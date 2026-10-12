@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "node --test ../tests/frontend/*.test.js ../tests/conformance/*.test.js",
+    "test": "node --test ../tests/frontend/*.test.js ../tests/conformance/*.test.js ../tests/guards/*.test.js",
     "lint": "eslint src && stylelint \"src/**/*.css\"",
     "purgecss": "purgecss --config purgecss.config.js"
   },
@@ -24,6 +24,7 @@
     "stylelint": "^16.0.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-declaration-strict-value": "^1.12.1",
-    "stylelint-value-no-unknown-custom-properties": "^6.1.1"
+    "stylelint-value-no-unknown-custom-properties": "^6.1.1",
+    "vite-plugin-html-inject": "^1.1.2"
   }
 }

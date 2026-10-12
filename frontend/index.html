@@ -2,8 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=/mwe.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Brewing Calculator</title>
+    <script type="module" src="/src/main.js"></script>
   </head>
-  <body></body>
+  <body>
+    <main class="card" x-data="stepCalculator()">
+      <h1 class="card-title">Brewing Calculator</h1>
+      <load src="./src/partials/step-mash.html" />
+    </main>
+  </body>
 </html>
