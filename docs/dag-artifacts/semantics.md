@@ -111,6 +111,9 @@ silently propagated.
 
 - **Domain (constraints)** — unary bounds on a node (`domain`), n-ary invariants
   in `relations`. They restrict *what is valid*, and are annotations, not nodes.
+  The engine **evaluates** both and surfaces the result to the view
+  (report-only: `relationStates()` / `domainStates()`); a violated invariant is a
+  presentation concern, not a computation failure.
 - **Interpretation** — a `derived` node whose output is a `taxonomy` (or boolean):
   a categorical judgment over a computed value (e.g. mash-pH status). Its
   presentation label/class is stripped.

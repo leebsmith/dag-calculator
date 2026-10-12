@@ -16,6 +16,8 @@ export function createCalculator(artifact, options = {}) {
 
 export { createEngine, buildGraph, topologicalSort } from "./dag.js";
 export { evaluate } from "./ast.js";
+export { evaluatePredicate, relationStates } from "./relations.js";
+export { checkDomain, domainStates } from "./domains.js";
 export { canonicalize, canonicalFingerprint, BoundaryCache } from "./boundary.js";
 export { sha256Hex } from "./sha256.js";
 export { getField, resolveReference } from "./paths.js";

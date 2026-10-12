@@ -3,7 +3,9 @@
 
 import { evaluate } from "./ast.js";
 import { BoundaryCache, canonicalFingerprint } from "./boundary.js";
+import { domainStates } from "./domains.js";
 import { getField, resolveReference } from "./paths.js";
+import { relationStates } from "./relations.js";
 
 export function buildGraph(artifact) {
   const adjacency = {};
@@ -185,6 +187,12 @@ export function createEngine(artifact, options = {}) {
   return {
     get,
     resolve: resolveValue,
+    relationStates() {
+      return relationStates(artifact, resolveValue);
+    },
+    domainStates() {
+      return domainStates(artifact, get, resolveValue);
+    },
     topoOrder,
     adjacency,
     dependents,
