@@ -1,20 +1,32 @@
 # TODO
 
-## Resume (2026-10-12)
+## Program status
 
-E-e1 is committed: 7-step workflow complete (horizontal wrapping stepper, menu
-bar + sticky footer, generic `step-card` partial, global dimension-level unit
-switcher), plus the seam work (schema-aware references, seed normalizers,
-empty-selection guard, per-card violation markers). `make check` / `make test`
-green.
+| Step | Status |
+|---|---|
+| A — grammar v2 + loadable artifact | done |
+| B — engine enforcement (relations + domains) | done |
+| C — conformance & correctness | done |
+| D — JSON seam (async boundary adapter) | done |
+| E — product/views | done |
+| E-e1 — remaining 3 steps + horizontal stepper + unit switcher | done |
+| F — persistence / freeze / auth (`plans/step-F-*.md`) | in-progress |
+| G — seed/schema conformance | pending |
 
-Next up:
-- **Step F** (persistence/freeze/auth) and **Step G** (seed/schema conformance)
-  — parallel; no `plans/step-F-*` / `step-G-*` files yet.
-- **Deferred from E-e1** (see `plans/step-E-product-views.md` E-e1 addendum):
-  - live-HTTP boundary debounce + in-flight coalescing (`engineAdapter.js`);
-  - per-node unit preferences (extend `uiStore.unitMode` with per-field override);
-  - `solver.water` salt-addition readouts (blocked on the C14 serialization-unit gap).
+**Now:** Step F-a — auth (Firebase Web SDK sign-in + backend `verify_id_token`;
+enforce bearer on `/solve/*`).
+
+## Deferred (E-e1)
+
+See `plans/step-E-product-views.md` E-e1 addendum:
+
+- live-HTTP boundary debounce + in-flight coalescing (`engineAdapter.js`);
+- per-node unit preferences (extend `uiStore.unitMode` with a per-field override);
+- `solver.water` salt-addition readouts (blocked on the C14 serialization-unit gap).
+
+## Deferred (Step F)
+
+- F-e — drift reconcile (reset-to-seed / keep-custom) on opening a frozen batch.
 
 ## Lazy-load seed data
 
