@@ -4,5 +4,6 @@ export function createUiStore() {
   return {
     activeStep: "mash",
     unitMode: {}, // dimension id -> preferred unit id (display only)
+    modal: null, // e.g. "rests" | null
   };
 }

@@ -25,17 +25,39 @@ export function createStepApp() {
   const app = {
     master,
     step: ui.activeStep,
+    unitMode: ui.unitMode,
+    modal: ui.modal,
     fieldsBySlice: {},
     relations: [],
     domains: [],
 
     compute() {
-      const all = produce(artifact, steps, registry, engine, { references: cache.references });
+      const all = produce(artifact, steps, registry, engine, {
+        references: cache.references,
+        ui,
+      });
       app.fieldsBySlice = Object.fromEntries(
         steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
       );
       app.relations = engine.relationStates();
       app.domains = engine.domainStates();
+    },
+
+    setUnit(dimension, unit) {
+      if (unit) ui.unitMode[dimension] = unit;
+      else delete ui.unitMode[dimension];
+      app.unitMode = { ...ui.unitMode };
+      app.compute();
+    },
+
+    openModal(name) {
+      ui.modal = name;
+      app.modal = name;
+    },
+
+    closeModal() {
+      ui.modal = null;
+      app.modal = null;
     },
 
     edit(field, value) {

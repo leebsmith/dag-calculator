@@ -9,10 +9,86 @@
   <body>
     <main class="card" x-data="stepCalculator()">
       <h1 class="card-title">Brewing Calculator</h1>
+
+      <div class="form-actions">
+        <button type="button" class="btn-outline" @click="openModal('rests')">
+          Configure rests
+        </button>
+      </div>
+
+      <div class="form-actions">
+        <template x-for="r in relations" :key="r.id">
+          <span
+            class="status-badge"
+            :class="r.holds ? 'status-badge-success' : 'status-badge-danger'"
+          >
+            <span x-text="r.id + ': ' + (r.holds ? 'ok' : 'violated')"></span>
+          </span>
+        </template>
+      </div>
+
+      <template x-for="d in domains" :key="d.nodeId">
+        <template x-if="!d.holds">
+          <p class="alert alert-warning"><span x-text="d.nodeId + ' is outside its domain'"></span></p>
+        </template>
+      </template>
+
       <load src="./src/partials/step-equipment-profile.html" />
       <load src="./src/partials/step-fermentables.html" />
       <load src="./src/partials/step-batch-solver.html" />
       <load src="./src/partials/step-mash.html" />
+
+      <template x-if="modal === 'rests'">
+        <div class="modal-backdrop" @click.self="closeModal()">
+          <div class="modal-dialog">
+            <div class="modal-header">
+              <h3 class="modal-title">Configure Rests</h3>
+              <button type="button" class="btn-close" @click="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+              <template
+                x-for="f in fieldsBySlice.mash.filter((x) => x.control === 'collection-table')"
+                :key="f.id"
+              >
+                <div>
+                  <span class="form-label" x-text="f.label"></span>
+                  <div class="data-table-container">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <template x-for="c in f.columns" :key="c.id">
+                            <th x-text="c.label"></th>
+                          </template>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template x-for="(row, ri) in f.rows" :key="ri">
+                          <tr>
+                            <template x-for="c in f.columns" :key="c.id">
+                              <td>
+                                <input
+                                  class="form-input"
+                                  :value="row[c.id]"
+                                  @input="editCell(f, ri, c.id, $event.target.value)"
+                                />
+                              </td>
+                            </template>
+                            <td>
+                              <button type="button" class="btn-link" @click="removeRow(f, ri)">×</button>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                  <button type="button" class="btn-outline" @click="addRow(f)">Add rest</button>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
     </main>
   </body>
 </html>

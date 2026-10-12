@@ -6,6 +6,7 @@
 // (boundary output / selection field), or a `{ collection }` entry. Valuation
 // uses `engine.resolve`, which handles nodes and dotted paths uniformly.
 import { resolveReference } from "../engine/paths.js";
+import { fromBase } from "../engine/units.js";
 import { rendererFor } from "./renderers.js";
 
 function defaultControl(node) {
@@ -20,6 +21,15 @@ function describe(artifact, id) {
   if (node) {
     if (node.kind === "root" && node.dimension === "reference") {
       return { kind: "reference", isInput: true, node, dimension: "reference", taxonomy: null };
+    }
+    if (node.kind === "derived") {
+      return {
+        kind: "derived",
+        isInput: false,
+        node,
+        dimension: node.output?.dimension ?? null,
+        taxonomy: node.output?.taxonomy ?? null,
+      };
     }
     return {
       kind: node.kind,
@@ -137,13 +147,21 @@ function formatValue(value) {
   return String(value);
 }
 
-export function valuate(fields, engine) {
+export function valuate(fields, engine, ctx = {}) {
+  const { ui, artifact } = ctx;
+  const unitMode = ui?.unitMode ?? {};
   return fields.map((field) => {
     if (field.control === "collection-table") {
       return { ...field, rows: (engine.get(field.id) ?? []).map((r) => ({ ...r })) };
     }
     const value = engine.resolve(field.id);
-    const out = { ...field, value, display: formatValue(value) };
+    // Display-only unit conversion (readouts): base value stays canonical.
+    const unit = field.dimension ? unitMode[field.dimension] ?? null : null;
+    const shown =
+      unit && field.dimension && typeof value === "number" && artifact
+        ? fromBase(artifact, field.dimension, unit, value)
+        : value;
+    const out = { ...field, value, unit: unit ?? field.unit, display: formatValue(shown) };
     if (field.target?.scope === "overlay") {
       const overlay = engine.getOverlay(field.target.selectionNodeId);
       out.overridden = Object.prototype.hasOwnProperty.call(overlay, field.target.field);
@@ -153,5 +171,5 @@ export function valuate(fields, engine) {
 }
 
 export function produce(artifact, steps, registry, engine, ctx = {}) {
-  return valuate(projectFields(artifact, steps, registry, ctx), engine);
+  return valuate(projectFields(artifact, steps, registry, ctx), engine, { ...ctx, artifact });
 }

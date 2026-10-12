@@ -59,6 +59,7 @@ export const steps = [
       "mash.strike_water_temp_base_c",
       "mash.strike_water_tun_offset_c",
       "mash.strike_water_temp_c",
+      { collection: "mash.rests" },
     ],
   },
 ];
