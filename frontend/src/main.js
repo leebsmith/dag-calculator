@@ -7,6 +7,7 @@ import { createCalculatorApp } from "./adapters/engineAdapter.js";
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
 import { getIdToken, signInAnonymously, signOut, onAuthStateChanged } from "./firebase.js";
+import { queueSave } from "./store/persistence.js";
 
 setTokenProvider(getIdToken);
 
@@ -23,6 +24,10 @@ onAuthStateChanged((user) => {
 });
 
 Alpine.data("calculator", () => createCalculatorApp());
-Alpine.data("stepCalculator", () => createStepApp());
+Alpine.data("stepCalculator", () => {
+  const app = createStepApp();
+  app.onChange = () => queueSave(() => app.draftState());
+  return app;
+});
 
 Alpine.start();

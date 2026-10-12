@@ -22,7 +22,7 @@ depends_on = ["app.core", "app.repositories", "app.schemas"]
 
 [[modules]]
 path = "app.auth"
-depends_on = ["app.schemas"]
+depends_on = ["app.database", "app.schemas"]
 
 [[modules]]
 path = "app.main"

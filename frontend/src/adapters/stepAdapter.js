@@ -55,6 +55,23 @@ export function createStepApp() {
     fieldsBySlice: {},
     relations: [],
     domains: [],
+    onChange: null, // optional browser hook, called after each state mutation
+
+    // Editable-state snapshot (roots + collections + overlays) for draft
+    // autosave. The engine mutates the `collections`/`overlays` closures in
+    // place, so this reflects the live state.
+    draftState() {
+      return {
+        roots: master.allRoots(),
+        collections: { ...collections },
+        overlays: { ...overlays },
+        schema_version: artifact.schema_version ?? 2,
+      };
+    },
+
+    notify() {
+      app.onChange?.();
+    },
 
     setRoot(nodeId, value) {
       master.setRoot(nodeId, value);
@@ -145,6 +162,7 @@ export function createStepApp() {
       }
       if (field.target.scope === "root" && raw) app.copyInCascade(field.target.nodeId);
       app.compute();
+      app.notify();
     },
 
     // Selection -> root copy-in (view-only). Picking a source report / target
@@ -178,6 +196,7 @@ export function createStepApp() {
       if (typeof attenuation === "number") {
         app.setRoot("batch.apparent_attenuation", attenuation);
         app.compute();
+        app.notify();
       }
     },
 
@@ -190,6 +209,7 @@ export function createStepApp() {
       if (field.target?.scope === "overlay") {
         engine.clearOverlay(field.target.selectionNodeId, field.target.field);
         app.compute();
+        app.notify();
       }
     },
 
@@ -199,6 +219,7 @@ export function createStepApp() {
       );
       engine.setCollection(field.target.nodeId, rows);
       app.compute();
+      app.notify();
     },
 
     addRow(field) {
@@ -207,12 +228,14 @@ export function createStepApp() {
       const blank = Object.fromEntries(Object.keys(schema).map((k) => [k, ""]));
       engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), blank]);
       app.compute();
+      app.notify();
     },
 
     removeRow(field, rowIndex) {
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       engine.setCollection(field.target.nodeId, rows);
       app.compute();
+      app.notify();
     },
 
     init() {

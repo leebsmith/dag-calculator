@@ -20,16 +20,17 @@ export function setTokenProvider(provider) {
   tokenProvider = provider;
 }
 
-export async function postJSON(path, body, { base = DEFAULT_BASE, fetchImpl } = {}) {
+export async function requestJSON(
+  path,
+  { method = "GET", body, base = DEFAULT_BASE, fetchImpl } = {}
+) {
   const doFetch = fetchImpl || fetch;
   const headers = { "Content-Type": "application/json" };
   const token = await tokenProvider();
   if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await doFetch(`${base}${path}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-  });
+  const init = { method, headers };
+  if (body !== undefined) init.body = JSON.stringify(body);
+  const res = await doFetch(`${base}${path}`, init);
   if (!res.ok) {
     let payload = {};
     try {
@@ -44,6 +45,10 @@ export async function postJSON(path, body, { base = DEFAULT_BASE, fetchImpl } = 
     );
   }
   return res.json();
+}
+
+export function postJSON(path, body, options = {}) {
+  return requestJSON(path, { ...options, method: "POST", body });
 }
 
 // Deep-flatten a nested response object into the artifact's dotted output keys:

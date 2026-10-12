@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import CurrentUser
+from app.schemas.batch import BatchRecord, DraftPayload
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSolverResponse,
@@ -19,6 +20,7 @@ from app.schemas.boundary import (
     WaterSolverResponse,
 )
 from app.services import SolverServiceError, solve_batch_request, solve_water_request
+from app.services.batch_service import BatchServiceDep
 
 app = FastAPI(title="dag-calculator backend")
 
@@ -49,3 +51,40 @@ def solve_water(req: WaterSolverRequest, _user: CurrentUser) -> WaterSolverRespo
                 code=exc.code, message=exc.message, details=exc.details
             ).model_dump(),
         )
+
+
+@app.get("/batches", response_model=list[BatchRecord])
+def list_batches(user: CurrentUser, service: BatchServiceDep):
+    """List the caller's drafts (frozen batches land with F-c)."""
+    return service.list_drafts(user["uid"])
+
+
+@app.post("/batches", response_model=BatchRecord, status_code=201)
+def create_batch(
+    payload: DraftPayload,
+    user: CurrentUser,
+    service: BatchServiceDep,
+):
+    """Create a new draft."""
+    return service.create_draft(user["uid"], payload)
+
+
+@app.put("/batches/{batch_id}/draft", response_model=BatchRecord)
+def update_draft(
+    batch_id: str,
+    payload: DraftPayload,
+    user: CurrentUser,
+    service: BatchServiceDep,
+):
+    """Autosave a draft's editable state (roots + collections + overlays)."""
+    return service.update_draft(user["uid"], batch_id, payload)
+
+
+@app.get("/batches/{batch_id}", response_model=BatchRecord)
+def get_batch(
+    batch_id: str,
+    user: CurrentUser,
+    service: BatchServiceDep,
+):
+    """Load a batch (draft or frozen) owned by the caller."""
+    return service.get_batch(user["uid"], batch_id)
