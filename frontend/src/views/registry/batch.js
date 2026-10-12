@@ -6,7 +6,7 @@ export const batchRegistry = {
   "batch.intensive_value": { label: "Intensive value (L/kg or r)" },
   "batch.hlt_starting_volume_l": { label: "HLT starting volume", unit: "L" },
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
-  "batch.apparent_attenuation": { label: "Apparent attenuation" },
+  "batch.apparent_attenuation": { label: "Apparent attenuation", control: "readout" },
 
   "solver.batch.sg_post_boil": { label: "Post-boil SG" },
   "solver.batch.v_pre_boil": { label: "Pre-boil volume", unit: "L" },

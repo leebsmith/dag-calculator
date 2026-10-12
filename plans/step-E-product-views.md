@@ -150,3 +150,35 @@ boolean input · list literals · `max`.
 
 ## Program context
 A → B → C ‖ D → **E**; Steps F/G parallel.
+
+## E-e1 addendum (delivered)
+
+Completes the view: the remaining three steps, a horizontal progress stepper,
+and a global unit switcher.
+
+- **Layout:** horizontal `flex-flow: row wrap` step row (no horizontal scroll);
+  a menu bar (title + global unit switcher) and a sticky footer (Back/Next +
+  violation summary). Progressive reveal gated by `uiStore.highwater` (furthest
+  reached), separate from the cursor (`activeIndex`); completed cards stay fully
+  active, future cards hidden. One generic `step-card.html` partial replaces the
+  four per-step partials.
+- **Steps wired:** yeast-selection, late-additions, water-chemistry (manifest
+  order equipment → yeast → fermentables → late-additions → batch → mash →
+  water).
+- **Yeast ↔ AA (decision):** picking a yeast does **not** auto-write AA; an
+  explicit "Use this attenuation" action copies `batch.yeast.attenuation_pct`
+  into `batch.apparent_attenuation`, which renders as a readout in the batch
+  card. No envelope range-guard yet.
+- **References:** the engine now resolves selections schema-aware
+  (`references[node.schema][refValue]`); `referenceCache` normalizes seeds
+  (flat water-target `ions.*`, water reports indexed by `report_id`).
+- **Empty-selection guard:** selection-derived fields are deferred while their
+  reference root is `""` (so `batch.yeast.*` readouts don't throw before a
+  yeast is chosen).
+- **Units:** dimension-level `unitMode` surfaced via a menu-bar switcher;
+  `UNIT_DIMENSIONS`/`UNIT_SYMBOLS` in `registry/units.js`; gravity SG↔Plato wired
+  through `engine.call`. Per-node unit preferences deferred.
+- **Deferred (tracked):** live-HTTP boundary debounce/in-flight coalescing;
+  per-node unit preferences; `solver.water` salt-addition readouts (blocked on
+  the C14 boundary-serialization-unit gap).
+

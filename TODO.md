@@ -1,5 +1,21 @@
 # TODO
 
+## Resume (2026-10-12)
+
+E-e1 is committed: 7-step workflow complete (horizontal wrapping stepper, menu
+bar + sticky footer, generic `step-card` partial, global dimension-level unit
+switcher), plus the seam work (schema-aware references, seed normalizers,
+empty-selection guard, per-card violation markers). `make check` / `make test`
+green.
+
+Next up:
+- **Step F** (persistence/freeze/auth) and **Step G** (seed/schema conformance)
+  — parallel; no `plans/step-F-*` / `step-G-*` files yet.
+- **Deferred from E-e1** (see `plans/step-E-product-views.md` E-e1 addendum):
+  - live-HTTP boundary debounce + in-flight coalescing (`engineAdapter.js`);
+  - per-node unit preferences (extend `uiStore.unitMode` with per-field override);
+  - `solver.water` salt-addition readouts (blocked on the C14 serialization-unit gap).
+
 ## Lazy-load seed data
 
 `frontend/src/store/referenceCache.js` currently `import`s all seed files, which

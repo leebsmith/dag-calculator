@@ -8,6 +8,7 @@
 import { resolveReference } from "../engine/paths.js";
 import { fromBase } from "../engine/units.js";
 import { rendererFor } from "./renderers.js";
+import { UNIT_SYMBOLS } from "./registry/units.js";
 
 function defaultControl(node) {
   if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
@@ -58,9 +59,10 @@ function describe(artifact, id) {
         field: suffix,
         dimension: fieldSpec.dimension ?? null,
         taxonomy: fieldSpec.taxonomy ?? null,
+        selectionRef: owner.ref,
       };
     }
-    return { kind: "path", isInput: false, node: owner, dimension: fieldSpec.dimension ?? null, taxonomy: fieldSpec.taxonomy ?? null };
+    return { kind: "path", isInput: false, node: owner, dimension: fieldSpec.dimension ?? null, taxonomy: fieldSpec.taxonomy ?? null, selectionRef: owner.ref };
   }
   throw new Error(`Unsupported reference "${id}"`);
 }
@@ -86,6 +88,15 @@ function collectionField(artifact, registry, step, entry) {
     editable: true,
     target: { scope: "collection", nodeId: entry.collection },
   };
+}
+
+// A reference root (dimension "reference") names the selection node whose
+// `ref` points back at it. That selection's schema keys the reference set.
+function referenceSchema(artifact, rootId) {
+  for (const node of Object.values(artifact.nodes)) {
+    if (node.kind === "selection" && node.ref === rootId) return node.schema;
+  }
+  return null;
 }
 
 export function projectFields(artifact, steps, registry, ctx = {}) {
@@ -119,7 +130,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         info.kind === "choice"
           ? artifact.taxonomies[info.taxonomy]
           : info.kind === "reference"
-            ? Object.keys(ctx.references ?? {})
+            ? Object.keys(ctx.references?.[referenceSchema(artifact, id)] ?? {})
             : null;
 
       fields.push({
@@ -133,6 +144,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         options,
         editable,
         target,
+        ...(info.selectionRef ? { selectionRef: info.selectionRef } : {}),
       });
     }
   }
@@ -147,27 +159,46 @@ function formatValue(value) {
   return String(value);
 }
 
+function nonlinearFns(artifact, engine) {
+  const fns = {};
+  for (const dim of Object.values(artifact.dimensions ?? {})) {
+    if (dim.kind !== "nonlinear") continue;
+    for (const unit of Object.values(dim.units ?? {})) {
+      fns[unit.fwd] = (v) => engine.call(unit.fwd, [v]);
+      fns[unit.inv] = (v) => engine.call(unit.inv, [v]);
+    }
+  }
+  return fns;
+}
+
 export function valuate(fields, engine, ctx = {}) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
-  return fields.map((field) => {
-    if (field.control === "collection-table") {
-      return { ...field, rows: (engine.get(field.id) ?? []).map((r) => ({ ...r })) };
-    }
-    const value = engine.resolve(field.id);
-    // Display-only unit conversion (readouts): base value stays canonical.
-    const unit = field.dimension ? unitMode[field.dimension] ?? null : null;
-    const shown =
-      unit && field.dimension && typeof value === "number" && artifact
-        ? fromBase(artifact, field.dimension, unit, value)
-        : value;
-    const out = { ...field, value, unit: unit ?? field.unit, display: formatValue(shown) };
-    if (field.target?.scope === "overlay") {
-      const overlay = engine.getOverlay(field.target.selectionNodeId);
-      out.overridden = Object.prototype.hasOwnProperty.call(overlay, field.target.field);
-    }
-    return out;
-  });
+  const nl = nonlinearFns(artifact, engine);
+  return fields
+    .map((field) => {
+      // Empty-selection guard: selection-derived fields are deferred until the
+      // reference root names a real component (default "" is "none chosen").
+      if (field.selectionRef && engine.get(field.selectionRef) === "") return null;
+      if (field.control === "collection-table") {
+        return { ...field, rows: (engine.get(field.id) ?? []).map((r) => ({ ...r })) };
+      }
+      const value = engine.resolve(field.id);
+      // Display-only unit conversion (readouts): base value stays canonical.
+      const unit = field.dimension ? unitMode[field.dimension] ?? null : null;
+      const shown =
+        unit && field.dimension && typeof value === "number" && artifact
+          ? fromBase(artifact, field.dimension, unit, value, nl)
+          : value;
+      const symbol = unit && field.dimension ? UNIT_SYMBOLS[field.dimension]?.[unit] ?? unit : null;
+      const out = { ...field, value, unit: symbol ?? field.unit, display: formatValue(shown) };
+      if (field.target?.scope === "overlay") {
+        const overlay = engine.getOverlay(field.target.selectionNodeId);
+        out.overridden = Object.prototype.hasOwnProperty.call(overlay, field.target.field);
+      }
+      return out;
+    })
+    .filter(Boolean);
 }
 
 export function produce(artifact, steps, registry, engine, ctx = {}) {

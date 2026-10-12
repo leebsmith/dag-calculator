@@ -3,8 +3,9 @@ import assert from "node:assert/strict";
 import { steps } from "../../frontend/src/views/steps.js";
 import { ROOT, read, existsSync, join } from "./util.js";
 
-// A7: every <load src> include exists and corresponds to a manifest step
-// (bidirectional — no orphan includes, no undeclared steps).
+// A7: every <load src> include exists and corresponds to a manifest step partial
+// (bidirectional — no orphan includes, no undeclared steps). Steps may share a
+// single generic partial, so comparison is over the unique sets.
 test("A7: include integrity", () => {
   const html = read("frontend/index.html");
   const srcs = [...html.matchAll(/<load\s+src="([^"]+)"/g)].map((m) => m[1]);
@@ -14,9 +15,9 @@ test("A7: include integrity", () => {
     assert.ok(existsSync(p), `missing partial for <load src="${src}">`);
   }
 
-  const declared = steps.map((s) => s.partial);
+  const declared = [...new Set(steps.map((s) => s.partial))];
   assert.deepEqual(
-    [...srcs].sort(),
+    [...new Set(srcs)].sort(),
     [...declared].sort(),
     "index.html <load> includes must match the step manifest partials"
   );

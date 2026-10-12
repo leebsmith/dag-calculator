@@ -1,7 +1,7 @@
-<section class="step">
-  <h2 class="card-title">Batch Sparge</h2>
+<section class="step-card">
+  <h2 class="card-title" x-text="step.title"></h2>
 
-  <template x-for="f in fieldsBySlice.batch" :key="f.id">
+  <template x-for="f in fieldsBySlice[step.slice]" :key="f.id">
     <div class="form-group">
       <template x-if="f.control === 'number'">
         <div>
@@ -84,5 +84,15 @@
         </div>
       </template>
     </div>
+  </template>
+
+  <template x-for="a in (step.actions || [])" :key="a.id">
+    <button
+      type="button"
+      class="btn-outline"
+      x-show="fieldsBySlice[step.slice].some((f) => f.id === a.gate)"
+      @click="runAction(a)"
+      x-text="a.label"
+    ></button>
   </template>
 </section>

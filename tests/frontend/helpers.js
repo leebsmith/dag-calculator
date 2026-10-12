@@ -83,7 +83,7 @@ export function waterOutputs() {
 }
 
 export function makeFixtures() {
-  const references = { "herms-30l": EQUIPMENT };
+  const references = { equipment: { "herms-30l": EQUIPMENT } };
 
   const collections = {
     "grist.major_malts": [

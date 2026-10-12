@@ -151,7 +151,7 @@ export function createEngine(artifact, options = {}) {
         return collections[nodeId] ?? [];
       case "selection": {
         const refValue = get(node.ref);
-        const component = references[refValue];
+        const component = references[node.schema]?.[refValue];
         if (component === undefined) {
           throw new Error(`Unknown reference "${refValue}" for selection "${nodeId}"`);
         }
@@ -191,6 +191,9 @@ export function createEngine(artifact, options = {}) {
   return {
     get,
     resolve: resolveValue,
+    call(fnId, args) {
+      return callFunction(fnId, args);
+    },
     relationStates() {
       return relationStates(artifact, resolveValue);
     },

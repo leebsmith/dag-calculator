@@ -7,7 +7,22 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { produce } from "../views/producer.js";
 import { registry, steps } from "../views/steps.js";
+import { UNIT_DIMENSIONS } from "../views/registry/units.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
+
+// Collect the slice prefixes referenced by a relation predicate (a tree of
+// {ref}/{op}/{args}/{lhs}/{rhs}/{const} nodes). Used to surface violations on the
+// cards that own the relevant nodes.
+function refSlices(node, out = new Set()) {
+  if (node === null || typeof node !== "object") return out;
+  if ("ref" in node) out.add(node.ref.split(".")[0]);
+  if (Array.isArray(node)) {
+    for (const item of node) refSlices(item, out);
+  } else {
+    for (const value of Object.values(node)) refSlices(value, out);
+  }
+  return out;
+}
 
 export function createStepApp() {
   const { master, ui } = createAppStore();
@@ -22,14 +37,29 @@ export function createStepApp() {
     roots: master.allRoots(),
   });
 
+  const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
+
   const app = {
     master,
-    step: ui.activeStep,
+    steps,
+    activeIndex: ui.activeIndex,
+    highwater: ui.highwater,
+    activeStep: steps[ui.activeIndex],
+    visibleSteps: [],
+    stepStatus: {},
+    unitDimensions: UNIT_DIMENSIONS,
     unitMode: ui.unitMode,
+    unitsOpen: false,
+    violationCount: 0,
     modal: ui.modal,
     fieldsBySlice: {},
     relations: [],
     domains: [],
+
+    setRoot(nodeId, value) {
+      master.setRoot(nodeId, value);
+      engine.setRoot(nodeId, value);
+    },
 
     compute() {
       const all = produce(artifact, steps, registry, engine, {
@@ -41,6 +71,47 @@ export function createStepApp() {
       );
       app.relations = engine.relationStates();
       app.domains = engine.domainStates();
+      app.violationCount =
+        app.relations.filter((r) => !r.holds).length + app.domains.filter((d) => !d.holds).length;
+
+      app.stepStatus = {};
+      for (const step of steps) app.stepStatus[step.slice] = { relations: [], domains: [] };
+      for (const r of app.relations) {
+        if (r.holds) continue;
+        for (const slice of refSlices(relationDefs[r.id]?.predicate)) {
+          app.stepStatus[slice]?.relations.push(r);
+        }
+      }
+      for (const d of app.domains) {
+        if (d.holds) continue;
+        app.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
+      }
+    },
+
+    syncNav() {
+      app.activeIndex = ui.activeIndex;
+      app.highwater = ui.highwater;
+      app.activeStep = steps[ui.activeIndex];
+      app.visibleSteps = steps
+        .slice(0, ui.highwater + 1)
+        .map((s, i) => ({ ...s, index: i, active: i === ui.activeIndex, complete: i < ui.activeIndex }));
+    },
+
+    selectStep(index) {
+      if (index < 0 || index > ui.highwater) return;
+      ui.activeIndex = index;
+      app.syncNav();
+    },
+
+    next() {
+      ui.activeIndex = Math.min(ui.activeIndex + 1, steps.length - 1);
+      ui.highwater = Math.max(ui.highwater, ui.activeIndex);
+      app.syncNav();
+    },
+
+    prev() {
+      ui.activeIndex = Math.max(ui.activeIndex - 1, 0);
+      app.syncNav();
     },
 
     setUnit(dimension, unit) {
@@ -48,6 +119,10 @@ export function createStepApp() {
       else delete ui.unitMode[dimension];
       app.unitMode = { ...ui.unitMode };
       app.compute();
+    },
+
+    toggleUnits() {
+      app.unitsOpen = !app.unitsOpen;
     },
 
     openModal(name) {
@@ -66,10 +141,49 @@ export function createStepApp() {
       if (field.target.scope === "overlay") {
         engine.setOverlay(field.target.selectionNodeId, field.target.field, raw);
       } else {
-        master.setRoot(field.target.nodeId, raw);
-        engine.setRoot(field.target.nodeId, raw);
+        app.setRoot(field.target.nodeId, raw);
       }
+      if (field.target.scope === "root" && raw) app.copyInCascade(field.target.nodeId);
       app.compute();
+    },
+
+    // Selection -> root copy-in (view-only). Picking a source report / target
+    // profile pre-fills the editable ion roots; they remain user-editable.
+    copyInCascade(rootId) {
+      if (rootId === "water.source_report_id") {
+        const report = engine.resolve("water.source_report");
+        if (!report) return;
+        const map = {
+          calcium_ca: "calcium_ca",
+          magnesium_mg: "magnesium_mg",
+          sodium_na: "sodium_na",
+          sulfate_so4: "sulfate_so4",
+          chloride_cl: "chloride_cl",
+          total_alkalinity_caco3: "alkalinity_as_caco3",
+        };
+        for (const [src, dst] of Object.entries(map)) {
+          if (typeof report[src] === "number") app.setRoot(`water.source.${dst}`, report[src]);
+        }
+      } else if (rootId === "water.target_profile_id") {
+        const profile = engine.resolve("water.target_profile");
+        if (!profile) return;
+        for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"]) {
+          if (typeof profile[ion] === "number") app.setRoot(`water.target.${ion}`, profile[ion]);
+        }
+      }
+    },
+
+    useYeastAttenuation() {
+      const attenuation = engine.resolve("batch.yeast.attenuation_pct");
+      if (typeof attenuation === "number") {
+        app.setRoot("batch.apparent_attenuation", attenuation);
+        app.compute();
+      }
+    },
+
+    runAction(action) {
+      const handler = app[action.handler];
+      if (typeof handler === "function") handler();
     },
 
     clearOverlay(field) {
@@ -101,13 +215,9 @@ export function createStepApp() {
       app.compute();
     },
 
-    selectStep(id) {
-      ui.activeStep = id;
-      app.step = id;
-    },
-
     init() {
       app.compute();
+      app.syncNav();
     },
   };
 

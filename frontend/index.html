@@ -7,36 +7,78 @@
     <script type="module" src="/src/main.js"></script>
   </head>
   <body>
-    <main class="card" x-data="stepCalculator()">
-      <h1 class="card-title">Brewing Calculator</h1>
+    <main class="app-shell" x-data="stepCalculator()">
+      <header class="menu-bar">
+        <span class="menu-title">Brewing Calculator</span>
+        <div class="menu-actions">
+          <button type="button" class="btn-outline" @click="openModal('rests')">
+            Configure rests
+          </button>
+          <div class="menu-unit">
+            <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
+            <div class="unit-popover" x-show="unitsOpen" @click.outside="unitsOpen = false">
+              <template x-for="d in unitDimensions" :key="d.id">
+                <div class="unit-row">
+                  <label class="form-label" x-text="d.label"></label>
+                  <select
+                    class="form-select"
+                    :value="unitMode[d.id] || d.units[0][0]"
+                    @change="setUnit(d.id, $event.target.value)"
+                  >
+                    <template x-for="u in d.units" :key="u[0]">
+                      <option :value="u[0]" x-text="u[1]"></option>
+                    </template>
+                  </select>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <div class="form-actions">
-        <button type="button" class="btn-outline" @click="openModal('rests')">
-          Configure rests
-        </button>
-      </div>
-
-      <div class="form-actions">
-        <template x-for="r in relations" :key="r.id">
-          <span
-            class="status-badge"
-            :class="r.holds ? 'status-badge-success' : 'status-badge-danger'"
+      <nav class="step-progress">
+        <template x-for="(s, i) in steps" :key="s.id">
+          <button
+            type="button"
+            class="step-progress-node"
+            :class="i < highwater ? 'is-complete' : (i === activeIndex ? 'is-active' : '')"
+            :disabled="i > highwater"
+            @click="selectStep(i)"
           >
-            <span x-text="r.id + ': ' + (r.holds ? 'ok' : 'violated')"></span>
-          </span>
+            <span class="step-progress-index" x-text="i + 1"></span>
+            <span class="step-progress-label" x-text="s.title"></span>
+            <span
+              class="status-dot status-dot-error"
+              x-show="(stepStatus[s.slice].relations.length + stepStatus[s.slice].domains.length) > 0"
+            ></span>
+          </button>
+        </template>
+      </nav>
+
+      <div class="step-row">
+        <template x-for="step in visibleSteps" :key="step.id">
+          <load src="./src/partials/step-card.html" />
         </template>
       </div>
 
-      <template x-for="d in domains" :key="d.nodeId">
-        <template x-if="!d.holds">
-          <p class="alert alert-warning"><span x-text="d.nodeId + ' is outside its domain'"></span></p>
-        </template>
-      </template>
-
-      <load src="./src/partials/step-equipment-profile.html" />
-      <load src="./src/partials/step-fermentables.html" />
-      <load src="./src/partials/step-batch-solver.html" />
-      <load src="./src/partials/step-mash.html" />
+      <footer class="sticky-footer">
+        <button type="button" class="btn-outline" @click="prev()" :disabled="activeIndex === 0">
+          ← Back
+        </button>
+        <span class="footer-step" x-text="'Step ' + (activeIndex + 1) + ' of ' + steps.length"></span>
+        <button
+          type="button"
+          class="btn-outline"
+          @click="next()"
+          :disabled="activeIndex === steps.length - 1"
+        >
+          Next →
+        </button>
+        <span class="footer-violations" x-show="violationCount > 0">
+          <span class="status-dot status-dot-error"></span>
+          <span x-text="violationCount + ' violation(s)'"></span>
+        </span>
+      </footer>
 
       <template x-if="modal === 'rests'">
         <div class="modal-backdrop" @click.self="closeModal()">
