@@ -2,8 +2,22 @@
   "herms-30l": {
     "id": "herms-30l",
     "name": "HERMS 30L",
+    "description": "30 L HERMS single-vessel rig (default profile).",
+    "max_kettle_volume_l": 40,
+    "max_mash_tun_volume_l": 40,
     "max_hlt_volume_l": 30,
-    "boil_off_rate_l_per_hr": 3,
+    "mash_dead_space_l": 1.0,
+    "mash_transfer_loss_l": 0.5,
+    "kettle_dead_space_l": 1.0,
+    "kettle_transfer_loss_l": 0.5,
+    "trub_loss_l": 0.5,
+    "hlt_dead_space_l": 0.5,
+    "hlt_transfer_loss_l": 0.5,
+    "boil_off_rate_l_per_hr": 3.0,
+    "grain_absorption_factor_l_per_kg": 0.96,
+    "conversion_efficiency": 0.9,
+    "shrinkage_pct": 0.04,
+    "hlt_coil_floor_l": 4.0,
     "mash_tun_specific_heat": 0.12,
     "mash_tun_mass_kg": 6.5
   }

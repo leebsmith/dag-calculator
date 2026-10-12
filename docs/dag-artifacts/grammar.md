@@ -40,17 +40,23 @@ boundary. For example, `solver.batch.mash_thickness_l_per_kg` is the
 
 ---
 
-## 2. Node kinds (five)
+## 2. Node kinds (six)
 
 Every node has a `kind`. The legal set, and the shape each requires:
 
 | Kind | Purpose | Required fields |
 |---|---|---|
-| `root` | user-set scalar input | `dimension`, `default` |
+| `root` | user-set scalar (numeric) input | `dimension`, `default` |
+| `choice` | user-set categorical input | `taxonomy`, `default` |
 | `collection` | user-set list | `item_schema` |
 | `selection` | reference to a component + overlay | `schema`, `ref` |
 | `derived` | pure computed value | `inputs`, `expr`, `output` |
 | `boundary` | sealed host-defined black box | `binding`, `resolution`, `inputs`, `outputs` |
+
+A node's **value type** is one of `{dimension}` (numeric quantity), `{taxonomy}`
+(N-valued categorical), or `{type:"boolean"}` — the same vocabulary used by
+`derived.output` and by each `boundary.outputs` entry. Inputs use it via the node
+kind (`root` → dimension; `choice` → taxonomy).
 
 ### 2.1 `root`
 
@@ -139,10 +145,30 @@ Every node has a `kind`. The legal set, and the shape each requires:
   (distinct from the node id). The engine maps this to native code.
 - `resolution` — `iterative` (root-finding / linear program). The artifact
   declares *that* it iterates, never *how*.
-- `inputs`/`outputs` — the declared contract (outputs are dimensioned).
+- `inputs`/`outputs` — the declared contract. Each output is a **value spec**:
+  `{dimension}` | `{taxonomy}` | `{type:"boolean"}`. Nested host responses are
+  **flattened to dotted output keys** (e.g. `cascade.v_strike`, `hlt.v_hlt_debt`),
+  reusing the dotted-path resolution of §1.1.
 - `domain` — the **feasibility/error surface**: the set of `code` values the
   boundary can raise (mirrors the implementation's `SolverValidationError` codes).
 - A boundary is **opaque**: no `expr`, no body. Its interior is host code.
+
+### 2.6 `choice`
+
+```jsonc
+"batch.topology": {
+  "kind": "choice",
+  "taxonomy": "topology",
+  "default": "r_l_to_g"
+}
+```
+
+- `taxonomy` — the enumerated domain the value is drawn from (see `taxonomies`).
+- `default` — the selected member (a bare string) or an expression evaluating to one.
+  If a literal, it must be a member of the named `taxonomy`.
+- Binary inputs (e.g. `r_l_to_g` | `runoff_ratio`) are `choice` over a 2-member
+  taxonomy; a dedicated boolean *input* kind does not exist (booleans are a
+  computed/interpretation value type only).
 
 ---
 
@@ -196,14 +222,15 @@ a first-class invariant, evaluated by the engine and surfaced to the view.
 The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
-- Top level: object with `schema_version` (integer), `meta` (object),
-  `dimensions`, `constants`, `taxonomies`, `functions`, `primitive_schemas`,
-  `nodes` (all objects), and `relations` (array).
-- `nodes.*` must be one of the five kinds; each kind's required fields are in
+- Top level: object with `schema_version` (integer; current grammar revision is
+  **2**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  `primitive_schemas`, `nodes` (all objects), and `relations` (array).
+- `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.
 - `derived.expr` and `functions.*.body` must be valid AST (see
   `expression-language.md`).
-- `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`.
+- `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`. A schema
+  field may also carry `{type:"boolean"}` for a flag (e.g. `enabled`).
 - Every `inputs`/`ref`/`{ref}` path must resolve to a declared node or a
   declared schema field; dangling references are a validation error.
 - Every `dimension`/`taxonomy`/`schema`/`function`/`constant` id referenced

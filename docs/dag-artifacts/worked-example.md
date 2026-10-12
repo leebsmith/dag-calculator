@@ -1,6 +1,6 @@
 # Worked Example — Strike-Water Chain & Color
 
-This walks a small slice of the artifact end-to-end, showing how the five node
+This walks a small slice of the artifact end-to-end, showing how the node
 kinds, the expression AST, the dimension system, and a boundary interlock.
 
 ---
@@ -186,7 +186,8 @@ so it lives in `relations`.
 
 ## 4. What this example demonstrates
 
-- All **five node kinds** (root, collection, selection, derived, boundary).
+- The node kinds used by the slice (root, collection, selection, derived, boundary;
+  `choice` is the sixth kind, for categorical inputs).
 - **Explicit edges** (`inputs` aliases), never inferred.
 - A **boundary output** consumed as an ordinary value.
 - A **selection** with a sparse **overlay**, resolved through a schema.

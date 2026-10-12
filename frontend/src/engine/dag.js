@@ -142,6 +142,7 @@ export function createEngine(artifact, options = {}) {
     const node = artifact.nodes[nodeId];
     switch (node.kind) {
       case "root":
+      case "choice":
         return roots.has(nodeId) ? roots.get(nodeId) : evaluate(node.default, topLevelCtx);
       case "collection":
         return collections[nodeId] ?? [];
@@ -188,8 +189,9 @@ export function createEngine(artifact, options = {}) {
     adjacency,
     dependents,
     setRoot(nodeId, value) {
-      if (artifact.nodes[nodeId]?.kind !== "root") {
-        throw new Error(`"${nodeId}" is not a root node`);
+      const kind = artifact.nodes[nodeId]?.kind;
+      if (kind !== "root" && kind !== "choice") {
+        throw new Error(`"${nodeId}" is not a settable root/choice node`);
       }
       roots.set(nodeId, value);
       invalidate(nodeId);

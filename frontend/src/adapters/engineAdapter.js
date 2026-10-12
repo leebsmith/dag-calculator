@@ -10,16 +10,36 @@ import { createReferenceCache } from "../store/referenceCache.js";
 // /solve/water) is wired in the full implementation; see TODO.md.
 const STUB_BOUNDARIES = {
   batch_sparge_solver: () => ({
-    mash_thickness_l_per_kg: 3.0,
-    v_strike: 14.0,
+    sg_post_boil: 1.055,
+    v_pre_boil: 24.0,
+    s_post_boil_target: 2.6,
     m_grist: 4.7,
+    "cascade.v_strike": 14.0,
+    "cascade.v_run1": 10.0,
+    "cascade.v_run2": 14.0,
+    "cascade.v_sparge": 14.0,
+    "cascade.s_run1": 2.0,
+    "cascade.s_run2": 0.6,
+    "cascade.sg_pre_boil": 1.048,
+    "cascade.v_post_boil": 21.0,
+    "cascade.mash_thickness_l_per_kg": 3.0,
+    max_achievable_abv: 10.0,
+    "hlt.v_hlt_debt": 1.0,
+    "hlt.v_hlt_after_strike": 16.0,
+    "hlt.v_hlt_top_up": 0.0,
+    "hlt.v_sparge_deliverable": 15.0,
+    mash_thickness_l_per_kg: 3.0,
   }),
-  water_chemistry_solver: () => ({ predicted_mash_ph: 5.4 }),
+  water_chemistry_solver: () => ({
+    strategy: "CALCIUM_FLOOR",
+    "prescription.predicted_mash_ph": 5.4,
+    "prescription.mash_ph_status": "OPTIMAL",
+    "prescription.residual_hlt_water_l": 0.0,
+    "prescription.sparge_tannin_warning": false,
+  }),
 };
 
-const INITIAL_ROOTS = {
-  "mash.dough_in_target_temp_c": 67.0,
-};
+const INITIAL_ROOTS = {};
 
 export function createCalculatorApp() {
   const store = createMasterStore(INITIAL_ROOTS);
@@ -52,14 +72,14 @@ export function createCalculatorApp() {
 
     refresh() {
       setRoot("mash.grain_temp_c", Number(this.grainTemp));
-      setRoot("mash.dough_in_target_temp_c", Number(this.doughInTarget));
       setRoot("batch.target_abv", Number(this.targetAbv));
 
+      this.doughInTarget = engine.get("mash.dough_in_target_temp_c");
       this.strikeBase = engine.get("mash.strike_water_temp_base_c");
       this.tunOffset = engine.get("mash.strike_water_tun_offset_c");
       this.strikeTemp = engine.get("mash.strike_water_temp_c");
       this.mashThickness = engine.resolve("solver.batch.mash_thickness_l_per_kg");
-      this.strikeVolume = engine.resolve("solver.batch.v_strike");
+      this.strikeVolume = engine.resolve("solver.batch.cascade.v_strike");
       this.weightedLovibond = engine.get("grist.weighted_lovibond");
       this.beerSrm = engine.get("grist.beer_srm");
       this.mashPhStatus = engine.get("water.mash_ph_status");

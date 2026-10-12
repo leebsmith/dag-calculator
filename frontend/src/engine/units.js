@@ -85,6 +85,7 @@ export function nodeDimension(artifact, nodeId) {
   const node = artifact.nodes[nodeId];
   if (!node) return null;
   if (node.kind === "root") return node.dimension;
+  if (node.kind === "choice") return node.taxonomy;
   if (node.kind === "derived") {
     if (node.output.dimension) return node.output.dimension;
     if (node.output.taxonomy) return node.output.taxonomy;
@@ -144,6 +145,7 @@ export function inferExprDimension(artifact, expr, inputDims = {}) {
       case "sum":
         return dim(expr.body);
       case "weighted_avg":
+      case "min":
         return dim(expr.value);
       case "map":
       case "filter":

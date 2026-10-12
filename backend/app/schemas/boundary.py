@@ -288,8 +288,8 @@ class WaterSolverRequest(BoundaryModel):
     v_hlt_debt_l: Annotated[float, Field(ge=0.0, default=0.0, description="Undeliverable HLT debt volume (L)")]
     v_sparge_demand_l: Annotated[float, Field(ge=0.0, description="Total sparge volume demand (L)")]
     mash_thickness_l_per_kg: Annotated[float, Field(gt=0.0, description="Resolved L/kg mash thickness")]
-    target_mash_ph: Annotated[float, Field(ge=4.0, le=7.0, default=5.35, description="Desired mash pH")]
-    strategy: WaterStrategy = Field(default=WaterStrategy.FLAVOR)
+    target_mash_ph: Annotated[float, Field(ge=4.0, le=7.0, default=5.4, description="Desired mash pH")]
+    strategy: WaterStrategy = Field(default=WaterStrategy.CALCIUM_FLOOR)
     salt_distribution: SaltDistribution = Field(default=SaltDistribution.PROPORTIONAL)
     acid_medium: AcidMedium = Field(default=AcidMedium.LACTIC_88)
     gypsum_form: str = Field(default="dihydrate")

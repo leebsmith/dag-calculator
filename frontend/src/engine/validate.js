@@ -2,7 +2,8 @@
 
 import { resolveReference } from "./paths.js";
 
-const NODE_KINDS = ["root", "collection", "selection", "derived", "boundary"];
+const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
+const SUPPORTED_SCHEMA_VERSIONS = [1, 2];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -11,14 +12,22 @@ export function validateArtifact(artifact) {
   if (typeof artifact.schema_version !== "number") {
     throw new Error('Artifact must declare a numeric "schema_version"');
   }
+  if (!SUPPORTED_SCHEMA_VERSIONS.includes(artifact.schema_version)) {
+    throw new Error(
+      `Unsupported schema_version ${artifact.schema_version}; expected one of ${SUPPORTED_SCHEMA_VERSIONS.join(", ")}`
+    );
+  }
   if (artifact.nodes === null || typeof artifact.nodes !== "object") {
     throw new Error('Artifact must declare a "nodes" object');
   }
 
   const dimensions = artifact.dimensions ?? {};
   const constants = artifact.constants ?? {};
+  const taxonomies = artifact.taxonomies ?? {};
   const functions = artifact.functions ?? {};
   const schemas = artifact.primitive_schemas ?? {};
+
+  validateSchemas(artifact, dimensions, taxonomies);
 
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (!NODE_KINDS.includes(node.kind)) {
@@ -41,11 +50,21 @@ export function validateArtifact(artifact) {
         }
         checkRefResolves(artifact, node.ref, `Selection "${id}" ref`);
         break;
+      case "choice":
+        if (!taxonomies[node.taxonomy]) {
+          throw new Error(`Choice "${id}" references unknown taxonomy "${node.taxonomy}"`);
+        }
+        if (typeof node.default === "string" && !taxonomies[node.taxonomy].includes(node.default)) {
+          throw new Error(
+            `Choice "${id}" default "${node.default}" is not a member of taxonomy "${node.taxonomy}"`
+          );
+        }
+        break;
       case "derived":
         validateDerived(artifact, id, node, constants, functions);
         break;
       case "boundary":
-        validateBoundary(artifact, id, node, dimensions);
+        validateBoundary(artifact, id, node, dimensions, taxonomies);
         break;
       default:
         break;
@@ -66,7 +85,7 @@ function validateDerived(artifact, id, node, constants, functions) {
   checkExprIds(artifact, node.expr, constants, functions, `Derived "${id}" expr`);
 }
 
-function validateBoundary(artifact, id, node, dimensions) {
+function validateBoundary(artifact, id, node, dimensions, taxonomies) {
   if (!node.binding) throw new Error(`Boundary "${id}" must declare a "binding"`);
   if (node.inputs === null || typeof node.inputs !== "object") {
     throw new Error(`Boundary "${id}" must declare an "inputs" object`);
@@ -80,6 +99,28 @@ function validateBoundary(artifact, id, node, dimensions) {
   for (const [name, out] of Object.entries(node.outputs)) {
     if (out.dimension && !dimensions[out.dimension]) {
       throw new Error(`Boundary "${id}" output "${name}" has unknown dimension "${out.dimension}"`);
+    }
+    if (out.taxonomy && !taxonomies[out.taxonomy]) {
+      throw new Error(`Boundary "${id}" output "${name}" has unknown taxonomy "${out.taxonomy}"`);
+    }
+  }
+}
+
+function validateSchemas(artifact, dimensions, taxonomies) {
+  for (const [sid, schema] of Object.entries(artifact.primitive_schemas ?? {})) {
+    for (const [field, spec] of Object.entries(schema)) {
+      if (spec === null || typeof spec !== "object") {
+        throw new Error(`Schema "${sid}" field "${field}" must be an object`);
+      }
+      if (spec.dimension && !dimensions[spec.dimension]) {
+        throw new Error(`Schema "${sid}" field "${field}" references unknown dimension "${spec.dimension}"`);
+      }
+      if (spec.taxonomy && !taxonomies[spec.taxonomy]) {
+        throw new Error(`Schema "${sid}" field "${field}" references unknown taxonomy "${spec.taxonomy}"`);
+      }
+      if (spec.type !== undefined && spec.type !== "boolean") {
+        throw new Error(`Schema "${sid}" field "${field}" has unsupported type "${spec.type}"`);
+      }
     }
   }
 }

@@ -1,90 +1,96 @@
-# Validation Report — Discovery Sweep
+# Validation Report — Discovery Sweep (Step A corrected)
 
-Self-check results for the completed `data/artifact.json`. All checks were run against the
-written artifact in place.
+Gate results for `data/artifact.json` after **Step A (Grammar v2 & Loadable
+Artifact)**. All checks were run with the project's own tooling (the engine
+validator, `node --test`, `pytest`, `ruff`, `tach`) — **not** a hand-rolled
+validator.
 
-## 1. Load / grammar validator
+> **Supersedes the original report.** The sweep's first report claimed
+> "PASS — 0 errors" via a *hand-rolled* validator that did not enforce
+> `grammar.md` §2.1 (`root` requires `dimension`). That validator diverged from
+> the grammar and passed an artifact our engine rejected on the first
+> taxonomy-root (`batch.topology`). That false PASS is withdrawn.
 
-A hand-rolled validator (mirroring `grammar.md` §5) checks:
+## 1. Engine load / grammar validation (`loadArtifact`)
 
-- top-level sections exactly `{schema_version, meta, dimensions, constants, taxonomies,
-  functions, primitive_schemas, nodes, relations}` (`extra: forbid`);
-- node kinds ∈ `{root, collection, selection, derived, boundary}`;
-- every referenced `dimension`/`taxonomy`/`schema`/`function`/`constant` is declared;
-- every `inputs`/`ref`/`{ref}` path resolves (node, schema field, boundary output, or the
-  slice-level `equipment.<field>` convention);
-- `derived`/`boundary` output spec ∈ `{dimension}` | `{taxonomy}` | `{type:"boolean"}`;
-- schema fields carry only `{dimension,taxonomy,domain,default,overridable}`;
-- reductions and calls reference declared functions.
+`loadArtifact()` runs `validateArtifact` (§5 grammar) + `validateDerivedDimensions`.
 
-**Result: PASS** — 0 errors. 60 nodes, 39 constants, 11 taxonomies, 12 functions,
-11 schemas, 4 relations.
+- **Result: PASS.** Loads with no errors.
+- Structural checks enforced: top-level sections (`extra: forbid`); node kinds ∈
+  {`root`,`choice`,`collection`,`selection`,`derived`,`boundary`}; every
+  `dimension`/`taxonomy`/`schema`/`function`/`constant` id declared; every
+  `inputs`/`ref`/`{ref}` path resolves; boundary outputs are valid value specs;
+  schema fields reference declared ids; `choice.default` ∈ its taxonomy;
+  `schema_version ∈ {1,2}`.
+- Counts: **60 nodes** (27 root, 7 choice, 3 collection, 4 selection, 17 derived,
+  2 boundary), 16 dimensions, 39 constants, 11 taxonomies, 12 functions,
+  10 schemas, 4 relations.
+- `schema_version = 2`; `meta.status = "complete"`.
 
 ## 2. Boundary parity (field-for-field vs `boundary.py`)
 
-A parity checker diffed the artifact's `solver.batch` / `solver.water` input+output keys and
-error-code sets against the Pydantic models.
+- `solver.batch` inputs = **17** — matches `BatchSolverRequest`.
+- `solver.batch` outputs = **19** (nested `cascade`/`hlt` → dotted keys) — matches
+  `BatchSolverResponse`.
+- `solver.batch.domain.codes` = **13** — matches `BatchSolverErrorCode`.
+- `solver.water` inputs = **26** (nested `source`/`target` `IonProfile` → dotted)
+  — matches `WaterSolverRequest`.
+- `solver.water` outputs = **31** (nested `prescription`/`mash_additions`/
+  `sparge_additions`/`post_salt_mash_ions` → dotted; `grist_buckets_kg` → 4 keys)
+  — matches `WaterSolverResponse` (excluding advisory `warnings`/`notes`).
+- `solver.water.domain.codes` = **10** — matches `WaterSolverErrorCode`.
+- **Result: PASS.**
 
-**Result: PASS.**
+## 3. Dimension checks (`validateDerivedDimensions`)
 
-- `solver.batch` inputs = 17 fields — exact match to `BatchSolverRequest`.
-- `solver.batch` outputs = 19 keys (nested `cascade`/`hlt` flattened to dotted keys) — exact
-  match to `BatchSolverResponse`.
-- `solver.batch.domain.codes` = 13 — exact match to `BatchSolverErrorCode`.
-- `solver.water` inputs = 26 keys (nested `source`/`target` `IonProfile` flattened) — exact
-  match to `WaterSolverRequest`.
-- `solver.water` outputs = 31 keys (nested `prescription`/`mash_additions`/`sparge_additions`/
-  `post_salt_mash_ions` flattened; `grist_buckets_kg` flattened to 4 grain types) — exact match
-  to `WaterSolverResponse` (excluding `warnings`/`notes`, advisory text — gap C6).
-- `solver.water.domain.codes` = 10 — exact match to `WaterSolverErrorCode`.
-- Taxonomies `topology`/`strategy`/`salt_distribution`/`acid_medium`/`alkaline_agent`/
-  `ph_status` match their enums.
+- **Result: PASS** (runs as part of `loadArtifact`).
+- `temperature + temperature_delta` legal; `min` preserves the dimension of its
+  `value`; `choice`/`boolean` values are non-dimensional.
 
-## 3. Dimension checks
+## 4. Test suites
 
-- `mash.strike_water_temp_c` adds `temperature` + `temperature_delta` — legal (the two are
-  distinct dimensions; `temperature_delta` is linear with no affine offset).
-- `batch.delta_v_evap` = `volume × (time/time)` → `volume`; `batch.s_late_add` = `mass`;
-  `grist.mcu` = `mass × color / volume × dimensionless` → `dimensionless`.
-- `grist.weighted_lovibond`/`weighted_yield_fraction` are `weighted_avg` reductions preserving
-  `color`/`percentage` respectively.
-- `water.mash_ph_status` is a taxonomy interpretation (`ph_status`), not a dimensioned quantity.
-- `sg_to_plato`/`plato_to_sg`/`morey_*` functions carry consistent `gravity`/`color` returns.
+- **Frontend** (`node --test`, engine): **40 pass / 0 fail** — includes `choice`
+  default + `setRoot`, `min` + `where` (filter-then-reduce), empty-`min` ⇒
+  `undefined`, `schema_version` guard, and the boundary/taxonomy resolution.
+- **Backend** (`pytest`): **59 pass / 0 fail** — includes `test_water_defaults`
+  (C3: `strategy` ⇒ `CALCIUM_FLOOR`; C5: `target_mash_ph` ⇒ `5.4`).
+- **Lint / architecture:** `ruff` clean; `tach` ✅; `eslint` + `stylelint` clean.
+- **Result: PASS.**
 
-**Result: PASS** — no dimension violations introduced.
-
-## 4. Golden-vector reproductions
+## 5. Golden-vector reproductions
 
 | Check | Expected | Got |
 |---|---|---|
-| `sg_to_plato(1.050)` (ASBC cubic) | ≈ 12.388 | 12.3876 |
-| `plato_to_sg(sg_to_plato(1.050))` round-trip | 1.050 | 1.050002 |
-| `morey_lovibond_to_srm(1.5)` = 1.3546·1.5 − 0.76 | 1.2719 | 1.2719 |
-| `morey_mcu_to_srm(8.0)` = 1.4922·8^0.6859 | 6.2124 | 6.2124 |
-| `extract_yield_ldk(0.80)` = 0.80 × 385.641 | 308.513 | 308.513 |
-| `bicarbonate_from_alkalinity(78)` = 78 × 61/50 | 95.16 | 95.16 |
-| strike base temp @ T=67°C, grain=20°C, R=2.6079: 67 + (0.41/2.6079)(67−20) | ≈ 74.39 | 74.389 |
+| strike base @ T=67, grain=20, R=3.0 | 73.4233 | 73.4233 |
+| tun thermal offset (tun=7.5, strike=14) | 3.0214 | 3.0214 |
+| final strike temp | 76.4447 | 76.4447 |
+| weighted grist Lovibond | 9.2 | 9.2 |
+| finished-beer SRM (`morey_lovibond_to_srm`) | 11.7023 | 11.7023 |
+| dough-in target (`min` of enabled rests) | 67.0 | 67.0 |
 
-**Result: PASS** — all golden values from `worked-example.md`, `domain-equations.md`, and the
-known-good code reproduce.
+- **Result: PASS.**
 
-## 5. Graph invariants
+## 6. Graph invariants
 
-- **No cycles:** Kahn topological sort over the explicit edge graph (inputs + `ref` +
-  relation refs) resolves all 60 nodes.
-- **Single writer:** each node id appears once; derived values are never roots.
-- **Explicit edges only:** all dependencies declared via `inputs`/`ref`/`relations`; no
-  read-tracking.
-- **Sealed boundaries:** `solver.batch`/`solver.water` carry `resolution:"iterative"` and the
-  binding slugs `batch_sparge_solver`/`water_chemistry_solver`; no interiors re-implemented.
-- **No presentation leakage:** labels, rounding, control kinds, CSS, sentinels, unit-mode
-  state absent from the artifact (see coverage matrix).
-- **No duplicated equations:** shared equations live once in `functions` and are invoked via
-  `call` (e.g. `mash_ph_status`, `extract_yield_ldk`, strike/tun functions).
+- **No cycles** (explicit edges: inputs + `ref` + relation refs).
+- **Single writer**; **explicit edges only**; **sealed boundaries**
+  (`resolution:"iterative"`, binding slugs preserved).
+- **No presentation leakage** (see `coverage-matrix.md`).
 
-## 6. Known deviations (documented, non-blocking)
+## 7. Step A corrections applied
 
-- `warnings`/`notes` boundary outputs omitted (advisory text) — gap C6.
-- Boundary `taxonomy`/`boolean` outputs and the `min` reduction are additive language
-  clarifications — gaps C7/C8 — with no `schema_version` bump (grammar shape unchanged).
-- `meta.status` = `"complete"`; `schema_version` = `1`.
+- 7 enum inputs re-modelled `root` → **`choice`** (grammar v2).
+- `mash.dough_in_target_temp_c` now filters by `where:{ref:"rest.enabled"}`.
+- Boundary outputs: **FLAT + dotted** convention ratified.
+- `schema_version` → **2**.
+- `boundary.py`: **C3** (`strategy` default → `CALCIUM_FLOOR`), **C5**
+  (`target_mash_ph` default → `5.4`).
+
+## 8. Known deviations (deferred — see Step B+)
+
+- Relations / `domain` bounds are **declared but not yet evaluated** by the engine
+  (Step B).
+- Semantic conformance vs the legacy code (beyond the golden vectors above) is
+  **Step C**.
+- `boundary.py` advisory `warnings`/`notes` omitted from the artifact; other
+  contract-hygiene warts deferred (see `gap-register.md`).

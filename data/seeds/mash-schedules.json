@@ -1,0 +1,10 @@
+{
+  "single-infusion": {
+    "id": "single-infusion",
+    "name": "Single Infusion (67 °C)",
+    "rests": [
+      { "rest_id": "dough_in", "enabled": true, "use_temp_c": 67.0, "duration_min": 0 },
+      { "rest_id": "mash_out", "enabled": false, "use_temp_c": 76.0, "duration_min": 10 }
+    ]
+  }
+}

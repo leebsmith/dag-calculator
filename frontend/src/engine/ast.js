@@ -76,6 +76,13 @@ function applyReduction(expr, ctx) {
     },
   });
 
+  // Filter-then-reduce: an optional `where` predicate selects the items each
+  // value-reduction (sum / weighted_avg / min) operates over. Truthiness is
+  // plain JS truthiness (undefined / null / false / 0 / "" are excluded).
+  const items = expr.where
+    ? coll.filter((el) => Boolean(evaluate(expr.where, withElement(el))))
+    : coll;
+
   switch (expr.op) {
     case "map":
       return coll.map((el) => evaluate(expr.body, withElement(el)));
@@ -83,19 +90,29 @@ function applyReduction(expr, ctx) {
       return coll.filter((el) => evaluate(expr.body, withElement(el)));
     case "sum": {
       let total = 0;
-      for (const el of coll) total += evaluate(expr.body, withElement(el));
+      for (const el of items) total += evaluate(expr.body, withElement(el));
       return total;
     }
     case "weighted_avg": {
       let num = 0;
       let den = 0;
-      for (const el of coll) {
+      for (const el of items) {
         const value = evaluate(expr.value, withElement(el));
         const weight = evaluate(expr.weight, withElement(el));
         num += value * weight;
         den += weight;
       }
       return den === 0 ? 0 : num / den;
+    }
+    case "min": {
+      // Minimum of the finite `value`s; undefined when none remain.
+      let result;
+      for (const el of items) {
+        const value = evaluate(expr.value, withElement(el));
+        if (typeof value !== "number" || !Number.isFinite(value)) continue;
+        if (result === undefined || value < result) result = value;
+      }
+      return result;
     }
     default:
       throw new Error(`Unknown reduction op: ${expr.op}`);

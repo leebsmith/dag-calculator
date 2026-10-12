@@ -82,3 +82,44 @@ test("evaluates map and filter", () => {
   };
   assert.deepEqual(evaluate(filterExpr, ctx({ xs: coll })), [3, 4]);
 });
+
+test("evaluates min, and min with a where predicate", () => {
+  const rests = [
+    { use_temp_c: 62, enabled: true },
+    { use_temp_c: 55, enabled: false },
+    { use_temp_c: 70, enabled: false },
+    { use_temp_c: 67, enabled: true },
+  ];
+  const all = { op: "min", coll: { ref: "rests" }, as: "rest", value: { ref: "rest.use_temp_c" } };
+  assert.equal(evaluate(all, ctx({ rests })), 55);
+
+  const enabled = {
+    ...all,
+    where: { ref: "rest.enabled" },
+  };
+  assert.equal(evaluate(enabled, ctx({ rests })), 62);
+
+  // no items satisfy the predicate => undefined
+  const none = { ...all, where: { op: "eq", args: [1, 2] } };
+  assert.equal(evaluate(none, ctx({ rests })), undefined);
+});
+
+test("where filters sum/weighted_avg before reducing", () => {
+  const rows = [
+    { v: 2, w: 1, on: true },
+    { v: 10, w: 1, on: false },
+  ];
+  const sum = { op: "sum", coll: { ref: "rows" }, as: "r", body: { ref: "r.v" }, where: { ref: "r.on" } };
+  assert.equal(evaluate(sum, ctx({ rows })), 2);
+
+  const avg = {
+    op: "weighted_avg",
+    coll: { ref: "rows" },
+    as: "r",
+    value: { ref: "r.v" },
+    weight: { ref: "r.w" },
+    where: { ref: "r.on" },
+  };
+  assert.equal(evaluate(avg, ctx({ rows })), 2);
+});
+

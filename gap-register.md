@@ -135,8 +135,31 @@ Presentation, unit selection, rounding, sentinels, CSS, control kinds, layout, m
 search, routing, and unit-mode state are excluded per `semantics.md` §2.3. These are itemized
 in `coverage-matrix.md` rather than re-listed here.
 
-## 4. Grammar notes (no shape change)
+## 4. Grammar ratification — Step A
 
-- `schema_version` remains `1`. The only language additions are additive and sanctioned:
-  the `min` reduction (C8) and boundary outputs accepting `{taxonomy}`/`{type:"boolean"}` (C7).
-- `meta.status` → `"complete"`.
+The sweep introduced grammar extensions while claiming "no shape change". Step A
+**ratifies** them explicitly and bumps the grammar revision.
+
+- **`choice` node kind** (new, sixth kind) — categorical user input
+  (`{kind:"choice", taxonomy, default}`). Previously improvised as `root` + `taxonomy`.
+- **`min` reduction + optional `where` predicate** — filter-then-reduce.
+- **Boundary outputs** accept `{dimension}` | `{taxonomy}` | `{type:"boolean"}`,
+  with **FLAT + dotted** keys for nested host responses.
+- **Boolean schema fields** (`{type:"boolean"}`, e.g. `mash_rest.enabled`).
+- `schema_version` → **2** (grammar §6); `meta.status` = `"complete"`.
+
+### C18 — silent grammar extension (`root` + `taxonomy`)  [resolved in Step A]
+The sweep modelled 7 categorical inputs as `{"kind":"root","taxonomy":…}`, which
+`grammar.md` §2.1 forbids (`root` requires `dimension`), and did **not** flag it
+here nor bump `schema_version`. It also omitted this from the original report.
+**Resolution:** ratified as the new **`choice`** kind; `schema_version` → 2.
+
+### C19 — boundary output flattening / advisory fields  [ratified]
+`boundary.py` returns nested objects and `warnings`/`notes` lists. **Resolution:**
+nested objects flattened to dotted keys (`cascade.v_strike`, `hlt.v_hlt_debt`, …);
+advisory `warnings`/`notes` excluded (not dimensioned quantities).
+
+### C3 / C5 — resolved in code (Step A)
+- **C3** `boundary.py` `strategy` default `FLAVOR` → **`CALCIUM_FLOOR`**.
+- **C5** `boundary.py` `target_mash_ph` default `5.35` → **`5.4`**.
+Explicit-default tests added (`test_water_defaults`).

@@ -40,7 +40,7 @@ test("end-to-end: boundary output feeds an interpretation (taxonomy)", () => {
 test("resolve() handles dotted sub-refs (boundary output + selection field)", () => {
   const e = engine();
   assert.equal(e.resolve("solver.batch.mash_thickness_l_per_kg"), 3.0);
-  assert.equal(e.resolve("solver.batch.v_strike"), 14.0);
+  assert.equal(e.resolve("solver.batch.cascade.v_strike"), 14.0);
   assert.equal(e.resolve("equipment.mash_tun_specific_heat"), 0.12);
   assert.equal(e.resolve("equipment.mash_tun_mass_kg"), 7.5); // overlay wins
 });
@@ -55,4 +55,28 @@ test("loadArtifact rejects a dangling reference", () => {
   const bad = structuredClone(artifact);
   bad.nodes["mash.strike_water_temp_base_c"].inputs.thickness = "does.not.exist";
   assert.throws(() => loadArtifact(bad), /unknown node\/field/);
+});
+
+test("choice inputs: default value and setRoot", () => {
+  const e = engine();
+  assert.equal(e.get("batch.topology"), "r_l_to_g");
+  e.setRoot("batch.topology", "runoff_ratio");
+  assert.equal(e.get("batch.topology"), "runoff_ratio");
+});
+
+test("derived dough-in target honors the enabled-rest filter", () => {
+  const e = engine();
+  assert.equal(e.get("mash.dough_in_target_temp_c"), 67.0); // disabled 55 must be ignored
+});
+
+test("loadArtifact rejects a choice default outside its taxonomy", () => {
+  const bad = structuredClone(artifact);
+  bad.nodes["batch.topology"].default = "not_a_member";
+  assert.throws(() => loadArtifact(bad), /not a member of taxonomy/);
+});
+
+test("loadArtifact accepts schema_version 2 and rejects unknown versions", () => {
+  const bad = structuredClone(artifact);
+  bad.schema_version = 99;
+  assert.throws(() => loadArtifact(bad), /Unsupported schema_version/);
 });

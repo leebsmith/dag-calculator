@@ -130,3 +130,14 @@ seeds > legacy partials/stores > grammar docs.
 | `kettle_not_overfilled` | inferred (`max_kettle_volume_l` capacity vs `v_pre_boil`) |
 | `mash_thickness_above_husk_floor` | `batch_solver.py` `MASH_TOO_THIN` gate (`R_L:G < K_ABS_TRUE`) |
 | `target_abv_reachable` | `batch_solver.py` `max_achievable_abv` + `ABV_UNREACHABLE` |
+
+## Grammar v2 additions (Step A)
+
+| Element | Source |
+|---|---|
+| `choice` kind (7 categorical inputs: topology, strategy, salt_distribution, acid_medium, gypsum_form, cacl2_form, alkaline_agent) | `boundary.py` enums + legacy `constants.js`/stores; ratified in Step A |
+| `min` + optional `where` (dough-in target) | legacy `mashSchedule.js::doughInInheritedTempC`; ratified in Step A |
+| boundary outputs **FLAT + dotted** (nested `cascade`/`hlt`/`prescription`/…) | `boundary.py` nested response models; ratified in Step A |
+| `mash_rest.enabled` → `{type:"boolean"}` | legacy rest `enabled` flag; ratified in Step A |
+| default mash schedule (`mash.rests`) | reference-cache seed `data/seeds/mash-schedules.json` |
+| `schema_version` 1 → 2 | `grammar.md` §6 (shape change) |

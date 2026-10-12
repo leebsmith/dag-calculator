@@ -20,7 +20,7 @@ seed ──▶ select(reference) ──▶ input ──▶ compute ──▶ out
 - **Compute** transforms them.
 - **Outputs** are the results.
 
-In the artifact this becomes a graph of **five node kinds** (`root`,
+In the artifact this becomes a graph of **six node kinds** (`root`, `choice`,
 `collection`, `selection`, `derived`, `boundary`) and **three edge kinds**
 (data, reference, relation) — see `grammar.md`.
 

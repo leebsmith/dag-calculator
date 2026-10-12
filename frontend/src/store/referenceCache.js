@@ -6,6 +6,7 @@ import sugars from "../../../data/seeds/sugars.json";
 import yeasts from "../../../data/seeds/yeasts.json";
 import waterTargets from "../../../data/seeds/water_target_profiles.json";
 import waterReports from "../../../data/seeds/water_reports.json";
+import mashSchedules from "../../../data/seeds/mash-schedules.json";
 
 function indexById(rows) {
   const map = {};
@@ -37,6 +38,7 @@ export function createReferenceCache() {
     references: equipment,
     collections: {
       "grist.major_malts": DEFAULT_GRIST.map(buildGristRow),
+      "mash.rests": mashSchedules["single-infusion"].rests,
     },
     seeds: {
       equipment,
@@ -45,6 +47,7 @@ export function createReferenceCache() {
       yeasts: indexById(yeasts),
       waterTargets: indexById(waterTargets),
       waterReports,
+      mashSchedules,
     },
   };
 }
