@@ -1,0 +1,94 @@
+{
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "ignoreFiles": [
+    "dist/**"
+  ],
+  "plugins": [
+    "stylelint-declaration-strict-value",
+    "stylelint-value-no-unknown-custom-properties"
+  ],
+  "rules": {
+    "csstools/value-no-unknown-custom-properties": [
+      true,
+      {
+        "importFrom": [
+          "src/tokens.css"
+        ]
+      }
+    ],
+    "scale-unlimited/declaration-strict-value": [
+      [
+        "/color$/",
+        "fill",
+        "stroke",
+        "/margin/",
+        "/padding/",
+        "gap",
+        "border-radius",
+        "box-shadow",
+        "font-family",
+        "font-size",
+        "line-height"
+      ],
+      {
+        "ignoreValues": [
+          "currentColor",
+          "inherit",
+          "transparent",
+          "none",
+          "auto",
+          "0",
+          "100%",
+          "1px",
+          "/^calc\\(.*\\)$/"
+        ],
+        "message": "Style Drift Detected: Utilize a design token var(--...) for '${property}' instead of the hardcoded value '${value}'."
+      }
+    ],
+    "color-no-hex": [
+      true,
+      {
+        "message": "Hex colors are prohibited in structural stylesheets. Define the color in tokens.css and reference it via a custom property."
+      }
+    ],
+    "declaration-no-important": true,
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": ["container"]
+      }
+    ],
+    "selector-max-specificity": "0,4,0",
+    "no-descending-specificity": null,
+    "media-feature-range-notation": null,
+    "rule-empty-line-before": null,
+    "custom-property-pattern": [
+      "^(sys|color|space|text|line-height|font|radius|container|size|width|z|transition|target)-.+",
+      {
+        "message": "Custom properties must adhere to the strict taxonomy prefix defined in the design system (e.g., --sys-color-action, --space-4)."
+      }
+    ],
+    "selector-class-pattern": [
+      "^[a-z]([a-z0-9-]+)?(__([a-z0-9]+-?)+)?(--([a-z0-9]+-?)+)?$",
+      {
+        "message": "Class names must adhere to strict BEM or hyphenated lowercase conventions."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/tokens.css"],
+      "rules": {
+        "color-no-hex": null,
+        "color-hex-length": null,
+        "color-function-notation": null,
+        "alpha-value-notation": null,
+        "value-keyword-case": null,
+        "custom-property-empty-line-before": null,
+        "scale-unlimited/declaration-strict-value": null
+      }
+    }
+  ]
+}

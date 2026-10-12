@@ -1,0 +1,123 @@
+[
+  {
+    "id": "ro-distilled",
+    "name": "RO / Distilled",
+    "description": "Zero-mineral baseline. Sparge acidification is bypassed.",
+    "ions": {
+      "calcium_ca": 0.0,
+      "magnesium_mg": 0.0,
+      "sodium_na": 0.0,
+      "sulfate_so4": 0.0,
+      "chloride_cl": 0.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": null,
+    "calcium_floor_ppm": 50.0,
+    "notes": "Flavor salts must be added from scratch to reach any target."
+  },
+  {
+    "id": "soft-pilsner",
+    "name": "Soft Pilsner",
+    "description": "Soft, low-mineral profile for delicate lagers.",
+    "ions": {
+      "calcium_ca": 40.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 5.0,
+      "sulfate_so4": 50.0,
+      "chloride_cl": 50.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 1.0,
+    "calcium_floor_ppm": 50.0
+  },
+  {
+    "id": "balanced-pale",
+    "name": "Balanced Pale",
+    "description": "Even sulfate-to-chloride balance for pale ales.",
+    "ions": {
+      "calcium_ca": 50.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 10.0,
+      "sulfate_so4": 75.0,
+      "chloride_cl": 75.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 1.0,
+    "calcium_floor_ppm": 50.0
+  },
+  {
+    "id": "hoppy-ipa",
+    "name": "Hoppy / IPA",
+    "description": "Sulfate-forward profile that accentuates hop bitterness.",
+    "ions": {
+      "calcium_ca": 75.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 10.0,
+      "sulfate_so4": 150.0,
+      "chloride_cl": 50.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 3.0,
+    "calcium_floor_ppm": 50.0
+  },
+  {
+    "id": "malty-amber",
+    "name": "Malty / Amber",
+    "description": "Chloride-forward profile that accentuates malt sweetness.",
+    "ions": {
+      "calcium_ca": 60.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 10.0,
+      "sulfate_so4": 50.0,
+      "chloride_cl": 100.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 0.5,
+    "calcium_floor_ppm": 50.0
+  },
+  {
+    "id": "dark-stout",
+    "name": "Dark / Stout",
+    "description": "Rounder profile suited to roasted malts.",
+    "ions": {
+      "calcium_ca": 75.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 15.0,
+      "sulfate_so4": 50.0,
+      "chloride_cl": 65.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 0.77,
+    "calcium_floor_ppm": 50.0
+  },
+  {
+    "id": "belgian-golden-tripel",
+    "name": "Belgian Golden / Tripel",
+    "description": "Moderate, sulfate-leaning profile for Belgian strong ales.",
+    "ions": {
+      "calcium_ca": 50.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 10.0,
+      "sulfate_so4": 50.0,
+      "chloride_cl": 75.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 0.67,
+    "calcium_floor_ppm": 50.0
+  },
+  {
+    "id": "belgian-saison",
+    "name": "Belgian Saison",
+    "description": "Dry, sulfate-forward profile for saison yeast character.",
+    "ions": {
+      "calcium_ca": 50.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 10.0,
+      "sulfate_so4": 100.0,
+      "chloride_cl": 60.0,
+      "alkalinity_as_caco3": 0.0
+    },
+    "sulfate_chloride_ratio": 1.67,
+    "calcium_floor_ppm": 50.0
+  }
+]

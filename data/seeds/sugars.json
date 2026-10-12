@@ -1,0 +1,121 @@
+[
+  {
+    "id": "agave-nectar",
+    "name": "Agave Nectar",
+    "yield_fraction": 0.822333,
+    "color_lovibond": 3.0,
+    "notes": "Fructose-rich syrup from agave plants. Highly fermentable with mild neutral honey-like character."
+  },
+  {
+    "id": "brown-sugar",
+    "name": "Brown Sugar",
+    "yield_fraction": 0.973815,
+    "color_lovibond": 15.0,
+    "notes": "Sucrose with molasses content. Contributes subtle rum, caramel, and toffee character in stouts and winter warmers."
+  },
+  {
+    "id": "candi-sugar",
+    "name": "Candi Sugar",
+    "yield_fraction": 0.973815,
+    "color_lovibond": 1.0,
+    "notes": "Crystallized beet sugar popular in Belgian brewing. Lightens body while increasing ABV without harsh hot-alcohol bite."
+  },
+  {
+    "id": "candi-syrup",
+    "name": "Candi Syrup",
+    "yield_fraction": 0.692491,
+    "color_lovibond": 60.0,
+    "notes": "Caramelized invert sugar syrup essential for Belgian Dubbels and Dark Strong Ales. Imparts rich dark fruit, toffee, and plum."
+  },
+  {
+    "id": "cane-sugar",
+    "name": "Cane Sugar",
+    "yield_fraction": 0.995456,
+    "color_lovibond": 0.0,
+    "notes": "Pure sucrose from sugar cane. 100% fermentable, commonly used to dry out high-gravity Belgian tripels and strong ales."
+  },
+  {
+    "id": "caramel",
+    "name": "Caramel",
+    "yield_fraction": 0.757412,
+    "color_lovibond": 40.0,
+    "notes": "Caramelized culinary sugar offering rich burnt sugar notes and golden-brown hue."
+  },
+  {
+    "id": "corn-sugar",
+    "name": "Corn Sugar",
+    "yield_fraction": 0.995456,
+    "color_lovibond": 0.0,
+    "notes": "100% fermentable D-glucose (dextrose). Ideal for bottle priming and boosting gravity while drying out IPAs and strong ales."
+  },
+  {
+    "id": "corn-syrup",
+    "name": "Corn Syrup",
+    "yield_fraction": 0.800692,
+    "color_lovibond": 0.5,
+    "notes": "Liquid glucose syrup used to boost gravity and lighten body in light lagers and IPAs."
+  },
+  {
+    "id": "honey",
+    "name": "Honey",
+    "yield_fraction": 0.757412,
+    "color_lovibond": 1.5,
+    "notes": "Natural unpasteurized bee honey. High in fructose and glucose; adds delicate floral aroma and crisp dryness when added late."
+  },
+  {
+    "id": "lactose-milk-sugar",
+    "name": "Lactose (Milk Sugar)",
+    "yield_fraction": 0.757412,
+    "color_lovibond": 0.0,
+    "notes": "Unfermentable milk sugar by brewer's yeast. Retains permanent residual sweetness, milky mouthfeel, and body in Milk Stouts and Pastry Sours."
+  },
+  {
+    "id": "maltodextrin",
+    "name": "Maltodextrin",
+    "yield_fraction": 0.865614,
+    "color_lovibond": 0.0,
+    "notes": "Non-sweet unfermentable complex polysaccharide. Enhances body, head retention, and viscosity without adding sweetness."
+  },
+  {
+    "id": "maple-syrup",
+    "name": "Maple Syrup",
+    "yield_fraction": 0.64921,
+    "color_lovibond": 35.0,
+    "notes": "Boiled maple sap syrup. Delivers distinct earthy woody sweetness and delicate maple aroma in dark ales and porters."
+  },
+  {
+    "id": "molasses",
+    "name": "Molasses",
+    "yield_fraction": 0.779052,
+    "color_lovibond": 80.0,
+    "notes": "Cane sugar refining byproduct. Delivers bold pungent dark sugar, licorice, rum, and burnt molasses flavor in imperial stouts."
+  },
+  {
+    "id": "rice-syrup",
+    "name": "Rice Syrup",
+    "yield_fraction": 0.779052,
+    "color_lovibond": 1.0,
+    "notes": "Fermentable syrup made from cultured rice. Enhances crisp dry finish in lagers."
+  },
+  {
+    "id": "sorghum-syrup",
+    "name": "Sorghum Syrup",
+    "yield_fraction": 0.800692,
+    "color_lovibond": 2.5,
+    "notes": "Key ingredient in gluten-free brewing. Liquid extract from sweet sorghum cane yielding herbal, citrusy, and sweet notes."
+  },
+  {
+    "id": "sugar",
+    "name": "Sugar",
+    "yield_fraction": 0.995456,
+    "color_lovibond": 0.0,
+    "notes": "Standard granulated white table sugar (sucrose). Ferments completely leaving zero residual sweetness or color."
+  },
+  {
+    "id": "turbinado",
+    "name": "Turbinado",
+    "yield_fraction": 0.973815,
+    "color_lovibond": 10.0,
+    "notes": "Raw cane sugar with light molasses remnants providing soft honey-like sweetness and delicate caramel color."
+  }
+]

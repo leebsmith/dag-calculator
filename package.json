@@ -1,0 +1,11 @@
+{
+  "name": "dag-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Brewing calculator monorepo orchestration",
+  "scripts": {},
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "firebase-tools": "^15.33.0"
+  }
+}

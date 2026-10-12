@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brewing Calculator — MWE</title>
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <main class="card" x-data="calculator()">
+      <h1 class="card-title">Brewing Calculator (MWE)</h1>
+      <p class="card-description">
+        Strike-water chain + color, driven by the explicit-DAG engine with
+        stubbed boundaries.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label" for="grain-temp">Grain temperature (°C)</label>
+        <input
+          class="form-input"
+          id="grain-temp"
+          type="number"
+          step="0.1"
+          x-model="grainTemp"
+          @input="refresh()"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="dough-in-target">Dough-in target (°C)</label>
+        <input
+          class="form-input"
+          id="dough-in-target"
+          type="number"
+          step="0.1"
+          x-model="doughInTarget"
+          @input="refresh()"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="target-abv">Target ABV (%)</label>
+        <input
+          class="form-input"
+          id="target-abv"
+          type="number"
+          step="0.1"
+          x-model="targetAbv"
+          @input="refresh()"
+        />
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Readout</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Equipment profile</td>
+              <td x-text="equipmentName"></td>
+            </tr>
+            <tr>
+              <td>Mash thickness (L/kg)</td>
+              <td class="tabular-nums" x-text="mashThickness"></td>
+            </tr>
+            <tr>
+              <td>Strike volume (L)</td>
+              <td class="tabular-nums" x-text="strikeVolume"></td>
+            </tr>
+            <tr>
+              <td>Strike base temp (°C)</td>
+              <td class="tabular-nums" x-text="strikeBase"></td>
+            </tr>
+            <tr>
+              <td>Tun thermal offset (°C)</td>
+              <td class="tabular-nums" x-text="tunOffset"></td>
+            </tr>
+            <tr>
+              <td>Final strike temp (°C)</td>
+              <td class="tabular-nums" x-text="strikeTemp"></td>
+            </tr>
+            <tr>
+              <td>Weighted grist Lovibond</td>
+              <td class="tabular-nums" x-text="weightedLovibond"></td>
+            </tr>
+            <tr>
+              <td>Finished-beer SRM</td>
+              <td class="tabular-nums" x-text="beerSrm"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-actions">
+        <span
+          class="status-badge"
+          :class="'status-badge-' + (mashPhStatus === 'HIGH' ? 'warning' : (mashPhStatus === 'LOW' ? 'info' : 'success'))"
+        >
+          Mash pH status: <span x-text="mashPhStatus"></span>
+        </span>
+      </div>
+    </main>
+  </body>
+</html>

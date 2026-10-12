@@ -1,0 +1,18 @@
+{
+  "pilsner": {
+    "id": "pilsner",
+    "name": "Pilsner",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.5,
+    "moisture_pct": 0.04
+  },
+  "crystal-40": {
+    "id": "crystal-40",
+    "name": "Crystal 40",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 40,
+    "moisture_pct": 0.04
+  }
+}

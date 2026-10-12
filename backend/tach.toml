@@ -1,0 +1,29 @@
+interfaces = []
+
+[[modules]]
+path = "app.core"
+depends_on = []
+
+[[modules]]
+path = "app.schemas"
+depends_on = []
+
+[[modules]]
+path = "app.database"
+depends_on = []
+
+[[modules]]
+path = "app.repositories"
+depends_on = ["app.database", "app.schemas"]
+
+[[modules]]
+path = "app.services"
+depends_on = ["app.core", "app.repositories", "app.schemas"]
+
+[[modules]]
+path = "app.auth"
+depends_on = ["app.schemas"]
+
+[[modules]]
+path = "app.main"
+depends_on = ["app.auth", "app.services", "app.schemas"]

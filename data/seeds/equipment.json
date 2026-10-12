@@ -1,0 +1,10 @@
+{
+  "herms-30l": {
+    "id": "herms-30l",
+    "name": "HERMS 30L",
+    "max_hlt_volume_l": 30,
+    "boil_off_rate_l_per_hr": 3,
+    "mash_tun_specific_heat": 0.12,
+    "mash_tun_mass_kg": 6.5
+  }
+}

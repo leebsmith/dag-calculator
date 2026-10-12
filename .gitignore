@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.tach/
+.DS_Store
+
+# Firebase emulators
+emulator-data/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
