@@ -1,12 +1,12 @@
 // Reference cache: immutable seed data resolved by id (seed-substrate.md).
 
-import equipment from "../../../data/seeds/equipment.json";
-import malts from "../../../data/seeds/malts.json";
-import sugars from "../../../data/seeds/sugars.json";
-import yeasts from "../../../data/seeds/yeasts.json";
-import waterTargets from "../../../data/seeds/water_target_profiles.json";
-import waterReports from "../../../data/seeds/water_reports.json";
-import mashSchedules from "../../../data/seeds/mash-schedules.json";
+import equipment from "../../../data/seeds/equipment.json" with { type: "json" };
+import malts from "../../../data/seeds/malts.json" with { type: "json" };
+import sugars from "../../../data/seeds/sugars.json" with { type: "json" };
+import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
+import waterTargets from "../../../data/seeds/water_target_profiles.json" with { type: "json" };
+import waterReports from "../../../data/seeds/water_reports.json" with { type: "json" };
+import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
 
 function indexById(rows) {
   const map = {};

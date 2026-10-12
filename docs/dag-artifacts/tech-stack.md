@@ -20,6 +20,12 @@ Browser ── JSON ──▶ FastAPI (verify token) ──▶ service ──▶
 
 The frontend and backend are **decoupled**: the API contract is the seam.
 
+The two boundary endpoints are `POST /solve/batch` and `POST /solve/water`
+(the legacy `/api/solve-*` convention is retired). In dev, Vite proxies `/solve`
+and `/api` to the FastAPI origin so the SPA shares an origin (no CORS). The
+frontend adapter pre-resolves these boundaries and seeds the engine's cache, so
+the engine itself stays synchronous and pure.
+
 ---
 
 ## 2. Frontend

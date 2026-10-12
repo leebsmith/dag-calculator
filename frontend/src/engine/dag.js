@@ -168,12 +168,14 @@ export function createEngine(artifact, options = {}) {
         for (const [alias, path] of Object.entries(node.inputs)) {
           inputValues[alias] = resolveValue(path);
         }
-        const fn = boundaries[node.binding];
-        if (typeof fn !== "function") {
-          throw new Error(`No boundary binding registered for "${node.binding}"`);
-        }
         const fingerprint = canonicalFingerprint(inputValues);
         if (boundaryCache.has(fingerprint)) return boundaryCache.get(fingerprint);
+        const fn = boundaries[node.binding];
+        if (typeof fn !== "function") {
+          throw new Error(
+            `No boundary binding registered for "${node.binding}" (result not pre-resolved)`
+          );
+        }
         const outputs = fn(inputValues, { artifact });
         const result = { outputs, fingerprint };
         boundaryCache.set(fingerprint, result);
@@ -216,6 +218,26 @@ export function createEngine(artifact, options = {}) {
       }
       collections[nodeId] = rows;
       invalidate(nodeId);
+    },
+    // Boundary seam (async host I/O lives in the adapter). Resolve a boundary's
+    // declared inputs + canonical fingerprint without invoking it; seed its
+    // outputs into the cache so subsequent sync evaluation hits the cache.
+    boundaryRequest(nodeId) {
+      const node = artifact.nodes[nodeId];
+      if (!node || node.kind !== "boundary") {
+        throw new Error(`"${nodeId}" is not a boundary node`);
+      }
+      const inputs = {};
+      for (const [alias, path] of Object.entries(node.inputs)) {
+        inputs[alias] = resolveValue(path);
+      }
+      return { binding: node.binding, inputs, fingerprint: canonicalFingerprint(inputs) };
+    },
+    applyBoundaryResult(fingerprint, outputs) {
+      boundaryCache.set(fingerprint, { outputs, fingerprint });
+    },
+    hasBoundaryResult(fingerprint) {
+      return boundaryCache.has(fingerprint);
     },
     invalidate,
   };
