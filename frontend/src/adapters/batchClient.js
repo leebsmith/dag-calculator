@@ -15,6 +15,10 @@ export function updateDraft(batchId, payload) {
   return requestJSON(`/batches/${batchId}/draft`, { method: "PUT", body: payload });
 }
 
+export function freezeBatch(batchId, payload) {
+  return requestJSON(`/batches/${batchId}/freeze`, { method: "POST", body: payload });
+}
+
 export function getBatch(batchId) {
   return requestJSON(`/batches/${batchId}`);
 }

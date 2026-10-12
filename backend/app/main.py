@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import CurrentUser
-from app.schemas.batch import BatchRecord, DraftPayload
+from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSolverResponse,
@@ -78,6 +78,17 @@ def update_draft(
 ):
     """Autosave a draft's editable state (roots + collections + overlays)."""
     return service.update_draft(user["uid"], batch_id, payload)
+
+
+@app.post("/batches/{batch_id}/freeze", response_model=BatchRecord, status_code=201)
+def freeze_batch(
+    batch_id: str,
+    payload: FreezePayload,
+    user: CurrentUser,
+    service: BatchServiceDep,
+):
+    """Snapshot a draft's full valuation into an immutable frozen batch."""
+    return service.freeze_batch(user["uid"], batch_id, payload)
 
 
 @app.get("/batches/{batch_id}", response_model=BatchRecord)

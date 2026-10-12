@@ -2,7 +2,7 @@
 // overlays) to the backend. F-b keeps a single implicit active draft; the
 // recipe list / New / Open surface replaces this in F-d.
 
-import { createBatch, listBatches, updateDraft } from "../adapters/batchClient.js";
+import { createBatch, freezeBatch, listBatches, updateDraft } from "../adapters/batchClient.js";
 
 let activeId = null;
 let saveTimer = null;
@@ -34,4 +34,10 @@ export function queueSave(getState, { delay = 400 } = {}) {
       console.error("autosave failed", err);
     }
   }, delay);
+}
+
+// Freeze the active draft into an immutable snapshot (valuation + provenance).
+export async function freezeActiveDraft(getState) {
+  const id = await ensureDraft();
+  return freezeBatch(id, getState());
 }

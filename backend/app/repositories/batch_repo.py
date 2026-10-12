@@ -1,4 +1,4 @@
-"""Firestore access for batch drafts (and, later, frozen batches)."""
+"""Firestore access for batch drafts and frozen batches."""
 
 from __future__ import annotations
 
@@ -54,6 +54,27 @@ class BatchRepository:
             return None
         self._coll.document(batch_id).update({**data, "updated_at": time.time()})
         return self.get(uid, batch_id)
+
+    def freeze(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+        """Create an immutable frozen snapshot linked to the source draft."""
+        source = self.get(uid, batch_id)
+        if source is None:
+            return None
+        now = time.time()
+        record = {
+            "uid": uid,
+            "name": source.get("name", "Untitled"),
+            "status": "frozen",
+            "schema_version": data.get("schema_version", source.get("schema_version", 2)),
+            "valuation": data.get("valuation", {}),
+            "provenance": data.get("provenance", {}),
+            "parent_batch_id": batch_id,
+            "created_at": now,
+            "updated_at": now,
+            "frozen_at": now,
+        }
+        _, ref = self._coll.add(record)
+        return self._record(ref.id, record)
 
     @staticmethod
     def _record(batch_id: str, data: dict[str, Any]) -> dict[str, Any]:

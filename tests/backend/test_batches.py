@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi import HTTPException
 
-from app.schemas.batch import DraftPayload
+from app.schemas.batch import DraftPayload, FreezePayload
 from app.services.batch_service import BatchService
 
 
@@ -41,6 +41,27 @@ class FakeRepo:
             return None
         self._docs[batch_id] = {**r, **data, "updated_at": 2.0}
         return self._docs[batch_id]
+
+    def freeze(self, uid, batch_id, data):
+        source = self._docs.get(batch_id)
+        if not source or source["uid"] != uid:
+            return None
+        bid = self._next_id()
+        r = {
+            "id": bid,
+            "uid": uid,
+            "name": source.get("name", "Untitled"),
+            "status": "frozen",
+            "schema_version": data.get("schema_version", source.get("schema_version", 2)),
+            "valuation": data.get("valuation", {}),
+            "provenance": data.get("provenance", {}),
+            "parent_batch_id": batch_id,
+            "created_at": 3.0,
+            "updated_at": 3.0,
+            "frozen_at": 3.0,
+        }
+        self._docs[bid] = r
+        return r
 
 
 def test_create_and_list_are_uid_scoped():
@@ -83,3 +104,44 @@ def test_foreign_and_missing_batches_are_404():
     with pytest.raises(HTTPException) as exc:
         svc.update_draft("u2", rec.id, DraftPayload())
     assert exc.value.status_code == 404
+
+
+def test_freeze_creates_immutable_linked_record():
+    svc = BatchService(FakeRepo())
+    rec = svc.create_draft("u1", DraftPayload(name="Saison", roots={"mash.grain_temp_c": 20}))
+
+    frozen = svc.freeze_batch(
+        "u1",
+        rec.id,
+        FreezePayload(
+            valuation={"mash.grain_temp_c": 20.0, "solver.batch.sg_post_boil": 1.055},
+            provenance={"batch.yeast": {"source_template_id": "y1", "source_revision": "abc"}},
+        ),
+    )
+    assert frozen.status == "frozen"
+    assert frozen.parent_batch_id == rec.id
+    assert frozen.valuation["solver.batch.sg_post_boil"] == 1.055
+    assert frozen.provenance["batch.yeast"]["source_template_id"] == "y1"
+
+    # the source draft is untouched and still editable
+    assert svc.get_batch("u1", rec.id).status == "draft"
+
+
+def test_cannot_update_frozen_batch():
+    svc = BatchService(FakeRepo())
+    rec = svc.create_draft("u1", DraftPayload())
+    frozen = svc.freeze_batch("u1", rec.id, FreezePayload())
+
+    with pytest.raises(HTTPException) as exc:
+        svc.update_draft("u1", frozen.id, DraftPayload())
+    assert exc.value.status_code == 409
+
+
+def test_cannot_freeze_twice():
+    svc = BatchService(FakeRepo())
+    rec = svc.create_draft("u1", DraftPayload())
+    frozen = svc.freeze_batch("u1", rec.id, FreezePayload())
+
+    with pytest.raises(HTTPException) as exc:
+        svc.freeze_batch("u1", frozen.id, FreezePayload())
+    assert exc.value.status_code == 409

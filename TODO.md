@@ -13,8 +13,9 @@
 | F — persistence / freeze / auth (`plans/step-F-*.md`) | in-progress |
 | G — seed/schema conformance | pending |
 
-**Now:** Step F-c — freeze (full valuation + provenance + immutability + lineage).
-F-a (auth) and F-b (draft CRUD + debounced autosave) are done.
+**Now:** Step F-d — UX (recipe list + New/Rename/Open/Freeze + restore flows).
+F-a (auth), F-b (draft CRUD + autosave), and F-c (freeze: valuation + provenance
++ immutability + lineage) are done.
 
 ## Deferred (E-e1)
 

@@ -2,7 +2,7 @@
 // field models; ONLY this adapter + the producer touch the engine. Boundary stubs
 // are the default offline seam (HTTP is Step D's path).
 import artifact from "../engine/artifact.json" with { type: "json" };
-import { createCalculator } from "../engine/index.js";
+import { canonicalize, createCalculator, sha256Hex } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { produce } from "../views/producer.js";
@@ -65,6 +65,41 @@ export function createStepApp() {
         roots: master.allRoots(),
         collections: { ...collections },
         overlays: { ...overlays },
+        schema_version: artifact.schema_version ?? 2,
+      };
+    },
+
+    // Full valuation (node-id -> value for every node) + provenance (per
+    // selection: source_template_id + content-hash of the referenced seed
+    // component). Browser-computed — the backend only stores it.
+    freezePayload() {
+      const valuation = {};
+      for (const id of engine.topoOrder) {
+        const node = artifact.nodes[id];
+        // A selection with no chosen component has no value (ref is "").
+        if (node.kind === "selection") {
+          const refValue = engine.get(node.ref);
+          if (refValue === "" || refValue === undefined) {
+            valuation[id] = null;
+            continue;
+          }
+        }
+        valuation[id] = engine.get(id);
+      }
+      const provenance = {};
+      for (const [id, node] of Object.entries(artifact.nodes)) {
+        if (node.kind !== "selection") continue;
+        const refValue = engine.get(node.ref);
+        if (refValue === "" || refValue === undefined) continue;
+        const component = cache.references[node.schema]?.[refValue];
+        provenance[id] = {
+          source_template_id: refValue,
+          source_revision: component ? sha256Hex(canonicalize(component)) : null,
+        };
+      }
+      return {
+        valuation,
+        provenance,
         schema_version: artifact.schema_version ?? 2,
       };
     },
