@@ -13,8 +13,9 @@
 | F — persistence / freeze / auth (`plans/step-F-*.md`) | in-progress |
 | G — seed/schema conformance | pending |
 
-**Now:** Step F-a — auth (Firebase Web SDK sign-in + backend `verify_id_token`;
-enforce bearer on `/solve/*`).
+**Now:** Step F-b — persistence seam (draft CRUD + debounced autosave against the
+real `uid`). F-a (auth) is done: Firebase Web SDK anonymous sign-in + backend
+`verify_id_token`, bearer enforced on `/solve/*`.
 
 ## Deferred (E-e1)
 

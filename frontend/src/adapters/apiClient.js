@@ -12,11 +12,22 @@ export class SolverError extends Error {
 const ENV = import.meta.env || {};
 export const DEFAULT_BASE = ENV.VITE_API_BASE || "";
 
+// Bearer token provider, injected by the browser entry (see main.js). Defaults
+// to null so the client is node-testable without a Firebase context.
+let tokenProvider = () => Promise.resolve(null);
+
+export function setTokenProvider(provider) {
+  tokenProvider = provider;
+}
+
 export async function postJSON(path, body, { base = DEFAULT_BASE, fetchImpl } = {}) {
   const doFetch = fetchImpl || fetch;
+  const headers = { "Content-Type": "application/json" };
+  const token = await tokenProvider();
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await doFetch(`${base}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
   if (!res.ok) {
