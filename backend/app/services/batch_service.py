@@ -14,8 +14,8 @@ class BatchService:
     def __init__(self, repo: BatchRepository) -> None:
         self._repo = repo
 
-    def list_drafts(self, uid: str) -> list[BatchRecord]:
-        return [BatchRecord(**r) for r in self._repo.list_drafts(uid)]
+    def list_batches(self, uid: str) -> list[BatchRecord]:
+        return [BatchRecord(**r) for r in self._repo.list_batches(uid)]
 
     def create_draft(self, uid: str, payload: DraftPayload) -> BatchRecord:
         return BatchRecord(**self._repo.create(uid, payload.model_dump()))

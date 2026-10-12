@@ -10,12 +10,12 @@
 | D — JSON seam (async boundary adapter) | done |
 | E — product/views | done |
 | E-e1 — remaining 3 steps + horizontal stepper + unit switcher | done |
-| F — persistence / freeze / auth (`plans/step-F-*.md`) | in-progress |
+| F — persistence / freeze / auth (`plans/step-F-*.md`) | done (F-e deferred) |
 | G — seed/schema conformance | pending |
 
-**Now:** Step F-d — UX (recipe list + New/Rename/Open/Freeze + restore flows).
-F-a (auth), F-b (draft CRUD + autosave), and F-c (freeze: valuation + provenance
-+ immutability + lineage) are done.
+**Now:** Step G — seed/schema conformance (validate the six `data/seeds/*.json`
+against `primitive_schemas`; reconcile the shape mismatches — nested `ions.*`,
+the `water_reports` envelope). No `plans/step-G-*.md` yet.
 
 ## Deferred (E-e1)
 
@@ -35,12 +35,6 @@ See `plans/step-E-product-views.md` E-e1 addendum:
 bundles the full catalogs (175-entry yeast list, sugars, water reports) into the
 client bundle. For production, fetch seeds on demand (per selection / per slice)
 instead of bundling them — keep the MWE's eager imports as-is for now.
-
-## Real Firebase auth on the `/solve` routes
-
-`backend/app/auth/deps.py::get_current_user` is a permissive stub. Replace it with
-Firebase Admin `verify_id_token`, and enforce the bearer token on `POST /solve/batch`
-and `/solve/water`. (See `tech-stack.md` §3–4.)
 
 ## Deferred language/engine features
 

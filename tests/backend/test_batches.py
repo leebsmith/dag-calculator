@@ -18,12 +18,12 @@ class FakeRepo:
         self._next += 1
         return f"batch-{self._next}"
 
-    def list_drafts(self, uid):
-        return [
-            r
-            for r in self._docs.values()
-            if r["uid"] == uid and r["status"] == "draft"
-        ]
+    def list_batches(self, uid):
+        return sorted(
+            [r for r in self._docs.values() if r["uid"] == uid],
+            key=lambda r: r.get("updated_at", 0),
+            reverse=True,
+        )
 
     def get(self, uid, batch_id):
         r = self._docs.get(batch_id)
@@ -56,6 +56,9 @@ class FakeRepo:
             "valuation": data.get("valuation", {}),
             "provenance": data.get("provenance", {}),
             "parent_batch_id": batch_id,
+            "roots": source.get("roots", {}),
+            "collections": source.get("collections", {}),
+            "overlays": source.get("overlays", {}),
             "created_at": 3.0,
             "updated_at": 3.0,
             "frozen_at": 3.0,
@@ -72,8 +75,8 @@ def test_create_and_list_are_uid_scoped():
     assert rec.status == "draft"
     assert rec.roots == {"mash.grain_temp_c": 20}
 
-    assert len(svc.list_drafts("u1")) == 1
-    assert svc.list_drafts("u2") == []
+    assert len(svc.list_batches("u1")) == 1
+    assert svc.list_batches("u2") == []
 
 
 def test_update_then_get():
@@ -145,3 +148,25 @@ def test_cannot_freeze_twice():
     with pytest.raises(HTTPException) as exc:
         svc.freeze_batch("u1", frozen.id, FreezePayload())
     assert exc.value.status_code == 409
+
+
+def test_fork_from_frozen_carries_state_and_lineage():
+    svc = BatchService(FakeRepo())
+    draft = svc.create_draft("u1", DraftPayload(name="Saison", roots={"mash.grain_temp_c": 20}))
+    frozen = svc.freeze_batch("u1", draft.id, FreezePayload(valuation={"x": 1}))
+
+    # a frozen batch keeps the editable state for lossless forking
+    assert frozen.roots == {"mash.grain_temp_c": 20}
+
+    fork = svc.create_draft(
+        "u1",
+        DraftPayload(
+            name="Saison (copy)",
+            parent_batch_id=frozen.id,
+            roots=frozen.roots,
+            collections=frozen.collections,
+            overlays=frozen.overlays,
+        ),
+    )
+    assert fork.parent_batch_id == frozen.id
+    assert fork.roots == {"mash.grain_temp_c": 20}

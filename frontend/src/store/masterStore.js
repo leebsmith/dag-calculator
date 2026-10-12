@@ -10,6 +10,11 @@ export function createMasterStore(initialRoots = {}) {
       roots.set(nodeId, value);
       for (const listener of listeners) listener(nodeId, value);
     },
+    replaceRoots(rootsObj) {
+      roots.clear();
+      for (const [nodeId, value] of Object.entries(rootsObj ?? {})) roots.set(nodeId, value);
+      for (const listener of listeners) listener("*", null);
+    },
     getRoot(nodeId) {
       return roots.get(nodeId);
     },

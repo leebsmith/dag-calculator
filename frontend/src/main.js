@@ -7,7 +7,7 @@ import { createCalculatorApp } from "./adapters/engineAdapter.js";
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
 import { getIdToken, signInAnonymously, signOut, onAuthStateChanged } from "./firebase.js";
-import { freezeActiveDraft, queueSave } from "./store/persistence.js";
+import * as persistence from "./store/persistence.js";
 
 setTokenProvider(getIdToken);
 
@@ -18,16 +18,75 @@ Alpine.store("auth", {
   signOut: () => signOut(),
 });
 
-onAuthStateChanged((user) => {
+Alpine.store("recipes", {
+  open: false,
+  batches: [],
+  activeId: null,
+
+  toggle() {
+    this.open = !this.open;
+    if (this.open) this.refresh();
+  },
+
+  syncActive() {
+    this.activeId = persistence.getActive()?.id ?? null;
+  },
+
+  async refresh() {
+    this.batches = await persistence.list();
+    this.syncActive();
+  },
+
+  async newRecipe() {
+    const name = (window.prompt("Recipe name") ?? "").trim() || "Untitled";
+    await persistence.createDraft(name);
+    await this.refresh();
+    this.open = false;
+  },
+
+  async openDraft(id) {
+    await persistence.open(id);
+    this.syncActive();
+    this.open = false;
+  },
+
+  async forkFrozen(id) {
+    await persistence.fork(id);
+    await this.refresh();
+    this.open = false;
+  },
+
+  async rename() {
+    const active = persistence.getActive();
+    if (!active || active.status !== "draft") return;
+    const name = (window.prompt("Rename recipe", active.name) ?? "").trim();
+    if (name) {
+      await persistence.renameActive(name);
+      await this.refresh();
+    }
+  },
+
+  async freeze() {
+    await persistence.freezeActive();
+    await this.refresh();
+  },
+});
+
+onAuthStateChanged(async (user) => {
   Alpine.store("auth").user = user;
   Alpine.store("auth").loading = false;
+  if (user) {
+    await Alpine.store("recipes").refresh();
+    const mostRecent = Alpine.store("recipes").batches.find((b) => b.status === "draft");
+    if (mostRecent) await persistence.open(mostRecent.id);
+  }
 });
 
 Alpine.data("calculator", () => createCalculatorApp());
 Alpine.data("stepCalculator", () => {
   const app = createStepApp();
-  app.onChange = () => queueSave(() => app.draftState());
-  app.freeze = () => freezeActiveDraft(() => app.freezePayload());
+  persistence.bindApp(app);
+  app.onChange = () => persistence.queueSave();
   return app;
 });
 

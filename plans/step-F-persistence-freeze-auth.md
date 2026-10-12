@@ -64,7 +64,7 @@ JSON store for the browser-computed freeze.
 - [x] F-a Auth — sign-in + `verify_id_token`; `/solve/*` bearer enforced
 - [x] F-b Persistence — draft CRUD + debounced autosave (roots+collections+overlays)
 - [x] F-c Freeze — valuation + provenance + immutability + lineage
-- [ ] F-d UX — recipe list + New/Rename/Open/Freeze + restore
+- [x] F-d UX — recipe list + New/Rename/Open/Freeze + restore
 - [ ] F-e Drift reconcile — reset-to-seed / keep-custom (optional)
 
 ## Acceptance / gate

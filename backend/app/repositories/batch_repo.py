@@ -19,13 +19,10 @@ class BatchRepository:
     def __init__(self, db) -> None:
         self._coll = db.collection(COLLECTION)
 
-    def list_drafts(self, uid: str) -> list[dict[str, Any]]:
-        docs = (
-            self._coll.where(filter=firestore.FieldFilter("uid", "==", uid))
-            .where(filter=firestore.FieldFilter("status", "==", "draft"))
-            .stream()
-        )
-        return [self._record(doc.id, doc.to_dict()) for doc in docs]
+    def list_batches(self, uid: str) -> list[dict[str, Any]]:
+        docs = self._coll.where(filter=firestore.FieldFilter("uid", "==", uid)).stream()
+        records = [self._record(doc.id, doc.to_dict()) for doc in docs]
+        return sorted(records, key=lambda r: r.get("updated_at", 0), reverse=True)
 
     def get(self, uid: str, batch_id: str) -> dict[str, Any] | None:
         doc = self._coll.document(batch_id).get()
@@ -69,6 +66,9 @@ class BatchRepository:
             "valuation": data.get("valuation", {}),
             "provenance": data.get("provenance", {}),
             "parent_batch_id": batch_id,
+            "roots": source.get("roots", {}),
+            "collections": source.get("collections", {}),
+            "overlays": source.get("overlays", {}),
             "created_at": now,
             "updated_at": now,
             "frozen_at": now,

@@ -22,7 +22,36 @@
         <header class="menu-bar">
           <span class="menu-title">Brewing Calculator</span>
           <div class="menu-actions">
-            <button type="button" class="btn-primary" @click="freeze()">Freeze version</button>
+            <div class="menu-recipes">
+              <button type="button" class="btn-outline" @click="$store.recipes.toggle()">
+                Recipes
+              </button>
+              <div
+                class="recipes-popover"
+                x-show="$store.recipes.open"
+                @click.outside="$store.recipes.open = false"
+              >
+                <div class="recipes-actions">
+                  <button type="button" class="btn-primary" @click="$store.recipes.newRecipe()">＋ New</button>
+                  <button type="button" class="btn-outline" @click="$store.recipes.rename()">Rename</button>
+                  <button type="button" class="btn-outline" @click="$store.recipes.freeze()">Freeze</button>
+                </div>
+                <div class="recipes-list">
+                  <template x-for="b in $store.recipes.batches" :key="b.id">
+                    <button
+                      type="button"
+                      class="recipes-item"
+                      :class="(b.id === $store.recipes.activeId ? 'is-active' : '') + (b.status === 'frozen' ? ' is-frozen' : '')"
+                      @click="b.status === 'draft' ? $store.recipes.openDraft(b.id) : $store.recipes.forkFrozen(b.id)"
+                    >
+                      <span class="recipes-name" x-text="b.name"></span>
+                      <span class="recipes-hint" x-show="b.status === 'frozen'" x-text="'frozen — click to copy'"></span>
+                    </button>
+                  </template>
+                  <p class="recipes-empty" x-show="!$store.recipes.batches.length">No recipes yet.</p>
+                </div>
+              </div>
+            </div>
             <button type="button" class="btn-outline" @click="openModal('rests')">
               Configure rests
             </button>

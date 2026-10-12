@@ -55,8 +55,8 @@ def solve_water(req: WaterSolverRequest, _user: CurrentUser) -> WaterSolverRespo
 
 @app.get("/batches", response_model=list[BatchRecord])
 def list_batches(user: CurrentUser, service: BatchServiceDep):
-    """List the caller's drafts (frozen batches land with F-c)."""
-    return service.list_drafts(user["uid"])
+    """List the caller's batches (drafts and frozen)."""
+    return service.list_batches(user["uid"])
 
 
 @app.post("/batches", response_model=BatchRecord, status_code=201)

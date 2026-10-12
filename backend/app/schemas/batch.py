@@ -15,6 +15,7 @@ class DraftPayload(BaseModel):
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
     overlays: dict[str, dict[str, Any]] = Field(default_factory=dict)
     schema_version: int = 2
+    parent_batch_id: str | None = None
 
 
 class FreezePayload(BaseModel):

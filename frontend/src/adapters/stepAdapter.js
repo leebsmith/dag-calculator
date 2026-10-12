@@ -27,9 +27,9 @@ function refSlices(node, out = new Set()) {
 export function createStepApp() {
   const { master, ui } = createAppStore();
   const cache = createReferenceCache();
-  const collections = { ...cache.collections };
-  const overlays = {};
-  const engine = createCalculator(artifact, {
+  let collections = { ...cache.collections };
+  let overlays = {};
+  let engine = createCalculator(artifact, {
     references: cache.references,
     collections,
     overlays,
@@ -106,6 +106,24 @@ export function createStepApp() {
 
     notify() {
       app.onChange?.();
+    },
+
+    // Replace the editable state (draft restore / open). Rebuilds the engine
+    // from the loaded roots/collections/overlays; default collections fall
+    // back to the seed cache when the draft predates them.
+    loadState(state) {
+      master.replaceRoots(state?.roots ?? {});
+      collections = { ...cache.collections, ...(state?.collections ?? {}) };
+      overlays = { ...(state?.overlays ?? {}) };
+      engine = createCalculator(artifact, {
+        references: cache.references,
+        collections,
+        overlays,
+        boundaries: STUB_BOUNDARIES,
+        roots: master.allRoots(),
+      });
+      app.compute();
+      app.syncNav();
     },
 
     setRoot(nodeId, value) {
