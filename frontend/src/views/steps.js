@@ -1,5 +1,5 @@
 // Step manifest: the authored workflow order. Each step declares its partial and
-// the artifact nodes / reference paths it binds. No domain logic here.
+// the artifact nodes / reference paths / collections it binds. No domain logic here.
 import { registry } from "./registry/index.js";
 
 export const steps = [
@@ -9,13 +9,21 @@ export const steps = [
     title: "Equipment Profile",
     partial: "./src/partials/step-equipment-profile.html",
     fields: [
-      "equipment.mash_tun_specific_heat",
+      "batch.equipment_profile_id",
       "equipment.mash_tun_mass_kg",
+      "equipment.mash_tun_specific_heat",
       "equipment.max_hlt_volume_l",
       "equipment.boil_off_rate_l_per_hr",
       "equipment.conversion_efficiency",
       "equipment.shrinkage_pct",
     ],
+  },
+  {
+    id: "fermentables",
+    slice: "fermentables",
+    title: "Fermentables",
+    partial: "./src/partials/step-fermentables.html",
+    fields: [{ collection: "grist.major_malts" }],
   },
   {
     id: "batch",

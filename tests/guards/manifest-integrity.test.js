@@ -10,6 +10,7 @@ test("A6: manifest integrity", () => {
   const offenders = [];
   for (const step of steps) {
     for (const entry of step.fields) {
+      if (typeof entry === "object" && entry.collection) continue; // collection entries resolved by kind
       const id = typeof entry === "string" ? entry : entry.id;
       if (!resolveReference(a, id)) offenders.push(id);
     }

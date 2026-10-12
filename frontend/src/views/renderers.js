@@ -1,8 +1,9 @@
 // Control-kind registry. The renderer dispatch (markup) keys off these kinds.
-// E-a implements `number` + `readout`; `choice-select` etc. arrive in E-b/E-c.
 export const RENDERERS = {
   number: { editable: true },
   "choice-select": { editable: true },
+  "selection-picker": { editable: true },
+  "collection-table": { editable: true },
   readout: { editable: false },
 };
 

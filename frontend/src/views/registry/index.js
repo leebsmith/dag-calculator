@@ -1,5 +1,6 @@
 import { batchRegistry } from "./batch.js";
 import { equipmentRegistry } from "./equipment.js";
+import { fermentablesRegistry } from "./fermentables.js";
 import { mashRegistry } from "./mash.js";
 
 // Presentation registry: node id / dotted path -> { label, unit?, control? }.
@@ -7,6 +8,7 @@ import { mashRegistry } from "./mash.js";
 // never flows back into the artifact).
 export const registry = {
   ...equipmentRegistry,
+  ...fermentablesRegistry,
   ...batchRegistry,
   ...mashRegistry,
 };

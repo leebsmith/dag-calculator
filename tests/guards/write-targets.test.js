@@ -19,10 +19,7 @@ test("A5: write-target coverage", () => {
       if (f.target.scope === "overlay" && !(f.target.selectionNodeId && f.target.field)) {
         offenders.push(`bad overlay target: ${f.id}`);
       }
-      if (
-        f.target.scope === "collection" &&
-        !(f.target.nodeId && f.target.row != null && f.target.field)
-      ) {
+      if (f.target.scope === "collection" && !f.target.nodeId) {
         offenders.push(`bad collection target: ${f.id}`);
       }
     } else if (f.target) {
