@@ -1,0 +1,46 @@
+<section class="step">
+  <h2 class="card-title">Equipment Profile</h2>
+
+  <template x-for="f in fieldsBySlice.equipment" :key="f.id">
+    <div class="form-group">
+      <template x-if="f.control === 'number'">
+        <div>
+          <label
+            class="form-label"
+            :for="f.id"
+            x-text="f.label + (f.unit ? ' (' + f.unit + ')' : '')"
+          ></label>
+          <input
+            class="form-input"
+            :id="f.id"
+            type="number"
+            step="0.1"
+            :value="f.value"
+            @input="edit(f, $event.target.value)"
+          />
+        </div>
+      </template>
+      <template x-if="f.control === 'choice-select'">
+        <div>
+          <label class="form-label" :for="f.id" x-text="f.label"></label>
+          <select
+            class="form-select"
+            :id="f.id"
+            :value="f.value"
+            @change="edit(f, $event.target.value)"
+          >
+            <template x-for="opt in (f.options || [])" :key="opt">
+              <option :value="opt" x-text="opt"></option>
+            </template>
+          </select>
+        </div>
+      </template>
+      <template x-if="f.control === 'readout'">
+        <div>
+          <span class="form-label" x-text="f.label + (f.unit ? ' (' + f.unit + ')' : '')"></span>
+          <span class="tabular-nums" x-text="f.display"></span>
+        </div>
+      </template>
+    </div>
+  </template>
+</section>
