@@ -3,7 +3,7 @@
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-const SUPPORTED_SCHEMA_VERSIONS = [1, 2];
+const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {

@@ -54,23 +54,30 @@ Base unit **SG**. `Plato` is a nonlinear transform of SG via the ASBC polynomial
 Both directions are exact inverses (lossless round-trip). Expressed as a
 `nonlinear` transform pair (`fwd`/`inv`).
 
-### 3.2 `color` — affine chain through SRM
+### 3.2 `grain_color` & `beer_color` — two linear ×1.97 dimensions
 
-Base unit **Lovibond** (°L). Conversion to SRM and EBC is a two-step **affine**
-chain:
+Color is **two** distinct quantities, not one:
 
-- `Lovibond → SRM` (Morey): `SRM = 1.3546·L − 0.76`
-- `SRM → EBC` (linear): `EBC = 1.97·SRM`  (from 25 / 12.7)
+- **`grain_color`** — a malt/sugar spec-sheet attribute. Base unit **Lovibond**
+  (°L). `°L` and `EBC_grain` are related by the fixed SRM↔EBC ratio
+  (`1°L ≈ 1 SRM` at low-to-moderate color):
 
-Composed:
+  `EBC = 1.97 × °L` · `°L = EBC / 1.97`
 
-- `EBC = 1.97·(1.3546·L − 0.76) = 2.6686·L − 1.4972`
-- `Lovibond = (EBC / 1.97 + 0.76) / 1.3546`
+- **`beer_color`** — finished-beer/wort color. Base unit **SRM**. `EBC_wort` is
+  the same ×1.97 ratio:
 
-> **Reconciliation note.** The legacy code used a flat `EBC = 1.97·Lovibond`
-> (treating Lovibond ≈ SRM). That was an approximation; the Morey equation above
-> is authoritative. The reference implementation (`scripts/water-chemistry-module.py`)
-> already encoded the correct affine inverse (`0.375·EBC + 0.561`).
+  `EBC = 1.97 × SRM`
+
+Both are **linear** (no offset). The finished-beer path computes `SRM` via the
+Morey power law (`1.4922·MCU^0.6859`) as a **function**, not a dimension
+transform — see `domain-equations.md` §1.3.
+
+> **Reconciliation note.** The prior schema (v2) modeled color as a single
+> affine `Lovibond → SRM → EBC` chain (`SRM = 1.3546·L − 0.76`), conflating grain
+> color, wort color, and the single-malt Morey *prediction* as unit conversions.
+> Schema v3 splits it into the two linear dimensions above and drops the
+> `morey_lovibond_to_srm` bridge.
 
 ### 3.3 `percentage` — display scalar
 

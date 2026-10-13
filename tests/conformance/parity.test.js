@@ -112,12 +112,11 @@ test("conformance: estimate_single_rest_loa_pct ↔ estimateSingleRestLoaPct", o
 });
 
 // Color intentionally diverges from the legacy flat `EBC = 1.97·L` approximation;
-// the artifact uses the authoritative Morey chain (dimensions.md §3.2). Assert the
-// reference formulas directly (no oracle needed).
-test("conformance: morey color formulas vs reference (documented delta)", () => {
-  for (const L of [1, 2, 5, 10, 40]) {
-    close(evalFn("morey_lovibond_to_srm", [L]), 1.3546 * L - 0.76, 1e-9, `L=${L}`);
-  }
+// the artifact splits color into `grain_color` (Lovibond) and `beer_color` (SRM),
+// each linear ×1.97 to EBC (schema_version 3). The single-malt
+// `morey_lovibond_to_srm` bridge was removed; the finished-beer MCU→Morey path
+// remains (`morey_mcu_to_srm`). Assert the surviving reference formula directly.
+test("conformance: morey_mcu_to_srm vs reference (documented delta)", () => {
   for (const mcu of [1, 4, 8, 20]) {
     close(evalFn("morey_mcu_to_srm", [mcu]), 1.4922 * Math.pow(mcu, 0.6859), 1e-9, `mcu=${mcu}`);
   }

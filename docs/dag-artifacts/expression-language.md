@@ -93,16 +93,16 @@ if a derived node requires them.
 `{ "call": "<function-id>", "args": [ ... ] }` invokes a `functions` entry.
 
 ```jsonc
-{ "call": "morey_lovibond_to_srm", "args": [ { "ref": "lovibond" } ] }
+{ "call": "morey_mcu_to_srm", "args": [ { "ref": "mcu" } ] }
 ```
 
 A `function` is declared as:
 
 ```jsonc
-"morey_lovibond_to_srm": {
-  "params": ["lovibond"],
-  "returns": "color",
-  "body": { "op": "-", "args": [ { "op": "*", "args": [ 1.3546, { "ref": "lovibond" } ] }, 0.76 ] }
+"morey_mcu_to_srm": {
+  "params": ["mcu"],
+  "returns": "beer_color",
+  "body": { "op": "*", "args": [ 1.4922, { "op": "pow", "args": [ { "ref": "mcu" }, 0.6859 ] } ] }
 }
 ```
 

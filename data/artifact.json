@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "meta": {
     "name": "batch-brewing-calculator-logic",
     "description": "Canonical business-logic DAG (grammar v2, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
@@ -67,17 +67,21 @@
         }
       }
     },
-    "color": {
+    "grain_color": {
       "base_unit": "Lovibond",
-      "kind": "affine",
+      "kind": "linear",
       "units": {
-        "SRM": {
-          "factor": 1.3546,
-          "offset": -0.76
-        },
         "EBC": {
-          "factor": 2.6686,
-          "offset": -1.4972
+          "factor": 0.5076142131979695
+        }
+      }
+    },
+    "beer_color": {
+      "base_unit": "SRM",
+      "kind": "linear",
+      "units": {
+        "EBC": {
+          "factor": 0.5076142131979695
         }
       }
     },
@@ -686,32 +690,11 @@
         ]
       }
     },
-    "morey_lovibond_to_srm": {
-      "params": [
-        "lovibond"
-      ],
-      "returns": "color",
-      "body": {
-        "op": "-",
-        "args": [
-          {
-            "op": "*",
-            "args": [
-              1.3546,
-              {
-                "ref": "lovibond"
-              }
-            ]
-          },
-          0.76
-        ]
-      }
-    },
     "morey_mcu_to_srm": {
       "params": [
         "mcu"
       ],
-      "returns": "color",
+      "returns": "beer_color",
       "body": {
         "op": "*",
         "args": [
@@ -830,7 +813,7 @@
         }
       },
       "color_lovibond": {
-        "dimension": "color",
+        "dimension": "grain_color",
         "domain": {
           "gte": 0
         }
@@ -858,7 +841,7 @@
         }
       },
       "color_lovibond": {
-        "dimension": "color",
+        "dimension": "grain_color",
         "domain": {
           "gte": 0
         }
@@ -1035,7 +1018,7 @@
         }
       },
       "color_lovibond": {
-        "dimension": "color",
+        "dimension": "grain_color",
         "domain": {
           "gte": 0
         }
@@ -1065,7 +1048,7 @@
         }
       },
       "color_lovibond": {
-        "dimension": "color",
+        "dimension": "grain_color",
         "domain": {
           "gte": 0
         }
@@ -1093,7 +1076,7 @@
         }
       },
       "color_lovibond": {
-        "dimension": "color",
+        "dimension": "grain_color",
         "domain": {
           "gte": 0
         }
@@ -1920,7 +1903,7 @@
         }
       },
       "output": {
-        "dimension": "color"
+        "dimension": "grain_color"
       }
     },
     "grist.weighted_yield_fraction": {
@@ -1960,23 +1943,6 @@
       },
       "output": {
         "dimension": "extract_yield"
-      }
-    },
-    "grist.beer_srm": {
-      "kind": "derived",
-      "inputs": {
-        "lovibond": "grist.weighted_lovibond"
-      },
-      "expr": {
-        "call": "morey_lovibond_to_srm",
-        "args": [
-          {
-            "ref": "lovibond"
-          }
-        ]
-      },
-      "output": {
-        "dimension": "color"
       }
     },
     "grist.mcu": {
@@ -2031,7 +1997,7 @@
         ]
       },
       "output": {
-        "dimension": "color"
+        "dimension": "beer_color"
       }
     },
     "batch.s_late_add": {

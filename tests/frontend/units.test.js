@@ -21,9 +21,13 @@ test("affine conversion: temperature degF <-> degC", () => {
   assert.ok(Math.abs(toBase(artifact, "temperature", "degF", 212) - 100) < 1e-9);
 });
 
-test("affine conversion: color Lovibond -> SRM", () => {
-  const srm = fromBase(artifact, "color", "SRM", 9.2);
-  assert.ok(Math.abs(srm - (1.3546 * 9.2 - 0.76)) < 1e-9);
+test("linear conversion: grain_color Lovibond -> EBC", () => {
+  assert.ok(Math.abs(fromBase(artifact, "grain_color", "EBC", 9.2) - 9.2 * 1.97) < 1e-9);
+  assert.ok(Math.abs(toBase(artifact, "grain_color", "EBC", 9.2 * 1.97) - 9.2) < 1e-9);
+});
+
+test("linear conversion: beer_color SRM -> EBC", () => {
+  assert.ok(Math.abs(fromBase(artifact, "beer_color", "EBC", 5) - 5 * 1.97) < 1e-9);
 });
 
 test("nonlinear conversion: gravity SG <-> Plato via injected fns", () => {

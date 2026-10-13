@@ -65,7 +65,7 @@ validator.
 | tun thermal offset (tun=7.5, strike=14) | 3.0214 | 3.0214 |
 | final strike temp | 76.4447 | 76.4447 |
 | weighted grist Lovibond | 9.2 | 9.2 |
-| finished-beer SRM (`morey_lovibond_to_srm`) | 11.7023 | 11.7023 |
+| Lovibond↔SRM bridge (`morey_lovibond_to_srm`, removed in schema v3) | 11.7023 | 11.7023 |
 | dough-in target (`min` of enabled rests) | 67.0 | 67.0 |
 
 - **Result: PASS.**

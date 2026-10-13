@@ -145,28 +145,30 @@ plus a linear delta). If it added two `temperature`s, or a `temperature` and a
   "inputs": { "rows": "grist.major_malts" },
   "expr": { "op": "weighted_avg", "coll": { "ref": "rows" }, "as": "row",
             "value": { "ref": "row.color_lovibond" }, "weight": { "ref": "row.pct" } },
-  "output": { "dimension": "color" }
+  "output": { "dimension": "grain_color" }
 }
 ```
 
 ### 2.2 Function + derived finished-beer color
 
 ```jsonc
-"morey_lovibond_to_srm": {
-  "params": ["lovibond"], "returns": "color",
-  "body": { "op": "-", "args": [ { "op": "*", "args": [ 1.3546, { "ref": "lovibond" } ] }, 0.76 ] }
+"morey_mcu_to_srm": {
+  "params": ["mcu"], "returns": "beer_color",
+  "body": { "op": "*", "args": [ 1.4922, { "op": "pow", "args": [ { "ref": "mcu" }, 0.6859 ] } ] }
 },
 
-"grist.beer_srm": {
+"grist.finished_beer_srm": {
   "kind": "derived",
-  "inputs": { "lovibond": "grist.weighted_lovibond" },
-  "expr": { "call": "morey_lovibond_to_srm", "args": [ { "ref": "lovibond" } ] },
-  "output": { "dimension": "color" }
+  "inputs": { "mcu": "grist.mcu" },
+  "expr": { "call": "morey_mcu_to_srm", "args": [ { "ref": "mcu" } ] },
+  "output": { "dimension": "beer_color" }
 }
 ```
 
-> The full finished-beer color uses MCU → Morey (`1.4922·MCU^0.6859`) scaled by
-> batch volume; `grist.beer_srm` here shows the Lovibond↔SRM unit bridge instead.
+> Grain and beer color are distinct linear ×1.97-to-EBC dimensions
+> (`grain_color` / `beer_color`); the finished-beer SRM comes from the MCU →
+> Morey path. The single-malt `morey_lovibond_to_srm` bridge was removed in
+> schema v3.
 
 ---
 

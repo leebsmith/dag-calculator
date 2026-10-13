@@ -7,7 +7,8 @@ export const UNIT_DIMENSIONS = [
   { id: "volume", label: "Volume", units: [["L", "L"], ["gal", "gal"], ["qt", "qt"], ["ml", "mL"]] },
   { id: "mass", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["g", "g"]] },
   { id: "gravity", label: "Gravity", units: [["SG", "SG"], ["Plato", "°P"]] },
-  { id: "color", label: "Color", units: [["Lovibond", "°L"], ["SRM", "SRM"], ["EBC", "EBC"]] },
+  { id: "grain_color", label: "Grain Color", units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
+  { id: "beer_color", label: "Beer Color", units: [["SRM", "SRM"], ["EBC", "EBC"]] },
   { id: "percentage", label: "Percentage", units: [["fraction", "×1"], ["pct", "%"]] },
 ];
 

@@ -29,7 +29,8 @@ test("end-to-end: selection overlay overrides the referenced component", () => {
 test("end-to-end: collection reductions compute weighted values", () => {
   const e = engine();
   assert.ok(Math.abs(e.get("grist.weighted_lovibond") - 9.2) < 1e-9);
-  assert.ok(Math.abs(e.get("grist.beer_srm") - (1.3546 * 9.2 - 0.76)) < 1e-9);
+  // finished-beer color via the MCU -> Morey path (grain SRM bridge removed).
+  assert.ok(Math.abs(e.get("grist.finished_beer_srm") - 6.59173743493663) < 1e-9);
 });
 
 test("end-to-end: boundary output feeds an interpretation (taxonomy)", () => {
@@ -75,7 +76,7 @@ test("loadArtifact rejects a choice default outside its taxonomy", () => {
   assert.throws(() => loadArtifact(bad), /not a member of taxonomy/);
 });
 
-test("loadArtifact accepts schema_version 2 and rejects unknown versions", () => {
+test("loadArtifact accepts schema_version 3 and rejects unknown versions", () => {
   const bad = structuredClone(artifact);
   bad.schema_version = 99;
   assert.throws(() => loadArtifact(bad), /Unsupported schema_version/);

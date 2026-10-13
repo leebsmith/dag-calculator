@@ -52,9 +52,10 @@ extract yield is the `pct`-weighted average of the malts' yields.
 
 ### 1.3 Color
 
-- **Weighted grist Lovibond** — the `pct`-weighted average of the malts'
-  `color_lovibond` (a summary of *grain* color, not finished-beer SRM).
-- **Finished-beer SRM** — via the MCU path (Morey):
+- **Weighted grist Lovibond** (`grain_color`) — the `pct`-weighted average of the
+  malts' `color_lovibond` (a summary of *grain* color, not finished-beer SRM).
+  Display `EBC = 1.97 × °L`.
+- **Finished-beer SRM** (`beer_color`) — via the MCU path (Morey):
 
   ```
   MCU = Σ (weight_lb · color_lovibond) / volume_gal
@@ -62,11 +63,10 @@ extract yield is the `pct`-weighted average of the malts' yields.
   EBC = 1.97 · SRM
   ```
 
-- Lovibond↔SRM (single-value): `SRM = 1.3546·L − 0.76` (see `dimensions.md`).
-
-> The current code's "weighted SRM" is a **weighted Lovibond average**, not a
-> true SRM; the MCU→Morey step is the *correct* finished-beer color and is a
-> `derived` node in the artifact.
+> Grain color and beer color are distinct `dimension`s (`grain_color` /
+> `beer_color`, each linear ×1.97 to EBC). The finished-beer `SRM` is produced by
+> the `morey_mcu_to_srm` *function*; the single-malt `morey_lovibond_to_srm`
+> bridge was removed in schema v3.
 
 ### 1.4 Late additions (kettle sugars)
 

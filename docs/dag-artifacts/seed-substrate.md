@@ -37,7 +37,7 @@ carries a `dimension`, an optional `domain`, an optional `default`, and an
 | `id`, `name` | — | — | identity/metadata (never overridable) |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
-| `color_lovibond` | color | `gte 0` | dry-malt color |
+| `color_lovibond` | grain_color | `gte 0` | dry-malt color |
 | `moisture_pct` | percentage | `[0, 1]`, default 0.04 | as-is moisture |
 | `di_ph`, `buffer_index` | ph / dimensionless | optional | pH-model coefficients (Troester/Palmer per category) |
 
@@ -47,7 +47,7 @@ carries a `dimension`, an optional `domain`, an optional `default`, and an
 |---|---|---|
 | `id`, `name` | — | — |
 | `yield_fraction` | percentage | `[0, 1]` |
-| `color_lovibond` | color | `gte 0` |
+| `color_lovibond` | grain_color | `gte 0` |
 
 ### 2.3 `yeast`
 

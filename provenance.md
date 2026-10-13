@@ -69,7 +69,6 @@ seeds > legacy partials/stores > grammar docs.
 | `bicarbonate_from_alkalinity` | `waterChemistry.js::bicarbonateFromAlkalinity` |
 | `alkalinity_from_bicarbonate` | `waterChemistry.js::ionsFromReport` fallback (50/61) |
 | `sugar_gravity_points` | `pureFunctions.js::sugarGravityPoints` + `domain-equations.md` §1.4 |
-| `morey_lovibond_to_srm` | exemplar + `srm-ebc-and-lovibond-reference.md` |
 | `morey_mcu_to_srm` | `srm-ebc-and-lovibond-reference.md` (1.4922·MCU^0.6859) |
 | `mash_ph_status` | exemplar + `water.py::mash_ph_status` |
 | `estimate_single_rest_loa_pct` | `mashSchedule.js::estimateSingleRestLoaPct` |
@@ -115,7 +114,6 @@ seeds > legacy partials/stores > grammar docs.
 | `mash.strike_water_temp_base_c`, `mash.strike_water_tun_offset_c`, `mash.strike_water_temp_c` | exemplar + `mashCard.js` strike-water chain |
 | `grist.weighted_lovibond` | exemplar + `maltGridStore.js::weightedLovibond` |
 | `grist.weighted_yield_fraction`, `grist.extract_yield_ldk` | `maltGridStore.js::weightedYield` (+ `pureFunctions.js`) |
-| `grist.beer_srm` | exemplar (Lovibond↔SRM bridge) |
 | `grist.mcu`, `grist.finished_beer_srm` | `srm-ebc-and-lovibond-reference.md` (MCU→Morey finished-beer color) |
 | `batch.s_late_add` | `lateAdditionsStore.js::totalExtractMassKg` + `domain-equations.md` §1.4 |
 | `batch.delta_v_evap` | `batchSolverCard.js` (`boil_off_rate × boil_time/60`) |

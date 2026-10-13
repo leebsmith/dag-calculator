@@ -92,7 +92,7 @@ export function createCalculatorApp(options = {}) {
       this.mashThickness = engine.resolve("solver.batch.mash_thickness_l_per_kg");
       this.strikeVolume = engine.resolve("solver.batch.cascade.v_strike");
       this.weightedLovibond = engine.get("grist.weighted_lovibond");
-      this.beerSrm = engine.get("grist.beer_srm");
+      this.beerSrm = engine.get("grist.finished_beer_srm");
       this.mashPhStatus = engine.get("water.mash_ph_status");
     },
 
