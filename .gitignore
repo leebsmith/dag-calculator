@@ -12,4 +12,6 @@ emulator-data/
 .firebase/
 firebase-debug.log
 firestore-debug.log
-ui-debug.log.TODO.md.swp
+ui-debug.log
+firebase-export-*/
+*.swp
