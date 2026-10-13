@@ -38,3 +38,8 @@ make test        # frontend (node --test) + backend pytest
 The `docs/dag-artifacts/` spec is maintained in sync with the artifact; the
 `docs/historical/` reports are frozen point-in-time records of the legacy →
 artifact migration. See [`docs/historical/README.md`](docs/historical/README.md).
+
+`docs/dag-artifacts/inventory.md` is **generated** from `data/artifact.json`
+(`node scripts/emit-artifact-inventory.mjs`) and checked by the
+`artifact-docs-sync` guard in `make test` — so an artifact change that isn't
+re-synced into the inventory fails the gate.
