@@ -99,3 +99,26 @@ test("adapter defaults to offline stubs when HTTP is not enabled", async () => {
   assert.equal(app.mashThickness, 3.0);
   assert.equal(app.mashPhStatus, "OPTIMAL");
 });
+
+test("refresh debounces bursts into a single solve", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createCalculatorApp({ useHttp: true, fetchImpl, debounceMs: 10 });
+  app.refresh();
+  app.refresh();
+  app.refresh();
+  await new Promise((r) => setTimeout(r, 50));
+  assert.equal(calls.length, 2, "burst of edits collapses to one batch + one water POST");
+});
+
+test("in-flight boundary requests are deduped by fingerprint", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createCalculatorApp({ useHttp: true, fetchImpl });
+  await Promise.all([app.solveNow(), app.solveNow()]);
+  assert.equal(calls.length, 2, "concurrent solves share one POST per fingerprint");
+});
