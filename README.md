@@ -20,6 +20,8 @@ backend with Firebase auth and Firestore persistence.
 | [`backend/`](backend/) | FastAPI JSON seam, solvers, auth, persistence |
 | [`tests/`](tests/) | frontend engine/conformance/guards + backend pytest |
 | [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate |
+| [`docs/engine.md`](docs/engine.md) | **living** — how the reference engine works (data structures + interpreter) |
+| [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-rulebook.md`](docs/style-rulebook.md) | CSS design-token conventions |
 | [`plans/`](plans/) | execution history — step plans + explorations |
