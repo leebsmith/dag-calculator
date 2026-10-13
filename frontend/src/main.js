@@ -93,7 +93,9 @@ onAuthStateChanged(async (user) => {
 
 Alpine.data("calculator", () => createCalculatorApp());
 Alpine.data("stepCalculator", () => {
-  const app = createStepApp();
+  // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate
+  // `this`) trigger re-renders, and so persistence mutates the same proxy.
+  const app = Alpine.reactive(createStepApp());
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
   return app;

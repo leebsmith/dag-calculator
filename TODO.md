@@ -2,7 +2,8 @@
 
 ## Urgent
 
-- Why is "configure rests" in menu bar
+- Why is "configure rests" in menu bar.
+- Cards have no defined width, don't wrap.
 - Cards don't advance
 - Buttons don't work
 - Buttons unattractive, unstyled? 

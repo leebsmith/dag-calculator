@@ -1,6 +1,10 @@
 // Step-view adapter: binds Alpine to the field-model producer. The view binds to
 // field models; ONLY this adapter + the producer touch the engine. Boundary stubs
 // are the default offline seam (HTTP is Step D's path).
+//
+// Alpine reactivity: methods mutate `this` (the Alpine reactive proxy), never the
+// raw object, so the view re-renders on every change. `main.js` wraps the app in
+// `Alpine.reactive` and binds that proxy to persistence.
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { canonicalize, createCalculator, sha256Hex, toBase } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
@@ -41,7 +45,7 @@ export function createStepApp() {
 
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
 
-  const app = {
+  return {
     master,
     steps,
     activeIndex: ui.activeIndex,
@@ -148,7 +152,7 @@ export function createStepApp() {
     },
 
     notify() {
-      app.onChange?.();
+      this.onChange?.();
     },
 
     // Replace the editable state (draft restore / open). Rebuilds the engine
@@ -165,8 +169,8 @@ export function createStepApp() {
         boundaries: STUB_BOUNDARIES,
         roots: master.allRoots(),
       });
-      app.compute();
-      app.syncNav();
+      this.compute();
+      this.syncNav();
     },
 
     setRoot(nodeId, value) {
@@ -179,33 +183,33 @@ export function createStepApp() {
         references: cache.references,
         ui,
       });
-      app.fieldsBySlice = Object.fromEntries(
+      this.fieldsBySlice = Object.fromEntries(
         steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
       );
-      app.relations = engine.relationStates();
-      app.domains = engine.domainStates();
-      app.violationCount =
-        app.relations.filter((r) => !r.holds).length + app.domains.filter((d) => !d.holds).length;
+      this.relations = engine.relationStates();
+      this.domains = engine.domainStates();
+      this.violationCount =
+        this.relations.filter((r) => !r.holds).length + this.domains.filter((d) => !d.holds).length;
 
-      app.stepStatus = {};
-      for (const step of steps) app.stepStatus[step.slice] = { relations: [], domains: [] };
-      for (const r of app.relations) {
+      this.stepStatus = {};
+      for (const step of steps) this.stepStatus[step.slice] = { relations: [], domains: [] };
+      for (const r of this.relations) {
         if (r.holds) continue;
         for (const slice of refSlices(relationDefs[r.id]?.predicate)) {
-          app.stepStatus[slice]?.relations.push(r);
+          this.stepStatus[slice]?.relations.push(r);
         }
       }
-      for (const d of app.domains) {
+      for (const d of this.domains) {
         if (d.holds) continue;
-        app.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
+        this.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
       }
     },
 
     syncNav() {
-      app.activeIndex = ui.activeIndex;
-      app.highwater = ui.highwater;
-      app.activeStep = steps[ui.activeIndex];
-      app.visibleSteps = steps
+      this.activeIndex = ui.activeIndex;
+      this.highwater = ui.highwater;
+      this.activeStep = steps[ui.activeIndex];
+      this.visibleSteps = steps
         .slice(0, ui.highwater + 1)
         .map((s, i) => ({ ...s, index: i, active: i === ui.activeIndex, complete: i < ui.activeIndex }));
     },
@@ -213,26 +217,26 @@ export function createStepApp() {
     selectStep(index) {
       if (index < 0 || index > ui.highwater) return;
       ui.activeIndex = index;
-      app.syncNav();
+      this.syncNav();
     },
 
     next() {
       ui.activeIndex = Math.min(ui.activeIndex + 1, steps.length - 1);
       ui.highwater = Math.max(ui.highwater, ui.activeIndex);
-      app.syncNav();
+      this.syncNav();
     },
 
     prev() {
       ui.activeIndex = Math.max(ui.activeIndex - 1, 0);
-      app.syncNav();
+      this.syncNav();
     },
 
     setUnit(dimension, unit) {
       if (unit) ui.unitMode[dimension] = unit;
       else delete ui.unitMode[dimension];
-      app.unitMode = { ...ui.unitMode };
+      this.unitMode = { ...ui.unitMode };
       saveUnitMode(ui.unitMode, artifact.schema_version);
-      app.compute();
+      this.compute();
     },
 
     // Per-field unit override: cycle the field through its dimension's units,
@@ -249,13 +253,13 @@ export function createStepApp() {
       const next = units[(units.indexOf(current) + 1) % units.length];
       if (next === fieldDefault) delete ui.unitMode[field.id];
       else ui.unitMode[field.id] = next;
-      app.unitMode = { ...ui.unitMode };
+      this.unitMode = { ...ui.unitMode };
       saveUnitMode(ui.unitMode, artifact.schema_version);
-      app.compute();
+      this.compute();
     },
 
     toggleUnits() {
-      app.unitsOpen = !app.unitsOpen;
+      this.unitsOpen = !this.unitsOpen;
     },
 
     edit(field, value) {
@@ -264,11 +268,11 @@ export function createStepApp() {
       if (field.target.scope === "overlay") {
         engine.setOverlay(field.target.selectionNodeId, field.target.field, raw);
       } else {
-        app.setRoot(field.target.nodeId, raw);
+        this.setRoot(field.target.nodeId, raw);
       }
-      if (field.target.scope === "root" && raw) app.copyInCascade(field.target.nodeId);
-      app.compute();
-      app.notify();
+      if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
+      this.compute();
+      this.notify();
     },
 
     // Selection -> root copy-in (view-only). Picking a source report / target
@@ -286,13 +290,13 @@ export function createStepApp() {
           total_alkalinity_caco3: "alkalinity_as_caco3",
         };
         for (const [src, dst] of Object.entries(map)) {
-          if (typeof report[src] === "number") app.setRoot(`water.source.${dst}`, report[src]);
+          if (typeof report[src] === "number") this.setRoot(`water.source.${dst}`, report[src]);
         }
       } else if (rootId === "water.target_profile_id") {
         const profile = engine.resolve("water.target_profile");
         if (!profile) return;
         for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"]) {
-          if (typeof profile[ion] === "number") app.setRoot(`water.target.${ion}`, profile[ion]);
+          if (typeof profile[ion] === "number") this.setRoot(`water.target.${ion}`, profile[ion]);
         }
       }
     },
@@ -300,22 +304,21 @@ export function createStepApp() {
     useYeastAttenuation() {
       const attenuation = engine.resolve("batch.yeast.attenuation_pct");
       if (typeof attenuation === "number") {
-        app.setRoot("batch.apparent_attenuation", attenuation);
-        app.compute();
-        app.notify();
+        this.setRoot("batch.apparent_attenuation", attenuation);
+        this.compute();
+        this.notify();
       }
     },
 
     runAction(action) {
-      const handler = app[action.handler];
-      if (typeof handler === "function") handler();
+      this[action.handler]?.();
     },
 
     clearOverlay(field) {
       if (field.target?.scope === "overlay") {
         engine.clearOverlay(field.target.selectionNodeId, field.target.field);
-        app.compute();
-        app.notify();
+        this.compute();
+        this.notify();
       }
     },
 
@@ -330,8 +333,8 @@ export function createStepApp() {
         i === rowIndex ? { ...row, [columnId]: raw } : row
       );
       engine.setCollection(field.target.nodeId, rows);
-      app.compute();
-      app.notify();
+      this.compute();
+      this.notify();
     },
 
     addRow(field) {
@@ -339,22 +342,20 @@ export function createStepApp() {
       const schema = artifact.primitive_schemas[node.item_schema] ?? {};
       const blank = Object.fromEntries(Object.keys(schema).map((k) => [k, ""]));
       engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), blank]);
-      app.compute();
-      app.notify();
+      this.compute();
+      this.notify();
     },
 
     removeRow(field, rowIndex) {
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       engine.setCollection(field.target.nodeId, rows);
-      app.compute();
-      app.notify();
+      this.compute();
+      this.notify();
     },
 
     init() {
-      app.compute();
-      app.syncNav();
+      this.compute();
+      this.syncNav();
     },
   };
-
-  return app;
 }
