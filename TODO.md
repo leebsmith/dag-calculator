@@ -20,8 +20,11 @@
 See `plans/step-E-product-views.md` E-e1 addendum:
 
 - live-HTTP boundary debounce + in-flight coalescing (`engineAdapter.js`);
-- per-node unit preferences (extend `uiStore.unitMode` with a per-field override);
 - `solver.water` salt-addition readouts (C14 now resolved — kg/L — so this is unblocked).
+
+Per-node unit preferences are **done** (per-field unit badge, cycle toggle,
+`unitMode[field.id]` override). Unit-preference persistence (localStorage/Firestore)
+is not yet wired.
 
 ## Deferred (Step F)
 

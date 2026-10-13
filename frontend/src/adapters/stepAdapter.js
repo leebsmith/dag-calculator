@@ -191,6 +191,23 @@ export function createStepApp() {
       app.compute();
     },
 
+    // Per-field unit override: cycle the field through its dimension's units,
+    // dropping the override when it lands back on the dimension default.
+    toggleFieldUnit(field) {
+      const dim = field.dimension;
+      if (!dim) return;
+      const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dim);
+      if (!dimDef) return;
+      const units = dimDef.units.map(([id]) => id);
+      const dimDefault = ui.unitMode[dim] ?? units[0];
+      const current = ui.unitMode[field.id] ?? dimDefault;
+      const next = units[(units.indexOf(current) + 1) % units.length];
+      if (next === dimDefault) delete ui.unitMode[field.id];
+      else ui.unitMode[field.id] = next;
+      app.unitMode = { ...ui.unitMode };
+      app.compute();
+    },
+
     toggleUnits() {
       app.unitsOpen = !app.unitsOpen;
     },

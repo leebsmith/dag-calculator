@@ -41,3 +41,29 @@ test("A8b: unit mode converts display; writes store base", () => {
   app.edit(app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c"), "25");
   assert.equal(app.master.getRoot("mash.grain_temp_c"), 25, "write stores the base value");
 });
+
+// A8c: per-field unit overrides win over the dimension default and drop cleanly
+// when toggled back to the default.
+test("A8c: per-field unit override", () => {
+  const app = createStepApp();
+  app.init();
+  const grain = () => app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c");
+
+  app.setUnit("temperature", "degF");
+  assert.equal(grain().unitId, "degF");
+  assert.equal(grain().customized, false);
+
+  app.toggleFieldUnit(grain());
+  assert.equal(grain().unitId, "degC");
+  assert.equal(grain().customized, true);
+  assert.equal(Number(grain().display), 20, "overridden field displays in its own unit");
+
+  // sibling temperature field still follows the dimension default
+  const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
+  assert.equal(strike.unitId, "degF");
+  assert.equal(strike.customized, false);
+
+  app.toggleFieldUnit(grain());
+  assert.equal(grain().unitId, "degF");
+  assert.equal(grain().customized, false);
+});

@@ -5,11 +5,18 @@
     <div class="form-group">
       <template x-if="f.control === 'number'">
         <div>
-          <label
-            class="form-label"
-            :for="f.id"
-            x-text="f.label + (f.unit ? ' (' + f.unit + ')' : '')"
-          ></label>
+          <label class="form-label" :for="f.id">
+            <span x-text="f.label + (!f.toggleable && f.unit ? ' (' + f.unit + ')' : '')"></span>
+            <button
+              type="button"
+              class="unit-badge"
+              x-show="f.toggleable"
+              :class="{ 'unit-badge-customized': f.customized }"
+              title="Click to change unit"
+              @click="toggleFieldUnit(f)"
+              x-text="f.unit"
+            ></button>
+          </label>
           <input
             class="form-input"
             :id="f.id"
@@ -42,7 +49,18 @@
 
       <template x-if="f.control === 'readout'">
         <div>
-          <span class="form-label" x-text="f.label + (f.unit ? ' (' + f.unit + ')' : '')"></span>
+          <span class="form-label">
+            <span x-text="f.label + (!f.toggleable && f.unit ? ' (' + f.unit + ')' : '')"></span>
+            <button
+              type="button"
+              class="unit-badge"
+              x-show="f.toggleable"
+              :class="{ 'unit-badge-customized': f.customized }"
+              title="Click to change unit"
+              @click="toggleFieldUnit(f)"
+              x-text="f.unit"
+            ></button>
+          </span>
           <span class="tabular-nums" x-text="f.display"></span>
         </div>
       </template>

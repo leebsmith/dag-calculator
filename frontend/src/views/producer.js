@@ -8,7 +8,7 @@
 import { resolveReference } from "../engine/paths.js";
 import { fromBase } from "../engine/units.js";
 import { rendererFor } from "./renderers.js";
-import { UNIT_SYMBOLS } from "./registry/units.js";
+import { UNIT_DIMENSIONS, UNIT_SYMBOLS } from "./registry/units.js";
 
 function defaultControl(node) {
   if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
@@ -175,6 +175,7 @@ export function valuate(fields, engine, ctx = {}) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
   const nl = nonlinearFns(artifact, engine);
+  const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));
   return fields
     .map((field) => {
       // Empty-selection guard: selection-derived fields are deferred until the
@@ -184,14 +185,24 @@ export function valuate(fields, engine, ctx = {}) {
         return { ...field, rows: (engine.get(field.id) ?? []).map((r) => ({ ...r })) };
       }
       const value = engine.resolve(field.id);
+      const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
       // Display-only unit conversion (readouts): base value stays canonical.
-      const unit = field.dimension ? unitMode[field.dimension] ?? null : null;
+      // A per-field override wins over the per-dimension default.
+      const unitId = toggleable ? unitMode[field.id] ?? unitMode[field.dimension] ?? null : null;
       const shown =
-        unit && field.dimension && typeof value === "number" && artifact
-          ? fromBase(artifact, field.dimension, unit, value, nl)
+        unitId && typeof value === "number" && artifact
+          ? fromBase(artifact, field.dimension, unitId, value, nl)
           : value;
-      const symbol = unit && field.dimension ? UNIT_SYMBOLS[field.dimension]?.[unit] ?? unit : null;
-      const out = { ...field, value, unit: symbol ?? field.unit, display: formatValue(shown) };
+      const symbol = unitId ? UNIT_SYMBOLS[field.dimension]?.[unitId] ?? unitId : null;
+      const out = {
+        ...field,
+        value,
+        unit: symbol ?? field.unit,
+        display: formatValue(shown),
+        toggleable,
+        unitId,
+        customized: toggleable && Object.prototype.hasOwnProperty.call(unitMode, field.id),
+      };
       if (field.target?.scope === "overlay") {
         const overlay = engine.getOverlay(field.target.selectionNodeId);
         out.overridden = Object.prototype.hasOwnProperty.call(overlay, field.target.field);

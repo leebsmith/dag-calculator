@@ -205,6 +205,29 @@ samp {
   color: var(--sys-text-secondary);
 }
 
+.unit-badge {
+  background-color: var(--color-transparent);
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-full);
+  color: var(--sys-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-0-5) var(--space-2);
+  cursor: pointer;
+  line-height: var(--line-height-snug);
+}
+
+.unit-badge:hover {
+  background-color: var(--sys-surface-hover);
+  color: var(--sys-text-primary);
+}
+
+.unit-badge-customized {
+  border-color: var(--sys-color-action-primary);
+  color: var(--sys-color-action-subtle-text);
+  background-color: var(--sys-color-action-subtle);
+}
+
 .form-input {
   width: 100%;
   padding: var(--space-2) var(--space-3);

@@ -177,8 +177,10 @@ and a global unit switcher.
   yeast is chosen).
 - **Units:** dimension-level `unitMode` surfaced via a menu-bar switcher;
   `UNIT_DIMENSIONS`/`UNIT_SYMBOLS` in `registry/units.js`; gravity SG↔Plato wired
-  through `engine.call`. Per-node unit preferences deferred.
+  through `engine.call`. Per-node unit preferences delivered later: per-field
+  `unit-badge` (cycle toggle), resolved as `unitMode[field.id] ??
+  unitMode[field.dimension]` in the producer.
 - **Deferred (tracked):** live-HTTP boundary debounce/in-flight coalescing;
-  per-node unit preferences; `solver.water` salt-addition readouts (blocked on
-  the C14 boundary-serialization-unit gap).
+  `solver.water` salt-addition readouts (unblocked by Step G's C14 fix);
+  unit-preference persistence.
 
