@@ -11,11 +11,9 @@
 | E — product/views | done |
 | E-e1 — remaining 3 steps + horizontal stepper + unit switcher | done |
 | F — persistence / freeze / auth (`plans/step-F-*.md`) | done (F-e deferred) |
-| G — seed/schema conformance | pending |
+| G — seed/schema conformance | done |
 
-**Now:** Step G — seed/schema conformance (validate the six `data/seeds/*.json`
-against `primitive_schemas`; reconcile the shape mismatches — nested `ions.*`,
-the `water_reports` envelope). No `plans/step-G-*.md` yet.
+**Now:** — program complete. Remaining optional/deferred items below.
 
 ## Deferred (E-e1)
 
@@ -23,7 +21,7 @@ See `plans/step-E-product-views.md` E-e1 addendum:
 
 - live-HTTP boundary debounce + in-flight coalescing (`engineAdapter.js`);
 - per-node unit preferences (extend `uiStore.unitMode` with a per-field override);
-- `solver.water` salt-addition readouts (blocked on the C14 serialization-unit gap).
+- `solver.water` salt-addition readouts (C14 now resolved — kg/L — so this is unblocked).
 
 ## Deferred (Step F)
 

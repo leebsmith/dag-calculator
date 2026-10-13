@@ -46,25 +46,27 @@ def _to_long_ions(ions: dict) -> IonProfile:
     return IonProfile(**{_ION_SHORT_TO_LONG[k]: v for k, v in ions.items()})
 
 
-def _alkaline_fields(agent: str, grams: float) -> dict:
+def _alkaline_fields(agent: str, kg: float) -> dict:
     if agent == "BAKING_SODA":
-        return {"baking_soda_g": grams}
+        return {"baking_soda_kg": kg}
     if agent == "CHALK":
-        return {"chalk_g": grams}
-    return {"pickling_lime_g": grams}
+        return {"chalk_kg": kg}
+    return {"pickling_lime_kg": kg}
 
 
 def _to_salt_additions(
     dose_g: dict, acid_ml: float, agent: str, alkaline_g: float
 ) -> SaltAdditions:
+    # The sealed solver emits grams/mL (its serialization unit); the boundary
+    # contract declares mass/volume in base kg/L, so convert here.
     fields = {
-        "gypsum_g": dose_g.get("gypsum_g", 0.0),
-        "cacl2_g": dose_g.get("cacl2_g", 0.0),
-        "epsom_g": dose_g.get("epsom_g", 0.0),
-        "nacl_g": dose_g.get("nacl_g", 0.0),
-        "acid_ml": acid_ml,
+        "gypsum_kg": dose_g.get("gypsum_g", 0.0) / 1000.0,
+        "cacl2_kg": dose_g.get("cacl2_g", 0.0) / 1000.0,
+        "epsom_kg": dose_g.get("epsom_g", 0.0) / 1000.0,
+        "nacl_kg": dose_g.get("nacl_g", 0.0) / 1000.0,
+        "acid_l": acid_ml / 1000.0,
     }
-    fields.update(_alkaline_fields(agent, alkaline_g))
+    fields.update(_alkaline_fields(agent, alkaline_g / 1000.0))
     return SaltAdditions(**fields)
 
 

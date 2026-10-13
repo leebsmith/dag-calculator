@@ -1,4 +1,6 @@
 // Reference cache: immutable seed data resolved by id (seed-substrate.md).
+// Every catalog seed is a flat id-keyed map of schema-conforming components
+// (normalized in Step G), so no per-file adapters are needed here.
 
 import equipment from "../../../data/seeds/equipment.json" with { type: "json" };
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
@@ -7,28 +9,6 @@ import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
 import waterTargets from "../../../data/seeds/water_target_profiles.json" with { type: "json" };
 import waterReports from "../../../data/seeds/water_reports.json" with { type: "json" };
 import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
-
-function indexById(rows) {
-  const map = {};
-  for (const row of rows) map[row.id] = row;
-  return map;
-}
-
-// Water target profiles nest ions under `ions.*`; the `water_target` schema
-// expects flat fields. Flatten so selection fields resolve by schema key.
-function flattenTargets(targets) {
-  const map = {};
-  for (const row of targets) map[row.id] = { ...row, ...(row.ions ?? {}) };
-  return map;
-}
-
-// water_reports.json is a source envelope: { source_id, ..., reports: [...] }.
-// Index the individual reports by report_id for the `water_report` selection.
-function indexReports(reportsDoc) {
-  const map = {};
-  for (const report of reportsDoc.reports ?? []) map[report.report_id] = report;
-  return map;
-}
 
 const DEFAULT_GRIST = [
   { catalog_id: "pilsner", pct: 0.8, parts: 80 },
@@ -50,16 +30,12 @@ function buildGristRow(entry) {
 }
 
 export function createReferenceCache() {
-  const yeastById = indexById(yeasts);
-  const sugarById = indexById(sugars);
-  const waterTargetById = flattenTargets(waterTargets);
-  const waterReportById = indexReports(waterReports);
   return {
     references: {
       equipment,
-      yeast: yeastById,
-      water_report: waterReportById,
-      water_target: waterTargetById,
+      yeast: yeasts,
+      water_report: waterReports,
+      water_target: waterTargets,
     },
     collections: {
       "grist.major_malts": DEFAULT_GRIST.map(buildGristRow),
@@ -69,9 +45,9 @@ export function createReferenceCache() {
     seeds: {
       equipment,
       malts,
-      sugars: sugarById,
-      yeasts: yeastById,
-      waterTargets: waterTargetById,
+      sugars,
+      yeasts,
+      waterTargets,
       waterReports,
       mashSchedules,
     },

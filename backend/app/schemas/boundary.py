@@ -299,14 +299,14 @@ class WaterSolverRequest(BoundaryModel):
 
 
 class SaltAdditions(BoundaryModel):
-    gypsum_g: Annotated[float, Field(ge=0.0, default=0.0)]
-    cacl2_g: Annotated[float, Field(ge=0.0, default=0.0)]
-    epsom_g: Annotated[float, Field(ge=0.0, default=0.0)]
-    nacl_g: Annotated[float, Field(ge=0.0, default=0.0)]
-    acid_ml: Annotated[float, Field(ge=0.0, default=0.0)]
-    baking_soda_g: Annotated[float, Field(ge=0.0, default=0.0)]
-    chalk_g: Annotated[float, Field(ge=0.0, default=0.0)]
-    pickling_lime_g: Annotated[float, Field(ge=0.0, default=0.0)]
+    gypsum_kg: Annotated[float, Field(ge=0.0, default=0.0)]
+    cacl2_kg: Annotated[float, Field(ge=0.0, default=0.0)]
+    epsom_kg: Annotated[float, Field(ge=0.0, default=0.0)]
+    nacl_kg: Annotated[float, Field(ge=0.0, default=0.0)]
+    acid_l: Annotated[float, Field(ge=0.0, default=0.0)]
+    baking_soda_kg: Annotated[float, Field(ge=0.0, default=0.0)]
+    chalk_kg: Annotated[float, Field(ge=0.0, default=0.0)]
+    pickling_lime_kg: Annotated[float, Field(ge=0.0, default=0.0)]
 
 
 class WaterPrescription(BoundaryModel):

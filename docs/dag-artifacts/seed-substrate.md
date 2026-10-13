@@ -81,6 +81,11 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 
 ## 3. How the engine consumes seeds
 
+- **Container shape:** every catalog seed is a flat **id-keyed map**
+  (`{ "<id>": { ...component... } }`), where each component conforms to its
+  `primitive_schema`. The exception is `mash-schedules.json`, a
+  `{ schedule_id → rests[] }` template whose `rests` are ordered. (`water_report`
+  is keyed by `report_id`; `water_target` ions are flat, not nested under `ions`.)
 - Selections resolve a `ref` (id) against the seed/component store into a typed
   value (per the schema); the `overlay` applies on top.
 - The six working ions for a water source are **derived from the lab report**

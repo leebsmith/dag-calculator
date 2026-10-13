@@ -8,11 +8,11 @@ seeds > legacy partials/stores > grammar docs.
 
 | id | source |
 |---|---|
-| `temperature`, `temperature_delta`, `volume`, `mass`, `gravity`, `color`, `specific_heat`, `mash_thickness`, `ph`, `concentration`, `percentage`, `reference`, `dimensionless` | exemplar `artifact.json` + `dimensions.md` |
+| `temperature`, `temperature_delta`, `volume`, `mass`, `gravity`, `grain_color`, `beer_color`, `specific_heat`, `mash_thickness`, `ph`, `concentration`, `percentage`, `reference`, `dimensionless` | exemplar `artifact.json` + `dimensions.md` |
 | `time` (min) | `dimensions.md` §2 (base dimension) |
 | `extract_yield` (L·°/kg; gal·°/lb=8.3454) | `dimensions.md` §4 + `constants.js` `SUCROSE_YIELD_LDK`/`LDK_PPG_CONVERSION_FACTOR` |
 | `total_extract` (L·°; gal·pts=3.785411784) | `dimensions.md` §4 |
-| `volume.units.ml` (0.001) | inferred (mass/volume SI sub-multiples; `_g`/`acid_ml` boundary outputs) |
+| `volume.units.ml` (0.001) | display unit (mass/volume SI sub-multiples; boundary emits base L since Step G) |
 
 ## Constants
 
@@ -86,7 +86,7 @@ seeds > legacy partials/stores > grammar docs.
 | `mash_rest` | `mashSchedule.js::createDefaultMashSchedule` rest shape |
 | `water_grist_row` | `boundary.py::WaterGristRow` |
 | `water_report` | legacy `water.py::WaterReport` + `data/seeds/water_reports.json` (21 fields) |
-| `water_target` | legacy `water.py::WaterTargetProfile` + `data/seeds/water_target_profiles.json` (nested `ions` flattened) |
+| `water_target` | legacy `water.py::WaterTargetProfile` + `data/seeds/water_target_profiles.json` (flat ions; normalized to id-keyed maps in Step G) |
 
 ## Nodes (by slice)
 

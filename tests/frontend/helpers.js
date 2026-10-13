@@ -58,7 +58,7 @@ export function batchOutputs() {
 }
 
 export function waterOutputs() {
-  const salts = { gypsum_g: 2.0, cacl2_g: 1.0, epsom_g: 0.0, nacl_g: 0.0, acid_ml: 0.5, baking_soda_g: 0.0, chalk_g: 0.0, pickling_lime_g: 0.0 };
+  const salts = { gypsum_kg: 0.002, cacl2_kg: 0.001, epsom_kg: 0.0, nacl_kg: 0.0, acid_l: 0.0005, baking_soda_kg: 0.0, chalk_kg: 0.0, pickling_lime_kg: 0.0 };
   const additions = (prefix) =>
     Object.fromEntries(Object.entries(salts).map(([k, v]) => [`${prefix}.${k}`, v]));
   return {

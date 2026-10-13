@@ -90,7 +90,7 @@
       "kind": "linear",
       "units": {
         "btu_per_lb_degF": {
-          "factor": 1.0
+          "factor": 1
         }
       }
     },
@@ -157,11 +157,11 @@
       "dimension": "dimensionless"
     },
     "water_specific_heat": {
-      "value": 1.0,
+      "value": 1,
       "dimension": "specific_heat"
     },
     "default_grain_temp_c": {
-      "value": 20.0,
+      "value": 20,
       "dimension": "temperature"
     },
     "default_equipment_profile_id": {
@@ -173,7 +173,7 @@
       "dimension": "percentage"
     },
     "default_v_ferm_l": {
-      "value": 20.0,
+      "value": 20,
       "dimension": "volume"
     },
     "default_apparent_attenuation": {
@@ -189,7 +189,7 @@
       "dimension": "mash_thickness"
     },
     "default_runoff_ratio": {
-      "value": 1.0,
+      "value": 1,
       "dimension": "dimensionless"
     },
     "sucrose_yield_ldk": {
@@ -209,7 +209,7 @@
       "dimension": "mash_thickness"
     },
     "rho_water": {
-      "value": 1.0,
+      "value": 1,
       "dimension": "dimensionless"
     },
     "default_shrinkage_fraction": {
@@ -253,7 +253,7 @@
       "dimension": "volume"
     },
     "default_hlt_coil_floor_l": {
-      "value": 0.0,
+      "value": 0,
       "dimension": "volume"
     },
     "default_mash_tun_specific_heat": {
@@ -261,11 +261,11 @@
       "dimension": "specific_heat"
     },
     "default_mash_tun_mass_kg": {
-      "value": 5.0,
+      "value": 5,
       "dimension": "mass"
     },
     "default_boil_off_rate_l_per_hr": {
-      "value": 3.0,
+      "value": 3,
       "dimension": "volume"
     },
     "default_target_mash_ph": {
@@ -273,15 +273,15 @@
       "dimension": "ph"
     },
     "default_calcium_floor_ppm": {
-      "value": 50.0,
+      "value": 50,
       "dimension": "concentration"
     },
     "bicarbonate_eq_weight": {
-      "value": 61.0,
+      "value": 61,
       "dimension": "dimensionless"
     },
     "caco3_eq_weight": {
-      "value": 50.0,
+      "value": 50,
       "dimension": "dimensionless"
     },
     "mash_ph_optimal_low": {
@@ -297,11 +297,11 @@
       "dimension": "dimensionless"
     },
     "loa_baseline_temp_f": {
-      "value": 152.0,
+      "value": 152,
       "dimension": "dimensionless"
     },
     "loa_baseline_attenuation_pct": {
-      "value": 75.0,
+      "value": 75,
       "dimension": "percentage"
     },
     "loa_temp_coefficient": {
@@ -556,7 +556,7 @@
               {
                 "op": "*",
                 "args": [
-                  1.27447e-05,
+                  0.0000127447,
                   {
                     "op": "pow",
                     "args": [
@@ -573,7 +573,7 @@
           {
             "op": "*",
             "args": [
-              6.34964e-08,
+              6.34964e-8,
               {
                 "op": "pow",
                 "args": [
@@ -1235,7 +1235,7 @@
         "domain": {
           "gte": 0
         },
-        "default": 50.0
+        "default": 50
       },
       "notes": {}
     }
@@ -1674,7 +1674,7 @@
         "calcium_floor_ppm": "water.calcium_floor_ppm"
       },
       "outputs": {
-        "strategy": {
+        "strategy.undefined": {
           "taxonomy": "strategy"
         },
         "prescription.predicted_mash_ph": {
@@ -1689,52 +1689,52 @@
         "prescription.sparge_tannin_warning": {
           "type": "boolean"
         },
-        "mash_additions.gypsum_g": {
+        "mash_additions.gypsum_kg": {
           "dimension": "mass"
         },
-        "mash_additions.cacl2_g": {
+        "mash_additions.cacl2_kg": {
           "dimension": "mass"
         },
-        "mash_additions.epsom_g": {
+        "mash_additions.epsom_kg": {
           "dimension": "mass"
         },
-        "mash_additions.nacl_g": {
+        "mash_additions.nacl_kg": {
           "dimension": "mass"
         },
-        "mash_additions.acid_ml": {
+        "mash_additions.acid_l": {
           "dimension": "volume"
         },
-        "mash_additions.baking_soda_g": {
+        "mash_additions.baking_soda_kg": {
           "dimension": "mass"
         },
-        "mash_additions.chalk_g": {
+        "mash_additions.chalk_kg": {
           "dimension": "mass"
         },
-        "mash_additions.pickling_lime_g": {
+        "mash_additions.pickling_lime_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.gypsum_g": {
+        "sparge_additions.gypsum_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.cacl2_g": {
+        "sparge_additions.cacl2_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.epsom_g": {
+        "sparge_additions.epsom_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.nacl_g": {
+        "sparge_additions.nacl_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.acid_ml": {
+        "sparge_additions.acid_l": {
           "dimension": "volume"
         },
-        "sparge_additions.baking_soda_g": {
+        "sparge_additions.baking_soda_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.chalk_g": {
+        "sparge_additions.chalk_kg": {
           "dimension": "mass"
         },
-        "sparge_additions.pickling_lime_g": {
+        "sparge_additions.pickling_lime_kg": {
           "dimension": "mass"
         },
         "post_salt_mash_ions.calcium_ca": {

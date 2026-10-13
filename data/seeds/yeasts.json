@@ -1,5 +1,5 @@
-[
-  {
+{
+  "bootleg-biology-bbx001-the-mad-fermentationist-saison-blend": {
     "id": "bootleg-biology-bbx001-the-mad-fermentationist-saison-blend",
     "name": "Bootleg Biology BBX001 The Mad Fermentationist Saison Blend",
     "manufacturer": "Bootleg Biology",
@@ -7,10 +7,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "The Mad Fermentationist Saison Blend. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "bootleg-biology-bbx002-saison-parfait": {
     "id": "bootleg-biology-bbx002-saison-parfait",
     "name": "Bootleg Biology BBX002 Saison Parfait",
     "manufacturer": "Bootleg Biology",
@@ -18,10 +18,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Saison Parfait. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "bootleg-biology-bbx003-sour-solera-blend": {
     "id": "bootleg-biology-bbx003-sour-solera-blend",
     "name": "Bootleg Biology BBX003 Sour Solera Blend",
     "manufacturer": "Bootleg Biology",
@@ -29,10 +29,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Sour Solera Blend. Produces a complex, funky, and sour profile."
   },
-  {
+  "bootleg-biology-bbx004-funk-weapon-1": {
     "id": "bootleg-biology-bbx004-funk-weapon-1",
     "name": "Bootleg Biology BBX004 Funk Weapon #1",
     "manufacturer": "Bootleg Biology",
@@ -40,10 +40,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Funk Weapon #1. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "bootleg-biology-bbx005-funk-weapon-2": {
     "id": "bootleg-biology-bbx005-funk-weapon-2",
     "name": "Bootleg Biology BBX005 Funk Weapon #2",
     "manufacturer": "Bootleg Biology",
@@ -51,10 +51,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Funk Weapon #2. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "bootleg-biology-bbx006-funk-weapon-3": {
     "id": "bootleg-biology-bbx006-funk-weapon-3",
     "name": "Bootleg Biology BBX006 Funk Weapon #3",
     "manufacturer": "Bootleg Biology",
@@ -62,10 +62,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Funk Weapon #3. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "bootleg-biology-bbx007-local-yeast-project": {
     "id": "bootleg-biology-bbx007-local-yeast-project",
     "name": "Bootleg Biology BBX007 Local Yeast Project",
     "manufacturer": "Bootleg Biology",
@@ -73,10 +73,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Local Yeast Project. Produces a complex, funky, and sour profile."
   },
-  {
+  "east-coast-yeast-ecy01-bugfarm": {
     "id": "east-coast-yeast-ecy01-bugfarm",
     "name": "East Coast Yeast ECY01 BugFarm",
     "manufacturer": "East Coast Yeast",
@@ -84,10 +84,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "BugFarm. Produces a complex, funky, and sour profile."
   },
-  {
+  "east-coast-yeast-ecy02-flemish-ale": {
     "id": "east-coast-yeast-ecy02-flemish-ale",
     "name": "East Coast Yeast ECY02 Flemish Ale",
     "manufacturer": "East Coast Yeast",
@@ -95,10 +95,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Flemish Ale. Produces a complex, funky, and sour profile."
   },
-  {
+  "east-coast-yeast-ecy03-farmhouse-brett": {
     "id": "east-coast-yeast-ecy03-farmhouse-brett",
     "name": "East Coast Yeast ECY03 Farmhouse Brett",
     "manufacturer": "East Coast Yeast",
@@ -106,10 +106,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Farmhouse Brett. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "east-coast-yeast-ecy04-brett-anomalus": {
     "id": "east-coast-yeast-ecy04-brett-anomalus",
     "name": "East Coast Yeast ECY04 Brett Anomalus",
     "manufacturer": "East Coast Yeast",
@@ -117,10 +117,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brett Anomalus. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "east-coast-yeast-ecy05-brett-blend-1": {
     "id": "east-coast-yeast-ecy05-brett-blend-1",
     "name": "East Coast Yeast ECY05 Brett Blend #1",
     "manufacturer": "East Coast Yeast",
@@ -128,10 +128,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brett Blend #1. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "east-coast-yeast-ecy06-berliner-blend": {
     "id": "east-coast-yeast-ecy06-berliner-blend",
     "name": "East Coast Yeast ECY06 Berliner Blend",
     "manufacturer": "East Coast Yeast",
@@ -139,10 +139,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Berliner Blend. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "east-coast-yeast-ecy07-scottish-heavy": {
     "id": "east-coast-yeast-ecy07-scottish-heavy",
     "name": "East Coast Yeast ECY07 Scottish Heavy",
     "manufacturer": "East Coast Yeast",
@@ -150,10 +150,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Scottish Heavy. Clean, malty, and slightly smoky. Ideal for Scottish ales and wee heavies."
   },
-  {
+  "east-coast-yeast-ecy08-saison-brasserie": {
     "id": "east-coast-yeast-ecy08-saison-brasserie",
     "name": "East Coast Yeast ECY08 Saison Brasserie",
     "manufacturer": "East Coast Yeast",
@@ -161,10 +161,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Saison Brasserie. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "east-coast-yeast-ecy09-belgian-abbaye": {
     "id": "east-coast-yeast-ecy09-belgian-abbaye",
     "name": "East Coast Yeast ECY09 Belgian Abbaye",
     "manufacturer": "East Coast Yeast",
@@ -172,10 +172,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Abbaye. Produces a rich, fruity, and phenolic Belgian abbey ale profile."
   },
-  {
+  "east-coast-yeast-ecy10-old-newark-ale": {
     "id": "east-coast-yeast-ecy10-old-newark-ale",
     "name": "East Coast Yeast ECY10 Old Newark Ale",
     "manufacturer": "East Coast Yeast",
@@ -183,10 +183,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Old Newark Ale. Malty, slightly fruity, and well-balanced."
   },
-  {
+  "east-coast-yeast-ecy11-farmhouse-saison": {
     "id": "east-coast-yeast-ecy11-farmhouse-saison",
     "name": "East Coast Yeast ECY11 Farmhouse Saison",
     "manufacturer": "East Coast Yeast",
@@ -194,10 +194,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Farmhouse Saison. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "east-coast-yeast-ecy12-big-belgian-ale": {
     "id": "east-coast-yeast-ecy12-big-belgian-ale",
     "name": "East Coast Yeast ECY12 Big Belgian Ale",
     "manufacturer": "East Coast Yeast",
@@ -205,10 +205,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Big Belgian Ale. Produces a rich, fruity, and phenolic Belgian ale profile."
   },
-  {
+  "east-coast-yeast-ecy13-trappist-ale": {
     "id": "east-coast-yeast-ecy13-trappist-ale",
     "name": "East Coast Yeast ECY13 Trappist Ale",
     "manufacturer": "East Coast Yeast",
@@ -216,10 +216,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Trappist Ale. Produces a rich, fruity, and phenolic Belgian ale profile."
   },
-  {
+  "east-coast-yeast-ecy14-scottish-ale": {
     "id": "east-coast-yeast-ecy14-scottish-ale",
     "name": "East Coast Yeast ECY14 Scottish Ale",
     "manufacturer": "East Coast Yeast",
@@ -227,10 +227,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Scottish Ale. Clean, malty, and slightly smoky. Ideal for Scottish ales and wee heavies."
   },
-  {
+  "east-coast-yeast-ecy15-saison-brasserie-blend": {
     "id": "east-coast-yeast-ecy15-saison-brasserie-blend",
     "name": "East Coast Yeast ECY15 Saison Brasserie Blend",
     "manufacturer": "East Coast Yeast",
@@ -238,10 +238,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Saison Brasserie Blend. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "east-coast-yeast-ecy16-berliner-weisse-blend": {
     "id": "east-coast-yeast-ecy16-berliner-weisse-blend",
     "name": "East Coast Yeast ECY16 Berliner Weisse Blend",
     "manufacturer": "East Coast Yeast",
@@ -249,10 +249,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Berliner Weisse Blend. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "east-coast-yeast-ecy17-bugcounty": {
     "id": "east-coast-yeast-ecy17-bugcounty",
     "name": "East Coast Yeast ECY17 BugCounty",
     "manufacturer": "East Coast Yeast",
@@ -260,10 +260,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "BugCounty. Produces a complex, funky, and sour profile."
   },
-  {
+  "east-coast-yeast-ecy18-berliner-blend": {
     "id": "east-coast-yeast-ecy18-berliner-blend",
     "name": "East Coast Yeast ECY18 Berliner Blend",
     "manufacturer": "East Coast Yeast",
@@ -271,10 +271,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Berliner Blend. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "east-coast-yeast-ecy19-berliner-blend": {
     "id": "east-coast-yeast-ecy19-berliner-blend",
     "name": "East Coast Yeast ECY19 Berliner Blend",
     "manufacturer": "East Coast Yeast",
@@ -282,10 +282,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Berliner Blend. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "east-coast-yeast-ecy20-bugfarm": {
     "id": "east-coast-yeast-ecy20-bugfarm",
     "name": "East Coast Yeast ECY20 BugFarm",
     "manufacturer": "East Coast Yeast",
@@ -293,10 +293,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "BugFarm. Produces a complex, funky, and sour profile."
   },
-  {
+  "fermentis-safale-be-134": {
     "id": "fermentis-safale-be-134",
     "name": "Fermentis SafAle BE-134",
     "manufacturer": "Fermentis",
@@ -304,10 +304,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafAle BE-134. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "fermentis-safale-ha-18": {
     "id": "fermentis-safale-ha-18",
     "name": "Fermentis SafAle HA-18",
     "manufacturer": "Fermentis",
@@ -315,10 +315,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 18.0,
+    "alcohol_tolerance_abv": 18,
     "notes": "SafAle HA-18. Highly alcohol-tolerant. Ideal for high-gravity ales."
   },
-  {
+  "fermentis-safale-k-97": {
     "id": "fermentis-safale-k-97",
     "name": "Fermentis SafAle K-97",
     "manufacturer": "Fermentis",
@@ -326,10 +326,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "SafAle K-97. Clean, crisp, and slightly fruity. Ideal for Kolsch and altbier."
   },
-  {
+  "fermentis-safale-s-04": {
     "id": "fermentis-safale-s-04",
     "name": "Fermentis SafAle S-04",
     "manufacturer": "Fermentis",
@@ -337,10 +337,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "SafAle S-04. Malty, slightly fruity, and highly flocculent. Ideal for English ales."
   },
-  {
+  "fermentis-safale-us-05": {
     "id": "fermentis-safale-us-05",
     "name": "Fermentis SafAle US-05",
     "manufacturer": "Fermentis",
@@ -348,10 +348,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafAle US-05. Clean, crisp, and neutral. The workhorse American ale yeast."
   },
-  {
+  "fermentis-safale-wb-06": {
     "id": "fermentis-safale-wb-06",
     "name": "Fermentis SafAle WB-06",
     "manufacturer": "Fermentis",
@@ -359,10 +359,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "SafAle WB-06. Produces classic banana and clove phenolics. Ideal for Bavarian hefeweizens."
   },
-  {
+  "fermentis-safbrew-be-256": {
     "id": "fermentis-safbrew-be-256",
     "name": "Fermentis SafBrew BE-256",
     "manufacturer": "Fermentis",
@@ -370,10 +370,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafBrew BE-256. Produces a rich, fruity, and phenolic Belgian abbey ale profile."
   },
-  {
+  "fermentis-safbrew-t-58": {
     "id": "fermentis-safbrew-t-58",
     "name": "Fermentis SafBrew T-58",
     "manufacturer": "Fermentis",
@@ -381,10 +381,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "SafBrew T-58. Produces a spicy, phenolic, and slightly fruity Belgian ale profile."
   },
-  {
+  "fermentis-safbrew-wb-06": {
     "id": "fermentis-safbrew-wb-06",
     "name": "Fermentis SafBrew WB-06",
     "manufacturer": "Fermentis",
@@ -392,10 +392,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "SafBrew WB-06. Produces classic banana and clove phenolics. Ideal for Bavarian hefeweizens."
   },
-  {
+  "fermentis-safcider-ab-1": {
     "id": "fermentis-safcider-ab-1",
     "name": "Fermentis SafCider AB-1",
     "manufacturer": "Fermentis",
@@ -403,10 +403,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafCider AB-1. Produces a clean, crisp, and slightly fruity cider profile."
   },
-  {
+  "fermentis-safcider-as-2": {
     "id": "fermentis-safcider-as-2",
     "name": "Fermentis SafCider AS-2",
     "manufacturer": "Fermentis",
@@ -414,10 +414,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafCider AS-2. Produces a clean, crisp, and slightly fruity cider profile."
   },
-  {
+  "fermentis-saflager-e-30": {
     "id": "fermentis-saflager-e-30",
     "name": "Fermentis SafLager E-30",
     "manufacturer": "Fermentis",
@@ -425,10 +425,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafLager E-30. Clean, crisp, and slightly malty. Ideal for European lagers."
   },
-  {
+  "fermentis-saflager-s-189": {
     "id": "fermentis-saflager-s-189",
     "name": "Fermentis SafLager S-189",
     "manufacturer": "Fermentis",
@@ -436,10 +436,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafLager S-189. Clean, crisp, and slightly malty. Ideal for Swiss lagers."
   },
-  {
+  "fermentis-saflager-s-23": {
     "id": "fermentis-saflager-s-23",
     "name": "Fermentis SafLager S-23",
     "manufacturer": "Fermentis",
@@ -447,10 +447,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafLager S-23. Clean, crisp, and slightly malty. Ideal for European lagers."
   },
-  {
+  "fermentis-saflager-w-34-70": {
     "id": "fermentis-saflager-w-34-70",
     "name": "Fermentis SafLager W-34/70",
     "manufacturer": "Fermentis",
@@ -458,10 +458,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "SafLager W-34/70. Clean, crisp, and slightly sulfurous. The workhorse German lager yeast."
   },
-  {
+  "imperial-a01-house": {
     "id": "imperial-a01-house",
     "name": "Imperial A01 House",
     "manufacturer": "Imperial Yeast",
@@ -469,10 +469,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "House strain. Clean, crisp, and neutral. The workhorse American ale yeast."
   },
-  {
+  "imperial-a07-flagship": {
     "id": "imperial-a07-flagship",
     "name": "Imperial A07 Flagship",
     "manufacturer": "Imperial Yeast",
@@ -480,10 +480,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Flagship strain. Clean, crisp, and neutral. Ideal for American ales."
   },
-  {
+  "imperial-a09-pub": {
     "id": "imperial-a09-pub",
     "name": "Imperial A09 Pub",
     "manufacturer": "Imperial Yeast",
@@ -491,10 +491,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Pub strain. Malty, slightly fruity, and highly flocculent. Ideal for English ales."
   },
-  {
+  "imperial-a10-darkness": {
     "id": "imperial-a10-darkness",
     "name": "Imperial A10 Darkness",
     "manufacturer": "Imperial Yeast",
@@ -502,10 +502,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Darkness strain. Rich, malty, and slightly fruity. Ideal for stouts and porters."
   },
-  {
+  "imperial-a18-joystick": {
     "id": "imperial-a18-joystick",
     "name": "Imperial A18 Joystick",
     "manufacturer": "Imperial Yeast",
@@ -513,10 +513,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Joystick strain. Clean, crisp, and slightly fruity. Ideal for American ales."
   },
-  {
+  "imperial-a20-citrus": {
     "id": "imperial-a20-citrus",
     "name": "Imperial A20 Citrus",
     "manufacturer": "Imperial Yeast",
@@ -524,10 +524,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Citrus strain. Produces a distinctive citrus-forward American ale profile."
   },
-  {
+  "imperial-a24-dry-hop": {
     "id": "imperial-a24-dry-hop",
     "name": "Imperial A24 Dry Hop",
     "manufacturer": "Imperial Yeast",
@@ -535,10 +535,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Dry Hop strain. Clean, crisp, and neutral. Ideal for hop-forward American ales."
   },
-  {
+  "imperial-a38-juice": {
     "id": "imperial-a38-juice",
     "name": "Imperial A38 Juice",
     "manufacturer": "Imperial Yeast",
@@ -546,10 +546,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Juice strain. Produces a hazy, juicy, and fruity New England IPA profile."
   },
-  {
+  "imperial-a43-loki": {
     "id": "imperial-a43-loki",
     "name": "Imperial A43 Loki",
     "manufacturer": "Imperial Yeast",
@@ -557,10 +557,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Loki strain. Clean, crisp, and slightly fruity. Ideal for American ales."
   },
-  {
+  "imperial-b44-whiteout": {
     "id": "imperial-b44-whiteout",
     "name": "Imperial B44 Whiteout",
     "manufacturer": "Imperial Yeast",
@@ -568,10 +568,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Whiteout strain. Produces a clean, slightly tart American wheat profile."
   },
-  {
+  "imperial-b45-gnome": {
     "id": "imperial-b45-gnome",
     "name": "Imperial B45 Gnome",
     "manufacturer": "Imperial Yeast",
@@ -579,10 +579,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Gnome strain. Produces classic banana and clove phenolics. Ideal for Bavarian hefeweizens."
   },
-  {
+  "imperial-b48-triple-double": {
     "id": "imperial-b48-triple-double",
     "name": "Imperial B48 Triple Double",
     "manufacturer": "Imperial Yeast",
@@ -590,10 +590,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Triple Double strain. Produces a rich, fruity, and phenolic Belgian ale profile."
   },
-  {
+  "imperial-b56-rustic": {
     "id": "imperial-b56-rustic",
     "name": "Imperial B56 Rustic",
     "manufacturer": "Imperial Yeast",
@@ -601,10 +601,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Rustic strain. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "imperial-b64-napoleon": {
     "id": "imperial-b64-napoleon",
     "name": "Imperial B64 Napoleon",
     "manufacturer": "Imperial Yeast",
@@ -612,10 +612,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Napoleon strain. Produces a rich, fruity, and phenolic Belgian ale profile."
   },
-  {
+  "imperial-l05-cablecar": {
     "id": "imperial-l05-cablecar",
     "name": "Imperial L05 Cablecar",
     "manufacturer": "Imperial Yeast",
@@ -623,10 +623,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Cablecar strain. Clean, crisp, and slightly malty. Ideal for California common."
   },
-  {
+  "imperial-l13-global": {
     "id": "imperial-l13-global",
     "name": "Imperial L13 Global",
     "manufacturer": "Imperial Yeast",
@@ -634,10 +634,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Global strain. Clean, crisp, and neutral. Ideal for international lagers."
   },
-  {
+  "imperial-l17-harvest": {
     "id": "imperial-l17-harvest",
     "name": "Imperial L17 Harvest",
     "manufacturer": "Imperial Yeast",
@@ -645,10 +645,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Harvest strain. Clean, malty, and slightly sulfurous. Ideal for German lagers."
   },
-  {
+  "imperial-l28-urkel": {
     "id": "imperial-l28-urkel",
     "name": "Imperial L28 Urkel",
     "manufacturer": "Imperial Yeast",
@@ -656,10 +656,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Urkel strain. Clean, crisp, and slightly malty. Ideal for Czech pilsners."
   },
-  {
+  "imperial-l34-san-fran": {
     "id": "imperial-l34-san-fran",
     "name": "Imperial L34 San Fran",
     "manufacturer": "Imperial Yeast",
@@ -667,10 +667,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "San Fran strain. Ferments cleanly at ale temperatures. Ideal for California common."
   },
-  {
+  "imperial-w15-suburban-brett": {
     "id": "imperial-w15-suburban-brett",
     "name": "Imperial W15 Suburban Brett",
     "manufacturer": "Imperial Yeast",
@@ -678,10 +678,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Suburban Brett. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "lallemand-abbaye": {
     "id": "lallemand-abbaye",
     "name": "Lallemand Abbaye",
     "manufacturer": "Lallemand",
@@ -689,10 +689,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Abbaye strain. Produces a rich, fruity, and phenolic Belgian abbey ale profile."
   },
-  {
+  "lallemand-belle-saison": {
     "id": "lallemand-belle-saison",
     "name": "Lallemand Belle Saison",
     "manufacturer": "Lallemand",
@@ -700,10 +700,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belle Saison strain. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "lallemand-cbc-1-cask-bottle-conditioned": {
     "id": "lallemand-cbc-1-cask-bottle-conditioned",
     "name": "Lallemand CBC-1 Cask & Bottle Conditioned",
     "manufacturer": "Lallemand",
@@ -711,10 +711,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "CBC-1 Cask & Bottle Conditioned strain. Highly flocculent and alcohol-tolerant. Ideal for bottle conditioning."
   },
-  {
+  "lallemand-diamond-lager": {
     "id": "lallemand-diamond-lager",
     "name": "Lallemand Diamond Lager",
     "manufacturer": "Lallemand",
@@ -722,10 +722,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Diamond Lager strain. Clean, crisp, and slightly sulfurous. Ideal for German lagers."
   },
-  {
+  "lallemand-london-esb-ale": {
     "id": "lallemand-london-esb-ale",
     "name": "Lallemand London ESB Ale",
     "manufacturer": "Lallemand",
@@ -733,10 +733,10 @@
     "low_attenuation": 0.6696,
     "high_attenuation": 0.7704,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "London ESB Ale strain. Malty, slightly fruity, and highly flocculent."
   },
-  {
+  "lallemand-lutra-kveik": {
     "id": "lallemand-lutra-kveik",
     "name": "Lallemand Lutra Kveik",
     "manufacturer": "Lallemand",
@@ -744,10 +744,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Lutra Kveik strain. Ferments cleanly at high temperatures with a neutral profile."
   },
-  {
+  "lallemand-munich-classic": {
     "id": "lallemand-munich-classic",
     "name": "Lallemand Munich Classic",
     "manufacturer": "Lallemand",
@@ -755,10 +755,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Munich Classic strain. Produces classic banana and clove phenolics. Ideal for Bavarian hefeweizens."
   },
-  {
+  "lallemand-munich-wheat": {
     "id": "lallemand-munich-wheat",
     "name": "Lallemand Munich Wheat",
     "manufacturer": "Lallemand",
@@ -766,10 +766,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Munich Wheat strain. Produces classic banana and clove phenolics. Ideal for Bavarian hefeweizens."
   },
-  {
+  "lallemand-nottingham-ale": {
     "id": "lallemand-nottingham-ale",
     "name": "Lallemand Nottingham Ale",
     "manufacturer": "Lallemand",
@@ -777,10 +777,10 @@
     "low_attenuation": 0.7161,
     "high_attenuation": 0.8239,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 14.0,
+    "alcohol_tolerance_abv": 14,
     "notes": "Nottingham Ale strain. Highly attenuative, clean, and flocculent. The workhorse dry English ale yeast."
   },
-  {
+  "lallemand-novalager": {
     "id": "lallemand-novalager",
     "name": "Lallemand NovaLager",
     "manufacturer": "Lallemand",
@@ -788,10 +788,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "NovaLager strain. Clean, crisp, and slightly malty. Ideal for modern lagers."
   },
-  {
+  "lallemand-philly-sour": {
     "id": "lallemand-philly-sour",
     "name": "Lallemand Philly Sour",
     "manufacturer": "Lallemand",
@@ -799,10 +799,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Philly Sour strain. Produces clean lactic acid for kettle sours and sour IPAs."
   },
-  {
+  "lallemand-verdant-ipa": {
     "id": "lallemand-verdant-ipa",
     "name": "Lallemand Verdant IPA",
     "manufacturer": "Lallemand",
@@ -810,10 +810,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Verdant IPA strain. Produces a hazy, juicy, and fruity New England IPA profile."
   },
-  {
+  "lallemand-voss-kveik": {
     "id": "lallemand-voss-kveik",
     "name": "Lallemand Voss Kveik",
     "manufacturer": "Lallemand",
@@ -821,10 +821,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Voss Kveik strain. Ferments cleanly at high temperatures with a distinctive citrus profile."
   },
-  {
+  "lallemand-wildbrew-sour-pitch": {
     "id": "lallemand-wildbrew-sour-pitch",
     "name": "Lallemand WildBrew Sour Pitch",
     "manufacturer": "Lallemand",
@@ -832,10 +832,10 @@
     "low_attenuation": 0.465,
     "high_attenuation": 0.535,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 5.0,
+    "alcohol_tolerance_abv": 5,
     "notes": "WildBrew Sour Pitch. Produces clean lactic acid for kettle sours."
   },
-  {
+  "lallemand-windsor-ale": {
     "id": "lallemand-windsor-ale",
     "name": "Lallemand Windsor Ale",
     "manufacturer": "Lallemand",
@@ -843,10 +843,10 @@
     "low_attenuation": 0.651,
     "high_attenuation": 0.749,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Windsor Ale strain. Malty, slightly fruity, and well-suited to English ales."
   },
-  {
+  "omega-oyl-004-west-coast-ale-i": {
     "id": "omega-oyl-004-west-coast-ale-i",
     "name": "Omega OYL-004 West Coast Ale I",
     "manufacturer": "Omega Yeast",
@@ -854,10 +854,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "West Coast Ale I. Clean, crisp, and neutral. Ideal for West Coast IPAs."
   },
-  {
+  "omega-oyl-005-irish-ale": {
     "id": "omega-oyl-005-irish-ale",
     "name": "Omega OYL-005 Irish Ale",
     "manufacturer": "Omega Yeast",
@@ -865,10 +865,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Irish Ale. Smooth, slightly fruity, and well-suited to stouts and red ales."
   },
-  {
+  "omega-oyl-011-british-ale-v": {
     "id": "omega-oyl-011-british-ale-v",
     "name": "Omega OYL-011 British Ale V",
     "manufacturer": "Omega Yeast",
@@ -876,10 +876,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "British Ale V. Malty, slightly fruity, and well-balanced."
   },
-  {
+  "omega-oyl-014-british-ale-viii": {
     "id": "omega-oyl-014-british-ale-viii",
     "name": "Omega OYL-014 British Ale VIII",
     "manufacturer": "Omega Yeast",
@@ -887,10 +887,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "British Ale VIII. Malty, slightly fruity, and well-balanced."
   },
-  {
+  "omega-oyl-021-conan": {
     "id": "omega-oyl-021-conan",
     "name": "Omega OYL-021 Conan",
     "manufacturer": "Omega Yeast",
@@ -898,10 +898,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Conan. Produces a hazy, juicy, and fruity New England IPA profile."
   },
-  {
+  "omega-oyl-024-belgian-ale-a": {
     "id": "omega-oyl-024-belgian-ale-a",
     "name": "Omega OYL-024 Belgian Ale A",
     "manufacturer": "Omega Yeast",
@@ -909,10 +909,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Ale A. Produces a spicy, phenolic, and slightly fruity Belgian ale profile."
   },
-  {
+  "omega-oyl-026-belgian-ale-w": {
     "id": "omega-oyl-026-belgian-ale-w",
     "name": "Omega OYL-026 Belgian Ale W",
     "manufacturer": "Omega Yeast",
@@ -920,10 +920,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Ale W. Produces a spicy, phenolic, and slightly fruity Belgian ale profile."
   },
-  {
+  "omega-oyl-028-belgian-ale-r": {
     "id": "omega-oyl-028-belgian-ale-r",
     "name": "Omega OYL-028 Belgian Ale R",
     "manufacturer": "Omega Yeast",
@@ -931,10 +931,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Ale R. Produces a spicy, phenolic, and slightly fruity Belgian ale profile."
   },
-  {
+  "omega-oyl-033-belgian-saison-i": {
     "id": "omega-oyl-033-belgian-saison-i",
     "name": "Omega OYL-033 Belgian Saison I",
     "manufacturer": "Omega Yeast",
@@ -942,10 +942,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Saison I. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "omega-oyl-042-belgian-saison-ii": {
     "id": "omega-oyl-042-belgian-saison-ii",
     "name": "Omega OYL-042 Belgian Saison II",
     "manufacturer": "Omega Yeast",
@@ -953,10 +953,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Saison II. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "omega-oyl-052-dipa-ale": {
     "id": "omega-oyl-052-dipa-ale",
     "name": "Omega OYL-052 DIPA Ale",
     "manufacturer": "Omega Yeast",
@@ -964,10 +964,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "DIPA Ale. Highly attenuative and alcohol-tolerant. Ideal for double IPAs."
   },
-  {
+  "omega-oyl-057-hothead-ale": {
     "id": "omega-oyl-057-hothead-ale",
     "name": "Omega OYL-057 HotHead Ale",
     "manufacturer": "Omega Yeast",
@@ -975,10 +975,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "HotHead Ale. Ferments cleanly at high temperatures with a distinctive citrus profile."
   },
-  {
+  "omega-oyl-061-voss-kveik": {
     "id": "omega-oyl-061-voss-kveik",
     "name": "Omega OYL-061 Voss Kveik",
     "manufacturer": "Omega Yeast",
@@ -986,10 +986,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Voss Kveik. Ferments cleanly at high temperatures with a distinctive citrus profile."
   },
-  {
+  "omega-oyl-071-lutra-kveik": {
     "id": "omega-oyl-071-lutra-kveik",
     "name": "Omega OYL-071 Lutra Kveik",
     "manufacturer": "Omega Yeast",
@@ -997,10 +997,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Lutra Kveik. Ferments cleanly at high temperatures with a neutral profile."
   },
-  {
+  "omega-oyl-091-hornindal-kveik": {
     "id": "omega-oyl-091-hornindal-kveik",
     "name": "Omega OYL-091 Hornindal Kveik",
     "manufacturer": "Omega Yeast",
@@ -1008,10 +1008,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Hornindal Kveik. Ferments cleanly at high temperatures with a distinctive tropical profile."
   },
-  {
+  "omega-oyl-101-pilsner-i": {
     "id": "omega-oyl-101-pilsner-i",
     "name": "Omega OYL-101 Pilsner I",
     "manufacturer": "Omega Yeast",
@@ -1019,10 +1019,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Pilsner I. Clean, crisp, and slightly sulfurous. Ideal for Bohemian pilsners."
   },
-  {
+  "omega-oyl-107-oktoberfest": {
     "id": "omega-oyl-107-oktoberfest",
     "name": "Omega OYL-107 Oktoberfest",
     "manufacturer": "Omega Yeast",
@@ -1030,10 +1030,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Oktoberfest. Clean, malty, and slightly sulfurous. Ideal for marzens."
   },
-  {
+  "omega-oyl-111-german-bock": {
     "id": "omega-oyl-111-german-bock",
     "name": "Omega OYL-111 German Bock",
     "manufacturer": "Omega Yeast",
@@ -1041,10 +1041,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "German Bock. Clean, malty, and slightly sulfurous. Ideal for bocks and doppelbocks."
   },
-  {
+  "omega-oyl-114-bayern-lager": {
     "id": "omega-oyl-114-bayern-lager",
     "name": "Omega OYL-114 Bayern Lager",
     "manufacturer": "Omega Yeast",
@@ -1052,10 +1052,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Bayern Lager. Clean, malty, and slightly sulfurous. Ideal for Bavarian lagers."
   },
-  {
+  "omega-oyl-200-tropical-ipa": {
     "id": "omega-oyl-200-tropical-ipa",
     "name": "Omega OYL-200 Tropical IPA",
     "manufacturer": "Omega Yeast",
@@ -1063,10 +1063,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Tropical IPA. Produces a hazy, juicy, and tropical New England IPA profile."
   },
-  {
+  "omega-oyl-210-saisonsteins-monster": {
     "id": "omega-oyl-210-saisonsteins-monster",
     "name": "Omega OYL-210 Saisonstein's Monster",
     "manufacturer": "Omega Yeast",
@@ -1074,10 +1074,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Omega OYL-210 Saisonstein's Monster (Omega Yeast). Traditional brewing yeast strain."
   },
-  {
+  "omega-oyl-218-bring-on-da-funk": {
     "id": "omega-oyl-218-bring-on-da-funk",
     "name": "Omega OYL-218 Bring On Da Funk",
     "manufacturer": "Omega Yeast",
@@ -1085,10 +1085,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Bring On Da Funk. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "omega-oyl-402-brettanomyces-bruxellensis": {
     "id": "omega-oyl-402-brettanomyces-bruxellensis",
     "name": "Omega OYL-402 Brettanomyces Bruxellensis",
     "manufacturer": "Omega Yeast",
@@ -1096,10 +1096,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brettanomyces Bruxellensis. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "omega-oyl-403-brettanomyces-claussenii": {
     "id": "omega-oyl-403-brettanomyces-claussenii",
     "name": "Omega OYL-403 Brettanomyces Claussenii",
     "manufacturer": "Omega Yeast",
@@ -1107,10 +1107,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brettanomyces Claussenii. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "omega-oyl-605-lactobacillus-blend": {
     "id": "omega-oyl-605-lactobacillus-blend",
     "name": "Omega OYL-605 Lactobacillus Blend",
     "manufacturer": "Omega Yeast",
@@ -1118,10 +1118,10 @@
     "low_attenuation": 0.465,
     "high_attenuation": 0.535,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 5.0,
+    "alcohol_tolerance_abv": 5,
     "notes": "Lactobacillus Blend. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "white-labs-wlp001-california-ale": {
     "id": "white-labs-wlp001-california-ale",
     "name": "White Labs WLP001 California Ale",
     "manufacturer": "White Labs",
@@ -1129,10 +1129,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "California Ale strain. Clean, crisp, and neutral. The workhorse American ale yeast."
   },
-  {
+  "white-labs-wlp002-english-ale": {
     "id": "white-labs-wlp002-english-ale",
     "name": "White Labs WLP002 English Ale",
     "manufacturer": "White Labs",
@@ -1140,10 +1140,10 @@
     "low_attenuation": 0.651,
     "high_attenuation": 0.749,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "English Ale strain. Malty, slightly fruity, and highly flocculent. Ideal for English bitters."
   },
-  {
+  "white-labs-wlp004-irish-ale": {
     "id": "white-labs-wlp004-irish-ale",
     "name": "White Labs WLP004 Irish Ale",
     "manufacturer": "White Labs",
@@ -1151,10 +1151,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Irish Ale strain. Smooth, slightly fruity, and well-suited to stouts and red ales."
   },
-  {
+  "white-labs-wlp005-british-ale": {
     "id": "white-labs-wlp005-british-ale",
     "name": "White Labs WLP005 British Ale",
     "manufacturer": "White Labs",
@@ -1162,10 +1162,10 @@
     "low_attenuation": 0.651,
     "high_attenuation": 0.749,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "British Ale strain. Malty, slightly fruity, and highly flocculent."
   },
-  {
+  "white-labs-wlp007-dry-english-ale": {
     "id": "white-labs-wlp007-dry-english-ale",
     "name": "White Labs WLP007 Dry English Ale",
     "manufacturer": "White Labs",
@@ -1173,10 +1173,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Dry English Ale strain. Highly attenuative and flocculent. Ideal for dry English ales."
   },
-  {
+  "white-labs-wlp008-east-coast-ale": {
     "id": "white-labs-wlp008-east-coast-ale",
     "name": "White Labs WLP008 East Coast Ale",
     "manufacturer": "White Labs",
@@ -1184,10 +1184,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "East Coast Ale strain. Clean, slightly fruity, and well-balanced."
   },
-  {
+  "white-labs-wlp013-london-ale": {
     "id": "white-labs-wlp013-london-ale",
     "name": "White Labs WLP013 London Ale",
     "manufacturer": "White Labs",
@@ -1195,10 +1195,10 @@
     "low_attenuation": 0.6696,
     "high_attenuation": 0.7704,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "London Ale strain. Rich, malty, and slightly fruity. Ideal for London-style ales."
   },
-  {
+  "white-labs-wlp023-burton-ale": {
     "id": "white-labs-wlp023-burton-ale",
     "name": "White Labs WLP023 Burton Ale",
     "manufacturer": "White Labs",
@@ -1206,10 +1206,10 @@
     "low_attenuation": 0.6696,
     "high_attenuation": 0.7704,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Burton Ale strain. Produces a distinctive minerally, fruity English ale profile."
   },
-  {
+  "white-labs-wlp029-german-ale-kolsch": {
     "id": "white-labs-wlp029-german-ale-kolsch",
     "name": "White Labs WLP029 German Ale/Kolsch",
     "manufacturer": "White Labs",
@@ -1217,10 +1217,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "German Ale/Kolsch strain. Clean, crisp, and slightly fruity. Ideal for Kolsch and altbier."
   },
-  {
+  "white-labs-wlp036-dusseldorf-alt": {
     "id": "white-labs-wlp036-dusseldorf-alt",
     "name": "White Labs WLP036 Dusseldorf Alt",
     "manufacturer": "White Labs",
@@ -1228,10 +1228,10 @@
     "low_attenuation": 0.651,
     "high_attenuation": 0.749,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Dusseldorf Alt strain. Clean, malty, and slightly fruity. Ideal for altbier."
   },
-  {
+  "white-labs-wlp041-pacific-ale": {
     "id": "white-labs-wlp041-pacific-ale",
     "name": "White Labs WLP041 Pacific Ale",
     "manufacturer": "White Labs",
@@ -1239,10 +1239,10 @@
     "low_attenuation": 0.6696,
     "high_attenuation": 0.7704,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Pacific Ale strain. Malty, slightly fruity, and highly flocculent."
   },
-  {
+  "white-labs-wlp051-california-v-ale": {
     "id": "white-labs-wlp051-california-v-ale",
     "name": "White Labs WLP051 California V Ale",
     "manufacturer": "White Labs",
@@ -1250,10 +1250,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "California V Ale strain. Slightly more fruity and flocculent than WLP001."
   },
-  {
+  "white-labs-wlp090-san-diego-super-yeast": {
     "id": "white-labs-wlp090-san-diego-super-yeast",
     "name": "White Labs WLP090 San Diego Super Yeast",
     "manufacturer": "White Labs",
@@ -1261,10 +1261,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "San Diego Super Yeast. Highly attenuative, clean, and flocculent. Ideal for West Coast IPAs."
   },
-  {
+  "white-labs-wlp099-super-high-gravity-ale": {
     "id": "white-labs-wlp099-super-high-gravity-ale",
     "name": "White Labs WLP099 Super High Gravity Ale",
     "manufacturer": "White Labs",
@@ -1272,10 +1272,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 25.0,
+    "alcohol_tolerance_abv": 25,
     "notes": "Super High Gravity Ale strain. Extremely alcohol-tolerant. Ideal for barleywines and imperial stouts."
   },
-  {
+  "white-labs-wlp300-hefeweizen-ale": {
     "id": "white-labs-wlp300-hefeweizen-ale",
     "name": "White Labs WLP300 Hefeweizen Ale",
     "manufacturer": "White Labs",
@@ -1283,10 +1283,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Hefeweizen Ale strain. Produces classic banana and clove phenolics."
   },
-  {
+  "white-labs-wlp320-american-hefeweizen": {
     "id": "white-labs-wlp320-american-hefeweizen",
     "name": "White Labs WLP320 American Hefeweizen",
     "manufacturer": "White Labs",
@@ -1294,10 +1294,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "American Hefeweizen strain. Produces a clean, slightly tart American wheat profile."
   },
-  {
+  "white-labs-wlp351-bavarian-weizen": {
     "id": "white-labs-wlp351-bavarian-weizen",
     "name": "White Labs WLP351 Bavarian Weizen",
     "manufacturer": "White Labs",
@@ -1305,10 +1305,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Bavarian Weizen strain. Produces classic banana and clove phenolics."
   },
-  {
+  "white-labs-wlp380-hefeweizen-iv-ale": {
     "id": "white-labs-wlp380-hefeweizen-iv-ale",
     "name": "White Labs WLP380 Hefeweizen IV Ale",
     "manufacturer": "White Labs",
@@ -1316,10 +1316,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Hefeweizen IV Ale strain. Produces a balanced banana and clove phenolic profile."
   },
-  {
+  "white-labs-wlp400-belgian-wit-ale": {
     "id": "white-labs-wlp400-belgian-wit-ale",
     "name": "White Labs WLP400 Belgian Wit Ale",
     "manufacturer": "White Labs",
@@ -1327,10 +1327,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Belgian Wit Ale strain. Produces a spicy, phenolic, and slightly tart witbier profile."
   },
-  {
+  "white-labs-wlp500-monastery-ale": {
     "id": "white-labs-wlp500-monastery-ale",
     "name": "White Labs WLP500 Monastery Ale",
     "manufacturer": "White Labs",
@@ -1338,10 +1338,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Monastery Ale strain. Produces a rich, fruity, and phenolic Belgian ale profile."
   },
-  {
+  "white-labs-wlp530-abbey-ale": {
     "id": "white-labs-wlp530-abbey-ale",
     "name": "White Labs WLP530 Abbey Ale",
     "manufacturer": "White Labs",
@@ -1349,10 +1349,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Abbey Ale strain. Produces a rich, fruity, and phenolic Belgian abbey ale profile."
   },
-  {
+  "white-labs-wlp550-belgian-ale": {
     "id": "white-labs-wlp550-belgian-ale",
     "name": "White Labs WLP550 Belgian Ale",
     "manufacturer": "White Labs",
@@ -1360,10 +1360,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Ale strain. Produces a spicy, phenolic, and slightly fruity Belgian ale profile."
   },
-  {
+  "white-labs-wlp565-belgian-saison-i": {
     "id": "white-labs-wlp565-belgian-saison-i",
     "name": "White Labs WLP565 Belgian Saison I",
     "manufacturer": "White Labs",
@@ -1371,10 +1371,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Saison I strain. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "white-labs-wlp566-belgian-saison-ii": {
     "id": "white-labs-wlp566-belgian-saison-ii",
     "name": "White Labs WLP566 Belgian Saison II",
     "manufacturer": "White Labs",
@@ -1382,10 +1382,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Saison II strain. Highly attenuative, producing a dry, spicy saison profile."
   },
-  {
+  "white-labs-wlp570-belgian-golden-ale": {
     "id": "white-labs-wlp570-belgian-golden-ale",
     "name": "White Labs WLP570 Belgian Golden Ale",
     "manufacturer": "White Labs",
@@ -1393,10 +1393,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Golden Ale strain. Produces a rich, fruity, and phenolic Belgian strong ale profile."
   },
-  {
+  "white-labs-wlp644-saccharomyces-bruxellensis-trois": {
     "id": "white-labs-wlp644-saccharomyces-bruxellensis-trois",
     "name": "White Labs WLP644 Saccharomyces Bruxellensis Trois",
     "manufacturer": "White Labs",
@@ -1404,10 +1404,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Saccharomyces Bruxellensis Trois. Produces a fruity, tropical, and slightly funky profile."
   },
-  {
+  "white-labs-wlp650-brettanomyces-bruxellensis": {
     "id": "white-labs-wlp650-brettanomyces-bruxellensis",
     "name": "White Labs WLP650 Brettanomyces Bruxellensis",
     "manufacturer": "White Labs",
@@ -1415,10 +1415,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brettanomyces Bruxellensis. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "white-labs-wlp653-brettanomyces-lambicus": {
     "id": "white-labs-wlp653-brettanomyces-lambicus",
     "name": "White Labs WLP653 Brettanomyces Lambicus",
     "manufacturer": "White Labs",
@@ -1426,10 +1426,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brettanomyces Lambicus. Produces classic horsey, smoky, and cherry-pie phenolics."
   },
-  {
+  "white-labs-wlp677-lactobacillus-delbrueckii": {
     "id": "white-labs-wlp677-lactobacillus-delbrueckii",
     "name": "White Labs WLP677 Lactobacillus Delbrueckii",
     "manufacturer": "White Labs",
@@ -1437,10 +1437,10 @@
     "low_attenuation": 0.465,
     "high_attenuation": 0.535,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 5.0,
+    "alcohol_tolerance_abv": 5,
     "notes": "Lactobacillus delbrueckii. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "white-labs-wlp800-pilsner-lager": {
     "id": "white-labs-wlp800-pilsner-lager",
     "name": "White Labs WLP800 Pilsner Lager",
     "manufacturer": "White Labs",
@@ -1448,10 +1448,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Pilsner Lager strain. Clean, crisp, and slightly sulfurous. Ideal for Bohemian pilsners."
   },
-  {
+  "white-labs-wlp802-czech-budejovice-lager": {
     "id": "white-labs-wlp802-czech-budejovice-lager",
     "name": "White Labs WLP802 Czech Budejovice Lager",
     "manufacturer": "White Labs",
@@ -1459,10 +1459,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Czech Budejovice Lager strain. Clean, crisp, and slightly malty. Ideal for Czech pilsners."
   },
-  {
+  "white-labs-wlp810-san-francisco-lager": {
     "id": "white-labs-wlp810-san-francisco-lager",
     "name": "White Labs WLP810 San Francisco Lager",
     "manufacturer": "White Labs",
@@ -1470,10 +1470,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "San Francisco Lager strain. Ferments cleanly at ale temperatures. Ideal for California common."
   },
-  {
+  "white-labs-wlp820-oktoberfest-marzen-lager": {
     "id": "white-labs-wlp820-oktoberfest-marzen-lager",
     "name": "White Labs WLP820 Oktoberfest/Marzen Lager",
     "manufacturer": "White Labs",
@@ -1481,10 +1481,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Oktoberfest/Marzen Lager strain. Clean, malty, and slightly sulfurous. Ideal for marzens."
   },
-  {
+  "white-labs-wlp830-german-lager": {
     "id": "white-labs-wlp830-german-lager",
     "name": "White Labs WLP830 German Lager",
     "manufacturer": "White Labs",
@@ -1492,10 +1492,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "German Lager strain. Clean, crisp, and slightly sulfurous. Ideal for German lagers."
   },
-  {
+  "white-labs-wlp833-german-bock-lager": {
     "id": "white-labs-wlp833-german-bock-lager",
     "name": "White Labs WLP833 German Bock Lager",
     "manufacturer": "White Labs",
@@ -1503,10 +1503,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "German Bock Lager strain. Clean, malty, and slightly sulfurous. Ideal for bocks and doppelbocks."
   },
-  {
+  "white-labs-wlp838-southern-german-lager": {
     "id": "white-labs-wlp838-southern-german-lager",
     "name": "White Labs WLP838 Southern German Lager",
     "manufacturer": "White Labs",
@@ -1514,10 +1514,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Southern German Lager strain. Clean, malty, and slightly sulfurous. Ideal for Bavarian lagers."
   },
-  {
+  "white-labs-wlp840-american-lager": {
     "id": "white-labs-wlp840-american-lager",
     "name": "White Labs WLP840 American Lager",
     "manufacturer": "White Labs",
@@ -1525,10 +1525,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "American Lager strain. Clean, crisp, and neutral. Ideal for light lagers."
   },
-  {
+  "white-labs-wlp940-mexican-lager": {
     "id": "white-labs-wlp940-mexican-lager",
     "name": "White Labs WLP940 Mexican Lager",
     "manufacturer": "White Labs",
@@ -1536,10 +1536,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Mexican Lager strain. Clean, crisp, and slightly malty. Ideal for Mexican lagers."
   },
-  {
+  "wyeast-1007-german-ale": {
     "id": "wyeast-1007-german-ale",
     "name": "Wyeast 1007 German Ale",
     "manufacturer": "Wyeast",
@@ -1547,10 +1547,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 11.0,
+    "alcohol_tolerance_abv": 11,
     "notes": "Altbier and German ale strain. Ferments dry and crisp, producing a well-balanced profile with slight sulfur notes."
   },
-  {
+  "wyeast-1010-american-wheat": {
     "id": "wyeast-1010-american-wheat",
     "name": "Wyeast 1010 American Wheat",
     "manufacturer": "Wyeast",
@@ -1558,10 +1558,10 @@
     "low_attenuation": 0.7068,
     "high_attenuation": 0.8132,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Produces a slightly tart, crisp, American wheat beer profile with a dry finish and low flocculation."
   },
-  {
+  "wyeast-1028-london-ale": {
     "id": "wyeast-1028-london-ale",
     "name": "Wyeast 1028 London Ale",
     "manufacturer": "Wyeast",
@@ -1569,10 +1569,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Rich, minerally, and slightly fruity English ale strain. Classic for London-style porters and stouts."
   },
-  {
+  "wyeast-1056-american-ale": {
     "id": "wyeast-1056-american-ale",
     "name": "Wyeast 1056 American Ale",
     "manufacturer": "Wyeast",
@@ -1580,10 +1580,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "The quintessential American ale strain. Clean, crisp, and neutral, allowing hops and malt to shine."
   },
-  {
+  "wyeast-1084-irish-ale": {
     "id": "wyeast-1084-irish-ale",
     "name": "Wyeast 1084 Irish Ale",
     "manufacturer": "Wyeast",
@@ -1591,10 +1591,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Smooth, slightly fruity Irish ale strain. Ideal for dry Irish stouts and red ales."
   },
-  {
+  "wyeast-1098-british-ale": {
     "id": "wyeast-1098-british-ale",
     "name": "Wyeast 1098 British Ale",
     "manufacturer": "Wyeast",
@@ -1602,10 +1602,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Classic British ale strain producing malty, fruity beers with a clean finish."
   },
-  {
+  "wyeast-1099-whitbread-ale": {
     "id": "wyeast-1099-whitbread-ale",
     "name": "Wyeast 1099 Whitbread Ale",
     "manufacturer": "Wyeast",
@@ -1613,10 +1613,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Whitbread strain. Balanced, slightly fruity, and well-suited to English pale ales and bitters."
   },
-  {
+  "wyeast-1187-ringwood-ale": {
     "id": "wyeast-1187-ringwood-ale",
     "name": "Wyeast 1187 Ringwood Ale",
     "manufacturer": "Wyeast",
@@ -1624,10 +1624,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Ringwood strain. Produces a distinctive fruity, estery profile with a full body."
   },
-  {
+  "wyeast-1272-american-ale-ii": {
     "id": "wyeast-1272-american-ale-ii",
     "name": "Wyeast 1272 American Ale II",
     "manufacturer": "Wyeast",
@@ -1635,10 +1635,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Slightly more fruity and flocculent than 1056. Excellent for American IPAs and pale ales."
   },
-  {
+  "wyeast-1275-thames-valley-ale": {
     "id": "wyeast-1275-thames-valley-ale",
     "name": "Wyeast 1275 Thames Valley Ale",
     "manufacturer": "Wyeast",
@@ -1646,10 +1646,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Traditional Thames Valley strain. Rich, malty, and slightly fruity with a clean finish."
   },
-  {
+  "wyeast-1318-london-ale-iii": {
     "id": "wyeast-1318-london-ale-iii",
     "name": "Wyeast 1318 London Ale III",
     "manufacturer": "Wyeast",
@@ -1657,10 +1657,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Boddingtons strain. Produces a soft, full-bodied, slightly sweet English ale profile."
   },
-  {
+  "wyeast-1332-northwest-ale": {
     "id": "wyeast-1332-northwest-ale",
     "name": "Wyeast 1332 Northwest Ale",
     "manufacturer": "Wyeast",
@@ -1668,10 +1668,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Northwest ale strain. Clean, malty, and well-balanced with good flocculation."
   },
-  {
+  "wyeast-1335-british-ale-ii": {
     "id": "wyeast-1335-british-ale-ii",
     "name": "Wyeast 1335 British Ale II",
     "manufacturer": "Wyeast",
@@ -1679,10 +1679,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "British Ale II. Malty, slightly fruity, and highly flocculent."
   },
-  {
+  "wyeast-1450-dennys-favorite-50": {
     "id": "wyeast-1450-dennys-favorite-50",
     "name": "Wyeast 1450 Denny's Favorite 50",
     "manufacturer": "Wyeast",
@@ -1690,10 +1690,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Wyeast 1450 Denny's Favorite 50 (Wyeast). Traditional brewing yeast strain."
   },
-  {
+  "wyeast-1469-west-yorkshire-ale": {
     "id": "wyeast-1469-west-yorkshire-ale",
     "name": "Wyeast 1469 West Yorkshire Ale",
     "manufacturer": "Wyeast",
@@ -1701,10 +1701,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Timothy Taylor strain. Produces a distinctive fruity, malty Yorkshire ale profile."
   },
-  {
+  "wyeast-1728-scottish-ale": {
     "id": "wyeast-1728-scottish-ale",
     "name": "Wyeast 1728 Scottish Ale",
     "manufacturer": "Wyeast",
@@ -1712,10 +1712,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Scottish ale strain. Clean, malty, and slightly smoky. Ideal for Scottish ales and wee heavies."
   },
-  {
+  "wyeast-1968-london-esb-ale": {
     "id": "wyeast-1968-london-esb-ale",
     "name": "Wyeast 1968 London ESB Ale",
     "manufacturer": "Wyeast",
@@ -1723,10 +1723,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Fullers strain. Rich, malty, and highly flocculent. Classic for London ESB and bitters."
   },
-  {
+  "wyeast-2007-pilsen-lager": {
     "id": "wyeast-2007-pilsen-lager",
     "name": "Wyeast 2007 Pilsen Lager",
     "manufacturer": "Wyeast",
@@ -1734,10 +1734,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Classic Pilsen lager strain. Clean, crisp, and slightly sulfurous. Ideal for Bohemian pilsners."
   },
-  {
+  "wyeast-2035-american-lager": {
     "id": "wyeast-2035-american-lager",
     "name": "Wyeast 2035 American Lager",
     "manufacturer": "Wyeast",
@@ -1745,10 +1745,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "American lager strain. Clean, crisp, and neutral. Ideal for light lagers and steam beers."
   },
-  {
+  "wyeast-2042-danish-lager": {
     "id": "wyeast-2042-danish-lager",
     "name": "Wyeast 2042 Danish Lager",
     "manufacturer": "Wyeast",
@@ -1756,10 +1756,10 @@
     "low_attenuation": 0.7068,
     "high_attenuation": 0.8132,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Danish lager strain. Clean, crisp, and slightly malty. Ideal for European lagers."
   },
-  {
+  "wyeast-2112-california-lager": {
     "id": "wyeast-2112-california-lager",
     "name": "Wyeast 2112 California Lager",
     "manufacturer": "Wyeast",
@@ -1767,10 +1767,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "High",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "California lager strain. Ferments cleanly at ale temperatures. Ideal for California common."
   },
-  {
+  "wyeast-2124-bohemian-lager": {
     "id": "wyeast-2124-bohemian-lager",
     "name": "Wyeast 2124 Bohemian Lager",
     "manufacturer": "Wyeast",
@@ -1778,10 +1778,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Bohemian lager strain. Clean, crisp, and slightly malty. Ideal for Czech pilsners."
   },
-  {
+  "wyeast-2206-bavarian-lager": {
     "id": "wyeast-2206-bavarian-lager",
     "name": "Wyeast 2206 Bavarian Lager",
     "manufacturer": "Wyeast",
@@ -1789,10 +1789,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Bavarian lager strain. Clean, malty, and slightly sulfurous. Ideal for German lagers."
   },
-  {
+  "wyeast-2278-czech-pils": {
     "id": "wyeast-2278-czech-pils",
     "name": "Wyeast 2278 Czech Pils",
     "manufacturer": "Wyeast",
@@ -1800,10 +1800,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Czech Pils strain. Clean, crisp, and slightly diacetyl-producing. Ideal for Czech pilsners."
   },
-  {
+  "wyeast-2308-munich-lager": {
     "id": "wyeast-2308-munich-lager",
     "name": "Wyeast 2308 Munich Lager",
     "manufacturer": "Wyeast",
@@ -1811,10 +1811,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Munich lager strain. Clean, malty, and slightly sulfurous. Ideal for Munich lagers and bocks."
   },
-  {
+  "wyeast-2565-kolsch": {
     "id": "wyeast-2565-kolsch",
     "name": "Wyeast 2565 Kolsch",
     "manufacturer": "Wyeast",
@@ -1822,10 +1822,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Kolsch strain. Produces a clean, crisp, slightly fruity ale profile. Ideal for Kolsch and altbier."
   },
-  {
+  "wyeast-3068-weihenstephan-weizen": {
     "id": "wyeast-3068-weihenstephan-weizen",
     "name": "Wyeast 3068 Weihenstephan Weizen",
     "manufacturer": "Wyeast",
@@ -1833,10 +1833,10 @@
     "low_attenuation": 0.6789,
     "high_attenuation": 0.7811,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Weihenstephan Weizen strain. Produces classic banana and clove phenolics. Ideal for Bavarian hefeweizens."
   },
-  {
+  "wyeast-3278-belgian-lambic-blend": {
     "id": "wyeast-3278-belgian-lambic-blend",
     "name": "Wyeast 3278 Belgian Lambic Blend",
     "manufacturer": "Wyeast",
@@ -1844,10 +1844,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian lambic blend. Contains Saccharomyces, Brettanomyces, and lactic acid bacteria. Ideal for lambic and gueuze."
   },
-  {
+  "wyeast-3522-belgian-ardennes": {
     "id": "wyeast-3522-belgian-ardennes",
     "name": "Wyeast 3522 Belgian Ardennes",
     "manufacturer": "Wyeast",
@@ -1855,10 +1855,10 @@
     "low_attenuation": 0.6975,
     "high_attenuation": 0.8025,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Ardennes strain. Produces a spicy, phenolic, and slightly fruity Belgian ale profile."
   },
-  {
+  "wyeast-3711-french-saison": {
     "id": "wyeast-3711-french-saison",
     "name": "Wyeast 3711 French Saison",
     "manufacturer": "Wyeast",
@@ -1866,10 +1866,10 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "French Saison strain. Highly attenuative, producing a dry, spicy, and slightly tart saison profile."
   },
-  {
+  "wyeast-3724-belgian-saison": {
     "id": "wyeast-3724-belgian-saison",
     "name": "Wyeast 3724 Belgian Saison",
     "manufacturer": "Wyeast",
@@ -1877,10 +1877,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Belgian Saison strain. Produces a spicy, phenolic, and highly attenuative saison profile."
   },
-  {
+  "wyeast-3787-trappist-high-gravity": {
     "id": "wyeast-3787-trappist-high-gravity",
     "name": "Wyeast 3787 Trappist High Gravity",
     "manufacturer": "Wyeast",
@@ -1888,10 +1888,10 @@
     "low_attenuation": 0.7254,
     "high_attenuation": 0.8346,
     "flocculation": "Medium",
-    "alcohol_tolerance_abv": 14.0,
+    "alcohol_tolerance_abv": 14,
     "notes": "Trappist High Gravity strain. Produces a rich, fruity, and phenolic Belgian ale profile."
   },
-  {
+  "wyeast-3944-belgian-witbier": {
     "id": "wyeast-3944-belgian-witbier",
     "name": "Wyeast 3944 Belgian Witbier",
     "manufacturer": "Wyeast",
@@ -1899,10 +1899,10 @@
     "low_attenuation": 0.6882,
     "high_attenuation": 0.7918,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 10.0,
+    "alcohol_tolerance_abv": 10,
     "notes": "Belgian Witbier strain. Produces a spicy, phenolic, and slightly tart witbier profile."
   },
-  {
+  "wyeast-5335-lactobacillus": {
     "id": "wyeast-5335-lactobacillus",
     "name": "Wyeast 5335 Lactobacillus",
     "manufacturer": "Wyeast",
@@ -1910,10 +1910,10 @@
     "low_attenuation": 0.465,
     "high_attenuation": 0.535,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 5.0,
+    "alcohol_tolerance_abv": 5,
     "notes": "Lactobacillus delbrueckii. Produces clean lactic acid for Berliner weisse and kettle sours."
   },
-  {
+  "wyeast-5526-brettanomyces-lambicus": {
     "id": "wyeast-5526-brettanomyces-lambicus",
     "name": "Wyeast 5526 Brettanomyces Lambicus",
     "manufacturer": "Wyeast",
@@ -1921,7 +1921,7 @@
     "low_attenuation": 0.744,
     "high_attenuation": 0.856,
     "flocculation": "Low",
-    "alcohol_tolerance_abv": 12.0,
+    "alcohol_tolerance_abv": 12,
     "notes": "Brettanomyces lambicus. Produces classic horsey, smoky, and cherry-pie phenolics."
   }
-]
+}

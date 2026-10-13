@@ -109,10 +109,13 @@ The fallback math is preserved as functions `alkalinity_from_bicarbonate` /
 **Resolution:** pre-existing exemplar quirk retained (do-not-break-consumers); dimensions are
 unambiguous but the stored scale for ABV-style percentages is a whole-percent number.
 
-### C14 — boundary serialization units
-Salt additions are emitted in grams (`*_g`) and milliliters (`acid_ml`); artifact declares
-dimension `mass`/`volume` (base kg/L). The specific g/mL unit is the boundary's serialization
-unit, not a dimension. `ml` unit added to the `volume` dimension for completeness.
+### C14 — boundary serialization units  [resolved in Step G]
+Salt additions were emitted in grams (`*_g`) and milliliters (`acid_ml`) while the
+artifact declared dimension `mass`/`volume` (base kg/L). **Resolution:** the
+boundary now serializes in base units — `gypsum_kg`, `cacl2_kg`, `epsom_kg`,
+`nacl_kg`, `acid_l`, `baking_soda_kg`, `chalk_kg`, `pickling_lime_kg`. The sealed
+`core/water.py` still computes grams/mL internally; `water_solver_service.py`
+converts to kg/L at the boundary (`/ 1000`). `ml` remains a `volume` display unit.
 
 ### C15 — `equipment.profile` overlay `{mash_tun_mass_kg: 7.5}`
 This is the exemplar's demonstration batch-scoped override. **Resolution:** retained verbatim

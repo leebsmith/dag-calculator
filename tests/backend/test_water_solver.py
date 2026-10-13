@@ -85,9 +85,9 @@ def test_solve_water_flavor_end_to_end():
     resp = solve_water_request(make_water_request())
     assert resp.prescription.predicted_mash_ph > 0.0
     assert resp.prescription.mash_ph_status in MashPhStatus
-    assert resp.mash_additions.gypsum_g >= 0.0
-    assert resp.mash_additions.cacl2_g >= 0.0
-    assert resp.mash_additions.acid_ml >= 0.0
+    assert resp.mash_additions.gypsum_kg >= 0.0
+    assert resp.mash_additions.cacl2_kg >= 0.0
+    assert resp.mash_additions.acid_l >= 0.0
     ions = resp.post_salt_mash_ions
     for field in ("calcium_ca", "magnesium_mg", "sodium_na",
                   "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"):
@@ -104,7 +104,7 @@ def test_solve_water_calcium_floor_end_to_end():
 def test_salt_form_normalization():
     # Schema default "dihydrate" must map to core "GYPSUM_DIHYDRATE".
     resp = solve_water_request(make_water_request())
-    assert resp.mash_additions.gypsum_g > 0.0
+    assert resp.mash_additions.gypsum_kg > 0.0
 
 
 def test_service_unknown_salt_form():
