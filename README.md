@@ -45,3 +45,33 @@ artifact migration. See [`docs/historical/README.md`](docs/historical/README.md)
 (`node scripts/emit-artifact-inventory.mjs`) and checked by the
 `artifact-docs-sync` guard in `make test` — so an artifact change that isn't
 re-synced into the inventory fails the gate.
+
+## Maintaining the docs
+
+The **mechanical** half of doc drift is guarded; the **prose** half is a manual
+discipline. After any change to `data/artifact.json`:
+
+1. **Re-sync the inventory** (the guard forces this):
+   ```bash
+   node scripts/emit-artifact-inventory.mjs
+   ```
+2. **Grep the prose** for what you touched, and update the narrative that still
+   describes the old model:
+   ```bash
+   grep -rn "<id | field | taxonomy | function>" docs/dag-artifacts/ docs/engine.md
+   ```
+3. **Update the right prose doc** — a rough map:
+
+   | Artifact change | Prose doc(s) |
+   |---|---|
+   | dimension / unit | `dimensions.md` |
+   | primitive_schema | `seed-substrate.md` §2 |
+   | function / constant / equation | `domain-equations.md` (+ `expression-language.md` for a new construct) |
+   | node kind or shape | `grammar.md` + `semantics.md` |
+   | invariant / model rule | `semantics.md` |
+   | `schema_version` bump | `grammar.md` §5 (inventory is auto) |
+   | engine behavior | `docs/engine.md` |
+   | taxonomy | wherever it's used (`domain-equations.md` / `seed-substrate.md`) |
+
+4. **Commit the prose with the artifact change** — a model change isn't done
+   until the prose that describes it is updated in the same commit.
