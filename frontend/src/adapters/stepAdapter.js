@@ -5,6 +5,7 @@ import artifact from "../engine/artifact.json" with { type: "json" };
 import { canonicalize, createCalculator, sha256Hex } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
+import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce } from "../views/producer.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS } from "../views/registry/units.js";
@@ -26,6 +27,7 @@ function refSlices(node, out = new Set()) {
 
 export function createStepApp() {
   const { master, ui } = createAppStore();
+  ui.unitMode = loadUnitMode(artifact);
   const cache = createReferenceCache();
   let collections = { ...cache.collections };
   let overlays = {};
@@ -188,6 +190,7 @@ export function createStepApp() {
       if (unit) ui.unitMode[dimension] = unit;
       else delete ui.unitMode[dimension];
       app.unitMode = { ...ui.unitMode };
+      saveUnitMode(ui.unitMode, artifact.schema_version);
       app.compute();
     },
 
@@ -205,6 +208,7 @@ export function createStepApp() {
       if (next === dimDefault) delete ui.unitMode[field.id];
       else ui.unitMode[field.id] = next;
       app.unitMode = { ...ui.unitMode };
+      saveUnitMode(ui.unitMode, artifact.schema_version);
       app.compute();
     },
 
