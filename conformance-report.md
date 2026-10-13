@@ -35,12 +35,13 @@ See `validation-report.md` §2: `solver.batch` 17 in / 19 out / 13 codes;
 `solver.water` 26 in / 31 out / 10 codes — exact field-for-field match.
 
 ## 4. Expected / documented deltas (not failures)
-- **Color:** legacy used a flat `EBC = 1.97·L` approximation; the artifact (schema
-  v3) splits color into `grain_color` (Lovibond) and `beer_color` (SRM), each
-  linear `EBC = 1.97·` — and the finished-beer color uses the MCU→Morey power law
-  (`morey_mcu_to_srm`, `1.4922·MCU^0.6859`), asserted directly against the
-  reference formulas. The single-malt `morey_lovibond_to_srm` bridge was removed
-  (v2→v3); see `dimensions.md` §3.2.
+- **Color:** legacy used a flat `EBC = 1.97·Lovibond` (treating °L ≈ SRM); schema
+  v3 converges on that ×1.97 ratio, splitting it into two linear dimensions —
+  `grain_color` (`EBC = 1.97 × °L`) and `beer_color` (`EBC = 1.97 × SRM`) — and
+  derives finished-beer color via the MCU→Morey power law (`morey_mcu_to_srm`,
+  `1.4922·MCU^0.6859`), asserted directly against the reference formulas. The
+  v2 single-malt `morey_lovibond_to_srm` bridge (`SRM = 1.3546·L − 0.76`) was
+  removed; see `dimensions.md` §3.2.
 - **Solver extras:** the new `batch_solver.py` adds staged HLT-budget outputs not
   in the legacy path; the legacy suites exercise only the shared surface and pass.
 
