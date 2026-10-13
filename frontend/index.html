@@ -52,9 +52,6 @@
                 </div>
               </div>
             </div>
-            <button type="button" class="btn-outline" @click="openModal('rests')">
-              Configure rests
-            </button>
             <div class="menu-unit">
               <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
               <div class="unit-popover" x-show="unitsOpen" @click.outside="unitsOpen = false">
@@ -124,58 +121,6 @@
             <span x-text="violationCount + ' violation(s)'"></span>
           </span>
         </footer>
-
-        <template x-if="modal === 'rests'">
-          <div class="modal-backdrop" @click.self="closeModal()">
-            <div class="modal-dialog">
-              <div class="modal-header">
-                <h3 class="modal-title">Configure Rests</h3>
-                <button type="button" class="btn-close" @click="closeModal()">×</button>
-              </div>
-              <div class="modal-body">
-                <template
-                  x-for="f in fieldsBySlice.mash.filter((x) => x.control === 'collection-table')"
-                  :key="f.id"
-                >
-                  <div>
-                    <span class="form-label" x-text="f.label"></span>
-                    <div class="data-table-container">
-                      <table class="data-table">
-                        <thead>
-                          <tr>
-                            <template x-for="c in f.columns" :key="c.id">
-                              <th x-text="c.label"></th>
-                            </template>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <template x-for="(row, ri) in f.rows" :key="ri">
-                            <tr>
-                              <template x-for="c in f.columns" :key="c.id">
-                                <td>
-                                  <input
-                                    class="form-input"
-                                    :value="row[c.id]"
-                                    @input="editCell(f, ri, c.id, $event.target.value)"
-                                  />
-                                </td>
-                              </template>
-                              <td>
-                                <button type="button" class="btn-link" @click="removeRow(f, ri)">×</button>
-                              </td>
-                            </tr>
-                          </template>
-                        </tbody>
-                      </table>
-                    </div>
-                    <button type="button" class="btn-outline" @click="addRow(f)">Add rest</button>
-                  </div>
-                </template>
-              </div>
-            </div>
-          </div>
-        </template>
       </div>
     </main>
   </body>

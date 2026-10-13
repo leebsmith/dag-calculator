@@ -53,7 +53,6 @@ export function createStepApp() {
     unitMode: ui.unitMode,
     unitsOpen: false,
     violationCount: 0,
-    modal: ui.modal,
     fieldsBySlice: {},
     relations: [],
     domains: [],
@@ -257,16 +256,6 @@ export function createStepApp() {
 
     toggleUnits() {
       app.unitsOpen = !app.unitsOpen;
-    },
-
-    openModal(name) {
-      ui.modal = name;
-      app.modal = name;
-    },
-
-    closeModal() {
-      ui.modal = null;
-      app.modal = null;
     },
 
     edit(field, value) {

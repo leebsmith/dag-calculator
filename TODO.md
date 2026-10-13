@@ -1,6 +1,14 @@
 # TODO
 
-## Next
+## Urgent
+
+- Why is "configure rests" in menu bar
+- Cards don't advance
+- Buttons don't work
+- Buttons unattractive, unstyled? 
+
+
+## Next (Don't process without confirmation)
 
 - Import BJCP JSON as a seed. Andrew Scholer's version. Need Pydantic schema
 - Dry hopping: See Pydantic schema( WetHopCard)  at https://share.gemini.google/o4oHUKhZUdyi
