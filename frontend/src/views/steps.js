@@ -140,6 +140,13 @@ export const steps = [
       "solver.water.sparge_additions.pickling_lime_kg",
     ],
   },
+  {
+    id: "dry-hops",
+    slice: "dry-hops",
+    title: "Dry Hopping",
+    partial: "./src/partials/step-card.html",
+    fields: [{ collection: "batch.dry_hops" }],
+  },
 ];
 
 export { registry };

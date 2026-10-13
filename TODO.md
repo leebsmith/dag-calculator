@@ -1,5 +1,13 @@
 # TODO
 
+## Next
+
+- Dry hopping: See Pydantic schema( WetHopCard)  at https://share.gemini.google/o4oHUKhZUdyi
+- Kettle hopping (Determines IBU.)
+- Trace additions (Influences color.)
+- Unit scaling: scale families + auto-display (`plans/unit-scaling.md`)
+
+
 ## Lazy-load seed data
 
 `frontend/src/store/referenceCache.js` currently `import`s all seed files, which

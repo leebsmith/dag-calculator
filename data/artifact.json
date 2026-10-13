@@ -28,7 +28,14 @@
     "time": {
       "base_unit": "min",
       "kind": "linear",
-      "units": {}
+      "units": {
+        "hr": {
+          "factor": 60
+        },
+        "day": {
+          "factor": 1440
+        }
+      }
     },
     "volume": {
       "base_unit": "L",
@@ -367,6 +374,24 @@
       "alpha_amylase",
       "beta_alpha_amylase",
       "mash_out"
+    ],
+    "wet_hop_product_type": [
+      "raw_whole_cones",
+      "frozen_whole_cones",
+      "map_whole_cones",
+      "liquid_extract",
+      "cryo_powder",
+      "terpene_isolate"
+    ],
+    "wet_hop_application_stage": [
+      "whirlpool",
+      "active_fermentation",
+      "cold_side"
+    ],
+    "hop_unit": [
+      "oz",
+      "g",
+      "ml"
     ]
   },
   "functions": {
@@ -1236,6 +1261,26 @@
           "gte": 0
         },
         "default": 50
+      },
+      "notes": {}
+    },
+    "dry_hop_row": {
+      "product_type": {
+        "taxonomy": "wet_hop_product_type"
+      },
+      "variety": {},
+      "quantity": {
+        "dimension": "dimensionless"
+      },
+      "unit": {
+        "taxonomy": "hop_unit"
+      },
+      "application_stage": {
+        "taxonomy": "wet_hop_application_stage"
+      },
+      "time_of_application": {},
+      "contact_duration_hours": {
+        "dimension": "time"
       },
       "notes": {}
     }
@@ -2118,6 +2163,10 @@
       "output": {
         "taxonomy": "ph_status"
       }
+    },
+    "batch.dry_hops": {
+      "kind": "collection",
+      "item_schema": "dry_hop_row"
     }
   },
   "relations": [

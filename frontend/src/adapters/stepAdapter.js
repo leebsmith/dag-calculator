@@ -2,7 +2,7 @@
 // field models; ONLY this adapter + the producer touch the engine. Boundary stubs
 // are the default offline seam (HTTP is Step D's path).
 import artifact from "../engine/artifact.json" with { type: "json" };
-import { canonicalize, createCalculator, sha256Hex } from "../engine/index.js";
+import { canonicalize, createCalculator, sha256Hex, toBase } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
@@ -331,8 +331,14 @@ export function createStepApp() {
     },
 
     editCell(field, rowIndex, columnId, value) {
+      const column = field.columns.find((c) => c.id === columnId);
+      // Convert a display-unit cell back to the base unit before storing.
+      let raw = value;
+      if (value !== "" && column?.dimension && column?.displayUnit) {
+        raw = toBase(artifact, column.dimension, column.displayUnit, Number(value));
+      }
       const rows = (engine.get(field.target.nodeId) ?? []).map((row, i) =>
-        i === rowIndex ? { ...row, [columnId]: value } : row
+        i === rowIndex ? { ...row, [columnId]: raw } : row
       );
       engine.setCollection(field.target.nodeId, rows);
       app.compute();

@@ -73,10 +73,16 @@ function collectionField(artifact, registry, step, entry) {
     throw new Error(`Unknown collection "${entry.collection}"`);
   }
   const schema = artifact.primitive_schemas[node.item_schema] ?? {};
-  const columns = (entry.columns ?? Object.keys(schema)).map((c) => ({
-    id: c,
-    label: registry[`${entry.collection}.${c}`]?.label ?? c,
-  }));
+  const columns = (entry.columns ?? Object.keys(schema)).map((c) => {
+    const spec = schema[c] ?? {};
+    const meta = registry[`${entry.collection}.${c}`] ?? {};
+    return {
+      id: c,
+      label: meta.label ?? c,
+      dimension: spec.dimension ?? null,
+      displayUnit: meta.displayUnit ?? null,
+    };
+  });
   return {
     id: entry.collection,
     slice: step.slice,
@@ -183,7 +189,19 @@ export function valuate(fields, engine, ctx = {}) {
       // reference root names a real component (default "" is "none chosen").
       if (field.selectionRef && engine.get(field.selectionRef) === "") return null;
       if (field.control === "collection-table") {
-        return { ...field, rows: (engine.get(field.id) ?? []).map((r) => ({ ...r })) };
+        // Display-only column conversion: a column with a registry `displayUnit`
+        // renders in that unit; the canonical value stays base in the engine.
+        const rows = (engine.get(field.id) ?? []).map((r) => ({ ...r }));
+        const displayRows = rows.map((row) => {
+          const out = { ...row };
+          for (const col of field.columns) {
+            if (col.displayUnit && col.dimension && typeof row[col.id] === "number") {
+              out[col.id] = fromBase(artifact, col.dimension, col.displayUnit, row[col.id], nl);
+            }
+          }
+          return out;
+        });
+        return { ...field, rows: displayRows };
       }
       const value = engine.resolve(field.id);
       const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
