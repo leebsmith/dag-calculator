@@ -74,8 +74,9 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 - `water_report` — `{ report_id, date_reported, calcium_ca, magnesium_mg,
   sodium_na, sulfate_so4, chloride_cl, total_alkalinity_caco3,
   bicarbonate_hco3, ph }` (ions in ppm).
-- `water_target` — `{ id, ions (six working ions), sulfate_chloride_ratio,
-  calcium_floor_ppm }` (presets like RO/Distilled, Balanced Pale, Hoppy/IPA…).
+- `water_target` — `{ id, name, description, calcium_ca, magnesium_mg, sodium_na,
+  sulfate_so4, chloride_cl, alkalinity_as_caco3, sulfate_chloride_ratio,
+  calcium_floor_ppm, notes }` (presets like RO/Distilled, Balanced Pale, Hoppy/IPA…).
 
 ---
 

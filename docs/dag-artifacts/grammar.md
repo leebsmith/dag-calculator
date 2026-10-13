@@ -223,7 +223,7 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **2**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **3**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `nodes` (all objects), and `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.

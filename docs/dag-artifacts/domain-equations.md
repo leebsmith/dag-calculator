@@ -172,7 +172,7 @@ The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 |---|---|
 | `strategy` | taxonomy |
 | `prescription` `{ predicted_mash_ph, mash_ph_status, residual_hlt_water_l, sparge_tannin_warning }` | ph / taxonomy / volume / boolean |
-| `mash_additions` `{ gypsum_g, cacl2_g, epsom_g, nacl_g, acid_ml, (baking_soda_g \| chalk_g \| pickling_lime_g) }` | mass / volume |
+| `mash_additions` `{ gypsum_kg, cacl2_kg, epsom_kg, nacl_kg, acid_l, (baking_soda_kg \| chalk_kg \| pickling_lime_kg) }` | mass / volume |
 | `sparge_additions` `{ … }` | mass / volume |
 | `post_salt_mash_ions` | ions |
 | `grist_buckets_kg` | mass (per grain type) |
