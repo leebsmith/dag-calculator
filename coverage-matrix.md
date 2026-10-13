@@ -132,7 +132,8 @@ Key to ownership columns:
 
 | Field | Artifact element |
 |---|---|
-| `name`, `water_profile_id`, `hop_schedule`, `fermentation_schedule`, `dry_hops` | excluded (batch identity / not-implemented placeholders) |
+| `name`, `water_profile_id`, `hop_schedule`, `fermentation_schedule` | excluded (batch identity / not-implemented placeholders) |
+| `dry_hops` | `batch.dry_hops` collection (`dry_hop_row` schema; description-only, no computation) |
 | `equipment` (full object) | `equipment.profile` selection (full-copy; see gap C16) |
 | `target_og`, `preboil_*`, `postboil_*`, `m_grist`, `mash_thickness_l_per_kg` | excluded (denormalized solver cache) |
 | `grain_bill`, `late_additions`, `mash`, `water`, `yeast_id`, `yeast_attenuation_pct` | mapped above |

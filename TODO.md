@@ -2,10 +2,12 @@
 
 ## Next
 
+- Import BJCP JSON as a seed. Andrew Scholer's version. Need Pydantic schema
 - Dry hopping: See Pydantic schema( WetHopCard)  at https://share.gemini.google/o4oHUKhZUdyi
 - Kettle hopping (Determines IBU.)
 - Trace additions (Influences color.)
 - Unit scaling: scale families + auto-display (`plans/unit-scaling.md`)
+- Add IBU / SRM / Style to batch data. Gate up front on mismatch
 
 
 ## Lazy-load seed data

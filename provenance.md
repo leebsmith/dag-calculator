@@ -9,7 +9,7 @@ seeds > legacy partials/stores > grammar docs.
 | id | source |
 |---|---|
 | `temperature`, `temperature_delta`, `volume`, `mass`, `gravity`, `grain_color`, `beer_color`, `specific_heat`, `mash_thickness`, `ph`, `concentration`, `percentage`, `reference`, `dimensionless` | exemplar `artifact.json` + `dimensions.md` |
-| `time` (min) | `dimensions.md` §2 (base dimension) |
+| `time` (min; `hr`=60, `day`=1440) | `dimensions.md` §2 (base dimension) |
 | `extract_yield` (L·°/kg; gal·°/lb=8.3454) | `dimensions.md` §4 + `constants.js` `SUCROSE_YIELD_LDK`/`LDK_PPG_CONVERSION_FACTOR` |
 | `total_extract` (L·°; gal·pts=3.785411784) | `dimensions.md` §4 |
 | `volume.units.ml` (0.001) | display unit (mass/volume SI sub-multiples; boundary emits base L since Step G) |
@@ -56,6 +56,7 @@ seeds > legacy partials/stores > grammar docs.
 | `gypsum_form`, `cacl2_form` | `water.py` `SALT_COEFFS` keys + legacy `SaltForm` enum |
 | `flocculation` | `data/seeds/yeasts.json` distinct values (`Low`/`Medium`/`High`) |
 | `mash_rest` | `mashSchedule.js` `CANONICAL_RESTS` + `DOUGH_IN_REST` + `MASH_OUT_REST` |
+| `wet_hop_product_type`, `wet_hop_application_stage`, `hop_unit` | user-provided `WetHopCard` schema (`plans/dry-hopping.md`) |
 
 ## Functions
 
@@ -87,6 +88,7 @@ seeds > legacy partials/stores > grammar docs.
 | `water_grist_row` | `boundary.py::WaterGristRow` |
 | `water_report` | legacy `water.py::WaterReport` + `data/seeds/water_reports.json` (21 fields) |
 | `water_target` | legacy `water.py::WaterTargetProfile` + `data/seeds/water_target_profiles.json` (flat ions; normalized to id-keyed maps in Step G) |
+| `dry_hop_row` | user-provided `WetHopCard` schema (`plans/dry-hopping.md`; adds free-text `variety`) |
 
 ## Nodes (by slice)
 
@@ -116,6 +118,7 @@ seeds > legacy partials/stores > grammar docs.
 | `grist.weighted_yield_fraction`, `grist.extract_yield_ldk` | `maltGridStore.js::weightedYield` (+ `pureFunctions.js`) |
 | `grist.mcu`, `grist.finished_beer_srm` | `srm-ebc-and-lovibond-reference.md` (MCU→Morey finished-beer color) |
 | `batch.s_late_add` | `lateAdditionsStore.js::totalExtractMassKg` + `domain-equations.md` §1.4 |
+| `batch.dry_hops` | user-provided `WetHopCard` collection (`plans/dry-hopping.md`; isolated — no inputs/dependents) |
 | `batch.delta_v_evap` | `batchSolverCard.js` (`boil_off_rate × boil_time/60`) |
 | `water.v_mash_treat_l`, `water.v_sparge_demand_l`, `water.v_hlt_debt_l`, `water.mash_thickness_l_per_kg` | `waterChemistry.js::buildWaterRequest` (identity from batch solver outputs) |
 | `water.mash_ph_status` | exemplar (`mash_ph_status` over `predicted_mash_ph`) |
