@@ -51,7 +51,16 @@ Alpine.store("recipes", {
   },
 
   async forkFrozen(id) {
-    await persistence.fork(id);
+    const drift = await persistence.driftFor(id);
+    let reconcile = "reset-to-seed";
+    if (drift.length) {
+      const reset = window.confirm(
+        `${drift.length} seed component(s) changed since this batch was frozen.\n\n` +
+          "OK — reset to current seeds\nCancel — keep the frozen values"
+      );
+      reconcile = reset ? "reset-to-seed" : "keep-custom";
+    }
+    await persistence.fork(id, reconcile);
     await this.refresh();
     this.open = false;
   },

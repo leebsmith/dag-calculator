@@ -106,6 +106,48 @@ export function createStepApp() {
       };
     },
 
+    // Compare a frozen batch's provenance hashes against the CURRENT seeds,
+    // returning the selections whose referenced component has changed (or gone
+    // missing) since freeze. Drift is explicit, never silent (seed-substrate §4).
+    detectDrift(provenance) {
+      const drift = [];
+      for (const [selectionId, p] of Object.entries(provenance ?? {})) {
+        const node = artifact.nodes[selectionId];
+        if (!node || node.kind !== "selection") continue;
+        const component = cache.references[node.schema]?.[p.source_template_id];
+        if (!component) {
+          drift.push({ selectionNodeId: selectionId, templateId: p.source_template_id, reason: "missing" });
+          continue;
+        }
+        if (sha256Hex(canonicalize(component)) !== p.source_revision) {
+          drift.push({ selectionNodeId: selectionId, templateId: p.source_template_id, reason: "changed" });
+        }
+      }
+      return drift;
+    },
+
+    // "Keep-custom" reconciliation: for drifted selections, materialize the
+    // frozen valuation's overridable fields that differ from the current seed
+    // into overlays, so the fork preserves the frozen-time values.
+    pinDrift(valuation, drift) {
+      const overlays = {};
+      for (const { selectionNodeId, templateId } of drift) {
+        const node = artifact.nodes[selectionNodeId];
+        if (!node || node.kind !== "selection") continue;
+        const schema = artifact.primitive_schemas[node.schema] ?? {};
+        const component = cache.references[node.schema]?.[templateId];
+        const frozen = valuation?.[selectionNodeId];
+        if (!component || !frozen) continue;
+        const overlay = {};
+        for (const [field, spec] of Object.entries(schema)) {
+          if (!spec.overridable) continue;
+          if (frozen[field] !== component[field]) overlay[field] = frozen[field];
+        }
+        if (Object.keys(overlay).length) overlays[selectionNodeId] = overlay;
+      }
+      return overlays;
+    },
+
     notify() {
       app.onChange?.();
     },

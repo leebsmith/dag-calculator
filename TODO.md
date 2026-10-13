@@ -25,7 +25,9 @@ All E-e1 deferrals are now **done**:
 
 ## Deferred (Step F)
 
-- F-e — drift reconcile (reset-to-seed / keep-custom) on opening a frozen batch.
+- F-e drift reconcile is **done**: on fork of a frozen batch, `detectDrift`
+  compares stored `source_revision` vs current seed hashes; the UI offers
+  reset-to-seed vs keep-custom (pins drifted overridable fields into overlays).
 
 ## Lazy-load seed data
 
