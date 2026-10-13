@@ -32,7 +32,7 @@ Examples:
 
 | id | base unit | kind | note |
 |---|---|---|---|
-| `mass` | kg | linear | lb = 0.45359237 kg, g = 0.001 kg |
+| `mass` | kg | linear | lb = 0.45359237 kg, g = 0.001 kg, oz = 0.028349523125 kg |
 | `volume` | L | linear | gal = 3.785411784 L, qt = 0.946352946 L |
 | `temperature` | °C | affine | °F = 1.8·°C + 32 |
 | `time` | min | linear | `hr` = 60, `day` = 1440 |

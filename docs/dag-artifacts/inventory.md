@@ -16,7 +16,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grain_color` | `Lovibond` | linear | `EBC` (factor 0.5076142131979695) |
 | `gravity` | `SG` | nonlinear | `Plato` (fwd sg_to_plato, inv plato_to_sg) |
 | `mash_thickness` | `L_per_kg` | linear | `qt_per_lb` (factor 2.08635) |
-| `mass` | `kg` | linear | `g` (factor 0.001), `lb` (factor 0.45359237) |
+| `mass` | `kg` | linear | `g` (factor 0.001), `lb` (factor 0.45359237), `oz` (factor 0.028349523125) |
 | `percentage` | `fraction` | linear | `pct` (factor 0.01) |
 | `ph` | `pH` | linear | — |
 | `reference` | `id` | identity | — |

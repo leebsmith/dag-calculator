@@ -6,7 +6,7 @@ export const UNIT_DIMENSIONS = [
   { id: "temperature", label: "Temperature", units: [["degC", "°C"], ["degF", "°F"]] },
   { id: "temperature_delta", label: "Temperature Δ", units: [["dC", "Δ°C"], ["dF", "Δ°F"]] },
   { id: "volume", label: "Volume", units: [["L", "L"], ["gal", "gal"], ["qt", "qt"], ["ml", "mL"]] },
-  { id: "mass", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["g", "g"]] },
+  { id: "mass", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["oz", "oz"], ["g", "g"]] },
   { id: "gravity", label: "Gravity", units: [["SG", "SG"], ["Plato", "°P"]] },
   { id: "grain_color", label: "Grain Color", units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
   { id: "beer_color", label: "Beer Color", units: [["SRM", "SRM"], ["EBC", "EBC"]] },
