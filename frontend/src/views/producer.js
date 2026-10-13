@@ -141,6 +141,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         dimension: info.dimension ?? info.taxonomy ?? null,
         label: meta.label ?? id,
         unit: meta.unit ?? null,
+        displayUnit: meta.displayUnit ?? null,
         options,
         editable,
         target,
@@ -187,8 +188,11 @@ export function valuate(fields, engine, ctx = {}) {
       const value = engine.resolve(field.id);
       const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
       // Display-only unit conversion (readouts): base value stays canonical.
-      // A per-field override wins over the per-dimension default.
-      const unitId = toggleable ? unitMode[field.id] ?? unitMode[field.dimension] ?? null : null;
+      // A per-field override wins over the per-dimension default, which wins
+      // over the registry's preferred display unit.
+      const unitId = toggleable
+        ? unitMode[field.id] ?? unitMode[field.dimension] ?? field.displayUnit ?? null
+        : null;
       const shown =
         unitId && typeof value === "number" && artifact
           ? fromBase(artifact, field.dimension, unitId, value, nl)

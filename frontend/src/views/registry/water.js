@@ -30,4 +30,22 @@ export const waterRegistry = {
 
   "solver.water.prescription.predicted_mash_ph": { label: "Predicted mash pH", unit: "pH" },
   "solver.water.prescription.mash_ph_status": { label: "Mash pH status" },
+
+  "solver.water.mash_additions.gypsum_kg": { label: "Mash gypsum", displayUnit: "g" },
+  "solver.water.mash_additions.cacl2_kg": { label: "Mash calcium chloride", displayUnit: "g" },
+  "solver.water.mash_additions.epsom_kg": { label: "Mash Epsom salt", displayUnit: "g" },
+  "solver.water.mash_additions.nacl_kg": { label: "Mash table salt", displayUnit: "g" },
+  "solver.water.mash_additions.acid_l": { label: "Mash acid", displayUnit: "ml" },
+  "solver.water.mash_additions.baking_soda_kg": { label: "Mash baking soda", displayUnit: "g" },
+  "solver.water.mash_additions.chalk_kg": { label: "Mash chalk", displayUnit: "g" },
+  "solver.water.mash_additions.pickling_lime_kg": { label: "Mash pickling lime", displayUnit: "g" },
+
+  "solver.water.sparge_additions.gypsum_kg": { label: "Sparge gypsum", displayUnit: "g" },
+  "solver.water.sparge_additions.cacl2_kg": { label: "Sparge calcium chloride", displayUnit: "g" },
+  "solver.water.sparge_additions.epsom_kg": { label: "Sparge Epsom salt", displayUnit: "g" },
+  "solver.water.sparge_additions.nacl_kg": { label: "Sparge table salt", displayUnit: "g" },
+  "solver.water.sparge_additions.acid_l": { label: "Sparge acid", displayUnit: "ml" },
+  "solver.water.sparge_additions.baking_soda_kg": { label: "Sparge baking soda", displayUnit: "g" },
+  "solver.water.sparge_additions.chalk_kg": { label: "Sparge chalk", displayUnit: "g" },
+  "solver.water.sparge_additions.pickling_lime_kg": { label: "Sparge pickling lime", displayUnit: "g" },
 };

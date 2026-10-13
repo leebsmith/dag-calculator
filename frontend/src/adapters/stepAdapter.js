@@ -195,17 +195,18 @@ export function createStepApp() {
     },
 
     // Per-field unit override: cycle the field through its dimension's units,
-    // dropping the override when it lands back on the dimension default.
+    // dropping the override when it lands back on the field's natural default
+    // (dimension default, else the registry's preferred display unit).
     toggleFieldUnit(field) {
       const dim = field.dimension;
       if (!dim) return;
       const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dim);
       if (!dimDef) return;
       const units = dimDef.units.map(([id]) => id);
-      const dimDefault = ui.unitMode[dim] ?? units[0];
-      const current = ui.unitMode[field.id] ?? dimDefault;
+      const fieldDefault = ui.unitMode[dim] ?? field.displayUnit ?? units[0];
+      const current = ui.unitMode[field.id] ?? fieldDefault;
       const next = units[(units.indexOf(current) + 1) % units.length];
-      if (next === dimDefault) delete ui.unitMode[field.id];
+      if (next === fieldDefault) delete ui.unitMode[field.id];
       else ui.unitMode[field.id] = next;
       app.unitMode = { ...ui.unitMode };
       saveUnitMode(ui.unitMode, artifact.schema_version);

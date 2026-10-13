@@ -17,14 +17,11 @@
 
 ## Deferred (E-e1)
 
-See `plans/step-E-product-views.md` E-e1 addendum:
-
-- `solver.water` salt-addition readouts (C14 now resolved — kg/L — so this is unblocked).
-
-Per-node unit preferences are **done** (per-field unit badge, cycle toggle,
-`unitMode[field.id]` override), and **unit-preference persistence is wired**
-(localStorage, schema-version stamped, sanitized on load via `store/unitPrefs.js`).
-Live-HTTP boundary **debounce + in-flight coalescing** is done (`engineAdapter.js`).
+All E-e1 deferrals are now **done**:
+- per-node unit preferences (per-field unit badge, cycle toggle, `unitMode[field.id]` override);
+- unit-preference persistence (localStorage, schema-version stamped, sanitized on load);
+- live-HTTP boundary debounce + in-flight coalescing (`engineAdapter.js`);
+- `solver.water` salt-addition readouts (mash + sparge, `g`/`ml` via registry `displayUnit`).
 
 ## Deferred (Step F)
 

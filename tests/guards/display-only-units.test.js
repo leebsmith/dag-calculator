@@ -67,3 +67,22 @@ test("A8c: per-field unit override", () => {
   assert.equal(grain().unitId, "degF");
   assert.equal(grain().customized, false);
 });
+
+// A8d: a registry `displayUnit` defaults the readout to that unit while the
+// canonical value stays in the base unit (kg/L), with no override recorded.
+test("A8d: registry displayUnit defaults the display (g/ml)", () => {
+  const app = createStepApp();
+  app.init();
+
+  const gypsum = app.fieldsBySlice.water.find((f) => f.id === "solver.water.mash_additions.gypsum_kg");
+  assert.equal(gypsum.value, 0.002, "canonical value stays kg");
+  assert.equal(gypsum.display, "2", "displays in grams by default");
+  assert.equal(gypsum.unit, "g");
+  assert.equal(gypsum.customized, false);
+
+  const acid = app.fieldsBySlice.water.find((f) => f.id === "solver.water.mash_additions.acid_l");
+  assert.equal(acid.value, 0.0005, "canonical value stays L");
+  assert.equal(acid.display, "0.5", "displays in millilitres by default");
+  assert.equal(acid.unit, "mL");
+  assert.equal(acid.customized, false);
+});
