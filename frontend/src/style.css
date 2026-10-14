@@ -778,69 +778,13 @@ samp {
   text-align: center;
 }
 
-.step-progress {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.step-progress-node {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1-5) var(--space-3);
-  border-radius: var(--radius-full);
-  border: 1px solid var(--sys-border-default);
-  background-color: var(--sys-surface-default);
-  color: var(--sys-text-secondary);
-  font-family: inherit;
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  min-height: var(--target-min-micro);
-}
-
-.step-progress-node:hover:not(:disabled) {
-  background-color: var(--sys-surface-hover);
-  color: var(--sys-text-primary);
-}
-
-.step-progress-node:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.step-progress-node.is-active {
-  border-color: var(--sys-color-action-primary);
-  color: var(--sys-text-on-action);
-  background-color: var(--sys-color-action-primary);
-}
-
-.step-progress-node.is-complete {
-  border-color: var(--sys-color-success-accent);
-  color: var(--sys-color-success-text);
-  background-color: var(--sys-color-success-subtle);
-}
-
-.step-progress-index {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: var(--radius-circle);
-  background-color: var(--sys-surface-subtle);
-  color: var(--sys-text-secondary);
-  font-weight: var(--font-weight-semibold);
-}
-
 .step-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 
-/* The x-for wrapper is the grid item (a plain block; no `display: contents`). */
+/* Wrapper for the injected step partial. */
 .step-slot {
   display: block;
 }
@@ -870,171 +814,68 @@ samp {
   box-shadow: var(--sys-shadow-md);
 }
 
-/* --- Card picker: even grid of summary tiles --- */
+/* --- Step body: a nav rail + the active step card --- */
 
-.card-grid {
+.step-body {
   flex: 1;
   min-height: 0;
-  display: grid;
+  display: flex;
   gap: var(--space-4);
 }
 
-.card-tile {
+.step-rail {
+  flex: none;
+  width: 4.5rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  overflow: hidden;
-  padding: var(--space-4);
-  text-align: left;
+  gap: var(--space-3);
+}
+
+.step-rail-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: inherit;
-  font-size: var(--text-sm);
-  color: var(--sys-text-primary);
+  font-size: var(--text-lg);
+  color: var(--sys-text-secondary);
   background-color: var(--sys-surface-default);
-  border: 1px solid var(--sys-border-subtle);
+  border: 1px solid var(--sys-border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--sys-shadow-sm);
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
+    color var(--transition-fast);
 }
 
-.card-tile:hover:not(:disabled) {
+.step-rail-btn:hover:not(:disabled) {
   background-color: var(--sys-surface-hover);
-  border-color: var(--sys-border-default);
-  box-shadow: var(--sys-shadow-md);
-  transform: translateY(-2px);
-}
-
-.card-tile.is-active {
   border-color: var(--sys-color-action-primary);
+  color: var(--sys-text-primary);
 }
 
-.card-tile.is-locked {
-  opacity: 0.45;
+.step-rail-btn:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.card-tile-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-}
-
-.card-tile-index {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: var(--radius-circle);
-  background-color: var(--sys-surface-subtle);
-  color: var(--sys-text-secondary);
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.card-tile-title {
-  flex: 1;
-  overflow: hidden;
-  font-weight: var(--font-weight-semibold);
-  color: var(--sys-text-primary);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-tile-subtitle {
-  width: 100%;
-  overflow: hidden;
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-tile-readouts {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  width: 100%;
-  margin-top: auto;
-}
-
-.card-tile-readout {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
-  font-size: var(--text-xs);
-}
-
-.card-tile-readout-label {
-  overflow: hidden;
-  color: var(--sys-text-muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-tile-readout-value {
-  flex: none;
-  color: var(--sys-text-primary);
-}
-
-.card-tile-readout-unit {
-  margin-left: var(--space-1);
-  color: var(--sys-text-muted);
-}
-
-/* --- Focus view: one real card --- */
-
-.focus-view {
+.step-viewport {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.focus-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.focus-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--sys-text-primary);
-}
-
-/* Overview <-> focus entry: the box is recreated when x-show toggles display,
-   so the animation replays in both directions. */
-@keyframes view-enter {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.card-grid,
-.focus-view {
-  animation: view-enter var(--transition-slow) both;
+  overflow-y: auto;
 }
 
 .footer-step {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
   color: var(--sys-text-secondary);
+}
+
+.footer-step-count {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
 }
 
 .footer-violations {
@@ -1399,15 +1240,6 @@ samp {
   .btn-action-icon,
   .form-input,
   .form-select {
-    transition: none;
-  }
-
-  .card-grid,
-  .focus-view {
-    animation: none;
-  }
-
-  .card-tile {
     transition: none;
   }
 }

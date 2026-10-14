@@ -11,7 +11,6 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns } from "../views/producer.js";
-import { evenGrid } from "../views/grid.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
@@ -148,10 +147,6 @@ export function createStepApp(options = {}) {
     highwater: ui.highwater,
     activeStep: steps[ui.activeIndex],
     visibleSteps: [],
-    view: ui.view,
-    overviewTiles: [],
-    overviewGrid: { cols: steps.length, rows: 1 },
-    gridStyle: "",
     stepStatus: initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
     unitGroups: UNIT_GROUPS,
@@ -381,77 +376,30 @@ export function createStepApp(options = {}) {
         if (d.holds) continue;
         this.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
       }
-      this.buildTiles();
     },
 
     syncNav() {
       this.activeIndex = ui.activeIndex;
       this.highwater = ui.highwater;
-      this.view = ui.view;
       this.activeStep = steps[ui.activeIndex];
       this.visibleSteps = steps
         .slice(0, ui.highwater + 1)
         .map((s, i) => ({ ...s, index: i, active: i === ui.activeIndex, complete: i < ui.activeIndex }));
-      this.buildTiles();
     },
 
-    // The card-picker tiles: one per step (all steps; future ones locked).
-    // Rebuilt alongside syncNav/compute so active/locked/violations stay fresh.
-    buildTiles() {
-      this.overviewGrid = evenGrid(steps.length);
-      this.gridStyle =
-        `grid-template-columns: repeat(${this.overviewGrid.cols}, minmax(var(--size-tile-min), 1fr)); ` +
-        `grid-template-rows: repeat(${this.overviewGrid.rows}, minmax(var(--size-tile-min), 1fr));`;
-      this.overviewTiles = steps.map((step, i) => {
-        const status = this.stepStatus[step.slice] ?? { relations: [], domains: [] };
-        const violations = status.relations.length + status.domains.length;
-        const readouts = (this.fieldsBySlice[step.slice] ?? [])
-          .filter((f) => f.role === "readout" && f.display !== "" && f.display != null)
-          .slice(0, 2)
-          .map((f) => ({ label: f.label, display: f.display, unit: f.unit }));
-        return {
-          id: step.id,
-          index: i,
-          title: step.title,
-          subtitle: step.subtitle,
-          locked: i > this.highwater,
-          active: i === this.activeIndex,
-          violations,
-          readouts,
-        };
-      });
-    },
-
-    focusStep(index) {
+    selectStep(index) {
       if (index < 0 || index > ui.highwater) return;
       ui.activeIndex = index;
-      ui.view = "focus";
       this.syncNav();
-    },
-
-    openOverview() {
-      ui.view = "overview";
-      this.syncNav();
-    },
-
-    // Kept for the (removed) pill stepper and tests.
-    selectStep(index) {
-      this.focusStep(index);
     },
 
     next() {
-      // From the picker, "Next" opens the current step.
-      if (ui.view === "overview") {
-        this.focusStep(ui.activeIndex);
-        return;
-      }
       ui.activeIndex = Math.min(ui.activeIndex + 1, steps.length - 1);
       ui.highwater = Math.max(ui.highwater, ui.activeIndex);
       this.syncNav();
     },
 
     prev() {
-      if (ui.view === "overview") return;
       ui.activeIndex = Math.max(ui.activeIndex - 1, 0);
       this.syncNav();
     },
@@ -693,7 +641,6 @@ export function createStepApp(options = {}) {
       this.boundaryError = null;
       ui.activeIndex = 0;
       ui.highwater = 0;
-      ui.view = "overview";
       this.syncNav();
       this.compute();
     },
