@@ -23,14 +23,14 @@ export function list() {
 export async function createDraft(name = "Untitled") {
   const created = await createBatch({ name });
   active = { id: created.id, name: created.name, status: created.status };
-  app?.loadState({ roots: created.roots, collections: created.collections });
+  await app?.loadState({ roots: created.roots, collections: created.collections });
   return created;
 }
 
 export async function open(batchId) {
   const b = await getBatch(batchId);
   active = { id: b.id, name: b.name, status: b.status };
-  app?.loadState({ roots: b.roots, collections: b.collections });
+  await app?.loadState({ roots: b.roots, collections: b.collections });
   return b;
 }
 
@@ -60,7 +60,7 @@ export async function fork(frozenId) {
     collections: frozen.collections,
   });
   active = { id: created.id, name: created.name, status: created.status };
-  app?.loadState({ roots: created.roots, collections: created.collections });
+  await app?.loadState({ roots: created.roots, collections: created.collections });
   return { created, drift };
 }
 

@@ -97,6 +97,19 @@
           </template>
         </nav>
 
+        <div class="alert alert-warning" x-show="boundaryError">
+          <div class="alert-header">
+            <span class="alert-dot"></span>
+            <span x-text="'Solver error: ' + (boundaryError && boundaryError.code ? boundaryError.code : 'unknown')"></span>
+          </div>
+          <p x-text="boundaryError && boundaryError.message"></p>
+        </div>
+
+        <div class="boundary-status" x-show="boundaryPending">
+          <span class="status-dot status-dot-warning"></span>
+          <span class="text-xs text-muted">Solving…</span>
+        </div>
+
         <div class="step-row">
           <template x-for="step in visibleSteps" :key="step.id">
             <template x-if="step.id === 'yeast'">

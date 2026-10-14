@@ -188,7 +188,14 @@ export function valuate(fields, engine, ctx = {}) {
         });
         return { ...field, rows: displayRows };
       }
-      const value = engine.resolve(field.id);
+      // A field whose value cannot be resolved (e.g. a boundary that has not
+      // been pre-resolved or failed) is deferred rather than crashing the view.
+      let value;
+      try {
+        value = engine.resolve(field.id);
+      } catch {
+        return null;
+      }
       const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
       // Display-only unit conversion (readouts): base value stays canonical.
       // A per-field override wins over the per-dimension default, which wins

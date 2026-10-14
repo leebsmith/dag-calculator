@@ -13,6 +13,7 @@ import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns } from "../views/producer.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS } from "../views/registry/units.js";
+import { flattenResponse, postJSON } from "./apiClient.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
@@ -58,17 +59,33 @@ function buildFieldSliceMap() {
 }
 
 
-export function createStepApp() {
+export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
   const cache = createReferenceCache();
   let collections = { ...cache.collections };
+
+  // Boundary seam: offline stubs by default (tests, no API base); the real
+  // solvers over HTTP when configured. The engine stays synchronous — the
+  // adapter pre-resolves boundaries and seeds the cache before computing.
+  const useHttp = options.useHttp ?? Boolean(import.meta.env?.VITE_API_BASE);
+  const fetchImpl = options.fetchImpl;
+  const debounceMs = options.debounceMs ?? 300;
+  const BOUNDARY_URLS = {
+    batch_sparge_solver: "/solve/batch",
+    water_chemistry_solver: "/solve/water",
+  };
+
   let engine = createCalculator(artifact, {
     references: cache.references,
     collections,
-    boundaries: STUB_BOUNDARIES,
+    boundaries: useHttp ? {} : STUB_BOUNDARIES,
     roots: master.allRoots(),
   });
+  const boundaryNodes = engine.topoOrder.filter((id) => artifact.nodes[id].kind === "boundary");
+  const inflight = new Map(); // fingerprint -> Promise
+  let solveTimer = null;
+  let solveToken = 0;
 
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   const fieldSlice = buildFieldSliceMap();
@@ -127,6 +144,12 @@ export function createStepApp() {
     relations: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
+    boundaryStatuses: Object.fromEntries(boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])),
+    boundaryError: null,
+
+    get boundaryPending() {
+      return useHttp && boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
+    },
 
     // Editable-state snapshot (roots + collections) for draft autosave. The
     // engine mutates the `collections` closure in place, so this reflects the
@@ -201,16 +224,17 @@ export function createStepApp() {
     // Replace the editable state (draft restore / open). Rebuilds the engine
     // from the loaded roots/collections; default collections fall back to the
     // seed cache when the draft predates them.
-    loadState(state) {
+    async loadState(state) {
       master.replaceRoots(state?.roots ?? {});
       collections = { ...cache.collections, ...(state?.collections ?? {}) };
       engine = createCalculator(artifact, {
         references: cache.references,
         collections,
-        boundaries: STUB_BOUNDARIES,
+        boundaries: useHttp ? {} : STUB_BOUNDARIES,
         roots: master.allRoots(),
       });
-      this.compute();
+      if (useHttp) await this.solveNow();
+      else this.compute();
       this.syncNav();
     },
 
@@ -219,8 +243,68 @@ export function createStepApp() {
       engine.setRoot(nodeId, value);
     },
 
+    // Resolve every boundary in topological order (via HTTP), then recompute.
+    // Superseded solves discard their (stale) result via the token.
+    async solveNow() {
+      if (!useHttp) {
+        this.compute();
+        return;
+      }
+      const token = ++solveToken;
+      try {
+        for (const id of boundaryNodes) {
+          const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
+          if (engine.hasBoundaryResult(fingerprint)) {
+            this.boundaryStatuses[id] = "ok";
+            continue;
+          }
+          this.boundaryStatuses[id] = "pending";
+          let promise = inflight.get(fingerprint);
+          if (!promise) {
+            promise = postJSON(BOUNDARY_URLS[binding], inputs, { fetchImpl })
+              .then((response) => engine.applyBoundaryResult(fingerprint, flattenResponse(response)))
+              .finally(() => inflight.delete(fingerprint));
+            inflight.set(fingerprint, promise);
+          }
+          await promise;
+          this.boundaryStatuses[id] = "ok";
+        }
+        if (token !== solveToken) return;
+        this.boundaryError = null;
+      } catch (error) {
+        if (token !== solveToken) return;
+        this.boundaryError = error;
+        for (const id of boundaryNodes) {
+          if (this.boundaryStatuses[id] === "pending") this.boundaryStatuses[id] = "error";
+        }
+      }
+      this.compute();
+    },
+
+    // Debounced entry point for edits: coalesce bursts, supersede in-flight
+    // solves. Offline (stubs) computes synchronously.
+    scheduleSolve() {
+      if (!useHttp) {
+        this.compute();
+        return;
+      }
+      solveToken++;
+      if (solveTimer) clearTimeout(solveTimer);
+      solveTimer = setTimeout(() => this.solveNow(), debounceMs);
+    },
+
     compute() {
-      const fieldDomains = engine.fieldDomainStates();
+      // Boundary-derived values may be unresolved (pending/failed solve); a
+      // failed resolution must not blank the whole card, so those paths yield
+      // no state rather than throwing.
+      const safe = (fn) => {
+        try {
+          return fn();
+        } catch {
+          return [];
+        }
+      };
+      const fieldDomains = safe(() => engine.fieldDomainStates());
       const fieldDomainIndex = {};
       for (const d of fieldDomains) fieldDomainIndex[`${d.selectionNodeId}.${d.field}`] = d;
 
@@ -232,8 +316,8 @@ export function createStepApp() {
       this.fieldsBySlice = Object.fromEntries(
         steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
       );
-      this.relations = engine.relationStates();
-      this.domains = engine.domainStates();
+      this.relations = safe(() => engine.relationStates());
+      this.domains = safe(() => engine.domainStates());
       this.fieldDomains = fieldDomains;
       this.selectedYeastId = engine.get("batch.yeast_id") || "";
       this.violationCount =
@@ -354,7 +438,7 @@ export function createStepApp() {
       raw = this.clampToSelection(field.target.nodeId, raw);
       this.setRoot(field.target.nodeId, raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
-      this.compute();
+      this.scheduleSolve();
       this.notify();
     },
 
@@ -432,13 +516,13 @@ export function createStepApp() {
       if (yeast && typeof yeast.attenuation_pct === "number") {
         this.setRoot("batch.apparent_attenuation", yeast.attenuation_pct);
       }
-      this.compute();
+      this.scheduleSolve();
       this.notify();
     },
 
     clearYeastSelection() {
       this.setRoot("batch.yeast_id", "");
-      this.compute();
+      this.scheduleSolve();
       this.notify();
     },
 
@@ -457,7 +541,7 @@ export function createStepApp() {
         i === rowIndex ? { ...row, [columnId]: raw } : row
       );
       engine.setCollection(field.target.nodeId, rows);
-      this.compute();
+      this.scheduleSolve();
       this.notify();
     },
 
@@ -466,19 +550,20 @@ export function createStepApp() {
       const schema = artifact.primitive_schemas[node.item_schema] ?? {};
       const blank = Object.fromEntries(Object.keys(schema).map((k) => [k, ""]));
       engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), blank]);
-      this.compute();
+      this.scheduleSolve();
       this.notify();
     },
 
     removeRow(field, rowIndex) {
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       engine.setCollection(field.target.nodeId, rows);
-      this.compute();
+      this.scheduleSolve();
       this.notify();
     },
 
-    init() {
-      this.compute();
+    async init() {
+      if (useHttp) await this.solveNow();
+      else this.compute();
       this.syncNav();
     },
   };
