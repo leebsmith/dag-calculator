@@ -10,7 +10,7 @@ import { canonicalize, createCalculator, resolveReference, sha256Hex, toBase } f
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
-import { produce, nonlinearFns } from "../views/producer.js";
+import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
@@ -46,7 +46,6 @@ const MAX_VISIBLE_YEASTS = 25;
 // key for draft rows (so the editor can track rows before they're persisted).
 const MAX_MAJOR_MALTS = 8;
 const MAX_VISIBLE_MALTS = 25;
-const newMaltKey = () => `r${Math.random().toString(36).slice(2, 10)}`;
 
 // fraction (0..1) -> percentage string with up to one decimal (0.744 -> "74.4").
 const formatPercent = (f) => (typeof f === "number" ? String(Math.round(f * 1000) / 10) : "");
@@ -303,7 +302,11 @@ export function createStepApp(options = {}) {
           this.boundaryStatuses[id] = "ok";
         }
         if (token !== solveToken) return;
-        this.boundaryError = null;
+      this.boundaryError = null;
+      this.closeDraft();
+      this.maltDrawer = null;
+      this.maltActiveIndex = null;
+      this.sugarDrawer = null;
       } catch (error) {
         if (token !== solveToken) return;
         this.boundaryError = error;
@@ -675,22 +678,127 @@ export function createStepApp(options = {}) {
       else this.addRow(field);
     },
 
-    // --- Grain bill editor (draft + catalog / inspector drawers) ---
+    // --- Collection draft editors (uniform: scratch copy + unit-aware grid) ---
+    // Every collection editor edits a deep-copied draft, never the engine: edits
+    // don't touch the engine/solvers/persistence until Save (Cancel discards, or
+    // restores nothing since the engine was untouched). The grid formats draft
+    // values through the SAME unit resolution as the producer, via the shared
+    // `resolveCollectionColumns` + `displayValue` helpers.
 
-    maltEditorOpen: false,
-    maltDraft: [],
+    draftOpen: false,
+    draftNodeId: "",
+    draftRows: [],
+
+    // Grain-bill rows for the summary card (reactive; refreshed in compute()).
+    gristRows: [],
+
+    draftEntry() {
+      for (const step of steps) {
+        for (const entry of step.fields) {
+          if (entry && typeof entry === "object" && entry.collection === this.draftNodeId) return entry;
+        }
+      }
+      return {};
+    },
+
+    get draftColumns() {
+      if (!this.draftNodeId) return [];
+      return resolveCollectionColumns(artifact, registry, this.draftNodeId, this.draftEntry(), ui.unitMode);
+    },
+
+    // Draft rows converted to their display units (mirrors the producer field).
+    get draftDisplayRows() {
+      const columns = this.draftColumns;
+      const nl = nonlinearFns(artifact, engine);
+      return this.draftRows.map((row) => {
+        const out = { ...row };
+        for (const col of columns) {
+          let v = row[col.id];
+          if (col.displayUnit && col.dimension && typeof v === "number") {
+            v = displayValue(artifact, col.dimension, col.displayUnit, v, nl);
+          }
+          if (typeof v === "number") {
+            v = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
+          }
+          out[col.id] = v;
+        }
+        return out;
+      });
+    },
+
+    openDraft(nodeId) {
+      this.draftNodeId = nodeId;
+      this.draftRows = JSON.parse(JSON.stringify(engine.get(nodeId) ?? []));
+      this.normalizeDraft();
+      this.draftOpen = true;
+    },
+
+    closeDraft() {
+      this.draftOpen = false;
+      this.draftRows = [];
+      this.draftNodeId = "";
+    },
+
+    saveDraft() {
+      engine.setCollection(this.draftNodeId, JSON.parse(JSON.stringify(this.normalizeDraft())));
+      this.closeDraft();
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    // Hamilton-normalize a grist draft's pct from its parts (no-op otherwise).
+    // Mutates rows in place (stable references) and returns them.
+    normalizeDraft() {
+      if (this.draftNodeId === "grist.major_malts" && this.draftRows.length) {
+        const pcts = hamiltonPct(this.draftRows.map((r) => r.parts));
+        this.draftRows.forEach((r, i) => {
+          r.pct = pcts[i];
+        });
+      }
+      return this.draftRows;
+    },
+
+    // Edit a draft cell: the input carries a display value; store its base.
+    editDraftCell(ri, colId, value) {
+      const col = this.draftColumns.find((c) => c.id === colId);
+      if (!col) return;
+      let base = value;
+      if (value !== "" && col.dimension) {
+        const n = Number(value);
+        base = col.displayUnit
+          ? toBase(artifact, col.dimension, col.displayUnit, n, nonlinearFns(artifact, engine))
+          : n;
+      }
+      this.draftRows[ri][colId] = base;
+      this.normalizeDraft();
+    },
+
+    addDraftRow(row) {
+      this.draftRows.push(row);
+      this.normalizeDraft();
+    },
+
+    removeDraftRow(ri) {
+      this.draftRows.splice(ri, 1);
+      this.normalizeDraft();
+    },
+
+    patchDraftRow(ri, patch) {
+      Object.assign(this.draftRows[ri], patch);
+    },
+
+    // --- Grain bill editor ---
     maltDrawer: null, // "search" | "inspect" | null
-    maltActiveKey: null,
+    maltActiveIndex: null,
     maltSearch: "",
     maltCategoryFilter: [],
 
-    // The grain-bill rows for the summary card. A reactive property refreshed in
-    // compute() — reading the engine directly in a getter would not re-render
-    // (the engine isn't Alpine-reactive).
-    gristRows: [],
+    get maltEditorOpen() {
+      return this.draftOpen && this.draftNodeId === "grist.major_malts";
+    },
 
-    // Weighted grist readouts, rendered from the producer's field models (so
-    // they honor the master unit menu for grain_color, stay display-only, etc.).
+    // Weighted grist readouts come from the producer's field models (master-aware,
+    // display-only).
     get maltWeightedColor() {
       return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === "grist.weighted_lovibond") ?? null;
     },
@@ -714,7 +822,7 @@ export function createStepApp(options = {}) {
     },
 
     get maltFilteredCatalog() {
-      const active = new Set(this.maltDraft.map((r) => r.catalog_id).filter(Boolean));
+      const active = new Set(this.draftRows.map((r) => r.catalog_id).filter(Boolean));
       const q = this.maltSearch.trim().toLowerCase();
       const cats = this.maltCategoryFilter;
       return this.maltCatalog.filter(
@@ -725,8 +833,6 @@ export function createStepApp(options = {}) {
       );
     },
 
-    // The catalog is large; render a window and let search narrow it (the rest
-    // stay searchable), mirroring the yeast picker.
     get maltVisibleCatalog() {
       return this.maltFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
     },
@@ -736,11 +842,11 @@ export function createStepApp(options = {}) {
     },
 
     get maltTotalParts() {
-      return this.maltDraft.reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+      return this.draftRows.reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
     },
 
     get maltTotalPct() {
-      return this.maltDraft.reduce((sum, r) => sum + (r.pct || 0), 0);
+      return this.draftRows.reduce((sum, r) => sum + (r.pct || 0), 0);
     },
 
     get maltValidation() {
@@ -756,11 +862,11 @@ export function createStepApp(options = {}) {
     },
 
     get maltAtLimit() {
-      return this.maltDraft.length >= MAX_MAJOR_MALTS;
+      return this.draftRows.length >= MAX_MAJOR_MALTS;
     },
 
     get maltActiveRow() {
-      return this.maltDraft.find((r) => r._key === this.maltActiveKey) ?? null;
+      return this.maltActiveIndex == null ? null : this.draftRows[this.maltActiveIndex] ?? null;
     },
 
     // Trace = under 2% of the bill (matches the legacy threshold).
@@ -769,67 +875,27 @@ export function createStepApp(options = {}) {
     },
 
     openMaltEditor() {
-      this.maltDraft = (engine.get("grist.major_malts") ?? []).map((row, i) => ({ ...row, _key: `r${i}` }));
-      this.normalizeMaltDraft();
+      this.openDraft("grist.major_malts");
       this.maltDrawer = null;
-      this.maltActiveKey = null;
-      this.maltEditorOpen = true;
+      this.maltActiveIndex = null;
     },
 
     cancelMaltEditor() {
-      this.maltEditorOpen = false;
+      this.closeDraft();
       this.maltDrawer = null;
-      this.maltActiveKey = null;
+      this.maltActiveIndex = null;
     },
 
     saveMaltEditor() {
-      const rows = this.maltDraft.map((row) => {
-        const clean = { ...row };
-        delete clean._key;
-        return clean;
-      });
-      engine.setCollection("grist.major_malts", this.normalizeGrist(rows));
-      this.maltEditorOpen = false;
+      this.saveDraft();
       this.maltDrawer = null;
-      this.maltActiveKey = null;
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    // Hamilton allocation over the draft's parts (pct stored as fractions of 1).
-    normalizeMaltDraft() {
-      if (!this.maltDraft.length) return;
-      const pcts = hamiltonPct(this.maltDraft.map((r) => r.parts));
-      this.maltDraft.forEach((r, i) => {
-        r.pct = pcts[i];
-      });
-    },
-
-    updateDraftParts(key, value) {
-      const row = this.maltDraft.find((r) => r._key === key);
-      if (!row) return;
-      const n = Number(value);
-      row.parts = Number.isFinite(n) && n > 0 ? n : 0;
-      this.normalizeMaltDraft();
-    },
-
-    // `scale` converts a display value to the stored base (e.g. % -> fraction).
-    updateDraftField(key, field, value, scale = 1) {
-      const row = this.maltDraft.find((r) => r._key === key);
-      if (!row) return;
-      if (value === "") {
-        row[field] = undefined;
-        return;
-      }
-      const n = Number(value);
-      row[field] = Number.isFinite(n) ? n * scale : 0;
+      this.maltActiveIndex = null;
     },
 
     addCatalogMalt(catalogId) {
       const malt = cache.seeds.malts?.[catalogId];
       if (!malt || this.maltAtLimit) return;
-      this.maltDraft.push({
-        _key: newMaltKey(),
+      this.addDraftRow({
         catalog_id: malt.id,
         name: malt.name,
         category: malt.category,
@@ -842,43 +908,52 @@ export function createStepApp(options = {}) {
         buffer_index: malt.buffer_index,
         notes: malt.notes,
       });
-      this.normalizeMaltDraft();
     },
 
-    removeDraftMalt(key) {
-      this.maltDraft = this.maltDraft.filter((r) => r._key !== key);
-      if (this.maltActiveKey === key) {
-        this.maltActiveKey = null;
+    removeDraftMalt(ri) {
+      this.removeDraftRow(ri);
+      if (this.maltActiveIndex === ri) {
+        this.maltActiveIndex = null;
         if (this.maltDrawer === "inspect") this.maltDrawer = null;
+      } else if (this.maltActiveIndex != null && this.maltActiveIndex > ri) {
+        this.maltActiveIndex -= 1;
       }
-      this.normalizeMaltDraft();
     },
 
-    cloneDraftMalt(key) {
+    cloneDraftMalt(ri) {
       if (this.maltAtLimit) return;
-      const row = this.maltDraft.find((r) => r._key === key);
+      const row = this.draftRows[ri];
       if (!row) return;
-      const clone = { ...row, _key: newMaltKey(), catalog_id: null, name: `${row.name} (Custom)` };
-      this.maltDraft.push(clone);
-      this.normalizeMaltDraft();
-      this.inspectDraftRow(clone._key);
+      this.addDraftRow({ ...row, catalog_id: null, name: `${row.name} (Custom)` });
+      this.inspectDraftRow(this.draftRows.length - 1);
     },
 
-    inspectDraftRow(key) {
-      this.maltActiveKey = key;
+    inspectDraftRow(ri) {
+      this.maltActiveIndex = ri;
       this.maltDrawer = "inspect";
+    },
+
+    // Inspector field edits. `scale` converts a display input to base (percent
+    // inputs use 0.01). Empty clears the field.
+    setMaltField(ri, field, value, scale = 1) {
+      if (value === "") {
+        this.patchDraftRow(ri, { [field]: undefined });
+        return;
+      }
+      const n = Number(value);
+      this.patchDraftRow(ri, { [field]: Number.isFinite(n) ? n * scale : 0 });
     },
 
     openMaltSearch() {
       this.maltDrawer = "search";
-      this.maltActiveKey = null;
+      this.maltActiveIndex = null;
       this.maltSearch = "";
       this.maltCategoryFilter = [];
     },
 
     closeMaltDrawer() {
       this.maltDrawer = null;
-      this.maltActiveKey = null;
+      this.maltActiveIndex = null;
     },
 
     toggleMaltCategory(category) {
@@ -892,22 +967,22 @@ export function createStepApp(options = {}) {
       else this.cancelMaltEditor();
     },
 
-    // --- Late additions editor (live sugar collection + catalog drawer) ---
-    // Edited directly on the engine collection so the producer renders the
-    // display unit (master-aware); Cancel restores the snapshot taken on open.
-
-    sugarEditorOpen: false,
+    // --- Late additions editor (same draft model) ---
     sugarDrawer: null, // "search" | null
     sugarSearch: "",
-    sugarSnapshot: [],
 
     // Sugar rows for the summary card (reactive; refreshed in compute()).
     sugarList: [],
+
+    get sugarEditorOpen() {
+      return this.draftOpen && this.draftNodeId === "batch.sugars";
+    },
 
     sugarField(id) {
       return (this.fieldsBySlice["late-additions"] ?? []).find((f) => f.id === id) ?? null;
     },
 
+    // The engine-backed sugar collection field (for the read-only summary card).
     get lateSugarField() {
       return (
         (this.fieldsBySlice["late-additions"] ?? []).find((f) => f.control === "collection-table") ?? null
@@ -931,7 +1006,7 @@ export function createStepApp(options = {}) {
     },
 
     get sugarFilteredCatalog() {
-      const active = new Set((engine.get("batch.sugars") ?? []).map((r) => r.sugar_id).filter(Boolean));
+      const active = new Set(this.draftRows.map((r) => r.sugar_id).filter(Boolean));
       const q = this.sugarSearch.trim().toLowerCase();
       return this.sugarCatalog.filter(
         (s) =>
@@ -948,31 +1023,43 @@ export function createStepApp(options = {}) {
       return this.sugarFilteredCatalog.length > MAX_VISIBLE_MALTS;
     },
 
+    // Draft totals (mass-unit aware) for the modal header / totals row.
+    _sugarDraftTotal(pick) {
+      const col = this.draftColumns.find((c) => c.id === "mass_kg");
+      const total = this.draftRows.reduce((sum, r) => sum + pick(r), 0);
+      if (!col) return String(total);
+      const v = displayValue(artifact, "mass", col.displayUnit, total, nonlinearFns(artifact, engine));
+      const shown = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
+      return `${shown}${col.unit ? " " + col.unit : ""}`;
+    },
+
+    get sugarDraftMassDisplay() {
+      return this._sugarDraftTotal((r) => Number(r.mass_kg) || 0);
+    },
+
+    get sugarDraftExtractDisplay() {
+      return this._sugarDraftTotal((r) => (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0));
+    },
+
     openSugarEditor() {
-      this.sugarSnapshot = JSON.parse(JSON.stringify(engine.get("batch.sugars") ?? []));
+      this.openDraft("batch.sugars");
       this.sugarDrawer = null;
-      this.sugarEditorOpen = true;
     },
 
     cancelSugarEditor() {
-      engine.setCollection("batch.sugars", JSON.parse(JSON.stringify(this.sugarSnapshot)));
-      this.sugarEditorOpen = false;
+      this.closeDraft();
       this.sugarDrawer = null;
-      this.scheduleSolve();
-      this.notify();
     },
 
-    // Edits apply live; Save just closes (Cancel reverts the snapshot).
     saveSugarEditor() {
-      this.sugarEditorOpen = false;
+      this.saveDraft();
       this.sugarDrawer = null;
     },
 
     addCatalogSugar(catalogId) {
       const sugar = cache.seeds.sugars?.[catalogId];
       if (!sugar) return;
-      const rows = [...(engine.get("batch.sugars") ?? [])];
-      rows.push({
+      this.addDraftRow({
         sugar_id: sugar.id,
         name: sugar.name,
         mass_kg: 0,
@@ -980,10 +1067,7 @@ export function createStepApp(options = {}) {
         color_lovibond: sugar.color_lovibond,
         notes: sugar.notes,
       });
-      engine.setCollection("batch.sugars", rows);
       this.closeSugarDrawer();
-      this.scheduleSolve();
-      this.notify();
     },
 
     openSugarSearch() {

@@ -59,24 +59,26 @@ function dimensionDefaultUnit(dimensionId) {
   return UNIT_DIMENSIONS.find((d) => d.id === dimensionId)?.default ?? null;
 }
 
-function collectionField(artifact, registry, step, entry, unitMode = {}) {
-  const node = artifact.nodes[entry.collection];
+// Resolve a collection's display columns. Shared by the producer's engine-backed
+// collection field AND the draft editors, so header units / cell conversion are
+// single-sourced. Unit precedence mirrors scalar fields:
+//   registry pin → master (menu) → dimension default → base.
+// `displayUnit` is the effective unit used for value conversion; `unit` is the
+// symbol shown in the header (falls back to the base symbol).
+export function resolveCollectionColumns(artifact, registry, collectionId, entry = {}, unitMode = {}) {
+  const node = artifact.nodes[collectionId];
   if (!node || node.kind !== "collection") {
-    throw new Error(`Unknown collection "${entry.collection}"`);
+    throw new Error(`Unknown collection "${collectionId}"`);
   }
   const schema = artifact.primitive_schemas[node.item_schema] ?? {};
   const inputs = entry.inputs ? new Set(entry.inputs) : null;
-  const columns = (entry.columns ?? Object.keys(schema)).map((c) => {
+  return (entry.columns ?? Object.keys(schema)).map((c) => {
     const spec = schema[c] ?? {};
-    const meta = registry[`${entry.collection}.${c}`] ?? {};
-    // Effective display unit, mirroring scalar fields: registry pin → master
-    // (menu) → dimension default → base. Lets collection header labels / cells
-    // track the master unit. `displayUnit` is what valuate/editCell convert by.
+    const meta = registry[`${collectionId}.${c}`] ?? {};
     const dimDef = spec.dimension ? UNIT_DIMENSIONS.find((d) => d.id === spec.dimension) : null;
     const unitId = spec.dimension
       ? meta.displayUnit ?? unitMode[spec.dimension] ?? dimensionDefaultUnit(spec.dimension) ?? null
       : null;
-    // Show the base unit symbol when there's no resolved unit (still base values).
     const shownUnitId = unitId ?? dimDef?.units?.[0]?.[0] ?? null;
     return {
       id: c,
@@ -84,10 +86,21 @@ function collectionField(artifact, registry, step, entry, unitMode = {}) {
       dimension: spec.dimension ?? null,
       displayUnit: unitId,
       unit: shownUnitId ? UNIT_SYMBOLS[spec.dimension]?.[shownUnitId] ?? shownUnitId : null,
-      decimals: meta.decimals ?? null,
+      decimals: meta.decimals ?? dimDef?.decimals ?? null,
       editable: inputs ? inputs.has(c) : true,
     };
   });
+}
+
+// Read-side display conversion (base → display unit) for a single value. Lives
+// here (with the producer) so `fromBase` stays single-sourced; drafts call it too.
+export function displayValue(artifact, dimensionId, unitId, value, nonlinearFns = {}) {
+  if (!dimensionId || !unitId || typeof value !== "number") return value;
+  return fromBase(artifact, dimensionId, unitId, value, nonlinearFns);
+}
+
+function collectionField(artifact, registry, step, entry, unitMode = {}) {
+  const columns = resolveCollectionColumns(artifact, registry, entry.collection, entry, unitMode);
   return {
     id: entry.collection,
     slice: step.slice,

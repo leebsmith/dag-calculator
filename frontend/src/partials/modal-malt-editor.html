@@ -42,83 +42,59 @@
 
         <div class="data-table-container">
           <table class="data-table is-fixed">
-            <colgroup>
-              <col style="width: 30%" />
-              <col style="width: 12%" />
-              <col style="width: 10%" />
-              <col style="width: 12%" />
-              <col style="width: 12%" />
-              <col style="width: 14%" />
-              <col style="width: 10%" />
-            </colgroup>
             <thead>
               <tr>
-                <th>Malt</th>
-                <th>Type</th>
-                <th class="text-right">°L</th>
-                <th class="text-right">Yield</th>
-                <th class="text-right">Parts</th>
-                <th class="text-right">Malt %</th>
+                <template x-for="c in draftColumns" :key="c.id">
+                  <th :class="c.id === 'name' || c.id === 'category' ? '' : 'text-right'">
+                    <span x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></span>
+                  </th>
+                </template>
                 <th class="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <template x-for="row in maltDraft" :key="row._key">
+              <template x-for="(row, ri) in draftDisplayRows" :key="ri">
                 <tr>
-                  <td>
-                    <span class="font-medium" x-text="row.name"></span>
-                    <template x-if="!row.catalog_id">
-                      <span class="status-badge status-badge-info text-nano">Custom</span>
-                    </template>
-                  </td>
-                  <td x-text="row.category"></td>
-                  <td class="text-right tabular-nums" x-text="Number(row.color_lovibond).toFixed(1)"></td>
-                  <td class="text-right tabular-nums" x-text="Math.round(row.yield_fraction * 100) + '%'"></td>
-                  <td class="text-right">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      class="form-input table-input-parts"
-                      :value="row.parts"
-                      @input="updateDraftParts(row._key, $event.target.value)"
-                    />
-                  </td>
-                  <td class="text-right">
-                    <div class="table-pct-cell">
-                      <span
-                        class="table-pct-value"
-                        :class="{ 'is-trace': maltIsTrace(row) }"
-                        x-text="(row.pct * 100).toFixed(1) + '%'"
-                      ></span>
-                      <span class="table-pct-badge" :class="maltIsTrace(row) ? 'is-trace' : 'is-valid'">
-                        <span x-text="maltIsTrace(row) ? '✗' : '✓'"></span>
-                      </span>
-                    </div>
-                  </td>
+                  <template x-for="c in draftColumns" :key="c.id">
+                    <td :class="c.id === 'name' || c.id === 'category' ? '' : 'text-right'">
+                      <template x-if="c.editable">
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          class="form-input table-input-parts"
+                          :value="row[c.id]"
+                          @input="editDraftCell(ri, c.id, $event.target.value)"
+                        />
+                      </template>
+                      <template x-if="!c.editable">
+                        <span class="collection-readout">
+                          <span x-text="row[c.id]"></span>
+                          <template x-if="c.id === 'pct'">
+                            <span class="table-pct-badge" :class="maltIsTrace(draftRows[ri]) ? 'is-trace' : 'is-valid'">
+                              <span x-text="maltIsTrace(draftRows[ri]) ? '✗' : '✓'"></span>
+                            </span>
+                          </template>
+                        </span>
+                      </template>
+                    </td>
+                  </template>
                   <td class="text-right">
                     <div class="table-action-cell">
                       <button
                         type="button"
                         class="btn-action-icon"
-                        @click="cloneDraftMalt(row._key)"
+                        @click="cloneDraftMalt(ri)"
                         :disabled="maltAtLimit"
                         title="Clone &amp; Edit"
                       >
                         📋
                       </button>
-                      <button
-                        type="button"
-                        class="btn-action-icon"
-                        @click="inspectDraftRow(row._key)"
-                        title="Inspect"
-                      >
-                        ✎
-                      </button>
+                      <button type="button" class="btn-action-icon" @click="inspectDraftRow(ri)" title="Inspect">✎</button>
                       <button
                         type="button"
                         class="btn-action-icon btn-action-danger"
-                        @click="removeDraftMalt(row._key)"
+                        @click="removeDraftMalt(ri)"
                         title="Remove"
                       >
                         🗑
@@ -127,9 +103,9 @@
                   </td>
                 </tr>
               </template>
-              <template x-if="maltDraft.length === 0">
+              <template x-if="draftRows.length === 0">
                 <tr>
-                  <td colspan="7" class="table-empty-cell">
+                  <td :colspan="draftColumns.length + 1" class="table-empty-cell">
                     No malts in the draft. Click “＋ Add Malt from Catalog” to begin.
                   </td>
                 </tr>
@@ -137,10 +113,10 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="4" class="font-bold">Totals</td>
-                <td class="text-right tabular-nums font-bold" x-text="maltTotalParts.toFixed(1)"></td>
-                <td class="text-right tabular-nums font-bold" x-text="(maltTotalPct * 100).toFixed(1) + '%'"></td>
-                <td></td>
+                <td :colspan="draftColumns.length + 1" class="tabular-nums">
+                  <span class="font-bold">Totals:</span>
+                  <span x-text="' ' + maltTotalParts.toFixed(1) + ' parts · ' + (maltTotalPct * 100).toFixed(1) + '%'"></span>
+                </td>
               </tr>
             </tfoot>
           </table>
@@ -166,7 +142,7 @@
                   <input
                     type="text"
                     class="form-input text-xs"
-                    placeholder="Search malts by name…"
+                    placeholder="Search malts by name or notes…"
                     x-model.debounce.50ms="maltSearch"
                   />
                 </div>
@@ -196,7 +172,7 @@
                       <div class="catalog-item-name" x-text="item.name"></div>
                       <div
                         class="catalog-item-meta"
-                        x-text="item.category + ' • ' + item.color_lovibond + ' °L'"
+                        x-text="item.category + ' • ' + item.color_lovibond + ' °L' + (item.notes ? ' • ' + item.notes : '')"
                       ></div>
                     </div>
                     <button
@@ -217,15 +193,24 @@
           </template>
 
           <template x-if="maltDrawer === 'inspect'">
-            <template x-for="row in (maltActiveRow ? [maltActiveRow] : [])" :key="row._key">
+            <template x-if="maltActiveRow">
               <div class="inspector-form">
                 <div class="form-group">
                   <label class="form-label text-xs">Malt name</label>
-                  <input type="text" class="form-input text-xs" x-model="row.name" />
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    :value="maltActiveRow.name"
+                    @input="setMaltField(maltActiveIndex, 'name', $event.target.value)"
+                  />
                 </div>
                 <div class="form-group">
                   <label class="form-label text-xs">Category</label>
-                  <select class="form-select text-xs" x-model="row.category">
+                  <select
+                    class="form-select text-xs"
+                    :value="maltActiveRow.category"
+                    @change="setMaltField(maltActiveIndex, 'category', $event.target.value)"
+                  >
                     <template x-for="c in maltCategories" :key="c">
                       <option :value="c" x-text="c"></option>
                     </template>
@@ -240,8 +225,8 @@
                       min="0"
                       max="100"
                       class="form-input text-xs"
-                      :value="(row.yield_fraction * 100).toFixed(0)"
-                      @input="updateDraftField(row._key, 'yield_fraction', $event.target.value, 0.01)"
+                      :value="(maltActiveRow.yield_fraction * 100).toFixed(0)"
+                      @input="setMaltField(maltActiveIndex, 'yield_fraction', $event.target.value, 0.01)"
                     />
                   </div>
                   <div class="form-group">
@@ -251,8 +236,8 @@
                       step="0.1"
                       min="0"
                       class="form-input text-xs"
-                      :value="row.color_lovibond"
-                      @input="updateDraftField(row._key, 'color_lovibond', $event.target.value)"
+                      :value="maltActiveRow.color_lovibond"
+                      @input="setMaltField(maltActiveIndex, 'color_lovibond', $event.target.value)"
                     />
                   </div>
                   <div class="form-group">
@@ -263,14 +248,19 @@
                       min="0"
                       max="20"
                       class="form-input text-xs"
-                      :value="(row.moisture_pct * 100).toFixed(1)"
-                      @input="updateDraftField(row._key, 'moisture_pct', $event.target.value, 0.01)"
+                      :value="(maltActiveRow.moisture_pct * 100).toFixed(1)"
+                      @input="setMaltField(maltActiveIndex, 'moisture_pct', $event.target.value, 0.01)"
                     />
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label text-xs">Notes</label>
-                  <textarea class="form-input text-xs" rows="3" x-model="row.notes"></textarea>
+                  <textarea
+                    class="form-input text-xs"
+                    rows="3"
+                    :value="maltActiveRow.notes ?? ''"
+                    @input="setMaltField(maltActiveIndex, 'notes', $event.target.value)"
+                  ></textarea>
                 </div>
               </div>
             </template>
