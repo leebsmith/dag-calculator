@@ -97,30 +97,69 @@ export function nodeDimension(artifact, nodeId) {
 
 // Static dimension inference for derived-node expressions. Returns a dimension
 // id, "boolean", "dimensionless", "collection", or null when indeterminate
-// (e.g. compound products or reduction bodies over collection items).
-export function inferExprDimension(artifact, expr, inputDims = {}) {
+// (compound products, or operands whose dimension can't be resolved).
+//
+// `elem` binds a reduction's element alias to its collection item schema, so
+// `rest.use_temp_c` resolves to the schema field's dimension. Dotted refs into
+// a boundary output / selection / collection field resolve via their declared
+// dimension. Dimensionless scalars (dimensionless, percentage) are absorbed by
+// `*` and `/` (e.g. mass * percentage -> mass); other compound products stay
+// indeterminate.
+const SCALAR_DIMS = new Set(["dimensionless", "percentage"]);
+
+export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
   if (expr === null || typeof expr !== "object") {
     if (typeof expr === "number") return "dimensionless";
     return null;
   }
-  const dim = (e) => inferExprDimension(artifact, e, inputDims);
+  const { elem = null, collSchemas = {} } = ctx;
+  const dim = (e) => inferExprDimension(artifact, e, inputDims, ctx);
   if ("ref" in expr) {
-    if (Object.prototype.hasOwnProperty.call(inputDims, expr.ref)) {
-      return inputDims[expr.ref];
+    const name = expr.ref;
+    if (elem && typeof name === "string" && name.startsWith(elem.alias + ".")) {
+      const spec = elem.schema?.[name.slice(elem.alias.length + 1)];
+      return spec ? spec.dimension ?? spec.taxonomy ?? null : null;
     }
-    const r = resolveReference(artifact, expr.ref);
+    if (Object.prototype.hasOwnProperty.call(inputDims, name)) return inputDims[name];
+    const r = resolveReference(artifact, name);
     if (!r) return null;
+    const node = artifact.nodes[r.nodeId];
     if (r.suffix.length === 0) return nodeDimension(artifact, r.nodeId);
-    return null; // selection/boundary field dimension not inferred here
+    const suffix = r.suffix.join(".");
+    if (node?.kind === "boundary") {
+      const out = node.outputs?.[suffix];
+      return out ? out.dimension ?? out.taxonomy ?? (out.type === "boolean" ? "boolean" : null) : null;
+    }
+    if (node?.kind === "selection" || node?.kind === "collection") {
+      const schemaId = node.schema ?? node.item_schema;
+      const spec = artifact.primitive_schemas?.[schemaId]?.[r.suffix[0]];
+      return spec ? spec.dimension ?? spec.taxonomy ?? null : null;
+    }
+    return null;
   }
   if ("const" in expr) return artifact.constants[expr.const]?.dimension ?? null;
   if ("call" in expr) return artifact.functions[expr.call]?.returns ?? null;
-  if ("op" in expr) {
+  if ("op" in expr && !("coll" in expr)) {
     switch (expr.op) {
       case "+":
         return inferAddDimension(artifact, dim(expr.args[0]), dim(expr.args[1]));
       case "-":
         return inferSubDimension(artifact, dim(expr.args[0]), dim(expr.args[1]));
+      case "neg":
+        return dim(expr.args[0]);
+      case "*": {
+        const ds = expr.args.map(dim);
+        if (ds.some((d) => d === null)) return null;
+        const nonScalar = ds.filter((d) => !SCALAR_DIMS.has(d));
+        if (nonScalar.length === 0) return "dimensionless";
+        return nonScalar.length === 1 ? nonScalar[0] : null;
+      }
+      case "/": {
+        const ds = expr.args.map(dim);
+        if (ds.some((d) => d === null)) return null;
+        const denominator = ds.slice(1).filter((d) => !SCALAR_DIMS.has(d));
+        return denominator.length === 0 ? ds[0] : null;
+      }
       case "gt":
       case "ge":
       case "lt":
@@ -137,16 +176,26 @@ export function inferExprDimension(artifact, expr, inputDims = {}) {
         return then === els ? then : null;
       }
       default:
-        return null; // *, /, neg, pow -> compound, unchecked
+        return null; // pow -> compound, unchecked
     }
   }
   if ("coll" in expr) {
+    const collName = expr.coll?.ref;
+    let itemSchema = collName ? collSchemas[collName] : null;
+    if (!itemSchema && collName) {
+      const r = resolveReference(artifact, collName);
+      const cn = r ? artifact.nodes[r.nodeId] : null;
+      if (cn?.kind === "collection") itemSchema = cn.item_schema;
+    }
+    const schema = itemSchema ? artifact.primitive_schemas?.[itemSchema] ?? {} : {};
+    const bound = { ...ctx, elem: { alias: expr.as ?? "", schema } };
+    const elemDim = (e) => inferExprDimension(artifact, e, inputDims, bound);
     switch (expr.op) {
       case "sum":
-        return dim(expr.body);
+        return elemDim(expr.body);
       case "weighted_avg":
       case "min":
-        return dim(expr.value);
+        return elemDim(expr.value);
       case "map":
       case "filter":
         return "collection";
@@ -162,12 +211,16 @@ export function validateDerivedDimensions(artifact) {
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (node.kind !== "derived" || !node.output.dimension) continue;
     const inputDims = {};
+    const collSchemas = {};
     for (const [alias, path] of Object.entries(node.inputs)) {
+      // Infer the alias's dimension from its full path (boundary output,
+      // selection/collection field, or node), not just the node.
+      inputDims[alias] = inferExprDimension(artifact, { ref: path }, {});
       const r = resolveReference(artifact, path);
-      inputDims[alias] =
-        r && r.suffix.length === 0 ? nodeDimension(artifact, r.nodeId) : null;
+      const cn = r && r.suffix.length === 0 ? artifact.nodes[r.nodeId] : null;
+      if (cn?.kind === "collection") collSchemas[alias] = cn.item_schema;
     }
-    const inferred = inferExprDimension(artifact, node.expr, inputDims);
+    const inferred = inferExprDimension(artifact, node.expr, inputDims, { collSchemas });
     if (inferred !== null && inferred !== node.output.dimension) {
       throw new Error(
         `Derived "${id}" declares dimension "${node.output.dimension}" ` +

@@ -117,3 +117,17 @@ The engine validates every expression against dimensions:
 `temperature_delta` is a **distinct dimension** from `temperature` (linear, no
 offset: Δ°F = 1.8·Δ°C) precisely so that `T + ΔT` type-checks while `T + T` is
 flagged.
+
+### 5.1 What is inferred
+
+`inferExprDimension` resolves: node refs, dotted refs into a boundary output /
+selection field / collection field, `{const}`/`{call}` returns, the reductions
+(`sum`/`weighted_avg`/`min` bind their element alias to the collection's item
+schema), and `+`/`-`/`neg`. Dimensionless scalars (`dimensionless`,
+`percentage`) are absorbed by `*` and `/` (e.g. `mass · percentage → mass`).
+
+Genuinely compound products (e.g. `volume/time · time`) remain **indeterminate**
+and are not checked; so are intentionally modeled-away quantities (`grist.mcu`
+is declared `dimensionless`). The set of unchecked derived nodes is pinned by
+`tests/guards/dimension-coverage.test.js` — a new one must be reviewed, not
+silently skipped.
