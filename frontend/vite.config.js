@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/solve": "http://127.0.0.1:8000",
+      "/batches": "http://127.0.0.1:8000",
       "/api": "http://127.0.0.1:8000",
     },
   },

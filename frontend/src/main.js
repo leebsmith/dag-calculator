@@ -106,10 +106,18 @@ async function applyAuth(user) {
 
   auth.loading = true;
   try {
-    await recipes.refresh();
-    const draft = recipes.batches.find((b) => b.status === "draft");
-    if (draft) await persistence.open(draft.id);
-    else await stepApp.boot();
+    try {
+      await recipes.refresh();
+      const draft = recipes.batches.find((b) => b.status === "draft");
+      if (draft) await persistence.open(draft.id);
+      else await stepApp.boot();
+    } catch (err) {
+      // A failed recipe-list fetch (e.g. the backend is still warming up, or a
+      // route isn't proxied) must not leave an empty shell — boot the default
+      // app and surface the failure rather than showing nothing.
+      console.error("recipe boot failed", err);
+      await stepApp.boot();
+    }
   } finally {
     auth.user = user;
     auth.loading = false;
@@ -118,7 +126,7 @@ async function applyAuth(user) {
 
 onAuthStateChanged((user) => {
   latestUser = user;
-  applyAuth(user);
+  applyAuth(user).catch((err) => console.error("auth handling failed", err));
 });
 
 Alpine.data("calculator", () => createCalculatorApp());
@@ -132,7 +140,7 @@ Alpine.data("stepCalculator", () => {
   app.onChange = () => persistence.queueSave();
   stepApp = app;
   // Auth may have resolved before this factory ran — boot now.
-  if (latestUser !== undefined) applyAuth(latestUser);
+  if (latestUser !== undefined) applyAuth(latestUser).catch((err) => console.error("auth handling failed", err));
   return app;
 });
 
