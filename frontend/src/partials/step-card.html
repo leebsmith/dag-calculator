@@ -22,7 +22,7 @@
             :id="f.id"
             type="number"
             step="0.1"
-            :value="f.value"
+            :value="f.display"
             @input="edit(f, $event.target.value)"
           />
           <template x-if="f.overridden">

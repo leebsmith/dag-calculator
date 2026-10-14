@@ -10,7 +10,7 @@ import { canonicalize, createCalculator, sha256Hex, toBase } from "../engine/ind
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
-import { produce } from "../views/producer.js";
+import { produce, nonlinearFns } from "../views/producer.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS } from "../views/registry/units.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
@@ -264,7 +264,13 @@ export function createStepApp() {
 
     edit(field, value) {
       if (!field.editable || !field.target) return;
-      const raw = field.control === "number" ? Number(value) : value;
+      let raw = field.control === "number" ? Number(value) : value;
+      // The input renders in the field's display unit (dimension default or
+      // per-field override); convert the typed value back to the base unit
+      // before it reaches the engine.
+      if (field.control === "number" && field.dimension && field.unitId && value !== "") {
+        raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
+      }
       if (field.target.scope === "overlay") {
         engine.setOverlay(field.target.selectionNodeId, field.target.field, raw);
       } else {

@@ -38,12 +38,15 @@ test("A8b: unit mode converts display; writes store base", () => {
     "display converts to °F"
   );
 
-  app.edit(app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c"), "25");
-  assert.equal(app.master.getRoot("mash.grain_temp_c"), 25, "write stores the base value");
+  // The input renders in °F, so a typed 68 is converted back to base (°C).
+  app.edit(app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c"), "68");
+  assert.equal(app.master.getRoot("mash.grain_temp_c"), 20, "write converts display unit -> base");
 });
 
 // A8c: per-field unit overrides win over the dimension default and drop cleanly
-// when toggled back to the default.
+// when toggled back to the default. The `customized` accent marks a pill when a
+// per-field override is in play OR the effective unit is not the field's natural
+// default (base unit here, °C) — so a dimension-level pick is accented too.
 test("A8c: per-field unit override", () => {
   const app = createStepApp();
   app.init();
@@ -51,21 +54,22 @@ test("A8c: per-field unit override", () => {
 
   app.setUnit("temperature", "degF");
   assert.equal(grain().unitId, "degF");
-  assert.equal(grain().customized, false);
+  assert.equal(grain().customized, true, "dimension-level pick is non-default");
 
   app.toggleFieldUnit(grain());
   assert.equal(grain().unitId, "degC");
-  assert.equal(grain().customized, true);
+  assert.equal(grain().customized, true, "a per-field override is accented even at the base unit");
   assert.equal(Number(grain().display), 20, "overridden field displays in its own unit");
 
   // sibling temperature field still follows the dimension default
   const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
   assert.equal(strike.unitId, "degF");
-  assert.equal(strike.customized, false);
+  assert.equal(strike.customized, true);
 
   app.toggleFieldUnit(grain());
   assert.equal(grain().unitId, "degF");
-  assert.equal(grain().customized, false);
+  assert.equal(grain().customized, true, "back on the dimension default (still non-base)");
+  assert.equal("mash.grain_temp_c" in app.unitMode, false, "field override dropped cleanly");
 });
 
 // A8d: a registry `displayUnit` defaults the readout to that unit while the

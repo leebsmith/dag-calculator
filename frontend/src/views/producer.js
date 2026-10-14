@@ -166,7 +166,7 @@ function formatValue(value) {
   return String(value);
 }
 
-function nonlinearFns(artifact, engine) {
+export function nonlinearFns(artifact, engine) {
   const fns = {};
   for (const dim of Object.values(artifact.dimensions ?? {})) {
     if (dim.kind !== "nonlinear") continue;
@@ -211,6 +211,12 @@ export function valuate(fields, engine, ctx = {}) {
       const unitId = toggleable
         ? unitMode[field.id] ?? unitMode[field.dimension] ?? field.displayUnit ?? null
         : null;
+      // The field's natural default (no overrides): the registry's preferred
+      // display unit, else the dimension's base unit. Used to decide whether the
+      // pill is showing a non-default unit.
+      const naturalUnitId = toggleable
+        ? field.displayUnit ?? UNIT_DIMENSIONS.find((d) => d.id === field.dimension)?.units[0]?.[0] ?? null
+        : null;
       const shown =
         unitId && typeof value === "number" && artifact
           ? fromBase(artifact, field.dimension, unitId, value, nl)
@@ -223,7 +229,13 @@ export function valuate(fields, engine, ctx = {}) {
         display: formatValue(shown),
         toggleable,
         unitId,
-        customized: toggleable && Object.prototype.hasOwnProperty.call(unitMode, field.id),
+        // Accented when the pill shows something the user wouldn't get by
+        // default: either a per-field toggle is in play, or the effective unit
+        // differs from the field's natural default (e.g. a Units-menu pick).
+        customized:
+          toggleable &&
+          (Object.prototype.hasOwnProperty.call(unitMode, field.id) ||
+            (unitId !== null && unitId !== naturalUnitId)),
       };
       if (field.target?.scope === "overlay") {
         const overlay = engine.getOverlay(field.target.selectionNodeId);

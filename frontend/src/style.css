@@ -228,6 +228,17 @@ samp {
   background-color: var(--sys-color-action-subtle);
 }
 
+.unit-badge-customized::before {
+  content: "";
+  display: inline-block;
+  width: var(--space-1-5);
+  height: var(--space-1-5);
+  margin-right: var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--sys-color-action-primary);
+  vertical-align: middle;
+}
+
 .form-input {
   width: 100%;
   padding: var(--space-2) var(--space-3);
