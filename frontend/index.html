@@ -75,7 +75,7 @@
                           <label class="form-label" x-text="d.label"></label>
                           <select
                             class="form-select"
-                            :value="unitMode[d.id] || d.units[0][0]"
+                            :value="unitMode[d.id] || d.default || d.units[0][0]"
                             @change="setUnit(d.id, $event.target.value)"
                           >
                             <template x-for="u in d.units" :key="u[0]">

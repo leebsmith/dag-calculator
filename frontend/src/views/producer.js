@@ -212,11 +212,12 @@ export function valuate(fields, engine, ctx = {}) {
       // registry `displayUnit` is a PIN — the field's preferred unit (e.g. salt
       // in g) that the master menu must not override. Precedence:
       //   per-field override → pin (displayUnit) → master (menu) → base unit.
-      const baseUnitId = toggleable
-        ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension)?.units[0]?.[0] ?? null
-        : null;
+      const dimDef = toggleable ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension) : null;
+      const baseUnitId = dimDef?.units[0]?.[0] ?? null;
+      // Inherited unit = pin → master pick → dimension's preferred default (e.g.
+      // color defaults to EBC, matching the legacy metric default) → base.
       const inheritedUnitId = toggleable
-        ? field.displayUnit ?? unitMode[field.dimension] ?? null
+        ? field.displayUnit ?? unitMode[field.dimension] ?? dimDef?.default ?? null
         : null;
       const unitId = toggleable ? unitMode[field.id] ?? inheritedUnitId : null;
       const shown =

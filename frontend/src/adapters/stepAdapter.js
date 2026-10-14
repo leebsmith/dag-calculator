@@ -461,7 +461,7 @@ export function createStepApp(options = {}) {
       const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dim);
       if (!dimDef) return;
       const units = dimDef.units.map(([id]) => id);
-      const fieldDefault = field.displayUnit ?? ui.unitMode[dim] ?? units[0];
+      const fieldDefault = field.displayUnit ?? ui.unitMode[dim] ?? dimDef.default ?? units[0];
       const current = ui.unitMode[field.id] ?? fieldDefault;
       const next = units[(units.indexOf(current) + 1) % units.length];
       if (next === fieldDefault) delete ui.unitMode[field.id];

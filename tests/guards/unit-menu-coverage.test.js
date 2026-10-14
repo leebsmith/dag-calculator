@@ -41,5 +41,12 @@ test("every menu dimension maps to base-first, valid artifact units", () => {
         `"${d.id}" menu lists unknown unit "${unitId}"`
       );
     }
+    if (d.default !== undefined) {
+      assert.ok(
+        d.default === def.base_unit ||
+          Object.prototype.hasOwnProperty.call(def.units ?? {}, d.default),
+        `"${d.id}" default unit "${d.default}" is not a valid unit`
+      );
+    }
   }
 });
