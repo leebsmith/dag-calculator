@@ -1,5 +1,6 @@
 <section class="step-card">
   <h2 class="card-title" x-text="step.title"></h2>
+  <p class="card-subtitle" x-show="step.subtitle" x-text="step.subtitle"></p>
 
   <template x-for="f in fieldsBySlice[step.slice]" :key="f.id">
     <div class="form-group">

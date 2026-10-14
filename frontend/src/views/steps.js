@@ -7,6 +7,7 @@ export const steps = [
     id: "equipment",
     slice: "equipment",
     title: "Equipment Profile",
+    subtitle: "Choose a profile and review the hardware constants",
     partial: "./src/partials/step-card.html",
     fields: [
       "batch.equipment_profile_id",
@@ -22,6 +23,7 @@ export const steps = [
     id: "yeast",
     slice: "yeast",
     title: "Yeast Selection",
+    subtitle: "Choose a strain and set the expected apparent attenuation",
     partial: "./src/partials/step-card.html",
     fields: [
       "batch.yeast_id",
@@ -44,6 +46,7 @@ export const steps = [
     id: "fermentables",
     slice: "fermentables",
     title: "Fermentables",
+    subtitle: "Build the grain bill",
     partial: "./src/partials/step-card.html",
     fields: [{ collection: "grist.major_malts" }],
   },
@@ -51,6 +54,7 @@ export const steps = [
     id: "late-additions",
     slice: "late-additions",
     title: "Late Additions",
+    subtitle: "Sugars and late additions",
     partial: "./src/partials/step-card.html",
     fields: [{ collection: "batch.sugars" }, "batch.s_late_add"],
   },
@@ -58,6 +62,7 @@ export const steps = [
     id: "batch",
     slice: "batch",
     title: "Batch Sparge",
+    subtitle: "Batch-sparge targets and solver inputs",
     partial: "./src/partials/step-card.html",
     fields: [
       "batch.target_abv",
@@ -80,6 +85,7 @@ export const steps = [
     id: "mash",
     slice: "mash",
     title: "Mash",
+    subtitle: "Mash rests and strike-water temperatures",
     partial: "./src/partials/step-card.html",
     fields: [
       "mash.grain_temp_c",
@@ -95,6 +101,7 @@ export const steps = [
     id: "water",
     slice: "water",
     title: "Water Chemistry",
+    subtitle: "Source and target water chemistry",
     partial: "./src/partials/step-card.html",
     fields: [
       "water.source_report_id",
@@ -144,6 +151,7 @@ export const steps = [
     id: "dry-hops",
     slice: "dry-hops",
     title: "Dry Hopping",
+    subtitle: "Dry-hop schedule",
     partial: "./src/partials/step-card.html",
     fields: [{ collection: "batch.dry_hops" }],
   },

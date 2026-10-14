@@ -45,10 +45,6 @@ samp {
   font-variant-numeric: tabular-nums;
 }
 
-.text-danger {
-  color: var(--sys-color-danger-text);
-}
-
 /* ==========================================================================
    2. Buttons & Interactive Controls
    ========================================================================== */
@@ -210,37 +206,35 @@ samp {
 }
 
 .unit-badge {
-  background-color: var(--color-transparent);
-  border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-full);
-  color: var(--sys-text-secondary);
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-medium);
-  padding: var(--space-0-5) var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-0-5) var(--space-unit-badge-x);
+  border-radius: var(--radius-sm);
+  background-color: var(--sys-surface-subtle);
+  border: 1px solid var(--sys-border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--sys-text-primary);
   cursor: pointer;
-  line-height: var(--line-height-snug);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  user-select: none;
 }
 
 .unit-badge:hover {
-  background-color: var(--sys-surface-hover);
-  color: var(--sys-text-primary);
-}
-
-.unit-badge-customized {
+  background-color: var(--sys-color-action-subtle-hover);
   border-color: var(--sys-color-action-primary);
-  color: var(--sys-color-action-subtle-text);
-  background-color: var(--sys-color-action-subtle);
+  color: var(--sys-color-action-primary);
 }
 
-.unit-badge-customized::before {
+.unit-badge-customized::after {
   content: "";
   display: inline-block;
-  width: var(--space-1-5);
-  height: var(--space-1-5);
-  margin-right: var(--space-1);
-  border-radius: var(--radius-full);
-  background-color: var(--sys-color-action-primary);
-  vertical-align: middle;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-circle);
+  background-color: var(--sys-color-warning-accent);
+  margin-left: var(--space-0-25);
 }
 
 .form-input {
@@ -857,7 +851,343 @@ samp {
 }
 
 /* ==========================================================================
-   10. Reduced Motion
+   10. Shared component library (ported from the legacy app; layout-agnostic)
+   ========================================================================== */
+
+/* --- Typography scale & color hierarchy helpers --- */
+
+.text-nano {
+  font-size: var(--text-nano);
+}
+
+.text-micro {
+  font-size: var(--text-micro);
+}
+
+.text-xs {
+  font-size: var(--text-xs);
+}
+
+.text-sm {
+  font-size: var(--text-sm);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-primary {
+  color: var(--sys-text-primary);
+}
+
+.text-secondary {
+  color: var(--sys-text-secondary);
+}
+
+.text-muted {
+  color: var(--sys-text-muted);
+}
+
+.text-danger {
+  color: var(--sys-color-danger-text);
+}
+
+.text-right,
+.align-right {
+  text-align: right;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Badges --- */
+
+.badge-success {
+  background-color: var(--sys-color-success-surface);
+  color: var(--sys-color-success-text);
+  border: 1px solid var(--sys-color-success-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-0-5) var(--space-2);
+}
+
+.badge-warning,
+.badge-amber {
+  background-color: var(--sys-color-warning-surface);
+  color: var(--sys-color-warning-text);
+  border: 1px solid var(--sys-color-warning-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-0-5) var(--space-2);
+}
+
+.badge-danger {
+  background-color: var(--sys-color-danger-surface);
+  color: var(--sys-color-danger-text);
+  border: 1px solid var(--sys-color-danger-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-0-5) var(--space-2);
+}
+
+.badge-info {
+  background-color: var(--sys-color-info-surface);
+  color: var(--sys-color-info-text);
+  border: 1px solid var(--sys-color-info-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-0-5) var(--space-2);
+}
+
+.badge-muted {
+  background-color: var(--sys-color-neutral-surface);
+  color: var(--sys-color-neutral-text);
+  border: 1px solid var(--sys-color-neutral-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-0-5) var(--space-2);
+}
+
+/* --- Catalog search & result counter --- */
+
+.catalog-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.catalog-search-clear {
+  position: absolute;
+  right: var(--space-3);
+  background: none;
+  border: none;
+  color: var(--sys-text-muted);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  padding: var(--space-1);
+}
+
+.catalog-search-clear:hover {
+  color: var(--sys-text-primary);
+}
+
+.catalog-result-counter {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+/* --- Table & card component helpers --- */
+
+.table-empty-cell {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--sys-text-muted);
+  font-family: var(--font-sans);
+  font-style: italic;
+}
+
+.table-action-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+/* --- Synthesized output cards --- */
+
+.synthesized-card {
+  background-color: var(--sys-surface-canvas);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.synthesized-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.synthesized-title {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sys-text-secondary);
+  margin: var(--space-0);
+}
+
+/* --- Metric strip --- */
+
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+}
+
+.metric-cell {
+  background-color: var(--sys-surface-default);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-2-5) var(--space-3);
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-cell-label {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+  line-height: var(--line-height-tight);
+}
+
+.metric-cell-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.metric-cell-val {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-primary);
+}
+
+.metric-cell-unit {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--sys-text-secondary);
+}
+
+/* --- Tri-state control --- */
+
+.tri-state-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tri-state-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1-5) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  line-height: var(--line-height-none);
+}
+
+.tri-state-pill:focus-visible {
+  outline: 2px solid var(--sys-border-focus);
+  outline-offset: 2px;
+}
+
+.tri-state-pill-solid {
+  background-color: var(--sys-color-action-primary);
+  color: var(--sys-text-on-action);
+  border: 1px solid var(--sys-color-action-primary);
+  box-shadow: var(--sys-shadow-sm);
+}
+
+.tri-state-pill-tinted {
+  background-color: var(--sys-color-action-subtle);
+  color: var(--sys-color-action-subtle-text);
+  border: 1px solid var(--sys-border-focus);
+}
+
+.tri-state-pill-ghost {
+  background-color: var(--sys-surface-default);
+  color: var(--sys-text-secondary);
+  border: 1px solid var(--sys-border-subtle);
+}
+
+.tri-state-pill-ghost:hover {
+  color: var(--sys-text-primary);
+  background-color: var(--sys-surface-hover);
+  border-color: var(--sys-border-default);
+}
+
+/* --- Card internals --- */
+
+.card-subtitle {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+  display: block;
+}
+
+.step-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-2);
+}
+
+.step-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@container (min-width: 600px) {
+  .step-grid-2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.step-section-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.step-section-header:first-child {
+  margin-top: var(--space-0);
+}
+
+.step-section-header::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--sys-border-subtle);
+}
+
+.step-section-title {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sys-text-secondary);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   11. Reduced Motion
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
