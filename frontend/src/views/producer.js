@@ -230,11 +230,17 @@ export function valuate(fields, engine, ctx = {}) {
       // the dimension's base-unit symbol (so a fraction reads "×1", not blank).
       const fallbackSymbol =
         !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[baseUnitId] ?? null : null;
+      // Dimension-level display precision (e.g. color to 1 decimal), else the
+      // default 3-decimal rounding.
+      const display =
+        dimDef?.decimals != null && typeof shown === "number"
+          ? shown.toFixed(dimDef.decimals)
+          : formatValue(shown);
       const out = {
         ...field,
         value,
         unit: symbol ?? field.unit ?? fallbackSymbol,
-        display: formatValue(shown),
+        display,
         toggleable,
         unitId,
         // Accented ONLY on a deliberate per-field deviation from the inherited
