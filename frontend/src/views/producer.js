@@ -215,10 +215,15 @@ export function valuate(fields, engine, ctx = {}) {
           ? fromBase(artifact, field.dimension, unitId, value, nl)
           : value;
       const symbol = unitId ? UNIT_SYMBOLS[field.dimension]?.[unitId] ?? unitId : null;
+      // A toggleable field with neither an override nor a registry `unit` (e.g.
+      // equipment conversion efficiency) still needs a pill label — fall back to
+      // the dimension's base-unit symbol (so a fraction reads "×1", not blank).
+      const fallbackSymbol =
+        !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[naturalUnitId] ?? null : null;
       const out = {
         ...field,
         value,
-        unit: symbol ?? field.unit,
+        unit: symbol ?? field.unit ?? fallbackSymbol,
         display: formatValue(shown),
         toggleable,
         unitId,
