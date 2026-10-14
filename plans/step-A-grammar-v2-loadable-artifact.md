@@ -7,7 +7,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: none
 blocks: [Step B, Step C, Step D, Step E, Step F, Step G]
 gate: loadArtifact + validateDerivedDimensions pass; npm test / make check / make test green; boundary parity; worked-example goldens
-status: ready
+status: done
 ---
 
 # Step A — Grammar v2 & Loadable Artifact

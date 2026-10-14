@@ -6,7 +6,8 @@ target_repo: ~/Development/dag-calculator
 depends_on: [Step D, Step E]
 blocks: []
 gate: the UI assembles full BatchSolverRequest / WaterSolverRequest bodies, posts them over the seam, and a real `make local-dev` solve returns a recipe; make check/test green
-status: ready
+status: done
+completed: 793ee84
 ---
 
 # Step D2 — Real Boundary Requests (batch + water)
@@ -114,6 +115,12 @@ Default `DEFAULT_GRIST` remains the seed until the user edits.
 4. **D2.4 conformance** — backend dump fixtures + node equality test.
 5. **Docs** — `step-D-json-seam.md` correction note; `engine.md` seam section;
    `TODO.md`.
+
+- [x] D2.1 adapter + tests
+- [x] D2.2 grist normalization
+- [x] D2.3 HTTP opt-in
+- [x] D2.4 conformance
+- [x] Docs
 
 ## Acceptance / gate
 - `make local-dev` → fill a recipe → real `/solve/batch` then `/solve/water`

@@ -7,7 +7,7 @@ oracle_repo: ~/Development/brewing-calculator
 depends_on: [Step A, Step B]
 blocks: [Step D, Step E]
 gate: parity report with 0 unexplained divergences; make check/test green
-status: ready
+status: done
 ---
 
 # Step C — Conformance & Correctness

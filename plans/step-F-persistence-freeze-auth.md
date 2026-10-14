@@ -6,7 +6,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [Step D, Step E]
 blocks: []
 gate: multi-draft autosave + freeze reproducible; make local-dev boots emulators + uvicorn; make check/test green
-status: ready
+status: done
 ---
 
 # Step F — Persistence / Freeze / Auth

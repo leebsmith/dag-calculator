@@ -6,7 +6,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: Step A
 blocks: [Step E]
 gate: relations + domain states evaluate; tests green; make check/test green; no artifact change
-status: ready
+status: done
 ---
 
 # Step B — Engine Enforcement (Relations & Domain Bounds)

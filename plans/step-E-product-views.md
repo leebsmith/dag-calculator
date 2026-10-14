@@ -6,7 +6,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [Step A, Step D]
 blocks: [Step F]
 gate: legacy 7-step workflow reproducible; make local-dev runs; make check/test green
-status: ready
+status: done
 ---
 
 # Step E — Product / Views

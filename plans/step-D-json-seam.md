@@ -6,7 +6,8 @@ target_repo: ~/Development/dag-calculator
 depends_on: [Step A]
 blocks: [Step E]
 gate: adapter assembles full requests, flattens responses, maps errors; engine stays sync; make check/test green
-status: ready
+status: done
+completed: 793ee84
 ---
 
 # Step D — JSON Seam End-to-End

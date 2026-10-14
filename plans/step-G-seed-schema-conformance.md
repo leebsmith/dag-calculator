@@ -6,7 +6,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [Step A, Step F]
 blocks: []
 gate: every seed file conforms to its primitive_schema; make check/test green
-status: ready
+status: done
 ---
 
 # Step G — Seed / Schema Conformance
