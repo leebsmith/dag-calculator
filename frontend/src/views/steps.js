@@ -23,8 +23,8 @@ export const steps = [
     id: "yeast",
     slice: "yeast",
     title: "Yeast Selection",
-    subtitle: "Choose a strain and set the expected apparent attenuation",
-    partial: "./src/partials/step-card.html",
+    subtitle: "Choose a strain; batch attenuation is set on the batch step",
+    partial: "./src/partials/step-yeast.html",
     fields: [
       "batch.yeast_id",
       "batch.yeast.attenuation_pct",
@@ -32,14 +32,6 @@ export const steps = [
       "batch.yeast.high_attenuation",
       "batch.yeast.flocculation",
       "batch.yeast.alcohol_tolerance_abv",
-    ],
-    actions: [
-      {
-        id: "use-attenuation",
-        label: "Use this attenuation",
-        handler: "useYeastAttenuation",
-        gate: "batch.yeast.attenuation_pct",
-      },
     ],
   },
   {

@@ -1,0 +1,113 @@
+<section class="step-card">
+  <h2 class="card-title" x-text="step.title"></h2>
+  <p class="card-subtitle" x-show="step.subtitle" x-text="step.subtitle"></p>
+
+  <div class="step-card-content">
+    <!-- Filters -->
+    <div class="step-grid-2col">
+      <div class="form-group">
+        <label class="form-label">Search by name</label>
+        <input
+          type="text"
+          class="form-input"
+          placeholder="e.g. American Ale"
+          x-model="yeastSearchQuery"
+        />
+        <span class="form-hint">Case-insensitive substring match on strain name</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Manufacturer</label>
+        <select class="form-select" x-model="yeastManufacturerFilter">
+          <option value="">All manufacturers</option>
+          <template x-for="mfr in yeastManufacturers" :key="mfr">
+            <option :value="mfr" x-text="mfr"></option>
+          </template>
+        </select>
+        <span class="form-hint">Filter by yeast lab</span>
+      </div>
+    </div>
+
+    <!-- Result counter -->
+    <div
+      class="catalog-result-counter"
+      aria-live="polite"
+      x-text="isYeastListTruncated
+        ? `Showing ${visibleYeasts.length} of ${yeastResultCount} matching strains — refine search or manufacturer filter`
+        : `Showing ${yeastResultCount} matching strains`"
+    ></div>
+
+    <!-- Results -->
+    <div class="data-table-container data-table-container-scroll">
+      <table class="data-table is-fixed">
+        <colgroup>
+          <col style="width: 28%;" />
+          <col style="width: 16%;" />
+          <col style="width: 16%;" />
+          <col style="width: 12%;" />
+          <col style="width: 12%;" />
+          <col style="width: 16%;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Strain</th>
+            <th>MFG.</th>
+            <th class="text-right">Atten.</th>
+            <th>Flocc.</th>
+            <th class="text-right">ABV Tol.</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="y in visibleYeasts" :key="y.id">
+            <tr :class="{ 'is-selected': selectedYeastId === y.id }">
+              <td><span class="font-medium" x-text="y.name"></span></td>
+              <td x-text="y.manufacturer"></td>
+              <td class="text-right tabular-nums" x-text="yeastAttenuationRange(y)"></td>
+              <td x-text="y.flocculation"></td>
+              <td class="text-right tabular-nums" x-text="y.alcohol_tolerance_abv + '%'"></td>
+              <td class="table-action-cell">
+                <button type="button" class="btn btn-secondary text-xs" @click="selectYeast(y.id)">
+                  Use
+                </button>
+              </td>
+            </tr>
+          </template>
+          <template x-if="filteredYeasts.length === 0">
+            <tr>
+              <td colspan="6" class="table-empty-cell">No yeast strains match the current filters.</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Selected strain -->
+    <template x-if="selectedYeast">
+      <div class="synthesized-card">
+        <div class="synthesized-header">
+          <span class="synthesized-title" x-text="selectedYeast.name"></span>
+          <button type="button" class="btn btn-secondary text-xs" @click="clearYeastSelection()">
+            Clear
+          </button>
+        </div>
+        <div class="step-grid-2col">
+          <div class="form-group">
+            <span class="form-label">Typical attenuation</span>
+            <span class="tabular-nums" x-text="yeastAttenuationRange(selectedYeast)"></span>
+          </div>
+          <div class="form-group">
+            <span class="form-label">Strain details</span>
+            <div class="text-xs text-muted">
+              <div><strong>Manufacturer:</strong> <span x-text="selectedYeast.manufacturer"></span></div>
+              <div><strong>Flocculation:</strong> <span x-text="selectedYeast.flocculation"></span></div>
+              <div><strong>ABV tolerance:</strong> <span x-text="selectedYeast.alcohol_tolerance_abv + '%'"></span></div>
+              <div class="card-subtitle" x-text="selectedYeast.notes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <p class="form-hint">Batch-specific attenuation is set on the Batch Sparge step.</p>
+  </div>
+</section>

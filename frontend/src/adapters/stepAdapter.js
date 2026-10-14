@@ -35,6 +35,13 @@ function refPaths(node, out = new Set()) {
   return out;
 }
 
+// Cap the rendered yeast rows (the catalog is large); the full count is still
+// shown in the result counter.
+const MAX_VISIBLE_YEASTS = 25;
+
+// fraction (0..1) -> percentage string with up to one decimal (0.744 -> "74.4").
+const formatPercent = (f) => (typeof f === "number" ? String(Math.round(f * 1000) / 10) : "");
+
 // Map every manifest field to the step slice that displays it, keyed by
 // `fieldKey`. Lets violations land on the card that owns the field.
 function buildFieldSliceMap() {
@@ -49,6 +56,7 @@ function buildFieldSliceMap() {
   }
   return map;
 }
+
 
 export function createStepApp() {
   const { master, ui } = createAppStore();
@@ -90,6 +98,7 @@ export function createStepApp() {
     unitsOpen: false,
     violationCount: 0,
     fieldsBySlice: {},
+    selectedYeastId: "",
     relations: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
@@ -201,6 +210,7 @@ export function createStepApp() {
       this.relations = engine.relationStates();
       this.domains = engine.domainStates();
       this.fieldDomains = fieldDomains;
+      this.selectedYeastId = engine.get("batch.yeast_id") || "";
       this.violationCount =
         this.relations.filter((r) => !r.holds).length +
         this.domains.filter((d) => !d.holds).length +
@@ -333,13 +343,62 @@ export function createStepApp() {
       }
     },
 
-    useYeastAttenuation() {
-      const attenuation = engine.resolve("batch.yeast.attenuation_pct");
-      if (typeof attenuation === "number") {
-        this.setRoot("batch.apparent_attenuation", attenuation);
-        this.compute();
-        this.notify();
+    // --- Yeast selection card (bespoke) ---
+    yeastSearchQuery: "",
+    yeastManufacturerFilter: "",
+
+    get yeastCatalog() {
+      return Object.values(cache.references.yeast ?? {});
+    },
+
+    get yeastManufacturers() {
+      return [...new Set(this.yeastCatalog.map((y) => y.manufacturer).filter(Boolean))].sort();
+    },
+
+    get filteredYeasts() {
+      const q = this.yeastSearchQuery.trim().toLowerCase();
+      const m = this.yeastManufacturerFilter;
+      return this.yeastCatalog.filter(
+        (y) => (!q || y.name.toLowerCase().includes(q)) && (!m || y.manufacturer === m)
+      );
+    },
+
+    get visibleYeasts() {
+      return this.filteredYeasts.slice(0, MAX_VISIBLE_YEASTS);
+    },
+
+    get yeastResultCount() {
+      return this.filteredYeasts.length;
+    },
+
+    get isYeastListTruncated() {
+      return this.yeastResultCount > MAX_VISIBLE_YEASTS;
+    },
+
+    get selectedYeast() {
+      return this.selectedYeastId ? cache.references.yeast[this.selectedYeastId] ?? null : null;
+    },
+
+    yeastAttenuationRange(y) {
+      return y ? `${formatPercent(y.low_attenuation)}–${formatPercent(y.high_attenuation)}%` : "";
+    },
+
+    // Selecting a strain copies its typical attenuation into the batch's
+    // apparent attenuation (which is edited on the Batch Sparge step).
+    selectYeast(id) {
+      this.setRoot("batch.yeast_id", id);
+      const yeast = cache.references.yeast[id];
+      if (yeast && typeof yeast.attenuation_pct === "number") {
+        this.setRoot("batch.apparent_attenuation", yeast.attenuation_pct);
       }
+      this.compute();
+      this.notify();
+    },
+
+    clearYeastSelection() {
+      this.setRoot("batch.yeast_id", "");
+      this.compute();
+      this.notify();
     },
 
     runAction(action) {

@@ -99,7 +99,12 @@
 
         <div class="step-row">
           <template x-for="step in visibleSteps" :key="step.id">
-            <load src="./src/partials/step-card.html" />
+            <template x-if="step.id === 'yeast'">
+              <load src="./src/partials/step-yeast.html" />
+            </template>
+            <template x-if="step.id !== 'yeast'">
+              <load src="./src/partials/step-card.html" />
+            </template>
           </template>
         </div>
 
