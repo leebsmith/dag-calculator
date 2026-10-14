@@ -382,6 +382,8 @@ export function createStepApp(options = {}) {
         if (d.holds) continue;
         this.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
       }
+      // Refresh the grain-bill rows for the summary card (reactive).
+      this.gristRows = engine.get("grist.major_malts") ?? [];
     },
 
     syncNav() {
@@ -658,9 +660,10 @@ export function createStepApp(options = {}) {
     maltSearch: "",
     maltCategoryFilter: [],
 
-    get gristRows() {
-      return engine.get("grist.major_malts") ?? [];
-    },
+    // The grain-bill rows for the summary card. A reactive property refreshed in
+    // compute() — reading the engine directly in a getter would not re-render
+    // (the engine isn't Alpine-reactive).
+    gristRows: [],
 
     // Weighted grist readouts, rendered from the producer's field models (so
     // they honor the master unit menu for grain_color, stay display-only, etc.).
