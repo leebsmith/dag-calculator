@@ -30,5 +30,19 @@ instead of bundling them — keep the MWE's eager imports as-is for now.
 
 Not needed by the current artifact; add only when a node requires them:
 
-- `max` reduction; boolean **input** kind; list literals; map/dict value type.
+- `max` reduction; boolean **input** kind (roots need a dimension, choices a
+  taxonomy — no boolean toggle node yet); list literals; map/dict value type.
 - True nested boundary outputs (currently flattened to dotted keys).
+
+## Engine robustness follow-ups (from the proactive assessment)
+
+- **Freeze shape (M1):** `freezePayload` snapshots boundary nodes as the internal
+  `{ outputs, fingerprint }` wrapper, not the outputs. Unwrap to `get(id).outputs`
+  before any frozen read-view/reconcile consumes the valuation.
+- **Non-finite propagation (L4):** `÷0` → `NaN/∞` is only flagged for root/choice
+  domains, not derived nodes. Consider a global "derived values finite" guard.
+- **Hamilton (L3):** the grist `parts → pct` allocation is deliberately host-side
+  (to be reused by later features); `Σ parts = 100%` is therefore not an engine
+  invariant. Revisit if it moves into the artifact.
+- **Unit scale families / auto-display (L5):** a display-layer concern, tracked in
+  `plans/unit-scaling.md`, not the engine core.
