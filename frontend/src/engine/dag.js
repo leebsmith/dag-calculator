@@ -81,6 +81,7 @@ export function createEngine(artifact, options = {}) {
   const references = options.references ?? {};
   const collections = options.collections ?? {};
   const boundaries = options.boundaries ?? {};
+  const boundaryRequests = options.boundaryRequests ?? {};
   const boundaryCache = options.boundaryCache ?? new BoundaryCache();
 
   const { adjacency, dependents, topoOrder } = buildGraph(artifact);
@@ -114,6 +115,23 @@ export function createEngine(artifact, options = {}) {
       return getField(get(r.nodeId), r.suffix.join("."));
     }
     throw new Error(`Cannot resolve suffix "${r.suffix.join(".")}" on ${node.kind} node "${r.nodeId}"`);
+  }
+
+  // Resolve a boundary's request body. When the host registers a request
+  // adapter for the node's binding (`options.boundaryRequests`), it reshapes the
+  // resolved values into the backend's contract; otherwise the declared
+  // `inputs` pass through unchanged (offline stubs). The SAME body feeds both
+  // `boundaryRequest()` and evaluation, so their fingerprints agree.
+  function resolveBoundaryInputs(node) {
+    const build = boundaryRequests[node.binding];
+    if (typeof build === "function") {
+      return build({ get, resolve: resolveValue });
+    }
+    const inputs = {};
+    for (const [alias, path] of Object.entries(node.inputs)) {
+      inputs[alias] = resolveValue(path);
+    }
+    return inputs;
   }
 
   function callFunction(fnId, args) {
@@ -192,10 +210,7 @@ export function createEngine(artifact, options = {}) {
         return evaluate(node.expr, derivedCtx(inputValues));
       }
       case "boundary": {
-        const inputValues = {};
-        for (const [alias, path] of Object.entries(node.inputs)) {
-          inputValues[alias] = resolveValue(path);
-        }
+        const inputValues = resolveBoundaryInputs(node);
         const fingerprint = canonicalFingerprint(inputValues);
         if (boundaryCache.has(fingerprint)) return boundaryCache.get(fingerprint);
         const fn = boundaries[node.binding];
@@ -264,10 +279,7 @@ export function createEngine(artifact, options = {}) {
       if (!node || node.kind !== "boundary") {
         throw new Error(`"${nodeId}" is not a boundary node`);
       }
-      const inputs = {};
-      for (const [alias, path] of Object.entries(node.inputs)) {
-        inputs[alias] = resolveValue(path);
-      }
+      const inputs = resolveBoundaryInputs(node);
       return { binding: node.binding, inputs, fingerprint: canonicalFingerprint(inputs) };
     },
     applyBoundaryResult(fingerprint, outputs) {

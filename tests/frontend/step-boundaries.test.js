@@ -81,3 +81,42 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   assert.equal(app.boundaryError.code, "MASH_TOO_THIN");
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
 });
+
+test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.init();
+
+  const batch = calls.find((c) => c.url === "/solve/batch").body;
+  const water = calls.find((c) => c.url === "/solve/water").body;
+
+  // Full Pydantic contract: 17 declared batch inputs.
+  assert.equal(Object.keys(batch).length, 17);
+  for (const k of ["target_abv", "apparent_attenuation", "topology", "grain_bill", "eta_conv"]) {
+    assert.ok(k in batch, `batch request missing ${k}`);
+  }
+  // Grain rows are renamed to the backend's GristBillRow keys (no raw catalog keys).
+  assert.ok(batch.grain_bill.length > 0);
+  for (const row of batch.grain_bill) {
+    assert.deepEqual(Object.keys(row).sort(), ["mc_i", "w_i", "yield_i"]);
+  }
+  const wSum = batch.grain_bill.reduce((acc, r) => acc + r.w_i, 0);
+  assert.ok(Math.abs(wSum - 1) < 1e-9, `w_i must sum to 1 (got ${wSum})`);
+
+  // Water nests the six working ions (no flat `source.calcium_ca` aliases).
+  const ions = ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"];
+  assert.deepEqual(Object.keys(water.source).sort(), [...ions].sort());
+  assert.deepEqual(Object.keys(water.target).sort(), [...ions].sort());
+  assert.ok(!("source.calcium_ca" in water));
+  for (const row of water.grist) {
+    assert.deepEqual(Object.keys(row).sort(), ["color_lovibond", "grain_type", "mass_kg"]);
+    assert.ok(row.mass_kg > 0, "water grist mass_kg must be positive");
+  }
+  // Enum values are artifact taxonomy strings, not the legacy aliases.
+  assert.equal(batch.topology, "r_l_to_g");
+  assert.equal(water.gypsum_form, "GYPSUM_DIHYDRATE");
+  assert.equal(water.preferred_alkaline_agent, "PICKLING_LIME");
+});

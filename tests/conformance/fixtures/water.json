@@ -1,0 +1,46 @@
+{
+  "fingerprint": "0047a0127e29f46f79ab797c609b4ed1f81244ec0d0ed87d15b66d07cf32f621",
+  "request": {
+    "acid_medium": "LACTIC_88",
+    "cacl2_form": "CACL2_DIHYDRATE",
+    "calcium_floor_ppm": 50.0,
+    "grist": [
+      {
+        "color_lovibond": 1.5,
+        "grain_type": "BASE",
+        "mass_kg": 3.7600000000000002
+      },
+      {
+        "color_lovibond": 40.0,
+        "grain_type": "CRYSTAL",
+        "mass_kg": 0.9400000000000001
+      }
+    ],
+    "gypsum_form": "GYPSUM_DIHYDRATE",
+    "mash_thickness_l_per_kg": 3.0,
+    "preferred_alkaline_agent": "PICKLING_LIME",
+    "salt_distribution": "PROPORTIONAL",
+    "source": {
+      "alkalinity_as_caco3": 80.0,
+      "calcium_ca": 20.0,
+      "chloride_cl": 15.0,
+      "magnesium_mg": 5.0,
+      "sodium_na": 10.0,
+      "sulfate_so4": 30.0
+    },
+    "strategy": "CALCIUM_FLOOR",
+    "target": {
+      "alkalinity_as_caco3": 40.0,
+      "calcium_ca": 60.0,
+      "chloride_cl": 50.0,
+      "magnesium_mg": 10.0,
+      "sodium_na": 20.0,
+      "sulfate_so4": 100.0
+    },
+    "target_mash_ph": 5.4,
+    "v_hlt_debt_l": 1.0,
+    "v_hlt_treat_l": 15.0,
+    "v_mash_treat_l": 14.0,
+    "v_sparge_demand_l": 14.0
+  }
+}

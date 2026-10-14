@@ -94,7 +94,9 @@ Alpine.data("calculator", () => createCalculatorApp());
 Alpine.data("stepCalculator", () => {
   // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate
   // `this`) trigger re-renders, and so persistence mutates the same proxy.
-  const app = Alpine.reactive(createStepApp());
+  // The product entry opts into HTTP explicitly (base = VITE_API_BASE ?? "",
+  // same-origin via the Vite proxy in dev); tests keep the stub default.
+  const app = Alpine.reactive(createStepApp({ useHttp: true }));
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
   return app;

@@ -1,0 +1,33 @@
+{
+  "fingerprint": "09d69dc951566be9591609087712b0391b08d5ad36d3c178a6ea5095135b588c",
+  "request": {
+    "apparent_attenuation": 0.75,
+    "delta_v_evap": 3.0,
+    "eta_conv": 0.95,
+    "f_shrink": 0.04,
+    "grain_bill": [
+      {
+        "mc_i": 0.04,
+        "w_i": 0.8,
+        "yield_i": 0.8
+      },
+      {
+        "mc_i": 0.04,
+        "w_i": 0.2,
+        "yield_i": 0.74
+      }
+    ],
+    "hlt_coil_floor_l": 0.0,
+    "hlt_dead_space_l": 0.0,
+    "hlt_starting_volume_l": 25.0,
+    "hlt_transfer_loss_l": 0.0,
+    "intensive_value": 3.0,
+    "max_hlt_volume_l": 30.0,
+    "s_late_add": 0.0,
+    "target_abv": 5.5,
+    "topology": "r_l_to_g",
+    "v_dead": 0.0,
+    "v_ferm": 20.0,
+    "v_kettle_dead": 0.0
+  }
+}

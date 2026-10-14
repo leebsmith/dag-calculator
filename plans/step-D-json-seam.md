@@ -11,6 +11,12 @@ status: ready
 
 # Step D — JSON Seam End-to-End
 
+> **Update:** the assumption below ("the artifact's declared `inputs` … match
+> `boundary.py`") turned out to be false — grain-bill/water-grist rows and the
+> nested `IonProfile`s need an explicit mapping layer. See
+> `plans/step-D2-boundary-requests.md` for the request adapter, grist
+> normalization, and HTTP opt-in that complete this step.
+
 **Goal:** replace the MWE's stub boundaries with the real seam — the browser
 assembles the full `BatchSolverRequest`/`WaterSolverRequest`, POSTs JSON to
 FastAPI, and maps the response back into the engine's flattened output keys, with

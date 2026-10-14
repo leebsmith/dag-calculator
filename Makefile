@@ -35,9 +35,9 @@ test:
 # Clean up processes and reclaim ports
 clean:
 	@echo "Cleaning up local environment..."
-	@pkill -INT -f 'firebase emulators:start' || true
-	@pkill -f 'vite' || true
-	@pkill -f 'uvicorn app.main:app' || true
+	@pkill -INT -f '[f]irebase emulators:start' || true
+	@pkill -f '[v]ite' || true
+	@pkill -f '[u]vicorn app.main:app' || true
 	@echo "Ports reclaimed."
 
 deploy: deploy-backend deploy-frontend

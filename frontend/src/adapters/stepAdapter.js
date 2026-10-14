@@ -11,9 +11,11 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns } from "../views/producer.js";
+import { hamiltonPct } from "../views/hamilton.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS } from "../views/registry/units.js";
 import { flattenResponse, postJSON } from "./apiClient.js";
+import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
@@ -66,9 +68,11 @@ export function createStepApp(options = {}) {
   let collections = { ...cache.collections };
 
   // Boundary seam: offline stubs by default (tests, no API base); the real
-  // solvers over HTTP when configured. The engine stays synchronous — the
-  // adapter pre-resolves boundaries and seeds the cache before computing.
-  const useHttp = options.useHttp ?? Boolean(import.meta.env?.VITE_API_BASE);
+  // solvers over HTTP when explicitly enabled. The engine stays synchronous —
+  // the adapter pre-resolves boundaries and seeds the cache before computing.
+  // HTTP is an explicit boolean (never the truthiness of the base string); the
+  // product entry (main.js) passes `useHttp: true`.
+  const useHttp = options.useHttp ?? false;
   const fetchImpl = options.fetchImpl;
   const debounceMs = options.debounceMs ?? 300;
   const BOUNDARY_URLS = {
@@ -80,6 +84,7 @@ export function createStepApp(options = {}) {
     references: cache.references,
     collections,
     boundaries: useHttp ? {} : STUB_BOUNDARIES,
+    boundaryRequests: BOUNDARY_BUILDERS,
     roots: master.allRoots(),
   });
   const boundaryNodes = engine.topoOrder.filter((id) => artifact.nodes[id].kind === "boundary");
@@ -231,6 +236,7 @@ export function createStepApp(options = {}) {
         references: cache.references,
         collections,
         boundaries: useHttp ? {} : STUB_BOUNDARIES,
+        boundaryRequests: BOUNDARY_BUILDERS,
         roots: master.allRoots(),
       });
       if (useHttp) await this.solveNow();
@@ -244,7 +250,10 @@ export function createStepApp(options = {}) {
     },
 
     // Resolve every boundary in topological order (via HTTP), then recompute.
-    // Superseded solves discard their (stale) result via the token.
+    // `engine.boundaryRequest` delegates to `BOUNDARY_BUILDERS`, so `inputs` is
+    // the adapted `BatchSolverRequest`/`WaterSolverRequest` body and
+    // `fingerprint` is its canonical hash (matching the backend). Superseded
+    // solves discard their (stale) result via the token.
     async solveNow() {
       if (!useHttp) {
         this.compute();
@@ -547,14 +556,26 @@ export function createStepApp(options = {}) {
 
     editCell(field, rowIndex, columnId, value) {
       const column = field.columns.find((c) => c.id === columnId);
-      // Convert a display-unit cell back to the base unit before storing.
+      // Convert a display-unit cell back to the base unit before storing; a
+      // dimensioned cell with no display unit still stores a real number (not
+      // the input's string).
       let raw = value;
-      if (value !== "" && column?.dimension && column?.displayUnit) {
-        raw = toBase(artifact, column.dimension, column.displayUnit, Number(value));
+      if (value !== "" && column?.dimension) {
+        const n = Number(value);
+        raw = column.displayUnit ? toBase(artifact, column.dimension, column.displayUnit, n) : n;
       }
       const rows = (engine.get(field.target.nodeId) ?? []).map((row, i) =>
-        i === rowIndex ? { ...row, [columnId]: raw } : row
+        i === rowIndex ? { ...row, [columnId]: raw } : { ...row }
       );
+      // Formulation rule (TODO/L3): `parts` is the grist authoring column; `pct`
+      // (and thus the grain-bill `w_i`) is the normalized allocation that sums to
+      // exactly 100% at 0.1% resolution.
+      if (field.target.nodeId === "grist.major_malts" && columnId === "parts") {
+        const pcts = hamiltonPct(rows.map((row) => row.parts));
+        rows.forEach((row, i) => {
+          row.pct = pcts[i];
+        });
+      }
       engine.setCollection(field.target.nodeId, rows);
       this.scheduleSolve();
       this.notify();

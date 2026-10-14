@@ -91,8 +91,13 @@ root/choice   → roots.get(nodeId) ?? evaluate(node.default)
 collection    → collections[nodeId] ?? []
 selection     → component (read-only view; empty ref → {})
 derived       → evaluate(node.expr, ctx(  resolve node.inputs  ))
-boundary      → resolve inputs → fingerprint → cache hit | boundaries[binding](inputs)
+boundary      → request body → fingerprint → cache hit | boundaries[binding](body)
 ```
+
+A boundary's **request body** is the resolved declared `inputs` by default; when
+the host registers a per-binding request adapter (`options.boundaryRequests`), it
+reshapes them into the backend's Pydantic contract. Either way the *same* body
+feeds `boundaryRequest()` and evaluation, so their fingerprints agree.
 
 ### `evaluate(expr, ctx)` — the AST
 
@@ -142,6 +147,16 @@ fingerprint }`; the adapter performs the I/O and calls
 `applyBoundaryResult(fingerprint, outputs)` to seed the cache. After that,
 evaluation hits the cache synchronously. `hasBoundaryResult(fingerprint)` checks
 whether a solve is already available.
+
+`inputs` here is the **request body**. The artifact's declared `inputs` are
+resolved into frontend shapes (flat roots, raw collection rows), but the
+backend's `extra="forbid"` models use different shapes (normalized grain-bill
+rows, nested `IonProfile`s). A **request adapter** bridges that gap: the host
+registers pure builders per binding via `options.boundaryRequests`
+(`frontend/src/adapters/boundaryRequest.js`), and the engine applies one whenever
+it resolves a boundary's body. Because the *adapted* body is what gets
+fingerprinted — and is what the adapter POSTs — the frontend hash matches the
+backend's `canonical_fingerprint` and the cache key lines up across the seam.
 
 ## Copy-forward flows
 

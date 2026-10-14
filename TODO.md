@@ -34,6 +34,17 @@ Not needed by the current artifact; add only when a node requires them:
   taxonomy — no boolean toggle node yet); list literals; map/dict value type.
 - True nested boundary outputs (currently flattened to dotted keys).
 
+## Boundary requests (D2)
+
+- **Auth:** `/solve/*` require a Firebase bearer. Dev works via the emulator
+  token injected by `setTokenProvider` (see `frontend/src/main.js`); a solve that
+  fails with `401`/`HTTP_ERROR` is a token problem, not a request-shape problem.
+- **Prod CORS:** the Vite proxy bridges `/solve` in dev; a deployed frontend on a
+  different origin than the backend needs `VITE_API_BASE` set and CORS enabled
+  on FastAPI.
+- **Scope:** hops/IBU, dry-hop, trace additions, and style gating still post no
+  boundary (batch + water only).
+
 ## Engine robustness follow-ups (from the proactive assessment)
 
 - **Freeze shape (M1):** `freezePayload` snapshots boundary nodes as the internal

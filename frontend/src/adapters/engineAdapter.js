@@ -12,6 +12,7 @@ import { createCalculator } from "../engine/index.js";
 import { createMasterStore } from "../store/masterStore.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { flattenResponse, postJSON } from "./apiClient.js";
+import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 
 const BOUNDARY_URLS = {
@@ -30,6 +31,7 @@ export function createCalculatorApp(options = {}) {
     references: cache.references,
     collections: cache.collections,
     boundaries: useHttp ? {} : STUB_BOUNDARIES,
+    boundaryRequests: BOUNDARY_BUILDERS,
     roots: store.allRoots(),
   });
 
