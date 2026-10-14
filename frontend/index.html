@@ -145,12 +145,15 @@
                     <template x-if="step.id === 'yeast'">
                       <load src="./src/partials/step-yeast.html" />
                     </template>
-                    <template x-if="step.id === 'fermentables'">
-                      <load src="./src/partials/step-fermentables.html" />
-                    </template>
-                    <template x-if="step.id !== 'yeast' && step.id !== 'fermentables'">
-                      <load src="./src/partials/step-card.html" />
-                    </template>
+                  <template x-if="step.id === 'fermentables'">
+                    <load src="./src/partials/step-fermentables.html" />
+                  </template>
+                  <template x-if="step.id === 'late-additions'">
+                    <load src="./src/partials/step-late-additions.html" />
+                  </template>
+                  <template x-if="step.id !== 'yeast' && step.id !== 'fermentables' && step.id !== 'late-additions'">
+                    <load src="./src/partials/step-card.html" />
+                  </template>
                   </div>
                 </template>
               </div>

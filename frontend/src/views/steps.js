@@ -51,8 +51,13 @@ export const steps = [
     slice: "late-additions",
     title: "Late Additions",
     subtitle: "Sugars and late additions",
-    partial: "./src/partials/step-card.html",
-    fields: [{ collection: "batch.sugars" }, "batch.s_late_add"],
+    partial: "./src/partials/step-late-additions.html",
+    fields: [
+      { collection: "batch.sugars" },
+      "batch.s_late_add",
+      "grist.sugars_mass",
+      "grist.sugar_weighted_lovibond",
+    ],
   },
   {
     id: "batch",

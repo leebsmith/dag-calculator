@@ -393,6 +393,7 @@ export function createStepApp(options = {}) {
       }
       // Refresh the grain-bill rows for the summary card (reactive).
       this.gristRows = engine.get("grist.major_malts") ?? [];
+      this.sugarList = engine.get("batch.sugars") ?? [];
     },
 
     syncNav() {
@@ -889,6 +890,129 @@ export function createStepApp(options = {}) {
     handleMaltEscape() {
       if (this.maltDrawer !== null) this.closeMaltDrawer();
       else this.cancelMaltEditor();
+    },
+
+    // --- Late additions editor (sugar draft + catalog drawer) ---
+
+    sugarEditorOpen: false,
+    sugarDraft: [],
+    sugarDrawer: null, // "search" | null
+    sugarSearch: "",
+
+    // Sugar rows for the summary card (reactive; refreshed in compute()).
+    sugarList: [],
+
+    sugarField(id) {
+      return (this.fieldsBySlice["late-additions"] ?? []).find((f) => f.id === id) ?? null;
+    },
+
+    get sugarMassField() {
+      return this.sugarField("grist.sugars_mass");
+    },
+
+    get sugarColorField() {
+      return this.sugarField("grist.sugar_weighted_lovibond");
+    },
+
+    get lateExtractField() {
+      return this.sugarField("batch.s_late_add");
+    },
+
+    get sugarCatalog() {
+      return Object.values(cache.seeds.sugars ?? {});
+    },
+
+    get sugarFilteredCatalog() {
+      const active = new Set(this.sugarDraft.map((r) => r.sugar_id).filter(Boolean));
+      const q = this.sugarSearch.trim().toLowerCase();
+      return this.sugarCatalog.filter(
+        (s) =>
+          !active.has(s.id) &&
+          (!q || (s.name ?? "").toLowerCase().includes(q) || (s.notes ?? "").toLowerCase().includes(q))
+      );
+    },
+
+    get sugarVisibleCatalog() {
+      return this.sugarFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
+    },
+
+    get sugarCatalogTruncated() {
+      return this.sugarFilteredCatalog.length > MAX_VISIBLE_MALTS;
+    },
+
+    get sugarTotalMass() {
+      return this.sugarDraft.reduce((sum, r) => sum + (Number(r.mass_kg) || 0), 0);
+    },
+
+    get sugarTotalExtract() {
+      return this.sugarDraft.reduce(
+        (sum, r) => sum + (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0),
+        0
+      );
+    },
+
+    openSugarEditor() {
+      this.sugarDraft = (engine.get("batch.sugars") ?? []).map((row, i) => ({ ...row, _key: `s${i}` }));
+      this.sugarDrawer = null;
+      this.sugarEditorOpen = true;
+    },
+
+    cancelSugarEditor() {
+      this.sugarEditorOpen = false;
+      this.sugarDrawer = null;
+    },
+
+    saveSugarEditor() {
+      const rows = this.sugarDraft.map((row) => {
+        const clean = { ...row };
+        delete clean._key;
+        return clean;
+      });
+      engine.setCollection("batch.sugars", rows);
+      this.sugarEditorOpen = false;
+      this.sugarDrawer = null;
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    updateDraftMass(key, value) {
+      const row = this.sugarDraft.find((r) => r._key === key);
+      if (!row) return;
+      const n = Number(value);
+      row.mass_kg = Number.isFinite(n) && n > 0 ? n : 0;
+    },
+
+    addCatalogSugar(catalogId) {
+      const sugar = cache.seeds.sugars?.[catalogId];
+      if (!sugar) return;
+      this.sugarDraft.push({
+        _key: newMaltKey(),
+        sugar_id: sugar.id,
+        name: sugar.name,
+        mass_kg: 0,
+        yield_fraction: sugar.yield_fraction,
+        color_lovibond: sugar.color_lovibond,
+        notes: sugar.notes,
+      });
+      this.closeSugarDrawer();
+    },
+
+    removeDraftSugar(key) {
+      this.sugarDraft = this.sugarDraft.filter((r) => r._key !== key);
+    },
+
+    openSugarSearch() {
+      this.sugarDrawer = "search";
+      this.sugarSearch = "";
+    },
+
+    closeSugarDrawer() {
+      this.sugarDrawer = null;
+    },
+
+    handleSugarEscape() {
+      if (this.sugarDrawer !== null) this.closeSugarDrawer();
+      else this.cancelSugarEditor();
     },
 
     // Explicit boot (main.js owns it after auth). Deliberately NOT named

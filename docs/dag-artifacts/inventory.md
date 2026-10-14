@@ -57,7 +57,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `malt` | `buffer_index` (dimension dimensionless), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `di_ph` (dimension ph), `id` (—), `moisture_pct` (dimension percentage, default 0.04), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
 | `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `id` (—), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
-| `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
 | `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
 | `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_chloride_ratio` (dimension dimensionless, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
@@ -146,6 +146,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grist.finished_beer_srm` | derived |
 | `grist.major_malts` | collection |
 | `grist.mcu` | derived |
+| `grist.sugar_weighted_lovibond` | derived |
+| `grist.sugars_mass` | derived |
 | `grist.weighted_lovibond` | derived |
 | `grist.weighted_yield_fraction` | derived |
 | `mash.dough_in_target_temp_c` | derived |
