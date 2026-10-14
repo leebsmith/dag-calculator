@@ -3,7 +3,7 @@
 
 import { evaluate } from "./ast.js";
 import { BoundaryCache, canonicalFingerprint } from "./boundary.js";
-import { domainStates, fieldDomainStates } from "./domains.js";
+import { domainStates, fieldDomainStates, collectionDomainStates } from "./domains.js";
 import { getField, resolveReference } from "./paths.js";
 import { relationStates } from "./relations.js";
 
@@ -228,6 +228,9 @@ export function createEngine(artifact, options = {}) {
     },
     fieldDomainStates() {
       return fieldDomainStates(artifact, resolveValue);
+    },
+    collectionDomainStates() {
+      return collectionDomainStates(artifact, get, resolveValue);
     },
     topoOrder,
     adjacency,

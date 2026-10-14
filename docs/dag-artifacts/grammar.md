@@ -207,7 +207,8 @@ valid inputs, they are not separate nodes.
 A bound that cannot be resolved (e.g. a `{ref}` to a field of an unset optional
 selection) is treated as **not applicable** and skipped. Primitive-schema fields
 may also carry `domain`s; those are evaluated for the fields of a *selected*
-component (surfaced separately from node domains).
+component and for the items of a *collection* (surfaced separately from node
+domains).
 
 ### 4.2 Relation (n-ary invariant)
 

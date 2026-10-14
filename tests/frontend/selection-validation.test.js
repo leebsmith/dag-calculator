@@ -28,3 +28,14 @@ test("attenuation is clamped to the selected strain's envelope", () => {
   app.edit(field(), "10"); // 10% < the strain's low (74.4%)
   assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - 0.744) < 1e-9);
 });
+
+test("collection cells are validated against their schema domains", () => {
+  const app = createStepApp();
+  app.init();
+  const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
+
+  app.editCell(table(), 0, "pct", "1.5"); // > 1
+  assert.ok(app.violationCount > 0);
+  const row0 = table().rowValidations[0];
+  assert.ok(row0.pct && !row0.pct.holds);
+});

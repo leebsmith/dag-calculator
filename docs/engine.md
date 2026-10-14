@@ -44,7 +44,7 @@ changes.
 | `ast.js` | the expression interpreter (`evaluate`) |
 | `paths.js` | dotted-path resolution (`resolveReference`, `getField`) |
 | `units.js` | dimension system: conversion, add/sub inference, derived-dimension checks |
-| `domains.js` | unary domain-bound checks (nodes + selected-component fields) |
+| `domains.js` | unary domain-bound checks (nodes, selected-component fields, collection items) |
 | `relations.js` | n-ary relation predicates |
 | `boundary.js` | canonical fingerprinting + `BoundaryCache` |
 | `validate.js` | structural validation of the artifact |
@@ -125,7 +125,8 @@ engine.resolve(path)      // dotted-path value
 engine.call(fnId, args)   // invoke a function
 engine.relationStates()   // [{ id, holds }]
 engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes)
-engine.fieldDomainStates() // [{ selectionNodeId, field, holds, … }]
+engine.fieldDomainStates()      // [{ selectionNodeId, field, holds, … }]
+engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
 
 engine.setRoot(id, v)  getRoot(id)  hasRoot(id)
 engine.setCollection(id, rows)

@@ -55,6 +55,30 @@ export function domainStates(artifact, get, resolveRef) {
   return states;
 }
 
+// Domain states for the *items* of collections. A collection's item schema may
+// declare per-field `domain`s (e.g. grist_row.pct in [0,1]); blank cells are
+// skipped. (The parts -> pct allocation itself is a host-side formulation rule.)
+export function collectionDomainStates(artifact, get, resolveRef) {
+  const states = [];
+  const schemas = artifact.primitive_schemas ?? {};
+  for (const [id, node] of Object.entries(artifact.nodes)) {
+    if (node.kind !== "collection") continue;
+    const schema = schemas[node.item_schema] ?? {};
+    const bounded = Object.entries(schema).filter(([, spec]) => spec.domain);
+    if (!bounded.length) continue;
+    const rows = get(id) ?? [];
+    rows.forEach((row, index) => {
+      for (const [field, spec] of bounded) {
+        const value = row?.[field];
+        if (value === undefined || value === null || value === "") continue;
+        const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
+        states.push({ nodeId: id, index, field, ...evaluateDomain(spec.domain, value, resolveLimitFn) });
+      }
+    });
+  }
+  return states;
+}
+
 // Domain states for the *fields* of selected components. A selection is a
 // read-only view of a seed component; its schema may declare per-field
 // `domain`s. Fields of an unset optional selection are skipped (the component

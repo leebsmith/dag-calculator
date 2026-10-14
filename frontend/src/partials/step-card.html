@@ -86,6 +86,7 @@
                       <td>
                         <input
                           class="form-input"
+                          :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
                           :value="row[c.id]"
                           @input="editCell(f, ri, c.id, $event.target.value)"
                         />
@@ -99,6 +100,10 @@
               </tbody>
             </table>
           </div>
+          <span
+            class="form-hint text-danger"
+            x-show="f.rowValidations && f.rowValidations.some((r) => Object.values(r).some((v) => !v.holds))"
+          >Some cells are outside their allowed range</span>
           <button type="button" class="btn-outline" @click="addRow(f)">Add row</button>
         </div>
       </template>

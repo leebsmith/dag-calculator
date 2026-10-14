@@ -64,3 +64,18 @@ test("checkDomain treats an unresolvable {ref} bound as not applicable", () => {
   const states = Object.fromEntries(e.domainStates().map((s) => [s.nodeId, s.holds]));
   assert.equal(states["batch.target_abv"], true); // gt:0 holds; unresolved lt is skipped
 });
+
+test("collectionDomainStates covers collection item fields (defaults valid)", () => {
+  const e = createCalculator(artifact, makeFixtures());
+  const states = e.collectionDomainStates();
+  assert.ok(states.length > 0);
+  assert.ok(states.every((s) => s.holds));
+});
+
+test("collectionDomainStates flags an out-of-range cell", () => {
+  const fixtures = makeFixtures();
+  fixtures.collections["grist.major_malts"][0].pct = 1.5; // > 1
+  const e = createCalculator(artifact, fixtures);
+  const bad = e.collectionDomainStates().filter((s) => !s.holds);
+  assert.ok(bad.some((s) => s.nodeId === "grist.major_malts" && s.field === "pct"));
+});

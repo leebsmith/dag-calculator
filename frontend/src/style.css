@@ -255,6 +255,10 @@ samp {
   box-shadow: var(--sys-shadow-focus);
 }
 
+.form-input.is-invalid {
+  border-color: var(--sys-color-danger-border);
+}
+
 .form-input:disabled,
 .form-input[disabled] {
   opacity: 0.6;

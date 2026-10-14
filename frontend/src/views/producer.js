@@ -166,6 +166,7 @@ export function valuate(fields, engine, ctx = {}) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
   const fieldDomains = ctx.fieldDomains ?? {};
+  const collectionDomains = ctx.collectionDomains ?? {};
   const nl = nonlinearFns(artifact, engine);
   const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));
   return fields
@@ -186,7 +187,7 @@ export function valuate(fields, engine, ctx = {}) {
           }
           return out;
         });
-        return { ...field, rows: displayRows };
+        return { ...field, rows: displayRows, rowValidations: displayRows.map((_, i) => collectionDomains[field.id]?.[i] ?? {}) };
       }
       // A field whose value cannot be resolved (e.g. a boundary that has not
       // been pre-resolved or failed) is deferred rather than crashing the view.

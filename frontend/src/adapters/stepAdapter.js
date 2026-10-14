@@ -49,7 +49,7 @@ function buildFieldSliceMap() {
   const map = new Map();
   for (const step of steps) {
     for (const entry of step.fields) {
-      const id = typeof entry === "string" ? entry : entry.id;
+      const id = typeof entry === "object" && entry.collection ? entry.collection : typeof entry === "string" ? entry : entry.id;
       if (!id) continue;
       const key = fieldKey(id);
       if (key && !map.has(key)) map.set(key, step.slice);
@@ -308,10 +308,19 @@ export function createStepApp(options = {}) {
       const fieldDomainIndex = {};
       for (const d of fieldDomains) fieldDomainIndex[`${d.selectionNodeId}.${d.field}`] = d;
 
+      const collectionDomains = safe(() => engine.collectionDomainStates());
+      const collectionIndex = {};
+      for (const d of collectionDomains) {
+        (collectionIndex[d.nodeId] ??= {});
+        (collectionIndex[d.nodeId][d.index] ??= {});
+        collectionIndex[d.nodeId][d.index][d.field] = d;
+      }
+
       const all = produce(artifact, steps, registry, engine, {
         references: cache.references,
         ui,
         fieldDomains: fieldDomainIndex,
+        collectionDomains: collectionIndex,
       });
       this.fieldsBySlice = Object.fromEntries(
         steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
@@ -319,11 +328,13 @@ export function createStepApp(options = {}) {
       this.relations = safe(() => engine.relationStates());
       this.domains = safe(() => engine.domainStates());
       this.fieldDomains = fieldDomains;
+      this.collectionDomains = collectionDomains;
       this.selectedYeastId = engine.get("batch.yeast_id") || "";
       this.violationCount =
         this.relations.filter((r) => !r.holds).length +
         this.domains.filter((d) => !d.holds).length +
-        fieldDomains.filter((d) => !d.holds).length;
+        fieldDomains.filter((d) => !d.holds).length +
+        collectionDomains.filter((d) => !d.holds).length;
 
       this.stepStatus = {};
       for (const step of steps) this.stepStatus[step.slice] = { relations: [], domains: [] };
@@ -342,6 +353,10 @@ export function createStepApp(options = {}) {
         const slice =
           fieldSlice.get(`${d.selectionNodeId}.${d.field}`) ?? selectionSlice.get(d.selectionNodeId);
         this.stepStatus[slice]?.domains.push(d);
+      }
+      for (const d of collectionDomains) {
+        if (d.holds) continue;
+        this.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
       }
     },
 
