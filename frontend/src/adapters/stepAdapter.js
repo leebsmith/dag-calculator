@@ -9,7 +9,7 @@ import artifact from "../engine/artifact.json" with { type: "json" };
 import { canonicalize, createCalculator, resolveReference, sha256Hex, toBase } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
-import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
+import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns } from "../views/producer.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { registry, steps } from "../views/steps.js";
@@ -441,6 +441,14 @@ export function createStepApp(options = {}) {
       else delete ui.unitMode[dimension];
       this.unitMode = { ...ui.unitMode };
       saveUnitMode(ui.unitMode, artifact.schema_version);
+      this.compute();
+    },
+
+    // Clear every stored unit preference (master picks + per-field overrides,
+    // including invisible ones on summary readouts) and revert to defaults.
+    resetUnits() {
+      ui.unitMode = clearUnitMode();
+      this.unitMode = { ...ui.unitMode };
       this.compute();
     },
 

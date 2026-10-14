@@ -66,25 +66,32 @@
             <div class="menu-unit">
               <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
               <div class="unit-popover" x-show="unitsOpen" @click.outside="unitsOpen = false">
-                <template x-for="g in unitGroups" :key="g.label">
-                  <div class="unit-col">
-                    <span class="unit-col-title" x-text="g.label"></span>
-                    <template x-for="d in g.dims" :key="d.id">
-                      <div class="unit-row">
-                        <label class="form-label" x-text="d.label"></label>
-                        <select
-                          class="form-select"
-                          :value="unitMode[d.id] || d.units[0][0]"
-                          @change="setUnit(d.id, $event.target.value)"
-                        >
-                          <template x-for="u in d.units" :key="u[0]">
-                            <option :value="u[0]" x-text="u[1]"></option>
-                          </template>
-                        </select>
-                      </div>
-                    </template>
-                  </div>
-                </template>
+                <div class="unit-cols">
+                  <template x-for="g in unitGroups" :key="g.label">
+                    <div class="unit-col">
+                      <span class="unit-col-title" x-text="g.label"></span>
+                      <template x-for="d in g.dims" :key="d.id">
+                        <div class="unit-row">
+                          <label class="form-label" x-text="d.label"></label>
+                          <select
+                            class="form-select"
+                            :value="unitMode[d.id] || d.units[0][0]"
+                            @change="setUnit(d.id, $event.target.value)"
+                          >
+                            <template x-for="u in d.units" :key="u[0]">
+                              <option :value="u[0]" x-text="u[1]"></option>
+                            </template>
+                          </select>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+                <div class="unit-reset">
+                  <button type="button" class="btn-link text-xs" @click="resetUnits()">
+                    Reset unit defaults
+                  </button>
+                </div>
               </div>
             </div>
             <span class="auth-user">

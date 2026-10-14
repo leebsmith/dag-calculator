@@ -45,7 +45,10 @@ export function loadUnitMode(artifact) {
   if (typeof localStorage === "undefined") return {};
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
-    return sanitizeUnitMode(artifact, raw?.unitMode);
+    // Drop preferences written against a different artifact version, so stale
+    // units (including invisible per-field overrides) can't linger across bumps.
+    if (!raw || raw.schema_version !== (artifact.schema_version ?? 2)) return {};
+    return sanitizeUnitMode(artifact, raw.unitMode);
   } catch {
     return {};
   }
@@ -58,4 +61,16 @@ export function saveUnitMode(unitMode, schemaVersion) {
   } catch {
     /* storage unavailable (private mode / quota) — prefs just won't persist */
   }
+}
+
+// Clear all stored unit preferences (master picks and per-field overrides).
+export function clearUnitMode() {
+  if (typeof localStorage !== "undefined") {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+  return {};
 }
