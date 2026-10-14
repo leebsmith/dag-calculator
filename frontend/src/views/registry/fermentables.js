@@ -8,4 +8,6 @@ export const fermentablesRegistry = {
   "grist.major_malts.yield_fraction": { label: "Yield (%)", displayUnit: "pct" },
   "grist.major_malts.color_lovibond": { label: "°L" },
   "grist.major_malts.moisture_pct": { label: "Moisture (%)", displayUnit: "pct" },
+  "grist.weighted_lovibond": { label: "Weighted grist color" },
+  "grist.weighted_yield_fraction": { label: "Weighted extract yield", displayUnit: "pct" },
 };

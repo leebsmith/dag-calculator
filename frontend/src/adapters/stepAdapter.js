@@ -661,22 +661,14 @@ export function createStepApp(options = {}) {
       return engine.get("grist.major_malts") ?? [];
     },
 
-    get maltWeightedColorDisplay() {
-      try {
-        const v = engine.resolve("grist.weighted_lovibond");
-        return typeof v === "number" ? `${v.toFixed(1)} °L` : "—";
-      } catch {
-        return "—";
-      }
+    // Weighted grist readouts, rendered from the producer's field models (so
+    // they honor the master unit menu for grain_color, stay display-only, etc.).
+    get maltWeightedColor() {
+      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === "grist.weighted_lovibond") ?? null;
     },
 
-    get maltWeightedYieldDisplay() {
-      try {
-        const v = engine.resolve("grist.weighted_yield_fraction");
-        return typeof v === "number" ? `${(v * 100).toFixed(1)}%` : "—";
-      } catch {
-        return "—";
-      }
+    get maltWeightedYield() {
+      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === "grist.weighted_yield_fraction") ?? null;
     },
 
     get maltCatalog() {
@@ -694,12 +686,10 @@ export function createStepApp(options = {}) {
     },
 
     get maltFilteredCatalog() {
-      const active = new Set(this.maltDraft.map((r) => r.catalog_id).filter(Boolean));
       const q = this.maltSearch.trim().toLowerCase();
       const cats = this.maltCategoryFilter;
       return this.maltCatalog.filter(
         (m) =>
-          !active.has(m.id) &&
           (cats.length === 0 || cats.includes(m.category)) &&
           (!q || (m.name ?? "").toLowerCase().includes(q))
       );

@@ -61,11 +61,17 @@
     <div class="grain-bill-summary" x-show="gristRows.length > 0">
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Weighted grist color</span>
-        <span class="text-base font-bold tabular-nums" x-text="maltWeightedColorDisplay"></span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="maltWeightedColor ? maltWeightedColor.display + ' ' + (maltWeightedColor.unit ?? '') : '—'"
+        ></span>
       </div>
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Weighted extract yield</span>
-        <span class="text-base font-bold tabular-nums" x-text="maltWeightedYieldDisplay"></span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="maltWeightedYield ? maltWeightedYield.display + (maltWeightedYield.unit ?? '') : '—'"
+        ></span>
       </div>
     </div>
   </div>

@@ -40,7 +40,11 @@ export const steps = [
     title: "Fermentables",
     subtitle: "Build the grain bill",
     partial: "./src/partials/step-fermentables.html",
-    fields: [{ collection: "grist.major_malts" }],
+    fields: [
+      { collection: "grist.major_malts" },
+      "grist.weighted_lovibond",
+      "grist.weighted_yield_fraction",
+    ],
   },
   {
     id: "late-additions",
