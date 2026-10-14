@@ -45,6 +45,7 @@ const MAX_VISIBLE_YEASTS = 25;
 // Grain bill: cap major malts (matches the legacy builder) and a client-only
 // key for draft rows (so the editor can track rows before they're persisted).
 const MAX_MAJOR_MALTS = 8;
+const MAX_VISIBLE_MALTS = 25;
 const newMaltKey = () => `r${Math.random().toString(36).slice(2, 10)}`;
 
 // fraction (0..1) -> percentage string with up to one decimal (0.744 -> "74.4").
@@ -686,13 +687,25 @@ export function createStepApp(options = {}) {
     },
 
     get maltFilteredCatalog() {
+      const active = new Set(this.maltDraft.map((r) => r.catalog_id).filter(Boolean));
       const q = this.maltSearch.trim().toLowerCase();
       const cats = this.maltCategoryFilter;
       return this.maltCatalog.filter(
         (m) =>
+          !active.has(m.id) &&
           (cats.length === 0 || cats.includes(m.category)) &&
-          (!q || (m.name ?? "").toLowerCase().includes(q))
+          (!q || (m.name ?? "").toLowerCase().includes(q) || (m.notes ?? "").toLowerCase().includes(q))
       );
+    },
+
+    // The catalog is large; render a window and let search narrow it (the rest
+    // stay searchable), mirroring the yeast picker.
+    get maltVisibleCatalog() {
+      return this.maltFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
+    },
+
+    get maltCatalogTruncated() {
+      return this.maltFilteredCatalog.length > MAX_VISIBLE_MALTS;
     },
 
     get maltTotalParts() {

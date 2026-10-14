@@ -184,11 +184,13 @@
                 <div
                   class="catalog-result-counter text-xs"
                   aria-live="polite"
-                  x-text="`Showing ${maltFilteredCatalog.length} malts`"
+                  x-text="maltCatalogTruncated
+                    ? `Showing ${maltVisibleCatalog.length} of ${maltFilteredCatalog.length} malts — refine search or category filters`
+                    : `Showing ${maltFilteredCatalog.length} malts`"
                 ></div>
               </div>
               <div class="catalog-drawer-list">
-                <template x-for="item in maltFilteredCatalog" :key="item.id">
+                <template x-for="item in maltVisibleCatalog" :key="item.id">
                   <div class="catalog-item-card">
                     <div>
                       <div class="catalog-item-name" x-text="item.name"></div>

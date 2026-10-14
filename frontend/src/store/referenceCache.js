@@ -11,8 +11,8 @@ import waterReports from "../../../data/seeds/water_reports.json" with { type: "
 import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
 
 const DEFAULT_GRIST = [
-  { catalog_id: "pilsner", pct: 0.8, parts: 80 },
-  { catalog_id: "crystal-40", pct: 0.2, parts: 20 },
+  { catalog_id: "pilsner-malt", pct: 0.8, parts: 80 },
+  { catalog_id: "caramel-crystal-malt-40l", pct: 0.2, parts: 20 },
 ];
 
 function buildGristRow(entry) {
