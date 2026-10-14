@@ -647,15 +647,32 @@ samp {
   top: calc(100% + var(--space-2));
   right: 0;
   z-index: var(--z-dropdown);
-  min-width: 14rem;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-5);
   padding: var(--space-4);
   background-color: var(--sys-surface-elevated);
   border: 1px solid var(--sys-border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--sys-shadow-lg);
+}
+
+.unit-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 13rem;
+}
+
+.unit-col-title {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sys-text-muted);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--sys-border-subtle);
 }
 
 .unit-row {

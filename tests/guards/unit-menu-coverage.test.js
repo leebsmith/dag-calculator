@@ -28,6 +28,7 @@ test("every menu dimension maps to base-first, valid artifact units", () => {
   for (const d of UNIT_DIMENSIONS) {
     const def = a.dimensions[d.id];
     assert.ok(def, `UNIT_DIMENSIONS "${d.id}" has no artifact dimension`);
+    assert.ok(d.group, `UNIT_DIMENSIONS "${d.id}" has no menu group (column)`);
     assert.equal(
       d.units[0]?.[0],
       def.base_unit,

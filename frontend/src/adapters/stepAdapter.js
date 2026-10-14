@@ -13,7 +13,7 @@ import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns } from "../views/producer.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { registry, steps } from "../views/steps.js";
-import { UNIT_DIMENSIONS } from "../views/registry/units.js";
+import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { flattenResponse, postJSON } from "./apiClient.js";
 import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
@@ -149,6 +149,7 @@ export function createStepApp(options = {}) {
     visibleSteps: [],
     stepStatus: initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
+    unitGroups: UNIT_GROUPS,
     unitMode: ui.unitMode,
     unitsOpen: false,
     violationCount: 0,
