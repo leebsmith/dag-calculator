@@ -16,6 +16,15 @@ export function getActive() {
   return active;
 }
 
+// Drop the active batch (sign-out). Also cancels a pending autosave.
+export function clearActive() {
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  active = null;
+}
+
 export function list() {
   return listBatches();
 }

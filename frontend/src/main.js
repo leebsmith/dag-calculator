@@ -80,14 +80,48 @@ Alpine.store("recipes", {
   },
 });
 
-onAuthStateChanged(async (user) => {
-  Alpine.store("auth").user = user;
-  Alpine.store("auth").loading = false;
-  if (user) {
-    await Alpine.store("recipes").refresh();
-    const mostRecent = Alpine.store("recipes").batches.find((b) => b.status === "draft");
-    if (mostRecent) await persistence.open(mostRecent.id);
+// --- Auth-owned boot ---------------------------------------------------------
+// The authenticated shell (`.app-content`) is gated on `$store.auth.user` with
+// `x-if`, so nothing compiles or solves before sign-in. main.js owns boot so
+// there is exactly ONE solve path: on sign-in, refresh the recipe list and
+// either open the most recent draft (which loads + solves) or bootstrap the
+// empty app. The user is published only AFTER boot, so the shell never paints
+// with stale/empty state.
+let stepApp = null;
+let latestUser; // undefined until the first auth callback
+
+async function applyAuth(user) {
+  const auth = Alpine.store("auth");
+  const recipes = Alpine.store("recipes");
+
+  if (!user) {
+    stepApp?.teardown();
+    persistence.clearActive();
+    recipes.batches = [];
+    recipes.activeId = null;
+    auth.user = null;
+    auth.loading = false;
+    return;
   }
+
+  // The component factory may not have run yet; it re-invokes this once it has.
+  if (!stepApp) return;
+
+  auth.loading = true;
+  try {
+    await recipes.refresh();
+    const draft = recipes.batches.find((b) => b.status === "draft");
+    if (draft) await persistence.open(draft.id);
+    else await stepApp.init();
+  } finally {
+    auth.user = user;
+    auth.loading = false;
+  }
+}
+
+onAuthStateChanged((user) => {
+  latestUser = user;
+  applyAuth(user);
 });
 
 Alpine.data("calculator", () => createCalculatorApp());
@@ -99,6 +133,9 @@ Alpine.data("stepCalculator", () => {
   const app = Alpine.reactive(createStepApp({ useHttp: true }));
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
+  stepApp = app;
+  // Auth may have resolved before this factory ran — boot now.
+  if (latestUser !== undefined) applyAuth(latestUser);
   return app;
 });
 

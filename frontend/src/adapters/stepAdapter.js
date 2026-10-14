@@ -132,6 +132,14 @@ export function createStepApp(options = {}) {
     return slices;
   }
 
+  // Seeded from the manifest so the first paint — which runs before the first
+  // (async) compute — can read `stepStatus[slice]` without racing.
+  const initialStepStatus = Object.fromEntries(
+    steps.map((step) => [step.slice, { relations: [], domains: [] }])
+  );
+  // The pristine auth-scoped baseline to restore on sign-out.
+  const baselineRoots = master.allRoots();
+
   return {
     master,
     steps,
@@ -139,7 +147,7 @@ export function createStepApp(options = {}) {
     highwater: ui.highwater,
     activeStep: steps[ui.activeIndex],
     visibleSteps: [],
-    stepStatus: {},
+    stepStatus: initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
     unitMode: ui.unitMode,
     unitsOpen: false,
@@ -601,6 +609,36 @@ export function createStepApp(options = {}) {
       if (useHttp) await this.solveNow();
       else this.compute();
       this.syncNav();
+    },
+
+    // Reset to the pristine auth-scoped baseline (sign-out). Bumps the solve
+    // token so any in-flight boundary response is discarded, rebuilds the engine
+    // from the seed cache, and returns the UI to the first step. Unit prefs are
+    // device-local and deliberately preserved.
+    teardown() {
+      solveToken++;
+      if (solveTimer) {
+        clearTimeout(solveTimer);
+        solveTimer = null;
+      }
+      inflight.clear();
+      master.replaceRoots(baselineRoots);
+      collections = { ...cache.collections };
+      engine = createCalculator(artifact, {
+        references: cache.references,
+        collections,
+        boundaries: useHttp ? {} : STUB_BOUNDARIES,
+        boundaryRequests: BOUNDARY_BUILDERS,
+        roots: master.allRoots(),
+      });
+      this.boundaryStatuses = Object.fromEntries(
+        boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
+      );
+      this.boundaryError = null;
+      ui.activeIndex = 0;
+      ui.highwater = 0;
+      this.syncNav();
+      this.compute();
     },
   };
 }

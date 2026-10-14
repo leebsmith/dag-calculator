@@ -810,6 +810,12 @@ samp {
   gap: var(--space-5);
 }
 
+/* The x-for wrapper must not generate a box, or `.step-card` stops being the
+   flex item (it owns `flex: 1 1 20rem`). */
+.step-slot {
+  display: contents;
+}
+
 .step-card {
   flex: 1 1 20rem;
   min-width: 20rem;
