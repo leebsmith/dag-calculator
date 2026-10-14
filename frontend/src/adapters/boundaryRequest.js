@@ -62,11 +62,15 @@ export function buildWaterRequest(engine) {
   const rows = engine.get("grist.major_malts") ?? [];
   const mGrist = engine.resolve("solver.batch.m_grist");
   return {
-    grist: rows.map((row) => ({
-      mass_kg: row.pct * mGrist,
-      color_lovibond: row.color_lovibond,
-      grain_type: row.category,
-    })),
+    // A 0%-of-bill row contributes nothing and would violate mass_kg > 0, so
+    // drop it (a freshly-added row starts at 0% until the user sets its parts).
+    grist: rows
+      .filter((row) => row.pct > 0)
+      .map((row) => ({
+        mass_kg: row.pct * mGrist,
+        color_lovibond: row.color_lovibond,
+        grain_type: row.category,
+      })),
     source: ionProfile(engine, "source"),
     target: ionProfile(engine, "target"),
     v_mash_treat_l: engine.resolve("water.v_mash_treat_l"),

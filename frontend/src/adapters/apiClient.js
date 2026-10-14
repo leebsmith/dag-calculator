@@ -38,9 +38,19 @@ export async function requestJSON(
     } catch {
       /* non-JSON error body */
     }
+    // FastAPI request-validation errors arrive as a `detail` array; turn them
+    // into a readable message instead of an opaque "HTTP 422".
+    const validation = Array.isArray(payload.detail)
+      ? payload.detail
+          .map((d) => {
+            const where = (d.loc ?? []).filter((p) => p !== "body").join(".");
+            return where ? `${where}: ${d.msg}` : d.msg;
+          })
+          .join("; ")
+      : null;
     throw new SolverError(
-      payload.code ?? "HTTP_ERROR",
-      payload.message ?? `HTTP ${res.status}`,
+      payload.code ?? (validation ? "VALIDATION" : "HTTP_ERROR"),
+      payload.message ?? validation ?? `HTTP ${res.status}`,
       payload.details ?? {}
     );
   }

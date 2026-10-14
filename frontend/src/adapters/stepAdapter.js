@@ -602,8 +602,18 @@ export function createStepApp(options = {}) {
     addRow(field) {
       const node = artifact.nodes[field.target.nodeId];
       const schema = artifact.primitive_schemas[node.item_schema] ?? {};
-      const blank = Object.fromEntries(Object.keys(schema).map((k) => [k, ""]));
-      engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), blank]);
+      // Seed a row with type-appropriate defaults (numbers, first taxonomy
+      // member, schema default) rather than empty strings, so a new row is
+      // well-formed and doesn't POST a request that fails validation.
+      const defaults = {};
+      for (const [key, spec] of Object.entries(schema)) {
+        if (spec.default !== undefined) defaults[key] = spec.default;
+        else if (spec.type === "boolean") defaults[key] = false;
+        else if (spec.taxonomy) defaults[key] = artifact.taxonomies[spec.taxonomy]?.[0] ?? "";
+        else if (spec.dimension) defaults[key] = 0;
+        else defaults[key] = "";
+      }
+      engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), defaults]);
       this.scheduleSolve();
       this.notify();
     },

@@ -34,7 +34,8 @@ test("collection cells are validated against their schema domains", () => {
   app.boot();
   const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
 
-  app.editCell(table(), 0, "pct", "1.5"); // > 1
+  // pct renders as a percentage, so 150 means 150% (base 1.5 > 1).
+  app.editCell(table(), 0, "pct", "150");
   assert.ok(app.violationCount > 0);
   const row0 = table().rowValidations[0];
   assert.ok(row0.pct && !row0.pct.holds);
