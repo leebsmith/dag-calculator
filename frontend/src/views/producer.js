@@ -61,6 +61,7 @@ function collectionField(artifact, registry, step, entry) {
     throw new Error(`Unknown collection "${entry.collection}"`);
   }
   const schema = artifact.primitive_schemas[node.item_schema] ?? {};
+  const inputs = entry.inputs ? new Set(entry.inputs) : null;
   const columns = (entry.columns ?? Object.keys(schema)).map((c) => {
     const spec = schema[c] ?? {};
     const meta = registry[`${entry.collection}.${c}`] ?? {};
@@ -69,6 +70,7 @@ function collectionField(artifact, registry, step, entry) {
       label: meta.label ?? c,
       dimension: spec.dimension ?? null,
       displayUnit: meta.displayUnit ?? null,
+      editable: inputs ? inputs.has(c) : true,
     };
   });
   return {
@@ -80,6 +82,9 @@ function collectionField(artifact, registry, step, entry) {
     unit: null,
     columns,
     editable: true,
+    // Optional bespoke add-row flow (e.g. open a catalog picker modal).
+    addAction: entry.addAction ?? null,
+    addLabel: entry.addLabel ?? "Add row",
     target: { scope: "collection", nodeId: entry.collection },
   };
 }
@@ -183,6 +188,11 @@ export function valuate(fields, engine, ctx = {}) {
           for (const col of field.columns) {
             if (col.displayUnit && col.dimension && typeof row[col.id] === "number") {
               out[col.id] = fromBase(artifact, col.dimension, col.displayUnit, row[col.id], nl);
+            }
+            // Round displayed numbers so converted values don't leak float fuzz
+            // (e.g. 80.00000000000001) — readout cells and input values alike.
+            if (typeof out[col.id] === "number") {
+              out[col.id] = Math.round(out[col.id] * 1000) / 1000;
             }
           }
           return out;

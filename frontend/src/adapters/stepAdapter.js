@@ -588,13 +588,12 @@ export function createStepApp(options = {}) {
       // Formulation rule (TODO/L3): `parts` is the grist authoring column; `pct`
       // (and thus the grain-bill `w_i`) is the normalized allocation that sums to
       // exactly 100% at 0.1% resolution.
-      if (field.target.nodeId === "grist.major_malts" && columnId === "parts") {
-        const pcts = hamiltonPct(rows.map((row) => row.parts));
-        rows.forEach((row, i) => {
-          row.pct = pcts[i];
-        });
-      }
-      engine.setCollection(field.target.nodeId, rows);
+      engine.setCollection(
+        field.target.nodeId,
+        field.target.nodeId === "grist.major_malts" && columnId === "parts"
+          ? this.normalizeGrist(rows)
+          : rows
+      );
       this.scheduleSolve();
       this.notify();
     },
@@ -620,7 +619,73 @@ export function createStepApp(options = {}) {
 
     removeRow(field, rowIndex) {
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
-      engine.setCollection(field.target.nodeId, rows);
+      engine.setCollection(
+        field.target.nodeId,
+        field.target.nodeId === "grist.major_malts" ? this.normalizeGrist(rows) : rows
+      );
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    // Hamilton-normalize the grain bill's `pct` (fractions summing to 1) from its
+    // `parts`.
+    normalizeGrist(rows) {
+      if (!rows.length) return rows;
+      const pcts = hamiltonPct(rows.map((row) => row.parts));
+      return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
+    },
+
+    // Dispatch a collection-table's add-row action: a bespoke handler named by
+    // the manifest (e.g. the malt picker), else the generic blank-row add.
+    runCollectionAdd(field) {
+      const handler = field.addAction && this[field.addAction];
+      if (typeof handler === "function") handler.call(this);
+      else this.addRow(field);
+    },
+
+    // --- Grain bill: malt catalog picker ---
+    maltPickerOpen: false,
+    maltSearch: "",
+
+    get maltCatalog() {
+      return Object.values(cache.seeds.malts ?? {});
+    },
+
+    get filteredMalts() {
+      const q = this.maltSearch.trim().toLowerCase();
+      if (!q) return this.maltCatalog;
+      return this.maltCatalog.filter(
+        (m) => m.name.toLowerCase().includes(q) || (m.category ?? "").toLowerCase().includes(q)
+      );
+    },
+
+    openMaltPicker() {
+      this.maltPickerOpen = true;
+      this.maltSearch = "";
+    },
+
+    closeMaltPicker() {
+      this.maltPickerOpen = false;
+    },
+
+    addMalt(catalogId) {
+      const malt = cache.seeds.malts?.[catalogId];
+      if (!malt) return;
+      const rows = [
+        ...(engine.get("grist.major_malts") ?? []),
+        {
+          catalog_id: malt.id,
+          name: malt.name,
+          category: malt.category,
+          parts: 10,
+          pct: 0,
+          yield_fraction: malt.yield_fraction,
+          color_lovibond: malt.color_lovibond,
+          moisture_pct: malt.moisture_pct ?? 0.04,
+        },
+      ];
+      engine.setCollection("grist.major_malts", this.normalizeGrist(rows));
+      this.closeMaltPicker();
       this.scheduleSolve();
       this.notify();
     },

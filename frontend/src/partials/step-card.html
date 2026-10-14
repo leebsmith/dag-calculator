@@ -84,12 +84,21 @@
                   <tr>
                     <template x-for="c in f.columns" :key="c.id">
                       <td>
-                        <input
-                          class="form-input"
-                          :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
-                          :value="row[c.id]"
-                          @input="editCell(f, ri, c.id, $event.target.value)"
-                        />
+                        <template x-if="c.editable">
+                          <input
+                            class="form-input"
+                            :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
+                            :value="row[c.id]"
+                            @input="editCell(f, ri, c.id, $event.target.value)"
+                          />
+                        </template>
+                        <template x-if="!c.editable">
+                          <span
+                            class="collection-readout tabular-nums"
+                            :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
+                            x-text="row[c.id]"
+                          ></span>
+                        </template>
                       </td>
                     </template>
                     <td>
@@ -104,7 +113,7 @@
             class="form-hint text-danger"
             x-show="f.rowValidations && f.rowValidations.some((r) => Object.values(r).some((v) => !v.holds))"
           >Some cells are outside their allowed range</span>
-          <button type="button" class="btn-outline" @click="addRow(f)">Add row</button>
+          <button type="button" class="btn-outline" @click="runCollectionAdd(f)" x-text="f.addLabel"></button>
         </div>
       </template>
     </div>

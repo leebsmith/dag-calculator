@@ -259,6 +259,17 @@ samp {
   border-color: var(--sys-color-danger-border);
 }
 
+.collection-readout {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--sys-text-secondary);
+}
+
+.collection-readout.is-invalid {
+  color: var(--sys-color-danger-text);
+}
+
 .form-input:disabled,
 .form-input[disabled] {
   opacity: 0.6;
