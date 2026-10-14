@@ -117,6 +117,29 @@ function collectionField(artifact, registry, step, entry, unitMode = {}) {
   };
 }
 
+// A readout table: a grouped, non-editable display of labeled scalar readouts
+// (the batch card's "Derived Anchors" / "Stage Cascade" / "Water Plan" tables).
+// Columns are either `text` (static per-row label) or `value` (a ref resolved at
+// valuation time). Cell dimensions are carried by each ref, not the column.
+function tableField(step, entry) {
+  return {
+    id: entry.table,
+    slice: step.slice,
+    role: "readout",
+    control: "readout-table",
+    title: entry.title ?? entry.table,
+    header: entry.columns.length > 2,
+    columns: entry.columns.map((c) => ({
+      id: c.id,
+      label: c.label ?? c.id,
+      kind: c.kind ?? "value",
+      align: (c.kind ?? "value") === "text" ? "left" : "right",
+    })),
+    rows: entry.rows,
+    editable: false,
+  };
+}
+
 // A reference root (dimension "reference") names the selection node whose
 // `ref` points back at it. That selection's schema keys the reference set.
 function referenceSchema(artifact, rootId) {
@@ -133,6 +156,10 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
     for (const entry of step.fields) {
       if (typeof entry === "object" && entry.collection) {
         fields.push(collectionField(artifact, registry, step, entry, unitMode));
+        continue;
+      }
+      if (typeof entry === "object" && entry.table) {
+        fields.push(tableField(step, entry));
         continue;
       }
       const id = typeof entry === "string" ? entry : entry.id;
@@ -167,6 +194,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         unit: meta.unit ?? null,
         displayUnit: meta.displayUnit ?? null,
         decimals: meta.decimals ?? null,
+        hint: meta.hint ?? null,
         options,
         editable,
         target,
@@ -183,6 +211,87 @@ function formatValue(value) {
     return Number.isInteger(value) ? String(value) : String(Math.round(value * 1000) / 1000);
   }
   return String(value);
+}
+
+// Resolve a table cell's display: convert a numeric value through its dimension's
+// inherited unit (master pick → dimension default → base) and pair it with the
+// unit symbol. Non-numeric values pass through as plain text; unknown dimensions
+// (e.g. dimensionless) render raw.
+function cellDisplay(artifact, dimension, value, unitMode, nl) {
+  if (typeof value !== "number" || !dimension) return { display: formatValue(value), unit: null };
+  const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dimension);
+  if (!dimDef) return { display: formatValue(value), unit: null };
+  const unitId = unitMode[dimension] ?? dimDef.default ?? dimDef.units[0][0];
+  const shown = fromBase(artifact, dimension, unitId, value, nl);
+  const decimals = dimDef.decimals ?? null;
+  const display = decimals != null ? shown.toFixed(decimals) : formatValue(shown);
+  const symbol = UNIT_SYMBOLS[dimension]?.[unitId] ?? unitId;
+  return { display, unit: symbol };
+}
+
+// Valuate a readout-table field: resolve each row's value cells against the
+// engine, convert numerics through their dimension, and surface optional static
+// hints and conditional notes (shown only when positive).
+function valuateTable(field, artifact, engine, unitMode, nl) {
+  const rows = field.rows.map((row) => {
+    const cells = {};
+    for (const col of field.columns) {
+      if (col.kind === "text") {
+        cells[col.id] = row[col.id] != null ? { text: String(row[col.id]) } : { text: "" };
+        continue;
+      }
+      const ref = row[col.id];
+      if (!ref) {
+        cells[col.id] = null;
+        continue;
+      }
+      let value;
+      try {
+        value = engine.resolve(ref);
+      } catch {
+        cells[col.id] = null;
+        continue;
+      }
+      if (typeof value !== "number") {
+        cells[col.id] = { text: formatValue(value) };
+        continue;
+      }
+      let dimension = null;
+      try {
+        dimension = describe(artifact, ref).dimension;
+      } catch {
+        dimension = null;
+      }
+      const d = cellDisplay(artifact, dimension, value, unitMode, nl);
+      cells[col.id] = { display: d.display, unit: d.unit };
+    }
+    let note = null;
+    if (row.note) {
+      let value;
+      try {
+        value = engine.resolve(row.note.ref);
+      } catch {
+        value = null;
+      }
+      if (typeof value === "number") {
+        let dimension = null;
+        try {
+          dimension = describe(artifact, row.note.ref).dimension;
+        } catch {
+          dimension = null;
+        }
+        const d = cellDisplay(artifact, dimension, value, unitMode, nl);
+        note = { show: value > 0, label: row.note.label ?? "", display: d.display, unit: d.unit };
+      }
+    }
+    return {
+      cells,
+      hint: row.hint != null ? String(row.hint) : null,
+      note,
+      bold: !!row.bold,
+    };
+  });
+  return { ...field, rows };
 }
 
 export function nonlinearFns(artifact, engine) {
@@ -231,6 +340,9 @@ export function valuate(fields, engine, ctx = {}) {
           return out;
         });
         return { ...field, rows: displayRows, rowValidations: displayRows.map((_, i) => collectionDomains[field.id]?.[i] ?? {}) };
+      }
+      if (field.control === "readout-table") {
+        return valuateTable(field, artifact, engine, unitMode, nl);
       }
       // A field whose value cannot be resolved (e.g. a boundary that has not
       // been pre-resolved or failed) is deferred rather than crashing the view.
@@ -291,6 +403,38 @@ export function valuate(fields, engine, ctx = {}) {
         if (typeof low === "number" && typeof high === "number") {
           const conv = (v) => (unitId && artifact ? fromBase(artifact, field.dimension, unitId, v, nl) : v);
           out.rangeHint = `${formatValue(conv(low))}–${formatValue(conv(high))}${symbol ?? ""}`;
+        }
+      }
+      // The intensive-value input is polymorphic across topologies: a mash
+      // thickness (L/kg) under `r_l_to_g`, a dimensionless runoff ratio under
+      // `runoff_ratio`. The artifact pins its dimension to mash_thickness, so
+      // the ratio mode is handled host-side (no conversion, no unit badge).
+      if (field.id === "batch.intensive_value") {
+        if (engine.get("batch.topology") === "runoff_ratio") {
+          out.label = "Runoff Ratio r";
+          out.dimension = null;
+          out.unit = null;
+          out.unitId = null;
+          out.toggleable = false;
+          out.customized = false;
+          out.display = formatValue(out.value);
+          out.hint = "V_run1 / V_run2; 1.0 is equal runnings.";
+        } else {
+          out.label = "Liquor-to-Grist Ratio";
+          out.hint = "Strike water per kg of grist.";
+        }
+      }
+      // Surface the solver's ABV ceiling under the target-ABV input (mirrors the
+      // legacy "Max at current attenuation" hint).
+      if (field.id === "batch.target_abv") {
+        let max;
+        try {
+          max = engine.resolve("solver.batch.max_achievable_abv");
+        } catch {
+          max = null;
+        }
+        if (typeof max === "number" && Number.isFinite(max)) {
+          out.hint = `Max at current attenuation: ${max.toFixed(1)}%.`;
         }
       }
       return out;

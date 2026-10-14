@@ -12,9 +12,11 @@ test("HLT fill is clamped to the equipment envelope", () => {
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.hlt_starting_volume_l");
 
   app.edit(field(), "50"); // > capacity (herms-30l max = 30 L)
+  app.commitField(field());
   assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 30);
 
   app.edit(field(), "1"); // < coil floor (4 L)
+  app.commitField(field());
   assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 4);
 });
 
@@ -26,6 +28,7 @@ test("attenuation is clamped to the selected strain's envelope", () => {
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.apparent_attenuation");
 
   app.edit(field(), "10"); // 10% < the strain's low (74.4%)
+  app.commitField(field());
   assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - 0.744) < 1e-9);
 });
 

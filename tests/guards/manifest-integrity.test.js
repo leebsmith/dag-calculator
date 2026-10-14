@@ -8,11 +8,27 @@ import { artifact } from "./util.js";
 test("A6: manifest integrity", () => {
   const a = artifact();
   const offenders = [];
+  const check = (ref) => {
+    if (!resolveReference(a, ref)) offenders.push(ref);
+  };
   for (const step of steps) {
     for (const entry of step.fields) {
       if (typeof entry === "object" && entry.collection) continue; // collection entries resolved by kind
+      if (typeof entry === "object" && entry.table) {
+        // Readout-table cells and notes are refs too: verify each resolves.
+        for (const col of entry.columns) {
+          if (col.kind === "text") continue;
+          for (const row of entry.rows) {
+            if (row[col.id]) check(row[col.id]);
+          }
+        }
+        for (const row of entry.rows) {
+          if (row.note?.ref) check(row.note.ref);
+        }
+        continue;
+      }
       const id = typeof entry === "string" ? entry : entry.id;
-      if (!resolveReference(a, id)) offenders.push(id);
+      check(id);
     }
   }
   assert.deepEqual(offenders, [], `Unresolved manifest refs:\n${offenders.join("\n")}`);
@@ -24,7 +40,10 @@ test("A6: selection pickers are displayed by a step", () => {
   const a = artifact();
   const shown = new Set();
   for (const step of steps) {
-    for (const entry of step.fields) shown.add(typeof entry === "string" ? entry : entry.id);
+    for (const entry of step.fields) {
+      if (typeof entry === "string") shown.add(entry);
+      else if (entry.id) shown.add(entry.id);
+    }
   }
   const offenders = [];
   for (const [id, node] of Object.entries(a.nodes)) {

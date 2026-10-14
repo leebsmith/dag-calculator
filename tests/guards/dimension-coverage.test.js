@@ -6,7 +6,7 @@ import { artifact } from "./util.js";
 
 // Derived nodes whose dimension cannot be inferred are a deliberate, documented
 // set. A new one must be reviewed (add here), not silently skipped.
-const INTENTIONAL_UNCHECKED = ["batch.delta_v_evap", "grist.mcu"];
+const INTENTIONAL_UNCHECKED = ["batch.delta_v_evap", "batch.runnings_ratio", "grist.mcu"];
 
 function uncheckedDerived(a) {
   const unchecked = [];

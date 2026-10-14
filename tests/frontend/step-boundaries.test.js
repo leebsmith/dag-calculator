@@ -67,9 +67,13 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
   assert.equal(app.boundaryStatuses["solver.batch"], "ok");
   assert.equal(app.boundaryStatuses["solver.water"], "ok");
 
-  // a boundary-derived field reflects the mock response
-  const m = app.fieldsBySlice.batch.find((f) => f.id === "solver.batch.sg_post_boil");
-  assert.equal(m.value, 1.055);
+  // a boundary-derived readout reflects the mock response (rendered in the
+  // Water Plan table, via the derived total-water-used node)
+  const waterPlan = app.fieldsBySlice.batch.find((f) => f.id === "water-plan");
+  assert.ok(waterPlan, "water-plan table present");
+  const totalRow = waterPlan.rows.find((r) => r.cells.label.text === "Total Water Used");
+  assert.equal(totalRow.cells.value.display, "28");
+  assert.equal(totalRow.cells.value.unit, "L");
 });
 
 test("http: a solver error surfaces as boundaryError and marks the boundary failed", async () => {

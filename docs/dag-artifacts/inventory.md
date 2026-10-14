@@ -135,10 +135,14 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.equipment_profile_id` | root |
 | `batch.hlt_starting_volume_l` | root |
 | `batch.intensive_value` | root |
+| `batch.runnings_ratio` | derived |
 | `batch.s_late_add` | derived |
+| `batch.sparge_salted_volume` | derived |
 | `batch.sugars` | collection |
+| `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |
 | `batch.topology` | choice |
+| `batch.total_water_used` | derived |
 | `batch.v_ferm` | root |
 | `batch.yeast` | selection |
 | `batch.yeast_id` | root |

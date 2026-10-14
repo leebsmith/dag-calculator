@@ -27,8 +27,10 @@
             step="0.1"
             :value="f.display"
             @input="edit(f, $event.target.value)"
+            @change="commitField(f)"
           />
           <span class="form-hint" x-show="f.rangeHint" x-text="'Allowed: ' + f.rangeHint"></span>
+          <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
           <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
         </div>
       </template>
@@ -46,6 +48,7 @@
               <option :value="opt" x-text="opt"></option>
             </template>
           </select>
+          <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
         </div>
       </template>
 
@@ -64,7 +67,49 @@
             ></button>
           </span>
           <span class="field-value" x-text="f.display"></span>
+          <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
           <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
+        </div>
+      </template>
+
+      <template x-if="f.control === 'readout-table'">
+        <div>
+          <h3 class="modal-drawer-title" x-text="f.title"></h3>
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead x-show="f.header">
+                <tr>
+                  <template x-for="c in f.columns" :key="c.id">
+                    <th :class="{ 'text-right': c.align === 'right' }" x-text="c.label"></th>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(row, ri) in f.rows" :key="ri">
+                  <tr>
+                    <template x-for="c in f.columns" :key="c.id">
+                      <td :class="{ 'text-right tabular-nums': c.align === 'right', 'font-bold': row.bold }">
+                        <template x-if="row.cells[c.id] && row.cells[c.id].text !== undefined">
+                          <span x-text="row.cells[c.id].text"></span>
+                        </template>
+                        <template x-if="row.cells[c.id] && row.cells[c.id].display !== undefined">
+                          <span x-text="row.cells[c.id].display"></span>
+                          <span x-text="row.cells[c.id].unit ? ' ' + row.cells[c.id].unit : ''"></span>
+                        </template>
+                        <template x-if="!row.cells[c.id]">
+                          <span>—</span>
+                        </template>
+                        <template x-if="c.id === f.columns[f.columns.length - 1].id">
+                          <span class="text-xs text-muted" x-show="row.hint" x-text="' (' + row.hint + ')'"></span>
+                          <span class="text-xs text-muted" x-show="row.note && row.note.show" x-text="' (' + row.note.label + ': ' + row.note.display + (row.note.unit ? ' ' + row.note.unit : '') + ')'"></span>
+                        </template>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
         </div>
       </template>
 

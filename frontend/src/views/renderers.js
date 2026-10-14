@@ -5,6 +5,7 @@ export const RENDERERS = {
   "selection-picker": { editable: true },
   "collection-table": { editable: true },
   readout: { editable: false },
+  "readout-table": { editable: false },
 };
 
 export function rendererFor(control) {

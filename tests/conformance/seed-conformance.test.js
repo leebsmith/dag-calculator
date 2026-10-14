@@ -10,6 +10,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { loadArtifact } from "../frontend/helpers.js";
+import { ingestEquipment } from "../../frontend/src/store/equipmentIngest.js";
 
 const artifact = loadArtifact();
 
@@ -17,6 +18,12 @@ function readSeed(name) {
   const url = new URL(`../../data/seeds/${name}`, import.meta.url);
   return JSON.parse(readFileSync(fileURLToPath(url), "utf8"));
 }
+
+// Seeds with a `{ units, data }` wrapper are normalized (imperial → metric)
+// before conformance checking, so the test validates the ingested component.
+const INGEST = {
+  "equipment.json": (data) => ingestEquipment(data, artifact),
+};
 
 const OPS = {
   gt: (a, b) => a > b,
@@ -75,7 +82,7 @@ function checkComponent(schema, component, label) {
 
 for (const [file, schemaName, idField] of CATALOGS) {
   test(`seed ${file} conforms to ${schemaName}`, () => {
-    const data = readSeed(file);
+    const data = INGEST[file] ? INGEST[file](readSeed(file)) : readSeed(file);
     assert.ok(
       data && typeof data === "object" && !Array.isArray(data),
       `${file} must be a flat id-keyed object`

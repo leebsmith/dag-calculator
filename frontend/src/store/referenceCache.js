@@ -2,13 +2,17 @@
 // Every catalog seed is a flat id-keyed map of schema-conforming components
 // (normalized in Step G), so no per-file adapters are needed here.
 
-import equipment from "../../../data/seeds/equipment.json" with { type: "json" };
+import artifact from "../engine/artifact.json" with { type: "json" };
+import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json" };
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
 import sugars from "../../../data/seeds/sugars.json" with { type: "json" };
 import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
 import waterTargets from "../../../data/seeds/water_target_profiles.json" with { type: "json" };
 import waterReports from "../../../data/seeds/water_reports.json" with { type: "json" };
 import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
+import { ingestEquipment } from "./equipmentIngest.js";
+
+const equipment = ingestEquipment(equipmentRaw, artifact);
 
 const DEFAULT_GRIST = [
   { catalog_id: "pilsner-malt", pct: 0.8, parts: 80 },

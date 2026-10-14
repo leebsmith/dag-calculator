@@ -509,14 +509,39 @@ export function createStepApp(options = {}) {
       if (field.control === "number" && field.dimension && field.unitId && value !== "") {
         raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
       }
-      // A batch value seeded from a selected component is clamped to that
-      // component's envelope (e.g. attenuation within the strain's range; the
-      // HLT fill within the equipment's [coil floor, capacity]).
-      raw = this.clampToSelection(field.target.nodeId, raw);
+      // Store the raw value live (no envelope clamp here): clamping on every
+      // keystroke fights the user mid-typing, so it is deferred to commitField
+      // on blur. The report-only relations still flag out-of-range values.
       this.setRoot(field.target.nodeId, raw);
+      if (field.target.nodeId === "batch.topology") this.resetIntensiveValue(raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.scheduleSolve();
       this.notify();
+    },
+
+    // Clamp an envelope-bounded number field to its selected component's range
+    // when the field is committed (blur/change). Live `edit` stores raw so typing
+    // isn't fought; this enforces the envelope only when the value is final.
+    commitField(field) {
+      if (!field.editable || !field.target || field.control !== "number") return;
+      const current = this.master.getRoot(field.target.nodeId);
+      if (typeof current !== "number") return;
+      const clamped = this.clampToSelection(field.target.nodeId, current);
+      if (clamped !== current) {
+        this.setRoot(field.target.nodeId, clamped);
+        this.scheduleSolve();
+        this.notify();
+      }
+    },
+
+    // Switching topology reinterprets the intensive value (L/kg vs dimensionless
+    // r), so reset it to the topology's sensible default (mirrors the legacy
+    // onTopologyChange).
+    resetIntensiveValue(topology) {
+      const constant =
+        topology === "runoff_ratio" ? "default_runoff_ratio" : "default_mash_thickness_l_per_kg";
+      const value = artifact.constants[constant]?.value;
+      if (typeof value === "number") this.setRoot("batch.intensive_value", value);
     },
 
     // Selection -> root copy-in (view-only). Picking a source report / target

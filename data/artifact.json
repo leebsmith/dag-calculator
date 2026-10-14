@@ -1707,6 +1707,90 @@
         ]
       }
     },
+    "batch.total_water_used": {
+      "kind": "derived",
+      "inputs": {
+        "v_strike": "solver.batch.cascade.v_strike",
+        "v_sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "op": "+",
+        "args": [
+          {
+            "ref": "v_strike"
+          },
+          {
+            "ref": "v_sparge"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "volume"
+      }
+    },
+    "batch.sparge_salted_volume": {
+      "kind": "derived",
+      "inputs": {
+        "v_hlt_after_strike": "solver.batch.hlt.v_hlt_after_strike",
+        "v_hlt_top_up": "solver.batch.hlt.v_hlt_top_up"
+      },
+      "expr": {
+        "op": "+",
+        "args": [
+          {
+            "ref": "v_hlt_after_strike"
+          },
+          {
+            "ref": "v_hlt_top_up"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "volume"
+      }
+    },
+    "batch.surplus_sparge_capacity": {
+      "kind": "derived",
+      "inputs": {
+        "v_sparge_deliverable": "solver.batch.hlt.v_sparge_deliverable",
+        "v_sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "op": "-",
+        "args": [
+          {
+            "ref": "v_sparge_deliverable"
+          },
+          {
+            "ref": "v_sparge"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "volume"
+      }
+    },
+    "batch.runnings_ratio": {
+      "kind": "derived",
+      "inputs": {
+        "v_run1": "solver.batch.cascade.v_run1",
+        "v_run2": "solver.batch.cascade.v_run2"
+      },
+      "expr": {
+        "op": "/",
+        "args": [
+          {
+            "ref": "v_run1"
+          },
+          {
+            "ref": "v_run2"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "dimensionless"
+      }
+    },
     "solver.water": {
       "kind": "boundary",
       "binding": "water_chemistry_solver",
