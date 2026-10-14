@@ -1,0 +1,74 @@
+<section class="step-card">
+  <h2 class="card-title" x-text="activeStep.title"></h2>
+  <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+
+  <div class="step-card-content">
+    <div class="table-header-toolbar">
+      <div>
+        <h3 class="modal-drawer-title">Major Grist Contributors</h3>
+        <p class="table-header-meta">Normalized via the Hamilton largest-remainder algorithm (sums to 100.0%)</p>
+      </div>
+      <button type="button" class="btn-primary text-xs" @click="openMaltEditor()">Configure Malts ⚙</button>
+    </div>
+
+    <div class="data-table-container">
+      <table class="data-table">
+        <colgroup>
+          <col style="width: 46%" />
+          <col style="width: 18%" />
+          <col style="width: 16%" />
+          <col style="width: 20%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Malt</th>
+            <th>Type</th>
+            <th class="text-right">Parts</th>
+            <th class="text-right">Malt %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="(row, ri) in gristRows" :key="ri">
+            <tr>
+              <td>
+                <span class="font-medium" x-text="row.name"></span>
+                <template x-if="!row.catalog_id">
+                  <span class="status-badge status-badge-info text-nano">Custom</span>
+                </template>
+              </td>
+              <td x-text="row.category"></td>
+              <td class="text-right tabular-nums" x-text="row.parts"></td>
+              <td class="text-right">
+                <span
+                  class="table-pct-value"
+                  :class="{ 'is-trace': maltIsTrace(row) }"
+                  x-text="(row.pct * 100).toFixed(1) + '%'"
+                ></span>
+              </td>
+            </tr>
+          </template>
+          <template x-if="gristRows.length === 0">
+            <tr>
+              <td colspan="4" class="table-empty-cell">
+                No malts yet. Click “Configure Malts” to build your grain bill.
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grain-bill-summary" x-show="gristRows.length > 0">
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Weighted grist color</span>
+        <span class="text-base font-bold tabular-nums" x-text="maltWeightedColorDisplay"></span>
+      </div>
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Weighted extract yield</span>
+        <span class="text-base font-bold tabular-nums" x-text="maltWeightedYieldDisplay"></span>
+      </div>
+    </div>
+  </div>
+
+  <load src="src/partials/modal-malt-editor.html" />
+</section>

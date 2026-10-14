@@ -132,6 +132,8 @@
   --container-content-stack: 36rem;
   --container-modal-dialog: 42rem;
   --container-modal-workspace: 72rem;
+  --container-drawer-workspace: 32rem;
+  --width-parts-input: 5rem;
 
   /* ========================================================================
      5. Border Radii

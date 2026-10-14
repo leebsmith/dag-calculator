@@ -137,70 +137,14 @@
                   <template x-if="activeStep.id === 'yeast'">
                     <load src="./src/partials/step-yeast.html" />
                   </template>
-                  <template x-if="activeStep.id !== 'yeast'">
+                  <template x-if="activeStep.id === 'fermentables'">
+                    <load src="./src/partials/step-fermentables.html" />
+                  </template>
+                  <template x-if="activeStep.id !== 'yeast' && activeStep.id !== 'fermentables'">
                     <load src="./src/partials/step-card.html" />
                   </template>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Malt catalog picker (grain bill add-row) -->
-        <div
-          class="modal-backdrop"
-          x-show="maltPickerOpen"
-          @click.self="closeMaltPicker()"
-          @keydown.escape.window="closeMaltPicker()"
-        >
-          <div class="modal-dialog">
-            <div class="modal-header">
-              <h2 class="modal-title">Add Malt</h2>
-              <button type="button" class="btn-link" @click="closeMaltPicker()">✕</button>
-            </div>
-            <div class="modal-body">
-              <input type="text" class="form-input" placeholder="Search malts…" x-model="maltSearch" />
-              <div class="data-table-container data-table-container-scroll">
-                <table class="data-table is-fixed">
-                  <colgroup>
-                    <col style="width: 40%" />
-                    <col style="width: 20%" />
-                    <col style="width: 14%" />
-                    <col style="width: 14%" />
-                    <col style="width: 12%" />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th>Malt</th>
-                      <th>Type</th>
-                      <th class="text-right">°L</th>
-                      <th class="text-right">Yield</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <template x-for="m in filteredMalts" :key="m.id">
-                      <tr>
-                        <td x-text="m.name"></td>
-                        <td x-text="m.category"></td>
-                        <td class="text-right tabular-nums" x-text="m.color_lovibond"></td>
-                        <td class="text-right tabular-nums" x-text="Math.round(m.yield_fraction * 100) + '%'"></td>
-                        <td class="text-right">
-                          <button type="button" class="btn-primary text-xs" @click="addMalt(m.id)">Add</button>
-                        </td>
-                      </tr>
-                    </template>
-                    <template x-if="filteredMalts.length === 0">
-                      <tr>
-                        <td colspan="5" class="table-empty-cell">No malts match.</td>
-                      </tr>
-                    </template>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn-outline" @click="closeMaltPicker()">Close</button>
             </div>
           </div>
         </div>
@@ -213,6 +157,7 @@
             <span x-text="violationCount + ' violation(s)'"></span>
           </span>
         </footer>
+        </div>
       </template>
     </main>
   </body>

@@ -1,0 +1,276 @@
+<!-- Grain Bill Editor (workspace modal): draft grid + catalog / inspector drawers -->
+<div
+  class="modal-backdrop"
+  x-show="maltEditorOpen"
+  @click.self="cancelMaltEditor()"
+  @keydown.escape.window="handleMaltEscape()"
+>
+  <div class="modal-dialog modal-dialog-workspace">
+    <div class="modal-workspace-header">
+      <div class="modal-workspace-header-title">
+        <h2 class="modal-workspace-title">Grain Bill Editor</h2>
+        <span class="status-badge text-xs" :class="maltValidation.class" x-text="maltValidation.label"></span>
+      </div>
+      <div class="modal-workspace-header-actions">
+        <button type="button" class="btn-outline text-xs" @click="cancelMaltEditor()">Cancel</button>
+        <button
+          type="button"
+          class="btn-primary text-xs"
+          @click="saveMaltEditor()"
+          :disabled="maltValidation.type !== 'balanced'"
+        >
+          Save &amp; Apply
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-workspace-body">
+      <div class="modal-workspace-main">
+        <div class="table-header-toolbar">
+          <span class="table-header-meta">
+            Enter relative proportional parts. Hamilton normalizes the bill to exactly 100.0%.
+          </span>
+          <button
+            type="button"
+            class="btn-primary text-xs"
+            @click="openMaltSearch()"
+            :disabled="maltAtLimit"
+          >
+            ＋ Add Malt from Catalog
+          </button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table is-fixed">
+            <colgroup>
+              <col style="width: 30%" />
+              <col style="width: 12%" />
+              <col style="width: 10%" />
+              <col style="width: 12%" />
+              <col style="width: 12%" />
+              <col style="width: 14%" />
+              <col style="width: 10%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Malt</th>
+                <th>Type</th>
+                <th class="text-right">°L</th>
+                <th class="text-right">Yield</th>
+                <th class="text-right">Parts</th>
+                <th class="text-right">Malt %</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="row in maltDraft" :key="row._key">
+                <tr>
+                  <td>
+                    <span class="font-medium" x-text="row.name"></span>
+                    <template x-if="!row.catalog_id">
+                      <span class="status-badge status-badge-info text-nano">Custom</span>
+                    </template>
+                  </td>
+                  <td x-text="row.category"></td>
+                  <td class="text-right tabular-nums" x-text="Number(row.color_lovibond).toFixed(1)"></td>
+                  <td class="text-right tabular-nums" x-text="Math.round(row.yield_fraction * 100) + '%'"></td>
+                  <td class="text-right">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      class="form-input table-input-parts"
+                      :value="row.parts"
+                      @input="updateDraftParts(row._key, $event.target.value)"
+                    />
+                  </td>
+                  <td class="text-right">
+                    <div class="table-pct-cell">
+                      <span
+                        class="table-pct-value"
+                        :class="{ 'is-trace': maltIsTrace(row) }"
+                        x-text="(row.pct * 100).toFixed(1) + '%'"
+                      ></span>
+                      <span class="table-pct-badge" :class="maltIsTrace(row) ? 'is-trace' : 'is-valid'">
+                        <span x-text="maltIsTrace(row) ? '✗' : '✓'"></span>
+                      </span>
+                    </div>
+                  </td>
+                  <td class="text-right">
+                    <div class="table-action-cell">
+                      <button
+                        type="button"
+                        class="btn-action-icon"
+                        @click="cloneDraftMalt(row._key)"
+                        :disabled="maltAtLimit"
+                        title="Clone &amp; Edit"
+                      >
+                        📋
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-action-icon"
+                        @click="inspectDraftRow(row._key)"
+                        title="Inspect"
+                      >
+                        ✎
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-action-icon btn-action-danger"
+                        @click="removeDraftMalt(row._key)"
+                        title="Remove"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="maltDraft.length === 0">
+                <tr>
+                  <td colspan="7" class="table-empty-cell">
+                    No malts in the draft. Click “＋ Add Malt from Catalog” to begin.
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="font-bold">Totals</td>
+                <td class="text-right tabular-nums font-bold" x-text="maltTotalParts.toFixed(1)"></td>
+                <td class="text-right tabular-nums font-bold" x-text="(maltTotalPct * 100).toFixed(1) + '%'"></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-drawer-scrim" x-show="maltDrawer !== null" @click="closeMaltDrawer()"></div>
+
+      <div class="modal-workspace-drawer" x-show="maltDrawer !== null">
+        <div class="modal-drawer-header">
+          <h3
+            class="modal-drawer-title"
+            x-text="maltDrawer === 'search' ? 'Malt Catalog Browser' : 'Row Inspector'"
+          ></h3>
+          <button type="button" class="btn-close text-xs" @click="closeMaltDrawer()">✕</button>
+        </div>
+
+        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': maltDrawer === 'search' }">
+          <template x-if="maltDrawer === 'search'">
+            <div class="catalog-drawer-content">
+              <div class="catalog-drawer-controls">
+                <div class="catalog-search-wrapper">
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    placeholder="Search malts by name…"
+                    x-model.debounce.50ms="maltSearch"
+                  />
+                </div>
+                <div class="filter-pills-container">
+                  <template x-for="c in maltCatalogCategories" :key="c">
+                    <button
+                      type="button"
+                      class="filter-pill"
+                      :class="{ 'is-active': maltCategoryFilter.includes(c) }"
+                      @click="toggleMaltCategory(c)"
+                      x-text="c"
+                    ></button>
+                  </template>
+                </div>
+                <div
+                  class="catalog-result-counter text-xs"
+                  aria-live="polite"
+                  x-text="`Showing ${maltFilteredCatalog.length} malts`"
+                ></div>
+              </div>
+              <div class="catalog-drawer-list">
+                <template x-for="item in maltFilteredCatalog" :key="item.id">
+                  <div class="catalog-item-card">
+                    <div>
+                      <div class="catalog-item-name" x-text="item.name"></div>
+                      <div
+                        class="catalog-item-meta"
+                        x-text="item.category + ' • ' + item.color_lovibond + ' °L'"
+                      ></div>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn-primary text-xs"
+                      @click="addCatalogMalt(item.id)"
+                      :disabled="maltAtLimit"
+                    >
+                      ＋ Add
+                    </button>
+                  </div>
+                </template>
+                <template x-if="maltFilteredCatalog.length === 0">
+                  <div class="table-empty-cell">No matching malts found.</div>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <template x-if="maltDrawer === 'inspect'">
+            <template x-for="row in (maltActiveRow ? [maltActiveRow] : [])" :key="row._key">
+              <div class="inspector-form">
+                <div class="form-group">
+                  <label class="form-label text-xs">Malt name</label>
+                  <input type="text" class="form-input text-xs" x-model="row.name" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs">Category</label>
+                  <select class="form-select text-xs" x-model="row.category">
+                    <template x-for="c in maltCategories" :key="c">
+                      <option :value="c" x-text="c"></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="inspector-grid-2col">
+                  <div class="form-group">
+                    <label class="form-label text-xs">Extract yield (%)</label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      max="100"
+                      class="form-input text-xs"
+                      :value="(row.yield_fraction * 100).toFixed(0)"
+                      @input="updateDraftField(row._key, 'yield_fraction', $event.target.value, 0.01)"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label text-xs">Color (°L)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      class="form-input text-xs"
+                      :value="row.color_lovibond"
+                      @input="updateDraftField(row._key, 'color_lovibond', $event.target.value)"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label text-xs">Moisture (%)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="20"
+                      class="form-input text-xs"
+                      :value="(row.moisture_pct * 100).toFixed(1)"
+                      @input="updateDraftField(row._key, 'moisture_pct', $event.target.value, 0.01)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

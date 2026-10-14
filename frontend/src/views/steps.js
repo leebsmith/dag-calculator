@@ -39,16 +39,8 @@ export const steps = [
     slice: "fermentables",
     title: "Fermentables",
     subtitle: "Build the grain bill",
-    partial: "./src/partials/step-card.html",
-    fields: [
-      {
-        collection: "grist.major_malts",
-        columns: ["name", "category", "parts", "pct"],
-        inputs: ["parts"],
-        addAction: "openMaltPicker",
-        addLabel: "＋ Add Malt",
-      },
-    ],
+    partial: "./src/partials/step-fermentables.html",
+    fields: [{ collection: "grist.major_malts" }],
   },
   {
     id: "late-additions",

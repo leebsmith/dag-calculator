@@ -500,6 +500,302 @@ samp {
 }
 
 /* ==========================================================================
+   7b. Grain bill editor (workspace modal + catalog / inspector drawers)
+   ========================================================================== */
+
+.modal-dialog-workspace {
+  max-width: var(--container-modal-workspace, 72rem);
+  height: min(88vh, 960px);
+  padding: var(--space-0);
+  gap: var(--space-0);
+  overflow: hidden;
+}
+
+.grain-bill-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--sys-surface-subtle);
+}
+
+.grain-bill-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.modal-workspace-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--sys-border-subtle);
+  background-color: var(--sys-surface-subtle);
+}
+
+.modal-workspace-header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.modal-workspace-title {
+  margin: var(--space-0);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--sys-text-primary);
+}
+
+.modal-workspace-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.modal-workspace-body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.modal-workspace-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  overflow-y: auto;
+}
+
+.modal-drawer-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-scrim);
+  background-color: var(--sys-surface-scrim);
+  backdrop-filter: var(--sys-backdrop-blur-subtle);
+  cursor: pointer;
+}
+
+.modal-workspace-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-drawer);
+  display: flex;
+  flex-direction: column;
+  width: var(--container-drawer-workspace);
+  max-width: 100%;
+  overflow: hidden;
+  background-color: var(--sys-surface-elevated);
+  border-left: 1px solid var(--sys-border-subtle);
+  box-shadow: var(--sys-shadow-xl);
+}
+
+.modal-drawer-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--sys-border-subtle);
+  background-color: var(--sys-surface-subtle);
+}
+
+.modal-drawer-title {
+  margin: var(--space-0);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
+.modal-drawer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+.modal-drawer-body-pinned {
+  overflow: hidden;
+}
+
+.catalog-drawer-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.catalog-drawer-controls {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.catalog-drawer-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+}
+
+.catalog-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--sys-surface-default);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.catalog-item-card:hover {
+  border-color: var(--sys-color-action-primary);
+  background-color: var(--sys-surface-hover);
+}
+
+.catalog-item-name {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
+.catalog-item-meta {
+  margin-top: var(--space-0-5);
+  font-size: var(--text-micro);
+  color: var(--sys-text-muted);
+}
+
+.filter-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-3);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--sys-text-secondary);
+  background-color: var(--sys-surface-subtle);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.filter-pill:hover {
+  border-color: var(--sys-border-default);
+  color: var(--sys-text-primary);
+}
+
+.filter-pill.is-active {
+  color: var(--sys-text-on-action);
+  background-color: var(--sys-color-action-primary);
+  border-color: var(--sys-color-action-primary);
+}
+
+.inspector-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.inspector-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.table-header-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.table-header-meta {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+}
+
+.table-pct-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+.table-pct-value {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-pct-value.is-trace {
+  color: var(--sys-color-danger-accent);
+}
+
+.table-pct-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-0-5);
+  font-size: var(--text-micro);
+  white-space: nowrap;
+  line-height: var(--line-height-none);
+}
+
+.table-pct-badge > span:first-child {
+  font-size: var(--text-base);
+  line-height: var(--line-height-none);
+}
+
+.table-pct-badge.is-trace {
+  color: var(--sys-color-danger-accent);
+}
+
+.table-pct-badge.is-valid {
+  color: var(--sys-color-success-accent);
+}
+
+.table-input-parts {
+  width: var(--width-parts-input);
+  margin-left: auto;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-align: right;
+}
+
+.modal-workspace-main .data-table .form-input {
+  min-width: 5rem;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+/* ==========================================================================
    8. Data Tables
    ========================================================================== */
 
@@ -801,7 +1097,6 @@ samp {
 }
 
 .step-card {
-  container-type: inline-size;
   height: 100%;
   background-color: var(--sys-surface-default);
   border: 1px solid var(--sys-border-subtle);
@@ -1190,6 +1485,7 @@ samp {
 }
 
 .step-card-content {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
