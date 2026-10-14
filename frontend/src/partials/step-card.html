@@ -25,6 +25,8 @@
             :value="f.display"
             @input="edit(f, $event.target.value)"
           />
+          <span class="form-hint" x-show="f.rangeHint" x-text="'Allowed: ' + f.rangeHint"></span>
+          <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
         </div>
       </template>
 
@@ -59,6 +61,7 @@
             ></button>
           </span>
           <span class="tabular-nums" x-text="f.display"></span>
+          <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
         </div>
       </template>
 

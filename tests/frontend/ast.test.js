@@ -51,6 +51,13 @@ test("evaluates if conditionals", () => {
   assert.equal(evaluate(expr, ctx({ ph: 5.4 })), "OPTIMAL");
 });
 
+test("and/or/if short-circuit the untaken branch", () => {
+  const c = ctx(); // resolveRef throws for any unknown ref
+  assert.equal(evaluate({ op: "if", args: [false, { ref: "boom" }, 42] }, c), 42);
+  assert.equal(evaluate({ op: "and", args: [false, { ref: "boom" }] }, c), false);
+  assert.equal(evaluate({ op: "or", args: [true, { ref: "boom" }] }, c), true);
+});
+
 test("evaluates reductions: sum and weighted_avg", () => {
   const coll = [
     { pct: 0.8, yield: 0.8 },

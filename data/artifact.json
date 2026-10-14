@@ -1,8 +1,8 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 3, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 4, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
   },
   "dimensions": {
@@ -2215,6 +2215,43 @@
         "rhs": {
           "ref": "solver.batch.max_achievable_abv"
         }
+      }
+    },
+    {
+      "id": "attenuation_within_yeast_envelope",
+      "predicate": {
+        "op": "if",
+        "args": [
+          { "op": "ne", "args": [ { "ref": "batch.yeast_id" }, "" ] },
+          {
+            "op": "and",
+            "args": [
+              {
+                "op": "ge",
+                "args": [ { "ref": "batch.apparent_attenuation" }, { "ref": "batch.yeast.low_attenuation" } ]
+              },
+              {
+                "op": "le",
+                "args": [ { "ref": "batch.apparent_attenuation" }, { "ref": "batch.yeast.high_attenuation" } ]
+              }
+            ]
+          },
+          true
+        ]
+      }
+    },
+    {
+      "id": "target_abv_within_yeast_tolerance",
+      "predicate": {
+        "op": "if",
+        "args": [
+          { "op": "ne", "args": [ { "ref": "batch.yeast_id" }, "" ] },
+          {
+            "op": "le",
+            "args": [ { "ref": "batch.target_abv" }, { "ref": "batch.yeast.alcohol_tolerance_abv" } ]
+          },
+          true
+        ]
       }
     }
   ]

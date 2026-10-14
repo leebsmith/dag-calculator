@@ -82,3 +82,15 @@ test("setRoot invalidates dependents and recomputes", () => {
   const after = engine.get("mash.strike_water_temp_base_c");
   assert.notEqual(before, after);
 });
+
+test("an unset optional selection resolves to an empty component (no throw)", () => {
+  const engine = createCalculator(loadArtifact(), makeFixtures());
+  assert.deepEqual(engine.get("batch.yeast"), {});
+  assert.equal(engine.resolve("batch.yeast.attenuation_pct"), undefined);
+});
+
+test("a non-empty but unknown selection id still throws", () => {
+  const engine = createCalculator(loadArtifact(), makeFixtures());
+  engine.setRoot("batch.yeast_id", "no-such-yeast");
+  assert.throws(() => engine.get("batch.yeast"), /Unknown reference/);
+});

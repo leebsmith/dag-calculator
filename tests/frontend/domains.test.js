@@ -43,3 +43,24 @@ test("checkDomain() on an unbounded node holds trivially", () => {
   assert.equal(r.bounded, false);
   assert.equal(r.holds, true);
 });
+
+test("fieldDomainStates covers fields of a selected component", () => {
+  const e = createCalculator(artifact, makeFixtures());
+  const states = e.fieldDomainStates();
+  assert.ok(states.length > 0);
+  assert.ok(states.every((s) => s.selectionNodeId === "equipment.profile"));
+  assert.ok(states.every((s) => s.holds));
+});
+
+test("fieldDomainStates skips unset optional selections", () => {
+  const e = createCalculator(artifact, makeFixtures());
+  assert.equal(e.fieldDomainStates().some((s) => s.selectionNodeId === "batch.yeast"), false);
+});
+
+test("checkDomain treats an unresolvable {ref} bound as not applicable", () => {
+  const a = structuredClone(artifact);
+  a.nodes["batch.target_abv"].domain = { gt: 0, lt: { ref: "batch.yeast.high_attenuation" } };
+  const e = createCalculator(a, makeFixtures());
+  const states = Object.fromEntries(e.domainStates().map((s) => [s.nodeId, s.holds]));
+  assert.equal(states["batch.target_abv"], true); // gt:0 holds; unresolved lt is skipped
+});

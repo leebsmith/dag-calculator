@@ -17,7 +17,25 @@ function evaluateLeaf(expr, ctx) {
     return applyReduction(expr, ctx);
   }
   if (isObjectWithKey(expr, "op")) {
-    return applyOperator(expr.op, expr.args.map((a) => evaluate(a, ctx)));
+    // Boolean operators and `if` short-circuit: only the taken branch is
+    // evaluated. This lets a predicate guard access to a node that may be
+    // unresolvable (e.g. an unset optional selection).
+    switch (expr.op) {
+      case "and": {
+        const lhs = evaluate(expr.args[0], ctx);
+        return lhs ? evaluate(expr.args[1], ctx) : lhs;
+      }
+      case "or": {
+        const lhs = evaluate(expr.args[0], ctx);
+        return lhs ? lhs : evaluate(expr.args[1], ctx);
+      }
+      case "if":
+        return evaluate(expr.args[0], ctx)
+          ? evaluate(expr.args[1], ctx)
+          : evaluate(expr.args[2], ctx);
+      default:
+        return applyOperator(expr.op, expr.args.map((a) => evaluate(a, ctx)));
+    }
   }
   throw new Error(`Unknown expression node: ${JSON.stringify(expr)}`);
 }

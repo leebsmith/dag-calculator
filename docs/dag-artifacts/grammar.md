@@ -101,6 +101,9 @@ kind (`root` → dimension; `choice` → taxonomy).
 - A selection is a **read-only view** of the referenced component: its value is the
   component, unchanged. Batch-specific variation is modeled with `root` nodes
   (optionally `default`-ing to a selected field), never by mutating the component.
+- An **empty `ref` value** means "no component chosen": the selection resolves to an
+  empty component (its fields read as `undefined`) rather than erroring. A non-empty
+  id that names no component is a validation error.
 
 ### 2.4 `derived`
 
@@ -201,6 +204,11 @@ Supported operators: `gt`, `gte`, `lt`, `lte`, `eq`, `ne`. Bounds may be
 literals, `{const}`, or `{ref}`. These are *annotations* — they restrict the
 valid inputs, they are not separate nodes.
 
+A bound that cannot be resolved (e.g. a `{ref}` to a field of an unset optional
+selection) is treated as **not applicable** and skipped. Primitive-schema fields
+may also carry `domain`s; those are evaluated for the fields of a *selected*
+component (surfaced separately from node domains).
+
 ### 4.2 Relation (n-ary invariant)
 
 ```jsonc
@@ -213,6 +221,10 @@ valid inputs, they are not separate nodes.
 A relation is a predicate over two or more nodes that no single node owns. It is
 a first-class invariant, evaluated by the engine and surfaced to the view.
 
+Predicate referents may include selection fields. Because `and`/`or`/`if`
+**short-circuit**, an optional selection is guarded with a conditional, e.g.
+`if(ref != "", <predicate over the selected component>, true)`.
+
 ---
 
 ## 5. JSON-Schema summary
@@ -221,7 +233,7 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **3**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **4**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `nodes` (all objects), and `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.

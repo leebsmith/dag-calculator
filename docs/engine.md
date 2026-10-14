@@ -28,7 +28,7 @@ The engine owns the **State** and **Derived** layers; the view only reads them.
    only, then `topologicalSort` produces `topoOrder`.
 3. **Evaluate lazily** — `get(nodeId)` evaluates a node once and **memoizes** it;
    descendants are pulled on demand, not eagerly.
-4. **Invalidate on change** — `setRoot`/`setCollection`/`setOverlay` drop the
+4. **Invalidate on change** — `setRoot`/`setCollection` drop the
    changed node and *its dependents* from the memo, so the next `get` re-derives.
 
 There is **no read-tracking and no reactivity**: dependencies exist only where the
@@ -44,7 +44,7 @@ changes.
 | `ast.js` | the expression interpreter (`evaluate`) |
 | `paths.js` | dotted-path resolution (`resolveReference`, `getField`) |
 | `units.js` | dimension system: conversion, add/sub inference, derived-dimension checks |
-| `domains.js` | unary domain-bound checks |
+| `domains.js` | unary domain-bound checks (nodes + selected-component fields) |
 | `relations.js` | n-ary relation predicates |
 | `boundary.js` | canonical fingerprinting + `BoundaryCache` |
 | `validate.js` | structural validation of the artifact |
@@ -87,7 +87,7 @@ outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
 ```text
 root/choice   → roots.get(nodeId) ?? evaluate(node.default)
 collection    → collections[nodeId] ?? []
-selection     → component (read-only view)
+selection     → component (read-only view; empty ref → {})
 derived       → evaluate(node.expr, ctx(  resolve node.inputs  ))
 boundary      → resolve inputs → fingerprint → cache hit | boundaries[binding](inputs)
 ```
@@ -111,7 +111,7 @@ collection field or a boundary output (e.g. `solver.batch.cascade.v_strike`).
 
 ## Invalidation
 
-`setRoot`/`setCollection`/`setOverlay` call `invalidate(nodeId)`, which deletes
+`setRoot`/`setCollection` call `invalidate(nodeId)`, which deletes
 the node from `memo` and recurses through `dependents`. The memo is the only
 place values are cached, so there is nothing else to keep consistent.
 
@@ -122,11 +122,11 @@ engine.get(id)            // node value (memoized)
 engine.resolve(path)      // dotted-path value
 engine.call(fnId, args)   // invoke a function
 engine.relationStates()   // [{ id, holds }]
-engine.domainStates()     // [{ nodeId, holds, … }]
+engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes)
+engine.fieldDomainStates() // [{ selectionNodeId, field, holds, … }]
 
 engine.setRoot(id, v)  getRoot(id)  hasRoot(id)
 engine.setCollection(id, rows)
-engine.setOverlay(id, field, v)  clearOverlay(id, field)  getOverlay(id)
 
 engine.topoOrder  adjacency  dependents
 ```

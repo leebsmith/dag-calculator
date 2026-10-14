@@ -45,6 +45,10 @@ samp {
   font-variant-numeric: tabular-nums;
 }
 
+.text-danger {
+  color: var(--sys-color-danger-text);
+}
+
 /* ==========================================================================
    2. Buttons & Interactive Controls
    ========================================================================== */

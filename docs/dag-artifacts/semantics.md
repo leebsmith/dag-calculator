@@ -82,9 +82,11 @@ declared edges — never authored.
 
 A `selection` holds a `ref` (component id) that resolves to an immutable seed
 component. Its value is a **read-only view** of that component — selections are
-never mutated. A batch that needs a value different from the selected component
-models it as a `root` (optionally `default`-ing to a selected field), keeping
-batch state in one place: the roots.
+never mutated. An empty `ref` means "no component chosen": the selection resolves
+to an empty component (fields read as `undefined`), so optional selections are
+safe to reference behind a short-circuit guard. A batch that needs a value
+different from the selected component models it as a `root` (optionally
+`default`-ing to a selected field), keeping batch state in one place: the roots.
 
 ### 3.2 Freeze = full valuation
 
@@ -115,7 +117,11 @@ the current seeds.
   in `relations`. They restrict *what is valid*, and are annotations, not nodes.
   The engine **evaluates** both and surfaces the result to the view
   (report-only: `relationStates()` / `domainStates()`); a violated invariant is a
-  presentation concern, not a computation failure.
+  presentation concern, not a computation failure. Bounds may reference a
+  selected component's fields; a bound that cannot be resolved (e.g. an unset
+  optional selection) is **not applicable** and skipped. Primitive-schema fields
+  may also declare `domain`s, evaluated for the fields of a selected component
+  (`fieldDomainStates()`).
 - **Interpretation** — a `derived` node whose output is a `taxonomy` (or boolean):
   a categorical judgment over a computed value (e.g. mash-pH status). Its
   presentation label/class is stripped.

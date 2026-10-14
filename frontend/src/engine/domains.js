@@ -20,22 +20,29 @@ function resolveLimit(limit, artifact, resolveRef) {
   return undefined;
 }
 
-export function checkDomain(artifact, nodeId, value, resolveRef) {
-  const node = artifact.nodes[nodeId];
-  const domain = node?.domain;
-  if (!domain) return { nodeId, bounded: false, holds: true };
+// Evaluate a domain spec against a value. A bound that cannot be resolved
+// (e.g. a {ref} to a field of an unset optional selection) is treated as
+// "not applicable" and skipped, rather than failing the value.
+function evaluateDomain(domain, value, resolveLimit) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
-    return { nodeId, bounded: true, holds: false, reason: "non-finite" };
+    return { bounded: true, holds: false, reason: "non-finite" };
   }
   for (const [op, limitExpr] of Object.entries(domain)) {
     const test = OPS[op];
     if (!test) continue;
-    const limit = resolveLimit(limitExpr, artifact, resolveRef);
-    if (!test(value, limit)) {
-      return { nodeId, bounded: true, holds: false, op, limit };
-    }
+    const limit = resolveLimit(limitExpr);
+    if (limit === undefined || limit === null || Number.isNaN(limit)) continue;
+    if (!test(value, limit)) return { bounded: true, holds: false, op, limit };
   }
-  return { nodeId, bounded: true, holds: true };
+  return { bounded: true, holds: true };
+}
+
+export function checkDomain(artifact, nodeId, value, resolveRef) {
+  const node = artifact.nodes[nodeId];
+  const domain = node?.domain;
+  if (!domain) return { nodeId, bounded: false, holds: true };
+  const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
+  return { nodeId, ...evaluateDomain(domain, value, resolveLimitFn) };
 }
 
 export function domainStates(artifact, get, resolveRef) {
@@ -43,6 +50,36 @@ export function domainStates(artifact, get, resolveRef) {
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if ((node.kind === "root" || node.kind === "choice") && node.domain) {
       states.push(checkDomain(artifact, id, get(id), resolveRef));
+    }
+  }
+  return states;
+}
+
+// Domain states for the *fields* of selected components. A selection is a
+// read-only view of a seed component; its schema may declare per-field
+// `domain`s. Fields of an unset optional selection are skipped (the component
+// resolves to `{}`, so the field reads as undefined).
+export function fieldDomainStates(artifact, resolveRef) {
+  const states = [];
+  const schemas = artifact.primitive_schemas ?? {};
+  for (const [id, node] of Object.entries(artifact.nodes)) {
+    if (node.kind !== "selection") continue;
+    const schema = schemas[node.schema] ?? {};
+    for (const [field, spec] of Object.entries(schema)) {
+      if (!spec.domain) continue;
+      let value;
+      try {
+        value = resolveRef(`${id}.${field}`);
+      } catch {
+        continue; // unguarded/unresolvable reference — not applicable
+      }
+      if (value === undefined) continue; // selection unset or field absent
+      const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
+      states.push({
+        selectionNodeId: id,
+        field,
+        ...evaluateDomain(spec.domain, value, resolveLimitFn),
+      });
     }
   }
   return states;

@@ -165,6 +165,7 @@ export function nonlinearFns(artifact, engine) {
 export function valuate(fields, engine, ctx = {}) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
+  const fieldDomains = ctx.fieldDomains ?? {};
   const nl = nonlinearFns(artifact, engine);
   const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));
   return fields
@@ -221,6 +222,21 @@ export function valuate(fields, engine, ctx = {}) {
           (Object.prototype.hasOwnProperty.call(unitMode, field.id) ||
             (unitId !== null && unitId !== naturalUnitId)),
       };
+      // Per-field domain state of the selected component (e.g. an equipment
+      // constant), for inline surfacing.
+      const ref = resolveReference(artifact, field.id);
+      const vkey = ref ? (ref.suffix.length ? `${ref.nodeId}.${ref.suffix.join(".")}` : ref.nodeId) : null;
+      out.validation = (vkey && fieldDomains[vkey]) || null;
+      // Apparent attenuation is bounded by the selected strain; expose the
+      // valid range so the batch card can show it (the adapter clamps to it).
+      if (field.id === "batch.apparent_attenuation") {
+        const low = engine.get("batch.yeast_id") ? engine.resolve("batch.yeast.low_attenuation") : undefined;
+        const high = engine.get("batch.yeast_id") ? engine.resolve("batch.yeast.high_attenuation") : undefined;
+        if (typeof low === "number" && typeof high === "number") {
+          const conv = (v) => (unitId && artifact ? fromBase(artifact, field.dimension, unitId, v, nl) : v);
+          out.rangeHint = `${formatValue(conv(low))}–${formatValue(conv(high))}${symbol ?? ""}`;
+        }
+      }
       return out;
     })
     .filter(Boolean);

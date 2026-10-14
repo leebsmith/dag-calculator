@@ -6,7 +6,7 @@
 // raw object, so the view re-renders on every change. `main.js` wraps the app in
 // `Alpine.reactive` and binds that proxy to persistence.
 import artifact from "../engine/artifact.json" with { type: "json" };
-import { canonicalize, createCalculator, sha256Hex, toBase } from "../engine/index.js";
+import { canonicalize, createCalculator, resolveReference, sha256Hex, toBase } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
@@ -15,18 +15,39 @@ import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS } from "../views/registry/units.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 
-// Collect the slice prefixes referenced by a relation predicate (a tree of
-// {ref}/{op}/{args}/{lhs}/{rhs}/{const} nodes). Used to surface violations on the
-// cards that own the relevant nodes.
-function refSlices(node, out = new Set()) {
+// The canonical key for a dotted path: the resolved node id plus its field
+// suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
+function fieldKey(path) {
+  const r = resolveReference(artifact, path);
+  if (!r) return null;
+  return r.suffix.length ? `${r.nodeId}.${r.suffix.join(".")}` : r.nodeId;
+}
+
+// Collect every `ref` path referenced by a predicate (tree of op/args/lhs/rhs/ref).
+function refPaths(node, out = new Set()) {
   if (node === null || typeof node !== "object") return out;
-  if ("ref" in node) out.add(node.ref.split(".")[0]);
+  if ("ref" in node) out.add(node.ref);
   if (Array.isArray(node)) {
-    for (const item of node) refSlices(item, out);
+    for (const item of node) refPaths(item, out);
   } else {
-    for (const value of Object.values(node)) refSlices(value, out);
+    for (const value of Object.values(node)) refPaths(value, out);
   }
   return out;
+}
+
+// Map every manifest field to the step slice that displays it, keyed by
+// `fieldKey`. Lets violations land on the card that owns the field.
+function buildFieldSliceMap() {
+  const map = new Map();
+  for (const step of steps) {
+    for (const entry of step.fields) {
+      const id = typeof entry === "string" ? entry : entry.id;
+      if (!id) continue;
+      const key = fieldKey(id);
+      if (key && !map.has(key)) map.set(key, step.slice);
+    }
+  }
+  return map;
 }
 
 export function createStepApp() {
@@ -42,6 +63,19 @@ export function createStepApp() {
   });
 
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
+  const fieldSlice = buildFieldSliceMap();
+
+  // Slices to surface a relation on: map each referenced path through the
+  // manifest (so batch.yeast.* lands on the yeast card), falling back to the
+  // path's leading segment.
+  function relationSlices(predicate) {
+    const slices = new Set();
+    for (const path of refPaths(predicate)) {
+      const slice = fieldSlice.get(fieldKey(path));
+      slices.add(slice ?? path.split(".")[0]);
+    }
+    return slices;
+  }
 
   return {
     master,
@@ -152,29 +186,41 @@ export function createStepApp() {
     },
 
     compute() {
+      const fieldDomains = engine.fieldDomainStates();
+      const fieldDomainIndex = {};
+      for (const d of fieldDomains) fieldDomainIndex[`${d.selectionNodeId}.${d.field}`] = d;
+
       const all = produce(artifact, steps, registry, engine, {
         references: cache.references,
         ui,
+        fieldDomains: fieldDomainIndex,
       });
       this.fieldsBySlice = Object.fromEntries(
         steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
       );
       this.relations = engine.relationStates();
       this.domains = engine.domainStates();
+      this.fieldDomains = fieldDomains;
       this.violationCount =
-        this.relations.filter((r) => !r.holds).length + this.domains.filter((d) => !d.holds).length;
+        this.relations.filter((r) => !r.holds).length +
+        this.domains.filter((d) => !d.holds).length +
+        fieldDomains.filter((d) => !d.holds).length;
 
       this.stepStatus = {};
       for (const step of steps) this.stepStatus[step.slice] = { relations: [], domains: [] };
       for (const r of this.relations) {
         if (r.holds) continue;
-        for (const slice of refSlices(relationDefs[r.id]?.predicate)) {
+        for (const slice of relationSlices(relationDefs[r.id]?.predicate)) {
           this.stepStatus[slice]?.relations.push(r);
         }
       }
       for (const d of this.domains) {
         if (d.holds) continue;
         this.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
+      }
+      for (const d of fieldDomains) {
+        if (d.holds) continue;
+        this.stepStatus[fieldSlice.get(`${d.selectionNodeId}.${d.field}`)]?.domains.push(d);
       }
     },
 
@@ -243,6 +289,17 @@ export function createStepApp() {
       // before it reaches the engine.
       if (field.control === "number" && field.dimension && field.unitId && value !== "") {
         raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
+      }
+      // The attenuation a batch uses is bounded by the selected strain's
+      // envelope; clamp typed values to it. (An unset yeast resolves to no
+      // bounds, so nothing is clamped.)
+      if (field.target.nodeId === "batch.apparent_attenuation" && typeof raw === "number") {
+        const low = engine.resolve("batch.yeast.low_attenuation");
+        const high = engine.resolve("batch.yeast.high_attenuation");
+        if (typeof low === "number" && typeof high === "number") {
+          if (raw < low) raw = low;
+          else if (raw > high) raw = high;
+        }
       }
       this.setRoot(field.target.nodeId, raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);

@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **3**
+- `schema_version`: **4**
 
 ## Dimensions
 
@@ -191,8 +191,10 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id |
 |---|
+| `attenuation_within_yeast_envelope` |
 | `hlt_not_overfilled` |
 | `kettle_not_overfilled` |
 | `mash_thickness_above_husk_floor` |
 | `target_abv_reachable` |
+| `target_abv_within_yeast_tolerance` |
 

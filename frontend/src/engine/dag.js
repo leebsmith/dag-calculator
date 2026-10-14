@@ -3,7 +3,7 @@
 
 import { evaluate } from "./ast.js";
 import { BoundaryCache, canonicalFingerprint } from "./boundary.js";
-import { domainStates } from "./domains.js";
+import { domainStates, fieldDomainStates } from "./domains.js";
 import { getField, resolveReference } from "./paths.js";
 import { relationStates } from "./relations.js";
 
@@ -150,6 +150,11 @@ export function createEngine(artifact, options = {}) {
         return collections[nodeId] ?? [];
       case "selection": {
         const refValue = get(node.ref);
+        // An empty ref means "no component chosen" (an unset optional
+        // selection): resolve to an empty component so its fields read as
+        // undefined rather than throwing. A non-empty but unknown id is still
+        // an error.
+        if (refValue === "") return {};
         const component = references[node.schema]?.[refValue];
         if (component === undefined) {
           throw new Error(`Unknown reference "${refValue}" for selection "${nodeId}"`);
@@ -198,6 +203,9 @@ export function createEngine(artifact, options = {}) {
     },
     domainStates() {
       return domainStates(artifact, get, resolveValue);
+    },
+    fieldDomainStates() {
+      return fieldDomainStates(artifact, resolveValue);
     },
     topoOrder,
     adjacency,

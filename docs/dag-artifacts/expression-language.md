@@ -51,6 +51,10 @@ one arg).
 ] }
 ```
 
+`and`, `or`, and `if` **short-circuit**: only the taken branch is evaluated. This
+lets a predicate guard access to a value that may be unresolvable, e.g. a field of
+an unset optional selection: `if(ref != "", <predicate>, true)`.
+
 ---
 
 ## 3. Reductions (higher-order)
