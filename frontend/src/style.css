@@ -898,13 +898,15 @@ samp {
   transition:
     background-color var(--transition-fast),
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .card-tile:hover:not(:disabled) {
   background-color: var(--sys-surface-hover);
   border-color: var(--sys-border-default);
   box-shadow: var(--sys-shadow-md);
+  transform: translateY(-2px);
 }
 
 .card-tile.is-active {
@@ -1008,6 +1010,25 @@ samp {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--sys-text-primary);
+}
+
+/* Overview <-> focus entry: the box is recreated when x-show toggles display,
+   so the animation replays in both directions. */
+@keyframes view-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.card-grid,
+.focus-view {
+  animation: view-enter var(--transition-slow) both;
 }
 
 .footer-step {
@@ -1378,6 +1399,15 @@ samp {
   .btn-action-icon,
   .form-input,
   .form-select {
+    transition: none;
+  }
+
+  .card-grid,
+  .focus-view {
+    animation: none;
+  }
+
+  .card-tile {
     transition: none;
   }
 }
