@@ -76,14 +76,15 @@ declared edges — never authored.
 
 ---
 
-## 3. Selection, overlay, and freeze
+## 3. Selection and freeze
 
-### 3.1 Selection = reference + overlay
+### 3.1 Selection = reference
 
-A `selection` holds a `ref` (component id) and a sparse `overlay`. The effective
-value of a field is `overlay[field] ?? component[field]`. Overrides are
-**absolute** values (not deltas), constrained to fields marked `overridable` on
-the schema.
+A `selection` holds a `ref` (component id) that resolves to an immutable seed
+component. Its value is a **read-only view** of that component — selections are
+never mutated. A batch that needs a value different from the selected component
+models it as a `root` (optionally `default`-ing to a selected field), keeping
+batch state in one place: the roots.
 
 ### 3.2 Freeze = full valuation
 
@@ -91,14 +92,15 @@ A saved batch is a **node-id → value** map over the whole graph, immutable,
 carrying provenance:
 
 - `source_template_id` / `source_revision` — which component (by content hash)
-  was copied in, for drift detection.
+  was referenced, for drift detection.
 - `schema_version` — the artifact revision the node set came from.
 - `parent_batch_id` — lineage (a batch is a recipe *variation*).
 
 **Provenance ≠ versioning.** There is no append-only component-version chain and
 no `(component_id, version)` reference. Reuse means *copy-into-batch* at
-selection time; drift is reconciled explicitly (reset-to-seed / keep-custom), not
-silently propagated.
+selection time; if a referenced seed changes after freeze, drift is surfaced
+explicitly (reported, never silently propagated), and forking re-resolves against
+the current seeds.
 
 ### 3.3 Draft vs. frozen
 

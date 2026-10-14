@@ -23,14 +23,14 @@ export function list() {
 export async function createDraft(name = "Untitled") {
   const created = await createBatch({ name });
   active = { id: created.id, name: created.name, status: created.status };
-  app?.loadState({ roots: created.roots, collections: created.collections, overlays: created.overlays });
+  app?.loadState({ roots: created.roots, collections: created.collections });
   return created;
 }
 
 export async function open(batchId) {
   const b = await getBatch(batchId);
   active = { id: b.id, name: b.name, status: b.status };
-  app?.loadState({ roots: b.roots, collections: b.collections, overlays: b.overlays });
+  app?.loadState({ roots: b.roots, collections: b.collections });
   return b;
 }
 
@@ -47,26 +47,20 @@ export async function driftFor(frozenId) {
   return app?.detectDrift(frozen.provenance) ?? [];
 }
 
-// Fork a frozen batch into a new editable draft, preserving lineage. `reconcile`
-// controls what happens to drifted selections: "reset-to-seed" (default) lets
-// the fork re-resolve against the current seeds; "keep-custom" pins the frozen
-// overridable values into overlays.
-export async function fork(frozenId, reconcile = "reset-to-seed") {
+// Fork a frozen batch into a new editable draft, preserving lineage. The fork
+// re-resolves selections against the current seeds; drift (selections whose
+// referenced component changed since freeze) is reported to the caller.
+export async function fork(frozenId) {
   const frozen = await getBatch(frozenId);
   const drift = app?.detectDrift(frozen.provenance) ?? [];
-  let overlays = { ...(frozen.overlays ?? {}) };
-  if (reconcile === "keep-custom" && drift.length) {
-    overlays = { ...overlays, ...app.pinDrift(frozen.valuation, drift) };
-  }
   const created = await createBatch({
     name: `${frozen.name} (copy)`,
     parent_batch_id: frozen.id,
     roots: frozen.roots,
     collections: frozen.collections,
-    overlays,
   });
   active = { id: created.id, name: created.name, status: created.status };
-  app?.loadState({ roots: created.roots, collections: created.collections, overlays: created.overlays });
+  app?.loadState({ roots: created.roots, collections: created.collections });
   return { created, drift };
 }
 

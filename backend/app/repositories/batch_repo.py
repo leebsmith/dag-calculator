@@ -68,7 +68,6 @@ class BatchRepository:
             "parent_batch_id": batch_id,
             "roots": source.get("roots", {}),
             "collections": source.get("collections", {}),
-            "overlays": source.get("overlays", {}),
             "created_at": now,
             "updated_at": now,
             "frozen_at": now,

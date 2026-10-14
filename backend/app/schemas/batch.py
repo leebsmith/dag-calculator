@@ -8,12 +8,11 @@ from pydantic import BaseModel, Field
 
 
 class DraftPayload(BaseModel):
-    """The browser-computed editable state (roots + collections + overlays)."""
+    """The browser-computed editable state (roots + collections)."""
 
     name: str = "Untitled"
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
-    overlays: dict[str, dict[str, Any]] = Field(default_factory=dict)
     schema_version: int = 2
     parent_batch_id: str | None = None
 
@@ -40,7 +39,6 @@ class BatchRecord(BaseModel):
     # draft-only state
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
-    overlays: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     # frozen-only state
     valuation: dict[str, Any] | None = None

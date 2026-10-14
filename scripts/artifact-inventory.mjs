@@ -42,7 +42,6 @@ function fieldSpec(spec) {
   if (spec.type) parts.push(`type ${spec.type}`);
   if (spec.domain) parts.push(`domain ${stableStringify(spec.domain)}`);
   if (spec.default !== undefined) parts.push(`default ${stableStringify(spec.default)}`);
-  if (spec.overridable) parts.push("overridable");
   return parts.join(", ") || "—";
 }
 

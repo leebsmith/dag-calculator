@@ -58,7 +58,6 @@ class FakeRepo:
             "parent_batch_id": batch_id,
             "roots": source.get("roots", {}),
             "collections": source.get("collections", {}),
-            "overlays": source.get("overlays", {}),
             "created_at": 3.0,
             "updated_at": 3.0,
             "frozen_at": 3.0,
@@ -85,7 +84,7 @@ def test_update_then_get():
     updated = svc.update_draft(
         "u1",
         rec.id,
-        DraftPayload(name="B", collections={"batch.sugars": []}, overlays={"equipment.profile": {"x": 1}}),
+        DraftPayload(name="B", collections={"batch.sugars": []}),
     )
     assert updated.name == "B"
     assert updated.collections == {"batch.sugars": []}
@@ -165,7 +164,6 @@ def test_fork_from_frozen_carries_state_and_lineage():
             parent_batch_id=frozen.id,
             roots=frozen.roots,
             collections=frozen.collections,
-            overlays=frozen.overlays,
         ),
     )
     assert fork.parent_batch_id == frozen.id

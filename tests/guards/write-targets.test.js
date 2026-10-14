@@ -5,7 +5,7 @@ import { registry, steps } from "../../frontend/src/views/steps.js";
 import { artifact } from "./util.js";
 
 // A5: every editable field carries exactly one valid write target; no readout does.
-const SCOPES = ["root", "choice", "overlay", "collection"];
+const SCOPES = ["root", "choice", "collection"];
 
 test("A5: write-target coverage", () => {
   const fields = projectFields(artifact(), steps, registry);
@@ -15,9 +15,6 @@ test("A5: write-target coverage", () => {
       if (!f.target || !SCOPES.includes(f.target.scope)) {
         offenders.push(`no/invalid target: ${f.id}`);
         continue;
-      }
-      if (f.target.scope === "overlay" && !(f.target.selectionNodeId && f.target.field)) {
-        offenders.push(`bad overlay target: ${f.id}`);
       }
       if (f.target.scope === "collection" && !f.target.nodeId) {
         offenders.push(`bad collection target: ${f.id}`);

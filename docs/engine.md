@@ -69,10 +69,8 @@ These are what make the DAG **explicit**: no edge exists unless declared.
 - **`collections`** — `collectionNodeId → rows[]`.
 - **`references`** — the immutable seed catalogs, keyed by schema then id
   (`equipment`/`yeast`/`water_report`/`water_target`).
-- **`overlays`** — `selectionNodeId → { field → value }`, the sparse batch-scoped
-  overrides.
 
-Only roots/choices/collections/overlays are mutable; derived values and boundary
+Only roots/choices/collections are mutable; derived values and boundary
 outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
 
 ### Caches
@@ -89,7 +87,7 @@ outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
 ```text
 root/choice   → roots.get(nodeId) ?? evaluate(node.default)
 collection    → collections[nodeId] ?? []
-selection     → { ...component, ...node.overlay, ...overlays[nodeId] }
+selection     → component (read-only view)
 derived       → evaluate(node.expr, ctx(  resolve node.inputs  ))
 boundary      → resolve inputs → fingerprint → cache hit | boundaries[binding](inputs)
 ```

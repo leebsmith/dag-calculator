@@ -58,7 +58,6 @@ export function createEngine(artifact, options = {}) {
   const roots = new Map(Object.entries(options.roots ?? {}));
   const references = options.references ?? {};
   const collections = options.collections ?? {};
-  const overlays = options.overlays ?? {};
   const boundaries = options.boundaries ?? {};
   const boundaryCache = options.boundaryCache ?? new BoundaryCache();
 
@@ -155,8 +154,8 @@ export function createEngine(artifact, options = {}) {
         if (component === undefined) {
           throw new Error(`Unknown reference "${refValue}" for selection "${nodeId}"`);
         }
-        // component < artifact overlay < mutable (user) overlay
-        return { ...component, ...(node.overlay ?? {}), ...(overlays[nodeId] ?? {}) };
+        // A selection is a read-only view of its referenced seed component.
+        return { ...component };
       }
       case "derived": {
         const inputValues = {};
@@ -223,22 +222,6 @@ export function createEngine(artifact, options = {}) {
       }
       collections[nodeId] = rows;
       invalidate(nodeId);
-    },
-    setOverlay(selectionNodeId, field, value) {
-      if (artifact.nodes[selectionNodeId]?.kind !== "selection") {
-        throw new Error(`"${selectionNodeId}" is not a selection node`);
-      }
-      overlays[selectionNodeId] = { ...(overlays[selectionNodeId] ?? {}), [field]: value };
-      invalidate(selectionNodeId);
-    },
-    clearOverlay(selectionNodeId, field) {
-      if (overlays[selectionNodeId]) {
-        delete overlays[selectionNodeId][field];
-        invalidate(selectionNodeId);
-      }
-    },
-    getOverlay(selectionNodeId) {
-      return overlays[selectionNodeId] ?? {};
     },
     // Boundary seam (async host I/O lives in the adapter). Resolve a boundary's
     // declared inputs + canonical fingerprint without invoking it; seed its

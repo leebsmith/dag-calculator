@@ -4,7 +4,7 @@ import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { artifact } from "./util.js";
 
 // A4: the master store holds only root/choice ids — never derived/selection/
-// collection ids. Overlays and collections live outside the roots store.
+// collection ids. Collections live outside the roots store.
 test("A4: roots-only master store", () => {
   const app = createStepApp();
   app.init();
@@ -13,8 +13,6 @@ test("A4: roots-only master store", () => {
   app.edit(app.fieldsBySlice.batch.find((f) => f.id === "batch.topology"), "runoff_ratio");
   const grist = app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
   app.editCell(grist, 0, "pct", "0.9");
-  const overlay = app.fieldsBySlice.equipment.find((f) => f.target?.scope === "overlay");
-  if (overlay) app.edit(overlay, "8.0");
 
   const a = artifact();
   for (const id of Object.keys(app.master.allRoots())) {

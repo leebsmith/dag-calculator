@@ -28,7 +28,7 @@ stores ───┘
   - *dynamic valuation* (on change): `{ value, display, unit, status }`.
   The producer **is** the recompute seam (driven by `engine.dependents`, never read-tracking).
 - **Write targets** unify edits under single-writer:
-  `{root|choice, nodeId}` · `{overlay, selectionNodeId, field}` · `{collection, nodeId, row, field}`.
+  `{root|choice, nodeId}` · `{collection, nodeId, row, field}`.
 - **Renderer registry** — control kind → partial: `number`, `choice-select`,
   `selection-picker`, `collection-table`, `readout`, `interpretation-badge`,
   `invariant-badge`, `boundary-status`.
@@ -68,7 +68,7 @@ stores ───┘
   chain (or a small `x-field` directive). Writes route to store via target scope.
 
 ### E.6 — Step partials (`src/partials/step-*.html`)
-- `step-equipment-profile` (selection + overlay accordion)
+- `step-equipment-profile` (selection picker + read-only component fields)
 - `step-yeast-selection` (component picker; attenuation → `batch.apparent_attenuation`)
 - `step-fermentables` (`grist.major_malts` table; Hamilton allocator is host-side)
 - `step-late-additions` (`batch.sugars` table → `batch.s_late_add`)
@@ -109,7 +109,7 @@ stores ───┘
   `number`+`readout`; edits write the root (store+engine) and update readouts via the
   producer re-pull; guards green; mash strike goldens hold (73.4233 / 3.0214 / 76.4447).
 - **E-b** step partials (1,5,6 wired to real engine data).
-- **E-c** selections/overlays + collection tables (steps 1,3,4,7).
+- **E-c** selections + collection tables (steps 1,3,4,7).
 - **E-d** units, boundary status, invariants, polish, modals.
 
 ## Acceptance Criteria — anti-drift guards
@@ -123,7 +123,7 @@ frontend test script (`... ../tests/guards/*.test.js`). Shared helper
 | A2 | `engine-access.test.js` | `engine.` may appear only under `frontend/src/engine/`, `frontend/src/adapters/`, `frontend/src/views/producer.js`; forbidden in `views/**` (excl. producer), `store/**`, `partials/**`, `components/**`, `main.js` | E-a |
 | A3 | `artifact-purity.test.js` | no `data/artifact.json` key matches `/^(label\|title\|control\|controlKind\|css\|class\|className\|rounding\|decimals\|sentinel\|layout\|order\|help\|display\|displayName\|format\|render\|colSpan)$/i` | E-a |
 | A4 | `roots-only.test.js` | every `store.allRoots()` key is a `root`/`choice` node | E-c |
-| A5 | `write-targets.test.js` | editable ⇒ exactly one target scope `root\|choice\|overlay\|collection` (with companion fields); readout ⇒ no target | E-a |
+| A5 | `write-targets.test.js` | editable ⇒ exactly one target scope `root\|choice\|collection`; readout ⇒ no target | E-a |
 | A6 | `manifest-integrity.test.js` | every manifest/registry reference path resolves via `resolveReference` | E-a |
 | A7 | `include-integrity.test.js` | every `<load src>` exists and ↔ manifest steps (bidirectional) | E-a |
 | A8 | `display-only-units.test.js` | `units.fromBase` referenced only by the producer/registry; writing a display value stores the base value | E-d |

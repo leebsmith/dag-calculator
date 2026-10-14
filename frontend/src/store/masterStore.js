@@ -1,4 +1,4 @@
-// Master store: holds roots ONLY (user inputs, selection ids, overlays).
+// Master store: holds roots ONLY (user inputs, selection ids).
 // Derived values are computed by the engine and never stored here.
 
 export function createMasterStore(initialRoots = {}) {

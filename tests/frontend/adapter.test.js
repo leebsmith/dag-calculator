@@ -76,7 +76,7 @@ test("adapter pre-resolves boundaries over HTTP in topo order", async () => {
   assert.equal(app.boundaryStatuses["solver.water"], "ok");
   assert.equal(app.doughInTarget, 67.0);
   assert.equal(app.mashThickness, 3.0);
-  assert.ok(Math.abs(app.strikeTemp - 76.4447619047619) < 1e-6);
+  assert.ok(Math.abs(app.strikeTemp - 76.04190476190476) < 1e-6);
   assert.equal(app.mashPhStatus, "OPTIMAL");
   assert.equal(app.boundaryError, null);
 });

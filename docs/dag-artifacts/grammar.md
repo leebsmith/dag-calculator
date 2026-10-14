@@ -49,7 +49,7 @@ Every node has a `kind`. The legal set, and the shape each requires:
 | `root` | user-set scalar (numeric) input | `dimension`, `default` |
 | `choice` | user-set categorical input | `taxonomy`, `default` |
 | `collection` | user-set list | `item_schema` |
-| `selection` | reference to a component + overlay | `schema`, `ref` |
+| `selection` | read-only reference to a component | `schema`, `ref` |
 | `derived` | pure computed value | `inputs`, `expr`, `output` |
 | `boundary` | sealed host-defined black box | `binding`, `resolution`, `inputs`, `outputs` |
 
@@ -92,17 +92,15 @@ kind (`root` → dimension; `choice` → taxonomy).
 "equipment.profile": {
   "kind": "selection",
   "schema": "equipment",
-  "ref": "batch.equipment_profile_id",
-  "overlay": { "mash_tun_mass_kg": 7.5 }
+  "ref": "batch.equipment_profile_id"
 }
 ```
 
 - `schema` — the component type this selection resolves to.
 - `ref` — a root holding the component id (usually a dotted path to a `batch.*` root).
-- `overlay` — a **sparse absolute-value delta**: only *overridden* fields appear;
-  absent = inherit from the referenced component. Legal keys are those fields
-  marked `overridable` in the schema; values inherit the field's `dimension`/`domain`.
-- The effective value of a dotted sub-ref is `overlay[field] ?? component[field]`.
+- A selection is a **read-only view** of the referenced component: its value is the
+  component, unchanged. Batch-specific variation is modeled with `root` nodes
+  (optionally `default`-ing to a selected field), never by mutating the component.
 
 ### 2.4 `derived`
 

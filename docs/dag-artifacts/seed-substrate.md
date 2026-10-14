@@ -12,7 +12,7 @@ against. It is *data*, not logic — the artifact **schematizes** it and
 |---|---|---|---|
 | **Immutable seeds** | malt/sugar/yeast catalogs, water lab reports, equipment presets | no | seed JSON (a separate data substrate) |
 | **User-owned components** | custom equipment/water/grain-bill/mash-schedule records | yes (simple CRUD) | per-user persistence |
-| **Ephemeral batch input** | manual water entry, batch-scoped overrides | yes (batch-scoped) | the batch draft |
+| **Ephemeral batch input** | manual water entry, batch roots | yes (batch-scoped) | the batch draft |
 
 The key line: **catalogs and reports are facts; they are never edited.** The
 artifact's `primitive_schemas` define *what a malt / yeast / water report / …
@@ -27,14 +27,13 @@ reserved for profile-specific presets.
 ## 2. Primitive schemas
 
 `primitive_schemas` declare the shape of each seed/component type. Each field
-carries a `dimension`, an optional `domain`, an optional `default`, and an
-`overridable` flag (governing the selection `overlay`).
+carries a `dimension`, an optional `domain`, and an optional `default`.
 
 ### 2.1 `malt`
 
 | Field | Dimension | Domain | Notes |
 |---|---|---|---|
-| `id`, `name` | — | — | identity/metadata (never overridable) |
+| `id`, `name` | — | — | identity/metadata |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
@@ -87,8 +86,8 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
   `primitive_schema`. The exception is `mash-schedules.json`, a
   `{ schedule_id → rests[] }` template whose `rests` are ordered. (`water_report`
   is keyed by `report_id`; `water_target` ions are flat, not nested under `ions`.)
-- Selections resolve a `ref` (id) against the seed/component store into a typed
-  value (per the schema); the `overlay` applies on top.
+- Selections resolve a `ref` (id) against the seed/component store into a typed,
+  read-only value (per the schema).
 - The six working ions for a water source are **derived from the lab report**
   (`source` is never entered independently in report mode): alkalinity is
   `total_alkalinity_caco3`, falling back to `bicarbonate_hco3 × (50/61)`.
@@ -101,5 +100,5 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 
 The freeze records, per embedded component: `source_template_id` +
 `source_revision` (content hash) + `schema_version`. If a seed changes under a
-frozen batch, the revision mismatch is detected and the user reconciles
-(reset-to-seed / keep-custom) — drift is explicit, never silent.
+frozen batch, the revision mismatch is detected and reported — drift is explicit,
+never silent.

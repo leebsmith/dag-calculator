@@ -34,11 +34,9 @@ export function createStepApp() {
   ui.unitMode = loadUnitMode(artifact);
   const cache = createReferenceCache();
   let collections = { ...cache.collections };
-  let overlays = {};
   let engine = createCalculator(artifact, {
     references: cache.references,
     collections,
-    overlays,
     boundaries: STUB_BOUNDARIES,
     roots: master.allRoots(),
   });
@@ -62,14 +60,13 @@ export function createStepApp() {
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
 
-    // Editable-state snapshot (roots + collections + overlays) for draft
-    // autosave. The engine mutates the `collections`/`overlays` closures in
-    // place, so this reflects the live state.
+    // Editable-state snapshot (roots + collections) for draft autosave. The
+    // engine mutates the `collections` closure in place, so this reflects the
+    // live state.
     draftState() {
       return {
         roots: master.allRoots(),
         collections: { ...collections },
-        overlays: { ...overlays },
         schema_version: artifact.schema_version ?? 2,
       };
     },
@@ -129,43 +126,19 @@ export function createStepApp() {
       return drift;
     },
 
-    // "Keep-custom" reconciliation: for drifted selections, materialize the
-    // frozen valuation's overridable fields that differ from the current seed
-    // into overlays, so the fork preserves the frozen-time values.
-    pinDrift(valuation, drift) {
-      const overlays = {};
-      for (const { selectionNodeId, templateId } of drift) {
-        const node = artifact.nodes[selectionNodeId];
-        if (!node || node.kind !== "selection") continue;
-        const schema = artifact.primitive_schemas[node.schema] ?? {};
-        const component = cache.references[node.schema]?.[templateId];
-        const frozen = valuation?.[selectionNodeId];
-        if (!component || !frozen) continue;
-        const overlay = {};
-        for (const [field, spec] of Object.entries(schema)) {
-          if (!spec.overridable) continue;
-          if (frozen[field] !== component[field]) overlay[field] = frozen[field];
-        }
-        if (Object.keys(overlay).length) overlays[selectionNodeId] = overlay;
-      }
-      return overlays;
-    },
-
     notify() {
       this.onChange?.();
     },
 
     // Replace the editable state (draft restore / open). Rebuilds the engine
-    // from the loaded roots/collections/overlays; default collections fall
-    // back to the seed cache when the draft predates them.
+    // from the loaded roots/collections; default collections fall back to the
+    // seed cache when the draft predates them.
     loadState(state) {
       master.replaceRoots(state?.roots ?? {});
       collections = { ...cache.collections, ...(state?.collections ?? {}) };
-      overlays = { ...(state?.overlays ?? {}) };
       engine = createCalculator(artifact, {
         references: cache.references,
         collections,
-        overlays,
         boundaries: STUB_BOUNDARIES,
         roots: master.allRoots(),
       });
@@ -271,11 +244,7 @@ export function createStepApp() {
       if (field.control === "number" && field.dimension && field.unitId && value !== "") {
         raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
       }
-      if (field.target.scope === "overlay") {
-        engine.setOverlay(field.target.selectionNodeId, field.target.field, raw);
-      } else {
-        this.setRoot(field.target.nodeId, raw);
-      }
+      this.setRoot(field.target.nodeId, raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.compute();
       this.notify();
@@ -318,14 +287,6 @@ export function createStepApp() {
 
     runAction(action) {
       this[action.handler]?.();
-    },
-
-    clearOverlay(field) {
-      if (field.target?.scope === "overlay") {
-        engine.clearOverlay(field.target.selectionNodeId, field.target.field);
-        this.compute();
-        this.notify();
-      }
     },
 
     editCell(field, rowIndex, columnId, value) {

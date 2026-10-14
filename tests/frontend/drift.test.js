@@ -31,21 +31,3 @@ test("detectDrift: flags a missing seed component", () => {
   assert.equal(drift.length, 1);
   assert.equal(drift[0].reason, "missing");
 });
-
-test("pinDrift materializes overridable fields that changed since freeze", () => {
-  const app = createStepApp();
-  app.init();
-  const drift = [{ selectionNodeId: "equipment.profile", templateId: "herms-30l", reason: "changed" }];
-  const valuation = { "equipment.profile": { id: "herms-30l", mash_tun_mass_kg: 9.0 } };
-  const overlays = app.pinDrift(valuation, drift);
-  assert.deepEqual(overlays, { "equipment.profile": { mash_tun_mass_kg: 9.0 } });
-});
-
-test("pinDrift leaves unchanged overridable fields unpinned", () => {
-  const app = createStepApp();
-  app.init();
-  const drift = [{ selectionNodeId: "equipment.profile", templateId: "herms-30l", reason: "changed" }];
-  // frozen value equals the current seed (6.5) -> nothing to pin
-  const valuation = { "equipment.profile": { id: "herms-30l", mash_tun_mass_kg: 6.5 } };
-  assert.deepEqual(app.pinDrift(valuation, drift), {});
-});

@@ -1018,8 +1018,7 @@
         "dimension": "mass",
         "domain": {
           "gt": 0
-        },
-        "overridable": true
+        }
       }
     },
     "grist_row": {
@@ -1374,10 +1373,7 @@
     "equipment.profile": {
       "kind": "selection",
       "schema": "equipment",
-      "ref": "batch.equipment_profile_id",
-      "overlay": {
-        "mash_tun_mass_kg": 7.5
-      }
+      "ref": "batch.equipment_profile_id"
     },
     "batch.yeast": {
       "kind": "selection",

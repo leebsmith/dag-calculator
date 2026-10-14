@@ -25,9 +25,6 @@
             :value="f.display"
             @input="edit(f, $event.target.value)"
           />
-          <template x-if="f.overridden">
-            <button type="button" class="btn-link" @click="clearOverlay(f)">reset to profile</button>
-          </template>
         </div>
       </template>
 

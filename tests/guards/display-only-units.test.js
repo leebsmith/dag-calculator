@@ -32,9 +32,9 @@ test("A8b: unit mode converts display; writes store base", () => {
   app.setUnit("temperature", "degF");
 
   const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
-  assert.ok(Math.abs(strike.value - 76.4447619047619) < 1e-6, "canonical value stays base (°C)");
+  assert.ok(Math.abs(strike.value - 76.04190476190476) < 1e-6, "canonical value stays base (°C)");
   assert.ok(
-    Math.abs(Number(strike.display) - (76.4447619047619 * 1.8 + 32)) < 0.01,
+    Math.abs(Number(strike.display) - (76.04190476190476 * 1.8 + 32)) < 0.01,
     "display converts to °F"
   );
 

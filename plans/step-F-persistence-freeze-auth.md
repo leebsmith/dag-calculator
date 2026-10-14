@@ -11,27 +11,27 @@ status: ready
 
 # Step F — Persistence / Freeze / Auth
 
-**Goal:** a multi-draft recipe library (each autosaved — roots + collections +
-overlays) plus an immutable **freeze** (full valuation + provenance), scoped
+**Goal:** a multi-draft recipe library (each autosaved — roots + collections)
+plus an immutable **freeze** (full valuation + provenance), scoped
 per-user via real Firebase auth. The engine stays pure; the backend is a dumb
 JSON store for the browser-computed freeze.
 
 ## Locked decisions
 
 1. **Multi-draft** — N recipes in progress; each is a batch doc with a name + `batch_id`.
-2. **Autosave** — draft edits debounced (~300–500 ms) → PUT draft (roots/collections/overlays). No explicit "Save".
+2. **Autosave** — draft edits debounced (~300–500 ms) → PUT draft (roots/collections). No explicit "Save".
 3. **Freeze = "save version"** — snapshots the full valuation; immutable; keeps the draft live with `parent_batch_id` lineage.
 4. **Valuation is browser-computed** — the engine is JS-only, so the frontend walks `engine.topoOrder` and snapshots `get(id)` for every node; the backend only stores + enforces immutability (no Python engine).
 5. **Provenance hashes reuse `canonicalize` + `sha256Hex`** (already in `engine/boundary.js`): per selection, `source_template_id` = ref value, `source_revision` = hash of the referenced seed component.
 
 ## Data model (Firestore, `batches/{id}`, uid-scoped)
 
-- **Draft doc:** `{ id, uid, name, status:"draft", schema_version, roots:{nodeId→value}, collections:{nodeId→rows}, overlays:{selectionNodeId→{field:value}}, updated_at }`
+- **Draft doc:** `{ id, uid, name, status:"draft", schema_version, roots:{nodeId→value}, collections:{nodeId→rows}, updated_at }`
 - **Frozen doc:** `{ id, uid, name, status:"frozen", parent_batch_id, schema_version, valuation:{nodeId→value}, provenance:{selectionNodeId→{source_template_id, source_revision}}, frozen_at }`
 
-> Draft "roots" is loose: the editable state is **roots + collections + overlays**
-> (collections/overlays live outside `masterStore` today — the adapter's
-> `collections`/`overlays` closures are exactly what to serialize).
+> Draft "roots" is loose: the editable state is **roots + collections**
+> (collections live outside `masterStore` — the adapter's `collections` closure
+> is exactly what to serialize).
 
 ## Backend (tach: `main → auth → service → repositories → schemas/database`)
 
@@ -47,25 +47,25 @@ JSON store for the browser-computed freeze.
 - **Auth** — Firebase Web SDK (compat/CDN, per tech-stack §2), ID token → bearer on `fetch`; sign-in gate.
 - **Persistence client** — extend `adapters/apiClient.js` with batch routes.
 - **Recipe panel** — menu-bar "Recipes" dropdown: list drafts + frozen, New / Rename / Open / Freeze.
-- **Autosave** — debounced serialize `{roots, collections, overlays}` → PUT draft (reuses the deferred debounce).
+- **Autosave** — debounced serialize `{roots, collections}` → PUT draft (reuses the deferred debounce).
 - **Freeze** — walk `topoOrder` → valuation + provenance hashes → POST; keep draft live.
-- **Restore** — draft: load roots/collections/overlays → store + recompute. Frozen: read-only view; "Edit" forks into a new draft (`parent_batch_id`).
+- **Restore** — draft: load roots/collections → store + recompute. Frozen: read-only view; "Edit" forks into a new draft (`parent_batch_id`).
 
 ## Sub-milestones (auth first)
 
 - **F-a — Auth** (first): Firebase Web SDK sign-in + backend `verify_id_token`; enforce bearer on `/solve/*` too.
-- **F-b — Persistence seam**: draft CRUD + debounced autosave (roots+collections+overlays) against the real `uid`.
+- **F-b — Persistence seam**: draft CRUD + debounced autosave (roots+collections) against the real `uid`.
 - **F-c — Freeze**: valuation + provenance + immutability + lineage.
 - **F-d — Frontend UX**: recipe list + New/Rename/Open/Freeze + restore flows.
-- **F-e — Drift reconcile** (deferred/optional): on open, compare `source_revision` vs current seed hash → reset-to-seed / keep-custom.
+- **F-e — Drift notice** (deferred/optional): on fork, compare `source_revision` vs current seed hash → report drift; the fork re-resolves against current seeds.
 
 ## Completion
 
 - [x] F-a Auth — sign-in + `verify_id_token`; `/solve/*` bearer enforced
-- [x] F-b Persistence — draft CRUD + debounced autosave (roots+collections+overlays)
+- [x] F-b Persistence — draft CRUD + debounced autosave (roots+collections)
 - [x] F-c Freeze — valuation + provenance + immutability + lineage
 - [x] F-d UX — recipe list + New/Rename/Open/Freeze + restore
-- [x] F-e Drift reconcile — reset-to-seed / keep-custom (optional)
+- [x] F-e Drift notice — report drift on fork; fork re-resolves to current seeds
 
 ## Acceptance / gate
 
@@ -75,7 +75,7 @@ JSON store for the browser-computed freeze.
 
 ## Risks
 
-- **Draft-state completeness** — forgetting collections/overlays in the draft would silently drop user edits (explicit `serializeDraft` test).
+- **Draft-state completeness** — forgetting collections in the draft would silently drop user edits (explicit `serializeDraft` test).
 - **Immutability** — a single "reject frozen writes" guard must be centralized in the service, not per-route.
 - **Valuation drift** — freeze must snapshot against the *current* `schema_version`; loading an old frozen batch against a newer artifact needs the drift path (F-e).
 

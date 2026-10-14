@@ -50,18 +50,6 @@ function describe(artifact, id) {
   }
   if (owner?.kind === "selection") {
     const fieldSpec = artifact.primitive_schemas[owner.schema]?.[ref.suffix[0]] ?? {};
-    if (fieldSpec.overridable) {
-      return {
-        kind: "overlay",
-        isInput: true,
-        node: owner,
-        selectionNodeId: ref.nodeId,
-        field: suffix,
-        dimension: fieldSpec.dimension ?? null,
-        taxonomy: fieldSpec.taxonomy ?? null,
-        selectionRef: owner.ref,
-      };
-    }
     return { kind: "path", isInput: false, node: owner, dimension: fieldSpec.dimension ?? null, taxonomy: fieldSpec.taxonomy ?? null, selectionRef: owner.ref };
   }
   throw new Error(`Unsupported reference "${id}"`);
@@ -119,18 +107,14 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
       const role = (typeof entry === "object" && entry.role) || (info.isInput ? "input" : "readout");
       let control = (typeof entry === "object" && entry.control) || meta.control;
       if (!control) {
-        if (info.kind === "overlay") control = info.taxonomy ? "choice-select" : "number";
-        else if (info.isInput) control = defaultControl(info.node);
+        if (info.isInput) control = defaultControl(info.node);
         else control = "readout";
       }
       const editable = role === "input" && rendererFor(control).editable;
 
       let target = null;
       if (editable) {
-        target =
-          info.kind === "overlay"
-            ? { scope: "overlay", selectionNodeId: info.selectionNodeId, field: info.field }
-            : { scope: info.kind === "reference" ? "root" : info.kind, nodeId: id };
+        target = { scope: info.kind === "reference" ? "root" : info.kind, nodeId: id };
       }
       const options =
         info.kind === "choice"
@@ -237,10 +221,6 @@ export function valuate(fields, engine, ctx = {}) {
           (Object.prototype.hasOwnProperty.call(unitMode, field.id) ||
             (unitId !== null && unitId !== naturalUnitId)),
       };
-      if (field.target?.scope === "overlay") {
-        const overlay = engine.getOverlay(field.target.selectionNodeId);
-        out.overridden = Object.prototype.hasOwnProperty.call(overlay, field.target.field);
-      }
       return out;
     })
     .filter(Boolean);

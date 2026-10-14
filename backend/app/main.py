@@ -76,7 +76,7 @@ def update_draft(
     user: CurrentUser,
     service: BatchServiceDep,
 ):
-    """Autosave a draft's editable state (roots + collections + overlays)."""
+    """Autosave a draft's editable state (roots + collections)."""
     return service.update_draft(user["uid"], batch_id, payload)
 
 

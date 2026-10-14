@@ -14,14 +14,14 @@ function engine() {
 test("end-to-end: strike-water chain resolves through the batch boundary", () => {
   const e = engine();
   assert.ok(Math.abs(e.get("mash.strike_water_temp_base_c") - 73.42333333333333) < 1e-6);
-  assert.ok(Math.abs(e.get("mash.strike_water_tun_offset_c") - 3.0214285714285714) < 1e-6);
-  assert.ok(Math.abs(e.get("mash.strike_water_temp_c") - 76.4447619047619) < 1e-6);
+  assert.ok(Math.abs(e.get("mash.strike_water_tun_offset_c") - 2.6185714285714288) < 1e-6);
+  assert.ok(Math.abs(e.get("mash.strike_water_temp_c") - 76.04190476190476) < 1e-6);
 });
 
-test("end-to-end: selection overlay overrides the referenced component", () => {
+test("end-to-end: selection resolves read-only to the referenced component", () => {
   const e = engine();
   const profile = e.get("equipment.profile");
-  assert.equal(profile.mash_tun_mass_kg, 7.5); // overlay wins
+  assert.equal(profile.mash_tun_mass_kg, 6.5); // inherited from seed
   assert.equal(profile.mash_tun_specific_heat, 0.12); // inherited from seed
   assert.equal(profile.max_hlt_volume_l, 30); // inherited from seed
 });
@@ -43,7 +43,7 @@ test("resolve() handles dotted sub-refs (boundary output + selection field)", ()
   assert.equal(e.resolve("solver.batch.mash_thickness_l_per_kg"), 3.0);
   assert.equal(e.resolve("solver.batch.cascade.v_strike"), 14.0);
   assert.equal(e.resolve("equipment.mash_tun_specific_heat"), 0.12);
-  assert.equal(e.resolve("equipment.mash_tun_mass_kg"), 7.5); // overlay wins
+  assert.equal(e.resolve("equipment.mash_tun_mass_kg"), 6.5); // inherited from seed
 });
 
 test("end-to-end: root defaults are evaluated when unset", () => {
