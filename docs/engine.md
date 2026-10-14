@@ -150,7 +150,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 
 | Editable value | Source | Mechanism | Re-sync semantics |
 |---|---|---|---|
-| `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit and on equipment-profile change |
+| `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
 | `batch.apparent_attenuation` | `batch.yeast.attenuation_pct` | auto-copy on selection | overwritten on each strain pick; clamped to the strain envelope |
 | `water.source.*` (6 ions) | `water.source_report` | `copyInCascade` | overwritten on each report pick (manual edits discarded); `gte 0` domains |
 | `water.target.*` (6 ions) | `water.target_profile` | `copyInCascade` | overwritten on each target pick (manual edits discarded); `gte 0` domains |

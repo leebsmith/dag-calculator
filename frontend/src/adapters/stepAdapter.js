@@ -353,16 +353,6 @@ export function createStepApp() {
       // HLT fill within the equipment's [coil floor, capacity]).
       raw = this.clampToSelection(field.target.nodeId, raw);
       this.setRoot(field.target.nodeId, raw);
-      // Changing the equipment profile re-clamps an already-set HLT fill (the
-      // default is only applied while unset, so it would otherwise go stale).
-      if (
-        field.target.nodeId === "batch.equipment_profile_id" &&
-        this.master.hasRoot("batch.hlt_starting_volume_l")
-      ) {
-        const current = this.master.getRoot("batch.hlt_starting_volume_l");
-        const clamped = this.clampToSelection("batch.hlt_starting_volume_l", current);
-        if (clamped !== current) this.setRoot("batch.hlt_starting_volume_l", clamped);
-      }
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.compute();
       this.notify();
