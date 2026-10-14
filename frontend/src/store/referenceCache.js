@@ -26,6 +26,11 @@ function buildGristRow(entry) {
     yield_fraction: malt.yield_fraction,
     color_lovibond: malt.color_lovibond,
     moisture_pct: malt.moisture_pct,
+    // Carried for downstream consumers (pH / buffering models); not edited in
+    // the grain-bill grid. Undefined until the catalog supplies them.
+    di_ph: malt.di_ph,
+    buffer_index: malt.buffer_index,
+    notes: malt.notes,
   };
 }
 

@@ -787,6 +787,10 @@ export function createStepApp(options = {}) {
     updateDraftField(key, field, value, scale = 1) {
       const row = this.maltDraft.find((r) => r._key === key);
       if (!row) return;
+      if (value === "") {
+        row[field] = undefined;
+        return;
+      }
       const n = Number(value);
       row[field] = Number.isFinite(n) ? n * scale : 0;
     },
@@ -804,6 +808,9 @@ export function createStepApp(options = {}) {
         yield_fraction: malt.yield_fraction,
         color_lovibond: malt.color_lovibond,
         moisture_pct: malt.moisture_pct ?? 0.04,
+        di_ph: malt.di_ph,
+        buffer_index: malt.buffer_index,
+        notes: malt.notes,
       });
       this.normalizeMaltDraft();
     },

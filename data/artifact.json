@@ -1065,7 +1065,14 @@
           "gte": 0,
           "lte": 1
         }
-      }
+      },
+      "di_ph": {
+        "dimension": "ph"
+      },
+      "buffer_index": {
+        "dimension": "dimensionless"
+      },
+      "notes": {}
     },
     "sugar_row": {
       "sugar_id": {},
