@@ -8,48 +8,42 @@
     <div class="table-header-toolbar">
       <div>
         <h3 class="modal-drawer-title">Late Sugar Additions</h3>
-        <p class="table-header-meta">Kettle sugars, dosed by mass (kg); they feed the batch solver's late extract.</p>
+        <p class="table-header-meta">Kettle sugars, dosed by mass; they feed the batch solver's late extract.</p>
       </div>
       <button type="button" class="btn-primary text-xs" @click="openSugarEditor()">Configure Sugars ⚙</button>
     </div>
 
-    <div class="data-table-container">
-      <table class="data-table">
-        <colgroup>
-          <col style="width: 40%" />
-          <col style="width: 18%" />
-          <col style="width: 20%" />
-          <col style="width: 22%" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Sugar</th>
-            <th class="text-right">Mass</th>
-            <th class="text-right">Yield</th>
-            <th class="text-right">°L</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template x-for="(row, ri) in sugarList" :key="ri">
+    <template x-if="lateSugarField">
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
             <tr>
-              <td><span class="font-medium" x-text="row.name"></span></td>
-              <td class="text-right tabular-nums" x-text="row.mass_kg"></td>
-              <td class="text-right tabular-nums" x-text="(row.yield_fraction * 100).toFixed(1) + '%'"></td>
-              <td class="text-right tabular-nums" x-text="Number(row.color_lovibond).toFixed(1)"></td>
+              <template x-for="c in lateSugarField.columns" :key="c.id">
+                <th :class="c.dimension ? 'text-right' : ''" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+              </template>
             </tr>
-          </template>
-          <template x-if="sugarList.length === 0">
-            <tr>
-              <td colspan="4" class="table-empty-cell">
-                No sugars yet. Click “Configure Sugars” to add late additions.
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            <template x-for="(row, ri) in lateSugarField.rows" :key="ri">
+              <tr>
+                <template x-for="c in lateSugarField.columns" :key="c.id">
+                  <td :class="c.dimension ? 'text-right tabular-nums' : ''" x-text="row[c.id]"></td>
+                </template>
+              </tr>
+            </template>
+            <template x-if="lateSugarField.rows.length === 0">
+              <tr>
+                <td :colspan="lateSugarField.columns.length" class="table-empty-cell">
+                  No sugars yet. Click “Configure Sugars” to add late additions.
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </template>
 
-    <div class="grain-bill-summary" x-show="sugarList.length > 0">
+    <div class="grain-bill-summary" x-show="lateSugarField && lateSugarField.rows.length > 0">
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Total sugar mass</span>
         <span

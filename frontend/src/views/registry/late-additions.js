@@ -5,7 +5,7 @@ export const lateAdditionsRegistry = {
   "batch.sugars.name": { label: "Sugar" },
   "batch.sugars.mass_kg": { label: "Mass", unit: "kg" },
   "batch.sugars.yield_fraction": { label: "Yield", displayUnit: "pct" },
-  "batch.sugars.color_lovibond": { label: "°L" },
+  "batch.sugars.color_lovibond": { label: "Color" },
   "batch.s_late_add": { label: "Total extract", unit: "kg" },
   "grist.sugars_mass": { label: "Total sugar mass" },
   "grist.sugar_weighted_lovibond": { label: "Weighted sugar color" },

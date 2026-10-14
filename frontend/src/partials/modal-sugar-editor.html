@@ -1,4 +1,4 @@
-<!-- Late Additions editor (sugar draft + catalog picker) -->
+<!-- Late Additions editor (live sugar collection + catalog picker) -->
 <div
   class="modal-backdrop"
   x-show="sugarEditorOpen"
@@ -9,7 +9,10 @@
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
         <h2 class="modal-workspace-title">Late Additions Editor</h2>
-        <span class="status-badge badge-info text-xs" x-text="sugarTotalMass.toFixed(2) + ' kg'"></span>
+        <span
+          class="status-badge badge-info text-xs"
+          x-text="sugarMassField ? sugarMassField.display + ' ' + (sugarMassField.unit ?? '') : '—'"
+        ></span>
       </div>
       <div class="modal-workspace-header-actions">
         <button type="button" class="btn-outline text-xs" @click="cancelSugarEditor()">Cancel</button>
@@ -21,81 +24,78 @@
       <div class="modal-workspace-main">
         <div class="table-header-toolbar">
           <span class="table-header-meta">
-            Dose sugars by mass (kg). Yield and color come from the catalog.
+            Dose sugars by mass. Yield and color come from the catalog.
           </span>
           <button type="button" class="btn-primary text-xs" @click="openSugarSearch()">
             ＋ Add Sugar from Catalog
           </button>
         </div>
 
-        <div class="data-table-container">
-          <table class="data-table is-fixed">
-            <colgroup>
-              <col style="width: 34%" />
-              <col style="width: 16%" />
-              <col style="width: 14%" />
-              <col style="width: 12%" />
-              <col style="width: 16%" />
-              <col style="width: 8%" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Sugar</th>
-                <th class="text-right">Mass (kg)</th>
-                <th class="text-right">Yield</th>
-                <th class="text-right">°L</th>
-                <th class="text-right">Extract (kg)</th>
-                <th class="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="row in sugarDraft" :key="row._key">
+        <template x-if="lateSugarField">
+          <div class="data-table-container">
+            <table class="data-table is-fixed">
+              <thead>
                 <tr>
-                  <td><span class="font-medium" x-text="row.name"></span></td>
-                  <td class="text-right">
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      class="form-input table-input-parts"
-                      :value="row.mass_kg"
-                      @input="updateDraftMass(row._key, $event.target.value)"
-                    />
-                  </td>
-                  <td class="text-right tabular-nums" x-text="(row.yield_fraction * 100).toFixed(1) + '%'"></td>
-                  <td class="text-right tabular-nums" x-text="Number(row.color_lovibond).toFixed(1)"></td>
-                  <td class="text-right tabular-nums" x-text="(row.mass_kg * row.yield_fraction).toFixed(3)"></td>
-                  <td class="text-right">
-                    <div class="table-action-cell">
-                      <button
-                        type="button"
-                        class="btn-action-icon btn-action-danger"
-                        @click="removeDraftSugar(row._key)"
-                        title="Remove"
-                      >
-                        🗑
-                      </button>
-                    </div>
+                  <template x-for="c in lateSugarField.columns" :key="c.id">
+                    <th :class="c.dimension ? 'text-right' : ''" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                  </template>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(row, ri) in lateSugarField.rows" :key="ri">
+                  <tr>
+                    <template x-for="c in lateSugarField.columns" :key="c.id">
+                      <td :class="c.dimension ? 'text-right' : ''">
+                        <template x-if="c.editable">
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-input table-input-parts"
+                            :class="{ 'is-invalid': lateSugarField.rowValidations[ri] && lateSugarField.rowValidations[ri][c.id] && !lateSugarField.rowValidations[ri][c.id].holds }"
+                            :value="row[c.id]"
+                            @input="editCell(lateSugarField, ri, c.id, $event.target.value)"
+                          />
+                        </template>
+                        <template x-if="!c.editable">
+                          <span class="collection-readout tabular-nums" x-text="row[c.id]"></span>
+                        </template>
+                      </td>
+                    </template>
+                    <td class="text-right">
+                      <div class="table-action-cell">
+                        <button
+                          type="button"
+                          class="btn-action-icon btn-action-danger"
+                          @click="removeRow(lateSugarField, ri)"
+                          title="Remove"
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="lateSugarField.rows.length === 0">
+                  <tr>
+                    <td :colspan="lateSugarField.columns.length + 1" class="table-empty-cell">
+                      No sugars yet. Click “＋ Add Sugar from Catalog”.
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td :colspan="lateSugarField.columns.length" class="font-bold">Totals</td>
+                  <td class="text-right tabular-nums font-bold">
+                    <span x-text="lateExtractField ? lateExtractField.display + ' ' + (lateExtractField.unit ?? '') : ''"></span>
                   </td>
                 </tr>
-              </template>
-              <template x-if="sugarDraft.length === 0">
-                <tr>
-                  <td colspan="6" class="table-empty-cell">
-                    No sugars in the draft. Click “＋ Add Sugar from Catalog”.
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="4" class="font-bold">Totals</td>
-                <td class="text-right tabular-nums font-bold" x-text="sugarTotalExtract.toFixed(3)"></td>
-                <td></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+              </tfoot>
+            </table>
+          </div>
+        </template>
       </div>
 
       <div class="modal-drawer-scrim" x-show="sugarDrawer !== null" @click="closeSugarDrawer()"></div>

@@ -55,7 +55,11 @@ function describe(artifact, id) {
   throw new Error(`Unsupported reference "${id}"`);
 }
 
-function collectionField(artifact, registry, step, entry) {
+function dimensionDefaultUnit(dimensionId) {
+  return UNIT_DIMENSIONS.find((d) => d.id === dimensionId)?.default ?? null;
+}
+
+function collectionField(artifact, registry, step, entry, unitMode = {}) {
   const node = artifact.nodes[entry.collection];
   if (!node || node.kind !== "collection") {
     throw new Error(`Unknown collection "${entry.collection}"`);
@@ -65,11 +69,21 @@ function collectionField(artifact, registry, step, entry) {
   const columns = (entry.columns ?? Object.keys(schema)).map((c) => {
     const spec = schema[c] ?? {};
     const meta = registry[`${entry.collection}.${c}`] ?? {};
+    // Effective display unit, mirroring scalar fields: registry pin → master
+    // (menu) → dimension default → base. Lets collection header labels / cells
+    // track the master unit. `displayUnit` is what valuate/editCell convert by.
+    const dimDef = spec.dimension ? UNIT_DIMENSIONS.find((d) => d.id === spec.dimension) : null;
+    const unitId = spec.dimension
+      ? meta.displayUnit ?? unitMode[spec.dimension] ?? dimensionDefaultUnit(spec.dimension) ?? null
+      : null;
+    // Show the base unit symbol when there's no resolved unit (still base values).
+    const shownUnitId = unitId ?? dimDef?.units?.[0]?.[0] ?? null;
     return {
       id: c,
       label: meta.label ?? c,
       dimension: spec.dimension ?? null,
-      displayUnit: meta.displayUnit ?? null,
+      displayUnit: unitId,
+      unit: shownUnitId ? UNIT_SYMBOLS[spec.dimension]?.[shownUnitId] ?? shownUnitId : null,
       editable: inputs ? inputs.has(c) : true,
     };
   });
@@ -99,11 +113,12 @@ function referenceSchema(artifact, rootId) {
 }
 
 export function projectFields(artifact, steps, registry, ctx = {}) {
+  const unitMode = ctx.ui?.unitMode ?? {};
   const fields = [];
   for (const step of steps) {
     for (const entry of step.fields) {
       if (typeof entry === "object" && entry.collection) {
-        fields.push(collectionField(artifact, registry, step, entry));
+        fields.push(collectionField(artifact, registry, step, entry, unitMode));
         continue;
       }
       const id = typeof entry === "string" ? entry : entry.id;

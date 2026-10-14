@@ -76,7 +76,7 @@
               <thead>
                 <tr>
                   <template x-for="c in f.columns" :key="c.id">
-                    <th x-text="c.label"></th>
+                    <th x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
                   </template>
                   <th></th>
                 </tr>

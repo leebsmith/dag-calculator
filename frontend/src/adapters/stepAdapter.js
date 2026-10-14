@@ -892,18 +892,26 @@ export function createStepApp(options = {}) {
       else this.cancelMaltEditor();
     },
 
-    // --- Late additions editor (sugar draft + catalog drawer) ---
+    // --- Late additions editor (live sugar collection + catalog drawer) ---
+    // Edited directly on the engine collection so the producer renders the
+    // display unit (master-aware); Cancel restores the snapshot taken on open.
 
     sugarEditorOpen: false,
-    sugarDraft: [],
     sugarDrawer: null, // "search" | null
     sugarSearch: "",
+    sugarSnapshot: [],
 
     // Sugar rows for the summary card (reactive; refreshed in compute()).
     sugarList: [],
 
     sugarField(id) {
       return (this.fieldsBySlice["late-additions"] ?? []).find((f) => f.id === id) ?? null;
+    },
+
+    get lateSugarField() {
+      return (
+        (this.fieldsBySlice["late-additions"] ?? []).find((f) => f.control === "collection-table") ?? null
+      );
     },
 
     get sugarMassField() {
@@ -923,7 +931,7 @@ export function createStepApp(options = {}) {
     },
 
     get sugarFilteredCatalog() {
-      const active = new Set(this.sugarDraft.map((r) => r.sugar_id).filter(Boolean));
+      const active = new Set((engine.get("batch.sugars") ?? []).map((r) => r.sugar_id).filter(Boolean));
       const q = this.sugarSearch.trim().toLowerCase();
       return this.sugarCatalog.filter(
         (s) =>
@@ -940,53 +948,31 @@ export function createStepApp(options = {}) {
       return this.sugarFilteredCatalog.length > MAX_VISIBLE_MALTS;
     },
 
-    get sugarTotalMass() {
-      return this.sugarDraft.reduce((sum, r) => sum + (Number(r.mass_kg) || 0), 0);
-    },
-
-    get sugarTotalExtract() {
-      return this.sugarDraft.reduce(
-        (sum, r) => sum + (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0),
-        0
-      );
-    },
-
     openSugarEditor() {
-      this.sugarDraft = (engine.get("batch.sugars") ?? []).map((row, i) => ({ ...row, _key: `s${i}` }));
+      this.sugarSnapshot = JSON.parse(JSON.stringify(engine.get("batch.sugars") ?? []));
       this.sugarDrawer = null;
       this.sugarEditorOpen = true;
     },
 
     cancelSugarEditor() {
-      this.sugarEditorOpen = false;
-      this.sugarDrawer = null;
-    },
-
-    saveSugarEditor() {
-      const rows = this.sugarDraft.map((row) => {
-        const clean = { ...row };
-        delete clean._key;
-        return clean;
-      });
-      engine.setCollection("batch.sugars", rows);
+      engine.setCollection("batch.sugars", JSON.parse(JSON.stringify(this.sugarSnapshot)));
       this.sugarEditorOpen = false;
       this.sugarDrawer = null;
       this.scheduleSolve();
       this.notify();
     },
 
-    updateDraftMass(key, value) {
-      const row = this.sugarDraft.find((r) => r._key === key);
-      if (!row) return;
-      const n = Number(value);
-      row.mass_kg = Number.isFinite(n) && n > 0 ? n : 0;
+    // Edits apply live; Save just closes (Cancel reverts the snapshot).
+    saveSugarEditor() {
+      this.sugarEditorOpen = false;
+      this.sugarDrawer = null;
     },
 
     addCatalogSugar(catalogId) {
       const sugar = cache.seeds.sugars?.[catalogId];
       if (!sugar) return;
-      this.sugarDraft.push({
-        _key: newMaltKey(),
+      const rows = [...(engine.get("batch.sugars") ?? [])];
+      rows.push({
         sugar_id: sugar.id,
         name: sugar.name,
         mass_kg: 0,
@@ -994,11 +980,10 @@ export function createStepApp(options = {}) {
         color_lovibond: sugar.color_lovibond,
         notes: sugar.notes,
       });
+      engine.setCollection("batch.sugars", rows);
       this.closeSugarDrawer();
-    },
-
-    removeDraftSugar(key) {
-      this.sugarDraft = this.sugarDraft.filter((r) => r._key !== key);
+      this.scheduleSolve();
+      this.notify();
     },
 
     openSugarSearch() {
