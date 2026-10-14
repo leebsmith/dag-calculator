@@ -17,3 +17,18 @@ test("A6: manifest integrity", () => {
   }
   assert.deepEqual(offenders, [], `Unresolved manifest refs:\n${offenders.join("\n")}`);
 });
+
+// A6b: every selection's picker root is displayed by some step, so validation
+// of that selection's fields can be attributed to a card (no orphaned states).
+test("A6: selection pickers are displayed by a step", () => {
+  const a = artifact();
+  const shown = new Set();
+  for (const step of steps) {
+    for (const entry of step.fields) shown.add(typeof entry === "string" ? entry : entry.id);
+  }
+  const offenders = [];
+  for (const [id, node] of Object.entries(a.nodes)) {
+    if (node.kind === "selection" && !shown.has(node.ref)) offenders.push(`${id} -> ${node.ref}`);
+  }
+  assert.deepEqual(offenders, [], `Selections whose picker is not shown:\n${offenders.join("\n")}`);
+});

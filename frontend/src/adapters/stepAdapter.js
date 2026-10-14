@@ -73,15 +73,40 @@ export function createStepApp() {
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   const fieldSlice = buildFieldSliceMap();
 
+  // Selection node -> the step that displays its picker (ref root). Fallback
+  // attribution for a selection's field-level domains when the field itself is
+  // not listed in the manifest (e.g. most equipment constants, water reports).
+  const selectionSlice = (() => {
+    const map = new Map();
+    for (const step of steps) {
+      for (const entry of step.fields) {
+        const id = typeof entry === "string" ? entry : entry.id;
+        if (!id) continue;
+        for (const [selId, node] of Object.entries(artifact.nodes)) {
+          if (node.kind === "selection" && node.ref === id) map.set(selId, step.slice);
+        }
+      }
+    }
+    return map;
+  })();
+
+  // The step slice a dotted path belongs to: its displayed field, else its
+  // selection's picker step, else the path's leading segment.
+  function sliceForPath(path) {
+    const ref = resolveReference(artifact, path);
+    return (
+      fieldSlice.get(fieldKey(path)) ??
+      (ref && selectionSlice.get(ref.nodeId)) ??
+      path.split(".")[0]
+    );
+  }
+
   // Slices to surface a relation on: map each referenced path through the
   // manifest (so batch.yeast.* lands on the yeast card), falling back to the
-  // path's leading segment.
+  // selection's picker step then the path's leading segment.
   function relationSlices(predicate) {
     const slices = new Set();
-    for (const path of refPaths(predicate)) {
-      const slice = fieldSlice.get(fieldKey(path));
-      slices.add(slice ?? path.split(".")[0]);
-    }
+    for (const path of refPaths(predicate)) slices.add(sliceForPath(path));
     return slices;
   }
 
@@ -230,7 +255,9 @@ export function createStepApp() {
       }
       for (const d of fieldDomains) {
         if (d.holds) continue;
-        this.stepStatus[fieldSlice.get(`${d.selectionNodeId}.${d.field}`)]?.domains.push(d);
+        const slice =
+          fieldSlice.get(`${d.selectionNodeId}.${d.field}`) ?? selectionSlice.get(d.selectionNodeId);
+        this.stepStatus[slice]?.domains.push(d);
       }
     },
 
