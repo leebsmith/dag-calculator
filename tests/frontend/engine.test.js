@@ -58,6 +58,12 @@ test("loadArtifact rejects a dangling reference", () => {
   assert.throws(() => loadArtifact(bad), /unknown node\/field/);
 });
 
+test("loadArtifact rejects a dangling default ref", () => {
+  const bad = structuredClone(artifact);
+  bad.nodes["batch.hlt_starting_volume_l"].default = { ref: "does.not.exist" };
+  assert.throws(() => loadArtifact(bad), /unknown node\/field/);
+});
+
 test("choice inputs: default value and setRoot", () => {
   const e = engine();
   assert.equal(e.get("batch.topology"), "r_l_to_g");

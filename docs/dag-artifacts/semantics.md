@@ -50,9 +50,10 @@ computed, it is *not* a root.
 
 ### 2.2 Explicit edges
 
-The dependency graph comes **only** from declared `inputs`, `ref`, and
-`relations`. There is **no read-tracking / auto-inference**. A dependency that is
-not declared does not exist.
+The dependency graph comes **only** from declared `inputs`, `ref`, `relations`,
+and `{ref}`s inside a node `default` (a default is a lazy expression, so its refs
+are dependencies). There is **no read-tracking / auto-inference**. A dependency
+that is not declared does not exist.
 
 ### 2.3 Domain-core-only
 

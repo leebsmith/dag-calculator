@@ -55,8 +55,10 @@ changes.
 ### The graph (`buildGraph`)
 
 - **`adjacency`** — `nodeId → [dependencyNodeIds]`, built from each node's
-  declared `inputs` (derived/boundary) and `ref` (selection). Collections, roots,
-  and choices have no edges out.
+  declared `inputs` (derived/boundary), `ref` (selection), and any `{ref}` in a
+  root/choice `default` (a default is evaluated lazily when the node is unset,
+  so its refs are real dependencies, not hidden ones). Collections have no edges
+  out.
 - **`dependents`** — the reverse: `nodeId → [consumerNodeIds]`.
 - **`topoOrder`** — a deterministic topological sort of all nodes.
 

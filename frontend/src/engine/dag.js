@@ -25,6 +25,13 @@ export function buildGraph(artifact) {
     } else if (node.kind === "selection") {
       const r = resolveReference(artifact, node.ref);
       if (r) deps.push(r.nodeId);
+    } else if (node.kind === "root" || node.kind === "choice") {
+      // A default expression is evaluated lazily when the node is unset, so
+      // any node it references is a real dependency (not a hidden one).
+      for (const path of collectRefs(node.default)) {
+        const r = resolveReference(artifact, path);
+        if (r) deps.push(r.nodeId);
+      }
     }
     adjacency[id] = deps;
     for (const dep of deps) dependents[dep].push(id);
@@ -32,6 +39,21 @@ export function buildGraph(artifact) {
 
   const topoOrder = topologicalSort(adjacency, dependents);
   return { adjacency, dependents, topoOrder };
+}
+
+// Collect every `{ref}` path appearing in an expression tree (defaults may be
+// `{ref}`, `{const}`, `{call}`, `{lit}`, or nested operators).
+function collectRefs(expr, out = []) {
+  if (expr === null || typeof expr !== "object") return out;
+  if (Array.isArray(expr)) {
+    for (const item of expr) collectRefs(item, out);
+    return out;
+  }
+  for (const [key, value] of Object.entries(expr)) {
+    if (key === "ref" && typeof value === "string") out.push(value);
+    else collectRefs(value, out);
+  }
+  return out;
 }
 
 export function topologicalSort(adjacency, dependents) {

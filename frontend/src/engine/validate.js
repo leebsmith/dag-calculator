@@ -38,6 +38,7 @@ export function validateArtifact(artifact) {
         if (!dimensions[node.dimension]) {
           throw new Error(`Root "${id}" references unknown dimension "${node.dimension}"`);
         }
+        checkDefaultRefs(artifact, node, `Root "${id}"`);
         break;
       case "collection":
         if (!schemas[node.item_schema]) {
@@ -159,4 +160,24 @@ function checkRefResolves(artifact, path, label) {
   if (!resolved) {
     throw new Error(`${label} references unknown node/field "${path}"`);
   }
+}
+
+// Every `{ref}` in a node's `default` expression must resolve.
+function checkDefaultRefs(artifact, node, label) {
+  for (const path of collectRefs(node.default)) {
+    checkRefResolves(artifact, path, `${label} default`);
+  }
+}
+
+function collectRefs(expr, out = []) {
+  if (expr === null || typeof expr !== "object") return out;
+  if (Array.isArray(expr)) {
+    for (const item of expr) collectRefs(item, out);
+    return out;
+  }
+  for (const [key, value] of Object.entries(expr)) {
+    if (key === "ref" && typeof value === "string") out.push(value);
+    else collectRefs(value, out);
+  }
+  return out;
 }
