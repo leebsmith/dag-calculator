@@ -224,7 +224,10 @@ a first-class invariant, evaluated by the engine and surfaced to the view.
 
 Predicate referents may include selection fields. Because `and`/`or`/`if`
 **short-circuit**, an optional selection is guarded with a conditional, e.g.
-`if(ref != "", <predicate over the selected component>, true)`.
+`if(ref != "", <predicate over the selected component>, true)`. An *unguarded*
+ref to an unset optional selection resolves to `undefined` and the comparison
+yields a spurious `holds:false` — it is not a load error (validate only checks
+that refs resolve).
 
 ---
 

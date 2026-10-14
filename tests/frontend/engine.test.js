@@ -64,6 +64,15 @@ test("loadArtifact rejects a dangling default ref", () => {
   assert.throws(() => loadArtifact(bad), /unknown node\/field/);
 });
 
+test("loadArtifact rejects a relation with a dangling ref", () => {
+  const bad = structuredClone(artifact);
+  bad.relations = [
+    ...bad.relations,
+    { id: "bad_ref", predicate: { op: "le", lhs: { ref: "does.not.exist" }, rhs: 1 } },
+  ];
+  assert.throws(() => loadArtifact(bad), /unknown node\/field/);
+});
+
 test("choice inputs: default value and setRoot", () => {
   const e = engine();
   assert.equal(e.get("batch.topology"), "r_l_to_g");

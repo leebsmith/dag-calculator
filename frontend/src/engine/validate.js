@@ -72,6 +72,15 @@ export function validateArtifact(artifact) {
     }
   }
 
+  for (const relation of artifact.relations ?? []) {
+    if (!relation || typeof relation !== "object" || !relation.id) {
+      throw new Error("Each relation must be an object with an id");
+    }
+    for (const path of collectRefs(relation.predicate)) {
+      checkRefResolves(artifact, path, `Relation "${relation.id}"`);
+    }
+  }
+
   return artifact;
 }
 
