@@ -159,6 +159,11 @@
         }
       }
     },
+    "abv": {
+      "base_unit": "pct",
+      "kind": "linear",
+      "units": {}
+    },
     "reference": {
       "base_unit": "id",
       "kind": "identity",
@@ -914,7 +919,7 @@
         "taxonomy": "flocculation"
       },
       "alcohol_tolerance_abv": {
-        "dimension": "percentage",
+        "dimension": "abv",
         "domain": {
           "gte": 0
         }
@@ -1314,7 +1319,7 @@
     },
     "batch.target_abv": {
       "kind": "root",
-      "dimension": "percentage",
+      "dimension": "abv",
       "default": {
         "const": "default_target_abv"
       },

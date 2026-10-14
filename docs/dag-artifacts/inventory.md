@@ -9,6 +9,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | base_unit | kind | units |
 |---|---|---|---|
+| `abv` | `pct` | linear | — |
 | `beer_color` | `SRM` | linear | `EBC` (factor 0.5076142131979695) |
 | `concentration` | `ppm` | linear | — |
 | `dimensionless` | `1` | identity | — |
@@ -61,7 +62,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
 | `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
 | `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_chloride_ratio` (dimension dimensionless, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
-| `yeast` | `alcohol_tolerance_abv` (dimension percentage, domain {"gte":0}), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `flocculation` (taxonomy flocculation), `high_attenuation` (dimension percentage, domain {"gte":0,"lte":1}), `id` (—), `low_attenuation` (dimension percentage, domain {"gte":0,"lte":1}), `manufacturer` (—), `name` (—), `notes` (—) |
+| `yeast` | `alcohol_tolerance_abv` (dimension abv, domain {"gte":0}), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `flocculation` (taxonomy flocculation), `high_attenuation` (dimension percentage, domain {"gte":0,"lte":1}), `id` (—), `low_attenuation` (dimension percentage, domain {"gte":0,"lte":1}), `manufacturer` (—), `name` (—), `notes` (—) |
 
 ## Functions
 
