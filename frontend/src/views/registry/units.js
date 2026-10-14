@@ -12,7 +12,7 @@ export const UNIT_DIMENSIONS = [
   { id: "time", group: "Base", label: "Time", units: [["min", "min"], ["hr", "hr"], ["day", "day"]] },
   { id: "volume", group: "Base", label: "Volume", units: [["L", "L"], ["gal", "gal"], ["qt", "qt"], ["ml", "mL"]] },
   { id: "mass", group: "Base", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["oz", "oz"], ["g", "g"]] },
-  { id: "gravity", group: "Base", label: "Gravity", units: [["SG", "SG"], ["Plato", "°P"]] },
+  { id: "gravity", group: "Base", label: "Gravity", default: "Plato", units: [["SG", "SG"], ["Plato", "°P"]] },
   { id: "grain_color", group: "Base", label: "Grain Color", default: "EBC", units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
   { id: "beer_color", group: "Base", label: "Beer Color", default: "EBC", units: [["SRM", "SRM"], ["EBC", "EBC"]] },
   { id: "percentage", group: "Base", label: "Percentage", units: [["fraction", "×1"], ["pct", "%"]] },
