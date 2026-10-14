@@ -153,6 +153,7 @@ export function createStepApp(options = {}) {
     highwater: ui.highwater,
     activeStep: steps[ui.activeIndex],
     visibleSteps: [],
+    navDir: null, // "next" | "prev" — drives the step-card entry animation
     stepStatus: initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
     unitGroups: UNIT_GROUPS,
@@ -169,6 +170,14 @@ export function createStepApp(options = {}) {
 
     get boundaryPending() {
       return useHttp && boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
+    },
+
+    // Entry animation class for the active card, keyed by nav direction. Empty
+    // until the first navigation so the initial card doesn't animate.
+    get navClass() {
+      if (this.navDir === "next") return "step-enter-down";
+      if (this.navDir === "prev") return "step-enter-up";
+      return "";
     },
 
     // Editable-state snapshot (roots + collections) for draft autosave. The
@@ -402,13 +411,19 @@ export function createStepApp(options = {}) {
     },
 
     next() {
-      ui.activeIndex = Math.min(ui.activeIndex + 1, steps.length - 1);
+      const index = Math.min(ui.activeIndex + 1, steps.length - 1);
+      if (index === ui.activeIndex) return;
+      this.navDir = "next";
+      ui.activeIndex = index;
       ui.highwater = Math.max(ui.highwater, ui.activeIndex);
       this.syncNav();
     },
 
     prev() {
-      ui.activeIndex = Math.max(ui.activeIndex - 1, 0);
+      const index = Math.max(ui.activeIndex - 1, 0);
+      if (index === ui.activeIndex) return;
+      this.navDir = "prev";
+      ui.activeIndex = index;
       this.syncNav();
     },
 

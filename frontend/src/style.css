@@ -1173,6 +1173,41 @@ samp {
   overflow-y: auto;
 }
 
+/* Step-card entry: going forward ("next") the card rises from below; going
+   back ("prev") it drops from above. The active card is keyed by step id, so
+   the animation replays on each step change (and not on edits within a step). */
+@keyframes step-enter-down {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes step-enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-enter-down {
+  animation: step-enter-down var(--transition-slow) both;
+}
+
+.step-enter-up {
+  animation: step-enter-up var(--transition-slow) both;
+}
+
 .footer-step {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
@@ -1548,5 +1583,10 @@ samp {
   .form-input,
   .form-select {
     transition: none;
+  }
+
+  .step-enter-down,
+  .step-enter-up {
+    animation: none;
   }
 }

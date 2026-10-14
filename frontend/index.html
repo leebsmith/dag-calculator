@@ -133,17 +133,19 @@
 
             <div class="step-viewport">
               <div class="step-row">
-                <div class="step-slot">
-                  <template x-if="activeStep.id === 'yeast'">
-                    <load src="./src/partials/step-yeast.html" />
-                  </template>
-                  <template x-if="activeStep.id === 'fermentables'">
-                    <load src="./src/partials/step-fermentables.html" />
-                  </template>
-                  <template x-if="activeStep.id !== 'yeast' && activeStep.id !== 'fermentables'">
-                    <load src="./src/partials/step-card.html" />
-                  </template>
-                </div>
+                <template x-for="step in [activeStep]" :key="step.id">
+                  <div class="step-slot" :class="navClass">
+                    <template x-if="step.id === 'yeast'">
+                      <load src="./src/partials/step-yeast.html" />
+                    </template>
+                    <template x-if="step.id === 'fermentables'">
+                      <load src="./src/partials/step-fermentables.html" />
+                    </template>
+                    <template x-if="step.id !== 'yeast' && step.id !== 'fermentables'">
+                      <load src="./src/partials/step-card.html" />
+                    </template>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
