@@ -198,28 +198,27 @@ export function valuate(fields, engine, ctx = {}) {
         return null;
       }
       const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
-      // Display-only unit conversion (readouts): base value stays canonical.
-      // A per-field override wins over the per-dimension default, which wins
-      // over the registry's preferred display unit.
-      const unitId = toggleable
-        ? unitMode[field.id] ?? unitMode[field.dimension] ?? field.displayUnit ?? null
+      // Display-only unit resolution (the base value stays canonical). A
+      // registry `displayUnit` is a PIN — the field's preferred unit (e.g. salt
+      // in g) that the master menu must not override. Precedence:
+      //   per-field override → pin (displayUnit) → master (menu) → base unit.
+      const baseUnitId = toggleable
+        ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension)?.units[0]?.[0] ?? null
         : null;
-      // The field's natural default (no overrides): the registry's preferred
-      // display unit, else the dimension's base unit. Used to decide whether the
-      // pill is showing a non-default unit.
-      const naturalUnitId = toggleable
-        ? field.displayUnit ?? UNIT_DIMENSIONS.find((d) => d.id === field.dimension)?.units[0]?.[0] ?? null
+      const inheritedUnitId = toggleable
+        ? field.displayUnit ?? unitMode[field.dimension] ?? null
         : null;
+      const unitId = toggleable ? unitMode[field.id] ?? inheritedUnitId : null;
       const shown =
         unitId && typeof value === "number" && artifact
           ? fromBase(artifact, field.dimension, unitId, value, nl)
           : value;
       const symbol = unitId ? UNIT_SYMBOLS[field.dimension]?.[unitId] ?? unitId : null;
-      // A toggleable field with neither an override nor a registry `unit` (e.g.
+      // A toggleable field with no unit id and no registry `unit` (e.g.
       // equipment conversion efficiency) still needs a pill label — fall back to
       // the dimension's base-unit symbol (so a fraction reads "×1", not blank).
       const fallbackSymbol =
-        !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[naturalUnitId] ?? null : null;
+        !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[baseUnitId] ?? null : null;
       const out = {
         ...field,
         value,
@@ -227,13 +226,9 @@ export function valuate(fields, engine, ctx = {}) {
         display: formatValue(shown),
         toggleable,
         unitId,
-        // Accented when the pill shows something the user wouldn't get by
-        // default: either a per-field toggle is in play, or the effective unit
-        // differs from the field's natural default (e.g. a Units-menu pick).
-        customized:
-          toggleable &&
-          (Object.prototype.hasOwnProperty.call(unitMode, field.id) ||
-            (unitId !== null && unitId !== naturalUnitId)),
+        // Accented ONLY on a deliberate per-field deviation from the inherited
+        // unit (a pill override); master-following and pinned fields never are.
+        customized: toggleable && unitId !== inheritedUnitId,
       };
       // Per-field domain state of the selected component (e.g. an equipment
       // constant), for inline surfacing.

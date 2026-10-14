@@ -412,15 +412,15 @@ export function createStepApp(options = {}) {
     },
 
     // Per-field unit override: cycle the field through its dimension's units,
-    // dropping the override when it lands back on the field's natural default
-    // (dimension default, else the registry's preferred display unit).
+    // dropping the override when it lands back on the field's inherited unit
+    // (the pinned registry `displayUnit`, else the master menu pick, else base).
     toggleFieldUnit(field) {
       const dim = field.dimension;
       if (!dim) return;
       const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dim);
       if (!dimDef) return;
       const units = dimDef.units.map(([id]) => id);
-      const fieldDefault = ui.unitMode[dim] ?? field.displayUnit ?? units[0];
+      const fieldDefault = field.displayUnit ?? ui.unitMode[dim] ?? units[0];
       const current = ui.unitMode[field.id] ?? fieldDefault;
       const next = units[(units.indexOf(current) + 1) % units.length];
       if (next === fieldDefault) delete ui.unitMode[field.id];

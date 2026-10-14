@@ -43,10 +43,10 @@ test("A8b: unit mode converts display; writes store base", () => {
   assert.equal(app.master.getRoot("mash.grain_temp_c"), 20, "write converts display unit -> base");
 });
 
-// A8c: per-field unit overrides win over the dimension default and drop cleanly
-// when toggled back to the default. The `customized` accent marks a pill when a
-// per-field override is in play OR the effective unit is not the field's natural
-// default (base unit here, °C) — so a dimension-level pick is accented too.
+// A8c: per-field unit overrides win over the inherited unit and drop cleanly
+// when toggled back. The `customized` accent marks ONLY a deliberate per-field
+// deviation from the inherited unit — a master (dimension-level) pick is the
+// inherited unit, so its pills are NOT accented.
 test("A8c: per-field unit override", () => {
   const app = createStepApp();
   app.boot();
@@ -54,21 +54,21 @@ test("A8c: per-field unit override", () => {
 
   app.setUnit("temperature", "degF");
   assert.equal(grain().unitId, "degF");
-  assert.equal(grain().customized, true, "dimension-level pick is non-default");
+  assert.equal(grain().customized, false, "a master pick is the inherited unit (not accented)");
 
   app.toggleFieldUnit(grain());
   assert.equal(grain().unitId, "degC");
-  assert.equal(grain().customized, true, "a per-field override is accented even at the base unit");
+  assert.equal(grain().customized, true, "a per-field override is accented");
   assert.equal(Number(grain().display), 20, "overridden field displays in its own unit");
 
-  // sibling temperature field still follows the dimension default
+  // sibling temperature field still follows the master pick (unaccented)
   const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
   assert.equal(strike.unitId, "degF");
-  assert.equal(strike.customized, true);
+  assert.equal(strike.customized, false);
 
   app.toggleFieldUnit(grain());
   assert.equal(grain().unitId, "degF");
-  assert.equal(grain().customized, true, "back on the dimension default (still non-base)");
+  assert.equal(grain().customized, false, "back on the inherited unit (unaccented)");
   assert.equal("mash.grain_temp_c" in app.unitMode, false, "field override dropped cleanly");
 });
 
