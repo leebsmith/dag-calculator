@@ -2182,6 +2182,18 @@
       }
     },
     {
+      "id": "hlt_above_coil_floor",
+      "predicate": {
+        "op": "ge",
+        "lhs": {
+          "ref": "batch.hlt_starting_volume_l"
+        },
+        "rhs": {
+          "ref": "equipment.hlt_coil_floor_l"
+        }
+      }
+    },
+    {
       "id": "kettle_not_overfilled",
       "predicate": {
         "op": "le",

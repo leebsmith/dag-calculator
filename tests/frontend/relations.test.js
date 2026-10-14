@@ -18,6 +18,7 @@ test("relationStates() evaluates every declared relation", () => {
     states.map((s) => s.id).sort(),
     [
       "attenuation_within_yeast_envelope",
+      "hlt_above_coil_floor",
       "hlt_not_overfilled",
       "kettle_not_overfilled",
       "mash_thickness_above_husk_floor",
@@ -41,6 +42,19 @@ test("a violated relation reports holds:false", () => {
   const states = Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds]));
   assert.equal(states.hlt_not_overfilled, false);
   assert.equal(states.kettle_not_overfilled, true);
+});
+
+test("hlt_above_coil_floor bounds the HLT fill from below", () => {
+  const e = engine();
+  assert.equal(
+    Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds])).hlt_above_coil_floor,
+    true
+  ); // default fill 30 >= coil floor 4
+  e.setRoot("batch.hlt_starting_volume_l", 3.0);
+  assert.equal(
+    Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds])).hlt_above_coil_floor,
+    false
+  );
 });
 
 const holds = (e, id) => Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds]))[id];

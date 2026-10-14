@@ -32,3 +32,17 @@ test("A6: selection pickers are displayed by a step", () => {
   }
   assert.deepEqual(offenders, [], `Selections whose picker is not shown:\n${offenders.join("\n")}`);
 });
+
+// A6c: root defaults that seed from a selection field are a deliberate,
+// documented "copy-forward" set (see docs/engine.md).
+test("A6: selection-seeded root defaults are the documented set", () => {
+  const a = artifact();
+  const seeded = [];
+  for (const [id, node] of Object.entries(a.nodes)) {
+    const d = node.default;
+    if (node.kind !== "root" || !d || typeof d !== "object" || !d.ref) continue;
+    const r = resolveReference(a, d.ref);
+    if (r && a.nodes[r.nodeId]?.kind === "selection") seeded.push(id);
+  }
+  assert.deepEqual(seeded.sort(), ["batch.hlt_starting_volume_l"]);
+});

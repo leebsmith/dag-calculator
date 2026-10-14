@@ -140,6 +140,24 @@ fingerprint }`; the adapter performs the I/O and calls
 evaluation hits the cache synchronously. `hasBoundaryResult(fingerprint)` checks
 whether a solve is already available.
 
+## Copy-forward flows
+
+Where a selected component's value seeds an **editable** value, the selection's
+constraints apply to that value. These flows are deliberate and few; envelopes
+(relations/domains) and clamps are authored per flow:
+
+| Editable value | Source | Mechanism | Re-sync semantics |
+|---|---|---|---|
+| `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit and on equipment-profile change |
+| `batch.apparent_attenuation` | `batch.yeast.attenuation_pct` | auto-copy on selection | overwritten on each strain pick; clamped to the strain envelope |
+| `water.source.*` (6 ions) | `water.source_report` | `copyInCascade` | overwritten on each report pick (manual edits discarded); `gte 0` domains |
+| `water.target.*` (6 ions) | `water.target_profile` | `copyInCascade` | overwritten on each target pick (manual edits discarded); `gte 0` domains |
+
+Selection-scoped invariants are expressed as `relations` referencing selection
+fields, guarded with `if(ref != "", …)` (short-circuit). Per-field schema
+`domain`s of a selected component are surfaced by `fieldDomainStates()`. The
+adapter attributes both to the card that owns the field/selection.
+
 ## Determinism
 
 Given the roots, every value is a pure function of its declared ancestors; the

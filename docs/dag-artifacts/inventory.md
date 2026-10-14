@@ -192,6 +192,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | id |
 |---|
 | `attenuation_within_yeast_envelope` |
+| `hlt_above_coil_floor` |
 | `hlt_not_overfilled` |
 | `kettle_not_overfilled` |
 | `mash_thickness_above_husk_floor` |

@@ -318,6 +318,27 @@ export function createStepApp() {
       this.unitsOpen = !this.unitsOpen;
     },
 
+    // Clamp an editable value to the envelope of its selected component, when
+    // one applies (a batch root bounded by a selection's fields). Returns the
+    // clamped value; an unset optional selection contributes no bounds.
+    clampToSelection(nodeId, value) {
+      if (typeof value !== "number") return value;
+      let low;
+      let high;
+      if (nodeId === "batch.apparent_attenuation") {
+        low = engine.resolve("batch.yeast.low_attenuation");
+        high = engine.resolve("batch.yeast.high_attenuation");
+      } else if (nodeId === "batch.hlt_starting_volume_l") {
+        low = engine.resolve("equipment.hlt_coil_floor_l");
+        high = engine.resolve("equipment.max_hlt_volume_l");
+      } else {
+        return value;
+      }
+      if (typeof low === "number" && value < low) value = low;
+      if (typeof high === "number" && value > high) value = high;
+      return value;
+    },
+
     edit(field, value) {
       if (!field.editable || !field.target) return;
       let raw = field.control === "number" ? Number(value) : value;
@@ -327,18 +348,21 @@ export function createStepApp() {
       if (field.control === "number" && field.dimension && field.unitId && value !== "") {
         raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
       }
-      // The attenuation a batch uses is bounded by the selected strain's
-      // envelope; clamp typed values to it. (An unset yeast resolves to no
-      // bounds, so nothing is clamped.)
-      if (field.target.nodeId === "batch.apparent_attenuation" && typeof raw === "number") {
-        const low = engine.resolve("batch.yeast.low_attenuation");
-        const high = engine.resolve("batch.yeast.high_attenuation");
-        if (typeof low === "number" && typeof high === "number") {
-          if (raw < low) raw = low;
-          else if (raw > high) raw = high;
-        }
-      }
+      // A batch value seeded from a selected component is clamped to that
+      // component's envelope (e.g. attenuation within the strain's range; the
+      // HLT fill within the equipment's [coil floor, capacity]).
+      raw = this.clampToSelection(field.target.nodeId, raw);
       this.setRoot(field.target.nodeId, raw);
+      // Changing the equipment profile re-clamps an already-set HLT fill (the
+      // default is only applied while unset, so it would otherwise go stale).
+      if (
+        field.target.nodeId === "batch.equipment_profile_id" &&
+        this.master.hasRoot("batch.hlt_starting_volume_l")
+      ) {
+        const current = this.master.getRoot("batch.hlt_starting_volume_l");
+        const clamped = this.clampToSelection("batch.hlt_starting_volume_l", current);
+        if (clamped !== current) this.setRoot("batch.hlt_starting_volume_l", clamped);
+      }
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.compute();
       this.notify();
