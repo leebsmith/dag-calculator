@@ -34,7 +34,7 @@ test("hamilton: degenerate input yields all zeros", () => {
 
 test("hamilton: editing grist parts renormalizes pct across the bill", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
 
   // Seed bill: 80/20 -> pct 0.8/0.2. Re-author the first row's parts.

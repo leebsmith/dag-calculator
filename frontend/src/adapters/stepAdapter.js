@@ -605,7 +605,10 @@ export function createStepApp(options = {}) {
       this.notify();
     },
 
-    async init() {
+    // Explicit boot (main.js owns it after auth). Deliberately NOT named
+    // `init`: Alpine auto-calls an `init()` method on `x-data` objects, which
+    // would run a solve before sign-in (and 401).
+    async boot() {
       if (useHttp) await this.solveNow();
       else this.compute();
       this.syncNav();

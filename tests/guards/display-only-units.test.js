@@ -28,7 +28,7 @@ test("A8a: units.fromBase used only by the producer", () => {
 // A8b: unit mode converts the DISPLAY, but writes to the store stay in base units.
 test("A8b: unit mode converts display; writes store base", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   app.setUnit("temperature", "degF");
 
   const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
@@ -49,7 +49,7 @@ test("A8b: unit mode converts display; writes store base", () => {
 // default (base unit here, °C) — so a dimension-level pick is accented too.
 test("A8c: per-field unit override", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const grain = () => app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c");
 
   app.setUnit("temperature", "degF");
@@ -76,7 +76,7 @@ test("A8c: per-field unit override", () => {
 // canonical value stays in the base unit (kg/L), with no override recorded.
 test("A8d: registry displayUnit defaults the display (g/ml)", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
 
   const gypsum = app.fieldsBySlice.water.find((f) => f.id === "solver.water.mash_additions.gypsum_kg");
   assert.equal(gypsum.value, 0.002, "canonical value stays kg");
@@ -95,7 +95,7 @@ test("A8d: registry displayUnit defaults the display (g/ml)", () => {
 // write stores the base value (cell conversion for collection tables).
 test("A8e: collection cell displayUnit converts display; write stores base", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const table = () => app.fieldsBySlice["dry-hops"].find((f) => f.control === "collection-table");
 
   app.addRow(table());

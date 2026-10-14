@@ -8,7 +8,7 @@ import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 
 test("HLT fill is clamped to the equipment envelope", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.hlt_starting_volume_l");
 
   app.edit(field(), "50"); // > capacity (herms-30l max = 30 L)
@@ -20,7 +20,7 @@ test("HLT fill is clamped to the equipment envelope", () => {
 
 test("attenuation is clamped to the selected strain's envelope", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   app.setRoot("batch.yeast_id", "bootleg-biology-bbx001-the-mad-fermentationist-saison-blend");
   app.compute();
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.apparent_attenuation");
@@ -31,7 +31,7 @@ test("attenuation is clamped to the selected strain's envelope", () => {
 
 test("collection cells are validated against their schema domains", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
 
   app.editCell(table(), 0, "pct", "1.5"); // > 1

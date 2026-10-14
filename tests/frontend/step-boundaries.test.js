@@ -46,7 +46,7 @@ function mockFetch(responses) {
 
 test("offline (default): boundaries are stubbed and reported ok", async () => {
   const app = createStepApp();
-  await app.init();
+  await app.boot();
   assert.deepEqual(app.boundaryStatuses, { "solver.batch": "ok", "solver.water": "ok" });
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryPending, false);
@@ -58,7 +58,7 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
     "/solve/water": { status: 200, body: WATER },
   });
   const app = createStepApp({ useHttp: true, fetchImpl });
-  await app.init();
+  await app.boot();
 
   assert.equal(calls.length, 2);
   assert.equal(calls[0].url, "/solve/batch"); // batch before water
@@ -77,7 +77,7 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
   const app = createStepApp({ useHttp: true, fetchImpl });
-  await app.init();
+  await app.boot();
   assert.equal(app.boundaryError.code, "MASH_TOO_THIN");
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
 });
@@ -88,7 +88,7 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
     "/solve/water": { status: 200, body: WATER },
   });
   const app = createStepApp({ useHttp: true, fetchImpl });
-  await app.init();
+  await app.boot();
 
   const batch = calls.find((c) => c.url === "/solve/batch").body;
   const water = calls.find((c) => c.url === "/solve/water").body;

@@ -5,14 +5,14 @@ import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 
 test("detectDrift: no drift when provenance matches current seeds", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const { provenance } = app.freezePayload();
   assert.deepEqual(app.detectDrift(provenance), []);
 });
 
 test("detectDrift: flags a changed seed component", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const drift = app.detectDrift({
     "equipment.profile": { source_template_id: "herms-30l", source_revision: "deadbeef" },
   });
@@ -24,7 +24,7 @@ test("detectDrift: flags a changed seed component", () => {
 
 test("detectDrift: flags a missing seed component", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
   const drift = app.detectDrift({
     "equipment.profile": { source_template_id: "does-not-exist", source_revision: "x" },
   });

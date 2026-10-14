@@ -50,7 +50,7 @@ const fetchImpl = async (url, opts) => {
 };
 
 const app = createStepApp({ useHttp: true, fetchImpl });
-await app.init();
+await app.boot();
 
 process.stdout.write(
   JSON.stringify({

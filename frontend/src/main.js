@@ -112,7 +112,7 @@ async function applyAuth(user) {
     await recipes.refresh();
     const draft = recipes.batches.find((b) => b.status === "draft");
     if (draft) await persistence.open(draft.id);
-    else await stepApp.init();
+    else await stepApp.boot();
   } finally {
     auth.user = user;
     auth.loading = false;

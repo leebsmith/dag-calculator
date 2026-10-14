@@ -7,7 +7,7 @@ import { artifact } from "./util.js";
 // collection ids. Collections live outside the roots store.
 test("A4: roots-only master store", () => {
   const app = createStepApp();
-  app.init();
+  app.boot();
 
   app.edit(app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c"), "22");
   app.edit(app.fieldsBySlice.batch.find((f) => f.id === "batch.topology"), "runoff_ratio");
