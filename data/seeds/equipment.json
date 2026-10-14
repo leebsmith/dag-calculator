@@ -15,13 +15,38 @@
       "trub_loss_l": 0.5,
       "hlt_dead_space_l": 0.5,
       "hlt_transfer_loss_l": 0.5,
-      "boil_off_rate_l_per_hr": 3.0,
+      "nominal_boil_off_rate_l_per_hr": 3.0,
       "grain_absorption_factor_l_per_kg": 0.96,
       "conversion_efficiency": 0.9,
       "shrinkage_pct": 0.04,
       "hlt_coil_floor_l": 4.0,
       "mash_tun_specific_heat": 0.12,
       "mash_tun_mass_kg": 6.5
+    }
+  },
+  "herms-15gal": {
+    "units": "imperial",
+    "data": {
+      "id": "herms-15gal",
+      "name": "HERMS 15 gal",
+      "description": "15 gal three-vessel HERMS rig",
+      "max_kettle_volume_gal": 15,
+      "max_mash_tun_volume_gal": 15,
+      "max_hlt_volume_gal": 15,
+      "mash_dead_space_gal": 0.25,
+      "mash_transfer_loss_gal": 0.375,
+      "kettle_dead_space_gal": 0.33,
+      "kettle_transfer_loss_gal": 0,
+      "trub_loss_gal": 0.45,
+      "hlt_dead_space_gal": 0.33,
+      "hlt_transfer_loss_gal": 0.25,
+      "hlt_coil_floor_gal": 8,
+      "nominal_boil_off_rate_gal_per_hr": 1.0,
+      "grain_absorption_factor_qt_per_lb": 0.5,
+      "conversion_efficiency": 0.96,
+      "shrinkage_pct": 0.02,
+      "mash_tun_specific_heat_btu_per_lb_f": 0.12,
+      "mash_tun_mass_lb": 30
     }
   }
 }

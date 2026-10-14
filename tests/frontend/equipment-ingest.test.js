@@ -35,7 +35,7 @@ test("imperial profile converts to metric and drops imperial keys", () => {
         name: "Ten Gal",
         description: "imperial rig",
         max_hlt_volume_gal: 10,
-        boil_off_rate_gal_per_hr: 0.7925,
+        nominal_boil_off_rate_gal_per_hr: 0.7925,
         grain_absorption_factor_qt_per_lb: 0.4601,
         mash_tun_mass_lb: 14.33,
         mash_tun_specific_heat_btu_per_lb_f: 0.12,
@@ -51,7 +51,7 @@ test("imperial profile converts to metric and drops imperial keys", () => {
   assert.equal(out.description, "imperial rig");
 
   approx(out.max_hlt_volume_l, 10 * 3.785411784); // 37.854 L
-  approx(out.boil_off_rate_l_per_hr, 0.7925 * 3.785411784); // ~3.0 L/hr
+  approx(out.nominal_boil_off_rate_l_per_hr, 0.7925 * 3.785411784); // ~3.0 L/hr
   approx(out.grain_absorption_factor_l_per_kg, 0.4601 * 2.08635); // ~0.96 L/kg
   approx(out.mash_tun_mass_kg, 14.33 * 0.45359237); // ~6.5 kg
   approx(out.mash_tun_specific_heat, 0.12); // BTU/(lb·°F) == kcal/(kg·°C)

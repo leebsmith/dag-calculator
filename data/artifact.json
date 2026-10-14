@@ -990,7 +990,7 @@
           "gte": 0
         }
       },
-      "boil_off_rate_l_per_hr": {
+      "nominal_boil_off_rate_l_per_hr": {
         "dimension": "volume_per_time",
         "domain": {
           "gt": 0
@@ -1342,6 +1342,16 @@
       "dimension": "time",
       "default": {
         "const": "default_boil_time_min"
+      },
+      "domain": {
+        "gt": 0
+      }
+    },
+    "batch.boil_off_rate_l_per_hr": {
+      "kind": "root",
+      "dimension": "volume_per_time",
+      "default": {
+        "ref": "equipment.nominal_boil_off_rate_l_per_hr"
       },
       "domain": {
         "gt": 0
@@ -2239,7 +2249,7 @@
     "batch.delta_v_evap": {
       "kind": "derived",
       "inputs": {
-        "rate": "equipment.boil_off_rate_l_per_hr",
+        "rate": "batch.boil_off_rate_l_per_hr",
         "boil_time": "batch.boil_time_min"
       },
       "expr": {

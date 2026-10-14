@@ -23,7 +23,7 @@ export const EQUIPMENT = {
   trub_loss_l: 0.5,
   hlt_dead_space_l: 0.5,
   hlt_transfer_loss_l: 0.5,
-  boil_off_rate_l_per_hr: 3.0,
+  nominal_boil_off_rate_l_per_hr: 3.0,
   grain_absorption_factor_l_per_kg: 0.96,
   conversion_efficiency: 0.9,
   shrinkage_pct: 0.04,

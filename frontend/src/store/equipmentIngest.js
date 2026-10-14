@@ -25,7 +25,7 @@ const IMPERIAL_KEYS = {
   hlt_dead_space_l: "hlt_dead_space_gal",
   hlt_transfer_loss_l: "hlt_transfer_loss_gal",
   hlt_coil_floor_l: "hlt_coil_floor_gal",
-  boil_off_rate_l_per_hr: "boil_off_rate_gal_per_hr",
+  nominal_boil_off_rate_l_per_hr: "nominal_boil_off_rate_gal_per_hr",
   grain_absorption_factor_l_per_kg: "grain_absorption_factor_qt_per_lb",
   mash_tun_mass_kg: "mash_tun_mass_lb",
   mash_tun_specific_heat: "mash_tun_specific_heat_btu_per_lb_f",
