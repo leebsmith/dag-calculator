@@ -404,6 +404,15 @@ export function createStepApp(options = {}) {
       this.syncNav();
     },
 
+    // Keyboard mirror of the up/down rail (arrows + page up/down). Ignored while
+    // focus is in a form control so it doesn't hijack arrow keys.
+    keyNav(direction, event) {
+      const el = event?.target;
+      if (el?.closest?.("input, select, textarea")) return;
+      if (direction === "prev") this.prev();
+      else this.next();
+    },
+
     setUnit(dimension, unit) {
       if (unit) ui.unitMode[dimension] = unit;
       else delete ui.unitMode[dimension];

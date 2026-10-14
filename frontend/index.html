@@ -12,7 +12,14 @@
     <script type="module" src="/src/main.js"></script>
   </head>
   <body>
-    <main class="app-shell" x-data="stepCalculator()">
+    <main
+      class="app-shell"
+      x-data="stepCalculator()"
+      @keydown.arrow-up.window="keyNav('prev', $event)"
+      @keydown.arrow-down.window="keyNav('next', $event)"
+      @keydown.page-up.window="keyNav('prev', $event)"
+      @keydown.page-down.window="keyNav('next', $event)"
+    >
       <div class="signin-panel" x-show="!$store.auth.user && !$store.auth.loading">
         <h1 class="card-title">Brewing Calculator</h1>
         <p class="card-description">Sign in to open your recipes.</p>
