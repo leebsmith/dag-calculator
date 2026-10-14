@@ -52,6 +52,15 @@
         }
       }
     },
+    "volume_per_time": {
+      "base_unit": "L_per_hr",
+      "kind": "linear",
+      "units": {
+        "gal_per_hr": {
+          "factor": 3.785411784
+        }
+      }
+    },
     "mass": {
       "base_unit": "kg",
       "kind": "linear",
@@ -276,7 +285,7 @@
     },
     "default_boil_off_rate_l_per_hr": {
       "value": 3,
-      "dimension": "volume"
+      "dimension": "volume_per_time"
     },
     "default_target_mash_ph": {
       "value": 5.4,
@@ -977,7 +986,7 @@
         }
       },
       "boil_off_rate_l_per_hr": {
-        "dimension": "volume",
+        "dimension": "volume_per_time",
         "domain": {
           "gt": 0
         }

@@ -26,6 +26,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `time` | `min` | linear | `day` (factor 1440), `hr` (factor 60) |
 | `total_extract` | `L_deg` | linear | `gal_pts` (factor 3.785411784) |
 | `volume` | `L` | linear | `gal` (factor 3.785411784), `ml` (factor 0.001), `qt` (factor 0.946352946) |
+| `volume_per_time` | `L_per_hr` | linear | `gal_per_hr` (factor 3.785411784) |
 
 ## Taxonomies
 
@@ -51,7 +52,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | id | fields |
 |---|---|
 | `dry_hop_row` | `application_stage` (taxonomy wet_hop_application_stage), `contact_duration_hours` (dimension time), `notes` (—), `product_type` (taxonomy wet_hop_product_type), `quantity` (dimension dimensionless), `time_of_application` (—), `unit` (taxonomy hop_unit), `variety` (—) |
-| `equipment` | `boil_off_rate_l_per_hr` (dimension volume, domain {"gt":0}), `conversion_efficiency` (dimension percentage, domain {"gt":0,"lte":1}), `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `hlt_coil_floor_l` (dimension volume, domain {"gte":0}), `hlt_dead_space_l` (dimension volume, domain {"gte":0}), `hlt_transfer_loss_l` (dimension volume, domain {"gte":0}), `id` (—), `kettle_dead_space_l` (dimension volume, domain {"gte":0}), `kettle_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_dead_space_l` (dimension volume, domain {"gte":0}), `mash_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_tun_mass_kg` (dimension mass, domain {"gt":0}), `mash_tun_specific_heat` (dimension specific_heat, domain {"gt":0}), `max_hlt_volume_l` (dimension volume, domain {"gt":0}), `max_kettle_volume_l` (dimension volume, domain {"gt":0}), `max_mash_tun_volume_l` (dimension volume, domain {"gt":0}), `name` (—), `shrinkage_pct` (dimension percentage, domain {"gte":0,"lte":0.2}), `trub_loss_l` (dimension volume, domain {"gte":0}) |
+| `equipment` | `boil_off_rate_l_per_hr` (dimension volume_per_time, domain {"gt":0}), `conversion_efficiency` (dimension percentage, domain {"gt":0,"lte":1}), `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `hlt_coil_floor_l` (dimension volume, domain {"gte":0}), `hlt_dead_space_l` (dimension volume, domain {"gte":0}), `hlt_transfer_loss_l` (dimension volume, domain {"gte":0}), `id` (—), `kettle_dead_space_l` (dimension volume, domain {"gte":0}), `kettle_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_dead_space_l` (dimension volume, domain {"gte":0}), `mash_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_tun_mass_kg` (dimension mass, domain {"gt":0}), `mash_tun_specific_heat` (dimension specific_heat, domain {"gt":0}), `max_hlt_volume_l` (dimension volume, domain {"gt":0}), `max_kettle_volume_l` (dimension volume, domain {"gt":0}), `max_mash_tun_volume_l` (dimension volume, domain {"gt":0}), `name` (—), `shrinkage_pct` (dimension percentage, domain {"gte":0,"lte":0.2}), `trub_loss_l` (dimension volume, domain {"gte":0}) |
 | `grist_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `moisture_pct` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `malt` | `buffer_index` (dimension dimensionless), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `di_ph` (dimension ph), `id` (—), `moisture_pct` (dimension percentage, default 0.04), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
@@ -85,7 +86,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `bicarbonate_eq_weight` | 61 | `dimensionless` |
 | `caco3_eq_weight` | 50 | `dimensionless` |
 | `default_apparent_attenuation` | 0.75 | `percentage` |
-| `default_boil_off_rate_l_per_hr` | 3 | `volume` |
+| `default_boil_off_rate_l_per_hr` | 3 | `volume_per_time` |
 | `default_boil_time_min` | 60 | `time` |
 | `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_conversion_efficiency` | 0.9 | `percentage` |
