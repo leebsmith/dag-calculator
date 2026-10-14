@@ -1232,12 +1232,14 @@ samp {
   }
 }
 
+/* No fill mode: the resting state must carry no `transform`, or `.step-slot`
+   becomes a containing block for the fixed-position editors rendered inside it. */
 .step-enter-down {
-  animation: step-enter-down var(--transition-slow) both;
+  animation: step-enter-down var(--transition-slow);
 }
 
 .step-enter-up {
-  animation: step-enter-up var(--transition-slow) both;
+  animation: step-enter-up var(--transition-slow);
 }
 
 .footer-step {
