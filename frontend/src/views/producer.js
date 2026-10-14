@@ -84,6 +84,7 @@ function collectionField(artifact, registry, step, entry, unitMode = {}) {
       dimension: spec.dimension ?? null,
       displayUnit: unitId,
       unit: shownUnitId ? UNIT_SYMBOLS[spec.dimension]?.[shownUnitId] ?? shownUnitId : null,
+      decimals: meta.decimals ?? null,
       editable: inputs ? inputs.has(c) : true,
     };
   });
@@ -152,6 +153,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         label: meta.label ?? id,
         unit: meta.unit ?? null,
         displayUnit: meta.displayUnit ?? null,
+        decimals: meta.decimals ?? null,
         options,
         editable,
         target,
@@ -204,10 +206,13 @@ export function valuate(fields, engine, ctx = {}) {
             if (col.displayUnit && col.dimension && typeof row[col.id] === "number") {
               out[col.id] = fromBase(artifact, col.dimension, col.displayUnit, row[col.id], nl);
             }
-            // Round displayed numbers so converted values don't leak float fuzz
-            // (e.g. 80.00000000000001) — readout cells and input values alike.
+            // Round/format displayed numbers so converted values don't leak
+            // float fuzz (e.g. 80.00000000000001); honor a column `decimals`.
             if (typeof out[col.id] === "number") {
-              out[col.id] = Math.round(out[col.id] * 1000) / 1000;
+              out[col.id] =
+                col.decimals != null
+                  ? out[col.id].toFixed(col.decimals)
+                  : Math.round(out[col.id] * 1000) / 1000;
             }
           }
           return out;
@@ -245,12 +250,10 @@ export function valuate(fields, engine, ctx = {}) {
       // the dimension's base-unit symbol (so a fraction reads "×1", not blank).
       const fallbackSymbol =
         !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[baseUnitId] ?? null : null;
-      // Dimension-level display precision (e.g. color to 1 decimal), else the
-      // default 3-decimal rounding.
+      // Display precision: registry override → dimension default → 3-decimal.
+      const decimals = field.decimals ?? dimDef?.decimals ?? null;
       const display =
-        dimDef?.decimals != null && typeof shown === "number"
-          ? shown.toFixed(dimDef.decimals)
-          : formatValue(shown);
+        decimals != null && typeof shown === "number" ? shown.toFixed(decimals) : formatValue(shown);
       const out = {
         ...field,
         value,

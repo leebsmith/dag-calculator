@@ -1,5 +1,19 @@
 # TODO
 
+## Before 1st printed recipe
+
+*  Need staged notes 
+  * Day before
+  * Day of
+  * Before underletting
+  * Before topping up
+  * Before sparging
+  * Before boiling
+  * Before whirlpooling
+  * Before knockout
+  * Before
+  * Before sealing the fermenter
+
 ## Next (Don't process without confirmation)
 
 - Import BJCP JSON as a seed. Andrew Scholer's version. Need Pydantic schema
