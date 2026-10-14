@@ -12,7 +12,7 @@
     <script type="module" src="/src/main.js"></script>
   </head>
   <body>
-    <main class="app-shell" x-data="stepCalculator()">
+    <main class="app-shell" x-data="stepCalculator()" @keydown.escape.window="openOverview()">
       <div class="signin-panel" x-show="!$store.auth.user && !$store.auth.loading">
         <h1 class="card-title">Brewing Calculator</h1>
         <p class="card-description">Sign in to open your recipes.</p>
@@ -87,25 +87,6 @@
           </div>
         </header>
 
-        <nav class="step-progress">
-          <template x-for="(s, i) in steps" :key="s.id">
-            <button
-              type="button"
-              class="step-progress-node"
-              :class="i < highwater ? 'is-complete' : (i === activeIndex ? 'is-active' : '')"
-              :disabled="i > highwater"
-              @click="selectStep(i)"
-            >
-              <span class="step-progress-index" x-text="i + 1"></span>
-              <span class="step-progress-label" x-text="s.title"></span>
-              <span
-                class="status-dot status-dot-error"
-                x-show="(stepStatus[s.slice].relations.length + stepStatus[s.slice].domains.length) > 0"
-              ></span>
-            </button>
-          </template>
-        </nav>
-
         <div class="stage">
           <div class="alert alert-warning" x-show="boundaryError">
             <div class="alert-header">
@@ -120,22 +101,67 @@
             <span class="text-xs text-muted">Solving…</span>
           </div>
 
-          <div class="step-row">
-            <template x-for="step in visibleSteps" :key="step.id">
+          <!-- Card picker: every step as an even grid of summary tiles. -->
+          <div class="card-grid" x-show="view === 'overview'" :style="gridStyle">
+            <template x-for="tile in overviewTiles" :key="tile.id">
+              <button
+                type="button"
+                class="card-tile"
+                :class="{ 'is-active': tile.active, 'is-locked': tile.locked }"
+                :disabled="tile.locked"
+                @click="focusStep(tile.index)"
+              >
+                <span class="card-tile-head">
+                  <span class="card-tile-index" x-text="tile.index + 1"></span>
+                  <span class="card-tile-title" x-text="tile.title"></span>
+                  <span
+                    class="status-dot status-dot-error"
+                    x-show="tile.violations > 0"
+                    :title="tile.violations + ' violation(s)'"
+                  ></span>
+                </span>
+                <span class="card-tile-subtitle" x-show="tile.subtitle" x-text="tile.subtitle"></span>
+                <span class="card-tile-readouts">
+                  <template x-for="r in tile.readouts" :key="r.label">
+                    <span class="card-tile-readout">
+                      <span class="card-tile-readout-label" x-text="r.label"></span>
+                      <span class="card-tile-readout-value">
+                        <span class="tabular-nums" x-text="r.display"></span>
+                        <span class="card-tile-readout-unit" x-show="r.unit" x-text="r.unit"></span>
+                      </span>
+                    </span>
+                  </template>
+                </span>
+              </button>
+            </template>
+          </div>
+
+          <!-- Focus: the real card for the active step. -->
+          <div class="focus-view" x-show="view === 'focus'">
+            <div class="focus-bar">
+              <button type="button" class="btn-outline" @click="openOverview()">⊞ All steps</button>
+              <span class="focus-label" x-text="activeStep.title"></span>
+            </div>
+            <div class="step-row">
               <div class="step-slot">
-                <template x-if="step.id === 'yeast'">
+                <template x-if="activeStep.id === 'yeast'">
                   <load src="./src/partials/step-yeast.html" />
                 </template>
-                <template x-if="step.id !== 'yeast'">
+                <template x-if="activeStep.id !== 'yeast'">
                   <load src="./src/partials/step-card.html" />
                 </template>
               </div>
-            </template>
+            </div>
           </div>
         </div>
 
         <footer class="app-footer">
-          <button type="button" class="btn-outline" @click="prev()" :disabled="activeIndex === 0">
+          <button
+            type="button"
+            class="btn-outline"
+            @click="prev()"
+            :disabled="view !== 'focus' || activeIndex === 0"
+          >
             ← Back
           </button>
           <span class="footer-step" x-text="'Step ' + (activeIndex + 1) + ' of ' + steps.length"></span>
@@ -143,9 +169,9 @@
             type="button"
             class="btn-outline"
             @click="next()"
-            :disabled="activeIndex === steps.length - 1"
+            :disabled="view === 'focus' && activeIndex === steps.length - 1"
           >
-            Next →
+            <span x-text="view === 'overview' ? 'Open →' : 'Next →'"></span>
           </button>
           <span class="footer-violations" x-show="violationCount > 0">
             <span class="status-dot status-dot-error"></span>

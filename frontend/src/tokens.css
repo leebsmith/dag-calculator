@@ -133,6 +133,9 @@
   --container-modal-dialog: 42rem;
   --container-modal-workspace: 72rem;
 
+  /* Card-picker tile floor: the grid fits above this; below it the stage scrolls. */
+  --size-tile-min: 9rem;
+
   /* ========================================================================
      5. Border Radii
      ======================================================================== */

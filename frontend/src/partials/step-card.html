@@ -1,8 +1,8 @@
 <section class="step-card">
-  <h2 class="card-title" x-text="step.title"></h2>
-  <p class="card-subtitle" x-show="step.subtitle" x-text="step.subtitle"></p>
+  <h2 class="card-title" x-text="activeStep.title"></h2>
+  <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
 
-  <template x-for="f in fieldsBySlice[step.slice]" :key="f.id">
+  <template x-for="f in fieldsBySlice[activeStep.slice]" :key="f.id">
     <div class="form-group">
       <template x-if="f.control === 'number'">
         <div>
@@ -110,11 +110,11 @@
     </div>
   </template>
 
-  <template x-for="a in (step.actions || [])" :key="a.id">
+  <template x-for="a in (activeStep.actions || [])" :key="a.id">
     <button
       type="button"
       class="btn-outline"
-      x-show="fieldsBySlice[step.slice].some((f) => f.id === a.gate)"
+      x-show="fieldsBySlice[activeStep.slice].some((f) => f.id === a.gate)"
       @click="runAction(a)"
       x-text="a.label"
     ></button>
