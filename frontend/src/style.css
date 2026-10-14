@@ -240,13 +240,25 @@ samp {
 .form-input {
   width: 100%;
   padding: var(--space-2) var(--space-3);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-family: inherit;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
   color: var(--sys-text-primary);
   background-color: var(--sys-surface-default);
   border: 1px solid var(--sys-border-default);
   border-radius: var(--radius-md);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* Calculated/readout values: same emphasis as editable values (semibold,
+   primary), so data reads above the muted field labels. */
+.field-value {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-primary);
 }
 
 .form-input:focus {
@@ -329,7 +341,7 @@ samp {
 }
 
 .card-title {
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   font-weight: var(--font-weight-semibold);
   color: var(--sys-text-primary);
   margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
@@ -1099,9 +1111,9 @@ samp {
 .step-card {
   height: 100%;
   background-color: var(--sys-surface-default);
-  border: 1px solid var(--sys-border-subtle);
+  border: 1px solid var(--sys-border-default);
   border-radius: var(--radius-xl);
-  box-shadow: var(--sys-shadow-sm);
+  box-shadow: var(--sys-shadow-md);
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
