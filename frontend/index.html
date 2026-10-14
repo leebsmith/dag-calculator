@@ -106,33 +106,35 @@
           </template>
         </nav>
 
-        <div class="alert alert-warning" x-show="boundaryError">
-          <div class="alert-header">
-            <span class="alert-dot"></span>
-            <span x-text="'Solver error: ' + (boundaryError && boundaryError.code ? boundaryError.code : 'unknown')"></span>
-          </div>
-          <p x-text="boundaryError && boundaryError.message"></p>
-        </div>
-
-        <div class="boundary-status" x-show="boundaryPending">
-          <span class="status-dot status-dot-warning"></span>
-          <span class="text-xs text-muted">Solving…</span>
-        </div>
-
-        <div class="step-row">
-          <template x-for="step in visibleSteps" :key="step.id">
-            <div class="step-slot">
-              <template x-if="step.id === 'yeast'">
-                <load src="./src/partials/step-yeast.html" />
-              </template>
-              <template x-if="step.id !== 'yeast'">
-                <load src="./src/partials/step-card.html" />
-              </template>
+        <div class="stage">
+          <div class="alert alert-warning" x-show="boundaryError">
+            <div class="alert-header">
+              <span class="alert-dot"></span>
+              <span x-text="'Solver error: ' + (boundaryError && boundaryError.code ? boundaryError.code : 'unknown')"></span>
             </div>
-          </template>
+            <p x-text="boundaryError && boundaryError.message"></p>
+          </div>
+
+          <div class="boundary-status" x-show="boundaryPending">
+            <span class="status-dot status-dot-warning"></span>
+            <span class="text-xs text-muted">Solving…</span>
+          </div>
+
+          <div class="step-row">
+            <template x-for="step in visibleSteps" :key="step.id">
+              <div class="step-slot">
+                <template x-if="step.id === 'yeast'">
+                  <load src="./src/partials/step-yeast.html" />
+                </template>
+                <template x-if="step.id !== 'yeast'">
+                  <load src="./src/partials/step-card.html" />
+                </template>
+              </div>
+            </template>
+          </div>
         </div>
 
-        <footer class="sticky-footer">
+        <footer class="app-footer">
           <button type="button" class="btn-outline" @click="prev()" :disabled="activeIndex === 0">
             ← Back
           </button>

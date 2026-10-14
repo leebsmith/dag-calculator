@@ -585,12 +585,26 @@ samp {
 .app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   padding: var(--space-6);
   gap: var(--space-5);
 }
 
 .app-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* The only scroll region: chrome (header/stepper/footer) stays pinned. */
+.stage {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
@@ -821,21 +835,19 @@ samp {
 }
 
 .step-row {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
   gap: var(--space-5);
 }
 
-/* The x-for wrapper must not generate a box, or `.step-card` stops being the
-   flex item (it owns `flex: 1 1 20rem`). */
+/* The x-for wrapper is the grid item (a plain block; no `display: contents`). */
 .step-slot {
-  display: contents;
+  display: block;
 }
 
 .step-card {
-  flex: 1 1 20rem;
-  min-width: 20rem;
+  container-type: inline-size;
+  height: 100%;
   background-color: var(--sys-surface-default);
   border: 1px solid var(--sys-border-subtle);
   border-radius: var(--radius-xl);
@@ -846,14 +858,11 @@ samp {
   gap: var(--space-4);
 }
 
-.sticky-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: var(--z-sticky);
+.app-footer {
+  flex: none;
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  margin-top: auto;
   padding: var(--space-4);
   background-color: var(--sys-surface-default);
   border: 1px solid var(--sys-border-subtle);
