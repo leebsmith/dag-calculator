@@ -80,6 +80,13 @@ test("choice inputs: default value and setRoot", () => {
   assert.equal(e.get("batch.topology"), "runoff_ratio");
 });
 
+test("mash.preset_id choice defaults to single_infusion and stores a preset", () => {
+  const e = engine();
+  assert.equal(e.get("mash.preset_id"), "single_infusion");
+  e.setRoot("mash.preset_id", "german_pils");
+  assert.equal(e.get("mash.preset_id"), "german_pils");
+});
+
 test("derived dough-in target honors the enabled-rest filter", () => {
   const e = engine();
   assert.equal(e.get("mash.dough_in_target_temp_c"), 67.0); // disabled 55 must be ignored

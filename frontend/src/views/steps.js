@@ -146,9 +146,9 @@ export const steps = [
   {
     id: "mash",
     slice: "mash",
-    title: "Mash",
-    subtitle: "Mash rests and strike-water temperatures",
-    partial: "./src/partials/step-card.html",
+    title: "Mash Profile",
+    subtitle: "Rest schedule, strike water temperature & fermentability",
+    partial: "./src/partials/step-mash.html",
     fields: [
       "mash.grain_temp_c",
       "mash.tun_initial_temp_c",

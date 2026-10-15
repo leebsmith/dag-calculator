@@ -40,6 +40,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `gypsum_form` | `GYPSUM_DIHYDRATE`, `GYPSUM_ANHYDROUS` |
 | `hop_unit` | `oz`, `g`, `ml` |
 | `malt_category` | `BASE`, `CRYSTAL`, `ROASTED`, `ACID` |
+| `mash_preset` | `single_infusion`, `custom`, `belgian_saison`, `belgian_tripel`, `german_pils`, `berliner_weisse`, `english_brown`, `american_pale` |
 | `mash_rest` | `dough_in`, `phytase`, `ferulic`, `beta_glucan`, `protein`, `beta_amylase`, `alpha_amylase`, `beta_alpha_amylase`, `mash_out` |
 | `ph_status` | `OPTIMAL`, `LOW`, `HIGH` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
@@ -159,6 +160,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grist.weighted_yield_fraction` | derived |
 | `mash.dough_in_target_temp_c` | derived |
 | `mash.grain_temp_c` | root |
+| `mash.preset_id` | choice |
 | `mash.rests` | collection |
 | `mash.strike_water_temp_base_c` | derived |
 | `mash.strike_water_temp_c` | derived |

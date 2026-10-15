@@ -392,6 +392,16 @@
       "beta_alpha_amylase",
       "mash_out"
     ],
+    "mash_preset": [
+      "single_infusion",
+      "custom",
+      "belgian_saison",
+      "belgian_tripel",
+      "german_pils",
+      "berliner_weisse",
+      "english_brown",
+      "american_pale"
+    ],
     "wet_hop_product_type": [
       "raw_whole_cones",
       "frozen_whole_cones",
@@ -1969,7 +1979,21 @@
           "ref": "rest.use_temp_c"
         },
         "where": {
-          "ref": "rest.enabled"
+          "op": "and",
+          "args": [
+            {
+              "ref": "rest.enabled"
+            },
+            {
+              "op": "ne",
+              "args": [
+                {
+                  "ref": "rest.rest_id"
+                },
+                "mash_out"
+              ]
+            }
+          ]
         }
       },
       "output": {
@@ -2352,6 +2376,11 @@
     "batch.dry_hops": {
       "kind": "collection",
       "item_schema": "dry_hop_row"
+    },
+    "mash.preset_id": {
+      "kind": "choice",
+      "taxonomy": "mash_preset",
+      "default": "single_infusion"
     }
   },
   "relations": [

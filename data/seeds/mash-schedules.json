@@ -3,8 +3,15 @@
     "id": "single-infusion",
     "name": "Single Infusion (67 °C)",
     "rests": [
-      { "rest_id": "dough_in", "enabled": true, "use_temp_c": 67.0, "duration_min": 0 },
-      { "rest_id": "mash_out", "enabled": false, "use_temp_c": 76.0, "duration_min": 10 }
+      { "rest_id": "dough_in", "enabled": true, "use_temp_c": null, "duration_min": 0 },
+      { "rest_id": "phytase", "enabled": false, "use_temp_c": null, "duration_min": null },
+      { "rest_id": "ferulic", "enabled": false, "use_temp_c": null, "duration_min": null },
+      { "rest_id": "beta_glucan", "enabled": false, "use_temp_c": null, "duration_min": null },
+      { "rest_id": "protein", "enabled": false, "use_temp_c": null, "duration_min": null },
+      { "rest_id": "beta_amylase", "enabled": false, "use_temp_c": null, "duration_min": null },
+      { "rest_id": "alpha_amylase", "enabled": false, "use_temp_c": null, "duration_min": null },
+      { "rest_id": "beta_alpha_amylase", "enabled": true, "use_temp_c": 67.0, "duration_min": 60 },
+      { "rest_id": "mash_out", "enabled": true, "use_temp_c": 76.0, "duration_min": 10 }
     ]
   }
 }

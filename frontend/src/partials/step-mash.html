@@ -1,0 +1,179 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <h2 class="card-title" x-text="activeStep.title"></h2>
+    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+  </div>
+
+  <div class="step-card-content">
+    <!-- Mash style preset -->
+    <div class="table-header-toolbar">
+      <div class="form-group">
+        <label for="mash-preset-selector" class="form-label text-xs">Mash Style Preset</label>
+        <select
+          id="mash-preset-selector"
+          class="form-select text-sm"
+          :value="mashPresetId"
+          @change="onMashPresetChange($event.target.value)"
+        >
+          <template x-for="(label, key) in mashPresetLabels" :key="key">
+            <option :value="key" x-text="label"></option>
+          </template>
+        </select>
+      </div>
+    </div>
+
+    <!-- Available rests (checkbox table) -->
+    <div class="synthesized-card">
+      <div class="synthesized-header">
+        <h3 class="synthesized-title">Available Rests</h3>
+        <button
+          type="button"
+          class="btn btn-secondary text-xs"
+          @click="openMashModal()"
+          :disabled="!hasOptionalRestsEnabled"
+        >
+          Configure Rests
+        </button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Rest</th>
+              <th>Range (<span x-text="temperatureUnit"></span>)</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="rest in canonicalMashRests" :key="rest.rest_id">
+              <tr>
+                <td>
+                  <label class="mash-rest-toggle">
+                    <input
+                      type="checkbox"
+                      :checked="rest.enabled"
+                      :disabled="rest.rest_id === 'dough_in' || rest.rest_id === 'mash_out'"
+                      @change="toggleMashRest(rest.rest_id, $event.target.checked)"
+                    />
+                    <span x-text="rest.name"></span>
+                  </label>
+                </td>
+                <td class="text-xs text-muted tabular-nums" x-text="restTempRangeDisplay(rest.rest_id) || '—'"></td>
+                <td class="text-xs text-muted" x-text="rest.purpose"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mash summary + metric strip -->
+    <div class="synthesized-card">
+      <div class="synthesized-header">
+        <h3 class="synthesized-title">Mash Summary</h3>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Rest</th>
+              <th>Use Temp (<span x-text="temperatureUnit"></span>)</th>
+              <th>Duration</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="rest in enabledMashRests" :key="rest.rest_id">
+              <tr>
+                <td x-text="restName(rest.rest_id)"></td>
+                <td class="tabular-nums">
+                  <template x-if="rest.rest_id === 'dough_in'">
+                    <span x-text="doughInDisplay || '—'"></span>
+                  </template>
+                  <template x-if="rest.rest_id !== 'dough_in'">
+                    <span x-text="restUseTempDisplay(rest) || '—'"></span>
+                  </template>
+                </td>
+                <td class="tabular-nums">
+                  <template x-if="rest.duration_min != null">
+                    <span x-text="rest.duration_min + ' min'"></span>
+                  </template>
+                  <template x-if="rest.duration_min == null">
+                    <span class="text-muted">—</span>
+                  </template>
+                </td>
+                <td class="text-xs text-muted" x-text="restPurpose(rest.rest_id)"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="metric-strip">
+        <div class="metric-cell">
+          <span class="metric-cell-label">Grain Temperature</span>
+          <div class="metric-cell-value-wrap">
+            <input
+              type="number"
+              step="0.1"
+              class="form-input tabular-nums"
+              :value="mashField('mash.grain_temp_c').display"
+              @input="edit(mashField('mash.grain_temp_c'), $event.target.value)"
+              @change="commitField(mashField('mash.grain_temp_c'))"
+            />
+            <span class="metric-cell-unit" x-text="mashField('mash.grain_temp_c').unit"></span>
+          </div>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Mash Tun Temperature</span>
+          <div class="metric-cell-value-wrap">
+            <input
+              type="number"
+              step="0.1"
+              class="form-input tabular-nums"
+              :value="mashField('mash.tun_initial_temp_c').display"
+              @input="edit(mashField('mash.tun_initial_temp_c'), $event.target.value)"
+              @change="commitField(mashField('mash.tun_initial_temp_c'))"
+            />
+            <span class="metric-cell-unit" x-text="mashField('mash.tun_initial_temp_c').unit"></span>
+          </div>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Strike Water Temp</span>
+          <div class="metric-cell-value-wrap">
+            <span class="metric-cell-val" x-text="strikeWaterTempDisplay() || '—'"></span>
+            <span class="metric-cell-unit" x-text="mashField('mash.strike_water_temp_c').unit"></span>
+          </div>
+          <template x-if="Number(mashField('mash.strike_water_tun_offset_c').value) > 0">
+            <span
+              class="text-xs text-muted"
+              x-text="'incl. tun ' + mashField('mash.strike_water_tun_offset_c').display + ' ' + mashField('mash.strike_water_tun_offset_c').unit"
+            ></span>
+          </template>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Total Mash Time</span>
+          <div class="metric-cell-value-wrap">
+            <span class="metric-cell-val" x-text="totalMashTimeMin"></span>
+            <span class="metric-cell-unit">min</span>
+          </div>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Limit of Attenuation</span>
+          <div class="metric-cell-value-wrap">
+            <span class="metric-cell-val" x-text="limitOfAttenuationDisplay() || '—'"></span>
+            <span class="metric-cell-unit">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <load src="src/partials/mash-rests-modal.html" />
+</section>

@@ -1488,6 +1488,19 @@ samp {
   color: var(--sys-text-secondary);
 }
 
+/* --- Mash profile card --- */
+
+.mash-rest-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.mash-rest-toggle input[type="checkbox"] {
+  accent-color: var(--sys-color-action-primary);
+}
+
 /* --- Tri-state control --- */
 
 .tri-state-group {
