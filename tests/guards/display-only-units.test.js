@@ -33,10 +33,7 @@ test("A8b: unit mode converts display; writes store base", () => {
 
   const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
   assert.ok(Math.abs(strike.value - 76.04190476190476) < 1e-6, "canonical value stays base (°C)");
-  assert.ok(
-    Math.abs(Number(strike.display) - (76.04190476190476 * 1.8 + 32)) < 0.01,
-    "display converts to °F"
-  );
+  assert.equal(strike.display, "168.9", "display converts to °F at 1 decimal");
 
   // The input renders in °F, so a typed 68 is converted back to base (°C).
   app.edit(app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c"), "68");

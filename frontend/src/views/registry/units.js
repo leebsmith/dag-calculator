@@ -13,8 +13,8 @@
 // dimensions whose units share one precision (e.g. color).
 
 export const UNIT_DIMENSIONS = [
-  { id: "temperature", group: "Base", label: "Temperature", units: [["degC", "°C"], ["degF", "°F"]] },
-  { id: "temperature_delta", group: "Base", label: "Temperature Δ", units: [["dC", "Δ°C"], ["dF", "Δ°F"]] },
+  { id: "temperature", group: "Base", label: "Temperature", units: [["degC", "°C", 1], ["degF", "°F", 1]] },
+  { id: "temperature_delta", group: "Base", label: "Temperature Δ", units: [["dC", "Δ°C", 1], ["dF", "Δ°F", 1]] },
   { id: "time", group: "Base", label: "Time", units: [["min", "min"], ["hr", "hr"], ["day", "day"]] },
   { id: "volume", group: "Base", label: "Volume", units: [["L", "L", 1], ["gal", "gal", 1], ["qt", "qt", 1], ["ml", "mL", 1]] },
   { id: "mass", group: "Base", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["oz", "oz"], ["g", "g"]] },
