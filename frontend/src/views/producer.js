@@ -8,7 +8,7 @@
 import { resolveReference } from "../engine/paths.js";
 import { fromBase } from "../engine/units.js";
 import { rendererFor } from "./renderers.js";
-import { UNIT_DIMENSIONS, UNIT_SYMBOLS } from "./registry/units.js";
+import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "./registry/units.js";
 
 function defaultControl(node) {
   if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
@@ -86,7 +86,7 @@ export function resolveCollectionColumns(artifact, registry, collectionId, entry
       dimension: spec.dimension ?? null,
       displayUnit: unitId,
       unit: shownUnitId ? UNIT_SYMBOLS[spec.dimension]?.[shownUnitId] ?? shownUnitId : null,
-      decimals: meta.decimals ?? dimDef?.decimals ?? null,
+      decimals: meta.decimals ?? unitDecimals(spec.dimension, shownUnitId),
       editable: inputs ? inputs.has(c) : true,
     };
   });
@@ -223,7 +223,7 @@ function cellDisplay(artifact, dimension, value, unitMode, nl) {
   if (!dimDef) return { display: formatValue(value), unit: null };
   const unitId = unitMode[dimension] ?? dimDef.default ?? dimDef.units[0][0];
   const shown = fromBase(artifact, dimension, unitId, value, nl);
-  const decimals = dimDef.decimals ?? null;
+  const decimals = unitDecimals(dimension, unitId);
   const display = decimals != null ? shown.toFixed(decimals) : formatValue(shown);
   const symbol = UNIT_SYMBOLS[dimension]?.[unitId] ?? unitId;
   return { display, unit: symbol };
@@ -375,8 +375,10 @@ export function valuate(fields, engine, ctx = {}) {
       // the dimension's base-unit symbol (so a fraction reads "×1", not blank).
       const fallbackSymbol =
         !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[baseUnitId] ?? null : null;
-      // Display precision: registry override → dimension default → 3-decimal.
-      const decimals = field.decimals ?? dimDef?.decimals ?? null;
+      // Display precision: registry override → unit-level → dimension fallback.
+      // A null `unitId` (no preference set) still displays the base unit, so
+      // resolve precision against the effective unit the value is shown in.
+      const decimals = field.decimals ?? unitDecimals(field.dimension, unitId ?? baseUnitId);
       const display =
         decimals != null && typeof shown === "number" ? shown.toFixed(decimals) : formatValue(shown);
       const out = {

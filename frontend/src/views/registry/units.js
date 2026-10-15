@@ -5,14 +5,20 @@
 // `group` clusters the master menu into columns: "Base" = single-reference
 // quantities, "Derived" = compound/rate dimensions. Every dimension with
 // alternate units must appear here (see tests/guards/unit-menu-coverage.test.js).
+//
+// Unit entries are `[id, symbol, decimals?]`. `decimals` is the per-UNIT display
+// precision (e.g. SG needs 3, °P needs 1) — precision is a property of the unit,
+// not the dimension, because switching units on the same field changes how many
+// digits are meaningful. A dimension-level `decimals` remains a fallback for
+// dimensions whose units share one precision (e.g. color).
 
 export const UNIT_DIMENSIONS = [
   { id: "temperature", group: "Base", label: "Temperature", units: [["degC", "°C"], ["degF", "°F"]] },
   { id: "temperature_delta", group: "Base", label: "Temperature Δ", units: [["dC", "Δ°C"], ["dF", "Δ°F"]] },
   { id: "time", group: "Base", label: "Time", units: [["min", "min"], ["hr", "hr"], ["day", "day"]] },
-  { id: "volume", group: "Base", label: "Volume", units: [["L", "L"], ["gal", "gal"], ["qt", "qt"], ["ml", "mL"]] },
+  { id: "volume", group: "Base", label: "Volume", units: [["L", "L", 1], ["gal", "gal", 1], ["qt", "qt", 1], ["ml", "mL", 1]] },
   { id: "mass", group: "Base", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["oz", "oz"], ["g", "g"]] },
-  { id: "gravity", group: "Base", label: "Gravity", default: "Plato", units: [["SG", "SG"], ["Plato", "°P"]] },
+  { id: "gravity", group: "Base", label: "Gravity", default: "Plato", units: [["SG", "SG", 3], ["Plato", "°P", 1]] },
   { id: "grain_color", group: "Base", label: "Grain Color", default: "EBC", decimals: 1, units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
   { id: "beer_color", group: "Base", label: "Beer Color", default: "EBC", decimals: 1, units: [["SRM", "SRM"], ["EBC", "EBC"]] },
   { id: "percentage", group: "Base", label: "Percentage", default: "pct", units: [["fraction", "×1"], ["pct", "%"]] },
@@ -24,8 +30,17 @@ export const UNIT_DIMENSIONS = [
 ];
 
 export const UNIT_SYMBOLS = Object.fromEntries(
-  UNIT_DIMENSIONS.map((d) => [d.id, Object.fromEntries(d.units)])
+  UNIT_DIMENSIONS.map((d) => [d.id, Object.fromEntries(d.units.map(([id, sym]) => [id, sym]))])
 );
+
+// Per-unit display precision: the unit's own `decimals`, else the dimension's
+// fallback, else null (the caller trims trailing zeros via `formatValue`).
+export function unitDecimals(dimensionId, unitId) {
+  const dim = UNIT_DIMENSIONS.find((d) => d.id === dimensionId);
+  if (!dim) return null;
+  const unit = dim.units.find(([id]) => id === unitId);
+  return unit?.[2] ?? dim.decimals ?? null;
+}
 
 // UNIT_DIMENSIONS grouped for the master menu's columns, preserving order.
 export const UNIT_GROUPS = (() => {

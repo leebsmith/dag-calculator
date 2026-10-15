@@ -100,8 +100,8 @@
                           <span>—</span>
                         </template>
                         <template x-if="c.id === f.columns[f.columns.length - 1].id">
-                          <span class="text-xs text-muted" x-show="row.hint" x-text="' (' + row.hint + ')'"></span>
-                          <span class="text-xs text-muted" x-show="row.note && row.note.show" x-text="' (' + row.note.label + ': ' + row.note.display + (row.note.unit ? ' ' + row.note.unit : '') + ')'"></span>
+                          <div class="text-xs text-muted" x-show="row.hint" x-text="'(' + row.hint + ')'"></div>
+                          <div class="text-xs text-muted" x-show="row.note && row.note.show" x-text="'(' + row.note.label + ': ' + row.note.display + (row.note.unit ? ' ' + row.note.unit : '') + ')'"></div>
                         </template>
                       </td>
                     </template>

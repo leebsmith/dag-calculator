@@ -72,7 +72,7 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
   const waterPlan = app.fieldsBySlice.batch.find((f) => f.id === "water-plan");
   assert.ok(waterPlan, "water-plan table present");
   const totalRow = waterPlan.rows.find((r) => r.cells.label.text === "Total Water Used");
-  assert.equal(totalRow.cells.value.display, "28");
+  assert.equal(totalRow.cells.value.display, "28.0");
   assert.equal(totalRow.cells.value.unit, "L");
 });
 
