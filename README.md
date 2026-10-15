@@ -19,7 +19,7 @@ backend with Firebase auth and Firestore persistence.
 | [`frontend/`](frontend/) | engine, views, adapters, stores (Vite + Alpine) |
 | [`backend/`](backend/) | FastAPI JSON seam, solvers, auth, persistence |
 | [`tests/`](tests/) | frontend engine/conformance/guards + backend pytest |
-| [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate |
+| [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate, node reference |
 | [`docs/engine.md`](docs/engine.md) | **living** — how the reference engine works (data structures + interpreter) |
 | [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
@@ -71,6 +71,7 @@ discipline. After any change to `data/artifact.json`:
    | invariant / model rule | `semantics.md` |
    | `schema_version` bump | `grammar.md` §5 (inventory is auto) |
    | engine behavior | `docs/engine.md` |
+   | what a node id exposes | `node-reference.md` |
    | taxonomy | wherever it's used (`domain-equations.md` / `seed-substrate.md`) |
 
 4. **Commit the prose with the artifact change** — a model change isn't done

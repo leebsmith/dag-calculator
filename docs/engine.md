@@ -139,6 +139,9 @@ engine.setCollection(id, rows)
 engine.topoOrder  adjacency  dependents
 ```
 
+> For a catalog of everything resolvable from a single node id (by accessor),
+> see `docs/dag-artifacts/node-reference.md`.
+
 ### The boundary seam
 
 The engine is synchronous and pure, but boundary *realizations* may be remote.

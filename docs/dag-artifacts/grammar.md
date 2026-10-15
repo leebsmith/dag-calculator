@@ -38,6 +38,9 @@ boundary. For example, `solver.batch.mash_thickness_l_per_kg` is the
 `equipment.mash_tun_specific_heat` is the `mash_tun_specific_heat` field of the
 `equipment.profile` selection's schema.
 
+> For everything resolvable from a node id at runtime (valuation, domain state,
+> topology, provenance, view metadata), see `node-reference.md`.
+
 ---
 
 ## 2. Node kinds (six)
