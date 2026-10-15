@@ -11,7 +11,7 @@
 import { toBase } from "../engine/units.js";
 
 // Metric field key -> imperial field key. Percentage fields
-// (conversion_efficiency, shrinkage_pct) and identity fields (id/name/
+// (nominal_conversion_efficiency, shrinkage_pct) and identity fields (id/name/
 // description) are unitless and intentionally absent: they pass through as-is.
 const IMPERIAL_KEYS = {
   max_kettle_volume_l: "max_kettle_volume_gal",

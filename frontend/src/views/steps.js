@@ -15,7 +15,7 @@ export const steps = [
       "equipment.mash_tun_specific_heat",
       "equipment.max_hlt_volume_l",
       "equipment.nominal_boil_off_rate_l_per_hr",
-      "equipment.conversion_efficiency",
+      "equipment.nominal_conversion_efficiency",
       "equipment.shrinkage_pct",
     ],
   },
@@ -81,6 +81,7 @@ export const steps = [
       "batch.hlt_starting_volume_l",
       "batch.boil_time_min",
       "batch.boil_off_rate_l_per_hr",
+      "batch.conversion_efficiency",
       "batch.apparent_attenuation",
       {
         table: "derived-anchors",

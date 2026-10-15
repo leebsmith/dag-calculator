@@ -46,7 +46,7 @@ export function buildBatchRequest(engine) {
     v_kettle_dead: engine.resolve("equipment.kettle_dead_space_l"),
     delta_v_evap: engine.resolve("batch.delta_v_evap"),
     v_dead: engine.resolve("equipment.mash_dead_space_l"),
-    eta_conv: engine.resolve("equipment.conversion_efficiency"),
+    eta_conv: engine.resolve("batch.conversion_efficiency"),
     f_shrink: engine.resolve("equipment.shrinkage_pct"),
     hlt_starting_volume_l: engine.resolve("batch.hlt_starting_volume_l"),
     hlt_dead_space_l: engine.resolve("equipment.hlt_dead_space_l"),

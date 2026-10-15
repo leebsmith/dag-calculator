@@ -1002,7 +1002,7 @@
           "gt": 0
         }
       },
-      "conversion_efficiency": {
+      "nominal_conversion_efficiency": {
         "dimension": "percentage",
         "domain": {
           "gt": 0,
@@ -1357,6 +1357,17 @@
         "gt": 0
       }
     },
+    "batch.conversion_efficiency": {
+      "kind": "root",
+      "dimension": "percentage",
+      "default": {
+        "ref": "equipment.nominal_conversion_efficiency"
+      },
+      "domain": {
+        "gt": 0,
+        "lte": 1
+      }
+    },
     "batch.topology": {
       "kind": "choice",
       "taxonomy": "topology",
@@ -1632,7 +1643,7 @@
         "v_kettle_dead": "equipment.kettle_dead_space_l",
         "delta_v_evap": "batch.delta_v_evap",
         "v_dead": "equipment.mash_dead_space_l",
-        "eta_conv": "equipment.conversion_efficiency",
+        "eta_conv": "batch.conversion_efficiency",
         "f_shrink": "equipment.shrinkage_pct",
         "hlt_starting_volume_l": "batch.hlt_starting_volume_l",
         "hlt_dead_space_l": "equipment.hlt_dead_space_l",

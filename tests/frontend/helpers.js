@@ -25,7 +25,7 @@ export const EQUIPMENT = {
   hlt_transfer_loss_l: 0.5,
   nominal_boil_off_rate_l_per_hr: 3.0,
   grain_absorption_factor_l_per_kg: 0.96,
-  conversion_efficiency: 0.9,
+  nominal_conversion_efficiency: 0.9,
   shrinkage_pct: 0.04,
   hlt_coil_floor_l: 4.0,
   mash_tun_specific_heat: 0.12,

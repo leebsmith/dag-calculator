@@ -63,5 +63,8 @@ test("A6: selection-seeded root defaults are the documented set", () => {
     const r = resolveReference(a, d.ref);
     if (r && a.nodes[r.nodeId]?.kind === "selection") seeded.push(id);
   }
-  assert.deepEqual(seeded.sort(), ["batch.boil_off_rate_l_per_hr", "batch.hlt_starting_volume_l"]);
+  assert.deepEqual(
+    seeded.sort(),
+    ["batch.boil_off_rate_l_per_hr", "batch.conversion_efficiency", "batch.hlt_starting_volume_l"]
+  );
 });

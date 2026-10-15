@@ -53,7 +53,7 @@ const BATCH_VALUES = {
   "equipment.kettle_dead_space_l": 0.0,
   "batch.delta_v_evap": 3.0,
   "equipment.mash_dead_space_l": 0.0,
-  "equipment.conversion_efficiency": 0.95,
+  "batch.conversion_efficiency": 0.95,
   "equipment.shrinkage_pct": 0.04,
   "batch.hlt_starting_volume_l": 25.0,
   "equipment.hlt_dead_space_l": 0.0,

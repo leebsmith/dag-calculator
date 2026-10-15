@@ -19,7 +19,7 @@ test("metric profile passes through unchanged", () => {
         description: "30 L rig",
         max_hlt_volume_l: 30,
         mash_tun_mass_kg: 6.5,
-        conversion_efficiency: 0.9,
+        nominal_conversion_efficiency: 0.9,
       },
     },
   };
@@ -39,7 +39,7 @@ test("imperial profile converts to metric and drops imperial keys", () => {
         grain_absorption_factor_qt_per_lb: 0.4601,
         mash_tun_mass_lb: 14.33,
         mash_tun_specific_heat_btu_per_lb_f: 0.12,
-        conversion_efficiency: 0.9,
+        nominal_conversion_efficiency: 0.9,
         shrinkage_pct: 0.04,
       },
     },
@@ -57,7 +57,7 @@ test("imperial profile converts to metric and drops imperial keys", () => {
   approx(out.mash_tun_specific_heat, 0.12); // BTU/(lb·°F) == kcal/(kg·°C)
 
   // Unitless fields are untouched.
-  assert.equal(out.conversion_efficiency, 0.9);
+  assert.equal(out.nominal_conversion_efficiency, 0.9);
   assert.equal(out.shrinkage_pct, 0.04);
 
   // No imperial-suffixed keys leak into the metric output.
