@@ -36,7 +36,7 @@
       "mash_dead_space_gal": 0.25,
       "mash_transfer_loss_gal": 0.375,
       "kettle_dead_space_gal": 0.33,
-      "kettle_transfer_loss_gal": 0.25,
+      "kettle_transfer_loss_gal": 0,
       "trub_loss_gal": 0.45,
       "hlt_dead_space_gal": 0.33,
       "hlt_transfer_loss_gal": 0.25,
