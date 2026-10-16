@@ -230,7 +230,7 @@ def cutaia_abv(oe_plato: float, apparent_attenuation: float) -> float:
 
     ``ae_plato = oe_plato * (1 - AA)``
     ``abw = (0.372 + 0.00357 * oe_plato) * (oe_plato - ae_plato)``
-    ``abv = abw * (fg_sg / 0.791)``
+    ``abv = abw * (fg_sg / 0.7907)``
 
     See ``unified-treatment.md`` §6.
     """
@@ -242,7 +242,7 @@ def cutaia_abv(oe_plato: float, apparent_attenuation: float) -> float:
     # Convert AE to specific gravity for volumetric expansion
     fg_sg = asbc_plato_to_sg(ae_plato)
 
-    return abw * (fg_sg / 0.791)
+    return abw * (fg_sg / 0.7907)
 
 
 def max_achievable_abv(apparent_attenuation: float) -> float:
