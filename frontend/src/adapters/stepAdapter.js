@@ -881,7 +881,6 @@ export function createStepApp(options = {}) {
           x: sx(this.styleSafestPoint.oe).toFixed(2),
           y: sy(this.styleSafestPoint.ae).toFixed(2),
         },
-        radius: ((this.styleSafestPoint.radius / Math.max(spanX, spanY)) * (size - 2 * pad)).toFixed(2),
       };
     },
 

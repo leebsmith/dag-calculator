@@ -1644,32 +1644,43 @@ samp {
    ========================================================================== */
 
 .extract-picker {
-  display: flex;
-  gap: var(--space-3);
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: auto 14rem;
+  grid-template-rows: 14rem auto;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: start;
   margin-top: var(--space-3);
 }
 
-.extract-slider {
-  width: 100%;
-}
-
 .extract-slider-ae {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
   width: auto;
   writing-mode: vertical-lr;
   direction: rtl;
 }
 
 .extract-preview {
-  flex: 1;
-  height: 10rem;
+  grid-column: 2;
+  grid-row: 1;
+  width: 14rem;
+  height: 14rem;
   border: 1px solid var(--sys-border-subtle);
   border-radius: var(--radius-md);
   background-color: var(--sys-surface-subtle);
 }
 
+.extract-slider-oe {
+  grid-column: 2;
+  grid-row: 2;
+  width: 14rem;
+}
+
 .extract-region {
-  fill: url("#extract-heat");
+  fill: var(--sys-color-action-primary);
+  fill-opacity: 0.1;
   stroke: var(--sys-color-action-primary);
   stroke-width: 0.75;
   stroke-linejoin: round;
@@ -1686,21 +1697,6 @@ samp {
   fill: var(--sys-color-action-primary);
   stroke: var(--sys-surface-default);
   stroke-width: 1;
-}
-
-.extract-heat-safe {
-  stop-color: var(--sys-color-success-accent);
-  stop-opacity: 0.5;
-}
-
-.extract-heat-warn {
-  stop-color: var(--sys-color-warning-accent);
-  stop-opacity: 0.4;
-}
-
-.extract-heat-risk {
-  stop-color: var(--sys-color-danger-accent);
-  stop-opacity: 0.35;
 }
 
 .extract-readouts {

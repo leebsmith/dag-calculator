@@ -76,6 +76,14 @@ test("the safest point has at least the centroid's margin", () => {
   assert.ok(safest.radius >= edgeMargin(v, c.oe, c.ae) - 1e-6);
 });
 
+test("the safest point is central, not an end of the max-margin ridge", () => {
+  const v = feasibleVertices(ENVELOPE);
+  const safest = chebyshevCenter(v);
+  const xs = v.map(([x]) => x);
+  const midpoint = (Math.min(...xs) + Math.max(...xs)) / 2;
+  assert.ok(Math.abs(safest.oe - midpoint) < 0.5);
+});
+
 test("extractFromTarget inverts targetFromExtract", () => {
   const c = styleCentroid(BLACK_IPA);
   const t = targetFromExtract(c.oe, c.ae);

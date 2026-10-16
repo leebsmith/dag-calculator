@@ -221,49 +221,42 @@ export function edgeMargin(vertices, oe, ae) {
   return margin;
 }
 
-// The region's pole of inaccessibility (max-min-distance to the boundary) via a
-// coarse grid plus local refinement — the "safest" target and the safety radius.
+// The region's pole of inaccessibility (max-min-distance to the boundary).
+// For elongated/convex regions the max-margin set can be a flat ridge, so
+// among near-maximal points we return the one nearest the area centroid — a
+// central "safest point" rather than an arbitrary end of the ridge.
 export function chebyshevCenter(vertices) {
   if (vertices.length < 3) return null;
+  const centroid = polygonCentroid(vertices);
+  if (!centroid) return null;
   const [xMin, xMax] = oeExtent(vertices);
   const [yMin, yMax] = aeExtent(vertices);
-  const span = Math.max(xMax - xMin, yMax - yMin) || 1;
-  const grid = 12;
-  let oe = null;
-  let ae = null;
-  let best = -Infinity;
+  const grid = 60;
+  const points = [];
+  let bestMargin = -Infinity;
   for (let i = 0; i <= grid; i += 1) {
     for (let j = 0; j <= grid; j += 1) {
-      const cx = xMin + ((xMax - xMin) * i) / grid;
-      const cy = yMin + ((yMax - yMin) * j) / grid;
-      if (!pointInRegion(vertices, cx, cy)) continue;
-      const margin = edgeMargin(vertices, cx, cy);
-      if (margin > best) {
-        best = margin;
-        oe = cx;
-        ae = cy;
-      }
+      const oe = xMin + ((xMax - xMin) * i) / grid;
+      const ae = yMin + ((yMax - yMin) * j) / grid;
+      if (!pointInRegion(vertices, oe, ae)) continue;
+      const margin = edgeMargin(vertices, oe, ae);
+      points.push([oe, ae, margin]);
+      if (margin > bestMargin) bestMargin = margin;
     }
   }
-  if (oe === null) return null;
-  let step = span / grid;
-  for (let iter = 0; iter < 40 && step > 1e-4; iter += 1) {
-    let improved = false;
-    for (const [dx, dy] of [[-step, 0], [step, 0], [0, -step], [0, step]]) {
-      const cx = oe + dx;
-      const cy = ae + dy;
-      if (!pointInRegion(vertices, cx, cy)) continue;
-      const margin = edgeMargin(vertices, cx, cy);
-      if (margin > best) {
-        best = margin;
-        oe = cx;
-        ae = cy;
-        improved = true;
-      }
+  if (!points.length) return null;
+  const tolerance = Math.max(1e-4, bestMargin * 1e-3);
+  let chosen = null;
+  let bestDistance = Infinity;
+  for (const [oe, ae, margin] of points) {
+    if (margin < bestMargin - tolerance) continue;
+    const distance = Math.hypot(oe - centroid[0], ae - centroid[1]);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      chosen = [oe, ae];
     }
-    if (!improved) step /= 2;
   }
-  return { oe, ae, radius: best };
+  return { oe: chosen[0], ae: chosen[1], radius: bestMargin };
 }
 
 // The target extract point and its derived (Plato-space) AA and ABV.

@@ -107,10 +107,15 @@ geometrically (no process assumptions):
 - `d` = distance from the point to the region boundary (OE/AE °P, `edgeMargin`).
 - `R` = the region's max in-region margin (`chebyshevCenter`, the pole of
   inaccessibility = the "safest" point).
-- **Style safety** = `d / R ∈ [0,1]` — 1 at the safest point, 0 on the boundary;
-  the SVG preview heatmap colours by it (safe core → risky rim).
+- **Style safety** = `d / R ∈ [0,1]` — 1 at the safest point, 0 on the boundary.
 - **Nearest limit** = the six style limits' smallest *normalized* headroom
   (`headroom / range`), reported in native units (OG/FG in SG, ABV in %).
+
+The preview is a plain polygon (no colour heatmap: a distance fill mostly
+re-encodes the marker position and misleads on elongated regions), with the
+picked marker and the safest point. For elongated/convex regions the max-margin
+set is a flat *ridge*, so `chebyshevCenter` returns the ridge point nearest the
+area centroid — a central "safest point" rather than an arbitrary ridge end.
 
 Scope: gravity/ABV only — IBU/SRM are not controlled by this picker. A true
 out-of-style *probability* additionally needs process variance (conversion

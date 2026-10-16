@@ -110,11 +110,6 @@
             <p x-text="boundaryError && boundaryError.message"></p>
           </div>
 
-          <div class="boundary-status" x-show="boundaryPending">
-            <span class="status-dot status-dot-warning"></span>
-            <span class="text-xs text-muted">Solving…</span>
-          </div>
-
           <!-- Step body: a definite-width nav rail + the active step card. -->
           <div class="step-body">
             <nav class="step-rail" aria-label="Step navigation">
@@ -170,6 +165,10 @@
         <footer class="app-footer">
           <span class="footer-step" x-text="activeStep.title"></span>
           <span class="footer-step-count" x-text="'Step ' + (activeIndex + 1) + ' of ' + steps.length"></span>
+          <span class="boundary-status" x-show="boundaryPending">
+            <span class="status-dot status-dot-warning"></span>
+            <span class="text-xs text-muted">Solving…</span>
+          </span>
           <span class="footer-violations" x-show="violationCount > 0">
             <span class="status-dot status-dot-error"></span>
             <span x-text="violationCount + ' violation(s)'"></span>
