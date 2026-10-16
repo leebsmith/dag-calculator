@@ -857,9 +857,10 @@ export function createStepApp(options = {}) {
     },
 
     // SVG geometry for the preview: the region polygon plus the marker/safest
-    // points. The region is drawn at its true aspect ratio, sized so its longer
-    // side spans REGION_REM, with PAD_REM of padding on the preview; the shorter
-    // side (and hence the preview / vertical slider) is clamped to MIN_REM.
+    // points, in pixel space (no viewBox — an SVG `viewBox` binding is defeated
+    // by HTML attribute lowercasing). The region is drawn at its true aspect
+    // ratio, its longer side spanning REGION_PX, with PAD_PX around it; the
+    // shorter side (and the vertical slider) is clamped to MIN_PX.
     get stylePreview() {
       const region = this.styleRegion;
       if (region.length < 3 || !this.styleExtract || !this.styleSafestPoint) return null;
@@ -871,24 +872,26 @@ export function createStepApp(options = {}) {
       const yMax = Math.max(...ys);
       const spanX = xMax - xMin || 1;
       const spanY = yMax - yMin || 1;
-      const REGION_REM = 13.75;
-      const PAD_REM = 1;
-      const MIN_REM = 4;
-      const scale = REGION_REM / Math.max(spanX, spanY); // rem per extract unit
-      const padU = PAD_REM / scale;
-      const vbW = spanX + 2 * padU;
-      const vbH = spanY + 2 * padU;
-      const sx = (x) => padU + (x - xMin);
-      const sy = (y) => vbH - padU - (y - yMin);
+      const REGION_PX = 220;
+      const PAD_PX = 16;
+      const MIN_PX = 64;
+      const scale = REGION_PX / Math.max(spanX, spanY);
+      const regionW = spanX * scale;
+      const regionH = spanY * scale;
+      const width = Math.max(regionW + 2 * PAD_PX, MIN_PX);
+      const height = Math.max(regionH + 2 * PAD_PX, MIN_PX);
+      const xOffset = (width - regionW) / 2;
+      const yOffset = (height - regionH) / 2;
+      const sx = (x) => xOffset + (x - xMin) * scale;
+      const sy = (y) => height - yOffset - (y - yMin) * scale;
       return {
-        viewBox: `0 0 ${vbW.toFixed(3)} ${vbH.toFixed(3)}`,
-        width: `${Math.max(spanX * scale + 2 * PAD_REM, MIN_REM).toFixed(2)}rem`,
-        height: `${Math.max(spanY * scale + 2 * PAD_REM, MIN_REM).toFixed(2)}rem`,
-        polygon: region.map(([x, y]) => `${sx(x).toFixed(2)},${sy(y).toFixed(2)}`).join(" "),
-        marker: { x: sx(this.styleExtract.oe).toFixed(2), y: sy(this.styleExtract.ae).toFixed(2) },
+        width,
+        height,
+        polygon: region.map(([x, y]) => `${sx(x).toFixed(1)},${sy(y).toFixed(1)}`).join(" "),
+        marker: { x: sx(this.styleExtract.oe).toFixed(1), y: sy(this.styleExtract.ae).toFixed(1) },
         safest: {
-          x: sx(this.styleSafestPoint.oe).toFixed(2),
-          y: sy(this.styleSafestPoint.ae).toFixed(2),
+          x: sx(this.styleSafestPoint.oe).toFixed(1),
+          y: sy(this.styleSafestPoint.ae).toFixed(1),
         },
       };
     },

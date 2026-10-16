@@ -175,9 +175,8 @@
           />
           <svg
             class="extract-preview"
-            :viewBox="stylePreview.viewBox"
-            :style="'width:' + stylePreview.width + ';height:' + stylePreview.height"
-            preserveAspectRatio="xMidYMid meet"
+            :width="stylePreview.width"
+            :height="stylePreview.height"
           >
             <polygon class="extract-region" :points="stylePreview.polygon" />
             <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
