@@ -173,7 +173,12 @@
             @input="setStyleTargetAe($event.target.value)"
             aria-label="Apparent extract (degrees Plato)"
           />
-          <svg class="extract-preview" :viewBox="stylePreview.viewBox" preserveAspectRatio="xMidYMid meet">
+          <svg
+            class="extract-preview"
+            :viewBox="stylePreview.viewBox"
+            :style="'width:' + stylePreview.width + ';height:' + stylePreview.height"
+            preserveAspectRatio="xMidYMid meet"
+          >
             <polygon class="extract-region" :points="stylePreview.polygon" />
             <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
             <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />

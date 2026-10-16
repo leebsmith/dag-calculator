@@ -84,6 +84,25 @@ test("resetStyleTarget returns to the envelope centroid", () => {
   assert.ok(Math.abs(app.styleExtract.oe - centroidOe) < 1e-6);
 });
 
+test("the preview preserves the region's aspect ratio", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21B Black IPA");
+  app.compute();
+
+  const points = app.stylePreview.polygon.split(" ").map((p) => p.split(",").map(Number));
+  const xs = points.map(([x]) => x);
+  const ys = points.map(([, y]) => y);
+  const boxAspect = (Math.max(...xs) - Math.min(...xs)) / (Math.max(...ys) - Math.min(...ys));
+
+  const region = app.styleRegion;
+  const rxs = region.map(([x]) => x);
+  const rys = region.map(([, y]) => y);
+  const regionAspect = (Math.max(...rxs) - Math.min(...rxs)) / (Math.max(...rys) - Math.min(...rys));
+
+  assert.ok(Math.abs(boxAspect - regionAspect) < 0.02);
+});
+
 test("editing the envelope reshapes the region and keeps the target in-region", () => {
   const app = createStepApp();
   app.boot();
