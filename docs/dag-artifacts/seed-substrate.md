@@ -82,7 +82,8 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 
 ### 2.6 `style`
 
-BJCP (2015) beer styles, keyed by the BJCP style number (`1A`…`34C`).
+BJCP (2021) beer styles, keyed by the BJCP style number (`1A`…`34C`), plus the
+six Specialty IPA sub-types keyed `21B <Name>` (e.g. `21B Black IPA`).
 
 | Field | Dimension | Domain |
 |---|---|---|
@@ -95,7 +96,11 @@ BJCP (2015) beer styles, keyed by the BJCP style number (`1A`…`34C`).
 | `abv_min`, `abv_max` | abv | `gte 0` (optional) |
 
 Specialty styles that define no numerical ranges omit the stat fields. The seed
-is normalized from a BJCP export by `scripts/build-styles-seed.mjs`.
+is merged from two raw sources by `scripts/build-styles-seed.mjs`:
+`data/sources/bjcp-2021-styles.json` (the 2021 export) and
+`data/sources/bjcp-specialty-ipas.json` (hand-authored sub-types from the BJCP
+2015 style page). The `21B Specialty IPA` container is dropped in favor of its
+concrete sub-types.
 
 Selecting a style (the `batch.style` selection) copy-ins its ranges into the
 `batch.style_*_min/_max` envelope roots, sets `batch.fermentation` from its tags,

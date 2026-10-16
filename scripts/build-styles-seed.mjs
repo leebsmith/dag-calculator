@@ -1,17 +1,27 @@
-// Regenerate data/seeds/styles.json from a BJCP styles export.
+// Regenerate data/seeds/styles.json from the committed BJCP sources.
 //
-// Usage: node scripts/build-styles-seed.mjs [input.json]
-// Defaults to /junk/styles.json.
+// Usage: node scripts/build-styles-seed.mjs
 //
-// The export is a bare array of styles with lowercase flat keys; this
-// normalizes each into the flat, schema-conforming, id-keyed map the runtime
-// seed substrate expects (keyed by the BJCP style number).
+// Two raw sources (flat lowercase keys, id-keyed by `number`) are normalized
+// and merged into one flat id-keyed seed:
+//   1. data/sources/bjcp-2021-styles.json — the 2021 style-guide export;
+//   2. data/sources/bjcp-specialty-ipas.json — the hand-authored Specialty IPA
+//      sub-types (from the BJCP 2015 style page, which lists each with stats).
+//
+// The "21B Specialty IPA" container entry is dropped: it is replaced by the
+// concrete sub-types in the second source.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_INPUT = "/junk/styles.json";
+const SOURCES = [
+  fileURLToPath(new URL("../data/sources/bjcp-2021-styles.json", import.meta.url)),
+  fileURLToPath(new URL("../data/sources/bjcp-specialty-ipas.json", import.meta.url)),
+];
 const OUTPUT = fileURLToPath(new URL("../data/seeds/styles.json", import.meta.url));
+
+// Style ids excluded from the merged seed.
+const DROP_IDS = new Set(["21B"]);
 
 // Prose keys shared verbatim (already snake_case in the target).
 const TEXT_FIELDS = {
@@ -73,14 +83,13 @@ function convert(row) {
   return component;
 }
 
-const inputPath = process.argv[2] ?? DEFAULT_INPUT;
-const rows = JSON.parse(readFileSync(inputPath, "utf8"));
-if (!Array.isArray(rows)) throw new Error(`${inputPath} must be a JSON array`);
+const rows = SOURCES.flatMap((path) => JSON.parse(readFileSync(path, "utf8")));
 
 const seed = {};
 for (const row of rows) {
   const component = convert(row);
   if (!component.id) throw new Error(`style "${row.name}" has no number`);
+  if (DROP_IDS.has(component.id)) continue;
   if (seed[component.id]) throw new Error(`duplicate style number "${component.id}"`);
   seed[component.id] = component;
 }

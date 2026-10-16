@@ -84,7 +84,7 @@ seeds > legacy partials/stores > grammar docs.
 | `malt` | exemplar + `primitives.py::MaltPrimitive` + `data/seeds/malts.json` (adds `di_ph`/`buffer_index`/`notes`) |
 | `sugar` | `primitives.py::SugarPrimitive` + `data/seeds/sugars.json` |
 | `yeast` | beer-analytics.com scrape (`scripts/build-yeasts-seed.mjs`) → `data/seeds/yeasts.json` |
-| `style` | BJCP export (`scripts/build-styles-seed.mjs`) → `data/seeds/styles.json` |
+| `style` | BJCP 2021 export + hand-authored Specialty IPA sub-types (`scripts/build-styles-seed.mjs`) → `data/seeds/styles.json` |
 | `equipment` | `templates.py::EquipmentProfile` + `data/seeds/equipment_profiles.json` |
 | `grist_row` | exemplar + `maltGridStore.js` row shape |
 | `sugar_row` | `lateAdditionsStore.js` row shape (`mass_kg` added over `sugar`) |

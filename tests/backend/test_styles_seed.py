@@ -17,7 +17,7 @@ def test_styles_seed_validates_and_is_id_keyed():
     data = json.loads(SEED.read_text())
     catalog = StyleCatalog.model_validate(data)
 
-    assert len(catalog.root) == 116
+    assert len(catalog.root) == 121
     for key, style in catalog.root.items():
         assert style.id == key, f"style key {key!r} does not match id {style.id!r}"
 
