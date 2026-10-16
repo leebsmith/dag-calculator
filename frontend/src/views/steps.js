@@ -28,10 +28,8 @@ export const steps = [
     fields: [
       "batch.yeast_id",
       "batch.yeast.attenuation_pct",
-      "batch.yeast.low_attenuation",
-      "batch.yeast.high_attenuation",
       "batch.yeast.flocculation",
-      "batch.yeast.alcohol_tolerance_abv",
+      "batch.yeast.alcohol_tolerance",
     ],
   },
   {

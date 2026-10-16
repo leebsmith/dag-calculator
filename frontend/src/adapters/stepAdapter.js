@@ -488,10 +488,7 @@ export function createStepApp(options = {}) {
       if (typeof value !== "number") return value;
       let low;
       let high;
-      if (nodeId === "batch.apparent_attenuation") {
-        low = engine.resolve("batch.yeast.low_attenuation");
-        high = engine.resolve("batch.yeast.high_attenuation");
-      } else if (nodeId === "batch.hlt_starting_volume_l") {
+      if (nodeId === "batch.hlt_starting_volume_l") {
         low = engine.resolve("equipment.hlt_coil_floor_l");
         high = engine.resolve("equipment.max_hlt_volume_l");
       } else {
@@ -608,8 +605,14 @@ export function createStepApp(options = {}) {
       return this.selectedYeastId ? cache.references.yeast[this.selectedYeastId] ?? null : null;
     },
 
-    yeastAttenuationRange(y) {
-      return y ? `${formatPercent(y.low_attenuation)}–${formatPercent(y.high_attenuation)}%` : "";
+    yeastAttenuation(y) {
+      return y ? `${formatPercent(y.attenuation_pct)}%` : "";
+    },
+
+    get selectedYeastTemp() {
+      const y = this.selectedYeast;
+      if (!y || typeof y.temp_low_c !== "number" || typeof y.temp_high_c !== "number") return "";
+      return `${y.temp_low_c}–${y.temp_high_c}°C`;
     },
 
     // Selecting a strain copies its typical attenuation into the batch's

@@ -397,16 +397,6 @@ export function valuate(fields, engine, ctx = {}) {
       const ref = resolveReference(artifact, field.id);
       const vkey = ref ? (ref.suffix.length ? `${ref.nodeId}.${ref.suffix.join(".")}` : ref.nodeId) : null;
       out.validation = (vkey && fieldDomains[vkey]) || null;
-      // Apparent attenuation is bounded by the selected strain; expose the
-      // valid range so the batch card can show it (the adapter clamps to it).
-      if (field.id === "batch.apparent_attenuation") {
-        const low = engine.get("batch.yeast_id") ? engine.resolve("batch.yeast.low_attenuation") : undefined;
-        const high = engine.get("batch.yeast_id") ? engine.resolve("batch.yeast.high_attenuation") : undefined;
-        if (typeof low === "number" && typeof high === "number") {
-          const conv = (v) => (unitId && artifact ? fromBase(artifact, field.dimension, unitId, v, nl) : v);
-          out.rangeHint = `${formatValue(conv(low))}–${formatValue(conv(high))}${symbol ?? ""}`;
-        }
-      }
       // The intensive-value input is polymorphic across topologies: a mash
       // thickness (L/kg) under `r_l_to_g`, a dimensionless runoff ratio under
       // `runoff_ratio`. The artifact pins its dimension to mash_thickness, so

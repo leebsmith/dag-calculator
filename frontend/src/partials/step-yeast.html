@@ -55,7 +55,7 @@
             <th>Manufacturer</th>
             <th class="text-right">Attenuation</th>
             <th>Flocculation</th>
-            <th class="text-right">ABV tolerance</th>
+            <th class="text-right">Alcohol tolerance</th>
             <th class="text-right">Action</th>
           </tr>
         </thead>
@@ -64,9 +64,9 @@
             <tr :class="{ 'is-selected': selectedYeastId === y.id }">
               <td><span class="font-medium" x-text="y.name"></span></td>
               <td x-text="y.manufacturer"></td>
-              <td class="text-right tabular-nums" x-text="yeastAttenuationRange(y)"></td>
+              <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
               <td x-text="y.flocculation"></td>
-              <td class="text-right tabular-nums" x-text="y.alcohol_tolerance_abv + '%'"></td>
+              <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
               <td class="table-action-cell">
                 <button type="button" class="btn btn-secondary text-xs" @click="selectYeast(y.id)">
                   Use
@@ -95,14 +95,18 @@
         <div class="step-grid-2col">
           <div class="form-group">
             <span class="form-label">Typical attenuation</span>
-            <span class="tabular-nums" x-text="yeastAttenuationRange(selectedYeast)"></span>
+            <span class="tabular-nums" x-text="yeastAttenuation(selectedYeast)"></span>
           </div>
           <div class="form-group">
             <span class="form-label">Strain details</span>
             <div class="text-xs text-muted">
               <div><strong>Manufacturer:</strong> <span x-text="selectedYeast.manufacturer"></span></div>
               <div><strong>Flocculation:</strong> <span x-text="selectedYeast.flocculation"></span></div>
-              <div><strong>ABV tolerance:</strong> <span x-text="selectedYeast.alcohol_tolerance_abv + '%'"></span></div>
+              <div><strong>Alcohol tolerance:</strong> <span x-text="selectedYeast.alcohol_tolerance"></span></div>
+              <div x-show="selectedYeast.form"><strong>Form:</strong> <span x-text="selectedYeast.form"></span></div>
+              <div x-show="selectedYeastTemp"><strong>Temperature:</strong> <span x-text="selectedYeastTemp"></span></div>
+              <div x-show="selectedYeast.recipes !== undefined"><strong>Recipes:</strong> <span x-text="selectedYeast.recipes"></span></div>
+              <div x-show="selectedYeast.url"><strong>Source:</strong> <a :href="selectedYeast.url" target="_blank" rel="noopener" x-text="selectedYeast.url"></a></div>
               <div class="card-subtitle" x-text="selectedYeast.notes"></div>
             </div>
           </div>

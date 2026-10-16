@@ -381,6 +381,10 @@
       "Medium",
       "High"
     ],
+    "form": [
+      "Dry",
+      "Liquid"
+    ],
     "mash_rest": [
       "dough_in",
       "phytase",
@@ -911,29 +915,21 @@
           "lte": 1
         }
       },
-      "low_attenuation": {
-        "dimension": "percentage",
-        "domain": {
-          "gte": 0,
-          "lte": 1
-        }
-      },
-      "high_attenuation": {
-        "dimension": "percentage",
-        "domain": {
-          "gte": 0,
-          "lte": 1
-        }
-      },
       "flocculation": {
         "taxonomy": "flocculation"
       },
-      "alcohol_tolerance_abv": {
-        "dimension": "abv",
-        "domain": {
-          "gte": 0
-        }
+      "alcohol_tolerance": {},
+      "form": {
+        "taxonomy": "form"
       },
+      "temp_low_c": {
+        "dimension": "temperature"
+      },
+      "temp_high_c": {
+        "dimension": "temperature"
+      },
+      "recipes": {},
+      "url": {},
       "notes": {}
     },
     "equipment": {
@@ -2442,43 +2438,6 @@
         "rhs": {
           "ref": "solver.batch.max_achievable_abv"
         }
-      }
-    },
-    {
-      "id": "attenuation_within_yeast_envelope",
-      "predicate": {
-        "op": "if",
-        "args": [
-          { "op": "ne", "args": [ { "ref": "batch.yeast_id" }, "" ] },
-          {
-            "op": "and",
-            "args": [
-              {
-                "op": "ge",
-                "args": [ { "ref": "batch.apparent_attenuation" }, { "ref": "batch.yeast.low_attenuation" } ]
-              },
-              {
-                "op": "le",
-                "args": [ { "ref": "batch.apparent_attenuation" }, { "ref": "batch.yeast.high_attenuation" } ]
-              }
-            ]
-          },
-          true
-        ]
-      }
-    },
-    {
-      "id": "target_abv_within_yeast_tolerance",
-      "predicate": {
-        "op": "if",
-        "args": [
-          { "op": "ne", "args": [ { "ref": "batch.yeast_id" }, "" ] },
-          {
-            "op": "le",
-            "args": [ { "ref": "batch.target_abv" }, { "ref": "batch.yeast.alcohol_tolerance_abv" } ]
-          },
-          true
-        ]
       }
     }
   ]

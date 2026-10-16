@@ -20,16 +20,12 @@ test("HLT fill is clamped to the equipment envelope", () => {
   assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 4);
 });
 
-test("attenuation is clamped to the selected strain's envelope", () => {
+test("selecting a strain seeds apparent attenuation from its typical value", () => {
   const app = createStepApp();
   app.boot();
-  app.setRoot("batch.yeast_id", "bootleg-biology-bbx001-the-mad-fermentationist-saison-blend");
+  app.selectYeast("fermentis-safale-american-ale-us-05");
   app.compute();
-  const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.apparent_attenuation");
-
-  app.edit(field(), "10"); // 10% < the strain's low (74.4%)
-  app.commitField(field());
-  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - 0.744) < 1e-9);
+  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - 0.81) < 1e-9);
 });
 
 test("collection cells are validated against their schema domains", () => {

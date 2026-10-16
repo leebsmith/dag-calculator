@@ -55,6 +55,7 @@ seeds > legacy partials/stores > grammar docs.
 | `alkaline_agent` | `boundary.py` `PreferredAlkalineAgent` |
 | `gypsum_form`, `cacl2_form` | `water.py` `SALT_COEFFS` keys + legacy `SaltForm` enum |
 | `flocculation` | `data/seeds/yeasts.json` distinct values (`Low`/`Medium`/`High`) |
+| `form` | `data/seeds/yeasts.json` distinct values (`Dry`/`Liquid`) |
 | `mash_rest` | `mashSchedule.js` `CANONICAL_RESTS` + `DOUGH_IN_REST` + `MASH_OUT_REST` |
 | `wet_hop_product_type`, `wet_hop_application_stage`, `hop_unit` | user-provided `WetHopCard` schema (`plans/dry-hopping.md`) |
 
@@ -80,7 +81,7 @@ seeds > legacy partials/stores > grammar docs.
 |---|---|
 | `malt` | exemplar + `primitives.py::MaltPrimitive` + `data/seeds/malts.json` (adds `di_ph`/`buffer_index`/`notes`) |
 | `sugar` | `primitives.py::SugarPrimitive` + `data/seeds/sugars.json` |
-| `yeast` | `primitives.py::YeastPrimitive` + `data/seeds/yeasts.json` |
+| `yeast` | beer-analytics.com scrape (`scripts/build-yeasts-seed.mjs`) → `data/seeds/yeasts.json` |
 | `equipment` | `templates.py::EquipmentProfile` + `data/seeds/equipment_profiles.json` |
 | `grist_row` | exemplar + `maltGridStore.js` row shape |
 | `sugar_row` | `lateAdditionsStore.js` row shape (`mass_kg` added over `sugar`) |
