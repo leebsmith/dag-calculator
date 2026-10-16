@@ -80,3 +80,40 @@ ABV* = ABV(OE*, AE*)
 `app.core.utils.calculate_abv_and_attenuation` for representative styles
 (21A, 22C, 25B, 1A) and asserts the centroid's ABV always falls inside the
 style's band. Any change to the Cutaia/ASBC constants must be regenerated there.
+
+## 8. Region navigator (target picker)
+
+Many styles span a wide band (e.g. Black IPA: ABV 5.5–9.0), so a single centroid
+is only a default. The Style card exposes an **OE/AE region navigator**: two
+sliders in °P that move a point over the feasible polygon, seeding AA/ABV live.
+
+- **Mutual, dynamic bounds.** For a convex region, `oe ∈ oeSliceAt(AE)` ⟺
+  `(oe, AE) ∈ region`. So each slider's min/max is the region slice imposed by
+  the other's current value (`oeSliceAt`/`aeSliceAt`) — no cross-clamping, and a
+  move can never leave the polygon.
+- **Source of truth.** The `batch.apparent_attenuation` / `batch.target_abv`
+  roots remain authoritative; the slider positions are their inverse
+  (`extractFromTarget`, a 1D bisection of `ABV(OE, OE·(1−AA)) = ABV`). The region
+  is derived from the `batch.style_*` envelope roots, so envelope edits reshape
+  it (WYSIWYG).
+- **Reset** returns to the envelope region's area centroid (identical to the
+  style's centroid until the envelope is edited).
+
+## 9. Model-free brew risk
+
+For a picked point, the risk of brewing *out of style* is quantified
+geometrically (no process assumptions):
+
+- `d` = distance from the point to the region boundary (OE/AE °P, `edgeMargin`).
+- `R` = the region's max in-region margin (`chebyshevCenter`, the pole of
+  inaccessibility = the "safest" point).
+- **Style safety** = `d / R ∈ [0,1]` — 1 at the safest point, 0 on the boundary;
+  the SVG preview heatmap colours by it (safe core → risky rim).
+- **Nearest limit** = the six style limits' smallest *normalized* headroom
+  (`headroom / range`), reported in native units (OG/FG in SG, ABV in %).
+
+Scope: gravity/ABV only — IBU/SRM are not controlled by this picker. A true
+out-of-style *probability* additionally needs process variance (conversion
+efficiency, yeast attenuation vs the targeted AA), which is not modelled; that
+is a deliberate deferral.
+

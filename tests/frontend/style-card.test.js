@@ -41,3 +41,58 @@ test("selecting a stats-less style does not seed fermentation targets", () => {
   assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
   assert.equal(app.master.getRoot("batch.apparent_attenuation"), undefined);
 });
+
+test("the picker initialises to the envelope centroid and seeds the roots", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21B Black IPA");
+  app.compute();
+
+  assert.ok(app.styleRegion.length >= 3);
+  assert.ok(app.styleExtract);
+  assert.ok(app.styleSafestPoint);
+  const info = app.styleTargetInfo;
+  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-6);
+  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-6);
+});
+
+test("moving the OE slider clamps into the region and re-seeds", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21B Black IPA");
+  app.compute();
+
+  const bounds = app.styleOeBounds;
+  app.setStyleTargetOe(bounds[1] + 100); // beyond the region's OE max at the current AE
+  assert.ok(app.styleExtract.oe <= bounds[1] + 1e-6);
+  assert.ok(app.styleExtract.oe >= bounds[0] - 1e-6);
+  const info = app.styleTargetInfo;
+  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-6);
+});
+
+test("resetStyleTarget returns to the envelope centroid", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21B Black IPA");
+  app.compute();
+  const centroidOe = app.styleExtract.oe;
+
+  app.setStyleTargetOe(app.styleOeBounds[0]);
+  assert.notEqual(app.styleExtract.oe, centroidOe);
+
+  app.resetStyleTarget();
+  assert.ok(Math.abs(app.styleExtract.oe - centroidOe) < 1e-6);
+});
+
+test("editing the envelope reshapes the region and keeps the target in-region", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21B Black IPA");
+  app.compute();
+
+  app.setRoot("batch.style_og_max", 1.1);
+  app.compute();
+  assert.ok(app.styleRegion.length >= 3);
+  assert.ok(app.styleExtract);
+  assert.ok(app.master.getRoot("batch.style_og_max") === 1.1);
+});

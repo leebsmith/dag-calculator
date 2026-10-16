@@ -148,3 +148,168 @@ export function styleCentroid(style) {
     vertices,
   };
 }
+
+// --- Region navigation: slices, margins, and the model-free risk -----------
+
+// Point-to-segment distance in extract (°P) space.
+function pointSegmentDistance(px, py, x0, y0, x1, y1) {
+  const dx = x1 - x0;
+  const dy = y1 - y0;
+  const len2 = dx * dx + dy * dy;
+  const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((px - x0) * dx + (py - y0) * dy) / len2));
+  return Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
+}
+
+// Ray-casting point-in-polygon (boundary points read as outside).
+export function pointInRegion(vertices, oe, ae) {
+  let inside = false;
+  for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i, i += 1) {
+    const [xi, yi] = vertices[i];
+    const [xj, yj] = vertices[j];
+    if (yi > ae !== yj > ae && oe < ((xj - xi) * (ae - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+// The range of the other axis where the polygon meets a line at `value` on
+// `axis` (0 = OE/x, 1 = AE/y). A single interval (the region is convex).
+function sliceAt(vertices, axis, value) {
+  const other = axis === 0 ? 1 : 0;
+  const hits = [];
+  for (let i = 0; i < vertices.length; i += 1) {
+    const a = vertices[i];
+    const b = vertices[(i + 1) % vertices.length];
+    if (a[axis] === b[axis]) {
+      if (value === a[axis]) hits.push(a[other], b[other]);
+      continue;
+    }
+    const t = (value - a[axis]) / (b[axis] - a[axis]);
+    if (t >= 0 && t <= 1) hits.push(a[other] + t * (b[other] - a[other]));
+  }
+  if (hits.length < 2) return null;
+  return [Math.min(...hits), Math.max(...hits)];
+}
+
+export function oeExtent(vertices) {
+  const xs = vertices.map(([x]) => x);
+  return [Math.min(...xs), Math.max(...xs)];
+}
+
+export function aeExtent(vertices) {
+  const ys = vertices.map(([, y]) => y);
+  return [Math.min(...ys), Math.max(...ys)];
+}
+
+// Horizontal slice: the OE range at a given AE.
+export function oeSliceAt(vertices, ae) {
+  return sliceAt(vertices, 1, ae);
+}
+
+// Vertical slice: the AE range at a given OE.
+export function aeSliceAt(vertices, oe) {
+  return sliceAt(vertices, 0, oe);
+}
+
+// Minimum distance from a point to the region boundary.
+export function edgeMargin(vertices, oe, ae) {
+  let margin = Infinity;
+  for (let i = 0; i < vertices.length; i += 1) {
+    const [x0, y0] = vertices[i];
+    const [x1, y1] = vertices[(i + 1) % vertices.length];
+    margin = Math.min(margin, pointSegmentDistance(oe, ae, x0, y0, x1, y1));
+  }
+  return margin;
+}
+
+// The region's pole of inaccessibility (max-min-distance to the boundary) via a
+// coarse grid plus local refinement — the "safest" target and the safety radius.
+export function chebyshevCenter(vertices) {
+  if (vertices.length < 3) return null;
+  const [xMin, xMax] = oeExtent(vertices);
+  const [yMin, yMax] = aeExtent(vertices);
+  const span = Math.max(xMax - xMin, yMax - yMin) || 1;
+  const grid = 12;
+  let oe = null;
+  let ae = null;
+  let best = -Infinity;
+  for (let i = 0; i <= grid; i += 1) {
+    for (let j = 0; j <= grid; j += 1) {
+      const cx = xMin + ((xMax - xMin) * i) / grid;
+      const cy = yMin + ((yMax - yMin) * j) / grid;
+      if (!pointInRegion(vertices, cx, cy)) continue;
+      const margin = edgeMargin(vertices, cx, cy);
+      if (margin > best) {
+        best = margin;
+        oe = cx;
+        ae = cy;
+      }
+    }
+  }
+  if (oe === null) return null;
+  let step = span / grid;
+  for (let iter = 0; iter < 40 && step > 1e-4; iter += 1) {
+    let improved = false;
+    for (const [dx, dy] of [[-step, 0], [step, 0], [0, -step], [0, step]]) {
+      const cx = oe + dx;
+      const cy = ae + dy;
+      if (!pointInRegion(vertices, cx, cy)) continue;
+      const margin = edgeMargin(vertices, cx, cy);
+      if (margin > best) {
+        best = margin;
+        oe = cx;
+        ae = cy;
+        improved = true;
+      }
+    }
+    if (!improved) step /= 2;
+  }
+  return { oe, ae, radius: best };
+}
+
+// The target extract point and its derived (Plato-space) AA and ABV.
+export function targetFromExtract(oe, ae) {
+  return {
+    oe,
+    ae,
+    og: platoToSg(oe),
+    fg: platoToSg(ae),
+    aa: (oe - ae) / oe,
+    abv: cutaiaAbv(oe, ae),
+  };
+}
+
+// Inverse: recover (OE, AE) from an AA (Plato) / ABV pair by 1D bisection.
+// `AE = OE * (1 - AA)` and ABV increases monotonically with OE, so the root is
+// unique over the physical 0-40 °P bracket.
+export function extractFromTarget(aa, abv) {
+  if (!(aa > 0 && aa < 1) || !(abv > 0)) return null;
+  const residual = (oe) => cutaiaAbv(oe, oe * (1 - aa)) - abv;
+  let lo = 1e-6;
+  let hi = 40;
+  if (residual(lo) * residual(hi) > 0) return null;
+  for (let i = 0; i < 80; i += 1) {
+    const mid = (lo + hi) / 2;
+    if (residual(lo) * residual(mid) <= 0) hi = mid;
+    else lo = mid;
+  }
+  const oe = (lo + hi) / 2;
+  return { oe, ae: oe * (1 - aa) };
+}
+
+// The nearest of the six style limits (by normalized headroom) and its native
+// headroom, for the risk readout.
+export function limitHeadroom(envelope, oe, ae) {
+  const { og, fg, abv } = targetFromExtract(oe, ae);
+  const { ogMin, ogMax, fgMin, fgMax, abvMin, abvMax } = envelope;
+  const rows = [
+    { label: "OG min", headroom: og - ogMin, range: ogMax - ogMin, unit: "SG" },
+    { label: "OG max", headroom: ogMax - og, range: ogMax - ogMin, unit: "SG" },
+    { label: "FG min", headroom: fg - fgMin, range: fgMax - fgMin, unit: "SG" },
+    { label: "FG max", headroom: fgMax - fg, range: fgMax - fgMin, unit: "SG" },
+    { label: "ABV min", headroom: abv - abvMin, range: abvMax - abvMin, unit: "%" },
+    { label: "ABV max", headroom: abvMax - abv, range: abvMax - abvMin, unit: "%" },
+  ].filter((row) => row.range > 0);
+  if (rows.length === 0) return null;
+  rows.sort((a, b) => a.headroom / a.range - b.headroom / b.range);
+  return rows[0];
+}

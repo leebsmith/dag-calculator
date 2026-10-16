@@ -1638,3 +1638,80 @@ samp {
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Style target picker (OE/AE region navigator)
+   ========================================================================== */
+
+.extract-picker {
+  display: flex;
+  gap: var(--space-3);
+  align-items: stretch;
+  margin-top: var(--space-3);
+}
+
+.extract-slider {
+  width: 100%;
+}
+
+.extract-slider-ae {
+  width: auto;
+  writing-mode: vertical-lr;
+  direction: rtl;
+}
+
+.extract-preview {
+  flex: 1;
+  height: 10rem;
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--sys-surface-subtle);
+}
+
+.extract-region {
+  fill: url("#extract-heat");
+  stroke: var(--sys-color-action-primary);
+  stroke-width: 0.75;
+  stroke-linejoin: round;
+}
+
+.extract-safest {
+  fill: none;
+  stroke: var(--sys-color-success-accent);
+  stroke-width: 0.75;
+  stroke-dasharray: 2 1.5;
+}
+
+.extract-marker {
+  fill: var(--sys-color-action-primary);
+  stroke: var(--sys-surface-default);
+  stroke-width: 1;
+}
+
+.extract-heat-safe {
+  stop-color: var(--sys-color-success-accent);
+  stop-opacity: 0.5;
+}
+
+.extract-heat-warn {
+  stop-color: var(--sys-color-warning-accent);
+  stop-opacity: 0.4;
+}
+
+.extract-heat-risk {
+  stop-color: var(--sys-color-danger-accent);
+  stop-opacity: 0.35;
+}
+
+.extract-readouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.extract-readout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}

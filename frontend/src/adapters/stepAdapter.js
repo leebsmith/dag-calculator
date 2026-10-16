@@ -11,7 +11,19 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
-import { styleCentroid } from "../engine/fermentation.js";
+import {
+  styleCentroid,
+  feasibleVertices,
+  polygonCentroid,
+  pointInRegion,
+  edgeMargin,
+  chebyshevCenter,
+  targetFromExtract,
+  extractFromTarget,
+  limitHeadroom,
+  oeSliceAt,
+  aeSliceAt,
+} from "../engine/fermentation.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import * as mash from "../views/mash.js";
 import { registry, steps } from "../views/steps.js";
@@ -198,6 +210,10 @@ export function createStepApp(options = {}) {
     selectedYeastId: "",
     selectedStyleId: "",
     styleSource: "styleguide",
+    styleRegion: [],
+    styleEnvelope: null,
+    styleSafestPoint: null,
+    styleExtract: null,
     relations: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
@@ -405,6 +421,7 @@ export function createStepApp(options = {}) {
       this.selectedYeastId = engine.get("batch.yeast_id") || "";
       this.selectedStyleId = engine.get("batch.style_id") || "";
       this.styleSource = engine.get("batch.style_source") || "styleguide";
+      this.computeStyleTarget();
       this.violationCount =
         this.relations.filter((r) => !r.holds).length +
         this.domains.filter((d) => !d.holds).length +
@@ -775,6 +792,126 @@ export function createStepApp(options = {}) {
 
     styleField(id) {
       return (this.fieldsBySlice.style ?? []).find((f) => f.id === id) ?? {};
+    },
+
+    // --- Style target picker (OE/AE region navigator, bespoke) ---
+    // The batch AA / target-ABV roots are the source of truth; the picker's
+    // slider positions are their inverse. The region comes from the envelope
+    // (batch.style_* roots) so it tracks envelope edits (WYSIWYG).
+    computeStyleTarget() {
+      const envelope = {
+        ogMin: engine.get("batch.style_og_min"),
+        ogMax: engine.get("batch.style_og_max"),
+        fgMin: engine.get("batch.style_fg_min"),
+        fgMax: engine.get("batch.style_fg_max"),
+        abvMin: engine.get("batch.style_abv_min"),
+        abvMax: engine.get("batch.style_abv_max"),
+      };
+      const complete =
+        envelope.ogMin < envelope.ogMax &&
+        envelope.fgMin < envelope.fgMax &&
+        envelope.abvMin < envelope.abvMax;
+      this.styleEnvelope = complete ? envelope : null;
+      this.styleRegion = complete ? feasibleVertices(envelope) : [];
+      this.styleSafestPoint = this.styleRegion.length >= 3 ? chebyshevCenter(this.styleRegion) : null;
+      this.styleExtract = null;
+      if (this.styleRegion.length < 3) return;
+      const aa = engine.get("batch.apparent_attenuation");
+      const abv = engine.get("batch.target_abv");
+      const inverse =
+        typeof aa === "number" && typeof abv === "number" ? extractFromTarget(aa, abv) : null;
+      if (
+        inverse &&
+        (pointInRegion(this.styleRegion, inverse.oe, inverse.ae) ||
+          edgeMargin(this.styleRegion, inverse.oe, inverse.ae) < 1e-6)
+      ) {
+        this.styleExtract = inverse;
+      } else {
+        const centroid = polygonCentroid(this.styleRegion);
+        if (centroid) this.styleExtract = { oe: centroid[0], ae: centroid[1] };
+      }
+    },
+
+    get styleOeBounds() {
+      if (!this.styleExtract) return null;
+      return oeSliceAt(this.styleRegion, this.styleExtract.ae);
+    },
+
+    get styleAeBounds() {
+      if (!this.styleExtract) return null;
+      return aeSliceAt(this.styleRegion, this.styleExtract.oe);
+    },
+
+    get styleTargetInfo() {
+      if (!this.styleExtract) return null;
+      return targetFromExtract(this.styleExtract.oe, this.styleExtract.ae);
+    },
+
+    get styleTargetRisk() {
+      if (!this.styleExtract || !this.styleSafestPoint) return null;
+      const margin = edgeMargin(this.styleRegion, this.styleExtract.oe, this.styleExtract.ae);
+      const radius = this.styleSafestPoint.radius;
+      const safety = radius > 0 ? Math.max(0, Math.min(1, margin / radius)) : null;
+      const nearest = limitHeadroom(this.styleEnvelope, this.styleExtract.oe, this.styleExtract.ae);
+      return { safety, nearest };
+    },
+
+    // SVG geometry for the preview: the region polygon plus the marker/safest
+    // points, mapped from extract space into a 0..100 viewBox (y flipped).
+    get stylePreview() {
+      const region = this.styleRegion;
+      if (region.length < 3 || !this.styleExtract || !this.styleSafestPoint) return null;
+      const xs = region.map(([x]) => x);
+      const ys = region.map(([, y]) => y);
+      const xMin = Math.min(...xs);
+      const xMax = Math.max(...xs);
+      const yMin = Math.min(...ys);
+      const yMax = Math.max(...ys);
+      const spanX = xMax - xMin || 1;
+      const spanY = yMax - yMin || 1;
+      const pad = 10;
+      const size = 100;
+      const sx = (x) => pad + ((x - xMin) / spanX) * (size - 2 * pad);
+      const sy = (y) => size - pad - ((y - yMin) / spanY) * (size - 2 * pad);
+      return {
+        viewBox: `0 0 ${size} ${size}`,
+        polygon: region.map(([x, y]) => `${sx(x).toFixed(2)},${sy(y).toFixed(2)}`).join(" "),
+        marker: { x: sx(this.styleExtract.oe).toFixed(2), y: sy(this.styleExtract.ae).toFixed(2) },
+        safest: {
+          x: sx(this.styleSafestPoint.oe).toFixed(2),
+          y: sy(this.styleSafestPoint.ae).toFixed(2),
+        },
+        radius: ((this.styleSafestPoint.radius / Math.max(spanX, spanY)) * (size - 2 * pad)).toFixed(2),
+      };
+    },
+
+    applyStyleExtract(oe, ae) {
+      const target = targetFromExtract(oe, ae);
+      this.setRoot("batch.apparent_attenuation", target.aa);
+      this.setRoot("batch.target_abv", target.abv);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    setStyleTargetOe(value) {
+      if (!this.styleExtract) return;
+      const bounds = oeSliceAt(this.styleRegion, this.styleExtract.ae);
+      if (!bounds) return;
+      const oe = Math.max(bounds[0], Math.min(bounds[1], Number(value)));
+      this.applyStyleExtract(oe, this.styleExtract.ae);
+    },
+
+    setStyleTargetAe(value) {
+      if (!this.styleExtract) return;
+      const bounds = aeSliceAt(this.styleRegion, this.styleExtract.oe);
+      if (!bounds) return;
+      const ae = Math.max(bounds[0], Math.min(bounds[1], Number(value)));
+      this.applyStyleExtract(this.styleExtract.oe, ae);
+    },
+
+    resetStyleTarget() {
+      const centroid = this.styleRegion.length >= 3 ? polygonCentroid(this.styleRegion) : null;
+      if (centroid) this.applyStyleExtract(centroid[0], centroid[1]);
     },
 
     // --- Mash profile card (bespoke) ---

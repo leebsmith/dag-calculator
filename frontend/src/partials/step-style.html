@@ -139,18 +139,92 @@
         <div class="text-xs text-muted" x-show="selectedStyle.comments" x-text="selectedStyle.comments"></div>
         <div class="step-grid-2col">
           <div class="form-group">
-            <span class="form-label">Fermentation target</span>
-            <span
-              class="tabular-nums"
-              x-show="selectedStyleTarget"
-              x-text="selectedStyleTarget
-                ? (selectedStyleTarget.aa * 100).toFixed(1) + '% AA · ' + selectedStyleTarget.abv.toFixed(1) + '% ABV'
-                : ''"
-            ></span>
-          </div>
-          <div class="form-group">
             <span class="form-label">Category</span>
             <span x-text="selectedStyle.category_name"></span>
+          </div>
+          <div class="form-group">
+            <span class="form-label">Vital statistics (OG / FG)</span>
+            <span
+              class="tabular-nums"
+              x-text="styleGravity(selectedStyle, 'og_min') + '–' + styleGravity(selectedStyle, 'og_max') + ' / ' + styleGravity(selectedStyle, 'fg_min') + '–' + styleGravity(selectedStyle, 'fg_max')"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Fermentation target picker (OE/AE region navigator) -->
+    <template x-if="styleExtract && stylePreview">
+      <div class="synthesized-card">
+        <div class="synthesized-header">
+          <h3 class="synthesized-title">Fermentation target</h3>
+          <button type="button" class="btn btn-secondary text-xs" @click="resetStyleTarget()">
+            Reset to centroid
+          </button>
+        </div>
+        <div class="extract-picker">
+          <input
+            type="range"
+            class="extract-slider extract-slider-ae"
+            :min="styleAeBounds ? styleAeBounds[0].toFixed(3) : 0"
+            :max="styleAeBounds ? styleAeBounds[1].toFixed(3) : 1"
+            step="0.01"
+            :value="styleExtract.ae"
+            @input="setStyleTargetAe($event.target.value)"
+            aria-label="Apparent extract (degrees Plato)"
+          />
+          <svg class="extract-preview" :viewBox="stylePreview.viewBox" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <radialGradient
+                id="extract-heat"
+                gradientUnits="userSpaceOnUse"
+                :cx="stylePreview.safest.x"
+                :cy="stylePreview.safest.y"
+                :r="stylePreview.radius"
+              >
+                <stop class="extract-heat-safe" offset="0%" />
+                <stop class="extract-heat-warn" offset="65%" />
+                <stop class="extract-heat-risk" offset="100%" />
+              </radialGradient>
+            </defs>
+            <polygon class="extract-region" :points="stylePreview.polygon" />
+            <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
+            <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
+          </svg>
+        </div>
+        <input
+          type="range"
+          class="extract-slider"
+          :min="styleOeBounds ? styleOeBounds[0].toFixed(3) : 0"
+          :max="styleOeBounds ? styleOeBounds[1].toFixed(3) : 1"
+          step="0.01"
+          :value="styleExtract.oe"
+          @input="setStyleTargetOe($event.target.value)"
+          aria-label="Original extract (degrees Plato)"
+        />
+        <span class="form-hint">OE (horizontal) and AE (vertical) in °P, constrained to the style's feasible region.</span>
+        <div class="extract-readouts">
+          <div class="extract-readout">
+            <span class="form-label">Apparent attenuation</span>
+            <span class="tabular-nums" x-text="styleTargetInfo ? (styleTargetInfo.aa * 100).toFixed(1) + '%' : ''"></span>
+          </div>
+          <div class="extract-readout">
+            <span class="form-label">ABV</span>
+            <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.abv.toFixed(1) + '%' : ''"></span>
+          </div>
+          <div class="extract-readout">
+            <span class="form-label">Style safety</span>
+            <span
+              class="tabular-nums"
+              x-text="styleTargetRisk && styleTargetRisk.safety != null ? Math.round(styleTargetRisk.safety * 100) + '%' : '—'"
+            ></span>
+          </div>
+          <div class="extract-readout">
+            <span class="form-label">Nearest limit</span>
+            <span
+              class="tabular-nums"
+              x-text="styleTargetRisk && styleTargetRisk.nearest ? styleTargetRisk.nearest.label + ' (' + styleTargetRisk.nearest.headroom.toFixed(3) + ' ' + styleTargetRisk.nearest.unit + ')' : '—'"
+            ></span>
           </div>
         </div>
       </div>

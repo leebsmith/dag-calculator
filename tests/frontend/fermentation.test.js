@@ -2,6 +2,21 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { styleCentroid, sgToPlato, platoToSg, cutaiaAbv } from "../../frontend/src/engine/fermentation.js";
+import {
+  feasibleVertices,
+  pointInRegion,
+  oeSliceAt,
+  aeSliceAt,
+  edgeMargin,
+  chebyshevCenter,
+  targetFromExtract,
+  extractFromTarget,
+  limitHeadroom,
+} from "../../frontend/src/engine/fermentation.js";
+
+const BLACK_IPA = { og_min: 1.05, og_max: 1.085, fg_min: 1.01, fg_max: 1.018, abv_min: 5.5, abv_max: 9 };
+const ENVELOPE = { ogMin: 1.05, ogMax: 1.085, fgMin: 1.01, fgMax: 1.018, abvMin: 5.5, abvMax: 9 };
+
 
 test("sgToPlato and platoToSg match backend reference points", () => {
   assert.ok(Math.abs(sgToPlato(1.0)) < 0.01);
@@ -33,4 +48,46 @@ test("styleCentroid lands inside the style's ABV band", () => {
 test("styleCentroid returns null for stats-less styles", () => {
   assert.equal(styleCentroid({}), null);
   assert.equal(styleCentroid({ og_min: 1.05, og_max: 1.06 }), null);
+});
+
+test("slices are consistent with region membership", () => {
+  const v = feasibleVertices(ENVELOPE);
+  const c = styleCentroid(BLACK_IPA);
+  assert.ok(pointInRegion(v, c.oe, c.ae));
+  const oeBounds = oeSliceAt(v, c.ae);
+  const aeBounds = aeSliceAt(v, c.oe);
+  assert.ok(c.oe >= oeBounds[0] && c.oe <= oeBounds[1]);
+  assert.ok(c.ae >= aeBounds[0] && c.ae <= aeBounds[1]);
+});
+
+test("edgeMargin is ~0 on the boundary and positive inside", () => {
+  const v = feasibleVertices(ENVELOPE);
+  const c = styleCentroid(BLACK_IPA);
+  assert.ok(edgeMargin(v, c.oe, c.ae) > 0);
+  const [vx, vy] = v[0];
+  assert.ok(edgeMargin(v, vx, vy) < 1e-6);
+});
+
+test("the safest point has at least the centroid's margin", () => {
+  const v = feasibleVertices(ENVELOPE);
+  const c = styleCentroid(BLACK_IPA);
+  const safest = chebyshevCenter(v);
+  assert.ok(safest);
+  assert.ok(safest.radius >= edgeMargin(v, c.oe, c.ae) - 1e-6);
+});
+
+test("extractFromTarget inverts targetFromExtract", () => {
+  const c = styleCentroid(BLACK_IPA);
+  const t = targetFromExtract(c.oe, c.ae);
+  const inv = extractFromTarget(t.aa, t.abv);
+  assert.ok(Math.abs(inv.oe - c.oe) < 1e-6);
+  assert.ok(Math.abs(inv.ae - c.ae) < 1e-6);
+});
+
+test("limitHeadroom reports the tightest of the six style limits", () => {
+  const c = styleCentroid(BLACK_IPA);
+  const nearest = limitHeadroom(ENVELOPE, c.oe, c.ae);
+  assert.ok(nearest);
+  assert.ok(["OG min", "OG max", "FG min", "FG max", "ABV min", "ABV max"].includes(nearest.label));
+  assert.ok(nearest.headroom >= 0);
 });
