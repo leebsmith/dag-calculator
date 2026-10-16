@@ -50,6 +50,7 @@ const CATALOGS = [
   ["malts.json", "malt", "id"],
   ["sugars.json", "sugar", "id"],
   ["yeasts.json", "yeast", "id"],
+  ["styles.json", "style", "id"],
   ["water_reports.json", "water_report", "report_id"],
   ["water_target_profiles.json", "water_target", "id"],
 ];

@@ -54,8 +54,11 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 |---|---|---|
 | `id`, `name`, `manufacturer` | — | — |
 | `attenuation_pct` | percentage | `[0, 1]` |
-| `low_attenuation`, `high_attenuation` | percentage | the **override envelope** (domain bounds a selection can cite) |
-| `flocculation`, `alcohol_tolerance_abv` | taxonomy / percentage | — |
+| `flocculation` | taxonomy `flocculation` | `Low`/`Medium`/`High` |
+| `alcohol_tolerance` | — | display string (`12.0%`, `High`, …) |
+| `form` | taxonomy `form` | `Dry`/`Liquid` |
+| `temp_low_c`, `temp_high_c` | temperature | — |
+| `recipes`, `url`, `notes` | — | — |
 
 ### 2.4 `equipment`
 
@@ -76,6 +79,23 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 - `water_target` — `{ id, name, description, calcium_ca, magnesium_mg, sodium_na,
   sulfate_so4, chloride_cl, alkalinity_as_caco3, sulfate_chloride_ratio,
   calcium_floor_ppm, notes }` (presets like RO/Distilled, Balanced Pale, Hoppy/IPA…).
+
+### 2.6 `style`
+
+BJCP (2015) beer styles, keyed by the BJCP style number (`1A`…`34C`).
+
+| Field | Dimension | Domain |
+|---|---|---|
+| `id`, `name`, `category_id`, `category_name` | — | — |
+| `type` | taxonomy `style_type` | `beer`/`mead`/`cider` |
+| `overall_impression`, `aroma`, `appearance`, `flavor`, `mouthfeel`, `comments`, `history`, `characteristic_ingredients`, `style_comparison`, `entry_instructions`, `commercial_examples`, `tags` | — | optional prose |
+| `og_min`, `og_max`, `fg_min`, `fg_max` | gravity | `gte 0` (optional) |
+| `ibu_min`, `ibu_max` | ibu | `gte 0` (optional) |
+| `srm_min`, `srm_max` | beer_color | `gte 0` (optional) |
+| `abv_min`, `abv_max` | abv | `gte 0` (optional) |
+
+Specialty styles that define no numerical ranges omit the stat fields. The seed
+is normalized from a BJCP export by `scripts/build-styles-seed.mjs`.
 
 ---
 

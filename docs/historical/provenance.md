@@ -13,6 +13,7 @@ seeds > legacy partials/stores > grammar docs.
 | `extract_yield` (L·°/kg; gal·°/lb=8.3454) | `dimensions.md` §4 + `constants.js` `SUCROSE_YIELD_LDK`/`LDK_PPG_CONVERSION_FACTOR` |
 | `total_extract` (L·°; gal·pts=3.785411784) | `dimensions.md` §4 |
 | `volume.units.ml` (0.001) | display unit (mass/volume SI sub-multiples; boundary emits base L since Step G) |
+| `ibu` (IBU) | BJCP style seed (`data/seeds/styles.json`) — bitterness, no alternate units |
 
 ## Constants
 
@@ -56,6 +57,7 @@ seeds > legacy partials/stores > grammar docs.
 | `gypsum_form`, `cacl2_form` | `water.py` `SALT_COEFFS` keys + legacy `SaltForm` enum |
 | `flocculation` | `data/seeds/yeasts.json` distinct values (`Low`/`Medium`/`High`) |
 | `form` | `data/seeds/yeasts.json` distinct values (`Dry`/`Liquid`) |
+| `style_type` | `data/seeds/styles.json` (BJCP style types `beer`/`mead`/`cider`) |
 | `mash_rest` | `mashSchedule.js` `CANONICAL_RESTS` + `DOUGH_IN_REST` + `MASH_OUT_REST` |
 | `wet_hop_product_type`, `wet_hop_application_stage`, `hop_unit` | user-provided `WetHopCard` schema (`plans/dry-hopping.md`) |
 
@@ -82,6 +84,7 @@ seeds > legacy partials/stores > grammar docs.
 | `malt` | exemplar + `primitives.py::MaltPrimitive` + `data/seeds/malts.json` (adds `di_ph`/`buffer_index`/`notes`) |
 | `sugar` | `primitives.py::SugarPrimitive` + `data/seeds/sugars.json` |
 | `yeast` | beer-analytics.com scrape (`scripts/build-yeasts-seed.mjs`) → `data/seeds/yeasts.json` |
+| `style` | BJCP export (`scripts/build-styles-seed.mjs`) → `data/seeds/styles.json` |
 | `equipment` | `templates.py::EquipmentProfile` + `data/seeds/equipment_profiles.json` |
 | `grist_row` | exemplar + `maltGridStore.js` row shape |
 | `sugar_row` | `lateAdditionsStore.js` row shape (`mass_kg` added over `sugar`) |

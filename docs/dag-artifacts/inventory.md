@@ -16,6 +16,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `extract_yield` | `L_deg_per_kg` | linear | `gal_deg_per_lb` (factor 8.3454) |
 | `grain_color` | `Lovibond` | linear | `EBC` (factor 0.5076142131979695) |
 | `gravity` | `SG` | nonlinear | `Plato` (fwd sg_to_plato, inv plato_to_sg) |
+| `ibu` | `IBU` | linear | — |
 | `mash_thickness` | `L_per_kg` | linear | `qt_per_lb` (factor 2.08635) |
 | `mass` | `kg` | linear | `g` (factor 0.001), `lb` (factor 0.45359237), `oz` (factor 0.028349523125) |
 | `percentage` | `fraction` | linear | `pct` (factor 0.01) |
@@ -46,6 +47,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `ph_status` | `OPTIMAL`, `LOW`, `HIGH` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE` |
+| `style_type` | `beer`, `mead`, `cider` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 | `wet_hop_application_stage` | `whirlpool`, `active_fermentation`, `cold_side` |
 | `wet_hop_product_type` | `raw_whole_cones`, `frozen_whole_cones`, `map_whole_cones`, `liquid_extract`, `cryo_powder`, `terpene_isolate` |
@@ -59,6 +61,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grist_row` | `buffer_index` (dimension dimensionless), `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `di_ph` (dimension ph), `moisture_pct` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `malt` | `buffer_index` (dimension dimensionless), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `di_ph` (dimension ph), `id` (—), `moisture_pct` (dimension percentage, default 0.04), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
+| `style` | `abv_max` (dimension abv, domain {"gte":0}), `abv_min` (dimension abv, domain {"gte":0}), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain {"gte":0}), `fg_min` (dimension gravity, domain {"gte":0}), `flavor` (—), `history` (—), `ibu_max` (dimension ibu, domain {"gte":0}), `ibu_min` (dimension ibu, domain {"gte":0}), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain {"gte":0}), `og_min` (dimension gravity, domain {"gte":0}), `overall_impression` (—), `srm_max` (dimension beer_color, domain {"gte":0}), `srm_min` (dimension beer_color, domain {"gte":0}), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
 | `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `id` (—), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
