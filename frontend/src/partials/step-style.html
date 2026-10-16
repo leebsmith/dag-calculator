@@ -196,6 +196,14 @@
         <span class="form-hint">AE (vertical) and OE (horizontal) in °P, constrained to the style's feasible region.</span>
         <div class="extract-readouts">
           <div class="extract-readout">
+            <span class="form-label">OG (SG)</span>
+            <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.og.toFixed(3) : ''"></span>
+          </div>
+          <div class="extract-readout">
+            <span class="form-label">FG (SG)</span>
+            <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.fg.toFixed(3) : ''"></span>
+          </div>
+          <div class="extract-readout">
             <span class="form-label">Apparent attenuation</span>
             <span class="tabular-nums" x-text="styleTargetInfo ? (styleTargetInfo.aa * 100).toFixed(1) + '%' : ''"></span>
           </div>

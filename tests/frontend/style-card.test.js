@@ -52,6 +52,8 @@ test("the picker initialises to the envelope centroid and seeds the roots", () =
   assert.ok(app.styleExtract);
   assert.ok(app.styleSafestPoint);
   const info = app.styleTargetInfo;
+  assert.ok(info.og > 1 && info.og < 1.15);
+  assert.ok(info.fg > 1 && info.fg < info.og);
   assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-6);
   assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-6);
 });
