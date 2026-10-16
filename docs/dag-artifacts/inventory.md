@@ -37,6 +37,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `acid_medium` | `LACTIC_88`, `PHOSPHORIC_10`, `PHOSPHORIC_85` |
 | `alkaline_agent` | `BAKING_SODA`, `CHALK`, `PICKLING_LIME` |
 | `cacl2_form` | `CACL2_DIHYDRATE`, `CACL2_ANHYDROUS` |
+| `fermentation` | `ale`, `lager`, `wild`, `mixed` |
 | `flocculation` | `Low`, `Medium`, `High` |
 | `form` | `Dry`, `Liquid` |
 | `gypsum_form` | `GYPSUM_DIHYDRATE`, `GYPSUM_ANHYDROUS` |
@@ -47,6 +48,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `ph_status` | `OPTIMAL`, `LOW`, `HIGH` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE` |
+| `style_source` | `styleguide`, `experimental` |
 | `style_type` | `beer`, `mead`, `cider` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 | `wet_hop_application_stage` | `whirlpool`, `active_fermentation`, `cold_side` |
@@ -140,11 +142,25 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.delta_v_evap` | derived |
 | `batch.dry_hops` | collection |
 | `batch.equipment_profile_id` | root |
+| `batch.fermentation` | choice |
 | `batch.hlt_starting_volume_l` | root |
 | `batch.intensive_value` | root |
 | `batch.runnings_ratio` | derived |
 | `batch.s_late_add` | derived |
 | `batch.sparge_salted_volume` | derived |
+| `batch.style` | selection |
+| `batch.style_abv_max` | root |
+| `batch.style_abv_min` | root |
+| `batch.style_fg_max` | root |
+| `batch.style_fg_min` | root |
+| `batch.style_ibu_max` | root |
+| `batch.style_ibu_min` | root |
+| `batch.style_id` | root |
+| `batch.style_og_max` | root |
+| `batch.style_og_min` | root |
+| `batch.style_source` | choice |
+| `batch.style_srm_max` | root |
+| `batch.style_srm_min` | root |
 | `batch.sugars` | collection |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |

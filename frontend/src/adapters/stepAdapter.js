@@ -11,6 +11,7 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
+import { styleCentroid } from "../engine/fermentation.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import * as mash from "../views/mash.js";
 import { registry, steps } from "../views/steps.js";
@@ -47,9 +48,42 @@ const MAX_VISIBLE_YEASTS = 25;
 // key for draft rows (so the editor can track rows before they're persisted).
 const MAX_MAJOR_MALTS = 8;
 const MAX_VISIBLE_MALTS = 25;
+const MAX_VISIBLE_STYLES = 25;
 
 // fraction (0..1) -> percentage string with up to one decimal (0.744 -> "74.4").
 const formatPercent = (f) => (typeof f === "number" ? String(Math.round(f * 1000) / 10) : "");
+
+const normalizeTag = (t) => (t ?? "").trim().toLowerCase().replace(/\s+/g, "-");
+
+function styleTagSet(style) {
+  return new Set((style?.tags ?? "").split(",").map(normalizeTag));
+}
+
+function styleFermentation(style) {
+  const tags = styleTagSet(style);
+  const name = (style?.name ?? "").toLowerCase();
+  if (tags.has("bottom-fermented")) return "lager";
+  if (tags.has("wild-fermented") || tags.has("wild-fermentation")) return "wild";
+  if (name.includes("mixed-fermentation")) return "mixed";
+  return "ale";
+}
+
+function styleStrength(style) {
+  const tags = styleTagSet(style);
+  if (tags.has("session-strength")) return "session";
+  if (tags.has("standard-strength")) return "standard";
+  if (tags.has("high-strength")) return "high";
+  if (tags.has("very-high-strength")) return "very high";
+  return "";
+}
+
+function styleColor(style) {
+  const tags = styleTagSet(style);
+  if (tags.has("pale-color")) return "pale";
+  if (tags.has("amber-color")) return "amber";
+  if (tags.has("dark-color")) return "dark";
+  return "";
+}
 
 // Map every manifest field to the step slice that displays it, keyed by
 // `fieldKey`. Lets violations land on the card that owns the field.
@@ -162,6 +196,8 @@ export function createStepApp(options = {}) {
     violationCount: 0,
     fieldsBySlice: {},
     selectedYeastId: "",
+    selectedStyleId: "",
+    styleSource: "styleguide",
     relations: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
@@ -367,6 +403,8 @@ export function createStepApp(options = {}) {
       this.fieldDomains = fieldDomains;
       this.collectionDomains = collectionDomains;
       this.selectedYeastId = engine.get("batch.yeast_id") || "";
+      this.selectedStyleId = engine.get("batch.style_id") || "";
+      this.styleSource = engine.get("batch.style_source") || "styleguide";
       this.violationCount =
         this.relations.filter((r) => !r.holds).length +
         this.domains.filter((d) => !d.holds).length +
@@ -631,6 +669,112 @@ export function createStepApp(options = {}) {
       this.setRoot("batch.yeast_id", "");
       this.scheduleSolve();
       this.notify();
+    },
+
+    // --- Style selection card (bespoke) ---
+    styleSearchQuery: "",
+    styleCategoryFilter: "",
+    styleStrengthFilter: "",
+    styleColorFilter: "",
+    styleFermentationFilter: "",
+
+    get styleCatalog() {
+      return Object.values(cache.references.style ?? {});
+    },
+
+    get styleCategories() {
+      return [...new Set(this.styleCatalog.map((s) => s.category_name).filter(Boolean))].sort();
+    },
+
+    get styleStrengths() {
+      return ["session", "standard", "high", "very high"];
+    },
+
+    get styleColors() {
+      return ["pale", "amber", "dark"];
+    },
+
+    get styleFermentations() {
+      return ["ale", "lager", "wild", "mixed"];
+    },
+
+    get filteredStyles() {
+      const q = this.styleSearchQuery.trim().toLowerCase();
+      const cat = this.styleCategoryFilter;
+      const strength = this.styleStrengthFilter;
+      const color = this.styleColorFilter;
+      const ferm = this.styleFermentationFilter;
+      return this.styleCatalog.filter((s) => {
+        const haystack = `${s.name ?? ""} ${s.id ?? ""} ${s.category_name ?? ""} ${s.tags ?? ""}`.toLowerCase();
+        if (q && !haystack.includes(q)) return false;
+        if (cat && s.category_name !== cat) return false;
+        if (strength && styleStrength(s) !== strength) return false;
+        if (color && styleColor(s) !== color) return false;
+        if (ferm && styleFermentation(s) !== ferm) return false;
+        return true;
+      });
+    },
+
+    get visibleStyles() {
+      return this.filteredStyles.slice(0, MAX_VISIBLE_STYLES);
+    },
+
+    get styleResultCount() {
+      return this.filteredStyles.length;
+    },
+
+    get isStyleListTruncated() {
+      return this.styleResultCount > MAX_VISIBLE_STYLES;
+    },
+
+    get selectedStyle() {
+      return this.selectedStyleId ? cache.references.style[this.selectedStyleId] ?? null : null;
+    },
+
+    get selectedStyleTarget() {
+      const s = this.selectedStyle;
+      if (!s) return null;
+      return styleCentroid(s);
+    },
+
+    styleRangeText(s) {
+      if (!s || s.og_min === undefined) return "";
+      return `${s.og_min}–${s.og_max} / ${s.fg_min}–${s.fg_max}`;
+    },
+
+    styleGravity(s, field) {
+      const v = s?.[field];
+      return typeof v === "number" ? v.toFixed(3) : "";
+    },
+
+    selectStyle(id) {
+      this.setRoot("batch.style_id", id);
+      const style = cache.references.style[id];
+      if (style) {
+        for (const field of ["og_min", "og_max", "fg_min", "fg_max", "ibu_min", "ibu_max", "srm_min", "srm_max", "abv_min", "abv_max"]) {
+          const value = style[field];
+          if (typeof value === "number") this.setRoot(`batch.style_${field}`, value);
+        }
+        this.setRoot("batch.fermentation", styleFermentation(style));
+        const centroid = styleCentroid(style);
+        if (centroid) {
+          this.setRoot("batch.apparent_attenuation", centroid.aa);
+          this.setRoot("batch.target_abv", centroid.abv);
+        }
+      }
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    clearStyleSelection() {
+      this.setRoot("batch.style_id", "");
+      this.setRoot("batch.fermentation", "ale");
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    styleField(id) {
+      return (this.fieldsBySlice.style ?? []).find((f) => f.id === id) ?? {};
     },
 
     // --- Mash profile card (bespoke) ---

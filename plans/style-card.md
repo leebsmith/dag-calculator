@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [Step G]
 blocks: []
 gate: make check/test green
-status: in-progress
+status: done
 ---
 
 # Style Card — BJCP style selection + fermentation envelope
@@ -59,37 +59,37 @@ Stats-less styles → `null` (no seeding).
 ## Implementation checklist
 
 ### Artifact
-- [ ] Add `style_source` and `fermentation` taxonomies.
-- [ ] Add `batch.style_source`, `batch.style_id`, `batch.style`, `batch.fermentation`.
-- [ ] Add the 10 `batch.style_*_min/_max` roots.
-- [ ] Regenerate `docs/dag-artifacts/inventory.md`.
+- [x] Add `style_source` and `fermentation` taxonomies.
+- [x] Add `batch.style_source`, `batch.style_id`, `batch.style`, `batch.fermentation`.
+- [x] Add the 10 `batch.style_*_min/_max` roots.
+- [x] Regenerate `docs/dag-artifacts/inventory.md`.
 
 ### Ingestion
-- [ ] Import `styles` in `store/referenceCache.js` (references + seeds).
+- [x] Import `styles` in `store/referenceCache.js` (references + seeds).
 
 ### Fermentation module
-- [ ] `frontend/src/engine/fermentation.js`: `styleCentroid(...)` → `{ aa, abv, og, fg, oe, ae }` (or `null`).
-- [ ] ASBC cubic + `platoToSg` inversion + Cutaia + Brent + shoelace centroid.
-- [ ] Unit tests cross-checked against backend `utils.py` (21A, 22C, 25B, 1A; no-stats → null).
+- [x] `frontend/src/engine/fermentation.js`: `styleCentroid(...)` → `{ aa, abv, og, fg, oe, ae }` (or `null`).
+- [x] ASBC cubic + `platoToSg` inversion + Cutaia + Brent + shoelace centroid.
+- [x] Unit tests cross-checked against backend `utils.py` (21A, 22C, 25B, 1A; no-stats → null).
 
 ### Adapter
-- [ ] `styleCatalog` / `filteredStyles` / `styleCategories` / filter-pill state / `visibleStyles`.
-- [ ] `selectStyle(id)`: set `batch.style_id` → copy-in 10 ranges → set `batch.fermentation` → centroid → set AA/ABV.
-- [ ] `clearStyleSelection()`: clear `style_id` + `fermentation`.
-- [ ] Fermentation classification from `tags` (+ name fallback).
+- [x] `styleCatalog` / `filteredStyles` / `styleCategories` / filter-pill state / `visibleStyles`.
+- [x] `selectStyle(id)`: set `batch.style_id` → copy-in 10 ranges → set `batch.fermentation` → centroid → set AA/ABV.
+- [x] `clearStyleSelection()`: clear `style_id` + `fermentation`.
+- [x] Fermentation classification from `tags` (+ name fallback).
 
 ### Step, partial, registry
-- [ ] `views/steps.js`: insert `style` step after `equipment`.
-- [ ] `partials/step-style.html`: source toggle; styleguide picker (search + dropdown + pills + table); experimental number inputs; selected readout.
-- [ ] `views/registry/style.js` + register in `registry/index.js`.
+- [x] `views/steps.js`: insert `style` step after `equipment`.
+- [x] `partials/step-style.html`: source toggle; styleguide picker (search + dropdown + pills + table); experimental number inputs; selected readout.
+- [x] `views/registry/style.js` + register in `registry/index.js`.
 
 ### Docs
-- [ ] `docs/style-card-centroid.md` (algorithm + worked examples + degenerate rules).
-- [ ] `docs/dag-artifacts/seed-substrate.md` style-card note.
+- [x] `docs/style-card-centroid.md` (algorithm + worked examples + degenerate rules).
+- [x] `docs/dag-artifacts/seed-substrate.md` style-card note.
 
 ### Tests & verification
-- [ ] `tests/frontend/fermentation.test.js`; adapter select/clear tests.
-- [ ] `make check` + `make test` green (frontend + backend + guards/conformance).
+- [x] `tests/frontend/fermentation.test.js`; adapter select/clear tests.
+- [x] `make check` + `make test` green (frontend + backend + guards/conformance).
 
 ## Out of scope (deferred)
 

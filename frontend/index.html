@@ -142,6 +142,9 @@
               <div class="step-row">
                 <template x-for="step in [activeStep]" :key="step.id">
                   <div class="step-slot" :class="navClass">
+                    <template x-if="step.id === 'style'">
+                      <load src="./src/partials/step-style.html" />
+                    </template>
                     <template x-if="step.id === 'yeast'">
                       <load src="./src/partials/step-yeast.html" />
                     </template>
@@ -154,7 +157,7 @@
                   <template x-if="step.id === 'mash'">
                     <load src="./src/partials/step-mash.html" />
                   </template>
-                  <template x-if="step.id !== 'yeast' && step.id !== 'fermentables' && step.id !== 'late-additions' && step.id !== 'mash'">
+                  <template x-if="step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'late-additions' && step.id !== 'mash'">
                     <load src="./src/partials/step-card.html" />
                   </template>
                   </div>

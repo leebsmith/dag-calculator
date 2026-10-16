@@ -395,6 +395,16 @@
       "mead",
       "cider"
     ],
+    "style_source": [
+      "styleguide",
+      "experimental"
+    ],
+    "fermentation": [
+      "ale",
+      "lager",
+      "wild",
+      "mixed"
+    ],
     "mash_rest": [
       "dough_in",
       "phytase",
@@ -1519,6 +1529,106 @@
       "kind": "selection",
       "schema": "yeast",
       "ref": "batch.yeast_id"
+    },
+    "batch.style_source": {
+      "kind": "choice",
+      "taxonomy": "style_source",
+      "default": "styleguide"
+    },
+    "batch.style_id": {
+      "kind": "root",
+      "dimension": "reference",
+      "default": ""
+    },
+    "batch.style": {
+      "kind": "selection",
+      "schema": "style",
+      "ref": "batch.style_id"
+    },
+    "batch.fermentation": {
+      "kind": "choice",
+      "taxonomy": "fermentation",
+      "default": "ale"
+    },
+    "batch.style_og_min": {
+      "kind": "root",
+      "dimension": "gravity",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_og_max": {
+      "kind": "root",
+      "dimension": "gravity",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_fg_min": {
+      "kind": "root",
+      "dimension": "gravity",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_fg_max": {
+      "kind": "root",
+      "dimension": "gravity",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_ibu_min": {
+      "kind": "root",
+      "dimension": "ibu",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_ibu_max": {
+      "kind": "root",
+      "dimension": "ibu",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_srm_min": {
+      "kind": "root",
+      "dimension": "beer_color",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_srm_max": {
+      "kind": "root",
+      "dimension": "beer_color",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_abv_min": {
+      "kind": "root",
+      "dimension": "abv",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.style_abv_max": {
+      "kind": "root",
+      "dimension": "abv",
+      "default": 0,
+      "domain": {
+        "gte": 0
+      }
     },
     "water.source_report_id": {
       "kind": "root",

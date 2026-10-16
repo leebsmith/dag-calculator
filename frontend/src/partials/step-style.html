@@ -1,0 +1,220 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <h2 class="card-title" x-text="activeStep.title"></h2>
+    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+  </div>
+
+  <div class="step-card-content">
+    <!-- Style source gate -->
+    <div class="form-group">
+      <label class="form-label">Style source</label>
+      <select
+        class="form-select"
+        :value="styleField('batch.style_source').value"
+        @change="edit(styleField('batch.style_source'), $event.target.value)"
+      >
+        <option value="styleguide">Style guide</option>
+        <option value="experimental">Experimental</option>
+      </select>
+    </div>
+
+    <!-- Styleguide picker -->
+    <template x-if="styleSource === 'styleguide'">
+      <div>
+        <div class="step-grid-2col">
+          <div class="form-group">
+            <label class="form-label">Search by name, number, or category</label>
+            <input
+              type="text"
+              class="form-input"
+              placeholder="e.g. IPA, 21A, lager"
+              x-model="styleSearchQuery"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" x-model="styleCategoryFilter">
+              <option value="">All categories</option>
+              <template x-for="c in styleCategories" :key="c">
+                <option :value="c" x-text="c"></option>
+              </template>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-pills-container">
+          <template x-for="s in styleStrengths" :key="'s-' + s">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': styleStrengthFilter === s }"
+              @click="styleStrengthFilter = styleStrengthFilter === s ? '' : s"
+              x-text="s"
+            ></button>
+          </template>
+          <template x-for="c in styleColors" :key="'c-' + c">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': styleColorFilter === c }"
+              @click="styleColorFilter = styleColorFilter === c ? '' : c"
+              x-text="c"
+            ></button>
+          </template>
+          <template x-for="f in styleFermentations" :key="'f-' + f">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': styleFermentationFilter === f }"
+              @click="styleFermentationFilter = styleFermentationFilter === f ? '' : f"
+              x-text="f"
+            ></button>
+          </template>
+        </div>
+
+        <div
+          class="catalog-result-counter"
+          aria-live="polite"
+          x-text="isStyleListTruncated
+            ? `Showing ${visibleStyles.length} of ${styleResultCount} matching styles — refine search`
+            : `Showing ${styleResultCount} matching styles`"
+        ></div>
+
+        <div class="data-table-container data-table-container-scroll">
+          <table class="data-table is-fixed">
+            <colgroup>
+              <col style="width: 34%;" />
+              <col style="width: 24%;" />
+              <col style="width: 14%;" />
+              <col style="width: 14%;" />
+              <col style="width: 14%;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Style</th>
+                <th>Category</th>
+                <th class="text-right">OG</th>
+                <th class="text-right">FG</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="s in visibleStyles" :key="s.id">
+                <tr :class="{ 'is-selected': selectedStyleId === s.id }">
+                  <td>
+                    <span class="font-medium" x-text="s.name"></span>
+                    <span class="text-xs text-muted" x-text="' ' + s.id"></span>
+                  </td>
+                  <td x-text="s.category_name"></td>
+                  <td class="text-right tabular-nums" x-text="styleGravity(s, 'og_min') + '–' + styleGravity(s, 'og_max')"></td>
+                  <td class="text-right tabular-nums" x-text="styleGravity(s, 'fg_min') + '–' + styleGravity(s, 'fg_max')"></td>
+                  <td class="table-action-cell">
+                    <button type="button" class="btn btn-secondary text-xs" @click="selectStyle(s.id)">
+                      Use
+                    </button>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="filteredStyles.length === 0">
+                <tr>
+                  <td colspan="5" class="table-empty-cell">No styles match the current filters.</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <!-- Selected style readout -->
+    <template x-if="selectedStyle">
+      <div class="synthesized-card">
+        <div class="synthesized-header">
+          <span class="synthesized-title" x-text="selectedStyle.name + ' (' + selectedStyle.id + ')'"></span>
+          <button type="button" class="btn btn-secondary text-xs" @click="clearStyleSelection()">
+            Clear
+          </button>
+        </div>
+        <div class="text-xs text-muted" x-text="selectedStyle.overall_impression"></div>
+        <div class="text-xs text-muted" x-show="selectedStyle.comments" x-text="selectedStyle.comments"></div>
+        <div class="step-grid-2col">
+          <div class="form-group">
+            <span class="form-label">Fermentation target</span>
+            <span
+              class="tabular-nums"
+              x-show="selectedStyleTarget"
+              x-text="selectedStyleTarget
+                ? (selectedStyleTarget.aa * 100).toFixed(1) + '% AA · ' + selectedStyleTarget.abv.toFixed(1) + '% ABV'
+                : ''"
+            ></span>
+          </div>
+          <div class="form-group">
+            <span class="form-label">Category</span>
+            <span x-text="selectedStyle.category_name"></span>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Style envelope (editable in both modes) -->
+    <div class="synthesized-card">
+      <div class="synthesized-header">
+        <h3 class="synthesized-title">Style envelope</h3>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fermentation</label>
+        <select
+          class="form-select"
+          :value="styleField('batch.fermentation').value"
+          @change="edit(styleField('batch.fermentation'), $event.target.value)"
+        >
+          <template x-for="opt in styleFermentations" :key="opt">
+            <option :value="opt" x-text="opt"></option>
+          </template>
+        </select>
+      </div>
+      <div class="step-grid-2col">
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_og_min').label"></label>
+          <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_og_min').display" @input="edit(styleField('batch.style_og_min'), $event.target.value)" @change="commitField(styleField('batch.style_og_min'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_og_max').label"></label>
+          <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_og_max').display" @input="edit(styleField('batch.style_og_max'), $event.target.value)" @change="commitField(styleField('batch.style_og_max'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_fg_min').label"></label>
+          <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_fg_min').display" @input="edit(styleField('batch.style_fg_min'), $event.target.value)" @change="commitField(styleField('batch.style_fg_min'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_fg_max').label"></label>
+          <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_fg_max').display" @input="edit(styleField('batch.style_fg_max'), $event.target.value)" @change="commitField(styleField('batch.style_fg_max'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_ibu_min').label"></label>
+          <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_ibu_min').display" @input="edit(styleField('batch.style_ibu_min'), $event.target.value)" @change="commitField(styleField('batch.style_ibu_min'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_ibu_max').label"></label>
+          <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_ibu_max').display" @input="edit(styleField('batch.style_ibu_max'), $event.target.value)" @change="commitField(styleField('batch.style_ibu_max'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_srm_min').label"></label>
+          <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_srm_min').display" @input="edit(styleField('batch.style_srm_min'), $event.target.value)" @change="commitField(styleField('batch.style_srm_min'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_srm_max').label"></label>
+          <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_srm_max').display" @input="edit(styleField('batch.style_srm_max'), $event.target.value)" @change="commitField(styleField('batch.style_srm_max'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_abv_min').label"></label>
+          <input type="number" step="0.1" class="form-input tabular-nums" :value="styleField('batch.style_abv_min').display" @input="edit(styleField('batch.style_abv_min'), $event.target.value)" @change="commitField(styleField('batch.style_abv_min'))" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" x-text="styleField('batch.style_abv_max').label"></label>
+          <input type="number" step="0.1" class="form-input tabular-nums" :value="styleField('batch.style_abv_max').display" @input="edit(styleField('batch.style_abv_max'), $event.target.value)" @change="commitField(styleField('batch.style_abv_max'))" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

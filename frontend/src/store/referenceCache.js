@@ -7,6 +7,7 @@ import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
 import sugars from "../../../data/seeds/sugars.json" with { type: "json" };
 import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
+import styles from "../../../data/seeds/styles.json" with { type: "json" };
 import waterTargets from "../../../data/seeds/water_target_profiles.json" with { type: "json" };
 import waterReports from "../../../data/seeds/water_reports.json" with { type: "json" };
 import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
@@ -43,6 +44,7 @@ export function createReferenceCache() {
     references: {
       equipment,
       yeast: yeasts,
+      style: styles,
       water_report: waterReports,
       water_target: waterTargets,
     },
@@ -57,6 +59,7 @@ export function createReferenceCache() {
       malts,
       sugars,
       yeasts,
+      styles,
       waterTargets,
       waterReports,
       mashSchedules,

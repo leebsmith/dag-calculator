@@ -97,6 +97,12 @@ BJCP (2015) beer styles, keyed by the BJCP style number (`1A`…`34C`).
 Specialty styles that define no numerical ranges omit the stat fields. The seed
 is normalized from a BJCP export by `scripts/build-styles-seed.mjs`.
 
+Selecting a style (the `batch.style` selection) copy-ins its ranges into the
+`batch.style_*_min/_max` envelope roots, sets `batch.fermentation` from its tags,
+and derives a single AA/ABV target from the style's feasible-region centroid
+(`docs/style-card-centroid.md`), seeding `batch.apparent_attenuation` and
+`batch.target_abv`.
+
 ---
 
 ## 3. How the engine consumes seeds
