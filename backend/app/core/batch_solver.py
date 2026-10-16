@@ -371,6 +371,8 @@ def post_boil_extract_target(
 def pre_boil_volume(
     v_ferm: float,
     v_kettle_dead: float,
+    v_kettle_transfer: float,
+    v_trub: float,
     delta_v_evap: float,
     s_late_add: float,
     v_bar: float,
@@ -378,14 +380,18 @@ def pre_boil_volume(
 ) -> float:
     """Compute the derived pre-boil kettle volume ``V_pre_boil``.
 
-    ``V_pre_boil = V_ferm / (1 - f_shrink) + V_kettle_dead + delta_v_evap
-                   - v_bar * S_late_add``
+    ``V_pre_boil = (V_ferm + V_kettle_dead + V_kettle_transfer + V_trub)
+                   / (1 - f_shrink) + delta_v_evap - v_bar * S_late_add``
+
+    The cold-side additive losses (kettle dead space, kettle transfer loss,
+    trub) are added to ``V_ferm`` before the shrinkage is reversed, per
+    ``plans/vessel-loss-model.md`` §4.2 (shrink the entire hot volume, then
+    subtract the additive losses).
 
     See ``unified-treatment.md`` §5 Phase 2.
     """
     return (
-        (v_ferm / (1.0 - f_shrink))
-        + v_kettle_dead
+        ((v_ferm + v_kettle_dead + v_kettle_transfer + v_trub) / (1.0 - f_shrink))
         + delta_v_evap
         - (v_bar * s_late_add)
     )
@@ -397,6 +403,8 @@ def resolve_volumetric_reversal(
     v_kettle_dead: float,
     delta_v_evap: float,
     s_late_add: float,
+    v_kettle_transfer: float = 0.0,
+    v_trub: float = 0.0,
     f_shrink: float = F_SHRINK_DEFAULT,
     v_bar: float = V_BAR_METRIC,
     gamma: float = GAMMA_METRIC,
@@ -410,6 +418,8 @@ def resolve_volumetric_reversal(
         v_ferm: Target cold fermenter volume, in liters.
         sg_post_boil: Post-boil specific gravity (20 °C reference) from Phase 1.
         v_kettle_dead: Unrecoverable kettle/chiller dead space, in liters.
+        v_kettle_transfer: Kettle/chiller transfer loss, in liters.
+        v_trub: Kettle trub loss, in liters.
         delta_v_evap: Calibrated kettle boil-off volume, in liters.
         s_late_add: Late-addition extract mass, in kg.
         f_shrink: Thermal contraction coefficient (default 4%).
@@ -452,7 +462,7 @@ def resolve_volumetric_reversal(
         )
 
     v_pre_boil = pre_boil_volume(
-        v_ferm, v_kettle_dead, delta_v_evap, s_late_add, v_bar, f_shrink
+        v_ferm, v_kettle_dead, v_kettle_transfer, v_trub, delta_v_evap, s_late_add, v_bar, f_shrink
     )
 
     return VolumetricReversal(
@@ -751,6 +761,10 @@ class StageCascade:
         v_run1: First-runnings volume, in liters.
         v_run2: Second-runnings volume, in liters.
         v_sparge: Sparge volume, in liters.
+        v_absorption: Grain absorption volume (``k_abs_true * m_grist``), in
+            liters. Part of ``V_ret`` along with ``v_dead``.
+        v_mc: Grain moisture volume, in liters.
+        v_sol: Dissolved-extract displacement volume, in liters.
         s_run1: First-runnings extract mass, in kg.
         s_run2: Second-runnings extract mass, in kg.
         sg_pre_boil: Consolidated pre-boil specific gravity.
@@ -768,6 +782,9 @@ class StageCascade:
     v_run1: float
     v_run2: float
     v_sparge: float
+    v_absorption: float
+    v_mc: float
+    v_sol: float
     s_run1: float
     s_run2: float
     sg_pre_boil: float
@@ -785,6 +802,7 @@ def resolve_stage_cascade(
     eta_conv: float,
     v_dead: float,
     delta_v_evap: float,
+    mash_transfer_loss: float = 0.0,
     k_abs_true: float = K_ABS_TRUE_METRIC,
     v_bar: float = V_BAR_METRIC,
     gamma: float = GAMMA_METRIC,
@@ -794,10 +812,14 @@ def resolve_stage_cascade(
     Dispatches on ``topology``:
 
     * ``"r_l_to_g"``: ``V_strike = R_L:G * M_grist``; ``V_run1`` from the tun
-      mass balance; ``V_run2 = V_sparge = V_pre_boil - V_run1``.
-    * ``"runoff_ratio"``: ``V_sparge = V_run2 = V_pre_boil / (r + 1)``;
-      ``V_run1 = V_pre_boil - V_run2``; ``V_strike`` is reversed from the tun
+      mass balance; ``V_run2 = V_sparge = V_drain - V_run1``.
+    * ``"runoff_ratio"``: ``V_sparge = V_run2 = V_drain / (r + 1)``;
+      ``V_run1 = V_drain - V_run2``; ``V_strike`` is reversed from the tun
       mass balance to absorb retention.
+
+    ``V_drain = V_pre_boil + mash_transfer_loss``: the mash tun must drain the
+    kettle target plus the volume retained in its transfer hose/pump, per
+    ``plans/vessel-loss-model.md`` §4.1.
 
     Args:
         m_grist: Converged dry grist mass, in kg (from Phase 3).
@@ -809,6 +831,8 @@ def resolve_stage_cascade(
         mc_bar: Composite moisture fraction ``MC_bar``.
         eta_conv: Mash conversion efficiency as a fraction.
         v_dead: Mash tun dead space, in liters.
+        delta_v_evap: Boil-off evaporation volume, in liters.
+        mash_transfer_loss: Mash tun transfer (hose/pump) loss, in liters.
         k_abs_true: True husk absorption coefficient, in L/kg.
         v_bar: Apparent specific volume of dissolved extract, in L/kg.
         gamma: Gravity-points conversion constant, in GU·L/kg.
@@ -846,16 +870,18 @@ def resolve_stage_cascade(
     s_conv = converted_extract(m_grist, yield_fraction, eta_conv)
     v_sol = solute_displacement_volume(s_conv, v_bar)
     v_ret = retained_volume(m_grist, k_abs_true, v_dead)
+    v_absorption = k_abs_true * m_grist
+    v_drain = v_pre_boil + mash_transfer_loss
 
     if topology == "r_l_to_g":
         v_strike = intensive_value * m_grist
         v_run1 = first_runnings_volume(v_strike, v_mc, v_sol, v_ret)
-        v_run2 = second_runnings_volume(v_pre_boil, v_run1)
+        v_run2 = second_runnings_volume(v_drain, v_run1)
         v_sparge = v_run2
     else:  # "runoff_ratio"
-        v_sparge = v_pre_boil / (intensive_value + 1.0)
+        v_sparge = v_drain / (intensive_value + 1.0)
         v_run2 = v_sparge
-        v_run1 = v_pre_boil - v_run2
+        v_run1 = v_drain - v_run2
         # Reverse the tun mass balance to absorb retention and displacement.
         v_strike = v_run1 + v_ret - v_mc - v_sol
 
@@ -907,6 +933,9 @@ def resolve_stage_cascade(
         v_run1=v_run1,
         v_run2=v_run2,
         v_sparge=v_sparge,
+        v_absorption=v_absorption,
+        v_mc=v_mc,
+        v_sol=v_sol,
         s_run1=s_run1,
         s_run2=s_run2,
         sg_pre_boil=sg_pre_boil,
@@ -1031,8 +1060,11 @@ class BatchSolverInput:
         grain_bill: The malt specification vector.
         s_late_add: Late-addition extract mass, in kg.
         v_kettle_dead: Unrecoverable kettle/chiller dead space, in liters.
+        v_kettle_transfer: Kettle/chiller transfer (hose/pump) loss, in liters.
+        v_trub: Kettle trub loss, in liters.
         delta_v_evap: Calibrated kettle boil-off volume, in liters.
         v_dead: Mash tun dead space, in liters.
+        mash_transfer_loss: Mash tun transfer (hose/pump) loss, in liters.
         eta_conv: Mash conversion efficiency as a fraction.
         f_shrink: Thermal contraction coefficient (default 4%).
         hlt_starting_volume_l: Volume of liquor in the HLT at the start of the
@@ -1059,8 +1091,11 @@ class BatchSolverInput:
     grain_bill: Sequence[GrainBillEntry]
     s_late_add: float
     v_kettle_dead: float
+    v_kettle_transfer: float
+    v_trub: float
     delta_v_evap: float
     v_dead: float
+    mash_transfer_loss: float
     eta_conv: float
     hlt_starting_volume_l: float
     hlt_dead_space_l: float
@@ -1136,6 +1171,8 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         v_ferm=inputs.v_ferm,
         sg_post_boil=sg_post_boil,
         v_kettle_dead=inputs.v_kettle_dead,
+        v_kettle_transfer=inputs.v_kettle_transfer,
+        v_trub=inputs.v_trub,
         delta_v_evap=inputs.delta_v_evap,
         s_late_add=inputs.s_late_add,
         f_shrink=inputs.f_shrink,
@@ -1165,6 +1202,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         eta_conv=inputs.eta_conv,
         v_dead=inputs.v_dead,
         delta_v_evap=inputs.delta_v_evap,
+        mash_transfer_loss=inputs.mash_transfer_loss,
     )
 
     # HLT water budget: derived from the cascade's sparge demand.

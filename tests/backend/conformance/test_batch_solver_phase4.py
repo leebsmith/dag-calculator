@@ -193,3 +193,50 @@ def test_resolve_stage_cascade_rejects_non_positive_intensive_value(cascade_case
             **cascade_case, topology="r_l_to_g", intensive_value=0.0
         )
     assert exc.value.code == "INVALID_INTENSIVE_VALUE"
+
+
+def test_resolve_stage_cascade_accounts_for_mash_transfer_loss(cascade_case):
+    result = resolve_stage_cascade(
+        **cascade_case, topology="r_l_to_g", intensive_value=3.0,
+        mash_transfer_loss=0.5,
+    )
+    # The mash tun drains the kettle target plus the hose holdup.
+    assert result.v_run1 + result.v_run2 == pytest.approx(
+        cascade_case["v_pre_boil"] + 0.5
+    )
+
+
+def test_resolve_stage_cascade_runoff_ratio_accounts_for_mash_transfer_loss(cascade_case):
+    result = resolve_stage_cascade(
+        **cascade_case, topology="runoff_ratio", intensive_value=1.0,
+        mash_transfer_loss=0.5,
+    )
+    assert result.v_run1 + result.v_run2 == pytest.approx(
+        cascade_case["v_pre_boil"] + 0.5
+    )
+    assert result.v_sparge == pytest.approx(result.v_run2)
+
+
+def test_resolve_stage_cascade_exposes_hidden_volume_terms(cascade_case):
+    result = resolve_stage_cascade(
+        **cascade_case, topology="r_l_to_g", intensive_value=3.0
+    )
+    m = cascade_case["m_grist"]
+    # v_absorption = k_abs_true * m; v_mc = m * mc_bar; v_sol = v_bar * S_conv.
+    assert result.v_absorption == pytest.approx(K_ABS_TRUE_METRIC * m)
+    assert result.v_mc == pytest.approx(m * cascade_case["mc_bar"])
+    s_conv = cascade_case["eta_conv"] * cascade_case["yield_fraction"] * m
+    assert result.v_sol == pytest.approx(V_BAR_METRIC * s_conv)
+
+
+def test_resolve_stage_cascade_ledger_reconciles(cascade_case):
+    result = resolve_stage_cascade(
+        **cascade_case, topology="r_l_to_g", intensive_value=3.0,
+        mash_transfer_loss=0.5,
+    )
+    # Strike + moisture + extract - absorption - dead space - transfer = pre-boil.
+    reconciled = (
+        result.v_strike + result.v_mc + result.v_sol + result.v_sparge
+        - result.v_absorption - cascade_case["v_dead"] - 0.5
+    )
+    assert reconciled == pytest.approx(cascade_case["v_pre_boil"])

@@ -14,14 +14,14 @@ from app.schemas.boundary import (
     GristBillRow,
 )
 
-BATCH_FINGERPRINT = "9bd6fa642fa9ea996f8575a7b47830125fae17609c475d9e3a50c2e54e99ef0c"
+BATCH_FINGERPRINT = "74d296c4e9f98dceb540c211bb061a88cd84731963b8c9fa540c5c38868570cb"
 BATCH_CANONICAL_JSON = (
     '{"apparent_attenuation":0.75,"delta_v_evap":3,"eta_conv":0.95,'
     '"f_shrink":0.04,"grain_bill":[{"mc_i":0.04,"w_i":1,"yield_i":0.8}],'
     '"hlt_coil_floor_l":0,"hlt_dead_space_l":0,"hlt_starting_volume_l":25,'
-    '"hlt_transfer_loss_l":0,"intensive_value":3,"max_hlt_volume_l":30,'
-    '"s_late_add":0,"target_abv":5.5,"topology":"r_l_to_g","v_dead":0,'
-    '"v_ferm":20,"v_kettle_dead":0}'
+    '"hlt_transfer_loss_l":0,"intensive_value":3,"mash_transfer_loss":0,'
+    '"max_hlt_volume_l":30,"s_late_add":0,"target_abv":5.5,"topology":"r_l_to_g",'
+    '"v_dead":0,"v_ferm":20,"v_kettle_dead":0,"v_kettle_transfer":0,"v_trub":0}'
 )
 
 

@@ -147,6 +147,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.intensive_value` | root |
 | `batch.runnings_ratio` | derived |
 | `batch.s_late_add` | derived |
+| `batch.shrinkage_volume_l` | derived |
 | `batch.sparge_salted_volume` | derived |
 | `batch.style` | selection |
 | `batch.style_abv_max` | root |

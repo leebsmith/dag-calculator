@@ -1847,10 +1847,13 @@
         "intensive_value": "batch.intensive_value",
         "grain_bill": "grist.major_malts",
         "s_late_add": "batch.s_late_add",
-        "v_kettle_dead": "equipment.kettle_dead_space_l",
-        "delta_v_evap": "batch.delta_v_evap",
-        "v_dead": "equipment.mash_dead_space_l",
-        "eta_conv": "batch.conversion_efficiency",
+    "v_kettle_dead": "equipment.kettle_dead_space_l",
+    "v_kettle_transfer": "equipment.kettle_transfer_loss_l",
+    "v_trub": "equipment.trub_loss_l",
+    "delta_v_evap": "batch.delta_v_evap",
+    "v_dead": "equipment.mash_dead_space_l",
+    "mash_transfer_loss": "equipment.mash_transfer_loss_l",
+    "eta_conv": "batch.conversion_efficiency",
         "f_shrink": "equipment.shrinkage_pct",
         "hlt_starting_volume_l": "batch.hlt_starting_volume_l",
         "hlt_dead_space_l": "equipment.hlt_dead_space_l",
@@ -1881,6 +1884,15 @@
           "dimension": "volume"
         },
         "cascade.v_sparge": {
+          "dimension": "volume"
+        },
+        "cascade.v_absorption": {
+          "dimension": "volume"
+        },
+        "cascade.v_mc": {
+          "dimension": "volume"
+        },
+        "cascade.v_sol": {
           "dimension": "volume"
         },
         "cascade.s_run1": {
@@ -2017,6 +2029,27 @@
       },
       "output": {
         "dimension": "dimensionless"
+      }
+    },
+    "batch.shrinkage_volume_l": {
+      "kind": "derived",
+      "inputs": {
+        "v_post_boil": "solver.batch.cascade.v_post_boil",
+        "f_shrink": "equipment.shrinkage_pct"
+      },
+      "expr": {
+        "op": "*",
+        "args": [
+          {
+            "ref": "v_post_boil"
+          },
+          {
+            "ref": "f_shrink"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "volume"
       }
     },
     "solver.water": {

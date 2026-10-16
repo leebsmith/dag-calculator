@@ -87,6 +87,17 @@ def test_invalid_shrinkage():
     assert exc.value.code == "INVALID_SHRINKAGE"
 
 
+def test_pre_boil_volume_accounts_for_post_boil_losses():
+    # V_pre_boil = (V_ferm + dead + transfer + trub) / (1 - shrink) + evap.
+    result = resolve_volumetric_reversal(
+        v_ferm=20.0, sg_post_boil=1.05, v_kettle_dead=1.0,
+        delta_v_evap=3.0, s_late_add=0.0, v_kettle_transfer=0.5, v_trub=0.5,
+    )
+    assert result.v_pre_boil == pytest.approx(
+        (20.0 + 1.0 + 0.5 + 0.5) / (1.0 - 0.04) + 3.0
+    )
+
+
 # ---------------------------------------------------------------------------
 # Phase 3 error taxonomy
 # ---------------------------------------------------------------------------

@@ -21,10 +21,10 @@ Key to ownership columns:
 | `manifest.equipment.max_mash_tun_volume_l` | `equipment.max_mash_tun_volume_l` |
 | `manifest.equipment.max_hlt_volume_l` | `equipment.max_hlt_volume_l` |
 | `manifest.equipment.mash_dead_space_l` | `equipment.mash_dead_space_l` (→ `solver.batch` `v_dead`) |
-| `manifest.equipment.mash_transfer_loss_l` | `equipment.mash_transfer_loss_l` |
+| `manifest.equipment.mash_transfer_loss_l` | `equipment.mash_transfer_loss_l` (→ `solver.batch` `mash_transfer_loss`) |
 | `manifest.equipment.kettle_dead_space_l` | `equipment.kettle_dead_space_l` (→ `solver.batch` `v_kettle_dead`) |
-| `manifest.equipment.kettle_transfer_loss_l` | `equipment.kettle_transfer_loss_l` |
-| `manifest.equipment.trub_loss_l` | `equipment.trub_loss_l` |
+| `manifest.equipment.kettle_transfer_loss_l` | `equipment.kettle_transfer_loss_l` (→ `solver.batch` `v_kettle_transfer`) |
+| `manifest.equipment.trub_loss_l` | `equipment.trub_loss_l` (→ `solver.batch` `v_trub`) |
 | `manifest.equipment.hlt_dead_space_l` | `equipment.hlt_dead_space_l` (→ `solver.batch`) |
 | `manifest.equipment.hlt_transfer_loss_l` | `equipment.hlt_transfer_loss_l` (→ `solver.batch`) |
 | `manifest.equipment.hlt_coil_floor_l` | `equipment.hlt_coil_floor_l` (→ `solver.batch`) |
@@ -83,8 +83,11 @@ Key to ownership columns:
 | `grain_bill` (`w_i`,`yield_i`,`mc_i`) | `grist.major_malts` → `solver.batch` `grain_bill` (schema adaptation: `pct/100`, `yield_fraction`, `moisture_pct`) |
 | `s_late_add` | `batch.s_late_add` |
 | `v_kettle_dead` | `equipment.kettle_dead_space_l` |
+| `v_kettle_transfer` | `equipment.kettle_transfer_loss_l` |
+| `v_trub` | `equipment.trub_loss_l` |
 | `delta_v_evap` | `batch.delta_v_evap` (`boil_off_rate × boil_time/60`) |
 | `v_dead` | `equipment.mash_dead_space_l` |
+| `mash_transfer_loss` | `equipment.mash_transfer_loss_l` |
 | `eta_conv` | `equipment.conversion_efficiency` |
 | `f_shrink` | `equipment.shrinkage_pct` |
 | HLT fields (`hlt_dead/transfer/coil_floor/max`) | `equipment.*` |

@@ -64,8 +64,8 @@ test("adapter pre-resolves boundaries over HTTP in topo order", async () => {
   assert.equal(calls[0].url, "/solve/batch"); // batch before water
   assert.equal(calls[1].url, "/solve/water");
 
-  // full BatchSolverRequest body: all 17 declared inputs
-  assert.equal(Object.keys(calls[0].body).length, 17);
+  // full BatchSolverRequest body: all 20 declared inputs
+  assert.equal(Object.keys(calls[0].body).length, 20);
   for (const k of ["target_abv", "apparent_attenuation", "topology", "grain_bill", "eta_conv"]) {
     assert.ok(k in calls[0].body, `request missing ${k}`);
   }

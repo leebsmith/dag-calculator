@@ -28,7 +28,7 @@ function ionProfile(engine, role) {
   return profile;
 }
 
-// BatchSolverRequest (17 fields).
+// BatchSolverRequest (20 fields).
 export function buildBatchRequest(engine) {
   const rows = engine.get("grist.major_malts") ?? [];
   return {
@@ -44,8 +44,11 @@ export function buildBatchRequest(engine) {
     })),
     s_late_add: engine.resolve("batch.s_late_add"),
     v_kettle_dead: engine.resolve("equipment.kettle_dead_space_l"),
+    v_kettle_transfer: engine.resolve("equipment.kettle_transfer_loss_l"),
+    v_trub: engine.resolve("equipment.trub_loss_l"),
     delta_v_evap: engine.resolve("batch.delta_v_evap"),
     v_dead: engine.resolve("equipment.mash_dead_space_l"),
+    mash_transfer_loss: engine.resolve("equipment.mash_transfer_loss_l"),
     eta_conv: engine.resolve("batch.conversion_efficiency"),
     f_shrink: engine.resolve("equipment.shrinkage_pct"),
     hlt_starting_volume_l: engine.resolve("batch.hlt_starting_volume_l"),
