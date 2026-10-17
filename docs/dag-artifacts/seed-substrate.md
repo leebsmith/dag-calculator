@@ -108,6 +108,25 @@ and derives a single AA/ABV target from the style's feasible-region centroid
 (`docs/style-card-centroid.md`), seeding `batch.apparent_attenuation` and
 `batch.target_abv`.
 
+### 2.7 `hop`
+
+Brewing hops scraped from beer-analytics.com, keyed by a slug of the hop name.
+
+| Field | Dimension | Domain |
+|---|---|---|
+| `id`, `name` | — | identity/metadata |
+| `synonym`, `category`, `purpose`, `origin`, `alpha_rating` | — | optional display metadata |
+| `recipes_count` | — | integer |
+| `alpha_acid_pct`, `alpha_acid_min_pct`, `alpha_acid_max_pct`, `beta_acid_pct` | percentage | `[0, 1]` |
+| `pairings`, `flavor_profiles` | — | comma-delimited strings |
+| `notes`, `url` | — | prose / provenance |
+
+`alpha_acid_pct` is the **median** of the scrape's alpha-acid range, stored as a
+fraction (6.5% → `0.065`); the boil-hops card back-calculates addition mass from
+it via Tinseth. The seed is built by `scripts/build-hops-seed.mjs` from
+`data/sources/beer-analytics-hops.json` (produced by
+`scripts/scrape/hop_scraper.py`).
+
 ---
 
 ## 3. How the engine consumes seeds

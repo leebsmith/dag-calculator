@@ -1,0 +1,91 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <h2 class="card-title" x-text="activeStep.title"></h2>
+    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+  </div>
+
+  <div class="step-card-content">
+    <div class="table-header-toolbar">
+      <div>
+        <h3 class="modal-drawer-title">Boil Additions</h3>
+        <p class="table-header-meta">Author by IBU share; the hop mass is back-calculated from Tinseth.</p>
+      </div>
+      <button type="button" class="btn-primary text-xs" @click="openHopEditor()">Configure Hops ⚙</button>
+    </div>
+
+    <div class="data-table-container">
+      <table class="data-table">
+        <colgroup>
+          <col style="width: 24%" />
+          <col style="width: 10%" />
+          <col style="width: 16%" />
+          <col style="width: 10%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 16%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Hop</th>
+            <th class="text-right">Alpha</th>
+            <th class="text-right">Boil</th>
+            <th class="text-right">Parts</th>
+            <th class="text-right">IBU share</th>
+            <th class="text-right">IBU</th>
+            <th class="text-right">Mass</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="(row, ri) in hopRows" :key="ri">
+            <tr>
+              <td><span class="font-medium" x-text="row.name"></span></td>
+              <td class="text-right tabular-nums" x-text="hopAlpha(row)"></td>
+              <td class="text-right tabular-nums">
+                <span x-text="hopBoilPct(row)"></span>
+                <span class="text-xs text-muted" x-text="' · ' + hopMinutes(row)"></span>
+              </td>
+              <td class="text-right tabular-nums" x-text="row.parts"></td>
+              <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
+              <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
+              <td class="text-right tabular-nums" x-text="hopMass(row)"></td>
+            </tr>
+          </template>
+          <template x-if="hopRows.length === 0">
+            <tr>
+              <td colspan="7" class="table-empty-cell">
+                No boil hops yet. Click “Configure Hops” to add additions.
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grain-bill-summary" x-show="hopRows.length > 0">
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Boil IBU target</span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="boilIbuField ? boilIbuField.display + ' ' + (boilIbuField.unit ?? 'IBU') : '—'"
+        ></span>
+      </div>
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Whirlpool IBU target</span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="whirlpoolIbuField ? whirlpoolIbuField.display + ' ' + (whirlpoolIbuField.unit ?? 'IBU') : '—'"
+        ></span>
+      </div>
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Total hop mass</span>
+        <span class="text-base font-bold tabular-nums" x-text="hopTotalMassDisplay"></span>
+      </div>
+    </div>
+
+    <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
+      Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
+    </p>
+  </div>
+
+  <load src="src/partials/modal-hop-editor.html" />
+</section>

@@ -2,6 +2,7 @@ import { batchRegistry } from "./batch.js";
 import { dryHopsRegistry } from "./dry-hops.js";
 import { equipmentRegistry } from "./equipment.js";
 import { fermentablesRegistry } from "./fermentables.js";
+import { hopsRegistry } from "./hops.js";
 import { lateAdditionsRegistry } from "./late-additions.js";
 import { mashRegistry } from "./mash.js";
 import { styleRegistry } from "./style.js";
@@ -15,6 +16,7 @@ export const registry = {
   ...equipmentRegistry,
   ...yeastRegistry,
   ...fermentablesRegistry,
+  ...hopsRegistry,
   ...lateAdditionsRegistry,
   ...batchRegistry,
   ...mashRegistry,

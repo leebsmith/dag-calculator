@@ -21,4 +21,16 @@ export const batchRegistry = {
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
   "batch.apparent_attenuation": { label: "Apparent attenuation", displayUnit: "pct" },
+  "batch.target_ibu": {
+    label: "Target IBU",
+    unit: "IBU",
+    hint: "Recipe bitterness target; split between the boil and the whirlpool.",
+  },
+  "batch.target_srm": {
+    label: "Target SRM",
+    hint: "Desired finished-beer color (a recorded target; actual color is derived from the grist).",
+  },
+  "batch.whirlpool_ibu_fraction": { label: "Whirlpool IBU share", displayUnit: "pct" },
+  "batch.boil_target_ibu": { label: "Boil IBU", unit: "IBU" },
+  "batch.whirlpool_target_ibu": { label: "Whirlpool IBU", unit: "IBU" },
 };

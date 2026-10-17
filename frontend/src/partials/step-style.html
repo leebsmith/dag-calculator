@@ -153,81 +153,156 @@
       </div>
     </template>
 
-    <!-- Fermentation target picker (OE/AE region navigator) -->
-    <template x-if="styleExtract && stylePreview">
+    <!-- Recipe targets: fermentation navigator + color/bitterness sliders -->
+    <div class="target-cards">
+      <!-- Fermentation target picker (OE/AE region navigator) -->
+      <template x-if="styleExtract && stylePreview">
+        <div class="synthesized-card">
+          <div class="synthesized-header">
+            <h3 class="synthesized-title">Fermentation target</h3>
+            <button type="button" class="btn btn-secondary text-xs" @click="resetStyleTarget()">
+              Reset to centroid
+            </button>
+          </div>
+          <div class="extract-picker">
+            <input
+              type="range"
+              class="extract-slider extract-slider-ae"
+              :min="styleAeBounds ? styleAeBounds[0].toFixed(3) : 0"
+              :max="styleAeBounds ? styleAeBounds[1].toFixed(3) : 1"
+              step="0.01"
+              :value="styleExtract.ae"
+              @input="setStyleTargetAe($event.target.value)"
+              aria-label="Apparent extract (degrees Plato)"
+            />
+            <svg
+              class="extract-preview"
+              :width="stylePreview.width"
+              :height="stylePreview.height"
+            >
+              <polygon class="extract-region" :points="stylePreview.polygon" />
+              <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
+              <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
+            </svg>
+            <input
+              type="range"
+              class="extract-slider extract-slider-oe"
+              :min="styleOeBounds ? styleOeBounds[0].toFixed(3) : 0"
+              :max="styleOeBounds ? styleOeBounds[1].toFixed(3) : 1"
+              step="0.01"
+              :value="styleExtract.oe"
+              @input="setStyleTargetOe($event.target.value)"
+              aria-label="Original extract (degrees Plato)"
+            />
+          </div>
+          <span class="form-hint">AE (vertical) and OE (horizontal) in °P, constrained to the style's feasible region.</span>
+          <div class="extract-readouts">
+            <div class="extract-readout">
+              <span class="form-label">OG (SG)</span>
+              <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.og.toFixed(3) : ''"></span>
+            </div>
+            <div class="extract-readout">
+              <span class="form-label">FG (SG)</span>
+              <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.fg.toFixed(3) : ''"></span>
+            </div>
+            <div class="extract-readout">
+              <span class="form-label">Apparent attenuation</span>
+              <span class="tabular-nums" x-text="styleTargetInfo ? (styleTargetInfo.aa * 100).toFixed(1) + '%' : ''"></span>
+            </div>
+            <div class="extract-readout">
+              <span class="form-label">ABV</span>
+              <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.abv.toFixed(1) + '%' : ''"></span>
+            </div>
+            <div class="extract-readout">
+              <span class="form-label">Style safety</span>
+              <span
+                class="tabular-nums"
+                x-text="styleTargetRisk && styleTargetRisk.safety != null ? Math.round(styleTargetRisk.safety * 100) + '%' : '—'"
+              ></span>
+            </div>
+            <div class="extract-readout">
+              <span class="form-label">Nearest limit</span>
+              <span
+                class="tabular-nums"
+                x-text="styleTargetRisk && styleTargetRisk.nearest ? styleTargetRisk.nearest.label + ' (' + styleTargetRisk.nearest.headroom.toFixed(3) + ' ' + styleTargetRisk.nearest.unit + ')' : '—'"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Color & bitterness targets (style-envelope bounded) -->
       <div class="synthesized-card">
         <div class="synthesized-header">
-          <h3 class="synthesized-title">Fermentation target</h3>
-          <button type="button" class="btn btn-secondary text-xs" @click="resetStyleTarget()">
-            Reset to centroid
-          </button>
+          <h3 class="synthesized-title">Color &amp; Bitterness targets</h3>
         </div>
-        <div class="extract-picker">
+
+        <div class="form-group">
+          <label class="form-label">Target SRM</label>
+          <template x-if="styleSrmBounds">
+            <div>
+              <input
+                type="range"
+                class="target-slider"
+                :min="styleSrmBounds[0]"
+                :max="styleSrmBounds[1]"
+                step="0.5"
+                :value="targetSrm"
+                @input="setTargetSrm($event.target.value)"
+                aria-label="Target SRM"
+              />
+              <div class="target-slider-readout">
+                <span class="tabular-nums" x-text="Number(targetSrm).toFixed(0) + ' SRM'"></span>
+                <span class="text-xs text-muted" x-text="'Style ' + styleSrmBounds[0] + '–' + styleSrmBounds[1] + ' SRM'"></span>
+              </div>
+            </div>
+          </template>
+          <span class="form-hint" x-show="!styleSrmBounds">No SRM range in this style's envelope.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target IBU</label>
+          <template x-if="styleIbuBounds">
+            <div>
+              <input
+                type="range"
+                class="target-slider"
+                :min="styleIbuBounds[0]"
+                :max="styleIbuBounds[1]"
+                step="1"
+                :value="targetIbu"
+                @input="setTargetIbu($event.target.value)"
+                aria-label="Target IBU"
+              />
+              <div class="target-slider-readout">
+                <span class="tabular-nums" x-text="Number(targetIbu).toFixed(1) + ' IBU'"></span>
+                <span class="text-xs text-muted" x-text="'Style ' + styleIbuBounds[0] + '–' + styleIbuBounds[1] + ' IBU'"></span>
+              </div>
+            </div>
+          </template>
+          <span class="form-hint" x-show="!styleIbuBounds">No IBU range in this style's envelope.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Bitterness allocation</label>
           <input
             type="range"
-            class="extract-slider extract-slider-ae"
-            :min="styleAeBounds ? styleAeBounds[0].toFixed(3) : 0"
-            :max="styleAeBounds ? styleAeBounds[1].toFixed(3) : 1"
+            class="target-slider"
+            min="0"
+            max="1"
             step="0.01"
-            :value="styleExtract.ae"
-            @input="setStyleTargetAe($event.target.value)"
-            aria-label="Apparent extract (degrees Plato)"
+            :value="whirlpoolFraction"
+            @input="setWhirlpoolFraction($event.target.value)"
+            aria-label="Whirlpool share of IBUs"
           />
-          <svg
-            class="extract-preview"
-            :width="stylePreview.width"
-            :height="stylePreview.height"
-          >
-            <polygon class="extract-region" :points="stylePreview.polygon" />
-            <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
-            <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
-          </svg>
-          <input
-            type="range"
-            class="extract-slider extract-slider-oe"
-            :min="styleOeBounds ? styleOeBounds[0].toFixed(3) : 0"
-            :max="styleOeBounds ? styleOeBounds[1].toFixed(3) : 1"
-            step="0.01"
-            :value="styleExtract.oe"
-            @input="setStyleTargetOe($event.target.value)"
-            aria-label="Original extract (degrees Plato)"
-          />
-        </div>
-        <span class="form-hint">AE (vertical) and OE (horizontal) in °P, constrained to the style's feasible region.</span>
-        <div class="extract-readouts">
-          <div class="extract-readout">
-            <span class="form-label">OG (SG)</span>
-            <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.og.toFixed(3) : ''"></span>
+          <div class="target-slider-readout">
+            <span class="tabular-nums text-xs" x-text="'Boil ' + boilIbuDisplay + ' IBU'"></span>
+            <span class="tabular-nums text-xs" x-text="whirlpoolPctDisplay + '% whirlpool · ' + whirlpoolIbuDisplay + ' IBU'"></span>
           </div>
-          <div class="extract-readout">
-            <span class="form-label">FG (SG)</span>
-            <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.fg.toFixed(3) : ''"></span>
-          </div>
-          <div class="extract-readout">
-            <span class="form-label">Apparent attenuation</span>
-            <span class="tabular-nums" x-text="styleTargetInfo ? (styleTargetInfo.aa * 100).toFixed(1) + '%' : ''"></span>
-          </div>
-          <div class="extract-readout">
-            <span class="form-label">ABV</span>
-            <span class="tabular-nums" x-text="styleTargetInfo ? styleTargetInfo.abv.toFixed(1) + '%' : ''"></span>
-          </div>
-          <div class="extract-readout">
-            <span class="form-label">Style safety</span>
-            <span
-              class="tabular-nums"
-              x-text="styleTargetRisk && styleTargetRisk.safety != null ? Math.round(styleTargetRisk.safety * 100) + '%' : '—'"
-            ></span>
-          </div>
-          <div class="extract-readout">
-            <span class="form-label">Nearest limit</span>
-            <span
-              class="tabular-nums"
-              x-text="styleTargetRisk && styleTargetRisk.nearest ? styleTargetRisk.nearest.label + ' (' + styleTargetRisk.nearest.headroom.toFixed(3) + ' ' + styleTargetRisk.nearest.unit + ')' : '—'"
-            ></span>
-          </div>
+          <span class="form-hint">Left = all boil-kettle; right = all whirlpool.</span>
         </div>
       </div>
-    </template>
+    </div>
 
     <!-- Style envelope (editable in both modes) -->
     <div class="synthesized-card">

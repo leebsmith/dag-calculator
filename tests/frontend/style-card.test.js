@@ -117,3 +117,40 @@ test("editing the envelope reshapes the region and keeps the target in-region", 
   assert.ok(app.styleExtract);
   assert.ok(app.master.getRoot("batch.style_og_max") === 1.1);
 });
+
+test("target sliders: SRM/IBU bounds come from the style envelope", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21A");
+  app.compute();
+
+  const srm = app.styleSrmBounds;
+  const ibu = app.styleIbuBounds;
+  assert.ok(Array.isArray(srm) && srm[0] < srm[1]);
+  assert.ok(Array.isArray(ibu) && ibu[0] < ibu[1]);
+  assert.equal(srm[0], app.master.getRoot("batch.style_srm_min"));
+  assert.equal(ibu[1], app.master.getRoot("batch.style_ibu_max"));
+});
+
+test("target sliders: whirlpool fraction splits the IBU target", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+
+  assert.equal(app.targetIbu, 40);
+  assert.equal(app.whirlpoolPctDisplay, 25);
+  assert.ok(Math.abs(app.boilIbu - 30) < 1e-9);
+  assert.ok(Math.abs(app.whirlpoolIbu - 10) < 1e-9);
+});
+
+test("target sliders: selecting a style seeds the midpoints", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21A");
+  app.compute();
+
+  const ibumin = app.master.getRoot("batch.style_ibu_min");
+  const ibumax = app.master.getRoot("batch.style_ibu_max");
+  assert.ok(Math.abs(app.targetIbu - (ibumin + ibumax) / 2) < 1e-9);
+});

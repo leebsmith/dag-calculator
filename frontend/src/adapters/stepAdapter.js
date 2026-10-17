@@ -25,6 +25,7 @@ import {
   aeSliceAt,
 } from "../engine/fermentation.js";
 import { hamiltonPct } from "../views/hamilton.js";
+import { massFromIbu } from "../views/hops.js";
 import * as mash from "../views/mash.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
@@ -444,6 +445,7 @@ export function createStepApp(options = {}) {
       this.selectedStyleId = engine.get("batch.style_id") || "";
       this.styleSource = engine.get("batch.style_source") || "styleguide";
       this.computeStyleTarget();
+      this.refreshTargets();
       this.violationCount =
         this.relations.filter((r) => !r.holds).length +
         this.domains.filter((d) => !d.holds).length +
@@ -475,6 +477,7 @@ export function createStepApp(options = {}) {
       // Refresh the grain-bill rows for the summary card (reactive).
       this.gristRows = sortGristRows(engine.get("grist.major_malts") ?? []);
       this.traceMaltRows = engine.get("grist.trace_malts") ?? [];
+      this.hopRows = this.computeHopRows(engine);
       this.sugarList = engine.get("batch.sugars") ?? [];
       this.mashRests = engine.get("mash.rests") ?? [];
     },
@@ -815,7 +818,16 @@ export function createStepApp(options = {}) {
           this.setRoot("batch.apparent_attenuation", centroid.aa);
           this.setRoot("batch.target_abv", centroid.abv);
         }
+        // Seed the color/bitterness targets at the envelope midpoint so the
+        // sliders start inside the style's range.
+        if (typeof style.srm_min === "number" && typeof style.srm_max === "number") {
+          this.setRoot("batch.target_srm", (style.srm_min + style.srm_max) / 2);
+        }
+        if (typeof style.ibu_min === "number" && typeof style.ibu_max === "number") {
+          this.setRoot("batch.target_ibu", (style.ibu_min + style.ibu_max) / 2);
+        }
       }
+      this.refreshTargets();
       this.scheduleSolve();
       this.notify();
     },
@@ -960,6 +972,76 @@ export function createStepApp(options = {}) {
     resetStyleTarget() {
       const centroid = this.styleRegion.length >= 3 ? polygonCentroid(this.styleRegion) : null;
       if (centroid) this.applyStyleExtract(centroid[0], centroid[1]);
+    },
+
+    // --- SRM / IBU / boil-whirlpool target sliders (envelope-bounded) ---
+    get styleSrmBounds() {
+      const min = Number(this.styleField("batch.style_srm_min").value);
+      const max = Number(this.styleField("batch.style_srm_max").value);
+      return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
+    },
+
+    get styleIbuBounds() {
+      const min = Number(this.styleField("batch.style_ibu_min").value);
+      const max = Number(this.styleField("batch.style_ibu_max").value);
+      return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
+    },
+
+    // Reactive mirrors of the target roots (refreshed in compute() and setters).
+    targetSrm: 0,
+    targetIbu: 30,
+    whirlpoolFraction: 0,
+    boilIbu: 30,
+    whirlpoolIbu: 0,
+
+    refreshTargets() {
+      this.targetSrm = engine.get("batch.target_srm");
+      this.targetIbu = engine.get("batch.target_ibu");
+      this.whirlpoolFraction = engine.get("batch.whirlpool_ibu_fraction");
+      this.boilIbu = engine.get("batch.boil_target_ibu");
+      this.whirlpoolIbu = engine.get("batch.whirlpool_target_ibu");
+    },
+
+    get whirlpoolPctDisplay() {
+      const fraction = this.whirlpoolFraction;
+      return typeof fraction === "number" ? Math.round(fraction * 100) : 0;
+    },
+
+    get boilIbuDisplay() {
+      const ibu = this.boilIbu;
+      return typeof ibu === "number" ? ibu.toFixed(1) : "—";
+    },
+
+    get whirlpoolIbuDisplay() {
+      const ibu = this.whirlpoolIbu;
+      return typeof ibu === "number" ? ibu.toFixed(1) : "—";
+    },
+
+    setTargetSrm(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return;
+      this.setRoot("batch.target_srm", Math.max(0, n));
+      this.refreshTargets();
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    setTargetIbu(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return;
+      this.setRoot("batch.target_ibu", Math.max(0, n));
+      this.refreshTargets();
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    setWhirlpoolFraction(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return;
+      this.setRoot("batch.whirlpool_ibu_fraction", Math.max(0, Math.min(1, n)));
+      this.refreshTargets();
+      this.scheduleSolve();
+      this.notify();
     },
 
     // --- Mash profile card (bespoke) ---
@@ -1235,13 +1317,14 @@ export function createStepApp(options = {}) {
       );
       // Formulation rule (TODO/L3): `parts` is the grist authoring column; `pct`
       // (and thus the grain-bill `w_i`) is the normalized allocation that sums to
-      // exactly 100% at 0.1% resolution.
-      engine.setCollection(
-        field.target.nodeId,
-        field.target.nodeId === "grist.major_malts" && columnId === "parts"
-          ? this.normalizeGrist(rows)
-          : rows
-      );
+      // exactly 100% at 0.1% resolution. Boil hops use the same parts -> pct rule
+      // over their IBU pool.
+      let next = rows;
+      if (columnId === "parts") {
+        if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
+        else if (field.target.nodeId === "batch.boil_hops") next = this.normalizeHopRows(rows);
+      }
+      engine.setCollection(field.target.nodeId, next);
       this.scheduleSolve();
       this.notify();
     },
@@ -1267,10 +1350,10 @@ export function createStepApp(options = {}) {
 
     removeRow(field, rowIndex) {
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
-      engine.setCollection(
-        field.target.nodeId,
-        field.target.nodeId === "grist.major_malts" ? this.normalizeGrist(rows) : rows
-      );
+      let next = rows;
+      if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
+      else if (field.target.nodeId === "batch.boil_hops") next = this.normalizeHopRows(rows);
+      engine.setCollection(field.target.nodeId, next);
       this.scheduleSolve();
       this.notify();
     },
@@ -1278,6 +1361,13 @@ export function createStepApp(options = {}) {
     // Hamilton-normalize the grain bill's `pct` (fractions summing to 1) from its
     // `parts`.
     normalizeGrist(rows) {
+      if (!rows.length) return rows;
+      const pcts = hamiltonPct(rows.map((row) => row.parts));
+      return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
+    },
+
+    // Hamilton-normalize the boil-hop IBU shares (`pct`) from their `parts`.
+    normalizeHopRows(rows) {
       if (!rows.length) return rows;
       const pcts = hamiltonPct(rows.map((row) => row.parts));
       return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
@@ -1359,10 +1449,13 @@ export function createStepApp(options = {}) {
       this.notify();
     },
 
-    // Hamilton-normalize a grist draft's pct from its parts (no-op otherwise).
+    // Hamilton-normalize a draft's pct from its parts (grist or boil hops).
     // Mutates rows in place (stable references) and returns them.
     normalizeDraft() {
-      if (this.draftNodeId === "grist.major_malts" && this.draftRows.length) {
+      if (
+        (this.draftNodeId === "grist.major_malts" || this.draftNodeId === "batch.boil_hops") &&
+        this.draftRows.length
+      ) {
         const pcts = hamiltonPct(this.draftRows.map((r) => r.parts));
         this.draftRows.forEach((r, i) => {
           r.pct = pcts[i];
@@ -1836,6 +1929,209 @@ export function createStepApp(options = {}) {
       if (!this.traceEditorOpen) return;
       if (this.traceDrawer !== null) this.closeTraceDrawer();
       else this.cancelTraceEditor();
+    },
+
+    // --- Boil hops card (bespoke; IBU-led, mass back-calculated via Tinseth) ---
+    hopDrawer: null, // "search" | "inspect" | null
+    hopSearch: "",
+    hopActiveIndex: null,
+    hopCategoryFilter: [],
+
+    // Per-row readouts (reactive; refreshed in compute()).
+    hopRows: [],
+
+    get hopEditorOpen() {
+      return this.draftOpen && this.draftNodeId === "batch.boil_hops";
+    },
+
+    hopField(id) {
+      return (this.fieldsBySlice.hops ?? []).find((f) => f.id === id) ?? null;
+    },
+
+    get boilIbuField() {
+      return this.hopField("batch.boil_target_ibu");
+    },
+
+    get whirlpoolIbuField() {
+      return this.hopField("batch.whirlpool_target_ibu");
+    },
+
+    get hopMassUnit() {
+      return ui.unitMode.mass ?? "oz";
+    },
+
+    get hopCatalog() {
+      return Object.values(cache.seeds.hops ?? {});
+    },
+
+    get hopCategories() {
+      return [...new Set(this.hopCatalog.map((h) => h.purpose).filter(Boolean))].sort();
+    },
+
+    get hopFilteredCatalog() {
+      const active = new Set(this.draftRows.map((r) => r.hop_id).filter(Boolean));
+      const q = this.hopSearch.trim().toLowerCase();
+      const cats = this.hopCategoryFilter;
+      return this.hopCatalog.filter(
+        (h) =>
+          !active.has(h.id) &&
+          (cats.length === 0 || cats.includes(h.purpose)) &&
+          (!q || (h.name ?? "").toLowerCase().includes(q) || (h.notes ?? "").toLowerCase().includes(q))
+      );
+    },
+
+    get hopVisibleCatalog() {
+      return this.hopFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
+    },
+
+    get hopCatalogTruncated() {
+      return this.hopFilteredCatalog.length > MAX_VISIBLE_MALTS;
+    },
+
+    get hopActiveRow() {
+      return this.hopActiveIndex == null ? null : this.draftRows[this.hopActiveIndex] ?? null;
+    },
+
+    get hopDraftPartsTotal() {
+      return this.draftRows.reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+    },
+
+    // Build the card's display rows: IBU share -> IBU -> Tinseth mass.
+    computeHopRows(engine) {
+      const rows = engine.get("batch.boil_hops") ?? [];
+      const boilIbu = Number(engine.get("batch.boil_target_ibu")) || 0;
+      const boilTimeMin = Number(engine.get("batch.boil_time_min")) || 0;
+      let gravity = null;
+      let volume = null;
+      try {
+        gravity = engine.resolve("solver.batch.cascade.sg_pre_boil");
+      } catch {
+        gravity = null;
+      }
+      try {
+        volume = engine.resolve("solver.batch.cascade.v_post_boil");
+      } catch {
+        volume = null;
+      }
+      return rows.map((row) => {
+        const minutes = (Number(row.boil_time_fraction) || 0) * boilTimeMin;
+        const ibu = (Number(row.pct) || 0) * boilIbu;
+        const mass = massFromIbu(ibu, Number(row.alpha_acid_pct) || 0, minutes, gravity, volume);
+        return { ...row, minutes, ibu, mass_kg: mass };
+      });
+    },
+
+    hopMass(row) {
+      if (!row || typeof row.mass_kg !== "number" || !Number.isFinite(row.mass_kg)) return "—";
+      const unit = this.hopMassUnit;
+      const value = displayValue(artifact, "mass", unit, row.mass_kg, nonlinearFns(artifact, engine));
+      const decimals = unit === "g" ? 0 : 2;
+      return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
+    },
+
+    get hopTotalMassDisplay() {
+      const masses = this.hopRows
+        .map((r) => r.mass_kg)
+        .filter((m) => typeof m === "number" && Number.isFinite(m));
+      if (!masses.length) return this.hopRows.length ? "—" : "";
+      const unit = this.hopMassUnit;
+      const total = masses.reduce((sum, m) => sum + m, 0);
+      const value = displayValue(artifact, "mass", unit, total, nonlinearFns(artifact, engine));
+      const decimals = unit === "g" ? 0 : 2;
+      return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
+    },
+
+    hopAlpha(row) {
+      return typeof row?.alpha_acid_pct === "number" ? formatPercent(row.alpha_acid_pct) + "%" : "—";
+    },
+
+    hopBoilPct(row) {
+      return typeof row?.boil_time_fraction === "number"
+        ? Math.round(row.boil_time_fraction * 100) + "%"
+        : "—";
+    },
+
+    hopMinutes(row) {
+      return typeof row?.minutes === "number" ? row.minutes.toFixed(0) + " min" : "—";
+    },
+
+    hopIbu(row) {
+      return typeof row?.ibu === "number" ? row.ibu.toFixed(1) : "—";
+    },
+
+    hopPct(row) {
+      return typeof row?.pct === "number" ? (row.pct * 100).toFixed(1) + "%" : "—";
+    },
+
+    openHopEditor() {
+      this.openDraft("batch.boil_hops");
+      this.hopDrawer = null;
+      this.hopActiveIndex = null;
+    },
+
+    cancelHopEditor() {
+      this.closeDraft();
+      this.hopDrawer = null;
+      this.hopActiveIndex = null;
+    },
+
+    saveHopEditor() {
+      this.saveDraft();
+      this.hopDrawer = null;
+      this.hopActiveIndex = null;
+    },
+
+    addCatalogHop(hopId) {
+      const hop = cache.seeds.hops?.[hopId];
+      if (!hop) return;
+      this.addDraftRow({
+        hop_id: hop.id,
+        name: hop.name,
+        alpha_acid_pct: hop.alpha_acid_pct,
+        boil_time_fraction: 1,
+        parts: 10,
+        pct: 0,
+      });
+      this.closeHopDrawer();
+    },
+
+    removeHop(ri) {
+      this.removeDraftRow(ri);
+      if (this.hopActiveIndex === ri) {
+        this.hopActiveIndex = null;
+        if (this.hopDrawer === "inspect") this.hopDrawer = null;
+      } else if (this.hopActiveIndex != null && this.hopActiveIndex > ri) {
+        this.hopActiveIndex -= 1;
+      }
+    },
+
+    inspectHopRow(ri) {
+      this.hopActiveIndex = ri;
+      this.hopDrawer = "inspect";
+    },
+
+    openHopSearch() {
+      this.hopDrawer = "search";
+      this.hopActiveIndex = null;
+      this.hopSearch = "";
+      this.hopCategoryFilter = [];
+    },
+
+    closeHopDrawer() {
+      this.hopDrawer = null;
+      this.hopActiveIndex = null;
+    },
+
+    toggleHopCategory(category) {
+      this.hopCategoryFilter = this.hopCategoryFilter.includes(category)
+        ? this.hopCategoryFilter.filter((c) => c !== category)
+        : [...this.hopCategoryFilter, category];
+    },
+
+    handleHopEscape() {
+      if (!this.hopEditorOpen) return;
+      if (this.hopDrawer !== null) this.closeHopDrawer();
+      else this.cancelHopEditor();
     },
 
     // Explicit boot (main.js owns it after auth). Deliberately NOT named

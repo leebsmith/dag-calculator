@@ -12,7 +12,7 @@ SCRAPE_DEPS := --with-requirements $(SCRAPE_DIR)/requirements.txt
 LIMIT ?=
 OUT   ?=
 
-.PHONY: help local-dev check test seeds seeds-styles seeds-yeasts \
+.PHONY: help local-dev check test seeds seeds-styles seeds-yeasts seeds-hops \
         scrape-yeasts scrape-hops clean deploy deploy-backend deploy-frontend destroy
 
 help:
@@ -58,15 +58,16 @@ test:
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/
 # by the .mjs builders. Scrapers are polite (identified UA, 1.5 s throttle).
-seeds: seeds-styles seeds-yeasts
-# NOTE: hops have a raw scrape + scraper but no build-hops-seed.mjs / `hop`
-# primitive schema yet; add `seeds-hops` when that lands.
+seeds: seeds-styles seeds-yeasts seeds-hops
 
 seeds-styles:
 	node scripts/build-styles-seed.mjs
 
 seeds-yeasts:
 	node scripts/build-yeasts-seed.mjs
+
+seeds-hops:
+	node scripts/build-hops-seed.mjs
 
 scrape-yeasts:
 	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/yeast_scraper.py \

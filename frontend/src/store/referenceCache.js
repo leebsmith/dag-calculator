@@ -5,6 +5,7 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json" };
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
+import hops from "../../../data/seeds/hops.json" with { type: "json" };
 import sugars from "../../../data/seeds/sugars.json" with { type: "json" };
 import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
 import styles from "../../../data/seeds/styles.json" with { type: "json" };
@@ -44,6 +45,7 @@ export function createReferenceCache() {
     references: {
       equipment,
       yeast: yeasts,
+      hop: hops,
       style: styles,
       water_report: waterReports,
       water_target: waterTargets,
@@ -53,11 +55,13 @@ export function createReferenceCache() {
       "grist.trace_malts": [],
       "mash.rests": mashSchedules["single-infusion"].rests,
       "batch.sugars": [],
+      "batch.boil_hops": [],
       "batch.dry_hops": [],
     },
     seeds: {
       equipment,
       malts,
+      hops,
       sugars,
       yeasts,
       styles,

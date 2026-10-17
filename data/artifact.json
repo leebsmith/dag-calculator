@@ -201,6 +201,14 @@
       "value": 5.5,
       "dimension": "percentage"
     },
+    "default_target_ibu": {
+      "value": 30,
+      "dimension": "ibu"
+    },
+    "default_target_srm": {
+      "value": 0,
+      "dimension": "beer_color"
+    },
     "default_v_ferm_l": {
       "value": 20,
       "dimension": "volume"
@@ -952,6 +960,48 @@
       "url": {},
       "notes": {}
     },
+    "hop": {
+      "id": {},
+      "name": {},
+      "synonym": {},
+      "category": {},
+      "purpose": {},
+      "origin": {},
+      "alpha_rating": {},
+      "recipes_count": {},
+      "alpha_acid_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "alpha_acid_min_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "alpha_acid_max_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "beta_acid_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "pairings": {},
+      "flavor_profiles": {},
+      "notes": {},
+      "url": {}
+    },
     "style": {
       "id": {},
       "name": {},
@@ -1250,6 +1300,37 @@
       },
       "notes": {}
     },
+    "boil_hop_row": {
+      "hop_id": {},
+      "name": {},
+      "alpha_acid_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "boil_time_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "parts": {
+        "dimension": "dimensionless",
+        "domain": {
+          "gte": 0
+        }
+      },
+      "pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      }
+    },
     "mash_rest": {
       "rest_id": {
         "taxonomy": "mash_rest"
@@ -1474,6 +1555,35 @@
         "gt": 0
       }
     },
+    "batch.target_ibu": {
+      "kind": "root",
+      "dimension": "ibu",
+      "default": {
+        "const": "default_target_ibu"
+      },
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.target_srm": {
+      "kind": "root",
+      "dimension": "beer_color",
+      "default": {
+        "const": "default_target_srm"
+      },
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.whirlpool_ibu_fraction": {
+      "kind": "root",
+      "dimension": "percentage",
+      "default": 0,
+      "domain": {
+        "gte": 0,
+        "lte": 1
+      }
+    },
     "batch.v_ferm": {
       "kind": "root",
       "dimension": "volume",
@@ -1559,6 +1669,10 @@
     "batch.sugars": {
       "kind": "collection",
       "item_schema": "sugar_row"
+    },
+    "batch.boil_hops": {
+      "kind": "collection",
+      "item_schema": "boil_hop_row"
     },
     "equipment.profile": {
       "kind": "selection",
@@ -1989,6 +2103,48 @@
           "MASH_TOO_THIN",
           "HLT_TOO_SMALL"
         ]
+      }
+    },
+    "batch.boil_target_ibu": {
+      "kind": "derived",
+      "inputs": {
+        "target_ibu": "batch.target_ibu",
+        "whirlpool_target_ibu": "batch.whirlpool_target_ibu"
+      },
+      "expr": {
+        "op": "-",
+        "args": [
+          {
+            "ref": "target_ibu"
+          },
+          {
+            "ref": "whirlpool_target_ibu"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "ibu"
+      }
+    },
+    "batch.whirlpool_target_ibu": {
+      "kind": "derived",
+      "inputs": {
+        "target_ibu": "batch.target_ibu",
+        "whirlpool_fraction": "batch.whirlpool_ibu_fraction"
+      },
+      "expr": {
+        "op": "*",
+        "args": [
+          {
+            "ref": "target_ibu"
+          },
+          {
+            "ref": "whirlpool_fraction"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "ibu"
       }
     },
     "batch.total_water_used": {

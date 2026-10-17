@@ -61,8 +61,7 @@ make seeds                      # rebuild data/seeds/ from data/sources/
 Scrapers identify the operator in the `User-Agent` and throttle between requests.
 Scraped content is © Beer Analytics and licensed
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); keep attribution
-when redistributing. (Hops have a scraper and raw source but not yet a seed
-builder / `hop` schema — that lands with the hops step.)
+when redistributing.
 
 ## Living vs. historical
 

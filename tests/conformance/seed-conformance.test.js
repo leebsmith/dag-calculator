@@ -48,6 +48,7 @@ function domainHolds(domain, value) {
 const CATALOGS = [
   ["equipment.json", "equipment", "id"],
   ["malts.json", "malt", "id"],
+  ["hops.json", "hop", "id"],
   ["sugars.json", "sugar", "id"],
   ["yeasts.json", "yeast", "id"],
   ["styles.json", "style", "id"],

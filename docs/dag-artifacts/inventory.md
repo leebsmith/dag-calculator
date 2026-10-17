@@ -58,9 +58,11 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | fields |
 |---|---|
+| `boil_hop_row` | `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `boil_time_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `hop_id` (—), `name` (—), `parts` (dimension dimensionless, domain {"gte":0}), `pct` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `dry_hop_row` | `application_stage` (taxonomy wet_hop_application_stage), `contact_duration_hours` (dimension time), `notes` (—), `product_type` (taxonomy wet_hop_product_type), `quantity` (dimension dimensionless), `time_of_application` (—), `unit` (taxonomy hop_unit), `variety` (—) |
 | `equipment` | `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `hlt_coil_floor_l` (dimension volume, domain {"gte":0}), `hlt_dead_space_l` (dimension volume, domain {"gte":0}), `hlt_transfer_loss_l` (dimension volume, domain {"gte":0}), `id` (—), `kettle_dead_space_l` (dimension volume, domain {"gte":0}), `kettle_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_dead_space_l` (dimension volume, domain {"gte":0}), `mash_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_tun_mass_kg` (dimension mass, domain {"gt":0}), `mash_tun_specific_heat` (dimension specific_heat, domain {"gt":0}), `max_hlt_volume_l` (dimension volume, domain {"gt":0}), `max_kettle_volume_l` (dimension volume, domain {"gt":0}), `max_mash_tun_volume_l` (dimension volume, domain {"gt":0}), `name` (—), `nominal_boil_off_rate_l_per_hr` (dimension volume_per_time, domain {"gt":0}), `nominal_conversion_efficiency` (dimension percentage, domain {"gt":0,"lte":1}), `shrinkage_pct` (dimension percentage, domain {"gte":0,"lte":0.2}), `trub_loss_l` (dimension volume, domain {"gte":0}) |
 | `grist_row` | `buffer_index` (dimension dimensionless), `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `di_ph` (dimension ph), `moisture_pct` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `hop` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_rating` (—), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `category` (—), `flavor_profiles` (—), `id` (—), `name` (—), `notes` (—), `origin` (—), `pairings` (—), `purpose` (—), `recipes_count` (—), `synonym` (—), `url` (—) |
 | `malt` | `buffer_index` (dimension dimensionless), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `di_ph` (dimension ph), `id` (—), `moisture_pct` (dimension percentage, default 0.04), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
 | `style` | `abv_max` (dimension abv, domain {"gte":0}), `abv_min` (dimension abv, domain {"gte":0}), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain {"gte":0}), `fg_min` (dimension gravity, domain {"gte":0}), `flavor` (—), `history` (—), `ibu_max` (dimension ibu, domain {"gte":0}), `ibu_min` (dimension ibu, domain {"gte":0}), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain {"gte":0}), `og_min` (dimension gravity, domain {"gte":0}), `overall_impression` (—), `srm_max` (dimension beer_color, domain {"gte":0}), `srm_min` (dimension beer_color, domain {"gte":0}), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
@@ -115,7 +117,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
 | `default_target_abv` | 5.5 | `percentage` |
+| `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
+| `default_target_srm` | 0 | `beer_color` |
 | `default_trub_loss_l` | 1.5 | `volume` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `k_abs_true` | 1.67 | `mash_thickness` |
@@ -137,7 +141,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | id | kind |
 |---|---|
 | `batch.apparent_attenuation` | root |
+| `batch.boil_hops` | collection |
 | `batch.boil_off_rate_l_per_hr` | root |
+| `batch.boil_target_ibu` | derived |
 | `batch.boil_time_min` | root |
 | `batch.conversion_efficiency` | root |
 | `batch.delta_v_evap` | derived |
@@ -166,9 +172,13 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.sugars` | collection |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |
+| `batch.target_ibu` | root |
+| `batch.target_srm` | root |
 | `batch.topology` | choice |
 | `batch.total_water_used` | derived |
 | `batch.v_ferm` | root |
+| `batch.whirlpool_ibu_fraction` | root |
+| `batch.whirlpool_target_ibu` | derived |
 | `batch.yeast` | selection |
 | `batch.yeast_id` | root |
 | `equipment.profile` | selection |

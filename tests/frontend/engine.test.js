@@ -126,3 +126,22 @@ test("trace malts: definite-mass rows fold into color (and only color)", () => {
   assert.ok(baseMcu < e.get("grist.mcu"));
   assert.equal(e.resolve("solver.batch.m_grist"), 4.7); // extract/mass untouched
 });
+
+test("target roots default from their constants", () => {
+  const e = createCalculator(artifact, makeFixtures());
+  assert.equal(e.get("batch.target_ibu"), 30);
+  assert.equal(e.get("batch.target_srm"), 0);
+  assert.equal(e.get("batch.whirlpool_ibu_fraction"), 0);
+});
+
+test("IBU split: boil/whirlpool targets track the whirlpool fraction", () => {
+  const e = createCalculator(artifact, makeFixtures());
+  e.setRoot("batch.target_ibu", 40);
+  e.setRoot("batch.whirlpool_ibu_fraction", 0.25);
+  assert.ok(Math.abs(e.get("batch.whirlpool_target_ibu") - 10) < 1e-9);
+  assert.ok(Math.abs(e.get("batch.boil_target_ibu") - 30) < 1e-9);
+
+  e.setRoot("batch.whirlpool_ibu_fraction", 1);
+  assert.equal(e.get("batch.boil_target_ibu"), 0);
+  assert.ok(Math.abs(e.get("batch.whirlpool_target_ibu") - 40) < 1e-9);
+});

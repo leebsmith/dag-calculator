@@ -110,6 +110,11 @@ export const steps = [
       "batch.boil_off_rate_l_per_hr",
       "batch.conversion_efficiency",
       "batch.apparent_attenuation",
+      "batch.target_ibu",
+      "batch.target_srm",
+      "batch.whirlpool_ibu_fraction",
+      "batch.boil_target_ibu",
+      "batch.whirlpool_target_ibu",
       {
         table: "derived-anchors",
         title: "Derived Anchors",
@@ -200,6 +205,22 @@ export const steps = [
           },
         ],
       },
+    ],
+  },
+  {
+    id: "hops",
+    slice: "hops",
+    title: "Hops",
+    subtitle: "Boil additions, dosed by IBU share and boil time",
+    partial: "./src/partials/step-hops.html",
+    fields: [
+      {
+        collection: "batch.boil_hops",
+        columns: ["name", "alpha_acid_pct", "boil_time_fraction", "parts", "pct"],
+        inputs: ["boil_time_fraction", "parts"],
+      },
+      "batch.boil_target_ibu",
+      "batch.whirlpool_target_ibu",
     ],
   },
   {
