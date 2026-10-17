@@ -25,6 +25,7 @@ import {
   aeSliceAt,
 } from "../engine/fermentation.js";
 import { hamiltonPct } from "../views/hamilton.js";
+import { registerYeastCard, refreshYeastCard } from "./cards/yeast.js";
 import { registerHopCard, refreshHopCard } from "./cards/hops.js";
 import { registerLateAdditionsCard, refreshLateAdditionsCard } from "./cards/late-additions.js";
 import { registerTraceMaltsCard, refreshTraceMaltsCard } from "./cards/trace-malts.js";
@@ -56,14 +57,7 @@ function refPaths(node, out = new Set()) {
   return out;
 }
 
-// Cap the rendered yeast rows (the catalog is large); the full count is still
-// shown in the result counter.
-const MAX_VISIBLE_YEASTS = 25;
-
 const MAX_VISIBLE_STYLES = 25;
-
-// fraction (0..1) -> percentage string with up to one decimal (0.744 -> "74.4").
-const formatPercent = (f) => (typeof f === "number" ? String(Math.round(f * 1000) / 10) : "");
 
 const normalizeTag = (t) => (t ?? "").trim().toLowerCase().replace(/\s+/g, "-");
 
@@ -95,18 +89,6 @@ function styleColor(style) {
   if (tags.has("amber-color")) return "amber";
   if (tags.has("dark-color")) return "dark";
   return "";
-}
-
-// Bin apparent attenuation (fraction 0..1) into the four commercial tiers.
-// Gaps between the tabulated ranges are split at their half-points so every
-// strain lands in exactly one tier.
-function yeastAttenuationTier(pct) {
-  if (typeof pct !== "number") return "";
-  const p = pct * 100;
-  if (p < 70.5) return "low";
-  if (p < 75.5) return "medium";
-  if (p < 82.5) return "high";
-  return "super";
 }
 
 // Map every manifest field to the step slice that displays it, keyed by
@@ -223,7 +205,6 @@ export function createStepApp(options = {}) {
     unitsOpen: false,
     violationCount: 0,
     fieldsBySlice: {},
-    selectedYeastId: "",
     selectedStyleId: "",
     styleSource: "styleguide",
     styleRegion: [],
@@ -434,7 +415,7 @@ export function createStepApp(options = {}) {
       this.domains = safe(() => engine.domainStates());
       this.fieldDomains = fieldDomains;
       this.collectionDomains = collectionDomains;
-      this.selectedYeastId = engine.get("batch.yeast_id") || "";
+      refreshYeastCard(this, cardCtx);
       this.selectedStyleId = engine.get("batch.style_id") || "";
       this.styleSource = engine.get("batch.style_source") || "styleguide";
       this.computeStyleTarget();
@@ -641,84 +622,6 @@ export function createStepApp(options = {}) {
           if (typeof profile[ion] === "number") this.setRoot(`water.target.${ion}`, profile[ion]);
         }
       }
-    },
-
-    // --- Yeast selection card (bespoke) ---
-    yeastSearchQuery: "",
-    yeastManufacturerFilter: "",
-    yeastAttenuationFilter: "",
-
-    get yeastCatalog() {
-      return Object.values(cache.references.yeast ?? {});
-    },
-
-    get yeastManufacturers() {
-      return [...new Set(this.yeastCatalog.map((y) => y.manufacturer).filter(Boolean))].sort();
-    },
-
-    get yeastAttenuationTiers() {
-      return [
-        { key: "low", label: "Low 65–70%" },
-        { key: "medium", label: "Medium 71–75%" },
-        { key: "high", label: "High 76–82%" },
-        { key: "super", label: "Super 83%+" },
-      ];
-    },
-
-    get filteredYeasts() {
-      const q = this.yeastSearchQuery.trim().toLowerCase();
-      const m = this.yeastManufacturerFilter;
-      const t = this.yeastAttenuationFilter;
-      return this.yeastCatalog.filter(
-        (y) =>
-          (!q || y.name.toLowerCase().includes(q)) &&
-          (!m || y.manufacturer === m) &&
-          (!t || yeastAttenuationTier(y.attenuation_pct) === t)
-      );
-    },
-
-    get visibleYeasts() {
-      return this.filteredYeasts.slice(0, MAX_VISIBLE_YEASTS);
-    },
-
-    get yeastResultCount() {
-      return this.filteredYeasts.length;
-    },
-
-    get isYeastListTruncated() {
-      return this.yeastResultCount > MAX_VISIBLE_YEASTS;
-    },
-
-    get selectedYeast() {
-      return this.selectedYeastId ? cache.references.yeast[this.selectedYeastId] ?? null : null;
-    },
-
-    yeastAttenuation(y) {
-      return y ? `${formatPercent(y.attenuation_pct)}%` : "";
-    },
-
-    get selectedYeastTemp() {
-      const y = this.selectedYeast;
-      if (!y || typeof y.temp_low_c !== "number" || typeof y.temp_high_c !== "number") return "";
-      return `${y.temp_low_c}–${y.temp_high_c}°C`;
-    },
-
-    // Selecting a strain copies its typical attenuation into the batch's
-    // apparent attenuation (which is edited on the Batch Sparge step).
-    selectYeast(id) {
-      this.setRoot("batch.yeast_id", id);
-      const yeast = cache.references.yeast[id];
-      if (yeast && typeof yeast.attenuation_pct === "number") {
-        this.setRoot("batch.apparent_attenuation", yeast.attenuation_pct);
-      }
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    clearYeastSelection() {
-      this.setRoot("batch.yeast_id", "");
-      this.scheduleSolve();
-      this.notify();
     },
 
     // --- Style selection card (bespoke) ---
@@ -1550,6 +1453,7 @@ export function createStepApp(options = {}) {
     },
   };
 
+  registerYeastCard(app, cardCtx);
   registerHopCard(app, cardCtx);
   registerLateAdditionsCard(app, cardCtx);
   registerTraceMaltsCard(app, cardCtx);
