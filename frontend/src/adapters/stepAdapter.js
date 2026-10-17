@@ -25,7 +25,7 @@ import {
   aeSliceAt,
 } from "../engine/fermentation.js";
 import { hamiltonPct } from "../views/hamilton.js";
-import { massFromIbu } from "../views/hops.js";
+import { registerHopCard, refreshHopCard } from "./cards/hops.js";
 import * as mash from "../views/mash.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
@@ -215,7 +215,11 @@ export function createStepApp(options = {}) {
   // The pristine auth-scoped baseline to restore on sign-out.
   const baselineRoots = master.allRoots();
 
-  return {
+  // Shared context for the per-card modules (cards/<name>.js). Cards attach
+  // reactive state/handlers onto `app` before main.js wraps it in Alpine.reactive.
+  const cardCtx = { engine, cache, ui, artifact };
+
+  const app = {
     master,
     steps,
     activeIndex: ui.activeIndex,
@@ -477,7 +481,7 @@ export function createStepApp(options = {}) {
       // Refresh the grain-bill rows for the summary card (reactive).
       this.gristRows = sortGristRows(engine.get("grist.major_malts") ?? []);
       this.traceMaltRows = engine.get("grist.trace_malts") ?? [];
-      this.hopRows = this.computeHopRows(engine);
+      refreshHopCard(this, cardCtx);
       this.sugarList = engine.get("batch.sugars") ?? [];
       this.mashRests = engine.get("mash.rests") ?? [];
     },
@@ -1931,209 +1935,6 @@ export function createStepApp(options = {}) {
       else this.cancelTraceEditor();
     },
 
-    // --- Boil hops card (bespoke; IBU-led, mass back-calculated via Tinseth) ---
-    hopDrawer: null, // "search" | "inspect" | null
-    hopSearch: "",
-    hopActiveIndex: null,
-    hopCategoryFilter: [],
-
-    // Per-row readouts (reactive; refreshed in compute()).
-    hopRows: [],
-
-    get hopEditorOpen() {
-      return this.draftOpen && this.draftNodeId === "batch.boil_hops";
-    },
-
-    hopField(id) {
-      return (this.fieldsBySlice.hops ?? []).find((f) => f.id === id) ?? null;
-    },
-
-    get boilIbuField() {
-      return this.hopField("batch.boil_target_ibu");
-    },
-
-    get whirlpoolIbuField() {
-      return this.hopField("batch.whirlpool_target_ibu");
-    },
-
-    get hopMassUnit() {
-      return ui.unitMode.mass ?? "oz";
-    },
-
-    get hopCatalog() {
-      return Object.values(cache.seeds.hops ?? {});
-    },
-
-    get hopCategories() {
-      return [...new Set(this.hopCatalog.map((h) => h.purpose).filter(Boolean))].sort();
-    },
-
-    get hopFilteredCatalog() {
-      const active = new Set(this.draftRows.map((r) => r.hop_id).filter(Boolean));
-      const q = this.hopSearch.trim().toLowerCase();
-      const cats = this.hopCategoryFilter;
-      return this.hopCatalog.filter(
-        (h) =>
-          !active.has(h.id) &&
-          (cats.length === 0 || cats.includes(h.purpose)) &&
-          (!q || (h.name ?? "").toLowerCase().includes(q) || (h.notes ?? "").toLowerCase().includes(q))
-      );
-    },
-
-    get hopVisibleCatalog() {
-      return this.hopFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
-    },
-
-    get hopCatalogTruncated() {
-      return this.hopFilteredCatalog.length > MAX_VISIBLE_MALTS;
-    },
-
-    get hopActiveRow() {
-      return this.hopActiveIndex == null ? null : this.draftRows[this.hopActiveIndex] ?? null;
-    },
-
-    get hopDraftPartsTotal() {
-      return this.draftRows.reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
-    },
-
-    // Build the card's display rows: IBU share -> IBU -> Tinseth mass.
-    computeHopRows(engine) {
-      const rows = engine.get("batch.boil_hops") ?? [];
-      const boilIbu = Number(engine.get("batch.boil_target_ibu")) || 0;
-      const boilTimeMin = Number(engine.get("batch.boil_time_min")) || 0;
-      let gravity = null;
-      let volume = null;
-      try {
-        gravity = engine.resolve("solver.batch.cascade.sg_pre_boil");
-      } catch {
-        gravity = null;
-      }
-      try {
-        volume = engine.resolve("solver.batch.cascade.v_post_boil");
-      } catch {
-        volume = null;
-      }
-      return rows.map((row) => {
-        const minutes = (Number(row.boil_time_fraction) || 0) * boilTimeMin;
-        const ibu = (Number(row.pct) || 0) * boilIbu;
-        const mass = massFromIbu(ibu, Number(row.alpha_acid_pct) || 0, minutes, gravity, volume);
-        return { ...row, minutes, ibu, mass_kg: mass };
-      });
-    },
-
-    hopMass(row) {
-      if (!row || typeof row.mass_kg !== "number" || !Number.isFinite(row.mass_kg)) return "—";
-      const unit = this.hopMassUnit;
-      const value = displayValue(artifact, "mass", unit, row.mass_kg, nonlinearFns(artifact, engine));
-      const decimals = unit === "g" ? 0 : 2;
-      return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
-    },
-
-    get hopTotalMassDisplay() {
-      const masses = this.hopRows
-        .map((r) => r.mass_kg)
-        .filter((m) => typeof m === "number" && Number.isFinite(m));
-      if (!masses.length) return this.hopRows.length ? "—" : "";
-      const unit = this.hopMassUnit;
-      const total = masses.reduce((sum, m) => sum + m, 0);
-      const value = displayValue(artifact, "mass", unit, total, nonlinearFns(artifact, engine));
-      const decimals = unit === "g" ? 0 : 2;
-      return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
-    },
-
-    hopAlpha(row) {
-      return typeof row?.alpha_acid_pct === "number" ? formatPercent(row.alpha_acid_pct) + "%" : "—";
-    },
-
-    hopBoilPct(row) {
-      return typeof row?.boil_time_fraction === "number"
-        ? Math.round(row.boil_time_fraction * 100) + "%"
-        : "—";
-    },
-
-    hopMinutes(row) {
-      return typeof row?.minutes === "number" ? row.minutes.toFixed(0) + " min" : "—";
-    },
-
-    hopIbu(row) {
-      return typeof row?.ibu === "number" ? row.ibu.toFixed(1) : "—";
-    },
-
-    hopPct(row) {
-      return typeof row?.pct === "number" ? (row.pct * 100).toFixed(1) + "%" : "—";
-    },
-
-    openHopEditor() {
-      this.openDraft("batch.boil_hops");
-      this.hopDrawer = null;
-      this.hopActiveIndex = null;
-    },
-
-    cancelHopEditor() {
-      this.closeDraft();
-      this.hopDrawer = null;
-      this.hopActiveIndex = null;
-    },
-
-    saveHopEditor() {
-      this.saveDraft();
-      this.hopDrawer = null;
-      this.hopActiveIndex = null;
-    },
-
-    addCatalogHop(hopId) {
-      const hop = cache.seeds.hops?.[hopId];
-      if (!hop) return;
-      this.addDraftRow({
-        hop_id: hop.id,
-        name: hop.name,
-        alpha_acid_pct: hop.alpha_acid_pct,
-        boil_time_fraction: 1,
-        parts: 10,
-        pct: 0,
-      });
-      this.closeHopDrawer();
-    },
-
-    removeHop(ri) {
-      this.removeDraftRow(ri);
-      if (this.hopActiveIndex === ri) {
-        this.hopActiveIndex = null;
-        if (this.hopDrawer === "inspect") this.hopDrawer = null;
-      } else if (this.hopActiveIndex != null && this.hopActiveIndex > ri) {
-        this.hopActiveIndex -= 1;
-      }
-    },
-
-    inspectHopRow(ri) {
-      this.hopActiveIndex = ri;
-      this.hopDrawer = "inspect";
-    },
-
-    openHopSearch() {
-      this.hopDrawer = "search";
-      this.hopActiveIndex = null;
-      this.hopSearch = "";
-      this.hopCategoryFilter = [];
-    },
-
-    closeHopDrawer() {
-      this.hopDrawer = null;
-      this.hopActiveIndex = null;
-    },
-
-    toggleHopCategory(category) {
-      this.hopCategoryFilter = this.hopCategoryFilter.includes(category)
-        ? this.hopCategoryFilter.filter((c) => c !== category)
-        : [...this.hopCategoryFilter, category];
-    },
-
-    handleHopEscape() {
-      if (!this.hopEditorOpen) return;
-      if (this.hopDrawer !== null) this.closeHopDrawer();
-      else this.cancelHopEditor();
-    },
-
     // Explicit boot (main.js owns it after auth). Deliberately NOT named
     // `init`: Alpine auto-calls an `init()` method on `x-data` objects, which
     // would run a solve before sign-in (and 401).
@@ -2173,4 +1974,7 @@ export function createStepApp(options = {}) {
       this.compute();
     },
   };
+
+  registerHopCard(app, cardCtx);
+  return app;
 }
