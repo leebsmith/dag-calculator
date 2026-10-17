@@ -109,6 +109,16 @@ function yeastAttenuationTier(pct) {
   return "super";
 }
 
+// Summary-card order: largest parts first, then name (case-insensitive) as a
+// stable tie-break. Display-only; the draft editor keeps its own row order.
+function sortGristRows(rows) {
+  return [...rows].sort(
+    (a, b) =>
+      (Number(b.parts) || 0) - (Number(a.parts) || 0) ||
+      String(a.name ?? "").localeCompare(String(b.name ?? ""), undefined, { sensitivity: "base" })
+  );
+}
+
 // Map every manifest field to the step slice that displays it, keyed by
 // `fieldKey`. Lets violations land on the card that owns the field.
 function buildFieldSliceMap() {
@@ -463,7 +473,7 @@ export function createStepApp(options = {}) {
         this.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
       }
       // Refresh the grain-bill rows for the summary card (reactive).
-      this.gristRows = engine.get("grist.major_malts") ?? [];
+      this.gristRows = sortGristRows(engine.get("grist.major_malts") ?? []);
       this.traceMaltRows = engine.get("grist.trace_malts") ?? [];
       this.sugarList = engine.get("batch.sugars") ?? [];
       this.mashRests = engine.get("mash.rests") ?? [];
