@@ -38,7 +38,11 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
 | `moisture_pct` | percentage | `[0, 1]`, default 0.04 | as-is moisture |
-| `di_ph`, `buffer_index` | ph / dimensionless | optional | pH-model coefficients (Troester/Palmer per category) |
+
+Mash pH/acidity is **not** a seed field. The water solver derives grain acidity
+from `category` + `color_lovibond` (a category color-slope model in
+`backend/app/core/water.py`). There is no per-malt `di_ph`/`buffer_index` to
+source or maintain.
 
 ### 2.2 `sugar`
 

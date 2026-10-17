@@ -1,9 +1,7 @@
 {
   "abbey-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 17.0,
-    "di_ph": 5.75,
     "id": "abbey-malt",
     "moisture_pct": 0.04,
     "name": "Abbey Malt",
@@ -11,10 +9,8 @@
     "yield_fraction": 0.76
   },
   "acidulated-malt": {
-    "buffer_index": 35.0,
     "category": "ACID",
     "color_lovibond": 3.0,
-    "di_ph": 3.8,
     "id": "acidulated-malt",
     "moisture_pct": 0.04,
     "name": "Acidulated Malt",
@@ -22,10 +18,8 @@
     "yield_fraction": 0.74
   },
   "amber-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 27.0,
-    "di_ph": 5.75,
     "id": "amber-malt",
     "moisture_pct": 0.04,
     "name": "Amber Malt",
@@ -33,10 +27,8 @@
     "yield_fraction": 0.76
   },
   "aromatic-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 20.0,
-    "di_ph": 5.75,
     "id": "aromatic-malt",
     "moisture_pct": 0.04,
     "name": "Aromatic Malt",
@@ -44,10 +36,8 @@
     "yield_fraction": 0.76
   },
   "basic-barley-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "basic-barley-malt",
     "moisture_pct": 0.04,
     "name": "Basic Barley Malt",
@@ -55,10 +45,8 @@
     "yield_fraction": 0.8
   },
   "biscuit-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 25.0,
-    "di_ph": 5.75,
     "id": "biscuit-malt",
     "moisture_pct": 0.04,
     "name": "Biscuit Malt",
@@ -66,10 +54,8 @@
     "yield_fraction": 0.76
   },
   "black-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 500.0,
-    "di_ph": 4.7,
     "id": "black-malt",
     "moisture_pct": 0.04,
     "name": "Black Malt",
@@ -77,10 +63,8 @@
     "yield_fraction": 0.55
   },
   "brown-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 65.0,
-    "di_ph": 4.7,
     "id": "brown-malt",
     "moisture_pct": 0.04,
     "name": "Brown Malt",
@@ -88,10 +72,8 @@
     "yield_fraction": 0.7
   },
   "buckwheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "buckwheat-malt",
     "moisture_pct": 0.04,
     "name": "Buckwheat Malt",
@@ -99,10 +81,8 @@
     "yield_fraction": 0.7
   },
   "caraamber": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 30.0,
-    "di_ph": 5.0,
     "id": "caraamber",
     "moisture_pct": 0.04,
     "name": "CaraAmber",
@@ -110,10 +90,8 @@
     "yield_fraction": 0.75
   },
   "caraaroma": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 150.0,
-    "di_ph": 5.0,
     "id": "caraaroma",
     "moisture_pct": 0.04,
     "name": "CaraAroma",
@@ -121,10 +99,8 @@
     "yield_fraction": 0.74
   },
   "carabelge": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 15.0,
-    "di_ph": 5.0,
     "id": "carabelge",
     "moisture_pct": 0.04,
     "name": "CaraBelge",
@@ -132,10 +108,8 @@
     "yield_fraction": 0.75
   },
   "carabohemian": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 75.0,
-    "di_ph": 5.0,
     "id": "carabohemian",
     "moisture_pct": 0.04,
     "name": "CaraBohemian",
@@ -143,10 +117,8 @@
     "yield_fraction": 0.74
   },
   "carafa-i": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 320.0,
-    "di_ph": 4.7,
     "id": "carafa-i",
     "moisture_pct": 0.04,
     "name": "CaraFa I",
@@ -154,10 +126,8 @@
     "yield_fraction": 0.7
   },
   "carafa-ii": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 425.0,
-    "di_ph": 4.7,
     "id": "carafa-ii",
     "moisture_pct": 0.04,
     "name": "CaraFa II",
@@ -165,10 +135,8 @@
     "yield_fraction": 0.65
   },
   "carafa-iii": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 525.0,
-    "di_ph": 4.7,
     "id": "carafa-iii",
     "moisture_pct": 0.04,
     "name": "CaraFa III",
@@ -176,10 +144,8 @@
     "yield_fraction": 0.6
   },
   "carafa-special-i": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 320.0,
-    "di_ph": 4.7,
     "id": "carafa-special-i",
     "moisture_pct": 0.04,
     "name": "CaraFa Special I",
@@ -187,10 +153,8 @@
     "yield_fraction": 0.7
   },
   "carafa-special-ii": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 425.0,
-    "di_ph": 4.7,
     "id": "carafa-special-ii",
     "moisture_pct": 0.04,
     "name": "CaraFa Special II",
@@ -198,10 +162,8 @@
     "yield_fraction": 0.65
   },
   "carafa-special-iii": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 525.0,
-    "di_ph": 4.7,
     "id": "carafa-special-iii",
     "moisture_pct": 0.04,
     "name": "CaraFa Special III",
@@ -209,10 +171,8 @@
     "yield_fraction": 0.6
   },
   "caragold": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 6.0,
-    "di_ph": 5.0,
     "id": "caragold",
     "moisture_pct": 0.04,
     "name": "CaraGold",
@@ -220,10 +180,8 @@
     "yield_fraction": 0.75
   },
   "carahell": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 10.0,
-    "di_ph": 5.0,
     "id": "carahell",
     "moisture_pct": 0.04,
     "name": "CaraHell",
@@ -231,10 +189,8 @@
     "yield_fraction": 0.75
   },
   "caramel-crystal-malt-10l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 10.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-10l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 10L",
@@ -242,10 +198,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-120l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 120.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-120l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 120L",
@@ -253,10 +207,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-140l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 140.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-140l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 140L",
@@ -264,10 +216,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-150l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 150.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-150l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 150L",
@@ -275,10 +225,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-15l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 15.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-15l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 15L",
@@ -286,10 +234,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-20l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 20.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-20l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 20L",
@@ -297,10 +243,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-30l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 30.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-30l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 30L",
@@ -308,10 +252,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-40l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 40.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-40l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 40L",
@@ -319,10 +261,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-45l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 45.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-45l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 45L",
@@ -330,10 +270,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-50l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 50.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-50l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 50L",
@@ -341,10 +279,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-55l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 55.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-55l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 55L",
@@ -352,10 +288,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-60l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 60.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-60l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 60L",
@@ -363,10 +297,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-70l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 70.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-70l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 70L",
@@ -374,10 +306,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-75l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 75.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-75l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 75L",
@@ -385,10 +315,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-80l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 80.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-80l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 80L",
@@ -396,10 +324,8 @@
     "yield_fraction": 0.74
   },
   "caramel-crystal-malt-90l": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 90.0,
-    "di_ph": 5.0,
     "id": "caramel-crystal-malt-90l",
     "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 90L",
@@ -407,10 +333,8 @@
     "yield_fraction": 0.74
   },
   "caramunich-i": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 38.0,
-    "di_ph": 5.0,
     "id": "caramunich-i",
     "moisture_pct": 0.04,
     "name": "CaraMunich I",
@@ -418,10 +342,8 @@
     "yield_fraction": 0.75
   },
   "caramunich-ii": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 45.0,
-    "di_ph": 5.0,
     "id": "caramunich-ii",
     "moisture_pct": 0.04,
     "name": "CaraMunich II",
@@ -429,10 +351,8 @@
     "yield_fraction": 0.75
   },
   "caramunich-iii": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 55.0,
-    "di_ph": 5.0,
     "id": "caramunich-iii",
     "moisture_pct": 0.04,
     "name": "CaraMunich III",
@@ -440,10 +360,8 @@
     "yield_fraction": 0.74
   },
   "carapils-carafoam": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 1.8,
-    "di_ph": 5.0,
     "id": "carapils-carafoam",
     "moisture_pct": 0.04,
     "name": "CaraPils / CaraFoam",
@@ -451,10 +369,8 @@
     "yield_fraction": 0.72
   },
   "carared": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 20.0,
-    "di_ph": 5.0,
     "id": "carared",
     "moisture_pct": 0.04,
     "name": "CaraRed",
@@ -462,10 +378,8 @@
     "yield_fraction": 0.75
   },
   "cararye": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 65.0,
-    "di_ph": 5.0,
     "id": "cararye",
     "moisture_pct": 0.04,
     "name": "CaraRye",
@@ -473,10 +387,8 @@
     "yield_fraction": 0.72
   },
   "caravienne": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 22.0,
-    "di_ph": 5.0,
     "id": "caravienne",
     "moisture_pct": 0.04,
     "name": "CaraVienne",
@@ -484,10 +396,8 @@
     "yield_fraction": 0.75
   },
   "carawheat": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 45.0,
-    "di_ph": 5.0,
     "id": "carawheat",
     "moisture_pct": 0.04,
     "name": "CaraWheat",
@@ -495,10 +405,8 @@
     "yield_fraction": 0.75
   },
   "chit-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.8,
-    "di_ph": 5.75,
     "id": "chit-malt",
     "moisture_pct": 0.04,
     "name": "Chit Malt",
@@ -506,10 +414,8 @@
     "yield_fraction": 0.78
   },
   "chocolate-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 350.0,
-    "di_ph": 4.7,
     "id": "chocolate-malt",
     "moisture_pct": 0.04,
     "name": "Chocolate Malt",
@@ -517,10 +423,8 @@
     "yield_fraction": 0.6
   },
   "coffee-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 150.0,
-    "di_ph": 4.7,
     "id": "coffee-malt",
     "moisture_pct": 0.04,
     "name": "Coffee Malt",
@@ -528,10 +432,8 @@
     "yield_fraction": 0.65
   },
   "cookie-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 20.0,
-    "di_ph": 5.75,
     "id": "cookie-malt",
     "moisture_pct": 0.04,
     "name": "Cookie Malt",
@@ -539,10 +441,8 @@
     "yield_fraction": 0.76
   },
   "dark-chocolate-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 420.0,
-    "di_ph": 4.7,
     "id": "dark-chocolate-malt",
     "moisture_pct": 0.04,
     "name": "Dark Chocolate Malt",
@@ -550,10 +450,8 @@
     "yield_fraction": 0.58
   },
   "dark-wheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 7.5,
-    "di_ph": 5.75,
     "id": "dark-wheat-malt",
     "moisture_pct": 0.04,
     "name": "Dark Wheat Malt",
@@ -561,10 +459,8 @@
     "yield_fraction": 0.8
   },
   "debittered-black-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 500.0,
-    "di_ph": 4.7,
     "id": "debittered-black-malt",
     "moisture_pct": 0.04,
     "name": "Debittered Black Malt",
@@ -572,10 +468,8 @@
     "yield_fraction": 0.55
   },
   "diastatic-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "diastatic-malt",
     "moisture_pct": 0.04,
     "name": "Diastatic Malt",
@@ -583,10 +477,8 @@
     "yield_fraction": 0.78
   },
   "diastatic-wheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "diastatic-wheat-malt",
     "moisture_pct": 0.04,
     "name": "Diastatic Wheat Malt",
@@ -594,10 +486,8 @@
     "yield_fraction": 0.8
   },
   "emmer-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 4.0,
-    "di_ph": 5.75,
     "id": "emmer-malt",
     "moisture_pct": 0.04,
     "name": "Emmer Malt",
@@ -605,10 +495,8 @@
     "yield_fraction": 0.8
   },
   "extra-dark-wheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 18.0,
-    "di_ph": 5.75,
     "id": "extra-dark-wheat-malt",
     "moisture_pct": 0.04,
     "name": "Extra Dark Wheat Malt",
@@ -616,10 +504,8 @@
     "yield_fraction": 0.78
   },
   "extra-pale-ale-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "extra-pale-ale-malt",
     "moisture_pct": 0.04,
     "name": "Extra Pale Ale Malt",
@@ -627,10 +513,8 @@
     "yield_fraction": 0.81
   },
   "flaked-barley": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "flaked-barley",
     "moisture_pct": 0.04,
     "name": "Flaked Barley",
@@ -638,10 +522,8 @@
     "yield_fraction": 0.7
   },
   "flaked-corn": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 0.8,
-    "di_ph": 5.75,
     "id": "flaked-corn",
     "moisture_pct": 0.04,
     "name": "Flaked Corn",
@@ -649,10 +531,8 @@
     "yield_fraction": 0.8
   },
   "flaked-oats": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.0,
-    "di_ph": 5.75,
     "id": "flaked-oats",
     "moisture_pct": 0.04,
     "name": "Flaked Oats",
@@ -660,10 +540,8 @@
     "yield_fraction": 0.8
   },
   "flaked-quinoa": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "flaked-quinoa",
     "moisture_pct": 0.04,
     "name": "Flaked Quinoa",
@@ -671,10 +549,8 @@
     "yield_fraction": 0.74
   },
   "flaked-rice": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 0.5,
-    "di_ph": 5.75,
     "id": "flaked-rice",
     "moisture_pct": 0.04,
     "name": "Flaked Rice",
@@ -682,10 +558,8 @@
     "yield_fraction": 0.82
   },
   "flaked-rye": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "flaked-rye",
     "moisture_pct": 0.04,
     "name": "Flaked Rye",
@@ -693,10 +567,8 @@
     "yield_fraction": 0.78
   },
   "flaked-spelt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "flaked-spelt",
     "moisture_pct": 0.04,
     "name": "Flaked Spelt",
@@ -704,10 +576,8 @@
     "yield_fraction": 0.78
   },
   "flaked-wheat": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.6,
-    "di_ph": 5.75,
     "id": "flaked-wheat",
     "moisture_pct": 0.04,
     "name": "Flaked Wheat",
@@ -715,10 +585,8 @@
     "yield_fraction": 0.78
   },
   "golden-naked-oats": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 10.0,
-    "di_ph": 5.0,
     "id": "golden-naked-oats",
     "moisture_pct": 0.04,
     "name": "Golden Naked Oats",
@@ -726,10 +594,8 @@
     "yield_fraction": 0.72
   },
   "golden-promise-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.8,
-    "di_ph": 5.75,
     "id": "golden-promise-malt",
     "moisture_pct": 0.04,
     "name": "Golden Promise Malt",
@@ -737,10 +603,8 @@
     "yield_fraction": 0.81
   },
   "green-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "green-malt",
     "moisture_pct": 0.04,
     "name": "Green Malt",
@@ -748,10 +612,8 @@
     "yield_fraction": 0.65
   },
   "honey-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 25.0,
-    "di_ph": 5.75,
     "id": "honey-malt",
     "moisture_pct": 0.04,
     "name": "Honey Malt",
@@ -759,10 +621,8 @@
     "yield_fraction": 0.8
   },
   "light-coffee-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 100.0,
-    "di_ph": 4.7,
     "id": "light-coffee-malt",
     "moisture_pct": 0.04,
     "name": "Light Coffee Malt",
@@ -770,10 +630,8 @@
     "yield_fraction": 0.7
   },
   "maize": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.0,
-    "di_ph": 5.75,
     "id": "maize",
     "moisture_pct": 0.04,
     "name": "Maize",
@@ -781,10 +639,8 @@
     "yield_fraction": 0.8
   },
   "malt-extract": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 4.0,
-    "di_ph": 5.75,
     "id": "malt-extract",
     "moisture_pct": 0.04,
     "name": "Malt Extract",
@@ -792,10 +648,8 @@
     "yield_fraction": 0.78
   },
   "maris-otter-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.0,
-    "di_ph": 5.75,
     "id": "maris-otter-malt",
     "moisture_pct": 0.04,
     "name": "Maris Otter Malt",
@@ -803,10 +657,8 @@
     "yield_fraction": 0.81
   },
   "melanoidin-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 28.0,
-    "di_ph": 5.75,
     "id": "melanoidin-malt",
     "moisture_pct": 0.04,
     "name": "Melanoidin Malt",
@@ -814,10 +666,8 @@
     "yield_fraction": 0.8
   },
   "mild-ale-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 4.5,
-    "di_ph": 5.75,
     "id": "mild-ale-malt",
     "moisture_pct": 0.04,
     "name": "Mild Ale Malt",
@@ -825,10 +675,8 @@
     "yield_fraction": 0.8
   },
   "millet-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "millet-malt",
     "moisture_pct": 0.04,
     "name": "Millet Malt",
@@ -836,10 +684,8 @@
     "yield_fraction": 0.7
   },
   "munich-dark-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 15.0,
-    "di_ph": 5.75,
     "id": "munich-dark-malt",
     "moisture_pct": 0.04,
     "name": "Munich Dark Malt",
@@ -847,10 +693,8 @@
     "yield_fraction": 0.78
   },
   "munich-light-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 6.0,
-    "di_ph": 5.75,
     "id": "munich-light-malt",
     "moisture_pct": 0.04,
     "name": "Munich Light Malt",
@@ -858,10 +702,8 @@
     "yield_fraction": 0.8
   },
   "munich-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 9.0,
-    "di_ph": 5.75,
     "id": "munich-malt",
     "moisture_pct": 0.04,
     "name": "Munich Malt",
@@ -869,10 +711,8 @@
     "yield_fraction": 0.8
   },
   "oat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "oat-malt",
     "moisture_pct": 0.04,
     "name": "Oat Malt",
@@ -880,10 +720,8 @@
     "yield_fraction": 0.72
   },
   "pale-ale-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.5,
-    "di_ph": 5.75,
     "id": "pale-ale-malt",
     "moisture_pct": 0.04,
     "name": "Pale Ale Malt",
@@ -891,10 +729,8 @@
     "yield_fraction": 0.81
   },
   "pale-chocolate": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 220.0,
-    "di_ph": 4.7,
     "id": "pale-chocolate",
     "moisture_pct": 0.04,
     "name": "Pale Chocolate",
@@ -902,10 +738,8 @@
     "yield_fraction": 0.65
   },
   "pale-wheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.8,
-    "di_ph": 5.75,
     "id": "pale-wheat-malt",
     "moisture_pct": 0.04,
     "name": "Pale Wheat Malt",
@@ -913,10 +747,8 @@
     "yield_fraction": 0.83
   },
   "peated-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "peated-malt",
     "moisture_pct": 0.04,
     "name": "Peated Malt",
@@ -924,10 +756,8 @@
     "yield_fraction": 0.8
   },
   "pilsner-light-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.4,
-    "di_ph": 5.75,
     "id": "pilsner-light-malt",
     "moisture_pct": 0.04,
     "name": "Pilsner Light Malt",
@@ -935,10 +765,8 @@
     "yield_fraction": 0.81
   },
   "pilsner-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.8,
-    "di_ph": 5.75,
     "id": "pilsner-malt",
     "moisture_pct": 0.04,
     "name": "Pilsner Malt",
@@ -946,10 +774,8 @@
     "yield_fraction": 0.81
   },
   "rice-hulls": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 0.0,
-    "di_ph": 5.75,
     "id": "rice-hulls",
     "moisture_pct": 0.04,
     "name": "Rice Hulls",
@@ -957,10 +783,8 @@
     "yield_fraction": 0.0
   },
   "roasted-barley-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 450.0,
-    "di_ph": 4.7,
     "id": "roasted-barley-malt",
     "moisture_pct": 0.04,
     "name": "Roasted Barley Malt",
@@ -968,10 +792,8 @@
     "yield_fraction": 0.55
   },
   "roasted-millet-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 350.0,
-    "di_ph": 4.7,
     "id": "roasted-millet-malt",
     "moisture_pct": 0.04,
     "name": "Roasted Millet Malt",
@@ -979,10 +801,8 @@
     "yield_fraction": 0.56
   },
   "roasted-rye-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 300.0,
-    "di_ph": 4.7,
     "id": "roasted-rye-malt",
     "moisture_pct": 0.04,
     "name": "Roasted Rye Malt",
@@ -990,10 +810,8 @@
     "yield_fraction": 0.6
   },
   "roasted-spelt-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 380.0,
-    "di_ph": 4.7,
     "id": "roasted-spelt-malt",
     "moisture_pct": 0.04,
     "name": "Roasted Spelt Malt",
@@ -1001,10 +819,8 @@
     "yield_fraction": 0.6
   },
   "roasted-wheat-malt": {
-    "buffer_index": 15.0,
     "category": "ROASTED",
     "color_lovibond": 400.0,
-    "di_ph": 4.7,
     "id": "roasted-wheat-malt",
     "moisture_pct": 0.04,
     "name": "Roasted Wheat Malt",
@@ -1012,10 +828,8 @@
     "yield_fraction": 0.6
   },
   "rye-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.7,
-    "di_ph": 5.75,
     "id": "rye-malt",
     "moisture_pct": 0.04,
     "name": "Rye Malt",
@@ -1023,10 +837,8 @@
     "yield_fraction": 0.81
   },
   "salty-caramel-malt": {
-    "buffer_index": 30.0,
     "category": "CRYSTAL",
     "color_lovibond": 35.0,
-    "di_ph": 5.0,
     "id": "salty-caramel-malt",
     "moisture_pct": 0.04,
     "name": "Salty Caramel Malt",
@@ -1034,10 +846,8 @@
     "yield_fraction": 0.72
   },
   "small-spelt-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.8,
-    "di_ph": 5.75,
     "id": "small-spelt-malt",
     "moisture_pct": 0.04,
     "name": "Small Spelt Malt",
@@ -1045,10 +855,8 @@
     "yield_fraction": 0.8
   },
   "smoke-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "smoke-malt",
     "moisture_pct": 0.04,
     "name": "Smoke Malt",
@@ -1056,10 +864,8 @@
     "yield_fraction": 0.8
   },
   "spelt-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.0,
-    "di_ph": 5.75,
     "id": "spelt-malt",
     "moisture_pct": 0.04,
     "name": "Spelt Malt",
@@ -1067,10 +873,8 @@
     "yield_fraction": 0.8
   },
   "stout-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "stout-malt",
     "moisture_pct": 0.04,
     "name": "Stout Malt",
@@ -1078,10 +882,8 @@
     "yield_fraction": 0.8
   },
   "toffee-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 12.0,
-    "di_ph": 5.75,
     "id": "toffee-malt",
     "moisture_pct": 0.04,
     "name": "Toffee Malt",
@@ -1089,10 +891,8 @@
     "yield_fraction": 0.74
   },
   "torrified-barley-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "torrified-barley-malt",
     "moisture_pct": 0.04,
     "name": "Torrified Barley Malt",
@@ -1100,10 +900,8 @@
     "yield_fraction": 0.78
   },
   "torrified-oats": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "torrified-oats",
     "moisture_pct": 0.04,
     "name": "Torrified Oats",
@@ -1111,10 +909,8 @@
     "yield_fraction": 0.74
   },
   "torrified-wheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "torrified-wheat-malt",
     "moisture_pct": 0.04,
     "name": "Torrified Wheat Malt",
@@ -1122,10 +918,8 @@
     "yield_fraction": 0.78
   },
   "triticale-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.5,
-    "di_ph": 5.75,
     "id": "triticale-malt",
     "moisture_pct": 0.04,
     "name": "Triticale Malt",
@@ -1133,10 +927,8 @@
     "yield_fraction": 0.81
   },
   "unmalted-barley": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "unmalted-barley",
     "moisture_pct": 0.04,
     "name": "Unmalted Barley",
@@ -1144,10 +936,8 @@
     "yield_fraction": 0.7
   },
   "unmalted-buckwheat": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "unmalted-buckwheat",
     "moisture_pct": 0.04,
     "name": "Unmalted Buckwheat",
@@ -1155,10 +945,8 @@
     "yield_fraction": 0.7
   },
   "unmalted-emmer": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.0,
-    "di_ph": 5.75,
     "id": "unmalted-emmer",
     "moisture_pct": 0.04,
     "name": "Unmalted Emmer",
@@ -1166,10 +954,8 @@
     "yield_fraction": 0.78
   },
   "unmalted-millet": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.5,
-    "di_ph": 5.75,
     "id": "unmalted-millet",
     "moisture_pct": 0.04,
     "name": "Unmalted Millet",
@@ -1177,10 +963,8 @@
     "yield_fraction": 0.7
   },
   "unmalted-oat": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.8,
-    "di_ph": 5.75,
     "id": "unmalted-oat",
     "moisture_pct": 0.04,
     "name": "Unmalted Oat",
@@ -1188,10 +972,8 @@
     "yield_fraction": 0.7
   },
   "unmalted-rye": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "unmalted-rye",
     "moisture_pct": 0.04,
     "name": "Unmalted Rye",
@@ -1199,10 +981,8 @@
     "yield_fraction": 0.78
   },
   "unmalted-spelt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "unmalted-spelt",
     "moisture_pct": 0.04,
     "name": "Unmalted Spelt",
@@ -1210,10 +990,8 @@
     "yield_fraction": 0.78
   },
   "unmalted-triticale": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.5,
-    "di_ph": 5.75,
     "id": "unmalted-triticale",
     "moisture_pct": 0.04,
     "name": "Unmalted Triticale",
@@ -1221,10 +999,8 @@
     "yield_fraction": 0.78
   },
   "unmalted-wheat": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 1.8,
-    "di_ph": 5.75,
     "id": "unmalted-wheat",
     "moisture_pct": 0.04,
     "name": "Unmalted Wheat",
@@ -1232,10 +1008,8 @@
     "yield_fraction": 0.78
   },
   "vienna-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 3.5,
-    "di_ph": 5.75,
     "id": "vienna-malt",
     "moisture_pct": 0.04,
     "name": "Vienna Malt",
@@ -1243,10 +1017,8 @@
     "yield_fraction": 0.79
   },
   "wheat-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.0,
-    "di_ph": 5.75,
     "id": "wheat-malt",
     "moisture_pct": 0.04,
     "name": "Wheat Malt",
@@ -1254,10 +1026,8 @@
     "yield_fraction": 0.82
   },
   "whisky-malt": {
-    "buffer_index": 45.0,
     "category": "BASE",
     "color_lovibond": 2.2,
-    "di_ph": 5.75,
     "id": "whisky-malt",
     "moisture_pct": 0.04,
     "name": "Whisky Malt",

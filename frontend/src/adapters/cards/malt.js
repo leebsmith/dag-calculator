@@ -27,8 +27,6 @@ function makeRow(malt) {
     yield_fraction: malt.yield_fraction,
     color_lovibond: malt.color_lovibond,
     moisture_pct: malt.moisture_pct ?? 0.04,
-    di_ph: malt.di_ph,
-    buffer_index: malt.buffer_index,
     notes: malt.notes,
   };
 }
