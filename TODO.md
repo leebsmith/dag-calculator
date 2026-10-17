@@ -2,11 +2,8 @@
 
 ## Next
 
-* Trace Malts
 * Water report selection in batch card
 * Parallel seeds for malts, sugars, hops, just like we did for styles
-* Hops scraper
-* Hops step, distributed by IBUs
 * Footer bar: style conformance gravity / abv range, SRM, IBU
 * LIFO warnings on footer bar
 
@@ -30,9 +27,7 @@
 ## Next (Don't process without confirmation)
 
 - Dry hopping: See Pydantic schema (WetHopCard) at https://share.gemini.google/o4oHUKhZUdyi
-- Kettle hopping (Determines IBU.)
 - Unit scaling: scale families + auto-display (`plans/unit-scaling.md`)
-- Add IBU / SRM / Style to batch data. Gate up front on mismatch
 
 ## Lazy-load seed data
 
