@@ -27,6 +27,7 @@ import {
 import { hamiltonPct } from "../views/hamilton.js";
 import { registerHopCard, refreshHopCard } from "./cards/hops.js";
 import { registerLateAdditionsCard, refreshLateAdditionsCard } from "./cards/late-additions.js";
+import { registerTraceMaltsCard, refreshTraceMaltsCard } from "./cards/trace-malts.js";
 import * as mash from "../views/mash.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
@@ -481,7 +482,7 @@ export function createStepApp(options = {}) {
       }
       // Refresh the grain-bill rows for the summary card (reactive).
       this.gristRows = sortGristRows(engine.get("grist.major_malts") ?? []);
-      this.traceMaltRows = engine.get("grist.trace_malts") ?? [];
+      refreshTraceMaltsCard(this, cardCtx);
       refreshHopCard(this, cardCtx);
       refreshLateAdditionsCard(this, cardCtx);
       this.mashRests = engine.get("mash.rests") ?? [];
@@ -1695,146 +1696,6 @@ export function createStepApp(options = {}) {
       else this.cancelMaltEditor();
     },
 
-    // --- Trace malts editor (definite mass; same draft model, malt catalog) ---
-    traceDrawer: null, // "search" | "inspect" | null
-    traceSearch: "",
-    traceActiveIndex: null,
-    traceMaltCategoryFilter: [],
-
-    // Trace rows for the summary card (reactive; refreshed in compute()).
-    traceMaltRows: [],
-
-    get traceEditorOpen() {
-      return this.draftOpen && this.draftNodeId === "grist.trace_malts";
-    },
-
-    traceField(id) {
-      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === id) ?? null;
-    },
-
-    get traceMaltField() {
-      return this.traceField("grist.trace_malts");
-    },
-
-    get traceMassField() {
-      return this.traceField("grist.trace_malts_mass");
-    },
-
-    get traceColorField() {
-      return this.traceField("grist.trace_weighted_lovibond");
-    },
-
-    get traceCatalog() {
-      return Object.values(cache.seeds.malts ?? {});
-    },
-
-    get traceCategories() {
-      return this.maltCatalogCategories;
-    },
-
-    get traceFilteredCatalog() {
-      const active = new Set(this.draftRows.map((r) => r.catalog_id).filter(Boolean));
-      const q = this.traceSearch.trim().toLowerCase();
-      const cats = this.traceMaltCategoryFilter;
-      return this.traceCatalog.filter(
-        (m) =>
-          !active.has(m.id) &&
-          (cats.length === 0 || cats.includes(m.category)) &&
-          (!q || (m.name ?? "").toLowerCase().includes(q) || (m.notes ?? "").toLowerCase().includes(q))
-      );
-    },
-
-    get traceVisibleCatalog() {
-      return this.traceFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
-    },
-
-    get traceCatalogTruncated() {
-      return this.traceFilteredCatalog.length > MAX_VISIBLE_MALTS;
-    },
-
-    get traceActiveRow() {
-      return this.traceActiveIndex == null ? null : this.draftRows[this.traceActiveIndex] ?? null;
-    },
-
-    get traceDraftMassDisplay() {
-      return this.draftMassDisplay((r) => Number(r.mass_kg) || 0);
-    },
-
-    openTraceEditor() {
-      this.openDraft("grist.trace_malts");
-      this.traceDrawer = null;
-      this.traceActiveIndex = null;
-    },
-
-    cancelTraceEditor() {
-      this.closeDraft();
-      this.traceDrawer = null;
-      this.traceActiveIndex = null;
-    },
-
-    saveTraceEditor() {
-      this.saveDraft();
-      this.traceDrawer = null;
-      this.traceActiveIndex = null;
-    },
-
-    addCatalogTraceMalt(catalogId) {
-      const malt = cache.seeds.malts?.[catalogId];
-      if (!malt) return;
-      this.addDraftRow({
-        catalog_id: malt.id,
-        name: malt.name,
-        category: malt.category,
-        mass_kg: 0,
-        yield_fraction: malt.yield_fraction,
-        color_lovibond: malt.color_lovibond,
-        moisture_pct: malt.moisture_pct ?? 0.04,
-        di_ph: malt.di_ph,
-        buffer_index: malt.buffer_index,
-        notes: malt.notes,
-      });
-      this.closeTraceDrawer();
-    },
-
-    removeTraceMalt(ri) {
-      this.removeDraftRow(ri);
-      if (this.traceActiveIndex === ri) {
-        this.traceActiveIndex = null;
-        if (this.traceDrawer === "inspect") this.traceDrawer = null;
-      } else if (this.traceActiveIndex != null && this.traceActiveIndex > ri) {
-        this.traceActiveIndex -= 1;
-      }
-    },
-
-    inspectTraceRow(ri) {
-      this.traceActiveIndex = ri;
-      this.traceDrawer = "inspect";
-    },
-
-    openTraceSearch() {
-      this.traceDrawer = "search";
-      this.traceActiveIndex = null;
-      this.traceSearch = "";
-      this.traceMaltCategoryFilter = [];
-    },
-
-    closeTraceDrawer() {
-      this.traceDrawer = null;
-      this.traceActiveIndex = null;
-    },
-
-    toggleTraceCategory(category) {
-      this.traceMaltCategoryFilter = this.traceMaltCategoryFilter.includes(category)
-        ? this.traceMaltCategoryFilter.filter((c) => c !== category)
-        : [...this.traceMaltCategoryFilter, category];
-    },
-
-    handleTraceEscape() {
-      if (!this.traceEditorOpen) return;
-      if (this.traceDrawer !== null) this.closeTraceDrawer();
-      else this.cancelTraceEditor();
-    },
-
     // Explicit boot (main.js owns it after auth). Deliberately NOT named
     // `init`: Alpine auto-calls an `init()` method on `x-data` objects, which
     // would run a solve before sign-in (and 401).
@@ -1877,5 +1738,6 @@ export function createStepApp(options = {}) {
 
   registerHopCard(app, cardCtx);
   registerLateAdditionsCard(app, cardCtx);
+  registerTraceMaltsCard(app, cardCtx);
   return app;
 }

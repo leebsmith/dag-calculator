@@ -64,7 +64,7 @@
                       <button
                         type="button"
                         class="btn-action-icon btn-action-danger"
-                        @click="removeTraceMalt(ri)"
+                        @click="removeTrace(ri)"
                         title="Remove"
                       >
                         🗑
@@ -121,7 +121,7 @@
                     <button
                       type="button"
                       class="filter-pill"
-                      :class="{ 'is-active': traceMaltCategoryFilter.includes(c) }"
+                      :class="{ 'is-active': traceCategoryFilter.includes(c) }"
                       @click="toggleTraceCategory(c)"
                       x-text="c"
                     ></button>
@@ -148,7 +148,7 @@
                     <button
                       type="button"
                       class="btn-primary text-xs"
-                      @click="addCatalogTraceMalt(item.id)"
+                      @click="addCatalogTrace(item.id)"
                     >
                       ＋ Add
                     </button>
