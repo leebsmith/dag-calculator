@@ -3,7 +3,6 @@
     "category": "BASE",
     "color_lovibond": 17.0,
     "id": "abbey-malt",
-    "moisture_pct": 0.04,
     "name": "Abbey Malt",
     "notes": "Belgian toasted malt formulated for Trappist and Abbey ales, providing bread crust, nuttiness, and golden amber hue.",
     "yield_fraction": 0.76
@@ -12,7 +11,6 @@
     "category": "ACID",
     "color_lovibond": 3.0,
     "id": "acidulated-malt",
-    "moisture_pct": 0.04,
     "name": "Acidulated Malt",
     "notes": "Contains naturally produced lactic acid (approx 1-2% by weight) to naturally lower mash pH without chemical acid additions.",
     "yield_fraction": 0.74
@@ -21,7 +19,6 @@
     "category": "BASE",
     "color_lovibond": 27.0,
     "id": "amber-malt",
-    "moisture_pct": 0.04,
     "name": "Amber Malt",
     "notes": "Traditional dry-roasted British specialty malt offering distinct biscuit, toasted wood, and coffee notes.",
     "yield_fraction": 0.76
@@ -30,7 +27,6 @@
     "category": "BASE",
     "color_lovibond": 20.0,
     "id": "aromatic-malt",
-    "moisture_pct": 0.04,
     "name": "Aromatic Malt",
     "notes": "High-kilned European malt providing intense malty aroma and clean syrupy malt flavor without harsh astringency.",
     "yield_fraction": 0.76
@@ -39,7 +35,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "basic-barley-malt",
-    "moisture_pct": 0.04,
     "name": "Basic Barley Malt",
     "notes": "Standard standard 2-row / 6-row brewer's malt providing high diastatic power and clean malty backbone.",
     "yield_fraction": 0.8
@@ -48,7 +43,6 @@
     "category": "BASE",
     "color_lovibond": 25.0,
     "id": "biscuit-malt",
-    "moisture_pct": 0.04,
     "name": "Biscuit Malt",
     "notes": "Warm-air roasted Belgian malt delivering dry, crisp, saltine cracker and warm toasted bread flavors.",
     "yield_fraction": 0.76
@@ -57,7 +51,6 @@
     "category": "ROASTED",
     "color_lovibond": 500.0,
     "id": "black-malt",
-    "moisture_pct": 0.04,
     "name": "Black Malt",
     "notes": "Black Patent malt. High-temperature roasted malt giving sharp, dry, acrid, burnt bread tones and deep black color.",
     "yield_fraction": 0.55
@@ -66,7 +59,6 @@
     "category": "ROASTED",
     "color_lovibond": 65.0,
     "id": "brown-malt",
-    "moisture_pct": 0.04,
     "name": "Brown Malt",
     "notes": "Historical English kiln-roasted malt. Delivers dry, biscuit, coffee-like, and charred wood complexity in porters.",
     "yield_fraction": 0.7
@@ -75,7 +67,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "buckwheat-malt",
-    "moisture_pct": 0.04,
     "name": "Buckwheat Malt",
     "notes": "Gluten-free malted pseudocereal delivering earthy, nutty, and savory grain characteristics.",
     "yield_fraction": 0.7
@@ -84,7 +75,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 30.0,
     "id": "caraamber",
-    "moisture_pct": 0.04,
     "name": "CaraAmber",
     "notes": "German drum-roasted caramel malt delivering toffee, bread crust, and warm caramel complexity.",
     "yield_fraction": 0.75
@@ -93,7 +83,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 150.0,
     "id": "caraaroma",
-    "moisture_pct": 0.04,
     "name": "CaraAroma",
     "notes": "Dark German caramel malt imparting deep reddish-brown color, dark fruit, and roasted caramel aromas.",
     "yield_fraction": 0.74
@@ -102,7 +91,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 15.0,
     "id": "carabelge",
-    "moisture_pct": 0.04,
     "name": "CaraBelge",
     "notes": "Enhances golden to amber color while contributing notes of mild honey, caramel, and biscuit.",
     "yield_fraction": 0.75
@@ -111,7 +99,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 75.0,
     "id": "carabohemian",
-    "moisture_pct": 0.04,
     "name": "CaraBohemian",
     "notes": "Bohemian drum-roasted caramel malt offering rich bread crust and dark toffee flavors for Czech dark lagers.",
     "yield_fraction": 0.74
@@ -120,7 +107,6 @@
     "category": "ROASTED",
     "color_lovibond": 320.0,
     "id": "carafa-i",
-    "moisture_pct": 0.04,
     "name": "CaraFa I",
     "notes": "German dark roasted specialty malt. Imparts dark color and fine roasted coffee flavors in Schwarzbier.",
     "yield_fraction": 0.7
@@ -129,7 +115,6 @@
     "category": "ROASTED",
     "color_lovibond": 425.0,
     "id": "carafa-ii",
-    "moisture_pct": 0.04,
     "name": "CaraFa II",
     "notes": "Mid-tier Carafa malt delivering deep black-brown color and rich espresso aroma.",
     "yield_fraction": 0.65
@@ -138,7 +123,6 @@
     "category": "ROASTED",
     "color_lovibond": 525.0,
     "id": "carafa-iii",
-    "moisture_pct": 0.04,
     "name": "CaraFa III",
     "notes": "Darkest Carafa malt for maximum color contribution and robust roast character.",
     "yield_fraction": 0.6
@@ -147,7 +131,6 @@
     "category": "ROASTED",
     "color_lovibond": 320.0,
     "id": "carafa-special-i",
-    "moisture_pct": 0.04,
     "name": "CaraFa Special I",
     "notes": "Dehusked Carafa I. Provides clean dark color and smooth roasted finish without harsh bitterness.",
     "yield_fraction": 0.7
@@ -156,7 +139,6 @@
     "category": "ROASTED",
     "color_lovibond": 425.0,
     "id": "carafa-special-ii",
-    "moisture_pct": 0.04,
     "name": "CaraFa Special II",
     "notes": "Dehusked Carafa II. Imparts deep color and mild dark-chocolate notes with reduced astringency.",
     "yield_fraction": 0.65
@@ -165,7 +147,6 @@
     "category": "ROASTED",
     "color_lovibond": 525.0,
     "id": "carafa-special-iii",
-    "moisture_pct": 0.04,
     "name": "CaraFa Special III",
     "notes": "Dehusked Carafa III. Maximum color depth with ultra-smooth cocoa and mild roast profile.",
     "yield_fraction": 0.6
@@ -174,7 +155,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 6.0,
     "id": "caragold",
-    "moisture_pct": 0.04,
     "name": "CaraGold",
     "notes": "Low-color caramel malt imparting sweet toffee notes, improved body, and brilliant golden color.",
     "yield_fraction": 0.75
@@ -183,7 +163,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 10.0,
     "id": "carahell",
-    "moisture_pct": 0.04,
     "name": "CaraHell",
     "notes": "Light German caramel malt enhancing body, softness, and mild caramel sweetness in pale lagers.",
     "yield_fraction": 0.75
@@ -192,7 +171,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 10.0,
     "id": "caramel-crystal-malt-10l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 10L",
     "notes": "Caramel/Crystal Malt \u2013 10L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -201,7 +179,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 120.0,
     "id": "caramel-crystal-malt-120l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 120L",
     "notes": "Caramel/Crystal Malt \u2013 120L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -210,7 +187,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 140.0,
     "id": "caramel-crystal-malt-140l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 140L",
     "notes": "Caramel/Crystal Malt \u2013 140L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -219,7 +195,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 150.0,
     "id": "caramel-crystal-malt-150l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 150L",
     "notes": "Caramel/Crystal Malt \u2013 150L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -228,7 +203,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 15.0,
     "id": "caramel-crystal-malt-15l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 15L",
     "notes": "Caramel/Crystal Malt \u2013 15L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -237,7 +211,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 20.0,
     "id": "caramel-crystal-malt-20l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 20L",
     "notes": "Caramel/Crystal Malt \u2013 20L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -246,7 +219,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 30.0,
     "id": "caramel-crystal-malt-30l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 30L",
     "notes": "Caramel/Crystal Malt \u2013 30L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -255,7 +227,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 40.0,
     "id": "caramel-crystal-malt-40l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 40L",
     "notes": "Caramel/Crystal Malt \u2013 40L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -264,7 +235,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 45.0,
     "id": "caramel-crystal-malt-45l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 45L",
     "notes": "Caramel/Crystal Malt \u2013 45L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -273,7 +243,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 50.0,
     "id": "caramel-crystal-malt-50l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 50L",
     "notes": "Caramel/Crystal Malt \u2013 50L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -282,7 +251,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 55.0,
     "id": "caramel-crystal-malt-55l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 55L",
     "notes": "Caramel/Crystal Malt \u2013 55L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -291,7 +259,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 60.0,
     "id": "caramel-crystal-malt-60l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 60L",
     "notes": "Caramel/Crystal Malt \u2013 60L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -300,7 +267,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 70.0,
     "id": "caramel-crystal-malt-70l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 70L",
     "notes": "Caramel/Crystal Malt \u2013 70L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -309,7 +275,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 75.0,
     "id": "caramel-crystal-malt-75l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 75L",
     "notes": "Caramel/Crystal Malt \u2013 75L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -318,7 +283,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 80.0,
     "id": "caramel-crystal-malt-80l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 80L",
     "notes": "Caramel/Crystal Malt \u2013 80L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -327,7 +291,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 90.0,
     "id": "caramel-crystal-malt-90l",
-    "moisture_pct": 0.04,
     "name": "Caramel/Crystal Malt 90L",
     "notes": "Caramel/Crystal Malt \u2013 90L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
     "yield_fraction": 0.74
@@ -336,7 +299,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 38.0,
     "id": "caramunich-i",
-    "moisture_pct": 0.04,
     "name": "CaraMunich I",
     "notes": "Type I CaraMunich. Introduces deep amber color, rich maltiness, and caramel flavors in dark lagers.",
     "yield_fraction": 0.75
@@ -345,7 +307,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 45.0,
     "id": "caramunich-ii",
-    "moisture_pct": 0.04,
     "name": "CaraMunich II",
     "notes": "Type II CaraMunich. Adds pronounced dark caramel, cookie, and toasted bread notes in bocks and m\u00e4rzens.",
     "yield_fraction": 0.75
@@ -354,7 +315,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 55.0,
     "id": "caramunich-iii",
-    "moisture_pct": 0.04,
     "name": "CaraMunich III",
     "notes": "Type III CaraMunich. Full-flavored dark caramel malt delivering raisin, plum, and intense malt richness.",
     "yield_fraction": 0.74
@@ -363,7 +323,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 1.8,
     "id": "carapils-carafoam",
-    "moisture_pct": 0.04,
     "name": "CaraPils / CaraFoam",
     "notes": "Dextrin malt processed to maximize foam stability, head retention, and creaminess without adding color or flavor.",
     "yield_fraction": 0.72
@@ -372,7 +331,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 20.0,
     "id": "carared",
-    "moisture_pct": 0.04,
     "name": "CaraRed",
     "notes": "Medium crystal malt engineered to enhance full body and deep red/copper hue in red ales and ambers.",
     "yield_fraction": 0.75
@@ -381,7 +339,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 65.0,
     "id": "cararye",
-    "moisture_pct": 0.04,
     "name": "CaraRye",
     "notes": "Caramelized malted rye. Adds deep reddish color, velvety mouthfeel, and spicy rye bread complexity.",
     "yield_fraction": 0.72
@@ -390,7 +347,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 22.0,
     "id": "caravienne",
-    "moisture_pct": 0.04,
     "name": "CaraVienne",
     "notes": "Belgian crystal malt yielding golden hues and delicate toffee and biscuit notes in Belgian ales.",
     "yield_fraction": 0.75
@@ -399,7 +355,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 45.0,
     "id": "carawheat",
-    "moisture_pct": 0.04,
     "name": "CaraWheat",
     "notes": "Caramelized wheat malt. Infuses dark wheat beers with rich body, dark color, and subtle roast-caramel aroma.",
     "yield_fraction": 0.75
@@ -408,7 +363,6 @@
     "category": "BASE",
     "color_lovibond": 1.8,
     "id": "chit-malt",
-    "moisture_pct": 0.04,
     "name": "Chit Malt",
     "notes": "Very lightly germinated malt rich in high-molecular proteins. Enhances head retention and foam without adding haze.",
     "yield_fraction": 0.78
@@ -417,7 +371,6 @@
     "category": "ROASTED",
     "color_lovibond": 350.0,
     "id": "chocolate-malt",
-    "moisture_pct": 0.04,
     "name": "Chocolate Malt",
     "notes": "Essential dark ale grain. Imparts rich cocoa, dark baker's chocolate, and nutty roasted flavors without harsh ashiness.",
     "yield_fraction": 0.6
@@ -426,7 +379,6 @@
     "category": "ROASTED",
     "color_lovibond": 150.0,
     "id": "coffee-malt",
-    "moisture_pct": 0.04,
     "name": "Coffee Malt",
     "notes": "Gently roasted malt producing smooth fresh brewed coffee and roasted nut aromas.",
     "yield_fraction": 0.65
@@ -435,7 +387,6 @@
     "category": "BASE",
     "color_lovibond": 20.0,
     "id": "cookie-malt",
-    "moisture_pct": 0.04,
     "name": "Cookie Malt",
     "notes": "Lightly toasted malt creating sweet pastry, butter cookie, and warm bakery aroma.",
     "yield_fraction": 0.76
@@ -444,7 +395,6 @@
     "category": "ROASTED",
     "color_lovibond": 420.0,
     "id": "dark-chocolate-malt",
-    "moisture_pct": 0.04,
     "name": "Dark Chocolate Malt",
     "notes": "Deeply roasted malt delivering intense dark chocolate, espresso, and opaque black color.",
     "yield_fraction": 0.58
@@ -453,7 +403,6 @@
     "category": "BASE",
     "color_lovibond": 7.5,
     "id": "dark-wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Dark Wheat Malt",
     "notes": "Kilned malted wheat for dunkelweizens and dark ales, contributing bready bread-crust tones and creamy body.",
     "yield_fraction": 0.8
@@ -462,7 +411,6 @@
     "category": "ROASTED",
     "color_lovibond": 500.0,
     "id": "debittered-black-malt",
-    "moisture_pct": 0.04,
     "name": "Debittered Black Malt",
     "notes": "Husk-stripped black malt providing deep pitch-black color without bitter astringent bite.",
     "yield_fraction": 0.55
@@ -471,7 +419,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "diastatic-malt",
-    "moisture_pct": 0.04,
     "name": "Diastatic Malt",
     "notes": "Super high-enzyme malt engineered to convert high fractions of unmalted adjuncts in the mash.",
     "yield_fraction": 0.78
@@ -480,7 +427,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "diastatic-wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Diastatic Wheat Malt",
     "notes": "Malted wheat optimized for exceptionally high alpha and beta amylase enzymatic potency.",
     "yield_fraction": 0.8
@@ -489,7 +435,6 @@
     "category": "BASE",
     "color_lovibond": 4.0,
     "id": "emmer-malt",
-    "moisture_pct": 0.04,
     "name": "Emmer Malt",
     "notes": "Ancient farro grain malt providing deep golden color and rustic nutty breadiness.",
     "yield_fraction": 0.8
@@ -498,7 +443,6 @@
     "category": "BASE",
     "color_lovibond": 18.0,
     "id": "extra-dark-wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Extra Dark Wheat Malt",
     "notes": "Intensely kilned dark wheat malt imparting deep brown highlights and complex toasty aromas.",
     "yield_fraction": 0.78
@@ -507,7 +451,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "extra-pale-ale-malt",
-    "moisture_pct": 0.04,
     "name": "Extra Pale Ale Malt",
     "notes": "Lightened pale ale malt tailored for modern hazy IPAs and delicate blonde ales.",
     "yield_fraction": 0.81
@@ -516,7 +459,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "flaked-barley",
-    "moisture_pct": 0.04,
     "name": "Flaked Barley",
     "notes": "Unmalted rolled barley flakes providing protein and beta-glucans for dense, creamy head retention and grainy body.",
     "yield_fraction": 0.7
@@ -525,7 +467,6 @@
     "category": "BASE",
     "color_lovibond": 0.8,
     "id": "flaked-corn",
-    "moisture_pct": 0.04,
     "name": "Flaked Corn",
     "notes": "Lightens body and color while contributing subtle sweet corn flavor in American lagers, cream ales, and pre-prohibition styles.",
     "yield_fraction": 0.8
@@ -534,7 +475,6 @@
     "category": "BASE",
     "color_lovibond": 1.0,
     "id": "flaked-oats",
-    "moisture_pct": 0.04,
     "name": "Flaked Oats",
     "notes": "Pre-gelatinized rolled oats. Imparts creamy mouthfeel, silky body, and haze stability in NEIPAs and oatmeal stouts.",
     "yield_fraction": 0.8
@@ -543,7 +483,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "flaked-quinoa",
-    "moisture_pct": 0.04,
     "name": "Flaked Quinoa",
     "notes": "Gluten-free pseudocereal flakes adding nutty flavor, light body, and amino acid nutrition.",
     "yield_fraction": 0.74
@@ -552,7 +491,6 @@
     "category": "BASE",
     "color_lovibond": 0.5,
     "id": "flaked-rice",
-    "moisture_pct": 0.04,
     "name": "Flaked Rice",
     "notes": "Lightens body, alcohol perception, and color to maximum dryness in Japanese dry lagers and American light lagers.",
     "yield_fraction": 0.82
@@ -561,7 +499,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "flaked-rye",
-    "moisture_pct": 0.04,
     "name": "Flaked Rye",
     "notes": "Gelatinized rye flakes contributing sharp spicy character and full, chewy viscosity to the wort.",
     "yield_fraction": 0.78
@@ -570,7 +507,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "flaked-spelt",
-    "moisture_pct": 0.04,
     "name": "Flaked Spelt",
     "notes": "Rustic unmalted ancient grain flakes enhancing foam and gentle nutty complexity.",
     "yield_fraction": 0.78
@@ -579,7 +515,6 @@
     "category": "BASE",
     "color_lovibond": 1.6,
     "id": "flaked-wheat",
-    "moisture_pct": 0.04,
     "name": "Flaked Wheat",
     "notes": "Essential for Belgian witbiers. Enhances mouthfeel, cloudiness, and clean cereal grain sweetness.",
     "yield_fraction": 0.78
@@ -588,7 +523,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 10.0,
     "id": "golden-naked-oats",
-    "moisture_pct": 0.04,
     "name": "Golden Naked Oats",
     "notes": "Crystal malted huskless oats. Imparts creamy silkiness, nutty sweetness, and toffee highlights.",
     "yield_fraction": 0.72
@@ -597,7 +531,6 @@
     "category": "BASE",
     "color_lovibond": 2.8,
     "id": "golden-promise-malt",
-    "moisture_pct": 0.04,
     "name": "Golden Promise Malt",
     "notes": "Scottish spring barley variety with sweet, clean, full-bodied malt sweetness. Common in Scotch ales and IPAs.",
     "yield_fraction": 0.81
@@ -606,7 +539,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "green-malt",
-    "moisture_pct": 0.04,
     "name": "Green Malt",
     "notes": "Germinated unkilned malt with high moisture and fresh grassy enzymatic characteristics.",
     "yield_fraction": 0.65
@@ -615,7 +547,6 @@
     "category": "BASE",
     "color_lovibond": 25.0,
     "id": "honey-malt",
-    "moisture_pct": 0.04,
     "name": "Honey Malt",
     "notes": "Brumalt style malt imparting intense sweet honey, graham cracker, and toasted grain character in small doses.",
     "yield_fraction": 0.8
@@ -624,7 +555,6 @@
     "category": "ROASTED",
     "color_lovibond": 100.0,
     "id": "light-coffee-malt",
-    "moisture_pct": 0.04,
     "name": "Light Coffee Malt",
     "notes": "Lightly kilned coffee malt offering subtle roasted coffee notes without astringent bitterness.",
     "yield_fraction": 0.7
@@ -633,7 +563,6 @@
     "category": "BASE",
     "color_lovibond": 1.0,
     "id": "maize",
-    "moisture_pct": 0.04,
     "name": "Maize",
     "notes": "Unmalted corn providing clean neutral fermentables to lighten body and crisp up pale lagers.",
     "yield_fraction": 0.8
@@ -642,7 +571,6 @@
     "category": "BASE",
     "color_lovibond": 4.0,
     "id": "malt-extract",
-    "moisture_pct": 0.04,
     "name": "Malt Extract",
     "notes": "Concentrated wort extract derived from base barley malt. Used for yeast starters, gravity boosts, or extract brewing.",
     "yield_fraction": 0.78
@@ -651,7 +579,6 @@
     "category": "BASE",
     "color_lovibond": 3.0,
     "id": "maris-otter-malt",
-    "moisture_pct": 0.04,
     "name": "Maris Otter Malt",
     "notes": "Celebrated traditional British heritage barley variety renowned for deep rich nutty and cracker complexity.",
     "yield_fraction": 0.81
@@ -660,7 +587,6 @@
     "category": "BASE",
     "color_lovibond": 28.0,
     "id": "melanoidin-malt",
-    "moisture_pct": 0.04,
     "name": "Melanoidin Malt",
     "notes": "Promotes deep red color, velvety mouthfeel, and rich decoction-like maltiness in lagers and bocks.",
     "yield_fraction": 0.8
@@ -669,7 +595,6 @@
     "category": "BASE",
     "color_lovibond": 4.5,
     "id": "mild-ale-malt",
-    "moisture_pct": 0.04,
     "name": "Mild Ale Malt",
     "notes": "High kilned traditional English base malt offering warm toasty bread crust tones for session ales.",
     "yield_fraction": 0.8
@@ -678,7 +603,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "millet-malt",
-    "moisture_pct": 0.04,
     "name": "Millet Malt",
     "notes": "Primary gluten-free brewing grain offering mild, crisp, clean cereal profile.",
     "yield_fraction": 0.7
@@ -687,7 +611,6 @@
     "category": "BASE",
     "color_lovibond": 15.0,
     "id": "munich-dark-malt",
-    "moisture_pct": 0.04,
     "name": "Munich Dark Malt",
     "notes": "Munich Type II. Highly kilned for deep amber to coppery color and pronounced toasted bread crust intensity.",
     "yield_fraction": 0.78
@@ -696,7 +619,6 @@
     "category": "BASE",
     "color_lovibond": 6.0,
     "id": "munich-light-malt",
-    "moisture_pct": 0.04,
     "name": "Munich Light Malt",
     "notes": "Munich Type I. Imparts subtle malty sweetness and golden-amber highlights without overwhelming roastiness.",
     "yield_fraction": 0.8
@@ -705,7 +627,6 @@
     "category": "BASE",
     "color_lovibond": 9.0,
     "id": "munich-malt",
-    "moisture_pct": 0.04,
     "name": "Munich Malt",
     "notes": "Rich, melanoidin-dense German malt kilned to develop distinct bready, bread-crust, and biscuit flavors.",
     "yield_fraction": 0.8
@@ -714,7 +635,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "oat-malt",
-    "moisture_pct": 0.04,
     "name": "Oat Malt",
     "notes": "Malted husked oats providing silky texture, enhanced head retention, and delicate nutty flavor.",
     "yield_fraction": 0.72
@@ -723,7 +643,6 @@
     "category": "BASE",
     "color_lovibond": 3.5,
     "id": "pale-ale-malt",
-    "moisture_pct": 0.04,
     "name": "Pale Ale Malt",
     "notes": "Fully modified British or American pale malt with rich biscuity, malty complexity for ales.",
     "yield_fraction": 0.81
@@ -732,7 +651,6 @@
     "category": "ROASTED",
     "color_lovibond": 220.0,
     "id": "pale-chocolate",
-    "moisture_pct": 0.04,
     "name": "Pale Chocolate",
     "notes": "Lightly roasted chocolate malt with mellow milk chocolate, mocha, and toasted hazelnut nuances.",
     "yield_fraction": 0.65
@@ -741,7 +659,6 @@
     "category": "BASE",
     "color_lovibond": 1.8,
     "id": "pale-wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Pale Wheat Malt",
     "notes": "Malted white wheat delivering clean crisp wheat character and high extract potential with low color.",
     "yield_fraction": 0.83
@@ -750,7 +667,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "peated-malt",
-    "moisture_pct": 0.04,
     "name": "Peated Malt",
     "notes": "Malt smoked over burning peat bog moss. Delivers earthy, phenolic, medicinal smoke character for Scotch ales.",
     "yield_fraction": 0.8
@@ -759,7 +675,6 @@
     "category": "BASE",
     "color_lovibond": 1.4,
     "id": "pilsner-light-malt",
-    "moisture_pct": 0.04,
     "name": "Pilsner Light Malt",
     "notes": "Extra pale pilsner malt kilned gently to preserve maximum enzyme activity and very low color.",
     "yield_fraction": 0.81
@@ -768,7 +683,6 @@
     "category": "BASE",
     "color_lovibond": 1.8,
     "id": "pilsner-malt",
-    "moisture_pct": 0.04,
     "name": "Pilsner Malt",
     "notes": "Lightest colored European base malt. Delicate sweet, grainy, bready flavor essential for continental lagers.",
     "yield_fraction": 0.81
@@ -777,7 +691,6 @@
     "category": "BASE",
     "color_lovibond": 0.0,
     "id": "rice-hulls",
-    "moisture_pct": 0.04,
     "name": "Rice Hulls",
     "notes": "Inert filter aid with zero extract or flavor contribution. Prevents stuck sparges when mashing high wheat, rye, or oat ratios.",
     "yield_fraction": 0.0
@@ -786,7 +699,6 @@
     "category": "ROASTED",
     "color_lovibond": 450.0,
     "id": "roasted-barley-malt",
-    "moisture_pct": 0.04,
     "name": "Roasted Barley Malt",
     "notes": "Unmalted roasted whole barley. Signature component of dry Irish stout, lending distinctive coffee and bitter roasted flavor.",
     "yield_fraction": 0.55
@@ -795,7 +707,6 @@
     "category": "ROASTED",
     "color_lovibond": 350.0,
     "id": "roasted-millet-malt",
-    "moisture_pct": 0.04,
     "name": "Roasted Millet Malt",
     "notes": "Gluten-free roasted alternative grain offering deep color and chocolate-coffee profile.",
     "yield_fraction": 0.56
@@ -804,7 +715,6 @@
     "category": "ROASTED",
     "color_lovibond": 300.0,
     "id": "roasted-rye-malt",
-    "moisture_pct": 0.04,
     "name": "Roasted Rye Malt",
     "notes": "Roasted malted rye providing spicy, earthy, dark-chocolate, and coffee nuances.",
     "yield_fraction": 0.6
@@ -813,7 +723,6 @@
     "category": "ROASTED",
     "color_lovibond": 380.0,
     "id": "roasted-spelt-malt",
-    "moisture_pct": 0.04,
     "name": "Roasted Spelt Malt",
     "notes": "Ancient grain roasted malt giving rustic nutty cocoa complexity.",
     "yield_fraction": 0.6
@@ -822,7 +731,6 @@
     "category": "ROASTED",
     "color_lovibond": 400.0,
     "id": "roasted-wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Roasted Wheat Malt",
     "notes": "Roasted huskless wheat. Adds dark color, smooth creamy mouthfeel, and dark chocolate notes to stouts and porters.",
     "yield_fraction": 0.6
@@ -831,7 +739,6 @@
     "category": "BASE",
     "color_lovibond": 3.7,
     "id": "rye-malt",
-    "moisture_pct": 0.04,
     "name": "Rye Malt",
     "notes": "Malted rye grain. Adds distinctive spicy, crisp, earthy rye flavor and velvety mouthfeel.",
     "yield_fraction": 0.81
@@ -840,7 +747,6 @@
     "category": "CRYSTAL",
     "color_lovibond": 35.0,
     "id": "salty-caramel-malt",
-    "moisture_pct": 0.04,
     "name": "Salty Caramel Malt",
     "notes": "Specialty toasted/caramel malt offering savory-sweet caramelized toffee tones.",
     "yield_fraction": 0.72
@@ -849,7 +755,6 @@
     "category": "BASE",
     "color_lovibond": 2.8,
     "id": "small-spelt-malt",
-    "moisture_pct": 0.04,
     "name": "Small Spelt Malt",
     "notes": "Einkorn malt. Delicate sweet ancient grain with high protein and silky body.",
     "yield_fraction": 0.8
@@ -858,7 +763,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "smoke-malt",
-    "moisture_pct": 0.04,
     "name": "Smoke Malt",
     "notes": "Barley malt smoked over seasoned beechwood logs. Signature ingredient for Bamberg Rauchbier.",
     "yield_fraction": 0.8
@@ -867,7 +771,6 @@
     "category": "BASE",
     "color_lovibond": 3.0,
     "id": "spelt-malt",
-    "moisture_pct": 0.04,
     "name": "Spelt Malt",
     "notes": "Ancient wheat variety producing soft, nutty, rustic flavor and excellent foam stability.",
     "yield_fraction": 0.8
@@ -876,7 +779,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "stout-malt",
-    "moisture_pct": 0.04,
     "name": "Stout Malt",
     "notes": "Irish pale malt kilned specifically to pair with unmalted roasted barley in dry Irish stouts.",
     "yield_fraction": 0.8
@@ -885,7 +787,6 @@
     "category": "BASE",
     "color_lovibond": 12.0,
     "id": "toffee-malt",
-    "moisture_pct": 0.04,
     "name": "Toffee Malt",
     "notes": "Specialty malt prepared to enhance body and introduce subtle caramelized toffee notes.",
     "yield_fraction": 0.74
@@ -894,7 +795,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "torrified-barley-malt",
-    "moisture_pct": 0.04,
     "name": "Torrified Barley Malt",
     "notes": "Popped whole barley grain providing foam stability and grainy character in traditional British bitters.",
     "yield_fraction": 0.78
@@ -903,7 +803,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "torrified-oats",
-    "moisture_pct": 0.04,
     "name": "Torrified Oats",
     "notes": "Heat-puffed whole oats adding body and smooth mouthfeel.",
     "yield_fraction": 0.74
@@ -912,7 +811,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "torrified-wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Torrified Wheat Malt",
     "notes": "Heat-puffed unmalted wheat. Improves head retention and adds clean rustic wheat character without requiring a cereal cook.",
     "yield_fraction": 0.78
@@ -921,7 +819,6 @@
     "category": "BASE",
     "color_lovibond": 3.5,
     "id": "triticale-malt",
-    "moisture_pct": 0.04,
     "name": "Triticale Malt",
     "notes": "Wheat-rye hybrid combining the bready smoothness of wheat with the spicy bite of rye.",
     "yield_fraction": 0.81
@@ -930,7 +827,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "unmalted-barley",
-    "moisture_pct": 0.04,
     "name": "Unmalted Barley",
     "notes": "Raw barley grain contributing grainy, cereal notes and heavy foam proteins.",
     "yield_fraction": 0.7
@@ -939,7 +835,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "unmalted-buckwheat",
-    "moisture_pct": 0.04,
     "name": "Unmalted Buckwheat",
     "notes": "Raw buckwheat for rustic earthy gluten-free brewing.",
     "yield_fraction": 0.7
@@ -948,7 +843,6 @@
     "category": "BASE",
     "color_lovibond": 3.0,
     "id": "unmalted-emmer",
-    "moisture_pct": 0.04,
     "name": "Unmalted Emmer",
     "notes": "Raw ancient farro kernel for traditional rustic grain beers.",
     "yield_fraction": 0.78
@@ -957,7 +851,6 @@
     "category": "BASE",
     "color_lovibond": 1.5,
     "id": "unmalted-millet",
-    "moisture_pct": 0.04,
     "name": "Unmalted Millet",
     "notes": "Raw millet grains for gluten-free cereal mashes.",
     "yield_fraction": 0.7
@@ -966,7 +859,6 @@
     "category": "BASE",
     "color_lovibond": 1.8,
     "id": "unmalted-oat",
-    "moisture_pct": 0.04,
     "name": "Unmalted Oat",
     "notes": "Raw unmalted oats for rich silkiness and body.",
     "yield_fraction": 0.7
@@ -975,7 +867,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "unmalted-rye",
-    "moisture_pct": 0.04,
     "name": "Unmalted Rye",
     "notes": "Raw whole rye kernel offering intense peppery rye spice.",
     "yield_fraction": 0.78
@@ -984,7 +875,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "unmalted-spelt",
-    "moisture_pct": 0.04,
     "name": "Unmalted Spelt",
     "notes": "Raw ancient spelt grain for soft cereal body.",
     "yield_fraction": 0.78
@@ -993,7 +883,6 @@
     "category": "BASE",
     "color_lovibond": 2.5,
     "id": "unmalted-triticale",
-    "moisture_pct": 0.04,
     "name": "Unmalted Triticale",
     "notes": "Raw wheat-rye hybrid grain offering crispness and body.",
     "yield_fraction": 0.78
@@ -1002,7 +891,6 @@
     "category": "BASE",
     "color_lovibond": 1.8,
     "id": "unmalted-wheat",
-    "moisture_pct": 0.04,
     "name": "Unmalted Wheat",
     "notes": "Raw unmalted wheat grain. Key traditional ingredient in Belgian lambic and witbier for starch haze and crisp flavor.",
     "yield_fraction": 0.78
@@ -1011,7 +899,6 @@
     "category": "BASE",
     "color_lovibond": 3.5,
     "id": "vienna-malt",
-    "moisture_pct": 0.04,
     "name": "Vienna Malt",
     "notes": "Lightly toasted continental base malt providing golden amber color and rich toasty malt aroma without sweetness.",
     "yield_fraction": 0.79
@@ -1020,7 +907,6 @@
     "category": "BASE",
     "color_lovibond": 2.0,
     "id": "wheat-malt",
-    "moisture_pct": 0.04,
     "name": "Wheat Malt",
     "notes": "Huskless malted wheat rich in protein. Boosts head retention, foam stability, and body in weissbiers and wheat ales.",
     "yield_fraction": 0.82
@@ -1029,7 +915,6 @@
     "category": "BASE",
     "color_lovibond": 2.2,
     "id": "whisky-malt",
-    "moisture_pct": 0.04,
     "name": "Whisky Malt",
     "notes": "Distiller's malt optimized for high fermentability, soluble extract, and enzyme potential.",
     "yield_fraction": 0.8

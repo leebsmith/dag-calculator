@@ -111,8 +111,8 @@ test("trace malts: definite-mass rows fold into color (and only color)", () => {
   const baseSrm = e.get("grist.finished_beer_srm");
 
   e.setCollection("grist.trace_malts", [
-    { catalog_id: "black", name: "Black Malt", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 500, moisture_pct: 0.04 },
-    { catalog_id: "roast", name: "Roasted Barley", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 450, moisture_pct: 0.04 },
+    { catalog_id: "black", name: "Black Malt", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 500 },
+    { catalog_id: "roast", name: "Roasted Barley", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 450 },
   ]);
 
   assert.ok(Math.abs(e.get("grist.trace_malts_mass") - 0.34) < 1e-9);

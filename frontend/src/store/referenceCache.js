@@ -31,7 +31,6 @@ function buildGristRow(entry) {
     pct: entry.pct,
     yield_fraction: malt.yield_fraction,
     color_lovibond: malt.color_lovibond,
-    moisture_pct: malt.moisture_pct,
     notes: malt.notes,
   };
 }

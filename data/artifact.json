@@ -217,6 +217,10 @@
       "value": 0.75,
       "dimension": "percentage"
     },
+    "default_grain_moisture_fraction": {
+      "value": 0.04,
+      "dimension": "percentage"
+    },
     "default_boil_time_min": {
       "value": 60,
       "dimension": "time"
@@ -902,10 +906,6 @@
           "gte": 0
         }
       },
-      "moisture_pct": {
-        "dimension": "percentage",
-        "default": 0.04
-      },
       "notes": {}
     },
     "sugar": {
@@ -1215,13 +1215,6 @@
           "gte": 0
         }
       },
-      "moisture_pct": {
-        "dimension": "percentage",
-        "domain": {
-          "gte": 0,
-          "lte": 1
-        }
-      },
       "notes": {}
     },
     "sugar_row": {
@@ -1271,13 +1264,6 @@
         "dimension": "grain_color",
         "domain": {
           "gte": 0
-        }
-      },
-      "moisture_pct": {
-        "dimension": "percentage",
-        "domain": {
-          "gte": 0,
-          "lte": 1
         }
       },
       "notes": {}
@@ -1645,6 +1631,17 @@
       },
       "domain": {
         "gt": 0,
+        "lte": 1
+      }
+    },
+    "batch.grain_moisture_fraction": {
+      "kind": "root",
+      "dimension": "percentage",
+      "default": {
+        "const": "default_grain_moisture_fraction"
+      },
+      "domain": {
+        "gte": 0,
         "lte": 1
       }
     },

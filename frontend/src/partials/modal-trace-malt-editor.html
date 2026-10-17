@@ -209,18 +209,6 @@
                       @input="setMaltField(traceActiveIndex, 'color_lovibond', $event.target.value)"
                     />
                   </div>
-                  <div class="form-group">
-                    <label class="form-label text-xs">Moisture (%)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="20"
-                      class="form-input text-xs"
-                      :value="(traceActiveRow.moisture_pct * 100).toFixed(1)"
-                      @input="setMaltField(traceActiveIndex, 'moisture_pct', $event.target.value, 0.01)"
-                    />
-                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label text-xs">Notes</label>

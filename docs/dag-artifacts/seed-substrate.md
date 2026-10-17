@@ -37,12 +37,15 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
-| `moisture_pct` | percentage | `[0, 1]`, default 0.04 | as-is moisture |
 
-Mash pH/acidity is **not** a seed field. The water solver derives grain acidity
-from `category` + `color_lovibond` (a category color-slope model in
-`backend/app/core/water.py`). There is no per-malt `di_ph`/`buffer_index` to
-source or maintain.
+**Moisture is not a seed field.** It is a batch-level solver input
+(`batch.grain_moisture_fraction`, default 4%), forwarded as `mc_i` for every
+grain-bill row.
+
+Mash pH/acidity is **not** a seed field either. The water solver derives grain
+acidity from `category` + `color_lovibond` (a category color-slope model in
+`backend/app/core/water.py`). There is no per-malt `di_ph`/`buffer_index` or
+`moisture_pct` to source or maintain.
 
 ### 2.2 `sugar`
 

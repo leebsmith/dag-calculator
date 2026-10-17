@@ -13,7 +13,6 @@ function makeRow(malt) {
     mass_kg: 0,
     yield_fraction: malt.yield_fraction,
     color_lovibond: malt.color_lovibond,
-    moisture_pct: malt.moisture_pct ?? 0.04,
     notes: malt.notes,
   };
 }

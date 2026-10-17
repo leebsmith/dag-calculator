@@ -95,7 +95,6 @@ export function makeFixtures() {
         pct: 0.8,
         yield_fraction: 0.8,
         color_lovibond: 1.5,
-        moisture_pct: 0.04,
       },
       {
         catalog_id: "c40",
@@ -105,7 +104,6 @@ export function makeFixtures() {
         pct: 0.2,
         yield_fraction: 0.74,
         color_lovibond: 40,
-        moisture_pct: 0.04,
       },
     ],
     // `dough_in` enabled at 67; the disabled rest at 55 must be ignored by the

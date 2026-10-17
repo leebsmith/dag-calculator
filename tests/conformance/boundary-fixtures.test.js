@@ -22,8 +22,8 @@ function fixture(name) {
 
 // The raw FRONTEND grist rows the engine resolves (pct already Hamilton-normalized).
 const GRIST = [
-  { catalog_id: "pilsner", name: "Pilsner", category: "BASE", parts: 80, pct: 0.8, yield_fraction: 0.8, color_lovibond: 1.5, moisture_pct: 0.04 },
-  { catalog_id: "crystal-40", name: "Crystal 40", category: "CRYSTAL", parts: 20, pct: 0.2, yield_fraction: 0.74, color_lovibond: 40, moisture_pct: 0.04 },
+  { catalog_id: "pilsner", name: "Pilsner", category: "BASE", parts: 80, pct: 0.8, yield_fraction: 0.8, color_lovibond: 1.5 },
+  { catalog_id: "crystal-40", name: "Crystal 40", category: "CRYSTAL", parts: 20, pct: 0.2, yield_fraction: 0.74, color_lovibond: 40 },
 ];
 
 const M_GRIST = 4.7;
@@ -47,6 +47,7 @@ function stubEngine(values, { traceRows = [] } = {}) {
 const BATCH_VALUES = {
   "batch.target_abv": 5.5,
   "batch.apparent_attenuation": 0.75,
+  "batch.grain_moisture_fraction": 0.04,
   "batch.v_ferm": 20.0,
   "batch.topology": "r_l_to_g",
   "batch.intensive_value": 3.0,
@@ -111,8 +112,8 @@ test("conformance: adapted WaterSolverRequest matches the backend dump", () => {
 
 test("water request appends trace malts by definite mass; drops zero-mass rows", () => {
   const trace = [
-    { catalog_id: "black", name: "Black Malt", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 500, moisture_pct: 0.04 },
-    { catalog_id: "empty", name: "Untouched", category: "ROASTED", mass_kg: 0, yield_fraction: 0.55, color_lovibond: 500, moisture_pct: 0.04 },
+    { catalog_id: "black", name: "Black Malt", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 500 },
+    { catalog_id: "empty", name: "Untouched", category: "ROASTED", mass_kg: 0, yield_fraction: 0.55, color_lovibond: 500 },
   ];
   const body = buildWaterRequest(stubEngine(WATER_VALUES, { traceRows: trace }));
   assert.deepEqual(body.grist, [

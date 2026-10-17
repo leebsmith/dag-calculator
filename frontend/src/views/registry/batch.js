@@ -21,6 +21,11 @@ export const batchRegistry = {
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
   "batch.apparent_attenuation": { label: "Apparent attenuation", displayUnit: "pct" },
+  "batch.grain_moisture_fraction": {
+    label: "Grain moisture",
+    displayUnit: "pct",
+    hint: "As-is moisture of the grain bill; feeds the solver's mass balance.",
+  },
   "batch.target_ibu": {
     label: "Target IBU",
     unit: "IBU",
