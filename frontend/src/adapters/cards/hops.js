@@ -60,11 +60,13 @@ export function registerHopCard(app, ctx) {
     maxVisible: MAX_VISIBLE,
   });
 
-  const { engine, ui, artifact } = ctx;
+  const { engine, artifact } = ctx;
 
+  // Hop masses are read in a hop-friendly unit, independent of the master mass
+  // unit (which may be lb for grain). Transient: defaults to oz each session.
   const formatMass = (kg) => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
-    const unit = ui.unitMode.mass ?? "oz";
+    const unit = app.hopMassUnit ?? "oz";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
     const decimals = unit === "g" ? 0 : 2;
     return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
@@ -73,6 +75,13 @@ export function registerHopCard(app, ctx) {
   Object.assign(app, {
     // Card readouts (refreshed by refreshHopCard).
     hopRows: [],
+    hopMassUnit: "oz",
+
+    toggleHopMassUnit() {
+      const units = ["oz", "g", "lb", "kg"];
+      const index = units.indexOf(this.hopMassUnit);
+      this.hopMassUnit = units[(index + 1) % units.length];
+    },
 
     hopMass(row) {
       return formatMass(row?.mass_kg);

@@ -997,6 +997,7 @@ export function createStepApp(options = {}) {
     whirlpoolFraction: 0,
     boilIbu: 30,
     whirlpoolIbu: 0,
+    ibuGu: null,
 
     refreshTargets() {
       this.targetSrm = engine.get("batch.target_srm");
@@ -1004,6 +1005,21 @@ export function createStepApp(options = {}) {
       this.whirlpoolFraction = engine.get("batch.whirlpool_ibu_fraction");
       this.boilIbu = engine.get("batch.boil_target_ibu");
       this.whirlpoolIbu = engine.get("batch.whirlpool_target_ibu");
+
+      // IBU/GU balance: target IBU over gravity units of the computed post-boil OG.
+      let postBoilSg = null;
+      try {
+        postBoilSg = engine.resolve("solver.batch.sg_post_boil");
+      } catch {
+        postBoilSg = null;
+      }
+      const gu = typeof postBoilSg === "number" ? (postBoilSg - 1) * 1000 : null;
+      this.ibuGu =
+        gu && gu > 0 && typeof this.targetIbu === "number" ? this.targetIbu / gu : null;
+    },
+
+    get ibuGuDisplay() {
+      return typeof this.ibuGu === "number" ? this.ibuGu.toFixed(2) : "—";
     },
 
     get whirlpoolPctDisplay() {

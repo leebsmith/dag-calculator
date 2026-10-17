@@ -43,3 +43,24 @@ test("boil hops: parts renormalize when an addition is removed", () => {
   assert.equal(app.hopRows.length, 1);
   assert.ok(Math.abs(app.hopRows[0].pct - 1) < 1e-9);
 });
+
+test("hop mass unit defaults to oz, cycles, and changes the readout", () => {
+  const app = createStepApp();
+  app.boot();
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  app.saveHopEditor();
+  app.compute();
+
+  assert.equal(app.hopMassUnit, "oz");
+  assert.match(app.hopMass(app.hopRows[0]), /oz$/);
+
+  app.toggleHopMassUnit(); // g
+  assert.equal(app.hopMassUnit, "g");
+  assert.match(app.hopMass(app.hopRows[0]), /g$/);
+
+  app.toggleHopMassUnit(); // lb
+  app.toggleHopMassUnit(); // kg
+  app.toggleHopMassUnit(); // back to oz
+  assert.equal(app.hopMassUnit, "oz");
+});

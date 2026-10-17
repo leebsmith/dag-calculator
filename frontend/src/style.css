@@ -1447,8 +1447,8 @@ samp {
 
 /* Recipe-target group on the style card: fermentation navigator + 1-D sliders. */
 .target-cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--space-3);
 }
 

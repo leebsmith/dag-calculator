@@ -32,7 +32,15 @@
             <th class="text-right">Parts</th>
             <th class="text-right">IBU share</th>
             <th class="text-right">IBU</th>
-            <th class="text-right">Mass</th>
+            <th class="text-right">
+              <button
+                type="button"
+                class="unit-badge"
+                title="Change hop mass unit"
+                @click="toggleHopMassUnit()"
+                x-text="hopMassUnit"
+              ></button>
+            </th>
           </tr>
         </thead>
         <tbody>
