@@ -28,6 +28,7 @@ import { hamiltonPct } from "../views/hamilton.js";
 import { registerHopCard, refreshHopCard } from "./cards/hops.js";
 import { registerLateAdditionsCard, refreshLateAdditionsCard } from "./cards/late-additions.js";
 import { registerTraceMaltsCard, refreshTraceMaltsCard } from "./cards/trace-malts.js";
+import { registerMaltCard, refreshMaltCard } from "./cards/malt.js";
 import * as mash from "../views/mash.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
@@ -59,10 +60,6 @@ function refPaths(node, out = new Set()) {
 // shown in the result counter.
 const MAX_VISIBLE_YEASTS = 25;
 
-// Grain bill: cap major malts (matches the legacy builder) and a client-only
-// key for draft rows (so the editor can track rows before they're persisted).
-const MAX_MAJOR_MALTS = 8;
-const MAX_VISIBLE_MALTS = 25;
 const MAX_VISIBLE_STYLES = 25;
 
 // fraction (0..1) -> percentage string with up to one decimal (0.744 -> "74.4").
@@ -110,16 +107,6 @@ function yeastAttenuationTier(pct) {
   if (p < 75.5) return "medium";
   if (p < 82.5) return "high";
   return "super";
-}
-
-// Summary-card order: largest parts first, then name (case-insensitive) as a
-// stable tie-break. Display-only; the draft editor keeps its own row order.
-function sortGristRows(rows) {
-  return [...rows].sort(
-    (a, b) =>
-      (Number(b.parts) || 0) - (Number(a.parts) || 0) ||
-      String(a.name ?? "").localeCompare(String(b.name ?? ""), undefined, { sensitivity: "base" })
-  );
 }
 
 // Map every manifest field to the step slice that displays it, keyed by
@@ -480,8 +467,8 @@ export function createStepApp(options = {}) {
         if (d.holds) continue;
         this.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
       }
-      // Refresh the grain-bill rows for the summary card (reactive).
-      this.gristRows = sortGristRows(engine.get("grist.major_malts") ?? []);
+      // Refresh the card readouts (reactive).
+      refreshMaltCard(this, cardCtx);
       refreshTraceMaltsCard(this, cardCtx);
       refreshHopCard(this, cardCtx);
       refreshLateAdditionsCard(this, cardCtx);
@@ -1414,9 +1401,6 @@ export function createStepApp(options = {}) {
     draftNodeId: "",
     draftRows: [],
 
-    // Grain-bill rows for the summary card (reactive; refreshed in compute()).
-    gristRows: [],
-
     draftEntry() {
       for (const step of steps) {
         for (const entry of step.fields) {
@@ -1515,154 +1499,8 @@ export function createStepApp(options = {}) {
       Object.assign(this.draftRows[ri], patch);
     },
 
-    // --- Grain bill editor ---
-    maltDrawer: null, // "search" | "inspect" | null
-    maltActiveIndex: null,
-    maltSearch: "",
-    maltCategoryFilter: [],
-
-    get maltEditorOpen() {
-      return this.draftOpen && this.draftNodeId === "grist.major_malts";
-    },
-
-    // Weighted grist readouts come from the producer's field models (master-aware,
-    // display-only).
-    get maltWeightedColor() {
-      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === "grist.weighted_lovibond") ?? null;
-    },
-
-    get maltWeightedYield() {
-      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === "grist.weighted_yield_fraction") ?? null;
-    },
-
-    get maltCatalog() {
-      return Object.values(cache.seeds.malts ?? {});
-    },
-
-    get maltCategories() {
-      return artifact.taxonomies.malt_category ?? [];
-    },
-
-    get maltCatalogCategories() {
-      const seen = new Set();
-      for (const m of this.maltCatalog) if (m.category) seen.add(m.category);
-      return [...seen].sort();
-    },
-
-    get maltFilteredCatalog() {
-      const active = new Set(this.draftRows.map((r) => r.catalog_id).filter(Boolean));
-      const q = this.maltSearch.trim().toLowerCase();
-      const cats = this.maltCategoryFilter;
-      return this.maltCatalog.filter(
-        (m) =>
-          !active.has(m.id) &&
-          (cats.length === 0 || cats.includes(m.category)) &&
-          (!q || (m.name ?? "").toLowerCase().includes(q) || (m.notes ?? "").toLowerCase().includes(q))
-      );
-    },
-
-    get maltVisibleCatalog() {
-      return this.maltFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
-    },
-
-    get maltCatalogTruncated() {
-      return this.maltFilteredCatalog.length > MAX_VISIBLE_MALTS;
-    },
-
-    get maltTotalParts() {
-      return this.draftRows.reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
-    },
-
-    get maltTotalPct() {
-      return this.draftRows.reduce((sum, r) => sum + (r.pct || 0), 0);
-    },
-
-    get maltValidation() {
-      const total = Number((this.maltTotalPct * 100).toFixed(1));
-      if (total === 100) return { type: "balanced", label: "100.0% Balanced", class: "badge-success" };
-      if (total === 0) return { type: "unconfigured", label: "Unconfigured", class: "badge-muted" };
-      if (total < 100) {
-        const remaining = (100 - total).toFixed(1);
-        return { type: "deficit", label: `${total.toFixed(1)}% (Remaining ${remaining}%)`, class: "badge-amber" };
-      }
-      const excess = (total - 100).toFixed(1);
-      return { type: "surplus", label: `${total.toFixed(1)}% (Excess +${excess}%)`, class: "badge-danger" };
-    },
-
-    get maltAtLimit() {
-      return this.draftRows.length >= MAX_MAJOR_MALTS;
-    },
-
-    get maltActiveRow() {
-      return this.maltActiveIndex == null ? null : this.draftRows[this.maltActiveIndex] ?? null;
-    },
-
-    // Trace = under 2% of the bill (matches the legacy threshold).
-    maltIsTrace(row) {
-      return (row.pct || 0) < 0.02;
-    },
-
-    openMaltEditor() {
-      this.openDraft("grist.major_malts");
-      this.maltDrawer = null;
-      this.maltActiveIndex = null;
-    },
-
-    cancelMaltEditor() {
-      this.closeDraft();
-      this.maltDrawer = null;
-      this.maltActiveIndex = null;
-    },
-
-    saveMaltEditor() {
-      this.saveDraft();
-      this.maltDrawer = null;
-      this.maltActiveIndex = null;
-    },
-
-    addCatalogMalt(catalogId) {
-      const malt = cache.seeds.malts?.[catalogId];
-      if (!malt || this.maltAtLimit) return;
-      this.addDraftRow({
-        catalog_id: malt.id,
-        name: malt.name,
-        category: malt.category,
-        parts: 10,
-        pct: 0,
-        yield_fraction: malt.yield_fraction,
-        color_lovibond: malt.color_lovibond,
-        moisture_pct: malt.moisture_pct ?? 0.04,
-        di_ph: malt.di_ph,
-        buffer_index: malt.buffer_index,
-        notes: malt.notes,
-      });
-    },
-
-    removeDraftMalt(ri) {
-      this.removeDraftRow(ri);
-      if (this.maltActiveIndex === ri) {
-        this.maltActiveIndex = null;
-        if (this.maltDrawer === "inspect") this.maltDrawer = null;
-      } else if (this.maltActiveIndex != null && this.maltActiveIndex > ri) {
-        this.maltActiveIndex -= 1;
-      }
-    },
-
-    cloneDraftMalt(ri) {
-      if (this.maltAtLimit) return;
-      const row = this.draftRows[ri];
-      if (!row) return;
-      this.addDraftRow({ ...row, catalog_id: null, name: `${row.name} (Custom)` });
-      this.inspectDraftRow(this.draftRows.length - 1);
-    },
-
-    inspectDraftRow(ri) {
-      this.maltActiveIndex = ri;
-      this.maltDrawer = "inspect";
-    },
-
-    // Inspector field edits. `scale` converts a display input to base (percent
-    // inputs use 0.01). Empty clears the field.
+    // Inspector field edits (shared by the draft cards). `scale` converts a
+    // display input to base (percent inputs use 0.01). Empty clears the field.
     setMaltField(ri, field, value, scale = 1) {
       if (value === "") {
         this.patchDraftRow(ri, { [field]: undefined });
@@ -1670,30 +1508,6 @@ export function createStepApp(options = {}) {
       }
       const n = Number(value);
       this.patchDraftRow(ri, { [field]: Number.isFinite(n) ? n * scale : 0 });
-    },
-
-    openMaltSearch() {
-      this.maltDrawer = "search";
-      this.maltActiveIndex = null;
-      this.maltSearch = "";
-      this.maltCategoryFilter = [];
-    },
-
-    closeMaltDrawer() {
-      this.maltDrawer = null;
-      this.maltActiveIndex = null;
-    },
-
-    toggleMaltCategory(category) {
-      this.maltCategoryFilter = this.maltCategoryFilter.includes(category)
-        ? this.maltCategoryFilter.filter((c) => c !== category)
-        : [...this.maltCategoryFilter, category];
-    },
-
-    handleMaltEscape() {
-      if (!this.maltEditorOpen) return;
-      if (this.maltDrawer !== null) this.closeMaltDrawer();
-      else this.cancelMaltEditor();
     },
 
     // Explicit boot (main.js owns it after auth). Deliberately NOT named
@@ -1739,5 +1553,6 @@ export function createStepApp(options = {}) {
   registerHopCard(app, cardCtx);
   registerLateAdditionsCard(app, cardCtx);
   registerTraceMaltsCard(app, cardCtx);
+  registerMaltCard(app, cardCtx);
   return app;
 }

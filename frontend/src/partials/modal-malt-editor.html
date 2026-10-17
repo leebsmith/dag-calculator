@@ -90,11 +90,11 @@
                       >
                         📋
                       </button>
-                      <button type="button" class="btn-action-icon" @click="inspectDraftRow(ri)" title="Inspect">✎</button>
+                      <button type="button" class="btn-action-icon" @click="inspectMaltRow(ri)" title="Inspect">✎</button>
                       <button
                         type="button"
                         class="btn-action-icon btn-action-danger"
-                        @click="removeDraftMalt(ri)"
+                        @click="removeMalt(ri)"
                         title="Remove"
                       >
                         🗑
@@ -147,7 +147,7 @@
                   />
                 </div>
                 <div class="filter-pills-container">
-                  <template x-for="c in maltCatalogCategories" :key="c">
+                  <template x-for="c in maltCategories" :key="c">
                     <button
                       type="button"
                       class="filter-pill"

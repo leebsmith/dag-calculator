@@ -30,6 +30,7 @@ export function installCatalogDraft(app, ctx, config) {
     categoryField = null,
     makeRow,
     maxVisible = 25,
+    canAdd = null,
   } = config;
   const seeds = ctx.cache.seeds ?? {};
   const catalog = () => Object.values(seeds[seedKey] ?? {});
@@ -63,6 +64,7 @@ export function installCatalogDraft(app, ctx, config) {
     [`addCatalog${Cap}`](catalogId) {
       const item = seeds[seedKey]?.[catalogId];
       if (!item) return;
+      if (canAdd && !canAdd(this)) return;
       this.addDraftRow(makeRow(item));
       this[`close${Cap}Drawer`]();
     },
