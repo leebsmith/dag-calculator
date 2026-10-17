@@ -1673,6 +1673,10 @@ samp {
   margin-top: var(--space-3);
 }
 
+.extract-slider {
+  accent-color: var(--sys-color-action-primary);
+}
+
 .extract-slider-ae {
   grid-column: 1;
   grid-row: 1;

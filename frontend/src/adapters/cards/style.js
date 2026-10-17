@@ -73,7 +73,6 @@ export function registerStyleCard(app, ctx) {
     whirlpoolFraction: 0,
     boilIbu: 30,
     whirlpoolIbu: 0,
-    ibuGu: null,
 
     styleRangeText(s) {
       if (!s || s.og_min === undefined) return "";
@@ -196,17 +195,6 @@ export function registerStyleCard(app, ctx) {
       this.whirlpoolFraction = engine.get("batch.whirlpool_ibu_fraction");
       this.boilIbu = engine.get("batch.boil_target_ibu");
       this.whirlpoolIbu = engine.get("batch.whirlpool_target_ibu");
-
-      // IBU/GU balance: target IBU over gravity units of the computed post-boil OG.
-      let postBoilSg = null;
-      try {
-        postBoilSg = engine.resolve("solver.batch.sg_post_boil");
-      } catch {
-        postBoilSg = null;
-      }
-      const gu = typeof postBoilSg === "number" ? (postBoilSg - 1) * 1000 : null;
-      this.ibuGu =
-        gu && gu > 0 && typeof this.targetIbu === "number" ? this.targetIbu / gu : null;
     },
 
     setTargetSrm(value) {
@@ -407,6 +395,18 @@ export function registerStyleCard(app, ctx) {
         const min = Number(this.styleField("batch.style_ibu_min").value);
         const max = Number(this.styleField("batch.style_ibu_max").value);
         return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
+      },
+    },
+    // Planned bitterness balance: planned IBU over the planned OG's gravity
+    // units (from the fermentation-target navigator), so it needs no solve.
+    ibuGu: {
+      configurable: true,
+      get() {
+        const og = this.styleTargetInfo?.og;
+        const ibu = this.targetIbu;
+        return typeof og === "number" && og > 1 && typeof ibu === "number"
+          ? ibu / ((og - 1) * 1000)
+          : null;
       },
     },
     ibuGuDisplay: {

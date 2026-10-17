@@ -155,13 +155,16 @@ test("target sliders: selecting a style seeds the midpoints", () => {
   assert.ok(Math.abs(app.targetIbu - (ibumin + ibumax) / 2) < 1e-9);
 });
 
-test("IBU/GU ratio uses target IBU and the computed post-boil gravity", () => {
+test("planned IBU/GU uses the target IBU and the planned OG (no solve)", () => {
   const app = createStepApp();
   app.boot();
-  app.setTargetIbu(40);
+  app.selectStyle("21A");
   app.compute();
+  app.setTargetIbu(40);
 
-  // Offline stub sg_post_boil = 1.055 -> 55 gravity units.
-  assert.ok(Math.abs(app.ibuGu - 40 / 55) < 1e-9);
-  assert.equal(app.ibuGuDisplay, "0.73");
+  const og = app.styleTargetInfo.og;
+  assert.ok(typeof og === "number" && og > 1);
+  const expected = 40 / ((og - 1) * 1000);
+  assert.ok(Math.abs(app.ibuGu - expected) < 1e-9);
+  assert.equal(app.ibuGuDisplay, expected.toFixed(2));
 });
