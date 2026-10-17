@@ -98,19 +98,23 @@
     "style_attributes": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "categorynumber": {
+      "type": "string",
+      "description": "Category number derived from style_id (e.g., '21' for '21A')."
+    },
+    "category": {
+      "type": "string",
+      "description": "Category name from the category header (e.g., 'IPA')."
+    },
+    "source_key": {
+      "type": "string",
+      "description": "Stable raw key: '<style_id> <style_name>' (disambiguates duplicate ids)."
     }
   },
   "required": [
     "style_id",
     "style_name",
-    "version",
-    "overall_impression",
-    "appearance",
-    "aroma",
-    "flavor",
-    "mouthfeel",
-    "vital_statistics",
-    "commercial_examples",
-    "style_attributes"
+    "version"
   ]
 }

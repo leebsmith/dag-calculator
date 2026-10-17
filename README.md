@@ -40,28 +40,34 @@ make test        # frontend (node --test) + backend pytest
 Reference catalogs are rebuilt in two stages:
 
 ```
-browser scrape                         normalize                 shipped
-data/sources/*.json  ──build-*.mjs──▶  data/seeds/*.json  ──▶  runtime cache
+scrape / fetch (network)                  normalize (offline)              shipped
+data/sources/*.json  ──────build-*.mjs──▶  data/seeds/*.json  ──▶  runtime cache
 ```
 
-- **Raw sources** are committed under [`data/sources/`](data/sources/) (the BJCP
-  style exports and the beer-analytics.com scrapes).
-- **Scrapers** live in [`scripts/scrape/`](scripts/scrape/) (Python). Their
-  dependencies (`requests`, `beautifulsoup4`) are declared in
-  `scripts/scrape/requirements.txt` and kept out of the backend's dependency set.
+- **Raw sources** are committed under [`data/sources/`](data/sources/): the
+  beer-analytics.com hop/yeast scrapes and the BJCP 2015/2021 style
+  scrape+aggregate outputs. `data/sources/manifest.json` records each source's
+  mechanism, upstream, content hash, and row count (guarded by
+  `tests/guards/sources-manifest`).
+- **Scrapers/aggregators** live under [`scripts/scrape/`](scripts/scrape/)
+  (Python): the beer-analytics hop/yeast scrapers and the BJCP category scraper
+  + aggregator. Dependencies are per-pipeline `requirements.txt` files, kept out
+  of the backend's dependency set.
 - **Builders** are the Node `scripts/build-*-seed.mjs` normalizers.
+- The BJCP scraper caches category HTML (not committed); the aggregator reads
+  that cache offline. The styles seed is built from the **2021** aggregate; the
+  **2015** aggregate is preserved as a source but not merged.
 
 ```
 make scrape-yeasts              # crawl yeasts  -> data/sources/beer-analytics-yeasts.json
 make scrape-hops                # crawl hops    -> data/sources/beer-analytics-hops.json
-make scrape-hops LIMIT=25       # trial run (first 25 hops)
+make aggregate-bjcp BJCP_CACHE=<cached-html-dir> BJCP_EDITION=2021
 make seeds                      # rebuild data/seeds/ from data/sources/
 ```
 
 Scrapers identify the operator in the `User-Agent` and throttle between requests.
-Scraped content is © Beer Analytics and licensed
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); keep attribution
-when redistributing.
+beer-analytics.com content is © Beer Analytics (CC BY-SA 4.0). BJCP style-guide
+content is © BJCP; this project uses it for personal, non-redistributed use.
 
 ## Living vs. historical
 

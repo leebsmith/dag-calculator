@@ -96,11 +96,19 @@ six Specialty IPA sub-types keyed `21B <Name>` (e.g. `21B Black IPA`).
 | `abv_min`, `abv_max` | abv | `gte 0` (optional) |
 
 Specialty styles that define no numerical ranges omit the stat fields. The seed
-is merged from two raw sources by `scripts/build-styles-seed.mjs`:
-`data/sources/bjcp-2021-styles.json` (the 2021 export) and
-`data/sources/bjcp-specialty-ipas.json` (hand-authored sub-types from the BJCP
-2015 style page). The `21B Specialty IPA` container is dropped in favor of its
-concrete sub-types.
+is built by `scripts/build-styles-seed.mjs` from the **2021** aggregate
+`data/sources/bjcp_styles_2021.json` (produced by the vendored BJCP scraper +
+aggregator under `scripts/scrape/bjcp/`). The 2015 aggregate
+`bjcp_styles_2015.json` is preserved as a source but is not merged. During
+normalization:
+
+- category-header records (bare numeric ids like `21`) are dropped, and their
+  names supply `category_name`;
+- duplicated style ids become composite ids from the sub-name
+  (`21B Belgian IPA`, `27A Kellerbier`), and a bare duplicate with no sub-name
+  (the `21B Specialty IPA` container) is dropped;
+- `vital_statistics` ranges are flattened to `*_min`/`*_max`, arrays are joined
+  to comma-delimited strings, and the site's `-` placeholders are omitted.
 
 Selecting a style (the `batch.style` selection) copy-ins its ranges into the
 `batch.style_*_min/_max` envelope roots, sets `batch.fermentation` from its tags,

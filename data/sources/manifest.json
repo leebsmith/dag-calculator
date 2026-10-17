@@ -1,0 +1,36 @@
+{
+  "sources": {
+    "beer-analytics-hops.json": {
+      "mechanism": "scrape",
+      "upstream": "https://www.beer-analytics.com/hops/",
+      "scraper": "scripts/scrape/hop_scraper.py",
+      "rows": 401,
+      "sha256": "eee4c407f22f8f4f2cc9fb6ae4dbfa4052488787c4eb04434d53ff1562b35d44"
+    },
+    "beer-analytics-yeasts.json": {
+      "mechanism": "scrape",
+      "upstream": "https://www.beer-analytics.com/yeasts/",
+      "scraper": "scripts/scrape/yeast_scraper.py",
+      "rows": 694,
+      "sha256": "0476e70f9fcaab3de27c8c6cb5cbe2c15db230e3bc3647f52721c5ba3eb6b837"
+    },
+    "bjcp_styles_2015.json": {
+      "mechanism": "scrape+aggregate",
+      "upstream": "https://www.bjcp.org/beer-styles/beer-style-guidelines/",
+      "scraper": "scripts/scrape/bjcp/scrape_bjcp.py",
+      "aggregator": "scripts/scrape/bjcp/aggregator.py",
+      "edition": 2015,
+      "rows": 154,
+      "sha256": "b8b1856b17837c2a5ba293f633810630092feb707f3b8458b16776a838121258"
+    },
+    "bjcp_styles_2021.json": {
+      "mechanism": "scrape+aggregate",
+      "upstream": "https://www.bjcp.org/beer-styles/beer-style-guidelines/",
+      "scraper": "scripts/scrape/bjcp/scrape_bjcp.py",
+      "aggregator": "scripts/scrape/bjcp/aggregator.py",
+      "edition": 2021,
+      "rows": 157,
+      "sha256": "d3f794532da832fb7caf88b494af69c92eafe2f06c492860690c00eb81a7abe1"
+    }
+  }
+}

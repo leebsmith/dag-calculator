@@ -12,8 +12,13 @@ SCRAPE_DEPS := --with-requirements $(SCRAPE_DIR)/requirements.txt
 LIMIT ?=
 OUT   ?=
 
+# BJCP re-aggregation reads a local HTML cache (not committed).
+#   make aggregate-bjcp BJCP_CACHE=~/MyPythonEnvironment/bjcp_scraper/2021
+BJCP_CACHE   ?=
+BJCP_EDITION ?= 2021
+
 .PHONY: help local-dev check test seeds seeds-styles seeds-yeasts seeds-hops \
-        scrape-yeasts scrape-hops clean deploy deploy-backend deploy-frontend destroy
+        scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
 help:
 	@echo "Usage: make <target>"
@@ -25,6 +30,8 @@ help:
 	@echo "  scrape-yeasts   Crawl beer-analytics.com yeasts -> data/sources/"
 	@echo "  scrape-hops     Crawl beer-analytics.com hops -> data/sources/"
 	@echo "                  (LIMIT=N for a trial, OUT=path to override output)"
+	@echo "  aggregate-bjcp  Re-aggregate cached BJCP HTML into data/sources/"
+	@echo "                  (BJCP_CACHE=<dir> BJCP_EDITION=2021)"
 	@echo "  clean           Stop local processes and reclaim ports"
 	@echo "  deploy          Deploy backend (Cloud Run) + frontend (Firebase)"
 	@echo "  destroy         Tear down the deployed services"
@@ -76,6 +83,15 @@ scrape-yeasts:
 scrape-hops:
 	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/hop_scraper.py \
 		$(if $(LIMIT),--limit $(LIMIT),) $(if $(OUT),--out $(OUT),)
+
+# Re-aggregate a local BJCP HTML cache (populate it first with
+# scripts/scrape/bjcp/scrape_bjcp.py). HTML is never committed.
+aggregate-bjcp:
+	@test -n "$(BJCP_CACHE)" || (echo "Set BJCP_CACHE=<cached-html-dir>"; exit 1)
+	uv run --with-requirements $(SCRAPE_DIR)/bjcp/requirements.txt \
+		python $(SCRAPE_DIR)/bjcp/aggregator.py \
+		--dir $(BJCP_CACHE) --out data/sources/bjcp_styles_$(BJCP_EDITION).json
+	node scripts/emit-sources-manifest.mjs
 
 # --- Cleanup -----------------------------------------------------------------
 clean:

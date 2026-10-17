@@ -55,7 +55,10 @@
       "session-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "11",
+    "category": "British Bitter",
+    "source_key": "11A Ordinary Bitter"
   },
   {
     "style_id": "11B",
@@ -108,7 +111,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "11",
+    "category": "British Bitter",
+    "source_key": "11B Best Bitter"
   },
   {
     "style_id": "11C",
@@ -161,7 +167,10 @@
       "session-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "11",
+    "category": "British Bitter",
+    "source_key": "11C Strong Bitter"
   },
   {
     "style_id": "4",
@@ -221,7 +230,10 @@
       "pale-lager-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "4",
+    "category": "Pale Malty European Lager",
+    "source_key": "4A Munich Helles"
   },
   {
     "style_id": "4B",
@@ -276,7 +288,10 @@
       "pale-lager-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "4",
+    "category": "Pale Malty European Lager",
+    "source_key": "4B Festbier"
   },
   {
     "style_id": "4C",
@@ -331,7 +346,10 @@
       "malty",
       "pale-color",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "4",
+    "category": "Pale Malty European Lager",
+    "source_key": "4C Helles Bock"
   },
   {
     "style_id": "25",
@@ -388,7 +406,10 @@
       "top-fermented",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "25",
+    "category": "Strong Belgian Ale",
+    "source_key": "25A Belgian Blond Ale"
   },
   {
     "style_id": "25B",
@@ -424,7 +445,10 @@
       "top-fermented",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "25",
+    "category": "Strong Belgian Ale",
+    "source_key": "25B Saison"
   },
   {
     "style_id": "25C",
@@ -476,7 +500,10 @@
       "traditional-style",
       "very-high-strength",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "25",
+    "category": "Strong Belgian Ale",
+    "source_key": "25C Belgian Golden Strong Ale"
   },
   {
     "style_id": "19",
@@ -535,7 +562,10 @@
       "north-america",
       "standard-strength",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "19",
+    "category": "Amber and Brown American Beer",
+    "source_key": "19A American Amber Ale"
   },
   {
     "style_id": "19B",
@@ -585,7 +615,10 @@
       "north-america",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "19",
+    "category": "Amber and Brown American Beer",
+    "source_key": "19B California Common"
   },
   {
     "style_id": "19C",
@@ -639,7 +672,10 @@
       "north-america",
       "standard-strength",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "19",
+    "category": "Amber and Brown American Beer",
+    "source_key": "19C American Brown Ale"
   },
   {
     "style_id": "31",
@@ -666,7 +702,10 @@
     ],
     "style_attributes": [
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "31",
+    "category": "Alternative Fermentables Beer",
+    "source_key": "31A Alternative Grain Beer"
   },
   {
     "style_id": "31B",
@@ -689,7 +728,10 @@
     ],
     "style_attributes": [
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "31",
+    "category": "Alternative Fermentables Beer",
+    "source_key": "31B Alternative Sugar Beer"
   },
   {
     "style_id": "10",
@@ -747,7 +789,10 @@
       "top-fermented",
       "traditional-style",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "10",
+    "category": "German Wheat Beer",
+    "source_key": "10A Weissbier"
   },
   {
     "style_id": "10B",
@@ -800,7 +845,10 @@
       "top-fermented",
       "traditional-style",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "10",
+    "category": "German Wheat Beer",
+    "source_key": "10B Dunkles Weissbier"
   },
   {
     "style_id": "10C",
@@ -855,7 +903,10 @@
       "top-fermented",
       "traditional-style",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "10",
+    "category": "German Wheat Beer",
+    "source_key": "10C Weizenbock"
   },
   {
     "style_id": "7",
@@ -915,7 +966,10 @@
       "lagered",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "7",
+    "category": "Amber Bitter European Beer",
+    "source_key": "7A Vienna Lager"
   },
   {
     "style_id": "7B",
@@ -970,7 +1024,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "7",
+    "category": "Amber Bitter European Beer",
+    "source_key": "7B Altbier"
   },
   {
     "style_id": "16",
@@ -1030,7 +1087,10 @@
       "sweet",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "16",
+    "category": "Dark British Beer",
+    "source_key": "16A Sweet Stout"
   },
   {
     "style_id": "16B",
@@ -1084,7 +1144,10 @@
       "stout-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "16",
+    "category": "Dark British Beer",
+    "source_key": "16B Oatmeal Stout"
   },
   {
     "style_id": "16C",
@@ -1139,7 +1202,10 @@
       "sweet",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "16",
+    "category": "Dark British Beer",
+    "source_key": "16C Tropical Stout"
   },
   {
     "style_id": "16D",
@@ -1194,7 +1260,10 @@
       "stout-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "16",
+    "category": "Dark British Beer",
+    "source_key": "16D Foreign Extra Stout"
   },
   {
     "style_id": "1",
@@ -1253,7 +1322,10 @@
       "pale-lager-family",
       "session-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "1",
+    "category": "Standard American Beer",
+    "source_key": "1A American Light Lager"
   },
   {
     "style_id": "1B",
@@ -1308,7 +1380,10 @@
       "pale-lager-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "1",
+    "category": "Standard American Beer",
+    "source_key": "1B American Lager"
   },
   {
     "style_id": "1C",
@@ -1361,7 +1436,10 @@
       "pale-color",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "1",
+    "category": "Standard American Beer",
+    "source_key": "1C Cream Ale"
   },
   {
     "style_id": "1D",
@@ -1413,7 +1491,10 @@
       "pale-color",
       "standard-strength",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "1",
+    "category": "Standard American Beer",
+    "source_key": "1D American Wheat Beer"
   },
   {
     "style_id": "34",
@@ -1433,7 +1514,10 @@
     ],
     "style_attributes": [
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "34",
+    "category": "Specialty Beer",
+    "source_key": "34A Commercial Specialty Beer"
   },
   {
     "style_id": "34B",
@@ -1450,7 +1534,10 @@
     ],
     "style_attributes": [
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "34",
+    "category": "Specialty Beer",
+    "source_key": "34B Mixed-Style Beer"
   },
   {
     "style_id": "34C",
@@ -1464,7 +1551,10 @@
     ],
     "style_attributes": [
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "34",
+    "category": "Specialty Beer",
+    "source_key": "34C Experimental Beer"
   },
   {
     "style_id": "5",
@@ -1524,7 +1614,10 @@
       "pale-lager-family",
       "session-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "5",
+    "category": "Pale Bitter European Beer",
+    "source_key": "5A German Leichtbier"
   },
   {
     "style_id": "5B",
@@ -1579,7 +1672,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "5",
+    "category": "Pale Bitter European Beer",
+    "source_key": "5B Kölsch"
   },
   {
     "style_id": "5C",
@@ -1633,7 +1729,10 @@
       "pale-lager-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "5",
+    "category": "Pale Bitter European Beer",
+    "source_key": "5C German Helles Exportbier"
   },
   {
     "style_id": "5D",
@@ -1690,7 +1789,10 @@
       "pilsner-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "5",
+    "category": "Pale Bitter European Beer",
+    "source_key": "5D German Pils"
   },
   {
     "style_id": "21",
@@ -1749,7 +1851,10 @@
       "north-america",
       "pale-color",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21A American IPA"
   },
   {
     "style_id": "21B",
@@ -1761,7 +1866,10 @@
     "flavor": "Variable by type, with the quality of each component dependent on the specific Specialty IPA. Hop flavor typically medium-low to high. Hop bitterness typically medium-high to very high. Malt flavor generally low to medium. Commonly has a medium-dry to dry finish. Some clean alcohol flavor can be noted in stronger versions. Various types of Specialty IPAs can show additional malt and yeast characteristics, depending on the type.",
     "mouthfeel": "Smooth. Medium-light to medium body. Medium carbonation, generally. A background alcohol warmth can be perceived in stronger versions.",
     "comments": "Entrants may use this category for a different strength version of an IPA defined by its own BJCP subcategory (e.g., session-strength American or English IPA) – except where an existing BJCP subcategory already exists for that style (e.g., double [American] IPA). A Session IPA is a 21B Specialty IPA with a base style of 21A American IPA with Session strength. A Double IPA is Category 22A not 21B.",
-    "style_comparison": "Currently Defined Types: Belgian IPA, Black IPA, Brown IPA, Red IPA, Rye IPA, White IPA, Brut IPA"
+    "style_comparison": "Currently Defined Types: Belgian IPA, Black IPA, Brown IPA, Red IPA, Rye IPA, White IPA, Brut IPA",
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA"
   },
   {
     "style_id": "21B",
@@ -1814,7 +1922,10 @@
       "pale-color",
       "specialty-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: Belgian IPA"
   },
   {
     "style_id": "21B",
@@ -1866,7 +1977,10 @@
       "north-america",
       "specialty-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: Black IPA"
   },
   {
     "style_id": "21B",
@@ -1918,7 +2032,10 @@
       "north-america",
       "specialty-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: Brown IPA"
   },
   {
     "style_id": "21B",
@@ -1970,7 +2087,10 @@
       "pale-color",
       "specialty-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: Brut IPA"
   },
   {
     "style_id": "21B",
@@ -2023,7 +2143,10 @@
       "north-america",
       "specialty-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: Red IPA"
   },
   {
     "style_id": "21B",
@@ -2074,7 +2197,10 @@
       "north-america",
       "specialty-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: Rye IPA"
   },
   {
     "style_id": "21B",
@@ -2126,7 +2252,10 @@
       "specialty-family",
       "spice",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21B Specialty IPA: White IPA"
   },
   {
     "style_id": "21C",
@@ -2181,7 +2310,10 @@
       "north-america",
       "pale-color",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "21",
+    "category": "IPA",
+    "source_key": "21C Hazy IPA"
   },
   {
     "style_id": "17",
@@ -2239,7 +2371,10 @@
       "strong-ale-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "17",
+    "category": "Strong British Ale",
+    "source_key": "17A British Strong Ale"
   },
   {
     "style_id": "17B",
@@ -2294,7 +2429,10 @@
       "strong-ale-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "17",
+    "category": "Strong British Ale",
+    "source_key": "17B Old Ale"
   },
   {
     "style_id": "17C",
@@ -2349,7 +2487,10 @@
       "strong-ale-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "17",
+    "category": "Strong British Ale",
+    "source_key": "17C Wee Heavy"
   },
   {
     "style_id": "17D",
@@ -2402,7 +2543,10 @@
       "top-fermented",
       "traditional-style",
       "very-high-strength"
-    ]
+    ],
+    "categorynumber": "17",
+    "category": "Strong British Ale",
+    "source_key": "17D English Barleywine"
   },
   {
     "style_id": "23",
@@ -2460,7 +2604,10 @@
       "top-fermented",
       "traditional-style",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23A Berliner Weisse"
   },
   {
     "style_id": "23B",
@@ -2515,7 +2662,10 @@
       "traditional-style",
       "western-europe",
       "wood"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23B Flanders Red Ale"
   },
   {
     "style_id": "23C",
@@ -2569,7 +2719,10 @@
       "top-fermented",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23C Oud Bruin"
   },
   {
     "style_id": "23D",
@@ -2624,7 +2777,10 @@
       "western-europe",
       "wheat-beer-family",
       "wild-fermented"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23D Lambic"
   },
   {
     "style_id": "23E",
@@ -2678,7 +2834,10 @@
       "western-europe",
       "wheat-beer-family",
       "wild-fermented"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23E Gueuze"
   },
   {
     "style_id": "23F",
@@ -2728,7 +2887,10 @@
       "western-europe",
       "wheat-beer-family",
       "wild-fermented"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23F Fruit Lambic"
   },
   {
     "style_id": "23G",
@@ -2780,7 +2942,10 @@
       "standard-strength",
       "top-fermented",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "23",
+    "category": "European Sour Ale",
+    "source_key": "23G Gose"
   },
   {
     "style_id": "30",
@@ -2808,7 +2973,10 @@
     "style_attributes": [
       "specialty-beer",
       "spice"
-    ]
+    ],
+    "categorynumber": "30",
+    "category": "Spiced Beer",
+    "source_key": "30A Spice, Herb, or Vegetable Beer"
   },
   {
     "style_id": "30B",
@@ -2832,7 +3000,10 @@
     "style_attributes": [
       "specialty-beer",
       "spice"
-    ]
+    ],
+    "categorynumber": "30",
+    "category": "Spiced Beer",
+    "source_key": "30B Autumn Seasonal Beer"
   },
   {
     "style_id": "30C",
@@ -2857,7 +3028,10 @@
     "style_attributes": [
       "specialty-beer",
       "spice"
-    ]
+    ],
+    "categorynumber": "30",
+    "category": "Spiced Beer",
+    "source_key": "30C Winter Seasonal Beer"
   },
   {
     "style_id": "30D",
@@ -2876,7 +3050,10 @@
     "style_attributes": [
       "specialty-beer",
       "spice"
-    ]
+    ],
+    "categorynumber": "30",
+    "category": "Spiced Beer",
+    "source_key": "30D Specialty Spice Beer"
   },
   {
     "style_id": "14",
@@ -2930,7 +3107,10 @@
       "session-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "14",
+    "category": "Scottish Ale",
+    "source_key": "14A Scottish Light"
   },
   {
     "style_id": "14B",
@@ -2979,7 +3159,10 @@
       "session-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "14",
+    "category": "Scottish Ale",
+    "source_key": "14B Scottish Heavy"
   },
   {
     "style_id": "14C",
@@ -3033,7 +3216,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "14",
+    "category": "Scottish Ale",
+    "source_key": "14C Scottish Export"
   },
   {
     "style_id": "33",
@@ -3063,7 +3249,10 @@
     "style_attributes": [
       "specialty-beer",
       "wood"
-    ]
+    ],
+    "categorynumber": "33",
+    "category": "Wood Beer",
+    "source_key": "33A Wood-Aged Beer"
   },
   {
     "style_id": "33B",
@@ -3088,7 +3277,10 @@
     "style_attributes": [
       "specialty-beer",
       "wood"
-    ]
+    ],
+    "categorynumber": "33",
+    "category": "Wood Beer",
+    "source_key": "33B Specialty Wood-Aged Beer"
   },
   {
     "style_id": "15",
@@ -3146,7 +3338,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "15",
+    "category": "Irish Beer",
+    "source_key": "15A Irish Red Ale"
   },
   {
     "style_id": "15B",
@@ -3200,7 +3395,10 @@
       "stout-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "15",
+    "category": "Irish Beer",
+    "source_key": "15B Irish Stout"
   },
   {
     "style_id": "15C",
@@ -3252,7 +3450,10 @@
       "stout-family",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "15",
+    "category": "Irish Beer",
+    "source_key": "15C Irish Extra Stout"
   },
   {
     "style_id": "13",
@@ -3310,7 +3511,10 @@
       "session-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "13",
+    "category": "Brown British Beer",
+    "source_key": "13A Dark Mild"
   },
   {
     "style_id": "13B",
@@ -3363,7 +3567,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "13",
+    "category": "Brown British Beer",
+    "source_key": "13B British Brown Ale"
   },
   {
     "style_id": "13C",
@@ -3417,7 +3624,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "13",
+    "category": "Brown British Beer",
+    "source_key": "13C English Porter"
   },
   {
     "style_id": "29",
@@ -3445,7 +3655,10 @@
     "style_attributes": [
       "fruit",
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "29",
+    "category": "Fruit Beer",
+    "source_key": "29A Fruit Beer"
   },
   {
     "style_id": "29B",
@@ -3469,7 +3682,10 @@
       "fruit",
       "specialty-beer",
       "spice"
-    ]
+    ],
+    "categorynumber": "29",
+    "category": "Fruit Beer",
+    "source_key": "29B Fruit and Spice Beer"
   },
   {
     "style_id": "29C",
@@ -3490,7 +3706,10 @@
     "style_attributes": [
       "fruit",
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "29",
+    "category": "Fruit Beer",
+    "source_key": "29C Specialty Fruit Beer"
   },
   {
     "style_id": "29D",
@@ -3538,7 +3757,10 @@
     "style_attributes": [
       "fruit",
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "29",
+    "category": "Fruit Beer",
+    "source_key": "29D Grape Ale"
   },
   {
     "style_id": "12",
@@ -3597,7 +3819,10 @@
       "pale-color",
       "standard-strength",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "12",
+    "category": "Pale Commonwealth Beer",
+    "source_key": "12A British Golden Ale"
   },
   {
     "style_id": "12B",
@@ -3645,7 +3870,10 @@
       "standard-strength",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "12",
+    "category": "Pale Commonwealth Beer",
+    "source_key": "12B Australian Sparkling Ale"
   },
   {
     "style_id": "12C",
@@ -3699,7 +3927,10 @@
       "pale-color",
       "top-fermented",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "12",
+    "category": "Pale Commonwealth Beer",
+    "source_key": "12C English IPA"
   },
   {
     "style_id": "6",
@@ -3757,7 +3988,10 @@
       "malty",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "6",
+    "category": "Amber Malty European Lager",
+    "source_key": "6A Märzen"
   },
   {
     "style_id": "6B",
@@ -3811,7 +4045,10 @@
       "smoke",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "6",
+    "category": "Amber Malty European Lager",
+    "source_key": "6B Rauchbier"
   },
   {
     "style_id": "6C",
@@ -3865,7 +4102,10 @@
       "lagered",
       "malty",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "6",
+    "category": "Amber Malty European Lager",
+    "source_key": "6C Dunkles Bock"
   },
   {
     "style_id": "8",
@@ -3924,7 +4164,10 @@
       "malty",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "8",
+    "category": "Dark European Lager",
+    "source_key": "8A Munich Dunkel"
   },
   {
     "style_id": "8B",
@@ -3979,7 +4222,10 @@
       "lagered",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "8",
+    "category": "Dark European Lager",
+    "source_key": "8B Schwarzbier"
   },
   {
     "style_id": "28",
@@ -4012,7 +4258,10 @@
       "north-america",
       "specialty-beer",
       "wild-fermentation"
-    ]
+    ],
+    "categorynumber": "28",
+    "category": "American Wild Ale",
+    "source_key": "28A Brett Beer"
   },
   {
     "style_id": "28B",
@@ -4041,7 +4290,10 @@
       "sour",
       "specialty-beer",
       "wild-fermentation"
-    ]
+    ],
+    "categorynumber": "28",
+    "category": "American Wild Ale",
+    "source_key": "28B Mixed-Fermentation Sour Beer"
   },
   {
     "style_id": "28C",
@@ -4071,7 +4323,10 @@
       "sour",
       "specialty-beer",
       "wild-fermentation"
-    ]
+    ],
+    "categorynumber": "28",
+    "category": "American Wild Ale",
+    "source_key": "28C Wild Specialty Beer"
   },
   {
     "style_id": "28D",
@@ -4116,7 +4371,10 @@
       "pale-color",
       "sour",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "28",
+    "category": "American Wild Ale",
+    "source_key": "28D Straight Sour Beer"
   },
   {
     "style_id": "26",
@@ -4174,7 +4432,10 @@
       "standard-strength",
       "top-fermented",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "26",
+    "category": "Monastic Ale",
+    "source_key": "26A Belgian Single"
   },
   {
     "style_id": "26B",
@@ -4226,7 +4487,10 @@
       "top-fermented",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "26",
+    "category": "Monastic Ale",
+    "source_key": "26B Belgian Dubbel"
   },
   {
     "style_id": "26C",
@@ -4278,7 +4542,10 @@
       "top-fermented",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "26",
+    "category": "Monastic Ale",
+    "source_key": "26C Belgian Tripel"
   },
   {
     "style_id": "26D",
@@ -4330,7 +4597,10 @@
       "traditional-style",
       "very-high-strength",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "26",
+    "category": "Monastic Ale",
+    "source_key": "26D Belgian Dark Strong Ale"
   },
   {
     "style_id": "27",
@@ -4356,7 +4626,10 @@
       "Paulaner Ur-Dunkel Naturtrüb; Helles – ABK Kellerbier Naturtrüb",
       "Löwenbräu 1747 Original; Pils – Giesinger Feines Pilschen",
       "Ketterer Zwickel-Pils"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Kellerbier"
   },
   {
     "style_id": "27A",
@@ -4403,7 +4676,10 @@
       "north-america",
       "standard-strength",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Kentucky Common"
   },
   {
     "style_id": "27A",
@@ -4453,7 +4729,10 @@
       "standard-strength",
       "top-fermented",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Lichtenhainer"
   },
   {
     "style_id": "27A",
@@ -4503,7 +4782,10 @@
       "session-strength",
       "sweet",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: London Brown Ale"
   },
   {
     "style_id": "27A",
@@ -4552,7 +4834,10 @@
       "smoke",
       "top-fermented",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Piwo Grodziskie"
   },
   {
     "style_id": "27A",
@@ -4606,7 +4891,10 @@
       "pale-color",
       "pilsner-family",
       "standard-strength"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Pre-Prohibition Lager"
   },
   {
     "style_id": "27A",
@@ -4655,7 +4943,10 @@
       "north-america",
       "porter-family",
       "standard-strength"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Pre-Prohibition Porter"
   },
   {
     "style_id": "27A",
@@ -4702,7 +4993,10 @@
       "standard-strength",
       "top-fermented",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Roggenbier"
   },
   {
     "style_id": "27A",
@@ -4749,7 +5043,10 @@
       "historical-style",
       "spice",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "27",
+    "category": "Historical Beer",
+    "source_key": "27A Historical Beer: Sahti"
   },
   {
     "style_id": "18",
@@ -4807,7 +5104,10 @@
       "pale-ale-family",
       "pale-color",
       "standard-strength"
-    ]
+    ],
+    "categorynumber": "18",
+    "category": "Pale American Ale",
+    "source_key": "18A Blonde Ale"
   },
   {
     "style_id": "18B",
@@ -4861,7 +5161,10 @@
       "pale-color",
       "standard-strength",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "18",
+    "category": "Pale American Ale",
+    "source_key": "18B American Pale Ale"
   },
   {
     "style_id": "2",
@@ -4921,7 +5224,10 @@
       "pale-lager-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "2",
+    "category": "International Lager",
+    "source_key": "2A International Pale Lager"
   },
   {
     "style_id": "2B",
@@ -4974,7 +5280,10 @@
       "malty",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "2",
+    "category": "International Lager",
+    "source_key": "2B International Amber Lager"
   },
   {
     "style_id": "2C",
@@ -5027,7 +5336,10 @@
       "malty",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "2",
+    "category": "International Lager",
+    "source_key": "2C International Dark Lager"
   },
   {
     "style_id": "9",
@@ -5090,7 +5402,10 @@
       "malty",
       "pale-color",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "9",
+    "category": "Strong European Beer",
+    "source_key": "9A Doppelbock"
   },
   {
     "style_id": "9B",
@@ -5139,7 +5454,10 @@
       "malty",
       "traditional-style",
       "very-high-strength"
-    ]
+    ],
+    "categorynumber": "9",
+    "category": "Strong European Beer",
+    "source_key": "9B Eisbock"
   },
   {
     "style_id": "9C",
@@ -5193,7 +5511,10 @@
       "malty",
       "porter-family",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "9",
+    "category": "Strong European Beer",
+    "source_key": "9C Baltic Porter"
   },
   {
     "style_id": "3",
@@ -5253,7 +5574,10 @@
       "pale-lager-family",
       "session-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "3",
+    "category": "Czech Lager",
+    "source_key": "3A Czech Pale Lager"
   },
   {
     "style_id": "3B",
@@ -5309,7 +5633,10 @@
       "pilsner-family",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "3",
+    "category": "Czech Lager",
+    "source_key": "3B Czech Premium Pale Lager"
   },
   {
     "style_id": "3C",
@@ -5363,7 +5690,10 @@
       "lagered",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "3",
+    "category": "Czech Lager",
+    "source_key": "3C Czech Amber Lager"
   },
   {
     "style_id": "3D",
@@ -5418,7 +5748,10 @@
       "lagered",
       "standard-strength",
       "traditional-style"
-    ]
+    ],
+    "categorynumber": "3",
+    "category": "Czech Lager",
+    "source_key": "3D Czech Dark Lager"
   },
   {
     "style_id": "24",
@@ -5476,7 +5809,10 @@
       "traditional-style",
       "western-europe",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "24",
+    "category": "Belgian Ale",
+    "source_key": "24A Witbier"
   },
   {
     "style_id": "24B",
@@ -5527,7 +5863,10 @@
       "top-fermented",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "24",
+    "category": "Belgian Ale",
+    "source_key": "24B Belgian Pale Ale"
   },
   {
     "style_id": "24C",
@@ -5582,7 +5921,10 @@
       "pale-color",
       "traditional-style",
       "western-europe"
-    ]
+    ],
+    "categorynumber": "24",
+    "category": "Belgian Ale",
+    "source_key": "24C Bière de Garde"
   },
   {
     "style_id": "22",
@@ -5641,7 +5983,10 @@
       "pale-color",
       "top-fermented",
       "very-high-strength"
-    ]
+    ],
+    "categorynumber": "22",
+    "category": "Strong American Ale",
+    "source_key": "22A Double IPA"
   },
   {
     "style_id": "22B",
@@ -5694,7 +6039,10 @@
       "north-america",
       "strong-ale-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "22",
+    "category": "Strong American Ale",
+    "source_key": "22B American Strong Ale"
   },
   {
     "style_id": "22C",
@@ -5747,7 +6095,10 @@
       "strong-ale-family",
       "top-fermented",
       "very-high-strength"
-    ]
+    ],
+    "categorynumber": "22",
+    "category": "Strong American Ale",
+    "source_key": "22C American Barleywine"
   },
   {
     "style_id": "22D",
@@ -5800,7 +6151,10 @@
       "top-fermented",
       "very-high-strength",
       "wheat-beer-family"
-    ]
+    ],
+    "categorynumber": "22",
+    "category": "Strong American Ale",
+    "source_key": "22D Wheatwine"
   },
   {
     "style_id": "32",
@@ -5830,7 +6184,10 @@
     "style_attributes": [
       "smoke",
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "32",
+    "category": "Smoked Beer",
+    "source_key": "32A Classic Style Smoked Beer"
   },
   {
     "style_id": "32B",
@@ -5850,7 +6207,10 @@
     "style_attributes": [
       "smoke",
       "specialty-beer"
-    ]
+    ],
+    "categorynumber": "32",
+    "category": "Smoked Beer",
+    "source_key": "32B Specialty Smoked Beer"
   },
   {
     "style_id": "20",
@@ -5910,7 +6270,10 @@
       "roasty",
       "standard-strength",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "20",
+    "category": "American Porter and Stout",
+    "source_key": "20A American Porter"
   },
   {
     "style_id": "20B",
@@ -5964,7 +6327,10 @@
       "roasty",
       "stout-family",
       "top-fermented"
-    ]
+    ],
+    "categorynumber": "20",
+    "category": "American Porter and Stout",
+    "source_key": "20B American Stout"
   },
   {
     "style_id": "20C",
@@ -6027,6 +6393,9 @@
       "top-fermented",
       "traditional-style",
       "very-high-strength"
-    ]
+    ],
+    "categorynumber": "20",
+    "category": "American Porter and Stout",
+    "source_key": "20C Imperial Stout"
   }
 ]

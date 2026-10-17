@@ -1,7 +1,8 @@
 """Pydantic models for the BJCP styles seed (`data/seeds/styles.json`).
 
-The seed is a flat id-keyed map (keyed by the BJCP style number); each component
-is a `BJCPStyle`. Numeric vital-stat ranges are stored flat (`og_min`/`og_max`,
+The seed is a flat id-keyed map (keyed by the BJCP style number, or a composite
+`<number> <sub-name>` id for styles with sub-types); each component is a
+`BJCPStyle`. Numeric vital-stat ranges are stored flat (`og_min`/`og_max`,
 ...) to match the artifact's `style` primitive schema.
 """
 

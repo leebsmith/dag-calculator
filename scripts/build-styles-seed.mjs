@@ -1,97 +1,108 @@
-// Regenerate data/seeds/styles.json from the committed BJCP sources.
+// Regenerate data/seeds/styles.json from the aggregated BJCP 2021 scrape.
 //
-// Usage: node scripts/build-styles-seed.mjs
+// Usage: node scripts/build-styles-seed.mjs [input.json]
+// Defaults to data/sources/bjcp_styles_2021.json (the vendored aggregator's
+// output). The seed uses the 2021 guide; the 2015 capture is preserved as a
+// source but is not merged.
 //
-// Two raw sources (flat lowercase keys, id-keyed by `number`) are normalized
-// and merged into one flat id-keyed seed:
-//   1. data/sources/bjcp-2021-styles.json — the 2021 style-guide export;
-//   2. data/sources/bjcp-specialty-ipas.json — the hand-authored Specialty IPA
-//      sub-types (from the BJCP 2015 style page, which lists each with stats).
-//
-// The "21B Specialty IPA" container entry is dropped: it is replaced by the
-// concrete sub-types in the second source.
+// The aggregated shape (scripts/scrape/bjcp/aggregator.py): style_id/style_name,
+// category/categorynumber, snake_case prose, nested vital_statistics, and array
+// commercial_examples/style_attributes. This normalizes it into the flat,
+// id-keyed seed the runtime reference cache expects:
+//   - category-header records (bare numeric id) are dropped;
+//   - duplicated style ids (21B, 27A) become composite ids from the sub-name;
+//   - a bare duplicate with no ":" sub-name is the container and is dropped;
+//   - nested ranges are flattened; arrays are joined to comma-delimited strings.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const SOURCES = [
-  fileURLToPath(new URL("../data/sources/bjcp-2021-styles.json", import.meta.url)),
-  fileURLToPath(new URL("../data/sources/bjcp-specialty-ipas.json", import.meta.url)),
-];
+const DEFAULT_INPUT = fileURLToPath(
+  new URL("../data/sources/bjcp_styles_2021.json", import.meta.url)
+);
 const OUTPUT = fileURLToPath(new URL("../data/seeds/styles.json", import.meta.url));
 
-// Style ids excluded from the merged seed.
-const DROP_IDS = new Set(["21B"]);
+// Prose keys copied verbatim (already snake_case in the aggregated shape).
+const PROSE_FIELDS = [
+  "overall_impression",
+  "aroma",
+  "appearance",
+  "flavor",
+  "mouthfeel",
+  "comments",
+  "history",
+  "characteristic_ingredients",
+  "style_comparison",
+];
 
-// Prose keys shared verbatim (already snake_case in the target).
-const TEXT_FIELDS = {
-  overallimpression: "overall_impression",
-  aroma: "aroma",
-  appearance: "appearance",
-  flavor: "flavor",
-  mouthfeel: "mouthfeel",
-  comments: "comments",
-  history: "history",
-  characteristicingredients: "characteristic_ingredients",
-  stylecomparison: "style_comparison",
-  entryinstructions: "entry_instructions",
-  commercialexamples: "commercial_examples",
-  tags: "tags",
-};
+// vital_statistics.<key>.{min,max} -> seed <key>_min / <key>_max.
+const STAT_FIELDS = ["ibu", "srm", "og", "fg", "abv"];
 
-// Flat vital-stat keys -> target field names.
-const STAT_FIELDS = {
-  ogmin: "og_min",
-  ogmax: "og_max",
-  fgmin: "fg_min",
-  fgmax: "fg_max",
-  ibumin: "ibu_min",
-  ibumax: "ibu_max",
-  srmmin: "srm_min",
-  srmmax: "srm_max",
-  abvmin: "abv_min",
-  abvmax: "abv_max",
-};
+const isCategoryHeader = (styleId) => /^\d+$/.test(styleId);
+const isStyleLevel = (styleId) => /[A-Za-z]$/.test(styleId);
 
-// Placeholder used in the export for "not applicable".
-const PLACEHOLDER = "-";
-
+// The BJCP site uses "-" for "not applicable"; treat it like an empty value.
 function present(value) {
-  return value !== undefined && value !== null && value.trim?.() !== "" && value !== PLACEHOLDER;
+  return value !== undefined && value !== null && String(value).trim() !== "" && String(value).trim() !== "-";
 }
 
-function convert(row) {
+// "Specialty IPA: Belgian IPA" -> "Belgian IPA"; null when there is no sub-name.
+function subName(styleName) {
+  const index = (styleName ?? "").indexOf(":");
+  return index === -1 ? null : styleName.slice(index + 1).trim();
+}
+
+function convert(row, id) {
   const component = {
-    id: row.number,
-    name: row.name,
-    category_id: row.categorynumber,
-    category_name: row.category,
+    id,
+    name: row.style_name,
+    category_id: row.categorynumber ?? "",
+    category_name: row.category ?? "",
     type: "beer",
   };
 
-  for (const [src, dst] of Object.entries(TEXT_FIELDS)) {
-    if (present(row[src])) component[dst] = row[src];
+  for (const field of PROSE_FIELDS) {
+    if (present(row[field])) component[field] = row[field];
   }
 
-  for (const [src, dst] of Object.entries(STAT_FIELDS)) {
-    if (present(row[src])) {
-      const value = Number(row[src]);
-      if (!Number.isNaN(value)) component[dst] = value;
+  const vitals = row.vital_statistics ?? {};
+  for (const key of STAT_FIELDS) {
+    const range = vitals[key];
+    if (range && typeof range.min === "number" && typeof range.max === "number") {
+      component[`${key}_min`] = range.min;
+      component[`${key}_max`] = range.max;
     }
+  }
+
+  if (Array.isArray(row.commercial_examples) && row.commercial_examples.length) {
+    component.commercial_examples = row.commercial_examples.join(", ");
+  }
+  if (Array.isArray(row.style_attributes) && row.style_attributes.length) {
+    component.tags = row.style_attributes.join(", ");
   }
 
   return component;
 }
 
-const rows = SOURCES.flatMap((path) => JSON.parse(readFileSync(path, "utf8")));
+const inputPath = process.argv[2] ?? DEFAULT_INPUT;
+const rows = JSON.parse(readFileSync(inputPath, "utf8"));
+
+const styleLevel = rows.filter((row) => isStyleLevel(row.style_id));
+const idCounts = {};
+for (const row of styleLevel) idCounts[row.style_id] = (idCounts[row.style_id] ?? 0) + 1;
 
 const seed = {};
-for (const row of rows) {
-  const component = convert(row);
-  if (!component.id) throw new Error(`style "${row.name}" has no number`);
-  if (DROP_IDS.has(component.id)) continue;
-  if (seed[component.id]) throw new Error(`duplicate style number "${component.id}"`);
-  seed[component.id] = component;
+for (const row of styleLevel) {
+  let id = row.style_id;
+  if (idCounts[row.style_id] > 1) {
+    const suffix = subName(row.style_name);
+    // A duplicated id with no sub-name is the container record (e.g. the bare
+    // "Specialty IPA"); drop it in favor of its concrete sub-types.
+    if (!suffix) continue;
+    id = `${row.style_id} ${suffix}`;
+  }
+  if (seed[id]) throw new Error(`duplicate style id "${id}"`);
+  seed[id] = convert(row, id);
 }
 
 const sorted = Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
