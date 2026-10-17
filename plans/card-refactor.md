@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: lint + full test suite + build green with no test churn; stepAdapter.js shrinks materially
-status: in-progress
+status: done
 ---
 
 # Card Refactor — Shared Catalog/Draft Helper + Per-Card Modules
@@ -116,3 +116,24 @@ card exposes a genuine gap (not to force a framework).
   raw object.
 - **Over-abstraction**: the helper stays narrow (catalog + drawer mechanics);
   bespoke cards stay bespoke.
+
+## Outcome
+
+Completed. `stepAdapter.js` went from ~2,176 lines to ~823 (the core solve /
+persistence / draft primitives / compute dispatcher); the bespoke cards now live
+under `adapters/cards/`:
+
+| Card | Module | Notes |
+|---|---|---|
+| Boil hops | `cards/hops.js` | trial card; IBU-led + Tinseth mass |
+| Late additions (sugars) | `cards/late-additions.js` | shared helper |
+| Trace malts | `cards/trace-malts.js` | shared helper |
+| Grain bill (malt) | `cards/malt.js` | shared helper + `canAdd` cap |
+| Yeast | `cards/yeast.js` | selection picker (no helper) |
+| Mash | `cards/mash.js` | preset/rest modal (no helper) |
+| Style | `cards/style.js` | picker + OE/AE navigator + target sliders |
+
+The shared helper is `adapters/cards/catalogDraft.js`; pure filtering is
+`views/catalog.js`. All 180 tests pass; lint + build green; no template or test
+churn beyond aligning the malt/trace template handler names with the helper's
+scheme.
