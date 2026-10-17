@@ -64,9 +64,9 @@ export function registerHopCard(app, ctx) {
 
   // Hop masses are read in a hop-friendly unit, independent of the master mass
   // unit (which may be lb for grain). Transient: defaults to oz each session.
-  const formatMass = (kg) => {
+  // The unit is passed in (read via `this` by callers) so Alpine tracks it.
+  const formatMass = (kg, unit = "oz") => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
-    const unit = app.hopMassUnit ?? "oz";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
     const decimals = unit === "g" ? 0 : 2;
     return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
@@ -84,7 +84,7 @@ export function registerHopCard(app, ctx) {
     },
 
     hopMass(row) {
-      return formatMass(row?.mass_kg);
+      return formatMass(row?.mass_kg, this.hopMassUnit);
     },
 
     hopAlpha(row) {
@@ -140,7 +140,7 @@ export function registerHopCard(app, ctx) {
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
         if (!masses.length) return this.hopRows?.length ? "—" : "";
-        return formatMass(masses.reduce((sum, m) => sum + m, 0));
+        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
   });
