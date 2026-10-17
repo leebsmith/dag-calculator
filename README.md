@@ -35,6 +35,35 @@ make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
 ```
 
+## Seeds & scraping
+
+Reference catalogs are rebuilt in two stages:
+
+```
+browser scrape                         normalize                 shipped
+data/sources/*.json  ──build-*.mjs──▶  data/seeds/*.json  ──▶  runtime cache
+```
+
+- **Raw sources** are committed under [`data/sources/`](data/sources/) (the BJCP
+  style exports and the beer-analytics.com scrapes).
+- **Scrapers** live in [`scripts/scrape/`](scripts/scrape/) (Python). Their
+  dependencies (`requests`, `beautifulsoup4`) are declared in
+  `scripts/scrape/requirements.txt` and kept out of the backend's dependency set.
+- **Builders** are the Node `scripts/build-*-seed.mjs` normalizers.
+
+```
+make scrape-yeasts              # crawl yeasts  -> data/sources/beer-analytics-yeasts.json
+make scrape-hops                # crawl hops    -> data/sources/beer-analytics-hops.json
+make scrape-hops LIMIT=25       # trial run (first 25 hops)
+make seeds                      # rebuild data/seeds/ from data/sources/
+```
+
+Scrapers identify the operator in the `User-Agent` and throttle between requests.
+Scraped content is © Beer Analytics and licensed
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); keep attribution
+when redistributing. (Hops have a scraper and raw source but not yet a seed
+builder / `hop` schema — that lands with the hops step.)
+
 ## Living vs. historical
 
 The `docs/dag-artifacts/` spec is maintained in sync with the artifact; the

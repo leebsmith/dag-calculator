@@ -1,7 +1,8 @@
 // Regenerate data/seeds/yeasts.json from a beer-analytics.com scrape.
 //
 // Usage: node scripts/build-yeasts-seed.mjs [input.json]
-// Defaults to ~/MyPythonEnvironment/beer_analytics_scraper/beer_analytics_yeasts.json.
+// Defaults to data/sources/beer-analytics-yeasts.json (the committed raw scrape,
+// produced by scripts/scrape/yeast_scraper.py).
 //
 // The scrape is an array of display strings; this normalizes each row into the
 // flat id-keyed, schema-conforming map the runtime reference cache expects.
@@ -9,8 +10,9 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_INPUT =
-  "/home/lbsmith/MyPythonEnvironment/beer_analytics_scraper/beer_analytics_yeasts.json";
+const DEFAULT_INPUT = fileURLToPath(
+  new URL("../data/sources/beer-analytics-yeasts.json", import.meta.url)
+);
 const OUTPUT = fileURLToPath(new URL("../data/seeds/yeasts.json", import.meta.url));
 
 // Scrape manufacturer labels that should match the catalog's established name.
