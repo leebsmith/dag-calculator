@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BJCP Beer Style",
+  "description": "Schema for parsing individual BJCP beer style guidelines.",
+  "type": "object",
+  "properties": {
+    "style_id": {
+      "type": "string",
+      "description": "The category and letter identifier for the style (e.g., '21A')."
+    },
+    "style_name": {
+      "type": "string",
+      "description": "The name of the beer style (e.g., 'American IPA')."
+    },
+    "version": {
+      "type": "integer",
+      "description": "The year of the BJCP guideline release (e.g., 2015, 2021)."
+    },
+    "overall_impression": {
+      "type": "string"
+    },
+    "appearance": {
+      "type": "string"
+    },
+    "aroma": {
+      "type": "string"
+    },
+    "flavor": {
+      "type": "string"
+    },
+    "mouthfeel": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "history": {
+      "type": "string"
+    },
+    "characteristic_ingredients": {
+      "type": "string"
+    },
+    "style_comparison": {
+      "type": "string"
+    },
+    "vital_statistics": {
+      "type": "object",
+      "description": "Quantitative parameters for the style.",
+      "properties": {
+        "ibu": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["min", "max"]
+        },
+        "srm": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["min", "max"]
+        },
+        "og": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["min", "max"]
+        },
+        "fg": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["min", "max"]
+        },
+        "abv": {
+          "type": "object",
+          "description": "Alcohol by volume, represented as a numeric percentage (e.g., 5.8 for 5.8%).",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["min", "max"]
+        }
+      },
+      "required": ["ibu", "srm", "og", "fg", "abv"]
+    },
+    "commercial_examples": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "style_attributes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": [
+    "style_id",
+    "style_name",
+    "version",
+    "overall_impression",
+    "appearance",
+    "aroma",
+    "flavor",
+    "mouthfeel",
+    "vital_statistics",
+    "commercial_examples",
+    "style_attributes"
+  ]
+}
