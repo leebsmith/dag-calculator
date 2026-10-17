@@ -103,3 +103,26 @@ test("loadArtifact accepts schema_version 4 and rejects unknown versions", () =>
   bad.schema_version = 99;
   assert.throws(() => loadArtifact(bad), /Unsupported schema_version/);
 });
+
+test("trace malts: definite-mass rows fold into color (and only color)", () => {
+  // Fresh fixtures so setCollection doesn't leak into the shared fixture set.
+  const e = createCalculator(artifact, makeFixtures());
+  const baseMcu = e.get("grist.mcu");
+  const baseSrm = e.get("grist.finished_beer_srm");
+
+  e.setCollection("grist.trace_malts", [
+    { catalog_id: "black", name: "Black Malt", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 500, moisture_pct: 0.04 },
+    { catalog_id: "roast", name: "Roasted Barley", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 450, moisture_pct: 0.04 },
+  ]);
+
+  assert.ok(Math.abs(e.get("grist.trace_malts_mass") - 0.34) < 1e-9);
+  assert.ok(Math.abs(e.get("grist.trace_weighted_lovibond") - 475) < 1e-9);
+
+  // MCU = (grist_mass·lovibond + trace_mass·trace_lovibond) / v_post_boil · 4.236
+  // (no sugars in the fixture). Trace raises color but never touches m_grist.
+  const expectedMcu = ((4.7 * 9.2 + 0.34 * 475) / 21.0) * 4.236;
+  assert.ok(Math.abs(e.get("grist.mcu") - expectedMcu) < 1e-9);
+  assert.ok(e.get("grist.finished_beer_srm") > baseSrm);
+  assert.ok(baseMcu < e.get("grist.mcu"));
+  assert.equal(e.resolve("solver.batch.m_grist"), 4.7); // extract/mass untouched
+});

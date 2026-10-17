@@ -29,12 +29,25 @@
       </div>
     </div>
 
+    <!-- Apparent attenuation tiers -->
+    <div class="filter-pills-container">
+      <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
+        <button
+          type="button"
+          class="filter-pill"
+          :class="{ 'is-active': yeastAttenuationFilter === t.key }"
+          @click="yeastAttenuationFilter = yeastAttenuationFilter === t.key ? '' : t.key"
+          x-text="t.label"
+        ></button>
+      </template>
+    </div>
+
     <!-- Result counter -->
     <div
       class="catalog-result-counter"
       aria-live="polite"
       x-text="isYeastListTruncated
-        ? `Showing ${visibleYeasts.length} of ${yeastResultCount} matching strains — refine search or manufacturer filter`
+        ? `Showing ${visibleYeasts.length} of ${yeastResultCount} matching strains — refine search or filters`
         : `Showing ${yeastResultCount} matching strains`"
     ></div>
 

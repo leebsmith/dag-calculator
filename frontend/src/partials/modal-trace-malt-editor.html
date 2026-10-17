@@ -1,0 +1,241 @@
+<!-- Trace Malt Editor (workspace modal): definite-mass rows + catalog / inspector drawers -->
+<div
+  class="modal-backdrop"
+  x-show="traceEditorOpen"
+  @click.self="cancelTraceEditor()"
+  @keydown.escape.window="handleTraceEscape()"
+>
+  <div class="modal-dialog modal-dialog-workspace">
+    <div class="modal-workspace-header">
+      <div class="modal-workspace-header-title">
+        <h2 class="modal-workspace-title">Trace Malt Editor</h2>
+        <span class="status-badge badge-info text-xs" x-text="traceDraftMassDisplay"></span>
+      </div>
+      <div class="modal-workspace-header-actions">
+        <button type="button" class="btn-outline text-xs" @click="cancelTraceEditor()">Cancel</button>
+        <button type="button" class="btn-primary text-xs" @click="saveTraceEditor()">Save &amp; Apply</button>
+      </div>
+    </div>
+
+    <div class="modal-workspace-body">
+      <div class="modal-workspace-main">
+        <div class="table-header-toolbar">
+          <span class="table-header-meta">
+            Dose colorants and strong flavorants by mass. They feed color and mash pH, not extract.
+          </span>
+          <button type="button" class="btn-primary text-xs" @click="openTraceSearch()">
+            ＋ Add Trace Malt by Weight
+          </button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table is-fixed">
+            <thead>
+              <tr>
+                <template x-for="c in draftColumns" :key="c.id">
+                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                </template>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(row, ri) in draftDisplayRows" :key="ri">
+                <tr>
+                  <template x-for="c in draftColumns" :key="c.id">
+                    <td :class="c.id === 'name' ? '' : 'text-right'">
+                      <template x-if="c.editable">
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          class="form-input table-input-parts"
+                          :value="row[c.id]"
+                          @input="editDraftCell(ri, c.id, $event.target.value)"
+                        />
+                      </template>
+                      <template x-if="!c.editable">
+                        <span class="collection-readout tabular-nums" x-text="row[c.id]"></span>
+                      </template>
+                    </td>
+                  </template>
+                  <td class="text-right">
+                    <div class="table-action-cell">
+                      <button type="button" class="btn-action-icon" @click="inspectTraceRow(ri)" title="Inspect">✎</button>
+                      <button
+                        type="button"
+                        class="btn-action-icon btn-action-danger"
+                        @click="removeTraceMalt(ri)"
+                        title="Remove"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="draftRows.length === 0">
+                <tr>
+                  <td :colspan="draftColumns.length + 1" class="table-empty-cell">
+                    No trace malts in the draft. Click “＋ Add Trace Malt by Weight”.
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td :colspan="draftColumns.length + 1" class="tabular-nums">
+                  <span class="font-bold">Total trace mass:</span>
+                  <span x-text="' ' + traceDraftMassDisplay"></span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-drawer-scrim" x-show="traceDrawer !== null" @click="closeTraceDrawer()"></div>
+
+      <div class="modal-workspace-drawer" x-show="traceDrawer !== null">
+        <div class="modal-drawer-header">
+          <h3
+            class="modal-drawer-title"
+            x-text="traceDrawer === 'search' ? 'Malt Catalog Browser' : 'Trace Malt Inspector'"
+          ></h3>
+          <button type="button" class="btn-close text-xs" @click="closeTraceDrawer()">✕</button>
+        </div>
+
+        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': traceDrawer === 'search' }">
+          <template x-if="traceDrawer === 'search'">
+            <div class="catalog-drawer-content">
+              <div class="catalog-drawer-controls">
+                <div class="catalog-search-wrapper">
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    placeholder="Search malts by name or notes…"
+                    x-model.debounce.50ms="traceSearch"
+                  />
+                </div>
+                <div class="filter-pills-container">
+                  <template x-for="c in traceCategories" :key="c">
+                    <button
+                      type="button"
+                      class="filter-pill"
+                      :class="{ 'is-active': traceMaltCategoryFilter.includes(c) }"
+                      @click="toggleTraceCategory(c)"
+                      x-text="c"
+                    ></button>
+                  </template>
+                </div>
+                <div
+                  class="catalog-result-counter text-xs"
+                  aria-live="polite"
+                  x-text="traceCatalogTruncated
+                    ? `Showing ${traceVisibleCatalog.length} of ${traceFilteredCatalog.length} malts — refine search or category filters`
+                    : `Showing ${traceFilteredCatalog.length} malts`"
+                ></div>
+              </div>
+              <div class="catalog-drawer-list">
+                <template x-for="item in traceVisibleCatalog" :key="item.id">
+                  <div class="catalog-item-card">
+                    <div>
+                      <div class="catalog-item-name" x-text="item.name"></div>
+                      <div
+                        class="catalog-item-meta"
+                        x-text="item.category + ' • ' + item.color_lovibond + ' °L' + (item.notes ? ' • ' + item.notes : '')"
+                      ></div>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn-primary text-xs"
+                      @click="addCatalogTraceMalt(item.id)"
+                    >
+                      ＋ Add
+                    </button>
+                  </div>
+                </template>
+                <template x-if="traceFilteredCatalog.length === 0">
+                  <div class="table-empty-cell">No matching malts found.</div>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <template x-if="traceDrawer === 'inspect'">
+            <template x-if="traceActiveRow">
+              <div class="inspector-form">
+                <div class="form-group">
+                  <label class="form-label text-xs">Malt name</label>
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    :value="traceActiveRow.name"
+                    @input="setMaltField(traceActiveIndex, 'name', $event.target.value)"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs">Category</label>
+                  <select
+                    class="form-select text-xs"
+                    :value="traceActiveRow.category"
+                    @change="setMaltField(traceActiveIndex, 'category', $event.target.value)"
+                  >
+                    <template x-for="c in maltCategories" :key="c">
+                      <option :value="c" x-text="c"></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="inspector-grid-2col">
+                  <div class="form-group">
+                    <label class="form-label text-xs">Extract yield (%)</label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      max="100"
+                      class="form-input text-xs"
+                      :value="(traceActiveRow.yield_fraction * 100).toFixed(0)"
+                      @input="setMaltField(traceActiveIndex, 'yield_fraction', $event.target.value, 0.01)"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label text-xs">Color (°L)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      class="form-input text-xs"
+                      :value="traceActiveRow.color_lovibond"
+                      @input="setMaltField(traceActiveIndex, 'color_lovibond', $event.target.value)"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label text-xs">Moisture (%)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="20"
+                      class="form-input text-xs"
+                      :value="(traceActiveRow.moisture_pct * 100).toFixed(1)"
+                      @input="setMaltField(traceActiveIndex, 'moisture_pct', $event.target.value, 0.01)"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs">Notes</label>
+                  <textarea
+                    class="form-input text-xs"
+                    rows="3"
+                    :value="traceActiveRow.notes ?? ''"
+                    @input="setMaltField(traceActiveIndex, 'notes', $event.target.value)"
+                  ></textarea>
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

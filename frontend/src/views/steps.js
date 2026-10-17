@@ -66,8 +66,15 @@ export const steps = [
         columns: ["name", "category", "color_lovibond", "yield_fraction", "parts", "pct"],
         inputs: ["parts"],
       },
+      {
+        collection: "grist.trace_malts",
+        columns: ["name", "mass_kg", "yield_fraction", "color_lovibond"],
+        inputs: ["mass_kg"],
+      },
       "grist.weighted_lovibond",
       "grist.weighted_yield_fraction",
+      "grist.trace_malts_mass",
+      "grist.trace_weighted_lovibond",
     ],
   },
   {

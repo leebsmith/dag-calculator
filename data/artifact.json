@@ -1210,6 +1210,46 @@
       },
       "notes": {}
     },
+    "trace_malt_row": {
+      "catalog_id": {},
+      "name": {},
+      "category": {
+        "taxonomy": "malt_category"
+      },
+      "mass_kg": {
+        "dimension": "mass",
+        "domain": {
+          "gte": 0
+        }
+      },
+      "yield_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "color_lovibond": {
+        "dimension": "grain_color",
+        "domain": {
+          "gte": 0
+        }
+      },
+      "moisture_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "di_ph": {
+        "dimension": "ph"
+      },
+      "buffer_index": {
+        "dimension": "dimensionless"
+      },
+      "notes": {}
+    },
     "mash_rest": {
       "rest_id": {
         "taxonomy": "mash_rest"
@@ -1811,6 +1851,10 @@
       "kind": "collection",
       "item_schema": "grist_row"
     },
+    "grist.trace_malts": {
+      "kind": "collection",
+      "item_schema": "trace_malt_row"
+    },
     "mash.grain_temp_c": {
       "kind": "root",
       "dimension": "temperature",
@@ -2394,6 +2438,47 @@
         "dimension": "grain_color"
       }
     },
+    "grist.trace_malts_mass": {
+      "kind": "derived",
+      "inputs": {
+        "rows": "grist.trace_malts"
+      },
+      "expr": {
+        "op": "sum",
+        "coll": {
+          "ref": "rows"
+        },
+        "as": "row",
+        "body": {
+          "ref": "row.mass_kg"
+        }
+      },
+      "output": {
+        "dimension": "mass"
+      }
+    },
+    "grist.trace_weighted_lovibond": {
+      "kind": "derived",
+      "inputs": {
+        "rows": "grist.trace_malts"
+      },
+      "expr": {
+        "op": "weighted_avg",
+        "coll": {
+          "ref": "rows"
+        },
+        "as": "row",
+        "value": {
+          "ref": "row.color_lovibond"
+        },
+        "weight": {
+          "ref": "row.mass_kg"
+        }
+      },
+      "output": {
+        "dimension": "grain_color"
+      }
+    },
     "grist.extract_yield_ldk": {
       "kind": "derived",
       "inputs": {
@@ -2418,6 +2503,8 @@
         "lovibond": "grist.weighted_lovibond",
         "sugars_mass": "grist.sugars_mass",
         "sugar_lovibond": "grist.sugar_weighted_lovibond",
+        "trace_mass": "grist.trace_malts_mass",
+        "trace_lovibond": "grist.trace_weighted_lovibond",
         "volume": "solver.batch.cascade.v_post_boil"
       },
       "expr": {
@@ -2430,13 +2517,29 @@
                 "op": "+",
                 "args": [
                   {
-                    "op": "*",
+                    "op": "+",
                     "args": [
                       {
-                        "ref": "grist_mass"
+                        "op": "*",
+                        "args": [
+                          {
+                            "ref": "grist_mass"
+                          },
+                          {
+                            "ref": "lovibond"
+                          }
+                        ]
                       },
                       {
-                        "ref": "lovibond"
+                        "op": "*",
+                        "args": [
+                          {
+                            "ref": "sugars_mass"
+                          },
+                          {
+                            "ref": "sugar_lovibond"
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2444,10 +2547,10 @@
                     "op": "*",
                     "args": [
                       {
-                        "ref": "sugars_mass"
+                        "ref": "trace_mass"
                       },
                       {
-                        "ref": "sugar_lovibond"
+                        "ref": "trace_lovibond"
                       }
                     ]
                   }

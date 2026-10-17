@@ -76,7 +76,64 @@
         ></span>
       </div>
     </div>
+
+    <!-- Trace / color malts: definite-mass additions (color + mash pH, not extract). -->
+    <div class="table-header-toolbar">
+      <div>
+        <h3 class="modal-drawer-title">Trace / Color Malts</h3>
+        <p class="table-header-meta">Dosed by mass; they influence color and mash pH, not extract.</p>
+      </div>
+      <button type="button" class="btn-primary text-xs" @click="openTraceEditor()">Configure Trace Malts ⚙</button>
+    </div>
+
+    <template x-if="traceMaltField">
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <template x-for="c in traceMaltField.columns" :key="c.id">
+                <th :class="c.dimension ? 'text-right' : ''" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(row, ri) in traceMaltField.rows" :key="ri">
+              <tr>
+                <template x-for="c in traceMaltField.columns" :key="c.id">
+                  <td :class="c.dimension ? 'text-right tabular-nums' : ''" x-text="row[c.id]"></td>
+                </template>
+              </tr>
+            </template>
+            <template x-if="traceMaltField.rows.length === 0">
+              <tr>
+                <td :colspan="traceMaltField.columns.length" class="table-empty-cell">
+                  No trace malts yet. Click “Configure Trace Malts” to add colorants by weight.
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <div class="grain-bill-summary" x-show="traceMaltRows.length > 0">
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Total trace mass</span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="traceMassField ? traceMassField.display + ' ' + (traceMassField.unit ?? '') : '—'"
+        ></span>
+      </div>
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Weighted trace color</span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="traceColorField ? traceColorField.display + ' ' + (traceColorField.unit ?? '') : '—'"
+        ></span>
+      </div>
+    </div>
   </div>
 
   <load src="src/partials/modal-malt-editor.html" />
+  <load src="src/partials/modal-trace-malt-editor.html" />
 </section>

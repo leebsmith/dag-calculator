@@ -1,6 +1,19 @@
 # TODO
 
+## Next
+
+* Trace Malts
+* Water report selection in batch card
+* Parallel seeds for malts, sugars, hops, just like we did for styles
+* Hops scraper
+* Hops step, distributed by IBUs
+* Footer bar: style conformance gravity / abv range, SRM, IBU
+* LIFO warnings on footer bar
+
+
 ## Before 1st printed recipe
+
+
 
 *  Need staged notes 
   * Day before
@@ -16,10 +29,8 @@
 
 ## Next (Don't process without confirmation)
 
-- Import BJCP JSON as a seed. Andrew Scholer's version. Need Pydantic schema
 - Dry hopping: See Pydantic schema (WetHopCard) at https://share.gemini.google/o4oHUKhZUdyi
 - Kettle hopping (Determines IBU.)
-- Trace additions (Influences color.)
 - Unit scaling: scale families + auto-display (`plans/unit-scaling.md`)
 - Add IBU / SRM / Style to batch data. Gate up front on mismatch
 

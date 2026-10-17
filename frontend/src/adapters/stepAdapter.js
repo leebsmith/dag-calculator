@@ -97,6 +97,18 @@ function styleColor(style) {
   return "";
 }
 
+// Bin apparent attenuation (fraction 0..1) into the four commercial tiers.
+// Gaps between the tabulated ranges are split at their half-points so every
+// strain lands in exactly one tier.
+function yeastAttenuationTier(pct) {
+  if (typeof pct !== "number") return "";
+  const p = pct * 100;
+  if (p < 70.5) return "low";
+  if (p < 75.5) return "medium";
+  if (p < 82.5) return "high";
+  return "super";
+}
+
 // Map every manifest field to the step slice that displays it, keyed by
 // `fieldKey`. Lets violations land on the card that owns the field.
 function buildFieldSliceMap() {
@@ -452,6 +464,7 @@ export function createStepApp(options = {}) {
       }
       // Refresh the grain-bill rows for the summary card (reactive).
       this.gristRows = engine.get("grist.major_malts") ?? [];
+      this.traceMaltRows = engine.get("grist.trace_malts") ?? [];
       this.sugarList = engine.get("batch.sugars") ?? [];
       this.mashRests = engine.get("mash.rests") ?? [];
     },
@@ -627,6 +640,7 @@ export function createStepApp(options = {}) {
     // --- Yeast selection card (bespoke) ---
     yeastSearchQuery: "",
     yeastManufacturerFilter: "",
+    yeastAttenuationFilter: "",
 
     get yeastCatalog() {
       return Object.values(cache.references.yeast ?? {});
@@ -636,11 +650,24 @@ export function createStepApp(options = {}) {
       return [...new Set(this.yeastCatalog.map((y) => y.manufacturer).filter(Boolean))].sort();
     },
 
+    get yeastAttenuationTiers() {
+      return [
+        { key: "low", label: "Low 65–70%" },
+        { key: "medium", label: "Medium 71–75%" },
+        { key: "high", label: "High 76–82%" },
+        { key: "super", label: "Super 83%+" },
+      ];
+    },
+
     get filteredYeasts() {
       const q = this.yeastSearchQuery.trim().toLowerCase();
       const m = this.yeastManufacturerFilter;
+      const t = this.yeastAttenuationFilter;
       return this.yeastCatalog.filter(
-        (y) => (!q || y.name.toLowerCase().includes(q)) && (!m || y.manufacturer === m)
+        (y) =>
+          (!q || y.name.toLowerCase().includes(q)) &&
+          (!m || y.manufacturer === m) &&
+          (!t || yeastAttenuationTier(y.attenuation_pct) === t)
       );
     },
 
@@ -1539,6 +1566,7 @@ export function createStepApp(options = {}) {
     },
 
     handleMaltEscape() {
+      if (!this.maltEditorOpen) return;
       if (this.maltDrawer !== null) this.closeMaltDrawer();
       else this.cancelMaltEditor();
     },
@@ -1658,6 +1686,146 @@ export function createStepApp(options = {}) {
     handleSugarEscape() {
       if (this.sugarDrawer !== null) this.closeSugarDrawer();
       else this.cancelSugarEditor();
+    },
+
+    // --- Trace malts editor (definite mass; same draft model, malt catalog) ---
+    traceDrawer: null, // "search" | "inspect" | null
+    traceSearch: "",
+    traceActiveIndex: null,
+    traceMaltCategoryFilter: [],
+
+    // Trace rows for the summary card (reactive; refreshed in compute()).
+    traceMaltRows: [],
+
+    get traceEditorOpen() {
+      return this.draftOpen && this.draftNodeId === "grist.trace_malts";
+    },
+
+    traceField(id) {
+      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === id) ?? null;
+    },
+
+    get traceMaltField() {
+      return this.traceField("grist.trace_malts");
+    },
+
+    get traceMassField() {
+      return this.traceField("grist.trace_malts_mass");
+    },
+
+    get traceColorField() {
+      return this.traceField("grist.trace_weighted_lovibond");
+    },
+
+    get traceCatalog() {
+      return Object.values(cache.seeds.malts ?? {});
+    },
+
+    get traceCategories() {
+      return this.maltCatalogCategories;
+    },
+
+    get traceFilteredCatalog() {
+      const active = new Set(this.draftRows.map((r) => r.catalog_id).filter(Boolean));
+      const q = this.traceSearch.trim().toLowerCase();
+      const cats = this.traceMaltCategoryFilter;
+      return this.traceCatalog.filter(
+        (m) =>
+          !active.has(m.id) &&
+          (cats.length === 0 || cats.includes(m.category)) &&
+          (!q || (m.name ?? "").toLowerCase().includes(q) || (m.notes ?? "").toLowerCase().includes(q))
+      );
+    },
+
+    get traceVisibleCatalog() {
+      return this.traceFilteredCatalog.slice(0, MAX_VISIBLE_MALTS);
+    },
+
+    get traceCatalogTruncated() {
+      return this.traceFilteredCatalog.length > MAX_VISIBLE_MALTS;
+    },
+
+    get traceActiveRow() {
+      return this.traceActiveIndex == null ? null : this.draftRows[this.traceActiveIndex] ?? null;
+    },
+
+    get traceDraftMassDisplay() {
+      return this._sugarDraftTotal((r) => Number(r.mass_kg) || 0);
+    },
+
+    openTraceEditor() {
+      this.openDraft("grist.trace_malts");
+      this.traceDrawer = null;
+      this.traceActiveIndex = null;
+    },
+
+    cancelTraceEditor() {
+      this.closeDraft();
+      this.traceDrawer = null;
+      this.traceActiveIndex = null;
+    },
+
+    saveTraceEditor() {
+      this.saveDraft();
+      this.traceDrawer = null;
+      this.traceActiveIndex = null;
+    },
+
+    addCatalogTraceMalt(catalogId) {
+      const malt = cache.seeds.malts?.[catalogId];
+      if (!malt) return;
+      this.addDraftRow({
+        catalog_id: malt.id,
+        name: malt.name,
+        category: malt.category,
+        mass_kg: 0,
+        yield_fraction: malt.yield_fraction,
+        color_lovibond: malt.color_lovibond,
+        moisture_pct: malt.moisture_pct ?? 0.04,
+        di_ph: malt.di_ph,
+        buffer_index: malt.buffer_index,
+        notes: malt.notes,
+      });
+      this.closeTraceDrawer();
+    },
+
+    removeTraceMalt(ri) {
+      this.removeDraftRow(ri);
+      if (this.traceActiveIndex === ri) {
+        this.traceActiveIndex = null;
+        if (this.traceDrawer === "inspect") this.traceDrawer = null;
+      } else if (this.traceActiveIndex != null && this.traceActiveIndex > ri) {
+        this.traceActiveIndex -= 1;
+      }
+    },
+
+    inspectTraceRow(ri) {
+      this.traceActiveIndex = ri;
+      this.traceDrawer = "inspect";
+    },
+
+    openTraceSearch() {
+      this.traceDrawer = "search";
+      this.traceActiveIndex = null;
+      this.traceSearch = "";
+      this.traceMaltCategoryFilter = [];
+    },
+
+    closeTraceDrawer() {
+      this.traceDrawer = null;
+      this.traceActiveIndex = null;
+    },
+
+    toggleTraceCategory(category) {
+      this.traceMaltCategoryFilter = this.traceMaltCategoryFilter.includes(category)
+        ? this.traceMaltCategoryFilter.filter((c) => c !== category)
+        : [...this.traceMaltCategoryFilter, category];
+    },
+
+    handleTraceEscape() {
+      if (!this.traceEditorOpen) return;
+      if (this.traceDrawer !== null) this.closeTraceDrawer();
+      else this.cancelTraceEditor();
     },
 
     // Explicit boot (main.js owns it after auth). Deliberately NOT named

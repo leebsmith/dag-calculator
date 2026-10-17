@@ -30,10 +30,11 @@ const M_GRIST = 4.7;
 
 // A matching engine state: only the paths the builders read, resolving to the
 // canonical values. An unexpected path throws, so adapter-path drift is caught.
-function stubEngine(values) {
+function stubEngine(values, { traceRows = [] } = {}) {
   return {
     get(id) {
       if (id === "grist.major_malts") return GRIST;
+      if (id === "grist.trace_malts") return traceRows;
       throw new Error(`unexpected get("${id}")`);
     },
     resolve(path) {
@@ -106,4 +107,17 @@ test("conformance: adapted WaterSolverRequest matches the backend dump", () => {
   const body = buildWaterRequest(stubEngine(WATER_VALUES));
   assert.deepEqual(body, request);
   assert.equal(canonicalFingerprint(body), fingerprint);
+});
+
+test("water request appends trace malts by definite mass; drops zero-mass rows", () => {
+  const trace = [
+    { catalog_id: "black", name: "Black Malt", category: "ROASTED", mass_kg: 0.17, yield_fraction: 0.55, color_lovibond: 500, moisture_pct: 0.04 },
+    { catalog_id: "empty", name: "Untouched", category: "ROASTED", mass_kg: 0, yield_fraction: 0.55, color_lovibond: 500, moisture_pct: 0.04 },
+  ];
+  const body = buildWaterRequest(stubEngine(WATER_VALUES, { traceRows: trace }));
+  assert.deepEqual(body.grist, [
+    { mass_kg: 0.8 * M_GRIST, color_lovibond: 1.5, grain_type: "BASE" },
+    { mass_kg: 0.2 * M_GRIST, color_lovibond: 40, grain_type: "CRYSTAL" },
+    { mass_kg: 0.17, color_lovibond: 500, grain_type: "ROASTED" },
+  ]);
 });
