@@ -1,18 +1,21 @@
 # TODO
 
-## Next
+## Next (in order)
 
-* Water report selection in batch card
-* Parallel seeds for malts, sugars, hops, just like we did for styles
-* Footer bar: style conformance gravity / abv range, SRM, IBU
-* LIFO warnings on footer bar
-
+1. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
+   (`views/hops.js`) into a first-class engine path and add a whirlpool
+   utilization model (temp/time decay), replacing the manual
+   `batch.whirlpool_ibu_fraction`.
+2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
+   `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
+3. **User-authored catalog items (CRUD)** — `plans/user-authored-items.md`;
+   local-first (localStorage), Firestore later.
+4. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+   warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
 
-
-
-*  Need staged notes 
+* Staged notes (covered by "Summary reporting" above):
   * Day before
   * Day of
   * Before underletting
@@ -21,33 +24,33 @@
   * Before boiling
   * Before whirlpooling
   * Before knockout
-  * Before
   * Before sealing the fermenter
 
-## Next (Don't process without confirmation)
+## Later
 
-- Dry hopping: See Pydantic schema (WetHopCard) at https://share.gemini.google/o4oHUKhZUdyi
-- Unit scaling: scale families + auto-display (`plans/unit-scaling.md`)
+* Dry hopping (computed WetHopCard; currently description-only)
+* Unit scaling (`plans/unit-scaling.md`)
+* Lazy-load seed data (bundle size)
+* Firestore for user-authored items
 
-## Lazy-load seed data
+## Engine robustness follow-ups
 
-`frontend/src/store/referenceCache.js` `import`s every seed file, bundling the
-full catalogs (115-entry malt list, 175-entry yeast list, sugars, water reports)
-into the client bundle. For production, fetch seeds on demand (per selection /
-per slice) instead of bundling them.
+* **Freeze shape (M1):** `freezePayload` snapshots boundary nodes as the internal
+  `{ outputs, fingerprint }` wrapper, not the outputs. Unwrap to `get(id).outputs`
+  before any frozen read-view/reconcile consumes the valuation.
+* **Non-finite propagation (L4):** `÷0` → `NaN/∞` is only flagged for root/choice
+  domains, not derived nodes. Consider a global "derived values finite" guard.
 
 ## Deferred language/engine features
 
 Not needed by the current artifact; add only when a node requires them:
 
-- `max` reduction; boolean **input** kind (roots need a dimension, choices a
+* `max` reduction; boolean **input** kind (roots need a dimension, choices a
   taxonomy — no boolean toggle node yet); list literals; map/dict value type.
-- True nested boundary outputs (currently flattened to dotted keys).
+* True nested boundary outputs (currently flattened to dotted keys).
 
-## Engine robustness follow-ups
+## Done
 
-- **Freeze shape (M1):** `freezePayload` snapshots boundary nodes as the internal
-  `{ outputs, fingerprint }` wrapper, not the outputs. Unwrap to `get(id).outputs`
-  before any frozen read-view/reconcile consumes the valuation.
-- **Non-finite propagation (L4):** `÷0` → `NaN/∞` is only flagged for root/choice
-  domains, not derived nodes. Consider a global "derived values finite" guard.
+* Water chemistry step card (`solver.water` boundary + full card)
+* Parallel seed builders (malts, sugars, hops, yeasts, styles)
+* Batch/recipe CRUD + menu
