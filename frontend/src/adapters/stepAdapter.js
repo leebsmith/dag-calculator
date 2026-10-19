@@ -8,6 +8,7 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { canonicalize, createCalculator, resolveReference, sha256Hex, toBase } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
+import { createUserCatalog } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
@@ -65,6 +66,8 @@ export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
   const cache = createReferenceCache();
+  const userCatalog = createUserCatalog({ artifact });
+  cache.syncUserItems(userCatalog.catalogs);
   let collections = { ...cache.collections };
 
   // Boundary seam: offline stubs by default (tests, no API base); the real
@@ -146,6 +149,7 @@ export function createStepApp(options = {}) {
 
   const app = {
     master,
+    userCatalog,
     steps,
     activeIndex: ui.activeIndex,
     highwater: ui.highwater,
@@ -158,6 +162,7 @@ export function createStepApp(options = {}) {
     unitMode: ui.unitMode,
     unitsOpen: false,
     violationCount: 0,
+    catalogRevision: 0,
     fieldsBySlice: {},
     relations: [],
     domains: [],
@@ -399,6 +404,20 @@ export function createStepApp(options = {}) {
       refreshHopCard(this, cardCtx);
       refreshLateAdditionsCard(this, cardCtx);
       refreshMashCard(this, cardCtx);
+    },
+
+    // Re-merge user-authored items into the cache/engine and re-render. Called
+    // by the catalog CRUD surface after a mutation. Every selection is
+    // invalidated (a user item may be referenced by any of them) so the memoized
+    // valuation re-resolves against the updated overlay; `catalogRevision` is the
+    // reactive signal the picker getters depend on.
+    refreshUserItems() {
+      cache.syncUserItems(userCatalog.catalogs);
+      for (const [id, node] of Object.entries(artifact.nodes)) {
+        if (node.kind === "selection") engine.invalidate(id);
+      }
+      this.catalogRevision += 1;
+      this.compute();
     },
 
     syncNav() {
@@ -819,5 +838,14 @@ export function createStepApp(options = {}) {
   registerTraceMaltsCard(app, cardCtx);
   registerMaltCard(app, cardCtx);
   registerMashCard(app, cardCtx);
+
+  // Any user-item mutation keeps the cache + engine consistent (the CRUD surface
+  // separately triggers refreshUserItems for the reactive re-render).
+  userCatalog.onChange = () => {
+    cache.syncUserItems(userCatalog.catalogs);
+    for (const [id, node] of Object.entries(artifact.nodes)) {
+      if (node.kind === "selection") engine.invalidate(id);
+    }
+  };
   return app;
 }

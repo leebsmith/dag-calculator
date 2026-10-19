@@ -11,6 +11,7 @@ import {
   validateComponent,
 } from "../../frontend/src/store/userCatalog.js";
 import { loadArtifact } from "./helpers.js";
+import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 
 const artifact = loadArtifact();
 
@@ -149,4 +150,24 @@ test("CATALOGS covers the seven user-editable catalogs", () => {
     "water_report",
     "water_target",
   ]);
+});
+
+test("syncUserItems overlays user items onto references and seeds without mutating seeds", () => {
+  const cache = createReferenceCache();
+  const seedYeastKeys = Object.keys(cache.references.yeast);
+  assert.ok(seedYeastKeys.length > 0);
+
+  const catalogs = {
+    yeast: { "u:my-yeast": { id: "u:my-yeast", name: "My Yeast", attenuation_pct: 0.75 } },
+    malt: { "u:my-malt": { id: "u:my-malt", name: "My Malt", category: "BASE", yield_fraction: 0.8, color_lovibond: 3, notes: "" } },
+  };
+
+  cache.syncUserItems(catalogs);
+  assert.ok("u:my-yeast" in cache.references.yeast);
+  assert.ok(seedYeastKeys.every((k) => k in cache.references.yeast));
+  assert.ok("u:my-malt" in cache.seeds.malts);
+
+  cache.syncUserItems({});
+  assert.equal("u:my-yeast" in cache.references.yeast, false);
+  assert.ok(seedYeastKeys.every((k) => k in cache.references.yeast));
 });
