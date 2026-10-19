@@ -11,12 +11,22 @@ against. It is *data*, not logic — the artifact **schematizes** it and
 | Class | Examples | Editable? | Lives |
 |---|---|---|---|
 | **Immutable seeds** | malt/sugar/yeast catalogs, water lab reports, equipment presets | no | seed JSON (a separate data substrate) |
-| **User-owned components** | custom equipment/water/grain-bill/mash-schedule records | yes (simple CRUD) | per-user persistence |
+| **User-authored items** | "my house malt", "my tap water", "my 3-vessel rig" | yes (CRUD) | device-local localStorage overlay |
 | **Ephemeral batch input** | manual water entry, batch roots | yes (batch-scoped) | the batch draft |
 
 The key line: **catalogs and reports are facts; they are never edited.** The
 artifact's `primitive_schemas` define *what a malt / yeast / water report / …
 is*; the seed JSON holds the *instances*.
+
+**User-authored items** are a third class between the two: full components
+conforming to the same `primitive_schema`, owned by the user and stored under a
+reserved `u:` id prefix (so they can never collide with a seed id). They are
+merged into the reference cache as a **live overlay** (`user > seed`, see
+`store/userCatalog.js` + `store/referenceCache.js syncUserItems`) so pickers and
+selection resolution treat them exactly like seeds — and selection-referenced
+items inherit provenance/drift (§4). They are device-local for now (Firestore
+later); `malt`, `yeast`, `hop`, `sugar`, `equipment`, `water_report`, and
+`water_target` support user items.
 
 Physical constants (sucrose yield, salt stoichiometry, acid properties) live in
 the artifact's `constants`/`functions`, **not** in seed JSON — seed data is

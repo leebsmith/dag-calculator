@@ -5,10 +5,16 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: user items for all seven catalogs add/edit/delete, validate against the primitive_schema, resolve via selection and picker, and drift-detect on edit/delete; lint + tests + build green
-status: proposed
+status: done
 ---
 
 # User-Authored Catalog Items
+
+> **Done.** Implemented across five commits (U.1–U.5):
+> `6f1302d` (store + validation), `e8fb78e` (live overlay), `ba3f397`
+> (pickers + badge + duplicate-as-mine), `81a8b30` (menu-bar CRUD). User items
+> are a device-local `u:`-prefixed overlay, schema-validated, and drift-detected
+> for selections — exactly as specified below.
 
 ## Goal
 
