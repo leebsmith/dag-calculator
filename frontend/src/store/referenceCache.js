@@ -17,8 +17,8 @@ import { ingestEquipment } from "./equipmentIngest.js";
 const equipment = ingestEquipment(equipmentRaw, artifact);
 
 const DEFAULT_GRIST = [
-  { catalog_id: "pilsner-malt", pct: 0.8, parts: 80 },
-  { catalog_id: "caramel-crystal-malt-40l", pct: 0.2, parts: 20 },
+  { catalog_id: "pale-ale-malt", pct: 0.8, parts: 80 },
+  { catalog_id: "caramel-malt-40l", pct: 0.2, parts: 20 },
 ];
 
 function buildGristRow(entry) {

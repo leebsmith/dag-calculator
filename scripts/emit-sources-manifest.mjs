@@ -39,6 +39,10 @@ const META = {
     aggregator: "scripts/scrape/bjcp/aggregator.py",
     edition: 2021,
   },
+  "malt-database-malts.json": {
+    mechanism: "scrape",
+    upstream: "malt_database (local scrape)",
+  },
 };
 
 export function buildSourcesManifest() {

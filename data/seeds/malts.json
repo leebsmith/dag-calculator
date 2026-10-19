@@ -1,922 +1,2846 @@
 {
-  "abbey-malt": {
-    "category": "BASE",
-    "color_lovibond": 17.0,
-    "id": "abbey-malt",
-    "name": "Abbey Malt",
-    "notes": "Belgian toasted malt formulated for Trappist and Abbey ales, providing bread crust, nuttiness, and golden amber hue.",
-    "yield_fraction": 0.76
-  },
-  "acidulated-malt": {
-    "category": "ACID",
-    "color_lovibond": 3.0,
-    "id": "acidulated-malt",
-    "name": "Acidulated Malt",
-    "notes": "Contains naturally produced lactic acid (approx 1-2% by weight) to naturally lower mash pH without chemical acid additions.",
-    "yield_fraction": 0.74
+  "amber-aromatic-md": {
+    "id": "amber-aromatic-md",
+    "name": "Amber - Aromatic® MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.79,
+    "color_lovibond": 20,
+    "notes": "Very strong malty"
   },
   "amber-malt": {
-    "category": "BASE",
-    "color_lovibond": 27.0,
     "id": "amber-malt",
     "name": "Amber Malt",
-    "notes": "Traditional dry-roasted British specialty malt offering distinct biscuit, toasted wood, and coffee notes.",
-    "yield_fraction": 0.76
+    "maltster": "Bairds",
+    "category": "ROASTED",
+    "yield_fraction": 0.77,
+    "color_lovibond": 39.32,
+    "notes": "Imparts light, biscuity, dry flavour and dark reddish to browns hues."
+  },
+  "american-honey-malt": {
+    "id": "american-honey-malt",
+    "name": "American Honey Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.82,
+    "color_lovibond": 25,
+    "notes": "Smooth, clean, honey, sweet bread, biscuit"
+  },
+  "aroma-100-md": {
+    "id": "aroma-100-md",
+    "name": "Aroma 100 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.77,
+    "color_lovibond": 38,
+    "notes": "Pronounced malty"
+  },
+  "aroma-150-md": {
+    "id": "aroma-150-md",
+    "name": "Aroma 150 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 60,
+    "notes": "Pronounced malty"
   },
   "aromatic-malt": {
-    "category": "BASE",
-    "color_lovibond": 20.0,
     "id": "aromatic-malt",
     "name": "Aromatic Malt",
-    "notes": "High-kilned European malt providing intense malty aroma and clean syrupy malt flavor without harsh astringency.",
-    "yield_fraction": 0.76
-  },
-  "basic-barley-malt": {
+    "maltster": "Simpsons",
     "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "basic-barley-malt",
-    "name": "Basic Barley Malt",
-    "notes": "Standard standard 2-row / 6-row brewer's malt providing high diastatic power and clean malty backbone.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.7,
+    "color_lovibond": 23,
+    "notes": "Malty, Honey, Raisins, Complex Sweetness with Sour After-Notes"
   },
-  "biscuit-malt": {
+  "aromatic-munich-malt-20l": {
+    "id": "aromatic-munich-malt-20l",
+    "name": "Aromatic Munich Malt 20L",
+    "maltster": "Briess",
     "category": "BASE",
-    "color_lovibond": 25.0,
-    "id": "biscuit-malt",
-    "name": "Biscuit Malt",
-    "notes": "Warm-air roasted Belgian malt delivering dry, crisp, saltine cracker and warm toasted bread flavors.",
-    "yield_fraction": 0.76
+    "yield_fraction": 0.79,
+    "color_lovibond": 20,
+    "notes": "Very smooth, clean, slightly sweet, rich intense malty"
+  },
+  "ashburne-mild-malt": {
+    "id": "ashburne-mild-malt",
+    "name": "Ashburne Mild Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 5.3,
+    "notes": "Slightly malty and sweet with a subtle toasty note"
+  },
+  "best-a-xl": {
+    "id": "best-a-xl",
+    "name": "BEST A-XL",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.55,
+    "notes": "BEST A-XL is a malt made from the traditional German barley variety Alexis. It imparts a malty flavor to the beer, provides a full body as well as a golden yellow color. An increased proportion of free amino nitrogen (FAN) suitably supplies yeast during fermentation.\nDue to its balanced proteolytic "
+  },
+  "best-acidulated-malt": {
+    "id": "best-acidulated-malt",
+    "name": "BEST Acidulated Malt",
+    "maltster": "Bestmalz",
+    "category": "ACID",
+    "yield_fraction": 0.76,
+    "color_lovibond": 2.55,
+    "notes": "BEST Acidulated Malt is used to optimize the pH value in the mash when the brewing water is not entirely optimal. This leads to higher enzyme activity in the mash and thus to a higher yield as well as better flavor stability. The colors of the worts become brighter and the aroma of the beer more bal"
+  },
+  "best-ale-malt": {
+    "id": "best-ale-malt",
+    "name": "Best Ale Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.808,
+    "color_lovibond": 2.8,
+    "notes": "Sweet malt bread; Afternotes of light caramel"
+  },
+  "best-beechwood-smoked": {
+    "id": "best-beechwood-smoked",
+    "name": "BEST Beechwood Smoked",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.775,
+    "color_lovibond": 2.55,
+    "notes": "BEST Beechwood Smoked (Malt) is smoked over the finest beechwood and gives the beer its typical taste, which is reminiscent of campfires and very strongly of smoked ham. The malt is ideal for both beer and whisky production. For initial use, we recommend 10% in the malt bill, which can be increased "
+  },
+  "best-biscuit": {
+    "id": "best-biscuit",
+    "name": "BEST Biscuit",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 19.3,
+    "notes": "BEST Biscuit is the lightest roasted malt from the BEST roasted malt line. It gives the beer an intense sweet malt aroma reminiscent of freshly baked bread and cookies. It combines light roasted aromas with a light color. This golden glow goes perfectly with a variety of beers and gives them that sp"
+  },
+  "best-black-malt": {
+    "id": "best-black-malt",
+    "name": "BEST Black Malt",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 432.5,
+    "notes": "BEST Black Malt is roasted more intensively than BEST Chocolate and is ideally suited for very dark to black beers that should have a pleasant roasted note. Depending on the amount used, flavor profiles of bitter chocolate and mild to strong coffee are achieved in the beer. Despite the more intensiv"
+  },
+  "best-black-malt-extra": {
+    "id": "best-black-malt-extra",
+    "name": "BEST Black Malt eXtra",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 509.5,
+    "notes": "BEST Black Malt eXtra is the darkest malt from the BEST roasted malt line. The intensive roasting process produces color and aroma components that impart a black to jet-black color and a note of black coffee or strong espresso to the beer, depending on the amount used. Despite the use of BEST Black "
+  },
+  "best-caramel-amber": {
+    "id": "best-caramel-amber",
+    "name": "BEST Caramel® Amber",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 27,
+    "notes": "BEST Caramel® Amber is suitable for all strong, full-bodied and aroma-intensive beers where a lot of malt body is desired in the drink. Compared to lighter caramel malts, BEST Caramel® Amber is characterized by strong notes of dates and cookies.\n\nFor Märzen, wheat beers, Bock, Amber Ale, Amber Lager"
+  },
+  "best-caramel-aromatic": {
+    "id": "best-caramel-aromatic",
+    "name": "BEST Caramel® Aromatic",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 19.5,
+    "notes": "BEST Caramel® Aroma brings increasingly strong malty aromatic and caramel flavor notes into the beer, which also lead to a darker beer color. The sensory profile shifts towards dark, strong caramel with light almond and nutty notes. T he malt is still excellent to process, so that high proportions c"
+  },
+  "best-caramel-hell": {
+    "id": "best-caramel-hell",
+    "name": "BEST Caramel® Hell",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 12,
+    "notes": "BEST Caramel® Hell intensifies the typical caramel malt aroma of the beer and leads to a full-bodiedness reminiscent of honey and cream caramel. The beer color shifts toward golden yellow to amber, depending on the proportion in the grain bill. Foam and flavor stability are also increased. The gentl"
+  },
+  "best-caramel-munich-i": {
+    "id": "best-caramel-munich-i",
+    "name": "BEST Caramel® Munich I",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 34.5,
+    "notes": "BEST Caramel® Munich I is the lightest caramel malt in the BEST Caramel® Munich line. The malt aroma changes with increasing color depth of the products noticeably from caramel-sweetish towards nutty and reminiscent of almonds as well as slightly toasted bread crust. With the BEST Caramel® Munich li"
+  },
+  "best-caramel-munich-ii": {
+    "id": "best-caramel-munich-ii",
+    "name": "BEST Caramel® Munich II",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 45.5,
+    "notes": "BEST Caramel® Munich II marks the center of the BEST Caramel® Munich line in terms of color. In addition to the darker color, the aroma components reminiscent of almond and bread crust also increase. Subtle toasty notes complement the profile. Due to the special caramelization process, a very unifor"
+  },
+  "best-caramel-munich-iii": {
+    "id": "best-caramel-munich-iii",
+    "name": "BEST Caramel® Munich III",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 63,
+    "notes": "BEST Caramel® Munich III is the darkest caramel malt from the BEST Caramel® Munich line. With this malt, even with low proportions on the grain bill, it is possible to brew strong dark beers and all types of dark specialty beers where value is placed on a full, round taste reminiscent of bread crust"
+  },
+  "best-caramel-pils": {
+    "id": "best-caramel-pils",
+    "name": "BEST Caramel® Pils",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 2.35,
+    "notes": "BEST Caramel® Pils is the lightest of all BEST Caramel® malts and is therefore particularly suitable for providing beers with more full-bodiedness without intensifying their color. Sensorically, the use of BEST Caramel® Pils leads to a sweet taste component in the beer reminiscent of honey, as the s"
+  },
+  "best-caramel-rye-malt": {
+    "id": "best-caramel-rye-malt",
+    "name": "BEST Caramel® Rye Malt",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 90.5,
+    "notes": "BEST Caramel® Rye Malt gives the beer a velvety soft mouthfeel and a special complexity. The aromas are reminiscent of caramelized bread crumbs. Due to the lack of husks and the high proportion of mucilage (pentosans), a grain bill proportion above 50% is not recommended, otherwise lautering problem"
+  },
+  "best-caramel-wheat-malt": {
+    "id": "best-caramel-wheat-malt",
+    "name": "BEST Caramel® Wheat Malt",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.69,
+    "color_lovibond": 43,
+    "notes": "BEST Caramel® Wheat Malt combines the smoothness of wheat with a subtle caramel flavor. It gives the beer a darker color than conventional wheat malt and enhances its full-bodied taste. Due to the special caramelization process, a very uniform caramel formation in the grain is achieved. BEST Caramel"
+  },
+  "best-cherry-ember-smoked": {
+    "id": "best-cherry-ember-smoked",
+    "name": "BEST Cherry Ember Smoked",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 2.55,
+    "notes": "BEST Cherry Ember Smoked is produced using the finest cherry wood and creates notes that reflect the taste of fresh cherries. The malt is ideal for both beer and whisky production. For initial use, we recommend 10% in the malt bill, which can be increased to 100% due to its high enzymatic power. It "
+  },
+  "best-chit-malt": {
+    "id": "best-chit-malt",
+    "name": "BEST Chit Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.5,
+    "color_lovibond": 1.4,
+    "notes": "BEST Chit Malt is used as a speciality among the functional malts either temporarily or continuously in the mashing process. The slightly dissolved barley malt contains a lot of high-molecular protein compared to a pilsner malt. It is therefore suitable for compensating for very highly dissolved mal"
+  },
+  "best-chocolate": {
+    "id": "best-chocolate",
+    "name": "BEST Chocolate",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 340,
+    "notes": "BEST Chocolate provides an ideal gateway to the world of brewing with roasted malts. Due to the gentle roasting process, noticeably bitter flavors are largely avoided, which can also be demonstrated by the comparatively very low pyrazine levels. This means that BEST Chocolate can also be used to bre"
+  },
+  "best-diastatic-malt": {
+    "id": "best-diastatic-malt",
+    "name": "BEST Diastatic Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 1.8,
+    "notes": "BEST Diastatic Malt can be used as a basic ingredient in the baking and food industry. The malt has a higher protein content, coupled with very strong enzymatics for optimal breakdown and dissolution of starch. Pale malts typically have a diastatic strength of about 300 wk (Windisch-Kolbach degrees)"
+  },
+  "best-diastatic-wheat-malt": {
+    "id": "best-diastatic-wheat-malt",
+    "name": "BEST Diastatic Wheat Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 1.87,
+    "notes": "BEST Diastatic Wheat Malt can be used as a basic ingredient in the baking and food industry. It has a high protein content coupled with very strong enzymatic activity. The high amylase activity is optimal for the breakdown and dissolution of starch. This is particularly apparent in the processing of"
+  },
+  "best-heidelberg": {
+    "id": "best-heidelberg",
+    "name": "BEST Heidelberg",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.12,
+    "notes": "BEST Heidelberg is a malt made from special, quality malting barley varieties that are less prone to coloring during the malting process. BEST Heidelberger is particularly suitable for the production of especially light beers. The protein content of the malt is usually somewhat lower than that of a "
+  },
+  "best-heidelberg-wheat-malt": {
+    "id": "best-heidelberg-wheat-malt",
+    "name": "BEST Heidelberg Wheat Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 1.6,
+    "notes": "BEST Heidelberger Wheat Malt is a particularly light malt and emphasizes the tangy freshness as well as the typical top-fermented wheat beer taste. BEST Heidelberg Wheat Malt is produced from high-quality brewing wheat varieties that have only a limited tendency to color during the malting process. "
+  },
+  "best-melanoidin": {
+    "id": "best-melanoidin",
+    "name": "BEST Melanoidin",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 27,
+    "notes": "Compared to BEST Melanoidin Light, BEST Melanoidin contains significantly more dextrins as well as aroma- and color-producing melanoidin compounds formed in a more intensive malting process. The malt is thus an excellent basis for particularly strong, dry-full-bodied and dark to chestnut-red beers. "
+  },
+  "best-melanoidin-light": {
+    "id": "best-melanoidin-light",
+    "name": "BEST Melanoidin Light",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 19.5,
+    "notes": "BEST Melanoidin Light is a malt characterized by a high content of dextrins and aroma- and color-intensive Maillard compounds, the so-called melanoidins. In addition to a russet color, these impart a special flavor and a dry, full-bodied character to the beer. Melanoidins can have a positive effect "
+  },
+  "best-munich": {
+    "id": "best-munich",
+    "name": "BEST Munich",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 6.3,
+    "notes": "BEST Munich pleasantly enhances the full-bodied, malty taste in amber-colored to dark beers. Even with low grain bill proportions, a typical malty note is achieved in the beer. BEST Munich is thus perfectly suited for adding more body to beers with very high fermentation levels. Due to the generally"
+  },
+  "best-munich-dark": {
+    "id": "best-munich-dark",
+    "name": "BEST Munich Dark",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 11.05,
+    "notes": "BEST Munich Dark yields intense, full-bodied beers with a pronounced malty body and a bright dark color. The special malting process results in high degrees of solution without loss of the positive sensory properties of the malt. The enzyme-rich malt can also be processed in high grain bill proporti"
+  },
+  "best-np-ultra-pale-malt": {
+    "id": "best-np-ultra-pale-malt",
+    "name": "BEST NP Ultra-Pale Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.25,
+    "notes": "BEST NP Ultra-Pale Malt is produced from special high-quality brewing barley varieties. The raw material undergoes very little colour change during the malting process. It is gently processed to achieve a stable final moisture content, making it completely stable for storage. Thanks to its unique ma"
+  },
+  "best-oat-malt": {
+    "id": "best-oat-malt",
+    "name": "BEST Oat malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.793,
+    "color_lovibond": 2.55,
+    "notes": "BEST Oat Malt is made from dehulled naked oats. The oats provide a velvety mouthfeel, which at higher grain bill proportions produces not only a lightly nutty oat-typical aroma, but also fruity aromas and a stable turbidity. The increased fat content in the grain slightly affects foam stability. The"
+  },
+  "best-pale-ale": {
+    "id": "best-pale-ale",
+    "name": "BEST Pale Ale",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.7,
+    "notes": "BEST Pale Ale is ideally suited as a base for numerous variants of Anglo-Saxon ales and many other beers where a fuller golden color and a tangier, but also fuller-bodied taste are desired.\n\nFor Pale Ale, Kölsch, Pilsener beers as well as all other specialty beers."
+  },
+  "best-pale-ale-malt": {
+    "id": "best-pale-ale-malt",
+    "name": "Best Pale Ale Malt",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.45,
+    "notes": "Rich Malty"
+  },
+  "best-pilsen-malt": {
+    "id": "best-pilsen-malt",
+    "name": "BEST Pilsen Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.95,
+    "notes": "The enzyme-strong and extract-rich BEST Pilsen Malt is the base malt, alone or combined, for all kinds of exceptional and great-tasting beers. Even with high special malt contents in the bulk, this malt provides the ideal basis for optimum processing in production and, as a result, the basis for the"
+  },
+  "best-red-x": {
+    "id": "best-red-x",
+    "name": "BEST Red X®",
+    "maltster": "Bestmalz",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.79,
+    "color_lovibond": 12,
+    "notes": "BEST Red X® has become synonymous with beers with a reddish color. It can be used 100% of the grain bill and is thus ready for use without the addition of further malts. BEST Red X® ensures, with the highest possible process reliability and optimum processability, that reproducibly bright beers with"
+  },
+  "best-roasted-barley": {
+    "id": "best-roasted-barley",
+    "name": "BEST Roasted Barley",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 489.5,
+    "notes": "BEST Roasted Barley bestows the beer with a characteristically dark depth of color. Depending on the grain bill proportion, it complements the flavor profile of the beer with intense roasted notes and bitter aromas reminiscent of strong black coffee or Italian espresso. The foam stability of the bee"
+  },
+  "best-roasted-wheat-dark": {
+    "id": "best-roasted-wheat-dark",
+    "name": "BEST Roasted Wheat Dark",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.73,
+    "color_lovibond": 58.95,
+    "notes": "BEST Roasted Wheat Dark imparts an intensely dark color to the beer and, depending on the grain bill proportion, adds roasted notes to the beer’s flavor profile. Foam stability can also be increased. The wheat is roasted directly without malting in a special and gentle process. The use of BEST Roast"
+  },
+  "best-roasted-wheat-light": {
+    "id": "best-roasted-wheat-light",
+    "name": "BEST Roasted Wheat Light",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 1.9,
+    "notes": "BEST Roasted Wheat Light is roasted directly without malting in a special and gentle process. The grain imparts an intense color to the beer and, depending on the grain bill proportion, adds roasted notes to the beer’s flavor profile. The foam stability of the beer can also be increased. The use of "
+  },
+  "best-roasted-wheat-medium": {
+    "id": "best-roasted-wheat-medium",
+    "name": "BEST Roasted Wheat Medium",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.74,
+    "color_lovibond": 11.85,
+    "notes": "BEST Roasted Wheat Medium imparts an intense color and an aromatic chocolate-like roasted note to the beer. The foam stability of the beer can also be increased. The grain is roasted directly without malting in a special and gentle process. The use of BEST Roasted Wheat for beer production does not "
+  },
+  "best-rye-malt": {
+    "id": "best-rye-malt",
+    "name": "BEST Rye Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.849,
+    "color_lovibond": 3.25,
+    "notes": "BEST Rye Malt imparts an incomparable structure, a velvety soft mouthfeel and a special complexity to the beer. The aromas are strongly reminiscent of bread crumbs. Due to the lack of husks and the high proportion of mucilage (pentosans), a grain bill proportion above 50% is not recommended, otherwi"
+  },
+  "best-sakura-smoked-malt": {
+    "id": "best-sakura-smoked-malt",
+    "name": "BEST Sakura Smoked Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 2.55,
+    "notes": "BEST Sakura Smoked is produced using the finest cherry wood and creates notes that reflect the taste of fresh, aromatic scent of cherry blossoms. The malt is ideal for both beer and whisky production. For initial use, we recommend 10% in the malt bill, which can be increased to 100% due to its high "
+  },
+  "best-smoked-malt": {
+    "id": "best-smoked-malt",
+    "name": "BEST Smoked Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 2.55,
+    "notes": "BEST Smoked Malt is smoked over beech wood from the Franconian Jura and imparts to the beer the typical flavor reminiscent of campfires and smoked ham. The malt is ideal for both beer and whiskey production. When first used, we recommend 10% in the bulk, which can be increased up to 100% thanks to h"
+  },
+  "best-special-x": {
+    "id": "best-special-x",
+    "name": "BEST Special X®",
+    "maltster": "Bestmalz",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 132.5,
+    "notes": "BEST Special X® is a dark caramel malt that has undergone a short roasting. As a result, it develops a very intensive, exceptional flavor profile. At a maximum usage rate of 20%, a bright chestnut red to chestnut brown color is achieved in a P12 beer. Even in low grain bill proportions, the malt is "
+  },
+  "best-spelt-malt": {
+    "id": "best-spelt-malt",
+    "name": "BEST Spelt Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 2.15,
+    "notes": "BEST Spelt Malt is essential for the production of typical strong, top-fermented spelt beers and additionally improves foam and cloud stability. As an ancient grain, spelt is said to have numerous health-promoting properties, which is why it was already the favorite grain of Hildegard von Bingen, th"
+  },
+  "best-vienna": {
+    "id": "best-vienna",
+    "name": "BEST Vienna",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 3.85,
+    "notes": "The use of BEST Vienna results in a full golden beer color, excellent foaming and a pleasant, full-bodied taste in the final beer. Unlike BEST Heidelberg, this malt uses two-row malting barley varieties that form more coloring substances during the malting process. The protein content is slightly hi"
+  },
+  "best-wheat-malt": {
+    "id": "best-wheat-malt",
+    "name": "BEST Wheat Malt",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 2.25,
+    "notes": "BEST Wheat Malt is the base malt for all wheat beer varieties. It ensures tangy freshness and the typical top-fermented wheat beer taste. It is produced exclusively from high-quality brewing wheat. Compared to BEST Pilsen Malt, the wheat malt has a higher protein content and is therefore suitable fo"
+  },
+  "best-wheat-malt-dark": {
+    "id": "best-wheat-malt-dark",
+    "name": "BEST Wheat Malt Dark",
+    "maltster": "Bestmalz",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 7.25,
+    "notes": "BEST Wheat Malt Dark is the dark or “Munich variant” of BEST Wheat Malt. It is suitable for use in sparkling, amber and dark wheat beers as well as in top-fermented beer specialties. Due to the more intensive malting process, BEST Wheat Malt Dark achieves a fuller, maltier body in the beer in combin"
+  },
+  "biscuit-50-md": {
+    "id": "biscuit-50-md",
+    "name": "Biscuit® 50 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 20,
+    "notes": "Warm bread and cookies"
+  },
+  "biscuit-rye-malt": {
+    "id": "biscuit-rye-malt",
+    "name": "Biscuit Rye Malt",
+    "maltster": "Great Western",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 15.33,
+    "notes": "Made with 100% malted rye, Biscuit Rye is roasted inside custom-designed drums in Vancouver, Washington. Biscuit Rye strikes a pleasant balance between toasted, biscuit-forward flavors and classic rye spice. A perfect choice for your next brewing or distilling creation."
+  },
+  "black-barley": {
+    "id": "black-barley",
+    "name": "Black Barley",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 550,
+    "notes": "Roasted, coffee, burnt"
   },
   "black-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 500.0,
     "id": "black-malt",
     "name": "Black Malt",
-    "notes": "Black Patent malt. High-temperature roasted malt giving sharp, dry, acrid, burnt bread tones and deep black color.",
-    "yield_fraction": 0.55
+    "maltster": "Crisp",
+    "category": "ROASTED",
+    "yield_fraction": 0.715,
+    "color_lovibond": 488,
+    "notes": "An intense hit of roasted notes; Layers of liquorice, smokiness and nuttiness"
+  },
+  "black-malted-barley-flour": {
+    "id": "black-malted-barley-flour",
+    "name": "Black Malted Barley Flour",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 500,
+    "notes": "Dry roasted, sharp to neutral"
+  },
+  "blackprinz-malt": {
+    "id": "blackprinz-malt",
+    "name": "Blackprinz Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 500,
+    "notes": "Subtle, smooth, no bitter, astringent, dry flavors or aftertaste, very delicate, clean flavor, mild roasted malty flavor"
+  },
+  "blonde-roastoat-malt": {
+    "id": "blonde-roastoat-malt",
+    "name": "Blonde RoastOat Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 6,
+    "notes": "Light roasted, mild sweetness"
+  },
+  "bonlander-munich-malt-10l": {
+    "id": "bonlander-munich-malt-10l",
+    "name": "Bonlander Munich Malt 10L",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 10,
+    "notes": "Clean, slightly sweet, rich malty"
+  },
+  "bourbon-malt": {
+    "id": "bourbon-malt",
+    "name": "Bourbon Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 2.19,
+    "notes": "A classic North American distilling malt. High in diastatic power and alpha-amylase, this malt is a real enzyme powerhouse."
+  },
+  "bow-valley-select-malt": {
+    "id": "bow-valley-select-malt",
+    "name": "Bow Valley Select Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 1.96,
+    "notes": "A premium 2-Row malt with excellent fermentability, high extract and was produced with the intention of connecting Alberta Farmers and Brewers across the province."
+  },
+  "brewers-barley-flakes": {
+    "id": "brewers-barley-flakes",
+    "name": "Brewers Barley Flakes",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.75,
+    "color_lovibond": 1.8,
+    "notes": "Slightly grainy"
+  },
+  "brewers-brown-rice-flakes": {
+    "id": "brewers-brown-rice-flakes",
+    "name": "Brewers Brown Rice Flakes",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.65,
+    "color_lovibond": 1,
+    "notes": "Mild nutty"
+  },
+  "brewers-malt": {
+    "id": "brewers-malt",
+    "name": "Brewers Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 2.1,
+    "notes": "Clean, sweet, mild malty"
+  },
+  "brewers-malt-flour": {
+    "id": "brewers-malt-flour",
+    "name": "Brewers Malt Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.1,
+    "notes": "Clean, sweet, mild malty"
+  },
+  "brewers-oat-flakes": {
+    "id": "brewers-oat-flakes",
+    "name": "Brewers Oat Flakes",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.7,
+    "color_lovibond": 2.5,
+    "notes": "Clean oaty"
+  },
+  "brewers-red-wheat-flakes": {
+    "id": "brewers-red-wheat-flakes",
+    "name": "Brewers Red Wheat Flakes",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.7,
+    "color_lovibond": 2,
+    "notes": "Slightly nutty"
+  },
+  "brewers-rye-flakes": {
+    "id": "brewers-rye-flakes",
+    "name": "Brewers Rye Flakes",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.71,
+    "color_lovibond": 2,
+    "notes": "Distinctive rye"
+  },
+  "brewers-torrified-wheat": {
+    "id": "brewers-torrified-wheat",
+    "name": "Brewers Torrified Wheat",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 1.5,
+    "notes": "Slightly nutty"
+  },
+  "brewers-yellow-corn-flakes-non-gmo": {
+    "id": "brewers-yellow-corn-flakes-non-gmo",
+    "name": "Brewers Yellow Corn Flakes Non-GMO",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0.8,
+    "notes": "Fresh corn flavor"
   },
   "brown-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 65.0,
     "id": "brown-malt",
     "name": "Brown Malt",
-    "notes": "Historical English kiln-roasted malt. Delivers dry, biscuit, coffee-like, and charred wood complexity in porters.",
-    "yield_fraction": 0.7
+    "maltster": "Bairds",
+    "category": "ROASTED",
+    "yield_fraction": 0.77,
+    "color_lovibond": 44.85,
+    "notes": "Provides a dry, mild coffee flavour and a darker amber hue."
   },
-  "buckwheat-malt": {
+  "brumalt": {
+    "id": "brumalt",
+    "name": "Brumalt",
+    "maltster": "Great Western",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 15.33,
+    "notes": "Brūmalt is an American-style honey malt. Tart but slightly sweet, Brūmalt delivers a lively fruity complexity not found in other malts. This vibrant malt was designed to punch up all your latest creations."
+  },
+  "cara-120-md": {
+    "id": "cara-120-md",
+    "name": "Cara 120 MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 45,
+    "notes": "Strong sweet caramel taste"
+  },
+  "cara-20-md": {
+    "id": "cara-20-md",
+    "name": "Cara 20 MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 8,
+    "notes": "Light caramel"
+  },
+  "cara-200-md": {
+    "id": "cara-200-md",
+    "name": "Cara 200 MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 75,
+    "notes": "Dark caramel"
+  },
+  "cara-50-md": {
+    "id": "cara-50-md",
+    "name": "Cara 50 MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 20,
+    "notes": "Strong caramel taste with a sweet honey note"
+  },
+  "cara-gold-malt": {
+    "id": "cara-gold-malt",
+    "name": "Cara Gold Malt",
+    "maltster": "Crisp",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.741,
+    "color_lovibond": 6,
+    "notes": "Rich fruity aromas with an intense sweetness; Subtle spicy notes"
+  },
+  "cara-malt": {
+    "id": "cara-malt",
+    "name": "Cara Malt",
+    "maltster": "Crisp",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.733,
+    "color_lovibond": 12,
+    "notes": "Intense caramel malty sweetness; Residual maltiness"
+  },
+  "cara-md-pilsen": {
+    "id": "cara-md-pilsen",
+    "name": "Cara MD Pilsen",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.71,
+    "color_lovibond": 3,
+    "notes": "Lichte karamel smaak"
+  },
+  "carabrown-malt": {
+    "id": "carabrown-malt",
+    "name": "Carabrown Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.79,
+    "color_lovibond": 55,
+    "notes": "Smooth, slightly sweet malty, lightly toasted biscuity, nutty, graham cracker, clean dry finish"
+  },
+  "caracrystal-wheat-malt": {
+    "id": "caracrystal-wheat-malt",
+    "name": "Caracrystal Wheat Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.78,
+    "color_lovibond": 55,
+    "notes": "Sweet, smooth, malty, bready, subtle caramel, dark toast, exceptionally clean finish"
+  },
+  "caraglow": {
+    "id": "caraglow",
+    "name": "CaraGlow",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 6.15,
+    "notes": "Mild Malty, Grassy, Hay"
+  },
+  "caramalt": {
+    "id": "caramalt",
+    "name": "Caramalt",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 14,
+    "notes": "Grassy, Mild Toffee, Sweet"
+  },
+  "caramel-malt-10l": {
+    "id": "caramel-malt-10l",
+    "name": "Caramel Malt 10L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 10,
+    "notes": "Candy-like sweetness, mild caramel"
+  },
+  "caramel-malt-120l": {
+    "id": "caramel-malt-120l",
+    "name": "Caramel Malt 120L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 120,
+    "notes": "Pronounced caramel, burnt sugar, raisiny, prunes"
+  },
+  "caramel-malt-20l": {
+    "id": "caramel-malt-20l",
+    "name": "Caramel Malt 20L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.76,
+    "color_lovibond": 20,
+    "notes": "Candy-like sweetness, mild caramel"
+  },
+  "caramel-malt-30l": {
+    "id": "caramel-malt-30l",
+    "name": "Caramel Malt 30L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 30,
+    "notes": "Sweet, caramel, toffee"
+  },
+  "caramel-malt-40l": {
+    "id": "caramel-malt-40l",
+    "name": "Caramel Malt 40L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 40,
+    "notes": "Sweet, caramel, toffee"
+  },
+  "caramel-malt-60l": {
+    "id": "caramel-malt-60l",
+    "name": "Caramel Malt 60L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 60,
+    "notes": "Sweet, pronounced caramel"
+  },
+  "caramel-malt-80l": {
+    "id": "caramel-malt-80l",
+    "name": "Caramel Malt 80L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.76,
+    "color_lovibond": 80,
+    "notes": "Pronounced caramel, slight burnt sugar, raisiny"
+  },
+  "caramel-malt-90l": {
+    "id": "caramel-malt-90l",
+    "name": "Caramel Malt 90L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 90,
+    "notes": "Pronounced caramel, burnt sugar, raisiny, prunes"
+  },
+  "caramel-munich-malt-60l": {
+    "id": "caramel-munich-malt-60l",
+    "name": "Caramel Munich Malt 60L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 60,
+    "notes": "Caramel, roasted, malty"
+  },
+  "caramel-rye-malt": {
+    "id": "caramel-rye-malt",
+    "name": "Caramel Rye Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.8,
+    "color_lovibond": 60,
+    "notes": "Touches of caramel and bread crust flavors that complement the spicy character of rye"
+  },
+  "caramel-steam-malt": {
+    "id": "caramel-steam-malt",
+    "name": "Caramel Steam Malt",
+    "maltster": "Great Western",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 30.09,
+    "notes": "Caramel Steam malt is created via an innovative process that develops crystal characteristics using steam. It can be used as an alternative to traditional crystal malts for those desiring a softer sensory impact and reduced astringency."
+  },
+  "caramel-vienne-malt-20l": {
+    "id": "caramel-vienne-malt-20l",
+    "name": "Caramel Vienne Malt 20L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.78,
+    "color_lovibond": 20,
+    "notes": "Soft toffee, caramel, malty"
+  },
+  "carapils-copper-malt": {
+    "id": "carapils-copper-malt",
+    "name": "Carapils Copper Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 30,
+    "notes": "Malty, graham cracker, toasty"
+  },
+  "carapils-malt": {
+    "id": "carapils-malt",
+    "name": "Carapils Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 1.5,
+    "notes": "No added flavor"
+  },
+  "century-rye-malt": {
+    "id": "century-rye-malt",
+    "name": "Century Rye Malt",
+    "maltster": "Canada Malting",
     "category": "BASE",
-    "color_lovibond": 2.5,
-    "id": "buckwheat-malt",
-    "name": "Buckwheat Malt",
-    "notes": "Gluten-free malted pseudocereal delivering earthy, nutty, and savory grain characteristics.",
-    "yield_fraction": 0.7
+    "yield_fraction": 0.85,
+    "color_lovibond": 3.14,
+    "notes": "Lends a great, slightly spicy flavour profile. Higher in protein and beta-glucans, so rice hulls are recommended to avoid stuck mashes."
   },
-  "caraamber": {
-    "category": "CRYSTAL",
-    "color_lovibond": 30.0,
-    "id": "caraamber",
-    "name": "CaraAmber",
-    "notes": "German drum-roasted caramel malt delivering toffee, bread crust, and warm caramel complexity.",
-    "yield_fraction": 0.75
-  },
-  "caraaroma": {
-    "category": "CRYSTAL",
-    "color_lovibond": 150.0,
-    "id": "caraaroma",
-    "name": "CaraAroma",
-    "notes": "Dark German caramel malt imparting deep reddish-brown color, dark fruit, and roasted caramel aromas.",
-    "yield_fraction": 0.74
-  },
-  "carabelge": {
-    "category": "CRYSTAL",
-    "color_lovibond": 15.0,
-    "id": "carabelge",
-    "name": "CaraBelge",
-    "notes": "Enhances golden to amber color while contributing notes of mild honey, caramel, and biscuit.",
-    "yield_fraction": 0.75
-  },
-  "carabohemian": {
-    "category": "CRYSTAL",
-    "color_lovibond": 75.0,
-    "id": "carabohemian",
-    "name": "CaraBohemian",
-    "notes": "Bohemian drum-roasted caramel malt offering rich bread crust and dark toffee flavors for Czech dark lagers.",
-    "yield_fraction": 0.74
-  },
-  "carafa-i": {
-    "category": "ROASTED",
-    "color_lovibond": 320.0,
-    "id": "carafa-i",
-    "name": "CaraFa I",
-    "notes": "German dark roasted specialty malt. Imparts dark color and fine roasted coffee flavors in Schwarzbier.",
-    "yield_fraction": 0.7
-  },
-  "carafa-ii": {
-    "category": "ROASTED",
-    "color_lovibond": 425.0,
-    "id": "carafa-ii",
-    "name": "CaraFa II",
-    "notes": "Mid-tier Carafa malt delivering deep black-brown color and rich espresso aroma.",
-    "yield_fraction": 0.65
-  },
-  "carafa-iii": {
-    "category": "ROASTED",
-    "color_lovibond": 525.0,
-    "id": "carafa-iii",
-    "name": "CaraFa III",
-    "notes": "Darkest Carafa malt for maximum color contribution and robust roast character.",
-    "yield_fraction": 0.6
-  },
-  "carafa-special-i": {
-    "category": "ROASTED",
-    "color_lovibond": 320.0,
-    "id": "carafa-special-i",
-    "name": "CaraFa Special I",
-    "notes": "Dehusked Carafa I. Provides clean dark color and smooth roasted finish without harsh bitterness.",
-    "yield_fraction": 0.7
-  },
-  "carafa-special-ii": {
-    "category": "ROASTED",
-    "color_lovibond": 425.0,
-    "id": "carafa-special-ii",
-    "name": "CaraFa Special II",
-    "notes": "Dehusked Carafa II. Imparts deep color and mild dark-chocolate notes with reduced astringency.",
-    "yield_fraction": 0.65
-  },
-  "carafa-special-iii": {
-    "category": "ROASTED",
-    "color_lovibond": 525.0,
-    "id": "carafa-special-iii",
-    "name": "CaraFa Special III",
-    "notes": "Dehusked Carafa III. Maximum color depth with ultra-smooth cocoa and mild roast profile.",
-    "yield_fraction": 0.6
-  },
-  "caragold": {
-    "category": "CRYSTAL",
-    "color_lovibond": 6.0,
-    "id": "caragold",
-    "name": "CaraGold",
-    "notes": "Low-color caramel malt imparting sweet toffee notes, improved body, and brilliant golden color.",
-    "yield_fraction": 0.75
-  },
-  "carahell": {
-    "category": "CRYSTAL",
-    "color_lovibond": 10.0,
-    "id": "carahell",
-    "name": "CaraHell",
-    "notes": "Light German caramel malt enhancing body, softness, and mild caramel sweetness in pale lagers.",
-    "yield_fraction": 0.75
-  },
-  "caramel-crystal-malt-10l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 10.0,
-    "id": "caramel-crystal-malt-10l",
-    "name": "Caramel/Crystal Malt 10L",
-    "notes": "Caramel/Crystal Malt \u2013 10L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-120l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 120.0,
-    "id": "caramel-crystal-malt-120l",
-    "name": "Caramel/Crystal Malt 120L",
-    "notes": "Caramel/Crystal Malt \u2013 120L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-140l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 140.0,
-    "id": "caramel-crystal-malt-140l",
-    "name": "Caramel/Crystal Malt 140L",
-    "notes": "Caramel/Crystal Malt \u2013 140L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-150l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 150.0,
-    "id": "caramel-crystal-malt-150l",
-    "name": "Caramel/Crystal Malt 150L",
-    "notes": "Caramel/Crystal Malt \u2013 150L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-15l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 15.0,
-    "id": "caramel-crystal-malt-15l",
-    "name": "Caramel/Crystal Malt 15L",
-    "notes": "Caramel/Crystal Malt \u2013 15L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-20l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 20.0,
-    "id": "caramel-crystal-malt-20l",
-    "name": "Caramel/Crystal Malt 20L",
-    "notes": "Caramel/Crystal Malt \u2013 20L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-30l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 30.0,
-    "id": "caramel-crystal-malt-30l",
-    "name": "Caramel/Crystal Malt 30L",
-    "notes": "Caramel/Crystal Malt \u2013 30L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-40l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 40.0,
-    "id": "caramel-crystal-malt-40l",
-    "name": "Caramel/Crystal Malt 40L",
-    "notes": "Caramel/Crystal Malt \u2013 40L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-45l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 45.0,
-    "id": "caramel-crystal-malt-45l",
-    "name": "Caramel/Crystal Malt 45L",
-    "notes": "Caramel/Crystal Malt \u2013 45L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-50l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 50.0,
-    "id": "caramel-crystal-malt-50l",
-    "name": "Caramel/Crystal Malt 50L",
-    "notes": "Caramel/Crystal Malt \u2013 50L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-55l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 55.0,
-    "id": "caramel-crystal-malt-55l",
-    "name": "Caramel/Crystal Malt 55L",
-    "notes": "Caramel/Crystal Malt \u2013 55L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-60l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 60.0,
-    "id": "caramel-crystal-malt-60l",
-    "name": "Caramel/Crystal Malt 60L",
-    "notes": "Caramel/Crystal Malt \u2013 60L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-70l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 70.0,
-    "id": "caramel-crystal-malt-70l",
-    "name": "Caramel/Crystal Malt 70L",
-    "notes": "Caramel/Crystal Malt \u2013 70L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-75l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 75.0,
-    "id": "caramel-crystal-malt-75l",
-    "name": "Caramel/Crystal Malt 75L",
-    "notes": "Caramel/Crystal Malt \u2013 75L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-80l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 80.0,
-    "id": "caramel-crystal-malt-80l",
-    "name": "Caramel/Crystal Malt 80L",
-    "notes": "Caramel/Crystal Malt \u2013 80L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramel-crystal-malt-90l": {
-    "category": "CRYSTAL",
-    "color_lovibond": 90.0,
-    "id": "caramel-crystal-malt-90l",
-    "name": "Caramel/Crystal Malt 90L",
-    "notes": "Caramel/Crystal Malt \u2013 90L (Caramel/Crystal Malt). Traditional specialty brewing fermentable.",
-    "yield_fraction": 0.74
-  },
-  "caramunich-i": {
-    "category": "CRYSTAL",
-    "color_lovibond": 38.0,
-    "id": "caramunich-i",
-    "name": "CaraMunich I",
-    "notes": "Type I CaraMunich. Introduces deep amber color, rich maltiness, and caramel flavors in dark lagers.",
-    "yield_fraction": 0.75
-  },
-  "caramunich-ii": {
-    "category": "CRYSTAL",
-    "color_lovibond": 45.0,
-    "id": "caramunich-ii",
-    "name": "CaraMunich II",
-    "notes": "Type II CaraMunich. Adds pronounced dark caramel, cookie, and toasted bread notes in bocks and m\u00e4rzens.",
-    "yield_fraction": 0.75
-  },
-  "caramunich-iii": {
-    "category": "CRYSTAL",
-    "color_lovibond": 55.0,
-    "id": "caramunich-iii",
-    "name": "CaraMunich III",
-    "notes": "Type III CaraMunich. Full-flavored dark caramel malt delivering raisin, plum, and intense malt richness.",
-    "yield_fraction": 0.74
-  },
-  "carapils-carafoam": {
-    "category": "CRYSTAL",
-    "color_lovibond": 1.8,
-    "id": "carapils-carafoam",
-    "name": "CaraPils / CaraFoam",
-    "notes": "Dextrin malt processed to maximize foam stability, head retention, and creaminess without adding color or flavor.",
-    "yield_fraction": 0.72
-  },
-  "carared": {
-    "category": "CRYSTAL",
-    "color_lovibond": 20.0,
-    "id": "carared",
-    "name": "CaraRed",
-    "notes": "Medium crystal malt engineered to enhance full body and deep red/copper hue in red ales and ambers.",
-    "yield_fraction": 0.75
-  },
-  "cararye": {
-    "category": "CRYSTAL",
-    "color_lovibond": 65.0,
-    "id": "cararye",
-    "name": "CaraRye",
-    "notes": "Caramelized malted rye. Adds deep reddish color, velvety mouthfeel, and spicy rye bread complexity.",
-    "yield_fraction": 0.72
-  },
-  "caravienne": {
-    "category": "CRYSTAL",
-    "color_lovibond": 22.0,
-    "id": "caravienne",
-    "name": "CaraVienne",
-    "notes": "Belgian crystal malt yielding golden hues and delicate toffee and biscuit notes in Belgian ales.",
-    "yield_fraction": 0.75
-  },
-  "carawheat": {
-    "category": "CRYSTAL",
-    "color_lovibond": 45.0,
-    "id": "carawheat",
-    "name": "CaraWheat",
-    "notes": "Caramelized wheat malt. Infuses dark wheat beers with rich body, dark color, and subtle roast-caramel aroma.",
-    "yield_fraction": 0.75
+  "chevallier-heritage-malt": {
+    "id": "chevallier-heritage-malt",
+    "name": "Chevallier® Heritage Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.767,
+    "color_lovibond": 3.55,
+    "notes": "Deep maltiness; Marmalade like sweetness; Subtle fresh bread"
   },
   "chit-malt": {
-    "category": "BASE",
-    "color_lovibond": 1.8,
     "id": "chit-malt",
     "name": "Chit Malt",
-    "notes": "Very lightly germinated malt rich in high-molecular proteins. Enhances head retention and foam without adding haze.",
-    "yield_fraction": 0.78
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.5,
+    "color_lovibond": 1.9,
+    "notes": "Neutral"
   },
   "chocolate-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 350.0,
     "id": "chocolate-malt",
     "name": "Chocolate Malt",
-    "notes": "Essential dark ale grain. Imparts rich cocoa, dark baker's chocolate, and nutty roasted flavors without harsh ashiness.",
-    "yield_fraction": 0.6
-  },
-  "coffee-malt": {
+    "maltster": "Simpsons",
     "category": "ROASTED",
-    "color_lovibond": 150.0,
-    "id": "coffee-malt",
-    "name": "Coffee Malt",
-    "notes": "Gently roasted malt producing smooth fresh brewed coffee and roasted nut aromas.",
-    "yield_fraction": 0.65
+    "yield_fraction": 0.7,
+    "color_lovibond": 441.5,
+    "notes": "Dark Chocolate"
   },
-  "cookie-malt": {
+  "chocolate-malt-or-coffee-malt": {
+    "id": "chocolate-malt-or-coffee-malt",
+    "name": "Chocolate Malt or Coffee Malt",
+    "maltster": "Crisp",
+    "category": "ROASTED",
+    "yield_fraction": 0.72,
+    "color_lovibond": 394.5,
+    "notes": "Rich roasted aromas; Top notes of espresso coffee; Undertones of black pepper and toasted nuts"
+  },
+  "chocolate-rye-300-md": {
+    "id": "chocolate-rye-300-md",
+    "name": "Chocolate Rye 300 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 115,
+    "notes": "Chocolate, Cacao beans, Coffee beans, fine spiciness"
+  },
+  "clear-choice-pale-malt": {
+    "id": "clear-choice-pale-malt",
+    "name": "Clear Choice Pale Malt",
+    "maltster": "Crisp",
     "category": "BASE",
-    "color_lovibond": 20.0,
-    "id": "cookie-malt",
-    "name": "Cookie Malt",
-    "notes": "Lightly toasted malt creating sweet pastry, butter cookie, and warm bakery aroma.",
-    "yield_fraction": 0.76
+    "yield_fraction": 0.806,
+    "color_lovibond": 2.1,
+    "notes": "Intensely smooth mouthfeel; Mild maltiness with a warm honey sweetness"
+  },
+  "cmc-2-row-malt": {
+    "id": "cmc-2-row-malt",
+    "name": "CMC 2-ROW MALT",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 1.85,
+    "notes": "The perfect base malt for all beer styles. Excellent fermentability. High extract."
+  },
+  "cmc-6-row-malt": {
+    "id": "cmc-6-row-malt",
+    "name": "CMC 6-Row Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.19,
+    "notes": "Higher enzyme content. Ideal for use in conjunction with adjuncts. Excellent base malt for wheat beer."
+  },
+  "coffee-mroost-450-md": {
+    "id": "coffee-mroost-450-md",
+    "name": "Coffee Mroost 450 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 170,
+    "notes": "Nutty, Coffee beans"
+  },
+  "crystal-15-malt": {
+    "id": "crystal-15-malt",
+    "name": "Crystal 15 Malt",
+    "maltster": "Great Western",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 11.63,
+    "notes": "Great Western Malting’s crystal malts are created inside custom-designed roasting drums in order to develop a full, rich sensory profile. Pacific Northwest barley is carefully selected to craft a line of malts that provide a range of flavors from soft and sweet caramel to dark toffee."
+  },
+  "crystal-dark": {
+    "id": "crystal-dark",
+    "name": "Crystal Dark",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 100.5,
+    "notes": "Raisins, Toffee Sweetness, Burnt Caramel"
+  },
+  "crystal-dark-medium": {
+    "id": "crystal-dark-medium",
+    "name": "Crystal Dark Medium",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 76.5,
+    "notes": "Dark Caramel, Hints of Toffee"
+  },
+  "crystal-extra-dark": {
+    "id": "crystal-extra-dark",
+    "name": "Crystal Extra Dark",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 177.5,
+    "notes": "Raisins, Christmas Cake"
+  },
+  "crystal-light": {
+    "id": "crystal-light",
+    "name": "Crystal Light",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 39.5,
+    "notes": "Nutty, Dried Fruit, Biscuit"
+  },
+  "crystal-malt": {
+    "id": "crystal-malt",
+    "name": "Crystal Malt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 61.46,
+    "notes": "This malt brings light amber colour and toffee/caramel sweetness. It enhances malt backbone in ales and bitters with subtle caramel character."
+  },
+  "crystal-medium": {
+    "id": "crystal-medium",
+    "name": "Crystal Medium",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 67,
+    "notes": "Pronounced Caramel, Toffee Sweetness"
+  },
+  "crystal-oat-malt": {
+    "id": "crystal-oat-malt",
+    "name": "Crystal Oat Malt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.5,
+    "color_lovibond": 36,
+    "notes": "Combines classic oat creaminess with sweet, caramelised sugar. Adds body and a toffee, silky finish—great for mouthfeel and colour in modern ales."
+  },
+  "crystal-red-malt": {
+    "id": "crystal-red-malt",
+    "name": "Crystal Red Malt",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 200,
+    "notes": "Pronounced caramel, burnt sugar, raisiny, prunes"
+  },
+  "crystal-rye-malt": {
+    "id": "crystal-rye-malt",
+    "name": "Crystal Rye Malt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 70,
+    "notes": "Distinctive and aromatic, Crystal Rye delivers toffee sweetness with aniseed and liquorice tones. Adds spice and colour to rye-forward recipes."
+  },
+  "crystal-t50": {
+    "id": "crystal-t50",
+    "name": "Crystal T50™",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 50.5,
+    "notes": "Honey, Mild Toffee, Delicate Malty Notes"
+  },
+  "crystal-wheat-malt": {
+    "id": "crystal-wheat-malt",
+    "name": "Crystal Wheat Malt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 60,
+    "notes": "Slightly drier than its barley counterpart, this wheat crystal adds head retention with deep caramel/toffee tones. A unique twist for wheat beers and stouts."
   },
   "dark-chocolate-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 420.0,
     "id": "dark-chocolate-malt",
     "name": "Dark Chocolate Malt",
-    "notes": "Deeply roasted malt delivering intense dark chocolate, espresso, and opaque black color.",
-    "yield_fraction": 0.58
-  },
-  "dark-wheat-malt": {
-    "category": "BASE",
-    "color_lovibond": 7.5,
-    "id": "dark-wheat-malt",
-    "name": "Dark Wheat Malt",
-    "notes": "Kilned malted wheat for dunkelweizens and dark ales, contributing bready bread-crust tones and creamy body.",
-    "yield_fraction": 0.8
-  },
-  "debittered-black-malt": {
+    "maltster": "Briess",
     "category": "ROASTED",
-    "color_lovibond": 500.0,
-    "id": "debittered-black-malt",
-    "name": "Debittered Black Malt",
-    "notes": "Husk-stripped black malt providing deep pitch-black color without bitter astringent bite.",
-    "yield_fraction": 0.55
+    "yield_fraction": 0.6,
+    "color_lovibond": 430,
+    "notes": "Rich smooth coffee"
   },
-  "diastatic-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "diastatic-malt",
-    "name": "Diastatic Malt",
-    "notes": "Super high-enzyme malt engineered to convert high fractions of unmalted adjuncts in the mash.",
-    "yield_fraction": 0.78
+  "dark-crystal-crystal-400": {
+    "id": "dark-crystal-crystal-400",
+    "name": "Dark Crystal (Crystal 400)",
+    "maltster": "Crisp",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.715,
+    "color_lovibond": 169.5,
+    "notes": "Well-rounded flavour profile dominated by treacle toffee aromas; An initial hit of roasted notes with hints of dried fruits"
   },
-  "diastatic-wheat-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "diastatic-wheat-malt",
-    "name": "Diastatic Wheat Malt",
-    "notes": "Malted wheat optimized for exceptionally high alpha and beta amylase enzymatic potency.",
-    "yield_fraction": 0.8
+  "dark-crystal-malt": {
+    "id": "dark-crystal-malt",
+    "name": "Dark Crystal Malt",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 78.07,
+    "notes": "Imparts toffee, caramel, sweet, nutty, stewed fruit, treacle, raisin flavours and red hues especially with the darker versions."
   },
-  "emmer-malt": {
+  "dark-munich-malt": {
+    "id": "dark-munich-malt",
+    "name": "Dark Munich Malt",
+    "maltster": "Crisp",
     "category": "BASE",
-    "color_lovibond": 4.0,
-    "id": "emmer-malt",
-    "name": "Emmer Malt",
-    "notes": "Ancient farro grain malt providing deep golden color and rustic nutty breadiness.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.78,
+    "color_lovibond": 17,
+    "notes": "Rich toasted bread aromas; Balanced malty sweetness"
   },
-  "extra-dark-wheat-malt": {
+  "dextra-pils": {
+    "id": "dextra-pils",
+    "name": "Dextra Pils®",
+    "maltster": "Great Western",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 1.67,
+    "notes": "Dextra Pils® malt utilizes a unique process to gelatinize the starch within the kernel. This malt will contribute additional body and foam stability without influencing color or flavor."
+  },
+  "dextrin-malt": {
+    "id": "dextrin-malt",
+    "name": "Dextrin Malt",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 1.85,
+    "notes": "Dextrin malt can be used to improve foam formation and stability whilst adding body, mouthfeel and palate fullness."
+  },
+  "dextrin-md": {
+    "id": "dextrin-md",
+    "name": "Dextrin MD",
+    "maltster": "Dingemans",
     "category": "BASE",
-    "color_lovibond": 18.0,
-    "id": "extra-dark-wheat-malt",
-    "name": "Extra Dark Wheat Malt",
-    "notes": "Intensely kilned dark wheat malt imparting deep brown highlights and complex toasty aromas.",
-    "yield_fraction": 0.78
+    "yield_fraction": 0.7,
+    "color_lovibond": 1.9,
+    "notes": "Zacht moutig, licht zoet"
+  },
+  "distillers-malt": {
+    "id": "distillers-malt",
+    "name": "Distillers Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.4,
+    "notes": "Grainy, grassy, fresh cucumber"
+  },
+  "distillers-malt-flour": {
+    "id": "distillers-malt-flour",
+    "name": "Distillers Malt Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.4,
+    "notes": "Grainy, grassy, fresh cucumber"
+  },
+  "distilling-malt": {
+    "id": "distilling-malt",
+    "name": "Distilling Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 1.85,
+    "notes": "Clean, crisp, fresh spirit character"
+  },
+  "euro-pils-malt": {
+    "id": "euro-pils-malt",
+    "name": "Euro-Pils Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 1.93,
+    "notes": "Low in protein High in extract European Pilsner modification"
+  },
+  "export-pale-brown": {
+    "id": "export-pale-brown",
+    "name": "Export Pale Brown",
+    "maltster": "Simpsons",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 40.5,
+    "notes": "Dry Cocoa, Subtle Coffee, Toasty"
+  },
+  "extra-dark-crystal-malt": {
+    "id": "extra-dark-crystal-malt",
+    "name": "Extra Dark Crystal Malt",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 111.29,
+    "notes": "Imparts toffee, caramel, sweet, nutty, stewed fruit, treacle, raisin flavours and red hues especially with the darker versions."
+  },
+  "extra-light-crystal-crystal-100": {
+    "id": "extra-light-crystal-crystal-100",
+    "name": "Extra Light Crystal (Crystal 100)",
+    "maltster": "Crisp",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.718,
+    "color_lovibond": 42,
+    "notes": "Strong caramel aromas; Delicate fresh fruit undertones"
   },
   "extra-pale-ale-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.5,
     "id": "extra-pale-ale-malt",
     "name": "Extra Pale Ale Malt",
-    "notes": "Lightened pale ale malt tailored for modern hazy IPAs and delicate blonde ales.",
-    "yield_fraction": 0.81
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.67,
+    "notes": "Imparts a golden colour and rich malty flavour notes."
+  },
+  "extra-pale-maris-otter-malt": {
+    "id": "extra-pale-maris-otter-malt",
+    "name": "Extra Pale Maris Otter® Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.806,
+    "color_lovibond": 1.7,
+    "notes": "Subtle sweetness; Bold grainy aromas; Balanced with malt bread notes"
+  },
+  "extra-special-malt": {
+    "id": "extra-special-malt",
+    "name": "Extra Special Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.73,
+    "color_lovibond": 130,
+    "notes": "Toasted marshmallow, toast, mild coffee, prunes, dry, woody"
+  },
+  "finest-lager-malt": {
+    "id": "finest-lager-malt",
+    "name": "Finest Lager Malt",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 1.9,
+    "notes": "Light Malty, Fresh"
+  },
+  "finest-maris-otter-ale-malt": {
+    "id": "finest-maris-otter-ale-malt",
+    "name": "Finest Maris Otter® Ale Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.806,
+    "color_lovibond": 2.8,
+    "notes": "Wonderfully sweet malt; Notes of baked bread and light toffee"
+  },
+  "finest-pale-ale-golden-promise": {
+    "id": "finest-pale-ale-golden-promise",
+    "name": "Finest Pale Ale Golden Promise®™",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 2.45,
+    "notes": "Light Malty"
+  },
+  "finest-pale-ale-maris-otter": {
+    "id": "finest-pale-ale-maris-otter",
+    "name": "Finest Pale Ale Maris Otter",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 2.45,
+    "notes": "Rich Malty"
+  },
+  "finest-pot-still-golden-promise": {
+    "id": "finest-pot-still-golden-promise",
+    "name": "Finest Pot Still Golden Promise®",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.792,
+    "color_lovibond": 0,
+    "notes": "Finest Pot Still Golden Promise is a distilling malt produced from heritage UK two-row barley variety Golden Promise.\n\nGolden Promise is renowned for its distinctively sweet, full-bodied flavour and unique balance of consistency and efficiency, making this product ideal for whisky distillers seeking"
   },
   "flaked-barley": {
-    "category": "BASE",
-    "color_lovibond": 1.5,
     "id": "flaked-barley",
     "name": "Flaked Barley",
-    "notes": "Unmalted rolled barley flakes providing protein and beta-glucans for dense, creamy head retention and grainy body.",
-    "yield_fraction": 0.7
-  },
-  "flaked-corn": {
+    "maltster": "Simpsons",
     "category": "BASE",
-    "color_lovibond": 0.8,
-    "id": "flaked-corn",
-    "name": "Flaked Corn",
-    "notes": "Lightens body and color while contributing subtle sweet corn flavor in American lagers, cream ales, and pre-prohibition styles.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.83,
+    "color_lovibond": 1.7,
+    "notes": "Creamy"
+  },
+  "flaked-barley-malt": {
+    "id": "flaked-barley-malt",
+    "name": "Flaked Barley Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.64,
+    "color_lovibond": 1.97,
+    "notes": "Unmalted and gelatinised, flaked barley boosts body and head retention while lending a smooth cereal note. Widely used in stouts and cream ales."
+  },
+  "flaked-maize-malt": {
+    "id": "flaked-maize-malt",
+    "name": "Flaked Maize Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.75,
+    "color_lovibond": 1.97,
+    "notes": ""
   },
   "flaked-oats": {
-    "category": "BASE",
-    "color_lovibond": 1.0,
     "id": "flaked-oats",
     "name": "Flaked Oats",
-    "notes": "Pre-gelatinized rolled oats. Imparts creamy mouthfeel, silky body, and haze stability in NEIPAs and oatmeal stouts.",
-    "yield_fraction": 0.8
-  },
-  "flaked-quinoa": {
+    "maltster": "Simpsons",
     "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "flaked-quinoa",
-    "name": "Flaked Quinoa",
-    "notes": "Gluten-free pseudocereal flakes adding nutty flavor, light body, and amino acid nutrition.",
-    "yield_fraction": 0.74
-  },
-  "flaked-rice": {
-    "category": "BASE",
-    "color_lovibond": 0.5,
-    "id": "flaked-rice",
-    "name": "Flaked Rice",
-    "notes": "Lightens body, alcohol perception, and color to maximum dryness in Japanese dry lagers and American light lagers.",
-    "yield_fraction": 0.82
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.7,
+    "notes": "Neutral"
   },
   "flaked-rye": {
-    "category": "BASE",
-    "color_lovibond": 2.0,
     "id": "flaked-rye",
     "name": "Flaked Rye",
-    "notes": "Gelatinized rye flakes contributing sharp spicy character and full, chewy viscosity to the wort.",
-    "yield_fraction": 0.78
-  },
-  "flaked-spelt": {
+    "maltster": "Canada Malting",
     "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "flaked-spelt",
-    "name": "Flaked Spelt",
-    "notes": "Rustic unmalted ancient grain flakes enhancing foam and gentle nutty complexity.",
-    "yield_fraction": 0.78
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Produced with cutting-edge cooking technology our Flaked Rye is made in a 100% stainless steel facility using traditional steam and electric heat in multi-step precision recipes. All our Premier  Adjuncts are optimized for flavour, mouthfeel, and brewhouse flexibility."
+  },
+  "flaked-torrefied-barley": {
+    "id": "flaked-torrefied-barley",
+    "name": "Flaked Torrefied Barley",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.814,
+    "color_lovibond": 0,
+    "notes": "Slightly more harsh flavour/bite than Torrefied Wheat"
+  },
+  "flaked-torrefied-maize": {
+    "id": "flaked-torrefied-maize",
+    "name": "Flaked Torrefied Maize",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.865,
+    "color_lovibond": 0,
+    "notes": "Corn flakes; Corn"
+  },
+  "flaked-torrefied-oats": {
+    "id": "flaked-torrefied-oats",
+    "name": "Flaked Torrefied Oats",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.772,
+    "color_lovibond": 0,
+    "notes": "Smooth; creamy mouthfeel"
+  },
+  "flaked-torrefied-rice": {
+    "id": "flaked-torrefied-rice",
+    "name": "Flaked Torrefied Rice",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.806,
+    "color_lovibond": 0,
+    "notes": "Dryness; Crisp finish"
   },
   "flaked-wheat": {
-    "category": "BASE",
-    "color_lovibond": 1.6,
     "id": "flaked-wheat",
     "name": "Flaked Wheat",
-    "notes": "Essential for Belgian witbiers. Enhances mouthfeel, cloudiness, and clean cereal grain sweetness.",
-    "yield_fraction": 0.78
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 1.7,
+    "notes": "Neutral"
+  },
+  "food-grade-malt": {
+    "id": "food-grade-malt",
+    "name": "FOOD GRADE MALT",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.26,
+    "notes": "Kilned at lower temperatures than base malts. Slightly higher moisture to help preserve enzymes. Higher Protein and lower colour. Good for Bakery, flour production, good in mixes or 100% blend."
+  },
+  "gambrinus-bc-pale-malt": {
+    "id": "gambrinus-bc-pale-malt",
+    "name": "Gambrinus BC Pale Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 2.2,
+    "notes": "Made from British Columbia-grown barley, this 2-row European-style pale ale malt is an outstanding base for craft brewers and distillers everywhere. With its characteristic blend of mellow fresh grain, sweet cookie, bread, honey, green tea, and graham cracker flavours, this region-specific malt adds"
+  },
+  "gambrinus-bc-pilsner-malt": {
+    "id": "gambrinus-bc-pilsner-malt",
+    "name": "Gambrinus BC Pilsner Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.71,
+    "notes": "Processed from the finest British Columbia two-row barley, this very low protein base malt is versatile in a wide range of beer styles. Expect delicate flavours of fresh barley, grain, honey, and bread, along with distinctive nutty character and suggestions of vanilla when used as the base for class"
+  },
+  "gambrinus-chit-malt": {
+    "id": "gambrinus-chit-malt",
+    "name": "Gambrinus Chit Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.6,
+    "color_lovibond": 1.37,
+    "notes": "Malted in Canada, Gambrinus Chit Malt is your North American solution for enhanced foam, body, and haze retention.\n\nGambrinus Chit Malt is lightly modified and kilned to a low colour, so it retains the high molecular weight proteins that positively impact beer foam, body, and haze without influencin"
+  },
+  "gambrinus-esb-pale-malt": {
+    "id": "gambrinus-esb-pale-malt",
+    "name": "Gambrinus ESB Pale Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 3,
+    "notes": "Our ‘Extra Special British’ Pale malt is malted for brewers seeking the unique flavour imparted by British Pale Malt. Gambrinus has modified its malting process to give you a distinctive malt traditionally found only on the British Isles. As you’d expect from the name, our ESB Pale Malt is ideal for"
+  },
+  "gambrinus-honey-malt": {
+    "id": "gambrinus-honey-malt",
+    "name": "Gambrinus Honey Malt®",
+    "maltster": "Gambrinus",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 19,
+    "notes": "Honey malt is the best description for European malt known as ‘Brühmalz’. Its intense malty sweetness makes it perfect for any specialty beer. This highly versatile, multifaceted malt brings flavours of honey, bread crust, toast, pretzel, grain, and a hint of tartness. Great for adding depth and com"
+  },
+  "gambrinus-honey-malted-oats": {
+    "id": "gambrinus-honey-malted-oats",
+    "name": "Gambrinus Honey Malted Oats",
+    "maltster": "Gambrinus",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 3.9,
+    "notes": "Use Gambrinus Honey Malted Oats to impart unique flavour along with texture to hazy IPAs, or to add nuance and depth to oatmeal stout, brown ale, and other malt-driven styles. Look for bready, grainy, and sweet flavour notes with rich body and silky mouthfeel. Honey Malted Oats are husked – no need "
+  },
+  "gambrinus-ipa-malt": {
+    "id": "gambrinus-ipa-malt",
+    "name": "Gambrinus IPA Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.79,
+    "color_lovibond": 2.2,
+    "notes": "Gambrinus IPA Malt possesses an elusive colour falling between very pale pilsner and golden pale ale malt. Tailormade to complement contemporary West Coast IPAs, it provides balancing sweetness and body in the presence of piney, juicy, and tropical hop profiles. Delivering a delicate profile of bread, toast, grain, and slight nuttiness, Gambrinus IPA Malt is a workhorse base malt.\n\nProduct Information Sheet"
+  },
+  "gambrinus-mars-malt": {
+    "id": "gambrinus-mars-malt",
+    "name": "Gambrinus Mars Malt®",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.79,
+    "color_lovibond": 10.9,
+    "notes": "Developed for crafting rich, flavourful beers with red colour, Gambrinus Mars Malt delivers mild malt sweetness and extraterrestrial versatility wherever you put it to use. Whether ® We designed Mars Malt to yield a brilliant red wort at 12°P when used as 100% of the grist. you’re brewing an Irish Red, a roasty M ä rzen , a brilliant Amber, or a big Barley Wine, roll out the red carpet with Gambrinus Mars Malt . ®\n\nINFO SHEET"
+  },
+  "gambrinus-munich-dark": {
+    "id": "gambrinus-munich-dark",
+    "name": "Gambrinus Munich Dark",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 24.55,
+    "notes": "A very deeply-kilned Munich malt that combines the colour and flavour characteristics of roasted malt with the mellowness of Munich malt. As up to 30% of the grain bill for dark lagers, Altbier, Doppelbock, dark Belgian beers, and brown or red ales, Gambrinus Munich Dark 30L adds a gorgeous red colo"
+  },
+  "gambrinus-munich-light": {
+    "id": "gambrinus-munich-light",
+    "name": "Gambrinus Munich Light",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 9.05,
+    "notes": "Seeking a well-balanced malty beer? This plump, sweet, and mellow Munich malt delivers impressions of toast, pretzel, toffee, and caramel, with nutty and cereal grain background notes. Ideal as the base malt for amber or red ales, Altbier, Scottish ales, and traditional Bavarian lagers; we also reco"
+  },
+  "gambrinus-organic-munich-light": {
+    "id": "gambrinus-organic-munich-light",
+    "name": "Gambrinus Organic Munich Light",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 9.05,
+    "notes": "Seeking a well-balanced malty beer? This plump, sweet and mellow Munich malt delivers impressions of bread crust, toast, pretzel, toffee, and caramel with woody background notes. Ideal as the base malt for organic versions of amber or red ales, Altbier, Scottish ales, and traditional Bavarian lagers"
+  },
+  "gambrinus-organic-pale-malt": {
+    "id": "gambrinus-organic-pale-malt",
+    "name": "Gambrinus Organic Pale Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.19,
+    "notes": "Our plump 2-row European-style pale ale malt is an outstanding base for any craft beer. Processed from premium Canadian 2-row barley. Gambrinus Organic Pale Malt is known for its honey and bready character with background notes of fresh barley, grain, brown sugar, green tea, and graham cracker. Use "
+  },
+  "gambrinus-organic-pilsner-malt": {
+    "id": "gambrinus-organic-pilsner-malt",
+    "name": "Gambrinus Organic Pilsner Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.71,
+    "notes": "Processed from the finest Canadian 2-row available, this very low protein organic base malt is versatile in a wide range of organic beer styles. Expect delicate flavours of sugar cookie, grain, honey, and bread along with distinctive nutty character and suggestions of fresh barley when used as the b"
+  },
+  "gambrinus-organic-wheat-malt": {
+    "id": "gambrinus-organic-wheat-malt",
+    "name": "Gambrinus Organic Wheat Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 2.33,
+    "notes": "Our plump, malted soft white wheat is of low protein. At an inclusion rate of up to 10%, Gambrinus Organic Wheat Malt can be an additional source for body and head retention with minimal flavour contribution in any formulation. When it comprises a higher percentage of the grist for American wheat or"
+  },
+  "gambrinus-pale-malt": {
+    "id": "gambrinus-pale-malt",
+    "name": "Gambrinus Pale Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.15,
+    "notes": "Our plump 2-row European-style pale ale malt is the base for all beers, and is processed from premium Canadian 2-row barley. Gambrinus Pale Malt is known for its fresh barley and bready character with background notes of biscuit, grain, honey, and hints of nutty and green tea flavour. Use for styles"
+  },
+  "gambrinus-pilsner-malt": {
+    "id": "gambrinus-pilsner-malt",
+    "name": "Gambrinus Pilsner Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.65,
+    "notes": "Processed from the finest Canadian two-row available, this very low protein base malt is versatile in a wide range of beer styles. Expect delicate flavours of fresh barley, grain, honey, and bread, along with distinctive nutty character and suggestions of vanilla when used as the base for classic Pi"
+  },
+  "gambrinus-rye-malt": {
+    "id": "gambrinus-rye-malt",
+    "name": "Gambrinus Rye Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.95,
+    "notes": "Our Rye Malt is a welcome addition to a wide range of beer styles and spirit mashbills, where it supplies spicy, grainy, and bready notes with suggestions of vanilla and sweet dough, as well as enhanced mouthfeel. Brewers love the subtle cracked-pepper spiciness that even small percentages of this m"
+  },
+  "gambrinus-vienna-malt": {
+    "id": "gambrinus-vienna-malt",
+    "name": "Gambrinus Vienna Malt",
+    "maltster": "Gambrinus",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 5,
+    "notes": "This mellow kilned malt is the missing link between a Pale and Munich malt. It is ideal for any amber beer, adding a balanced malty character with strong suggestions of honey, toffee, and caramel. Use at up to 100% for traditional Vienna, Märzen, and other amber beer styles, or as a smaller fraction"
+  },
+  "german-pilsen-malt": {
+    "id": "german-pilsen-malt",
+    "name": "German Pilsen Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.793,
+    "color_lovibond": 1.9,
+    "notes": "Strong bready aromas; Palatable, grainy earthiness"
   },
   "golden-naked-oats": {
-    "category": "CRYSTAL",
-    "color_lovibond": 10.0,
     "id": "golden-naked-oats",
-    "name": "Golden Naked Oats",
-    "notes": "Crystal malted huskless oats. Imparts creamy silkiness, nutty sweetness, and toffee highlights.",
-    "yield_fraction": 0.72
+    "name": "Golden Naked Oats®™",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.7,
+    "color_lovibond": 7.25,
+    "notes": "Creamy, Nutty, Breakast Cereal Bar"
   },
   "golden-promise-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.8,
     "id": "golden-promise-malt",
     "name": "Golden Promise Malt",
-    "notes": "Scottish spring barley variety with sweet, clean, full-bodied malt sweetness. Common in Scotch ales and IPAs.",
-    "yield_fraction": 0.81
-  },
-  "green-malt": {
+    "maltster": "Bairds",
     "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "green-malt",
-    "name": "Green Malt",
-    "notes": "Germinated unkilned malt with high moisture and fresh grassy enzymatic characteristics.",
-    "yield_fraction": 0.65
+    "yield_fraction": 0.79,
+    "color_lovibond": 1.85,
+    "notes": "Imparts light golden colour and sweet wort flavours"
   },
-  "honey-malt": {
+  "golden-promise-pale-ale-malt": {
+    "id": "golden-promise-pale-ale-malt",
+    "name": "Golden Promise Pale Ale Malt",
+    "maltster": "Fawcett",
     "category": "BASE",
-    "color_lovibond": 25.0,
-    "id": "honey-malt",
-    "name": "Honey Malt",
-    "notes": "Brumalt style malt imparting intense sweet honey, graham cracker, and toasted grain character in small doses.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.8,
+    "notes": "A heritage spring barley with a rich legacy, Golden Promise brings soft sweetness and full body. Perfectly suited for cask ales and hop-forward beers where its gentle maltiness supports bold flavours."
   },
-  "light-coffee-malt": {
+  "goldpils-vienna-malt": {
+    "id": "goldpils-vienna-malt",
+    "name": "Goldpils Vienna Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 3.5,
+    "notes": "Rich malty; hints of biscuity notes; finishes exceptionally clean"
+  },
+  "halcyon-pale-ale-malt": {
+    "id": "halcyon-pale-ale-malt",
+    "name": "Halcyon Pale Ale Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.8,
+    "notes": "It became popular in the UK during the 1980s due to its excellent agronomic qualities of good disease resistance and relatively high yields, as well as its homogeneity, which ensured its excellent performance in the malt house. Halcyon gives the beer a pleasant malty/biscuit component resulting in a"
+  },
+  "hana-heritage-malt": {
+    "id": "hana-heritage-malt",
+    "name": "Haná Heritage Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.767,
+    "color_lovibond": 1.7,
+    "notes": "Freshly baked bread; Clean and smooth"
+  },
+  "heavily-peated-malt": {
+    "id": "heavily-peated-malt",
+    "name": "Heavily Peated Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 1.85,
+    "notes": "Phenol levels of 25 – 50 ppm impart peated character to final distilled spirit"
+  },
+  "heritage-gold-malt": {
+    "id": "heritage-gold-malt",
+    "name": "Heritage Gold™ Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.75,
+    "color_lovibond": 3.8,
+    "notes": "Complex bread character, with notes of honey, biscuit, and floral"
+  },
+  "heritage-select-malt": {
+    "id": "heritage-select-malt",
+    "name": "Heritage Select Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.19,
+    "notes": "Heritage Select Malt is produced using an heirloom Blue Aleurone 6 Row barley variety called Olli. This malt has a delicate flavor, full of malting sweetness and a touch more colour than modern Pils malt. Perfect match for lighter German-style beers."
+  },
+  "high-diastatic-power-hdp-malt": {
+    "id": "high-diastatic-power-hdp-malt",
+    "name": "High Diastatic Power (Hdp) Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Neutral flavour"
+  },
+  "high-enzyme-distilling-malt": {
+    "id": "high-enzyme-distilling-malt",
+    "name": "High Enzyme Distilling Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Lightly kilned to preserve enzymes so not typically used for flavour as it can impart grassy, grainy and sulphurous (high DMS) notes."
+  },
+  "high-enzyme-malt": {
+    "id": "high-enzyme-malt",
+    "name": "High-Enzyme Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.93,
+    "notes": "The high enzyme levels of our High-Enzyme Malt allow for efficient alcohol production without compromising the essential\nand sometimes subtle flavors in your distillate."
+  },
+  "imperial-malt": {
+    "id": "imperial-malt",
+    "name": "Imperial Malt",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.75,
+    "color_lovibond": 17.5,
+    "notes": "Biscuit Dry Sweetness (Honey/Plums), Bread Crust"
+  },
+  "karrewheat-77-md": {
+    "id": "karrewheat-77-md",
+    "name": "Karrewheat 77 MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 30,
+    "notes": "Sweet aroma, light caramel with notes of warm bread, cookies and toffee"
+  },
+  "lager-malt": {
+    "id": "lager-malt",
+    "name": "Lager Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.67,
+    "notes": "Imparts light golden colour and sweet wort flavours"
+  },
+  "lager-pilsner-malt": {
+    "id": "lager-pilsner-malt",
+    "name": "Lager / Pilsner Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.9,
+    "notes": "Low colour, high performance. This malt is fully modified, gently kilned for pale beers where a clean base is essential. Ideal for lagers and hop-forward ales where malt character is subtle but refined."
+  },
+  "light-caramalt": {
+    "id": "light-caramalt",
+    "name": "Light Caramalt",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 11.63,
+    "notes": "Imparts sweet, toffee, caramel, burnt sugar, raisin flavours and a golden light flavour."
+  },
+  "light-crystal": {
+    "id": "light-crystal",
+    "name": "Light Crystal",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 41.16,
+    "notes": "Imparts toffee, caramel, sweet, nutty, stewed fruit, treacle, raisin flavours and red hues especially with the darker versions."
+  },
+  "light-crystal-crystal-150": {
+    "id": "light-crystal-crystal-150",
+    "name": "Light Crystal (Crystal 150)",
+    "maltster": "Crisp",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.718,
+    "color_lovibond": 65,
+    "notes": "Deep, rich caramel flavours; Subtle smoky spices aftertastes"
+  },
+  "light-munich-malt": {
+    "id": "light-munich-malt",
+    "name": "Light Munich Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.793,
+    "color_lovibond": 8.85,
+    "notes": "Well-rounded flavour profile; Forward spicy notes; Delicate pastry aromas"
+  },
+  "lighthouse-munich-malt": {
+    "id": "lighthouse-munich-malt",
+    "name": "Lighthouse™ Munich Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 6,
+    "notes": "Clean, bready, slight notes of nutty, pretzel and honey"
+  },
+  "lightly-peated-malt": {
+    "id": "lightly-peated-malt",
+    "name": "Lightly Peated Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 1.85,
+    "notes": "Phenol levels of 2 – 5 ppm impart peated character to final distilled spirit"
+  },
+  "london-lager-malt": {
+    "id": "london-lager-malt",
+    "name": "London Lager Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.808,
+    "color_lovibond": 1.85,
+    "notes": "Provides a malty and honeyed flavour"
+  },
+  "low-color-wheat-malt": {
+    "id": "low-color-wheat-malt",
+    "name": "Low Color Wheat Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.04,
+    "notes": "Low Color Wheat Malt provides a light foundation for wheat beers like Hefeweizens and American Wheats. This malt provides very little color while contributing characteristics of high protein wheat malt that improve head retention, full body, and mouthfeel."
+  },
+  "low-colour-chocolate-malt": {
+    "id": "low-colour-chocolate-malt",
+    "name": "Low Colour Chocolate Malt",
+    "maltster": "Crisp",
     "category": "ROASTED",
-    "color_lovibond": 100.0,
-    "id": "light-coffee-malt",
-    "name": "Light Coffee Malt",
-    "notes": "Lightly kilned coffee malt offering subtle roasted coffee notes without astringent bitterness.",
-    "yield_fraction": 0.7
+    "yield_fraction": 0.72,
+    "color_lovibond": 207.5,
+    "notes": "Distinct roasted aromas; Creamy coffee notes; Intense smoothness and added body"
   },
-  "maize": {
+  "low-colour-golden-promise": {
+    "id": "low-colour-golden-promise",
+    "name": "Low Colour Golden Promise®™",
+    "maltster": "Simpsons",
     "category": "BASE",
-    "color_lovibond": 1.0,
-    "id": "maize",
-    "name": "Maize",
-    "notes": "Unmalted corn providing clean neutral fermentables to lighten body and crisp up pale lagers.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.9,
+    "notes": "Light Malty"
   },
-  "malt-extract": {
+  "low-colour-maris-otter": {
+    "id": "low-colour-maris-otter",
+    "name": "Low Colour Maris Otter",
+    "maltster": "Simpsons",
     "category": "BASE",
-    "color_lovibond": 4.0,
-    "id": "malt-extract",
-    "name": "Malt Extract",
-    "notes": "Concentrated wort extract derived from base barley malt. Used for yeast starters, gravity boosts, or extract brewing.",
-    "yield_fraction": 0.78
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.9,
+    "notes": "Rich Malty"
+  },
+  "malted-oats": {
+    "id": "malted-oats",
+    "name": "Malted Oats",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.59,
+    "color_lovibond": 2.1,
+    "notes": "Creamy, Porridge Oat"
+  },
+  "malted-rye": {
+    "id": "malted-rye",
+    "name": "Malted Rye",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.8,
+    "notes": "Spicy"
+  },
+  "malted-rye-flour": {
+    "id": "malted-rye-flour",
+    "name": "Malted Rye Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 3.7,
+    "notes": "Clean, sweet, mild malty"
+  },
+  "maris-otter-blend": {
+    "id": "maris-otter-blend",
+    "name": "Maris Otter Blend",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 2.41,
+    "notes": "Imparts sweet, complex biscuit type notes to Best Ale type beers"
+  },
+  "maris-otter-finest-ale-malt": {
+    "id": "maris-otter-finest-ale-malt",
+    "name": "Maris Otter Finest Ale Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.813,
+    "color_lovibond": 2.41,
+    "notes": "Imparts sweet, complex biscuit type notes to Best Ale type beers"
+  },
+  "maris-otter-low-colour-ale-malt": {
+    "id": "maris-otter-low-colour-ale-malt",
+    "name": "Maris Otter Low Colour Ale Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.9,
+    "notes": "Revered since the 1960s, it’s ideal for cask ales and infusion mashing, offering classic English ale character with unrivalled depth and flavour. Maris Otter was the dominant barley variety in the 1970’s, and remained on the NIAB Recommended list until 1989. It is typically low in nitrogen (protein)"
   },
   "maris-otter-malt": {
-    "category": "BASE",
-    "color_lovibond": 3.0,
     "id": "maris-otter-malt",
     "name": "Maris Otter Malt",
-    "notes": "Celebrated traditional British heritage barley variety renowned for deep rich nutty and cracker complexity.",
-    "yield_fraction": 0.81
-  },
-  "melanoidin-malt": {
+    "maltster": "Bairds",
     "category": "BASE",
-    "color_lovibond": 28.0,
-    "id": "melanoidin-malt",
-    "name": "Melanoidin Malt",
-    "notes": "Promotes deep red color, velvety mouthfeel, and rich decoction-like maltiness in lagers and bocks.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.41,
+    "notes": "Imparts sweet, complex biscuit type notes to Best Ale type beers"
+  },
+  "maris-otter-md": {
+    "id": "maris-otter-md",
+    "name": "Maris Otter MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2,
+    "notes": "Slightly nutty and biscuity flavour"
+  },
+  "maris-otter-pale-ale-malt": {
+    "id": "maris-otter-pale-ale-malt",
+    "name": "Maris Otter Pale Ale Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.8,
+    "notes": "Made from heritage two-row Maris Otter barley and traditionally floor malted, this iconic malt imparts rich, sweet malty and toffee notes."
+  },
+  "maritime-malt": {
+    "id": "maritime-malt",
+    "name": "Maritime Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.66,
+    "notes": "Grown in Western New Brunswick. Unique terroir adds extra body to malt. Great for all types of Ales."
+  },
+  "medium-caramalt": {
+    "id": "medium-caramalt",
+    "name": "Medium Caramalt",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 25.29,
+    "notes": "Imparts sweet, toffee, caramel, burnt sugar, raisin flavours and a golden light flavour."
+  },
+  "medium-crystal": {
+    "id": "medium-crystal",
+    "name": "Medium Crystal",
+    "maltster": "Bairds",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 55.93,
+    "notes": "Imparts toffee, caramel, sweet, nutty, stewed fruit, treacle, raisin flavours and red hues especially with the darker versions."
+  },
+  "medium-crystal-crystal-240": {
+    "id": "medium-crystal-crystal-240",
+    "name": "Medium Crystal (Crystal 240)",
+    "maltster": "Crisp",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.715,
+    "color_lovibond": 102,
+    "notes": "Intense, dark caramel flavour notes; Mellow undertones of spiced coffee and dark fruits"
+  },
+  "medium-peated-malt": {
+    "id": "medium-peated-malt",
+    "name": "Medium Peated Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.815,
+    "color_lovibond": 1.85,
+    "notes": "Phenol levels of 8 – 15 ppm impart peated character to final distilled spirit"
+  },
+  "mela-malt": {
+    "id": "mela-malt",
+    "name": "Mela Malt",
+    "maltster": "Great Western",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 22.71,
+    "notes": "Mela malt is kilned at elevated temperatures to contribute bold, malt forward flavors balanced alongside slightly sweet and toasted notes."
+  },
+  "melanoidin-md": {
+    "id": "melanoidin-md",
+    "name": "Melanoidin MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.78,
+    "color_lovibond": 26.8,
+    "notes": "Enhanced malt aroma"
+  },
+  "midnight-wheat-malt": {
+    "id": "midnight-wheat-malt",
+    "name": "Midnight Wheat Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 550,
+    "notes": "Subtle, smooth, no bitter, astringent, dry flavors or aftertaste, starts slightly sweet, hints of roasted flavor"
   },
   "mild-ale-malt": {
-    "category": "BASE",
-    "color_lovibond": 4.5,
     "id": "mild-ale-malt",
     "name": "Mild Ale Malt",
-    "notes": "High kilned traditional English base malt offering warm toasty bread crust tones for session ales.",
-    "yield_fraction": 0.8
-  },
-  "millet-malt": {
+    "maltster": "Fawcett",
     "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "millet-malt",
-    "name": "Millet Malt",
-    "notes": "Primary gluten-free brewing grain offering mild, crisp, clean cereal profile.",
-    "yield_fraction": 0.7
+    "yield_fraction": 0.8,
+    "color_lovibond": 3.65,
+    "notes": "Rich and darker than standard pale malt, this base delivers a sweet, malty character with deeper colour. It’s perfect for milds and darker ales where malt depth is essential."
   },
-  "munich-dark-malt": {
-    "category": "BASE",
-    "color_lovibond": 15.0,
-    "id": "munich-dark-malt",
-    "name": "Munich Dark Malt",
-    "notes": "Munich Type II. Highly kilned for deep amber to coppery color and pronounced toasted bread crust intensity.",
-    "yield_fraction": 0.78
+  "mroost-1400-md": {
+    "id": "mroost-1400-md",
+    "name": "Mroost 1400 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 530,
+    "notes": "strong coffee, cappuccino and cocoa"
   },
-  "munich-light-malt": {
+  "mroost-900-md": {
+    "id": "mroost-900-md",
+    "name": "Mroost 900 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 340,
+    "notes": "chocolate, cocoa beans, coffee beans"
+  },
+  "mroost-wheat-malt-30-md": {
+    "id": "mroost-wheat-malt-30-md",
+    "name": "Mroost Wheat Malt 30 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 12,
+    "notes": "Hazelnuts and almonds"
+  },
+  "munich-15-md": {
+    "id": "munich-15-md",
+    "name": "Munich 15 MD",
+    "maltster": "Dingemans",
     "category": "BASE",
-    "color_lovibond": 6.0,
-    "id": "munich-light-malt",
-    "name": "Munich Light Malt",
-    "notes": "Munich Type I. Imparts subtle malty sweetness and golden-amber highlights without overwhelming roastiness.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.795,
+    "color_lovibond": 6,
+    "notes": "Pronounced malty"
   },
   "munich-malt": {
-    "category": "BASE",
-    "color_lovibond": 9.0,
     "id": "munich-malt",
     "name": "Munich Malt",
-    "notes": "Rich, melanoidin-dense German malt kilned to develop distinct bready, bread-crust, and biscuit flavors.",
-    "yield_fraction": 0.8
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 8.68,
+    "notes": "Produced in the traditional European method of \"stewing\" germinated 2-Row malt, then kilning at high temperatures. Process provides colour and aromatics without caramel/crystal flavours. Fantastic for Amber and Dark beers."
+  },
+  "naked-oat-malt": {
+    "id": "naked-oat-malt",
+    "name": "Naked Oat Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.65,
+    "color_lovibond": 2.35,
+    "notes": "Creamy; Oaty"
+  },
+  "new-englander-malt": {
+    "id": "new-englander-malt",
+    "name": "New Englander Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.66,
+    "notes": "Grown in Northern Maine. Aromatic with distinctive characteristics. Excellent for all types of Ales."
+  },
+  "no-19-maris-otter-ale-malt": {
+    "id": "no-19-maris-otter-ale-malt",
+    "name": "No 19 Maris Otter® Ale Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Bold bready backbone; Complimentary sweetness; Malty afternotes"
+  },
+  "non-gn-malt": {
+    "id": "non-gn-malt",
+    "name": "Non-GN Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.93,
+    "notes": "Our AMERICAN DISTILLERS Non-GN Malt is a complete package of highly available starches and sugars, with just the right levels of enzymes and other nutrients, resulting in malt with superior spirits yield. Our access to Odyssey, as well as other esteemed non-glycosidic nitrile producing barley varieties (non-GN), allow us to meet the discerning needs of American single malt whiskey producers."
   },
   "oat-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.5,
     "id": "oat-malt",
     "name": "Oat Malt",
-    "notes": "Malted husked oats providing silky texture, enhanced head retention, and delicate nutty flavor.",
-    "yield_fraction": 0.72
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.6,
+    "color_lovibond": 2.41,
+    "notes": "Well modified for excellent milling performance, low Beta-Glucan, and quick Lauters. High Haze for internally cloudy beers. The perfect malt for North-East IPA or Belgian Wit."
+  },
+  "oat-malt-md": {
+    "id": "oat-malt-md",
+    "name": "Oat Malt MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.6,
+    "color_lovibond": 1.6,
+    "notes": "Creamy, breakfast porridge taste"
+  },
+  "ontario-select-malt": {
+    "id": "ontario-select-malt",
+    "name": "Ontario Select Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.66,
+    "notes": "Grown near the Ottawa River Valley in Eastern Ontario. Well modified, and aromatic. Great for all types of Ales."
+  },
+  "organic-2-row-malt": {
+    "id": "organic-2-row-malt",
+    "name": "Organic 2-Row Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.11,
+    "notes": "Currently available for bulk orders only. Grown in the Heartland of Canada by farmers exercising best practices for organics. Malted in at our organic certified Thunder Bay Malt House. Similar characteristics to non-organic 2-Row. Great for all styles of beer."
+  },
+  "organic-biscuit-md": {
+    "id": "organic-biscuit-md",
+    "name": "Organic Biscuit® MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 20,
+    "notes": "Warm bread, cookies"
+  },
+  "organic-brewers-malt": {
+    "id": "organic-brewers-malt",
+    "name": "Organic Brewers Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.1,
+    "notes": "Clean, sweet, mild malty"
+  },
+  "organic-cara-md": {
+    "id": "organic-cara-md",
+    "name": "Organic Cara MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 45,
+    "notes": "Rich caramel with a sweet taste"
+  },
+  "organic-caramel-malt-20l": {
+    "id": "organic-caramel-malt-20l",
+    "name": "Organic Caramel Malt 20L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.76,
+    "color_lovibond": 20,
+    "notes": "Candy-like sweetness, mild caramel"
+  },
+  "organic-caramel-malt-60l": {
+    "id": "organic-caramel-malt-60l",
+    "name": "Organic Caramel Malt 60L",
+    "maltster": "Briess",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.77,
+    "color_lovibond": 60,
+    "notes": "Sweet, pronounced caramel"
+  },
+  "organic-chocolate-malt": {
+    "id": "organic-chocolate-malt",
+    "name": "Organic Chocolate Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 350,
+    "notes": "Rich roasted coffee, cocoa"
+  },
+  "organic-malt": {
+    "id": "organic-malt",
+    "name": "Organic Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Our  Inverness  maltings, situated  in the  heart of the  Highlands, is organic certified which  means we’re able to offer our customers  malt that conforms to the Organic Food Federation (OFF) principles. The production of Organic Malt is important as it supports agricultural sustainability and our"
+  },
+  "organic-mroost-1400-md": {
+    "id": "organic-mroost-1400-md",
+    "name": "Organic Mroost 1400 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 530,
+    "notes": "Strong coffee, cappuccino and cacao"
+  },
+  "organic-munich-md": {
+    "id": "organic-munich-md",
+    "name": "Organic Munich MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.795,
+    "color_lovibond": 6,
+    "notes": "Pronounced malty"
+  },
+  "organic-pale-ale-md": {
+    "id": "organic-pale-ale-md",
+    "name": "Organic Pale Ale MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 3.8,
+    "notes": "Malty"
+  },
+  "organic-pilsen-md": {
+    "id": "organic-pilsen-md",
+    "name": "Organic Pilsen MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.6,
+    "notes": "Mild malty"
+  },
+  "organic-pilsen-md-belgium-origin": {
+    "id": "organic-pilsen-md-belgium-origin",
+    "name": "Organic Pilsen MD Belgium Origin",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.79,
+    "color_lovibond": 1.6,
+    "notes": "Mild malty"
+  },
+  "organic-wheat-malt-md": {
+    "id": "organic-wheat-malt-md",
+    "name": "Organic Wheat Malt MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 1.8,
+    "notes": "Specific fine wheat taste"
+  },
+  "pale-ale-9-md": {
+    "id": "pale-ale-9-md",
+    "name": "Pale Ale 9 MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 3.8,
+    "notes": "Malty"
   },
   "pale-ale-malt": {
-    "category": "BASE",
-    "color_lovibond": 3.5,
     "id": "pale-ale-malt",
     "name": "Pale Ale Malt",
-    "notes": "Fully modified British or American pale malt with rich biscuity, malty complexity for ales.",
-    "yield_fraction": 0.81
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.41,
+    "notes": "Imparts a golden colour and rich malty flavour notes."
+  },
+  "pale-caramalt": {
+    "id": "pale-caramalt",
+    "name": "Pale Caramalt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 6.56,
+    "notes": "Lightly roasted for a pale golden colour, but very sweet, almost honey-like flavour."
   },
   "pale-chocolate": {
-    "category": "ROASTED",
-    "color_lovibond": 220.0,
     "id": "pale-chocolate",
     "name": "Pale Chocolate",
-    "notes": "Lightly roasted chocolate malt with mellow milk chocolate, mocha, and toasted hazelnut nuances.",
-    "yield_fraction": 0.65
+    "maltster": "Simpsons",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 223.5,
+    "notes": "Coffee Beans, Light Roasty"
   },
-  "pale-wheat-malt": {
+  "pale-chocolate-malt": {
+    "id": "pale-chocolate-malt",
+    "name": "Pale Chocolate Malt",
+    "maltster": "Fawcett",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 230,
+    "notes": "Smooth and roasted with coffee tones, this lighter chocolate malt offers mellow roast character and brown colour. Ideal for brown ales and porters."
+  },
+  "pale-crystal-malt": {
+    "id": "pale-crystal-malt",
+    "name": "Pale Crystal Malt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 25,
+    "notes": "Sweet and malty, Pale Crystal adds body and a soft caramel note. Ideal for bitters, pale ales, and session beers needing balance and smooth complexity."
+  },
+  "pale-high-color-malt": {
+    "id": "pale-high-color-malt",
+    "name": "Pale High Color Malt",
+    "maltster": "Great Western",
     "category": "BASE",
-    "color_lovibond": 1.8,
-    "id": "pale-wheat-malt",
-    "name": "Pale Wheat Malt",
-    "notes": "Malted white wheat delivering clean crisp wheat character and high extract potential with low color.",
-    "yield_fraction": 0.83
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.78,
+    "notes": "Pale High Color malt is produced utilizing traditional British kilning practices. This results in a fully functional base malt with rich flavor and deep gold color."
+  },
+  "pealed-roasted-barley-md": {
+    "id": "pealed-roasted-barley-md",
+    "name": "Pealed Roasted Barley MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 450,
+    "notes": "Coffee beans, toffee"
+  },
+  "pearl-pale-ale-malt": {
+    "id": "pearl-pale-ale-malt",
+    "name": "Pearl Pale Ale Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.8,
+    "notes": "A time-tested winter barley with a loyal following. Pearl offers consistency and subtle malt complexity, with blue/grey aleurone character and balanced flavour. Perfect for brewers who value tradition and reliability."
   },
   "peated-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.5,
     "id": "peated-malt",
     "name": "Peated Malt",
-    "notes": "Malt smoked over burning peat bog moss. Delivers earthy, phenolic, medicinal smoke character for Scotch ales.",
-    "yield_fraction": 0.8
-  },
-  "pilsner-light-malt": {
+    "maltster": "Fawcett",
     "category": "BASE",
-    "color_lovibond": 1.4,
-    "id": "pilsner-light-malt",
-    "name": "Pilsner Light Malt",
-    "notes": "Extra pale pilsner malt kilned gently to preserve maximum enzyme activity and very low color.",
-    "yield_fraction": 0.81
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.5,
+    "notes": "Moderately peated with smoky, medicinal phenolics. Traditional in Scotch whisky and bold smoked ales. Use sparingly to add character and intrigue."
   },
-  "pilsner-malt": {
+  "peated-pot-still-malt": {
+    "id": "peated-pot-still-malt",
+    "name": "Peated Pot Still Malt",
+    "maltster": "Crisp",
     "category": "BASE",
-    "color_lovibond": 1.8,
-    "id": "pilsner-malt",
-    "name": "Pilsner Malt",
-    "notes": "Lightest colored European base malt. Delicate sweet, grainy, bready flavor essential for continental lagers.",
-    "yield_fraction": 0.81
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Peat smoke; Phenolic"
+  },
+  "pilsen-malt": {
+    "id": "pilsen-malt",
+    "name": "Pilsen Malt",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 1.5,
+    "notes": "Clean, sweet, delicate malty"
+  },
+  "pilsen-md": {
+    "id": "pilsen-md",
+    "name": "Pilsen MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.6,
+    "notes": "Mild malty"
+  },
+  "pilsen-md-belgium-origin": {
+    "id": "pilsen-md-belgium-origin",
+    "name": "Pilsen MD Belgium Origin",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.6,
+    "notes": "Mild malty"
+  },
+  "pink-boots-malt": {
+    "id": "pink-boots-malt",
+    "name": "Pink Boots Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 1.74,
+    "notes": "The Pink Boots Malt is a seasonal craft base malt product, appropriate for both brewing and distilling. Each year, it will highlight a different barley variety and subtle differences in base malt characteristics. The 2024 Pink Boots Malt features the Odyssey barley variety grown across the Pacific N"
+  },
+  "pot-still-distilling-malt": {
+    "id": "pot-still-distilling-malt",
+    "name": "Pot Still Distilling Malt",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.829,
+    "color_lovibond": 1.7,
+    "notes": "Pot Still Distilling Malt is crafted specifically for whisky production, delivering exceptional spirit yield, consistent performance and a clean, fermentable extract.\n\nOur Pot Still Distilling Malt is produced from the highest quality two-row spring barley procured through our agricultural merchanti"
+  },
+  "premium-english-caramalt": {
+    "id": "premium-english-caramalt",
+    "name": "Premium English Caramalt",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 23,
+    "notes": "Horlicks, Shreddies, Sweet"
+  },
+  "premium-pot-still-malt": {
+    "id": "premium-pot-still-malt",
+    "name": "Premium Pot Still Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Neutral malt flavour"
+  },
+  "premium-two-row-malt": {
+    "id": "premium-two-row-malt",
+    "name": "Premium Two Row Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.04,
+    "notes": "Premium Two Row is produced from Western U.S. barley, this base malt is processed meticulously to create a balanced flavor profile designed to be at the heart of your craft."
+  },
+  "pure-idaho-pilsner-malt": {
+    "id": "pure-idaho-pilsner-malt",
+    "name": "Pure Idaho Pilsner Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.67,
+    "notes": "100% Idaho-grown barley. This unique pilsner malt is fully-modified and gently dried. It contributes a light color and balanced flavor profile designed to be at the heart of your craft."
+  },
+  "pure-oregon-malt": {
+    "id": "pure-oregon-malt",
+    "name": "Pure Oregon Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2,
+    "notes": "100% Oregon-grown barley. This special base malt is fully-modified and gently dried. It contributes a balanced flavor profile designed to be at the heart of your craft."
+  },
+  "pure-washington-malt": {
+    "id": "pure-washington-malt",
+    "name": "Pure Washington Malt",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2,
+    "notes": "100% Washington-grown barley. This special base malt is fully-modified and gently dried. It contributes a balanced flavor profile designed to be at the heart of your craft."
+  },
+  "quebecoise-malt": {
+    "id": "quebecoise-malt",
+    "name": "Québécoise Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 2.66,
+    "notes": "Grown in Southwestern Québec. Slightly higher colour than other pale ale malts. Fantastic for ales and Belgian-styled beers."
+  },
+  "red-crystal-malt": {
+    "id": "red-crystal-malt",
+    "name": "Red Crystal Malt",
+    "maltster": "Fawcett",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.7,
+    "color_lovibond": 150.45,
+    "notes": "A rich, ruby-red colour with pronounced bonfire toffee flavour."
+  },
+  "red-rye-crystal": {
+    "id": "red-rye-crystal",
+    "name": "Red Rye Crystal",
+    "maltster": "Simpsons",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.65,
+    "color_lovibond": 102.5,
+    "notes": "Bread Crust, Malty, Sweet"
+  },
+  "red-wheat-malt": {
+    "id": "red-wheat-malt",
+    "name": "Red Wheat Malt",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 2.78,
+    "notes": "Made with local Malting grade, Hard Red Spring wheat. Great for adding head retention and mouthfeel to most beer styles. Lower colour than our White Wheat Malt means this malt is perfect for low-colour beers. Excellent for European Wheat Beers and North American Hazy IPA’s"
+  },
+  "red-wheat-raw": {
+    "id": "red-wheat-raw",
+    "name": "Red Wheat Raw",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2,
+    "notes": "Wheat flour flavor"
+  },
+  "red-wheat-raw-flour": {
+    "id": "red-wheat-raw-flour",
+    "name": "Red Wheat Raw Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2,
+    "notes": "Wheat flour"
   },
   "rice-hulls": {
-    "category": "BASE",
-    "color_lovibond": 0.0,
     "id": "rice-hulls",
     "name": "Rice Hulls",
-    "notes": "Inert filter aid with zero extract or flavor contribution. Prevents stuck sparges when mashing high wheat, rye, or oat ratios.",
-    "yield_fraction": 0.0
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "No added flavor"
+  },
+  "roast-barley": {
+    "id": "roast-barley",
+    "name": "Roast Barley",
+    "maltster": "Fawcett",
+    "category": "ROASTED",
+    "yield_fraction": 0.685,
+    "color_lovibond": 545,
+    "notes": "Made from unmalted barley and roasted to a dark finish. Delivers strong roast and dry bitterness, essential in classic stouts and Irish-style beers."
+  },
+  "roast-rye-malt": {
+    "id": "roast-rye-malt",
+    "name": "Roast Rye Malt",
+    "maltster": "Fawcett",
+    "category": "ROASTED",
+    "yield_fraction": 0.675,
+    "color_lovibond": 244.14,
+    "notes": "Lower in colour than barley equivalents but with dry biscuit and liquorice tones. Adds spice, depth, and distinct rye sharpness to dark beers."
+  },
+  "roast-wheat-malt": {
+    "id": "roast-wheat-malt",
+    "name": "Roast Wheat Malt",
+    "maltster": "Fawcett",
+    "category": "ROASTED",
+    "yield_fraction": 0.7,
+    "color_lovibond": 325,
+    "notes": "Softer roast flavours than roasted barley with benefits for head retention. Adds colour and complexity to wheat-forward dark ales."
+  },
+  "roasted-barley": {
+    "id": "roasted-barley",
+    "name": "Roasted Barley",
+    "maltster": "Simpsons",
+    "category": "ROASTED",
+    "yield_fraction": 0.62,
+    "color_lovibond": 597,
+    "notes": "Coffee Beans"
   },
   "roasted-barley-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 450.0,
     "id": "roasted-barley-malt",
     "name": "Roasted Barley Malt",
-    "notes": "Unmalted roasted whole barley. Signature component of dry Irish stout, lending distinctive coffee and bitter roasted flavor.",
-    "yield_fraction": 0.55
-  },
-  "roasted-millet-malt": {
+    "maltster": "Crisp",
     "category": "ROASTED",
-    "color_lovibond": 350.0,
-    "id": "roasted-millet-malt",
-    "name": "Roasted Millet Malt",
-    "notes": "Gluten-free roasted alternative grain offering deep color and chocolate-coffee profile.",
-    "yield_fraction": 0.56
-  },
-  "roasted-rye-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 300.0,
-    "id": "roasted-rye-malt",
-    "name": "Roasted Rye Malt",
-    "notes": "Roasted malted rye providing spicy, earthy, dark-chocolate, and coffee nuances.",
-    "yield_fraction": 0.6
-  },
-  "roasted-spelt-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 380.0,
-    "id": "roasted-spelt-malt",
-    "name": "Roasted Spelt Malt",
-    "notes": "Ancient grain roasted malt giving rustic nutty cocoa complexity.",
-    "yield_fraction": 0.6
-  },
-  "roasted-wheat-malt": {
-    "category": "ROASTED",
-    "color_lovibond": 400.0,
-    "id": "roasted-wheat-malt",
-    "name": "Roasted Wheat Malt",
-    "notes": "Roasted huskless wheat. Adds dark color, smooth creamy mouthfeel, and dark chocolate notes to stouts and porters.",
-    "yield_fraction": 0.6
+    "yield_fraction": 0.715,
+    "color_lovibond": 519,
+    "notes": "Deeply roasted; Prominent smoky aromas; Subtle bitterness (at higher %)"
   },
   "rye-malt": {
-    "category": "BASE",
-    "color_lovibond": 3.7,
     "id": "rye-malt",
     "name": "Rye Malt",
-    "notes": "Malted rye grain. Adds distinctive spicy, crisp, earthy rye flavor and velvety mouthfeel.",
-    "yield_fraction": 0.81
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.84,
+    "color_lovibond": 3.7,
+    "notes": "Clean, sweet, mild malty"
   },
-  "salty-caramel-malt": {
+  "rye-malt-md": {
+    "id": "rye-malt-md",
+    "name": "Rye Malt MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 3.2,
+    "notes": "Malty with dry herbal flavour"
+  },
+  "rye-raw": {
+    "id": "rye-raw",
+    "name": "Rye Raw",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 3,
+    "notes": "Dry, spicy rye"
+  },
+  "rye-raw-flour": {
+    "id": "rye-raw-flour",
+    "name": "Rye Raw Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 3,
+    "notes": "Dry, spicy rye"
+  },
+  "scottish-ale-malt": {
+    "id": "scottish-ale-malt",
+    "name": "Scottish Ale Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 1.85,
+    "notes": "Imparts light golden colour and sweet wort flavours"
+  },
+  "scottish-extra-pale-ale-malt": {
+    "id": "scottish-extra-pale-ale-malt",
+    "name": "Scottish Extra Pale Ale Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 1.75,
+    "notes": "Subtle Malt Sweetness"
+  },
+  "scottish-pale-ale-malt": {
+    "id": "scottish-pale-ale-malt",
+    "name": "Scottish Pale Ale Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 2.9,
+    "notes": "Balanced malt sweetness"
+  },
+  "scottish-peated-malt": {
+    "id": "scottish-peated-malt",
+    "name": "Scottish Peated Malt",
+    "maltster": "Crisp",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "Peat smoke; Phenolic"
+  },
+  "simpsons-drc": {
+    "id": "simpsons-drc",
+    "name": "Simpsons DRC®",
+    "maltster": "Simpsons",
     "category": "CRYSTAL",
-    "color_lovibond": 35.0,
-    "id": "salty-caramel-malt",
-    "name": "Salty Caramel Malt",
-    "notes": "Specialty toasted/caramel malt offering savory-sweet caramelized toffee tones.",
-    "yield_fraction": 0.72
+    "yield_fraction": 0.7,
+    "color_lovibond": 112.5,
+    "notes": "Dark Caramel, Subtle Taste of Plums & Raisins"
   },
-  "small-spelt-malt": {
+  "smoked-malt-cherry-wood": {
+    "id": "smoked-malt-cherry-wood",
+    "name": "Smoked Malt, Cherry Wood",
+    "maltster": "Briess",
     "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 5,
+    "notes": "Pronounced smoke, subtle fruity, malty sweet, smooth, clean"
+  },
+  "smoked-malt-cherry-wood-flour": {
+    "id": "smoked-malt-cherry-wood-flour",
+    "name": "Smoked Malt, Cherry Wood Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 5,
+    "notes": "Pronounced smoke, subtle fruity, malty sweet, smooth, clean"
+  },
+  "special-b-md": {
+    "id": "special-b-md",
+    "name": "Special B® MD",
+    "maltster": "Dingemans",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.72,
+    "color_lovibond": 115,
+    "notes": "Heavy caramel taste, raisins, figs and toffee"
+  },
+  "special-roast-malt": {
+    "id": "special-roast-malt",
+    "name": "Special Roast Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.72,
+    "color_lovibond": 40,
+    "notes": "Toasty, biscuity, bran flakes, sourdough, tangy"
+  },
+  "spring-pale-ale-malt": {
+    "id": "spring-pale-ale-malt",
+    "name": "Spring Pale Ale Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.8,
     "color_lovibond": 2.8,
-    "id": "small-spelt-malt",
-    "name": "Small Spelt Malt",
-    "notes": "Einkorn malt. Delicate sweet ancient grain with high protein and silky body.",
-    "yield_fraction": 0.8
+    "notes": "Made from high-quality spring barley like Laureate, this modern malt offers excellent extract potential with a clean, crisp malt profile. Ideal for a broad range of ale styles where consistency and efficiency matter."
   },
-  "smoke-malt": {
+  "superior-pale-ale-malt": {
+    "id": "superior-pale-ale-malt",
+    "name": "Superior Pale Ale Malt",
+    "maltster": "Canada Malting",
     "category": "BASE",
-    "color_lovibond": 2.5,
-    "id": "smoke-malt",
-    "name": "Smoke Malt",
-    "notes": "Barley malt smoked over seasoned beechwood logs. Signature ingredient for Bamberg Rauchbier.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.81,
+    "color_lovibond": 2.78,
+    "notes": "Higher colour than regular base malts. Well modified. Aromatic. Great for all types of Ales."
   },
-  "spelt-malt": {
+  "superior-pilsen-malt": {
+    "id": "superior-pilsen-malt",
+    "name": "Superior Pilsen Malt",
+    "maltster": "Canada Malting",
     "category": "BASE",
-    "color_lovibond": 3.0,
-    "id": "spelt-malt",
-    "name": "Spelt Malt",
-    "notes": "Ancient wheat variety producing soft, nutty, rustic flavor and excellent foam stability.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.81,
+    "color_lovibond": 1.67,
+    "notes": "Produced from hand-selected lots of premium, Canadian-grown Copeland barley. Exclusive to the Canada Malting Calgary Malthouse. Low in protein, and colour. High extract. Balanced modification. Great for Lagers."
   },
-  "stout-malt": {
+  "synergy-select-pilsen-malt": {
+    "id": "synergy-select-pilsen-malt",
+    "name": "Synergy Select Pilsen Malt",
+    "maltster": "Briess",
     "category": "BASE",
-    "color_lovibond": 2.5,
-    "id": "stout-malt",
-    "name": "Stout Malt",
-    "notes": "Irish pale malt kilned specifically to pair with unmalted roasted barley in dry Irish stouts.",
-    "yield_fraction": 0.8
-  },
-  "toffee-malt": {
-    "category": "BASE",
-    "color_lovibond": 12.0,
-    "id": "toffee-malt",
-    "name": "Toffee Malt",
-    "notes": "Specialty malt prepared to enhance body and introduce subtle caramelized toffee notes.",
-    "yield_fraction": 0.74
-  },
-  "torrified-barley-malt": {
-    "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "torrified-barley-malt",
-    "name": "Torrified Barley Malt",
-    "notes": "Popped whole barley grain providing foam stability and grainy character in traditional British bitters.",
-    "yield_fraction": 0.78
-  },
-  "torrified-oats": {
-    "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "torrified-oats",
-    "name": "Torrified Oats",
-    "notes": "Heat-puffed whole oats adding body and smooth mouthfeel.",
-    "yield_fraction": 0.74
-  },
-  "torrified-wheat-malt": {
-    "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "torrified-wheat-malt",
-    "name": "Torrified Wheat Malt",
-    "notes": "Heat-puffed unmalted wheat. Improves head retention and adds clean rustic wheat character without requiring a cereal cook.",
-    "yield_fraction": 0.78
-  },
-  "triticale-malt": {
-    "category": "BASE",
-    "color_lovibond": 3.5,
-    "id": "triticale-malt",
-    "name": "Triticale Malt",
-    "notes": "Wheat-rye hybrid combining the bready smoothness of wheat with the spicy bite of rye.",
-    "yield_fraction": 0.81
-  },
-  "unmalted-barley": {
-    "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "unmalted-barley",
-    "name": "Unmalted Barley",
-    "notes": "Raw barley grain contributing grainy, cereal notes and heavy foam proteins.",
-    "yield_fraction": 0.7
-  },
-  "unmalted-buckwheat": {
-    "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "unmalted-buckwheat",
-    "name": "Unmalted Buckwheat",
-    "notes": "Raw buckwheat for rustic earthy gluten-free brewing.",
-    "yield_fraction": 0.7
-  },
-  "unmalted-emmer": {
-    "category": "BASE",
-    "color_lovibond": 3.0,
-    "id": "unmalted-emmer",
-    "name": "Unmalted Emmer",
-    "notes": "Raw ancient farro kernel for traditional rustic grain beers.",
-    "yield_fraction": 0.78
-  },
-  "unmalted-millet": {
-    "category": "BASE",
-    "color_lovibond": 1.5,
-    "id": "unmalted-millet",
-    "name": "Unmalted Millet",
-    "notes": "Raw millet grains for gluten-free cereal mashes.",
-    "yield_fraction": 0.7
-  },
-  "unmalted-oat": {
-    "category": "BASE",
+    "yield_fraction": 0.83,
     "color_lovibond": 1.8,
-    "id": "unmalted-oat",
-    "name": "Unmalted Oat",
-    "notes": "Raw unmalted oats for rich silkiness and body.",
-    "yield_fraction": 0.7
+    "notes": "Clean, sweet, mild malty"
   },
-  "unmalted-rye": {
+  "synergy-select-pilsen-maltgems": {
+    "id": "synergy-select-pilsen-maltgems",
+    "name": "Synergy Select Pilsen MaltGems",
+    "maltster": "Briess",
     "category": "BASE",
-    "color_lovibond": 2.5,
-    "id": "unmalted-rye",
-    "name": "Unmalted Rye",
-    "notes": "Raw whole rye kernel offering intense peppery rye spice.",
-    "yield_fraction": 0.78
-  },
-  "unmalted-spelt": {
-    "category": "BASE",
-    "color_lovibond": 2.0,
-    "id": "unmalted-spelt",
-    "name": "Unmalted Spelt",
-    "notes": "Raw ancient spelt grain for soft cereal body.",
-    "yield_fraction": 0.78
-  },
-  "unmalted-triticale": {
-    "category": "BASE",
-    "color_lovibond": 2.5,
-    "id": "unmalted-triticale",
-    "name": "Unmalted Triticale",
-    "notes": "Raw wheat-rye hybrid grain offering crispness and body.",
-    "yield_fraction": 0.78
-  },
-  "unmalted-wheat": {
-    "category": "BASE",
+    "yield_fraction": 0.833,
     "color_lovibond": 1.8,
-    "id": "unmalted-wheat",
-    "name": "Unmalted Wheat",
-    "notes": "Raw unmalted wheat grain. Key traditional ingredient in Belgian lambic and witbier for starch haze and crisp flavor.",
-    "yield_fraction": 0.78
+    "notes": "Clean, sweet, with notes of bread, cracker, and honey"
+  },
+  "toasted-oat-malt": {
+    "id": "toasted-oat-malt",
+    "name": "Toasted Oat Malt",
+    "maltster": "Fawcett",
+    "category": "ROASTED",
+    "yield_fraction": 0.5,
+    "color_lovibond": 27.5,
+    "notes": "Lightly roasted whole oats impart biscuit sweetness and creamy mouthfeel. Enhances haze and body—ideal for modern stouts and NEIPAs."
+  },
+  "toasted-rye-40-md": {
+    "id": "toasted-rye-40-md",
+    "name": "Toasted Rye 40 MD",
+    "maltster": "Dingemans",
+    "category": "ROASTED",
+    "yield_fraction": 0.6,
+    "color_lovibond": 15,
+    "notes": "Soft roastiness, cookies, warm bread, fine spiciness"
+  },
+  "toll-malt": {
+    "id": "toll-malt",
+    "name": "Toll Malt",
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "At Bairds, we offer brewers and distillers the opportunity to convert barley that they have supplied themselves which is where working in partnership is a perfect way to emphasise the whole supply chain . As we have four malting locations across the UK with various batch sizes, we are able to offer "
+  },
+  "torrefied-wheat": {
+    "id": "torrefied-wheat",
+    "name": "Torrefied Wheat",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 1.9,
+    "notes": "Neutral"
+  },
+  "torrefied-wheat-malt": {
+    "id": "torrefied-wheat-malt",
+    "name": "Torrefied Wheat Malt",
+    "maltster": "Fawcett",
+    "category": "BASE",
+    "yield_fraction": 0.72,
+    "color_lovibond": 2.25,
+    "notes": "Puffed raw wheat with excellent foam stability. Adds starch and mouthfeel without malt flavour. Great for improving body and head in all beer styles."
+  },
+  "very-heavily-peated-malt": {
+    "id": "very-heavily-peated-malt",
+    "name": "Very Heavily Peated Malt",
+    "maltster": "Simpsons",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 0,
+    "notes": "For the peatiest of expressions, Very Heavily Peated Malt (80ppm+) delivers intense, enveloping smoke for every dram. Expect full-on phenolic impact with little room for subtlety.\n\nThis malt is the foundation of ultra-peated single malts, where phenol is not just an accent but the star. It creates w"
+  },
+  "victory-malt": {
+    "id": "victory-malt",
+    "name": "Victory Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 28,
+    "notes": "Toasty, biscuity, baking bread, nutty, clean"
+  },
+  "victory-organic-malt": {
+    "id": "victory-organic-malt",
+    "name": "Victory Organic Malt",
+    "maltster": "Briess",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 28,
+    "notes": "Toasty, biscuity, baking bread, nutty, clean"
   },
   "vienna-malt": {
-    "category": "BASE",
-    "color_lovibond": 3.5,
     "id": "vienna-malt",
     "name": "Vienna Malt",
-    "notes": "Lightly toasted continental base malt providing golden amber color and rich toasty malt aroma without sweetness.",
-    "yield_fraction": 0.79
+    "maltster": "Bairds",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 3.14,
+    "notes": "Provides sweet worts and light golden to orange hues"
   },
   "wheat-malt": {
-    "category": "BASE",
-    "color_lovibond": 2.0,
     "id": "wheat-malt",
     "name": "Wheat Malt",
-    "notes": "Huskless malted wheat rich in protein. Boosts head retention, foam stability, and body in weissbiers and wheat ales.",
-    "yield_fraction": 0.82
-  },
-  "whisky-malt": {
+    "maltster": "Crisp",
     "category": "BASE",
-    "color_lovibond": 2.2,
-    "id": "whisky-malt",
-    "name": "Whisky Malt",
-    "notes": "Distiller's malt optimized for high fermentability, soluble extract, and enzyme potential.",
-    "yield_fraction": 0.8
+    "yield_fraction": 0.819,
+    "color_lovibond": 2,
+    "notes": "Touch of acidity; Gentle; Refreshing & Creamy"
+  },
+  "wheat-malt-md": {
+    "id": "wheat-malt-md",
+    "name": "Wheat Malt MD",
+    "maltster": "Dingemans",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 1.8,
+    "notes": "Specific fine wheat taste"
+  },
+  "wheat-malt-red": {
+    "id": "wheat-malt-red",
+    "name": "Wheat Malt, Red",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 3,
+    "notes": "Creamy, sweet, malty, wheat flour"
+  },
+  "wheat-malt-red-flour": {
+    "id": "wheat-malt-red-flour",
+    "name": "Wheat Malt, Red Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 3,
+    "notes": "Creamy, sweet, malty, wheat flour"
+  },
+  "wheat-malt-white": {
+    "id": "wheat-malt-white",
+    "name": "Wheat Malt, White",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 2.8,
+    "notes": "Sweet, malty, wheat, mild bread dough"
+  },
+  "wheat-malt-white-flour": {
+    "id": "wheat-malt-white-flour",
+    "name": "Wheat Malt, White Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.83,
+    "color_lovibond": 2.8,
+    "notes": "Sweet, malty, wheat, mild bread dough"
+  },
+  "whiskey-malt-flour": {
+    "id": "whiskey-malt-flour",
+    "name": "Whiskey Malt Flour",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.84,
+    "color_lovibond": 1.9,
+    "notes": "Sweet and bready with notes of honey"
+  },
+  "whiskey-malt-no-gn": {
+    "id": "whiskey-malt-no-gn",
+    "name": "Whiskey Malt (No-GN)",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.84,
+    "color_lovibond": 1.9,
+    "notes": "Sweet and bready with notes of honey"
+  },
+  "white-wheat-malt": {
+    "id": "white-wheat-malt",
+    "name": "WHITE WHEAT MALT",
+    "maltster": "Canada Malting",
+    "category": "BASE",
+    "yield_fraction": 0.84,
+    "color_lovibond": 2.78,
+    "notes": "Made with superior-grade, soft white wheat. Good for adding head retention, and mouth feel to most beer styles. Excellent for Weissbier/Wheat beers."
+  },
+  "white-wheat-raw": {
+    "id": "white-wheat-raw",
+    "name": "White Wheat Raw",
+    "maltster": "Briess",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2,
+    "notes": "Wheat flour flavor"
+  },
+  "white-wheat-unmalted": {
+    "id": "white-wheat-unmalted",
+    "name": "White Wheat Unmalted",
+    "maltster": "Great Western",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 2.19,
+    "notes": "Grown exclusively in the Pacific Northwest, Unmalted White Wheat will provide additional body and foam stability. It contributes desirable cloudiness to Belgian and hazy beer styles."
   }
 }

@@ -5,10 +5,17 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: malts/sugars seed rebuilt from committed sources; crosswalk guarded; lint + tests + build green
-status: proposed
+status: superseded
 ---
 
 # Fermentables Sourcing — beer-analytics catalog + Brewtarget yields
+
+> **Superseded.** The malts/sugars seed is now built from the personal
+> malt_database scrape (real notes + per-malt yield) instead of the
+> beer-analytics + Brewtarget crosswalk proposed here. See
+> `scripts/build-fermentables-seed.mjs` and
+> `data/sources/malt-database-malts.json`. The beer-analytics-vs-Brewtarget
+> source comparison below is retained for reference only.
 
 ## Goal
 

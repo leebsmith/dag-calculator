@@ -34,6 +34,7 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 | Field | Dimension | Domain | Notes |
 |---|---|---|---|
 | `id`, `name` | — | — | identity/metadata |
+| `maltster` | — | — | producer (provenance) |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
@@ -52,8 +53,13 @@ acidity from `category` + `color_lovibond` (a category color-slope model in
 | Field | Dimension | Domain |
 |---|---|---|
 | `id`, `name` | — | — |
+| `maltster` | — | — |
 | `yield_fraction` | percentage | `[0, 1]` |
 | `color_lovibond` | grain_color | `gte 0` |
+
+The malt and sugar seeds are built by `scripts/build-fermentables-seed.mjs`
+from the vendored `data/sources/malt-database-malts.json` scrape (deduped
+one-per-name, `malt`+`adjunct` → malts, `sugar`+`syrup`+`extract` → sugars).
 
 ### 2.3 `yeast`
 

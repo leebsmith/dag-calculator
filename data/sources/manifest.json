@@ -31,6 +31,12 @@
       "edition": 2021,
       "rows": 157,
       "sha256": "d3f794532da832fb7caf88b494af69c92eafe2f06c492860690c00eb81a7abe1"
+    },
+    "malt-database-malts.json": {
+      "mechanism": "scrape",
+      "upstream": "malt_database (local scrape)",
+      "rows": 419,
+      "sha256": "1886a6187ab312aa497b11c5ab0e3c305f3a4e8a3eba186044fe6e94d35ba598"
     }
   }
 }

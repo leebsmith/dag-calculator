@@ -4,9 +4,10 @@
 - `seeds/` — the immutable reference catalogs (malt/sugar/yeast/equipment/water/styles),
   the normalized, schema-conforming output of the build scripts.
 - `sources/` — the raw, pre-normalization inputs the build scripts consume:
-  the beer-analytics.com hop/yeast scrapes and the BJCP 2015/2021 style
-  scrape+aggregate outputs. `sources/manifest.json` records each source's
-  mechanism, upstream, content hash, and row count.
+  the beer-analytics.com hop/yeast scrapes, the BJCP 2015/2021 style
+  scrape+aggregate outputs, and the malt_database fermentables scrape.
+  `sources/manifest.json` records each source's mechanism, upstream, content
+  hash, and row count.
 - Scraped HTML is never committed; re-running the BJCP aggregator reads a local
   cache (see the root README).
 

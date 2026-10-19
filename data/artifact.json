@@ -890,6 +890,7 @@
     "malt": {
       "id": {},
       "name": {},
+      "maltster": {},
       "category": {
         "taxonomy": "malt_category"
       },
@@ -911,6 +912,7 @@
     "sugar": {
       "id": {},
       "name": {},
+      "maltster": {},
       "yield_fraction": {
         "dimension": "percentage",
         "domain": {
