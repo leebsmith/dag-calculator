@@ -1,0 +1,85 @@
+<div class="menu-myitems">
+  <button type="button" class="btn-outline" @click="userCatalogOpen = !userCatalogOpen">
+    My items
+  </button>
+  <div class="user-catalog-popover" x-show="userCatalogOpen" @click.outside="userCatalogOpen = false">
+    <div class="filter-pills-container">
+      <template x-for="t in userCatalogTabs" :key="t.id">
+        <button
+          type="button"
+          class="filter-pill"
+          :class="{ 'is-active': userCatalogTab === t.id }"
+          @click="selectUserCatalogTab(t.id)"
+          x-text="t.label"
+        ></button>
+      </template>
+    </div>
+
+    <div class="user-catalog-list">
+      <template x-for="item in userCatalogItems" :key="userItemId(item)">
+        <div class="catalog-item-card">
+          <div class="catalog-item-name" x-text="userItemTitle(item)"></div>
+          <div class="catalog-item-actions">
+            <button type="button" class="btn-outline text-xs" @click="editUserItem(userItemId(item))">Edit</button>
+            <button type="button" class="btn-outline text-xs" @click="deleteUserItem(userItemId(item))">Delete</button>
+          </div>
+        </div>
+      </template>
+      <p class="recipes-empty" x-show="!userCatalogItems.length">No items yet.</p>
+    </div>
+
+    <div class="recipes-actions">
+      <button type="button" class="btn-primary text-xs" @click="newUserItem()">＋ New</button>
+    </div>
+
+    <template x-if="userCatalogDraft">
+      <div class="user-catalog-editor">
+        <template x-for="f in userCatalogFields" :key="f.field">
+          <div class="form-group">
+            <label class="form-label text-xs" x-text="f.label"></label>
+            <template x-if="f.kind === 'select'">
+              <select
+                class="form-select text-xs"
+                :value="userFieldDisplay(f.field)"
+                @change="userSetField(f.field, $event.target.value)"
+              >
+                <option value="">—</option>
+                <template x-for="o in f.options" :key="o">
+                  <option :value="o" x-text="o"></option>
+                </template>
+              </select>
+            </template>
+            <template x-if="f.kind === 'number'">
+              <input
+                type="number"
+                step="any"
+                class="form-input text-xs"
+                :value="userFieldDisplay(f.field)"
+                @input="userSetField(f.field, $event.target.value)"
+              />
+            </template>
+            <template x-if="f.kind === 'text'">
+              <input
+                type="text"
+                class="form-input text-xs"
+                :value="userFieldDisplay(f.field)"
+                @input="userSetField(f.field, $event.target.value)"
+              />
+            </template>
+          </div>
+        </template>
+        <div class="recipes-actions">
+          <button type="button" class="btn-outline text-xs" @click="userCatalogDraft = null">Cancel</button>
+          <button type="button" class="btn-primary text-xs" @click="saveUserItem()">Save</button>
+        </div>
+        <template x-if="userCatalogErrors.length">
+          <div class="text-xs text-muted">
+            <template x-for="e in userCatalogErrors" :key="e.field">
+              <div x-text="e.field + ': ' + e.message"></div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</div>

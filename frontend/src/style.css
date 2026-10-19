@@ -1076,6 +1076,44 @@ samp {
   overflow-y: auto;
 }
 
+.menu-myitems {
+  position: relative;
+}
+
+.user-catalog-popover {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: var(--z-dropdown);
+  min-width: 20rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--sys-surface-elevated);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--sys-shadow-lg);
+}
+
+.user-catalog-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.user-catalog-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--sys-border-subtle);
+}
+
 .recipes-item {
   display: flex;
   align-items: center;
