@@ -8,7 +8,7 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { canonicalize, createCalculator, resolveReference, sha256Hex, toBase } from "../engine/index.js";
 import { createReferenceCache } from "../store/referenceCache.js";
-import { createUserCatalog } from "../store/userCatalog.js";
+import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
@@ -418,6 +418,21 @@ export function createStepApp(options = {}) {
       }
       this.catalogRevision += 1;
       this.compute();
+    },
+
+    // True when the id is a user-authored (`u:`) item (picker badge).
+    isUserItem(id) {
+      return isUserItem(id);
+    },
+
+    // Clone a seed component into a user-authored item, then refresh the overlay.
+    duplicateUserItem(catalog, component) {
+      try {
+        this.userCatalog.duplicateFrom(catalog, component);
+        this.refreshUserItems();
+      } catch (err) {
+        console.error(`duplicate ${catalog} failed`, err);
+      }
     },
 
     syncNav() {

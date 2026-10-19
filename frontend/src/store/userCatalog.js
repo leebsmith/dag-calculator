@@ -33,6 +33,10 @@ function titleFieldOf(meta) {
   return meta?.titleField ?? "name";
 }
 
+export const SEED_KEY_TO_CATALOG = Object.fromEntries(
+  Object.entries(CATALOGS).map(([catalog, meta]) => [meta.seedKey, catalog])
+);
+
 export function isUserItem(id) {
   return typeof id === "string" && id.startsWith(PREFIX);
 }

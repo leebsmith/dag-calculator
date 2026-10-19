@@ -50,6 +50,7 @@ export function registerYeastCard(app, ctx) {
     yeastCatalog: {
       configurable: true,
       get() {
+        void this.catalogRevision;
         return Object.values(cache.references.yeast ?? {});
       },
     },

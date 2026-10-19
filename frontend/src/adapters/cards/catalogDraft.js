@@ -19,6 +19,7 @@
 // Object.defineProperties (Object.assign would collapse them to values).
 
 import { catalogCategories, filterCatalog } from "../../views/catalog.js";
+import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
 
 export function installCatalogDraft(app, ctx, config) {
   const {
@@ -69,6 +70,13 @@ export function installCatalogDraft(app, ctx, config) {
       this[`close${Cap}Drawer`]();
     },
 
+    [`duplicateCatalog${Cap}`](catalogId) {
+      const item = seeds[seedKey]?.[catalogId];
+      const catalog = SEED_KEY_TO_CATALOG[seedKey];
+      if (!item || !catalog) return;
+      this.duplicateUserItem(catalog, item);
+    },
+
     [`remove${Cap}`](ri) {
       this.removeDraftRow(ri);
       if (this[`${prefix}ActiveIndex`] === ri) {
@@ -117,12 +125,15 @@ export function installCatalogDraft(app, ctx, config) {
       return this.draftOpen && this.draftNodeId === nodeId;
     },
     [`${prefix}Catalog`]() {
+      void this.catalogRevision;
       return catalog();
     },
     [`${prefix}Categories`]() {
+      void this.catalogRevision;
       return categoryField ? catalogCategories(catalog(), (item) => item[categoryField]) : [];
     },
     [`${prefix}FilteredCatalog`]() {
+      void this.catalogRevision;
       const activeIds = new Set(
         (this.draftRows ?? []).map((row) => row[idField]).filter(Boolean)
       );

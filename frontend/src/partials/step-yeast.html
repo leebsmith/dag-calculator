@@ -75,7 +75,12 @@
         <tbody>
           <template x-for="y in visibleYeasts" :key="y.id">
             <tr :class="{ 'is-selected': selectedYeastId === y.id }">
-              <td><span class="font-medium" x-text="y.name"></span></td>
+              <td>
+                <span class="font-medium" x-text="y.name"></span>
+                <template x-if="isUserItem(y.id)">
+                  <span class="status-badge status-badge-info text-nano">mine</span>
+                </template>
+              </td>
               <td x-text="y.manufacturer"></td>
               <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
               <td x-text="y.flocculation"></td>
@@ -83,6 +88,15 @@
               <td class="table-action-cell">
                 <button type="button" class="btn btn-secondary text-xs" @click="selectYeast(y.id)">
                   Use
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline text-xs"
+                  x-show="!isUserItem(y.id)"
+                  @click="duplicateUserItem('yeast', y)"
+                  title="Copy to my items"
+                >
+                  Copy
                 </button>
               </td>
             </tr>
