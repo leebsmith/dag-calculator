@@ -88,6 +88,9 @@ EXTENSIONS = [
     dict(name="Caramel 90L", family="crystal", form="malted", color_lovibond_min=85.0, color_lovibond_max=95.0,
          aliases=["Caramel 90L", "Caramel 90", "Crystal 90L", "Cara 90"],
          description="Deep caramel."),
+    dict(name="Crystal Oat", family="crystal", form="malted", color_lovibond_min=30.0, color_lovibond_max=40.0,
+         aliases=["Crystal Oat", "Crystal Oat Malt"],
+         description="Oat crystal; caramel, smooth body."),
 
     # Red / kilned specialty
     dict(name="Red Color Malt", family="kilned", form="malted", color_lovibond_min=12.0, color_lovibond_max=25.0,

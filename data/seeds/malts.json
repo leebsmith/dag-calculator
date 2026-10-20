@@ -85,10 +85,10 @@
     "yield_fraction": 0.79,
     "color_lovibond": 20,
     "notes": "Very smooth, clean, slightly sweet, rich intense malty",
-    "standard_malt": "munich-light",
-    "standard_name": "Munich Light",
+    "standard_malt": "munich-dark",
+    "standard_name": "Munich Dark",
     "family": "kilned",
-    "generic_description": "Malty; märzen, bock, altbier."
+    "generic_description": "Rich malt; dunkel, bock."
   },
   "ashburne-mild-malt": {
     "id": "ashburne-mild-malt",
@@ -111,10 +111,10 @@
     "yield_fraction": 0.8,
     "color_lovibond": 1.55,
     "notes": "BEST A-XL is a malt made from the traditional German barley variety Alexis. It imparts a malty flavor to the beer, provides a full body as well as a golden yellow color. An increased proportion of free amino nitrogen (FAN) suitably supplies yeast during fermentation.\nDue to its balanced proteolytic ",
-    "standard_malt": "chit-malt",
-    "standard_name": "Chit Malt",
-    "family": "chit",
-    "generic_description": "Under-modified; foam/body, very low colour."
+    "standard_malt": "pale-ale-malt",
+    "standard_name": "Pale Ale Malt",
+    "family": "base",
+    "generic_description": "Standard American/British base malt."
   },
   "best-acidulated-malt": {
     "id": "best-acidulated-malt",
@@ -683,10 +683,10 @@
     "yield_fraction": 0.82,
     "color_lovibond": 7.25,
     "notes": "BEST Wheat Malt Dark is the dark or “Munich variant” of BEST Wheat Malt. It is suitable for use in sparkling, amber and dark wheat beers as well as in top-fermented beer specialties. Due to the more intensive malting process, BEST Wheat Malt Dark achieves a fuller, maltier body in the beer in combin",
-    "standard_malt": "wheat-malt",
-    "standard_name": "Wheat Malt",
+    "standard_malt": "dark-wheat-malt",
+    "standard_name": "Dark Wheat Malt",
     "family": "base",
-    "generic_description": "Foam and body; wheat beers."
+    "generic_description": "Darker wheat for dunkelweizen."
   },
   "biscuit-50-md": {
     "id": "biscuit-50-md",
@@ -1515,10 +1515,10 @@
     "yield_fraction": 0.5,
     "color_lovibond": 36,
     "notes": "Combines classic oat creaminess with sweet, caramelised sugar. Adds body and a toffee, silky finish—great for mouthfeel and colour in modern ales.",
-    "standard_malt": "golden-naked-oats",
-    "standard_name": "Golden Naked Oats",
+    "standard_malt": "crystal-oat",
+    "standard_name": "Crystal Oat",
     "family": "crystal",
-    "generic_description": "Naked-oat crystal; body."
+    "generic_description": "Oat crystal; caramel, smooth body."
   },
   "crystal-red-malt": {
     "id": "crystal-red-malt",
@@ -2074,10 +2074,10 @@
     "yield_fraction": 0.74,
     "color_lovibond": 3.9,
     "notes": "Use Gambrinus Honey Malted Oats to impart unique flavour along with texture to hazy IPAs, or to add nuance and depth to oatmeal stout, brown ale, and other malt-driven styles. Look for bready, grainy, and sweet flavour notes with rich body and silky mouthfeel. Honey Malted Oats are husked – no need ",
-    "standard_malt": "honey-malt",
-    "standard_name": "Honey Malt",
-    "family": "kilned",
-    "generic_description": "Honey/bread; melanoidin-style."
+    "standard_malt": "golden-naked-oats",
+    "standard_name": "Golden Naked Oats",
+    "family": "crystal",
+    "generic_description": "Naked-oat crystal; body."
   },
   "gambrinus-ipa-malt": {
     "id": "gambrinus-ipa-malt",

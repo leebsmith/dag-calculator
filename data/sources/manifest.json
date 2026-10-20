@@ -41,14 +41,14 @@
     "malt-standard-crosswalk.json": {
       "mechanism": "unknown",
       "rows": 316,
-      "sha256": "ccb8465c1033b11cf693c857b7cc3e859ff4ae0bff5b9c2bd505a31f4019dbf6"
+      "sha256": "491df43619554da668608490da59af0ef735b20b8853d1389b244c0ce6ab8328"
     },
     "standard-malts.json": {
       "mechanism": "vendor+extend",
       "upstream": "malt_database standard_malts.tsv (extended)",
       "scraper": "scripts/vendor-standard-malts.py",
-      "rows": 88,
-      "sha256": "30a7eb861bc8ed845b47fe88bc9ff2873f1162374f995dad32d9b38a53ceb3e8"
+      "rows": 89,
+      "sha256": "573bb37f30d30525847aaf8fffb9e1c2a211047bdb4f14fed76e3d02307fd23b"
     }
   }
 }

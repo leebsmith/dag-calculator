@@ -372,6 +372,19 @@
     ],
     "description": "Roasted rye; chocolate, spice."
   },
+  "crystal-oat": {
+    "id": "crystal-oat",
+    "name": "Crystal Oat",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 30.0,
+    "color_lovibond_max": 40.0,
+    "aliases": [
+      "Crystal Oat",
+      "Crystal Oat Malt"
+    ],
+    "description": "Oat crystal; caramel, smooth body."
+  },
   "crystal-rye": {
     "id": "crystal-rye",
     "name": "Crystal Rye",
