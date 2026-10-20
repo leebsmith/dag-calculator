@@ -69,10 +69,11 @@ function truncate(value, max = NOTES_MAX) {
 }
 
 // Prefer the record with the most complete technical profile, in priority
-// order: yield, then colour, then description.
+// order: yield, then moisture/colour, then description.
 function prefer(a, b) {
   const rank = (r) =>
     (hasValue(r.yield_fraction) ? 4 : 0) +
+    (hasValue(r.moisture) ? 2 : 0) +
     (hasValue(r.color_lovibond) ? 2 : 0) +
     (hasValue(r.description) ? 1 : 0);
   const ra = rank(a);
@@ -111,8 +112,8 @@ function dedupeMalts(rows) {
     let winner = group[0];
     for (const candidate of group.slice(1)) winner = prefer(winner, candidate);
 
-    // Backfill missing yield/colour from sibling records of the same name.
-    for (const field of ["yield_fraction", "color_lovibond"]) {
+    // Backfill missing yield/colour/moisture from sibling records of the same name.
+    for (const field of ["yield_fraction", "color_lovibond", "moisture"]) {
       if (hasValue(winner[field])) continue;
       const sibling = group.find((r) => hasValue(r[field]));
       if (sibling) winner = { ...winner, [field]: sibling[field] };
@@ -135,6 +136,10 @@ function maltComponent(row) {
     color_lovibond: hasValue(row.color_lovibond) ? row.color_lovibond : 0,
     notes: notesFor(row),
   };
+  // Datasheet moisture is a percent; 0 means "not published" (absent).
+  if (hasValue(row.moisture) && row.moisture > 0) {
+    component.moisture_fraction = row.moisture / 100;
+  }
   return component;
 }
 

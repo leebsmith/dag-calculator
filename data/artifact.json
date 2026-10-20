@@ -905,6 +905,13 @@
           "lte": 1
         }
       },
+      "moisture_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
       "color_lovibond": {
         "dimension": "grain_color",
         "domain": {
@@ -1209,6 +1216,13 @@
         }
       },
       "yield_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "moisture_fraction": {
         "dimension": "percentage",
         "domain": {
           "gte": 0,

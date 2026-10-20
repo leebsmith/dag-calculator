@@ -55,7 +55,7 @@ export function buildStandardMalts(malts) {
   for (const [stdId, ms] of groups) {
     const first = ms[0];
     const category = majorityCategory(ms) ?? FAMILY_CATEGORY[first.family] ?? "BASE";
-    reps[`std:${stdId}`] = {
+    const rep = {
       id: `std:${stdId}`,
       name: first.standard_name,
       maltster: "Generic",
@@ -68,6 +68,9 @@ export function buildStandardMalts(malts) {
       family: first.family,
       generic_description: first.generic_description,
     };
+    const moistures = ms.map((m) => m.moisture_fraction).filter((n) => typeof n === "number");
+    if (moistures.length) rep.moisture_fraction = median(moistures);
+    reps[`std:${stdId}`] = rep;
   }
   return reps;
 }

@@ -10,7 +10,8 @@
     "standard_malt": "6-row-malt",
     "standard_name": "6-Row Malt",
     "family": "base",
-    "generic_description": "High husk/enzyme; classic US adjunct base."
+    "generic_description": "High husk/enzyme; classic US adjunct base.",
+    "moisture_fraction": 0.045
   },
   "std:acidulated-malt": {
     "id": "std:acidulated-malt",
@@ -23,7 +24,8 @@
     "standard_malt": "acidulated-malt",
     "standard_name": "Acidulated Malt",
     "family": "acidulated",
-    "generic_description": "Lowers mash pH; use 1-10%."
+    "generic_description": "Lowers mash pH; use 1-10%.",
+    "moisture_fraction": 0.08
   },
   "std:amber-malt": {
     "id": "std:amber-malt",
@@ -36,7 +38,8 @@
     "standard_malt": "amber-malt",
     "standard_name": "Amber Malt",
     "family": "kilned",
-    "generic_description": "Toasty/biscuity; British ales."
+    "generic_description": "Toasty/biscuity; British ales.",
+    "moisture_fraction": 0.045
   },
   "std:aromatic-malt": {
     "id": "std:aromatic-malt",
@@ -49,7 +52,8 @@
     "standard_malt": "aromatic-malt",
     "standard_name": "Aromatic Malt",
     "family": "kilned",
-    "generic_description": "Intense malt; Belgian ales."
+    "generic_description": "Intense malt; Belgian ales.",
+    "moisture_fraction": 0.0475
   },
   "std:biscuit-malt": {
     "id": "std:biscuit-malt",
@@ -62,7 +66,8 @@
     "standard_malt": "biscuit-malt",
     "standard_name": "Biscuit Malt",
     "family": "kilned",
-    "generic_description": "Bready, biscuity."
+    "generic_description": "Bready, biscuity.",
+    "moisture_fraction": 0.045
   },
   "std:black-malt": {
     "id": "std:black-malt",
@@ -75,7 +80,8 @@
     "standard_malt": "black-malt",
     "standard_name": "Black Malt",
     "family": "roasted",
-    "generic_description": "Husked; black colour and roast, astringent."
+    "generic_description": "Husked; black colour and roast, astringent.",
+    "moisture_fraction": 0.045
   },
   "std:bourbon-malt": {
     "id": "std:bourbon-malt",
@@ -88,7 +94,8 @@
     "standard_malt": "bourbon-malt",
     "standard_name": "Bourbon Malt",
     "family": "kilned",
-    "generic_description": "Kilned bourbon malt; caramel, vanilla, oak."
+    "generic_description": "Kilned bourbon malt; caramel, vanilla, oak.",
+    "moisture_fraction": 0.055
   },
   "std:brown-malt": {
     "id": "std:brown-malt",
@@ -101,7 +108,8 @@
     "standard_malt": "brown-malt",
     "standard_name": "Brown Malt",
     "family": "kilned",
-    "generic_description": "Toasted-brown; porter and brown ale."
+    "generic_description": "Toasted-brown; porter and brown ale.",
+    "moisture_fraction": 0.045
   },
   "std:caraamber": {
     "id": "std:caraamber",
@@ -114,7 +122,8 @@
     "standard_malt": "caraamber",
     "standard_name": "CaraAmber",
     "family": "crystal",
-    "generic_description": "Amber crystal."
+    "generic_description": "Amber crystal.",
+    "moisture_fraction": 0.045
   },
   "std:caraaroma": {
     "id": "std:caraaroma",
@@ -127,7 +136,8 @@
     "standard_malt": "caraaroma",
     "standard_name": "CaraAroma",
     "family": "crystal",
-    "generic_description": "Aromatic crystal."
+    "generic_description": "Aromatic crystal.",
+    "moisture_fraction": 0.07
   },
   "std:carabrown": {
     "id": "std:carabrown",
@@ -140,7 +150,8 @@
     "standard_malt": "carabrown",
     "standard_name": "CaraBrown",
     "family": "crystal",
-    "generic_description": "Brown crystal; toffee and dark caramel."
+    "generic_description": "Brown crystal; toffee and dark caramel.",
+    "moisture_fraction": 0.022000000000000002
   },
   "std:caragold": {
     "id": "std:caragold",
@@ -153,7 +164,8 @@
     "standard_malt": "caragold",
     "standard_name": "CaraGold",
     "family": "crystal",
-    "generic_description": "Very light crystal; gentle sweetness, golden colour."
+    "generic_description": "Very light crystal; gentle sweetness, golden colour.",
+    "moisture_fraction": 0.07
   },
   "std:caramel-100l": {
     "id": "std:caramel-100l",
@@ -166,7 +178,8 @@
     "standard_malt": "caramel-100l",
     "standard_name": "Caramel 100L",
     "family": "crystal",
-    "generic_description": "Deep caramel."
+    "generic_description": "Deep caramel.",
+    "moisture_fraction": 0.0425
   },
   "std:caramel-10l": {
     "id": "std:caramel-10l",
@@ -179,7 +192,8 @@
     "standard_malt": "caramel-10l",
     "standard_name": "Caramel 10L",
     "family": "crystal",
-    "generic_description": "Light caramel sweetness."
+    "generic_description": "Light caramel sweetness.",
+    "moisture_fraction": 0.078
   },
   "std:caramel-120l": {
     "id": "std:caramel-120l",
@@ -192,7 +206,8 @@
     "standard_malt": "caramel-120l",
     "standard_name": "Caramel 120L",
     "family": "crystal",
-    "generic_description": "Deep caramel, burnt sugar."
+    "generic_description": "Deep caramel, burnt sugar.",
+    "moisture_fraction": 0.0475
   },
   "std:caramel-150l": {
     "id": "std:caramel-150l",
@@ -205,7 +220,8 @@
     "standard_malt": "caramel-150l",
     "standard_name": "Caramel 150L",
     "family": "crystal",
-    "generic_description": "Dark caramel."
+    "generic_description": "Dark caramel.",
+    "moisture_fraction": 0.0375
   },
   "std:caramel-20l": {
     "id": "std:caramel-20l",
@@ -218,7 +234,8 @@
     "standard_malt": "caramel-20l",
     "standard_name": "Caramel 20L",
     "family": "crystal",
-    "generic_description": "Light caramel sweetness."
+    "generic_description": "Light caramel sweetness.",
+    "moisture_fraction": 0.06
   },
   "std:caramel-30l": {
     "id": "std:caramel-30l",
@@ -231,7 +248,8 @@
     "standard_malt": "caramel-30l",
     "standard_name": "Caramel 30L",
     "family": "crystal",
-    "generic_description": "Caramel sweetness."
+    "generic_description": "Caramel sweetness.",
+    "moisture_fraction": 0.055
   },
   "std:caramel-40l": {
     "id": "std:caramel-40l",
@@ -244,7 +262,8 @@
     "standard_malt": "caramel-40l",
     "standard_name": "Caramel 40L",
     "family": "crystal",
-    "generic_description": "Caramel sweetness."
+    "generic_description": "Caramel sweetness.",
+    "moisture_fraction": 0.057499999999999996
   },
   "std:caramel-60l": {
     "id": "std:caramel-60l",
@@ -257,7 +276,8 @@
     "standard_malt": "caramel-60l",
     "standard_name": "Caramel 60L",
     "family": "crystal",
-    "generic_description": "Caramel/toffee."
+    "generic_description": "Caramel/toffee.",
+    "moisture_fraction": 0.05
   },
   "std:caramel-80l": {
     "id": "std:caramel-80l",
@@ -270,7 +290,8 @@
     "standard_malt": "caramel-80l",
     "standard_name": "Caramel 80L",
     "family": "crystal",
-    "generic_description": "Toffee/caramel."
+    "generic_description": "Toffee/caramel.",
+    "moisture_fraction": 0.05
   },
   "std:caramel-90l": {
     "id": "std:caramel-90l",
@@ -283,7 +304,8 @@
     "standard_malt": "caramel-90l",
     "standard_name": "Caramel 90L",
     "family": "crystal",
-    "generic_description": "Deep caramel."
+    "generic_description": "Deep caramel.",
+    "moisture_fraction": 0.04
   },
   "std:caramunich": {
     "id": "std:caramunich",
@@ -296,7 +318,8 @@
     "standard_malt": "caramunich",
     "standard_name": "CaraMunich",
     "family": "crystal",
-    "generic_description": "Munich-style crystal."
+    "generic_description": "Munich-style crystal.",
+    "moisture_fraction": 0.045
   },
   "std:carared": {
     "id": "std:carared",
@@ -309,7 +332,8 @@
     "standard_malt": "carared",
     "standard_name": "CaraRed",
     "family": "crystal",
-    "generic_description": "Red crystal."
+    "generic_description": "Red crystal.",
+    "moisture_fraction": 0.08
   },
   "std:caravienne": {
     "id": "std:caravienne",
@@ -322,7 +346,8 @@
     "standard_malt": "caravienne",
     "standard_name": "CaraVienne",
     "family": "crystal",
-    "generic_description": "Vienna-style crystal."
+    "generic_description": "Vienna-style crystal.",
+    "moisture_fraction": 0.045
   },
   "std:chevallier": {
     "id": "std:chevallier",
@@ -335,7 +360,8 @@
     "standard_malt": "chevallier",
     "standard_name": "Chevallier",
     "family": "base",
-    "generic_description": "Victorian landrace; toffee, baked loaf, dried fruit."
+    "generic_description": "Victorian landrace; toffee, baked loaf, dried fruit.",
+    "moisture_fraction": 0.045
   },
   "std:chit-malt": {
     "id": "std:chit-malt",
@@ -348,7 +374,8 @@
     "standard_malt": "chit-malt",
     "standard_name": "Chit Malt",
     "family": "chit",
-    "generic_description": "Under-modified; foam/body, very low colour."
+    "generic_description": "Under-modified; foam/body, very low colour.",
+    "moisture_fraction": 0.07
   },
   "std:chocolate-malt": {
     "id": "std:chocolate-malt",
@@ -361,7 +388,8 @@
     "standard_malt": "chocolate-malt",
     "standard_name": "Chocolate Malt",
     "family": "roasted",
-    "generic_description": "Husked; chocolate/coffee; stouts and porters."
+    "generic_description": "Husked; chocolate/coffee; stouts and porters.",
+    "moisture_fraction": 0.04
   },
   "std:chocolate-rye": {
     "id": "std:chocolate-rye",
@@ -374,7 +402,8 @@
     "standard_malt": "chocolate-rye",
     "standard_name": "Chocolate Rye",
     "family": "roasted",
-    "generic_description": "Roasted rye; chocolate, spice."
+    "generic_description": "Roasted rye; chocolate, spice.",
+    "moisture_fraction": 0.042499999999999996
   },
   "std:crystal-oat": {
     "id": "std:crystal-oat",
@@ -387,7 +416,8 @@
     "standard_malt": "crystal-oat",
     "standard_name": "Crystal Oat",
     "family": "crystal",
-    "generic_description": "Oat crystal; caramel, smooth body."
+    "generic_description": "Oat crystal; caramel, smooth body.",
+    "moisture_fraction": 0.05
   },
   "std:crystal-rye": {
     "id": "std:crystal-rye",
@@ -400,7 +430,8 @@
     "standard_malt": "crystal-rye",
     "standard_name": "Crystal Rye",
     "family": "crystal",
-    "generic_description": "Rye crystal."
+    "generic_description": "Rye crystal.",
+    "moisture_fraction": 0.05
   },
   "std:crystal-wheat": {
     "id": "std:crystal-wheat",
@@ -413,7 +444,8 @@
     "standard_malt": "crystal-wheat",
     "standard_name": "Crystal Wheat",
     "family": "crystal",
-    "generic_description": "Wheat crystal."
+    "generic_description": "Wheat crystal.",
+    "moisture_fraction": 0.05
   },
   "std:dark-specialty": {
     "id": "std:dark-specialty",
@@ -426,7 +458,8 @@
     "standard_malt": "dark-specialty",
     "standard_name": "Dark Specialty",
     "family": "kilned",
-    "generic_description": "Deep amber-red specialty; toast, dark caramel."
+    "generic_description": "Deep amber-red specialty; toast, dark caramel.",
+    "moisture_fraction": 0.035
   },
   "std:dark-wheat-malt": {
     "id": "std:dark-wheat-malt",
@@ -439,7 +472,8 @@
     "standard_malt": "dark-wheat-malt",
     "standard_name": "Dark Wheat Malt",
     "family": "base",
-    "generic_description": "Darker wheat for dunkelweizen."
+    "generic_description": "Darker wheat for dunkelweizen.",
+    "moisture_fraction": 0.055
   },
   "std:debittered-coffee-malt": {
     "id": "std:debittered-coffee-malt",
@@ -452,7 +486,8 @@
     "standard_malt": "debittered-coffee-malt",
     "standard_name": "Debittered Coffee Malt",
     "family": "dehusked",
-    "generic_description": "Huskless/debittered; coffee, less harsh."
+    "generic_description": "Huskless/debittered; coffee, less harsh.",
+    "moisture_fraction": 0.028999999999999998
   },
   "std:dehusked-black": {
     "id": "std:dehusked-black",
@@ -465,7 +500,8 @@
     "standard_malt": "dehusked-black",
     "standard_name": "Dehusked Black",
     "family": "dehusked",
-    "generic_description": "Huskless black; smooth, less bitter."
+    "generic_description": "Huskless black; smooth, less bitter.",
+    "moisture_fraction": 0.045
   },
   "std:dehusked-black-wheat": {
     "id": "std:dehusked-black-wheat",
@@ -478,7 +514,8 @@
     "standard_malt": "dehusked-black-wheat",
     "standard_name": "Dehusked Black Wheat",
     "family": "dehusked",
-    "generic_description": "Huskless black wheat."
+    "generic_description": "Huskless black wheat.",
+    "moisture_fraction": 0.065
   },
   "std:dehusked-chocolate": {
     "id": "std:dehusked-chocolate",
@@ -491,7 +528,8 @@
     "standard_malt": "dehusked-chocolate",
     "standard_name": "Dehusked Chocolate",
     "family": "dehusked",
-    "generic_description": "Huskless; smooth chocolate/coffee."
+    "generic_description": "Huskless; smooth chocolate/coffee.",
+    "moisture_fraction": 0.041499999999999995
   },
   "std:dehusked-light-roasted": {
     "id": "std:dehusked-light-roasted",
@@ -504,7 +542,8 @@
     "standard_malt": "dehusked-light-roasted",
     "standard_name": "Dehusked Light Roasted",
     "family": "dehusked",
-    "generic_description": "Huskless; smooth roast, no astringency."
+    "generic_description": "Huskless; smooth roast, no astringency.",
+    "moisture_fraction": 0.045
   },
   "std:dextrin-malt": {
     "id": "std:dextrin-malt",
@@ -517,7 +556,8 @@
     "standard_malt": "dextrin-malt",
     "standard_name": "Dextrin Malt",
     "family": "dextrin",
-    "generic_description": "Body and foam; minimal colour."
+    "generic_description": "Body and foam; minimal colour.",
+    "moisture_fraction": 0.065
   },
   "std:distilling-malt": {
     "id": "std:distilling-malt",
@@ -530,7 +570,8 @@
     "standard_malt": "distilling-malt",
     "standard_name": "Distilling Malt",
     "family": "base",
-    "generic_description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits."
+    "generic_description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits.",
+    "moisture_fraction": 0.06
   },
   "std:extra-dark-crystal": {
     "id": "std:extra-dark-crystal",
@@ -543,7 +584,8 @@
     "standard_malt": "extra-dark-crystal",
     "standard_name": "Extra Dark Crystal",
     "family": "crystal",
-    "generic_description": "Very dark caramel."
+    "generic_description": "Very dark caramel.",
+    "moisture_fraction": 0.04
   },
   "std:flaked-barley": {
     "id": "std:flaked-barley",
@@ -556,7 +598,8 @@
     "standard_malt": "flaked-barley",
     "standard_name": "Flaked Barley",
     "family": "flaked",
-    "generic_description": "Unmalted; body, head retention."
+    "generic_description": "Unmalted; body, head retention.",
+    "moisture_fraction": 0.1
   },
   "std:flaked-maize": {
     "id": "std:flaked-maize",
@@ -569,7 +612,8 @@
     "standard_malt": "flaked-maize",
     "standard_name": "Flaked Maize",
     "family": "flaked",
-    "generic_description": "Light adjunct; dry finish."
+    "generic_description": "Light adjunct; dry finish.",
+    "moisture_fraction": 0.085
   },
   "std:flaked-oats": {
     "id": "std:flaked-oats",
@@ -582,7 +626,8 @@
     "standard_malt": "flaked-oats",
     "standard_name": "Flaked Oats",
     "family": "flaked",
-    "generic_description": "Unmalted; silky body."
+    "generic_description": "Unmalted; silky body.",
+    "moisture_fraction": 0.10250000000000001
   },
   "std:flaked-rice": {
     "id": "std:flaked-rice",
@@ -595,7 +640,8 @@
     "standard_malt": "flaked-rice",
     "standard_name": "Flaked Rice",
     "family": "flaked",
-    "generic_description": "Light adjunct; crisp finish."
+    "generic_description": "Light adjunct; crisp finish.",
+    "moisture_fraction": 0.07
   },
   "std:flaked-rye": {
     "id": "std:flaked-rye",
@@ -608,7 +654,8 @@
     "standard_malt": "flaked-rye",
     "standard_name": "Flaked Rye",
     "family": "flaked",
-    "generic_description": "Unmalted; rye spice."
+    "generic_description": "Unmalted; rye spice.",
+    "moisture_fraction": 0.0975
   },
   "std:flaked-wheat": {
     "id": "std:flaked-wheat",
@@ -621,7 +668,8 @@
     "standard_malt": "flaked-wheat",
     "standard_name": "Flaked Wheat",
     "family": "flaked",
-    "generic_description": "Unmalted; body, haze."
+    "generic_description": "Unmalted; body, haze.",
+    "moisture_fraction": 0.0975
   },
   "std:golden-naked-oats": {
     "id": "std:golden-naked-oats",
@@ -634,7 +682,8 @@
     "standard_malt": "golden-naked-oats",
     "standard_name": "Golden Naked Oats",
     "family": "crystal",
-    "generic_description": "Naked-oat crystal; body."
+    "generic_description": "Naked-oat crystal; body.",
+    "moisture_fraction": 0.060000000000000005
   },
   "std:golden-promise": {
     "id": "std:golden-promise",
@@ -647,7 +696,8 @@
     "standard_malt": "golden-promise",
     "standard_name": "Golden Promise",
     "family": "base",
-    "generic_description": "Soft, sweet, honeyed Scottish spring barley; Scotch ales and hazy IPAs."
+    "generic_description": "Soft, sweet, honeyed Scottish spring barley; Scotch ales and hazy IPAs.",
+    "moisture_fraction": 0.045
   },
   "std:halcyon": {
     "id": "std:halcyon",
@@ -660,7 +710,8 @@
     "standard_malt": "halcyon",
     "standard_name": "Halcyon",
     "family": "base",
-    "generic_description": "Bright, crisp British winter barley."
+    "generic_description": "Bright, crisp British winter barley.",
+    "moisture_fraction": 0.04
   },
   "std:hana": {
     "id": "std:hana",
@@ -673,7 +724,8 @@
     "standard_malt": "hana",
     "standard_name": "Haná",
     "family": "base",
-    "generic_description": "Moravian landrace; delicate bready pilsner malt for decoction."
+    "generic_description": "Moravian landrace; delicate bready pilsner malt for decoction.",
+    "moisture_fraction": 0.045
   },
   "std:honey-malt": {
     "id": "std:honey-malt",
@@ -686,7 +738,8 @@
     "standard_malt": "honey-malt",
     "standard_name": "Honey Malt",
     "family": "kilned",
-    "generic_description": "Honey/bread; melanoidin-style."
+    "generic_description": "Honey/bread; melanoidin-style.",
+    "moisture_fraction": 0.05
   },
   "std:lager-malt": {
     "id": "std:lager-malt",
@@ -699,7 +752,8 @@
     "standard_malt": "lager-malt",
     "standard_name": "Lager Malt",
     "family": "base",
-    "generic_description": "Light base for lagers."
+    "generic_description": "Light base for lagers.",
+    "moisture_fraction": 0.045
   },
   "std:malted-oats": {
     "id": "std:malted-oats",
@@ -712,7 +766,8 @@
     "standard_malt": "malted-oats",
     "standard_name": "Malted Oats",
     "family": "base",
-    "generic_description": "Silky mouthfeel; hazy/soft styles."
+    "generic_description": "Silky mouthfeel; hazy/soft styles.",
+    "moisture_fraction": 0.055
   },
   "std:malted-spelt": {
     "id": "std:malted-spelt",
@@ -725,7 +780,8 @@
     "standard_malt": "malted-spelt",
     "standard_name": "Malted Spelt",
     "family": "base",
-    "generic_description": "Ancient-grain base."
+    "generic_description": "Ancient-grain base.",
+    "moisture_fraction": 0.057499999999999996
   },
   "std:maris-otter": {
     "id": "std:maris-otter",
@@ -738,7 +794,8 @@
     "standard_malt": "maris-otter",
     "standard_name": "Maris Otter",
     "family": "base",
-    "generic_description": "Nutty, biscuity British winter barley; classic English ales and bitters."
+    "generic_description": "Nutty, biscuity British winter barley; classic English ales and bitters.",
+    "moisture_fraction": 0.04
   },
   "std:melanoidin-malt": {
     "id": "std:melanoidin-malt",
@@ -751,7 +808,8 @@
     "standard_malt": "melanoidin-malt",
     "standard_name": "Melanoidin Malt",
     "family": "kilned",
-    "generic_description": "Melanoidin richness and body."
+    "generic_description": "Melanoidin richness and body.",
+    "moisture_fraction": 0.045
   },
   "std:mild-ale-malt": {
     "id": "std:mild-ale-malt",
@@ -764,7 +822,8 @@
     "standard_malt": "mild-ale-malt",
     "standard_name": "Mild Ale Malt",
     "family": "base",
-    "generic_description": "Higher residual body; mild and brown ales."
+    "generic_description": "Higher residual body; mild and brown ales.",
+    "moisture_fraction": 0.037500000000000006
   },
   "std:munich-dark": {
     "id": "std:munich-dark",
@@ -777,7 +836,8 @@
     "standard_malt": "munich-dark",
     "standard_name": "Munich Dark",
     "family": "kilned",
-    "generic_description": "Rich malt; dunkel, bock."
+    "generic_description": "Rich malt; dunkel, bock.",
+    "moisture_fraction": 0.049
   },
   "std:munich-light": {
     "id": "std:munich-light",
@@ -790,7 +850,8 @@
     "standard_malt": "munich-light",
     "standard_name": "Munich Light",
     "family": "kilned",
-    "generic_description": "Malty; märzen, bock, altbier."
+    "generic_description": "Malty; märzen, bock, altbier.",
+    "moisture_fraction": 0.045
   },
   "std:pale-ale-malt": {
     "id": "std:pale-ale-malt",
@@ -803,7 +864,8 @@
     "standard_malt": "pale-ale-malt",
     "standard_name": "Pale Ale Malt",
     "family": "base",
-    "generic_description": "Standard American/British base malt."
+    "generic_description": "Standard American/British base malt.",
+    "moisture_fraction": 0.045
   },
   "std:pale-chocolate": {
     "id": "std:pale-chocolate",
@@ -816,7 +878,8 @@
     "standard_malt": "pale-chocolate",
     "standard_name": "Pale Chocolate",
     "family": "roasted",
-    "generic_description": "Husked; light coffee/cocoa, some astringency."
+    "generic_description": "Husked; light coffee/cocoa, some astringency.",
+    "moisture_fraction": 0.035
   },
   "std:pearl": {
     "id": "std:pearl",
@@ -829,7 +892,8 @@
     "standard_malt": "pearl",
     "standard_name": "Pearl",
     "family": "base",
-    "generic_description": "Clean, neutral British winter barley."
+    "generic_description": "Clean, neutral British winter barley.",
+    "moisture_fraction": 0.04
   },
   "std:peated-malt": {
     "id": "std:peated-malt",
@@ -842,7 +906,8 @@
     "standard_malt": "peated-malt",
     "standard_name": "Peated Malt",
     "family": "peated",
-    "generic_description": "Phenolic peat smoke."
+    "generic_description": "Phenolic peat smoke.",
+    "moisture_fraction": 0.05
   },
   "std:pilsner-malt": {
     "id": "std:pilsner-malt",
@@ -855,7 +920,8 @@
     "standard_malt": "pilsner-malt",
     "standard_name": "Pilsner Malt",
     "family": "base",
-    "generic_description": "Clean, pale base malt for lagers."
+    "generic_description": "Clean, pale base malt for lagers.",
+    "moisture_fraction": 0.047
   },
   "std:raw-rye": {
     "id": "std:raw-rye",
@@ -868,7 +934,8 @@
     "standard_malt": "raw-rye",
     "standard_name": "Raw Rye",
     "family": "raw",
-    "generic_description": "Unmalted; rye spice."
+    "generic_description": "Unmalted; rye spice.",
+    "moisture_fraction": 0.12
   },
   "std:raw-wheat": {
     "id": "std:raw-wheat",
@@ -881,7 +948,8 @@
     "standard_malt": "raw-wheat",
     "standard_name": "Raw Wheat",
     "family": "raw",
-    "generic_description": "Unmalted; turbidity and body."
+    "generic_description": "Unmalted; turbidity and body.",
+    "moisture_fraction": 0.12
   },
   "std:red-color-malt": {
     "id": "std:red-color-malt",
@@ -894,7 +962,8 @@
     "standard_malt": "red-color-malt",
     "standard_name": "Red Color Malt",
     "family": "kilned",
-    "generic_description": "Red colour contribution with malty body."
+    "generic_description": "Red colour contribution with malty body.",
+    "moisture_fraction": 0.049
   },
   "std:rice-hulls": {
     "id": "std:rice-hulls",
@@ -920,7 +989,8 @@
     "standard_malt": "roast-rye",
     "standard_name": "Roast Rye",
     "family": "roasted",
-    "generic_description": "Roasted rye; dry, toasty."
+    "generic_description": "Roasted rye; dry, toasty.",
+    "moisture_fraction": 0.045
   },
   "std:roast-wheat": {
     "id": "std:roast-wheat",
@@ -933,7 +1003,8 @@
     "standard_malt": "roast-wheat",
     "standard_name": "Roast Wheat",
     "family": "roasted",
-    "generic_description": "Roasted wheat; roast notes, dark colour."
+    "generic_description": "Roasted wheat; roast notes, dark colour.",
+    "moisture_fraction": 0.05
   },
   "std:roasted-barley": {
     "id": "std:roasted-barley",
@@ -946,7 +1017,8 @@
     "standard_malt": "roasted-barley",
     "standard_name": "Roasted Barley",
     "family": "roasted",
-    "generic_description": "Unmalted (husked); dry stout."
+    "generic_description": "Unmalted (husked); dry stout.",
+    "moisture_fraction": 0.045
   },
   "std:rye-malt": {
     "id": "std:rye-malt",
@@ -959,7 +1031,8 @@
     "standard_malt": "rye-malt",
     "standard_name": "Rye Malt",
     "family": "base",
-    "generic_description": "Spicy; roggenbier and rye ales."
+    "generic_description": "Spicy; roggenbier and rye ales.",
+    "moisture_fraction": 0.05
   },
   "std:smoked-malt": {
     "id": "std:smoked-malt",
@@ -972,7 +1045,8 @@
     "standard_malt": "smoked-malt",
     "standard_name": "Smoked Malt",
     "family": "smoked",
-    "generic_description": "Beechwood/cherry/oak smoke."
+    "generic_description": "Beechwood/cherry/oak smoke.",
+    "moisture_fraction": 0.057999999999999996
   },
   "std:special-b": {
     "id": "std:special-b",
@@ -985,7 +1059,8 @@
     "standard_malt": "special-b",
     "standard_name": "Special B",
     "family": "crystal",
-    "generic_description": "Raisin/plum; dubbel and quad."
+    "generic_description": "Raisin/plum; dubbel and quad.",
+    "moisture_fraction": 0.05
   },
   "std:toasted-oats": {
     "id": "std:toasted-oats",
@@ -998,7 +1073,8 @@
     "standard_malt": "toasted-oats",
     "standard_name": "Toasted Oats",
     "family": "toasted",
-    "generic_description": "Toasty oats; body."
+    "generic_description": "Toasty oats; body.",
+    "moisture_fraction": 0.0375
   },
   "std:toasted-rye": {
     "id": "std:toasted-rye",
@@ -1011,7 +1087,8 @@
     "standard_malt": "toasted-rye",
     "standard_name": "Toasted Rye",
     "family": "toasted",
-    "generic_description": "Toasty rye; spice."
+    "generic_description": "Toasty rye; spice.",
+    "moisture_fraction": 0.06
   },
   "std:torrefied-grain": {
     "id": "std:torrefied-grain",
@@ -1024,7 +1101,8 @@
     "standard_malt": "torrefied-grain",
     "standard_name": "Torrefied Grain",
     "family": "raw",
-    "generic_description": "Torrefied cereal; body and head retention."
+    "generic_description": "Torrefied cereal; body and head retention.",
+    "moisture_fraction": 0.0925
   },
   "std:torrefied-wheat": {
     "id": "std:torrefied-wheat",
@@ -1037,7 +1115,8 @@
     "standard_malt": "torrefied-wheat",
     "standard_name": "Torrefied Wheat",
     "family": "raw",
-    "generic_description": "Pre-gelatinized; body and foam."
+    "generic_description": "Pre-gelatinized; body and foam.",
+    "moisture_fraction": 0.12
   },
   "std:victory-malt": {
     "id": "std:victory-malt",
@@ -1050,7 +1129,8 @@
     "standard_malt": "victory-malt",
     "standard_name": "Victory Malt",
     "family": "kilned",
-    "generic_description": "Toasty, nutty."
+    "generic_description": "Toasty, nutty.",
+    "moisture_fraction": 0.025
   },
   "std:vienna-malt": {
     "id": "std:vienna-malt",
@@ -1063,7 +1143,8 @@
     "standard_malt": "vienna-malt",
     "standard_name": "Vienna Malt",
     "family": "kilned",
-    "generic_description": "Toasty, amber; Vienna lager and märzen."
+    "generic_description": "Toasty, amber; Vienna lager and märzen.",
+    "moisture_fraction": 0.049
   },
   "std:wheat-malt": {
     "id": "std:wheat-malt",
@@ -1076,6 +1157,7 @@
     "standard_malt": "wheat-malt",
     "standard_name": "Wheat Malt",
     "family": "base",
-    "generic_description": "Foam and body; wheat beers."
+    "generic_description": "Foam and body; wheat beers.",
+    "moisture_fraction": 0.052500000000000005
   }
 }

@@ -51,16 +51,19 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 | `generic_description` | — | — | shared one-line description from the standard list |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
+| `moisture_fraction` | percentage | `[0, 1]` | as-is moisture, where the datasheet publishes it (`0`/absent ⇒ not published) |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
 
-**Moisture is not a seed field.** It is a batch-level solver input
-(`batch.grain_moisture_fraction`, default 4%), forwarded as `mc_i` for every
-grain-bill row.
+**Moisture is a per-malt seed field where published.** `moisture_fraction` comes
+from the datasheet (`moisture %/100`); malts that publish none carry no field.
+`batch.grain_moisture_fraction` (default 4%) is the **fallback** for such rows:
+the request adapter sends `mc_i = row.moisture_fraction ?? batch.grain_moisture_fraction`
+per row, and the boundary computes the weighted `MC_bar = Σ wᵢ·mcᵢ`.
 
 Mash pH/acidity is **not** a seed field either. The water solver derives grain
 acidity from `category` + `color_lovibond` (a category color-slope model in
-`backend/app/core/water.py`). There is no per-malt `di_ph`/`buffer_index` or
-`moisture_pct` to source or maintain.
+`backend/app/core/water.py`). There is no per-malt `di_ph`/`buffer_index` to
+source or maintain.
 
 ### 2.2 `sugar`
 
