@@ -45,15 +45,20 @@ data/sources/*.json  ──────build-*.mjs──▶  data/seeds/*.json  
 ```
 
 - **Raw sources** are committed under [`data/sources/`](data/sources/): the
-  beer-analytics.com hop/yeast scrapes and the BJCP 2015/2021 style
-  scrape+aggregate outputs. `data/sources/manifest.json` records each source's
-  mechanism, upstream, content hash, and row count (guarded by
-  `tests/guards/sources-manifest`).
+  beer-analytics.com hop/yeast scrapes, the BJCP 2015/2021 style
+  scrape+aggregate outputs, the malt_database fermentables scrape, and the
+  standard-malt list + malt→standard crosswalk. `data/sources/manifest.json`
+  records each source's mechanism, upstream, content hash, and row count (guarded
+  by `tests/guards/sources-manifest`).
 - **Scrapers/aggregators** live under [`scripts/scrape/`](scripts/scrape/)
   (Python): the beer-analytics hop/yeast scrapers and the BJCP category scraper
   + aggregator. Dependencies are per-pipeline `requirements.txt` files, kept out
   of the backend's dependency set.
-- **Builders** are the Node `scripts/build-*-seed.mjs` normalizers.
+- **Builders** are the Node `scripts/build-*-seed.mjs` normalizers. The
+  fermentables pipeline is two-stage: `build-fermentables-seed.mjs` (source →
+  `malts.json`/`sugars.json`, classifying each malt via the crosswalk) then
+  `build-standard-malts-seed.mjs` (derives the generic `standard-malts.json`
+  representative set from `malts.json`).
 - The BJCP scraper caches category HTML (not committed); the aggregator reads
   that cache offline. The styles seed is built from the **2021** aggregate; the
   **2015** aggregate is preserved as a source but not merged.

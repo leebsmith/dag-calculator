@@ -3,6 +3,10 @@
 - `artifact.json` — the canonical DAG (source of truth for business logic).
 - `seeds/` — the immutable reference catalogs (malt/sugar/yeast/equipment/water/styles),
   the normalized, schema-conforming output of the build scripts.
+  `seeds/standard-malts.json` is a **derived** catalog — one generic, median-based
+  representative per standard-malt class, built by
+  `scripts/build-standard-malts-seed.mjs` from `seeds/malts.json` (see
+  `docs/dag-artifacts/seed-substrate.md` §2.8).
 - `sources/` — the raw, pre-normalization inputs the build scripts consume:
   the beer-analytics.com hop/yeast scrapes, the BJCP 2015/2021 style
   scrape+aggregate outputs, the malt_database fermentables scrape, and the

@@ -166,6 +166,43 @@ it via Tinseth. The seed is built by `scripts/build-hops-seed.mjs` from
 `data/sources/beer-analytics-hops.json` (produced by
 `scripts/scrape/hop_scraper.py`).
 
+### 2.8 `standard-malts` — generic representatives (the default set)
+
+`seeds/standard-malts.json` is a **derived** catalog of one generic
+representative per used standard-malt class (81), each conforming to the `malt`
+schema with `id = std:<standard-id>` and `maltster: "Generic"`. It is the
+neutral default tier over the spotty producer notes: the default grist uses the
+generic pale ale + caramel 40L, and the picker surfaces the representative first
+inside each standard group (badged "generic").
+
+**Derivation** (`scripts/build-standard-malts-seed.mjs`, regenerated from
+`data/seeds/malts.json`):
+
+- `yield_fraction` / `color_lovibond` are the **median** of the class's members.
+  The median — not a mean, and *not* a statistical-outlier-filtered mean — is
+  chosen because the apparent yield "outliers" are real product traits (oats
+  ~0.60, chit ~0.50), which a family or IQR band would wrongly discard.
+- `category` is the strict-majority category of the members, with a family
+  fallback on a tie (`acidulated` → ACID, `crystal`/`dextrin` → CRYSTAL,
+  `roasted`/`dehusked`/`toasted` → ROASTED, else BASE). `category` is load-bearing:
+  it drives the water solver's grain-acidity buckets, not just display.
+- The `color_lovibond: 0` missing-sentinel is handled upstream: the malt builder
+  backfills 0 from the class's non-zero median when it is ≥ 1 °L, keeping 0 only
+  for genuine near-zero adjuncts (rice hulls).
+
+**The grouping is a prerequisite, not an assumption.** The representatives are
+only as good as the crosswalk, so imprecise assignments were fixed first
+(Aromatic Munich 20L → Munich Dark, Dark Wheat, A-XL → Pale Ale, Honey Malted
+Oats → Golden Naked Oats, Crystal Oat split out). Known residual: bimodal groups
+(Roast Wheat) take their median (a "medium roast"); the dark variants stay
+selectable as producer malts.
+
+**Derived + guarded, never silent.** The set tracks the imported catalog: a
+re-import that shifts the seed also shifts the medians (and may add a
+representative for a newly populated class). `make seeds` runs
+`seeds-fermentables` → `seeds-standard-malts`, and a guard fails if the committed
+file diverges from the derived medians, so drift is an explicit, reviewable diff.
+
 ---
 
 ## 3. How the engine consumes seeds
