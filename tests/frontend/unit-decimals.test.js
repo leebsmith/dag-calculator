@@ -42,3 +42,15 @@ test("gravity readouts use the active unit's precision (SG=3, °P=1)", () => {
   app.setUnit("gravity", "SG");
   assert.equal(anchor("Post-Boil Gravity (incl. late additions, if any)").display, "1.055");
 });
+
+test("editable number inputs render their natural value (no fixed-decimal padding)", () => {
+  const app = createStepApp();
+  app.boot();
+  const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.v_ferm");
+
+  // The volume input must not be padded to the unit's 1-decimal precision, or a
+  // debounced re-render would rewrite a mid-keystroke "6" into "6.0".
+  assert.equal(field().display, "20");
+  app.edit(field(), "6");
+  assert.equal(field().display, "6");
+});

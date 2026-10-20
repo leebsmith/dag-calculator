@@ -380,8 +380,13 @@ export function valuate(fields, engine, ctx = {}) {
       // A null `unitId` (no preference set) still displays the base unit, so
       // resolve precision against the effective unit the value is shown in.
       const decimals = field.decimals ?? unitDecimals(field.dimension, unitId ?? baseUnitId);
+      // Editable number inputs render their natural value (no fixed-decimal
+      // padding) so a debounced re-render never rewrites "6" into "6.0" while
+      // the user is mid-keystroke. Readouts keep their pinned precision.
       const display =
-        decimals != null && typeof shown === "number" ? shown.toFixed(decimals) : formatValue(shown);
+        field.control !== "number" && decimals != null && typeof shown === "number"
+          ? shown.toFixed(decimals)
+          : formatValue(shown);
       const out = {
         ...field,
         value,
