@@ -1220,6 +1220,89 @@ samp {
   text-align: center;
 }
 
+.chooser {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.chooser-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: var(--container-content-stack);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-2);
+}
+
+.chooser-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.recipes-item-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.recipes-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.editor-title {
+  flex: 1;
+  min-width: 0;
+  margin-right: var(--space-4);
+}
+
+.editor-title-input {
+  width: 100%;
+  padding: var(--space-1) 0;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
+.editor-title-input:hover,
+.editor-title-input:focus {
+  border-bottom-color: var(--sys-border-subtle);
+  outline: none;
+}
+
 .step-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

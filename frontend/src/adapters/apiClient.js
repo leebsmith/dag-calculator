@@ -31,6 +31,7 @@ export async function requestJSON(
   const init = { method, headers };
   if (body !== undefined) init.body = JSON.stringify(body);
   const res = await doFetch(`${base}${path}`, init);
+  if (res.status === 204) return null;
   if (!res.ok) {
     let payload = {};
     try {

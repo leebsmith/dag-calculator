@@ -16,17 +16,20 @@ Alpine.store("auth", {
 });
 
 Alpine.store("recipes", {
-  open: false,
+  view: "chooser", // "chooser" | "editor"
+  trashView: false,
   batches: [],
   activeId: null,
+  activeName: "",
 
-  toggle() {
-    this.open = !this.open;
-    if (this.open) this.refresh();
+  get visible() {
+    return this.batches.filter((b) => (b.trashed ?? false) === this.trashView);
   },
 
   syncActive() {
-    this.activeId = persistence.getActive()?.id ?? null;
+    const active = persistence.getActive();
+    this.activeId = active?.id ?? null;
+    this.activeName = active?.name ?? "";
   },
 
   async refresh() {
@@ -35,16 +38,18 @@ Alpine.store("recipes", {
   },
 
   async newRecipe() {
-    const name = (window.prompt("Recipe name") ?? "").trim() || "Untitled";
-    await persistence.createDraft(name);
+    await persistence.createUntitled();
+    this.trashView = false;
+    this.view = "editor";
     await this.refresh();
-    this.open = false;
+    this.syncActive();
   },
 
   async openDraft(id) {
     await persistence.open(id);
+    this.trashView = false;
+    this.view = "editor";
     this.syncActive();
-    this.open = false;
   },
 
   async forkFrozen(id) {
@@ -57,18 +62,39 @@ Alpine.store("recipes", {
       if (!proceed) return;
     }
     await persistence.fork(id);
+    this.trashView = false;
+    this.view = "editor";
     await this.refresh();
-    this.open = false;
+    this.syncActive();
   },
 
-  async rename() {
-    const active = persistence.getActive();
-    if (!active || active.status !== "draft") return;
-    const name = (window.prompt("Rename recipe", active.name) ?? "").trim();
-    if (name) {
-      await persistence.renameActive(name);
-      await this.refresh();
-    }
+  async rename(name) {
+    await persistence.renameActive(name);
+    this.syncActive();
+  },
+
+  async backToChooser() {
+    await persistence.flushSave();
+    await this.refresh();
+    this.view = "chooser";
+    this.syncActive();
+  },
+
+  async trash() {
+    await persistence.trashActive();
+    await this.refresh();
+    this.view = "chooser";
+    this.syncActive();
+  },
+
+  async restore(id) {
+    await persistence.restore(id);
+    await this.refresh();
+  },
+
+  async deletePermanent(id) {
+    await persistence.deletePermanent(id);
+    await this.refresh();
   },
 
   async freeze() {
@@ -79,11 +105,10 @@ Alpine.store("recipes", {
 
 // --- Auth-owned boot ---------------------------------------------------------
 // The authenticated shell (`.app-content`) is gated on `$store.auth.user` with
-// `x-if`, so nothing compiles or solves before sign-in. main.js owns boot so
-// there is exactly ONE solve path: on sign-in, refresh the recipe list and
-// either open the most recent draft (which loads + solves) or bootstrap the
-// empty app. The user is published only AFTER boot, so the shell never paints
-// with stale/empty state.
+// `x-if`, so nothing compiles or solves before sign-in. On sign-in we land on
+// the recipe chooser; the editor is entered only via New/Open/Fork (each loads
+// state). The user is published only AFTER the list is fetched, so the chooser
+// never paints with stale/empty state.
 let stepApp = null;
 let latestUser; // undefined until the first auth callback
 
@@ -96,28 +121,24 @@ async function applyAuth(user) {
     persistence.clearActive();
     recipes.batches = [];
     recipes.activeId = null;
+    recipes.activeName = "";
+    recipes.view = "chooser";
+    recipes.trashView = false;
     auth.user = null;
     auth.loading = false;
     return;
   }
 
-  // The component factory may not have run yet; it re-invokes this once it has.
   if (!stepApp) return;
 
   auth.loading = true;
   try {
     try {
       await recipes.refresh();
-      const draft = recipes.batches.find((b) => b.status === "draft");
-      if (draft) await persistence.open(draft.id);
-      else await stepApp.boot();
     } catch (err) {
-      // A failed recipe-list fetch (e.g. the backend is still warming up, or a
-      // route isn't proxied) must not leave an empty shell — boot the default
-      // app and surface the failure rather than showing nothing.
-      console.error("recipe boot failed", err);
-      await stepApp.boot();
+      console.error("recipe list failed", err);
     }
+    recipes.view = "chooser";
   } finally {
     auth.user = user;
     auth.loading = false;
@@ -139,7 +160,7 @@ Alpine.data("stepCalculator", () => {
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
   stepApp = app;
-  // Auth may have resolved before this factory ran — boot now.
+  // Auth may have resolved before this factory ran — land on the chooser now.
   if (latestUser !== undefined) applyAuth(latestUser).catch((err) => console.error("auth handling failed", err));
   return app;
 });

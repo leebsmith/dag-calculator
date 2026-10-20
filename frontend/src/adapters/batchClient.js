@@ -7,12 +7,18 @@ export function listBatches() {
   return requestJSON("/batches");
 }
 
-export function createBatch(payload) {
-  return requestJSON("/batches", { method: "POST", body: payload });
+export function upsertBatch(batchId, payload, baseUpdatedAt) {
+  const body =
+    baseUpdatedAt === undefined ? payload : { ...payload, base_updated_at: baseUpdatedAt };
+  return requestJSON(`/batches/${batchId}`, { method: "PUT", body });
 }
 
-export function updateDraft(batchId, payload) {
-  return requestJSON(`/batches/${batchId}/draft`, { method: "PUT", body: payload });
+export function setTrashed(batchId, trashed) {
+  return requestJSON(`/batches/${batchId}`, { method: "PATCH", body: { trashed } });
+}
+
+export function deleteBatch(batchId) {
+  return requestJSON(`/batches/${batchId}`, { method: "DELETE" });
 }
 
 export function freezeBatch(batchId, payload) {
