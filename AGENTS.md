@@ -1,0 +1,59 @@
+# AGENTS.md
+
+## What this is
+
+A brewing calculator built on a deterministic DAG engine. Business logic is
+declared in **`data/artifact.json`** (grammar, semantics, dimensions, domain
+math, seeds, boundaries); a JS engine (`frontend/src/engine/`) interprets it,
+an Alpine/Vite frontend renders it, and a FastAPI backend provides the JSON
+seam, solvers, Firebase auth, and Firestore persistence.
+
+## Source of truth
+
+- **`data/artifact.json` is canonical.** The engine interprets it; tests enforce
+  it; `docs/` explains it but never overrides it.
+- Docs in `docs/dag-artifacts/` + `docs/engine.md` + `docs/adding-a-node.md` are
+  **living** and must stay in sync with the artifact. `docs/historical/` is
+  **frozen** — do not maintain.
+
+## Layout
+
+| Path | Role |
+|---|---|
+| `data/` | artifact + seed catalogs (`sources/` raw → `seeds/` normalized) |
+| `frontend/src/engine/` | reference interpreter for the artifact |
+| `frontend/src/` | views, adapters, stores (Vite + Alpine) |
+| `backend/` | FastAPI app (Python 3.12, `uv`) |
+| `tests/` | frontend engine/conformance/guards + backend pytest |
+| `docs/` | living spec + frozen historical |
+| `plans/` | execution history |
+| `scripts/` | seed builders (`.mjs`) + scrapers (`scrape/`, Python) |
+
+## Commands
+
+```
+make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
+make check       # eslint/stylelint + ruff + tach
+make test        # frontend (node --test) + backend pytest
+```
+
+After any `data/artifact.json` change:
+```bash
+node scripts/emit-artifact-inventory.mjs   # REQUIRED — guarded by make test
+```
+
+## Conventions
+
+- **JS** (frontend): ES modules, `node --test` for tests, eslint + stylelint.
+- **Python** (backend): `uv run`, pytest, ruff (line-length 100), tach boundary
+  checks. Scraper deps are isolated per-pipeline and never enter the backend.
+- **Commits**: concise imperative subject (`Pin the malt-database import contract`).
+- **Artifact changes are atomic with their docs.** A model change is not done
+  until `inventory.md` is re-emitted and the relevant prose doc updated in the
+  same commit (see `docs/adding-a-node.md` and `README.md` "Maintaining the docs").
+- **No comments in code** unless asked.
+
+## When unsure
+
+- Adding an input/derived value → follow `docs/adding-a-node.md`.
+- Current/next work lives in `TODO.md`; prior decisions in `plans/`.
