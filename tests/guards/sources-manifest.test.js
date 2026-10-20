@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
+import { rowCount } from "../../scripts/emit-sources-manifest.mjs";
+
 const DIR = fileURLToPath(new URL("../../data/sources/", import.meta.url));
 const manifest = JSON.parse(
   readFileSync(new URL("../../data/sources/manifest.json", import.meta.url), "utf8")
@@ -28,7 +30,7 @@ test("sources manifest matches every committed raw source", () => {
     );
     assert.equal(
       entry.rows,
-      Array.isArray(data) ? data.length : Object.keys(data).length,
+      rowCount(data),
       `${file} row count is stale — run node scripts/emit-sources-manifest.mjs`
     );
   }

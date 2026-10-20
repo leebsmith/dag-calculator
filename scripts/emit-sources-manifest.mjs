@@ -43,12 +43,24 @@ const META = {
     mechanism: "scrape",
     upstream: "malt_database (local scrape)",
   },
+  "malt.schema.json": {
+    mechanism: "contract",
+    upstream: "malt_database schema/malt.schema.json (pinned)",
+  },
   "standard-malts.json": {
     mechanism: "vendor+extend",
     upstream: "malt_database standard_malts.tsv (extended)",
     scraper: "scripts/vendor-standard-malts.py",
   },
 };
+
+// Row count for the sources-manifest guard: a list, an envelope's `entries`, or
+// (fallback) an object's top-level key count.
+export function rowCount(data) {
+  if (Array.isArray(data)) return data.length;
+  if (data && Array.isArray(data.entries)) return data.entries.length;
+  return Object.keys(data ?? {}).length;
+}
 
 export function buildSourcesManifest() {
   const files = readdirSync(SOURCES_DIR)
@@ -61,7 +73,7 @@ export function buildSourcesManifest() {
     const data = JSON.parse(raw);
     sources[file] = {
       ...(META[file] ?? { mechanism: "unknown" }),
-      rows: Array.isArray(data) ? data.length : Object.keys(data).length,
+      rows: rowCount(data),
       sha256: createHash("sha256").update(raw).digest("hex"),
     };
   }

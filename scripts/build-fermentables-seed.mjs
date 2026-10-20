@@ -218,7 +218,14 @@ function backfillColor(seed) {
 }
 
 const inputPath = process.argv[2] ?? DEFAULT_INPUT;
-const rows = JSON.parse(readFileSync(inputPath, "utf8"));
+const source = JSON.parse(readFileSync(inputPath, "utf8"));
+const expectedSchemaVersion = 1;
+if (source.schema_version !== expectedSchemaVersion) {
+  throw new Error(
+    `malt-database source has schema_version ${source.schema_version}; expected ${expectedSchemaVersion}`
+  );
+}
+const rows = source.entries;
 const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
 const standardList = JSON.parse(readFileSync(STANDARD_LIST_PATH, "utf8"));
 const { malts, sugars } = splitByType(rows);

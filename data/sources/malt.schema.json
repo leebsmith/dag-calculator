@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "malt.schema.json",
+  "title": "Malt",
+  "$comment": "Import contract v1 — bump SCHEMA_VERSION in bin/unify.py on breaking changes.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["name", "maltster"],
+  "properties": {
+    "name":           { "type": "string" },
+    "maltster":       { "type": "string", "enum": ["Briess","Simpsons","Fawcett","Weyermann","Bairds","Dingemans","Muntons","Gambrinus","Great Western","Bestmalz","Canada Malting","Crisp","Brewtarget","Williams Brewing","Northern Brewer","L.D. Carlson"] },
+    "yield_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
+    "yield_basis":    { "type": "string", "enum": ["extract", "fermentability"] },
+    "color_lovibond": { "type": "number", "minimum": 0 },
+    "moisture":       { "type": "number", "minimum": 0, "maximum": 100 },
+    "notes":          { "type": "string" },
+    "description":    { "type": "string" },
+    "sold_out":       { "type": "boolean" },
+    "category":       { "type": "string", "enum": ["BASE","ROASTED","CRYSTAL","ACIDULATED"] },
+    "product_type":   { "type": "string", "enum": ["malt","extract","adjunct","syrup","sugar"] }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["product_type"],
+        "properties": { "product_type": { "enum": ["extract", "syrup", "sugar"] } }
+      },
+      "then": { "not": { "required": ["category"] } },
+      "else": { "required": ["category"] }
+    }
+  ]
+}

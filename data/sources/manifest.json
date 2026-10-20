@@ -36,12 +36,18 @@
       "mechanism": "scrape",
       "upstream": "malt_database (local scrape)",
       "rows": 467,
-      "sha256": "688e8003a61eb3c448ba47eed218f684830814deb77fd92649e318fc5d3c869a"
+      "sha256": "24d116acebd00bdf06c42c265c5276d7436054ff96e0b14bc9e6c3b77c45fed7"
     },
     "malt-standard-crosswalk.json": {
       "mechanism": "unknown",
       "rows": 361,
       "sha256": "5f6d76135c521c212d829ddf6cb5f4cbc50cf84ffae849a3e6548cea127f31ea"
+    },
+    "malt.schema.json": {
+      "mechanism": "contract",
+      "upstream": "malt_database schema/malt.schema.json (pinned)",
+      "rows": 9,
+      "sha256": "d0b5f883a062021aa22c96139d916e786ff5f598ffe40f86faaf68ed4e25fe28"
     },
     "standard-malts.json": {
       "mechanism": "vendor+extend",

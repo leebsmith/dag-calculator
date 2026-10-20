@@ -1,16 +1,17 @@
 // Source-contract guard for the vendored malt-database scrape.
 //
 // The builder (scripts/build-fermentables-seed.mjs) reads
-// data/sources/malt-database-malts.json, which is a committed copy of the
-// personal malt_database scrape. This guard fails loudly when that source
-// drifts in *shape* — a renamed/retitled field, a changed enum, or an
-// unexpected new key — so the builder never silently emits defaults for a
-// field it can no longer find. Content drift (a re-scrape that changes rows)
-// is caught separately by the sources-manifest hash/row-count guard.
+// data/sources/malt-database-malts.json, a committed copy of the personal
+// malt_database scrape. That source is now the versioned envelope
+// `{ schema_version, generated_at, entries }` described by the pinned
+// `data/sources/malt.schema.json` (vendored from the producer). This guard fails
+// loudly on contract drift — a version bump, a renamed/retitled field, a changed
+// enum, or an unexpected new key — so the builder never silently emits defaults.
+// Content drift is caught separately by the sources-manifest hash/row-count guard.
 //
-// New optional source fields (e.g. a future per-malt `moisture`) are
-// deliberately unhandled by the builder until wired in; add them to
-// ALLOWED_KEYS here to acknowledge them.
+// The key/enum sets are DERIVED from the pinned schema, so `malt.schema.json`
+// remains the single source of truth; a new field in the producer is a visible
+// diff to this guard, not a silent reshape.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -20,49 +21,41 @@ import { fileURLToPath } from "node:url";
 const SOURCE = fileURLToPath(
   new URL("../../data/sources/malt-database-malts.json", import.meta.url)
 );
+const SCHEMA = fileURLToPath(
+  new URL("../../data/sources/malt.schema.json", import.meta.url)
+);
 
-const PRODUCT_TYPES = ["malt", "extract", "adjunct", "syrup", "sugar"];
-const CATEGORIES = ["BASE", "ROASTED", "CRYSTAL", "ACIDULATED"];
-const YIELD_BASES = ["extract", "fermentability"];
+const EXPECTED_SCHEMA_VERSION = 1;
 
-// Top-level keys the scraper is allowed to emit. A renamed field (e.g.
-// color_lovibond -> color) surfaces here as an unknown key, instead of the
-// builder quietly substituting a default.
-const ALLOWED_KEYS = new Set([
-  "name",
-  "maltster",
-  "product_type",
-  "category",
-  "yield_fraction",
-  "yield_basis",
-  "color_lovibond",
-  "moisture",
-  "notes",
-  "description",
-  "sold_out",
-]);
+const schema = JSON.parse(readFileSync(SCHEMA, "utf8"));
+const ALLOWED_KEYS = new Set(Object.keys(schema.properties ?? {}));
+const PRODUCT_TYPES = schema.properties?.product_type?.enum ?? [];
+const CATEGORIES = schema.properties?.category?.enum ?? [];
+const YIELD_BASES = schema.properties?.yield_basis?.enum ?? [];
 
 const MALT_LIKE = new Set(["malt", "adjunct"]);
 
-function readSource() {
+function readEnvelope() {
   return JSON.parse(readFileSync(SOURCE, "utf8"));
 }
 
-test("malt-database source is a non-empty list", () => {
-  const rows = readSource();
-  assert.ok(Array.isArray(rows), "source must be a list");
-  assert.ok(rows.length > 0, "source must not be empty");
+test("malt-database source is the versioned envelope", () => {
+  const raw = readEnvelope();
+  assert.equal(raw.schema_version, EXPECTED_SCHEMA_VERSION, "contract version mismatch");
+  assert.ok(Array.isArray(raw.entries), "entries must be a list");
+  assert.ok(raw.entries.length > 0, "entries must not be empty");
+  assert.equal(typeof raw.generated_at, "string", "generated_at must be a string");
 });
 
-test("malt-database source entries conform to the scrape contract", () => {
-  const rows = readSource();
+test("malt-database entries conform to the pinned contract", () => {
+  const rows = readEnvelope().entries;
   for (const [i, entry] of rows.entries()) {
     const label = `[${i}] ${entry?.name ?? "?"}`;
 
     assert.ok(entry && typeof entry === "object", `${label} must be an object`);
 
     for (const key of Object.keys(entry)) {
-      assert.ok(ALLOWED_KEYS.has(key), `${label} has unexpected field "${key}"`);
+      assert.ok(ALLOWED_KEYS.has(key), `${label} has undeclared field "${key}"`);
     }
 
     assert.equal(typeof entry.name, "string", `${label}.name must be a string`);
@@ -111,8 +104,8 @@ test("malt-database source entries conform to the scrape contract", () => {
     if (entry.moisture !== undefined && entry.moisture !== null) {
       assert.equal(typeof entry.moisture, "number", `${label}.moisture must be a number`);
       assert.ok(
-        entry.moisture >= 0 && entry.moisture <= 100,
-        `${label}.moisture=${entry.moisture} out of range (percent)`
+        entry.moisture > 0 && entry.moisture <= 100,
+        `${label}.moisture=${entry.moisture} out of range (0 means absent)`
       );
     }
     for (const field of ["notes", "description"]) {
