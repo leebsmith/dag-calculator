@@ -54,8 +54,7 @@ owned by the user, merged into both views at lookup time.
 6. **Storage** — `localStorage`, `schema_version`-stamped (mirrors
    `store/unitPrefs.js`); no export/import yet.
 7. **Scope** — `malt`, `yeast`, `hop`, `sugar`, `equipment`, `water_report`,
-   `water_target`. Mash schedules (a `rests[]` template, a different shape) are
-   deferred.
+   `water_target`.
 
 ## Data model
 
@@ -132,6 +131,5 @@ component, so frozen batches stay stable and drift is explicit.
 
 ## Out of scope
 
-- Mash-schedule templates (different shape).
 - Editing/overriding seed items.
 - Firestore persistence and cross-device export/import.
