@@ -4,6 +4,8 @@
 
 import {
   styleCentroid,
+  styleFermentation,
+  styleTagSet,
   feasibleVertices,
   polygonCentroid,
   pointInRegion,
@@ -15,23 +17,9 @@ import {
   oeSliceAt,
   aeSliceAt,
 } from "../../engine/fermentation.js";
+import { derivationsFor } from "../../views/seedDerivations.js";
 
 const MAX_VISIBLE_STYLES = 25;
-
-const normalizeTag = (t) => (t ?? "").trim().toLowerCase().replace(/\s+/g, "-");
-
-function styleTagSet(style) {
-  return new Set((style?.tags ?? "").split(",").map(normalizeTag));
-}
-
-function styleFermentation(style) {
-  const tags = styleTagSet(style);
-  const name = (style?.name ?? "").toLowerCase();
-  if (tags.has("bottom-fermented")) return "lager";
-  if (tags.has("wild-fermented") || tags.has("wild-fermentation")) return "wild";
-  if (name.includes("mixed-fermentation")) return "mixed";
-  return "ale";
-}
 
 function styleStrength(style) {
   const tags = styleTagSet(style);
@@ -88,23 +76,11 @@ export function registerStyleCard(app, ctx) {
       this.setRoot("batch.style_id", id);
       const style = cache.references.style[id];
       if (style) {
-        for (const field of ["og_min", "og_max", "fg_min", "fg_max", "ibu_min", "ibu_max", "srm_min", "srm_max", "abv_min", "abv_max"]) {
-          const value = style[field];
-          if (typeof value === "number") this.setRoot(`batch.style_${field}`, value);
-        }
-        this.setRoot("batch.fermentation", styleFermentation(style));
-        const centroid = styleCentroid(style);
-        if (centroid) {
-          this.setRoot("batch.apparent_attenuation", centroid.aa);
-          this.setRoot("batch.target_abv", centroid.abv);
-        }
-        // Seed the color/bitterness targets at the envelope midpoint so the
-        // sliders start inside the style's range.
-        if (typeof style.srm_min === "number" && typeof style.srm_max === "number") {
-          this.setRoot("batch.target_srm", (style.srm_min + style.srm_max) / 2);
-        }
-        if (typeof style.ibu_min === "number" && typeof style.ibu_max === "number") {
-          this.setRoot("batch.target_ibu", (style.ibu_min + style.ibu_max) / 2);
+        for (const { rootId, derive } of derivationsFor("batch.style")) {
+          const value = derive(style);
+          if (typeof value === "number" || (typeof value === "string" && value !== "")) {
+            this.setRoot(rootId, value);
+          }
         }
       }
       this.refreshTargets();

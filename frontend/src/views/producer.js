@@ -9,6 +9,7 @@ import { resolveReference } from "../engine/paths.js";
 import { fromBase } from "../engine/units.js";
 import { rendererFor } from "./renderers.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "./registry/units.js";
+import { seedDerivations, approxEqual, sourceLabel } from "./seedDerivations.js";
 
 function defaultControl(node) {
   if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
@@ -428,6 +429,37 @@ export function valuate(fields, engine, ctx = {}) {
         if (typeof max === "number" && Number.isFinite(max)) {
           out.hint = `Max at current attenuation: ${max.toFixed(1)}%.`;
         }
+      }
+      // Seed provenance: is this root's value currently equal to a seed-derived
+      // source (a water report ion, a yeast/style copy-in)? Carries the source
+      // value + label for the "reset to source" affordance.
+      const sources = seedDerivations(field.id);
+      if (sources.length) {
+        let seeded = false;
+        let seededValue;
+        let seededSource = "";
+        for (const src of sources) {
+          let component;
+          try {
+            component = engine.get(src.selection);
+          } catch {
+            component = null;
+          }
+          const derived = src.derive(component);
+          if (derived === undefined) continue;
+          if (seededValue === undefined) {
+            seededValue = derived;
+            seededSource = sourceLabel(component);
+          }
+          if (value !== undefined && approxEqual(derived, value)) {
+            seeded = true;
+            seededValue = derived;
+            seededSource = sourceLabel(component);
+          }
+        }
+        out.seeded = seeded;
+        out.seededValue = seededValue;
+        out.seededSource = seededSource;
       }
       return out;
     })

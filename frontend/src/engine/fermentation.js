@@ -306,3 +306,22 @@ export function limitHeadroom(envelope, oe, ae) {
   rows.sort((a, b) => a.headroom / a.range - b.headroom / b.range);
   return rows[0];
 }
+
+// --- Style-tag -> fermentation classification ------------------------------
+// Maps a BJCP style's tags (plus its name) to the batch fermentation choice.
+// Pure; shared by the style card and the seed-derivations registry.
+
+const normalizeTag = (t) => (t ?? "").trim().toLowerCase().replace(/\s+/g, "-");
+
+export function styleTagSet(style) {
+  return new Set((style?.tags ?? "").split(",").map(normalizeTag));
+}
+
+export function styleFermentation(style) {
+  const tags = styleTagSet(style);
+  const name = (style?.name ?? "").toLowerCase();
+  if (tags.has("bottom-fermented")) return "lager";
+  if (tags.has("wild-fermented") || tags.has("wild-fermentation")) return "wild";
+  if (name.includes("mixed-fermentation")) return "mixed";
+  return "ale";
+}

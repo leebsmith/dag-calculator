@@ -13,6 +13,7 @@ import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
 import { hamiltonPct } from "../views/hamilton.js";
+import { derivationsFor } from "../views/seedDerivations.js";
 import { registerYeastCard, refreshYeastCard } from "./cards/yeast.js";
 import { registerStyleCard, refreshStyleCard } from "./cards/style.js";
 import { registerHopCard, refreshHopCard } from "./cards/hops.js";
@@ -62,6 +63,16 @@ function buildFieldSliceMap() {
   return map;
 }
 
+// Selection reference root (e.g. "water.source_report_id") -> its selection node
+// id (e.g. "water.source_report"), for the copy-in cascade.
+function refToSelection(artifact) {
+  const map = new Map();
+  for (const [id, node] of Object.entries(artifact.nodes)) {
+    if (node.kind === "selection") map.set(node.ref, id);
+  }
+  return map;
+}
+
 
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
@@ -98,6 +109,7 @@ export function createStepApp(options = {}) {
 
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   const fieldSlice = buildFieldSliceMap();
+  const refToSelectionMap = refToSelection(artifact);
 
   // Selection node -> the step that displays its picker (ref root). Fallback
   // attribution for a selection's field-level domains when the field itself is
@@ -568,6 +580,16 @@ export function createStepApp(options = {}) {
       }
     },
 
+    // Restore a seed-derived root to its source value (the "↺" affordance shown
+    // once the user has overridden it).
+    resetField(field) {
+      const nodeId = field?.target?.nodeId;
+      if (!nodeId || field.seededValue === undefined) return;
+      this.setRoot(nodeId, field.seededValue);
+      this.scheduleSolve();
+      this.notify();
+    },
+
     // Switching topology reinterprets the intensive value (L/kg vs dimensionless
     // r), so reset it to the topology's sensible default (mirrors the legacy
     // onTopologyChange).
@@ -580,26 +602,15 @@ export function createStepApp(options = {}) {
 
     // Selection -> root copy-in (view-only). Picking a source report / target
     // profile pre-fills the editable ion roots; they remain user-editable.
-    copyInCascade(rootId) {
-      if (rootId === "water.source_report_id") {
-        const report = engine.resolve("water.source_report");
-        if (!report) return;
-        const map = {
-          calcium_ca: "calcium_ca",
-          magnesium_mg: "magnesium_mg",
-          sodium_na: "sodium_na",
-          sulfate_so4: "sulfate_so4",
-          chloride_cl: "chloride_cl",
-          total_alkalinity_caco3: "alkalinity_as_caco3",
-        };
-        for (const [src, dst] of Object.entries(map)) {
-          if (typeof report[src] === "number") this.setRoot(`water.source.${dst}`, report[src]);
-        }
-      } else if (rootId === "water.target_profile_id") {
-        const profile = engine.resolve("water.target_profile");
-        if (!profile) return;
-        for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"]) {
-          if (typeof profile[ion] === "number") this.setRoot(`water.target.${ion}`, profile[ion]);
+    copyInCascade(refRootId) {
+      const selectionNode = refToSelectionMap.get(refRootId);
+      if (!selectionNode) return;
+      const component = engine.get(selectionNode);
+      if (!component) return;
+      for (const { rootId, derive } of derivationsFor(selectionNode)) {
+        const value = derive(component);
+        if (typeof value === "number" || (typeof value === "string" && value !== "")) {
+          this.setRoot(rootId, value);
         }
       }
     },

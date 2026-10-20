@@ -237,6 +237,40 @@ samp {
   margin-left: var(--space-0-25);
 }
 
+.seed-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-25) var(--space-1);
+  border-radius: var(--radius-sm);
+  background-color: var(--sys-color-action-subtle);
+  color: var(--sys-color-action-subtle-text);
+  font-size: var(--text-nano);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.seed-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--sys-text-tertiary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.seed-reset:hover {
+  color: var(--sys-color-action-primary);
+}
+
+.form-input.is-seeded,
+.form-select.is-seeded {
+  color: var(--sys-text-tertiary);
+}
+
 .form-input {
   width: 100%;
   padding: var(--space-2) var(--space-3);

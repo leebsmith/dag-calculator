@@ -1,6 +1,8 @@
 // Yeast selection card: catalog picker with name / manufacturer / attenuation
 // tier filters. Not a draft editor, so it does not use the catalog/draft helper.
 
+import { derivationsFor } from "../../views/seedDerivations.js";
+
 const MAX_VISIBLE = 25;
 
 const formatPercent = (f) => (typeof f === "number" ? String(Math.round(f * 1000) / 10) : "");
@@ -32,8 +34,11 @@ export function registerYeastCard(app, ctx) {
     selectYeast(id) {
       this.setRoot("batch.yeast_id", id);
       const yeast = cache.references.yeast[id];
-      if (yeast && typeof yeast.attenuation_pct === "number") {
-        this.setRoot("batch.apparent_attenuation", yeast.attenuation_pct);
+      if (yeast) {
+        for (const { rootId, derive } of derivationsFor("batch.yeast")) {
+          const value = derive(yeast);
+          if (typeof value === "number") this.setRoot(rootId, value);
+        }
       }
       this.scheduleSolve();
       this.notify();
