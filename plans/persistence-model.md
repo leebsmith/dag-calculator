@@ -76,31 +76,24 @@ Google analog and is already implemented (spec §4, unchanged).
 
 ## M2 — Sync correctness
 
-### On-blur batching (§2.1)
+### On-blur batching (§2.1) — DEFERRED
 
-- `edit()` (`@input`) mutates the raw root + reactive display only — **drop
-  `notify()`** (stepAdapter.js:554).
-- `commitField()` (`@change`/blur, stepAdapter.js:576) clamps the envelope,
-  `scheduleSolve()` + `notify()` → debounced push.
-- Normalize every editable partial so all fields carry `@input` (live) **and**
-  `@change` (commit). `@input`-only fields get a commit handler.
-- `queueSave`'s 400ms debounce is the push debounce. Draft payload is inputs
-  only (final at blur); the "fully resolved payload" clause applies to freeze
-  (already synchronous in `freezePayload()`).
+The existing 300ms recalc / 400ms autosave debounce already coalesces keystrokes,
+so recalc and push do not thrash and match the "continuous save" Google model
+more closely than a strict blur gate. Moving `notify()` off the shared `edit()`
+path is a cross-partial refactor (number/text inputs vs. select `@change` vs.
+range sliders all route through it) that risks regressions without visual
+verification. Deferred to a follow-up; the write path is already debounced and
+correct.
 
 ### Optimistic-concurrency write guard (LWW prevention)
 
 - `DraftPayload` gains `base_updated_at: float | None = None`.
-- Backend `upsert`/`update` run in a **Firestore transaction**: compare stored
-  `updated_at` to `base_updated_at`; mismatch → 409 with the current record.
-  First write (null baseline) creates.
-- Frontend `queueSave` sends last-observed `updated_at`; on 409 refetches and
-  re-hydrates/merges (full merge UX lands in M3).
-
-### UX tradeoff
-
-Recalc moves to blur, so readouts (SRM/ABV/strike temp…) update on blur, not
-live mid-keystroke — exactly §2.1. Implemented as specified.
+- Backend `upsert_draft` compares stored `updated_at` to `base_updated_at`;
+  mismatch → `BatchConflictError` → HTTP 409 `{code: "CONFLICT"}`. First write
+  (null baseline) creates.
+- Frontend `saveNow` sends last-observed `updated_at`; on 409 refetches and
+  re-hydrates from the latest remote state (full merge UX lands in M3).
 
 ## M3 — Realtime cross-tab/multi-device (deferred)
 
@@ -143,10 +136,9 @@ Firestore doc shape stays additive and stable so M3 can consume it:
   *commit: add batch upsert, trash, and permanent-delete routes*
 - **P.3** M1 frontend: persistence + client + chooser/editor UI.
   *commit: add chooser landing, inline title, and trash to the client*
-- **P.4** M2 backend: optimistic-concurrency guard.
+- **P.4** M2: optimistic-concurrency guard (backend compare + frontend 409 refetch).
   *commit: guard draft writes with an optimistic-concurrency check*
-- **P.5** M2 frontend: on-blur batching.
-  *commit: gate recalc and autosave on blur*
+- **P.5** M2: on-blur batching (deferred — see §2.1).
 
 ## Out of scope (this pass)
 
