@@ -1,12 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { catalogCategories, filterCatalog } from "../../frontend/src/views/catalog.js";
+import { catalogCategories, familyOptions, filterCatalog, standardGroups } from "../../frontend/src/views/catalog.js";
 
 const items = [
   { id: "a", name: "Alpha", notes: "citrus", purpose: "Aroma" },
   { id: "b", name: "Beta", notes: "pine", purpose: "Bittering" },
   { id: "c", name: "Cascade", notes: "floral", purpose: "Dual Purpose" },
+];
+
+const malts = [
+  { id: "m1", name: "Briess Brewers Malt", notes: "", standard_malt: "pale-ale-malt", standard_name: "Pale Ale Malt", family: "base", generic_description: "Standard American/British base malt." },
+  { id: "m2", name: "Bairds Pale Ale Malt", notes: "", standard_malt: "pale-ale-malt", standard_name: "Pale Ale Malt", family: "base", generic_description: "Standard American/British base malt." },
+  { id: "m3", name: "Pilsen Malt", notes: "", standard_malt: "pilsner-malt", standard_name: "Pilsner Malt", family: "base", generic_description: "Clean, pale base malt for lagers." },
+  { id: "m4", name: "Caramel Malt 40L", notes: "", standard_malt: "caramel-40l", standard_name: "Caramel 40L", family: "crystal", generic_description: "Caramel sweetness." },
+  { id: "m5", name: "Caramel Malt 60L", notes: "", standard_malt: "caramel-60l", standard_name: "Caramel 60L", family: "crystal", generic_description: "Caramel/toffee." },
 ];
 
 const ids = (rows) => rows.map((row) => row.id);
@@ -38,4 +46,31 @@ test("catalogCategories returns sorted unique categories", () => {
     "Dual Purpose",
   ]);
   assert.deepEqual(catalogCategories(items, () => null), []);
+});
+
+test("filterCatalog searches custom searchFields", () => {
+  assert.deepEqual(
+    ids(filterCatalog(malts, { query: "lager", searchFields: ["standard_name", "generic_description"] })),
+    ["m3"]
+  );
+  assert.deepEqual(ids(filterCatalog(malts, { query: "caramel sweetness" })), []);
+});
+
+test("familyOptions returns families in canonical order with counts", () => {
+  const fams = familyOptions(malts);
+  assert.deepEqual(fams.map((f) => f.name), ["base", "crystal"]);
+  assert.deepEqual(fams.map((f) => f.count), [3, 2]);
+  assert.equal(fams[0].label, "Base");
+});
+
+test("standardGroups groups by standard, family-ordered, count desc then name", () => {
+  const groups = standardGroups(malts);
+  assert.deepEqual(
+    groups.map((g) => g.id),
+    ["pale-ale-malt", "pilsner-malt", "caramel-40l", "caramel-60l"]
+  );
+  assert.equal(groups[0].name, "Pale Ale Malt");
+  assert.equal(groups[0].description, "Standard American/British base malt.");
+  assert.equal(groups[0].count, 2);
+  assert.equal(groups[1].count, 1);
 });
