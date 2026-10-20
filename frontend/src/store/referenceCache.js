@@ -10,6 +10,7 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json" };
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
+import standardMalts from "../../../data/seeds/standard-malts.json" with { type: "json" };
 import hops from "../../../data/seeds/hops.json" with { type: "json" };
 import sugars from "../../../data/seeds/sugars.json" with { type: "json" };
 import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
@@ -31,9 +32,13 @@ const BASE_REFERENCES = {
   water_target: waterTargets,
 };
 
+// The generic representative set (`std:`-prefixed) is merged into the malt
+// catalog so pickers and the default grist resolve them uniformly.
+const allMalts = { ...malts, ...standardMalts };
+
 const BASE_SEEDS = {
   equipment,
-  malts,
+  malts: allMalts,
   hops,
   sugars,
   yeasts,
@@ -44,12 +49,12 @@ const BASE_SEEDS = {
 };
 
 const DEFAULT_GRIST = [
-  { catalog_id: "pale-ale-malt", pct: 0.8, parts: 80 },
-  { catalog_id: "caramel-malt-40l", pct: 0.2, parts: 20 },
+  { catalog_id: "std:pale-ale-malt", pct: 0.8, parts: 80 },
+  { catalog_id: "std:caramel-40l", pct: 0.2, parts: 20 },
 ];
 
 function buildGristRow(entry) {
-  const malt = malts[entry.catalog_id];
+  const malt = allMalts[entry.catalog_id];
   return {
     catalog_id: entry.catalog_id,
     name: malt.name,

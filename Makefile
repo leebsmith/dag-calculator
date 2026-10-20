@@ -18,6 +18,7 @@ BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
 .PHONY: help local-dev check test seeds seeds-styles seeds-yeasts seeds-hops \
+        seeds-fermentables seeds-standard-malts \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
 help:
@@ -65,7 +66,7 @@ test:
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/
 # by the .mjs builders. Scrapers are polite (identified UA, 1.5 s throttle).
-seeds: seeds-styles seeds-yeasts seeds-hops
+seeds: seeds-styles seeds-yeasts seeds-hops seeds-fermentables seeds-standard-malts
 
 seeds-styles:
 	node scripts/build-styles-seed.mjs
@@ -75,6 +76,12 @@ seeds-yeasts:
 
 seeds-hops:
 	node scripts/build-hops-seed.mjs
+
+seeds-fermentables:
+	node scripts/build-fermentables-seed.mjs
+
+seeds-standard-malts: seeds-fermentables
+	node scripts/build-standard-malts-seed.mjs
 
 scrape-yeasts:
 	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/yeast_scraper.py \

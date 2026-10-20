@@ -172,6 +172,9 @@
                       <div>
                         <div class="catalog-item-name">
                           <span x-text="item.name"></span>
+                          <template x-if="item.id.startsWith('std:')">
+                            <span class="status-badge status-badge-success text-nano">generic</span>
+                          </template>
                           <template x-if="isUserItem(item.id)">
                             <span class="status-badge status-badge-info text-nano">mine</span>
                           </template>
@@ -185,7 +188,7 @@
                         <button
                           type="button"
                           class="btn-outline text-xs"
-                          x-show="!isUserItem(item.id)"
+                          x-show="!isUserItem(item.id) && !item.id.startsWith('std:')"
                           @click="duplicateCatalogTrace(item.id)"
                           title="Copy to my items"
                         >

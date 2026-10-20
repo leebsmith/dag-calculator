@@ -176,6 +176,9 @@ export function installCatalogDraft(app, ctx, config) {
       const family = this[`${prefix}Family`];
       const added = activeIds.call(this);
       let items = catalog();
+      // Representative (`std:`) entries are not producer variants — exclude them
+      // from the browser counts.
+      items = items.filter((item) => !String(item.id ?? "").startsWith("std:"));
       if (family) items = items.filter((item) => item[familyField] === family);
       if (q) {
         items = filterCatalog(items, {
@@ -204,12 +207,21 @@ export function installCatalogDraft(app, ctx, config) {
       if (standardField && this[`${prefix}Standard`]) {
         items = items.filter((item) => item[standardField] === this[`${prefix}Standard`]);
       }
-      return filterCatalog(items, {
+      const filtered = filterCatalog(items, {
         activeIds: activeIds.call(this),
         query: this[`${prefix}Search`],
         categories: this[`${prefix}CategoryFilter`],
         categoryOf: categoryField ? (item) => item[categoryField] : null,
       });
+      // In a standard's drill-down, surface the generic representative first.
+      if (standardField && this[`${prefix}Standard`]) {
+        filtered.sort((a, b) => {
+          const ar = String(a.id ?? "").startsWith("std:") ? 0 : 1;
+          const br = String(b.id ?? "").startsWith("std:") ? 0 : 1;
+          return ar - br || String(a.name ?? "").localeCompare(String(b.name ?? ""));
+        });
+      }
+      return filtered;
     },
     [`${prefix}VisibleCatalog`]() {
       if (standardField && this[`${prefix}Standard`]) {
