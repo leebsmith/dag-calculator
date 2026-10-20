@@ -90,6 +90,14 @@ Alpine.store("recipes", {
     this.syncActive();
   },
 
+  async openTrash() {
+    await persistence.flushSave();
+    await this.refresh();
+    this.trashView = true;
+    this.view = "chooser";
+    this.syncActive();
+  },
+
   async trash() {
     await persistence.trashActive();
     await this.refresh();
