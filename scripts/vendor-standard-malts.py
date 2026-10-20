@@ -22,12 +22,10 @@ OUT = Path(__file__).resolve().parent.parent / "data/sources/standard-malts.json
 
 
 def slugify(value: str) -> str:
-    return re.sub(
-        r"[^a-z0-9]+", "-",
-        value.lower()
-        .replace("\u00ae", "").replace("\u2122", "")
-        .strip(),
-    ).strip("-")
+    import unicodedata
+    text = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("utf-8")
+    text = text.lower().replace("\u00ae", "").replace("\u2122", "")
+    return re.sub(r"[^a-z0-9]+", "-", text).strip("-")
 
 
 def entry_from_tsv(row):
