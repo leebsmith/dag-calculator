@@ -373,6 +373,21 @@ export function registerStyleCard(app, ctx) {
         return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
       },
     },
+    // The SRM/IBU target roots live on the batch slice, but the style card shows
+    // them as sliders; expose their field models (with `seeded`/`seededValue`)
+    // for the seed provenance affordance.
+    srmTargetField: {
+      configurable: true,
+      get() {
+        return (this.fieldsBySlice.batch ?? []).find((f) => f.id === "batch.target_srm") ?? null;
+      },
+    },
+    ibuTargetField: {
+      configurable: true,
+      get() {
+        return (this.fieldsBySlice.batch ?? []).find((f) => f.id === "batch.target_ibu") ?? null;
+      },
+    },
     // Planned bitterness balance: planned IBU over the planned OG's gravity
     // units (from the fermentation-target navigator), so it needs no solve.
     ibuGu: {

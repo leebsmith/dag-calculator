@@ -238,7 +238,21 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Target SRM</label>
+          <label class="form-label">
+            <span>Target SRM</span>
+            <span
+              class="seed-badge"
+              x-show="srmTargetField && srmTargetField.seeded"
+              :title="'Auto-filled from ' + srmTargetField.seededSource + ' (seed)'"
+            >seed</span>
+            <button
+              type="button"
+              class="seed-reset"
+              x-show="srmTargetField && !srmTargetField.seeded && srmTargetField.seededValue !== undefined"
+              :title="'Reset to ' + srmTargetField.seededSource"
+              @click="resetField(srmTargetField)"
+            >↺</button>
+          </label>
           <template x-if="styleSrmBounds">
             <div>
               <input
@@ -261,7 +275,21 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Target IBU</label>
+          <label class="form-label">
+            <span>Target IBU</span>
+            <span
+              class="seed-badge"
+              x-show="ibuTargetField && ibuTargetField.seeded"
+              :title="'Auto-filled from ' + ibuTargetField.seededSource + ' (seed)'"
+            >seed</span>
+            <button
+              type="button"
+              class="seed-reset"
+              x-show="ibuTargetField && !ibuTargetField.seeded && ibuTargetField.seededValue !== undefined"
+              :title="'Reset to ' + ibuTargetField.seededSource"
+              @click="resetField(ibuTargetField)"
+            >↺</button>
+          </label>
           <template x-if="styleIbuBounds">
             <div>
               <input
@@ -316,7 +344,21 @@
         <h3 class="synthesized-title">Style envelope</h3>
       </div>
       <div class="form-group">
-        <label class="form-label">Fermentation</label>
+        <label class="form-label">
+          <span>Fermentation</span>
+          <span
+            class="seed-badge"
+            x-show="styleField('batch.fermentation').seeded"
+            :title="'Auto-filled from ' + styleField('batch.fermentation').seededSource + ' (seed)'"
+          >seed</span>
+          <button
+            type="button"
+            class="seed-reset"
+            x-show="!styleField('batch.fermentation').seeded && styleField('batch.fermentation').seededValue !== undefined"
+            :title="'Reset to ' + styleField('batch.fermentation').seededSource"
+            @click="resetField(styleField('batch.fermentation'))"
+          >↺</button>
+        </label>
         <select
           class="form-select"
           :value="styleField('batch.fermentation').value"
@@ -329,43 +371,83 @@
       </div>
       <div class="step-grid-2col">
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_og_min').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_og_min').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_og_min').seeded" :title="'Auto-filled from ' + styleField('batch.style_og_min').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_og_min').seeded && styleField('batch.style_og_min').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_og_min').seededSource" @click="resetField(styleField('batch.style_og_min'))">↺</button>
+          </label>
           <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_og_min').display" @input="edit(styleField('batch.style_og_min'), $event.target.value)" @change="commitField(styleField('batch.style_og_min'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_og_max').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_og_max').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_og_max').seeded" :title="'Auto-filled from ' + styleField('batch.style_og_max').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_og_max').seeded && styleField('batch.style_og_max').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_og_max').seededSource" @click="resetField(styleField('batch.style_og_max'))">↺</button>
+          </label>
           <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_og_max').display" @input="edit(styleField('batch.style_og_max'), $event.target.value)" @change="commitField(styleField('batch.style_og_max'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_fg_min').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_fg_min').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_fg_min').seeded" :title="'Auto-filled from ' + styleField('batch.style_fg_min').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_fg_min').seeded && styleField('batch.style_fg_min').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_fg_min').seededSource" @click="resetField(styleField('batch.style_fg_min'))">↺</button>
+          </label>
           <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_fg_min').display" @input="edit(styleField('batch.style_fg_min'), $event.target.value)" @change="commitField(styleField('batch.style_fg_min'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_fg_max').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_fg_max').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_fg_max').seeded" :title="'Auto-filled from ' + styleField('batch.style_fg_max').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_fg_max').seeded && styleField('batch.style_fg_max').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_fg_max').seededSource" @click="resetField(styleField('batch.style_fg_max'))">↺</button>
+          </label>
           <input type="number" step="0.001" class="form-input tabular-nums" :value="styleField('batch.style_fg_max').display" @input="edit(styleField('batch.style_fg_max'), $event.target.value)" @change="commitField(styleField('batch.style_fg_max'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_ibu_min').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_ibu_min').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_ibu_min').seeded" :title="'Auto-filled from ' + styleField('batch.style_ibu_min').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_ibu_min').seeded && styleField('batch.style_ibu_min').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_ibu_min').seededSource" @click="resetField(styleField('batch.style_ibu_min'))">↺</button>
+          </label>
           <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_ibu_min').display" @input="edit(styleField('batch.style_ibu_min'), $event.target.value)" @change="commitField(styleField('batch.style_ibu_min'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_ibu_max').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_ibu_max').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_ibu_max').seeded" :title="'Auto-filled from ' + styleField('batch.style_ibu_max').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_ibu_max').seeded && styleField('batch.style_ibu_max').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_ibu_max').seededSource" @click="resetField(styleField('batch.style_ibu_max'))">↺</button>
+          </label>
           <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_ibu_max').display" @input="edit(styleField('batch.style_ibu_max'), $event.target.value)" @change="commitField(styleField('batch.style_ibu_max'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_srm_min').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_srm_min').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_srm_min').seeded" :title="'Auto-filled from ' + styleField('batch.style_srm_min').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_srm_min').seeded && styleField('batch.style_srm_min').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_srm_min').seededSource" @click="resetField(styleField('batch.style_srm_min'))">↺</button>
+          </label>
           <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_srm_min').display" @input="edit(styleField('batch.style_srm_min'), $event.target.value)" @change="commitField(styleField('batch.style_srm_min'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_srm_max').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_srm_max').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_srm_max').seeded" :title="'Auto-filled from ' + styleField('batch.style_srm_max').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_srm_max').seeded && styleField('batch.style_srm_max').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_srm_max').seededSource" @click="resetField(styleField('batch.style_srm_max'))">↺</button>
+          </label>
           <input type="number" step="1" class="form-input tabular-nums" :value="styleField('batch.style_srm_max').display" @input="edit(styleField('batch.style_srm_max'), $event.target.value)" @change="commitField(styleField('batch.style_srm_max'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_abv_min').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_abv_min').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_abv_min').seeded" :title="'Auto-filled from ' + styleField('batch.style_abv_min').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_abv_min').seeded && styleField('batch.style_abv_min').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_abv_min').seededSource" @click="resetField(styleField('batch.style_abv_min'))">↺</button>
+          </label>
           <input type="number" step="0.1" class="form-input tabular-nums" :value="styleField('batch.style_abv_min').display" @input="edit(styleField('batch.style_abv_min'), $event.target.value)" @change="commitField(styleField('batch.style_abv_min'))" />
         </div>
         <div class="form-group">
-          <label class="form-label" x-text="styleField('batch.style_abv_max').label"></label>
+          <label class="form-label">
+            <span x-text="styleField('batch.style_abv_max').label"></span>
+            <span class="seed-badge" x-show="styleField('batch.style_abv_max').seeded" :title="'Auto-filled from ' + styleField('batch.style_abv_max').seededSource + ' (seed)'">seed</span>
+            <button type="button" class="seed-reset" x-show="!styleField('batch.style_abv_max').seeded && styleField('batch.style_abv_max').seededValue !== undefined" :title="'Reset to ' + styleField('batch.style_abv_max').seededSource" @click="resetField(styleField('batch.style_abv_max'))">↺</button>
+          </label>
           <input type="number" step="0.1" class="form-input tabular-nums" :value="styleField('batch.style_abv_max').display" @input="edit(styleField('batch.style_abv_max'), $event.target.value)" @change="commitField(styleField('batch.style_abv_max'))" />
         </div>
       </div>
