@@ -200,9 +200,14 @@ samp {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-1);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-medium);
   color: var(--sys-text-secondary);
+}
+
+.form-label > span:first-child {
+  margin-right: auto;
 }
 
 .unit-badge {
