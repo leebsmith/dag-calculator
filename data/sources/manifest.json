@@ -37,6 +37,13 @@
       "upstream": "malt_database (local scrape)",
       "rows": 419,
       "sha256": "1886a6187ab312aa497b11c5ab0e3c305f3a4e8a3eba186044fe6e94d35ba598"
+    },
+    "standard-malts.json": {
+      "mechanism": "vendor+extend",
+      "upstream": "malt_database standard_malts.tsv (extended)",
+      "scraper": "scripts/vendor-standard-malts.py",
+      "rows": 88,
+      "sha256": "1a103acbbdcbd99cd9ee44c2f5795d4a3daebe925db638b2e1a10caf6815293a"
     }
   }
 }

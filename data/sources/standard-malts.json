@@ -1,0 +1,1135 @@
+{
+  "6-row-malt": {
+    "id": "6-row-malt",
+    "name": "6-Row Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "6-Row"
+    ],
+    "description": "High husk/enzyme; classic US adjunct base."
+  },
+  "acidulated-malt": {
+    "id": "acidulated-malt",
+    "name": "Acidulated Malt",
+    "family": "acidulated",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Sauermalz",
+      "Acid Malt"
+    ],
+    "description": "Lowers mash pH; use 1-10%."
+  },
+  "amber-malt": {
+    "id": "amber-malt",
+    "name": "Amber Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 20.0,
+    "color_lovibond_max": 30.0,
+    "aliases": [
+      "Amber"
+    ],
+    "description": "Toasty/biscuity; British ales."
+  },
+  "aromatic-malt": {
+    "id": "aromatic-malt",
+    "name": "Aromatic Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 18.0,
+    "color_lovibond_max": 22.0,
+    "aliases": [
+      "Aromatic Munich",
+      "Aroma"
+    ],
+    "description": "Intense malt; Belgian ales."
+  },
+  "biscuit-malt": {
+    "id": "biscuit-malt",
+    "name": "Biscuit Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 20.0,
+    "color_lovibond_max": 30.0,
+    "aliases": [
+      "Biscuit"
+    ],
+    "description": "Bready, biscuity."
+  },
+  "black-malt": {
+    "id": "black-malt",
+    "name": "Black Malt",
+    "family": "roasted",
+    "form": "malted",
+    "color_lovibond_min": 500.0,
+    "color_lovibond_max": 550.0,
+    "aliases": [
+      "Black",
+      "Carafa III"
+    ],
+    "description": "Husked; black colour and roast, astringent."
+  },
+  "bourbon-malt": {
+    "id": "bourbon-malt",
+    "name": "Bourbon Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 5.0,
+    "aliases": [
+      "Bourbon Malt",
+      "Bourbon"
+    ],
+    "description": "Kilned bourbon malt; caramel, vanilla, oak."
+  },
+  "brown-malt": {
+    "id": "brown-malt",
+    "name": "Brown Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 50.0,
+    "color_lovibond_max": 70.0,
+    "aliases": [
+      "Brown"
+    ],
+    "description": "Toasted-brown; porter and brown ale."
+  },
+  "caraamber": {
+    "id": "caraamber",
+    "name": "CaraAmber",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 25.0,
+    "color_lovibond_max": 35.0,
+    "aliases": [
+      "CaraAmber"
+    ],
+    "description": "Amber crystal."
+  },
+  "caraaroma": {
+    "id": "caraaroma",
+    "name": "CaraAroma",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 120.0,
+    "color_lovibond_max": 140.0,
+    "aliases": [
+      "CaraAroma"
+    ],
+    "description": "Aromatic crystal."
+  },
+  "carabrown": {
+    "id": "carabrown",
+    "name": "CaraBrown",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 55.0,
+    "color_lovibond_max": 65.0,
+    "aliases": [
+      "CaraBrown",
+      "Cara Brown",
+      "Carabrown"
+    ],
+    "description": "Brown crystal; toffee and dark caramel."
+  },
+  "caragold": {
+    "id": "caragold",
+    "name": "CaraGold",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 5.0,
+    "color_lovibond_max": 12.0,
+    "aliases": [
+      "CaraGold",
+      "Cara Gold",
+      "CaraGlow",
+      "Caramalt",
+      "Cara Gold Malt"
+    ],
+    "description": "Very light crystal; gentle sweetness, golden colour."
+  },
+  "caramel-100l": {
+    "id": "caramel-100l",
+    "name": "Caramel 100L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 95.0,
+    "color_lovibond_max": 105.0,
+    "aliases": [
+      "Cara 100",
+      "Crystal 100"
+    ],
+    "description": "Deep caramel."
+  },
+  "caramel-10l": {
+    "id": "caramel-10l",
+    "name": "Caramel 10L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 8.0,
+    "color_lovibond_max": 12.0,
+    "aliases": [
+      "Cara 10",
+      "Crystal 10"
+    ],
+    "description": "Light caramel sweetness."
+  },
+  "caramel-120l": {
+    "id": "caramel-120l",
+    "name": "Caramel 120L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 115.0,
+    "color_lovibond_max": 125.0,
+    "aliases": [
+      "Cara 120",
+      "Crystal 120"
+    ],
+    "description": "Deep caramel, burnt sugar."
+  },
+  "caramel-150l": {
+    "id": "caramel-150l",
+    "name": "Caramel 150L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 145.0,
+    "color_lovibond_max": 155.0,
+    "aliases": [
+      "Cara 150",
+      "Crystal 150"
+    ],
+    "description": "Dark caramel."
+  },
+  "caramel-20l": {
+    "id": "caramel-20l",
+    "name": "Caramel 20L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 18.0,
+    "color_lovibond_max": 22.0,
+    "aliases": [
+      "Cara 20",
+      "Crystal 20"
+    ],
+    "description": "Light caramel sweetness."
+  },
+  "caramel-30l": {
+    "id": "caramel-30l",
+    "name": "Caramel 30L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 25.0,
+    "color_lovibond_max": 35.0,
+    "aliases": [
+      "Cara 30",
+      "Crystal 30"
+    ],
+    "description": "Caramel sweetness."
+  },
+  "caramel-40l": {
+    "id": "caramel-40l",
+    "name": "Caramel 40L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 35.0,
+    "color_lovibond_max": 45.0,
+    "aliases": [
+      "Cara 40",
+      "Crystal 40"
+    ],
+    "description": "Caramel sweetness."
+  },
+  "caramel-60l": {
+    "id": "caramel-60l",
+    "name": "Caramel 60L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 55.0,
+    "color_lovibond_max": 65.0,
+    "aliases": [
+      "Cara 60",
+      "Crystal 60"
+    ],
+    "description": "Caramel/toffee."
+  },
+  "caramel-80l": {
+    "id": "caramel-80l",
+    "name": "Caramel 80L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 75.0,
+    "color_lovibond_max": 85.0,
+    "aliases": [
+      "Cara 80",
+      "Crystal 80"
+    ],
+    "description": "Toffee/caramel."
+  },
+  "caramel-90l": {
+    "id": "caramel-90l",
+    "name": "Caramel 90L",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 85.0,
+    "color_lovibond_max": 95.0,
+    "aliases": [
+      "Caramel 90L",
+      "Caramel 90",
+      "Crystal 90L",
+      "Cara 90"
+    ],
+    "description": "Deep caramel."
+  },
+  "caramunich": {
+    "id": "caramunich",
+    "name": "CaraMunich",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 50.0,
+    "color_lovibond_max": 60.0,
+    "aliases": [
+      "CaraMunich"
+    ],
+    "description": "Munich-style crystal."
+  },
+  "carared": {
+    "id": "carared",
+    "name": "CaraRed",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 20.0,
+    "color_lovibond_max": 25.0,
+    "aliases": [
+      "CaraRed"
+    ],
+    "description": "Red crystal."
+  },
+  "caravienne": {
+    "id": "caravienne",
+    "name": "CaraVienne",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 20.0,
+    "color_lovibond_max": 25.0,
+    "aliases": [
+      "CaraVienne"
+    ],
+    "description": "Vienna-style crystal."
+  },
+  "chevallier": {
+    "id": "chevallier",
+    "name": "Chevallier",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 3.0,
+    "color_lovibond_max": 4.0,
+    "aliases": [
+      "Chevallier",
+      "Chevallier Heritage",
+      "Chevallier Malt"
+    ],
+    "description": "Victorian landrace; toffee, baked loaf, dried fruit."
+  },
+  "chit-malt": {
+    "id": "chit-malt",
+    "name": "Chit Malt",
+    "family": "chit",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "Chit"
+    ],
+    "description": "Under-modified; foam/body, very low colour."
+  },
+  "chocolate-malt": {
+    "id": "chocolate-malt",
+    "name": "Chocolate Malt",
+    "family": "roasted",
+    "form": "malted",
+    "color_lovibond_min": 340.0,
+    "color_lovibond_max": 370.0,
+    "aliases": [
+      "Chocolate",
+      "Carafa II"
+    ],
+    "description": "Husked; chocolate/coffee; stouts and porters."
+  },
+  "chocolate-rye": {
+    "id": "chocolate-rye",
+    "name": "Chocolate Rye",
+    "family": "roasted",
+    "form": "malted",
+    "color_lovibond_min": 250.0,
+    "color_lovibond_max": 350.0,
+    "aliases": [
+      "Chocolate Rye"
+    ],
+    "description": "Roasted rye; chocolate, spice."
+  },
+  "crystal-rye": {
+    "id": "crystal-rye",
+    "name": "Crystal Rye",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 80.0,
+    "color_lovibond_max": 100.0,
+    "aliases": [
+      "CaraRye"
+    ],
+    "description": "Rye crystal."
+  },
+  "crystal-wheat": {
+    "id": "crystal-wheat",
+    "name": "Crystal Wheat",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 50.0,
+    "color_lovibond_max": 60.0,
+    "aliases": [
+      "CaraWheat"
+    ],
+    "description": "Wheat crystal."
+  },
+  "dark-specialty": {
+    "id": "dark-specialty",
+    "name": "Dark Specialty",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 120.0,
+    "color_lovibond_max": 140.0,
+    "aliases": [
+      "Special X",
+      "Extra Special Malt",
+      "Extra Special"
+    ],
+    "description": "Deep amber-red specialty; toast, dark caramel."
+  },
+  "dark-wheat-malt": {
+    "id": "dark-wheat-malt",
+    "name": "Dark Wheat Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 6.0,
+    "color_lovibond_max": 9.0,
+    "aliases": [
+      "Dark Wheat"
+    ],
+    "description": "Darker wheat for dunkelweizen."
+  },
+  "debittered-coffee-malt": {
+    "id": "debittered-coffee-malt",
+    "name": "Debittered Coffee Malt",
+    "family": "dehusked",
+    "form": "malted",
+    "color_lovibond_min": 400.0,
+    "color_lovibond_max": 450.0,
+    "aliases": [
+      "Coffee Malt",
+      "Debittered Black"
+    ],
+    "description": "Huskless/debittered; coffee, less harsh."
+  },
+  "dehusked-black": {
+    "id": "dehusked-black",
+    "name": "Dehusked Black",
+    "family": "dehusked",
+    "form": "malted",
+    "color_lovibond_min": 500.0,
+    "color_lovibond_max": 550.0,
+    "aliases": [
+      "Carafa Special III",
+      "Blackprinz",
+      "Mroost 1400",
+      "Black Malt Extra"
+    ],
+    "description": "Huskless black; smooth, less bitter."
+  },
+  "dehusked-black-wheat": {
+    "id": "dehusked-black-wheat",
+    "name": "Dehusked Black Wheat",
+    "family": "dehusked",
+    "form": "malted",
+    "color_lovibond_min": 500.0,
+    "color_lovibond_max": 550.0,
+    "aliases": [
+      "Midnight Wheat"
+    ],
+    "description": "Huskless black wheat."
+  },
+  "dehusked-chocolate": {
+    "id": "dehusked-chocolate",
+    "name": "Dehusked Chocolate",
+    "family": "dehusked",
+    "form": "malted",
+    "color_lovibond_min": 300.0,
+    "color_lovibond_max": 340.0,
+    "aliases": [
+      "Carafa Special II",
+      "Mroost 900"
+    ],
+    "description": "Huskless; smooth chocolate/coffee."
+  },
+  "dehusked-light-roasted": {
+    "id": "dehusked-light-roasted",
+    "name": "Dehusked Light Roasted",
+    "family": "dehusked",
+    "form": "malted",
+    "color_lovibond_min": 115.0,
+    "color_lovibond_max": 140.0,
+    "aliases": [
+      "Carafa Special I"
+    ],
+    "description": "Huskless; smooth roast, no astringency."
+  },
+  "dextrin-malt": {
+    "id": "dextrin-malt",
+    "name": "Dextrin Malt",
+    "family": "dextrin",
+    "form": "malted",
+    "color_lovibond_min": 1.0,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "Carapils",
+      "Cara-Foam",
+      "Dextra-Pils"
+    ],
+    "description": "Body and foam; minimal colour."
+  },
+  "distilling-malt": {
+    "id": "distilling-malt",
+    "name": "Distilling Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Distilling",
+      "Distillers",
+      "Pot Still",
+      "Whiskey Malt",
+      "Whisky Malt",
+      "High Enzyme",
+      "High-Enzyme",
+      "High Diastatic",
+      "High Diastatic Power",
+      "HDP"
+    ],
+    "description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits."
+  },
+  "extra-dark-crystal": {
+    "id": "extra-dark-crystal",
+    "name": "Extra Dark Crystal",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 195.0,
+    "color_lovibond_max": 205.0,
+    "aliases": [
+      "Crystal 200L",
+      "Cara 200"
+    ],
+    "description": "Very dark caramel."
+  },
+  "flaked-barley": {
+    "id": "flaked-barley",
+    "name": "Flaked Barley",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Flaked Barley"
+    ],
+    "description": "Unmalted; body, head retention."
+  },
+  "flaked-maize": {
+    "id": "flaked-maize",
+    "name": "Flaked Maize",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.0,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "Flaked Corn"
+    ],
+    "description": "Light adjunct; dry finish."
+  },
+  "flaked-oats": {
+    "id": "flaked-oats",
+    "name": "Flaked Oats",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Flaked Oats"
+    ],
+    "description": "Unmalted; silky body."
+  },
+  "flaked-quinoa": {
+    "id": "flaked-quinoa",
+    "name": "Flaked Quinoa",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Flaked Quinoa"
+    ],
+    "description": "Flaked quinoa; body, gluten-free."
+  },
+  "flaked-rice": {
+    "id": "flaked-rice",
+    "name": "Flaked Rice",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.0,
+    "color_lovibond_max": 1.5,
+    "aliases": [
+      "Flaked Rice"
+    ],
+    "description": "Light adjunct; crisp finish."
+  },
+  "flaked-rye": {
+    "id": "flaked-rye",
+    "name": "Flaked Rye",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Flaked Rye"
+    ],
+    "description": "Unmalted; rye spice."
+  },
+  "flaked-spelt": {
+    "id": "flaked-spelt",
+    "name": "Flaked Spelt",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Flaked Spelt"
+    ],
+    "description": "Flaked spelt; body and haze."
+  },
+  "flaked-wheat": {
+    "id": "flaked-wheat",
+    "name": "Flaked Wheat",
+    "family": "flaked",
+    "form": "flaked",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Flaked Wheat"
+    ],
+    "description": "Unmalted; body, haze."
+  },
+  "golden-naked-oats": {
+    "id": "golden-naked-oats",
+    "name": "Golden Naked Oats",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 5.0,
+    "color_lovibond_max": 9.0,
+    "aliases": [
+      "GNO",
+      "Crystal Oat"
+    ],
+    "description": "Naked-oat crystal; body."
+  },
+  "golden-promise": {
+    "id": "golden-promise",
+    "name": "Golden Promise",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Golden Promise",
+      "Golden Promise Malt"
+    ],
+    "description": "Soft, sweet, honeyed Scottish spring barley; Scotch ales and hazy IPAs."
+  },
+  "halcyon": {
+    "id": "halcyon",
+    "name": "Halcyon",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.5,
+    "color_lovibond_max": 3.5,
+    "aliases": [
+      "Halcyon",
+      "Halcyon Malt"
+    ],
+    "description": "Bright, crisp British winter barley."
+  },
+  "han": {
+    "id": "han",
+    "name": "Han\u00e1",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "Han\u00e1",
+      "Hana",
+      "Han\u00e1 Heritage",
+      "Han\u00e1 Malt"
+    ],
+    "description": "Moravian landrace; delicate bready pilsner malt for decoction."
+  },
+  "honey-malt": {
+    "id": "honey-malt",
+    "name": "Honey Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 15.0,
+    "color_lovibond_max": 25.0,
+    "aliases": [
+      "Brumalt"
+    ],
+    "description": "Honey/bread; melanoidin-style."
+  },
+  "lager-malt": {
+    "id": "lager-malt",
+    "name": "Lager Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "Lager"
+    ],
+    "description": "Light base for lagers."
+  },
+  "malted-oats": {
+    "id": "malted-oats",
+    "name": "Malted Oats",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.0,
+    "aliases": [
+      "Oat Malt"
+    ],
+    "description": "Silky mouthfeel; hazy/soft styles."
+  },
+  "malted-spelt": {
+    "id": "malted-spelt",
+    "name": "Malted Spelt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Spelt",
+      "Dinkel"
+    ],
+    "description": "Ancient-grain base."
+  },
+  "maris-otter": {
+    "id": "maris-otter",
+    "name": "Maris Otter",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.5,
+    "color_lovibond_max": 3.5,
+    "aliases": [
+      "Maris Otter",
+      "Maris Otter Malt",
+      "Low Colour Maris Otter"
+    ],
+    "description": "Nutty, biscuity British winter barley; classic English ales and bitters."
+  },
+  "melanoidin-malt": {
+    "id": "melanoidin-malt",
+    "name": "Melanoidin Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 20.0,
+    "color_lovibond_max": 30.0,
+    "aliases": [
+      "Melanoidin"
+    ],
+    "description": "Melanoidin richness and body."
+  },
+  "mild-ale-malt": {
+    "id": "mild-ale-malt",
+    "name": "Mild Ale Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 3.0,
+    "color_lovibond_max": 4.0,
+    "aliases": [
+      "Mild"
+    ],
+    "description": "Higher residual body; mild and brown ales."
+  },
+  "munich-dark": {
+    "id": "munich-dark",
+    "name": "Munich Dark",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 15.0,
+    "color_lovibond_max": 20.0,
+    "aliases": [
+      "Munich II",
+      "Munich 20L"
+    ],
+    "description": "Rich malt; dunkel, bock."
+  },
+  "munich-light": {
+    "id": "munich-light",
+    "name": "Munich Light",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 6.0,
+    "color_lovibond_max": 10.0,
+    "aliases": [
+      "Munich I",
+      "Munich 10L"
+    ],
+    "description": "Malty; m\u00e4rzen, bock, altbier."
+  },
+  "optic": {
+    "id": "optic",
+    "name": "Optic",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Optic",
+      "Optic Malt"
+    ],
+    "description": "High-extract mellow spring barley."
+  },
+  "pale-ale-malt": {
+    "id": "pale-ale-malt",
+    "name": "Pale Ale Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "2-Row",
+      "Pale Malt"
+    ],
+    "description": "Standard American/British base malt."
+  },
+  "pale-chocolate": {
+    "id": "pale-chocolate",
+    "name": "Pale Chocolate",
+    "family": "roasted",
+    "form": "malted",
+    "color_lovibond_min": 190.0,
+    "color_lovibond_max": 210.0,
+    "aliases": [
+      "Pale Chocolate",
+      "Carafa I"
+    ],
+    "description": "Husked; light coffee/cocoa, some astringency."
+  },
+  "pearl": {
+    "id": "pearl",
+    "name": "Pearl",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.5,
+    "color_lovibond_max": 3.5,
+    "aliases": [
+      "Pearl",
+      "Pearl Malt"
+    ],
+    "description": "Clean, neutral British winter barley."
+  },
+  "peated-malt": {
+    "id": "peated-malt",
+    "name": "Peated Malt",
+    "family": "peated",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 3.5,
+    "aliases": [
+      "Peated"
+    ],
+    "description": "Phenolic peat smoke."
+  },
+  "pilsner-malt": {
+    "id": "pilsner-malt",
+    "name": "Pilsner Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Pilsen",
+      "Pilsner"
+    ],
+    "description": "Clean, pale base malt for lagers."
+  },
+  "raw-barley": {
+    "id": "raw-barley",
+    "name": "Raw Barley",
+    "family": "raw",
+    "form": "raw",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Raw Barley"
+    ],
+    "description": "Unmalted barley; body, head retention."
+  },
+  "raw-rye": {
+    "id": "raw-rye",
+    "name": "Raw Rye",
+    "family": "raw",
+    "form": "raw",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Unmalted Rye"
+    ],
+    "description": "Unmalted; rye spice."
+  },
+  "raw-wheat": {
+    "id": "raw-wheat",
+    "name": "Raw Wheat",
+    "family": "raw",
+    "form": "raw",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Unmalted Wheat"
+    ],
+    "description": "Unmalted; turbidity and body."
+  },
+  "red-color-malt": {
+    "id": "red-color-malt",
+    "name": "Red Color Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 12.0,
+    "color_lovibond_max": 25.0,
+    "aliases": [
+      "Red X",
+      "RedX",
+      "Special Red",
+      "Best Red X"
+    ],
+    "description": "Red colour contribution with malty body."
+  },
+  "rice-hulls": {
+    "id": "rice-hulls",
+    "name": "Rice Hulls",
+    "family": "adjunct",
+    "form": "hulls",
+    "color_lovibond_min": 0.0,
+    "color_lovibond_max": 0.0,
+    "aliases": [
+      "Rice Hulls"
+    ],
+    "description": "Lautering aid; no extract/colour."
+  },
+  "roast-rye": {
+    "id": "roast-rye",
+    "name": "Roast Rye",
+    "family": "roasted",
+    "form": "malted",
+    "color_lovibond_min": 200.0,
+    "color_lovibond_max": 300.0,
+    "aliases": [
+      "Roast Rye",
+      "Roasted Rye"
+    ],
+    "description": "Roasted rye; dry, toasty."
+  },
+  "roast-wheat": {
+    "id": "roast-wheat",
+    "name": "Roast Wheat",
+    "family": "roasted",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 350.0,
+    "aliases": [
+      "Roast Wheat",
+      "Roasted Wheat",
+      "Mroost Wheat"
+    ],
+    "description": "Roasted wheat; roast notes, dark colour."
+  },
+  "roasted-barley": {
+    "id": "roasted-barley",
+    "name": "Roasted Barley",
+    "family": "roasted",
+    "form": "unmalted",
+    "color_lovibond_min": 300.0,
+    "color_lovibond_max": 350.0,
+    "aliases": [
+      "Roast Barley"
+    ],
+    "description": "Unmalted (husked); dry stout."
+  },
+  "rye-malt": {
+    "id": "rye-malt",
+    "name": "Rye Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 3.0,
+    "color_lovibond_max": 4.0,
+    "aliases": [
+      "Rye"
+    ],
+    "description": "Spicy; roggenbier and rye ales."
+  },
+  "smoked-malt": {
+    "id": "smoked-malt",
+    "name": "Smoked Malt",
+    "family": "smoked",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 5.0,
+    "aliases": [
+      "Rauchmalt"
+    ],
+    "description": "Beechwood/cherry/oak smoke."
+  },
+  "special-b": {
+    "id": "special-b",
+    "name": "Special B",
+    "family": "crystal",
+    "form": "malted",
+    "color_lovibond_min": 130.0,
+    "color_lovibond_max": 160.0,
+    "aliases": [
+      "Special B"
+    ],
+    "description": "Raisin/plum; dubbel and quad."
+  },
+  "spring": {
+    "id": "spring",
+    "name": "Spring",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Spring",
+      "Spring Malt"
+    ],
+    "description": "Contemporary high-extract spring two-row."
+  },
+  "toasted-oats": {
+    "id": "toasted-oats",
+    "name": "Toasted Oats",
+    "family": "toasted",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 8.0,
+    "aliases": [
+      "Toasted Oat Malt"
+    ],
+    "description": "Toasty oats; body."
+  },
+  "toasted-rye": {
+    "id": "toasted-rye",
+    "name": "Toasted Rye",
+    "family": "toasted",
+    "form": "malted",
+    "color_lovibond_min": 15.0,
+    "color_lovibond_max": 25.0,
+    "aliases": [
+      "Toasted Rye"
+    ],
+    "description": "Toasty rye; spice."
+  },
+  "toasted-wheat": {
+    "id": "toasted-wheat",
+    "name": "Toasted Wheat",
+    "family": "toasted",
+    "form": "malted",
+    "color_lovibond_min": 20.0,
+    "color_lovibond_max": 30.0,
+    "aliases": [
+      "Toasted Wheat"
+    ],
+    "description": "Toasty wheat; body."
+  },
+  "torrefied-grain": {
+    "id": "torrefied-grain",
+    "name": "Torrefied Grain",
+    "family": "raw",
+    "form": "torrefied",
+    "color_lovibond_min": 1.0,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Torrefied Barley",
+      "Torrefied Maize",
+      "Torrefied Rice",
+      "Torrefied Oats",
+      "Flaked Torrefied Barley",
+      "Flaked Torrefied Maize",
+      "Flaked Torrefied Rice",
+      "Flaked Torrefied Oats",
+      "Torrified Wheat",
+      "Torrefied Wheat"
+    ],
+    "description": "Torrefied cereal; body and head retention."
+  },
+  "torrefied-wheat": {
+    "id": "torrefied-wheat",
+    "name": "Torrefied Wheat",
+    "family": "raw",
+    "form": "torrefied",
+    "color_lovibond_min": 1.5,
+    "color_lovibond_max": 2.5,
+    "aliases": [
+      "Torrified Wheat"
+    ],
+    "description": "Pre-gelatinized; body and foam."
+  },
+  "victory-malt": {
+    "id": "victory-malt",
+    "name": "Victory Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 25.0,
+    "color_lovibond_max": 30.0,
+    "aliases": [
+      "Victory"
+    ],
+    "description": "Toasty, nutty."
+  },
+  "vienna-malt": {
+    "id": "vienna-malt",
+    "name": "Vienna Malt",
+    "family": "kilned",
+    "form": "malted",
+    "color_lovibond_min": 3.0,
+    "color_lovibond_max": 4.0,
+    "aliases": [
+      "Vienna"
+    ],
+    "description": "Toasty, amber; Vienna lager and m\u00e4rzen."
+  },
+  "wheat-malt": {
+    "id": "wheat-malt",
+    "name": "Wheat Malt",
+    "family": "base",
+    "form": "malted",
+    "color_lovibond_min": 2.0,
+    "color_lovibond_max": 3.0,
+    "aliases": [
+      "Pale Wheat",
+      "White Wheat"
+    ],
+    "description": "Foam and body; wheat beers."
+  }
+}

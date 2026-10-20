@@ -43,6 +43,11 @@ const META = {
     mechanism: "scrape",
     upstream: "malt_database (local scrape)",
   },
+  "standard-malts.json": {
+    mechanism: "vendor+extend",
+    upstream: "malt_database standard_malts.tsv (extended)",
+    scraper: "scripts/vendor-standard-malts.py",
+  },
 };
 
 export function buildSourcesManifest() {
