@@ -5,10 +5,14 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: every seed malt carries standard_malt + generic_description; crosswalk covers all slugs; lint + tests + build green
-status: in-progress
+status: done
 ---
 
 # Standard-Malt Classification — Generic Description Backfill
+
+> **Done.** Implemented across `4be62c5` (S.1 list), `a99ecec` (S.2 crosswalk),
+> `4af9bdf` (S.3 builder + schema), `c4f2f7e` (S.4 guard). Every seed malt now
+> carries `standard_malt` + `generic_description`.
 
 ## Goal
 
