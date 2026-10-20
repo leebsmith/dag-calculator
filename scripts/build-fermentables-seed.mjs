@@ -183,6 +183,34 @@ function writeSorted(path, seed) {
   writeFileSync(path, `${JSON.stringify(sorted, null, 2)}\n`);
 }
 
+function median(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+// Backfill color_lovibond === 0 (a "no colour published" sentinel) from the
+// malt's standard group: use the group's non-zero median when it is >= 1 L
+// (real colour), keeping 0 only for genuine near-zero adjuncts (rice hulls).
+function backfillColor(seed) {
+  const groups = new Map();
+  for (const malt of Object.values(seed)) {
+    if (!groups.has(malt.standard_malt)) groups.set(malt.standard_malt, []);
+    groups.get(malt.standard_malt).push(malt);
+  }
+  for (const malts of groups.values()) {
+    const nonZero = malts
+      .map((m) => m.color_lovibond)
+      .filter((c) => typeof c === "number" && c > 0);
+    if (!nonZero.length) continue;
+    const value = median(nonZero);
+    if (value < 1.0) continue;
+    for (const malt of malts) {
+      if (malt.color_lovibond === 0) malt.color_lovibond = value;
+    }
+  }
+}
+
 const inputPath = process.argv[2] ?? DEFAULT_INPUT;
 const rows = JSON.parse(readFileSync(inputPath, "utf8"));
 const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
@@ -191,6 +219,8 @@ const { malts, sugars } = splitByType(rows);
 
 const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent), true);
 const sugarSeed = toIdKeyedMap(sugars.map(sugarComponent));
+
+backfillColor(maltSeed);
 
 writeSorted(MALTS_OUTPUT, maltSeed);
 writeSorted(SUGARS_OUTPUT, sugarSeed);
