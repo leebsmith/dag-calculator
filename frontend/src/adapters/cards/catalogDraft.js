@@ -11,6 +11,11 @@
 //   seedKey        reference-cache seed key ("hops")
 //   idField        row field holding the catalog id ("hop_id")
 //   categoryField  catalog field to filter/pill on ("purpose") | null
+//   standardField  (optional) catalog field holding the standard-malt id; when
+//                  set, the drawer becomes a standard-first browser + drill-down
+//                  ("standard_malt")
+//   standardNameField / standardDescriptionField / familyField
+//                  (optional) the standard display fields, used with standardField
 //   makeRow        (catalogItem) => draft row
 //   maxVisible     optional cap (default 25)
 //
@@ -18,7 +23,7 @@
 // binding and the direct-call tests behave unchanged. Getters are installed with
 // Object.defineProperties (Object.assign would collapse them to values).
 
-import { catalogCategories, filterCatalog } from "../../views/catalog.js";
+import { catalogCategories, familyOptions, filterCatalog, standardGroups } from "../../views/catalog.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
 
 export function installCatalogDraft(app, ctx, config) {
@@ -29,6 +34,10 @@ export function installCatalogDraft(app, ctx, config) {
     seedKey,
     idField,
     categoryField = null,
+    standardField = null,
+    standardNameField = null,
+    standardDescriptionField = null,
+    familyField = null,
     makeRow,
     maxVisible = 25,
     canAdd = null,
@@ -41,6 +50,8 @@ export function installCatalogDraft(app, ctx, config) {
     [`${prefix}Search`]: "",
     [`${prefix}ActiveIndex`]: null,
     [`${prefix}CategoryFilter`]: [],
+    [`${prefix}Family`]: "",
+    [`${prefix}Standard`]: "",
   };
 
   const methods = {
@@ -72,9 +83,9 @@ export function installCatalogDraft(app, ctx, config) {
 
     [`duplicateCatalog${Cap}`](catalogId) {
       const item = seeds[seedKey]?.[catalogId];
-      const catalog = SEED_KEY_TO_CATALOG[seedKey];
-      if (!item || !catalog) return;
-      this.duplicateUserItem(catalog, item);
+      const catalogName = SEED_KEY_TO_CATALOG[seedKey];
+      if (!item || !catalogName) return;
+      this.duplicateUserItem(catalogName, item);
     },
 
     [`remove${Cap}`](ri) {
@@ -97,6 +108,8 @@ export function installCatalogDraft(app, ctx, config) {
       this[`${prefix}ActiveIndex`] = null;
       this[`${prefix}Search`] = "";
       this[`${prefix}CategoryFilter`] = [];
+      this[`${prefix}Family`] = "";
+      this[`${prefix}Standard`] = "";
     },
 
     [`close${Cap}Drawer`]() {
@@ -111,6 +124,21 @@ export function installCatalogDraft(app, ctx, config) {
         : [...current, category];
     },
 
+    [`toggle${Cap}Family`](family) {
+      this[`${prefix}Family`] = this[`${prefix}Family`] === family ? "" : family;
+      this[`${prefix}Standard`] = "";
+    },
+
+    [`select${Cap}Standard`](standardId) {
+      this[`${prefix}Standard`] = standardId;
+      this[`${prefix}ActiveIndex`] = null;
+    },
+
+    [`clear${Cap}Standard`]() {
+      this[`${prefix}Standard`] = "";
+      this[`${prefix}ActiveIndex`] = null;
+    },
+
     [`handle${Cap}Escape`]() {
       if (!this[`${prefix}EditorOpen`]) return;
       if (this[`${prefix}Drawer`] !== null) this[`close${Cap}Drawer`]();
@@ -119,6 +147,9 @@ export function installCatalogDraft(app, ctx, config) {
   };
 
   Object.assign(app, state, methods);
+
+  const activeIds = () =>
+    new Set((this.draftRows ?? []).map((row) => row[idField]).filter(Boolean));
 
   const getters = {
     [`${prefix}EditorOpen`]() {
@@ -132,22 +163,61 @@ export function installCatalogDraft(app, ctx, config) {
       void this.catalogRevision;
       return categoryField ? catalogCategories(catalog(), (item) => item[categoryField]) : [];
     },
+    [`${prefix}Families`]() {
+      if (!standardField) return [];
+      void this.catalogRevision;
+      return familyOptions(catalog(), (item) => item[familyField]);
+    },
+    [`${prefix}StandardGroups`]() {
+      if (!standardField) return [];
+      void this.catalogRevision;
+      const q = String(this[`${prefix}Search`] ?? "").trim().toLowerCase();
+      const family = this[`${prefix}Family`];
+      const added = activeIds.call(this);
+      let items = catalog();
+      if (family) items = items.filter((item) => item[familyField] === family);
+      if (q) {
+        items = filterCatalog(items, {
+          activeIds: added,
+          query: q,
+          searchFields: [standardNameField, standardDescriptionField].filter(Boolean),
+        });
+      } else {
+        items = items.filter((item) => !added.has(item.id));
+      }
+      return standardGroups(items, {
+        idOf: (item) => item[standardField],
+        nameOf: standardNameField ? (item) => item[standardNameField] : undefined,
+        descriptionOf: standardDescriptionField ? (item) => item[standardDescriptionField] : undefined,
+        familyOf: familyField ? (item) => item[familyField] : undefined,
+      });
+    },
+    [`${prefix}StandardName`]() {
+      if (!standardField || !this[`${prefix}Standard`]) return "";
+      const item = catalog().find((i) => i[standardField] === this[`${prefix}Standard`]);
+      return item && standardNameField ? item[standardNameField] : this[`${prefix}Standard`] ?? "";
+    },
     [`${prefix}FilteredCatalog`]() {
       void this.catalogRevision;
-      const activeIds = new Set(
-        (this.draftRows ?? []).map((row) => row[idField]).filter(Boolean)
-      );
-      return filterCatalog(catalog(), {
-        activeIds,
+      let items = catalog();
+      if (standardField && this[`${prefix}Standard`]) {
+        items = items.filter((item) => item[standardField] === this[`${prefix}Standard`]);
+      }
+      return filterCatalog(items, {
+        activeIds: activeIds.call(this),
         query: this[`${prefix}Search`],
         categories: this[`${prefix}CategoryFilter`],
         categoryOf: categoryField ? (item) => item[categoryField] : null,
       });
     },
     [`${prefix}VisibleCatalog`]() {
+      if (standardField && this[`${prefix}Standard`]) {
+        return this[`${prefix}FilteredCatalog`];
+      }
       return this[`${prefix}FilteredCatalog`].slice(0, maxVisible);
     },
     [`${prefix}CatalogTruncated`]() {
+      if (standardField && this[`${prefix}Standard`]) return false;
       return this[`${prefix}FilteredCatalog`].length > maxVisible;
     },
     [`${prefix}ActiveRow`]() {

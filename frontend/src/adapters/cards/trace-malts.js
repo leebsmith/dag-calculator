@@ -25,6 +25,10 @@ export function registerTraceMaltsCard(app, ctx) {
     seedKey: "malts",
     idField: "catalog_id",
     categoryField: "category",
+    standardField: "standard_malt",
+    standardNameField: "standard_name",
+    standardDescriptionField: "generic_description",
+    familyField: "family",
     makeRow,
   });
 
