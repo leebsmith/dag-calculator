@@ -22,9 +22,9 @@ export const batchRegistry = {
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
   "batch.apparent_attenuation": { label: "Apparent attenuation", displayUnit: "pct" },
   "batch.grain_moisture_fraction": {
-    label: "Grain moisture",
+    label: "Fallback grain moisture (when a malt has none)",
     displayUnit: "pct",
-    hint: "As-is moisture of the grain bill; feeds the solver's mass balance.",
+    hint: "As-is moisture used for malts that publish none; feeds the solver's mass balance.",
   },
   "batch.target_ibu": {
     label: "Target IBU",

@@ -183,7 +183,7 @@ export const steps = [
         ],
         rows: [
           { label: "Strike water", value: "solver.batch.cascade.v_strike" },
-          { label: "Grain moisture", value: "solver.batch.cascade.v_mc" },
+          { label: "Grain moisture (per malt, backfilled)", value: "solver.batch.cascade.v_mc" },
           { label: "Dissolved extract", value: "solver.batch.cascade.v_sol" },
           { label: "− Grain absorption", value: "solver.batch.cascade.v_absorption" },
           { label: "− Mash dead space", value: "equipment.mash_dead_space_l" },
