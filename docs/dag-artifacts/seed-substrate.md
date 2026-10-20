@@ -45,6 +45,8 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 |---|---|---|---|
 | `id`, `name` | — | — | identity/metadata |
 | `maltster` | — | — | producer (provenance) |
+| `standard_malt` | — | — | standard classification id (generic family) |
+| `generic_description` | — | — | shared one-line description from the standard list |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
 | `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
@@ -70,6 +72,10 @@ acidity from `category` + `color_lovibond` (a category color-slope model in
 The malt and sugar seeds are built by `scripts/build-fermentables-seed.mjs`
 from the vendored `data/sources/malt-database-malts.json` scrape (deduped
 one-per-name, `malt`+`adjunct` → malts, `sugar`+`syrup`+`extract` → sugars).
+Each malt is classified against `data/sources/standard-malts.json` via the
+committed `data/sources/malt-standard-crosswalk.json`, supplying `standard_malt`
++ `generic_description` (a reliable generic layer over the spotty per-malt
+`notes`).
 
 ### 2.3 `yeast`
 

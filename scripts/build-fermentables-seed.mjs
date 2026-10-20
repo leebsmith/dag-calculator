@@ -15,6 +15,8 @@
 //     from sibling records of the same name;
 //   - maps category ACIDULATED -> ACID;
 //   - fills residual gaps with category defaults;
+//   - classifies each malt against the standard-malt list (via the committed
+//     crosswalk) and emits `standard_malt` + `generic_description`;
 //   - slugifies names to ids and emits the flat id-keyed maps the engine expects.
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -25,6 +27,12 @@ const DEFAULT_INPUT = fileURLToPath(
 );
 const MALTS_OUTPUT = fileURLToPath(new URL("../data/seeds/malts.json", import.meta.url));
 const SUGARS_OUTPUT = fileURLToPath(new URL("../data/seeds/sugars.json", import.meta.url));
+const CROSSWALK_PATH = fileURLToPath(
+  new URL("../data/sources/malt-standard-crosswalk.json", import.meta.url)
+);
+const STANDARD_LIST_PATH = fileURLToPath(
+  new URL("../data/sources/standard-malts.json", import.meta.url)
+);
 
 const MALT_TYPES = new Set(["malt", "adjunct"]);
 const SUGAR_TYPES = new Set(["sugar", "syrup", "extract"]);
@@ -141,7 +149,7 @@ function sugarComponent(row) {
   };
 }
 
-function toIdKeyedMap(components) {
+function toIdKeyedMap(components, classify = false) {
   const used = new Set();
   const seed = {};
   for (const component of components) {
@@ -152,9 +160,17 @@ function toIdKeyedMap(components) {
       id = `${id}-${n}`;
     }
     used.add(id);
-    seed[id] = { ...component, id };
+    seed[id] = classify ? { ...component, id, ...standardFor(id) } : { ...component, id };
   }
   return seed;
+}
+
+function standardFor(id) {
+  const standardId = crosswalk[id];
+  if (!standardId) return {};
+  const entry = standardList[standardId];
+  if (!entry) return {};
+  return { standard_malt: standardId, generic_description: entry.description ?? "" };
 }
 
 function writeSorted(path, seed) {
@@ -164,9 +180,11 @@ function writeSorted(path, seed) {
 
 const inputPath = process.argv[2] ?? DEFAULT_INPUT;
 const rows = JSON.parse(readFileSync(inputPath, "utf8"));
+const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
+const standardList = JSON.parse(readFileSync(STANDARD_LIST_PATH, "utf8"));
 const { malts, sugars } = splitByType(rows);
 
-const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent));
+const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent), true);
 const sugarSeed = toIdKeyedMap(sugars.map(sugarComponent));
 
 writeSorted(MALTS_OUTPUT, maltSeed);
