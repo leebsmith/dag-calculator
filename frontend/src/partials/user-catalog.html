@@ -36,7 +36,7 @@
       <div class="user-catalog-editor">
         <template x-for="f in userCatalogFields" :key="f.field">
           <div class="form-group">
-            <label class="form-label text-xs" x-text="f.label"></label>
+            <label class="form-label text-xs" x-text="f.symbol ? f.label + ' (' + f.symbol + ')' : f.label"></label>
             <template x-if="f.kind === 'select'">
               <select
                 class="form-select text-xs"

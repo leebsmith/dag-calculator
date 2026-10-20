@@ -22,7 +22,7 @@ import { registerMaltCard, refreshMaltCard } from "./cards/malt.js";
 import { registerMashCard, refreshMashCard } from "./cards/mash.js";
 import { registerUserCatalogUi } from "./userCatalogUi.js";
 import { registry, steps } from "../views/steps.js";
-import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
+import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
 import { flattenResponse, postJSON } from "./apiClient.js";
 import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 import { STUB_BOUNDARIES } from "./stubBoundaries.js";
@@ -805,6 +805,32 @@ export function createStepApp(options = {}) {
       }
       const n = Number(value);
       this.patchDraftRow(ri, { [field]: Number.isFinite(n) ? n * scale : 0 });
+    },
+
+    // Color (grain_color) edits in the master unit (Lovibond/EBC) and stores base
+    // (Lovibond). The malt/trace inspectors bind to these instead of the raw
+    // color_lovibond value, mirroring the collection grids' unit handling.
+    colorUnit() {
+      const unitId = this.unitMode.grain_color ?? "EBC";
+      return UNIT_SYMBOLS.grain_color?.[unitId] ?? unitId;
+    },
+
+    colorDisplay(value) {
+      if (typeof value !== "number" || !Number.isFinite(value)) return "";
+      const unitId = this.unitMode.grain_color ?? "EBC";
+      return Math.round(displayValue(artifact, "grain_color", unitId, value) * 10) / 10;
+    },
+
+    setColorField(ri, value) {
+      if (value === "") {
+        this.patchDraftRow(ri, { color_lovibond: undefined });
+        return;
+      }
+      const unitId = this.unitMode.grain_color ?? "EBC";
+      const n = Number(value);
+      this.patchDraftRow(ri, {
+        color_lovibond: Number.isFinite(n) ? toBase(artifact, "grain_color", unitId, n) : 0,
+      });
     },
 
     // Explicit boot (main.js owns it after auth). Deliberately NOT named

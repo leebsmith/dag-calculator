@@ -215,14 +215,14 @@
                     />
                   </div>
                   <div class="form-group">
-                    <label class="form-label text-xs">Color (°L)</label>
+                    <label class="form-label text-xs" x-text="'Color (' + colorUnit() + ')'"></label>
                     <input
                       type="number"
                       step="0.1"
                       min="0"
                       class="form-input text-xs"
-                      :value="traceActiveRow.color_lovibond"
-                      @input="setMaltField(traceActiveIndex, 'color_lovibond', $event.target.value)"
+                      :value="colorDisplay(traceActiveRow.color_lovibond)"
+                      @input="setColorField(traceActiveIndex, $event.target.value)"
                     />
                   </div>
                 </div>

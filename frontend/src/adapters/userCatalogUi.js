@@ -2,15 +2,24 @@
 // items, mounted in the menu bar. Each catalog renders an input per declared
 // primitive_schema field (excluding the identity field), driven by the same
 // schema the seeds conform to — no bespoke per-catalog templates.
+//
+// Dimension fields are unit-aware: they display in the master `unitMode` pick
+// (imperial/metric) and convert back to base (metric) on input, so the store —
+// the persistence boundary — always holds base units. Mirrors the producer's
+// "display in unit, store base" convention.
 
 import { CATALOGS } from "../store/userCatalog.js";
+import { toBase } from "../engine/units.js";
+import { displayValue, nonlinearFns } from "../views/producer.js";
+import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
 
 function buildTabs() {
   return Object.entries(CATALOGS).map(([id, meta]) => ({ id, label: meta.label }));
 }
 
 export function registerUserCatalogUi(app, ctx) {
-  const { artifact } = ctx;
+  const { artifact, engine } = ctx;
+  const nl = () => nonlinearFns(artifact, engine);
 
   Object.assign(app, {
     userCatalogOpen: false,
@@ -42,10 +51,29 @@ export function registerUserCatalogUi(app, ctx) {
         return Object.entries(schema)
           .filter(([field]) => field !== meta.idField)
           .map(([field, spec]) => {
-            const kind = spec.dimension ? "number" : spec.taxonomy ? "select" : "text";
-            const scale = spec.dimension === "percentage" ? 100 : 1;
-            const options = spec.taxonomy ? artifact.taxonomies?.[spec.taxonomy] ?? [] : null;
-            return { field, label: field, kind, scale, options };
+            if (spec.taxonomy) {
+              return {
+                field,
+                label: field,
+                kind: "select",
+                options: artifact.taxonomies?.[spec.taxonomy] ?? [],
+              };
+            }
+            if (!spec.dimension) return { field, label: field, kind: "text" };
+            const dimDef = UNIT_DIMENSIONS.find((d) => d.id === spec.dimension);
+            if (!dimDef) {
+              return { field, label: field, kind: "number", dimension: spec.dimension, unitId: null, symbol: null };
+            }
+            const unitId = this.unitMode[spec.dimension] ?? dimDef.default ?? dimDef.units[0][0];
+            return {
+              field,
+              label: field,
+              kind: "number",
+              dimension: spec.dimension,
+              unitId,
+              symbol: UNIT_SYMBOLS[spec.dimension]?.[unitId] ?? unitId,
+              decimals: unitDecimals(spec.dimension, unitId),
+            };
           });
       },
     },
@@ -74,7 +102,11 @@ export function registerUserCatalogUi(app, ctx) {
       const value = this.userCatalogDraft?.[field];
       if (value === undefined || value === null) return "";
       const spec = this.userCatalogFields.find((f) => f.field === field);
-      return spec?.kind === "number" && spec.scale !== 1 ? value * spec.scale : value;
+      if (!spec || spec.kind !== "number") return value;
+      if (!spec.unitId || spec.dimension == null) return value; // non-toggleable dimension (raw)
+      const shown = displayValue(artifact, spec.dimension, spec.unitId, value, nl());
+      if (spec.decimals != null) return Number(shown.toFixed(spec.decimals));
+      return Math.round(shown * 1000) / 1000;
     },
 
     userSetField(field, value) {
@@ -83,8 +115,11 @@ export function registerUserCatalogUi(app, ctx) {
       if (value === "") {
         delete next[field];
       } else if (spec?.kind === "number") {
-        const n = Number(value);
-        next[field] = Number.isFinite(n) ? n / spec.scale : 0;
+        let n = Number(value);
+        if (Number.isFinite(n) && spec.unitId && spec.dimension != null) {
+          n = toBase(artifact, spec.dimension, spec.unitId, n, nl());
+        }
+        next[field] = Number.isFinite(n) ? n : 0;
       } else {
         next[field] = value;
       }
