@@ -31,16 +31,22 @@ seam, solvers, Firebase auth, and Firestore persistence.
 
 ## Commands
 
-```
-make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
-make check       # eslint/stylelint + ruff + tach
-make test        # frontend (node --test) + backend pytest
-```
+    make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
+    make check       # eslint/stylelint + ruff + tach
+    make test        # frontend (node --test) + backend pytest
 
 After any `data/artifact.json` change:
-```bash
-node scripts/emit-artifact-inventory.mjs   # REQUIRED — guarded by make test
-```
+
+    node scripts/emit-artifact-inventory.mjs   # REQUIRED — guarded by make test
+
+## Governance & Modes
+
+- **Plan mode**: Strictly read-only analysis. Inspect codebase, map dependencies,
+  and outline proposals. Do not write to disk or run mutating commands.
+- **Build mode**: Implement scoped changes. Run `make check` and `make test` to
+  verify all gates pass before completing a task.
+- **Dependencies**: Never modify dependencies in `package.json` or `pyproject.toml`
+  without explicit user instruction.
 
 ## Conventions
 
