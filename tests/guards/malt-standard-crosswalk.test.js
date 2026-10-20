@@ -40,5 +40,10 @@ test("seed carries standard_malt + generic_description agreeing with the crosswa
       standard.description,
       `${slug}.generic_description disagrees with the standard list`
     );
+    assert.equal(
+      malt.family,
+      standard.family,
+      `${slug}.family disagrees with the standard list — re-run build-fermentables-seed.mjs`
+    );
   }
 });

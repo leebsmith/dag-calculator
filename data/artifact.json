@@ -892,6 +892,7 @@
       "name": {},
       "maltster": {},
       "standard_malt": {},
+      "family": {},
       "generic_description": {},
       "category": {
         "taxonomy": "malt_category"

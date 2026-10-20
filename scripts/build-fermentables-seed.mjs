@@ -170,7 +170,11 @@ function standardFor(id) {
   if (!standardId) return {};
   const entry = standardList[standardId];
   if (!entry) return {};
-  return { standard_malt: standardId, generic_description: entry.description ?? "" };
+  return {
+    standard_malt: standardId,
+    family: entry.family ?? "",
+    generic_description: entry.description ?? "",
+  };
 }
 
 function writeSorted(path, seed) {
