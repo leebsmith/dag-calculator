@@ -117,63 +117,95 @@
                   />
                 </div>
                 <div class="filter-pills-container">
-                  <template x-for="c in traceCategories" :key="c">
+                  <template x-for="f in traceFamilies" :key="f.name">
                     <button
                       type="button"
                       class="filter-pill"
-                      :class="{ 'is-active': traceCategoryFilter.includes(c) }"
-                      @click="toggleTraceCategory(c)"
-                      x-text="c"
+                      :class="{ 'is-active': traceFamily === f.name }"
+                      @click="toggleTraceFamily(f.name)"
+                      x-text="f.label + ' · ' + f.count"
                     ></button>
                   </template>
                 </div>
                 <div
                   class="catalog-result-counter text-xs"
                   aria-live="polite"
-                  x-text="traceCatalogTruncated
-                    ? `Showing ${traceVisibleCatalog.length} of ${traceFilteredCatalog.length} malts — refine search or category filters`
-                    : `Showing ${traceFilteredCatalog.length} malts`"
+                  x-text="traceStandard
+                    ? `Showing ${traceFilteredCatalog.length} malts`
+                    : `Showing ${traceStandardGroups.length} standards`"
                 ></div>
               </div>
-              <div class="catalog-drawer-list">
-                <template x-for="item in traceVisibleCatalog" :key="item.id">
-                  <div class="catalog-item-card">
-                    <div>
-                      <div class="catalog-item-name">
-                        <span x-text="item.name"></span>
-                        <template x-if="isUserItem(item.id)">
-                          <span class="status-badge status-badge-info text-nano">mine</span>
-                        </template>
+              <template x-if="!traceStandard">
+                <div class="catalog-drawer-list">
+                  <template x-for="g in traceStandardGroups" :key="g.id">
+                    <div
+                      class="catalog-item-card catalog-item-card-selectable"
+                      role="button"
+                      tabindex="0"
+                      @click="selectTraceStandard(g.id)"
+                      @keydown.enter="selectTraceStandard(g.id)"
+                    >
+                      <div>
+                        <div class="catalog-item-name" x-text="g.name"></div>
+                        <div
+                          class="catalog-item-meta"
+                          x-text="g.description + ' · ' + g.count + (g.count === 1 ? ' malt' : ' malts')"
+                        ></div>
                       </div>
-                      <div
-                        class="catalog-item-meta"
-                        x-text="item.category + ' • ' + item.color_lovibond + ' °L' + (item.notes ? ' • ' + item.notes : '')"
-                      ></div>
+                      <span class="catalog-item-chevron" aria-hidden="true">›</span>
                     </div>
-                    <div class="catalog-item-actions">
-                      <button
-                        type="button"
-                        class="btn-outline text-xs"
-                        x-show="!isUserItem(item.id)"
-                        @click="duplicateCatalogTrace(item.id)"
-                        title="Copy to my items"
-                      >
-                        Copy
-                      </button>
-                      <button
-                        type="button"
-                        class="btn-primary text-xs"
-                        @click="addCatalogTrace(item.id)"
-                      >
-                        ＋ Add
-                      </button>
-                    </div>
+                  </template>
+                  <template x-if="traceStandardGroups.length === 0">
+                    <div class="table-empty-cell">No matching standards found.</div>
+                  </template>
+                </div>
+              </template>
+
+              <template x-if="traceStandard">
+                <div class="catalog-drawer-list">
+                  <div class="catalog-drawer-breadcrumb">
+                    <button type="button" class="btn-link text-xs" @click="clearTraceStandard()">← All standards</button>
+                    <span class="text-xs font-medium" x-text="traceStandardName"></span>
                   </div>
-                </template>
-                <template x-if="traceFilteredCatalog.length === 0">
-                  <div class="table-empty-cell">No matching malts found.</div>
-                </template>
-              </div>
+                  <template x-for="item in traceVisibleCatalog" :key="item.id">
+                    <div class="catalog-item-card">
+                      <div>
+                        <div class="catalog-item-name">
+                          <span x-text="item.name"></span>
+                          <template x-if="isUserItem(item.id)">
+                            <span class="status-badge status-badge-info text-nano">mine</span>
+                          </template>
+                        </div>
+                        <div
+                          class="catalog-item-meta"
+                          x-text="item.category + ' • ' + item.color_lovibond + ' °L' + (item.notes ? ' • ' + item.notes : '')"
+                        ></div>
+                      </div>
+                      <div class="catalog-item-actions">
+                        <button
+                          type="button"
+                          class="btn-outline text-xs"
+                          x-show="!isUserItem(item.id)"
+                          @click="duplicateCatalogTrace(item.id)"
+                          title="Copy to my items"
+                        >
+                          Copy
+                        </button>
+                        <button
+                          type="button"
+                          class="btn-primary text-xs"
+                          @click="addCatalogTrace(item.id)"
+                        >
+                          ＋ Add
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+                  <template x-if="traceFilteredCatalog.length === 0">
+                    <div class="table-empty-cell">No matching malts found.</div>
+                  </template>
+                </div>
+              </template>
             </div>
           </template>
 

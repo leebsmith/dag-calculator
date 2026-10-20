@@ -708,6 +708,25 @@ samp {
   flex-shrink: 0;
 }
 
+.catalog-item-card-selectable {
+  cursor: pointer;
+}
+
+.catalog-item-chevron {
+  color: var(--sys-text-muted);
+  font-size: var(--text-base);
+  flex-shrink: 0;
+}
+
+.catalog-drawer-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--sys-border-subtle);
+}
+
 .filter-pills-container {
   display: flex;
   flex-wrap: wrap;
