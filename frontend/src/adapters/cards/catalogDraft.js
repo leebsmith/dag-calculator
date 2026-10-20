@@ -148,8 +148,9 @@ export function installCatalogDraft(app, ctx, config) {
 
   Object.assign(app, state, methods);
 
-  const activeIds = () =>
-    new Set((this.draftRows ?? []).map((row) => row[idField]).filter(Boolean));
+  function activeIds() {
+    return new Set((this.draftRows ?? []).map((row) => row[idField]).filter(Boolean));
+  }
 
   const getters = {
     [`${prefix}EditorOpen`]() {

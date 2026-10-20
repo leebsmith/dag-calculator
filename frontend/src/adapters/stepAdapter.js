@@ -712,6 +712,18 @@ export function createStepApp(options = {}) {
       return resolveCollectionColumns(artifact, registry, this.draftNodeId, this.draftEntry(), ui.unitMode);
     },
 
+    // Draft total (mass-unit aware) for the modal header / totals row. Sums
+    // `pick(row)` over the draft and formats it in the mass column's display
+    // unit (used by the late-additions and trace-malt editors).
+    draftMassDisplay(pick) {
+      const col = this.draftColumns.find((c) => c.id === "mass_kg");
+      const total = (this.draftRows ?? []).reduce((sum, r) => sum + (pick(r) || 0), 0);
+      if (!col) return String(total);
+      const v = displayValue(artifact, "mass", col.displayUnit, total, nonlinearFns(artifact, engine));
+      const shown = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
+      return `${shown}${col.unit ? " " + col.unit : ""}`;
+    },
+
     // Draft rows converted to their display units (mirrors the producer field).
     get draftDisplayRows() {
       const columns = this.draftColumns;
