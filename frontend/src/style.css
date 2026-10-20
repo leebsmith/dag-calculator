@@ -1420,6 +1420,10 @@ samp {
   color: var(--sys-color-danger-text);
 }
 
+.text-warning {
+  color: var(--sys-color-warning-text);
+}
+
 .text-right,
 .align-right {
   text-align: right;

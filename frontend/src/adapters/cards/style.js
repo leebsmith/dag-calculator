@@ -18,6 +18,7 @@ import {
   aeSliceAt,
 } from "../../engine/fermentation.js";
 import { derivationsFor } from "../../views/seedDerivations.js";
+import { styleConformance } from "../../engine/styleConformance.js";
 
 const MAX_VISIBLE_STYLES = 25;
 
@@ -48,6 +49,8 @@ export function registerStyleCard(app, ctx) {
     styleEnvelope: null,
     styleSafestPoint: null,
     styleExtract: null,
+    styleConformance: null,
+    styleSai: null,
 
     styleSearchQuery: "",
     styleCategoryFilter: "",
@@ -198,6 +201,39 @@ export function registerStyleCard(app, ctx) {
       this.refreshTargets();
       this.scheduleSolve();
       this.notify();
+    },
+
+    styleConformanceReport() {
+      const read = (path) => {
+        try {
+          return engine.resolve(path);
+        } catch {
+          return undefined;
+        }
+      };
+      const og = read("solver.batch.sg_post_boil");
+      const fg = read("batch.realized_fg");
+      const abv = read("batch.realized_abv");
+      const ibu = read("batch.target_ibu");
+      const srm = read("grist.finished_beer_srm");
+      if ([og, fg, abv, ibu, srm].some((v) => typeof v !== "number" || !Number.isFinite(v))) {
+        return null;
+      }
+      const envelope = {
+        ogMin: engine.get("batch.style_og_min"),
+        ogMax: engine.get("batch.style_og_max"),
+        fgMin: engine.get("batch.style_fg_min"),
+        fgMax: engine.get("batch.style_fg_max"),
+        abvMin: engine.get("batch.style_abv_min"),
+        abvMax: engine.get("batch.style_abv_max"),
+        ibuMin: engine.get("batch.style_ibu_min"),
+        ibuMax: engine.get("batch.style_ibu_max"),
+        srmMin: engine.get("batch.style_srm_min"),
+        srmMax: engine.get("batch.style_srm_max"),
+      };
+      const report = styleConformance({ og, fg, abv, ibu, srm }, envelope);
+      report.styleId = engine.get("batch.style_id") || null;
+      return report;
     },
   });
 
@@ -386,6 +422,33 @@ export function registerStyleCard(app, ctx) {
       configurable: true,
       get() {
         return (this.fieldsBySlice.batch ?? []).find((f) => f.id === "batch.target_ibu") ?? null;
+      },
+    },
+    conformanceSummary: {
+      configurable: true,
+      get() {
+        const c = this.styleConformance;
+        if (!c || !c.hasBaseline) return null;
+        const meta = {
+          og: { label: "Original gravity", fmt: (v) => v.toFixed(3), unit: " SG" },
+          fg: { label: "Final gravity", fmt: (v) => v.toFixed(3), unit: " SG" },
+          abv: { label: "ABV", fmt: (v) => v.toFixed(1), unit: "%" },
+          ibu: { label: "IBU", fmt: (v) => v.toFixed(0), unit: " IBU" },
+          srm: { label: "SRM", fmt: (v) => v.toFixed(0), unit: " SRM" },
+          aa: { label: "Attenuation", fmt: (v) => v.toFixed(1), unit: "%" },
+          bugu: { label: "BU:GU", fmt: (v) => v.toFixed(2), unit: "" },
+        };
+        const statusLabel = { within: "Within", grace: "Grace", drift: "Drift", severe: "Severe" };
+        const dimensions = Object.entries(c.dimensions)
+          .filter(([, d]) => d)
+          .map(([id, d]) => ({
+            id,
+            label: meta[id].label,
+            value: meta[id].fmt(d.value) + meta[id].unit,
+            status: statusLabel[d.status],
+            z: d.z,
+          }));
+        return { sai: c.sai, dimensions };
       },
     },
     // Planned bitterness balance: planned IBU over the planned OG's gravity

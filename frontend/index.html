@@ -177,6 +177,13 @@
             <span class="status-dot status-dot-error"></span>
             <span x-text="violationCount + ' violation(s)'"></span>
           </span>
+          <span class="footer-violations" x-show="styleConformance && styleConformance.hasBaseline">
+            <span
+              class="status-dot"
+              :class="styleSai >= 90 ? 'status-dot-success' : 'status-dot-warning'"
+            ></span>
+            <span x-text="'SAI ' + styleSai"></span>
+          </span>
         </footer>
         </div>
       </template>

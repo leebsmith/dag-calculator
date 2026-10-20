@@ -676,6 +676,145 @@
         ]
       }
     },
+    "realized_fg": {
+      "params": [
+        "og_sg",
+        "aa"
+      ],
+      "returns": "gravity",
+      "body": {
+        "call": "plato_to_sg",
+        "args": [
+          {
+            "op": "*",
+            "args": [
+              {
+                "call": "sg_to_plato",
+                "args": [
+                  {
+                    "ref": "og_sg"
+                  }
+                ]
+              },
+              {
+                "op": "-",
+                "args": [
+                  1,
+                  {
+                    "ref": "aa"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "realized_abv": {
+      "params": [
+        "og_sg",
+        "aa"
+      ],
+      "returns": "abv",
+      "body": {
+        "op": "*",
+        "args": [
+          {
+            "op": "*",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  0.372,
+                  {
+                    "op": "*",
+                    "args": [
+                      0.00357,
+                      {
+                        "call": "sg_to_plato",
+                        "args": [
+                          {
+                            "ref": "og_sg"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "-",
+                "args": [
+                  {
+                    "call": "sg_to_plato",
+                    "args": [
+                      {
+                        "ref": "og_sg"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "call": "sg_to_plato",
+                        "args": [
+                          {
+                            "ref": "og_sg"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "-",
+                        "args": [
+                          1,
+                          {
+                            "ref": "aa"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "call": "plato_to_sg",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "call": "sg_to_plato",
+                        "args": [
+                          {
+                            "ref": "og_sg"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "-",
+                        "args": [
+                          1,
+                          {
+                            "ref": "aa"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              0.7907
+            ]
+          }
+        ]
+      }
+    },
     "extract_yield_ldk": {
       "params": [
         "yield_fraction"
@@ -2103,6 +2242,48 @@
           "MASH_TOO_THIN",
           "HLT_TOO_SMALL"
         ]
+      }
+    },
+    "batch.realized_fg": {
+      "kind": "derived",
+      "inputs": {
+        "og_sg": "solver.batch.sg_post_boil",
+        "aa": "batch.apparent_attenuation"
+      },
+      "expr": {
+        "call": "realized_fg",
+        "args": [
+          {
+            "ref": "og_sg"
+          },
+          {
+            "ref": "aa"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "gravity"
+      }
+    },
+    "batch.realized_abv": {
+      "kind": "derived",
+      "inputs": {
+        "og_sg": "solver.batch.sg_post_boil",
+        "aa": "batch.apparent_attenuation"
+      },
+      "expr": {
+        "call": "realized_abv",
+        "args": [
+          {
+            "ref": "og_sg"
+          },
+          {
+            "ref": "aa"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "abv"
       }
     },
     "batch.boil_target_ibu": {

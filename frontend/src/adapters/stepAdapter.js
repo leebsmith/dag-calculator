@@ -238,6 +238,7 @@ export function createStepApp(options = {}) {
         valuation,
         provenance,
         schema_version: artifact.schema_version ?? 2,
+        conformance: this.styleConformanceReport?.() ?? null,
       };
     },
 
@@ -368,11 +369,15 @@ export function createStepApp(options = {}) {
         collectionIndex[d.nodeId][d.index][d.field] = d;
       }
 
+      this.styleConformance = this.styleConformanceReport?.() ?? null;
+      this.styleSai = this.styleConformance?.sai ?? null;
+
       const all = produce(artifact, steps, registry, engine, {
         references: cache.references,
         ui,
         fieldDomains: fieldDomainIndex,
         collectionDomains: collectionIndex,
+        conformance: this.styleConformance,
       });
       this.fieldsBySlice = Object.fromEntries(
         steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])

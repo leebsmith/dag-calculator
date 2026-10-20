@@ -45,6 +45,7 @@
           <span class="form-hint" x-show="f.rangeHint" x-text="'Allowed: ' + f.rangeHint"></span>
           <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
           <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
+          <span class="form-hint text-warning" x-show="f.conformanceHint" x-text="f.conformanceHint"></span>
         </div>
       </template>
 
@@ -97,6 +98,7 @@
           <span class="field-value" x-text="f.display"></span>
           <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
           <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
+          <span class="form-hint text-warning" x-show="f.conformanceHint" x-text="f.conformanceHint"></span>
         </div>
       </template>
 

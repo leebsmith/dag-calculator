@@ -87,6 +87,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash_ph_status` | ph | `ph_status` |
 | `morey_mcu_to_srm` | mcu | `beer_color` |
 | `plato_to_sg` | plato | `gravity` |
+| `realized_abv` | og_sg, aa | `abv` |
+| `realized_fg` | og_sg, aa | `gravity` |
 | `sg_to_plato` | sg | `gravity` |
 | `sugar_gravity_points` | mass_kg, yield_fraction, v_ferm_l | `gravity` |
 
@@ -154,6 +156,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.grain_moisture_fraction` | root |
 | `batch.hlt_starting_volume_l` | root |
 | `batch.intensive_value` | root |
+| `batch.realized_abv` | derived |
+| `batch.realized_fg` | derived |
 | `batch.runnings_ratio` | derived |
 | `batch.s_late_add` | derived |
 | `batch.shrinkage_volume_l` | derived |

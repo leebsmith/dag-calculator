@@ -116,6 +116,10 @@ export const steps = [
       "batch.whirlpool_ibu_fraction",
       "batch.boil_target_ibu",
       "batch.whirlpool_target_ibu",
+      "solver.batch.sg_post_boil",
+      "batch.realized_fg",
+      "batch.realized_abv",
+      "grist.finished_beer_srm",
       {
         table: "derived-anchors",
         title: "Derived Anchors",
@@ -124,7 +128,6 @@ export const steps = [
           { id: "value", label: "" },
         ],
         rows: [
-          { label: "Post-Boil Gravity (incl. late additions, if any)", value: "solver.batch.sg_post_boil" },
           { label: "Pre-Boil Volume", value: "solver.batch.v_pre_boil" },
           { label: "Post-Boil Extract Target", value: "solver.batch.s_post_boil_target" },
           { label: "Grist Mass", value: "solver.batch.m_grist" },

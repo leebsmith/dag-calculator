@@ -22,6 +22,7 @@ class FreezePayload(BaseModel):
 
     valuation: dict[str, Any] = Field(default_factory=dict)
     provenance: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    conformance: dict[str, Any] | None = None
     schema_version: int = 2
 
 
@@ -43,5 +44,6 @@ class BatchRecord(BaseModel):
     # frozen-only state
     valuation: dict[str, Any] | None = None
     provenance: dict[str, dict[str, Any]] | None = None
+    conformance: dict[str, Any] | None = None
     parent_batch_id: str | None = None
     frozen_at: float | None = None

@@ -65,6 +65,7 @@ class BatchRepository:
             "schema_version": data.get("schema_version", source.get("schema_version", 2)),
             "valuation": data.get("valuation", {}),
             "provenance": data.get("provenance", {}),
+            "conformance": data.get("conformance"),
             "parent_batch_id": batch_id,
             "roots": source.get("roots", {}),
             "collections": source.get("collections", {}),

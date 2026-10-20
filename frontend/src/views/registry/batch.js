@@ -38,4 +38,8 @@ export const batchRegistry = {
   "batch.whirlpool_ibu_fraction": { label: "Whirlpool IBU share", displayUnit: "pct" },
   "batch.boil_target_ibu": { label: "Boil IBU", unit: "IBU" },
   "batch.whirlpool_target_ibu": { label: "Whirlpool IBU", unit: "IBU" },
+  "solver.batch.sg_post_boil": { label: "Post-boil gravity" },
+  "batch.realized_fg": { label: "Final gravity" },
+  "batch.realized_abv": { label: "ABV", unit: "%" },
+  "grist.finished_beer_srm": { label: "Beer color" },
 };

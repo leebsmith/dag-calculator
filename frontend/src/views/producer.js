@@ -18,6 +18,23 @@ function defaultControl(node) {
   return "readout";
 }
 
+// Which realized vital a field id maps to, for inline style-conformance badges.
+const CONFORMANCE_FIELD_MAP = {
+  "solver.batch.sg_post_boil": "og",
+  "batch.realized_fg": "fg",
+  "batch.realized_abv": "abv",
+  "batch.target_ibu": "ibu",
+  "grist.finished_beer_srm": "srm",
+};
+
+function conformanceHint(c) {
+  if (!c || !c.violatedBoundary) return null;
+  const dir = c.violatedBoundary === c.high ? "Above" : "Below";
+  const tier =
+    c.status === "severe" ? "far out of style" : c.status === "drift" ? "out of style" : "near style limit";
+  return `${dir} style limit ${Number(c.violatedBoundary.toFixed(3))} (${tier})`;
+}
+
 function describe(artifact, id) {
   const node = artifact.nodes[id];
   if (node) {
@@ -403,6 +420,11 @@ export function valuate(fields, engine, ctx = {}) {
       const ref = resolveReference(artifact, field.id);
       const vkey = ref ? (ref.suffix.length ? `${ref.nodeId}.${ref.suffix.join(".")}` : ref.nodeId) : null;
       out.validation = (vkey && fieldDomains[vkey]) || null;
+      const conformanceKey = CONFORMANCE_FIELD_MAP[field.id];
+      if (conformanceKey && ctx.conformance?.dimensions) {
+        out.conformance = ctx.conformance.dimensions[conformanceKey] ?? null;
+        out.conformanceHint = conformanceHint(out.conformance);
+      }
       // The intensive-value input is polymorphic across topologies: a mash
       // thickness (L/kg) under `r_l_to_g`, a dimensionless runoff ratio under
       // `runoff_ratio`. The artifact pins its dimension to mash_thickness, so

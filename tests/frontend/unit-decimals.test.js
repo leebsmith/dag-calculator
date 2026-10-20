@@ -30,17 +30,14 @@ test("unitDecimals is null where no precision is declared", () => {
 test("gravity readouts use the active unit's precision (SG=3, °P=1)", () => {
   const app = createStepApp();
   app.boot();
-  const anchor = (id) =>
-    app.fieldsBySlice.batch
-      .find((f) => f.id === "derived-anchors")
-      .rows.find((r) => r.cells.label.text === id).cells.value;
+  const gravity = () => app.fieldsBySlice.batch.find((f) => f.id === "solver.batch.sg_post_boil");
 
   // Default unit is Plato → one decimal.
-  assert.equal(anchor("Post-Boil Gravity (incl. late additions, if any)").display, "13.6");
+  assert.equal(gravity().display, "13.6");
 
   // Switching to SG → three decimals.
   app.setUnit("gravity", "SG");
-  assert.equal(anchor("Post-Boil Gravity (incl. late additions, if any)").display, "1.055");
+  assert.equal(gravity().display, "1.055");
 });
 
 test("editable number inputs render their natural value (no fixed-decimal padding)", () => {
