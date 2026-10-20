@@ -732,7 +732,7 @@ samp {
 .catalog-item-meta {
   margin-top: var(--space-0-5);
   font-size: var(--text-micro);
-  color: var(--sys-text-muted);
+  color: var(--sys-text-tertiary);
 }
 
 .catalog-item-actions {
@@ -923,9 +923,9 @@ samp {
 .data-table thead {
   background-color: var(--sys-surface-subtle);
   font-size: var(--text-xs);
-  color: var(--sys-text-muted);
+  color: var(--sys-text-secondary);
   text-transform: uppercase;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   border-bottom: 1px solid var(--sys-border-subtle);
 }
 

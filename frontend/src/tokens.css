@@ -196,8 +196,8 @@
   /* Text & Hierarchy */
   --sys-text-primary: var(--color-slate-900);
   --sys-text-secondary: var(--color-slate-600);
-  --sys-text-tertiary: var(--color-slate-500);
-  --sys-text-muted: var(--color-slate-400);
+  --sys-text-tertiary: var(--color-slate-600);
+  --sys-text-muted: var(--color-slate-500);
   --sys-text-on-action: #ffffff;
 
   /* Borders & Dividers */
@@ -267,8 +267,8 @@
     /* Text & Hierarchy */
     --sys-text-primary: #f8fafc;
     --sys-text-secondary: #cbd5e1;
-    --sys-text-tertiary: #94a3b8;
-    --sys-text-muted: #64748b;
+    --sys-text-tertiary: #cbd5e1;
+    --sys-text-muted: #94a3b8;
     --sys-text-on-action: #ffffff;
 
     /* Borders */
