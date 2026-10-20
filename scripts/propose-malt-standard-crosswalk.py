@@ -27,8 +27,8 @@ def norm(s: str) -> str:
 
 # Curated per-slug assignments for names the keyword table can't disambiguate.
 OVERRIDES = {
-    "aroma-100-md": "aromatic-malt",
-    "aroma-150-md": "aromatic-malt",
+    "aroma-100-md": "melanoidin-malt",
+    "aroma-150-md": "brown-malt",
     "best-a-xl": "chit-malt",
     "best-ale-malt": "pale-ale-malt",
     "best-caramel-hell": "caramel-10l",
@@ -39,12 +39,14 @@ OVERRIDES = {
     "brewers-malt-flour": "pale-ale-malt",
     "cara-malt": "caramel-10l",
     "caramel-steam-malt": "caramel-30l",
+    "coffee-mroost-450-md": "dehusked-light-roasted",
     "crystal-dark": "caramel-100l",
     "crystal-dark-medium": "caramel-80l",
     "crystal-extra-dark": "extra-dark-crystal",
     "crystal-light": "caramel-40l",
     "crystal-malt": "caramel-60l",
     "crystal-medium": "caramel-60l",
+    "crystal-red-malt": "extra-dark-crystal",
     "dark-crystal-malt": "caramel-80l",
     "extra-dark-crystal-malt": "caramel-120l",
     "food-grade-malt": "pale-ale-malt",
@@ -52,6 +54,7 @@ OVERRIDES = {
     "heritage-select-malt": "pale-ale-malt",
     "high-enzyme-malt": "distilling-malt",
     "light-crystal": "caramel-40l",
+    "low-colour-chocolate-malt": "pale-chocolate",
     "maritime-malt": "pale-ale-malt",
     "medium-crystal": "caramel-60l",
     "new-englander-malt": "pale-ale-malt",
@@ -117,7 +120,7 @@ KEYWORDS = [
     ("crystal rye", "crystal-rye"), ("caramel rye", "crystal-rye"),
     ("red rye crystal", "crystal-rye"),
     ("golden naked oats", "golden-naked-oats"), ("crystal oat", "golden-naked-oats"),
-    ("crystal red", "caramel-150l"), ("red crystal", "caramel-150l"),
+    ("crystal red", "extra-dark-crystal"), ("red crystal", "caramel-150l"),
     ("drc", "caramel-120l"),
     ("carabrown", "carabrown"), ("cara brown", "carabrown"),
     ("caragold", "caragold"), ("cara gold", "caragold"),
@@ -155,6 +158,9 @@ KEYWORDS = [
     ("blackprinz", "dehusked-black"),
     ("midnight wheat", "dehusked-black-wheat"),
     ("mroost 1400", "dehusked-black"), ("mroost 900", "dehusked-chocolate"),
+    # NOTE: "Mroost NNN" numbers are EBC (Dingemans); "Mroost 900"~340L,
+    # "Mroost 1400"~530L are correct here, but "Coffee Mroost 450"~170L is not a
+    # 400-450L debittered coffee — it is handled by OVERRIDES above.
     ("coffee mroost", "debittered-coffee-malt"), ("coffee malt", "debittered-coffee-malt"),
     ("debittered", "debittered-coffee-malt"),
     ("pale chocolate", "pale-chocolate"),
