@@ -21,6 +21,7 @@ Alpine.store("recipes", {
   batches: [],
   activeId: null,
   activeName: "",
+  loadError: false,
 
   get visible() {
     return this.batches.filter((b) => (b.trashed ?? false) === this.trashView);
@@ -34,7 +35,16 @@ Alpine.store("recipes", {
 
   async refresh() {
     this.batches = await persistence.list();
+    this.loadError = false;
     this.syncActive();
+  },
+
+  async retryLoad() {
+    try {
+      await this.refresh();
+    } catch {
+      this.loadError = true;
+    }
   },
 
   async newRecipe() {
@@ -134,14 +144,29 @@ async function applyAuth(user) {
   auth.loading = true;
   try {
     try {
-      await recipes.refresh();
+      await refreshWithRetry(recipes);
     } catch (err) {
       console.error("recipe list failed", err);
+      recipes.loadError = true;
     }
     recipes.view = "chooser";
   } finally {
     auth.user = user;
     auth.loading = false;
+  }
+}
+
+// The backend binds its port a beat after Vite under `make local-dev`; retry the
+// initial list fetch briefly so the chooser doesn't land empty on the race.
+async function refreshWithRetry(recipes, attempts = 6) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      await recipes.refresh();
+      return;
+    } catch (err) {
+      if (i === attempts - 1) throw err;
+      await new Promise((r) => setTimeout(r, 300 * (i + 1)));
+    }
   }
 }
 

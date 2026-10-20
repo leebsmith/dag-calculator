@@ -50,6 +50,18 @@
               </header>
 
               <div class="chooser-body">
+                <div
+                  class="alert alert-warning"
+                  x-show="$store.recipes.loadError"
+                >
+                  <div class="alert-header">
+                    <span class="alert-dot"></span>
+                    <span>Couldn't reach the server</span>
+                  </div>
+                  <p>Your recipes couldn't be loaded.</p>
+                  <button type="button" class="btn-outline" @click="$store.recipes.retryLoad()">Retry</button>
+                </div>
+
                 <div class="chooser-actions">
                   <button type="button" class="btn-primary" @click="$store.recipes.newRecipe()">
                     ＋ New recipe
