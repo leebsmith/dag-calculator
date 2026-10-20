@@ -41,6 +41,11 @@ test("seed carries standard_malt + generic_description agreeing with the crosswa
       `${slug}.generic_description disagrees with the standard list`
     );
     assert.equal(
+      malt.standard_name,
+      standard.name,
+      `${slug}.standard_name disagrees with the standard list — re-run build-fermentables-seed.mjs`
+    );
+    assert.equal(
       malt.family,
       standard.family,
       `${slug}.family disagrees with the standard list — re-run build-fermentables-seed.mjs`

@@ -46,6 +46,7 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 | `id`, `name` | — | — | identity/metadata |
 | `maltster` | — | — | producer (provenance) |
 | `standard_malt` | — | — | standard classification id (generic family) |
+| `standard_name` | — | — | standard display name (e.g. "Pale Ale Malt") |
 | `family` | — | — | standard family (base/kilned/crystal/roasted/…) |
 | `generic_description` | — | — | shared one-line description from the standard list |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |

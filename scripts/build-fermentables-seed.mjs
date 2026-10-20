@@ -172,6 +172,7 @@ function standardFor(id) {
   if (!entry) return {};
   return {
     standard_malt: standardId,
+    standard_name: entry.name ?? "",
     family: entry.family ?? "",
     generic_description: entry.description ?? "",
   };
