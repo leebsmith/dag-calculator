@@ -365,7 +365,7 @@
     "name": "Chocolate Rye",
     "family": "roasted",
     "form": "malted",
-    "color_lovibond_min": 250.0,
+    "color_lovibond_min": 100.0,
     "color_lovibond_max": 350.0,
     "aliases": [
       "Chocolate Rye"
@@ -971,7 +971,7 @@
     "family": "roasted",
     "form": "unmalted",
     "color_lovibond_min": 300.0,
-    "color_lovibond_max": 350.0,
+    "color_lovibond_max": 600.0,
     "aliases": [
       "Roast Barley"
     ],

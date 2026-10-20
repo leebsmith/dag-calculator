@@ -40,8 +40,8 @@
     "yield_fraction": 0.77,
     "color_lovibond": 38,
     "notes": "Pronounced malty",
-    "standard_malt": "aromatic-malt",
-    "generic_description": "Intense malt; Belgian ales."
+    "standard_malt": "melanoidin-malt",
+    "generic_description": "Melanoidin richness and body."
   },
   "aroma-150-md": {
     "id": "aroma-150-md",
@@ -51,8 +51,8 @@
     "yield_fraction": 0.75,
     "color_lovibond": 60,
     "notes": "Pronounced malty",
-    "standard_malt": "aromatic-malt",
-    "generic_description": "Intense malt; Belgian ales."
+    "standard_malt": "brown-malt",
+    "generic_description": "Toasted-brown; porter and brown ale."
   },
   "aromatic-malt": {
     "id": "aromatic-malt",
@@ -1195,8 +1195,8 @@
     "yield_fraction": 0.7,
     "color_lovibond": 170,
     "notes": "Nutty, Coffee beans",
-    "standard_malt": "debittered-coffee-malt",
-    "generic_description": "Huskless/debittered; coffee, less harsh."
+    "standard_malt": "dehusked-light-roasted",
+    "generic_description": "Huskless; smooth roast, no astringency."
   },
   "crystal-15-malt": {
     "id": "crystal-15-malt",
@@ -1294,8 +1294,8 @@
     "yield_fraction": 0.75,
     "color_lovibond": 200,
     "notes": "Pronounced caramel, burnt sugar, raisiny, prunes",
-    "standard_malt": "caramel-150l",
-    "generic_description": "Dark caramel."
+    "standard_malt": "extra-dark-crystal",
+    "generic_description": "Very dark caramel."
   },
   "crystal-rye-malt": {
     "id": "crystal-rye-malt",
@@ -2174,8 +2174,8 @@
     "yield_fraction": 0.72,
     "color_lovibond": 207.5,
     "notes": "Distinct roasted aromas; Creamy coffee notes; Intense smoothness and added body",
-    "standard_malt": "chocolate-malt",
-    "generic_description": "Husked; chocolate/coffee; stouts and porters."
+    "standard_malt": "pale-chocolate",
+    "generic_description": "Husked; light coffee/cocoa, some astringency."
   },
   "low-colour-golden-promise": {
     "id": "low-colour-golden-promise",

@@ -101,7 +101,7 @@ EXTENSIONS = [
          description="Kilned bourbon malt; caramel, vanilla, oak."),
 
     # Roasted rye / wheat
-    dict(name="Chocolate Rye", family="roasted", form="malted", color_lovibond_min=250.0, color_lovibond_max=350.0,
+    dict(name="Chocolate Rye", family="roasted", form="malted", color_lovibond_min=100.0, color_lovibond_max=350.0,
          aliases=["Chocolate Rye"],
          description="Roasted rye; chocolate, spice."),
     dict(name="Roast Rye", family="roasted", form="malted", color_lovibond_min=200.0, color_lovibond_max=300.0,
@@ -128,6 +128,12 @@ EXTENSIONS = [
          description="Unmalted barley; body, head retention."),
 ]
 
+# Post-load colour-range overrides for tsv entries whose "typical" range is too
+# narrow for the actual products (e.g. roasted barley runs 300-600 L, not 300-350).
+RANGE_OVERRIDES = {
+    "roasted-barley": (300.0, 600.0),
+}
+
 
 def main():
     tsv_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_TSV
@@ -143,6 +149,10 @@ def main():
             "aliases": ext["aliases"],
         }
         entries[e["id"]] = e
+    for eid, (lo, hi) in RANGE_OVERRIDES.items():
+        if eid in entries:
+            entries[eid]["color_lovibond_min"] = lo
+            entries[eid]["color_lovibond_max"] = hi
 
     ordered = {k: entries[k] for k in sorted(entries)}
     OUT.write_text(json.dumps(ordered, indent=2) + "\n")
