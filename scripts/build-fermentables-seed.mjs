@@ -195,6 +195,7 @@ function median(values) {
 function backfillColor(seed) {
   const groups = new Map();
   for (const malt of Object.values(seed)) {
+    if (!malt.standard_malt) continue; // unclassified — skip (no group to borrow from)
     if (!groups.has(malt.standard_malt)) groups.set(malt.standard_malt, []);
     groups.get(malt.standard_malt).push(malt);
   }

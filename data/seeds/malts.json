@@ -1,4 +1,30 @@
 {
+  "abbey-malt-biscuit-malt": {
+    "id": "abbey-malt-biscuit-malt",
+    "name": "Abbey Malt® (Biscuit Malt)",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.75,
+    "color_lovibond": 17.4,
+    "notes": "complex malt aroma with intense notes of biscuit and honey, nuts and chocolate.",
+    "standard_malt": "biscuit-malt",
+    "standard_name": "Biscuit Malt",
+    "family": "kilned",
+    "generic_description": "Bready, biscuity."
+  },
+  "acidulated-malt": {
+    "id": "acidulated-malt",
+    "name": "Acidulated Malt",
+    "maltster": "Weyermann",
+    "category": "ACID",
+    "yield_fraction": 0.74,
+    "color_lovibond": 1.6,
+    "notes": "fruity-acidic, universally applicable",
+    "standard_malt": "acidulated-malt",
+    "standard_name": "Acidulated Malt",
+    "family": "acidulated",
+    "generic_description": "Lowers mash pH; use 1-10%."
+  },
   "amber-aromatic-md": {
     "id": "amber-aromatic-md",
     "name": "Amber - Aromatic® MD",
@@ -102,6 +128,58 @@
     "standard_name": "Mild Ale Malt",
     "family": "base",
     "generic_description": "Higher residual body; mild and brown ales."
+  },
+  "barke-munich-malt": {
+    "id": "barke-munich-malt",
+    "name": "Barke® Munich Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 7.8,
+    "notes": "pronounced malt aroma with notes of honey and pastries.",
+    "standard_malt": "munich-light",
+    "standard_name": "Munich Light",
+    "family": "kilned",
+    "generic_description": "Malty; märzen, bock, altbier."
+  },
+  "barke-pilsner-malt": {
+    "id": "barke-pilsner-malt",
+    "name": "Barke® Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.75,
+    "notes": "pronounced malt aromas with underlying toffee notes; pleasant, soft mouthfeel.",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
+  },
+  "barke-vienna-malt": {
+    "id": "barke-vienna-malt",
+    "name": "Barke® Vienna Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.79,
+    "color_lovibond": 3.25,
+    "notes": "intense malt-sweet, light toffee, honey and nut notes; amused, soft mouthfeel",
+    "standard_malt": "vienna-malt",
+    "standard_name": "Vienna Malt",
+    "family": "kilned",
+    "generic_description": "Toasty, amber; Vienna lager and märzen."
+  },
+  "beech-smoked-barley-malt": {
+    "id": "beech-smoked-barley-malt",
+    "name": "Beech Smoked Barley Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 2.75,
+    "notes": "A pale, well-modified malt from top-quality barley that has been gently smoked over a beech-wood fire.",
+    "standard_malt": "smoked-malt",
+    "standard_name": "Smoked Malt",
+    "family": "smoked",
+    "generic_description": "Beechwood/cherry/oak smoke."
   },
   "best-a-xl": {
     "id": "best-a-xl",
@@ -779,6 +857,19 @@
     "family": "toasted",
     "generic_description": "Toasty oats; body."
   },
+  "bohemian-pilsner-malt": {
+    "id": "bohemian-pilsner-malt",
+    "name": "Bohemian Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.8,
+    "color_lovibond": 1.95,
+    "notes": "nutty malt aroma, malty-sweet",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
+  },
   "bonlander-munich-malt-10l": {
     "id": "bonlander-munich-malt-10l",
     "name": "Bonlander Munich Malt 10L",
@@ -1052,6 +1143,58 @@
     "family": "dextrin",
     "generic_description": "Body and foam; minimal colour."
   },
+  "caraamber": {
+    "id": "caraamber",
+    "name": "CARAAMBER®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 26.85,
+    "notes": "Toffee, caramel and bread notes",
+    "standard_malt": "caraamber",
+    "standard_name": "CaraAmber",
+    "family": "crystal",
+    "generic_description": "Amber crystal."
+  },
+  "caraaroma": {
+    "id": "caraaroma",
+    "name": "CARAAROMA®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 151.25,
+    "notes": "first nuances of roasted aromas, notes of roasted nuts, dark caramel and dried fruit.",
+    "standard_malt": "caraaroma",
+    "standard_name": "CaraAroma",
+    "family": "crystal",
+    "generic_description": "Aromatic crystal."
+  },
+  "carabelge": {
+    "id": "carabelge",
+    "name": "CARABELGE®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 12.7,
+    "notes": "Notes of caramel, dried fruits and nuts (almonds)",
+    "standard_malt": "caramel-10l",
+    "standard_name": "Caramel 10L",
+    "family": "crystal",
+    "generic_description": "Light caramel sweetness."
+  },
+  "carabohemian": {
+    "id": "carabohemian",
+    "name": "CARABOHEMIAN®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.73,
+    "color_lovibond": 73.95,
+    "notes": "Bread, caramel and toffee notes",
+    "standard_malt": "caramel-80l",
+    "standard_name": "Caramel 80L",
+    "family": "crystal",
+    "generic_description": "Toffee/caramel."
+  },
   "carabrown-malt": {
     "id": "carabrown-malt",
     "name": "Carabrown Malt",
@@ -1078,6 +1221,84 @@
     "family": "crystal",
     "generic_description": "Wheat crystal."
   },
+  "carafa-special-type-1": {
+    "id": "carafa-special-type-1",
+    "name": "CARAFA® SPECIAL Type 1",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 339.8,
+    "notes": "properties: fine roast aroma with reduced astringency and bitterness, notes of coffee, cacao, and dark chocolate",
+    "standard_malt": "dehusked-chocolate",
+    "standard_name": "Dehusked Chocolate",
+    "family": "dehusked",
+    "generic_description": "Huskless; smooth chocolate/coffee."
+  },
+  "carafa-special-type-2": {
+    "id": "carafa-special-type-2",
+    "name": "CARAFA® SPECIAL Type 2",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 434,
+    "notes": "properties: fine roast aroma with reduced astringency and bitterness, notes of coffee, cacao, and dark chocolate",
+    "standard_malt": "debittered-coffee-malt",
+    "standard_name": "Debittered Coffee Malt",
+    "family": "dehusked",
+    "generic_description": "Huskless/debittered; coffee, less harsh."
+  },
+  "carafa-special-type-3": {
+    "id": "carafa-special-type-3",
+    "name": "CARAFA® SPECIAL TYPE 3",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 528.3,
+    "notes": "A dark to very dark, roasted malt with strong coloring potential; made from sccharified, de-husked barley malt.",
+    "standard_malt": "dehusked-black",
+    "standard_name": "Dehusked Black",
+    "family": "dehusked",
+    "generic_description": "Huskless black; smooth, less bitter."
+  },
+  "carafa-type-1": {
+    "id": "carafa-type-1",
+    "name": "CARAFA® Type 1",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 339.8,
+    "notes": "properties: intense roast aroma notes of coffee, cacao, and dark chocolate",
+    "standard_malt": "chocolate-malt",
+    "standard_name": "Chocolate Malt",
+    "family": "roasted",
+    "generic_description": "Husked; chocolate/coffee; stouts and porters."
+  },
+  "carafa-type-2": {
+    "id": "carafa-type-2",
+    "name": "CARAFA® Type 2",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 434,
+    "notes": "properties: intense roast aroma notes of coffee, cacao, and dark chocolate",
+    "standard_malt": "chocolate-malt",
+    "standard_name": "Chocolate Malt",
+    "family": "roasted",
+    "generic_description": "Husked; chocolate/coffee; stouts and porters."
+  },
+  "carafa-type-3": {
+    "id": "carafa-type-3",
+    "name": "CARAFA® Type 3",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 528.3,
+    "notes": "properties: intense roast aroma notes of coffee, cacao, and dark chocolate",
+    "standard_malt": "black-malt",
+    "standard_name": "Black Malt",
+    "family": "roasted",
+    "generic_description": "Husked; black colour and roast, astringent."
+  },
   "caraglow": {
     "id": "caraglow",
     "name": "CaraGlow",
@@ -1090,6 +1311,19 @@
     "standard_name": "CaraGold",
     "family": "crystal",
     "generic_description": "Very light crystal; gentle sweetness, golden colour."
+  },
+  "carahell": {
+    "id": "carahell",
+    "name": "CARAHELL®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 9.9,
+    "notes": "malty-sweet; fine caramel notes",
+    "standard_malt": "caramel-10l",
+    "standard_name": "Caramel 10L",
+    "family": "crystal",
+    "generic_description": "Light caramel sweetness."
   },
   "caramalt": {
     "id": "caramalt",
@@ -1260,6 +1494,58 @@
     "family": "crystal",
     "generic_description": "Vienna-style crystal."
   },
+  "caramunich-type-1": {
+    "id": "caramunich-type-1",
+    "name": "CARAMUNICH® Type 1",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.73,
+    "color_lovibond": 34.4,
+    "notes": "properties: intense notes of caramel and biscuit",
+    "standard_malt": "caramunich",
+    "standard_name": "CaraMunich",
+    "family": "crystal",
+    "generic_description": "Munich-style crystal."
+  },
+  "caramunich-type-2": {
+    "id": "caramunich-type-2",
+    "name": "CARAMUNICH® Type 2",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.73,
+    "color_lovibond": 45.7,
+    "notes": "properties: intense notes of caramel and biscuit",
+    "standard_malt": "caramunich",
+    "standard_name": "CaraMunich",
+    "family": "crystal",
+    "generic_description": "Munich-style crystal."
+  },
+  "caramunich-type-3": {
+    "id": "caramunich-type-3",
+    "name": "CARAMUNICH® Type 3",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.73,
+    "color_lovibond": 57,
+    "notes": "properties: intense notes of caramel and biscuit",
+    "standard_malt": "caramunich",
+    "standard_name": "CaraMunich",
+    "family": "crystal",
+    "generic_description": "Munich-style crystal."
+  },
+  "carapils": {
+    "id": "carapils",
+    "name": "CARAPILS®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.75,
+    "color_lovibond": 2.15,
+    "notes": "malty-sweet with light caramel notes.",
+    "standard_malt": "dextrin-malt",
+    "standard_name": "Dextrin Malt",
+    "family": "dextrin",
+    "generic_description": "Body and foam; minimal colour."
+  },
   "carapils-copper-malt": {
     "id": "carapils-copper-malt",
     "name": "Carapils Copper Malt",
@@ -1285,6 +1571,45 @@
     "standard_name": "Dextrin Malt",
     "family": "dextrin",
     "generic_description": "Body and foam; minimal colour."
+  },
+  "carared": {
+    "id": "carared",
+    "name": "CARARED®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 19.3,
+    "notes": "malty-sweet with notes of caramel, honey and pastry.",
+    "standard_malt": "carared",
+    "standard_name": "CaraRed",
+    "family": "crystal",
+    "generic_description": "Red crystal."
+  },
+  "cararye": {
+    "id": "cararye",
+    "name": "CARARYE®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.74,
+    "color_lovibond": 66.45,
+    "notes": "A brown, aromatic, caramelized malt from top-quality rye.",
+    "standard_malt": "crystal-rye",
+    "standard_name": "Crystal Rye",
+    "family": "crystal",
+    "generic_description": "Rye crystal."
+  },
+  "carawheat": {
+    "id": "carawheat",
+    "name": "CARAWHEAT®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.68,
+    "color_lovibond": 47.55,
+    "notes": "An aromatic, brown, caramelized malt from top-quality what.",
+    "standard_malt": "crystal-wheat",
+    "standard_name": "Crystal Wheat",
+    "family": "crystal",
+    "generic_description": "Wheat crystal."
   },
   "century-rye-malt": {
     "id": "century-rye-malt",
@@ -1363,6 +1688,32 @@
     "standard_name": "Chocolate Rye",
     "family": "roasted",
     "generic_description": "Roasted rye; chocolate, spice."
+  },
+  "chocolate-rye-malt": {
+    "id": "chocolate-rye-malt",
+    "name": "Chocolate Rye Malt",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 207.85,
+    "notes": "properties: notes of bread, chocolate and nuts, as well as mild notes of coffee",
+    "standard_malt": "chocolate-rye",
+    "standard_name": "Chocolate Rye",
+    "family": "roasted",
+    "generic_description": "Roasted rye; chocolate, spice."
+  },
+  "chocolate-wheat-malt": {
+    "id": "chocolate-wheat-malt",
+    "name": "Chocolate Wheat Malt",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.65,
+    "color_lovibond": 396.35,
+    "notes": "properties: notes of coffee, dark chocolate, and well-toasted bread",
+    "standard_malt": "chocolate-malt",
+    "standard_name": "Chocolate Malt",
+    "family": "roasted",
+    "generic_description": "Husked; chocolate/coffee; stouts and porters."
   },
   "clear-choice-pale-malt": {
     "id": "clear-choice-pale-malt",
@@ -1663,6 +2014,19 @@
     "family": "dextrin",
     "generic_description": "Body and foam; minimal colour."
   },
+  "diastatic-barley-malt": {
+    "id": "diastatic-barley-malt",
+    "name": "Diastatic Barley Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 1.7,
+    "notes": "Diastatic barley malt produced from quality barley",
+    "standard_malt": "distilling-malt",
+    "standard_name": "Distilling Malt",
+    "family": "base",
+    "generic_description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits."
+  },
   "distillers-malt": {
     "id": "distillers-malt",
     "name": "Distillers Malt",
@@ -1689,6 +2053,19 @@
     "family": "base",
     "generic_description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits."
   },
+  "distilling-barley-malt": {
+    "id": "distilling-barley-malt",
+    "name": "Distilling Barley Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.77,
+    "color_lovibond": 2.5,
+    "notes": "Distilling Barley Malt malted from quality barley",
+    "standard_malt": "distilling-malt",
+    "standard_name": "Distilling Malt",
+    "family": "base",
+    "generic_description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits."
+  },
   "distilling-malt": {
     "id": "distilling-malt",
     "name": "Distilling Malt",
@@ -1701,6 +2078,19 @@
     "standard_name": "Distilling Malt",
     "family": "base",
     "generic_description": "High-enzyme, high-spirit-yield malt for whisky and neutral spirits."
+  },
+  "eraclea-pilsner-malt": {
+    "id": "eraclea-pilsner-malt",
+    "name": "Eraclea Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.75,
+    "notes": "malty-sweet with light honey notes.",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
   },
   "euro-pils-malt": {
     "id": "euro-pils-malt",
@@ -1779,6 +2169,19 @@
     "standard_name": "Maris Otter",
     "family": "base",
     "generic_description": "Nutty, biscuity British winter barley; classic English ales and bitters."
+  },
+  "extra-pale-premium-pilsner-malt": {
+    "id": "extra-pale-premium-pilsner-malt",
+    "name": "Extra Pale Premium Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.5,
+    "notes": "malty-sweet with light honey notes",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
   },
   "extra-special-malt": {
     "id": "extra-special-malt",
@@ -1987,6 +2390,45 @@
     "standard_name": "Flaked Wheat",
     "family": "flaked",
     "generic_description": "Unmalted; body, haze."
+  },
+  "floor-malted-bohemiam-pilsner-malt": {
+    "id": "floor-malted-bohemiam-pilsner-malt",
+    "name": "Floor-Malted Bohemiam Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.79,
+    "color_lovibond": 1.85,
+    "notes": "A pale malt from top-quality Czech brewing barley (Bojos, Tolar); distinct and strong aroma profile; comparable to Scottish floor malt.",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
+  },
+  "floor-malted-bohemian-dark-malt": {
+    "id": "floor-malted-bohemian-dark-malt",
+    "name": "Floor-Malted Bohemian Dark Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 6.5,
+    "notes": "Intense malt aroma with toffee and dark caramel notes; full body, pronounced malt sweetness",
+    "standard_malt": "munich-light",
+    "standard_name": "Munich Light",
+    "family": "kilned",
+    "generic_description": "Malty; märzen, bock, altbier."
+  },
+  "floor-malted-bohemian-pilsner-malt": {
+    "id": "floor-malted-bohemian-pilsner-malt",
+    "name": "Floor-Malted Bohemian Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.79,
+    "color_lovibond": 1.85,
+    "notes": "intense malt aroma with honey and biscuit notes",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
   },
   "food-grade-malt": {
     "id": "food-grade-malt",
@@ -2417,6 +2859,19 @@
     "family": "kilned",
     "generic_description": "Rich malt; dunkel, bock."
   },
+  "isaria-1924": {
+    "id": "isaria-1924",
+    "name": "Isaria 1924®",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 3.45,
+    "notes": "malty-sweet taste and soft biscuit like aroma; soft mouthfeel.",
+    "standard_malt": "pale-ale-malt",
+    "standard_name": "Pale Ale Malt",
+    "family": "base",
+    "generic_description": "Standard American/British base malt."
+  },
   "karrewheat-77-md": {
     "id": "karrewheat-77-md",
     "name": "Karrewheat 77 MD",
@@ -2794,6 +3249,19 @@
     "family": "kilned",
     "generic_description": "Melanoidin richness and body."
   },
+  "melanoidin-malt": {
+    "id": "melanoidin-malt",
+    "name": "Melanoidin Malt",
+    "maltster": "Weyermann",
+    "category": "ROASTED",
+    "yield_fraction": 0.75,
+    "color_lovibond": 26.85,
+    "notes": "properties: malty-sweet with aromas of biscuit and honey, as well as slightly sour notes of dried fruit",
+    "standard_malt": "melanoidin-malt",
+    "standard_name": "Melanoidin Malt",
+    "family": "kilned",
+    "generic_description": "Melanoidin richness and body."
+  },
   "melanoidin-md": {
     "id": "melanoidin-md",
     "name": "Melanoidin MD",
@@ -2898,6 +3366,32 @@
     "family": "kilned",
     "generic_description": "Malty; märzen, bock, altbier."
   },
+  "munich-malt-type-1": {
+    "id": "munich-malt-type-1",
+    "name": "Munich Malt Type 1",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 6.1,
+    "notes": "A light brown malt from top quality barley.",
+    "standard_malt": "munich-light",
+    "standard_name": "Munich Light",
+    "family": "kilned",
+    "generic_description": "Malty; märzen, bock, altbier."
+  },
+  "munich-malt-type-2": {
+    "id": "munich-malt-type-2",
+    "name": "Munich Malt Type 2",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.78,
+    "color_lovibond": 8.95,
+    "notes": "A light brown malt from top quality barley.",
+    "standard_malt": "munich-light",
+    "standard_name": "Munich Light",
+    "family": "kilned",
+    "generic_description": "Malty; märzen, bock, altbier."
+  },
   "naked-oat-malt": {
     "id": "naked-oat-malt",
     "name": "Naked Oat Malt",
@@ -2949,6 +3443,19 @@
     "standard_name": "Pale Ale Malt",
     "family": "base",
     "generic_description": "Standard American/British base malt."
+  },
+  "oak-smoked-wheat-malt": {
+    "id": "oak-smoked-wheat-malt",
+    "name": "Oak Smoked Wheat Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 2.35,
+    "notes": "A pale, well-modified, gently dried malt from top-quality wheat; gently smoked over an oak-wood fire.",
+    "standard_malt": "smoked-malt",
+    "standard_name": "Smoked Malt",
+    "family": "smoked",
+    "generic_description": "Beechwood/cherry/oak smoke."
   },
   "oat-malt": {
     "id": "oat-malt",
@@ -3086,7 +3593,7 @@
     "maltster": "Bairds",
     "category": "BASE",
     "yield_fraction": 0.8,
-    "color_lovibond": 2.19,
+    "color_lovibond": 2.1950000000000003,
     "notes": "Our  Inverness  maltings, situated  in the  heart of the  Highlands, is organic certified which  means we’re able to offer our customers  malt that conforms to the Organic Food Federation (OFF) principles. The production of Organic Malt is important as it supports agricultural sustainability and our",
     "standard_malt": "pale-ale-malt",
     "standard_name": "Pale Ale Malt",
@@ -3348,6 +3855,19 @@
     "yield_fraction": 0.8,
     "color_lovibond": 1.6,
     "notes": "Mild malty",
+    "standard_malt": "pilsner-malt",
+    "standard_name": "Pilsner Malt",
+    "family": "base",
+    "generic_description": "Clean, pale base malt for lagers."
+  },
+  "pilsner-malt": {
+    "id": "pilsner-malt",
+    "name": "Pilsner Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.805,
+    "color_lovibond": 1.75,
+    "notes": "malty-sweet with light honey notes",
     "standard_malt": "pilsner-malt",
     "standard_name": "Pilsner Malt",
     "family": "base",
@@ -3639,6 +4159,19 @@
     "family": "base",
     "generic_description": "Spicy; roggenbier and rye ales."
   },
+  "rye-malt-pale": {
+    "id": "rye-malt-pale",
+    "name": "Rye Malt pale",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 3.1,
+    "notes": "properties: typical rye flavors and aromas, malty-sweet taste, with notes and bread and honey",
+    "standard_malt": "rye-malt",
+    "standard_name": "Rye Malt",
+    "family": "base",
+    "generic_description": "Spicy; roggenbier and rye ales."
+  },
   "rye-raw": {
     "id": "rye-raw",
     "name": "Rye Raw",
@@ -3782,6 +4315,32 @@
     "family": "kilned",
     "generic_description": "Toasty, nutty."
   },
+  "special-w": {
+    "id": "special-w",
+    "name": "SPECIAL W®",
+    "maltster": "Weyermann",
+    "category": "CRYSTAL",
+    "yield_fraction": 0.73,
+    "color_lovibond": 113.55,
+    "notes": "notes of raisins, dark caramel, pronounced aromas of nuts, pastries and bread.",
+    "standard_malt": "caramel-120l",
+    "standard_name": "Caramel 120L",
+    "family": "crystal",
+    "generic_description": "Deep caramel, burnt sugar."
+  },
+  "spelt-malt": {
+    "id": "spelt-malt",
+    "name": "Spelt Malt",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.795,
+    "color_lovibond": 2.35,
+    "notes": "properties: characteristic spelt notes, slightly malt-aromatic taste, with mild notes of biscuit and hazelnut",
+    "standard_malt": "malted-spelt",
+    "standard_name": "Malted Spelt",
+    "family": "base",
+    "generic_description": "Ancient-grain base."
+  },
   "spring-pale-ale-malt": {
     "id": "spring-pale-ale-malt",
     "name": "Spring Pale Ale Malt",
@@ -3879,7 +4438,7 @@
     "maltster": "Bairds",
     "category": "BASE",
     "yield_fraction": 0.8,
-    "color_lovibond": 2.19,
+    "color_lovibond": 2.1950000000000003,
     "notes": "At Bairds, we offer brewers and distillers the opportunity to convert barley that they have supplied themselves which is where working in partnership is a perfect way to emphasise the whole supply chain . As we have four malting locations across the UK with various batch sizes, we are able to offer ",
     "standard_malt": "pale-ale-malt",
     "standard_name": "Pale Ale Malt",
@@ -3977,6 +4536,19 @@
     "family": "base",
     "generic_description": "Foam and body; wheat beers."
   },
+  "wheat-malt-dark": {
+    "id": "wheat-malt-dark",
+    "name": "Wheat Malt dark",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.81,
+    "color_lovibond": 7.05,
+    "notes": "properties: malty-sweet taste, with notes of honey, toffee and caramel, plus gentle notes of nuts and biscuit",
+    "standard_malt": "wheat-malt",
+    "standard_name": "Wheat Malt",
+    "family": "base",
+    "generic_description": "Foam and body; wheat beers."
+  },
   "wheat-malt-md": {
     "id": "wheat-malt-md",
     "name": "Wheat Malt MD",
@@ -3985,6 +4557,19 @@
     "yield_fraction": 0.83,
     "color_lovibond": 1.8,
     "notes": "Specific fine wheat taste",
+    "standard_malt": "wheat-malt",
+    "standard_name": "Wheat Malt",
+    "family": "base",
+    "generic_description": "Foam and body; wheat beers."
+  },
+  "wheat-malt-pale": {
+    "id": "wheat-malt-pale",
+    "name": "Wheat Malt pale",
+    "maltster": "Weyermann",
+    "category": "BASE",
+    "yield_fraction": 0.82,
+    "color_lovibond": 1.95,
+    "notes": "Bread, nut, biscuit, toffee and light caramel notes",
     "standard_malt": "wheat-malt",
     "standard_name": "Wheat Malt",
     "family": "base",

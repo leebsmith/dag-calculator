@@ -162,6 +162,13 @@ KEYWORDS = [
     ("blackprinz", "dehusked-black"),
     ("midnight wheat", "dehusked-black-wheat"),
     ("mroost 1400", "dehusked-black"), ("mroost 900", "dehusked-chocolate"),
+    # Weyermann CARAFA (husked) / CARAFA Special (huskless), by type -> colour.
+    ("carafa special type 3", "dehusked-black"),
+    ("carafa special type 2", "debittered-coffee-malt"),
+    ("carafa special type 1", "dehusked-chocolate"),
+    ("carafa type 3", "black-malt"),
+    ("carafa type 2", "chocolate-malt"),
+    ("carafa type 1", "chocolate-malt"),
     # NOTE: "Mroost NNN" numbers are EBC (Dingemans); "Mroost 900"~340L,
     # "Mroost 1400"~530L are correct here, but "Coffee Mroost 450"~170L is not a
     # 400-450L debittered coffee — it is handled by OVERRIDES above.
@@ -176,7 +183,9 @@ KEYWORDS = [
     # kilned
     ("munich dark", "munich-dark"), ("dark munich", "munich-dark"),
     ("munich light", "munich-light"), ("light munich", "munich-light"),
+    ("floor-malted bohemian dark", "munich-light"),
     ("munich", "munich-light"),
+    ("isaria", "pale-ale-malt"),
     ("vienna", "vienna-malt"),
     ("aromatic", "aromatic-malt"),
     ("melanoidin", "melanoidin-malt"),

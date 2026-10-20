@@ -40,8 +40,8 @@
     },
     "malt-standard-crosswalk.json": {
       "mechanism": "unknown",
-      "rows": 316,
-      "sha256": "491df43619554da668608490da59af0ef735b20b8853d1389b244c0ce6ab8328"
+      "rows": 361,
+      "sha256": "5f6d76135c521c212d829ddf6cb5f4cbc50cf84ffae849a3e6548cea127f31ea"
     },
     "standard-malts.json": {
       "mechanism": "vendor+extend",
