@@ -8,13 +8,25 @@ from pydantic import BaseModel, Field
 
 
 class DraftPayload(BaseModel):
-    """The browser-computed editable state (roots + collections)."""
+    """The browser-computed editable state (roots + collections).
+
+    ``base_updated_at`` is the client's last-observed ``updated_at``, used for
+    optimistic-concurrency detection: a non-null value that no longer matches the
+    stored timestamp means another session wrote in between.
+    """
 
     name: str = "Untitled"
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
     schema_version: int = 2
     parent_batch_id: str | None = None
+    base_updated_at: float | None = None
+
+
+class TrashPayload(BaseModel):
+    """The trash/restore toggle (soft delete)."""
+
+    trashed: bool
 
 
 class FreezePayload(BaseModel):
@@ -36,6 +48,7 @@ class BatchRecord(BaseModel):
     schema_version: int
     created_at: float
     updated_at: float
+    trashed: bool = False
 
     # draft-only state
     roots: dict[str, Any] = Field(default_factory=dict)

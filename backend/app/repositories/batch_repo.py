@@ -33,17 +33,18 @@ class BatchRepository:
             return None
         return self._record(batch_id, data)
 
-    def create(self, uid: str, data: dict[str, Any]) -> dict[str, Any]:
+    def create(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any]:
         now = time.time()
         record = {
             **data,
             "uid": uid,
             "status": "draft",
+            "trashed": False,
             "created_at": now,
             "updated_at": now,
         }
-        _, ref = self._coll.add(record)
-        return self._record(ref.id, record)
+        self._coll.document(batch_id).set(record)
+        return self._record(batch_id, record)
 
     def update(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
         doc = self._coll.document(batch_id).get()
@@ -51,6 +52,20 @@ class BatchRepository:
             return None
         self._coll.document(batch_id).update({**data, "updated_at": time.time()})
         return self.get(uid, batch_id)
+
+    def set_trashed(self, uid: str, batch_id: str, trashed: bool) -> dict[str, Any] | None:
+        doc = self._coll.document(batch_id).get()
+        if not doc.exists or doc.to_dict().get("uid") != uid:
+            return None
+        self._coll.document(batch_id).update({"trashed": trashed, "updated_at": time.time()})
+        return self.get(uid, batch_id)
+
+    def delete(self, uid: str, batch_id: str) -> bool:
+        doc = self._coll.document(batch_id).get()
+        if not doc.exists or doc.to_dict().get("uid") != uid:
+            return False
+        self._coll.document(batch_id).delete()
+        return True
 
     def freeze(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
         """Create an immutable frozen snapshot linked to the source draft."""
@@ -62,6 +77,7 @@ class BatchRepository:
             "uid": uid,
             "name": source.get("name", "Untitled"),
             "status": "frozen",
+            "trashed": False,
             "schema_version": data.get("schema_version", source.get("schema_version", 2)),
             "valuation": data.get("valuation", {}),
             "provenance": data.get("provenance", {}),

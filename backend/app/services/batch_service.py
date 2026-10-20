@@ -1,4 +1,4 @@
-"""Batch business logic: draft CRUD + freeze (immutability + lineage)."""
+"""Batch business logic: draft upsert + freeze + trash/delete."""
 
 from __future__ import annotations
 
@@ -10,6 +10,14 @@ from app.repositories.batch_repo import BatchRepoDep, BatchRepository
 from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
 
 
+class BatchConflictError(Exception):
+    """A draft write's baseline ``updated_at`` no longer matches the stored doc."""
+
+    def __init__(self, current: BatchRecord) -> None:
+        super().__init__("Batch changed elsewhere")
+        self.current = current
+
+
 class BatchService:
     def __init__(self, repo: BatchRepository) -> None:
         self._repo = repo
@@ -17,16 +25,19 @@ class BatchService:
     def list_batches(self, uid: str) -> list[BatchRecord]:
         return [BatchRecord(**r) for r in self._repo.list_batches(uid)]
 
-    def create_draft(self, uid: str, payload: DraftPayload) -> BatchRecord:
-        return BatchRecord(**self._repo.create(uid, payload.model_dump()))
-
-    def update_draft(self, uid: str, batch_id: str, payload: DraftPayload) -> BatchRecord:
+    def upsert_draft(self, uid: str, batch_id: str, payload: DraftPayload) -> BatchRecord:
         existing = self._repo.get(uid, batch_id)
+        data = payload.model_dump(exclude_none=True, exclude={"base_updated_at"})
         if existing is None:
-            raise HTTPException(status_code=404, detail="Batch not found")
+            return BatchRecord(**self._repo.create(uid, batch_id, data))
         if existing.get("status") != "draft":
             raise HTTPException(status_code=409, detail="Cannot mutate a frozen batch")
-        return BatchRecord(**self._repo.update(uid, batch_id, payload.model_dump()))
+        if (
+            payload.base_updated_at is not None
+            and existing.get("updated_at") != payload.base_updated_at
+        ):
+            raise BatchConflictError(BatchRecord(**existing))
+        return BatchRecord(**self._repo.update(uid, batch_id, data))
 
     def freeze_batch(self, uid: str, batch_id: str, payload: FreezePayload) -> BatchRecord:
         existing = self._repo.get(uid, batch_id)
@@ -35,6 +46,16 @@ class BatchService:
         if existing.get("status") != "draft":
             raise HTTPException(status_code=409, detail="Already frozen")
         return BatchRecord(**self._repo.freeze(uid, batch_id, payload.model_dump()))
+
+    def set_trashed(self, uid: str, batch_id: str, trashed: bool) -> BatchRecord:
+        record = self._repo.set_trashed(uid, batch_id, trashed)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        return BatchRecord(**record)
+
+    def delete_batch(self, uid: str, batch_id: str) -> None:
+        if not self._repo.delete(uid, batch_id):
+            raise HTTPException(status_code=404, detail="Batch not found")
 
     def get_batch(self, uid: str, batch_id: str) -> BatchRecord:
         record = self._repo.get(uid, batch_id)

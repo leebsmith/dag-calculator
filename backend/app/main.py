@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import CurrentUser
-from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
+from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload, TrashPayload
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSolverResponse,
@@ -20,7 +20,7 @@ from app.schemas.boundary import (
     WaterSolverResponse,
 )
 from app.services import SolverServiceError, solve_batch_request, solve_water_request
-from app.services.batch_service import BatchServiceDep
+from app.services.batch_service import BatchConflictError, BatchServiceDep
 
 app = FastAPI(title="dag-calculator backend")
 
@@ -59,25 +59,42 @@ def list_batches(user: CurrentUser, service: BatchServiceDep):
     return service.list_batches(user["uid"])
 
 
-@app.post("/batches", response_model=BatchRecord, status_code=201)
-def create_batch(
-    payload: DraftPayload,
-    user: CurrentUser,
-    service: BatchServiceDep,
-):
-    """Create a new draft."""
-    return service.create_draft(user["uid"], payload)
-
-
-@app.put("/batches/{batch_id}/draft", response_model=BatchRecord)
-def update_draft(
+@app.put("/batches/{batch_id}", response_model=BatchRecord)
+def upsert_batch(
     batch_id: str,
     payload: DraftPayload,
     user: CurrentUser,
     service: BatchServiceDep,
 ):
-    """Autosave a draft's editable state (roots + collections)."""
-    return service.update_draft(user["uid"], batch_id, payload)
+    """Idempotently create-or-update a draft (client-owned id)."""
+    try:
+        return service.upsert_draft(user["uid"], batch_id, payload)
+    except BatchConflictError:
+        return JSONResponse(
+            status_code=409,
+            content={"code": "CONFLICT", "message": "Batch changed elsewhere"},
+        )
+
+
+@app.patch("/batches/{batch_id}", response_model=BatchRecord)
+def trash_batch(
+    batch_id: str,
+    payload: TrashPayload,
+    user: CurrentUser,
+    service: BatchServiceDep,
+):
+    """Move a batch to trash or restore it."""
+    return service.set_trashed(user["uid"], batch_id, payload.trashed)
+
+
+@app.delete("/batches/{batch_id}", status_code=204)
+def delete_batch(
+    batch_id: str,
+    user: CurrentUser,
+    service: BatchServiceDep,
+):
+    """Permanently delete a batch owned by the caller."""
+    service.delete_batch(user["uid"], batch_id)
 
 
 @app.post("/batches/{batch_id}/freeze", response_model=BatchRecord, status_code=201)
