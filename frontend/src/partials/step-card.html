@@ -74,7 +74,7 @@
             @change="edit(f, $event.target.value)"
           >
             <template x-for="opt in (f.options || [])" :key="opt">
-              <option :value="opt" x-text="opt"></option>
+              <option :value="opt" :selected="opt === f.value" x-text="opt"></option>
             </template>
           </select>
           <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>

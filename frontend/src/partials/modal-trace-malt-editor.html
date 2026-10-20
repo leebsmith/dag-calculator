@@ -232,7 +232,7 @@
                     @change="setMaltField(traceActiveIndex, 'category', $event.target.value)"
                   >
                     <template x-for="c in maltCategories" :key="c">
-                      <option :value="c" x-text="c"></option>
+                      <option :value="c" :selected="c === traceActiveRow.category" x-text="c"></option>
                     </template>
                   </select>
                 </div>

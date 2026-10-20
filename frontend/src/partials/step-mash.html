@@ -16,7 +16,7 @@
           @change="onMashPresetChange($event.target.value)"
         >
           <template x-for="(label, key) in mashPresetLabels" :key="key">
-            <option :value="key" x-text="label"></option>
+            <option :value="key" :selected="key === mashPresetId" x-text="label"></option>
           </template>
         </select>
       </div>

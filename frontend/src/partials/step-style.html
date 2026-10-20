@@ -13,8 +13,8 @@
         :value="styleField('batch.style_source').value"
         @change="edit(styleField('batch.style_source'), $event.target.value)"
       >
-        <option value="styleguide">Style guide</option>
-        <option value="experimental">Experimental</option>
+        <option value="styleguide" :selected="styleField('batch.style_source').value === 'styleguide'">Style guide</option>
+        <option value="experimental" :selected="styleField('batch.style_source').value === 'experimental'">Experimental</option>
       </select>
     </div>
 
@@ -385,7 +385,7 @@
           @change="edit(styleField('batch.fermentation'), $event.target.value)"
         >
           <template x-for="opt in styleFermentations" :key="opt">
-            <option :value="opt" x-text="opt"></option>
+            <option :value="opt" :selected="opt === styleField('batch.fermentation').value" x-text="opt"></option>
           </template>
         </select>
       </div>
