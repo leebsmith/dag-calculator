@@ -40,7 +40,7 @@ export function buildBatchRequest(engine) {
     grain_bill: rows.map((row) => ({
       w_i: row.pct,
       yield_i: row.yield_fraction,
-      mc_i: engine.resolve("batch.grain_moisture_fraction"),
+      mc_i: row.moisture_fraction ?? engine.resolve("batch.grain_moisture_fraction"),
     })),
     s_late_add: engine.resolve("batch.s_late_add"),
     v_kettle_dead: engine.resolve("equipment.kettle_dead_space_l"),

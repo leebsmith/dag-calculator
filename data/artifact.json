@@ -2003,6 +2003,7 @@
         "topology": "batch.topology",
         "intensive_value": "batch.intensive_value",
         "grain_bill": "grist.major_malts",
+        "grain_moisture_fraction": "batch.grain_moisture_fraction",
         "s_late_add": "batch.s_late_add",
     "v_kettle_dead": "equipment.kettle_dead_space_l",
     "v_kettle_transfer": "equipment.kettle_transfer_loss_l",
@@ -2257,6 +2258,8 @@
       "resolution": "iterative",
       "inputs": {
         "grist": "grist.major_malts",
+        "trace_malts": "grist.trace_malts",
+        "m_grist": "solver.batch.m_grist",
         "source.calcium_ca": "water.source.calcium_ca",
         "source.magnesium_mg": "water.source.magnesium_mg",
         "source.sodium_na": "water.source.sodium_na",
