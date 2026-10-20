@@ -35,8 +35,8 @@
     "malt-database-malts.json": {
       "mechanism": "scrape",
       "upstream": "malt_database (local scrape)",
-      "rows": 419,
-      "sha256": "1886a6187ab312aa497b11c5ab0e3c305f3a4e8a3eba186044fe6e94d35ba598"
+      "rows": 467,
+      "sha256": "688e8003a61eb3c448ba47eed218f684830814deb77fd92649e318fc5d3c869a"
     },
     "malt-standard-crosswalk.json": {
       "mechanism": "unknown",

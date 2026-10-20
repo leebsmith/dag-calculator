@@ -36,6 +36,7 @@ const ALLOWED_KEYS = new Set([
   "yield_fraction",
   "yield_basis",
   "color_lovibond",
+  "moisture",
   "notes",
   "description",
   "sold_out",
@@ -106,6 +107,13 @@ test("malt-database source entries conform to the scrape contract", () => {
     if (entry.color_lovibond !== undefined && entry.color_lovibond !== null) {
       assert.equal(typeof entry.color_lovibond, "number", `${label}.color_lovibond must be a number`);
       assert.ok(entry.color_lovibond >= 0, `${label}.color_lovibond out of range`);
+    }
+    if (entry.moisture !== undefined && entry.moisture !== null) {
+      assert.equal(typeof entry.moisture, "number", `${label}.moisture must be a number`);
+      assert.ok(
+        entry.moisture >= 0 && entry.moisture <= 100,
+        `${label}.moisture=${entry.moisture} out of range (percent)`
+      );
     }
     for (const field of ["notes", "description"]) {
       if (entry[field] !== undefined && entry[field] !== null) {
