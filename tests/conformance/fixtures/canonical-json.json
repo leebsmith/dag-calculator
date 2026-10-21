@@ -1,0 +1,165 @@
+{
+  "batch": {
+    "request": {
+      "apparent_attenuation": 0.75,
+      "delta_v_evap": 3,
+      "eta_conv": 0.95,
+      "f_shrink": 0.04,
+      "grain_bill": [
+        {
+          "mc_i": 0.04,
+          "w_i": 1,
+          "yield_i": 0.8
+        }
+      ],
+      "hlt_coil_floor_l": 0,
+      "hlt_dead_space_l": 0,
+      "hlt_starting_volume_l": 25,
+      "hlt_transfer_loss_l": 0,
+      "intensive_value": 3,
+      "mash_transfer_loss": 0,
+      "max_hlt_volume_l": 30,
+      "s_late_add": 0,
+      "target_abv": 5.5,
+      "topology": "r_l_to_g",
+      "v_dead": 0,
+      "v_ferm": 20,
+      "v_kettle_dead": 0,
+      "v_kettle_transfer": 0,
+      "v_trub": 0
+    },
+    "canonical": "{\"apparent_attenuation\":0.75,\"delta_v_evap\":3,\"eta_conv\":0.95,\"f_shrink\":0.04,\"grain_bill\":[{\"mc_i\":0.04,\"w_i\":1,\"yield_i\":0.8}],\"hlt_coil_floor_l\":0,\"hlt_dead_space_l\":0,\"hlt_starting_volume_l\":25,\"hlt_transfer_loss_l\":0,\"intensive_value\":3,\"mash_transfer_loss\":0,\"max_hlt_volume_l\":30,\"s_late_add\":0,\"target_abv\":5.5,\"topology\":\"r_l_to_g\",\"v_dead\":0,\"v_ferm\":20,\"v_kettle_dead\":0,\"v_kettle_transfer\":0,\"v_trub\":0}",
+    "fingerprint": "74d296c4e9f98dceb540c211bb061a88cd84731963b8c9fa540c5c38868570cb"
+  },
+  "floats": [
+    {
+      "value": 20.0,
+      "expected": "20"
+    },
+    {
+      "value": 1.5,
+      "expected": "1.5"
+    },
+    {
+      "value": 0.5,
+      "expected": "0.5"
+    },
+    {
+      "value": 1e-05,
+      "expected": "0.00001"
+    },
+    {
+      "value": 1e-07,
+      "expected": "1e-7"
+    },
+    {
+      "value": 1e-06,
+      "expected": "0.000001"
+    },
+    {
+      "value": 1e+20,
+      "expected": "100000000000000000000"
+    },
+    {
+      "value": 1e+21,
+      "expected": "1e+21"
+    },
+    {
+      "value": 1.23e+22,
+      "expected": "1.23e+22"
+    },
+    {
+      "value": 1.5e-08,
+      "expected": "1.5e-8"
+    },
+    {
+      "value": -0.0,
+      "expected": "0"
+    },
+    {
+      "value": -1.5,
+      "expected": "-1.5"
+    },
+    {
+      "value": 385.641,
+      "expected": "385.641"
+    },
+    {
+      "value": 2.08635,
+      "expected": "2.08635"
+    },
+    {
+      "value": 0.45359237,
+      "expected": "0.45359237"
+    }
+  ],
+  "special_floats": [
+    {
+      "value": "NaN",
+      "expected": "null"
+    },
+    {
+      "value": "Infinity",
+      "expected": "null"
+    },
+    {
+      "value": "-Infinity",
+      "expected": "null"
+    }
+  ],
+  "strings": [
+    {
+      "value": "zażółć gęślą jaźń",
+      "canonical": "\"zażółć gęślą jaźń\""
+    },
+    {
+      "value": "quote\" slash\\ newline\n",
+      "canonical": "\"quote\\\" slash\\\\ newline\\n\""
+    }
+  ],
+  "vectors": [
+    {
+      "name": "key order",
+      "value": {
+        "z": 1,
+        "a": 2,
+        "m": {
+          "b": 3,
+          "a": 4
+        }
+      },
+      "canonical": "{\"a\":2,\"m\":{\"a\":4,\"b\":3},\"z\":1}",
+      "fingerprint": "e45c30b44d3d323ad520c1705dc1debea784800c25887d83cc182f4895836442"
+    },
+    {
+      "name": "unicode and mixed nesting",
+      "value": {
+        "text": "zażółć gęślą jaźń",
+        "emoji": "🍺",
+        "nested": {
+          "list": [
+            true,
+            false,
+            null,
+            1.5
+          ],
+          "tiny": 1e-07
+        }
+      },
+      "canonical": "{\"emoji\":\"🍺\",\"nested\":{\"list\":[true,false,null,1.5],\"tiny\":1e-7},\"text\":\"zażółć gęślą jaźń\"}",
+      "fingerprint": "d9264858f52c1342a78edd2a13eea9d2bf598de8130d2475515e275bef496d74"
+    },
+    {
+      "name": "exponent boundaries",
+      "value": {
+        "small": 1e-06,
+        "smaller": 1e-07,
+        "big": 1e+20,
+        "bigger": 1e+21,
+        "huge": 1.23e+22
+      },
+      "canonical": "{\"big\":100000000000000000000,\"bigger\":1e+21,\"huge\":1.23e+22,\"small\":0.000001,\"smaller\":1e-7}",
+      "fingerprint": "13b75e1be1ca400cf33d3a4fdddac417769e150541e5a7bb6ff15fa0baa79903"
+    }
+  ]
+}

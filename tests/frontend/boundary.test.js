@@ -1,48 +1,50 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import { canonicalize, canonicalFingerprint, BoundaryCache } from "../../frontend/src/engine/boundary.js";
 
-const BATCH_FINGERPRINT = "74d296c4e9f98dceb540c211bb061a88cd84731963b8c9fa540c5c38868570cb";
-const BATCH_CANONICAL_JSON =
-  '{"apparent_attenuation":0.75,"delta_v_evap":3,"eta_conv":0.95,' +
-  '"f_shrink":0.04,"grain_bill":[{"mc_i":0.04,"w_i":1,"yield_i":0.8}],' +
-  '"hlt_coil_floor_l":0,"hlt_dead_space_l":0,"hlt_starting_volume_l":25,' +
-  '"hlt_transfer_loss_l":0,"intensive_value":3,"mash_transfer_loss":0,' +
-  '"max_hlt_volume_l":30,"s_late_add":0,"target_abv":5.5,"topology":"r_l_to_g",' +
-  '"v_dead":0,"v_ferm":20,"v_kettle_dead":0,"v_kettle_transfer":0,"v_trub":0}';
+const FIXTURE = JSON.parse(
+  readFileSync(new URL("../conformance/fixtures/canonical-json.json", import.meta.url), "utf8")
+);
 
-function batchRequest() {
-  return {
-    target_abv: 5.5,
-    apparent_attenuation: 0.75,
-    v_ferm: 20.0,
-    topology: "r_l_to_g",
-    intensive_value: 3.0,
-    grain_bill: [{ w_i: 1.0, yield_i: 0.8, mc_i: 0.04 }],
-    s_late_add: 0.0,
-    v_kettle_dead: 0.0,
-    v_kettle_transfer: 0.0,
-    v_trub: 0.0,
-    delta_v_evap: 3.0,
-    v_dead: 0.0,
-    mash_transfer_loss: 0.0,
-    eta_conv: 0.95,
-    f_shrink: 0.04,
-    hlt_starting_volume_l: 25.0,
-    hlt_dead_space_l: 0.0,
-    hlt_transfer_loss_l: 0.0,
-    hlt_coil_floor_l: 0.0,
-    max_hlt_volume_l: 30.0,
-  };
-}
+const SPECIAL_FLOATS = {
+  NaN: NaN,
+  Infinity: Infinity,
+  "-Infinity": -Infinity,
+};
 
 test("canonical JSON matches the backend golden string", () => {
-  assert.equal(canonicalize(batchRequest()), BATCH_CANONICAL_JSON);
+  assert.equal(canonicalize(FIXTURE.batch.request), FIXTURE.batch.canonical);
 });
 
 test("fingerprint matches the backend golden SHA-256", () => {
-  assert.equal(canonicalFingerprint(batchRequest()), BATCH_FINGERPRINT);
+  assert.equal(canonicalFingerprint(FIXTURE.batch.request), FIXTURE.batch.fingerprint);
+});
+
+test("canonicalize formats floats like the backend", () => {
+  for (const { value, expected } of FIXTURE.floats) {
+    assert.equal(canonicalize(value), expected, `float ${value}`);
+  }
+});
+
+test("canonicalize collapses non-finite floats to null", () => {
+  for (const { value, expected } of FIXTURE.special_floats) {
+    assert.equal(canonicalize(SPECIAL_FLOATS[value]), expected, `float ${value}`);
+  }
+});
+
+test("canonicalize escapes unicode strings like the backend", () => {
+  for (const { value, canonical } of FIXTURE.strings) {
+    assert.equal(canonicalize(value), canonical);
+  }
+});
+
+test("canonical vectors match the shared fixture", () => {
+  for (const vector of FIXTURE.vectors) {
+    assert.equal(canonicalize(vector.value), vector.canonical, vector.name);
+    assert.equal(canonicalFingerprint(vector.value), vector.fingerprint, vector.name);
+  }
 });
 
 test("canonicalize sorts object keys deterministically", () => {
