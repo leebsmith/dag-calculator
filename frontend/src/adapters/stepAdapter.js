@@ -341,11 +341,7 @@ export function createStepApp(options = {}) {
           this.boundaryStatuses[id] = "ok";
         }
         if (token !== solveToken) return;
-      this.boundaryError = null;
-      this.closeDraft();
-      this.maltDrawer = null;
-      this.maltActiveIndex = null;
-      this.sugarDrawer = null;
+        this.boundaryError = null;
       } catch (error) {
         if (token !== solveToken) return;
         this.boundaryError = error;

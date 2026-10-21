@@ -142,6 +142,73 @@ test("http: a superseded solve discards its result", async () => {
   assert.ok(calls.length >= 2, "the superseding solve issued its own requests");
 });
 
+test("http: a completed solve leaves an open draft editor intact", async () => {
+  const { fetchImpl } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.boot();
+
+  app.openDraft("batch.boil_hops");
+  app.addDraftRow({
+    hop_id: "cascade",
+    name: "Cascade",
+    alpha_acid_pct: 0.055,
+    boil_time_fraction: 1,
+    parts: 10,
+    pct: 1,
+  });
+  app.maltDrawer = "search";
+  app.maltActiveIndex = 1;
+  app.sugarDrawer = "search";
+
+  app.setRoot("batch.target_ibu", 45);
+  await app.solveNow();
+
+  assert.equal(app.draftOpen, true);
+  assert.equal(app.draftNodeId, "batch.boil_hops");
+  assert.equal(app.draftRows.length, 1);
+  assert.equal(app.maltDrawer, "search");
+  assert.equal(app.maltActiveIndex, 1);
+  assert.equal(app.sugarDrawer, "search");
+});
+
+test("http: a failed solve leaves an open draft editor intact", async () => {
+  const { fetchImpl } = mockFetch({
+    "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.boot();
+
+  app.openDraft("batch.sugars");
+  app.addDraftRow({ sugar_id: "table-sugar", name: "Table Sugar", mass_kg: 0.5 });
+
+  await app.solveNow();
+
+  assert.equal(app.boundaryError.code, "MASH_TOO_THIN");
+  assert.equal(app.draftOpen, true);
+  assert.equal(app.draftNodeId, "batch.sugars");
+  assert.equal(app.draftRows.length, 1);
+});
+
+test("saveDraft and closeDraft still close the editor", async () => {
+  const app = createStepApp();
+  await app.boot();
+
+  app.openDraft("batch.sugars");
+  app.addDraftRow({ sugar_id: "table-sugar", name: "Table Sugar", mass_kg: 0.5 });
+  app.saveDraft();
+  assert.equal(app.draftOpen, false);
+  assert.equal(app.draftRows.length, 0);
+
+  app.openDraft("batch.sugars");
+  assert.equal(app.draftOpen, true);
+  app.closeDraft();
+  assert.equal(app.draftOpen, false);
+  assert.equal(app.draftRows.length, 0);
+});
+
 test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async () => {
   const { fetchImpl, calls } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },
