@@ -6,7 +6,7 @@ import pytest
 from conftest import FakeBatchRepo, make_batch_request, make_water_request
 from fastapi.testclient import TestClient
 
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_allowed_user
 from app.main import app
 from app.schemas.batch import DraftPayload, FreezePayload
 from app.services.batch_service import BatchService, get_batch_service
@@ -22,6 +22,7 @@ def service():
     svc = BatchService(FakeBatchRepo())
     app.dependency_overrides[get_batch_service] = lambda: svc
     app.dependency_overrides[get_current_user] = lambda: {"uid": UID, "token": "test"}
+    app.dependency_overrides[require_allowed_user] = lambda: {"uid": UID, "token": "test"}
     yield svc
     app.dependency_overrides.clear()
 
@@ -44,6 +45,7 @@ def draft_body(**overrides):
 
 def test_auth_is_enforced_on_every_route(anon_client):
     routes = [
+        ("GET", "/session", None),
         ("GET", "/batches", None),
         ("PUT", "/batches/b1", draft_body()),
         ("PATCH", "/batches/b1", {"trashed": True}),

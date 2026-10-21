@@ -52,7 +52,7 @@ local-dev:
 		--prefix-colors "blue,yellow,green" \
 		"cd frontend && npm run dev" \
 		"mkdir -p emulator-data && npx firebase emulators:start --project $(PROJECT_ID) --import=emulator-data --export-on-exit=emulator-data" \
-		"cd backend && FIREBASE_PROJECT_ID=$(PROJECT_ID) FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 uv run uvicorn app.main:app --reload --port 8000"
+		"cd backend && FIREBASE_PROJECT_ID=$(PROJECT_ID) FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ALLOWED_EMAILS=dev@localhost uv run uvicorn app.main:app --reload --port 8000"
 
 # --- Verification ------------------------------------------------------------
 check:

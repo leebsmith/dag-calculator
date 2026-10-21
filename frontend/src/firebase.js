@@ -16,8 +16,33 @@ if (import.meta.env.DEV || import.meta.env.VITE_FIREBASE_EMULATOR) {
   auth.useEmulator("http://127.0.0.1:9099");
 }
 
-export function signInAnonymously() {
-  return auth.signInAnonymously();
+const POPUP_FALLBACK_CODES = new Set([
+  "auth/popup-blocked",
+  "auth/popup-closed-by-user",
+  "auth/cancelled-popup-request",
+  "auth/operation-not-supported-in-this-environment",
+]);
+
+function googleProvider() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  return provider;
+}
+
+export async function signInWithGoogle() {
+  const provider = googleProvider();
+  try {
+    return await auth.signInWithPopup(provider);
+  } catch (err) {
+    if (POPUP_FALLBACK_CODES.has(err?.code)) {
+      return auth.signInWithRedirect(provider);
+    }
+    throw err;
+  }
+}
+
+export function getRedirectResult() {
+  return auth.getRedirectResult();
 }
 
 export function signOut() {

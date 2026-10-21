@@ -22,9 +22,28 @@
     >
       <div class="signin-panel" x-show="!$store.auth.user && !$store.auth.loading">
         <h1 class="card-title">Brewing Calculator</h1>
-        <p class="card-description">Sign in to open your recipes.</p>
+        <p class="card-description" x-show="!$store.auth.blocked && !$store.auth.sessionError">
+          Sign in to open your recipes.
+        </p>
+        <div class="alert alert-warning" x-show="$store.auth.blocked">
+          <div class="alert-header">
+            <span class="alert-dot"></span>
+            <span>Access not allowed</span>
+          </div>
+          <p>
+            <span x-text="$store.auth.blockedEmail || 'This account'"></span>
+            is not on the allowlist for this app.
+          </p>
+        </div>
+        <div class="alert alert-warning" x-show="$store.auth.sessionError">
+          <div class="alert-header">
+            <span class="alert-dot"></span>
+            <span>Couldn't verify your session</span>
+          </div>
+          <p>Check the server connection and sign in again.</p>
+        </div>
         <button type="button" class="btn-primary" @click="$store.auth.signIn()">
-          Sign in anonymously
+          Sign in with Google
         </button>
       </div>
 
@@ -53,7 +72,7 @@
                     Trash
                   </button>
                   <span class="auth-user">
-                    <span x-text="$store.auth.user.isAnonymous ? 'Anonymous' : ($store.auth.user.email || '')"></span>
+                    <span x-text="$store.auth.user.email || ''"></span>
                     <button type="button" class="btn-link" @click="$store.auth.signOut()">Sign out</button>
                   </span>
                 </div>
@@ -416,7 +435,7 @@
                     </div>
                   </div>
                   <span class="auth-user">
-                    <span x-text="$store.auth.user.isAnonymous ? 'Anonymous' : ($store.auth.user.email || '')"></span>
+                    <span x-text="$store.auth.user.email || ''"></span>
                     <button type="button" class="btn-link" @click="$store.auth.signOut()">Sign out</button>
                   </span>
                 </div>

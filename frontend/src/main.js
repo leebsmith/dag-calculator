@@ -2,7 +2,14 @@ import Alpine from "alpinejs";
 
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
-import { getIdToken, signInAnonymously, signOut, onAuthStateChanged } from "./firebase.js";
+import { getSession } from "./adapters/authClient.js";
+import {
+  getIdToken,
+  getRedirectResult,
+  onAuthStateChanged,
+  signInWithGoogle,
+  signOut,
+} from "./firebase.js";
 import * as persistence from "./store/persistence.js";
 import {
   FREEZE_RAIL_LIMIT,
@@ -31,7 +38,10 @@ function anchorStyle(event) {
 Alpine.store("auth", {
   user: null,
   loading: true,
-  signIn: () => signInAnonymously(),
+  blocked: false,
+  blockedEmail: "",
+  sessionError: false,
+  signIn: () => signInWithGoogle(),
   signOut: () => signOut(),
 });
 
@@ -205,14 +215,6 @@ Alpine.store("recipes", {
   },
 
   async forkFrozen(id) {
-    const drift = await persistence.driftFor(id);
-    if (drift.length) {
-      const proceed = window.confirm(
-        `${drift.length} seed component(s) changed since this batch was frozen.\n\n` +
-          "The copy will re-resolve against the current seeds."
-      );
-      if (!proceed) return;
-    }
     await persistence.fork(id);
     this.trashView = false;
     this.view = "editor";
@@ -300,6 +302,32 @@ async function applyAuth(user) {
   if (!stepApp) return;
 
   auth.loading = true;
+  let session;
+  try {
+    session = await getSession();
+  } catch (err) {
+    console.error("session check failed", err);
+    auth.sessionError = true;
+    auth.blocked = false;
+    auth.user = null;
+    auth.loading = false;
+    await signOut();
+    return;
+  }
+
+  if (!session.allowed) {
+    auth.blocked = true;
+    auth.blockedEmail = session.email || user.email || "";
+    auth.sessionError = false;
+    auth.user = null;
+    auth.loading = false;
+    await signOut();
+    return;
+  }
+
+  auth.blocked = false;
+  auth.blockedEmail = "";
+  auth.sessionError = false;
   try {
     try {
       await refreshWithRetry(recipes);
@@ -327,6 +355,8 @@ async function refreshWithRetry(recipes, attempts = 6) {
     }
   }
 }
+
+getRedirectResult().catch((err) => console.error("redirect sign-in failed", err));
 
 onAuthStateChanged((user) => {
   latestUser = user;
