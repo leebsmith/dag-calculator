@@ -2382,7 +2382,7 @@
         "calcium_floor_ppm": "water.target_profile.calcium_floor_ppm"
       },
       "outputs": {
-        "strategy.undefined": {
+        "strategy": {
           "taxonomy": "strategy"
         },
         "prescription.predicted_mash_ph": {

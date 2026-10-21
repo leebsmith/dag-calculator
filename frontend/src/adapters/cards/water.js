@@ -5,6 +5,7 @@
 
 import { fieldOr, formatQuantity, formatValue } from "../../utils.js";
 import { WATER_NODES as N, waterRegistry } from "../../views/registry/water.js";
+import { ratioReadout } from "../../views/waterRatio.js";
 import { reportError } from "../../observability.js";
 
 const IONS = [
@@ -141,6 +142,17 @@ export function refreshWaterCard(app, ctx) {
     const hltIons = ionVector(engine, N.postHltIons);
     const targetIons = ionVector(engine, N.targetProfile);
     const kettle = kettleBlend(mashIons, hltIons, run1 + run2, sparge);
+    const ratio = ratioReadout(
+      kettle,
+      engine.get(N.sulfateChlorideMode),
+      num(engine, N.sulfateChlorideRatio)
+    );
+    const ratioBasis = proportional
+      ? "Kettle ratio — split mode: same concentration in both vessels."
+      : "Kettle ratio — sparge untreated, acid only.";
+    const ratioLine = ratio.intentText
+      ? `${ratio.intentText} intent → ${ratio.asSolvedText} kettle, ${ratio.deltaFactorText}`
+      : ratio.asSolvedText;
 
     const ions = IONS.map(([ion, label]) => {
       const m = mashIons[ion];
@@ -201,6 +213,9 @@ export function refreshWaterCard(app, ctx) {
       residualHlt,
       notModelled:
         "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).",
+      ratio,
+      ratioBasis,
+      ratioLine,
       instructionSetup,
       instructionDoughIn,
       instructionSparge,

@@ -21,6 +21,8 @@ export const WATER_NODES = {
   postMashIons: "solver.water.post_salt_mash_ions",
   postHltIons: "solver.water.post_salt_hlt_ions",
   targetProfile: "water.target_profile",
+  sulfateChlorideMode: "batch.sulfate_chloride_target_mode",
+  sulfateChlorideRatio: "batch.sulfate_chloride_target_ratio",
 };
 
 export const waterRegistry = {
