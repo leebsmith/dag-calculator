@@ -7,7 +7,6 @@ import {
   CATALOG_KINDS,
   SEED_KEY_TO_CATALOG,
   isUserItem,
-  slugify,
   validateComponent,
 } from "../../frontend/src/store/userCatalog.js";
 import { loadArtifact } from "./helpers.js";
@@ -17,9 +16,7 @@ const registry = JSON.parse(
   readFileSync(new URL("../../data/catalogs.json", import.meta.url), "utf8")
 );
 
-test("slugify + legacy identity helpers", () => {
-  assert.equal(slugify("Maris Otter® Malt"), "maris-otter-malt");
-  assert.equal(slugify("  Café / Vienna "), "cafe-vienna");
+test("legacy identity helpers", () => {
   assert.equal(isUserItem("u:house-malt"), true);
   assert.equal(isUserItem("6f2a0c"), false);
   assert.equal(isUserItem(null), false);

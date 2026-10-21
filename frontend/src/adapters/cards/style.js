@@ -91,11 +91,6 @@ export function registerStyleCard(app, ctx) {
     boilIbu: 30,
     whirlpoolIbu: 0,
 
-    styleRangeText(s) {
-      if (!s || s.og_min === undefined) return "";
-      return `${s.og_min}–${s.og_max} / ${s.fg_min}–${s.fg_max}`;
-    },
-
     styleGravity(s, field) {
       return formatGravity(s?.[field]);
     },

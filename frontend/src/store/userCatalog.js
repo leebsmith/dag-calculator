@@ -32,15 +32,6 @@ export function isUserItem(id) {
   return typeof id === "string" && id.startsWith("u:");
 }
 
-export function slugify(value) {
-  return String(value ?? "")
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 const DOMAIN_OPS = {
   gt: (a, b) => a > b,
   gte: (a, b) => a >= b,

@@ -1,13 +1,23 @@
 // Firebase Auth (compat/CDN build). The SDK is loaded via <script> in index.html
 // and exposed as `globalThis.firebase`. Browser-only — never imported by node tests.
 
+import { resolveFirebaseConfig } from "./firebaseConfig.js";
+
 const firebase = globalThis.firebase;
 
-const config = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? "demo-api-key",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? "dag-calculator.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? "dag-calculator",
-};
+const config = resolveFirebaseConfig({
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  // Emulator/demo fallback, stripped from production builds by `import.meta.env.DEV`.
+  fallback: import.meta.env.DEV
+    ? {
+        apiKey: "demo-api-key",
+        authDomain: "dag-calculator.firebaseapp.com",
+        projectId: "dag-calculator",
+      }
+    : undefined,
+});
 
 const app = firebase.initializeApp(config);
 export const auth = firebase.auth(app);

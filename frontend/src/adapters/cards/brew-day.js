@@ -52,12 +52,8 @@ export function registerBrewDayCard(app, ctx) {
       this._writeBrewDayRows(rows);
     },
 
-    brewDayDefaultInstruction() {
-      return "";
-    },
-
     brewDayInstruction(row) {
-      return row?.instructions || this.brewDayDefaultInstruction(row?.step_id);
+      return row?.instructions || "";
     },
   });
 
@@ -71,9 +67,7 @@ export function registerBrewDayCard(app, ctx) {
     brewDayPayload: {
       configurable: true,
       get() {
-        return buildBrewDayPayload(this.brewDayRows, (stepId) =>
-          this.brewDayDefaultInstruction(stepId)
-        );
+        return buildBrewDayPayload(this.brewDayRows);
       },
     },
   });

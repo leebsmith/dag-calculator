@@ -2,7 +2,16 @@
 
 from __future__ import annotations
 
+import pytest
+
 from app.database import firebase, firestore
+
+
+@pytest.fixture(autouse=True)
+def _clear_db_cache():
+    firestore.clear_db_cache()
+    yield
+    firestore.clear_db_cache()
 
 
 def test_get_app_initializes_lazily_with_the_configured_project(monkeypatch):
@@ -45,3 +54,26 @@ def test_get_db_binds_the_shared_app(monkeypatch):
 
     assert firestore.get_db() == "db"
     assert seen == [app]
+
+
+def test_get_db_reuses_a_single_client(monkeypatch):
+    app = object()
+    seen = []
+    monkeypatch.setattr(firestore, "get_app", lambda: app)
+    monkeypatch.setattr(firestore.firestore, "client", lambda app=None: seen.append(app) or "db")
+
+    assert firestore.get_db() == "db"
+    assert firestore.get_db() == "db"
+    assert seen == [app]
+
+
+def test_clear_db_cache_forces_recreation(monkeypatch):
+    app = object()
+    seen = []
+    monkeypatch.setattr(firestore, "get_app", lambda: app)
+    monkeypatch.setattr(firestore.firestore, "client", lambda app=None: seen.append(app) or "db")
+
+    assert firestore.get_db() == "db"
+    firestore.clear_db_cache()
+    assert firestore.get_db() == "db"
+    assert seen == [app, app]

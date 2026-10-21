@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const DIST = fileURLToPath(new URL("../frontend/dist/", import.meta.url));
@@ -27,4 +27,13 @@ if (!existsSync(indexPath)) {
   }
 
   if (!process.exitCode) console.log(`build check: ${refs.length} assets referenced`);
+}
+
+// A production bundle must not ship the dev/emulator API-key fallback.
+const assetsDir = `${DIST}assets/`;
+if (existsSync(assetsDir)) {
+  const leaked = readdirSync(assetsDir)
+    .filter((name) => name.endsWith(".js"))
+    .filter((name) => readFileSync(`${assetsDir}${name}`, "utf8").includes("demo-api-key"));
+  if (leaked.length) fail(`production bundle contains demo-api-key: ${leaked.join(", ")}`);
 }
