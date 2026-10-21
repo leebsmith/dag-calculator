@@ -1,4 +1,4 @@
-"""Offline tests for the Firestore batch repository (fake collection, no network)."""
+"""Offline tests for the per-user Firestore batch repository (fake collections)."""
 
 from __future__ import annotations
 
@@ -36,20 +36,6 @@ class FakeDocumentReference:
         self._collection.docs.pop(self.id, None)
 
 
-class FakeQuery:
-    def __init__(self, collection, field, op, value):
-        self._collection = collection
-        self._field = field
-        self._op = op
-        self._value = value
-
-    def stream(self):
-        assert self._op == "=="
-        for doc_id, record in list(self._collection.docs.items()):
-            if record.get(self._field) == self._value:
-                yield FakeDocumentSnapshot(self._collection, doc_id)
-
-
 class FakeCollection:
     def __init__(self):
         self.docs = {}
@@ -64,17 +50,36 @@ class FakeCollection:
         self.docs[doc_id] = dict(record)
         return None, FakeDocumentReference(self, doc_id)
 
-    def where(self, filter):
-        return FakeQuery(self, filter.field_path, filter.op_string, filter.value)
+    def stream(self):
+        for doc_id in list(self.docs):
+            yield FakeDocumentSnapshot(self, doc_id)
+
+
+class FakeUserDocument:
+    def __init__(self, db, uid):
+        self._db = db
+        self._uid = uid
+
+    def collection(self, name):
+        assert name == "batches"
+        return self._db.batches.setdefault(self._uid, FakeCollection())
+
+
+class FakeUsersCollection:
+    def __init__(self, db):
+        self._db = db
+
+    def document(self, uid):
+        return FakeUserDocument(self._db, uid)
 
 
 class FakeDb:
     def __init__(self):
-        self.batches = FakeCollection()
+        self.batches = {}
 
     def collection(self, name):
-        assert name == "batches"
-        return self.batches
+        assert name == "users"
+        return FakeUsersCollection(self)
 
 
 def repo():
@@ -82,7 +87,11 @@ def repo():
     return BatchRepository(db), db
 
 
-def test_create_stamps_ownership_status_and_timestamps():
+def user_docs(db, uid):
+    return db.batches.setdefault(uid, FakeCollection()).docs
+
+
+def test_create_stamps_status_and_timestamps_under_the_user_path():
     store, db = repo()
 
     record = store.create("u1", "b1", {"name": "A", "roots": {"x": 1}})
@@ -92,10 +101,12 @@ def test_create_stamps_ownership_status_and_timestamps():
     assert record["status"] == "draft"
     assert record["trashed"] is False
     assert record["created_at"] <= record["updated_at"]
-    assert db.batches.docs["b1"]["roots"] == {"x": 1}
+    stored = user_docs(db, "u1")["b1"]
+    assert stored["roots"] == {"x": 1}
+    assert "uid" not in stored
 
 
-def test_get_is_scoped_to_the_owner():
+def test_get_is_scoped_by_the_path():
     store, _ = repo()
     store.create("u1", "b1", {"name": "A"})
 
@@ -104,18 +115,19 @@ def test_get_is_scoped_to_the_owner():
     assert store.get("u1", "missing") is None
 
 
-def test_list_filters_by_owner_and_sorts_updated_at_desc():
-    store, _ = repo()
+def test_list_reads_only_the_users_subcollection_and_sorts_updated_at_desc():
+    store, db = repo()
     store.create("u1", "old", {"name": "Old"})
     store.create("u1", "new", {"name": "New"})
     store.create("u2", "foreign", {"name": "Foreign"})
-    store._coll.document("old").update({"updated_at": 1.0})
-    store._coll.document("new").update({"updated_at": 2.0})
+    user_docs(db, "u1")["old"]["updated_at"] = 1.0
+    user_docs(db, "u1")["new"]["updated_at"] = 2.0
 
     assert [r["id"] for r in store.list_batches("u1")] == ["new", "old"]
+    assert [r["id"] for r in store.list_batches("u2")] == ["foreign"]
 
 
-def test_update_advances_updated_at_and_refuses_foreign_docs():
+def test_update_advances_updated_at_and_is_path_scoped():
     store, _ = repo()
     created = store.create("u1", "b1", {"name": "A"})
 
@@ -127,45 +139,42 @@ def test_update_advances_updated_at_and_refuses_foreign_docs():
     assert store.update("u1", "missing", {"name": "X"}) is None
 
 
-def test_set_trashed_toggles_only_owned_docs():
-    store, _ = repo()
-    store.create("u1", "b1", {"name": "A"})
-
-    assert store.set_trashed("u1", "b1", True)["trashed"] is True
-    assert store.set_trashed("u2", "b1", True) is None
-    assert store.set_trashed("u1", "missing", True) is None
-
-
-def test_rename_updates_only_owned_docs_and_advances_updated_at():
+def test_set_trashed_and_rename_are_path_scoped():
     store, _ = repo()
     created = store.create("u1", "b1", {"name": "A"})
 
-    renamed = store.rename("u1", "b1", "B")
+    assert store.set_trashed("u1", "b1", True)["trashed"] is True
+    assert store.set_trashed("u2", "b1", True) is None
 
+    renamed = store.rename("u1", "b1", "B")
     assert renamed["name"] == "B"
     assert renamed["updated_at"] > created["updated_at"]
     assert store.rename("u2", "b1", "Hijack") is None
     assert store.rename("u1", "missing", "X") is None
-    assert store.get("u1", "b1")["name"] == "B"
 
 
-def test_delete_removes_only_owned_docs():
+def test_delete_removes_only_from_the_users_collection():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})
+    store.create("u2", "b1", {"name": "Theirs"})
 
-    assert store.delete("u2", "b1") is False
-    assert "b1" in db.batches.docs
     assert store.delete("u1", "b1") is True
-    assert "b1" not in db.batches.docs
+    assert "b1" not in user_docs(db, "u1")
+    assert "b1" in user_docs(db, "u2")
     assert store.delete("u1", "b1") is False
 
 
-def test_freeze_creates_a_linked_immutable_snapshot():
+def test_freeze_creates_a_linked_immutable_snapshot_in_the_same_path():
     store, db = repo()
     draft = store.create(
         "u1",
         "b1",
-        {"name": "Saison", "roots": {"mash.grain_temp_c": 20}, "collections": {"grist.major_malts": []}},
+        {
+            "name": "Saison",
+            "roots": {"mash.grain_temp_c": 20},
+            "collections": {"grist.major_malts": []},
+            "selections": {"batch.yeast": {"id": "y1", "name": "Yeast"}},
+        },
     )
 
     frozen = store.freeze(
@@ -182,8 +191,10 @@ def test_freeze_creates_a_linked_immutable_snapshot():
 
     assert frozen["status"] == "frozen"
     assert frozen["parent_batch_id"] == "b1"
+    assert frozen["uid"] == "u1"
     assert frozen["roots"] == draft["roots"]
     assert frozen["collections"] == draft["collections"]
+    assert frozen["selections"] == draft["selections"]
     assert frozen["valuation"] == {"batch.target_abv": 5.5}
     assert frozen["valuation_format"] == "outputs"
     assert frozen["provenance"] == {"batch.yeast": {"source_template_id": "y1"}}
@@ -191,17 +202,17 @@ def test_freeze_creates_a_linked_immutable_snapshot():
     assert frozen["schema_version"] == 3
     assert frozen["frozen_at"] == frozen["created_at"]
     assert frozen["id"].startswith("auto-")
-    assert frozen["id"] in db.batches.docs
+    assert frozen["id"] in user_docs(db, "u1")
 
 
 def test_freeze_refuses_foreign_or_missing_drafts():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})
-    before = len(db.batches.docs)
+    before = len(user_docs(db, "u1"))
 
     assert store.freeze("u2", "b1", {}) is None
     assert store.freeze("u1", "missing", {}) is None
-    assert len(db.batches.docs) == before
+    assert len(user_docs(db, "u1")) == before
 
 
 def test_get_batch_repo_wraps_the_firestore_client():
@@ -210,4 +221,6 @@ def test_get_batch_repo_wraps_the_firestore_client():
     store = get_batch_repo(db)
 
     assert isinstance(store, BatchRepository)
-    assert store._coll is db.batches
+    assert store._db is db
+    collection = store._collection("u1")
+    assert collection is db.batches["u1"]
