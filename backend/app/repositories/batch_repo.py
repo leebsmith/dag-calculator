@@ -94,10 +94,10 @@ class BatchRepository:
         ``force`` is set, which skips only the baseline comparison).
         """
         ref = self._collection(uid).document(batch_id)
-        transaction = self._db.transaction()
 
-        with transaction:
-            snapshot = transaction.get(ref)
+        @firestore.transactional
+        def _apply(transaction):
+            snapshot = ref.get(transaction=transaction)
             if not snapshot.exists:
                 now = time.time()
                 record = {
@@ -119,6 +119,8 @@ class BatchRepository:
             record = {**current, **data, "updated_at": time.time()}
             transaction.update(ref, {**data, "updated_at": record["updated_at"]})
             return record, None
+
+        return _apply(self._db.transaction())
 
     def update(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
         doc = self._collection(uid).document(batch_id).get()
@@ -165,10 +167,10 @@ class BatchRepository:
         collection = self._collection(uid)
         ref = collection.document(batch_id)
         new_ref = collection.document()
-        transaction = self._db.transaction()
 
-        with transaction:
-            snapshot = transaction.get(ref)
+        @firestore.transactional
+        def _freeze(transaction):
+            snapshot = ref.get(transaction=transaction)
             if not snapshot.exists:
                 return None, "missing"
 
@@ -196,6 +198,8 @@ class BatchRepository:
             }
             transaction.set(new_ref, record)
             return self._record(uid, new_ref.id, record), None
+
+        return _freeze(self._db.transaction())
 
     @staticmethod
     def _record(uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any]:

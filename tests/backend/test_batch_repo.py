@@ -25,7 +25,9 @@ class FakeDocumentReference:
         self.id = doc_id
         self._collection = collection
 
-    def get(self):
+    def get(self, transaction=None):
+        if transaction is not None:
+            transaction.calls.append(("get", self.id))
         return FakeDocumentSnapshot(self._collection, self.id)
 
     def set(self, record):
@@ -86,10 +88,22 @@ class FakeCollection:
 class FakeTransaction:
     def __init__(self):
         self.calls = []
+        self._id = None
+        self._max_attempts = 1
+        self._read_only = False
 
-    def get(self, ref):
-        self.calls.append(("get", ref.id))
-        return ref.get()
+    def _clean_up(self):
+        self._id = None
+
+    def _begin(self, retry_id=None):
+        self._id = b"txn"
+        self.calls.append(("begin", retry_id))
+
+    def _commit(self):
+        self.calls.append(("commit", None))
+
+    def _rollback(self):
+        self.calls.append(("rollback", None))
 
     def set(self, ref, record):
         self.calls.append(("set", ref.id))
@@ -102,12 +116,6 @@ class FakeTransaction:
     def delete(self, ref):
         self.calls.append(("delete", ref.id))
         ref.delete()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc, tb):
-        return False
 
 
 class FakeUserDocument:
@@ -323,7 +331,12 @@ def test_apply_draft_creates_when_absent():
     assert record["id"] == "b1"
     assert record["status"] == "draft"
     assert record["trashed"] is False
-    assert db.last_transaction.calls == [("get", "b1"), ("set", "b1")]
+    assert db.last_transaction.calls == [
+        ("begin", None),
+        ("get", "b1"),
+        ("set", "b1"),
+        ("commit", None),
+    ]
 
 
 def test_apply_draft_updates_when_baseline_matches():
@@ -348,7 +361,7 @@ def test_apply_draft_rejects_stale_baseline_without_writing():
     assert reason == "stale"
     assert record["name"] == "B"
     assert user_docs(db, "u1")["b1"] == before
-    assert [call[0] for call in db.last_transaction.calls] == ["get"]
+    assert [call[0] for call in db.last_transaction.calls] == ["begin", "get", "commit"]
 
 
 def test_apply_draft_rejects_frozen():
@@ -405,9 +418,10 @@ def test_freeze_reads_before_it_writes():
     frozen, reason = store.freeze("u1", "b1", {"valuation": {"x": 1}})
 
     assert reason is None
-    assert db.last_transaction.calls[0] == ("get", "b1")
-    assert db.last_transaction.calls[1][0] == "set"
-    assert frozen["id"] == db.last_transaction.calls[1][1]
+    assert db.last_transaction.calls[0][0] == "begin"
+    assert db.last_transaction.calls[1] == ("get", "b1")
+    assert db.last_transaction.calls[2][0] == "set"
+    assert frozen["id"] == db.last_transaction.calls[2][1]
 
 
 def test_freeze_refuses_an_already_frozen_record():
