@@ -1,6 +1,5 @@
 import Alpine from "alpinejs";
 
-import { createCalculatorApp } from "./adapters/engineAdapter.js";
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
 import { getIdToken, signInAnonymously, signOut, onAuthStateChanged } from "./firebase.js";
@@ -183,7 +182,6 @@ onAuthStateChanged((user) => {
   applyAuth(user).catch((err) => console.error("auth handling failed", err));
 });
 
-Alpine.data("calculator", () => createCalculatorApp());
 Alpine.data("stepCalculator", () => {
   // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate
   // `this`) trigger re-renders, and so persistence mutates the same proxy.
