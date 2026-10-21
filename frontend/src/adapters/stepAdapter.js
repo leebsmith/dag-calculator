@@ -156,9 +156,31 @@ export function createStepApp(options = {}) {
   // The pristine auth-scoped baseline to restore on sign-out.
   const baselineRoots = master.allRoots();
 
+  // AI AGENT HOOKS: Use this facade for resolving the live engine from card
+  // closures. Do not duplicated this logic elsewhere — never capture `engine`
+  // directly, because loadState/teardown replace it.
+  const liveEngine = {
+    get: (id) => engine.get(id),
+    resolve: (path) => engine.resolve(path),
+    call: (fnId, args) => engine.call(fnId, args),
+    setRoot: (id, value) => engine.setRoot(id, value),
+    setCollection: (id, rows) => engine.setCollection(id, rows),
+    invalidate: (id) => engine.invalidate(id),
+    boundaryRequest: (id) => engine.boundaryRequest(id),
+    hasBoundaryResult: (fingerprint) => engine.hasBoundaryResult(fingerprint),
+    applyBoundaryResult: (fingerprint, outputs) => engine.applyBoundaryResult(fingerprint, outputs),
+    relationStates: () => engine.relationStates(),
+    domainStates: () => engine.domainStates(),
+    fieldDomainStates: () => engine.fieldDomainStates(),
+    collectionDomainStates: () => engine.collectionDomainStates(),
+    get topoOrder() {
+      return engine.topoOrder;
+    },
+  };
+
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
   // reactive state/handlers onto `app` before main.js wraps it in Alpine.reactive.
-  const cardCtx = { engine, cache, ui, artifact };
+  const cardCtx = { engine: liveEngine, cache, ui, artifact };
 
   const app = {
     master,
