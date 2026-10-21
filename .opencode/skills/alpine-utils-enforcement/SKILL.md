@@ -1,74 +1,152 @@
 ---
-name: Alpine Utils Enforcement
-description: Use whenever writing or editing Alpine.js templates, x-data factories, x-text/x-show/:value bindings, event handlers, or card adapters in this repo. Enforces that all number formatting, percent/gravity conversion, unit labels, pluralization, catalog meta strings, field lookup, and seed-provenance logic go through frontend/src/utils.js instead of inline expressions.
+name: Architecture & Codebase Guardrails
+description: Use whenever writing or editing Alpine.js templates, x-data factories, bindings, event handlers, card adapters, backend services, persistence, or API routes in this repo. Enforces the A9 determinism invariant, pure-utility formatting (frontend/src/utils.js barrel), the installer KEYS contract, safeHref URL validation, reportError for swallowed exceptions, Admin-SDK-only Firestore persistence, and shared component validation.
 ---
 
-# Alpine Utils Enforcement
+# Architecture & Codebase Guardrails
 
 ## Purpose
 
-`frontend/src/utils.js` is the single source of truth for display formatting and
-pure model helpers. Templates bind to it as `fmt.*`; adapters import it directly.
-This skill exists so agent sessions stop re-deriving `toFixed`, `* 100`,
-`label + ' (' + unit + ')'`, and catalog meta strings inline, which is how the
-formatting drift in `step-style.html`, the four catalog modals, and the card
-adapters accumulated.
+This repo has two load-bearing purity contracts that agent sessions must not
+break:
 
-**Module contract:** pure and deterministic, no DOM, no engine, no artifact, no
-module-level mutable state. Every export carries
-`@note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.`
+- **Frontend** — `frontend/src/utils.js` (a barrel re-exporting `utils/format.js`,
+  `utils/model.js`, `utils/strings.js`) is the single source of truth for display
+  formatting and pure model helpers. Templates bind it as `fmt.*`; adapters import
+  it directly. Never re-derive `toFixed`, `* 100`, `label + ' (' + unit + ')'`,
+  percent math, or catalog meta strings inline.
+- **Backend** — persistence goes through FastAPI + the Firebase Admin SDK only;
+  the browser is an Auth-only Firebase client. Batch writes are atomic, component
+  validation is shared, and solver request/input fields are parity-checked.
 
 ## When this skill triggers
 
-Load and apply this skill when any of these are true:
+- Creating or editing any file under `frontend/src/partials/`, `frontend/index.html`,
+  or `backend/app/`.
+- Adding or changing `x-data`, `x-text`, `x-show`, `x-if`, `x-for`, `x-model`,
+  `:class`, `:value`, `:min`, `:max`, `:title`, `@click`, `@change`, `@input`,
+  or `x-init`.
+- Writing or modifying a card adapter (`frontend/src/adapters/cards/*.js`),
+  `draftEditor.js`, `libraryUi.js`, `stepView.js`, `stepAdapter.js`, `main.js`
+  store getters, a repository, a service, or a route handler.
+- Any task touching display, formatting, labels, units, percentages, gravity,
+  counts, dates, clamping, seed provenance, persistence, validation, or auth.
 
-- Creating or editing any file under `frontend/src/partials/` or `frontend/index.html`.
-- Adding or changing `x-data`, `x-text`, `x-show`, `x-if`, `x-for`, `x-model`, `:class`, `:value`, `:min`, `:max`, `:title`, `@click`, `@change`, `@input`, or `x-init`.
-- Writing or modifying a card adapter (`frontend/src/adapters/cards/*.js`), `draftEditor.js`, `libraryUi.js`, `stepView.js`, `stepAdapter.js`, or `main.js` store getters.
-- Any task whose wording involves display, formatting, labels, units, percentages, gravity, counts, ranges, pluralization, dates, clamping, or seed provenance.
+## Core architectural invariants (must not violate)
+
+- **A9 determinism** — wholesale recomputation stays. No read tracking, no
+  field-level dirty flags, no stable-identity reuse. `produce()` must stay a pure
+  `(artifact, roots, selections, boundaryCache, unitMode) → fields` function
+  reproducible from scratch (`tests/guards/determinism.test.js`); the engine has
+  no reactivity (`tests/guards/no-reactivity.test.js`, A1). Cards snapshot field
+  models and re-`find()` by id, so wholesale identity replacement is load-bearing.
+- **Artifact canonicality** — never edit `data/artifact.json` or re-emit
+  inventories from agent code. Any artifact change requires
+  `node scripts/emit-artifact-inventory.mjs` plus the matching doc update.
+- **Pure functions** — no ad-hoc date formatting, regex, string manipulation, or
+  numeric math inline. Import and call the designated pure helpers (they carry
+  `@note STRICT UTILITY` JSDoc).
+- **Client-side auth & persistence** — direct client-side Firestore access is
+  forbidden (`firestore.rules` denies all client access; the browser is Auth-only).
+  All reads/writes go through FastAPI using the Admin SDK.
+
+## Alpine.js state & installer contract
+
+- **No god-object sprawl** — do not split the single reactive Alpine root object;
+  a single root is a framework requirement (`x-data="stepCalculator()"`).
+- **Explicit installer exports** — every `install*`/`register*` module must export
+  a `KEYS` array listing exactly the app members it assigns (including the
+  `catalogDraftKeys(prefix, Cap)` expansion for draft cards).
+- **Collision safeguards** — `createStepApp` invokes
+  `assertNoCollisions(INSTALLERS)` under `import.meta.env.DEV`
+  (`adapters/contract.js`); the guard test
+  `tests/guards/installer-contract.test.js` compares the exported key sets.
+  When you add an app member, add it to that module's `KEYS` too.
 
 ## Mandatory enforcement rules
 
 **Forbidden — no exceptions in templates (`*.html`):**
 
-- No arithmetic. `* 100`, `/ 1000`, `+ 1`, `(og - 1) * 1000` are all violations.
-- No number formatting: `toFixed`, `Math.round`, `Math.min`, `Math.max`, `parseFloat`, `parseInt`, `Number(...)`.
+- No arithmetic: `* 100`, `/ 1000`, `+ 1`, `(og - 1) * 1000`.
+- No number formatting: `toFixed`, `Math.round`, `Math.min`, `Math.max`,
+  `parseFloat`, `parseInt`, `Number(...)`.
 - No locale/date APIs: `Intl.*`, `new Date`, `Date.now`, `toLocaleString`.
 - No regex literals, `.test()`, `.match()`, `.replace()`, `.startsWith()`.
-- No string assembly for display: `label + ' (' + unit + ')'`, `display + ' ' + (unit ?? '')`, `'Showing ' + n + ' of ' + m`.
-- No predicates: `.some(...)`, `.filter(...)`, `.find(...)`, `.includes(...)` inside `x-show`/`x-if`.
-- No nested ternaries for formatting. A single guard ternary (`x ? a : b`) is tolerated only when both branches are already formatted values.
+- No string assembly for display: `label + ' (' + unit + ')'`,
+  `display + ' ' + (unit ?? '')`, `'Showing ' + n + ' of ' + m`.
+- No predicates: `.some(...)`, `.filter(...)`, `.find(...)`, `.includes(...)`
+  inside `x-show`/`x-if`.
+- No nested ternaries for formatting (a single guard ternary is tolerated only
+  when both branches are already formatted values).
 - No state assignment in handlers (`foo = false`, `$store.x.y = z`). Call a named method.
-- No helper logic in `x-data`. It stays a thin factory (`x-data="stepCalculator()"`); behavior belongs in an adapter/installer.
+- No helper logic in `x-data`. It stays a thin factory; behavior belongs in an installer.
+- No unsafe URLs: external links must pass through `fmt.safeHref(url)` — only
+  `http:`/`https:` is allowed.
 
 **Forbidden in JavaScript adapters:**
 
-- Do not re-implement formatting that already exists in `utils.js`. Grep before writing.
-- Do not add `Math.round(v * 1000) / 1000`, `(v * 100).toFixed(1)`, `col.decimals != null ? v.toFixed(...)`, or `UNIT_SYMBOLS[d]?.[u] ?? u` anywhere else.
-- Do not put engine- or artifact-dependent conversion in `utils.js` (`toBase`, `displayValue`, `nonlinearFns`, `UNIT_DIMENSIONS` defaults). Those stay in `views/producer` and the adapters. Pass resolved values in.
+- Do not re-implement formatting that already exists in the `utils.js` barrel.
+  Grep first.
+- Do not add `Math.round(v * 1000) / 1000`, `(v * 100).toFixed(1)`,
+  `col.decimals != null ? v.toFixed(...)`, or `UNIT_SYMBOLS[d]?.[u] ?? u` elsewhere.
+- Do not put engine- or artifact-dependent conversion in the utils barrel
+  (`toBase`, `displayValue`, `nonlinearFns`, `UNIT_DIMENSIONS` defaults). Those
+  stay in `views/producer` and the adapters.
+- No bare `catch {}` — use `reportError(scope, err)` (from
+  `frontend/src/observability.js`) so a swallowed engine/view error is logged
+  once per signature and counted, without changing the degradation behavior.
+
+**Forbidden in the backend:**
+
+- No direct Firestore from the client; no `sql`/ORM filter chains in route
+  handlers — data access lives in repositories.
+- Batch writes must be atomic: create-or-update goes through
+  `BatchRepository.apply_draft` (read-then-write in a Firestore transaction) and
+  freezing through `BatchRepository.freeze`; never re-read-then-write outside a
+  transaction.
+- Component validation must not duplicate the domain operator table. Use
+  `engine/domains.js:checkComponentDomain` (frontend) or `validate_component`
+  (backend), both driven by the shared corpus
+  `tests/conformance/fixtures/validation-cases.json`.
+- Solver request/input mappings are parity-checked by
+  `assert_field_parity(BatchSolverRequest, BatchSolverInput)` (and the water
+  equivalent) at import time in the service adapters.
 
 **How a template reaches a util:**
 
-- Templates resolve names against the Alpine component scope. Bare imports are invisible.
-- Correct: `x-text="fmt.formatPercent(row.pct)"` — `fmt` is attached in `stepAdapter.js` and is reactive-safe.
-- Correct: a named getter/method on the card that calls the util, e.g. `x-text="maltDraftTotals"` or `x-text="styleTargetNearest()"`.
-- Wrong: `x-text="formatPercent(row.pct)"` — this both fails at runtime and trips the A8 guard unless a matching app method exists.
+- Templates resolve names against the Alpine component scope; bare imports are invisible.
+- Correct: `x-text="fmt.formatPercent(row.pct)"` — `fmt` is attached in `stepAdapter.js`.
+- Correct: a named getter/method on the card that calls the util.
+- Wrong: `x-text="formatPercent(row.pct)"` — fails at runtime and trips A8.
 
 **Nullability:**
 
-- Never dereference a nullable model in `x-show` (`x-show="srmTargetField.seeded"`). Use an `x-if`, a provenance getter, or `fmt.provenanceFor(...)`. Guard A10 enforces this.
-- Use `x-if` for null-until-ready subtrees; `x-show` still evaluates its subtree.
+- Never dereference a nullable model in `x-show`. Use `x-if`, a provenance getter,
+  or `fmt.provenanceFor(...)`. Guard A10 enforces this.
 
 **When a util genuinely does not exist:**
 
-1. Add it to `frontend/src/utils.js` with full JSDoc, typed params/returns, and the `@note STRICT UTILITY` line.
-2. Add assertions to `tests/frontend/utils.test.js` covering null, empty string, and wrong-type inputs.
+1. Add it to the correct submodule — `utils/format.js` (numeric/unit/date),
+   `utils/model.js` (field models/predicates/filters), or `utils/strings.js`
+   (leaf string helpers) — with full JSDoc and the `@note STRICT UTILITY` line.
+   The barrel re-exports it automatically; consumer import paths never change.
+2. Add assertions to `tests/frontend/utils.test.js` (null, empty string, wrong type).
 3. Add the task → function row to the index below.
 4. Never inline the logic "temporarily" while deciding.
 
+## Quick reference
+
+| Task | Avoid | Use instead |
+| :--- | :--- | :--- |
+| URL sanitization | Raw string bindings / `:href="x.url"` | `fmt.safeHref(url)` |
+| Error catching | Bare `catch {}` | `reportError("scope", err)` |
+| Database writes | Client SDK / ad-hoc read-modify-write | Atomic transactions via `BatchRepository` |
+| Component validation | Custom domain tables / divergent checks | Shared conformance fixtures + `engine/domains.js` |
+| Date / percent / unit formatting | Inline `toFixed` / `* 100` / `+ ' (' + unit + ')'` | `fmt.format*`, `fmt.formatPercent`, `fmt.formatQuantity` |
+
 ## Function reference index
 
-Import paths (from the file doing the importing):
+Import paths (from the file doing the importing; `utils.js` is a barrel):
 
 | Location | Import |
 | --- | --- |
@@ -77,20 +155,21 @@ Import paths (from the file doing the importing):
 | `frontend/src/store/*.js` | `import { fn } from "../utils.js"` |
 | `frontend/src/views/producer/*.js` | `import { fn } from "../../utils.js"` |
 | Templates | `fmt.fn(...)` (no import; `fmt` is on the component) |
+| Error observability | `import { reportError } from "../observability.js"` |
 
 ### Numbers, percent, gravity
 
 | UI task | Function to import and call | Notes |
 | --- | --- | --- |
 | Any scalar → display string | `formatValue(value)` | Integers verbatim, others trimmed to 3dp, `""` for null/NaN/Infinity |
-| Fixed-decimal display | `formatWithDecimals(value, decimals, { dash })` | `decimals = null` trims to 3dp; replaces the `decimals != null ? toFixed : round` pattern |
+| Fixed-decimal display | `formatWithDecimals(value, decimals, { dash })` | `decimals = null` trims to 3dp |
 | Round a number (not display) | `roundTo(value, decimals)` | Returns `number|null` |
 | Numeric coercion of input | `toFiniteOrNull(value)` | Trims strings, rejects booleans/arrays/blank/Infinity |
 | Numeric type test | `isFiniteNumber(value)` | `typeof === "number" && Number.isFinite` |
 | Fraction 0..1 → `"76.2%"` | `formatPercent(fraction, decimals = 1, { dash })` | Multiplies by 100 |
 | Fraction 0..1 → `"76%"` | `formatPercentRounded(fraction, { dash })` | Multiplies by 100 |
-| Value already in percent (ABV 5.4) | `formatPercentValue(percent, decimals = 1, { dash })` | Does NOT multiply — do not pass a fraction |
-| Fraction → number for `<input :value>` | `toPercentValue(fraction, decimals = 1, { dash })` | No `%` sign; inverse of the `scale = 0.01` write path |
+| Value already in percent (ABV 5.4) | `formatPercentValue(percent, decimals = 1, { dash })` | Does NOT multiply |
+| Fraction → number for `<input :value>` | `toPercentValue(fraction, decimals = 1, { dash })` | No `%` sign |
 | Specific gravity readout | `formatGravity(sg, decimals = 3, { dash })` | |
 | OG/FG range | `formatGravityRange(low, high, { decimals, separator, dash })` | `"1.040–1.055"` |
 | Generic range | `formatRange(low, high, formatter, { separator, dash })` | Degrades to the known side or the dash |
@@ -99,23 +178,24 @@ Import paths (from the file doing the importing):
 
 | UI task | Function to import and call | Notes |
 | --- | --- | --- |
-| Value + unit, one string | `formatValueWithUnit(value, unit, { fallbackUnit, dash, tightUnits })` | `%` is tight by default (`80%`), other symbols get a space |
-| Producer `{ display, unit }` field model | `formatQuantity(field, { fallbackUnit, dash, tightUnits })` | The canonical readout formatter; returns `—` for a missing model |
+| Value + unit, one string | `formatValueWithUnit(value, unit, { fallbackUnit, dash, tightUnits })` | `%` is tight by default |
+| Producer `{ display, unit }` field model | `formatQuantity(field, { fallbackUnit, dash, tightUnits })` | Canonical readout formatter |
 | `"Label (unit)"` | `formatFieldLabel(label, symbol)` | |
 | Table column header | `formatColumnHeader(column)` | Falls back to `column.id` |
-| First usable string | `firstNonEmptyString(...values)` | Trims; stringifies finite numbers; `""` when none |
+| First usable string | `firstNonEmptyString(...values)` | Trims; stringifies finite numbers |
 | Preferred unit id | `preferredUnit(unitMode, dimension, fallback)` | Never hard-code `"EBC"`, `"oz"`, `"degC"` |
-| Unit symbol | `unitSymbol(symbols, dimension, unitId, fallback)` | Falls back to the unit id, then the fallback |
+| Unit symbol | `unitSymbol(symbols, dimension, unitId, fallback)` | Falls back to the unit id |
 
-### Strings, counts, meta
+### Strings, counts, meta, safety
 
 | UI task | Function to import and call | Notes |
 | --- | --- | --- |
-| Join meta parts, skipping blanks | `joinNonEmpty(parts, separator = " • ")` | Replaces `(x ? ' • ' + x : '')` chains |
-| Pluralized count | `countLabel(count, singular, plural = null, { dash })` | Explicit plural wins over `+ "s"` |
-| Catalog result counter | `resultCounter({ shown, total, noun, plural, truncated, truncatedHint, dash })` | Builds the whole `Showing X of Y …` sentence |
+| Join meta parts, skipping blanks | `joinNonEmpty(parts, separator = " • ")` | Replaces `(x ? ' • ' + x : '')` |
+| Pluralized count | `countLabel(count, singular, plural = null, { dash })` | Explicit plural wins |
+| Catalog result counter | `resultCounter({ shown, total, noun, plural, truncated, truncatedHint, dash })` | Whole `Showing X of Y …` sentence |
 | Dash for empty text | `displayOrDash(text, dash = "—")` | |
-| Short localized date | `formatDate(seconds, { locale, timeZone, dash })` | Epoch seconds, not milliseconds |
+| Short localized date | `formatDate(seconds, { locale, timeZone, dash })` | Epoch seconds |
+| External link `href` | `safeHref(url)` | `""` unless `http:`/`https:` |
 
 ### Filters, units, math
 
@@ -123,8 +203,8 @@ Import paths (from the file doing the importing):
 | --- | --- | --- |
 | Click-to-clear filter pill | `toggleFilter(current, value)` | Returns `""` or `value` |
 | Multi-select filter pill | `toggleInList(list, value)` | Returns a new array; never mutates |
-| Cycle a unit button | `cycleUnit(units, current)` | Wraps; unknown current starts at index 0 |
-| Bound a value | `clamp(value, min = null, max = null)` | `null` bounds ignored; `null` for non-numeric |
+| Cycle a unit button | `cycleUnit(units, current)` | Wraps |
+| Bound a value | `clamp(value, min = null, max = null)` | `null` bounds ignored |
 | Gravity units | `gravityUnits(sg)` | `(sg - 1) * 1000` |
 | BU:GU | `bitternessRatio(ibu, og)` | `null` when GU <= 0 |
 
@@ -132,8 +212,8 @@ Import paths (from the file doing the importing):
 
 | UI task | Function to import and call | Notes |
 | --- | --- | --- |
-| Index field models by id | `indexFields(fields)` | First id wins; used by `stepView.compute` → `app.fieldsById` |
-| Read a field by id | `fieldOr(fieldsById, id, fallback = EMPTY_FIELD)` | Returns the frozen `EMPTY_FIELD`, never throws |
+| Index field models by id | `indexFields(fields)` | First id wins |
+| Read a field by id | `fieldOr(fieldsById, id, fallback = EMPTY_FIELD)` | Frozen `EMPTY_FIELD`, never throws |
 | Numeric `[low, high]` bounds | `boundsOf(fields, minId, maxId)` | `null` unless strictly ordered |
 | Seed badge / reset affordance | `provenanceFor(field, { sourceLabel, resetSymbol })` | `{ showSeed, showReset, seedTitle, resetTitle, resetSymbol }` |
 | Readout-table cell variant | `cellKind(cell)` | `"text" \| "number" \| "empty"` |
@@ -149,49 +229,63 @@ Import paths (from the file doing the importing):
 | `x-text="styleTargetInfo ? styleTargetInfo.og.toFixed(3) : ''"` | `x-text="fmt.formatGravity(styleTargetInfo?.og)"` |
 | `x-text="f.display + ' ' + (f.unit ?? '')"` | `x-text="fmt.formatQuantity(f)"` |
 | `x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"` | `x-text="fmt.formatColumnHeader(c)"` |
-| `x-text="'Yield ' + Math.round(y * 100) + '%'"` | `x-text="fmt.formatPercentRounded(y)"` |
 | `:value="(row.yield_fraction * 100).toFixed(0)"` | `:value="fmt.toPercentValue(row.yield_fraction, 0)"` |
-| `x-text="'Showing ' + n + ' of ' + m + ' hops'"` | `x-text="fmt.resultCounter({ shown: n, total: m, noun: 'hop' })"` |
-| `x-text="item.category + ' • ' + item.color + ' °L'"` | `x-text="fmt.joinNonEmpty([item.category, fmt.formatValueWithUnit(item.color, '°L', { dash: '' })])"` |
+| `:href="selectedYeast.url"` | `:href="fmt.safeHref(selectedYeast.url)"` |
+| `catch {}` | `catch (err) { reportError("scope", err); ... }` |
 | `x-show="field && field.seeded"` | card getter returning `provenanceFor(field)`, then `x-show="f.provenance.showSeed"` |
 | `@click="unitsOpen = false"` | `@click="closeUnits()"` |
-| `@click="filter = filter === v ? '' : v"` | `@click="setFilter(v)"` calling `toggleFilter` inside the adapter |
+| `@click="filter = filter === v ? '' : v"` | `@click="setFilter(v)"` calling `toggleFilter` in the adapter |
 
 ## Workflow
 
-1. Identify the requested display/derivation output and the layer that owns it (template, card adapter, or store getter).
-2. Search the module first: `grep -n "^export function" frontend/src/utils.js`.
-3. If a function exists, use it. If it nearly fits, extend it with an option rather than adding a sibling.
-4. If it does not exist, implement it in `utils.js` with JSDoc + the `@note STRICT UTILITY` line, add tests, add the index row here.
-5. Wire it: `fmt.*` in templates, or a named getter/method on the card for multi-part strings.
-6. Run the gates: `make check` then `make test`. Use `make verify` before declaring done.
+1. Identify the layer that owns the change (template, card adapter, store getter,
+   repository, service, or route) and whether it is a display concern or a data one.
+2. For display/derivation, grep the utils barrel: `grep -rn "^export function" frontend/src/utils`.
+3. If a function exists, use it; if it nearly fits, extend it with an option.
+4. If it does not exist, add it to the right submodule with JSDoc + `@note STRICT
+   UTILITY`, add tests, and add the index row above.
+5. Wire it: `fmt.*` in templates, a named getter/method on the card, or a
+   repository/service method in the backend.
+6. Update the module's `KEYS` if you added an app member; run the collision guard.
+7. Run `make check` then `make test`; use `make verify` before declaring done.
 
 ## Checklist before finishing
 
 ```sh
-# Must return nothing (no inline formatting in templates):
+# No inline formatting in templates:
 grep -rnE "toFixed|Math\.(round|min|max)|Intl\.|new Date|parseFloat|parseInt" \
   frontend/src/partials frontend/index.html
 
-# Must return nothing (no inline label/unit assembly):
+# No inline label/unit assembly:
 grep -rnE "\.display \+ ' '|label \+ \(.*unit|label \+ ' \('" \
   frontend/src/partials frontend/index.html
 
-# Must return nothing (no assignments in handlers):
+# No assignments in handlers:
 grep -rnE "(@[a-z.:-]+|x-on:[a-z.:-]+)=\"[^\"]*[^=!<>]=( |\")" \
   frontend/src/partials frontend/index.html
 ```
 
+Review (not a clean-room grep): `grep -rnE "catch \{" frontend/src/adapters frontend/src/store`.
+Bare catches are acceptable only for parsing untrusted external data (`JSON.parse`,
+`localStorage`) and the boundary frontier's dependency probe; every engine/view
+degradation catch (`stepView.safe`, `materializeSelections`, `hops`/`style`
+`engine.resolve`) must use `reportError(scope, err)` instead.
+
 Then confirm:
 
-- `tests/guards/alpine-handlers.test.js` (A8) passes: every handler calls a real app method.
-- `tests/guards/show-dereference.test.js` (A10) passes: no nullable dereference behind `x-show`.
+- `tests/guards/alpine-handlers.test.js` (A8): every handler calls a real app method.
+- `tests/guards/show-dereference.test.js` (A10): no nullable dereference behind `x-show`.
+- `tests/guards/installer-contract.test.js`: installer key sets are declared and collide-free.
+- `tests/guards/determinism.test.js` (A9) and `tests/guards/no-reactivity.test.js` (A1) pass.
 - `tests/frontend/utils.test.js` covers any util you added or changed.
-- No engine/artifact imports were added to `utils.js`.
+- `tests/conformance/validation-parity.test.js` + `tests/backend/conformance/test_validation_parity.py` agree.
+- No engine/artifact imports were added to the utils barrel.
 
 ## Neighbouring invariants (do not duplicate, do respect)
 
 - `<select :value>` with `x-for` options needs an explicit `:selected` on each option (`tests/guards/select-binding.test.js`).
 - Field models come from `fieldsBySlice` / `fieldsById`; never resolve engine paths in a template.
 - Unit conversion is display-only: writes store base units (`tests/guards/display-only-units.test.js`).
-- `data/artifact.json` is canonical. This skill governs presentation only; artifact changes still require `node scripts/emit-artifact-inventory.mjs` and doc updates.
+- `data/artifact.json` is canonical; artifact changes still require `node scripts/emit-artifact-inventory.mjs` and doc updates.
+- Token verification is cached ≤5 min (`TOKEN_CACHE_TTL_SECONDS`); revocation is eventual within that window.
+- `/solve/*` routes are per-uid rate-limited (`RateLimitedUser`); it is instance-scoped and best-effort, not a security boundary.
