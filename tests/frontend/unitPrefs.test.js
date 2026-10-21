@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { loadUnitMode, sanitizeUnitMode, saveUnitMode } from "../../frontend/src/store/unitPrefs.js";
+import { clearUnitMode, loadUnitMode, sanitizeUnitMode, saveUnitMode } from "../../frontend/src/store/unitPrefs.js";
 import { loadArtifact } from "./helpers.js";
 
 const artifact = loadArtifact();
@@ -52,4 +52,82 @@ test("load/save roundtrip through localStorage (schema-version stamped)", () => 
 
 test("loadUnitMode returns {} when localStorage is absent", () => {
   assert.deepEqual(loadUnitMode(artifact), {});
+});
+
+function fakeStorage(initial = {}) {
+  const store = new Map(Object.entries(initial));
+  return {
+    store,
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => store.set(k, v),
+    removeItem: (k) => store.delete(k),
+  };
+}
+
+test("sanitizeUnitMode rejects non-object input and non-string units", () => {
+  assert.deepEqual(sanitizeUnitMode(artifact, null), {});
+  assert.deepEqual(sanitizeUnitMode(artifact, "temperature"), {});
+  assert.deepEqual(sanitizeUnitMode(artifact, { temperature: 3, volume: "gal" }), { volume: "gal" });
+});
+
+test("preferences from an older artifact version are dropped", () => {
+  globalThis.localStorage = fakeStorage({
+    brew_unit_preferences: JSON.stringify({
+      schema_version: (artifact.schema_version ?? 2) - 1,
+      unitMode: { temperature: "degF" },
+    }),
+  });
+  try {
+    assert.deepEqual(loadUnitMode(artifact), {});
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test("corrupt stored preferences fall back to empty", () => {
+  globalThis.localStorage = fakeStorage({ brew_unit_preferences: "{not json" });
+  try {
+    assert.deepEqual(loadUnitMode(artifact), {});
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test("clearUnitMode removes the stored preferences", () => {
+  const storage = fakeStorage({
+    brew_unit_preferences: JSON.stringify({ schema_version: artifact.schema_version, unitMode: {} }),
+  });
+  globalThis.localStorage = storage;
+  try {
+    assert.deepEqual(clearUnitMode(), {});
+    assert.equal(storage.store.has("brew_unit_preferences"), false);
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test("storage failures are swallowed", () => {
+  globalThis.localStorage = {
+    getItem: () => {
+      throw new Error("denied");
+    },
+    setItem: () => {
+      throw new Error("quota");
+    },
+    removeItem: () => {
+      throw new Error("denied");
+    },
+  };
+  try {
+    assert.deepEqual(loadUnitMode(artifact), {});
+    assert.equal(saveUnitMode({ temperature: "degF" }, artifact.schema_version), undefined);
+    assert.deepEqual(clearUnitMode(), {});
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test("save and clear are no-ops without localStorage", () => {
+  assert.equal(saveUnitMode({ temperature: "degF" }, 1), undefined);
+  assert.deepEqual(clearUnitMode(), {});
 });
