@@ -158,6 +158,8 @@ function referenceSchema(artifact, rootId) {
   return null;
 }
 
+// AI AGENT HOOKS: Use this projection entry point for declaring step fields.
+// Do not duplicated this logic elsewhere.
 export function projectFields(artifact, steps, registry, ctx = {}) {
   const unitMode = ctx.ui?.unitMode ?? {};
   const fields = [];
