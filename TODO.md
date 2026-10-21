@@ -8,9 +8,7 @@
    `batch.whirlpool_ibu_fraction`.
 2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
-3. **User-authored catalog items (CRUD)** — `plans/user-authored-items.md`;
-   local-first (localStorage), Firestore later.
-4. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -29,6 +27,8 @@
 ## Later
 
 * Dry hopping (computed WetHopCard; currently description-only)
+* Realtime cross-tab / multi-device sync (Firestore `onSnapshot`)
+* Offline resilience (IndexedDB write-ahead overlay)
 * Unit scaling (`plans/unit-scaling.md`)
 * Lazy-load seed data (bundle size)
 * Firestore for user-authored items
