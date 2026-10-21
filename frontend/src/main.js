@@ -4,8 +4,29 @@ import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
 import { getIdToken, signInAnonymously, signOut, onAuthStateChanged } from "./firebase.js";
 import * as persistence from "./store/persistence.js";
+import {
+  FREEZE_RAIL_LIMIT,
+  draftBatches,
+  draftSections,
+  formatDate,
+  frozenBatches,
+  recentFreezes,
+  trashedBatches,
+} from "./store/recipeList.js";
 
 setTokenProvider(getIdToken);
+
+// Anchor a fixed-position popover under (or above) its trigger. Fixed
+// positioning keeps menus out of the chooser body's scroll clipping.
+function anchorStyle(event) {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const above = rect.bottom > window.innerHeight / 2;
+  const right = Math.max(0, Math.round(window.innerWidth - rect.right));
+  const vertical = above
+    ? `bottom:${Math.round(window.innerHeight - rect.top + 4)}px`
+    : `top:${Math.round(rect.bottom + 4)}px`;
+  return `right:${right}px; ${vertical}`;
+}
 
 Alpine.store("auth", {
   user: null,
@@ -15,15 +36,50 @@ Alpine.store("auth", {
 });
 
 Alpine.store("recipes", {
-  view: "chooser", // "chooser" | "editor"
+  view: "chooser", // "chooser" | "freezes" | "editor"
   trashView: false,
   batches: [],
   activeId: null,
   activeName: "",
   loadError: false,
+  sort: "modified", // "modified" | "title"
+  sortOpen: false,
+  sortMenuStyle: "",
+  rowMenu: null,
+  rowMenuStyle: "",
+  renamingId: null,
+  renameValue: "",
 
   get visible() {
     return this.batches.filter((b) => (b.trashed ?? false) === this.trashView);
+  },
+
+  get drafts() {
+    return draftBatches(this.batches);
+  },
+
+  get freezes() {
+    return frozenBatches(this.batches);
+  },
+
+  get recentFreezeRail() {
+    return recentFreezes(this.batches, FREEZE_RAIL_LIMIT);
+  },
+
+  get sections() {
+    return draftSections(this.batches, { sort: this.sort });
+  },
+
+  get trashRows() {
+    return trashedBatches(this.batches);
+  },
+
+  get sortLabel() {
+    return this.sort === "title" ? "Title" : "Last modified";
+  },
+
+  dateLabel(seconds) {
+    return formatDate(seconds);
   },
 
   syncActive() {
@@ -35,6 +91,7 @@ Alpine.store("recipes", {
   async refresh() {
     this.batches = await persistence.list();
     this.loadError = false;
+    this.rowMenu = null;
     this.syncActive();
   },
 
@@ -44,6 +101,89 @@ Alpine.store("recipes", {
     } catch {
       this.loadError = true;
     }
+  },
+
+  toggleSort(event) {
+    this.closeRowMenu();
+    if (this.sortOpen) {
+      this.sortOpen = false;
+      return;
+    }
+    this.sortMenuStyle = anchorStyle(event);
+    this.sortOpen = true;
+  },
+
+  closeSort() {
+    this.sortOpen = false;
+  },
+
+  setSort(sort) {
+    if (sort === "modified" || sort === "title") this.sort = sort;
+    this.sortOpen = false;
+  },
+
+  openRowMenu(batch, event) {
+    this.sortOpen = false;
+    this.rowMenuStyle = anchorStyle(event);
+    this.rowMenu = batch;
+  },
+
+  closeRowMenu() {
+    this.rowMenu = null;
+  },
+
+  async forkRow() {
+    const batch = this.rowMenu;
+    this.closeRowMenu();
+    if (batch) await this.forkFrozen(batch.id);
+  },
+
+  beginRename(batch) {
+    this.closeRowMenu();
+    this.renamingId = batch.id;
+    this.renameValue = batch.name;
+  },
+
+  startRename() {
+    const batch = this.rowMenu;
+    this.closeRowMenu();
+    if (batch) this.beginRename(batch);
+  },
+
+  cancelRename() {
+    this.renamingId = null;
+  },
+
+  async commitRename(batch) {
+    if (this.renamingId !== batch.id) return;
+    const name = this.renameValue.trim();
+    this.renamingId = null;
+    if (!name || name === batch.name) return;
+    try {
+      await persistence.renameBatch(batch.id, name);
+      await this.refresh();
+    } catch (err) {
+      console.error("rename failed", err);
+    }
+  },
+
+  async trashRow() {
+    const batch = this.rowMenu;
+    this.closeRowMenu();
+    if (!batch) return;
+    try {
+      await persistence.trashBatch(batch.id);
+      await this.refresh();
+    } catch (err) {
+      console.error("trash failed", err);
+    }
+  },
+
+  showFreezes() {
+    this.closeRowMenu();
+    this.closeSort();
+    this.trashView = false;
+    this.view = "freezes";
   },
 
   async newRecipe() {
@@ -85,6 +225,9 @@ Alpine.store("recipes", {
   async backToChooser() {
     await persistence.flushSave();
     await this.refresh();
+    this.renamingId = null;
+    this.sortOpen = false;
+    this.trashView = false;
     this.view = "chooser";
     this.syncActive();
   },
@@ -92,6 +235,8 @@ Alpine.store("recipes", {
   async openTrash() {
     await persistence.flushSave();
     await this.refresh();
+    this.renamingId = null;
+    this.sortOpen = false;
     this.trashView = true;
     this.view = "chooser";
     this.syncActive();
@@ -141,6 +286,9 @@ async function applyAuth(user) {
     recipes.activeName = "";
     recipes.view = "chooser";
     recipes.trashView = false;
+    recipes.sortOpen = false;
+    recipes.rowMenu = null;
+    recipes.renamingId = null;
     auth.user = null;
     auth.loading = false;
     return;
