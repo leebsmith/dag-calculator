@@ -1,16 +1,14 @@
 // Pure list shaping for the recipe landing page. No DOM, no store state — the
 // store composes these helpers so the partition/sort rules stay testable.
 
+import { formatDate } from "../utils.js";
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const RECENT_WINDOW_DAYS = 30;
 export const FREEZE_RAIL_LIMIT = 6;
 
-const DEFAULT_DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-});
+export { formatDate };
 
 function updatedMs(batch) {
   return typeof batch?.updated_at === "number" ? batch.updated_at * 1000 : 0;
@@ -83,18 +81,4 @@ export function draftSections(
     { key: "recent", label: `Last ${windowDays} days`, batches: sortBatches(recent, sort) },
     { key: "older", label: "Older", batches: sortBatches(older, sort) },
   ].filter((section) => section.batches.length);
-}
-
-export function formatDate(seconds, { locale, timeZone } = {}) {
-  if (typeof seconds !== "number" || !Number.isFinite(seconds)) return "—";
-  const formatter =
-    locale || timeZone
-      ? new Intl.DateTimeFormat(locale, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          ...(timeZone ? { timeZone } : {}),
-        })
-      : DEFAULT_DATE_FORMAT;
-  return formatter.format(new Date(seconds * 1000));
 }

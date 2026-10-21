@@ -42,7 +42,7 @@
                 <tr>
                   <td x-text="restName(rest.rest_id)"></td>
                   <td class="text-xs text-muted tabular-nums">
-                    <span x-text="getRestDefinition(rest.rest_id) && getRestDefinition(rest.rest_id).temp_min_c != null ? restBoundDisplay(rest.rest_id, 'min') : '—'"></span>
+                    <span x-text="fmt.displayOrDash(restBoundDisplay(rest.rest_id, 'min'))"></span>
                   </td>
                   <td>
                     <template x-if="rest.rest_id === 'dough_in'">
@@ -72,7 +72,7 @@
                     </template>
                   </td>
                   <td class="text-xs text-muted tabular-nums">
-                    <span x-text="getRestDefinition(rest.rest_id) && getRestDefinition(rest.rest_id).temp_max_c != null ? restBoundDisplay(rest.rest_id, 'max') : '—'"></span>
+                    <span x-text="fmt.displayOrDash(restBoundDisplay(rest.rest_id, 'max'))"></span>
                   </td>
                   <td>
                     <input

@@ -2,6 +2,7 @@
 // violations onto their owning slices, and refreshes the card readouts.
 
 import { produce } from "../views/producer.js";
+import { indexFields } from "../utils.js";
 import { refreshYeastCard } from "./cards/yeast.js";
 import { refreshStyleCard } from "./cards/style.js";
 import { refreshHopCard } from "./cards/hops.js";
@@ -59,6 +60,7 @@ export function createStepView({
     app.fieldsBySlice = Object.fromEntries(
       steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
     );
+    app.fieldsById = indexFields(all);
     app.relations = safe(() => engine.relationStates());
     app.domains = safe(() => engine.domainStates());
     app.fieldDomains = fieldDomains;

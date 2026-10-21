@@ -12,7 +12,7 @@ const SEEDS = {
   },
 };
 
-function setup({ canAdd = null } = {}) {
+function setup({ canAdd = null, ...extra } = {}) {
   const calls = [];
   const app = {
     draftRows: [],
@@ -61,6 +61,7 @@ function setup({ canAdd = null } = {}) {
       makeRow: (malt) => ({ catalog_id: malt.id, name: malt.name, parts: 10, pct: 0 }),
       maxVisible: 2,
       canAdd,
+      ...extra,
     }
   );
 
@@ -290,4 +291,22 @@ test("activeRow resolves the inspected draft row", () => {
 
   app.maltActiveIndex = 9;
   assert.equal(app.maltActiveRow, null);
+});
+
+test("itemMeta and groupMeta compose supplier strings from parts", () => {
+  const { app } = setup({
+    itemMeta: (item) => [item.category, item.name],
+    groupMeta: (group) => [group.description, `${group.count} malts`],
+  });
+
+  assert.equal(app.maltItemMeta(SEEDS.malts.pils), "BASE • Pilsner");
+  assert.equal(app.maltItemMeta({}), "");
+  assert.equal(app.maltItemMeta(undefined), "");
+
+  const group = app.maltStandardGroups[0];
+  assert.equal(app.maltGroupMeta(group), `${group.description} · ${group.count} malts`);
+
+  const { app: bare } = setup();
+  assert.equal(bare.maltItemMeta(SEEDS.malts.pils), "");
+  assert.equal(bare.maltGroupMeta(group), "");
 });

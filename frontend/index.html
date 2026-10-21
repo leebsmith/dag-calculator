@@ -63,7 +63,7 @@
                     type="button"
                     class="btn-outline"
                     x-show="$store.recipes.trashView"
-                    @click="$store.recipes.trashView = false"
+                    @click="$store.recipes.showRecipes()"
                   >
                     Back to recipes
                   </button>
@@ -131,7 +131,7 @@
                                       class="landing-rename"
                                       type="text"
                                       :value="$store.recipes.renameValue"
-                                      @input="$store.recipes.renameValue = $event.target.value"
+                                      @input="$store.recipes.setRenameValue($event.target.value)"
                                       @keydown.enter.prevent="$store.recipes.commitRename(b)"
                                       @keydown.escape.prevent="$store.recipes.cancelRename()"
                                       @blur="$store.recipes.commitRename(b)"
@@ -279,7 +279,7 @@
                                               class="landing-rename"
                                               type="text"
                                               :value="$store.recipes.renameValue"
-                                              @input="$store.recipes.renameValue = $event.target.value"
+                                              @input="$store.recipes.setRenameValue($event.target.value)"
                                               @keydown.enter.prevent="$store.recipes.commitRename(b)"
                                               @keydown.escape.prevent="$store.recipes.cancelRename()"
                                               @blur="$store.recipes.commitRename(b)"
@@ -417,7 +417,7 @@
                   <button type="button" class="btn-outline" @click="openLibrary()">Library</button>
                   <div class="menu-unit">
                     <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
-                    <div class="unit-popover" x-show="unitsOpen" @click.outside="unitsOpen = false">
+                    <div class="unit-popover" x-show="unitsOpen" @click.outside="closeUnits()">
                       <div class="unit-cols">
                         <template x-for="g in unitGroups" :key="g.label">
                           <div class="unit-col">

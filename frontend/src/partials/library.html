@@ -73,7 +73,7 @@
           <div class="form-group">
             <label
               class="form-label text-xs"
-              x-text="f.symbol ? f.label + ' (' + f.symbol + ')' : f.label"
+              x-text="fmt.formatFieldLabel(f.label, f.symbol)"
             ></label>
             <template x-if="f.kind === 'select'">
               <select

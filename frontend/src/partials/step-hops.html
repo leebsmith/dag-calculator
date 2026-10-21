@@ -74,14 +74,14 @@
         <span class="text-xs text-muted">Boil IBU target</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="boilIbuField ? boilIbuField.display + ' ' + (boilIbuField.unit ?? 'IBU') : '—'"
+          x-text="fmt.formatQuantity(boilIbuField, { fallbackUnit: 'IBU' })"
         ></span>
       </div>
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Whirlpool IBU target</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="whirlpoolIbuField ? whirlpoolIbuField.display + ' ' + (whirlpoolIbuField.unit ?? 'IBU') : '—'"
+          x-text="fmt.formatQuantity(whirlpoolIbuField, { fallbackUnit: 'IBU' })"
         ></span>
       </div>
       <div class="grain-bill-summary-item">

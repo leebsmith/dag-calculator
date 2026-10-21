@@ -44,7 +44,7 @@
                 <span
                   class="table-pct-value"
                   :class="{ 'is-trace': maltIsTrace(row) }"
-                  x-text="(row.pct * 100).toFixed(1) + '%'"
+                  x-text="fmt.formatPercent(row.pct)"
                 ></span>
               </td>
             </tr>
@@ -65,14 +65,14 @@
         <span class="text-xs text-muted">Weighted grist color</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="maltWeightedColor ? maltWeightedColor.display + ' ' + (maltWeightedColor.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(maltWeightedColor)"
         ></span>
       </div>
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Weighted extract yield</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="maltWeightedYield ? maltWeightedYield.display + (maltWeightedYield.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(maltWeightedYield)"
         ></span>
       </div>
     </div>
@@ -92,7 +92,7 @@
           <thead>
             <tr>
               <template x-for="c in traceMaltField.columns" :key="c.id">
-                <th :class="c.dimension ? 'text-right' : ''" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                <th :class="c.dimension ? 'text-right' : ''" x-text="fmt.formatColumnHeader(c)"></th>
               </template>
             </tr>
           </thead>
@@ -121,14 +121,14 @@
         <span class="text-xs text-muted">Total trace mass</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="traceMassField ? traceMassField.display + ' ' + (traceMassField.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(traceMassField)"
         ></span>
       </div>
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Weighted trace color</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="traceColorField ? traceColorField.display + ' ' + (traceColorField.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(traceColorField)"
         ></span>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { displayValue, nonlinearFns, resolveCollectionColumns } from "../views/p
 import { registry, steps } from "../views/steps.js";
 import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
+import { formatWithDecimals, preferredUnit, unitSymbol } from "../utils.js";
 
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
@@ -41,7 +42,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
         total,
         nonlinearFns(artifact, session.getEngine())
       );
-      const shown = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
+      const shown = formatWithDecimals(v, col.decimals);
       return `${shown}${col.unit ? " " + col.unit : ""}`;
     },
 
@@ -127,14 +128,17 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     // (Lovibond). The malt/trace inspectors bind to these instead of the raw
     // color_lovibond value, mirroring the collection grids' unit handling.
     colorUnit() {
-      const unitId = this.unitMode.grain_color ?? "EBC";
-      return UNIT_SYMBOLS.grain_color?.[unitId] ?? unitId;
+      const unitId = this.grainColorUnit();
+      return unitSymbol(UNIT_SYMBOLS, "grain_color", unitId) ?? unitId;
+    },
+
+    grainColorUnit() {
+      return preferredUnit(this.unitMode, "grain_color", "EBC");
     },
 
     colorDisplay(value) {
       if (typeof value !== "number" || !Number.isFinite(value)) return "";
-      const unitId = this.unitMode.grain_color ?? "EBC";
-      return Math.round(displayValue(artifact, "grain_color", unitId, value) * 10) / 10;
+      return Math.round(displayValue(artifact, "grain_color", this.grainColorUnit(), value) * 10) / 10;
     },
 
     setColorField(ri, value) {
@@ -142,10 +146,11 @@ export function installDraftEditor(app, { artifact, ui, session }) {
         this.patchDraftRow(ri, { color_lovibond: undefined });
         return;
       }
-      const unitId = this.unitMode.grain_color ?? "EBC";
       const n = Number(value);
       this.patchDraftRow(ri, {
-        color_lovibond: Number.isFinite(n) ? toBase(artifact, "grain_color", unitId, n) : 0,
+        color_lovibond: Number.isFinite(n)
+          ? toBase(artifact, "grain_color", this.grainColorUnit(), n)
+          : 0,
       });
     },
   });
@@ -177,7 +182,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
               v = displayValue(artifact, col.dimension, col.displayUnit, v, nl);
             }
             if (typeof v === "number") {
-              v = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
+              v = formatWithDecimals(v, col.decimals);
             }
             out[col.id] = v;
           }

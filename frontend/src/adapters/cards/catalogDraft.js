@@ -18,6 +18,8 @@
 //                  (optional) the standard display fields, used with standardField
 //   makeRow        (catalogItem) => draft row
 //   maxVisible     optional cap (default 25)
+//   itemMeta       optional (catalogItem) => parts[]; joined for the card subtitle
+//   groupMeta      optional (standardGroup) => parts[]; joined for a group row
 //
 // Handlers keep using `this` exactly as the inline methods did, so Alpine's
 // binding and the direct-call tests behave unchanged. Getters are installed with
@@ -25,6 +27,7 @@
 
 import { catalogCategories, familyOptions, filterCatalog, standardGroups } from "../../views/catalog.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
+import { joinNonEmpty } from "../../utils.js";
 
 export function installCatalogDraft(app, ctx, config) {
   const {
@@ -41,6 +44,8 @@ export function installCatalogDraft(app, ctx, config) {
     makeRow,
     maxVisible = 25,
     canAdd = null,
+    itemMeta = null,
+    groupMeta = null,
   } = config;
   const seeds = ctx.cache.seeds ?? {};
   const catalog = () => Object.values(seeds[seedKey] ?? {});
@@ -143,6 +148,16 @@ export function installCatalogDraft(app, ctx, config) {
       if (!this[`${prefix}EditorOpen`]) return;
       if (this[`${prefix}Drawer`] !== null) this[`close${Cap}Drawer`]();
       else this[`cancel${Cap}Editor`]();
+    },
+
+    [`${prefix}ItemMeta`](item) {
+      if (!itemMeta || !item || typeof item !== "object") return "";
+      return joinNonEmpty(itemMeta(item));
+    },
+
+    [`${prefix}GroupMeta`](group) {
+      if (!groupMeta || !group || typeof group !== "object") return "";
+      return joinNonEmpty(groupMeta(group), " · ");
     },
   };
 

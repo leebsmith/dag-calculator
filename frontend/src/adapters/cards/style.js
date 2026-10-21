@@ -20,8 +20,33 @@ import {
 import { derivationsFor } from "../../views/seedDerivations.js";
 import { styleConformance } from "../../engine/styleConformance.js";
 import { STYLE_NODES as N } from "../../views/registry/style.js";
+import {
+  bitternessRatio,
+  boundsOf,
+  fieldOr,
+  formatGravity,
+  formatGravityRange,
+  formatWithDecimals,
+  provenanceFor,
+  resultCounter,
+  toggleFilter,
+} from "../../utils.js";
 
 const MAX_VISIBLE_STYLES = 25;
+
+// Envelope inputs, in display order, with their authored step size.
+const ENVELOPE_INPUTS = [
+  { id: N.envelope.ogMin, step: "0.001" },
+  { id: N.envelope.ogMax, step: "0.001" },
+  { id: N.envelope.fgMin, step: "0.001" },
+  { id: N.envelope.fgMax, step: "0.001" },
+  { id: N.envelope.ibuMin, step: "1" },
+  { id: N.envelope.ibuMax, step: "1" },
+  { id: N.envelope.srmMin, step: "1" },
+  { id: N.envelope.srmMax, step: "1" },
+  { id: N.envelope.abvMin, step: "0.1" },
+  { id: N.envelope.abvMax, step: "0.1" },
+];
 
 function styleStrength(style) {
   const tags = styleTagSet(style);
@@ -72,8 +97,26 @@ export function registerStyleCard(app, ctx) {
     },
 
     styleGravity(s, field) {
-      const v = s?.[field];
-      return typeof v === "number" ? v.toFixed(3) : "";
+      return formatGravity(s?.[field]);
+    },
+
+    styleVitals(s) {
+      return `${formatGravityRange(s?.og_min, s?.og_max)} / ${formatGravityRange(
+        s?.fg_min,
+        s?.fg_max
+      )}`;
+    },
+
+    toggleStyleStrength(value) {
+      this.styleStrengthFilter = toggleFilter(this.styleStrengthFilter, value);
+    },
+
+    toggleStyleColor(value) {
+      this.styleColorFilter = toggleFilter(this.styleColorFilter, value);
+    },
+
+    toggleStyleFermentation(value) {
+      this.styleFermentationFilter = toggleFilter(this.styleFermentationFilter, value);
     },
 
     selectStyle(id) {
@@ -102,7 +145,7 @@ export function registerStyleCard(app, ctx) {
     },
 
     styleField(id) {
-      return (this.fieldsBySlice.style ?? []).find((f) => f.id === id) ?? {};
+      return fieldOr(this.fieldsById, id);
     },
 
     // The batch AA / target-ABV roots are the source of truth; the picker's
@@ -169,6 +212,13 @@ export function registerStyleCard(app, ctx) {
     resetStyleTarget() {
       const centroid = this.styleRegion.length >= 3 ? polygonCentroid(this.styleRegion) : null;
       if (centroid) this.applyStyleExtract(centroid[0], centroid[1]);
+    },
+
+    styleTargetNearest() {
+      const nearest = this.styleTargetRisk?.nearest;
+      if (!nearest) return "—";
+      const headroom = formatWithDecimals(nearest.headroom, 3);
+      return `${nearest.label} (${headroom} ${nearest.unit})`;
     },
 
     refreshTargets() {
@@ -399,17 +449,13 @@ export function registerStyleCard(app, ctx) {
     styleSrmBounds: {
       configurable: true,
       get() {
-        const min = Number(this.styleField(N.envelope.srmMin).value);
-        const max = Number(this.styleField(N.envelope.srmMax).value);
-        return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
+        return boundsOf(this.fieldsById, N.envelope.srmMin, N.envelope.srmMax);
       },
     },
     styleIbuBounds: {
       configurable: true,
       get() {
-        const min = Number(this.styleField(N.envelope.ibuMin).value);
-        const max = Number(this.styleField(N.envelope.ibuMax).value);
-        return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
+        return boundsOf(this.fieldsById, N.envelope.ibuMin, N.envelope.ibuMax);
       },
     },
     // The SRM/IBU target roots live on the batch slice, but the style card shows
@@ -418,13 +464,66 @@ export function registerStyleCard(app, ctx) {
     srmTargetField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.targets.srm) ?? null;
+        return this.fieldsById?.[N.targets.srm] ?? null;
       },
     },
     ibuTargetField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.targets.ibu) ?? null;
+        return this.fieldsById?.[N.targets.ibu] ?? null;
+      },
+    },
+    srmTargetProvenance: {
+      configurable: true,
+      get() {
+        return provenanceFor(this.srmTargetField);
+      },
+    },
+    ibuTargetProvenance: {
+      configurable: true,
+      get() {
+        return provenanceFor(this.ibuTargetField);
+      },
+    },
+    fermentationField: {
+      configurable: true,
+      get() {
+        return fieldOr(this.fieldsById, N.fermentation);
+      },
+    },
+    fermentationProvenance: {
+      configurable: true,
+      get() {
+        return provenanceFor(this.fermentationField);
+      },
+    },
+    styleSourceModel: {
+      configurable: true,
+      get() {
+        return fieldOr(this.fieldsById, N.styleSource);
+      },
+    },
+    // Envelope editors, in display order, with resolved field models and seed
+    // provenance so the template stays a dumb x-for.
+    styleEnvelopeFields: {
+      configurable: true,
+      get() {
+        return ENVELOPE_INPUTS.map(({ id, step }) => {
+          const field = fieldOr(this.fieldsById, id);
+          return { id, step, field, provenance: provenanceFor(field) };
+        });
+      },
+    },
+    styleResultLabel: {
+      configurable: true,
+      get() {
+        return resultCounter({
+          shown: this.visibleStyles.length,
+          total: this.styleResultCount,
+          noun: "matching style",
+          truncated: this.isStyleListTruncated,
+          truncatedHint: "refine search",
+        });
       },
     },
     conformanceSummary: {
@@ -433,13 +532,13 @@ export function registerStyleCard(app, ctx) {
         const c = this.styleConformance;
         if (!c || !c.hasBaseline) return null;
         const meta = {
-          og: { label: "Original gravity", fmt: (v) => v.toFixed(3), unit: " SG" },
-          fg: { label: "Final gravity", fmt: (v) => v.toFixed(3), unit: " SG" },
-          abv: { label: "ABV", fmt: (v) => v.toFixed(1), unit: "%" },
-          ibu: { label: "IBU", fmt: (v) => v.toFixed(0), unit: " IBU" },
-          srm: { label: "SRM", fmt: (v) => v.toFixed(0), unit: " SRM" },
-          aa: { label: "Attenuation", fmt: (v) => v.toFixed(1), unit: "%" },
-          bugu: { label: "BU:GU", fmt: (v) => v.toFixed(2), unit: "" },
+          og: { label: "Original gravity", fmt: formatGravity, unit: " SG" },
+          fg: { label: "Final gravity", fmt: formatGravity, unit: " SG" },
+          abv: { label: "ABV", fmt: (v) => formatWithDecimals(v, 1), unit: "%" },
+          ibu: { label: "IBU", fmt: (v) => formatWithDecimals(v, 0), unit: " IBU" },
+          srm: { label: "SRM", fmt: (v) => formatWithDecimals(v, 0), unit: " SRM" },
+          aa: { label: "Attenuation", fmt: (v) => formatWithDecimals(v, 1), unit: "%" },
+          bugu: { label: "BU:GU", fmt: (v) => formatWithDecimals(v, 2), unit: "" },
         };
         const statusLabel = { within: "Within", grace: "Grace", drift: "Drift", severe: "Severe" };
         const dimensions = Object.entries(c.dimensions)
@@ -459,11 +558,7 @@ export function registerStyleCard(app, ctx) {
     ibuGu: {
       configurable: true,
       get() {
-        const og = this.styleTargetInfo?.og;
-        const ibu = this.targetIbu;
-        return typeof og === "number" && og > 1 && typeof ibu === "number"
-          ? ibu / ((og - 1) * 1000)
-          : null;
+        return bitternessRatio(this.targetIbu, this.styleTargetInfo?.og);
       },
     },
     ibuGuDisplay: {

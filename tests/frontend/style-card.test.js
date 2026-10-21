@@ -168,3 +168,48 @@ test("planned IBU/GU uses the target IBU and the planned OG (no solve)", () => {
   assert.ok(Math.abs(app.ibuGu - expected) < 1e-9);
   assert.equal(app.ibuGuDisplay, expected.toFixed(2));
 });
+
+test("fieldsById indexes the projected models and powers the envelope grid", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21A");
+  app.compute();
+
+  assert.equal(app.fieldsById["batch.style_og_min"].id, "batch.style_og_min");
+  assert.equal(app.styleField("batch.fermentation").id, "batch.fermentation");
+
+  const envelope = app.styleEnvelopeFields;
+  assert.equal(envelope.length, 10);
+  assert.deepEqual(
+    envelope.map((row) => row.id),
+    [
+      "batch.style_og_min",
+      "batch.style_og_max",
+      "batch.style_fg_min",
+      "batch.style_fg_max",
+      "batch.style_ibu_min",
+      "batch.style_ibu_max",
+      "batch.style_srm_min",
+      "batch.style_srm_max",
+      "batch.style_abv_min",
+      "batch.style_abv_max",
+    ]
+  );
+  for (const row of envelope) {
+    assert.equal(row.field.id, row.id);
+    assert.equal(typeof row.step, "string");
+    assert.equal(typeof row.provenance.showSeed, "boolean");
+  }
+  const label = app.styleResultLabel;
+  assert.match(label, /^Showing \d+( of \d+)? matching styles/);
+  assert.equal(
+    label,
+    `Showing ${app.visibleStyles.length} of ${app.styleResultCount} matching styles — refine search`
+  );
+});
+
+test("utils namespace is exposed to templates", () => {
+  const app = createStepApp();
+  assert.equal(typeof app.fmt.formatGravity, "function");
+  assert.equal(app.fmt.formatQuantity({ display: "1.5", unit: "kg" }), "1.5 kg");
+});

@@ -32,6 +32,7 @@ import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
 import { installNavigation } from "./navigation.js";
 import { createStepView } from "./stepView.js";
+import * as fmt from "../utils.js";
 
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
@@ -65,6 +66,7 @@ export function createStepApp(options = {}) {
     master,
     library,
     steps,
+    fmt,
     activeIndex: ui.activeIndex,
     highwater: ui.highwater,
     activeStep: steps[ui.activeIndex],
@@ -79,6 +81,7 @@ export function createStepApp(options = {}) {
     catalogRevision: 0,
     libraryRevision: 0,
     fieldsBySlice: {},
+    fieldsById: {},
     relations: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation

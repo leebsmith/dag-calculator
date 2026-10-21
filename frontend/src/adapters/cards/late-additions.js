@@ -3,6 +3,7 @@
 
 import { installCatalogDraft } from "./catalogDraft.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
+import { formatPercentRounded, formatValueWithUnit, resultCounter } from "../../utils.js";
 
 
 function makeRow(sugar) {
@@ -25,6 +26,10 @@ export function registerLateAdditionsCard(app, ctx) {
     idField: "sugar_id",
     categoryField: null,
     makeRow,
+    itemMeta: (item) => [
+      `Yield ${formatPercentRounded(item.yield_fraction)}`,
+      formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
+    ],
   });
 
   Object.assign(app, {
@@ -77,6 +82,18 @@ export function registerLateAdditionsCard(app, ctx) {
         return this.draftMassDisplay(
           (r) => (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0)
         );
+      },
+    },
+    sugarResultLabel: {
+      configurable: true,
+      get() {
+        return resultCounter({
+          shown: this.sugarVisibleCatalog.length,
+          total: this.sugarFilteredCatalog.length,
+          noun: "sugar",
+          truncated: this.sugarCatalogTruncated,
+          truncatedHint: "refine search",
+        });
       },
     },
   });

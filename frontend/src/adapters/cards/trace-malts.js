@@ -3,6 +3,7 @@
 
 import { installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
+import { countLabel, formatValueWithUnit } from "../../utils.js";
 
 
 function makeRow(malt) {
@@ -30,6 +31,12 @@ export function registerTraceMaltsCard(app, ctx) {
     standardDescriptionField: "generic_description",
     familyField: "family",
     makeRow,
+    itemMeta: (item) => [
+      item.category,
+      formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
+      item.notes,
+    ],
+    groupMeta: (group) => [group.description, countLabel(group.count, "malt")],
   });
 
   Object.assign(app, {

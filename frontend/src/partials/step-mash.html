@@ -59,7 +59,7 @@
                     <span x-text="rest.name"></span>
                   </label>
                 </td>
-                <td class="text-xs text-muted tabular-nums" x-text="restTempRangeDisplay(rest.rest_id) || '—'"></td>
+                <td class="text-xs text-muted tabular-nums" x-text="fmt.displayOrDash(restTempRangeDisplay(rest.rest_id))"></td>
                 <td class="text-xs text-muted" x-text="rest.purpose"></td>
               </tr>
             </template>
@@ -151,7 +151,7 @@
           <template x-if="Number(mashField('mash.strike_water_tun_offset_c').value) > 0">
             <span
               class="text-xs text-muted"
-              x-text="'incl. tun ' + mashField('mash.strike_water_tun_offset_c').display + ' ' + mashField('mash.strike_water_tun_offset_c').unit"
+              x-text="'incl. tun ' + fmt.formatQuantity(mashField('mash.strike_water_tun_offset_c'), { dash: '' })"
             ></span>
           </template>
         </div>

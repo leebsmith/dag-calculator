@@ -3,6 +3,7 @@
 
 import { derivationsFor } from "../../views/seedDerivations.js";
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
+import { resultCounter, toggleFilter } from "../../utils.js";
 
 const MAX_VISIBLE = 25;
 
@@ -51,6 +52,10 @@ export function registerYeastCard(app, ctx) {
       this.pickSelection(N.selection, "");
       this.scheduleSolve();
       this.notify();
+    },
+
+    toggleYeastAttenuation(value) {
+      this.yeastAttenuationFilter = toggleFilter(this.yeastAttenuationFilter, value);
     },
   });
 
@@ -109,6 +114,18 @@ export function registerYeastCard(app, ctx) {
       configurable: true,
       get() {
         return this.yeastResultCount > MAX_VISIBLE;
+      },
+    },
+    yeastResultLabel: {
+      configurable: true,
+      get() {
+        return resultCounter({
+          shown: this.visibleYeasts.length,
+          total: this.yeastResultCount,
+          noun: "matching strain",
+          truncated: this.isYeastListTruncated,
+          truncatedHint: "refine search or filters",
+        });
       },
     },
     selectedYeast: {

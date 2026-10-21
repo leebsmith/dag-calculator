@@ -33,7 +33,7 @@
             <thead>
               <tr>
                 <template x-for="c in draftColumns" :key="c.id">
-                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="fmt.formatColumnHeader(c)"></th>
                 </template>
                 <th class="text-right">Actions</th>
               </tr>
@@ -149,7 +149,7 @@
                         <div class="catalog-item-name" x-text="g.name"></div>
                         <div
                           class="catalog-item-meta"
-                          x-text="g.description + ' · ' + g.count + (g.count === 1 ? ' malt' : ' malts')"
+                          x-text="traceGroupMeta(g)"
                         ></div>
                       </div>
                       <span class="catalog-item-chevron" aria-hidden="true">›</span>
@@ -181,7 +181,7 @@
                         </div>
                         <div
                           class="catalog-item-meta"
-                          x-text="item.category + ' • ' + item.color_lovibond + ' °L' + (item.notes ? ' • ' + item.notes : '')"
+                          x-text="traceItemMeta(item)"
                         ></div>
                       </div>
                       <div class="catalog-item-actions">
@@ -245,7 +245,7 @@
                       min="0"
                       max="100"
                       class="form-input text-xs"
-                      :value="(traceActiveRow.yield_fraction * 100).toFixed(0)"
+                      :value="fmt.toPercentValue(traceActiveRow.yield_fraction, 0)"
                       @input="setMaltField(traceActiveIndex, 'yield_fraction', $event.target.value, 0.01)"
                     />
                   </div>

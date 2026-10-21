@@ -9,7 +9,7 @@
       <template x-if="f.control === 'number'">
         <div>
           <label class="form-label" :for="f.id">
-            <span x-text="f.label + (!f.toggleable && f.unit ? ' (' + f.unit + ')' : '')"></span>
+            <span x-text="fmt.formatFieldLabel(f.label, f.toggleable ? null : f.unit)"></span>
             <button
               type="button"
               class="unit-badge"
@@ -87,7 +87,7 @@
       <template x-if="f.control === 'readout'">
         <div>
           <span class="form-label">
-            <span x-text="f.label + (!f.toggleable && f.unit ? ' (' + f.unit + ')' : '')"></span>
+            <span x-text="fmt.formatFieldLabel(f.label, f.toggleable ? null : f.unit)"></span>
             <button
               type="button"
               class="unit-badge"
@@ -134,7 +134,7 @@
                         </template>
                         <template x-if="c.id === f.columns[f.columns.length - 1].id">
                           <div class="text-xs text-muted" x-show="row.hint" x-text="'(' + row.hint + ')'"></div>
-                          <div class="text-xs text-muted" x-show="row.note && row.note.show" x-text="'(' + row.note.label + ': ' + row.note.display + (row.note.unit ? ' ' + row.note.unit : '') + ')'"></div>
+                          <div class="text-xs text-muted" x-show="row.note && row.note.show" x-text="'(' + row.note.label + ': ' + fmt.formatQuantity(row.note, { dash: '' }) + ')'"></div>
                         </template>
                       </td>
                     </template>
@@ -154,7 +154,7 @@
               <thead>
                 <tr>
                   <template x-for="c in f.columns" :key="c.id">
-                    <th x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                    <th x-text="fmt.formatColumnHeader(c)"></th>
                   </template>
                   <th></th>
                 </tr>

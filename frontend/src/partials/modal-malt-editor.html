@@ -46,7 +46,7 @@
               <tr>
                 <template x-for="c in draftColumns" :key="c.id">
                   <th :class="c.id === 'name' || c.id === 'category' ? '' : 'text-right'">
-                    <span x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></span>
+                    <span x-text="fmt.formatColumnHeader(c)"></span>
                   </th>
                 </template>
                 <th class="text-right">Actions</th>
@@ -115,7 +115,7 @@
               <tr>
                 <td :colspan="draftColumns.length + 1" class="tabular-nums">
                   <span class="font-bold">Totals:</span>
-                  <span x-text="' ' + maltTotalParts.toFixed(1) + ' parts · ' + (maltTotalPct * 100).toFixed(1) + '%'"></span>
+                  <span x-text="maltDraftTotals"></span>
                 </td>
               </tr>
             </tfoot>
@@ -179,7 +179,7 @@
                         <div class="catalog-item-name" x-text="g.name"></div>
                         <div
                           class="catalog-item-meta"
-                          x-text="g.description + ' · ' + g.count + (g.count === 1 ? ' malt' : ' malts')"
+                          x-text="maltGroupMeta(g)"
                         ></div>
                       </div>
                       <span class="catalog-item-chevron" aria-hidden="true">›</span>
@@ -211,7 +211,7 @@
                         </div>
                         <div
                           class="catalog-item-meta"
-                          x-text="item.category + ' • ' + item.color_lovibond + ' °L' + (item.notes ? ' • ' + item.notes : '')"
+                          x-text="maltItemMeta(item)"
                         ></div>
                       </div>
                       <div class="catalog-item-actions">
@@ -276,7 +276,7 @@
                       min="0"
                       max="100"
                       class="form-input text-xs"
-                      :value="(maltActiveRow.yield_fraction * 100).toFixed(0)"
+                      :value="fmt.toPercentValue(maltActiveRow.yield_fraction, 0)"
                       @input="setMaltField(maltActiveIndex, 'yield_fraction', $event.target.value, 0.01)"
                     />
                   </div>

@@ -33,7 +33,7 @@
             <thead>
               <tr>
                 <template x-for="c in draftColumns" :key="c.id">
-                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="fmt.formatColumnHeader(c)"></th>
                 </template>
                 <th class="text-right">Actions</th>
               </tr>
@@ -114,9 +114,7 @@
               <div
                 class="catalog-result-counter text-xs"
                 aria-live="polite"
-                x-text="sugarCatalogTruncated
-                  ? `Showing ${sugarVisibleCatalog.length} of ${sugarFilteredCatalog.length} sugars — refine search`
-                  : `Showing ${sugarFilteredCatalog.length} sugars`"
+                x-text="sugarResultLabel"
               ></div>
             </div>
             <div class="catalog-drawer-list">
@@ -131,7 +129,7 @@
                     </div>
                     <div
                       class="catalog-item-meta"
-                      x-text="'Yield ' + Math.round(item.yield_fraction * 100) + '% • ' + item.color_lovibond + ' °L'"
+                      x-text="sugarItemMeta(item)"
                     ></div>
                   </div>
                   <div class="catalog-item-actions">

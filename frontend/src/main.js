@@ -168,6 +168,10 @@ Alpine.store("recipes", {
     this.renamingId = null;
   },
 
+  setRenameValue(value) {
+    this.renameValue = value;
+  },
+
   async commitRename(batch) {
     if (this.renamingId !== batch.id) return;
     const name = this.renameValue.trim();
@@ -198,6 +202,10 @@ Alpine.store("recipes", {
     this.closeSort();
     this.trashView = false;
     this.view = "freezes";
+  },
+
+  showRecipes() {
+    this.trashView = false;
   },
 
   async newRecipe() {

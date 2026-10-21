@@ -6,6 +6,9 @@ import { massFromIbu } from "../../views/hops.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
 import { HOP_NODES as N } from "../../views/registry/hops.js";
+import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
+
+const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 
 const MAX_VISIBLE = 25;
 
@@ -58,6 +61,13 @@ export function registerHopCard(app, ctx) {
     categoryField: "purpose",
     makeRow,
     maxVisible: MAX_VISIBLE,
+    itemMeta: (item) => [
+      item.purpose || "Hop",
+      isFiniteNumber(item.alpha_acid_pct)
+        ? `${formatPercent(item.alpha_acid_pct)} alpha`
+        : "alpha n/a",
+      item.origin,
+    ],
   });
 
   const { engine, artifact } = ctx;
@@ -78,9 +88,7 @@ export function registerHopCard(app, ctx) {
     hopMassUnit: "oz",
 
     toggleHopMassUnit() {
-      const units = ["oz", "g", "lb", "kg"];
-      const index = units.indexOf(this.hopMassUnit);
-      this.hopMassUnit = units[(index + 1) % units.length];
+      this.hopMassUnit = cycleUnit(HOP_MASS_UNITS, this.hopMassUnit);
     },
 
     hopMass(row) {
@@ -131,6 +139,25 @@ export function registerHopCard(app, ctx) {
       configurable: true,
       get() {
         return (this.draftRows ?? []).reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+      },
+    },
+    hopDraftSummary: {
+      configurable: true,
+      get() {
+        const additions = countLabel(this.draftRows.length, "addition");
+        return `${additions} · ${formatWithDecimals(this.hopDraftPartsTotal, 1)} parts`;
+      },
+    },
+    hopResultLabel: {
+      configurable: true,
+      get() {
+        return resultCounter({
+          shown: this.hopVisibleCatalog.length,
+          total: this.hopFilteredCatalog.length,
+          noun: "hop",
+          truncated: this.hopCatalogTruncated,
+          truncatedHint: "refine search or purpose filters",
+        });
       },
     },
     hopTotalMassDisplay: {

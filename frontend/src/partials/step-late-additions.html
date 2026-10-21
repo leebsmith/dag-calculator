@@ -19,7 +19,7 @@
           <thead>
             <tr>
               <template x-for="c in lateSugarField.columns" :key="c.id">
-                <th :class="c.dimension ? 'text-right' : ''" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                <th :class="c.dimension ? 'text-right' : ''" x-text="fmt.formatColumnHeader(c)"></th>
               </template>
             </tr>
           </thead>
@@ -48,21 +48,21 @@
         <span class="text-xs text-muted">Total sugar mass</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="sugarMassField ? sugarMassField.display + ' ' + (sugarMassField.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(sugarMassField)"
         ></span>
       </div>
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Weighted sugar color</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="sugarColorField ? sugarColorField.display + ' ' + (sugarColorField.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(sugarColorField)"
         ></span>
       </div>
       <div class="grain-bill-summary-item">
         <span class="text-xs text-muted">Late extract</span>
         <span
           class="text-base font-bold tabular-nums"
-          x-text="lateExtractField ? lateExtractField.display + ' ' + (lateExtractField.unit ?? '') : '—'"
+          x-text="fmt.formatQuantity(lateExtractField)"
         ></span>
       </div>
     </div>

@@ -46,5 +46,9 @@ export function installUnitActions(app, { artifact, ui }) {
     toggleUnits() {
       this.unitsOpen = !this.unitsOpen;
     },
+
+    closeUnits() {
+      this.unitsOpen = false;
+    },
   });
 }

@@ -11,7 +11,7 @@
         <h2 class="modal-workspace-title">Hop Schedule Editor</h2>
         <span
           class="status-badge badge-info text-xs"
-          x-text="draftRows.length + ' additions · ' + hopDraftPartsTotal.toFixed(1) + ' parts'"
+          x-text="hopDraftSummary"
         ></span>
       </div>
       <div class="modal-workspace-header-actions">
@@ -36,7 +36,7 @@
             <thead>
               <tr>
                 <template x-for="c in draftColumns" :key="c.id">
-                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"></th>
+                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="fmt.formatColumnHeader(c)"></th>
                 </template>
                 <th class="text-right">Actions</th>
               </tr>
@@ -88,7 +88,7 @@
               <tr>
                 <td :colspan="draftColumns.length + 1" class="tabular-nums">
                   <span class="font-bold">Total parts:</span>
-                  <span x-text="' ' + hopDraftPartsTotal.toFixed(1)"></span>
+                  <span x-text="fmt.formatWithDecimals(hopDraftPartsTotal, 1)"></span>
                 </td>
               </tr>
             </tfoot>
@@ -133,9 +133,7 @@
                 <div
                   class="catalog-result-counter text-xs"
                   aria-live="polite"
-                  x-text="hopCatalogTruncated
-                    ? `Showing ${hopVisibleCatalog.length} of ${hopFilteredCatalog.length} hops — refine search or purpose filters`
-                    : `Showing ${hopFilteredCatalog.length} hops`"
+                  x-text="hopResultLabel"
                 ></div>
               </div>
               <div class="catalog-drawer-list">
@@ -150,7 +148,7 @@
                       </div>
                       <div
                         class="catalog-item-meta"
-                        x-text="(item.purpose || 'Hop') + ' • ' + (typeof item.alpha_acid_pct === 'number' ? (item.alpha_acid_pct * 100).toFixed(1) + '% alpha' : 'alpha n/a') + (item.origin ? ' • ' + item.origin : '')"
+                        x-text="hopItemMeta(item)"
                       ></div>
                     </div>
                     <div class="catalog-item-actions">
@@ -196,7 +194,7 @@
                     min="0"
                     max="100"
                     class="form-input text-xs"
-                    :value="(hopActiveRow.alpha_acid_pct * 100).toFixed(1)"
+                    :value="fmt.toPercentValue(hopActiveRow.alpha_acid_pct, 1)"
                     @input="setMaltField(hopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
                   />
                   <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
