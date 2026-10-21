@@ -56,16 +56,16 @@ export function presentationFor(id) {
   return FIELD_OVERRIDES[id] ?? null;
 }
 
-export function applyPresentation(out, rule, engine, formatValue) {
+export function applyPresentation(out, rule, readers, formatValue) {
   if (rule.switch) {
-    const variant = rule.switch.cases[engine.get(rule.switch.path)] ?? rule.switch.fallback;
+    const variant = rule.switch.cases[readers.get(rule.switch.path)] ?? rule.switch.fallback;
     Object.assign(out, variant);
     if (variant.rawDisplay) out.display = formatValue(out.value);
   }
   if (rule.hint) {
     let value;
     try {
-      value = engine.resolve(rule.hint.path);
+      value = readers.resolve(rule.hint.path);
     } catch {
       value = null;
     }
