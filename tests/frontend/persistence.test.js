@@ -28,6 +28,7 @@ function fakeClient() {
         trashed: false,
         roots: payload.roots ?? {},
         collections: payload.collections ?? {},
+        provenance: payload.provenance ?? {},
         schema_version: payload.schema_version ?? 2,
         updated_at: clock++,
       };
@@ -54,8 +55,8 @@ function fakeClient() {
       calls.push({ op: "delete", id });
       docs.delete(id);
     },
-    async freezeBatch() {
-      calls.push({ op: "freeze" });
+    async freezeBatch(id, payload) {
+      calls.push({ op: "freeze", id, payload });
     },
   };
 }
@@ -168,3 +169,151 @@ test("stale baseline conflicts then re-hydrates from remote", async () => {
   assert.equal(persistence.getActive().updated_at, baseline + 1);
   assert.deepEqual(app.loaded.roots, { "mash.grain_temp_c": 30 });
 });
+
+test("open hydrates the active batch and loads its state", async () => {
+  const { client, app } = setup();
+  const stored = await client.upsertBatch("b1", {
+    name: "Stored",
+    roots: { "mash.grain_temp_c": 18 },
+    collections: { "grist.major_malts": [] },
+    schema_version: 3,
+  });
+
+  const opened = await persistence.open("b1");
+
+  assert.equal(opened.id, "b1");
+  assert.deepEqual(persistence.getActive(), {
+    id: "b1",
+    name: "Stored",
+    status: "draft",
+    trashed: false,
+    persisted: true,
+    updated_at: stored.updated_at,
+  });
+  assert.deepEqual(app.loaded, { roots: { "mash.grain_temp_c": 18 }, collections: { "grist.major_malts": [] } });
+});
+
+test("open propagates a missing batch instead of inventing one", async () => {
+  setup();
+  await assert.rejects(() => persistence.open("missing"), /not found/);
+  assert.equal(persistence.getActive(), null);
+});
+
+test("fork copies the frozen batch into a new draft with lineage", async () => {
+  const { client, app } = setup();
+  await client.upsertBatch("frozen-1", {
+    name: "Saison",
+    roots: { "mash.grain_temp_c": 20 },
+    collections: {},
+    provenance: { "batch.yeast": { source_template_id: "y1", source_revision: "abc" } },
+    schema_version: 3,
+  });
+  client.calls.length = 0;
+
+  const { created, drift } = await persistence.fork("frozen-1");
+
+  assert.deepEqual(drift, []);
+  assert.equal(created.name, "Saison (copy)");
+  assert.equal(created.status, "draft");
+  assert.equal(persistence.getActive().id, created.id);
+  assert.deepEqual(app.loaded, { roots: { "mash.grain_temp_c": 20 }, collections: {} });
+  const upsert = client.calls.find((c) => c.op === "upsert");
+  assert.equal(upsert.id, created.id);
+  assert.equal(upsert.base, undefined);
+});
+
+test("fork reports drift from the frozen provenance", async () => {
+  const { client, app } = setup();
+  const provenance = { "batch.yeast": { source_template_id: "y1", source_revision: "abc" } };
+  await client.upsertBatch("frozen-1", { name: "Old", roots: {}, collections: {}, provenance });
+  app.detectDrift = (seen) => [{ selectionNodeId: "batch.yeast", templateId: seen["batch.yeast"].source_template_id, reason: "changed" }];
+
+  const { drift } = await persistence.fork("frozen-1");
+
+  assert.deepEqual(drift, [{ selectionNodeId: "batch.yeast", templateId: "y1", reason: "changed" }]);
+});
+
+test("driftFor reads the frozen provenance and delegates to the app", async () => {
+  const { client, app } = setup();
+  const provenance = { "batch.yeast": { source_template_id: "y1", source_revision: "abc" } };
+  await client.upsertBatch("frozen-1", { name: "F", roots: {}, collections: {}, provenance });
+  let seen = null;
+  app.detectDrift = (value) => {
+    seen = value;
+    return [];
+  };
+
+  assert.deepEqual(await persistence.driftFor("frozen-1"), []);
+  assert.deepEqual(seen, provenance);
+});
+
+test("freezeActive posts the app's freeze payload, and only for drafts", async () => {
+  const { client } = setup();
+  await persistence.createUntitled();
+  await persistence.flushSave();
+
+  await persistence.freezeActive();
+
+  const freeze = client.calls.find((c) => c.op === "freeze");
+  assert.ok(freeze);
+  assert.deepEqual(freeze.payload, { valuation: {}, provenance: {} });
+
+  persistence.clearActive();
+  await persistence.freezeActive();
+  assert.equal(client.calls.filter((c) => c.op === "freeze").length, 1);
+});
+
+test("list, restore, and deletePermanent delegate to the client", async () => {
+  const { client } = setup();
+  await client.upsertBatch("b1", { name: "A", roots: {}, collections: {} });
+
+  const listed = await persistence.list();
+  assert.deepEqual(listed.map((record) => record.id), ["b1"]);
+
+  client.calls.length = 0;
+  await persistence.restore("b1");
+  await persistence.deletePermanent("b1");
+
+  assert.deepEqual(client.calls, [
+    { op: "trash", id: "b1", trashed: false },
+    { op: "delete", id: "b1" },
+  ]);
+});
+
+test("a failed autosave is reported and leaves the draft dirty", async (t) => {
+  const { client } = setup();
+  await persistence.createUntitled();
+  const errors = [];
+  t.mock.method(console, "error", (message) => errors.push(message));
+  client.upsertBatch = async () => {
+    throw new Error("offline");
+  };
+
+  persistence.queueSave({ delay: 1 });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+
+  assert.deepEqual(errors, ["autosave failed"]);
+  assert.equal(persistence.getActive().persisted, false);
+});
+
+test("a conflict whose re-read fails propagates instead of silently dropping edits", async () => {
+  const { client } = setup();
+  await persistence.createUntitled();
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+  const baseline = persistence.getActive().updated_at;
+
+  client.upsertBatch = async () => {
+    const err = new Error("conflict");
+    err.code = "CONFLICT";
+    throw err;
+  };
+  client.getBatch = async () => {
+    throw new Error("offline");
+  };
+
+  assert.equal(baseline > 0, true);
+  persistence.queueSave({ delay: 60000 });
+  await assert.rejects(() => persistence.flushSave(), /offline/);
+});
+
