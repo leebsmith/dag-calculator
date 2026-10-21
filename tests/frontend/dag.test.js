@@ -97,20 +97,7 @@ test("a non-empty but unknown selection id still throws", () => {
 
 test("default refs are declared graph edges", () => {
   const { adjacency } = buildGraph(loadArtifact());
-  assert.ok(adjacency["water.v_hlt_treat_l"].includes("solver.batch"));
   assert.ok(adjacency["batch.hlt_starting_volume_l"].includes("equipment.profile"));
-});
-
-test("a root default referencing a boundary output tracks it after setRoot", () => {
-  const fixtures = makeFixtures();
-  const boundaries = {
-    batch_sparge_solver: (inputs) => ({ "hlt.v_sparge_deliverable": 10 * inputs.target_abv }),
-    water_chemistry_solver: () => ({}),
-  };
-  const engine = createCalculator(loadArtifact(), { ...fixtures, boundaries });
-  assert.equal(engine.get("water.v_hlt_treat_l"), 55); // 10 * default target_abv (5.5)
-  engine.setRoot("batch.target_abv", 8);
-  assert.equal(engine.get("water.v_hlt_treat_l"), 80); // not stale
 });
 
 test("a root default seeded from a selection tracks the selection after setRoot", () => {

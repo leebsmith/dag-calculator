@@ -29,7 +29,6 @@ BATCH_PINS = [
 
 WATER_PINS = [
     ("BICARBONATE_EQ_WEIGHT", "bicarbonate_eq_weight"),
-    ("DEFAULT_CALCIUM_FLOOR_PPM", "default_calcium_floor_ppm"),
     ("MASH_PH_OPTIMAL_LOW", "mash_ph_optimal_low"),
     ("MASH_PH_OPTIMAL_HIGH", "mash_ph_optimal_high"),
 ]

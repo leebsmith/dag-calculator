@@ -48,6 +48,15 @@ export function createSession({ artifact, cache, master, useHttp = false, select
     },
   };
 
+  function sanitizeRoots(roots) {
+    const out = {};
+    for (const [id, value] of Object.entries(roots ?? {})) {
+      const kind = artifact.nodes[id]?.kind;
+      if (kind === "root" || kind === "choice") out[id] = value;
+    }
+    return out;
+  }
+
   return {
     getEngine() {
       return engine;
@@ -69,14 +78,14 @@ export function createSession({ artifact, cache, master, useHttp = false, select
       engine.invalidate(nodeId);
     },
     rebuild(state = {}) {
-      master.replaceRoots(state.roots ?? {});
+      master.replaceRoots(sanitizeRoots(state.roots));
       collections = { ...cache.collections, ...(state.collections ?? {}) };
       selectionSnapshots = { ...(state.selections ?? {}) };
       engine = build();
       return engine;
     },
     reset(roots = {}) {
-      master.replaceRoots(roots);
+      master.replaceRoots(sanitizeRoots(roots));
       collections = { ...cache.collections };
       selectionSnapshots = {};
       engine = build();

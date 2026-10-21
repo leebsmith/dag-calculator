@@ -19,3 +19,11 @@ test("A4: roots-only master store", () => {
     assert.ok(["root", "choice"].includes(a.nodes[id]?.kind), `store holds non-root "${id}"`);
   }
 });
+
+// A4b: a draft that predates a root→derived migration must not carry the stale
+// key into the store. `water.v_hlt_treat_l` is derived since the water cleanup.
+test("A4b: stale non-root draft keys are filtered on load", async () => {
+  const app = createStepApp();
+  await app.loadState({ roots: { "water.v_hlt_treat_l": 15.0 } });
+  assert.ok(!("water.v_hlt_treat_l" in app.master.allRoots()));
+});

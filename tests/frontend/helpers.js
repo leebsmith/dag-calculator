@@ -2,6 +2,8 @@
 
 import { readFileSync } from "node:fs";
 
+import { BOUNDARY_BUILDERS } from "../../frontend/src/adapters/boundaryRequest.js";
+
 export function loadArtifact() {
   const path = new URL("../../frontend/src/engine/artifact.json", import.meta.url);
   return JSON.parse(readFileSync(path, "utf8"));
@@ -75,6 +77,12 @@ export function waterOutputs() {
     "post_salt_mash_ions.sulfate_so4": 100.0,
     "post_salt_mash_ions.chloride_cl": 50.0,
     "post_salt_mash_ions.alkalinity_as_caco3": 40.0,
+    "post_salt_hlt_ions.calcium_ca": 20.0,
+    "post_salt_hlt_ions.magnesium_mg": 5.0,
+    "post_salt_hlt_ions.sodium_na": 10.0,
+    "post_salt_hlt_ions.sulfate_so4": 30.0,
+    "post_salt_hlt_ions.chloride_cl": 15.0,
+    "post_salt_hlt_ions.alkalinity_as_caco3": 80.0,
     "grist_buckets_kg.BASE": 4.0,
     "grist_buckets_kg.CRYSTAL": 0.7,
     "grist_buckets_kg.ROASTED": 0.0,
@@ -125,5 +133,5 @@ export function makeFixtures() {
     "mash.tun_initial_temp_c": 20.0,
   };
 
-  return { references, collections, boundaries, roots };
+  return { references, collections, boundaries, boundaryRequests: BOUNDARY_BUILDERS, roots };
 }

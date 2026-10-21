@@ -13,26 +13,6 @@ import { styleCentroid, styleFermentation } from "../engine/fermentation.js";
 const mid = (lo, hi) =>
   typeof lo === "number" && typeof hi === "number" ? (lo + hi) / 2 : undefined;
 
-// water.source_report ions — note `alkalinity_as_caco3` reads
-// `total_alkalinity_caco3` from the report (a rename).
-const SOURCE_IONS = {
-  calcium_ca: (r) => r?.calcium_ca,
-  magnesium_mg: (r) => r?.magnesium_mg,
-  sodium_na: (r) => r?.sodium_na,
-  sulfate_so4: (r) => r?.sulfate_so4,
-  chloride_cl: (r) => r?.chloride_cl,
-  alkalinity_as_caco3: (r) => r?.total_alkalinity_caco3,
-};
-
-const TARGET_IONS = {
-  calcium_ca: (r) => r?.calcium_ca,
-  magnesium_mg: (r) => r?.magnesium_mg,
-  sodium_na: (r) => r?.sodium_na,
-  sulfate_so4: (r) => r?.sulfate_so4,
-  chloride_cl: (r) => r?.chloride_cl,
-  alkalinity_as_caco3: (r) => r?.alkalinity_as_caco3,
-};
-
 const STYLE_ENVELOPE = {
   og_min: (s) => s?.og_min,
   og_max: (s) => s?.og_max,
@@ -49,13 +29,6 @@ const STYLE_ENVELOPE = {
 // root id -> [ { selection, derive } ]. A root may have several possible sources
 // (e.g. batch.apparent_attenuation from yeast OR the style centroid).
 export const SEED_DERIVATIONS = {};
-
-for (const [ion, derive] of Object.entries(SOURCE_IONS)) {
-  SEED_DERIVATIONS[`water.source.${ion}`] = [{ selection: "water.source_report", derive }];
-}
-for (const [ion, derive] of Object.entries(TARGET_IONS)) {
-  SEED_DERIVATIONS[`water.target.${ion}`] = [{ selection: "water.target_profile", derive }];
-}
 
 SEED_DERIVATIONS["batch.apparent_attenuation"] = [
   { selection: "batch.yeast", derive: (y) => y?.attenuation_pct },

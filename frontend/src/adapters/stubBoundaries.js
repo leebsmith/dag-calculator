@@ -47,5 +47,11 @@ export const STUB_BOUNDARIES = {
     "sparge_additions.baking_soda_kg": 0.0,
     "sparge_additions.chalk_kg": 0.0,
     "sparge_additions.pickling_lime_kg": 0.0,
+    "post_salt_hlt_ions.calcium_ca": 20.0,
+    "post_salt_hlt_ions.magnesium_mg": 5.0,
+    "post_salt_hlt_ions.sodium_na": 10.0,
+    "post_salt_hlt_ions.sulfate_so4": 30.0,
+    "post_salt_hlt_ions.chloride_cl": 15.0,
+    "post_salt_hlt_ions.alkalinity_as_caco3": 80.0,
   }),
 };

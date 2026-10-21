@@ -313,10 +313,6 @@
       "value": 5.4,
       "dimension": "ph"
     },
-    "default_calcium_floor_ppm": {
-      "value": 50,
-      "dimension": "concentration"
-    },
     "bicarbonate_eq_weight": {
       "value": 61,
       "dimension": "dimensionless"
@@ -455,6 +451,10 @@
       "oz",
       "g",
       "ml"
+    ],
+    "sulfate_chloride_target": [
+      "unspecified",
+      "specified"
     ]
   },
   "functions": {
@@ -1495,6 +1495,8 @@
       "date_reported": {},
       "laboratory": {},
       "sample_id": {},
+      "source_name": {},
+      "location": {},
       "ph": {
         "dimension": "ph",
         "domain": {
@@ -1624,12 +1626,6 @@
       },
       "alkalinity_as_caco3": {
         "dimension": "concentration",
-        "domain": {
-          "gte": 0
-        }
-      },
-      "sulfate_chloride_ratio": {
-        "dimension": "dimensionless",
         "domain": {
           "gte": 0
         }
@@ -1931,6 +1927,19 @@
         "gte": 0
       }
     },
+    "batch.sulfate_chloride_target_mode": {
+      "kind": "choice",
+      "taxonomy": "sulfate_chloride_target",
+      "default": "unspecified"
+    },
+    "batch.sulfate_chloride_target_ratio": {
+      "kind": "root",
+      "dimension": "dimensionless",
+      "default": 1.0,
+      "domain": {
+        "gte": 0
+      }
+    },
     "water.source_report_id": {
       "kind": "root",
       "dimension": "reference",
@@ -1950,102 +1959,6 @@
       "kind": "selection",
       "schema": "water_target",
       "ref": "water.target_profile_id"
-    },
-    "water.source.calcium_ca": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.source.magnesium_mg": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.source.sodium_na": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.source.sulfate_so4": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.source.chloride_cl": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.source.alkalinity_as_caco3": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.target.calcium_ca": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.target.magnesium_mg": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.target.sodium_na": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.target.sulfate_so4": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.target.chloride_cl": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.target.alkalinity_as_caco3": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": 0,
-      "domain": {
-        "gte": 0
-      }
     },
     "water.target_mash_ph": {
       "kind": "root",
@@ -2088,24 +2001,16 @@
       "taxonomy": "alkaline_agent",
       "default": "PICKLING_LIME"
     },
-    "water.calcium_floor_ppm": {
-      "kind": "root",
-      "dimension": "concentration",
-      "default": {
-        "const": "default_calcium_floor_ppm"
-      },
-      "domain": {
-        "gte": 0
-      }
-    },
     "water.v_hlt_treat_l": {
-      "kind": "root",
-      "dimension": "volume",
-      "default": {
-        "ref": "solver.batch.hlt.v_sparge_deliverable"
+      "kind": "derived",
+      "inputs": {
+        "v": "batch.sparge_salted_volume"
       },
-      "domain": {
-        "gte": 0
+      "expr": {
+        "ref": "v"
+      },
+      "output": {
+        "dimension": "volume"
       }
     },
     "grist.major_malts": {
@@ -2450,18 +2355,18 @@
         "grist": "grist.major_malts",
         "trace_malts": "grist.trace_malts",
         "m_grist": "solver.batch.m_grist",
-        "source.calcium_ca": "water.source.calcium_ca",
-        "source.magnesium_mg": "water.source.magnesium_mg",
-        "source.sodium_na": "water.source.sodium_na",
-        "source.sulfate_so4": "water.source.sulfate_so4",
-        "source.chloride_cl": "water.source.chloride_cl",
-        "source.alkalinity_as_caco3": "water.source.alkalinity_as_caco3",
-        "target.calcium_ca": "water.target.calcium_ca",
-        "target.magnesium_mg": "water.target.magnesium_mg",
-        "target.sodium_na": "water.target.sodium_na",
-        "target.sulfate_so4": "water.target.sulfate_so4",
-        "target.chloride_cl": "water.target.chloride_cl",
-        "target.alkalinity_as_caco3": "water.target.alkalinity_as_caco3",
+        "source.calcium_ca": "water.source_report.calcium_ca",
+        "source.magnesium_mg": "water.source_report.magnesium_mg",
+        "source.sodium_na": "water.source_report.sodium_na",
+        "source.sulfate_so4": "water.source_report.sulfate_so4",
+        "source.chloride_cl": "water.source_report.chloride_cl",
+        "source.alkalinity_as_caco3": "water.source_report.total_alkalinity_caco3",
+        "target.calcium_ca": "water.target_profile.calcium_ca",
+        "target.magnesium_mg": "water.target_profile.magnesium_mg",
+        "target.sodium_na": "water.target_profile.sodium_na",
+        "target.sulfate_so4": "water.target_profile.sulfate_so4",
+        "target.chloride_cl": "water.target_profile.chloride_cl",
+        "target.alkalinity_as_caco3": "water.target_profile.alkalinity_as_caco3",
         "v_mash_treat_l": "water.v_mash_treat_l",
         "v_hlt_treat_l": "water.v_hlt_treat_l",
         "v_hlt_debt_l": "water.v_hlt_debt_l",
@@ -2474,7 +2379,7 @@
         "gypsum_form": "water.gypsum_form",
         "cacl2_form": "water.cacl2_form",
         "preferred_alkaline_agent": "water.preferred_alkaline_agent",
-        "calcium_floor_ppm": "water.calcium_floor_ppm"
+        "calcium_floor_ppm": "water.target_profile.calcium_floor_ppm"
       },
       "outputs": {
         "strategy.undefined": {
@@ -2556,6 +2461,24 @@
           "dimension": "concentration"
         },
         "post_salt_mash_ions.alkalinity_as_caco3": {
+          "dimension": "concentration"
+        },
+        "post_salt_hlt_ions.calcium_ca": {
+          "dimension": "concentration"
+        },
+        "post_salt_hlt_ions.magnesium_mg": {
+          "dimension": "concentration"
+        },
+        "post_salt_hlt_ions.sodium_na": {
+          "dimension": "concentration"
+        },
+        "post_salt_hlt_ions.sulfate_so4": {
+          "dimension": "concentration"
+        },
+        "post_salt_hlt_ions.chloride_cl": {
+          "dimension": "concentration"
+        },
+        "post_salt_hlt_ions.alkalinity_as_caco3": {
           "dimension": "concentration"
         },
         "grist_buckets_kg.BASE": {

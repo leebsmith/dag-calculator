@@ -50,6 +50,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE` |
 | `style_source` | `styleguide`, `experimental` |
 | `style_type` | `beer`, `mead`, `cider` |
+| `sulfate_chloride_target` | `unspecified`, `specified` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 | `wet_hop_application_stage` | `whirlpool`, `active_fermentation`, `cold_side` |
 | `wet_hop_product_type` | `raw_whole_cones`, `frozen_whole_cones`, `map_whole_cones`, `liquid_extract`, `cryo_powder`, `terpene_isolate` |
@@ -71,8 +72,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `trace_malt_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
-| `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
-| `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_chloride_ratio` (dimension dimensionless, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
+| `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `location` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `source_name` (—), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
+| `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
 | `yeast` | `alcohol_tolerance` (—), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `recipes` (—), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
 
 ## Functions
@@ -102,7 +103,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_apparent_attenuation` | 0.75 | `percentage` |
 | `default_boil_off_rate_l_per_hr` | 3 | `volume_per_time` |
 | `default_boil_time_min` | 60 | `time` |
-| `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_conversion_efficiency` | 0.9 | `percentage` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
 | `default_grain_absorption_l_per_kg` | 0.96 | `mash_thickness` |
@@ -178,6 +178,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.style_srm_max` | root |
 | `batch.style_srm_min` | root |
 | `batch.sugars` | collection |
+| `batch.sulfate_chloride_target_mode` | choice |
+| `batch.sulfate_chloride_target_ratio` | root |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |
 | `batch.target_ibu` | root |
@@ -213,32 +215,19 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `solver.water` | boundary |
 | `water.acid_medium` | choice |
 | `water.cacl2_form` | choice |
-| `water.calcium_floor_ppm` | root |
 | `water.gypsum_form` | choice |
 | `water.mash_ph_status` | derived |
 | `water.mash_thickness_l_per_kg` | derived |
 | `water.preferred_alkaline_agent` | choice |
 | `water.salt_distribution` | choice |
-| `water.source.alkalinity_as_caco3` | root |
-| `water.source.calcium_ca` | root |
-| `water.source.chloride_cl` | root |
-| `water.source.magnesium_mg` | root |
-| `water.source.sodium_na` | root |
-| `water.source.sulfate_so4` | root |
 | `water.source_report` | selection |
 | `water.source_report_id` | root |
 | `water.strategy` | choice |
-| `water.target.alkalinity_as_caco3` | root |
-| `water.target.calcium_ca` | root |
-| `water.target.chloride_cl` | root |
-| `water.target.magnesium_mg` | root |
-| `water.target.sodium_na` | root |
-| `water.target.sulfate_so4` | root |
 | `water.target_mash_ph` | root |
 | `water.target_profile` | selection |
 | `water.target_profile_id` | root |
 | `water.v_hlt_debt_l` | derived |
-| `water.v_hlt_treat_l` | root |
+| `water.v_hlt_treat_l` | derived |
 | `water.v_mash_treat_l` | derived |
 | `water.v_sparge_demand_l` | derived |
 

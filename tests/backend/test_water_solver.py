@@ -17,6 +17,7 @@ from app.core.water import (
 )
 from app.schemas.boundary import (
     MashPhStatus,
+    SaltDistribution,
     WaterSolverErrorCode,
     WaterStrategy,
 )
@@ -98,6 +99,19 @@ def test_solve_water_calcium_floor_end_to_end():
         make_water_request(strategy=WaterStrategy.CALCIUM_FLOOR)
     )
     assert resp.prescription.predicted_mash_ph > 0.0
+
+
+def test_post_salt_hlt_ions_proportional_matches_mash():
+    resp = solve_water_request(
+        make_water_request(salt_distribution=SaltDistribution.PROPORTIONAL)
+    )
+    assert resp.post_salt_hlt_ions == resp.post_salt_mash_ions
+
+
+def test_post_salt_hlt_ions_mash_only_is_source():
+    req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
+    resp = solve_water_request(req)
+    assert resp.post_salt_hlt_ions == req.source
 
 
 def test_salt_form_normalization():

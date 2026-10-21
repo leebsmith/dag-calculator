@@ -13,15 +13,6 @@
 // Hamilton stays host-side (TODO/L3): `w_i` here is the normalized `pct` the
 // grist table authors (`frontend/src/views/hamilton.js`), never an engine value.
 
-const ION_FIELDS = [
-  "calcium_ca",
-  "magnesium_mg",
-  "sodium_na",
-  "sulfate_so4",
-  "chloride_cl",
-  "alkalinity_as_caco3",
-];
-
 // AI AGENT HOOKS: Use this helper for building every boundary request body from
 // its declarative field map. Do not duplicated this logic elsewhere — each map
 // key is one artifact-declared boundary input, and `wire: null` marks an input
@@ -29,7 +20,8 @@ const ION_FIELDS = [
 function buildFromMap(engine, fields) {
   const resolved = {};
   for (const [alias, rule] of Object.entries(fields)) {
-    resolved[alias] = rule.read === "get" ? engine.get(rule.path) : engine.resolve(rule.path);
+    const value = rule.read === "get" ? engine.get(rule.path) : engine.resolve(rule.path);
+    resolved[alias] = value === undefined && "default" in rule ? rule.default : value;
   }
 
   const out = {};
@@ -110,14 +102,18 @@ export const WATER_FIELDS = {
   },
   trace_malts: { path: "grist.trace_malts", read: "get", wire: null },
   m_grist: { path: "solver.batch.m_grist", wire: null },
-  ...Object.fromEntries(
-    ["source", "target"].flatMap((role) =>
-      ION_FIELDS.map((ion) => [
-        `${role}.${ion}`,
-        { path: `water.${role}.${ion}` },
-      ])
-    )
-  ),
+  "source.calcium_ca": { path: "water.source_report.calcium_ca", default: 0 },
+  "source.magnesium_mg": { path: "water.source_report.magnesium_mg", default: 0 },
+  "source.sodium_na": { path: "water.source_report.sodium_na", default: 0 },
+  "source.sulfate_so4": { path: "water.source_report.sulfate_so4", default: 0 },
+  "source.chloride_cl": { path: "water.source_report.chloride_cl", default: 0 },
+  "source.alkalinity_as_caco3": { path: "water.source_report.total_alkalinity_caco3", default: 0 },
+  "target.calcium_ca": { path: "water.target_profile.calcium_ca", default: 0 },
+  "target.magnesium_mg": { path: "water.target_profile.magnesium_mg", default: 0 },
+  "target.sodium_na": { path: "water.target_profile.sodium_na", default: 0 },
+  "target.sulfate_so4": { path: "water.target_profile.sulfate_so4", default: 0 },
+  "target.chloride_cl": { path: "water.target_profile.chloride_cl", default: 0 },
+  "target.alkalinity_as_caco3": { path: "water.target_profile.alkalinity_as_caco3", default: 0 },
   v_mash_treat_l: { path: "water.v_mash_treat_l" },
   v_hlt_treat_l: { path: "water.v_hlt_treat_l" },
   v_hlt_debt_l: { path: "water.v_hlt_debt_l" },
@@ -130,7 +126,7 @@ export const WATER_FIELDS = {
   gypsum_form: { path: "water.gypsum_form" },
   cacl2_form: { path: "water.cacl2_form" },
   preferred_alkaline_agent: { path: "water.preferred_alkaline_agent" },
-  calcium_floor_ppm: { path: "water.calcium_floor_ppm" },
+  calcium_floor_ppm: { path: "water.target_profile.calcium_floor_ppm", default: 50 },
 };
 
 export function buildBatchRequest(engine) {

@@ -17,6 +17,7 @@ from app.schemas.boundary import (
     IonProfile,
     MashPhStatus,
     SaltAdditions,
+    SaltDistribution,
     WaterPrescription,
     WaterSolverRequest,
     WaterSolverResponse,
@@ -101,7 +102,26 @@ def _to_input(req: WaterSolverRequest) -> WaterChemistryInput:
     )
 
 
-def _to_response(result, preferred_agent: str) -> WaterSolverResponse:
+def _post_hlt_ions(result, req: WaterSolverRequest) -> IonProfile:
+    """Reconstruct the treated HLT vector from the sealed core's documented rule.
+
+    ``core/water.py`` computes ``post_hlt = source + added`` under
+    ``PROPORTIONAL`` and bare ``source`` under ``MASH_ONLY``, but does not return
+    it. Both are derivable here: under ``PROPORTIONAL`` the HLT vector equals the
+    mash vector (same per-litre dose, by construction); under ``MASH_ONLY`` it is
+    the request's source ions. Unknown modes fail loudly rather than guessing.
+    """
+    if req.salt_distribution is SaltDistribution.PROPORTIONAL:
+        return _to_long_ions(result.post_salt_mash_ions)
+    if req.salt_distribution is SaltDistribution.MASH_ONLY:
+        return req.source
+    raise SolverServiceError(
+        "UNKNOWN_SALT_DISTRIBUTION",
+        f"Unknown salt distribution {req.salt_distribution.value!r}.",
+    )
+
+
+def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
     return WaterSolverResponse(
         strategy=WaterStrategy(result.strategy),
         prescription=WaterPrescription(
@@ -111,12 +131,19 @@ def _to_response(result, preferred_agent: str) -> WaterSolverResponse:
             sparge_tannin_warning=result.sparge_tannin_warning,
         ),
         mash_additions=_to_salt_additions(
-            result.mash_dose_g, result.mash_acid_ml, preferred_agent, result.alkaline_agent_g
+            result.mash_dose_g,
+            result.mash_acid_ml,
+            req.preferred_alkaline_agent.value,
+            result.alkaline_agent_g,
         ),
         sparge_additions=_to_salt_additions(
-            result.sparge_dose_g, result.sparge_acid_ml, preferred_agent, 0.0
+            result.sparge_dose_g,
+            result.sparge_acid_ml,
+            req.preferred_alkaline_agent.value,
+            0.0,
         ),
         post_salt_mash_ions=_to_long_ions(result.post_salt_mash_ions),
+        post_salt_hlt_ions=_post_hlt_ions(result, req),
         grist_buckets_kg=result.grist_buckets_kg,
         warnings=result.warnings,
         notes=result.notes,
@@ -129,4 +156,4 @@ def solve_water_request(req: WaterSolverRequest) -> WaterSolverResponse:
         result = solve_water_chemistry(_to_input(req))
     except SolverValidationError as exc:
         raise SolverServiceError(exc.code, exc.message) from exc
-    return _to_response(result, req.preferred_alkaline_agent.value)
+    return _to_response(result, req)

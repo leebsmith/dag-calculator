@@ -21,5 +21,23 @@
     "total_phosphorus_p": 0.08,
     "total_iron_fe": 0.01,
     "notes": "Baseline Ward Labs report"
+  },
+  "ro-distilled": {
+    "report_id": "ro-distilled",
+    "laboratory": "RO / Distilled (definition)",
+    "sample_id": "",
+    "source_name": "RO / Distilled",
+    "location": "",
+    "tds_ppm": 0,
+    "calcium_ca": 0,
+    "magnesium_mg": 0,
+    "sodium_na": 0,
+    "potassium_k": 0,
+    "chloride_cl": 0,
+    "sulfate_so4": 0,
+    "bicarbonate_hco3": 0,
+    "total_alkalinity_caco3": 0,
+    "total_hardness_caco3": 0,
+    "notes": "Zero-mineral baseline. A definition, not a lab result."
   }
 }

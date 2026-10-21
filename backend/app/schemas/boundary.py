@@ -338,6 +338,7 @@ class WaterSolverResponse(BoundaryModel):
     mash_additions: SaltAdditions
     sparge_additions: SaltAdditions
     post_salt_mash_ions: IonProfile
+    post_salt_hlt_ions: IonProfile
     grist_buckets_kg: dict[str, float]
     warnings: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
