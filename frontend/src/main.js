@@ -53,6 +53,8 @@ Alpine.store("recipes", {
   activeId: null,
   activeName: "",
   loadError: false,
+  saveState: "idle", // "idle" | "dirty" | "saving" | "error" | "conflict"
+  conflictRemote: null,
   sort: "modified", // "modified" | "title"
   sortOpen: false,
   sortMenuStyle: "",
@@ -208,6 +210,18 @@ Alpine.store("recipes", {
     this.trashView = false;
   },
 
+  keepMine() {
+    return persistence.saveNow({ force: true });
+  },
+
+  reloadFromRemote() {
+    return persistence.resolveConflictByReload();
+  },
+
+  retrySave() {
+    return persistence.saveNow();
+  },
+
   async newRecipe() {
     await persistence.createUntitled();
     this.trashView = false;
@@ -277,6 +291,14 @@ Alpine.store("recipes", {
     await persistence.freezeActive();
     await this.refresh();
   },
+});
+
+// Mirror the persistence save-state into the reactive recipes store so the
+// editor badge re-renders when autosave transitions (idle/dirty/saving/...).
+persistence.setStateObserver(({ state, conflictRemote }) => {
+  const recipes = Alpine.store("recipes");
+  recipes.saveState = state;
+  recipes.conflictRemote = conflictRemote;
 });
 
 // --- Auth-owned boot ---------------------------------------------------------

@@ -521,6 +521,21 @@
               </div>
 
               <footer class="app-footer">
+                <span class="save-state text-xs" x-show="$store.recipes.saveState !== 'idle'">
+                  <span x-show="$store.recipes.saveState === 'dirty'">Unsaved</span>
+                  <span x-show="$store.recipes.saveState === 'saving'">Saving…</span>
+                  <button
+                    type="button"
+                    class="btn-link text-xs"
+                    x-show="$store.recipes.saveState === 'error'"
+                    @click="$store.recipes.retrySave()"
+                  >Save failed — retry</button>
+                  <span x-show="$store.recipes.saveState === 'conflict'">
+                    Changed in another tab —
+                    <button type="button" class="btn-link text-xs" @click="$store.recipes.keepMine()">Keep mine</button>
+                    <button type="button" class="btn-link text-xs" @click="$store.recipes.reloadFromRemote()">Reload</button>
+                  </span>
+                </span>
                 <span class="footer-step" x-text="activeStep.title"></span>
                 <span class="footer-step-count" x-text="'Step ' + (activeIndex + 1) + ' of ' + steps.length"></span>
                 <span class="boundary-status" x-show="boundaryPending">

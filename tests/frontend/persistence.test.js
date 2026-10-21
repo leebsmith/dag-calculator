@@ -13,12 +13,13 @@ function fakeClient() {
       calls.push({ op: "list" });
       return [...docs.values()];
     },
-    async upsertBatch(id, payload, base) {
-      calls.push({ op: "upsert", id, base });
+    async upsertBatch(id, payload, base, force = false) {
+      calls.push({ op: "upsert", id, base, force });
       const existing = docs.get(id);
-      if (base !== undefined && existing && existing.updated_at !== base) {
+      if (!force && base !== undefined && existing && existing.updated_at !== base) {
         const err = new Error("conflict");
         err.code = "CONFLICT";
+        err.details = { reason: "stale", current: { ...existing } };
         throw err;
       }
       const rec = {
@@ -193,12 +194,13 @@ test("trashBatch soft-deletes a landing row and drops it from the active slot", 
   assert.equal(persistence.getActive(), null);
 });
 
-test("stale baseline conflicts then re-hydrates from remote", async () => {
+test("stale baseline conflicts preserve local edits and report conflict", async () => {
   const { client, app } = setup();
   await persistence.createUntitled();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   const baseline = persistence.getActive().updated_at;
+  app.loaded = { marker: "local-state-preserved" };
 
   // another session writes, advancing updated_at
   await client.upsertBatch(persistence.getActive().id, { name: "Remote edit", roots: { "mash.grain_temp_c": 30 } }, baseline);
@@ -206,9 +208,10 @@ test("stale baseline conflicts then re-hydrates from remote", async () => {
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
 
-  assert.equal(persistence.getActive().name, "Remote edit");
-  assert.equal(persistence.getActive().updated_at, baseline + 1);
-  assert.deepEqual(app.loaded.roots, { "mash.grain_temp_c": 30 });
+  assert.equal(persistence.getSaveState(), "conflict");
+  assert.equal(persistence.getActive().name, "Untitled recipe");
+  assert.equal(app.loaded.marker, "local-state-preserved");
+  assert.equal(persistence.getConflictRemote().name, "Remote edit");
 });
 
 test("open hydrates the active batch and loads its state", async () => {
@@ -320,24 +323,66 @@ test("a failed autosave is reported and leaves the draft dirty", async (t) => {
   assert.equal(persistence.getActive().persisted, false);
 });
 
-test("a conflict whose re-read fails propagates instead of silently dropping edits", async () => {
+test("a conflict reports state without re-reading the remote", async () => {
+  const { client } = setup();
+  await persistence.createUntitled();
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+
+  client.upsertBatch = async () => {
+    const err = new Error("conflict");
+    err.code = "CONFLICT";
+    err.details = { reason: "stale", current: null };
+    throw err;
+  };
+
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+
+  assert.equal(persistence.getSaveState(), "conflict");
+  assert.equal(persistence.getConflictRemote(), null);
+  assert.equal(client.calls.filter((c) => c.op === "get").length, 0);
+});
+
+test("force save overwrites the remote and clears the conflict", async () => {
   const { client } = setup();
   await persistence.createUntitled();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   const baseline = persistence.getActive().updated_at;
 
-  client.upsertBatch = async () => {
-    const err = new Error("conflict");
-    err.code = "CONFLICT";
-    throw err;
-  };
-  client.getBatch = async () => {
-    throw new Error("offline");
-  };
+  await client.upsertBatch(persistence.getActive().id, { name: "Remote edit", roots: {} }, baseline);
 
-  assert.equal(baseline > 0, true);
   persistence.queueSave({ delay: 60000 });
-  await assert.rejects(() => persistence.flushSave(), /offline/);
+  await persistence.flushSave();
+  assert.equal(persistence.getSaveState(), "conflict");
+
+  await persistence.saveNow({ force: true });
+
+  assert.equal(persistence.getSaveState(), "idle");
+  assert.equal(persistence.getConflictRemote(), null);
+  assert.equal(persistence.getActive().name, "Untitled recipe");
+  const upserts = client.calls.filter((c) => c.op === "upsert");
+  assert.equal(upserts.at(-1).force, true);
+});
+
+test("reload resolves a conflict by re-hydrating the remote record", async () => {
+  const { client, app } = setup();
+  await persistence.createUntitled();
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+  const baseline = persistence.getActive().updated_at;
+
+  await client.upsertBatch(persistence.getActive().id, { name: "Remote edit", roots: { "mash.grain_temp_c": 30 } }, baseline);
+
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+  assert.equal(persistence.getSaveState(), "conflict");
+
+  await persistence.resolveConflictByReload();
+
+  assert.equal(persistence.getSaveState(), "idle");
+  assert.equal(persistence.getActive().name, "Remote edit");
+  assert.deepEqual(app.loaded.roots, { "mash.grain_temp_c": 30 });
 });
 

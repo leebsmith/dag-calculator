@@ -326,6 +326,28 @@ def test_apply_draft_two_writers_one_deterministic_loser():
     assert loser["name"] == "Winner"
 
 
+def test_apply_draft_force_overrides_a_stale_baseline():
+    store, _ = repo()
+    created, _ = store.apply_draft("u1", "b1", {"name": "A"}, None)
+    store.apply_draft("u1", "b1", {"name": "B"}, created["updated_at"])
+
+    record, reason = store.apply_draft("u1", "b1", {"name": "C"}, created["updated_at"], force=True)
+
+    assert reason is None
+    assert record["name"] == "C"
+
+
+def test_apply_draft_force_still_rejects_frozen():
+    store, _ = repo()
+    store.create("u1", "b1", {"name": "A"})
+    store._collection("u1").document("b1").update({"status": "frozen"})
+
+    record, reason = store.apply_draft("u1", "b1", {"name": "B"}, None, force=True)
+
+    assert reason == "frozen"
+    assert record["status"] == "frozen"
+
+
 def test_freeze_reads_before_it_writes():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})

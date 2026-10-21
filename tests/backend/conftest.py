@@ -127,7 +127,7 @@ class FakeBatchRepo:
         self._docs[batch_id] = {**r, **data, "updated_at": self._now()}
         return self._docs[batch_id]
 
-    def apply_draft(self, uid, batch_id, data, base_updated_at):
+    def apply_draft(self, uid, batch_id, data, base_updated_at, force=False):
         existing = self._docs.get(batch_id)
         if not existing or existing["uid"] != uid:
             now = self._now()
@@ -144,7 +144,7 @@ class FakeBatchRepo:
             return r, None
         if existing["status"] != "draft":
             return existing, "frozen"
-        if base_updated_at is not None and existing["updated_at"] != base_updated_at:
+        if not force and base_updated_at is not None and existing["updated_at"] != base_updated_at:
             return existing, "stale"
         updated = {**existing, **data, "updated_at": self._now()}
         self._docs[batch_id] = updated

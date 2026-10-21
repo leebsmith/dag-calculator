@@ -7,9 +7,10 @@ export function listBatches() {
   return requestJSON("/batches");
 }
 
-export function upsertBatch(batchId, payload, baseUpdatedAt) {
-  const body =
-    baseUpdatedAt === undefined ? payload : { ...payload, base_updated_at: baseUpdatedAt };
+export function upsertBatch(batchId, payload, baseUpdatedAt, force = false) {
+  const body = { ...payload };
+  if (baseUpdatedAt !== undefined) body.base_updated_at = baseUpdatedAt;
+  if (force) body.force = true;
   return requestJSON(`/batches/${batchId}`, { method: "PUT", body });
 }
 

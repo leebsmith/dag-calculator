@@ -55,6 +55,7 @@ class BatchRepository:
         batch_id: str,
         data: dict[str, Any],
         base_updated_at: float | None,
+        force: bool = False,
     ) -> tuple[dict[str, Any], str | None]:
         """Atomically create-or-update a draft, rejecting stale/frozen writes.
 
@@ -62,7 +63,8 @@ class BatchRepository:
         the optimistic ``base_updated_at`` comparison cannot be raced by another
         autosave. Returns ``(record, reason)`` where ``reason`` is ``None`` on
         success, ``"frozen"`` when the target is already immutable, or
-        ``"stale"`` when the client's baseline no longer matches.
+        ``"stale"`` when the client's baseline no longer matches (unless
+        ``force`` is set, which skips only the baseline comparison).
         """
         ref = self._collection(uid).document(batch_id)
         transaction = self._db.transaction()
@@ -84,7 +86,7 @@ class BatchRepository:
             current = self._record(uid, batch_id, snapshot.to_dict())
             if current.get("status") != "draft":
                 return current, "frozen"
-            if base_updated_at is not None and current.get("updated_at") != base_updated_at:
+            if not force and base_updated_at is not None and current.get("updated_at") != base_updated_at:
                 return current, "stale"
 
             record = {**current, **data, "updated_at": time.time()}

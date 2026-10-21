@@ -9,6 +9,26 @@ let app = null;
 let active = null; // { id, name, status, trashed, persisted, updated_at }
 let dirty = false; // unsaved edits since last successful sync
 let saveTimer = null;
+let saveState = "idle"; // "idle" | "dirty" | "saving" | "error" | "conflict"
+let conflictRemote = null; // authoritative record returned with a 409
+let onStateChange = null; // observer: ({ state, conflictRemote }) => void
+
+function setSaveState(state) {
+  saveState = state;
+  onStateChange?.({ state, conflictRemote });
+}
+
+export function setStateObserver(fn) {
+  onStateChange = fn;
+}
+
+export function getSaveState() {
+  return saveState;
+}
+
+export function getConflictRemote() {
+  return conflictRemote;
+}
 
 export function setClient(c) {
   client = c;
@@ -30,6 +50,8 @@ export function clearActive() {
   }
   active = null;
   dirty = false;
+  conflictRemote = null;
+  setSaveState("idle");
 }
 
 export function list() {
@@ -48,6 +70,8 @@ export async function createUntitled() {
     updated_at: null,
   };
   dirty = false;
+  conflictRemote = null;
+  setSaveState("idle");
   await app?.loadState({ roots: {}, collections: {}, selections: {} });
   return active;
 }
@@ -63,6 +87,8 @@ export async function open(batchId) {
     updated_at: b.updated_at,
   };
   dirty = false;
+  conflictRemote = null;
+  setSaveState("idle");
   await app?.loadState({
     roots: b.roots,
     collections: b.collections,
@@ -98,6 +124,8 @@ export async function fork(frozenId) {
     updated_at: created.updated_at,
   };
   dirty = false;
+  conflictRemote = null;
+  setSaveState("idle");
   await app?.loadState({
     roots: created.roots,
     collections: created.collections,
@@ -114,6 +142,7 @@ export async function freezeActive() {
 export function queueSave({ delay = 400 } = {}) {
   if (!active || active.status !== "draft") return;
   dirty = true;
+  setSaveState("dirty");
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     try {
@@ -167,39 +196,60 @@ export function deletePermanent(batchId) {
   return client.deleteBatch(batchId);
 }
 
-async function saveNow() {
+export async function saveNow({ force = false } = {}) {
   if (!active || active.status !== "draft") return;
+  setSaveState("saving");
   const payload = { name: active.name, ...app.draftState() };
   try {
-    const updated = await client.upsertBatch(active.id, payload, active.updated_at ?? undefined);
+    const updated = await client.upsertBatch(
+      active.id,
+      payload,
+      active.updated_at ?? undefined,
+      force
+    );
     active = { ...active, persisted: true, updated_at: updated.updated_at };
     dirty = false;
+    conflictRemote = null;
+    setSaveState("idle");
     return updated;
   } catch (err) {
     if (err?.code === "CONFLICT") {
-      await reconcileConflict();
+      markConflict(err.details?.current ?? null);
       return;
     }
+    setSaveState("error");
     throw err;
   }
 }
 
-// Another session wrote after our last observation: drop our local edits and
-// re-hydrate from the latest remote state (the full merge lands with M3).
-async function reconcileConflict() {
-  const b = await client.getBatch(active.id);
+// Another session wrote after our last observation. Preserve the local edits:
+// record the authoritative remote snapshot and surface a "conflict" state for
+// the UI to resolve (reload remote, or force-save our copy). Never loadState
+// here — that would silently discard the user's work.
+function markConflict(remote) {
+  conflictRemote = remote;
+  setSaveState("conflict");
+}
+
+// Resolve a conflict by discarding local edits and re-hydrating from the
+// authoritative remote record the server returned with the 409.
+export async function resolveConflictByReload() {
+  const remote = conflictRemote;
+  if (!remote) return;
   active = {
-    ...active,
-    name: b.name,
-    status: b.status,
-    trashed: b.trashed ?? false,
+    id: remote.id,
+    name: remote.name,
+    status: remote.status,
+    trashed: remote.trashed ?? false,
     persisted: true,
-    updated_at: b.updated_at,
+    updated_at: remote.updated_at,
   };
   dirty = false;
+  conflictRemote = null;
+  setSaveState("idle");
   await app?.loadState({
-    roots: b.roots,
-    collections: b.collections,
-    selections: b.selections,
+    roots: remote.roots,
+    collections: remote.collections,
+    selections: remote.selections,
   });
 }

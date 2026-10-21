@@ -65,6 +65,19 @@ def test_upsert_stale_baseline_conflicts():
     assert exc.value.reason == "stale"
 
 
+def test_upsert_force_overrides_a_stale_baseline():
+    svc = BatchService(FakeRepo())
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))
+    svc.upsert_draft("u1", "batch-a", DraftPayload(name="B", base_updated_at=rec.updated_at))
+
+    forced = svc.upsert_draft(
+        "u1",
+        "batch-a",
+        DraftPayload(name="C", base_updated_at=rec.updated_at, force=True),
+    )
+    assert forced.name == "C"
+
+
 def test_trash_and_restore():
     svc = BatchService(FakeRepo())
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))

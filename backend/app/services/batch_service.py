@@ -33,8 +33,10 @@ class BatchService:
         return [BatchRecord(**r) for r in self._repo.list_batches(uid)]
 
     def upsert_draft(self, uid: str, batch_id: str, payload: DraftPayload) -> BatchRecord:
-        data = payload.model_dump(exclude_none=True, exclude={"base_updated_at"})
-        record, reason = self._repo.apply_draft(uid, batch_id, data, payload.base_updated_at)
+        data = payload.model_dump(exclude_none=True, exclude={"base_updated_at", "force"})
+        record, reason = self._repo.apply_draft(
+            uid, batch_id, data, payload.base_updated_at, payload.force
+        )
         if reason == "frozen":
             raise BatchConflictError("frozen", BatchRecord(**record))
         if reason == "stale":
