@@ -260,3 +260,18 @@ export function installCatalogDraft(app, ctx, config) {
   }
   Object.defineProperties(app, descriptors);
 }
+
+// The app members installCatalogDraft assigns, expanded for a given prefix.
+export function catalogDraftKeys(prefix, Cap) {
+  return [
+    `${prefix}Drawer`, `${prefix}Search`, `${prefix}ActiveIndex`, `${prefix}CategoryFilter`,
+    `${prefix}Family`, `${prefix}Standard`,
+    `open${Cap}Editor`, `cancel${Cap}Editor`, `save${Cap}Editor`, `addCatalog${Cap}`,
+    `duplicateCatalog${Cap}`, `remove${Cap}`, `inspect${Cap}Row`, `open${Cap}Search`,
+    `close${Cap}Drawer`, `toggle${Cap}Category`, `toggle${Cap}Family`, `select${Cap}Standard`,
+    `clear${Cap}Standard`, `handle${Cap}Escape`, `${prefix}ItemMeta`, `${prefix}GroupMeta`,
+    `${prefix}EditorOpen`, `${prefix}Catalog`, `${prefix}Categories`, `${prefix}Families`,
+    `${prefix}StandardGroups`, `${prefix}StandardName`, `${prefix}FilteredCatalog`,
+    `${prefix}VisibleCatalog`, `${prefix}CatalogTruncated`, `${prefix}ActiveRow`,
+  ];
+}

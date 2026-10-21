@@ -32,8 +32,43 @@ import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
 import { installNavigation } from "./navigation.js";
 import { createStepView } from "./stepView.js";
+import { assertNoCollisions } from "./contract.js";
+import { KEYS as navigationKeys } from "./navigation.js";
+import { KEYS as fieldActionsKeys } from "./fieldActions.js";
+import { KEYS as draftEditorKeys } from "./draftEditor.js";
+import { KEYS as unitActionsKeys } from "./unitActions.js";
+import { KEYS as snapshotKeys } from "../store/snapshot.js";
+import { KEYS as libraryUiKeys } from "./libraryUi.js";
+import { KEYS as yeastKeys } from "./cards/yeast.js";
+import { KEYS as styleKeys } from "./cards/style.js";
+import { KEYS as hopKeys } from "./cards/hops.js";
+import { KEYS as lateAdditionsKeys } from "./cards/late-additions.js";
+import { KEYS as traceMaltsKeys } from "./cards/trace-malts.js";
+import { KEYS as maltKeys } from "./cards/malt.js";
+import { KEYS as mashKeys } from "./cards/mash.js";
+import { KEYS as brewDayKeys } from "./cards/brew-day.js";
 import * as fmt from "../utils.js";
 import { reportError } from "../observability.js";
+
+// Declared installer contract: each module exports the app members it assigns.
+// The single reactive root is a deliberate Alpine requirement; this check just
+// makes name collisions loud in development instead of silently clobbering state.
+const INSTALLERS = [
+  { name: "navigation", keys: navigationKeys },
+  { name: "fieldActions", keys: fieldActionsKeys },
+  { name: "draftEditor", keys: draftEditorKeys },
+  { name: "unitActions", keys: unitActionsKeys },
+  { name: "snapshot", keys: snapshotKeys },
+  { name: "libraryUi", keys: libraryUiKeys },
+  { name: "yeast", keys: yeastKeys },
+  { name: "style", keys: styleKeys },
+  { name: "hop", keys: hopKeys },
+  { name: "lateAdditions", keys: lateAdditionsKeys },
+  { name: "traceMalts", keys: traceMaltsKeys },
+  { name: "malt", keys: maltKeys },
+  { name: "mash", keys: mashKeys },
+  { name: "brewDay", keys: brewDayKeys },
+];
 
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
@@ -288,6 +323,10 @@ export function createStepApp(options = {}) {
     for (const [id, node] of Object.entries(artifact.nodes)) {
       if (node.kind === "selection") session.engine.invalidate(id);
     }
+  }
+
+  if (import.meta.env?.DEV) {
+    assertNoCollisions(INSTALLERS);
   }
 
   return app;

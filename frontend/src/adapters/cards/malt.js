@@ -2,7 +2,7 @@
 // Uses the shared catalog/draft helper; bespoke bits are the parts/validation
 // readouts, trace flag, and clone action.
 
-import { installCatalogDraft } from "./catalogDraft.js";
+import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel, formatPercent, formatValueWithUnit, formatWithDecimals } from "../../utils.js";
 
@@ -147,3 +147,4 @@ export function registerMaltCard(app, ctx) {
 export function refreshMaltCard(app, ctx) {
   app.gristRows = sortGristRows(ctx.engine.get(N.majorMalts) ?? []);
 }
+export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltIsTrace", "cloneDraftMalt", "maltWeightedColor", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];

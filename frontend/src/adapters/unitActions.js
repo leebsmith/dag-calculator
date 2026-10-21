@@ -52,3 +52,5 @@ export function installUnitActions(app, { artifact, ui }) {
     },
   });
 }
+
+export const KEYS = ["setUnit", "resetUnits", "toggleFieldUnit", "toggleUnits", "closeUnits"];

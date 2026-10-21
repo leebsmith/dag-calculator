@@ -1,7 +1,7 @@
 // Trace / color malts card: definite-mass additions from the malt catalog.
 // Uses the shared catalog/draft helper; bespoke bits are the summary readouts.
 
-import { installCatalogDraft } from "./catalogDraft.js";
+import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel, formatValueWithUnit } from "../../utils.js";
 
@@ -79,3 +79,4 @@ export function registerTraceMaltsCard(app, ctx) {
 export function refreshTraceMaltsCard(app, ctx) {
   app.traceMaltRows = ctx.engine.get(N.traceMalts) ?? [];
 }
+export const KEYS = [...catalogDraftKeys("trace", "Trace"), "traceMaltRows", "traceField", "traceMaltField", "traceMassField", "traceColorField", "traceDraftMassDisplay"];

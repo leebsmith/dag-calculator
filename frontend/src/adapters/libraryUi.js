@@ -239,3 +239,5 @@ export function registerLibraryUi(app, ctx) {
     },
   });
 }
+
+export const KEYS = ["libraryOpen", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "librarySetField", "newLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];

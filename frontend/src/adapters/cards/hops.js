@@ -1,7 +1,7 @@
 // Boil-hops card: IBU-led additions with Tinseth mass back-calculation.
 // See plans/card-refactor.md (trial card).
 
-import { installCatalogDraft } from "./catalogDraft.js";
+import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { massFromIbu } from "../../views/hops.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
@@ -179,3 +179,4 @@ export function registerHopCard(app, ctx) {
 export function refreshHopCard(app, ctx) {
   app.hopRows = computeHopRows(ctx.engine);
 }
+export const KEYS = [...catalogDraftKeys("hop", "Hop"), "hopRows", "hopMassUnit", "toggleHopMassUnit", "hopMass", "hopAlpha", "hopBoilPct", "hopMinutes", "hopIbu", "hopPct", "boilIbuField", "whirlpoolIbuField", "hopDraftPartsTotal", "hopDraftSummary", "hopResultLabel", "hopTotalMassDisplay"];

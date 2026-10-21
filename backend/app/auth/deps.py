@@ -17,6 +17,7 @@ within ``TOKEN_CACHE_TTL_SECONDS``; a cache miss always re-verifies with
 from __future__ import annotations
 
 import hashlib
+import logging
 import os
 import threading
 import time
@@ -26,6 +27,8 @@ from fastapi import Depends, Header, HTTPException
 from firebase_admin import auth
 
 from app.database.firebase import get_app
+
+logger = logging.getLogger("app.auth")
 
 TOKEN_CACHE_TTL_SECONDS = 300
 
@@ -43,6 +46,14 @@ def parse_allowed_emails(value: str | None) -> frozenset[str]:
 
 
 ALLOWED_EMAILS = parse_allowed_emails(os.environ.get("ALLOWED_EMAILS"))
+
+
+def log_allowlist_status() -> None:
+    """Emit a startup diagnostic: an unset allowlist fails closed silently."""
+    if ALLOWED_EMAILS:
+        logger.info("allowlist configured: %d address(es)", len(ALLOWED_EMAILS))
+    else:
+        logger.warning("ALLOWED_EMAILS is unset: every request will be denied (fail closed)")
 
 
 def _cache_key(token: str) -> str:

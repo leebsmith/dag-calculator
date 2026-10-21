@@ -10,7 +10,9 @@ import json
 import logging
 import math
 import os
+from collections.abc import Mapping
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 from urllib.parse import urlparse
 
@@ -51,13 +53,22 @@ def data_dir() -> Path:
     )
 
 
+def _freeze(value: Any) -> Any:
+    """Deep-freeze a parsed JSON structure into read-only mappings/tuples."""
+    if isinstance(value, dict):
+        return MappingProxyType({key: _freeze(item) for key, item in value.items()})
+    if isinstance(value, list):
+        return tuple(_freeze(item) for item in value)
+    return value
+
+
 def _load(name: str) -> dict[str, Any]:
     directory = data_dir()
     key = f"{directory}:{name}"
     if key not in _cache:
         path = directory / name
         with path.open(encoding="utf-8") as handle:
-            _cache[key] = json.load(handle)
+            _cache[key] = _freeze(json.load(handle))
         if name == "artifact.json":
             logger.info("Resolved artifact data directory: %s", directory)
     return _cache[key]
@@ -78,13 +89,13 @@ def load_catalogs() -> dict[str, Any]:
 def _resolve_limit(limit: Any, constants: dict[str, Any]) -> Any:
     if isinstance(limit, (int, float)):
         return limit
-    if isinstance(limit, dict) and "const" in limit:
+    if isinstance(limit, Mapping) and "const" in limit:
         return constants.get(limit["const"], {}).get("value")
     return None
 
 
 def _domain_error(domain: Any, value: float, constants: dict[str, Any]) -> bool:
-    if not isinstance(domain, dict):
+    if not isinstance(domain, Mapping):
         return False
     for op, limit_expr in domain.items():
         test = _DOMAIN_OPS.get(op)

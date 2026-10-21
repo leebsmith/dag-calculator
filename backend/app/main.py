@@ -13,7 +13,14 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app.artifact import data_dir
-from app.auth.deps import AllowedUser, CurrentUser, session_payload
+from app.auth.deps import (
+    ALLOWED_EMAILS,
+    AllowedUser,
+    CurrentUser,
+    log_allowlist_status,
+    session_payload,
+)
+from app.auth.throttle import RateLimitedError, RateLimitedUser
 from app.schemas.batch import BatchPatch, BatchRecord, DraftPayload, FreezePayload
 from app.schemas.boundary import (
     BatchSolverRequest,
@@ -35,6 +42,21 @@ app = FastAPI(title="dag-calculator backend")
 logging.getLogger("app.artifact").info(
     "Resolved artifact data directory: %s", data_dir()
 )
+log_allowlist_status()
+
+
+@app.exception_handler(RateLimitedError)
+async def _rate_limited_handler(request, exc):
+    return JSONResponse(
+        status_code=429,
+        content={"code": "RATE_LIMITED", "message": "Rate limit exceeded", "details": {}},
+    )
+
+
+@app.get("/health")
+def health() -> dict:
+    """Readiness probe. Reports config presence without leaking any secrets."""
+    return {"artifact": True, "allowlist_configured": bool(ALLOWED_EMAILS)}
 
 
 @app.get("/session")
@@ -44,7 +66,7 @@ def get_session(user: CurrentUser) -> dict:
 
 
 @app.post("/solve/batch", response_model=BatchSolverResponse)
-def solve_batch(req: BatchSolverRequest, _user: AllowedUser) -> BatchSolverResponse | JSONResponse:
+def solve_batch(req: BatchSolverRequest, _user: RateLimitedUser) -> BatchSolverResponse | JSONResponse:
     """Resolve the batch-sparge boundary (Brent root-finding)."""
     try:
         return solve_batch_request(req)
@@ -58,7 +80,7 @@ def solve_batch(req: BatchSolverRequest, _user: AllowedUser) -> BatchSolverRespo
 
 
 @app.post("/solve/water", response_model=WaterSolverResponse)
-def solve_water(req: WaterSolverRequest, _user: AllowedUser) -> WaterSolverResponse | JSONResponse:
+def solve_water(req: WaterSolverRequest, _user: RateLimitedUser) -> WaterSolverResponse | JSONResponse:
     """Resolve the water-chemistry boundary (linear program)."""
     try:
         return solve_water_request(req)

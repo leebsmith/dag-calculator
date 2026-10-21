@@ -302,3 +302,5 @@ export function registerMashCard(app, ctx) {
 export function refreshMashCard(app, ctx) {
   app.mashRests = ctx.engine.get(N.rests) ?? [];
 }
+
+export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "limitOfAttenuationDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "hasOptionalRestsEnabled", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "limitOfAttenuation", "sortedMashDraftRests", "mashDraftDoughInTempC", "mashDraftDoughInDisplay", "isMashDraftValid"];

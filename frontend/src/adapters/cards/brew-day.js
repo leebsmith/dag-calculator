@@ -76,3 +76,5 @@ export function registerBrewDayCard(app, ctx) {
 export function refreshBrewDayCard(app, ctx) {
   app.brewDayRows = materializeBrewDayRows(ctx.engine.get(N.steps));
 }
+
+export const KEYS = ["brewDayRows", "brewDayOpenSections", "brewDayRow", "toggleBrewDaySection", "isBrewDaySectionOpen", "_writeBrewDayRows", "toggleBrewDayStep", "setBrewDayInstruction", "brewDayInstruction", "brewDaySections", "brewDayPayload"];

@@ -1,0 +1,50 @@
+/**
+ * @file Pure string helpers. Leaf module: no imports, so it can be shared by
+ * the formatting and model layers without creating an import cycle.
+ */
+
+function stringifyNumber(value) {
+  if (!Number.isFinite(value)) return "";
+  return Number.isInteger(value) ? String(value) : String(Math.round(value * 1000) / 1000);
+}
+
+/**
+ * First non-empty string among the candidates; numeric candidates are stringified.
+ *
+ * @param {...unknown} values
+ * @returns {string} `""` when nothing usable is supplied.
+ * @note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.
+ */
+export function firstNonEmptyString(...values) {
+  for (const value of values) {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed !== "") return trimmed;
+      continue;
+    }
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  }
+  return "";
+}
+
+/**
+ * Join only the non-empty pieces, suppressing the separators that would otherwise
+ * trail or double up. Replaces the `(x ? ' • ' + x : '')` chains.
+ *
+ * @param {unknown} parts
+ * @param {string} [separator=" • "]
+ * @returns {string}
+ * @note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.
+ */
+export function joinNonEmpty(parts, separator = " • ") {
+  if (!Array.isArray(parts)) return "";
+  const pieces = [];
+  for (const part of parts) {
+    if (part === null || part === undefined) continue;
+    const text =
+      typeof part === "string" ? part.trim() : typeof part === "number" ? stringifyNumber(part) : String(part);
+    if (text === "") continue;
+    pieces.push(text);
+  }
+  return pieces.join(separator);
+}

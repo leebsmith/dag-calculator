@@ -4,12 +4,21 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import MappingProxyType
 
 import pytest
 
 from app import artifact as artifact_module
 
 DATA = Path(__file__).resolve().parents[2] / "data"
+
+
+def thaw(value):
+    if isinstance(value, MappingProxyType):
+        return {k: thaw(v) for k, v in value.items()}
+    if isinstance(value, tuple):
+        return [thaw(v) for v in value]
+    return value
 
 SEED_FILES = {
     "malt": ["malts.json", "standard-malts.json"],
@@ -94,7 +103,7 @@ def test_artifact_path_override_points_at_a_directory(monkeypatch, tmp_path):
     artifact_module.clear_cache()
 
     assert artifact_module.data_dir() == tmp_path
-    assert artifact_module.load_artifact() == {"nodes": {}}
+    assert thaw(artifact_module.load_artifact()) == {"nodes": {}}
     monkeypatch.delenv("ARTIFACT_PATH")
     artifact_module.clear_cache()
     assert artifact_module.data_dir() == DATA

@@ -66,3 +66,5 @@ export function installSnapshot(app, { artifact, master, session }) {
     },
   });
 }
+
+export const KEYS = ["draftState", "freezePayload"];

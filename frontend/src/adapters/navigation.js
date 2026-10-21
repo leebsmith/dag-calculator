@@ -1,8 +1,7 @@
 // Step navigation: keeps the app's visible rail in sync with the UI store and
 // mirrors the rail with keyboard/button navigation.
 
-export function installNavigation(app, { ui, steps }) {
-  Object.assign(app, {
+export function installNavigation(app, { ui, steps }) {  Object.assign(app, {
     syncNav() {
       this.activeIndex = ui.activeIndex;
       this.highwater = ui.highwater;
@@ -45,3 +44,5 @@ export function installNavigation(app, { ui, steps }) {
     },
   });
 }
+
+export const KEYS = ["syncNav", "selectStep", "next", "prev", "keyNav"];

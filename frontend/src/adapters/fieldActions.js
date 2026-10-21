@@ -185,3 +185,5 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     },
   });
 }
+
+export const KEYS = ["clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

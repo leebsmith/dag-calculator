@@ -141,6 +141,11 @@ clean:
 # --- Deploy ------------------------------------------------------------------
 deploy: deploy-backend deploy-frontend
 
+# The backend is deployed `--allow-unauthenticated` on purpose: Firebase Hosting
+# proxies a browser that cannot hold an IAM identity, so access control lives in
+# the app (Firebase ID token verification + the ALLOWED_EMAILS allowlist +
+# per-uid rate limiting). The real network perimeter is Cloud Armor / an API
+# gateway, not IAM.
 deploy-backend:
 	@echo "Vendoring the artifact + catalog registry for the deployed image..."
 	mkdir -p backend/app/_vendor

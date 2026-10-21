@@ -1,0 +1,337 @@
+            <div class="chooser">
+              <header class="menu-bar">
+                <span class="menu-title">Brewing Calculator</span>
+                <div class="menu-actions">
+                  <button
+                    type="button"
+                    class="btn-outline"
+                    x-show="$store.recipes.trashView"
+                    @click="$store.recipes.showRecipes()"
+                  >
+                    Back to recipes
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-outline"
+                    x-show="$store.recipes.view === 'chooser' && !$store.recipes.trashView"
+                    @click="openLibrary()"
+                  >
+                    Library
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-outline"
+                    x-show="$store.recipes.view === 'chooser' && !$store.recipes.trashView"
+                    @click="$store.recipes.openTrash()"
+                  >
+                    Trash
+                  </button>
+                  <span class="auth-user">
+                    <span x-text="$store.auth.user.email || ''"></span>
+                    <button type="button" class="btn-link" @click="$store.auth.signOut()">Sign out</button>
+                  </span>
+                </div>
+              </header>
+
+              <div
+                class="chooser-body"
+                @scroll="$store.recipes.closeRowMenu(); $store.recipes.closeSort()"
+              >
+                <div class="alert alert-warning" x-show="$store.recipes.loadError">
+                  <div class="alert-header">
+                    <span class="alert-dot"></span>
+                    <span>Couldn't reach the server</span>
+                  </div>
+                  <p>Your recipes couldn't be loaded.</p>
+                  <button type="button" class="btn-outline" @click="$store.recipes.retryLoad()">Retry</button>
+                </div>
+
+                <template x-if="$store.recipes.view === 'freezes'">
+                  <div class="landing">
+                    <section class="landing-library">
+                      <div class="landing-section-bar">
+                        <h2 class="landing-heading">Frozen batches</h2>
+                        <button type="button" class="btn-outline" @click="$store.recipes.backToChooser()">
+                          Back to recipes
+                        </button>
+                      </div>
+
+                      <div class="landing-table-wrap" x-show="$store.recipes.freezes.length">
+                        <table class="landing-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Title</th>
+                              <th scope="col" class="landing-col-date">Frozen</th>
+                              <th scope="col" class="landing-col-actions" aria-label="Actions"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <template x-for="b in $store.recipes.freezes" :key="b.id">
+                              <tr>
+                                <td class="landing-col-title">
+                                  <template x-if="$store.recipes.renamingId === b.id">
+                                    <input
+                                      class="landing-rename"
+                                      type="text"
+                                      :value="$store.recipes.renameValue"
+                                      @input="$store.recipes.setRenameValue($event.target.value)"
+                                      @keydown.enter.prevent="$store.recipes.commitRename(b)"
+                                      @keydown.escape.prevent="$store.recipes.cancelRename()"
+                                      @blur="$store.recipes.commitRename(b)"
+                                      x-init="$el.focus(); $el.select()"
+                                    />
+                                  </template>
+                                  <template x-if="$store.recipes.renamingId !== b.id">
+                                    <button
+                                      type="button"
+                                      class="landing-title"
+                                      @click="$store.recipes.forkFrozen(b.id)"
+                                    >
+                                      <span class="landing-name" x-text="b.name"></span>
+                                      <span class="landing-row-hint">frozen — click to fork a copy</span>
+                                    </button>
+                                  </template>
+                                </td>
+                                <td class="landing-col-date" x-text="$store.recipes.dateLabel(b.frozen_at)"></td>
+                                <td class="landing-col-actions">
+                                  <button
+                                    type="button"
+                                    class="landing-kebab"
+                                    aria-label="Frozen batch actions"
+                                    aria-haspopup="menu"
+                                    :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id"
+                                    @click.stop="$store.recipes.openRowMenu(b, $event)"
+                                  >
+                                    ⋮
+                                  </button>
+                                </td>
+                              </tr>
+                            </template>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <p class="landing-empty" x-show="!$store.recipes.freezes.length">
+                        No frozen batches yet. Freeze a recipe to keep an immutable snapshot.
+                      </p>
+                    </section>
+                  </div>
+                </template>
+
+                <template x-if="$store.recipes.view === 'chooser'">
+                  <div class="landing">
+                    <template x-if="$store.recipes.trashView">
+                      <div class="recipes-list">
+                        <template x-for="b in $store.recipes.trashRows" :key="b.id">
+                          <div class="recipes-item" :class="b.status === 'frozen' ? 'is-frozen' : ''">
+                            <span class="recipes-name" x-text="b.name"></span>
+                            <span class="recipes-hint" x-show="b.status === 'frozen'" x-text="'frozen'"></span>
+                            <span
+                              class="recipes-hint"
+                              x-text="'Moved ' + $store.recipes.dateLabel(b.updated_at)"
+                            ></span>
+                            <div class="recipes-row-actions">
+                              <button type="button" class="btn-outline" @click="$store.recipes.restore(b.id)">
+                                Restore
+                              </button>
+                              <button type="button" class="btn-outline" @click="$store.recipes.deletePermanent(b.id)">
+                                Delete permanently
+                              </button>
+                            </div>
+                          </div>
+                        </template>
+                        <p class="recipes-empty" x-show="!$store.recipes.trashRows.length">Trash is empty.</p>
+                      </div>
+                    </template>
+
+                    <template x-if="!$store.recipes.trashView">
+                      <div class="landing-page">
+                        <section class="landing-hero">
+                          <button type="button" class="landing-create" @click="$store.recipes.newRecipe()">
+                            <span class="landing-create-icon">＋</span>
+                            <span class="landing-create-title">New recipe</span>
+                            <span class="landing-create-hint">Start with a blank batch</span>
+                          </button>
+
+                          <div class="landing-freezes">
+                            <div class="landing-section-bar">
+                              <h2 class="landing-subheading">Start from a frozen batch</h2>
+                              <button
+                                type="button"
+                                class="btn-link"
+                                x-show="$store.recipes.freezes.length > $store.recipes.recentFreezeRail.length"
+                                @click="$store.recipes.showFreezes()"
+                              >
+                                View all
+                              </button>
+                            </div>
+
+                            <div class="landing-freeze-rail" x-show="$store.recipes.freezes.length">
+                              <template x-for="b in $store.recipes.recentFreezeRail" :key="b.id">
+                                <button
+                                  type="button"
+                                  class="landing-freeze-card"
+                                  @click="$store.recipes.forkFrozen(b.id)"
+                                >
+                                  <span class="landing-freeze-name" x-text="b.name"></span>
+                                  <span
+                                    class="landing-freeze-date"
+                                    x-text="'Frozen ' + $store.recipes.dateLabel(b.frozen_at)"
+                                  ></span>
+                                </button>
+                              </template>
+                            </div>
+
+                            <p class="landing-empty" x-show="!$store.recipes.freezes.length">
+                              Freeze a recipe to keep an immutable snapshot and fork it later.
+                            </p>
+                          </div>
+                        </section>
+
+                        <section class="landing-library">
+                          <div class="landing-section-bar">
+                            <h2 class="landing-heading">Your recipes</h2>
+                            <button
+                              type="button"
+                              class="btn-outline landing-sort-btn"
+                              @click.stop="$store.recipes.toggleSort($event)"
+                            >
+                              <span x-text="'Sort: ' + $store.recipes.sortLabel"></span>
+                              <span aria-hidden="true">▾</span>
+                            </button>
+                          </div>
+
+                          <template x-for="section in $store.recipes.sections" :key="section.key">
+                            <div class="landing-group">
+                              <h3 class="landing-group-title" x-text="section.label"></h3>
+                              <div class="landing-table-wrap">
+                                <table class="landing-table">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Title</th>
+                                      <th scope="col" class="landing-col-date">Modified</th>
+                                      <th scope="col" class="landing-col-actions" aria-label="Actions"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <template x-for="b in section.batches" :key="b.id">
+                                      <tr>
+                                        <td class="landing-col-title">
+                                          <template x-if="$store.recipes.renamingId === b.id">
+                                            <input
+                                              class="landing-rename"
+                                              type="text"
+                                              :value="$store.recipes.renameValue"
+                                              @input="$store.recipes.setRenameValue($event.target.value)"
+                                              @keydown.enter.prevent="$store.recipes.commitRename(b)"
+                                              @keydown.escape.prevent="$store.recipes.cancelRename()"
+                                              @blur="$store.recipes.commitRename(b)"
+                                              x-init="$el.focus(); $el.select()"
+                                            />
+                                          </template>
+                                          <template x-if="$store.recipes.renamingId !== b.id">
+                                            <button
+                                              type="button"
+                                              class="landing-title"
+                                              @click="$store.recipes.openDraft(b.id)"
+                                            >
+                                              <span class="landing-name" x-text="b.name"></span>
+                                            </button>
+                                          </template>
+                                        </td>
+                                        <td class="landing-col-date" x-text="$store.recipes.dateLabel(b.updated_at)"></td>
+                                        <td class="landing-col-actions">
+                                          <button
+                                            type="button"
+                                            class="landing-kebab"
+                                            aria-label="Recipe actions"
+                                            aria-haspopup="menu"
+                                            :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id"
+                                            @click.stop="$store.recipes.openRowMenu(b, $event)"
+                                          >
+                                            ⋮
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    </template>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </template>
+
+                          <p class="landing-empty" x-show="!$store.recipes.drafts.length">
+                            No recipes yet. Start with a blank recipe.
+                          </p>
+                        </section>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <template x-if="$store.recipes.rowMenu">
+                <div
+                  class="landing-menu"
+                  :style="$store.recipes.rowMenuStyle"
+                  role="menu"
+                  @click.outside="$store.recipes.closeRowMenu()"
+                  @keydown.escape.window="$store.recipes.closeRowMenu()"
+                >
+                  <button
+                    type="button"
+                    class="landing-menu-item"
+                    role="menuitem"
+                    x-show="$store.recipes.rowMenu.status === 'frozen'"
+                    @click="$store.recipes.forkRow()"
+                  >
+                    Fork a copy
+                  </button>
+                  <button
+                    type="button"
+                    class="landing-menu-item"
+                    role="menuitem"
+                    @click="$store.recipes.startRename()"
+                  >
+                    Rename
+                  </button>
+                  <button
+                    type="button"
+                    class="landing-menu-item"
+                    role="menuitem"
+                    @click="$store.recipes.trashRow()"
+                  >
+                    Move to trash
+                  </button>
+                </div>
+              </template>
+
+              <template x-if="$store.recipes.sortOpen">
+                <div
+                  class="landing-menu"
+                  :style="$store.recipes.sortMenuStyle"
+                  role="menu"
+                  @click.outside="$store.recipes.closeSort()"
+                  @keydown.escape.window="$store.recipes.closeSort()"
+                >
+                  <button
+                    type="button"
+                    class="landing-menu-item"
+                    role="menuitemradio"
+                    :aria-checked="$store.recipes.sort === 'modified'"
+                    @click="$store.recipes.setSort('modified')"
+                  >
+                    Last modified
+                  </button>
+                  <button
+                    type="button"
+                    class="landing-menu-item"
+                    role="menuitemradio"
+                    :aria-checked="$store.recipes.sort === 'title'"
+                    @click="$store.recipes.setSort('title')"
+                  >
+                    Title
+                  </button>
+                </div>
+              </template>
+            </div>

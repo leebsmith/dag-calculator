@@ -1,0 +1,159 @@
+            <div class="editor">
+              <header class="menu-bar">
+                <div class="editor-title">
+                  <input
+                    type="text"
+                    class="editor-title-input"
+                    :value="$store.recipes.activeName"
+                    placeholder="Untitled recipe"
+                    @change="$store.recipes.rename($event.target.value)"
+                  />
+                </div>
+                <div class="menu-actions">
+                  <button type="button" class="btn-outline" @click="$store.recipes.backToChooser()">
+                    Recipes
+                  </button>
+                  <button type="button" class="btn-outline" @click="$store.recipes.openTrash()">Trash</button>
+                  <button type="button" class="btn-outline" @click="$store.recipes.freeze()">Freeze</button>
+                  <button type="button" class="btn-outline" @click="$store.recipes.trash()">Move to Trash</button>
+                  <button type="button" class="btn-outline" @click="openLibrary()">Library</button>
+                  <div class="menu-unit">
+                    <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
+                    <div class="unit-popover" x-show="unitsOpen" @click.outside="closeUnits()">
+                      <div class="unit-cols">
+                        <template x-for="g in unitGroups" :key="g.label">
+                          <div class="unit-col">
+                            <span class="unit-col-title" x-text="g.label"></span>
+                            <template x-for="d in g.dims" :key="d.id">
+                              <div class="unit-row">
+                                <label class="form-label" x-text="d.label"></label>
+                                <select
+                                  class="form-select"
+                                  :value="unitMode[d.id] || d.default || d.units[0][0]"
+                                  @change="setUnit(d.id, $event.target.value)"
+                                >
+                                  <template x-for="u in d.units" :key="u[0]">
+                                    <option :value="u[0]" :selected="u[0] === (unitMode[d.id] || d.default || d.units[0][0])" x-text="u[1]"></option>
+                                  </template>
+                                </select>
+                              </div>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                      <div class="unit-reset">
+                        <button type="button" class="btn-link text-xs" @click="resetUnits()">
+                          Reset unit defaults
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="auth-user">
+                    <span x-text="$store.auth.user.email || ''"></span>
+                    <button type="button" class="btn-link" @click="$store.auth.signOut()">Sign out</button>
+                  </span>
+                </div>
+              </header>
+
+              <div class="stage">
+                <div class="alert alert-warning" x-show="boundaryError">
+                  <div class="alert-header">
+                    <span class="alert-dot"></span>
+                    <span x-text="'Solver error: ' + (boundaryError && boundaryError.code ? boundaryError.code : 'unknown')"></span>
+                  </div>
+                  <p x-text="boundaryError && boundaryError.message"></p>
+                </div>
+
+                <!-- Step body: a definite-width nav rail + the active step card. -->
+                <div class="step-body">
+                  <nav class="step-rail" aria-label="Step navigation">
+                    <button
+                      type="button"
+                      class="step-rail-btn"
+                      @click="prev()"
+                      :disabled="activeIndex === 0"
+                      aria-label="Previous step"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      class="step-rail-btn"
+                      @click="next()"
+                      :disabled="activeIndex === steps.length - 1"
+                      aria-label="Next step"
+                    >
+                      ▼
+                    </button>
+                  </nav>
+
+                  <div class="step-viewport">
+                    <div class="step-row">
+                      <template x-for="step in [activeStep]" :key="step.id">
+                        <div class="step-slot" :class="navClass">
+                          <template x-if="step.id === 'style'">
+                            <load src="src/partials/step-style.html" />
+                          </template>
+                          <template x-if="step.id === 'yeast'">
+                            <load src="src/partials/step-yeast.html" />
+                          </template>
+                          <template x-if="step.id === 'fermentables'">
+                            <load src="src/partials/step-fermentables.html" />
+                          </template>
+                          <template x-if="step.id === 'hops'">
+                            <load src="src/partials/step-hops.html" />
+                          </template>
+                          <template x-if="step.id === 'late-additions'">
+                            <load src="src/partials/step-late-additions.html" />
+                          </template>
+                          <template x-if="step.id === 'mash'">
+                            <load src="src/partials/step-mash.html" />
+                          </template>
+                          <template x-if="step.id === 'brew-day'">
+                            <load src="src/partials/step-brew-day.html" />
+                          </template>
+                          <template x-if="step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'hops' && step.id !== 'late-additions' && step.id !== 'mash' && step.id !== 'brew-day'">
+                            <load src="src/partials/step-card.html" />
+                          </template>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <footer class="app-footer">
+                <span class="save-state text-xs" x-show="$store.recipes.saveState !== 'idle'">
+                  <span x-show="$store.recipes.saveState === 'dirty'">Unsaved</span>
+                  <span x-show="$store.recipes.saveState === 'saving'">Saving…</span>
+                  <button
+                    type="button"
+                    class="btn-link text-xs"
+                    x-show="$store.recipes.saveState === 'error'"
+                    @click="$store.recipes.retrySave()"
+                  >Save failed — retry</button>
+                  <span x-show="$store.recipes.saveState === 'conflict'">
+                    Changed in another tab —
+                    <button type="button" class="btn-link text-xs" @click="$store.recipes.keepMine()">Keep mine</button>
+                    <button type="button" class="btn-link text-xs" @click="$store.recipes.reloadFromRemote()">Reload</button>
+                  </span>
+                </span>
+                <span class="footer-step" x-text="activeStep.title"></span>
+                <span class="footer-step-count" x-text="'Step ' + (activeIndex + 1) + ' of ' + steps.length"></span>
+                <span class="boundary-status" x-show="boundaryPending">
+                  <span class="status-dot status-dot-warning"></span>
+                  <span class="text-xs text-muted">Solving…</span>
+                </span>
+                <span class="footer-violations" x-show="violationCount > 0">
+                  <span class="status-dot status-dot-error"></span>
+                  <span x-text="violationCount + ' violation(s)'"></span>
+                </span>
+                <span class="footer-violations" x-show="styleConformance && styleConformance.hasBaseline">
+                  <span
+                    class="status-dot"
+                    :class="styleSai >= 90 ? 'status-dot-success' : 'status-dot-warning'"
+                  ></span>
+                  <span x-text="'SAI ' + styleSai"></span>
+                </span>
+              </footer>
+            </div>

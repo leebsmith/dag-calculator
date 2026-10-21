@@ -148,3 +148,5 @@ export function registerYeastCard(app, ctx) {
 export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
+
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];

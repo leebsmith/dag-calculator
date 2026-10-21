@@ -192,3 +192,5 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     },
   });
 }
+
+export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftEntry", "draftMassDisplay", "openDraft", "closeDraft", "saveDraft", "normalizeDraft", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows"];
