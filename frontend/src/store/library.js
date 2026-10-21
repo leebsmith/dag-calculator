@@ -112,9 +112,10 @@ export function createLibrary({ client = EMPTY_CLIENT, kinds = CATALOG_KINDS, on
         target.removeItem(LEGACY_STORAGE_KEY);
         return { imported: 0 };
       }
-      target.removeItem(LEGACY_STORAGE_KEY);
-      if (!raw?.catalogs || typeof raw.catalogs !== "object") return { imported: 0 };
-
+      if (!raw?.catalogs || typeof raw.catalogs !== "object") {
+        target.removeItem(LEGACY_STORAGE_KEY);
+        return { imported: 0 };
+      }
       let imported = 0;
       for (const [kind, entries] of Object.entries(raw.catalogs)) {
         const meta = CATALOGS[kind];
@@ -131,6 +132,7 @@ export function createLibrary({ client = EMPTY_CLIENT, kinds = CATALOG_KINDS, on
           }
         }
       }
+      target.removeItem(LEGACY_STORAGE_KEY);
       return { imported };
     },
   };
