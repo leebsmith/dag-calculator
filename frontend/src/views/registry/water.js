@@ -20,10 +20,35 @@ export const waterRegistry = {
   "water.target_profile.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
 
   "water.strategy": { label: "Strategy" },
-  "water.salt_distribution": { label: "Salt distribution" },
-  "water.acid_medium": { label: "Acid medium" },
-  "water.gypsum_form": { label: "Gypsum form" },
-  "water.cacl2_form": { label: "CaCl2 form" },
+  "water.salt_distribution": {
+    label: "Salt distribution",
+    optionLabels: {
+      PROPORTIONAL: "Split — grist and HLT",
+      MASH_ONLY: "Mash only salts",
+    },
+  },
+  "water.acid_medium": {
+    label: "Acid medium",
+    optionLabels: {
+      LACTIC_88: "88% lactic acid",
+      PHOSPHORIC_10: "10% phosphoric acid",
+      PHOSPHORIC_85: "85% phosphoric acid",
+    },
+  },
+  "water.gypsum_form": {
+    label: "Gypsum form",
+    optionLabels: {
+      GYPSUM_DIHYDRATE: "Dihydrate (CaSO₄·2H₂O)",
+      GYPSUM_ANHYDROUS: "Anhydrous (CaSO₄)",
+    },
+  },
+  "water.cacl2_form": {
+    label: "CaCl2 form",
+    optionLabels: {
+      CACL2_DIHYDRATE: "Dihydrate (CaCl₂·2H₂O)",
+      CACL2_ANHYDROUS: "Anhydrous (CaCl₂)",
+    },
+  },
   "water.preferred_alkaline_agent": { label: "Alkaline agent" },
   "water.target_mash_ph": { label: "Target mash pH", unit: "pH" },
   "water.v_hlt_treat_l": { label: "Sparge salt dosing volume", unit: "L" },

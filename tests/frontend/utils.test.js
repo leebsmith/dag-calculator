@@ -31,6 +31,7 @@ import {
   indexFields,
   isRepresentative,
   joinNonEmpty,
+  optionLabel,
   preferredUnit,
   provenanceFor,
   resultCounter,
@@ -164,6 +165,13 @@ test("joinNonEmpty suppresses empty separators", () => {
   assert.equal(joinNonEmpty([null, undefined, ""]), "");
   assert.equal(joinNonEmpty("nope"), "");
   assert.equal(joinNonEmpty([0, 1]), "0 • 1");
+});
+
+test("optionLabel falls back to the raw value when unlabelled", () => {
+  assert.equal(optionLabel({ MASH_ONLY: "Mash only salts" }, "MASH_ONLY"), "Mash only salts");
+  assert.equal(optionLabel({ MASH_ONLY: "Mash only salts" }, "PROPORTIONAL"), "PROPORTIONAL");
+  assert.equal(optionLabel(null, "MASH_ONLY"), "MASH_ONLY");
+  assert.equal(optionLabel(undefined, "MASH_ONLY"), "MASH_ONLY");
 });
 
 test("countLabel pluralizes explicitly and safely", () => {

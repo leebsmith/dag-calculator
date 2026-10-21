@@ -252,6 +252,13 @@ export function registerStyleCard(app, ctx) {
       this.notify();
     },
 
+    setSulfateChlorideMode(checked) {
+      const mode = checked ? "specified" : "unspecified";
+      this.setRoot(N.sulfateChlorideMode, mode);
+      this.scheduleSolve();
+      this.notify();
+    },
+
     styleConformanceReport() {
       const read = (path) => {
         try {
@@ -500,6 +507,24 @@ export function registerStyleCard(app, ctx) {
         return fieldOr(this.fieldsById, N.styleSource);
       },
     },
+    sulfateChlorideModeField: {
+      configurable: true,
+      get() {
+        return fieldOr(this.fieldsById, N.sulfateChlorideMode);
+      },
+    },
+    sulfateChlorideRatioField: {
+      configurable: true,
+      get() {
+        return fieldOr(this.fieldsById, N.sulfateChlorideRatio);
+      },
+    },
+    sulfateChlorideSpecified: {
+      configurable: true,
+      get() {
+        return this.sulfateChlorideModeField.value === "specified";
+      },
+    },
     // Envelope editors, in display order, with resolved field models and seed
     // provenance so the template stays a dumb x-for.
     styleEnvelopeFields: {
@@ -595,4 +620,4 @@ export function refreshStyleCard(app, ctx) {
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleSource", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleSearchQuery", "styleCategoryFilter", "styleStrengthFilter", "styleColorFilter", "styleFermentationFilter", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "toggleStyleStrength", "toggleStyleColor", "toggleStyleFermentation", "selectStyle", "clearStyleSelection", "styleField", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "styleCatalog", "styleCategories", "styleStrengths", "styleColors", "styleFermentations", "filteredStyles", "visibleStyles", "styleResultCount", "isStyleListTruncated", "selectedStyle", "selectedStyleTarget", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleSourceModel", "styleEnvelopeFields", "styleResultLabel", "conformanceSummary", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleSource", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleSearchQuery", "styleCategoryFilter", "styleStrengthFilter", "styleColorFilter", "styleFermentationFilter", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "toggleStyleStrength", "toggleStyleColor", "toggleStyleFermentation", "selectStyle", "clearStyleSelection", "styleField", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "setSulfateChlorideMode", "sulfateChlorideModeField", "sulfateChlorideRatioField", "sulfateChlorideSpecified", "styleConformanceReport", "styleCatalog", "styleCategories", "styleStrengths", "styleColors", "styleFermentations", "filteredStyles", "visibleStyles", "styleResultCount", "isStyleListTruncated", "selectedStyle", "selectedStyleTarget", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleSourceModel", "styleEnvelopeFields", "styleResultLabel", "conformanceSummary", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

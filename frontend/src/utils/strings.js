@@ -48,3 +48,19 @@ export function joinNonEmpty(parts, separator = " • ") {
   }
   return pieces.join(separator);
 }
+
+/**
+ * Human label for a choice option, from a per-field label map, falling back to the
+ * raw value when the map is absent or the member is unlabelled.
+ *
+ * @param {Record<string, string>|null|undefined} labels
+ * @param {string} value
+ * @returns {string}
+ * @note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.
+ */
+export function optionLabel(labels, value) {
+  if (labels && typeof labels === "object" && typeof value === "string" && value in labels) {
+    return labels[value];
+  }
+  return value;
+}

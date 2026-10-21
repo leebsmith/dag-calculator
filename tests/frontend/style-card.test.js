@@ -213,3 +213,28 @@ test("utils namespace is exposed to templates", () => {
   assert.equal(typeof app.fmt.formatGravity, "function");
   assert.equal(app.fmt.formatQuantity({ display: "1.5", unit: "kg" }), "1.5 kg");
 });
+
+test("the SO4:Cl intent toggles the mode and persists the ratio", () => {
+  const app = createStepApp();
+  app.boot();
+
+  assert.equal(app.sulfateChlorideModeField.value, "unspecified");
+  assert.equal(app.sulfateChlorideSpecified, false);
+
+  app.setSulfateChlorideMode(true);
+  app.compute();
+  assert.equal(app.sulfateChlorideModeField.value, "specified");
+  assert.equal(app.sulfateChlorideSpecified, true);
+
+  app.edit(app.sulfateChlorideRatioField, "2.5");
+  assert.equal(app.master.getRoot("batch.sulfate_chloride_target_ratio"), 2.5);
+
+  app.setSulfateChlorideMode(false);
+  app.compute();
+  assert.equal(app.sulfateChlorideModeField.value, "unspecified");
+  assert.equal(
+    app.master.getRoot("batch.sulfate_chloride_target_ratio"),
+    2.5,
+    "ratio persists after clearing the intent"
+  );
+});

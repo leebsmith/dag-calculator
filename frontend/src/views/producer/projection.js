@@ -207,6 +207,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         decimals: meta.decimals ?? null,
         hint: meta.hint ?? null,
         options,
+        optionLabels: meta.optionLabels ?? null,
         editable,
         target,
         ...(info.selectionRef ? { selectionRef: info.selectionRef } : {}),

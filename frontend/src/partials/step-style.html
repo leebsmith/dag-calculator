@@ -415,6 +415,28 @@
           </div>
         </template>
       </div>
+      <div class="form-group">
+        <label class="form-label">
+          <input
+            type="checkbox"
+            class="form-checkbox"
+            :checked="sulfateChlorideSpecified"
+            @change="setSulfateChlorideMode($event.target.checked)"
+          />
+          <span>Specify sulfate-to-chloride target</span>
+        </label>
+        <input
+          type="number"
+          step="0.1"
+          min="0"
+          class="form-input tabular-nums"
+          :value="sulfateChlorideRatioField.display"
+          :disabled="!sulfateChlorideSpecified"
+          placeholder="1.0"
+          @input="edit(sulfateChlorideRatioField, $event.target.value)"
+          @change="commitField(sulfateChlorideRatioField)"
+        />
+      </div>
     </div>
   </div>
 </section>
