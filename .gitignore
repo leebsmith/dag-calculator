@@ -5,6 +5,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .tach/
+backend/app/_vendor/
 .DS_Store
 
 # Firebase emulators

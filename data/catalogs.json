@@ -1,0 +1,58 @@
+{
+  "malt": {
+    "label": "Malt",
+    "schema": "malt",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": null,
+    "seed_key": "malts"
+  },
+  "yeast": {
+    "label": "Yeast",
+    "schema": "yeast",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": "yeast",
+    "seed_key": "yeasts"
+  },
+  "hop": {
+    "label": "Hop",
+    "schema": "hop",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": "hop",
+    "seed_key": "hops"
+  },
+  "sugar": {
+    "label": "Sugar",
+    "schema": "sugar",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": null,
+    "seed_key": "sugars"
+  },
+  "equipment": {
+    "label": "Equipment",
+    "schema": "equipment",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": "equipment",
+    "seed_key": "equipment"
+  },
+  "water_report": {
+    "label": "Water Report",
+    "schema": "water_report",
+    "id_field": "report_id",
+    "title_field": "laboratory",
+    "references_key": "water_report",
+    "seed_key": "waterReports"
+  },
+  "water_target": {
+    "label": "Water Target",
+    "schema": "water_target",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": "water_target",
+    "seed_key": "waterTargets"
+  }
+}

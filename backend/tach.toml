@@ -1,6 +1,10 @@
 interfaces = []
 
 [[modules]]
+path = "app.artifact"
+depends_on = []
+
+[[modules]]
 path = "app.core"
 depends_on = []
 
@@ -18,7 +22,7 @@ depends_on = ["app.database", "app.schemas"]
 
 [[modules]]
 path = "app.services"
-depends_on = ["app.core", "app.repositories", "app.schemas"]
+depends_on = ["app.artifact", "app.core", "app.repositories", "app.schemas"]
 
 [[modules]]
 path = "app.auth"
