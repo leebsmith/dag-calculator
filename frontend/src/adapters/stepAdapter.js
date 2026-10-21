@@ -11,7 +11,7 @@ import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
-import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
+import { loadUnitMode } from "../store/unitPrefs.js";
 import { produce, nonlinearFns } from "../views/producer.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { derivationsFor } from "../views/seedDerivations.js";
@@ -27,6 +27,7 @@ import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
 import { installDraftEditor } from "./draftEditor.js";
+import { installUnitActions } from "./unitActions.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
 // suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
@@ -427,45 +428,6 @@ export function createStepApp(options = {}) {
       else this.next();
     },
 
-    setUnit(dimension, unit) {
-      if (unit) ui.unitMode[dimension] = unit;
-      else delete ui.unitMode[dimension];
-      this.unitMode = { ...ui.unitMode };
-      saveUnitMode(ui.unitMode, artifact.schema_version);
-      this.compute();
-    },
-
-    // Clear every stored unit preference (master picks + per-field overrides,
-    // including invisible ones on summary readouts) and revert to defaults.
-    resetUnits() {
-      ui.unitMode = clearUnitMode();
-      this.unitMode = { ...ui.unitMode };
-      this.compute();
-    },
-
-    // Per-field unit override: cycle the field through its dimension's units,
-    // dropping the override when it lands back on the field's inherited unit
-    // (the pinned registry `displayUnit`, else the master menu pick, else base).
-    toggleFieldUnit(field) {
-      const dim = field.dimension;
-      if (!dim) return;
-      const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dim);
-      if (!dimDef) return;
-      const units = dimDef.units.map(([id]) => id);
-      const fieldDefault = field.displayUnit ?? ui.unitMode[dim] ?? dimDef.default ?? units[0];
-      const current = ui.unitMode[field.id] ?? fieldDefault;
-      const next = units[(units.indexOf(current) + 1) % units.length];
-      if (next === fieldDefault) delete ui.unitMode[field.id];
-      else ui.unitMode[field.id] = next;
-      this.unitMode = { ...ui.unitMode };
-      saveUnitMode(ui.unitMode, artifact.schema_version);
-      this.compute();
-    },
-
-    toggleUnits() {
-      this.unitsOpen = !this.unitsOpen;
-    },
-
     // Clamp an editable value to the envelope of its selected component, when
     // one applies (a batch root bounded by a selection's fields). Returns the
     // clamped value; an unset optional selection contributes no bounds.
@@ -677,6 +639,7 @@ export function createStepApp(options = {}) {
   });
 
   installDraftEditor(app, { artifact, ui, session });
+  installUnitActions(app, { artifact, ui });
 
   registerYeastCard(app, cardCtx);
   registerStyleCard(app, cardCtx);
