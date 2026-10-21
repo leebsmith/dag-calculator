@@ -7,9 +7,12 @@ adapters, which wrap the sealed ``app.core`` solvers.
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from app.artifact import data_dir
 from app.auth.deps import AllowedUser, CurrentUser, session_payload
 from app.schemas.batch import BatchPatch, BatchRecord, DraftPayload, FreezePayload
 from app.schemas.boundary import (
@@ -28,6 +31,9 @@ from app.services.catalog_service import (
 )
 
 app = FastAPI(title="dag-calculator backend")
+logging.getLogger("app.artifact").info(
+    "Resolved artifact data directory: %s", data_dir()
+)
 
 
 @app.get("/session")

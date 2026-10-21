@@ -30,4 +30,4 @@ depends_on = ["app.database", "app.schemas"]
 
 [[modules]]
 path = "app.main"
-depends_on = ["app.auth", "app.services", "app.schemas"]
+depends_on = ["app.artifact", "app.auth", "app.services", "app.schemas"]
