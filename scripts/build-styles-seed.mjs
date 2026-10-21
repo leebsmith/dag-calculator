@@ -84,27 +84,31 @@ function convert(row, id) {
   return component;
 }
 
-const inputPath = process.argv[2] ?? DEFAULT_INPUT;
-const rows = JSON.parse(readFileSync(inputPath, "utf8"));
+export function buildSeed(rows) {
+  const styleLevel = rows.filter((row) => isStyleLevel(row.style_id));
+  const idCounts = {};
+  for (const row of styleLevel) idCounts[row.style_id] = (idCounts[row.style_id] ?? 0) + 1;
 
-const styleLevel = rows.filter((row) => isStyleLevel(row.style_id));
-const idCounts = {};
-for (const row of styleLevel) idCounts[row.style_id] = (idCounts[row.style_id] ?? 0) + 1;
-
-const seed = {};
-for (const row of styleLevel) {
-  let id = row.style_id;
-  if (idCounts[row.style_id] > 1) {
-    const suffix = subName(row.style_name);
-    // A duplicated id with no sub-name is the container record (e.g. the bare
-    // "Specialty IPA"); drop it in favor of its concrete sub-types.
-    if (!suffix) continue;
-    id = `${row.style_id} ${suffix}`;
+  const seed = {};
+  for (const row of styleLevel) {
+    let id = row.style_id;
+    if (idCounts[row.style_id] > 1) {
+      const suffix = subName(row.style_name);
+      // A duplicated id with no sub-name is the container record (e.g. the bare
+      // "Specialty IPA"); drop it in favor of its concrete sub-types.
+      if (!suffix) continue;
+      id = `${row.style_id} ${suffix}`;
+    }
+    if (seed[id]) throw new Error(`duplicate style id "${id}"`);
+    seed[id] = convert(row, id);
   }
-  if (seed[id]) throw new Error(`duplicate style id "${id}"`);
-  seed[id] = convert(row, id);
+
+  return Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
 }
 
-const sorted = Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
-writeFileSync(OUTPUT, `${JSON.stringify(sorted, null, 2)}\n`);
-console.log(`wrote ${Object.keys(sorted).length} styles to data/seeds/styles.json`);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const inputPath = process.argv[2] ?? DEFAULT_INPUT;
+  const seed = buildSeed(JSON.parse(readFileSync(inputPath, "utf8")));
+  writeFileSync(OUTPUT, `${JSON.stringify(seed, null, 2)}\n`);
+  console.log(`wrote ${Object.keys(seed).length} styles to data/seeds/styles.json`);
+}

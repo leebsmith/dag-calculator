@@ -91,19 +91,24 @@ function convert(row, usedSlugs) {
   return component;
 }
 
-const inputPath = process.argv[2] ?? DEFAULT_INPUT;
-const rows = JSON.parse(readFileSync(inputPath, "utf8"));
-
-const usedSlugs = new Set();
-const seed = {};
-for (const row of rows) {
-  const component = convert(row, usedSlugs);
-  if (component) seed[component.id] = component;
+export function buildSeed(rows) {
+  const usedSlugs = new Set();
+  const seed = {};
+  for (const row of rows) {
+    const component = convert(row, usedSlugs);
+    if (component) seed[component.id] = component;
+  }
+  return Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
 }
 
-const sorted = Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
-writeFileSync(OUTPUT, `${JSON.stringify(sorted, null, 2)}\n`);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const inputPath = process.argv[2] ?? DEFAULT_INPUT;
+  const rows = JSON.parse(readFileSync(inputPath, "utf8"));
+  const seed = buildSeed(rows);
 
-const skipped = rows.length - Object.keys(sorted).length;
-console.log(`wrote ${Object.keys(sorted).length} yeasts to data/seeds/yeasts.json`);
-if (skipped) console.log(`skipped ${skipped} rows without a parseable attenuation`);
+  writeFileSync(OUTPUT, `${JSON.stringify(seed, null, 2)}\n`);
+
+  const skipped = rows.length - Object.keys(seed).length;
+  console.log(`wrote ${Object.keys(seed).length} yeasts to data/seeds/yeasts.json`);
+  if (skipped) console.log(`skipped ${skipped} rows without a parseable attenuation`);
+}

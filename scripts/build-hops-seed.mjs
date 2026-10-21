@@ -74,25 +74,28 @@ function convert(row) {
   return component;
 }
 
-const inputPath = process.argv[2] ?? DEFAULT_INPUT;
-const rows = JSON.parse(readFileSync(inputPath, "utf8"));
-
-const usedSlugs = new Set();
-const seed = {};
-for (const row of rows) {
-  const component = convert(row);
-  if (!component) continue;
-  let id = component.id;
-  if (usedSlugs.has(id)) {
-    let n = 2;
-    while (usedSlugs.has(`${id}-${n}`)) n += 1;
-    id = `${id}-${n}`;
-    component.id = id;
+export function buildSeed(rows) {
+  const usedSlugs = new Set();
+  const seed = {};
+  for (const row of rows) {
+    const component = convert(row);
+    if (!component) continue;
+    let id = component.id;
+    if (usedSlugs.has(id)) {
+      let n = 2;
+      while (usedSlugs.has(`${id}-${n}`)) n += 1;
+      id = `${id}-${n}`;
+      component.id = id;
+    }
+    usedSlugs.add(id);
+    seed[id] = component;
   }
-  usedSlugs.add(id);
-  seed[id] = component;
+  return Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
 }
 
-const sorted = Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
-writeFileSync(OUTPUT, `${JSON.stringify(sorted, null, 2)}\n`);
-console.log(`wrote ${Object.keys(sorted).length} hops to data/seeds/hops.json`);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const inputPath = process.argv[2] ?? DEFAULT_INPUT;
+  const seed = buildSeed(JSON.parse(readFileSync(inputPath, "utf8")));
+  writeFileSync(OUTPUT, `${JSON.stringify(seed, null, 2)}\n`);
+  console.log(`wrote ${Object.keys(seed).length} hops to data/seeds/hops.json`);
+}

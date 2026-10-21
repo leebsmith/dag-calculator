@@ -154,7 +154,7 @@ function sugarComponent(row) {
   };
 }
 
-function toIdKeyedMap(components, classify = false) {
+function toIdKeyedMap(components, classify, crosswalk, standardList) {
   const used = new Set();
   const seed = {};
   for (const component of components) {
@@ -165,12 +165,14 @@ function toIdKeyedMap(components, classify = false) {
       id = `${id}-${n}`;
     }
     used.add(id);
-    seed[id] = classify ? { ...component, id, ...standardFor(id) } : { ...component, id };
+    seed[id] = classify
+      ? { ...component, id, ...standardFor(id, crosswalk, standardList) }
+      : { ...component, id };
   }
   return seed;
 }
 
-function standardFor(id) {
+function standardFor(id, crosswalk, standardList) {
   const standardId = crosswalk[id];
   if (!standardId) return {};
   const entry = standardList[standardId];
@@ -183,9 +185,12 @@ function standardFor(id) {
   };
 }
 
+function sorted(seed) {
+  return Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
+}
+
 function writeSorted(path, seed) {
-  const sorted = Object.fromEntries(Object.keys(seed).sort().map((id) => [id, seed[id]]));
-  writeFileSync(path, `${JSON.stringify(sorted, null, 2)}\n`);
+  writeFileSync(path, `${JSON.stringify(sorted(seed), null, 2)}\n`);
 }
 
 function median(values) {
@@ -217,26 +222,31 @@ function backfillColor(seed) {
   }
 }
 
-const inputPath = process.argv[2] ?? DEFAULT_INPUT;
-const source = JSON.parse(readFileSync(inputPath, "utf8"));
-const expectedSchemaVersion = 1;
-if (source.schema_version !== expectedSchemaVersion) {
-  throw new Error(
-    `malt-database source has schema_version ${source.schema_version}; expected ${expectedSchemaVersion}`
-  );
+export function buildSeeds(rows, crosswalk, standardList) {
+  const { malts, sugars } = splitByType(rows);
+
+  const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent), true, crosswalk, standardList);
+  const sugarSeed = toIdKeyedMap(sugars.map(sugarComponent), false, crosswalk, standardList);
+
+  backfillColor(maltSeed);
+
+  return { malts: sorted(maltSeed), sugars: sorted(sugarSeed) };
 }
-const rows = source.entries;
-const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
-const standardList = JSON.parse(readFileSync(STANDARD_LIST_PATH, "utf8"));
-const { malts, sugars } = splitByType(rows);
 
-const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent), true);
-const sugarSeed = toIdKeyedMap(sugars.map(sugarComponent));
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const inputPath = process.argv[2] ?? DEFAULT_INPUT;
+  const source = JSON.parse(readFileSync(inputPath, "utf8"));
+  const expectedSchemaVersion = 1;
+  if (source.schema_version !== expectedSchemaVersion) {
+    throw new Error(
+      `malt-database source has schema_version ${source.schema_version}; expected ${expectedSchemaVersion}`
+    );
+  }
+  const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
+  const standardList = JSON.parse(readFileSync(STANDARD_LIST_PATH, "utf8"));
+  const { malts, sugars } = buildSeeds(source.entries, crosswalk, standardList);
 
-backfillColor(maltSeed);
-
-writeSorted(MALTS_OUTPUT, maltSeed);
-writeSorted(SUGARS_OUTPUT, sugarSeed);
-console.log(
-  `wrote ${Object.keys(maltSeed).length} malts and ${Object.keys(sugarSeed).length} sugars`
-);
+  writeSorted(MALTS_OUTPUT, malts);
+  writeSorted(SUGARS_OUTPUT, sugars);
+  console.log(`wrote ${Object.keys(malts).length} malts and ${Object.keys(sugars).length} sugars`);
+}

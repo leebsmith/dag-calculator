@@ -61,7 +61,10 @@ data/sources/*.json  ──────build-*.mjs──▶  data/seeds/*.json  
   fermentables pipeline is two-stage: `build-fermentables-seed.mjs` (source →
   `malts.json`/`sugars.json`, classifying each malt via the crosswalk) then
   `build-standard-malts-seed.mjs` (derives the generic `standard-malts.json`
-  representative set from `malts.json`).
+  representative set from `malts.json`). Every builder exports its pure
+  normalizer and writes only when run as a CLI, so
+  `tests/guards/seed-rebuild` can assert the committed seeds equal a fresh
+  rebuild of `data/sources/`.
 - The BJCP scraper caches category HTML (not committed); the aggregator reads
   that cache offline. The styles seed is built from the **2021** aggregate; the
   **2015** aggregate is preserved as a source but not merged.
