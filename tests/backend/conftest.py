@@ -83,3 +83,84 @@ def batch_request():
 @pytest.fixture
 def water_request():
     return make_water_request()
+
+
+class FakeBatchRepo:
+
+    def __init__(self):
+        self._docs: dict[str, dict] = {}
+        self._clock = 1.0
+
+    def _now(self):
+        self._clock += 1.0
+        return self._clock
+
+    def list_batches(self, uid):
+        return sorted(
+            [r for r in self._docs.values() if r["uid"] == uid],
+            key=lambda r: r.get("updated_at", 0),
+            reverse=True,
+        )
+
+    def get(self, uid, batch_id):
+        r = self._docs.get(batch_id)
+        return r if r and r["uid"] == uid else None
+
+    def create(self, uid, batch_id, data):
+        now = self._now()
+        r = {
+            "id": batch_id,
+            "uid": uid,
+            "status": "draft",
+            "trashed": False,
+            "created_at": now,
+            "updated_at": now,
+            **data,
+        }
+        self._docs[batch_id] = r
+        return r
+
+    def update(self, uid, batch_id, data):
+        r = self._docs.get(batch_id)
+        if not r or r["uid"] != uid:
+            return None
+        self._docs[batch_id] = {**r, **data, "updated_at": self._now()}
+        return self._docs[batch_id]
+
+    def set_trashed(self, uid, batch_id, trashed):
+        r = self._docs.get(batch_id)
+        if not r or r["uid"] != uid:
+            return None
+        self._docs[batch_id] = {**r, "trashed": trashed, "updated_at": self._now()}
+        return self._docs[batch_id]
+
+    def delete(self, uid, batch_id):
+        r = self._docs.get(batch_id)
+        if not r or r["uid"] != uid:
+            return False
+        del self._docs[batch_id]
+        return True
+
+    def freeze(self, uid, batch_id, data):
+        source = self._docs.get(batch_id)
+        if not source or source["uid"] != uid:
+            return None
+        now = self._now()
+        r = {
+            "id": f"{batch_id}-frozen",
+            "uid": uid,
+            "name": source.get("name", "Untitled"),
+            "status": "frozen",
+            "trashed": False,
+            "schema_version": data.get("schema_version", source.get("schema_version", 2)),
+            "valuation": data.get("valuation", {}),
+            "provenance": data.get("provenance", {}),
+            "parent_batch_id": batch_id,
+            "roots": source.get("roots", {}),
+            "collections": source.get("collections", {}),
+            "created_at": now,
+            "updated_at": now,
+            "frozen_at": now,
+        }
+        self._docs[r["id"]] = r
+        return r

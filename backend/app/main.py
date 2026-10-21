@@ -69,10 +69,14 @@ def upsert_batch(
     """Idempotently create-or-update a draft (client-owned id)."""
     try:
         return service.upsert_draft(user["uid"], batch_id, payload)
-    except BatchConflictError:
+    except BatchConflictError as exc:
         return JSONResponse(
             status_code=409,
-            content={"code": "CONFLICT", "message": "Batch changed elsewhere"},
+            content={
+                "code": "CONFLICT",
+                "message": str(exc),
+                "details": {"reason": exc.reason},
+            },
         )
 
 

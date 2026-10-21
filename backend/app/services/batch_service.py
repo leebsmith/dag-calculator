@@ -11,10 +11,17 @@ from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
 
 
 class BatchConflictError(Exception):
-    """A draft write's baseline ``updated_at`` no longer matches the stored doc."""
+    """A draft write was rejected because the stored batch moved on.
 
-    def __init__(self, current: BatchRecord) -> None:
+    ``reason`` is ``"stale"`` when the client's baseline ``updated_at`` no longer
+    matches and ``"frozen"`` when the target is already an immutable snapshot.
+    The HTTP layer maps both onto one ``CONFLICT`` envelope so the browser can
+    reconcile from the remote record.
+    """
+
+    def __init__(self, reason: str, current: BatchRecord) -> None:
         super().__init__("Batch changed elsewhere")
+        self.reason = reason
         self.current = current
 
 
@@ -31,12 +38,12 @@ class BatchService:
         if existing is None:
             return BatchRecord(**self._repo.create(uid, batch_id, data))
         if existing.get("status") != "draft":
-            raise HTTPException(status_code=409, detail="Cannot mutate a frozen batch")
+            raise BatchConflictError("frozen", BatchRecord(**existing))
         if (
             payload.base_updated_at is not None
             and existing.get("updated_at") != payload.base_updated_at
         ):
-            raise BatchConflictError(BatchRecord(**existing))
+            raise BatchConflictError("stale", BatchRecord(**existing))
         return BatchRecord(**self._repo.update(uid, batch_id, data))
 
     def freeze_batch(self, uid: str, batch_id: str, payload: FreezePayload) -> BatchRecord:

@@ -3,90 +3,11 @@
 from __future__ import annotations
 
 import pytest
+from conftest import FakeBatchRepo as FakeRepo
 from fastapi import HTTPException
 
 from app.schemas.batch import DraftPayload, FreezePayload
 from app.services.batch_service import BatchConflictError, BatchService
-
-
-class FakeRepo:
-    def __init__(self):
-        self._docs: dict[str, dict] = {}
-        self._clock = 1.0
-
-    def _now(self):
-        self._clock += 1.0
-        return self._clock
-
-    def list_batches(self, uid):
-        return sorted(
-            [r for r in self._docs.values() if r["uid"] == uid],
-            key=lambda r: r.get("updated_at", 0),
-            reverse=True,
-        )
-
-    def get(self, uid, batch_id):
-        r = self._docs.get(batch_id)
-        return r if r and r["uid"] == uid else None
-
-    def create(self, uid, batch_id, data):
-        now = self._now()
-        r = {
-            "id": batch_id,
-            "uid": uid,
-            "status": "draft",
-            "trashed": False,
-            "created_at": now,
-            "updated_at": now,
-            **data,
-        }
-        self._docs[batch_id] = r
-        return r
-
-    def update(self, uid, batch_id, data):
-        r = self._docs.get(batch_id)
-        if not r or r["uid"] != uid:
-            return None
-        self._docs[batch_id] = {**r, **data, "updated_at": self._now()}
-        return self._docs[batch_id]
-
-    def set_trashed(self, uid, batch_id, trashed):
-        r = self._docs.get(batch_id)
-        if not r or r["uid"] != uid:
-            return None
-        self._docs[batch_id] = {**r, "trashed": trashed, "updated_at": self._now()}
-        return self._docs[batch_id]
-
-    def delete(self, uid, batch_id):
-        r = self._docs.get(batch_id)
-        if not r or r["uid"] != uid:
-            return False
-        del self._docs[batch_id]
-        return True
-
-    def freeze(self, uid, batch_id, data):
-        source = self._docs.get(batch_id)
-        if not source or source["uid"] != uid:
-            return None
-        now = self._now()
-        r = {
-            "id": f"{batch_id}-frozen",
-            "uid": uid,
-            "name": source.get("name", "Untitled"),
-            "status": "frozen",
-            "trashed": False,
-            "schema_version": data.get("schema_version", source.get("schema_version", 2)),
-            "valuation": data.get("valuation", {}),
-            "provenance": data.get("provenance", {}),
-            "parent_batch_id": batch_id,
-            "roots": source.get("roots", {}),
-            "collections": source.get("collections", {}),
-            "created_at": now,
-            "updated_at": now,
-            "frozen_at": now,
-        }
-        self._docs[r["id"]] = r
-        return r
 
 
 def test_upsert_creates_then_updates():
@@ -118,9 +39,9 @@ def test_upsert_frozen_is_409():
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload())
     frozen = svc.freeze_batch("u1", rec.id, FreezePayload())
 
-    with pytest.raises(HTTPException) as exc:
+    with pytest.raises(BatchConflictError) as exc:
         svc.upsert_draft("u1", frozen.id, DraftPayload())
-    assert exc.value.status_code == 409
+    assert exc.value.reason == "frozen"
 
 
 def test_upsert_stale_baseline_conflicts():
@@ -135,12 +56,13 @@ def test_upsert_stale_baseline_conflicts():
     )
 
     # replaying the original baseline now conflicts
-    with pytest.raises(BatchConflictError):
+    with pytest.raises(BatchConflictError) as exc:
         svc.upsert_draft(
             "u1",
             "batch-a",
             DraftPayload(name="C", base_updated_at=rec.updated_at),
         )
+    assert exc.value.reason == "stale"
 
 
 def test_trash_and_restore():
