@@ -6,7 +6,8 @@
 // raw object, so the view re-renders on every change. `main.js` wraps the app in
 // `Alpine.reactive` and binds that proxy to persistence.
 import artifact from "../engine/artifact.json" with { type: "json" };
-import { canonicalize, createCalculator, resolveReference, sha256Hex, toBase } from "../engine/index.js";
+import { canonicalize, resolveReference, sha256Hex, toBase } from "../engine/index.js";
+import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
@@ -25,8 +26,6 @@ import { registerUserCatalogUi } from "./userCatalogUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
 import { flattenResponse, postJSON } from "./apiClient.js";
-import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
-import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
 // suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
@@ -80,7 +79,6 @@ export function createStepApp(options = {}) {
   const cache = createReferenceCache();
   const userCatalog = createUserCatalog({ artifact });
   cache.syncUserItems(userCatalog.catalogs);
-  let collections = { ...cache.collections };
 
   // Boundary seam: offline stubs by default (tests, no API base); the real
   // solvers over HTTP when explicitly enabled. The engine stays synchronous —
@@ -95,14 +93,8 @@ export function createStepApp(options = {}) {
     water_chemistry_solver: "/solve/water",
   };
 
-  let engine = createCalculator(artifact, {
-    references: cache.references,
-    collections,
-    boundaries: useHttp ? {} : STUB_BOUNDARIES,
-    boundaryRequests: BOUNDARY_BUILDERS,
-    roots: master.allRoots(),
-  });
-  const boundaryNodes = engine.topoOrder.filter((id) => artifact.nodes[id].kind === "boundary");
+  const session = createSession({ artifact, cache, master, useHttp });
+  const boundaryNodes = session.boundaryNodes;
   const inflight = new Map(); // fingerprint -> Promise
   let solveTimer = null;
   let solveToken = 0;
@@ -156,31 +148,9 @@ export function createStepApp(options = {}) {
   // The pristine auth-scoped baseline to restore on sign-out.
   const baselineRoots = master.allRoots();
 
-  // AI AGENT HOOKS: Use this facade for resolving the live engine from card
-  // closures. Do not duplicated this logic elsewhere — never capture `engine`
-  // directly, because loadState/teardown replace it.
-  const liveEngine = {
-    get: (id) => engine.get(id),
-    resolve: (path) => engine.resolve(path),
-    call: (fnId, args) => engine.call(fnId, args),
-    setRoot: (id, value) => engine.setRoot(id, value),
-    setCollection: (id, rows) => engine.setCollection(id, rows),
-    invalidate: (id) => engine.invalidate(id),
-    boundaryRequest: (id) => engine.boundaryRequest(id),
-    hasBoundaryResult: (fingerprint) => engine.hasBoundaryResult(fingerprint),
-    applyBoundaryResult: (fingerprint, outputs) => engine.applyBoundaryResult(fingerprint, outputs),
-    relationStates: () => engine.relationStates(),
-    domainStates: () => engine.domainStates(),
-    fieldDomainStates: () => engine.fieldDomainStates(),
-    collectionDomainStates: () => engine.collectionDomainStates(),
-    get topoOrder() {
-      return engine.topoOrder;
-    },
-  };
-
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
   // reactive state/handlers onto `app` before main.js wraps it in Alpine.reactive.
-  const cardCtx = { engine: liveEngine, cache, ui, artifact };
+  const cardCtx = { engine: session.engine, cache, ui, artifact };
 
   const app = {
     master,
@@ -223,7 +193,7 @@ export function createStepApp(options = {}) {
     draftState() {
       return {
         roots: master.allRoots(),
-        collections: { ...collections },
+        collections: { ...session.collections() },
         schema_version: artifact.schema_version ?? 2,
       };
     },
@@ -232,6 +202,7 @@ export function createStepApp(options = {}) {
     // selection: source_template_id + content-hash of the referenced seed
     // component). Browser-computed — the backend only stores it.
     freezePayload() {
+      const engine = session.getEngine();
       const valuation = {};
       for (const id of engine.topoOrder) {
         const node = artifact.nodes[id];
@@ -292,15 +263,7 @@ export function createStepApp(options = {}) {
     // from the loaded roots/collections; default collections fall back to the
     // seed cache when the draft predates them.
     async loadState(state) {
-      master.replaceRoots(state?.roots ?? {});
-      collections = { ...cache.collections, ...(state?.collections ?? {}) };
-      engine = createCalculator(artifact, {
-        references: cache.references,
-        collections,
-        boundaries: useHttp ? {} : STUB_BOUNDARIES,
-        boundaryRequests: BOUNDARY_BUILDERS,
-        roots: master.allRoots(),
-      });
+      session.rebuild(state);
       if (useHttp) await this.solveNow();
       else this.compute();
       this.syncNav();
@@ -308,7 +271,7 @@ export function createStepApp(options = {}) {
 
     setRoot(nodeId, value) {
       master.setRoot(nodeId, value);
-      engine.setRoot(nodeId, value);
+      session.engine.setRoot(nodeId, value);
     },
 
     // Resolve every boundary in topological order (via HTTP), then recompute.
@@ -321,6 +284,7 @@ export function createStepApp(options = {}) {
         this.compute();
         return;
       }
+      const engine = session.getEngine();
       const token = ++solveToken;
       try {
         for (const id of boundaryNodes) {
@@ -365,6 +329,7 @@ export function createStepApp(options = {}) {
     },
 
     compute() {
+      const engine = session.getEngine();
       // Boundary-derived values may be unresolved (pending/failed solve); a
       // failed resolution must not blank the whole card, so those paths yield
       // no state rather than throwing.
@@ -450,7 +415,7 @@ export function createStepApp(options = {}) {
     refreshUserItems() {
       cache.syncUserItems(userCatalog.catalogs);
       for (const [id, node] of Object.entries(artifact.nodes)) {
-        if (node.kind === "selection") engine.invalidate(id);
+        if (node.kind === "selection") session.engine.invalidate(id);
       }
       this.catalogRevision += 1;
       this.compute();
@@ -556,6 +521,7 @@ export function createStepApp(options = {}) {
     // clamped value; an unset optional selection contributes no bounds.
     clampToSelection(nodeId, value) {
       if (typeof value !== "number") return value;
+      const engine = session.getEngine();
       let low;
       let high;
       if (nodeId === "batch.hlt_starting_volume_l") {
@@ -571,6 +537,7 @@ export function createStepApp(options = {}) {
 
     edit(field, value) {
       if (!field.editable || !field.target) return;
+      const engine = session.getEngine();
       let raw = field.control === "number" ? Number(value) : value;
       // The input renders in the field's display unit (dimension default or
       // per-field override); convert the typed value back to the base unit
@@ -628,7 +595,7 @@ export function createStepApp(options = {}) {
     copyInCascade(refRootId) {
       const selectionNode = refToSelectionMap.get(refRootId);
       if (!selectionNode) return;
-      const component = engine.get(selectionNode);
+      const component = session.getEngine().get(selectionNode);
       if (!component) return;
       for (const { rootId, derive } of derivationsFor(selectionNode)) {
         const value = derive(component);
@@ -643,6 +610,7 @@ export function createStepApp(options = {}) {
     },
 
     editCell(field, rowIndex, columnId, value) {
+      const engine = session.getEngine();
       const column = field.columns.find((c) => c.id === columnId);
       // Convert a display-unit cell back to the base unit before storing; a
       // dimensioned cell with no display unit still stores a real number (not
@@ -670,6 +638,7 @@ export function createStepApp(options = {}) {
     },
 
     addRow(field) {
+      const engine = session.getEngine();
       const node = artifact.nodes[field.target.nodeId];
       const schema = artifact.primitive_schemas[node.item_schema] ?? {};
       // Seed a row with type-appropriate defaults (numbers, first taxonomy
@@ -689,6 +658,7 @@ export function createStepApp(options = {}) {
     },
 
     removeRow(field, rowIndex) {
+      const engine = session.getEngine();
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       let next = rows;
       if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
@@ -753,7 +723,13 @@ export function createStepApp(options = {}) {
       const col = this.draftColumns.find((c) => c.id === "mass_kg");
       const total = (this.draftRows ?? []).reduce((sum, r) => sum + (pick(r) || 0), 0);
       if (!col) return String(total);
-      const v = displayValue(artifact, "mass", col.displayUnit, total, nonlinearFns(artifact, engine));
+      const v = displayValue(
+        artifact,
+        "mass",
+        col.displayUnit,
+        total,
+        nonlinearFns(artifact, session.getEngine())
+      );
       const shown = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
       return `${shown}${col.unit ? " " + col.unit : ""}`;
     },
@@ -761,7 +737,7 @@ export function createStepApp(options = {}) {
     // Draft rows converted to their display units (mirrors the producer field).
     get draftDisplayRows() {
       const columns = this.draftColumns;
-      const nl = nonlinearFns(artifact, engine);
+      const nl = nonlinearFns(artifact, session.getEngine());
       return this.draftRows.map((row) => {
         const out = { ...row };
         for (const col of columns) {
@@ -780,7 +756,7 @@ export function createStepApp(options = {}) {
 
     openDraft(nodeId) {
       this.draftNodeId = nodeId;
-      this.draftRows = JSON.parse(JSON.stringify(engine.get(nodeId) ?? []));
+      this.draftRows = JSON.parse(JSON.stringify(session.getEngine().get(nodeId) ?? []));
       this.normalizeDraft();
       this.draftOpen = true;
     },
@@ -792,7 +768,10 @@ export function createStepApp(options = {}) {
     },
 
     saveDraft() {
-      engine.setCollection(this.draftNodeId, JSON.parse(JSON.stringify(this.normalizeDraft())));
+      session.engine.setCollection(
+        this.draftNodeId,
+        JSON.parse(JSON.stringify(this.normalizeDraft()))
+      );
       this.closeDraft();
       this.scheduleSolve();
       this.notify();
@@ -821,7 +800,7 @@ export function createStepApp(options = {}) {
       if (value !== "" && col.dimension) {
         const n = Number(value);
         base = col.displayUnit
-          ? toBase(artifact, col.dimension, col.displayUnit, n, nonlinearFns(artifact, engine))
+          ? toBase(artifact, col.dimension, col.displayUnit, n, nonlinearFns(artifact, session.getEngine()))
           : n;
       }
       this.draftRows[ri][colId] = base;
@@ -899,15 +878,7 @@ export function createStepApp(options = {}) {
         solveTimer = null;
       }
       inflight.clear();
-      master.replaceRoots(baselineRoots);
-      collections = { ...cache.collections };
-      engine = createCalculator(artifact, {
-        references: cache.references,
-        collections,
-        boundaries: useHttp ? {} : STUB_BOUNDARIES,
-        boundaryRequests: BOUNDARY_BUILDERS,
-        roots: master.allRoots(),
-      });
+      session.reset(baselineRoots);
       this.boundaryStatuses = Object.fromEntries(
         boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
       );
@@ -933,7 +904,7 @@ export function createStepApp(options = {}) {
   userCatalog.onChange = () => {
     cache.syncUserItems(userCatalog.catalogs);
     for (const [id, node] of Object.entries(artifact.nodes)) {
-      if (node.kind === "selection") engine.invalidate(id);
+      if (node.kind === "selection") session.engine.invalidate(id);
     }
   };
   return app;
