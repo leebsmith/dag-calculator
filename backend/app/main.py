@@ -131,7 +131,7 @@ def upsert_batch(
             content={
                 "code": "CONFLICT",
                 "message": str(exc),
-                "details": {"reason": exc.reason},
+                "details": {"reason": exc.reason, "current": exc.current.model_dump()},
             },
         )
 

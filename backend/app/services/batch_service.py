@@ -33,26 +33,21 @@ class BatchService:
         return [BatchRecord(**r) for r in self._repo.list_batches(uid)]
 
     def upsert_draft(self, uid: str, batch_id: str, payload: DraftPayload) -> BatchRecord:
-        existing = self._repo.get(uid, batch_id)
         data = payload.model_dump(exclude_none=True, exclude={"base_updated_at"})
-        if existing is None:
-            return BatchRecord(**self._repo.create(uid, batch_id, data))
-        if existing.get("status") != "draft":
-            raise BatchConflictError("frozen", BatchRecord(**existing))
-        if (
-            payload.base_updated_at is not None
-            and existing.get("updated_at") != payload.base_updated_at
-        ):
-            raise BatchConflictError("stale", BatchRecord(**existing))
-        return BatchRecord(**self._repo.update(uid, batch_id, data))
+        record, reason = self._repo.apply_draft(uid, batch_id, data, payload.base_updated_at)
+        if reason == "frozen":
+            raise BatchConflictError("frozen", BatchRecord(**record))
+        if reason == "stale":
+            raise BatchConflictError("stale", BatchRecord(**record))
+        return BatchRecord(**record)
 
     def freeze_batch(self, uid: str, batch_id: str, payload: FreezePayload) -> BatchRecord:
-        existing = self._repo.get(uid, batch_id)
-        if existing is None:
+        record, reason = self._repo.freeze(uid, batch_id, payload.model_dump())
+        if reason == "missing":
             raise HTTPException(status_code=404, detail="Batch not found")
-        if existing.get("status") != "draft":
+        if reason == "frozen":
             raise HTTPException(status_code=409, detail="Already frozen")
-        return BatchRecord(**self._repo.freeze(uid, batch_id, payload.model_dump()))
+        return BatchRecord(**record)
 
     def set_trashed(self, uid: str, batch_id: str, trashed: bool) -> BatchRecord:
         record = self._repo.set_trashed(uid, batch_id, trashed)

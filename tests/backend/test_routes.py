@@ -141,7 +141,10 @@ def test_upsert_with_a_stale_baseline_returns_the_conflict_envelope(client):
 
     assert response.status_code == 409
     assert response.json()["code"] == "CONFLICT"
-    assert response.json()["details"] == {"reason": "stale"}
+    details = response.json()["details"]
+    assert details["reason"] == "stale"
+    assert details["current"]["id"] == "b1"
+    assert details["current"]["status"] == "draft"
 
 
 def test_upsert_against_a_frozen_batch_returns_the_same_conflict_envelope(client, service):
@@ -152,7 +155,10 @@ def test_upsert_against_a_frozen_batch_returns_the_same_conflict_envelope(client
 
     assert response.status_code == 409
     assert response.json()["code"] == "CONFLICT"
-    assert response.json()["details"] == {"reason": "frozen"}
+    details = response.json()["details"]
+    assert details["reason"] == "frozen"
+    assert details["current"]["id"] == frozen.id
+    assert details["current"]["status"] == "frozen"
 
 
 def test_freeze_returns_201_and_links_the_parent(client):

@@ -41,7 +41,10 @@ class FakeCollection:
         self.docs = {}
         self._auto = 0
 
-    def document(self, doc_id):
+    def document(self, doc_id=None):
+        if doc_id is None:
+            self._auto += 1
+            doc_id = f"auto-{self._auto}"
         return FakeDocumentReference(self, doc_id)
 
     def add(self, record):
@@ -53,6 +56,33 @@ class FakeCollection:
     def stream(self):
         for doc_id in list(self.docs):
             yield FakeDocumentSnapshot(self, doc_id)
+
+
+class FakeTransaction:
+    def __init__(self):
+        self.calls = []
+
+    def get(self, ref):
+        self.calls.append(("get", ref.id))
+        return ref.get()
+
+    def set(self, ref, record):
+        self.calls.append(("set", ref.id))
+        ref.set(record)
+
+    def update(self, ref, changes):
+        self.calls.append(("update", ref.id))
+        ref.update(changes)
+
+    def delete(self, ref):
+        self.calls.append(("delete", ref.id))
+        ref.delete()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
 
 
 class FakeUserDocument:
@@ -76,10 +106,15 @@ class FakeUsersCollection:
 class FakeDb:
     def __init__(self):
         self.batches = {}
+        self.last_transaction = None
 
     def collection(self, name):
         assert name == "users"
         return FakeUsersCollection(self)
+
+    def transaction(self):
+        self.last_transaction = FakeTransaction()
+        return self.last_transaction
 
 
 def repo():
@@ -177,7 +212,7 @@ def test_freeze_creates_a_linked_immutable_snapshot_in_the_same_path():
         },
     )
 
-    frozen = store.freeze(
+    frozen, reason = store.freeze(
         "u1",
         draft["id"],
         {
@@ -189,6 +224,7 @@ def test_freeze_creates_a_linked_immutable_snapshot_in_the_same_path():
         },
     )
 
+    assert reason is None
     assert frozen["status"] == "frozen"
     assert frozen["parent_batch_id"] == "b1"
     assert frozen["uid"] == "u1"
@@ -210,8 +246,10 @@ def test_freeze_refuses_foreign_or_missing_drafts():
     store.create("u1", "b1", {"name": "A"})
     before = len(user_docs(db, "u1"))
 
-    assert store.freeze("u2", "b1", {}) is None
-    assert store.freeze("u1", "missing", {}) is None
+    record, reason = store.freeze("u2", "b1", {})
+    assert record is None and reason == "missing"
+    record, reason = store.freeze("u1", "missing", {})
+    assert record is None and reason == "missing"
     assert len(user_docs(db, "u1")) == before
 
 
@@ -224,3 +262,103 @@ def test_get_batch_repo_wraps_the_firestore_client():
     assert store._db is db
     collection = store._collection("u1")
     assert collection is db.batches["u1"]
+
+
+def test_apply_draft_creates_when_absent():
+    store, db = repo()
+
+    record, reason = store.apply_draft("u1", "b1", {"name": "A"}, None)
+
+    assert reason is None
+    assert record["id"] == "b1"
+    assert record["status"] == "draft"
+    assert record["trashed"] is False
+    assert db.last_transaction.calls == [("get", "b1"), ("set", "b1")]
+
+
+def test_apply_draft_updates_when_baseline_matches():
+    store, _ = repo()
+    created, _ = store.apply_draft("u1", "b1", {"name": "A"}, None)
+
+    updated, reason = store.apply_draft("u1", "b1", {"name": "B"}, created["updated_at"])
+
+    assert reason is None
+    assert updated["name"] == "B"
+    assert updated["updated_at"] > created["updated_at"]
+
+
+def test_apply_draft_rejects_stale_baseline_without_writing():
+    store, db = repo()
+    created, _ = store.apply_draft("u1", "b1", {"name": "A"}, None)
+    store.apply_draft("u1", "b1", {"name": "B"}, created["updated_at"])
+    before = user_docs(db, "u1")["b1"]
+
+    record, reason = store.apply_draft("u1", "b1", {"name": "C"}, created["updated_at"])
+
+    assert reason == "stale"
+    assert record["name"] == "B"
+    assert user_docs(db, "u1")["b1"] == before
+    assert [call[0] for call in db.last_transaction.calls] == ["get"]
+
+
+def test_apply_draft_rejects_frozen():
+    store, _ = repo()
+    store.create("u1", "b1", {"name": "A"})
+    store._collection("u1").document("b1").update({"status": "frozen"})
+
+    record, reason = store.apply_draft("u1", "b1", {"name": "B"}, None)
+
+    assert reason == "frozen"
+    assert record["status"] == "frozen"
+
+
+def test_apply_draft_two_writers_one_deterministic_loser():
+    store, _ = repo()
+    first, _ = store.apply_draft("u1", "b1", {"name": "A"}, None)
+
+    # Both writers captured the same baseline before either committed.
+    winner, winner_reason = store.apply_draft("u1", "b1", {"name": "Winner"}, first["updated_at"])
+    loser, loser_reason = store.apply_draft("u1", "b1", {"name": "Loser"}, first["updated_at"])
+
+    assert winner_reason is None
+    assert winner["name"] == "Winner"
+    assert loser_reason == "stale"
+    assert loser["name"] == "Winner"
+
+
+def test_freeze_reads_before_it_writes():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "A"})
+
+    frozen, reason = store.freeze("u1", "b1", {"valuation": {"x": 1}})
+
+    assert reason is None
+    assert db.last_transaction.calls[0] == ("get", "b1")
+    assert db.last_transaction.calls[1][0] == "set"
+    assert frozen["id"] == db.last_transaction.calls[1][1]
+
+
+def test_freeze_refuses_an_already_frozen_record():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "A"})
+
+    frozen, reason = store.freeze("u1", "b1", {})
+    assert reason is None
+
+    again, reason = store.freeze("u1", frozen["id"], {})
+    assert reason == "frozen"
+    assert again["status"] == "frozen"
+    assert len([d for d in user_docs(db, "u1") if d != "b1"]) == 1
+
+
+def test_freeze_after_trash_still_snapshots_with_trashed_false():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "A"})
+    store.set_trashed("u1", "b1", True)
+
+    frozen, reason = store.freeze("u1", "b1", {})
+
+    assert reason is None
+    assert frozen["status"] == "frozen"
+    assert frozen["trashed"] is False
+    assert frozen["parent_batch_id"] == "b1"

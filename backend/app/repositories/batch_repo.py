@@ -49,6 +49,48 @@ class BatchRepository:
         self._collection(uid).document(batch_id).set(record)
         return self._record(uid, batch_id, record)
 
+    def apply_draft(
+        self,
+        uid: str,
+        batch_id: str,
+        data: dict[str, Any],
+        base_updated_at: float | None,
+    ) -> tuple[dict[str, Any], str | None]:
+        """Atomically create-or-update a draft, rejecting stale/frozen writes.
+
+        Runs inside a Firestore transaction: the read and write are atomic, so
+        the optimistic ``base_updated_at`` comparison cannot be raced by another
+        autosave. Returns ``(record, reason)`` where ``reason`` is ``None`` on
+        success, ``"frozen"`` when the target is already immutable, or
+        ``"stale"`` when the client's baseline no longer matches.
+        """
+        ref = self._collection(uid).document(batch_id)
+        transaction = self._db.transaction()
+
+        with transaction:
+            snapshot = transaction.get(ref)
+            if not snapshot.exists:
+                now = time.time()
+                record = {
+                    **data,
+                    "status": "draft",
+                    "trashed": False,
+                    "created_at": now,
+                    "updated_at": now,
+                }
+                transaction.set(ref, record)
+                return self._record(uid, batch_id, record), None
+
+            current = self._record(uid, batch_id, snapshot.to_dict())
+            if current.get("status") != "draft":
+                return current, "frozen"
+            if base_updated_at is not None and current.get("updated_at") != base_updated_at:
+                return current, "stale"
+
+            record = {**current, **data, "updated_at": time.time()}
+            transaction.update(ref, {**data, "updated_at": record["updated_at"]})
+            return record, None
+
     def update(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
         doc = self._collection(uid).document(batch_id).get()
         if not doc.exists:
@@ -79,31 +121,52 @@ class BatchRepository:
         self._collection(uid).document(batch_id).delete()
         return True
 
-    def freeze(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
-        """Create an immutable frozen snapshot linked to the source draft."""
-        source = self.get(uid, batch_id)
-        if source is None:
-            return None
-        now = time.time()
-        record = {
-            "name": source.get("name", "Untitled"),
-            "status": "frozen",
-            "trashed": False,
-            "schema_version": data.get("schema_version", source.get("schema_version", 2)),
-            "valuation": data.get("valuation", {}),
-            "valuation_format": data.get("valuation_format"),
-            "provenance": data.get("provenance", {}),
-            "conformance": data.get("conformance"),
-            "parent_batch_id": batch_id,
-            "roots": source.get("roots", {}),
-            "collections": source.get("collections", {}),
-            "selections": source.get("selections", {}),
-            "created_at": now,
-            "updated_at": now,
-            "frozen_at": now,
-        }
-        _, ref = self._collection(uid).add(record)
-        return self._record(uid, ref.id, record)
+    def freeze(
+        self, uid: str, batch_id: str, data: dict[str, Any]
+    ) -> tuple[dict[str, Any] | None, str | None]:
+        """Atomically snapshot a draft into an immutable frozen batch.
+
+        The status check and the snapshot insert share one transaction, closing
+        the double-freeze window and the duplicate source-read window (the
+        service no longer re-reads the source before delegating). Returns
+        ``(record, reason)``: ``reason`` is ``None`` on success, ``"missing"``
+        when the source does not exist (or belongs to another user), or
+        ``"frozen"`` when the target is already immutable.
+        """
+        collection = self._collection(uid)
+        ref = collection.document(batch_id)
+        new_ref = collection.document()
+        transaction = self._db.transaction()
+
+        with transaction:
+            snapshot = transaction.get(ref)
+            if not snapshot.exists:
+                return None, "missing"
+
+            source = snapshot.to_dict()
+            if source.get("status") != "draft":
+                return self._record(uid, batch_id, source), "frozen"
+
+            now = time.time()
+            record = {
+                "name": source.get("name", "Untitled"),
+                "status": "frozen",
+                "trashed": False,
+                "schema_version": data.get("schema_version", source.get("schema_version", 2)),
+                "valuation": data.get("valuation", {}),
+                "valuation_format": data.get("valuation_format"),
+                "provenance": data.get("provenance", {}),
+                "conformance": data.get("conformance"),
+                "parent_batch_id": batch_id,
+                "roots": source.get("roots", {}),
+                "collections": source.get("collections", {}),
+                "selections": source.get("selections", {}),
+                "created_at": now,
+                "updated_at": now,
+                "frozen_at": now,
+            }
+            transaction.set(new_ref, record)
+            return self._record(uid, new_ref.id, record), None
 
     @staticmethod
     def _record(uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any]:
