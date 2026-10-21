@@ -8,11 +8,11 @@ from pathlib import Path
 import pytest
 
 from app.schemas.boundary import (
-    _canonicalize,
-    _js_float_to_string,
     BatchSolverRequest,
     BatchSpargeTopology,
     GristBillRow,
+    _canonicalize,
+    _js_float_to_string,
 )
 
 FIXTURE = json.loads(

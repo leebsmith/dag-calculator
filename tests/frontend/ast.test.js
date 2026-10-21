@@ -13,7 +13,7 @@ function ctx(refs = {}, consts = {}) {
       if (!(id in consts)) throw new Error(`unknown const ${id}`);
       return consts[id];
     },
-    call: (id, args) => {
+    call: (id) => {
       throw new Error(`no function ${id}`);
     },
   };

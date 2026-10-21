@@ -17,7 +17,7 @@ OUT   ?=
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help local-dev check test seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help local-dev check test verify build seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
@@ -27,6 +27,8 @@ help:
 	@echo "  local-dev       Run frontend + Firebase emulators + backend"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
+	@echo "  verify          check + test + production build"
+	@echo "  build           Production frontend bundle + dist assertions"
 	@echo "  seeds           Rebuild normalized seed catalogs from data/sources/"
 	@echo "  scrape-yeasts   Crawl beer-analytics.com yeasts -> data/sources/"
 	@echo "  scrape-hops     Crawl beer-analytics.com hops -> data/sources/"
@@ -53,8 +55,10 @@ local-dev:
 check:
 	@echo "Checking frontend linting..."
 	cd frontend && npm run lint
+	@echo "Checking test linting..."
+	./frontend/node_modules/.bin/eslint --config eslint.config.js --max-warnings 0 tests
 	@echo "Checking backend linting and architectural boundaries..."
-	cd backend && uv run ruff check .
+	cd backend && uv run ruff check . ../tests/backend
 	cd backend && uv run tach check
 
 test:
@@ -62,6 +66,14 @@ test:
 	cd frontend && npm test
 	@echo "Running backend pytest..."
 	cd backend && uv run pytest ../tests/backend/
+
+build:
+	@echo "Building frontend bundle..."
+	cd frontend && npm run build
+	node scripts/check-build.mjs
+
+verify: check test build
+	@echo "verify: all gates passed"
 
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/

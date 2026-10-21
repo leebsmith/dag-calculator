@@ -9,14 +9,11 @@ import math
 import pytest
 
 from app.core.batch_solver import (
-    K_ABS_TRUE_METRIC,
-    V_BAR_METRIC,
     SolverValidationError,
     grist_mass_bracket,
     grist_mass_residual,
     solve_grist_mass,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

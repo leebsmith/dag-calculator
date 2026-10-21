@@ -3,16 +3,15 @@
 from __future__ import annotations
 
 import pytest
+from conftest import make_batch_request, make_water_request
 from pydantic import ValidationError
 
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSpargeTopology,
-    WaterStrategy,
     WaterSolverRequest,
+    WaterStrategy,
 )
-
-from conftest import make_batch_request, make_water_request
 
 
 def test_extra_fields_forbidden():

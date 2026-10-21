@@ -7,7 +7,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 
 import { buildStandardMalts } from "../../scripts/build-standard-malts-seed.mjs";
 

@@ -15,15 +15,14 @@ from app.core.batch_solver import (
     V_BAR_METRIC,
     GrainBillEntry,
     SolverValidationError,
-    composite_yield_fraction,
     composite_moisture_fraction,
     composite_volumetric_expansion,
+    composite_yield_fraction,
     converted_extract,
     moisture_volume,
     retained_volume,
     solute_displacement_volume,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

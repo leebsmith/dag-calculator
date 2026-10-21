@@ -34,6 +34,8 @@ backend with Firebase auth and Firestore persistence.
 make local-dev   # Vite + Firebase emulators + uvicorn
 make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
+make verify      # check + test + production build
+make build       # frontend bundle + dist assertions (unresolved includes, assets)
 ```
 
 ## Seeds & scraping

@@ -1,10 +1,11 @@
 import pytest
+
 from app.core.utils import (
-    sg_to_plato,
-    plato_to_sg,
     calculate_abv_and_attenuation,
-    invert_from_target_abv_and_attenuation,
     invert_from_oe_and_target_abv,
+    invert_from_target_abv_and_attenuation,
+    plato_to_sg,
+    sg_to_plato,
 )
 
 

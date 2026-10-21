@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from conftest import make_water_request
 
 from app.core.water import (
     GrainEntry,
@@ -20,8 +21,6 @@ from app.schemas.boundary import (
     WaterStrategy,
 )
 from app.services import SolverServiceError, solve_water_request
-
-from conftest import make_water_request
 
 _SOURCE = {"ca": 10.0, "mg": 2.0, "na": 8.0, "so4": 5.0, "cl": 7.0, "alk": 40.0}
 _TARGET = {"ca": 80.0, "mg": 5.0, "na": 20.0, "so4": 100.0, "cl": 50.0, "alk": 0.0}

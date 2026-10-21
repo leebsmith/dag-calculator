@@ -18,15 +18,4 @@ export default [
       "no-unused-vars": "warn",
     },
   },
-  {
-    files: ["tests/**/*.js"],
-    languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      globals: {
-        console: "readonly",
-        process: "readonly",
-      },
-    },
-  },
 ];

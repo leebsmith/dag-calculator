@@ -5,7 +5,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 
 function read(rel) {
   return JSON.parse(readFileSync(new URL(rel, import.meta.url), "utf8"));

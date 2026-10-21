@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from conftest import make_batch_request
 
 from app.core.batch_solver import (
     GrainBillEntry,
@@ -11,15 +12,11 @@ from app.core.batch_solver import (
     max_achievable_abv,
     resolve_hlt_water_budget,
     resolve_volumetric_reversal,
-    solve_batch,
     solve_grist_mass,
     solve_sg_post_boil_from_abv,
 )
 from app.schemas.boundary import BatchSolverErrorCode
 from app.services import SolverServiceError, solve_batch_request
-
-from conftest import make_batch_request
-
 
 # ---------------------------------------------------------------------------
 # Pure helpers

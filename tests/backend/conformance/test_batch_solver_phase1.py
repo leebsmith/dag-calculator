@@ -16,7 +16,6 @@ from app.core.batch_solver import (
 )
 from app.core.utils import plato_to_sg, sg_to_plato
 
-
 # ---------------------------------------------------------------------------
 # ASBC conversion helpers
 # ---------------------------------------------------------------------------
