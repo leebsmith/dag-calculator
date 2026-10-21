@@ -52,14 +52,14 @@ local-dev:
 # --- Verification ------------------------------------------------------------
 check:
 	@echo "Checking frontend linting..."
-	cd frontend && npm run lint || true
+	cd frontend && npm run lint
 	@echo "Checking backend linting and architectural boundaries..."
 	cd backend && uv run ruff check .
 	cd backend && uv run tach check
 
 test:
 	@echo "Running frontend engine tests..."
-	cd frontend && npm test || true
+	cd frontend && npm test
 	@echo "Running backend pytest..."
 	cd backend && uv run pytest ../tests/backend/
 
