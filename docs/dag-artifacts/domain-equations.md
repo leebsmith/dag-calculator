@@ -150,8 +150,8 @@ program via `scipy.optimize.linprog`). **Realization:** the module
 | `grist` | collection | rows `{ mass_kg, color_lovibond, grain_type }` |
 | `source` | ions | the six working ions (source water) |
 | `target` | ions | the six working ions (target profile) |
-| `v_mash_treat_l` | volume | mash treatment volume (L) |
-| `v_hlt_treat_l` | volume | HLT treatment volume (L) |
+| `v_mash_treat_l` | volume | mash treatment volume (L), equal to `v_strike` |
+| `v_hlt_treat_l` | volume | **sparge salt dosing volume** — the HLT content after the strike is drawn and any top-up added, derived from `batch.sparge_salted_volume` (`v_hlt_after_strike + v_hlt_top_up`), *not* the delivered sparge volume |
 | `v_hlt_debt_l` | volume | undeliverable HLT debt (L) |
 | `v_sparge_demand_l` | volume | sparge demand (L) |
 | `mash_thickness_l_per_kg` | mash_thickness | resolved L/kg |
@@ -164,7 +164,15 @@ program via `scipy.optimize.linprog`). **Realization:** the module
 | `calcium_floor_ppm` | concentration | Ca floor (ppm) |
 
 The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
-`chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃).
+`chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃). `source`
+and `target` are read from the `water.source_report` / `water.target_profile`
+selections (copied forward from records, read-only in the batch); `target`
+alkalinity is the profile's `alkalinity_as_caco3` while `source` alkalinity is the
+report's `total_alkalinity_caco3`. `calcium_floor_ppm` comes from the target
+profile's `calcium_floor_ppm` field (schema default `50`). The assumed dosing
+practice — dry-grist dosing, HLT dosing after top-up, the two distribution modes,
+and the unmodelled grist/SMB contributions — lives in
+`docs/calculator-assumed-dosing-practice.md`.
 
 ### 3.2 Outputs
 
@@ -175,6 +183,7 @@ The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 | `mash_additions` `{ gypsum_kg, cacl2_kg, epsom_kg, nacl_kg, acid_l, (baking_soda_kg \| chalk_kg \| pickling_lime_kg) }` | mass / volume |
 | `sparge_additions` `{ … }` | mass / volume |
 | `post_salt_mash_ions` | ions |
+| `post_salt_hlt_ions` | ions — the treated HLT vector: `post_salt_mash_ions` under `PROPORTIONAL`, the source ions under `MASH_ONLY` |
 | `grist_buckets_kg` | mass (per grain type) |
 | `warnings` / `notes` | text |
 

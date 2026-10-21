@@ -106,12 +106,18 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 
 ### 2.5 `water_report` / `water_target`
 
-- `water_report` — `{ report_id, date_reported, calcium_ca, magnesium_mg,
-  sodium_na, sulfate_so4, chloride_cl, total_alkalinity_caco3,
-  bicarbonate_hco3, ph }` (ions in ppm).
+- `water_report` — `{ report_id, date_reported, laboratory, sample_id, source_name,
+  location, calcium_ca, magnesium_mg, sodium_na, sulfate_so4, chloride_cl,
+  total_alkalinity_caco3, bicarbonate_hco3, ph }` (ions in ppm). `laboratory` is the
+  catalog `title_field`. `source_name` / `location` are free-text provenance. The
+  seed includes one synthetic `ro-distilled` report — `laboratory` is an explicit
+  non-lab convention (`RO / Distilled (definition)`), zero ions, no lab dates — it
+  is a definition, not a measurement.
 - `water_target` — `{ id, name, description, calcium_ca, magnesium_mg, sodium_na,
-  sulfate_so4, chloride_cl, alkalinity_as_caco3, sulfate_chloride_ratio,
-  calcium_floor_ppm, notes }` (presets like RO/Distilled, Balanced Pale, Hoppy/IPA…).
+  sulfate_so4, chloride_cl, alkalinity_as_caco3, calcium_floor_ppm, notes }`
+  (presets like Balanced Pale, Hoppy/IPA…). The `sulfate_chloride_ratio` field is
+  removed — the ion vector is the only authority; the picker may display the
+  implied ratio. RO is a *source report*, not a target profile.
 
 ### 2.6 `style`
 
