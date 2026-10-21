@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSpargeTopology,
+    GristBillRow,
     WaterSolverRequest,
     WaterStrategy,
 )
@@ -96,3 +97,31 @@ def test_water_defaults():
     )
     assert req.strategy is WaterStrategy.CALCIUM_FLOOR
     assert req.target_mash_ph == 5.4
+
+
+def test_grain_bill_normalization_accepts_valid_bills():
+    req = make_batch_request(
+        grain_bill=[
+            GristBillRow(w_i=0.5, yield_i=0.80, mc_i=0.00),
+            GristBillRow(w_i=0.5, yield_i=0.70, mc_i=0.00),
+        ]
+    )
+    assert sum(row.w_i for row in req.grain_bill) == pytest.approx(1.0)
+
+
+def test_grain_bill_normalization_rejects_unbalanced_bills():
+    with pytest.raises(ValidationError):
+        make_batch_request(
+            grain_bill=[
+                GristBillRow(w_i=0.6, yield_i=0.80, mc_i=0.00),
+                GristBillRow(w_i=0.5, yield_i=0.70, mc_i=0.00),
+            ]
+        )
+
+
+def test_grain_bill_normalization_tolerates_float_drift():
+    # 0.1 * 10 accumulates float error but stays within the 1e-6 tolerance.
+    req = make_batch_request(
+        grain_bill=[GristBillRow(w_i=0.1, yield_i=0.80, mc_i=0.00)] * 10
+    )
+    assert sum(row.w_i for row in req.grain_bill) == pytest.approx(1.0, abs=1e-6)

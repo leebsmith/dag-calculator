@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 from app.repositories.batch_repo import BatchRepository, get_batch_repo
 
 
@@ -36,6 +38,26 @@ class FakeDocumentReference:
         self._collection.docs.pop(self.id, None)
 
 
+class FakeQuery:
+    def __init__(self, collection, field, direction):
+        self._collection = collection
+        self._field = field
+        self._descending = direction is not None and "DESC" in str(direction).upper()
+        self._limit = None
+
+    def limit(self, n):
+        self._limit = n
+        return self
+
+    def stream(self):
+        docs = list(self._collection.docs.items())
+        docs.sort(key=lambda kv: kv[1].get(self._field, 0), reverse=self._descending)
+        if self._limit is not None:
+            docs = docs[: self._limit]
+        for doc_id, _ in docs:
+            yield FakeDocumentSnapshot(self._collection, doc_id)
+
+
 class FakeCollection:
     def __init__(self):
         self.docs = {}
@@ -52,6 +74,9 @@ class FakeCollection:
         doc_id = f"auto-{self._auto}"
         self.docs[doc_id] = dict(record)
         return None, FakeDocumentReference(self, doc_id)
+
+    def order_by(self, field, direction=None):
+        return FakeQuery(self, field, direction)
 
     def stream(self):
         for doc_id in list(self.docs):
@@ -160,6 +185,31 @@ def test_list_reads_only_the_users_subcollection_and_sorts_updated_at_desc():
 
     assert [r["id"] for r in store.list_batches("u1")] == ["new", "old"]
     assert [r["id"] for r in store.list_batches("u2")] == ["foreign"]
+
+
+def test_list_batches_orders_and_respects_the_limit():
+    store, db = repo()
+    store.create("u1", "a", {"name": "A"})
+    store.create("u1", "b", {"name": "B"})
+    store.create("u1", "c", {"name": "C"})
+    user_docs(db, "u1")["a"]["updated_at"] = 1.0
+    user_docs(db, "u1")["b"]["updated_at"] = 3.0
+    user_docs(db, "u1")["c"]["updated_at"] = 2.0
+
+    assert [r["id"] for r in store.list_batches("u1")] == ["b", "c", "a"]
+    assert [r["id"] for r in store.list_batches("u1", limit=2)] == ["b", "c"]
+
+
+def test_list_batches_warns_when_truncated(caplog):
+    store, _ = repo()
+    store.create("u1", "a", {"name": "A"})
+    store.create("u1", "b", {"name": "B"})
+    store.create("u1", "c", {"name": "C"})
+
+    with caplog.at_level(logging.WARNING, logger="app.batch_repo"):
+        store.list_batches("u1", limit=2)
+
+    assert any("truncated" in message for message in caplog.messages)
 
 
 def test_update_advances_updated_at_and_is_path_scoped():

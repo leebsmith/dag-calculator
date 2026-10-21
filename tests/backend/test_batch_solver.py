@@ -14,6 +14,7 @@ from app.core.batch_solver import (
     resolve_volumetric_reversal,
     solve_grist_mass,
     solve_sg_post_boil_from_abv,
+    validate_grain_bill_normalization,
 )
 from app.schemas.boundary import BatchSolverErrorCode
 from app.services import SolverServiceError, solve_batch_request
@@ -29,6 +30,24 @@ def test_composite_yield_fraction():
         GrainBillEntry(w_i=0.5, yield_i=0.70, mc_i=0.00),
     ]
     assert composite_yield_fraction(bill) == pytest.approx(0.75)
+
+
+def test_grain_bill_normalization_gate():
+    validate_grain_bill_normalization(
+        [
+            GrainBillEntry(w_i=0.5, yield_i=0.80, mc_i=0.00),
+            GrainBillEntry(w_i=0.5, yield_i=0.70, mc_i=0.00),
+        ]
+    )
+
+    with pytest.raises(SolverValidationError) as exc:
+        validate_grain_bill_normalization(
+            [
+                GrainBillEntry(w_i=0.6, yield_i=0.80, mc_i=0.00),
+                GrainBillEntry(w_i=0.5, yield_i=0.70, mc_i=0.00),
+            ]
+        )
+    assert exc.value.code == "INVALID_GRAIN_BILL_NORMALIZATION"
 
 
 # ---------------------------------------------------------------------------
@@ -201,7 +220,7 @@ def test_error_surface_complete():
         "INVALID_FERM_VOLUME", "INVALID_SHRINKAGE", "EXTRACT_TARGET_NON_POSITIVE",
         "INVALID_YIELD", "DEGENERATE_BRACKET", "BRACKET_NO_SIGN_CHANGE",
         "UNKNOWN_TOPOLOGY", "INVALID_INTENSIVE_VALUE", "MASH_TOO_THIN",
-        "HLT_TOO_SMALL",
+        "HLT_TOO_SMALL", "INVALID_GRAIN_BILL_NORMALIZATION",
     }
     assert declared == expected
 

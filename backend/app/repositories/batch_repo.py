@@ -6,6 +6,7 @@ is the path itself, so records no longer store or filter by ``uid``.
 
 from __future__ import annotations
 
+import logging
 import time
 from typing import Annotated, Any
 
@@ -15,6 +16,14 @@ from firebase_admin import firestore
 from app.database.firestore import get_db
 
 COLLECTION = "batches"
+
+# List bounding + instrumentation (B5 step 1): order server-side, cap the read,
+# and warn as the collection approaches the cap so we can move to paging before
+# real accounts ever hit a silent truncation.
+LIST_LIMIT = 500
+HIGH_WATER_MARK = 400
+
+logger = logging.getLogger("app.batch_repo")
 
 DB = Annotated[firestore.Client, Depends(get_db)]
 
@@ -26,10 +35,28 @@ class BatchRepository:
     def _collection(self, uid: str):
         return self._db.collection("users").document(uid).collection(COLLECTION)
 
-    def list_batches(self, uid: str) -> list[dict[str, Any]]:
-        docs = self._collection(uid).stream()
+    def list_batches(self, uid: str, limit: int = LIST_LIMIT) -> list[dict[str, Any]]:
+        docs = (
+            self._collection(uid)
+            .order_by("updated_at", direction=firestore.Query.DESCENDING)
+            .limit(limit)
+            .stream()
+        )
         records = [self._record(uid, doc.id, doc.to_dict()) for doc in docs]
-        return sorted(records, key=lambda r: r.get("updated_at", 0), reverse=True)
+        if len(records) >= limit:
+            logger.warning(
+                "batch list truncated at %d documents for uid=%s; consider pagination",
+                limit,
+                uid,
+            )
+        elif len(records) >= HIGH_WATER_MARK:
+            logger.warning(
+                "batch list reached %d documents for uid=%s (high-water mark %d)",
+                len(records),
+                uid,
+                HIGH_WATER_MARK,
+            )
+        return records
 
     def get(self, uid: str, batch_id: str) -> dict[str, Any] | None:
         doc = self._collection(uid).document(batch_id).get()

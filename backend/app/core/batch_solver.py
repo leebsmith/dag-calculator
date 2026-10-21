@@ -135,6 +135,21 @@ def composite_moisture_fraction(grain_bill: Sequence[GrainBillEntry]) -> float:
     return sum(entry.w_i * entry.mc_i for entry in grain_bill)
 
 
+def validate_grain_bill_normalization(grain_bill: Sequence[GrainBillEntry]) -> None:
+    """Enforce that the grain-bill mass fractions sum to 1.0.
+
+    The sealed solver boundary must not trust callers: the HTTP schema checks
+    this too, but the core re-validates so a direct ``solve_batch`` caller
+    cannot silently derive a wrong grist mass from a malformed bill.
+    """
+    total = sum(entry.w_i for entry in grain_bill)
+    if abs(total - 1.0) > 1e-6:
+        raise SolverValidationError(
+            "INVALID_GRAIN_BILL_NORMALIZATION",
+            f"Grain bill weights must sum to 1.0; got {total}.",
+        )
+
+
 def composite_volumetric_expansion(
     mc_bar: float,
     v_bar: float,
@@ -1158,6 +1173,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
 
     See ``unified-treatment.md`` §5.
     """
+    validate_grain_bill_normalization(inputs.grain_bill)
     yield_fraction = composite_yield_fraction(inputs.grain_bill)
     mc_bar = composite_moisture_fraction(inputs.grain_bill)
 

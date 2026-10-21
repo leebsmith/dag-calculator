@@ -12,7 +12,7 @@ import json
 from enum import StrEnum
 from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 def _js_float_to_string(x: float) -> str:
@@ -131,6 +131,7 @@ class BatchSolverErrorCode(StrEnum):
     INVALID_INTENSIVE_VALUE = "INVALID_INTENSIVE_VALUE"
     MASH_TOO_THIN = "MASH_TOO_THIN"
     HLT_TOO_SMALL = "HLT_TOO_SMALL"
+    INVALID_GRAIN_BILL_NORMALIZATION = "INVALID_GRAIN_BILL_NORMALIZATION"
 
 
 class WaterSolverErrorCode(StrEnum):
@@ -196,6 +197,13 @@ class BatchSolverRequest(BoundaryModel):
     hlt_transfer_loss_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT transfer debt in Liters")]
     hlt_coil_floor_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT coil immersion floor in Liters")]
     max_hlt_volume_l: Annotated[float, Field(gt=0.0, description="Maximum HLT capacity in Liters")]
+
+    @model_validator(mode="after")
+    def _check_grain_bill_normalization(self) -> BatchSolverRequest:
+        total = sum(row.w_i for row in self.grain_bill)
+        if abs(total - 1.0) > 1e-6:
+            raise ValueError(f"Grain bill weights must sum to 1.0; got {total}")
+        return self
 
 
 class BatchCascadeOutputs(BoundaryModel):
