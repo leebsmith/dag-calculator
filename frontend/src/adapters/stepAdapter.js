@@ -50,6 +50,7 @@ export function createStepApp(options = {}) {
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   // The pristine auth-scoped baseline to restore on sign-out.
   const baselineRoots = master.allRoots();
+  let reactiveApp;
 
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
   // reactive state/handlers onto `app` before main.js wraps it in Alpine.reactive.
@@ -79,6 +80,13 @@ export function createStepApp(options = {}) {
       session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
     ),
     boundaryError: null,
+
+    // The browser wraps this object in Alpine.reactive. The runner and its
+    // status callback are created below, outside that proxy, so point them at
+    // the reactive instance explicitly (see `bindReactive`).
+    bindReactive(proxy) {
+      reactiveApp = proxy;
+    },
 
     get boundaryPending() {
       return useHttp && session.boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
@@ -192,10 +200,11 @@ export function createStepApp(options = {}) {
     useHttp,
     fetchImpl,
     debounceMs,
-    compute: () => app.compute(),
+    compute: () => (reactiveApp ?? app).compute(),
     onState: ({ statuses, error }) => {
-      app.boundaryStatuses = statuses;
-      app.boundaryError = error;
+      const target = reactiveApp ?? app;
+      target.boundaryStatuses = statuses;
+      target.boundaryError = error;
     },
   });
 

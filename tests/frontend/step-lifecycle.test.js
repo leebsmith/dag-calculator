@@ -56,6 +56,26 @@ test("loadState rebinds the style card to the new engine", async () => {
   assert.equal(app.targetIbu, 55);
 });
 
+test("scheduled solves and status writes target the reactive binding", async () => {
+  const app = createStepApp();
+  const proxy = {
+    compute() {
+      this.computes += 1;
+    },
+    computes: 0,
+    boundaryStatuses: {},
+    boundaryError: null,
+  };
+  app.bindReactive(proxy);
+
+  await app.solveNow();
+  assert.equal(proxy.computes, 1);
+
+  app.teardown();
+  assert.deepEqual(Object.keys(proxy.boundaryStatuses).sort(), ["solver.batch", "solver.water"]);
+  assert.equal(proxy.boundaryError, null);
+});
+
 test("loadState rebinds the mash card to the loaded rest collection", async () => {
   const app = createStepApp();
   await app.boot();

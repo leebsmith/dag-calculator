@@ -339,6 +339,7 @@ Alpine.data("stepCalculator", () => {
   // The product entry opts into HTTP explicitly (base = VITE_API_BASE ?? "",
   // same-origin via the Vite proxy in dev); tests keep the stub default.
   const app = Alpine.reactive(createStepApp({ useHttp: true }));
+  app.bindReactive(app);
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
   stepApp = app;
