@@ -80,6 +80,7 @@ class BatchRepository:
             "trashed": False,
             "schema_version": data.get("schema_version", source.get("schema_version", 2)),
             "valuation": data.get("valuation", {}),
+            "valuation_format": data.get("valuation_format"),
             "provenance": data.get("provenance", {}),
             "conformance": data.get("conformance"),
             "parent_batch_id": batch_id,

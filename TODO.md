@@ -35,9 +35,6 @@
 
 ## Engine robustness follow-ups
 
-* **Freeze shape (M1):** `freezePayload` snapshots boundary nodes as the internal
-  `{ outputs, fingerprint }` wrapper, not the outputs. Unwrap to `get(id).outputs`
-  before any frozen read-view/reconcile consumes the valuation.
 * **Non-finite propagation (L4):** `÷0` → `NaN/∞` is only flagged for root/choice
   domains, not derived nodes. Consider a global "derived values finite" guard.
 

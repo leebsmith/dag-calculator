@@ -4,6 +4,18 @@
 
 import { canonicalize, sha256Hex } from "../engine/index.js";
 
+// Frozen valuation format marker; a missing marker means the legacy
+// `{ outputs, fingerprint }` wrapper shape.
+export const VALUATION_FORMAT = "outputs";
+
+// AI AGENT HOOKS: Use this helper for the persisted value of a frozen node.
+// Boundary nodes store their plain output map, never engine cache wrappers.
+// Do not duplicated this logic elsewhere.
+function frozenValue(engine, node, id) {
+  const value = engine.get(id);
+  return node.kind === "boundary" ? value.outputs : value;
+}
+
 // AI AGENT HOOKS: Use this snapshot installer for draft autosave state, frozen
 // valuation payloads, and provenance drift checks. Do not duplicated this logic
 // elsewhere.
@@ -34,7 +46,7 @@ export function installSnapshot(app, { artifact, cache, master, session }) {
             continue;
           }
         }
-        valuation[id] = engine.get(id);
+        valuation[id] = frozenValue(engine, node, id);
       }
       const provenance = {};
       for (const [id, node] of Object.entries(artifact.nodes)) {
@@ -49,6 +61,7 @@ export function installSnapshot(app, { artifact, cache, master, session }) {
       }
       return {
         valuation,
+        valuation_format: VALUATION_FORMAT,
         provenance,
         schema_version: artifact.schema_version ?? 2,
         conformance: this.styleConformanceReport?.() ?? null,

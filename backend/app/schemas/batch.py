@@ -30,9 +30,16 @@ class TrashPayload(BaseModel):
 
 
 class FreezePayload(BaseModel):
-    """The browser-computed full valuation + provenance (immutable snapshot)."""
+    """The browser-computed full valuation + provenance (immutable snapshot).
+
+    ``valuation_format`` marks how boundary nodes are stored. ``"outputs"``
+    means each boundary entry is its plain output map. ``None`` is the legacy
+    shape, where a boundary entry was the engine's ``{outputs, fingerprint}``
+    cache wrapper; read paths must treat a missing marker as legacy.
+    """
 
     valuation: dict[str, Any] = Field(default_factory=dict)
+    valuation_format: str | None = None
     provenance: dict[str, dict[str, Any]] = Field(default_factory=dict)
     conformance: dict[str, Any] | None = None
     schema_version: int = 2
@@ -56,6 +63,7 @@ class BatchRecord(BaseModel):
 
     # frozen-only state
     valuation: dict[str, Any] | None = None
+    valuation_format: str | None = None
     provenance: dict[str, dict[str, Any]] | None = None
     conformance: dict[str, Any] | None = None
     parent_batch_id: str | None = None

@@ -98,6 +98,10 @@ carrying provenance:
   was referenced, for drift detection.
 - `schema_version` — the artifact revision the node set came from.
 - `parent_batch_id` — lineage (a batch is a recipe *variation*).
+- `valuation_format` — `"outputs"` marks the current shape: a boundary node maps
+  to its plain output map (`sg_post_boil`, `cascade.v_strike`, …). A missing
+  marker is the legacy shape, where the entry was the engine's internal
+  `{ outputs, fingerprint }` cache wrapper; read paths must keep accepting it.
 
 **Provenance ≠ versioning.** There is no append-only component-version chain and
 no `(component_id, version)` reference. Reuse means *copy-into-batch* at
