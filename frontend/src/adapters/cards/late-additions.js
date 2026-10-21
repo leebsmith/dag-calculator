@@ -2,8 +2,8 @@
 // Uses the shared catalog/draft helper; bespoke bits are the summary readouts.
 
 import { installCatalogDraft } from "./catalogDraft.js";
+import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 
-const NODE = "batch.sugars";
 
 function makeRow(sugar) {
   return {
@@ -20,7 +20,7 @@ export function registerLateAdditionsCard(app, ctx) {
   installCatalogDraft(app, ctx, {
     prefix: "sugar",
     Cap: "Sugar",
-    nodeId: NODE,
+    nodeId: N.collection,
     seedKey: "sugars",
     idField: "sugar_id",
     categoryField: null,
@@ -32,7 +32,7 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarList: [],
 
     sugarField(id) {
-      return (this.fieldsBySlice["late-additions"] ?? []).find((f) => f.id === id) ?? null;
+      return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
     },
   });
 
@@ -41,7 +41,7 @@ export function registerLateAdditionsCard(app, ctx) {
       configurable: true,
       get() {
         return (
-          (this.fieldsBySlice["late-additions"] ?? []).find(
+          (this.fieldsBySlice[N.slice] ?? []).find(
             (f) => f.control === "collection-table"
           ) ?? null
         );
@@ -50,19 +50,19 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarMassField: {
       configurable: true,
       get() {
-        return this.sugarField("grist.sugars_mass");
+        return this.sugarField(N.mass);
       },
     },
     sugarColorField: {
       configurable: true,
       get() {
-        return this.sugarField("grist.sugar_weighted_lovibond");
+        return this.sugarField(N.color);
       },
     },
     lateExtractField: {
       configurable: true,
       get() {
-        return this.sugarField("batch.s_late_add");
+        return this.sugarField(N.extract);
       },
     },
     sugarDraftMassDisplay: {
@@ -83,5 +83,5 @@ export function registerLateAdditionsCard(app, ctx) {
 }
 
 export function refreshLateAdditionsCard(app, ctx) {
-  app.sugarList = ctx.engine.get(NODE) ?? [];
+  app.sugarList = ctx.engine.get(N.collection) ?? [];
 }

@@ -1,4 +1,10 @@
 // Presentation metadata for the yeast slice (selection picker + readouts).
+export const YEAST_NODES = {
+  selection: "batch.yeast_id",
+  selectionNode: "batch.yeast",
+  slice: "yeast",
+};
+
 export const yeastRegistry = {
   "batch.yeast_id": { label: "Yeast" },
   "batch.yeast.attenuation_pct": { label: "Typical attenuation" },

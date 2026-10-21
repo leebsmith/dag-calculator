@@ -2,8 +2,8 @@
 // Uses the shared catalog/draft helper; bespoke bits are the summary readouts.
 
 import { installCatalogDraft } from "./catalogDraft.js";
+import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 
-const NODE = "grist.trace_malts";
 
 function makeRow(malt) {
   return {
@@ -21,7 +21,7 @@ export function registerTraceMaltsCard(app, ctx) {
   installCatalogDraft(app, ctx, {
     prefix: "trace",
     Cap: "Trace",
-    nodeId: NODE,
+    nodeId: N.traceMalts,
     seedKey: "malts",
     idField: "catalog_id",
     categoryField: "category",
@@ -37,7 +37,7 @@ export function registerTraceMaltsCard(app, ctx) {
     traceMaltRows: [],
 
     traceField(id) {
-      return (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === id) ?? null;
+      return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
     },
   });
 
@@ -45,19 +45,19 @@ export function registerTraceMaltsCard(app, ctx) {
     traceMaltField: {
       configurable: true,
       get() {
-        return this.traceField(NODE);
+        return this.traceField(N.traceMalts);
       },
     },
     traceMassField: {
       configurable: true,
       get() {
-        return this.traceField("grist.trace_malts_mass");
+        return this.traceField(N.traceMass);
       },
     },
     traceColorField: {
       configurable: true,
       get() {
-        return this.traceField("grist.trace_weighted_lovibond");
+        return this.traceField(N.traceColor);
       },
     },
     traceDraftMassDisplay: {
@@ -70,5 +70,5 @@ export function registerTraceMaltsCard(app, ctx) {
 }
 
 export function refreshTraceMaltsCard(app, ctx) {
-  app.traceMaltRows = ctx.engine.get(NODE) ?? [];
+  app.traceMaltRows = ctx.engine.get(N.traceMalts) ?? [];
 }

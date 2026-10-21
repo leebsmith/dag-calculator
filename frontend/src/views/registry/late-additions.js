@@ -1,4 +1,12 @@
 // Presentation metadata for the late-additions slice (sugar collection + readout).
+export const LATE_ADDITION_NODES = {
+  collection: "batch.sugars",
+  mass: "grist.sugars_mass",
+  color: "grist.sugar_weighted_lovibond",
+  extract: "batch.s_late_add",
+  slice: "late-additions",
+};
+
 export const lateAdditionsRegistry = {
   "batch.sugars": { label: "Late additions" },
   "batch.sugars.sugar_id": { label: "Sugar ID" },

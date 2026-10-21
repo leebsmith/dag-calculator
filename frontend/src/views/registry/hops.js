@@ -1,4 +1,14 @@
 // Presentation metadata for the hops slice (boil additions collection + readouts).
+export const HOP_NODES = {
+  collection: "batch.boil_hops",
+  boilIbu: "batch.boil_target_ibu",
+  whirlpoolIbu: "batch.whirlpool_target_ibu",
+  boilTime: "batch.boil_time_min",
+  preBoilGravity: "solver.batch.cascade.sg_pre_boil",
+  postBoilVolume: "solver.batch.cascade.v_post_boil",
+  slice: "hops",
+};
+
 export const hopsRegistry = {
   "batch.boil_hops": { label: "Boil hops" },
   "batch.boil_hops.hop_id": { label: "Hop ID" },

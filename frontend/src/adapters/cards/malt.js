@@ -3,8 +3,8 @@
 // readouts, trace flag, and clone action.
 
 import { installCatalogDraft } from "./catalogDraft.js";
+import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 
-const NODE = "grist.major_malts";
 const MAX_VISIBLE = 25;
 const MAX_MAJOR_MALTS = 8;
 
@@ -35,7 +35,7 @@ export function registerMaltCard(app, ctx) {
   installCatalogDraft(app, ctx, {
     prefix: "malt",
     Cap: "Malt",
-    nodeId: NODE,
+    nodeId: N.majorMalts,
     seedKey: "malts",
     idField: "catalog_id",
     categoryField: "category",
@@ -71,7 +71,7 @@ export function registerMaltCard(app, ctx) {
       configurable: true,
       get() {
         return (
-          (this.fieldsBySlice.fermentables ?? []).find((f) => f.id === "grist.weighted_lovibond") ?? null
+          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.weightedLovibond) ?? null
         );
       },
     },
@@ -79,8 +79,8 @@ export function registerMaltCard(app, ctx) {
       configurable: true,
       get() {
         return (
-          (this.fieldsBySlice.fermentables ?? []).find(
-            (f) => f.id === "grist.weighted_yield_fraction"
+          (this.fieldsBySlice[N.slice] ?? []).find(
+            (f) => f.id === N.weightedYield
           ) ?? null
         );
       },
@@ -131,5 +131,5 @@ export function registerMaltCard(app, ctx) {
 }
 
 export function refreshMaltCard(app, ctx) {
-  app.gristRows = sortGristRows(ctx.engine.get(NODE) ?? []);
+  app.gristRows = sortGristRows(ctx.engine.get(N.majorMalts) ?? []);
 }

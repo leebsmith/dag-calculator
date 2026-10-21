@@ -7,6 +7,7 @@ import { hamiltonPct } from "../views/hamilton.js";
 import { displayValue, nonlinearFns, resolveCollectionColumns } from "../views/producer.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_SYMBOLS } from "../views/registry/units.js";
+import { SYSTEM_NODES as N } from "../views/registry/system.js";
 
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
@@ -71,7 +72,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     // derives its shares from `parts`. Do not duplicated this logic elsewhere.
     normalizeDraft() {
       if (
-        (this.draftNodeId === "grist.major_malts" || this.draftNodeId === "batch.boil_hops") &&
+        (this.draftNodeId === N.majorMalts || this.draftNodeId === N.boilHops) &&
         this.draftRows.length
       ) {
         const pcts = hamiltonPct(this.draftRows.map((r) => r.parts));

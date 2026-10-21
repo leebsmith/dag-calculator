@@ -2,6 +2,7 @@
 // tier filters. Not a draft editor, so it does not use the catalog/draft helper.
 
 import { derivationsFor } from "../../views/seedDerivations.js";
+import { YEAST_NODES as N } from "../../views/registry/yeast.js";
 
 const MAX_VISIBLE = 25;
 
@@ -32,10 +33,10 @@ export function registerYeastCard(app, ctx) {
     // Selecting a strain copies its typical attenuation into the batch's
     // apparent attenuation (which is edited on the Batch Sparge step).
     selectYeast(id) {
-      this.setRoot("batch.yeast_id", id);
+      this.setRoot(N.selection, id);
       const yeast = cache.references.yeast[id];
       if (yeast) {
-        for (const { rootId, derive } of derivationsFor("batch.yeast")) {
+        for (const { rootId, derive } of derivationsFor(N.selectionNode)) {
           const value = derive(yeast);
           if (typeof value === "number") this.setRoot(rootId, value);
         }
@@ -45,7 +46,7 @@ export function registerYeastCard(app, ctx) {
     },
 
     clearYeastSelection() {
-      this.setRoot("batch.yeast_id", "");
+      this.setRoot(N.selection, "");
       this.scheduleSolve();
       this.notify();
     },
@@ -126,5 +127,5 @@ export function registerYeastCard(app, ctx) {
 }
 
 export function refreshYeastCard(app, ctx) {
-  app.selectedYeastId = ctx.engine.get("batch.yeast_id") || "";
+  app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }

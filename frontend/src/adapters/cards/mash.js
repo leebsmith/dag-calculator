@@ -6,6 +6,7 @@ import * as mash from "../../views/mash.js";
 import { toBase } from "../../engine/index.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
+import { MASH_NODES as N } from "../../views/registry/mash.js";
 
 export function registerMashCard(app, ctx) {
   const { engine, ui, artifact } = ctx;
@@ -83,7 +84,7 @@ export function registerMashCard(app, ctx) {
     // Strike temp is derived from the dough-in target; with no enabled rest it
     // is undefined/NaN, so render "—" rather than a stale/NaN readout.
     strikeWaterTempDisplay() {
-      const f = this.mashField("mash.strike_water_temp_c");
+      const f = this.mashField(N.strikeTemp);
       if (!f || typeof f.value !== "number" || !Number.isFinite(f.value)) return "";
       return f.display;
     },
@@ -104,18 +105,18 @@ export function registerMashCard(app, ctx) {
     },
 
     _writeMashRests(rows) {
-      engine.setCollection("mash.rests", rows);
+      engine.setCollection(N.rests, rows);
       this.scheduleSolve();
       this.notify();
     },
 
     onMashPresetChange(presetId) {
-      this.setRoot("mash.preset_id", presetId);
+      this.setRoot(N.presetId, presetId);
       this._writeMashRests(mash.applyMashPreset(this._materializeRests(this.mashRests), presetId));
     },
 
     toggleMashRest(restId, enabled) {
-      this.setRoot("mash.preset_id", "custom");
+      this.setRoot(N.presetId, "custom");
       const def = mash.getCanonicalRest(restId);
       const rows = this._materializeRests(this.mashRests).map((r) => {
         if (r.rest_id !== restId) return r;
@@ -147,7 +148,7 @@ export function registerMashCard(app, ctx) {
     },
 
     commitMashSchedule() {
-      if (this.mashDraftDirty) this.setRoot("mash.preset_id", "custom");
+      if (this.mashDraftDirty) this.setRoot(N.presetId, "custom");
       this._writeMashRests(JSON.parse(JSON.stringify(this.mashDraft)));
       this.closeMashModal();
     },
@@ -190,7 +191,7 @@ export function registerMashCard(app, ctx) {
     mashPresetId: {
       configurable: true,
       get() {
-        return engine.get("mash.preset_id");
+        return engine.get(N.presetId);
       },
     },
     canonicalMashRests: {
@@ -231,7 +232,7 @@ export function registerMashCard(app, ctx) {
     doughInInheritedTempC: {
       configurable: true,
       get() {
-        return engine.get("mash.dough_in_target_temp_c");
+        return engine.get(N.doughInTarget);
       },
     },
     temperatureUnit: {
@@ -299,5 +300,5 @@ export function registerMashCard(app, ctx) {
 }
 
 export function refreshMashCard(app, ctx) {
-  app.mashRests = ctx.engine.get("mash.rests") ?? [];
+  app.mashRests = ctx.engine.get(N.rests) ?? [];
 }

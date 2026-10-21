@@ -19,6 +19,7 @@ import {
 } from "../../engine/fermentation.js";
 import { derivationsFor } from "../../views/seedDerivations.js";
 import { styleConformance } from "../../engine/styleConformance.js";
+import { STYLE_NODES as N } from "../../views/registry/style.js";
 
 const MAX_VISIBLE_STYLES = 25;
 
@@ -76,10 +77,10 @@ export function registerStyleCard(app, ctx) {
     },
 
     selectStyle(id) {
-      this.setRoot("batch.style_id", id);
+      this.setRoot(N.styleId, id);
       const style = cache.references.style[id];
       if (style) {
-        for (const { rootId, derive } of derivationsFor("batch.style")) {
+        for (const { rootId, derive } of derivationsFor(N.selectionNode)) {
           const value = derive(style);
           if (typeof value === "number" || (typeof value === "string" && value !== "")) {
             this.setRoot(rootId, value);
@@ -92,8 +93,8 @@ export function registerStyleCard(app, ctx) {
     },
 
     clearStyleSelection() {
-      this.setRoot("batch.style_id", "");
-      this.setRoot("batch.fermentation", "ale");
+      this.setRoot(N.styleId, "");
+      this.setRoot(N.fermentation, "ale");
       this.scheduleSolve();
       this.notify();
     },
@@ -107,12 +108,12 @@ export function registerStyleCard(app, ctx) {
     // (batch.style_* roots) so it tracks envelope edits (WYSIWYG).
     computeStyleTarget() {
       const envelope = {
-        ogMin: engine.get("batch.style_og_min"),
-        ogMax: engine.get("batch.style_og_max"),
-        fgMin: engine.get("batch.style_fg_min"),
-        fgMax: engine.get("batch.style_fg_max"),
-        abvMin: engine.get("batch.style_abv_min"),
-        abvMax: engine.get("batch.style_abv_max"),
+        ogMin: engine.get(N.envelope.ogMin),
+        ogMax: engine.get(N.envelope.ogMax),
+        fgMin: engine.get(N.envelope.fgMin),
+        fgMax: engine.get(N.envelope.fgMax),
+        abvMin: engine.get(N.envelope.abvMin),
+        abvMax: engine.get(N.envelope.abvMax),
       };
       const complete =
         envelope.ogMin < envelope.ogMax &&
@@ -123,8 +124,8 @@ export function registerStyleCard(app, ctx) {
       this.styleSafestPoint = this.styleRegion.length >= 3 ? chebyshevCenter(this.styleRegion) : null;
       this.styleExtract = null;
       if (this.styleRegion.length < 3) return;
-      const aa = engine.get("batch.apparent_attenuation");
-      const abv = engine.get("batch.target_abv");
+      const aa = engine.get(N.apparentAttenuation);
+      const abv = engine.get(N.targetAbv);
       const inverse =
         typeof aa === "number" && typeof abv === "number" ? extractFromTarget(aa, abv) : null;
       if (
@@ -141,8 +142,8 @@ export function registerStyleCard(app, ctx) {
 
     applyStyleExtract(oe, ae) {
       const target = targetFromExtract(oe, ae);
-      this.setRoot("batch.apparent_attenuation", target.aa);
-      this.setRoot("batch.target_abv", target.abv);
+      this.setRoot(N.apparentAttenuation, target.aa);
+      this.setRoot(N.targetAbv, target.abv);
       this.scheduleSolve();
       this.notify();
     },
@@ -169,17 +170,17 @@ export function registerStyleCard(app, ctx) {
     },
 
     refreshTargets() {
-      this.targetSrm = engine.get("batch.target_srm");
-      this.targetIbu = engine.get("batch.target_ibu");
-      this.whirlpoolFraction = engine.get("batch.whirlpool_ibu_fraction");
-      this.boilIbu = engine.get("batch.boil_target_ibu");
-      this.whirlpoolIbu = engine.get("batch.whirlpool_target_ibu");
+      this.targetSrm = engine.get(N.targets.srm);
+      this.targetIbu = engine.get(N.targets.ibu);
+      this.whirlpoolFraction = engine.get(N.targets.whirlpoolFraction);
+      this.boilIbu = engine.get(N.targets.boilIbu);
+      this.whirlpoolIbu = engine.get(N.targets.whirlpoolIbu);
     },
 
     setTargetSrm(value) {
       const n = Number(value);
       if (!Number.isFinite(n)) return;
-      this.setRoot("batch.target_srm", Math.max(0, n));
+      this.setRoot(N.targets.srm, Math.max(0, n));
       this.refreshTargets();
       this.scheduleSolve();
       this.notify();
@@ -188,7 +189,7 @@ export function registerStyleCard(app, ctx) {
     setTargetIbu(value) {
       const n = Number(value);
       if (!Number.isFinite(n)) return;
-      this.setRoot("batch.target_ibu", Math.max(0, n));
+      this.setRoot(N.targets.ibu, Math.max(0, n));
       this.refreshTargets();
       this.scheduleSolve();
       this.notify();
@@ -197,7 +198,7 @@ export function registerStyleCard(app, ctx) {
     setWhirlpoolFraction(value) {
       const n = Number(value);
       if (!Number.isFinite(n)) return;
-      this.setRoot("batch.whirlpool_ibu_fraction", Math.max(0, Math.min(1, n)));
+      this.setRoot(N.targets.whirlpoolFraction, Math.max(0, Math.min(1, n)));
       this.refreshTargets();
       this.scheduleSolve();
       this.notify();
@@ -211,28 +212,28 @@ export function registerStyleCard(app, ctx) {
           return undefined;
         }
       };
-      const og = read("solver.batch.sg_post_boil");
-      const fg = read("batch.realized_fg");
-      const abv = read("batch.realized_abv");
-      const ibu = read("batch.target_ibu");
-      const srm = read("grist.finished_beer_srm");
+      const og = read(N.realized.og);
+      const fg = read(N.realized.fg);
+      const abv = read(N.realized.abv);
+      const ibu = read(N.targets.ibu);
+      const srm = read(N.realized.srm);
       if ([og, fg, abv, ibu, srm].some((v) => typeof v !== "number" || !Number.isFinite(v))) {
         return null;
       }
       const envelope = {
-        ogMin: engine.get("batch.style_og_min"),
-        ogMax: engine.get("batch.style_og_max"),
-        fgMin: engine.get("batch.style_fg_min"),
-        fgMax: engine.get("batch.style_fg_max"),
-        abvMin: engine.get("batch.style_abv_min"),
-        abvMax: engine.get("batch.style_abv_max"),
-        ibuMin: engine.get("batch.style_ibu_min"),
-        ibuMax: engine.get("batch.style_ibu_max"),
-        srmMin: engine.get("batch.style_srm_min"),
-        srmMax: engine.get("batch.style_srm_max"),
+        ogMin: engine.get(N.envelope.ogMin),
+        ogMax: engine.get(N.envelope.ogMax),
+        fgMin: engine.get(N.envelope.fgMin),
+        fgMax: engine.get(N.envelope.fgMax),
+        abvMin: engine.get(N.envelope.abvMin),
+        abvMax: engine.get(N.envelope.abvMax),
+        ibuMin: engine.get(N.envelope.ibuMin),
+        ibuMax: engine.get(N.envelope.ibuMax),
+        srmMin: engine.get(N.envelope.srmMin),
+        srmMax: engine.get(N.envelope.srmMax),
       };
       const report = styleConformance({ og, fg, abv, ibu, srm }, envelope);
-      report.styleId = engine.get("batch.style_id") || null;
+      report.styleId = engine.get(N.styleId) || null;
       return report;
     },
   });
@@ -396,16 +397,16 @@ export function registerStyleCard(app, ctx) {
     styleSrmBounds: {
       configurable: true,
       get() {
-        const min = Number(this.styleField("batch.style_srm_min").value);
-        const max = Number(this.styleField("batch.style_srm_max").value);
+        const min = Number(this.styleField(N.envelope.srmMin).value);
+        const max = Number(this.styleField(N.envelope.srmMax).value);
         return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
       },
     },
     styleIbuBounds: {
       configurable: true,
       get() {
-        const min = Number(this.styleField("batch.style_ibu_min").value);
-        const max = Number(this.styleField("batch.style_ibu_max").value);
+        const min = Number(this.styleField(N.envelope.ibuMin).value);
+        const max = Number(this.styleField(N.envelope.ibuMax).value);
         return Number.isFinite(min) && Number.isFinite(max) && min < max ? [min, max] : null;
       },
     },
@@ -415,13 +416,13 @@ export function registerStyleCard(app, ctx) {
     srmTargetField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice.batch ?? []).find((f) => f.id === "batch.target_srm") ?? null;
+        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.targets.srm) ?? null;
       },
     },
     ibuTargetField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice.batch ?? []).find((f) => f.id === "batch.target_ibu") ?? null;
+        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.targets.ibu) ?? null;
       },
     },
     conformanceSummary: {
@@ -494,8 +495,8 @@ export function registerStyleCard(app, ctx) {
 }
 
 export function refreshStyleCard(app, ctx) {
-  app.selectedStyleId = ctx.engine.get("batch.style_id") || "";
-  app.styleSource = ctx.engine.get("batch.style_source") || "styleguide";
+  app.selectedStyleId = ctx.engine.get(N.styleId) || "";
+  app.styleSource = ctx.engine.get(N.styleSource) || "styleguide";
   app.computeStyleTarget();
   app.refreshTargets();
 }

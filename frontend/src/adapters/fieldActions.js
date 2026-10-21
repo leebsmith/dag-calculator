@@ -6,6 +6,7 @@ import { hamiltonPct } from "../views/hamilton.js";
 import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { clampBoundsFor } from "../views/registry/presentation.js";
+import { SYSTEM_NODES as N } from "../views/registry/system.js";
 
 export function installFieldActions(app, { artifact, session, refToSelectionMap }) {
   Object.assign(app, {
@@ -38,7 +39,7 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       // keystroke fights the user mid-typing, so it is deferred to commitField
       // on blur. The report-only relations still flag out-of-range values.
       this.setRoot(field.target.nodeId, raw);
-      if (field.target.nodeId === "batch.topology") this.resetIntensiveValue(raw);
+      if (field.target.nodeId === N.topology) this.resetIntensiveValue(raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.scheduleSolve();
       this.notify();
@@ -76,7 +77,7 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const constant =
         topology === "runoff_ratio" ? "default_runoff_ratio" : "default_mash_thickness_l_per_kg";
       const value = artifact.constants[constant]?.value;
-      if (typeof value === "number") this.setRoot("batch.intensive_value", value);
+      if (typeof value === "number") this.setRoot(N.intensiveValue, value);
     },
 
     // Selection -> root copy-in (view-only). Picking a source report / target
@@ -118,8 +119,8 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       // over their IBU pool.
       let next = rows;
       if (columnId === "parts") {
-        if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
-        else if (field.target.nodeId === "batch.boil_hops") next = this.normalizeHopRows(rows);
+        if (field.target.nodeId === N.majorMalts) next = this.normalizeGrist(rows);
+        else if (field.target.nodeId === N.boilHops) next = this.normalizeHopRows(rows);
       }
       engine.setCollection(field.target.nodeId, next);
       this.scheduleSolve();
@@ -150,8 +151,8 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const engine = session.getEngine();
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       let next = rows;
-      if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
-      else if (field.target.nodeId === "batch.boil_hops") next = this.normalizeHopRows(rows);
+      if (field.target.nodeId === N.majorMalts) next = this.normalizeGrist(rows);
+      else if (field.target.nodeId === N.boilHops) next = this.normalizeHopRows(rows);
       engine.setCollection(field.target.nodeId, next);
       this.scheduleSolve();
       this.notify();

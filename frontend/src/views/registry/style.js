@@ -1,4 +1,40 @@
 // Presentation metadata for the style slice (selection picker + envelope roots).
+export const STYLE_NODES = {
+  styleId: "batch.style_id",
+  styleSource: "batch.style_source",
+  selectionNode: "batch.style",
+  fermentation: "batch.fermentation",
+  envelope: {
+    ogMin: "batch.style_og_min",
+    ogMax: "batch.style_og_max",
+    fgMin: "batch.style_fg_min",
+    fgMax: "batch.style_fg_max",
+    abvMin: "batch.style_abv_min",
+    abvMax: "batch.style_abv_max",
+    ibuMin: "batch.style_ibu_min",
+    ibuMax: "batch.style_ibu_max",
+    srmMin: "batch.style_srm_min",
+    srmMax: "batch.style_srm_max",
+  },
+  targets: {
+    srm: "batch.target_srm",
+    ibu: "batch.target_ibu",
+    whirlpoolFraction: "batch.whirlpool_ibu_fraction",
+    boilIbu: "batch.boil_target_ibu",
+    whirlpoolIbu: "batch.whirlpool_target_ibu",
+  },
+  realized: {
+    og: "solver.batch.sg_post_boil",
+    fg: "batch.realized_fg",
+    abv: "batch.realized_abv",
+    ibu: "batch.target_ibu",
+    srm: "grist.finished_beer_srm",
+  },
+  apparentAttenuation: "batch.apparent_attenuation",
+  targetAbv: "batch.target_abv",
+  slice: "batch",
+};
+
 export const styleRegistry = {
   "batch.style_source": { label: "Style source" },
   "batch.style_id": { label: "Style" },

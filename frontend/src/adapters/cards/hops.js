@@ -5,8 +5,8 @@ import { installCatalogDraft } from "./catalogDraft.js";
 import { massFromIbu } from "../../views/hops.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
+import { HOP_NODES as N } from "../../views/registry/hops.js";
 
-const NODE = "batch.boil_hops";
 const MAX_VISIBLE = 25;
 
 function makeRow(hop) {
@@ -23,19 +23,19 @@ function makeRow(hop) {
 // IBU share -> IBU -> Tinseth mass, using the solver's pre-boil gravity and
 // post-boil volume. Percent -> IBU here is host-side, display-only.
 function computeHopRows(engine) {
-  const rows = engine.get(NODE) ?? [];
-  const boilIbu = Number(engine.get("batch.boil_target_ibu")) || 0;
-  const boilTimeMin = Number(engine.get("batch.boil_time_min")) || 0;
+  const rows = engine.get(N.collection) ?? [];
+  const boilIbu = Number(engine.get(N.boilIbu)) || 0;
+  const boilTimeMin = Number(engine.get(N.boilTime)) || 0;
 
   let gravity = null;
   let volume = null;
   try {
-    gravity = engine.resolve("solver.batch.cascade.sg_pre_boil");
+    gravity = engine.resolve(N.preBoilGravity);
   } catch {
     gravity = null;
   }
   try {
-    volume = engine.resolve("solver.batch.cascade.v_post_boil");
+    volume = engine.resolve(N.postBoilVolume);
   } catch {
     volume = null;
   }
@@ -52,7 +52,7 @@ export function registerHopCard(app, ctx) {
   installCatalogDraft(app, ctx, {
     prefix: "hop",
     Cap: "Hop",
-    nodeId: NODE,
+    nodeId: N.collection,
     seedKey: "hops",
     idField: "hop_id",
     categoryField: "purpose",
@@ -116,14 +116,14 @@ export function registerHopCard(app, ctx) {
     boilIbuField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice.hops ?? []).find((f) => f.id === "batch.boil_target_ibu") ?? null;
+        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.boilIbu) ?? null;
       },
     },
     whirlpoolIbuField: {
       configurable: true,
       get() {
         return (
-          (this.fieldsBySlice.hops ?? []).find((f) => f.id === "batch.whirlpool_target_ibu") ?? null
+          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.whirlpoolIbu) ?? null
         );
       },
     },
