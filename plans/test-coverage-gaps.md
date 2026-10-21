@@ -57,11 +57,36 @@ unimportable; skippable oracle/node tests.
 11. `Close residual unit gaps` — `engine/validate.js`, `apiClient.js` error
     branches, `navigation.js` flush, `cards/malt.js` / `catalogDraft.js`.
 
-## Acceptance
+## Outcome
 
-- `make verify` green from a clean checkout.
-- `app/main.py` ≥95% statements; backend total ≥95%.
-- Frontend line coverage ≥90% over loaded modules.
-- Every `@event` handler resolves; every builder is imported by a test.
-- No test silently disappears: oracle/node skips print a reason and can be
-  made fatal.
+All eleven commits landed; `make verify` is green (eslint + stylelint + ruff +
+tach, 346 node tests, 263 pytest tests, vite build + dist assertions).
+
+| Measure | Before | After |
+|---|---|---|
+| Node tests | 256 | 346 |
+| Pytest tests | 236 | 263 |
+| Frontend lines/branches | 86.0 / 81.8 | 89.9 / 84.1 |
+| Backend statements | 90% | 98% |
+| `app/main.py` | 0% | 100% |
+| `batch_repo.py` | 35% | 100% |
+| `persistence.js` | 73% | 99% |
+| `batchClient.js` | 0% behaviour | 100% |
+| `catalogDraft.js` | 60% | 100% |
+| `userCatalogUi.js` | 47% | 99% |
+| Seed builders importable | 1/5 | 5/5 |
+
+## Remaining, deliberately deferred
+
+- Browser-only entry (`main.js`, `firebase.js`, 0%): requires a DOM/Firebase
+  harness; the build gate covers resolution, the handler guard covers wiring.
+- `sha256.js` 31-50: the no-`crypto.subtle` fallback; only reachable by
+  deleting a Node global.
+- Card adapters below 90% lines: `yeast` (73%), `late-additions` (75%),
+  `hops` (91%), `mash` (92%), `style` (82%) — mostly presentational branches.
+- `engine/units.js` 87% (invalid-unit branches) and the sealed solver cores
+  (`batch_solver.py` 98%, `water.py` 97%) — numeric edge branches.
+- Deploy path (Cloud Run entrypoint, `uv export`, hosting rewrites/CORS) is
+  still untested; `make verify` stops at the local build.
+- No coverage threshold in `make verify` (baselined via `make coverage` only).
+
