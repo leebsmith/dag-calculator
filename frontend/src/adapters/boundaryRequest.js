@@ -22,64 +22,84 @@ const ION_FIELDS = [
   "alkalinity_as_caco3",
 ];
 
-function ionProfile(engine, role) {
-  const profile = {};
-  for (const ion of ION_FIELDS) profile[ion] = engine.resolve(`water.${role}.${ion}`);
-  return profile;
+// AI AGENT HOOKS: Use this helper for building every boundary request body from
+// its declarative field map. Do not duplicated this logic elsewhere — each map
+// key is one artifact-declared boundary input, and `wire: null` marks an input
+// consumed only by a row builder.
+function buildFromMap(engine, fields) {
+  const resolved = {};
+  for (const [alias, rule] of Object.entries(fields)) {
+    resolved[alias] = rule.read === "get" ? engine.get(rule.path) : engine.resolve(rule.path);
+  }
+
+  const out = {};
+  for (const [alias, rule] of Object.entries(fields)) {
+    if (rule.wire === null) continue;
+    const value = rule.build ? rule.build(resolved) : resolved[alias];
+    assignWire(out, rule.wire ?? alias, value);
+  }
+  return out;
 }
 
-// BatchSolverRequest (20 fields).
-export function buildBatchRequest(engine) {
-  const rows = engine.get("grist.major_malts") ?? [];
-  return {
-    target_abv: engine.resolve("batch.target_abv"),
-    apparent_attenuation: engine.resolve("batch.apparent_attenuation"),
-    v_ferm: engine.resolve("batch.v_ferm"),
-    topology: engine.resolve("batch.topology"),
-    intensive_value: engine.resolve("batch.intensive_value"),
-    grain_bill: rows.map((row) => ({
-      w_i: row.pct,
-      yield_i: row.yield_fraction,
-      mc_i: row.moisture_fraction ?? engine.resolve("batch.grain_moisture_fraction"),
-    })),
-    s_late_add: engine.resolve("batch.s_late_add"),
-    v_kettle_dead: engine.resolve("equipment.kettle_dead_space_l"),
-    v_kettle_transfer: engine.resolve("equipment.kettle_transfer_loss_l"),
-    v_trub: engine.resolve("equipment.trub_loss_l"),
-    delta_v_evap: engine.resolve("batch.delta_v_evap"),
-    v_dead: engine.resolve("equipment.mash_dead_space_l"),
-    mash_transfer_loss: engine.resolve("equipment.mash_transfer_loss_l"),
-    eta_conv: engine.resolve("batch.conversion_efficiency"),
-    f_shrink: engine.resolve("equipment.shrinkage_pct"),
-    hlt_starting_volume_l: engine.resolve("batch.hlt_starting_volume_l"),
-    hlt_dead_space_l: engine.resolve("equipment.hlt_dead_space_l"),
-    hlt_transfer_loss_l: engine.resolve("equipment.hlt_transfer_loss_l"),
-    hlt_coil_floor_l: engine.resolve("equipment.hlt_coil_floor_l"),
-    max_hlt_volume_l: engine.resolve("equipment.max_hlt_volume_l"),
-  };
+function assignWire(out, wire, value) {
+  if (!wire.includes(".")) {
+    out[wire] = value;
+    return;
+  }
+  const [head, ...rest] = wire.split(".");
+  out[head] ??= {};
+  assignWire(out[head], rest.join("."), value);
 }
 
-// WaterSolverRequest. `solver.batch` precedes `solver.water` in topo order, so
-// `m_grist` is always cached before this resolves the grain masses.
-export function buildWaterRequest(engine) {
-  const rows = engine.get("grist.major_malts") ?? [];
-  const traceRows = engine.get("grist.trace_malts") ?? [];
-  const mGrist = engine.resolve("solver.batch.m_grist");
-  return {
-    // A 0%-of-bill row contributes nothing and would violate mass_kg > 0, so
-    // drop it (a freshly-added row starts at 0% until the user sets its parts).
-    // Trace malts are already dosed by definite mass; keep their mass as-is but
-    // drop empty rows (they still sit in the mash, so they affect the pH
-    // buckets — unlike kettle sugars, which are deliberately excluded).
-    grist: [
-      ...rows
+// BatchSolverRequest: one entry per solver.batch declared input.
+export const BATCH_FIELDS = {
+  target_abv: { path: "batch.target_abv" },
+  apparent_attenuation: { path: "batch.apparent_attenuation" },
+  v_ferm: { path: "batch.v_ferm" },
+  topology: { path: "batch.topology" },
+  intensive_value: { path: "batch.intensive_value" },
+  grain_bill: {
+    path: "grist.major_malts",
+    read: "get",
+    build: (resolved) =>
+      (resolved.grain_bill ?? []).map((row) => ({
+        w_i: row.pct,
+        yield_i: row.yield_fraction,
+        mc_i: row.moisture_fraction ?? resolved.grain_moisture_fraction,
+      })),
+  },
+  grain_moisture_fraction: { path: "batch.grain_moisture_fraction", wire: null },
+  s_late_add: { path: "batch.s_late_add" },
+  v_kettle_dead: { path: "equipment.kettle_dead_space_l" },
+  v_kettle_transfer: { path: "equipment.kettle_transfer_loss_l" },
+  v_trub: { path: "equipment.trub_loss_l" },
+  delta_v_evap: { path: "batch.delta_v_evap" },
+  v_dead: { path: "equipment.mash_dead_space_l" },
+  mash_transfer_loss: { path: "equipment.mash_transfer_loss_l" },
+  eta_conv: { path: "batch.conversion_efficiency" },
+  f_shrink: { path: "equipment.shrinkage_pct" },
+  hlt_starting_volume_l: { path: "batch.hlt_starting_volume_l" },
+  hlt_dead_space_l: { path: "equipment.hlt_dead_space_l" },
+  hlt_transfer_loss_l: { path: "equipment.hlt_transfer_loss_l" },
+  hlt_coil_floor_l: { path: "equipment.hlt_coil_floor_l" },
+  max_hlt_volume_l: { path: "equipment.max_hlt_volume_l" },
+};
+
+// WaterSolverRequest: one entry per solver.water declared input. `solver.batch`
+// precedes `solver.water` in topo order, so `m_grist` is cached before this runs.
+export const WATER_FIELDS = {
+  grist: {
+    path: "grist.major_malts",
+    read: "get",
+    build: (resolved) => [
+      ...(resolved.grist ?? [])
         .filter((row) => row.pct > 0)
         .map((row) => ({
-          mass_kg: row.pct * mGrist,
+          mass_kg: row.pct * resolved.m_grist,
           color_lovibond: row.color_lovibond,
           grain_type: row.category,
         })),
-      ...traceRows
+      ...(resolved.trace_malts ?? [])
         .filter((row) => row.mass_kg > 0)
         .map((row) => ({
           mass_kg: row.mass_kg,
@@ -87,22 +107,38 @@ export function buildWaterRequest(engine) {
           grain_type: row.category,
         })),
     ],
-    source: ionProfile(engine, "source"),
-    target: ionProfile(engine, "target"),
-    v_mash_treat_l: engine.resolve("water.v_mash_treat_l"),
-    v_hlt_treat_l: engine.resolve("water.v_hlt_treat_l"),
-    v_hlt_debt_l: engine.resolve("water.v_hlt_debt_l"),
-    v_sparge_demand_l: engine.resolve("water.v_sparge_demand_l"),
-    mash_thickness_l_per_kg: engine.resolve("water.mash_thickness_l_per_kg"),
-    target_mash_ph: engine.resolve("water.target_mash_ph"),
-    strategy: engine.resolve("water.strategy"),
-    salt_distribution: engine.resolve("water.salt_distribution"),
-    acid_medium: engine.resolve("water.acid_medium"),
-    gypsum_form: engine.resolve("water.gypsum_form"),
-    cacl2_form: engine.resolve("water.cacl2_form"),
-    preferred_alkaline_agent: engine.resolve("water.preferred_alkaline_agent"),
-    calcium_floor_ppm: engine.resolve("water.calcium_floor_ppm"),
-  };
+  },
+  trace_malts: { path: "grist.trace_malts", read: "get", wire: null },
+  m_grist: { path: "solver.batch.m_grist", wire: null },
+  ...Object.fromEntries(
+    ["source", "target"].flatMap((role) =>
+      ION_FIELDS.map((ion) => [
+        `${role}.${ion}`,
+        { path: `water.${role}.${ion}` },
+      ])
+    )
+  ),
+  v_mash_treat_l: { path: "water.v_mash_treat_l" },
+  v_hlt_treat_l: { path: "water.v_hlt_treat_l" },
+  v_hlt_debt_l: { path: "water.v_hlt_debt_l" },
+  v_sparge_demand_l: { path: "water.v_sparge_demand_l" },
+  mash_thickness_l_per_kg: { path: "water.mash_thickness_l_per_kg" },
+  target_mash_ph: { path: "water.target_mash_ph" },
+  strategy: { path: "water.strategy" },
+  salt_distribution: { path: "water.salt_distribution" },
+  acid_medium: { path: "water.acid_medium" },
+  gypsum_form: { path: "water.gypsum_form" },
+  cacl2_form: { path: "water.cacl2_form" },
+  preferred_alkaline_agent: { path: "water.preferred_alkaline_agent" },
+  calcium_floor_ppm: { path: "water.calcium_floor_ppm" },
+};
+
+export function buildBatchRequest(engine) {
+  return buildFromMap(engine, BATCH_FIELDS);
+}
+
+export function buildWaterRequest(engine) {
+  return buildFromMap(engine, WATER_FIELDS);
 }
 
 // binding -> builder, registered on the engine (options.boundaryRequests).

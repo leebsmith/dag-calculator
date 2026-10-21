@@ -1,32 +1,48 @@
-// Boundary seam guard: each request builder may only read nodes declared in its
-// boundary's `inputs`. The engine derives adjacency/topo/invalidation from those
-// declared inputs, so an undeclared read is a hidden dependency that can go
-// stale. This catches it at the contract.
+// Boundary seam guard: each request builder must read EXACTLY the nodes declared
+// in its boundary's `inputs` — no undeclared read (a hidden dependency that can
+// go stale) and no declared input left unmapped. The engine derives
+// adjacency/topo/invalidation from those declared inputs, so drift is a contract
+// break, not a detail.
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
-import { resolveReference } from "../../frontend/src/engine/index.js";
-import { buildBatchRequest, buildWaterRequest } from "../../frontend/src/adapters/boundaryRequest.js";
+import {
+  BATCH_FIELDS,
+  WATER_FIELDS,
+  buildBatchRequest,
+  buildWaterRequest,
+} from "../../frontend/src/adapters/boundaryRequest.js";
 import { loadArtifact } from "../frontend/helpers.js";
 
 const artifact = loadArtifact();
+const WIRE_KEYS = JSON.parse(
+  readFileSync(new URL("../conformance/fixtures/boundary-wire-keys.json", import.meta.url), "utf8")
+);
 
-function declaredNodeIds(boundaryId) {
-  const node = artifact.nodes[boundaryId];
-  const ids = new Set();
-  for (const path of Object.values(node.inputs ?? {})) {
-    const r = resolveReference(artifact, path);
-    ids.add(r ? r.nodeId : path);
-  }
-  return ids;
+function wireKeys(fields) {
+  return Object.entries(fields)
+    .filter(([, rule]) => rule.wire !== null)
+    .map(([alias, rule]) => rule.wire ?? alias)
+    .sort();
+}
+
+function declaredPaths(boundaryId) {
+  return new Set(Object.values(artifact.nodes[boundaryId].inputs ?? {}));
 }
 
 // A recording engine that returns a single well-formed grist row (no moisture,
 // so the batch builder exercises the fallback read) and 0 for every scalar.
 function recordEngine() {
   const reads = [];
-  const ROW = { pct: 0.5, yield_fraction: 0.8, mass_kg: 1, color_lovibond: 3, category: "BASE" };
+  const ROW = {
+    pct: 0.5,
+    yield_fraction: 0.8,
+    mass_kg: 1,
+    color_lovibond: 3,
+    category: "BASE",
+  };
   const engine = {
     resolve(path) {
       reads.push(path);
@@ -40,24 +56,31 @@ function recordEngine() {
   return { engine, reads };
 }
 
-function assertOnlyDeclared(builder, boundaryId) {
+function assertExactDeclared(builder, fieldMap, boundaryId) {
   const { engine, reads } = recordEngine();
   builder(engine);
-  const declared = declaredNodeIds(boundaryId);
-  for (const path of reads) {
-    const r = resolveReference(artifact, path);
-    const nodeId = r ? r.nodeId : path;
-    assert.ok(
-      declared.has(nodeId),
-      `${boundaryId} builder reads undeclared node "${nodeId}" (via "${path}")`
-    );
-  }
+
+  assert.deepEqual(
+    [...new Set(reads)].sort(),
+    [...declaredPaths(boundaryId)].sort(),
+    `${boundaryId} builder must read every declared input exactly (and nothing else)`
+  );
+  assert.deepEqual(
+    Object.keys(fieldMap).sort(),
+    Object.keys(artifact.nodes[boundaryId].inputs ?? {}).sort(),
+    `${boundaryId} field map must mirror the artifact's declared input aliases`
+  );
 }
 
-test("batch request builder reads only declared solver.batch inputs", () => {
-  assertOnlyDeclared(buildBatchRequest, "solver.batch");
+test("batch request builder reads exactly the declared solver.batch inputs", () => {
+  assertExactDeclared(buildBatchRequest, BATCH_FIELDS, "solver.batch");
 });
 
-test("water request builder reads only declared solver.water inputs", () => {
-  assertOnlyDeclared(buildWaterRequest, "solver.water");
+test("water request builder reads exactly the declared solver.water inputs", () => {
+  assertExactDeclared(buildWaterRequest, WATER_FIELDS, "solver.water");
+});
+
+test("wire keys match the shared backend contract fixture", () => {
+  assert.deepEqual(wireKeys(BATCH_FIELDS), WIRE_KEYS.batch);
+  assert.deepEqual(wireKeys(WATER_FIELDS), WIRE_KEYS.water);
 });
