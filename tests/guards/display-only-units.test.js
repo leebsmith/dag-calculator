@@ -11,6 +11,7 @@ test("A8a: units.fromBase used only by the producer", () => {
     const r = rel(abs);
     if (
       r.endsWith("views/producer.js") ||
+      r.includes("views/producer/") ||
       r.endsWith("engine/units.js") ||
       r.endsWith("engine/index.js")
     ) {

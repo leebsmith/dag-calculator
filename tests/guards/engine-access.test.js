@@ -9,6 +9,7 @@ const ALLOW = [
   "frontend/src/adapters/",
   "frontend/src/store/snapshot.js",
   "frontend/src/views/producer.js",
+  "frontend/src/views/producer/",
 ];
 
 const isComment = (line) => /^\s*(\/\/|\*|\/\*|#)/.test(line);
