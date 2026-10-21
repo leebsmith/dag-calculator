@@ -86,6 +86,62 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
 });
 
+test("http: a debounced burst collapses into one batch + one water request", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl, debounceMs: 10 });
+  app.scheduleSolve();
+  app.scheduleSolve();
+  app.scheduleSolve();
+  await new Promise((r) => setTimeout(r, 50));
+  assert.equal(calls.length, 2, "burst of edits collapses to one batch + one water POST");
+});
+
+test("http: concurrent solveNow calls dedupe by fingerprint", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await Promise.all([app.solveNow(), app.solveNow()]);
+  assert.equal(calls.length, 2, "concurrent solves share one POST per fingerprint");
+});
+
+test("http: a superseded solve discards its result", async () => {
+  let batchCalls = 0;
+  const calls = [];
+  const fetchImpl = async (url, opts) => {
+    calls.push({ url, body: JSON.parse(opts.body) });
+    if (url === "/solve/batch" && ++batchCalls === 1) {
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    const r = url === "/solve/batch"
+      ? { status: 200, body: BATCH }
+      : { status: 200, body: WATER };
+    return { ok: true, status: r.status, json: async () => r.body };
+  };
+
+  const app = createStepApp({ useHttp: true, fetchImpl, debounceMs: 5 });
+  let computes = 0;
+  const compute = app.compute.bind(app);
+  app.compute = () => {
+    computes += 1;
+    compute();
+  };
+
+  const stale = app.solveNow();
+  app.setRoot("batch.target_abv", 6.5);
+  app.scheduleSolve();
+  await stale;
+  await new Promise((r) => setTimeout(r, 90));
+
+  assert.equal(computes, 1, "only the newest solve computes");
+  assert.equal(app.boundaryError, null);
+  assert.ok(calls.length >= 2, "the superseding solve issued its own requests");
+});
+
 test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async () => {
   const { fetchImpl, calls } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },
