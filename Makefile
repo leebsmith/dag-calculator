@@ -17,7 +17,7 @@ OUT   ?=
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help local-dev check test test-oracle coverage verify build seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help local-dev check test test-oracle coverage verify verify-full build seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
@@ -27,9 +27,10 @@ help:
 	@echo "  local-dev       Run frontend + Firebase emulators + backend"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
-	@echo "  test-oracle     Differential conformance against the legacy checkout"
+	@echo "  test-oracle     Check the oracle snapshot against the legacy checkout"
 	@echo "  coverage        Frontend + backend coverage reports"
-	@echo "  verify          check + test + production build"
+	@echo "  verify          check + test + production build (hermetic)"
+	@echo "  verify-full     verify + test-oracle (needs the legacy checkout)"
 	@echo "  build           Production frontend bundle + dist assertions"
 	@echo "  seeds           Rebuild normalized seed catalogs from data/sources/"
 	@echo "  scrape-yeasts   Crawl beer-analytics.com yeasts -> data/sources/"
@@ -70,7 +71,7 @@ test:
 	cd backend && uv run pytest ../tests/backend/
 
 test-oracle:
-	cd frontend && REQUIRE_ORACLE=1 node --test ../tests/conformance/parity.test.js
+	node tests/conformance/emit-oracle-fixture.mjs --check
 
 coverage:
 	@echo "Frontend coverage (loaded modules)..."
@@ -86,6 +87,9 @@ build:
 
 verify: check test build
 	@echo "verify: all gates passed"
+
+verify-full: verify test-oracle
+	@echo "verify-full: all gates passed, oracle snapshot current"
 
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/

@@ -36,9 +36,16 @@ make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
 make verify      # check + test + production build
 make build       # frontend bundle + dist assertions (unresolved includes, assets)
-make test-oracle # differential conformance against ~/Development/brewing-calculator
+make test-oracle # assert the committed oracle snapshot matches the legacy checkout
+make verify-full # verify + test-oracle
 make coverage    # frontend line/branch + backend statement coverage
 ```
+
+The frontend differential suite (`tests/conformance/parity.test.js`) compares
+artifact functions against `tests/conformance/fixtures/oracle-parity.json`, a
+snapshot of the legacy pure modules. Refresh the snapshot with
+`node tests/conformance/emit-oracle-fixture.mjs --write` and confirm it with
+`make test-oracle`; `make verify` itself needs no legacy checkout.
 
 ## Seeds & scraping
 

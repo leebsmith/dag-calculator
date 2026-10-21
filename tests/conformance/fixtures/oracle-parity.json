@@ -1,0 +1,188 @@
+{
+  "source": "legacy brewing-calculator pure modules (frontend/src/utils)",
+  "generated_by": "tests/conformance/emit-oracle-fixture.mjs",
+  "tolerance": 1e-9,
+  "cases": [
+    {
+      "fn": "extract_yield_ldk",
+      "args": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "fn": "extract_yield_ldk",
+      "args": [
+        0.5
+      ],
+      "expected": 192.8205
+    },
+    {
+      "fn": "extract_yield_ldk",
+      "args": [
+        0.74
+      ],
+      "expected": 285.37434
+    },
+    {
+      "fn": "extract_yield_ldk",
+      "args": [
+        0.8
+      ],
+      "expected": 308.5128
+    },
+    {
+      "fn": "extract_yield_ldk",
+      "args": [
+        1
+      ],
+      "expected": 385.641
+    },
+    {
+      "fn": "sugar_gravity_points",
+      "args": [
+        0.5,
+        0.8,
+        20
+      ],
+      "expected": 7.712820000000001
+    },
+    {
+      "fn": "sugar_gravity_points",
+      "args": [
+        1.25,
+        0.74,
+        19
+      ],
+      "expected": 18.774627631578948
+    },
+    {
+      "fn": "sugar_gravity_points",
+      "args": [
+        0.2,
+        0.95,
+        23.5
+      ],
+      "expected": 3.1179485106382985
+    },
+    {
+      "fn": "calculate_strike_water_base_temp",
+      "args": [
+        67,
+        20,
+        3
+      ],
+      "expected": 73.42333333333333
+    },
+    {
+      "fn": "calculate_strike_water_base_temp",
+      "args": [
+        66,
+        18.5,
+        2.6079
+      ],
+      "expected": 73.46769431343226
+    },
+    {
+      "fn": "calculate_strike_water_base_temp",
+      "args": [
+        72,
+        22,
+        4.5
+      ],
+      "expected": 76.55555555555556
+    },
+    {
+      "fn": "calculate_tun_thermal_offset",
+      "args": [
+        67,
+        20,
+        0.12,
+        7.5,
+        14
+      ],
+      "expected": 3.0214285714285714
+    },
+    {
+      "fn": "calculate_tun_thermal_offset",
+      "args": [
+        66,
+        19,
+        0.12,
+        6.5,
+        12.2
+      ],
+      "expected": 3.0049180327868856
+    },
+    {
+      "fn": "bicarbonate_from_alkalinity",
+      "args": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "fn": "bicarbonate_from_alkalinity",
+      "args": [
+        40
+      ],
+      "expected": 48.8
+    },
+    {
+      "fn": "bicarbonate_from_alkalinity",
+      "args": [
+        78
+      ],
+      "expected": 95.16
+    },
+    {
+      "fn": "bicarbonate_from_alkalinity",
+      "args": [
+        150.5
+      ],
+      "expected": 183.60999999999999
+    },
+    {
+      "fn": "estimate_single_rest_loa_pct",
+      "args": [
+        64
+      ],
+      "expected": 80.76000000000002
+    },
+    {
+      "fn": "estimate_single_rest_loa_pct",
+      "args": [
+        65.5
+      ],
+      "expected": 77.52
+    },
+    {
+      "fn": "estimate_single_rest_loa_pct",
+      "args": [
+        66
+      ],
+      "expected": 76.43999999999998
+    },
+    {
+      "fn": "estimate_single_rest_loa_pct",
+      "args": [
+        67
+      ],
+      "expected": 74.28
+    },
+    {
+      "fn": "estimate_single_rest_loa_pct",
+      "args": [
+        68
+      ],
+      "expected": 72.11999999999999
+    },
+    {
+      "fn": "estimate_single_rest_loa_pct",
+      "args": [
+        70
+      ],
+      "expected": 67.8
+    }
+  ]
+}

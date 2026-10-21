@@ -34,7 +34,8 @@ seam, solvers, Firebase auth, and Firestore persistence.
     make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
     make check       # eslint/stylelint + ruff + tach
     make test        # frontend (node --test) + backend pytest
-    make verify      # check + test + production build (run before committing)
+    make verify      # check + test + production build (hermetic)
+    make verify-full # verify + oracle-snapshot check against the legacy checkout
 
 After any `data/artifact.json` change:
 
