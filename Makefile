@@ -63,6 +63,8 @@ check:
 	@echo "Checking backend linting and architectural boundaries..."
 	cd backend && uv run ruff check . ../tests/backend
 	cd backend && uv run tach check
+	@echo "Checking Firebase config..."
+	node scripts/check-firebase-config.mjs
 
 test:
 	@echo "Running frontend engine tests..."
