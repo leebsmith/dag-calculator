@@ -616,6 +616,28 @@ export function cellKind(cell) {
 }
 
 /**
+ * Return a safe `href` for an external link: the trimmed URL if its scheme is
+ * strictly `http:` or `https:`, else `""`. Blocks `javascript:`, `data:`,
+ * `vbscript:`, and scheme-less/relative URLs so a stored value can never inject
+ * an executable URL into an anchor.
+ *
+ * @param {unknown} url
+ * @returns {string}
+ * @note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.
+ */
+export function safeHref(url) {
+  if (typeof url !== "string") return "";
+  const trimmed = url.trim();
+  if (trimmed === "") return "";
+  try {
+    const parsed = new URL(trimmed);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? trimmed : "";
+  } catch {
+    return "";
+  }
+}
+
+/**
  * True when any cell in any row carries `holds === false`.
  *
  * @param {unknown} rowValidations

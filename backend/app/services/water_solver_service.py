@@ -23,6 +23,9 @@ from app.schemas.boundary import (
     WaterStrategy,
 )
 from app.services.errors import SolverServiceError
+from app.services.parity import assert_field_parity
+
+assert_field_parity(WaterSolverRequest, WaterChemistryInput)
 
 _ION_LONG_TO_SHORT = {
     "calcium_ca": "ca",

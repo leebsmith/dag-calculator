@@ -1,0 +1,85 @@
+{
+  "note": "Shared component-validation corpus. `expected` lists the field names each validator must flag. NaN is encoded as {\"__nan__\": true} because JSON cannot represent it.",
+  "cases": [
+    {
+      "catalog": "malt",
+      "component": { "name": "Pilsner", "category": "BASE", "yield_fraction": 0.8, "moisture_fraction": 0.04, "color_lovibond": 2.0 },
+      "expected": []
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": "", "yield_fraction": 2.0 },
+      "expected": ["name", "yield_fraction"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": "X", "yield_fraction": true },
+      "expected": ["yield_fraction"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": "X", "yield_fraction": { "__nan__": true } },
+      "expected": ["yield_fraction"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": "X", "bogus_field": 1 },
+      "expected": ["bogus_field"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "yield_fraction": 0.8 },
+      "expected": ["name"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": 123 },
+      "expected": ["name"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": "X", "category": "BOGUS" },
+      "expected": ["category"]
+    },
+    {
+      "catalog": "malt",
+      "component": { "name": "X", "id": 123 },
+      "expected": ["id"]
+    },
+    {
+      "catalog": "yeast",
+      "component": { "name": "Y", "url": "javascript:alert(1)" },
+      "expected": ["url"]
+    },
+    {
+      "catalog": "yeast",
+      "component": { "name": "Y", "url": "data:text/html,<script>alert(1)</script>" },
+      "expected": ["url"]
+    },
+    {
+      "catalog": "yeast",
+      "component": { "name": "Y", "url": "https://example.com/strain" },
+      "expected": []
+    },
+    {
+      "catalog": "yeast",
+      "component": { "name": "Y", "url": "relative/path" },
+      "expected": ["url"]
+    },
+    {
+      "catalog": "hop",
+      "component": { "name": "H", "url": "//example.com" },
+      "expected": ["url"]
+    },
+    {
+      "catalog": "yeast",
+      "component": { "name": "Y", "attenuation_pct": "0.5" },
+      "expected": ["attenuation_pct"]
+    },
+    {
+      "catalog": "water_report",
+      "component": { "calcium_ca": 40 },
+      "expected": ["laboratory"]
+    }
+  ]
+}

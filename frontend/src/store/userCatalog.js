@@ -5,6 +5,8 @@
 // module holds no persistence.
 
 import catalogsData from "../../../data/catalogs.json" with { type: "json" };
+import { checkComponentDomain } from "../engine/domains.js";
+import { safeHref } from "../utils.js";
 
 // Catalog kind -> registry metadata (camelCase view of the shared JSON).
 export const CATALOGS = Object.fromEntries(
@@ -32,37 +34,10 @@ export function isUserItem(id) {
   return typeof id === "string" && id.startsWith("u:");
 }
 
-const DOMAIN_OPS = {
-  gt: (a, b) => a > b,
-  gte: (a, b) => a >= b,
-  lt: (a, b) => a < b,
-  lte: (a, b) => a <= b,
-  eq: (a, b) => a === b,
-  ne: (a, b) => a !== b,
-};
-
-function resolveLimit(limitExpr, constants) {
-  if (typeof limitExpr === "number") return limitExpr;
-  if (limitExpr && typeof limitExpr === "object" && "const" in limitExpr) {
-    return constants?.[limitExpr.const]?.value;
-  }
-  return undefined;
-}
-
-function domainViolation(domain, value, constants) {
-  for (const [op, limitExpr] of Object.entries(domain ?? {})) {
-    const test = DOMAIN_OPS[op];
-    if (!test) continue;
-    const limit = resolveLimit(limitExpr, constants);
-    if (limit === undefined || limit === null || Number.isNaN(limit)) continue;
-    if (!test(value, limit)) return { op, limit };
-  }
-  return null;
-}
-
-// Mirror of the seed-conformance checkComponent: a component must only carry
+// Mirror of the server-side validate_component: a component must only carry
 // declared fields, and each field must honor its dimension/domain/taxonomy/type.
-// Returns an array of { field, message }; empty means valid.
+// Domain evaluation delegates to the engine's shared evaluator; URL fields are
+// restricted to http(s). Returns an array of { field, message }; empty means valid.
 export function validateComponent(artifact, catalog, component) {
   const meta = CATALOGS[catalog];
   const schema = artifact?.primitive_schemas?.[meta?.schema];
@@ -76,6 +51,10 @@ export function validateComponent(artifact, catalog, component) {
   if (typeof component[titleField] !== "string" || !component[titleField].trim()) {
     errors.push({ field: titleField, message: `${titleField} is required` });
   }
+  const idField = meta.idField;
+  if (idField && idField in component && typeof component[idField] !== "string") {
+    errors.push({ field: idField, message: `${idField} must be a string` });
+  }
 
   for (const [field, value] of Object.entries(component)) {
     if (!(field in schema)) {
@@ -84,12 +63,19 @@ export function validateComponent(artifact, catalog, component) {
     }
     if (value === undefined || value === null || value === "") continue;
     const spec = schema[field];
+    if (field === "url") {
+      if (typeof value !== "string" || safeHref(value) === "") {
+        errors.push({ field, message: "must be an http(s) URL" });
+      }
+      continue;
+    }
     if (spec.dimension) {
       if (typeof value !== "number" || !Number.isFinite(value)) {
         errors.push({ field, message: "must be a number" });
         continue;
       }
-      if (domainViolation(spec.domain, value, artifact?.constants)) {
+      const result = checkComponentDomain(artifact, spec.domain, value);
+      if (result.bounded && !result.holds) {
         errors.push({ field, message: `violates ${JSON.stringify(spec.domain)}` });
       }
     } else if (spec.taxonomy) {

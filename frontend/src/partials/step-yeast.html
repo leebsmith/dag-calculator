@@ -136,7 +136,7 @@
               <div x-show="selectedYeast.form"><strong>Form:</strong> <span x-text="selectedYeast.form"></span></div>
               <div x-show="selectedYeastTemp"><strong>Temperature:</strong> <span x-text="selectedYeastTemp"></span></div>
               <div x-show="selectedYeast.recipes !== undefined"><strong>Recipes:</strong> <span x-text="selectedYeast.recipes"></span></div>
-              <div x-show="selectedYeast.url"><strong>Source:</strong> <a :href="selectedYeast.url" target="_blank" rel="noopener" x-text="selectedYeast.url"></a></div>
+              <div x-show="selectedYeast.url"><strong>Source:</strong> <a :href="fmt.safeHref(selectedYeast.url)" target="_blank" rel="noopener" x-text="selectedYeast.url"></a></div>
               <div class="card-subtitle" x-text="selectedYeast.notes"></div>
             </div>
           </div>

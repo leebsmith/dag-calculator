@@ -35,6 +35,7 @@ import {
   provenanceFor,
   resultCounter,
   roundTo,
+  safeHref,
   toFiniteOrNull,
   toPercentValue,
   toggleFilter,
@@ -305,6 +306,21 @@ test("isRepresentative spots std: entries", () => {
   assert.equal(isRepresentative("std:base"), true);
   assert.equal(isRepresentative({ id: "malt-1" }), false);
   assert.equal(isRepresentative(null), false);
+});
+
+test("safeHref allows only http(s) schemes", () => {
+  assert.equal(safeHref("https://example.com/strain"), "https://example.com/strain");
+  assert.equal(safeHref("http://example.com"), "http://example.com");
+  assert.equal(safeHref("  https://example.com  "), "https://example.com");
+  assert.equal(safeHref("javascript:alert(1)"), "");
+  assert.equal(safeHref("data:text/html,<script>"), "");
+  assert.equal(safeHref("vbscript:msgbox"), "");
+  assert.equal(safeHref("relative/path"), "");
+  assert.equal(safeHref("//example.com"), "");
+  assert.equal(safeHref(""), "");
+  assert.equal(safeHref("   "), "");
+  assert.equal(safeHref(123), "");
+  assert.equal(safeHref(null), "");
 });
 
 test("unit helpers resolve symbols with the id as fallback", () => {

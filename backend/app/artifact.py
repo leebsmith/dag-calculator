@@ -12,6 +12,7 @@ import math
 import os
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 logger = logging.getLogger("app.artifact")
 
@@ -97,6 +98,16 @@ def _domain_error(domain: Any, value: float, constants: dict[str, Any]) -> bool:
     return False
 
 
+def _is_safe_url(value: Any) -> bool:
+    """Return True when `value` is an unset string or an http(s) URL."""
+    if not isinstance(value, str):
+        return False
+    stripped = value.strip()
+    if not stripped:
+        return True  # empty is "unset", not a violation
+    return urlparse(stripped).scheme in ("http", "https")
+
+
 def validate_component(kind: str, component: Any) -> list[str]:
     """Validate a component against its catalog kind's primitive schema.
 
@@ -132,6 +143,10 @@ def validate_component(kind: str, component: Any) -> list[str]:
         if value is None or value == "":
             continue
         spec = schema[field]
+        if field == "url":
+            if not _is_safe_url(value):
+                errors.append(f"{field}: must be an http(s) URL")
+            continue
         if spec.get("dimension"):
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 errors.append(f"{field}: must be a number")

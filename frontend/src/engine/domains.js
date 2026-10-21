@@ -45,6 +45,16 @@ export function checkDomain(artifact, nodeId, value, resolveRef) {
   return { nodeId, ...evaluateDomain(domain, value, resolveLimitFn) };
 }
 
+// Evaluate a raw domain spec (as declared on a primitive-schema field) against a
+// value. Component fields carry `{const}`/literal bounds, never `{ref}` (a
+// component is self-contained), so the ref resolver is a no-op. This is the
+// single source of truth for component-field domain checks on the frontend.
+export function checkComponentDomain(artifact, domain, value) {
+  if (!domain || typeof domain !== "object") return { bounded: false, holds: true };
+  const resolveLimitFn = (limit) => resolveLimit(limit, artifact, () => undefined);
+  return evaluateDomain(domain, value, resolveLimitFn);
+}
+
 export function domainStates(artifact, get, resolveRef) {
   const states = [];
   for (const [id, node] of Object.entries(artifact.nodes)) {

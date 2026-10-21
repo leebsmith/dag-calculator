@@ -21,6 +21,9 @@ from app.schemas.boundary import (
     BatchSolverResponse,
 )
 from app.services.errors import SolverServiceError
+from app.services.parity import assert_field_parity
+
+assert_field_parity(BatchSolverRequest, BatchSolverInput)
 
 
 def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
