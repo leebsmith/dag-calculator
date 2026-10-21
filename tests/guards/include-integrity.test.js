@@ -6,8 +6,8 @@ import { ROOT, read, existsSync, join } from "./util.js";
 // A7: every <load src> include exists and corresponds to a manifest step partial
 // (bidirectional — no orphan includes, no undeclared steps). Steps may share a
 // single generic partial, so comparison is over the unique sets. Non-step
-// includes (e.g. the menu-bar user-catalog surface) are allowlisted explicitly.
-const EXTRA_PARTIALS = ["./src/partials/user-catalog.html"];
+// includes (e.g. the app-level library surface) are allowlisted explicitly.
+const EXTRA_PARTIALS = ["./src/partials/library.html"];
 
 test("A7: include integrity", () => {
   const html = read("frontend/index.html");

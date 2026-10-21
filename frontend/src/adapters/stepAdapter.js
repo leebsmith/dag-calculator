@@ -9,7 +9,8 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
-import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
+import { createLibrary } from "../store/library.js";
+import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode } from "../store/unitPrefs.js";
 import { installSnapshot } from "../store/snapshot.js";
@@ -21,7 +22,7 @@ import { registerTraceMaltsCard } from "./cards/trace-malts.js";
 import { registerMaltCard } from "./cards/malt.js";
 import { registerMashCard } from "./cards/mash.js";
 import { registerBrewDayCard } from "./cards/brew-day.js";
-import { registerUserCatalogUi } from "./userCatalogUi.js";
+import { registerLibraryUi } from "./libraryUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
@@ -36,8 +37,11 @@ export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
   const cache = createReferenceCache();
-  const userCatalog = createUserCatalog({ artifact });
-  cache.syncUserItems(userCatalog.catalogs);
+  const library = createLibrary({
+    client: options.libraryClient,
+    onChange: () => syncLibrary(),
+  });
+  cache.syncLibraryItems(library.items());
 
   // Boundary seam: offline stubs by default (tests, no API base); the real
   // solvers over HTTP when explicitly enabled. HTTP is an explicit boolean
@@ -59,7 +63,7 @@ export function createStepApp(options = {}) {
 
   const app = {
     master,
-    userCatalog,
+    library,
     steps,
     activeIndex: ui.activeIndex,
     highwater: ui.highwater,
@@ -73,6 +77,7 @@ export function createStepApp(options = {}) {
     unitsOpen: false,
     violationCount: 0,
     catalogRevision: 0,
+    libraryRevision: 0,
     fieldsBySlice: {},
     relations: [],
     domains: [],
@@ -169,30 +174,33 @@ export function createStepApp(options = {}) {
       view.compute(this);
     },
 
-    // Re-merge user-authored items into the cache/engine and re-render. Called
-    // by the catalog CRUD surface after a mutation. Every selection is
-    // invalidated (a user item may be referenced by any of them) so the memoized
-    // valuation re-resolves against the updated overlay; `catalogRevision` is the
-    // reactive signal the picker getters depend on.
-    refreshUserItems() {
-      cache.syncUserItems(userCatalog.catalogs);
-      for (const [id, node] of Object.entries(artifact.nodes)) {
-        if (node.kind === "selection") session.engine.invalidate(id);
-      }
+    // Re-merge library records into the cache/engine and re-render. Called by
+    // the library surface after a mutation. Every selection is invalidated (a
+    // record may be referenced by any of them) so the memoized valuation
+    // re-resolves against the updated overlay; the revision counters are the
+    // reactive signals the picker and library getters depend on.
+    refreshLibraryItems() {
+      syncLibrary();
       this.catalogRevision += 1;
+      this.libraryRevision += 1;
       this.compute();
     },
 
-    // True when the id is a user-authored (`u:`) item (picker badge).
+    // True when the id is user-authored (legacy `u:` seed copy or a server
+    // library record) — drives the picker "mine" badge.
     isUserItem(id) {
-      return isUserItem(id);
+      return isUserItem(id) || cache.isLibraryItem(id);
     },
 
-    // Clone a seed component into a user-authored item, then refresh the overlay.
-    duplicateUserItem(catalog, component) {
+    // Copy a seed component into a new server record.
+    async duplicateUserItem(catalog, component) {
+      const meta = CATALOGS[catalog];
+      if (!meta) return;
+      const copy = { ...component };
+      delete copy[meta.idField];
       try {
-        this.userCatalog.duplicateFrom(catalog, component);
-        this.refreshUserItems();
+        await this.library.create(catalog, copy);
+        this.refreshLibraryItems();
       } catch (err) {
         console.error(`duplicate ${catalog} failed`, err);
       }
@@ -204,6 +212,10 @@ export function createStepApp(options = {}) {
     async boot() {
       if (useHttp) await this.solveNow();
       else this.compute();
+      this.library
+        .refresh()
+        .then(() => this.refreshLibraryItems())
+        .catch((err) => console.error("library refresh failed", err));
       this.syncNav();
     },
 
@@ -263,16 +275,14 @@ export function createStepApp(options = {}) {
   registerMaltCard(app, cardCtx);
   registerMashCard(app, cardCtx);
   registerBrewDayCard(app, cardCtx);
-  registerUserCatalogUi(app, cardCtx);
+  registerLibraryUi(app, cardCtx);
 
-  // Any user-item mutation keeps the cache + engine consistent (the CRUD surface
-  // separately triggers refreshUserItems for the reactive re-render).
-  userCatalog.onChange = () => {
-    cache.syncUserItems(userCatalog.catalogs);
+  function syncLibrary() {
+    cache.syncLibraryItems(library.items());
     for (const [id, node] of Object.entries(artifact.nodes)) {
       if (node.kind === "selection") session.engine.invalidate(id);
     }
-  };
+  }
 
   return app;
 }

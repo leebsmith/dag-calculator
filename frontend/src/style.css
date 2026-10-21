@@ -1134,29 +1134,56 @@ samp {
   overflow-y: auto;
 }
 
-.menu-myitems {
-  position: relative;
+.library-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+  background-color: var(--sys-surface-overlay);
+  backdrop-filter: var(--sys-backdrop-blur);
 }
 
-.user-catalog-popover {
-  position: absolute;
-  top: calc(100% + var(--space-2));
-  right: 0;
-  z-index: var(--z-dropdown);
-  min-width: 20rem;
-  max-height: 80vh;
-  overflow-y: auto;
+.library-panel {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  width: min(56rem, 100%);
+  max-height: 90vh;
+  margin: auto;
   padding: var(--space-4);
+  overflow-y: auto;
   background-color: var(--sys-surface-elevated);
   border: 1px solid var(--sys-border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--sys-shadow-lg);
 }
 
-.user-catalog-list {
+.library-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.library-section,
+.library-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--sys-border-subtle);
+}
+
+.library-heading {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.library-records {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -1164,12 +1191,8 @@ samp {
   overflow-y: auto;
 }
 
-.user-catalog-editor {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--sys-border-subtle);
+.catalog-item-card.is-readonly {
+  opacity: 0.8;
 }
 
 .recipes-item {

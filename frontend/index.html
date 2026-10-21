@@ -49,6 +49,10 @@
 
       <template x-if="$store.auth.user">
         <div class="app-content">
+          <template x-if="libraryOpen">
+            <load src="./src/partials/library.html" />
+          </template>
+
           <!-- Recipe landing ------------------------------------------------>
           <template x-if="$store.recipes.view !== 'editor'">
             <div class="chooser">
@@ -62,6 +66,14 @@
                     @click="$store.recipes.trashView = false"
                   >
                     Back to recipes
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-outline"
+                    x-show="$store.recipes.view === 'chooser' && !$store.recipes.trashView"
+                    @click="openLibrary()"
+                  >
+                    Library
                   </button>
                   <button
                     type="button"
@@ -402,7 +414,7 @@
                   <button type="button" class="btn-outline" @click="$store.recipes.openTrash()">Trash</button>
                   <button type="button" class="btn-outline" @click="$store.recipes.freeze()">Freeze</button>
                   <button type="button" class="btn-outline" @click="$store.recipes.trash()">Move to Trash</button>
-                  <load src="./src/partials/user-catalog.html" />
+                  <button type="button" class="btn-outline" @click="openLibrary()">Library</button>
                   <div class="menu-unit">
                     <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
                     <div class="unit-popover" x-show="unitsOpen" @click.outside="unitsOpen = false">

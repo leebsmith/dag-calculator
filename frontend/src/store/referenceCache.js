@@ -2,10 +2,10 @@
 // Every catalog seed is a flat id-keyed map of schema-conforming components
 // (normalized in Step G), so no per-file adapters are needed here.
 //
-// User-authored items are layered on as a live overlay: `syncUserItems` merges
-// them (user > seed, `u:`-prefixed ids) into the per-schema/per-seed maps in
-// place, so the engine — which captured `cache.references` by reference at
-// construction — and the pickers both see them immediately.
+// Server-persisted library records are layered on as a live overlay:
+// `syncLibraryItems` merges them (record > seed) into the per-schema/per-seed
+// maps in place, so pickers see them immediately. A loaded batch never re-reads
+// them for selection values — its snapshots own those.
 
 import artifact from "../engine/artifact.json" with { type: "json" };
 import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json" };
@@ -81,21 +81,32 @@ export function createReferenceCache() {
       "batch.brew_day_steps": defaultBrewDayRows(),
     },
     seeds: { ...BASE_SEEDS },
+    libraryIds: new Set(),
 
-    // Merge user-authored items into the live reference/seed maps in place.
-    // The base maps are never mutated, so removing a user item reveals the seed
+    // Merge server library records into the live reference/seed maps in place.
+    // The base maps are never mutated, so removing a record reveals the seed
     // again. The outer `references`/`seeds` objects keep their identity, so the
     // engine (which holds `references` by reference) sees the reassigned maps.
-    syncUserItems(catalogs) {
+    syncLibraryItems(items) {
+      const libraryIds = new Set();
       for (const [catalog, meta] of Object.entries(CATALOGS)) {
-        const user = catalogs?.[catalog] ?? {};
+        const records = items?.[catalog] ?? {};
+        for (const id of Object.keys(records)) libraryIds.add(id);
         if (meta.referencesKey) {
-          this.references[meta.referencesKey] = { ...BASE_REFERENCES[meta.referencesKey], ...user };
+          this.references[meta.referencesKey] = {
+            ...BASE_REFERENCES[meta.referencesKey],
+            ...records,
+          };
         }
         if (meta.seedKey) {
-          this.seeds[meta.seedKey] = { ...BASE_SEEDS[meta.seedKey], ...user };
+          this.seeds[meta.seedKey] = { ...BASE_SEEDS[meta.seedKey], ...records };
         }
       }
+      this.libraryIds = libraryIds;
+    },
+
+    isLibraryItem(id) {
+      return this.libraryIds.has(id);
     },
   };
   return cache;

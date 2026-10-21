@@ -3,6 +3,7 @@ import Alpine from "alpinejs";
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
 import { getSession } from "./adapters/authClient.js";
+import * as libraryClient from "./adapters/libraryClient.js";
 import {
   getIdToken,
   getRedirectResult,
@@ -278,6 +279,7 @@ Alpine.store("recipes", {
 // never paints with stale/empty state.
 let stepApp = null;
 let latestUser; // undefined until the first auth callback
+let legacyLibraryImported = false;
 
 async function applyAuth(user) {
   const auth = Alpine.store("auth");
@@ -340,6 +342,17 @@ async function applyAuth(user) {
     auth.user = user;
     auth.loading = false;
   }
+
+  if (!legacyLibraryImported) {
+    legacyLibraryImported = true;
+    stepApp.library
+      .importLegacy()
+      .then(({ imported }) => {
+        if (!imported) return;
+        return stepApp.library.refresh().then(() => stepApp.refreshLibraryItems());
+      })
+      .catch((err) => console.error("legacy library import failed", err));
+  }
 }
 
 // The backend binds its port a beat after Vite under `make local-dev`; retry the
@@ -368,7 +381,7 @@ Alpine.data("stepCalculator", () => {
   // `this`) trigger re-renders, and so persistence mutates the same proxy.
   // The product entry opts into HTTP explicitly (base = VITE_API_BASE ?? "",
   // same-origin via the Vite proxy in dev); tests keep the stub default.
-  const app = Alpine.reactive(createStepApp({ useHttp: true }));
+  const app = Alpine.reactive(createStepApp({ useHttp: true, libraryClient }));
   app.bindReactive(app);
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
