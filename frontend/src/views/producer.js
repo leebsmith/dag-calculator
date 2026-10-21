@@ -10,6 +10,11 @@ import { fromBase } from "../engine/units.js";
 import { rendererFor } from "./renderers.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "./registry/units.js";
 import { seedDerivations, approxEqual, sourceLabel } from "./seedDerivations.js";
+import {
+  CONFORMANCE_FIELD_MAP,
+  applyPresentation,
+  presentationFor,
+} from "./registry/presentation.js";
 
 function defaultControl(node) {
   if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
@@ -19,14 +24,6 @@ function defaultControl(node) {
 }
 
 // Which realized vital a field id maps to, for inline style-conformance badges.
-const CONFORMANCE_FIELD_MAP = {
-  "solver.batch.sg_post_boil": "og",
-  "batch.realized_fg": "fg",
-  "batch.realized_abv": "abv",
-  "batch.target_ibu": "ibu",
-  "grist.finished_beer_srm": "srm",
-};
-
 function conformanceHint(c) {
   if (!c || !c.violatedBoundary) return null;
   const dir = c.violatedBoundary === c.high ? "Above" : "Below";
@@ -425,38 +422,10 @@ export function valuate(fields, engine, ctx = {}) {
         out.conformance = ctx.conformance.dimensions[conformanceKey] ?? null;
         out.conformanceHint = conformanceHint(out.conformance);
       }
-      // The intensive-value input is polymorphic across topologies: a mash
-      // thickness (L/kg) under `r_l_to_g`, a dimensionless runoff ratio under
-      // `runoff_ratio`. The artifact pins its dimension to mash_thickness, so
-      // the ratio mode is handled host-side (no conversion, no unit badge).
-      if (field.id === "batch.intensive_value") {
-        if (engine.get("batch.topology") === "runoff_ratio") {
-          out.label = "Runoff Ratio r";
-          out.dimension = null;
-          out.unit = null;
-          out.unitId = null;
-          out.toggleable = false;
-          out.customized = false;
-          out.display = formatValue(out.value);
-          out.hint = "V_run1 / V_run2; 1.0 is equal runnings.";
-        } else {
-          out.label = "Liquor-to-Grist Ratio";
-          out.hint = "Strike water per kg of grist.";
-        }
-      }
-      // Surface the solver's ABV ceiling under the target-ABV input (mirrors the
-      // legacy "Max at current attenuation" hint).
-      if (field.id === "batch.target_abv") {
-        let max;
-        try {
-          max = engine.resolve("solver.batch.max_achievable_abv");
-        } catch {
-          max = null;
-        }
-        if (typeof max === "number" && Number.isFinite(max)) {
-          out.hint = `Max at current attenuation: ${max.toFixed(1)}%.`;
-        }
-      }
+      // Host-side presentation overrides (polymorphic labels/units, solver
+      // hints). The artifact stays the sole owner of value semantics.
+      const presentation = presentationFor(field.id);
+      if (presentation) applyPresentation(out, presentation, engine, formatValue);
       // Seed provenance: is this root's value currently equal to a seed-derived
       // source (a water report ion, a yeast/style copy-in)? Carries the source
       // value + label for the "reset to source" affordance.

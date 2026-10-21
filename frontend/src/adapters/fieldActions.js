@@ -5,6 +5,7 @@ import { toBase } from "../engine/index.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
+import { clampBoundsFor } from "../views/registry/presentation.js";
 
 export function installFieldActions(app, { artifact, session, refToSelectionMap }) {
   Object.assign(app, {
@@ -13,15 +14,11 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     // clamped value; an unset optional selection contributes no bounds.
     clampToSelection(nodeId, value) {
       if (typeof value !== "number") return value;
+      const bounds = clampBoundsFor(nodeId);
+      if (!bounds) return value;
       const engine = session.getEngine();
-      let low;
-      let high;
-      if (nodeId === "batch.hlt_starting_volume_l") {
-        low = engine.resolve("equipment.hlt_coil_floor_l");
-        high = engine.resolve("equipment.max_hlt_volume_l");
-      } else {
-        return value;
-      }
+      const low = engine.resolve(bounds.low);
+      const high = engine.resolve(bounds.high);
       if (typeof low === "number" && value < low) value = low;
       if (typeof high === "number" && value > high) value = high;
       return value;
