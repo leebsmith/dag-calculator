@@ -25,7 +25,7 @@ import { registerMashCard, refreshMashCard } from "./cards/mash.js";
 import { registerUserCatalogUi } from "./userCatalogUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
-import { flattenResponse, postJSON } from "./apiClient.js";
+import { createBoundaryRunner } from "./boundaryRunner.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
 // suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
@@ -88,16 +88,9 @@ export function createStepApp(options = {}) {
   const useHttp = options.useHttp ?? false;
   const fetchImpl = options.fetchImpl;
   const debounceMs = options.debounceMs ?? 300;
-  const BOUNDARY_URLS = {
-    batch_sparge_solver: "/solve/batch",
-    water_chemistry_solver: "/solve/water",
-  };
 
   const session = createSession({ artifact, cache, master, useHttp });
   const boundaryNodes = session.boundaryNodes;
-  const inflight = new Map(); // fingerprint -> Promise
-  let solveTimer = null;
-  let solveToken = 0;
 
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   const fieldSlice = buildFieldSliceMap();
@@ -275,57 +268,13 @@ export function createStepApp(options = {}) {
     },
 
     // Resolve every boundary in topological order (via HTTP), then recompute.
-    // `engine.boundaryRequest` delegates to `BOUNDARY_BUILDERS`, so `inputs` is
-    // the adapted `BatchSolverRequest`/`WaterSolverRequest` body and
-    // `fingerprint` is its canonical hash (matching the backend). Superseded
-    // solves discard their (stale) result via the token.
-    async solveNow() {
-      if (!useHttp) {
-        this.compute();
-        return;
-      }
-      const engine = session.getEngine();
-      const token = ++solveToken;
-      try {
-        for (const id of boundaryNodes) {
-          const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
-          if (engine.hasBoundaryResult(fingerprint)) {
-            this.boundaryStatuses[id] = "ok";
-            continue;
-          }
-          this.boundaryStatuses[id] = "pending";
-          let promise = inflight.get(fingerprint);
-          if (!promise) {
-            promise = postJSON(BOUNDARY_URLS[binding], inputs, { fetchImpl })
-              .then((response) => engine.applyBoundaryResult(fingerprint, flattenResponse(response)))
-              .finally(() => inflight.delete(fingerprint));
-            inflight.set(fingerprint, promise);
-          }
-          await promise;
-          this.boundaryStatuses[id] = "ok";
-        }
-        if (token !== solveToken) return;
-        this.boundaryError = null;
-      } catch (error) {
-        if (token !== solveToken) return;
-        this.boundaryError = error;
-        for (const id of boundaryNodes) {
-          if (this.boundaryStatuses[id] === "pending") this.boundaryStatuses[id] = "error";
-        }
-      }
-      this.compute();
+    // The runner owns debounce, supersession, dedupe, and status/error state.
+    solveNow() {
+      return runner.solveNow();
     },
 
-    // Debounced entry point for edits: coalesce bursts, supersede in-flight
-    // solves. Offline (stubs) computes synchronously.
     scheduleSolve() {
-      if (!useHttp) {
-        this.compute();
-        return;
-      }
-      solveToken++;
-      if (solveTimer) clearTimeout(solveTimer);
-      solveTimer = setTimeout(() => this.solveNow(), debounceMs);
+      runner.scheduleSolve();
     },
 
     compute() {
@@ -872,23 +821,26 @@ export function createStepApp(options = {}) {
     // from the seed cache, and returns the UI to the first step. Unit prefs are
     // device-local and deliberately preserved.
     teardown() {
-      solveToken++;
-      if (solveTimer) {
-        clearTimeout(solveTimer);
-        solveTimer = null;
-      }
-      inflight.clear();
+      runner.reset();
       session.reset(baselineRoots);
-      this.boundaryStatuses = Object.fromEntries(
-        boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
-      );
-      this.boundaryError = null;
       ui.activeIndex = 0;
       ui.highwater = 0;
       this.syncNav();
       this.compute();
     },
   };
+
+  const runner = createBoundaryRunner({
+    session,
+    useHttp,
+    fetchImpl,
+    debounceMs,
+    compute: () => app.compute(),
+    onState: ({ statuses, error }) => {
+      app.boundaryStatuses = statuses;
+      app.boundaryError = error;
+    },
+  });
 
   registerYeastCard(app, cardCtx);
   registerStyleCard(app, cardCtx);
