@@ -54,6 +54,10 @@ def test_auth_is_enforced_on_every_route(anon_client):
         ("GET", "/batches/b1", None),
         ("POST", "/solve/batch", make_batch_request().model_dump(mode="json")),
         ("POST", "/solve/water", make_water_request().model_dump(mode="json")),
+        ("GET", "/catalog/equipment", None),
+        ("POST", "/catalog/equipment", {"component": {"name": "Rig"}}),
+        ("GET", "/catalog/equipment/missing", None),
+        ("DELETE", "/catalog/equipment/missing", None),
     ]
     for method, path, body in routes:
         response = anon_client.request(method, path, json=body)

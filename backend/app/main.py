@@ -19,8 +19,13 @@ from app.schemas.boundary import (
     WaterSolverRequest,
     WaterSolverResponse,
 )
+from app.schemas.catalog import CatalogItem, CatalogItemCreate
 from app.services import SolverServiceError, solve_batch_request, solve_water_request
 from app.services.batch_service import BatchConflictError, BatchServiceDep
+from app.services.catalog_service import (
+    CatalogServiceDep,
+    CatalogValidationError,
+)
 
 app = FastAPI(title="dag-calculator backend")
 
@@ -57,6 +62,45 @@ def solve_water(req: WaterSolverRequest, _user: AllowedUser) -> WaterSolverRespo
                 code=exc.code, message=exc.message, details=exc.details
             ).model_dump(),
         )
+
+
+@app.get("/catalog/{kind}", response_model=list[CatalogItem])
+def list_catalog_items(kind: str, user: AllowedUser, service: CatalogServiceDep):
+    """List the caller's immutable records for one catalog kind."""
+    return service.list_items(user["uid"], kind)
+
+
+@app.get("/catalog/{kind}/{item_id}", response_model=CatalogItem)
+def get_catalog_item(kind: str, item_id: str, user: AllowedUser, service: CatalogServiceDep):
+    """Load one catalog record owned by the caller."""
+    return service.get_item(user["uid"], kind, item_id)
+
+
+@app.post("/catalog/{kind}", response_model=CatalogItem, status_code=201)
+def create_catalog_item(
+    kind: str,
+    payload: CatalogItemCreate,
+    user: AllowedUser,
+    service: CatalogServiceDep,
+):
+    """Validate a component, assign an id, and store it immutably."""
+    try:
+        return service.create_item(user["uid"], kind, payload.component)
+    except CatalogValidationError as exc:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "code": "VALIDATION",
+                "message": str(exc),
+                "details": {"errors": exc.errors},
+            },
+        )
+
+
+@app.delete("/catalog/{kind}/{item_id}", status_code=204)
+def delete_catalog_item(kind: str, item_id: str, user: AllowedUser, service: CatalogServiceDep):
+    """Permanently delete one of the caller's catalog records."""
+    service.delete_item(user["uid"], kind, item_id)
 
 
 @app.get("/batches", response_model=list[BatchRecord])
