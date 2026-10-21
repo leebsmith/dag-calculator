@@ -48,7 +48,7 @@ export async function createUntitled() {
     updated_at: null,
   };
   dirty = false;
-  await app?.loadState({ roots: {}, collections: {} });
+  await app?.loadState({ roots: {}, collections: {}, selections: {} });
   return active;
 }
 
@@ -63,7 +63,11 @@ export async function open(batchId) {
     updated_at: b.updated_at,
   };
   dirty = false;
-  await app?.loadState({ roots: b.roots, collections: b.collections });
+  await app?.loadState({
+    roots: b.roots,
+    collections: b.collections,
+    selections: b.selections,
+  });
   return b;
 }
 
@@ -73,25 +77,17 @@ export async function renameActive(name) {
   await saveNow();
 }
 
-// Detect seed drift for a frozen batch (selections whose referenced component
-// changed since freeze). Returns the drift list.
-export async function driftFor(frozenId) {
-  const frozen = await client.getBatch(frozenId);
-  return app?.detectDrift(frozen.provenance) ?? [];
-}
-
-// Fork a frozen batch into a new editable draft, preserving lineage. The fork
-// re-resolves selections against the current seeds; drift (selections whose
-// referenced component changed since freeze) is reported to the caller.
+// Fork a frozen batch into a new editable draft, preserving lineage and the
+// frozen batch's copied-forward selections.
 export async function fork(frozenId) {
   const frozen = await client.getBatch(frozenId);
-  const drift = app?.detectDrift(frozen.provenance) ?? [];
   const created = await client.upsertBatch(crypto.randomUUID(), {
     name: `${frozen.name} (copy)`,
     parent_batch_id: frozen.id,
     roots: frozen.roots,
     collections: frozen.collections,
-    schema_version: frozen.schema_version ?? 2,
+    selections: frozen.selections ?? {},
+    schema_version: frozen.schema_version ?? 3,
   });
   active = {
     id: created.id,
@@ -102,8 +98,12 @@ export async function fork(frozenId) {
     updated_at: created.updated_at,
   };
   dirty = false;
-  await app?.loadState({ roots: created.roots, collections: created.collections });
-  return { created, drift };
+  await app?.loadState({
+    roots: created.roots,
+    collections: created.collections,
+    selections: created.selections,
+  });
+  return created;
 }
 
 export async function freezeActive() {
@@ -197,5 +197,9 @@ async function reconcileConflict() {
     updated_at: b.updated_at,
   };
   dirty = false;
-  await app?.loadState({ roots: b.roots, collections: b.collections });
+  await app?.loadState({
+    roots: b.roots,
+    collections: b.collections,
+    selections: b.selections,
+  });
 }

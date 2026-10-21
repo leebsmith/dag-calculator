@@ -61,12 +61,13 @@ test("frozen valuation is JSON-serializable and finite", async () => {
   }
 });
 
-test("fork only needs roots and collections, not the valuation", async () => {
+test("fork only needs roots, collections, and selections, not the valuation", async () => {
   const app = createStepApp();
   await app.boot();
   const state = app.draftState();
 
   assert.ok("roots" in state);
   assert.ok("collections" in state);
+  assert.ok("selections" in state);
   assert.equal("valuation" in state, false);
 });

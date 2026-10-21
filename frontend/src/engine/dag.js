@@ -80,6 +80,7 @@ export function createEngine(artifact, options = {}) {
   const roots = new Map(Object.entries(options.roots ?? {}));
   const references = options.references ?? {};
   const collections = options.collections ?? {};
+  const selections = options.selections ?? {};
   const boundaries = options.boundaries ?? {};
   const boundaryRequests = options.boundaryRequests ?? {};
   const boundaryCache = options.boundaryCache ?? new BoundaryCache();
@@ -195,6 +196,11 @@ export function createEngine(artifact, options = {}) {
         // undefined rather than throwing. A non-empty but unknown id is still
         // an error.
         if (refValue === "") return {};
+        // A batch carries its own copy of every selected component; the library
+        // is only consulted for legacy drafts without a snapshot.
+        if (Object.prototype.hasOwnProperty.call(selections, nodeId)) {
+          return { ...selections[nodeId] };
+        }
         const component = references[node.schema]?.[refValue];
         if (component === undefined) {
           throw new Error(`Unknown reference "${refValue}" for selection "${nodeId}"`);

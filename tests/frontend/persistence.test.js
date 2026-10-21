@@ -28,8 +28,9 @@ function fakeClient() {
         trashed: false,
         roots: payload.roots ?? {},
         collections: payload.collections ?? {},
+        selections: payload.selections ?? {},
         provenance: payload.provenance ?? {},
-        schema_version: payload.schema_version ?? 2,
+        schema_version: payload.schema_version ?? 3,
         updated_at: clock++,
       };
       docs.set(id, rec);
@@ -71,11 +72,10 @@ function fakeClient() {
 function fakeApp() {
   return {
     loaded: null,
-    draftState: () => ({ roots: { "mash.grain_temp_c": 20 }, collections: {}, schema_version: 2 }),
+    draftState: () => ({ roots: { "mash.grain_temp_c": 20 }, collections: {}, selections: {}, schema_version: 3 }),
     async loadState(state) {
       this.loaded = state;
     },
-    detectDrift: () => [],
     freezePayload: () => ({ valuation: {}, provenance: {} }),
   };
 }
@@ -231,7 +231,11 @@ test("open hydrates the active batch and loads its state", async () => {
     persisted: true,
     updated_at: stored.updated_at,
   });
-  assert.deepEqual(app.loaded, { roots: { "mash.grain_temp_c": 18 }, collections: { "grist.major_malts": [] } });
+  assert.deepEqual(app.loaded, {
+    roots: { "mash.grain_temp_c": 18 },
+    collections: { "grist.major_malts": [] },
+    selections: {},
+  });
 });
 
 test("open propagates a missing batch instead of inventing one", async () => {
@@ -240,52 +244,31 @@ test("open propagates a missing batch instead of inventing one", async () => {
   assert.equal(persistence.getActive(), null);
 });
 
-test("fork copies the frozen batch into a new draft with lineage", async () => {
+test("fork copies the frozen batch into a new draft with lineage and selections", async () => {
   const { client, app } = setup();
   await client.upsertBatch("frozen-1", {
     name: "Saison",
     roots: { "mash.grain_temp_c": 20 },
     collections: {},
-    provenance: { "batch.yeast": { source_template_id: "y1", source_revision: "abc" } },
+    selections: { "batch.yeast": { id: "y1", name: "Yeast" } },
+    provenance: { "batch.yeast": { source_template_id: "y1" } },
     schema_version: 3,
   });
   client.calls.length = 0;
 
-  const { created, drift } = await persistence.fork("frozen-1");
+  const created = await persistence.fork("frozen-1");
 
-  assert.deepEqual(drift, []);
   assert.equal(created.name, "Saison (copy)");
   assert.equal(created.status, "draft");
   assert.equal(persistence.getActive().id, created.id);
-  assert.deepEqual(app.loaded, { roots: { "mash.grain_temp_c": 20 }, collections: {} });
+  assert.deepEqual(app.loaded, {
+    roots: { "mash.grain_temp_c": 20 },
+    collections: {},
+    selections: { "batch.yeast": { id: "y1", name: "Yeast" } },
+  });
   const upsert = client.calls.find((c) => c.op === "upsert");
   assert.equal(upsert.id, created.id);
   assert.equal(upsert.base, undefined);
-});
-
-test("fork reports drift from the frozen provenance", async () => {
-  const { client, app } = setup();
-  const provenance = { "batch.yeast": { source_template_id: "y1", source_revision: "abc" } };
-  await client.upsertBatch("frozen-1", { name: "Old", roots: {}, collections: {}, provenance });
-  app.detectDrift = (seen) => [{ selectionNodeId: "batch.yeast", templateId: seen["batch.yeast"].source_template_id, reason: "changed" }];
-
-  const { drift } = await persistence.fork("frozen-1");
-
-  assert.deepEqual(drift, [{ selectionNodeId: "batch.yeast", templateId: "y1", reason: "changed" }]);
-});
-
-test("driftFor reads the frozen provenance and delegates to the app", async () => {
-  const { client, app } = setup();
-  const provenance = { "batch.yeast": { source_template_id: "y1", source_revision: "abc" } };
-  await client.upsertBatch("frozen-1", { name: "F", roots: {}, collections: {}, provenance });
-  let seen = null;
-  app.detectDrift = (value) => {
-    seen = value;
-    return [];
-  };
-
-  assert.deepEqual(await persistence.driftFor("frozen-1"), []);
-  assert.deepEqual(seen, provenance);
 });
 
 test("freezeActive posts the app's freeze payload, and only for drafts", async () => {

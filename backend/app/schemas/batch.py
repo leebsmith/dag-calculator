@@ -18,7 +18,8 @@ class DraftPayload(BaseModel):
     name: str = "Untitled"
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
-    schema_version: int = 2
+    selections: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    schema_version: int = 3
     parent_batch_id: str | None = None
     base_updated_at: float | None = None
 
@@ -55,7 +56,7 @@ class FreezePayload(BaseModel):
     valuation_format: str | None = None
     provenance: dict[str, dict[str, Any]] = Field(default_factory=dict)
     conformance: dict[str, Any] | None = None
-    schema_version: int = 2
+    schema_version: int = 3
 
 
 class BatchRecord(BaseModel):
@@ -73,6 +74,7 @@ class BatchRecord(BaseModel):
     # draft-only state
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
+    selections: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     # frozen-only state
     valuation: dict[str, Any] | None = None

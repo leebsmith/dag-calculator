@@ -9,14 +9,16 @@ import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 // AI AGENT HOOKS: Use this session factory for constructing, rebuilding, and
 // resetting the live engine. Do not duplicated this logic elsewhere — callers
 // must resolve the engine through the session instead of capturing one.
-export function createSession({ artifact, cache, master, useHttp = false }) {
+export function createSession({ artifact, cache, master, useHttp = false, selections = {} }) {
   let collections = { ...cache.collections };
+  let selectionSnapshots = { ...selections };
   let engine = build();
 
   function build() {
     return createCalculator(artifact, {
       references: cache.references,
       collections,
+      selections: selectionSnapshots,
       boundaries: useHttp ? {} : STUB_BOUNDARIES,
       boundaryRequests: BOUNDARY_BUILDERS,
       roots: master.allRoots(),
@@ -55,15 +57,28 @@ export function createSession({ artifact, cache, master, useHttp = false }) {
     collections() {
       return collections;
     },
+    selections() {
+      return selectionSnapshots;
+    },
+    setSelection(nodeId, component) {
+      if (component === null || component === undefined) {
+        delete selectionSnapshots[nodeId];
+      } else {
+        selectionSnapshots[nodeId] = { ...component };
+      }
+      engine.invalidate(nodeId);
+    },
     rebuild(state = {}) {
       master.replaceRoots(state.roots ?? {});
       collections = { ...cache.collections, ...(state.collections ?? {}) };
+      selectionSnapshots = { ...(state.selections ?? {}) };
       engine = build();
       return engine;
     },
     reset(roots = {}) {
       master.replaceRoots(roots);
       collections = { ...cache.collections };
+      selectionSnapshots = {};
       engine = build();
       return engine;
     },

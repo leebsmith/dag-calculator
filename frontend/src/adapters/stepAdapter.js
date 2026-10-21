@@ -106,13 +106,49 @@ export function createStepApp(options = {}) {
     },
 
     // Replace the editable state (draft restore / open). The session rebuilds
-    // the engine from the loaded roots/collections; default collections fall
-    // back to the seed cache when the draft predates them.
+    // the engine from the loaded roots/collections/selections; default
+    // collections fall back to the seed cache when the draft predates them.
+    // A selection whose snapshot is missing (legacy draft) is materialised from
+    // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       session.rebuild(state);
       if (useHttp) await this.solveNow();
       else this.compute();
+      if (this.materializeSelections()) this.notify();
       this.syncNav();
+    },
+
+    // Copy every referenced component into the batch when it lacks a snapshot.
+    // Returns true when anything was materialised.
+    materializeSelections() {
+      const engine = session.getEngine();
+      const snapshots = session.selections();
+      let changed = false;
+      for (const [id, node] of Object.entries(artifact.nodes)) {
+        if (node.kind !== "selection" || snapshots[id]) continue;
+        let refValue;
+        try {
+          refValue = engine.get(node.ref);
+        } catch {
+          continue;
+        }
+        if (!refValue) continue;
+        const component = cache.references[node.schema]?.[refValue];
+        if (!component) continue;
+        session.setSelection(id, component);
+        changed = true;
+      }
+      return changed;
+    },
+
+    // Copy the chosen component into the batch's selection snapshot and clear
+    // it when the reference root is emptied.
+    pickSelection(refRootId, refValue) {
+      const selectionNode = attribution.refToSelectionMap.get(refRootId);
+      if (!selectionNode) return;
+      const node = artifact.nodes[selectionNode];
+      const component = refValue ? cache.references[node.schema]?.[refValue] : null;
+      session.setSelection(selectionNode, component ?? null);
     },
 
     setRoot(nodeId, value) {

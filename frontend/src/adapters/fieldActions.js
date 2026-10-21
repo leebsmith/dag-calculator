@@ -39,6 +39,9 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       // keystroke fights the user mid-typing, so it is deferred to commitField
       // on blur. The report-only relations still flag out-of-range values.
       this.setRoot(field.target.nodeId, raw);
+      if (field.control === "selection-picker") {
+        this.pickSelection(field.target.nodeId, raw);
+      }
       if (field.target.nodeId === N.topology) this.resetIntensiveValue(raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.scheduleSolve();
