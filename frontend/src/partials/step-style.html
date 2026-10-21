@@ -339,24 +339,26 @@
     </div>
 
     <!-- Style conformance (realized drift vs. the envelope) -->
-    <div class="synthesized-card" x-show="conformanceSummary">
-      <div class="synthesized-header">
-        <h3 class="synthesized-title">Style conformance</h3>
-        <span class="tabular-nums" x-text="'SAI ' + conformanceSummary.sai"></span>
+    <template x-if="conformanceSummary">
+      <div class="synthesized-card">
+        <div class="synthesized-header">
+          <h3 class="synthesized-title">Style conformance</h3>
+          <span class="tabular-nums" x-text="'SAI ' + conformanceSummary.sai"></span>
+        </div>
+        <div class="extract-readouts">
+          <template x-for="d in conformanceSummary.dimensions" :key="d.id">
+            <div class="extract-readout">
+              <span class="form-label" x-text="d.label"></span>
+              <span
+                class="tabular-nums"
+                :class="{ 'text-warning': d.status !== 'Within' }"
+                x-text="d.value + ' — ' + d.status"
+              ></span>
+            </div>
+          </template>
+        </div>
       </div>
-      <div class="extract-readouts">
-        <template x-for="d in conformanceSummary.dimensions" :key="d.id">
-          <div class="extract-readout">
-            <span class="form-label" x-text="d.label"></span>
-            <span
-              class="tabular-nums"
-              :class="{ 'text-warning': d.status !== 'Within' }"
-              x-text="d.value + ' — ' + d.status"
-            ></span>
-          </div>
-        </template>
-      </div>
-    </div>
+    </template>
 
     <!-- Style envelope (editable in both modes) -->
     <div class="synthesized-card">
