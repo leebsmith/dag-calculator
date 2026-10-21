@@ -20,6 +20,7 @@ import { registerLateAdditionsCard } from "./cards/late-additions.js";
 import { registerTraceMaltsCard } from "./cards/trace-malts.js";
 import { registerMaltCard } from "./cards/malt.js";
 import { registerMashCard } from "./cards/mash.js";
+import { registerBrewDayCard } from "./cards/brew-day.js";
 import { registerUserCatalogUi } from "./userCatalogUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
@@ -225,6 +226,7 @@ export function createStepApp(options = {}) {
   registerTraceMaltsCard(app, cardCtx);
   registerMaltCard(app, cardCtx);
   registerMashCard(app, cardCtx);
+  registerBrewDayCard(app, cardCtx);
   registerUserCatalogUi(app, cardCtx);
 
   // Any user-item mutation keeps the cache + engine consistent (the CRUD surface

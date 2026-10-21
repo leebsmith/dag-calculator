@@ -9,6 +9,7 @@ import { refreshLateAdditionsCard } from "./cards/late-additions.js";
 import { refreshTraceMaltsCard } from "./cards/trace-malts.js";
 import { refreshMaltCard } from "./cards/malt.js";
 import { refreshMashCard } from "./cards/mash.js";
+import { refreshBrewDayCard } from "./cards/brew-day.js";
 
 export function createStepView({
   artifact,
@@ -97,6 +98,7 @@ export function createStepView({
     refreshHopCard(app, cardCtx);
     refreshLateAdditionsCard(app, cardCtx);
     refreshMashCard(app, cardCtx);
+    refreshBrewDayCard(app, cardCtx);
   }
 
   return { compute };

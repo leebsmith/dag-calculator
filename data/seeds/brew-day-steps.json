@@ -1,0 +1,41 @@
+{
+  "process": "single_batch_batch_sparge",
+  "sections": [
+    {
+      "id": "preparation",
+      "name": "Preparation",
+      "steps": [
+        { "id": "advance-prep", "name": "Advance Prep" },
+        { "id": "brew-day-setup", "name": "Brew Day Setup" }
+      ]
+    },
+    {
+      "id": "mashing",
+      "name": "Mashing & Lautering",
+      "steps": [
+        { "id": "dough-in", "name": "Dough-In / Underlet" },
+        { "id": "mash-rests", "name": "Mash Rests" },
+        { "id": "first-runnings", "name": "First Runnings" },
+        { "id": "batch-sparge", "name": "Batch Sparge" }
+      ]
+    },
+    {
+      "id": "boil",
+      "name": "The Boil",
+      "steps": [
+        { "id": "pre-boil", "name": "Pre-Boil" },
+        { "id": "active-boil", "name": "Active Boil" },
+        { "id": "flameout", "name": "Flameout" }
+      ]
+    },
+    {
+      "id": "knockout",
+      "name": "Knockout & Transfer",
+      "steps": [
+        { "id": "whirlpool", "name": "Whirlpool" },
+        { "id": "chilling", "name": "Chilling" },
+        { "id": "fermenter-transfer", "name": "Fermenter Transfer" }
+      ]
+    }
+  ]
+}

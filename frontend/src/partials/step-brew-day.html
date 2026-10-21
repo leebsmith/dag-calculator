@@ -1,0 +1,61 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <h2 class="card-title" x-text="activeStep.title"></h2>
+    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+  </div>
+
+  <div class="step-card-content">
+    <p class="form-hint">
+      Check the steps to include in the printed recipe. Instructions appear when a step is checked.
+    </p>
+
+    <template x-for="section in brewDaySections" :key="section.id">
+      <div class="synthesized-card brew-day-section">
+        <button
+          type="button"
+          class="brew-day-section-toggle"
+          :aria-expanded="isBrewDaySectionOpen(section.id)"
+          :aria-controls="'brew-day-panel-' + section.id"
+          @click="toggleBrewDaySection(section.id)"
+        >
+          <span class="brew-day-section-chevron" aria-hidden="true">▸</span>
+          <span class="synthesized-title" x-text="section.name"></span>
+          <span
+            class="brew-day-section-count"
+            x-show="section.activeCount > 0"
+            x-text="section.activeCount + (section.activeCount === 1 ? ' step active' : ' steps active')"
+          ></span>
+        </button>
+
+        <div
+          class="brew-day-steps"
+          :id="'brew-day-panel-' + section.id"
+          x-show="isBrewDaySectionOpen(section.id)"
+        >
+          <template x-for="row in section.steps" :key="row.step_id">
+            <div class="brew-day-step">
+              <label class="brew-day-step-toggle">
+                <input
+                  type="checkbox"
+                  :checked="row.enabled"
+                  @change="toggleBrewDayStep(row.step_id, $event.target.checked)"
+                />
+                <span x-text="row.name"></span>
+              </label>
+
+              <div class="brew-day-instructions-wrap" x-show="row.enabled">
+                <textarea
+                  class="form-input brew-day-instructions"
+                  rows="3"
+                  :value="brewDayInstruction(row)"
+                  placeholder="Add instructions for this step"
+                  @input="setBrewDayInstruction(row.step_id, $event.target.value)"
+                ></textarea>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>

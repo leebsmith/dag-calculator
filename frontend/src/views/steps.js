@@ -294,6 +294,14 @@ export const steps = [
     ],
   },
   {
+    id: "brew-day",
+    slice: "brew-day",
+    title: "Brew Day Checklist",
+    subtitle: "Choose the steps and notes included in the printed recipe",
+    partial: "./src/partials/step-brew-day.html",
+    fields: [{ collection: "batch.brew_day_steps" }],
+  },
+  {
     id: "dry-hops",
     slice: "dry-hops",
     title: "Dry Hopping",

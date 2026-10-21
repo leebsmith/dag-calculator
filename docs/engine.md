@@ -74,6 +74,9 @@ These are what make the DAG **explicit**: no edge exists unless declared.
 
 Only roots/choices/collections are mutable; derived values and boundary
 outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
+`batch.brew_day_steps` is an authoring-only collection: it carries the printed
+recipe's selected workflow steps and instruction text, and no derived math
+depends on it.
 
 ### Caches
 

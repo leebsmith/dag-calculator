@@ -476,7 +476,10 @@
                           <template x-if="step.id === 'mash'">
                             <load src="./src/partials/step-mash.html" />
                           </template>
-                          <template x-if="step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'hops' && step.id !== 'late-additions' && step.id !== 'mash'">
+                          <template x-if="step.id === 'brew-day'">
+                            <load src="./src/partials/step-brew-day.html" />
+                          </template>
+                          <template x-if="step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'hops' && step.id !== 'late-additions' && step.id !== 'mash' && step.id !== 'brew-day'">
                             <load src="./src/partials/step-card.html" />
                           </template>
                         </div>

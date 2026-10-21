@@ -20,6 +20,7 @@ import waterReports from "../../../data/seeds/water_reports.json" with { type: "
 import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
 import { ingestEquipment } from "./equipmentIngest.js";
 import { CATALOGS } from "./userCatalog.js";
+import { defaultBrewDayRows } from "../views/brewDay.js";
 
 const equipment = ingestEquipment(equipmentRaw, artifact);
 
@@ -77,6 +78,7 @@ export function createReferenceCache() {
       "batch.sugars": [],
       "batch.boil_hops": [],
       "batch.dry_hops": [],
+      "batch.brew_day_steps": defaultBrewDayRows(),
     },
     seeds: { ...BASE_SEEDS },
 
