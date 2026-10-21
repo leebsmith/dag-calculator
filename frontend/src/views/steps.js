@@ -277,6 +277,7 @@ export const steps = [
       "water.v_hlt_treat_l",
       "solver.water.prescription.predicted_mash_ph",
       "solver.water.prescription.mash_ph_status",
+      "solver.water.prescription.residual_hlt_water_l",
       "solver.water.mash_additions.gypsum_kg",
       "solver.water.mash_additions.cacl2_kg",
       "solver.water.mash_additions.epsom_kg",

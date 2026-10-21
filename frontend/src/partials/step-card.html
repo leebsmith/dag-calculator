@@ -199,6 +199,42 @@
     </div>
   </template>
 
+  <template x-if="activeStep.slice === 'water'">
+    <div class="water-summary">
+      <p class="water-basis" x-text="waterSummary.basis"></p>
+      <p class="water-destinations">Mash → dry grist, before underletting · Sparge → HLT after top-up</p>
+      <table class="water-treated">
+        <thead>
+          <tr>
+            <th>Ion</th>
+            <th>Mash</th>
+            <th>HLT</th>
+            <th>Kettle</th>
+            <th>Target</th>
+            <th>Δ kettle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="r in waterSummary.ions" :key="r.ion">
+            <tr>
+              <td x-text="r.label"></td>
+              <td x-text="r.mashText"></td>
+              <td x-text="r.hltText"></td>
+              <td x-text="r.kettleText"></td>
+              <td x-text="r.targetText"></td>
+              <td x-text="r.kettleDeltaText"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <p class="text-warning" x-show="waterSummary.tanninWarning">Sparge tannin risk — the sparge acid is still required.</p>
+      <template x-for="n in waterSummary.notes" :key="n">
+        <p class="text-warning" x-text="n"></p>
+      </template>
+      <p class="water-not-modelled" x-text="waterSummary.notModelled"></p>
+    </div>
+  </template>
+
   <template x-for="a in (activeStep.actions || [])" :key="a.id">
     <button
       type="button"

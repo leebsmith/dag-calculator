@@ -22,6 +22,7 @@ import { registerTraceMaltsCard } from "./cards/trace-malts.js";
 import { registerMaltCard } from "./cards/malt.js";
 import { registerMashCard } from "./cards/mash.js";
 import { registerBrewDayCard } from "./cards/brew-day.js";
+import { registerWaterCard } from "./cards/water.js";
 import { registerLibraryUi } from "./libraryUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
@@ -47,6 +48,7 @@ import { KEYS as traceMaltsKeys } from "./cards/trace-malts.js";
 import { KEYS as maltKeys } from "./cards/malt.js";
 import { KEYS as mashKeys } from "./cards/mash.js";
 import { KEYS as brewDayKeys } from "./cards/brew-day.js";
+import { KEYS as waterKeys } from "./cards/water.js";
 import * as fmt from "../utils.js";
 import { reportError } from "../observability.js";
 
@@ -68,6 +70,7 @@ const INSTALLERS = [
   { name: "malt", keys: maltKeys },
   { name: "mash", keys: mashKeys },
   { name: "brewDay", keys: brewDayKeys },
+  { name: "water", keys: waterKeys },
 ];
 
 export function createStepApp(options = {}) {
@@ -316,6 +319,7 @@ export function createStepApp(options = {}) {
   registerMaltCard(app, cardCtx);
   registerMashCard(app, cardCtx);
   registerBrewDayCard(app, cardCtx);
+  registerWaterCard(app, cardCtx);
   registerLibraryUi(app, cardCtx);
 
   function syncLibrary() {

@@ -67,7 +67,9 @@ export function registerBrewDayCard(app, ctx) {
     brewDayPayload: {
       configurable: true,
       get() {
-        return buildBrewDayPayload(this.brewDayRows);
+        const defaultInstruction =
+          typeof this.waterInstruction === "function" ? (id) => this.waterInstruction(id) : () => "";
+        return buildBrewDayPayload(this.brewDayRows, defaultInstruction);
       },
     },
   });

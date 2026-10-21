@@ -114,6 +114,22 @@ def test_post_salt_hlt_ions_mash_only_is_source():
     assert resp.post_salt_hlt_ions == req.source
 
 
+def test_mash_only_zeroes_sparge_salts_but_keeps_acid():
+    req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
+    resp = solve_water_request(req)
+    assert resp.sparge_additions.gypsum_kg == 0.0
+    assert resp.sparge_additions.cacl2_kg == 0.0
+    assert resp.sparge_additions.epsom_kg == 0.0
+    assert resp.sparge_additions.nacl_kg == 0.0
+    assert resp.sparge_additions.acid_l > 0.0
+
+
+def test_proportional_doses_the_hlt():
+    req = make_water_request(salt_distribution=SaltDistribution.PROPORTIONAL)
+    resp = solve_water_request(req)
+    assert resp.sparge_additions.gypsum_kg > 0.0
+
+
 def test_salt_form_normalization():
     # Schema default "dihydrate" must map to core "GYPSUM_DIHYDRATE".
     resp = solve_water_request(make_water_request())

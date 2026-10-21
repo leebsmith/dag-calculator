@@ -1,5 +1,28 @@
 // Presentation metadata for the water-chemistry slice (pickers, ion readouts,
 // choices, and solver.water readouts).
+export const WATER_NODES = {
+  slice: "water",
+  saltDistribution: "water.salt_distribution",
+  gypsumForm: "water.gypsum_form",
+  cacl2Form: "water.cacl2_form",
+  acidMedium: "water.acid_medium",
+  vMashTreat: "water.v_mash_treat_l",
+  spargeSaltedVolume: "batch.sparge_salted_volume",
+  vSpargeDeliverable: "solver.batch.hlt.v_sparge_deliverable",
+  vRun1: "solver.batch.cascade.v_run1",
+  vRun2: "solver.batch.cascade.v_run2",
+  vSparge: "solver.batch.cascade.v_sparge",
+  hltStart: "batch.hlt_starting_volume_l",
+  surplusSpargeCapacity: "batch.surplus_sparge_capacity",
+  residualHlt: "solver.water.prescription.residual_hlt_water_l",
+  spargeTanninWarning: "solver.water.prescription.sparge_tannin_warning",
+  mashAdditions: "solver.water.mash_additions",
+  spargeAdditions: "solver.water.sparge_additions",
+  postMashIons: "solver.water.post_salt_mash_ions",
+  postHltIons: "solver.water.post_salt_hlt_ions",
+  targetProfile: "water.target_profile",
+};
+
 export const waterRegistry = {
   "water.source_report_id": { label: "Source report" },
   "water.target_profile_id": { label: "Target profile" },
@@ -55,6 +78,7 @@ export const waterRegistry = {
 
   "solver.water.prescription.predicted_mash_ph": { label: "Predicted mash pH", unit: "pH" },
   "solver.water.prescription.mash_ph_status": { label: "Mash pH status" },
+  "solver.water.prescription.residual_hlt_water_l": { label: "Residual HLT water", unit: "L" },
 
   "solver.water.mash_additions.gypsum_kg": { label: "Mash gypsum", displayUnit: "g" },
   "solver.water.mash_additions.cacl2_kg": { label: "Mash calcium chloride", displayUnit: "g" },

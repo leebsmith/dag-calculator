@@ -48,7 +48,7 @@
                   class="form-input brew-day-instructions"
                   rows="3"
                   :value="brewDayInstruction(row)"
-                  placeholder="Add instructions for this step"
+                  :placeholder="waterInstruction(row.step_id) || 'Add instructions for this step'"
                   @input="setBrewDayInstruction(row.step_id, $event.target.value)"
                 ></textarea>
               </div>
