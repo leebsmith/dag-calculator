@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
 const BATCH = {
   sg_post_boil: 1.055,
@@ -246,4 +247,44 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
   assert.equal(batch.topology, "r_l_to_g");
   assert.equal(water.gypsum_form, "GYPSUM_DIHYDRATE");
   assert.equal(water.preferred_alkaline_agent, "PICKLING_LIME");
+});
+
+function boundaryBindingErrors() {
+  return Object.keys(errorCounters()).filter((s) => s.includes("No boundary binding registered"));
+}
+
+test("http: teardown does not compute before the boundary resolves", () => {
+  resetErrorObservability();
+  let calls = 0;
+  const fetchImpl = async () => {
+    calls += 1;
+    return { ok: true, status: 200, json: async () => ({}) };
+  };
+  const app = createStepApp({ useHttp: true, fetchImpl });
+
+  app.teardown();
+
+  assert.equal(calls, 0, "sign-out must not issue a solve");
+  assert.equal(app.boundaryError, null);
+  assert.deepEqual(boundaryBindingErrors(), []);
+});
+
+test("http: refreshLibraryItems resolves the boundary before computing", async () => {
+  resetErrorObservability();
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+
+  await app.refreshLibraryItems();
+
+  assert.deepEqual(calls.map((c) => c.url), ["/solve/batch", "/solve/water"]);
+  assert.equal(app.boundaryError, null);
+  assert.equal(app.boundaryStatuses["solver.batch"], "ok");
+  assert.equal(app.boundaryStatuses["solver.water"], "ok");
+  assert.deepEqual(boundaryBindingErrors(), []);
+  const waterPlan = app.fieldsBySlice.batch.find((f) => f.id === "water-plan");
+  const totalRow = waterPlan.rows.find((r) => r.cells.label.text === "Total Water Used");
+  assert.equal(totalRow.cells.value.display, "28.0");
 });

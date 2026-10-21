@@ -212,7 +212,7 @@ export function registerLibraryUi(app, ctx) {
         this.libraryErrors = [];
         this.libraryDraft = null;
         this.libraryNotice = "Saved. Records are immutable; corrections create a new record.";
-        this.refreshLibraryItems();
+        await this.refreshLibraryItems();
       } catch (err) {
         this.libraryErrors =
           err?.details?.errors?.map((message) => ({ field: "*", message })) ??
@@ -232,7 +232,7 @@ export function registerLibraryUi(app, ctx) {
           this.libraryDraft = null;
         }
         this.libraryNotice = "";
-        this.refreshLibraryItems();
+        await this.refreshLibraryItems();
       } catch (err) {
         this.libraryErrors = [{ field: "*", message: String(err?.message ?? err) }];
       }

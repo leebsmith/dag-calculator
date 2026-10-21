@@ -221,12 +221,15 @@ export function createStepApp(options = {}) {
     // the library surface after a mutation. Every selection is invalidated (a
     // record may be referenced by any of them) so the memoized valuation
     // re-resolves against the updated overlay; the revision counters are the
-    // reactive signals the picker and library getters depend on.
-    refreshLibraryItems() {
+    // reactive signals the picker and library getters depend on. In HTTP mode
+    // the boundary result must be (re)resolved before compute, exactly like
+    // `loadState`/`boot`; `solveNow` computes internally.
+    async refreshLibraryItems() {
       syncLibrary();
       this.catalogRevision += 1;
       this.libraryRevision += 1;
-      this.compute();
+      if (useHttp) await this.solveNow();
+      else this.compute();
     },
 
     // True when the id is user-authored (legacy `u:` seed copy or a server
@@ -243,7 +246,7 @@ export function createStepApp(options = {}) {
       delete copy[meta.idField];
       try {
         await this.library.create(catalog, copy);
-        this.refreshLibraryItems();
+        await this.refreshLibraryItems();
       } catch (err) {
         console.error(`duplicate ${catalog} failed`, err);
       }
@@ -265,14 +268,16 @@ export function createStepApp(options = {}) {
 
     // Reset to the pristine auth-scoped baseline (sign-out). The runner discards
     // any in-flight solve and the session rebuilds from the seed cache; unit
-    // prefs are device-local and deliberately preserved.
+    // prefs are device-local and deliberately preserved. In HTTP mode the reset
+    // engine has no boundary result yet, so skip compute (the editor is
+    // unmounted while signed out and re-solves on the next loadState/boot).
     teardown() {
       runner.reset();
       session.reset(baselineRoots);
       ui.activeIndex = 0;
       ui.highwater = 0;
       this.syncNav();
-      this.compute();
+      if (!useHttp) this.compute();
     },
   };
 

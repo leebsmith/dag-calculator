@@ -368,7 +368,7 @@ async function applyAuth(user) {
       recipes.loadError = true;
     }
     await stepApp.library.refresh();
-    stepApp.refreshLibraryItems();
+    await stepApp.refreshLibraryItems();
     recipes.view = "chooser";
   } finally {
     auth.user = user;
