@@ -151,6 +151,18 @@ export function restore(batchId) {
   return client.setTrashed(batchId, false);
 }
 
+export async function trashBatch(batchId) {
+  const record = await client.setTrashed(batchId, true);
+  if (active?.id === batchId) clearActive();
+  return record;
+}
+
+export async function renameBatch(batchId, name) {
+  const record = await client.renameBatch(batchId, name);
+  if (active?.id === batchId) active = { ...active, name: record.name };
+  return record;
+}
+
 export function deletePermanent(batchId) {
   return client.deleteBatch(batchId);
 }

@@ -134,6 +134,13 @@ class FakeBatchRepo:
         self._docs[batch_id] = {**r, "trashed": trashed, "updated_at": self._now()}
         return self._docs[batch_id]
 
+    def rename(self, uid, batch_id, name):
+        r = self._docs.get(batch_id)
+        if not r or r["uid"] != uid:
+            return None
+        self._docs[batch_id] = {**r, "name": name, "updated_at": self._now()}
+        return self._docs[batch_id]
+
     def delete(self, uid, batch_id):
         r = self._docs.get(batch_id)
         if not r or r["uid"] != uid:

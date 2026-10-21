@@ -136,6 +136,19 @@ def test_set_trashed_toggles_only_owned_docs():
     assert store.set_trashed("u1", "missing", True) is None
 
 
+def test_rename_updates_only_owned_docs_and_advances_updated_at():
+    store, _ = repo()
+    created = store.create("u1", "b1", {"name": "A"})
+
+    renamed = store.rename("u1", "b1", "B")
+
+    assert renamed["name"] == "B"
+    assert renamed["updated_at"] > created["updated_at"]
+    assert store.rename("u2", "b1", "Hijack") is None
+    assert store.rename("u1", "missing", "X") is None
+    assert store.get("u1", "b1")["name"] == "B"
+
+
 def test_delete_removes_only_owned_docs():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})

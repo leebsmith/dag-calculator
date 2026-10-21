@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import CurrentUser
-from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload, TrashPayload
+from app.schemas.batch import BatchPatch, BatchRecord, DraftPayload, FreezePayload
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSolverResponse,
@@ -81,14 +81,18 @@ def upsert_batch(
 
 
 @app.patch("/batches/{batch_id}", response_model=BatchRecord)
-def trash_batch(
+def patch_batch(
     batch_id: str,
-    payload: TrashPayload,
+    payload: BatchPatch,
     user: CurrentUser,
     service: BatchServiceDep,
 ):
-    """Move a batch to trash or restore it."""
-    return service.set_trashed(user["uid"], batch_id, payload.trashed)
+    """Rename a batch and/or move it to trash (partial metadata update)."""
+    if payload.name is not None:
+        service.rename_batch(user["uid"], batch_id, payload.name)
+    if payload.trashed is not None:
+        service.set_trashed(user["uid"], batch_id, payload.trashed)
+    return service.get_batch(user["uid"], batch_id)
 
 
 @app.delete("/batches/{batch_id}", status_code=204)

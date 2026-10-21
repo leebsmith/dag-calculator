@@ -182,6 +182,29 @@ def test_trash_and_restore_routes(client):
     assert restored.json()["trashed"] is False
 
 
+def test_rename_route_updates_the_name_and_keeps_state(client, service):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    frozen_record = service.freeze_batch(UID, created["id"], FreezePayload())
+
+    renamed = client.patch("/batches/b1", json={"name": "  Session IPA  "})
+    assert renamed.status_code == 200
+    assert renamed.json()["name"] == "Session IPA"
+    assert renamed.json()["roots"] == created["roots"]
+
+    renamed_frozen = client.patch(f"/batches/{frozen_record.id}", json={"name": "Session IPA v1"})
+    assert renamed_frozen.status_code == 200
+    assert renamed_frozen.json()["status"] == "frozen"
+    assert renamed_frozen.json()["valuation"] == frozen_record.valuation
+
+
+def test_patch_rejects_an_empty_change_set_and_blank_names(client):
+    client.put("/batches/b1", json=draft_body())
+
+    assert client.patch("/batches/b1", json={}).status_code == 422
+    assert client.patch("/batches/b1", json={"name": "   "}).status_code == 422
+    assert client.patch("/batches/missing", json={"name": "Gone"}).status_code == 404
+
+
 def test_delete_returns_204_without_a_body(client):
     client.put("/batches/b1", json=draft_body())
 

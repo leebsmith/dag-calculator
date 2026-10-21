@@ -51,6 +51,13 @@ function fakeClient() {
       d.trashed = trashed;
       return { ...d };
     },
+    async renameBatch(id, name) {
+      calls.push({ op: "rename", id, name });
+      const d = docs.get(id);
+      if (!d) throw new Error("not found");
+      d.name = name;
+      return { ...d };
+    },
     async deleteBatch(id) {
       calls.push({ op: "delete", id });
       docs.delete(id);
@@ -150,6 +157,40 @@ test("renameActive persists the new name", async () => {
   const upsert = client.calls.find((c) => c.op === "upsert");
   assert.ok(upsert);
   assert.equal(persistence.getActive().name, "My Saison");
+});
+
+test("renameBatch persists any row and refreshes the active name", async () => {
+  const { client } = setup();
+  await client.upsertBatch("b1", { name: "Old", roots: {}, collections: {} });
+  await persistence.open("b1");
+
+  const renamed = await persistence.renameBatch("b1", "Session IPA");
+
+  assert.equal(renamed.name, "Session IPA");
+  assert.equal(persistence.getActive().name, "Session IPA");
+  assert.ok(client.calls.some((c) => c.op === "rename" && c.id === "b1" && c.name === "Session IPA"));
+});
+
+test("renameBatch leaves another active batch's name alone", async () => {
+  const { client } = setup();
+  await client.upsertBatch("b1", { name: "One", roots: {}, collections: {} });
+  await client.upsertBatch("b2", { name: "Two", roots: {}, collections: {} });
+  await persistence.open("b2");
+
+  await persistence.renameBatch("b1", "Renamed");
+
+  assert.equal(persistence.getActive().name, "Two");
+});
+
+test("trashBatch soft-deletes a landing row and drops it from the active slot", async () => {
+  const { client } = setup();
+  await client.upsertBatch("b1", { name: "One", roots: {}, collections: {} });
+  await persistence.open("b1");
+
+  await persistence.trashBatch("b1");
+
+  assert.ok(client.calls.some((c) => c.op === "trash" && c.id === "b1" && c.trashed === true));
+  assert.equal(persistence.getActive(), null);
 });
 
 test("stale baseline conflicts then re-hydrates from remote", async () => {

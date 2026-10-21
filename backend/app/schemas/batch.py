@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints, model_validator
 
 
 class DraftPayload(BaseModel):
@@ -23,10 +23,23 @@ class DraftPayload(BaseModel):
     base_updated_at: float | None = None
 
 
-class TrashPayload(BaseModel):
-    """The trash/restore toggle (soft delete)."""
+class BatchPatch(BaseModel):
+    """Partial metadata update: rename and/or the trash toggle (soft delete).
 
-    trashed: bool
+    Both fields are optional so the same route serves the trash button and the
+    landing-page rename, but at least one must be present.
+    """
+
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)
+    ] | None = None
+    trashed: bool | None = None
+
+    @model_validator(mode="after")
+    def _require_a_change(self) -> BatchPatch:
+        if self.name is None and self.trashed is None:
+            raise ValueError("name or trashed is required")
+        return self
 
 
 class FreezePayload(BaseModel):

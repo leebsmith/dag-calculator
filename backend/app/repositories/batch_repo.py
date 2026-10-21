@@ -60,6 +60,13 @@ class BatchRepository:
         self._coll.document(batch_id).update({"trashed": trashed, "updated_at": time.time()})
         return self.get(uid, batch_id)
 
+    def rename(self, uid: str, batch_id: str, name: str) -> dict[str, Any] | None:
+        doc = self._coll.document(batch_id).get()
+        if not doc.exists or doc.to_dict().get("uid") != uid:
+            return None
+        self._coll.document(batch_id).update({"name": name, "updated_at": time.time()})
+        return self.get(uid, batch_id)
+
     def delete(self, uid: str, batch_id: str) -> bool:
         doc = self._coll.document(batch_id).get()
         if not doc.exists or doc.to_dict().get("uid") != uid:

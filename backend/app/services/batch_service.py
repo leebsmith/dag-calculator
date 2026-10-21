@@ -60,6 +60,12 @@ class BatchService:
             raise HTTPException(status_code=404, detail="Batch not found")
         return BatchRecord(**record)
 
+    def rename_batch(self, uid: str, batch_id: str, name: str) -> BatchRecord:
+        record = self._repo.rename(uid, batch_id, name)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        return BatchRecord(**record)
+
     def delete_batch(self, uid: str, batch_id: str) -> None:
         if not self._repo.delete(uid, batch_id):
             raise HTTPException(status_code=404, detail="Batch not found")

@@ -77,6 +77,33 @@ def test_trash_and_restore():
     assert restored.trashed is False
 
 
+def test_rename_draft_and_frozen_metadata():
+    svc = BatchService(FakeRepo())
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))
+
+    renamed = svc.rename_batch("u1", rec.id, "Session IPA")
+    assert renamed.name == "Session IPA"
+    assert renamed.updated_at > rec.updated_at
+
+    frozen = svc.freeze_batch("u1", rec.id, FreezePayload(valuation={"batch.target_abv": 5.5}))
+    renamed_frozen = svc.rename_batch("u1", frozen.id, "Session IPA (v1)")
+    assert renamed_frozen.name == "Session IPA (v1)"
+    assert renamed_frozen.valuation == frozen.valuation
+
+
+def test_rename_foreign_or_missing_is_404():
+    svc = BatchService(FakeRepo())
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))
+
+    with pytest.raises(HTTPException) as foreign:
+        svc.rename_batch("u2", rec.id, "Hijack")
+    assert foreign.value.status_code == 404
+
+    with pytest.raises(HTTPException) as missing:
+        svc.rename_batch("u1", "missing", "Nope")
+    assert missing.value.status_code == 404
+
+
 def test_permanent_delete():
     svc = BatchService(FakeRepo())
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload())

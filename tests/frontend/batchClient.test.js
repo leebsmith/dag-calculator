@@ -58,6 +58,17 @@ test("setTrashed patches the trash flag", async (t) => {
   assert.deepEqual(JSON.parse(calls[0].init.body), { trashed: true });
 });
 
+test("renameBatch patches the name", async (t) => {
+  const calls = recordFetch(jsonResponse({ id: "b1", name: "Session IPA" }), t);
+
+  const renamed = await batchClient.renameBatch("b1", "Session IPA");
+
+  assert.equal(renamed.name, "Session IPA");
+  assert.equal(calls[0].url, "/batches/b1");
+  assert.equal(calls[0].init.method, "PATCH");
+  assert.deepEqual(JSON.parse(calls[0].init.body), { name: "Session IPA" });
+});
+
 test("deleteBatch returns null for the 204 response", async (t) => {
   const calls = recordFetch({ ok: true, status: 204, json: async () => null }, t);
 

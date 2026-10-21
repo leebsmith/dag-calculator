@@ -17,6 +17,10 @@ export function setTrashed(batchId, trashed) {
   return requestJSON(`/batches/${batchId}`, { method: "PATCH", body: { trashed } });
 }
 
+export function renameBatch(batchId, name) {
+  return requestJSON(`/batches/${batchId}`, { method: "PATCH", body: { name } });
+}
+
 export function deleteBatch(batchId) {
   return requestJSON(`/batches/${batchId}`, { method: "DELETE" });
 }
