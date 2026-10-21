@@ -2,20 +2,17 @@
 
 ## Next (in order)
 
-1. **Record library foundation** — server-persisted immutable record collections,
-   copy-forward into the batch, Google sign-in with a build-time email allowlist, and
-   batches moved under `users/{uid}/` (`plans/record-library-foundation.md`).
-2. **Water chemistry cleanup** — water records become read-only copies, the twelve
+1. **Water chemistry cleanup** — water records become read-only copies, the twelve
    duplicated ion roots go, `calcium_floor_ppm` moves onto the target record, RO becomes
    a source report, and desired SO4:Cl is shown against the kettle ratio
    (`plans/water-chemistry-cleanup.md`).
-3. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
+2. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
    (`views/hops.js`) into a first-class engine path and add a whirlpool
    utilization model (temp/time decay), replacing the manual
    `batch.whirlpool_ibu_fraction`.
-4. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
+3. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
-5. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+4. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -65,6 +62,7 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
+* Record library foundation (server records, copy-forward, Google allowlist, user-scoped batches)
 * Water chemistry step card (`solver.water` boundary + full card)
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu

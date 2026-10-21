@@ -11,22 +11,21 @@ against. It is *data*, not logic — the artifact **schematizes** it and
 | Class | Examples | Editable? | Lives |
 |---|---|---|---|
 | **Immutable seeds** | malt/sugar/yeast catalogs, water lab reports, equipment presets | no | seed JSON (a separate data substrate) |
-| **User-authored items** | "my house malt", "my tap water", "my 3-vessel rig" | yes (CRUD) | device-local localStorage overlay |
+| **Library records** | "my house malt", "my tap water", "my 3-vessel rig" | create/delete (immutable) | `users/{uid}/catalog_items` (Firestore) |
 | **Ephemeral batch input** | manual water entry, batch roots | yes (batch-scoped) | the batch draft |
 
 The key line: **catalogs and reports are facts; they are never edited.** The
 artifact's `primitive_schemas` define *what a malt / yeast / water report / …
 is*; the seed JSON holds the *instances*.
 
-**User-authored items** are a third class between the two: full components
-conforming to the same `primitive_schema`, owned by the user and stored under a
-reserved `u:` id prefix (so they can never collide with a seed id). They are
-merged into the reference cache as a **live overlay** (`user > seed`, see
-`store/userCatalog.js` + `store/referenceCache.js syncUserItems`) so pickers and
-selection resolution treat them exactly like seeds — and selection-referenced
-items inherit provenance/drift (§4). They are device-local for now (Firestore
-later); `malt`, `yeast`, `hop`, `sugar`, `equipment`, `water_report`, and
-`water_target` support user items.
+**Library records** are a third class between the two: full components
+conforming to the same `primitive_schema`, owned by the user and persisted on the
+server under `users/{uid}/catalog_items`. They are immutable — create, read,
+delete; a correction is a new record. They are merged into the picker's reference
+cache (`record > seed`) so they can be chosen exactly like a seed, but choosing
+one **copies it into the batch** (§4). The kind registry shared by frontend and
+backend is [`data/catalogs.json`](../../data/catalogs.json); `malt`, `yeast`,
+`hop`, `sugar`, `equipment`, `water_report`, and `water_target` support records.
 
 Physical constants (sucrose yield, salt stoichiometry, acid properties) live in
 the artifact's `constants`/`functions`, **not** in seed JSON — seed data is
@@ -225,9 +224,19 @@ file diverges from the derived medians, so drift is an explicit, reviewable diff
 
 ---
 
-## 4. Provenance
+## 4. Provenance and copy-forward
 
-The freeze records, per embedded component: `source_template_id` +
-`source_revision` (content hash) + `schema_version`. If a seed changes under a
-frozen batch, the revision mismatch is detected and reported — drift is explicit,
-never silent.
+The freeze records `source_template_id` per embedded component plus
+`schema_version`. That is provenance only — the batch already owns a full copy of
+every selected component, so a later library edit or seed change cannot alter it.
+There is no content hash and no drift detection.
+
+Records vs seeds vs batch state:
+
+- **Seed** — bundled, read-only, replaced only by a code deploy.
+- **Record** — immutable, per-user, server-persisted; delete it and existing
+  batches still hold their copies.
+- **Batch selection snapshot** — the batch's own copy, captured when the
+  component is picked; it survives save/load/freeze and is what the engine reads.
+  A legacy draft without a snapshot materialises one from the current library on
+  load and persists it on the next save.

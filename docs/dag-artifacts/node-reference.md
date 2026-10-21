@@ -100,8 +100,9 @@ To find what points at an id, scan the artifact for it in: `default` expressions
 ## 7. Provenance (freeze)
 
 For a `selection` id, `freezePayload().provenance[id]` →
-`{ source_template_id, source_revision }` (a content hash of the referenced seed
-component). Used by `detectDrift`. See `semantics.md` §3.2.
+`{ source_template_id }` (which component was chosen). Provenance only — the
+batch's copied selection snapshot is the frozen value, and there is no drift
+detection. See `semantics.md` §3.2.
 
 ---
 

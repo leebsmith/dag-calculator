@@ -15,7 +15,7 @@ backend with Firebase auth and Firestore persistence.
 
 | Path | Role |
 |---|---|
-| [`data/`](data/) | the artifact + seed catalogs |
+| [`data/`](data/) | the artifact, the catalog registry (`catalogs.json`), and seed catalogs |
 | [`frontend/`](frontend/) | engine, views, adapters, stores (Vite + Alpine) |
 | [`backend/`](backend/) | FastAPI JSON seam, solvers, auth, persistence |
 | [`tests/`](tests/) | frontend engine/conformance/guards + backend pytest |
@@ -46,6 +46,38 @@ artifact functions against `tests/conformance/fixtures/oracle-parity.json`, a
 snapshot of the legacy pure modules. Refresh the snapshot with
 `node tests/conformance/emit-oracle-fixture.mjs --write` and confirm it with
 `make test-oracle`; `make verify` itself needs no legacy checkout.
+
+## Auth & deployment
+
+Sign-in is Google-only (`signInWithPopup`, redirect fallback); anonymous auth
+has been removed. The backend verifies ID tokens with `check_revoked=True`, then
+requires a **verified email present in `ALLOWED_EMAILS`** (comma/space-separated,
+case-insensitive). An unset or empty allowlist **fails closed**. `GET /session`
+is auth-only and reports `{uid, email, allowed}` so the app can show a blocked
+screen before signing the user out.
+
+Firebase console setup:
+
+- Enable the **Google** provider under Authentication → Sign-in method.
+- Add every hosting domain (including `localhost` for dev) under Authentication →
+  Settings → **Authorized domains**.
+- Configure the OAuth consent screen (testing mode is fine for a small allowlist;
+  external/published otherwise).
+
+`make local-dev` passes `ALLOWED_EMAILS=dev@localhost` to the backend; sign in to
+the Auth emulator with that Google account (or change the Makefile value).
+
+Deployment notes:
+
+- `make deploy-backend` vendors `data/artifact.json` and `data/catalogs.json`
+  into `backend/app/_vendor/` before deploying (the Cloud Run source is
+  `backend/`, so `data/` is otherwise absent). The backend logs the resolved
+  artifact directory at startup.
+- Set the production allowlist on Cloud Run, e.g.
+  `gcloud run services update dag-calculator-backend --region us-east4 --update-env-vars ALLOWED_EMAILS=you@example.com`.
+- Batches live at `users/{uid}/batches/{id}`; catalog records at
+  `users/{uid}/catalog_items/{id}`. Firestore security rules should scope both to
+  the authenticated uid (the browser only talks to the API).
 
 ## Seeds & scraping
 

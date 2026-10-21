@@ -48,7 +48,7 @@ changes.
 | `relations.js` | n-ary relation predicates |
 | `boundary.js` | canonical fingerprinting + `BoundaryCache` |
 | `validate.js` | structural validation of the artifact |
-| `sha256.js` | hashing for fingerprints and seed provenance |
+| `sha256.js` | hashing for canonical boundary fingerprints |
 
 ## Data structures
 
@@ -69,8 +69,13 @@ These are what make the DAG **explicit**: no edge exists unless declared.
 - **`roots`** — a `Map` of `root`/`choice` values (`nodeId → value`). Includes the
   `reference` roots that name selections. `setRoot` rejects non-root/choice nodes.
 - **`collections`** — `collectionNodeId → rows[]`.
-- **`references`** — the immutable seed catalogs, keyed by schema then id
-  (`equipment`/`yeast`/`water_report`/`water_target`).
+- **`selections`** — `selectionNodeId → component`, the batch's copied-forward
+  snapshot of each chosen component. A loaded batch reads selections from this
+  map, never from the live library.
+- **`references`** — the immutable seed catalogs keyed by schema then id
+  (`equipment`/`yeast`/`water_report`/`water_target`), with the user's server
+  library records merged over the seeds for the pickers. The engine consults it
+  only for legacy drafts whose selection snapshot is missing.
 
 Only roots/choices/collections are mutable; derived values and boundary
 outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
@@ -92,7 +97,7 @@ depends on it.
 ```text
 root/choice   → roots.get(nodeId) ?? evaluate(node.default)
 collection    → collections[nodeId] ?? []
-selection     → component (read-only view; empty ref → {})
+selection     → selections[nodeId] ?? reference component (empty ref → {})
 derived       → evaluate(node.expr, ctx(  resolve node.inputs  ))
 boundary      → request body → fingerprint → cache hit | boundaries[binding](body)
 ```
@@ -101,6 +106,13 @@ A boundary's **request body** is the resolved declared `inputs` by default; when
 the host registers a per-binding request adapter (`options.boundaryRequests`), it
 reshapes them into the backend's Pydantic contract. Either way the *same* body
 feeds `boundaryRequest()` and evaluation, so their fingerprints agree.
+
+A selection resolves the batch's copied component first
+(`options.selections[nodeId]`). A non-empty `ref` with no snapshot falls back to
+the library `references[node.schema][refValue]`; that fallback exists only for
+legacy drafts, which the normal load path materialises and persists on the next
+save. Library edits therefore cannot perturb a batch that already carries its
+snapshot.
 
 ### `evaluate(expr, ctx)` — the AST
 
@@ -128,6 +140,8 @@ place values are cached, so there is nothing else to keep consistent.
 ## Public API
 
 ```js
+createCalculator(artifact, { roots, collections, selections, references, … })
+
 engine.get(id)            // node value (memoized)
 engine.resolve(path)      // dotted-path value
 engine.call(fnId, args)   // invoke a function

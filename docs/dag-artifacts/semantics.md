@@ -13,9 +13,12 @@ The app's business logic is a **deterministic DAG**. Data flows:
 seed ──▶ select(reference) ──▶ input ──▶ compute ──▶ output
 ```
 
-- **Seeds** are immutable facts (catalogs, lab reports) — read, never edited.
-- **Selections** reference a component by id (plus an optional batch-scoped
-  override).
+- **Seeds** are immutable bundled facts (catalogs, lab reports) — read, never
+  edited. **Library records** are immutable, per-user components authored outside
+  a batch; they merge with seeds for selection but are copied into a batch when
+  chosen.
+- **Selections** reference a component by id and hold the batch's own read-only
+  copy of that component.
 - **Inputs** are user-set values.
 - **Compute** transforms them.
 - **Outputs** are the results.
@@ -79,24 +82,29 @@ declared edges — never authored.
 
 ## 3. Selection and freeze
 
-### 3.1 Selection = reference
+### 3.1 Selection = reference + batch copy
 
-A `selection` holds a `ref` (component id) that resolves to an immutable seed
-component. Its value is a **read-only view** of that component — selections are
-never mutated. An empty `ref` means "no component chosen": the selection resolves
-to an empty component (fields read as `undefined`), so optional selections are
-safe to reference behind a short-circuit guard. A batch that needs a value
-different from the selected component models it as a `root` (optionally
-`default`-ing to a selected field), keeping batch state in one place: the roots.
+A `selection` holds a `ref` (component id). Choosing a component **copies it
+forward** into the batch's `selections` snapshot, and the selection resolves to a
+**read-only view** of that snapshot — selections are never mutated. The library
+(seeds + the user's records) is consulted only when a legacy draft has a
+non-empty ref and no snapshot; the normal load path materialises the snapshot and
+persists it on the next save. Library edits therefore cannot perturb a loaded
+batch. An empty `ref` means "no component chosen": the selection resolves to an
+empty component (fields read as `undefined`), so optional selections are safe to
+reference behind a short-circuit guard. A batch that needs a value different from
+the selected component models it as a `root` (optionally `default`-ing to a
+selected field), keeping batch state in one place: the roots.
 
 ### 3.2 Freeze = full valuation
 
 A saved batch is a **node-id → value** map over the whole graph, immutable,
 carrying provenance:
 
-- `source_template_id` / `source_revision` — which component (by content hash)
-  was referenced, for drift detection.
-- `schema_version` — the artifact revision the node set came from.
+- `source_template_id` — which component was selected (provenance only; there is
+  no content hash and no drift detection, because the batch already owns its
+  copy).
+- `schema_version` — the batch payload revision.
 - `parent_batch_id` — lineage (a batch is a recipe *variation*).
 - `valuation_format` — `"outputs"` marks the current shape: a boundary node maps
   to its plain output map (`sg_post_boil`, `cascade.v_strike`, …). A missing
@@ -105,14 +113,15 @@ carrying provenance:
 
 **Provenance ≠ versioning.** There is no append-only component-version chain and
 no `(component_id, version)` reference. Reuse means *copy-into-batch* at
-selection time; if a referenced seed changes after freeze, drift is surfaced
-explicitly (reported, never silently propagated), and forking re-resolves against
-the current seeds.
+selection time; correcting a library record means creating a new immutable record
+and deleting the old one. Existing batches are unaffected.
 
 ### 3.3 Draft vs. frozen
 
-- **Draft** — roots only; derived values computed live by the engine.
-- **Frozen** — full valuation, immutable, provenance-tagged.
+- **Draft** — roots, collections, and copied selection snapshots; derived values
+  computed live by the engine.
+- **Frozen** — full valuation, immutable, provenance-tagged, keeping the draft's
+  roots/collections/selections for lossless forking.
 
 ---
 
