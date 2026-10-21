@@ -12,7 +12,7 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { clearUnitMode, loadUnitMode, saveUnitMode } from "../store/unitPrefs.js";
-import { produce, nonlinearFns, resolveCollectionColumns, displayValue } from "../views/producer.js";
+import { produce, nonlinearFns } from "../views/producer.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { registerYeastCard, refreshYeastCard } from "./cards/yeast.js";
@@ -24,8 +24,9 @@ import { registerMaltCard, refreshMaltCard } from "./cards/malt.js";
 import { registerMashCard, refreshMashCard } from "./cards/mash.js";
 import { registerUserCatalogUi } from "./userCatalogUi.js";
 import { registry, steps } from "../views/steps.js";
-import { UNIT_DIMENSIONS, UNIT_GROUPS, UNIT_SYMBOLS } from "../views/registry/units.js";
+import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
+import { installDraftEditor } from "./draftEditor.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
 // suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
@@ -640,173 +641,6 @@ export function createStepApp(options = {}) {
       else this.addRow(field);
     },
 
-    // --- Collection draft editors (uniform: scratch copy + unit-aware grid) ---
-    // Every collection editor edits a deep-copied draft, never the engine: edits
-    // don't touch the engine/solvers/persistence until Save (Cancel discards, or
-    // restores nothing since the engine was untouched). The grid formats draft
-    // values through the SAME unit resolution as the producer, via the shared
-    // `resolveCollectionColumns` + `displayValue` helpers.
-
-    draftOpen: false,
-    draftNodeId: "",
-    draftRows: [],
-
-    draftEntry() {
-      for (const step of steps) {
-        for (const entry of step.fields) {
-          if (entry && typeof entry === "object" && entry.collection === this.draftNodeId) return entry;
-        }
-      }
-      return {};
-    },
-
-    get draftColumns() {
-      if (!this.draftNodeId) return [];
-      return resolveCollectionColumns(artifact, registry, this.draftNodeId, this.draftEntry(), ui.unitMode);
-    },
-
-    // Draft total (mass-unit aware) for the modal header / totals row. Sums
-    // `pick(row)` over the draft and formats it in the mass column's display
-    // unit (used by the late-additions and trace-malt editors).
-    draftMassDisplay(pick) {
-      const col = this.draftColumns.find((c) => c.id === "mass_kg");
-      const total = (this.draftRows ?? []).reduce((sum, r) => sum + (pick(r) || 0), 0);
-      if (!col) return String(total);
-      const v = displayValue(
-        artifact,
-        "mass",
-        col.displayUnit,
-        total,
-        nonlinearFns(artifact, session.getEngine())
-      );
-      const shown = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
-      return `${shown}${col.unit ? " " + col.unit : ""}`;
-    },
-
-    // Draft rows converted to their display units (mirrors the producer field).
-    get draftDisplayRows() {
-      const columns = this.draftColumns;
-      const nl = nonlinearFns(artifact, session.getEngine());
-      return this.draftRows.map((row) => {
-        const out = { ...row };
-        for (const col of columns) {
-          let v = row[col.id];
-          if (col.displayUnit && col.dimension && typeof v === "number") {
-            v = displayValue(artifact, col.dimension, col.displayUnit, v, nl);
-          }
-          if (typeof v === "number") {
-            v = col.decimals != null ? v.toFixed(col.decimals) : Math.round(v * 1000) / 1000;
-          }
-          out[col.id] = v;
-        }
-        return out;
-      });
-    },
-
-    openDraft(nodeId) {
-      this.draftNodeId = nodeId;
-      this.draftRows = JSON.parse(JSON.stringify(session.getEngine().get(nodeId) ?? []));
-      this.normalizeDraft();
-      this.draftOpen = true;
-    },
-
-    closeDraft() {
-      this.draftOpen = false;
-      this.draftRows = [];
-      this.draftNodeId = "";
-    },
-
-    saveDraft() {
-      session.engine.setCollection(
-        this.draftNodeId,
-        JSON.parse(JSON.stringify(this.normalizeDraft()))
-      );
-      this.closeDraft();
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    // Hamilton-normalize a draft's pct from its parts (grist or boil hops).
-    // Mutates rows in place (stable references) and returns them.
-    normalizeDraft() {
-      if (
-        (this.draftNodeId === "grist.major_malts" || this.draftNodeId === "batch.boil_hops") &&
-        this.draftRows.length
-      ) {
-        const pcts = hamiltonPct(this.draftRows.map((r) => r.parts));
-        this.draftRows.forEach((r, i) => {
-          r.pct = pcts[i];
-        });
-      }
-      return this.draftRows;
-    },
-
-    // Edit a draft cell: the input carries a display value; store its base.
-    editDraftCell(ri, colId, value) {
-      const col = this.draftColumns.find((c) => c.id === colId);
-      if (!col) return;
-      let base = value;
-      if (value !== "" && col.dimension) {
-        const n = Number(value);
-        base = col.displayUnit
-          ? toBase(artifact, col.dimension, col.displayUnit, n, nonlinearFns(artifact, session.getEngine()))
-          : n;
-      }
-      this.draftRows[ri][colId] = base;
-      this.normalizeDraft();
-    },
-
-    addDraftRow(row) {
-      this.draftRows.push(row);
-      this.normalizeDraft();
-    },
-
-    removeDraftRow(ri) {
-      this.draftRows.splice(ri, 1);
-      this.normalizeDraft();
-    },
-
-    patchDraftRow(ri, patch) {
-      Object.assign(this.draftRows[ri], patch);
-    },
-
-    // Inspector field edits (shared by the draft cards). `scale` converts a
-    // display input to base (percent inputs use 0.01). Empty clears the field.
-    setMaltField(ri, field, value, scale = 1) {
-      if (value === "") {
-        this.patchDraftRow(ri, { [field]: undefined });
-        return;
-      }
-      const n = Number(value);
-      this.patchDraftRow(ri, { [field]: Number.isFinite(n) ? n * scale : 0 });
-    },
-
-    // Color (grain_color) edits in the master unit (Lovibond/EBC) and stores base
-    // (Lovibond). The malt/trace inspectors bind to these instead of the raw
-    // color_lovibond value, mirroring the collection grids' unit handling.
-    colorUnit() {
-      const unitId = this.unitMode.grain_color ?? "EBC";
-      return UNIT_SYMBOLS.grain_color?.[unitId] ?? unitId;
-    },
-
-    colorDisplay(value) {
-      if (typeof value !== "number" || !Number.isFinite(value)) return "";
-      const unitId = this.unitMode.grain_color ?? "EBC";
-      return Math.round(displayValue(artifact, "grain_color", unitId, value) * 10) / 10;
-    },
-
-    setColorField(ri, value) {
-      if (value === "") {
-        this.patchDraftRow(ri, { color_lovibond: undefined });
-        return;
-      }
-      const unitId = this.unitMode.grain_color ?? "EBC";
-      const n = Number(value);
-      this.patchDraftRow(ri, {
-        color_lovibond: Number.isFinite(n) ? toBase(artifact, "grain_color", unitId, n) : 0,
-      });
-    },
-
     // Explicit boot (main.js owns it after auth). Deliberately NOT named
     // `init`: Alpine auto-calls an `init()` method on `x-data` objects, which
     // would run a solve before sign-in (and 401).
@@ -841,6 +675,8 @@ export function createStepApp(options = {}) {
       app.boundaryError = error;
     },
   });
+
+  installDraftEditor(app, { artifact, ui, session });
 
   registerYeastCard(app, cardCtx);
   registerStyleCard(app, cardCtx);
