@@ -129,6 +129,29 @@ default. If it mirrors known-good legacy math, add a conformance case too.
 - [ ] an engine test asserts the new value
 - [ ] `make check` + `make test` green
 
+## Artifact-owned vs host-side rules
+
+The artifact owns every value and domain rule the engine evaluates. A few
+cross-cutting presentation/authoring rules are deliberately host-side — they
+describe *how the UI authors or displays* a value, not what the value is:
+
+| Rule | Owner | Where |
+|---|---|---|
+| Node ids, constants, formulas, dimensions, domains, boundary inputs | artifact | `data/artifact.json` |
+| Hamilton normalization of authored `parts` into `pct`/`w_i` | host | `frontend/src/views/hamilton.js` |
+| Tinseth hop mass back-calculation from IBU shares | host | `frontend/src/views/hops.js` |
+| Style-conformance judgement and badges | host | `frontend/src/engine/styleConformance.js`, `views/producer/conformance.js` |
+| Seed-derived copy-in values and provenance hashes | host | `frontend/src/views/seedDerivations.js`, `store/snapshot.js` |
+| Fermentation geometry (styles' OE/AE feasible regions) | host | `frontend/src/engine/fermentation.js` |
+| Presentation overrides (polymorphic labels, hints, clamp envelopes) | host | `frontend/src/views/registry/presentation.js` |
+| Card node-id references | host registry | `frontend/src/views/registry/*.js` |
+
+Artifact-owned rules are pinned by artifact tests and the cross-runtime fixtures
+(`docs/engine.md` §"Cross-runtime contract"). Host-side rules are intentionally
+not expressible in the artifact; `tests/guards/presentation-ids.test.js` keeps
+literal node ids out of card modules and the producer so the registry remains
+the single presentation home.
+
 ## Out of scope (the view)
 
 Surfacing the node in the UI — adding it to a step's `fields` in

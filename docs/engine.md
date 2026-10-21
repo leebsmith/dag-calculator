@@ -194,6 +194,15 @@ corresponding declarative field map; both suites then fail until the wire-keys
 fixture and Pydantic model agree. Editing a shared constant or formula fails the
 constant or numeric-parity test on the untouched side.
 
+## Host-side rules
+
+Not every rule belongs in the artifact. Hamilton normalization, Tinseth hop
+back-calculation, style conformance, seed-derived copy-in, fermentation geometry,
+and presentation overrides are host-side by design. `docs/adding-a-node.md`
+§"Artifact-owned vs host-side rules" lists the owner and location of each;
+`tests/guards/presentation-ids.test.js` keeps card modules and the producer free
+of literal node ids.
+
 ## Copy-forward flows
 
 Where a selected component's value seeds an **editable** value, the selection's
