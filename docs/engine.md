@@ -161,6 +161,39 @@ it resolves a boundary's body. Because the *adapted* body is what gets
 fingerprinted — and is what the adapter POSTs — the frontend hash matches the
 backend's `canonical_fingerprint` and the cache key lines up across the seam.
 
+### Cross-runtime contract
+
+Three runtimes evaluate the same brewing model, so their shared numeric and wire
+contracts are pinned by fixtures rather than by convention:
+
+| Runtime | Location | Role |
+|---|---|---|
+| Artifact | `data/artifact.json` | canonical constants, functions, dimensions, boundary inputs |
+| JS solver | `frontend/src/engine/` + `adapters/boundaryRequest.js` | live evaluation, fingerprinting, request mapping |
+| Python solver | `backend/app/core/` + `schemas/boundary.py` | boundary implementations, Pydantic wire models |
+
+Shared values and the single test surface that pins each:
+
+| Contract | Artifact source | JS consumer | Python consumer | Pinning test |
+|---|---|---|---|---|
+| Sucrose gravity points, extract volume/absorption, shrinkage | `sucrose_yield_ldk`, `v_bar`, `k_abs_true`, `rho_water`, `default_shrinkage_fraction` | engine functions | `batch_solver` constants | `tests/backend/conformance/test_artifact_constants.py` |
+| Water equivalents, calcium floor, mash-pH window and default | `bicarbonate_eq_weight`, `default_calcium_floor_ppm`, `mash_ph_optimal_low/high`, `default_target_mash_ph` | engine functions | `core/water.py`, `WaterSolverRequest` | `tests/backend/conformance/test_artifact_constants.py` |
+| ASBC Plato↔SG, Cutaia ABV, maximum achievable ABV, Phase 1 SG-from-ABV | `plato_to_sg`, `sg_to_plato`, `realized_abv` | engine functions | `core/utils.py`, `batch_solver` | `tests/conformance/numeric-parity.test.js` + `tests/backend/conformance/test_numeric_parity.py` on `tests/conformance/fixtures/numeric-parity.json` |
+| Canonical JSON + SHA-256 fingerprint | n/a | `engine/boundary.js` | `schemas/boundary.py` | `tests/frontend/boundary.test.js` + `tests/backend/test_fingerprint.py` on `tests/conformance/fixtures/canonical-json.json` |
+| Boundary wire keys | node `inputs` aliases | declarative `BATCH_FIELDS` / `WATER_FIELDS` | Pydantic model fields | `tests/guards/boundary-inputs.test.js` + `tests/backend/conformance/test_boundary_wire_contract.py` on `tests/conformance/fixtures/boundary-wire-keys.json` |
+
+The JS `realized_abv` function defines the Cutaia model in the SG domain; the
+Python `cutaia_abv` defines it in the Plato domain. Parity is asserted through
+the shared fixture, which stores SG inputs so both runtimes exercise the same
+path. The Phase 1 inverse (`solve_sg_post_boil_from_abv`) is backend-only; the
+JS side pins it by checking that `realized_abv(sg, aa)` recovers the fixture's
+target ABV.
+
+Editing a boundary input requires updating the artifact declaration and the
+corresponding declarative field map; both suites then fail until the wire-keys
+fixture and Pydantic model agree. Editing a shared constant or formula fails the
+constant or numeric-parity test on the untouched side.
+
 ## Copy-forward flows
 
 Where a selected component's value seeds an **editable** value, the selection's
