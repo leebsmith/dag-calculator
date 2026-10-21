@@ -3,6 +3,7 @@
 
 import { produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
+import { reportError } from "../observability.js";
 import { refreshYeastCard } from "./cards/yeast.js";
 import { refreshStyleCard } from "./cards/style.js";
 import { refreshHopCard } from "./cards/hops.js";
@@ -28,7 +29,8 @@ export function createStepView({
   function safe(fn) {
     try {
       return fn();
-    } catch {
+    } catch (err) {
+      reportError("stepView.safe", err);
       return [];
     }
   }

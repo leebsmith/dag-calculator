@@ -33,6 +33,7 @@ import { installUnitActions } from "./unitActions.js";
 import { installNavigation } from "./navigation.js";
 import { createStepView } from "./stepView.js";
 import * as fmt from "../utils.js";
+import { reportError } from "../observability.js";
 
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
@@ -137,7 +138,8 @@ export function createStepApp(options = {}) {
         let refValue;
         try {
           refValue = engine.get(node.ref);
-        } catch {
+        } catch (err) {
+          reportError("stepAdapter.materializeSelections", err);
           continue;
         }
         if (!refValue) continue;

@@ -31,6 +31,7 @@ import {
   resultCounter,
   toggleFilter,
 } from "../../utils.js";
+import { reportError } from "../../observability.js";
 
 const MAX_VISIBLE_STYLES = 25;
 
@@ -255,7 +256,8 @@ export function registerStyleCard(app, ctx) {
       const read = (path) => {
         try {
           return engine.resolve(path);
-        } catch {
+        } catch (err) {
+          reportError("style.conformance.resolve", err);
           return undefined;
         }
       };

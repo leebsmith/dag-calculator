@@ -27,6 +27,16 @@ if (!existsSync(indexPath)) {
   }
 
   if (!process.exitCode) console.log(`build check: ${refs.length} assets referenced`);
+
+  // Every gstatic.com SDK script must be SRI-pinned and deferred.
+  const scripts = [...html.matchAll(/<script\b([^>]*)>/g)].map((m) => m[1]);
+  for (const attrs of scripts) {
+    const src = (attrs.match(/\bsrc="([^"]+)"/) ?? [])[1];
+    if (!src || !src.includes("gstatic.com")) continue;
+    if (!/\bintegrity="sha384-/.test(attrs)) fail(`gstatic script missing integrity: ${src}`);
+    if (!/\bdefer\b/.test(attrs)) fail(`gstatic script missing defer: ${src}`);
+    if (!/\bcrossorigin="anonymous"/.test(attrs)) fail(`gstatic script missing crossorigin: ${src}`);
+  }
 }
 
 // A production bundle must not ship the dev/emulator API-key fallback.

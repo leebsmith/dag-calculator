@@ -7,6 +7,7 @@ import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
 import { HOP_NODES as N } from "../../views/registry/hops.js";
 import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
+import { reportError } from "../../observability.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 
@@ -34,12 +35,14 @@ function computeHopRows(engine) {
   let volume = null;
   try {
     gravity = engine.resolve(N.preBoilGravity);
-  } catch {
+  } catch (err) {
+    reportError("hops.preBoilGravity", err);
     gravity = null;
   }
   try {
     volume = engine.resolve(N.postBoilVolume);
-  } catch {
+  } catch (err) {
+    reportError("hops.postBoilVolume", err);
     volume = null;
   }
 

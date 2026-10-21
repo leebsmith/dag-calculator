@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 // Structural verification for the Firebase hardening config (PR 1):
 //   firestore.rules            — deny-all client access
 //   firebase.json              — firestore rules binding + hosting block
-//   hosting headers            — SPA cache strategy + report-only CSP
+//   hosting headers            — SPA cache strategy + enforced CSP
 // Wired into `make check` (and therefore `make verify`).
 
 const ROOT = new URL("../", import.meta.url);
@@ -77,9 +77,9 @@ if (!/immutable/.test(assetHeaders["Cache-Control"] ?? "")) {
   fail('firebase.json must send an immutable Cache-Control for assets/**');
 }
 
-const csp = headersFor(config, "**")["Content-Security-Policy-Report-Only"];
+const csp = headersFor(config, "**")["Content-Security-Policy"];
 if (!csp) {
-  fail('firebase.json must set a Content-Security-Policy-Report-Only header for "**"');
+  fail('firebase.json must set a Content-Security-Policy header for "**"');
 } else {
   const required = [
     "default-src 'self'",
@@ -99,5 +99,5 @@ if (failures.length) {
   for (const message of failures) console.error(`firebase config: ${message}`);
   process.exitCode = 1;
 } else {
-  console.log("firebase config: rules + hosting + report-only CSP validated");
+  console.log("firebase config: rules + hosting + enforced CSP validated");
 }
