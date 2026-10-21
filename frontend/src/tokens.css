@@ -130,6 +130,7 @@
      4. Layout Dimensions & Sizing
      ======================================================================== */
   --container-content-stack: 36rem;
+  --container-content-wide: 56rem;
   --container-modal-dialog: 42rem;
   --container-modal-workspace: 72rem;
   --container-drawer-workspace: 32rem;

@@ -51,3 +51,4 @@ Not needed by the current artifact; add only when a node requires them:
 * Water chemistry step card (`solver.water` boundary + full card)
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu
+* Recipe landing page (freeze rail, sortable library, row menus, inline rename)

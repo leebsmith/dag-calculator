@@ -91,7 +91,6 @@ Alpine.store("recipes", {
   async refresh() {
     this.batches = await persistence.list();
     this.loadError = false;
-    this.rowMenu = null;
     this.syncActive();
   },
 
@@ -124,6 +123,10 @@ Alpine.store("recipes", {
 
   openRowMenu(batch, event) {
     this.sortOpen = false;
+    if (this.rowMenu?.id === batch.id) {
+      this.rowMenu = null;
+      return;
+    }
     this.rowMenuStyle = anchorStyle(event);
     this.rowMenu = batch;
   },
