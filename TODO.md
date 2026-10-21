@@ -2,13 +2,20 @@
 
 ## Next (in order)
 
-1. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
+1. **Record library foundation** — server-persisted immutable record collections,
+   copy-forward into the batch, Google sign-in with a build-time email allowlist, and
+   batches moved under `users/{uid}/` (`plans/record-library-foundation.md`).
+2. **Water chemistry cleanup** — water records become read-only copies, the twelve
+   duplicated ion roots go, `calcium_floor_ppm` moves onto the target record, RO becomes
+   a source report, and desired SO4:Cl is shown against the kettle ratio
+   (`plans/water-chemistry-cleanup.md`).
+3. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
    (`views/hops.js`) into a first-class engine path and add a whirlpool
    utilization model (temp/time decay), replacing the manual
    `batch.whirlpool_ibu_fraction`.
-2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
+4. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
-3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+5. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -31,7 +38,17 @@
 * Offline resilience (IndexedDB write-ahead overlay)
 * Unit scaling (`plans/unit-scaling.md`)
 * Lazy-load seed data (bundle size)
-* Firestore for user-authored items
+* **Cooling curves** — named kettle ΔT-over-time profiles feeding the whirlpool model;
+  the first catalog authored on the record library, and the trigger for the artifact's
+  nested-list grammar.
+* **Style-conformance water axis** — nothing scores water against the chosen style today:
+  `styleConformance.js` covers only `og`/`fg`/`abv`/`ibu`/`srm` and `styles.json` carries
+  no water fields. Needs a desired water character, a realized character derived from the
+  batch, a verdict layer, and a granularity decision (per style / category / water family).
+* **App shell navigation** — the wizard toolbar mixes navigation (`Recipes`), per-recipe
+  verbs (`Freeze`, `Move to trash`), a tool (library), and settings (`Units`, sign out) at
+  equal weight; move to a labeled nav that collapses to a hamburger below a breakpoint,
+  with verbs in a row overflow and settings top-right.
 
 ## Engine robustness follow-ups
 
