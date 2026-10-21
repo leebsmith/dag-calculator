@@ -43,9 +43,9 @@
                 :value="userFieldDisplay(f.field)"
                 @change="userSetField(f.field, $event.target.value)"
               >
-                <option value="">—</option>
+                <option value="" :selected="userFieldDisplay(f.field) === ''">—</option>
                 <template x-for="o in f.options" :key="o">
-                  <option :value="o" x-text="o"></option>
+                  <option :value="o" :selected="o === userFieldDisplay(f.field)" x-text="o"></option>
                 </template>
               </select>
             </template>

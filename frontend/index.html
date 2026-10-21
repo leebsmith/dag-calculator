@@ -142,7 +142,7 @@
                                   @change="setUnit(d.id, $event.target.value)"
                                 >
                                   <template x-for="u in d.units" :key="u[0]">
-                                    <option :value="u[0]" x-text="u[1]"></option>
+                                    <option :value="u[0]" :selected="u[0] === (unitMode[d.id] || d.default || d.units[0][0])" x-text="u[1]"></option>
                                   </template>
                                 </select>
                               </div>
