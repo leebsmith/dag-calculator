@@ -46,6 +46,10 @@
   verbs (`Freeze`, `Move to trash`), a tool (library), and settings (`Units`, sign out) at
   equal weight; move to a labeled nav that collapses to a hamburger below a breakpoint,
   with verbs in a row overflow and settings top-right.
+* **View recompute granularity** — wholesale `produce()` recompute is by design (A9
+  determinism / A1 no-reactivity). Production runs HTTP-debounced; the synchronous path
+  (`boundaryRunner.js` scheduleSolve) is tests-only. Revisit only if profiling shows jank
+  as field count grows (cooling curves, style-water axis).
 
 ## Engine robustness follow-ups
 
