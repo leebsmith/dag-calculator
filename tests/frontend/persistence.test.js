@@ -86,6 +86,8 @@ function setup() {
   const app = fakeApp();
   persistence.setClient(client);
   persistence.bindApp(app);
+  persistence.setStateObserver(null);
+  persistence.setRetryDelays([0, 0, 0]);
   persistence.clearActive();
   return { client, app };
 }
@@ -317,7 +319,11 @@ test("a failed autosave is reported and leaves the draft dirty", async (t) => {
   };
 
   persistence.queueSave({ delay: 1 });
-  await new Promise((resolve) => setTimeout(resolve, 20));
+  // Poll until the retry loop exhausts and the autosave reports, so the in-flight
+  // saveNow does not leak into the next test.
+  for (let i = 0; i < 200 && errors.length === 0; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
 
   assert.deepEqual(errors, ["autosave failed"]);
   assert.equal(persistence.getActive().persisted, false);
@@ -384,5 +390,61 @@ test("reload resolves a conflict by re-hydrating the remote record", async () =>
   assert.equal(persistence.getSaveState(), "idle");
   assert.equal(persistence.getActive().name, "Remote edit");
   assert.deepEqual(app.loaded.roots, { "mash.grain_temp_c": 30 });
+});
+
+test("saveState transitions dirty -> saving -> idle on a clean save", async () => {
+  const { client } = setup();
+  const states = [];
+  persistence.setStateObserver(({ state }) => states.push(state));
+  await persistence.createUntitled();
+  states.length = 0;
+
+  persistence.queueSave({ delay: 60000 });
+  assert.deepEqual(states, ["dirty"]);
+
+  await persistence.flushSave();
+  assert.deepEqual(states, ["dirty", "saving", "idle"]);
+  assert.equal(client.calls.filter((c) => c.op === "upsert").length, 1);
+});
+
+test("saveState reaches error after exhausting retries", async () => {
+  const { client } = setup();
+  const states = [];
+  persistence.setStateObserver(({ state }) => states.push(state));
+  await persistence.createUntitled();
+  states.length = 0;
+
+  let attempts = 0;
+  client.upsertBatch = async () => {
+    attempts += 1;
+    throw new Error("offline");
+  };
+
+  persistence.queueSave({ delay: 60000 });
+  await assert.rejects(() => persistence.flushSave(), /offline/);
+
+  assert.equal(attempts, 4);
+  assert.equal(persistence.getSaveState(), "error");
+  assert.deepEqual(states, ["dirty", "saving", "saving", "saving", "saving", "error"]);
+});
+
+test("a transient failure recovers within the retry budget", async () => {
+  const { client } = setup();
+  await persistence.createUntitled();
+
+  let attempts = 0;
+  const original = client.upsertBatch;
+  client.upsertBatch = async (...args) => {
+    attempts += 1;
+    if (attempts < 3) throw new Error("offline");
+    return original(...args);
+  };
+
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+
+  assert.equal(attempts, 3);
+  assert.equal(persistence.getSaveState(), "idle");
+  assert.ok(persistence.getActive().persisted);
 });
 

@@ -50,14 +50,45 @@ export function createBoundaryRunner({
     }
     const engine = session.getEngine();
     const token = ++solveToken;
-    try {
-      for (const id of session.boundaryNodes) {
-        const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
-        if (engine.hasBoundaryResult(fingerprint)) {
-          setStatus(id, "ok");
-          continue;
+
+    // Boundary nodes are topologically ordered, and the water boundary's inputs
+    // depend on the batch boundary's outputs, so a node's request can only be
+    // built once its upstream boundary has resolved. Walk the order and, within
+    // each "frontier" of consecutively-resolvable nodes, solve in parallel via
+    // Promise.allSettled; a node whose inputs are not ready yet ends the frontier
+    // and is retried on the next pass.
+    const nodes = [...session.boundaryNodes];
+    let firstError = null;
+    let index = 0;
+
+    while (index < nodes.length) {
+      if (token !== solveToken) return;
+
+      const frontier = [];
+      while (index < nodes.length) {
+        const id = nodes[index];
+        try {
+          const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
+          if (engine.hasBoundaryResult(fingerprint)) {
+            setStatus(id, "ok");
+            index += 1;
+            continue;
+          }
+          setStatus(id, "pending");
+          frontier.push({ id, binding, inputs, fingerprint });
+          index += 1;
+        } catch {
+          break;
         }
-        setStatus(id, "pending");
+      }
+
+      if (frontier.length === 0) {
+        for (let i = index; i < nodes.length; i++) setStatus(nodes[i], "error");
+        break;
+      }
+
+      const settle = frontier.map(async (job) => {
+        const { binding, inputs, fingerprint } = job;
         let promise = inflight.get(fingerprint);
         if (!promise) {
           promise = postJSON(BOUNDARY_URLS[binding], inputs, { fetchImpl })
@@ -65,20 +96,37 @@ export function createBoundaryRunner({
             .finally(() => inflight.delete(fingerprint));
           inflight.set(fingerprint, promise);
         }
-        await promise;
-        setStatus(id, "ok");
-      }
+        try {
+          await promise;
+          return { fingerprint, ok: true };
+        } catch (err) {
+          return { fingerprint, ok: false, err };
+        }
+      });
+
+      const results = await Promise.allSettled(settle);
       if (token !== solveToken) return;
-      error = null;
-      emit();
-    } catch (err) {
-      if (token !== solveToken) return;
-      error = err;
-      for (const id of session.boundaryNodes) {
-        if (statuses[id] === "pending") statuses[id] = "error";
+
+      const failures = new Map();
+      for (const result of results) {
+        if (result.status === "rejected") {
+          if (!firstError) firstError = result.reason;
+          continue;
+        }
+        if (result.value && !result.value.ok) {
+          if (!firstError) firstError = result.value.err;
+          failures.set(result.value.fingerprint, result.value.err);
+        }
       }
-      emit();
+
+      for (const job of frontier) {
+        setStatus(job.id, failures.has(job.fingerprint) ? "error" : "ok");
+      }
     }
+
+    if (token !== solveToken) return;
+    error = firstError;
+    emit();
     compute();
   }
 

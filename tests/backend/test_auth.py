@@ -13,6 +13,13 @@ from app.main import app
 from app.services.batch_service import BatchService, get_batch_service
 
 
+@pytest.fixture(autouse=True)
+def _clear_token_cache():
+    deps.clear_token_cache()
+    yield
+    deps.clear_token_cache()
+
+
 def test_missing_token_is_401():
     with pytest.raises(HTTPException) as exc:
         get_current_user(None)
@@ -53,6 +60,42 @@ def test_valid_token_returns_identity_and_checks_revocation(monkeypatch):
     assert user["email_verified"] is True
     assert user["token"] == "good"
     assert seen["check_revoked"] is True
+
+
+def test_token_cache_hit_avoids_reverification(monkeypatch):
+    monkeypatch.setattr("app.auth.deps.get_app", lambda: object())
+    calls = []
+
+    def _verify(_token, **kwargs):
+        calls.append(kwargs)
+        return {"uid": "u1", "email": "e@x.com", "email_verified": True}
+
+    monkeypatch.setattr("app.auth.deps.auth.verify_id_token", _verify)
+
+    assert get_current_user("Bearer tok")["uid"] == "u1"
+    assert get_current_user("Bearer tok")["uid"] == "u1"
+    assert len(calls) == 1
+
+
+def test_token_cache_expiry_reverifies(monkeypatch):
+    monkeypatch.setattr("app.auth.deps.get_app", lambda: object())
+    calls = []
+
+    def _verify(_token, **kwargs):
+        calls.append(kwargs)
+        return {"uid": "fresh", "email": "e@x.com", "email_verified": True}
+
+    monkeypatch.setattr("app.auth.deps.auth.verify_id_token", _verify)
+
+    # Pre-seed an already-expired entry for the same token.
+    key = deps._cache_key("tok")
+    deps._token_cache[key] = (
+        {"uid": "stale", "email": "e@x.com", "email_verified": True, "token": "tok"},
+        0.0,
+    )
+
+    assert get_current_user("Bearer tok")["uid"] == "fresh"
+    assert len(calls) == 1
 
 
 def test_parse_allowed_emails_is_case_insensitive_and_separator_tolerant():

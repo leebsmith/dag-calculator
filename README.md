@@ -56,6 +56,11 @@ case-insensitive). An unset or empty allowlist **fails closed**. `GET /session`
 is auth-only and reports `{uid, email, allowed}` so the app can show a blocked
 screen before signing the user out.
 
+Verified tokens are cached in-process for up to 5 minutes (keyed by a SHA-256
+digest, never the raw token) to avoid a revocation lookup on every autosave;
+revocation is therefore eventual within that window. Cache misses always
+re-verify with `check_revoked=True`.
+
 Firebase console setup:
 
 - Enable the **Google** provider under Authentication → Sign-in method.

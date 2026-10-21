@@ -12,6 +12,7 @@ let saveTimer = null;
 let saveState = "idle"; // "idle" | "dirty" | "saving" | "error" | "conflict"
 let conflictRemote = null; // authoritative record returned with a 409
 let onStateChange = null; // observer: ({ state, conflictRemote }) => void
+let retryDelays = [1000, 2000, 4000]; // exponential backoff between retries
 
 function setSaveState(state) {
   saveState = state;
@@ -20,6 +21,10 @@ function setSaveState(state) {
 
 export function setStateObserver(fn) {
   onStateChange = fn;
+}
+
+export function setRetryDelays(delays) {
+  retryDelays = delays;
 }
 
 export function getSaveState() {
@@ -198,28 +203,35 @@ export function deletePermanent(batchId) {
 
 export async function saveNow({ force = false } = {}) {
   if (!active || active.status !== "draft") return;
-  setSaveState("saving");
-  const payload = { name: active.name, ...app.draftState() };
-  try {
-    const updated = await client.upsertBatch(
-      active.id,
-      payload,
-      active.updated_at ?? undefined,
-      force
-    );
-    active = { ...active, persisted: true, updated_at: updated.updated_at };
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
-    return updated;
-  } catch (err) {
-    if (err?.code === "CONFLICT") {
-      markConflict(err.details?.current ?? null);
-      return;
+  let lastError;
+  for (let attempt = 0; attempt <= retryDelays.length; attempt++) {
+    setSaveState("saving");
+    const payload = { name: active.name, ...app.draftState() };
+    try {
+      const updated = await client.upsertBatch(
+        active.id,
+        payload,
+        active.updated_at ?? undefined,
+        force
+      );
+      active = { ...active, persisted: true, updated_at: updated.updated_at };
+      dirty = false;
+      conflictRemote = null;
+      setSaveState("idle");
+      return updated;
+    } catch (err) {
+      if (err?.code === "CONFLICT") {
+        markConflict(err.details?.current ?? null);
+        return;
+      }
+      lastError = err;
+      if (attempt < retryDelays.length) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelays[attempt]));
+      }
     }
-    setSaveState("error");
-    throw err;
   }
+  setSaveState("error");
+  throw lastError;
 }
 
 // Another session wrote after our last observation. Preserve the local edits:
