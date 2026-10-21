@@ -242,3 +242,16 @@ def test_missing_batch_is_404_with_a_detail(client):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Batch not found"
+
+
+def test_oversized_draft_name_returns_422(client):
+    response = client.put("/batches/b1", json=draft_body(name="x" * 201))
+
+    assert response.status_code == 422
+    assert isinstance(response.json()["detail"], list)
+
+
+def test_malformed_batch_id_returns_404(client):
+    assert client.get("/batches/..").status_code == 404
+    assert client.get("/batches/" + "a" * 65).status_code == 404
+    assert client.get("/batches/bad!id").status_code == 404

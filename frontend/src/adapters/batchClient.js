@@ -11,25 +11,34 @@ export function upsertBatch(batchId, payload, baseUpdatedAt, force = false) {
   const body = { ...payload };
   if (baseUpdatedAt !== undefined) body.base_updated_at = baseUpdatedAt;
   if (force) body.force = true;
-  return requestJSON(`/batches/${batchId}`, { method: "PUT", body });
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, { method: "PUT", body });
 }
 
 export function setTrashed(batchId, trashed) {
-  return requestJSON(`/batches/${batchId}`, { method: "PATCH", body: { trashed } });
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
+    method: "PATCH",
+    body: { trashed },
+  });
 }
 
 export function renameBatch(batchId, name) {
-  return requestJSON(`/batches/${batchId}`, { method: "PATCH", body: { name } });
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
+    method: "PATCH",
+    body: { name },
+  });
 }
 
 export function deleteBatch(batchId) {
-  return requestJSON(`/batches/${batchId}`, { method: "DELETE" });
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, { method: "DELETE" });
 }
 
 export function freezeBatch(batchId, payload) {
-  return requestJSON(`/batches/${batchId}/freeze`, { method: "POST", body: payload });
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}/freeze`, {
+    method: "POST",
+    body: payload,
+  });
 }
 
 export function getBatch(batchId) {
-  return requestJSON(`/batches/${batchId}`);
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}`);
 }

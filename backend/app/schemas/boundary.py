@@ -177,12 +177,12 @@ class GristBillRow(BoundaryModel):
 class BatchSolverRequest(BoundaryModel):
     """Input contract for batch_sparge_solver (Brent's method root-finding)."""
 
-    target_abv: Annotated[float, Field(gt=0.0, description="Target ABV in percent (e.g. 5.5)")]
+    target_abv: Annotated[float, Field(gt=0.0, le=100.0, description="Target ABV in percent (e.g. 5.5)")]
     apparent_attenuation: Annotated[float, Field(gt=0.0, le=1.0, description="Expected attenuation fraction")]
-    v_ferm: Annotated[float, Field(gt=0.0, description="Target cold fermenter volume in Liters")]
+    v_ferm: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Target cold fermenter volume in Liters")]
     topology: BatchSpargeTopology = Field(description="Runoff model topology")
-    intensive_value: Annotated[float, Field(gt=0.0, description="R_L:G ratio (L/kg) or runoff ratio r")]
-    grain_bill: list[GristBillRow] = Field(min_length=1, description="Normalized grain bill rows")
+    intensive_value: Annotated[float, Field(gt=0.0, le=1000.0, description="R_L:G ratio (L/kg) or runoff ratio r")]
+    grain_bill: list[GristBillRow] = Field(min_length=1, max_length=50, description="Normalized grain bill rows")
     s_late_add: Annotated[float, Field(ge=0.0, default=0.0, description="Late-addition kettle extract in kg")]
     v_kettle_dead: Annotated[float, Field(ge=0.0, default=0.0, description="Kettle/chiller dead space in Liters")]
     v_kettle_transfer: Annotated[float, Field(ge=0.0, default=0.0, description="Kettle/chiller transfer loss in Liters")]
@@ -196,7 +196,7 @@ class BatchSolverRequest(BoundaryModel):
     hlt_dead_space_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT dead space loss in Liters")]
     hlt_transfer_loss_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT transfer debt in Liters")]
     hlt_coil_floor_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT coil immersion floor in Liters")]
-    max_hlt_volume_l: Annotated[float, Field(gt=0.0, description="Maximum HLT capacity in Liters")]
+    max_hlt_volume_l: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Maximum HLT capacity in Liters")]
 
     @model_validator(mode="after")
     def _check_grain_bill_normalization(self) -> BatchSolverRequest:
@@ -294,11 +294,11 @@ class WaterGristRow(BoundaryModel):
 class WaterSolverRequest(BoundaryModel):
     """Input contract for water_chemistry_solver (Linear Program)."""
 
-    grist: list[WaterGristRow] = Field(min_length=1, description="Grist rows for buffering calculations")
+    grist: list[WaterGristRow] = Field(min_length=1, max_length=50, description="Grist rows for buffering calculations")
     source: IonProfile = Field(description="Working ions from source report")
     target: IonProfile = Field(description="Target water profile ions")
-    v_mash_treat_l: Annotated[float, Field(gt=0.0, description="Mash liquor treatment volume (L)")]
-    v_hlt_treat_l: Annotated[float, Field(ge=0.0, description="HLT liquor treatment volume (L)")]
+    v_mash_treat_l: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Mash liquor treatment volume (L)")]
+    v_hlt_treat_l: Annotated[float, Field(ge=0.0, le=1_000_000.0, description="HLT liquor treatment volume (L)")]
     v_hlt_debt_l: Annotated[float, Field(ge=0.0, default=0.0, description="Undeliverable HLT debt volume (L)")]
     v_sparge_demand_l: Annotated[float, Field(ge=0.0, description="Total sparge volume demand (L)")]
     mash_thickness_l_per_kg: Annotated[float, Field(gt=0.0, description="Resolved L/kg mash thickness")]

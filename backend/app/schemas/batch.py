@@ -2,9 +2,16 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, StringConstraints, model_validator
+
+logger = logging.getLogger("app.schemas.batch")
+
+# Log-only draft-size ceiling (C2): warn above this so we can review real P99
+# payload sizes before enforcing a hard rejection.
+DRAFT_SIZE_WARN_BYTES = 512 * 1024
 
 
 class DraftPayload(BaseModel):
@@ -15,7 +22,7 @@ class DraftPayload(BaseModel):
     stored timestamp means another session wrote in between.
     """
 
-    name: str = "Untitled"
+    name: Annotated[str, StringConstraints(max_length=200)] = "Untitled"
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
     selections: dict[str, dict[str, Any]] = Field(default_factory=dict)
@@ -25,6 +32,17 @@ class DraftPayload(BaseModel):
     # Client "keep mine" escape hatch: when true, the server skips the optimistic
     # baseline comparison but still refuses to overwrite a frozen batch.
     force: bool = False
+
+    @model_validator(mode="after")
+    def _warn_large_draft(self) -> DraftPayload:
+        size = len(self.model_dump_json().encode("utf-8"))
+        if size > DRAFT_SIZE_WARN_BYTES:
+            logger.warning(
+                "draft payload is %d bytes (over the %d-byte high-water mark)",
+                size,
+                DRAFT_SIZE_WARN_BYTES,
+            )
+        return self
 
 
 class BatchPatch(BaseModel):

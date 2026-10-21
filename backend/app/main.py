@@ -23,6 +23,7 @@ from app.schemas.boundary import (
     WaterSolverResponse,
 )
 from app.schemas.catalog import CatalogItem, CatalogItemCreate
+from app.schemas.ids import validate_doc_id
 from app.services import SolverServiceError, solve_batch_request, solve_water_request
 from app.services.batch_service import BatchConflictError, BatchServiceDep
 from app.services.catalog_service import (
@@ -79,6 +80,7 @@ def list_catalog_items(kind: str, user: AllowedUser, service: CatalogServiceDep)
 @app.get("/catalog/{kind}/{item_id}", response_model=CatalogItem)
 def get_catalog_item(kind: str, item_id: str, user: AllowedUser, service: CatalogServiceDep):
     """Load one catalog record owned by the caller."""
+    validate_doc_id(item_id)
     return service.get_item(user["uid"], kind, item_id)
 
 
@@ -106,6 +108,7 @@ def create_catalog_item(
 @app.delete("/catalog/{kind}/{item_id}", status_code=204)
 def delete_catalog_item(kind: str, item_id: str, user: AllowedUser, service: CatalogServiceDep):
     """Permanently delete one of the caller's catalog records."""
+    validate_doc_id(item_id)
     service.delete_item(user["uid"], kind, item_id)
 
 
@@ -123,6 +126,7 @@ def upsert_batch(
     service: BatchServiceDep,
 ):
     """Idempotently create-or-update a draft (client-owned id)."""
+    validate_doc_id(batch_id)
     try:
         return service.upsert_draft(user["uid"], batch_id, payload)
     except BatchConflictError as exc:
@@ -144,6 +148,7 @@ def patch_batch(
     service: BatchServiceDep,
 ):
     """Rename a batch and/or move it to trash (partial metadata update)."""
+    validate_doc_id(batch_id)
     if payload.name is not None:
         service.rename_batch(user["uid"], batch_id, payload.name)
     if payload.trashed is not None:
@@ -158,6 +163,7 @@ def delete_batch(
     service: BatchServiceDep,
 ):
     """Permanently delete a batch owned by the caller."""
+    validate_doc_id(batch_id)
     service.delete_batch(user["uid"], batch_id)
 
 
@@ -169,6 +175,7 @@ def freeze_batch(
     service: BatchServiceDep,
 ):
     """Snapshot a draft's full valuation into an immutable frozen batch."""
+    validate_doc_id(batch_id)
     return service.freeze_batch(user["uid"], batch_id, payload)
 
 
@@ -179,4 +186,5 @@ def get_batch(
     service: BatchServiceDep,
 ):
     """Load a batch (draft or frozen) owned by the caller."""
+    validate_doc_id(batch_id)
     return service.get_batch(user["uid"], batch_id)

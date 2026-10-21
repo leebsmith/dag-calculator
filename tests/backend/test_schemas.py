@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import logging
+
 import pytest
 from conftest import make_batch_request, make_water_request
 from pydantic import ValidationError
 
+from app.schemas.batch import DraftPayload
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSpargeTopology,
@@ -125,3 +128,27 @@ def test_grain_bill_normalization_tolerates_float_drift():
         grain_bill=[GristBillRow(w_i=0.1, yield_i=0.80, mc_i=0.00)] * 10
     )
     assert sum(row.w_i for row in req.grain_bill) == pytest.approx(1.0, abs=1e-6)
+
+
+def test_draft_name_is_capped_at_200_chars():
+    assert DraftPayload(name="x" * 200).name == "x" * 200
+    with pytest.raises(ValidationError):
+        DraftPayload(name="x" * 201)
+
+
+def test_grain_bill_is_capped_at_50_rows():
+    with pytest.raises(ValidationError):
+        make_batch_request(
+            grain_bill=[GristBillRow(w_i=0.02, yield_i=0.80, mc_i=0.00)] * 51
+        )
+
+
+def test_target_abv_has_an_upper_bound():
+    with pytest.raises(ValidationError):
+        make_batch_request(target_abv=150.0)
+
+
+def test_large_draft_warns_but_is_not_rejected(caplog):
+    with caplog.at_level(logging.WARNING, logger="app.schemas.batch"):
+        DraftPayload(roots={"blob": "x" * (512 * 1024 + 16)})
+    assert any("draft payload is" in message for message in caplog.messages)
