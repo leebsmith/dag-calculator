@@ -1,80 +1,35 @@
-// Step-view adapter: binds Alpine to the field-model producer. The view binds to
-// field models; ONLY this adapter + the producer touch the engine. Boundary stubs
-// are the default offline seam (HTTP is Step D's path).
+// Step-view composition root: binds Alpine to the field-model producer. The
+// view binds to field models; only this adapter and the producer touch the
+// engine. Session, boundary runner, draft editor, unit actions, snapshot, and
+// field actions own their respective seams; this module wires them together.
 //
 // Alpine reactivity: methods mutate `this` (the Alpine reactive proxy), never the
 // raw object, so the view re-renders on every change. `main.js` wraps the app in
 // `Alpine.reactive` and binds that proxy to persistence.
 import artifact from "../engine/artifact.json" with { type: "json" };
-import { resolveReference, toBase } from "../engine/index.js";
 import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode } from "../store/unitPrefs.js";
-import { produce, nonlinearFns } from "../views/producer.js";
-import { hamiltonPct } from "../views/hamilton.js";
-import { derivationsFor } from "../views/seedDerivations.js";
-import { registerYeastCard, refreshYeastCard } from "./cards/yeast.js";
-import { registerStyleCard, refreshStyleCard } from "./cards/style.js";
-import { registerHopCard, refreshHopCard } from "./cards/hops.js";
-import { registerLateAdditionsCard, refreshLateAdditionsCard } from "./cards/late-additions.js";
-import { registerTraceMaltsCard, refreshTraceMaltsCard } from "./cards/trace-malts.js";
-import { registerMaltCard, refreshMaltCard } from "./cards/malt.js";
-import { registerMashCard, refreshMashCard } from "./cards/mash.js";
+import { installSnapshot } from "../store/snapshot.js";
+import { registerYeastCard } from "./cards/yeast.js";
+import { registerStyleCard } from "./cards/style.js";
+import { registerHopCard } from "./cards/hops.js";
+import { registerLateAdditionsCard } from "./cards/late-additions.js";
+import { registerTraceMaltsCard } from "./cards/trace-malts.js";
+import { registerMaltCard } from "./cards/malt.js";
+import { registerMashCard } from "./cards/mash.js";
 import { registerUserCatalogUi } from "./userCatalogUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
+import { createFieldAttribution } from "./fieldAttribution.js";
+import { installFieldActions } from "./fieldActions.js";
 import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
-import { installSnapshot } from "../store/snapshot.js";
-
-// The canonical key for a dotted path: the resolved node id plus its field
-// suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
-function fieldKey(path) {
-  const r = resolveReference(artifact, path);
-  if (!r) return null;
-  return r.suffix.length ? `${r.nodeId}.${r.suffix.join(".")}` : r.nodeId;
-}
-
-// Collect every `ref` path referenced by a predicate (tree of op/args/lhs/rhs/ref).
-function refPaths(node, out = new Set()) {
-  if (node === null || typeof node !== "object") return out;
-  if ("ref" in node) out.add(node.ref);
-  if (Array.isArray(node)) {
-    for (const item of node) refPaths(item, out);
-  } else {
-    for (const value of Object.values(node)) refPaths(value, out);
-  }
-  return out;
-}
-
-// Map every manifest field to the step slice that displays it, keyed by
-// `fieldKey`. Lets violations land on the card that owns the field.
-function buildFieldSliceMap() {
-  const map = new Map();
-  for (const step of steps) {
-    for (const entry of step.fields) {
-      const id = typeof entry === "object" && entry.collection ? entry.collection : typeof entry === "string" ? entry : entry.id;
-      if (!id) continue;
-      const key = fieldKey(id);
-      if (key && !map.has(key)) map.set(key, step.slice);
-    }
-  }
-  return map;
-}
-
-// Selection reference root (e.g. "water.source_report_id") -> its selection node
-// id (e.g. "water.source_report"), for the copy-in cascade.
-function refToSelection(artifact) {
-  const map = new Map();
-  for (const [id, node] of Object.entries(artifact.nodes)) {
-    if (node.kind === "selection") map.set(node.ref, id);
-  }
-  return map;
-}
-
+import { installNavigation } from "./navigation.js";
+import { createStepView } from "./stepView.js";
 
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
@@ -84,63 +39,15 @@ export function createStepApp(options = {}) {
   cache.syncUserItems(userCatalog.catalogs);
 
   // Boundary seam: offline stubs by default (tests, no API base); the real
-  // solvers over HTTP when explicitly enabled. The engine stays synchronous —
-  // the adapter pre-resolves boundaries and seeds the cache before computing.
-  // HTTP is an explicit boolean (never the truthiness of the base string); the
-  // product entry (main.js) passes `useHttp: true`.
+  // solvers over HTTP when explicitly enabled. HTTP is an explicit boolean
+  // (never the truthiness of the base string); main.js passes `useHttp: true`.
   const useHttp = options.useHttp ?? false;
   const fetchImpl = options.fetchImpl;
   const debounceMs = options.debounceMs ?? 300;
 
   const session = createSession({ artifact, cache, master, useHttp });
-  const boundaryNodes = session.boundaryNodes;
-
+  const attribution = createFieldAttribution(artifact, steps);
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
-  const fieldSlice = buildFieldSliceMap();
-  const refToSelectionMap = refToSelection(artifact);
-
-  // Selection node -> the step that displays its picker (ref root). Fallback
-  // attribution for a selection's field-level domains when the field itself is
-  // not listed in the manifest (e.g. most equipment constants, water reports).
-  const selectionSlice = (() => {
-    const map = new Map();
-    for (const step of steps) {
-      for (const entry of step.fields) {
-        const id = typeof entry === "string" ? entry : entry.id;
-        if (!id) continue;
-        for (const [selId, node] of Object.entries(artifact.nodes)) {
-          if (node.kind === "selection" && node.ref === id) map.set(selId, step.slice);
-        }
-      }
-    }
-    return map;
-  })();
-
-  // The step slice a dotted path belongs to: its displayed field, else its
-  // selection's picker step, else the path's leading segment.
-  function sliceForPath(path) {
-    const ref = resolveReference(artifact, path);
-    return (
-      fieldSlice.get(fieldKey(path)) ??
-      (ref && selectionSlice.get(ref.nodeId)) ??
-      path.split(".")[0]
-    );
-  }
-
-  // Slices to surface a relation on: map each referenced path through the
-  // manifest (so batch.yeast.* lands on the yeast card), falling back to the
-  // selection's picker step then the path's leading segment.
-  function relationSlices(predicate) {
-    const slices = new Set();
-    for (const path of refPaths(predicate)) slices.add(sliceForPath(path));
-    return slices;
-  }
-
-  // Seeded from the manifest so the first paint — which runs before the first
-  // (async) compute — can read `stepStatus[slice]` without racing.
-  const initialStepStatus = Object.fromEntries(
-    steps.map((step) => [step.slice, { relations: [], domains: [] }])
-  );
   // The pristine auth-scoped baseline to restore on sign-out.
   const baselineRoots = master.allRoots();
 
@@ -157,7 +64,7 @@ export function createStepApp(options = {}) {
     activeStep: steps[ui.activeIndex],
     visibleSteps: [],
     navDir: null, // "next" | "prev" — drives the step-card entry animation
-    stepStatus: initialStepStatus,
+    stepStatus: attribution.initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
     unitGroups: UNIT_GROUPS,
     unitMode: ui.unitMode,
@@ -168,11 +75,13 @@ export function createStepApp(options = {}) {
     relations: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
-    boundaryStatuses: Object.fromEntries(boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])),
+    boundaryStatuses: Object.fromEntries(
+      session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
+    ),
     boundaryError: null,
 
     get boundaryPending() {
-      return useHttp && boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
+      return useHttp && session.boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
     },
 
     // Entry animation class for the active card, keyed by nav direction. Empty
@@ -187,9 +96,9 @@ export function createStepApp(options = {}) {
       this.onChange?.();
     },
 
-    // Replace the editable state (draft restore / open). Rebuilds the engine
-    // from the loaded roots/collections; default collections fall back to the
-    // seed cache when the draft predates them.
+    // Replace the editable state (draft restore / open). The session rebuilds
+    // the engine from the loaded roots/collections; default collections fall
+    // back to the seed cache when the draft predates them.
     async loadState(state) {
       session.rebuild(state);
       if (useHttp) await this.solveNow();
@@ -202,7 +111,6 @@ export function createStepApp(options = {}) {
       session.engine.setRoot(nodeId, value);
     },
 
-    // Resolve every boundary in topological order (via HTTP), then recompute.
     // The runner owns debounce, supersession, dedupe, and status/error state.
     solveNow() {
       return runner.solveNow();
@@ -213,82 +121,7 @@ export function createStepApp(options = {}) {
     },
 
     compute() {
-      const engine = session.getEngine();
-      // Boundary-derived values may be unresolved (pending/failed solve); a
-      // failed resolution must not blank the whole card, so those paths yield
-      // no state rather than throwing.
-      const safe = (fn) => {
-        try {
-          return fn();
-        } catch {
-          return [];
-        }
-      };
-      const fieldDomains = safe(() => engine.fieldDomainStates());
-      const fieldDomainIndex = {};
-      for (const d of fieldDomains) fieldDomainIndex[`${d.selectionNodeId}.${d.field}`] = d;
-
-      const collectionDomains = safe(() => engine.collectionDomainStates());
-      const collectionIndex = {};
-      for (const d of collectionDomains) {
-        (collectionIndex[d.nodeId] ??= {});
-        (collectionIndex[d.nodeId][d.index] ??= {});
-        collectionIndex[d.nodeId][d.index][d.field] = d;
-      }
-
-      this.styleConformance = this.styleConformanceReport?.() ?? null;
-      this.styleSai = this.styleConformance?.sai ?? null;
-
-      const all = produce(artifact, steps, registry, engine, {
-        references: cache.references,
-        ui,
-        fieldDomains: fieldDomainIndex,
-        collectionDomains: collectionIndex,
-        conformance: this.styleConformance,
-      });
-      this.fieldsBySlice = Object.fromEntries(
-        steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
-      );
-      this.relations = safe(() => engine.relationStates());
-      this.domains = safe(() => engine.domainStates());
-      this.fieldDomains = fieldDomains;
-      this.collectionDomains = collectionDomains;
-      refreshYeastCard(this, cardCtx);
-      refreshStyleCard(this, cardCtx);
-      this.violationCount =
-        this.relations.filter((r) => !r.holds).length +
-        this.domains.filter((d) => !d.holds).length +
-        fieldDomains.filter((d) => !d.holds).length +
-        collectionDomains.filter((d) => !d.holds).length;
-
-      this.stepStatus = {};
-      for (const step of steps) this.stepStatus[step.slice] = { relations: [], domains: [] };
-      for (const r of this.relations) {
-        if (r.holds) continue;
-        for (const slice of relationSlices(relationDefs[r.id]?.predicate)) {
-          this.stepStatus[slice]?.relations.push(r);
-        }
-      }
-      for (const d of this.domains) {
-        if (d.holds) continue;
-        this.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
-      }
-      for (const d of fieldDomains) {
-        if (d.holds) continue;
-        const slice =
-          fieldSlice.get(`${d.selectionNodeId}.${d.field}`) ?? selectionSlice.get(d.selectionNodeId);
-        this.stepStatus[slice]?.domains.push(d);
-      }
-      for (const d of collectionDomains) {
-        if (d.holds) continue;
-        this.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
-      }
-      // Refresh the card readouts (reactive).
-      refreshMaltCard(this, cardCtx);
-      refreshTraceMaltsCard(this, cardCtx);
-      refreshHopCard(this, cardCtx);
-      refreshLateAdditionsCard(this, cardCtx);
-      refreshMashCard(this, cardCtx);
+      view.compute(this);
     },
 
     // Re-merge user-authored items into the cache/engine and re-render. Called
@@ -320,222 +153,6 @@ export function createStepApp(options = {}) {
       }
     },
 
-    syncNav() {
-      this.activeIndex = ui.activeIndex;
-      this.highwater = ui.highwater;
-      this.activeStep = steps[ui.activeIndex];
-      this.visibleSteps = steps
-        .slice(0, ui.highwater + 1)
-        .map((s, i) => ({ ...s, index: i, active: i === ui.activeIndex, complete: i < ui.activeIndex }));
-    },
-
-    selectStep(index) {
-      if (index < 0 || index > ui.highwater) return;
-      ui.activeIndex = index;
-      this.syncNav();
-    },
-
-    next() {
-      const index = Math.min(ui.activeIndex + 1, steps.length - 1);
-      if (index === ui.activeIndex) return;
-      this.navDir = "next";
-      ui.activeIndex = index;
-      ui.highwater = Math.max(ui.highwater, ui.activeIndex);
-      this.syncNav();
-    },
-
-    prev() {
-      const index = Math.max(ui.activeIndex - 1, 0);
-      if (index === ui.activeIndex) return;
-      this.navDir = "prev";
-      ui.activeIndex = index;
-      this.syncNav();
-    },
-
-    // Keyboard mirror of the up/down rail (arrows + page up/down). Ignored while
-    // focus is in a form control so it doesn't hijack arrow keys.
-    keyNav(direction, event) {
-      const el = event?.target;
-      if (el?.closest?.("input, select, textarea")) return;
-      if (direction === "prev") this.prev();
-      else this.next();
-    },
-
-    // Clamp an editable value to the envelope of its selected component, when
-    // one applies (a batch root bounded by a selection's fields). Returns the
-    // clamped value; an unset optional selection contributes no bounds.
-    clampToSelection(nodeId, value) {
-      if (typeof value !== "number") return value;
-      const engine = session.getEngine();
-      let low;
-      let high;
-      if (nodeId === "batch.hlt_starting_volume_l") {
-        low = engine.resolve("equipment.hlt_coil_floor_l");
-        high = engine.resolve("equipment.max_hlt_volume_l");
-      } else {
-        return value;
-      }
-      if (typeof low === "number" && value < low) value = low;
-      if (typeof high === "number" && value > high) value = high;
-      return value;
-    },
-
-    edit(field, value) {
-      if (!field.editable || !field.target) return;
-      const engine = session.getEngine();
-      let raw = field.control === "number" ? Number(value) : value;
-      // The input renders in the field's display unit (dimension default or
-      // per-field override); convert the typed value back to the base unit
-      // before it reaches the engine.
-      if (field.control === "number" && field.dimension && field.unitId && value !== "") {
-        raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
-      }
-      // Store the raw value live (no envelope clamp here): clamping on every
-      // keystroke fights the user mid-typing, so it is deferred to commitField
-      // on blur. The report-only relations still flag out-of-range values.
-      this.setRoot(field.target.nodeId, raw);
-      if (field.target.nodeId === "batch.topology") this.resetIntensiveValue(raw);
-      if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    // Clamp an envelope-bounded number field to its selected component's range
-    // when the field is committed (blur/change). Live `edit` stores raw so typing
-    // isn't fought; this enforces the envelope only when the value is final.
-    commitField(field) {
-      if (!field.editable || !field.target || field.control !== "number") return;
-      const current = this.master.getRoot(field.target.nodeId);
-      if (typeof current !== "number") return;
-      const clamped = this.clampToSelection(field.target.nodeId, current);
-      if (clamped !== current) {
-        this.setRoot(field.target.nodeId, clamped);
-        this.scheduleSolve();
-        this.notify();
-      }
-    },
-
-    // Restore a seed-derived root to its source value (the "↺" affordance shown
-    // once the user has overridden it).
-    resetField(field) {
-      const nodeId = field?.target?.nodeId;
-      if (!nodeId || field.seededValue === undefined) return;
-      this.setRoot(nodeId, field.seededValue);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    // Switching topology reinterprets the intensive value (L/kg vs dimensionless
-    // r), so reset it to the topology's sensible default (mirrors the legacy
-    // onTopologyChange).
-    resetIntensiveValue(topology) {
-      const constant =
-        topology === "runoff_ratio" ? "default_runoff_ratio" : "default_mash_thickness_l_per_kg";
-      const value = artifact.constants[constant]?.value;
-      if (typeof value === "number") this.setRoot("batch.intensive_value", value);
-    },
-
-    // Selection -> root copy-in (view-only). Picking a source report / target
-    // profile pre-fills the editable ion roots; they remain user-editable.
-    copyInCascade(refRootId) {
-      const selectionNode = refToSelectionMap.get(refRootId);
-      if (!selectionNode) return;
-      const component = session.getEngine().get(selectionNode);
-      if (!component) return;
-      for (const { rootId, derive } of derivationsFor(selectionNode)) {
-        const value = derive(component);
-        if (typeof value === "number" || (typeof value === "string" && value !== "")) {
-          this.setRoot(rootId, value);
-        }
-      }
-    },
-
-    runAction(action) {
-      this[action.handler]?.();
-    },
-
-    editCell(field, rowIndex, columnId, value) {
-      const engine = session.getEngine();
-      const column = field.columns.find((c) => c.id === columnId);
-      // Convert a display-unit cell back to the base unit before storing; a
-      // dimensioned cell with no display unit still stores a real number (not
-      // the input's string).
-      let raw = value;
-      if (value !== "" && column?.dimension) {
-        const n = Number(value);
-        raw = column.displayUnit ? toBase(artifact, column.dimension, column.displayUnit, n) : n;
-      }
-      const rows = (engine.get(field.target.nodeId) ?? []).map((row, i) =>
-        i === rowIndex ? { ...row, [columnId]: raw } : { ...row }
-      );
-      // Formulation rule (TODO/L3): `parts` is the grist authoring column; `pct`
-      // (and thus the grain-bill `w_i`) is the normalized allocation that sums to
-      // exactly 100% at 0.1% resolution. Boil hops use the same parts -> pct rule
-      // over their IBU pool.
-      let next = rows;
-      if (columnId === "parts") {
-        if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
-        else if (field.target.nodeId === "batch.boil_hops") next = this.normalizeHopRows(rows);
-      }
-      engine.setCollection(field.target.nodeId, next);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    addRow(field) {
-      const engine = session.getEngine();
-      const node = artifact.nodes[field.target.nodeId];
-      const schema = artifact.primitive_schemas[node.item_schema] ?? {};
-      // Seed a row with type-appropriate defaults (numbers, first taxonomy
-      // member, schema default) rather than empty strings, so a new row is
-      // well-formed and doesn't POST a request that fails validation.
-      const defaults = {};
-      for (const [key, spec] of Object.entries(schema)) {
-        if (spec.default !== undefined) defaults[key] = spec.default;
-        else if (spec.type === "boolean") defaults[key] = false;
-        else if (spec.taxonomy) defaults[key] = artifact.taxonomies[spec.taxonomy]?.[0] ?? "";
-        else if (spec.dimension) defaults[key] = 0;
-        else defaults[key] = "";
-      }
-      engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), defaults]);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    removeRow(field, rowIndex) {
-      const engine = session.getEngine();
-      const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
-      let next = rows;
-      if (field.target.nodeId === "grist.major_malts") next = this.normalizeGrist(rows);
-      else if (field.target.nodeId === "batch.boil_hops") next = this.normalizeHopRows(rows);
-      engine.setCollection(field.target.nodeId, next);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    // Hamilton-normalize the grain bill's `pct` (fractions summing to 1) from its
-    // `parts`.
-    normalizeGrist(rows) {
-      if (!rows.length) return rows;
-      const pcts = hamiltonPct(rows.map((row) => row.parts));
-      return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
-    },
-
-    // Hamilton-normalize the boil-hop IBU shares (`pct`) from their `parts`.
-    normalizeHopRows(rows) {
-      if (!rows.length) return rows;
-      const pcts = hamiltonPct(rows.map((row) => row.parts));
-      return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
-    },
-
-    // Dispatch a collection-table's add-row action: a bespoke handler named by
-    // the manifest, else the generic blank-row add.
-    runCollectionAdd(field) {
-      const handler = field.addAction && this[field.addAction];
-      if (typeof handler === "function") handler.call(this);
-      else this.addRow(field);
-    },
-
     // Explicit boot (main.js owns it after auth). Deliberately NOT named
     // `init`: Alpine auto-calls an `init()` method on `x-data` objects, which
     // would run a solve before sign-in (and 401).
@@ -545,10 +162,9 @@ export function createStepApp(options = {}) {
       this.syncNav();
     },
 
-    // Reset to the pristine auth-scoped baseline (sign-out). Bumps the solve
-    // token so any in-flight boundary response is discarded, rebuilds the engine
-    // from the seed cache, and returns the UI to the first step. Unit prefs are
-    // device-local and deliberately preserved.
+    // Reset to the pristine auth-scoped baseline (sign-out). The runner discards
+    // any in-flight solve and the session rebuilds from the seed cache; unit
+    // prefs are device-local and deliberately preserved.
     teardown() {
       runner.reset();
       session.reset(baselineRoots);
@@ -558,6 +174,18 @@ export function createStepApp(options = {}) {
       this.compute();
     },
   };
+
+  const view = createStepView({
+    artifact,
+    steps,
+    registry,
+    cache,
+    ui,
+    session,
+    cardCtx,
+    relationDefs,
+    attribution,
+  });
 
   const runner = createBoundaryRunner({
     session,
@@ -571,6 +199,12 @@ export function createStepApp(options = {}) {
     },
   });
 
+  installNavigation(app, { ui, steps });
+  installFieldActions(app, {
+    artifact,
+    session,
+    refToSelectionMap: attribution.refToSelectionMap,
+  });
   installDraftEditor(app, { artifact, ui, session });
   installUnitActions(app, { artifact, ui });
   installSnapshot(app, { artifact, cache, master, session });
@@ -592,5 +226,6 @@ export function createStepApp(options = {}) {
       if (node.kind === "selection") session.engine.invalidate(id);
     }
   };
+
   return app;
 }
