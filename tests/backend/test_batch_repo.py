@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from app.repositories.batch_repo import BatchRepository
+from app.repositories.batch_repo import BatchRepository, get_batch_repo
 
 
 class FakeDocumentSnapshot:
@@ -189,3 +189,12 @@ def test_freeze_refuses_foreign_or_missing_drafts():
     assert store.freeze("u2", "b1", {}) is None
     assert store.freeze("u1", "missing", {}) is None
     assert len(db.batches.docs) == before
+
+
+def test_get_batch_repo_wraps_the_firestore_client():
+    db = FakeDb()
+
+    store = get_batch_repo(db)
+
+    assert isinstance(store, BatchRepository)
+    assert store._coll is db.batches

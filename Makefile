@@ -17,7 +17,7 @@ OUT   ?=
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help local-dev check test verify build seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help local-dev check test test-oracle coverage verify build seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
@@ -27,6 +27,8 @@ help:
 	@echo "  local-dev       Run frontend + Firebase emulators + backend"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
+	@echo "  test-oracle     Differential conformance against the legacy checkout"
+	@echo "  coverage        Frontend + backend coverage reports"
 	@echo "  verify          check + test + production build"
 	@echo "  build           Production frontend bundle + dist assertions"
 	@echo "  seeds           Rebuild normalized seed catalogs from data/sources/"
@@ -66,6 +68,16 @@ test:
 	cd frontend && npm test
 	@echo "Running backend pytest..."
 	cd backend && uv run pytest ../tests/backend/
+
+test-oracle:
+	cd frontend && REQUIRE_ORACLE=1 node --test ../tests/conformance/parity.test.js
+
+coverage:
+	@echo "Frontend coverage (loaded modules)..."
+	cd frontend && node --test --experimental-test-coverage ../tests/frontend/*.test.js ../tests/conformance/*.test.js ../tests/guards/*.test.js
+	@echo "Backend coverage..."
+	cd backend && uv run --with pytest-cov pytest ../tests/backend/ -p no:tach --cov=app --cov-report=term-missing
+	@rm -f backend/.coverage
 
 build:
 	@echo "Building frontend bundle..."

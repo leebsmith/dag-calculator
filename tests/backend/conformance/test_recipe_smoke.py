@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -29,6 +30,8 @@ DRIVER = REPO_ROOT / "tests" / "conformance" / "emit-default-requests.mjs"
 def _default_requests() -> dict:
     node = shutil.which("node")
     if node is None:
+        if os.environ.get("REQUIRE_NODE") == "1":
+            pytest.fail("REQUIRE_NODE=1 but node was not found on PATH")
         pytest.skip("node is required for the recipe smoke test")
     result = subprocess.run(
         [node, str(DRIVER)],

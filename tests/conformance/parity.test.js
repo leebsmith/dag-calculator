@@ -46,6 +46,13 @@ const mash = await tryImport("frontend/src/utils/mashSchedule.js");
 const water = await tryImport("frontend/src/utils/waterChemistry.js");
 
 const haveOracle = Boolean(pure && mash && water);
+const requireOracle = process.env.REQUIRE_ORACLE === "1";
+if (!haveOracle && requireOracle) {
+  throw new Error(
+    `REQUIRE_ORACLE=1 but the oracle modules are missing at ${oracleRepo} ` +
+      "(set BREWING_ORACLE_REPO to the legacy checkout)"
+  );
+}
 const opts = haveOracle ? {} : { skip: `oracle not found at ${oracleRepo}` };
 
 function close(actual, expected, tol = 1e-9, label = "") {

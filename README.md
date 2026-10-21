@@ -36,6 +36,8 @@ make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
 make verify      # check + test + production build
 make build       # frontend bundle + dist assertions (unresolved includes, assets)
+make test-oracle # differential conformance against ~/Development/brewing-calculator
+make coverage    # frontend line/branch + backend statement coverage
 ```
 
 ## Seeds & scraping
