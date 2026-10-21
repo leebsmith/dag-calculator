@@ -7,6 +7,7 @@ import { walk, read, rel } from "./util.js";
 const ALLOW = [
   "frontend/src/engine/",
   "frontend/src/adapters/",
+  "frontend/src/store/snapshot.js",
   "frontend/src/views/producer.js",
 ];
 

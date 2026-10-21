@@ -6,7 +6,7 @@
 // raw object, so the view re-renders on every change. `main.js` wraps the app in
 // `Alpine.reactive` and binds that proxy to persistence.
 import artifact from "../engine/artifact.json" with { type: "json" };
-import { canonicalize, resolveReference, sha256Hex, toBase } from "../engine/index.js";
+import { resolveReference, toBase } from "../engine/index.js";
 import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { createUserCatalog, isUserItem } from "../store/userCatalog.js";
@@ -28,6 +28,7 @@ import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
 import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
+import { installSnapshot } from "../store/snapshot.js";
 
 // The canonical key for a dotted path: the resolved node id plus its field
 // suffix (e.g. "equipment.max_hlt_volume_l" -> "equipment.profile.max_hlt_volume_l").
@@ -180,74 +181,6 @@ export function createStepApp(options = {}) {
       if (this.navDir === "next") return "step-enter-down";
       if (this.navDir === "prev") return "step-enter-up";
       return "";
-    },
-
-    // Editable-state snapshot (roots + collections) for draft autosave. The
-    // engine mutates the `collections` closure in place, so this reflects the
-    // live state.
-    draftState() {
-      return {
-        roots: master.allRoots(),
-        collections: { ...session.collections() },
-        schema_version: artifact.schema_version ?? 2,
-      };
-    },
-
-    // Full valuation (node-id -> value for every node) + provenance (per
-    // selection: source_template_id + content-hash of the referenced seed
-    // component). Browser-computed — the backend only stores it.
-    freezePayload() {
-      const engine = session.getEngine();
-      const valuation = {};
-      for (const id of engine.topoOrder) {
-        const node = artifact.nodes[id];
-        // A selection with no chosen component has no value (ref is "").
-        if (node.kind === "selection") {
-          const refValue = engine.get(node.ref);
-          if (refValue === "" || refValue === undefined) {
-            valuation[id] = null;
-            continue;
-          }
-        }
-        valuation[id] = engine.get(id);
-      }
-      const provenance = {};
-      for (const [id, node] of Object.entries(artifact.nodes)) {
-        if (node.kind !== "selection") continue;
-        const refValue = engine.get(node.ref);
-        if (refValue === "" || refValue === undefined) continue;
-        const component = cache.references[node.schema]?.[refValue];
-        provenance[id] = {
-          source_template_id: refValue,
-          source_revision: component ? sha256Hex(canonicalize(component)) : null,
-        };
-      }
-      return {
-        valuation,
-        provenance,
-        schema_version: artifact.schema_version ?? 2,
-        conformance: this.styleConformanceReport?.() ?? null,
-      };
-    },
-
-    // Compare a frozen batch's provenance hashes against the CURRENT seeds,
-    // returning the selections whose referenced component has changed (or gone
-    // missing) since freeze. Drift is explicit, never silent (seed-substrate §4).
-    detectDrift(provenance) {
-      const drift = [];
-      for (const [selectionId, p] of Object.entries(provenance ?? {})) {
-        const node = artifact.nodes[selectionId];
-        if (!node || node.kind !== "selection") continue;
-        const component = cache.references[node.schema]?.[p.source_template_id];
-        if (!component) {
-          drift.push({ selectionNodeId: selectionId, templateId: p.source_template_id, reason: "missing" });
-          continue;
-        }
-        if (sha256Hex(canonicalize(component)) !== p.source_revision) {
-          drift.push({ selectionNodeId: selectionId, templateId: p.source_template_id, reason: "changed" });
-        }
-      }
-      return drift;
     },
 
     notify() {
@@ -640,6 +573,7 @@ export function createStepApp(options = {}) {
 
   installDraftEditor(app, { artifact, ui, session });
   installUnitActions(app, { artifact, ui });
+  installSnapshot(app, { artifact, cache, master, session });
 
   registerYeastCard(app, cardCtx);
   registerStyleCard(app, cardCtx);
