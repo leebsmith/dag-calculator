@@ -231,6 +231,8 @@ Import paths (from the file doing the importing; `utils.js` is a barrel):
 | `x-text="c.label + (c.unit ? ' (' + c.unit + ')' : '')"` | `x-text="fmt.formatColumnHeader(c)"` |
 | `:value="(row.yield_fraction * 100).toFixed(0)"` | `:value="fmt.toPercentValue(row.yield_fraction, 0)"` |
 | `:href="selectedYeast.url"` | `:href="fmt.safeHref(selectedYeast.url)"` |
+| `x-text="opt"` in a choice `<option>` | `x-text="fmt.optionLabel(f.optionLabels, opt)"` |
+| hardcoded `<option value="…">Raw code</option>` | `optionLabels` on the `views/registry/*` entry, rendered via `fmt.optionLabel` |
 | `catch {}` | `catch (err) { reportError("scope", err); ... }` |
 | `x-show="field && field.seeded"` | card getter returning `provenanceFor(field)`, then `x-show="f.provenance.showSeed"` |
 | `@click="unitsOpen = false"` | `@click="closeUnits()"` |
@@ -277,6 +279,7 @@ Then confirm:
 - `tests/guards/show-dereference.test.js` (A10): no nullable dereference behind `x-show`.
 - `tests/guards/installer-contract.test.js`: installer key sets are declared and collide-free.
 - `tests/guards/determinism.test.js` (A9) and `tests/guards/no-reactivity.test.js` (A1) pass.
+- `tests/guards/option-labels.test.js`: every choice selector labels its full taxonomy (the set is derived from the step manifest — add the registry `optionLabels`, never edit the guard's list).
 - `tests/frontend/utils.test.js` covers any util you added or changed.
 - `tests/conformance/validation-parity.test.js` + `tests/backend/conformance/test_validation_parity.py` agree.
 - No engine/artifact imports were added to the utils barrel.
@@ -284,6 +287,7 @@ Then confirm:
 ## Neighbouring invariants (do not duplicate, do respect)
 
 - `<select :value>` with `x-for` options needs an explicit `:selected` on each option (`tests/guards/select-binding.test.js`).
+- Presentation metadata — `label`, `optionLabels`, `hint`, `unit` — lives in `views/registry/*`; templates and cards read it, never hardcode it. Choice selectors and reference pickers both resolve through `fmt.optionLabel`.
 - Field models come from `fieldsBySlice` / `fieldsById`; never resolve engine paths in a template.
 - Unit conversion is display-only: writes store base units (`tests/guards/display-only-units.test.js`).
 - `data/artifact.json` is canonical; artifact changes still require `node scripts/emit-artifact-inventory.mjs` and doc updates.
