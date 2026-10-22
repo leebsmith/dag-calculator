@@ -336,6 +336,8 @@ export function refreshWaterCard(app, ctx) {
         ion,
         pin,
         label,
+        checkboxLabel: `Target ${label}`,
+        inputLabel: `${label} target (ppm)`,
         checked: isChecked,
         targetValue: typeof targetVal === "number" ? targetVal : 0,
         valueText: isValued ? fmtPpm(targetVal) : AUTO_TARGET,

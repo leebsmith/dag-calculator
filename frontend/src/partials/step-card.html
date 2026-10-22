@@ -244,6 +244,7 @@
                   class="form-checkbox"
                   :checked="r.checked"
                   :disabled="waterTargetLocked"
+                  :aria-label="r.checkboxLabel"
                   @change="toggleWaterTarget(r.pin)"
                 />
               </td>
@@ -257,6 +258,7 @@
                     step="1"
                     class="form-input tabular-nums"
                     :value="r.targetValue"
+                    :aria-label="r.inputLabel"
                     @input="editWaterTarget(r.pin, $event.target.value)"
                   />
                 </template>
