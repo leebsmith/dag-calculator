@@ -249,6 +249,10 @@ class WaterStrategy(StrEnum):
     FLAVOR = "FLAVOR"
     CALCIUM_FLOOR = "CALCIUM_FLOOR"
     OPTIMIZE = "OPTIMIZE"
+    AUTO = "AUTO"
+    HYBRID = "HYBRID"
+    BASELINE = "BASELINE"
+    CUSTOM = "CUSTOM"
 
 
 class SaltDistribution(StrEnum):

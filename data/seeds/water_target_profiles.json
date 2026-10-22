@@ -3,13 +3,14 @@
     "id": "soft-pilsner",
     "name": "Soft Pilsner",
     "description": "Soft, low-mineral profile for delicate lagers.",
-    "calcium_floor_ppm": 50,
-    "calcium_ca": 40,
-    "magnesium_mg": 5,
-    "sodium_na": 5,
-    "sulfate_so4": 50,
-    "chloride_cl": 50,
-    "alkalinity_as_caco3": 0
+    "calcium_floor_ppm": 15,
+    "calcium_ca": 15,
+    "magnesium_mg": 3,
+    "sodium_na": 4,
+    "sulfate_so4": 10,
+    "chloride_cl": 10,
+    "alkalinity_as_caco3": 15,
+    "mode": "OPTIMIZE"
   },
   "balanced-pale": {
     "id": "balanced-pale",
@@ -19,9 +20,10 @@
     "calcium_ca": 50,
     "magnesium_mg": 5,
     "sodium_na": 10,
-    "sulfate_so4": 75,
-    "chloride_cl": 75,
-    "alkalinity_as_caco3": 0
+    "sulfate_so4": 100,
+    "chloride_cl": 100,
+    "alkalinity_as_caco3": 0,
+    "mode": "CALCIUM_FLOOR"
   },
   "hoppy-ipa": {
     "id": "hoppy-ipa",
@@ -31,33 +33,36 @@
     "calcium_ca": 75,
     "magnesium_mg": 5,
     "sodium_na": 10,
-    "sulfate_so4": 150,
+    "sulfate_so4": 250,
     "chloride_cl": 50,
-    "alkalinity_as_caco3": 0
+    "alkalinity_as_caco3": 0,
+    "mode": "CALCIUM_FLOOR"
   },
   "malty-amber": {
     "id": "malty-amber",
     "name": "Malty / Amber",
-    "description": "Chloride-forward profile that accentuates malt sweetness.",
+    "description": "Chloride-forward profile with a carbonate buffer for malt sweetness.",
     "calcium_floor_ppm": 50,
     "calcium_ca": 60,
     "magnesium_mg": 5,
     "sodium_na": 10,
     "sulfate_so4": 50,
-    "chloride_cl": 100,
-    "alkalinity_as_caco3": 0
+    "chloride_cl": 120,
+    "alkalinity_as_caco3": 60,
+    "mode": "HYBRID"
   },
   "dark-stout": {
     "id": "dark-stout",
     "name": "Dark / Stout",
-    "description": "Rounder profile suited to roasted malts.",
+    "description": "Rounder, buffered profile suited to roasted malts.",
     "calcium_floor_ppm": 50,
     "calcium_ca": 75,
     "magnesium_mg": 5,
     "sodium_na": 15,
     "sulfate_so4": 50,
-    "chloride_cl": 65,
-    "alkalinity_as_caco3": 0
+    "chloride_cl": 100,
+    "alkalinity_as_caco3": 150,
+    "mode": "HYBRID"
   },
   "belgian-golden-tripel": {
     "id": "belgian-golden-tripel",
@@ -67,9 +72,10 @@
     "calcium_ca": 50,
     "magnesium_mg": 5,
     "sodium_na": 10,
-    "sulfate_so4": 50,
-    "chloride_cl": 75,
-    "alkalinity_as_caco3": 0
+    "sulfate_so4": 80,
+    "chloride_cl": 60,
+    "alkalinity_as_caco3": 0,
+    "mode": "CALCIUM_FLOOR"
   },
   "belgian-saison": {
     "id": "belgian-saison",
@@ -79,8 +85,9 @@
     "calcium_ca": 50,
     "magnesium_mg": 5,
     "sodium_na": 10,
-    "sulfate_so4": 100,
+    "sulfate_so4": 180,
     "chloride_cl": 60,
-    "alkalinity_as_caco3": 0
+    "alkalinity_as_caco3": 0,
+    "mode": "CALCIUM_FLOOR"
   }
 }
