@@ -14,6 +14,10 @@ export const batchRegistry = {
   "batch.topology": {
     label: "Constraint Topology",
     hint: "Selects which intensive constraint the root-finder consumes.",
+    optionLabels: {
+      r_l_to_g: "Liquor-to-grist ratio (L/kg)",
+      runoff_ratio: "Runnings ratio (r)",
+    },
   },
   "batch.intensive_value": { label: "Intensive value (L/kg or r)" },
   "batch.hlt_starting_volume_l": { label: "HLT starting volume", unit: "L" },

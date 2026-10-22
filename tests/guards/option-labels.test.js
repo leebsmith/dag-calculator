@@ -1,31 +1,25 @@
-// Choice labels: the dose-relevant water choices must map every taxonomy member
-// to human prose, so a new salt form, acid strength, or distribution mode cannot
-// render as a raw code. Grow this list when another code-like choice is labelled.
+// Choice labels: every choice node that renders as a `<select>` must label its
+// whole taxonomy, so a new or renamed choice cannot surface as a raw code. The
+// set is derived from the step manifest via the same projection the view uses,
+// not from a hand-maintained list that can drift.
 
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { projectFields } from "../../frontend/src/views/producer.js";
+import { registry, steps } from "../../frontend/src/views/steps.js";
 import { artifact } from "./util.js";
-import { waterRegistry } from "../../frontend/src/views/registry/water.js";
 
-const LABELLED = [
-  "water.salt_distribution",
-  "water.gypsum_form",
-  "water.cacl2_form",
-  "water.acid_medium",
-];
-
-test("every member of a labelled choice taxonomy has an optionLabel", () => {
+test("every choice-select field labels exactly its taxonomy members", () => {
   const a = artifact();
-  for (const id of LABELLED) {
-    const taxonomy = a.nodes[id]?.taxonomy;
-    assert.ok(taxonomy, `${id} is not a choice node`);
-    const members = a.taxonomies[taxonomy] ?? [];
-    const labels = waterRegistry[id]?.optionLabels ?? {};
-    assert.deepEqual(
-      Object.keys(labels).sort(),
-      [...members].sort(),
-      `${id} optionLabels must cover exactly taxonomy "${taxonomy}"`
-    );
+  const offenders = [];
+  for (const f of projectFields(a, steps, registry)) {
+    if (f.control !== "choice-select") continue;
+    const members = [...(f.options ?? [])].sort();
+    const labels = Object.keys(f.optionLabels ?? {}).sort();
+    if (JSON.stringify(members) !== JSON.stringify(labels)) {
+      offenders.push(`${f.id}: options [${members}] vs labels [${labels}]`);
+    }
   }
+  assert.deepEqual(offenders, [], offenders.join("\n"));
 });

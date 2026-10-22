@@ -38,9 +38,23 @@ export const STYLE_NODES = {
 };
 
 export const styleRegistry = {
-  "batch.style_source": { label: "Style source" },
+  "batch.style_source": {
+    label: "Style source",
+    optionLabels: {
+      styleguide: "Style guide",
+      experimental: "Experimental",
+    },
+  },
   "batch.style_id": { label: "Style" },
-  "batch.fermentation": { label: "Fermentation" },
+  "batch.fermentation": {
+    label: "Fermentation",
+    optionLabels: {
+      ale: "Ale",
+      lager: "Lager",
+      wild: "Wild",
+      mixed: "Mixed",
+    },
+  },
   "batch.style_og_min": { label: "OG min", displayUnit: "SG" },
   "batch.style_og_max": { label: "OG max", displayUnit: "SG" },
   "batch.style_fg_min": { label: "FG min", displayUnit: "SG" },
@@ -51,6 +65,12 @@ export const styleRegistry = {
   "batch.style_srm_max": { label: "SRM max", unit: "SRM" },
   "batch.style_abv_min": { label: "ABV min", unit: "%" },
   "batch.style_abv_max": { label: "ABV max", unit: "%" },
-  "batch.sulfate_chloride_target_mode": { label: "Specify SO4:Cl target" },
+  "batch.sulfate_chloride_target_mode": {
+    label: "Specify SO4:Cl target",
+    optionLabels: {
+      unspecified: "Unspecified",
+      specified: "Specified",
+    },
+  },
   "batch.sulfate_chloride_target_ratio": { label: "Desired SO4:Cl ratio" },
 };

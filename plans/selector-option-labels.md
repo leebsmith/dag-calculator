@@ -6,7 +6,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [water-pin-visibility-and-test-matrix]
 blocks: []
 gate: make verify
-status: accepted
+status: executed
 revision: 1
 revised: 2026-10-22
 supersedes: —

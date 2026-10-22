@@ -8,25 +8,13 @@
 
 ## Next (in order)
 
-1. **Selector option labels** — 11 `choice` nodes exist, 9 render as selects in
-   the step manifest, and only 4 carry `optionLabels`. The five that still render
-   raw taxonomy codes: `batch.topology` (`r_l_to_g` → "Liquor-to-grist ratio
-   (L/kg)", `runoff_ratio` → "Runnings ratio (r)"), `batch.style_source`
-   (`styleguide`/`experimental`), `batch.fermentation`
-   (`ale`/`lager`/`wild`/`mixed`), `batch.sulfate_chloride_target_mode`
-   (`unspecified`/`specified`), `water.preferred_alkaline_agent`
-   (`BAKING_SODA`/`CHALK`/`PICKLING_LIME`). (`water.strategy` renders as radios,
-   not a select; `mash.preset_id` is not in the manifest.) Widen
-   `option-labels.test.js` to every choice node appearing in a step manifest, so
-   a new selector cannot ship raw codes. Same class as the water profile picker
-   labels.
-2. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
+1. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
    (`views/hops.js`) into a first-class engine path and add a whirlpool
    utilization model (temp/time decay), replacing the manual
    `batch.whirlpool_ibu_fraction`.
-3. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
+2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
-4. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -92,6 +80,7 @@ Not needed by the current artifact; add only when a node requires them:
 * Record library foundation (server records, copy-forward, Google allowlist, user-scoped batches)
 * Water chemistry cleanup (read-only records, copy-forward ions, RO-as-report, treated-water vs target, SO4:Cl intent, dose basis + brew-day instruction)
 * Bounded buffer-capacity mash pH model (`plans/mash-ph-buffer-capacity.md`)
+* Selector option labels everywhere (`plans/selector-option-labels.md`)
 * Water chemistry step card (`solver.water` boundary + full card)
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu

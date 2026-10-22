@@ -13,8 +13,9 @@
         :value="styleSourceModel.value"
         @change="edit(styleSourceModel, $event.target.value)"
       >
-        <option value="styleguide" :selected="styleSourceModel.value === 'styleguide'">Style guide</option>
-        <option value="experimental" :selected="styleSourceModel.value === 'experimental'">Experimental</option>
+        <template x-for="opt in styleSourceModel.options" :key="opt">
+          <option :value="opt" :selected="opt === styleSourceModel.value" x-text="fmt.optionLabel(styleSourceModel.optionLabels, opt)"></option>
+        </template>
       </select>
     </div>
 
@@ -382,7 +383,7 @@
           @change="edit(fermentationField, $event.target.value)"
         >
           <template x-for="opt in styleFermentations" :key="opt">
-            <option :value="opt" :selected="opt === fermentationField.value" x-text="opt"></option>
+            <option :value="opt" :selected="opt === fermentationField.value" x-text="fmt.optionLabel(fermentationField.optionLabels, opt)"></option>
           </template>
         </select>
       </div>

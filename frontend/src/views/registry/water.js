@@ -140,7 +140,14 @@ export const waterRegistry = {
       CACL2_ANHYDROUS: "Anhydrous (CaCl₂)",
     },
   },
-  "water.preferred_alkaline_agent": { label: "Alkaline agent" },
+  "water.preferred_alkaline_agent": {
+    label: "Alkaline agent",
+    optionLabels: {
+      BAKING_SODA: "Baking soda (NaHCO₃)",
+      CHALK: "Chalk (CaCO₃)",
+      PICKLING_LIME: "Pickling lime (Ca(OH)₂)",
+    },
+  },
   "water.target_mash_ph": { label: "Target mash pH", unit: "pH" },
   "water.v_hlt_treat_l": { label: "Sparge salt dosing volume", unit: "L" },
 
