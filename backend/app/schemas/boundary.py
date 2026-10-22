@@ -146,6 +146,7 @@ class WaterSolverErrorCode(StrEnum):
     SALT_SOLVE_FAILED = "SALT_SOLVE_FAILED"
     ION_TARGET_OUT_OF_RANGE = "ION_TARGET_OUT_OF_RANGE"
     UNKNOWN_STRATEGY = "UNKNOWN_STRATEGY"
+    PINNED_IONS_REQUIRED = "PINNED_IONS_REQUIRED"
 
 
 class SolverErrorResponse(BoundaryModel):
@@ -313,7 +314,11 @@ class WaterSolverRequest(BoundaryModel):
     cacl2_form: str = Field(default="dihydrate")
     preferred_alkaline_agent: PreferredAlkalineAgent = Field(default=PreferredAlkalineAgent.BAKING_SODA)
     calcium_floor_ppm: Annotated[float, Field(ge=0.0, default=50.0, description="Calcium floor in ppm")]
-    custom_pinned_ions: list[str] = Field(default_factory=list)
+    custom_pinned_ions: list[str] = Field(
+        default_factory=list,
+        max_length=4,
+        description="Mode 5 equalities (short ion keys). At most four: salts leave the rest floating.",
+    )
 
 
 class SaltAdditions(BoundaryModel):

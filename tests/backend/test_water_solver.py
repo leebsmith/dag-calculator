@@ -164,5 +164,6 @@ def test_error_surface_complete():
         "INVALID_MASH_VOLUME", "INVALID_SPARGE_VOLUME", "UNKNOWN_GRAIN_TYPE",
         "UNKNOWN_ACID_MEDIUM", "UNKNOWN_ALKALINE_AGENT", "UNKNOWN_SALT_FORM",
         "SALT_SOLVE_FAILED", "ION_TARGET_OUT_OF_RANGE", "UNKNOWN_STRATEGY",
+        "PINNED_IONS_REQUIRED",
     }
     assert declared == expected

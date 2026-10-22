@@ -55,6 +55,11 @@ QT_PER_L_PER_KG = 2.08635  # 1 L/kg == 2.08635 qt/lb
 MASH_PH_OPTIMAL_LOW = 5.20
 MASH_PH_OPTIMAL_HIGH = 5.60
 
+# Validity band of the linear mash-pH model. Outside it the prediction is
+# extrapolation, so the result is flagged rather than presented as physical.
+MASH_PH_MODEL_MIN = 3.5
+MASH_PH_MODEL_MAX = 7.5
+
 # Biological and toxicological thresholds
 DEFAULT_CALCIUM_FLOOR_PPM = 50.0
 RECOMMENDED_CALCIUM_MIN_PPM = 30.0
@@ -417,28 +422,30 @@ def infer_adsco_mode(
     strategy: str,
     target: dict[str, float],
     custom_pinned_ions: Sequence[str],
-) -> tuple[str, str]:
+) -> tuple[str, str, bool]:
     """Classify the user intent into one of the 5 ADSCO operational branches.
 
-    Returns (resolved_mode, canonical_strategy_code).
+    Returns (resolved_mode, canonical_strategy_code, auto_fallback). The last
+    element is True only when AUTO could not classify the target vector and
+    fell through to the least-squares cloner.
     """
     clean_strat = strategy.upper().strip()
 
     if clean_strat in {"MODE_1", "MODE 1", "FLAVOR_ONLY"}:
-        return "MODE_1", "CALCIUM_FLOOR"
+        return "MODE_1", "CALCIUM_FLOOR", False
     if clean_strat in {"MODE_2", "MODE 2", "HYBRID"}:
-        return "MODE_2", "HYBRID"
+        return "MODE_2", "HYBRID", False
     if clean_strat in {"MODE_3", "MODE 3", "OPTIMIZE", "CLONE"}:
-        return "MODE_3", "OPTIMIZE"
+        return "MODE_3", "OPTIMIZE", False
     if clean_strat in {"MODE_4", "MODE 4", "BASELINE", "NONE"}:
-        return "MODE_4", "BASELINE"
+        return "MODE_4", "BASELINE", False
     if clean_strat in {"MODE_5", "MODE 5", "CUSTOM"}:
-        return "MODE_5", "CUSTOM"
+        return "MODE_5", "CUSTOM", False
 
     if clean_strat == "CALCIUM_FLOOR":
-        return "MODE_1", "CALCIUM_FLOOR"
+        return "MODE_1", "CALCIUM_FLOOR", False
     if clean_strat == "FLAVOR":
-        return "MODE_1", "FLAVOR"
+        return "MODE_1", "FLAVOR", False
 
     if clean_strat not in {"AUTO", ""}:
         raise SolverValidationError("UNKNOWN_STRATEGY", f"Unknown strategy {strategy!r}.")
@@ -447,10 +454,10 @@ def infer_adsco_mode(
     has_target = {k: v for k, v in target.items() if v is not None and v > 0.0}
 
     if not has_target:
-        return "MODE_4", "BASELINE"
+        return "MODE_4", "BASELINE", False
 
     if custom_pinned_ions:
-        return "MODE_5", "CUSTOM"
+        return "MODE_5", "CUSTOM", False
 
     has_ca = "ca" in has_target
     has_mg = "mg" in has_target
@@ -461,18 +468,19 @@ def infer_adsco_mode(
 
     # All 6 ions explicitly provided -> Mode 3 (Profile Cloning)
     if has_ca and has_mg and has_na and has_alk and has_so4 and has_cl:
-        return "MODE_3", "OPTIMIZE"
+        return "MODE_3", "OPTIMIZE", False
 
     # Flavor ions plus Alkalinity buffer -> Mode 2 (Ratio + Buffer)
     if (has_so4 or has_cl) and has_alk and not (has_ca or has_mg or has_na):
-        return "MODE_2", "HYBRID"
+        return "MODE_2", "HYBRID", False
 
     # Only flavor ions (SO4, Cl, and optionally Na) -> Mode 1 (Linear Minimalist)
     if (has_so4 or has_cl or has_na) and not (has_ca or has_mg or has_alk):
-        return "MODE_1", "CALCIUM_FLOOR"
+        return "MODE_1", "CALCIUM_FLOOR", False
 
-    # Any other arbitrary subset -> Mode 5 (Custom Permutation)
-    return "MODE_5", "CUSTOM"
+    # Any other arbitrary subset: no sparse equality set was named, so fall
+    # through to the least-squares cloner rather than an unactionable state.
+    return "MODE_3", "OPTIMIZE", True
 
 
 # ---------------------------------------------------------------------------
@@ -507,6 +515,25 @@ def _solve_linear_minimalist(
 
     need_so4 = max(0.0, target.get("so4", 0.0) - source.get("so4", 0.0))
     need_cl = max(0.0, target.get("cl", 0.0) - source.get("cl", 0.0))
+
+    if events is not None:
+        for ion in ("so4", "cl"):
+            target_ppm = target.get(ion, 0.0)
+            source_ppm = source.get(ion, 0.0)
+            if target_ppm < source_ppm - 1e-9:
+                events.append(
+                    TelemetryEvent(
+                        code="FLAVOR_TARGET_BELOW_SOURCE",
+                        category="GUARDRAIL",
+                        severity="WARNING",
+                        message=(
+                            f"{ion.upper()} target is {target_ppm:.1f} ppm but the source "
+                            f"already carries {source_ppm:.1f} ppm; salts only add, so the "
+                            "kettle will stay above the target."
+                        ),
+                        context={"ion": ion, "target": target_ppm, "source": source_ppm},
+                    )
+                )
 
     if unbounded_ca:
         # Pure unconstrained flavor dosing (Ca floats freely)
@@ -737,9 +764,23 @@ def _solve_dynamic_sparse(
     agent = SALT_COEFFS.get(preferred_alkaline_agent, {})
     salts = [gyp, cacl2, epsom, nacl, agent]
 
-    pinned = list(pinned_ions) if pinned_ions else [
-        k for k in ("ca", "mg", "na", "so4", "cl", "alk") if target.get(k, 0.0) > 0.0
-    ]
+    pinned = list(pinned_ions)
+
+    for ion in pinned:
+        if target.get(ion, 0.0) < source.get(ion, 0.0) - 1e-9:
+            events.append(
+                TelemetryEvent(
+                    code="PINNED_TARGET_BELOW_SOURCE",
+                    category="GUARDRAIL",
+                    severity="WARNING",
+                    message=(
+                        f"{ion.upper()} is pinned at {target.get(ion, 0.0):.1f} ppm but the "
+                        f"source already carries {source.get(ion, 0.0):.1f} ppm; salts only add, "
+                        "so that pin cannot be reached - unpin it to free the other targets."
+                    ),
+                    context={"ion": ion, "target": target.get(ion, 0.0), "source": source.get(ion, 0.0)},
+                )
+            )
 
     a_eq = []
     b_eq = []
@@ -796,7 +837,25 @@ def solve_salt_dose(
     evs = events if events is not None else []
     coeffs = _salt_ion_coeffs(gypsum_form, cacl2_form)
 
-    mode, canonical_strat = infer_adsco_mode(strategy, target, custom_pinned_ions)
+    mode, canonical_strat, auto_fallback = infer_adsco_mode(
+        strategy, target, custom_pinned_ions
+    )
+
+    if canonical_strat == "CUSTOM" and not custom_pinned_ions:
+        raise SolverValidationError(
+            "PINNED_IONS_REQUIRED",
+            "Custom mode requires at least one pinned ion; pin one to four ions or choose another mode.",
+        )
+
+    if auto_fallback:
+        evs.append(
+            TelemetryEvent(
+                code="ROUTER_AUTO_BEST_FIT",
+                category="ROUTER",
+                severity="NOTE",
+                message="Strategy AUTO could not classify the target vector; routed to the Non-Linear Cloner (Mode 3: best fit across all six ions, nothing held exactly).",
+            )
+        )
 
     if mode == "MODE_4":  # Baseline Mode
         evs.append(
@@ -1029,6 +1088,21 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     ra_dose = residual_alkalinity(post_dose["ca"], post_dose["mg"], post_dose.get("alk", 0.0))
     predicted_ph = predict_mash_ph(grist_acidity, ra_dose, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg)
     status = mash_ph_status(predicted_ph)
+
+    if not (MASH_PH_MODEL_MIN <= predicted_ph <= MASH_PH_MODEL_MAX):
+        events.append(
+            TelemetryEvent(
+                code="GUARDRAIL_PH_MODEL_OUT_OF_RANGE",
+                category="GUARDRAIL",
+                severity="WARNING",
+                message=(
+                    f"Predicted mash pH ({predicted_ph:.2f}) is outside the model's calibrated "
+                    f"band ({MASH_PH_MODEL_MIN:.1f} - {MASH_PH_MODEL_MAX:.1f}); treat it as "
+                    "indicative and re-check the target vector and alkalinity inputs."
+                ),
+                context={"predicted_ph": predicted_ph},
+            )
+        )
 
     if status == "OPTIMAL":
         events.append(
