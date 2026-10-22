@@ -35,6 +35,7 @@ function stubEngine(values, { traceRows = [] } = {}) {
     get(id) {
       if (id === "grist.major_malts") return GRIST;
       if (id === "grist.trace_malts") return traceRows;
+      if (id === "water.pinned_ions") return [];
       throw new Error(`unexpected get("${id}")`);
     },
     resolve(path) {

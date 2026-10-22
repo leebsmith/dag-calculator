@@ -127,6 +127,11 @@ export const WATER_FIELDS = {
   cacl2_form: { path: "water.cacl2_form" },
   preferred_alkaline_agent: { path: "water.preferred_alkaline_agent" },
   calcium_floor_ppm: { path: "water.target_profile.calcium_floor_ppm", default: 50 },
+  custom_pinned_ions: {
+    path: "water.pinned_ions",
+    read: "get",
+    build: (resolved) => (resolved.custom_pinned_ions ?? []).map((row) => row.ion),
+  },
 };
 
 export function buildBatchRequest(engine) {

@@ -371,6 +371,14 @@
       "BASELINE",
       "CUSTOM"
     ],
+    "ion": [
+      "ca",
+      "mg",
+      "na",
+      "so4",
+      "cl",
+      "alk"
+    ],
     "salt_distribution": [
       "MASH_ONLY",
       "PROPORTIONAL"
@@ -1646,6 +1654,11 @@
       },
       "notes": {}
     },
+    "water_pinned_ion": {
+      "ion": {
+        "taxonomy": "ion"
+      }
+    },
     "dry_hop_row": {
       "product_type": {
         "taxonomy": "wet_hop_product_type"
@@ -2052,6 +2065,10 @@
       "kind": "collection",
       "item_schema": "mash_rest"
     },
+    "water.pinned_ions": {
+      "kind": "collection",
+      "item_schema": "water_pinned_ion"
+    },
     "solver.batch": {
       "kind": "boundary",
       "binding": "batch_sparge_solver",
@@ -2386,7 +2403,8 @@
         "gypsum_form": "water.gypsum_form",
         "cacl2_form": "water.cacl2_form",
         "preferred_alkaline_agent": "water.preferred_alkaline_agent",
-        "calcium_floor_ppm": "water.target_profile.calcium_floor_ppm"
+        "calcium_floor_ppm": "water.target_profile.calcium_floor_ppm",
+        "custom_pinned_ions": "water.pinned_ions"
       },
       "outputs": {
         "strategy": {

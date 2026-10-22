@@ -42,6 +42,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `form` | `Dry`, `Liquid` |
 | `gypsum_form` | `GYPSUM_DIHYDRATE`, `GYPSUM_ANHYDROUS` |
 | `hop_unit` | `oz`, `g`, `ml` |
+| `ion` | `ca`, `mg`, `na`, `so4`, `cl`, `alk` |
 | `malt_category` | `BASE`, `CRYSTAL`, `ROASTED`, `ACID` |
 | `mash_preset` | `single_infusion`, `custom`, `belgian_saison`, `belgian_tripel`, `german_pils`, `berliner_weisse`, `english_brown`, `american_pale` |
 | `mash_rest` | `dough_in`, `phytase`, `ferulic`, `beta_glucan`, `protein`, `beta_amylase`, `alpha_amylase`, `beta_alpha_amylase`, `mash_out` |
@@ -72,6 +73,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `trace_malt_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
+| `water_pinned_ion` | `ion` (taxonomy ion) |
 | `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `location` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `source_name` (—), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
 | `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `mode` (taxonomy strategy), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
 | `yeast` | `alcohol_tolerance` (—), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `recipes` (—), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
@@ -218,6 +220,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.gypsum_form` | choice |
 | `water.mash_ph_status` | derived |
 | `water.mash_thickness_l_per_kg` | derived |
+| `water.pinned_ions` | collection |
 | `water.preferred_alkaline_agent` | choice |
 | `water.salt_distribution` | choice |
 | `water.source_report` | selection |

@@ -314,6 +314,7 @@ class WaterSolverRequest(BoundaryModel):
     cacl2_form: str = Field(default="dihydrate")
     preferred_alkaline_agent: PreferredAlkalineAgent = Field(default=PreferredAlkalineAgent.BAKING_SODA)
     calcium_floor_ppm: Annotated[float, Field(ge=0.0, default=50.0, description="Calcium floor in ppm")]
+    custom_pinned_ions: list[str] = Field(default_factory=list)
 
 
 class SaltAdditions(BoundaryModel):

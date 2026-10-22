@@ -150,6 +150,7 @@ class WaterChemistryInput:
     cacl2_form: str = "CACL2_DIHYDRATE"
     preferred_alkaline_agent: str = "PICKLING_LIME"
     calcium_floor_ppm: float = DEFAULT_CALCIUM_FLOOR_PPM
+    custom_pinned_ions: Sequence[str] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True)

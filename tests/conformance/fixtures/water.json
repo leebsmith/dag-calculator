@@ -1,9 +1,10 @@
 {
-  "fingerprint": "0047a0127e29f46f79ab797c609b4ed1f81244ec0d0ed87d15b66d07cf32f621",
+  "fingerprint": "e6ab4db8300994b89c8e5416b32b5f98bcc0a4107458f8fa8d818ca9a7b333b4",
   "request": {
     "acid_medium": "LACTIC_88",
     "cacl2_form": "CACL2_DIHYDRATE",
     "calcium_floor_ppm": 50.0,
+    "custom_pinned_ions": [],
     "grist": [
       {
         "color_lovibond": 1.5,

@@ -99,6 +99,7 @@ def _to_input(req: WaterSolverRequest) -> WaterChemistryInput:
         cacl2_form=_CACL2_FORMS.get(req.cacl2_form, req.cacl2_form),
         preferred_alkaline_agent=req.preferred_alkaline_agent.value,
         calcium_floor_ppm=req.calcium_floor_ppm,
+        custom_pinned_ions=req.custom_pinned_ions,
     )
 
 
