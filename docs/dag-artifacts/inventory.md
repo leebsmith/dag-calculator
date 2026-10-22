@@ -134,7 +134,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash_ph_optimal_high` | 5.6 | `ph` |
 | `mash_ph_optimal_low` | 5.2 | `ph` |
 | `mash_thermal_factor` | 0.41 | `dimensionless` |
-| `mcu_metric_to_imperial_factor` | 4.236 | `dimensionless` |
+| `mcu_metric_to_imperial_factor` | 8.3454 | `dimensionless` |
 | `rho_water` | 1 | `dimensionless` |
 | `sucrose_yield_ldk` | 385.641 | `extract_yield` |
 | `sucrose_yield_ppg` | 46.21 | `extract_yield` |

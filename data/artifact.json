@@ -330,7 +330,7 @@
       "dimension": "ph"
     },
     "mcu_metric_to_imperial_factor": {
-      "value": 4.236,
+      "value": 8.3454,
       "dimension": "dimensionless"
     },
     "loa_baseline_temp_f": {

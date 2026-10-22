@@ -30,7 +30,17 @@ test("end-to-end: collection reductions compute weighted values", () => {
   const e = engine();
   assert.ok(Math.abs(e.get("grist.weighted_lovibond") - 9.2) < 1e-9);
   // finished-beer color via the MCU -> Morey path (grain SRM bridge removed).
-  assert.ok(Math.abs(e.get("grist.finished_beer_srm") - 6.59173743493663) < 1e-9);
+  assert.ok(Math.abs(e.get("grist.finished_beer_srm") - 10.49521689713994) < 1e-9);
+});
+
+test("MCU converts metric color density with the plain lb/kg x L/gal factor", () => {
+  const k = artifact.constants.mcu_metric_to_imperial_factor.value;
+  // kg*L/L -> lb*L/US gal. An EBC/Lovibond adjustment here would understate SRM.
+  assert.ok(Math.abs(k - 2.2046226218487757 * 3.785411784) < 1e-4);
+
+  const metric = (8.446 * 42.6) / 26.5;
+  const srm = 1.4922 * Math.pow(metric * k, 0.6859);
+  assert.ok(Math.abs(srm - 38.27) < 0.01);
 });
 
 test("end-to-end: boundary output feeds an interpretation (taxonomy)", () => {
@@ -118,9 +128,9 @@ test("trace malts: definite-mass rows fold into color (and only color)", () => {
   assert.ok(Math.abs(e.get("grist.trace_malts_mass") - 0.34) < 1e-9);
   assert.ok(Math.abs(e.get("grist.trace_weighted_lovibond") - 475) < 1e-9);
 
-  // MCU = (grist_mass·lovibond + trace_mass·trace_lovibond) / v_post_boil · 4.236
+  // MCU = (grist_mass·lovibond + trace_mass·trace_lovibond) / v_post_boil · 8.3454
   // (no sugars in the fixture). Trace raises color but never touches m_grist.
-  const expectedMcu = ((4.7 * 9.2 + 0.34 * 475) / 21.0) * 4.236;
+  const expectedMcu = ((4.7 * 9.2 + 0.34 * 475) / 21.0) * 8.3454;
   assert.ok(Math.abs(e.get("grist.mcu") - expectedMcu) < 1e-9);
   assert.ok(e.get("grist.finished_beer_srm") > baseSrm);
   assert.ok(baseMcu < e.get("grist.mcu"));

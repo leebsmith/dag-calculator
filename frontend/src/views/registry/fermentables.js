@@ -23,7 +23,10 @@ export const fermentablesRegistry = {
   "grist.trace_malts.mass_kg": { label: "Mass", displayUnit: "oz" },
   "grist.trace_malts.yield_fraction": { label: "Yield", displayUnit: "pct" },
   "grist.trace_malts.color_lovibond": { label: "Color" },
-  "grist.weighted_lovibond": { label: "Weighted grist color" },
+  "grist.weighted_lovibond": {
+    label: "Weighted grist color",
+    hint: "Mass-weighted malt color (grain, not finished beer).",
+  },
   "grist.weighted_yield_fraction": { label: "Weighted extract yield", displayUnit: "pct" },
   "grist.trace_malts_mass": { label: "Trace malt mass", displayUnit: "oz" },
   "grist.trace_weighted_lovibond": { label: "Weighted trace color" },
