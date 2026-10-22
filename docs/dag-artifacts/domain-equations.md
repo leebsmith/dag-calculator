@@ -149,15 +149,15 @@ program via `scipy.optimize.linprog`). **Realization:** the module
 |---|---|---|
 | `grist` | collection | rows `{ mass_kg, color_lovibond, grain_type }` |
 | `source` | ions | the six working ions (source water) |
-| `target` | ions | the six working ions (editable target roots; unpinned ions float to source) |
-| `custom_pinned_ions` | list[str] | Mode-5 pinned ion subset (short keys) |
+| `target` | ions | the six working ions (checked targets constrain; unchecked ions float to source) |
+| `custom_pinned_ions` | list[str] | the checked ion subset (short keys), filtered to checked ions with a positive target |
 | `v_mash_treat_l` | volume | mash treatment volume (L), equal to `v_strike` |
 | `v_hlt_treat_l` | volume | **sparge salt dosing volume** — the HLT content after the strike is drawn and any top-up added, derived from `batch.sparge_salted_volume` (`v_hlt_after_strike + v_hlt_top_up`), *not* the delivered sparge volume |
 | `v_hlt_debt_l` | volume | undeliverable HLT debt (L) |
 | `v_sparge_demand_l` | volume | sparge demand (L) |
 | `mash_thickness_l_per_kg` | mash_thickness | resolved L/kg |
 | `target_mash_ph` | ph | desired mash pH |
-| `strategy` | taxonomy | `AUTO` \| `FLAVOR` \| `CALCIUM_FLOOR` \| `OPTIMIZE` \| `HYBRID` \| `BASELINE` \| `CUSTOM` |
+| `strategy` | taxonomy | `AUTO` \| `FLAVOR` \| `CALCIUM_FLOOR` \| `OPTIMIZE` \| `HYBRID` \| `BASELINE` \| `CUSTOM` (the UI derives it and never sends `AUTO`) |
 | `salt_distribution` | taxonomy | `MASH_ONLY` \| `PROPORTIONAL` |
 | `acid_medium` | taxonomy | `LACTIC_88` \| `PHOSPHORIC_10` \| `PHOSPHORIC_85` |
 | `gypsum_form` / `cacl2_form` | taxonomy | hydrate forms |
@@ -168,11 +168,18 @@ The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 `chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃). `source`
 is read from the `water.source_report` selection (copied forward from records,
 read-only in the batch); `target` is read from the editable `water.target.*`
-roots, seeded from the selected `water.target_profile` and its `mode`;
-`target` alkalinity is the root's `alkalinity_as_caco3` while `source` alkalinity
-is the report's `total_alkalinity_caco3`. `calcium_floor_ppm` is the editable
+roots, seeded from the selected preset's declared ions. The routed `strategy` is
+derived from the checked set (`checked ∩ positive target`): `{}` → `BASELINE`,
+`{SO₄,Cl}` → `CALCIUM_FLOOR`, `{SO₄,Cl,alk}` → `HYBRID`, all six → `OPTIMIZE`,
+anything else → `CUSTOM` with those ions as pins. The UI never writes `AUTO`,
+though the solver still accepts it for API clients. `target` alkalinity is the
+root's `alkalinity_as_caco3` while `source` alkalinity is the report's
+`total_alkalinity_caco3`. `calcium_floor_ppm` is the editable
 `water.calcium_floor_ppm` root (seeded from the profile); `custom_pinned_ions`
-is the `water.pinned_ions` collection (Mode 5). The assumed dosing practice —
+is the checked subset in the `water.pinned_ions` collection — ignored by the
+named strategies, and the equality set for `CUSTOM`. A checked ion with no
+positive target is dropped by the request builder rather than sent as a zero
+target. The assumed dosing practice —
 dry-grist dosing, HLT dosing after top-up, the two distribution modes, and the
 unmodelled grist/SMB contributions — lives in
 `docs/calculator-assumed-dosing-practice.md`.

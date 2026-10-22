@@ -21,72 +21,72 @@ No "Solve" button. The live DAG recomputes on every edit, debounced through
 `boundaryRunner`. Invalid/incomplete states surface as live warnings and a
 pending/error boundary status, never a blocked submit.
 
-## Mode radios
+## Target selector
 
-Five radios, each enabling only its relevant inputs and floating the rest:
+One select decides which ions the solver must satisfy. Routing is *derived* from
+the checked set; there is no separate mode control and the UI never writes
+`AUTO`.
 
-| Radio | Editable | Floated |
-| --- | --- | --- |
-| 1 Flavor Balance (SO₄/Cl) | SO₄, Cl | Ca, Mg, Na, Alk |
-| 2 Ratio + Dark Beer Buffer | SO₄, Cl, Alk | Ca, Mg, Na |
-| 3 Classic Clone (all 6) | all six | none |
-| 4 Baseline (no targets) | none | all six |
-| 5 Custom Permutation | modal-selected | unchecked |
+| Selection | Checked ions | Values | Route |
+| --- | --- | --- | --- |
+| No targets | none (locked) | cleared | BASELINE |
+| A preset | the preset's ions | the preset's values | derived from the set |
+| Freeform entry | none at first | cleared | derived as ions are checked |
 
-Locked inputs render muted with a lock glyph and an "(Auto)" placeholder; their
-underlying value floats to source in the solver (no `None`/`0` sentinel through
-the DAG — pinning is mode-driven, not value-driven).
+- The checkbox means **target this ion**: checked ⇒ the solver holds or optimises
+  it. Unchecking clears that cell.
+- Presets are value bundles: selecting one clears every value, checks its ions
+  and fills them. Editing the checked set detaches the preset (the selector then
+  reads Freeform); editing a held value keeps it.
+- No targets is enforced — the checkboxes are disabled. Freeform is the compose
+  state, starting empty.
+- The checked set is stored in `water.pinned_ions`; `water.strategy` is derived
+  from `checked ∩ has-value`: {} → BASELINE, {SO₄,Cl} → CALCIUM_FLOOR,
+  {SO₄,Cl,alk} → HYBRID, all six → OPTIMIZE, anything else → CUSTOM with those
+  ions as pins.
+- A checked ion with no value is excluded and hinted (`no target entered`); it is
+  never sent as a zero target.
 
 ## Target vs actual grid (the hero)
 
-Immediately below entry, one row per ion:
+One row per ion, with the Target checkbox and value in the same table:
 
 ```
-Ion        Source   Target   Post-addition   Δ       Status
-Calcium    12.0     (Auto)   52.4            —       Auto
-Sulfate    15.0     250      250.0           0       Target
-Alkalinity 35.0     (Auto)   35.0            —       Auto
+Target  Ion         Source  Target value  Post-addition  Δ      Status
+[x]     Calcium     12.0    60            72.4           +12.4  Target
+[ ]     Sulfate     15.0    (Auto)        250.0          —      Auto
+[ ]     Alkalinity  35.0    (Auto)        35.0           —      Auto
 ```
 
-- The Target column is **the constraint the routed mode posed**, never the stored
-  root value. A floated ion shows `(Auto)` even when `water.target.<ion>` holds a
-  dormant number.
-- Status vocabulary: `Target` (hard equality), `Buffer` (Mode 2 alkalinity — a
-  pre-acid minimum, so its Δ is expected to be non-zero), `Best fit` (Mode 3
-  least squares — every ion is targeted, none is held exactly), `Auto` (floated).
+- Checked + value: the cell is an input; that ion is a constraint.
+- Unchecked: the cell reads `(Auto)`; the ion floats.
+- Checked + empty: `No value` status with a hint; excluded from the solve.
+- Status vocabulary: `Target` (hard equality), `Buffer` (alkalinity held via the
+  agent, so its Δ is expected to be non-zero), `Best fit` (all six — least
+  squares, nothing held exactly), `No value` (unfinished entry), `Auto` (floated).
 - `Δ = post − target` is only meaningful for held ions; floated rows render `—`.
-- Driven by `post_dose_mash_ions` vs `target`, with the pin sets mirrored in
-  `frontend/src/views/registry/water.js` and pinned to the solver by
-  `tests/conformance/fixtures/ion-constraints.json`.
+- The line under the grid names the route: `Targets: SO₄/Cl (2) — exact`,
+  `Targets: all six — best fit, nothing held exactly`, `No targets — baseline`.
+  Five checked is allowed but flagged `exactly determined, may be infeasible`.
 
-## Mode 5 pin modal
+## Preset labels
 
-- Pin **one to four** ions. The rule is stated in the modal, together with the
-  reason: four keeps a degree of freedom for the salt optimiser.
-- The modal must not promise success. Salts only add, so a pin the source already
-  meets forbids every salt that adds it; the solve reports
-  `PINNED_TARGET_BELOW_SOURCE` instead of reaching the target.
-- Ticking a fifth ion is disabled; unticking the last one is disabled.
+Options lead with the constraint set and name the style as an example:
 
-## Profile picker labels
-
-Reference pickers render the component's name, never its raw id, plus a
-constraint tag using the shared vocabulary:
-
-| Mode | Option tag |
+| Selection | Label |
 | --- | --- |
-| 1 | `SO₄/Cl held` |
-| 2 | `SO₄/Cl/alk held` |
-| 3 | `all six, best fit` |
-| 4 | `no salt targets` |
-| 5 | `you pick ≤ 4` |
+| preset `hoppy-ipa` | `SO₄/Cl — Hoppy / IPA` |
+| preset `dark-stout` | `SO₄/Cl/Alk — Dark / Stout` |
+| preset `soft-pilsner` | `All six — Soft Pilsner` |
+| pseudo | `No targets — no ion targets` (first) |
+| pseudo | `Freeform entry — compose your own set` (last) |
 
-The hint under the picker states that applying a profile resets its derived
-targets and returns the routing to `AUTO`.
+Presets are sorted by constraint-set size, then label. A profile record targets
+the ions it declares a number for (`null` floats).
 
 ## Telemetry
 
-- **Banner**: one line — resolved mode + objective + worst severity.
+- **Route line**: one line under the grid — the target set and its exactness.
 - **Audit log**: collapsible drawer grouped by category; INFO collapsed, NOTE
   neutral, WARNING/ERROR surfaced. Host-side only (never a DAG output).
 
@@ -98,5 +98,6 @@ the corrected pH and the full dose (salts + agent + acid).
 ## Guardrails / a11y
 
 - Named handlers, `fmt.*` for all numbers/deltas, no inline logic (A8/A10),
-  explicit `:selected` on any select, keyboard/aria for radios and the modal.
+  explicit `:selected` on any select, keyboard/aria for the target checkboxes
+  and the target inputs.
 - Thresholds aligned: Na 0–50, Cl 0–300, SO₄ 400, Mg 50.
