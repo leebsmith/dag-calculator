@@ -227,3 +227,23 @@ def test_orchestration_ro_bypasses_sparge_acid():
 def test_orchestration_residual_hlt_water():
     out = solve_water_chemistry(_request(v_hlt_treat_l=20.0, v_sparge_demand_l=18.0))
     assert out.residual_hlt_water_l == pytest.approx(2.0)
+
+
+def test_hybrid_supplies_alkalinity_buffer():
+    out = solve_water_chemistry(_request(
+        strategy="HYBRID",
+        source=_ions(ca=20.0, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=0.0),
+        target=_ions(so4=50.0, cl=120.0, alk=60.0),
+    ))
+    assert out.alkaline_agent_g > 0.0
+    assert out.post_salt_mash_ions["alk"] == pytest.approx(60.0, abs=0.5)
+
+
+def test_cloner_reaches_alkalinity_with_the_agent():
+    out = solve_water_chemistry(_request(
+        strategy="OPTIMIZE",
+        source=_ions(ca=20.0, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=0.0),
+        target=_ions(ca=60.0, mg=5.0, na=10.0, so4=100.0, cl=50.0, alk=60.0),
+    ))
+    assert out.alkaline_agent_g > 0.0
+    assert abs(out.post_salt_mash_ions["alk"] - 60.0) < 8.0

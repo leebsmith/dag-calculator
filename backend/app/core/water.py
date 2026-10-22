@@ -208,6 +208,7 @@ class WaterChemistryOutput:
     sparge_acid_ml: float
     alkaline_agent_g: float
     post_salt_mash_ions: dict
+    post_dose_mash_ions: dict
     residual_hlt_water_l: float
     sparge_tannin_warning: bool
     grist_buckets_kg: dict
@@ -397,6 +398,15 @@ def add_ions(base: dict[str, float], added: dict[str, float]) -> dict[str, float
         ion: float(base.get(ion, 0.0) + added.get(ion, 0.0))
         for ion in {"ca", "mg", "na", "so4", "cl", "alk"}
     }
+
+
+def _agent_g_per_l(source: dict[str, float], target: dict[str, float], preferred_alkaline_agent: str) -> float:
+    """Per-litre alkaline agent mass to raise alkalinity to the target buffer."""
+    deficit = target.get("alk", 0.0) - source.get("alk", 0.0)
+    if deficit <= 0.0:
+        return 0.0
+    yield_alk = SALT_COEFFS.get(preferred_alkaline_agent, {}).get("alk", 0.0)
+    return deficit / yield_alk if yield_alk > 0.0 else 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -623,72 +633,66 @@ def _solve_nonlinear_cloner(
     coeffs: dict[str, dict[str, float]],
     calcium_floor_ppm: float,
     events: list[TelemetryEvent],
+    preferred_alkaline_agent: str = "PICKLING_LIME",
 ) -> tuple[SaltDose, list[str]]:
     """Mode 3: Non-Linear Cloner Engine (Weighted Least Squares via SLSQP)."""
     notes: list[str] = []
     gyp, cacl2, epsom, nacl = coeffs["GYPSUM"], coeffs["CACL2"], coeffs["EPSOM"], coeffs["NACL"]
+    agent = SALT_COEFFS.get(preferred_alkaline_agent, {})
 
-    # Ions to curve fit and their relative importance weights
     ions = ["ca", "mg", "na", "so4", "cl", "alk"]
     weights = {
-        "ca": 2.0,   # Enzymatic priority
-        "alk": 2.5,  # Mash pH buffering priority
-        "so4": 1.5,  # Flavor priority
-        "cl": 1.5,   # Flavor priority
-        "mg": 1.0,   # Sensory/toxicity
-        "na": 0.5,   # Lowest priority compromise ion
+        "ca": 2.0,
+        "alk": 2.5,
+        "so4": 1.5,
+        "cl": 1.5,
+        "mg": 1.0,
+        "na": 0.5,
     }
 
     target_vec = np.array([target.get(i, source.get(i, 0.0)) for i in ions], dtype=float)
     source_vec = np.array([source.get(i, 0.0) for i in ions], dtype=float)
     w_vec = np.array([weights[i] for i in ions], dtype=float)
 
-    # Matrix of salt yields per gram of salt [gyp, cacl2, epsom, nacl]
-    # Dimensions: 6 ions x 4 salts
+    # 6 ions x 5 levers [gyp, cacl2, epsom, nacl, agent]
     A_matrix = np.array([
-        [gyp.get("ca", 0.0), cacl2.get("ca", 0.0), 0.0, 0.0],
-        [0.0, 0.0, epsom.get("mg", 0.0), 0.0],
-        [0.0, 0.0, 0.0, nacl.get("na", 0.0)],
-        [gyp.get("so4", 0.0), 0.0, epsom.get("so4", 0.0), 0.0],
-        [0.0, cacl2.get("cl", 0.0), 0.0, nacl.get("cl", 0.0)],
-        [0.0, 0.0, 0.0, 0.0],  # Flavor salts do not add alkalinity
+        [gyp.get("ca", 0.0), cacl2.get("ca", 0.0), 0.0, 0.0, agent.get("ca", 0.0)],
+        [0.0, 0.0, epsom.get("mg", 0.0), 0.0, agent.get("mg", 0.0)],
+        [0.0, 0.0, 0.0, nacl.get("na", 0.0), agent.get("na", 0.0)],
+        [gyp.get("so4", 0.0), 0.0, epsom.get("so4", 0.0), 0.0, agent.get("so4", 0.0)],
+        [0.0, cacl2.get("cl", 0.0), 0.0, nacl.get("cl", 0.0), agent.get("cl", 0.0)],
+        [0.0, 0.0, 0.0, 0.0, agent.get("alk", 0.0)],
     ], dtype=float)
 
     def objective(x):
         predicted = source_vec + A_matrix @ x
         errors = (predicted - target_vec) * w_vec
-        # Penalize total salt mass slightly to prevent runaway mineral additions
         mass_penalty = 0.05 * np.sum(x)
         return float(np.sum(errors ** 2) + mass_penalty)
 
-    # Boundary: doses must be non-negative
-    bounds = [(0.0, 5.0) for _ in range(4)]
+    bounds = [(0.0, 5.0) for _ in range(5)]
 
-    # Inequality constraints: enforce Calcium floor and Magnesium ceiling
     constraints = []
-    # Total Ca >= calcium_floor_ppm => source['ca'] + A[0] @ x >= floor
     constraints.append({
         "type": "ineq",
         "fun": lambda x: float((source_vec[0] + A_matrix[0] @ x) - calcium_floor_ppm),
     })
-    # Total Mg <= HARD_MAGNESIUM_MAX_PPM
     constraints.append({
         "type": "ineq",
         "fun": lambda x: float(HARD_MAGNESIUM_MAX_PPM - (source_vec[1] + A_matrix[1] @ x)),
     })
 
-    # Initial guess: linear flavor estimates
     x0 = np.array([
         max(0.0, (target.get("so4", 0.0) - source.get("so4", 0.0)) / gyp.get("so4", 500.0)),
         max(0.0, (target.get("cl", 0.0) - source.get("cl", 0.0)) / cacl2.get("cl", 500.0)),
         0.0,
         0.0,
+        _agent_g_per_l(source, target, preferred_alkaline_agent),
     ], dtype=float)
 
     res = minimize(objective, x0, method="SLSQP", bounds=bounds, constraints=constraints)
 
     if not res.success:
-        # If strict constraints fail, relax the Ca floor constraint
         res = minimize(objective, x0, method="SLSQP", bounds=bounds)
         notes.append("Profile cloner relaxed calcium floor to locate mathematical fit.")
 
@@ -714,6 +718,7 @@ def _solve_nonlinear_cloner(
         cacl2_g_per_l=x_opt[1],
         epsom_g_per_l=x_opt[2],
         nacl_g_per_l=x_opt[3],
+        alkaline_agent_g_per_l=x_opt[4],
     ), notes
 
 
@@ -724,31 +729,32 @@ def _solve_dynamic_sparse(
     pinned_ions: Sequence[str],
     calcium_floor_ppm: float,
     events: list[TelemetryEvent],
+    preferred_alkaline_agent: str = "PICKLING_LIME",
 ) -> tuple[SaltDose, list[str]]:
     """Mode 5: Dynamic Sparse Linear Engine for custom user subsets."""
     notes: list[str] = []
     gyp, cacl2, epsom, nacl = coeffs["GYPSUM"], coeffs["CACL2"], coeffs["EPSOM"], coeffs["NACL"]
-    salts = [gyp, cacl2, epsom, nacl]
+    agent = SALT_COEFFS.get(preferred_alkaline_agent, {})
+    salts = [gyp, cacl2, epsom, nacl, agent]
+
+    pinned = list(pinned_ions) if pinned_ions else [
+        k for k in ("ca", "mg", "na", "so4", "cl", "alk") if target.get(k, 0.0) > 0.0
+    ]
 
     a_eq = []
     b_eq = []
-
-    for ion in pinned_ions:
-        if ion in target and target[ion] is not None:
-            deficit = max(0.0, target[ion] - source.get(ion, 0.0))
-            row = [s.get(ion, 0.0) for s in salts]
-            a_eq.append(row)
-            b_eq.append(deficit)
+    for ion in pinned:
+        deficit = max(0.0, target.get(ion, 0.0) - source.get(ion, 0.0))
+        a_eq.append([s.get(ion, 0.0) for s in salts])
+        b_eq.append(deficit)
 
     c_primary = [sum(s.values()) for s in salts]
 
     a_ub = None
     b_ub = None
-    if "ca" not in pinned_ions and source.get("ca", 0.0) < calcium_floor_ppm:
-        # Enforce Ca floor as lower bound inequality
+    if "ca" not in pinned and source.get("ca", 0.0) < calcium_floor_ppm:
         ca_gap = calcium_floor_ppm - source.get("ca", 0.0)
-        # Gypsum and CaCl2 add Ca -> sum >= ca_gap => -sum <= -ca_gap
-        a_ub = [[-gyp.get("ca", 0.0), -cacl2.get("ca", 0.0), 0.0, 0.0]]
+        a_ub = [[-gyp.get("ca", 0.0), -cacl2.get("ca", 0.0), 0.0, 0.0, -agent.get("ca", 0.0)]]
         b_ub = [-ca_gap]
 
     res = _solve_lp(c_primary, a_eq, b_eq, a_ub, b_ub)
@@ -766,6 +772,7 @@ def _solve_dynamic_sparse(
         cacl2_g_per_l=x[1],
         epsom_g_per_l=x[2],
         nacl_g_per_l=x[3],
+        alkaline_agent_g_per_l=x[4],
     ), notes
 
 
@@ -840,6 +847,13 @@ def solve_salt_dose(
             events=evs,
         )
         notes.extend(l_notes)
+        dose = SaltDose(
+            gypsum_g_per_l=dose.gypsum_g_per_l,
+            cacl2_g_per_l=dose.cacl2_g_per_l,
+            epsom_g_per_l=dose.epsom_g_per_l,
+            nacl_g_per_l=dose.nacl_g_per_l,
+            alkaline_agent_g_per_l=_agent_g_per_l(source, target, preferred_alkaline_agent),
+        )
         return dose, notes, canonical_strat
 
     if mode == "MODE_3":  # Non-Linear Cloner
@@ -852,7 +866,7 @@ def solve_salt_dose(
             )
         )
         dose, c_notes = _solve_nonlinear_cloner(
-            source, target, coeffs, calcium_floor_ppm, evs
+            source, target, coeffs, calcium_floor_ppm, evs, preferred_alkaline_agent
         )
         notes.extend(c_notes)
         return dose, notes, canonical_strat
@@ -867,7 +881,7 @@ def solve_salt_dose(
         )
     )
     dose, s_notes = _solve_dynamic_sparse(
-        source, target, coeffs, custom_pinned_ions, calcium_floor_ppm, evs
+        source, target, coeffs, custom_pinned_ions, calcium_floor_ppm, evs, preferred_alkaline_agent
     )
     notes.extend(s_notes)
     return dose, notes, canonical_strat
@@ -939,43 +953,81 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     )
     notes.extend(solve_notes)
 
-    # 4. Post-salt mineral concentrations
+    # 4. Stage-1 post-salt ions (flavor salts + stage-1 alkaline agent)
     added = ions_added_ppm(
         dose, inp.gypsum_form, inp.cacl2_form, preferred_alkaline_agent=inp.preferred_alkaline_agent
     )
-    post_mash = add_ions(inp.source, added)
+    post_salt = add_ions(inp.source, added)
     proportional = (inp.salt_distribution.upper() == "PROPORTIONAL")
     post_hlt = add_ions(inp.source, added) if proportional else dict(inp.source)
 
-    # Calculate added mineral mass and TDS metrics
-    dose_rate_g_per_l = (
-        dose.gypsum_g_per_l + dose.cacl2_g_per_l + dose.epsom_g_per_l + dose.nacl_g_per_l
-    )
-    total_added_salt_mass_g = (
-        dose_rate_g_per_l * inp.v_mash_treat_l
-        + (dose_rate_g_per_l * inp.v_hlt_treat_l if proportional else 0.0)
-    )
-    added_tds_ppm = sum(added.values())
+    # 5. Stage-2 acid / alkaline correction to target_mash_ph
+    ra_stage1 = residual_alkalinity(post_salt["ca"], post_salt["mg"], post_salt.get("alk", 0.0))
+    ph_stage1 = predict_mash_ph(grist_acidity, ra_stage1, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg)
+    meq_l = acid_required_meq_l(post_salt.get("alk", 0.0), ph_stage1, inp.target_mash_ph)
+    mash_acid_ml = 0.0
+    stage2_agent_g = 0.0
+    alk_correction_ppm = 0.0
 
-    events.append(
-        TelemetryEvent(
-            code="OPT_MINIMAL_MASS_ACHIEVED",
-            category="OPTIMIZATION",
-            severity="INFO",
-            message=f"Optimal mineral dose identified: Total added salt mass is {total_added_salt_mass_g:.2f} g ({dose_rate_g_per_l:.2f} g/L). Added mineral contribution to TDS: {added_tds_ppm:.1f} ppm.",
-            context={
-                "total_mass_g": total_added_salt_mass_g,
-                "dose_rate_g_l": dose_rate_g_per_l,
-                "added_tds_ppm": added_tds_ppm,
-            },
+    if meq_l > 0.0:
+        total_acid_meq = meq_l * inp.v_mash_treat_l
+        mash_acid_ml = acid_volume_ml(total_acid_meq, inp.acid_medium, inp.target_mash_ph)
+        alk_correction_ppm = -meq_l * 50.0
+        events.append(
+            TelemetryEvent(
+                code="ENZYMATIC_ACID_DOSE_PRESCRIBED",
+                category="ENZYMATIC",
+                severity="INFO",
+                message=f"Mash acidification prescribed: {mash_acid_ml:.2f} mL of {inp.acid_medium} ({total_acid_meq:.1f} mEq) required to shift mash from pH {ph_stage1:.2f} to target pH {inp.target_mash_ph:.2f}.",
+                context={
+                    "volume_ml": mash_acid_ml,
+                    "acid_medium": inp.acid_medium,
+                    "meq_total": total_acid_meq,
+                    "ph_start": ph_stage1,
+                    "ph_target": inp.target_mash_ph,
+                },
+            )
         )
-    )
+    elif meq_l < 0.0:
+        total_alk_meq = abs(meq_l) * inp.v_mash_treat_l
+        stage2_agent_g = alkaline_agent_mass_g(total_alk_meq, inp.preferred_alkaline_agent)
+        alk_correction_ppm = total_alk_meq / inp.v_mash_treat_l * 50.0
+        events.append(
+            TelemetryEvent(
+                code="ENZYMATIC_ALKALINE_DOSE_PRESCRIBED",
+                category="ENZYMATIC",
+                severity="INFO",
+                message=f"Mash buffering prescribed: {stage2_agent_g:.2f} g of {inp.preferred_alkaline_agent} ({total_alk_meq:.1f} mEq) required to raise mash pH from {ph_stage1:.2f} to target pH {inp.target_mash_ph:.2f}.",
+                context={
+                    "mass_g": stage2_agent_g,
+                    "agent": inp.preferred_alkaline_agent,
+                    "meq_total": total_alk_meq,
+                    "ph_start": ph_stage1,
+                    "ph_target": inp.target_mash_ph,
+                },
+            )
+        )
+        if inp.preferred_alkaline_agent == "CHALK":
+            events.append(
+                TelemetryEvent(
+                    code="OPERATIONAL_SALT_DISSOLUTION_LIMIT",
+                    category="OPERATIONAL",
+                    severity="WARNING",
+                    message="Low salt solubility: Chalk (CaCO3) has extremely low solubility at room temperature. Ensure chalk is added directly to the mash tun with grains, or substitute Baking Soda/Pickling Lime.",
+                )
+            )
 
-    # 5. Residual alkalinity and enzymatic mash pH prediction
-    ra_mash = residual_alkalinity(post_mash["ca"], post_mash["mg"], post_mash.get("alk", 0.0))
-    predicted_ph = predict_mash_ph(
-        grist_acidity, ra_mash, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg
-    )
+    # 6. Post-dose ions and corrected mash pH
+    post_dose = dict(post_salt)
+    post_dose["alk"] = max(0.0, post_salt.get("alk", 0.0) + alk_correction_ppm)
+    if stage2_agent_g > 0.0:
+        agent_yields = SALT_COEFFS.get(inp.preferred_alkaline_agent, {})
+        per_l = stage2_agent_g / inp.v_mash_treat_l
+        post_dose["na"] = post_dose.get("na", 0.0) + per_l * agent_yields.get("na", 0.0)
+        post_dose["ca"] = post_dose.get("ca", 0.0) + per_l * agent_yields.get("ca", 0.0)
+
+    ra_dose = residual_alkalinity(post_dose["ca"], post_dose["mg"], post_dose.get("alk", 0.0))
+    predicted_ph = predict_mash_ph(grist_acidity, ra_dose, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg)
     status = mash_ph_status(predicted_ph)
 
     if status == "OPTIMAL":
@@ -999,56 +1051,8 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
             )
         )
 
-    # 6. Acid / Alkaline correction to achieve target_mash_ph
-    meq_l = acid_required_meq_l(post_mash.get("alk", 0.0), predicted_ph, inp.target_mash_ph)
-    mash_acid_ml = 0.0
-    alkaline_agent_g = 0.0
-
-    if meq_l > 0.0:
-        total_acid_meq = meq_l * inp.v_mash_treat_l
-        mash_acid_ml = acid_volume_ml(total_acid_meq, inp.acid_medium, inp.target_mash_ph)
-        events.append(
-            TelemetryEvent(
-                code="ENZYMATIC_ACID_DOSE_PRESCRIBED",
-                category="ENZYMATIC",
-                severity="INFO",
-                message=f"Mash acidification prescribed: {mash_acid_ml:.2f} mL of {inp.acid_medium} ({total_acid_meq:.1f} mEq) required to shift mash from pH {predicted_ph:.2f} to target pH {inp.target_mash_ph:.2f}.",
-                context={
-                    "volume_ml": mash_acid_ml,
-                    "acid_medium": inp.acid_medium,
-                    "meq_total": total_acid_meq,
-                    "ph_start": predicted_ph,
-                    "ph_target": inp.target_mash_ph,
-                },
-            )
-        )
-    elif meq_l < 0.0:
-        total_alk_meq = abs(meq_l) * inp.v_mash_treat_l
-        alkaline_agent_g = alkaline_agent_mass_g(total_alk_meq, inp.preferred_alkaline_agent)
-        events.append(
-            TelemetryEvent(
-                code="ENZYMATIC_ALKALINE_DOSE_PRESCRIBED",
-                category="ENZYMATIC",
-                severity="INFO",
-                message=f"Mash buffering prescribed: {alkaline_agent_g:.2f} g of {inp.preferred_alkaline_agent} ({total_alk_meq:.1f} mEq) required to raise mash pH from {predicted_ph:.2f} to target pH {inp.target_mash_ph:.2f}.",
-                context={
-                    "mass_g": alkaline_agent_g,
-                    "agent": inp.preferred_alkaline_agent,
-                    "meq_total": total_alk_meq,
-                    "ph_start": predicted_ph,
-                    "ph_target": inp.target_mash_ph,
-                },
-            )
-        )
-        if inp.preferred_alkaline_agent == "CHALK":
-            events.append(
-                TelemetryEvent(
-                    code="OPERATIONAL_SALT_DISSOLUTION_LIMIT",
-                    category="OPERATIONAL",
-                    severity="WARNING",
-                    message="Low salt solubility: Chalk (CaCO3) has extremely low solubility at room temperature. Ensure chalk is added directly to the mash tun with grains, or substitute Baking Soda/Pickling Lime.",
-                )
-            )
+    # 7. Total alkaline agent (stage-1 target/buffer + stage-2 pH correction)
+    alkaline_agent_g = dose.alkaline_agent_g_per_l * inp.v_mash_treat_l + stage2_agent_g
 
     # 7. Sparge tannin protection
     ra_hlt = residual_alkalinity(post_hlt["ca"], post_hlt["mg"], post_hlt.get("alk", 0.0))
@@ -1088,6 +1092,28 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         "nacl_g": 0.0,
     }
 
+    # 8b. Added mineral mass and TDS
+    flavor_per_l = dose.gypsum_g_per_l + dose.cacl2_g_per_l + dose.epsom_g_per_l + dose.nacl_g_per_l
+    flavor_mass = flavor_per_l * inp.v_mash_treat_l + (flavor_per_l * inp.v_hlt_treat_l if proportional else 0.0)
+    total_added_salt_mass_g = flavor_mass + alkaline_agent_g
+    added_tds_ppm = total_added_salt_mass_g / inp.v_mash_treat_l * 1000.0
+    dose_rate_g_per_l = flavor_per_l + dose.alkaline_agent_g_per_l
+
+    if resolved_strat != "OPTIMIZE":
+        events.append(
+            TelemetryEvent(
+                code="OPT_MINIMAL_MASS_ACHIEVED",
+                category="OPTIMIZATION",
+                severity="INFO",
+                message=f"Optimal mineral dose identified: Total added salt mass is {total_added_salt_mass_g:.2f} g ({dose_rate_g_per_l:.2f} g/L). Added mineral contribution to TDS: {added_tds_ppm:.1f} ppm.",
+                context={
+                    "total_mass_g": total_added_salt_mass_g,
+                    "dose_rate_g_l": dose_rate_g_per_l,
+                    "added_tds_ppm": added_tds_ppm,
+                },
+            )
+        )
+
     # 9. Brewhouse diagnostics and guardrail checks
     residual_hlt = max(0.0, inp.v_hlt_treat_l - inp.v_sparge_demand_l)
     if inp.v_hlt_treat_l - inp.v_hlt_debt_l - inp.v_sparge_demand_l > 0.0:
@@ -1106,7 +1132,7 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
 
     # Magnesium threshold check
     mg_added = added.get("mg", 0.0)
-    mg_total = post_mash.get("mg", 0.0)
+    mg_total = post_dose.get("mg", 0.0)
     if mg_added > EPSOM_MG_WARN_PPM or mg_total > HARD_MAGNESIUM_MAX_PPM:
         msg = f"Added magnesium {mg_added:.1f} ppm exceeds {EPSOM_MG_WARN_PPM:.0f} ppm (total Mg: {mg_total:.1f} ppm)."
         warnings.append(msg)
@@ -1121,7 +1147,7 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         )
 
     # Sulfate threshold check
-    so4_total = post_mash.get("so4", 0.0)
+    so4_total = post_dose.get("so4", 0.0)
     if so4_total > HARD_SULFATE_MAX_PPM:
         msg = f"Total sulfate {so4_total:.1f} ppm exceeds {HARD_SULFATE_MAX_PPM:.0f} ppm harshness threshold."
         warnings.append(msg)
@@ -1136,8 +1162,8 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         )
 
     # Calcium floor audit
-    if post_mash["ca"] < inp.calcium_floor_ppm - 1e-6:
-        msg = f"Calcium {post_mash['ca']:.1f} ppm is below the {inp.calcium_floor_ppm:.0f} ppm floor."
+    if post_dose["ca"] < inp.calcium_floor_ppm - 1e-6:
+        msg = f"Calcium {post_dose['ca']:.1f} ppm is below the {inp.calcium_floor_ppm:.0f} ppm floor."
         warnings.append(msg)
 
     # Synchronize string warnings/notes with telemetry events for legacy callers
@@ -1157,7 +1183,8 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         mash_acid_ml=mash_acid_ml,
         sparge_acid_ml=sparge_acid_ml,
         alkaline_agent_g=alkaline_agent_g,
-        post_salt_mash_ions=post_mash,
+        post_salt_mash_ions=post_salt,
+        post_dose_mash_ions=post_dose,
         residual_hlt_water_l=residual_hlt,
         sparge_tannin_warning=sparge_tannin_warning,
         grist_buckets_kg=buckets,
