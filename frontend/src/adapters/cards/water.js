@@ -5,29 +5,17 @@
 // (WATER_NODES).
 
 import { fieldOr, formatQuantity, formatValue } from "../../utils.js";
-import { WATER_NODES as N, waterRegistry } from "../../views/registry/water.js";
+import {
+  WATER_IONS,
+  WATER_NODES as N,
+  constraintStatusFor,
+  pinnedIonsFor,
+  waterRegistry,
+} from "../../views/registry/water.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import { reportError } from "../../observability.js";
 
-const IONS = [
-  ["calcium_ca", "Calcium"],
-  ["magnesium_mg", "Magnesium"],
-  ["sodium_na", "Sodium"],
-  ["sulfate_so4", "Sulfate"],
-  ["chloride_cl", "Chloride"],
-  ["alkalinity_as_caco3", "Alkalinity"],
-];
-
-// Source reports name alkalinity "total_alkalinity_caco3"; everything else uses
-// the working-ion key.
-const SOURCE_ION = {
-  calcium_ca: "calcium_ca",
-  magnesium_mg: "magnesium_mg",
-  sodium_na: "sodium_na",
-  sulfate_so4: "sulfate_so4",
-  chloride_cl: "chloride_cl",
-  alkalinity_as_caco3: "total_alkalinity_caco3",
-};
+const ION_KEYS = WATER_IONS.map((row) => row.ion);
 
 const ADDITIONS = ["gypsum_kg", "cacl2_kg", "epsom_kg", "nacl_kg", "acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"];
 
@@ -39,19 +27,17 @@ const WATER_MODES = [
   { id: "CUSTOM", label: "Custom Permutation" },
 ];
 
-function pinnedIonsFor(mode, custom) {
-  if (mode === "HYBRID") return new Set(["so4", "cl", "alk"]);
-  if (mode === "OPTIMIZE") return new Set(["ca", "mg", "na", "so4", "cl", "alk"]);
-  if (mode === "BASELINE") return new Set();
-  if (mode === "CUSTOM") return new Set(custom ?? []);
-  return new Set(["so4", "cl"]);
-}
+const AUTO_TARGET = "(Auto)";
+
+// Salts are five levers; four pins keep one degree of freedom so mass
+// minimisation still has a choice to make.
+const WATER_PIN_LIMIT = 4;
 
 export function kettleBlend(mash, hlt, runnings, sparge) {
   const total = runnings + sparge;
   if (!(total > 0)) return null;
   const out = {};
-  for (const [ion] of IONS) {
+  for (const ion of ION_KEYS) {
     const m = mash?.[ion];
     const h = hlt?.[ion];
     if (typeof m !== "number" || typeof h !== "number") {
@@ -79,7 +65,7 @@ function num(engine, path) {
 
 function ionVector(engine, prefix) {
   const out = {};
-  for (const [ion] of IONS) out[ion] = num(engine, `${prefix}.${ion}`);
+  for (const ion of ION_KEYS) out[ion] = num(engine, `${prefix}.${ion}`);
   return out;
 }
 
@@ -172,9 +158,16 @@ export function registerWaterCard(app, ctx) {
       return (this.waterSummary.pinnedIons ?? []).includes(ion);
     },
 
+    waterPinDisabled(ion) {
+      const rows = engine.get(N.pinnedIons) ?? [];
+      return !rows.some((r) => r.ion === ion) && rows.length >= WATER_PIN_LIMIT;
+    },
+
     toggleWaterPin(ion) {
       const rows = engine.get(N.pinnedIons) ?? [];
       const pinned = rows.some((r) => r.ion === ion);
+      if (pinned && rows.length === 1) return;
+      if (!pinned && rows.length >= WATER_PIN_LIMIT) return;
       const next = pinned ? rows.filter((r) => r.ion !== ion) : [...rows, { ion }];
       engine.setCollection(N.pinnedIons, next);
       this.waterSummary.pinnedIons = next.map((r) => r.ion);
@@ -249,19 +242,19 @@ export function refreshWaterCard(app, ctx) {
     const effectiveMode = mode === "AUTO" ? resolvedMode : mode;
     const customPins = (engine.get(N.pinnedIons) ?? []).map((r) => r.ion);
     const pinned = pinnedIonsFor(effectiveMode, customPins);
-    const ions = IONS.map(([ion, label]) => {
-      const sourceVal = num(engine, `${N.sourceReport}.${SOURCE_ION[ion]}`);
+    const ions = WATER_IONS.map(({ ion, pin, label, source }) => {
+      const sourceVal = num(engine, `${N.sourceReport}.${source}`);
       const targetVal = num(engine, `${N.target}.${ion}`);
       const postDoseVal = num(engine, `${N.postDoseIons}.${ion}`);
-      const isPinned = pinned.has(ion);
+      const isPinned = pinned.has(pin);
       return {
         ion,
         label,
         sourceText: fmtPpm(sourceVal),
-        targetText: isPinned ? fmtPpm(targetVal) : "—",
+        targetText: isPinned ? fmtPpm(targetVal) : AUTO_TARGET,
         postDoseText: fmtPpm(postDoseVal),
         deltaText: isPinned ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
-        status: isPinned ? "Target" : "Auto",
+        status: isPinned ? constraintStatusFor(effectiveMode, pin) : "Auto",
       };
     });
 
@@ -326,4 +319,4 @@ export function refreshWaterCard(app, ctx) {
   }
 }
 
-export const KEYS = ["waterSummary", "waterModes", "waterModeLabel", "waterPinModalOpen", "waterPinOptions", "setWaterMode", "openWaterPinModal", "closeWaterPinModal", "waterPinChecked", "toggleWaterPin", "waterInstruction", "telemetryLine", "telemetryClass", "waterModeBanner"];
+export const KEYS = ["waterSummary", "waterModes", "waterModeLabel", "waterPinModalOpen", "waterPinOptions", "setWaterMode", "openWaterPinModal", "closeWaterPinModal", "waterPinChecked", "waterPinDisabled", "toggleWaterPin", "waterInstruction", "telemetryLine", "telemetryClass", "waterModeBanner"];

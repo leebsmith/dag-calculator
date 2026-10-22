@@ -1,6 +1,48 @@
 // Presentation metadata for the water-chemistry slice (pickers, ion readouts,
 // choices, and solver.water readouts).
+
+// One row per working ion: the report key it is read from, the router's short
+// pin key, and the label. The card derives its grid from this table so the row
+// key space and the pin key space cannot drift apart.
+export const WATER_IONS = [
+  { ion: "calcium_ca", pin: "ca", label: "Calcium", source: "calcium_ca" },
+  { ion: "magnesium_mg", pin: "mg", label: "Magnesium", source: "magnesium_mg" },
+  { ion: "sodium_na", pin: "na", label: "Sodium", source: "sodium_na" },
+  { ion: "sulfate_so4", pin: "so4", label: "Sulfate", source: "sulfate_so4" },
+  { ion: "chloride_cl", pin: "cl", label: "Chloride", source: "chloride_cl" },
+  { ion: "alkalinity_as_caco3", pin: "alk", label: "Alkalinity", source: "total_alkalinity_caco3" },
+];
+
+// Which ions a routed mode constrains. Short keys, matching the backend router.
+export function pinnedIonsFor(mode, custom) {
+  if (mode === "HYBRID") return new Set(["so4", "cl", "alk"]);
+  if (mode === "OPTIMIZE") return new Set(["ca", "mg", "na", "so4", "cl", "alk"]);
+  if (mode === "BASELINE") return new Set();
+  if (mode === "CUSTOM") return new Set(custom ?? []);
+  return new Set(["so4", "cl"]);
+}
+
+// How a constrained ion is held: an equality target, a pre-acid buffer (Mode 2
+// alkalinity), or a least-squares best fit (Mode 3 holds nothing exactly).
+export function constraintStatusFor(mode, pin) {
+  if (mode === "OPTIMIZE") return "Best fit";
+  if (mode === "HYBRID" && pin === "alk") return "Buffer";
+  return "Target";
+}
+
+// Picker vocabulary: held (hard equality) vs best fit (least squares) vs float.
+// Shared by the profile picker, the grid, and the docs.
+const MODE_TAG = {
+  CALCIUM_FLOOR: "SO₄/Cl held",
+  FLAVOR: "SO₄/Cl held",
+  HYBRID: "SO₄/Cl/alk held",
+  OPTIMIZE: "all six, best fit",
+  BASELINE: "no salt targets",
+  CUSTOM: "you pick ≤ 4",
+};
+
 export const WATER_NODES = {
+
   slice: "water",
   saltDistribution: "water.salt_distribution",
   gypsumForm: "water.gypsum_form",
@@ -32,8 +74,18 @@ export const WATER_NODES = {
 };
 
 export const waterRegistry = {
-  "water.source_report_id": { label: "Source report" },
-  "water.target_profile_id": { label: "Target profile" },
+  "water.source_report_id": {
+    label: "Source report",
+    optionLabel: (report) => report?.laboratory || report?.source_name || report?.report_id,
+  },
+  "water.target_profile_id": {
+    label: "Target profile",
+    hint: "Applying a profile resets its derived targets and returns the routing to AUTO.",
+    optionLabel: (profile) =>
+      MODE_TAG[profile?.mode]
+        ? `${profile.name} — ${MODE_TAG[profile.mode]}`
+        : profile?.name ?? profile?.id ?? "",
+  },
 
   "water.source_report.calcium_ca": { label: "Calcium", unit: "ppm" },
   "water.source_report.magnesium_mg": { label: "Magnesium", unit: "ppm" },
