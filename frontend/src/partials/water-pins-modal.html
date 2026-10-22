@@ -5,30 +5,27 @@
   @click.self="closeWaterPinModal()"
   @keydown.escape.window="closeWaterPinModal()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Pin Target Ions</h2>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-primary text-xs" @click="closeWaterPinModal()">Done</button>
-      </div>
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 class="modal-title">Pin Target Ions</h2>
     </div>
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
-        <template x-for="opt in waterPinOptions" :key="opt.ion">
-          <label class="pin-row">
-            <input
-              type="checkbox"
-              :checked="waterPinChecked(opt.ion)"
-              @change="toggleWaterPin(opt.ion)"
-            />
-            <span x-text="opt.label"></span>
-          </label>
-        </template>
-        <p class="form-hint">Checked ions are pinned as equality targets; unchecked ions float to the source.</p>
-      </div>
+    <div class="modal-body">
+      <template x-for="opt in waterPinOptions" :key="opt.ion">
+        <label class="pin-row">
+          <input
+            type="checkbox"
+            :checked="waterPinChecked(opt.ion)"
+            @change="toggleWaterPin(opt.ion)"
+          />
+          <span x-text="opt.label"></span>
+        </label>
+      </template>
+      <p class="form-hint">Checked ions are pinned as equality targets; unchecked ions float to the source.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-primary text-xs" @click="closeWaterPinModal()">Done</button>
     </div>
   </div>
 </div>

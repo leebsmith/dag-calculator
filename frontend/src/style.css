@@ -2328,3 +2328,193 @@ samp {
   flex-direction: column;
   gap: var(--space-0-5);
 }
+
+/* ==========================================================================
+   Water chemistry card (mode radio, target grid, telemetry, pin modal)
+   ========================================================================== */
+
+.water-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--sys-surface-canvas);
+}
+
+.water-modes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.water-mode {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--sys-text-secondary);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--sys-surface-default);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.water-mode:hover {
+  border-color: var(--sys-border-default);
+  color: var(--sys-text-primary);
+}
+
+.water-mode:has(input:checked) {
+  border-color: var(--sys-color-action-primary);
+  color: var(--sys-text-primary);
+  background-color: var(--sys-color-action-subtle);
+}
+
+.water-mode input[type="radio"] {
+  accent-color: var(--sys-color-action-primary);
+}
+
+.water-mode-banner {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--sys-color-info-text);
+  background-color: var(--sys-color-info-surface);
+  border: 1px solid var(--sys-color-info-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+.water-basis,
+.water-destinations,
+.water-ratio,
+.water-ratio-basis,
+.water-not-modelled {
+  margin: var(--space-0);
+}
+
+.water-basis {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+}
+
+.water-destinations {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--sys-text-secondary);
+}
+
+.water-ratio {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
+.water-ratio-basis {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+}
+
+.water-not-modelled {
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
+}
+
+.water-treated {
+  width: 100%;
+  text-align: left;
+  font-size: var(--text-sm);
+  border-collapse: collapse;
+}
+
+.water-treated thead {
+  background-color: var(--sys-surface-subtle);
+  font-size: var(--text-xs);
+  color: var(--sys-text-secondary);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-bold);
+  border-bottom: 1px solid var(--sys-border-subtle);
+}
+
+.water-treated th,
+.water-treated td {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: middle;
+  text-align: right;
+}
+
+.water-treated th:first-child,
+.water-treated td:first-child,
+.water-treated th:last-child,
+.water-treated td:last-child {
+  text-align: left;
+}
+
+.water-treated tbody tr {
+  border-bottom: 1px solid var(--sys-border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.water-treated tbody tr:last-child {
+  border-bottom: none;
+}
+
+.telemetry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--sys-surface-default);
+}
+
+.telemetry-row {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--line-height-snug);
+  margin: var(--space-0);
+}
+
+.sev-error {
+  color: var(--sys-color-danger-text);
+}
+
+.sev-warning {
+  color: var(--sys-color-warning-text);
+}
+
+.sev-info {
+  color: var(--sys-color-info-text);
+}
+
+.sev-note {
+  color: var(--sys-text-muted);
+}
+
+.pin-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--sys-text-primary);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.pin-row:hover {
+  border-color: var(--sys-border-default);
+  background-color: var(--sys-surface-subtle);
+}
+
+.pin-row input[type="checkbox"] {
+  accent-color: var(--sys-color-action-primary);
+}
