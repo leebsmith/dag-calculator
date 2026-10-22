@@ -77,6 +77,7 @@ to deliver the sparge plus the HLT debt.
 | Grist ion contributions | Small, no seed data, no tolerance for the comparison | Unknown; typically single-digit ppm |
 | Sodium metabisulfite | Added to remove chlorine/chloramine, not for ions; concentration depends on HLT volume and is diluted by untreated top-up water | One 0.44 g tablet: ≤ ~7.8 mg/L SO₄, ~1.9 mg/L Na at 56.8 L (15 US gal); ≤ ~14.8 mg/L SO₄, ~3.6 mg/L Na in a 30 L HLT |
 | Chlorine / chloramine removal | Treatment effect, not an ion balance | — |
+| Secondary-ion contaminants (K, Fe, Mn, NO₃) | The core audits `k`/`fe`/`mn`/`no3` against `CONTAMINANT_LIMITS` and emits `GUARDRAIL_SOURCE_CONTAMINANT_DETECTED`, but the `water_report` schema and seeds do not yet carry those ions to the solver (no `mn`, nitrate is `nitrate_no3_n` "as-N"), so the guardrail is not exercised through the seam today | — |
 
 Both omissions push the same way: with metabisulfite in the HLT, the realized sulfate
 (and therefore the kettle SO4:Cl) is **higher** than the calculator reports. The

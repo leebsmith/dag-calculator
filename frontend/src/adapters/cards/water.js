@@ -120,7 +120,9 @@ function severityRank(severity) {
   return { ERROR: 3, WARNING: 2, NOTE: 1, INFO: 0 }[severity] ?? 0;
 }
 
-export function registerWaterCard(app) {
+export function registerWaterCard(app, ctx) {
+  const engine = ctx.engine;
+
   Object.assign(app, {
     waterSummary: {
       mode: "",
@@ -141,10 +143,41 @@ export function registerWaterCard(app) {
 
     waterModes: WATER_MODES,
     waterModeLabel: "",
+    waterPinModalOpen: false,
+    waterPinOptions: [
+      { ion: "ca", label: "Calcium (Ca²⁺)" },
+      { ion: "mg", label: "Magnesium (Mg²⁺)" },
+      { ion: "na", label: "Sodium (Na⁺)" },
+      { ion: "so4", label: "Sulfate (SO₄²⁻)" },
+      { ion: "cl", label: "Chloride (Cl⁻)" },
+      { ion: "alk", label: "Alkalinity (as CaCO₃)" },
+    ],
 
     setWaterMode(mode) {
       this.waterSummary.mode = mode;
       this.setRoot(N.strategy, mode);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    openWaterPinModal() {
+      this.waterPinModalOpen = true;
+    },
+
+    closeWaterPinModal() {
+      this.waterPinModalOpen = false;
+    },
+
+    waterPinChecked(ion) {
+      return (this.waterSummary.pinnedIons ?? []).includes(ion);
+    },
+
+    toggleWaterPin(ion) {
+      const rows = engine.get(N.pinnedIons) ?? [];
+      const pinned = rows.some((r) => r.ion === ion);
+      const next = pinned ? rows.filter((r) => r.ion !== ion) : [...rows, { ion }];
+      engine.setCollection(N.pinnedIons, next);
+      this.waterSummary.pinnedIons = next.map((r) => r.ion);
       this.scheduleSolve();
       this.notify();
     },
@@ -212,8 +245,10 @@ export function refreshWaterCard(app, ctx) {
 
     // Target-vs-actual grid: source (read-only report), target (editable roots),
     // post-dose (salts + agent + acid), signed delta, and a pin/floating status.
+    const resolvedMode = engine.resolve(N.resolvedStrategy) ?? mode;
+    const effectiveMode = mode === "AUTO" ? resolvedMode : mode;
     const customPins = (engine.get(N.pinnedIons) ?? []).map((r) => r.ion);
-    const pinned = pinnedIonsFor(mode, customPins);
+    const pinned = pinnedIonsFor(effectiveMode, customPins);
     const ions = IONS.map(([ion, label]) => {
       const sourceVal = num(engine, `${N.sourceReport}.${SOURCE_ION[ion]}`);
       const targetVal = num(engine, `${N.target}.${ion}`);
@@ -263,7 +298,7 @@ export function refreshWaterCard(app, ctx) {
 
     app.waterSummary = {
       mode,
-      resolvedMode: engine.resolve(N.resolvedStrategy) ?? mode,
+      resolvedMode,
       proportional,
       basis,
       mashDose,
@@ -271,6 +306,7 @@ export function refreshWaterCard(app, ctx) {
       doseVolume,
       deliveredSparge,
       ions,
+      pinnedIons: customPins,
       notes,
       tanninWarning,
       residualHlt,
@@ -290,4 +326,4 @@ export function refreshWaterCard(app, ctx) {
   }
 }
 
-export const KEYS = ["waterSummary", "waterModes", "waterModeLabel", "setWaterMode", "waterInstruction", "telemetryLine", "telemetryClass", "waterModeBanner"];
+export const KEYS = ["waterSummary", "waterModes", "waterModeLabel", "waterPinModalOpen", "waterPinOptions", "setWaterMode", "openWaterPinModal", "closeWaterPinModal", "waterPinChecked", "toggleWaterPin", "waterInstruction", "telemetryLine", "telemetryClass", "waterModeBanner"];

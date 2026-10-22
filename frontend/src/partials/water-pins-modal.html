@@ -1,0 +1,34 @@
+<!-- Mode 5: pin target ions. Checked = equality target; unchecked = floats to source. -->
+<div
+  class="modal-backdrop"
+  x-show="waterPinModalOpen"
+  @click.self="closeWaterPinModal()"
+  @keydown.escape.window="closeWaterPinModal()"
+>
+  <div class="modal-dialog modal-dialog-workspace">
+    <div class="modal-workspace-header">
+      <div class="modal-workspace-header-title">
+        <h2 class="modal-workspace-title">Pin Target Ions</h2>
+      </div>
+      <div class="modal-workspace-header-actions">
+        <button type="button" class="btn-primary text-xs" @click="closeWaterPinModal()">Done</button>
+      </div>
+    </div>
+
+    <div class="modal-workspace-body">
+      <div class="modal-workspace-main">
+        <template x-for="opt in waterPinOptions" :key="opt.ion">
+          <label class="pin-row">
+            <input
+              type="checkbox"
+              :checked="waterPinChecked(opt.ion)"
+              @change="toggleWaterPin(opt.ion)"
+            />
+            <span x-text="opt.label"></span>
+          </label>
+        </template>
+        <p class="form-hint">Checked ions are pinned as equality targets; unchecked ions float to the source.</p>
+      </div>
+    </div>
+  </div>
+</div>

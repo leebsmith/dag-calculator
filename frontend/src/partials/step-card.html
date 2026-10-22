@@ -216,6 +216,15 @@
         </template>
       </div>
 
+      <button
+        type="button"
+        class="btn-outline text-xs"
+        x-show="waterSummary.mode === 'CUSTOM'"
+        @click="openWaterPinModal()"
+      >
+        Configure pinned ions
+      </button>
+
       <p class="water-mode-banner" x-show="waterSummary.resolvedMode" x-text="waterModeBanner()"></p>
 
       <p class="water-basis" x-text="waterSummary.basis"></p>
@@ -256,6 +265,7 @@
         </template>
       </div>
       <p class="water-not-modelled" x-text="waterSummary.notModelled"></p>
+      <load src="src/partials/water-pins-modal.html" />
     </div>
   </template>
 
