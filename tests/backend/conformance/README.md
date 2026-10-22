@@ -25,3 +25,20 @@ Result: **110 passed.**
 
 To refresh after an intentional solver change, re-copy from the legacy repo and
 re-run; any failure is a real behavioral divergence to reconcile.
+
+## Non-vendored water suites
+
+These are **ours** (not legacy copies) and document behaviour the vendored
+oracle cannot express:
+
+- `test_water_routing.py` — the AUTO truth table over all 64 target shapes, the
+  explicit-strategy mapping, and the generated
+  `tests/conformance/fixtures/ion-constraints.json` (observed pin sets; refresh
+  with `UPDATE_FIXTURES=1`). `make test` fails if the fixture goes stale.
+- `test_water_matrix.py` — beers × source waters × settings, asserting invariants
+  (non-negative doses, pH band or explicit out-of-range flag, vessel distribution
+  rules, residual HLT, additions-only, determinism) plus per-scenario
+  expectations (held ions, telemetry, expected failures).
+- `test_water_fuzz.py` — seeded generative sweep, skipped unless
+  `WATER_FUZZ_CASES` is set; run it with `make test-fuzz`.
+

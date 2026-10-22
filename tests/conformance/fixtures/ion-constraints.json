@@ -1,0 +1,50 @@
+{
+  "generated_by": "tests/backend/conformance/test_water_routing.py",
+  "modes": {
+    "BASELINE": [],
+    "CALCIUM_FLOOR": [
+      "so4",
+      "cl"
+    ],
+    "FLAVOR": [
+      "so4",
+      "cl"
+    ],
+    "HYBRID": [
+      "so4",
+      "cl",
+      "alk"
+    ],
+    "OPTIMIZE": []
+  },
+  "note": "Ion constraint sets observed from the solver: an ion is held when it lands on target. CUSTOM is collection-driven (the request names the pins).",
+  "pin_examples": {
+    "alk": [
+      "alk"
+    ],
+    "ca,cl": [
+      "ca",
+      "cl"
+    ],
+    "so4,mg": [
+      "so4",
+      "mg"
+    ]
+  },
+  "source": {
+    "alk": 37.0,
+    "ca": 11.0,
+    "cl": 5.0,
+    "mg": 3.0,
+    "na": 7.0,
+    "so4": 13.0
+  },
+  "target": {
+    "alk": 61.0,
+    "ca": 73.0,
+    "cl": 97.0,
+    "mg": 17.0,
+    "na": 29.0,
+    "so4": 211.0
+  }
+}

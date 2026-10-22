@@ -17,7 +17,7 @@ OUT   ?=
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help local-dev check test test-oracle coverage verify verify-full build seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help local-dev check test test-fuzz test-oracle coverage verify verify-full build seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
@@ -27,6 +27,7 @@ help:
 	@echo "  local-dev       Run frontend + Firebase emulators + backend"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
+	@echo "  test-fuzz       Seeded water-solver invariant sweep (CASES=200 SEED=...)"
 	@echo "  test-oracle     Check the oracle snapshot against the legacy checkout"
 	@echo "  coverage        Frontend + backend coverage reports"
 	@echo "  verify          check + test + production build (hermetic)"
@@ -74,6 +75,12 @@ test:
 
 test-oracle:
 	node tests/conformance/emit-oracle-fixture.mjs --check
+
+# Generative search, deliberately outside `verify`: the case count is a
+# parameter and a failure is a seed to reproduce, not a diff to review.
+test-fuzz:
+	cd backend && WATER_FUZZ_CASES=$${CASES:-200} WATER_FUZZ_SEED=$${SEED:-20261022} \
+		uv run pytest ../tests/backend/conformance/test_water_fuzz.py -q
 
 coverage:
 	@echo "Frontend coverage (loaded modules)..."
