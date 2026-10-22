@@ -201,6 +201,23 @@
 
   <template x-if="activeStep.slice === 'water'">
     <div class="water-summary">
+      <div class="water-modes">
+        <template x-for="m in waterModes" :key="m.id">
+          <label class="water-mode">
+            <input
+              type="radio"
+              name="waterMode"
+              :value="m.id"
+              :checked="waterSummary.mode === m.id"
+              @change="setWaterMode(m.id)"
+            />
+            <span x-text="m.label"></span>
+          </label>
+        </template>
+      </div>
+
+      <p class="water-mode-banner" x-show="waterSummary.resolvedMode" x-text="waterModeBanner()"></p>
+
       <p class="water-basis" x-text="waterSummary.basis"></p>
       <p class="water-destinations">Mash → dry grist, before underletting · Sparge → HLT after top-up</p>
       <p class="water-ratio" x-text="waterSummary.ratioLine"></p>
@@ -209,22 +226,22 @@
         <thead>
           <tr>
             <th>Ion</th>
-            <th>Mash</th>
-            <th>HLT</th>
-            <th>Kettle</th>
+            <th>Source</th>
             <th>Target</th>
-            <th>Δ kettle</th>
+            <th>Post-addition</th>
+            <th>Δ</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
           <template x-for="r in waterSummary.ions" :key="r.ion">
             <tr>
               <td x-text="r.label"></td>
-              <td x-text="r.mashText"></td>
-              <td x-text="r.hltText"></td>
-              <td x-text="r.kettleText"></td>
+              <td x-text="r.sourceText"></td>
               <td x-text="r.targetText"></td>
-              <td x-text="r.kettleDeltaText"></td>
+              <td x-text="r.postDoseText"></td>
+              <td x-text="r.deltaText"></td>
+              <td x-text="r.status"></td>
             </tr>
           </template>
         </tbody>
@@ -233,6 +250,11 @@
       <template x-for="n in waterSummary.notes" :key="n">
         <p class="text-warning" x-text="n"></p>
       </template>
+      <div class="telemetry" x-show="waterSummary.telemetry.length > 0">
+        <template x-for="t in waterSummary.telemetry" :key="t.code + ':' + t.message">
+          <p class="telemetry-row" :class="telemetryClass(t)" x-text="telemetryLine(t)"></p>
+        </template>
+      </div>
       <p class="water-not-modelled" x-text="waterSummary.notModelled"></p>
     </div>
   </template>

@@ -1,7 +1,8 @@
-// Water card: treatment summary, treated-water vectors against the target
-// profile, and the mode-specific brew-day dosing instruction. All readouts are
-// derived from declared outputs and roots — no engine path resolution leaks into
-// the template. Node ids live in the registry (WATER_NODES).
+// Water card: mode selector, target-vs-actual grid, treatment summary, treated
+// water against the target, telemetry audit log, and the mode-specific brew-day
+// dosing instruction. All readouts derive from declared outputs and roots — no
+// engine path resolution leaks into the template. Node ids live in the registry
+// (WATER_NODES).
 
 import { fieldOr, formatQuantity, formatValue } from "../../utils.js";
 import { WATER_NODES as N, waterRegistry } from "../../views/registry/water.js";
@@ -17,7 +18,34 @@ const IONS = [
   ["alkalinity_as_caco3", "Alkalinity"],
 ];
 
+// Source reports name alkalinity "total_alkalinity_caco3"; everything else uses
+// the working-ion key.
+const SOURCE_ION = {
+  calcium_ca: "calcium_ca",
+  magnesium_mg: "magnesium_mg",
+  sodium_na: "sodium_na",
+  sulfate_so4: "sulfate_so4",
+  chloride_cl: "chloride_cl",
+  alkalinity_as_caco3: "total_alkalinity_caco3",
+};
+
 const ADDITIONS = ["gypsum_kg", "cacl2_kg", "epsom_kg", "nacl_kg", "acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"];
+
+const WATER_MODES = [
+  { id: "CALCIUM_FLOOR", label: "Flavor Balance (SO₄ / Cl)" },
+  { id: "HYBRID", label: "Ratio + Dark Beer Buffer (SO₄ / Cl + Alk)" },
+  { id: "OPTIMIZE", label: "Classic Clone (all 6 ions)" },
+  { id: "BASELINE", label: "Baseline (no targets)" },
+  { id: "CUSTOM", label: "Custom Permutation" },
+];
+
+function pinnedIonsFor(mode, custom) {
+  if (mode === "HYBRID") return new Set(["so4", "cl", "alk"]);
+  if (mode === "OPTIMIZE") return new Set(["ca", "mg", "na", "so4", "cl", "alk"]);
+  if (mode === "BASELINE") return new Set();
+  if (mode === "CUSTOM") return new Set(custom ?? []);
+  return new Set(["so4", "cl"]);
+}
 
 export function kettleBlend(mash, hlt, runnings, sparge) {
   const total = runnings + sparge;
@@ -88,10 +116,15 @@ function fmtDelta(value) {
   return (value > 0 ? "+" : "") + formatValue(value);
 }
 
+function severityRank(severity) {
+  return { ERROR: 3, WARNING: 2, NOTE: 1, INFO: 0 }[severity] ?? 0;
+}
+
 export function registerWaterCard(app) {
   Object.assign(app, {
     waterSummary: {
-      mode: null,
+      mode: "",
+      resolvedMode: "",
       proportional: false,
       basis: "",
       mashDose: [],
@@ -103,6 +136,17 @@ export function registerWaterCard(app) {
       tanninWarning: false,
       residualHlt: null,
       notModelled: "",
+      telemetry: [],
+    },
+
+    waterModes: WATER_MODES,
+    waterModeLabel: "",
+
+    setWaterMode(mode) {
+      this.waterSummary.mode = mode;
+      this.setRoot(N.strategy, mode);
+      this.scheduleSolve();
+      this.notify();
     },
 
     waterInstruction(stepId) {
@@ -112,14 +156,27 @@ export function registerWaterCard(app) {
       if (stepId === "brew-day-setup") return s.instructionSetup ?? "";
       return "";
     },
+
+    telemetryLine(t) {
+      return `[${t?.severity ?? ""}] ${t?.message ?? ""}`;
+    },
+
+    telemetryClass(t) {
+      return `sev-${(t?.severity ?? "").toLowerCase()}`;
+    },
+
+    waterModeBanner() {
+      const m = this.waterSummary.resolvedMode;
+      return m ? `Routed: ${m}` : "";
+    },
   });
 }
 
 export function refreshWaterCard(app, ctx) {
   const engine = ctx.engine;
   try {
-    const mode = engine.get(N.saltDistribution);
-    const proportional = mode === "PROPORTIONAL";
+    const mode = engine.get(N.strategy) ?? "";
+    const proportional = engine.get(N.saltDistribution) === "PROPORTIONAL";
     const strike = num(engine, N.vMashTreat);
     const doseVolume = num(engine, N.spargeSaltedVolume);
     const deliveredSparge = num(engine, N.vSpargeDeliverable);
@@ -140,7 +197,6 @@ export function refreshWaterCard(app, ctx) {
 
     const mashIons = ionVector(engine, N.postMashIons);
     const hltIons = ionVector(engine, N.postHltIons);
-    const targetIons = ionVector(engine, N.targetProfile);
     const kettle = kettleBlend(mashIons, hltIons, run1 + run2, sparge);
     const ratio = ratioReadout(
       kettle,
@@ -154,20 +210,23 @@ export function refreshWaterCard(app, ctx) {
       ? `${ratio.intentText} intent → ${ratio.asSolvedText} kettle, ${ratio.deltaFactorText}`
       : ratio.asSolvedText;
 
+    // Target-vs-actual grid: source (read-only report), target (editable roots),
+    // post-dose (salts + agent + acid), signed delta, and a pin/floating status.
+    const customPins = (engine.get(N.pinnedIons) ?? []).map((r) => r.ion);
+    const pinned = pinnedIonsFor(mode, customPins);
     const ions = IONS.map(([ion, label]) => {
-      const m = mashIons[ion];
-      const h = hltIons[ion];
-      const t = targetIons[ion];
-      const k = kettle?.[ion] ?? null;
-      const kDelta = ionDelta(k, t);
+      const sourceVal = num(engine, `${N.sourceReport}.${SOURCE_ION[ion]}`);
+      const targetVal = num(engine, `${N.target}.${ion}`);
+      const postDoseVal = num(engine, `${N.postDoseIons}.${ion}`);
+      const isPinned = pinned.has(ion);
       return {
         ion,
         label,
-        mashText: fmtPpm(m),
-        hltText: fmtPpm(h),
-        kettleText: fmtPpm(k),
-        targetText: fmtPpm(t),
-        kettleDeltaText: fmtDelta(kDelta),
+        sourceText: fmtPpm(sourceVal),
+        targetText: isPinned ? fmtPpm(targetVal) : "—",
+        postDoseText: fmtPpm(postDoseVal),
+        deltaText: isPinned ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
+        status: isPinned ? "Target" : "Auto",
       };
     });
 
@@ -199,8 +258,12 @@ export function refreshWaterCard(app, ctx) {
       : `After the strike is drawn and the HLT is topped up to ${fmtL(doseVolume)}: no salts in the HLT. ` +
         `${spargeDoseText ? `Add ${spargeDoseText} only.` : "No additions — underlet with untreated water."} ${fmtL(deliveredSparge)} ships.`;
 
+    const telemetry = (app.waterTelemetry?.telemetry ?? []).slice();
+    telemetry.sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
+
     app.waterSummary = {
       mode,
+      resolvedMode: engine.resolve(N.resolvedStrategy) ?? mode,
       proportional,
       basis,
       mashDose,
@@ -216,14 +279,15 @@ export function refreshWaterCard(app, ctx) {
       ratio,
       ratioBasis,
       ratioLine,
+      telemetry,
       instructionSetup,
       instructionDoughIn,
       instructionSparge,
     };
   } catch (err) {
     reportError("waterCard.refresh", err);
-    app.waterSummary = { ...app.waterSummary, mode: null, ions: [], notes: [] };
+    app.waterSummary = { ...app.waterSummary, mode: "", ions: [], notes: [], telemetry: [] };
   }
 }
 
-export const KEYS = ["waterSummary", "waterInstruction"];
+export const KEYS = ["waterSummary", "waterModes", "waterModeLabel", "setWaterMode", "waterInstruction", "telemetryLine", "telemetryClass", "waterModeBanner"];

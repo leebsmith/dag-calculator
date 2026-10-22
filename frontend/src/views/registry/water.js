@@ -20,6 +20,12 @@ export const WATER_NODES = {
   spargeAdditions: "solver.water.sparge_additions",
   postMashIons: "solver.water.post_salt_mash_ions",
   postHltIons: "solver.water.post_salt_hlt_ions",
+  postDoseIons: "solver.water.post_dose_mash_ions",
+  resolvedStrategy: "solver.water.strategy",
+  strategy: "water.strategy",
+  target: "water.target",
+  sourceReport: "water.source_report",
+  pinnedIons: "water.pinned_ions",
   targetProfile: "water.target_profile",
   sulfateChlorideMode: "batch.sulfate_chloride_target_mode",
   sulfateChlorideRatio: "batch.sulfate_chloride_target_ratio",
@@ -43,6 +49,14 @@ export const waterRegistry = {
   "water.target_profile.chloride_cl": { label: "Chloride", unit: "ppm" },
   "water.target_profile.alkalinity_as_caco3": { label: "Alkalinity (as CaCO3)", unit: "ppm" },
   "water.target_profile.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
+
+  "water.target.calcium_ca": { label: "Target Calcium", unit: "ppm" },
+  "water.target.magnesium_mg": { label: "Target Magnesium", unit: "ppm" },
+  "water.target.sodium_na": { label: "Target Sodium", unit: "ppm" },
+  "water.target.sulfate_so4": { label: "Target Sulfate", unit: "ppm" },
+  "water.target.chloride_cl": { label: "Target Chloride", unit: "ppm" },
+  "water.target.alkalinity_as_caco3": { label: "Target Alkalinity (as CaCO3)", unit: "ppm" },
+  "water.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
 
   "water.strategy": { label: "Strategy" },
   "water.salt_distribution": {
