@@ -15,11 +15,11 @@ export const batchRegistry = {
     label: "Constraint Topology",
     hint: "Selects which intensive constraint the root-finder consumes.",
     optionLabels: {
-      r_l_to_g: "Liquor-to-grist ratio (L/kg)",
+      r_l_to_g: "Liquor-to-grist ratio",
       runoff_ratio: "Runnings ratio (r)",
     },
   },
-  "batch.intensive_value": { label: "Intensive value (L/kg or r)" },
+  "batch.intensive_value": { label: "Intensive value" },
   "batch.hlt_starting_volume_l": { label: "HLT starting volume", unit: "L" },
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },

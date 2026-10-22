@@ -26,7 +26,7 @@ const INTENSIVE_VALUE = {
     },
     fallback: {
       label: "Liquor-to-Grist Ratio",
-      hint: "Strike water per kg of grist.",
+      hint: "Strike water per grist mass; follows the Mash Thickness unit preference.",
     },
   },
 };
