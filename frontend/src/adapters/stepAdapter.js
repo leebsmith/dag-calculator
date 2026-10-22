@@ -128,6 +128,9 @@ export function createStepApp(options = {}) {
       session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
     ),
     boundaryError: null,
+    boundaryExtras: Object.fromEntries(
+      session.boundaryNodes.map((id) => [id, null])
+    ),
 
     // The browser wraps this object in Alpine.reactive. The runner and its
     // status callback are created below, outside that proxy, so point them at
@@ -138,6 +141,10 @@ export function createStepApp(options = {}) {
 
     get boundaryPending() {
       return useHttp && session.boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
+    },
+
+    get waterTelemetry() {
+      return this.boundaryExtras?.["solver.water"] ?? null;
     },
 
     // Entry animation class for the active card, keyed by nav direction. Empty
@@ -299,10 +306,11 @@ export function createStepApp(options = {}) {
     fetchImpl,
     debounceMs,
     compute: () => (reactiveApp ?? app).compute(),
-    onState: ({ statuses, error }) => {
+    onState: ({ statuses, error, extras }) => {
       const target = reactiveApp ?? app;
       target.boundaryStatuses = statuses;
       target.boundaryError = error;
+      target.boundaryExtras = extras;
     },
   });
 

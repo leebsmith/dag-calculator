@@ -22,13 +22,16 @@ export function createBoundaryRunner({
   const statuses = Object.fromEntries(
     session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
   );
+  const extras = Object.fromEntries(
+    session.boundaryNodes.map((id) => [id, null])
+  );
   const inflight = new Map(); // fingerprint -> Promise
   let error = null;
   let solveTimer = null;
   let solveToken = 0;
 
   function emit() {
-    onState?.({ statuses: { ...statuses }, error });
+    onState?.({ statuses: { ...statuses }, error, extras: { ...extras } });
   }
 
   function setStatus(id, value) {
@@ -92,15 +95,18 @@ export function createBoundaryRunner({
         let promise = inflight.get(fingerprint);
         if (!promise) {
           promise = postJSON(BOUNDARY_URLS[binding], inputs, { fetchImpl })
-            .then((response) => engine.applyBoundaryResult(fingerprint, flattenResponse(response)))
+            .then((response) => {
+              engine.applyBoundaryResult(fingerprint, flattenResponse(response));
+              return response;
+            })
             .finally(() => inflight.delete(fingerprint));
           inflight.set(fingerprint, promise);
         }
         try {
-          await promise;
-          return { fingerprint, ok: true };
+          const response = await promise;
+          return { job, response, ok: true };
         } catch (err) {
-          return { fingerprint, ok: false, err };
+          return { job, ok: false, err };
         }
       });
 
@@ -115,8 +121,23 @@ export function createBoundaryRunner({
         }
         if (result.value && !result.value.ok) {
           if (!firstError) firstError = result.value.err;
-          failures.set(result.value.fingerprint, result.value.err);
+          failures.set(result.value.job.fingerprint, result.value.err);
         }
+      }
+
+      for (const result of results) {
+        if (result.status !== "fulfilled") continue;
+        const value = result.value;
+        if (!value || !value.ok) {
+          extras[value?.job?.id] = null;
+          continue;
+        }
+        const { job, response } = value;
+        extras[job.id] = {
+          telemetry: response?.telemetry ?? [],
+          warnings: response?.warnings ?? [],
+          notes: response?.notes ?? [],
+        };
       }
 
       for (const job of frontier) {
@@ -144,7 +165,10 @@ export function createBoundaryRunner({
     solveToken++;
     clearTimer();
     inflight.clear();
-    for (const id of session.boundaryNodes) statuses[id] = useHttp ? "pending" : "ok";
+    for (const id of session.boundaryNodes) {
+      statuses[id] = useHttp ? "pending" : "ok";
+      extras[id] = null;
+    }
     error = null;
     emit();
   }

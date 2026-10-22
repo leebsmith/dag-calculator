@@ -288,3 +288,25 @@ test("http: refreshLibraryItems resolves the boundary before computing", async (
   const totalRow = waterPlan.rows.find((r) => r.cells.label.text === "Total Water Used");
   assert.equal(totalRow.cells.value.display, "28.0");
 });
+
+test("http: boundary telemetry is retained and cleared on teardown", async () => {
+  const waterWithTelemetry = {
+    ...WATER,
+    telemetry: [
+      { code: "ROUTER_MODE_1_LINEAR_FLAVOR", category: "ROUTER", severity: "INFO", message: "m", context: {} },
+    ],
+    total_added_salt_mass_g: 3.0,
+    added_mineral_tds_ppm: 150.0,
+  };
+  const { fetchImpl } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: waterWithTelemetry },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.boot();
+
+  assert.equal(app.waterTelemetry.telemetry[0].code, "ROUTER_MODE_1_LINEAR_FLAVOR");
+
+  app.teardown();
+  assert.equal(app.waterTelemetry, null);
+});
