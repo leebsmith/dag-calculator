@@ -1,14 +1,29 @@
 # TODO
 
+## In progress
+
+* **Water pin visibility & coverage** (`plans/water-pin-visibility-and-test-matrix.md`)
+  — pin/float rendering from one ion registry, profile intent, Mode 5 cap, and the
+  beer × water × settings test matrix.
+
 ## Next (in order)
 
-1. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
+1. **Selector option labels** — only 4 of 11 `choice` nodes have `optionLabels`,
+   so seven selectors render raw taxonomy codes: `batch.topology`
+   (`r_l_to_g` → "Liquor-to-grist ratio (L/kg)", `runoff_ratio` → "Runnings
+   ratio (r)"), `batch.style_source`, `batch.fermentation`,
+   `batch.sulfate_chloride_target_mode`, `water.strategy`,
+   `water.preferred_alkaline_agent`, `mash.preset_id`. Widen
+   `option-labels.test.js` to every choice node appearing in a step manifest,
+   so a new selector cannot ship raw codes. Same class as the water profile
+   picker labels.
+2. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
    (`views/hops.js`) into a first-class engine path and add a whirlpool
    utilization model (temp/time decay), replacing the manual
    `batch.whirlpool_ibu_fraction`.
-2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
+3. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
-3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+4. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -46,6 +61,15 @@
   determinism / A1 no-reactivity). Production runs HTTP-debounced; the synchronous path
   (`boundaryRunner.js` scheduleSolve) is tests-only. Revisit only if profiling shows jank
   as field count grows (cooling curves, style-water axis).
+* **Water grid status chips** — `docs/adsco/ui.md` specifies Exact / Floor / Buffer /
+  Floating / Compromise / Below-buffer per ion; the card renders only `Target` / `Auto`.
+  Needs per-ion constraint state surfaced from the boundary (telemetry now carries only
+  free-text messages).
+* **Artifact-declared routing** — the mode → pin-set mapping lives in the presentation
+  registry, pinned to the Python router by a fixture. Moving it into `data/artifact.json`
+  would remove the duplication outright, but `constants` is scalar-only today, so it
+  needs a non-scalar value kind (grammar + `schema_version` + inventory + docs).
+
 
 ## Engine robustness follow-ups
 
