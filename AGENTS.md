@@ -13,7 +13,9 @@ seam, solvers, Firebase auth, and Firestore persistence.
 - **`data/artifact.json` is canonical.** The engine interprets it; tests enforce
   it; `docs/` explains it but never overrides it.
 - Docs in `docs/dag-artifacts/` + `docs/engine.md` + `docs/adding-a-node.md` are
-  **living** and must stay in sync with the artifact. `docs/historical/` is
+  **living** and must stay in sync with the artifact. `docs/adsco/ui.md` (the
+  reconciled UI model) and `plans/adsco-contract.md` (reconciled solver decisions)
+  are living too. `docs/historical/` and the vendored `docs/adsco/*` specs are
   **frozen** — do not maintain.
 
 ## Layout
@@ -26,7 +28,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 | `backend/` | FastAPI app (Python 3.12, `uv`) |
 | `tests/` | frontend engine/conformance/guards + backend pytest |
 | `docs/` | living spec + frozen historical |
-| `plans/` | execution history |
+| `plans/` | execution history + reconciled decisions (`adsco-contract.md`) |
 | `scripts/` | seed builders (`.mjs`) + scrapers (`scrape/`, Python) |
 
 ## Commands
@@ -34,6 +36,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
     make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
     make check       # eslint/stylelint + ruff + tach
     make test        # frontend (node --test) + backend pytest
+    make test-fuzz   # seeded water-solver invariant sweep (CASES=200 SEED=...)
     make verify      # check + test + production build (hermetic)
     make verify-full # verify + oracle-snapshot check against the legacy checkout
 
