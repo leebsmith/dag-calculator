@@ -43,6 +43,16 @@ SEED_DERIVATIONS["batch.target_abv"] = [{ selection: "batch.style", derive: (s) 
 SEED_DERIVATIONS["batch.target_srm"] = [{ selection: "batch.style", derive: (s) => mid(s?.srm_min, s?.srm_max) }];
 SEED_DERIVATIONS["batch.target_ibu"] = [{ selection: "batch.style", derive: (s) => mid(s?.ibu_min, s?.ibu_max) }];
 
+// Water target ions + calcium floor are editable roots seeded from the profile.
+for (const field of ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"]) {
+  SEED_DERIVATIONS[`water.target.${field}`] = [
+    { selection: "water.target_profile", derive: (p) => p?.[field] },
+  ];
+}
+SEED_DERIVATIONS["water.calcium_floor_ppm"] = [
+  { selection: "water.target_profile", derive: (p) => p?.calcium_floor_ppm },
+];
+
 export function seedDerivations(rootId) {
   return SEED_DERIVATIONS[rootId] ?? [];
 }

@@ -217,6 +217,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `solver.water` | boundary |
 | `water.acid_medium` | choice |
 | `water.cacl2_form` | choice |
+| `water.calcium_floor_ppm` | root |
 | `water.gypsum_form` | choice |
 | `water.mash_ph_status` | derived |
 | `water.mash_thickness_l_per_kg` | derived |
@@ -226,6 +227,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.source_report` | selection |
 | `water.source_report_id` | root |
 | `water.strategy` | choice |
+| `water.target.alkalinity_as_caco3` | root |
+| `water.target.calcium_ca` | root |
+| `water.target.chloride_cl` | root |
+| `water.target.magnesium_mg` | root |
+| `water.target.sodium_na` | root |
+| `water.target.sulfate_so4` | root |
 | `water.target_mash_ph` | root |
 | `water.target_profile` | selection |
 | `water.target_profile_id` | root |

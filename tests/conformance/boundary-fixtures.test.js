@@ -76,12 +76,12 @@ const WATER_VALUES = {
   "water.source_report.sulfate_so4": 30.0,
   "water.source_report.chloride_cl": 15.0,
   "water.source_report.total_alkalinity_caco3": 80.0,
-  "water.target_profile.calcium_ca": 60.0,
-  "water.target_profile.magnesium_mg": 10.0,
-  "water.target_profile.sodium_na": 20.0,
-  "water.target_profile.sulfate_so4": 100.0,
-  "water.target_profile.chloride_cl": 50.0,
-  "water.target_profile.alkalinity_as_caco3": 40.0,
+  "water.target.calcium_ca": 60.0,
+  "water.target.magnesium_mg": 10.0,
+  "water.target.sodium_na": 20.0,
+  "water.target.sulfate_so4": 100.0,
+  "water.target.chloride_cl": 50.0,
+  "water.target.alkalinity_as_caco3": 40.0,
   "water.v_mash_treat_l": 14.0,
   "water.v_hlt_treat_l": 15.0,
   "water.v_hlt_debt_l": 1.0,
@@ -94,7 +94,7 @@ const WATER_VALUES = {
   "water.gypsum_form": "GYPSUM_DIHYDRATE",
   "water.cacl2_form": "CACL2_DIHYDRATE",
   "water.preferred_alkaline_agent": "PICKLING_LIME",
-  "water.target_profile.calcium_floor_ppm": 50.0,
+  "water.calcium_floor_ppm": 50.0,
 };
 
 test("conformance: adapted BatchSolverRequest matches the backend dump", () => {
