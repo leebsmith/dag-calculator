@@ -63,5 +63,13 @@ export const STUB_BOUNDARIES = {
     "grist_buckets_kg.CRYSTAL": 0.7,
     "grist_buckets_kg.ROASTED": 0.0,
     "grist_buckets_kg.ACID": 0.0,
+    "post_dose_mash_ions.calcium_ca": 60.0,
+    "post_dose_mash_ions.magnesium_mg": 5.0,
+    "post_dose_mash_ions.sodium_na": 10.0,
+    "post_dose_mash_ions.sulfate_so4": 100.0,
+    "post_dose_mash_ions.chloride_cl": 50.0,
+    "post_dose_mash_ions.alkalinity_as_caco3": 40.0,
+    "total_added_salt_mass_g": 3.0,
+    "added_mineral_tds_ppm": 150.0,
   }),
 };

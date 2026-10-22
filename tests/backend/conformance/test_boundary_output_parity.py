@@ -23,7 +23,7 @@ ARTIFACT = json.loads(
 # Response fields that are deliberately not declared as artifact outputs.
 ALLOW = {
     "solver.batch": set(),
-    "solver.water": {"warnings", "notes"},
+    "solver.water": {"warnings", "notes", "telemetry"},
 }
 
 CASES = [

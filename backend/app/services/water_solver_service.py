@@ -122,6 +122,11 @@ def _post_hlt_ions(result, req: WaterSolverRequest) -> IonProfile:
 
 
 def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
+    added_salt_g = (
+        sum(result.mash_dose_g.values())
+        + sum(result.sparge_dose_g.values())
+        + result.alkaline_agent_g
+    )
     return WaterSolverResponse(
         strategy=WaterStrategy(result.strategy),
         prescription=WaterPrescription(
@@ -144,9 +149,13 @@ def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
         ),
         post_salt_mash_ions=_to_long_ions(result.post_salt_mash_ions),
         post_salt_hlt_ions=_post_hlt_ions(result, req),
+        post_dose_mash_ions=_to_long_ions(result.post_salt_mash_ions),
+        total_added_salt_mass_g=added_salt_g,
+        added_mineral_tds_ppm=(added_salt_g / req.v_mash_treat_l * 1000.0),
         grist_buckets_kg=result.grist_buckets_kg,
         warnings=result.warnings,
         notes=result.notes,
+        telemetry=[],
     )
 
 

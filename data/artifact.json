@@ -2492,6 +2492,30 @@
         },
         "grist_buckets_kg.ACID": {
           "dimension": "mass"
+        },
+        "post_dose_mash_ions.calcium_ca": {
+          "dimension": "concentration"
+        },
+        "post_dose_mash_ions.magnesium_mg": {
+          "dimension": "concentration"
+        },
+        "post_dose_mash_ions.sodium_na": {
+          "dimension": "concentration"
+        },
+        "post_dose_mash_ions.sulfate_so4": {
+          "dimension": "concentration"
+        },
+        "post_dose_mash_ions.chloride_cl": {
+          "dimension": "concentration"
+        },
+        "post_dose_mash_ions.alkalinity_as_caco3": {
+          "dimension": "concentration"
+        },
+        "total_added_salt_mass_g": {
+          "dimension": "mass"
+        },
+        "added_mineral_tds_ppm": {
+          "dimension": "concentration"
         }
       },
       "domain": {
