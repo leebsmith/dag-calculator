@@ -114,10 +114,11 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
   non-lab convention (`RO / Distilled (definition)`), zero ions, no lab dates — it
   is a definition, not a measurement.
 - `water_target` — `{ id, name, description, calcium_ca, magnesium_mg, sodium_na,
-  sulfate_so4, chloride_cl, alkalinity_as_caco3, calcium_floor_ppm, notes }`
-  (presets like Balanced Pale, Hoppy/IPA…). The `sulfate_chloride_ratio` field is
-  removed — the ion vector is the only authority; the picker may display the
-  implied ratio. RO is a *source report*, not a target profile.
+  sulfate_so4, chloride_cl, alkalinity_as_caco3, calcium_floor_ppm, mode, notes }`
+  (presets like Balanced Pale, Hoppy/IPA…). `mode` is the template's pre-selected
+  strategy (taxonomy `strategy`), applied on copy-in. The `sulfate_chloride_ratio`
+  field is removed — the ion vector is the only authority; the picker may display
+  the implied ratio. RO is a *source report*, not a target profile.
 
 ### 2.6 `style`
 

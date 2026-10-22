@@ -231,10 +231,12 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
 | `batch.apparent_attenuation` | `batch.yeast.attenuation_pct` | auto-copy on selection | overwritten on each strain pick; clamped to the strain envelope |
 
-Water source and target ions are **read-only selection readouts** — they no
-longer copy into editable roots; the boundary reads them straight from the
-`water.source_report` / `water.target_profile` selections. The assumed dosing
-practice is documented in `docs/calculator-assumed-dosing-practice.md`.
+Water source ions are **read-only selection readouts** (the boundary reads them
+straight from `water.source_report`). Water target ions and the calcium floor are
+**editable roots** (`water.target.*`, `water.calcium_floor_ppm`), seeded from the
+selected `water.target_profile` on copy-in, along with the template's `mode`
+(`water.strategy`). The assumed dosing practice is documented in
+`docs/calculator-assumed-dosing-practice.md`.
 
 Selection-scoped invariants are expressed as `relations` referencing selection
 fields, guarded with `if(ref != "", …)` (short-circuit). Per-field schema

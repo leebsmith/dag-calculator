@@ -149,14 +149,15 @@ program via `scipy.optimize.linprog`). **Realization:** the module
 |---|---|---|
 | `grist` | collection | rows `{ mass_kg, color_lovibond, grain_type }` |
 | `source` | ions | the six working ions (source water) |
-| `target` | ions | the six working ions (target profile) |
+| `target` | ions | the six working ions (editable target roots; unpinned ions float to source) |
+| `custom_pinned_ions` | list[str] | Mode-5 pinned ion subset (short keys) |
 | `v_mash_treat_l` | volume | mash treatment volume (L), equal to `v_strike` |
 | `v_hlt_treat_l` | volume | **sparge salt dosing volume** — the HLT content after the strike is drawn and any top-up added, derived from `batch.sparge_salted_volume` (`v_hlt_after_strike + v_hlt_top_up`), *not* the delivered sparge volume |
 | `v_hlt_debt_l` | volume | undeliverable HLT debt (L) |
 | `v_sparge_demand_l` | volume | sparge demand (L) |
 | `mash_thickness_l_per_kg` | mash_thickness | resolved L/kg |
 | `target_mash_ph` | ph | desired mash pH |
-| `strategy` | taxonomy | `FLAVOR` \| `CALCIUM_FLOOR` \| `OPTIMIZE` |
+| `strategy` | taxonomy | `AUTO` \| `FLAVOR` \| `CALCIUM_FLOOR` \| `OPTIMIZE` \| `HYBRID` \| `BASELINE` \| `CUSTOM` |
 | `salt_distribution` | taxonomy | `MASH_ONLY` \| `PROPORTIONAL` |
 | `acid_medium` | taxonomy | `LACTIC_88` \| `PHOSPHORIC_10` \| `PHOSPHORIC_85` |
 | `gypsum_form` / `cacl2_form` | taxonomy | hydrate forms |
@@ -165,13 +166,15 @@ program via `scipy.optimize.linprog`). **Realization:** the module
 
 The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 `chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃). `source`
-and `target` are read from the `water.source_report` / `water.target_profile`
-selections (copied forward from records, read-only in the batch); `target`
-alkalinity is the profile's `alkalinity_as_caco3` while `source` alkalinity is the
-report's `total_alkalinity_caco3`. `calcium_floor_ppm` comes from the target
-profile's `calcium_floor_ppm` field (schema default `50`). The assumed dosing
-practice — dry-grist dosing, HLT dosing after top-up, the two distribution modes,
-and the unmodelled grist/SMB contributions — lives in
+is read from the `water.source_report` selection (copied forward from records,
+read-only in the batch); `target` is read from the editable `water.target.*`
+roots, seeded from the selected `water.target_profile` and its `mode`;
+`target` alkalinity is the root's `alkalinity_as_caco3` while `source` alkalinity
+is the report's `total_alkalinity_caco3`. `calcium_floor_ppm` is the editable
+`water.calcium_floor_ppm` root (seeded from the profile); `custom_pinned_ions`
+is the `water.pinned_ions` collection (Mode 5). The assumed dosing practice —
+dry-grist dosing, HLT dosing after top-up, the two distribution modes, and the
+unmodelled grist/SMB contributions — lives in
 `docs/calculator-assumed-dosing-practice.md`.
 
 ### 3.2 Outputs
@@ -184,12 +187,15 @@ and the unmodelled grist/SMB contributions — lives in
 | `sparge_additions` `{ … }` | mass / volume |
 | `post_salt_mash_ions` | ions |
 | `post_salt_hlt_ions` | ions — the treated HLT vector: `post_salt_mash_ions` under `PROPORTIONAL`, the source ions under `MASH_ONLY` |
+| `post_dose_mash_ions` | ions — the full post-addition mash vector (flavor salts + alkaline agent + acid-neutralized alkalinity) |
+| `total_added_salt_mass_g` | mass — total dosed salt mass (flavor salts + agent) |
+| `added_mineral_tds_ppm` | concentration — added mineral mass normalized to the mash volume |
 | `grist_buckets_kg` | mass (per grain type) |
 | `warnings` / `notes` | text |
+| `telemetry` | host-side only (not a DAG output) |
 
 ### 3.3 Domain / error surface
 
-`OPTIMIZE_NOT_IMPLEMENTED` · `SOURCE_NOT_FOUND` · `MISSING_SOURCE` ·
-`SALT_SOLVE_FAILED` · `INVALID_MASH_VOLUME` · `UNKNOWN_STRATEGY` ·
-`UNKNOWN_ACID` · `UNKNOWN_ALKALINE_AGENT` · `UNKNOWN_SALT_FORM` ·
-`UNKNOWN_GRAIN_TYPE`.
+`INVALID_MASH_VOLUME` · `INVALID_SPARGE_VOLUME` · `UNKNOWN_GRAIN_TYPE` ·
+`UNKNOWN_ACID_MEDIUM` · `UNKNOWN_ALKALINE_AGENT` · `UNKNOWN_SALT_FORM` ·
+`SALT_SOLVE_FAILED` · `ION_TARGET_OUT_OF_RANGE` · `UNKNOWN_STRATEGY`.
