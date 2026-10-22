@@ -169,9 +169,10 @@ export function createStepApp(options = {}) {
       session.rebuild(state);
       const materialized = this.materializeSelections();
       const seeded = this.materializeDerivedRoots();
+      const synced = this.syncWaterTargets?.() ?? false;
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (materialized || seeded) this.notify();
+      if (materialized || seeded || synced) this.notify();
       this.syncNav();
     },
 
@@ -298,6 +299,7 @@ export function createStepApp(options = {}) {
     // Deliberately NOT named `init`: Alpine auto-calls an `init()` method on
     // `x-data` objects, which would run a solve before sign-in (and 401).
     async boot() {
+      this.syncWaterTargets?.();
       if (useHttp) await this.solveNow();
       else this.compute();
       this.library

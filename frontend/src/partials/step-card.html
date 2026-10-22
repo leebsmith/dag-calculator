@@ -105,6 +105,23 @@
         </div>
       </template>
 
+      <template x-if="f.control === 'water-target-selector'">
+        <div>
+          <label class="form-label" :for="f.id"><span x-text="f.label"></span></label>
+          <select
+            class="form-select"
+            :id="f.id"
+            :value="waterTargetSelection"
+            @change="selectWaterTarget($event.target.value)"
+          >
+            <template x-for="opt in waterTargetOptions" :key="opt.value">
+              <option :value="opt.value" :selected="opt.value === waterTargetSelection" x-text="opt.label"></option>
+            </template>
+          </select>
+          <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
+        </div>
+      </template>
+
       <template x-if="f.control === 'readout-table'">
         <div>
           <h3 class="modal-drawer-title" x-text="f.title"></h3>
@@ -201,42 +218,18 @@
 
   <template x-if="activeStep.slice === 'water'">
     <div class="water-summary">
-      <div class="water-modes">
-        <template x-for="m in waterModes" :key="m.id">
-          <label class="water-mode">
-            <input
-              type="radio"
-              name="waterMode"
-              :value="m.id"
-              :checked="waterSummary.mode === m.id"
-              @change="setWaterMode(m.id)"
-            />
-            <span x-text="m.label"></span>
-          </label>
-        </template>
-      </div>
-
-      <button
-        type="button"
-        class="btn-outline text-xs"
-        x-show="waterSummary.mode === 'CUSTOM'"
-        @click="openWaterPinModal()"
-      >
-        Configure pinned ions
-      </button>
-
-      <p class="water-mode-banner" x-show="waterSummary.resolvedMode" x-text="waterModeBanner()"></p>
-
       <p class="water-basis" x-text="waterSummary.basis"></p>
       <p class="water-destinations">Mash → dry grist, before underletting · Sparge → HLT after top-up</p>
       <p class="water-ratio" x-text="waterSummary.ratioLine"></p>
       <p class="water-ratio-basis" x-text="waterSummary.ratioBasis"></p>
+      <p class="water-target-line" x-text="waterSummary.targetLine"></p>
       <table class="water-treated">
         <thead>
           <tr>
+            <th>Target</th>
             <th>Ion</th>
             <th>Source</th>
-            <th>Target</th>
+            <th>Target value</th>
             <th>Post-addition</th>
             <th>Δ</th>
             <th>Status</th>
@@ -245,12 +238,38 @@
         <tbody>
           <template x-for="r in waterSummary.ions" :key="r.ion">
             <tr>
+              <td>
+                <input
+                  type="checkbox"
+                  class="form-checkbox"
+                  :checked="r.checked"
+                  :disabled="waterTargetLocked"
+                  @change="toggleWaterTarget(r.pin)"
+                />
+              </td>
               <td x-text="r.label"></td>
               <td x-text="r.sourceText"></td>
-              <td x-text="r.targetText"></td>
+              <td>
+                <template x-if="r.checked">
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-input tabular-nums"
+                    :value="r.targetValue"
+                    @input="editWaterTarget(r.pin, $event.target.value)"
+                  />
+                </template>
+                <template x-if="!r.checked">
+                  <span x-text="r.valueText"></span>
+                </template>
+              </td>
               <td x-text="r.postDoseText"></td>
               <td x-text="r.deltaText"></td>
-              <td x-text="r.status"></td>
+              <td>
+                <span x-text="r.status"></span>
+                <div class="text-xs text-warning" x-show="r.hint" x-text="r.hint"></div>
+              </td>
             </tr>
           </template>
         </tbody>
@@ -265,7 +284,6 @@
         </template>
       </div>
       <p class="water-not-modelled" x-text="waterSummary.notModelled"></p>
-      <load src="src/partials/water-pins-modal.html" />
     </div>
   </template>
 

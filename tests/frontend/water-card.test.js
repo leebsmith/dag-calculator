@@ -46,89 +46,148 @@ test("the water summary and brew-day instruction branch on the mode", () => {
   assert.match(app.waterInstruction("brew-day-setup"), /metabisulfite/i);
 });
 
-test("the target column follows the routed mode's pin set", () => {
+test("the checked set drives the grid and the derived strategy", () => {
   const app = createStepApp();
   app.boot();
-  app.setRoot("water.strategy", "CALCIUM_FLOOR");
-  app.setRoot("water.target.sulfate_so4", 250);
-  app.setRoot("water.target.chloride_cl", 50);
+  app.selectWaterTarget("freeform");
+  app.toggleWaterTarget("so4");
+  app.editWaterTarget("so4", "250");
+  app.toggleWaterTarget("cl");
+  app.editWaterTarget("cl", "50");
   app.compute();
 
-  const rows = Object.fromEntries(app.waterSummary.ions.map((r) => [r.ion, r]));
-  assert.deepEqual(
-    app.waterSummary.ions.map((r) => r.ion),
-    WATER_IONS.map((r) => r.ion)
-  );
-
+  assert.equal(app.waterSummary.mode, "CALCIUM_FLOOR");
+  assert.deepEqual(app.waterSummary.valuedPins, ["so4", "cl"]);
+  const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
+  assert.equal(rows.sulfate_so4.checked, true);
   assert.equal(rows.sulfate_so4.status, "Target");
-  assert.equal(rows.sulfate_so4.targetText, "250");
-  assert.equal(rows.chloride_cl.status, "Target");
-  assert.equal(rows.chloride_cl.targetText, "50");
+  assert.equal(rows.sulfate_so4.valueText, "250");
   assert.equal(rows.sulfate_so4.deltaText, "-150");
+  assert.equal(rows.chloride_cl.valueText, "50");
 
   for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "alkalinity_as_caco3"]) {
+    assert.equal(rows[ion].checked, false);
     assert.equal(rows[ion].status, "Auto");
-    assert.equal(rows[ion].targetText, "(Auto)");
+    assert.equal(rows[ion].valueText, "(Auto)");
     assert.equal(rows[ion].deltaText, "—");
   }
 });
 
-test("AUTO renders the router's resolved mode, not a blank target column", () => {
+test("a checked ion with no value is excluded and hinted", () => {
   const app = createStepApp();
   app.boot();
-  app.setRoot("water.strategy", "AUTO");
-  app.setRoot("water.target.sulfate_so4", 250);
+  app.selectWaterTarget("freeform");
+  app.toggleWaterTarget("so4");
   app.compute();
 
-  assert.equal(app.waterSummary.resolvedMode, "CALCIUM_FLOOR");
-  const sulfate = app.waterSummary.ions.find((r) => r.ion === "sulfate_so4");
-  assert.equal(sulfate.status, "Target");
-  assert.equal(sulfate.targetText, "250");
+  const row = app.waterSummary.ions.find((r) => r.ion === "sulfate_so4");
+  assert.equal(row.checked, true);
+  assert.equal(row.status, "No value");
+  assert.equal(row.hint, "no target entered");
+  assert.deepEqual(app.waterSummary.valuedPins, []);
+  assert.equal(app.waterSummary.mode, "BASELINE");
+  assert.match(app.waterSummary.targetLine, /No targets/);
 });
 
-test("BASELINE floats every ion", () => {
+test("No targets locks the grid; Freeform unlocks it", () => {
   const app = createStepApp();
   app.boot();
-  app.setRoot("water.strategy", "BASELINE");
+  assert.equal(app.waterTargetLocked, true, "an untargeted draft opens locked");
+
+  app.toggleWaterTarget("so4");
   app.compute();
+  assert.deepEqual(app.waterSummary.checkedPins, [], "a locked grid ignores toggles");
 
-  for (const row of app.waterSummary.ions) {
-    assert.equal(row.status, "Auto");
-    assert.equal(row.targetText, "(Auto)");
-  }
+  app.selectWaterTarget("freeform");
+  assert.equal(app.waterTargetLocked, false);
+  app.toggleWaterTarget("ca");
+  app.editWaterTarget("ca", "60");
+  app.compute();
+  assert.deepEqual(app.waterSummary.checkedPins, ["ca"]);
+  assert.equal(app.waterSummary.mode, "CUSTOM");
 });
 
-test("switching profiles resets the previous profile's targets and returns to AUTO", () => {
+test("presets clear the previous targets, fill their ions and derive the strategy", () => {
   const app = createStepApp();
   app.boot();
+  const target = (ion) => app.master.getRoot(`water.target.${ion}`);
 
-  const applyProfile = (id) => {
-    app.setRoot("water.target_profile_id", id);
-    app.pickSelection("water.target_profile_id", id);
-    app.copyInCascade("water.target_profile_id");
-    app.compute();
-  };
-  const target = (ion) => app.fieldsById[`water.target.${ion}`]?.value;
-
-  applyProfile("soft-pilsner");
+  app.selectWaterTarget("soft-pilsner");
+  app.compute();
   assert.equal(target("calcium_ca"), 15);
   assert.equal(target("magnesium_mg"), 3);
   assert.equal(target("sodium_na"), 4);
   assert.equal(target("alkalinity_as_caco3"), 15);
-  assert.equal(app.fieldsById["water.calcium_floor_ppm"].value, 15);
-  assert.equal(app.waterSummary.mode, "AUTO");
+  assert.equal(app.master.getRoot("water.calcium_floor_ppm"), 15);
+  assert.equal(app.waterSummary.mode, "OPTIMIZE");
+  assert.equal(app.waterSummary.checkedPins.length, 6);
+  assert.equal(app.waterTargetLocked, false);
 
-  applyProfile("hoppy-ipa");
+  app.selectWaterTarget("hoppy-ipa");
+  app.compute();
   assert.equal(target("sulfate_so4"), 250);
   assert.equal(target("chloride_cl"), 50);
   for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "alkalinity_as_caco3"]) {
     assert.equal(target(ion), 0, `${ion} must not survive the profile switch`);
   }
-  assert.equal(app.fieldsById["water.calcium_floor_ppm"].value, 50);
-  assert.equal(app.waterSummary.mode, "AUTO");
+  assert.equal(app.master.getRoot("water.calcium_floor_ppm"), 50);
+  assert.equal(app.waterSummary.mode, "CALCIUM_FLOOR");
+  assert.deepEqual(app.waterSummary.checkedPins, ["so4", "cl"]);
+  assert.equal(app.master.getRoot("water.target_profile_id"), "hoppy-ipa");
 });
 
-test("every shipped profile declares only the ions its mode targets", () => {
+test("toggling a checked ion detaches the preset", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectWaterTarget("hoppy-ipa");
+  app.toggleWaterTarget("cl");
+  app.compute();
+
+  assert.equal(app.master.getRoot("water.target_profile_id"), "");
+  assert.equal(app.waterTargetSelection, "freeform");
+  assert.deepEqual(app.waterSummary.checkedPins, ["so4"]);
+  assert.equal(app.waterSummary.mode, "CUSTOM");
+});
+
+test("five and six checked are allowed and reported", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectWaterTarget("freeform");
+  for (const pin of ["ca", "mg", "na", "so4", "cl"]) {
+    app.toggleWaterTarget(pin);
+    app.editWaterTarget(pin, "100");
+  }
+  app.compute();
+  assert.equal(app.waterSummary.mode, "CUSTOM");
+  assert.match(app.waterSummary.targetLine, /exactly determined, may be infeasible/);
+
+  app.toggleWaterTarget("alk");
+  app.editWaterTarget("alk", "80");
+  app.compute();
+  assert.equal(app.waterSummary.mode, "OPTIMIZE");
+  assert.match(app.waterSummary.targetLine, /best fit, nothing held exactly/);
+});
+
+test("the selector lists constraints first and keeps the pseudo-options at the ends", () => {
+  const app = createStepApp();
+  app.boot();
+  app.compute();
+
+  const options = app.waterTargetOptions;
+  assert.equal(options[0].value, "none");
+  assert.equal(options.at(-1).value, "freeform");
+  const labels = Object.fromEntries(options.map((option) => [option.value, option.label]));
+  assert.equal(labels["hoppy-ipa"], "SO₄/Cl — Hoppy / IPA");
+  assert.equal(labels["malty-amber"], "SO₄/Cl/Alk — Malty / Amber");
+  assert.equal(labels["soft-pilsner"], "All six — Soft Pilsner");
+
+  const reports = app.fieldsById["water.source_report_id"].optionLabels;
+  assert.equal(reports["25138"], "Ward Laboratories, Inc.");
+  assert.equal(reports["ro-distilled"], "RO / Distilled (definition)");
+  assert.equal(app.waterTargetSelection, "none");
+});
+
+test("every shipped profile declares a non-empty target set", () => {
   const modes = {
     "soft-pilsner": ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
     "balanced-pale": ["sulfate_so4", "chloride_cl"],
@@ -146,35 +205,6 @@ test("every shipped profile declares only the ions its mode targets", () => {
     );
     assert.deepEqual(declared, expected, `${id} declares unexpected ions`);
   }
-});
-
-test("Mode 5 caps the pin set at four and never empties it", () => {
-  const app = createStepApp();
-  app.boot();
-  app.setRoot("water.strategy", "CUSTOM");
-
-  for (const ion of ["ca", "mg", "na", "so4"]) app.toggleWaterPin(ion);
-  assert.equal(app.waterPinDisabled("cl"), true);
-  app.toggleWaterPin("cl");
-  assert.deepEqual(app.waterSummary.pinnedIons, ["ca", "mg", "na", "so4"]);
-
-  for (const ion of ["ca", "mg", "na", "so4"]) app.toggleWaterPin(ion);
-  assert.deepEqual(app.waterSummary.pinnedIons, ["so4"]);
-});
-
-test("reference pickers show names and the held / best-fit / float vocabulary", () => {
-  const app = createStepApp();
-  app.boot();
-  app.compute();
-
-  const profiles = app.fieldsById["water.target_profile_id"].optionLabels;
-  assert.equal(profiles["hoppy-ipa"], "Hoppy / IPA — SO₄/Cl held");
-  assert.equal(profiles["malty-amber"], "Malty / Amber — SO₄/Cl/alk held");
-  assert.equal(profiles["soft-pilsner"], "Soft Pilsner — all six, best fit");
-
-  const reports = app.fieldsById["water.source_report_id"].optionLabels;
-  assert.equal(reports["25138"], "Ward Laboratories, Inc.");
-  assert.equal(reports["ro-distilled"], "RO / Distilled (definition)");
 });
 
 test("the brew-day payload carries the derived water instruction", () => {

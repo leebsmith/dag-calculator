@@ -14,32 +14,49 @@ export const WATER_IONS = [
 ];
 
 // Which ions a routed mode constrains. Short keys, matching the backend router.
-export function pinnedIonsFor(mode, custom) {
-  if (mode === "HYBRID") return new Set(["so4", "cl", "alk"]);
-  if (mode === "OPTIMIZE") return new Set(["ca", "mg", "na", "so4", "cl", "alk"]);
-  if (mode === "BASELINE") return new Set();
-  if (mode === "CUSTOM") return new Set(custom ?? []);
-  return new Set(["so4", "cl"]);
-}
-
-// How a constrained ion is held: an equality target, a pre-acid buffer (Mode 2
-// alkalinity), or a least-squares best fit (Mode 3 holds nothing exactly).
+// Retained for the status vocabulary only; the UI derives the mode from the
+// checked target set instead of routing independently.
 export function constraintStatusFor(mode, pin) {
   if (mode === "OPTIMIZE") return "Best fit";
   if (mode === "HYBRID" && pin === "alk") return "Buffer";
   return "Target";
 }
 
-// Picker vocabulary: held (hard equality) vs best fit (least squares) vs float.
-// Shared by the profile picker, the grid, and the docs.
-const MODE_TAG = {
-  CALCIUM_FLOOR: "SO₄/Cl held",
-  FLAVOR: "SO₄/Cl held",
-  HYBRID: "SO₄/Cl/alk held",
-  OPTIMIZE: "all six, best fit",
-  BASELINE: "no salt targets",
-  CUSTOM: "you pick ≤ 4",
-};
+export const WATER_ION_BY_PIN = Object.fromEntries(WATER_IONS.map((row) => [row.pin, row.ion]));
+
+// Ions a profile targets: the ones it declares a number for (nulls float).
+export function heldFromProfile(profile) {
+  return WATER_IONS.filter(({ ion }) => typeof profile?.[ion] === "number").map((row) => row.pin);
+}
+
+// The router's canonical strategy for a checked-with-value set. Every other
+// subset is the sparse linear engine with these ions as pins.
+export function strategyForHeld(held) {
+  const set = new Set(held);
+  if (set.size === 0) return "BASELINE";
+  if (set.size === 6) return "OPTIMIZE";
+  if (set.size === 2 && set.has("so4") && set.has("cl")) return "CALCIUM_FLOOR";
+  if (set.size === 3 && set.has("so4") && set.has("cl") && set.has("alk")) return "HYBRID";
+  return "CUSTOM";
+}
+
+const ION_SHORT = { ca: "Ca", mg: "Mg", na: "Na", so4: "SO₄", cl: "Cl", alk: "Alk" };
+
+export function constraintLabel(held) {
+  const ordered = WATER_IONS.map((row) => row.pin).filter((pin) => held.includes(pin));
+  if (ordered.length === 0) return "No targets";
+  if (ordered.length === 6) return "All six";
+  return ordered.map((pin) => ION_SHORT[pin]).join("/");
+}
+
+// One line under the grid: what the solver will actually do with this set.
+export function routeSummary(held) {
+  const count = held.length;
+  if (count === 0) return "No targets — baseline (no salt dosing)";
+  if (count === 6) return "Targets: all six — best fit, nothing held exactly";
+  const suffix = count === 5 ? "exactly determined, may be infeasible" : "exact";
+  return `Targets: ${constraintLabel(held)} (${count}) — ${suffix}`;
+}
 
 export const WATER_NODES = {
 
@@ -66,6 +83,8 @@ export const WATER_NODES = {
   resolvedStrategy: "solver.water.strategy",
   strategy: "water.strategy",
   target: "water.target",
+  targetProfileId: "water.target_profile_id",
+  calciumFloor: "water.calcium_floor_ppm",
   sourceReport: "water.source_report",
   pinnedIons: "water.pinned_ions",
   targetProfile: "water.target_profile",
@@ -77,12 +96,9 @@ export const waterRegistry = {
     optionLabel: (report) => report?.laboratory || report?.source_name || report?.report_id,
   },
   "water.target_profile_id": {
-    label: "Target profile",
-    hint: "Applying a profile resets its derived targets and returns the routing to AUTO.",
-    optionLabel: (profile) =>
-      MODE_TAG[profile?.mode]
-        ? `${profile.name} — ${MODE_TAG[profile.mode]}`
-        : profile?.name ?? profile?.id ?? "",
+    label: "Targets",
+    control: "water-target-selector",
+    hint: "Pick a constraint set: presets fill their ions, Freeform starts empty.",
   },
 
   "water.source_report.calcium_ca": { label: "Calcium", unit: "ppm" },
@@ -100,15 +116,8 @@ export const waterRegistry = {
   "water.target_profile.alkalinity_as_caco3": { label: "Alkalinity (as CaCO3)", unit: "ppm" },
   "water.target_profile.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
 
-  "water.target.calcium_ca": { label: "Target Calcium", unit: "ppm" },
-  "water.target.magnesium_mg": { label: "Target Magnesium", unit: "ppm" },
-  "water.target.sodium_na": { label: "Target Sodium", unit: "ppm" },
-  "water.target.sulfate_so4": { label: "Target Sulfate", unit: "ppm" },
-  "water.target.chloride_cl": { label: "Target Chloride", unit: "ppm" },
-  "water.target.alkalinity_as_caco3": { label: "Target Alkalinity (as CaCO3)", unit: "ppm" },
   "water.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
 
-  "water.strategy": { label: "Strategy" },
   "water.salt_distribution": {
     label: "Salt distribution",
     optionLabels: {

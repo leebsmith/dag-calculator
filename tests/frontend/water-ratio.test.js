@@ -32,12 +32,15 @@ test("ratioReadout compares the kettle to the target-implied ratio", () => {
   assert.equal(ratioReadout(kettle, { ...IONS, sulfate_so4: 100, chloride_cl: 0 }).target, null);
 });
 
-test("the water summary compares against the target only when both flavor ions are constrained", () => {
+test("the water summary compares against the target only when both flavor ions are checked with values", () => {
   const app = createStepApp();
   app.boot();
+  app.selectWaterTarget("freeform");
   app.setRoot("water.salt_distribution", "PROPORTIONAL");
-  app.setRoot("water.target.sulfate_so4", 120);
-  app.setRoot("water.target.chloride_cl", 40);
+  app.toggleWaterTarget("so4");
+  app.editWaterTarget("so4", "120");
+  app.toggleWaterTarget("cl");
+  app.editWaterTarget("cl", "40");
   app.compute();
 
   assert.match(app.waterSummary.ratioBasis, /split mode/);
@@ -45,12 +48,15 @@ test("the water summary compares against the target only when both flavor ions a
   assert.match(app.waterSummary.ratioLine, /target →/);
   assert.doesNotMatch(app.waterSummary.ratioLine, /intent/);
 
-  app.setRoot("water.strategy", "BASELINE");
+  app.selectWaterTarget("none");
   app.compute();
   assert.doesNotMatch(app.waterSummary.ratioLine, /target →/);
 
-  app.setRoot("water.strategy", "CALCIUM_FLOOR");
+  app.selectWaterTarget("freeform");
+  app.toggleWaterTarget("so4");
+  app.editWaterTarget("so4", "120");
   app.setRoot("water.salt_distribution", "MASH_ONLY");
   app.compute();
+  assert.doesNotMatch(app.waterSummary.ratioLine, /target →/, "one flavor ion is not a ratio");
   assert.match(app.waterSummary.ratioBasis, /sparge untreated, acid only/);
 });

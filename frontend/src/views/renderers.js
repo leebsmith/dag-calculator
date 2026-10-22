@@ -6,6 +6,7 @@ export const RENDERERS = {
   "collection-table": { editable: true },
   readout: { editable: false },
   "readout-table": { editable: false },
+  "water-target-selector": { editable: false },
 };
 
 export function rendererFor(control) {

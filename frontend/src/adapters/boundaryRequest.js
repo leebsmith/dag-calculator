@@ -79,6 +79,15 @@ export const BATCH_FIELDS = {
 
 // WaterSolverRequest: one entry per solver.water declared input. `solver.batch`
 // precedes `solver.water` in topo order, so `m_grist` is cached before this runs.
+const PIN_TARGET_ALIAS = {
+  ca: "target.calcium_ca",
+  mg: "target.magnesium_mg",
+  na: "target.sodium_na",
+  so4: "target.sulfate_so4",
+  cl: "target.chloride_cl",
+  alk: "target.alkalinity_as_caco3",
+};
+
 export const WATER_FIELDS = {
   grist: {
     path: "grist.major_malts",
@@ -130,7 +139,12 @@ export const WATER_FIELDS = {
   custom_pinned_ions: {
     path: "water.pinned_ions",
     read: "get",
-    build: (resolved) => (resolved.custom_pinned_ions ?? []).map((row) => row.ion),
+    // Only checked ions with a positive target constrain the solver; an empty
+    // checked ion is an unfinished entry, not a zero target.
+    build: (resolved) =>
+      (resolved.custom_pinned_ions ?? [])
+        .map((row) => row.ion)
+        .filter((ion) => (resolved[PIN_TARGET_ALIAS[ion]] ?? 0) > 0),
   },
 };
 

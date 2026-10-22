@@ -265,8 +265,9 @@ test("http: loadState seeds missing derived roots from the selected profile", as
   const water = calls.find((c) => c.url === "/solve/water").body;
   assert.equal(water.target.sulfate_so4, 111, "explicit root wins");
   assert.equal(water.target.chloride_cl, 50, "missing root seeded from the profile");
-  assert.equal(water.target.calcium_ca, 0, "the profile declares only the ions its mode targets");
-  assert.equal(water.strategy, "AUTO");
+  assert.equal(water.target.calcium_ca, 0, "the profile declares only the ions it targets");
+  assert.equal(water.strategy, "CALCIUM_FLOOR", "strategy derives from the profile's target set");
+  assert.deepEqual(water.custom_pinned_ions, ["so4", "cl"], "checked set seeded from positive targets");
 });
 
 function boundaryBindingErrors() {

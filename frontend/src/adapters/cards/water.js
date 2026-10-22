@@ -1,15 +1,20 @@
-// Water card: mode selector, target-vs-actual grid, treatment summary, treated
+// Water card: target selector, target-vs-actual grid, treatment summary, treated
 // water against the target, telemetry audit log, and the mode-specific brew-day
-// dosing instruction. All readouts derive from declared outputs and roots — no
-// engine path resolution leaks into the template. Node ids live in the registry
-// (WATER_NODES).
+// dosing instruction. The checked ion set is the constraint declaration; the
+// solver strategy is derived from it. All readouts derive from declared outputs
+// and roots — no engine path resolution leaks into the template. Node ids live
+// in the registry (WATER_NODES).
 
 import { fieldOr, formatQuantity, formatValue } from "../../utils.js";
 import {
+  WATER_ION_BY_PIN,
   WATER_IONS,
   WATER_NODES as N,
+  constraintLabel,
   constraintStatusFor,
-  pinnedIonsFor,
+  heldFromProfile,
+  routeSummary,
+  strategyForHeld,
   waterRegistry,
 } from "../../views/registry/water.js";
 import { ratioReadout } from "../../views/waterRatio.js";
@@ -19,19 +24,7 @@ const ION_KEYS = WATER_IONS.map((row) => row.ion);
 
 const ADDITIONS = ["gypsum_kg", "cacl2_kg", "epsom_kg", "nacl_kg", "acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"];
 
-const WATER_MODES = [
-  { id: "CALCIUM_FLOOR", label: "Flavor Balance (SO₄ / Cl)" },
-  { id: "HYBRID", label: "Ratio + Dark Beer Buffer (SO₄ / Cl + Alk)" },
-  { id: "OPTIMIZE", label: "Classic Clone (all 6 ions)" },
-  { id: "BASELINE", label: "Baseline (no targets)" },
-  { id: "CUSTOM", label: "Custom Permutation" },
-];
-
 const AUTO_TARGET = "(Auto)";
-
-// Salts are five levers; four pins keep one degree of freedom so mass
-// minimisation still has a choice to make.
-const WATER_PIN_LIMIT = 4;
 
 export function kettleBlend(mash, hlt, runnings, sparge) {
   const total = runnings + sparge;
@@ -67,6 +60,21 @@ function ionVector(engine, prefix) {
   const out = {};
   for (const ion of ION_KEYS) out[ion] = num(engine, `${prefix}.${ion}`);
   return out;
+}
+
+function checkedPins(engine) {
+  return (engine.get(N.pinnedIons) ?? []).map((row) => row.ion);
+}
+
+function targetValue(engine, pin) {
+  const ion = WATER_ION_BY_PIN[pin];
+  if (!ion) return 0;
+  const value = engine.resolve(`${N.target}.${ion}`);
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function valuedPins(engine) {
+  return checkedPins(engine).filter((pin) => targetValue(engine, pin) > 0);
 }
 
 function doseList(fieldsById, prefix, vessel, forms) {
@@ -113,6 +121,7 @@ export function registerWaterCard(app, ctx) {
     waterSummary: {
       mode: "",
       resolvedMode: "",
+      targetLine: "",
       proportional: false,
       basis: "",
       mashDose: [],
@@ -120,6 +129,8 @@ export function registerWaterCard(app, ctx) {
       doseVolume: null,
       deliveredSparge: null,
       ions: [],
+      checkedPins: [],
+      valuedPins: [],
       notes: [],
       tanninWarning: false,
       residualHlt: null,
@@ -127,52 +138,89 @@ export function registerWaterCard(app, ctx) {
       telemetry: [],
     },
 
-    waterModes: WATER_MODES,
-    waterModeLabel: "",
-    waterPinModalOpen: false,
-    waterPinOptions: [
-      { ion: "ca", label: "Calcium (Ca²⁺)" },
-      { ion: "mg", label: "Magnesium (Mg²⁺)" },
-      { ion: "na", label: "Sodium (Na⁺)" },
-      { ion: "so4", label: "Sulfate (SO₄²⁻)" },
-      { ion: "cl", label: "Chloride (Cl⁻)" },
-      { ion: "alk", label: "Alkalinity (as CaCO₃)" },
-    ],
+    waterTargetLocked: false,
 
-    setWaterMode(mode) {
-      this.waterSummary.mode = mode;
-      this.setRoot(N.strategy, mode);
-      this.scheduleSolve();
-      this.notify();
+    // Replace the target state in one atomic write: the preset's ions are
+    // checked and filled, everything else is cleared.
+    selectWaterTarget(value) {
+      const preset =
+        value !== "none" && value !== "freeform"
+          ? ctx.cache.references.water_target?.[value]
+          : null;
+      const held = preset ? heldFromProfile(preset) : [];
+      const entries = {};
+      for (const { ion, pin } of WATER_IONS) {
+        entries[`${N.target}.${ion}`] = preset && held.includes(pin) ? Number(preset[ion]) || 0 : 0;
+      }
+      if (preset) entries[N.calciumFloor] = Number(preset.calcium_floor_ppm) || 50;
+      entries[N.targetProfileId] = preset ? value : "";
+      this.writeWaterState(entries);
+      engine.setCollection(N.pinnedIons, held.map((ion) => ({ ion })));
+      this.pickSelection(N.targetProfileId, preset ? value : "");
+      this.waterTargetLocked = value === "none";
+      this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
     },
 
-    openWaterPinModal() {
-      this.waterPinModalOpen = true;
-    },
-
-    closeWaterPinModal() {
-      this.waterPinModalOpen = false;
-    },
-
-    waterPinChecked(ion) {
-      return (this.waterSummary.pinnedIons ?? []).includes(ion);
-    },
-
-    waterPinDisabled(ion) {
+    toggleWaterTarget(pin) {
+      if (this.waterTargetLocked) return;
       const rows = engine.get(N.pinnedIons) ?? [];
-      return !rows.some((r) => r.ion === ion) && rows.length >= WATER_PIN_LIMIT;
-    },
-
-    toggleWaterPin(ion) {
-      const rows = engine.get(N.pinnedIons) ?? [];
-      const pinned = rows.some((r) => r.ion === ion);
-      if (pinned && rows.length === 1) return;
-      if (!pinned && rows.length >= WATER_PIN_LIMIT) return;
-      const next = pinned ? rows.filter((r) => r.ion !== ion) : [...rows, { ion }];
+      const checked = rows.some((row) => row.ion === pin);
+      const next = checked ? rows.filter((row) => row.ion !== pin) : [...rows, { ion: pin }];
       engine.setCollection(N.pinnedIons, next);
-      this.waterSummary.pinnedIons = next.map((r) => r.ion);
-      this.scheduleSolve();
-      this.notify();
+      if (checked) this.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: 0 });
+      this.clearWaterPreset();
+      this.waterTargetLocked = false;
+      this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+    },
+
+    editWaterTarget(pin, raw) {
+      if (!checkedPins(engine).includes(pin)) return;
+      const parsed = Number(raw);
+      const value = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+      this.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: value });
+      this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+    },
+
+    // Load-time normalisation: legacy drafts carry values but no checked set,
+    // and possibly a stale AUTO strategy. Seed the set from positive targets
+    // and write the derived strategy. Returns true when anything changed.
+    syncWaterTargets() {
+      let changed = false;
+      let pins = checkedPins(engine);
+      if (pins.length === 0) {
+        const positives = WATER_IONS.filter(({ pin }) => targetValue(engine, pin) > 0).map(
+          ({ pin }) => pin
+        );
+        if (positives.length > 0) {
+          engine.setCollection(N.pinnedIons, positives.map((ion) => ({ ion })));
+          pins = positives;
+          changed = true;
+        }
+      }
+      this.waterTargetLocked = !engine.get(N.targetProfileId) && pins.length === 0;
+      const strategy = strategyForHeld(valuedPins(engine));
+      if (engine.get(N.strategy) !== strategy) {
+        this.master.setRoot(N.strategy, strategy);
+        engine.setRoot(N.strategy, strategy);
+        changed = true;
+      }
+      return changed;
+    },
+
+    // Direct root writes for batch actions; the caller ends with one setRoot on
+    // the derived strategy so exactly one solve is scheduled.
+    writeWaterState(entries) {
+      for (const [nodeId, value] of Object.entries(entries)) {
+        this.master.setRoot(nodeId, value);
+        engine.setRoot(nodeId, value);
+      }
+    },
+
+    // Any manual change to the checked set detaches the preset.
+    clearWaterPreset() {
+      if (!engine.get(N.targetProfileId)) return;
+      this.writeWaterState({ [N.targetProfileId]: "" });
+      this.pickSelection(N.targetProfileId, "");
     },
 
     waterInstruction(stepId) {
@@ -190,10 +238,40 @@ export function registerWaterCard(app, ctx) {
     telemetryClass(t) {
       return `sev-${(t?.severity ?? "").toLowerCase()}`;
     },
+  });
 
-    waterModeBanner() {
-      const m = this.waterSummary.resolvedMode;
-      return m ? `Routed: ${m}` : "";
+  Object.defineProperties(app, {
+    waterTargetOptions: {
+      configurable: true,
+      get() {
+        const records = ctx.cache.references.water_target ?? {};
+        const presets = Object.entries(records)
+          .map(([id, profile]) => {
+            const held = heldFromProfile(profile);
+            return {
+              value: id,
+              label: `${constraintLabel(held)} — ${profile?.name ?? id}`,
+              size: held.length,
+            };
+          })
+          .filter((option) => option.size > 0)
+          .sort((a, b) => a.size - b.size || a.label.localeCompare(b.label));
+        return [
+          { value: "none", label: "No targets — no ion targets" },
+          ...presets.map(({ value, label }) => ({ value, label })),
+          { value: "freeform", label: "Freeform entry — compose your own set" },
+        ];
+      },
+    },
+    waterTargetSelection: {
+      configurable: true,
+      get() {
+        const id = engine.get(N.targetProfileId) ?? "";
+        if (id) {
+          return this.waterTargetOptions.some((option) => option.value === id) ? id : "freeform";
+        }
+        return this.waterTargetLocked ? "none" : "freeform";
+      },
     },
   });
 }
@@ -201,7 +279,6 @@ export function registerWaterCard(app, ctx) {
 export function refreshWaterCard(app, ctx) {
   const engine = ctx.engine;
   try {
-    const mode = engine.get(N.strategy) ?? "";
     const proportional = engine.get(N.saltDistribution) === "PROPORTIONAL";
     const strike = num(engine, N.vMashTreat);
     const doseVolume = num(engine, N.spargeSaltedVolume);
@@ -225,17 +302,19 @@ export function refreshWaterCard(app, ctx) {
     const hltIons = ionVector(engine, N.postHltIons);
     const kettle = kettleBlend(mashIons, hltIons, run1 + run2, sparge);
 
-    // Target-vs-actual grid: source (read-only report), target (editable roots),
-    // post-dose (salts + agent + acid), signed delta, and a pin/floating status.
-    const resolvedMode = engine.resolve(N.resolvedStrategy) ?? mode;
-    const effectiveMode = mode === "AUTO" ? resolvedMode : mode;
-    const customPins = (engine.get(N.pinnedIons) ?? []).map((r) => r.ion);
-    const pinned = pinnedIonsFor(effectiveMode, customPins);
+    // The checked set is the declaration; only checked ions with a positive
+    // value constrain the solver. The strategy is derived from that set.
+    const checked = checkedPins(engine);
+    const checkedSet = new Set(checked);
+    const valued = valuedPins(engine);
+    const valuedSet = new Set(valued);
+    const stored = engine.get(N.strategy) ?? "";
+    const effectiveMode = !stored || stored === "AUTO" ? strategyForHeld(valued) : stored;
+    const resolvedMode = engine.resolve(N.resolvedStrategy) ?? effectiveMode;
 
     // The target ratio is only a comparison basis when both flavor ions are
-    // actually constrained; under BASELINE (or a custom set without them) the
-    // target roots are inert, so the readout stays as-solved only.
-    const flavorConstrained = pinned.has("so4") && pinned.has("cl");
+    // constrained; otherwise the readout stays as-solved only.
+    const flavorConstrained = valuedSet.has("so4") && valuedSet.has("cl");
     const ratio = ratioReadout(kettle, flavorConstrained ? ionVector(engine, N.target) : null);
     const ratioBasis = proportional
       ? "Kettle ratio — split mode: same concentration in both vessels."
@@ -248,15 +327,23 @@ export function refreshWaterCard(app, ctx) {
       const sourceVal = num(engine, `${N.sourceReport}.${source}`);
       const targetVal = num(engine, `${N.target}.${ion}`);
       const postDoseVal = num(engine, `${N.postDoseIons}.${ion}`);
-      const isPinned = pinned.has(pin);
+      const isChecked = checkedSet.has(pin);
+      const isValued = valuedSet.has(pin) && typeof targetVal === "number";
+      const below = isValued && typeof sourceVal === "number" && targetVal < sourceVal;
+      let status = "Auto";
+      if (isChecked) status = isValued ? constraintStatusFor(effectiveMode, pin) : "No value";
       return {
         ion,
+        pin,
         label,
+        checked: isChecked,
+        targetValue: typeof targetVal === "number" ? targetVal : 0,
+        valueText: isValued ? fmtPpm(targetVal) : AUTO_TARGET,
         sourceText: fmtPpm(sourceVal),
-        targetText: isPinned ? fmtPpm(targetVal) : AUTO_TARGET,
         postDoseText: fmtPpm(postDoseVal),
-        deltaText: isPinned ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
-        status: isPinned ? constraintStatusFor(effectiveMode, pin) : "Auto",
+        deltaText: isValued ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
+        status,
+        hint: isChecked && !isValued ? "no target entered" : below ? "below source" : "",
       };
     });
 
@@ -292,8 +379,9 @@ export function refreshWaterCard(app, ctx) {
     telemetry.sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
 
     app.waterSummary = {
-      mode,
+      mode: effectiveMode,
       resolvedMode,
+      targetLine: routeSummary(valued),
       proportional,
       basis,
       mashDose,
@@ -301,7 +389,8 @@ export function refreshWaterCard(app, ctx) {
       doseVolume,
       deliveredSparge,
       ions,
-      pinnedIons: customPins,
+      checkedPins: checked,
+      valuedPins: valued,
       notes,
       tanninWarning,
       residualHlt,
@@ -321,4 +410,18 @@ export function refreshWaterCard(app, ctx) {
   }
 }
 
-export const KEYS = ["waterSummary", "waterModes", "waterModeLabel", "waterPinModalOpen", "waterPinOptions", "setWaterMode", "openWaterPinModal", "closeWaterPinModal", "waterPinChecked", "waterPinDisabled", "toggleWaterPin", "waterInstruction", "telemetryLine", "telemetryClass", "waterModeBanner"];
+export const KEYS = [
+  "waterSummary",
+  "waterTargetLocked",
+  "waterTargetOptions",
+  "waterTargetSelection",
+  "selectWaterTarget",
+  "toggleWaterTarget",
+  "editWaterTarget",
+  "syncWaterTargets",
+  "writeWaterState",
+  "clearWaterPreset",
+  "waterInstruction",
+  "telemetryLine",
+  "telemetryClass",
+];
