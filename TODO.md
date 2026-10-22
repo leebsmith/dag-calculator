@@ -75,11 +75,6 @@
 
 * **Non-finite propagation (L4):** `÷0` → `NaN/∞` is only flagged for root/choice
   domains, not derived nodes. Consider a global "derived values finite" guard.
-* **Mash pH model validity band:** the linear `predict_mash_ph` extrapolates far
-  outside the brewing range — the seeded water sweep produces predictions of
-  10-55 at extreme target vectors. They are now flagged
-  (`GUARDRAIL_PH_MODEL_OUT_OF_RANGE`) rather than presented as physical, but the
-  model itself needs either calibrated input bounds or a non-linear buffer model.
 
 ## Deferred language/engine features
 
@@ -93,6 +88,7 @@ Not needed by the current artifact; add only when a node requires them:
 
 * Record library foundation (server records, copy-forward, Google allowlist, user-scoped batches)
 * Water chemistry cleanup (read-only records, copy-forward ions, RO-as-report, treated-water vs target, SO4:Cl intent, dose basis + brew-day instruction)
+* Bounded buffer-capacity mash pH model (`plans/mash-ph-buffer-capacity.md`)
 * Water chemistry step card (`solver.water` boundary + full card)
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu

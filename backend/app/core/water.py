@@ -20,6 +20,7 @@ Key Architectural Enhancements:
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
@@ -46,9 +47,15 @@ CARBONIC_PKB = 4.3  # pH at which bicarbonate is fully dissociated
 # Sparge tannin-extraction threshold
 SPARGE_TANNIN_PH = 5.80
 
-# Mash-pH model (metric)
-MASH_PH_INTERCEPT = 5.76
-MASH_PH_SLOPE = 0.17
+# Mash-pH model (metric). A bounded logistic over the acidity index `i26`: it
+# saturates at a carbonate-buffered ceiling and an acid-grist floor instead of
+# extrapolating linearly past them. The parameters track the former linear fit
+# through the realistic band (a typical base-malt mash lands near 5.6) and only
+# diverge where that fit left the physical range.
+MASH_PH_FLOOR = 4.0
+MASH_PH_CEIL = 6.0
+MASH_PH_MID = 4.0  # `i26` at which pH = midpoint (5.0)
+MASH_PH_SCALE = 2.0  # steepness of the saturation
 QT_PER_L_PER_KG = 2.08635  # 1 L/kg == 2.08635 qt/lb
 
 # Optimal mash pH extraction window
@@ -267,14 +274,20 @@ def predict_mash_ph(
     v_mash_treat_l: float,
     mash_thickness_l_per_kg: float,
 ) -> float:
-    """Estimated room-temperature mash pH."""
+    """Estimated room-temperature mash pH (bounded buffer-capacity model)."""
     if v_mash_treat_l <= 0.0:
         raise SolverValidationError("INVALID_MASH_VOLUME", "Mash volume must be positive.")
 
     water_alk_meq = (ra_ppm / 50.0) * v_mash_treat_l
     qt_per_lb = mash_thickness_l_per_kg / QT_PER_L_PER_KG
     i26 = (grist_acidity_meq - water_alk_meq * qt_per_lb / 1.5) / v_mash_treat_l
-    return max(MASH_PH_INTERCEPT - MASH_PH_SLOPE * i26, 0.10)
+    return MASH_PH_FLOOR + (MASH_PH_CEIL - MASH_PH_FLOOR) * _logistic(
+        (MASH_PH_MID - i26) / MASH_PH_SCALE
+    )
+
+
+def _logistic(z: float) -> float:
+    return 1.0 / (1.0 + math.exp(-z))
 
 
 def mash_ph_status(ph: float) -> str:

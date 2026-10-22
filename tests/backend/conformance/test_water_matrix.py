@@ -182,9 +182,7 @@ def _assert_invariants(inp: WaterChemistryInput, out) -> None:
         for ion in IONS:
             assert math.isfinite(ions[ion]) and ions[ion] >= 0.0, (field, ion)
 
-    assert 3.5 < out.predicted_mash_ph < 7.5 or "GUARDRAIL_PH_MODEL_OUT_OF_RANGE" in {
-        event["code"] for event in out.telemetry
-    }
+    assert 3.5 < out.predicted_mash_ph < 7.5
     assert out.mash_ph_status == mash_ph_status(out.predicted_mash_ph)
 
     # Salts only add: the five mineral ions never fall below the source.

@@ -137,10 +137,15 @@ Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
 
 - Compute `post_dose_mash_ions` = source + flavor salts + agent ions − acid
   alkalinity-neutralization (meq × 50).
-- Predict pH from that vector's residual alkalinity + grist acidity.
+- Predict pH from that vector's residual alkalinity + grist acidity, using a
+  **bounded buffer-capacity curve** (logistic, floor 4.0, ceiling 6.0) over the
+  same acidity index the linear fit used; it matches the old fit in the realistic
+  band and saturates instead of extrapolating.
 - Prescribe acid/alkaline to reach `target_mash_ph`; recompute `predicted_mash_ph`
   from the corrected vector (the reported, corrected outcome).
 - `mash_ph_status` derives from the corrected pH.
+- `GUARDRAIL_PH_MODEL_OUT_OF_RANGE` is now a defensive net only: the model stays
+  inside 3.5-7.5 by construction, so the flag should not fire.
 
 ## Telemetry (host-side)
 
