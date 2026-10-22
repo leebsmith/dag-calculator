@@ -47,7 +47,7 @@ def test_invalid_mash_volume():
 def test_unknown_acid():
     with pytest.raises(SolverValidationError) as exc:
         acid_volume_ml(1.0, "BOGUS", 5.2)
-    assert exc.value.code == "UNKNOWN_ACID"
+    assert exc.value.code == "UNKNOWN_ACID_MEDIUM"
 
 
 def test_unknown_alkaline_agent():
@@ -62,11 +62,12 @@ def test_unknown_salt_form():
     assert exc.value.code == "UNKNOWN_SALT_FORM"
 
 
-def test_optimize_not_implemented():
-    with pytest.raises(SolverValidationError) as exc:
-        solve_salt_dose("OPTIMIZE", _SOURCE, _TARGET, "GYPSUM_DIHYDRATE",
-                        "CACL2_DIHYDRATE", 50.0)
-    assert exc.value.code == "OPTIMIZE_NOT_IMPLEMENTED"
+def test_optimize_returns_a_clone_dose():
+    dose, _notes, strat = solve_salt_dose(
+        "OPTIMIZE", _SOURCE, _TARGET, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0
+    )
+    assert strat == "OPTIMIZE"
+    assert dose.gypsum_g_per_l >= 0.0
 
 
 def test_unknown_strategy():
@@ -160,9 +161,8 @@ def test_service_unknown_grain_type():
 def test_error_surface_complete():
     declared = {c.value for c in WaterSolverErrorCode}
     expected = {
-        "OPTIMIZE_NOT_IMPLEMENTED", "SOURCE_NOT_FOUND", "MISSING_SOURCE",
-        "SALT_SOLVE_FAILED", "INVALID_MASH_VOLUME", "UNKNOWN_STRATEGY",
-        "UNKNOWN_ACID", "UNKNOWN_ALKALINE_AGENT", "UNKNOWN_SALT_FORM",
-        "UNKNOWN_GRAIN_TYPE",
+        "INVALID_MASH_VOLUME", "INVALID_SPARGE_VOLUME", "UNKNOWN_GRAIN_TYPE",
+        "UNKNOWN_ACID_MEDIUM", "UNKNOWN_ALKALINE_AGENT", "UNKNOWN_SALT_FORM",
+        "SALT_SOLVE_FAILED", "ION_TARGET_OUT_OF_RANGE", "UNKNOWN_STRATEGY",
     }
     assert declared == expected

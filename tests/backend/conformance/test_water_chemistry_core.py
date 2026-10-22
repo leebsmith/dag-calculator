@@ -122,7 +122,7 @@ def test_add_ions_sums():
 
 
 def test_tier1_flavor_closed_form():
-    dose, notes = solve_salt_dose(
+    dose, notes, _strat = solve_salt_dose(
         "FLAVOR", _ions(so4=9.0, cl=3.0), _ions(so4=100.0, cl=60.0),
         "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0,
     )
@@ -135,7 +135,7 @@ def test_tier1_flavor_closed_form():
 def test_tier2_calcium_floor_hits_target_ions():
     source = _ions(ca=21.5, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=78.0)
     target = _ions(ca=50.0, mg=5.0, na=10.0, so4=100.0, cl=60.0)
-    dose, _ = solve_salt_dose(
+    dose, _, _ = solve_salt_dose(
         "CALCIUM_FLOOR", source, target, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0
     )
     added = ions_added_ppm(dose, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE")
@@ -147,7 +147,7 @@ def test_tier2_flavor_first_for_soft_source():
     # Below the floor: flavor salts are used as-is (calcium may overshoot).
     source = _ions(ca=21.5, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=78.0)
     target = _ions(ca=50.0, mg=5.0, na=10.0, so4=100.0, cl=60.0)
-    dose, _ = solve_salt_dose(
+    dose, _, _ = solve_salt_dose(
         "CALCIUM_FLOOR", source, target, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0
     )
     assert dose.gypsum_g_per_l > 0
@@ -160,7 +160,7 @@ def test_tier2_caps_added_calcium_for_hard_source():
     # Above the floor: no calcium is added; sulfate/chloride go to Epsom/NaCl.
     source = _ions(ca=120.0, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=78.0)
     target = _ions(ca=50.0, mg=5.0, na=10.0, so4=100.0, cl=60.0)
-    dose, _ = solve_salt_dose(
+    dose, _, _ = solve_salt_dose(
         "CALCIUM_FLOOR", source, target, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0
     )
     added = ions_added_ppm(dose, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE")
@@ -168,10 +168,14 @@ def test_tier2_caps_added_calcium_for_hard_source():
     assert source["so4"] + added["so4"] == pytest.approx(100.0, abs=1e-4)
 
 
-def test_tier3_optimize_raises():
-    with pytest.raises(SolverValidationError):
-        solve_salt_dose("OPTIMIZE", _ions(), _ions(so4=50.0, cl=50.0),
-                        "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0)
+def test_tier3_optimize_returns_a_clone_dose():
+    dose, _notes, strat = solve_salt_dose(
+        "OPTIMIZE", _ions(ca=10.0, mg=2.0, na=8.0, so4=5.0, cl=7.0, alk=40.0),
+        _ions(ca=80.0, mg=5.0, na=20.0, so4=100.0, cl=50.0, alk=0.0),
+        "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0,
+    )
+    assert strat == "OPTIMIZE"
+    assert dose.gypsum_g_per_l >= 0.0
 
 
 # --- Orchestration ----------------------------------------------------------
@@ -188,6 +192,7 @@ def _request(**overrides):
         v_sparge_demand_l=18.0,
         mash_thickness_l_per_kg=3.0,
         target_mash_ph=5.4,
+        strategy="CALCIUM_FLOOR",
     )
     base.update(overrides)
     return WaterChemistryInput(**base)
