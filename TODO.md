@@ -8,15 +8,18 @@
 
 ## Next (in order)
 
-1. **Selector option labels** — only 4 of 11 `choice` nodes have `optionLabels`,
-   so seven selectors render raw taxonomy codes: `batch.topology`
-   (`r_l_to_g` → "Liquor-to-grist ratio (L/kg)", `runoff_ratio` → "Runnings
-   ratio (r)"), `batch.style_source`, `batch.fermentation`,
-   `batch.sulfate_chloride_target_mode`, `water.strategy`,
-   `water.preferred_alkaline_agent`, `mash.preset_id`. Widen
-   `option-labels.test.js` to every choice node appearing in a step manifest,
-   so a new selector cannot ship raw codes. Same class as the water profile
-   picker labels.
+1. **Selector option labels** — 11 `choice` nodes exist, 9 render as selects in
+   the step manifest, and only 4 carry `optionLabels`. The five that still render
+   raw taxonomy codes: `batch.topology` (`r_l_to_g` → "Liquor-to-grist ratio
+   (L/kg)", `runoff_ratio` → "Runnings ratio (r)"), `batch.style_source`
+   (`styleguide`/`experimental`), `batch.fermentation`
+   (`ale`/`lager`/`wild`/`mixed`), `batch.sulfate_chloride_target_mode`
+   (`unspecified`/`specified`), `water.preferred_alkaline_agent`
+   (`BAKING_SODA`/`CHALK`/`PICKLING_LIME`). (`water.strategy` renders as radios,
+   not a select; `mash.preset_id` is not in the manifest.) Widen
+   `option-labels.test.js` to every choice node appearing in a step manifest, so
+   a new selector cannot ship raw codes. Same class as the water profile picker
+   labels.
 2. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
    (`views/hops.js`) into a first-class engine path and add a whirlpool
    utilization model (temp/time decay), replacing the manual
