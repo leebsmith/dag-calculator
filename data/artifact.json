@@ -237,10 +237,6 @@
       "value": 385.641,
       "dimension": "extract_yield"
     },
-    "sucrose_yield_ppg": {
-      "value": 46.21,
-      "dimension": "extract_yield"
-    },
     "v_bar": {
       "value": 0.625,
       "dimension": "mash_thickness"
@@ -256,58 +252,6 @@
     "default_shrinkage_fraction": {
       "value": 0.04,
       "dimension": "percentage"
-    },
-    "default_conversion_efficiency": {
-      "value": 0.9,
-      "dimension": "percentage"
-    },
-    "default_grain_absorption_l_per_kg": {
-      "value": 0.96,
-      "dimension": "mash_thickness"
-    },
-    "default_mash_dead_space_l": {
-      "value": 0.946,
-      "dimension": "volume"
-    },
-    "default_mash_transfer_loss_l": {
-      "value": 0.946,
-      "dimension": "volume"
-    },
-    "default_kettle_dead_space_l": {
-      "value": 1.249,
-      "dimension": "volume"
-    },
-    "default_kettle_transfer_loss_l": {
-      "value": 0.946,
-      "dimension": "volume"
-    },
-    "default_hlt_dead_space_l": {
-      "value": 0.946,
-      "dimension": "volume"
-    },
-    "default_hlt_transfer_loss_l": {
-      "value": 0.946,
-      "dimension": "volume"
-    },
-    "default_trub_loss_l": {
-      "value": 1.5,
-      "dimension": "volume"
-    },
-    "default_hlt_coil_floor_l": {
-      "value": 0,
-      "dimension": "volume"
-    },
-    "default_mash_tun_specific_heat": {
-      "value": 0.12,
-      "dimension": "specific_heat"
-    },
-    "default_mash_tun_mass_kg": {
-      "value": 5,
-      "dimension": "mass"
-    },
-    "default_boil_off_rate_l_per_hr": {
-      "value": 3,
-      "dimension": "volume_per_time"
     },
     "default_target_mash_ph": {
       "value": 5.4,
@@ -2835,23 +2779,6 @@
       },
       "output": {
         "dimension": "grain_color"
-      }
-    },
-    "grist.extract_yield_ldk": {
-      "kind": "derived",
-      "inputs": {
-        "yield_fraction": "grist.weighted_yield_fraction"
-      },
-      "expr": {
-        "call": "extract_yield_ldk",
-        "args": [
-          {
-            "ref": "yield_fraction"
-          }
-        ]
-      },
-      "output": {
-        "dimension": "extract_yield"
       }
     },
     "grist.mcu": {

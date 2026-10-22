@@ -102,30 +102,17 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `bicarbonate_eq_weight` | 61 | `dimensionless` |
 | `caco3_eq_weight` | 50 | `dimensionless` |
 | `default_apparent_attenuation` | 0.75 | `percentage` |
-| `default_boil_off_rate_l_per_hr` | 3 | `volume_per_time` |
 | `default_boil_time_min` | 60 | `time` |
-| `default_conversion_efficiency` | 0.9 | `percentage` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
-| `default_grain_absorption_l_per_kg` | 0.96 | `mash_thickness` |
 | `default_grain_moisture_fraction` | 0.04 | `percentage` |
 | `default_grain_temp_c` | 20 | `temperature` |
-| `default_hlt_coil_floor_l` | 0 | `volume` |
-| `default_hlt_dead_space_l` | 0.946 | `volume` |
-| `default_hlt_transfer_loss_l` | 0.946 | `volume` |
-| `default_kettle_dead_space_l` | 1.249 | `volume` |
-| `default_kettle_transfer_loss_l` | 0.946 | `volume` |
-| `default_mash_dead_space_l` | 0.946 | `volume` |
 | `default_mash_thickness_l_per_kg` | 2.6079 | `mash_thickness` |
-| `default_mash_transfer_loss_l` | 0.946 | `volume` |
-| `default_mash_tun_mass_kg` | 5 | `mass` |
-| `default_mash_tun_specific_heat` | 0.12 | `specific_heat` |
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
 | `default_target_abv` | 5.5 | `percentage` |
 | `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_target_srm` | 0 | `beer_color` |
-| `default_trub_loss_l` | 1.5 | `volume` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `k_abs_true` | 1.67 | `mash_thickness` |
 | `loa_baseline_attenuation_pct` | 75 | `percentage` |
@@ -137,7 +124,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mcu_metric_to_imperial_factor` | 8.3454 | `dimensionless` |
 | `rho_water` | 1 | `dimensionless` |
 | `sucrose_yield_ldk` | 385.641 | `extract_yield` |
-| `sucrose_yield_ppg` | 46.21 | `extract_yield` |
 | `v_bar` | 0.625 | `mash_thickness` |
 | `water_specific_heat` | 1 | `specific_heat` |
 
@@ -191,7 +177,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.yeast` | selection |
 | `batch.yeast_id` | root |
 | `equipment.profile` | selection |
-| `grist.extract_yield_ldk` | derived |
 | `grist.finished_beer_srm` | derived |
 | `grist.major_malts` | collection |
 | `grist.mcu` | derived |
