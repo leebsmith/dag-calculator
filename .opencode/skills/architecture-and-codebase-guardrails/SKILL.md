@@ -50,6 +50,29 @@ break:
   forbidden (`firestore.rules` denies all client access; the browser is Auth-only).
   All reads/writes go through FastAPI using the Admin SDK.
 
+## Artifact vs. presentation — the consumer test
+
+Before adding anything to `data/artifact.json`, answer one question: does the
+engine compute, enforce, or route on it?
+
+- **Yes** → the artifact (node, constant, taxonomy, dimension, function).
+- **No** → `views/registry/*` (label, hint, option labels),
+  `views/registry/presentation.js` (display or control override), host adapter
+  state, or the catalog/seed the value belongs to.
+
+"It must survive reload" is not sufficient grounds; presentation state can be
+derived or stored outside the artifact. The water target selector's
+No-targets/Freeform lock is presentation derived from an empty held set — the
+domain fact is `water.pinned_ions`.
+
+Counterexample: `batch.sulfate_chloride_target_mode` / `_ratio` (removed) were
+user-facing targets no engine consumed.
+
+Corollary: a constant or node with no consumer is either a missing contract (pin
+it with a test, cf. `tests/backend/conformance/test_artifact_constants.py`) or
+dead weight (delete it). `tests/guards/artifact-consumers.test.js` enforces the
+distinction with explicit allowlists.
+
 ## Alpine.js state & installer contract
 
 - **No god-object sprawl** — do not split the single reactive Alpine root object;
