@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 
 from app.core.water import GRAIN_ACIDITY
-from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest
+from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest, WaterStrategy
 from app.services.batch_solver_service import solve_batch_request
 from app.services.water_solver_service import solve_water_request
 
@@ -90,7 +90,7 @@ def test_default_recipe_generates_end_to_end():
     assert batch.max_achievable_abv > 0.0
     assert 0.0 < water.prescription.predicted_mash_ph <= 14.0
     assert water.prescription.mash_ph_status in {"OPTIMAL", "LOW", "HIGH"}
-    assert water.strategy == water_req.strategy
+    assert water.strategy != WaterStrategy.AUTO
 
     additions = [
         water.mash_additions,

@@ -2050,7 +2050,7 @@
     "water.strategy": {
       "kind": "choice",
       "taxonomy": "strategy",
-      "default": "CALCIUM_FLOOR"
+      "default": "AUTO"
     },
     "water.salt_distribution": {
       "kind": "choice",

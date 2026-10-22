@@ -76,7 +76,7 @@ def test_water_request_builds():
 def test_water_defaults():
     """C3/C5: omitted fields fall back to the corrected defaults.
 
-    ``strategy`` must default to CALCIUM_FLOOR (matching core + UI), and
+    ``strategy`` must default to AUTO (matching core + UI), and
     ``target_mash_ph`` to 5.4 (not the legacy 5.35).
     """
     ions = {
@@ -98,7 +98,7 @@ def test_water_defaults():
             "mash_thickness_l_per_kg": 3.0,
         }
     )
-    assert req.strategy is WaterStrategy.CALCIUM_FLOOR
+    assert req.strategy is WaterStrategy.AUTO
     assert req.target_mash_ph == 5.4
 
 
