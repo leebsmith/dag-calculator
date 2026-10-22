@@ -224,17 +224,6 @@ export function refreshWaterCard(app, ctx) {
     const mashIons = ionVector(engine, N.postMashIons);
     const hltIons = ionVector(engine, N.postHltIons);
     const kettle = kettleBlend(mashIons, hltIons, run1 + run2, sparge);
-    const ratio = ratioReadout(
-      kettle,
-      engine.get(N.sulfateChlorideMode),
-      num(engine, N.sulfateChlorideRatio)
-    );
-    const ratioBasis = proportional
-      ? "Kettle ratio — split mode: same concentration in both vessels."
-      : "Kettle ratio — sparge untreated, acid only.";
-    const ratioLine = ratio.intentText
-      ? `${ratio.intentText} intent → ${ratio.asSolvedText} kettle, ${ratio.deltaFactorText}`
-      : ratio.asSolvedText;
 
     // Target-vs-actual grid: source (read-only report), target (editable roots),
     // post-dose (salts + agent + acid), signed delta, and a pin/floating status.
@@ -242,6 +231,19 @@ export function refreshWaterCard(app, ctx) {
     const effectiveMode = mode === "AUTO" ? resolvedMode : mode;
     const customPins = (engine.get(N.pinnedIons) ?? []).map((r) => r.ion);
     const pinned = pinnedIonsFor(effectiveMode, customPins);
+
+    // The target ratio is only a comparison basis when both flavor ions are
+    // actually constrained; under BASELINE (or a custom set without them) the
+    // target roots are inert, so the readout stays as-solved only.
+    const flavorConstrained = pinned.has("so4") && pinned.has("cl");
+    const ratio = ratioReadout(kettle, flavorConstrained ? ionVector(engine, N.target) : null);
+    const ratioBasis = proportional
+      ? "Kettle ratio — split mode: same concentration in both vessels."
+      : "Kettle ratio — sparge untreated, acid only.";
+    const ratioLine =
+      ratio.targetText && ratio.deltaFactorText
+        ? `${ratio.targetText} target → ${ratio.asSolvedText} kettle, ${ratio.deltaFactorText}`
+        : ratio.asSolvedText;
     const ions = WATER_IONS.map(({ ion, pin, label, source }) => {
       const sourceVal = num(engine, `${N.sourceReport}.${source}`);
       const targetVal = num(engine, `${N.target}.${ion}`);

@@ -32,8 +32,6 @@ export const STYLE_NODES = {
   },
   apparentAttenuation: "batch.apparent_attenuation",
   targetAbv: "batch.target_abv",
-  sulfateChlorideMode: "batch.sulfate_chloride_target_mode",
-  sulfateChlorideRatio: "batch.sulfate_chloride_target_ratio",
   slice: "batch",
 };
 
@@ -65,12 +63,4 @@ export const styleRegistry = {
   "batch.style_srm_max": { label: "SRM max", unit: "SRM" },
   "batch.style_abv_min": { label: "ABV min", unit: "%" },
   "batch.style_abv_max": { label: "ABV max", unit: "%" },
-  "batch.sulfate_chloride_target_mode": {
-    label: "Specify SO4:Cl target",
-    optionLabels: {
-      unspecified: "Unspecified",
-      specified: "Specified",
-    },
-  },
-  "batch.sulfate_chloride_target_ratio": { label: "Desired SO4:Cl ratio" },
 };

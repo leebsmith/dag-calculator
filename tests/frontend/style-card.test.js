@@ -214,27 +214,11 @@ test("utils namespace is exposed to templates", () => {
   assert.equal(app.fmt.formatQuantity({ display: "1.5", unit: "kg" }), "1.5 kg");
 });
 
-test("the SO4:Cl intent toggles the mode and persists the ratio", () => {
+test("the style card carries no water-flavor intent fields", () => {
   const app = createStepApp();
   app.boot();
 
-  assert.equal(app.sulfateChlorideModeField.value, "unspecified");
-  assert.equal(app.sulfateChlorideSpecified, false);
-
-  app.setSulfateChlorideMode(true);
-  app.compute();
-  assert.equal(app.sulfateChlorideModeField.value, "specified");
-  assert.equal(app.sulfateChlorideSpecified, true);
-
-  app.edit(app.sulfateChlorideRatioField, "2.5");
-  assert.equal(app.master.getRoot("batch.sulfate_chloride_target_ratio"), 2.5);
-
-  app.setSulfateChlorideMode(false);
-  app.compute();
-  assert.equal(app.sulfateChlorideModeField.value, "unspecified");
-  assert.equal(
-    app.master.getRoot("batch.sulfate_chloride_target_ratio"),
-    2.5,
-    "ratio persists after clearing the intent"
-  );
+  const ids = app.fieldsBySlice.style.map((f) => f.id);
+  assert.equal(ids.some((id) => id.startsWith("batch.sulfate_chloride")), false);
+  assert.equal(app.sulfateChlorideSpecified, undefined);
 });

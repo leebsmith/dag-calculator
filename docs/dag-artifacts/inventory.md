@@ -51,7 +51,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE`, `AUTO`, `HYBRID`, `BASELINE`, `CUSTOM` |
 | `style_source` | `styleguide`, `experimental` |
 | `style_type` | `beer`, `mead`, `cider` |
-| `sulfate_chloride_target` | `unspecified`, `specified` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 | `wet_hop_application_stage` | `whirlpool`, `active_fermentation`, `cold_side` |
 | `wet_hop_product_type` | `raw_whole_cones`, `frozen_whole_cones`, `map_whole_cones`, `liquid_extract`, `cryo_powder`, `terpene_isolate` |
@@ -180,8 +179,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.style_srm_max` | root |
 | `batch.style_srm_min` | root |
 | `batch.sugars` | collection |
-| `batch.sulfate_chloride_target_mode` | choice |
-| `batch.sulfate_chloride_target_ratio` | root |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |
 | `batch.target_ibu` | root |

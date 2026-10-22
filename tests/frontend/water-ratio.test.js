@@ -12,32 +12,44 @@ test("sulfateChloride divides sulfate by chloride and guards zero chloride", () 
   assert.equal(sulfateChloride(null), null);
 });
 
-test("ratioReadout emits no intent when unspecified and a factor when specified", () => {
+test("ratioReadout compares the kettle to the target-implied ratio", () => {
   const kettle = { ...IONS, sulfate_so4: 100, chloride_cl: 50 };
-  const unspecified = ratioReadout(kettle, "unspecified", 3.0);
-  assert.equal(unspecified.asSolved, 2);
-  assert.equal(unspecified.intent, null);
-  assert.equal(unspecified.intentText, null);
-  assert.equal(unspecified.deltaFactor, null);
+  const target = { ...IONS, sulfate_so4: 120, chloride_cl: 40 };
 
-  const specified = ratioReadout(kettle, "specified", 4.0);
-  assert.equal(specified.intent, 4.0);
-  assert.equal(specified.deltaFactor, 0.5);
-  assert.equal(specified.deltaFactorText, "0.50×");
+  const compared = ratioReadout(kettle, target);
+  assert.equal(compared.asSolved, 2);
+  assert.equal(compared.target, 3);
+  assert.equal(compared.asSolvedText, "2.0 : 1");
+  assert.equal(compared.targetText, "3.0 : 1");
+  assert.equal(compared.deltaFactorText, "0.67×");
+
+  const asSolvedOnly = ratioReadout(kettle, null);
+  assert.equal(asSolvedOnly.target, null);
+  assert.equal(asSolvedOnly.targetText, null);
+  assert.equal(asSolvedOnly.deltaFactor, null);
+  assert.equal(asSolvedOnly.asSolvedText, "2.0 : 1");
+
+  assert.equal(ratioReadout(kettle, { ...IONS, sulfate_so4: 100, chloride_cl: 0 }).target, null);
 });
 
-test("the water summary exposes the kettle ratio and basis for both modes", () => {
+test("the water summary compares against the target only when both flavor ions are constrained", () => {
   const app = createStepApp();
   app.boot();
-  app.setRoot("batch.sulfate_chloride_target_mode", "specified");
-  app.setRoot("batch.sulfate_chloride_target_ratio", 3);
   app.setRoot("water.salt_distribution", "PROPORTIONAL");
+  app.setRoot("water.target.sulfate_so4", 120);
+  app.setRoot("water.target.chloride_cl", 40);
   app.compute();
 
   assert.match(app.waterSummary.ratioBasis, /split mode/);
   assert.equal(typeof app.waterSummary.ratio.asSolved, "number");
-  assert.match(app.waterSummary.ratioLine, /intent →/);
+  assert.match(app.waterSummary.ratioLine, /target →/);
+  assert.doesNotMatch(app.waterSummary.ratioLine, /intent/);
 
+  app.setRoot("water.strategy", "BASELINE");
+  app.compute();
+  assert.doesNotMatch(app.waterSummary.ratioLine, /target →/);
+
+  app.setRoot("water.strategy", "CALCIUM_FLOOR");
   app.setRoot("water.salt_distribution", "MASH_ONLY");
   app.compute();
   assert.match(app.waterSummary.ratioBasis, /sparge untreated, acid only/);

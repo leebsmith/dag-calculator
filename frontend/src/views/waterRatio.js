@@ -1,12 +1,12 @@
-// Host-side SO4:Cl readout: no DAG node. The ratio is the sulfate-to-chloride
-// ratio of the kettle ion vector (computed by the water card), compared against
-// the batch's declared intent. Presentation-only.
+// Host-side SO4:Cl readout: no DAG node. Both ratios are sulfate-to-chloride
+// ratios of ion vectors: the kettle blend (computed by the water card) and the
+// target roots the solver consumes. Presentation-only.
 
 import { formatWithDecimals } from "../utils.js";
 
-export function sulfateChloride(kettle) {
-  const so4 = kettle?.sulfate_so4;
-  const cl = kettle?.chloride_cl;
+export function sulfateChloride(vector) {
+  const so4 = vector?.sulfate_so4;
+  const cl = vector?.chloride_cl;
   if (typeof so4 !== "number" || typeof cl !== "number" || cl <= 0) return null;
   return so4 / cl;
 }
@@ -15,20 +15,17 @@ function ratioText(value) {
   return value == null ? "—" : `${formatWithDecimals(value, 1)} : 1`;
 }
 
-export function ratioReadout(kettle, intentMode, intentRatio) {
+export function ratioReadout(kettle, target) {
   const asSolved = sulfateChloride(kettle);
-  const specified = intentMode === "specified";
-  const intent = specified && typeof intentRatio === "number" && Number.isFinite(intentRatio)
-    ? intentRatio
-    : null;
+  const targetRatio = sulfateChloride(target);
   const deltaFactor =
-    asSolved != null && intent != null && intent > 0 ? asSolved / intent : null;
+    asSolved != null && targetRatio != null && targetRatio > 0 ? asSolved / targetRatio : null;
 
   return {
     asSolved,
     asSolvedText: ratioText(asSolved),
-    intent,
-    intentText: intent == null ? null : ratioText(intent),
+    target: targetRatio,
+    targetText: targetRatio == null ? null : ratioText(targetRatio),
     deltaFactor,
     deltaFactorText: deltaFactor == null ? null : `${formatWithDecimals(deltaFactor, 2)}×`,
   };

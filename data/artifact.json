@@ -463,10 +463,6 @@
       "oz",
       "g",
       "ml"
-    ],
-    "sulfate_chloride_target": [
-      "unspecified",
-      "specified"
     ]
   },
   "functions": {
@@ -1943,19 +1939,6 @@
       "kind": "root",
       "dimension": "abv",
       "default": 0,
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.sulfate_chloride_target_mode": {
-      "kind": "choice",
-      "taxonomy": "sulfate_chloride_target",
-      "default": "unspecified"
-    },
-    "batch.sulfate_chloride_target_ratio": {
-      "kind": "root",
-      "dimension": "dimensionless",
-      "default": 1.0,
       "domain": {
         "gte": 0
       }

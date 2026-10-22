@@ -39,8 +39,6 @@ export const steps = [
       "batch.style_srm_max",
       "batch.style_abv_min",
       "batch.style_abv_max",
-      "batch.sulfate_chloride_target_mode",
-      "batch.sulfate_chloride_target_ratio",
     ],
   },
   {
