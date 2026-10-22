@@ -17,12 +17,8 @@
     "name": "Balanced Pale",
     "description": "Even sulfate-to-chloride balance for pale ales.",
     "calcium_floor_ppm": 50,
-    "calcium_ca": 50,
-    "magnesium_mg": 5,
-    "sodium_na": 10,
     "sulfate_so4": 100,
     "chloride_cl": 100,
-    "alkalinity_as_caco3": 0,
     "mode": "CALCIUM_FLOOR"
   },
   "hoppy-ipa": {
@@ -30,12 +26,8 @@
     "name": "Hoppy / IPA",
     "description": "Sulfate-forward profile that accentuates hop bitterness.",
     "calcium_floor_ppm": 50,
-    "calcium_ca": 75,
-    "magnesium_mg": 5,
-    "sodium_na": 10,
     "sulfate_so4": 250,
     "chloride_cl": 50,
-    "alkalinity_as_caco3": 0,
     "mode": "CALCIUM_FLOOR"
   },
   "malty-amber": {
@@ -43,9 +35,6 @@
     "name": "Malty / Amber",
     "description": "Chloride-forward profile with a carbonate buffer for malt sweetness.",
     "calcium_floor_ppm": 50,
-    "calcium_ca": 60,
-    "magnesium_mg": 5,
-    "sodium_na": 10,
     "sulfate_so4": 50,
     "chloride_cl": 120,
     "alkalinity_as_caco3": 60,
@@ -56,9 +45,6 @@
     "name": "Dark / Stout",
     "description": "Rounder, buffered profile suited to roasted malts.",
     "calcium_floor_ppm": 50,
-    "calcium_ca": 75,
-    "magnesium_mg": 5,
-    "sodium_na": 15,
     "sulfate_so4": 50,
     "chloride_cl": 100,
     "alkalinity_as_caco3": 150,
@@ -69,12 +55,8 @@
     "name": "Belgian Golden / Tripel",
     "description": "Moderate, sulfate-leaning profile for Belgian strong ales.",
     "calcium_floor_ppm": 50,
-    "calcium_ca": 50,
-    "magnesium_mg": 5,
-    "sodium_na": 10,
     "sulfate_so4": 80,
     "chloride_cl": 60,
-    "alkalinity_as_caco3": 0,
     "mode": "CALCIUM_FLOOR"
   },
   "belgian-saison": {
@@ -82,12 +64,8 @@
     "name": "Belgian Saison",
     "description": "Dry, sulfate-forward profile for saison yeast character.",
     "calcium_floor_ppm": 50,
-    "calcium_ca": 50,
-    "magnesium_mg": 5,
-    "sodium_na": 10,
     "sulfate_so4": 180,
     "chloride_cl": 60,
-    "alkalinity_as_caco3": 0,
     "mode": "CALCIUM_FLOOR"
   }
 }

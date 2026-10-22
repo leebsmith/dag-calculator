@@ -85,12 +85,22 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
 
     // Selection -> root copy-in (view-only). Picking a source report / target
     // profile pre-fills the editable ion roots; they remain user-editable.
+    // Derived roots reset to their artifact default first, so switching to a
+    // component that does not supply a root cannot leave a stale value behind
+    // (e.g. a six-ion profile followed by a two-ion one).
     copyInCascade(refRootId) {
       const selectionNode = refToSelectionMap.get(refRootId);
       if (!selectionNode) return;
       const component = session.getEngine().get(selectionNode);
       if (!component) return;
-      for (const { rootId, derive } of derivationsFor(selectionNode)) {
+      const derivations = derivationsFor(selectionNode);
+      for (const { rootId } of derivations) {
+        const fallback = artifact.nodes[rootId]?.default;
+        if (typeof fallback === "number" || (typeof fallback === "string" && fallback !== "")) {
+          this.setRoot(rootId, fallback);
+        }
+      }
+      for (const { rootId, derive } of derivations) {
         const value = derive(component);
         if (typeof value === "number" || (typeof value === "string" && value !== "")) {
           this.setRoot(rootId, value);

@@ -52,8 +52,10 @@ for (const field of ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "
 SEED_DERIVATIONS["water.calcium_floor_ppm"] = [
   { selection: "water.target_profile", derive: (p) => p?.calcium_floor_ppm },
 ];
+// A profile declares only the ions its mode targets; the strategy is always
+// derived by the router from that vector, so applying a profile re-enables AUTO.
 SEED_DERIVATIONS["water.strategy"] = [
-  { selection: "water.target_profile", derive: (p) => p?.mode },
+  { selection: "water.target_profile", derive: () => "AUTO" },
 ];
 
 export function seedDerivations(rootId) {

@@ -249,6 +249,26 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
   assert.equal(water.preferred_alkaline_agent, "PICKLING_LIME");
 });
 
+test("http: loadState seeds missing derived roots from the selected profile", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.boot();
+  calls.length = 0;
+
+  await app.loadState({
+    roots: { "water.target_profile_id": "hoppy-ipa", "water.target.sulfate_so4": 111 },
+  });
+
+  const water = calls.find((c) => c.url === "/solve/water").body;
+  assert.equal(water.target.sulfate_so4, 111, "explicit root wins");
+  assert.equal(water.target.chloride_cl, 50, "missing root seeded from the profile");
+  assert.equal(water.target.calcium_ca, 0, "the profile declares only the ions its mode targets");
+  assert.equal(water.strategy, "AUTO");
+});
+
 function boundaryBindingErrors() {
   return Object.keys(errorCounters()).filter((s) => s.includes("No boundary binding registered"));
 }
