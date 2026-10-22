@@ -24,6 +24,31 @@ decision** that the code will follow.
    copy-forward). Pin/floating is decided by the **mode**, not by value presence.
 6. **`custom_pinned_ions` is a wire list** but is populated by the service from a
    Mode-5 pin collection, never inferred from `0`-vs-`None` in the target vector.
+7. **Routing is vector-driven; pinning is mode-driven.** These are different
+   questions and decision 5 only covers the second. `AUTO` *classifies* the mode
+   from the target-vector shape; once classified, the mode alone decides which
+   ions are held. The frontend mirrors the resulting pin sets in
+   `views/registry/water.js` and is pinned to the solver by
+   `tests/conformance/fixtures/ion-constraints.json` (generated from observed
+   solver behaviour).
+8. **Mode 5 pins are capped at 1-4.** Four keeps a degree of freedom for mass
+   minimisation and avoids the exactly-determined regime where the one-way
+   (addition-only) constraints fail most often. The cap is necessary, not
+   sufficient: a pin the source already meets forbids every salt that adds it,
+   so per-target infeasibility is reported, never promised away.
+9. **An empty pin set is not a mode.** The "pin every positive target" fallback
+   in the sparse solver is deleted. `AUTO` that cannot classify the vector routes
+   to Mode 3 (best fit) and says so in telemetry; an explicit `CUSTOM` with no
+   pins raises `PINNED_IONS_REQUIRED`.
+10. **Profiles declare only the ions their mode targets.** A profile carries its
+    authored `mode` as metadata, and applying it writes `water.strategy = AUTO`
+    (the router must derive the same mode from the declared ions). Applying a
+    profile first resets every profile-derived root to its artifact default, so a
+    two-ion profile cannot inherit a previous six-ion profile's targets.
+11. **The grid reports the constraint, not the stored value.** A held ion shows
+    its target and signed delta; a floated ion shows `(Auto)`; status vocabulary
+    is `Target` (equality), `Buffer` (Mode 2 alkalinity, pre-acid), `Best fit`
+    (Mode 3 — nothing held exactly), `Auto`. Picker labels use the same words.
 
 ## Boundary contract
 
@@ -63,7 +88,13 @@ decision** that the code will follow.
 
 `INVALID_MASH_VOLUME` · `INVALID_SPARGE_VOLUME` · `UNKNOWN_GRAIN_TYPE` ·
 `UNKNOWN_ACID_MEDIUM` · `UNKNOWN_ALKALINE_AGENT` · `UNKNOWN_SALT_FORM` ·
-`SALT_SOLVE_FAILED` · `ION_TARGET_OUT_OF_RANGE` · `UNKNOWN_STRATEGY`.
+`SALT_SOLVE_FAILED` · `ION_TARGET_OUT_OF_RANGE` · `UNKNOWN_STRATEGY` ·
+`PINNED_IONS_REQUIRED` (`CUSTOM` with no pins).
+
+Added telemetry codes (host-side, not the error surface): `PINNED_TARGET_BELOW_SOURCE`,
+`FLAVOR_TARGET_BELOW_SOURCE` (salts only add), `ROUTER_AUTO_BEST_FIT` (AUTO
+fall-through to Mode 3), `GUARDRAIL_PH_MODEL_OUT_OF_RANGE` (prediction outside
+3.5-7.5, i.e. the linear pH model is extrapolating).
 
 Removed: `OPTIMIZE_NOT_IMPLEMENTED` (now implemented), `SOURCE_NOT_FOUND`,
 `MISSING_SOURCE`. Renamed: `UNKNOWN_ACID` → `UNKNOWN_ACID_MEDIUM`.
@@ -79,7 +110,7 @@ Decision vector (per litre of mash liquor):
 | 2 Buffer | `HYBRID` | so4, cl; alk ≥ target (buffer) | min salt+agent mass | balance to target | agent supplies buffer; acid balances |
 | 3 Clone | `OPTIMIZE` | none (soft all 6) | min Σ w_i(actual−target)² + λ·mass | soft toward target | agent+acid active (alk reachable) |
 | 4 Baseline | `BASELINE` | none; salts+agent = 0 | — | acid/base only | acid/base only |
-| 5 Custom | `CUSTOM` | `custom_pinned_ions` | min mass | correct to target | post-step |
+| 5 Custom | `CUSTOM` | `custom_pinned_ions` (1-4) | min mass | correct to target | post-step |
 
 Guardrails (constraints where mode-specific, warnings otherwise): Ca ≥ floor,
 Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
@@ -94,7 +125,13 @@ Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
 - Service derives `custom_pinned_ions` from `water.pinned_ions`; the core floats
   unpinned ions to `source`.
 - `AUTO` (wire default): empty/all-zero target → `BASELINE`; else infer from the
-  target shape per `boundary-deltas.md` §2.2. The UI always sends an explicit mode.
+  target shape per `boundary-deltas.md` §2.2. Unclassifiable shapes fall through
+  to `OPTIMIZE` (best fit) rather than an unactionable state. The UI always sends
+  an explicit mode.
+- Target profiles (`data/seeds/water_target_profiles.json`) carry only the ions
+  their `mode` targets; `mode` is authored metadata that the router must
+  reproduce from those ions (guarded in `tests/frontend/water-card.test.js` and
+  `tests/backend/conformance/test_water_routing.py`).
 
 ## pH and ion coupling
 

@@ -113,12 +113,15 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
   seed includes one synthetic `ro-distilled` report — `laboratory` is an explicit
   non-lab convention (`RO / Distilled (definition)`), zero ions, no lab dates — it
   is a definition, not a measurement.
-- `water_target` — `{ id, name, description, calcium_ca, magnesium_mg, sodium_na,
-  sulfate_so4, chloride_cl, alkalinity_as_caco3, calcium_floor_ppm, mode, notes }`
-  (presets like Balanced Pale, Hoppy/IPA…). `mode` is the template's pre-selected
-  strategy (taxonomy `strategy`), applied on copy-in. The `sulfate_chloride_ratio`
-  field is removed — the ion vector is the only authority; the picker may display
-  the implied ratio. RO is a *source report*, not a target profile.
+- `water_target` — `{ id, name, description, <ions>, calcium_floor_ppm, mode, notes }`
+  (presets like Balanced Pale, Hoppy/IPA…). A profile declares **only the ions its
+  `mode` targets** — flavour profiles carry SO₄/Cl, buffer profiles add
+  alkalinity, and only the all-six clone profile carries every ion. `mode` is
+  authored metadata: applying a profile writes `water.strategy = AUTO` and the
+  router must derive the same mode from the declared ions. The
+  `sulfate_chloride_ratio` field is removed — the ion vector is the only
+  authority; the picker may display the implied ratio. RO is a *source report*,
+  not a target profile.
 
 ### 2.6 `style`
 

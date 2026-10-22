@@ -1,6 +1,8 @@
 # ADSCO UI model
 
-Status: draft for review. Locked UI decisions from the reconciliation.
+Status: **locked** (reconciled). Supersedes the vendored UI passages where they
+differ; decisions are recorded in `plans/adsco-contract.md` (§ Locked decisions
+7-11).
 
 ## State model — one source of truth
 
@@ -41,15 +43,46 @@ Immediately below entry, one row per ion:
 
 ```
 Ion        Source   Target   Post-addition   Δ       Status
-Calcium    12.0     (Auto)   52.4            —       Floor ≥ 50
-Sulfate    15.0     250      250.0           0       Exact
-Alkalinity 35.0     (Auto)   35.0            —       Floating
+Calcium    12.0     (Auto)   52.4            —       Auto
+Sulfate    15.0     250      250.0           0       Target
+Alkalinity 35.0     (Auto)   35.0            —       Auto
 ```
 
-- `(Auto)` for floated ions; signed Δ for targeted ions.
-- Status chips: Exact / Floor / Buffer / Floating / Compromise / Below-buffer.
-- Driven by `post_dose_mash_ions` vs `target`, plus per-ion constraint state from
-  telemetry.
+- The Target column is **the constraint the routed mode posed**, never the stored
+  root value. A floated ion shows `(Auto)` even when `water.target.<ion>` holds a
+  dormant number.
+- Status vocabulary: `Target` (hard equality), `Buffer` (Mode 2 alkalinity — a
+  pre-acid minimum, so its Δ is expected to be non-zero), `Best fit` (Mode 3
+  least squares — every ion is targeted, none is held exactly), `Auto` (floated).
+- `Δ = post − target` is only meaningful for held ions; floated rows render `—`.
+- Driven by `post_dose_mash_ions` vs `target`, with the pin sets mirrored in
+  `frontend/src/views/registry/water.js` and pinned to the solver by
+  `tests/conformance/fixtures/ion-constraints.json`.
+
+## Mode 5 pin modal
+
+- Pin **one to four** ions. The rule is stated in the modal, together with the
+  reason: four keeps a degree of freedom for the salt optimiser.
+- The modal must not promise success. Salts only add, so a pin the source already
+  meets forbids every salt that adds it; the solve reports
+  `PINNED_TARGET_BELOW_SOURCE` instead of reaching the target.
+- Ticking a fifth ion is disabled; unticking the last one is disabled.
+
+## Profile picker labels
+
+Reference pickers render the component's name, never its raw id, plus a
+constraint tag using the shared vocabulary:
+
+| Mode | Option tag |
+| --- | --- |
+| 1 | `SO₄/Cl held` |
+| 2 | `SO₄/Cl/alk held` |
+| 3 | `all six, best fit` |
+| 4 | `no salt targets` |
+| 5 | `you pick ≤ 4` |
+
+The hint under the picker states that applying a profile resets its derived
+targets and returns the routing to `AUTO`.
 
 ## Telemetry
 

@@ -75,6 +75,11 @@
 
 * **Non-finite propagation (L4):** `÷0` → `NaN/∞` is only flagged for root/choice
   domains, not derived nodes. Consider a global "derived values finite" guard.
+* **Mash pH model validity band:** the linear `predict_mash_ph` extrapolates far
+  outside the brewing range — the seeded water sweep produces predictions of
+  10-55 at extreme target vectors. They are now flagged
+  (`GUARDRAIL_PH_MODEL_OUT_OF_RANGE`) rather than presented as physical, but the
+  model itself needs either calibrated input bounds or a non-linear buffer model.
 
 ## Deferred language/engine features
 

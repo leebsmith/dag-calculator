@@ -34,6 +34,7 @@ backend with Firebase auth and Firestore persistence.
 make local-dev   # Vite + Firebase emulators + uvicorn
 make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
+make test-fuzz   # seeded water-solver invariant sweep (CASES=200 SEED=...)
 make verify      # check + test + production build
 make build       # frontend bundle + dist assertions (unresolved includes, assets)
 make test-oracle # assert the committed oracle snapshot matches the legacy checkout
@@ -46,6 +47,12 @@ artifact functions against `tests/conformance/fixtures/oracle-parity.json`, a
 snapshot of the legacy pure modules. Refresh the snapshot with
 `node tests/conformance/emit-oracle-fixture.mjs --write` and confirm it with
 `make test-oracle`; `make verify` itself needs no legacy checkout.
+
+`make test-fuzz` is the generative counterpart: `tests/backend/conformance/test_water_fuzz.py`
+asserts only the solver's structural invariants over pseudo-random, physically
+plausible inputs. It is deliberately outside `verify` — the case count is a
+parameter (`CASES`) and a failure names a seed (`SEED`) to reproduce, not a diff
+to review.
 
 ## Auth & deployment
 

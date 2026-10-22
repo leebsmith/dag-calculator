@@ -22,8 +22,18 @@ and reflected back into `docs/dag-artifacts/` in the same commit.
 | `ion-limits-for-brewing.md` | `ion-limits-for-brewing.md` |
 | `reference/adsco_core_water_chemistry_solver.py` | `adsco_core_water_chemistry_solver.py` |
 
+The table above is **frozen provenance**: those files are design inputs and are
+not edited. The operative layer is:
+
+| File | Role |
+| --- | --- |
+| `plans/adsco-contract.md` | reconciled decisions; supersedes the vendored specs where they diverge |
+| `ui.md` | reconciled UI model (grid vocabulary, pin modal, picker labels) |
+
 ## Notes
 
+- `ui.md` is not vendored: it is the reconciled UI model and is maintained with
+  the implementation.
 - `reference/adsco_core_water_chemistry_solver.py` is a **non-imported snapshot**.
   It is not the implementation and is not executed by tests. The production core
   will live in `backend/app/core/water.py`.

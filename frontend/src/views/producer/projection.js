@@ -158,6 +158,16 @@ function referenceSchema(artifact, rootId) {
   return null;
 }
 
+// Reference pickers show the catalog component's human name instead of its raw
+// id; a slice may supply `optionLabel` on the registry entry for a richer label.
+function referenceLabels(meta, components) {
+  const labels = {};
+  for (const [id, component] of Object.entries(components)) {
+    labels[id] = meta.optionLabel?.(component) ?? component?.name ?? id;
+  }
+  return labels;
+}
+
 // AI AGENT HOOKS: Use this projection entry point for declaring step fields.
 // Do not duplicated this logic elsewhere.
 export function projectFields(artifact, steps, registry, ctx = {}) {
@@ -194,6 +204,10 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
           : info.kind === "reference"
             ? Object.keys(ctx.references?.[referenceSchema(artifact, id)] ?? {})
             : null;
+      const optionLabels =
+        info.kind === "reference"
+          ? referenceLabels(meta, ctx.references?.[referenceSchema(artifact, id)] ?? {})
+          : meta.optionLabels ?? null;
 
       fields.push({
         id,
@@ -207,7 +221,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         decimals: meta.decimals ?? null,
         hint: meta.hint ?? null,
         options,
-        optionLabels: meta.optionLabels ?? null,
+        optionLabels,
         editable,
         target,
         ...(info.selectionRef ? { selectionRef: info.selectionRef } : {}),
