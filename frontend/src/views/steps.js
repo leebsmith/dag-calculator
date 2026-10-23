@@ -6,8 +6,8 @@ export const steps = [
   {
     id: "equipment",
     slice: "equipment",
-    title: "Equipment Profile",
-    subtitle: "Choose a profile and review the hardware constants",
+    title: "Equipment",
+    subtitle: "Hardware constants from the batch's rig (fixed at creation)",
     partial: "./src/partials/step-card.html",
     fields: [
       "equipment.mash_tun_mass_kg",
@@ -252,7 +252,7 @@ export const steps = [
     id: "water",
     slice: "water",
     title: "Water Chemistry",
-    subtitle: "Source and target water chemistry",
+    subtitle: "Source water is fixed at creation; the targets are yours",
     partial: "./src/partials/step-water.html",
     fields: [
       "water.target_profile_id",

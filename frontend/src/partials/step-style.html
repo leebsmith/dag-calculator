@@ -5,18 +5,16 @@
   </div>
 
   <div class="step-card-content">
-    <!-- Style source gate -->
+    <!-- Style declaration: fixed for this batch -->
     <div class="form-group">
-      <label class="form-label">Style source</label>
-      <select
-        class="form-select"
-        :value="styleSourceModel.value"
-        @change="edit(styleSourceModel, $event.target.value)"
-      >
-        <template x-for="opt in styleSourceModel.options" :key="opt">
-          <option :value="opt" :selected="opt === styleSourceModel.value" x-text="fmt.optionLabel(styleSourceModel.optionLabels, opt)"></option>
-        </template>
-      </select>
+      <label class="form-label">
+        <span>Style source</span>
+      </label>
+      <p class="form-hint">
+        <span x-text="fmt.optionLabel(styleSourceModel.optionLabels, styleSourceModel.value)"></span>
+        — rig, water, and style define this batch. Changing the style below redefines it;
+        the new-batch flow will make that explicit.
+      </p>
     </div>
 
     <!-- Styleguide picker -->
@@ -392,27 +390,8 @@
           <div class="form-group">
             <label class="form-label">
               <span x-text="row.field.label"></span>
-              <span
-                class="seed-badge"
-                x-show="row.provenance.showSeed"
-                :title="row.provenance.seedTitle"
-              >seed</span>
-              <button
-                type="button"
-                class="seed-reset"
-                x-show="row.provenance.showReset"
-                :title="row.provenance.resetTitle"
-                @click="resetField(row.field)"
-              >↺</button>
             </label>
-            <input
-              type="number"
-              :step="row.step"
-              class="form-input tabular-nums"
-              :value="row.field.display"
-              @input="edit(row.field, $event.target.value)"
-              @change="commitField(row.field)"
-            />
+            <span class="field-value" x-text="row.field.display"></span>
           </div>
         </template>
       </div>

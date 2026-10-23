@@ -76,6 +76,7 @@ projector + renderer the service will expose.
 | artifact | `data/artifact.json` | repo (shipped to backend) |
 | units | `data/units.json` | repo (shipped) — symbols/precision/defaults |
 | recipe schema | `data/recipe.yaml` | authored |
+| **identity** | `{ equipment, "water.source", style }` component snapshots | the batch's immutable identity (see `plans/off-graph-identity.md`) |
 | **valuation** | `node-id → value` (boundary nodes → `{outputs, fingerprint}`) | a **frozen** `BatchRecord.valuation`, or a fixture |
 | unit profile | `{ master: {dim→unit}, overrides: {node→unit} }` | explicit argument |
 
@@ -100,8 +101,14 @@ Table          { label, collection, columns: [Column], rows: [[str, …]] }
 Column         { label, field }
 Group          { label, blocks: [Value|Table|Group|Prose] }
 Prose          { text }
-identity       { schema_version, provenance: dict, content_hash }
+identity       { schema_version, provenance: dict, content_hash,
+                 batch: { equipment, water_source, style } }
 ```
+
+- `identity.batch` is the batch's identity snapshot **as rendered** (rig name, water
+  source label, style name and bounds). It is the document header; it is not read
+  from the library, so a deleted or corrected catalogue record cannot change a
+  printed document.
 
 - Every leaf `value` is a **string** ("12.2 g") or `None` (conditional/optional).
 - The renderer walks this tree generically (headings, paragraphs, key-values,
@@ -118,18 +125,27 @@ identity       { schema_version, provenance: dict, content_hash }
 **API (shape):**
 
 ```
-def project_recipe(recipe_yaml, artifact, units, valuation, unit_profile) -> RecipeDocument
+def project_recipe(recipe_yaml, artifact, units, identity, valuation, unit_profile) -> RecipeDocument
 ```
 
 **Algorithm:**
 1. Parse `recipe.yaml` (validated against the grammar — see §7) into an in-memory
-   document tree of raw bindings/labels/prose.
+   document tree of raw bindings/labels/prose; attach `identity.batch` from the
+   batch record.
 2. For each `Value`/`Table` leaf: resolve its binding against the valuation (§5.1),
    evaluate `when` (§5.3), adapt units + format (§6), set the string.
 3. Recurse into `Group`/`Section`/`Subsection`.
 4. Attach `identity` (`schema_version` + provenance from the batch + a content
    hash; see §8).
 5. Return the populated `RecipeDocument`.
+
+### 5.0 Identity header
+
+The document header is projected from `BatchRecord.identity` (the same snapshot the
+engine was constructed with). No node ids, no resolver: the three components are
+copied into `identity.batch` with their display labels. Sections may interpolate
+`identity.*` values (e.g. the rig's max HLT volume) through the same leaf/section
+machinery.
 
 ### 5.1 Valuation path resolution (mirror of `engine.resolve`)
 
