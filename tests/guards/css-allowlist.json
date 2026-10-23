@@ -6,22 +6,11 @@
   "duplicateGroups": [
     {
       "context": "",
-      "declarations": "overflow: hidden",
-      "selectors": [
-        "body.modal-open",
-        ".modal-drawer-body-pinned"
-      ],
-      "reason": "Phase 3: body.modal-open is dead; delete it and keep the drawer scroll lock.",
-      "phase": 3
-    },
-    {
-      "context": "",
       "declarations": "outline-offset: 2px; outline: 2px solid var(--sys-border-focus)",
       "selectors": [
         ".btn:focus-visible",
         ".landing-create:focus-visible, .landing-title:focus-visible, .landing-kebab:focus-visible, .landing-freeze-card:focus-visible",
-        ".brew-day-section-toggle:focus-visible",
-        ".tri-state-pill:focus-visible"
+        ".brew-day-section-toggle:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
     },
@@ -41,8 +30,7 @@
       "selectors": [
         ".btn-link:hover:not(:disabled)",
         ".btn-close:hover",
-        ".text-primary",
-        ".catalog-search-clear:hover"
+        ".text-primary"
       ],
       "reason": "Coincidental text-primary colour; button hover and the utility are independent."
     },
@@ -62,8 +50,7 @@
         ".sev-error",
         ".text-danger"
       ],
-      "reason": "Keep the text-danger utility and the dynamic sev-* telemetry exception.",
-      "phase": 3
+      "reason": "Keep the text-danger utility and the dynamic sev-* telemetry exception."
     },
     {
       "context": "",
@@ -90,8 +77,7 @@
         ".sev-warning",
         ".text-warning"
       ],
-      "reason": "Keep the text-warning utility and the dynamic sev-* telemetry exception.",
-      "phase": 3
+      "reason": "Keep the text-warning utility and the dynamic sev-* telemetry exception."
     },
     {
       "context": "",
@@ -101,26 +87,6 @@
         ".sev-info"
       ],
       "reason": "Status colour and dynamic telemetry severity share the info token."
-    },
-    {
-      "context": "",
-      "declarations": "align-items: center; display: flex; justify-content: space-between",
-      "selectors": [
-        ".modal-header",
-        ".synthesized-header"
-      ],
-      "reason": "Phase 3: .modal-header is dead; delete it.",
-      "phase": 3
-    },
-    {
-      "context": "",
-      "declarations": "display: flex; justify-content: flex-end; padding-top: var(--space-2)",
-      "selectors": [
-        ".modal-footer",
-        ".step-actions"
-      ],
-      "reason": "Phase 3: both selectors are dead; delete them.",
-      "phase": 3
     },
     {
       "context": "",
@@ -152,25 +118,6 @@
     },
     {
       "context": "",
-      "declarations": "align-items: center; display: flex; gap: var(--space-1); justify-content: flex-end",
-      "selectors": [
-        ".table-pct-cell",
-        ".table-action-cell"
-      ],
-      "reason": "Phase 3: .table-pct-cell is dead; delete it.",
-      "phase": 3
-    },
-    {
-      "context": "",
-      "declarations": "color: var(--sys-color-danger-accent)",
-      "selectors": [
-        ".table-pct-value.is-trace",
-        ".table-pct-badge.is-trace"
-      ],
-      "reason": "Trace state shares the danger accent across value and badge."
-    },
-    {
-      "context": "",
       "declarations": "background-color: var(--sys-surface-default); border-radius: var(--radius-lg); border: 1px solid var(--sys-border-subtle); overflow-x: auto",
       "selectors": [
         ".data-table-container",
@@ -186,16 +133,6 @@
         ".recipes-item.is-active"
       ],
       "reason": "Coincidental selected surface; table row and recipe item are unrelated."
-    },
-    {
-      "context": "",
-      "declarations": "position: relative",
-      "selectors": [
-        ".menu-unit",
-        ".menu-recipes"
-      ],
-      "reason": "Phase 3: .menu-recipes is dead; delete it.",
-      "phase": 3
     },
     {
       "context": "",
@@ -237,15 +174,6 @@
     },
     {
       "context": "",
-      "declarations": "font-size: var(--text-sm)",
-      "selectors": [
-        ".landing-subheading",
-        ".text-sm"
-      ],
-      "reason": "Coincidental type step; the heading carries other declarations."
-    },
-    {
-      "context": "",
       "declarations": "display: flex; flex-direction: column; gap: var(--space-2)",
       "selectors": [
         ".landing-group",
@@ -264,131 +192,5 @@
       "reason": "Shared control accent recipe; checkbox and slider contexts differ."
     }
   ],
-  "classes": [
-    {
-      "class": "alert-code",
-      "reason": "Phase 3: dead legacy alert code; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "align-right",
-      "reason": "Phase 3: selector surgery; remove the dead alias and keep .text-right.",
-      "phase": 3
-    },
-    {
-      "class": "badge-warning",
-      "reason": "Phase 3: selector surgery; remove the dead alias and keep .badge-amber.",
-      "phase": 3
-    },
-    {
-      "class": "btn-danger-outline",
-      "reason": "Phase 3: dead button variant; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "btn-lg",
-      "reason": "Phase 3: dead button size; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "catalog-search-clear",
-      "reason": "Phase 3: dead catalog control; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "font-mono",
-      "reason": "Phase 3: unused font utility; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "font-sans",
-      "reason": "Phase 3: unused font utility; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "form-actions",
-      "reason": "Phase 3: dead form layout; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "menu-recipes",
-      "reason": "Phase 3: dead menu wrapper; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "modal-body",
-      "reason": "Phase 3: dead modal shell; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "modal-footer",
-      "reason": "Phase 3: dead modal shell; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "modal-header",
-      "reason": "Phase 3: dead modal shell; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "modal-open",
-      "reason": "Phase 3: unused body state; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "modal-title",
-      "reason": "Phase 3: dead modal shell; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "recipes-popover",
-      "reason": "Phase 3: dead recipes popover; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "step-actions",
-      "reason": "Phase 3: dead step actions; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "table-pct-cell",
-      "reason": "Phase 3: dead table cell layout; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "text-micro",
-      "reason": "Phase 3: unused type utility; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "tri-state-group",
-      "reason": "Phase 3: unused tri-state control; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "tri-state-pill",
-      "reason": "Phase 3: unused tri-state control; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "tri-state-pill-ghost",
-      "reason": "Phase 3: unused tri-state control; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "tri-state-pill-solid",
-      "reason": "Phase 3: unused tri-state control; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "tri-state-pill-tinted",
-      "reason": "Phase 3: unused tri-state control; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "truncate",
-      "reason": "Phase 3: unused text utility; delete it.",
-      "phase": 3
-    }
-  ]
+  "classes": []
 }

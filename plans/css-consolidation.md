@@ -46,7 +46,7 @@ doubles as the cleanup work list.
 | 0. Decisions & rule alignment | Complete | Decisions recorded; rulebook amended; no code change |
 | 1. Guardrails | Complete | Guards run in `make test` on a seeded baseline; rulebook updated |
 | 2. Water CSS collapse | Complete | Water card renders identically; dead water rules removed; `make check` passes |
-| 3. Backlog paydown | Not started | Duplicate groups resolved or allowlisted; 43 dead rules removed |
+| 3. Backlog paydown | Complete | Duplicate groups resolved or allowlisted; dead rules removed |
 | Deferred: stylesheet split | Decision recorded | Not scheduled; reasons below |
 
 Mapping from the earlier draft: old Phase 2 → Phase 1, old Phase 1 → Phase 2,
@@ -205,19 +205,32 @@ re-measure before starting.
 - [x] `tbody tr:last-child { border-bottom: none }` (3: `.data-table`,
       `.landing-table`, `.water-treated`) → collapsed onto one shared selector
       list for the data and landing tables.
-- [ ] Review the remaining ~32 groups; classify each as shared recipe,
-      coincidental convergence, or deletion candidate. Roughly 10 are genuine
-      recipes (focus rings, button hover, flex-row/flex-column clusters, panel
-      headers); the rest are coincidental and stay allowlisted with reasons.
-- [ ] Consolidate panel recipes into a small documented set — canvas output card,
+- [x] Review the remaining groups; classify each as shared recipe,
+      coincidental convergence, or deletion candidate. The 20 survivors are
+      documented in the allowlist; five are shared recipes, four are the
+      `sev-*`/status-colour convergence, and the rest are coincidental layouts.
+- [x] Consolidate panel recipes into a small documented set — canvas output card,
       subtle summary strip, inset telemetry — reusing `.synthesized-card`. The
-      four panel pairs stay allowlisted per Phase 0.
-- [ ] Delete the dead CSS identified by Guard B: 43 fully-dead rules (316 lines)
-      plus selector surgery on the three mixed rules (`.text-right` /
-      `.align-right`, `.badge-warning` / `.badge-amber`, and the water margin
-      list). Do not wire PurgeCSS; its configuration is removed in Phase 0.
-- [ ] Remove each resolved entry from the allowlist, update the baseline metrics
-      in this plan, and state the final allowlist size.
+      four panel pairs stay allowlisted per Phase 0; no new primitive was added.
+- [x] Delete the dead CSS identified by Guard B: 28 fully-dead rules in this
+      phase (157 rule lines, ~186 lines including separators) plus selector
+      surgery on `.text-right`/`.align-right` and `.badge-warning`/`.badge-amber`.
+      With the 7 dead water rules from Phase 2, 2 dead badge rules, and the 6
+      `.water-treated` rules retired by the dense-table conversion, **43 rule
+      blocks left the stylesheet**. The original 316-line estimate included
+      separators; the final tree is 333 lines shorter. Do not wire PurgeCSS;
+      its configuration is removed in Phase 0.
+- [x] Remove each resolved entry from the allowlist, update the baseline metrics
+      in this plan, and state the final allowlist size: **20 duplicate groups
+      allowlisted, 0 class entries, 0 unreferenced classes outside the `sev-*`
+      safelist.**
+
+Final metrics at the end of Phase 3:
+
+- `frontend/src/style.css`: **2,482 → 2,149 lines (−333)**.
+- **277** rule blocks, **220** distinct classes.
+- **20** allowlisted duplicate groups (down from 35), all with reasons.
+- **0** class allowlist entries; the only safelist prefix is `sev-`.
 
 Acceptance:
 
@@ -236,7 +249,8 @@ single-developer with no merge-conflict pressure, and the section headers alread
 provide navigation. Splitting now would distribute any remaining drift across 13
 files without reducing it.
 
-The section map is retained for a future attempt:
+The section map below is the pre-cleanup line numbering; re-measure before any
+future attempt. It is retained for reference:
 
 | Block | Source lines | Target |
 |---|---|---|
@@ -310,7 +324,9 @@ Recorded so the corrections are not re-introduced:
 - Duplicate and dead-class guards run in `make test` and fail on new drift.
 - Duplicate groups are either resolved or documented in the allowlist, with the
   final allowlist size stated.
-- The ~316 lines of dead CSS are removed, or the shortfall is explained.
+- The ~316 lines of dead CSS are removed, or the shortfall is explained: **43
+  rule blocks left the stylesheet** and the final tree is **333 lines shorter**
+  (2,482 → 2,149). The original line estimate counted separators more loosely.
 - The rulebook states the delta-only rule and the narrowed §9.
 - All Phase 0 decisions are recorded; the stylesheet split remains explicitly
   deferred with reasons.
