@@ -86,6 +86,27 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
 });
 
+test("http: a failed water solve still renders the target grid", async () => {
+  const { fetchImpl } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": {
+      status: 422,
+      body: { code: "SALT_SOLVE_FAILED", message: "no feasible dose", details: {} },
+    },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.boot();
+
+  assert.equal(app.boundaryError.code, "SALT_SOLVE_FAILED");
+  assert.equal(app.boundaryStatuses["solver.water"], "error");
+  assert.equal(app.waterSummary.ions.length, 6);
+  for (const row of app.waterSummary.ions) {
+    assert.equal(row.postDoseText, "—");
+    assert.equal(row.deltaText, "—");
+    assert.notEqual(row.sourceText, undefined);
+  }
+});
+
 test("http: a debounced burst collapses into one batch + one water request", async () => {
   const { fetchImpl, calls } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },

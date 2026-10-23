@@ -52,8 +52,16 @@ function optionLabelFor(fieldId, value) {
   return waterRegistry[fieldId]?.optionLabels?.[value] ?? value;
 }
 
+function resolveValue(engine, path) {
+  try {
+    return engine.resolve(path);
+  } catch {
+    return undefined;
+  }
+}
+
 function num(engine, path) {
-  const v = engine.resolve(path);
+  const v = resolveValue(engine, path);
   return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
@@ -70,7 +78,7 @@ function checkedPins(engine) {
 function targetValue(engine, pin) {
   const ion = WATER_ION_BY_PIN[pin];
   if (!ion) return 0;
-  const value = engine.resolve(`${N.target}.${ion}`);
+  const value = resolveValue(engine, `${N.target}.${ion}`);
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
@@ -373,7 +381,7 @@ export function refreshWaterCard(app, ctx) {
     const valuedSet = new Set(valued);
     const stored = engine.get(N.strategy) ?? "";
     const effectiveMode = !stored || stored === "AUTO" ? strategyForHeld(valued) : stored;
-    const resolvedMode = engine.resolve(N.resolvedStrategy) ?? effectiveMode;
+    const resolvedMode = resolveValue(engine, N.resolvedStrategy) ?? effectiveMode;
 
     // The target ratio is only a comparison basis when both flavor ions are
     // constrained; otherwise the readout stays as-solved only.
@@ -530,7 +538,7 @@ export function refreshWaterCard(app, ctx) {
     };
   } catch (err) {
     reportError("waterCard.refresh", err);
-    app.waterSummary = { ...app.waterSummary, mode: "", ions: [], notes: [], telemetry: [] };
+    app.waterSummary = { ...app.waterSummary, notes: [], telemetry: [] };
   }
 }
 
