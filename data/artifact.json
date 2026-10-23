@@ -1410,6 +1410,46 @@
         }
       }
     },
+    "whirlpool_hop_row": {
+      "hop_id": {},
+      "name": {},
+      "alpha_acid_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "duration_min": {
+        "dimension": "time",
+        "default": 30,
+        "domain": {
+          "gte": 0
+        }
+      },
+      "initial_temp_c": {
+        "dimension": "temperature",
+        "default": 99,
+        "domain": {
+          "gte": 0,
+          "lte": 100
+        }
+      },
+      "parts": {
+        "dimension": "dimensionless",
+        "domain": {
+          "gte": 0
+        }
+      },
+      "pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "notes": {}
+    },
     "mash_rest": {
       "rest_id": {
         "taxonomy": "mash_rest"
@@ -1676,6 +1716,23 @@
         "lte": 1
       }
     },
+    "batch.whirlpool_ambient_temp_c": {
+      "kind": "root",
+      "dimension": "temperature",
+      "default": 20,
+      "domain": {
+        "gte": -20,
+        "lte": 50
+      }
+    },
+    "batch.whirlpool_cooling_time_constant_min": {
+      "kind": "root",
+      "dimension": "time",
+      "default": 108.69565217391305,
+      "domain": {
+        "gt": 0
+      }
+    },
     "batch.v_ferm": {
       "kind": "root",
       "dimension": "volume",
@@ -1776,6 +1833,10 @@
     "batch.boil_hops": {
       "kind": "collection",
       "item_schema": "boil_hop_row"
+    },
+    "batch.whirlpool_hops": {
+      "kind": "collection",
+      "item_schema": "whirlpool_hop_row"
     },
     "equipment.profile": {
       "kind": "selection",

@@ -77,6 +77,7 @@ export function createReferenceCache() {
       "mash.rests": mashSchedules["single-infusion"].rests,
       "batch.sugars": [],
       "batch.boil_hops": [],
+      "batch.whirlpool_hops": [],
       "batch.dry_hops": [],
       "batch.brew_day_steps": defaultBrewDayRows(),
     },

@@ -133,7 +133,12 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       let next = rows;
       if (columnId === "parts") {
         if (field.target.nodeId === N.majorMalts) next = this.normalizeGrist(rows);
-        else if (field.target.nodeId === N.boilHops) next = this.normalizeHopRows(rows);
+        else if (
+          field.target.nodeId === N.boilHops ||
+          field.target.nodeId === N.whirlpoolHops
+        ) {
+          next = this.normalizeHopRows(rows);
+        }
       }
       engine.setCollection(field.target.nodeId, next);
       this.scheduleSolve();
@@ -165,7 +170,12 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       let next = rows;
       if (field.target.nodeId === N.majorMalts) next = this.normalizeGrist(rows);
-      else if (field.target.nodeId === N.boilHops) next = this.normalizeHopRows(rows);
+      else if (
+        field.target.nodeId === N.boilHops ||
+        field.target.nodeId === N.whirlpoolHops
+      ) {
+        next = this.normalizeHopRows(rows);
+      }
       engine.setCollection(field.target.nodeId, next);
       this.scheduleSolve();
       this.notify();

@@ -215,7 +215,7 @@ export const steps = [
     id: "hops",
     slice: "hops",
     title: "Hops",
-    subtitle: "Boil additions, dosed by IBU share and boil time",
+    subtitle: "Boil and whirlpool additions, dosed by IBU share",
     partial: "./src/partials/step-hops.html",
     fields: [
       {
@@ -223,8 +223,15 @@ export const steps = [
         columns: ["name", "alpha_acid_pct", "boil_time_fraction", "parts", "pct"],
         inputs: ["boil_time_fraction", "parts"],
       },
+      {
+        collection: "batch.whirlpool_hops",
+        columns: ["name", "alpha_acid_pct", "duration_min", "initial_temp_c", "parts", "pct"],
+        inputs: ["duration_min", "initial_temp_c", "parts"],
+      },
       "batch.boil_target_ibu",
       "batch.whirlpool_target_ibu",
+      "batch.whirlpool_ambient_temp_c",
+      "batch.whirlpool_cooling_time_constant_min",
     ],
   },
   {

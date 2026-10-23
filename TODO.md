@@ -8,10 +8,11 @@
 
 ## Next (in order)
 
-1. **Whirlpool IBU engine** — promote the host-side Tinseth boil math
-   (`views/hops.js`) into a first-class engine path and add a whirlpool
-   utilization model (temp/time decay), replacing the manual
-   `batch.whirlpool_ibu_fraction`.
+1. **Whirlpool engine promotion** — the host-side cooling model and IBU-share
+   schedule landed (`docs/whirlpool-hopping-model.md`, `views/whirlpool.js`);
+   remaining work is promoting Tinseth/whirlpool math into the artifact and
+   replacing the manual `batch.whirlpool_ibu_fraction` with schedule-derived
+   IBU.
 2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
@@ -83,6 +84,7 @@ Not needed by the current artifact; add only when a node requires them:
 * Selector option labels everywhere (`plans/archive/selector-option-labels.md`)
 * CSS consolidation & drift guardrails (`plans/archive/css-consolidation.md`)
 * Water chemistry step card (`solver.water` boundary + full card)
+* Whirlpool hop schedule (IBU-share boil/whirlpool pools, Arrhenius cooling integral) — `docs/whirlpool-hopping-model.md`
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu
 * Recipe landing page (freeze rail, sortable library, row menus, inline rename)

@@ -1,0 +1,209 @@
+<!-- Whirlpool Hop Editor (workspace modal): draft grid + hop catalog / inspector drawers -->
+<div
+  class="modal-backdrop"
+  x-show="whirlpoolHopEditorOpen"
+  @click.self="cancelWhirlpoolHopEditor()"
+  @keydown.escape.window="handleWhirlpoolHopEscape()"
+>
+  <div class="modal-dialog modal-dialog-workspace">
+    <div class="modal-workspace-header">
+      <div class="modal-workspace-header-title">
+        <h2 class="modal-workspace-title">Whirlpool Hop Editor</h2>
+        <span
+          class="status-badge badge-info text-xs"
+          x-text="whirlpoolHopDraftSummary"
+        ></span>
+      </div>
+      <div class="modal-workspace-header-actions">
+        <button type="button" class="btn-outline text-xs" @click="cancelWhirlpoolHopEditor()">Cancel</button>
+        <button type="button" class="btn-primary text-xs" @click="saveWhirlpoolHopEditor()">Save &amp; Apply</button>
+      </div>
+    </div>
+
+    <div class="modal-workspace-body">
+      <div class="modal-workspace-main">
+        <div class="table-header-toolbar">
+          <span class="text-xs text-muted">
+            Enter relative IBU parts; Hamilton normalizes them to 100%. Mass is derived from the whirlpool cooling integral.
+          </span>
+          <button type="button" class="btn-primary text-xs" @click="openWhirlpoolHopSearch()">
+            ＋ Add Hop from Catalog
+          </button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table is-fixed">
+            <thead>
+              <tr>
+                <template x-for="c in draftColumns" :key="c.id">
+                  <th :class="c.id === 'name' ? '' : 'text-right'" x-text="fmt.formatColumnHeader(c)"></th>
+                </template>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(row, ri) in draftDisplayRows" :key="ri">
+                <tr>
+                  <template x-for="c in draftColumns" :key="c.id">
+                    <td :class="c.id === 'name' ? '' : 'text-right'">
+                      <template x-if="c.editable">
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          class="form-input table-input-parts"
+                          :value="row[c.id]"
+                          @input="editDraftCell(ri, c.id, $event.target.value)"
+                        />
+                      </template>
+                      <template x-if="!c.editable">
+                        <span class="collection-readout tabular-nums" x-text="row[c.id]"></span>
+                      </template>
+                    </td>
+                  </template>
+                  <td class="text-right">
+                    <div class="table-action-cell">
+                      <button type="button" class="btn-action-icon" @click="inspectWhirlpoolHopRow(ri)" title="Inspect">✎</button>
+                      <button
+                        type="button"
+                        class="btn-action-icon btn-action-danger"
+                        @click="removeWhirlpoolHop(ri)"
+                        title="Remove"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="draftRows.length === 0">
+                <tr>
+                  <td :colspan="draftColumns.length + 1" class="table-empty-cell">
+                    No hops in the draft. Click “＋ Add Hop from Catalog”.
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td :colspan="draftColumns.length + 1" class="tabular-nums">
+                  <span class="font-bold">Total parts:</span>
+                  <span x-text="fmt.formatWithDecimals(whirlpoolHopDraftPartsTotal, 1)"></span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-drawer-scrim" x-show="whirlpoolHopDrawer !== null" @click="closeWhirlpoolHopDrawer()"></div>
+
+      <div class="modal-workspace-drawer" x-show="whirlpoolHopDrawer !== null">
+        <div class="modal-drawer-header">
+          <h3
+            class="modal-drawer-title"
+            x-text="whirlpoolHopDrawer === 'search' ? 'Hop Catalog' : 'Hop Inspector'"
+          ></h3>
+          <button type="button" class="btn-close text-xs" @click="closeWhirlpoolHopDrawer()">✕</button>
+        </div>
+
+        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': whirlpoolHopDrawer === 'search' }">
+          <template x-if="whirlpoolHopDrawer === 'search'">
+            <div class="catalog-drawer-content">
+              <div class="catalog-drawer-controls">
+                <div class="catalog-search-wrapper">
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    placeholder="Search hops by name or notes…"
+                    x-model.debounce.50ms="whirlpoolHopSearch"
+                  />
+                </div>
+                <div class="filter-pills-container">
+                  <template x-for="c in whirlpoolHopCategories" :key="c">
+                    <button
+                      type="button"
+                      class="filter-pill"
+                      :class="{ 'is-active': whirlpoolHopCategoryFilter.includes(c) }"
+                      @click="toggleWhirlpoolHopCategory(c)"
+                      x-text="c"
+                    ></button>
+                  </template>
+                </div>
+                <div
+                  class="catalog-result-counter text-xs"
+                  aria-live="polite"
+                  x-text="whirlpoolHopResultLabel"
+                ></div>
+              </div>
+              <div class="catalog-drawer-list">
+                <template x-for="item in whirlpoolHopVisibleCatalog" :key="item.id">
+                  <div class="catalog-item-card">
+                    <div>
+                      <div class="catalog-item-name">
+                        <span x-text="item.name"></span>
+                        <template x-if="isUserItem(item.id)">
+                          <span class="status-badge status-badge-info text-nano">mine</span>
+                        </template>
+                      </div>
+                      <div
+                        class="catalog-item-meta"
+                        x-text="whirlpoolHopItemMeta(item)"
+                      ></div>
+                    </div>
+                    <div class="catalog-item-actions">
+                      <button
+                        type="button"
+                        class="btn-outline text-xs"
+                        x-show="!isUserItem(item.id)"
+                        @click="duplicateCatalogWhirlpoolHop(item.id)"
+                        title="Copy to my items"
+                      >
+                        Copy
+                      </button>
+                      <button type="button" class="btn-primary text-xs" @click="addCatalogWhirlpoolHop(item.id)">
+                        ＋ Add
+                      </button>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="whirlpoolHopFilteredCatalog.length === 0">
+                  <div class="table-empty-cell">No matching hops found.</div>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <template x-if="whirlpoolHopDrawer === 'inspect'">
+            <template x-if="whirlpoolHopActiveRow">
+              <div class="inspector-form">
+                <div class="form-group">
+                  <label class="form-label text-xs">Hop name</label>
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    :value="whirlpoolHopActiveRow.name"
+                    @input="setMaltField(whirlpoolHopActiveIndex, 'name', $event.target.value)"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs">Alpha acid (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    class="form-input text-xs"
+                    :value="fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1)"
+                    @input="setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
+                  />
+                  <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

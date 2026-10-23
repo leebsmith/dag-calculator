@@ -73,7 +73,9 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     // derives its shares from `parts`. Do not duplicated this logic elsewhere.
     normalizeDraft() {
       if (
-        (this.draftNodeId === N.majorMalts || this.draftNodeId === N.boilHops) &&
+        (this.draftNodeId === N.majorMalts ||
+          this.draftNodeId === N.boilHops ||
+          this.draftNodeId === N.whirlpoolHops) &&
         this.draftRows.length
       ) {
         const pcts = hamiltonPct(this.draftRows.map((r) => r.parts));

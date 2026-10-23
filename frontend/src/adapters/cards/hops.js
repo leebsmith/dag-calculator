@@ -1,8 +1,16 @@
-// Boil-hops card: IBU-led additions with Tinseth mass back-calculation.
-// See plans/card-refactor.md (trial card).
+// Hops card: boil additions (Tinseth) and whirlpool additions (Arrhenius
+// cooling integral), both authored by IBU share.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { massFromIbu } from "../../views/hops.js";
+import {
+  DEFAULT_AMBIENT_TEMP_C,
+  DEFAULT_COOLING_TIME_CONSTANT_MIN,
+  DEFAULT_INITIAL_TEMP_C,
+  DEFAULT_K_PER_MIN,
+  DEFAULT_REST_DURATION_MIN,
+  whirlpoolMassKg,
+} from "../../views/whirlpool.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
 import { HOP_NODES as N } from "../../views/registry/hops.js";
@@ -24,8 +32,31 @@ function makeRow(hop) {
   };
 }
 
-// IBU share -> IBU -> Tinseth mass, using the solver's pre-boil gravity and
-// post-boil volume. Percent -> IBU here is host-side, display-only.
+function makeWhirlpoolRow(hop) {
+  return {
+    hop_id: hop.id,
+    name: hop.name,
+    alpha_acid_pct: hop.alpha_acid_pct,
+    duration_min: DEFAULT_REST_DURATION_MIN,
+    initial_temp_c: DEFAULT_INITIAL_TEMP_C,
+    parts: 10,
+    pct: 0,
+  };
+}
+
+function resolveOrNull(engine, path) {
+  try {
+    return engine.resolve(path);
+  } catch {
+    return null;
+  }
+}
+
+function finiteNumber(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 function computeHopRows(engine) {
   const rows = engine.get(N.collection) ?? [];
   const boilIbu = Number(engine.get(N.boilIbu)) || 0;
@@ -54,6 +85,36 @@ function computeHopRows(engine) {
   });
 }
 
+function computeWhirlpoolRows(engine) {
+  const rows = engine.get(N.whirlpoolCollection) ?? [];
+  const whirlpoolIbu = Number(engine.get(N.whirlpoolIbu)) || 0;
+  const ambientTempC = finiteNumber(engine.get(N.whirlpoolAmbient), DEFAULT_AMBIENT_TEMP_C);
+  const timeConstantMin = finiteNumber(
+    engine.get(N.whirlpoolCoolingTimeConstant),
+    DEFAULT_COOLING_TIME_CONSTANT_MIN
+  );
+  const kPerMin = timeConstantMin > 0 ? 1 / timeConstantMin : DEFAULT_K_PER_MIN;
+  const gravity = resolveOrNull(engine, N.postBoilGravity);
+  const volume = resolveOrNull(engine, N.postBoilVolume);
+
+  return rows.map((row) => {
+    const minutes = Number(row.duration_min) || 0;
+    const initialTempC = Number(row.initial_temp_c) || DEFAULT_INITIAL_TEMP_C;
+    const ibu = (Number(row.pct) || 0) * whirlpoolIbu;
+    const mass = whirlpoolMassKg({
+      ibu,
+      alphaFraction: Number(row.alpha_acid_pct) || 0,
+      volumeL: volume,
+      gravity,
+      durationMin: minutes,
+      initialTempC,
+      ambientTempC,
+      kPerMin,
+    });
+    return { ...row, minutes, ibu, mass_kg: mass };
+  });
+}
+
 export function registerHopCard(app, ctx) {
   installCatalogDraft(app, ctx, {
     prefix: "hop",
@@ -73,11 +134,26 @@ export function registerHopCard(app, ctx) {
     ],
   });
 
-  const { engine, artifact } = ctx;
+  installCatalogDraft(app, ctx, {
+    prefix: "whirlpoolHop",
+    Cap: "WhirlpoolHop",
+    nodeId: N.whirlpoolCollection,
+    seedKey: "hops",
+    idField: "hop_id",
+    categoryField: "purpose",
+    makeRow: makeWhirlpoolRow,
+    maxVisible: MAX_VISIBLE,
+    itemMeta: (item) => [
+      item.purpose || "Hop",
+      isFiniteNumber(item.alpha_acid_pct)
+        ? `${formatPercent(item.alpha_acid_pct)} alpha`
+        : "alpha n/a",
+      item.origin,
+    ],
+  });
 
-  // Hop masses are read in a hop-friendly unit, independent of the master mass
-  // unit (which may be lb for grain). Transient: defaults to oz each session.
-  // The unit is passed in (read via `this` by callers) so Alpine tracks it.
+  const { engine, artifact, ui } = ctx;
+
   const formatMass = (kg, unit = "oz") => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
@@ -85,9 +161,22 @@ export function registerHopCard(app, ctx) {
     return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
   };
 
+  const formatTemp = (tempC) => {
+    if (typeof tempC !== "number" || !Number.isFinite(tempC)) return "—";
+    const unitId = ui.unitMode.temperature ?? "degC";
+    const value = displayValue(
+      artifact,
+      "temperature",
+      unitId,
+      tempC,
+      nonlinearFns(artifact, engine)
+    );
+    return `${formatWithDecimals(value, 1)} ${UNIT_SYMBOLS.temperature?.[unitId] ?? unitId}`;
+  };
+
   Object.assign(app, {
-    // Card readouts (refreshed by refreshHopCard).
     hopRows: [],
+    whirlpoolHopRows: [],
     hopMassUnit: "oz",
 
     toggleHopMassUnit() {
@@ -114,6 +203,10 @@ export function registerHopCard(app, ctx) {
       return typeof row?.minutes === "number" ? `${row.minutes.toFixed(0)} min` : "—";
     },
 
+    hopTemp(row) {
+      return formatTemp(row?.initial_temp_c);
+    },
+
     hopIbu(row) {
       return typeof row?.ibu === "number" ? row.ibu.toFixed(1) : "—";
     },
@@ -138,6 +231,24 @@ export function registerHopCard(app, ctx) {
         );
       },
     },
+    whirlpoolAmbientField: {
+      configurable: true,
+      get() {
+        return (
+          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.whirlpoolAmbient) ?? null
+        );
+      },
+    },
+    whirlpoolCoolingField: {
+      configurable: true,
+      get() {
+        return (
+          (this.fieldsBySlice[N.slice] ?? []).find(
+            (f) => f.id === N.whirlpoolCoolingTimeConstant
+          ) ?? null
+        );
+      },
+    },
     hopDraftPartsTotal: {
       configurable: true,
       get() {
@@ -149,6 +260,19 @@ export function registerHopCard(app, ctx) {
       get() {
         const additions = countLabel(this.draftRows.length, "addition");
         return `${additions} · ${formatWithDecimals(this.hopDraftPartsTotal, 1)} parts`;
+      },
+    },
+    whirlpoolHopDraftPartsTotal: {
+      configurable: true,
+      get() {
+        return (this.draftRows ?? []).reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+      },
+    },
+    whirlpoolHopDraftSummary: {
+      configurable: true,
+      get() {
+        const additions = countLabel(this.draftRows.length, "addition");
+        return `${additions} · ${formatWithDecimals(this.whirlpoolHopDraftPartsTotal, 1)} parts`;
       },
     },
     hopResultLabel: {
@@ -163,13 +287,48 @@ export function registerHopCard(app, ctx) {
         });
       },
     },
+    whirlpoolHopResultLabel: {
+      configurable: true,
+      get() {
+        return resultCounter({
+          shown: this.whirlpoolHopVisibleCatalog.length,
+          total: this.whirlpoolHopFilteredCatalog.length,
+          noun: "hop",
+          truncated: this.whirlpoolHopCatalogTruncated,
+          truncatedHint: "refine search or purpose filters",
+        });
+      },
+    },
+    hopTotalMassKg: {
+      configurable: true,
+      get() {
+        const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
+        return rows.reduce(
+          (sum, r) =>
+            typeof r.mass_kg === "number" && Number.isFinite(r.mass_kg) ? sum + r.mass_kg : sum,
+          0
+        );
+      },
+    },
     hopTotalMassDisplay: {
       configurable: true,
       get() {
-        const masses = (this.hopRows ?? [])
+        const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
+        const masses = rows
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return this.hopRows?.length ? "—" : "";
+        if (!masses.length) return rows.length ? "—" : "";
+        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
+      },
+    },
+    whirlpoolHopTotalMassDisplay: {
+      configurable: true,
+      get() {
+        const rows = this.whirlpoolHopRows ?? [];
+        const masses = rows
+          .map((r) => r.mass_kg)
+          .filter((m) => typeof m === "number" && Number.isFinite(m));
+        if (!masses.length) return rows.length ? "—" : "";
         return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
@@ -178,5 +337,34 @@ export function registerHopCard(app, ctx) {
 
 export function refreshHopCard(app, ctx) {
   app.hopRows = computeHopRows(ctx.engine);
+  app.whirlpoolHopRows = computeWhirlpoolRows(ctx.engine);
 }
-export const KEYS = [...catalogDraftKeys("hop", "Hop"), "hopRows", "hopMassUnit", "toggleHopMassUnit", "hopMass", "hopAlpha", "hopBoilPct", "hopMinutes", "hopIbu", "hopPct", "boilIbuField", "whirlpoolIbuField", "hopDraftPartsTotal", "hopDraftSummary", "hopResultLabel", "hopTotalMassDisplay"];
+
+export const KEYS = [
+  ...catalogDraftKeys("hop", "Hop"),
+  ...catalogDraftKeys("whirlpoolHop", "WhirlpoolHop"),
+  "hopRows",
+  "whirlpoolHopRows",
+  "hopMassUnit",
+  "toggleHopMassUnit",
+  "hopMass",
+  "hopAlpha",
+  "hopBoilPct",
+  "hopMinutes",
+  "hopTemp",
+  "hopIbu",
+  "hopPct",
+  "boilIbuField",
+  "whirlpoolIbuField",
+  "whirlpoolAmbientField",
+  "whirlpoolCoolingField",
+  "hopDraftPartsTotal",
+  "hopDraftSummary",
+  "whirlpoolHopDraftPartsTotal",
+  "whirlpoolHopDraftSummary",
+  "hopResultLabel",
+  "whirlpoolHopResultLabel",
+  "hopTotalMassKg",
+  "hopTotalMassDisplay",
+  "whirlpoolHopTotalMassDisplay",
+];

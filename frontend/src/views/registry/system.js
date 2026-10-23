@@ -7,4 +7,5 @@ export const SYSTEM_NODES = {
   apparentAttenuation: "batch.apparent_attenuation",
   majorMalts: "grist.major_malts",
   boilHops: "batch.boil_hops",
+  whirlpoolHops: "batch.whirlpool_hops",
 };
