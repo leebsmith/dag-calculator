@@ -1,9 +1,11 @@
 {
   "emulators": {
     "firestore": {
+      "host": "127.0.0.1",
       "port": 8080
     },
     "auth": {
+      "host": "127.0.0.1",
       "port": 9099
     }
   },
@@ -12,7 +14,11 @@
   },
   "hosting": {
     "public": "frontend/dist",
-    "ignore": ["firebase.json", "**/node_modules/**", "**/.*"],
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**",
+      "**/.*"
+    ],
     "rewrites": [
       {
         "source": "**",

@@ -12,12 +12,19 @@ SCRAPE_DEPS := --with-requirements $(SCRAPE_DIR)/requirements.txt
 LIMIT ?=
 OUT   ?=
 
+# Emulator data: import only when a prior export exists, so a fresh checkout (or a
+# wiped emulator-data dir) starts quietly instead of warning about missing
+# import metadata.
+EMULATOR_DATA   := emulator-data
+EMULATOR_IMPORT := $(wildcard $(EMULATOR_DATA)/firebase-export-metadata.json)
+EMULATOR_FLAGS  := $(if $(EMULATOR_IMPORT),--import=$(EMULATOR_DATA)) --export-on-exit=$(EMULATOR_DATA)
+
 # BJCP re-aggregation reads a local HTML cache (not committed).
 #   make aggregate-bjcp BJCP_CACHE=~/MyPythonEnvironment/bjcp_scraper/2021
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help local-dev check test test-fuzz test-oracle coverage verify verify-full build seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help local-dev check test test-fuzz test-oracle coverage verify verify-full build clear reset-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
@@ -39,7 +46,8 @@ help:
 	@echo "                  (LIMIT=N for a trial, OUT=path to override output)"
 	@echo "  aggregate-bjcp  Re-aggregate cached BJCP HTML into data/sources/"
 	@echo "                  (BJCP_CACHE=<dir> BJCP_EDITION=2021)"
-	@echo "  clean           Stop local processes and reclaim ports"
+	@echo "  clean           Stop local processes and reclaim ports (alias: clear)"
+	@echo "  reset-data      Delete local emulator data (drafts, frozen batches, library)"
 	@echo "  deploy          Deploy backend (Cloud Run) + frontend (Firebase)"
 	@echo "  destroy         Tear down the deployed services"
 
@@ -52,7 +60,7 @@ local-dev:
 		--names "VITE,FIREBASE,UV" \
 		--prefix-colors "blue,yellow,green" \
 		"cd frontend && npm run dev" \
-		"mkdir -p emulator-data && npx firebase emulators:start --project $(PROJECT_ID) --import=emulator-data --export-on-exit=emulator-data" \
+		"mkdir -p $(EMULATOR_DATA) && npx firebase emulators:start --project $(PROJECT_ID) $(EMULATOR_FLAGS)" \
 		"cd backend && FIREBASE_PROJECT_ID=$(PROJECT_ID) FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ALLOWED_EMAILS=dev@localhost uv run uvicorn app.main:app --reload --port 8000"
 
 # --- Verification ------------------------------------------------------------
@@ -141,12 +149,21 @@ aggregate-bjcp:
 	node scripts/emit-sources-manifest.mjs
 
 # --- Cleanup -----------------------------------------------------------------
+clear: clean
+
 clean:
 	@echo "Cleaning up local environment..."
 	@pkill -INT -f '[f]irebase emulators:start' || true
 	@pkill -f '[v]ite' || true
 	@pkill -f '[u]vicorn app.main:app' || true
 	@echo "Ports reclaimed."
+
+# Destructive: drops every local draft, frozen batch, and library record. Kept
+# separate from `clean` so reclaiming ports never loses data by accident.
+reset-data:
+	@echo "Removing local emulator data..."
+	@rm -rf $(EMULATOR_DATA)
+	@echo "Local data cleared; the next local-dev starts empty."
 
 # --- Deploy ------------------------------------------------------------------
 deploy: deploy-backend deploy-frontend
