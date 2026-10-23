@@ -301,15 +301,18 @@
           @input="$store.setup.state.equipmentDraft.name = $event.target.value"
         />
         <div class="step-grid-2col">
-          <template x-for="field in ['max_kettle_volume_l','max_hlt_volume_l','nominal_boil_off_rate_l_per_hr','nominal_conversion_efficiency']" :key="field">
+          <template x-for="spec in $store.setup.equipmentFields()" :key="spec.field">
             <div class="form-group">
-              <label class="form-label"><span x-text="field"></span></label>
+              <label class="form-label">
+                <span x-text="spec.label"></span>
+                <span class="text-xs text-muted" x-show="spec.unit" x-text="'(' + spec.unit + ')'"></span>
+              </label>
               <input
                 class="form-input tabular-nums"
                 type="number"
-                step="0.01"
-                :value="$store.setup.state.equipmentDraft[field]"
-                @input="$store.setup.state.equipmentDraft[field] = Number($event.target.value)"
+                :step="spec.step"
+                :value="$store.setup.state.equipmentDraft[spec.field]"
+                @input="$store.setup.state.equipmentDraft[spec.field] = Number($event.target.value)"
               />
             </div>
           </template>
@@ -347,15 +350,18 @@
           @input="$store.setup.state.waterDraft.laboratory = $event.target.value"
         />
         <div class="step-grid-2col">
-          <template x-for="ion in ['calcium_ca','magnesium_mg','sodium_na','sulfate_so4','chloride_cl','total_alkalinity_caco3']" :key="ion">
+          <template x-for="spec in $store.setup.waterFields()" :key="spec.field">
             <div class="form-group">
-              <label class="form-label"><span x-text="ion"></span></label>
+              <label class="form-label">
+                <span x-text="spec.label"></span>
+                <span class="text-xs text-muted" x-show="spec.unit" x-text="'(' + spec.unit + ')'"></span>
+              </label>
               <input
                 class="form-input tabular-nums"
                 type="number"
-                step="0.1"
-                :value="$store.setup.state.waterDraft[ion]"
-                @input="$store.setup.state.waterDraft[ion] = Number($event.target.value)"
+                :step="spec.step"
+                :value="$store.setup.state.waterDraft[spec.field]"
+                @input="$store.setup.state.waterDraft[spec.field] = Number($event.target.value)"
               />
             </div>
           </template>

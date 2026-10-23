@@ -7,8 +7,9 @@
   * ~~"New batch" button does not open the modal~~ — moved the assets section
     inside the chooser's scroll region (the un-sized wrapper was clipping it).
   * ~~Equipment form does not scroll~~ — same layout fix.
-  * Style envelope inputs render as inert number fields; they should be readouts.
-  * Equipment create form exposes 4 of 17 schema fields.
+  * ~~Style envelope inputs render as inert number fields~~ — readouts now.
+  * ~~Equipment create form exposes 4 of 17 schema fields~~ — full field set.
+
 
 
 * **Water pin visibility & coverage** (`plans/water-pin-visibility-and-test-matrix.md`)

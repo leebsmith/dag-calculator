@@ -74,6 +74,25 @@ test("canCreate requires a name, a rig, a water source, and a style", () => {
   assert.equal(store.canCreate(), false);
 });
 
+test("the authoring forms expose every solver-relevant field", () => {
+  const store = createSetupStore({});
+  const equipment = store.equipmentFields();
+  const water = store.waterFields();
+
+  const fields = equipment.map((spec) => spec.field);
+  assert.ok(fields.includes("max_hlt_volume_l"));
+  assert.ok(fields.includes("nominal_conversion_efficiency"));
+  assert.ok(fields.includes("hlt_coil_floor_l"));
+  assert.equal(equipment.length, 17);
+  assert.ok(equipment.every((spec) => spec.label && spec.step));
+
+  const ions = water.map((spec) => spec.field);
+  for (const ion of ["calcium_ca", "sulfate_so4", "total_alkalinity_caco3", "ph"]) {
+    assert.ok(ions.includes(ion), `${ion} must be authorable`);
+  }
+  assert.equal(water.length, 15);
+});
+
 test("create() persists a batch carrying the identity snapshot", async () => {
   persistence.setClient(fakeClient());
   const app = fakeApp();

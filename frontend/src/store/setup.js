@@ -7,33 +7,59 @@ import * as libraryClient from "../adapters/libraryClient.js";
 import { createReferenceCache } from "./referenceCache.js";
 import * as persistence from "./persistence.js";
 
+// Authoring form for the equipment catalog record: every numeric field the
+// solvers read, with its display label and unit. Prefilled from the seed default.
 const EQUIPMENT_FIELDS = [
-  "max_kettle_volume_l",
-  "max_mash_tun_volume_l",
-  "max_hlt_volume_l",
-  "mash_dead_space_l",
-  "mash_transfer_loss_l",
-  "kettle_dead_space_l",
-  "kettle_transfer_loss_l",
-  "trub_loss_l",
-  "hlt_dead_space_l",
-  "hlt_transfer_loss_l",
-  "nominal_boil_off_rate_l_per_hr",
-  "grain_absorption_factor_l_per_kg",
-  "nominal_conversion_efficiency",
-  "shrinkage_pct",
-  "hlt_coil_floor_l",
-  "mash_tun_specific_heat",
-  "mash_tun_mass_kg",
+  { field: "max_kettle_volume_l", label: "Max kettle volume", unit: "L", step: "0.1" },
+  { field: "max_mash_tun_volume_l", label: "Max mash tun volume", unit: "L", step: "0.1" },
+  { field: "max_hlt_volume_l", label: "Max HLT volume", unit: "L", step: "0.1" },
+  { field: "mash_dead_space_l", label: "Mash dead space", unit: "L", step: "0.1" },
+  { field: "mash_transfer_loss_l", label: "Mash transfer loss", unit: "L", step: "0.1" },
+  { field: "kettle_dead_space_l", label: "Kettle dead space", unit: "L", step: "0.1" },
+  { field: "kettle_transfer_loss_l", label: "Kettle transfer loss", unit: "L", step: "0.1" },
+  { field: "trub_loss_l", label: "Trub loss", unit: "L", step: "0.1" },
+  { field: "hlt_dead_space_l", label: "HLT dead space", unit: "L", step: "0.1" },
+  { field: "hlt_transfer_loss_l", label: "HLT transfer loss", unit: "L", step: "0.1" },
+  { field: "hlt_coil_floor_l", label: "HLT coil floor", unit: "L", step: "0.1" },
+  {
+    field: "nominal_boil_off_rate_l_per_hr",
+    label: "Nominal boil-off rate",
+    unit: "L/hr",
+    step: "0.1",
+  },
+  {
+    field: "grain_absorption_factor_l_per_kg",
+    label: "Grain absorption",
+    unit: "L/kg",
+    step: "0.01",
+  },
+  { field: "nominal_conversion_efficiency", label: "Conversion efficiency", step: "0.01" },
+  { field: "shrinkage_pct", label: "Shrinkage", step: "0.001" },
+  { field: "mash_tun_specific_heat", label: "Tun specific heat", unit: "kcal/(kg·°C)", step: "0.01" },
+  { field: "mash_tun_mass_kg", label: "Tun mass", unit: "kg", step: "0.1" },
 ];
 
-const WATER_IONS = [
-  "calcium_ca",
-  "magnesium_mg",
-  "sodium_na",
-  "sulfate_so4",
-  "chloride_cl",
-  "total_alkalinity_caco3",
+const WATER_ION_FIELDS = [
+  { field: "calcium_ca", label: "Calcium", unit: "ppm", step: "0.1" },
+  { field: "magnesium_mg", label: "Magnesium", unit: "ppm", step: "0.1" },
+  { field: "sodium_na", label: "Sodium", unit: "ppm", step: "0.1" },
+  { field: "potassium_k", label: "Potassium", unit: "ppm", step: "0.1" },
+  { field: "chloride_cl", label: "Chloride", unit: "ppm", step: "0.1" },
+  { field: "sulfate_so4", label: "Sulfate", unit: "ppm", step: "0.1" },
+  { field: "bicarbonate_hco3", label: "Bicarbonate", unit: "ppm", step: "0.1" },
+  { field: "total_alkalinity_caco3", label: "Alkalinity (as CaCO₃)", unit: "ppm", step: "0.1" },
+  { field: "total_hardness_caco3", label: "Hardness (as CaCO₃)", unit: "ppm", step: "0.1" },
+  { field: "ph", label: "pH", step: "0.1" },
+  { field: "tds_ppm", label: "TDS", unit: "ppm", step: "1" },
+  {
+    field: "electrical_conductivity_mmho_cm",
+    label: "Conductivity",
+    unit: "mmho/cm",
+    step: "0.01",
+  },
+  { field: "nitrate_no3_n", label: "Nitrate (as N)", unit: "ppm", step: "0.1" },
+  { field: "total_iron_fe", label: "Iron", unit: "ppm", step: "0.01" },
+  { field: "total_phosphorus_p", label: "Phosphorus", unit: "ppm", step: "0.01" },
 ];
 
 const STYLE_BOUNDS = [
@@ -65,14 +91,14 @@ function equipmentTemplate(cache) {
   const id = "herms-30l";
   const seed = cache.references.equipment?.[id] ?? {};
   const draft = { name: "" };
-  for (const field of EQUIPMENT_FIELDS) draft[field] = seed[field] ?? 0;
+  for (const { field } of EQUIPMENT_FIELDS) draft[field] = seed[field] ?? 0;
   return draft;
 }
 
 function waterTemplate(cache) {
   const seed = Object.values(cache.references.water_report ?? {})[0] ?? {};
   const draft = { laboratory: "", source_name: "" };
-  for (const ion of WATER_IONS) draft[ion] = seed[ion] ?? 0;
+  for (const { field } of WATER_ION_FIELDS) draft[field] = seed[field] ?? 0;
   return draft;
 }
 
@@ -107,6 +133,14 @@ export function createSetupStore({ onCreated } = {}) {
     async refreshAssets() {
       await library.refresh();
       return library.items();
+    },
+
+    equipmentFields() {
+      return EQUIPMENT_FIELDS;
+    },
+
+    waterFields() {
+      return WATER_ION_FIELDS;
     },
 
     equipmentOptions() {
