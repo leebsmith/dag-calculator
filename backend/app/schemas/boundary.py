@@ -316,8 +316,11 @@ class WaterSolverRequest(BoundaryModel):
     calcium_floor_ppm: Annotated[float, Field(ge=0.0, default=50.0, description="Calcium floor in ppm")]
     custom_pinned_ions: list[str] = Field(
         default_factory=list,
-        max_length=4,
-        description="Mode 5 equalities (short ion keys). At most four: salts leave the rest floating.",
+        max_length=6,
+        description=(
+            "Mode 5 equalities (short ion keys). Five pins are exactly determined and may be "
+            "infeasible; six are accepted as a best-fit request."
+        ),
     )
 
 

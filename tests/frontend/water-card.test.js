@@ -244,23 +244,33 @@ test("telemetry severity drives the warning count and keeps the full log in deta
   assert.equal(app.waterDetails.telemetry.length, 3);
 });
 
-test("five and six checked are allowed and reported", () => {
+test("five and six checked are allowed and warned", () => {
   const app = createStepApp();
   app.boot();
   app.selectWaterTarget("freeform");
-  for (const pin of ["ca", "mg", "na", "so4", "cl"]) {
+  for (const pin of ["ca", "mg", "na", "so4"]) {
     app.toggleWaterTarget(pin);
     app.editWaterTarget(pin, "100");
   }
   app.compute();
   assert.equal(app.waterSummary.mode, "CUSTOM");
+  assert.equal(app.waterSummary.targetWarning, "");
+
+  app.toggleWaterTarget("cl");
+  app.editWaterTarget("cl", "100");
+  app.compute();
+  assert.equal(app.waterSummary.mode, "CUSTOM");
   assert.match(app.waterSummary.targetLine, /exactly determined, may be infeasible/);
+  assert.match(app.waterSummary.targetWarning, /5 targets/);
+  assert.match(app.waterSummary.targetWarning, /may fail/);
 
   app.toggleWaterTarget("alk");
   app.editWaterTarget("alk", "80");
   app.compute();
   assert.equal(app.waterSummary.mode, "OPTIMIZE");
   assert.match(app.waterSummary.targetLine, /best fit, nothing held exactly/);
+  assert.match(app.waterSummary.targetWarning, /best fit, not exact/);
+  assert.match(app.waterSummary.targetWarning, /guarantees no individual target/);
 });
 
 test("the selector lists constraints first and keeps the pseudo-options at the ends", () => {

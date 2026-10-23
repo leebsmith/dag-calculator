@@ -15,6 +15,7 @@ import {
   heldFromProfile,
   routeSummary,
   strategyForHeld,
+  targetWarningFor,
   waterRegistry,
 } from "../../views/registry/water.js";
 import { ratioReadout } from "../../views/waterRatio.js";
@@ -427,6 +428,7 @@ export function refreshWaterCard(app, ctx) {
     const notModelled =
       "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).";
     const targetLine = routeSummary(valued);
+    const targetWarning = targetWarningFor(valued);
 
     const instructionSetup =
       `Fill the HLT to ${fmtL(hltStart)}. Add 1 crushed metabisulfite tablet per 15 US gal. ` +
@@ -503,6 +505,7 @@ export function refreshWaterCard(app, ctx) {
       mode: effectiveMode,
       resolvedMode,
       targetLine,
+      targetWarning,
       proportional,
       basis,
       mashDose: mashDoses.rows,

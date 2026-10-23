@@ -102,6 +102,15 @@ def test_solve_water_calcium_floor_end_to_end():
     assert resp.prescription.predicted_mash_ph > 0.0
 
 
+def test_six_pins_route_to_best_fit():
+    req = make_water_request(
+        strategy=WaterStrategy.OPTIMIZE,
+        custom_pinned_ions=["ca", "mg", "na", "so4", "cl", "alk"],
+    )
+    resp = solve_water_request(req)
+    assert resp.strategy is WaterStrategy.OPTIMIZE
+
+
 def test_post_salt_hlt_ions_proportional_matches_mash():
     resp = solve_water_request(
         make_water_request(salt_distribution=SaltDistribution.PROPORTIONAL)

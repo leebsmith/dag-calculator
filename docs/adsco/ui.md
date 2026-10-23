@@ -105,6 +105,8 @@ Target  Ion         Source  Target value  Post-addition  Δ      Status
 - The line under the grid names the route: `Targets: SO₄/Cl (2) — exact`,
   `Targets: all six — best fit, nothing held exactly`, `No targets — baseline`.
   Five checked is allowed but flagged `exactly determined, may be infeasible`.
+  Six checked routes to best fit and warns that no individual target is
+  guaranteed.
 
 ## Preset labels
 

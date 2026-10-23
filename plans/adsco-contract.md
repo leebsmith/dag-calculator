@@ -31,11 +31,14 @@ decision** that the code will follow.
    `views/registry/water.js` and is pinned to the solver by
    `tests/conformance/fixtures/ion-constraints.json` (generated from observed
    solver behaviour).
-8. **Mode 5 pins are capped at 1-4.** Four keeps a degree of freedom for mass
-   minimisation and avoids the exactly-determined regime where the one-way
-   (addition-only) constraints fail most often. The cap is necessary, not
-   sufficient: a pin the source already meets forbids every salt that adds it,
-   so per-target infeasibility is reported, never promised away.
+8. **Mode 5 pins are capped at 1-6.** Five pins are exactly determined: there is
+   no remaining degree of freedom for mass minimisation, so the one-way
+   (addition-only) constraints may be infeasible and the UI warns before
+   solving. Six pins are accepted because the checked set routes to `OPTIMIZE`
+   (best fit); the pins are not used as equalities and no individual target is
+   guaranteed. The cap is necessary, not sufficient: a pin the source already
+   meets forbids every salt that adds it, so per-target infeasibility is
+   reported, never promised away.
 9. **An empty pin set is not a mode.** The "pin every positive target" fallback
    in the sparse solver is deleted. `AUTO` that cannot classify the vector routes
    to Mode 3 (best fit) and says so in telemetry; an explicit `CUSTOM` with no
@@ -59,7 +62,7 @@ decision** that the code will follow.
 | `grist` | list | unchanged | |
 | `source` | `IonProfile` (6 required) | `SourceProfile` (6 ions + optional `k, fe, mn, no3`) | contaminants audited, not solved |
 | `target` | `IonProfile` (6 required) | `IonProfile` (6 floats, all default `0`) | unpinned ions float to source |
-| `custom_pinned_ions` | — | `list[str]` (short keys), default `[]` | Mode 5 only |
+| `custom_pinned_ions` | — | `list[str]` (short keys), default `[]` | Mode 5 only; max six (five exact, six best fit) |
 | `strategy` | `CALCIUM_FLOOR` | `AUTO` default; + `HYBRID`, `BASELINE`, `CUSTOM` | `FLAVOR` retained |
 | `target_mash_ph` | 5.4 | unchanged | domain 5.0–5.8 |
 | `calcium_floor_ppm` | 50.0 | unchanged | warn < 30 |
@@ -110,7 +113,7 @@ Decision vector (per litre of mash liquor):
 | 2 Buffer | `HYBRID` | so4, cl; alk ≥ target (buffer) | min salt+agent mass | balance to target | agent supplies buffer; acid balances |
 | 3 Clone | `OPTIMIZE` | none (soft all 6) | min Σ w_i(actual−target)² + λ·mass | soft toward target | agent+acid active (alk reachable) |
 | 4 Baseline | `BASELINE` | none; salts+agent = 0 | — | acid/base only | acid/base only |
-| 5 Custom | `CUSTOM` | `custom_pinned_ions` (1-4) | min mass | correct to target | post-step |
+| 5 Custom | `CUSTOM` | `custom_pinned_ions` (1-5; six checked routes to Mode 3 best fit) | min mass | correct to target | post-step |
 
 Guardrails (constraints where mode-specific, warnings otherwise): Ca ≥ floor,
 Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.

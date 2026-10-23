@@ -39,14 +39,21 @@ def test_water_strategy_enum():
     assert req.strategy is WaterStrategy.CALCIUM_FLOOR
 
 
-def test_custom_pins_are_capped_at_four():
-    req = make_water_request(
-        strategy="CUSTOM", custom_pinned_ions=["ca", "mg", "na", "so4"]
+def test_custom_pins_allow_five_and_six():
+    five = make_water_request(
+        strategy="CUSTOM", custom_pinned_ions=["ca", "mg", "na", "so4", "cl"]
     )
-    assert len(req.custom_pinned_ions) == 4
+    assert len(five.custom_pinned_ions) == 5
+    six = make_water_request(
+        strategy="CUSTOM", custom_pinned_ions=["ca", "mg", "na", "so4", "cl", "alk"]
+    )
+    assert len(six.custom_pinned_ions) == 6
+
+
+def test_custom_pins_are_capped_at_six():
     with pytest.raises(ValidationError):
         make_water_request(
-            strategy="CUSTOM", custom_pinned_ions=["ca", "mg", "na", "so4", "cl"]
+            strategy="CUSTOM", custom_pinned_ions=["ca", "mg", "na", "so4", "cl", "alk", "fe"]
         )
 
 

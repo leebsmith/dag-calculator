@@ -58,6 +58,16 @@ export function routeSummary(held) {
   return `Targets: ${constraintLabel(held)} (${count}) — ${suffix}`;
 }
 
+export function targetWarningFor(held) {
+  if (held.length === 5) {
+    return "5 targets — exactly determined. The solver may fail to find a feasible dose; unpin one to leave a degree of freedom.";
+  }
+  if (held.length === 6) {
+    return "All six targets — best fit, not exact. The solver minimises error and guarantees no individual target.";
+  }
+  return "";
+}
+
 export const WATER_NODES = {
 
   slice: "water",

@@ -47,7 +47,7 @@ screen *and* would catch its cousins.
 | 1 | Grid vocabulary: a targeted ion shows its value and signed Δ; a floated ion shows `(Auto)`; status is `Target` or `Auto` for now. |
 | 2 | Profiles carry **only the ions their mode targets**; `mode` stays as authored metadata. Applying a profile writes `water.strategy = AUTO`. |
 | 3 | Profile change **resets** every profile-derived root to its artifact default, then applies. Explicit application is destructive (matches copy-in). |
-| 4 | Mode 5 pins are capped at **1–4**. The cap is necessary, not sufficient: a pin the source already meets forbids every salt that adds it, which is a per-target infeasibility the modal must not promise against. |
+| 4 | Mode 5 pins are capped at **1–6**. Five is exactly determined and warned that the solve may fail; six routes to best fit and warns that no individual target is guaranteed. The cap is necessary, not sufficient: a pin the source already meets forbids every salt that adds it, which is a per-target infeasibility the UI must not promise against. |
 | 5 | The empty-pin fallback in `_solve_dynamic_sparse` is **deleted**. AUTO that cannot classify resolves to **Mode 3** (best fit); explicit `CUSTOM` with no pins raises `PINNED_IONS_REQUIRED`. |
 | 6 | Labels distinguish **held** (hard equality), **best fit** (least squares), and **float**. Mode 3 reads "all six, best fit", never "pins all six". |
 | 7 | Source of truth for pin sets: the presentation registry in `views/registry/water.js`, pinned against the backend router by a generated fixture. No artifact change; no new response field. |
@@ -74,7 +74,7 @@ screen *and* would catch its cousins.
 | `tests/backend/conformance/test_boundary_outputs_match_response_fields.py` — declared outputs == response fields minus `ALLOW` | Confirms the response-field route is a contract change; avoided by decision 7. |
 | `tests/conformance/boundary-fixtures.test.js:WATER_VALUES` — hard-codes the sample water request and throws on unexpected paths | Seed/profile edits do not touch it; solver-signature edits must not either. |
 | `tests/backend/test_water_solver.py:test_error_surface_complete` — exact `WaterSolverErrorCode` set | `PINNED_IONS_REQUIRED` must be added to the enum **and** the expected set in the same commit. |
-| `backend/app/schemas/boundary.py` + `assert_field_parity` at import | `max_length=4` on `custom_pinned_ions` is wire-compatible; do not rename fields. |
+| `backend/app/schemas/boundary.py` + `assert_field_parity` at import | `max_length=6` on `custom_pinned_ions` is wire-compatible; do not rename fields. |
 | `frontend/src/adapters/fieldActions.js:copyInCascade` is additive and also runs for the source-report picker | The reset must be scoped to `water.target_profile`; resetting to an artifact default requires the default to be a primitive (it is: `0`, `50`, `"AUTO"`). |
 | `tests/guards/determinism.test.js` (A9) | Reset-then-apply must be a pure sequence of `setRoot` calls; no provenance flags. |
 | `docs/adsco/README.md` — vendored specs are design inputs, frozen; divergence is recorded in `plans/adsco-contract.md` | Do **not** edit `boundary-deltas.md`, `style-selection-and-ion-entry.md`, or `required-solver-telemetry-messages.md`. |
@@ -107,17 +107,21 @@ screen *and* would catch its cousins.
 
 ### Phase 3 — Pin cap, honest empty state
 
-- `backend/app/schemas/boundary.py`: `custom_pinned_ions` gains `max_length=4`.
+> Superseded on 2026-10-23: the cap is six. Five pins are exactly determined
+> and warned; six route to best fit and warn that no individual target is
+> guaranteed. The fifth-pin disable below is obsolete.
+
+- `backend/app/schemas/boundary.py`: `custom_pinned_ions` gains `max_length=6`.
 - `backend/app/core/water.py`: empty-pin fallback deleted; AUTO fall-through
   returns `MODE_3`/`OPTIMIZE`; explicit CUSTOM with no pins raises
   `PINNED_IONS_REQUIRED`; a telemetry NOTE records the AUTO→Mode 3 resolution.
 - `backend/app/schemas/boundary.py`: add the error code; update
   `test_error_surface_complete`.
-- Water card + `partials/water-pins-modal.html`: fifth pin disabled with the
-  "up to four; the rest float" note and the no-promise caveat. Named helpers —
-  no predicates or assignments in the template.
-- Tests: schema rejects five pins; AUTO with an unclassifiable vector resolves
-  to OPTIMIZE and doses; explicit CUSTOM with no pins errors with the new code.
+- Water card: five and six checked are allowed with pre-solve warnings. The
+  pin modal was removed in `948cc4e`; the target grid owns the checked set.
+- Tests: schema accepts five and six pins and rejects seven; AUTO with an
+  unclassifiable vector resolves to OPTIMIZE and doses; explicit CUSTOM with no
+  pins errors with the new code.
 
 ### Phase 4 — The matrix
 
