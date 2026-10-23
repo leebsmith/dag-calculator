@@ -74,7 +74,7 @@ decision** that the code will follow.
 | `strategy` | code | resolved code (never `AUTO`) |
 | `prescription.predicted_mash_ph` | pre-correction | **corrected** |
 | `prescription.mash_ph_status` | pre-correction | from corrected pH |
-| `prescription.residual_hlt_water_l`, `sparge_tannin_warning` | — | unchanged |
+| `prescription.residual_hlt_water_l` | — | unchanged |
 | `mash_additions`, `sparge_additions` | — | unchanged shape |
 | `post_salt_mash_ions`, `post_salt_hlt_ions` | — | unchanged (salts only) |
 | `post_dose_mash_ions` | — | **new**: salts + agent + acid-neutralized alkalinity (the "post-addition" vector) |

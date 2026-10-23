@@ -21,6 +21,43 @@ No "Solve" button. The live DAG recomputes on every edit, debounced through
 `boundaryRunner`. Invalid/incomplete states surface as live warnings and a
 pending/error boundary status, never a blocked submit.
 
+## Card layout
+
+The water card is four labelled regions, in this order:
+
+1. **Water plan** — source report picker, target preset picker, calcium floor,
+   target mash pH, the target-vs-actual grid, route line, kettle ratio, predicted
+   mash pH/status, and actionable warnings. This is the primary decision surface.
+2. **Treatment** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
+   the alkaline agent.
+3. **Prescription** — dosing volume, residual HLT, nonzero mash/sparge additions,
+   dosing-basis footnote, and destinations. A nonzero sparge acid dose carries the
+   note `Sparge acid prescribed to keep sparge pH ≤ 5.80`; this is a prescription
+   fact, not a warning, because the card assumes the plan is followed.
+4. **Details** — collapsed full telemetry log, ratio basis, not-modelled caveat,
+   and abnormal boundary status.
+
+The source report picker carries identity only; source ions render solely in the
+grid's Source column. Predicted pH/status lives in the Water plan and is not
+repeated. The warning badge counts WARNING + ERROR telemetry entries and opens
+Details; INFO and NOTE entries remain in the full log.
+
+### Precision
+
+| Quantity | Precision |
+| --- | --- |
+| Source, target, post-addition, Δ concentrations | 1 dp (Δ signed; zero `0.0`) |
+| Mash pH readouts | 2 dp |
+| Mass (g) | 1 dp |
+| Volume (L) | 1 dp |
+| Acid (mL) | 1 dp |
+| Ratio | 1 dp; delta factor 2 dp |
+| Editable inputs | natural value, no forced padding |
+
+Additions that format to `0.0` at the chosen precision are suppressed. A vessel
+with no additions reads `No mash additions` / `No sparge additions`; a vessel
+with a mix adds `Only nonzero additions shown.`
+
 ## Target selector
 
 One select decides which ions the solver must satisfy. Routing is *derived* from

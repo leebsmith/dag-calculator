@@ -78,7 +78,7 @@ test("A8d: registry displayUnit defaults the display (g/ml)", () => {
 
   const gypsum = app.fieldsBySlice.water.find((f) => f.id === "solver.water.mash_additions.gypsum_kg");
   assert.equal(gypsum.value, 0.002, "canonical value stays kg");
-  assert.equal(gypsum.display, "2", "displays in grams by default");
+  assert.equal(gypsum.display, "2.0", "displays in grams by default at 1 dp");
   assert.equal(gypsum.unit, "g");
   assert.equal(gypsum.customized, false);
 

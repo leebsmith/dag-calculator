@@ -5,7 +5,7 @@
 // and roots — no engine path resolution leaks into the template. Node ids live
 // in the registry (WATER_NODES).
 
-import { fieldOr, formatQuantity, formatValue } from "../../utils.js";
+import { fieldOr, formatQuantity, formatValue, formatWithDecimals } from "../../utils.js";
 import {
   WATER_ION_BY_PIN,
   WATER_IONS,
@@ -77,7 +77,7 @@ function valuedPins(engine) {
   return checkedPins(engine).filter((pin) => targetValue(engine, pin) > 0);
 }
 
-function doseList(fieldsById, prefix, vessel, forms) {
+function doseRows(fieldsById, prefix, forms) {
   const names = {
     gypsum_kg: `gypsum (${forms.gypsum})`,
     cacl2_kg: `calcium chloride (${forms.cacl2})`,
@@ -89,12 +89,22 @@ function doseList(fieldsById, prefix, vessel, forms) {
     pickling_lime_kg: "pickling lime",
   };
   const rows = [];
+  let zero = 0;
   for (const key of ADDITIONS) {
     const field = fieldOr(fieldsById, `${prefix}.${key}`);
-    if (typeof field.value !== "number" || field.value <= 0) continue;
-    rows.push({ label: `${vessel} ${names[key]}`, text: formatQuantity(field) });
+    if (typeof field.value !== "number") continue;
+    if (field.value <= 0) {
+      zero += 1;
+      continue;
+    }
+    const shown = Number(field.display);
+    if (Number.isFinite(shown) && shown === 0) {
+      zero += 1;
+      continue;
+    }
+    rows.push({ key, label: names[key], text: formatQuantity(field) });
   }
-  return rows;
+  return { rows, suppressed: zero > 0 && rows.length > 0 };
 }
 
 function fmtL(value) {
@@ -102,12 +112,13 @@ function fmtL(value) {
 }
 
 function fmtPpm(value) {
-  return value == null ? "—" : formatValue(value);
+  return value == null ? "—" : formatWithDecimals(value, 1, { dash: "—" });
 }
 
 function fmtDelta(value) {
   if (value == null) return "—";
-  return (value > 0 ? "+" : "") + formatValue(value);
+  const text = formatWithDecimals(value, 1, { dash: "—" });
+  return value > 0 ? `+${text}` : text;
 }
 
 function severityRank(severity) {
@@ -132,13 +143,58 @@ export function registerWaterCard(app, ctx) {
       checkedPins: [],
       valuedPins: [],
       notes: [],
-      tanninWarning: false,
       residualHlt: null,
       notModelled: "",
       telemetry: [],
+      warningCount: 0,
+      warningLabel: "0 warnings",
     },
 
     waterTargetLocked: false,
+
+    waterDetailsOpen: false,
+
+    waterPlan: {
+      source: {},
+      target: {},
+      floor: {},
+      mashPh: {},
+    },
+
+    waterTreatmentFields: [],
+
+    waterPrescription: {
+      doseVolumeText: "—",
+      residualText: "—",
+      mash: [],
+      sparge: [],
+      suppressed: false,
+      spargeAcidPrescribed: false,
+      pending: false,
+      basis: "",
+      destinations: "Mash → dry grist, before underletting · Sparge → HLT after top-up",
+    },
+
+    waterVerdict: {
+      targetLine: "",
+      ratioLine: "",
+      predictedPh: "—",
+      status: "",
+    },
+
+    waterDetails: {
+      telemetry: [],
+      ratioBasis: "",
+      notModelled: "",
+      boundaryStatus: "ok",
+      error: null,
+    },
+
+    waterWarningCount: 0,
+
+    toggleWaterDetails() {
+      this.waterDetailsOpen = !this.waterDetailsOpen;
+    },
 
     // Replace the target state in one atomic write: the preset's ions are
     // checked and filled, everything else is cleared.
@@ -159,6 +215,8 @@ export function registerWaterCard(app, ctx) {
       this.pickSelection(N.targetProfileId, preset ? value : "");
       this.waterTargetLocked = value === "none";
       this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      this.scheduleSolve();
+      this.notify();
     },
 
     toggleWaterTarget(pin) {
@@ -171,6 +229,8 @@ export function registerWaterCard(app, ctx) {
       this.clearWaterPreset();
       this.waterTargetLocked = false;
       this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      this.scheduleSolve();
+      this.notify();
     },
 
     editWaterTarget(pin, raw) {
@@ -179,6 +239,8 @@ export function registerWaterCard(app, ctx) {
       const value = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
       this.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: value });
       this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      this.scheduleSolve();
+      this.notify();
     },
 
     // Load-time normalisation: legacy drafts carry values but no checked set,
@@ -355,14 +417,16 @@ export function refreshWaterCard(app, ctx) {
       notes.push(`HLT holds ${fmtL(surplus)} more than the sparge delivers.`);
     }
     const residualHlt = num(engine, N.residualHlt);
-    const tanninWarning = engine.resolve(N.spargeTanninWarning) === true;
 
-    const mashDose = doseList(app.fieldsById, N.mashAdditions, "Mash", forms);
-    const spargeDose = doseList(app.fieldsById, N.spargeAdditions, "Sparge", forms);
-    const mashDoseText = mashDose.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
-    const spargeDoseText = spargeDose.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
+    const mashDoses = doseRows(app.fieldsById, N.mashAdditions, forms);
+    const spargeDoses = doseRows(app.fieldsById, N.spargeAdditions, forms);
+    const mashDoseText = mashDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
+    const spargeDoseText = spargeDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
     const hltStart = num(engine, N.hltStart);
     const basis = `Masses assume ${gypsum} · ${cacl2} · ${acid}`;
+    const notModelled =
+      "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).";
+    const targetLine = routeSummary(valued);
 
     const instructionSetup =
       `Fill the HLT to ${fmtL(hltStart)}. Add 1 crushed metabisulfite tablet per 15 US gal. ` +
@@ -379,29 +443,84 @@ export function refreshWaterCard(app, ctx) {
 
     const telemetry = (app.waterTelemetry?.telemetry ?? []).slice();
     telemetry.sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
+    const warningCount = telemetry.filter(
+      (t) => t?.severity === "WARNING" || t?.severity === "ERROR"
+    ).length;
+
+    const predictedField = fieldOr(app.fieldsById, N.predictedPh);
+    const statusField = fieldOr(app.fieldsById, N.phStatus);
+    const doseVolumeField = fieldOr(app.fieldsById, N.vHltTreat);
+    const residualField = fieldOr(app.fieldsById, N.residualHlt);
+
+    app.waterPlan = {
+      source: fieldOr(app.fieldsById, N.sourceReportId),
+      target: fieldOr(app.fieldsById, N.targetProfileId),
+      floor: fieldOr(app.fieldsById, N.calciumFloor),
+      mashPh: fieldOr(app.fieldsById, N.targetMashPh),
+    };
+    app.waterTreatmentFields = [
+      N.saltDistribution,
+      N.acidMedium,
+      N.gypsumForm,
+      N.cacl2Form,
+      N.alkalineAgent,
+    ]
+      .map((id) => fieldOr(app.fieldsById, id))
+      .filter((field) => field.id);
+
+    app.waterVerdict = {
+      targetLine,
+      ratioLine,
+      predictedPh: predictedField.display || "—",
+      status: statusField.display || "",
+    };
+
+    const spargeAcid = spargeDoses.rows.find((dose) => dose.key === "acid_l");
+
+    app.waterPrescription = {
+      doseVolumeText: formatQuantity(doseVolumeField),
+      residualText: formatQuantity(residualField),
+      mash: mashDoses.rows,
+      sparge: spargeDoses.rows,
+      suppressed: mashDoses.suppressed || spargeDoses.suppressed,
+      spargeAcidPrescribed: Boolean(spargeAcid),
+      pending: Boolean(app.boundaryPending),
+      basis,
+      destinations: "Mash → dry grist, before underletting · Sparge → HLT after top-up",
+    };
+
+    app.waterDetails = {
+      telemetry,
+      ratioBasis,
+      notModelled,
+      boundaryStatus: app.boundaryStatuses?.[N.waterBoundary] ?? "ok",
+      error: app.boundaryError ?? null,
+    };
+
+    app.waterWarningCount = warningCount;
 
     app.waterSummary = {
       mode: effectiveMode,
       resolvedMode,
-      targetLine: routeSummary(valued),
+      targetLine,
       proportional,
       basis,
-      mashDose,
-      spargeDose,
+      mashDose: mashDoses.rows,
+      spargeDose: spargeDoses.rows,
       doseVolume,
       deliveredSparge,
       ions,
       checkedPins: checked,
       valuedPins: valued,
       notes,
-      tanninWarning,
       residualHlt,
-      notModelled:
-        "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).",
+      notModelled,
       ratio,
       ratioBasis,
       ratioLine,
       telemetry,
+      warningCount,
+      warningLabel: warningCount === 1 ? "1 warning" : `${warningCount} warnings`,
       instructionSetup,
       instructionDoughIn,
       instructionSparge,
@@ -415,6 +534,14 @@ export function refreshWaterCard(app, ctx) {
 export const KEYS = [
   "waterSummary",
   "waterTargetLocked",
+  "waterDetailsOpen",
+  "waterPlan",
+  "waterTreatmentFields",
+  "waterPrescription",
+  "waterVerdict",
+  "waterDetails",
+  "waterWarningCount",
+  "toggleWaterDetails",
   "waterTargetOptions",
   "waterTargetSelection",
   "selectWaterTarget",

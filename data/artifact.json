@@ -2402,9 +2402,6 @@
         "prescription.residual_hlt_water_l": {
           "dimension": "volume"
         },
-        "prescription.sparge_tannin_warning": {
-          "type": "boolean"
-        },
         "mash_additions.gypsum_kg": {
           "dimension": "mass"
         },

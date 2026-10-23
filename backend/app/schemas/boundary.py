@@ -336,7 +336,6 @@ class WaterPrescription(BoundaryModel):
     predicted_mash_ph: Annotated[float, Field(description="Modeled mash pH")]
     mash_ph_status: MashPhStatus = Field(description="Interpretation: HIGH, LOW, or OPTIMAL")
     residual_hlt_water_l: Annotated[float, Field(description="Remaining treated HLT water (L)")]
-    sparge_tannin_warning: bool = Field(default=False, description="Flagged if sparge alkalinity triggers tannin extraction")
 
 
 class WaterSolverResponse(BoundaryModel):

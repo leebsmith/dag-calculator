@@ -30,7 +30,6 @@ export const STUB_BOUNDARIES = {
     "prescription.predicted_mash_ph": 5.4,
     "prescription.mash_ph_status": "OPTIMAL",
     "prescription.residual_hlt_water_l": 0.0,
-    "prescription.sparge_tannin_warning": false,
     "mash_additions.gypsum_kg": 0.002,
     "mash_additions.cacl2_kg": 0.001,
     "mash_additions.epsom_kg": 0.0,

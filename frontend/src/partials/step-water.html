@@ -1,0 +1,268 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <h2 class="card-title" x-text="activeStep.title"></h2>
+    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+  </div>
+
+  <div class="step-card-content">
+    <div class="synthesized-card">
+      <div class="synthesized-header">
+        <h3 class="synthesized-title">Water plan</h3>
+      </div>
+
+      <div class="step-grid-2col">
+        <div class="form-group">
+          <label class="form-label" :for="waterPlan.source.id">
+            <span x-text="waterPlan.source.label || 'Source report'"></span>
+          </label>
+          <select
+            class="form-select"
+            :id="waterPlan.source.id"
+            :value="waterPlan.source.value"
+            @change="edit(waterPlan.source, $event.target.value)"
+          >
+            <template x-for="opt in (waterPlan.source.options || [])" :key="opt">
+              <option
+                :value="opt"
+                :selected="opt === waterPlan.source.value"
+                x-text="fmt.optionLabel(waterPlan.source.optionLabels, opt)"
+              ></option>
+            </template>
+          </select>
+          <span class="form-hint" x-show="waterPlan.source.hint" x-text="waterPlan.source.hint"></span>
+          <button type="button" class="btn-link text-xs" @click="openLibrary()">Manage library</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" :for="waterPlan.target.id">
+            <span x-text="waterPlan.target.label || 'Targets'"></span>
+          </label>
+          <select
+            class="form-select"
+            :id="waterPlan.target.id"
+            :value="waterTargetSelection"
+            @change="selectWaterTarget($event.target.value)"
+          >
+            <template x-for="opt in waterTargetOptions" :key="opt.value">
+              <option
+                :value="opt.value"
+                :selected="opt.value === waterTargetSelection"
+                x-text="opt.label"
+              ></option>
+            </template>
+          </select>
+          <span class="form-hint" x-show="waterPlan.target.hint" x-text="waterPlan.target.hint"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" :for="waterPlan.floor.id">
+            <span x-text="fmt.formatFieldLabel(waterPlan.floor.label, waterPlan.floor.unit)"></span>
+          </label>
+          <input
+            class="form-input"
+            :id="waterPlan.floor.id"
+            type="number"
+            step="1"
+            :value="waterPlan.floor.display"
+            @input="edit(waterPlan.floor, $event.target.value)"
+            @change="commitField(waterPlan.floor)"
+          />
+          <span class="form-hint" x-show="waterPlan.floor.hint" x-text="waterPlan.floor.hint"></span>
+          <span class="form-hint text-danger" x-show="waterPlan.floor.validation && !waterPlan.floor.validation.holds">Outside the allowed range</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" :for="waterPlan.mashPh.id">
+            <span x-text="fmt.formatFieldLabel(waterPlan.mashPh.label, waterPlan.mashPh.unit)"></span>
+          </label>
+          <input
+            class="form-input"
+            :id="waterPlan.mashPh.id"
+            type="number"
+            step="0.1"
+            :value="waterPlan.mashPh.display"
+            @input="edit(waterPlan.mashPh, $event.target.value)"
+            @change="commitField(waterPlan.mashPh)"
+          />
+          <span class="form-hint" x-show="waterPlan.mashPh.hint" x-text="waterPlan.mashPh.hint"></span>
+          <span class="form-hint text-danger" x-show="waterPlan.mashPh.validation && !waterPlan.mashPh.validation.holds">Outside the allowed range</span>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="water-treated">
+          <caption class="text-xs text-muted">Concentrations in ppm</caption>
+          <thead>
+            <tr>
+              <th>Target</th>
+              <th>Ion</th>
+              <th>Source (ppm)</th>
+              <th>Target (ppm)</th>
+              <th>Post-addition (ppm)</th>
+              <th>Δ (ppm)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="r in waterSummary.ions" :key="r.ion">
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="form-checkbox"
+                    :checked="r.checked"
+                    :disabled="waterTargetLocked"
+                    :aria-label="r.checkboxLabel"
+                    @change="toggleWaterTarget(r.pin)"
+                  />
+                </td>
+                <td x-text="r.label"></td>
+                <td x-text="r.sourceText"></td>
+                <td>
+                  <template x-if="r.checked">
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      class="form-input tabular-nums"
+                      :value="r.targetValue"
+                      :aria-label="r.inputLabel"
+                      @input="editWaterTarget(r.pin, $event.target.value)"
+                    />
+                  </template>
+                  <template x-if="!r.checked">
+                    <span x-text="r.valueText"></span>
+                  </template>
+                </td>
+                <td x-text="r.postDoseText"></td>
+                <td x-text="r.deltaText"></td>
+                <td>
+                  <span x-text="r.status"></span>
+                  <div class="text-xs text-warning" x-show="r.hint" x-text="r.hint"></div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="water-target-line" x-text="waterVerdict.targetLine"></p>
+      <p class="water-ratio" x-text="waterVerdict.ratioLine"></p>
+      <p class="text-sm">
+        <span class="text-muted">Predicted mash pH </span>
+        <span class="tabular-nums" x-text="waterVerdict.predictedPh"></span>
+        <span class="text-muted" x-show="waterVerdict.status" x-text="' · ' + waterVerdict.status"></span>
+      </p>
+      <button
+        type="button"
+        class="btn-link text-warning text-xs"
+        x-show="waterWarningCount > 0"
+        @click="toggleWaterDetails()"
+        x-text="waterSummary.warningLabel + ' — view details'"
+      ></button>
+    </div>
+
+    <section class="step-section">
+      <div class="step-section-header">
+        <h3 class="step-section-title">Treatment</h3>
+      </div>
+      <div class="step-grid-2col">
+        <template x-for="f in waterTreatmentFields" :key="f.id">
+          <div class="form-group">
+            <label class="form-label" :for="f.id">
+              <span x-text="f.label"></span>
+            </label>
+            <select
+              class="form-select"
+              :id="f.id"
+              :value="f.value"
+              @change="edit(f, $event.target.value)"
+            >
+              <template x-for="opt in (f.options || [])" :key="opt">
+                <option
+                  :value="opt"
+                  :selected="opt === f.value"
+                  x-text="fmt.optionLabel(f.optionLabels, opt)"
+                ></option>
+              </template>
+            </select>
+            <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <section class="step-section">
+      <div class="step-section-header">
+        <h3 class="step-section-title">Prescription</h3>
+      </div>
+      <p class="text-xs text-muted" x-text="waterPrescription.destinations"></p>
+      <p class="text-sm">
+        <span class="text-muted">Dosing volume </span>
+        <span class="tabular-nums" x-text="waterPrescription.doseVolumeText"></span>
+        <span class="text-muted"> · Residual HLT </span>
+        <span class="tabular-nums" x-text="waterPrescription.residualText"></span>
+      </p>
+
+      <div class="step-grid-2col">
+        <div>
+          <h4 class="synthesized-title">Mash</h4>
+          <p class="text-sm text-muted" x-show="waterPrescription.pending">Solving…</p>
+          <p class="text-sm text-muted" x-show="!waterPrescription.pending && waterPrescription.mash.length === 0">No mash additions.</p>
+          <template x-for="d in waterPrescription.mash" :key="d.label">
+            <p class="text-sm">
+              <span x-text="d.label"></span>
+              <span class="tabular-nums" x-text="d.text"></span>
+            </p>
+          </template>
+        </div>
+        <div>
+          <h4 class="synthesized-title">Sparge</h4>
+          <p class="text-sm text-muted" x-show="waterPrescription.pending">Solving…</p>
+          <p class="text-sm text-muted" x-show="!waterPrescription.pending && waterPrescription.sparge.length === 0">No sparge additions.</p>
+          <template x-for="d in waterPrescription.sparge" :key="d.label">
+            <p class="text-sm">
+              <span x-text="d.label"></span>
+              <span class="tabular-nums" x-text="d.text"></span>
+            </p>
+          </template>
+        </div>
+      </div>
+
+      <p class="text-xs text-muted" x-show="waterPrescription.spargeAcidPrescribed">Sparge acid prescribed to keep sparge pH ≤ 5.80.</p>
+      <p class="text-xs text-muted" x-show="waterPrescription.suppressed">Only nonzero additions shown.</p>
+      <p class="text-xs text-muted" x-text="waterPrescription.basis"></p>
+      <template x-for="n in waterSummary.notes" :key="n">
+        <p class="text-warning" x-text="n"></p>
+      </template>
+    </section>
+
+    <section class="step-section">
+      <div class="step-section-header">
+        <h3 class="step-section-title">Details</h3>
+        <button
+          type="button"
+          class="btn-link text-xs"
+          :aria-expanded="waterDetailsOpen"
+          aria-controls="water-details-body"
+          @click="toggleWaterDetails()"
+          x-text="waterDetailsOpen ? 'Hide' : 'Show'"
+        ></button>
+      </div>
+
+      <div id="water-details-body" x-show="waterDetailsOpen">
+        <template x-if="waterDetails.error">
+          <p class="text-danger" x-text="'Solver error: ' + (waterDetails.error.code || 'unknown')"></p>
+        </template>
+        <p class="text-xs text-muted" x-show="waterDetails.boundaryStatus !== 'ok'" x-text="'Solver status: ' + waterDetails.boundaryStatus"></p>
+        <p class="text-xs text-muted" x-text="waterDetails.ratioBasis"></p>
+        <div class="telemetry" x-show="waterDetails.telemetry.length > 0">
+          <template x-for="t in waterDetails.telemetry" :key="t.code + ':' + t.message">
+            <p class="telemetry-row" :class="telemetryClass(t)" x-text="telemetryLine(t)"></p>
+          </template>
+        </div>
+        <p class="water-not-modelled" x-text="waterDetails.notModelled"></p>
+      </div>
+    </section>
+  </div>
+</section>

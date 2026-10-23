@@ -68,7 +68,6 @@ export function waterOutputs() {
     "prescription.predicted_mash_ph": 5.4,
     "prescription.mash_ph_status": "OPTIMAL",
     "prescription.residual_hlt_water_l": 0.0,
-    "prescription.sparge_tannin_warning": false,
     ...additions("mash_additions"),
     ...additions("sparge_additions"),
     "post_salt_mash_ions.calcium_ca": 60.0,

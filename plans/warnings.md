@@ -22,8 +22,9 @@ style-conformance readouts (gravity / ABV / SRM / IBU ranges).
 - `boundaryError` (hard solver failure) → an alert in the stage
   (`frontend/index.html:105`).
 - The footer already renders `violationCount` (`frontend/index.html:172-175`).
-- The water boundary already emits `prescription.sparge_tannin_warning`
-  (`frontend/src/adapters/stubBoundaries.js:33`) — currently unconsumed.
+- The water boundary now treats sparge acid as a prescription, not a warning. The
+  former `prescription.sparge_tannin_warning` flag was removed; a nonzero sparge
+  acid dose is the source of truth and is shown in the water card's Prescription.
 - Trace malts (see `plans/` trace-malts feature) will produce a
   "% of total grist" signal post-solve.
 - Style conformance vs. the style envelope is a TODO ("gate up front on mismatch").
@@ -46,7 +47,6 @@ style-conformance readouts (gravity / ABV / SRM / IBU ranges).
 
 ## Initial warning taxonomy
 
-- `water.tannin` ← `prescription.sparge_tannin_warning`
 - `style.conformance.{og,fg,abv,srm,ibu}` ← envelope drift (soft)
 - `trace.pct_high` ← trace mass above a threshold % of total grist
   (requires the trace-malts feature + reviewer)
@@ -61,7 +61,7 @@ style-conformance readouts (gravity / ABV / SRM / IBU ranges).
 
 ## Staging
 
-- **W.1** Severity model + hook; wire `sparge_tannin_warning` end-to-end.
+- **W.1** Severity model + hook; wire style conformance end-to-end.
 - **W.2** LIFO queue (dedup, bound, order) + footer rendering.
 - **W.3** Style conformance readouts on the footer.
 - **W.4** Freeze-snapshot semantics + reviewer consumption.

@@ -61,9 +61,9 @@ test("the checked set drives the grid and the derived strategy", () => {
   const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
   assert.equal(rows.sulfate_so4.checked, true);
   assert.equal(rows.sulfate_so4.status, "Target");
-  assert.equal(rows.sulfate_so4.valueText, "250");
-  assert.equal(rows.sulfate_so4.deltaText, "-150");
-  assert.equal(rows.chloride_cl.valueText, "50");
+  assert.equal(rows.sulfate_so4.valueText, "250.0");
+  assert.equal(rows.sulfate_so4.deltaText, "-150.0");
+  assert.equal(rows.chloride_cl.valueText, "50.0");
 
   for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "alkalinity_as_caco3"]) {
     assert.equal(rows[ion].checked, false);
@@ -147,6 +147,101 @@ test("toggling a checked ion detaches the preset", () => {
   assert.equal(app.waterTargetSelection, "freeform");
   assert.deepEqual(app.waterSummary.checkedPins, ["so4"]);
   assert.equal(app.waterSummary.mode, "CUSTOM");
+});
+
+test("target changes recalculate immediately and queue a save", () => {
+  const app = createStepApp();
+  app.boot();
+  let saves = 0;
+  app.onChange = () => {
+    saves += 1;
+  };
+
+  app.selectWaterTarget("soft-pilsner");
+  assert.equal(app.waterSummary.mode, "OPTIMIZE");
+  assert.equal(saves, 1, "selecting a preset schedules the solve and the save");
+
+  app.toggleWaterTarget("ca");
+  const cleared = app.waterSummary.ions.find((row) => row.ion === "calcium_ca");
+  assert.equal(app.master.getRoot("water.target.calcium_ca"), 0);
+  assert.equal(cleared.checked, false);
+  assert.equal(cleared.valueText, "(Auto)");
+  assert.equal(cleared.deltaText, "—");
+  assert.equal(app.waterSummary.checkedPins.length, 5);
+  assert.equal(app.waterSummary.mode, "CUSTOM");
+  assert.equal(saves, 2, "unchecking recalculates and queues a save");
+
+  app.editWaterTarget("so4", "300");
+  const edited = app.waterSummary.ions.find((row) => row.ion === "sulfate_so4");
+  assert.equal(edited.valueText, "300.0");
+  assert.notEqual(edited.deltaText, "—");
+  assert.equal(saves, 3, "editing a target recalculates and queues a save");
+});
+
+test("source ions render only in the comparison grid", () => {
+  const app = createStepApp();
+  app.boot();
+  app.edit(app.fieldsById["water.source_report_id"], "25138");
+  app.compute();
+
+  const ids = app.fieldsBySlice.water.map((f) => f.id);
+  for (const { ion } of WATER_IONS) {
+    assert.ok(!ids.includes(`water.source_report.${ion}`), `${ion} readout must be gone`);
+  }
+  assert.equal(app.waterPlan.source.id, "water.source_report_id");
+  assert.equal(app.waterPlan.target.id, "water.target_profile_id");
+  assert.equal(app.waterPlan.mashPh.id, "water.target_mash_ph");
+  assert.equal(app.waterTreatmentFields.length, 5);
+  const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
+  assert.equal(rows.calcium_ca.sourceText, "21.5");
+  assert.equal(rows.magnesium_mg.sourceText, "5.0");
+});
+
+test("water readouts use the fixed precision policy", () => {
+  const app = createStepApp();
+  app.boot();
+  app.edit(app.fieldsById["water.source_report_id"], "25138");
+  app.selectWaterTarget("hoppy-ipa");
+  app.compute();
+
+  const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
+  assert.equal(rows.sulfate_so4.valueText, "250.0");
+  assert.equal(rows.sulfate_so4.deltaText, "-150.0");
+  assert.equal(rows.chloride_cl.postDoseText, "50.0");
+  assert.equal(app.waterVerdict.predictedPh, "5.40");
+  assert.equal(app.waterPrescription.mash[0].text, "2.0 g");
+  assert.equal(app.waterPrescription.doseVolumeText, "16.0 L");
+});
+
+test("prescription suppresses doses that round to zero", () => {
+  const app = createStepApp();
+  app.boot();
+
+  assert.equal(app.waterPrescription.suppressed, true);
+  assert.ok(app.waterPrescription.mash.length > 0);
+  assert.equal(
+    app.waterPrescription.mash.some((dose) => dose.text.startsWith("0.0")),
+    false
+  );
+  assert.equal(app.waterPrescription.sparge.length, 1);
+  assert.equal(app.waterPrescription.spargeAcidPrescribed, false);
+});
+
+test("telemetry severity drives the warning count and keeps the full log in details", () => {
+  const app = createStepApp();
+  app.boot();
+  app.boundaryExtras["solver.water"] = {
+    telemetry: [
+      { severity: "WARNING", code: "w", message: "warning message" },
+      { severity: "ERROR", code: "e", message: "error message" },
+      { severity: "INFO", code: "i", message: "info message" },
+    ],
+  };
+  app.compute();
+
+  assert.equal(app.waterWarningCount, 2);
+  assert.equal(app.waterSummary.warningLabel, "2 warnings");
+  assert.equal(app.waterDetails.telemetry.length, 3);
 });
 
 test("five and six checked are allowed and reported", () => {

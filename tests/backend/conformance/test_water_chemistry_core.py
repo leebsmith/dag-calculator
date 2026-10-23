@@ -212,16 +212,14 @@ def test_orchestration_mash_only_leaves_sparge_unsalted():
     assert out.sparge_dose_g == {"gypsum_g": 0.0, "cacl2_g": 0.0, "epsom_g": 0.0, "nacl_g": 0.0}
 
 
-def test_orchestration_sparge_tannin_warning_on_alkaline_source():
+def test_orchestration_sparge_acid_prescribed_on_alkaline_source():
     out = solve_water_chemistry(_request())
-    assert out.sparge_tannin_warning is True
     assert out.sparge_acid_ml > 0
 
 
 def test_orchestration_ro_bypasses_sparge_acid():
     out = solve_water_chemistry(_request(source=_ions()))
     assert out.sparge_acid_ml == 0.0
-    assert out.sparge_tannin_warning is False
 
 
 def test_orchestration_residual_hlt_water():

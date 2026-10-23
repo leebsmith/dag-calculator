@@ -44,8 +44,8 @@ P1_CARBONIC = 6.38
 P2_CARBONIC = 10.33
 CARBONIC_PKB = 4.3  # pH at which bicarbonate is fully dissociated
 
-# Sparge tannin-extraction threshold
-SPARGE_TANNIN_PH = 5.80
+# Sparge acid target pH
+SPARGE_ACID_PH = 5.80
 
 # Mash-pH model (metric). A bounded logistic over the acidity index `i26`: it
 # saturates at a carbonate-buffered ceiling and an acid-grist floor instead of
@@ -222,7 +222,6 @@ class WaterChemistryOutput:
     post_salt_mash_ions: dict
     post_dose_mash_ions: dict
     residual_hlt_water_l: float
-    sparge_tannin_warning: bool
     grist_buckets_kg: dict
     warnings: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
@@ -1141,24 +1140,22 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     # 7. Total alkaline agent (stage-1 target/buffer + stage-2 pH correction)
     alkaline_agent_g = dose.alkaline_agent_g_per_l * inp.v_mash_treat_l + stage2_agent_g
 
-    # 7. Sparge tannin protection
+    # 7. Sparge acid prescription
     ra_hlt = residual_alkalinity(post_hlt["ca"], post_hlt["mg"], post_hlt.get("alk", 0.0))
     sparge_acid_ml = 0.0
-    sparge_tannin_warning = False
 
     if inp.source.get("alk", 0.0) > 0.0 and ra_hlt > 0.0:
         sparge_meq_l = ra_hlt / 50.0
         sparge_acid_ml = acid_volume_ml(
-            sparge_meq_l * inp.v_hlt_treat_l, inp.acid_medium, SPARGE_TANNIN_PH
+            sparge_meq_l * inp.v_hlt_treat_l, inp.acid_medium, SPARGE_ACID_PH
         )
-        sparge_tannin_warning = True
         events.append(
             TelemetryEvent(
                 code="ENZYMATIC_SPARGE_ACID_PRESCRIBED",
                 category="ENZYMATIC",
                 severity="INFO",
-                message=f"Sparge acidification prescribed: {sparge_acid_ml:.2f} mL of {inp.acid_medium} ({sparge_meq_l * inp.v_hlt_treat_l:.1f} mEq) required to neutralize sparge alkalinity and cap pH at {SPARGE_TANNIN_PH:.2f}.",
-                context={"volume_ml": sparge_acid_ml, "target_ph": SPARGE_TANNIN_PH},
+                message=f"Sparge acidification prescribed: {sparge_acid_ml:.2f} mL of {inp.acid_medium} ({sparge_meq_l * inp.v_hlt_treat_l:.1f} mEq) required to neutralize sparge alkalinity and cap pH at {SPARGE_ACID_PH:.2f}.",
+                context={"volume_ml": sparge_acid_ml, "target_ph": SPARGE_ACID_PH},
             )
         )
 
@@ -1273,7 +1270,6 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         post_salt_mash_ions=post_salt,
         post_dose_mash_ions=post_dose,
         residual_hlt_water_l=residual_hlt,
-        sparge_tannin_warning=sparge_tannin_warning,
         grist_buckets_kg=buckets,
         warnings=warnings,
         notes=notes,

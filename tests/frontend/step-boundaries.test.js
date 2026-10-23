@@ -31,7 +31,6 @@ const WATER = {
     predicted_mash_ph: 5.4,
     mash_ph_status: "OPTIMAL",
     residual_hlt_water_l: 0.0,
-    sparge_tannin_warning: false,
   },
 };
 
