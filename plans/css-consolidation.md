@@ -184,10 +184,10 @@ Acceptance:
 Group sizes below are at `bf4cee8`; Phase 2 removes three water selectors, so
 re-measure before starting.
 
-- [ ] Muted-xs group (7 selectors: `.table-header-meta`, `.recipes-hint`,
+- [x] Muted-xs group (7 selectors: `.table-header-meta`, `.recipes-hint`,
       `.landing-create-hint`/`.landing-row-hint`/`.landing-freeze-date`,
       `.footer-step-count`, plus three water rules removed in Phase 2) →
-      `text-xs text-muted`. This touches 14 markup sites; scope it as its own
+      `text-xs text-muted`. This touched 14 markup sites; landed as its own
       commit.
 - [ ] Danger group (4: `.collection-readout.is-invalid`, `.status-badge-danger`,
       `.text-danger`, `.sev-error`) → keep `.text-danger` as the utility, apply

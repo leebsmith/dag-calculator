@@ -88,7 +88,7 @@
                                       @click="$store.recipes.forkFrozen(b.id)"
                                     >
                                       <span class="landing-name" x-text="b.name"></span>
-                                      <span class="landing-row-hint">frozen — click to fork a copy</span>
+                                      <span class="text-xs text-muted">frozen — click to fork a copy</span>
                                     </button>
                                   </template>
                                 </td>
@@ -125,9 +125,9 @@
                         <template x-for="b in $store.recipes.trashRows" :key="b.id">
                           <div class="recipes-item" :class="b.status === 'frozen' ? 'is-frozen' : ''">
                             <span class="recipes-name" x-text="b.name"></span>
-                            <span class="recipes-hint" x-show="b.status === 'frozen'" x-text="'frozen'"></span>
+                            <span class="text-xs text-muted" x-show="b.status === 'frozen'" x-text="'frozen'"></span>
                             <span
-                              class="recipes-hint"
+                              class="text-xs text-muted"
                               x-text="'Moved ' + $store.recipes.dateLabel(b.updated_at)"
                             ></span>
                             <div class="recipes-row-actions">
@@ -150,7 +150,7 @@
                           <button type="button" class="landing-create" @click="$store.recipes.newRecipe()">
                             <span class="landing-create-icon">＋</span>
                             <span class="landing-create-title">New recipe</span>
-                            <span class="landing-create-hint">Start with a blank batch</span>
+                            <span class="text-xs text-muted">Start with a blank batch</span>
                           </button>
 
                           <div class="landing-freezes">
@@ -175,7 +175,7 @@
                                 >
                                   <span class="landing-freeze-name" x-text="b.name"></span>
                                   <span
-                                    class="landing-freeze-date"
+                                    class="text-xs text-muted"
                                     x-text="'Frozen ' + $store.recipes.dateLabel(b.frozen_at)"
                                   ></span>
                                 </button>

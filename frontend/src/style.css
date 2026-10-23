@@ -820,11 +820,6 @@ samp {
   gap: var(--space-4);
 }
 
-.table-header-meta {
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
-}
-
 .table-pct-cell {
   display: flex;
   align-items: center;
@@ -1232,11 +1227,6 @@ samp {
   white-space: nowrap;
 }
 
-.recipes-hint {
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
-}
-
 .recipes-empty {
   margin: var(--space-0);
   padding: var(--space-3);
@@ -1327,13 +1317,6 @@ samp {
 .landing-create-title {
   font-size: var(--text-base);
   font-weight: var(--font-weight-semibold);
-}
-
-.landing-create-hint,
-.landing-row-hint,
-.landing-freeze-date {
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
 }
 
 .landing-freezes {
@@ -1760,11 +1743,6 @@ samp {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
   color: var(--sys-text-secondary);
-}
-
-.footer-step-count {
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
 }
 
 .footer-violations {

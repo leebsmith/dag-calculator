@@ -155,18 +155,6 @@
     },
     {
       "context": "",
-      "declarations": "color: var(--sys-text-muted); font-size: var(--text-xs)",
-      "selectors": [
-        ".table-header-meta",
-        ".recipes-hint",
-        ".landing-create-hint, .landing-row-hint, .landing-freeze-date",
-        ".footer-step-count"
-      ],
-      "reason": "Phase 3: consolidate onto text-xs text-muted.",
-      "phase": 3
-    },
-    {
-      "context": "",
       "declarations": "align-items: center; display: flex; gap: var(--space-1); justify-content: flex-end",
       "selectors": [
         ".table-pct-cell",
