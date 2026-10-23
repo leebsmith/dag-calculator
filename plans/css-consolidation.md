@@ -79,10 +79,10 @@ old Phase 4 → deferred.
       stated reason. Phase 2 consumes it for the water verdict line.
 - [x] Note the empty `frontend/src/styles/` directory as the deferred split
       target.
-- [ ] PurgeCSS: remove `purgecss.config.js`, the `npm run purgecss` script, and
+- [x] PurgeCSS: remove `purgecss.config.js`, the `npm run purgecss` script, and
       the devDependency. Nothing in `make build`/`check`/`test` invokes them.
       Removing the devDependency is a dependency change and needs explicit
-      sign-off; defer that sub-step to the build agent.
+      sign-off; sign-off taken from the request to execute this plan.
 
 Acceptance: the decisions above are recorded in this plan and the rulebook is
 amended; no source files change. Config and dependency removal lands as a

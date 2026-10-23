@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "node --test ../tests/frontend/*.test.js ../tests/conformance/*.test.js ../tests/guards/*.test.js",
-    "lint": "eslint src && stylelint \"src/**/*.css\"",
-    "purgecss": "purgecss --config purgecss.config.js"
+    "lint": "eslint src && stylelint \"src/**/*.css\""
   },
   "keywords": [],
   "author": "",
@@ -20,7 +19,6 @@
   },
   "devDependencies": {
     "eslint": "^10.12.0",
-    "purgecss": "^8.0.0",
     "stylelint": "^16.0.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-declaration-strict-value": "^1.12.1",
