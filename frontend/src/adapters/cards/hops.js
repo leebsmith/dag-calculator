@@ -231,6 +231,14 @@ export function registerHopCard(app, ctx) {
         );
       },
     },
+    totalIbuField: {
+      configurable: true,
+      get() {
+        return (
+          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.totalIbu) ?? null
+        );
+      },
+    },
     whirlpoolAmbientField: {
       configurable: true,
       get() {
@@ -299,6 +307,17 @@ export function registerHopCard(app, ctx) {
         });
       },
     },
+    boilHopTotalMassDisplay: {
+      configurable: true,
+      get() {
+        const rows = this.hopRows ?? [];
+        const masses = rows
+          .map((r) => r.mass_kg)
+          .filter((m) => typeof m === "number" && Number.isFinite(m));
+        if (!masses.length) return rows.length ? "—" : "";
+        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
+      },
+    },
     hopTotalMassKg: {
       configurable: true,
       get() {
@@ -356,6 +375,7 @@ export const KEYS = [
   "hopPct",
   "boilIbuField",
   "whirlpoolIbuField",
+  "totalIbuField",
   "whirlpoolAmbientField",
   "whirlpoolCoolingField",
   "hopDraftPartsTotal",
@@ -364,6 +384,7 @@ export const KEYS = [
   "whirlpoolHopDraftSummary",
   "hopResultLabel",
   "whirlpoolHopResultLabel",
+  "boilHopTotalMassDisplay",
   "hopTotalMassKg",
   "hopTotalMassDisplay",
   "whirlpoolHopTotalMassDisplay",

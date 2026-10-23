@@ -228,6 +228,7 @@ export const steps = [
         columns: ["name", "alpha_acid_pct", "duration_min", "initial_temp_c", "parts", "pct"],
         inputs: ["duration_min", "initial_temp_c", "parts"],
       },
+      "batch.target_ibu",
       "batch.boil_target_ibu",
       "batch.whirlpool_target_ibu",
       "batch.whirlpool_ambient_temp_c",

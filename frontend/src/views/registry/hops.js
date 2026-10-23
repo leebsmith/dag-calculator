@@ -4,6 +4,7 @@ export const HOP_NODES = {
   whirlpoolCollection: "batch.whirlpool_hops",
   boilIbu: "batch.boil_target_ibu",
   whirlpoolIbu: "batch.whirlpool_target_ibu",
+  totalIbu: "batch.target_ibu",
   whirlpoolAmbient: "batch.whirlpool_ambient_temp_c",
   whirlpoolCoolingTimeConstant: "batch.whirlpool_cooling_time_constant_min",
   boilTime: "batch.boil_time_min",

@@ -115,6 +115,18 @@ test("whirlpool hops: rest duration and initial temperature drive the mass", () 
   assert.ok(coolShort > hotLong, `${coolShort} should exceed ${hotLong}`);
 });
 
+test("whirlpool ambient follows the global temperature unit", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setUnit("temperature", "degF");
+
+  assert.equal(app.whirlpoolAmbientField.unit, "°F");
+  assert.equal(app.whirlpoolAmbientField.display, "68");
+
+  app.edit(app.whirlpoolAmbientField, "77");
+  assert.equal(app.master.getRoot("batch.whirlpool_ambient_temp_c"), 25);
+});
+
 test("whirlpool cooling time constant changes the required mass", () => {
   const app = createStepApp();
   app.boot();

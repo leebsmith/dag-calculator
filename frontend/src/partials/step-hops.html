@@ -78,15 +78,8 @@
         ></span>
       </div>
       <div class="grain-bill-summary-item">
-        <span class="text-xs text-muted">Whirlpool IBU target</span>
-        <span
-          class="text-base font-bold tabular-nums"
-          x-text="fmt.formatQuantity(whirlpoolIbuField, { fallbackUnit: 'IBU' })"
-        ></span>
-      </div>
-      <div class="grain-bill-summary-item">
-        <span class="text-xs text-muted">Total hop mass</span>
-        <span class="text-base font-bold tabular-nums" x-text="hopTotalMassDisplay"></span>
+        <span class="text-xs text-muted">Boil hop mass</span>
+        <span class="text-base font-bold tabular-nums" x-text="boilHopTotalMassDisplay"></span>
       </div>
     </div>
 
@@ -102,7 +95,11 @@
       <div class="step-grid-2col">
         <template x-if="whirlpoolAmbientField">
           <div class="form-group">
-            <label class="form-label" :for="whirlpoolAmbientField.id" x-text="whirlpoolAmbientField.label"></label>
+            <label
+              class="form-label"
+              :for="whirlpoolAmbientField.id"
+              x-text="fmt.formatFieldLabel(whirlpoolAmbientField.label, whirlpoolAmbientField.unit)"
+            ></label>
             <input
               class="form-input"
               type="number"
@@ -116,7 +113,11 @@
         </template>
         <template x-if="whirlpoolCoolingField">
           <div class="form-group">
-            <label class="form-label" :for="whirlpoolCoolingField.id" x-text="whirlpoolCoolingField.label"></label>
+            <label
+              class="form-label"
+              :for="whirlpoolCoolingField.id"
+              x-text="fmt.formatFieldLabel(whirlpoolCoolingField.label, whirlpoolCoolingField.unit)"
+            ></label>
             <input
               class="form-input"
               type="number"
@@ -213,6 +214,20 @@
         Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
       </p>
     </section>
+
+    <div class="grain-bill-summary" x-show="hopRows.length > 0 || whirlpoolHopRows.length > 0">
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Total IBU target</span>
+        <span
+          class="text-base font-bold tabular-nums"
+          x-text="fmt.formatQuantity(totalIbuField, { fallbackUnit: 'IBU' })"
+        ></span>
+      </div>
+      <div class="grain-bill-summary-item">
+        <span class="text-xs text-muted">Total hop mass</span>
+        <span class="text-base font-bold tabular-nums" x-text="hopTotalMassDisplay"></span>
+      </div>
+    </div>
   </div>
 
   <load src="src/partials/modal-hop-editor.html" />
