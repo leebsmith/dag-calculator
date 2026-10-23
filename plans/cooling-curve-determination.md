@@ -16,20 +16,41 @@ A user authors a cooling curve record from measured time/temperature points; the
 fits Newton cooling and copies the resulting time constant into the batch. In the
 absence of a selected curve, the existing `0.0092 min⁻¹` default remains.
 
+The durable part of this work is a **non-DAG record schema layer** for authored
+measurement documents. Cooling curves are its first consumer; sparge runoff tables and
+similar measurement records can reuse the same layer.
+
 ## Why
 
-`k` is the most impactful uncertain input in the whirlpool model. The current default
-is a literature-style lumped constant; the same kettle changes it with fill volume,
+`k` is the most impactful uncertain input in the whirlpool model. The current default is
+a literature-style lumped constant; the same kettle changes it with fill volume,
 headspace, insulation, evaporation, and drafts. A measured curve is more useful than
 more kinetic theory until `k` is calibrated.
 
 ## Non-goals
 
+- Adding nested lists to the artifact grammar or bumping the artifact schema version.
+- Making the cooling curve a DAG node or engine-evaluated value.
 - Replacing the Tinseth/Arrhenius model with the consecutive-kinetics model.
 - Product-form oil retention or perceived-bitterness modelling.
 - Equipment-level thermal simulation (surface area, heat-transfer coefficients).
-- Editing immutable library records (corrections create a new record).
+- Editing immutable records; corrections create a new record.
 - Automatic sensor ingestion.
+
+## Architectural boundary
+
+The artifact remains the DAG-evaluable business-logic model: scalar roots, choices,
+flat collections, selections, derived values, and boundary contracts. A cooling curve
+is a **measurement document**, not a DAG value:
+
+- variable-length time series,
+- no DAG consumer,
+- no dimension inference or reduction over its rows,
+- only a host-side fit that produces one scalar `k`.
+
+Therefore the curve points live in a separate record schema layer, not in
+`artifact.primitive_schemas`. The artifact gains only a scalar reference root for
+provenance. The artifact `schema_version` does not change.
 
 ## Current state
 
@@ -38,66 +59,99 @@ more kinetic theory until `k` is calibrated.
   (`k = 0.0092 min⁻¹`).
 - `frontend/src/views/whirlpool.js` uses that time constant to derive `k` and
   integrate `t_eff`.
-- The record library already supports flat catalog records with create/read/delete.
-- The artifact primitive schema does not yet support nested lists.
-- `TODO.md` already identifies cooling curves as the first record-library catalog and
-  the trigger for nested-list grammar.
+- The record library supports flat artifact-backed catalog records with
+  create/read/delete.
+- `TODO.md` identifies cooling curves as the first record-library catalog.
 
-## Decisions
+## Record schema layer
 
-1. **Ambient temperature is part of the curve.** Newton cooling cannot determine `k`
-   without `T_env`. Selecting a curve copies both `ambient_temp_c` and the derived
-   time constant into the batch.
-2. **Use log-linear least squares.** Fit
-   `ln((T_i - T_env) / (T_start - T_env))` against `t_i`; `k = -slope`,
-   `tau = 1/k`. Report `R²`; warn below a quality threshold but do not block.
-3. **Raw points are canonical.** Derive `k` host-side; do not store a derived `k` in
-   the library record. Persist the copied time constant in the batch.
-4. **Fallback is explicit.** No curve or invalid fit → `108.7 min` /
-   `0.0092 min⁻¹`.
-5. **Copy-forward, like a water report.** Selecting a curve stores
-   `batch.cooling_curve_id` and a selection snapshot, then copies values into the
-   batch roots. Deleting the library record does not change the batch.
-6. **Manual edit detaches.** Editing the cooling time constant clears the curve
-   selection (or shows “Custom”); choosing “Default cooling” resets `108.7`.
-7. **Records are immutable.** Create/read/delete only; corrections create a new
-   curve.
+Add two data files:
 
-## Prerequisite: nested-list primitive grammar
+- `data/record_schemas.json` — schemas for non-DAG records.
+- `data/record_catalogs.json` — catalog kinds backed by those schemas.
 
-User-administrable point rows require a schema field that is a list of structured
-items, for example:
+Schema shape:
 
 ```json
-"cooling_curve": {
-  "name": {},
-  "ambient_temp_c": { "dimension": "temperature", "domain": { "gte": -20, "lte": 50 } },
-  "start_temp_c": { "dimension": "temperature", "domain": { "gte": 0, "lte": 100 } },
-  "points": {
-    "list": {
-      "item": {
-        "time_min": { "dimension": "time", "domain": { "gte": 0 } },
-        "temp_c": { "dimension": "temperature", "domain": { "gte": -20, "lte": 100 } }
+{
+  "cooling_curve": {
+    "fields": {
+      "name": { "type": "string", "required": true },
+      "description": { "type": "string" },
+      "ambient_temp_c": {
+        "dimension": "temperature",
+        "domain": { "gte": -20, "lte": 50 }
       },
-      "min_items": 2
+      "start_temp_c": {
+        "dimension": "temperature",
+        "domain": { "gte": 0, "lte": 100 }
+      },
+      "points": {
+        "type": "list",
+        "min_items": 2,
+        "item": {
+          "time_min": { "dimension": "time", "domain": { "gte": 0 } },
+          "temp_c": {
+            "dimension": "temperature",
+            "domain": { "gte": -20, "lte": 100 }
+          }
+        }
+      },
+      "notes": { "type": "string" }
     }
   }
 }
 ```
 
-This is the substantial part of the plan:
+Record schemas reference artifact dimensions, domains, and taxonomies so units and
+validation stay single-sourced. The record layer does not introduce a second dimension
+system.
 
-- artifact grammar and schema validation for nested lists,
-- JS and Python component-validation mirrors,
-- library form rendering for add/remove point rows,
-- inventory and grammar docs,
-- artifact `schema_version` bump and the associated tests/migration notes.
+Catalog shape:
 
-Do not fake this with fixed point fields or a CSV text field.
+```json
+{
+  "cooling_curve": {
+    "label": "Cooling Curve",
+    "schema": "cooling_curve",
+    "schema_source": "records",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": null,
+    "seed_key": "coolingCurves"
+  }
+}
+```
 
-## Record and selection model
+Implementation points:
 
-Catalog kind: `cooling_curve`
+- Frontend `store/userCatalog.js` merges `data/catalogs.json` and
+  `data/record_catalogs.json` into `CATALOGS`; each meta carries its schema source.
+- Backend `app/artifact.py` exposes both catalog registries and a
+  `validate_record_component` function.
+- `catalog_service`/`validate_component` dispatch by schema source.
+- Library tabs include the merged kinds; artifact-backed records keep their current
+  behaviour.
+- Seed data: `data/seeds/cooling_curves.json`, wired through `referenceCache`.
+
+### Nested list validation
+
+The list support is limited to a list of flat rows. That is enough for cooling curves
+and sparge runoff tables and keeps the record layer simple.
+
+Validate recursively:
+
+- list item count (`min_items`),
+- unknown item fields,
+- numeric dimensions, finite values, domains,
+- taxonomies,
+- strings/booleans,
+- no nested lists inside list items (reject explicitly).
+
+This validator is separate from artifact grammar validation. The artifact validator
+stays unchanged.
+
+## Cooling curve records
 
 Fields:
 
@@ -109,25 +163,9 @@ Fields:
 - `points`: `[{ time_min, temp_c }]`
 - `notes` (optional)
 
-Seed catalog: `data/seeds/cooling_curves.json` (at least one reference curve).
+Records are immutable: create/read/delete. Corrections create a new curve.
 
-Artifact additions:
-
-- `batch.cooling_curve_id` root (`reference`, default `""`)
-- `batch.cooling_curve` selection (`schema: cooling_curve`, `ref: batch.cooling_curve_id`)
-- Keep the existing `batch.whirlpool_ambient_temp_c` and
-  `batch.whirlpool_cooling_time_constant_min` roots as the batch-owned copied values.
-
-Selection behaviour:
-
-1. User picks a curve (or “Default cooling”).
-2. Copy `ambient_temp_c` and `1/k` into the existing batch roots.
-3. Store the selection snapshot and reference id.
-4. Show the curve name, derived `k`, `tau`, and fit quality.
-5. Editing the time constant clears the selection; selecting “Default cooling”
-   resets `tau = 108.7` and leaves ambient unchanged.
-
-## Fit function
+## Fit
 
 Add a pure host-side helper, e.g. `frontend/src/views/coolingCurve.js`:
 
@@ -136,24 +174,56 @@ fitCoolingCurve({ startTempC, ambientTempC, points })
   -> { kPerMin, tauMin, r2, pointCount, ignored, valid }
 ```
 
+Use a log-linear least-squares fit:
+
+```text
+y_i = ln((T_i - T_env) / (T_start - T_env))
+k = -slope(t_i, y_i)
+tau = 1 / k
+```
+
 Rules:
 
 - require `startTempC > ambientTempC`,
 - require at least two usable points with `time_min > 0`,
 - require `temp_c > ambientTempC`,
-- require strictly increasing times; ignore or reject duplicates,
-- compute log-linear least squares,
+- require strictly increasing times; reject duplicates,
 - return `valid: false` when fewer than two points or a non-positive slope,
-- `r2` reports fit quality; the UI warns below `0.98` but still allows the curve.
+- report `R²`; warn below `0.98` but still allow the fit.
 
-`tauMin = 1 / kPerMin`. The whirlpool card continues to consume
-`batch.whirlpool_cooling_time_constant_min`; no model rewrite is required.
+The raw points stay canonical. Do not store a derived `k` in the record.
+
+## Batch integration
+
+The artifact gains one additive root:
+
+- `batch.cooling_curve_id` (`dimension: "reference"`, default `""`)
+
+There is **no** `batch.cooling_curve` selection node. The curve is not a DAG value.
+
+Behaviour:
+
+1. The hops card shows a `Cooling curve` picker with `Default cooling`, seed curves, and
+   user curves.
+2. Selecting a curve:
+   - fits `k`,
+   - copies `ambient_temp_c` into `batch.whirlpool_ambient_temp_c`,
+   - copies `1/k` into `batch.whirlpool_cooling_time_constant_min`,
+   - stores `batch.cooling_curve_id`.
+3. `Default cooling` resets the time constant to `108.7` and clears the id.
+4. Manually editing the time constant clears the id and shows `Custom`.
+5. Deleting the library curve does not change the batch; the copied roots remain.
+6. If a saved id no longer resolves, the picker shows `Missing curve` but the batch
+   still uses its copied values.
+
+The existing time constant remains the solver input. No DAG selection snapshot is
+needed because the curve is authoring-only.
 
 ## UI
 
 ### Library
 
-Add a `Cooling Curves` tab. The generic form gains a list editor:
+Add a `Cooling Curves` tab. The generic record form gains a list editor:
 
 - start temperature, ambient temperature, name, notes,
 - point rows with time and temperature,
@@ -164,81 +234,89 @@ Add a `Cooling Curves` tab. The generic form gains a list editor:
 
 Because records are immutable, the UI says “Saved. Corrections create a new curve.”
 
+The list renderer is generic so future record kinds can use it without artifact
+changes.
+
 ### Hops card
 
-In the whirlpool settings block, next to ambient and cooling time constant:
+In the whirlpool settings block:
 
-- a `Cooling curve` selector with `Default cooling` plus seed and user curves,
-- a `Manage library` link,
-- a readout of the selected curve’s `k`, `tau`, and `R²`,
-- a warning when the fit is poor or the ambient/start values are inconsistent.
+- `Cooling curve` selector with `Default cooling` + seed/user curves,
+- `Manage library` link,
+- selected curve name, `k`, `tau`, and `R²`,
+- warning when the fit is poor or ambient/start values are inconsistent.
 
-Selecting a curve populates the two batch roots. Manual time-constant edits detach.
+## Future reuse
+
+The record schema layer is the reusable piece:
+
+- sparge runoff tables (time/volume or volume/temperature rows),
+- fermentation logs,
+- hop sensory panels or other measurement documents.
+
+If a future record must be displayed inside a batch rather than reduced to scalars,
+add a generic `batch.records` attachment map later. That is a separate plan; cooling
+curves only need the derived scalar roots.
 
 ## Tests
 
-Pure fit:
+Record layer:
+
+- nested list validation accepts valid rows and rejects unknown fields, missing items,
+  bad dimensions, domains, taxonomies, and nested lists inside items,
+- JS and Python validators agree,
+- artifact-backed catalogs are unaffected,
+- library create/read/delete for a cooling curve,
+- seed curves listed read-only.
+
+Fit:
 
 - exact synthetic Newton cooling recovers `k`,
 - noisy points recover `k` within tolerance,
 - one point is invalid,
 - temperatures at or below ambient are rejected,
 - non-increasing times are rejected,
-- R² reflects a poor fit.
-
-Library:
-
-- create/read/delete a cooling curve,
-- nested-list validation in JS and Python,
-- immutable records,
-- seed curves listed read-only.
+- `R²` reflects a poor fit.
 
 Batch:
 
-- selecting a curve copies `ambient` and `tau`,
-- selecting “Default cooling” restores `108.7`,
+- selecting a curve copies ambient and `tau`,
+- `Default cooling` restores `108.7`,
 - editing `tau` clears the selection,
 - deleting a library curve does not change a loaded batch,
-- copy-forward survives save/load/freeze.
+- saved values survive save/load/freeze.
 
 Docs/gates:
 
-- regenerate the artifact inventory,
+- regenerate the artifact inventory (new root only),
 - update `docs/whirlpool-hopping-model.md` with the empirical `k` workflow,
-- update `docs/adding-a-node.md`/grammar docs for nested lists,
+- update `docs/dag-artifacts/seed-substrate.md` or the record-library docs for
+  non-DAG records,
 - `make verify`.
 
 ## Phases
 
-1. **Nested-list grammar** — artifact schema, JS/Python validation, inventory, docs,
-   schema-version/migration notes. Acceptance: `make test` with a nested fixture.
-2. **Cooling curve catalog** — `data/catalogs.json`, seed catalog, reference cache,
-   library tab and row editor. Acceptance: create/read/delete through the library.
-3. **Fit and selection** — pure fit helper, batch roots/selection, selector UI,
-   copy-forward, detach/default. Acceptance: card uses the selected curve and falls
+1. **Record schema layer** — data files, JS/Python validation, catalog merge, library
+   form list renderer. Acceptance: a non-DAG record can be created and validated
+   without changing the artifact grammar.
+2. **Cooling curve catalog** — seed, library tab, point-row editor, immutable CRUD.
+   Acceptance: a curve can be created, read, and deleted.
+3. **Fit and batch integration** — pure fit helper, `batch.cooling_curve_id` root,
+   picker, copy/detach/default. Acceptance: the card uses the selected curve and falls
    back to `108.7`.
 4. **Hardening** — fit-quality warnings, tests, docs, `make verify`.
 
 ## Risks
 
-- Nested-list grammar is a real schema extension, not a form-only change; it touches
-  the artifact, both validators, the library renderer, inventory, and docs.
-- An artifact `schema_version` bump can invalidate older stored preferences; follow
-  the existing version-gate tests and migration policy.
-- A poor measurement or inconsistent ambient produces a misleading `k`; surface
-  `R²` and the raw points, and allow a manual override.
-- Fit `k` is only as good as the temperature sensor and the assumption of a single
-  lumped temperature.
+- The record schema layer duplicates some validation concepts from the artifact; keep
+  dimensions, domains, and taxonomies single-sourced from the artifact.
+- A generic library list editor is a moderate UI change; keep it limited to flat rows.
+- A poor measurement or inconsistent ambient produces a misleading `k`; surface `R²`
+  and the raw points, and allow manual override.
+- Fit `k` is only as good as the temperature sensor and the single-lumped-temperature
+  assumption.
 - Copy-forward means a corrected library curve does not retroactively change an
   existing batch.
-
-## Interim option
-
-If the nested-list grammar is too large for the next slice, a stateless
-“cooling calibration” helper in the hops card could accept start/ambient plus a few
-time/temp pairs, derive `k`, and write the time constant without persisting a record.
-That delivers the empirical determination now and leaves CRUD for the grammar phase.
-It is not a substitute for the catalog plan.
 
 ## Open questions
 
@@ -247,3 +325,5 @@ It is not a substitute for the catalog plan.
 - Should the curve’s ambient override `batch.whirlpool_ambient_temp_c`, or only feed
   the fit? (Current recommendation: copy it, like a water report.)
 - Should duplicate time points be rejected or averaged?
+- Should the first reusable record type after cooling curves be sparge runoff, or wait
+  for a second consumer before generalizing further?
