@@ -317,10 +317,6 @@ samp {
   color: var(--sys-text-secondary);
 }
 
-.collection-readout.is-invalid {
-  color: var(--sys-color-danger-text);
-}
-
 .form-input:disabled,
 .form-input[disabled] {
   opacity: 0.6;
@@ -462,16 +458,8 @@ samp {
   color: var(--sys-color-success-text);
 }
 
-.status-badge-warning {
-  color: var(--sys-color-warning-text);
-}
-
 .status-badge-info {
   color: var(--sys-color-info-text);
-}
-
-.status-badge-danger {
-  color: var(--sys-color-danger-text);
 }
 
 .status-dot {
@@ -930,7 +918,8 @@ samp {
 }
 
 .data-table th,
-.data-table td {
+.data-table td,
+.data-table tfoot td {
   padding: var(--space-3);
   vertical-align: middle;
 }
@@ -939,13 +928,27 @@ samp {
   text-align: center;
 }
 
+.data-table.data-table--dense th,
+.data-table.data-table--dense td {
+  padding: var(--space-2) var(--space-3);
+  text-align: right;
+}
+
+.data-table.data-table--dense th:first-child,
+.data-table.data-table--dense td:first-child,
+.data-table.data-table--dense th:last-child,
+.data-table.data-table--dense td:last-child {
+  text-align: left;
+}
+
 .data-table tbody tr {
   border-bottom: 1px solid var(--sys-border-subtle);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
 }
 
-.data-table tbody tr:last-child {
+.data-table tbody tr:last-child,
+.landing-table tbody tr:last-child {
   border-bottom: none;
 }
 
@@ -954,11 +957,6 @@ samp {
   background-color: var(--sys-surface-subtle);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-}
-
-.data-table tfoot td {
-  padding: var(--space-3);
-  vertical-align: middle;
 }
 
 .data-table tr.is-selected {
@@ -1441,10 +1439,6 @@ samp {
 
 .landing-table tbody tr {
   border-bottom: 1px solid var(--sys-border-subtle);
-}
-
-.landing-table tbody tr:last-child {
-  border-bottom: none;
 }
 
 .landing-table tbody tr:hover {
@@ -2314,46 +2308,6 @@ samp {
 /* ==========================================================================
    Water chemistry card (mode radio, target grid, telemetry, pin modal)
    ========================================================================== */
-
-.water-treated {
-  width: 100%;
-  text-align: left;
-  font-size: var(--text-sm);
-  border-collapse: collapse;
-}
-
-.water-treated thead {
-  background-color: var(--sys-surface-subtle);
-  font-size: var(--text-xs);
-  color: var(--sys-text-secondary);
-  text-transform: uppercase;
-  font-weight: var(--font-weight-bold);
-  border-bottom: 1px solid var(--sys-border-subtle);
-}
-
-.water-treated th,
-.water-treated td {
-  padding: var(--space-2) var(--space-3);
-  vertical-align: middle;
-  text-align: right;
-}
-
-.water-treated th:first-child,
-.water-treated td:first-child,
-.water-treated th:last-child,
-.water-treated td:last-child {
-  text-align: left;
-}
-
-.water-treated tbody tr {
-  border-bottom: 1px solid var(--sys-border-subtle);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
-.water-treated tbody tr:last-child {
-  border-bottom: none;
-}
 
 .telemetry {
   display: flex;

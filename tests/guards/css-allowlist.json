@@ -59,12 +59,10 @@
       "context": "",
       "declarations": "color: var(--sys-color-danger-text)",
       "selectors": [
-        ".collection-readout.is-invalid",
-        ".status-badge-danger",
-        ".text-danger",
-        ".sev-error"
+        ".sev-error",
+        ".text-danger"
       ],
-      "reason": "Phase 3: apply text-danger in markup and keep only the sev-* telemetry exception.",
+      "reason": "Keep the text-danger utility and the dynamic sev-* telemetry exception.",
       "phase": 3
     },
     {
@@ -89,11 +87,10 @@
       "context": "",
       "declarations": "color: var(--sys-color-warning-text)",
       "selectors": [
-        ".status-badge-warning",
-        ".text-warning",
-        ".sev-warning"
+        ".sev-warning",
+        ".text-warning"
       ],
-      "reason": "Phase 3: keep text-warning and the sev-* telemetry exception.",
+      "reason": "Keep the text-warning utility and the dynamic sev-* telemetry exception.",
       "phase": 3
     },
     {
@@ -180,57 +177,6 @@
         ".landing-table-wrap"
       ],
       "reason": "Panel surface recipe; the landing table wrapper mirrors the data-table container."
-    },
-    {
-      "context": "",
-      "declarations": "border-collapse: collapse; font-size: var(--text-sm); text-align: left; width: 100%",
-      "selectors": [
-        ".data-table",
-        ".water-treated"
-      ],
-      "reason": "Phase 3: replace the water table with data-table--dense.",
-      "phase": 3
-    },
-    {
-      "context": "",
-      "declarations": "background-color: var(--sys-surface-subtle); border-bottom: 1px solid var(--sys-border-subtle); color: var(--sys-text-secondary); font-size: var(--text-xs); font-weight: var(--font-weight-bold); text-transform: uppercase",
-      "selectors": [
-        ".data-table thead",
-        ".water-treated thead"
-      ],
-      "reason": "Phase 3: replace the water table with data-table--dense.",
-      "phase": 3
-    },
-    {
-      "context": "",
-      "declarations": "padding: var(--space-3); vertical-align: middle",
-      "selectors": [
-        ".data-table th, .data-table td",
-        ".data-table tfoot td"
-      ],
-      "reason": "Phase 3: fold tfoot cells into the shared table cell padding rule.",
-      "phase": 3
-    },
-    {
-      "context": "",
-      "declarations": "border-bottom: 1px solid var(--sys-border-subtle); font-family: var(--font-mono); font-size: var(--text-xs)",
-      "selectors": [
-        ".data-table tbody tr",
-        ".water-treated tbody tr"
-      ],
-      "reason": "Phase 3: replace the water table with data-table--dense.",
-      "phase": 3
-    },
-    {
-      "context": "",
-      "declarations": "border-bottom: none",
-      "selectors": [
-        ".data-table tbody tr:last-child",
-        ".landing-table tbody tr:last-child",
-        ".water-treated tbody tr:last-child"
-      ],
-      "reason": "Phase 3: keep one last-row rule for data and landing tables.",
-      "phase": 3
     },
     {
       "context": "",
@@ -397,16 +343,6 @@
     {
       "class": "recipes-popover",
       "reason": "Phase 3: dead recipes popover; delete it.",
-      "phase": 3
-    },
-    {
-      "class": "status-badge-danger",
-      "reason": "Phase 3: replace with the text-danger utility and delete it.",
-      "phase": 3
-    },
-    {
-      "class": "status-badge-warning",
-      "reason": "Phase 3: replace with the text-warning utility and delete it.",
       "phase": 3
     },
     {

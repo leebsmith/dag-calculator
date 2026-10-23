@@ -189,23 +189,22 @@ re-measure before starting.
       `.footer-step-count`, plus three water rules removed in Phase 2) →
       `text-xs text-muted`. This touched 14 markup sites; landed as its own
       commit.
-- [ ] Danger group (4: `.collection-readout.is-invalid`, `.status-badge-danger`,
+- [x] Danger group (4: `.collection-readout.is-invalid`, `.status-badge-danger`,
       `.text-danger`, `.sev-error`) → keep `.text-danger` as the utility, apply
       it in markup, keep `.sev-error` per Phase 0.
-- [ ] Warning group (3: `.status-badge-warning`, `.text-warning`,
+- [x] Warning group (3: `.status-badge-warning`, `.text-warning`,
       `.sev-warning`) → same treatment.
-- [ ] Water table: `.water-treated` root, `thead`, and `tbody tr` are
+- [x] Water table: `.water-treated` root, `thead`, and `tbody tr` are
       byte-identical to `.data-table`, `.data-table thead`,
       `.data-table tbody tr`; they are duplicated, not merely similar. Two rules
       genuinely conflict: `th`/`td` padding is `space-2 space-3` vs
       `.data-table`'s `space-3`, and `.data-table thead th { text-align: center }`
-      fights the water table's left-aligned first/last column. Choose
-      **`.data-table` plus a `.data-table--dense` modifier** and delete
-      `.water-treated`; fall back to keeping `.water-treated` only if the
-      modifier changes another table.
-- [ ] `tbody tr:last-child { border-bottom: none }` (3: `.data-table`,
-      `.landing-table`, `.water-treated`) → collapse onto the same decision;
-      keep one rule.
+      fights the water table's left-aligned first/last column. Chose
+      **`.data-table` plus a `.data-table--dense` modifier** and deleted
+      `.water-treated`.
+- [x] `tbody tr:last-child { border-bottom: none }` (3: `.data-table`,
+      `.landing-table`, `.water-treated`) → collapsed onto one shared selector
+      list for the data and landing tables.
 - [ ] Review the remaining ~32 groups; classify each as shared recipe,
       coincidental convergence, or deletion candidate. Roughly 10 are genuine
       recipes (focus rings, button hover, flex-row/flex-column clusters, panel

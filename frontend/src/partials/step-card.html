@@ -192,7 +192,7 @@
                         <template x-if="!c.editable">
                           <span
                             class="collection-readout tabular-nums"
-                            :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
+                            :class="{ 'text-danger': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
                             x-text="row[c.id]"
                           ></span>
                         </template>
