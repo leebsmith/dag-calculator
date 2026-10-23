@@ -1,6 +1,7 @@
 # CSS Consolidation & Drift Guardrails
 
-Status: proposed
+Status: complete
+Completed: 2026-10-23
 Scope: frontend stylesheet and its guardrails
 Out of scope: card behaviour, artifact/data changes, backend
 
