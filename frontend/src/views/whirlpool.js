@@ -10,6 +10,15 @@ export const DEFAULT_INITIAL_TEMP_C = 99;
 const RATE_PREFACTOR = 2.39e11;
 const RATE_EXPONENT_K = 9773;
 
+export const PRODUCT_FORM_UTILIZATION = {
+  t90_pellet: 1.0,
+  flowable_extract: 1.2,
+};
+
+export function productFormUtilization(productForm) {
+  return PRODUCT_FORM_UTILIZATION[productForm] ?? 1.0;
+}
+
 export function relativeIsomerizationRate(tempC) {
   const kelvin = tempC + 273.15;
   if (!(kelvin > 0)) return 0;
@@ -72,6 +81,7 @@ export function whirlpoolIbu({
   initialTempC = DEFAULT_INITIAL_TEMP_C,
   ambientTempC = DEFAULT_AMBIENT_TEMP_C,
   kPerMin = DEFAULT_K_PER_MIN,
+  productForm = "t90_pellet",
 }) {
   if (!(massKg > 0) || !(alphaFraction > 0) || !(volumeL > 0) || !(gravity > 0)) {
     return { ibu: 0, effectiveMinutes: 0, utilization: 0 };
@@ -82,7 +92,8 @@ export function whirlpoolIbu({
     ambientTempC,
     kPerMin,
   });
-  const utilization = whirlpoolUtilization(gravity, effectiveMinutes);
+  const utilization =
+    whirlpoolUtilization(gravity, effectiveMinutes) * productFormUtilization(productForm);
   const concentrationMgL = (massKg * 1000 * alphaFraction * 1000) / volumeL;
   return {
     ibu: concentrationMgL * utilization,
@@ -100,6 +111,7 @@ export function whirlpoolMassKg({
   initialTempC = DEFAULT_INITIAL_TEMP_C,
   ambientTempC = DEFAULT_AMBIENT_TEMP_C,
   kPerMin = DEFAULT_K_PER_MIN,
+  productForm = "t90_pellet",
 }) {
   if (!(ibu > 0) || !(alphaFraction > 0) || !(volumeL > 0) || !(gravity > 0)) return null;
   const effectiveMinutes = effectiveWhirlpoolMinutes({
@@ -108,7 +120,8 @@ export function whirlpoolMassKg({
     ambientTempC,
     kPerMin,
   });
-  const utilization = whirlpoolUtilization(gravity, effectiveMinutes);
+  const utilization =
+    whirlpoolUtilization(gravity, effectiveMinutes) * productFormUtilization(productForm);
   if (!(utilization > 0)) return null;
   const massG = (ibu * volumeL) / (alphaFraction * 1000 * utilization);
   return massG / 1000;

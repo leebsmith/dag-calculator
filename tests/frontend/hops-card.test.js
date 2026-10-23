@@ -115,6 +115,47 @@ test("whirlpool hops: rest duration and initial temperature drive the mass", () 
   assert.ok(coolShort > hotLong, `${coolShort} should exceed ${hotLong}`);
 });
 
+test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+  app.openWhirlpoolHopEditor();
+  app.addCatalogWhirlpoolHop("cascade");
+  app.patchDraftRow(0, { product_form: "flowable_extract", alpha_acid_pct: 0.45 });
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  const extract = app.whirlpoolHopRows[0];
+  assert.equal(extract.product_form, "flowable_extract");
+  assert.match(app.hopForm(extract), /extract/i);
+  assert.equal(app.whirlpoolHopMassUnit, "g");
+  assert.match(app.whirlpoolHopMass(extract), /g$/);
+  assert.equal(extract.ibu, 10);
+  assert.ok(extract.mass_kg > 0);
+
+  app.openWhirlpoolHopEditor();
+  app.patchDraftRow(0, { product_form: "t90_pellet" });
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+  const pellet = app.whirlpoolHopRows[0];
+  assert.ok(extract.mass_kg < pellet.mass_kg, "extract needs less mass at the same alpha");
+});
+
+test("flowable extract doses above the 4 g/gal ceiling warn", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setTargetIbu(100);
+  app.setWhirlpoolFraction(1);
+  app.openWhirlpoolHopEditor();
+  app.addCatalogWhirlpoolHop("cascade");
+  app.patchDraftRow(0, { product_form: "flowable_extract", alpha_acid_pct: 0.45 });
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  assert.match(app.whirlpoolHopDoseWarning, /4 g\/gal/);
+});
+
 test("whirlpool ambient follows the global temperature unit", () => {
   const app = createStepApp();
   app.boot();

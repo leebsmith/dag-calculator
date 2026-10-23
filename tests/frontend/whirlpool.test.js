@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   coolingTemperature,
   effectiveWhirlpoolMinutes,
+  productFormUtilization,
   relativeIsomerizationRate,
   whirlpoolIbu,
   whirlpoolMassKg,
@@ -76,6 +77,26 @@ test("mass back-calculation inverts the forward model", () => {
     ...BASE,
   });
   assert.ok(Math.abs(mass - 0.05) < 1e-12, `mass=${mass}`);
+});
+
+test("flowable extract applies the 1.20 utilization scalar", () => {
+  assert.equal(productFormUtilization("t90_pellet"), 1);
+  assert.equal(productFormUtilization("flowable_extract"), 1.2);
+
+  const common = {
+    alphaFraction: 0.45,
+    volumeL: 20,
+    gravity: 1.05,
+    ...BASE,
+  };
+  const pelletMass = whirlpoolMassKg({ ibu: 30, ...common, productForm: "t90_pellet" });
+  const extractMass = whirlpoolMassKg({ ibu: 30, ...common, productForm: "flowable_extract" });
+  assert.ok(Math.abs(pelletMass / extractMass - 1.2) < 1e-12);
+  assert.ok(Math.abs(whirlpoolMassKg({ ibu: 30, ...common }) - pelletMass) < 1e-12);
+
+  const pellet = whirlpoolIbu({ massKg: 0.02, ...common, productForm: "t90_pellet" });
+  const extract = whirlpoolIbu({ massKg: 0.02, ...common, productForm: "flowable_extract" });
+  assert.ok(Math.abs(extract.ibu / pellet.ibu - 1.2) < 1e-12);
 });
 
 test("cooling temperature follows Newton decay", () => {

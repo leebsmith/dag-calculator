@@ -19,6 +19,11 @@ import { reportError } from "../../observability.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 
+const WHIRLPOOL_HOP_FORMS = [
+  { value: "t90_pellet", label: "T-90 pellets" },
+  { value: "flowable_extract", label: "Flowable CO₂ extract" },
+];
+
 const MAX_VISIBLE = 25;
 
 function makeRow(hop) {
@@ -36,6 +41,7 @@ function makeWhirlpoolRow(hop) {
   return {
     hop_id: hop.id,
     name: hop.name,
+    product_form: "t90_pellet",
     alpha_acid_pct: hop.alpha_acid_pct,
     duration_min: DEFAULT_REST_DURATION_MIN,
     initial_temp_c: DEFAULT_INITIAL_TEMP_C,
@@ -100,6 +106,7 @@ function computeWhirlpoolRows(engine) {
   return rows.map((row) => {
     const minutes = Number(row.duration_min) || 0;
     const initialTempC = Number(row.initial_temp_c) || DEFAULT_INITIAL_TEMP_C;
+    const productForm = row.product_form ?? "t90_pellet";
     const ibu = (Number(row.pct) || 0) * whirlpoolIbu;
     const mass = whirlpoolMassKg({
       ibu,
@@ -110,8 +117,13 @@ function computeWhirlpoolRows(engine) {
       initialTempC,
       ambientTempC,
       kPerMin,
+      productForm,
     });
-    return { ...row, minutes, ibu, mass_kg: mass };
+    const doseGPerGal =
+      typeof mass === "number" && volume > 0
+        ? (mass * 1000) / (volume / 3.785411784)
+        : null;
+    return { ...row, product_form: productForm, minutes, ibu, mass_kg: mass, dose_g_per_gal: doseGPerGal };
   });
 }
 
@@ -157,7 +169,7 @@ export function registerHopCard(app, ctx) {
   const formatMass = (kg, unit = "oz") => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
-    const decimals = unit === "g" ? 0 : 2;
+    const decimals = unit === "g" ? 1 : 2;
     return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
   };
 
@@ -178,13 +190,28 @@ export function registerHopCard(app, ctx) {
     hopRows: [],
     whirlpoolHopRows: [],
     hopMassUnit: "oz",
+    whirlpoolHopMassUnit: "g",
+    whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
 
     toggleHopMassUnit() {
       this.hopMassUnit = cycleUnit(HOP_MASS_UNITS, this.hopMassUnit);
     },
 
+    toggleWhirlpoolHopMassUnit() {
+      this.whirlpoolHopMassUnit = cycleUnit(HOP_MASS_UNITS, this.whirlpoolHopMassUnit);
+    },
+
     hopMass(row) {
       return formatMass(row?.mass_kg, this.hopMassUnit);
+    },
+
+    whirlpoolHopMass(row) {
+      return formatMass(row?.mass_kg, this.whirlpoolHopMassUnit);
+    },
+
+    hopForm(row) {
+      const value = row?.product_form ?? "t90_pellet";
+      return WHIRLPOOL_HOP_FORMS.find((form) => form.value === value)?.label ?? value;
     },
 
     hopAlpha(row) {
@@ -348,7 +375,21 @@ export function registerHopCard(app, ctx) {
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
         if (!masses.length) return rows.length ? "—" : "";
-        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
+        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.whirlpoolHopMassUnit);
+      },
+    },
+    whirlpoolHopDoseWarning: {
+      configurable: true,
+      get() {
+        const doses = (this.whirlpoolHopRows ?? [])
+          .filter((r) => r.product_form === "flowable_extract")
+          .map((r) => r.dose_g_per_gal)
+          .filter((d) => typeof d === "number" && Number.isFinite(d));
+        if (!doses.length) return "";
+        const worst = Math.max(...doses);
+        return worst > 4
+          ? `Flowable extract dose ${worst.toFixed(2)} g/gal exceeds the 4 g/gal saturation ceiling.`
+          : "";
       },
     },
   });
@@ -365,8 +406,13 @@ export const KEYS = [
   "hopRows",
   "whirlpoolHopRows",
   "hopMassUnit",
+  "whirlpoolHopMassUnit",
+  "whirlpoolHopForms",
   "toggleHopMassUnit",
+  "toggleWhirlpoolHopMassUnit",
   "hopMass",
+  "whirlpoolHopMass",
+  "hopForm",
   "hopAlpha",
   "hopBoilPct",
   "hopMinutes",
@@ -388,4 +434,5 @@ export const KEYS = [
   "hopTotalMassKg",
   "hopTotalMassDisplay",
   "whirlpoolHopTotalMassDisplay",
+  "whirlpoolHopDoseWarning",
 ];

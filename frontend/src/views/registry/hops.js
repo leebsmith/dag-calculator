@@ -25,6 +25,7 @@ export const hopsRegistry = {
   "batch.whirlpool_hops": { label: "Whirlpool hops" },
   "batch.whirlpool_hops.hop_id": { label: "Hop ID" },
   "batch.whirlpool_hops.name": { label: "Hop" },
+  "batch.whirlpool_hops.product_form": { label: "Form" },
   "batch.whirlpool_hops.alpha_acid_pct": { label: "Alpha", displayUnit: "pct" },
   "batch.whirlpool_hops.duration_min": { label: "Rest", unit: "min" },
   "batch.whirlpool_hops.initial_temp_c": { label: "Initial temp", unit: "°C" },

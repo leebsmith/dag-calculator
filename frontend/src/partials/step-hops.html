@@ -165,9 +165,9 @@
                 <button
                   type="button"
                   class="unit-badge"
-                  title="Change hop mass unit"
-                  @click="toggleHopMassUnit()"
-                  x-text="hopMassUnit"
+                  title="Change whirlpool hop mass unit"
+                  @click="toggleWhirlpoolHopMassUnit()"
+                  x-text="whirlpoolHopMassUnit"
                 ></button>
               </th>
             </tr>
@@ -175,14 +175,17 @@
           <tbody>
             <template x-for="(row, ri) in whirlpoolHopRows" :key="ri">
               <tr>
-                <td><span class="font-medium" x-text="row.name"></span></td>
+                <td>
+                  <div class="font-medium" x-text="row.name"></div>
+                  <div class="text-xs text-muted" x-text="hopForm(row)"></div>
+                </td>
                 <td class="text-right tabular-nums" x-text="hopAlpha(row)"></td>
                 <td class="text-right tabular-nums" x-text="hopMinutes(row)"></td>
                 <td class="text-right tabular-nums" x-text="hopTemp(row)"></td>
                 <td class="text-right tabular-nums" x-text="row.parts"></td>
                 <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
                 <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
-                <td class="text-right tabular-nums" x-text="hopMass(row)"></td>
+                <td class="text-right tabular-nums" x-text="whirlpoolHopMass(row)"></td>
               </tr>
             </template>
             <template x-if="whirlpoolHopRows.length === 0">
@@ -213,6 +216,10 @@
       <p class="form-hint" x-show="whirlpoolHopRows.length > 0 && whirlpoolHopRows.some((r) => r.mass_kg == null)">
         Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
       </p>
+      <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'flowable_extract')">
+        Flowable extract: weigh the lot CoA alpha (typically 40–55%). Typical dose is 1.5–3.5 g/gal.
+      </p>
+      <p class="form-hint text-warning" x-show="whirlpoolHopDoseWarning" x-text="whirlpoolHopDoseWarning"></p>
     </section>
 
     <div class="grain-bill-summary" x-show="hopRows.length > 0 || whirlpoolHopRows.length > 0">

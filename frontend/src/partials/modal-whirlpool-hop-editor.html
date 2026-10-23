@@ -187,6 +187,22 @@
                   />
                 </div>
                 <div class="form-group">
+                  <label class="form-label text-xs">Form</label>
+                  <select
+                    class="form-select text-xs"
+                    :value="whirlpoolHopActiveRow.product_form || 't90_pellet'"
+                    @change="patchDraftRow(whirlpoolHopActiveIndex, { product_form: $event.target.value })"
+                  >
+                    <template x-for="form in whirlpoolHopForms" :key="form.value">
+                      <option
+                        :value="form.value"
+                        :selected="form.value === (whirlpoolHopActiveRow.product_form || 't90_pellet')"
+                        x-text="form.label"
+                      ></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label class="form-label text-xs">Alpha acid (%)</label>
                   <input
                     type="number"
@@ -198,6 +214,13 @@
                     @input="setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
                   />
                   <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
+                  <span
+                    class="form-hint"
+                    x-show="whirlpoolHopActiveRow.product_form === 'flowable_extract'"
+                  >
+                    Use the lot CoA alpha (typically 40–55%). Dosed by weight; no vegetative absorption.
+                    Typical dose is 1.5–3.5 g/gal; >4 g/gal risks oil slicking.
+                  </span>
                 </div>
               </div>
             </template>

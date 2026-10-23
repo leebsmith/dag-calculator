@@ -407,6 +407,10 @@
       "oz",
       "g",
       "ml"
+    ],
+    "whirlpool_hop_form": [
+      "t90_pellet",
+      "flowable_extract"
     ]
   },
   "functions": {
@@ -1413,6 +1417,10 @@
     "whirlpool_hop_row": {
       "hop_id": {},
       "name": {},
+      "product_form": {
+        "taxonomy": "whirlpool_hop_form",
+        "default": "t90_pellet"
+      },
       "alpha_acid_pct": {
         "dimension": "percentage",
         "domain": {

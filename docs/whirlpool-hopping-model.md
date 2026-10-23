@@ -4,11 +4,11 @@ Canonical theory and equations for whirlpool bitterness. The implementation is
 host-side (like the Tinseth boil helpers); the artifact owns the hop charges,
 targets, and the rest/cooling inputs.
 
-Status: implemented model for T-90 pellets, target-driven IBU, per-charge rest
-duration and initial temperature, and batch-level ambient temperature and
-cooling time constant. Product-form multipliers, oil retention, humulinone
-bitterness, active chilling, and equipment cooling curves are documented as
-deferred.
+Status: implemented model for T-90 pellets and flowable CO₂ extracts,
+target-driven IBU, per-charge rest duration and initial temperature, and
+batch-level ambient temperature and cooling time constant. Cryo multipliers,
+oil retention, humulinone bitterness, active chilling, and equipment cooling
+curves are documented as deferred.
 
 ## 1. Notation
 
@@ -26,6 +26,7 @@ deferred.
 | `m` | Hop charge mass | kg |
 | `A` | Alpha-acid fraction | decimal |
 | `U` | Fractional isomerization utilization | — |
+| `C_trub` | Product-form utilization scalar | — |
 
 `k` and the ambient temperature are batch-level model inputs. Duration and
 initial temperature are per hop charge.
@@ -107,8 +108,15 @@ Gravity factor and time factor:
 ```
 f_gravity(G) = 1.65 · 0.000125^(G - 1)
 f_time(t_eff) = (1 - exp(-0.04 · t_eff)) / 4.15
-U = f_gravity(G) · f_time(t_eff)
+U = f_gravity(G) · f_time(t_eff) · C_trub
 ```
+
+Product-form scalar:
+
+| Form | `C_trub` | Notes |
+|---|---|---|
+| T-90 pellets | 1.00 | Baseline, including the empirical trub loss built into Tinseth |
+| Flowable CO₂ extract | 1.20 | No vegetative surface area; bypasses much of the trub adsorption loss |
 
 Forward IBU from a hop charge:
 
@@ -127,6 +135,17 @@ the total IBU target into boil and whirlpool pools; each hop table normalizes
 its `parts` into shares of its own pool and back-calculates mass with the
 inverse model.
 
+### Flowable extract practice
+
+- Dose gravimetrically; the card derives grams and defaults whirlpool mass to
+  grams. No density or volumetric conversion is used.
+- Enter the lot certificate-of-analysis alpha, typically `0.40–0.55`.
+- At equal alpha and IBU target, extract mass is `1 / 1.20` of pellet mass.
+- Typical whirlpool dosing is `1.5–3.5 g/gal`; above `4 g/gal`, oil slicking and
+  diminishing returns become likely.
+- `R_absorption = 0` for extract. The model already uses the post-boil hot
+  kettle volume and does not subtract hop vegetative absorption.
+
 ## 6. Reference vectors
 
 Implemented test vectors:
@@ -137,6 +156,7 @@ Implemented test vectors:
 | 50 g at 10% AA, 20 L, 1.050, above case | `28.327469657` IBU |
 | Isothermal 100 °C, 30 min | `t_eff = 30.276952309` min |
 | Isothermal 60 °C, 20 min | `t_eff = 0.869642856` min |
+| 30 IBU, 20 L, 1.050, 30 min, 45% AA extract | `≈ 9.81 g` extract |
 
 ## 7. Reconciliation with the hot-side reference
 
@@ -148,8 +168,8 @@ contract.
 - The implementation uses `9773 K` and `2.39e11` from the provided whirlpool
   model. The `Ea/R ≈ 9500 K` figure in the hot-side reference is a rounded
   alternate fit and is not used.
-- V1 assumes T-90 pellets: `M_form = 1.0`. Cryo and flowable-extract multipliers
-  are deferred.
+- V1 supports T-90 pellets (`C_trub = 1.0`) and flowable CO₂ extracts
+  (`C_trub = 1.20`). Cryo multipliers are deferred.
 - Oil retention, humulinone bitterness, and perceived-bitterness offsets are
   deferred.
 - Ambient temperature and cooling decay are inputs, not constants in the model
@@ -158,8 +178,9 @@ contract.
 ## 8. Limitations
 
 - Single lumped wort temperature; no stratification or active chilling.
-- No hop-form multiplier, trub adsorption, pH/fermentation losses, or dry-hop
-  contribution.
+- Product forms are limited to T-90 pellets and flowable CO₂ extract. Cryo,
+  pellet vegetative absorption, pH/fermentation losses, and dry-hop contribution
+  are not modelled.
 - No oil or sensory prediction; the output is IBU only.
 - The cooling constant must be calibrated for a vessel and fill volume.
 
