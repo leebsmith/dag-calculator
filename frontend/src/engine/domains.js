@@ -120,5 +120,24 @@ export function fieldDomainStates(artifact, resolveRef) {
       });
     }
   }
+  for (const [namespace, schemaId] of Object.entries(artifact.identity ?? {})) {
+    const schema = schemas[schemaId] ?? {};
+    for (const [field, spec] of Object.entries(schema)) {
+      if (!spec.domain) continue;
+      let value;
+      try {
+        value = resolveRef(`${namespace}.${field}`);
+      } catch {
+        continue;
+      }
+      if (value === undefined) continue;
+      const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
+      states.push({
+        namespace,
+        field,
+        ...evaluateDomain(spec.domain, value, resolveLimitFn),
+      });
+    }
+  }
   return states;
 }

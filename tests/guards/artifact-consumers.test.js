@@ -11,7 +11,7 @@ import { artifact } from "./util.js";
 
 // Read by frontend/src/adapters/fieldActions.js when the constraint topology
 // changes; never referenced by an expression.
-const HOST_CONSTANTS = new Set(["default_runoff_ratio"]);
+const HOST_CONSTANTS = new Set(["default_runoff_ratio", "default_equipment_profile_id"]);
 
 // Restated by the Python solvers and pinned to this file by
 // tests/backend/conformance/test_artifact_constants.py.

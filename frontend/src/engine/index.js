@@ -20,7 +20,7 @@ export { evaluatePredicate, relationStates } from "./relations.js";
 export { checkDomain, domainStates, fieldDomainStates, collectionDomainStates } from "./domains.js";
 export { canonicalize, canonicalFingerprint, BoundaryCache } from "./boundary.js";
 export { sha256Hex } from "./sha256.js";
-export { getField, resolveReference } from "./paths.js";
+export { getField, refKey, resolveReference } from "./paths.js";
 export {
   toBase,
   fromBase,

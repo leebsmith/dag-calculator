@@ -20,17 +20,17 @@ export function buildGraph(artifact) {
     if (node.kind === "derived" || node.kind === "boundary") {
       for (const path of Object.values(node.inputs)) {
         const r = resolveReference(artifact, path);
-        if (r) deps.push(r.nodeId);
+        if (r?.kind === "node") deps.push(r.nodeId);
       }
     } else if (node.kind === "selection") {
       const r = resolveReference(artifact, node.ref);
-      if (r) deps.push(r.nodeId);
+      if (r?.kind === "node") deps.push(r.nodeId);
     } else if (node.kind === "root" || node.kind === "choice") {
       // A default expression is evaluated lazily when the node is unset, so
       // any node it references is a real dependency (not a hidden one).
       for (const path of collectRefs(node.default)) {
         const r = resolveReference(artifact, path);
-        if (r) deps.push(r.nodeId);
+        if (r?.kind === "node") deps.push(r.nodeId);
       }
     }
     adjacency[id] = deps;
@@ -77,6 +77,12 @@ export function topologicalSort(adjacency, dependents) {
 }
 
 export function createEngine(artifact, options = {}) {
+  const identity = options.identity ?? {};
+  if (Object.keys(artifact.identity ?? {}).length > 0 && Object.keys(identity).length === 0) {
+    throw new Error(
+      "identity is required: supply the equipment, water source, and style components"
+    );
+  }
   const roots = new Map(Object.entries(options.roots ?? {}));
   const references = options.references ?? {};
   const collections = options.collections ?? {};
@@ -107,6 +113,9 @@ export function createEngine(artifact, options = {}) {
   function resolveValue(path) {
     const r = resolveReference(artifact, path);
     if (!r) throw new Error(`Unresolved reference "${path}"`);
+    if (r.kind === "identity") {
+      return getField(identity[r.namespace], r.suffix.join("."));
+    }
     const node = artifact.nodes[r.nodeId];
     if (r.suffix.length === 0) return get(r.nodeId);
     if (node.kind === "boundary") {
@@ -236,6 +245,7 @@ export function createEngine(artifact, options = {}) {
   }
 
   return {
+    identity,
     get,
     resolve: resolveValue,
     call(fnId, args) {

@@ -22,6 +22,11 @@ separate, later step and is deliberately out of scope here.
 (`boundary` is heavier — it needs a host-registered solver — and is not covered
 here.)
 
+**Identity is not a node.** Equipment, water source, and style are supplied as
+immutable component snapshots (see `artifact.identity`) and addressed through their
+namespaces; do not add `*_id` roots or selections for them. A new immutable context
+component is a new `identity` namespace, not a node.
+
 **Prefer a `default` over a host copy.** If a root should take its value from a
 selection (a profile field, a style envelope), declare a `default` that reads
 that field — the root inherits while unset and becomes an override once set. Do

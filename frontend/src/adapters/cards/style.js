@@ -17,7 +17,6 @@ import {
   oeSliceAt,
   aeSliceAt,
 } from "../../engine/fermentation.js";
-import { derivationsFor } from "../../views/seedDerivations.js";
 import { styleConformance } from "../../engine/styleConformance.js";
 import { STYLE_NODES as N } from "../../views/registry/style.js";
 import {
@@ -116,29 +115,15 @@ export function registerStyleCard(app, ctx) {
     },
 
     selectStyle(id) {
-      this.setRoot(N.styleId, id);
-      const style = cache.references.style[id];
-      this.pickSelection(N.styleId, id);
-      this.resetSeededRoots(N.selectionNode);
-      if (style) {
-        for (const { rootId, derive } of derivationsFor(N.selectionNode)) {
-          const value = derive(style);
-          if (typeof value === "number" || (typeof value === "string" && value !== "")) {
-            this.setRoot(rootId, value);
-          }
-        }
-      }
+      this.setIdentityComponent("style", cache.references.style[id] ?? null);
       this.refreshTargets();
       this.scheduleSolve();
-      this.notify();
     },
 
     clearStyleSelection() {
-      this.setRoot(N.styleId, "");
-      this.pickSelection(N.styleId, "");
-      this.resetSeededRoots(N.selectionNode);
+      this.setIdentityComponent("style", null);
+      this.refreshTargets();
       this.scheduleSolve();
-      this.notify();
     },
 
     styleField(id) {
@@ -150,12 +135,12 @@ export function registerStyleCard(app, ctx) {
     // (batch.style_* roots) so it tracks envelope edits (WYSIWYG).
     computeStyleTarget() {
       const envelope = {
-        ogMin: engine.get(N.envelope.ogMin),
-        ogMax: engine.get(N.envelope.ogMax),
-        fgMin: engine.get(N.envelope.fgMin),
-        fgMax: engine.get(N.envelope.fgMax),
-        abvMin: engine.get(N.envelope.abvMin),
-        abvMax: engine.get(N.envelope.abvMax),
+        ogMin: engine.resolve(N.envelope.ogMin),
+        ogMax: engine.resolve(N.envelope.ogMax),
+        fgMin: engine.resolve(N.envelope.fgMin),
+        fgMax: engine.resolve(N.envelope.fgMax),
+        abvMin: engine.resolve(N.envelope.abvMin),
+        abvMax: engine.resolve(N.envelope.abvMax),
       };
       const complete =
         envelope.ogMin < envelope.ogMax &&
@@ -271,19 +256,19 @@ export function registerStyleCard(app, ctx) {
         return null;
       }
       const envelope = {
-        ogMin: engine.get(N.envelope.ogMin),
-        ogMax: engine.get(N.envelope.ogMax),
-        fgMin: engine.get(N.envelope.fgMin),
-        fgMax: engine.get(N.envelope.fgMax),
-        abvMin: engine.get(N.envelope.abvMin),
-        abvMax: engine.get(N.envelope.abvMax),
-        ibuMin: engine.get(N.envelope.ibuMin),
-        ibuMax: engine.get(N.envelope.ibuMax),
-        srmMin: engine.get(N.envelope.srmMin),
-        srmMax: engine.get(N.envelope.srmMax),
+        ogMin: engine.resolve(N.envelope.ogMin),
+        ogMax: engine.resolve(N.envelope.ogMax),
+        fgMin: engine.resolve(N.envelope.fgMin),
+        fgMax: engine.resolve(N.envelope.fgMax),
+        abvMin: engine.resolve(N.envelope.abvMin),
+        abvMax: engine.resolve(N.envelope.abvMax),
+        ibuMin: engine.resolve(N.envelope.ibuMin),
+        ibuMax: engine.resolve(N.envelope.ibuMax),
+        srmMin: engine.resolve(N.envelope.srmMin),
+        srmMax: engine.resolve(N.envelope.srmMax),
       };
       const report = styleConformance({ og, fg, abv, ibu, srm }, envelope);
-      report.styleId = engine.get(N.styleId) || null;
+      report.styleId = engine.identity?.style?.id ?? null;
       return report;
     },
   });
@@ -498,7 +483,14 @@ export function registerStyleCard(app, ctx) {
     styleSourceModel: {
       configurable: true,
       get() {
-        return fieldOr(this.fieldsById, N.styleSource);
+        return {
+          id: "style",
+          value: this.styleSource,
+          options: ["styleguide", "experimental"],
+          optionLabels: { styleguide: "Style guide", experimental: "Experimental" },
+          editable: false,
+          target: null,
+        };
       },
     },
     // Envelope editors, in display order, with resolved field models and seed
@@ -590,8 +582,8 @@ export function registerStyleCard(app, ctx) {
 }
 
 export function refreshStyleCard(app, ctx) {
-  app.selectedStyleId = ctx.engine.get(N.styleId) || "";
-  app.styleSource = ctx.engine.get(N.styleSource) || "styleguide";
+  app.selectedStyleId = ctx.engine.identity?.style?.id ?? "";
+  app.styleSource = ctx.engine.identity?.style?.id ? "styleguide" : "experimental";
   app.computeStyleTarget();
   app.refreshTargets();
 }

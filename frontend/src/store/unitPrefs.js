@@ -14,6 +14,10 @@ function fieldDimension(artifact, id) {
   if (artifact.nodes && id in artifact.nodes) return nodeDimension(artifact, id);
   const ref = resolveReference(artifact, id);
   if (!ref) return null;
+  if (ref.kind === "identity") {
+    const schemaId = artifact.identity?.[ref.namespace];
+    return artifact.primitive_schemas?.[schemaId]?.[ref.suffix[0]]?.dimension ?? null;
+  }
   const owner = artifact.nodes?.[ref.nodeId];
   if (!owner) return null;
   if (owner.kind === "boundary") {

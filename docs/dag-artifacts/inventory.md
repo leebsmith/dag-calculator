@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **5**
+- `schema_version`: **6**
 
 ## Dimensions
 
@@ -142,7 +142,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.conversion_efficiency` | root |
 | `batch.delta_v_evap` | derived |
 | `batch.dry_hops` | collection |
-| `batch.equipment_profile_id` | root |
 | `batch.fermentation` | choice |
 | `batch.grain_moisture_fraction` | root |
 | `batch.hlt_starting_volume_l` | root |
@@ -153,19 +152,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.s_late_add` | derived |
 | `batch.shrinkage_volume_l` | derived |
 | `batch.sparge_salted_volume` | derived |
-| `batch.style` | selection |
-| `batch.style_abv_max` | root |
-| `batch.style_abv_min` | root |
-| `batch.style_fg_max` | root |
-| `batch.style_fg_min` | root |
-| `batch.style_ibu_max` | root |
-| `batch.style_ibu_min` | root |
-| `batch.style_id` | root |
-| `batch.style_og_max` | root |
-| `batch.style_og_min` | root |
-| `batch.style_source` | choice |
-| `batch.style_srm_max` | root |
-| `batch.style_srm_min` | root |
 | `batch.sugars` | collection |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |
@@ -181,7 +167,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.whirlpool_target_ibu` | derived |
 | `batch.yeast` | selection |
 | `batch.yeast_id` | root |
-| `equipment.profile` | selection |
 | `grist.finished_beer_srm` | derived |
 | `grist.major_malts` | collection |
 | `grist.mcu` | derived |
@@ -211,8 +196,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.pinned_ions` | collection |
 | `water.preferred_alkaline_agent` | choice |
 | `water.salt_distribution` | choice |
-| `water.source_report` | selection |
-| `water.source_report_id` | root |
 | `water.strategy` | choice |
 | `water.target.alkalinity_as_caco3` | root |
 | `water.target.calcium_ca` | root |

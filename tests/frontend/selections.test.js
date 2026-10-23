@@ -5,7 +5,7 @@ import { createCalculator } from "../../frontend/src/engine/index.js";
 import { createSession } from "../../frontend/src/adapters/session.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
-import { loadArtifact } from "./helpers.js";
+import { identityFixture, loadArtifact } from "./helpers.js";
 
 const artifact = loadArtifact();
 const cache = createReferenceCache();
@@ -14,6 +14,7 @@ const [YEAST_ID, YEAST] = Object.entries(cache.references.yeast)[0];
 test("the engine resolves a selection from the batch snapshot first", () => {
   const snapshot = { ...YEAST, name: "Snapshot Yeast" };
   const calc = createCalculator(artifact, {
+    identity: identityFixture(),
     references: { yeast: { [YEAST_ID]: { ...YEAST, name: "Library Yeast" } } },
     selections: { "batch.yeast": snapshot },
     roots: { "batch.yeast_id": YEAST_ID },
@@ -24,6 +25,7 @@ test("the engine resolves a selection from the batch snapshot first", () => {
 
 test("without a snapshot the engine falls back to the library reference", () => {
   const calc = createCalculator(artifact, {
+    identity: identityFixture(),
     references: { yeast: { [YEAST_ID]: YEAST } },
     roots: { "batch.yeast_id": YEAST_ID },
   });
@@ -37,7 +39,12 @@ test("library edits do not perturb a batch that carries a snapshot", () => {
     collections: {},
   };
   const master = { allRoots: () => ({ "batch.yeast_id": YEAST_ID }), replaceRoots() {} };
-  const session = createSession({ artifact, cache: localCache, master });
+  const session = createSession({
+    artifact,
+    cache: localCache,
+    master,
+    identity: identityFixture(),
+  });
   session.setSelection("batch.yeast", YEAST);
 
   localCache.references.yeast[YEAST_ID] = { ...YEAST, name: "Edited In The Library" };

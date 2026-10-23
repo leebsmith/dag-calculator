@@ -23,6 +23,7 @@ class DraftPayload(BaseModel):
     """
 
     name: Annotated[str, StringConstraints(max_length=200)] = "Untitled"
+    identity: dict[str, dict[str, Any]] = Field(default_factory=dict)
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
     selections: dict[str, dict[str, Any]] = Field(default_factory=dict)
@@ -91,6 +92,9 @@ class BatchRecord(BaseModel):
     created_at: float
     updated_at: float
     trashed: bool = False
+
+    # identity is batch-level and immutable for the record's life
+    identity: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     # draft-only state
     roots: dict[str, Any] = Field(default_factory=dict)

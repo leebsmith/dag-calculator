@@ -95,6 +95,7 @@ export async function open(batchId) {
   conflictRemote = null;
   setSaveState("idle");
   await app?.loadState({
+    ...(b.identity ? { identity: b.identity } : {}),
     roots: b.roots,
     collections: b.collections,
     selections: b.selections,
@@ -115,6 +116,7 @@ export async function fork(frozenId) {
   const created = await client.upsertBatch(crypto.randomUUID(), {
     name: `${frozen.name} (copy)`,
     parent_batch_id: frozen.id,
+    identity: frozen.identity,
     roots: frozen.roots,
     collections: frozen.collections,
     selections: frozen.selections ?? {},
@@ -132,6 +134,7 @@ export async function fork(frozenId) {
   conflictRemote = null;
   setSaveState("idle");
   await app?.loadState({
+    ...(created.identity ? { identity: created.identity } : {}),
     roots: created.roots,
     collections: created.collections,
     selections: created.selections,
@@ -260,6 +263,7 @@ export async function resolveConflictByReload() {
   conflictRemote = null;
   setSaveState("idle");
   await app?.loadState({
+    ...(remote.identity ? { identity: remote.identity } : {}),
     roots: remote.roots,
     collections: remote.collections,
     selections: remote.selections,

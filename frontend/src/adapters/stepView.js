@@ -40,7 +40,10 @@ export function createStepView({
     const engine = session.getEngine();
     const fieldDomains = safe(() => engine.fieldDomainStates());
     const fieldDomainIndex = {};
-    for (const d of fieldDomains) fieldDomainIndex[`${d.selectionNodeId}.${d.field}`] = d;
+    for (const d of fieldDomains) {
+      const owner = d.namespace ?? d.selectionNodeId;
+      fieldDomainIndex[`${owner}.${d.field}`] = d;
+    }
 
     const collectionDomains = safe(() => engine.collectionDomainStates());
     const collectionIndex = {};
@@ -90,8 +93,8 @@ export function createStepView({
     }
     for (const d of fieldDomains) {
       if (d.holds !== false) continue;
-      const slice =
-        fieldSlice.get(`${d.selectionNodeId}.${d.field}`) ?? selectionSlice.get(d.selectionNodeId);
+      const path = `${d.namespace ?? d.selectionNodeId}.${d.field}`;
+      const slice = fieldSlice.get(path) ?? selectionSlice.get(d.namespace ?? d.selectionNodeId);
       app.stepStatus[slice]?.domains.push(d);
     }
     for (const d of collectionDomains) {

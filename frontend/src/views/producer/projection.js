@@ -38,6 +38,18 @@ export function describeField(artifact, id) {
   }
   const ref = resolveReference(artifact, id);
   if (!ref) throw new Error(`Manifest references unknown node/field "${id}"`);
+  if (ref.kind === "identity") {
+    const schemaId = artifact.identity?.[ref.namespace];
+    const fieldSpec = artifact.primitive_schemas?.[schemaId]?.[ref.suffix[0]] ?? {};
+    return {
+      kind: "path",
+      isInput: false,
+      node: null,
+      dimension: fieldSpec.dimension ?? null,
+      taxonomy: fieldSpec.taxonomy ?? null,
+      identityNamespace: ref.namespace,
+    };
+  }
   const owner = artifact.nodes[ref.nodeId];
   const suffix = ref.suffix.join(".");
   if (owner?.kind === "boundary") {

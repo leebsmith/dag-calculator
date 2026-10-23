@@ -143,6 +143,11 @@ export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
     if (Object.prototype.hasOwnProperty.call(inputDims, name)) return inputDims[name];
     const r = resolveReference(artifact, name);
     if (!r) return null;
+    if (r.kind === "identity") {
+      const schemaId = artifact.identity?.[r.namespace];
+      const spec = artifact.primitive_schemas?.[schemaId]?.[r.suffix[0]];
+      return spec ? spec.dimension ?? spec.taxonomy ?? null : null;
+    }
     const node = artifact.nodes[r.nodeId];
     if (r.suffix.length === 0) return nodeDimension(artifact, r.nodeId);
     const suffix = r.suffix.join(".");
@@ -205,7 +210,7 @@ export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
     let itemSchema = collName ? collSchemas[collName] : null;
     if (!itemSchema && collName) {
       const r = resolveReference(artifact, collName);
-      const cn = r ? artifact.nodes[r.nodeId] : null;
+      const cn = r?.kind === "node" ? artifact.nodes[r.nodeId] : null;
       if (cn?.kind === "collection") itemSchema = cn.item_schema;
     }
     const schema = itemSchema ? artifact.primitive_schemas?.[itemSchema] ?? {} : {};
@@ -238,7 +243,7 @@ export function validateDerivedDimensions(artifact) {
       // selection/collection field, or node), not just the node.
       inputDims[alias] = inferExprDimension(artifact, { ref: path }, {});
       const r = resolveReference(artifact, path);
-      const cn = r && r.suffix.length === 0 ? artifact.nodes[r.nodeId] : null;
+      const cn = r?.kind === "node" && r.suffix.length === 0 ? artifact.nodes[r.nodeId] : null;
       if (cn?.kind === "collection") collSchemas[alias] = cn.item_schema;
     }
     const inferred = inferExprDimension(artifact, node.expr, inputDims, { collSchemas });

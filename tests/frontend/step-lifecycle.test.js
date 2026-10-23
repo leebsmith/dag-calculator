@@ -3,17 +3,22 @@ import assert from "node:assert/strict";
 
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 
-const ENVELOPE = {
-  "batch.style_id": "21A",
-  "batch.style_og_min": 1.056,
-  "batch.style_og_max": 1.07,
-  "batch.style_fg_min": 1.01,
-  "batch.style_fg_max": 1.018,
-  "batch.style_abv_min": 5.5,
-  "batch.style_abv_max": 7.5,
-  "batch.target_srm": 20,
-  "batch.target_ibu": 55,
+const STYLE = {
+  id: "21A",
+  name: "American IPA",
+  og_min: 1.056,
+  og_max: 1.07,
+  fg_min: 1.01,
+  fg_max: 1.018,
+  abv_min: 5.5,
+  abv_max: 7.5,
+  ibu_min: 40,
+  ibu_max: 70,
+  srm_min: 6,
+  srm_max: 14,
 };
+
+const ENVELOPE = { "batch.target_srm": 20, "batch.target_ibu": 55 };
 
 const HOP_ROWS = [
   {
@@ -47,7 +52,10 @@ test("loadState rebinds the style card to the new engine", async () => {
   const app = createStepApp();
   await app.boot();
 
-  await app.loadState({ roots: ENVELOPE });
+  await app.loadState({
+    identity: { equipment: {}, "water.source": {}, style: STYLE },
+    roots: ENVELOPE,
+  });
 
   assert.equal(app.selectedStyleId, "21A");
   assert.equal(app.styleEnvelope.ogMin, 1.056);

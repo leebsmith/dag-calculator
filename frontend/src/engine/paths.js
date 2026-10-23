@@ -12,30 +12,37 @@ export function getField(obj, path) {
   return current;
 }
 
-// Resolve a dotted reference path to a node id plus an optional field/output
-// suffix. Longest-prefix match over declared node ids, with a slice-level
-// fallback for selection nodes (e.g. "equipment.mash_tun_specific_heat" ->
-// selection node "equipment.profile", suffix "mash_tun_specific_heat").
+// Resolve a dotted path to either a graph node (plus an optional selection /
+// collection field or boundary output suffix) or an identity namespace declared
+// in `artifact.identity` (plus a component-field suffix). Longest-prefix match,
+// nodes before identity namespaces.
 export function resolveReference(artifact, path) {
   const nodes = artifact.nodes;
   if (Object.prototype.hasOwnProperty.call(nodes, path)) {
-    return { nodeId: path, suffix: [] };
+    return { kind: "node", nodeId: path, suffix: [], path };
   }
 
   const segments = path.split(".");
   for (let i = segments.length - 1; i >= 1; i--) {
     const prefix = segments.slice(0, i).join(".");
     if (Object.prototype.hasOwnProperty.call(nodes, prefix)) {
-      return { nodeId: prefix, suffix: segments.slice(i) };
+      return { kind: "node", nodeId: prefix, suffix: segments.slice(i), path };
     }
   }
 
-  const slice = segments[0];
-  for (const [id, node] of Object.entries(nodes)) {
-    if (node.kind === "selection" && id.split(".")[0] === slice) {
-      return { nodeId: id, suffix: segments.slice(1) };
+  const identity = artifact.identity ?? {};
+  for (let i = segments.length; i >= 1; i--) {
+    const prefix = segments.slice(0, i).join(".");
+    if (Object.prototype.hasOwnProperty.call(identity, prefix)) {
+      return { kind: "identity", namespace: prefix, suffix: segments.slice(i), path };
     }
   }
 
   return null;
+}
+
+// The canonical key for a resolved reference: the original path, so node and
+// identity paths share one key space (used for field-domain lookups).
+export function refKey(ref) {
+  return ref ? ref.path : null;
 }

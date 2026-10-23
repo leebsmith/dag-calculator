@@ -1,20 +1,17 @@
-// Presentation metadata for the style slice (selection picker + envelope roots).
+// Presentation metadata for the style slice (identity declaration + targets).
 export const STYLE_NODES = {
-  styleId: "batch.style_id",
-  styleSource: "batch.style_source",
-  selectionNode: "batch.style",
   fermentation: "batch.fermentation",
   envelope: {
-    ogMin: "batch.style_og_min",
-    ogMax: "batch.style_og_max",
-    fgMin: "batch.style_fg_min",
-    fgMax: "batch.style_fg_max",
-    abvMin: "batch.style_abv_min",
-    abvMax: "batch.style_abv_max",
-    ibuMin: "batch.style_ibu_min",
-    ibuMax: "batch.style_ibu_max",
-    srmMin: "batch.style_srm_min",
-    srmMax: "batch.style_srm_max",
+    ogMin: "style.og_min",
+    ogMax: "style.og_max",
+    fgMin: "style.fg_min",
+    fgMax: "style.fg_max",
+    abvMin: "style.abv_min",
+    abvMax: "style.abv_max",
+    ibuMin: "style.ibu_min",
+    ibuMax: "style.ibu_max",
+    srmMin: "style.srm_min",
+    srmMax: "style.srm_max",
   },
   targets: {
     srm: "batch.target_srm",
@@ -36,14 +33,6 @@ export const STYLE_NODES = {
 };
 
 export const styleRegistry = {
-  "batch.style_source": {
-    label: "Style source",
-    optionLabels: {
-      styleguide: "Style guide",
-      experimental: "Experimental",
-    },
-  },
-  "batch.style_id": { label: "Style" },
   "batch.fermentation": {
     label: "Fermentation",
     optionLabels: {
@@ -53,14 +42,14 @@ export const styleRegistry = {
       mixed: "Mixed",
     },
   },
-  "batch.style_og_min": { label: "OG min", displayUnit: "SG" },
-  "batch.style_og_max": { label: "OG max", displayUnit: "SG" },
-  "batch.style_fg_min": { label: "FG min", displayUnit: "SG" },
-  "batch.style_fg_max": { label: "FG max", displayUnit: "SG" },
-  "batch.style_ibu_min": { label: "IBU min", unit: "IBU" },
-  "batch.style_ibu_max": { label: "IBU max", unit: "IBU" },
-  "batch.style_srm_min": { label: "SRM min", unit: "SRM" },
-  "batch.style_srm_max": { label: "SRM max", unit: "SRM" },
-  "batch.style_abv_min": { label: "ABV min", unit: "%" },
-  "batch.style_abv_max": { label: "ABV max", unit: "%" },
+  "style.og_min": { label: "OG min", displayUnit: "SG" },
+  "style.og_max": { label: "OG max", displayUnit: "SG" },
+  "style.fg_min": { label: "FG min", displayUnit: "SG" },
+  "style.fg_max": { label: "FG max", displayUnit: "SG" },
+  "style.ibu_min": { label: "IBU min", unit: "IBU" },
+  "style.ibu_max": { label: "IBU max", unit: "IBU" },
+  "style.srm_min": { label: "SRM min", unit: "SRM" },
+  "style.srm_max": { label: "SRM max", unit: "SRM" },
+  "style.abv_min": { label: "ABV min", unit: "%" },
+  "style.abv_max": { label: "ABV max", unit: "%" },
 };

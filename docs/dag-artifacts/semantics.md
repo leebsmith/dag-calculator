@@ -78,7 +78,27 @@ inheritance as a default (pull) — the copy needs a synchroniser that remembers
 re-copy on every component change and to clear on every detach. A set root is an
 **override** and survives later component changes.
 
-### 2.5 Absence is not a value
+### 2.5 Identity is memory, not state
+
+A batch carries an immutable **identity**: the equipment, water source, and style
+components it was designed with, as `{ id, label, …values }` snapshots supplied by
+the host at engine construction. Identity is memory — it survives independently of
+the library that produced it — and not linkage: editing or deleting a library
+record never changes a batch, and no live dereference exists.
+
+Consequences:
+
+- Identity values are **not nodes**: no edges, no invalidation, no root, no
+  `valuation` entry. A dotted path like `equipment.mash_tun_mass_kg` or
+  `style.og_min` resolves through `artifact.identity`, not through the graph.
+- Identity is **required**: an artifact that declares identity namespaces cannot be
+  interpreted without them.
+- **No container entity exists.** Batches with equal identity are "the same beer";
+  grouping is a query, and `parent_batch_id` records explicit lineage only.
+- Styles are catalogue data or an inline *experimental* declaration, so they have
+  no CRUD lifecycle; equipment and water sources are user-owned assets that do.
+
+### 2.6 Absence is not a value
 
 A node may have **no value**: an unset root whose default cannot resolve (e.g. a
 field the selected component does not declare, or no component at all), or a
@@ -90,7 +110,7 @@ and `null` in payloads — never `0`, `""`, `{}`, or a dropped key.
   `undefined` (safe behind a short-circuiting `if`).
 - Presentation renders absence as blank, never as a zero.
 
-### 2.6 Realization-agnostic boundaries
+### 2.7 Realization-agnostic boundaries
 
 `boundary` nodes declare a **contract** (inputs, outputs, resolution, domain) but
 not a body. Their realization (remote HTTP, native code, in-process) is a
@@ -105,13 +125,16 @@ declared edges — never authored.
 
 A `selection` holds a `ref` (component id). Choosing a component **copies it
 forward** into the batch's `selections` snapshot, and the selection resolves to a
-**read-only view** of that snapshot — selections are never mutated. The library
+**read-only view** of that snapshot — selections are never mutated. Only the two
+switchable references (water target profile, yeast) remain selections; equipment,
+water source, and style are identity (see §2.5). The library
 (seeds + the user's records) is consulted only when a legacy draft has a
 non-empty ref and no snapshot; the normal load path materialises the snapshot and
 persists it on the next save. Library edits therefore cannot perturb a loaded
 batch. An empty `ref` means "no component chosen": the selection resolves to
 `null` (dotted reads yield `undefined`), so optional selections are safe to
-reference behind a short-circuit guard. A batch that needs a value different from
+reference behind a short-circuit guard. Identity namespaces carry no `ref`: the
+component is the value. A batch that needs a value different from
 the selected component models it as a `root` defaulting to the selected field;
 setting that root overrides the inheritance, keeping batch state in one place:
 the roots.

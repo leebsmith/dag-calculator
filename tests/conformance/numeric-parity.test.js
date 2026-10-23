@@ -6,10 +6,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
-import { loadArtifact } from "../frontend/helpers.js";
+import { identityFixture, loadArtifact } from "../frontend/helpers.js";
 
 const artifact = loadArtifact();
-const engine = createCalculator(artifact);
+const engine = createCalculator(artifact, { identity: identityFixture() });
 const fixture = JSON.parse(
   readFileSync(new URL("./fixtures/numeric-parity.json", import.meta.url), "utf8")
 );

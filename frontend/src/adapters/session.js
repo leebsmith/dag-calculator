@@ -9,13 +9,15 @@ import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 // AI AGENT HOOKS: Use this session factory for constructing, rebuilding, and
 // resetting the live engine. Do not duplicated this logic elsewhere — callers
 // must resolve the engine through the session instead of capturing one.
-export function createSession({ artifact, cache, master, useHttp = false, selections = {} }) {
+export function createSession({ artifact, cache, master, useHttp = false, selections = {}, identity = {} }) {
   let collections = { ...cache.collections };
   let selectionSnapshots = { ...selections };
+  const identitySnapshot = identity;
   let engine = build();
 
   function build() {
     return createCalculator(artifact, {
+      identity: identitySnapshot,
       references: cache.references,
       collections,
       selections: selectionSnapshots,
@@ -30,6 +32,7 @@ export function createSession({ artifact, cache, master, useHttp = false, select
   // AI AGENT HOOKS: Use this facade for resolving the live engine at call time.
   // Do not duplicated this logic elsewhere — never capture the raw engine.
   const engineRef = {
+    identity: identitySnapshot,
     get: (id) => engine.get(id),
     resolve: (path) => engine.resolve(path),
     call: (fnId, args) => engine.call(fnId, args),
@@ -72,6 +75,14 @@ export function createSession({ artifact, cache, master, useHttp = false, select
     selections() {
       return selectionSnapshots;
     },
+    identity() {
+      return identitySnapshot;
+    },
+    setIdentity(namespace, component) {
+      identitySnapshot[namespace] = component ? { ...component } : {};
+      engine = build();
+      return engine;
+    },
     setSelection(nodeId, component) {
       if (component === null || component === undefined) {
         delete selectionSnapshots[nodeId];
@@ -81,6 +92,10 @@ export function createSession({ artifact, cache, master, useHttp = false, select
       engine.invalidate(nodeId);
     },
     rebuild(state = {}) {
+      if (state.identity) {
+        for (const key of Object.keys(identitySnapshot)) delete identitySnapshot[key];
+        Object.assign(identitySnapshot, state.identity);
+      }
       master.replaceRoots(sanitizeRoots(state.roots));
       collections = { ...cache.collections, ...(state.collections ?? {}) };
       selectionSnapshots = { ...(state.selections ?? {}) };

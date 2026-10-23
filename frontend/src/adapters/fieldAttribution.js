@@ -5,8 +5,7 @@ import { resolveReference } from "../engine/index.js";
 
 function fieldKey(artifact, path) {
   const ref = resolveReference(artifact, path);
-  if (!ref) return null;
-  return ref.suffix.length ? `${ref.nodeId}.${ref.suffix.join(".")}` : ref.nodeId;
+  return ref ? ref.path : null;
 }
 
 function refPaths(node, out = new Set()) {
@@ -56,7 +55,7 @@ export function createFieldAttribution(artifact, steps) {
     const ref = resolveReference(artifact, path);
     return (
       fieldSlice.get(fieldKey(artifact, path)) ??
-      (ref && selectionSlice.get(ref.nodeId)) ??
+      (ref?.kind === "node" && selectionSlice.get(ref.nodeId)) ??
       path.split(".")[0]
     );
   }

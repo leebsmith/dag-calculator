@@ -1,7 +1,7 @@
 // Scalar valuation: resolves one projected field, applies display units,
 // validation, and presentation overrides.
 
-import { resolveReference } from "../../engine/paths.js";
+import { refKey, resolveReference } from "../../engine/paths.js";
 import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
 import { applyPresentation, presentationFor } from "../registry/presentation.js";
@@ -70,8 +70,7 @@ export function valuateScalar(field, engine, ctx, nl) {
   };
   // Per-field domain state of the selected component (e.g. an equipment
   // constant), for inline surfacing.
-  const ref = resolveReference(artifact, field.id);
-  const vkey = ref ? (ref.suffix.length ? `${ref.nodeId}.${ref.suffix.join(".")}` : ref.nodeId) : null;
+  const vkey = refKey(resolveReference(artifact, field.id));
   out.validation = (vkey && fieldDomains[vkey]) || null;
   // Host-side presentation overrides (polymorphic labels/units, solver hints).
   // The artifact stays the sole owner of value semantics.

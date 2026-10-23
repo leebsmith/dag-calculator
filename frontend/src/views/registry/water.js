@@ -95,19 +95,19 @@ export const WATER_NODES = {
   strategy: "water.strategy",
   target: "water.target",
   targetProfileId: "water.target_profile_id",
-  sourceReportId: "water.source_report_id",
+  sourceReportId: null,
   targetMashPh: "water.target_mash_ph",
   predictedPh: "solver.water.prescription.predicted_mash_ph",
   phStatus: "solver.water.prescription.mash_ph_status",
   waterBoundary: "solver.water",
   calciumFloor: "water.calcium_floor_ppm",
-  sourceReport: "water.source_report",
+  sourceReport: "water.source",
   pinnedIons: "water.pinned_ions",
   targetProfile: "water.target_profile",
 };
 
 export const waterRegistry = {
-  "water.source_report_id": {
+  "water.source": {
     label: "Source report",
     optionLabel: (report) => report?.laboratory || report?.source_name || report?.report_id,
   },

@@ -95,9 +95,9 @@ test("a non-empty but unknown selection id still throws", () => {
   assert.throws(() => engine.get("batch.yeast"), /Unknown reference/);
 });
 
-test("default refs are declared graph edges", () => {
+test("identity-backed default refs create no graph edges", () => {
   const { adjacency } = buildGraph(loadArtifact());
-  assert.ok(adjacency["batch.hlt_starting_volume_l"].includes("equipment.profile"));
+  assert.deepEqual(adjacency["batch.hlt_starting_volume_l"], []);
 });
 
 test("unsetRoot restores the default and reports no explicit value", () => {
@@ -106,7 +106,7 @@ test("unsetRoot restores the default and reports no explicit value", () => {
     small: { ...EQUIPMENT, id: "small", max_hlt_volume_l: 30 },
     big: { ...EQUIPMENT, id: "big", max_hlt_volume_l: 100 },
   };
-  fixtures.roots["batch.equipment_profile_id"] = "small";
+  fixtures.identity.equipment = { ...EQUIPMENT, max_hlt_volume_l: 30 };
   const engine = createCalculator(loadArtifact(), fixtures);
   assert.equal(engine.get("batch.hlt_starting_volume_l"), 30);
   engine.setRoot("batch.hlt_starting_volume_l", 12);
@@ -116,15 +116,15 @@ test("unsetRoot restores the default and reports no explicit value", () => {
   assert.equal(engine.get("batch.hlt_starting_volume_l"), 30);
 });
 
-test("a root default seeded from a selection tracks the selection after setRoot", () => {
+test("an identity-backed default reads the supplied snapshot", () => {
   const fixtures = makeFixtures();
-  fixtures.references.equipment = {
-    small: { ...EQUIPMENT, id: "small", max_hlt_volume_l: 30 },
-    big: { ...EQUIPMENT, id: "big", max_hlt_volume_l: 100 },
-  };
-  fixtures.roots["batch.equipment_profile_id"] = "small";
+  fixtures.identity.equipment = { ...EQUIPMENT, max_hlt_volume_l: 42 };
   const engine = createCalculator(loadArtifact(), fixtures);
-  assert.equal(engine.get("batch.hlt_starting_volume_l"), 30);
-  engine.setRoot("batch.equipment_profile_id", "big");
-  assert.equal(engine.get("batch.hlt_starting_volume_l"), 100); // not stale
+  assert.equal(engine.get("batch.hlt_starting_volume_l"), 42);
+});
+
+test("the engine refuses to construct without identity", () => {
+  const fixtures = makeFixtures();
+  delete fixtures.identity;
+  assert.throws(() => createCalculator(loadArtifact(), fixtures), /identity is required/);
 });

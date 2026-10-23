@@ -70,12 +70,12 @@ const BATCH_VALUES = {
 
 const WATER_VALUES = {
   "solver.batch.m_grist": M_GRIST,
-  "water.source_report.calcium_ca": 20.0,
-  "water.source_report.magnesium_mg": 5.0,
-  "water.source_report.sodium_na": 10.0,
-  "water.source_report.sulfate_so4": 30.0,
-  "water.source_report.chloride_cl": 15.0,
-  "water.source_report.total_alkalinity_caco3": 80.0,
+  "water.source.calcium_ca": 20.0,
+  "water.source.magnesium_mg": 5.0,
+  "water.source.sodium_na": 10.0,
+  "water.source.sulfate_so4": 30.0,
+  "water.source.chloride_cl": 15.0,
+  "water.source.total_alkalinity_caco3": 80.0,
   "water.target.calcium_ca": 60.0,
   "water.target.magnesium_mg": 10.0,
   "water.target.sodium_na": 20.0,

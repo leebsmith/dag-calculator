@@ -22,15 +22,15 @@ export const SEED_DERIVATIONS = {};
 
 SEED_DERIVATIONS["batch.apparent_attenuation"] = [
   { selection: "batch.yeast", derive: (y) => y?.attenuation_pct },
-  { selection: "batch.style", derive: (s) => styleCentroid(s)?.aa },
+  { identity: "style", derive: (s) => styleCentroid(s)?.aa },
 ];
 
 SEED_DERIVATIONS["batch.fermentation"] = [
-  { selection: "batch.style", derive: (s) => styleFermentation(s) },
+  { identity: "style", derive: (s) => styleFermentation(s) },
 ];
 
 SEED_DERIVATIONS["batch.target_abv"] = [
-  { selection: "batch.style", derive: (s) => styleCentroid(s)?.abv },
+  { identity: "style", derive: (s) => styleCentroid(s)?.abv },
 ];
 
 export function seedDerivations(rootId) {
@@ -43,6 +43,17 @@ export function derivationsFor(selectionNodeId) {
   for (const [rootId, sources] of Object.entries(SEED_DERIVATIONS)) {
     for (const src of sources) {
       if (src.selection === selectionNodeId) out.push({ rootId, derive: src.derive });
+    }
+  }
+  return out;
+}
+
+// All residual roots seeded from an identity namespace.
+export function identityDerivations(namespace) {
+  const out = [];
+  for (const [rootId, sources] of Object.entries(SEED_DERIVATIONS)) {
+    for (const src of sources) {
+      if (src.identity === namespace) out.push({ rootId, derive: src.derive });
     }
   }
   return out;

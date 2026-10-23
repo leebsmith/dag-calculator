@@ -34,6 +34,37 @@ export const EQUIPMENT = {
   mash_tun_mass_kg: 6.5,
 };
 
+export const STYLE = {
+  id: "21A",
+  name: "American IPA",
+  og_min: 1.056,
+  og_max: 1.07,
+  fg_min: 1.008,
+  fg_max: 1.014,
+  ibu_min: 40,
+  ibu_max: 70,
+  srm_min: 6,
+  srm_max: 14,
+  abv_min: 5.5,
+  abv_max: 7.5,
+  tags: ["ale"],
+};
+
+export const WATER_SOURCE = {
+  report_id: "ward-2024",
+  laboratory: "Ward Labs",
+  calcium_ca: 40,
+  magnesium_mg: 8,
+  sodium_na: 20,
+  sulfate_so4: 30,
+  chloride_cl: 25,
+  total_alkalinity_caco3: 80,
+};
+
+export function identityFixture() {
+  return { equipment: { ...EQUIPMENT }, "water.source": { ...WATER_SOURCE }, style: { ...STYLE } };
+}
+
 // Full flattened output sets (matching the artifact's boundary output keys).
 export function batchOutputs() {
   return {
@@ -132,5 +163,12 @@ export function makeFixtures() {
     "mash.tun_initial_temp_c": 20.0,
   };
 
-  return { references, collections, boundaries, boundaryRequests: BOUNDARY_BUILDERS, roots };
+  return {
+    references,
+    collections,
+    boundaries,
+    boundaryRequests: BOUNDARY_BUILDERS,
+    identity: identityFixture(),
+    roots,
+  };
 }

@@ -30,14 +30,14 @@ It complements `grammar.md` (node *shape*) and `docs/engine.md` (runtime *API*).
 | Facet | Field | Notes |
 |---|---|---|
 | kind | `kind` | `root` · `choice` · `collection` · `selection` · `derived` · `boundary` |
-| value type | `dimension` / `taxonomy` / `output.{dimension|taxonomy|boolean|schema}` / `item_schema` | normalized by `valueSpecOf(artifact, id)`; `nodeDimension` returns the scalar dimension/taxonomy only |
+| value type | `dimension` / `taxonomy` / `output.{dimension|taxonomy|boolean|schema}` / `item_schema` | normalized by `valueSpecOf(artifact, id)`; `nodeDimension` returns the scalar dimension/taxonomy only. Identity fields take their type from `artifact.identity[namespace]` → schema |
 | bounds | `domain` | unary ops (`gte/lte/gt/lt/eq/ne`), values may be `{ref}`/`{const}` |
 | default | `default` | root/choice only; evaluated when unset |
 | collection | `item_schema` | ⇒ `primitive_schemas[item_schema]` (per-field spec) |
 | selection | `output.schema`, `ref` | component type + the root holding the chosen id |
 | derived | `inputs`, `expr`, `output` | alias→path edges, AST, output type |
 | boundary | `binding`, `resolution`, `inputs`, `outputs`, `domain.codes` | contract only (§2.5, `grammar.md`) |
-| namespace | `id.split(".")[0]` | `equipment` · `mash` · `water` · `grist` · `batch` · `solver` |
+| namespace | `id.split(".")[0]` | graph slices: `mash` · `water` · `grist` · `batch` · `solver`; identity namespaces: `equipment`, `style`, `water.source` |
 
 Referenced sections (look up by the ids found above): `dimensions`, `constants`,
 `taxonomies`, `functions`, `primitive_schemas`.
@@ -51,8 +51,9 @@ Accessor: none — read `artifact.nodes[id]` directly.
 | Accessor | Returns |
 |---|---|
 | `engine.get(id)` | the memoized, lazy value — by kind: scalar (root/choice/derived), `rows[]` (collection), the selected component or `null` (selection), `{ outputs, fingerprint }` (boundary). A valueless node returns `undefined`. |
-| `engine.resolve(path)` | a value by **dotted path** — node id, or a boundary output / selection field / collection field (longest-prefix via `resolveReference`) |
-| `engine.getRoot(id)` / `engine.hasRoot(id)` | the **explicitly-set** store value for a root/choice (distinct from the evaluated value, which folds in `default`) |
+| `engine.resolve(path)` | a value by **dotted path** — node id, or a boundary output / selection field / collection field, **or an identity namespace field** (`equipment.mash_tun_mass_kg`, `style.og_min`, `water.source.calcium_ca`) |
+| `engine.identity` | the immutable identity snapshot passed at construction: `{ equipment, "water.source", style }`; values are components, not ids |
+| `engine.getRoot(id)` / `engine.hasRoot(id)` | the **explicitly-set** store value for a root/choice (distinct from the evaluated value, which folds in `default`); identity values are never roots |
 | `engine.setRoot(id, v)` / `engine.unsetRoot(id)` | write / drop an explicit root or choice value; unsetting restores the `default` (or leaves the node valueless) |
 | `engine.setCollection(id, rows)` | write a collection |
 | `engine.boundaryRequest(id)` | `{ binding, inputs, fingerprint }` — the boundary node's adapted request body |
@@ -130,3 +131,5 @@ detection. See `semantics.md` §3.2.
 - **Absence**: `undefined` in the engine, `null` in payloads. An unset selection
   is `null`; a dotted read into it is `undefined`. Never treat `0` or `{}` as
   "not set".
+- **Identity is not a node**: `engine.get("style")` throws; use `resolve` for
+  identity fields, and read the component itself from `engine.identity`.

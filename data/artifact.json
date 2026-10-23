@@ -1,9 +1,14 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 5, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 6, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
+  },
+  "identity": {
+    "equipment": "equipment",
+    "water.source": "water_report",
+    "style": "style"
   },
   "dimensions": {
     "temperature": {
@@ -1734,13 +1739,6 @@
     }
   },
   "nodes": {
-    "batch.equipment_profile_id": {
-      "kind": "root",
-      "dimension": "reference",
-      "default": {
-        "const": "default_equipment_profile_id"
-      }
-    },
     "batch.target_abv": {
       "kind": "root",
       "dimension": "abv",
@@ -1757,17 +1755,11 @@
       "default": {
         "op": "if",
         "args": [
-          {
-            "op": "and",
-            "args": [
-              { "op": "ne", "args": [{ "ref": "batch.style_id" }, ""] },
-              { "op": "lt", "args": [{ "ref": "batch.style.ibu_min" }, { "ref": "batch.style.ibu_max" }] }
-            ]
-          },
+          { "op": "lt", "args": [{ "ref": "style.ibu_min" }, { "ref": "style.ibu_max" }] },
           {
             "op": "/",
             "args": [
-              { "op": "+", "args": [{ "ref": "batch.style.ibu_min" }, { "ref": "batch.style.ibu_max" }] },
+              { "op": "+", "args": [{ "ref": "style.ibu_min" }, { "ref": "style.ibu_max" }] },
               2
             ]
           },
@@ -1784,17 +1776,11 @@
       "default": {
         "op": "if",
         "args": [
-          {
-            "op": "and",
-            "args": [
-              { "op": "ne", "args": [{ "ref": "batch.style_id" }, ""] },
-              { "op": "lt", "args": [{ "ref": "batch.style.srm_min" }, { "ref": "batch.style.srm_max" }] }
-            ]
-          },
+          { "op": "lt", "args": [{ "ref": "style.srm_min" }, { "ref": "style.srm_max" }] },
           {
             "op": "/",
             "args": [
-              { "op": "+", "args": [{ "ref": "batch.style.srm_min" }, { "ref": "batch.style.srm_max" }] },
+              { "op": "+", "args": [{ "ref": "style.srm_min" }, { "ref": "style.srm_max" }] },
               2
             ]
           },
@@ -1936,125 +1922,15 @@
       "kind": "collection",
       "item_schema": "whirlpool_hop_row"
     },
-    "equipment.profile": {
-      "kind": "selection",
-      "output": { "schema": "equipment" },
-      "ref": "batch.equipment_profile_id"
-    },
     "batch.yeast": {
       "kind": "selection",
       "output": { "schema": "yeast" },
       "ref": "batch.yeast_id"
     },
-    "batch.style_source": {
-      "kind": "choice",
-      "taxonomy": "style_source",
-      "default": "styleguide"
-    },
-    "batch.style_id": {
-      "kind": "root",
-      "dimension": "reference",
-      "default": ""
-    },
-    "batch.style": {
-      "kind": "selection",
-      "output": { "schema": "style" },
-      "ref": "batch.style_id"
-    },
     "batch.fermentation": {
       "kind": "choice",
       "taxonomy": "fermentation",
       "default": "ale"
-    },
-    "batch.style_og_min": {
-      "kind": "root",
-      "dimension": "gravity",
-      "default": { "ref": "batch.style.og_min" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_og_max": {
-      "kind": "root",
-      "dimension": "gravity",
-      "default": { "ref": "batch.style.og_max" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_fg_min": {
-      "kind": "root",
-      "dimension": "gravity",
-      "default": { "ref": "batch.style.fg_min" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_fg_max": {
-      "kind": "root",
-      "dimension": "gravity",
-      "default": { "ref": "batch.style.fg_max" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_ibu_min": {
-      "kind": "root",
-      "dimension": "ibu",
-      "default": { "ref": "batch.style.ibu_min" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_ibu_max": {
-      "kind": "root",
-      "dimension": "ibu",
-      "default": { "ref": "batch.style.ibu_max" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_srm_min": {
-      "kind": "root",
-      "dimension": "beer_color",
-      "default": { "ref": "batch.style.srm_min" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_srm_max": {
-      "kind": "root",
-      "dimension": "beer_color",
-      "default": { "ref": "batch.style.srm_max" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_abv_min": {
-      "kind": "root",
-      "dimension": "abv",
-      "default": { "ref": "batch.style.abv_min" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "batch.style_abv_max": {
-      "kind": "root",
-      "dimension": "abv",
-      "default": { "ref": "batch.style.abv_max" },
-      "domain": {
-        "gte": 0
-      }
-    },
-    "water.source_report_id": {
-      "kind": "root",
-      "dimension": "reference",
-      "default": ""
-    },
-    "water.source_report": {
-      "kind": "selection",
-      "output": { "schema": "water_report" },
-      "ref": "water.source_report_id"
     },
     "water.target_profile_id": {
       "kind": "root",
@@ -2535,12 +2411,12 @@
         "grist": "grist.major_malts",
         "trace_malts": "grist.trace_malts",
         "m_grist": "solver.batch.m_grist",
-        "source.calcium_ca": "water.source_report.calcium_ca",
-        "source.magnesium_mg": "water.source_report.magnesium_mg",
-        "source.sodium_na": "water.source_report.sodium_na",
-        "source.sulfate_so4": "water.source_report.sulfate_so4",
-        "source.chloride_cl": "water.source_report.chloride_cl",
-        "source.alkalinity_as_caco3": "water.source_report.total_alkalinity_caco3",
+        "source.calcium_ca": "water.source.calcium_ca",
+        "source.magnesium_mg": "water.source.magnesium_mg",
+        "source.sodium_na": "water.source.sodium_na",
+        "source.sulfate_so4": "water.source.sulfate_so4",
+        "source.chloride_cl": "water.source.chloride_cl",
+        "source.alkalinity_as_caco3": "water.source.total_alkalinity_caco3",
         "target.calcium_ca": "water.target.calcium_ca",
         "target.magnesium_mg": "water.target.magnesium_mg",
         "target.sodium_na": "water.target.sodium_na",

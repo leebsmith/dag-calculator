@@ -63,5 +63,5 @@ test("readout tables honour registry decimal overrides", () => {
   const out = valuateTable(field, artifact, engine, {}, {}, {
     "batch.target_ibu": { decimals: 2 },
   });
-  assert.equal(out.rows[0].cells.value.display, "30.00");
+  assert.equal(out.rows[0].cells.value.display, "55.00");
 });

@@ -182,26 +182,44 @@ test("target changes recalculate immediately and queue a save", () => {
 test("source ions render only in the comparison grid", () => {
   const app = createStepApp();
   app.boot();
-  app.edit(app.fieldsById["water.source_report_id"], "25138");
+  app.setIdentityComponent("water.source", {
+    report_id: "25138",
+    laboratory: "Ward Labs",
+    calcium_ca: 40,
+    magnesium_mg: 8,
+    sodium_na: 20,
+    sulfate_so4: 30,
+    chloride_cl: 25,
+    total_alkalinity_caco3: 80,
+  });
   app.compute();
 
   const ids = app.fieldsBySlice.water.map((f) => f.id);
   for (const { ion } of WATER_IONS) {
     assert.ok(!ids.includes(`water.source_report.${ion}`), `${ion} readout must be gone`);
   }
-  assert.equal(app.waterPlan.source.id, "water.source_report_id");
+  assert.equal(app.waterPlan.source.id, "water.source");
   assert.equal(app.waterPlan.target.id, "water.target_profile_id");
   assert.equal(app.waterPlan.mashPh.id, "water.target_mash_ph");
   assert.equal(app.waterTreatmentFields.length, 5);
   const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
-  assert.equal(rows.calcium_ca.sourceText, "21.5");
-  assert.equal(rows.magnesium_mg.sourceText, "5.0");
+  assert.equal(rows.calcium_ca.sourceText, "40.0");
+  assert.equal(rows.magnesium_mg.sourceText, "8.0");
 });
 
 test("water readouts use the fixed precision policy", () => {
   const app = createStepApp();
   app.boot();
-  app.edit(app.fieldsById["water.source_report_id"], "25138");
+  app.setIdentityComponent("water.source", {
+    report_id: "25138",
+    laboratory: "Ward Labs",
+    calcium_ca: 40,
+    magnesium_mg: 8,
+    sodium_na: 20,
+    sulfate_so4: 30,
+    chloride_cl: 25,
+    total_alkalinity_caco3: 80,
+  });
   app.selectWaterTarget("hoppy-ipa");
   app.compute();
 
@@ -287,9 +305,6 @@ test("the selector lists constraints first and keeps the pseudo-options at the e
   assert.equal(labels["malty-amber"], "SO₄/Cl/Alk — Malty / Amber");
   assert.equal(labels["soft-pilsner"], "All six — Soft Pilsner");
 
-  const reports = app.fieldsById["water.source_report_id"].optionLabels;
-  assert.equal(reports["25138"], "Ward Laboratories, Inc.");
-  assert.equal(reports["ro-distilled"], "RO / Distilled (definition)");
   assert.equal(app.waterTargetSelection, "none");
 });
 

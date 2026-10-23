@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [model-absence-and-seed-defaults]
 blocks: [landing-and-batch-setup]
 gate: the artifact declares an `identity` section; the engine resolves identity-backed paths without nodes; 58 writable nodes become 43; make check/test/build green
-status: proposed
+status: done
 ---
 
 # Off-Graph Identity
@@ -174,6 +174,26 @@ inventory re-emit.
   exists to remove).
 
 ---
+
+## 8a. Outcome (as shipped)
+
+- S1–S4 landed with **14 nodes deleted** (not 15): `batch.fermentation` stays a
+  batch-level choice, seeded at creation from the style's tags, because the style
+  component does not carry a fermentation field and identity must remain exactly the
+  three components.
+- `identity` is declared with three namespaces (`equipment`, `water.source`,
+  `style`); a fourth would be additive and needs no engine change.
+- The resolver matches nodes first, then identity namespaces; the old selection
+  slice fallback in `paths.js` is gone (`equipment.*` is now identity-backed).
+- Engine construction throws when the artifact declares identity and the host
+  supplies none; `engine.identity` exposes the snapshot for readers (cards, tests).
+- The style card's picker writes `session.setIdentity("style", …)` (interim until the
+  landing page/modal exists); the envelope grid and the equipment/water-source
+  pickers are read-only, and `waterPlan.source` is a synthetic readout.
+- Drafts carry `identity`; `BatchRecord`/`DraftPayload` persist it; the fork and
+  remote-load paths pass it through.
+- Deferred exactly as planned: the landing page + new-batch modal (L1–L4), old-record
+  wipe/guard at the persistence boundary, and the target-vector cleanup.
 
 ## 10. Out of scope
 

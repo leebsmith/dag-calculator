@@ -6,11 +6,13 @@ import { registry, steps } from "../../frontend/src/views/steps.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { STUB_BOUNDARIES } from "../../frontend/src/adapters/stubBoundaries.js";
 import { artifact } from "./util.js";
+import { identityFixture } from "../frontend/helpers.js";
 
 // A9: the producer is deterministic — identical roots => identical field models.
 function engine() {
   const cache = createReferenceCache();
   return createCalculator(artifact(), {
+    identity: identityFixture(),
     references: cache.references,
     collections: cache.collections,
     boundaries: STUB_BOUNDARIES,

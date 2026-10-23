@@ -25,6 +25,7 @@ export function installSnapshot(app, { artifact, master, session }) {
     // for draft autosave.
     draftState() {
       return {
+        identity: { ...session.identity() },
         roots: master.allRoots(),
         collections: { ...session.collections() },
         selections: { ...session.selections() },

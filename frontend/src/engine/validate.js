@@ -3,7 +3,7 @@
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5];
+const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -28,6 +28,7 @@ export function validateArtifact(artifact) {
   const schemas = artifact.primitive_schemas ?? {};
 
   validateSchemas(artifact, dimensions, taxonomies);
+  validateIdentity(artifact, schemas);
 
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (!NODE_KINDS.includes(node.kind)) {
@@ -174,6 +175,36 @@ function checkRefResolves(artifact, path, label) {
   const resolved = resolveReference(artifact, path);
   if (!resolved) {
     throw new Error(`${label} references unknown node/field "${path}"`);
+  }
+  if (resolved.kind === "identity") {
+    const schema = artifact.primitive_schemas?.[artifact.identity[resolved.namespace]];
+    const field = resolved.suffix[0];
+    if (!schema || field === undefined || !(field in schema)) {
+      throw new Error(`${label} references unknown identity field "${path}"`);
+    }
+  }
+}
+
+function validateIdentity(artifact, schemas) {
+  const identity = artifact.identity;
+  if (identity === undefined) return;
+  if (identity === null || typeof identity !== "object" || Array.isArray(identity)) {
+    throw new Error('"identity" must be an object mapping a namespace to a primitive schema');
+  }
+  for (const [namespace, schemaId] of Object.entries(identity)) {
+    if (!namespace.includes(".") && namespace === "") {
+      throw new Error('Identity namespace must be a non-empty dotted slug');
+    }
+    if (!schemas[schemaId]) {
+      throw new Error(`Identity namespace "${namespace}" references unknown schema "${schemaId}"`);
+    }
+    for (const id of Object.keys(artifact.nodes)) {
+      if (id === namespace || id.startsWith(`${namespace}.`)) {
+        throw new Error(
+          `Identity namespace "${namespace}" collides with node "${id}"`
+        );
+      }
+    }
   }
 }
 

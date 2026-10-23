@@ -130,7 +130,14 @@ evaluates its `body` — used for shared equations (e.g. the strike-water chain)
 
 `resolveValue(path)` / `resolveReference` resolve dotted paths by
 longest-prefix match against node ids, then treat the suffix as a selection /
-collection field or a boundary output (e.g. `solver.batch.cascade.v_strike`).
+collection field or a boundary output (e.g. `solver.batch.cascade.v_strike`). If
+no node matches, the longest `artifact.identity` namespace prefix is resolved
+against the immutable identity snapshot (`equipment.mash_tun_mass_kg`,
+`style.og_min`, `water.source.calcium_ca`). Identity refs create **no graph
+edges** — nothing can invalidate them.
+
+`createCalculator(artifact, { identity })` is required whenever the artifact
+declares identity namespaces; the engine throws without it.
 
 ## Invalidation
 
@@ -156,6 +163,7 @@ engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes; holds
 engine.fieldDomainStates()      // [{ selectionNodeId, field, holds, … }]
 engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
 
+engine.identity          // { equipment, "water.source", style } snapshots
 engine.setRoot(id, v)  unsetRoot(id)  getRoot(id)  hasRoot(id)
 engine.setCollection(id, rows)
 

@@ -13,7 +13,7 @@ test("domainStates() covers every bounded root/choice node", () => {
     (n) => (n.kind === "root" || n.kind === "choice") && n.domain
   ).length;
   assert.equal(states.length, expected);
-  assert.equal(states.length, 34);
+  assert.equal(states.length, 24);
 });
 
 test("default values satisfy their domains or are unresolved", () => {
@@ -53,11 +53,12 @@ test("checkDomain() on an unbounded node holds trivially", () => {
   assert.equal(r.holds, true);
 });
 
-test("fieldDomainStates covers fields of a selected component", () => {
+test("fieldDomainStates covers identity components and remaining selections", () => {
   const e = createCalculator(artifact, makeFixtures());
   const states = e.fieldDomainStates();
   assert.ok(states.length > 0);
-  assert.ok(states.every((s) => s.selectionNodeId === "equipment.profile"));
+  assert.ok(states.some((s) => s.namespace === "equipment"));
+  assert.ok(states.some((s) => s.namespace === "water.source"));
   assert.ok(states.every((s) => s.holds));
 });
 

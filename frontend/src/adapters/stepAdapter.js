@@ -29,6 +29,7 @@ import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
 import { installFieldActions } from "./fieldActions.js";
+import { identityDerivations } from "../views/seedDerivations.js";
 import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
 import { installNavigation } from "./navigation.js";
@@ -73,6 +74,17 @@ const INSTALLERS = [
   { name: "water", keys: waterKeys },
 ];
 
+// Pre-landing-page bootstrap: the seed default equipment, no water source, no
+// style. The landing page replaces this with the batch's identity snapshot.
+function bootstrapIdentity(artifact, cache) {
+  const equipmentId = artifact.constants?.default_equipment_profile_id?.value;
+  return {
+    equipment: cache.references.equipment?.[equipmentId] ?? {},
+    "water.source": {},
+    style: {},
+  };
+}
+
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
@@ -90,7 +102,8 @@ export function createStepApp(options = {}) {
   const fetchImpl = options.fetchImpl;
   const debounceMs = options.debounceMs ?? 300;
 
-  const session = createSession({ artifact, cache, master, useHttp });
+  const identity = options.identity ?? bootstrapIdentity(artifact, cache);
+  const session = createSession({ artifact, cache, master, useHttp, identity });
   const attribution = createFieldAttribution(artifact, steps);
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   // The pristine auth-scoped baseline to restore on sign-out.
@@ -329,6 +342,20 @@ export function createStepApp(options = {}) {
     session,
     refToSelectionMap: attribution.refToSelectionMap,
   });
+  app.setIdentityComponent = function setIdentityComponent(namespace, component) {
+    session.setIdentity(namespace, component);
+    for (const { rootId } of identityDerivations(namespace)) this.unsetRoot(rootId);
+    if (component) {
+      for (const { rootId, derive } of identityDerivations(namespace)) {
+        const value = derive(component);
+        if (typeof value === "number" || (typeof value === "string" && value !== "")) {
+          this.setRoot(rootId, value);
+        }
+      }
+    }
+    this.compute();
+    this.notify();
+  };
   installDraftEditor(app, { artifact, ui, session });
   installUnitActions(app, { artifact, ui });
   installSnapshot(app, { artifact, cache, master, session });

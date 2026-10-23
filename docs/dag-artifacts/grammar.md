@@ -16,6 +16,7 @@ artifact.json
 ├─ taxonomies          { id → [value, ...] }
 ├─ functions           { id → { params, returns, body } }
 ├─ primitive_schemas   { id → schema }
+├─ identity            { namespace → schema id }   (optional)
 ├─ nodes               { id → node }
 └─ relations           [ relation, ... ]
 ```
@@ -23,6 +24,13 @@ artifact.json
 Only `schema_version`, `meta`, and `nodes` are required at a minimum; the other
 sections may be empty. `relations` is an array; the rest are maps keyed by
 string id.
+
+`identity` declares the **immutable context** the host must supply: each key is a
+dotted namespace (`equipment`, `water.source`, `style`) and each value is a
+primitive-schema id describing its shape. Identity values are not nodes — they have
+no edges, are never invalidated, and are not stored in the batch's `roots`. Every
+identity namespace must be disjoint from the node ids (a node id may not equal or
+extend a namespace).
 
 ### 1.1 Identifier conventions
 
@@ -59,7 +67,17 @@ Every node has a `kind`. The legal set, and the shape each requires:
 A node's **value type** is one of `{dimension}` (numeric quantity), `{taxonomy}`
 (N-valued categorical), or `{type:"boolean"}` — the same vocabulary used by
 `derived.output` and by each `boundary.outputs` entry. Inputs use it via the node
-kind (`root` → dimension; `choice` → taxonomy).
+kind (`root` → dimension; `choice` → taxonomy). A `selection` declares
+`output: {schema}`; identity namespaces declare their shape in the `identity`
+section.
+
+### 1.2 Dotted paths
+
+A dotted path resolves to a node (plus a selection/collection field or boundary
+output suffix) **or** to an identity namespace (plus a component-field suffix).
+Nodes win; identity namespaces are matched by longest prefix after node resolution
+fails. Dispatch order is: exact node id → longest node prefix → longest identity
+namespace → error.
 
 ### 2.1 `root`
 
@@ -254,8 +272,9 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **5**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
-  `primitive_schemas`, `nodes` (all objects), and `relations` (array).
+  **6**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  `primitive_schemas`, `identity` (all objects), `nodes` (all objects), and
+  `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.
 - `derived.expr` and `functions.*.body` must be valid AST (see
@@ -263,8 +282,9 @@ tooling, not shipped as a deliverable) is, in essence:
 - `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`/`schema`.
   A selection's `output` is `{schema: <id>}`. A schema field may also carry
   `{type:"boolean"}` for a flag (e.g. `enabled`).
-- Every `inputs`/`ref`/`{ref}` path must resolve to a declared node or a
-  declared schema field; dangling references are a validation error.
+- Every `inputs`/`ref`/`{ref}` path must resolve to a declared node, a declared
+  schema field, or a declared identity namespace + schema field; dangling
+  references are a validation error.
 - Every `dimension`/`taxonomy`/`schema`/`function`/`constant` id referenced
   anywhere must be declared in its section.
 

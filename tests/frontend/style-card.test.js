@@ -9,13 +9,11 @@ test("selectStyle inherits the envelope and seeds the residual fermentation targ
   app.selectStyle("21A");
   app.compute();
 
-  assert.equal(app.master.getRoot("batch.style_id"), "21A");
-  // Envelope values are pulled by artifact defaults: no stored root.
-  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
+  assert.equal(app.engine.identity.style.id, "21A");
   assert.equal(app.master.getRoot("batch.target_ibu"), undefined);
   assert.deepEqual(app.styleSrmBounds, [6, 14]);
   assert.deepEqual(app.styleIbuBounds, [40, 70]);
-  // The residual three are still host-seeded (no declarable expression).
+  // The residual three are host-seeded at selection time.
   assert.equal(app.master.getRoot("batch.fermentation"), "ale");
 
   const aa = app.master.getRoot("batch.apparent_attenuation");
@@ -24,37 +22,28 @@ test("selectStyle inherits the envelope and seeds the residual fermentation targ
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
 });
 
-test("a pulled envelope field is seeded while unset and authored once set", () => {
+test("the envelope is identity-backed and read-only", () => {
   const app = createStepApp();
   app.boot();
   app.selectStyle("21A");
   app.compute();
 
-  const inherited = app.fieldsById["batch.style_og_min"];
-  assert.equal(inherited.seeded, true);
-  assert.equal(inherited.seededReset, "unset");
-
-  app.setRoot("batch.style_og_min", 1.052);
-  app.compute();
-  const authored = app.fieldsById["batch.style_og_min"];
-  assert.equal(authored.seeded, false);
-  assert.equal(authored.seededReset, "unset");
-
-  app.resetField(authored);
-  app.compute();
-  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
-  assert.equal(app.fieldsById["batch.style_og_min"].seeded, true);
+  const field = app.fieldsById["style.og_min"];
+  assert.equal(field.value, 1.056);
+  assert.equal(field.editable, false);
+  app.edit(field, "1.040");
+  assert.equal(app.engine.identity.style.og_min, 1.056);
 });
 
-test("an envelope override survives switching style", () => {
+test("selecting a different style replaces the identity declaration", () => {
   const app = createStepApp();
   app.boot();
   app.selectStyle("21A");
   app.compute();
-  app.setRoot("batch.style_og_max", 1.08);
+  assert.equal(app.engine.identity.style.og_min, 1.056);
   app.selectStyle("21B Black IPA");
   app.compute();
-  assert.equal(app.master.getRoot("batch.style_og_max"), 1.08);
+  assert.notEqual(app.engine.identity.style.og_min, 1.056);
   assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
 });
 
@@ -65,7 +54,7 @@ test("clearStyleSelection clears the style id and resets fermentation", () => {
   app.clearStyleSelection();
   app.compute();
 
-  assert.equal(app.master.getRoot("batch.style_id"), "");
+  assert.deepEqual(app.engine.identity.style, {});
   assert.equal(app.master.getRoot("batch.fermentation"), undefined);
   assert.equal(app.fieldsById["batch.fermentation"].value, "ale");
 });
@@ -76,8 +65,8 @@ test("selecting a stats-less style does not seed fermentation targets", () => {
   app.selectStyle("34C");
   app.compute();
 
-  assert.equal(app.master.getRoot("batch.style_id"), "34C");
-  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
+  assert.equal(app.engine.identity.style.id, "34C");
+  assert.equal(Number.isFinite(app.engine.identity.style.og_min), false);
   assert.equal(app.master.getRoot("batch.apparent_attenuation"), undefined);
 });
 
@@ -144,17 +133,15 @@ test("the preview preserves the region's aspect ratio", () => {
   assert.ok(Math.abs(boxAspect - regionAspect) < 0.02);
 });
 
-test("editing the envelope reshapes the region and keeps the target in-region", () => {
+test("the region follows the identity declaration, not batch state", () => {
   const app = createStepApp();
   app.boot();
   app.selectStyle("21B Black IPA");
   app.compute();
 
-  app.setRoot("batch.style_og_max", 1.1);
-  app.compute();
   assert.ok(app.styleRegion.length >= 3);
   assert.ok(app.styleExtract);
-  assert.ok(app.master.getRoot("batch.style_og_max") === 1.1);
+  assert.equal(app.master.getRoot("batch.style_og_max"), undefined);
 });
 
 test("target sliders: SRM/IBU bounds come from the style envelope", () => {
@@ -215,7 +202,7 @@ test("fieldsById indexes the projected models and powers the envelope grid", () 
   app.selectStyle("21A");
   app.compute();
 
-  assert.equal(app.fieldsById["batch.style_og_min"].id, "batch.style_og_min");
+  assert.equal(app.fieldsById["style.og_min"].id, "style.og_min");
   assert.equal(app.styleField("batch.fermentation").id, "batch.fermentation");
 
   const envelope = app.styleEnvelopeFields;
@@ -223,16 +210,16 @@ test("fieldsById indexes the projected models and powers the envelope grid", () 
   assert.deepEqual(
     envelope.map((row) => row.id),
     [
-      "batch.style_og_min",
-      "batch.style_og_max",
-      "batch.style_fg_min",
-      "batch.style_fg_max",
-      "batch.style_ibu_min",
-      "batch.style_ibu_max",
-      "batch.style_srm_min",
-      "batch.style_srm_max",
-      "batch.style_abv_min",
-      "batch.style_abv_max",
+      "style.og_min",
+      "style.og_max",
+      "style.fg_min",
+      "style.fg_max",
+      "style.ibu_min",
+      "style.ibu_max",
+      "style.srm_min",
+      "style.srm_max",
+      "style.abv_min",
+      "style.abv_max",
     ]
   );
   for (const row of envelope) {

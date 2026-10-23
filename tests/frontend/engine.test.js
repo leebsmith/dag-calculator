@@ -18,12 +18,12 @@ test("end-to-end: strike-water chain resolves through the batch boundary", () =>
   assert.ok(Math.abs(e.get("mash.strike_water_temp_c") - 76.04190476190476) < 1e-6);
 });
 
-test("end-to-end: selection resolves read-only to the referenced component", () => {
+test("end-to-end: identity resolves read-only to the supplied component", () => {
   const e = engine();
-  const profile = e.get("equipment.profile");
-  assert.equal(profile.mash_tun_mass_kg, 6.5); // inherited from seed
-  assert.equal(profile.mash_tun_specific_heat, 0.12); // inherited from seed
-  assert.equal(profile.max_hlt_volume_l, 30); // inherited from seed
+  assert.equal(e.resolve("equipment.mash_tun_mass_kg"), 6.5);
+  assert.equal(e.resolve("equipment.mash_tun_specific_heat"), 0.12);
+  assert.equal(e.resolve("equipment.max_hlt_volume_l"), 30);
+  assert.equal(e.identity.style.og_min, 1.056);
 });
 
 test("end-to-end: collection reductions compute weighted values", () => {
@@ -137,11 +137,17 @@ test("trace malts: definite-mass rows fold into color (and only color)", () => {
   assert.equal(e.resolve("solver.batch.m_grist"), 4.7); // extract/mass untouched
 });
 
-test("target roots default from their constants or have no value", () => {
-  const e = createCalculator(artifact, makeFixtures());
-  assert.equal(e.get("batch.target_ibu"), 30);
-  assert.equal(e.get("batch.target_srm"), null);
-  assert.equal(e.get("batch.whirlpool_ibu_fraction"), 0);
+test("target roots inherit the style midpoint or fall back", () => {
+  const withStyle = createCalculator(artifact, makeFixtures());
+  assert.equal(withStyle.get("batch.target_ibu"), 55);
+  assert.equal(withStyle.get("batch.target_srm"), 10);
+  assert.equal(withStyle.get("batch.whirlpool_ibu_fraction"), 0);
+
+  const fixtures = makeFixtures();
+  fixtures.identity.style = {};
+  const noStyle = createCalculator(artifact, fixtures);
+  assert.equal(noStyle.get("batch.target_ibu"), 30);
+  assert.equal(noStyle.get("batch.target_srm"), null);
 });
 
 test("IBU split: boil/whirlpool targets track the whirlpool fraction", () => {

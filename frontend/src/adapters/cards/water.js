@@ -485,8 +485,18 @@ export function refreshWaterCard(app, ctx) {
     const doseVolumeField = fieldOr(app.fieldsById, N.vHltTreat);
     const residualField = fieldOr(app.fieldsById, N.residualHlt);
 
+    const sourceComponent = engine.identity?.[N.sourceReport] ?? {};
     app.waterPlan = {
-      source: fieldOr(app.fieldsById, N.sourceReportId),
+      source: {
+        id: N.sourceReport,
+        label: "Source report",
+        value: sourceComponent.report_id ?? "",
+        options: [],
+        optionLabels: {},
+        hint: sourceComponent.laboratory || "Fixed by the batch identity",
+        editable: false,
+        target: null,
+      },
       target: fieldOr(app.fieldsById, N.targetProfileId),
       floor: fieldOr(app.fieldsById, N.calciumFloor),
       mashPh: fieldOr(app.fieldsById, N.targetMashPh),

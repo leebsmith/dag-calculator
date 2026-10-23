@@ -19,22 +19,27 @@ function collectRefs(expr, out = []) {
   return out;
 }
 
-// The selection a root inherits from, when its default reads one. Returns null
-// for roots with no selection-derived default (literal/const/derived defaults).
-export function selectionDefault(artifact, nodeId) {
+// The component a root inherits from, when its default reads one. Returns null
+// for roots with no component-derived default (literal/const/derived defaults).
+export function inheritedSource(artifact, nodeId) {
   const node = artifact?.nodes?.[nodeId];
   if (!node || (node.kind !== "root" && node.kind !== "choice")) return null;
   for (const path of collectRefs(node.default)) {
     const resolved = resolveReference(artifact, path);
     if (!resolved) continue;
-    if (artifact.nodes[resolved.nodeId]?.kind === "selection") return resolved.nodeId;
+    if (resolved.kind === "identity") return { kind: "identity", id: resolved.namespace };
+    if (artifact.nodes[resolved.nodeId]?.kind === "selection") {
+      return { kind: "selection", id: resolved.nodeId };
+    }
   }
   return null;
 }
 
-function componentLabel(engine, selectionNodeId) {
+function componentLabel(engine, source) {
   try {
-    return sourceLabel(engine.get(selectionNodeId));
+    const component =
+      source.kind === "identity" ? engine.identity?.[source.id] : engine.get(source.id);
+    return sourceLabel(component);
   } catch {
     return "";
   }
@@ -43,7 +48,7 @@ function componentLabel(engine, selectionNodeId) {
 // AI AGENT HOOKS: Use this decorator for seed-derived provenance and reset
 // affordances. Do not duplicated this logic elsewhere.
 export function decorateProvenance(out, field, engine, artifact) {
-  const inheritedFrom = selectionDefault(artifact, field.id);
+  const inheritedFrom = inheritedSource(artifact, field.id);
   if (inheritedFrom) {
     const seeded = !engine.hasRoot(field.id) && out.value !== undefined;
     out.seeded = seeded;
