@@ -27,6 +27,7 @@ import { registerLibraryUi } from "./libraryUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
+import { bindGate, waterTargetGate } from "./waterGate.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
 import { installFieldActions } from "./fieldActions.js";
 import { identityDerivations } from "../views/seedDerivations.js";
@@ -325,6 +326,7 @@ export function createStepApp(options = {}) {
   const runner = createBoundaryRunner({
     session,
     useHttp,
+    gate: bindGate(waterTargetGate),
     fetchImpl,
     debounceMs,
     compute: () => (reactiveApp ?? app).compute(),

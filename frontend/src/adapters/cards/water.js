@@ -451,6 +451,8 @@ export function refreshWaterCard(app, ctx) {
         inputLabel: `${label} target (ppm)`,
         checked: isChecked,
         targetValue: typeof targetVal === "number" ? targetVal : 0,
+        sourceValue: typeof sourceVal === "number" ? sourceVal : 0,
+        belowSource: isValued && below,
         valueText: isValued ? fmtPpm(targetVal) : AUTO_TARGET,
         sourceText: fmtPpm(sourceVal),
         postDoseText: fmtPpm(postDoseVal),

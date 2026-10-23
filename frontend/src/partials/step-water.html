@@ -122,11 +122,12 @@
                   <template x-if="r.checked">
                     <input
                       type="number"
-                      min="0"
+                      :min="r.sourceValue ?? 0"
                       step="1"
                       class="form-input tabular-nums"
                       :value="r.targetValue"
                       :aria-label="r.inputLabel"
+                      :aria-invalid="r.belowSource ? 'true' : null"
                       @input="editWaterTarget(r.pin, $event.target.value)"
                     />
                   </template>

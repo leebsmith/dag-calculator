@@ -18,6 +18,7 @@ export function createBoundaryRunner({
   debounceMs = 300,
   compute,
   onState,
+  gate = () => null,
 }) {
   const statuses = Object.fromEntries(
     session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
@@ -72,6 +73,13 @@ export function createBoundaryRunner({
         const id = nodes[index];
         try {
           const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
+          const blocked = gate(binding, inputs);
+          if (blocked) {
+            if (!firstError) firstError = new Error(blocked);
+            setStatus(id, "error");
+            index += 1;
+            continue;
+          }
           if (engine.hasBoundaryResult(fingerprint)) {
             setStatus(id, "ok");
             index += 1;

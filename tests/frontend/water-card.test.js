@@ -144,7 +144,7 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(target("magnesium_mg"), 3);
   assert.equal(target("sodium_na"), 4);
   assert.equal(target("alkalinity_as_caco3"), 15);
-  assert.equal(app.engine.get("water.calcium_floor_ppm"), 15);
+  assert.equal(app.engine.get("water.calcium_floor_ppm"), 50);
   assert.equal(app.waterSummary.mode, "OPTIMIZE");
   assert.equal(app.waterSummary.checkedPins.length, 6);
   assert.equal(app.waterTargetLocked, false);

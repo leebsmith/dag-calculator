@@ -206,6 +206,10 @@
       "value": 5.5,
       "dimension": "percentage"
     },
+    "default_calcium_floor_ppm": {
+      "value": 50,
+      "dimension": "concentration"
+    },
     "default_target_ibu": {
       "value": 30,
       "dimension": "ibu"
@@ -1993,14 +1997,7 @@
     "water.calcium_floor_ppm": {
       "kind": "root",
       "dimension": "concentration",
-      "default": {
-        "op": "if",
-        "args": [
-          { "op": "ne", "args": [{ "ref": "water.target_profile_id" }, ""] },
-          { "ref": "water.target_profile.calcium_floor_ppm" },
-          50
-        ]
-      },
+      "default": { "const": "default_calcium_floor_ppm" },
       "domain": {
         "gte": 0
       }

@@ -106,6 +106,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `caco3_eq_weight` | 50 | `dimensionless` |
 | `default_apparent_attenuation` | 0.75 | `percentage` |
 | `default_boil_time_min` | 60 | `time` |
+| `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
 | `default_grain_moisture_fraction` | 0.04 | `percentage` |
 | `default_grain_temp_c` | 20 | `temperature` |

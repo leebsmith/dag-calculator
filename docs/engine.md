@@ -247,7 +247,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 
 Water source ions are **read-only selection readouts** (the boundary reads them
 straight from `water.source_report`). Water target ions and the calcium floor are
-**editable roots** (`water.target.*`, `water.calcium_floor_ppm`), seeded from the
+**editable roots** (`water.target.*`), seeded from the
 selected `water.target_profile` on copy-in, along with the template's `mode`
 (`water.strategy`). The assumed dosing practice is documented in
 `docs/calculator-assumed-dosing-practice.md`.

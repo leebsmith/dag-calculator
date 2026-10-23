@@ -133,3 +133,7 @@ detection. See `semantics.md` §3.2.
   "not set".
 - **Identity is not a node**: `engine.get("style")` throws; use `resolve` for
   identity fields, and read the component itself from `engine.identity`.
+- **Water targets are gated, not clamped**: a pinned target below its source is
+  sent nowhere — `adapters/waterGate.js` blocks the request (salts only add). The
+  rule is deliberately at the seam, not a domain bound, because unpinned ions may
+  legitimately sit below source.
