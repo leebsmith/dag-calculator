@@ -39,5 +39,30 @@
     "total_alkalinity_caco3": 0,
     "total_hardness_caco3": 0,
     "notes": "Zero-mineral baseline. A definition, not a lab result."
+  },
+  "southside-va-well": {
+    "report_id": "southside-va-well",
+    "date_received": "",
+    "date_reported": "",
+    "laboratory": "Southside Virginia well",
+    "source_name": "Drilled well (Piedmont, crystalline bedrock)",
+    "location": "Southside Virginia",
+    "sample_id": "",
+    "ph": 6.6,
+    "tds_ppm": 78,
+    "electrical_conductivity_mmho_cm": 0.12,
+    "calcium_ca": 12.0,
+    "magnesium_mg": 3.5,
+    "sodium_na": 6.0,
+    "potassium_k": 0.0,
+    "chloride_cl": 5.0,
+    "sulfate_so4": 8.0,
+    "bicarbonate_hco3": 35.0,
+    "total_alkalinity_caco3": 28.7,
+    "total_hardness_caco3": 44.4,
+    "nitrate_no3_n": 0.0,
+    "total_phosphorus_p": 0.0,
+    "total_iron_fe": 0.3,
+    "notes": "Representative Southside Virginia drilled-well profile (Piedmont crystalline/metamorphic bedrock): low-mineral and slightly acidic, close to RO purity. Alkalinity derived from bicarbonate (35 x 50/61 = 28.7 as CaCO3); hardness from Ca/Mg (12 x 2.497 + 3.5 x 4.118 = 44.4 as CaCO3); TDS midpoint of the 65-90 mg/L range. Iron sits at the secondary aesthetic limit; manganese (not carried by the water-report schema) commonly runs near or above its secondary limit in this province. Not a laboratory analysis."
   }
 }
