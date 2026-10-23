@@ -81,8 +81,21 @@ The structural stylesheet consumes tokens; it never defines them.
 - Presentation state belongs in **semantic state classes** (`.is-active`,
   `.is-locked`, `.is-error`), not in a pile of utility strings applied at
   runtime.
+- Utilities are permitted for **typography, color, and spacing deltas**
+  (`text-xs`, `text-muted`, `font-semibold`). Utilities are not a substitute
+  for state classes or for layout structure.
 - Never use **inline styles** in markup. All visual declarations — including
   display toggles — live in classes.
+
+### 3.4 Composition
+
+- A component class declares **only its deltas**. Shared surface, typography,
+  and control recipes come from primitives or utilities.
+- If two components share a declaration block, either extract the shared recipe
+  or record why the convergence is coincidental.
+- Dynamic state names built at runtime (for example a severity prefix) must be
+  declared in the drift-guard safelist rather than duplicated as static
+  classes.
 
 ---
 
@@ -151,6 +164,22 @@ The structural stylesheet consumes tokens; it never defines them.
 - No `transition: all`.
 - No inline styles in markup.
 - No bare-element styling outside the reset block.
-- No utility-first class soup in markup — use semantic state classes.
+- No utility-first class soup for **state or layout structure** — use semantic
+  state classes. Typography, color, and spacing deltas may use utilities.
 - No pure black/white surfaces.
 - No color-only state indication.
+
+---
+
+## 10. Drift Guards
+
+Duplicate declaration blocks and unreferenced classes are guarded in
+`make test`. The allowlist lives beside those guards and uses one entry per
+duplicate declaration group or unreferenced class:
+
+- Every entry needs a **reason**; an entry without one fails the guard.
+- A planned cleanup entry carries a **phase** naming the commit that removes it.
+- The entry is deleted in the same commit that resolves it. Stale entries fail
+  the guard, so the allowlist stays a work list rather than an archive.
+- Runtime-built class names use an explicit **safelist prefix**; they are not
+  allowlisted one class at a time.

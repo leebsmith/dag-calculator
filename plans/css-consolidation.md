@@ -31,6 +31,11 @@ Measured at `bf4cee8` (after the water card restructure):
   `make test` = node --test (includes `tests/guards/`) + pytest. There is no CI
   workflow; `make verify` is the local gate.
 
+The landed guard measures **35 duplicate rule-block groups** and **34
+unreferenced classes** at `3c84b15`. The earlier draft's 36/38 came from a
+per-selector/looser-token definition; the guard's rule-block and exact-token
+definitions are the ones that stay reproducible.
+
 ## Tracking
 
 Execution order is top to bottom. Guards land before cleanup so the allowlist
@@ -38,7 +43,7 @@ doubles as the cleanup work list.
 
 | Phase | Status | Acceptance gate |
 |---|---|---|
-| 0. Decisions & rule alignment | Not started | Decisions recorded; rulebook amended; no code change |
+| 0. Decisions & rule alignment | Complete | Decisions recorded; rulebook amended; no code change |
 | 1. Guardrails | Not started | Guards run in `make test` on a seeded baseline; rulebook updated |
 | 2. Water CSS collapse | Not started | Water card renders identically; dead water rules removed; `make check` passes |
 | 3. Backlog paydown | Not started | Duplicate groups resolved or allowlisted; 43 dead rules removed |
@@ -49,38 +54,39 @@ old Phase 4 → deferred.
 
 ## Phase 0 — Decisions & rule alignment
 
-- [ ] Resolve the rulebook contradiction: `docs/style-rulebook.md` §9 says
+- [x] Resolve the rulebook contradiction: `docs/style-rulebook.md` §9 says
       "No utility-first class soup in markup — use semantic state classes",
       while Phases 2 and 3 substitute utilities (`text-xs text-muted`,
       `text-danger`). Narrow §9 to *state* (no utility soup for `is-*`-style
       state), and permit utilities for typography and color deltas. Decision:
       **utilities for type/color, semantic classes for state and layout
       structure.**
-- [ ] Add the composition rule to the rulebook now: a component class declares
+- [x] Add the composition rule to the rulebook now: a component class declares
       only its deltas; shared surface/typography recipes come from primitives or
       utilities.
-- [ ] `sev-*`: keep as a documented exception. They are dynamic
+- [x] `sev-*`: keep as a documented exception. They are dynamic
       (`sev-${severity}` at `frontend/src/adapters/cards/water.js:301`) and
       duplicate `text-danger`/`text-warning`/`text-muted` exactly, but replacing
       them requires editing `water.js`, which is outside this plan's scope.
-- [ ] PurgeCSS: remove `purgecss.config.js`, the `npm run purgecss` script, and
-      the devDependency. Nothing in `make build`/`check`/`test` invokes them.
-      Removing the devDependency is a dependency change and needs explicit
-      sign-off; defer that sub-step to the build agent.
-- [ ] Panel primitive (review Q1): **reuse `.synthesized-card`; do not introduce
+- [x] Panel primitive (review Q1): **reuse `.synthesized-card`; do not introduce
       a new panel primitive.** The competing surface classes (`step-card`,
       `library-panel`, `signin-panel`, `landing-freeze-card`, `catalog-item-card`,
       `modal-*`, `telemetry`) encode different elevation roles. The four
       panel-shaped duplicate groups (19, 20, 21, 25) are allowlisted in Phase 1.
       Revisit only when a third genuine consumer appears.
-- [ ] `.font-semibold` (review Q2): **add the utility.** `--font-weight-semibold`
+- [x] `.font-semibold` (review Q2): **add the utility.** `--font-weight-semibold`
       already exists; the utility set stops at `font-medium`/`font-bold` for no
       stated reason. Phase 2 consumes it for the water verdict line.
-- [ ] Note the empty `frontend/src/styles/` directory as the deferred split
+- [x] Note the empty `frontend/src/styles/` directory as the deferred split
       target.
+- [ ] PurgeCSS: remove `purgecss.config.js`, the `npm run purgecss` script, and
+      the devDependency. Nothing in `make build`/`check`/`test` invokes them.
+      Removing the devDependency is a dependency change and needs explicit
+      sign-off; defer that sub-step to the build agent.
 
 Acceptance: the decisions above are recorded in this plan and the rulebook is
-amended; no source files change.
+amended; no source files change. Config and dependency removal lands as a
+separate commit because it touches source files.
 
 ## Phase 1 — Guardrails
 
