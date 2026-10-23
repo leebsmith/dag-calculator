@@ -2,6 +2,14 @@
 
 ## In progress
 
+* **Landing / batch setup polish** (`plans/landing-and-batch-setup.md`, shipped
+  MVP) — known gaps:
+  * "New batch" button does not open the modal (console error TBD).
+  * The setup panel's equipment form does not scroll in a short viewport.
+  * Style envelope inputs render as inert number fields; they should be readouts.
+  * Equipment create form exposes 4 of 17 schema fields.
+
+
 * **Water pin visibility & coverage** (`plans/water-pin-visibility-and-test-matrix.md`)
   — pin/float rendering from one ion registry, profile intent, Mode 5 cap, and the
   beer × water × settings test matrix.

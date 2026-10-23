@@ -82,8 +82,10 @@ function targetValue(engine, pin) {
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
+// Checked ions are always valued (checking seeds a number; clearing unchecks),
+// so the constrained set and the checked set are the same set.
 function valuedPins(engine) {
-  return checkedPins(engine).filter((pin) => targetValue(engine, pin) > 0);
+  return checkedPins(engine);
 }
 
 function doseRows(fieldsById, prefix, forms) {
@@ -233,23 +235,38 @@ export function registerWaterCard(app, ctx) {
       const checked = rows.some((row) => row.ion === pin);
       const next = checked ? rows.filter((row) => row.ion !== pin) : [...rows, { ion: pin }];
       engine.setCollection(N.pinnedIons, next);
-      // Detaching keeps the profile's values as explicit overrides, then the
-      // unchecked ion loses its target (absence, not a zero target).
-      if (checked) this.materializeWaterTargets();
-      this.clearWaterPreset();
-      if (checked) this.unsetRoot(`${N.target}.${WATER_ION_BY_PIN[pin]}`);
+      const nodeId = `${N.target}.${WATER_ION_BY_PIN[pin]}`;
+      if (checked) {
+        // Detaching keeps the profile's values as explicit overrides; the
+        // unchecked ion then loses its target entirely.
+        this.materializeWaterTargets();
+        this.clearWaterPreset();
+        this.unsetRoot(nodeId);
+      } else {
+        // Checked ions are always valued: seed from the batch's water source,
+        // which is the only non-infeasible starting point (salts only add).
+        const source = engine.identity?.[N.sourceReport] ?? {};
+        const seed = Number(source[WATER_ION_BY_PIN[pin]]);
+        this.setRoot(nodeId, Number.isFinite(seed) ? seed : 0);
+        this.clearWaterPreset();
+      }
       this.waterTargetLocked = false;
-      this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      this.setRoot(N.strategy, strategyForHeld(checkedPins(engine)));
       this.scheduleSolve();
       this.notify();
     },
 
     editWaterTarget(pin, raw) {
       if (!checkedPins(engine).includes(pin)) return;
+      if (String(raw).trim() === "") {
+        // A checked ion must carry a value; clearing the field unchecks it.
+        this.toggleWaterTarget(pin);
+        return;
+      }
       const parsed = Number(raw);
-      const value = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-      this.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: value });
-      this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      if (!Number.isFinite(parsed) || parsed < 0) return;
+      this.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: parsed });
+      this.setRoot(N.strategy, strategyForHeld(checkedPins(engine)));
       this.scheduleSolve();
       this.notify();
     },
@@ -396,8 +413,8 @@ export function refreshWaterCard(app, ctx) {
     const hltIons = ionVector(engine, N.postHltIons);
     const kettle = kettleBlend(mashIons, hltIons, run1 + run2, sparge);
 
-    // The checked set is the declaration; only checked ions with a positive
-    // value constrain the solver. The strategy is derived from that set.
+    // The checked set is the declaration and every checked ion carries a value.
+    // The strategy is derived from that set.
     const checked = checkedPins(engine);
     const checkedSet = new Set(checked);
     const valued = valuedPins(engine);

@@ -73,20 +73,46 @@ test("the checked set drives the grid and the derived strategy", () => {
   }
 });
 
-test("a checked ion with no value is excluded and hinted", () => {
+test("checking an ion seeds a value from the water source", () => {
   const app = createStepApp();
   app.boot();
+  app.setIdentityComponent("water.source", {
+    report_id: "w1",
+    laboratory: "Ward",
+    calcium_ca: 40,
+    magnesium_mg: 8,
+    sodium_na: 20,
+    sulfate_so4: 75,
+    chloride_cl: 25,
+    total_alkalinity_caco3: 80,
+  });
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("so4");
   app.compute();
 
   const row = app.waterSummary.ions.find((r) => r.ion === "sulfate_so4");
   assert.equal(row.checked, true);
-  assert.equal(row.status, "No value");
-  assert.equal(row.hint, "no target entered");
-  assert.deepEqual(app.waterSummary.valuedPins, []);
-  assert.equal(app.waterSummary.mode, "BASELINE");
-  assert.match(app.waterSummary.targetLine, /No targets/);
+  assert.equal(row.targetValue, 75);
+  assert.equal(row.hint, "");
+  assert.deepEqual(app.waterSummary.valuedPins, ["so4"]);
+  assert.equal(app.waterSummary.mode, "CUSTOM");
+  assert.equal(app.master.getRoot("water.target.sulfate_so4"), 75);
+});
+
+test("clearing a checked ion's value unchecks it", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectWaterTarget("freeform");
+  app.toggleWaterTarget("so4");
+  app.compute();
+
+  app.editWaterTarget("so4", "");
+  app.compute();
+
+  const row = app.waterSummary.ions.find((r) => r.ion === "sulfate_so4");
+  assert.equal(row.checked, false);
+  assert.equal(app.master.getRoot("water.target.sulfate_so4"), undefined);
+  assert.deepEqual(app.waterSummary.checkedPins, []);
 });
 
 test("No targets locks the grid; Freeform unlocks it", () => {
