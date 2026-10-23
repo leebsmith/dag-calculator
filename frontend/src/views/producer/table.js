@@ -6,21 +6,22 @@ import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.j
 import { describeField } from "./projection.js";
 import { formatValue } from "./format.js";
 
-function cellDisplay(artifact, dimension, value, unitMode, nl) {
+function cellDisplay(artifact, dimension, value, unitMode, nl, meta = {}) {
   if (typeof value !== "number" || !dimension) return { display: formatValue(value), unit: null };
   const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dimension);
-  if (!dimDef) return { display: formatValue(value), unit: null };
-  const unitId = unitMode[dimension] ?? dimDef.default ?? dimDef.units[0][0];
-  const shown = fromBase(artifact, dimension, unitId, value, nl);
-  const decimals = unitDecimals(dimension, unitId);
+  const unitId = dimDef
+    ? meta.displayUnit ?? unitMode[dimension] ?? dimDef.default ?? dimDef.units[0][0]
+    : null;
+  const shown = dimDef && unitId ? fromBase(artifact, dimension, unitId, value, nl) : value;
+  const decimals = meta.decimals ?? unitDecimals(dimension, unitId);
   const display = decimals != null ? shown.toFixed(decimals) : formatValue(shown);
-  const symbol = UNIT_SYMBOLS[dimension]?.[unitId] ?? unitId;
+  const symbol = dimDef ? UNIT_SYMBOLS[dimension]?.[unitId] ?? unitId : meta.unit ?? null;
   return { display, unit: symbol };
 }
 
 // AI AGENT HOOKS: Use this valuator for readout-table cells and notes.
 // Do not duplicated this logic elsewhere.
-export function valuateTable(field, artifact, engine, unitMode, nl) {
+export function valuateTable(field, artifact, engine, unitMode, nl, registry = {}) {
   const rows = field.rows.map((row) => {
     const cells = {};
     for (const col of field.columns) {
@@ -50,7 +51,7 @@ export function valuateTable(field, artifact, engine, unitMode, nl) {
       } catch {
         dimension = null;
       }
-      const d = cellDisplay(artifact, dimension, value, unitMode, nl);
+      const d = cellDisplay(artifact, dimension, value, unitMode, nl, registry[ref] ?? {});
       cells[col.id] = { display: d.display, unit: d.unit };
     }
     let note = null;
@@ -68,7 +69,14 @@ export function valuateTable(field, artifact, engine, unitMode, nl) {
         } catch {
           dimension = null;
         }
-        const d = cellDisplay(artifact, dimension, value, unitMode, nl);
+        const d = cellDisplay(
+          artifact,
+          dimension,
+          value,
+          unitMode,
+          nl,
+          registry[row.note.ref] ?? {}
+        );
         note = { show: value > 0, label: row.note.label ?? "", display: d.display, unit: d.unit };
       }
     }

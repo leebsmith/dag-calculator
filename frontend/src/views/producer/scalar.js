@@ -61,6 +61,7 @@ export function valuateScalar(field, engine, ctx, nl) {
     value,
     unit: symbol ?? field.unit ?? fallbackSymbol,
     display,
+    decimals,
     toggleable,
     unitId,
     // Accented ONLY on a deliberate per-field deviation from the inherited unit

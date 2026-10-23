@@ -13,6 +13,6 @@ export const mashRegistry = {
   "mash.tun_initial_temp_c": { label: "Tun initial temperature", unit: "°C" },
   "mash.dough_in_target_temp_c": { label: "Dough-in target", unit: "°C" },
   "mash.strike_water_temp_base_c": { label: "Strike base temp", unit: "°C" },
-  "mash.strike_water_tun_offset_c": { label: "Tun thermal offset", unit: "°C" },
+  "mash.strike_water_tun_offset_c": { label: "Tun thermal offset" },
   "mash.strike_water_temp_c": { label: "Strike water temp", unit: "°C" },
 };

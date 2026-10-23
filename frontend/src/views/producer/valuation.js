@@ -38,7 +38,7 @@ export function valuate(fields, engine, ctx = {}) {
         return valuateCollection(field, engine, artifact, collectionDomains, nl);
       }
       if (field.control === "readout-table") {
-        return valuateTable(field, artifact, engine, unitMode, nl);
+        return valuateTable(field, artifact, engine, unitMode, nl, ctx.registry ?? {});
       }
       const out = valuateScalar(field, engine, ctx, nl);
       if (!out) return null;
@@ -49,5 +49,9 @@ export function valuate(fields, engine, ctx = {}) {
 }
 
 export function produce(artifact, steps, registry, engine, ctx = {}) {
-  return valuate(projectFields(artifact, steps, registry, ctx), engine, { ...ctx, artifact });
+  return valuate(projectFields(artifact, steps, registry, ctx), engine, {
+    ...ctx,
+    artifact,
+    registry,
+  });
 }

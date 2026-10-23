@@ -17,13 +17,20 @@ test("unitDecimals resolves per-unit precision", () => {
 });
 
 test("unitDecimals falls back to dimension-level precision", () => {
-  // grain_color/beer_color carry a dimension-level default (1) for both units.
   assert.equal(unitDecimals("grain_color", "EBC"), 1);
   assert.equal(unitDecimals("grain_color", "Lovibond"), 1);
+  assert.equal(unitDecimals("mass", "kg"), 1);
+  assert.equal(unitDecimals("ibu", "IBU"), 1);
+  assert.equal(unitDecimals("abv", "pct"), 1);
+  assert.equal(unitDecimals("ph", "pH"), 2);
+  assert.equal(unitDecimals("percentage", "pct"), 1);
+  assert.equal(unitDecimals("percentage", "fraction"), 3);
+  assert.equal(unitDecimals("time", "min"), 0);
+  assert.equal(unitDecimals("time", "hr"), 1);
 });
 
 test("unitDecimals is null where no precision is declared", () => {
-  assert.equal(unitDecimals("mass", "kg"), null);
+  assert.equal(unitDecimals("dimensionless", "1"), null);
   assert.equal(unitDecimals("unknown_dimension", "x"), null);
 });
 

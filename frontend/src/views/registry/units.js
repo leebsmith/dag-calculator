@@ -15,13 +15,13 @@
 export const UNIT_DIMENSIONS = [
   { id: "temperature", group: "Base", label: "Temperature", units: [["degC", "°C", 1], ["degF", "°F", 1]] },
   { id: "temperature_delta", group: "Base", label: "Temperature Δ", units: [["dC", "Δ°C", 1], ["dF", "Δ°F", 1]] },
-  { id: "time", group: "Base", label: "Time", units: [["min", "min"], ["hr", "hr"], ["day", "day"]] },
+  { id: "time", group: "Base", label: "Time", units: [["min", "min", 0], ["hr", "hr", 1], ["day", "day", 1]] },
   { id: "volume", group: "Base", label: "Volume", units: [["L", "L", 1], ["gal", "gal", 1], ["qt", "qt", 1], ["ml", "mL", 1]] },
   { id: "mass", group: "Base", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["oz", "oz"], ["g", "g"]] },
   { id: "gravity", group: "Base", label: "Gravity", default: "Plato", units: [["SG", "SG", 3], ["Plato", "°P", 1]] },
   { id: "grain_color", group: "Base", label: "Grain Color", default: "EBC", decimals: 1, units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
   { id: "beer_color", group: "Base", label: "Beer Color", default: "EBC", decimals: 1, units: [["SRM", "SRM"], ["EBC", "EBC"]] },
-  { id: "percentage", group: "Base", label: "Percentage", default: "pct", units: [["fraction", "×1"], ["pct", "%"]] },
+  { id: "percentage", group: "Base", label: "Percentage", default: "pct", units: [["fraction", "×1", 3], ["pct", "%", 1]] },
   { id: "volume_per_time", group: "Derived", label: "Boil-off rate", units: [["L_per_hr", "L/hr"], ["gal_per_hr", "gal/hr"]] },
   { id: "specific_heat", group: "Derived", label: "Specific Heat", units: [["kcal_per_kg_degC", "kcal/(kg·°C)"], ["btu_per_lb_degF", "BTU/(lb·°F)"]] },
   { id: "mash_thickness", group: "Derived", label: "Mash Thickness", units: [["L_per_kg", "L/kg"], ["qt_per_lb", "qt/lb"]] },
@@ -33,13 +33,35 @@ export const UNIT_SYMBOLS = Object.fromEntries(
   UNIT_DIMENSIONS.map((d) => [d.id, Object.fromEntries(d.units.map(([id, sym]) => [id, sym]))])
 );
 
+// Dimension-level readout precision. Per-unit decimals win; this map covers
+// dimensions without a switchable unit menu and fills the gaps for dimensions
+// whose units share one precision.
+export const DIMENSION_DECIMALS = {
+  temperature: 1,
+  temperature_delta: 1,
+  time: 0,
+  volume: 1,
+  volume_per_time: 1,
+  mass: 1,
+  grain_color: 1,
+  beer_color: 1,
+  percentage: 1,
+  ph: 2,
+  concentration: 1,
+  abv: 1,
+  ibu: 1,
+  specific_heat: 2,
+  mash_thickness: 2,
+  extract_yield: 2,
+  total_extract: 1,
+};
+
 // Per-unit display precision: the unit's own `decimals`, else the dimension's
 // fallback, else null (the caller trims trailing zeros via `formatValue`).
 export function unitDecimals(dimensionId, unitId) {
   const dim = UNIT_DIMENSIONS.find((d) => d.id === dimensionId);
-  if (!dim) return null;
-  const unit = dim.units.find(([id]) => id === unitId);
-  return unit?.[2] ?? dim.decimals ?? null;
+  const unit = dim?.units.find(([id]) => id === unitId);
+  return unit?.[2] ?? dim?.decimals ?? DIMENSION_DECIMALS[dimensionId] ?? null;
 }
 
 // UNIT_DIMENSIONS grouped for the master menu's columns, preserving order.

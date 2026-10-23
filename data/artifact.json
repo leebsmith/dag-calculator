@@ -1728,7 +1728,7 @@
     "batch.whirlpool_cooling_time_constant_min": {
       "kind": "root",
       "dimension": "time",
-      "default": 108.69565217391305,
+      "default": 108.7,
       "domain": {
         "gt": 0
       }
