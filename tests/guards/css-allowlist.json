@@ -87,16 +87,6 @@
     },
     {
       "context": "",
-      "declarations": "margin: var(--space-0)",
-      "selectors": [
-        ".alert p",
-        ".water-basis, .water-destinations, .water-ratio, .water-ratio-basis, .water-target-line, .water-not-modelled"
-      ],
-      "reason": "Phase 2: water margin resets leave, leaving only .alert p.",
-      "phase": 2
-    },
-    {
-      "context": "",
       "declarations": "color: var(--sys-color-warning-text)",
       "selectors": [
         ".status-badge-warning",
@@ -170,10 +160,7 @@
         ".table-header-meta",
         ".recipes-hint",
         ".landing-create-hint, .landing-row-hint, .landing-freeze-date",
-        ".footer-step-count",
-        ".water-basis",
-        ".water-ratio-basis",
-        ".water-not-modelled"
+        ".footer-step-count"
       ],
       "reason": "Phase 3: consolidate onto text-xs text-muted.",
       "phase": 3
@@ -334,23 +321,11 @@
     },
     {
       "context": "",
-      "declarations": "color: var(--sys-text-secondary); font-size: var(--text-xs); font-weight: var(--font-weight-medium)",
-      "selectors": [
-        ".metric-cell-unit",
-        ".water-destinations",
-        ".water-target-line"
-      ],
-      "reason": "Phase 2: water selectors leave, leaving metric-cell-unit alone.",
-      "phase": 2
-    },
-    {
-      "context": "",
       "declarations": "accent-color: var(--sys-color-action-primary)",
       "selectors": [
-        ".mash-rest-toggle input[type=\"checkbox\"]",
         ".brew-day-step-toggle input[type=\"checkbox\"]",
         ".extract-slider",
-        ".pin-row input[type=\"checkbox\"]"
+        ".mash-rest-toggle input[type=\"checkbox\"]"
       ],
       "reason": "Shared control accent recipe; checkbox and slider contexts differ."
     }
@@ -432,11 +407,6 @@
       "phase": 3
     },
     {
-      "class": "pin-row",
-      "reason": "Phase 2: dead pin controls; delete them with the water collapse.",
-      "phase": 2
-    },
-    {
       "class": "recipes-popover",
       "reason": "Phase 3: dead recipes popover; delete it.",
       "phase": 3
@@ -467,16 +437,6 @@
       "phase": 3
     },
     {
-      "class": "text-primary",
-      "reason": "Phase 2: consumed by the water ratio line.",
-      "phase": 2
-    },
-    {
-      "class": "text-secondary",
-      "reason": "Phase 2: consumed by the water target line.",
-      "phase": 2
-    },
-    {
       "class": "tri-state-group",
       "reason": "Phase 3: unused tri-state control; delete it.",
       "phase": 3
@@ -505,26 +465,6 @@
       "class": "truncate",
       "reason": "Phase 3: unused text utility; delete it.",
       "phase": 3
-    },
-    {
-      "class": "water-basis",
-      "reason": "Phase 2: dead water text; delete it.",
-      "phase": 2
-    },
-    {
-      "class": "water-destinations",
-      "reason": "Phase 2: dead water text; delete it.",
-      "phase": 2
-    },
-    {
-      "class": "water-ratio-basis",
-      "reason": "Phase 2: dead water text; delete it.",
-      "phase": 2
-    },
-    {
-      "class": "water-summary",
-      "reason": "Phase 2: dead water summary; delete it.",
-      "phase": 2
     }
   ]
 }

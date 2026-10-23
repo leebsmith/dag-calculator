@@ -146,8 +146,8 @@
         </table>
       </div>
 
-      <p class="water-target-line" x-text="waterVerdict.targetLine"></p>
-      <p class="water-ratio" x-text="waterVerdict.ratioLine"></p>
+      <p class="text-xs text-secondary font-medium" x-text="waterVerdict.targetLine"></p>
+      <p class="text-sm font-semibold text-primary" x-text="waterVerdict.ratioLine"></p>
       <p class="text-sm">
         <span class="text-muted">Predicted mash pH </span>
         <span class="tabular-nums" x-text="waterVerdict.predictedPh"></span>
@@ -261,7 +261,7 @@
             <p class="telemetry-row" :class="telemetryClass(t)" x-text="telemetryLine(t)"></p>
           </template>
         </div>
-        <p class="water-not-modelled" x-text="waterDetails.notModelled"></p>
+        <p class="text-xs text-muted" x-text="waterDetails.notModelled"></p>
       </div>
     </section>
   </div>

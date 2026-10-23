@@ -45,7 +45,7 @@ doubles as the cleanup work list.
 |---|---|---|
 | 0. Decisions & rule alignment | Complete | Decisions recorded; rulebook amended; no code change |
 | 1. Guardrails | Complete | Guards run in `make test` on a seeded baseline; rulebook updated |
-| 2. Water CSS collapse | Not started | Water card renders identically; dead water rules removed; `make check` passes |
+| 2. Water CSS collapse | Complete | Water card renders identically; dead water rules removed; `make check` passes |
 | 3. Backlog paydown | Not started | Duplicate groups resolved or allowlisted; 43 dead rules removed |
 | Deferred: stylesheet split | Decision recorded | Not scheduled; reasons below |
 
@@ -135,41 +135,41 @@ because it is the only item here with a visual regression surface.
 
 Dead, delete outright:
 
-- [ ] `.water-summary` — no markup consumer.
-- [ ] `.water-basis`, `.water-destinations`, `.water-ratio-basis` — no markup
+- [x] `.water-summary` — no markup consumer.
+- [x] `.water-basis`, `.water-destinations`, `.water-ratio-basis` — no markup
       consumer.
-- [ ] `.pin-row`, `.pin-row:hover` — no markup consumer.
-- [ ] `.pin-row input[type="checkbox"]` — delete **only this selector** from
+- [x] `.pin-row`, `.pin-row:hover` — no markup consumer.
+- [x] `.pin-row input[type="checkbox"]` — delete **only this selector** from
       the shared `accent-color` block; `.mash-rest-toggle input[type="checkbox"]`,
       `.brew-day-step-toggle input[type="checkbox"]`, and `.extract-slider` stay.
 
 Still in markup, convert rather than delete:
 
-- [ ] `.water-target-line` (html:149) → `text-xs text-secondary font-medium` on
+- [x] `.water-target-line` (html:149) → `text-xs text-secondary font-medium` on
       the element, then delete the rule and its selector from the shared
       `margin: 0` list.
-- [ ] `.water-ratio` (html:150) → `text-sm font-semibold text-primary`, using
+- [x] `.water-ratio` (html:150) → `text-sm font-semibold text-primary`, using
       the Phase 0 utility, then delete the rule.
-- [ ] `.water-not-modelled` (html:264) → `text-xs text-muted`, then delete.
+- [x] `.water-not-modelled` (html:264) → `text-xs text-muted`, then delete.
 
 Keep:
 
-- [ ] `.telemetry`, `.telemetry-row` — live in the Details panel.
-- [ ] `.sev-*` — dynamic and live (Phase 0 decision).
-- [ ] `.water-treated` — the table stays as-is in this phase.
+- [x] `.telemetry`, `.telemetry-row` — live in the Details panel.
+- [x] `.sev-*` — dynamic and live (Phase 0 decision).
+- [x] `.water-treated` — the table stays as-is in this phase.
 
 Bookkeeping:
 
-- [ ] Remove the allowlist entries this phase resolves (`.water-summary`,
+- [x] Remove the allowlist entries this phase resolves (`.water-summary`,
       `.water-basis`, `.water-destinations`, `.water-ratio-basis`, `.pin-row`
       variants, and `.text-secondary` now that it is used).
-- [ ] Hand the water-table duplication (3 identical rules, 2 conflicting) to
+- [x] Hand the water-table duplication (3 identical rules, 2 conflicting) to
       Phase 3.
-- [ ] Escalate the orphaned co-selectors to Phase 3: `.metric-cell-unit`
+- [x] Escalate the orphaned co-selectors to Phase 3: `.metric-cell-unit`
       (after `.water-destinations`/`.water-target-line` leave its group) and
       `.alert p` (after the water list leaves the `margin: 0` group).
-- [ ] Record the net line reduction **after** the markup edits, with before and
-      after line counts.
+- [x] Record the net line reduction **after** the markup edits, with before and
+      after line counts: **2,482 → 2,412 lines (−70)**.
 
 Acceptance:
 
