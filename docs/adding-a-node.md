@@ -16,11 +16,18 @@ separate, later step and is deliberately out of scope here.
 | a scalar input | `root` | `dimension`, `default` |
 | a categorical input | `choice` | `taxonomy`, `default` |
 | a list input | `collection` | `item_schema` |
-| a reference + override | `selection` | `schema`, `ref` |
+| a reference + override | `selection` | `output.schema`, `ref` |
 | a computed value | `derived` | `inputs`, `expr`, `output` |
 
 (`boundary` is heavier — it needs a host-registered solver — and is not covered
 here.)
+
+**Prefer a `default` over a host copy.** If a root should take its value from a
+selection (a profile field, a style envelope), declare a `default` that reads
+that field — the root inherits while unset and becomes an override once set. Do
+not add an entry to `views/seedDerivations.js`; that table is reserved for
+derivations the expression language cannot express (centroid geometry, tag
+sets).
 
 ## 1. Add supporting declarations first (only if new)
 
@@ -141,7 +148,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 | Hamilton normalization of authored `parts` into `pct`/`w_i` | host | `frontend/src/views/hamilton.js` |
 | Tinseth hop mass back-calculation from IBU shares | host | `frontend/src/views/hops.js` |
 | Style-conformance judgement and badges | host | `frontend/src/engine/styleConformance.js`, `views/producer/conformance.js` |
-| Seed-derived copy-in values and provenance hashes | host | `frontend/src/views/seedDerivations.js`, `store/snapshot.js` |
+| Residual seed-derived copy-in (only values the AST cannot express) | host | `frontend/src/views/seedDerivations.js` |
 | Fermentation geometry (styles' OE/AE feasible regions) | host | `frontend/src/engine/fermentation.js` |
 | Presentation overrides (polymorphic labels, hints, clamp envelopes) | host | `frontend/src/views/registry/presentation.js` |
 | Card node-id references | host registry | `frontend/src/views/registry/*.js` |

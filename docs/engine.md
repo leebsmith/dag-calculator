@@ -109,10 +109,11 @@ feeds `boundaryRequest()` and evaluation, so their fingerprints agree.
 
 A selection resolves the batch's copied component first
 (`options.selections[nodeId]`). A non-empty `ref` with no snapshot falls back to
-the library `references[node.schema][refValue]`; that fallback exists only for
+the library `references[node.output.schema][refValue]`; that fallback exists only for
 legacy drafts, which the normal load path materialises and persists on the next
 save. Library edits therefore cannot perturb a batch that already carries its
-snapshot.
+snapshot. An empty `ref` (or a `null` snapshot) resolves to `null` — absence, not
+an empty component — so dotted reads yield `undefined`.
 
 ### `evaluate(expr, ctx)` — the AST
 
@@ -133,9 +134,14 @@ collection field or a boundary output (e.g. `solver.batch.cascade.v_strike`).
 
 ## Invalidation
 
-`setRoot`/`setCollection` call `invalidate(nodeId)`, which deletes
+`setRoot`/`unsetRoot`/`setCollection` call `invalidate(nodeId)`, which deletes
 the node from `memo` and recurses through `dependents`. The memo is the only
 place values are cached, so there is nothing else to keep consistent.
+
+`unsetRoot(id)` drops an explicit value: the node falls back to its `default`
+(or becomes valueless when the default cannot resolve). A root whose default
+reads a selection field therefore *inherits* from that component until the user
+sets it; once set it is an override and component changes no longer affect it.
 
 ## Public API
 
@@ -146,11 +152,11 @@ engine.get(id)            // node value (memoized)
 engine.resolve(path)      // dotted-path value
 engine.call(fnId, args)   // invoke a function
 engine.relationStates()   // [{ id, holds }]
-engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes)
+engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes; holds:null = unresolved)
 engine.fieldDomainStates()      // [{ selectionNodeId, field, holds, … }]
 engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
 
-engine.setRoot(id, v)  getRoot(id)  hasRoot(id)
+engine.setRoot(id, v)  unsetRoot(id)  getRoot(id)  hasRoot(id)
 engine.setCollection(id, rows)
 
 engine.topoOrder  adjacency  dependents

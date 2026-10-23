@@ -83,9 +83,9 @@ test("setRoot invalidates dependents and recomputes", () => {
   assert.notEqual(before, after);
 });
 
-test("an unset optional selection resolves to an empty component (no throw)", () => {
+test("an unset optional selection resolves to null (no throw)", () => {
   const engine = createCalculator(loadArtifact(), makeFixtures());
-  assert.deepEqual(engine.get("batch.yeast"), {});
+  assert.equal(engine.get("batch.yeast"), null);
   assert.equal(engine.resolve("batch.yeast.attenuation_pct"), undefined);
 });
 
@@ -98,6 +98,22 @@ test("a non-empty but unknown selection id still throws", () => {
 test("default refs are declared graph edges", () => {
   const { adjacency } = buildGraph(loadArtifact());
   assert.ok(adjacency["batch.hlt_starting_volume_l"].includes("equipment.profile"));
+});
+
+test("unsetRoot restores the default and reports no explicit value", () => {
+  const fixtures = makeFixtures();
+  fixtures.references.equipment = {
+    small: { ...EQUIPMENT, id: "small", max_hlt_volume_l: 30 },
+    big: { ...EQUIPMENT, id: "big", max_hlt_volume_l: 100 },
+  };
+  fixtures.roots["batch.equipment_profile_id"] = "small";
+  const engine = createCalculator(loadArtifact(), fixtures);
+  assert.equal(engine.get("batch.hlt_starting_volume_l"), 30);
+  engine.setRoot("batch.hlt_starting_volume_l", 12);
+  assert.equal(engine.hasRoot("batch.hlt_starting_volume_l"), true);
+  engine.unsetRoot("batch.hlt_starting_volume_l");
+  assert.equal(engine.hasRoot("batch.hlt_starting_volume_l"), false);
+  assert.equal(engine.get("batch.hlt_starting_volume_l"), 30);
 });
 
 test("a root default seeded from a selection tracks the selection after setRoot", () => {

@@ -6,6 +6,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
+from app.artifact import load_artifact
 from app.auth.deps import require_allowed_user
 from app.main import app
 from app.services.catalog_service import (
@@ -81,7 +82,7 @@ def test_create_assigns_the_identity_field_and_lists_by_kind():
     assert created.id == "item-1"
     assert created.kind == "malt"
     assert created.component["id"] == "item-1"
-    assert created.schema_version == 4
+    assert created.schema_version == load_artifact()["schema_version"]
     assert [item.id for item in svc.list_items("u1", "malt")] == ["item-1"]
     assert svc.list_items("u1", "equipment") == []
 

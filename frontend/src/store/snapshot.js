@@ -13,6 +13,7 @@ export const VALUATION_FORMAT = "outputs";
 // Do not duplicated this logic elsewhere.
 function frozenValue(engine, node, id) {
   const value = engine.get(id);
+  if (value === undefined) return null;
   return node.kind === "boundary" ? value.outputs : value;
 }
 
@@ -39,21 +40,13 @@ export function installSnapshot(app, { artifact, master, session }) {
       const valuation = {};
       for (const id of engine.topoOrder) {
         const node = artifact.nodes[id];
-        // A selection with no chosen component has no value (ref is "").
-        if (node.kind === "selection") {
-          const refValue = engine.get(node.ref);
-          if (refValue === "" || refValue === undefined) {
-            valuation[id] = null;
-            continue;
-          }
-        }
         valuation[id] = frozenValue(engine, node, id);
       }
       const provenance = {};
       for (const [id, node] of Object.entries(artifact.nodes)) {
         if (node.kind !== "selection") continue;
         const refValue = engine.get(node.ref);
-        if (refValue === "" || refValue === undefined) continue;
+        if (refValue === "" || refValue == null) continue;
         provenance[id] = { source_template_id: refValue };
       }
       return {

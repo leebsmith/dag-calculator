@@ -145,7 +145,7 @@ test("teardown restores baseline card state", async () => {
   assert.equal(app.selectedStyleId, "");
   assert.equal(app.styleEnvelope, null);
   assert.equal(app.styleRegion.length, 0);
-  assert.equal(app.targetSrm, 0);
+  assert.equal(app.targetSrm, null);
   assert.equal(app.targetIbu, 30);
   assert.equal(app.selectedYeastId, "");
   assert.equal(app.hopRows.length, 0);

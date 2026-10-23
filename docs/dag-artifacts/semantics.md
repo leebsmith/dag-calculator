@@ -71,7 +71,26 @@ Derived values are computed by the engine and **memoized by the engine**, never
 materialized into the store. A live draft holds roots only. A *saved batch* is a
 separate, immutable **frozen valuation** (see §3), which is a fact, not a cache.
 
-### 2.5 Realization-agnostic boundaries
+This extends to component values: a root that inherits from a selection declares
+a `default` over that selection's field and stays **unset**. Host code must not
+copy component values into roots (push) when the artifact can express the
+inheritance as a default (pull) — the copy needs a synchroniser that remembers to
+re-copy on every component change and to clear on every detach. A set root is an
+**override** and survives later component changes.
+
+### 2.5 Absence is not a value
+
+A node may have **no value**: an unset root whose default cannot resolve (e.g. a
+field the selected component does not declare, or no component at all), or a
+`selection` whose `ref` is empty. Absence is spelled `undefined` in the engine
+and `null` in payloads — never `0`, `""`, `{}`, or a dropped key.
+
+- Bounds on a valueless node are **unresolved**, not violated (§4.1).
+- An empty `ref` selection resolves to `null`; dotted reads into it yield
+  `undefined` (safe behind a short-circuiting `if`).
+- Presentation renders absence as blank, never as a zero.
+
+### 2.6 Realization-agnostic boundaries
 
 `boundary` nodes declare a **contract** (inputs, outputs, resolution, domain) but
 not a body. Their realization (remote HTTP, native code, in-process) is a
@@ -90,11 +109,12 @@ forward** into the batch's `selections` snapshot, and the selection resolves to 
 (seeds + the user's records) is consulted only when a legacy draft has a
 non-empty ref and no snapshot; the normal load path materialises the snapshot and
 persists it on the next save. Library edits therefore cannot perturb a loaded
-batch. An empty `ref` means "no component chosen": the selection resolves to an
-empty component (fields read as `undefined`), so optional selections are safe to
+batch. An empty `ref` means "no component chosen": the selection resolves to
+`null` (dotted reads yield `undefined`), so optional selections are safe to
 reference behind a short-circuit guard. A batch that needs a value different from
-the selected component models it as a `root` (optionally `default`-ing to a
-selected field), keeping batch state in one place: the roots.
+the selected component models it as a `root` defaulting to the selected field;
+setting that root overrides the inheritance, keeping batch state in one place:
+the roots.
 
 ### 3.2 Freeze = full valuation
 

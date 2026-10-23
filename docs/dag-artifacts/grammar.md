@@ -52,7 +52,7 @@ Every node has a `kind`. The legal set, and the shape each requires:
 | `root` | user-set scalar (numeric) input | `dimension`, `default` |
 | `choice` | user-set categorical input | `taxonomy`, `default` |
 | `collection` | user-set list | `item_schema` |
-| `selection` | read-only reference to a component | `schema`, `ref` |
+| `selection` | read-only reference to a component | `output.schema`, `ref` |
 | `derived` | pure computed value | `inputs`, `expr`, `output` |
 | `boundary` | sealed host-defined black box | `binding`, `resolution`, `inputs`, `outputs` |
 
@@ -73,7 +73,11 @@ kind (`root` → dimension; `choice` → taxonomy).
 ```
 
 - `default` — an expression (see `expression-language.md`): `{const}` / `{ref}` /
-  `{call}` / `{lit}`. Evaluated when the root is unset.
+  `{call}` / a bare literal. Evaluated when the root is unset; a default that
+  reads a selection field is the sanctioned way to inherit a component value
+  (e.g. `batch.boil_off_rate_l_per_hr` → `equipment.nominal_boil_off_rate_l_per_hr`).
+  A set root overrides its default and is never overwritten by later component
+  changes.
 - `domain` — **unary bounds** on this node (see §4.1).
 
 ### 2.2 `collection`
@@ -94,19 +98,23 @@ kind (`root` → dimension; `choice` → taxonomy).
 ```jsonc
 "equipment.profile": {
   "kind": "selection",
-  "schema": "equipment",
+  "output": { "schema": "equipment" },
   "ref": "batch.equipment_profile_id"
 }
 ```
 
-- `schema` — the component type this selection resolves to.
+- `output.schema` — the component type this selection resolves to. `output` is the
+  selection's value spec, parallel to `derived.output`; it names a declaration in
+  `primitive_schemas` (it is a type key, not a graph edge).
 - `ref` — a root holding the component id (usually a dotted path to a `batch.*` root).
 - A selection is a **read-only view** of the referenced component: its value is the
   component, unchanged. Batch-specific variation is modeled with `root` nodes
   (optionally `default`-ing to a selected field), never by mutating the component.
-- An **empty `ref` value** means "no component chosen": the selection resolves to an
-  empty component (its fields read as `undefined`) rather than erroring. A non-empty
-  id that names no component is a validation error.
+- A selection resolves in order: the batch's copied component snapshot, then the
+  reference catalogue (`references[schema][id]`). An **empty `ref` value** means
+  "no component chosen": the selection resolves to `null` (dotted field reads
+  yield `undefined`) rather than erroring. A non-empty id that names no component
+  is a validation error.
 
 ### 2.4 `derived`
 
@@ -213,6 +221,12 @@ may also carry `domain`s; those are evaluated for the fields of a *selected*
 component and for the items of a *collection* (surfaced separately from node
 domains).
 
+A node with **no value** (`undefined` / `null` — e.g. a root whose default reads
+a field of an unset selection) is reported as **unresolved**:
+`{ bounded: true, holds: null, reason: "unresolved" }`. Absence is not a
+violation. Only a value that exists and fails a bound is `holds: false`; a
+non-finite computed number (e.g. `NaN`) is still a violation.
+
 ### 4.2 Relation (n-ary invariant)
 
 ```jsonc
@@ -240,14 +254,15 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **4**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **5**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `nodes` (all objects), and `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.
 - `derived.expr` and `functions.*.body` must be valid AST (see
   `expression-language.md`).
-- `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`. A schema
-  field may also carry `{type:"boolean"}` for a flag (e.g. `enabled`).
+- `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`/`schema`.
+  A selection's `output` is `{schema: <id>}`. A schema field may also carry
+  `{type:"boolean"}` for a flag (e.g. `enabled`).
 - Every `inputs`/`ref`/`{ref}` path must resolve to a declared node or a
   declared schema field; dangling references are a validation error.
 - Every `dimension`/`taxonomy`/`schema`/`function`/`constant` id referenced

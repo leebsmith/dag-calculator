@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **4**
+- `schema_version`: **5**
 
 ## Dimensions
 
@@ -115,7 +115,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_abv` | 5.5 | `percentage` |
 | `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
-| `default_target_srm` | 0 | `beer_color` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `k_abs_true` | 1.67 | `mash_thickness` |
 | `loa_baseline_attenuation_pct` | 75 | `percentage` |

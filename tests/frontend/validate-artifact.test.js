@@ -62,8 +62,12 @@ test("rejects collection and selection schema or ref drift", () => {
   assert.throws(() => validateArtifact(badItem), /Collection ".*" references unknown schema "nope"/);
 
   const badSchema = clone();
-  node(badSchema, "selection").schema = "nope";
+  node(badSchema, "selection").output = { schema: "nope" };
   assert.throws(() => validateArtifact(badSchema), /Selection ".*" references unknown schema "nope"/);
+
+  const missingOutput = clone();
+  delete node(missingOutput, "selection").output;
+  assert.throws(() => validateArtifact(missingOutput), /Selection ".*" must declare an "output\.schema"/);
 
   const badRef = clone();
   node(badRef, "selection").ref = "nope";

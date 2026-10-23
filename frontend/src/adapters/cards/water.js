@@ -213,17 +213,16 @@ export function registerWaterCard(app, ctx) {
           ? ctx.cache.references.water_target?.[value]
           : null;
       const held = preset ? heldFromProfile(preset) : [];
-      const entries = {};
-      for (const { ion, pin } of WATER_IONS) {
-        entries[`${N.target}.${ion}`] = preset && held.includes(pin) ? Number(preset[ion]) || 0 : 0;
-      }
-      if (preset) entries[N.calciumFloor] = Number(preset.calcium_floor_ppm) || 50;
-      entries[N.targetProfileId] = preset ? value : "";
-      this.writeWaterState(entries);
+      // A preset supplies the ion targets, the calcium floor, and the strategy
+      // through artifact defaults: unset them so nothing from a previous profile
+      // survives. Freeform/none have no component, so the host derives a
+      // strategy from the checked set.
+      this.resetWaterTargets();
+      this.setRoot(N.targetProfileId, preset ? value : "");
       engine.setCollection(N.pinnedIons, held.map((ion) => ({ ion })));
       this.pickSelection(N.targetProfileId, preset ? value : "");
       this.waterTargetLocked = value === "none";
-      this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      if (!preset) this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
       this.scheduleSolve();
       this.notify();
     },
@@ -234,8 +233,11 @@ export function registerWaterCard(app, ctx) {
       const checked = rows.some((row) => row.ion === pin);
       const next = checked ? rows.filter((row) => row.ion !== pin) : [...rows, { ion: pin }];
       engine.setCollection(N.pinnedIons, next);
-      if (checked) this.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: 0 });
+      // Detaching keeps the profile's values as explicit overrides, then the
+      // unchecked ion loses its target (absence, not a zero target).
+      if (checked) this.materializeWaterTargets();
       this.clearWaterPreset();
+      if (checked) this.unsetRoot(`${N.target}.${WATER_ION_BY_PIN[pin]}`);
       this.waterTargetLocked = false;
       this.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
       this.scheduleSolve();
@@ -276,6 +278,27 @@ export function registerWaterCard(app, ctx) {
         changed = true;
       }
       return changed;
+    },
+
+    // Drop every inherited target so the selected profile (or absence) supplies
+    // the values again.
+    resetWaterTargets() {
+      for (const { ion } of WATER_IONS) this.unsetRoot(`${N.target}.${ion}`);
+      this.unsetRoot(N.calciumFloor);
+      this.unsetRoot(N.strategy);
+    },
+
+    // Convert inherited targets into explicit overrides, so clearing the profile
+    // keeps the current numbers editable instead of dropping them.
+    materializeWaterTargets() {
+      const entries = {};
+      for (const { ion } of WATER_IONS) {
+        const value = engine.get(`${N.target}.${ion}`);
+        if (value !== undefined && value !== null) entries[`${N.target}.${ion}`] = value;
+      }
+      const floor = engine.get(N.calciumFloor);
+      if (floor !== undefined && floor !== null) entries[N.calciumFloor] = floor;
+      this.writeWaterState(entries);
     },
 
     // Direct root writes for batch actions; the caller ends with one setRoot on
@@ -564,4 +587,6 @@ export const KEYS = [
   "waterInstruction",
   "telemetryLine",
   "telemetryClass",
+  "resetWaterTargets",
+  "materializeWaterTargets",
 ];

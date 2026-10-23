@@ -44,7 +44,7 @@
           />
           <span class="form-hint" x-show="f.rangeHint" x-text="'Allowed: ' + f.rangeHint"></span>
           <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
-          <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
+          <span class="form-hint text-danger" x-show="f.validation && f.validation.holds === false">Outside the allowed range</span>
           <span class="form-hint text-warning" x-show="f.conformanceHint" x-text="f.conformanceHint"></span>
         </div>
       </template>
@@ -100,7 +100,7 @@
           </span>
           <span class="field-value" x-text="f.display"></span>
           <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
-          <span class="form-hint text-danger" x-show="f.validation && !f.validation.holds">Outside the allowed range</span>
+          <span class="form-hint text-danger" x-show="f.validation && f.validation.holds === false">Outside the allowed range</span>
           <span class="form-hint text-warning" x-show="f.conformanceHint" x-text="f.conformanceHint"></span>
         </div>
       </template>
@@ -184,7 +184,7 @@
                         <template x-if="c.editable">
                           <input
                             class="form-input"
-                            :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
+                            :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && f.rowValidations[ri][c.id].holds === false }"
                             :value="row[c.id]"
                             @input="editCell(f, ri, c.id, $event.target.value)"
                           />
@@ -192,7 +192,7 @@
                         <template x-if="!c.editable">
                           <span
                             class="collection-readout tabular-nums"
-                            :class="{ 'text-danger': f.rowValidations[ri] && f.rowValidations[ri][c.id] && !f.rowValidations[ri][c.id].holds }"
+                            :class="{ 'text-danger': f.rowValidations[ri] && f.rowValidations[ri][c.id] && f.rowValidations[ri][c.id].holds === false }"
                             x-text="row[c.id]"
                           ></span>
                         </template>
@@ -208,7 +208,7 @@
           </div>
           <span
             class="form-hint text-danger"
-            x-show="f.rowValidations && f.rowValidations.some((r) => Object.values(r).some((v) => !v.holds))"
+            x-show="f.rowValidations && f.rowValidations.some((r) => Object.values(r).some((v) => v.holds === false))"
           >Some cells are outside their allowed range</span>
           <button type="button" class="btn-outline" @click="runCollectionAdd(f)" x-text="f.addLabel"></button>
         </div>

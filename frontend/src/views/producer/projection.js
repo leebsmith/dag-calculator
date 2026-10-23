@@ -51,7 +51,7 @@ export function describeField(artifact, id) {
     };
   }
   if (owner?.kind === "selection") {
-    const fieldSpec = artifact.primitive_schemas[owner.schema]?.[ref.suffix[0]] ?? {};
+    const fieldSpec = artifact.primitive_schemas[owner.output?.schema]?.[ref.suffix[0]] ?? {};
     return {
       kind: "path",
       isInput: false,
@@ -153,7 +153,7 @@ function tableField(step, entry) {
 // `ref` points back at it. That selection's schema keys the reference set.
 function referenceSchema(artifact, rootId) {
   for (const node of Object.values(artifact.nodes)) {
-    if (node.kind === "selection" && node.ref === rootId) return node.schema;
+    if (node.kind === "selection" && node.ref === rootId) return node.output?.schema;
   }
   return null;
 }

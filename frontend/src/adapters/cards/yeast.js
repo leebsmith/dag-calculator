@@ -37,6 +37,7 @@ export function registerYeastCard(app, ctx) {
       this.setRoot(N.selection, id);
       const yeast = cache.references.yeast[id];
       this.pickSelection(N.selection, id);
+      this.resetSeededRoots(N.selectionNode);
       if (yeast) {
         for (const { rootId, derive } of derivationsFor(N.selectionNode)) {
           const value = derive(yeast);
@@ -50,6 +51,7 @@ export function registerYeastCard(app, ctx) {
     clearYeastSelection() {
       this.setRoot(N.selection, "");
       this.pickSelection(N.selection, "");
+      this.resetSeededRoots(N.selectionNode);
       this.scheduleSolve();
       this.notify();
     },

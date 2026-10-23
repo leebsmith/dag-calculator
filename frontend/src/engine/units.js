@@ -81,17 +81,37 @@ export function inferSubDimension(artifact, dimA, dimB) {
   throw new Error(`Dimension mismatch: cannot subtract "${dimB}" from "${dimA}"`);
 }
 
-export function nodeDimension(artifact, nodeId) {
+// The declared value type of a node, normalized across kinds. Scalars carry
+// their type at the top level (dimension/taxonomy); every other kind declares it
+// as `output` (selection/derived) or names its element type on the node
+// (collection). Boundary outputs are per-output, so a boundary has no single
+// spec. Returns one of {dimension} | {taxonomy} | {type} | {schema} |
+// {item_schema}, or null when the node has no single value type.
+export function valueSpecOf(artifact, nodeId) {
   const node = artifact.nodes[nodeId];
   if (!node) return null;
-  if (node.kind === "root") return node.dimension;
-  if (node.kind === "choice") return node.taxonomy;
-  if (node.kind === "derived") {
-    if (node.output.dimension) return node.output.dimension;
-    if (node.output.taxonomy) return node.output.taxonomy;
-    if (node.output.type === "boolean") return "boolean";
-    return null;
+  switch (node.kind) {
+    case "root":
+      return { dimension: node.dimension };
+    case "choice":
+      return { taxonomy: node.taxonomy };
+    case "derived":
+      return node.output ?? null;
+    case "selection":
+      return node.output ?? null;
+    case "collection":
+      return { item_schema: node.item_schema };
+    default:
+      return null;
   }
+}
+
+export function nodeDimension(artifact, nodeId) {
+  const spec = valueSpecOf(artifact, nodeId);
+  if (!spec) return null;
+  if (spec.dimension) return spec.dimension;
+  if (spec.taxonomy) return spec.taxonomy;
+  if (spec.type === "boolean") return "boolean";
   return null;
 }
 
@@ -131,9 +151,10 @@ export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
       return out ? out.dimension ?? out.taxonomy ?? (out.type === "boolean" ? "boolean" : null) : null;
     }
     if (node?.kind === "selection" || node?.kind === "collection") {
-      const schemaId = node.schema ?? node.item_schema;
-      const spec = artifact.primitive_schemas?.[schemaId]?.[r.suffix[0]];
-      return spec ? spec.dimension ?? spec.taxonomy ?? null : null;
+      const spec = valueSpecOf(artifact, r.nodeId);
+      const schemaId = spec?.schema ?? spec?.item_schema;
+      const fieldSpec = artifact.primitive_schemas?.[schemaId]?.[r.suffix[0]];
+      return fieldSpec ? fieldSpec.dimension ?? fieldSpec.taxonomy ?? null : null;
     }
     return null;
   }

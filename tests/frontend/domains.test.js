@@ -16,10 +16,11 @@ test("domainStates() covers every bounded root/choice node", () => {
   assert.equal(states.length, 34);
 });
 
-test("default values satisfy their domains", () => {
+test("default values satisfy their domains or are unresolved", () => {
   const states = createCalculator(artifact, makeFixtures()).domainStates();
   for (const s of states) {
-    assert.equal(s.holds, true, `${s.nodeId} should satisfy its domain`);
+    assert.notEqual(s.holds, false, `${s.nodeId} should not violate its domain by default`);
+    if (s.holds === null) assert.equal(s.reason, "unresolved");
   }
 });
 
@@ -36,6 +37,14 @@ test("checkDomain() reports non-finite values as unbounded-but-failing", () => {
   const r = checkDomain(artifact, "batch.target_abv", Number.NaN, noRef);
   assert.equal(r.holds, false);
   assert.equal(r.reason, "non-finite");
+});
+
+test("checkDomain() reports a missing value as unresolved, not violated", () => {
+  for (const missing of [undefined, null]) {
+    const r = checkDomain(artifact, "batch.target_abv", missing, noRef);
+    assert.equal(r.holds, null);
+    assert.equal(r.reason, "unresolved");
+  }
 });
 
 test("checkDomain() on an unbounded node holds trivially", () => {

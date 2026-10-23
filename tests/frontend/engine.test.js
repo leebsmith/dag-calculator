@@ -137,10 +137,10 @@ test("trace malts: definite-mass rows fold into color (and only color)", () => {
   assert.equal(e.resolve("solver.batch.m_grist"), 4.7); // extract/mass untouched
 });
 
-test("target roots default from their constants", () => {
+test("target roots default from their constants or have no value", () => {
   const e = createCalculator(artifact, makeFixtures());
   assert.equal(e.get("batch.target_ibu"), 30);
-  assert.equal(e.get("batch.target_srm"), 0);
+  assert.equal(e.get("batch.target_srm"), null);
   assert.equal(e.get("batch.whirlpool_ibu_fraction"), 0);
 });
 

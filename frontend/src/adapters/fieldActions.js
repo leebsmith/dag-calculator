@@ -63,11 +63,20 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       }
     },
 
-    // Restore a seed-derived root to its source value (the "↺" affordance shown
-    // once the user has overridden it).
+    // Restore a root to its inherited value (the "↺" affordance shown once the
+    // user has overridden it). Roots that inherit through an artifact `default`
+    // are simply unset; residual host-seeded roots are re-pushed from their
+    // component.
     resetField(field) {
       const nodeId = field?.target?.nodeId;
-      if (!nodeId || field.seededValue === undefined) return;
+      if (!nodeId) return;
+      if (field.seededReset === "unset") {
+        this.unsetRoot(nodeId);
+        this.scheduleSolve();
+        this.notify();
+        return;
+      }
+      if (field.seededValue === undefined) return;
       this.setRoot(nodeId, field.seededValue);
       this.scheduleSolve();
       this.notify();
@@ -83,24 +92,20 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       if (typeof value === "number") this.setRoot(N.intensiveValue, value);
     },
 
-    // Selection -> root copy-in (view-only). Picking a source report / target
-    // profile pre-fills the editable ion roots; they remain user-editable.
-    // Derived roots reset to their artifact default first, so switching to a
-    // component that does not supply a root cannot leave a stale value behind
-    // (e.g. a six-ion profile followed by a two-ion one).
+    // Push the residual (non-declarable) roots that a selection still has to
+    // supply. Everything the artifact can express as a `default` is pulled, not
+    // pushed, so this list is deliberately tiny (see views/seedDerivations.js).
+    resetSeededRoots(selectionNodeId) {
+      for (const { rootId } of derivationsFor(selectionNodeId)) this.unsetRoot(rootId);
+    },
+
     copyInCascade(refRootId) {
       const selectionNode = refToSelectionMap.get(refRootId);
       if (!selectionNode) return;
+      this.resetSeededRoots(selectionNode);
       const component = session.getEngine().get(selectionNode);
       if (!component) return;
-      const derivations = derivationsFor(selectionNode);
-      for (const { rootId } of derivations) {
-        const fallback = artifact.nodes[rootId]?.default;
-        if (typeof fallback === "number" || (typeof fallback === "string" && fallback !== "")) {
-          this.setRoot(rootId, fallback);
-        }
-      }
-      for (const { rootId, derive } of derivations) {
+      for (const { rootId, derive } of derivationsFor(selectionNode)) {
         const value = derive(component);
         if (typeof value === "number" || (typeof value === "string" && value !== "")) {
           this.setRoot(rootId, value);
@@ -206,4 +211,4 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
   });
 }
 
-export const KEYS = ["clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];
+export const KEYS = ["clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

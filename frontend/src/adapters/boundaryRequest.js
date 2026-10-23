@@ -21,7 +21,7 @@ function buildFromMap(engine, fields) {
   const resolved = {};
   for (const [alias, rule] of Object.entries(fields)) {
     const value = rule.read === "get" ? engine.get(rule.path) : engine.resolve(rule.path);
-    resolved[alias] = value === undefined && "default" in rule ? rule.default : value;
+    resolved[alias] = value == null && "default" in rule ? rule.default : value;
   }
 
   const out = {};

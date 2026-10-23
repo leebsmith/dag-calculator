@@ -1,8 +1,8 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 4, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 5, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
   },
   "dimensions": {
@@ -204,10 +204,6 @@
     "default_target_ibu": {
       "value": 30,
       "dimension": "ibu"
-    },
-    "default_target_srm": {
-      "value": 0,
-      "dimension": "beer_color"
     },
     "default_v_ferm_l": {
       "value": 20,
@@ -1759,7 +1755,24 @@
       "kind": "root",
       "dimension": "ibu",
       "default": {
-        "const": "default_target_ibu"
+        "op": "if",
+        "args": [
+          {
+            "op": "and",
+            "args": [
+              { "op": "ne", "args": [{ "ref": "batch.style_id" }, ""] },
+              { "op": "lt", "args": [{ "ref": "batch.style.ibu_min" }, { "ref": "batch.style.ibu_max" }] }
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              { "op": "+", "args": [{ "ref": "batch.style.ibu_min" }, { "ref": "batch.style.ibu_max" }] },
+              2
+            ]
+          },
+          { "const": "default_target_ibu" }
+        ]
       },
       "domain": {
         "gte": 0
@@ -1769,7 +1782,24 @@
       "kind": "root",
       "dimension": "beer_color",
       "default": {
-        "const": "default_target_srm"
+        "op": "if",
+        "args": [
+          {
+            "op": "and",
+            "args": [
+              { "op": "ne", "args": [{ "ref": "batch.style_id" }, ""] },
+              { "op": "lt", "args": [{ "ref": "batch.style.srm_min" }, { "ref": "batch.style.srm_max" }] }
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              { "op": "+", "args": [{ "ref": "batch.style.srm_min" }, { "ref": "batch.style.srm_max" }] },
+              2
+            ]
+          },
+          null
+        ]
       },
       "domain": {
         "gte": 0
@@ -1908,12 +1938,12 @@
     },
     "equipment.profile": {
       "kind": "selection",
-      "schema": "equipment",
+      "output": { "schema": "equipment" },
       "ref": "batch.equipment_profile_id"
     },
     "batch.yeast": {
       "kind": "selection",
-      "schema": "yeast",
+      "output": { "schema": "yeast" },
       "ref": "batch.yeast_id"
     },
     "batch.style_source": {
@@ -1928,7 +1958,7 @@
     },
     "batch.style": {
       "kind": "selection",
-      "schema": "style",
+      "output": { "schema": "style" },
       "ref": "batch.style_id"
     },
     "batch.fermentation": {
@@ -1939,7 +1969,7 @@
     "batch.style_og_min": {
       "kind": "root",
       "dimension": "gravity",
-      "default": 0,
+      "default": { "ref": "batch.style.og_min" },
       "domain": {
         "gte": 0
       }
@@ -1947,7 +1977,7 @@
     "batch.style_og_max": {
       "kind": "root",
       "dimension": "gravity",
-      "default": 0,
+      "default": { "ref": "batch.style.og_max" },
       "domain": {
         "gte": 0
       }
@@ -1955,7 +1985,7 @@
     "batch.style_fg_min": {
       "kind": "root",
       "dimension": "gravity",
-      "default": 0,
+      "default": { "ref": "batch.style.fg_min" },
       "domain": {
         "gte": 0
       }
@@ -1963,7 +1993,7 @@
     "batch.style_fg_max": {
       "kind": "root",
       "dimension": "gravity",
-      "default": 0,
+      "default": { "ref": "batch.style.fg_max" },
       "domain": {
         "gte": 0
       }
@@ -1971,7 +2001,7 @@
     "batch.style_ibu_min": {
       "kind": "root",
       "dimension": "ibu",
-      "default": 0,
+      "default": { "ref": "batch.style.ibu_min" },
       "domain": {
         "gte": 0
       }
@@ -1979,7 +2009,7 @@
     "batch.style_ibu_max": {
       "kind": "root",
       "dimension": "ibu",
-      "default": 0,
+      "default": { "ref": "batch.style.ibu_max" },
       "domain": {
         "gte": 0
       }
@@ -1987,7 +2017,7 @@
     "batch.style_srm_min": {
       "kind": "root",
       "dimension": "beer_color",
-      "default": 0,
+      "default": { "ref": "batch.style.srm_min" },
       "domain": {
         "gte": 0
       }
@@ -1995,7 +2025,7 @@
     "batch.style_srm_max": {
       "kind": "root",
       "dimension": "beer_color",
-      "default": 0,
+      "default": { "ref": "batch.style.srm_max" },
       "domain": {
         "gte": 0
       }
@@ -2003,7 +2033,7 @@
     "batch.style_abv_min": {
       "kind": "root",
       "dimension": "abv",
-      "default": 0,
+      "default": { "ref": "batch.style.abv_min" },
       "domain": {
         "gte": 0
       }
@@ -2011,7 +2041,7 @@
     "batch.style_abv_max": {
       "kind": "root",
       "dimension": "abv",
-      "default": 0,
+      "default": { "ref": "batch.style.abv_max" },
       "domain": {
         "gte": 0
       }
@@ -2023,7 +2053,7 @@
     },
     "water.source_report": {
       "kind": "selection",
-      "schema": "water_report",
+      "output": { "schema": "water_report" },
       "ref": "water.source_report_id"
     },
     "water.target_profile_id": {
@@ -2033,13 +2063,13 @@
     },
     "water.target_profile": {
       "kind": "selection",
-      "schema": "water_target",
+      "output": { "schema": "water_target" },
       "ref": "water.target_profile_id"
     },
     "water.target.calcium_ca": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 0,
+      "default": { "ref": "water.target_profile.calcium_ca" },
       "domain": {
         "gte": 0
       }
@@ -2047,7 +2077,7 @@
     "water.target.magnesium_mg": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 0,
+      "default": { "ref": "water.target_profile.magnesium_mg" },
       "domain": {
         "gte": 0
       }
@@ -2055,7 +2085,7 @@
     "water.target.sodium_na": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 0,
+      "default": { "ref": "water.target_profile.sodium_na" },
       "domain": {
         "gte": 0
       }
@@ -2063,7 +2093,7 @@
     "water.target.sulfate_so4": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 0,
+      "default": { "ref": "water.target_profile.sulfate_so4" },
       "domain": {
         "gte": 0
       }
@@ -2071,7 +2101,7 @@
     "water.target.chloride_cl": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 0,
+      "default": { "ref": "water.target_profile.chloride_cl" },
       "domain": {
         "gte": 0
       }
@@ -2079,7 +2109,7 @@
     "water.target.alkalinity_as_caco3": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 0,
+      "default": { "ref": "water.target_profile.alkalinity_as_caco3" },
       "domain": {
         "gte": 0
       }
@@ -2087,7 +2117,14 @@
     "water.calcium_floor_ppm": {
       "kind": "root",
       "dimension": "concentration",
-      "default": 50,
+      "default": {
+        "op": "if",
+        "args": [
+          { "op": "ne", "args": [{ "ref": "water.target_profile_id" }, ""] },
+          { "ref": "water.target_profile.calcium_floor_ppm" },
+          50
+        ]
+      },
       "domain": {
         "gte": 0
       }
@@ -2106,7 +2143,14 @@
     "water.strategy": {
       "kind": "choice",
       "taxonomy": "strategy",
-      "default": "AUTO"
+      "default": {
+        "op": "if",
+        "args": [
+          { "op": "ne", "args": [{ "ref": "water.target_profile_id" }, ""] },
+          { "ref": "water.target_profile.mode" },
+          "AUTO"
+        ]
+      }
     },
     "water.salt_distribution": {
       "kind": "choice",

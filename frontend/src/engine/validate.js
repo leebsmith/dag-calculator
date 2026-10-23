@@ -3,7 +3,7 @@
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4];
+const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -46,8 +46,13 @@ export function validateArtifact(artifact) {
         }
         break;
       case "selection":
-        if (!schemas[node.schema]) {
-          throw new Error(`Selection "${id}" references unknown schema "${node.schema}"`);
+        if (!node.output || !node.output.schema) {
+          throw new Error(`Selection "${id}" must declare an "output.schema"`);
+        }
+        if (!schemas[node.output.schema]) {
+          throw new Error(
+            `Selection "${id}" references unknown schema "${node.output.schema}"`
+          );
         }
         checkRefResolves(artifact, node.ref, `Selection "${id}" ref`);
         break;
@@ -60,6 +65,7 @@ export function validateArtifact(artifact) {
             `Choice "${id}" default "${node.default}" is not a member of taxonomy "${node.taxonomy}"`
           );
         }
+        checkDefaultRefs(artifact, node, `Choice "${id}"`);
         break;
       case "derived":
         validateDerived(artifact, id, node, constants, functions);

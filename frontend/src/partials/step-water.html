@@ -68,7 +68,7 @@
             @change="commitField(waterPlan.floor)"
           />
           <span class="form-hint" x-show="waterPlan.floor.hint" x-text="waterPlan.floor.hint"></span>
-          <span class="form-hint text-danger" x-show="waterPlan.floor.validation && !waterPlan.floor.validation.holds">Outside the allowed range</span>
+          <span class="form-hint text-danger" x-show="waterPlan.floor.validation && waterPlan.floor.validation.holds === false">Outside the allowed range</span>
         </div>
 
         <div class="form-group">
@@ -85,7 +85,7 @@
             @change="commitField(waterPlan.mashPh)"
           />
           <span class="form-hint" x-show="waterPlan.mashPh.hint" x-text="waterPlan.mashPh.hint"></span>
-          <span class="form-hint text-danger" x-show="waterPlan.mashPh.validation && !waterPlan.mashPh.validation.holds">Outside the allowed range</span>
+          <span class="form-hint text-danger" x-show="waterPlan.mashPh.validation && waterPlan.mashPh.validation.holds === false">Outside the allowed range</span>
         </div>
       </div>
 

@@ -28,5 +28,6 @@ export {
   inferSubDimension,
   inferExprDimension,
   nodeDimension,
+  valueSpecOf,
   validateDerivedDimensions,
 } from "./units.js";

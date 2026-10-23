@@ -54,17 +54,58 @@ test("A6: selection pickers are displayed by a step", () => {
 
 // A6c: root defaults that seed from a selection field are a deliberate,
 // documented "copy-forward" set (see docs/engine.md).
+// Every root/choice that inherits from a selection, however deeply the ref is
+// nested inside its default expression. Roots NOT listed here must not read a
+// selection: seeds are pulled by defaults, never pushed by host code.
+const SELECTION_DERIVED = [
+  "batch.boil_off_rate_l_per_hr",
+  "batch.conversion_efficiency",
+  "batch.hlt_starting_volume_l",
+  "batch.style_abv_max",
+  "batch.style_abv_min",
+  "batch.style_fg_max",
+  "batch.style_fg_min",
+  "batch.style_ibu_max",
+  "batch.style_ibu_min",
+  "batch.style_og_max",
+  "batch.style_og_min",
+  "batch.style_srm_max",
+  "batch.style_srm_min",
+  "batch.target_ibu",
+  "batch.target_srm",
+  "water.calcium_floor_ppm",
+  "water.strategy",
+  "water.target.alkalinity_as_caco3",
+  "water.target.calcium_ca",
+  "water.target.chloride_cl",
+  "water.target.magnesium_mg",
+  "water.target.sodium_na",
+  "water.target.sulfate_so4",
+];
+
+function collectRefs(expr, out = []) {
+  if (expr === null || typeof expr !== "object") return out;
+  if (Array.isArray(expr)) {
+    for (const item of expr) collectRefs(item, out);
+    return out;
+  }
+  for (const [key, value] of Object.entries(expr)) {
+    if (key === "ref" && typeof value === "string") out.push(value);
+    else collectRefs(value, out);
+  }
+  return out;
+}
+
 test("A6: selection-seeded root defaults are the documented set", () => {
   const a = artifact();
   const seeded = [];
   for (const [id, node] of Object.entries(a.nodes)) {
-    const d = node.default;
-    if (node.kind !== "root" || !d || typeof d !== "object" || !d.ref) continue;
-    const r = resolveReference(a, d.ref);
-    if (r && a.nodes[r.nodeId]?.kind === "selection") seeded.push(id);
+    if (node.kind !== "root" && node.kind !== "choice") continue;
+    const readsSelection = collectRefs(node.default).some((path) => {
+      const r = resolveReference(a, path);
+      return r && a.nodes[r.nodeId]?.kind === "selection";
+    });
+    if (readsSelection) seeded.push(id);
   }
-  assert.deepEqual(
-    seeded.sort(),
-    ["batch.boil_off_rate_l_per_hr", "batch.conversion_efficiency", "batch.hlt_starting_volume_l"]
-  );
+  assert.deepEqual(seeded.sort(), SELECTION_DERIVED);
 });

@@ -24,6 +24,10 @@ function resolveLimit(limit, artifact, resolveRef) {
 // (e.g. a {ref} to a field of an unset optional selection) is treated as
 // "not applicable" and skipped, rather than failing the value.
 function evaluateDomain(domain, value, resolveLimit) {
+  // No value yet: absence is not a violation. Only an actually-invalid value is.
+  if (value === undefined || value === null) {
+    return { bounded: true, holds: null, reason: "unresolved" };
+  }
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return { bounded: true, holds: false, reason: "non-finite" };
   }
@@ -98,7 +102,7 @@ export function fieldDomainStates(artifact, resolveRef) {
   const schemas = artifact.primitive_schemas ?? {};
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (node.kind !== "selection") continue;
-    const schema = schemas[node.schema] ?? {};
+    const schema = schemas[node.output?.schema] ?? {};
     for (const [field, spec] of Object.entries(schema)) {
       if (!spec.domain) continue;
       let value;

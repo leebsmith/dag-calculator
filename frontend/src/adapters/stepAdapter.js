@@ -28,7 +28,6 @@ import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
-import { derivationsFor } from "../views/seedDerivations.js";
 import { installFieldActions } from "./fieldActions.js";
 import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
@@ -104,6 +103,7 @@ export function createStepApp(options = {}) {
 
   const app = {
     master,
+    engine: session.engine,
     library,
     steps,
     fmt,
@@ -168,11 +168,10 @@ export function createStepApp(options = {}) {
     async loadState(state) {
       session.rebuild(state);
       const materialized = this.materializeSelections();
-      const seeded = this.materializeDerivedRoots();
       const synced = this.syncWaterTargets?.() ?? false;
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (materialized || seeded || synced) this.notify();
+      if (materialized || synced) this.notify();
       this.syncNav();
     },
 
@@ -192,41 +191,10 @@ export function createStepApp(options = {}) {
           continue;
         }
         if (!refValue) continue;
-        const component = cache.references[node.schema]?.[refValue];
+        const component = cache.references[node.output?.schema]?.[refValue];
         if (!component) continue;
         session.setSelection(id, component);
         changed = true;
-      }
-      return changed;
-    },
-
-    // Fill any missing seed-derived root from its current selection. Drafts
-    // written before a root became editable can carry the selection without the
-    // derived roots, which would otherwise use the artifact default (e.g. a
-    // zero water target). Explicit values are never overwritten.
-    materializeDerivedRoots() {
-      const engine = session.getEngine();
-      let changed = false;
-      for (const [id, node] of Object.entries(artifact.nodes)) {
-        if (node.kind !== "selection") continue;
-        const derivations = derivationsFor(id);
-        if (derivations.length === 0) continue;
-        let component;
-        try {
-          component = engine.get(id);
-        } catch (err) {
-          reportError("stepAdapter.materializeDerivedRoots", err);
-          continue;
-        }
-        if (!component) continue;
-        for (const { rootId, derive } of derivations) {
-          if (master.hasRoot(rootId)) continue;
-          const value = derive(component);
-          if (typeof value === "number" || (typeof value === "string" && value !== "")) {
-            this.setRoot(rootId, value);
-            changed = true;
-          }
-        }
       }
       return changed;
     },
@@ -237,13 +205,18 @@ export function createStepApp(options = {}) {
       const selectionNode = attribution.refToSelectionMap.get(refRootId);
       if (!selectionNode) return;
       const node = artifact.nodes[selectionNode];
-      const component = refValue ? cache.references[node.schema]?.[refValue] : null;
+      const component = refValue ? cache.references[node.output?.schema]?.[refValue] : null;
       session.setSelection(selectionNode, component ?? null);
     },
 
     setRoot(nodeId, value) {
       master.setRoot(nodeId, value);
       session.engine.setRoot(nodeId, value);
+    },
+
+    unsetRoot(nodeId) {
+      master.unsetRoot(nodeId);
+      session.engine.unsetRoot(nodeId);
     },
 
     // The runner owns debounce, supersession, dedupe, and status/error state.

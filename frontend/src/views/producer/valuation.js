@@ -43,7 +43,7 @@ export function valuate(fields, engine, ctx = {}) {
       const out = valuateScalar(field, engine, ctx, nl);
       if (!out) return null;
       decorateConformance(out, field, ctx);
-      return decorateProvenance(out, field, engine);
+      return decorateProvenance(out, field, engine, artifact);
     })
     .filter(Boolean);
 }

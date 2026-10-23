@@ -30,8 +30,11 @@ dosed by IBU share, total realized IBU equals `batch.target_ibu` by construction
 
 The style envelope is the ten `batch.style_*` roots (gravity in SG, ABV in %,
 IBU in IBU, SRM in SRM): `og_min/max`, `fg_min/max`, `abv_min/max`,
-`ibu_min/max`, `srm_min/max`. They are seeded from the styleguide pick and remain
-hand-editable in experimental mode.
+`ibu_min/max`, `srm_min/max`. Each carries a `default` that reads the
+corresponding `batch.style` field, so an untouched envelope inherits the selected
+styleguide values, a hand-edited (set) envelope is an override, and an unset
+envelope with no style has **no value** — conformance then skips the pillars it
+cannot grade rather than scoring against zero bounds.
 
 ## 2. Realized FG and ABV
 

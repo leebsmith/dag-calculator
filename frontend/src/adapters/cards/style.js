@@ -119,6 +119,7 @@ export function registerStyleCard(app, ctx) {
       this.setRoot(N.styleId, id);
       const style = cache.references.style[id];
       this.pickSelection(N.styleId, id);
+      this.resetSeededRoots(N.selectionNode);
       if (style) {
         for (const { rootId, derive } of derivationsFor(N.selectionNode)) {
           const value = derive(style);
@@ -135,7 +136,7 @@ export function registerStyleCard(app, ctx) {
     clearStyleSelection() {
       this.setRoot(N.styleId, "");
       this.pickSelection(N.styleId, "");
-      this.setRoot(N.fermentation, "ale");
+      this.resetSeededRoots(N.selectionNode);
       this.scheduleSolve();
       this.notify();
     },

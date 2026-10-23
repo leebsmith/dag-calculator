@@ -20,7 +20,7 @@ function fieldDimension(artifact, id) {
     return owner.outputs?.[ref.suffix.join(".")]?.dimension ?? null;
   }
   if (owner.kind === "selection") {
-    return artifact.primitive_schemas?.[owner.schema]?.[ref.suffix[0]]?.dimension ?? null;
+    return artifact.primitive_schemas?.[owner.output?.schema]?.[ref.suffix[0]]?.dimension ?? null;
   }
   return null;
 }

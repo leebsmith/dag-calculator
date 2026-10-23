@@ -110,7 +110,7 @@ test("No targets locks the grid; Freeform unlocks it", () => {
 test("presets clear the previous targets, fill their ions and derive the strategy", () => {
   const app = createStepApp();
   app.boot();
-  const target = (ion) => app.master.getRoot(`water.target.${ion}`);
+  const target = (ion) => app.engine.get(`water.target.${ion}`);
 
   app.selectWaterTarget("soft-pilsner");
   app.compute();
@@ -118,7 +118,7 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(target("magnesium_mg"), 3);
   assert.equal(target("sodium_na"), 4);
   assert.equal(target("alkalinity_as_caco3"), 15);
-  assert.equal(app.master.getRoot("water.calcium_floor_ppm"), 15);
+  assert.equal(app.engine.get("water.calcium_floor_ppm"), 15);
   assert.equal(app.waterSummary.mode, "OPTIMIZE");
   assert.equal(app.waterSummary.checkedPins.length, 6);
   assert.equal(app.waterTargetLocked, false);
@@ -128,9 +128,9 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(target("sulfate_so4"), 250);
   assert.equal(target("chloride_cl"), 50);
   for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "alkalinity_as_caco3"]) {
-    assert.equal(target(ion), 0, `${ion} must not survive the profile switch`);
+    assert.equal(Number.isFinite(target(ion)), false, `${ion} must not survive the profile switch`);
   }
-  assert.equal(app.master.getRoot("water.calcium_floor_ppm"), 50);
+  assert.equal(app.engine.get("water.calcium_floor_ppm"), 50);
   assert.equal(app.waterSummary.mode, "CALCIUM_FLOOR");
   assert.deepEqual(app.waterSummary.checkedPins, ["so4", "cl"]);
   assert.equal(app.master.getRoot("water.target_profile_id"), "hoppy-ipa");
@@ -163,7 +163,8 @@ test("target changes recalculate immediately and queue a save", () => {
 
   app.toggleWaterTarget("ca");
   const cleared = app.waterSummary.ions.find((row) => row.ion === "calcium_ca");
-  assert.equal(app.master.getRoot("water.target.calcium_ca"), 0);
+  assert.equal(app.master.getRoot("water.target.calcium_ca"), undefined);
+  assert.equal(app.master.getRoot("water.target_profile_id"), "");
   assert.equal(cleared.checked, false);
   assert.equal(cleared.valueText, "(Auto)");
   assert.equal(cleared.deltaText, "—");

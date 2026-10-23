@@ -75,7 +75,7 @@ export function validateComponent(artifact, catalog, component) {
         continue;
       }
       const result = checkComponentDomain(artifact, spec.domain, value);
-      if (result.bounded && !result.holds) {
+      if (result.bounded && result.holds === false) {
         errors.push({ field, message: `violates ${JSON.stringify(spec.domain)}` });
       }
     } else if (spec.taxonomy) {

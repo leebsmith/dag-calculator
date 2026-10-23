@@ -30,11 +30,11 @@ It complements `grammar.md` (node *shape*) and `docs/engine.md` (runtime *API*).
 | Facet | Field | Notes |
 |---|---|---|
 | kind | `kind` | `root` · `choice` · `collection` · `selection` · `derived` · `boundary` |
-| value type | `dimension` / `taxonomy` / `output.{dimension|taxonomy|boolean}` | normalized by `nodeDimension(artifact, id)` |
+| value type | `dimension` / `taxonomy` / `output.{dimension|taxonomy|boolean|schema}` / `item_schema` | normalized by `valueSpecOf(artifact, id)`; `nodeDimension` returns the scalar dimension/taxonomy only |
 | bounds | `domain` | unary ops (`gte/lte/gt/lt/eq/ne`), values may be `{ref}`/`{const}` |
 | default | `default` | root/choice only; evaluated when unset |
 | collection | `item_schema` | ⇒ `primitive_schemas[item_schema]` (per-field spec) |
-| selection | `schema`, `ref` | component schema + the root holding the chosen id |
+| selection | `output.schema`, `ref` | component type + the root holding the chosen id |
 | derived | `inputs`, `expr`, `output` | alias→path edges, AST, output type |
 | boundary | `binding`, `resolution`, `inputs`, `outputs`, `domain.codes` | contract only (§2.5, `grammar.md`) |
 | namespace | `id.split(".")[0]` | `equipment` · `mash` · `water` · `grist` · `batch` · `solver` |
@@ -50,10 +50,11 @@ Accessor: none — read `artifact.nodes[id]` directly.
 
 | Accessor | Returns |
 |---|---|
-| `engine.get(id)` | the memoized, lazy value — by kind: scalar (root/choice/derived), `rows[]` (collection), component or `{}`/`null` (selection), `{ outputs, fingerprint }` (boundary) |
+| `engine.get(id)` | the memoized, lazy value — by kind: scalar (root/choice/derived), `rows[]` (collection), the selected component or `null` (selection), `{ outputs, fingerprint }` (boundary). A valueless node returns `undefined`. |
 | `engine.resolve(path)` | a value by **dotted path** — node id, or a boundary output / selection field / collection field (longest-prefix via `resolveReference`) |
 | `engine.getRoot(id)` / `engine.hasRoot(id)` | the **explicitly-set** store value for a root/choice (distinct from the evaluated value, which folds in `default`) |
-| `engine.setRoot(id, v)` / `engine.setCollection(id, rows)` | writes (roots/choices/collections only) |
+| `engine.setRoot(id, v)` / `engine.unsetRoot(id)` | write / drop an explicit root or choice value; unsetting restores the `default` (or leaves the node valueless) |
+| `engine.setCollection(id, rows)` | write a collection |
 | `engine.boundaryRequest(id)` | `{ binding, inputs, fingerprint }` — the boundary node's adapted request body |
 | `engine.hasBoundaryResult(fp)` / `engine.applyBoundaryResult(fp, outputs)` | boundary-cache seam |
 
@@ -66,7 +67,7 @@ for sub-fields.
 
 | Accessor | Scope |
 |---|---|
-| `checkDomain(artifact, id, value, resolveRef)` | one node → `{ nodeId, bounded, holds, reason?, op?, limit? }` |
+| `checkDomain(artifact, id, value, resolveRef)` | one node → `{ nodeId, bounded, holds, reason?, op?, limit? }`; `holds: null` + `reason: "unresolved"` means the node has no value (not a violation) |
 | `engine.domainStates()` | every bounded root/choice |
 | `engine.fieldDomainStates()` | fields of selected components → `{ selectionNodeId, field, … }` |
 | `engine.collectionDomainStates()` | collection item fields → `{ nodeId, index, field, … }` |
@@ -123,5 +124,9 @@ detection. See `semantics.md` §3.2.
   dotted output path (`engine.resolve`) for one output.
 - Reads can **throw**: an unresolved boundary (HTTP mode) or an unknown/unset
   reference. The step adapter guards with a `safe(fn)` try/catch in `compute()`.
-- **Evaluated vs stored**: `engine.get(id)` folds in `default`; `getRoot(id)` is
-  only what the user explicitly set (roots/choices).
+- **Evaluated vs stored**: `engine.get(id)` folds in `default`; `hasRoot(id)` is
+  the provenance signal — `false` means the value is inherited, `true` means the
+  user (or host) set it and it will not follow later component changes.
+- **Absence**: `undefined` in the engine, `null` in payloads. An unset selection
+  is `null`; a dotted read into it is `undefined`. Never treat `0` or `{}` as
+  "not set".

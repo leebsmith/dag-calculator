@@ -191,17 +191,17 @@ export function createEngine(artifact, options = {}) {
         return collections[nodeId] ?? [];
       case "selection": {
         const refValue = get(node.ref);
-        // An empty ref means "no component chosen" (an unset optional
-        // selection): resolve to an empty component so its fields read as
-        // undefined rather than throwing. A non-empty but unknown id is still
-        // an error.
-        if (refValue === "") return {};
+        // No component chosen: `""` is the canonical empty id, and a null batch
+        // snapshot carries the same meaning. Resolve to null — absence, not an
+        // empty object, so a missing component can never be mistaken for one
+        // whose fields are all undefined.
+        if (refValue === "" || refValue === undefined || refValue === null) return null;
         // A batch carries its own copy of every selected component; the library
         // is only consulted for legacy drafts without a snapshot.
         if (Object.prototype.hasOwnProperty.call(selections, nodeId)) {
-          return { ...selections[nodeId] };
+          return selections[nodeId] === null ? null : { ...selections[nodeId] };
         }
-        const component = references[node.schema]?.[refValue];
+        const component = references[node.output.schema]?.[refValue];
         if (component === undefined) {
           throw new Error(`Unknown reference "${refValue}" for selection "${nodeId}"`);
         }
@@ -262,6 +262,16 @@ export function createEngine(artifact, options = {}) {
         throw new Error(`"${nodeId}" is not a settable root/choice node`);
       }
       roots.set(nodeId, value);
+      invalidate(nodeId);
+    },
+    // Remove an explicit value so the node falls back to its `default` (or has
+    // no value at all when the default cannot resolve).
+    unsetRoot(nodeId) {
+      const kind = artifact.nodes[nodeId]?.kind;
+      if (kind !== "root" && kind !== "choice") {
+        throw new Error(`"${nodeId}" is not an unsettable root/choice node`);
+      }
+      if (!roots.delete(nodeId)) return;
       invalidate(nodeId);
     },
     getRoot(nodeId) {

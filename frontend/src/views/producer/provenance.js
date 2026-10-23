@@ -1,11 +1,58 @@
-// Provenance decoration: marks a root whose current value equals a seed-derived
-// source (water report ion, yeast/style copy-in) and carries the reset affordance.
+// Provenance decoration: marks a root whose value comes from a selected
+// component. Roots that inherit through an artifact `default` are seeded while
+// unset and authored once set (hasRoot); residual host-seeded roots fall back to
+// value comparison against their derivation.
 
 import { seedDerivations, approxEqual, sourceLabel } from "../seedDerivations.js";
+import { resolveReference } from "../../engine/paths.js";
+
+function collectRefs(expr, out = []) {
+  if (expr === null || typeof expr !== "object") return out;
+  if (Array.isArray(expr)) {
+    for (const item of expr) collectRefs(item, out);
+    return out;
+  }
+  for (const [key, value] of Object.entries(expr)) {
+    if (key === "ref" && typeof value === "string") out.push(value);
+    else collectRefs(value, out);
+  }
+  return out;
+}
+
+// The selection a root inherits from, when its default reads one. Returns null
+// for roots with no selection-derived default (literal/const/derived defaults).
+export function selectionDefault(artifact, nodeId) {
+  const node = artifact?.nodes?.[nodeId];
+  if (!node || (node.kind !== "root" && node.kind !== "choice")) return null;
+  for (const path of collectRefs(node.default)) {
+    const resolved = resolveReference(artifact, path);
+    if (!resolved) continue;
+    if (artifact.nodes[resolved.nodeId]?.kind === "selection") return resolved.nodeId;
+  }
+  return null;
+}
+
+function componentLabel(engine, selectionNodeId) {
+  try {
+    return sourceLabel(engine.get(selectionNodeId));
+  } catch {
+    return "";
+  }
+}
 
 // AI AGENT HOOKS: Use this decorator for seed-derived provenance and reset
 // affordances. Do not duplicated this logic elsewhere.
-export function decorateProvenance(out, field, engine) {
+export function decorateProvenance(out, field, engine, artifact) {
+  const inheritedFrom = selectionDefault(artifact, field.id);
+  if (inheritedFrom) {
+    const seeded = !engine.hasRoot(field.id) && out.value !== undefined;
+    out.seeded = seeded;
+    out.seededValue = out.value;
+    out.seededSource = componentLabel(engine, inheritedFrom);
+    out.seededReset = "unset";
+    return out;
+  }
+
   const sources = seedDerivations(field.id);
   if (!sources.length) return out;
 

@@ -72,9 +72,9 @@ export function createStepView({
     refreshStyleCard(app, cardCtx);
     app.violationCount =
       app.relations.filter((r) => !r.holds).length +
-      app.domains.filter((d) => !d.holds).length +
-      fieldDomains.filter((d) => !d.holds).length +
-      collectionDomains.filter((d) => !d.holds).length;
+      app.domains.filter((d) => d.holds === false).length +
+      fieldDomains.filter((d) => d.holds === false).length +
+      collectionDomains.filter((d) => d.holds === false).length;
 
     app.stepStatus = {};
     for (const step of steps) app.stepStatus[step.slice] = { relations: [], domains: [] };
@@ -85,17 +85,17 @@ export function createStepView({
       }
     }
     for (const d of app.domains) {
-      if (d.holds) continue;
+      if (d.holds !== false) continue;
       app.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
     }
     for (const d of fieldDomains) {
-      if (d.holds) continue;
+      if (d.holds !== false) continue;
       const slice =
         fieldSlice.get(`${d.selectionNodeId}.${d.field}`) ?? selectionSlice.get(d.selectionNodeId);
       app.stepStatus[slice]?.domains.push(d);
     }
     for (const d of collectionDomains) {
-      if (d.holds) continue;
+      if (d.holds !== false) continue;
       app.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
     }
     refreshMaltCard(app, cardCtx);

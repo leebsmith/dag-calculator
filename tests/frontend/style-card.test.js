@@ -3,21 +3,59 @@ import assert from "node:assert/strict";
 
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 
-test("selectStyle seeds the envelope, fermentation, and fermentation targets", () => {
+test("selectStyle inherits the envelope and seeds the residual fermentation targets", () => {
   const app = createStepApp();
   app.boot();
   app.selectStyle("21A");
   app.compute();
 
   assert.equal(app.master.getRoot("batch.style_id"), "21A");
-  assert.equal(app.master.getRoot("batch.style_og_min"), 1.056);
-  assert.equal(app.master.getRoot("batch.style_abv_max"), 7.5);
+  // Envelope values are pulled by artifact defaults: no stored root.
+  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
+  assert.equal(app.master.getRoot("batch.target_ibu"), undefined);
+  assert.deepEqual(app.styleSrmBounds, [6, 14]);
+  assert.deepEqual(app.styleIbuBounds, [40, 70]);
+  // The residual three are still host-seeded (no declarable expression).
   assert.equal(app.master.getRoot("batch.fermentation"), "ale");
 
   const aa = app.master.getRoot("batch.apparent_attenuation");
   const abv = app.master.getRoot("batch.target_abv");
   assert.ok(typeof aa === "number" && aa > 0 && aa <= 1);
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
+});
+
+test("a pulled envelope field is seeded while unset and authored once set", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21A");
+  app.compute();
+
+  const inherited = app.fieldsById["batch.style_og_min"];
+  assert.equal(inherited.seeded, true);
+  assert.equal(inherited.seededReset, "unset");
+
+  app.setRoot("batch.style_og_min", 1.052);
+  app.compute();
+  const authored = app.fieldsById["batch.style_og_min"];
+  assert.equal(authored.seeded, false);
+  assert.equal(authored.seededReset, "unset");
+
+  app.resetField(authored);
+  app.compute();
+  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
+  assert.equal(app.fieldsById["batch.style_og_min"].seeded, true);
+});
+
+test("an envelope override survives switching style", () => {
+  const app = createStepApp();
+  app.boot();
+  app.selectStyle("21A");
+  app.compute();
+  app.setRoot("batch.style_og_max", 1.08);
+  app.selectStyle("21B Black IPA");
+  app.compute();
+  assert.equal(app.master.getRoot("batch.style_og_max"), 1.08);
+  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
 });
 
 test("clearStyleSelection clears the style id and resets fermentation", () => {
@@ -28,7 +66,8 @@ test("clearStyleSelection clears the style id and resets fermentation", () => {
   app.compute();
 
   assert.equal(app.master.getRoot("batch.style_id"), "");
-  assert.equal(app.master.getRoot("batch.fermentation"), "ale");
+  assert.equal(app.master.getRoot("batch.fermentation"), undefined);
+  assert.equal(app.fieldsById["batch.fermentation"].value, "ale");
 });
 
 test("selecting a stats-less style does not seed fermentation targets", () => {
@@ -128,8 +167,10 @@ test("target sliders: SRM/IBU bounds come from the style envelope", () => {
   const ibu = app.styleIbuBounds;
   assert.ok(Array.isArray(srm) && srm[0] < srm[1]);
   assert.ok(Array.isArray(ibu) && ibu[0] < ibu[1]);
-  assert.equal(srm[0], app.master.getRoot("batch.style_srm_min"));
-  assert.equal(ibu[1], app.master.getRoot("batch.style_ibu_max"));
+  // Bounds come from the selected style's envelope (pulled, not stored).
+  assert.deepEqual(srm, [6, 14]);
+  assert.deepEqual(ibu, [40, 70]);
+  assert.equal(app.master.getRoot("batch.style_srm_min"), undefined);
 });
 
 test("target sliders: whirlpool fraction splits the IBU target", () => {
@@ -150,9 +191,8 @@ test("target sliders: selecting a style seeds the midpoints", () => {
   app.selectStyle("21A");
   app.compute();
 
-  const ibumin = app.master.getRoot("batch.style_ibu_min");
-  const ibumax = app.master.getRoot("batch.style_ibu_max");
-  assert.ok(Math.abs(app.targetIbu - (ibumin + ibumax) / 2) < 1e-9);
+  assert.equal(app.master.getRoot("batch.target_ibu"), undefined);
+  assert.ok(Math.abs(app.targetIbu - (40 + 70) / 2) < 1e-9);
 });
 
 test("planned IBU/GU uses the target IBU and the planned OG (no solve)", () => {
