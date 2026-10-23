@@ -65,7 +65,10 @@
 
           <!-- Recipe landing ------------------------------------------------>
           <template x-if="$store.recipes.view !== 'editor'">
-            <load src="./src/partials/chooser.html" />
+            <div>
+              <load src="./src/partials/chooser.html" />
+              <load src="./src/partials/batch-setup.html" />
+            </div>
           </template>
 
           <!-- Editor -------------------------------------------------------->

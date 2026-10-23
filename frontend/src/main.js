@@ -12,6 +12,7 @@ import {
   signOut,
 } from "./firebase.js";
 import * as persistence from "./store/persistence.js";
+import { createSetupStore } from "./store/setup.js";
 import {
   FREEZE_RAIL_LIMIT,
   draftBatches,
@@ -45,6 +46,19 @@ Alpine.store("auth", {
   signIn: () => signInWithGoogle(),
   signOut: () => signOut(),
 });
+
+const setupStore = createSetupStore({
+  onCreated: () => {
+    const recipes = Alpine.store("recipes");
+    recipes.trashView = false;
+    recipes.view = "editor";
+    recipes.syncActive();
+    // A new batch starts at the style parameterisation screen.
+    stepApp?.next();
+  },
+});
+
+Alpine.store("setup", setupStore);
 
 Alpine.store("recipes", {
   view: "chooser", // "chooser" | "freezes" | "editor"
@@ -223,11 +237,7 @@ Alpine.store("recipes", {
   },
 
   async newRecipe() {
-    await persistence.createUntitled();
-    this.trashView = false;
-    this.view = "editor";
-    await this.refresh();
-    this.syncActive();
+    Alpine.store("setup").openModal();
   },
 
   async openDraft(id) {
@@ -369,6 +379,7 @@ async function applyAuth(user) {
     }
     await stepApp.library.refresh();
     await stepApp.refreshLibraryItems();
+    await Alpine.store("setup").refreshAssets();
     recipes.view = "chooser";
   } finally {
     auth.user = user;

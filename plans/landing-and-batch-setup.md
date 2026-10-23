@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [off-graph-identity]
 blocks: []
 gate: a landing page lists batches and manages equipment/water assets with no engine; a new-batch modal captures the invariant triplet and opens the style parameterization screen; make verify green
-status: proposed
+status: done
 ---
 
 # Landing Page & Batch Setup
@@ -109,6 +109,25 @@ hops → mash → brew day), all batch-level.
   must stay usable while a batch is broken or incomplete.
 
 ---
+
+## 7a. Outcome (as shipped)
+
+- The chooser already existed; **"New recipe" became "New batch"** and now opens the
+  modal instead of creating a blank draft.
+- **L2 asset CRUD**: a "Your setup" section lists equipment and water sources
+  (seeds + the user's catalog records) with create and delete. The equipment form
+  exposes the four fields that dominate the solver (kettle/HLT volume, boil-off,
+  conversion efficiency), prefilled from the seed default; the water form exposes
+  name + the six ions. "Update" is create-new + delete-old, matching the immutable
+  record rule.
+- **L3 modal**: name, equipment, water source (with an explicit *Unknown source*),
+  style guide vs experimental (inline bounds), the "fixed for this batch" warning,
+  and immediate persistence so the batch appears in the list.
+- **L4**: on creation the editor advances to the style parameterisation step.
+- **Guard**: opening a record without identity, or with a different draft payload
+  revision, fails with a clear error instead of booting with an empty identity.
+- Not done: renaming/moving batches between groups, batch/version comparison, and
+  the target-vector cleanup.
 
 ## 7. Out of scope
 

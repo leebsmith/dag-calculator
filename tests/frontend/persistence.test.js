@@ -3,6 +3,12 @@ import assert from "node:assert/strict";
 
 import * as persistence from "../../frontend/src/store/persistence.js";
 
+const DEFAULT_IDENTITY = {
+  equipment: { id: "rig-1", name: "Test rig", max_hlt_volume_l: 30 },
+  "water.source": { report_id: "w-1", laboratory: "Test lab", calcium_ca: 40 },
+  style: { id: "21A", name: "American IPA", og_min: 1.05, og_max: 1.07 },
+};
+
 function fakeClient() {
   const docs = new Map();
   const calls = [];
@@ -30,8 +36,9 @@ function fakeClient() {
         roots: payload.roots ?? {},
         collections: payload.collections ?? {},
         selections: payload.selections ?? {},
+        identity: payload.identity === null ? undefined : (payload.identity ?? DEFAULT_IDENTITY),
         provenance: payload.provenance ?? {},
-        schema_version: payload.schema_version ?? 3,
+        schema_version: payload.schema_version ?? 4,
         updated_at: clock++,
       };
       docs.set(id, rec);
@@ -73,7 +80,13 @@ function fakeClient() {
 function fakeApp() {
   return {
     loaded: null,
-    draftState: () => ({ roots: { "mash.grain_temp_c": 20 }, collections: {}, selections: {}, schema_version: 3 }),
+    draftState: () => ({
+      identity: DEFAULT_IDENTITY,
+      roots: { "mash.grain_temp_c": 20 },
+      collections: {},
+      selections: {},
+      schema_version: 4,
+    }),
     async loadState(state) {
       this.loaded = state;
     },
@@ -91,6 +104,12 @@ function setup() {
   persistence.clearActive();
   return { client, app };
 }
+
+test("opening a pre-identity record fails loudly", async () => {
+  const { client } = setup();
+  await client.upsertBatch("legacy", { name: "Legacy", roots: {}, identity: null });
+  await assert.rejects(() => persistence.open("legacy"), /predates the identity model/);
+});
 
 test("createUntitled makes no network call and is unpersisted", async () => {
   const { client } = setup();
@@ -222,7 +241,7 @@ test("open hydrates the active batch and loads its state", async () => {
     name: "Stored",
     roots: { "mash.grain_temp_c": 18 },
     collections: { "grist.major_malts": [] },
-    schema_version: 3,
+    schema_version: 4,
   });
 
   const opened = await persistence.open("b1");
@@ -237,6 +256,7 @@ test("open hydrates the active batch and loads its state", async () => {
     updated_at: stored.updated_at,
   });
   assert.deepEqual(app.loaded, {
+    identity: DEFAULT_IDENTITY,
     roots: { "mash.grain_temp_c": 18 },
     collections: { "grist.major_malts": [] },
     selections: {},
@@ -257,7 +277,7 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
     collections: {},
     selections: { "batch.yeast": { id: "y1", name: "Yeast" } },
     provenance: { "batch.yeast": { source_template_id: "y1" } },
-    schema_version: 3,
+    schema_version: 4,
   });
   client.calls.length = 0;
 
@@ -267,6 +287,7 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
   assert.equal(created.status, "draft");
   assert.equal(persistence.getActive().id, created.id);
   assert.deepEqual(app.loaded, {
+    identity: DEFAULT_IDENTITY,
     roots: { "mash.grain_temp_c": 20 },
     collections: {},
     selections: { "batch.yeast": { id: "y1", name: "Yeast" } },

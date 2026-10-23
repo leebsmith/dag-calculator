@@ -3,6 +3,7 @@
 // adapter is bound via `bindApp` so loads/autosaves can read + write its state.
 
 import * as batchClient from "../adapters/batchClient.js";
+import { DRAFT_SCHEMA_VERSION } from "./snapshot.js";
 
 let client = batchClient;
 let app = null;
@@ -65,6 +66,47 @@ export function list() {
 
 // Create an untitled, unpersisted draft locally (client UUID). No network write
 // happens until the first autosave. The editor is reset to empty state.
+export class UnsupportedBatchError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "UnsupportedBatchError";
+  }
+}
+
+// A batch must carry its identity and a payload revision this build understands.
+// Old records are not migrated: they cannot be interpreted, and silently booting
+// them with an empty identity would render blank values as if they were unset.
+function assertSupported(record) {
+  if (!record.identity || !record.identity.equipment || !record.identity.style) {
+    throw new UnsupportedBatchError(
+      "This batch predates the identity model and cannot be opened. Create a new batch."
+    );
+  }
+  if (record.schema_version !== undefined && record.schema_version !== DRAFT_SCHEMA_VERSION) {
+    throw new UnsupportedBatchError(
+      `This batch was saved with payload schema ${record.schema_version}; this build reads ${DRAFT_SCHEMA_VERSION}.`
+    );
+  }
+}
+
+export async function createWithIdentity({ name, identity }) {
+  active = {
+    id: crypto.randomUUID(),
+    name: name || "Untitled batch",
+    status: "draft",
+    trashed: false,
+    persisted: false,
+    updated_at: null,
+  };
+  dirty = false;
+  conflictRemote = null;
+  setSaveState("idle");
+  await app?.loadState({ identity, roots: {}, collections: {}, selections: {} });
+  dirty = true;
+  await saveNow();
+  return active;
+}
+
 export async function createUntitled() {
   active = {
     id: crypto.randomUUID(),
@@ -83,6 +125,7 @@ export async function createUntitled() {
 
 export async function open(batchId) {
   const b = await client.getBatch(batchId);
+  assertSupported(b);
   active = {
     id: b.id,
     name: b.name,
@@ -113,6 +156,7 @@ export async function renameActive(name) {
 // frozen batch's copied-forward selections.
 export async function fork(frozenId) {
   const frozen = await client.getBatch(frozenId);
+  assertSupported(frozen);
   const created = await client.upsertBatch(crypto.randomUUID(), {
     name: `${frozen.name} (copy)`,
     parent_batch_id: frozen.id,

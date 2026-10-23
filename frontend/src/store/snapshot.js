@@ -2,7 +2,7 @@
 // valuation. This is the single owner of the persistent payload shape.
 
 // Batch payload shape revision (independent of the artifact grammar version).
-export const DRAFT_SCHEMA_VERSION = 3;
+export const DRAFT_SCHEMA_VERSION = 4;
 
 // Frozen valuation format marker; a missing marker means the legacy
 // `{ outputs, fingerprint }` wrapper shape.

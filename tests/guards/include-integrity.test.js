@@ -10,6 +10,7 @@ import { ROOT, read, existsSync, join } from "./util.js";
 const EXTRA_PARTIALS = [
   "./src/partials/library.html",
   "./src/partials/chooser.html",
+  "./src/partials/batch-setup.html",
   "./src/partials/editor.html",
 ];
 
