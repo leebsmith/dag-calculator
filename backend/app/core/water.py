@@ -815,8 +815,12 @@ def _solve_dynamic_sparse(
         notes.append("Sparse solve could not satisfy all constraints; solving equalities only.")
         res = _solve_lp(c_primary, a_eq, b_eq, None, None)
         if not res.success:
+            count = len(pinned)
+            noun = "target" if count == 1 else "targets"
             raise SolverValidationError(
-                "SALT_SOLVE_FAILED", "Custom sparse optimization failed to find a feasible dose."
+                "SALT_SOLVE_FAILED",
+                f"No salt dose can satisfy all {count} pinned {noun}. "
+                "Unpin one ion to leave a degree of freedom, or choose a target preset.",
             )
 
     x = [max(0.0, val) for val in res.x]

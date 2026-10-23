@@ -242,6 +242,7 @@ def test_conflicting_custom_pins_fail_legibly():
     with pytest.raises(SolverValidationError) as exc:
         solve_water_chemistry(inp)
     assert exc.value.code == "SALT_SOLVE_FAILED"
+    assert "Unpin one ion" in exc.value.message
 
 
 def _lcg(seed: int):

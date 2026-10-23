@@ -255,6 +255,7 @@
         <template x-if="waterDetails.error">
           <p class="text-danger" x-text="'Solver error: ' + (waterDetails.error.code || 'unknown')"></p>
         </template>
+        <p class="text-xs text-danger" x-show="waterDetails.error && waterDetails.error.message" x-text="waterDetails.error && waterDetails.error.message"></p>
         <p class="text-xs text-muted" x-show="waterDetails.boundaryStatus !== 'ok'" x-text="'Solver status: ' + waterDetails.boundaryStatus"></p>
         <p class="text-xs text-muted" x-text="waterDetails.ratioBasis"></p>
         <div class="telemetry" x-show="waterDetails.telemetry.length > 0">
