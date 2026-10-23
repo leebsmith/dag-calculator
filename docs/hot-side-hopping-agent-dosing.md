@@ -1,3 +1,8 @@
+> The implemented whirlpool theory and equations live in
+> [Whirlpool Hopping Model](whirlpool-hopping-model.md). This document remains
+> the product-form and dosing reference; it does not duplicate the model
+> equations.
+
 Dosing for modern hot-side hopping agents (flowable $\text{CO}_2$ extracts, cryogenic lupulin powders, and standardized bittering resins) is specified across four primary frameworks depending on whether the product targets isomerized bitterness, aromatic oil load, or direct pellet substitution.
 
 Unlike traditional T-90 pellets—which are dosed almost exclusively by gross vegetative weight per unit volume (e.g., $\text{oz/gal}$ or $\text{g/L}$) alongside a variable crop-year alpha acid percentage—newer advanced hop products are chemically standardized, shifting how recipes and brewing calculators must parameterize them.
@@ -84,89 +89,6 @@ Furthermore, when introducing modern hot-side agents (like flowable $\text{CO}_2
 
 ---
 
-## 1. Temperature-Dependent Isomerization Kinetics ($\text{IBU}$)
+## Whirlpool model
 
-Standard Tinseth utilization models assume a constant boiling temperature ($100^\circ\text{C}$), breaking down completely in a sub-boiling whirlpool. To extend Tinseth across the $75^\circ\text{C}\text{--}98^\circ\text{C}$ window, we decouple the **time-gravity base utilization** from a **temperature-dependent Arrhenius scaling factor** ($k_T$) and a **product-form multiplier** ($M_{\text{form}}$).
-
-### The Arrhenius Sub-Boiling Factor
-
-Alpha-acid isomerization follows first-order kinetics with an empirical activation energy ($E_a$) of approximately $79.1\text{ to }88.0\text{ kJ/mol}$ (Perkins/Malowicki models). Relative to a $100^\circ\text{C}$ ($373.15\text{ K}$) boil baseline, the relative rate constant $f_{\text{temp}}(T)$ at whirlpool temperature $T$ (in Kelvin) is:
-
-$$f_{\text{temp}}(T) = \exp\left( -\frac{E_a}{R} \left( \frac{1}{T} - \frac{1}{373.15} \right) \right)$$
-
-Where $R = 8.314\text{ J/(mol}\cdot\text{K)}$. Using a standard empirical fit ($E_a/R \approx 9500\text{ K}$), the relative isomerization rate drops precipitously across the target window:
-
-* **$98^\circ\text{C}$ ($371.15\text{ K}$):** $f_{\text{temp}} \approx 0.87$ ($87\%$ of boiling isomerization speed)
-* **$90^\circ\text{C}$ ($363.15\text{ K}$):** $f_{\text{temp}} \approx 0.49$ ($49\%$ of boiling speed)
-* **$85^\circ\text{C}$ ($358.15\text{ K}$):** $f_{\text{temp}} \approx 0.34$ ($34\%$ of boiling speed)
-* **$80^\circ\text{C}$ ($353.15\text{ K}$):** $f_{\text{temp}} \approx 0.23$ ($23\%$ of boiling speed)
-* **$75^\circ\text{C}$ ($348.15\text{ K}$):** $f_{\text{temp}} \approx 0.16$ ($16\%$ of boiling speed)
-
-### The Non-Isothermal Cooling Integral
-
-Because a whirlpool rarely sits at a single static temperature for 20 to 40 minutes, a static temperature input overpredicts utilization. If a vessel cools from $T_{\text{start}}$ to $T_{\text{end}}$ over duration $t_{\text{wp}}$ according to Newton’s Law of Cooling, $T(t) = T_{\text{ambient}} + (T_{\text{start}} - T_{\text{ambient}})e^{-c t}$, we integrate an **effective boiling-equivalent time** ($t_{\text{eff}}$) and feed that into the standard Tinseth time decay function:
-
-$$t_{\text{eff}} = \int_{0}^{t_{\text{wp}}} f_{\text{temp}}(T(t)) \, dt$$
-
-$$U_{\text{wp}} = M_{\text{form}} \cdot f_{\text{gravity}}(G) \cdot \left( \frac{1 - e^{-0.04 \cdot t_{\text{eff}}}}{4.15} \right)$$
-
-### The Product Form Multiplier ($M_{\text{form}}$) & The Viscosity Trap
-
-For T-90 pellets ($M_{\text{form}} = 1.0$) and Cryo/Lupomax ($M_{\text{form}} \approx 1.05\text{--}1.10$), $M_{\text{form}}$ is static across the temperature window.
-
-For **flowable $\text{CO}_2$ extracts** (Incognito, DynaBoost), $M_{\text{form}}$ is **piecewise or sigmoidally dependent on temperature and shear**. Above $90^\circ\text{C}$, the extract is low-viscosity and pre-ruptured, yielding $M_{\text{form}} \approx 1.15$. However, as the temperature approaches $75^\circ\text{C}$, lipid viscosity climbs rapidly. Without aggressive pump shear, the resin forms globules with low surface-area-to-volume ratios, dropping effective utilization below T-90 pellets ($M_{\text{form}} \approx 0.75\text{--}0.85$).
-
----
-
-## 2. Modeling Aromatic Oil Retention & Fractionation
-
-Modeling "total oil retention" as a single scalar fails in the $75^\circ\text{C}\text{--}98^\circ\text{C}$ window because hop oil is a biphasic mixture of compounds with vastly different volatilities and polarities. To get meaningful sensory predictions, the model should split total oil into two kinetic buckets:
-
-1. **Non-Polar Hydrocarbons (Monoterpenes & Sesquiterpenes):** Myrcene, humulene, caryophyllene (typically $70\%\text{--}80\%$ of total oil). Highly hydrophobic; low aqueous solubility; high Henry's Law volatility in hot wort.
-2. **Oxygenated Terpenoids & Thiols:** Linalool, geraniol, citronellol, esters (typically $20\%\text{--}30\%$ of total oil). Polar; significantly higher aqueous solubility; resistant to steam stripping below $90^\circ\text{C}$.
-
-### First-Order Evaporative Decay
-
-During an uncovered or vented whirlpool stand of duration $t$, the surviving fraction $R_i$ of each aromatic bucket $i$ follows an exponential decay driven by a temperature-dependent volatilization constant $k_{\text{vol}, i}(T)$:
-
-$$R_i(T, t) = \exp\left( -k_{\text{vol}, i}(T) \cdot t \right)$$
-
-However, unlike simple boiling, **aqueous solubility caps the maximum retainable concentration** ($C_{\text{max}, i}$) of non-polar hydrocarbons:
-
-* **Myrcene Solubility Ceiling:** In wort, myrcene saturates at very low thresholds (roughly $0.5\text{ to }1.5\text{ mg/L}$ depending on wort gravity and lipid/protein binding), whereas linalool and geraniol remain soluble well past $50\text{ mg/L}$.
-* **Form Factor Advantage (Oil Partitioning):** In T-90 pellets, vegetative matter acts as an adsorbent sponge—a significant fraction of non-polar oils partitions back onto the solid trub cone and stays in the kettle. Flowable extracts and oil fractions have **zero solid trub adsorption**, meaning $100\%$ of the un-volatilized oil remains in the liquid phase (either dissolved or micro-emulsified), until hitting the $2\text{ g/L}$ phase-separation ceiling.
-
----
-
-## 3. Kinetic Behavior Across the $75^\circ\text{C}$ to $98^\circ\text{C}$ Window
-
-Assuming a standard **20-minute whirlpool stand**, the coupled parameters behave as follows across the thermal gradient:
-
-| Whirlpool Temp | $f_{\text{temp}}(T)$ (Relative to $100^\circ\text{C}$) | Effective 20-Min Util. ($U_{\text{base}}$ T-90 @ 1.050) | Flowable Extract Dispersion Efficiency | Hydrocarbon Survival *(Myrcene / Humulene)* | Oxygenated Survival *(Linalool / Geraniol)* |
-| --- | --- | --- | --- | --- | --- |
-| **$98^\circ\text{C}$ ($208^\circ\text{F}$)** | $0.87$ | $\approx 10.5\%$ | **100%** *(Instant liquefaction; max isomerization)* | **10% – 20%** *(Rapid flash-off; resinous/spicy shift)* | **45% – 60%** *(Moderate thermal stripping)* |
-| **$90^\circ\text{C}$ ($194^\circ\text{F}$)** | $0.49$ | $\approx 6.9\%$ | **95% – 100%** *(Ideal viscosity vs. thermal energy)* | **25% – 40%** *(Steady evaporative loss)* | **70% – 80%** *(High retention of floral/citrus alcohols)* |
-| **$85^\circ\text{C}$ ($185^\circ\text{F}$)** | $0.34$ | $\approx 5.1\%$ | **85% – 95%** *(Sweet spot for pumped/HERMS whirlpool)* | **45% – 60%** *(Below steam-stripping threshold)* | **85% – 90%** *(Minimal loss; optimal glycosylation staging)* |
-| **$80^\circ\text{C}$ ($176^\circ\text{F}$)** | $0.23$ | $\approx 3.6\%$ | **75% – 85%** *(Requires pre-warming extract to $45^\circ\text{C}$ + pump shear)* | **65% – 75%** *(High myrcene retention; pungent green/citrus)* | **90% – 95%** *(Near-complete preservation)* |
-| **$75^\circ\text{C}$ ($167^\circ\text{F}$)** | $0.16$ | $\approx 2.6\%$ | **50% – 70%** *(Risk of kettle wall smearing if low shear)* | **75% – 85%** *(Capped primarily by wort solubility limit)* | **95%+** *(Virtually zero thermal loss)* |
-
----
-
-## 4. Non-Iso-Alpha "Perceived Bitterness" Offset
-
-If a massive whirlpool addition at $75^\circ\text{C}\text{--}80^\circ\text{C}$ is modeled strictly via Arrhenius isomerization, the calculated $\text{IBU}$ will look deceptively low ($2\%\text{ to }3\%$ utilization), yet the finished beer will taste distinctly bitter.
-
-In that lower thermal window, two non-isomerized pathways take over:
-
-1. **Humulinones (Oxidized Alpha Acids):** Present naturally in T-90 pellets ($0.2\%\text{--}0.5\%$) and concentrated in Cryo/Lupomax ($0.5\%\text{--}1.0\%$). Humulinones are highly water-soluble and dissolve completely at $75^\circ\text{C}$ without requiring thermal isomerization. They are roughly **$66\%$ as bitter as iso-alpha acids** and register on standard spectrophotometric $\text{IBU}$ tests. *(Note: Supercritical $\text{CO}_2$ flowable extracts contain almost zero humulinones, making them noticeably softer at $80^\circ\text{C}$ than pellets).*
-2. **Un-isomerized Alpha Acids & Hulupones:** Warm turbulence in the $80^\circ\text{C}$ window dissolves raw alpha acids up to their wort solubility limit ($\approx 14\text{--}20\text{ mg/L}$, though fermentation pH drops this down to $\approx 5\text{--}10\text{ mg/L}$).
-
----
-
-## 5. Architectural Checkpoints for Your Model
-
-Before translating these dynamics into a schema or calculation engine, several design boundaries are worth establishing depending on the desired degrees of freedom:
-
-* **Thermal Profile vs. Point Temperature:** Should the model accept a single static whirlpool target temperature (e.g., chilling to $82^\circ\text{C}$ via a heat exchanger or HERMS coil and holding), or should it model passive cooling from $98^\circ\text{C}$ using an equipment-specific thermal decay constant?
-* **Bitterness Output Metric:** Should the model strictly output **True Iso-Alpha Acids ($\text{mg/L}$)** via the Arrhenius curve, or should it also compute a **Perceived Bitterness / Spectrophotometric IBU** that layers in dissolved humulinones from pellets/Cryo versus pure $\text{CO}_2$ extracts?
-* **Oil Representation:** Are you looking to track a single normalized **Surviving Oil Yield ($\text{mL/hL}$)** for recipe scaling, or do you want to split the state vector into **Hydrocarbon vs. Oxygenated Fractions** to predict sensory shifts?
+The implemented Arrhenius/Newton/Tinseth model, constants, reference vectors, and limitations are in [Whirlpool Hopping Model](whirlpool-hopping-model.md). Product-form multipliers, oil retention, and perceived-bitterness offsets remain deferred design background rather than implemented behaviour.

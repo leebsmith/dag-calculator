@@ -24,6 +24,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-conformance.md`](docs/style-conformance.md) | **living** — style-conformance assessor (adherence index + drift status) |
+| [`docs/whirlpool-hopping-model.md`](docs/whirlpool-hopping-model.md) | **living** — whirlpool bitterness theory, equations, constants, and reference vectors |
 | [`docs/style-rulebook.md`](docs/style-rulebook.md) | CSS design-token conventions |
 | [`plans/`](plans/) | execution history — step plans + explorations |
 | [`TODO.md`](TODO.md) | remaining work |
