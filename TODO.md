@@ -40,7 +40,7 @@
 * Lazy-load seed data (bundle size)
 * **Cooling curves** — named kettle ΔT-over-time profiles feeding the whirlpool model;
   the first catalog authored on the record library, and the trigger for the artifact's
-  nested-list grammar.
+  nested-list grammar (`plans/cooling-curve-determination.md`).
 * **Style-conformance water axis** — nothing scores water against the chosen style today:
   `styleConformance.js` covers only `og`/`fg`/`abv`/`ibu`/`srm` and `styles.json` carries
   no water fields. Needs a desired water character, a realized character derived from the
