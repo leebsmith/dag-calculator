@@ -77,10 +77,10 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
-* Record library foundation (server records, copy-forward, Google allowlist, user-scoped batches)
-* Water chemistry cleanup (read-only records, copy-forward ions, RO-as-report, treated-water vs target, SO4:Cl intent, dose basis + brew-day instruction)
-* Bounded buffer-capacity mash pH model (`plans/mash-ph-buffer-capacity.md`)
-* Selector option labels everywhere (`plans/selector-option-labels.md`)
+* Record library foundation (server records, copy-forward, Google allowlist, user-scoped batches) — `plans/archive/record-library-foundation.md`
+* Water chemistry cleanup (read-only records, copy-forward ions, RO-as-report, treated-water vs target, SO4:Cl intent, dose basis + brew-day instruction) — `plans/archive/water-chemistry-cleanup.md`
+* Bounded buffer-capacity mash pH model (`plans/archive/mash-ph-buffer-capacity.md`)
+* Selector option labels everywhere (`plans/archive/selector-option-labels.md`)
 * Water chemistry step card (`solver.water` boundary + full card)
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu

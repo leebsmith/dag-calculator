@@ -9,7 +9,7 @@ gate: —
 status: accepted
 revision: 2
 revised: 2026-10-21
-supersedes: plans/water-chemistry-cleanup.md (v1, accepted 2026-10-20, never executed)
+supersedes: plans/archive/water-chemistry-cleanup.md (v1, accepted 2026-10-20, never executed)
 ---
 
 # Plan 2 (rev 2) — Water chemistry cleanup, SO4:Cl intent, salt-mode honesty
