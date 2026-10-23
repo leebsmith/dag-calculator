@@ -32,6 +32,13 @@
       "rows": 157,
       "sha256": "d3f794532da832fb7caf88b494af69c92eafe2f06c492860690c00eb81a7abe1"
     },
+    "hop-products.json": {
+      "mechanism": "curated",
+      "upstream": "Yakima Chief Hops DynaBoost product data sheet; BarthHaas INCOGNITO technical data sheet",
+      "builder": "scripts/build-hop-products-seed.mjs",
+      "rows": 19,
+      "sha256": "68d138fa86308d4eb59a982b6689ea60b4ca2a2a2a01b5d6c30a94fc14833a69"
+    },
     "malt-database-malts.json": {
       "mechanism": "scrape",
       "upstream": "malt_database (local scrape)",

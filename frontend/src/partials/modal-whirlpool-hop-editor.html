@@ -102,7 +102,7 @@
         <div class="modal-drawer-header">
           <h3
             class="modal-drawer-title"
-            x-text="whirlpoolHopDrawer === 'search' ? 'Hop Catalog' : 'Hop Inspector'"
+            x-text="whirlpoolHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Hop Inspector'"
           ></h3>
           <button type="button" class="btn-close text-xs" @click="closeWhirlpoolHopDrawer()">✕</button>
         </div>
@@ -115,9 +115,25 @@
                   <input
                     type="text"
                     class="form-input text-xs"
-                    placeholder="Search hops by name or notes…"
+                    placeholder="Search hops and products by name, notes, or maker…"
                     x-model.debounce.50ms="whirlpoolHopSearch"
                   />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs">Catalog</label>
+                  <select
+                    class="form-select text-xs"
+                    :value="whirlpoolHopCatalogForm"
+                    @change="setWhirlpoolHopCatalogForm($event.target.value)"
+                  >
+                    <template x-for="form in whirlpoolHopForms" :key="form.value">
+                      <option
+                        :value="form.value"
+                        :selected="form.value === whirlpoolHopCatalogForm"
+                        x-text="form.label"
+                      ></option>
+                    </template>
+                  </select>
                 </div>
                 <div class="filter-pills-container">
                   <template x-for="c in whirlpoolHopCategories" :key="c">
@@ -168,7 +184,7 @@
                   </div>
                 </template>
                 <template x-if="whirlpoolHopFilteredCatalog.length === 0">
-                  <div class="table-empty-cell">No matching hops found.</div>
+                  <div class="table-empty-cell">No matching entries found.</div>
                 </template>
               </div>
             </div>
@@ -213,14 +229,19 @@
                     :value="fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1)"
                     @input="setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
                   />
-                  <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
+                  <span class="form-hint">Override with the lot CoA alpha; defaults to the catalog preset.</span>
                   <span
                     class="form-hint"
                     x-show="whirlpoolHopActiveRow.product_form === 'flowable_extract'"
                   >
-                    Use the lot CoA alpha (typically 40–55%). Dosed by weight; no vegetative absorption.
-                    Typical dose is 1.5–3.5 g/gal; >4 g/gal risks oil slicking.
+                    Use the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Dosed by weight;
+                    no vegetative absorption. Typical dose varies by product.
                   </span>
+                  <span
+                    class="form-hint"
+                    x-show="whirlpoolHopT90Equivalent"
+                    x-text="whirlpoolHopT90Equivalent"
+                  ></span>
                 </div>
               </div>
             </template>

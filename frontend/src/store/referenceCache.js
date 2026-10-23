@@ -12,6 +12,7 @@ import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
 import standardMalts from "../../../data/seeds/standard-malts.json" with { type: "json" };
 import hops from "../../../data/seeds/hops.json" with { type: "json" };
+import hopProducts from "../../../data/seeds/hop-products.json" with { type: "json" };
 import sugars from "../../../data/seeds/sugars.json" with { type: "json" };
 import yeasts from "../../../data/seeds/yeasts.json" with { type: "json" };
 import styles from "../../../data/seeds/styles.json" with { type: "json" };
@@ -41,6 +42,7 @@ const BASE_SEEDS = {
   equipment,
   malts: allMalts,
   hops,
+  hopProducts,
   sugars,
   yeasts,
   styles,

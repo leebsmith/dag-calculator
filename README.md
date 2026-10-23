@@ -104,10 +104,11 @@ data/sources/*.json  ──────build-*.mjs──▶  data/seeds/*.json  
 
 - **Raw sources** are committed under [`data/sources/`](data/sources/): the
   beer-analytics.com hop/yeast scrapes, the BJCP 2015/2021 style
-  scrape+aggregate outputs, the malt_database fermentables scrape, and the
-  standard-malt list + malt→standard crosswalk. `data/sources/manifest.json`
-  records each source's mechanism, upstream, content hash, and row count (guarded
-  by `tests/guards/sources-manifest`).
+  scrape+aggregate outputs, the malt_database fermentables scrape, the
+  standard-malt list + malt→standard crosswalk, and the curated flowable
+  hop-product source. `data/sources/manifest.json` records each source's
+  mechanism, upstream, content hash, and row count (guarded by
+  `tests/guards/sources-manifest`).
 - **Scrapers/aggregators** live under [`scripts/scrape/`](scripts/scrape/)
   (Python): the beer-analytics hop/yeast scrapers and the BJCP category scraper
   + aggregator. Dependencies are per-pipeline `requirements.txt` files, kept out
@@ -116,8 +117,9 @@ data/sources/*.json  ──────build-*.mjs──▶  data/seeds/*.json  
   fermentables pipeline is two-stage: `build-fermentables-seed.mjs` (source →
   `malts.json`/`sugars.json`, classifying each malt via the crosswalk) then
   `build-standard-malts-seed.mjs` (derives the generic `standard-malts.json`
-  representative set from `malts.json`). Every builder exports its pure
-  normalizer and writes only when run as a CLI, so
+  representative set from `malts.json`), and `build-hop-products-seed.mjs`
+  (normalizes the curated flowable hop-product source). Every builder exports
+  its pure normalizer and writes only when run as a CLI, so
   `tests/guards/seed-rebuild` can assert the committed seeds equal a fresh
   rebuild of `data/sources/`.
 - The BJCP scraper caches category HTML (not committed); the aggregator reads

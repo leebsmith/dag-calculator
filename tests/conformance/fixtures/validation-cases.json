@@ -72,6 +72,37 @@
       "expected": ["url"]
     },
     {
+      "catalog": "hop_product",
+      "component": {
+        "id": "dynaboost-citra",
+        "name": "DynaBoost Citra",
+        "manufacturer": "Yakima Chief Hops",
+        "brand": "DynaBoost",
+        "variety_id": "citra",
+        "product_form": "flowable_extract",
+        "purpose": "Flowable extract",
+        "alpha_acid_pct": 0.425,
+        "alpha_acid_min_pct": 0.35,
+        "alpha_acid_max_pct": 0.5,
+        "beta_acid_pct": 0.15,
+        "total_oil_pct": 0.2,
+        "t90_replacement_ratio": 10,
+        "url": "https://www.yakimachief.com/products/dynaboost"
+      },
+      "expected": []
+    },
+    {
+      "catalog": "hop_product",
+      "component": {
+        "id": "bad",
+        "name": "Bad product",
+        "product_form": "nope",
+        "alpha_acid_pct": 1.5,
+        "t90_replacement_ratio": -1
+      },
+      "expected": ["product_form", "alpha_acid_pct", "t90_replacement_ratio"]
+    },
+    {
       "catalog": "yeast",
       "component": { "name": "Y", "attenuation_pct": "0.5" },
       "expected": ["attenuation_pct"]

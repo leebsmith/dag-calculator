@@ -25,7 +25,8 @@ delete; a correction is a new record. They are merged into the picker's referenc
 cache (`record > seed`) so they can be chosen exactly like a seed, but choosing
 one **copies it into the batch** (§4). The kind registry shared by frontend and
 backend is [`data/catalogs.json`](../../data/catalogs.json); `malt`, `yeast`,
-`hop`, `sugar`, `equipment`, `water_report`, and `water_target` support records.
+`hop`, `hop_product`, `sugar`, `equipment`, `water_report`, and `water_target`
+support records.
 
 Physical constants (sucrose yield, salt stoichiometry, acid properties) live in
 the artifact's `constants`/`functions`, **not** in seed JSON — seed data is
@@ -214,6 +215,29 @@ re-import that shifts the seed also shifts the medians (and may add a
 representative for a newly populated class). `make seeds` runs
 `seeds-fermentables` → `seeds-standard-malts`, and a guard fails if the committed
 file diverges from the derived medians, so drift is an explicit, reviewable diff.
+
+### 2.9 `hop_product`
+
+Flowable whirlpool hop products: branded extracts (DynaBoost, Incognito) and one
+generic fallback. Keyed by a slug of the product and variety.
+
+| Field | Dimension / taxonomy | Domain | Notes |
+|---|---|---|---|
+| `id`, `name`, `manufacturer`, `brand`, `variety_id`, `purpose` | — | — | identity/display metadata; `variety_id` points at a `hop` id |
+| `product_form` | taxonomy `whirlpool_hop_form` | — | `flowable_extract` for the current seed |
+| `alpha_acid_pct`, `alpha_acid_min_pct`, `alpha_acid_max_pct`, `beta_acid_pct`, `total_oil_pct` | percentage | `[0, 1]` | published product ranges; `alpha_acid_pct` is the range midpoint |
+| `t90_replacement_ratio` | dimensionless | `gte 0` | display-only T-90 equivalence |
+| `notes`, `url` | — | — | dosing/provenance prose and product page |
+
+The curated source is `data/sources/hop-products.json`, normalized by
+`scripts/build-hop-products-seed.mjs` into `data/seeds/hop-products.json`.
+Percentages are authored as percentages in the source and stored as fractions.
+The builder verifies every `variety_id` against `data/seeds/hops.json`.
+
+`alpha_acid_pct` is an editable preset, not a lot constant: the whirlpool inspector
+tells the brewer to replace it with the certificate-of-analysis value. The
+`t90_replacement_ratio` feeds only the inspector's informational T-90 equivalent;
+it is never used for IBU back-solving.
 
 ---
 

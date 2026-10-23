@@ -142,6 +142,55 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", ()
   assert.ok(extract.mass_kg < pellet.mass_kg, "extract needs less mass at the same alpha");
 });
 
+test("whirlpool catalog switches to products and copies form, alpha, and ratio", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.5);
+  app.compute();
+
+  app.openWhirlpoolHopEditor();
+  app.openWhirlpoolHopSearch();
+  app.setWhirlpoolHopCatalogForm("flowable_extract");
+  assert.ok(app.whirlpoolHopCatalog.some((item) => item.id === "dynaboost-citra"));
+  assert.ok(app.whirlpoolHopCatalog.some((item) => item.id === "incognito-citra"));
+  app.addCatalogWhirlpoolHop("dynaboost-citra");
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  const row = app.whirlpoolHopRows[0];
+  assert.equal(row.name, "DynaBoost Citra");
+  assert.equal(row.product_form, "flowable_extract");
+  assert.equal(row.alpha_acid_pct, 0.425);
+  assert.equal(row.t90_replacement_ratio, 10);
+  assert.match(app.whirlpoolHopMass(row), /g$/);
+});
+
+test("inspector shows the T-90 equivalent only when the row carries a ratio", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.5);
+  app.compute();
+
+  app.openWhirlpoolHopEditor();
+  app.openWhirlpoolHopSearch();
+  app.setWhirlpoolHopCatalogForm("flowable_extract");
+  app.addCatalogWhirlpoolHop("dynaboost-citra");
+  app.inspectWhirlpoolHopRow(0);
+  assert.match(app.whirlpoolHopT90Equivalent, /T-90 equivalent \(1:10\)/);
+
+  app.setWhirlpoolHopCatalogForm("flowable_extract");
+  app.addCatalogWhirlpoolHop("flowable-co2-extract-generic");
+  app.inspectWhirlpoolHopRow(1);
+  assert.match(app.whirlpoolHopT90Equivalent, /T-90 equivalent \(1:8\)/);
+
+  app.setWhirlpoolHopCatalogForm("t90_pellet");
+  app.addCatalogWhirlpoolHop("cascade");
+  app.inspectWhirlpoolHopRow(2);
+  assert.equal(app.whirlpoolHopT90Equivalent, "");
+});
+
 test("flowable extract doses above the 4 g/gal ceiling warn", () => {
   const app = createStepApp();
   app.boot();

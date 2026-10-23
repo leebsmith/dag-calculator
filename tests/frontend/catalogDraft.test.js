@@ -127,6 +127,28 @@ test("duplicateCatalogMalt routes the seed into the user catalog", () => {
   assert.equal(calls.filter((c) => c.op === "duplicate").length, 1);
 });
 
+test("a custom catalog and catalogNameOf override add and duplicate", () => {
+  const product = { id: "product", name: "Product" };
+  const { app, calls } = setup({
+    catalog: () => [product],
+    catalogNameOf: () => "hop_product",
+  });
+
+  assert.deepEqual(app.maltCatalog, [product]);
+  app.addCatalogMalt("product");
+  assert.deepEqual(calls.at(-1), {
+    op: "add",
+    row: { catalog_id: "product", name: "Product", parts: 10, pct: 0 },
+  });
+
+  app.duplicateCatalogMalt("product");
+  assert.deepEqual(calls.at(-1), {
+    op: "duplicate",
+    catalog: "hop_product",
+    item: product,
+  });
+});
+
 test("removeMalt keeps the active index pointing at the same row", () => {
   const { app } = setup();
   app.addDraftRow({ catalog_id: "a" });

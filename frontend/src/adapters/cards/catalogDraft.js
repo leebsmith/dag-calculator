@@ -9,6 +9,10 @@
 //   Cap            capitalized stem for handler names ("Hop")
 //   nodeId         collection node id ("batch.boil_hops")
 //   seedKey        reference-cache seed key ("hops")
+//   catalog        optional () => catalogItem[] override for a dynamic catalog
+//   catalogNameOf  optional (catalogItem) => catalog kind for "Copy to my items";
+//                  defaults to SEED_KEY_TO_CATALOG[seedKey]
+//   searchFields   optional catalog fields searched by the drawer (default name, notes)
 //   idField        row field holding the catalog id ("hop_id")
 //   categoryField  catalog field to filter/pill on ("purpose") | null
 //   standardField  (optional) catalog field holding the standard-malt id; when
@@ -35,6 +39,9 @@ export function installCatalogDraft(app, ctx, config) {
     Cap,
     nodeId,
     seedKey,
+    catalog: catalogFn = null,
+    catalogNameOf = null,
+    searchFields = ["name", "notes"],
     idField,
     categoryField = null,
     standardField = null,
@@ -48,7 +55,9 @@ export function installCatalogDraft(app, ctx, config) {
     groupMeta = null,
   } = config;
   const seeds = ctx.cache.seeds ?? {};
-  const catalog = () => Object.values(seeds[seedKey] ?? {});
+  const seedCatalog = () => Object.values(seeds[seedKey] ?? {});
+  const catalog = catalogFn ? () => catalogFn() : seedCatalog;
+  const findCatalogItem = (id) => catalog().find((item) => item.id === id);
 
   const state = {
     [`${prefix}Drawer`]: null, // "search" | "inspect" | null
@@ -79,7 +88,7 @@ export function installCatalogDraft(app, ctx, config) {
     },
 
     [`addCatalog${Cap}`](catalogId) {
-      const item = seeds[seedKey]?.[catalogId];
+      const item = findCatalogItem(catalogId);
       if (!item) return;
       if (canAdd && !canAdd(this)) return;
       this.addDraftRow(makeRow(item));
@@ -87,9 +96,12 @@ export function installCatalogDraft(app, ctx, config) {
     },
 
     [`duplicateCatalog${Cap}`](catalogId) {
-      const item = seeds[seedKey]?.[catalogId];
-      const catalogName = SEED_KEY_TO_CATALOG[seedKey];
-      if (!item || !catalogName) return;
+      const item = findCatalogItem(catalogId);
+      if (!item) return;
+      const catalogName = catalogNameOf
+        ? catalogNameOf(item)
+        : SEED_KEY_TO_CATALOG[seedKey];
+      if (!catalogName) return;
       this.duplicateUserItem(catalogName, item);
     },
 
@@ -227,6 +239,7 @@ export function installCatalogDraft(app, ctx, config) {
         query: this[`${prefix}Search`],
         categories: this[`${prefix}CategoryFilter`],
         categoryOf: categoryField ? (item) => item[categoryField] : null,
+        searchFields,
       });
       // In a standard's drill-down, surface the generic representative first.
       if (standardField && this[`${prefix}Standard`]) {

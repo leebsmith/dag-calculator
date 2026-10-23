@@ -38,16 +38,20 @@ function makeRow(hop) {
 }
 
 function makeWhirlpoolRow(hop) {
-  return {
+  const row = {
     hop_id: hop.id,
     name: hop.name,
-    product_form: "t90_pellet",
+    product_form: hop.product_form ?? "t90_pellet",
     alpha_acid_pct: hop.alpha_acid_pct,
     duration_min: DEFAULT_REST_DURATION_MIN,
     initial_temp_c: DEFAULT_INITIAL_TEMP_C,
     parts: 10,
     pct: 0,
   };
+  if (isFiniteNumber(hop.t90_replacement_ratio)) {
+    row.t90_replacement_ratio = hop.t90_replacement_ratio;
+  }
+  return row;
 }
 
 function resolveOrNull(engine, path) {
@@ -91,40 +95,50 @@ function computeHopRows(engine) {
   });
 }
 
-function computeWhirlpoolRows(engine) {
-  const rows = engine.get(N.whirlpoolCollection) ?? [];
+function whirlpoolContext(engine) {
   const whirlpoolIbu = Number(engine.get(N.whirlpoolIbu)) || 0;
   const ambientTempC = finiteNumber(engine.get(N.whirlpoolAmbient), DEFAULT_AMBIENT_TEMP_C);
   const timeConstantMin = finiteNumber(
     engine.get(N.whirlpoolCoolingTimeConstant),
     DEFAULT_COOLING_TIME_CONSTANT_MIN
   );
-  const kPerMin = timeConstantMin > 0 ? 1 / timeConstantMin : DEFAULT_K_PER_MIN;
-  const gravity = resolveOrNull(engine, N.postBoilGravity);
-  const volume = resolveOrNull(engine, N.postBoilVolume);
+  return {
+    whirlpoolIbu,
+    ambientTempC,
+    kPerMin: timeConstantMin > 0 ? 1 / timeConstantMin : DEFAULT_K_PER_MIN,
+    gravity: resolveOrNull(engine, N.postBoilGravity),
+    volume: resolveOrNull(engine, N.postBoilVolume),
+  };
+}
 
-  return rows.map((row) => {
-    const minutes = Number(row.duration_min) || 0;
-    const initialTempC = Number(row.initial_temp_c) || DEFAULT_INITIAL_TEMP_C;
-    const productForm = row.product_form ?? "t90_pellet";
-    const ibu = (Number(row.pct) || 0) * whirlpoolIbu;
-    const mass = whirlpoolMassKg({
-      ibu,
-      alphaFraction: Number(row.alpha_acid_pct) || 0,
-      volumeL: volume,
-      gravity,
-      durationMin: minutes,
-      initialTempC,
-      ambientTempC,
-      kPerMin,
-      productForm,
-    });
-    const doseGPerGal =
-      typeof mass === "number" && volume > 0
-        ? (mass * 1000) / (volume / 3.785411784)
-        : null;
-    return { ...row, product_form: productForm, minutes, ibu, mass_kg: mass, dose_g_per_gal: doseGPerGal };
+function computeWhirlpoolRow(row, context) {
+  const { whirlpoolIbu, ambientTempC, kPerMin, gravity, volume } = context;
+  const minutes = Number(row.duration_min) || 0;
+  const initialTempC = Number(row.initial_temp_c) || DEFAULT_INITIAL_TEMP_C;
+  const productForm = row.product_form ?? "t90_pellet";
+  const ibu = (Number(row.pct) || 0) * whirlpoolIbu;
+  const mass = whirlpoolMassKg({
+    ibu,
+    alphaFraction: Number(row.alpha_acid_pct) || 0,
+    volumeL: volume,
+    gravity,
+    durationMin: minutes,
+    initialTempC,
+    ambientTempC,
+    kPerMin,
+    productForm,
   });
+  const doseGPerGal =
+    typeof mass === "number" && volume > 0
+      ? (mass * 1000) / (volume / 3.785411784)
+      : null;
+  return { ...row, product_form: productForm, minutes, ibu, mass_kg: mass, dose_g_per_gal: doseGPerGal };
+}
+
+function computeWhirlpoolRows(engine) {
+  const rows = engine.get(N.whirlpoolCollection) ?? [];
+  const context = whirlpoolContext(engine);
+  return rows.map((row) => computeWhirlpoolRow(row, context));
 }
 
 export function registerHopCard(app, ctx) {
@@ -151,16 +165,23 @@ export function registerHopCard(app, ctx) {
     Cap: "WhirlpoolHop",
     nodeId: N.whirlpoolCollection,
     seedKey: "hops",
+    catalog: () => {
+      const key = app.whirlpoolHopCatalogForm === "flowable_extract" ? "hopProducts" : "hops";
+      return Object.values(ctx.cache.seeds[key] ?? {});
+    },
+    catalogNameOf: (item) =>
+      item.product_form === "flowable_extract" ? "hop_product" : "hop",
+    searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id",
     categoryField: "purpose",
     makeRow: makeWhirlpoolRow,
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
-      item.purpose || "Hop",
+      item.product_form === "flowable_extract" ? item.brand ?? "Extract" : item.purpose || "Hop",
       isFiniteNumber(item.alpha_acid_pct)
         ? `${formatPercent(item.alpha_acid_pct)} alpha`
         : "alpha n/a",
-      item.origin,
+      item.product_form === "flowable_extract" ? item.manufacturer : item.origin,
     ],
   });
 
@@ -192,6 +213,13 @@ export function registerHopCard(app, ctx) {
     hopMassUnit: "oz",
     whirlpoolHopMassUnit: "g",
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
+    whirlpoolHopCatalogForm: "t90_pellet",
+
+    setWhirlpoolHopCatalogForm(value) {
+      this.whirlpoolHopCatalogForm = value;
+      this.whirlpoolHopSearch = "";
+      this.whirlpoolHopCategoryFilter = [];
+    },
 
     toggleHopMassUnit() {
       this.hopMassUnit = cycleUnit(HOP_MASS_UNITS, this.hopMassUnit);
@@ -282,6 +310,23 @@ export function registerHopCard(app, ctx) {
             (f) => f.id === N.whirlpoolCoolingTimeConstant
           ) ?? null
         );
+      },
+    },
+    whirlpoolHopT90Equivalent: {
+      configurable: true,
+      get() {
+        const row = this.whirlpoolHopActiveRow;
+        if (
+          !row ||
+          row.product_form !== "flowable_extract" ||
+          !isFiniteNumber(row.t90_replacement_ratio)
+        ) {
+          return "";
+        }
+        const computed = computeWhirlpoolRow(row, whirlpoolContext(ctx.engine));
+        if (!isFiniteNumber(computed.mass_kg)) return "";
+        const equivalent = computed.mass_kg * row.t90_replacement_ratio;
+        return `${formatMass(equivalent, "g")} T-90 equivalent (1:${row.t90_replacement_ratio})`;
       },
     },
     hopDraftPartsTotal: {
@@ -408,6 +453,8 @@ export const KEYS = [
   "hopMassUnit",
   "whirlpoolHopMassUnit",
   "whirlpoolHopForms",
+  "whirlpoolHopCatalogForm",
+  "setWhirlpoolHopCatalogForm",
   "toggleHopMassUnit",
   "toggleWhirlpoolHopMassUnit",
   "hopMass",
@@ -424,6 +471,7 @@ export const KEYS = [
   "totalIbuField",
   "whirlpoolAmbientField",
   "whirlpoolCoolingField",
+  "whirlpoolHopT90Equivalent",
   "hopDraftPartsTotal",
   "hopDraftSummary",
   "whirlpoolHopDraftPartsTotal",

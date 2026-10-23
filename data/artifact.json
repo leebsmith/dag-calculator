@@ -1104,6 +1104,60 @@
       "notes": {},
       "url": {}
     },
+    "hop_product": {
+      "id": {},
+      "name": {},
+      "manufacturer": {},
+      "brand": {},
+      "variety_id": {},
+      "product_form": {
+        "taxonomy": "whirlpool_hop_form"
+      },
+      "purpose": {},
+      "alpha_acid_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "alpha_acid_min_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "alpha_acid_max_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "beta_acid_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "total_oil_pct": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "t90_replacement_ratio": {
+        "dimension": "dimensionless",
+        "domain": {
+          "gte": 0
+        }
+      },
+      "notes": {},
+      "url": {}
+    },
     "style": {
       "id": {},
       "name": {},
@@ -1426,6 +1480,12 @@
         "domain": {
           "gte": 0,
           "lte": 1
+        }
+      },
+      "t90_replacement_ratio": {
+        "dimension": "dimensionless",
+        "domain": {
+          "gte": 0
         }
       },
       "duration_min": {

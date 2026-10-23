@@ -25,6 +25,7 @@ SEED_FILES = {
     "sugar": ["sugars.json"],
     "yeast": ["yeasts.json"],
     "hop": ["hops.json"],
+    "hop_product": ["hop-products.json"],
     "equipment": ["equipment.json"],
     "water_report": ["water_reports.json"],
     "water_target": ["water_target_profiles.json"],

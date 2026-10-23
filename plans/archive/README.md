@@ -10,6 +10,7 @@ proposed plans.
 | [Water Chemistry Cleanup](water-chemistry-cleanup.md) | accepted (rev 2) | 2026-10 |
 | [Bounded Buffer-Capacity Mash pH Model](mash-ph-buffer-capacity.md) | executed | 2026-10-22 |
 | [Selector Option Labels Everywhere](selector-option-labels.md) | executed | 2026-10-22 |
+| [Flowable Whirlpool Hop-Product Seeds](hop-product-whirlpool-seeds.md) | executed | 2026-10-23 |
 | [CSS Consolidation & Drift Guardrails](css-consolidation.md) | complete | 2026-10-23 |
 
 Move a plan here when its gate is green and it is recorded under `TODO.md` Done.

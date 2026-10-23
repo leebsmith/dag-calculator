@@ -23,6 +23,14 @@
     "references_key": "hop",
     "seed_key": "hops"
   },
+  "hop_product": {
+    "label": "Hop product",
+    "schema": "hop_product",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": null,
+    "seed_key": "hopProducts"
+  },
   "sugar": {
     "label": "Sugar",
     "schema": "sugar",

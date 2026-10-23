@@ -39,6 +39,12 @@ const META = {
     aggregator: "scripts/scrape/bjcp/aggregator.py",
     edition: 2021,
   },
+  "hop-products.json": {
+    mechanism: "curated",
+    upstream:
+      "Yakima Chief Hops DynaBoost product data sheet; BarthHaas INCOGNITO technical data sheet",
+    builder: "scripts/build-hop-products-seed.mjs",
+  },
   "malt-database-malts.json": {
     mechanism: "scrape",
     upstream: "malt_database (local scrape)",

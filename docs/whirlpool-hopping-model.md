@@ -139,10 +139,17 @@ inverse model.
 
 - Dose gravimetrically; the card derives grams and defaults whirlpool mass to
   grams. No density or volumetric conversion is used.
-- Enter the lot certificate-of-analysis alpha, typically `0.40–0.55`.
+- Enter the lot certificate-of-analysis alpha. Published product ranges are
+  DynaBoost `0.35–0.50` and Incognito `0.20–0.55`; the seeded catalog stores the
+  range midpoint (`0.425`, `0.375`) as an editable preset.
 - At equal alpha and IBU target, extract mass is `1 / 1.20` of pellet mass.
-- Typical whirlpool dosing is `1.5–3.5 g/gal`; above `4 g/gal`, oil slicking and
-  diminishing returns become likely.
+- Product guidance: DynaBoost `0.15–0.5 g/L`; Incognito `0.5–2.0 g/L`, maximum
+  `2 g/L`. The card keeps a generic `4 g/gal` ceiling warning; the product limits
+  are informational until dose is modeled.
+- T-90 replacement is `1:10` for DynaBoost, `1:6` for Incognito, and `1:8` for the
+  generic preset. These are supplier substitution heuristics, not bitterness
+  equations. The inspector can show a T-90 equivalent (`extract mass × ratio`)
+  when the row carries a ratio; IBU back-solving always uses alpha and utilization.
 - `R_absorption = 0` for extract. The model already uses the post-boil hot
   kettle volume and does not subtract hop vegetative absorption.
 

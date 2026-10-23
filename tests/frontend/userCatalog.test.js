@@ -38,6 +38,7 @@ test("the registry is the shared data/catalogs.json", () => {
 
 test("seed keys map back to their catalog kind", () => {
   assert.equal(SEED_KEY_TO_CATALOG.hops, "hop");
+  assert.equal(SEED_KEY_TO_CATALOG.hopProducts, "hop_product");
   assert.equal(SEED_KEY_TO_CATALOG.yeasts, "yeast");
   assert.equal(SEED_KEY_TO_CATALOG.waterReports, "water_report");
   assert.equal(SEED_KEY_TO_CATALOG.waterTargets, "water_target");
