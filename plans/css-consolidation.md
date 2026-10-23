@@ -44,7 +44,7 @@ doubles as the cleanup work list.
 | Phase | Status | Acceptance gate |
 |---|---|---|
 | 0. Decisions & rule alignment | Complete | Decisions recorded; rulebook amended; no code change |
-| 1. Guardrails | Not started | Guards run in `make test` on a seeded baseline; rulebook updated |
+| 1. Guardrails | Complete | Guards run in `make test` on a seeded baseline; rulebook updated |
 | 2. Water CSS collapse | Not started | Water card renders identically; dead water rules removed; `make check` passes |
 | 3. Backlog paydown | Not started | Duplicate groups resolved or allowlisted; 43 dead rules removed |
 | Deferred: stylesheet split | Decision recorded | Not scheduled; reasons below |
@@ -93,29 +93,29 @@ separate commit because it touches source files.
 Land the guards against a **seeded** allowlist so they pass on today's tree. The
 seed is the Phase 3 work list; each cleanup step deletes an entry.
 
-- [ ] Seed the allowlist from the baseline: all 36 duplicate declaration groups
-      and all 38 unreferenced classes, each with a one-line reason. Include
+- [x] Seed the allowlist from the baseline: all 35 duplicate declaration groups
+      and all 34 unreferenced classes, each with a one-line reason. Include
       `.text-secondary`, which Phase 2 starts using.
-- [ ] Add `tests/guards/css-duplication.test.js`: parse `style.css`, normalize
+- [x] Add `tests/guards/css-duplication.test.js`: parse `style.css`, normalize
       declaration blocks (split on `;`, trim, collapse whitespace, sort), group
       by normalized text, and fail when a group has more than one consumer
       outside the allowlist. Normalize per selector so the "selector in a shared
       list plus its own rule" pattern is caught — this is the pattern that
       produced the water rules.
-- [ ] Add `tests/guards/css-classes.test.js`: collect `.class` tokens from the
+- [x] Add `tests/guards/css-classes.test.js`: collect `.class` tokens from the
       stylesheet, scan `frontend/src/**/*.{html,js}` and `frontend/index.html`
       with word-boundary matching, and fail on unreferenced classes outside the
       allowlist. Safelist `sev-*` (single dynamic construction site:
       `water.js:301`) and future runtime-built names.
-- [ ] Allowlist format: one entry per `selector`/`class` with a required reason
+- [x] Allowlist format: one entry per `selector`/`class` with a required reason
       and an optional follow-up phase. Document adding and removing entries; an
       entry without a reason fails review.
-- [ ] Enable stylelint `no-duplicate-selectors` as a cheap regression lock only.
+- [x] Enable stylelint `no-duplicate-selectors` as a cheap regression lock only.
       It reports **0 problems** on the current file and detects only identical
       whole selector lists in the same at-rule context; it does not see the 36
       declaration groups or cross-list repetition. Do not rely on it for the
       duplication guard.
-- [ ] Rely on the existing glob in `npm test` (`../tests/guards/*.test.js`), so
+- [x] Rely on the existing glob in `npm test` (`../tests/guards/*.test.js`), so
       the guards run in `make test` and therefore `make verify`. Do not add a
       parallel wiring path in `make check`.
 
