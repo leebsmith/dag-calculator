@@ -27,12 +27,12 @@ export const batchRegistry = {
   "batch.apparent_attenuation": {
     label: "Batch attenuation",
     displayUnit: "pct",
-    hint: "Solver output: extract-weighted wort AA clamped by the yeast cap.",
+    hint: "Solver output: min(wort attenuation, yeast cap). It differs from wort attenuation only when the yeast cap binds.",
   },
   "batch.wort_aa": {
     label: "Wort attenuation",
     displayUnit: "pct",
-    hint: "Extract-weighted malt and sugar fermentability before the yeast cap.",
+    hint: "Extract-weighted pre-cap blend. Batch attenuation is this value clamped by the yeast cap.",
   },
   "batch.grain_moisture_fraction": {
     label: "Fallback grain moisture (when a malt has none)",

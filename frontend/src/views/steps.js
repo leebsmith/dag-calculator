@@ -22,7 +22,7 @@ export const steps = [
     id: "style",
     slice: "style",
     title: "Style",
-    subtitle: "Choose a BJCP style or define your own",
+    subtitle: "Sealed at batch creation; edit this batch's target envelope",
     partial: "./src/partials/step-style.html",
     fields: [
       "batch.fermentation",
