@@ -154,6 +154,25 @@ The structural stylesheet consumes tokens; it never defines them.
 - Maintain generous **hit targets** (≈44px for primary controls, no smaller
   than ≈24px for dense or inline controls).
 
+### Control states
+
+State is expressed once per control and mirrored in ARIA:
+
+| Meaning | Class | ARIA |
+| :--- | :--- | :--- |
+| A control is on (filter, toggle, applied action) | `is-active` | `aria-pressed="true"` |
+| A record is the chosen one in a list | `is-selected` | visual only in a plain table; the action's `aria-pressed` carries it |
+| A disclosure is open | — | `aria-expanded` (+ `aria-controls`) |
+| One of a radio set | — | `aria-checked` |
+| Content validity | `is-invalid`, `is-trace` | the control's own validity attributes |
+
+- The control that causes a state carries it. A chosen row and the action that
+  chose it may both be marked: the row answers "which record", the action
+  answers "did this apply".
+- `is-active` is guarded: any markup toggle using it must also bind
+  `aria-pressed` (see `tests/guards/control-states.test.js`).
+- State classes must exist in the stylesheet; no colour-only state indication.
+
 ---
 
 ## 9. Quick-Reference Prohibitions

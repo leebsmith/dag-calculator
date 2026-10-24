@@ -20,7 +20,7 @@
           <button
             type="button"
             class="filter-pill"
-            :class="{ 'is-active': yeastSearchNotes }"
+            :class="{ 'is-active': yeastSearchNotes }" :aria-pressed="(yeastSearchNotes) ? 'true' : 'false'"
             @click="toggleYeastSearchNotes()"
           >Search notes</button>
         </div>
@@ -43,7 +43,7 @@
         <button
           type="button"
           class="filter-pill"
-          :class="{ 'is-active': yeastAttenuationFilter === t.key }"
+          :class="{ 'is-active': yeastAttenuationFilter === t.key }" :aria-pressed="(yeastAttenuationFilter === t.key) ? 'true' : 'false'"
           @click="toggleYeastAttenuation(t.key)"
           x-text="t.label"
         ></button>
@@ -92,9 +92,13 @@
               <td x-text="y.flocculation"></td>
               <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
               <td class="table-action-cell">
-                <button type="button" class="btn btn-secondary text-xs" @click="selectYeast(y.id)">
-                  Use
-                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary text-xs"
+                  :class="{ 'is-active': selectedYeastId === y.id }" :aria-pressed="(selectedYeastId === y.id) ? 'true' : 'false'"
+                  @click="selectYeast(y.id)"
+                  x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"
+                ></button>
                 <button
                   type="button"
                   class="btn btn-outline text-xs"

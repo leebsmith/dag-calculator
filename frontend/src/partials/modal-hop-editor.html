@@ -124,7 +124,7 @@
                   <button
                     type="button"
                     class="filter-pill"
-                    :class="{ 'is-active': hopSearchNotes }"
+                    :class="{ 'is-active': hopSearchNotes }" :aria-pressed="(hopSearchNotes) ? 'true' : 'false'"
                     @click="toggleHopSearchNotes()"
                   >Search notes</button>
                 </div>
@@ -133,7 +133,7 @@
                     <button
                       type="button"
                       class="filter-pill"
-                      :class="{ 'is-active': hopCategoryFilter.includes(c) }"
+                      :class="{ 'is-active': hopCategoryFilter.includes(c) }" :aria-pressed="(hopCategoryFilter.includes(c)) ? 'true' : 'false'"
                       @click="toggleHopCategory(c)"
                       x-text="c"
                     ></button>

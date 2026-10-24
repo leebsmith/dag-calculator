@@ -124,7 +124,7 @@
                   <button
                     type="button"
                     class="filter-pill"
-                    :class="{ 'is-active': whirlpoolHopSearchNotes }"
+                    :class="{ 'is-active': whirlpoolHopSearchNotes }" :aria-pressed="(whirlpoolHopSearchNotes) ? 'true' : 'false'"
                     @click="toggleWhirlpoolHopSearchNotes()"
                   >Search notes</button>
                 </div>
@@ -149,7 +149,7 @@
                     <button
                       type="button"
                       class="filter-pill"
-                      :class="{ 'is-active': whirlpoolHopCategoryFilter.includes(c) }"
+                      :class="{ 'is-active': whirlpoolHopCategoryFilter.includes(c) }" :aria-pressed="(whirlpoolHopCategoryFilter.includes(c)) ? 'true' : 'false'"
                       @click="toggleWhirlpoolHopCategory(c)"
                       x-text="c"
                     ></button>

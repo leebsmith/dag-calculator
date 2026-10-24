@@ -111,6 +111,12 @@ samp {
   color: var(--sys-text-primary);
 }
 
+.btn.is-active {
+  background-color: var(--sys-surface-selected);
+  border-color: var(--sys-border-selected);
+  color: var(--sys-color-action-subtle-text);
+}
+
 .btn-link {
   background-color: var(--color-transparent);
   border-color: var(--color-transparent);

@@ -121,7 +121,7 @@
                   <button
                     type="button"
                     class="filter-pill"
-                    :class="{ 'is-active': traceSearchNotes }"
+                    :class="{ 'is-active': traceSearchNotes }" :aria-pressed="(traceSearchNotes) ? 'true' : 'false'"
                     @click="toggleTraceSearchNotes()"
                   >Search notes</button>
                 </div>
@@ -130,7 +130,7 @@
                     <button
                       type="button"
                       class="filter-pill"
-                      :class="{ 'is-active': traceFamily === f.name }"
+                      :class="{ 'is-active': traceFamily === f.name }" :aria-pressed="(traceFamily === f.name) ? 'true' : 'false'"
                       @click="toggleTraceFamily(f.name)"
                       x-text="f.label + ' · ' + f.count"
                     ></button>

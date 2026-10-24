@@ -151,7 +151,7 @@
                   <button
                     type="button"
                     class="filter-pill"
-                    :class="{ 'is-active': maltSearchNotes }"
+                    :class="{ 'is-active': maltSearchNotes }" :aria-pressed="(maltSearchNotes) ? 'true' : 'false'"
                     @click="toggleMaltSearchNotes()"
                   >Search notes</button>
                 </div>
@@ -160,7 +160,7 @@
                     <button
                       type="button"
                       class="filter-pill"
-                      :class="{ 'is-active': maltFamily === f.name }"
+                      :class="{ 'is-active': maltFamily === f.name }" :aria-pressed="(maltFamily === f.name) ? 'true' : 'false'"
                       @click="toggleMaltFamily(f.name)"
                       x-text="f.label + ' · ' + f.count"
                     ></button>

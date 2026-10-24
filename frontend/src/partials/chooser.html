@@ -55,7 +55,7 @@
                 <button
                   type="button"
                   class="filter-pill"
-                  :class="{ 'is-active': $store.recipes.scope === s[0] }"
+                  :class="{ 'is-active': $store.recipes.scope === s[0] }" :aria-pressed="($store.recipes.scope === s[0]) ? 'true' : 'false'"
                   @click="$store.recipes.setScope(s[0])"
                   x-text="s[1]"
                 ></button>

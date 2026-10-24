@@ -116,7 +116,7 @@
                 <button
                   type="button"
                   class="filter-pill"
-                  :class="{ 'is-active': sugarSearchNotes }"
+                  :class="{ 'is-active': sugarSearchNotes }" :aria-pressed="(sugarSearchNotes) ? 'true' : 'false'"
                   @click="toggleSugarSearchNotes()"
                 >Search notes</button>
               </div>

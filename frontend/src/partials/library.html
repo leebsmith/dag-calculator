@@ -16,13 +16,13 @@
       <button
         type="button"
         class="filter-pill"
-        :class="{ 'is-active': librarySection === 'sources' }"
+        :class="{ 'is-active': librarySection === 'sources' }" :aria-pressed="(librarySection === 'sources') ? 'true' : 'false'"
         @click="selectLibrarySection('sources')"
       >Sources</button>
       <button
         type="button"
         class="filter-pill"
-        :class="{ 'is-active': librarySection === 'ingredients' }"
+        :class="{ 'is-active': librarySection === 'ingredients' }" :aria-pressed="(librarySection === 'ingredients') ? 'true' : 'false'"
         @click="selectLibrarySection('ingredients')"
       >Ingredients</button>
     </div>
@@ -53,7 +53,7 @@
       <button
         type="button"
         class="filter-pill"
-        :class="{ 'is-active': librarySearchNotes }"
+        :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
         @click="toggleLibrarySearchNotes()"
       >Search notes</button>
     </div>
@@ -65,7 +65,7 @@
             <button
               type="button"
               class="filter-pill"
-              :class="{ 'is-active': sourceKind === k.id }"
+              :class="{ 'is-active': sourceKind === k.id }" :aria-pressed="(sourceKind === k.id) ? 'true' : 'false'"
               @click="selectSourceKind(k.id)"
               x-text="k.label"
             ></button>
@@ -156,7 +156,7 @@
             <button
               type="button"
               class="filter-pill"
-              :class="{ 'is-active': libraryTab === t.id }"
+              :class="{ 'is-active': libraryTab === t.id }" :aria-pressed="(libraryTab === t.id) ? 'true' : 'false'"
               @click="selectLibraryTab(t.id)"
               x-text="t.label"
             ></button>
