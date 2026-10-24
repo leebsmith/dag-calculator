@@ -27,6 +27,7 @@ export function registerYeastCard(app, ctx) {
     yeastSearchNotes: false,
     yeastManufacturerFilter: "",
     yeastAttenuationFilter: "",
+    yeastChooserOpen: false,
 
     yeastAttenuation(y) {
       return y ? `${formatPercent(y.attenuation_pct)}%` : "";
@@ -38,6 +39,7 @@ export function registerYeastCard(app, ctx) {
       this.setRoot(N.selection, id);
       this.pickSelection(N.selection, id);
       this.yeastSearchNotes = false;
+      this.yeastChooserOpen = false;
       this.scheduleSolve();
       this.notify();
     },
@@ -46,8 +48,13 @@ export function registerYeastCard(app, ctx) {
       this.setRoot(N.selection, "");
       this.pickSelection(N.selection, "");
       this.yeastSearchNotes = false;
+      this.yeastChooserOpen = true;
       this.scheduleSolve();
       this.notify();
+    },
+
+    toggleYeastChooser() {
+      this.yeastChooserOpen = !this.yeastChooserOpen;
     },
 
     toggleYeastSearchNotes() {
@@ -176,4 +183,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
 
-export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "yeastChooserOpen", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastChooser", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];

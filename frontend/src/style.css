@@ -1655,6 +1655,12 @@ samp {
   justify-content: space-between;
 }
 
+.synthesized-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
 .synthesized-title {
   font-size: var(--text-xs);
   font-weight: var(--font-weight-bold);

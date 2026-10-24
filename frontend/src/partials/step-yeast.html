@@ -5,130 +5,19 @@
   </div>
 
   <div class="step-card-content">
-    <!-- Filters -->
-    <div class="step-grid-2col">
-      <div class="form-group">
-        <label class="form-label" for="yeast-search">Search by name</label>
-        <input
-          id="yeast-search"
-          type="text"
-          class="form-input"
-          placeholder="e.g. American Ale"
-          x-model="yeastSearchQuery"
-        />
-        <span class="form-hint">Name-first match; ties are alphabetical</span>
-        <div class="filter-pills-container">
-          <button
-            type="button"
-            class="filter-pill"
-            :class="{ 'is-active': yeastSearchNotes }" :aria-pressed="(yeastSearchNotes) ? 'true' : 'false'"
-            @click="toggleYeastSearchNotes()"
-          >Search notes</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="yeast-manufacturer">Manufacturer</label>
-        <select id="yeast-manufacturer" class="form-select" x-model="yeastManufacturerFilter">
-          <option value="">All manufacturers</option>
-          <template x-for="mfr in yeastManufacturers" :key="mfr">
-            <option :value="mfr" x-text="mfr"></option>
-          </template>
-        </select>
-        <span class="form-hint">Filter by yeast lab</span>
-      </div>
-    </div>
-
-    <!-- Apparent attenuation tiers -->
-    <div class="filter-pills-container">
-      <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
-        <button
-          type="button"
-          class="filter-pill"
-          :class="{ 'is-active': yeastAttenuationFilter === t.key }" :aria-pressed="(yeastAttenuationFilter === t.key) ? 'true' : 'false'"
-          @click="toggleYeastAttenuation(t.key)"
-          x-text="t.label"
-        ></button>
-      </template>
-    </div>
-
-    <!-- Result counter -->
-    <div
-      class="catalog-result-counter"
-      aria-live="polite"
-      x-text="yeastResultLabel"
-    ></div>
-
-    <!-- Results -->
-    <div class="data-table-container data-table-container-scroll">
-      <table class="data-table is-fixed">
-        <colgroup>
-          <col style="width: 26%;" />
-          <col style="width: 16%;" />
-          <col style="width: 14%;" />
-          <col style="width: 16%;" />
-          <col style="width: 14%;" />
-          <col style="width: 14%;" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Strain</th>
-            <th>Manufacturer</th>
-            <th class="text-right">Attenuation</th>
-            <th>Flocculation</th>
-            <th class="text-right">Alcohol tolerance</th>
-            <th class="text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template x-for="y in visibleYeasts" :key="y.id">
-            <tr :class="{ 'is-selected': selectedYeastId === y.id }">
-              <td>
-                <span class="font-medium" x-text="y.name"></span>
-                <template x-if="isUserItem(y.id)">
-                  <span class="status-badge status-badge-info text-nano">mine</span>
-                </template>
-              </td>
-              <td x-text="y.manufacturer"></td>
-              <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
-              <td x-text="y.flocculation"></td>
-              <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
-              <td class="table-action-cell">
-                <button
-                  type="button"
-                  class="btn btn-secondary text-xs"
-                  :class="{ 'is-active': selectedYeastId === y.id }" :aria-pressed="(selectedYeastId === y.id) ? 'true' : 'false'"
-                  @click="selectYeast(y.id)"
-                  x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"
-                ></button>
-                <button
-                  type="button"
-                  class="btn btn-outline text-xs"
-                  x-show="!isUserItem(y.id)"
-                  @click="duplicateUserItem('yeast', y)"
-                  title="Copy to my items"
-                >
-                  Copy
-                </button>
-              </td>
-            </tr>
-          </template>
-          <template x-if="filteredYeasts.length === 0">
-            <tr>
-              <td colspan="6" class="table-empty-cell">No yeast strains match the current filters.</td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Selected strain -->
+    <!-- Selected strain (summary first; the chooser collapses once chosen) -->
     <template x-if="selectedYeast">
       <div class="synthesized-card">
         <div class="synthesized-header">
           <span class="synthesized-title" x-text="selectedYeast.name"></span>
-          <button type="button" class="btn btn-secondary text-xs" @click="clearYeastSelection()">
-            Clear
-          </button>
+          <div class="synthesized-actions">
+            <button type="button" class="btn btn-secondary text-xs" @click="toggleYeastChooser()">
+              <span x-text="yeastChooserOpen ? 'Hide chooser' : 'Change yeast'"></span>
+            </button>
+            <button type="button" class="btn btn-secondary text-xs" @click="clearYeastSelection()">
+              Clear
+            </button>
+          </div>
         </div>
         <div class="step-grid-2col">
           <div class="form-group">
@@ -170,6 +59,125 @@
         </div>
       </div>
     </template>
+
+    <div x-show="!selectedYeast || yeastChooserOpen">
+        <!-- Filters -->
+      <div class="step-grid-2col">
+        <div class="form-group">
+          <label class="form-label" for="yeast-search">Search by name</label>
+          <input
+            id="yeast-search"
+            type="text"
+            class="form-input"
+            placeholder="e.g. American Ale"
+            x-model="yeastSearchQuery"
+          />
+          <span class="form-hint">Name-first match; ties are alphabetical</span>
+          <div class="filter-pills-container">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': yeastSearchNotes }" :aria-pressed="(yeastSearchNotes) ? 'true' : 'false'"
+              @click="toggleYeastSearchNotes()"
+            >Search notes</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="yeast-manufacturer">Manufacturer</label>
+          <select id="yeast-manufacturer" class="form-select" x-model="yeastManufacturerFilter">
+            <option value="">All manufacturers</option>
+            <template x-for="mfr in yeastManufacturers" :key="mfr">
+              <option :value="mfr" x-text="mfr"></option>
+            </template>
+          </select>
+          <span class="form-hint">Filter by yeast lab</span>
+        </div>
+      </div>
+  
+      <!-- Apparent attenuation tiers -->
+      <div class="filter-pills-container">
+        <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
+          <button
+            type="button"
+            class="filter-pill"
+            :class="{ 'is-active': yeastAttenuationFilter === t.key }" :aria-pressed="(yeastAttenuationFilter === t.key) ? 'true' : 'false'"
+            @click="toggleYeastAttenuation(t.key)"
+            x-text="t.label"
+          ></button>
+        </template>
+      </div>
+  
+      <!-- Result counter -->
+      <div
+        class="catalog-result-counter"
+        aria-live="polite"
+        x-text="yeastResultLabel"
+      ></div>
+  
+      <!-- Results -->
+      <div class="data-table-container data-table-container-scroll">
+        <table class="data-table is-fixed">
+          <colgroup>
+            <col style="width: 26%;" />
+            <col style="width: 16%;" />
+            <col style="width: 14%;" />
+            <col style="width: 16%;" />
+            <col style="width: 14%;" />
+            <col style="width: 14%;" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Strain</th>
+              <th>Manufacturer</th>
+              <th class="text-right">Attenuation</th>
+              <th>Flocculation</th>
+              <th class="text-right">Alcohol tolerance</th>
+              <th class="text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="y in visibleYeasts" :key="y.id">
+              <tr :class="{ 'is-selected': selectedYeastId === y.id }">
+                <td>
+                  <span class="font-medium" x-text="y.name"></span>
+                  <template x-if="isUserItem(y.id)">
+                    <span class="status-badge status-badge-info text-nano">mine</span>
+                  </template>
+                </td>
+                <td x-text="y.manufacturer"></td>
+                <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
+                <td x-text="y.flocculation"></td>
+                <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
+                <td class="table-action-cell">
+                  <button
+                    type="button"
+                    class="btn btn-secondary text-xs"
+                    :class="{ 'is-active': selectedYeastId === y.id }" :aria-pressed="(selectedYeastId === y.id) ? 'true' : 'false'"
+                    @click="selectYeast(y.id)"
+                    x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"
+                  ></button>
+                  <button
+                    type="button"
+                    class="btn btn-outline text-xs"
+                    x-show="!isUserItem(y.id)"
+                    @click="duplicateUserItem('yeast', y)"
+                    title="Copy to my items"
+                  >
+                    Copy
+                  </button>
+                </td>
+              </tr>
+            </template>
+            <template x-if="filteredYeasts.length === 0">
+              <tr>
+                <td colspan="6" class="table-empty-cell">No yeast strains match the current filters.</td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+  
+    </div>
 
     <p class="form-hint">The batch attenuation is solved from the grist and the yeast cap.</p>
   </div>

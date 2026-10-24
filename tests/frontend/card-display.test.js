@@ -112,6 +112,20 @@ test("yeast card: tier filters toggle on and off", async () => {
   assert.equal(app.yeastAttenuationFilter, "");
 });
 
+test("yeast card: selecting a strain collapses the chooser and it can reopen", async () => {
+  const app = await bootedApp();
+  assert.equal(app.yeastChooserOpen, false);
+
+  app.toggleYeastChooser();
+  assert.equal(app.yeastChooserOpen, true);
+  app.toggleYeastChooser();
+  assert.equal(app.yeastChooserOpen, false);
+
+  app.clearYeastSelection();
+  assert.equal(app.yeastChooserOpen, true);
+  assert.equal(app.selectedYeast, null);
+});
+
 test("yeast card: derate commits on blur and resets invalid input", async () => {
   const app = await bootedApp();
   const input = { value: "95" };
