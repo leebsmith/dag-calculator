@@ -32,7 +32,6 @@ export const EQUIPMENT = {
   hlt_coil_floor_l: 4.0,
   mash_tun_specific_heat: 0.12,
   mash_tun_mass_kg: 6.5,
-  mash_heating_rate_c_per_min: 1.0,
 };
 
 export const STYLE = {

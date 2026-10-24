@@ -14,12 +14,6 @@ import { artifact } from "./util.js";
 const HOST_CONSTANTS = new Set([
   "default_runoff_ratio",
   "default_equipment_profile_id",
-  "default_mash_heating_rate_c_per_min",
-  "mash_attenuation_ref_temp_c",
-  "mash_attenuation_temp_coefficient",
-  "mash_conversion_window_low_c",
-  "mash_conversion_window_high_c",
-  "mash_attenuation_band",
 ]);
 
 // Restated by the Python solvers and pinned to this file by

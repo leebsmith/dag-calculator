@@ -112,7 +112,6 @@ test("loadState drops a legacy dough-in rest row", async () => {
 
   assert.equal(app.mashRests.some((r) => r.rest_id === "dough_in"), false);
   assert.equal(app.doughInInheritedTempC, 67);
-  assert.equal(app.mashRestCount, 2);
 });
 
 test("loadState rebinds the hop card to the loaded rows", async () => {

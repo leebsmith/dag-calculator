@@ -21,8 +21,7 @@
       "shrinkage_pct": 0.04,
       "hlt_coil_floor_l": 4.0,
       "mash_tun_specific_heat": 0.12,
-      "mash_tun_mass_kg": 6.5,
-      "mash_heating_rate_c_per_min": 1.0
+      "mash_tun_mass_kg": 6.5
     }
   },
   "herms-15gal": {
@@ -47,8 +46,7 @@
       "nominal_conversion_efficiency": 0.9,
       "shrinkage_pct": 0.02,
       "mash_tun_specific_heat_btu_per_lb_f": 0.12,
-      "mash_tun_mass_lb": 30,
-      "mash_heating_rate_f_per_min": 1.8
+      "mash_tun_mass_lb": 30
     }
   }
 }

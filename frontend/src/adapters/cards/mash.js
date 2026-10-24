@@ -1,34 +1,14 @@
-// Mash profile card: preset + rest schedule + strike water + advisory
-// attenuation estimate. Bespoke (not a catalog draft editor); pure mash logic
-// lives in views/mash.js and views/mashAttenuation.js.
+// Mash profile card: preset + rest schedule + strike water. Bespoke (not a
+// catalog draft editor); pure mash logic lives in views/mash.js.
 
 import * as mash from "../../views/mash.js";
-import { predictMashAttenuation } from "../../views/mashAttenuation.js";
 import { toBase } from "../../engine/index.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
 import { MASH_NODES as N } from "../../views/registry/mash.js";
 
-const SHAPE_LABELS = {
-  none: "No rests",
-  single_step: "Single-step",
-  multi_step: "Multi-step",
-};
-
 export function registerMashCard(app, ctx) {
   const { engine, artifact } = ctx;
-
-  function safeGet(path) {
-    try {
-      return engine.resolve(path);
-    } catch {
-      try {
-        return engine.get(path);
-      } catch {
-        return undefined;
-      }
-    }
-  }
 
   Object.assign(app, {
     // Rests collection rows in base units, refreshed in compute(); the partial
@@ -44,17 +24,6 @@ export function registerMashCard(app, ctx) {
       if (value == null) return null;
       const unitId = this.unitMode?.[dimension] ?? fallbackUnit ?? null;
       return displayValue(artifact, dimension, unitId, value, nonlinearFns(artifact, engine));
-    },
-
-    _constant(id) {
-      return artifact.constants[id]?.value ?? null;
-    },
-
-    _rateUnitId() {
-      if (this.unitMode?.temperature_delta_per_time) {
-        return this.unitMode.temperature_delta_per_time;
-      }
-      return this.unitMode?.temperature === "degF" ? "dF_per_min" : "dC_per_min";
     },
 
     restUseTempDisplay(rest) {
@@ -204,12 +173,6 @@ export function registerMashCard(app, ctx) {
       }
       this.mashDraftDirty = true;
     },
-
-    _percentDisplay(value) {
-      if (!Number.isFinite(value)) return "";
-      const v = displayValue(artifact, "percentage", "pct", value, nonlinearFns(artifact, engine));
-      return Number.isFinite(v) ? v.toFixed(1) : "";
-    },
   });
 
   Object.defineProperties(app, {
@@ -280,160 +243,6 @@ export function registerMashCard(app, ctx) {
         return mash.totalMashDurationMin(this.enabledMashRests);
       },
     },
-    mashHeatingRateCPerMin: {
-      configurable: true,
-      get() {
-        const v = safeGet(N.heatingRate);
-        return Number.isFinite(v) ? v : this._constant("default_mash_heating_rate_c_per_min");
-      },
-    },
-    rampRateDisplay: {
-      configurable: true,
-      get() {
-        const v = this.mashHeatingRateCPerMin;
-        if (!Number.isFinite(v)) return "";
-        const d = displayValue(
-          artifact,
-          "temperature_delta_per_time",
-          this._rateUnitId(),
-          v,
-          nonlinearFns(artifact, engine)
-        );
-        return Number.isFinite(d) ? d.toFixed(2) : "";
-      },
-    },
-    rampRateUnit: {
-      configurable: true,
-      get() {
-        const unitId = this._rateUnitId();
-        return UNIT_SYMBOLS.temperature_delta_per_time[unitId] ?? unitId;
-      },
-    },
-    attenuationBaseline: {
-      configurable: true,
-      get() {
-        const v = safeGet(N.yeastAttenuation);
-        return Number.isFinite(v) && v > 0 && v <= 1 ? v : null;
-      },
-    },
-    batchAttenuation: {
-      configurable: true,
-      get() {
-        const v = safeGet(N.batchAttenuation);
-        return Number.isFinite(v) ? v : null;
-      },
-    },
-    attenuationModel: {
-      configurable: true,
-      get() {
-        return predictMashAttenuation({
-          rests: this.mashRests,
-          rampRateCPerMin: this.mashHeatingRateCPerMin,
-          aaRef: this.attenuationBaseline,
-          tempCoefficient: this._constant("mash_attenuation_temp_coefficient"),
-          refTempC: this._constant("mash_attenuation_ref_temp_c"),
-          lowC: this._constant("mash_conversion_window_low_c"),
-          highC: this._constant("mash_conversion_window_high_c"),
-        });
-      },
-    },
-    predictedAttenuation: {
-      configurable: true,
-      get() {
-        return this.attenuationModel?.aa ?? null;
-      },
-    },
-    attenuationDelta: {
-      configurable: true,
-      get() {
-        return this.attenuationModel?.delta ?? null;
-      },
-    },
-    attenuationBand: {
-      configurable: true,
-      get() {
-        return this._constant("mash_attenuation_band");
-      },
-    },
-    attenuationInBand: {
-      configurable: true,
-      get() {
-        const delta = this.attenuationDelta;
-        const band = this.attenuationBand;
-        return Number.isFinite(delta) && Number.isFinite(band) ? Math.abs(delta) <= band : null;
-      },
-    },
-    effectiveConversionTempC: {
-      configurable: true,
-      get() {
-        return this.attenuationModel?.effectiveTempC ?? null;
-      },
-    },
-    predictedAttenuationDisplay: {
-      configurable: true,
-      get() {
-        return this._percentDisplay(this.predictedAttenuation);
-      },
-    },
-    attenuationBaselineDisplay: {
-      configurable: true,
-      get() {
-        return this._percentDisplay(this.attenuationBaseline);
-      },
-    },
-    batchAttenuationDisplay: {
-      configurable: true,
-      get() {
-        return this._percentDisplay(this.batchAttenuation);
-      },
-    },
-    attenuationDeltaDisplay: {
-      configurable: true,
-      get() {
-        const delta = this.attenuationDelta;
-        if (!Number.isFinite(delta)) return "";
-        const d = displayValue(artifact, "percentage", "pct", Math.abs(delta), nonlinearFns(artifact, engine));
-        if (!Number.isFinite(d)) return "";
-        return `${delta < 0 ? "−" : "+"}${d.toFixed(1)}`;
-      },
-    },
-    attenuationBandDisplay: {
-      configurable: true,
-      get() {
-        return this._percentDisplay(this.attenuationBand);
-      },
-    },
-    effectiveConversionTempDisplay: {
-      configurable: true,
-      get() {
-        const v = this.effectiveConversionTempC;
-        if (!Number.isFinite(v)) return "";
-        const d = this._convert("temperature", v, "degC");
-        return Number.isFinite(d) ? d.toFixed(1) : "";
-      },
-    },
-    mashShapeLabel: {
-      configurable: true,
-      get() {
-        return SHAPE_LABELS[engine.get(N.shape)] ?? "";
-      },
-    },
-    mashRestCount: {
-      configurable: true,
-      get() {
-        const v = engine.get(N.restCount);
-        return Number.isFinite(v) ? v : null;
-      },
-    },
-    mashShapeSummary: {
-      configurable: true,
-      get() {
-        const label = this.mashShapeLabel;
-        const count = this.mashRestCount;
-        if (!label || count == null) return "";
-        return `${label} · ${count} ${count === 1 ? "rest" : "rests"}`;
-      },
-    },
     sortedMashDraftRests: {
       configurable: true,
       get() {
@@ -453,4 +262,4 @@ export function refreshMashCard(app, ctx) {
   app.mashRests = (ctx.engine.get(N.rests) ?? []).filter((r) => r.rest_id !== "dough_in");
 }
 
-export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "_constant", "_rateUnitId", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "_percentDisplay", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "mashHeatingRateCPerMin", "rampRateDisplay", "rampRateUnit", "attenuationBaseline", "batchAttenuation", "attenuationModel", "predictedAttenuation", "attenuationDelta", "attenuationBand", "attenuationInBand", "effectiveConversionTempC", "predictedAttenuationDisplay", "attenuationBaselineDisplay", "batchAttenuationDisplay", "attenuationDeltaDisplay", "attenuationBandDisplay", "effectiveConversionTempDisplay", "mashShapeLabel", "mashRestCount", "mashShapeSummary", "sortedMashDraftRests", "isMashDraftValid"];
+export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "sortedMashDraftRests", "isMashDraftValid"];

@@ -12,7 +12,6 @@ export const steps = [
     fields: [
       "equipment.mash_tun_mass_kg",
       "equipment.mash_tun_specific_heat",
-      "equipment.mash_heating_rate_c_per_min",
       "equipment.max_hlt_volume_l",
       "equipment.nominal_boil_off_rate_l_per_hr",
       "equipment.nominal_conversion_efficiency",
@@ -246,8 +245,6 @@ export const steps = [
       "mash.strike_water_temp_base_c",
       "mash.strike_water_tun_offset_c",
       "mash.strike_water_temp_c",
-      "mash.rest_count",
-      "mash.shape",
       { collection: "mash.rests" },
     ],
   },
