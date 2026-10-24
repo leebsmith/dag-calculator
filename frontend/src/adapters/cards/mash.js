@@ -16,7 +16,7 @@ const SHAPE_LABELS = {
 };
 
 export function registerMashCard(app, ctx) {
-  const { engine, ui, artifact } = ctx;
+  const { engine, artifact } = ctx;
 
   function safeGet(path) {
     try {
@@ -42,7 +42,7 @@ export function registerMashCard(app, ctx) {
     // `displayValue` so unit conversion stays single-sourced (guard A8a).
     _convert(dimension, value, fallbackUnit) {
       if (value == null) return null;
-      const unitId = ui.unitMode[dimension] ?? fallbackUnit ?? null;
+      const unitId = this.unitMode?.[dimension] ?? fallbackUnit ?? null;
       return displayValue(artifact, dimension, unitId, value, nonlinearFns(artifact, engine));
     },
 
@@ -181,7 +181,7 @@ export function registerMashCard(app, ctx) {
       row.use_temp_c =
         displayVal === ""
           ? null
-          : toBase(artifact, "temperature", ui.unitMode.temperature ?? "degC", Number(displayVal));
+          : toBase(artifact, "temperature", this.unitMode?.temperature ?? "degC", Number(displayVal));
       if (row.use_temp_c != null && Number.isNaN(row.use_temp_c)) row.use_temp_c = null;
       this.mashDraftDirty = true;
     },
@@ -254,7 +254,7 @@ export function registerMashCard(app, ctx) {
     temperatureUnit: {
       configurable: true,
       get() {
-        const unitId = ui.unitMode.temperature ?? "degC";
+        const unitId = this.unitMode?.temperature ?? "degC";
         return UNIT_SYMBOLS.temperature[unitId] ?? unitId;
       },
     },
@@ -292,7 +292,7 @@ export function registerMashCard(app, ctx) {
     rampRateUnit: {
       configurable: true,
       get() {
-        const unitId = ui.unitMode.temperature_delta_per_time ?? "dC_per_min";
+        const unitId = this.unitMode?.temperature_delta_per_time ?? "dC_per_min";
         return UNIT_SYMBOLS.temperature_delta_per_time[unitId] ?? unitId;
       },
     },

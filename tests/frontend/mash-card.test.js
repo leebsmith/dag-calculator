@@ -148,3 +148,35 @@ test("the advisory is unresolved without a yeast baseline", async () => {
   assert.equal(app.predictedAttenuation, null);
   assert.equal(app.predictedAttenuationDisplay, "");
 });
+
+test("mash temperature labels and ranges follow the unit tracker", async () => {
+  const app = createStepApp();
+  await app.boot();
+
+  assert.equal(app.temperatureUnit, "°C");
+  assert.equal(app.restTempRangeDisplay("beta_amylase"), "62–65");
+  assert.equal(app.restTempRangeDisplay("alpha_amylase"), "68–72");
+
+  app.setUnit("temperature", "degF");
+
+  assert.equal(app.temperatureUnit, "°F");
+  assert.equal(app.restTempRangeDisplay("beta_amylase"), "144–149");
+  assert.equal(app.restTempRangeDisplay("alpha_amylase"), "154–162");
+
+  app.setUnit("temperature", "degC");
+
+  assert.equal(app.temperatureUnit, "°C");
+  assert.equal(app.restTempRangeDisplay("beta_amylase"), "62–65");
+});
+
+test("mash draft temperatures parse in the active display unit", async () => {
+  const app = createStepApp();
+  await app.boot();
+  app.openMashModal();
+  app.setUnit("temperature", "degF");
+
+  app.setMashDraftTemp("beta_amylase", "150");
+
+  const row = app.mashDraftRow("beta_amylase");
+  assert.ok(Math.abs(row.use_temp_c - (150 - 32) / 1.8) < 1e-9);
+});

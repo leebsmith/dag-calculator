@@ -57,7 +57,7 @@
                       step="0.1"
                       class="form-input tabular-nums"
                       :value="restUseTempDisplay(rest)"
-                      @input="setMashDraftTemp(rest.rest_id, $event.target.value)"
+                      @change="setMashDraftTemp(rest.rest_id, $event.target.value)"
                     />
                     <template x-if="isRestOutOfRange(rest.rest_id, rest.use_temp_c)">
                       <span class="form-hint text-danger">
