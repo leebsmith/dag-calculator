@@ -1314,7 +1314,7 @@ samp {
   background-color: var(--sys-surface-hover);
 }
 
-.landing-menu-item[aria-checked="true"] {
+.landing-menu-item.is-active {
   background-color: var(--sys-surface-selected);
   color: var(--sys-color-action-subtle-text);
 }

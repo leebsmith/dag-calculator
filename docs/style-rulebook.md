@@ -169,6 +169,9 @@ State is expressed once per control and mirrored in ARIA:
 - The control that causes a state carries it. A chosen row and the action that
   chose it may both be marked: the row answers "which record", the action
   answers "did this apply".
+- A popover of ordinary buttons is a **disclosure** (`aria-expanded` +
+  `aria-controls`). Do not claim `role="menu"`/`menuitem` without arrow-key
+  navigation; the guard rejects those roles.
 - `is-active` is guarded: any markup toggle using it must also bind
   `aria-pressed` (see `tests/guards/control-states.test.js`).
 - State classes must exist in the stylesheet; no colour-only state indication.

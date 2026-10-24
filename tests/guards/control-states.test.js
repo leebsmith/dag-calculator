@@ -32,3 +32,15 @@ test("state classes used in markup exist in the stylesheet", () => {
   const missing = [...used].filter((name) => !css.includes(`.${name}`));
   assert.deepEqual(missing, [], `state classes missing from ${STYLE_PATH}: ${missing.join(", ")}`);
 });
+
+test("popovers do not claim menu roles without keyboard support", () => {
+  const offenders = [];
+  for (const file of partials()) {
+    const text = read(file);
+    for (const match of text.matchAll(/role="(menu|menubar|menuitem|menuitemradio)"/g)) {
+      offenders.push(`${file}: ${match[0]}`);
+    }
+    if (text.includes('aria-haspopup="menu"')) offenders.push(`${file}: aria-haspopup="menu"`);
+  }
+  assert.deepEqual(offenders, [], `menu roles without roving focus:\n${offenders.join("\n")}`);
+});

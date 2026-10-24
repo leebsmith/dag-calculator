@@ -64,6 +64,8 @@
             <button
               type="button"
               class="btn-outline landing-sort-btn"
+              :aria-expanded="$store.recipes.sortOpen ? 'true' : 'false'"
+              aria-controls="batch-sort-menu"
               @click.stop="$store.recipes.toggleSort($event)"
             >
               <span x-text="'Sort: ' + $store.recipes.sortLabel"></span>
@@ -141,8 +143,8 @@
                           type="button"
                           class="landing-kebab"
                           aria-label="Batch actions"
-                          aria-haspopup="menu"
-                          :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id"
+                          :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id ? 'true' : 'false'"
+                          aria-controls="batch-row-menu"
                           @click.stop="$store.recipes.openRowMenu(b, $event)"
                         >
                           ⋮
@@ -164,15 +166,14 @@
   <template x-if="$store.recipes.rowMenu">
     <div
       class="landing-menu"
+      id="batch-row-menu"
       :style="$store.recipes.rowMenuStyle"
-      role="menu"
       @click.outside="$store.recipes.closeRowMenu()"
       @keydown.escape.window="$store.recipes.closeRowMenu()"
     >
       <button
         type="button"
         class="landing-menu-item"
-        role="menuitem"
         x-show="$store.recipes.rowMenu.status === 'frozen'"
         @click="$store.recipes.forkRow()"
       >
@@ -181,7 +182,6 @@
       <button
         type="button"
         class="landing-menu-item"
-        role="menuitem"
         @click="$store.recipes.startRename()"
       >
         Rename
@@ -189,7 +189,6 @@
       <button
         type="button"
         class="landing-menu-item"
-        role="menuitem"
         @click="$store.recipes.trashRow()"
       >
         Move to trash
@@ -200,16 +199,15 @@
   <template x-if="$store.recipes.sortOpen">
     <div
       class="landing-menu"
+      id="batch-sort-menu"
       :style="$store.recipes.sortMenuStyle"
-      role="menu"
       @click.outside="$store.recipes.closeSort()"
       @keydown.escape.window="$store.recipes.closeSort()"
     >
       <button
         type="button"
         class="landing-menu-item"
-        role="menuitemradio"
-        :aria-checked="$store.recipes.sort === 'modified'"
+        :class="{ 'is-active': $store.recipes.sort === 'modified' }" :aria-pressed="($store.recipes.sort === 'modified') ? 'true' : 'false'"
         @click="$store.recipes.setSort('modified')"
       >
         Last modified
@@ -217,8 +215,7 @@
       <button
         type="button"
         class="landing-menu-item"
-        role="menuitemradio"
-        :aria-checked="$store.recipes.sort === 'title'"
+        :class="{ 'is-active': $store.recipes.sort === 'title' }" :aria-pressed="($store.recipes.sort === 'title') ? 'true' : 'false'"
         @click="$store.recipes.setSort('title')"
       >
         Title
