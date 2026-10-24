@@ -6,7 +6,9 @@
    schedule landed (`docs/whirlpool-hopping-model.md`, `views/whirlpool.js`);
    remaining work is promoting Tinseth/whirlpool math into the artifact and
    replacing the manual `batch.whirlpool_ibu_fraction` with schedule-derived
-   IBU.
+   IBU. Spike complete: the grammar needs `exp`/`ln` plus a deterministic
+   quadrature primitive; see `plans/hop-math-promotion.md`. Full objective is
+   unchanged and deferred to a later implementation pass.
 2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO

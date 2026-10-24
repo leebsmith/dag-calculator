@@ -1,35 +1,22 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { sulfateChloride, ratioReadout } from "../../frontend/src/views/waterRatio.js";
+import { ratioReadout } from "../../frontend/src/views/waterRatio.js";
 import { createTestApp } from "./appHelpers.js";
 
-const IONS = { calcium_ca: 0, magnesium_mg: 0, sodium_na: 0, sulfate_so4: 0, chloride_cl: 0, alkalinity_as_caco3: 0 };
-
-test("sulfateChloride divides sulfate by chloride and guards zero chloride", () => {
-  assert.equal(sulfateChloride({ ...IONS, sulfate_so4: 100, chloride_cl: 50 }), 2);
-  assert.equal(sulfateChloride({ ...IONS, sulfate_so4: 100, chloride_cl: 0 }), null);
-  assert.equal(sulfateChloride(null), null);
-});
-
-test("ratioReadout compares the kettle to the target-implied ratio", () => {
-  const kettle = { ...IONS, sulfate_so4: 100, chloride_cl: 50 };
-  const target = { ...IONS, sulfate_so4: 120, chloride_cl: 40 };
-
-  const compared = ratioReadout(kettle, target);
+test("ratioReadout compares the kettle ratio to the target-implied ratio", () => {
+  const compared = ratioReadout(2, 3);
   assert.equal(compared.asSolved, 2);
   assert.equal(compared.target, 3);
   assert.equal(compared.asSolvedText, "2.0 : 1");
   assert.equal(compared.targetText, "3.0 : 1");
   assert.equal(compared.deltaFactorText, "0.67×");
 
-  const asSolvedOnly = ratioReadout(kettle, null);
+  const asSolvedOnly = ratioReadout(2, null);
   assert.equal(asSolvedOnly.target, null);
   assert.equal(asSolvedOnly.targetText, null);
   assert.equal(asSolvedOnly.deltaFactor, null);
   assert.equal(asSolvedOnly.asSolvedText, "2.0 : 1");
-
-  assert.equal(ratioReadout(kettle, { ...IONS, sulfate_so4: 100, chloride_cl: 0 }).target, null);
 });
 
 test("the water summary compares against the target only when both flavor ions are checked with values", () => {

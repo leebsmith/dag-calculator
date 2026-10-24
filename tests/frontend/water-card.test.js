@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createTestApp } from "./appHelpers.js";
-import { kettleBlend, ionDelta } from "../../frontend/src/adapters/cards/water.js";
+import { ionDelta } from "../../frontend/src/adapters/cards/water.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import waterTargetProfiles from "../../data/seeds/water_target_profiles.json" with { type: "json" };
 
@@ -12,21 +12,35 @@ async function loadWaterSource(app, source) {
   app.compute();
 }
 
-test("kettleBlend reduces to the mash vector when both vessels are identical", () => {
-  const mash = { calcium_ca: 60, magnesium_mg: 5, sodium_na: 10, sulfate_so4: 100, chloride_cl: 50, alkalinity_as_caco3: 40 };
-  const hlt = { ...mash };
-  assert.deepEqual(kettleBlend(mash, hlt, 10, 14), mash);
+test("kettle blend nodes reduce to the treated vector and the helper weights volumes", () => {
+  const app = createTestApp();
+  app.boot();
+  app.compute();
+
+  // Stub fixtures: both vessels carry the same treated vector.
+  assert.equal(app.engine.get("water.kettle_blend.calcium_ca"), 60);
+  for (const { ion } of WATER_IONS) {
+    assert.equal(typeof app.engine.get(`water.kettle_blend.${ion}`), "number");
+  }
+  assert.equal(app.engine.call("blend_ion", [100, 0, 10, 0, 10]), 50);
+  assert.equal(app.engine.call("blend_ion", [10, 10, 0, 0, 0]), null);
 });
 
-test("kettleBlend volume-weights the two treated vectors", () => {
-  const mash = { calcium_ca: 100, magnesium_mg: 0, sodium_na: 0, sulfate_so4: 0, chloride_cl: 0, alkalinity_as_caco3: 0 };
-  const hlt = { calcium_ca: 0, magnesium_mg: 0, sodium_na: 0, sulfate_so4: 0, chloride_cl: 0, alkalinity_as_caco3: 0 };
-  assert.equal(kettleBlend(mash, hlt, 10, 10).calcium_ca, 50);
-});
+test("kettle and target sulfate:chloride ratios come from the artifact", () => {
+  const app = createTestApp();
+  app.boot();
+  app.compute();
 
-test("kettleBlend returns null when no water reaches the kettle", () => {
-  const ions = { calcium_ca: 10, magnesium_mg: 0, sodium_na: 0, sulfate_so4: 0, chloride_cl: 0, alkalinity_as_caco3: 0 };
-  assert.equal(kettleBlend(ions, ions, 0, 0), null);
+  assert.ok(Math.abs(app.engine.get("water.kettle_blend.sulfate_chloride_ratio") - 2) < 1e-9);
+
+  app.setRoot("water.target.sulfate_so4", 100);
+  app.setRoot("water.target.chloride_cl", 50);
+  app.compute();
+  assert.ok(Math.abs(app.engine.get("water.target.sulfate_chloride_ratio") - 2) < 1e-9);
+
+  app.setRoot("water.target.chloride_cl", 0);
+  app.compute();
+  assert.equal(app.engine.get("water.target.sulfate_chloride_ratio"), null);
 });
 
 test("ionDelta is null when either side is missing", () => {

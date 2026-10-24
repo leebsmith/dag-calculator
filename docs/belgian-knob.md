@@ -7,7 +7,8 @@ The Belgian knob answers one question:
 
 It is **advisory only**. It never mutates the recipe, never adds a sugar row,
 and never calls the solver. It is a presentation-layer calculation on top of
-the current solved state.
+the current solved state. Ownership is deliberately host-side
+(`frontend/src/adapters/cards/style.js`); it is not an artifact derived node.
 
 ## Why it works
 

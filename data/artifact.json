@@ -186,6 +186,18 @@
     }
   },
   "constants": {
+    "cutaia_a": {
+      "value": 0.372,
+      "dimension": "dimensionless"
+    },
+    "cutaia_b": {
+      "value": 0.00357,
+      "dimension": "dimensionless"
+    },
+    "ethanol_density": {
+      "value": 0.7907,
+      "dimension": "dimensionless"
+    },
     "mash_thermal_factor": {
       "value": 0.41,
       "dimension": "dimensionless"
@@ -688,11 +700,15 @@
               {
                 "op": "+",
                 "args": [
-                  0.372,
+                  {
+                    "const": "cutaia_a"
+                  },
                   {
                     "op": "*",
                     "args": [
-                      0.00357,
+                      {
+                        "const": "cutaia_b"
+                      },
                       {
                         "call": "sg_to_plato",
                         "args": [
@@ -772,7 +788,9 @@
                   }
                 ]
               },
-              0.7907
+              {
+                "const": "ethanol_density"
+              }
             ]
           }
         ]
@@ -939,6 +957,202 @@
               "OPTIMAL"
             ]
           }
+        ]
+      }
+    },
+    "cutaia_abv_plato": {
+      "params": [
+        "oe",
+        "ae"
+      ],
+      "returns": "abv",
+      "body": {
+        "op": "*",
+        "args": [
+          {
+            "op": "*",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "const": "cutaia_a"
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "const": "cutaia_b"
+                      },
+                      {
+                        "ref": "oe"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "-",
+                "args": [
+                  {
+                    "ref": "oe"
+                  },
+                  {
+                    "ref": "ae"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "call": "plato_to_sg",
+                "args": [
+                  {
+                    "ref": "ae"
+                  }
+                ]
+              },
+              {
+                "const": "ethanol_density"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "blend_ion": {
+      "params": [
+        "mash",
+        "hlt",
+        "run1",
+        "run2",
+        "sparge"
+      ],
+      "returns": "concentration",
+      "body": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "run1"
+                      },
+                      {
+                        "ref": "run2"
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "sparge"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "ref": "mash"
+                      },
+                      {
+                        "op": "+",
+                        "args": [
+                          {
+                            "ref": "run1"
+                          },
+                          {
+                            "ref": "run2"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "ref": "hlt"
+                      },
+                      {
+                        "ref": "sparge"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "run1"
+                      },
+                      {
+                        "ref": "run2"
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "sparge"
+                  }
+                ]
+              }
+            ]
+          },
+          null
+        ]
+      }
+    },
+    "sulfate_chloride_ratio": {
+      "params": [
+        "sulfate",
+        "chloride"
+      ],
+      "returns": "dimensionless",
+      "body": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "chloride"
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "ref": "sulfate"
+              },
+              {
+                "ref": "chloride"
+              }
+            ]
+          },
+          null
         ]
       }
     }
@@ -2170,6 +2384,178 @@
       },
       "output": {
         "dimension": "volume"
+      }
+    },
+    "water.kettle_blend.calcium_ca": {
+      "kind": "derived",
+      "inputs": {
+        "mash": "solver.water.post_salt_mash_ions.calcium_ca",
+        "hlt": "solver.water.post_salt_hlt_ions.calcium_ca",
+        "run1": "solver.batch.cascade.v_run1",
+        "run2": "solver.batch.cascade.v_run2",
+        "sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "call": "blend_ion",
+        "args": [
+          { "ref": "mash" },
+          { "ref": "hlt" },
+          { "ref": "run1" },
+          { "ref": "run2" },
+          { "ref": "sparge" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.kettle_blend.magnesium_mg": {
+      "kind": "derived",
+      "inputs": {
+        "mash": "solver.water.post_salt_mash_ions.magnesium_mg",
+        "hlt": "solver.water.post_salt_hlt_ions.magnesium_mg",
+        "run1": "solver.batch.cascade.v_run1",
+        "run2": "solver.batch.cascade.v_run2",
+        "sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "call": "blend_ion",
+        "args": [
+          { "ref": "mash" },
+          { "ref": "hlt" },
+          { "ref": "run1" },
+          { "ref": "run2" },
+          { "ref": "sparge" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.kettle_blend.sodium_na": {
+      "kind": "derived",
+      "inputs": {
+        "mash": "solver.water.post_salt_mash_ions.sodium_na",
+        "hlt": "solver.water.post_salt_hlt_ions.sodium_na",
+        "run1": "solver.batch.cascade.v_run1",
+        "run2": "solver.batch.cascade.v_run2",
+        "sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "call": "blend_ion",
+        "args": [
+          { "ref": "mash" },
+          { "ref": "hlt" },
+          { "ref": "run1" },
+          { "ref": "run2" },
+          { "ref": "sparge" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.kettle_blend.sulfate_so4": {
+      "kind": "derived",
+      "inputs": {
+        "mash": "solver.water.post_salt_mash_ions.sulfate_so4",
+        "hlt": "solver.water.post_salt_hlt_ions.sulfate_so4",
+        "run1": "solver.batch.cascade.v_run1",
+        "run2": "solver.batch.cascade.v_run2",
+        "sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "call": "blend_ion",
+        "args": [
+          { "ref": "mash" },
+          { "ref": "hlt" },
+          { "ref": "run1" },
+          { "ref": "run2" },
+          { "ref": "sparge" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.kettle_blend.chloride_cl": {
+      "kind": "derived",
+      "inputs": {
+        "mash": "solver.water.post_salt_mash_ions.chloride_cl",
+        "hlt": "solver.water.post_salt_hlt_ions.chloride_cl",
+        "run1": "solver.batch.cascade.v_run1",
+        "run2": "solver.batch.cascade.v_run2",
+        "sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "call": "blend_ion",
+        "args": [
+          { "ref": "mash" },
+          { "ref": "hlt" },
+          { "ref": "run1" },
+          { "ref": "run2" },
+          { "ref": "sparge" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.kettle_blend.alkalinity_as_caco3": {
+      "kind": "derived",
+      "inputs": {
+        "mash": "solver.water.post_salt_mash_ions.alkalinity_as_caco3",
+        "hlt": "solver.water.post_salt_hlt_ions.alkalinity_as_caco3",
+        "run1": "solver.batch.cascade.v_run1",
+        "run2": "solver.batch.cascade.v_run2",
+        "sparge": "solver.batch.cascade.v_sparge"
+      },
+      "expr": {
+        "call": "blend_ion",
+        "args": [
+          { "ref": "mash" },
+          { "ref": "hlt" },
+          { "ref": "run1" },
+          { "ref": "run2" },
+          { "ref": "sparge" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.kettle_blend.sulfate_chloride_ratio": {
+      "kind": "derived",
+      "inputs": {
+        "sulfate": "water.kettle_blend.sulfate_so4",
+        "chloride": "water.kettle_blend.chloride_cl"
+      },
+      "expr": {
+        "call": "sulfate_chloride_ratio",
+        "args": [
+          { "ref": "sulfate" },
+          { "ref": "chloride" }
+        ]
+      },
+      "output": {
+        "dimension": "dimensionless"
+      }
+    },
+    "water.target.sulfate_chloride_ratio": {
+      "kind": "derived",
+      "inputs": {
+        "sulfate": "water.target.sulfate_so4",
+        "chloride": "water.target.chloride_cl"
+      },
+      "expr": {
+        "call": "sulfate_chloride_ratio",
+        "args": [
+          { "ref": "sulfate" },
+          { "ref": "chloride" }
+        ]
+      },
+      "output": {
+        "dimension": "dimensionless"
       }
     },
     "grist.major_malts": {

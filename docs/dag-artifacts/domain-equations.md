@@ -203,6 +203,12 @@ unmodelled grist/SMB contributions — lives in
 | `warnings` / `notes` | text |
 | `telemetry` | host-side only (not a DAG output) |
 
+Derived water readouts: `water.kettle_blend.<ion>` volume-weights the treated
+mash and HLT vectors by `v_run1 + v_run2` and `v_sparge`;
+`water.kettle_blend.sulfate_chloride_ratio` and
+`water.target.sulfate_chloride_ratio` guard `chloride > 0`. The grid shows
+post-addition, kettle, and Δ columns; Δ formatting remains host-side.
+
 ### 3.3 Domain / error surface
 
 `INVALID_MASH_VOLUME` · `INVALID_SPARGE_VOLUME` · `UNKNOWN_GRAIN_TYPE` ·

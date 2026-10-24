@@ -1,11 +1,9 @@
 // Fermentation geometry: the BJCP style's feasible OE/AE region and its
 // centroid, from which the batch's apparent attenuation (AA) and target ABV are
-// derived. Pure and engine-independent; mirrors backend/app/core/utils.py
-// (ASBC cubic + Cutaia 2009, ethanol density 0.7907).
+// derived. Pure; the ASBC/Cutaia primitives and constants come from the
+// artifact (`artifactFunctions.js`), which mirrors backend/app/core/utils.py.
 
-const ETHANOL_DENSITY = 0.7907;
-const CUTAIA_A = 0.372;
-const CUTAIA_B = 0.00357;
+import { artifactConstant, callArtifactFunction } from "./artifactFunctions.js";
 
 // Solver extract-point conversion (kg extract per GU·L), matching
 // backend/app/core/batch_solver.py::GAMMA_METRIC.
@@ -17,27 +15,29 @@ const CAP_EPS = 1e-3;
 
 // ASBC Table 1 cubic (SG -> degrees Plato).
 export function sgToPlato(sg) {
-  return ((135.997 * sg - 630.272) * sg + 1111.14) * sg - 616.868;
+  return callArtifactFunction("sg_to_plato", [sg]);
 }
 
 // ASBC 3rd-order polynomial (degrees Plato -> SG). Not the exact cubic inverse;
 // matches backend/app/core/utils.py::plato_to_sg.
 export function platoToSg(plato) {
-  return 1.0000131 + 0.00386777 * plato + 1.27447e-5 * plato * plato + 6.34964e-8 * plato * plato * plato;
+  return callArtifactFunction("plato_to_sg", [plato]);
 }
 
 // Cutaia-Reid-Speers (2009) ABV (% v/v) from original/apparent extract (Plato).
 export function cutaiaAbv(oe, ae) {
-  const abw = (CUTAIA_A + CUTAIA_B * oe) * (oe - ae);
-  return abw * (platoToSg(ae) / ETHANOL_DENSITY);
+  return callArtifactFunction("cutaia_abv_plato", [oe, ae]);
 }
 
 // ABV along a fixed-AE (horizontal) edge is quadratic in OE; solve for OE.
 function horizontalCrossings(ae, targetAbv) {
-  const k = platoToSg(ae) / ETHANOL_DENSITY;
-  const a = CUTAIA_B;
-  const b = CUTAIA_A - CUTAIA_B * ae;
-  const c = -CUTAIA_A * ae - targetAbv / k;
+  const ethanolDensity = artifactConstant("ethanol_density");
+  const cutaiaA = artifactConstant("cutaia_a");
+  const cutaiaB = artifactConstant("cutaia_b");
+  const k = platoToSg(ae) / ethanolDensity;
+  const a = cutaiaB;
+  const b = cutaiaA - cutaiaB * ae;
+  const c = -cutaiaA * ae - targetAbv / k;
   const disc = b * b - 4 * a * c;
   if (disc < 0) return [];
   const roots = [];

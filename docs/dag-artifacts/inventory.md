@@ -88,8 +88,10 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `alkalinity_from_bicarbonate` | bicarbonate_hco3 | `concentration` |
 | `apply_attenuation_factor` | aa, factor | `percentage` |
 | `bicarbonate_from_alkalinity` | alkalinity_caco3 | `concentration` |
+| `blend_ion` | mash, hlt, run1, run2, sparge | `concentration` |
 | `calculate_strike_water_base_temp` | t_target, t_grain, thickness | `temperature` |
 | `calculate_tun_thermal_offset` | t_target, tun_initial, specific_heat, tun_mass, water_mass | `temperature_delta` |
+| `cutaia_abv_plato` | oe, ae | `abv` |
 | `extract_yield_ldk` | yield_fraction | `extract_yield` |
 | `mash_ph_status` | ph | `ph_status` |
 | `morey_mcu_to_srm` | mcu | `beer_color` |
@@ -98,6 +100,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `realized_fg` | og_sg, aa | `gravity` |
 | `sg_to_plato` | sg | `gravity` |
 | `sugar_gravity_points` | mass_kg, yield_fraction, v_ferm_l | `gravity` |
+| `sulfate_chloride_ratio` | sulfate, chloride | `dimensionless` |
 
 ## Constants
 
@@ -105,6 +108,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 |---|---|---|
 | `bicarbonate_eq_weight` | 61 | `dimensionless` |
 | `caco3_eq_weight` | 50 | `dimensionless` |
+| `cutaia_a` | 0.372 | `dimensionless` |
+| `cutaia_b` | 0.00357 | `dimensionless` |
 | `default_attenuation_derate` | 1 | `percentage` |
 | `default_boil_time_min` | 60 | `time` |
 | `default_calcium_floor_ppm` | 50 | `concentration` |
@@ -118,6 +123,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_v_ferm_l` | 20 | `volume` |
+| `ethanol_density` | 0.7907 | `dimensionless` |
 | `k_abs_true` | 1.67 | `mash_thickness` |
 | `mash_ph_optimal_high` | 5.6 | `ph` |
 | `mash_ph_optimal_low` | 5.2 | `ph` |
@@ -194,6 +200,13 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.cacl2_form` | choice |
 | `water.calcium_floor_ppm` | root |
 | `water.gypsum_form` | choice |
+| `water.kettle_blend.alkalinity_as_caco3` | derived |
+| `water.kettle_blend.calcium_ca` | derived |
+| `water.kettle_blend.chloride_cl` | derived |
+| `water.kettle_blend.magnesium_mg` | derived |
+| `water.kettle_blend.sodium_na` | derived |
+| `water.kettle_blend.sulfate_chloride_ratio` | derived |
+| `water.kettle_blend.sulfate_so4` | derived |
 | `water.mash_ph_status` | derived |
 | `water.mash_thickness_l_per_kg` | derived |
 | `water.pinned_ions` | collection |
@@ -205,6 +218,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.target.chloride_cl` | root |
 | `water.target.magnesium_mg` | root |
 | `water.target.sodium_na` | root |
+| `water.target.sulfate_chloride_ratio` | derived |
 | `water.target.sulfate_so4` | root |
 | `water.target_mash_ph` | root |
 | `water.target_profile` | selection |

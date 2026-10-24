@@ -21,27 +21,9 @@ import {
 import { ratioReadout } from "../../views/waterRatio.js";
 import { reportError } from "../../observability.js";
 
-const ION_KEYS = WATER_IONS.map((row) => row.ion);
-
 const ADDITIONS = ["gypsum_kg", "cacl2_kg", "epsom_kg", "nacl_kg", "acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"];
 
 const AUTO_TARGET = "(Auto)";
-
-export function kettleBlend(mash, hlt, runnings, sparge) {
-  const total = runnings + sparge;
-  if (!(total > 0)) return null;
-  const out = {};
-  for (const ion of ION_KEYS) {
-    const m = mash?.[ion];
-    const h = hlt?.[ion];
-    if (typeof m !== "number" || typeof h !== "number") {
-      out[ion] = null;
-      continue;
-    }
-    out[ion] = (m * runnings + h * sparge) / total;
-  }
-  return out;
-}
 
 export function ionDelta(value, target) {
   if (typeof value !== "number" || typeof target !== "number") return null;
@@ -63,12 +45,6 @@ function resolveValue(engine, path) {
 function num(engine, path) {
   const v = resolveValue(engine, path);
   return typeof v === "number" && Number.isFinite(v) ? v : null;
-}
-
-function ionVector(engine, prefix) {
-  const out = {};
-  for (const ion of ION_KEYS) out[ion] = num(engine, `${prefix}.${ion}`);
-  return out;
 }
 
 function checkedPins(engine) {
@@ -394,9 +370,6 @@ export function refreshWaterCard(app, ctx) {
     const strike = num(engine, N.vMashTreat);
     const doseVolume = num(engine, N.spargeSaltedVolume);
     const deliveredSparge = num(engine, N.vSpargeDeliverable);
-    const run1 = num(engine, N.vRun1) ?? 0;
-    const run2 = num(engine, N.vRun2) ?? 0;
-    const sparge = num(engine, N.vSparge) ?? 0;
 
     const gypsum = optionLabelFor(N.gypsumForm, engine.get(N.gypsumForm));
     const cacl2 = optionLabelFor(N.cacl2Form, engine.get(N.cacl2Form));
@@ -408,10 +381,6 @@ export function refreshWaterCard(app, ctx) {
       cacl2: cacl2Form === "CACL2_ANHYDROUS" ? "anhydrous" : "dihydrate",
       acid,
     };
-
-    const mashIons = ionVector(engine, N.postMashIons);
-    const hltIons = ionVector(engine, N.postHltIons);
-    const kettle = kettleBlend(mashIons, hltIons, run1 + run2, sparge);
 
     // The checked set is the declaration and every checked ion carries a value.
     // The strategy is derived from that set.
@@ -426,7 +395,10 @@ export function refreshWaterCard(app, ctx) {
     // The target ratio is only a comparison basis when both flavor ions are
     // constrained; otherwise the readout stays as-solved only.
     const flavorConstrained = valuedSet.has("so4") && valuedSet.has("cl");
-    const ratio = ratioReadout(kettle, flavorConstrained ? ionVector(engine, N.target) : null);
+    const ratio = ratioReadout(
+      num(engine, N.kettleRatio),
+      flavorConstrained ? num(engine, N.targetRatio) : null
+    );
     const ratioBasis = proportional
       ? "Kettle ratio — split mode: same concentration in both vessels."
       : "Kettle ratio — sparge untreated, acid only.";
@@ -438,6 +410,7 @@ export function refreshWaterCard(app, ctx) {
       const sourceVal = num(engine, `${N.sourceReport}.${source}`);
       const targetVal = num(engine, `${N.target}.${ion}`);
       const postDoseVal = num(engine, `${N.postDoseIons}.${ion}`);
+      const kettleVal = num(engine, `${N.kettleBlend}.${ion}`);
       const isChecked = checkedSet.has(pin);
       const isValued = valuedSet.has(pin) && typeof targetVal === "number";
       const below = isValued && typeof sourceVal === "number" && targetVal < sourceVal;
@@ -456,6 +429,7 @@ export function refreshWaterCard(app, ctx) {
         valueText: isValued ? fmtPpm(targetVal) : AUTO_TARGET,
         sourceText: fmtPpm(sourceVal),
         postDoseText: fmtPpm(postDoseVal),
+        kettleText: fmtPpm(kettleVal),
         deltaText: isValued ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
         status,
         hint: isChecked && !isValued ? "no target entered" : below ? "below source" : "",

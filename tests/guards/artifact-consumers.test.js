@@ -34,6 +34,19 @@ const PARITY_CONSTANTS = new Set([
 // tests/frontend/engine.test.js; the water card reads the boundary path.
 const INTERPRETATION_NODES = new Set(["water.mash_ph_status"]);
 
+// Read by the water card through WATER_NODES; no artifact expression consumes
+// them. They are the derived kettle-blend/ratio readouts.
+const HOST_NODES = new Set([
+  "water.kettle_blend.calcium_ca",
+  "water.kettle_blend.magnesium_mg",
+  "water.kettle_blend.sodium_na",
+  "water.kettle_blend.sulfate_so4",
+  "water.kettle_blend.chloride_cl",
+  "water.kettle_blend.alkalinity_as_caco3",
+  "water.kettle_blend.sulfate_chloride_ratio",
+  "water.target.sulfate_chloride_ratio",
+]);
+
 function collectConstants(value, out) {
   if (Array.isArray(value)) {
     for (const v of value) collectConstants(v, out);
@@ -99,11 +112,11 @@ test("every derived node is reachable from the graph or the manifest", () => {
   for (const [id, node] of Object.entries(a.nodes)) {
     if (node.kind !== "derived") continue;
     assert.ok(
-      refs.has(id) || manifest.has(id) || INTERPRETATION_NODES.has(id),
+      refs.has(id) || manifest.has(id) || INTERPRETATION_NODES.has(id) || HOST_NODES.has(id),
       `derived node "${id}" is unreachable`
     );
   }
-  for (const id of INTERPRETATION_NODES) {
+  for (const id of [...INTERPRETATION_NODES, ...HOST_NODES]) {
     assert.equal(a.nodes[id]?.kind, "derived", `allowlisted node "${id}" is not derived`);
   }
 });
