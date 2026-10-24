@@ -81,11 +81,16 @@ source or maintain.
 | `id`, `name` | — | — |
 | `maltster` | — | — |
 | `yield_fraction` | percentage | `[0, 1]` |
+| `fermentability_fraction` | percentage | `[0, 1]` (optional; AAL) |
 | `color_lovibond` | grain_color | `gte 0` |
 
 The malt and sugar seeds are built by `scripts/build-fermentables-seed.mjs`
 from the vendored `data/sources/malt-database-malts.json` scrape (deduped
 one-per-name, `malt`+`adjunct` → malts, `sugar`+`syrup`+`extract` → sugars).
+Rows whose `yield_basis` is `fermentability` are **excluded**: the value is an
+AAL, not an extract yield, and the two axes are not interchangeable. The raw
+source keeps the AAL; `fermentability_fraction` is carried only when a row has
+both an extract yield and an AAL.
 Each malt is classified against `data/sources/standard-malts.json` via the
 committed `data/sources/malt-standard-crosswalk.json`, supplying `standard_malt`
 + `generic_description` (a reliable generic layer over the spotty per-malt

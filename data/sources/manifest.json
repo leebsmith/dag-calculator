@@ -54,7 +54,7 @@
       "mechanism": "contract",
       "upstream": "malt_database schema/malt.schema.json (pinned)",
       "rows": 9,
-      "sha256": "d0b5f883a062021aa22c96139d916e786ff5f598ffe40f86faaf68ed4e25fe28"
+      "sha256": "c6267ab89c9d76cc174c812d39d4162978f58be6a123ab7e3366d955f14c0f06"
     },
     "standard-malts.json": {
       "mechanism": "vendor+extend",

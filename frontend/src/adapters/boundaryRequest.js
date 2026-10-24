@@ -46,7 +46,7 @@ function assignWire(out, wire, value) {
 // BatchSolverRequest: one entry per solver.batch declared input.
 export const BATCH_FIELDS = {
   target_abv: { path: "batch.target_abv" },
-  apparent_attenuation: { path: "batch.apparent_attenuation" },
+  apparent_attenuation: { path: "batch.effective_apparent_attenuation" },
   v_ferm: { path: "batch.v_ferm" },
   topology: { path: "batch.topology" },
   intensive_value: { path: "batch.intensive_value" },

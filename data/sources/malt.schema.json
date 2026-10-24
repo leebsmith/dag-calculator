@@ -11,6 +11,7 @@
     "maltster":       { "type": "string", "enum": ["Briess","Simpsons","Fawcett","Weyermann","Bairds","Dingemans","Muntons","Gambrinus","Great Western","Bestmalz","Canada Malting","Crisp","Brewtarget","Williams Brewing","Northern Brewer","L.D. Carlson"] },
     "yield_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
     "yield_basis":    { "type": "string", "enum": ["extract", "fermentability"] },
+    "fermentability_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
     "color_lovibond": { "type": "number", "minimum": 0 },
     "moisture":       { "type": "number", "minimum": 0, "maximum": 100 },
     "notes":          { "type": "string" },

@@ -244,6 +244,12 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 |---|---|---|---|
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
 | `batch.apparent_attenuation` | `batch.yeast.attenuation_pct` | auto-copy on selection | overwritten on each strain pick; clamped to the strain envelope |
+| `batch.house_attenuation_factor` | — | per-batch root | multiplies the planned attenuation into `batch.effective_apparent_attenuation`; starts at 1.0 |
+
+`batch.effective_apparent_attenuation` is the product of the planned root and
+the house factor. The solver and the realized FG/ABV nodes consume the effective
+value; the planned value stays visible as the target. Conversion efficiency is a
+separate gravity correction, not an attenuation correction.
 
 Water source ions are **read-only selection readouts** (the boundary reads them
 straight from `water.source_report`). Water target ions and the calcium floor are

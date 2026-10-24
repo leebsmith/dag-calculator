@@ -222,6 +222,10 @@
       "value": 0.75,
       "dimension": "percentage"
     },
+    "default_house_attenuation_factor": {
+      "value": 1,
+      "dimension": "percentage"
+    },
     "default_grain_moisture_fraction": {
       "value": 0.04,
       "dimension": "percentage"
@@ -624,6 +628,21 @@
         ]
       }
     },
+    "apply_attenuation_factor": {
+      "params": ["aa", "factor"],
+      "returns": "percentage",
+      "body": {
+        "op": "*",
+        "args": [
+          {
+            "ref": "aa"
+          },
+          {
+            "ref": "factor"
+          }
+        ]
+      }
+    },
     "realized_fg": {
       "params": [
         "og_sg",
@@ -947,6 +966,13 @@
           "lte": 1
         }
       },
+      "fermentability_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
       "moisture_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -967,6 +993,13 @@
       "name": {},
       "maltster": {},
       "yield_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
           "gte": 0,
@@ -1847,6 +1880,38 @@
         "lte": 1
       }
     },
+    "batch.house_attenuation_factor": {
+      "kind": "root",
+      "dimension": "percentage",
+      "default": {
+        "const": "default_house_attenuation_factor"
+      },
+      "domain": {
+        "gt": 0,
+        "lte": 1
+      }
+    },
+    "batch.effective_apparent_attenuation": {
+      "kind": "derived",
+      "inputs": {
+        "aa": "batch.apparent_attenuation",
+        "factor": "batch.house_attenuation_factor"
+      },
+      "expr": {
+        "call": "apply_attenuation_factor",
+        "args": [
+          {
+            "ref": "aa"
+          },
+          {
+            "ref": "factor"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
     "batch.grain_moisture_fraction": {
       "kind": "root",
       "dimension": "percentage",
@@ -2048,7 +2113,7 @@
       "resolution": "iterative",
       "inputs": {
         "target_abv": "batch.target_abv",
-        "apparent_attenuation": "batch.apparent_attenuation",
+        "apparent_attenuation": "batch.effective_apparent_attenuation",
         "v_ferm": "batch.v_ferm",
         "topology": "batch.topology",
         "intensive_value": "batch.intensive_value",
@@ -2159,7 +2224,7 @@
       "kind": "derived",
       "inputs": {
         "og_sg": "solver.batch.sg_post_boil",
-        "aa": "batch.apparent_attenuation"
+        "aa": "batch.effective_apparent_attenuation"
       },
       "expr": {
         "call": "realized_fg",
@@ -2180,7 +2245,7 @@
       "kind": "derived",
       "inputs": {
         "og_sg": "solver.batch.sg_post_boil",
-        "aa": "batch.apparent_attenuation"
+        "aa": "batch.effective_apparent_attenuation"
       },
       "expr": {
         "call": "realized_abv",

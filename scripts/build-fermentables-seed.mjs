@@ -9,6 +9,10 @@
 // description, notes, color_lovibond, yield_fraction, yield_basis, sold_out).
 // This builder:
 //   - drops sold-out entries;
+//   - excludes rows whose `yield_basis` is "fermentability" (an AAL, not an
+//     extract yield) and reports the count; an AAL is preserved on the source
+//     row, and `fermentability_fraction` is carried when a row also has extract
+//     yield;
 //   - routes malt + adjunct -> malts.json, sugar + syrup + extract -> sugars.json;
 //   - dedupes malts one-per-name (cross-maltster), preferring records that carry
 //     yield, then colour, then description, and backfills missing yield/colour
@@ -91,12 +95,17 @@ function notesFor(entry) {
 function splitByType(rows) {
   const malts = [];
   const sugars = [];
+  const excluded = [];
   for (const row of rows) {
     if (row.sold_out) continue;
+    if (row.yield_basis === "fermentability") {
+      excluded.push(row);
+      continue;
+    }
     if (MALT_TYPES.has(row.product_type)) malts.push(row);
     else if (SUGAR_TYPES.has(row.product_type)) sugars.push(row);
   }
-  return { malts, sugars };
+  return { malts, sugars, excluded };
 }
 
 function dedupeMalts(rows) {
@@ -140,11 +149,14 @@ function maltComponent(row) {
   if (hasValue(row.moisture) && row.moisture > 0) {
     component.moisture_fraction = row.moisture / 100;
   }
+  if (hasValue(row.fermentability_fraction)) {
+    component.fermentability_fraction = row.fermentability_fraction;
+  }
   return component;
 }
 
 function sugarComponent(row) {
-  return {
+  const component = {
     id: slugify(row.name),
     name: row.name.trim(),
     maltster: row.maltster,
@@ -152,6 +164,10 @@ function sugarComponent(row) {
     color_lovibond: hasValue(row.color_lovibond) ? row.color_lovibond : 0,
     notes: notesFor(row),
   };
+  if (hasValue(row.fermentability_fraction)) {
+    component.fermentability_fraction = row.fermentability_fraction;
+  }
+  return component;
 }
 
 function toIdKeyedMap(components, classify, crosswalk, standardList) {
@@ -223,14 +239,14 @@ function backfillColor(seed) {
 }
 
 export function buildSeeds(rows, crosswalk, standardList) {
-  const { malts, sugars } = splitByType(rows);
+  const { malts, sugars, excluded } = splitByType(rows);
 
   const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent), true, crosswalk, standardList);
   const sugarSeed = toIdKeyedMap(sugars.map(sugarComponent), false, crosswalk, standardList);
 
   backfillColor(maltSeed);
 
-  return { malts: sorted(maltSeed), sugars: sorted(sugarSeed) };
+  return { malts: sorted(maltSeed), sugars: sorted(sugarSeed), excluded: excluded.length };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -244,9 +260,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
   const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
   const standardList = JSON.parse(readFileSync(STANDARD_LIST_PATH, "utf8"));
-  const { malts, sugars } = buildSeeds(source.entries, crosswalk, standardList);
+  const { malts, sugars, excluded } = buildSeeds(source.entries, crosswalk, standardList);
 
   writeSorted(MALTS_OUTPUT, malts);
   writeSorted(SUGARS_OUTPUT, sugars);
-  console.log(`wrote ${Object.keys(malts).length} malts and ${Object.keys(sugars).length} sugars`);
+  console.log(
+    `wrote ${Object.keys(malts).length} malts and ${Object.keys(sugars).length} sugars; ` +
+      `excluded ${excluded} fermentability-basis rows (AAL, not extract yield)`
+  );
 }

@@ -13,7 +13,7 @@ test("domainStates() covers every bounded root/choice node", () => {
     (n) => (n.kind === "root" || n.kind === "choice") && n.domain
   ).length;
   assert.equal(states.length, expected);
-  assert.equal(states.length, 24);
+  assert.equal(states.length, 25);
 });
 
 test("default values satisfy their domains or are unresolved", () => {
@@ -29,6 +29,9 @@ test("checkDomain() flags out-of-range values", () => {
   assert.equal(checkDomain(artifact, "batch.target_abv", 5.5, noRef).holds, true);
   assert.equal(checkDomain(artifact, "batch.apparent_attenuation", 1.5, noRef).holds, false); // lte 1
   assert.equal(checkDomain(artifact, "batch.apparent_attenuation", 0.75, noRef).holds, true);
+  assert.equal(checkDomain(artifact, "batch.house_attenuation_factor", 0, noRef).holds, false); // gt 0
+  assert.equal(checkDomain(artifact, "batch.house_attenuation_factor", 1.01, noRef).holds, false); // lte 1
+  assert.equal(checkDomain(artifact, "batch.house_attenuation_factor", 0.95, noRef).holds, true);
   assert.equal(checkDomain(artifact, "water.target_mash_ph", 8.0, noRef).holds, false); // lte 7
   assert.equal(checkDomain(artifact, "water.target_mash_ph", 5.4, noRef).holds, true);
 });

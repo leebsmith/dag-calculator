@@ -24,7 +24,21 @@ export const batchRegistry = {
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
-  "batch.apparent_attenuation": { label: "Apparent attenuation", displayUnit: "pct" },
+  "batch.apparent_attenuation": {
+    label: "Planned attenuation",
+    displayUnit: "pct",
+    hint: "Planning target seeded from the yeast or style; the solver uses the effective value.",
+  },
+  "batch.house_attenuation_factor": {
+    label: "House attenuation factor",
+    displayUnit: "pct",
+    hint: "Multiplies the planned attenuation before the solver. 95% means 95% of plan.",
+  },
+  "batch.effective_apparent_attenuation": {
+    label: "Effective attenuation",
+    displayUnit: "pct",
+    hint: "Planned attenuation × house factor; this is the solver input.",
+  },
   "batch.grain_moisture_fraction": {
     label: "Fallback grain moisture (when a malt has none)",
     displayUnit: "pct",

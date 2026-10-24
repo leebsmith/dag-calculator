@@ -38,3 +38,20 @@ test("realized FG and ABV track an edited apparent attenuation", () => {
   assert.ok(Math.abs(valuation["batch.realized_fg"] - platoToSg(ae)) < 1e-9);
   assert.ok(Math.abs(valuation["batch.realized_abv"] - cutaiaAbv(oe, ae)) < 1e-9);
 });
+
+test("the house attenuation factor scales the solver-facing AA", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setRoot("batch.house_attenuation_factor", 0.95);
+  app.compute();
+
+  const valuation = app.freezePayload().valuation;
+  const og = valuation["solver.batch"].sg_post_boil;
+  const oe = sgToPlato(og);
+  const aa = 0.75 * 0.95;
+  const ae = oe * (1 - aa);
+
+  assert.ok(Math.abs(valuation["batch.effective_apparent_attenuation"] - aa) < 1e-12);
+  assert.ok(Math.abs(valuation["batch.realized_fg"] - platoToSg(ae)) < 1e-9);
+  assert.ok(Math.abs(valuation["batch.realized_abv"] - cutaiaAbv(oe, ae)) < 1e-9);
+});

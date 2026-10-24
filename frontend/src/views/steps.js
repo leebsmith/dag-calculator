@@ -107,6 +107,8 @@ export const steps = [
       "batch.boil_off_rate_l_per_hr",
       "batch.conversion_efficiency",
       "batch.apparent_attenuation",
+      "batch.house_attenuation_factor",
+      "batch.effective_apparent_attenuation",
       "batch.grain_moisture_fraction",
       "batch.target_ibu",
       "batch.target_srm",
