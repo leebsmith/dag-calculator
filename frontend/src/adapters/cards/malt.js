@@ -44,6 +44,8 @@ export function registerMaltCard(app, ctx) {
     standardNameField: "standard_name",
     standardDescriptionField: "generic_description",
     familyField: "family",
+    brandField: "maltster",
+    productSearchLimit: 10,
     makeRow,
     maxVisible: MAX_VISIBLE,
     canAdd: (target) => !target.maltAtLimit,

@@ -148,7 +148,9 @@
                   aria-live="polite"
                   x-text="traceStandard
                     ? `Showing ${traceFilteredCatalog.length} malts`
-                    : `Showing ${traceStandardGroups.length} standards`"
+                    : (traceSearch.trim()
+                      ? `${traceStandardGroups.length} standards · ${traceProductMatches.length} malts`
+                      : `Showing ${traceStandardGroups.length} standards`)"
                 ></div>
               </div>
               <template x-if="!traceStandard">
@@ -171,8 +173,44 @@
                       <span class="catalog-item-chevron" aria-hidden="true">›</span>
                     </div>
                   </template>
-                  <template x-if="traceStandardGroups.length === 0">
-                    <div class="table-empty-cell">No matching standards found.</div>
+                  <template x-if="traceSearch.trim() && traceProductMatches.length > 0">
+                    <div class="catalog-drawer-breadcrumb">
+                      <span class="text-xs font-medium">Matching malts</span>
+                    </div>
+                  </template>
+                  <template x-for="item in traceProductMatches" :key="item.id">
+                    <div class="catalog-item-card">
+                      <div>
+                        <div class="catalog-item-name">
+                          <span x-text="item.name"></span>
+                          <template x-if="isUserItem(item.id)">
+                            <span class="status-badge status-badge-info text-nano">mine</span>
+                          </template>
+                        </div>
+                        <div class="catalog-item-meta" x-text="traceItemMeta(item)"></div>
+                      </div>
+                      <div class="catalog-item-actions">
+                        <button
+                          type="button"
+                          class="btn-outline text-xs"
+                          x-show="!isUserItem(item.id)"
+                          @click="duplicateCatalogTrace(item.id)"
+                          title="Copy to my items"
+                        >
+                          Copy
+                        </button>
+                        <button
+                          type="button"
+                          class="btn-primary text-xs"
+                          @click="addCatalogTrace(item.id)"
+                        >
+                          ＋ Add
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+                  <template x-if="traceStandardGroups.length === 0 && traceProductMatches.length === 0">
+                    <div class="table-empty-cell">No matching standards or malts found.</div>
                   </template>
                 </div>
               </template>

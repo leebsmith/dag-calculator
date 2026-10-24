@@ -30,6 +30,8 @@ export function registerTraceMaltsCard(app, ctx) {
     standardNameField: "standard_name",
     standardDescriptionField: "generic_description",
     familyField: "family",
+    brandField: "maltster",
+    productSearchLimit: 10,
     makeRow,
     itemMeta: (item) => [
       item.category,

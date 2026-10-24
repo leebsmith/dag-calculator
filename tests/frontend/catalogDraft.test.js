@@ -12,7 +12,56 @@ const SEEDS = {
   },
 };
 
-function setup({ canAdd = null, ...extra } = {}) {
+const BRAND_SEEDS = {
+  malts: {
+    "carafa-type-1": {
+      id: "carafa-type-1",
+      name: "CARAFA® Type 1",
+      maltster: "Weyermann",
+      category: "ROASTED",
+      standard_malt: "chocolate-malt",
+      standard_name: "Chocolate Malt",
+      generic_description: "Husked; chocolate/coffee",
+      family: "roasted",
+      notes: "intense roast",
+    },
+    "carafa-special-1": {
+      id: "carafa-special-1",
+      name: "CARAFA® SPECIAL Type 1",
+      maltster: "Weyermann",
+      category: "ROASTED",
+      standard_malt: "dehusked-chocolate",
+      standard_name: "Dehusked Chocolate",
+      generic_description: "Huskless; smooth chocolate/coffee",
+      family: "dehusked",
+      notes: "smooth",
+    },
+    "best-chocolate": {
+      id: "best-chocolate",
+      name: "BEST Chocolate",
+      maltster: "Bestmalz",
+      category: "ROASTED",
+      standard_malt: "chocolate-malt",
+      standard_name: "Chocolate Malt",
+      generic_description: "Husked; chocolate/coffee",
+      family: "roasted",
+      notes: "cocoa",
+    },
+    "crystal-40": {
+      id: "crystal-40",
+      name: "Crystal 40",
+      maltster: "Weyermann",
+      category: "CRYSTAL",
+      standard_malt: "crystal-40",
+      standard_name: "Crystal 40",
+      generic_description: "Caramel malt",
+      family: "crystal",
+      notes: "toffee",
+    },
+  },
+};
+
+function setup({ canAdd = null, seeds = SEEDS, ...extra } = {}) {
   const calls = [];
   const app = {
     draftRows: [],
@@ -46,7 +95,7 @@ function setup({ canAdd = null, ...extra } = {}) {
 
   installCatalogDraft(
     app,
-    { cache: { seeds: SEEDS } },
+    { cache: { seeds } },
     {
       prefix: "malt",
       Cap: "Malt",
@@ -331,4 +380,85 @@ test("itemMeta and groupMeta compose supplier strings from parts", () => {
   const { app: bare } = setup();
   assert.equal(bare.maltItemMeta(SEEDS.malts.pils), "");
   assert.equal(bare.maltGroupMeta(group), "");
+});
+
+function brandSetup(overrides = {}) {
+  return setup({
+    seeds: BRAND_SEEDS,
+    brandField: "maltster",
+    productSearchLimit: 10,
+    ...overrides,
+  });
+}
+
+test("a brand query finds products the standard layer does not name", () => {
+  const { app } = brandSetup();
+
+  app.maltSearch = "carafa";
+  assert.deepEqual(app.maltStandardGroups, []);
+  assert.deepEqual(
+    app.maltProductMatches.map((item) => item.id).sort(),
+    ["carafa-special-1", "carafa-type-1"]
+  );
+});
+
+test("a maltster query matches the brand field", () => {
+  const { app } = brandSetup();
+
+  app.maltSearch = "weyermann";
+  assert.deepEqual(
+    app.maltProductMatches.map((item) => item.id).sort(),
+    ["carafa-special-1", "carafa-type-1", "crystal-40"]
+  );
+});
+
+test("product matches stay empty without a query or while drilled into a standard", () => {
+  const { app } = brandSetup();
+
+  assert.deepEqual(app.maltProductMatches, []);
+
+  app.maltSearch = "carafa";
+  assert.equal(app.maltProductMatches.length, 2);
+
+  app.maltStandard = "chocolate-malt";
+  assert.deepEqual(app.maltProductMatches, []);
+});
+
+test("product matches honour the category and family pills", () => {
+  const { app } = brandSetup();
+  app.maltSearch = "carafa";
+
+  app.maltCategoryFilter = ["CRYSTAL"];
+  assert.deepEqual(app.maltProductMatches, []);
+
+  app.maltCategoryFilter = [];
+  app.maltFamily = "dehusked";
+  assert.deepEqual(app.maltProductMatches.map((item) => item.id), ["carafa-special-1"]);
+});
+
+test("product matches exclude rows already in the draft", () => {
+  const { app } = brandSetup();
+  app.addDraftRow({ catalog_id: "carafa-type-1" });
+
+  app.maltSearch = "carafa";
+  assert.deepEqual(app.maltProductMatches.map((item) => item.id), ["carafa-special-1"]);
+});
+
+test("product matches respect the display cap", () => {
+  const { app } = brandSetup({ productSearchLimit: 1 });
+
+  app.maltSearch = "weyermann";
+  assert.equal(app.maltProductMatches.length, 1);
+});
+
+test("adding a product match goes through the draft lifecycle", () => {
+  const { app } = brandSetup();
+  app.maltSearch = "carafa";
+  const carafa = app.maltProductMatches.find((item) => item.id === "carafa-type-1");
+
+  app.addCatalogMalt(carafa.id);
+
+  assert.equal(app.draftRows.length, 1);
+  assert.equal(app.draftRows[0].catalog_id, "carafa-type-1");
+  assert.equal(app.maltDrawer, null);
 });

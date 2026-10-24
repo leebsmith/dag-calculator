@@ -178,7 +178,9 @@
                   aria-live="polite"
                   x-text="maltStandard
                     ? `Showing ${maltFilteredCatalog.length} malts`
-                    : `Showing ${maltStandardGroups.length} standards`"
+                    : (maltSearch.trim()
+                      ? `${maltStandardGroups.length} standards · ${maltProductMatches.length} malts`
+                      : `Showing ${maltStandardGroups.length} standards`)"
                 ></div>
               </div>
               <template x-if="!maltStandard">
@@ -201,8 +203,45 @@
                       <span class="catalog-item-chevron" aria-hidden="true">›</span>
                     </div>
                   </template>
-                  <template x-if="maltStandardGroups.length === 0">
-                    <div class="table-empty-cell">No matching standards found.</div>
+                  <template x-if="maltSearch.trim() && maltProductMatches.length > 0">
+                    <div class="catalog-drawer-breadcrumb">
+                      <span class="text-xs font-medium">Matching malts</span>
+                    </div>
+                  </template>
+                  <template x-for="item in maltProductMatches" :key="item.id">
+                    <div class="catalog-item-card">
+                      <div>
+                        <div class="catalog-item-name">
+                          <span x-text="item.name"></span>
+                          <template x-if="isUserItem(item.id)">
+                            <span class="status-badge status-badge-info text-nano">mine</span>
+                          </template>
+                        </div>
+                        <div class="catalog-item-meta" x-text="maltItemMeta(item)"></div>
+                      </div>
+                      <div class="catalog-item-actions">
+                        <button
+                          type="button"
+                          class="btn-outline text-xs"
+                          x-show="!isUserItem(item.id)"
+                          @click="duplicateCatalogMalt(item.id)"
+                          title="Copy to my items"
+                        >
+                          Copy
+                        </button>
+                        <button
+                          type="button"
+                          class="btn-primary text-xs"
+                          @click="addCatalogMalt(item.id)"
+                          :disabled="maltAtLimit"
+                        >
+                          ＋ Add
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+                  <template x-if="maltStandardGroups.length === 0 && maltProductMatches.length === 0">
+                    <div class="table-empty-cell">No matching standards or malts found.</div>
                   </template>
                 </div>
               </template>

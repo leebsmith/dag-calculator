@@ -13,6 +13,7 @@
 //   catalogNameOf  optional (catalogItem) => catalog kind for "Copy to my items";
 //                  defaults to SEED_KEY_TO_CATALOG[seedKey]
 //   searchFields   optional catalog fields searched by the drawer (default name, notes)
+//   brandField     optional brand/maltster field, searched by the product matches
 //   idField        row field holding the catalog id ("hop_id")
 //   categoryField  catalog field to filter/pill on ("purpose") | null
 //   standardField  (optional) catalog field holding the standard-malt id; when
@@ -22,6 +23,7 @@
 //                  (optional) the standard display fields, used with standardField
 //   makeRow        (catalogItem) => draft row
 //   maxVisible     optional cap (default 25)
+//   productSearchLimit optional cap for brand/name matches (default 10)
 //   itemMeta       optional (catalogItem) => parts[]; joined for the card subtitle
 //   groupMeta      optional (standardGroup) => parts[]; joined for a group row
 //
@@ -42,6 +44,7 @@ export function installCatalogDraft(app, ctx, config) {
     catalog: catalogFn = null,
     catalogNameOf = null,
     searchFields = ["name", "notes"],
+    brandField = null,
     idField,
     categoryField = null,
     standardField = null,
@@ -50,6 +53,7 @@ export function installCatalogDraft(app, ctx, config) {
     familyField = null,
     makeRow,
     maxVisible = 25,
+    productSearchLimit = 10,
     canAdd = null,
     itemMeta = null,
     groupMeta = null,
@@ -229,6 +233,29 @@ export function installCatalogDraft(app, ctx, config) {
         familyOf: familyField ? (item) => item[familyField] : undefined,
       });
     },
+    // Brand/name matches surfaced beside the standard groups, so a query like
+    // "carafa" or "weyermann" finds the product even though the standard layer
+    // never carries a maltster name. Drill-down owns the list once a standard
+    // is selected, and a blank query keeps the browser standard-first.
+    [`${prefix}ProductMatches`]() {
+      if (standardField && this[`${prefix}Standard`]) return [];
+      const query = String(this[`${prefix}Search`] ?? "").trim();
+      if (!query) return [];
+      void this.catalogRevision;
+      let items = catalog().filter((item) => !String(item.id ?? "").startsWith("std:"));
+      if (standardField && this[`${prefix}Family`]) {
+        items = items.filter((item) => item[familyField] === this[`${prefix}Family`]);
+      }
+      const fields = [...new Set([...searchFields, ...(brandField ? [brandField] : [])])];
+      return filterCatalog(items, {
+        activeIds: activeIds.call(this),
+        query,
+        categories: this[`${prefix}CategoryFilter`],
+        categoryOf: categoryField ? (item) => item[categoryField] : null,
+        searchFields: fields,
+        includeNotes: this[`${prefix}SearchNotes`],
+      }).slice(0, productSearchLimit);
+    },
     [`${prefix}StandardName`]() {
       if (!standardField || !this[`${prefix}Standard`]) return "";
       const item = catalog().find((i) => i[standardField] === this[`${prefix}Standard`]);
@@ -293,7 +320,8 @@ export function catalogDraftKeys(prefix, Cap) {
     `close${Cap}Drawer`, `toggle${Cap}Category`, `toggle${Cap}Family`, `select${Cap}Standard`,
     `clear${Cap}Standard`, `handle${Cap}Escape`, `${prefix}ItemMeta`, `${prefix}GroupMeta`,
     `${prefix}EditorOpen`, `${prefix}Catalog`, `${prefix}Categories`, `${prefix}Families`,
-    `${prefix}StandardGroups`, `${prefix}StandardName`, `${prefix}FilteredCatalog`,
+    `${prefix}StandardGroups`, `${prefix}StandardName`, `${prefix}ProductMatches`,
+    `${prefix}FilteredCatalog`,
     `${prefix}VisibleCatalog`, `${prefix}CatalogTruncated`, `${prefix}ActiveRow`,
   ];
 }
