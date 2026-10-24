@@ -1,6 +1,12 @@
-// Batch setup: the identity triplet (equipment / water source / style) and the
+// Batch setup: the identity triplet (style / equipment / water source) and the
 // user-owned assets it is drawn from. Engine-free by design — this store only
 // touches the catalog client, the seed reference cache, and persistence.
+//
+// Every mutation goes through `this.state` (the object Alpine observes through
+// its reactive proxy). Writing a closure-captured raw object would update the
+// value but never re-render. Asset option getters read `this.revision` so they
+// re-evaluate after a create/delete, because the seed/reference cache is a
+// plain closure object.
 
 import { createLibrary } from "./library.js";
 import * as libraryClient from "../adapters/libraryClient.js";
@@ -62,17 +68,10 @@ const WATER_ION_FIELDS = [
   { field: "total_phosphorus_p", label: "Phosphorus", unit: "ppm", step: "0.01" },
 ];
 
-const STYLE_BOUNDS = [
-  "og_min",
-  "og_max",
-  "fg_min",
-  "fg_max",
-  "ibu_min",
-  "ibu_max",
-  "srm_min",
-  "srm_max",
-  "abv_min",
-  "abv_max",
+const PREREQUISITES = [
+  { kind: "style", label: "styles" },
+  { kind: "equipment", label: "rigs" },
+  { kind: "water_report", label: "water sources" },
 ];
 
 const UNKNOWN_WATER = {
@@ -106,32 +105,30 @@ export function createSetupStore({ onCreated } = {}) {
   const cache = createReferenceCache();
   const library = createLibrary({
     client: libraryClient,
-    kinds: ["equipment", "water_report"],
+    kinds: ["style", "equipment", "water_report"],
     onChange: () => cache.syncLibraryItems(library.items()),
   });
 
-  const state = {
-    modalOpen: false,
-    busy: false,
-    error: "",
-    name: "",
-    equipmentId: "",
-    waterId: "",
-    styleMode: "styleguide",
-    styleId: "",
-    customStyle: { name: "Experimental", og_min: 1.04, og_max: 1.06, fg_min: 1.008, fg_max: 1.014, ibu_min: 20, ibu_max: 40, srm_min: 4, srm_max: 10, abv_min: 4, abv_max: 6 },
-    equipmentDraft: equipmentTemplate(cache),
-    waterDraft: waterTemplate(cache),
-  };
-
-  const component = (kind, itemId) => cache.references[kind]?.[itemId] ?? null;
-
   return {
-    state,
+    state: {
+      modalOpen: false,
+      busy: false,
+      error: "",
+      name: "",
+      equipmentId: "",
+      waterId: "",
+      styleId: "",
+      equipmentDraft: equipmentTemplate(cache),
+      waterDraft: waterTemplate(cache),
+    },
     library,
+    // Bumped whenever the asset inventory changes; read by the option getters so
+    // Alpine re-evaluates them (the reference cache is a plain object).
+    revision: 0,
 
     async refreshAssets() {
       await library.refresh();
+      this.revision += 1;
       return library.items();
     },
 
@@ -144,6 +141,7 @@ export function createSetupStore({ onCreated } = {}) {
     },
 
     equipmentOptions() {
+      void this.revision;
       const records = cache.references.equipment ?? {};
       return Object.entries(records)
         .map(([id, record]) => ({ value: id, label: record.name ?? id }))
@@ -151,6 +149,7 @@ export function createSetupStore({ onCreated } = {}) {
     },
 
     waterOptions() {
+      void this.revision;
       const records = {
         unknown: UNKNOWN_WATER,
         ...(cache.references.water_report ?? {}),
@@ -162,84 +161,102 @@ export function createSetupStore({ onCreated } = {}) {
     },
 
     styleOptions() {
+      void this.revision;
       return Object.entries(cache.references.style ?? {})
         .map(([id, style]) => ({ value: id, label: style.name ?? id }))
         .sort((a, b) => a.label.localeCompare(b.label));
     },
 
+    // A batch cannot be created until one of each identity source exists.
+    prerequisiteStatus() {
+      void this.revision;
+      const missing = PREREQUISITES.filter(
+        ({ kind }) => Object.keys(cache.references[kind] ?? {}).length === 0
+      ).map(({ label }) => label);
+      return { ready: missing.length === 0, missing };
+    },
+
+    isUserRecord(kind, itemId) {
+      void this.revision;
+      return library.has(kind, itemId);
+    },
+
     openModal() {
-      state.modalOpen = true;
-      state.error = "";
-      state.busy = false;
-      state.name = "";
-      state.equipmentId = this.equipmentOptions()[0]?.value ?? "";
-      state.waterId = "unknown";
-      state.styleMode = "styleguide";
-      state.styleId = this.styleOptions()[0]?.value ?? "";
+      this.state.modalOpen = true;
+      this.state.error = "";
+      this.state.busy = false;
+      this.state.name = "";
+      this.state.equipmentId = this.equipmentOptions()[0]?.value ?? "";
+      this.state.waterId = "unknown";
+      this.state.styleId = this.styleOptions()[0]?.value ?? "";
     },
 
     closeModal() {
-      state.modalOpen = false;
+      this.state.modalOpen = false;
     },
 
     canCreate() {
-      if (!state.name.trim()) return false;
-      if (!state.equipmentId || !state.waterId) return false;
-      if (state.styleMode === "styleguide") return Boolean(state.styleId);
-      return STYLE_BOUNDS.every((field) => Number.isFinite(Number(state.customStyle[field])));
+      const s = this.state;
+      if (!s.name.trim()) return false;
+      return Boolean(s.equipmentId && s.waterId && s.styleId);
     },
 
     identity() {
-      const equipment = component("equipment", state.equipmentId);
-      const water =
-        state.waterId === "unknown" ? UNKNOWN_WATER : component("water_report", state.waterId);
-      const style =
-        state.styleMode === "styleguide" ? component("style", state.styleId) : { ...state.customStyle };
+      const s = this.state;
+      const equipment = this.component("equipment", s.equipmentId);
+      const water = s.waterId === "unknown" ? UNKNOWN_WATER : this.component("water_report", s.waterId);
+      const style = this.component("style", s.styleId);
       return {
+        style: { ...style },
         equipment: { ...equipment },
         "water.source": { ...water },
-        style: { ...style },
       };
     },
 
+    component(kind, itemId) {
+      return cache.references[kind]?.[itemId] ?? null;
+    },
+
     async create() {
-      if (!this.canCreate() || state.busy) return null;
-      state.busy = true;
-      state.error = "";
+      if (!this.canCreate() || this.state.busy) return null;
+      this.state.busy = true;
+      this.state.error = "";
       try {
         const active = await persistence.createWithIdentity({
-          name: state.name.trim(),
+          name: this.state.name.trim(),
           identity: this.identity(),
         });
-        state.modalOpen = false;
+        this.state.modalOpen = false;
         onCreated?.(active);
         return active;
       } catch (err) {
-        state.error = err?.message ?? "Could not create the batch.";
+        this.state.error = err?.message ?? "Could not create the batch.";
         return null;
       } finally {
-        state.busy = false;
+        this.state.busy = false;
       }
     },
 
     async createEquipment() {
-      const draft = state.equipmentDraft;
+      const draft = this.state.equipmentDraft;
       if (!draft.name?.trim()) return null;
       const component = { ...draft, name: draft.name.trim() };
       const created = await library.create("equipment", component);
-      state.equipmentDraft = equipmentTemplate(cache);
-      if (created?.id) state.equipmentId = created.id;
+      this.state.equipmentDraft = equipmentTemplate(cache);
+      if (created?.id) this.state.equipmentId = created.id;
+      this.revision += 1;
       return created;
     },
 
     async deleteEquipment(itemId) {
-      if (!itemId) return;
+      if (!itemId || !library.has("equipment", itemId)) return;
       await library.remove("equipment", itemId);
-      if (state.equipmentId === itemId) state.equipmentId = "";
+      if (this.state.equipmentId === itemId) this.state.equipmentId = "";
+      this.revision += 1;
     },
 
     async createWater() {
-      const draft = state.waterDraft;
+      const draft = this.state.waterDraft;
       if (!draft.laboratory?.trim()) return null;
       const component = {
         ...draft,
@@ -247,15 +264,39 @@ export function createSetupStore({ onCreated } = {}) {
         source_name: draft.source_name?.trim() || draft.laboratory.trim(),
       };
       const created = await library.create("water_report", component);
-      state.waterDraft = waterTemplate(cache);
-      if (created?.id) state.waterId = created.id;
+      this.state.waterDraft = waterTemplate(cache);
+      if (created?.id) this.state.waterId = created.id;
+      this.revision += 1;
       return created;
     },
 
     async deleteWater(itemId) {
-      if (!itemId || itemId === "unknown") return;
+      if (!itemId || itemId === "unknown" || !library.has("water_report", itemId)) return;
       await library.remove("water_report", itemId);
-      if (state.waterId === itemId) state.waterId = "unknown";
+      if (this.state.waterId === itemId) this.state.waterId = "unknown";
+      this.revision += 1;
+    },
+
+    // Create a sealed style record from an existing one. Any style may be forked
+    // (a catalogue seed or another user record); lineage is a display snapshot.
+    async forkStyle(itemId) {
+      const parent = this.component("style", itemId);
+      if (!parent) return null;
+      const component = { ...parent };
+      delete component.id;
+      component.name = `${parent.name ?? itemId} (copy)`;
+      component.forked_from_id = itemId;
+      component.forked_from_name = parent.name ?? itemId;
+      const created = await library.create("style", component);
+      this.revision += 1;
+      return created;
+    },
+
+    async deleteStyle(itemId) {
+      if (!itemId || !library.has("style", itemId)) return;
+      await library.remove("style", itemId);
+      if (this.state.styleId === itemId) this.state.styleId = "";
+      this.revision += 1;
     },
   };
 }

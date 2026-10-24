@@ -1,26 +1,30 @@
 <div class="library-overlay" @keydown.escape.window="closeLibrary()">
-  <section class="library-panel" role="dialog" aria-modal="true" aria-label="Record library">
+  <section class="library-panel" role="dialog" aria-modal="true" aria-label="Library">
     <header class="library-header">
       <div>
-        <h2 class="card-title">Record library</h2>
+        <h2 class="card-title">Library</h2>
         <p class="card-subtitle">
-          Server-backed records you can select in a batch. Records are immutable: delete one
-          and create a new record to correct it.
+          Reference data. Records are sealed when saved and never edited; a correction is a new
+          record. A batch copies what it uses, so changing or deleting a record never changes a
+          batch.
         </p>
       </div>
       <button type="button" class="btn-outline" @click="closeLibrary()">Close</button>
     </header>
 
     <div class="filter-pills-container">
-      <template x-for="t in libraryTabs" :key="t.id">
-        <button
-          type="button"
-          class="filter-pill"
-          :class="{ 'is-active': libraryTab === t.id }"
-          @click="selectLibraryTab(t.id)"
-          x-text="t.label"
-        ></button>
-      </template>
+      <button
+        type="button"
+        class="filter-pill"
+        :class="{ 'is-active': librarySection === 'sources' }"
+        @click="selectLibrarySection('sources')"
+      >Sources</button>
+      <button
+        type="button"
+        class="filter-pill"
+        :class="{ 'is-active': librarySection === 'ingredients' }"
+        @click="selectLibrarySection('ingredients')"
+      >Ingredients</button>
     </div>
 
     <p class="form-hint" x-show="libraryLoading">Loading records…</p>
@@ -36,39 +40,157 @@
       <p class="form-hint" x-text="libraryNotice"></p>
     </template>
 
-    <section class="library-section">
-      <h3 class="library-heading">Your records</h3>
-      <div class="library-records">
-        <template x-for="item in libraryRecords" :key="libraryItemId(item)">
-          <div class="catalog-item-card">
-            <div>
-              <div class="catalog-item-name" x-text="libraryItemTitle(item)"></div>
-              <div class="text-xs text-muted" x-text="libraryItemId(item)"></div>
-            </div>
+    <template x-if="librarySection === 'sources'">
+      <div>
+        <div class="filter-pills-container">
+          <template x-for="k in identityTabs" :key="k.id">
             <button
               type="button"
-              class="btn-outline text-xs"
-              @click="deleteLibraryItem(libraryItemId(item))"
-            >
-              Delete
-            </button>
-          </div>
-        </template>
-        <p class="landing-empty" x-show="!libraryRecords.length">
-          No records yet. Create one below, or select a bundled seed.
-        </p>
-      </div>
-    </section>
+              class="filter-pill"
+              :class="{ 'is-active': sourceKind === k.id }"
+              @click="selectSourceKind(k.id)"
+              x-text="k.label"
+            ></button>
+          </template>
+        </div>
 
-    <div class="recipes-actions">
-      <button type="button" class="btn-primary text-xs" @click="newLibraryItem()">
-        ＋ New record
-      </button>
-    </div>
+        <p class="form-hint">
+          Styles, rigs, and water sources are equal co-requisites: a batch snapshots one of each,
+          and cannot be created until every one of them has a record. Styles are forked from an
+          existing declaration before they are edited.
+        </p>
+
+        <section class="library-section">
+          <h3 class="library-heading">Your records</h3>
+          <div class="library-records">
+            <template x-for="item in libraryRecords" :key="libraryItemId(item)">
+              <div class="catalog-item-card">
+                <div>
+                  <div class="catalog-item-name" x-text="libraryItemTitle(item)"></div>
+                  <div
+                    class="text-xs text-muted"
+                    x-text="item.forked_from_name ? libraryItemId(item) + ' · forked from ' + item.forked_from_name : libraryItemId(item)"
+                  ></div>
+                </div>
+                <div class="catalog-item-actions">
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    x-show="canForkRecord"
+                    @click="forkLibraryItem(item)"
+                  >Fork</button>
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    @click="deleteLibraryItem(libraryItemId(item))"
+                  >Delete</button>
+                </div>
+              </div>
+            </template>
+            <p class="landing-empty" x-show="!libraryRecords.length">No records yet.</p>
+          </div>
+        </section>
+
+        <div class="recipes-actions" x-show="canAuthorRecord">
+          <button type="button" class="btn-primary text-xs" @click="newLibraryItem()">
+            ＋ New record
+          </button>
+        </div>
+
+        <section class="library-section">
+          <h3 class="library-heading">Bundled seeds (read-only)</h3>
+          <div class="library-records">
+            <template x-for="item in librarySeedItems" :key="libraryItemId(item)">
+              <div class="catalog-item-card is-readonly">
+                <span class="catalog-item-name" x-text="librarySeedItemTitle(item)"></span>
+                <span class="catalog-item-actions">
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    x-show="canForkRecord"
+                    @click="forkLibraryItem(item)"
+                  >Fork</button>
+                  <span class="status-badge status-badge-info text-nano">seed</span>
+                </span>
+              </div>
+            </template>
+          </div>
+          <p class="form-hint">
+            Showing <span x-text="librarySeedItems.length"></span> of
+            <span x-text="librarySeedCount"></span> bundled seeds.
+          </p>
+        </section>
+      </div>
+    </template>
+
+    <template x-if="librarySection === 'ingredients'">
+      <div>
+        <div class="filter-pills-container">
+          <template x-for="t in libraryTabs" :key="t.id">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': libraryTab === t.id }"
+              @click="selectLibraryTab(t.id)"
+              x-text="t.label"
+            ></button>
+          </template>
+        </div>
+
+        <p class="form-hint">
+          Step-local inputs. A batch copies the record when it is picked, so a measurement that
+          differs from the record is edited on the batch, not here.
+        </p>
+
+        <section class="library-section">
+          <h3 class="library-heading">Your records</h3>
+          <div class="library-records">
+            <template x-for="item in libraryRecords" :key="libraryItemId(item)">
+              <div class="catalog-item-card">
+                <div>
+                  <div class="catalog-item-name" x-text="libraryItemTitle(item)"></div>
+                  <div class="text-xs text-muted" x-text="libraryItemId(item)"></div>
+                </div>
+                <button
+                  type="button"
+                  class="btn-outline text-xs"
+                  @click="deleteLibraryItem(libraryItemId(item))"
+                >Delete</button>
+              </div>
+            </template>
+            <p class="landing-empty" x-show="!libraryRecords.length">
+              No records yet. Create one below, or select a bundled seed.
+            </p>
+          </div>
+        </section>
+
+        <div class="recipes-actions">
+          <button type="button" class="btn-primary text-xs" @click="newLibraryItem()">
+            ＋ New record
+          </button>
+        </div>
+
+        <section class="library-section">
+          <h3 class="library-heading">Bundled seeds (read-only)</h3>
+          <div class="library-records">
+            <template x-for="item in librarySeedItems" :key="libraryItemId(item)">
+              <div class="catalog-item-card is-readonly">
+                <span class="catalog-item-name" x-text="librarySeedItemTitle(item)"></span>
+                <span class="status-badge status-badge-info text-nano">seed</span>
+              </div>
+            </template>
+          </div>
+          <p class="form-hint">
+            Showing <span x-text="librarySeedItems.length"></span> of
+            <span x-text="librarySeedCount"></span> bundled seeds.
+          </p>
+        </section>
+      </div>
+    </template>
 
     <template x-if="libraryDraft">
       <div class="library-editor">
-        <h3 class="library-heading">New record</h3>
+        <h3 class="library-heading" x-text="libraryDraft.forked_from_name ? 'Forked ' + activeKindLabel.toLowerCase() : 'New ' + activeKindLabel.toLowerCase()"></h3>
         <template x-for="f in libraryFields" :key="f.field">
           <div class="form-group">
             <label
@@ -115,7 +237,7 @@
             Cancel
           </button>
           <button type="button" class="btn-primary text-xs" @click="saveLibraryItem()">
-            Save record
+            Save and seal
           </button>
         </div>
         <template x-if="libraryErrors.length">
@@ -127,21 +249,5 @@
         </template>
       </div>
     </template>
-
-    <section class="library-section">
-      <h3 class="library-heading">Bundled seeds (read-only)</h3>
-      <div class="library-records">
-        <template x-for="item in librarySeedItems" :key="libraryItemId(item)">
-          <div class="catalog-item-card is-readonly">
-            <span class="catalog-item-name" x-text="librarySeedItemTitle(item)"></span>
-            <span class="status-badge status-badge-info text-nano">seed</span>
-          </div>
-        </template>
-      </div>
-      <p class="form-hint">
-        Showing <span x-text="librarySeedItems.length"></span> of
-        <span x-text="librarySeedCount"></span> bundled seeds.
-      </p>
-    </section>
   </section>
 </div>

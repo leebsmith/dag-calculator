@@ -9,6 +9,7 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
+import { identityDerivations } from "../views/seedDerivations.js";
 import { createLibrary } from "../store/library.js";
 import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
@@ -30,7 +31,6 @@ import { createBoundaryRunner } from "./boundaryRunner.js";
 import { bindGate, waterTargetGate } from "./waterGate.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
 import { installFieldActions } from "./fieldActions.js";
-import { identityDerivations } from "../views/seedDerivations.js";
 import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
 import { installNavigation } from "./navigation.js";
@@ -181,12 +181,32 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       session.rebuild(state);
+      const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (materialized || synced) this.notify();
+      if (seeded || materialized || synced) this.notify();
       this.syncNav();
+    },
+
+    // Seed the creation-time residuals from the batch's identity snapshot when
+    // the draft does not already carry them. Identity is read-only in the
+    // workspace, so this is the only place the residual roots are derived.
+    seedIdentityResiduals() {
+      let changed = false;
+      for (const [namespace, component] of Object.entries(session.identity() ?? {})) {
+        if (!component || Object.keys(component).length === 0) continue;
+        for (const { rootId, derive } of identityDerivations(namespace)) {
+          if (master.getRoot(rootId) !== undefined) continue;
+          const value = derive(component);
+          if (typeof value === "number" || (typeof value === "string" && value !== "")) {
+            this.setRoot(rootId, value);
+            changed = true;
+          }
+        }
+      }
+      return changed;
     },
 
     // Copy every referenced component into the batch when it lacks a snapshot.
@@ -344,20 +364,6 @@ export function createStepApp(options = {}) {
     session,
     refToSelectionMap: attribution.refToSelectionMap,
   });
-  app.setIdentityComponent = function setIdentityComponent(namespace, component) {
-    session.setIdentity(namespace, component);
-    for (const { rootId } of identityDerivations(namespace)) this.unsetRoot(rootId);
-    if (component) {
-      for (const { rootId, derive } of identityDerivations(namespace)) {
-        const value = derive(component);
-        if (typeof value === "number" || (typeof value === "string" && value !== "")) {
-          this.setRoot(rootId, value);
-        }
-      }
-    }
-    this.compute();
-    this.notify();
-  };
   installDraftEditor(app, { artifact, ui, session });
   installUnitActions(app, { artifact, ui });
   installSnapshot(app, { artifact, cache, master, session });

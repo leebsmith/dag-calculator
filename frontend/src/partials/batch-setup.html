@@ -1,11 +1,11 @@
-<!-- New batch modal --------------------------------------------------------->
+<!-- New batch dialog: selection only. Records are authored in the Library. ------->
 <div
   class="modal-backdrop"
   x-show="$store.setup.state.modalOpen"
   @click.self="$store.setup.closeModal()"
   @keydown.escape.window="$store.setup.closeModal()"
 >
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-workspace">
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
         <h2 class="modal-workspace-title">New batch</h2>
@@ -22,76 +22,57 @@
     </div>
 
     <div class="modal-workspace-body">
-      <p class="form-hint text-warning" role="note">
-        Rig, water source, and style are fixed for this batch. To change them later, start a new batch.
-      </p>
+      <div class="modal-workspace-main">
+        <p class="form-hint text-warning" role="note">
+          Style, rig, and water source are sealed into this batch. To change any of them later,
+          start a new batch.
+        </p>
 
-      <div class="form-group">
-        <label class="form-label"><span>Batch name</span></label>
-        <input
-          class="form-input"
-          type="text"
-          placeholder="e.g. House Pale"
-          :value="$store.setup.state.name"
-          @input="$store.setup.state.name = $event.target.value"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label"><span>Equipment</span></label>
-        <select class="form-select" @change="$store.setup.state.equipmentId = $event.target.value">
-          <template x-for="option in $store.setup.equipmentOptions()" :key="option.value">
-            <option :value="option.value" :selected="option.value === $store.setup.state.equipmentId" x-text="option.label"></option>
-          </template>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label"><span>Water source</span></label>
-        <select class="form-select" @change="$store.setup.state.waterId = $event.target.value">
-          <template x-for="option in $store.setup.waterOptions()" :key="option.value">
-            <option :value="option.value" :selected="option.value === $store.setup.state.waterId" x-text="option.label"></option>
-          </template>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label"><span>Style</span></label>
-        <select class="form-select" @change="$store.setup.state.styleMode = $event.target.value">
-          <option value="styleguide" :selected="$store.setup.state.styleMode === 'styleguide'">Style guide</option>
-          <option value="experimental" :selected="$store.setup.state.styleMode === 'experimental'">Experimental</option>
-        </select>
-      </div>
-
-      <template x-if="$store.setup.state.styleMode === 'styleguide'">
         <div class="form-group">
-          <label class="form-label"><span>Catalogue style</span></label>
+          <label class="form-label"><span>Batch name</span></label>
+          <input
+            class="form-input"
+            type="text"
+            placeholder="e.g. House Pale"
+            :value="$store.setup.state.name"
+            @input="$store.setup.state.name = $event.target.value"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><span>Style</span></label>
           <select class="form-select" @change="$store.setup.state.styleId = $event.target.value">
             <template x-for="option in $store.setup.styleOptions()" :key="option.value">
               <option :value="option.value" :selected="option.value === $store.setup.state.styleId" x-text="option.label"></option>
             </template>
           </select>
         </div>
-      </template>
 
-      <template x-if="$store.setup.state.styleMode === 'experimental'">
-        <div class="step-grid-2col">
-          <template x-for="field in ['og_min','og_max','fg_min','fg_max','ibu_min','ibu_max','srm_min','srm_max','abv_min','abv_max']" :key="field">
-            <div class="form-group">
-              <label class="form-label"><span x-text="field"></span></label>
-              <input
-                class="form-input tabular-nums"
-                type="number"
-                step="0.001"
-                :value="$store.setup.state.customStyle[field]"
-                @input="$store.setup.state.customStyle[field] = Number($event.target.value)"
-              />
-            </div>
-          </template>
+        <div class="form-group">
+          <label class="form-label"><span>Rig</span></label>
+          <select class="form-select" @change="$store.setup.state.equipmentId = $event.target.value">
+            <template x-for="option in $store.setup.equipmentOptions()" :key="option.value">
+              <option :value="option.value" :selected="option.value === $store.setup.state.equipmentId" x-text="option.label"></option>
+            </template>
+          </select>
         </div>
-      </template>
 
-      <p class="form-hint text-danger" x-show="$store.setup.state.error" x-text="$store.setup.state.error"></p>
+        <div class="form-group">
+          <label class="form-label"><span>Water source</span></label>
+          <select class="form-select" @change="$store.setup.state.waterId = $event.target.value">
+            <template x-for="option in $store.setup.waterOptions()" :key="option.value">
+              <option :value="option.value" :selected="option.value === $store.setup.state.waterId" x-text="option.label"></option>
+            </template>
+          </select>
+        </div>
+
+        <p class="form-hint" x-show="!$store.setup.canCreate() && !$store.setup.state.busy">
+          Choose a name, a style, a rig, and a water source. Records are created and sealed in the
+          Library's Sources section.
+        </p>
+
+        <p class="form-hint text-danger" x-show="$store.setup.state.error" x-text="$store.setup.state.error"></p>
+      </div>
     </div>
   </div>
 </div>

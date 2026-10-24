@@ -29,6 +29,7 @@ SEED_FILES = {
     "equipment": ["equipment.json"],
     "water_report": ["water_reports.json"],
     "water_target": ["water_target_profiles.json"],
+    "style": ["styles.json"],
 }
 
 

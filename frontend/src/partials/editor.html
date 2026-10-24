@@ -5,18 +5,16 @@
                     type="text"
                     class="editor-title-input"
                     :value="$store.recipes.activeName"
-                    placeholder="Untitled recipe"
+                    placeholder="Untitled batch"
                     @change="$store.recipes.rename($event.target.value)"
                   />
                 </div>
                 <div class="menu-actions">
-                  <button type="button" class="btn-outline" @click="$store.recipes.backToChooser()">
-                    Recipes
+                  <button type="button" class="btn-outline" @click="$store.recipes.backToBatches()">
+                    Batches
                   </button>
-                  <button type="button" class="btn-outline" @click="$store.recipes.openTrash()">Trash</button>
                   <button type="button" class="btn-outline" @click="$store.recipes.freeze()">Freeze</button>
-                  <button type="button" class="btn-outline" @click="$store.recipes.trash()">Move to Trash</button>
-                  <button type="button" class="btn-outline" @click="openLibrary()">Library</button>
+                  <button type="button" class="btn-outline" @click="$store.recipes.trash()">Move to trash</button>
                   <div class="menu-unit">
                     <button type="button" class="btn-outline" @click="toggleUnits()">Units</button>
                     <div class="unit-popover" x-show="unitsOpen" @click.outside="closeUnits()">

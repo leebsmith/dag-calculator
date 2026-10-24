@@ -29,6 +29,7 @@ class DraftPayload(BaseModel):
     selections: dict[str, dict[str, Any]] = Field(default_factory=dict)
     schema_version: int = 3
     parent_batch_id: str | None = None
+    parent_name: str | None = None
     base_updated_at: float | None = None
     # Client "keep mine" escape hatch: when true, the server skips the optimistic
     # baseline comparison but still refuses to overwrite a frozen batch.
@@ -107,4 +108,5 @@ class BatchRecord(BaseModel):
     provenance: dict[str, dict[str, Any]] | None = None
     conformance: dict[str, Any] | None = None
     parent_batch_id: str | None = None
+    parent_name: str | None = None
     frozen_at: float | None = None

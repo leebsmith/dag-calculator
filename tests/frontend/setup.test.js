@@ -44,22 +44,22 @@ function fakeApp() {
 
 test("identity() snapshots the chosen triplet", () => {
   const store = createSetupStore({});
+  const styleId = store.styleOptions()[0].value;
   const equipmentId = store.equipmentOptions()[0].value;
 
+  store.state.styleId = styleId;
   store.state.equipmentId = equipmentId;
   store.state.waterId = "unknown";
-  store.state.styleMode = "experimental";
   store.state.name = "House Pale";
 
   const identity = store.identity();
+  assert.equal(identity.style.id, styleId);
   assert.equal(identity.equipment.id, equipmentId);
   assert.equal(identity["water.source"].laboratory, "Unknown source");
   assert.equal(identity["water.source"].calcium_ca, 0);
-  assert.equal(identity.style.name, "Experimental");
-  assert.equal(identity.style.og_min, 1.04);
 });
 
-test("canCreate requires a name, a rig, a water source, and a style", () => {
+test("canCreate requires a name, a style, a rig, and a water source", () => {
   const store = createSetupStore({});
   store.openModal();
   assert.equal(store.canCreate(), false);
@@ -67,10 +67,15 @@ test("canCreate requires a name, a rig, a water source, and a style", () => {
   store.state.name = "House Pale";
   assert.equal(store.canCreate(), true);
 
-  store.state.styleMode = "experimental";
-  assert.equal(store.canCreate(), true);
+  store.state.styleId = "";
+  assert.equal(store.canCreate(), false);
+  store.state.styleId = store.styleOptions()[0].value;
 
-  store.state.customStyle.og_min = Number.NaN;
+  store.state.equipmentId = "";
+  assert.equal(store.canCreate(), false);
+  store.state.equipmentId = store.equipmentOptions()[0].value;
+
+  store.state.waterId = "";
   assert.equal(store.canCreate(), false);
 });
 
@@ -93,6 +98,28 @@ test("the authoring forms expose every solver-relevant field", () => {
   assert.equal(water.length, 15);
 });
 
+test("store mutations are observable through store.state", () => {
+  const store = createSetupStore({});
+  const writes = [];
+  store.state = new Proxy(store.state, {
+    set(target, key, value) {
+      writes.push(String(key));
+      return Reflect.set(target, key, value);
+    },
+  });
+
+  store.openModal();
+
+  assert.equal(store.state.modalOpen, true);
+  assert.ok(writes.includes("modalOpen"));
+  assert.ok(writes.includes("name"));
+});
+
+test("prerequisiteStatus names every missing identity source", () => {
+  const store = createSetupStore({});
+  assert.deepEqual(store.prerequisiteStatus(), { ready: true, missing: [] });
+});
+
 test("create() persists a batch carrying the identity snapshot", async () => {
   persistence.setClient(fakeClient());
   const app = fakeApp();
@@ -103,14 +130,13 @@ test("create() persists a batch carrying the identity snapshot", async () => {
   const store = createSetupStore({ onCreated: (active) => (created = active) });
   store.openModal();
   store.state.name = "House Pale";
-  store.state.styleMode = "experimental";
 
   const active = await store.create();
 
   assert.ok(active.id);
   assert.equal(active.name, "House Pale");
   assert.equal(created?.id, active.id);
-  assert.equal(app.loaded.identity.style.name, "Experimental");
+  assert.equal(app.loaded.identity.style.id, store.state.styleId);
   assert.equal(app.loaded.identity["water.source"].calcium_ca, 0);
   assert.equal(store.state.modalOpen, false);
 });

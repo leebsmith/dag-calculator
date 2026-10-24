@@ -1,14 +1,21 @@
-// Record-library surface: kind tabs, a schema-generated create form, deletion,
-// and read-only seed listings. Records live on the server via store/library.js;
+// Record-library surface: administration only. Two sections — Sources (the
+// identity sources a batch is built from) and Ingredients (the step-local
+// formulation records). Records are immutable: create/delete, and a style is
+// forked before it is edited. Records live on the server via store/library.js;
 // this adapter only owns view state and the write actions.
+//
+// Selection never happens here: pickers read the reference cache. The Library
+// never references a batch.
 
-import { CATALOGS, validateComponent } from "../store/userCatalog.js";
+import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
 
-function tabs() {
-  return Object.entries(CATALOGS).map(([id, meta]) => ({ id, label: meta.label }));
+const LINEAGE_FIELDS = new Set(["forked_from_id", "forked_from_name"]);
+
+function tabList(kinds) {
+  return kinds.map((id) => ({ id, label: CATALOGS[id].label }));
 }
 
 function identityOf(meta, item) {
@@ -25,7 +32,9 @@ export function registerLibraryUi(app, ctx) {
 
   Object.assign(app, {
     libraryOpen: false,
-    libraryTab: "equipment",
+    librarySection: "sources", // "sources" | "ingredients"
+    sourceKind: "style",
+    libraryTab: "malt",
     libraryDraft: null,
     libraryErrors: [],
     libraryNotice: "",
@@ -35,21 +44,33 @@ export function registerLibraryUi(app, ctx) {
     libraryTabs: {
       configurable: true,
       get() {
-        return tabs();
+        return tabList(Object.keys(CATALOGS).filter((kind) => !IDENTITY_KINDS.includes(kind)));
+      },
+    },
+    identityTabs: {
+      configurable: true,
+      get() {
+        return tabList(IDENTITY_KINDS);
+      },
+    },
+    activeKind: {
+      configurable: true,
+      get() {
+        return this.librarySection === "sources" ? this.sourceKind : this.libraryTab;
       },
     },
     libraryRecords: {
       configurable: true,
       get() {
         void this.libraryRevision;
-        return this.library.list(this.libraryTab);
+        return this.library.list(this.activeKind);
       },
     },
     librarySeedItems: {
       configurable: true,
       get() {
         void this.libraryRevision;
-        const meta = CATALOGS[this.libraryTab];
+        const meta = CATALOGS[this.activeKind];
         const seeds = cache.seeds[meta?.seedKey] ?? {};
         return Object.values(seeds).slice(0, 50);
       },
@@ -57,7 +78,8 @@ export function registerLibraryUi(app, ctx) {
     librarySeedCount: {
       configurable: true,
       get() {
-        const meta = CATALOGS[this.libraryTab];
+        void this.libraryRevision;
+        const meta = CATALOGS[this.activeKind];
         return Object.keys(cache.seeds[meta?.seedKey] ?? {}).length;
       },
     },
@@ -78,10 +100,10 @@ export function registerLibraryUi(app, ctx) {
     libraryFields: {
       configurable: true,
       get() {
-        const meta = CATALOGS[this.libraryTab];
+        const meta = CATALOGS[this.activeKind];
         const schema = artifact.primitive_schemas?.[meta?.schema] ?? {};
         return Object.entries(schema)
-          .filter(([field]) => field !== meta.idField)
+          .filter(([field]) => field !== meta.idField && !LINEAGE_FIELDS.has(field))
           .map(([field, spec]) => {
             if (spec.taxonomy) {
               return {
@@ -116,11 +138,44 @@ export function registerLibraryUi(app, ctx) {
           });
       },
     },
+    // Styles are forked, never authored from scratch: a custom style starts as a
+    // copy of an existing declaration.
+    canAuthorRecord: {
+      configurable: true,
+      get() {
+        return this.activeKind !== "style";
+      },
+    },
+    canForkRecord: {
+      configurable: true,
+      get() {
+        return this.activeKind === "style";
+      },
+    },
+    activeKindLabel: {
+      configurable: true,
+      get() {
+        return CATALOGS[this.activeKind]?.label ?? this.activeKind;
+      },
+    },
   });
+
+  async function afterRecordsChanged(store) {
+    store.libraryDraft = null;
+    store.libraryErrors = [];
+    await store.refreshLibraryItems();
+    await store.onRecordsChanged?.();
+  }
 
   Object.assign(app, {
     openLibrary(kind) {
-      if (kind && CATALOGS[kind]) this.libraryTab = kind;
+      if (kind && IDENTITY_KINDS.includes(kind)) {
+        this.librarySection = "sources";
+        this.sourceKind = kind;
+      } else if (kind && CATALOGS[kind]) {
+        this.librarySection = "ingredients";
+        this.libraryTab = kind;
+      }
       this.libraryOpen = true;
       this.libraryDraft = null;
       this.libraryErrors = [];
@@ -137,8 +192,26 @@ export function registerLibraryUi(app, ctx) {
       this.libraryNotice = "";
     },
 
+    selectLibrarySection(section) {
+      if (section !== "sources" && section !== "ingredients") return;
+      this.librarySection = section;
+      this.libraryDraft = null;
+      this.libraryErrors = [];
+      this.libraryNotice = "";
+    },
+
+    selectSourceKind(kind) {
+      if (!IDENTITY_KINDS.includes(kind)) return;
+      this.librarySection = "sources";
+      this.sourceKind = kind;
+      this.libraryDraft = null;
+      this.libraryErrors = [];
+      this.libraryNotice = "";
+    },
+
     selectLibraryTab(id) {
-      if (!CATALOGS[id]) return;
+      if (!CATALOGS[id] || IDENTITY_KINDS.includes(id)) return;
+      this.librarySection = "ingredients";
       this.libraryTab = id;
       this.libraryDraft = null;
       this.libraryErrors = [];
@@ -146,15 +219,15 @@ export function registerLibraryUi(app, ctx) {
     },
 
     libraryItemId(item) {
-      return identityOf(CATALOGS[this.libraryTab], item);
+      return identityOf(CATALOGS[this.activeKind], item);
     },
 
     libraryItemTitle(item) {
-      return titleOf(CATALOGS[this.libraryTab], item);
+      return titleOf(CATALOGS[this.activeKind], item);
     },
 
     librarySeedItemTitle(item) {
-      const meta = CATALOGS[this.libraryTab];
+      const meta = CATALOGS[this.activeKind];
       return titleOf(meta, item);
     },
 
@@ -187,9 +260,28 @@ export function registerLibraryUi(app, ctx) {
     },
 
     newLibraryItem() {
+      if (!this.canAuthorRecord) return;
       this.libraryDraft = {};
       this.libraryErrors = [];
       this.libraryNotice = "";
+    },
+
+    // Fork a sealed style: copy its declaration, drop the identity field, record
+    // display lineage. The server assigns the new id, so the record is immutable
+    // from the moment it is saved.
+    forkLibraryItem(item) {
+      if (!this.canForkRecord || !item) return;
+      const meta = CATALOGS[this.activeKind];
+      const id = identityOf(meta, item);
+      const draft = { ...item };
+      delete draft[meta.idField];
+      delete draft.id;
+      draft.name = `${titleOf(meta, item)} (copy)`;
+      draft.forked_from_id = id;
+      draft.forked_from_name = titleOf(meta, item);
+      this.libraryDraft = draft;
+      this.libraryErrors = [];
+      this.libraryNotice = `Forked from ${titleOf(meta, item)}. Edit the declaration, then save.`;
     },
 
     cancelLibraryItem() {
@@ -199,20 +291,19 @@ export function registerLibraryUi(app, ctx) {
 
     async saveLibraryItem() {
       if (!this.libraryDraft) return;
-      const meta = CATALOGS[this.libraryTab];
+      const kind = this.activeKind;
+      const meta = CATALOGS[kind];
       const draft = { ...this.libraryDraft };
       delete draft[meta.idField];
-      const errors = validateComponent(artifact, this.libraryTab, draft);
+      const errors = validateComponent(artifact, kind, draft);
       if (errors.length) {
         this.libraryErrors = errors;
         return;
       }
       try {
-        await this.library.create(this.libraryTab, draft);
-        this.libraryErrors = [];
-        this.libraryDraft = null;
-        this.libraryNotice = "Saved. Records are immutable; corrections create a new record.";
-        await this.refreshLibraryItems();
+        await this.library.create(kind, draft);
+        this.libraryNotice = "Saved and sealed. Records are immutable; corrections create a new record.";
+        await afterRecordsChanged(this);
       } catch (err) {
         this.libraryErrors =
           err?.details?.errors?.map((message) => ({ field: "*", message })) ??
@@ -227,12 +318,9 @@ export function registerLibraryUi(app, ctx) {
         return;
       }
       try {
-        await this.library.remove(this.libraryTab, itemId);
-        if (this.libraryDraft && this.libraryItemId(this.libraryDraft) === itemId) {
-          this.libraryDraft = null;
-        }
+        await this.library.remove(this.activeKind, itemId);
         this.libraryNotice = "";
-        await this.refreshLibraryItems();
+        await afterRecordsChanged(this);
       } catch (err) {
         this.libraryErrors = [{ field: "*", message: String(err?.message ?? err) }];
       }
@@ -240,4 +328,4 @@ export function registerLibraryUi(app, ctx) {
   });
 }
 
-export const KEYS = ["libraryOpen", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "librarySetField", "newLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];
+export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];

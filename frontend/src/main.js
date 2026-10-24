@@ -14,19 +14,17 @@ import {
 import * as persistence from "./store/persistence.js";
 import { createSetupStore } from "./store/setup.js";
 import {
-  FREEZE_RAIL_LIMIT,
-  draftBatches,
-  draftSections,
+  SCOPE_LABELS,
+  batchesForScope,
   formatDate,
-  frozenBatches,
-  recentFreezes,
-  trashedBatches,
+  identityLabel,
+  parentLabel,
 } from "./store/recipeList.js";
 
 setTokenProvider(getIdToken);
 
 // Anchor a fixed-position popover under (or above) its trigger. Fixed
-// positioning keeps menus out of the chooser body's scroll clipping.
+// positioning keeps menus out of the batches body's scroll clipping.
 function anchorStyle(event) {
   const rect = event.currentTarget.getBoundingClientRect();
   const above = rect.bottom > window.innerHeight / 2;
@@ -50,7 +48,7 @@ Alpine.store("auth", {
 const setupStore = createSetupStore({
   onCreated: () => {
     const recipes = Alpine.store("recipes");
-    recipes.trashView = false;
+    recipes.scope = "all";
     recipes.view = "editor";
     recipes.syncActive();
     // A new batch starts at the style parameterisation screen.
@@ -61,8 +59,8 @@ const setupStore = createSetupStore({
 Alpine.store("setup", setupStore);
 
 Alpine.store("recipes", {
-  view: "chooser", // "chooser" | "freezes" | "editor"
-  trashView: false,
+  view: "batches", // "batches" | "editor"
+  scope: "all", // "all" | "drafts" | "frozen" | "trash"
   batches: [],
   activeId: null,
   activeName: "",
@@ -77,36 +75,51 @@ Alpine.store("recipes", {
   renamingId: null,
   renameValue: "",
 
-  get visible() {
-    return this.batches.filter((b) => (b.trashed ?? false) === this.trashView);
+  get rows() {
+    return batchesForScope(this.batches, this.scope, { sort: this.sort });
   },
 
-  get drafts() {
-    return draftBatches(this.batches);
+  get prerequisites() {
+    return Alpine.store("setup").prerequisiteStatus();
   },
 
-  get freezes() {
-    return frozenBatches(this.batches);
-  },
-
-  get recentFreezeRail() {
-    return recentFreezes(this.batches, FREEZE_RAIL_LIMIT);
-  },
-
-  get sections() {
-    return draftSections(this.batches, { sort: this.sort });
-  },
-
-  get trashRows() {
-    return trashedBatches(this.batches);
+  get canCreateBatch() {
+    return this.prerequisites.ready;
   },
 
   get sortLabel() {
     return this.sort === "title" ? "Title" : "Last modified";
   },
 
+  get scopeLabel() {
+    return SCOPE_LABELS[this.scope] ?? "All";
+  },
+
+  get emptyMessage() {
+    if (this.scope === "trash") return "Trash is empty.";
+    if (this.scope === "drafts") return "No drafts.";
+    if (this.scope === "frozen") return "No frozen batches.";
+    return "No batches yet. Create your first batch.";
+  },
+
   dateLabel(seconds) {
     return formatDate(seconds);
+  },
+
+  styleLabel(batch) {
+    return identityLabel(batch, "style");
+  },
+
+  rigLabel(batch) {
+    return identityLabel(batch, "equipment");
+  },
+
+  waterLabel(batch) {
+    return identityLabel(batch, "water.source", "laboratory");
+  },
+
+  parentLabel(batch) {
+    return parentLabel(batch);
   },
 
   syncActive() {
@@ -127,6 +140,14 @@ Alpine.store("recipes", {
     } catch {
       this.loadError = true;
     }
+  },
+
+  setScope(scope) {
+    if (!SCOPE_LABELS[scope]) return;
+    this.scope = scope;
+    this.closeRowMenu();
+    this.closeSort();
+    this.renamingId = null;
   },
 
   toggleSort(event) {
@@ -213,15 +234,24 @@ Alpine.store("recipes", {
     }
   },
 
-  showFreezes() {
+  async restoreRow(batch) {
     this.closeRowMenu();
-    this.closeSort();
-    this.trashView = false;
-    this.view = "freezes";
+    try {
+      await persistence.restore(batch.id);
+      await this.refresh();
+    } catch (err) {
+      console.error("restore failed", err);
+    }
   },
 
-  showRecipes() {
-    this.trashView = false;
+  async deleteRow(batch) {
+    this.closeRowMenu();
+    try {
+      await persistence.deletePermanent(batch.id);
+      await this.refresh();
+    } catch (err) {
+      console.error("delete failed", err);
+    }
   },
 
   keepMine() {
@@ -236,20 +266,20 @@ Alpine.store("recipes", {
     return persistence.saveNow();
   },
 
-  async newRecipe() {
+  async newBatch() {
     Alpine.store("setup").openModal();
   },
 
   async openDraft(id) {
     await persistence.open(id);
-    this.trashView = false;
+    this.scope = "all";
     this.view = "editor";
     this.syncActive();
   },
 
   async forkFrozen(id) {
     await persistence.fork(id);
-    this.trashView = false;
+    this.scope = "all";
     this.view = "editor";
     await this.refresh();
     this.syncActive();
@@ -260,30 +290,20 @@ Alpine.store("recipes", {
     this.syncActive();
   },
 
-  async backToChooser() {
+  async backToBatches() {
     await persistence.flushSave();
     await this.refresh();
     this.renamingId = null;
     this.sortOpen = false;
-    this.trashView = false;
-    this.view = "chooser";
-    this.syncActive();
-  },
-
-  async openTrash() {
-    await persistence.flushSave();
-    await this.refresh();
-    this.renamingId = null;
-    this.sortOpen = false;
-    this.trashView = true;
-    this.view = "chooser";
+    this.view = "batches";
     this.syncActive();
   },
 
   async trash() {
     await persistence.trashActive();
     await this.refresh();
-    this.view = "chooser";
+    this.view = "batches";
+    this.scope = "all";
     this.syncActive();
   },
 
@@ -314,8 +334,8 @@ persistence.setStateObserver(({ state, conflictRemote }) => {
 // --- Auth-owned boot ---------------------------------------------------------
 // The authenticated shell (`.app-content`) is gated on `$store.auth.user` with
 // `x-if`, so nothing compiles or solves before sign-in. On sign-in we land on
-// the recipe chooser; the editor is entered only via New/Open/Fork (each loads
-// state). The user is published only AFTER the list is fetched, so the chooser
+// the Batches view; the editor is entered only via New/Open/Fork (each loads
+// state). The user is published only AFTER the list is fetched, so the list
 // never paints with stale/empty state.
 let stepApp = null;
 let latestUser; // undefined until the first auth callback
@@ -331,8 +351,8 @@ async function applyAuth(user) {
     recipes.batches = [];
     recipes.activeId = null;
     recipes.activeName = "";
-    recipes.view = "chooser";
-    recipes.trashView = false;
+    recipes.view = "batches";
+    recipes.scope = "all";
     recipes.sortOpen = false;
     recipes.rowMenu = null;
     recipes.renamingId = null;
@@ -380,7 +400,7 @@ async function applyAuth(user) {
     await stepApp.library.refresh();
     await stepApp.refreshLibraryItems();
     await Alpine.store("setup").refreshAssets();
-    recipes.view = "chooser";
+    recipes.view = "batches";
   } finally {
     auth.user = user;
     auth.loading = false;
@@ -399,7 +419,7 @@ async function applyAuth(user) {
 }
 
 // The backend binds its port a beat after Vite under `make local-dev`; retry the
-// initial list fetch briefly so the chooser doesn't land empty on the race.
+// initial list fetch briefly so the view doesn't land empty on the race.
 async function refreshWithRetry(recipes, attempts = 6) {
   for (let i = 0; i < attempts; i++) {
     try {
@@ -428,8 +448,13 @@ Alpine.data("stepCalculator", () => {
   app.bindReactive(app);
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
+  app.onRecordsChanged = () => {
+    Alpine.store("setup")
+      .refreshAssets()
+      .catch((err) => console.error("setup refresh failed", err));
+  };
   stepApp = app;
-  // Auth may have resolved before this factory ran — land on the chooser now.
+  // Auth may have resolved before this factory ran — land on Batches now.
   if (latestUser !== undefined) applyAuth(latestUser).catch((err) => console.error("auth handling failed", err));
   return app;
 });

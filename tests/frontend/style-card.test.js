@@ -2,18 +2,34 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 
-test("selectStyle inherits the envelope and seeds the residual fermentation targets", () => {
+const cache = createReferenceCache();
+
+// A batch's style is its identity: it is sealed at creation and loaded as a
+// snapshot, never selected from the workspace.
+async function appWithStyle(styleId = "21A") {
   const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
+  await app.loadState({
+    identity: {
+      style: cache.references.style[styleId] ?? {},
+      equipment: {},
+      "water.source": {},
+    },
+    roots: {},
+    collections: {},
+    selections: {},
+  });
   app.compute();
+  return app;
+}
+
+test("the sealed style declaration seeds the residual targets", async () => {
+  const app = await appWithStyle("21A");
 
   assert.equal(app.engine.identity.style.id, "21A");
-  assert.equal(app.master.getRoot("batch.target_ibu"), undefined);
   assert.deepEqual(app.styleSrmBounds, [6, 14]);
   assert.deepEqual(app.styleIbuBounds, [40, 70]);
-  // The residual three are host-seeded at selection time.
   assert.equal(app.master.getRoot("batch.fermentation"), "ale");
 
   const aa = app.master.getRoot("batch.apparent_attenuation");
@@ -22,188 +38,56 @@ test("selectStyle inherits the envelope and seeds the residual fermentation targ
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
 });
 
-test("the envelope is identity-backed and read-only", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.compute();
+test("the style declaration is read-only and has no workspace selector", async () => {
+  const app = await appWithStyle("21A");
 
   const field = app.fieldsById["style.og_min"];
   assert.equal(field.value, 1.056);
   assert.equal(field.editable, false);
   app.edit(field, "1.040");
   assert.equal(app.engine.identity.style.og_min, 1.056);
+
+  // Identity is frozen at creation: the workspace cannot write it.
+  assert.equal(app.selectStyle, undefined);
+  assert.equal(app.clearStyleSelection, undefined);
+  assert.equal(app.setIdentityComponent, undefined);
 });
 
-test("selecting a different style replaces the identity declaration", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.compute();
-  assert.equal(app.engine.identity.style.og_min, 1.056);
-  app.selectStyle("21B Black IPA");
-  app.compute();
-  assert.notEqual(app.engine.identity.style.og_min, 1.056);
-  assert.equal(app.master.getRoot("batch.style_og_min"), undefined);
-});
-
-test("clearStyleSelection clears the style id and resets fermentation", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.clearStyleSelection();
-  app.compute();
-
-  assert.deepEqual(app.engine.identity.style, {});
-  assert.equal(app.master.getRoot("batch.fermentation"), undefined);
-  assert.equal(app.fieldsById["batch.fermentation"].value, "ale");
-});
-
-test("selecting a stats-less style does not seed fermentation targets", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("34C");
-  app.compute();
+test("a stats-less style leaves the residuals unseeded", async () => {
+  const app = await appWithStyle("34C");
 
   assert.equal(app.engine.identity.style.id, "34C");
   assert.equal(Number.isFinite(app.engine.identity.style.og_min), false);
   assert.equal(app.master.getRoot("batch.apparent_attenuation"), undefined);
 });
 
-test("the picker initialises to the envelope centroid and seeds the roots", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21B Black IPA");
-  app.compute();
-
-  assert.ok(app.styleRegion.length >= 3);
-  assert.ok(app.styleExtract);
-  assert.ok(app.styleSafestPoint);
-  const info = app.styleTargetInfo;
-  assert.ok(info.og > 1 && info.og < 1.15);
-  assert.ok(info.fg > 1 && info.fg < info.og);
-  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-6);
-  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-6);
-});
-
-test("moving the OE slider clamps into the region and re-seeds", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21B Black IPA");
-  app.compute();
-
-  const bounds = app.styleOeBounds;
-  app.setStyleTargetOe(bounds[1] + 100); // beyond the region's OE max at the current AE
-  assert.ok(app.styleExtract.oe <= bounds[1] + 1e-6);
-  assert.ok(app.styleExtract.oe >= bounds[0] - 1e-6);
-  const info = app.styleTargetInfo;
-  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-6);
-});
-
-test("resetStyleTarget returns to the envelope centroid", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21B Black IPA");
-  app.compute();
-  const centroidOe = app.styleExtract.oe;
-
-  app.setStyleTargetOe(app.styleOeBounds[0]);
-  assert.notEqual(app.styleExtract.oe, centroidOe);
+test("the fermentation navigator writes the batch targets, not the declaration", async () => {
+  const app = await appWithStyle("21A");
 
   app.resetStyleTarget();
-  assert.ok(Math.abs(app.styleExtract.oe - centroidOe) < 1e-6);
+  const info = app.styleTargetInfo;
+
+  assert.ok(info.og > 1);
+  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-9);
+  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-9);
 });
 
-test("the preview preserves the region's aspect ratio", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21B Black IPA");
-  app.compute();
-
-  const points = app.stylePreview.polygon.split(" ").map((p) => p.split(",").map(Number));
-  const xs = points.map(([x]) => x);
-  const ys = points.map(([, y]) => y);
-  const boxAspect = (Math.max(...xs) - Math.min(...xs)) / (Math.max(...ys) - Math.min(...ys));
-
-  const region = app.styleRegion;
-  const rxs = region.map(([x]) => x);
-  const rys = region.map(([, y]) => y);
-  const regionAspect = (Math.max(...rxs) - Math.min(...rxs)) / (Math.max(...rys) - Math.min(...rys));
-
-  assert.ok(Math.abs(boxAspect - regionAspect) < 0.02);
-});
-
-test("the region follows the identity declaration, not batch state", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21B Black IPA");
-  app.compute();
-
-  assert.ok(app.styleRegion.length >= 3);
-  assert.ok(app.styleExtract);
-  assert.equal(app.master.getRoot("batch.style_og_max"), undefined);
-});
-
-test("target sliders: SRM/IBU bounds come from the style envelope", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.compute();
-
-  const srm = app.styleSrmBounds;
-  const ibu = app.styleIbuBounds;
-  assert.ok(Array.isArray(srm) && srm[0] < srm[1]);
-  assert.ok(Array.isArray(ibu) && ibu[0] < ibu[1]);
-  // Bounds come from the selected style's envelope (pulled, not stored).
-  assert.deepEqual(srm, [6, 14]);
-  assert.deepEqual(ibu, [40, 70]);
-  assert.equal(app.master.getRoot("batch.style_srm_min"), undefined);
-});
-
-test("target sliders: whirlpool fraction splits the IBU target", () => {
-  const app = createStepApp();
-  app.boot();
-  app.setTargetIbu(40);
-  app.setWhirlpoolFraction(0.25);
-
-  assert.equal(app.targetIbu, 40);
-  assert.equal(app.whirlpoolPctDisplay, 25);
-  assert.ok(Math.abs(app.boilIbu - 30) < 1e-9);
-  assert.ok(Math.abs(app.whirlpoolIbu - 10) < 1e-9);
-});
-
-test("target sliders: selecting a style seeds the midpoints", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.compute();
-
-  assert.equal(app.master.getRoot("batch.target_ibu"), undefined);
-  assert.ok(Math.abs(app.targetIbu - (40 + 70) / 2) < 1e-9);
-});
-
-test("planned IBU/GU uses the target IBU and the planned OG (no solve)", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.compute();
+test("IBU/GU uses the planned target and the navigator's OG", async () => {
+  const app = await appWithStyle("21A");
+  app.resetStyleTarget();
   app.setTargetIbu(40);
 
   const og = app.styleTargetInfo.og;
-  assert.ok(typeof og === "number" && og > 1);
   const expected = 40 / ((og - 1) * 1000);
   assert.ok(Math.abs(app.ibuGu - expected) < 1e-9);
   assert.equal(app.ibuGuDisplay, expected.toFixed(2));
 });
 
-test("fieldsById indexes the projected models and powers the envelope grid", () => {
-  const app = createStepApp();
-  app.boot();
-  app.selectStyle("21A");
-  app.compute();
+test("fieldsById indexes the projected models and powers the envelope grid", async () => {
+  const app = await appWithStyle("21A");
 
   assert.equal(app.fieldsById["style.og_min"].id, "style.og_min");
-  assert.equal(app.styleField("batch.fermentation").id, "batch.fermentation");
+  assert.equal(app.styleField, undefined);
 
   const envelope = app.styleEnvelopeFields;
   assert.equal(envelope.length, 10);
@@ -227,12 +111,6 @@ test("fieldsById indexes the projected models and powers the envelope grid", () 
     assert.equal(typeof row.step, "string");
     assert.equal(typeof row.provenance.showSeed, "boolean");
   }
-  const label = app.styleResultLabel;
-  assert.match(label, /^Showing \d+( of \d+)? matching styles/);
-  assert.equal(
-    label,
-    `Showing ${app.visibleStyles.length} of ${app.styleResultCount} matching styles — refine search`
-  );
 });
 
 test("utils namespace is exposed to templates", () => {

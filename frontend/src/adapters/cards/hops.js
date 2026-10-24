@@ -248,6 +248,45 @@ export function registerHopCard(app, ctx) {
         : "—";
     },
 
+    // The batch row owns the measured value; the catalogue's alpha band is
+    // context (a descriptive range, never a gate).
+    hopAlphaInput(row) {
+      return typeof row?.alpha_acid_pct === "number"
+        ? Number((row.alpha_acid_pct * 100).toFixed(2))
+        : "";
+    },
+
+    hopAlphaRange(row) {
+      const record = ctx.cache.references.hop?.[row?.hop_id];
+      const lo = record?.alpha_acid_min_pct;
+      const hi = record?.alpha_acid_max_pct;
+      if (!isFiniteNumber(lo) || !isFiniteNumber(hi)) return "";
+      return `stock ${(lo * 100).toFixed(1)}–${(hi * 100).toFixed(1)}%`;
+    },
+
+    hopAlphaOutsideStock(row) {
+      const record = ctx.cache.references.hop?.[row?.hop_id];
+      const lo = record?.alpha_acid_min_pct;
+      const hi = record?.alpha_acid_max_pct;
+      const value = row?.alpha_acid_pct;
+      if (!isFiniteNumber(lo) || !isFiniteNumber(hi) || !isFiniteNumber(value)) return false;
+      return value < lo || value > hi;
+    },
+
+    // Batch-scoped measurement edit: the row is batch data, not a record. The
+    // IBU -> mass solve reads this value, so the mass re-solves immediately.
+    setHopAlpha(kind, index, value) {
+      const nodeId = kind === "whirlpool" ? N.whirlpoolCollection : N.collection;
+      const rows = (engine.get(nodeId) ?? []).map((row) => ({ ...row }));
+      const row = rows[index];
+      if (!row) return;
+      const pct = Number(value);
+      row.alpha_acid_pct = Number.isFinite(pct) ? Math.max(0, Math.min(1, pct / 100)) : 0;
+      engine.setCollection(nodeId, rows);
+      this.scheduleSolve();
+      this.notify();
+    },
+
     hopBoilPct(row) {
       return typeof row?.boil_time_fraction === "number"
         ? `${Math.round(row.boil_time_fraction * 100)}%`
@@ -461,6 +500,10 @@ export const KEYS = [
   "whirlpoolHopMass",
   "hopForm",
   "hopAlpha",
+  "hopAlphaInput",
+  "hopAlphaRange",
+  "hopAlphaOutsideStock",
+  "setHopAlpha",
   "hopBoilPct",
   "hopMinutes",
   "hopTemp",

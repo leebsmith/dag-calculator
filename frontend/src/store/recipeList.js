@@ -1,22 +1,19 @@
-// Pure list shaping for the recipe landing page. No DOM, no store state — the
-// store composes these helpers so the partition/sort rules stay testable.
+// Pure list shaping for the Batches view. No DOM, no store state — the store
+// composes these helpers so the scope/sort rules stay testable.
 
 import { formatDate } from "../utils.js";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+export const BATCH_SCOPES = ["all", "drafts", "frozen", "trash"];
 
-export const RECENT_WINDOW_DAYS = 30;
-export const FREEZE_RAIL_LIMIT = 6;
-
-export { formatDate };
+export const SCOPE_LABELS = {
+  all: "All",
+  drafts: "Drafts",
+  frozen: "Frozen",
+  trash: "Trash",
+};
 
 function updatedMs(batch) {
   return typeof batch?.updated_at === "number" ? batch.updated_at * 1000 : 0;
-}
-
-function frozenMs(batch) {
-  if (typeof batch?.frozen_at === "number") return batch.frozen_at * 1000;
-  return updatedMs(batch);
 }
 
 function titleCompare(a, b) {
@@ -42,43 +39,33 @@ export function isTrashed(batch) {
   return batch?.trashed === true;
 }
 
-export function draftBatches(batches) {
-  return (batches ?? []).filter((b) => !isFrozen(b) && !isTrashed(b));
-}
-
-export function frozenBatches(batches) {
-  return (batches ?? [])
-    .filter((b) => isFrozen(b) && !isTrashed(b))
-    .sort((a, b) => frozenMs(b) - frozenMs(a) || titleCompare(a, b));
-}
-
-export function recentFreezes(batches, limit = FREEZE_RAIL_LIMIT) {
-  return frozenBatches(batches).slice(0, Math.max(0, limit));
-}
-
-export function trashedBatches(batches) {
-  return (batches ?? [])
-    .filter(isTrashed)
-    .sort((a, b) => updatedMs(b) - updatedMs(a) || titleCompare(a, b));
-}
-
 export function sortBatches(batches, sort = "modified") {
   return [...batches].sort(sort === "title" ? byTitle : byModified);
 }
 
-export function draftSections(
-  batches,
-  { now = Date.now(), sort = "modified", windowDays = RECENT_WINDOW_DAYS } = {}
-) {
-  const cutoff = now - windowDays * DAY_MS;
-  const recent = [];
-  const older = [];
-  for (const batch of draftBatches(batches)) {
-    if (updatedMs(batch) >= cutoff) recent.push(batch);
-    else older.push(batch);
-  }
-  return [
-    { key: "recent", label: `Last ${windowDays} days`, batches: sortBatches(recent, sort) },
-    { key: "older", label: "Older", batches: sortBatches(older, sort) },
-  ].filter((section) => section.batches.length);
+// Scope is the only partition: trash is a scope, not a separate screen, and
+// frozen is a status filter rather than a destination.
+export function batchesForScope(batches, scope = "all", { sort = "modified" } = {}) {
+  const rows = (batches ?? []).filter((batch) => {
+    if (scope === "trash") return isTrashed(batch);
+    if (isTrashed(batch)) return false;
+    if (scope === "drafts") return !isFrozen(batch);
+    if (scope === "frozen") return isFrozen(batch);
+    return true;
+  });
+  return sortBatches(rows, sort);
 }
+
+// The identity snapshot is a copy, so a row shows its labels as text. Namespaces
+// are `style`, `equipment`, and `water.source`.
+export function identityLabel(batch, namespace, field = "name") {
+  const component = batch?.identity?.[namespace];
+  if (!component) return "";
+  return component[field] || component.laboratory || component.id || component.report_id || "";
+}
+
+export function parentLabel(batch) {
+  return batch?.parent_name || "";
+}
+
+export { formatDate };

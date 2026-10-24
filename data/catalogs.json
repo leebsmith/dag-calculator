@@ -1,4 +1,12 @@
 {
+  "style": {
+    "label": "Style",
+    "schema": "style",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": "style",
+    "seed_key": "styles"
+  },
   "malt": {
     "label": "Malt",
     "schema": "malt",

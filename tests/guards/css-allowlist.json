@@ -9,7 +9,7 @@
       "declarations": "outline-offset: 2px; outline: 2px solid var(--sys-border-focus)",
       "selectors": [
         ".btn:focus-visible",
-        ".landing-create:focus-visible, .landing-title:focus-visible, .landing-kebab:focus-visible, .landing-freeze-card:focus-visible",
+        ".landing-title:focus-visible, .landing-kebab:focus-visible",
         ".brew-day-section-toggle:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
@@ -127,15 +127,6 @@
     },
     {
       "context": "",
-      "declarations": "background-color: var(--sys-surface-selected)",
-      "selectors": [
-        ".data-table tr.is-selected",
-        ".recipes-item.is-active"
-      ],
-      "reason": "Coincidental selected surface; table row and recipe item are unrelated."
-    },
-    {
-      "context": "",
       "declarations": "align-items: center; display: flex; gap: var(--space-3); justify-content: space-between",
       "selectors": [
         ".unit-row",
@@ -147,7 +138,6 @@
       "context": "",
       "declarations": "background-color: var(--sys-surface-hover)",
       "selectors": [
-        ".recipes-item:hover",
         ".landing-table tbody tr:hover",
         ".landing-menu-item:hover"
       ],
@@ -157,11 +147,10 @@
       "context": "",
       "declarations": "color: var(--sys-text-muted)",
       "selectors": [
-        ".recipes-item.is-frozen",
         ".text-muted",
         ".sev-note"
       ],
-      "reason": "Semantic frozen state and the muted utility converge; sev-note is dynamic."
+      "reason": "The muted utility and the semantic severity note converge."
     },
     {
       "context": "",
@@ -174,15 +163,6 @@
     },
     {
       "context": "",
-      "declarations": "display: flex; flex-direction: column; gap: var(--space-2)",
-      "selectors": [
-        ".landing-group",
-        ".brew-day-step"
-      ],
-      "reason": "Coincidental column layout; landing group and brew-day step are unrelated."
-    },
-    {
-      "context": "",
       "declarations": "accent-color: var(--sys-color-action-primary)",
       "selectors": [
         ".brew-day-step-toggle input[type=\"checkbox\"]",
@@ -190,6 +170,15 @@
         ".mash-rest-toggle input[type=\"checkbox\"]"
       ],
       "reason": "Shared control accent recipe; checkbox and slider contexts differ."
+    },
+    {
+      "context": "",
+      "declarations": "color: var(--sys-text-primary); font-size: var(--text-lg); font-weight: var(--font-weight-semibold); margin: var(--space-0)",
+      "selectors": [
+        ".card-title",
+        ".landing-heading"
+      ],
+      "reason": "Coincidental section-title recipe; the card heading and the page section heading are independent."
     }
   ],
   "classes": []

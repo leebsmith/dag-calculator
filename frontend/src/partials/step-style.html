@@ -5,132 +5,11 @@
   </div>
 
   <div class="step-card-content">
-    <!-- Style declaration: fixed for this batch -->
-    <div class="form-group">
-      <label class="form-label">
-        <span>Style source</span>
-      </label>
-      <p class="form-hint">
-        <span x-text="fmt.optionLabel(styleSourceModel.optionLabels, styleSourceModel.value)"></span>
-        — rig, water, and style define this batch. Changing the style below redefines it;
-        the new-batch flow will make that explicit.
-      </p>
-    </div>
-
-    <!-- Styleguide picker -->
-    <template x-if="styleSource === 'styleguide'">
-      <div>
-        <div class="step-grid-2col">
-          <div class="form-group">
-            <label class="form-label">Search by name, number, or category</label>
-            <input
-              type="text"
-              class="form-input"
-              placeholder="e.g. IPA, 21A, lager"
-              x-model="styleSearchQuery"
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Category</label>
-            <select class="form-select" x-model="styleCategoryFilter">
-              <option value="">All categories</option>
-              <template x-for="c in styleCategories" :key="c">
-                <option :value="c" x-text="c"></option>
-              </template>
-            </select>
-          </div>
-        </div>
-
-        <div class="filter-pills-container">
-          <template x-for="s in styleStrengths" :key="'s-' + s">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': styleStrengthFilter === s }"
-              @click="toggleStyleStrength(s)"
-              x-text="s"
-            ></button>
-          </template>
-          <template x-for="c in styleColors" :key="'c-' + c">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': styleColorFilter === c }"
-              @click="toggleStyleColor(c)"
-              x-text="c"
-            ></button>
-          </template>
-          <template x-for="f in styleFermentations" :key="'f-' + f">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': styleFermentationFilter === f }"
-              @click="toggleStyleFermentation(f)"
-              x-text="f"
-            ></button>
-          </template>
-        </div>
-
-        <div
-          class="catalog-result-counter"
-          aria-live="polite"
-          x-text="styleResultLabel"
-        ></div>
-
-        <div class="data-table-container data-table-container-scroll">
-          <table class="data-table is-fixed">
-            <colgroup>
-              <col style="width: 34%;" />
-              <col style="width: 24%;" />
-              <col style="width: 14%;" />
-              <col style="width: 14%;" />
-              <col style="width: 14%;" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Style</th>
-                <th>Category</th>
-                <th class="text-right">OG</th>
-                <th class="text-right">FG</th>
-                <th class="text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="s in visibleStyles" :key="s.id">
-                <tr :class="{ 'is-selected': selectedStyleId === s.id }">
-                  <td>
-                    <span class="font-medium" x-text="s.name"></span>
-                    <span class="text-xs text-muted" x-text="' ' + s.id"></span>
-                  </td>
-                  <td x-text="s.category_name"></td>
-                  <td class="text-right tabular-nums" x-text="fmt.formatGravityRange(s.og_min, s.og_max)"></td>
-                  <td class="text-right tabular-nums" x-text="fmt.formatGravityRange(s.fg_min, s.fg_max)"></td>
-                  <td class="table-action-cell">
-                    <button type="button" class="btn btn-secondary text-xs" @click="selectStyle(s.id)">
-                      Use
-                    </button>
-                  </td>
-                </tr>
-              </template>
-              <template x-if="filteredStyles.length === 0">
-                <tr>
-                  <td colspan="5" class="table-empty-cell">No styles match the current filters.</td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </template>
-
     <!-- Selected style readout -->
     <template x-if="selectedStyle">
       <div class="synthesized-card">
         <div class="synthesized-header">
           <span class="synthesized-title" x-text="selectedStyle.name + ' (' + selectedStyle.id + ')'"></span>
-          <button type="button" class="btn btn-secondary text-xs" @click="clearStyleSelection()">
-            Clear
-          </button>
         </div>
         <div class="text-xs text-muted" x-text="selectedStyle.overall_impression"></div>
         <div class="text-xs text-muted" x-show="selectedStyle.comments" x-text="selectedStyle.comments"></div>
@@ -354,7 +233,7 @@
       </div>
     </template>
 
-    <!-- Style envelope (editable in both modes) -->
+    <!-- Style envelope: the sealed declaration is read-only -->
     <div class="synthesized-card">
       <div class="synthesized-header">
         <h3 class="synthesized-title">Style envelope</h3>
@@ -362,28 +241,11 @@
       <div class="form-group">
         <label class="form-label">
           <span>Fermentation</span>
-          <span
-            class="seed-badge"
-            x-show="fermentationProvenance.showSeed"
-            :title="fermentationProvenance.seedTitle"
-          >seed</span>
-          <button
-            type="button"
-            class="seed-reset"
-            x-show="fermentationProvenance.showReset"
-            :title="fermentationProvenance.resetTitle"
-            @click="resetField(fermentationField)"
-          >↺</button>
         </label>
-        <select
-          class="form-select"
-          :value="fermentationField.value"
-          @change="edit(fermentationField, $event.target.value)"
-        >
-          <template x-for="opt in styleFermentations" :key="opt">
-            <option :value="opt" :selected="opt === fermentationField.value" x-text="fmt.optionLabel(fermentationField.optionLabels, opt)"></option>
-          </template>
-        </select>
+        <span
+          class="field-value"
+          x-text="fmt.optionLabel(fermentationField.optionLabels, fermentationField.value)"
+        ></span>
       </div>
       <div class="step-grid-2col">
         <template x-for="row in styleEnvelopeFields" :key="row.id">

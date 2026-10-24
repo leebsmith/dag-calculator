@@ -3,9 +3,6 @@
 // editor); the region math lives in engine/fermentation.js.
 
 import {
-  styleCentroid,
-  styleFermentation,
-  styleTagSet,
   feasibleVertices,
   polygonCentroid,
   pointInRegion,
@@ -27,12 +24,8 @@ import {
   formatGravityRange,
   formatWithDecimals,
   provenanceFor,
-  resultCounter,
-  toggleFilter,
 } from "../../utils.js";
 import { reportError } from "../../observability.js";
-
-const MAX_VISIBLE_STYLES = 25;
 
 // Envelope inputs, in display order, with their authored step size.
 const ENVELOPE_INPUTS = [
@@ -48,41 +41,17 @@ const ENVELOPE_INPUTS = [
   { id: N.envelope.abvMax, step: "0.1" },
 ];
 
-function styleStrength(style) {
-  const tags = styleTagSet(style);
-  if (tags.has("session-strength")) return "session";
-  if (tags.has("standard-strength")) return "standard";
-  if (tags.has("high-strength")) return "high";
-  if (tags.has("very-high-strength")) return "very high";
-  return "";
-}
-
-function styleColor(style) {
-  const tags = styleTagSet(style);
-  if (tags.has("pale-color")) return "pale";
-  if (tags.has("amber-color")) return "amber";
-  if (tags.has("dark-color")) return "dark";
-  return "";
-}
-
 export function registerStyleCard(app, ctx) {
   const { engine, cache } = ctx;
 
   Object.assign(app, {
     selectedStyleId: "",
-    styleSource: "styleguide",
     styleRegion: [],
     styleEnvelope: null,
     styleSafestPoint: null,
     styleExtract: null,
     styleConformance: null,
     styleSai: null,
-
-    styleSearchQuery: "",
-    styleCategoryFilter: "",
-    styleStrengthFilter: "",
-    styleColorFilter: "",
-    styleFermentationFilter: "",
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
     targetSrm: 0,
@@ -100,34 +69,6 @@ export function registerStyleCard(app, ctx) {
         s?.fg_min,
         s?.fg_max
       )}`;
-    },
-
-    toggleStyleStrength(value) {
-      this.styleStrengthFilter = toggleFilter(this.styleStrengthFilter, value);
-    },
-
-    toggleStyleColor(value) {
-      this.styleColorFilter = toggleFilter(this.styleColorFilter, value);
-    },
-
-    toggleStyleFermentation(value) {
-      this.styleFermentationFilter = toggleFilter(this.styleFermentationFilter, value);
-    },
-
-    selectStyle(id) {
-      this.setIdentityComponent("style", cache.references.style[id] ?? null);
-      this.refreshTargets();
-      this.scheduleSolve();
-    },
-
-    clearStyleSelection() {
-      this.setIdentityComponent("style", null);
-      this.refreshTargets();
-      this.scheduleSolve();
-    },
-
-    styleField(id) {
-      return fieldOr(this.fieldsById, id);
     },
 
     // The batch AA / target-ABV roots are the source of truth; the picker's
@@ -274,85 +215,10 @@ export function registerStyleCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
-    styleCatalog: {
-      configurable: true,
-      get() {
-        return Object.values(cache.references.style ?? {});
-      },
-    },
-    styleCategories: {
-      configurable: true,
-      get() {
-        return [...new Set(this.styleCatalog.map((s) => s.category_name).filter(Boolean))].sort();
-      },
-    },
-    styleStrengths: {
-      configurable: true,
-      get() {
-        return ["session", "standard", "high", "very high"];
-      },
-    },
-    styleColors: {
-      configurable: true,
-      get() {
-        return ["pale", "amber", "dark"];
-      },
-    },
-    styleFermentations: {
-      configurable: true,
-      get() {
-        return ["ale", "lager", "wild", "mixed"];
-      },
-    },
-    filteredStyles: {
-      configurable: true,
-      get() {
-        const q = this.styleSearchQuery.trim().toLowerCase();
-        const cat = this.styleCategoryFilter;
-        const strength = this.styleStrengthFilter;
-        const color = this.styleColorFilter;
-        const ferm = this.styleFermentationFilter;
-        return this.styleCatalog.filter((s) => {
-          const haystack = `${s.name ?? ""} ${s.id ?? ""} ${s.category_name ?? ""} ${s.tags ?? ""}`.toLowerCase();
-          if (q && !haystack.includes(q)) return false;
-          if (cat && s.category_name !== cat) return false;
-          if (strength && styleStrength(s) !== strength) return false;
-          if (color && styleColor(s) !== color) return false;
-          if (ferm && styleFermentation(s) !== ferm) return false;
-          return true;
-        });
-      },
-    },
-    visibleStyles: {
-      configurable: true,
-      get() {
-        return this.filteredStyles.slice(0, MAX_VISIBLE_STYLES);
-      },
-    },
-    styleResultCount: {
-      configurable: true,
-      get() {
-        return this.filteredStyles.length;
-      },
-    },
-    isStyleListTruncated: {
-      configurable: true,
-      get() {
-        return this.styleResultCount > MAX_VISIBLE_STYLES;
-      },
-    },
     selectedStyle: {
       configurable: true,
       get() {
         return this.selectedStyleId ? cache.references.style[this.selectedStyleId] ?? null : null;
-      },
-    },
-    selectedStyleTarget: {
-      configurable: true,
-      get() {
-        const s = this.selectedStyle;
-        if (!s) return null;
-        return styleCentroid(s);
       },
     },
     styleOeBounds: {
@@ -480,19 +346,6 @@ export function registerStyleCard(app, ctx) {
         return provenanceFor(this.fermentationField);
       },
     },
-    styleSourceModel: {
-      configurable: true,
-      get() {
-        return {
-          id: "style",
-          value: this.styleSource,
-          options: ["styleguide", "experimental"],
-          optionLabels: { styleguide: "Style guide", experimental: "Experimental" },
-          editable: false,
-          target: null,
-        };
-      },
-    },
     // Envelope editors, in display order, with resolved field models and seed
     // provenance so the template stays a dumb x-for.
     styleEnvelopeFields: {
@@ -501,18 +354,6 @@ export function registerStyleCard(app, ctx) {
         return ENVELOPE_INPUTS.map(({ id, step }) => {
           const field = fieldOr(this.fieldsById, id);
           return { id, step, field, provenance: provenanceFor(field) };
-        });
-      },
-    },
-    styleResultLabel: {
-      configurable: true,
-      get() {
-        return resultCounter({
-          shown: this.visibleStyles.length,
-          total: this.styleResultCount,
-          noun: "matching style",
-          truncated: this.isStyleListTruncated,
-          truncatedHint: "refine search",
         });
       },
     },
@@ -583,9 +424,8 @@ export function registerStyleCard(app, ctx) {
 
 export function refreshStyleCard(app, ctx) {
   app.selectedStyleId = ctx.engine.identity?.style?.id ?? "";
-  app.styleSource = ctx.engine.identity?.style?.id ? "styleguide" : "experimental";
   app.computeStyleTarget();
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleSource", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleSearchQuery", "styleCategoryFilter", "styleStrengthFilter", "styleColorFilter", "styleFermentationFilter", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "toggleStyleStrength", "toggleStyleColor", "toggleStyleFermentation", "selectStyle", "clearStyleSelection", "styleField", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "styleCatalog", "styleCategories", "styleStrengths", "styleColors", "styleFermentations", "filteredStyles", "visibleStyles", "styleResultCount", "isStyleListTruncated", "selectedStyle", "selectedStyleTarget", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleSourceModel", "styleEnvelopeFields", "styleResultLabel", "conformanceSummary", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

@@ -6,6 +6,12 @@ import { kettleBlend, ionDelta } from "../../frontend/src/adapters/cards/water.j
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import waterTargetProfiles from "../../data/seeds/water_target_profiles.json" with { type: "json" };
 
+async function loadWaterSource(app, source) {
+  const identity = { ...app.engine.identity, "water.source": source };
+  await app.loadState({ identity, roots: {}, collections: {}, selections: {} });
+  app.compute();
+}
+
 test("kettleBlend reduces to the mash vector when both vessels are identical", () => {
   const mash = { calcium_ca: 60, magnesium_mg: 5, sodium_na: 10, sulfate_so4: 100, chloride_cl: 50, alkalinity_as_caco3: 40 };
   const hlt = { ...mash };
@@ -73,10 +79,10 @@ test("the checked set drives the grid and the derived strategy", () => {
   }
 });
 
-test("checking an ion seeds a value from the water source", () => {
+test("checking an ion seeds a value from the water source", async () => {
   const app = createStepApp();
   app.boot();
-  app.setIdentityComponent("water.source", {
+  await loadWaterSource(app, {
     report_id: "w1",
     laboratory: "Ward",
     calcium_ca: 40,
@@ -205,10 +211,10 @@ test("target changes recalculate immediately and queue a save", () => {
   assert.equal(saves, 3, "editing a target recalculates and queues a save");
 });
 
-test("source ions render only in the comparison grid", () => {
+test("source ions render only in the comparison grid", async () => {
   const app = createStepApp();
   app.boot();
-  app.setIdentityComponent("water.source", {
+  await loadWaterSource(app, {
     report_id: "25138",
     laboratory: "Ward Labs",
     calcium_ca: 40,
@@ -233,10 +239,10 @@ test("source ions render only in the comparison grid", () => {
   assert.equal(rows.magnesium_mg.sourceText, "8.0");
 });
 
-test("water readouts use the fixed precision policy", () => {
+test("water readouts use the fixed precision policy", async () => {
   const app = createStepApp();
   app.boot();
-  app.setIdentityComponent("water.source", {
+  await loadWaterSource(app, {
     report_id: "25138",
     laboratory: "Ward Labs",
     calcium_ca: 40,

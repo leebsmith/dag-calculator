@@ -160,6 +160,7 @@ export async function fork(frozenId) {
   const created = await client.upsertBatch(crypto.randomUUID(), {
     name: `${frozen.name} (copy)`,
     parent_batch_id: frozen.id,
+    parent_name: frozen.name,
     identity: frozen.identity,
     roots: frozen.roots,
     collections: frozen.collections,

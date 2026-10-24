@@ -4,6 +4,12 @@ import assert from "node:assert/strict";
 import { waterTargetGate, bindGate } from "../../frontend/src/adapters/waterGate.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 
+async function loadWaterSource(app, source) {
+  const identity = { ...app.engine.identity, "water.source": source };
+  await app.loadState({ identity, roots: {}, collections: {}, selections: {} });
+  app.compute();
+}
+
 const SOURCE = { ca: 40, mg: 8, na: 20, so4: 30, cl: 25, alk: 80 };
 
 // Minimal batch boundary body so the water request can be built.
@@ -76,11 +82,10 @@ test("a blocked request is never posted", async () => {
       json: async () => (url === "/solve/batch" ? BATCH : {}),
     };
   };
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = createStepApp({ useHttp: true, fetchImpl, debounceMs: 10 });
   await app.boot();
-  calls.length = 0;
 
-  app.setIdentityComponent("water.source", {
+  await loadWaterSource(app, {
     report_id: "w1",
     laboratory: "Ward",
     calcium_ca: 40,
@@ -90,6 +95,7 @@ test("a blocked request is never posted", async () => {
     chloride_cl: 25,
     total_alkalinity_caco3: 80,
   });
+  calls.length = 0;
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("so4");
   app.editWaterTarget("so4", "10");

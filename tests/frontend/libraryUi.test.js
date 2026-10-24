@@ -2,7 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { registerLibraryUi } from "../../frontend/src/adapters/libraryUi.js";
-import { CATALOGS } from "../../frontend/src/store/userCatalog.js";
+import {
+  CATALOGS,
+  IDENTITY_KINDS,
+  INGREDIENT_KINDS,
+} from "../../frontend/src/store/userCatalog.js";
 import { artifact } from "../guards/util.js";
 
 const ENGINE = {
@@ -11,15 +15,17 @@ const ENGINE = {
   },
 };
 
-function setup({ unitMode = {}, records = {}, seeds = {}, onCreate, onRemove } = {}) {
+function setup({ unitMode = {}, records = {}, seeds = {}, onCreate, onRemove, onRecordsChanged } = {}) {
   const events = [];
   const app = {
     libraryRevision: 0,
     unitMode,
+    onRecordsChanged,
     library: {
       loaded: () => true,
       loading: () => false,
       error: () => null,
+      has: (kind, id) => Boolean(records[kind]?.some((r) => r.id === id)),
       async refresh() {},
       list(tab) {
         events.push({ op: "list", tab });
@@ -47,47 +53,54 @@ function field(app, name) {
   return app.libraryFields.find((spec) => spec.field === name);
 }
 
-test("tabs mirror the shared registry and open/close manage the surface", () => {
+test("the surface has two sections: identity sources and formulation ingredients", () => {
   const { app } = setup();
 
   assert.deepEqual(
+    app.identityTabs,
+    IDENTITY_KINDS.map((id) => ({ id, label: CATALOGS[id].label }))
+  );
+  assert.deepEqual(
     app.libraryTabs,
-    Object.entries(CATALOGS).map(([id, meta]) => ({ id, label: meta.label }))
+    INGREDIENT_KINDS.map((id) => ({ id, label: CATALOGS[id].label }))
   );
   assert.equal(app.libraryOpen, false);
 
-  app.openLibrary("yeast");
+  app.openLibrary("equipment");
   assert.equal(app.libraryOpen, true);
+  assert.equal(app.librarySection, "sources");
+  assert.equal(app.activeKind, "equipment");
+
+  app.openLibrary("yeast");
+  assert.equal(app.librarySection, "ingredients");
   assert.equal(app.libraryTab, "yeast");
+  assert.equal(app.activeKind, "yeast");
 
   app.libraryDraft = { name: "x" };
-  app.libraryErrors = [{ field: "*", message: "bad" }];
   app.closeLibrary();
   assert.equal(app.libraryOpen, false);
   assert.equal(app.libraryDraft, null);
-  assert.deepEqual(app.libraryErrors, []);
 });
 
-test("fields are generated from the primitive schema, excluding the identity field", () => {
+test("fields are generated from the primitive schema, excluding identity and lineage", () => {
   const { app } = setup();
-  app.libraryTab = "malt";
+  app.selectSourceKind("style");
   const names = app.libraryFields.map((spec) => spec.field);
 
   assert.equal(names.includes("id"), false);
-  assert.deepEqual(field(app, "category"), {
-    field: "category",
-    label: "category",
-    kind: "select",
-    options: artifact().taxonomies.malt_category,
-  });
+  assert.equal(names.includes("forked_from_id"), false);
+  assert.equal(names.includes("forked_from_name"), false);
+  assert.equal(field(app, "og_min").kind, "number");
   assert.equal(field(app, "name").kind, "text");
-  assert.equal(field(app, "yield_fraction").unitId, "pct");
-  assert.equal(field(app, "color_lovibond").unitId, "EBC");
+
+  app.selectLibraryTab("malt");
+  assert.equal(field(app, "category").kind, "select");
+  assert.deepEqual(field(app, "category").options, artifact().taxonomies.malt_category);
 });
 
 test("field units follow the master unit mode", () => {
   const { app } = setup({ unitMode: { percentage: "fraction", grain_color: "Lovibond" } });
-  app.libraryTab = "malt";
+  app.selectLibraryTab("malt");
 
   assert.equal(field(app, "yield_fraction").unitId, "fraction");
   assert.equal(field(app, "color_lovibond").unitId, "Lovibond");
@@ -95,7 +108,7 @@ test("field units follow the master unit mode", () => {
 
 test("display converts base values to the active unit and input converts back", () => {
   const { app } = setup();
-  app.libraryTab = "malt";
+  app.selectLibraryTab("malt");
   app.libraryDraft = { yield_fraction: 0.8, color_lovibond: 10, name: "Pale" };
 
   assert.equal(app.libraryFieldDisplay("yield_fraction"), 80);
@@ -108,9 +121,43 @@ test("display converts base values to the active unit and input converts back", 
   assert.equal(app.libraryDraft.name, "Pilsner");
 });
 
-test("saving a valid new record creates it and refreshes the surface", async () => {
+test("styles are forked, never authored from scratch", () => {
   const { app, events } = setup();
-  app.libraryTab = "malt";
+  app.selectSourceKind("style");
+
+  assert.equal(app.canAuthorRecord, false);
+  assert.equal(app.canForkRecord, true);
+
+  app.newLibraryItem();
+  assert.equal(app.libraryDraft, null);
+
+  app.forkLibraryItem({ id: "21A", name: "American IPA", og_min: 1.056 });
+  assert.equal(app.libraryDraft.name, "American IPA (copy)");
+  assert.equal(app.libraryDraft.id, undefined);
+  assert.equal(app.libraryDraft.forked_from_id, "21A");
+  assert.equal(app.libraryDraft.forked_from_name, "American IPA");
+  assert.equal(events.some((event) => event.op === "create"), false);
+});
+
+test("saving a forked style posts it under the style kind and refreshes", async () => {
+  const { app, events } = setup();
+  app.selectSourceKind("style");
+  app.forkLibraryItem({ id: "21A", name: "American IPA", og_min: 1.056, og_max: 1.07 });
+
+  await app.saveLibraryItem();
+
+  const create = events.find((event) => event.op === "create");
+  assert.equal(create.tab, "style");
+  assert.equal(create.component.id, undefined);
+  assert.equal(create.component.forked_from_id, "21A");
+  assert.equal(create.component.forked_from_name, "American IPA");
+  assert.equal(app.libraryDraft, null);
+  assert.equal(events.at(-1).op, "refresh");
+});
+
+test("saving a valid new ingredient record creates it and refreshes", async () => {
+  const { app, events } = setup();
+  app.selectLibraryTab("malt");
   app.libraryDraft = { name: "House Pale", category: "BASE", yield_fraction: 0.8 };
 
   await app.saveLibraryItem();
@@ -128,7 +175,7 @@ test("saving a valid new record creates it and refreshes the surface", async () 
 
 test("invalid records are rejected locally and keep the draft", async () => {
   const { app, events } = setup();
-  app.libraryTab = "malt";
+  app.selectLibraryTab("malt");
   app.libraryDraft = { category: "BASE" };
 
   await app.saveLibraryItem();
@@ -146,7 +193,7 @@ test("server validation details surface as errors", async () => {
       throw err;
     },
   });
-  app.libraryTab = "malt";
+  app.selectLibraryTab("malt");
   app.libraryDraft = { name: "House Pale", category: "BASE" };
 
   await app.saveLibraryItem();
@@ -158,7 +205,7 @@ test("server validation details surface as errors", async () => {
 
 test("deleting a record calls the library and refreshes", async () => {
   const { app, events } = setup();
-  app.libraryTab = "malt";
+  app.selectLibraryTab("malt");
 
   await app.deleteLibraryItem("r1");
 
@@ -169,6 +216,17 @@ test("deleting a record calls the library and refreshes", async () => {
   assert.equal(events.at(-1).op, "refresh");
 });
 
+test("record mutations notify the host so the batch setup cache stays fresh", async () => {
+  let notified = 0;
+  const { app } = setup({ onRecordsChanged: () => (notified += 1) });
+  app.selectLibraryTab("malt");
+  app.libraryDraft = { name: "House Pale", category: "BASE", yield_fraction: 0.8 };
+
+  await app.saveLibraryItem();
+
+  assert.equal(notified, 1);
+});
+
 test("seed listings are read-only and capped for display", () => {
   const seeds = {
     yeasts: Object.fromEntries(
@@ -176,7 +234,7 @@ test("seed listings are read-only and capped for display", () => {
     ),
   };
   const { app } = setup({ seeds });
-  app.libraryTab = "yeast";
+  app.selectLibraryTab("yeast");
 
   assert.equal(app.librarySeedItems.length, 50);
   assert.equal(app.librarySeedCount, 60);

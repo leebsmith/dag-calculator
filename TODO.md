@@ -89,3 +89,6 @@ Not needed by the current artifact; add only when a node requires them:
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu
 * Recipe landing page (freeze rail, sortable library, row menus, inline rename)
+* Batches view (scope filters, identity columns, lineage), Library Sources/Ingredients
+  split, style as a catalog kind with fork/seal, selection-only new-batch dialog,
+  read-only workspace identity, batch-scoped hop alpha — `plans/batches-view-and-record-layer.md`

@@ -25,6 +25,18 @@ export const CATALOGS = Object.fromEntries(
 
 export const CATALOG_KINDS = Object.keys(CATALOGS);
 
+// Reference data has two classes. Identity sources define a batch (one of each is
+// snapshotted into its identity); formulation records are step-local selections.
+export const IDENTITY_KINDS = ["style", "equipment", "water_report"];
+export const INGREDIENT_KINDS = CATALOG_KINDS.filter((kind) => !IDENTITY_KINDS.includes(kind));
+
+export function catalogClass(kind) {
+  if (IDENTITY_KINDS.includes(kind)) return "identity";
+  if (INGREDIENT_KINDS.includes(kind)) return "formulation";
+  return null;
+}
+
+
 export const SEED_KEY_TO_CATALOG = Object.fromEntries(
   Object.entries(CATALOGS).map(([catalog, meta]) => [meta.seedKey, catalog])
 );

@@ -189,6 +189,7 @@ class BatchRepository:
                 "provenance": data.get("provenance", {}),
                 "conformance": data.get("conformance"),
                 "parent_batch_id": batch_id,
+                "parent_name": source.get("parent_name"),
                 "identity": source.get("identity", {}),
                 "roots": source.get("roots", {}),
                 "collections": source.get("collections", {}),

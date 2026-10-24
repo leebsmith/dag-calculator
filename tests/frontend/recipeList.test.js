@@ -2,16 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  FREEZE_RAIL_LIMIT,
-  draftSections,
+  BATCH_SCOPES,
+  batchesForScope,
   formatDate,
-  frozenBatches,
-  recentFreezes,
+  identityLabel,
+  parentLabel,
   sortBatches,
-  trashedBatches,
 } from "../../frontend/src/store/recipeList.js";
 
-const DAY = 24 * 60 * 60;
 const NOW = Date.UTC(2026, 9, 21, 12, 0, 0);
 
 function batch(id, overrides = {}) {
@@ -25,47 +23,40 @@ function batch(id, overrides = {}) {
   };
 }
 
-test("draftSections partitions at 30 days and drops frozen/trashed rows", () => {
-  const batches = [
-    batch("recent", { updated_at: NOW / 1000 - DAY }),
-    batch("edge", { updated_at: NOW / 1000 - 30 * DAY }),
-    batch("older", { updated_at: NOW / 1000 - 31 * DAY }),
-    batch("frozen", { status: "frozen", frozen_at: NOW / 1000 }),
-    batch("trashed", { trashed: true }),
-  ];
+const BATCHES = [
+  batch("draft-new", { updated_at: NOW / 1000 }),
+  batch("draft-old", { updated_at: NOW / 1000 - 10 }),
+  batch("frozen", { status: "frozen", updated_at: NOW / 1000 - 5 }),
+  batch("trashed", { trashed: true, updated_at: NOW / 1000 - 1 }),
+];
 
-  const sections = draftSections(batches, { now: NOW });
+test("scopes partition drafts, frozen, and trash", () => {
+  assert.deepEqual(BATCH_SCOPES, ["all", "drafts", "frozen", "trash"]);
+
+  const ids = (scope) => batchesForScope(BATCHES, scope).map((b) => b.id);
+
+  assert.deepEqual(ids("all"), ["draft-new", "frozen", "draft-old"]);
+  assert.deepEqual(ids("drafts"), ["draft-new", "draft-old"]);
+  assert.deepEqual(ids("frozen"), ["frozen"]);
+  assert.deepEqual(ids("trash"), ["trashed"]);
+});
+
+test("scope defaults to all and sorts by modified", () => {
   assert.deepEqual(
-    sections.map((s) => [s.key, s.batches.map((b) => b.id)]),
-    [
-      ["recent", ["recent", "edge"]],
-      ["older", ["older"]],
-    ]
+    batchesForScope(BATCHES).map((b) => b.id),
+    ["draft-new", "frozen", "draft-old"]
   );
 });
 
-test("draftSections omits empty groups", () => {
-  assert.deepEqual(draftSections([], { now: NOW }), []);
-  const olderOnly = draftSections([batch("old", { updated_at: NOW / 1000 - 40 * DAY })], {
-    now: NOW,
-  });
-  assert.deepEqual(olderOnly.map((s) => s.key), ["older"]);
-});
-
-test("sort by modified is newest first and by title is A-Z within a group", () => {
-  const batches = [
-    batch("bravo", { updated_at: NOW / 1000 - DAY }),
-    batch("alpha", { updated_at: NOW / 1000 - 2 * DAY }),
-    batch("charlie", { updated_at: NOW / 1000 - 3 * DAY }),
-  ];
-
+test("sort by title is case-insensitive and numeric-aware", () => {
+  const rows = [batch("recipe 10"), batch("Recipe 2"), batch("recipe 1")];
   assert.deepEqual(
-    draftSections(batches, { now: NOW, sort: "modified" })[0].batches.map((b) => b.id),
-    ["bravo", "alpha", "charlie"]
+    sortBatches(rows, "title").map((b) => b.id),
+    ["recipe 1", "Recipe 2", "recipe 10"]
   );
   assert.deepEqual(
-    draftSections(batches, { now: NOW, sort: "title" })[0].batches.map((b) => b.id),
-    ["alpha", "bravo", "charlie"]
+    batchesForScope(rows, "all", { sort: "title" }).map((b) => b.id),
+    ["recipe 1", "Recipe 2", "recipe 10"]
   );
 });
 
@@ -76,40 +67,22 @@ test("sortBatches does not mutate the input", () => {
   assert.deepEqual(input.map((b) => b.id), before);
 });
 
-test("title sort is case-insensitive and numeric-aware", () => {
-  const batches = [batch("recipe 10"), batch("Recipe 2"), batch("recipe 1")];
-  assert.deepEqual(
-    sortBatches(batches, "title").map((b) => b.id),
-    ["recipe 1", "Recipe 2", "recipe 10"]
-  );
-});
+test("row labels read the identity snapshot", () => {
+  const row = batch("x", {
+    identity: {
+      style: { id: "21A", name: "American IPA" },
+      equipment: { id: "herms-30l", name: "HERMS 30L" },
+      "water.source": { laboratory: "Ward Lab" },
+    },
+    parent_name: "House Pale",
+  });
 
-test("frozenBatches sorts by frozen_at newest first and excludes trashed", () => {
-  const batches = [
-    batch("old", { status: "frozen", frozen_at: 100 }),
-    batch("new", { status: "frozen", frozen_at: 300 }),
-    batch("trashed", { status: "frozen", frozen_at: 400, trashed: true }),
-    batch("draft", { status: "draft" }),
-  ];
-  assert.deepEqual(frozenBatches(batches).map((b) => b.id), ["new", "old"]);
-});
-
-test("recentFreezes caps the rail", () => {
-  const batches = Array.from({ length: FREEZE_RAIL_LIMIT + 3 }, (_, i) =>
-    batch(`f${i}`, { status: "frozen", frozen_at: i + 1 })
-  );
-  assert.equal(recentFreezes(batches).length, FREEZE_RAIL_LIMIT);
-  assert.equal(recentFreezes(batches)[0].id, `f${FREEZE_RAIL_LIMIT + 2}`);
-  assert.equal(recentFreezes(batches, 2).length, 2);
-});
-
-test("trashedBatches keeps both statuses, newest modified first", () => {
-  const batches = [
-    batch("a", { trashed: true, updated_at: 10 }),
-    batch("b", { trashed: true, updated_at: 30 }),
-    batch("c", { updated_at: 40 }),
-  ];
-  assert.deepEqual(trashedBatches(batches).map((b) => b.id), ["b", "a"]);
+  assert.equal(identityLabel(row, "style"), "American IPA");
+  assert.equal(identityLabel(row, "equipment"), "HERMS 30L");
+  assert.equal(identityLabel(row, "water.source", "laboratory"), "Ward Lab");
+  assert.equal(identityLabel(batch("y"), "style"), "");
+  assert.equal(parentLabel(row), "House Pale");
+  assert.equal(parentLabel(batch("y")), "");
 });
 
 test("formatDate renders a short date or an em dash", () => {

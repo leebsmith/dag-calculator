@@ -1018,13 +1018,6 @@ samp {
   gap: var(--space-2);
 }
 
-.recipes-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  max-height: 20rem;
-  overflow-y: auto;
-}
 
 .library-overlay {
   position: fixed;
@@ -1087,50 +1080,11 @@ samp {
   opacity: 0.8;
 }
 
-.recipes-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  border: none;
-  border-radius: var(--radius-md);
-  background-color: var(--color-transparent);
-  color: var(--sys-text-primary);
-  font-family: inherit;
-  font-size: var(--text-sm);
-  text-align: left;
-  cursor: pointer;
-}
 
-.recipes-item:hover {
-  background-color: var(--sys-surface-hover);
-}
 
-.recipes-item.is-active {
-  background-color: var(--sys-surface-selected);
-}
 
-.recipes-item.is-frozen {
-  color: var(--sys-text-muted);
-}
 
-.recipes-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
-.recipes-empty {
-  margin: var(--space-0);
-  padding: var(--space-3);
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
-  text-align: center;
-}
 
 .chooser {
   flex: 1;
@@ -1164,64 +1118,17 @@ samp {
   gap: var(--space-5);
 }
 
-.landing-hero {
-  display: grid;
-  grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
-  gap: var(--space-4);
-  align-items: stretch;
-}
 
-.landing-create {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: 9rem;
-  padding: var(--space-5);
-  border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-lg);
-  background-color: var(--sys-surface-default);
-  box-shadow: var(--sys-shadow-sm);
-  color: var(--sys-text-primary);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
 
-.landing-create:hover {
-  background-color: var(--sys-surface-hover);
-  box-shadow: var(--sys-shadow-md);
-}
 
-.landing-create:focus-visible,
 .landing-title:focus-visible,
-.landing-kebab:focus-visible,
-.landing-freeze-card:focus-visible {
+.landing-kebab:focus-visible {
   outline: 2px solid var(--sys-border-focus);
   outline-offset: 2px;
 }
 
-.landing-create-icon {
-  font-size: var(--text-xl);
-  line-height: var(--line-height-none);
-  color: var(--sys-color-action-primary);
-}
 
-.landing-create-title {
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-}
 
-.landing-freezes {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
 
 .landing-section-bar {
   display: flex;
@@ -1230,58 +1137,13 @@ samp {
   gap: var(--space-3);
 }
 
-.landing-heading,
-.landing-subheading {
+.landing-heading {
   margin: var(--space-0);
   color: var(--sys-text-primary);
   font-weight: var(--font-weight-semibold);
-}
-
-.landing-heading {
   font-size: var(--text-lg);
 }
 
-.landing-freeze-rail {
-  display: flex;
-  gap: var(--space-3);
-  overflow-x: auto;
-  padding-bottom: var(--space-1);
-}
-
-.landing-freeze-card {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-  min-width: 13rem;
-  max-width: 18rem;
-  padding: var(--space-3);
-  border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-lg);
-  background-color: var(--sys-surface-default);
-  color: var(--sys-text-primary);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast);
-}
-
-.landing-freeze-card:hover {
-  background-color: var(--sys-surface-hover);
-  border-color: var(--sys-border-default);
-}
-
-.landing-freeze-name {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-semibold);
-}
 
 .landing-library {
   display: flex;
@@ -1289,20 +1151,7 @@ samp {
   gap: var(--space-4);
 }
 
-.landing-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
 
-.landing-group-title {
-  margin: var(--space-0);
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--sys-text-muted);
-}
 
 .landing-table-wrap {
   overflow-x: auto;
@@ -1456,12 +1305,6 @@ samp {
 .landing-menu-item[aria-checked="true"] {
   background-color: var(--sys-surface-selected);
   color: var(--sys-color-action-subtle-text);
-}
-
-@media (max-width: 45rem) {
-  .landing-hero {
-    grid-template-columns: 1fr;
-  }
 }
 
 .recipes-row-actions {

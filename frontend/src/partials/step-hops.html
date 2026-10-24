@@ -47,7 +47,23 @@
           <template x-for="(row, ri) in hopRows" :key="ri">
             <tr>
               <td><span class="font-medium" x-text="row.name"></span></td>
-              <td class="text-right tabular-nums" x-text="hopAlpha(row)"></td>
+              <td class="text-right tabular-nums">
+                <input
+                  class="form-input table-input-parts"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  :value="hopAlphaInput(row)"
+                  @change="setHopAlpha('boil', ri, $event.target.value)"
+                  :aria-label="'Alpha acid percent for ' + row.name"
+                />
+                <span
+                  class="text-xs text-muted"
+                  x-show="hopAlphaRange(row)"
+                  :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
+                  x-text="hopAlphaRange(row)"
+                ></span>
+              </td>
               <td class="text-right tabular-nums">
                 <span x-text="hopBoilPct(row)"></span>
                 <span class="text-xs text-muted" x-text="' · ' + hopMinutes(row)"></span>
@@ -179,7 +195,23 @@
                   <div class="font-medium" x-text="row.name"></div>
                   <div class="text-xs text-muted" x-text="hopForm(row)"></div>
                 </td>
-                <td class="text-right tabular-nums" x-text="hopAlpha(row)"></td>
+                <td class="text-right tabular-nums">
+                  <input
+                    class="form-input table-input-parts"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    :value="hopAlphaInput(row)"
+                    @change="setHopAlpha('whirlpool', ri, $event.target.value)"
+                    :aria-label="'Alpha acid percent for ' + row.name"
+                  />
+                  <span
+                    class="text-xs text-muted"
+                    x-show="hopAlphaRange(row)"
+                    :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
+                    x-text="hopAlphaRange(row)"
+                  ></span>
+                </td>
                 <td class="text-right tabular-nums" x-text="hopMinutes(row)"></td>
                 <td class="text-right tabular-nums" x-text="hopTemp(row)"></td>
                 <td class="text-right tabular-nums" x-text="row.parts"></td>

@@ -24,9 +24,18 @@ server under `users/{uid}/catalog_items`. They are immutable — create, read,
 delete; a correction is a new record. They are merged into the picker's reference
 cache (`record > seed`) so they can be chosen exactly like a seed, but choosing
 one **copies it into the batch** (§4). The kind registry shared by frontend and
-backend is [`data/catalogs.json`](../../data/catalogs.json); `malt`, `yeast`,
-`hop`, `hop_product`, `sugar`, `equipment`, `water_report`, and `water_target`
-support records.
+backend is [`data/catalogs.json`](../../data/catalogs.json); `style`, `malt`,
+`yeast`, `hop`, `hop_product`, `sugar`, `equipment`, `water_report`, and
+`water_target` support records.
+
+Records fall into two classes by role. **Identity sources** — `style`,
+`equipment`, `water_report` — define a batch: one of each is snapshotted into its
+identity at creation. They are equal co-requisites and are authored in the
+Library's *Sources* section; a style is forked from an existing record before it
+is edited, and every record is sealed on save. **Formulation records** — the
+remaining kinds — are step-local, snapshotted into the batch's selections when
+picked, and authored in *Ingredients*. A fork keeps display lineage in
+`forked_from_id` / `forked_from_name`; that is a snapshot, never a live edge.
 
 Physical constants (sucrose yield, salt stoichiometry, acid properties) live in
 the artifact's `constants`/`functions`, **not** in seed JSON — seed data is
