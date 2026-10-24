@@ -26,6 +26,7 @@ function makeRow(malt) {
     parts: 10,
     pct: 0,
     yield_fraction: malt.yield_fraction,
+    fermentability_fraction: malt.fermentability_fraction,
     moisture_fraction: malt.moisture_fraction,
     color_lovibond: malt.color_lovibond,
     notes: malt.notes,

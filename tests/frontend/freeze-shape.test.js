@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 import { loadArtifact } from "./helpers.js";
 import { VALUATION_FORMAT } from "../../frontend/src/store/snapshot.js";
 
@@ -25,7 +25,7 @@ function assertJsonFinite(value, path) {
 }
 
 test("frozen valuation covers every node id", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const { valuation } = app.freezePayload();
 
@@ -33,7 +33,7 @@ test("frozen valuation covers every node id", async () => {
 });
 
 test("frozen valuation stores boundary outputs, not cache wrappers", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const payload = app.freezePayload();
 
@@ -49,7 +49,7 @@ test("frozen valuation stores boundary outputs, not cache wrappers", async () =>
 });
 
 test("frozen valuation is JSON-serializable and finite", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   app.setRoot("batch.target_ibu", 42);
   const { valuation } = app.freezePayload();
@@ -62,7 +62,7 @@ test("frozen valuation is JSON-serializable and finite", async () => {
 });
 
 test("fork only needs roots, collections, and selections, not the valuation", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const state = app.draftState();
 

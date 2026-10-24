@@ -1,35 +1,36 @@
 {
   "batch": {
     "request": {
+      "target_abv": 5.5,
       "apparent_attenuation": 0.75,
-      "delta_v_evap": 3,
-      "eta_conv": 0.95,
-      "f_shrink": 0.04,
+      "v_ferm": 20.0,
+      "topology": "r_l_to_g",
+      "intensive_value": 3.0,
       "grain_bill": [
         {
+          "w_i": 1.0,
+          "yield_i": 0.8,
           "mc_i": 0.04,
-          "w_i": 1,
-          "yield_i": 0.8
+          "fermentability_i": 0.8
         }
       ],
-      "hlt_coil_floor_l": 0,
-      "hlt_dead_space_l": 0,
-      "hlt_starting_volume_l": 25,
-      "hlt_transfer_loss_l": 0,
-      "intensive_value": 3,
-      "mash_transfer_loss": 0,
-      "max_hlt_volume_l": 30,
-      "s_late_add": 0,
-      "target_abv": 5.5,
-      "topology": "r_l_to_g",
-      "v_dead": 0,
-      "v_ferm": 20,
-      "v_kettle_dead": 0,
-      "v_kettle_transfer": 0,
-      "v_trub": 0
+      "s_late_add": 0.0,
+      "v_kettle_dead": 0.0,
+      "v_kettle_transfer": 0.0,
+      "v_trub": 0.0,
+      "delta_v_evap": 3.0,
+      "v_dead": 0.0,
+      "mash_transfer_loss": 0.0,
+      "eta_conv": 0.95,
+      "f_shrink": 0.04,
+      "hlt_starting_volume_l": 25.0,
+      "hlt_dead_space_l": 0.0,
+      "hlt_transfer_loss_l": 0.0,
+      "hlt_coil_floor_l": 0.0,
+      "max_hlt_volume_l": 30.0
     },
-    "canonical": "{\"apparent_attenuation\":0.75,\"delta_v_evap\":3,\"eta_conv\":0.95,\"f_shrink\":0.04,\"grain_bill\":[{\"mc_i\":0.04,\"w_i\":1,\"yield_i\":0.8}],\"hlt_coil_floor_l\":0,\"hlt_dead_space_l\":0,\"hlt_starting_volume_l\":25,\"hlt_transfer_loss_l\":0,\"intensive_value\":3,\"mash_transfer_loss\":0,\"max_hlt_volume_l\":30,\"s_late_add\":0,\"target_abv\":5.5,\"topology\":\"r_l_to_g\",\"v_dead\":0,\"v_ferm\":20,\"v_kettle_dead\":0,\"v_kettle_transfer\":0,\"v_trub\":0}",
-    "fingerprint": "74d296c4e9f98dceb540c211bb061a88cd84731963b8c9fa540c5c38868570cb"
+    "canonical": "{\"apparent_attenuation\":0.75,\"delta_v_evap\":3,\"eta_conv\":0.95,\"f_shrink\":0.04,\"grain_bill\":[{\"fermentability_i\":0.8,\"mc_i\":0.04,\"w_i\":1,\"yield_i\":0.8}],\"hlt_coil_floor_l\":0,\"hlt_dead_space_l\":0,\"hlt_starting_volume_l\":25,\"hlt_transfer_loss_l\":0,\"intensive_value\":3,\"mash_transfer_loss\":0,\"max_hlt_volume_l\":30,\"s_late_add\":0,\"target_abv\":5.5,\"topology\":\"r_l_to_g\",\"v_dead\":0,\"v_ferm\":20,\"v_kettle_dead\":0,\"v_kettle_transfer\":0,\"v_trub\":0}",
+    "fingerprint": "493d5f1b5da585b174ce44d89811e55b58e098572885be4fe0004e1312360ed9"
   },
   "floats": [
     {
@@ -109,8 +110,8 @@
   ],
   "strings": [
     {
-      "value": "zażółć gęślą jaźń",
-      "canonical": "\"zażółć gęślą jaźń\""
+      "value": "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144",
+      "canonical": "\"za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144\""
     },
     {
       "value": "quote\" slash\\ newline\n",
@@ -134,8 +135,8 @@
     {
       "name": "unicode and mixed nesting",
       "value": {
-        "text": "zażółć gęślą jaźń",
-        "emoji": "🍺",
+        "text": "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144",
+        "emoji": "\ud83c\udf7a",
         "nested": {
           "list": [
             true,
@@ -146,7 +147,7 @@
           "tiny": 1e-07
         }
       },
-      "canonical": "{\"emoji\":\"🍺\",\"nested\":{\"list\":[true,false,null,1.5],\"tiny\":1e-7},\"text\":\"zażółć gęślą jaźń\"}",
+      "canonical": "{\"emoji\":\"\ud83c\udf7a\",\"nested\":{\"list\":[true,false,null,1.5],\"tiny\":1e-7},\"text\":\"za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144\"}",
       "fingerprint": "d9264858f52c1342a78edd2a13eea9d2bf598de8130d2475515e275bef496d74"
     },
     {

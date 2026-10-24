@@ -13,6 +13,7 @@ function makeRow(malt) {
     category: malt.category,
     mass_kg: 0,
     yield_fraction: malt.yield_fraction,
+    fermentability_fraction: malt.fermentability_fraction,
     color_lovibond: malt.color_lovibond,
     notes: malt.notes,
   };

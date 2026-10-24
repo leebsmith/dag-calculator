@@ -218,11 +218,7 @@
       "value": 20,
       "dimension": "volume"
     },
-    "default_apparent_attenuation": {
-      "value": 0.75,
-      "dimension": "percentage"
-    },
-    "default_house_attenuation_factor": {
+    "default_attenuation_derate": {
       "value": 1,
       "dimension": "percentage"
     },
@@ -1353,6 +1349,13 @@
           "lte": 1
         }
       },
+      "fermentability_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
       "moisture_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1384,6 +1387,13 @@
           "lte": 1
         }
       },
+      "fermentability_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
       "color_lovibond": {
         "dimension": "grain_color",
         "domain": {
@@ -1405,6 +1415,13 @@
         }
       },
       "yield_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
           "gte": 0,
@@ -1870,42 +1887,71 @@
       "default": ""
     },
     "batch.apparent_attenuation": {
-      "kind": "root",
-      "dimension": "percentage",
-      "default": {
-        "const": "default_apparent_attenuation"
-      },
-      "domain": {
-        "gt": 0,
-        "lte": 1
-      }
-    },
-    "batch.house_attenuation_factor": {
-      "kind": "root",
-      "dimension": "percentage",
-      "default": {
-        "const": "default_house_attenuation_factor"
-      },
-      "domain": {
-        "gt": 0,
-        "lte": 1
-      }
-    },
-    "batch.effective_apparent_attenuation": {
       "kind": "derived",
       "inputs": {
-        "aa": "batch.apparent_attenuation",
-        "factor": "batch.house_attenuation_factor"
+        "aa": "solver.batch.aa_batch"
       },
       "expr": {
-        "call": "apply_attenuation_factor",
+        "ref": "aa"
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
+    "batch.wort_aa": {
+      "kind": "derived",
+      "inputs": {
+        "aa": "solver.batch.aa_wort"
+      },
+      "expr": {
+        "ref": "aa"
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
+    "batch.attenuation_derate": {
+      "kind": "root",
+      "dimension": "percentage",
+      "default": {
+        "const": "default_attenuation_derate"
+      },
+      "domain": {
+        "gt": 0,
+        "lte": 1
+      }
+    },
+    "batch.yeast_cap": {
+      "kind": "derived",
+      "inputs": {
+        "selector": "batch.yeast_id",
+        "aa": "batch.yeast.attenuation_pct",
+        "derate": "batch.attenuation_derate"
+      },
+      "expr": {
+        "op": "if",
         "args": [
           {
-            "ref": "aa"
+            "op": "ne",
+            "args": [
+              {
+                "ref": "selector"
+              },
+              ""
+            ]
           },
           {
-            "ref": "factor"
-          }
+            "call": "apply_attenuation_factor",
+            "args": [
+              {
+                "ref": "aa"
+              },
+              {
+                "ref": "derate"
+              }
+            ]
+          },
+          null
         ]
       },
       "output": {
@@ -2113,7 +2159,7 @@
       "resolution": "iterative",
       "inputs": {
         "target_abv": "batch.target_abv",
-        "apparent_attenuation": "batch.effective_apparent_attenuation",
+        "apparent_attenuation": "batch.yeast_cap",
         "v_ferm": "batch.v_ferm",
         "topology": "batch.topology",
         "intensive_value": "batch.intensive_value",
@@ -2186,6 +2232,12 @@
         "max_achievable_abv": {
           "dimension": "percentage"
         },
+        "aa_wort": {
+          "dimension": "percentage"
+        },
+        "aa_batch": {
+          "dimension": "percentage"
+        },
         "hlt.v_hlt_debt": {
           "dimension": "volume"
         },
@@ -2224,7 +2276,7 @@
       "kind": "derived",
       "inputs": {
         "og_sg": "solver.batch.sg_post_boil",
-        "aa": "batch.effective_apparent_attenuation"
+        "aa": "solver.batch.aa_batch"
       },
       "expr": {
         "call": "realized_fg",
@@ -2245,7 +2297,7 @@
       "kind": "derived",
       "inputs": {
         "og_sg": "solver.batch.sg_post_boil",
-        "aa": "batch.effective_apparent_attenuation"
+        "aa": "solver.batch.aa_batch"
       },
       "expr": {
         "call": "realized_abv",

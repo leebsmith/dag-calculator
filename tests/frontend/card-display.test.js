@@ -5,20 +5,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 
 const cache = createReferenceCache();
 
 async function bootedApp() {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   app.compute();
   return app;
 }
 
 async function styledApp(styleId = "21A") {
-  const app = createStepApp();
+  const app = createTestApp();
   const water = Object.values(cache.references.water_report ?? {})[0] ?? {};
   await app.loadState({
     identity: {
@@ -283,14 +283,14 @@ test("style card: the conformance summary renders the scored dimensions", async 
 });
 
 test("style card: the summary is null without a conformance baseline", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   assert.equal(app.conformanceSummary, null);
 });
 
 // --- Mash ------------------------------------------------------------------
 
 test("mash card: rest names, purposes, and bound formatting come from the canon", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   assert.equal(app.restName("mash_out"), "Mash-out");

@@ -2,12 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "../frontend/appHelpers.js";
 import { valuateTable } from "../../frontend/src/views/producer/table.js";
-import { loadArtifact, makeFixtures } from "../frontend/helpers.js";
+import { loadArtifact, makeFixturesWithYeast } from "../frontend/helpers.js";
 
 test("every numeric readout resolves to a decimal policy", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const seen = new Map();
   for (const fields of Object.values(app.fieldsBySlice)) {
@@ -21,7 +21,7 @@ test("every numeric readout resolves to a decimal policy", async () => {
 });
 
 test("representative readouts use the dimension policy", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const byId = new Map();
   for (const fields of Object.values(app.fieldsBySlice)) {
@@ -42,7 +42,7 @@ test("representative readouts use the dimension policy", async () => {
 });
 
 test("collection columns inherit the dimension policy", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const table = app.fieldsBySlice.hops.find((f) => f.id === "batch.whirlpool_hops");
   const columns = Object.fromEntries(table.columns.map((c) => [c.id, c]));
@@ -54,7 +54,7 @@ test("collection columns inherit the dimension policy", async () => {
 
 test("readout tables honour registry decimal overrides", () => {
   const artifact = loadArtifact();
-  const engine = createCalculator(artifact, makeFixtures());
+  const engine = createCalculator(artifact, makeFixturesWithYeast());
   const field = {
     control: "readout-table",
     columns: [{ id: "value", kind: "value" }],

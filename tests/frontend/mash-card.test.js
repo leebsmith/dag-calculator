@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 import { MASH_PRESETS } from "../../frontend/src/views/mash.js";
 
 test("mash card defaults to a single-infusion schedule with every canonical rest", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   assert.equal(app.mashPresetId, "single_infusion");
@@ -26,7 +26,7 @@ test("mash card defaults to a single-infusion schedule with every canonical rest
 });
 
 test("onMashPresetChange applies a preset, seeds durations, and leaves mash-out alone", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.onMashPresetChange("german_pils");
@@ -48,7 +48,7 @@ test("onMashPresetChange applies a preset, seeds durations, and leaves mash-out 
 });
 
 test("toggleMashRest marks the schedule custom, seeds temp and duration, and allows mash-out", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.toggleMashRest("protein", true);
@@ -64,7 +64,7 @@ test("toggleMashRest marks the schedule custom, seeds temp and duration, and all
 });
 
 test("Configure Rests modal is draft/cancel: Cancel discards, OK commits", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.openMashModal();
@@ -93,7 +93,7 @@ test("MASH_PRESETS includes single_infusion and custom as bookends of the matrix
 });
 
 test("custom preset leaves the dough-in target unresolved and keeps mash-out", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.onMashPresetChange("custom");
@@ -105,7 +105,7 @@ test("custom preset leaves the dough-in target unresolved and keeps mash-out", a
 });
 
 test("mash temperature labels and ranges follow the unit tracker", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   assert.equal(app.temperatureUnit, "°C");
@@ -125,7 +125,7 @@ test("mash temperature labels and ranges follow the unit tracker", async () => {
 });
 
 test("mash draft temperatures parse in the active display unit", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   app.openMashModal();
   app.setUnit("temperature", "degF");

@@ -64,15 +64,15 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `brew_day_step` | `enabled` (type boolean), `instructions` (—), `name` (—), `section` (—), `step_id` (—) |
 | `dry_hop_row` | `application_stage` (taxonomy wet_hop_application_stage), `contact_duration_hours` (dimension time), `notes` (—), `product_type` (taxonomy wet_hop_product_type), `quantity` (dimension dimensionless), `time_of_application` (—), `unit` (taxonomy hop_unit), `variety` (—) |
 | `equipment` | `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `hlt_coil_floor_l` (dimension volume, domain {"gte":0}), `hlt_dead_space_l` (dimension volume, domain {"gte":0}), `hlt_transfer_loss_l` (dimension volume, domain {"gte":0}), `id` (—), `kettle_dead_space_l` (dimension volume, domain {"gte":0}), `kettle_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_dead_space_l` (dimension volume, domain {"gte":0}), `mash_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_tun_mass_kg` (dimension mass, domain {"gt":0}), `mash_tun_specific_heat` (dimension specific_heat, domain {"gt":0}), `max_hlt_volume_l` (dimension volume, domain {"gt":0}), `max_kettle_volume_l` (dimension volume, domain {"gt":0}), `max_mash_tun_volume_l` (dimension volume, domain {"gt":0}), `name` (—), `nominal_boil_off_rate_l_per_hr` (dimension volume_per_time, domain {"gt":0}), `nominal_conversion_efficiency` (dimension percentage, domain {"gt":0,"lte":1}), `shrinkage_pct` (dimension percentage, domain {"gte":0,"lte":0.2}), `trub_loss_l` (dimension volume, domain {"gte":0}) |
-| `grist_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `grist_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `hop` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_rating` (—), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `category` (—), `flavor_profiles` (—), `id` (—), `name` (—), `notes` (—), `origin` (—), `pairings` (—), `purpose` (—), `recipes_count` (—), `synonym` (—), `url` (—) |
 | `hop_product` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `brand` (—), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `product_form` (taxonomy whirlpool_hop_form), `purpose` (—), `t90_replacement_ratio` (dimension dimensionless, domain {"gte":0}), `total_oil_pct` (dimension percentage, domain {"gte":0,"lte":1}), `url` (—), `variety_id` (—) |
 | `malt` | `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `family` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `generic_description` (—), `id` (—), `maltster` (—), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `standard_malt` (—), `standard_name` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
 | `style` | `abv_max` (dimension abv, domain {"gte":0}), `abv_min` (dimension abv, domain {"gte":0}), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain {"gte":0}), `fg_min` (dimension gravity, domain {"gte":0}), `flavor` (—), `forked_from_id` (—), `forked_from_name` (—), `history` (—), `ibu_max` (dimension ibu, domain {"gte":0}), `ibu_min` (dimension ibu, domain {"gte":0}), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain {"gte":0}), `og_min` (dimension gravity, domain {"gte":0}), `overall_impression` (—), `srm_max` (dimension beer_color, domain {"gte":0}), `srm_min` (dimension beer_color, domain {"gte":0}), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
 | `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `id` (—), `maltster` (—), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
-| `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
-| `trace_malt_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `trace_malt_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
 | `water_pinned_ion` | `ion` (taxonomy ion) |
 | `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `location` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `source_name` (—), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
@@ -104,13 +104,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 |---|---|---|
 | `bicarbonate_eq_weight` | 61 | `dimensionless` |
 | `caco3_eq_weight` | 50 | `dimensionless` |
-| `default_apparent_attenuation` | 0.75 | `percentage` |
+| `default_attenuation_derate` | 1 | `percentage` |
 | `default_boil_time_min` | 60 | `time` |
 | `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
 | `default_grain_moisture_fraction` | 0.04 | `percentage` |
 | `default_grain_temp_c` | 20 | `temperature` |
-| `default_house_attenuation_factor` | 1 | `percentage` |
 | `default_mash_thickness_l_per_kg` | 2.6079 | `mash_thickness` |
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
@@ -132,7 +131,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | kind |
 |---|---|
-| `batch.apparent_attenuation` | root |
+| `batch.apparent_attenuation` | derived |
+| `batch.attenuation_derate` | root |
 | `batch.boil_hops` | collection |
 | `batch.boil_off_rate_l_per_hr` | root |
 | `batch.boil_target_ibu` | derived |
@@ -141,11 +141,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.conversion_efficiency` | root |
 | `batch.delta_v_evap` | derived |
 | `batch.dry_hops` | collection |
-| `batch.effective_apparent_attenuation` | derived |
 | `batch.fermentation` | choice |
 | `batch.grain_moisture_fraction` | root |
 | `batch.hlt_starting_volume_l` | root |
-| `batch.house_attenuation_factor` | root |
 | `batch.intensive_value` | root |
 | `batch.realized_abv` | derived |
 | `batch.realized_fg` | derived |
@@ -166,7 +164,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.whirlpool_hops` | collection |
 | `batch.whirlpool_ibu_fraction` | root |
 | `batch.whirlpool_target_ibu` | derived |
+| `batch.wort_aa` | derived |
 | `batch.yeast` | selection |
+| `batch.yeast_cap` | derived |
 | `batch.yeast_id` | root |
 | `grist.finished_beer_srm` | derived |
 | `grist.major_malts` | collection |

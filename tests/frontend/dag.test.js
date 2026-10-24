@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { buildGraph, createCalculator } from "../../frontend/src/engine/index.js";
-import { loadArtifact, makeFixtures, EQUIPMENT } from "./helpers.js";
+import { loadArtifact, makeFixtures, makeFixturesWithYeast, EQUIPMENT } from "./helpers.js";
 
 function syntheticArtifact(nodes) {
   return {
@@ -55,7 +55,7 @@ test("cycles are rejected", () => {
 
 test("lazy memoization: boundary evaluated once per unique input", () => {
   const artifact = loadArtifact();
-  const fixtures = makeFixtures();
+  const fixtures = makeFixturesWithYeast();
   let calls = 0;
   const boundaries = {
     batch_sparge_solver: () => {
@@ -74,7 +74,7 @@ test("lazy memoization: boundary evaluated once per unique input", () => {
 
 test("setRoot invalidates dependents and recomputes", () => {
   const artifact = loadArtifact();
-  const fixtures = makeFixtures();
+  const fixtures = makeFixturesWithYeast();
   const engine = createCalculator(artifact, fixtures);
 
   const before = engine.get("mash.strike_water_temp_base_c");

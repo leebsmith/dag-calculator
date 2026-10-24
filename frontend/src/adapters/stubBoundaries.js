@@ -19,6 +19,8 @@ export const STUB_BOUNDARIES = {
     "cascade.v_post_boil": 21.0,
     "cascade.mash_thickness_l_per_kg": 3.0,
     max_achievable_abv: 10.0,
+    aa_wort: 0.76,
+    aa_batch: 0.75,
     "hlt.v_hlt_debt": 1.0,
     "hlt.v_hlt_after_strike": 16.0,
     "hlt.v_hlt_top_up": 0.0,

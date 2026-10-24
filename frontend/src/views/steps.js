@@ -42,10 +42,12 @@ export const steps = [
     id: "yeast",
     slice: "yeast",
     title: "Yeast Selection",
-    subtitle: "Choose a strain; batch attenuation is set on the batch step",
+    subtitle: "Choose a strain; the solver uses its attenuation cap",
     partial: "./src/partials/step-yeast.html",
     fields: [
       "batch.yeast_id",
+      "batch.attenuation_derate",
+      "batch.yeast_cap",
       "batch.yeast.attenuation_pct",
       "batch.yeast.flocculation",
       "batch.yeast.alcohol_tolerance",
@@ -60,12 +62,12 @@ export const steps = [
     fields: [
       {
         collection: "grist.major_malts",
-        columns: ["name", "category", "color_lovibond", "yield_fraction", "parts", "pct"],
+        columns: ["name", "category", "color_lovibond", "yield_fraction", "fermentability_fraction", "parts", "pct"],
         inputs: ["parts"],
       },
       {
         collection: "grist.trace_malts",
-        columns: ["name", "mass_kg", "yield_fraction", "color_lovibond"],
+        columns: ["name", "mass_kg", "yield_fraction", "fermentability_fraction", "color_lovibond"],
         inputs: ["mass_kg"],
       },
       "grist.weighted_lovibond",
@@ -83,7 +85,7 @@ export const steps = [
     fields: [
       {
         collection: "batch.sugars",
-        columns: ["name", "mass_kg", "yield_fraction", "color_lovibond"],
+        columns: ["name", "mass_kg", "yield_fraction", "fermentability_fraction", "color_lovibond"],
         inputs: ["mass_kg"],
       },
       "batch.s_late_add",
@@ -107,8 +109,7 @@ export const steps = [
       "batch.boil_off_rate_l_per_hr",
       "batch.conversion_efficiency",
       "batch.apparent_attenuation",
-      "batch.house_attenuation_factor",
-      "batch.effective_apparent_attenuation",
+      "batch.wort_aa",
       "batch.grain_moisture_fraction",
       "batch.target_ibu",
       "batch.target_srm",

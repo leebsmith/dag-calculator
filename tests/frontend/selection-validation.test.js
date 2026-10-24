@@ -1,13 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 // Batch values seeded from a selected component are clamped to that component's
 // envelope by the adapter (report-only relations live in the artifact).
 
 test("HLT fill is clamped to the equipment envelope", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.hlt_starting_volume_l");
 
@@ -20,16 +20,16 @@ test("HLT fill is clamped to the equipment envelope", () => {
   assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 4);
 });
 
-test("selecting a strain seeds apparent attenuation from its typical value", () => {
-  const app = createStepApp();
+test("selecting a strain sets the yeast attenuation cap", () => {
+  const app = createTestApp();
   app.boot();
   app.selectYeast("fermentis-safale-american-ale-us-05");
   app.compute();
-  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - 0.81) < 1e-9);
+  assert.ok(Math.abs(app.engine.get("batch.yeast_cap") - 0.81) < 1e-9);
 });
 
 test("collection cells are validated against their schema domains", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
 

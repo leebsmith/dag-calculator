@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { hamiltonPct } from "../../frontend/src/views/hamilton.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 test("hamilton: exact allocations pass through at 0.1% resolution", () => {
   assert.deepEqual(hamiltonPct([80, 20]), [0.8, 0.2]);
@@ -33,7 +33,7 @@ test("hamilton: degenerate input yields all zeros", () => {
 });
 
 test("hamilton: editing grist parts renormalizes pct across the bill", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
 

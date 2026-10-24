@@ -47,8 +47,7 @@ function stubEngine(values, { traceRows = [] } = {}) {
 
 const BATCH_VALUES = {
   "batch.target_abv": 5.5,
-  "batch.effective_apparent_attenuation": 0.75,
-  "batch.grain_moisture_fraction": 0.04,
+  "batch.yeast_cap": 0.75,  "batch.grain_moisture_fraction": 0.04,
   "batch.v_ferm": 20.0,
   "batch.topology": "r_l_to_g",
   "batch.intensive_value": 3.0,

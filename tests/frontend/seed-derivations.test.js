@@ -12,21 +12,14 @@ import {
 test("only the residuals are host-seeded", () => {
   const style = identityDerivations("style");
   assert.deepEqual(style.map((d) => d.rootId).sort(), [
-    "batch.apparent_attenuation",
     "batch.fermentation",
     "batch.target_abv",
   ]);
-  assert.deepEqual(
-    derivationsFor("batch.yeast").map((d) => d.rootId),
-    ["batch.apparent_attenuation"]
-  );
+  assert.deepEqual(derivationsFor("batch.yeast"), []);
   assert.deepEqual(derivationsFor("water.target_profile"), []);
   assert.deepEqual(identityDerivations("equipment"), []);
 });
 
-test("apparent attenuation has both yeast and style sources", () => {
-  const atten = seedDerivations("batch.apparent_attenuation");
-  assert.equal(atten.length, 2);
-  assert.equal(atten[0].selection, "batch.yeast");
-  assert.equal(atten[1].identity, "style");
+test("apparent attenuation is no longer a host-seeded root", () => {
+  assert.deepEqual(seedDerivations("batch.apparent_attenuation"), []);
 });

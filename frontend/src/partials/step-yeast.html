@@ -136,6 +136,26 @@
             <span class="tabular-nums" x-text="yeastAttenuation(selectedYeast)"></span>
           </div>
           <div class="form-group">
+            <label class="form-label" for="yeast-derate">Batch derate</label>
+            <input
+              id="yeast-derate"
+              type="number"
+              step="0.1"
+              class="form-input"
+              :value="yeastField('batch.attenuation_derate').display"
+              @input="edit(yeastField('batch.attenuation_derate'), $event.target.value)"
+              @change="commitField(yeastField('batch.attenuation_derate'))"
+            />
+            <span class="form-hint">Percent of the strain limit; default 100%</span>
+          </div>
+        </div>
+        <div class="step-grid-2col">
+          <div class="form-group">
+            <span class="form-label">Yeast attenuation cap</span>
+            <span class="tabular-nums" x-text="yeastField('batch.yeast_cap').display || '—'"></span>
+            <span x-text="yeastField('batch.yeast_cap').unit"></span>
+          </div>
+          <div class="form-group">
             <span class="form-label">Strain details</span>
             <div class="text-xs text-muted">
               <div><strong>Manufacturer:</strong> <span x-text="selectedYeast.manufacturer"></span></div>
@@ -152,6 +172,6 @@
       </div>
     </template>
 
-    <p class="form-hint">Batch-specific attenuation is set on the Batch Sparge step.</p>
+    <p class="form-hint">The batch attenuation is solved from the grist and the yeast cap.</p>
   </div>
 </section>

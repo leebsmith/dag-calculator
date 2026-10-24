@@ -11,6 +11,8 @@ import {
   targetFromExtract,
   extractFromTarget,
   limitHeadroom,
+  raySegment,
+  sugarAdvisory,
   oeSliceAt,
   aeSliceAt,
 } from "../../engine/fermentation.js";
@@ -52,6 +54,7 @@ export function registerStyleCard(app, ctx) {
     styleExtract: null,
     styleConformance: null,
     styleSai: null,
+    belgianTargetAa: null,
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
     targetSrm: 0,
@@ -103,38 +106,61 @@ export function registerStyleCard(app, ctx) {
       ) {
         this.styleExtract = inverse;
       } else {
-        const centroid = polygonCentroid(this.styleRegion);
-        if (centroid) this.styleExtract = { oe: centroid[0], ae: centroid[1] };
+        const ray = Number.isFinite(aa) ? raySegment(this.styleRegion, aa) : null;
+        if (ray) {
+          const oe = (ray.oeMin + ray.oeMax) / 2;
+          this.styleExtract = { oe, ae: oe * (1 - aa) };
+        } else {
+          const centroid = polygonCentroid(this.styleRegion);
+          if (centroid) this.styleExtract = { oe: centroid[0], ae: centroid[1] };
+        }
       }
     },
 
     applyStyleExtract(oe, ae) {
       const target = targetFromExtract(oe, ae);
-      this.setRoot(N.apparentAttenuation, target.aa);
+      this.styleExtract = { oe, ae };
       this.setRoot(N.targetAbv, target.abv);
       this.scheduleSolve();
       this.notify();
     },
 
+    setBelgianTargetAa(value) {
+      const n = Number(value);
+      this.belgianTargetAa = Number.isFinite(n) ? n / 100 : null;
+      this.notify();
+    },
+
     setStyleTargetOe(value) {
       if (!this.styleExtract) return;
-      const bounds = oeSliceAt(this.styleRegion, this.styleExtract.ae);
-      if (!bounds) return;
-      const oe = Math.max(bounds[0], Math.min(bounds[1], Number(value)));
-      this.applyStyleExtract(oe, this.styleExtract.ae);
+      const aa = engine.get(N.apparentAttenuation);
+      if (!Number.isFinite(aa) || aa >= 1) return;
+      const ray = raySegment(this.styleRegion, aa);
+      if (!ray) return;
+      const oe = Math.max(ray.oeMin, Math.min(ray.oeMax, Number(value)));
+      if (!Number.isFinite(oe)) return;
+      this.applyStyleExtract(oe, oe * (1 - aa));
     },
 
     setStyleTargetAe(value) {
       if (!this.styleExtract) return;
-      const bounds = aeSliceAt(this.styleRegion, this.styleExtract.oe);
-      if (!bounds) return;
-      const ae = Math.max(bounds[0], Math.min(bounds[1], Number(value)));
-      this.applyStyleExtract(this.styleExtract.oe, ae);
+      const aa = engine.get(N.apparentAttenuation);
+      if (!Number.isFinite(aa) || aa >= 1) return;
+      const ray = raySegment(this.styleRegion, aa);
+      if (!ray) return;
+      const ae = Number(value);
+      if (!Number.isFinite(ae)) return;
+      const oe = Math.max(ray.oeMin, Math.min(ray.oeMax, ae / (1 - aa)));
+      this.applyStyleExtract(oe, oe * (1 - aa));
     },
 
     resetStyleTarget() {
-      const centroid = this.styleRegion.length >= 3 ? polygonCentroid(this.styleRegion) : null;
-      if (centroid) this.applyStyleExtract(centroid[0], centroid[1]);
+      const aa = engine.get(N.apparentAttenuation);
+      if (!Number.isFinite(aa) || aa >= 1) return;
+      const ray = raySegment(this.styleRegion, aa);
+      if (!ray) return;
+      const oe = (ray.oeMin + ray.oeMax) / 2;
+      this.applyStyleExtract(oe, oe * (1 - aa));
     },
 
     styleTargetNearest() {
@@ -215,8 +241,7 @@ export function registerStyleCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
-    selectedStyle: {
-      configurable: true,
+    selectedStyle: {      configurable: true,
       get() {
         return this.selectedStyleId ? cache.references.style[this.selectedStyleId] ?? null : null;
       },
@@ -225,14 +250,18 @@ export function registerStyleCard(app, ctx) {
       configurable: true,
       get() {
         if (!this.styleExtract) return null;
-        return oeSliceAt(this.styleRegion, this.styleExtract.ae);
+        const aa = engine.get(N.apparentAttenuation);
+        const ray = Number.isFinite(aa) ? raySegment(this.styleRegion, aa) : null;
+        return ray ? [ray.oeMin, ray.oeMax] : oeSliceAt(this.styleRegion, this.styleExtract.ae);
       },
     },
     styleAeBounds: {
       configurable: true,
       get() {
         if (!this.styleExtract) return null;
-        return aeSliceAt(this.styleRegion, this.styleExtract.oe);
+        const aa = engine.get(N.apparentAttenuation);
+        const ray = Number.isFinite(aa) ? raySegment(this.styleRegion, aa) : null;
+        return ray ? [ray.aeMin, ray.aeMax] : aeSliceAt(this.styleRegion, this.styleExtract.oe);
       },
     },
     styleTargetInfo: {
@@ -240,6 +269,55 @@ export function registerStyleCard(app, ctx) {
       get() {
         if (!this.styleExtract) return null;
         return targetFromExtract(this.styleExtract.oe, this.styleExtract.ae);
+      },
+    },
+    // Advisory-only Belgian knob: hold AE, raise OE with sucrose. Never mutates
+    // the recipe or the solver state.
+    styleBelgian: {
+      configurable: true,
+      get() {
+        if (!this.styleExtract) return null;
+        const currentAa =
+          this.styleExtract.oe > 0
+            ? (this.styleExtract.oe - this.styleExtract.ae) / this.styleExtract.oe
+            : null;
+        const targetAa = Number.isFinite(this.belgianTargetAa)
+          ? this.belgianTargetAa
+          : currentAa;
+        const cap = engine.resolve(N.yeastCap);
+        if (!Number.isFinite(cap)) return null;
+        const volume = engine.resolve(N.postBoilVolume) ?? engine.get(N.fermVolume);
+        if (!Number.isFinite(volume)) return null;
+        return sugarAdvisory({
+          oe: this.styleExtract.oe,
+          ae: this.styleExtract.ae,
+          yeastCap: cap,
+          volumeL: volume,
+          targetAa,
+        });
+      },
+    },
+    styleBelgianMessage: {
+      configurable: true,
+      get() {
+        const a = this.styleBelgian;
+        if (!a) return "";
+        if (!a.ok) {
+          return {
+            invalid_state: "Enter a valid OE/AE point first.",
+            no_volume: "The batch volume is unresolved.",
+            invalid_yield: "Sucrose yield must be positive.",
+            invalid_target: "Enter a target attenuation.",
+            below_current_aa: "Sugar cannot lower attenuation; pick a higher target.",
+            impossible_aa: "100% attenuation is not physically reachable.",
+            above_yeast_cap: "That exceeds the yeast's attenuation cap.",
+            below_current_abv: "Sugar cannot lower ABV at fixed AE.",
+            abv_unreachable: "That ABV is unreachable at the current apparent extract.",
+            no_target: "Enter a target.",
+          }[a.reason] ?? "Infeasible target.";
+        }
+        if (a.sucroseKg < 1e-9) return "No sucrose needed at this target.";
+        return `Add ${formatWithDecimals(a.sucroseKg, 3, { dash: "—" })} kg sucrose`;
       },
     },
     styleTargetRisk: {
@@ -283,6 +361,9 @@ export function registerStyleCard(app, ctx) {
         const yOffset = (height - regionH) / 2;
         const sx = (x) => xOffset + (x - xMin) * scale;
         const sy = (y) => height - yOffset - (y - yMin) * scale;
+        const aa = engine.get(N.apparentAttenuation);
+        const ray = Number.isFinite(aa) ? raySegment(region, aa) : null;
+        const belgian = this.styleBelgian;
         return {
           width,
           height,
@@ -292,6 +373,18 @@ export function registerStyleCard(app, ctx) {
             x: sx(this.styleSafestPoint.oe).toFixed(1),
             y: sy(this.styleSafestPoint.ae).toFixed(1),
           },
+          ray: ray
+            ? {
+                x1: sx(ray.oeMin).toFixed(1),
+                y1: sy(ray.aeMin).toFixed(1),
+                x2: sx(ray.oeMax).toFixed(1),
+                y2: sy(ray.aeMax).toFixed(1),
+              }
+            : null,
+          advised:
+            belgian?.ok && belgian.deltaOe > 1e-9
+              ? { x: sx(belgian.targetOe).toFixed(1), y: sy(this.styleExtract.ae).toFixed(1) }
+              : null,
         };
       },
     },
@@ -428,4 +521,4 @@ export function refreshStyleCard(app, ctx) {
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "belgianTargetAa", "setBelgianTargetAa", "styleBelgian", "styleBelgianMessage", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

@@ -62,7 +62,7 @@ def canonical_batch() -> BatchSolverRequest:
         v_ferm=20.0,
         topology=BatchSpargeTopology.R_L_TO_G,
         intensive_value=3.0,
-        grain_bill=[GristBillRow(w_i=1.0, yield_i=0.80, mc_i=0.04)],
+        grain_bill=[GristBillRow(w_i=1.0, yield_i=0.80, mc_i=0.04, fermentability_i=0.8)],
         delta_v_evap=3.0,
         eta_conv=0.95,
         hlt_starting_volume_l=25.0,

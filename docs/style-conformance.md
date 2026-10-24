@@ -44,7 +44,7 @@ assessor, and the recipe document read one source.
 
 ```
 OE  = sg_to_plato(OG)                      # ASBC Table 1 cubic
-AE  = OE · (1 − AA),   AA = batch.apparent_attenuation
+AE  = OE · (1 − AA),   AA = solver.batch.aa_batch
 FG  = plato_to_sg(AE)                       # ASBC 3rd-order polynomial
 ABV = (0.372 + 0.00357·OE)(OE − AE) · (FG / 0.7907)   # Cutaia, Reid & Speers 2009
 ```

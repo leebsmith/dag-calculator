@@ -8,6 +8,7 @@ from conftest import make_batch_request
 from app.core.batch_solver import (
     GrainBillEntry,
     SolverValidationError,
+    composite_fermentability_fraction,
     composite_yield_fraction,
     max_achievable_abv,
     resolve_hlt_water_budget,
@@ -16,7 +17,7 @@ from app.core.batch_solver import (
     solve_sg_post_boil_from_abv,
     validate_grain_bill_normalization,
 )
-from app.schemas.boundary import BatchSolverErrorCode
+from app.schemas.boundary import BatchSolverErrorCode, GristBillRow
 from app.services import SolverServiceError, solve_batch_request
 
 # ---------------------------------------------------------------------------
@@ -30,6 +31,22 @@ def test_composite_yield_fraction():
         GrainBillEntry(w_i=0.5, yield_i=0.70, mc_i=0.00),
     ]
     assert composite_yield_fraction(bill) == pytest.approx(0.75)
+
+
+def test_composite_fermentability_is_extract_weighted():
+    bill = [
+        GrainBillEntry(w_i=0.5, yield_i=0.80, mc_i=0.00, fermentability_i=0.80),
+        GrainBillEntry(w_i=0.5, yield_i=0.40, mc_i=0.00, fermentability_i=0.20),
+    ]
+    assert composite_fermentability_fraction(bill) == pytest.approx(0.60)
+
+
+def test_composite_fermentability_requires_every_row():
+    bill = [
+        GrainBillEntry(w_i=0.5, yield_i=0.80, mc_i=0.00, fermentability_i=0.80),
+        GrainBillEntry(w_i=0.5, yield_i=0.70, mc_i=0.00),
+    ]
+    assert composite_fermentability_fraction(bill) is None
 
 
 def test_grain_bill_normalization_gate():
@@ -192,6 +209,85 @@ def test_solve_batch_end_to_end():
         if isinstance(v, float):
             assert v == v  # finite, not NaN
             assert v != float("inf")
+
+
+def _fermentable_bill(f: float = 0.80) -> list[GristBillRow]:
+    return [GristBillRow(w_i=1.0, yield_i=0.80, mc_i=0.04, fermentability_i=f)]
+
+
+def test_all_malt_wort_aa_is_the_malt_baseline():
+    resp = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.80), apparent_attenuation=0.90)
+    )
+    assert resp.aa_wort == pytest.approx(0.80)
+    assert resp.aa_batch == pytest.approx(0.80)
+
+
+def test_yeast_cap_clamps_the_wort_baseline():
+    resp = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.80), apparent_attenuation=0.70)
+    )
+    assert resp.aa_wort == pytest.approx(0.80)
+    assert resp.aa_batch == pytest.approx(0.70)
+    assert resp.max_achievable_abv == pytest.approx(max_achievable_abv(0.70))
+
+
+def test_cap_above_the_baseline_leaves_it_untouched():
+    resp = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.80), apparent_attenuation=0.90)
+    )
+    assert resp.aa_batch == pytest.approx(0.80)
+    assert resp.max_achievable_abv == pytest.approx(max_achievable_abv(0.80))
+
+
+def test_sugar_raises_the_mixed_wort_aa():
+    malt_only = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.80), apparent_attenuation=0.99)
+    )
+    sweet = solve_batch_request(
+        make_batch_request(
+            grain_bill=_fermentable_bill(0.80),
+            apparent_attenuation=0.99,
+            s_late_add=0.4,
+        )
+    )
+    assert sweet.aa_wort > malt_only.aa_wort
+    assert sweet.aa_wort <= 1.0
+    assert sweet.aa_batch == pytest.approx(sweet.aa_wort)
+
+
+def test_sugar_blend_matches_the_extract_share():
+    resp = solve_batch_request(
+        make_batch_request(
+            grain_bill=_fermentable_bill(0.80),
+            apparent_attenuation=1.0,
+            s_late_add=0.4,
+        )
+    )
+    malt_extract = resp.s_post_boil_target - 0.4
+    expected = (malt_extract * 0.80 + 0.4) / resp.s_post_boil_target
+    assert resp.aa_wort == pytest.approx(expected, rel=1e-9)
+
+
+def test_derated_cap_changes_the_batch_aa():
+    full = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.80), apparent_attenuation=0.90)
+    )
+    derated = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.80), apparent_attenuation=0.855)
+    )
+    assert full.aa_batch == pytest.approx(0.80)
+    assert derated.aa_batch == pytest.approx(0.80)
+    capped = solve_batch_request(
+        make_batch_request(grain_bill=_fermentable_bill(0.90), apparent_attenuation=0.855)
+    )
+    assert capped.aa_batch == pytest.approx(0.855)
+
+
+def test_legacy_rows_without_fermentability_fall_back_to_the_cap():
+    resp = solve_batch_request(make_batch_request(apparent_attenuation=0.75))
+    assert resp.aa_wort == pytest.approx(0.75)
+    assert resp.aa_batch == pytest.approx(0.75)
 
 
 def test_solve_batch_runoff_ratio_topology():

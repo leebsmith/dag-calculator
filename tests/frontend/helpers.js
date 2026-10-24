@@ -82,6 +82,8 @@ export function batchOutputs() {
     "cascade.v_post_boil": 21.0,
     "cascade.mash_thickness_l_per_kg": 3.0,
     max_achievable_abv: 10.0,
+    aa_wort: 0.76,
+    aa_batch: 0.75,
     "hlt.v_hlt_debt": 1.0,
     "hlt.v_hlt_after_strike": 16.0,
     "hlt.v_hlt_top_up": 0.0,
@@ -119,6 +121,18 @@ export function waterOutputs() {
     "grist_buckets_kg.ACID": 0.0,
   };
 }
+
+export const YEAST = {
+  id: "test-yeast",
+  name: "Test Yeast",
+  manufacturer: "Test",
+  attenuation_pct: 0.75,
+  flocculation: "Medium",
+  alcohol_tolerance: "10%",
+  form: "Dry",
+  temp_low_c: 18,
+  temp_high_c: 22,
+};
 
 export function makeFixtures() {
   const references = { equipment: { "herms-30l": EQUIPMENT } };
@@ -171,4 +185,11 @@ export function makeFixtures() {
     identity: identityFixture(),
     roots,
   };
+}
+
+export function makeFixturesWithYeast() {
+  const fixtures = makeFixtures();
+  fixtures.references.yeast = { "test-yeast": YEAST };
+  fixtures.roots["batch.yeast_id"] = "test-yeast";
+  return fixtures;
 }

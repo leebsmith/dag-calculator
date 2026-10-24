@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 const STYLE = {
   id: "21A",
@@ -49,7 +49,7 @@ function customMashRests(app) {
 }
 
 test("loadState rebinds the style card to the new engine", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   await app.loadState({
@@ -65,7 +65,7 @@ test("loadState rebinds the style card to the new engine", async () => {
 });
 
 test("scheduled solves and status writes target the reactive binding", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   const proxy = {
     compute() {
       this.computes += 1;
@@ -85,7 +85,7 @@ test("scheduled solves and status writes target the reactive binding", async () 
 });
 
 test("loadState rebinds the mash card to the loaded rest collection", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const rests = customMashRests(app);
 
@@ -97,7 +97,7 @@ test("loadState rebinds the mash card to the loaded rest collection", async () =
 });
 
 test("loadState drops a legacy dough-in rest row", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   await app.loadState({
@@ -115,7 +115,7 @@ test("loadState drops a legacy dough-in rest row", async () => {
 });
 
 test("loadState rebinds the hop card to the loaded rows", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0);
@@ -131,7 +131,7 @@ test("loadState rebinds the hop card to the loaded rows", async () => {
 });
 
 test("loadState rebinds the yeast card to the loaded selection", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   const yeastId = app.yeastCatalog[0].id;
 
@@ -141,7 +141,7 @@ test("loadState rebinds the yeast card to the loaded selection", async () => {
 });
 
 test("loadState rebinds draft rows and their readouts", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   await app.loadState({ collections: { "batch.sugars": SUGAR_ROWS } });
@@ -153,7 +153,7 @@ test("loadState rebinds draft rows and their readouts", async () => {
 });
 
 test("teardown restores baseline card state", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   app.setTargetIbu(40);
   const yeastId = app.yeastCatalog[0].id;

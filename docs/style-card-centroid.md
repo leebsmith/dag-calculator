@@ -72,7 +72,9 @@ AA* = (OE* − AE*) / OE*          # Plato-space (solver-native)
 ABV* = ABV(OE*, AE*)
 ```
 
-`AA*` seeds `batch.apparent_attenuation`; `ABV*` seeds `batch.target_abv`.
+`ABV*` seeds `batch.target_abv`. `AA*` is the style point's implied
+attenuation; the solver's `batch.apparent_attenuation` is `min(AA_wort,
+yeast_cap)` and is the value the navigator constrains to (see §8).
 
 ## 7. Conformance
 
@@ -84,20 +86,25 @@ style's band. Any change to the Cutaia/ASBC constants must be regenerated there.
 ## 8. Region navigator (target picker)
 
 Many styles span a wide band (e.g. Black IPA: ABV 5.5–9.0), so a single centroid
-is only a default. The Style card exposes an **OE/AE region navigator**: two
-sliders in °P that move a point over the feasible polygon, seeding AA/ABV live.
+is only a default. The Style card exposes an **OE/AE region navigator** on the
+**fixed-AA ray**:
 
-- **Mutual, dynamic bounds.** For a convex region, `oe ∈ oeSliceAt(AE)` ⟺
-  `(oe, AE) ∈ region`. So each slider's min/max is the region slice imposed by
-  the other's current value (`oeSliceAt`/`aeSliceAt`) — no cross-clamping, and a
-  move can never leave the polygon.
-- **Source of truth.** The `batch.apparent_attenuation` / `batch.target_abv`
-  roots remain authoritative; the slider positions are their inverse
-  (`extractFromTarget`, a 1D bisection of `ABV(OE, OE·(1−AA)) = ABV`). The region
-  is derived from the `batch.style_*` envelope roots, so envelope edits reshape
-  it (WYSIWYG).
-- **Reset** returns to the envelope region's area centroid (identical to the
-  style's centroid until the envelope is edited).
+```
+AE = OE · (1 − aa_batch)
+```
+
+- **One degree of freedom.** `aa_batch` comes from the solved recipe and yeast
+  cap. Moving the OE or AE slider moves the point along that ray, and the ray's
+  intersection with the feasible polygon is the reachable span
+  (`raySegment`). If the ray misses the polygon, the sliders are disabled and
+  the card warns.
+- **Source of truth.** `batch.target_abv` is the knob; the slider positions are
+  its inverse on the ray. `batch.apparent_attenuation` is the solver's
+  `aa_batch` display, not a root.
+- **Reset** returns to the midpoint of the ray's intersection with the polygon.
+- **Advisory Belgian knob.** The card also shows the sucrose dose needed to
+  raise AA/ABV at fixed AE. It is advisory only and never mutates the recipe
+  (`docs/belgian-knob.md`).
 
 ## 9. Model-free brew risk
 

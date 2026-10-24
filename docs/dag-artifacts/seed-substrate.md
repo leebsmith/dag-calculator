@@ -59,7 +59,8 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 | `family` | — | — | standard family (base/kilned/crystal/roasted/…) |
 | `generic_description` | — | — | shared one-line description from the standard list |
 | `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
-| `yield_fraction` | percentage | `[0, 1]` | dry-basis extract yield |
+| `yield_fraction` | percentage | `[0, 1]` | dry-basis fine-grind extract yield; the solver applies `(1 - moisture)` |
+| `fermentability_fraction` | percentage | `[0, 1]` | Congress-Mash fermentability limit (default by category) |
 | `moisture_fraction` | percentage | `[0, 1]` | as-is moisture, where the datasheet publishes it (`0`/absent ⇒ not published) |
 | `color_lovibond` | grain_color | `gte 0` | dry-malt color |
 
@@ -80,17 +81,22 @@ source or maintain.
 |---|---|---|
 | `id`, `name` | — | — |
 | `maltster` | — | — |
-| `yield_fraction` | percentage | `[0, 1]` |
-| `fermentability_fraction` | percentage | `[0, 1]` (optional; AAL) |
+| `yield_fraction` | percentage | `[0, 1]` (as-is sugar-point contribution) |
+| `fermentability_fraction` | percentage | `[0, 1]` (`1.0` for sugars/extracts) |
 | `color_lovibond` | grain_color | `gte 0` |
 
 The malt and sugar seeds are built by `scripts/build-fermentables-seed.mjs`
 from the vendored `data/sources/malt-database-malts.json` scrape (deduped
 one-per-name, `malt`+`adjunct` → malts, `sugar`+`syrup`+`extract` → sugars).
-Rows whose `yield_basis` is `fermentability` are **excluded**: the value is an
-AAL, not an extract yield, and the two axes are not interchangeable. The raw
-source keeps the AAL; `fermentability_fraction` is carried only when a row has
-both an extract yield and an AAL.
+Rows whose `yield_basis` is `fermentability` are interpreted by product type:
+extract/syrup/sugar rows are **restored** as as-is sugar-point yields with
+`fermentability_fraction = 1.0`; the two Maltoferm black extracts and any
+malt/adjunct row with a fermentability basis are excluded. The raw source keeps
+the original value and basis label.
+Malts take a scraped `fermentability_fraction` when present, otherwise a
+category default: base `0.81`, crystal `0.50`, roasted `0.15`, acid `0.80`.
+`fermentability_fraction` is carried on `malt`, `sugar`, `standard-malts`,
+`grist_row`, `sugar_row`, and `trace_malt_row`.
 Each malt is classified against `data/sources/standard-malts.json` via the
 committed `data/sources/malt-standard-crosswalk.json`, supplying `standard_malt`
 + `generic_description` (a reliable generic layer over the spotty per-malt
@@ -170,9 +176,9 @@ normalization:
 
 Selecting a style (the `batch.style` selection) copy-ins its ranges into the
 `batch.style_*_min/_max` envelope roots, sets `batch.fermentation` from its tags,
-and derives a single AA/ABV target from the style's feasible-region centroid
-(`docs/style-card-centroid.md`), seeding `batch.apparent_attenuation` and
-`batch.target_abv`.
+and derives a single ABV target from the style's feasible-region centroid
+(`docs/style-card-centroid.md`), seeding `batch.target_abv`. The batch AA is not
+seeded: it is solved from the grist + yeast cap.
 
 ### 2.7 `hop`
 
@@ -205,7 +211,9 @@ inside each standard group (badged "generic").
 **Derivation** (`scripts/build-standard-malts-seed.mjs`, regenerated from
 `data/seeds/malts.json`):
 
-- `yield_fraction` / `color_lovibond` are the **median** of the class's members.
+- `yield_fraction` / `fermentability_fraction` / `color_lovibond` are the
+  **median** of the class's members; a missing fermentability falls back to the
+  category default.
   The median — not a mean, and *not* a statistical-outlier-filtered mean — is
   chosen because the apparent yield "outliers" are real product traits (oats
   ~0.60, chit ~0.50), which a family or IQR band would wrongly discard.

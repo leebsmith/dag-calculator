@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 import { kettleBlend, ionDelta } from "../../frontend/src/adapters/cards/water.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import waterTargetProfiles from "../../data/seeds/water_target_profiles.json" with { type: "json" };
@@ -36,7 +36,7 @@ test("ionDelta is null when either side is missing", () => {
 });
 
 test("the water summary and brew-day instruction branch on the mode", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setRoot("water.salt_distribution", "MASH_ONLY");
   app.compute();
@@ -53,7 +53,7 @@ test("the water summary and brew-day instruction branch on the mode", () => {
 });
 
 test("the checked set drives the grid and the derived strategy", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("so4");
@@ -80,7 +80,7 @@ test("the checked set drives the grid and the derived strategy", () => {
 });
 
 test("checking an ion seeds a value from the water source", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   await loadWaterSource(app, {
     report_id: "w1",
@@ -106,7 +106,7 @@ test("checking an ion seeds a value from the water source", async () => {
 });
 
 test("clearing a checked ion's value unchecks it", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("so4");
@@ -122,7 +122,7 @@ test("clearing a checked ion's value unchecks it", () => {
 });
 
 test("No targets locks the grid; Freeform unlocks it", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   assert.equal(app.waterTargetLocked, true, "an untargeted draft opens locked");
 
@@ -140,7 +140,7 @@ test("No targets locks the grid; Freeform unlocks it", () => {
 });
 
 test("presets clear the previous targets, fill their ions and derive the strategy", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const target = (ion) => app.engine.get(`water.target.${ion}`);
 
@@ -169,7 +169,7 @@ test("presets clear the previous targets, fill their ions and derive the strateg
 });
 
 test("toggling a checked ion detaches the preset", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.selectWaterTarget("hoppy-ipa");
   app.toggleWaterTarget("cl");
@@ -182,7 +182,7 @@ test("toggling a checked ion detaches the preset", () => {
 });
 
 test("target changes recalculate immediately and queue a save", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   let saves = 0;
   app.onChange = () => {
@@ -212,7 +212,7 @@ test("target changes recalculate immediately and queue a save", () => {
 });
 
 test("source ions render only in the comparison grid", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   await loadWaterSource(app, {
     report_id: "25138",
@@ -240,7 +240,7 @@ test("source ions render only in the comparison grid", async () => {
 });
 
 test("water readouts use the fixed precision policy", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   await loadWaterSource(app, {
     report_id: "25138",
@@ -265,7 +265,7 @@ test("water readouts use the fixed precision policy", async () => {
 });
 
 test("prescription suppresses doses that round to zero", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
 
   assert.equal(app.waterPrescription.suppressed, true);
@@ -279,7 +279,7 @@ test("prescription suppresses doses that round to zero", () => {
 });
 
 test("telemetry severity drives the warning count and keeps the full log in details", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.boundaryExtras["solver.water"] = {
     telemetry: [
@@ -296,7 +296,7 @@ test("telemetry severity drives the warning count and keeps the full log in deta
 });
 
 test("five and six checked are allowed and warned", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.selectWaterTarget("freeform");
   for (const pin of ["ca", "mg", "na", "so4"]) {
@@ -325,7 +325,7 @@ test("five and six checked are allowed and warned", () => {
 });
 
 test("the selector lists constraints first and keeps the pseudo-options at the ends", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.compute();
 
@@ -361,7 +361,7 @@ test("every shipped profile declares a non-empty target set", () => {
 });
 
 test("the brew-day payload carries the derived water instruction", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.toggleBrewDayStep("dough-in", true);
   app.compute();

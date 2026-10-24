@@ -44,6 +44,7 @@
             <input
               type="range"
               class="extract-slider extract-slider-ae"
+              :disabled="!stylePreview?.ray"
               :min="fmt.formatWithDecimals(styleAeBounds?.[0], 3, { dash: '0' })"
               :max="fmt.formatWithDecimals(styleAeBounds?.[1], 3, { dash: '1' })"
               step="0.01"
@@ -57,12 +58,36 @@
               :height="stylePreview.height"
             >
               <polygon class="extract-region" :points="stylePreview.polygon" />
+              <line
+                x-show="stylePreview.ray"
+                class="extract-ray"
+                :x1="stylePreview.ray?.x1"
+                :y1="stylePreview.ray?.y1"
+                :x2="stylePreview.ray?.x2"
+                :y2="stylePreview.ray?.y2"
+              />
+              <line
+                x-show="stylePreview.advised"
+                class="extract-advised"
+                :x1="stylePreview.marker.x"
+                :y1="stylePreview.marker.y"
+                :x2="stylePreview.advised?.x"
+                :y2="stylePreview.advised?.y"
+              />
               <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
               <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
+              <circle
+                x-show="stylePreview.advised"
+                class="extract-advised-marker"
+                :cx="stylePreview.advised?.x"
+                :cy="stylePreview.advised?.y"
+                r="2.5"
+              />
             </svg>
             <input
               type="range"
               class="extract-slider extract-slider-oe"
+              :disabled="!stylePreview?.ray"
               :min="fmt.formatWithDecimals(styleOeBounds?.[0], 3, { dash: '0' })"
               :max="fmt.formatWithDecimals(styleOeBounds?.[1], 3, { dash: '1' })"
               step="0.01"
@@ -72,6 +97,9 @@
             />
           </div>
           <span class="form-hint">AE (vertical) and OE (horizontal) in °P, constrained to the style's feasible region.</span>
+          <p class="form-hint" x-show="styleExtract && styleBelgian && !stylePreview?.ray">
+            The fixed-attenuation ray misses the style region; adjust the grist or yeast.
+          </p>
           <div class="extract-readouts">
             <div class="extract-readout">
               <span class="form-label">OG (SG)</span>
@@ -101,6 +129,44 @@
               <span class="tabular-nums" x-text="styleTargetNearest()"></span>
             </div>
           </div>
+
+          <div class="synthesized-header" style="margin-top: 0.75rem">
+            <h4 class="synthesized-title">Belgian knob (advisory)</h4>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="belgian-target-aa">Target attenuation</label>
+            <input
+              id="belgian-target-aa"
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              class="form-input"
+              :value="fmt.formatWithDecimals((styleBelgian?.targetAa ?? styleBelgian?.currentAa ?? 0) * 100, 1)"
+              @change="setBelgianTargetAa($event.target.value)"
+            />
+          </div>
+          <template x-if="styleBelgian?.ok">
+            <div>
+              <p class="form-hint" x-text="styleBelgianMessage"></p>
+              <p class="text-xs text-muted" x-show="styleBelgian.sucroseKg > 0">
+                OE <span x-text="fmt.formatWithDecimals(styleBelgian.oe, 1)"></span> →
+                <span x-text="fmt.formatWithDecimals(styleBelgian.targetOe, 1)"></span> °P;
+                AE <span x-text="fmt.formatWithDecimals(styleBelgian.ae, 1)"></span> °P;
+                AA <span x-text="fmt.formatPercent(styleBelgian.currentAa)"></span> →
+                <span x-text="fmt.formatPercent(styleBelgian.targetAa)"></span>;
+                ABV <span x-text="fmt.formatPercentValue(styleBelgian.currentAbv)"></span> →
+                <span x-text="fmt.formatPercentValue(styleBelgian.targetAbv)"></span>
+              </p>
+            </div>
+          </template>
+          <template x-if="styleBelgian && !styleBelgian.ok">
+            <p class="form-hint" x-text="styleBelgianMessage"></p>
+          </template>
+          <p class="form-hint" x-show="styleExtract && !styleBelgian">
+            Select a yeast to compute the advisory.
+          </p>
+          <p class="form-hint">Advisory only; it does not change the recipe.</p>
         </div>
       </template>
 

@@ -13,6 +13,7 @@ export const lateAdditionsRegistry = {
   "batch.sugars.name": { label: "Sugar" },
   "batch.sugars.mass_kg": { label: "Mass", unit: "kg" },
   "batch.sugars.yield_fraction": { label: "Yield", displayUnit: "pct", decimals: 1 },
+  "batch.sugars.fermentability_fraction": { label: "Fermentable", displayUnit: "pct", decimals: 1 },
   "batch.sugars.color_lovibond": { label: "Color" },
   "batch.s_late_add": { label: "Total extract", unit: "kg", decimals: 1 },
   "grist.sugars_mass": { label: "Total sugar mass" },

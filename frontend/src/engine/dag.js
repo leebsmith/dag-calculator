@@ -119,7 +119,8 @@ export function createEngine(artifact, options = {}) {
     const node = artifact.nodes[r.nodeId];
     if (r.suffix.length === 0) return get(r.nodeId);
     if (node.kind === "boundary") {
-      return get(r.nodeId).outputs[r.suffix.join(".")];
+      const value = get(r.nodeId);
+      return value === undefined ? undefined : value.outputs[r.suffix.join(".")];
     }
     if (node.kind === "selection" || node.kind === "collection") {
       return getField(get(r.nodeId), r.suffix.join("."));
@@ -226,6 +227,16 @@ export function createEngine(artifact, options = {}) {
       }
       case "boundary": {
         const inputValues = resolveBoundaryInputs(node);
+        if (
+          Object.values(inputValues).some(
+            (value) =>
+              value === undefined ||
+              value === null ||
+              (typeof value === "number" && Number.isNaN(value))
+          )
+        ) {
+          return undefined;
+        }
         const fingerprint = canonicalFingerprint(inputValues);
         if (boundaryCache.has(fingerprint)) return boundaryCache.get(fingerprint);
         const fn = boundaries[node.binding];

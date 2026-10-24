@@ -22,6 +22,8 @@ const FAMILY_CATEGORY = {
   toasted: "ROASTED",
 };
 
+const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
+
 export function median(values) {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
@@ -61,6 +63,10 @@ export function buildStandardMalts(malts) {
       maltster: "Generic",
       category,
       yield_fraction: median(ms.map((m) => m.yield_fraction).filter((n) => typeof n === "number")),
+      fermentability_fraction:
+        median(ms.map((m) => m.fermentability_fraction).filter((n) => typeof n === "number")) ||
+        CATEGORY_DEFAULT_F[category] ||
+        0.81,
       color_lovibond: median(ms.map((m) => m.color_lovibond).filter((n) => typeof n === "number")),
       notes: first.generic_description,
       standard_malt: stdId,

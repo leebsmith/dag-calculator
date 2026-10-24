@@ -121,6 +121,7 @@ export function createStepApp(options = {}) {
     boundaryExtras: Object.fromEntries(
       session.boundaryNodes.map((id) => [id, null])
     ),
+    boundaryBlocked: {},
 
     // The browser wraps this object in Alpine.reactive. The runner and its
     // status callback are created below, outside that proxy, so point them at
@@ -131,6 +132,10 @@ export function createStepApp(options = {}) {
 
     get boundaryPending() {
       return useHttp && session.boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
+    },
+
+    get boundaryBlockedMessage() {
+      return Object.values(this.boundaryBlocked ?? {}).find(Boolean) ?? "";
     },
 
     get waterTelemetry() {
@@ -283,8 +288,7 @@ export function createStepApp(options = {}) {
     // `x-data` objects, which would run a solve before sign-in (and 401).
     async boot() {
       this.syncWaterTargets?.();
-      if (useHttp) await this.solveNow();
-      else this.compute();
+      await this.solveNow();
       this.library
         .refresh()
         .then(() => this.refreshLibraryItems())
@@ -323,14 +327,20 @@ export function createStepApp(options = {}) {
     session,
     useHttp,
     gate: bindGate(waterTargetGate),
+    preGate: (id, engine) => {
+      if (id !== "solver.batch") return null;
+      const cap = engine.resolve("batch.yeast_cap");
+      return Number.isFinite(cap) && cap > 0 ? null : "Select a yeast to solve the batch.";
+    },
     fetchImpl,
     debounceMs,
     compute: () => (reactiveApp ?? app).compute(),
-    onState: ({ statuses, error, extras }) => {
+    onState: ({ statuses, error, extras, blocked }) => {
       const target = reactiveApp ?? app;
       target.boundaryStatuses = statuses;
       target.boundaryError = error;
       target.boundaryExtras = extras;
+      target.boundaryBlocked = blocked;
     },
   });
 

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { walk, read, rel } from "./util.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "../frontend/appHelpers.js";
 
 // A8a: unit conversion is display-only — `units.fromBase` is referenced only by
 // the producer (and the units module itself).
@@ -28,7 +28,7 @@ test("A8a: units.fromBase used only by the producer", () => {
 
 // A8b: unit mode converts the DISPLAY, but writes to the store stay in base units.
 test("A8b: unit mode converts display; writes store base", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setUnit("temperature", "degF");
 
@@ -46,7 +46,7 @@ test("A8b: unit mode converts display; writes store base", () => {
 // deviation from the inherited unit — a master (dimension-level) pick is the
 // inherited unit, so its pills are NOT accented.
 test("A8c: per-field unit override", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const grain = () => app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c");
 
@@ -73,7 +73,7 @@ test("A8c: per-field unit override", () => {
 // A8d: a registry `displayUnit` defaults the readout to that unit while the
 // canonical value stays in the base unit (kg/L), with no override recorded.
 test("A8d: registry displayUnit defaults the display (g/ml)", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
 
   const gypsum = app.fieldsBySlice.water.find((f) => f.id === "solver.water.mash_additions.gypsum_kg");
@@ -92,7 +92,7 @@ test("A8d: registry displayUnit defaults the display (g/ml)", () => {
 // A8e: a collection column with a `displayUnit` renders in that unit, and the
 // write stores the base value (cell conversion for collection tables).
 test("A8e: collection cell displayUnit converts display; write stores base", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const table = () => app.fieldsBySlice["dry-hops"].find((f) => f.control === "collection-table");
 

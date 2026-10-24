@@ -12,6 +12,7 @@ function makeRow(sugar) {
     name: sugar.name,
     mass_kg: 0,
     yield_fraction: sugar.yield_fraction,
+    fermentability_fraction: sugar.fermentability_fraction,
     color_lovibond: sugar.color_lovibond,
     notes: sugar.notes,
   };

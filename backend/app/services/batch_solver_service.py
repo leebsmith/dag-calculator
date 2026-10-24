@@ -34,7 +34,12 @@ def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
         topology=req.topology.value,
         intensive_value=req.intensive_value,
         grain_bill=[
-            GrainBillEntry(w_i=row.w_i, yield_i=row.yield_i, mc_i=row.mc_i)
+            GrainBillEntry(
+                w_i=row.w_i,
+                yield_i=row.yield_i,
+                mc_i=row.mc_i,
+                fermentability_i=row.fermentability_i,
+            )
             for row in req.grain_bill
         ],
         s_late_add=req.s_late_add,
@@ -77,6 +82,8 @@ def _to_response(result) -> BatchSolverResponse:
             mash_thickness_l_per_kg=cascade.mash_thickness_l_per_kg,
         ),
         max_achievable_abv=result.max_achievable_abv,
+        aa_wort=result.aa_wort,
+        aa_batch=result.aa_batch,
         hlt=BatchHltOutputs(
             v_hlt_debt=hlt.v_hlt_debt,
             v_hlt_after_strike=hlt.v_hlt_after_strike,

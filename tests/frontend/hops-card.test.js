@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 test("boil hops: parts normalize to IBU shares and mass back-calculates", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0);
@@ -31,7 +31,7 @@ test("boil hops: parts normalize to IBU shares and mass back-calculates", () => 
 });
 
 test("boil hops: parts renormalize when an addition is removed", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.openHopEditor();
   app.addCatalogHop("cascade");
@@ -45,7 +45,7 @@ test("boil hops: parts renormalize when an addition is removed", () => {
 });
 
 test("both hop mass pills seed from the saved mass preference", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
 
   assert.equal(app.hopMassUnit, "g");
@@ -53,7 +53,7 @@ test("both hop mass pills seed from the saved mass preference", () => {
 });
 
 test("hop mass unit cycles and changes the readout", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.openHopEditor();
   app.addCatalogHop("cascade");
@@ -74,7 +74,7 @@ test("hop mass unit cycles and changes the readout", () => {
 });
 
 test("the two hop mass pills are independent once seeded", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
@@ -105,7 +105,7 @@ test("the two hop mass pills are independent once seeded", () => {
 });
 
 test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
@@ -132,7 +132,7 @@ test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", (
 });
 
 test("whirlpool hops: rest duration and initial temperature drive the mass", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
@@ -155,7 +155,7 @@ test("whirlpool hops: rest duration and initial temperature drive the mass", () 
 });
 
 test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
@@ -182,7 +182,7 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", ()
 });
 
 test("whirlpool catalog switches to products and copies form, alpha, and ratio", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.5);
@@ -206,7 +206,7 @@ test("whirlpool catalog switches to products and copies form, alpha, and ratio",
 });
 
 test("inspector shows the T-90 equivalent only when the row carries a ratio", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.5);
@@ -231,7 +231,7 @@ test("inspector shows the T-90 equivalent only when the row carries a ratio", ()
 });
 
 test("flowable extract doses above the 4 g/gal ceiling warn", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(100);
   app.setWhirlpoolFraction(1);
@@ -245,7 +245,7 @@ test("flowable extract doses above the 4 g/gal ceiling warn", () => {
 });
 
 test("whirlpool ambient follows the global temperature unit", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setUnit("temperature", "degF");
 
@@ -257,7 +257,7 @@ test("whirlpool ambient follows the global temperature unit", () => {
 });
 
 test("whirlpool cooling time constant changes the required mass", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
@@ -275,7 +275,7 @@ test("whirlpool cooling time constant changes the required mass", () => {
 });
 
 test("total hop mass includes boil and whirlpool additions", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);

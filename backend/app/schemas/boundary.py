@@ -172,13 +172,17 @@ class GristBillRow(BoundaryModel):
     w_i: Annotated[float, Field(ge=0.0, le=1.0, description="Normalized grist fraction")]
     yield_i: Annotated[float, Field(ge=0.0, le=1.0, description="Dry-basis extract yield fraction")]
     mc_i: Annotated[float, Field(ge=0.0, le=1.0, description="As-is moisture fraction")]
+    fermentability_i: Annotated[
+        float | None,
+        Field(default=None, ge=0.0, le=1.0, description="Congress-Mash fermentability fraction"),
+    ]
 
 
 class BatchSolverRequest(BoundaryModel):
     """Input contract for batch_sparge_solver (Brent's method root-finding)."""
 
     target_abv: Annotated[float, Field(gt=0.0, le=100.0, description="Target ABV in percent (e.g. 5.5)")]
-    apparent_attenuation: Annotated[float, Field(gt=0.0, le=1.0, description="Expected attenuation fraction")]
+    apparent_attenuation: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast attenuation cap fraction")]
     v_ferm: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Target cold fermenter volume in Liters")]
     topology: BatchSpargeTopology = Field(description="Runoff model topology")
     intensive_value: Annotated[float, Field(gt=0.0, le=1000.0, description="R_L:G ratio (L/kg) or runoff ratio r")]
@@ -237,6 +241,8 @@ class BatchSolverResponse(BoundaryModel):
     m_grist: Annotated[float, Field(description="Total required grist mass (kg)")]
     cascade: BatchCascadeOutputs
     max_achievable_abv: Annotated[float, Field(description="Upper bound achievable ABV given geometry")]
+    aa_wort: Annotated[float, Field(description="Extract-weighted wort fermentability")]
+    aa_batch: Annotated[float, Field(description="Wort AA clamped by the yeast cap")]
     hlt: BatchHltOutputs
     mash_thickness_l_per_kg: Annotated[float, Field(description="Resolved mash thickness (L/kg)")]
 

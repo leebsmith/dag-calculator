@@ -7,6 +7,14 @@ const ETHANOL_DENSITY = 0.7907;
 const CUTAIA_A = 0.372;
 const CUTAIA_B = 0.00357;
 
+// Solver extract-point conversion (kg extract per GU·L), matching
+// backend/app/core/batch_solver.py::GAMMA_METRIC.
+export const GAMMA_METRIC = 385.641;
+// Sucrose is 100% extract; the app's relative yield is 1.0.
+export const SUCROSE_YIELD = 1.0;
+// The current AA can sit a hair above the cap after a style-target inverse.
+const CAP_EPS = 1e-3;
+
 // ASBC Table 1 cubic (SG -> degrees Plato).
 export function sgToPlato(sg) {
   return ((135.997 * sg - 630.272) * sg + 1111.14) * sg - 616.868;
@@ -42,9 +50,93 @@ function horizontalCrossings(ae, targetAbv) {
   return roots;
 }
 
+// Extract mass (kg) represented by an OE reading at a fixed cold volume.
+export function extractMassKg(oe, volumeL) {
+  return (1000 * (platoToSg(oe) - 1) * volumeL) / GAMMA_METRIC;
+}
+
+// OE needed to hit an ABV at fixed AE. Picks the physical root above AE.
+export function oeForAbvAtAe(ae, targetAbv) {
+  const roots = horizontalCrossings(ae, targetAbv)
+    .filter((oe) => Number.isFinite(oe) && oe > ae)
+    .sort((a, b) => a - b);
+  return roots.length ? roots[0] : null;
+}
+
+// Advisory sugar vector: hold AE, raise OE until the target AA or ABV is met.
+// Pure; never mutates a recipe. `sucroseKg` is the ingredient mass at
+// `yieldSucrose` (1.0 for sucrose).
+export function sugarAdvisory({
+  oe,
+  ae,
+  yeastCap,
+  volumeL,
+  targetAa,
+  targetAbv,
+  yieldSucrose = SUCROSE_YIELD,
+}) {
+  const currentAa = oe > 0 ? (oe - ae) / oe : null;
+  const currentAbv = cutaiaAbv(oe, ae);
+  const cap = Number.isFinite(yeastCap) ? yeastCap : 1;
+  const base = { oe, ae, volumeL, currentAa, currentAbv, yeastCap: cap };
+
+  if (!(oe > 0) || !(ae >= 0) || ae >= oe) {
+    return { ok: false, reason: "invalid_state", ...base };
+  }
+  if (!(volumeL > 0)) {
+    return { ok: false, reason: "no_volume", ...base };
+  }
+  if (!(yieldSucrose > 0)) {
+    return { ok: false, reason: "invalid_yield", ...base };
+  }
+
+  let targetOe;
+  if (targetAa !== undefined && targetAa !== null) {
+    if (!Number.isFinite(targetAa)) return { ok: false, reason: "invalid_target", ...base };
+    if (targetAa < currentAa - 1e-12) {
+      return { ok: false, reason: "below_current_aa", ...base };
+    }
+    if (targetAa >= 1) return { ok: false, reason: "impossible_aa", ...base };
+    if (targetAa > cap + CAP_EPS) {
+      return { ok: false, reason: "above_yeast_cap", ...base };
+    }
+    targetOe = ae / (1 - targetAa);
+  } else if (targetAbv !== undefined && targetAbv !== null) {
+    if (!Number.isFinite(targetAbv)) return { ok: false, reason: "invalid_target", ...base };
+    if (targetAbv < currentAbv - 1e-12) {
+      return { ok: false, reason: "below_current_abv", ...base };
+    }
+    targetOe = oeForAbvAtAe(ae, targetAbv);
+    if (targetOe === null || targetOe < oe - 1e-9) {
+      return { ok: false, reason: "abv_unreachable", ...base };
+    }
+  } else {
+    return { ok: false, reason: "no_target", ...base };
+  }
+
+  const deltaOe = Math.max(0, targetOe - oe);
+  const targetAaValue = 1 - ae / targetOe;
+  if (targetAaValue > cap + CAP_EPS) {
+    return { ok: false, reason: "above_yeast_cap", ...base };
+  }
+  const dose =
+    deltaOe === 0
+      ? 0
+      : (extractMassKg(targetOe, volumeL) - extractMassKg(oe, volumeL)) / yieldSucrose;
+
+  return {
+    ok: true,
+    ...base,
+    targetOe,
+    deltaOe,
+    targetAa: targetAaValue,
+    targetAbv: cutaiaAbv(targetOe, ae),
+    sucroseKg: Math.max(0, dose),
+  };
+}
+
 // ABV along a fixed-OE (vertical) edge is monotone decreasing in AE; bisect.
-function verticalCrossing(oe, aeMin, aeMax, targetAbv) {
-  const f = (ae) => cutaiaAbv(oe, ae) - targetAbv;
+function verticalCrossing(oe, aeMin, aeMax, targetAbv) {  const f = (ae) => cutaiaAbv(oe, ae) - targetAbv;
   let lo = aeMin;
   let hi = aeMax;
   const fLo = f(lo);
@@ -158,6 +250,37 @@ function pointSegmentDistance(px, py, x0, y0, x1, y1) {
   const len2 = dx * dx + dy * dy;
   const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((px - x0) * dx + (py - y0) * dy) / len2));
   return Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
+}
+
+// Intersection of the fixed-AA ray AE = OE * (1 - AA) with the polygon.
+// Returns the OE/AE span inside the region, or null when the ray misses it.
+export function raySegment(vertices, aa) {
+  if (!(aa > 0 && aa < 1) || vertices.length < 3) return null;
+  const slope = 1 - aa;
+  const points = [];
+  const push = (oe, ae) => {
+    if (points.some(([x, y]) => Math.abs(x - oe) < 1e-9 && Math.abs(y - ae) < 1e-9)) return;
+    points.push([oe, ae]);
+  };
+  for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i, i += 1) {
+    const [x0, y0] = vertices[j];
+    const [x1, y1] = vertices[i];
+    const f0 = y0 - slope * x0;
+    const f1 = y1 - slope * x1;
+    if (Math.abs(f0) < 1e-9) push(x0, y0);
+    if (Math.abs(f1) < 1e-9) push(x1, y1);
+    if (f0 * f1 < 0) {
+      const t = f0 / (f0 - f1);
+      const oe = x0 + t * (x1 - x0);
+      const ae = y0 + t * (y1 - y0);
+      push(oe, ae);
+    }
+  }
+  if (points.length < 2) return null;
+  const oes = points.map(([oe]) => oe);
+  const oeMin = Math.min(...oes);
+  const oeMax = Math.max(...oes);
+  return { oeMin, oeMax, aeMin: slope * oeMin, aeMax: slope * oeMax };
 }
 
 // Ray-casting point-in-polygon (boundary points read as outside).

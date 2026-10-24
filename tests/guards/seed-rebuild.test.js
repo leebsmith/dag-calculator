@@ -41,7 +41,7 @@ test("A9: fermentable seeds rebuild from the scrape and the crosswalk", () => {
   assert.deepEqual(sugars, json("data/seeds/sugars.json"));
 });
 
-test("fermentability-basis source rows are excluded, not treated as extract yield", () => {
+test("fermentability-basis extracts are restored with F=1; black extracts are excluded", () => {
   const rows = [
     {
       name: "Test Dry Extract",
@@ -52,19 +52,30 @@ test("fermentability-basis source rows are excluded, not treated as extract yiel
       color_lovibond: 3,
     },
     {
-      name: "Test Sugar",
+      name: "Maltoferm A-6000 Black LME",
       maltster: "Test",
-      product_type: "sugar",
-      yield_fraction: 0.95,
-      yield_basis: "extract",
-      color_lovibond: 0,
+      product_type: "extract",
+      yield_fraction: 0.32,
+      yield_basis: "fermentability",
+      color_lovibond: 500,
+    },
+    {
+      name: "Test Fermentability Malt",
+      maltster: "Test",
+      product_type: "malt",
+      category: "BASE",
+      yield_fraction: 0.8,
+      yield_basis: "fermentability",
+      color_lovibond: 2,
     },
   ];
 
-  const { sugars, excluded } = buildFermentables(rows, {}, {});
-  assert.equal(excluded, 1);
-  assert.equal(sugars["test-dry-extract"], undefined);
-  assert.equal(sugars["test-sugar"].yield_fraction, 0.95);
+  const { sugars, malts, excluded } = buildFermentables(rows, {}, {});
+  assert.equal(excluded, 2);
+  assert.equal(sugars["test-dry-extract"].yield_fraction, 0.75);
+  assert.equal(sugars["test-dry-extract"].fermentability_fraction, 1);
+  assert.equal(sugars["maltoferm-a-6000-black-lme"], undefined);
+  assert.equal(malts["test-fermentability-malt"], undefined);
 });
 
 test("a row with both axes keeps extract yield and fermentability", () => {

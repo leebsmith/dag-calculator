@@ -2,10 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createCalculator, loadArtifact } from "../../frontend/src/engine/index.js";
-import { loadArtifact as readArtifact, makeFixtures } from "./helpers.js";
+import { loadArtifact as readArtifact, makeFixtures, makeFixturesWithYeast } from "./helpers.js";
 
 const artifact = readArtifact();
-const fixtures = makeFixtures();
+const fixtures = makeFixturesWithYeast();
 
 function engine() {
   return createCalculator(artifact, fixtures);
@@ -116,7 +116,7 @@ test("loadArtifact accepts schema_version 4 and rejects unknown versions", () =>
 
 test("trace malts: definite-mass rows fold into color (and only color)", () => {
   // Fresh fixtures so setCollection doesn't leak into the shared fixture set.
-  const e = createCalculator(artifact, makeFixtures());
+  const e = createCalculator(artifact, makeFixturesWithYeast());
   const baseMcu = e.get("grist.mcu");
   const baseSrm = e.get("grist.finished_beer_srm");
 

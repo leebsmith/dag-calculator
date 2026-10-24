@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { createTestApp } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
@@ -21,6 +22,8 @@ const BATCH = {
     mash_thickness_l_per_kg: 3.0,
   },
   max_achievable_abv: 10.0,
+  aa_wort: 0.76,
+  aa_batch: 0.75,
   hlt: { v_hlt_debt: 1.0, v_hlt_after_strike: 16.0, v_hlt_top_up: 0.0, v_sparge_deliverable: 15.0 },
   mash_thickness_l_per_kg: 3.0,
 };
@@ -44,12 +47,39 @@ function mockFetch(responses) {
   return { fetchImpl, calls };
 }
 
+function makeApp(options) {
+  return createTestApp(options);
+}
+
 test("offline (default): boundaries are stubbed and reported ok", async () => {
-  const app = createStepApp();
+  const app = makeApp();
   await app.boot();
   assert.deepEqual(app.boundaryStatuses, { "solver.batch": "ok", "solver.water": "ok" });
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryPending, false);
+});
+
+test("offline: a missing yeast leaves the batch unresolved", async () => {
+  const app = createStepApp();
+  await app.boot();
+  assert.equal(app.boundaryStatuses["solver.batch"], "blocked");
+  assert.match(app.boundaryBlockedMessage, /Select a yeast/);
+  assert.equal(app.engine.get("solver.batch"), undefined);
+});
+
+test("http: a missing yeast blocks the batch without a solver error", async () => {
+  const { fetchImpl, calls } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ useHttp: true, fetchImpl });
+  await app.boot();
+
+  assert.equal(app.boundaryStatuses["solver.batch"], "blocked");
+  assert.match(app.boundaryBlockedMessage, /Select a yeast/);
+  assert.equal(app.boundaryError, null);
+  assert.equal(calls.some((call) => call.url === "/solve/batch"), false);
+  assert.equal(app.engine.get("solver.batch"), undefined);
 });
 
 test("http: pre-resolves both boundaries in topo order and computes", async () => {
@@ -57,7 +87,7 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
   assert.equal(calls.length, 2);
@@ -80,7 +110,7 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
   assert.equal(app.boundaryError.code, "MASH_TOO_THIN");
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
@@ -94,7 +124,7 @@ test("http: a failed water solve still renders the target grid", async () => {
       body: { code: "SALT_SOLVE_FAILED", message: "no feasible dose", details: {} },
     },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
   assert.equal(app.boundaryError.code, "SALT_SOLVE_FAILED");
@@ -112,7 +142,7 @@ test("http: a debounced burst collapses into one batch + one water request", asy
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl, debounceMs: 10 });
+  const app = makeApp({ useHttp: true, fetchImpl, debounceMs: 10 });
   app.scheduleSolve();
   app.scheduleSolve();
   app.scheduleSolve();
@@ -125,7 +155,7 @@ test("http: concurrent solveNow calls dedupe by fingerprint", async () => {
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await Promise.all([app.solveNow(), app.solveNow()]);
   assert.equal(calls.length, 2, "concurrent solves share one POST per fingerprint");
 });
@@ -144,7 +174,7 @@ test("http: a superseded solve discards its result", async () => {
     return { ok: true, status: r.status, json: async () => r.body };
   };
 
-  const app = createStepApp({ useHttp: true, fetchImpl, debounceMs: 5 });
+  const app = makeApp({ useHttp: true, fetchImpl, debounceMs: 5 });
   let computes = 0;
   const compute = app.compute.bind(app);
   app.compute = () => {
@@ -168,7 +198,7 @@ test("http: a completed solve leaves an open draft editor intact", async () => {
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
   app.openDraft("batch.boil_hops");
@@ -199,7 +229,7 @@ test("http: a failed solve leaves an open draft editor intact", async () => {
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
   app.openDraft("batch.sugars");
@@ -214,7 +244,7 @@ test("http: a failed solve leaves an open draft editor intact", async () => {
 });
 
 test("saveDraft and closeDraft still close the editor", async () => {
-  const app = createStepApp();
+  const app = makeApp();
   await app.boot();
 
   app.openDraft("batch.sugars");
@@ -235,7 +265,7 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
   const batch = calls.find((c) => c.url === "/solve/batch").body;
@@ -249,7 +279,7 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
   // Grain rows are renamed to the backend's GristBillRow keys (no raw catalog keys).
   assert.ok(batch.grain_bill.length > 0);
   for (const row of batch.grain_bill) {
-    assert.deepEqual(Object.keys(row).sort(), ["mc_i", "w_i", "yield_i"]);
+    assert.deepEqual(Object.keys(row).sort(), ["fermentability_i", "mc_i", "w_i", "yield_i"]);
   }
   const wSum = batch.grain_bill.reduce((acc, r) => acc + r.w_i, 0);
   assert.ok(Math.abs(wSum - 1) < 1e-9, `w_i must sum to 1 (got ${wSum})`);
@@ -274,7 +304,7 @@ test("http: loadState seeds missing derived roots from the selected profile", as
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
   calls.length = 0;
 
@@ -301,7 +331,7 @@ test("http: teardown does not compute before the boundary resolves", () => {
     calls += 1;
     return { ok: true, status: 200, json: async () => ({}) };
   };
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
 
   app.teardown();
 
@@ -316,7 +346,7 @@ test("http: refreshLibraryItems resolves the boundary before computing", async (
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
 
   await app.refreshLibraryItems();
 
@@ -343,7 +373,7 @@ test("http: boundary telemetry is retained and cleared on teardown", async () =>
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: waterWithTelemetry },
   });
-  const app = createStepApp({ useHttp: true, fetchImpl });
+  const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
   assert.equal(app.waterTelemetry.telemetry[0].code, "ROUTER_MODE_1_LINEAR_FLAVOR");

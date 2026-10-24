@@ -61,6 +61,13 @@
               </header>
 
               <div class="stage">
+                <div class="alert alert-info" x-show="boundaryBlockedMessage">
+                  <div class="alert-header">
+                    <span class="alert-dot"></span>
+                    <span x-text="boundaryBlockedMessage"></span>
+                  </div>
+                </div>
+
                 <div class="alert alert-warning" x-show="boundaryError">
                   <div class="alert-header">
                     <span class="alert-dot"></span>

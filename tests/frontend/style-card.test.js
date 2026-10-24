@@ -1,20 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
+import { identityFixture } from "./helpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
+import { raySegment } from "../../frontend/src/engine/fermentation.js";
 
 const cache = createReferenceCache();
 
 // A batch's style is its identity: it is sealed at creation and loaded as a
 // snapshot, never selected from the workspace.
 async function appWithStyle(styleId = "21A") {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.loadState({
     identity: {
+      ...identityFixture(),
       style: cache.references.style[styleId] ?? {},
-      equipment: {},
-      "water.source": {},
     },
     roots: {},
     collections: {},
@@ -32,7 +33,7 @@ test("the sealed style declaration seeds the residual targets", async () => {
   assert.deepEqual(app.styleIbuBounds, [40, 70]);
   assert.equal(app.master.getRoot("batch.fermentation"), "ale");
 
-  const aa = app.master.getRoot("batch.apparent_attenuation");
+  const aa = app.engine.get("batch.apparent_attenuation");
   const abv = app.master.getRoot("batch.target_abv");
   assert.ok(typeof aa === "number" && aa > 0 && aa <= 1);
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
@@ -58,7 +59,7 @@ test("a stats-less style leaves the residuals unseeded", async () => {
 
   assert.equal(app.engine.identity.style.id, "34C");
   assert.equal(Number.isFinite(app.engine.identity.style.og_min), false);
-  assert.equal(app.master.getRoot("batch.apparent_attenuation"), undefined);
+  assert.equal(app.master.getRoot("batch.target_abv"), undefined);
 });
 
 test("the fermentation navigator writes the batch targets, not the declaration", async () => {
@@ -68,8 +69,39 @@ test("the fermentation navigator writes the batch targets, not the declaration",
   const info = app.styleTargetInfo;
 
   assert.ok(info.og > 1);
-  assert.ok(Math.abs(app.master.getRoot("batch.apparent_attenuation") - info.aa) < 1e-9);
+  assert.ok(Math.abs(app.engine.get("batch.apparent_attenuation") - info.aa) < 1e-9);
   assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-9);
+});
+
+test("the fixed-AA ray constrains the OE/AE navigator", async () => {
+  const app = await appWithStyle("21A");
+  const aa = app.engine.get("batch.apparent_attenuation");
+  const ray = raySegment(app.styleRegion, aa);
+  assert.ok(ray);
+
+  app.setStyleTargetOe(ray.oeMin + 0.1 * (ray.oeMax - ray.oeMin));
+  const { oe, ae } = app.styleExtract;
+  assert.ok(oe >= ray.oeMin - 1e-9 && oe <= ray.oeMax + 1e-9);
+  assert.ok(Math.abs(ae - oe * (1 - aa)) < 1e-9);
+});
+
+test("the Belgian advisory is a readout and does not mutate the recipe", async () => {
+  const app = await appWithStyle("21A");
+  app.styleExtract = { oe: 12, ae: 4 };
+
+  const targetBefore = app.master.getRoot("batch.target_abv");
+  const gristBefore = app.engine.get("grist.major_malts");
+
+  app.setBelgianTargetAa(70);
+  const advisory = app.styleBelgian;
+  assert.equal(advisory.ok, true, advisory.reason);
+  assert.ok(advisory.sucroseKg > 0);
+  assert.match(app.styleBelgianMessage, /sucrose/);
+  assert.equal(advisory.ae, 4);
+  assert.ok(advisory.targetOe > 12);
+
+  assert.equal(app.master.getRoot("batch.target_abv"), targetBefore);
+  assert.deepEqual(app.engine.get("grist.major_malts"), gristBefore);
 });
 
 test("IBU/GU uses the planned target and the navigator's OG", async () => {
@@ -114,13 +146,13 @@ test("fieldsById indexes the projected models and powers the envelope grid", asy
 });
 
 test("utils namespace is exposed to templates", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   assert.equal(typeof app.fmt.formatGravity, "function");
   assert.equal(app.fmt.formatQuantity({ display: "1.5", unit: "kg" }), "1.5 kg");
 });
 
 test("the style card carries no water-flavor intent fields", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
 
   const ids = app.fieldsBySlice.style.map((f) => f.id);

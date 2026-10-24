@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import { createLibrary, LEGACY_STORAGE_KEY } from "../../frontend/src/store/library.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 import { CATALOGS } from "../../frontend/src/store/userCatalog.js";
 
 function makeClient(initial = {}) {
@@ -99,7 +99,7 @@ test("a failed library fetch does not break a loaded batch", async () => {
     deleteCatalog: async () => null,
   };
 
-  const app = createStepApp({ libraryClient: failing });
+  const app = createTestApp({ libraryClient: failing });
   await app.boot();
   await new Promise((resolve) => setTimeout(resolve, 0));
 

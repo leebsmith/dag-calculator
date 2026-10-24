@@ -19,11 +19,15 @@ export function createBoundaryRunner({
   compute,
   onState,
   gate = () => null,
+  preGate = () => null,
 }) {
   const statuses = Object.fromEntries(
     session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
   );
   const extras = Object.fromEntries(
+    session.boundaryNodes.map((id) => [id, null])
+  );
+  const blocked = Object.fromEntries(
     session.boundaryNodes.map((id) => [id, null])
   );
   const inflight = new Map(); // fingerprint -> Promise
@@ -32,7 +36,12 @@ export function createBoundaryRunner({
   let solveToken = 0;
 
   function emit() {
-    onState?.({ statuses: { ...statuses }, error, extras: { ...extras } });
+    onState?.({
+      statuses: { ...statuses },
+      error,
+      extras: { ...extras },
+      blocked: { ...blocked },
+    });
   }
 
   function setStatus(id, value) {
@@ -47,8 +56,19 @@ export function createBoundaryRunner({
     }
   }
 
+  function syncBlockedOffline() {
+    const engine = session.getEngine();
+    for (const id of session.boundaryNodes) {
+      const message = preGate(id, engine);
+      blocked[id] = message;
+      statuses[id] = message ? "blocked" : "ok";
+    }
+    emit();
+  }
+
   async function solveNow() {
     if (!useHttp) {
+      syncBlockedOffline();
       compute();
       return;
     }
@@ -62,6 +82,7 @@ export function createBoundaryRunner({
     // Promise.allSettled; a node whose inputs are not ready yet ends the frontier
     // and is retried on the next pass.
     const nodes = [...session.boundaryNodes];
+    for (const id of nodes) blocked[id] = null;
     let firstError = null;
     let index = 0;
 
@@ -72,10 +93,17 @@ export function createBoundaryRunner({
       while (index < nodes.length) {
         const id = nodes[index];
         try {
+          const preBlocked = preGate(id, engine);
+          if (preBlocked) {
+            blocked[id] = preBlocked;
+            setStatus(id, "blocked");
+            index += 1;
+            continue;
+          }
           const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
-          const blocked = gate(binding, inputs);
-          if (blocked) {
-            if (!firstError) firstError = new Error(blocked);
+          const gateMessage = gate(binding, inputs);
+          if (gateMessage) {
+            if (!firstError) firstError = new Error(gateMessage);
             setStatus(id, "error");
             index += 1;
             continue;
@@ -161,6 +189,7 @@ export function createBoundaryRunner({
 
   function scheduleSolve() {
     if (!useHttp) {
+      syncBlockedOffline();
       compute();
       return;
     }
@@ -176,6 +205,7 @@ export function createBoundaryRunner({
     for (const id of session.boundaryNodes) {
       statuses[id] = useHttp ? "pending" : "ok";
       extras[id] = null;
+      blocked[id] = null;
     }
     error = null;
     emit();

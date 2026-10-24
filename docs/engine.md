@@ -243,13 +243,21 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 | Editable value | Source | Mechanism | Re-sync semantics |
 |---|---|---|---|
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
-| `batch.apparent_attenuation` | `batch.yeast.attenuation_pct` | auto-copy on selection | overwritten on each strain pick; clamped to the strain envelope |
-| `batch.house_attenuation_factor` | — | per-batch root | multiplies the planned attenuation into `batch.effective_apparent_attenuation`; starts at 1.0 |
+| `batch.attenuation_derate` | — | per-batch root | scales the yeast cap; starts at 1.0 |
 
-`batch.effective_apparent_attenuation` is the product of the planned root and
-the house factor. The solver and the realized FG/ABV nodes consume the effective
-value; the planned value stays visible as the target. Conversion efficiency is a
-separate gravity correction, not an attenuation correction.
+`batch.yeast_cap = batch.yeast.attenuation_pct × batch.attenuation_derate`.
+The batch solver computes the extract-weighted wort AA from the grain-bill
+fermentability values and the late-addition sugar (`F = 1.0`), clamps it to
+`batch.yeast_cap`, and returns `aa_batch`. `batch.apparent_attenuation` displays
+the solved value; `batch.wort_aa` displays the pre-cap blend. The batch is
+unresolved until a yeast is selected. Conversion efficiency remains a separate
+gravity correction, not an attenuation correction. See
+`docs/fermentability-and-yield.md`.
+
+The style step's OE/AE navigator moves along the fixed-AA ray
+`AE = OE · (1 − aa_batch)`; the style polygon bounds the reachable span and the
+UI warns when the ray misses it. The advisory Belgian knob holds AE and adds
+sucrose (OE rises) without mutating the recipe; see `docs/belgian-knob.md`.
 
 Water source ions are **read-only selection readouts** (the boundary reads them
 straight from `water.source_report`). Water target ions and the calcium floor are

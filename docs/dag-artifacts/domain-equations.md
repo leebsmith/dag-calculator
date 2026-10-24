@@ -102,11 +102,11 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | Field | Dimension | Meaning |
 |---|---|---|
 | `target_abv` | percentage | desired ABV (%) |
-| `apparent_attenuation` | percentage (fraction) | expected attenuation, (0, 1] |
+| `apparent_attenuation` | percentage (fraction) | yeast attenuation cap (strain × batch derate), (0, 1] |
 | `v_ferm` | volume | target cold fermenter volume (L) |
 | `topology` | taxonomy | `r_l_to_g` \| `runoff_ratio` |
 | `intensive_value` | mash_thickness / dimensionless | `R_L:G` (L/kg) or `r` |
-| `grain_bill` | collection | rows `{ w_i, yield_i, mc_i }` (Σw=1) |
+| `grain_bill` | collection | rows `{ w_i, yield_i, mc_i, fermentability_i }` (Σw=1) |
 | `s_late_add` | mass | late-addition extract (kg) |
 | `v_kettle_dead`, `delta_v_evap`, `v_dead` | volume | kettle/chiller dead space, boil-off, mash-tun dead space (L) |
 | `eta_conv` | percentage (fraction) | mash conversion efficiency |
@@ -125,6 +125,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `m_grist` | mass |
 | `cascade` `{ v_strike, v_run1, v_run2, v_sparge, s_run1, s_run2, sg_pre_boil, v_post_boil, mash_thickness_l_per_kg }` | volumes / masses / gravity |
 | `max_achievable_abv` | percentage |
+| `aa_wort` | percentage |
+| `aa_batch` | percentage |
 | `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
 

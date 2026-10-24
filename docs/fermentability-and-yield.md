@@ -2,24 +2,27 @@
 
 Two axes, often conflated by vendors:
 
-- **`yield_fraction`** — as-is extract yield: extract mass per ingredient mass,
-  water included. This is what scales OE.
+- **`yield_fraction`** — extract yield. For malts it is the dry-basis fine-grind
+  extract; the solver applies `(1 - moisture)` to get the as-is yield. For
+  sugars/extracts it is the as-is sugar-point contribution (water included).
 - **`fermentability_fraction`** — the fraction of that extract that is
   fermentable. This is what scales AA.
 
 They are independent. Knowing one does not give the other.
 
-## `yield_fraction` (as-is yield)
+## `yield_fraction` (extract yield)
 
 For a malt, the COA usually gives fine-grind dry-basis extract and moisture:
 
 `yield_as_is = extract_fgdb × (1 − moisture)`
 
-For a liquid extract or syrup, the vendor number is often already an as-is
-sugar-point contribution (ppg or LDK relative to sucrose). Water reduces it.
+The seed stores `extract_fgdb` in `malt.yield_fraction`; the solver applies
+`(1 - mc_i)`. For a liquid extract or syrup, the vendor number is often already
+an as-is sugar-point contribution; it is stored directly in
+`sugar.yield_fraction` and used without a moisture factor.
 
-The app stores the as-is value in `yield_fraction`. Do not rename the field;
-treat it as as-is in docs and UI.
+Do not rename the field. Treat its basis as ingredient-type-specific:
+malt = dry basis, sugar/extract = as-is.
 
 ## `fermentability_fraction` (limit of attenuation)
 

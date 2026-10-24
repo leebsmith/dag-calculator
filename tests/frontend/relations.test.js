@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
-import { loadArtifact as readArtifact, makeFixtures } from "./helpers.js";
+import { loadArtifact as readArtifact, makeFixturesWithYeast } from "./helpers.js";
 
 const artifact = readArtifact();
 
-function engine(fixtures = makeFixtures()) {
+function engine(fixtures = makeFixturesWithYeast()) {
   return createCalculator(artifact, fixtures);
 }
 

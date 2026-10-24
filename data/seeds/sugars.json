@@ -4,6 +4,7 @@
     "name": "5 Lovibond Golden Belgian Candi Syrup",
     "maltster": "L.D. Carlson",
     "yield_fraction": 0.6957,
+    "fermentability_fraction": 1,
     "color_lovibond": 5,
     "notes": "5 Lovibond Golden Belgian Candi Syrup Golden Candi Syrup is an unparalleled, superior quality rich golden syrup. Golden is a rich translucent 24 karat gold and adds a pronounced caramel and light fruit palate to authentic Belgian Tripels, Saisons, Golden Ales, and Bier de Garde."
   },
@@ -12,6 +13,7 @@
     "name": "Amber Candi Syrup",
     "maltster": "Williams Brewing",
     "yield_fraction": 0.7925,
+    "fermentability_fraction": 1,
     "color_lovibond": 150.45,
     "notes": "Pure invert sugar syrup with a mixture of sucrose, glucose and fructose, made from beet and cane sugars. Color rated at 300-500 EBC, contributes rich, fruity rum-like profile. Produced by caramelizing the sugar, which makes it difficult to replicate with American-produced white sugar alternatives. P"
   },
@@ -20,6 +22,7 @@
     "name": "Belgian Candi Syrup - Extra Dark",
     "maltster": "L.D. Carlson",
     "yield_fraction": 0.6957,
+    "fermentability_fraction": 1,
     "color_lovibond": 177.74,
     "notes": "Extra Dark Belgian Candi Syrup The richest, darkest Belgian candi syrup. Imparts hints of dark raisin and extra dark stone fruit on top of a roasty, dark caramel palate. Superb for Belgian style ales and brew that need a full body and indescribable flavor. SRM 240"
   },
@@ -28,14 +31,25 @@
     "name": "Blonde Soft Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 49.28,
     "notes": "Soft Blonde Candi Sugar (Geel) Soft Blonde Candi Sugar (Geel) is the ideal addition for homebrewers crafting Belgian ales, Tripels, and Belgian Blondes. Its delicate caramelized sugar, honey-like sweetness, and subtle aromatic complexity elevate your brews authentically. Made from premium beet and c"
+  },
+  "briessweet-white-grain-sorghum-extract-45de-high-maltose": {
+    "id": "briessweet-white-grain-sorghum-extract-45de-high-maltose",
+    "name": "BriesSweet™ White Grain Sorghum Extract 45DE High Maltose",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 3,
+    "notes": "Neutral Flavor"
   },
   "brown-soft-candi-sugar": {
     "id": "brown-soft-candi-sugar",
     "name": "Brown Soft Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 210.41,
     "notes": "Soft Brown Candi Sugar (Bruin) Soft Brown Candi Sugar (Bruin) brings complexity, depth, and authentic Belgian flavor to your dubbels, quadrupels, and specialty dark ales. Crafted from select beet and cane sugars, this brewing sugar imparts rich molasses, caramel undertones, and mild dark-fruit notes"
   },
@@ -44,6 +58,7 @@
     "name": "Brown Sugar, Dark",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 37.47,
     "notes": ""
   },
@@ -52,6 +67,7 @@
     "name": "Brown Sugar, Light",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 6.47,
     "notes": ""
   },
@@ -60,6 +76,7 @@
     "name": "Candi Sugar, Amber",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
+    "fermentability_fraction": 1,
     "color_lovibond": 55.93,
     "notes": ""
   },
@@ -68,6 +85,7 @@
     "name": "Candi Sugar, Clear",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
+    "fermentability_fraction": 1,
     "color_lovibond": 1.3,
     "notes": ""
   },
@@ -76,6 +94,7 @@
     "name": "Candi Sugar, Dark",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
+    "fermentability_fraction": 1,
     "color_lovibond": 203.57,
     "notes": ""
   },
@@ -84,14 +103,133 @@
     "name": "Cane (Beet) Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": ""
+  },
+  "cbw-bavarian-wheat-dme": {
+    "id": "cbw-bavarian-wheat-dme",
+    "name": "CBW Bavarian Wheat DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 3,
+    "notes": "Neutral, malty"
+  },
+  "cbw-bavarian-wheat-lme": {
+    "id": "cbw-bavarian-wheat-lme",
+    "name": "CBW Bavarian Wheat LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 3,
+    "notes": "Neutral, malty"
+  },
+  "cbw-golden-light-dme": {
+    "id": "cbw-golden-light-dme",
+    "name": "CBW Golden Light DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 4,
+    "notes": "Malty"
+  },
+  "cbw-golden-light-lme": {
+    "id": "cbw-golden-light-lme",
+    "name": "CBW Golden Light LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 4,
+    "notes": "Malty"
+  },
+  "cbw-munich-lme": {
+    "id": "cbw-munich-lme",
+    "name": "CBW Munich LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 8,
+    "notes": "Rich malty, biscuity"
+  },
+  "cbw-pale-ale-dme": {
+    "id": "cbw-pale-ale-dme",
+    "name": "CBW Pale Ale DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 6,
+    "notes": "Rich malt, hints of biscuit and nuts"
+  },
+  "cbw-pilsen-light-dme": {
+    "id": "cbw-pilsen-light-dme",
+    "name": "CBW Pilsen Light DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 2,
+    "notes": "Subtle malty"
+  },
+  "cbw-pilsen-light-lme": {
+    "id": "cbw-pilsen-light-lme",
+    "name": "CBW Pilsen Light LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.76,
+    "fermentability_fraction": 1,
+    "color_lovibond": 2,
+    "notes": "Subtle malty"
+  },
+  "cbw-sparkling-amber-dme": {
+    "id": "cbw-sparkling-amber-dme",
+    "name": "CBW Sparkling Amber DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 11,
+    "notes": "Sweet, malty, caramel"
+  },
+  "cbw-sparkling-amber-lme": {
+    "id": "cbw-sparkling-amber-lme",
+    "name": "CBW Sparkling Amber LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 11,
+    "notes": "Sweet, malty, caramel"
+  },
+  "cbw-traditional-dark-dme": {
+    "id": "cbw-traditional-dark-dme",
+    "name": "CBW Traditional Dark DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 30,
+    "notes": "Sweet, intense malty"
+  },
+  "cbw-traditional-dark-lme": {
+    "id": "cbw-traditional-dark-lme",
+    "name": "CBW Traditional Dark LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 30,
+    "notes": "Sweet, intense malty"
+  },
+  "clarified-brown-rice-syrup-42de": {
+    "id": "clarified-brown-rice-syrup-42de",
+    "name": "Clarified Brown Rice Syrup 42DE",
+    "maltster": "Briess",
+    "yield_fraction": 0.7,
+    "fermentability_fraction": 1,
+    "color_lovibond": 2,
+    "notes": "Neutral flavor"
   },
   "clear-belgian-candi-sugar": {
     "id": "clear-belgian-candi-sugar",
     "name": "Clear Belgian Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 0,
     "notes": "Imported from Belgium, this sugar is refined from sugar beets, and is 100% fermentable. 0°L."
   },
@@ -100,6 +238,7 @@
     "name": "Corn Sugar (Dextrose)",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": ""
   },
@@ -108,6 +247,7 @@
     "name": "Corn Syrup",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
+    "fermentability_fraction": 1,
     "color_lovibond": 1.3,
     "notes": ""
   },
@@ -116,6 +256,7 @@
     "name": "D-180 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
+    "fermentability_fraction": 1,
     "color_lovibond": 133.44,
     "notes": "D-180 is a premium extra dark Belgian candi syrup is perfect for use in dark Belgian ales. This premium extra dark Belgian candi syrup has deep flavors of fresh ground coffee, dark fruit, and toasted bread. Perfect for use in dark Belgian ales. 180 SRM, 1.032 PPG."
   },
@@ -124,6 +265,7 @@
     "name": "D-45 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
+    "fermentability_fraction": 1,
     "color_lovibond": 33.78,
     "notes": "This premium amber Belgian candi syrup is perfect for amber and brown Belgian ales. The syrup has flavors of toffee, vanilla, and toasted bread. 45 SRM, 1.032 PPG."
   },
@@ -132,6 +274,7 @@
     "name": "D-90 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
+    "fermentability_fraction": 1,
     "color_lovibond": 67,
     "notes": "This premium dark candi syrup creates subtle chocolate, toffee, and toasted bread flavors in dark Belgian ales. D-90 is a versatile dark candi syrup. This syrup creates an unmistakable and subtle chocolate back-palate, toffee, and toasted bread flavors."
   },
@@ -140,6 +283,7 @@
     "name": "Dark Belgian Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 275,
     "notes": "Imported from Belgium, this sugar is refined from sugar beets, and is 100% fermentable. Rated at 275°L; actual color contribution is lower."
   },
@@ -148,6 +292,7 @@
     "name": "Dark Candi Syrup",
     "maltster": "Williams Brewing",
     "yield_fraction": 0.795,
+    "fermentability_fraction": 1,
     "color_lovibond": 862.45,
     "notes": "Pure invert sugar syrup with a mixture of sucrose, glucose and fructose, made from beet and cane sugars. Color rated at 1900-2700 EBC, contributes strong dark pit fruit and coffee character. Great for your dark Belgian Ales, and really good on pancakes and waffles! This is the darkest grade of candi"
   },
@@ -156,6 +301,7 @@
     "name": "Dememera Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 2.04,
     "notes": ""
   },
@@ -164,14 +310,34 @@
     "name": "Invert Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": ""
+  },
+  "maltoferm-organic-10000-lme": {
+    "id": "maltoferm-organic-10000-lme",
+    "name": "Maltoferm Organic 10000 LME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 4,
+    "notes": "Malty"
+  },
+  "maltoferm-organic-10001-powder-dme": {
+    "id": "maltoferm-organic-10001-powder-dme",
+    "name": "Maltoferm Organic 10001 Powder DME",
+    "maltster": "Briess",
+    "yield_fraction": 0.75,
+    "fermentability_fraction": 1,
+    "color_lovibond": 4,
+    "notes": "Malty"
   },
   "maple-syrup": {
     "id": "maple-syrup",
     "name": "Maple Syrup",
     "maltster": "Brewtarget",
     "yield_fraction": 0.652,
+    "fermentability_fraction": 1,
     "color_lovibond": 26.4,
     "notes": ""
   },
@@ -180,6 +346,7 @@
     "name": "Milk Sugar (Lactose)",
     "maltster": "Brewtarget",
     "yield_fraction": 0.761,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": ""
   },
@@ -188,6 +355,7 @@
     "name": "Molasses",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
+    "fermentability_fraction": 1,
     "color_lovibond": 59.62,
     "notes": ""
   },
@@ -196,6 +364,7 @@
     "name": "Simplicity Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": "A premium clear Belgian candi syrup made from beet sugar. Provides clean honey-like flavor to light Belgian Ales. Great for Tripels, Golden Strong ales, or anytime you're looking for increased drinkability and complexity. 0 SRM, 1.032 ppg."
   },
@@ -204,6 +373,7 @@
     "name": "Sugar, Table (Sucrose)",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
+    "fermentability_fraction": 1,
     "color_lovibond": 1.3,
     "notes": ""
   },
@@ -212,6 +382,7 @@
     "name": "Turbinado",
     "maltster": "Brewtarget",
     "yield_fraction": 0.957,
+    "fermentability_fraction": 1,
     "color_lovibond": 7.94,
     "notes": ""
   }

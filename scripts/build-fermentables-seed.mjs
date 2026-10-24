@@ -9,10 +9,11 @@
 // description, notes, color_lovibond, yield_fraction, yield_basis, sold_out).
 // This builder:
 //   - drops sold-out entries;
-//   - excludes rows whose `yield_basis` is "fermentability" (an AAL, not an
-//     extract yield) and reports the count; an AAL is preserved on the source
-//     row, and `fermentability_fraction` is carried when a row also has extract
-//     yield;
+//   - restores extract/syrup/sugar rows whose `yield_basis` is
+//     "fermentability": the value is a sugar-point contribution (as-is yield),
+//     and the fermentability is 1.0;
+//   - excludes the two Maltoferm black extracts and any malt/adjunct row whose
+//     basis is "fermentability" (no extract yield can be derived);
 //   - routes malt + adjunct -> malts.json, sugar + syrup + extract -> sugars.json;
 //   - dedupes malts one-per-name (cross-maltster), preferring records that carry
 //     yield, then colour, then description, and backfills missing yield/colour
@@ -43,6 +44,11 @@ const SUGAR_TYPES = new Set(["sugar", "syrup", "extract"]);
 
 const CATEGORY_MAP = { ACIDULATED: "ACID" };
 const CATEGORY_DEFAULT_YIELD = { BASE: 0.8, CRYSTAL: 0.74, ROASTED: 0.6, ACID: 0.74 };
+const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
+const EXCLUDED_EXTRACTS = new Set([
+  "Maltoferm A-6000 Black LME",
+  "Maltoferm A-6001 Black DME",
+]);
 
 const NOTES_MAX = 300;
 
@@ -98,7 +104,11 @@ function splitByType(rows) {
   const excluded = [];
   for (const row of rows) {
     if (row.sold_out) continue;
-    if (row.yield_basis === "fermentability") {
+    if (EXCLUDED_EXTRACTS.has(row.name)) {
+      excluded.push(row);
+      continue;
+    }
+    if (row.yield_basis === "fermentability" && MALT_TYPES.has(row.product_type)) {
       excluded.push(row);
       continue;
     }
@@ -121,8 +131,14 @@ function dedupeMalts(rows) {
     let winner = group[0];
     for (const candidate of group.slice(1)) winner = prefer(winner, candidate);
 
-    // Backfill missing yield/colour/moisture from sibling records of the same name.
-    for (const field of ["yield_fraction", "color_lovibond", "moisture"]) {
+    // Backfill missing yield/colour/moisture/fermentability from sibling records
+    // of the same name.
+    for (const field of [
+      "yield_fraction",
+      "color_lovibond",
+      "moisture",
+      "fermentability_fraction",
+    ]) {
       if (hasValue(winner[field])) continue;
       const sibling = group.find((r) => hasValue(r[field]));
       if (sibling) winner = { ...winner, [field]: sibling[field] };
@@ -142,15 +158,14 @@ function maltComponent(row) {
     category,
     yield_fraction:
       row.yield_fraction ?? CATEGORY_DEFAULT_YIELD[category] ?? 0.8,
+    fermentability_fraction:
+      row.fermentability_fraction ?? CATEGORY_DEFAULT_F[category] ?? 0.8,
     color_lovibond: hasValue(row.color_lovibond) ? row.color_lovibond : 0,
     notes: notesFor(row),
   };
   // Datasheet moisture is a percent; 0 means "not published" (absent).
   if (hasValue(row.moisture) && row.moisture > 0) {
     component.moisture_fraction = row.moisture / 100;
-  }
-  if (hasValue(row.fermentability_fraction)) {
-    component.fermentability_fraction = row.fermentability_fraction;
   }
   return component;
 }
@@ -161,12 +176,10 @@ function sugarComponent(row) {
     name: row.name.trim(),
     maltster: row.maltster,
     yield_fraction: row.yield_fraction ?? 0.95,
+    fermentability_fraction: row.fermentability_fraction ?? 1.0,
     color_lovibond: hasValue(row.color_lovibond) ? row.color_lovibond : 0,
     notes: notesFor(row),
   };
-  if (hasValue(row.fermentability_fraction)) {
-    component.fermentability_fraction = row.fermentability_fraction;
-  }
   return component;
 }
 
@@ -266,6 +279,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   writeSorted(SUGARS_OUTPUT, sugars);
   console.log(
     `wrote ${Object.keys(malts).length} malts and ${Object.keys(sugars).length} sugars; ` +
-      `excluded ${excluded} fermentability-basis rows (AAL, not extract yield)`
+      `excluded ${excluded} rows (black extracts or malt with fermentability basis)`
   );
 }

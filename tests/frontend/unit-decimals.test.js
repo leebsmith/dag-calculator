@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { unitDecimals } from "../../frontend/src/views/registry/units.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 // Per-unit display precision: precision belongs to the unit, not the dimension,
 // so the same field shows a different number of digits when its unit changes.
@@ -38,7 +38,7 @@ test("unitDecimals is null where no precision is declared", () => {
 });
 
 test("gravity readouts use the active unit's precision (SG=3, °P=1)", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const gravity = () => app.fieldsBySlice.batch.find((f) => f.id === "solver.batch.sg_post_boil");
 
@@ -51,7 +51,7 @@ test("gravity readouts use the active unit's precision (SG=3, °P=1)", () => {
 });
 
 test("editable number inputs render their natural value (no fixed-decimal padding)", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.v_ferm");
 

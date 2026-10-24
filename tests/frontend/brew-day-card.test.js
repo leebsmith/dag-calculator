@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 test("brew day checklist starts with four sections and twelve disabled rows", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   assert.equal(app.brewDaySections.length, 4);
@@ -20,7 +20,7 @@ test("brew day checklist starts with four sections and twelve disabled rows", as
 });
 
 test("toggling a step updates the active count and grouped payload", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.toggleBrewDayStep("advance-prep", true);
@@ -48,7 +48,7 @@ test("toggling a step updates the active count and grouped payload", async () =>
 });
 
 test("accordion sections open and close independently", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   assert.equal(app.isBrewDaySectionOpen("preparation"), true);
@@ -62,7 +62,7 @@ test("accordion sections open and close independently", async () => {
 });
 
 test("draft and freeze payloads include the checklist rows", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.toggleBrewDayStep("batch-sparge", true);
@@ -85,7 +85,7 @@ test("draft and freeze payloads include the checklist rows", async () => {
 });
 
 test("loadState hydrates stored rows and materializes the canonical order", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   await app.loadState({
@@ -109,7 +109,7 @@ test("loadState hydrates stored rows and materializes the canonical order", asyn
 });
 
 test("teardown restores the disabled defaults", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.toggleBrewDayStep("whirlpool", true);

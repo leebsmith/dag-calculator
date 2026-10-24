@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { waterTargetGate, bindGate } from "../../frontend/src/adapters/waterGate.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 async function loadWaterSource(app, source) {
   const identity = { ...app.engine.identity, "water.source": source };
@@ -30,6 +30,8 @@ const BATCH = {
     mash_thickness_l_per_kg: 3.0,
   },
   max_achievable_abv: 10.0,
+  aa_wort: 0.76,
+  aa_batch: 0.75,
   hlt: { v_hlt_debt: 1.0, v_hlt_after_strike: 16.0, v_hlt_top_up: 0.0, v_sparge_deliverable: 15.0 },
   mash_thickness_l_per_kg: 3.0,
 };
@@ -82,7 +84,7 @@ test("a blocked request is never posted", async () => {
       json: async () => (url === "/solve/batch" ? BATCH : {}),
     };
   };
-  const app = createStepApp({ useHttp: true, fetchImpl, debounceMs: 10 });
+  const app = createTestApp({ useHttp: true, fetchImpl, debounceMs: 10 });
   await app.boot();
 
   await loadWaterSource(app, {

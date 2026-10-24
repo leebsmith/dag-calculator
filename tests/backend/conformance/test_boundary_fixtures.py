@@ -30,7 +30,7 @@ from app.schemas.boundary import (
 FIXTURE_DIR = Path(__file__).resolve().parents[3] / "tests" / "conformance" / "fixtures"
 
 # Canonical host state (mirrored by the node test's stub engine).
-_GRIST = [(0.8, 0.8, 0.04), (0.2, 0.74, 0.04)]
+_GRIST = [(0.8, 0.8, 0.04, 0.81), (0.2, 0.74, 0.04, 0.5)]
 _M_GRIST = 4.7
 _WATER_GRIST = [(1.5, "BASE"), (40.0, "CRYSTAL")]
 
@@ -42,7 +42,10 @@ def canonical_batch() -> BatchSolverRequest:
         v_ferm=20.0,
         topology=BatchSpargeTopology.R_L_TO_G,
         intensive_value=3.0,
-        grain_bill=[GristBillRow(w_i=w, yield_i=y, mc_i=mc) for w, y, mc in _GRIST],
+        grain_bill=[
+            GristBillRow(w_i=w, yield_i=y, mc_i=mc, fermentability_i=f)
+            for w, y, mc, f in _GRIST
+        ],
         s_late_add=0.0,
         v_kettle_dead=0.0,
         delta_v_evap=3.0,
@@ -61,7 +64,7 @@ def canonical_water() -> WaterSolverRequest:
     return WaterSolverRequest(
         grist=[
             WaterGristRow(mass_kg=w * _M_GRIST, color_lovibond=color, grain_type=gt)
-            for (w, _y, _mc), (color, gt) in zip(_GRIST, _WATER_GRIST, strict=True)
+            for (w, _y, _mc, _f), (color, gt) in zip(_GRIST, _WATER_GRIST, strict=True)
         ],
         source=IonProfile(
             calcium_ca=20.0,

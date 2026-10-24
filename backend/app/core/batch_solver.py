@@ -105,6 +105,7 @@ class GrainBillEntry:
     w_i: float
     yield_i: float
     mc_i: float
+    fermentability_i: float | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -133,6 +134,27 @@ def composite_moisture_fraction(grain_bill: Sequence[GrainBillEntry]) -> float:
     See ``batch-sparge-non-linear-root-finding-v2.md`` §1.1.
     """
     return sum(entry.w_i * entry.mc_i for entry in grain_bill)
+
+
+def composite_fermentability_fraction(
+    grain_bill: Sequence[GrainBillEntry],
+) -> float | None:
+    """Compute the extract-weighted malt fermentability baseline.
+
+    ``AA_malt = sum_i( extract_i * F_i ) / sum_i( extract_i )``
+
+    ``extract_i = w_i * yield_i * (1 - mc_i)``. Returns ``None`` when any row
+    omits ``fermentability_i`` so legacy callers keep the old scalar-AA path.
+    """
+    if any(entry.fermentability_i is None for entry in grain_bill):
+        return None
+    total = 0.0
+    fermentable = 0.0
+    for entry in grain_bill:
+        extract = entry.w_i * entry.yield_i * (1.0 - entry.mc_i)
+        total += extract
+        fermentable += extract * entry.fermentability_i
+    return fermentable / total if total > 0.0 else None
 
 
 def validate_grain_bill_normalization(grain_bill: Sequence[GrainBillEntry]) -> None:
@@ -1067,8 +1089,8 @@ class BatchSolverInput:
 
     Attributes:
         target_abv: Desired alcohol by volume, as a percentage (e.g. 5.5).
-        apparent_attenuation: Expected apparent attenuation as a fraction
-            in (0, 1] (e.g. 0.75).
+        apparent_attenuation: Yeast attenuation cap as a fraction in (0, 1]
+            (the strain's typical attenuation times the batch derate).
         v_ferm: Target cold fermenter volume, in liters.
         topology: Either ``"r_l_to_g"`` or ``"runoff_ratio"``.
         intensive_value: ``R_L:G`` (L/kg) or ``r`` (dimensionless).
@@ -1133,6 +1155,8 @@ class BatchSolverResult:
         max_achievable_abv: The Phase 1 bracket ceiling for the given
             attenuation, as a percentage. Echoed back so the frontend can
             bound the target-ABV input without duplicating the Cutaia model.
+        aa_wort: The extract-weighted wort fermentability before the yeast cap.
+        aa_batch: The wort AA clamped by the yeast cap; the solver's final AA.
         hlt: The HLT water budget (top-up and deliverable sparge volume).
         mash_thickness_l_per_kg: Resolved liquor-to-grist ratio, in L/kg.
             Surfaced at the top level (in addition to ``cascade``) because the
@@ -1147,6 +1171,8 @@ class BatchSolverResult:
     m_grist: float
     cascade: StageCascade
     max_achievable_abv: float
+    aa_wort: float
+    aa_batch: float
     hlt: HltWaterBudget
     mash_thickness_l_per_kg: float
 
@@ -1176,23 +1202,41 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
     validate_grain_bill_normalization(inputs.grain_bill)
     yield_fraction = composite_yield_fraction(inputs.grain_bill)
     mc_bar = composite_moisture_fraction(inputs.grain_bill)
+    aa_malt = composite_fermentability_fraction(inputs.grain_bill)
 
-    # Phase 1: cold-side inverse resolution.
-    sg_post_boil = solve_sg_post_boil_from_abv(
-        inputs.target_abv, inputs.apparent_attenuation
-    )
+    def solve_phase_1(aa: float):
+        sg = solve_sg_post_boil_from_abv(inputs.target_abv, aa)
+        rev = resolve_volumetric_reversal(
+            v_ferm=inputs.v_ferm,
+            sg_post_boil=sg,
+            v_kettle_dead=inputs.v_kettle_dead,
+            v_kettle_transfer=inputs.v_kettle_transfer,
+            v_trub=inputs.v_trub,
+            delta_v_evap=inputs.delta_v_evap,
+            s_late_add=inputs.s_late_add,
+            f_shrink=inputs.f_shrink,
+        )
+        return sg, rev
 
-    # Phase 2: volumetric reversal & extract targeting.
-    reversal = resolve_volumetric_reversal(
-        v_ferm=inputs.v_ferm,
-        sg_post_boil=sg_post_boil,
-        v_kettle_dead=inputs.v_kettle_dead,
-        v_kettle_transfer=inputs.v_kettle_transfer,
-        v_trub=inputs.v_trub,
-        delta_v_evap=inputs.delta_v_evap,
-        s_late_add=inputs.s_late_add,
-        f_shrink=inputs.f_shrink,
-    )
+    cap = inputs.apparent_attenuation
+    if aa_malt is None:
+        aa_batch = cap
+        aa_wort = cap
+    else:
+        aa_batch = min(max(aa_malt, 1e-9), cap)
+        for _ in range(50):
+            _, rev = solve_phase_1(aa_batch)
+            total = rev.s_post_boil_target
+            malt = total - inputs.s_late_add
+            aa_wort = (malt * aa_malt + inputs.s_late_add) / total
+            aa_new = min(max(aa_wort, 1e-9), cap)
+            if abs(aa_new - aa_batch) <= 1e-10:
+                aa_batch = aa_new
+                break
+            aa_batch = aa_new
+        aa_wort = min(max(aa_wort, 1e-9), 1.0)
+
+    sg_post_boil, reversal = solve_phase_1(aa_batch)
 
     # Phase 3: grist mass resolution.
     m_grist = solve_grist_mass(
@@ -1238,7 +1282,9 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         s_post_boil_target=reversal.s_post_boil_target,
         m_grist=m_grist,
         cascade=cascade,
-        max_achievable_abv=max_achievable_abv(inputs.apparent_attenuation),
+        max_achievable_abv=max_achievable_abv(aa_batch),
+        aa_wort=aa_wort,
+        aa_batch=aa_batch,
         hlt=hlt,
         mash_thickness_l_per_kg=cascade.mash_thickness_l_per_kg,
     )

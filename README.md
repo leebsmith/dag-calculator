@@ -25,7 +25,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-conformance.md`](docs/style-conformance.md) | **living** — style-conformance assessor (adherence index + drift status) |
 | [`docs/whirlpool-hopping-model.md`](docs/whirlpool-hopping-model.md) | **living** — whirlpool bitterness theory, equations, constants, and reference vectors |
-| [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — as-is yield vs fermentability, mixed-wort AA, yeast cap |
+| [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — extract yield vs fermentability, mixed-wort AA, yeast cap |
 | [`docs/belgian-knob.md`](docs/belgian-knob.md) | **living** — advisory sugar dose to shift AA/ABV at fixed AE |
 | [`docs/display-precision.md`](docs/display-precision.md) | **living** — decimal precision policy for displayed values |
 | [`docs/style-rulebook.md`](docs/style-rulebook.md) | CSS design-token conventions |

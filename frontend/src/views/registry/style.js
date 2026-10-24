@@ -28,6 +28,9 @@ export const STYLE_NODES = {
     srm: "grist.finished_beer_srm",
   },
   apparentAttenuation: "batch.apparent_attenuation",
+  yeastCap: "batch.yeast_cap",
+  fermVolume: "batch.v_ferm",
+  postBoilVolume: "solver.batch.cascade.v_post_boil",
   targetAbv: "batch.target_abv",
   slice: "batch",
 };

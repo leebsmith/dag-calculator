@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { sulfateChloride, ratioReadout } from "../../frontend/src/views/waterRatio.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 
 const IONS = { calcium_ca: 0, magnesium_mg: 0, sodium_na: 0, sulfate_so4: 0, chloride_cl: 0, alkalinity_as_caco3: 0 };
 
@@ -33,7 +33,7 @@ test("ratioReadout compares the kettle to the target-implied ratio", () => {
 });
 
 test("the water summary compares against the target only when both flavor ions are checked with values", () => {
-  const app = createStepApp();
+  const app = createTestApp();
   app.boot();
   app.selectWaterTarget("freeform");
   app.setRoot("water.salt_distribution", "PROPORTIONAL");

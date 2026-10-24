@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
 import { createSession } from "../../frontend/src/adapters/session.js";
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { createTestApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { identityFixture, loadArtifact } from "./helpers.js";
 
@@ -54,7 +54,7 @@ test("library edits do not perturb a batch that carries a snapshot", () => {
 });
 
 test("picking a component copies it forward; clearing removes the copy", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
 
   app.selectYeast(YEAST_ID);
@@ -65,12 +65,12 @@ test("picking a component copies it forward; clearing removes the copy", async (
 });
 
 test("selections survive save -> load -> freeze", async () => {
-  const first = createStepApp();
+  const first = createTestApp();
   await first.boot();
   first.selectYeast(YEAST_ID);
   const state = first.draftState();
 
-  const second = createStepApp();
+  const second = createTestApp();
   await second.boot();
   await second.loadState(state);
   assert.equal(second.selectedYeast.name, YEAST.name);
@@ -82,7 +82,7 @@ test("selections survive save -> load -> freeze", async () => {
 });
 
 test("a legacy draft without a snapshot materialises it and marks dirty", async () => {
-  const app = createStepApp();
+  const app = createTestApp();
   await app.boot();
   let changes = 0;
   app.onChange = () => (changes += 1);

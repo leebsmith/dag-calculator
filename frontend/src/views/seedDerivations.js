@@ -3,8 +3,7 @@
 // Everything else is declared in the artifact as a `default` over the selection
 // (pull), so an unset root inherits and a set root overrides.
 //
-// Residual list (3 roots):
-//   - batch.apparent_attenuation — style centroid (polygon geometry)
+// Residual list (2 roots):
 //   - batch.target_abv           — style centroid (polygon geometry)
 //   - batch.fermentation         — style tag set-membership (no `in` operator)
 //
@@ -18,13 +17,8 @@
 import { styleCentroid, styleFermentation } from "../engine/fermentation.js";
 
 // root id -> [ { selection, derive } ]. A root may have several possible sources
-// (e.g. batch.apparent_attenuation from yeast OR the style centroid).
+// (e.g. batch.target_abv from the style centroid).
 export const SEED_DERIVATIONS = {};
-
-SEED_DERIVATIONS["batch.apparent_attenuation"] = [
-  { selection: "batch.yeast", derive: (y) => y?.attenuation_pct },
-  { identity: "style", derive: (s) => styleCentroid(s)?.aa },
-];
 
 SEED_DERIVATIONS["batch.fermentation"] = [
   { identity: "style", derive: (s) => styleFermentation(s) },
