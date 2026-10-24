@@ -1,6 +1,5 @@
-// Mash profile card: preset + rest schedule + strike water + limit of
-// attenuation. Bespoke (not a catalog draft editor); pure mash logic lives in
-// views/mash.js.
+// Mash profile card: preset + rest schedule + strike water. Bespoke (not a
+// catalog draft editor); pure mash logic lives in views/mash.js.
 
 import * as mash from "../../views/mash.js";
 import { toBase } from "../../engine/index.js";
@@ -47,12 +46,6 @@ export function registerMashCard(app, ctx) {
       const base = bound === "min" ? def.temp_min_c : def.temp_max_c;
       if (base == null) return "";
       return Math.round(this._convert("temperature", base, "degC"));
-    },
-
-    limitOfAttenuationDisplay() {
-      if (this.limitOfAttenuation == null || isNaN(this.limitOfAttenuation)) return "";
-      const v = this._convert("percentage", this.limitOfAttenuation, "pct");
-      return Number.isFinite(v) ? v.toFixed(1) : "";
     },
 
     getRestDefinition(restId) {
@@ -257,12 +250,6 @@ export function registerMashCard(app, ctx) {
         return mash.totalMashDurationMin(this.enabledMashRests);
       },
     },
-    limitOfAttenuation: {
-      configurable: true,
-      get() {
-        return mash.estimateLimitOfAttenuation(this.mashRests);
-      },
-    },
     sortedMashDraftRests: {
       configurable: true,
       get() {
@@ -303,4 +290,4 @@ export function refreshMashCard(app, ctx) {
   app.mashRests = ctx.engine.get(N.rests) ?? [];
 }
 
-export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "limitOfAttenuationDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "hasOptionalRestsEnabled", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "limitOfAttenuation", "sortedMashDraftRests", "mashDraftDoughInTempC", "mashDraftDoughInDisplay", "isMashDraftValid"];
+export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "hasOptionalRestsEnabled", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "sortedMashDraftRests", "mashDraftDoughInTempC", "mashDraftDoughInDisplay", "isMashDraftValid"];

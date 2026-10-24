@@ -27,9 +27,6 @@ test("mash card defaults to a single-infusion schedule with all canonical rests"
 
   // Total mash time sums enabled durations (0 + 60 + 10).
   assert.equal(app.totalMashTimeMin, 70);
-
-  // LoA is a duration-weighted single-infusion estimate (67 °C -> 74.28%).
-  assert.ok(Math.abs(app.limitOfAttenuation - 0.7428) < 1e-4, `loa=${app.limitOfAttenuation}`);
 });
 
 test("onMashPresetChange applies a named preset and seeds default temps", async () => {

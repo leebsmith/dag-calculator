@@ -88,7 +88,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `bicarbonate_from_alkalinity` | alkalinity_caco3 | `concentration` |
 | `calculate_strike_water_base_temp` | t_target, t_grain, thickness | `temperature` |
 | `calculate_tun_thermal_offset` | t_target, tun_initial, specific_heat, tun_mass, water_mass | `temperature_delta` |
-| `estimate_single_rest_loa_pct` | temp_c | `percentage` |
 | `extract_yield_ldk` | yield_fraction | `extract_yield` |
 | `mash_ph_status` | ph | `ph_status` |
 | `morey_mcu_to_srm` | mcu | `beer_color` |
@@ -118,9 +117,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `k_abs_true` | 1.67 | `mash_thickness` |
-| `loa_baseline_attenuation_pct` | 75 | `percentage` |
-| `loa_baseline_temp_f` | 152 | `dimensionless` |
-| `loa_temp_coefficient` | 1.2 | `dimensionless` |
 | `mash_ph_optimal_high` | 5.6 | `ph` |
 | `mash_ph_optimal_low` | 5.2 | `ph` |
 | `mash_thermal_factor` | 0.41 | `dimensionless` |

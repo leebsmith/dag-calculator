@@ -141,48 +141,6 @@
         150.5
       ],
       "expected": 183.60999999999999
-    },
-    {
-      "fn": "estimate_single_rest_loa_pct",
-      "args": [
-        64
-      ],
-      "expected": 80.76000000000002
-    },
-    {
-      "fn": "estimate_single_rest_loa_pct",
-      "args": [
-        65.5
-      ],
-      "expected": 77.52
-    },
-    {
-      "fn": "estimate_single_rest_loa_pct",
-      "args": [
-        66
-      ],
-      "expected": 76.43999999999998
-    },
-    {
-      "fn": "estimate_single_rest_loa_pct",
-      "args": [
-        67
-      ],
-      "expected": 74.28
-    },
-    {
-      "fn": "estimate_single_rest_loa_pct",
-      "args": [
-        68
-      ],
-      "expected": 72.11999999999999
-    },
-    {
-      "fn": "estimate_single_rest_loa_pct",
-      "args": [
-        70
-      ],
-      "expected": 67.8
     }
   ]
 }

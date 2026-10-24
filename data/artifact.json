@@ -281,18 +281,6 @@
     "mcu_metric_to_imperial_factor": {
       "value": 8.3454,
       "dimension": "dimensionless"
-    },
-    "loa_baseline_temp_f": {
-      "value": 152,
-      "dimension": "dimensionless"
-    },
-    "loa_baseline_attenuation_pct": {
-      "value": 75,
-      "dimension": "percentage"
-    },
-    "loa_temp_coefficient": {
-      "value": 1.2,
-      "dimension": "dimensionless"
     }
   },
   "taxonomies": {
@@ -935,51 +923,6 @@
               },
               "LOW",
               "OPTIMAL"
-            ]
-          }
-        ]
-      }
-    },
-    "estimate_single_rest_loa_pct": {
-      "params": [
-        "temp_c"
-      ],
-      "returns": "percentage",
-      "body": {
-        "op": "-",
-        "args": [
-          {
-            "const": "loa_baseline_attenuation_pct"
-          },
-          {
-            "op": "*",
-            "args": [
-              {
-                "op": "-",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "ref": "temp_c"
-                          },
-                          1.8
-                        ]
-                      },
-                      32
-                    ]
-                  },
-                  {
-                    "const": "loa_baseline_temp_f"
-                  }
-                ]
-              },
-              {
-                "const": "loa_temp_coefficient"
-              }
             ]
           }
         ]

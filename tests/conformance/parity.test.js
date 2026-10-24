@@ -53,7 +53,6 @@ test("conformance: the snapshot covers every migrated scalar formula", () => {
     "bicarbonate_from_alkalinity",
     "calculate_strike_water_base_temp",
     "calculate_tun_thermal_offset",
-    "estimate_single_rest_loa_pct",
     "extract_yield_ldk",
     "sugar_gravity_points",
   ]);

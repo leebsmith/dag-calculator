@@ -5,7 +5,7 @@
 // Framework- and engine-free: these never touch the engine and never do unit
 // conversion (guards A2 / A8a). The stepAdapter owns engine reads/writes and
 // display conversion; this module only owns the rest vocabulary, preset matrix,
-// ordering, LoA model, and validation.
+// ordering, and validation.
 
 /**
  * Canonical rest vocabulary, in canonical order. The array index is the
@@ -214,59 +214,3 @@ export function applyMashPreset(rests, presetId) {
   });
 }
 
-// ---------------------------------------------------------------------------
-// Limit of Attenuation (Google Rule of Thumb), informational only.
-// ---------------------------------------------------------------------------
-
-export const LOA_MIN_C = 64.0;
-export const LOA_MAX_C = 70.0;
-export const LOA_BASELINE_TEMP_F = 152.0;
-export const LOA_BASELINE_ATTENUATION_PCT = 75.0;
-export const LOA_TEMP_COEFFICIENT = 1.2;
-
-/**
- * Estimate the LoA for a single saccharification rest (fraction in [0, 1]).
- * Returns NaN outside the saccharification range [64, 70] °C.
- */
-export function estimateSingleRestLoaPct(
-  targetTempC,
-  baselineTempF = LOA_BASELINE_TEMP_F,
-  baselineAttenuationPct = LOA_BASELINE_ATTENUATION_PCT,
-  tempCoefficient = LOA_TEMP_COEFFICIENT
-) {
-  const tempC = Number(targetTempC);
-  if (isNaN(tempC) || tempC < LOA_MIN_C || tempC > LOA_MAX_C) return NaN;
-
-  const tempF = (tempC * 9.0) / 5.0 + 32.0;
-  const estimated = baselineAttenuationPct - (tempF - baselineTempF) * tempCoefficient;
-  return Math.max(0.0, Math.min(100.0, estimated));
-}
-
-const SACCHARIFICATION = new Set(["beta_amylase", "alpha_amylase", "beta_alpha_amylase"]);
-
-/**
- * Duration-weighted LoA over the schedule's saccharification rests, as a
- * fraction in [0, 1]. Rests outside the model's valid range score NaN and are
- * excluded. Returns NaN when no valid saccharification rest is enabled.
- */
-export function estimateLimitOfAttenuation(rests) {
-  let weightedSum = 0;
-  let totalDuration = 0;
-
-  for (const rest of rests) {
-    if (!rest.enabled) continue;
-    if (typeof rest.use_temp_c !== "number" || isNaN(rest.use_temp_c)) continue;
-    if (typeof rest.duration_min !== "number" || isNaN(rest.duration_min)) continue;
-    if (rest.duration_min <= 0) continue;
-    if (!SACCHARIFICATION.has(rest.rest_id)) continue;
-
-    const loaPct = estimateSingleRestLoaPct(rest.use_temp_c);
-    if (isNaN(loaPct)) continue;
-
-    weightedSum += loaPct * rest.duration_min;
-    totalDuration += rest.duration_min;
-  }
-
-  if (totalDuration === 0) return NaN;
-  return weightedSum / totalDuration / 100.0;
-}

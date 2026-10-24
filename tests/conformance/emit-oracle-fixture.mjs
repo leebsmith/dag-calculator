@@ -31,10 +31,6 @@ const ORACLE = {
     "frontend/src/utils/waterChemistry.js",
     "bicarbonateFromAlkalinity",
   ],
-  estimate_single_rest_loa_pct: [
-    "frontend/src/utils/mashSchedule.js",
-    "estimateSingleRestLoaPct",
-  ],
 };
 
 const CASES = [
@@ -52,10 +48,6 @@ const CASES = [
     args,
   })),
   ...[0, 40, 78, 150.5].map((a) => ({ fn: "bicarbonate_from_alkalinity", args: [a] })),
-  ...[64, 65.5, 66, 67, 68, 70].map((t) => ({
-    fn: "estimate_single_rest_loa_pct",
-    args: [t],
-  })),
 ];
 
 const mode = process.argv[2] ?? "--check";

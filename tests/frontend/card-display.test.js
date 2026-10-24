@@ -311,10 +311,3 @@ test("mash card: rest names, purposes, and bound formatting come from the canon"
   assert.equal(app.restUseTempDisplay({ rest_id: "dough_in", use_temp_c: null }), "");
   assert.equal(app.restUseTempDisplay(null), "");
 });
-
-test("mash card: the limit-of-attenuation readout renders with one decimal", async () => {
-  const app = createStepApp();
-  await app.boot();
-
-  assert.match(app.limitOfAttenuationDisplay(), /^\d+\.\d$/);
-});
