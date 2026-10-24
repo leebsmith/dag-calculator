@@ -16,13 +16,13 @@
     <div class="data-table-container">
       <table class="data-table">
         <colgroup>
-          <col style="width: 24%" />
-          <col style="width: 10%" />
-          <col style="width: 16%" />
-          <col style="width: 10%" />
-          <col style="width: 12%" />
-          <col style="width: 12%" />
-          <col style="width: 16%" />
+          <col style="width: 23%" />
+          <col style="width: 15%" />
+          <col style="width: 15%" />
+          <col style="width: 9%" />
+          <col style="width: 11%" />
+          <col style="width: 9%" />
+          <col style="width: 18%" />
         </colgroup>
         <thead>
           <tr>
@@ -58,7 +58,7 @@
                   :aria-label="'Alpha acid percent for ' + row.name"
                 />
                 <span
-                  class="text-xs text-muted"
+                  class="table-alpha-stock text-muted"
                   x-show="hopAlphaRange(row)"
                   :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
                   x-text="hopAlphaRange(row)"
@@ -159,13 +159,13 @@
       <div class="data-table-container">
         <table class="data-table">
           <colgroup>
-            <col style="width: 22%" />
+            <col style="width: 20%" />
+            <col style="width: 15%" />
             <col style="width: 9%" />
             <col style="width: 9%" />
             <col style="width: 9%" />
+            <col style="width: 11%" />
             <col style="width: 9%" />
-            <col style="width: 12%" />
-            <col style="width: 12%" />
             <col style="width: 18%" />
           </colgroup>
           <thead>
@@ -206,7 +206,7 @@
                     :aria-label="'Alpha acid percent for ' + row.name"
                   />
                   <span
-                    class="text-xs text-muted"
+                    class="table-alpha-stock text-muted"
                     x-show="hopAlphaRange(row)"
                     :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
                     x-text="hopAlphaRange(row)"

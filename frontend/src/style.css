@@ -776,6 +776,12 @@ samp {
   text-align: right;
 }
 
+.table-alpha-stock {
+  display: block;
+  white-space: nowrap;
+  font-size: var(--text-micro);
+}
+
 .modal-workspace-main .data-table .form-input {
   min-width: 5rem;
   padding: var(--space-1) var(--space-2);
