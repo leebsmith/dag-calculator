@@ -50,6 +50,13 @@ export function registerMashCard(app, ctx) {
       return artifact.constants[id]?.value ?? null;
     },
 
+    _rateUnitId() {
+      if (this.unitMode?.temperature_delta_per_time) {
+        return this.unitMode.temperature_delta_per_time;
+      }
+      return this.unitMode?.temperature === "degF" ? "dF_per_min" : "dC_per_min";
+    },
+
     restUseTempDisplay(rest) {
       if (!rest || rest.use_temp_c == null) return "";
       const v = this._convert("temperature", rest.use_temp_c, "degC");
@@ -285,14 +292,20 @@ export function registerMashCard(app, ctx) {
       get() {
         const v = this.mashHeatingRateCPerMin;
         if (!Number.isFinite(v)) return "";
-        const d = this._convert("temperature_delta_per_time", v, "dC_per_min");
+        const d = displayValue(
+          artifact,
+          "temperature_delta_per_time",
+          this._rateUnitId(),
+          v,
+          nonlinearFns(artifact, engine)
+        );
         return Number.isFinite(d) ? d.toFixed(2) : "";
       },
     },
     rampRateUnit: {
       configurable: true,
       get() {
-        const unitId = this.unitMode?.temperature_delta_per_time ?? "dC_per_min";
+        const unitId = this._rateUnitId();
         return UNIT_SYMBOLS.temperature_delta_per_time[unitId] ?? unitId;
       },
     },
@@ -440,4 +453,4 @@ export function refreshMashCard(app, ctx) {
   app.mashRests = (ctx.engine.get(N.rests) ?? []).filter((r) => r.rest_id !== "dough_in");
 }
 
-export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "_constant", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "_percentDisplay", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "mashHeatingRateCPerMin", "rampRateDisplay", "rampRateUnit", "attenuationBaseline", "batchAttenuation", "attenuationModel", "predictedAttenuation", "attenuationDelta", "attenuationBand", "attenuationInBand", "effectiveConversionTempC", "predictedAttenuationDisplay", "attenuationBaselineDisplay", "batchAttenuationDisplay", "attenuationDeltaDisplay", "attenuationBandDisplay", "effectiveConversionTempDisplay", "mashShapeLabel", "mashRestCount", "mashShapeSummary", "sortedMashDraftRests", "isMashDraftValid"];
+export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "_constant", "_rateUnitId", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "_percentDisplay", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "mashHeatingRateCPerMin", "rampRateDisplay", "rampRateUnit", "attenuationBaseline", "batchAttenuation", "attenuationModel", "predictedAttenuation", "attenuationDelta", "attenuationBand", "attenuationInBand", "effectiveConversionTempC", "predictedAttenuationDisplay", "attenuationBaselineDisplay", "batchAttenuationDisplay", "attenuationDeltaDisplay", "attenuationBandDisplay", "effectiveConversionTempDisplay", "mashShapeLabel", "mashRestCount", "mashShapeSummary", "sortedMashDraftRests", "isMashDraftValid"];

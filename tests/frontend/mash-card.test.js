@@ -156,17 +156,23 @@ test("mash temperature labels and ranges follow the unit tracker", async () => {
   assert.equal(app.temperatureUnit, "°C");
   assert.equal(app.restTempRangeDisplay("beta_amylase"), "62–65");
   assert.equal(app.restTempRangeDisplay("alpha_amylase"), "68–72");
+  assert.equal(app.rampRateUnit, "°C/min");
+  assert.equal(app.rampRateDisplay, "1.00");
 
   app.setUnit("temperature", "degF");
 
   assert.equal(app.temperatureUnit, "°F");
   assert.equal(app.restTempRangeDisplay("beta_amylase"), "144–149");
   assert.equal(app.restTempRangeDisplay("alpha_amylase"), "154–162");
+  assert.equal(app.rampRateUnit, "°F/min");
+  assert.equal(app.rampRateDisplay, "1.80");
 
   app.setUnit("temperature", "degC");
 
   assert.equal(app.temperatureUnit, "°C");
   assert.equal(app.restTempRangeDisplay("beta_amylase"), "62–65");
+  assert.equal(app.rampRateUnit, "°C/min");
+  assert.equal(app.rampRateDisplay, "1.00");
 });
 
 test("mash draft temperatures parse in the active display unit", async () => {
