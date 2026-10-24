@@ -76,6 +76,9 @@ export function registerStyleCard(app, ctx) {
     styleSai: null,
     styleAbvTouched: false,
     styleAbvCentered: false,
+    styleSolvedAa: null,
+    styleSolvedCap: null,
+    styleSolvedVolume: null,
     belgianTargetAa: null,
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
@@ -117,7 +120,7 @@ export function registerStyleCard(app, ctx) {
       this.styleSafestPoint = this.styleRegion.length >= 3 ? chebyshevCenter(this.styleRegion) : null;
       this.styleExtract = null;
       if (this.styleRegion.length < 3) return;
-      const aa = engine.get(N.apparentAttenuation);
+      const aa = this.styleSolvedAa;
       const abv = engine.get(N.targetAbv);
       const inverse =
         typeof aa === "number" && typeof abv === "number" ? extractFromTarget(aa, abv) : null;
@@ -142,7 +145,7 @@ export function registerStyleCard(app, ctx) {
     // Persist an ABV target and point the OE/AE preview at the fixed-AA ray.
     // Returns false when the ray is unavailable or the inverse cannot resolve.
     writeStyleAbv(value) {
-      const aa = engine.get(N.apparentAttenuation);
+      const aa = this.styleSolvedAa;
       if (!Number.isFinite(aa) || aa >= 1) return false;
       const inverse = extractFromTarget(aa, value);
       if (!inverse) return false;
@@ -210,6 +213,9 @@ export function registerStyleCard(app, ctx) {
       this.styleAbvTouched = hasTarget;
       this.styleAbvCentered = hasTarget;
       this.styleExtract = null;
+      this.styleSolvedAa = null;
+      this.styleSolvedCap = null;
+      this.styleSolvedVolume = null;
       this.belgianTargetAa = null;
     },
 
@@ -317,7 +323,7 @@ export function registerStyleCard(app, ctx) {
       configurable: true,
       get() {
         if (!this.styleExtract) return null;
-        const aa = engine.get(N.apparentAttenuation);
+        const aa = this.styleSolvedAa;
         if (!Number.isFinite(aa) || aa >= 1) return null;
         return abvInterval(raySegment(this.styleRegion, aa));
       },
@@ -350,9 +356,9 @@ export function registerStyleCard(app, ctx) {
         const targetAa = Number.isFinite(this.belgianTargetAa)
           ? this.belgianTargetAa
           : currentAa;
-        const cap = engine.resolve(N.yeastCap);
+        const cap = this.styleSolvedCap;
         if (!Number.isFinite(cap)) return null;
-        const volume = engine.resolve(N.postBoilVolume) ?? engine.get(N.fermVolume);
+        const volume = this.styleSolvedVolume;
         if (!Number.isFinite(volume)) return null;
         return sugarAdvisory({
           oe: this.styleExtract.oe,
@@ -427,7 +433,7 @@ export function registerStyleCard(app, ctx) {
         const yOffset = (height - regionH) / 2;
         const sx = (x) => xOffset + (x - xMin) * scale;
         const sy = (y) => height - yOffset - (y - yMin) * scale;
-        const aa = engine.get(N.apparentAttenuation);
+        const aa = this.styleSolvedAa;
         const ray = Number.isFinite(aa) ? raySegment(region, aa) : null;
         const belgian = this.styleBelgian;
         return {
@@ -583,8 +589,21 @@ export function registerStyleCard(app, ctx) {
 
 export function refreshStyleCard(app, ctx) {
   app.selectedStyleId = ctx.engine.identity?.style?.id ?? "";
+  const read = (path) => {
+    try {
+      return ctx.engine.resolve(path);
+    } catch {
+      return undefined;
+    }
+  };
+  app.styleSolvedAa = read(N.apparentAttenuation);
+  app.styleSolvedCap = read(N.yeastCap);
+  const postBoilVolume = read(N.postBoilVolume);
+  app.styleSolvedVolume = Number.isFinite(postBoilVolume)
+    ? postBoilVolume
+    : ctx.engine.get(N.fermVolume);
   app.computeStyleTarget();
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "belgianTargetAa", "setBelgianTargetAa", "styleBelgian", "styleBelgianMessage", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "belgianTargetAa", "setBelgianTargetAa", "styleBelgian", "styleBelgianMessage", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
