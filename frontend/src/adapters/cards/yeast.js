@@ -1,6 +1,7 @@
 // Yeast selection card: catalog picker with name / manufacturer / attenuation
 // tier filters. Not a draft editor, so it does not use the catalog/draft helper.
 
+import { filterCatalog } from "../../views/catalog.js";
 import { derivationsFor } from "../../views/seedDerivations.js";
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
 import { resultCounter, toggleFilter } from "../../utils.js";
@@ -24,6 +25,7 @@ export function registerYeastCard(app, ctx) {
   Object.assign(app, {
     selectedYeastId: "",
     yeastSearchQuery: "",
+    yeastSearchNotes: false,
     yeastManufacturerFilter: "",
     yeastAttenuationFilter: "",
 
@@ -44,6 +46,7 @@ export function registerYeastCard(app, ctx) {
           if (typeof value === "number") this.setRoot(rootId, value);
         }
       }
+      this.yeastSearchNotes = false;
       this.scheduleSolve();
       this.notify();
     },
@@ -52,8 +55,13 @@ export function registerYeastCard(app, ctx) {
       this.setRoot(N.selection, "");
       this.pickSelection(N.selection, "");
       this.resetSeededRoots(N.selectionNode);
+      this.yeastSearchNotes = false;
       this.scheduleSolve();
       this.notify();
+    },
+
+    toggleYeastSearchNotes() {
+      this.yeastSearchNotes = !this.yeastSearchNotes;
     },
 
     toggleYeastAttenuation(value) {
@@ -89,15 +97,18 @@ export function registerYeastCard(app, ctx) {
     filteredYeasts: {
       configurable: true,
       get() {
-        const q = this.yeastSearchQuery.trim().toLowerCase();
         const m = this.yeastManufacturerFilter;
         const t = this.yeastAttenuationFilter;
-        return this.yeastCatalog.filter(
+        const items = this.yeastCatalog.filter(
           (y) =>
-            (!q || y.name.toLowerCase().includes(q)) &&
             (!m || y.manufacturer === m) &&
             (!t || attenuationTier(y.attenuation_pct) === t)
         );
+        return filterCatalog(items, {
+          query: this.yeastSearchQuery,
+          searchFields: ["name", "notes"],
+          includeNotes: this.yeastSearchNotes,
+        });
       },
     },
     visibleYeasts: {
@@ -151,4 +162,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
 
-export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];

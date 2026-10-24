@@ -8,6 +8,7 @@
 // never references a batch.
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
+import { filterCatalog } from "../views/catalog.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
@@ -34,6 +35,8 @@ export function registerLibraryUi(app, ctx) {
     libraryOpen: false,
     librarySection: "sources", // "sources" | "ingredients"
     sourceKind: "style",
+    librarySearch: "",
+    librarySearchNotes: false,
     libraryTab: "malt",
     libraryDraft: null,
     libraryErrors: [],
@@ -59,11 +62,31 @@ export function registerLibraryUi(app, ctx) {
         return this.librarySection === "sources" ? this.sourceKind : this.libraryTab;
       },
     },
+    activeKindHasNotes: {
+      configurable: true,
+      get() {
+        return Boolean(artifact.primitive_schemas?.[CATALOGS[this.activeKind]?.schema]?.notes);
+      },
+    },
+    librarySearchFields: {
+      configurable: true,
+      get() {
+        const meta = CATALOGS[this.activeKind];
+        const fields = [meta?.titleField ?? "name"];
+        if (this.activeKind === "water_report") fields.push("source_name", "report_id");
+        if (this.activeKindHasNotes) fields.push("notes");
+        return fields;
+      },
+    },
     libraryRecords: {
       configurable: true,
       get() {
         void this.libraryRevision;
-        return this.library.list(this.activeKind);
+        return filterCatalog(this.library.list(this.activeKind), {
+          query: this.librarySearch,
+          searchFields: this.librarySearchFields,
+          includeNotes: this.librarySearchNotes,
+        });
       },
     },
     librarySeedItems: {
@@ -72,7 +95,11 @@ export function registerLibraryUi(app, ctx) {
         void this.libraryRevision;
         const meta = CATALOGS[this.activeKind];
         const seeds = cache.seeds[meta?.seedKey] ?? {};
-        return Object.values(seeds).slice(0, 50);
+        return filterCatalog(Object.values(seeds), {
+          query: this.librarySearch,
+          searchFields: this.librarySearchFields,
+          includeNotes: this.librarySearchNotes,
+        }).slice(0, 50);
       },
     },
     librarySeedCount: {
@@ -80,7 +107,12 @@ export function registerLibraryUi(app, ctx) {
       get() {
         void this.libraryRevision;
         const meta = CATALOGS[this.activeKind];
-        return Object.keys(cache.seeds[meta?.seedKey] ?? {}).length;
+        const seeds = cache.seeds[meta?.seedKey] ?? {};
+        return filterCatalog(Object.values(seeds), {
+          query: this.librarySearch,
+          searchFields: this.librarySearchFields,
+          includeNotes: this.librarySearchNotes,
+        }).length;
       },
     },
     libraryLoading: {
@@ -180,6 +212,8 @@ export function registerLibraryUi(app, ctx) {
       this.libraryDraft = null;
       this.libraryErrors = [];
       this.libraryNotice = "";
+      this.librarySearch = "";
+      this.librarySearchNotes = false;
       if (!this.library.loaded() && !this.library.loading()) {
         this.library.refresh().then(() => this.refreshLibraryItems());
       }
@@ -195,6 +229,8 @@ export function registerLibraryUi(app, ctx) {
     selectLibrarySection(section) {
       if (section !== "sources" && section !== "ingredients") return;
       this.librarySection = section;
+      this.librarySearch = "";
+      this.librarySearchNotes = false;
       this.libraryDraft = null;
       this.libraryErrors = [];
       this.libraryNotice = "";
@@ -204,6 +240,8 @@ export function registerLibraryUi(app, ctx) {
       if (!IDENTITY_KINDS.includes(kind)) return;
       this.librarySection = "sources";
       this.sourceKind = kind;
+      this.librarySearch = "";
+      this.librarySearchNotes = false;
       this.libraryDraft = null;
       this.libraryErrors = [];
       this.libraryNotice = "";
@@ -213,9 +251,19 @@ export function registerLibraryUi(app, ctx) {
       if (!CATALOGS[id] || IDENTITY_KINDS.includes(id)) return;
       this.librarySection = "ingredients";
       this.libraryTab = id;
+      this.librarySearch = "";
+      this.librarySearchNotes = false;
       this.libraryDraft = null;
       this.libraryErrors = [];
       this.libraryNotice = "";
+    },
+
+    librarySetSearch(value) {
+      this.librarySearch = value;
+    },
+
+    toggleLibrarySearchNotes() {
+      this.librarySearchNotes = !this.librarySearchNotes;
     },
 
     libraryItemId(item) {
@@ -328,4 +376,4 @@ export function registerLibraryUi(app, ctx) {
   });
 }
 
-export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];
+export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];

@@ -15,7 +15,15 @@
           placeholder="e.g. American Ale"
           x-model="yeastSearchQuery"
         />
-        <span class="form-hint">Case-insensitive substring match on strain name</span>
+        <span class="form-hint">Name-first match; ties are alphabetical</span>
+        <div class="filter-pills-container">
+          <button
+            type="button"
+            class="filter-pill"
+            :class="{ 'is-active': yeastSearchNotes }"
+            @click="toggleYeastSearchNotes()"
+          >Search notes</button>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Manufacturer</label>

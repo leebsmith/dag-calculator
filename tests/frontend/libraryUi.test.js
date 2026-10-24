@@ -227,6 +227,33 @@ test("record mutations notify the host so the batch setup cache stays fresh", as
   assert.equal(notified, 1);
 });
 
+test("search ranks name matches and gates notes behind the toggle", () => {
+  const seeds = {
+    malts: {
+      m1: { id: "m1", name: "Centennial Malt", notes: "citrus" },
+      m2: { id: "m2", name: "Pale Malt", notes: "centennial-like" },
+      m3: { id: "m3", name: "Munich Malt", notes: "malty" },
+    },
+  };
+  const records = {
+    malt: [{ id: "r1", name: "My Munich", notes: "centennial-ish" }],
+  };
+  const { app } = setup({ seeds, records });
+  app.selectLibraryTab("malt");
+
+  app.librarySetSearch("cen");
+  assert.deepEqual(app.librarySeedItems.map((s) => s.id), ["m1"]);
+  assert.deepEqual(app.libraryRecords.map((r) => r.id), []);
+
+  app.toggleLibrarySearchNotes();
+  assert.deepEqual(app.librarySeedItems.map((s) => s.id), ["m1", "m2"]);
+  assert.deepEqual(app.libraryRecords.map((r) => r.id), ["r1"]);
+
+  app.selectLibraryTab("yeast");
+  assert.equal(app.librarySearch, "");
+  assert.equal(app.librarySearchNotes, false);
+});
+
 test("seed listings are read-only and capped for display", () => {
   const seeds = {
     yeasts: Object.fromEntries(

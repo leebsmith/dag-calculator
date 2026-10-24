@@ -40,6 +40,24 @@
       <p class="form-hint" x-text="libraryNotice"></p>
     </template>
 
+    <div class="catalog-search-wrapper">
+      <input
+        type="text"
+        class="form-input text-xs"
+        :placeholder="'Search ' + activeKindLabel.toLowerCase() + '…'"
+        :value="librarySearch"
+        @input="librarySetSearch($event.target.value)"
+      />
+    </div>
+    <div class="filter-pills-container" x-show="activeKindHasNotes">
+      <button
+        type="button"
+        class="filter-pill"
+        :class="{ 'is-active': librarySearchNotes }"
+        @click="toggleLibrarySearchNotes()"
+      >Search notes</button>
+    </div>
+
     <template x-if="librarySection === 'sources'">
       <div>
         <div class="filter-pills-container">
@@ -87,7 +105,11 @@
                 </div>
               </div>
             </template>
-            <p class="landing-empty" x-show="!libraryRecords.length">No records yet.</p>
+            <p
+              class="landing-empty"
+              x-show="!libraryRecords.length"
+              x-text="librarySearch ? 'No matching records.' : 'No records yet.'"
+            ></p>
           </div>
         </section>
 
@@ -115,9 +137,13 @@
               </div>
             </template>
           </div>
+          <p class="landing-empty" x-show="librarySearch && !librarySeedItems.length">
+            No matching seeds.
+          </p>
           <p class="form-hint">
             Showing <span x-text="librarySeedItems.length"></span> of
-            <span x-text="librarySeedCount"></span> bundled seeds.
+            <span x-text="librarySeedCount"></span>
+            <span x-text="librarySearch ? 'matching seeds' : 'bundled seeds'"></span>.
           </p>
         </section>
       </div>
@@ -158,9 +184,11 @@
                 >Delete</button>
               </div>
             </template>
-            <p class="landing-empty" x-show="!libraryRecords.length">
-              No records yet. Create one below, or select a bundled seed.
-            </p>
+            <p
+              class="landing-empty"
+              x-show="!libraryRecords.length"
+              x-text="librarySearch ? 'No matching records.' : 'No records yet. Create one below, or select a bundled seed.'"
+            ></p>
           </div>
         </section>
 
@@ -180,9 +208,13 @@
               </div>
             </template>
           </div>
+          <p class="landing-empty" x-show="librarySearch && !librarySeedItems.length">
+            No matching seeds.
+          </p>
           <p class="form-hint">
             Showing <span x-text="librarySeedItems.length"></span> of
-            <span x-text="librarySeedCount"></span> bundled seeds.
+            <span x-text="librarySeedCount"></span>
+            <span x-text="librarySearch ? 'matching seeds' : 'bundled seeds'"></span>.
           </p>
         </section>
       </div>
