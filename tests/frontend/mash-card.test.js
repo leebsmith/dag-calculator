@@ -63,6 +63,24 @@ test("toggleMashRest marks the schedule custom, seeds temp and duration, and all
   assert.equal(app.mashRests.find((r) => r.rest_id === "mash_out").enabled, false);
 });
 
+test("dough-in target tracks ticked and configured rests", async () => {
+  const app = createTestApp();
+  await app.boot();
+
+  app.toggleMashRest("beta_alpha_amylase", false);
+  app.toggleMashRest("alpha_amylase", true);
+  assert.equal(app.mashDoughInTempC, 70.0);
+  assert.equal(app.doughInInheritedTempC, 70.0);
+  assert.equal(app.doughInDisplay, "70.0");
+
+  app.openMashModal();
+  app.setMashDraftTemp("alpha_amylase", "69.0");
+  app.commitMashSchedule();
+  assert.equal(app.mashDoughInTempC, 69.0);
+  assert.equal(app.doughInInheritedTempC, 69.0);
+  assert.equal(app.doughInDisplay, "69.0");
+});
+
 test("Configure Rests modal is draft/cancel: Cancel discards, OK commits", async () => {
   const app = createTestApp();
   await app.boot();

@@ -14,6 +14,7 @@ export function registerMashCard(app, ctx) {
     // Rests collection rows in base units, refreshed in compute(); the partial
     // and modal bind to these plus the scalar field models in fieldsBySlice.mash.
     mashRests: [],
+    mashDoughInTempC: null,
     mashModalOpen: false,
     mashDraft: [],
     mashDraftDirty: false,
@@ -218,7 +219,7 @@ export function registerMashCard(app, ctx) {
     doughInInheritedTempC: {
       configurable: true,
       get() {
-        return engine.get(N.doughInTarget);
+        return this.mashDoughInTempC;
       },
     },
     temperatureUnit: {
@@ -260,6 +261,7 @@ export function registerMashCard(app, ctx) {
 
 export function refreshMashCard(app, ctx) {
   app.mashRests = (ctx.engine.get(N.rests) ?? []).filter((r) => r.rest_id !== "dough_in");
+  app.mashDoughInTempC = ctx.engine.get(N.doughInTarget);
 }
 
-export const KEYS = ["mashRests", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "sortedMashDraftRests", "isMashDraftValid"];
+export const KEYS = ["mashRests", "mashDoughInTempC", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "sortedMashDraftRests", "isMashDraftValid"];
