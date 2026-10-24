@@ -21,3 +21,25 @@ export function assertNoCollisions(installers) {
     }
   }
 }
+
+// The app members present before the first installer runs. Non-enumerable, so
+// the symbol never reaches Alpine's reactive walk or the template surface.
+export const BASE_KEYS = Symbol.for("dag.installerBaseKeys");
+
+/**
+ * Compare an assembled app against its declared installer contract: every
+ * member an installer added must be declared, and every declared key must
+ * exist. Both directions matter — an undeclared member is invisible to the
+ * collision check, and a declared key that no installer assigns is stale.
+ *
+ * @param {object} app
+ * @param {Array<{ name: string, keys: string[] }>} installers
+ * @returns {{ undeclared: string[], missing: string[] }}
+ */
+export function installerSurfaceGaps(app, installers) {
+  const base = new Set(app[BASE_KEYS] ?? []);
+  const declared = new Set(installers.flatMap(({ keys }) => keys));
+  const undeclared = Object.keys(app).filter((key) => !base.has(key) && !declared.has(key));
+  const missing = [...declared].filter((key) => !(key in app));
+  return { undeclared, missing };
+}

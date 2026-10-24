@@ -9,21 +9,39 @@ function surfaces() {
 
 const TAG = /<[a-zA-Z][^>]*>/gs;
 
-test("every modal backdrop contains a labelled dialog with focus management", () => {
+// Selection is by role, not by a styling class: an overlay that renames its
+// backdrop (the Library panel) must still be held to the dialog contract.
+function dialogSurfaces() {
+  return surfaces().filter((file) => read(file).includes('role="dialog"'));
+}
+
+test("every dialog is labelled, modal, and focuses itself on open", () => {
+  const found = dialogSurfaces();
+  assert.ok(found.length > 0, "no dialog surfaces found");
   const missing = [];
-  for (const file of surfaces()) {
+  for (const file of found) {
     const text = read(file);
-    if (!text.includes('class="modal-backdrop"')) continue;
     const checks = [
-      ['role="dialog"', text.includes('role="dialog"')],
       ['aria-modal="true"', text.includes('aria-modal="true"')],
       ["aria-labelledby", text.includes("aria-labelledby=")],
       ['tabindex="-1"', text.includes('tabindex="-1"')],
-      ["x-effect=\"dialogFocus(", text.includes('x-effect="dialogFocus(')],
+      [
+        "dialogFocus binding",
+        text.includes('x-effect="dialogFocus(') || text.includes('x-init="dialogFocus('),
+      ],
     ];
     for (const [name, ok] of checks) if (!ok) missing.push(`${file}: ${name}`);
   }
   assert.deepEqual(missing, [], `incomplete dialogs:\n${missing.join("\n")}`);
+});
+
+test("no modal backdrop is missing its dialog role", () => {
+  const offenders = [];
+  for (const file of surfaces()) {
+    if (!read(file).includes('class="modal-backdrop"')) continue;
+    if (!read(file).includes('role="dialog"')) offenders.push(file);
+  }
+  assert.deepEqual(offenders, [], `backdrops without a dialog role:\n${offenders.join("\n")}`);
 });
 
 test("static aria references resolve within the same surface and unique ids", () => {
