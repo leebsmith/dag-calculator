@@ -12,7 +12,7 @@ import {
   whirlpoolMassKg,
 } from "../../views/whirlpool.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
-import { UNIT_SYMBOLS } from "../../views/registry/units.js";
+import { UNIT_SYMBOLS, unitDecimals } from "../../views/registry/units.js";
 import { HOP_NODES as N } from "../../views/registry/hops.js";
 import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
 import { reportError } from "../../observability.js";
@@ -195,8 +195,7 @@ export function registerHopCard(app, ctx) {
   const formatMass = (kg, unit) => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
-    const decimals = unit === "g" ? 1 : 2;
-    return `${value.toFixed(decimals)} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
+    return `${value.toFixed(unitDecimals("mass", unit))} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
   };
 
   const formatTemp = (tempC) => {

@@ -16,7 +16,7 @@ collection columns, and readout tables.
 | `time` | `min` 0, `hr` 1, `day` 1 | |
 | `volume` | 1 | L, gal, qt, mL |
 | `volume_per_time` | 1 | L/hr, gal/hr |
-| `mass` | 1 | kg, lb, oz, g |
+| `mass` | `kg` 1, `lb` 2, `oz` 2, `g` 1 | |
 | `gravity` | SG 3, Plato 1 | |
 | `grain_color` | 1 | °L, EBC |
 | `beer_color` | 1 | SRM, EBC |
@@ -40,7 +40,7 @@ collection columns, and readout tables.
 4. `formatValue` fallback (integer/trimmed 3 dp)
 
 Per-field overrides are reserved for deliberate deviations, such as water
-additions in grams at 1 dp or the hop card's mass display.
+additions in grams at 1 dp.
 
 ## Inputs
 

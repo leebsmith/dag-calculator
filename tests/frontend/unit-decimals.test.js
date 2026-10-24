@@ -14,6 +14,9 @@ test("unitDecimals resolves per-unit precision", () => {
   assert.equal(unitDecimals("volume", "gal"), 1);
   assert.equal(unitDecimals("temperature", "degF"), 1);
   assert.equal(unitDecimals("temperature_delta", "dF"), 1);
+  assert.equal(unitDecimals("mass", "lb"), 2);
+  assert.equal(unitDecimals("mass", "oz"), 2);
+  assert.equal(unitDecimals("mass", "g"), 1);
 });
 
 test("unitDecimals falls back to dimension-level precision", () => {

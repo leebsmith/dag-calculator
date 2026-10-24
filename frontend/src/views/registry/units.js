@@ -17,7 +17,7 @@ export const UNIT_DIMENSIONS = [
   { id: "temperature_delta", group: "Base", label: "Temperature Δ", units: [["dC", "Δ°C", 1], ["dF", "Δ°F", 1]] },
   { id: "time", group: "Base", label: "Time", units: [["min", "min", 0], ["hr", "hr", 1], ["day", "day", 1]] },
   { id: "volume", group: "Base", label: "Volume", units: [["L", "L", 1], ["gal", "gal", 1], ["qt", "qt", 1], ["ml", "mL", 1]] },
-  { id: "mass", group: "Base", label: "Mass", units: [["kg", "kg"], ["lb", "lb"], ["oz", "oz"], ["g", "g"]] },
+  { id: "mass", group: "Base", label: "Mass", units: [["kg", "kg"], ["lb", "lb", 2], ["oz", "oz", 2], ["g", "g", 1]] },
   { id: "gravity", group: "Base", label: "Gravity", default: "Plato", units: [["SG", "SG", 3], ["Plato", "°P", 1]] },
   { id: "grain_color", group: "Base", label: "Grain Color", default: "EBC", decimals: 1, units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
   { id: "beer_color", group: "Base", label: "Beer Color", default: "EBC", decimals: 1, units: [["SRM", "SRM"], ["EBC", "EBC"]] },
