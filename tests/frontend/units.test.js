@@ -21,6 +21,18 @@ test("affine conversion: temperature degF <-> degC", () => {
   assert.ok(Math.abs(toBase(artifact, "temperature", "degF", 212) - 100) < 1e-9);
 });
 
+test("linear conversion: temperature delta dC <-> dF", () => {
+  assert.ok(Math.abs(fromBase(artifact, "temperature_delta", "dF", 2.91) - 5.238) < 1e-9);
+  assert.ok(Math.abs(toBase(artifact, "temperature_delta", "dF", 5.238) - 2.91) < 1e-9);
+  const roundTrip = fromBase(
+    artifact,
+    "temperature_delta",
+    "dF",
+    toBase(artifact, "temperature_delta", "dF", 5.238)
+  );
+  assert.ok(Math.abs(roundTrip - 5.238) < 1e-9);
+});
+
 test("linear conversion: grain_color Lovibond -> EBC", () => {
   assert.ok(Math.abs(fromBase(artifact, "grain_color", "EBC", 9.2) - 9.2 * 1.97) < 1e-9);
   assert.ok(Math.abs(toBase(artifact, "grain_color", "EBC", 9.2 * 1.97) - 9.2) < 1e-9);

@@ -24,7 +24,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `reference` | `id` | identity | — |
 | `specific_heat` | `kcal_per_kg_degC` | linear | `btu_per_lb_degF` (factor 1) |
 | `temperature` | `degC` | affine | `degF` (factor 1.8, offset 32) |
-| `temperature_delta` | `dC` | linear | `dF` (factor 1.8) |
+| `temperature_delta` | `dC` | linear | `dF` (factor 0.5555555555555556) |
 | `time` | `min` | linear | `day` (factor 1440), `hr` (factor 60) |
 | `total_extract` | `L_deg` | linear | `gal_pts` (factor 3.785411784) |
 | `volume` | `L` | linear | `gal` (factor 3.785411784), `ml` (factor 0.001), `qt` (factor 0.946352946) |
