@@ -1,11 +1,5 @@
 # TODO
 
-## In progress
-
-* **Water pin visibility & coverage** (`plans/water-pin-visibility-and-test-matrix.md`)
-  — pin/float rendering from one ion registry, profile intent, Mode 5 cap, and the
-  beer × water × settings test matrix.
-
 ## Next (in order)
 
 1. **Whirlpool engine promotion** — the host-side cooling model and IBU-share
@@ -92,3 +86,6 @@ Not needed by the current artifact; add only when a node requires them:
 * Batches view (scope filters, identity columns, lineage), Library Sources/Ingredients
   split, style as a catalog kind with fork/seal, selection-only new-batch dialog,
   read-only workspace identity, batch-scoped hop alpha — `plans/batches-view-and-record-layer.md`
+* Water pin visibility & coverage (pin/float rendering from one ion registry, profile
+  intent, Mode 5 cap, beer × water × settings test matrix) —
+  `plans/water-pin-visibility-and-test-matrix.md`

@@ -71,7 +71,7 @@ screen *and* would catch its cousins.
 | `tests/guards/presentation-ids.test.js` — cards must not hardcode artifact paths | Row paths stay registered in `views/registry/water.js`; the adapter derives from the registry, not from literals. |
 | `tests/guards/option-labels.test.js` — exact coverage for labelled choices | `water.strategy` labels stay out of scope unless its `optionLabels` are completed for all seven members. |
 | `tests/guards/stub-outputs.test.js` — declared ⊆ stub keys | Safe: no new boundary output is introduced. |
-| `tests/backend/conformance/test_boundary_outputs_match_response_fields.py` — declared outputs == response fields minus `ALLOW` | Confirms the response-field route is a contract change; avoided by decision 7. |
+| `tests/backend/conformance/test_boundary_output_parity.py:test_boundary_outputs_match_response_fields` — declared outputs == response fields minus `ALLOW` | Confirms the response-field route is a contract change; avoided by decision 7. |
 | `tests/conformance/boundary-fixtures.test.js:WATER_VALUES` — hard-codes the sample water request and throws on unexpected paths | Seed/profile edits do not touch it; solver-signature edits must not either. |
 | `tests/backend/test_water_solver.py:test_error_surface_complete` — exact `WaterSolverErrorCode` set | `PINNED_IONS_REQUIRED` must be added to the enum **and** the expected set in the same commit. |
 | `backend/app/schemas/boundary.py` + `assert_field_parity` at import | `max_length=6` on `custom_pinned_ions` is wire-compatible; do not rename fields. |

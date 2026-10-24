@@ -64,8 +64,6 @@ export function list() {
   return client.listBatches();
 }
 
-// Create an untitled, unpersisted draft locally (client UUID). No network write
-// happens until the first autosave. The editor is reset to empty state.
 export class UnsupportedBatchError extends Error {
   constructor(message) {
     super(message);
@@ -107,10 +105,14 @@ export async function createWithIdentity({ name, identity }) {
   return active;
 }
 
-export async function createUntitled() {
+// Unsaved-draft seam. Production always creates through `createWithIdentity`,
+// which persists immediately; the autosave/conflict/trash suites need a batch
+// that has never been written, and this is the only way to reach that state.
+// The name is deliberate: it is not a creation path and carries no identity.
+export async function createUnsavedDraft({ name = "Untitled batch" } = {}) {
   active = {
     id: crypto.randomUUID(),
-    name: "Untitled recipe",
+    name,
     status: "draft",
     trashed: false,
     persisted: false,

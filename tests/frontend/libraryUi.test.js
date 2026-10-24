@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { registerLibraryUi } from "../../frontend/src/adapters/libraryUi.js";
+import { dialogFocus, dialogRestore } from "../../frontend/src/adapters/modalFocus.js";
 import {
   CATALOGS,
   IDENTITY_KINDS,
@@ -15,18 +16,29 @@ const ENGINE = {
   },
 };
 
-function setup({ unitMode = {}, records = {}, seeds = {}, onCreate, onRemove, onRecordsChanged } = {}) {
+function setup({
+  unitMode = {},
+  records = {},
+  seeds = {},
+  onCreate,
+  onRemove,
+  onRecordsChanged,
+  loaded = () => true,
+  loading = () => false,
+} = {}) {
   const events = [];
   const app = {
     libraryRevision: 0,
     unitMode,
     onRecordsChanged,
     library: {
-      loaded: () => true,
-      loading: () => false,
+      loaded,
+      loading,
       error: () => null,
       has: (kind, id) => Boolean(records[kind]?.some((r) => r.id === id)),
-      async refresh() {},
+      async refresh() {
+        events.push({ op: "refreshLibrary" });
+      },
       list(tab) {
         events.push({ op: "list", tab });
         return records[tab] ?? [];
@@ -266,4 +278,77 @@ test("seed listings are read-only and capped for display", () => {
   assert.equal(app.librarySeedItems.length, 50);
   assert.equal(app.librarySeedCount, 60);
   assert.equal(app.librarySeedItemTitle(app.librarySeedItems[0]), "Yeast 0");
+});
+
+test("closing the Library returns focus to the element that opened it", () => {
+  const { app } = setup();
+  const doc = { activeElement: null };
+  const trigger = {
+    focused: 0,
+    focus() {
+      this.focused += 1;
+      doc.activeElement = this;
+    },
+  };
+  const panel = {
+    querySelectorAll: () => [],
+    addEventListener() {},
+    removeEventListener() {},
+    focus() {},
+  };
+
+  trigger.focus();
+  dialogFocus(panel, true, { document: doc, requestAnimationFrame: (fn) => fn() });
+  app.openLibrary("equipment");
+  app.closeLibrary();
+
+  assert.equal(app.libraryOpen, false);
+  assert.equal(trigger.focused, 2);
+  dialogRestore();
+});
+
+test("opening the Library fetches records only when the cache is cold", async () => {
+  const cold = setup({ loaded: () => false, loading: () => false });
+  cold.app.openLibrary("malt");
+  await Promise.resolve();
+  assert.ok(cold.events.some((event) => event.op === "refreshLibrary"));
+  assert.ok(cold.events.some((event) => event.op === "refresh"));
+
+  dialogRestore();
+  const warm = setup();
+  warm.app.openLibrary("malt");
+  await Promise.resolve();
+  assert.equal(warm.events.some((event) => event.op === "refreshLibrary"), false);
+});
+
+test("a permanent delete asks for confirmation when a window exists", async () => {
+  const { app, events } = setup();
+  app.selectLibraryTab("malt");
+  const original = globalThis.window;
+
+  try {
+    globalThis.window = { confirm: () => false };
+    await app.deleteLibraryItem("r1");
+    assert.equal(events.filter((event) => event.op === "remove").length, 0);
+
+    globalThis.window = { confirm: () => true };
+    await app.deleteLibraryItem("r1");
+    assert.equal(events.filter((event) => event.op === "remove").length, 1);
+  } finally {
+    if (original === undefined) delete globalThis.window;
+    else globalThis.window = original;
+  }
+});
+
+test("a failed delete surfaces the message in the Library", async () => {
+  const { app } = setup({
+    onRemove: async () => {
+      throw new Error("record is referenced");
+    },
+  });
+  app.selectLibraryTab("malt");
+
+  await app.deleteLibraryItem("r1");
+
+  assert.deepEqual(app.libraryErrors, [{ field: "*", message: "record is referenced" }]);
 });

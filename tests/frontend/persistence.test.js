@@ -111,18 +111,32 @@ test("opening a pre-identity record fails loudly", async () => {
   await assert.rejects(() => persistence.open("legacy"), /predates the identity model/);
 });
 
-test("createUntitled makes no network call and is unpersisted", async () => {
+test("createUnsavedDraft makes no network call and is unpersisted", async () => {
   const { client } = setup();
-  const active = await persistence.createUntitled();
+  const active = await persistence.createUnsavedDraft({ name: "House Pale" });
   assert.ok(active.id);
-  assert.equal(active.name, "Untitled recipe");
+  assert.equal(active.name, "House Pale");
   assert.equal(active.persisted, false);
   assert.equal(client.calls.length, 0);
 });
 
+test("createUnsavedDraft defaults its name and carries no identity", async () => {
+  const { app, client } = setup();
+  const active = await persistence.createUnsavedDraft();
+
+  assert.equal(active.name, "Untitled batch");
+  assert.deepEqual(app.loaded, { roots: {}, collections: {}, selections: {} });
+  assert.equal(client.calls.length, 0);
+
+  // The unsaved draft is the one shape `open()` refuses to hydrate.
+  persistence.queueSave({ delay: 60000 });
+  await persistence.flushSave();
+  assert.deepEqual(client.calls.filter((c) => c.op === "upsert").length, 1);
+});
+
 test("first flushSave upserts and marks persisted", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   assert.equal(client.calls.filter((c) => c.op === "upsert").length, 1);
@@ -133,7 +147,7 @@ test("first flushSave upserts and marks persisted", async () => {
 
 test("later saves carry the observed updated_at baseline", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   const baseline = persistence.getActive().updated_at;
@@ -146,7 +160,7 @@ test("later saves carry the observed updated_at baseline", async () => {
 
 test("queueSave debounces into a single write", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 5 });
   persistence.queueSave({ delay: 5 });
   persistence.queueSave({ delay: 5 });
@@ -156,7 +170,7 @@ test("queueSave debounces into a single write", async () => {
 
 test("trashActive abandons an unedited unpersisted draft", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   await persistence.trashActive();
   assert.equal(persistence.getActive(), null);
   assert.equal(client.calls.length, 0);
@@ -164,7 +178,7 @@ test("trashActive abandons an unedited unpersisted draft", async () => {
 
 test("trashActive flushes then soft-deletes a persisted draft", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   await persistence.trashActive();
@@ -174,7 +188,7 @@ test("trashActive flushes then soft-deletes a persisted draft", async () => {
 
 test("renameActive persists the new name", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   await persistence.renameActive("My Saison");
   const upsert = client.calls.find((c) => c.op === "upsert");
   assert.ok(upsert);
@@ -217,7 +231,7 @@ test("trashBatch soft-deletes a landing row and drops it from the active slot", 
 
 test("stale baseline conflicts preserve local edits and report conflict", async () => {
   const { client, app } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   const baseline = persistence.getActive().updated_at;
@@ -230,7 +244,7 @@ test("stale baseline conflicts preserve local edits and report conflict", async 
   await persistence.flushSave();
 
   assert.equal(persistence.getSaveState(), "conflict");
-  assert.equal(persistence.getActive().name, "Untitled recipe");
+  assert.equal(persistence.getActive().name, "Untitled batch");
   assert.equal(app.loaded.marker, "local-state-preserved");
   assert.equal(persistence.getConflictRemote().name, "Remote edit");
 });
@@ -299,7 +313,7 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
 
 test("freezeActive posts the app's freeze payload, and only for drafts", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   await persistence.flushSave();
 
   await persistence.freezeActive();
@@ -332,7 +346,7 @@ test("list, restore, and deletePermanent delegate to the client", async () => {
 
 test("a failed autosave is reported and leaves the draft dirty", async (t) => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   const errors = [];
   t.mock.method(console, "error", (message) => errors.push(message));
   client.upsertBatch = async () => {
@@ -352,7 +366,7 @@ test("a failed autosave is reported and leaves the draft dirty", async (t) => {
 
 test("a conflict reports state without re-reading the remote", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
 
@@ -373,7 +387,7 @@ test("a conflict reports state without re-reading the remote", async () => {
 
 test("force save overwrites the remote and clears the conflict", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   const baseline = persistence.getActive().updated_at;
@@ -388,14 +402,14 @@ test("force save overwrites the remote and clears the conflict", async () => {
 
   assert.equal(persistence.getSaveState(), "idle");
   assert.equal(persistence.getConflictRemote(), null);
-  assert.equal(persistence.getActive().name, "Untitled recipe");
+  assert.equal(persistence.getActive().name, "Untitled batch");
   const upserts = client.calls.filter((c) => c.op === "upsert");
   assert.equal(upserts.at(-1).force, true);
 });
 
 test("reload resolves a conflict by re-hydrating the remote record", async () => {
   const { client, app } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   persistence.queueSave({ delay: 60000 });
   await persistence.flushSave();
   const baseline = persistence.getActive().updated_at;
@@ -417,7 +431,7 @@ test("saveState transitions dirty -> saving -> idle on a clean save", async () =
   const { client } = setup();
   const states = [];
   persistence.setStateObserver(({ state }) => states.push(state));
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   states.length = 0;
 
   persistence.queueSave({ delay: 60000 });
@@ -432,7 +446,7 @@ test("saveState reaches error after exhausting retries", async () => {
   const { client } = setup();
   const states = [];
   persistence.setStateObserver(({ state }) => states.push(state));
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
   states.length = 0;
 
   let attempts = 0;
@@ -451,7 +465,7 @@ test("saveState reaches error after exhausting retries", async () => {
 
 test("a transient failure recovers within the retry budget", async () => {
   const { client } = setup();
-  await persistence.createUntitled();
+  await persistence.createUnsavedDraft();
 
   let attempts = 0;
   const original = client.upsertBatch;

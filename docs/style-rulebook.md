@@ -86,6 +86,11 @@ The structural stylesheet consumes tokens; it never defines them.
   for state classes or for layout structure.
 - Never use **inline styles** in markup. All visual declarations — including
   display toggles — live in classes.
+  **One exception:** a fixed-position popover is anchored to its trigger with a
+  single `:style` binding computed from `getBoundingClientRect()` (see
+  `frontend/src/partials/chooser.html`). The values are viewport geometry, not
+  design decisions, so they cannot be expressed as a class; everything else
+  about the popover is class-driven.
 
 ### 3.4 Composition
 
@@ -186,7 +191,8 @@ State is expressed once per control and mirrored in ARIA:
 - No hex colors in the structural stylesheet.
 - No `!important`.
 - No `transition: all`.
-- No inline styles in markup.
+- No inline styles in markup — the only sanctioned use is viewport-derived
+  popover anchoring (see §3.3).
 - No bare-element styling outside the reset block.
 - No utility-first class soup for **state or layout structure** — use semantic
   state classes. Typography, color, and spacing deltas may use utilities.
