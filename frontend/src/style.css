@@ -195,6 +195,12 @@ samp {
   margin-right: auto;
 }
 
+.form-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+
 .unit-badge {
   display: inline-flex;
   align-items: center;
