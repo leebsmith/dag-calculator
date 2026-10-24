@@ -30,9 +30,10 @@
                             <span class="unit-col-title" x-text="g.label"></span>
                             <template x-for="d in g.dims" :key="d.id">
                               <div class="unit-row">
-                                <label class="form-label" x-text="d.label"></label>
+                                <label class="form-label" :for="'unit-' + d.id" x-text="d.label"></label>
                                 <select
                                   class="form-select"
+                                  :id="'unit-' + d.id"
                                   :value="unitMode[d.id] || d.default || d.units[0][0]"
                                   @change="setUnit(d.id, $event.target.value)"
                                 >

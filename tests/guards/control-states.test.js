@@ -44,3 +44,15 @@ test("popovers do not claim menu roles without keyboard support", () => {
   }
   assert.deepEqual(offenders, [], `menu roles without roving focus:\n${offenders.join("\n")}`);
 });
+
+test("every form label is associated with a control", () => {
+  const LABEL = /<label\b[^>]*class="[^"]*\bform-label\b[^"]*"[^>]*>/gs;
+  const missing = [];
+  for (const file of partials()) {
+    for (const tag of read(file).matchAll(LABEL)) {
+      const text = tag[0];
+      if (!/\bfor=/.test(text) && !text.includes(":for=")) missing.push(file);
+    }
+  }
+  assert.deepEqual(missing, [], `form-label without for=:\n${missing.join("\n")}`);
+});

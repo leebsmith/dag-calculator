@@ -36,8 +36,9 @@
         </p>
 
         <div class="form-group">
-          <label class="form-label"><span>Batch name</span></label>
+          <label class="form-label" for="batch-name"><span>Batch name</span></label>
           <input
+            id="batch-name"
             class="form-input"
             type="text"
             placeholder="e.g. House Pale"
@@ -47,8 +48,8 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label"><span>Style</span></label>
-          <select class="form-select" @change="$store.setup.state.styleId = $event.target.value">
+          <label class="form-label" for="batch-style"><span>Style</span></label>
+          <select id="batch-style" class="form-select" @change="$store.setup.state.styleId = $event.target.value">
             <template x-for="option in $store.setup.styleOptions()" :key="option.value">
               <option :value="option.value" :selected="option.value === $store.setup.state.styleId" x-text="option.label"></option>
             </template>
@@ -56,8 +57,8 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label"><span>Rig</span></label>
-          <select class="form-select" @change="$store.setup.state.equipmentId = $event.target.value">
+          <label class="form-label" for="batch-rig"><span>Rig</span></label>
+          <select id="batch-rig" class="form-select" @change="$store.setup.state.equipmentId = $event.target.value">
             <template x-for="option in $store.setup.equipmentOptions()" :key="option.value">
               <option :value="option.value" :selected="option.value === $store.setup.state.equipmentId" x-text="option.label"></option>
             </template>
@@ -65,8 +66,8 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label"><span>Water source</span></label>
-          <select class="form-select" @change="$store.setup.state.waterId = $event.target.value">
+          <label class="form-label" for="batch-water"><span>Water source</span></label>
+          <select id="batch-water" class="form-select" @change="$store.setup.state.waterId = $event.target.value">
             <template x-for="option in $store.setup.waterOptions()" :key="option.value">
               <option :value="option.value" :selected="option.value === $store.setup.state.waterId" x-text="option.label"></option>
             </template>

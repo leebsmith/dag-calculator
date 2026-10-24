@@ -234,11 +234,13 @@
           <div class="form-group">
             <label
               class="form-label text-xs"
+              :for="'library-field-' + f.field"
               x-text="fmt.formatFieldLabel(f.label, f.symbol)"
             ></label>
             <template x-if="f.kind === 'select'">
               <select
                 class="form-select text-xs"
+                :id="'library-field-' + f.field"
                 :value="libraryFieldDisplay(f.field)"
                 @change="librarySetField(f.field, $event.target.value)"
               >
@@ -257,6 +259,7 @@
                 type="number"
                 step="any"
                 class="form-input text-xs"
+                :id="'library-field-' + f.field"
                 :value="libraryFieldDisplay(f.field)"
                 @input="librarySetField(f.field, $event.target.value)"
               />
@@ -265,6 +268,7 @@
               <input
                 type="text"
                 class="form-input text-xs"
+                :id="'library-field-' + f.field"
                 :value="libraryFieldDisplay(f.field)"
                 @input="librarySetField(f.field, $event.target.value)"
               />

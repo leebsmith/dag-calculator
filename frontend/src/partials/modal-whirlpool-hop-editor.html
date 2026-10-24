@@ -136,8 +136,9 @@
                   >Search notes</button>
                 </div>
                 <div class="form-group">
-                  <label class="form-label text-xs">Catalog</label>
+                  <label class="form-label text-xs" for="whirlpool-hop-catalog">Catalog</label>
                   <select
+                    id="whirlpool-hop-catalog"
                     class="form-select text-xs"
                     :value="whirlpoolHopCatalogForm"
                     @change="setWhirlpoolHopCatalogForm($event.target.value)"
@@ -210,8 +211,9 @@
             <template x-if="whirlpoolHopActiveRow">
               <div class="inspector-form">
                 <div class="form-group">
-                  <label class="form-label text-xs">Hop name</label>
+                  <label class="form-label text-xs" for="whirlpool-hop-row-name">Hop name</label>
                   <input
+                    id="whirlpool-hop-row-name"
                     type="text"
                     class="form-input text-xs"
                     :value="whirlpoolHopActiveRow.name"
@@ -219,8 +221,9 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-label text-xs">Form</label>
+                  <label class="form-label text-xs" for="whirlpool-hop-row-form">Form</label>
                   <select
+                    id="whirlpool-hop-row-form"
                     class="form-select text-xs"
                     :value="whirlpoolHopActiveRow.product_form || 't90_pellet'"
                     @change="patchDraftRow(whirlpoolHopActiveIndex, { product_form: $event.target.value })"
@@ -235,8 +238,9 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label text-xs">Alpha acid (%)</label>
+                  <label class="form-label text-xs" for="whirlpool-hop-row-alpha">Alpha acid (%)</label>
                   <input
+                    id="whirlpool-hop-row-alpha"
                     type="number"
                     step="0.1"
                     min="0"

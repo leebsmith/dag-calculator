@@ -111,7 +111,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">
+          <label class="form-label" for="target-srm">
             <span>Target SRM</span>
             <span
               class="seed-badge"
@@ -136,6 +136,7 @@
                 step="0.5"
                 :value="targetSrm"
                 @input="setTargetSrm($event.target.value)"
+                id="target-srm"
                 aria-label="Target SRM"
               />
               <div class="target-slider-readout">
@@ -148,7 +149,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">
+          <label class="form-label" for="target-ibu">
             <span>Target IBU</span>
             <span
               class="seed-badge"
@@ -173,6 +174,7 @@
                 step="1"
                 :value="targetIbu"
                 @input="setTargetIbu($event.target.value)"
+                id="target-ibu"
                 aria-label="Target IBU"
               />
               <div class="target-slider-readout">
@@ -185,8 +187,9 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Bitterness allocation</label>
+          <label class="form-label" for="whirlpool-fraction">Bitterness allocation</label>
           <input
+            id="whirlpool-fraction"
             type="range"
             class="target-slider"
             min="0"
@@ -239,9 +242,9 @@
         <h3 class="synthesized-title">Style envelope</h3>
       </div>
       <div class="form-group">
-        <label class="form-label">
+        <span class="form-label">
           <span>Fermentation</span>
-        </label>
+        </span>
         <span
           class="field-value"
           x-text="fmt.optionLabel(fermentationField.optionLabels, fermentationField.value)"
@@ -250,9 +253,9 @@
       <div class="step-grid-2col">
         <template x-for="row in styleEnvelopeFields" :key="row.id">
           <div class="form-group">
-            <label class="form-label">
+            <span class="form-label">
               <span x-text="row.field.label"></span>
-            </label>
+            </span>
             <span class="field-value" x-text="row.field.display"></span>
           </div>
         </template>

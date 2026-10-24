@@ -153,6 +153,8 @@ The structural stylesheet consumes tokens; it never defines them.
   requirements; never remove focus outlines without a replacement.
 - Maintain generous **hit targets** (≈44px for primary controls, no smaller
   than ≈24px for dense or inline controls).
+- Every form control has a programmatic label (`for` bound to the control's
+  `id`); a placeholder never substitutes for one.
 
 ### Control states
 

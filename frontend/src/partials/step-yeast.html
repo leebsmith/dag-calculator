@@ -8,8 +8,9 @@
     <!-- Filters -->
     <div class="step-grid-2col">
       <div class="form-group">
-        <label class="form-label">Search by name</label>
+        <label class="form-label" for="yeast-search">Search by name</label>
         <input
+          id="yeast-search"
           type="text"
           class="form-input"
           placeholder="e.g. American Ale"
@@ -26,8 +27,8 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Manufacturer</label>
-        <select class="form-select" x-model="yeastManufacturerFilter">
+        <label class="form-label" for="yeast-manufacturer">Manufacturer</label>
+        <select id="yeast-manufacturer" class="form-select" x-model="yeastManufacturerFilter">
           <option value="">All manufacturers</option>
           <template x-for="mfr in yeastManufacturers" :key="mfr">
             <option :value="mfr" x-text="mfr"></option>

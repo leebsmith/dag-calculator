@@ -232,8 +232,9 @@
             <template x-if="traceActiveRow">
               <div class="inspector-form">
                 <div class="form-group">
-                  <label class="form-label text-xs">Malt name</label>
+                  <label class="form-label text-xs" for="trace-row-name">Malt name</label>
                   <input
+                    id="trace-row-name"
                     type="text"
                     class="form-input text-xs"
                     :value="traceActiveRow.name"
@@ -241,8 +242,9 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-label text-xs">Category</label>
+                  <label class="form-label text-xs" for="trace-row-category">Category</label>
                   <select
+                    id="trace-row-category"
                     class="form-select text-xs"
                     :value="traceActiveRow.category"
                     @change="setMaltField(traceActiveIndex, 'category', $event.target.value)"
@@ -254,8 +256,9 @@
                 </div>
                 <div class="inspector-grid-2col">
                   <div class="form-group">
-                    <label class="form-label text-xs">Extract yield (%)</label>
+                    <label class="form-label text-xs" for="trace-row-yield">Extract yield (%)</label>
                     <input
+                      id="trace-row-yield"
                       type="number"
                       step="1"
                       min="0"
@@ -266,8 +269,9 @@
                     />
                   </div>
                   <div class="form-group">
-                    <label class="form-label text-xs" x-text="'Color (' + colorUnit() + ')'"></label>
+                    <label class="form-label text-xs" for="trace-row-color" x-text="'Color (' + colorUnit() + ')'"></label>
                     <input
+                      id="trace-row-color"
                       type="number"
                       step="0.1"
                       min="0"
@@ -278,8 +282,9 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="form-label text-xs">Notes</label>
+                  <label class="form-label text-xs" for="trace-row-notes">Notes</label>
                   <textarea
+                    id="trace-row-notes"
                     class="form-input text-xs"
                     rows="3"
                     :value="traceActiveRow.notes ?? ''"
