@@ -37,6 +37,7 @@
                 type="button"
                 class="unit-badge"
                 title="Change hop mass unit"
+                :aria-label="'Mass unit: ' + hopMassUnit + '. Activate to change.'"
                 @click="toggleHopMassUnit()"
                 x-text="hopMassUnit"
               ></button>
@@ -182,6 +183,7 @@
                   type="button"
                   class="unit-badge"
                   title="Change whirlpool hop mass unit"
+                  :aria-label="'Mass unit: ' + whirlpoolHopMassUnit + '. Activate to change.'"
                   @click="toggleWhirlpoolHopMassUnit()"
                   x-text="whirlpoolHopMassUnit"
                 ></button>

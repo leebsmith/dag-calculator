@@ -1,8 +1,15 @@
 <div class="library-overlay" @keydown.escape.window="closeLibrary()">
-  <section class="library-panel" role="dialog" aria-modal="true" aria-label="Library">
+  <section
+    class="library-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="library-title"
+    tabindex="-1"
+    x-init="dialogFocus($el, true)"
+  >
     <header class="library-header">
       <div>
-        <h2 class="card-title">Library</h2>
+        <h2 class="card-title" id="library-title">Library</h2>
         <p class="card-subtitle">
           Reference data. Records are sealed when saved and never edited; a correction is a new
           record. A batch copies what it uses, so changing or deleting a record never changes a

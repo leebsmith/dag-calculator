@@ -34,6 +34,7 @@ import { installFieldActions } from "./fieldActions.js";
 import { installDraftEditor } from "./draftEditor.js";
 import { installUnitActions } from "./unitActions.js";
 import { installNavigation } from "./navigation.js";
+import { dialogFocus, KEYS as modalFocusKeys } from "./modalFocus.js";
 import { createStepView } from "./stepView.js";
 import { assertNoCollisions } from "./contract.js";
 import { KEYS as navigationKeys } from "./navigation.js";
@@ -73,6 +74,7 @@ const INSTALLERS = [
   { name: "mash", keys: mashKeys },
   { name: "brewDay", keys: brewDayKeys },
   { name: "water", keys: waterKeys },
+  { name: "modalFocus", keys: modalFocusKeys },
 ];
 
 // Pre-landing-page bootstrap: the seed default equipment, no water source, no
@@ -359,6 +361,7 @@ export function createStepApp(options = {}) {
   });
 
   installNavigation(app, { ui, steps });
+  app.dialogFocus = dialogFocus;
   installFieldActions(app, {
     artifact,
     session,

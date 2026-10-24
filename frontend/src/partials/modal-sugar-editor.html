@@ -5,10 +5,17 @@
   @click.self="cancelSugarEditor()"
   @keydown.escape.window="handleSugarEscape()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="sugar-editor-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, sugarEditorOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Late Additions Editor</h2>
+        <h2 class="modal-workspace-title" id="sugar-editor-title">Late Additions Editor</h2>
         <span class="status-badge badge-info text-xs" x-text="sugarDraftMassDisplay"></span>
       </div>
       <div class="modal-workspace-header-actions">
@@ -23,7 +30,7 @@
           <span class="text-xs text-muted">
             Dose sugars by mass. Yield and color come from the catalog.
           </span>
-          <button type="button" class="btn-primary text-xs" @click="openSugarSearch()">
+          <button type="button" class="btn-primary text-xs" @click="openSugarSearch()" :aria-expanded="(sugarDrawer !== null) ? 'true' : 'false'" aria-controls="sugar-drawer">
             ＋ Add Sugar from Catalog
           </button>
         </div>
@@ -94,7 +101,7 @@
 
       <div class="modal-drawer-scrim" x-show="sugarDrawer !== null" @click="closeSugarDrawer()"></div>
 
-      <div class="modal-workspace-drawer" x-show="sugarDrawer !== null">
+      <div class="modal-workspace-drawer" id="sugar-drawer" x-show="sugarDrawer !== null">
         <div class="modal-drawer-header">
           <h3 class="modal-drawer-title">Sugar Catalog</h3>
           <button type="button" class="btn-close text-xs" @click="closeSugarDrawer()">✕</button>

@@ -5,10 +5,17 @@
   @click.self="cancelTraceEditor()"
   @keydown.escape.window="handleTraceEscape()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="trace-malt-editor-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, traceEditorOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Trace Malt Editor</h2>
+        <h2 class="modal-workspace-title" id="trace-malt-editor-title">Trace Malt Editor</h2>
         <span class="status-badge badge-info text-xs" x-text="traceDraftMassDisplay"></span>
       </div>
       <div class="modal-workspace-header-actions">
@@ -23,7 +30,7 @@
           <span class="text-xs text-muted">
             Dose colorants and strong flavorants by mass. They feed color and mash pH, not extract.
           </span>
-          <button type="button" class="btn-primary text-xs" @click="openTraceSearch()">
+          <button type="button" class="btn-primary text-xs" @click="openTraceSearch()" :aria-expanded="(traceDrawer !== null) ? 'true' : 'false'" aria-controls="trace-drawer">
             ＋ Add Trace Malt by Weight
           </button>
         </div>
@@ -95,7 +102,7 @@
 
       <div class="modal-drawer-scrim" x-show="traceDrawer !== null" @click="closeTraceDrawer()"></div>
 
-      <div class="modal-workspace-drawer" x-show="traceDrawer !== null">
+      <div class="modal-workspace-drawer" id="trace-drawer" x-show="traceDrawer !== null">
         <div class="modal-drawer-header">
           <h3
             class="modal-drawer-title"

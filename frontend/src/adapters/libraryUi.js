@@ -9,6 +9,7 @@
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
 import { filterCatalog } from "../views/catalog.js";
+import { dialogRestore } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
@@ -221,6 +222,7 @@ export function registerLibraryUi(app, ctx) {
 
     closeLibrary() {
       this.libraryOpen = false;
+      dialogRestore();
       this.libraryDraft = null;
       this.libraryErrors = [];
       this.libraryNotice = "";

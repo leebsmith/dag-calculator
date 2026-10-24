@@ -5,10 +5,17 @@
   @click.self="cancelMaltEditor()"
   @keydown.escape.window="handleMaltEscape()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="malt-editor-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, maltEditorOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Grain Bill Editor</h2>
+        <h2 class="modal-workspace-title" id="malt-editor-title">Grain Bill Editor</h2>
         <span class="status-badge text-xs" :class="maltValidation.class" x-text="maltValidation.label"></span>
       </div>
       <div class="modal-workspace-header-actions">
@@ -33,7 +40,7 @@
           <button
             type="button"
             class="btn-primary text-xs"
-            @click="openMaltSearch()"
+            @click="openMaltSearch()" :aria-expanded="(maltDrawer !== null) ? 'true' : 'false'" aria-controls="malt-drawer"
             :disabled="maltAtLimit"
           >
             ＋ Add Malt from Catalog
@@ -125,7 +132,7 @@
 
       <div class="modal-drawer-scrim" x-show="maltDrawer !== null" @click="closeMaltDrawer()"></div>
 
-      <div class="modal-workspace-drawer" x-show="maltDrawer !== null">
+      <div class="modal-workspace-drawer" id="malt-drawer" x-show="maltDrawer !== null">
         <div class="modal-drawer-header">
           <h3
             class="modal-drawer-title"

@@ -5,10 +5,17 @@
   @click.self="cancelWhirlpoolHopEditor()"
   @keydown.escape.window="handleWhirlpoolHopEscape()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="whirlpool-hop-editor-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, whirlpoolHopEditorOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Whirlpool Hop Editor</h2>
+        <h2 class="modal-workspace-title" id="whirlpool-hop-editor-title">Whirlpool Hop Editor</h2>
         <span
           class="status-badge badge-info text-xs"
           x-text="whirlpoolHopDraftSummary"
@@ -26,7 +33,7 @@
           <span class="text-xs text-muted">
             Enter relative IBU parts; Hamilton normalizes them to 100%. Mass is derived from the whirlpool cooling integral.
           </span>
-          <button type="button" class="btn-primary text-xs" @click="openWhirlpoolHopSearch()">
+          <button type="button" class="btn-primary text-xs" @click="openWhirlpoolHopSearch()" :aria-expanded="(whirlpoolHopDrawer !== null) ? 'true' : 'false'" aria-controls="whirlpool-hop-drawer">
             ＋ Add Hop from Catalog
           </button>
         </div>
@@ -98,7 +105,7 @@
 
       <div class="modal-drawer-scrim" x-show="whirlpoolHopDrawer !== null" @click="closeWhirlpoolHopDrawer()"></div>
 
-      <div class="modal-workspace-drawer" x-show="whirlpoolHopDrawer !== null">
+      <div class="modal-workspace-drawer" id="whirlpool-hop-drawer" x-show="whirlpoolHopDrawer !== null">
         <div class="modal-drawer-header">
           <h3
             class="modal-drawer-title"

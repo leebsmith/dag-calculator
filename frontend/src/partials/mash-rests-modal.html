@@ -5,10 +5,17 @@
   @click.self="closeMashModal()"
   @keydown.escape.window="closeMashModal()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mash-rests-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, mashModalOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Configure Mash Rests</h2>
+        <h2 class="modal-workspace-title" id="mash-rests-title">Configure Mash Rests</h2>
       </div>
       <div class="modal-workspace-header-actions">
         <button type="button" class="btn-outline text-xs" @click="closeMashModal()">Cancel</button>

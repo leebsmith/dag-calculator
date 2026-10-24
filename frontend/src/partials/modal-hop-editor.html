@@ -5,10 +5,17 @@
   @click.self="cancelHopEditor()"
   @keydown.escape.window="handleHopEscape()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="hop-editor-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, hopEditorOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">Hop Schedule Editor</h2>
+        <h2 class="modal-workspace-title" id="hop-editor-title">Hop Schedule Editor</h2>
         <span
           class="status-badge badge-info text-xs"
           x-text="hopDraftSummary"
@@ -26,7 +33,7 @@
           <span class="text-xs text-muted">
             Enter relative IBU parts; Hamilton normalizes them to 100%. Mass is derived from Tinseth.
           </span>
-          <button type="button" class="btn-primary text-xs" @click="openHopSearch()">
+          <button type="button" class="btn-primary text-xs" @click="openHopSearch()" :aria-expanded="(hopDrawer !== null) ? 'true' : 'false'" aria-controls="hop-drawer">
             ＋ Add Hop from Catalog
           </button>
         </div>
@@ -98,7 +105,7 @@
 
       <div class="modal-drawer-scrim" x-show="hopDrawer !== null" @click="closeHopDrawer()"></div>
 
-      <div class="modal-workspace-drawer" x-show="hopDrawer !== null">
+      <div class="modal-workspace-drawer" id="hop-drawer" x-show="hopDrawer !== null">
         <div class="modal-drawer-header">
           <h3
             class="modal-drawer-title"

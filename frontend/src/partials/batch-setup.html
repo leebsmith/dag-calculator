@@ -5,10 +5,17 @@
   @click.self="$store.setup.closeModal()"
   @keydown.escape.window="$store.setup.closeModal()"
 >
-  <div class="modal-dialog modal-dialog-workspace">
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="new-batch-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, $store.setup.state.modalOpen)"
+  >
     <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title">New batch</h2>
+        <h2 class="modal-workspace-title" id="new-batch-title">New batch</h2>
       </div>
       <div class="modal-workspace-header-actions">
         <button type="button" class="btn-outline text-xs" @click="$store.setup.closeModal()">Cancel</button>

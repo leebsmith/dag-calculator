@@ -16,6 +16,7 @@
               x-show="f.toggleable"
               :class="{ 'unit-badge-customized': f.customized }"
               title="Click to change unit"
+              :aria-label="'Unit: ' + f.unit + '. Activate to change.'"
               @click="toggleFieldUnit(f)"
               x-text="f.unit"
             ></button>
@@ -91,6 +92,7 @@
               x-show="f.toggleable"
               :class="{ 'unit-badge-customized': f.customized }"
               title="Click to change unit"
+              :aria-label="'Unit: ' + f.unit + '. Activate to change.'"
               @click="toggleFieldUnit(f)"
               x-text="f.unit"
             ></button>
