@@ -100,7 +100,7 @@ export const steps = [
     subtitle: "Batch-sparge targets and solver inputs",
     partial: "./src/partials/step-card.html",
     fields: [
-      "batch.target_abv",
+      { id: "batch.target_abv", control: "readout" },
       "batch.v_ferm",
       "batch.topology",
       "batch.intensive_value",

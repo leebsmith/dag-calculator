@@ -10,11 +10,10 @@ import {
   chebyshevCenter,
   targetFromExtract,
   extractFromTarget,
+  cutaiaAbv,
   limitHeadroom,
   raySegment,
   sugarAdvisory,
-  oeSliceAt,
-  aeSliceAt,
 } from "../../engine/fermentation.js";
 import { styleConformance } from "../../engine/styleConformance.js";
 import { STYLE_NODES as N } from "../../views/registry/style.js";
@@ -43,6 +42,27 @@ const ENVELOPE_INPUTS = [
   { id: N.envelope.abvMax, step: "0.1" },
 ];
 
+const ABV_EPS = 1e-9;
+// A one-decimal target can sit a few hundredths outside a recomputed ray
+// interval; re-solving for that would oscillate. Clamp only beyond half a step.
+const ABV_CLAMP_EPS = 0.05;
+
+function abvInterval(ray) {
+  if (!ray) return null;
+  const a = cutaiaAbv(ray.oeMin, ray.aeMin);
+  const b = cutaiaAbv(ray.oeMax, ray.aeMax);
+  return Number.isFinite(a) && Number.isFinite(b) ? [Math.min(a, b), Math.max(a, b)] : null;
+}
+
+// Clamp to the interval and quantize inward to the input's 0.1 grid.
+function quantizeAbv(value, [low, high]) {
+  const lowQ = Math.ceil(low * 10 - ABV_EPS) / 10;
+  const highQ = Math.floor(high * 10 + ABV_EPS) / 10;
+  if (lowQ > highQ) return (low + high) / 2;
+  const rounded = Math.round(value * 10) / 10;
+  return Math.min(highQ, Math.max(lowQ, rounded));
+}
+
 export function registerStyleCard(app, ctx) {
   const { engine, cache } = ctx;
 
@@ -54,6 +74,8 @@ export function registerStyleCard(app, ctx) {
     styleExtract: null,
     styleConformance: null,
     styleSai: null,
+    styleAbvTouched: false,
+    styleAbvCentered: false,
     belgianTargetAa: null,
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
@@ -74,9 +96,9 @@ export function registerStyleCard(app, ctx) {
       )}`;
     },
 
-    // The batch AA / target-ABV roots are the source of truth; the picker's
-    // slider positions are their inverse. The region comes from the envelope
-    // (batch.style_* roots) so it tracks envelope edits (WYSIWYG).
+    // ABV is the control; the OE/AE point is its inverse on the fixed-AA ray.
+    // The region comes from the envelope (batch.style_* roots) so it tracks
+    // envelope edits (WYSIWYG).
     computeStyleTarget() {
       const envelope = {
         ogMin: engine.resolve(N.envelope.ogMin),
@@ -117,12 +139,78 @@ export function registerStyleCard(app, ctx) {
       }
     },
 
-    applyStyleExtract(oe, ae) {
-      const target = targetFromExtract(oe, ae);
-      this.styleExtract = { oe, ae };
-      this.setRoot(N.targetAbv, target.abv);
+    // Persist an ABV target and point the OE/AE preview at the fixed-AA ray.
+    // Returns false when the ray is unavailable or the inverse cannot resolve.
+    writeStyleAbv(value) {
+      const aa = engine.get(N.apparentAttenuation);
+      if (!Number.isFinite(aa) || aa >= 1) return false;
+      const inverse = extractFromTarget(aa, value);
+      if (!inverse) return false;
+      this.styleExtract = inverse;
+      this.setRoot(N.targetAbv, value);
+      this.styleAbvCentered = true;
+      return true;
+    },
+
+    setStyleTargetAbv(valueOrElement) {
+      const element =
+        valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
+      const raw = element ? element.value : valueOrElement;
+      const previous = this.styleAbvTarget;
+      const bounds = this.styleAbvBounds;
+      const numeric = Number(raw);
+      if (!bounds) {
+        if (element) element.value = formatWithDecimals(previous, 1);
+        return;
+      }
+      if (raw === "" || raw === null || !Number.isFinite(numeric)) {
+        if (element) element.value = formatWithDecimals(previous, 1);
+        return;
+      }
+      const target = quantizeAbv(numeric, bounds);
+      if (!this.writeStyleAbv(target)) {
+        if (element) element.value = formatWithDecimals(previous, 1);
+        return;
+      }
+      this.styleAbvTouched = true;
+      this.styleAbvCentered = true;
+      if (element) element.value = formatWithDecimals(target, 1);
       this.scheduleSolve();
       this.notify();
+    },
+
+    // Seed the target from the style band at creation; once a yeast exists,
+    // center it on the feasible ray interval. After that, only clamp when the
+    // ray changes underneath a user-owned value.
+    centerOrClampStyleAbv() {
+      const bounds = this.styleAbvBounds;
+      if (!bounds) return false;
+      const current = engine.get(N.targetAbv);
+      if (!this.styleAbvCentered && !this.styleAbvTouched) {
+        return this.writeStyleAbv(quantizeAbv((bounds[0] + bounds[1]) / 2, bounds));
+      }
+      if (
+        Number.isFinite(current) &&
+        (current < bounds[0] - ABV_CLAMP_EPS || current > bounds[1] + ABV_CLAMP_EPS)
+      ) {
+        return this.writeStyleAbv(quantizeAbv(current, bounds));
+      }
+      return false;
+    },
+
+    afterCompute() {
+      if (this.centerOrClampStyleAbv()) {
+        this.scheduleSolve();
+        this.notify();
+      }
+    },
+
+    onBatchLoad() {
+      const hasTarget = this.master.getRoot(N.targetAbv) !== undefined;
+      this.styleAbvTouched = hasTarget;
+      this.styleAbvCentered = hasTarget;
+      this.styleExtract = null;
+      this.belgianTargetAa = null;
     },
 
     setBelgianTargetAa(value) {
@@ -131,36 +219,15 @@ export function registerStyleCard(app, ctx) {
       this.notify();
     },
 
-    setStyleTargetOe(value) {
-      if (!this.styleExtract) return;
-      const aa = engine.get(N.apparentAttenuation);
-      if (!Number.isFinite(aa) || aa >= 1) return;
-      const ray = raySegment(this.styleRegion, aa);
-      if (!ray) return;
-      const oe = Math.max(ray.oeMin, Math.min(ray.oeMax, Number(value)));
-      if (!Number.isFinite(oe)) return;
-      this.applyStyleExtract(oe, oe * (1 - aa));
-    },
-
-    setStyleTargetAe(value) {
-      if (!this.styleExtract) return;
-      const aa = engine.get(N.apparentAttenuation);
-      if (!Number.isFinite(aa) || aa >= 1) return;
-      const ray = raySegment(this.styleRegion, aa);
-      if (!ray) return;
-      const ae = Number(value);
-      if (!Number.isFinite(ae)) return;
-      const oe = Math.max(ray.oeMin, Math.min(ray.oeMax, ae / (1 - aa)));
-      this.applyStyleExtract(oe, oe * (1 - aa));
-    },
-
     resetStyleTarget() {
-      const aa = engine.get(N.apparentAttenuation);
-      if (!Number.isFinite(aa) || aa >= 1) return;
-      const ray = raySegment(this.styleRegion, aa);
-      if (!ray) return;
-      const oe = (ray.oeMin + ray.oeMax) / 2;
-      this.applyStyleExtract(oe, oe * (1 - aa));
+      const bounds = this.styleAbvBounds;
+      if (!bounds) return;
+      const target = quantizeAbv((bounds[0] + bounds[1]) / 2, bounds);
+      if (!this.writeStyleAbv(target)) return;
+      this.styleAbvTouched = true;
+      this.styleAbvCentered = true;
+      this.scheduleSolve();
+      this.notify();
     },
 
     styleTargetNearest() {
@@ -246,22 +313,21 @@ export function registerStyleCard(app, ctx) {
         return this.selectedStyleId ? cache.references.style[this.selectedStyleId] ?? null : null;
       },
     },
-    styleOeBounds: {
+    styleAbvBounds: {
       configurable: true,
       get() {
         if (!this.styleExtract) return null;
         const aa = engine.get(N.apparentAttenuation);
-        const ray = Number.isFinite(aa) ? raySegment(this.styleRegion, aa) : null;
-        return ray ? [ray.oeMin, ray.oeMax] : oeSliceAt(this.styleRegion, this.styleExtract.ae);
+        if (!Number.isFinite(aa) || aa >= 1) return null;
+        return abvInterval(raySegment(this.styleRegion, aa));
       },
     },
-    styleAeBounds: {
+    styleAbvTarget: {
       configurable: true,
       get() {
-        if (!this.styleExtract) return null;
-        const aa = engine.get(N.apparentAttenuation);
-        const ray = Number.isFinite(aa) ? raySegment(this.styleRegion, aa) : null;
-        return ray ? [ray.aeMin, ray.aeMax] : aeSliceAt(this.styleRegion, this.styleExtract.oe);
+        const target = engine.get(N.targetAbv);
+        if (Number.isFinite(target)) return target;
+        return this.styleTargetInfo?.abv ?? null;
       },
     },
     styleTargetInfo: {
@@ -521,4 +587,4 @@ export function refreshStyleCard(app, ctx) {
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "applyStyleExtract", "setStyleTargetOe", "setStyleTargetAe", "resetStyleTarget", "belgianTargetAa", "setBelgianTargetAa", "styleBelgian", "styleBelgianMessage", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleOeBounds", "styleAeBounds", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "belgianTargetAa", "setBelgianTargetAa", "styleBelgian", "styleBelgianMessage", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

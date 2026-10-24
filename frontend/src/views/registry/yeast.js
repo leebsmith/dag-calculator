@@ -2,6 +2,8 @@
 export const YEAST_NODES = {
   selection: "batch.yeast_id",
   selectionNode: "batch.yeast",
+  derate: "batch.attenuation_derate",
+  cap: "batch.yeast_cap",
   slice: "yeast",
 };
 

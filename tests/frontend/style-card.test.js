@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, TEST_YEAST_ID } from "./appHelpers.js";
+import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { identityFixture } from "./helpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { raySegment } from "../../frontend/src/engine/fermentation.js";
@@ -73,16 +74,75 @@ test("the fermentation navigator writes the batch targets, not the declaration",
   assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-9);
 });
 
-test("the fixed-AA ray constrains the OE/AE navigator", async () => {
+test("the ABV input writes the target and clamps to the fixed-AA ray", async () => {
   const app = await appWithStyle("21A");
+  const bounds = app.styleAbvBounds;
   const aa = app.engine.get("batch.apparent_attenuation");
-  const ray = raySegment(app.styleRegion, aa);
-  assert.ok(ray);
+  assert.ok(bounds);
+  assert.ok(raySegment(app.styleRegion, aa));
 
-  app.setStyleTargetOe(ray.oeMin + 0.1 * (ray.oeMax - ray.oeMin));
+  const target = Math.round(((bounds[0] + bounds[1]) / 2) * 10) / 10;
+  app.setStyleTargetAbv(target);
+  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - target) < 1e-9);
   const { oe, ae } = app.styleExtract;
+  const ray = raySegment(app.styleRegion, aa);
   assert.ok(oe >= ray.oeMin - 1e-9 && oe <= ray.oeMax + 1e-9);
   assert.ok(Math.abs(ae - oe * (1 - aa)) < 1e-9);
+  assert.ok(Math.abs(app.styleTargetInfo.abv - target) < 1e-9);
+  assert.equal(app.styleAbvTouched, true);
+
+  app.compute();
+  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - target) < 1e-9);
+
+  const invalid = { value: "" };
+  app.setStyleTargetAbv(invalid);
+  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - target) < 1e-9);
+  assert.equal(invalid.value, target.toFixed(1));
+
+  app.setStyleTargetAbv(bounds[1] + 10);
+  const high = app.master.getRoot("batch.target_abv");
+  assert.ok(high <= bounds[1] + 1e-9);
+  assert.ok(high >= bounds[0] - 1e-9);
+  assert.equal(Math.round(high * 10) / 10, high);
+
+  app.setStyleTargetAbv(bounds[0] - 10);
+  const low = app.master.getRoot("batch.target_abv");
+  assert.ok(low >= bounds[0] - 1e-9);
+  assert.ok(low <= bounds[1] + 1e-9);
+  assert.equal(Math.round(low * 10) / 10, low);
+});
+
+test("a new batch seeds the style ABV midpoint and centers it on the first yeast", async () => {
+  const app = createStepApp();
+  await app.loadState({
+    identity: {
+      ...identityFixture(),
+      style: cache.references.style["21A"] ?? {},
+    },
+    roots: {},
+    collections: {},
+    selections: {},
+  });
+
+  assert.equal(app.master.getRoot("batch.target_abv"), 6.5);
+  assert.equal(app.styleAbvBounds, null);
+
+  app.selectYeast(TEST_YEAST_ID);
+  app.compute();
+
+  const bounds = app.styleAbvBounds;
+  assert.ok(bounds);
+  const midpoint = Math.round(((bounds[0] + bounds[1]) / 2) * 10) / 10;
+  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - midpoint) < 1e-9);
+  assert.equal(app.styleAbvTouched, false);
+});
+
+test("the batch Target ABV is a read-only readout", async () => {
+  const app = await appWithStyle("21A");
+  const field = app.fieldsById["batch.target_abv"];
+  assert.equal(field.control, "readout");
+  assert.equal(field.editable, false);
+  assert.equal(field.target, null);
 });
 
 test("the Belgian advisory is a readout and does not mutate the recipe", async () => {

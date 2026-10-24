@@ -4,7 +4,7 @@ export const batchRegistry = {
   "batch.target_abv": {
     label: "Target ABV",
     unit: "%",
-    hint: "Always expressed as a percentage (no unit toggle). Consumed by the batch-sparge solver.",
+    hint: "Set on the Style step; read-only here. Consumed by the batch-sparge solver.",
   },
   "batch.v_ferm": {
     label: "Fermenter volume",

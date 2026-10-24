@@ -143,8 +143,7 @@
               step="0.1"
               class="form-input"
               :value="yeastField('batch.attenuation_derate').display"
-              @input="edit(yeastField('batch.attenuation_derate'), $event.target.value)"
-              @change="commitField(yeastField('batch.attenuation_derate'))"
+              @change="commitYeastDerate($event.target)"
             />
             <span class="form-hint">Percent of the strain limit; default 100%</span>
           </div>

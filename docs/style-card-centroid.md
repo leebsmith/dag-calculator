@@ -72,9 +72,11 @@ AA* = (OE* − AE*) / OE*          # Plato-space (solver-native)
 ABV* = ABV(OE*, AE*)
 ```
 
-`ABV*` seeds `batch.target_abv`. `AA*` is the style point's implied
-attenuation; the solver's `batch.apparent_attenuation` is `min(AA_wort,
-yeast_cap)` and is the value the navigator constrains to (see §8).
+The centroid's `ABV*` is a reference point, not the seed: the workspace now
+starts `batch.target_abv` at the ABV-band midpoint and re-centers it on the
+fixed-AA ray once a yeast is selected (see §8). `AA*` is the style point's
+implied attenuation; the solver's `batch.apparent_attenuation` is
+`min(AA_wort, yeast_cap)` and is the value the navigator constrains to.
 
 ## 7. Conformance
 
@@ -83,24 +85,32 @@ yeast_cap)` and is the value the navigator constrains to (see §8).
 (21A, 22C, 25B, 1A) and asserts the centroid's ABV always falls inside the
 style's band. Any change to the Cutaia/ASBC constants must be regenerated there.
 
-## 8. Region navigator (target picker)
+## 8. ABV target control
 
-Many styles span a wide band (e.g. Black IPA: ABV 5.5–9.0), so a single centroid
-is only a default. The Style card exposes an **OE/AE region navigator** on the
-**fixed-AA ray**:
+Many styles span a wide ABV band (e.g. Black IPA: 5.5–9.0), so a single
+centroid is only a reference. The Style card exposes **ABV as the target
+control** on the **fixed-AA ray**:
 
 ```
 AE = OE · (1 − aa_batch)
 ```
 
 - **One degree of freedom.** `aa_batch` comes from the solved recipe and yeast
-  cap. Moving the OE or AE slider moves the point along that ray, and the ray's
-  intersection with the feasible polygon is the reachable span
-  (`raySegment`). If the ray misses the polygon, the sliders are disabled and
-  the card warns.
-- **Source of truth.** `batch.target_abv` is the knob; the slider positions are
-  its inverse on the ray. `batch.apparent_attenuation` is the solver's
-  `aa_batch` display, not a root.
+  cap. The target ABV input moves the OE/AE point along that ray; the ray's
+  intersection with the feasible polygon is the reachable interval
+  (`raySegment`). OE and AE are readouts, never independent controls.
+- **Initialization.** A new batch seeds `batch.target_abv` to
+  `(style.abv_min + style.abv_max) / 2`. The input is disabled until a yeast
+  gives the ray a slope. On the first yeast selection the target is re-centered
+  to the midpoint of the feasible ray interval. After that the user's value is
+  authoritative: edits clamp to the interval, and recipe changes only clamp if
+  the value falls outside it.
+- **Input.** A one-decimal number field. Values are clamped and quantized
+  inward to the ray ∩ polygon interval; invalid input resets to the previous
+  value.
+- **Read-only display.** The Batch step's Target ABV field is a readout; the
+  Style step is the only editor. The underlying root is still
+  `batch.target_abv`, so the solver contract is unchanged.
 - **Reset** returns to the midpoint of the ray's intersection with the polygon.
 - **Advisory Belgian knob.** The card also shows the sucrose dose needed to
   raise AA/ABV at fixed AE. It is advisory only and never mutates the recipe

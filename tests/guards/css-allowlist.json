@@ -166,10 +166,9 @@
       "declarations": "accent-color: var(--sys-color-action-primary)",
       "selectors": [
         ".brew-day-step-toggle input[type=\"checkbox\"]",
-        ".extract-slider",
         ".mash-rest-toggle input[type=\"checkbox\"]"
       ],
-      "reason": "Shared control accent recipe; checkbox and slider contexts differ."
+      "reason": "Shared checkbox accent recipe; toggle contexts differ."
     },
     {
       "context": "",

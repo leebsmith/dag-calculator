@@ -112,6 +112,29 @@ test("yeast card: tier filters toggle on and off", async () => {
   assert.equal(app.yeastAttenuationFilter, "");
 });
 
+test("yeast card: derate commits on blur and resets invalid input", async () => {
+  const app = await bootedApp();
+  const input = { value: "95" };
+  app.commitYeastDerate(input);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+
+  const previous = app.yeastField("batch.attenuation_derate").display;
+  const invalid = { value: "0" };
+  app.commitYeastDerate(invalid);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+  assert.equal(invalid.value, previous);
+
+  const tooHigh = { value: "101" };
+  app.commitYeastDerate(tooHigh);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+  assert.equal(tooHigh.value, previous);
+
+  const empty = { value: "" };
+  app.commitYeastDerate(empty);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+  assert.equal(empty.value, previous);
+});
+
 // --- Late additions --------------------------------------------------------
 
 test("late additions: the sugar draft fields resolve inside the card's slice", async () => {

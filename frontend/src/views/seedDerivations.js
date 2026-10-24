@@ -4,20 +4,26 @@
 // (pull), so an unset root inherits and a set root overrides.
 //
 // Residual list (2 roots):
-//   - batch.target_abv           — style centroid (polygon geometry)
+//   - batch.target_abv           — style ABV-band midpoint
 //   - batch.fermentation         — style tag set-membership (no `in` operator)
 //
 // Consumers:
-//   - selectYeast / copyInCascade (push the residual values);
 //   - stepAdapter.seedIdentityResiduals (identity namespaces at creation/load);
 //   - the producer's "seeded" provenance flag for those residuals;
 //   - "reset to source" (fieldActions.resetField).
 // Adding an entry here is a last resort: prefer an artifact `default`.
 
-import { styleCentroid, styleFermentation } from "../engine/fermentation.js";
+import { styleFermentation } from "../engine/fermentation.js";
+
+function styleAbvMidpoint(style) {
+  const low = style?.abv_min;
+  const high = style?.abv_max;
+  if (!Number.isFinite(low) || !Number.isFinite(high) || high < low) return undefined;
+  return (low + high) / 2;
+}
 
 // root id -> [ { selection, derive } ]. A root may have several possible sources
-// (e.g. batch.target_abv from the style centroid).
+// (e.g. batch.target_abv from the style ABV band).
 export const SEED_DERIVATIONS = {};
 
 SEED_DERIVATIONS["batch.fermentation"] = [
@@ -25,7 +31,7 @@ SEED_DERIVATIONS["batch.fermentation"] = [
 ];
 
 SEED_DERIVATIONS["batch.target_abv"] = [
-  { identity: "style", derive: (s) => styleCentroid(s)?.abv },
+  { identity: "style", derive: (s) => styleAbvMidpoint(s) },
 ];
 
 export function seedDerivations(rootId) {

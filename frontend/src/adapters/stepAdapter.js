@@ -161,6 +161,7 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       session.rebuild(state);
+      this.onBatchLoad?.();
       const migrated = dropLegacyDoughIn();
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
@@ -245,6 +246,7 @@ export function createStepApp(options = {}) {
 
     compute() {
       view.compute(this);
+      this.afterCompute?.();
     },
 
     // Re-merge library records into the cache/engine and re-render. Called by

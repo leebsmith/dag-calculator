@@ -37,21 +37,33 @@
           <div class="synthesized-header">
             <h3 class="synthesized-title">Fermentation target</h3>
             <button type="button" class="btn btn-secondary text-xs" @click="resetStyleTarget()">
-              Reset to centroid
+              Reset to midpoint
             </button>
           </div>
-          <div class="extract-picker">
+          <div class="form-group">
+            <label class="form-label" for="style-target-abv">Target ABV (%)</label>
             <input
-              type="range"
-              class="extract-slider extract-slider-ae"
-              :disabled="!stylePreview?.ray"
-              :min="fmt.formatWithDecimals(styleAeBounds?.[0], 3, { dash: '0' })"
-              :max="fmt.formatWithDecimals(styleAeBounds?.[1], 3, { dash: '1' })"
-              step="0.01"
-              :value="styleExtract.ae"
-              @input="setStyleTargetAe($event.target.value)"
-              aria-label="Apparent extract (degrees Plato)"
+              id="style-target-abv"
+              type="number"
+              step="0.1"
+              class="form-input"
+              :min="fmt.formatWithDecimals(styleAbvBounds?.[0], 3, { dash: '0' })"
+              :max="fmt.formatWithDecimals(styleAbvBounds?.[1], 3, { dash: '100' })"
+              :value="fmt.formatWithDecimals(styleAbvTarget, 1)"
+              :disabled="!styleAbvBounds"
+              @change="setStyleTargetAbv($event.target)"
             />
+            <span class="form-hint" x-show="styleAbvBounds">
+              Clamped to the fixed-AA ray inside the style's feasible region.
+            </span>
+            <span class="form-hint" x-show="!styleAbvBounds && !styleBelgian">
+              Select a yeast to set the target ABV.
+            </span>
+            <span class="form-hint" x-show="!styleAbvBounds && styleBelgian">
+              The fixed-AA ray misses the style region; adjust the grist or yeast.
+            </span>
+          </div>
+          <div class="extract-picker">
             <svg
               class="extract-preview"
               :width="stylePreview.width"
@@ -84,22 +96,8 @@
                 r="2.5"
               />
             </svg>
-            <input
-              type="range"
-              class="extract-slider extract-slider-oe"
-              :disabled="!stylePreview?.ray"
-              :min="fmt.formatWithDecimals(styleOeBounds?.[0], 3, { dash: '0' })"
-              :max="fmt.formatWithDecimals(styleOeBounds?.[1], 3, { dash: '1' })"
-              step="0.01"
-              :value="styleExtract.oe"
-              @input="setStyleTargetOe($event.target.value)"
-              aria-label="Original extract (degrees Plato)"
-            />
           </div>
-          <span class="form-hint">AE (vertical) and OE (horizontal) in °P, constrained to the style's feasible region.</span>
-          <p class="form-hint" x-show="styleExtract && styleBelgian && !stylePreview?.ray">
-            The fixed-attenuation ray misses the style region; adjust the grist or yeast.
-          </p>
+          <span class="form-hint">OE and AE follow the fixed-AA ray; they are readouts, not independent controls.</span>
           <div class="extract-readouts">
             <div class="extract-readout">
               <span class="form-label">OG (SG)</span>

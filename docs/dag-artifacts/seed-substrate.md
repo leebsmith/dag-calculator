@@ -176,9 +176,10 @@ normalization:
 
 Selecting a style (the `batch.style` selection) copy-ins its ranges into the
 `batch.style_*_min/_max` envelope roots, sets `batch.fermentation` from its tags,
-and derives a single ABV target from the style's feasible-region centroid
-(`docs/style-card-centroid.md`), seeding `batch.target_abv`. The batch AA is not
-seeded: it is solved from the grist + yeast cap.
+and seeds `batch.target_abv` to the `abv_min`/`abv_max` midpoint. The batch AA
+is not seeded: it is solved from the grist + yeast cap. The Style step then
+re-centers the ABV target on the fixed-AA ray (see
+`docs/style-card-centroid.md`).
 
 ### 2.7 `hop`
 

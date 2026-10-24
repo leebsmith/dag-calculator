@@ -58,6 +58,26 @@ export function registerYeastCard(app, ctx) {
       this.yeastAttenuationFilter = toggleFilter(this.yeastAttenuationFilter, value);
     },
 
+    // Commit the derate on blur/change, not per keystroke. Empty, invalid, or
+    // out-of-range values reset to the previous value.
+    commitYeastDerate(valueOrElement) {
+      const element =
+        valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
+      const raw = element ? element.value : valueOrElement;
+      const field = this.yeastField(N.derate);
+      const previous = this.master.getRoot(N.derate);
+      const previousDisplay = field.display ?? formatPercent(previous);
+      const value = Number(raw);
+      if (raw === "" || !Number.isFinite(value) || value <= 0 || value > 100) {
+        if (element) element.value = previousDisplay;
+        return;
+      }
+      this.setRoot(N.derate, value / 100);
+      if (element) element.value = formatPercent(value / 100);
+      this.scheduleSolve();
+      this.notify();
+    },
+
     yeastField(id) {
       return (this.fieldsBySlice.yeast ?? []).find((f) => f.id === id) ?? {};
     },
@@ -156,4 +176,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
 
-export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];

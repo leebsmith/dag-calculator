@@ -242,6 +242,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 
 | Editable value | Source | Mechanism | Re-sync semantics |
 |---|---|---|---|
+| `batch.target_abv` | `style.abv_min` / `style.abv_max` | Style-step number input | seeded to the band midpoint; clamped to the fixed-AA ray interval; Batch step read-only |
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
 | `batch.attenuation_derate` | — | per-batch root | scales the yeast cap; starts at 1.0 |
 
@@ -254,10 +255,13 @@ unresolved until a yeast is selected. Conversion efficiency remains a separate
 gravity correction, not an attenuation correction. See
 `docs/fermentability-and-yield.md`.
 
-The style step's OE/AE navigator moves along the fixed-AA ray
-`AE = OE · (1 − aa_batch)`; the style polygon bounds the reachable span and the
-UI warns when the ray misses it. The advisory Belgian knob holds AE and adds
-sucrose (OE rises) without mutating the recipe; see `docs/belgian-knob.md`.
+The Style step's **Target ABV** input is the primary fermentation control. It
+moves along the fixed-AA ray `AE = OE · (1 − aa_batch)` and is clamped to the
+ray ∩ style-region interval; OE/AE are readouts. A new batch starts at the
+style's ABV-band midpoint and re-centers on the first yeast selection. The Batch
+step's Target ABV field is a read-only display of the same root. The advisory
+Belgian knob holds AE and adds sucrose (OE rises) without mutating the recipe;
+see `docs/belgian-knob.md` and `docs/style-card-centroid.md`.
 
 Water source ions are **read-only selection readouts** (the boundary reads them
 straight from `water.source_report`). Water target ions and the calcium floor are

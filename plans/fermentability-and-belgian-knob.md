@@ -35,8 +35,12 @@ commit's yield/fermentability data correction.
 9. **No mash modifier.** Category defaults are Congress-Mash priors, not
    mash-schedule predictions. A calibrated mash model is a later feature.
 10. **Fixed-AA ray.** The style step constrains OE/AE to
-    `AE = OE · (1 − AA_batch)`. Moving either slider drives target ABV; a ray
-    that misses the style region disables the sliders and warns.
+    `AE = OE · (1 − AA_batch)`. ABV is the primary one-decimal input; it writes
+    `batch.target_abv` and OE/AE are readouts. A new batch seeds the style
+    ABV-band midpoint and the first yeast selection re-centers it on the
+    feasible ray interval; later edits clamp only when outside. A ray that
+    misses the style region disables the input. The Batch step shows the target
+    as a read-only readout.
 11. **Belgian knob is advisory.** It holds AE, raises OE with sucrose, and never
     mutates the recipe or calls the solver. Default target is AA; ABV is a
     readout. The kg dose uses the app's extract model
