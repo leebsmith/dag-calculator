@@ -76,7 +76,7 @@ export function createReferenceCache() {
     collections: {
       "grist.major_malts": DEFAULT_GRIST.map(buildGristRow),
       "grist.trace_malts": [],
-      "mash.rests": mashSchedules["single-infusion"].rests,
+      "mash.rests": mashSchedules["single_infusion"].rests,
       "batch.sugars": [],
       "batch.boil_hops": [],
       "batch.whirlpool_hops": [],

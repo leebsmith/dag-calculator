@@ -3,8 +3,7 @@
 // Everything else is declared in the artifact as a `default` over the selection
 // (pull), so an unset root inherits and a set root overrides.
 //
-// Residual list (2 roots):
-//   - batch.target_abv           — style ABV-band midpoint
+// Residual list (1 root):
 //   - batch.fermentation         — style tag set-membership (no `in` operator)
 //
 // Consumers:
@@ -15,23 +14,12 @@
 
 import { styleFermentation } from "../engine/fermentation.js";
 
-function styleAbvMidpoint(style) {
-  const low = style?.abv_min;
-  const high = style?.abv_max;
-  if (!Number.isFinite(low) || !Number.isFinite(high) || high < low) return undefined;
-  return (low + high) / 2;
-}
-
 // root id -> [ { selection, derive } ]. A root may have several possible sources
-// (e.g. batch.target_abv from the style ABV band).
+// (e.g. batch.fermentation from the style tag set).
 export const SEED_DERIVATIONS = {};
 
 SEED_DERIVATIONS["batch.fermentation"] = [
   { identity: "style", derive: (s) => styleFermentation(s) },
-];
-
-SEED_DERIVATIONS["batch.target_abv"] = [
-  { identity: "style", derive: (s) => styleAbvMidpoint(s) },
 ];
 
 export function seedDerivations(rootId) {

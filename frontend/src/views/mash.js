@@ -1,116 +1,54 @@
-// Pure mash-schedule helpers for the Mash Profile card — a port of the legacy
-// brewing-calculator `utils/mashSchedule.js`, adapted to this repo's collection
-// shape (`mash.rests` rows of { rest_id, enabled, use_temp_c, duration_min }).
+// Pure mash-schedule helpers for the Mash Profile card. The rest catalog and
+// preset matrix are seed data; this module only sorts, validates, and applies
+// them. Framework- and engine-free (guards A2 / A8a).
 //
-// Framework- and engine-free: these never touch the engine and never do unit
-// conversion (guards A2 / A8a). The stepAdapter owns engine reads/writes and
-// display conversion; this module only owns the rest vocabulary, preset matrix,
-// ordering, and validation.
-//
-// Dough-in is a transition target, not a rest: it is derived from the first
-// enabled rest (`mash.dough_in_target_temp_c`) and is not a row in `mash.rests`.
+// Dough-in and total time are artifact-derived nodes
+// (`mash.dough_in_target_temp_c`, `mash.total_time_min`).
 
-export const CANONICAL_RESTS = Object.freeze([
-  {
-    rest_id: "phytase",
-    name: "Phytase / Acid Rest",
-    temp_min_c: 35,
-    temp_max_c: 52,
-    default_duration_min: 30,
-    purpose: "Lowers mash pH naturally (rarely used today; replaced by modern brewing acids).",
-  },
-  {
-    rest_id: "ferulic",
-    name: "Ferulic Acid Rest",
-    temp_min_c: 43,
-    temp_max_c: 45,
-    default_duration_min: 20,
-    purpose: "Releases ferulic acid to create the clove-like aroma in German Hefeweizens.",
-  },
-  {
-    rest_id: "beta_glucan",
-    name: "Beta-Glucan Rest",
-    temp_min_c: 45,
-    temp_max_c: 50,
-    default_duration_min: 20,
-    purpose: "Breaks down gums in sticky, high-viscosity grains like oats, rye, and unmalted wheat.",
-  },
-  {
-    rest_id: "protein",
-    name: "Protein Rest",
-    temp_min_c: 50,
-    temp_max_c: 54,
-    default_duration_min: 20,
-    purpose: "Breaks down complex proteins to improve yeast health and reduce chill haze in under-modified malts.",
-  },
-  {
-    rest_id: "beta_amylase",
-    name: "Beta-Amylase Rest",
-    temp_min_c: 62,
-    temp_max_c: 65,
-    default_duration_min: 30,
-    purpose: "Creates highly fermentable sugars (maltose) for a dry, clean-finishing beer with high alcohol conversion.",
-  },
-  {
-    rest_id: "alpha_amylase",
-    name: "Alpha-Amylase Rest",
-    temp_min_c: 68,
-    temp_max_c: 72,
-    default_duration_min: 20,
-    purpose: "Breaks down remaining starches into unfermentable dextrins, adding body and reducing fermentability.",
-  },
-  {
-    rest_id: "beta_alpha_amylase",
-    name: "Beta/Alpha-Amylase Rest",
-    temp_min_c: 62,
-    temp_max_c: 72,
-    default_duration_min: 60,
-    purpose: "Simultaneous beta- and alpha-amylase activity for balanced everyday brewing. Used as the \"single infusion\" rest.",
-  },
-]);
+import restDefinitions from "../../../data/seeds/mash-rests.json" with { type: "json" };
+import scheduleDefinitions from "../../../data/seeds/mash-schedules.json" with { type: "json" };
 
-export const MASH_OUT_REST = Object.freeze({
-  rest_id: "mash_out",
-  name: "Mash-out",
-  temp_min_c: 75.5,
-  temp_max_c: 76.7,
-  default_duration_min: 10,
-  purpose: "Raises the mash to mash-out temperature to halt enzymatic activity and improve lautering.",
-});
+const DEFINITIONS = Object.values(restDefinitions)
+  .sort((a, b) => a.sequence - b.sequence)
+  .map((rest) => Object.freeze({ ...rest }));
+
+export const MASH_OUT_REST = DEFINITIONS.find((rest) => rest.rest_id === "mash_out");
+
+export const CANONICAL_RESTS = Object.freeze(
+  DEFINITIONS.filter((rest) => rest.rest_id !== "mash_out")
+);
 
 /**
  * Named preset matrix. Each preset lists the canonical `rest_id`s it enables.
  * Mash-out is independent user state and is never preset-controlled.
  */
-export const MASH_PRESETS = Object.freeze({
-  single_infusion: Object.freeze(["beta_alpha_amylase"]),
-  custom: Object.freeze([]),
-  belgian_saison: Object.freeze(["beta_glucan", "protein", "beta_amylase"]),
-  belgian_tripel: Object.freeze(["beta_amylase"]),
-  german_pils: Object.freeze(["beta_amylase", "alpha_amylase"]),
-  berliner_weisse: Object.freeze(["phytase", "beta_alpha_amylase"]),
-  english_brown: Object.freeze(["alpha_amylase"]),
-  american_pale: Object.freeze(["beta_alpha_amylase"]),
-});
+export const MASH_PRESETS = Object.freeze(
+  Object.fromEntries(
+    Object.entries(scheduleDefinitions).map(([id, schedule]) => [
+      id,
+      Object.freeze(
+        schedule.rests
+          .filter((rest) => rest.enabled && rest.rest_id !== MASH_OUT_REST.rest_id)
+          .map((rest) => rest.rest_id)
+      ),
+    ])
+  )
+);
 
 /**
  * Human-readable labels for the preset dropdown (object order = menu order).
  */
-export const MASH_PRESET_LABELS = Object.freeze({
-  single_infusion: "Single Infusion",
-  custom: "Custom",
-  belgian_saison: "Belgian Saison / Bière de Garde",
-  belgian_tripel: "Belgian Tripel / Dubbel / Golden Strong",
-  german_pils: "German Pils / Dortmunder (Hochkurz)",
-  berliner_weisse: "Traditional Berliner Weisse",
-  english_brown: "English Brown / Mild / Oatmeal Stout",
-  american_pale: "American Pale / IPA / Porter / Standard Ale",
-});
+export const MASH_PRESET_LABELS = Object.freeze(
+  Object.fromEntries(
+    Object.entries(scheduleDefinitions).map(([id, schedule]) => [id, schedule.name])
+  )
+);
+
+const REST_BY_ID = new Map(DEFINITIONS.map((rest) => [rest.rest_id, rest]));
 
 /** Look up a canonical rest definition by `rest_id`. */
 export function getCanonicalRest(restId) {
-  if (restId === MASH_OUT_REST.rest_id) return MASH_OUT_REST;
-  return CANONICAL_RESTS.find((r) => r.rest_id === restId) || null;
+  return REST_BY_ID.get(restId) ?? null;
 }
 
 /** Default duration for a rest, or null when the id is unknown. */
@@ -120,9 +58,7 @@ export function defaultDurationMin(restId) {
 
 /** Canonical-order index for a rest_id (mash-out last). */
 export function canonicalOrderIndex(restId) {
-  if (restId === MASH_OUT_REST.rest_id) return CANONICAL_RESTS.length;
-  const idx = CANONICAL_RESTS.findIndex((r) => r.rest_id === restId);
-  return idx === -1 ? CANONICAL_RESTS.length + 1 : idx;
+  return getCanonicalRest(restId)?.sequence ?? MASH_OUT_REST.sequence + 1;
 }
 
 function bookendRank(restId) {
@@ -150,11 +86,6 @@ export function sortRestsByTemperature(rests) {
   });
 }
 
-/** Total mash time in minutes: the sum of every enabled rest's duration. */
-export function totalMashDurationMin(enabledRests) {
-  return (enabledRests || []).reduce((sum, r) => sum + (parseFloat(r.duration_min) || 0), 0);
-}
-
 /** True when every enabled rest has a use-temperature and a non-negative duration. */
 export function isMashScheduleValid(enabledRests) {
   return (enabledRests || []).every((r) => {
@@ -167,29 +98,27 @@ export function isMashScheduleValid(enabledRests) {
 
 /**
  * Apply a named preset to a rests array: flips `enabled` flags and seeds a
- * default temperature/duration the first time a rest is enabled, without
+ * preset temperature/duration the first time a rest is enabled, without
  * clobbering a value the user has already set. Mash-out is left untouched.
  * Non-mutating.
  */
 export function applyMashPreset(rests, presetId) {
-  const enabledIds = MASH_PRESETS[presetId];
-  if (!enabledIds) return rests;
+  const schedule = scheduleDefinitions[presetId];
+  if (!schedule) return rests;
+  const presetRows = new Map(schedule.rests.map((rest) => [rest.rest_id, rest]));
 
   return rests.map((rest) => {
     if (rest.rest_id === MASH_OUT_REST.rest_id) return { ...rest };
-    const shouldEnable = enabledIds.includes(rest.rest_id);
-    const canonical = getCanonicalRest(rest.rest_id);
+    const preset = presetRows.get(rest.rest_id);
+    if (!preset) return { ...rest };
+    const shouldEnable = !!preset.enabled;
     return {
       ...rest,
       enabled: shouldEnable,
       use_temp_c:
-        shouldEnable && rest.use_temp_c == null && canonical && canonical.temp_min_c != null
-          ? (canonical.temp_min_c + canonical.temp_max_c) / 2
-          : rest.use_temp_c,
+        shouldEnable && rest.use_temp_c == null ? preset.use_temp_c : rest.use_temp_c,
       duration_min:
-        shouldEnable && rest.duration_min == null && canonical
-          ? canonical.default_duration_min
-          : rest.duration_min,
+        shouldEnable && rest.duration_min == null ? preset.duration_min : rest.duration_min,
     };
   });
 }

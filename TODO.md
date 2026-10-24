@@ -30,7 +30,7 @@
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
-* **Mash ramp time** — `totalMashTimeMin` is only the sum of enabled rest
+* **Mash ramp time** — `mash.total_time_min` is only the sum of enabled rest
   durations. Including heat-up time needs a ramp-rate model (equipment or batch
   input), each step's starting temperature, and the target temperature. The
   earlier ramp-rate unit was removed with the mash attenuation estimator.

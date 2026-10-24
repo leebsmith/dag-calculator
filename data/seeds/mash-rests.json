@@ -1,0 +1,74 @@
+{
+  "phytase": {
+    "rest_id": "phytase",
+    "name": "Phytase / Acid Rest",
+    "temp_min_c": 35,
+    "temp_max_c": 52,
+    "default_duration_min": 30,
+    "purpose": "Lowers mash pH naturally (rarely used today; replaced by modern brewing acids).",
+    "sequence": 0
+  },
+  "ferulic": {
+    "rest_id": "ferulic",
+    "name": "Ferulic Acid Rest",
+    "temp_min_c": 43,
+    "temp_max_c": 45,
+    "default_duration_min": 20,
+    "purpose": "Releases ferulic acid to create the clove-like aroma in German Hefeweizens.",
+    "sequence": 1
+  },
+  "beta_glucan": {
+    "rest_id": "beta_glucan",
+    "name": "Beta-Glucan Rest",
+    "temp_min_c": 45,
+    "temp_max_c": 50,
+    "default_duration_min": 20,
+    "purpose": "Breaks down gums in sticky, high-viscosity grains like oats, rye, and unmalted wheat.",
+    "sequence": 2
+  },
+  "protein": {
+    "rest_id": "protein",
+    "name": "Protein Rest",
+    "temp_min_c": 50,
+    "temp_max_c": 54,
+    "default_duration_min": 20,
+    "purpose": "Breaks down complex proteins to improve yeast health and reduce chill haze in under-modified malts.",
+    "sequence": 3
+  },
+  "beta_amylase": {
+    "rest_id": "beta_amylase",
+    "name": "Beta-Amylase Rest",
+    "temp_min_c": 62,
+    "temp_max_c": 65,
+    "default_duration_min": 30,
+    "purpose": "Creates highly fermentable sugars (maltose) for a dry, clean-finishing beer with high alcohol conversion.",
+    "sequence": 4
+  },
+  "alpha_amylase": {
+    "rest_id": "alpha_amylase",
+    "name": "Alpha-Amylase Rest",
+    "temp_min_c": 68,
+    "temp_max_c": 72,
+    "default_duration_min": 20,
+    "purpose": "Breaks down remaining starches into unfermentable dextrins, adding body and reducing fermentability.",
+    "sequence": 5
+  },
+  "beta_alpha_amylase": {
+    "rest_id": "beta_alpha_amylase",
+    "name": "Beta/Alpha-Amylase Rest",
+    "temp_min_c": 62,
+    "temp_max_c": 72,
+    "default_duration_min": 60,
+    "purpose": "Simultaneous beta- and alpha-amylase activity for balanced everyday brewing. Used as the \"single infusion\" rest.",
+    "sequence": 6
+  },
+  "mash_out": {
+    "rest_id": "mash_out",
+    "name": "Mash-out",
+    "temp_min_c": 75.5,
+    "temp_max_c": 76.7,
+    "default_duration_min": 10,
+    "purpose": "Raises the mash to mash-out temperature to halt enzymatic activity and improve lautering.",
+    "sequence": 7
+  }
+}

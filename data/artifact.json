@@ -1531,6 +1531,28 @@
         "dimension": "time"
       }
     },
+    "mash_rest_definition": {
+      "rest_id": {
+        "taxonomy": "mash_rest"
+      },
+      "name": {},
+      "temp_min_c": {
+        "dimension": "temperature"
+      },
+      "temp_max_c": {
+        "dimension": "temperature"
+      },
+      "default_duration_min": {
+        "dimension": "time"
+      },
+      "purpose": {},
+      "sequence": {
+        "dimension": "dimensionless",
+        "domain": {
+          "gte": 0
+        }
+      }
+    },
     "water_grist_row": {
       "mass_kg": {
         "dimension": "mass",
@@ -1741,7 +1763,40 @@
       "kind": "root",
       "dimension": "abv",
       "default": {
-        "const": "default_target_abv"
+        "op": "if",
+        "args": [
+          {
+            "op": "lt",
+            "args": [
+              {
+                "ref": "style.abv_min"
+              },
+              {
+                "ref": "style.abv_max"
+              }
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "ref": "style.abv_min"
+                  },
+                  {
+                    "ref": "style.abv_max"
+                  }
+                ]
+              },
+              2
+            ]
+          },
+          {
+            "const": "default_target_abv"
+          }
+        ]
       },
       "domain": {
         "gt": 0
@@ -2687,6 +2742,42 @@
       },
       "output": {
         "dimension": "temperature"
+      }
+    },
+    "mash.total_time_min": {
+      "kind": "derived",
+      "inputs": {
+        "rests": "mash.rests"
+      },
+      "expr": {
+        "op": "sum",
+        "coll": {
+          "ref": "rests"
+        },
+        "as": "rest",
+        "where": {
+          "op": "and",
+          "args": [
+            {
+              "ref": "rest.enabled"
+            },
+            {
+              "op": "ne",
+              "args": [
+                {
+                  "ref": "rest.duration_min"
+                },
+                null
+              ]
+            }
+          ]
+        },
+        "body": {
+          "ref": "rest.duration_min"
+        }
+      },
+      "output": {
+        "dimension": "time"
       }
     },
     "mash.strike_water_temp_base_c": {

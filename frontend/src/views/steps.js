@@ -245,6 +245,7 @@ export const steps = [
       "mash.grain_temp_c",
       "mash.tun_initial_temp_c",
       "mash.dough_in_target_temp_c",
+      "mash.total_time_min",
       "mash.strike_water_temp_base_c",
       "mash.strike_water_tun_offset_c",
       "mash.strike_water_temp_c",

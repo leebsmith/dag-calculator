@@ -13,13 +13,13 @@ test("only the residuals are host-seeded", () => {
   const style = identityDerivations("style");
   assert.deepEqual(style.map((d) => d.rootId).sort(), [
     "batch.fermentation",
-    "batch.target_abv",
   ]);
   assert.deepEqual(derivationsFor("batch.yeast"), []);
   assert.deepEqual(derivationsFor("water.target_profile"), []);
   assert.deepEqual(identityDerivations("equipment"), []);
 });
 
-test("apparent attenuation is no longer a host-seeded root", () => {
+test("apparent attenuation and target ABV are not host-seeded roots", () => {
   assert.deepEqual(seedDerivations("batch.apparent_attenuation"), []);
+  assert.deepEqual(seedDerivations("batch.target_abv"), []);
 });

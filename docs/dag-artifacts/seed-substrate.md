@@ -175,11 +175,12 @@ normalization:
   to comma-delimited strings, and the site's `-` placeholders are omitted.
 
 Selecting a style (the `batch.style` selection) copy-ins its ranges into the
-`batch.style_*_min/_max` envelope roots, sets `batch.fermentation` from its tags,
-and seeds `batch.target_abv` to the `abv_min`/`abv_max` midpoint. The batch AA
-is not seeded: it is solved from the grist + yeast cap. The Style step then
-re-centers the ABV target on the fixed-AA ray (see
-`docs/style-card-centroid.md`).
+`batch.style_*_min/_max` envelope roots and sets `batch.fermentation` from its
+tags. `batch.target_abv` inherits the artifact default
+`(style.abv_min + style.abv_max) / 2`; the host only seeds
+`batch.fermentation`. The batch AA is not seeded: it is solved from the grist +
+yeast cap. The Style step then re-centers the ABV target on the fixed-AA ray
+(see `docs/style-card-centroid.md`).
 
 ### 2.7 `hop`
 
@@ -262,6 +263,24 @@ tells the brewer to replace it with the certificate-of-analysis value. The
 `t90_replacement_ratio` feeds only the inspector's informational T-90 equivalent;
 it is never used for IBU back-solving.
 
+### 2.10 `mash_rest` / `mash-schedules`
+
+`mash-rests.json` is the rest catalog, keyed by `rest_id` and conforming to the
+`mash_rest_definition` schema:
+
+| Field | Dimension | Notes |
+|---|---|---|
+| `rest_id`, `name`, `purpose` | — | identity and display prose |
+| `temp_min_c`, `temp_max_c` | temperature | recommended range |
+| `default_duration_min` | time | seeded when a rest is first enabled |
+| `sequence` | dimensionless | canonical order (mash-out last) |
+
+`mash-schedules.json` is the preset matrix, keyed by the `mash_preset` taxonomy:
+each entry has `{ id, name, rests[] }`, where `rests` rows conform to the
+`mash_rest` collection schema. The host applies a preset from these rows and
+preserves mash-out as independent user state. `mash.total_time_min` is a derived
+node over the enabled rows; it will gain ramp time when the ramp model lands.
+
 ---
 
 ## 3. How the engine consumes seeds
@@ -269,8 +288,9 @@ it is never used for IBU back-solving.
 - **Container shape:** every catalog seed is a flat **id-keyed map**
   (`{ "<id>": { ...component... } }`), where each component conforms to its
   `primitive_schema`. The exception is `mash-schedules.json`, a
-  `{ schedule_id → rests[] }` template whose `rests` are ordered. (`water_report`
-  is keyed by `report_id`; `water_target` ions are flat, not nested under `ions`.)
+  `{ schedule_id → { id, name, rests[] } }` preset template whose `rests` are
+  ordered. (`water_report` is keyed by `report_id`; `water_target` ions are flat,
+  not nested under `ions`.)
 - Selections resolve a `ref` (id) against the seed/component store into a typed,
   read-only value (per the schema).
 - The six working ions for a water source are **derived from the lab report**

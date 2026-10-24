@@ -56,6 +56,7 @@ const CATALOGS = [
   ["styles.json", "style", "id"],
   ["water_reports.json", "water_report", "report_id"],
   ["water_target_profiles.json", "water_target", "id"],
+  ["mash-rests.json", "mash_rest_definition", "rest_id"],
 ];
 
 function checkComponent(schema, component, label) {

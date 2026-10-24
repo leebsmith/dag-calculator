@@ -194,7 +194,9 @@ test("a new batch seeds the style ABV midpoint and centers it on the first yeast
     selections: {},
   });
 
-  assert.equal(app.master.getRoot("batch.target_abv"), 6.5);
+  assert.equal(app.master.getRoot("batch.target_abv"), undefined);
+  assert.equal(app.engine.get("batch.target_abv"), 6.5);
+  assert.equal(app.styleAbvTarget, 6.5);
   assert.equal(app.styleAbvBounds, null);
 
   app.selectYeast(TEST_YEAST_ID);

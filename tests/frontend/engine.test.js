@@ -59,7 +59,7 @@ test("resolve() handles dotted sub-refs (boundary output + selection field)", ()
 test("end-to-end: root defaults are evaluated when unset", () => {
   const e = engine();
   assert.equal(e.get("mash.grain_temp_c"), 20.0); // default_grain_temp_c
-  assert.equal(e.get("batch.target_abv"), 5.5); // default_target_abv
+  assert.equal(e.get("batch.target_abv"), 6.5); // style ABV-band midpoint
 });
 
 test("loadArtifact rejects a dangling reference", () => {

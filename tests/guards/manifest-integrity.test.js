@@ -61,6 +61,7 @@ const IDENTITY_DERIVED = [
   "batch.boil_off_rate_l_per_hr",
   "batch.conversion_efficiency",
   "batch.hlt_starting_volume_l",
+  "batch.target_abv",
   "batch.target_ibu",
   "batch.target_srm",
 ];

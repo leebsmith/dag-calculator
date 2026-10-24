@@ -1,16 +1,434 @@
 {
-  "single-infusion": {
-    "id": "single-infusion",
-    "name": "Single Infusion (67 °C)",
+  "single_infusion": {
+    "id": "single_infusion",
+    "name": "Single Infusion",
     "rests": [
-      { "rest_id": "phytase", "enabled": false, "use_temp_c": null, "duration_min": null },
-      { "rest_id": "ferulic", "enabled": false, "use_temp_c": null, "duration_min": null },
-      { "rest_id": "beta_glucan", "enabled": false, "use_temp_c": null, "duration_min": null },
-      { "rest_id": "protein", "enabled": false, "use_temp_c": null, "duration_min": null },
-      { "rest_id": "beta_amylase", "enabled": false, "use_temp_c": null, "duration_min": null },
-      { "rest_id": "alpha_amylase", "enabled": false, "use_temp_c": null, "duration_min": null },
-      { "rest_id": "beta_alpha_amylase", "enabled": true, "use_temp_c": 67.0, "duration_min": 60 },
-      { "rest_id": "mash_out", "enabled": true, "use_temp_c": 76.0, "duration_min": 10 }
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": true,
+        "use_temp_c": 67,
+        "duration_min": 60
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "custom": {
+    "id": "custom",
+    "name": "Custom",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "belgian_saison": {
+    "id": "belgian_saison",
+    "name": "Belgian Saison / Bière de Garde",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": true,
+        "use_temp_c": 47.5,
+        "duration_min": 20
+      },
+      {
+        "rest_id": "protein",
+        "enabled": true,
+        "use_temp_c": 52,
+        "duration_min": 20
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": true,
+        "use_temp_c": 63.5,
+        "duration_min": 30
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "belgian_tripel": {
+    "id": "belgian_tripel",
+    "name": "Belgian Tripel / Dubbel / Golden Strong",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": true,
+        "use_temp_c": 63.5,
+        "duration_min": 30
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "german_pils": {
+    "id": "german_pils",
+    "name": "German Pils / Dortmunder (Hochkurz)",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": true,
+        "use_temp_c": 63.5,
+        "duration_min": 30
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": true,
+        "use_temp_c": 70,
+        "duration_min": 20
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "berliner_weisse": {
+    "id": "berliner_weisse",
+    "name": "Traditional Berliner Weisse",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": true,
+        "use_temp_c": 43.5,
+        "duration_min": 30
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": true,
+        "use_temp_c": 67,
+        "duration_min": 60
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "english_brown": {
+    "id": "english_brown",
+    "name": "English Brown / Mild / Oatmeal Stout",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": true,
+        "use_temp_c": 70,
+        "duration_min": 20
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
+    ]
+  },
+  "american_pale": {
+    "id": "american_pale",
+    "name": "American Pale / IPA / Porter / Standard Ale",
+    "rests": [
+      {
+        "rest_id": "phytase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "ferulic",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_glucan",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "protein",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "alpha_amylase",
+        "enabled": false,
+        "use_temp_c": null,
+        "duration_min": null
+      },
+      {
+        "rest_id": "beta_alpha_amylase",
+        "enabled": true,
+        "use_temp_c": 67,
+        "duration_min": 60
+      },
+      {
+        "rest_id": "mash_out",
+        "enabled": true,
+        "use_temp_c": 76.0,
+        "duration_min": 10
+      }
     ]
   }
 }
