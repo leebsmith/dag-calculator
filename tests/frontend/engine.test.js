@@ -22,6 +22,7 @@ test("end-to-end: identity resolves read-only to the supplied component", () => 
   const e = engine();
   assert.equal(e.resolve("equipment.mash_tun_mass_kg"), 6.5);
   assert.equal(e.resolve("equipment.mash_tun_specific_heat"), 0.12);
+  assert.equal(e.resolve("equipment.mash_heating_rate_c_per_min"), 1.0);
   assert.equal(e.resolve("equipment.max_hlt_volume_l"), 30);
   assert.equal(e.identity.style.og_min, 1.056);
 });
@@ -100,6 +101,27 @@ test("mash.preset_id choice defaults to single_infusion and stores a preset", ()
 test("derived dough-in target honors the enabled-rest filter", () => {
   const e = engine();
   assert.equal(e.get("mash.dough_in_target_temp_c"), 67.0); // disabled 55 must be ignored
+});
+
+test("mash step count and shape derive from enabled rests", () => {
+  const e = createCalculator(artifact, makeFixtures());
+  assert.equal(e.get("mash.rest_count"), 1);
+  assert.equal(e.get("mash.middle_rest_count"), 1);
+  assert.equal(e.get("mash.shape"), "single_step");
+
+  e.setCollection("mash.rests", [
+    { rest_id: "beta_amylase", enabled: true, use_temp_c: 63, duration_min: 30 },
+    { rest_id: "alpha_amylase", enabled: true, use_temp_c: 70, duration_min: 20 },
+    { rest_id: "mash_out", enabled: true, use_temp_c: 76, duration_min: 10 },
+  ]);
+  assert.equal(e.get("mash.rest_count"), 3);
+  assert.equal(e.get("mash.middle_rest_count"), 2);
+  assert.equal(e.get("mash.shape"), "multi_step");
+
+  e.setCollection("mash.rests", []);
+  assert.equal(e.get("mash.rest_count"), 0);
+  assert.equal(e.get("mash.middle_rest_count"), 0);
+  assert.equal(e.get("mash.shape"), "none");
 });
 
 test("loadArtifact rejects a choice default outside its taxonomy", () => {

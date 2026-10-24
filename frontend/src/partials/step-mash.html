@@ -30,7 +30,6 @@
           type="button"
           class="btn btn-secondary text-xs"
           @click="openMashModal()"
-          :disabled="!hasOptionalRestsEnabled"
         >
           Configure Rests
         </button>
@@ -53,7 +52,6 @@
                     <input
                       type="checkbox"
                       :checked="rest.enabled"
-                      :disabled="rest.rest_id === 'dough_in' || rest.rest_id === 'mash_out'"
                       @change="toggleMashRest(rest.rest_id, $event.target.checked)"
                     />
                     <span x-text="rest.name"></span>
@@ -74,6 +72,12 @@
         <h3 class="synthesized-title">Mash Summary</h3>
       </div>
 
+      <p class="form-hint">
+        Dough-in target
+        <span class="tabular-nums" x-text="doughInDisplay || '—'"></span>
+        <span x-text="temperatureUnit"></span>
+      </p>
+
       <div class="data-table-container">
         <table class="data-table">
           <thead>
@@ -89,12 +93,7 @@
               <tr>
                 <td x-text="restName(rest.rest_id)"></td>
                 <td class="tabular-nums">
-                  <template x-if="rest.rest_id === 'dough_in'">
-                    <span x-text="doughInDisplay || '—'"></span>
-                  </template>
-                  <template x-if="rest.rest_id !== 'dough_in'">
-                    <span x-text="restUseTempDisplay(rest) || '—'"></span>
-                  </template>
+                  <span x-text="restUseTempDisplay(rest) || '—'"></span>
                 </td>
                 <td class="tabular-nums">
                   <template x-if="rest.duration_min != null">
@@ -164,6 +163,60 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="synthesized-card">
+      <div class="synthesized-header">
+        <h3 class="synthesized-title">Attenuation Estimate</h3>
+        <span class="text-xs text-muted" x-text="mashShapeSummary"></span>
+      </div>
+
+      <div class="metric-strip">
+        <div class="metric-cell">
+          <span class="metric-cell-label">Predicted AA</span>
+          <div class="metric-cell-value-wrap">
+            <span class="metric-cell-val" x-text="predictedAttenuationDisplay || '—'"></span>
+            <span class="metric-cell-unit" x-show="predictedAttenuationDisplay">%</span>
+          </div>
+          <span class="text-xs text-muted" x-show="attenuationBandDisplay" x-text="'± ' + attenuationBandDisplay + ' pp'"></span>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Yeast Baseline</span>
+          <div class="metric-cell-value-wrap">
+            <span class="metric-cell-val" x-text="attenuationBaselineDisplay || '—'"></span>
+            <span class="metric-cell-unit" x-show="attenuationBaselineDisplay">%</span>
+          </div>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Δ vs Baseline</span>
+          <div class="metric-cell-value-wrap">
+            <span
+              class="metric-cell-val"
+              :class="attenuationInBand === false ? 'text-danger' : ''"
+              x-text="attenuationDeltaDisplay || '—'"
+            ></span>
+            <span class="metric-cell-unit" x-show="attenuationDeltaDisplay">pp</span>
+          </div>
+        </div>
+
+        <div class="metric-cell">
+          <span class="metric-cell-label">Effective Mash Temp</span>
+          <div class="metric-cell-value-wrap">
+            <span class="metric-cell-val" x-text="effectiveConversionTempDisplay || '—'"></span>
+            <span class="metric-cell-unit" x-text="temperatureUnit"></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="form-hint">
+        Advisory only. Assumes conversion rests run to completion; ramps at
+        <span class="tabular-nums" x-text="rampRateDisplay || '—'"></span>
+        <span x-text="rampRateUnit"></span>.
+        The solver still uses Batch AA
+        <span class="tabular-nums" x-text="batchAttenuationDisplay || '—'"></span>%.
+      </p>
     </div>
   </div>
 

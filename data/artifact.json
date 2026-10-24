@@ -30,6 +30,15 @@
         }
       }
     },
+    "temperature_delta_per_time": {
+      "base_unit": "dC_per_min",
+      "kind": "linear",
+      "units": {
+        "dF_per_min": {
+          "factor": 0.5555555555555556
+        }
+      }
+    },
     "time": {
       "base_unit": "min",
       "kind": "linear",
@@ -234,6 +243,30 @@
       "value": 2.6079,
       "dimension": "mash_thickness"
     },
+    "default_mash_heating_rate_c_per_min": {
+      "value": 1,
+      "dimension": "temperature_delta_per_time"
+    },
+    "mash_attenuation_ref_temp_c": {
+      "value": 65,
+      "dimension": "temperature"
+    },
+    "mash_attenuation_temp_coefficient": {
+      "value": 0.029,
+      "dimension": "dimensionless"
+    },
+    "mash_conversion_window_low_c": {
+      "value": 60,
+      "dimension": "temperature"
+    },
+    "mash_conversion_window_high_c": {
+      "value": 72,
+      "dimension": "temperature"
+    },
+    "mash_attenuation_band": {
+      "value": 0.05,
+      "dimension": "percentage"
+    },
     "default_runoff_ratio": {
       "value": 1,
       "dimension": "dimensionless"
@@ -363,7 +396,6 @@
       "mixed"
     ],
     "mash_rest": [
-      "dough_in",
       "phytase",
       "ferulic",
       "beta_glucan",
@@ -372,6 +404,11 @@
       "alpha_amylase",
       "beta_alpha_amylase",
       "mash_out"
+    ],
+    "mash_schedule_shape": [
+      "none",
+      "single_step",
+      "multi_step"
     ],
     "mash_preset": [
       "single_infusion",
@@ -1293,6 +1330,12 @@
       },
       "mash_tun_mass_kg": {
         "dimension": "mass",
+        "domain": {
+          "gt": 0
+        }
+      },
+      "mash_heating_rate_c_per_min": {
+        "dimension": "temperature_delta_per_time",
         "domain": {
           "gt": 0
         }
@@ -2556,12 +2599,138 @@
                 },
                 "mash_out"
               ]
+            },
+            {
+              "op": "ne",
+              "args": [
+                {
+                  "ref": "rest.rest_id"
+                },
+                "dough_in"
+              ]
             }
           ]
         }
       },
       "output": {
         "dimension": "temperature"
+      }
+    },
+    "mash.rest_count": {
+      "kind": "derived",
+      "inputs": {
+        "rests": "mash.rests"
+      },
+      "expr": {
+        "op": "sum",
+        "coll": {
+          "ref": "rests"
+        },
+        "as": "rest",
+        "body": 1,
+        "where": {
+          "op": "and",
+          "args": [
+            {
+              "ref": "rest.enabled"
+            },
+            {
+              "op": "ne",
+              "args": [
+                {
+                  "ref": "rest.rest_id"
+                },
+                "dough_in"
+              ]
+            }
+          ]
+        }
+      },
+      "output": {
+        "dimension": "dimensionless"
+      }
+    },
+    "mash.middle_rest_count": {
+      "kind": "derived",
+      "inputs": {
+        "rests": "mash.rests"
+      },
+      "expr": {
+        "op": "sum",
+        "coll": {
+          "ref": "rests"
+        },
+        "as": "rest",
+        "body": 1,
+        "where": {
+          "op": "and",
+          "args": [
+            {
+              "ref": "rest.enabled"
+            },
+            {
+              "op": "ne",
+              "args": [
+                {
+                  "ref": "rest.rest_id"
+                },
+                "mash_out"
+              ]
+            },
+            {
+              "op": "ne",
+              "args": [
+                {
+                  "ref": "rest.rest_id"
+                },
+                "dough_in"
+              ]
+            }
+          ]
+        }
+      },
+      "output": {
+        "dimension": "dimensionless"
+      }
+    },
+    "mash.shape": {
+      "kind": "derived",
+      "inputs": {
+        "middle_count": "mash.middle_rest_count"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "eq",
+            "args": [
+              {
+                "ref": "middle_count"
+              },
+              0
+            ]
+          },
+          "none",
+          {
+            "op": "if",
+            "args": [
+              {
+                "op": "eq",
+                "args": [
+                  {
+                    "ref": "middle_count"
+                  },
+                  1
+                ]
+              },
+              "single_step",
+              "multi_step"
+            ]
+          }
+        ]
+      },
+      "output": {
+        "taxonomy": "mash_schedule_shape"
       }
     },
     "mash.strike_water_temp_base_c": {

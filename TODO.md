@@ -27,6 +27,15 @@
 
 ## Later
 
+* **Surface and fit the grain thermal factor** — `mash_thermal_factor` (0.41)
+  drives `mash.strike_water_temp_base_c` but has no readout. Surface it near
+  Strike Water Temp, then move it toward an equipment-scoped value estimated
+  from observed strike-water outcomes (rolling average / regression). Needs a
+  rig-level observation record.
+* **Duration-aware attenuation (level 2)** — the advisory estimate
+  (`docs/mash-attenuation-model.md`) assumes conversion rests run to
+  completion. Add enzyme-inactivation kinetics once measured FG/AA across rest
+  durations exists; the segment builder is the extension point.
 * Dry hopping (computed WetHopCard; currently description-only)
 * Realtime cross-tab / multi-device sync (Firestore `onSnapshot`)
 * Offline resilience (IndexedDB write-ahead overlay)

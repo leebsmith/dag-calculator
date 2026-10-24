@@ -3,7 +3,6 @@
     "id": "single-infusion",
     "name": "Single Infusion (67 °C)",
     "rests": [
-      { "rest_id": "dough_in", "enabled": true, "use_temp_c": null, "duration_min": 0 },
       { "rest_id": "phytase", "enabled": false, "use_temp_c": null, "duration_min": null },
       { "rest_id": "ferulic", "enabled": false, "use_temp_c": null, "duration_min": null },
       { "rest_id": "beta_glucan", "enabled": false, "use_temp_c": null, "duration_min": null },

@@ -96,6 +96,25 @@ test("loadState rebinds the mash card to the loaded rest collection", async () =
   assert.equal(app.doughInInheritedTempC, 68);
 });
 
+test("loadState drops a legacy dough-in rest row", async () => {
+  const app = createStepApp();
+  await app.boot();
+
+  await app.loadState({
+    collections: {
+      "mash.rests": [
+        { rest_id: "dough_in", enabled: true, use_temp_c: null, duration_min: 0 },
+        { rest_id: "beta_alpha_amylase", enabled: true, use_temp_c: 67, duration_min: 60 },
+        { rest_id: "mash_out", enabled: true, use_temp_c: 76, duration_min: 10 },
+      ],
+    },
+  });
+
+  assert.equal(app.mashRests.some((r) => r.rest_id === "dough_in"), false);
+  assert.equal(app.doughInInheritedTempC, 67);
+  assert.equal(app.mashRestCount, 2);
+});
+
 test("loadState rebinds the hop card to the loaded rows", async () => {
   const app = createStepApp();
   await app.boot();

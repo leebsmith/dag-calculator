@@ -293,7 +293,7 @@ test("mash card: rest names, purposes, and bound formatting come from the canon"
   const app = createStepApp();
   await app.boot();
 
-  assert.equal(app.restName("dough_in"), "Dough-in");
+  assert.equal(app.restName("mash_out"), "Mash-out");
   assert.ok(app.restPurpose("protein"));
   assert.equal(app.restName("made_up"), "made_up");
   assert.equal(app.restPurpose("made_up"), "");
@@ -308,6 +308,6 @@ test("mash card: rest names, purposes, and bound formatting come from the canon"
   );
   assert.ok(rest, "a scheduled rest must carry a temperature");
   assert.match(app.restUseTempDisplay(rest), /^\d+\.\d$/);
-  assert.equal(app.restUseTempDisplay({ rest_id: "dough_in", use_temp_c: null }), "");
+  assert.equal(app.restUseTempDisplay({ rest_id: "mash_out", use_temp_c: null }), "");
   assert.equal(app.restUseTempDisplay(null), "");
 });

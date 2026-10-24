@@ -25,6 +25,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-conformance.md`](docs/style-conformance.md) | **living** — style-conformance assessor (adherence index + drift status) |
 | [`docs/whirlpool-hopping-model.md`](docs/whirlpool-hopping-model.md) | **living** — whirlpool bitterness theory, equations, constants, and reference vectors |
+| [`docs/mash-attenuation-model.md`](docs/mash-attenuation-model.md) | **living** — advisory mash-schedule attenuation estimate (algorithm, parameters, limits) |
 | [`docs/display-precision.md`](docs/display-precision.md) | **living** — decimal precision policy for displayed values |
 | [`docs/style-rulebook.md`](docs/style-rulebook.md) | CSS design-token conventions |
 | [`plans/`](plans/) | execution history — step plans + explorations |

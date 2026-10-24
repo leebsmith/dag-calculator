@@ -32,6 +32,7 @@ export const EQUIPMENT = {
   hlt_coil_floor_l: 4.0,
   mash_tun_specific_heat: 0.12,
   mash_tun_mass_kg: 6.5,
+  mash_heating_rate_c_per_min: 1.0,
 };
 
 export const STYLE = {
@@ -144,11 +145,11 @@ export function makeFixtures() {
         color_lovibond: 40,
       },
     ],
-    // `dough_in` enabled at 67; the disabled rest at 55 must be ignored by the
-    // `where` predicate, so the derived dough-in target is 67 (not 55).
+    // `beta_alpha_amylase` enabled at 67; the disabled rest at 55 must be ignored
+    // by the `where` predicate, so the derived dough-in target is 67 (not 55).
     "mash.rests": [
-      { rest_id: "dough_in", enabled: true, use_temp_c: 67.0, duration_min: 0 },
-      { rest_id: "protein", enabled: false, use_temp_c: 55.0, duration_min: 10 },
+      { rest_id: "beta_alpha_amylase", enabled: true, use_temp_c: 67.0, duration_min: 60 },
+      { rest_id: "protein", enabled: false, use_temp_c: 55.0, duration_min: 20 },
       { rest_id: "mash_out", enabled: false, use_temp_c: 76.0, duration_min: 10 },
     ],
   };

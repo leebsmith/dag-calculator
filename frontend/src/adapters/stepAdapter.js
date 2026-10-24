@@ -71,6 +71,15 @@ export function createStepApp(options = {}) {
 
   const identity = options.identity ?? bootstrapIdentity(artifact, cache);
   const session = createSession({ artifact, cache, master, useHttp, identity });
+
+  function dropLegacyDoughIn() {
+    const rests = session.engine.get("mash.rests");
+    if (!Array.isArray(rests)) return false;
+    const filtered = rests.filter((rest) => rest?.rest_id !== "dough_in");
+    if (filtered.length === rests.length) return false;
+    session.engine.setCollection("mash.rests", filtered);
+    return true;
+  }
   const attribution = createFieldAttribution(artifact, steps);
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   // The pristine auth-scoped baseline to restore on sign-out.
@@ -147,12 +156,13 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       session.rebuild(state);
+      const migrated = dropLegacyDoughIn();
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (seeded || materialized || synced) this.notify();
+      if (seeded || materialized || synced || migrated) this.notify();
       this.syncNav();
     },
 

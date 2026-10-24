@@ -54,6 +54,7 @@ IMPERIAL_KEYS = {
     "grain_absorption_factor_l_per_kg": "grain_absorption_factor_qt_per_lb",
     "mash_tun_mass_kg": "mash_tun_mass_lb",
     "mash_tun_specific_heat": "mash_tun_specific_heat_btu_per_lb_f",
+    "mash_heating_rate_c_per_min": "mash_heating_rate_f_per_min",
 }
 
 IMPERIAL_UNIT = {
@@ -62,6 +63,7 @@ IMPERIAL_UNIT = {
     "volume_per_time": "gal_per_hr",
     "specific_heat": "btu_per_lb_degF",
     "mash_thickness": "qt_per_lb",
+    "temperature_delta_per_time": "dF_per_min",
 }
 
 
