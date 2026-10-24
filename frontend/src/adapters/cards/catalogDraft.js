@@ -62,6 +62,7 @@ export function installCatalogDraft(app, ctx, config) {
   const state = {
     [`${prefix}Drawer`]: null, // "search" | "inspect" | null
     [`${prefix}Search`]: "",
+    [`${prefix}SearchNotes`]: false,
     [`${prefix}ActiveIndex`]: null,
     [`${prefix}CategoryFilter`]: [],
     [`${prefix}Family`]: "",
@@ -124,9 +125,14 @@ export function installCatalogDraft(app, ctx, config) {
       this[`${prefix}Drawer`] = "search";
       this[`${prefix}ActiveIndex`] = null;
       this[`${prefix}Search`] = "";
+      this[`${prefix}SearchNotes`] = false;
       this[`${prefix}CategoryFilter`] = [];
       this[`${prefix}Family`] = "";
       this[`${prefix}Standard`] = "";
+    },
+
+    [`toggle${Cap}SearchNotes`]() {
+      this[`${prefix}SearchNotes`] = !this[`${prefix}SearchNotes`];
     },
 
     [`close${Cap}Drawer`]() {
@@ -240,6 +246,7 @@ export function installCatalogDraft(app, ctx, config) {
         categories: this[`${prefix}CategoryFilter`],
         categoryOf: categoryField ? (item) => item[categoryField] : null,
         searchFields,
+        includeNotes: this[`${prefix}SearchNotes`],
       });
       // In a standard's drill-down, surface the generic representative first.
       if (standardField && this[`${prefix}Standard`]) {
@@ -277,7 +284,8 @@ export function installCatalogDraft(app, ctx, config) {
 // The app members installCatalogDraft assigns, expanded for a given prefix.
 export function catalogDraftKeys(prefix, Cap) {
   return [
-    `${prefix}Drawer`, `${prefix}Search`, `${prefix}ActiveIndex`, `${prefix}CategoryFilter`,
+    `${prefix}Drawer`, `${prefix}Search`, `${prefix}SearchNotes`, `${prefix}ActiveIndex`,
+    `${prefix}CategoryFilter`,
     `${prefix}Family`, `${prefix}Standard`,
     `open${Cap}Editor`, `cancel${Cap}Editor`, `save${Cap}Editor`, `addCatalog${Cap}`,
     `duplicateCatalog${Cap}`, `remove${Cap}`, `inspect${Cap}Row`, `open${Cap}Search`,

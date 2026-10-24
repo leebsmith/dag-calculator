@@ -39,6 +39,35 @@ test("filterCatalog tolerates missing names/notes and empty options", () => {
   assert.deepEqual(ids(filterCatalog(sparse)), ["x", "y"]);
 });
 
+test("filterCatalog ranks name matches above notes and breaks ties by name", () => {
+  const rows = [
+    { id: "n1", name: "Notes only", notes: "centennial-like" },
+    { id: "n2", name: "Cascade", notes: "" },
+    { id: "n3", name: "Centennial", notes: "" },
+    { id: "n4", name: "House Centennial", notes: "" },
+    { id: "n5", name: "Acent", notes: "" },
+  ];
+
+  assert.deepEqual(ids(filterCatalog(rows, { query: "cen" })), ["n3", "n4", "n5", "n1"]);
+  assert.deepEqual(
+    ids(filterCatalog([...rows, { id: "n6", name: "Centaurus" }], { query: "cen" })),
+    ["n6", "n3", "n4", "n5", "n1"]
+  );
+});
+
+test("filterCatalog can exclude prose notes from the search", () => {
+  const rows = [
+    { id: "n1", name: "Notes only", notes: "centennial-like" },
+    { id: "n2", name: "Centennial", notes: "" },
+  ];
+
+  assert.deepEqual(ids(filterCatalog(rows, { query: "cen" })), ["n2", "n1"]);
+  assert.deepEqual(
+    ids(filterCatalog(rows, { query: "cen", includeNotes: false })),
+    ["n2"]
+  );
+});
+
 test("catalogCategories returns sorted unique categories", () => {
   assert.deepEqual(catalogCategories(items, (item) => item.purpose), [
     "Aroma",

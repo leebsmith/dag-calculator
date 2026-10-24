@@ -115,9 +115,18 @@
                   <input
                     type="text"
                     class="form-input text-xs"
-                    placeholder="Search hops by name or notes…"
+                    placeholder="Search hops by name…"
                     x-model.debounce.50ms="hopSearch"
                   />
+                </div>
+
+                <div class="filter-pills-container">
+                  <button
+                    type="button"
+                    class="filter-pill"
+                    :class="{ 'is-active': hopSearchNotes }"
+                    @click="toggleHopSearchNotes()"
+                  >Search notes</button>
                 </div>
                 <div class="filter-pills-container">
                   <template x-for="c in hopCategories" :key="c">

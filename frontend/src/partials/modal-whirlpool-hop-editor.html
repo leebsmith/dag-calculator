@@ -115,9 +115,18 @@
                   <input
                     type="text"
                     class="form-input text-xs"
-                    placeholder="Search hops and products by name, notes, or maker…"
+                    placeholder="Search hops and products by name or maker…"
                     x-model.debounce.50ms="whirlpoolHopSearch"
                   />
+                </div>
+
+                <div class="filter-pills-container">
+                  <button
+                    type="button"
+                    class="filter-pill"
+                    :class="{ 'is-active': whirlpoolHopSearchNotes }"
+                    @click="toggleWhirlpoolHopSearchNotes()"
+                  >Search notes</button>
                 </div>
                 <div class="form-group">
                   <label class="form-label text-xs">Catalog</label>

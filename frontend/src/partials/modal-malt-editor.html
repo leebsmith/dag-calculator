@@ -142,9 +142,18 @@
                   <input
                     type="text"
                     class="form-input text-xs"
-                    placeholder="Search malts by name or notes…"
+                    placeholder="Search malts by name…"
                     x-model.debounce.50ms="maltSearch"
                   />
+                </div>
+
+                <div class="filter-pills-container">
+                  <button
+                    type="button"
+                    class="filter-pill"
+                    :class="{ 'is-active': maltSearchNotes }"
+                    @click="toggleMaltSearchNotes()"
+                  >Search notes</button>
                 </div>
                 <div class="filter-pills-container">
                   <template x-for="f in maltFamilies" :key="f.name">

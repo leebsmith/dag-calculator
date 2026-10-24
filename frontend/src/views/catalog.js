@@ -42,6 +42,33 @@ export function familyLabel(family) {
   return FAMILY_LABELS[family] ?? family;
 }
 
+// Relevance for a text query: name-prefix beats word-prefix beats name-substring
+// beats a match in another field, and a match found only in prose notes ranks
+// last. Ties are broken by name so a short query still reads alphabetically.
+function primaryScore(value, q) {
+  if (!value) return null;
+  if (value.startsWith(q)) return 0;
+  if (value.split(/\s+/).some((word) => word.startsWith(q))) return 1;
+  if (value.includes(q)) return 2;
+  return null;
+}
+
+function matchRank(item, q, fields) {
+  const primary = fields.includes("name") ? "name" : fields[0];
+  const score = primaryScore(String(item?.[primary] ?? "").toLowerCase(), q);
+  if (score != null) return score;
+
+  let best = null;
+  for (const field of fields) {
+    if (field === primary) continue;
+    const value = String(item?.[field] ?? "").toLowerCase();
+    if (!value.includes(q)) continue;
+    const rank = field === "notes" ? 4 : 3;
+    best = best == null ? rank : Math.min(best, rank);
+  }
+  return best;
+}
+
 export function filterCatalog(
   items,
   {
@@ -50,22 +77,34 @@ export function filterCatalog(
     categories = [],
     categoryOf = null,
     searchFields = ["name", "notes"],
+    includeNotes = true,
   } = {}
 ) {
   const q = String(query ?? "").trim().toLowerCase();
   const wanted = new Set(categories ?? []);
-  return items.filter((item) => {
+  const fields = includeNotes ? searchFields : searchFields.filter((field) => field !== "notes");
+  const eligible = items.filter((item) => {
     if (activeIds.has(item.id)) return false;
     if (wanted.size > 0) {
       const category = categoryOf ? categoryOf(item) : null;
       if (!wanted.has(category)) return false;
     }
-    if (q) {
-      const haystack = searchFields.map((f) => item?.[f] ?? "").join(" ").toLowerCase();
-      if (!haystack.includes(q)) return false;
-    }
     return true;
   });
+  if (!q) return eligible;
+
+  return eligible
+    .map((item) => ({ item, rank: matchRank(item, q, fields) }))
+    .filter((row) => row.rank != null)
+    .sort(
+      (a, b) =>
+        a.rank - b.rank ||
+        String(a.item?.name ?? "").localeCompare(String(b.item?.name ?? ""), undefined, {
+          sensitivity: "base",
+          numeric: true,
+        })
+    )
+    .map((row) => row.item);
 }
 
 export function catalogCategories(items, categoryOf) {

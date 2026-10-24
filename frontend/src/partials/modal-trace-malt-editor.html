@@ -112,9 +112,18 @@
                   <input
                     type="text"
                     class="form-input text-xs"
-                    placeholder="Search malts by name or notes…"
+                    placeholder="Search malts by name…"
                     x-model.debounce.50ms="traceSearch"
                   />
+                </div>
+
+                <div class="filter-pills-container">
+                  <button
+                    type="button"
+                    class="filter-pill"
+                    :class="{ 'is-active': traceSearchNotes }"
+                    @click="toggleTraceSearchNotes()"
+                  >Search notes</button>
                 </div>
                 <div class="filter-pills-container">
                   <template x-for="f in traceFamilies" :key="f.name">

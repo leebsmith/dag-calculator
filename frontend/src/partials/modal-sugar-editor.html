@@ -107,9 +107,18 @@
                 <input
                   type="text"
                   class="form-input text-xs"
-                  placeholder="Search sugars by name or notes…"
+                  placeholder="Search sugars by name…"
                   x-model.debounce.50ms="sugarSearch"
                 />
+              </div>
+
+              <div class="filter-pills-container">
+                <button
+                  type="button"
+                  class="filter-pill"
+                  :class="{ 'is-active': sugarSearchNotes }"
+                  @click="toggleSugarSearchNotes()"
+                >Search notes</button>
               </div>
               <div
                 class="catalog-result-counter text-xs"
