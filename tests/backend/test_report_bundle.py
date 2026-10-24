@@ -1,0 +1,165 @@
+"""Guard tests for the report bundle schema (plans/report-bundle.md)."""
+
+from __future__ import annotations
+
+import pytest
+from pydantic import ValidationError
+
+from app.schemas.report_bundle import BUNDLE_FORMAT, ReportBundle
+
+ARTIFACT = {
+    "schema_version": 6,
+    "dimensions": {
+        "volume": {"base_unit": "L", "kind": "linear", "units": {"gal": {"factor": 3.785411784}}}
+    },
+    "primitive_schemas": {
+        "equipment": {"name": {}, "max_hlt_volume_l": {"dimension": "volume"}},
+        "mash_rest": {"rest_id": {}, "use_temp_c": {"dimension": "volume"}},
+    },
+    "identity": {"equipment": "equipment", "water.source": "equipment", "style": "equipment"},
+    "nodes": {
+        "mash.rests": {"kind": "collection", "item_schema": "mash_rest"},
+        "batch.v_ferm": {"kind": "root", "dimension": "volume"},
+        "solver.batch": {
+            "kind": "boundary",
+            "binding": "batch_sparge_solver",
+            "outputs": {"cascade.v_strike": {"dimension": "volume"}},
+        },
+        "water.target_profile": {
+            "kind": "selection",
+            "output": {"schema": "equipment"},
+            "ref": "batch.v_ferm",
+        },
+    },
+}
+
+IDENTITY = {
+    "equipment": {"id": "rig", "name": "Test rig", "max_hlt_volume_l": 30},
+    "water.source": {"report_id": "w1", "name": "Test water"},
+    "style": {"id": "21A", "name": "American IPA"},
+}
+
+
+def bundle(**overrides) -> dict:
+    base = {
+        "bundle_format": BUNDLE_FORMAT,
+        "artifact": {"schema_version": 6, "hash": "sha256:artifact", "content": ARTIFACT},
+        "catalog": {
+            "hash": "sha256:catalog",
+            "dimensions": {"volume": {"base_unit": "L", "kind": "linear", "units": {}}},
+            "nodes": {
+                "batch.v_ferm": {"label": "Fermenter volume", "unit": "L", "decimals": 1},
+                "mash.rests.use_temp_c": {"label": "Rest temperature"},
+                "solver.batch.cascade.v_strike": {"label": "Strike volume"},
+                "equipment.max_hlt_volume_l": {"label": "Max HLT"},
+            },
+        },
+        "batch": {
+            "id": "b1",
+            "name": "House Pale",
+            "frozen_at": 1.0,
+            "parent_batch_id": None,
+            "identity": IDENTITY,
+        },
+        "state": {
+            "valuation": {
+                "batch.v_ferm": 20,
+                "mash.rests": [{"rest_id": "dough_in", "use_temp_c": 67}],
+                "solver.batch": {"cascade.v_strike": 14},
+                "water.target_profile": {"id": "rig"},
+            },
+            "roots": {"batch.v_ferm": 20},
+            "collections": {"mash.rests": [{"rest_id": "dough_in"}]},
+            "selections": {"water.target_profile": {"id": "rig"}},
+            "provenance": {"water.target_profile": {"source_template_id": "rig"}},
+        },
+        "conformance": {"sai": 92.0},
+        "validation": {
+            "relations": [{"id": "r", "holds": True}],
+            "domains": [],
+            "field_domains": [],
+            "collection_domains": [],
+        },
+        "telemetry": {
+            "solver.batch": {
+                "binding": "batch_sparge_solver",
+                "fingerprint": "sha256:fp",
+                "telemetry": [{"code": "X", "severity": "INFO"}],
+                "warnings": [],
+                "notes": ["ok"],
+            }
+        },
+        "content_hash": "sha256:content",
+    }
+    base.update(overrides)
+    return base
+
+
+def test_a_well_formed_bundle_validates() -> None:
+    parsed = ReportBundle.model_validate(bundle())
+    assert parsed.bundle_format == 1
+    assert parsed.batch.identity["equipment"]["name"] == "Test rig"
+
+
+def test_unknown_fields_are_rejected() -> None:
+    with pytest.raises(ValidationError):
+        ReportBundle.model_validate(bundle(unexpected="nope"))
+
+
+def test_unknown_bundle_format_is_rejected() -> None:
+    with pytest.raises(ValidationError):
+        ReportBundle.model_validate(bundle(bundle_format=2))
+
+
+def test_valuation_must_name_declared_nodes() -> None:
+    state = bundle()["state"] | {"valuation": {"nope": 1}}
+    with pytest.raises(ValidationError, match="undeclared nodes: nope"):
+        ReportBundle.model_validate(bundle(state=state))
+
+
+def test_telemetry_must_target_a_matching_boundary() -> None:
+    bad_key = bundle() | {"telemetry": {"mash.rests": bundle()["telemetry"]["solver.batch"]}}
+    with pytest.raises(ValidationError, match="is not a boundary node"):
+        ReportBundle.model_validate(bad_key)
+
+    bad_binding = bundle()["telemetry"]["solver.batch"] | {"binding": "other"}
+    with pytest.raises(ValidationError, match="does not match"):
+        ReportBundle.model_validate(bundle(telemetry={"solver.batch": bad_binding}))
+
+
+def test_catalog_dimensions_must_be_declared() -> None:
+    catalog = bundle()["catalog"] | {"dimensions": {"pressure": {"base_unit": "bar", "kind": "linear"}}}
+    with pytest.raises(ValidationError, match="undeclared dimensions: pressure"):
+        ReportBundle.model_validate(bundle(catalog=catalog))
+
+
+def test_identity_namespaces_must_be_declared() -> None:
+    batch = bundle()["batch"] | {"identity": {"yeast": {"id": "y"}}}
+    with pytest.raises(ValidationError, match="identity namespaces not declared: yeast"):
+        ReportBundle.model_validate(bundle(batch=batch))
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "batch.v_ferm",
+        "mash.rests.use_temp_c",
+        "solver.batch.cascade.v_strike",
+        "equipment.max_hlt_volume_l",
+    ],
+)
+def test_known_catalog_paths_resolve(path: str) -> None:
+    catalog = bundle()["catalog"] | {"nodes": {path: {"label": "x"}}}
+    assert ReportBundle.model_validate(bundle(catalog=catalog)).catalog.nodes[path].label == "x"
+
+
+def test_unknown_catalog_paths_are_rejected() -> None:
+    catalog = bundle()["catalog"] | {"nodes": {"mash.nope": {"label": "x"}}}
+    with pytest.raises(ValidationError, match="resolves to no node"):
+        ReportBundle.model_validate(bundle(catalog=catalog))
+
+
+def test_collection_state_must_name_a_collection_node() -> None:
+    state = bundle()["state"] | {"collections": {"batch.v_ferm": []}}
+    with pytest.raises(ValidationError, match="non-collection node"):
+        ReportBundle.model_validate(bundle(state=state))
