@@ -44,7 +44,15 @@ test("boil hops: parts renormalize when an addition is removed", () => {
   assert.ok(Math.abs(app.hopRows[0].pct - 1) < 1e-9);
 });
 
-test("hop mass unit defaults to oz, cycles, and changes the readout", () => {
+test("both hop mass pills seed from the saved mass preference", () => {
+  const app = createStepApp();
+  app.boot();
+
+  assert.equal(app.hopMassUnit, "g");
+  assert.equal(app.whirlpoolHopMassUnit, "g");
+});
+
+test("hop mass unit cycles and changes the readout", () => {
   const app = createStepApp();
   app.boot();
   app.openHopEditor();
@@ -52,17 +60,48 @@ test("hop mass unit defaults to oz, cycles, and changes the readout", () => {
   app.saveHopEditor();
   app.compute();
 
-  assert.equal(app.hopMassUnit, "oz");
-  assert.match(app.hopMass(app.hopRows[0]), /oz$/);
-
-  app.toggleHopMassUnit(); // g
   assert.equal(app.hopMassUnit, "g");
   assert.match(app.hopMass(app.hopRows[0]), /g$/);
 
   app.toggleHopMassUnit(); // lb
+  assert.equal(app.hopMassUnit, "lb");
+  assert.match(app.hopMass(app.hopRows[0]), /lb$/);
+
   app.toggleHopMassUnit(); // kg
-  app.toggleHopMassUnit(); // back to oz
-  assert.equal(app.hopMassUnit, "oz");
+  app.toggleHopMassUnit(); // oz
+  app.toggleHopMassUnit(); // back to g
+  assert.equal(app.hopMassUnit, "g");
+});
+
+test("the two hop mass pills are independent once seeded", () => {
+  const app = createStepApp();
+  app.boot();
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  app.saveHopEditor();
+
+  app.openWhirlpoolHopEditor();
+  app.addCatalogWhirlpoolHop("citra");
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  app.toggleHopMassUnit(); // lb — boil only
+  assert.equal(app.hopMassUnit, "lb");
+  assert.equal(app.whirlpoolHopMassUnit, "g");
+  assert.match(app.hopMass(app.hopRows[0]), /lb$/);
+  assert.match(app.whirlpoolHopMass(app.whirlpoolHopRows[0]), /g$/);
+
+  app.toggleWhirlpoolHopMassUnit(); // lb — whirlpool only
+  assert.equal(app.hopMassUnit, "lb");
+  assert.equal(app.whirlpoolHopMassUnit, "lb");
+  assert.match(app.whirlpoolHopMass(app.whirlpoolHopRows[0]), /lb$/);
+
+  app.toggleHopMassUnit(); // kg — boil only
+  assert.match(app.boilHopTotalMassDisplay, /kg$/);
+  assert.match(app.whirlpoolHopTotalMassDisplay, /lb$/);
 });
 
 test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", () => {

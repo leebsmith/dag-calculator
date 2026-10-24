@@ -187,7 +187,12 @@ export function registerHopCard(app, ctx) {
 
   const { engine, artifact, ui } = ctx;
 
-  const formatMass = (kg, unit = "oz") => {
+  // Both pools are seeded from the saved Mass preference (grams when nothing is
+  // stored — hops are charged in grams, and the dimension's base unit is kg).
+  // They stay independent after that: each has its own pill.
+  const massUnit = ui.unitMode.mass ?? "g";
+
+  const formatMass = (kg, unit) => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
     const decimals = unit === "g" ? 1 : 2;
@@ -210,8 +215,8 @@ export function registerHopCard(app, ctx) {
   Object.assign(app, {
     hopRows: [],
     whirlpoolHopRows: [],
-    hopMassUnit: "oz",
-    whirlpoolHopMassUnit: "g",
+    hopMassUnit: massUnit,
+    whirlpoolHopMassUnit: massUnit,
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
 
