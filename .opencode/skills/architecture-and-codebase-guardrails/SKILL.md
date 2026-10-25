@@ -119,6 +119,20 @@ distinction with explicit allowlists.
   with `@input`; formatting readouts is fine, formatting mid-keystroke is not.
 - Guard: `tests/guards/number-input-contract.test.js`.
 
+**Anti-drift guards (extend these instead of adding prose):**
+
+- `tests/guards/boundary-output-consumers.test.js` — every declared boundary
+  output is consumed downstream or allow-listed with a reason.
+- `tests/guards/no-silent-catch.test.js` — every catch reports via
+  `reportError`, writes an error surface, or is allow-listed.
+- `tests/guards/schema-version.test.js` — the artifact grammar revision matches
+  the validator, inventory, and grammar doc; the payload revision matches the
+  backend legacy defaults.
+- `tests/guards/unit-roundtrip.test.js` — every unit inverts through its base
+  unit (nonlinear pairs within their published agreement).
+- `tests/backend/conformance/test_route_auth_coverage.py` — every FastAPI route
+  names its auth/rate-limit dependency; public probes are allow-listed.
+
 **Forbidden in JavaScript adapters:**
 
 - Do not re-implement formatting that already exists in the `utils.js` barrel.
