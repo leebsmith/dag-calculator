@@ -14,7 +14,13 @@ from pathlib import Path
 
 import pytest
 
-from app.schemas.boundary import BatchSolverResponse, WaterSolverResponse
+from app.schemas.boundary import (
+    BatchSolverResponse,
+    BoilHopResult,
+    HopSolverResponse,
+    WaterSolverResponse,
+    WhirlpoolHopResult,
+)
 
 ARTIFACT = json.loads(
     (Path(__file__).resolve().parents[3] / "data" / "artifact.json").read_text()
@@ -24,12 +30,19 @@ ARTIFACT = json.loads(
 ALLOW = {
     "solver.batch": set(),
     "solver.water": {"warnings", "notes", "telemetry"},
+    "solver.hops": set(),
 }
 
 CASES = [
     ("solver.batch", BatchSolverResponse),
     ("solver.water", WaterSolverResponse),
+    ("solver.hops", HopSolverResponse),
 ]
+
+COLLECTION_MODELS = {
+    "boil_rows": BoilHopResult,
+    "whirlpool_rows": WhirlpoolHopResult,
+}
 
 
 @pytest.mark.parametrize(("boundary_id", "model"), CASES)
@@ -41,3 +54,12 @@ def test_boundary_outputs_match_response_fields(boundary_id, model):
         f"{boundary_id} outputs drift from {model.__name__}: "
         f"declared={sorted(declared)}, expected={sorted(expected)}"
     )
+
+
+def test_hop_collection_item_schemas_match_result_models():
+    outputs = ARTIFACT["nodes"]["solver.hops"]["outputs"]
+    for output_name, model in COLLECTION_MODELS.items():
+        spec = outputs[output_name]
+        assert spec.get("type") == "collection", output_name
+        schema = ARTIFACT["primitive_schemas"][spec["item_schema"]]
+        assert set(schema) == set(model.model_fields), output_name

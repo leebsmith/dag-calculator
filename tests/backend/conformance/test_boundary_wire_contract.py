@@ -13,7 +13,12 @@ from pathlib import Path
 
 import pytest
 
-from app.schemas.boundary import BatchSolverRequest, IonProfile, WaterSolverRequest
+from app.schemas.boundary import (
+    BatchSolverRequest,
+    HopSolverRequest,
+    IonProfile,
+    WaterSolverRequest,
+)
 
 FIXTURE = json.loads(
     (
@@ -35,6 +40,10 @@ def test_batch_wire_keys_match_model_fields():
 
 def test_water_wire_keys_match_model_fields():
     assert top_level(FIXTURE["water"]) == set(WaterSolverRequest.model_fields)
+
+
+def test_hop_wire_keys_match_model_fields():
+    assert set(FIXTURE["hop"]) == set(HopSolverRequest.model_fields)
 
 
 @pytest.mark.parametrize("profile", ["source", "target"])

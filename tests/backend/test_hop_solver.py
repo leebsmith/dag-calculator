@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import json
 import math
+from pathlib import Path
 
 import pytest
 
 from app.core import hop_solver
+from app.core.hop_solver import BoilHopEntry, HopSolverInput, WhirlpoolHopEntry
 from app.schemas.boundary import (
     BoilHopRow,
     HopSolverRequest,
@@ -174,3 +177,47 @@ def test_invalid_inputs_raise_typed_errors():
             hop_solver.HopSolverInput(**{**base, "whirlpool_cooling_time_constant_min": 0.0})
         )
     assert exc.value.code == "INVALID_COOLING_CONSTANT"
+
+
+HOP_PARITY = json.loads(
+    (Path(__file__).resolve().parents[1] / "conformance" / "fixtures" / "hop-parity.json").read_text()
+)
+
+
+def _compare_rows(actual, expected, label):
+    assert len(actual) == len(expected), label
+    for index, (got, want) in enumerate(zip(actual, expected, strict=True)):
+        for key, value in want.items():
+            assert getattr(got, key) == pytest.approx(value), f"{label}[{index}].{key}"
+
+
+def test_shared_hop_parity_fixture_matches_core_solver():
+    for case in HOP_PARITY["cases"]:
+        payload = case["input"]
+        result = hop_solver.solve_hops(
+            HopSolverInput(
+                boil_hops=[BoilHopEntry(**row) for row in payload["boil_hops"]],
+                whirlpool_hops=[
+                    WhirlpoolHopEntry(**row) for row in payload["whirlpool_hops"]
+                ],
+                boil_target_ibu=payload["boil_target_ibu"],
+                whirlpool_target_ibu=payload["whirlpool_target_ibu"],
+                boil_time_min=payload["boil_time_min"],
+                pre_boil_gravity=payload["pre_boil_gravity"],
+                post_boil_gravity=payload["post_boil_gravity"],
+                post_boil_volume_l=payload["post_boil_volume_l"],
+                whirlpool_ambient_temp_c=payload["whirlpool_ambient_temp_c"],
+                whirlpool_cooling_time_constant_min=payload[
+                    "whirlpool_cooling_time_constant_min"
+                ],
+            )
+        )
+        expected = case["expected"]
+        _compare_rows(result.boil_rows, expected["boil_rows"], f"{case['name']}.boil_rows")
+        _compare_rows(
+            result.whirlpool_rows,
+            expected["whirlpool_rows"],
+            f"{case['name']}.whirlpool_rows",
+        )
+        for key in ("boil_mass_kg", "whirlpool_mass_kg", "total_mass_kg"):
+            assert getattr(result, key) == pytest.approx(expected[key]), f"{case['name']}.{key}"

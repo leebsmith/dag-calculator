@@ -18,13 +18,17 @@ from app.schemas.boundary import (
     AcidMedium,
     BatchSolverRequest,
     BatchSpargeTopology,
+    BoilHopRow,
     GristBillRow,
+    HopSolverRequest,
     IonProfile,
     PreferredAlkalineAgent,
     SaltDistribution,
     WaterGristRow,
     WaterSolverRequest,
     WaterStrategy,
+    WhirlpoolHopForm,
+    WhirlpoolHopRow,
 )
 
 FIXTURE_DIR = Path(__file__).resolve().parents[3] / "tests" / "conformance" / "fixtures"
@@ -98,7 +102,33 @@ def canonical_water() -> WaterSolverRequest:
     )
 
 
-CASES = {"batch": canonical_batch, "water": canonical_water}
+def canonical_hop() -> HopSolverRequest:
+    return HopSolverRequest(
+        boil_hops=[
+            BoilHopRow(alpha_acid_pct=0.10, boil_time_fraction=1.0, pct=0.6),
+            BoilHopRow(alpha_acid_pct=0.12, boil_time_fraction=0.5, pct=0.4),
+        ],
+        whirlpool_hops=[
+            WhirlpoolHopRow(
+                alpha_acid_pct=0.10,
+                duration_min=30.0,
+                initial_temp_c=99.0,
+                pct=1.0,
+                product_form=WhirlpoolHopForm.T90_PELLET,
+            )
+        ],
+        boil_target_ibu=40.0,
+        whirlpool_target_ibu=20.0,
+        boil_time_min=60.0,
+        pre_boil_gravity=1.048,
+        post_boil_gravity=1.055,
+        post_boil_volume_l=21.0,
+        whirlpool_ambient_temp_c=20.0,
+        whirlpool_cooling_time_constant_min=108.7,
+    )
+
+
+CASES = {"batch": canonical_batch, "water": canonical_water, "hop": canonical_hop}
 
 
 def _dump(model) -> dict:

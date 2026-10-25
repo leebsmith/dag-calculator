@@ -12,6 +12,7 @@ import { readFileSync } from "node:fs";
 
 import {
   buildBatchRequest,
+  buildHopRequest,
   buildWaterRequest,
 } from "../../frontend/src/adapters/boundaryRequest.js";
 import { canonicalFingerprint } from "../../frontend/src/engine/boundary.js";
@@ -30,12 +31,17 @@ const M_GRIST = 4.7;
 
 // A matching engine state: only the paths the builders read, resolving to the
 // canonical values. An unexpected path throws, so adapter-path drift is caught.
-function stubEngine(values, { traceRows = [] } = {}) {
+function stubEngine(
+  values,
+  { traceRows = [], hopBoilRows = [], hopWhirlpoolRows = [] } = {}
+) {
   return {
     get(id) {
       if (id === "grist.major_malts") return GRIST;
       if (id === "grist.trace_malts") return traceRows;
       if (id === "water.pinned_ions") return [];
+      if (id === "batch.boil_hops") return hopBoilRows;
+      if (id === "batch.whirlpool_hops") return hopWhirlpoolRows;
       throw new Error(`unexpected get("${id}")`);
     },
     resolve(path) {
@@ -99,6 +105,44 @@ const WATER_VALUES = {
 test("conformance: adapted BatchSolverRequest matches the backend dump", () => {
   const { request, fingerprint } = fixture("batch");
   const body = buildBatchRequest(stubEngine(BATCH_VALUES));
+  assert.deepEqual(body, request);
+  assert.equal(canonicalFingerprint(body), fingerprint);
+});
+
+const HOP_VALUES = {
+  "batch.boil_target_ibu": 40.0,
+  "batch.whirlpool_target_ibu": 20.0,
+  "batch.boil_time_min": 60.0,
+  "solver.batch.cascade.sg_pre_boil": 1.048,
+  "solver.batch.sg_post_boil": 1.055,
+  "solver.batch.cascade.v_post_boil": 21.0,
+  "batch.whirlpool_ambient_temp_c": 20.0,
+  "batch.whirlpool_cooling_time_constant_min": 108.7,
+};
+
+const HOP_BOIL_ROWS = [
+  { alpha_acid_pct: 0.1, boil_time_fraction: 1.0, pct: 0.6 },
+  { alpha_acid_pct: 0.12, boil_time_fraction: 0.5, pct: 0.4 },
+];
+
+const HOP_WHIRLPOOL_ROWS = [
+  {
+    alpha_acid_pct: 0.1,
+    duration_min: 30.0,
+    initial_temp_c: 99.0,
+    pct: 1.0,
+    product_form: "t90_pellet",
+  },
+];
+
+test("conformance: adapted HopSolverRequest matches the backend dump", () => {
+  const { request, fingerprint } = fixture("hop");
+  const body = buildHopRequest(
+    stubEngine(HOP_VALUES, {
+      hopBoilRows: HOP_BOIL_ROWS,
+      hopWhirlpoolRows: HOP_WHIRLPOOL_ROWS,
+    })
+  );
   assert.deepEqual(body, request);
   assert.equal(canonicalFingerprint(body), fingerprint);
 });

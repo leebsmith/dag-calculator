@@ -1,0 +1,171 @@
+{
+  "cases": [
+    {
+      "name": "boil-only",
+      "input": {
+        "boil_hops": [
+          {
+            "alpha_acid_pct": 0.1,
+            "boil_time_fraction": 1.0,
+            "pct": 1.0
+          }
+        ],
+        "whirlpool_hops": [],
+        "boil_target_ibu": 40.0,
+        "whirlpool_target_ibu": 0.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [
+          {
+            "minutes": 60.0,
+            "ibu": 40.0,
+            "mass_kg": 0.034065333118
+          }
+        ],
+        "whirlpool_rows": [],
+        "boil_mass_kg": 0.034065333118,
+        "whirlpool_mass_kg": 0,
+        "total_mass_kg": 0.034065333118
+      }
+    },
+    {
+      "name": "whirlpool-pellet",
+      "input": {
+        "boil_hops": [],
+        "whirlpool_hops": [
+          {
+            "alpha_acid_pct": 0.1,
+            "duration_min": 30.0,
+            "initial_temp_c": 99.0,
+            "pct": 1.0,
+            "product_form": "t90_pellet"
+          }
+        ],
+        "boil_target_ibu": 0.0,
+        "whirlpool_target_ibu": 30.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 21.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [],
+        "whirlpool_rows": [
+          {
+            "minutes": 30.0,
+            "ibu": 30.0,
+            "mass_kg": 0.05815423919,
+            "effective_minutes": 14.795319261482
+          }
+        ],
+        "boil_mass_kg": 0,
+        "whirlpool_mass_kg": 0.05815423919,
+        "total_mass_kg": 0.05815423919
+      }
+    },
+    {
+      "name": "whirlpool-flowable",
+      "input": {
+        "boil_hops": [],
+        "whirlpool_hops": [
+          {
+            "alpha_acid_pct": 0.45,
+            "duration_min": 30.0,
+            "initial_temp_c": 99.0,
+            "pct": 1.0,
+            "product_form": "flowable_extract"
+          }
+        ],
+        "boil_target_ibu": 0.0,
+        "whirlpool_target_ibu": 30.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 21.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [],
+        "whirlpool_rows": [
+          {
+            "minutes": 30.0,
+            "ibu": 30.0,
+            "mass_kg": 0.010769303554,
+            "effective_minutes": 14.795319261482
+          }
+        ],
+        "boil_mass_kg": 0,
+        "whirlpool_mass_kg": 0.010769303554,
+        "total_mass_kg": 0.010769303554
+      }
+    },
+    {
+      "name": "mixed",
+      "input": {
+        "boil_hops": [
+          {
+            "alpha_acid_pct": 0.1,
+            "boil_time_fraction": 1.0,
+            "pct": 0.5
+          },
+          {
+            "alpha_acid_pct": 0.12,
+            "boil_time_fraction": 0.5,
+            "pct": 0.5
+          }
+        ],
+        "whirlpool_hops": [
+          {
+            "alpha_acid_pct": 0.1,
+            "duration_min": 20.0,
+            "initial_temp_c": 90.0,
+            "pct": 1.0,
+            "product_form": "t90_pellet"
+          }
+        ],
+        "boil_target_ibu": 25.0,
+        "whirlpool_target_ibu": 15.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 21.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [
+          {
+            "minutes": 60.0,
+            "ibu": 12.5,
+            "mass_kg": 0.011177687429
+          },
+          {
+            "minutes": 30.0,
+            "ibu": 12.5,
+            "mass_kg": 0.012120285155
+          }
+        ],
+        "whirlpool_rows": [
+          {
+            "minutes": 20.0,
+            "ibu": 15.0,
+            "mass_kg": 0.057415607607,
+            "effective_minutes": 6.411417646729
+          }
+        ],
+        "boil_mass_kg": 0.023297972584,
+        "whirlpool_mass_kg": 0.057415607607,
+        "total_mass_kg": 0.080713580191
+      }
+    }
+  ]
+}
