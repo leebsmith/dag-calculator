@@ -133,6 +133,12 @@ using `makeFixtures()` from `tests/frontend/helpers.js`). For a `derived` node,
 assert the numeric result; for an input, assert `get`/`setRoot` behavior and the
 default. If it mirrors known-good legacy math, add a conformance case too.
 
+**Equipment fields** additionally need both profiles in `data/seeds/equipment.json`,
+the metric/imperial pair in `frontend/src/store/equipmentIngest.js`
+(`IMPERIAL_KEYS` / `IMPERIAL_UNIT`), and the shared
+`tests/conformance/fixtures/equipment-imperial-map.json`. The equipment contract
+guard fails if those diverge or a profile omits the field.
+
 ## Checklist
 
 - [ ] Node + any supporting declaration added to `data/artifact.json`

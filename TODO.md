@@ -7,8 +7,8 @@
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
-   `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
+2. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`)
+   + staged brew-day checklist. Precursor: `plans/report-bundle.md` R2–R4.
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 

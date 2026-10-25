@@ -38,35 +38,11 @@ def load_seed(filename):
         return json.load(handle)
 
 
-IMPERIAL_KEYS = {
-    "max_kettle_volume_l": "max_kettle_volume_gal",
-    "max_mash_tun_volume_l": "max_mash_tun_volume_gal",
-    "max_hlt_volume_l": "max_hlt_volume_gal",
-    "mash_dead_space_l": "mash_dead_space_gal",
-    "mash_transfer_loss_l": "mash_transfer_loss_gal",
-    "kettle_dead_space_l": "kettle_dead_space_gal",
-    "kettle_transfer_loss_l": "kettle_transfer_loss_gal",
-    "trub_loss_l": "trub_loss_gal",
-    "hlt_dead_space_l": "hlt_dead_space_gal",
-    "hlt_transfer_loss_l": "hlt_transfer_loss_gal",
-    "hlt_coil_floor_l": "hlt_coil_floor_gal",
-    "nominal_boil_off_rate_l_per_hr": "nominal_boil_off_rate_gal_per_hr",
-    "grain_absorption_factor_l_per_kg": "grain_absorption_factor_qt_per_lb",
-    "mash_tun_mass_kg": "mash_tun_mass_lb",
-    "mash_tun_specific_heat": "mash_tun_specific_heat_btu_per_lb_f",
-    "mash_heating_rate_c_per_min": "mash_heating_rate_f_per_min",
-    "min_lgr_l_per_kg": "min_lgr_qt_per_lb",
-}
-
-IMPERIAL_UNIT = {
-    "volume": "gal",
-    "mass": "lb",
-    "volume_per_time": "gal_per_hr",
-    "specific_heat": "btu_per_lb_degF",
-    "mash_thickness": "qt_per_lb",
-    "temperature_delta_per_time": "dF_per_min",
-}
-
+EQUIPMENT_MAP = json.loads(
+    (DATA.parent / "tests" / "conformance" / "fixtures" / "equipment-imperial-map.json").read_text()
+)
+IMPERIAL_KEYS = EQUIPMENT_MAP["keys"]
+IMPERIAL_UNIT = EQUIPMENT_MAP["units"]
 
 def ingest_equipment(raw):
     artifact = artifact_module.load_artifact()
@@ -169,3 +145,25 @@ def test_validator_rejects_unknown_kinds_and_non_objects():
 @pytest.mark.parametrize("kind", list(SEED_FILES))
 def test_catalogs_registry_covers_every_seed_kind(kind):
     assert kind in artifact_module.load_catalogs()
+
+
+def test_equipment_imperial_map_matches_the_schema():
+    artifact = artifact_module.load_artifact()
+    schema = artifact["primitive_schemas"]["equipment"]
+    dimensions = artifact["dimensions"]
+    for metric_key, imperial_key in IMPERIAL_KEYS.items():
+        assert metric_key in schema, metric_key
+        dimension = schema[metric_key]["dimension"]
+        assert imperial_key, metric_key
+        assert IMPERIAL_UNIT[dimension] in dimensions[dimension]["units"], metric_key
+    for dimension, unit in IMPERIAL_UNIT.items():
+        assert unit in dimensions[dimension]["units"], dimension
+
+
+def test_every_equipment_profile_declares_every_schema_field():
+    artifact = artifact_module.load_artifact()
+    schema = artifact["primitive_schemas"]["equipment"]
+    required = set(schema) - {"id", "name", "description"}
+    for item_id, component in components_for_kind("equipment").items():
+        missing = required - set(component)
+        assert not missing, f"{item_id}: {sorted(missing)}"

@@ -43,7 +43,7 @@ function assignWire(out, wire, value) {
   assignWire(out[head], rest.join("."), value);
 }
 
-const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
+export const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
 
 function fermentabilityOf(row) {
   return row.fermentability_fraction ?? CATEGORY_DEFAULT_F[row.category] ?? 0.81;

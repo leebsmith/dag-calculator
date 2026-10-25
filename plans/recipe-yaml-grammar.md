@@ -5,8 +5,12 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: [recipe-pipeline]
 gate: a worked recipe parses against the generic document model and its bindings resolve
-status: proposed
+status: superseded
 ---
+
+> **Superseded** by [Report Renderer](report-renderer.md). Report composition
+> moves into Typst against the frozen report bundle, so no YAML recipe layer is
+> built. Retained as the grammar record.
 
 # Recipe YAML — Vocabulary & Grammar
 

@@ -5,10 +5,15 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: [recipe-service]
 gate: a YAML recipe projects to a populated document model from a frozen valuation; markdown renders; optional PDF; make check/test green
-status: proposed
+status: superseded
 ---
 
 # Recipe Pipeline — Rendered Recipe Document
+
+> **Superseded** by [Report Renderer](report-renderer.md). The projector,
+> `RecipeDocument`, and the markdown/PDF path are retired in favour of Typst
+> composing directly from the frozen report bundle. Retained as the record of
+> the projector design; `plans/recipe-yaml-grammar.md` is superseded with it.
 
 **Goal:** turn a declarative **YAML recipe** into a populated **recipe document**
 (a presentation model) from an artifact + a per-batch `valuation`, then render it

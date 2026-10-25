@@ -13,7 +13,7 @@ import { toBase } from "../engine/units.js";
 // Metric field key -> imperial field key. Percentage fields
 // (nominal_conversion_efficiency, shrinkage_pct) and identity fields (id/name/
 // description) are unitless and intentionally absent: they pass through as-is.
-const IMPERIAL_KEYS = {
+export const IMPERIAL_KEYS = {
   max_kettle_volume_l: "max_kettle_volume_gal",
   max_mash_tun_volume_l: "max_mash_tun_volume_gal",
   max_hlt_volume_l: "max_hlt_volume_gal",
@@ -34,7 +34,7 @@ const IMPERIAL_KEYS = {
 };
 
 // The imperial unit each dimension is authored in (matches artifact unit ids).
-const IMPERIAL_UNIT = {
+export const IMPERIAL_UNIT = {
   volume: "gal",
   mass: "lb",
   volume_per_time: "gal_per_hr",
