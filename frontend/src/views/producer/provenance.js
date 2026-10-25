@@ -5,6 +5,7 @@
 
 import { seedDerivations, approxEqual, sourceLabel } from "../seedDerivations.js";
 import { resolveReference } from "../../engine/paths.js";
+import { reportError } from "../../observability.js";
 
 function collectRefs(expr, out = []) {
   if (expr === null || typeof expr !== "object") return out;
@@ -40,7 +41,8 @@ function componentLabel(engine, source) {
     const component =
       source.kind === "identity" ? engine.identity?.[source.id] : engine.get(source.id);
     return sourceLabel(component);
-  } catch {
+  } catch (err) {
+    reportError("producer.provenance.label", err);
     return "";
   }
 }
@@ -68,7 +70,8 @@ export function decorateProvenance(out, field, engine, artifact) {
     let component;
     try {
       component = engine.get(src.selection);
-    } catch {
+    } catch (err) {
+      reportError("producer.provenance.component", err);
       component = null;
     }
     const derived = src.derive(component);

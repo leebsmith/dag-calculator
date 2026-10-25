@@ -6,6 +6,7 @@ import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
 import { applyPresentation, presentationFor } from "../registry/presentation.js";
 import { formatValue } from "./format.js";
+import { reportError } from "../../observability.js";
 
 // AI AGENT HOOKS: Use this valuator for scalar field resolution and display
 // units. Do not duplicated this logic elsewhere.
@@ -18,7 +19,8 @@ export function valuateScalar(field, engine, ctx, nl) {
   let value;
   try {
     value = engine.resolve(field.id);
-  } catch {
+  } catch (err) {
+    reportError("producer.scalar.value", err);
     return null;
   }
   const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));

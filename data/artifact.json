@@ -225,7 +225,7 @@
     },
     "default_target_abv": {
       "value": 5.5,
-      "dimension": "percentage"
+      "dimension": "abv"
     },
     "default_calcium_floor_ppm": {
       "value": 50,
@@ -376,10 +376,6 @@
       "beer",
       "mead",
       "cider"
-    ],
-    "style_source": [
-      "styleguide",
-      "experimental"
     ],
     "fermentation": [
       "ale",
@@ -2692,9 +2688,6 @@
         "cascade.v_post_boil": {
           "dimension": "volume"
         },
-        "cascade.mash_thickness_l_per_kg": {
-          "dimension": "mash_thickness"
-        },
         "max_achievable_abv": {
           "dimension": "percentage"
         },
@@ -3106,7 +3099,6 @@
           "UNKNOWN_ALKALINE_AGENT",
           "UNKNOWN_SALT_FORM",
           "SALT_SOLVE_FAILED",
-          "ION_TARGET_OUT_OF_RANGE",
           "UNKNOWN_STRATEGY",
           "PINNED_IONS_REQUIRED"
         ]

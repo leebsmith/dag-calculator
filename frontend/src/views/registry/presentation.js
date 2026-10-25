@@ -1,6 +1,8 @@
 // Presentation-only field overrides. Node ids here describe how the host shows
 // artifact values; they never feed back into the artifact, engine, or solvers.
 
+import { reportError } from "../../observability.js";
+
 export const CONFORMANCE_FIELD_MAP = {
   "solver.batch.sg_post_boil": "og",
   "batch.realized_fg": "fg",
@@ -66,7 +68,8 @@ export function applyPresentation(out, rule, readers, formatValue) {
     let value;
     try {
       value = readers.resolve(rule.hint.path);
-    } catch {
+    } catch (err) {
+      reportError("presentation.hint", err);
       value = null;
     }
     if (typeof value === "number" && Number.isFinite(value)) {

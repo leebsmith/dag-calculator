@@ -249,6 +249,23 @@ export function validateRootDefaults(artifact) {
       }
       continue;
     }
+    if (
+      value.op === "if" &&
+      Array.isArray(value.args) &&
+      value.args.length === 3
+    ) {
+      const thenDimension = inferExprDimension(artifact, value.args[1], {});
+      const elseDimension = inferExprDimension(artifact, value.args[2], {});
+      if (
+        thenDimension !== null &&
+        elseDimension !== null &&
+        thenDimension !== elseDimension
+      ) {
+        throw new Error(
+          `Root "${id}" default has if branches with dimensions "${thenDimension}" and "${elseDimension}"`
+        );
+      }
+    }
     const inferred = inferExprDimension(artifact, value, {});
     if (inferred !== null && inferred !== node.dimension) {
       throw new Error(

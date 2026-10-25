@@ -37,7 +37,8 @@ function optionLabelFor(fieldId, value) {
 function resolveValue(engine, path) {
   try {
     return engine.resolve(path);
-  } catch {
+  } catch (err) {
+    reportError("waterCard.resolve", err);
     return undefined;
   }
 }

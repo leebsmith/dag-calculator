@@ -86,7 +86,6 @@ def test_default_recipe_generates_end_to_end():
         batch.cascade.s_run2,
         batch.cascade.sg_pre_boil,
         batch.cascade.v_post_boil,
-        batch.cascade.mash_thickness_l_per_kg,
         batch.max_achievable_abv,
         batch.hlt.v_hlt_debt,
         batch.hlt.v_hlt_after_strike,

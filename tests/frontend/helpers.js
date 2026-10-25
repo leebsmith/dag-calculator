@@ -83,7 +83,6 @@ export function batchOutputs() {
     "cascade.s_run2": 0.6,
     "cascade.sg_pre_boil": 1.048,
     "cascade.v_post_boil": 21.0,
-    "cascade.mash_thickness_l_per_kg": 3.0,
     max_achievable_abv: 10.0,
     aa_wort: 0.76,
     aa_batch: 0.75,

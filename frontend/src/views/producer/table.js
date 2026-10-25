@@ -5,6 +5,7 @@ import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
 import { describeField } from "./projection.js";
 import { formatValue } from "./format.js";
+import { reportError } from "../../observability.js";
 
 function cellDisplay(artifact, dimension, value, unitMode, nl, meta = {}) {
   if (typeof value !== "number" || !dimension) return { display: formatValue(value), unit: null };
@@ -37,7 +38,8 @@ export function valuateTable(field, artifact, engine, unitMode, nl, registry = {
       let value;
       try {
         value = engine.resolve(ref);
-      } catch {
+      } catch (err) {
+        reportError("producer.table.value", err);
         cells[col.id] = null;
         continue;
       }
@@ -48,7 +50,8 @@ export function valuateTable(field, artifact, engine, unitMode, nl, registry = {
       let dimension = null;
       try {
         dimension = describeField(artifact, ref).dimension;
-      } catch {
+      } catch (err) {
+        reportError("producer.table.dimension", err);
         dimension = null;
       }
       const d = cellDisplay(artifact, dimension, value, unitMode, nl, registry[ref] ?? {});
@@ -59,14 +62,16 @@ export function valuateTable(field, artifact, engine, unitMode, nl, registry = {
       let value;
       try {
         value = engine.resolve(row.note.ref);
-      } catch {
+      } catch (err) {
+        reportError("producer.table.note", err);
         value = null;
       }
       if (typeof value === "number") {
         let dimension = null;
         try {
           dimension = describeField(artifact, row.note.ref).dimension;
-        } catch {
+        } catch (err) {
+          reportError("producer.table.noteDimension", err);
           dimension = null;
         }
         const d = cellDisplay(

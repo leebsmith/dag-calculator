@@ -57,3 +57,36 @@ test("ion taxonomy covers the UI pin set", () => {
   const a = artifact();
   assert.deepEqual([...taxonomy(a, "ion")].sort(), WATER_IONS.map((row) => row.pin).sort());
 });
+
+
+test("every taxonomy is referenced and has unique values", () => {
+  const a = artifact();
+  const referenced = new Set();
+  for (const node of Object.values(a.nodes)) {
+    if (node.kind === "choice") referenced.add(node.taxonomy);
+    if (node.kind === "derived" && node.output?.taxonomy) referenced.add(node.output.taxonomy);
+    if (node.kind === "boundary") {
+      for (const output of Object.values(node.outputs ?? {})) {
+        if (output.taxonomy) referenced.add(output.taxonomy);
+      }
+    }
+  }
+  for (const schema of Object.values(a.primitive_schemas)) {
+    for (const spec of Object.values(schema)) {
+      if (spec.taxonomy) referenced.add(spec.taxonomy);
+    }
+  }
+
+  for (const [id, values] of Object.entries(a.taxonomies)) {
+    assert.ok(referenced.has(id), `taxonomy "${id}" is not referenced by any choice or schema field`);
+    assert.deepEqual(
+      values,
+      [...new Set(values)],
+      `taxonomy "${id}" has duplicate values`
+    );
+    assert.ok(
+      values.every((value) => typeof value === "string" && value !== ""),
+      `taxonomy "${id}" has an empty or non-string value`
+    );
+  }
+});

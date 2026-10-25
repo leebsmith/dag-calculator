@@ -160,6 +160,9 @@ export function registerHopCard(app, ctx) {
   Object.assign(app, {
     hopRows: [],
     whirlpoolHopRows: [],
+    boilHopMassKg: null,
+    whirlpoolHopMassKg: null,
+    hopBoundaryTotalMassKg: null,
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
 
@@ -373,6 +376,9 @@ export function registerHopCard(app, ctx) {
     boilHopTotalMassDisplay: {
       configurable: true,
       get() {
+        if (typeof this.boilHopMassKg === "number" && Number.isFinite(this.boilHopMassKg)) {
+          return formatMass(this.boilHopMassKg, this.hopMassUnit);
+        }
         const rows = this.hopRows ?? [];
         const masses = rows
           .map((r) => r.mass_kg)
@@ -384,6 +390,12 @@ export function registerHopCard(app, ctx) {
     hopTotalMassKg: {
       configurable: true,
       get() {
+        if (
+          typeof this.hopBoundaryTotalMassKg === "number" &&
+          Number.isFinite(this.hopBoundaryTotalMassKg)
+        ) {
+          return this.hopBoundaryTotalMassKg;
+        }
         const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
         return rows.reduce(
           (sum, r) =>
@@ -396,16 +408,29 @@ export function registerHopCard(app, ctx) {
       configurable: true,
       get() {
         const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
+        if (!rows.length) return "";
+        if (
+          typeof this.hopBoundaryTotalMassKg === "number" &&
+          Number.isFinite(this.hopBoundaryTotalMassKg)
+        ) {
+          return formatMass(this.hopBoundaryTotalMassKg, this.hopMassUnit);
+        }
         const masses = rows
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return rows.length ? "—" : "";
+        if (!masses.length) return "—";
         return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
     whirlpoolHopTotalMassDisplay: {
       configurable: true,
       get() {
+        if (
+          typeof this.whirlpoolHopMassKg === "number" &&
+          Number.isFinite(this.whirlpoolHopMassKg)
+        ) {
+          return formatMass(this.whirlpoolHopMassKg, this.hopMassUnit);
+        }
         const rows = this.whirlpoolHopRows ?? [];
         const masses = rows
           .map((r) => r.mass_kg)
@@ -449,6 +474,9 @@ export function refreshHopCard(app, ctx) {
     whirlpoolIbu,
     volume
   );
+  app.boilHopMassKg = resolveOrNull(engine, N.boilMass);
+  app.whirlpoolHopMassKg = resolveOrNull(engine, N.whirlpoolMass);
+  app.hopBoundaryTotalMassKg = resolveOrNull(engine, N.totalMass);
 }
 
 export const KEYS = [
@@ -456,6 +484,9 @@ export const KEYS = [
   ...catalogDraftKeys("whirlpoolHop", "WhirlpoolHop"),
   "hopRows",
   "whirlpoolHopRows",
+  "boilHopMassKg",
+  "whirlpoolHopMassKg",
+  "hopBoundaryTotalMassKg",
   "hopMassUnit",
   "whirlpoolHopForms",
   "whirlpoolHopCatalogForm",

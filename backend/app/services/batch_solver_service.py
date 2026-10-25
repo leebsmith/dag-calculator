@@ -79,7 +79,6 @@ def _to_response(result) -> BatchSolverResponse:
             s_run2=cascade.s_run2,
             sg_pre_boil=cascade.sg_pre_boil,
             v_post_boil=cascade.v_post_boil,
-            mash_thickness_l_per_kg=cascade.mash_thickness_l_per_kg,
         ),
         max_achievable_abv=result.max_achievable_abv,
         aa_wort=result.aa_wort,

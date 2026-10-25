@@ -213,4 +213,15 @@ test("root defaults must infer the root dimension", () => {
     () => validateRootDefaults(stringDefault),
     /has a string default but dimension "volume"/
   );
+
+  const mixedBranches = clone();
+  mixedBranches.nodes["batch.target_abv"].default = {
+    op: "if",
+    args: [
+      { op: "gt", args: [{ ref: "batch.v_ferm" }, 0] },
+      { ref: "batch.v_ferm" },
+      { ref: "batch.target_ibu" },
+    ],
+  };
+  assert.throws(() => validateRootDefaults(mixedBranches), /if branches with dimensions/);
 });

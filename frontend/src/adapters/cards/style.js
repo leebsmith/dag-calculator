@@ -592,7 +592,8 @@ export function refreshStyleCard(app, ctx) {
   const read = (path) => {
     try {
       return ctx.engine.resolve(path);
-    } catch {
+    } catch (err) {
+      reportError("style.solvedAa", err);
       return undefined;
     }
   };

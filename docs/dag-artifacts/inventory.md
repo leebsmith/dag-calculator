@@ -50,7 +50,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `ph_status` | `OPTIMAL`, `LOW`, `HIGH` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE`, `AUTO`, `HYBRID`, `BASELINE`, `CUSTOM` |
-| `style_source` | `styleguide`, `experimental` |
 | `style_type` | `beer`, `mead`, `cider` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 | `wet_hop_application_stage` | `whirlpool`, `active_fermentation`, `cold_side` |
@@ -123,7 +122,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_mash_thickness_l_per_kg` | 2.6079 | `mash_thickness` |
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
-| `default_target_abv` | 5.5 | `percentage` |
+| `default_target_abv` | 5.5 | `abv` |
 | `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_v_ferm_l` | 20 | `volume` |

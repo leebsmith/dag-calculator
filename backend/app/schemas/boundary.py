@@ -145,7 +145,6 @@ class WaterSolverErrorCode(StrEnum):
     UNKNOWN_ALKALINE_AGENT = "UNKNOWN_ALKALINE_AGENT"
     UNKNOWN_SALT_FORM = "UNKNOWN_SALT_FORM"
     SALT_SOLVE_FAILED = "SALT_SOLVE_FAILED"
-    ION_TARGET_OUT_OF_RANGE = "ION_TARGET_OUT_OF_RANGE"
     UNKNOWN_STRATEGY = "UNKNOWN_STRATEGY"
     PINNED_IONS_REQUIRED = "PINNED_IONS_REQUIRED"
 
@@ -233,7 +232,6 @@ class BatchCascadeOutputs(BoundaryModel):
     s_run2: Annotated[float, Field(description="Second runnings extract mass (kg)")]
     sg_pre_boil: Annotated[float, Field(description="Pre-boil specific gravity")]
     v_post_boil: Annotated[float, Field(description="Post-boil volume (L)")]
-    mash_thickness_l_per_kg: Annotated[float, Field(description="Resolved mash thickness (L/kg)")]
 
 
 class BatchHltOutputs(BoundaryModel):
