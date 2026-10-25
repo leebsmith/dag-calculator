@@ -1,5 +1,8 @@
-// Snapshot seam: editable-state snapshots for autosave and full frozen
-// valuation. This is the single owner of the persistent payload shape.
+// Snapshot seam: editable-state snapshots for autosave, the frozen valuation,
+// the report inputs, and the presentation catalog. This is the single owner of
+// the persistent payload shape.
+
+import { buildReportCatalog } from "../views/registry/catalog.js";
 
 // Batch payload shape revision (independent of the artifact grammar version).
 export const DRAFT_SCHEMA_VERSION = 4;
@@ -85,7 +88,13 @@ export function installSnapshot(app, { artifact, master, session }) {
       }
       return { validation, telemetry };
     },
+
+    // Per-path presentation for the report bundle. Static for a given artifact,
+    // so it is rebuilt only when the installer is (app boot).
+    reportCatalog() {
+      return buildReportCatalog(artifact);
+    },
   });
 }
 
-export const KEYS = ["draftState", "freezePayload", "reportInputs"];
+export const KEYS = ["draftState", "freezePayload", "reportInputs", "reportCatalog"];
