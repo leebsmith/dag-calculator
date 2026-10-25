@@ -56,6 +56,7 @@ MASH_PH_FLOOR = 4.0
 MASH_PH_CEIL = 6.0
 MASH_PH_MID = 4.0  # `i26` at which pH = midpoint (5.0)
 MASH_PH_SCALE = 2.0  # steepness of the saturation
+MASH_PH_TARGET_TOLERANCE = 0.01  # accepted |predicted - target| after inversion
 QT_PER_L_PER_KG = 2.08635  # 1 L/kg == 2.08635 qt/lb
 
 # Optimal mash pH extraction window
@@ -309,18 +310,29 @@ def _carbonate_fractions(ph: float) -> tuple[float, float, float]:
     return 1.0 / d, r1 / d, (r1 * r2) / d
 
 
-def acid_required_meq_l(alkalinity_caco3: float, ph_start: float, ph_target: float) -> float:
-    """Acid required (mEq/L) to shift water from ph_start to ph_target."""
-    f1_start, _, f3_start = _carbonate_fractions(ph_start)
-    f1_end, _, f3_end = _carbonate_fractions(CARBONIC_PKB)
-    denom = (f1_end - f1_start) + (f3_start - f3_end)
-    ct = (alkalinity_caco3 / 50.0) / denom if denom != 0.0 else 0.0
+def residual_alkalinity_for_target_ph(
+    grist_acidity_meq: float,
+    target_ph: float,
+    v_mash_treat_l: float,
+    mash_thickness_l_per_kg: float,
+) -> float | None:
+    """Residual alkalinity (ppm as CaCO3) that lands on ``target_ph``.
 
-    f1_target, _, f3_target = _carbonate_fractions(ph_target)
-    delta_co2 = (f1_target - f1_start) + (f3_start - f3_target)
-    h_shift = 10.0 ** (-ph_target) - 10.0 ** (-ph_start)
-
-    return ct * delta_co2 + h_shift + 0.01
+    Inverts the bounded logistic pH model. Returns ``None`` when the target lies
+    outside the model's open floor/ceiling band.
+    """
+    if v_mash_treat_l <= 0.0:
+        raise SolverValidationError("INVALID_MASH_VOLUME", "Mash volume must be positive.")
+    if not (MASH_PH_FLOOR < target_ph < MASH_PH_CEIL):
+        return None
+    qt_per_lb = mash_thickness_l_per_kg / QT_PER_L_PER_KG
+    if not (qt_per_lb > 0.0):
+        return None
+    fraction = (target_ph - MASH_PH_FLOOR) / (MASH_PH_CEIL - MASH_PH_FLOOR)
+    z = math.log(fraction / (1.0 - fraction))
+    i26_target = MASH_PH_MID - z * MASH_PH_SCALE
+    water_alk_meq = (grist_acidity_meq - i26_target * v_mash_treat_l) * 1.5 / qt_per_lb
+    return water_alk_meq * 50.0 / v_mash_treat_l
 
 
 def _acid_charge_fraction(ph: float, pks: tuple[float, float, float]) -> float:
@@ -1039,42 +1051,96 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     # 5. Stage-2 acid / alkaline correction to target_mash_ph
     ra_stage1 = residual_alkalinity(post_salt["ca"], post_salt["mg"], post_salt.get("alk", 0.0))
     ph_stage1 = predict_mash_ph(grist_acidity, ra_stage1, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg)
-    meq_l = acid_required_meq_l(post_salt.get("alk", 0.0), ph_stage1, inp.target_mash_ph)
     mash_acid_ml = 0.0
     stage2_agent_g = 0.0
     alk_correction_ppm = 0.0
     dose_event: dict[str, Any] | None = None
+    unreachable: dict[str, Any] | None = None
 
-    if meq_l > 0.0:
-        total_acid_meq = meq_l * inp.v_mash_treat_l
-        mash_acid_ml = acid_volume_ml(total_acid_meq, inp.acid_medium, inp.target_mash_ph)
-        alk_correction_ppm = -meq_l * 50.0
-        dose_event = {"kind": "acid", "meq_total": total_acid_meq}
-    elif meq_l < 0.0:
-        total_alk_meq = abs(meq_l) * inp.v_mash_treat_l
-        stage2_agent_g = alkaline_agent_mass_g(total_alk_meq, inp.preferred_alkaline_agent)
-        alk_correction_ppm = total_alk_meq / inp.v_mash_treat_l * 50.0
-        dose_event = {"kind": "alkaline", "meq_total": total_alk_meq}
-        if inp.preferred_alkaline_agent == "CHALK":
-            events.append(
-                TelemetryEvent(
-                    code="OPERATIONAL_SALT_DISSOLUTION_LIMIT",
-                    category="OPERATIONAL",
-                    severity="WARNING",
-                    message="Low salt solubility: Chalk (CaCO3) has extremely low solubility at room temperature. Ensure chalk is added directly to the mash tun with grains, or substitute Baking Soda/Pickling Lime.",
+    ra_target = residual_alkalinity_for_target_ph(
+        grist_acidity,
+        inp.target_mash_ph,
+        inp.v_mash_treat_l,
+        inp.mash_thickness_l_per_kg,
+    )
+
+    if ra_target is None:
+        if inp.target_mash_ph <= MASH_PH_FLOOR:
+            alk_correction_ppm = -post_salt.get("alk", 0.0)
+            unreachable = {
+                "reason": "below_model_floor",
+                "mitigations": [
+                    f"Choose a target above {MASH_PH_FLOOR:.1f}.",
+                    "Increase grist acidity (acidulated or dark malt).",
+                    "Lower the calcium/magnesium target.",
+                ],
+            }
+        else:
+            unreachable = {
+                "reason": "above_model_ceiling",
+                "mitigations": [
+                    f"Choose a target below {MASH_PH_CEIL:.1f}.",
+                    "Increase alkalinity or use a lower-acidity grist.",
+                ],
+            }
+    else:
+        alk_target = (
+            ra_target
+            + post_salt["ca"] * RA_CA_COEFF
+            + post_salt["mg"] * RA_MG_COEFF
+        )
+        alk_correction_ppm = alk_target - post_salt.get("alk", 0.0)
+        if alk_correction_ppm > 0.0:
+            for _ in range(20):
+                agent_g = alkaline_agent_mass_g(
+                    alk_correction_ppm * inp.v_mash_treat_l / 50.0,
+                    inp.preferred_alkaline_agent,
                 )
+                per_l = agent_g / inp.v_mash_treat_l
+                agent_yields = SALT_COEFFS.get(inp.preferred_alkaline_agent, {})
+                ca_dose = post_salt["ca"] + per_l * agent_yields.get("ca", 0.0)
+                mg_dose = post_salt["mg"] + per_l * agent_yields.get("mg", 0.0)
+                needed = ra_target + ca_dose * RA_CA_COEFF + mg_dose * RA_MG_COEFF
+                next_correction = needed - post_salt.get("alk", 0.0)
+                if abs(next_correction - alk_correction_ppm) <= 1e-9:
+                    alk_correction_ppm = next_correction
+                    break
+                alk_correction_ppm = next_correction
+
+    if alk_correction_ppm < 0.0:
+        total_acid_meq = abs(alk_correction_ppm) * inp.v_mash_treat_l / 50.0
+        mash_acid_ml = acid_volume_ml(total_acid_meq, inp.acid_medium, inp.target_mash_ph)
+        dose_event = {"kind": "acid", "meq_total": total_acid_meq}
+    elif alk_correction_ppm > 0.0:
+        total_alk_meq = alk_correction_ppm * inp.v_mash_treat_l / 50.0
+        stage2_agent_g = alkaline_agent_mass_g(total_alk_meq, inp.preferred_alkaline_agent)
+        dose_event = {"kind": "alkaline", "meq_total": total_alk_meq}
+
+    if (
+        dose_event is not None
+        and dose_event["kind"] == "alkaline"
+        and inp.preferred_alkaline_agent == "CHALK"
+    ):
+        events.append(
+            TelemetryEvent(
+                code="OPERATIONAL_SALT_DISSOLUTION_LIMIT",
+                category="OPERATIONAL",
+                severity="WARNING",
+                message="Low salt solubility: Chalk (CaCO3) has extremely low solubility at room temperature. Ensure chalk is added directly to the mash tun with grains, or substitute Baking Soda/Pickling Lime.",
             )
+        )
 
     # 6. Post-dose ions and corrected mash pH
     post_dose = dict(post_salt)
-    post_dose["alk"] = max(0.0, post_salt.get("alk", 0.0) + alk_correction_ppm)
+    ph_alkalinity = post_salt.get("alk", 0.0) + alk_correction_ppm
+    post_dose["alk"] = max(0.0, ph_alkalinity)
     if stage2_agent_g > 0.0:
         agent_yields = SALT_COEFFS.get(inp.preferred_alkaline_agent, {})
         per_l = stage2_agent_g / inp.v_mash_treat_l
         post_dose["na"] = post_dose.get("na", 0.0) + per_l * agent_yields.get("na", 0.0)
         post_dose["ca"] = post_dose.get("ca", 0.0) + per_l * agent_yields.get("ca", 0.0)
 
-    ra_dose = residual_alkalinity(post_dose["ca"], post_dose["mg"], post_dose.get("alk", 0.0))
+    ra_dose = residual_alkalinity(post_dose["ca"], post_dose["mg"], ph_alkalinity)
     predicted_ph = predict_mash_ph(grist_acidity, ra_dose, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg)
     status = mash_ph_status(predicted_ph)
 
@@ -1123,6 +1189,60 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
                     },
                 )
             )
+
+    if unreachable is not None:
+        reason = unreachable["reason"]
+        if reason == "below_model_floor":
+            message = (
+                f"Mash pH target {inp.target_mash_ph:.2f} is at or below the model floor "
+                f"({MASH_PH_FLOOR:.1f}); the model saturates there. The current correction "
+                f"neutralises all available alkalinity and predicts pH {predicted_ph:.2f}. "
+                f"Mitigations: choose a target above {MASH_PH_FLOOR:.1f}, increase grist "
+                "acidity, or lower the Ca/Mg target."
+            )
+        else:
+            message = (
+                f"Mash pH target {inp.target_mash_ph:.2f} is above the model ceiling "
+                f"({MASH_PH_CEIL:.1f}); the model saturates there. The current vector predicts "
+                f"pH {predicted_ph:.2f} with no correction. Mitigations: choose a target below "
+                f"{MASH_PH_CEIL:.1f}, or increase alkalinity/use a lower-acidity grist."
+            )
+        events.append(
+            TelemetryEvent(
+                code="TARGET_MASH_PH_UNREACHABLE",
+                category="ENZYMATIC",
+                severity="WARNING",
+                message=message,
+                context={
+                    "reason": reason,
+                    "target_ph": inp.target_mash_ph,
+                    "predicted_ph": predicted_ph,
+                    "model_floor": MASH_PH_FLOOR,
+                    "model_ceiling": MASH_PH_CEIL,
+                    "ca_ppm": post_salt["ca"],
+                    "mg_ppm": post_salt["mg"],
+                    "mitigations": unreachable["mitigations"],
+                },
+            )
+        )
+    elif abs(predicted_ph - inp.target_mash_ph) > MASH_PH_TARGET_TOLERANCE:
+        events.append(
+            TelemetryEvent(
+                code="TARGET_MASH_PH_MISSED",
+                category="ENZYMATIC",
+                severity="WARNING",
+                message=(
+                    f"Dose inversion missed the mash pH target (target "
+                    f"{inp.target_mash_ph:.2f}, achieved {predicted_ph:.2f}). This is a solver "
+                    "defect; report the batch inputs."
+                ),
+                context={
+                    "target_ph": inp.target_mash_ph,
+                    "achieved_ph": predicted_ph,
+                    "tolerance": MASH_PH_TARGET_TOLERANCE,
+                },
+            )
+        )
 
     if not (MASH_PH_MODEL_MIN <= predicted_ph <= MASH_PH_MODEL_MAX):
         events.append(

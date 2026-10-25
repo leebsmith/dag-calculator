@@ -5,7 +5,6 @@ from app.core.water import (
     SaltDose,
     SolverValidationError,
     WaterChemistryInput,
-    acid_required_meq_l,
     acid_volume_ml,
     add_ions,
     alkaline_agent_mass_g,
@@ -14,6 +13,7 @@ from app.core.water import (
     mash_ph_status,
     predict_mash_ph,
     residual_alkalinity,
+    residual_alkalinity_for_target_ph,
     resolve_grist,
     solve_salt_dose,
     solve_water_chemistry,
@@ -98,8 +98,24 @@ def test_acid_volume_positive_and_monotonic():
     assert high == pytest.approx(2 * low)
 
 
-def test_acid_required_more_for_higher_start_ph():
-    assert acid_required_meq_l(78.0, 6.2, 5.4) > acid_required_meq_l(78.0, 5.8, 5.4)
+def test_residual_alkalinity_for_target_inverts_the_bounded_model():
+    ra = residual_alkalinity_for_target_ph(
+        grist_acidity_meq=20.0,
+        target_ph=5.4,
+        v_mash_treat_l=15.0,
+        mash_thickness_l_per_kg=3.0,
+    )
+    assert ra is not None
+    assert predict_mash_ph(20.0, ra, 15.0, 3.0) == pytest.approx(5.4, abs=1e-9)
+
+
+def test_residual_alkalinity_for_target_rejects_out_of_band():
+    assert (
+        residual_alkalinity_for_target_ph(20.0, 6.5, 15.0, 3.0) is None
+    )
+    assert (
+        residual_alkalinity_for_target_ph(20.0, 4.0, 15.0, 3.0) is None
+    )
 
 
 def test_alkaline_agent_mass():

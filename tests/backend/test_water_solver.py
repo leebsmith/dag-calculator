@@ -191,3 +191,48 @@ def test_dose_telemetry_reports_the_corrected_predicted_ph():
         assert event["context"]["ph_after"] == pytest.approx(
             resp.prescription.predicted_mash_ph
         )
+
+
+def test_feasible_targets_are_hit_after_dosing():
+    for target in (5.2, 5.35, 5.4, 5.5, 5.6, 5.8):
+        resp = solve_water_request(make_water_request(target_mash_ph=target))
+        assert resp.prescription.predicted_mash_ph == pytest.approx(target, abs=0.01)
+        codes = {event["code"] for event in resp.telemetry}
+        assert "TARGET_MASH_PH_UNREACHABLE" not in codes
+        assert "TARGET_MASH_PH_MISSED" not in codes
+
+    # Excess acid is carried as a signed pH-model alkalinity; the reported ion
+    # vector still floors at zero.
+    resp = solve_water_request(make_water_request(target_mash_ph=5.35))
+    assert resp.prescription.predicted_mash_ph == pytest.approx(5.35, abs=0.01)
+    assert resp.post_dose_mash_ions.alkalinity_as_caco3 == 0.0
+
+
+def test_alkaline_agent_ion_feedback_hits_the_target():
+    resp = solve_water_request(
+        make_water_request(target_mash_ph=5.8, preferred_alkaline_agent="CHALK")
+    )
+    assert resp.prescription.predicted_mash_ph == pytest.approx(5.8, abs=0.01)
+    assert resp.mash_additions.chalk_kg > 0.0
+
+
+def test_targets_outside_the_model_band_are_flagged():
+    low = solve_water_request(make_water_request(target_mash_ph=4.0))
+    low_event = next(
+        event for event in low.telemetry if event["code"] == "TARGET_MASH_PH_UNREACHABLE"
+    )
+    assert low_event["context"]["reason"] == "below_model_floor"
+    assert low_event["context"]["predicted_ph"] == pytest.approx(
+        low.prescription.predicted_mash_ph
+    )
+    assert "Mitigations" in low_event["message"]
+
+    high = solve_water_request(make_water_request(target_mash_ph=6.5))
+    high_event = next(
+        event for event in high.telemetry if event["code"] == "TARGET_MASH_PH_UNREACHABLE"
+    )
+    assert high_event["context"]["reason"] == "above_model_ceiling"
+    assert high_event["context"]["predicted_ph"] == pytest.approx(
+        high.prescription.predicted_mash_ph
+    )
+    assert high_event["context"]["model_ceiling"] == 6.0

@@ -144,8 +144,18 @@ Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
   **bounded buffer-capacity curve** (logistic, floor 4.0, ceiling 6.0) over the
   same acidity index the linear fit used; it matches the old fit in the realistic
   band and saturates instead of extrapolating.
-- Prescribe acid/alkaline to reach `target_mash_ph`; recompute `predicted_mash_ph`
-  from the corrected vector (the reported, corrected outcome).
+- Prescribe acid/alkaline by **inverting the bounded pH model** (target pH →
+  `i26` → residual alkalinity → alkalinity dose), including the alkaline agent's
+  Ca/Na contribution. The reported `predicted_mash_ph` must land on
+  `target_mash_ph` where the target is feasible.
+- Acid surplus beyond zero alkalinity is carried as a **signed pH-model
+  alkalinity**; the reported `post_dose_mash_ions.alkalinity_as_caco3` still
+  floors at 0. This lets the reported pH model reach low targets that the old
+  alkalinity-clamped vector could not.
+- The target is unreachable only when it is at/below the model floor (4.0) or
+  at/above the ceiling (6.0). Emit `TARGET_MASH_PH_UNREACHABLE` with the target,
+  predicted pH, model band, Ca/Mg, and a `mitigations` list. A failed inversion
+  emits `TARGET_MASH_PH_MISSED` rather than silently missing the target.
 - `mash_ph_status` derives from the corrected pH.
 - `GUARDRAIL_PH_MODEL_OUT_OF_RANGE` is now a defensive net only: the model stays
   inside 3.5-7.5 by construction, so the flag should not fire.
@@ -162,6 +172,10 @@ Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
   `ENZYMATIC_ALKALINE_DOSE_PRESCRIBED`) are emitted after the corrected pH is
   computed and carry `ph_after`; the message names the model-predicted pH after
   dosing, not just the target.
+- `TARGET_MASH_PH_UNREACHABLE` is a WARNING with structured context
+  (`reason`, `target_ph`, `predicted_ph`, `model_floor`, `model_ceiling`,
+  `ca_ppm`, `mg_ppm`, `mitigations`). The message names the failure condition and
+  the concrete mitigation options.
 
 ## Metrics
 
