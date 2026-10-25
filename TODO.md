@@ -2,19 +2,15 @@
 
 ## Next (in order)
 
-1. **Batch solver correctness** — absorption, transfer loss, physical floor, and capacity
-   findings (`plans/batch-solver-correctness.md`, decisions D1–D25). Build order is in the
-   plan; the sequencing trap is that D15 (absorption) and D12 (transfer loss) must share one
-   fixture re-emit, and the ceiling/tun/HLT/`blocking` changes share one `schema_version` bump.
-2. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
+1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
    backend boundary `solver.hops` (`docs/whirlpool-hopping-model.md`); the
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-3. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`)
+2. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`)
    + staged brew-day checklist. Precursor landed: the freeze bundle
    (`plans/report-bundle.md` R1–R4); next is the Typst section set and renderer.
-4. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -85,6 +81,9 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
+* Batch solver correctness (absorption, transfer loss, physical floor, capacity
+  findings, feasible ABV, findings enumeration, freeze gate) —
+  `plans/batch-solver-correctness.md`
 * Mash ramp time (`mash.ramp_time_min`, equipment ramp rate) + minimum-LGR warning
 * Hop bitterness boundary (`solver.hops`, Tinseth + Arrhenius) with offline stub
 * On-blur numeric input formatting (raw draft text, live solve)

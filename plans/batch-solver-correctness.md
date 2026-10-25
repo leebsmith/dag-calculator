@@ -3,10 +3,16 @@ title: Batch Solver Correctness — absorption, capacity, thickness and findings
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [warnings, off-graph-identity]
-status: proposed
+status: shipped
 ---
 
 # Batch Solver Correctness
+
+> **Shipped.** Steps 0–6 landed as one commit per step; `make verify-full` is
+> green. Decisions D1–D26 are in force. The only deliberate deviation from the
+> step contracts is that D22/D23 need the kettle and tun limits inside the
+> solver's diagnostic/feasibility pass, so those two limits are wire inputs;
+> they never constrain the solve (D14/D16 still hold).
 
 An audit of the batch-sparge path against the vision in [`docs/vision.md`](../docs/vision.md):
 the solver must invert targets into sizes deterministically, declare infeasibility, and never

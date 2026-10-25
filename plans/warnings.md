@@ -3,7 +3,7 @@ title: Warnings — Post-Solve Surfacing & LIFO Tracking
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [trace-malts]
-status: proposed
+status: partially shipped
 ---
 
 # Warnings — Post-Solve Surfacing & LIFO Tracking
