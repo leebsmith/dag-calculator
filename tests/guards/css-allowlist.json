@@ -1,7 +1,8 @@
 {
   "$comment": "CSS drift allowlist. One entry per duplicate declaration group or unreferenced class. Every entry needs a reason; add a phase when cleanup is planned. Remove the entry in the commit that resolves it. The guards fail on stale entries.",
   "safelistPrefixes": [
-    "sev-"
+    "sev-",
+    "finding-"
   ],
   "duplicateGroups": [
     {
@@ -47,10 +48,11 @@
       "context": "",
       "declarations": "color: var(--sys-color-danger-text)",
       "selectors": [
+        ".finding-error .finding-label",
         ".sev-error",
         ".text-danger"
       ],
-      "reason": "Keep the text-danger utility and the dynamic sev-* telemetry exception."
+      "reason": "Keep the text-danger utility, the dynamic sev-* telemetry exception, and the finding error label."
     },
     {
       "context": "",
@@ -74,10 +76,11 @@
       "context": "",
       "declarations": "color: var(--sys-color-warning-text)",
       "selectors": [
+        ".finding-warning .finding-label",
         ".sev-warning",
         ".text-warning"
       ],
-      "reason": "Keep the text-warning utility and the dynamic sev-* telemetry exception."
+      "reason": "Keep the text-warning utility, the dynamic sev-* telemetry exception, and the finding warning label."
     },
     {
       "context": "",
@@ -151,6 +154,15 @@
         ".sev-note"
       ],
       "reason": "The muted utility and the semantic severity note converge."
+    },
+    {
+      "context": "",
+      "declarations": "color: var(--sys-text-secondary)",
+      "selectors": [
+        ".finding-message",
+        ".text-secondary"
+      ],
+      "reason": "Finding messages share the secondary-text colour utility."
     },
     {
       "context": "",

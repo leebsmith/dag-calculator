@@ -1,0 +1,16 @@
+<div class="findings" x-show="(findingItems || []).length > 0">
+  <template x-for="finding in (findingItems || [])" :key="finding.id">
+    <div class="finding" :class="'finding-' + finding.severity">
+      <span class="finding-label" x-text="finding.label"></span>
+      <span class="finding-message" x-text="finding.message"></span>
+      <template x-if="finding.action && pinFindingAvailable">
+        <button
+          type="button"
+          class="btn-link text-xs finding-action"
+          @click="runFindingAction(finding)"
+          x-text="finding.action.label"
+        ></button>
+      </template>
+    </div>
+  </template>
+</div>

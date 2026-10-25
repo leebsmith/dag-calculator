@@ -72,6 +72,50 @@ test("offline (default): boundaries are stubbed and reported ok", async () => {
   assert.equal(app.boundaryPending, false);
 });
 
+test("findings enumerate a violated relation with unit-formatted operands", async () => {
+  const app = makeApp();
+  await app.boot();
+
+  app.setRoot("batch.hlt_starting_volume_l", 50);
+  app.compute();
+
+  const finding = app.findingsById.hlt_not_overfilled;
+  assert.ok(finding);
+  assert.equal(finding.severity, "error");
+  assert.match(finding.message, /50\.0 L/);
+  assert.match(finding.message, /30\.0 L/);
+  assert.ok(app.findings.some((entry) => entry.id === "hlt_not_overfilled"));
+});
+
+test("the pin action is offered only with an implied thickness", async () => {
+  const app = makeApp();
+  await app.boot();
+  assert.equal(app.pinFindingAvailable, false);
+
+  app.setRoot("batch.topology", "runoff_ratio");
+  app.compute();
+  assert.equal(app.pinFindingAvailable, true);
+
+  app.setRoot("batch.topology", "r_l_to_g");
+  app.compute();
+  assert.equal(app.pinFindingAvailable, false);
+});
+
+test("pinMashThickness writes max(default, rig floor) only in runoff", async () => {
+  const app = makeApp();
+  await app.boot();
+
+  app.setRoot("batch.topology", "runoff_ratio");
+  app.compute();
+  app.pinMashThickness();
+  assert.equal(app.engine.get("batch.mash_thickness_l_per_kg"), 2.6079);
+
+  app.setRoot("batch.topology", "r_l_to_g");
+  app.setRoot("batch.mash_thickness_l_per_kg", 3.0);
+  app.pinMashThickness();
+  assert.equal(app.engine.get("batch.mash_thickness_l_per_kg"), 3.0);
+});
+
 test("offline: a missing yeast leaves the batch unresolved", async () => {
   const app = createStepApp();
   await app.boot();

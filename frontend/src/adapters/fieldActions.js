@@ -148,6 +148,29 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       if (typeof value === "number") this.setRoot(nodeId, value);
     },
 
+    // One-shot pin for the thickness-ceiling warning: only offered while the
+    // thickness is implied (runoff topology), and it writes the rig default, not
+    // the ceiling. It promises nothing about capacity.
+    pinMashThickness() {
+      const engine = session.getEngine();
+      if (engine.get("batch.topology") !== "runoff_ratio") return;
+      const floor = engine.resolve("equipment.min_lgr_l_per_kg");
+      const fallback = artifact.constants.default_mash_thickness_l_per_kg?.value;
+      const target = Math.max(
+        typeof fallback === "number" ? fallback : 0,
+        typeof floor === "number" ? floor : 0
+      );
+      if (target <= 0) return;
+      this.setRoot(N.mashThickness, target);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    runFindingAction(finding) {
+      if (!finding?.action) return;
+      this.runAction(finding.action);
+    },
+
     // Push the residual (non-declarable) roots that a selection still has to
     // supply. Everything the artifact can express as a `default` is pulled, not
     // pushed, so this list is deliberately tiny (see views/seedDerivations.js).
@@ -267,4 +290,4 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
   });
 }
 
-export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];
+export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

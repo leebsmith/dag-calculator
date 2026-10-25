@@ -8,6 +8,12 @@ status: proposed
 
 # Warnings — Post-Solve Surfacing & LIFO Tracking
 
+> **Status (batch-solver-correctness batch).** Relation findings now enumerate
+> through `views/registry/findings.js` with severity `warning` / `error` derived
+> from the artifact's `blocking` flag; the footer count remains as a summary
+> badge, and a violated blocking finding refuses a freeze client- and
+> server-side. The LIFO style/trace queue (W.1–W.5) remains proposed.
+
 > **See also:** [`batch-solver-correctness.md`](batch-solver-correctness.md) (D13, D16, D17, D22).
 > That plan extends this one: severity becomes artifact-declared (`blocking` on relations),
 > capacity overruns become `error` findings that do **not** block the solve but **do** block
@@ -38,8 +44,9 @@ style-conformance readouts (gravity / ABV / SRM / IBU ranges).
 
 ## Locked decisions
 
-1. **Two tiers.** HARD violations (existing) vs. SOFT warnings (new). Separate
-   channels, shared footer surface.
+1. **Two tiers.** `error` = unbrewable/blocking (a violated relation whose
+   artifact `blocking` flag is true); `warning` = quality/policy. Separate
+   channels, shared footer surface. Do not introduce a third vocabulary.
 2. **Post-solve only.** Warnings derive from the valuation, never from
    authoring inputs. No pre-solve guessing.
 3. **LIFO queue.** Newest-first, bounded (N visible + "+k more"), deduped by a

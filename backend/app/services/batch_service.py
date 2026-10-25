@@ -7,10 +7,25 @@ from typing import Annotated, Any
 from fastapi import Depends, HTTPException
 from pydantic import ValidationError
 
+from app.artifact import load_artifact
 from app.repositories.batch_repo import BatchRepoDep, BatchRepository
 from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
 from app.schemas.report_bundle import ReportBundle
 from app.services.report_bundle_service import build_report_bundle
+
+
+def _blocking_finding(payload: FreezePayload) -> dict[str, Any] | None:
+    """The first violated relation that the artifact declares blocking."""
+    artifact = load_artifact()
+    blocking = {
+        relation["id"]
+        for relation in artifact.get("relations", [])
+        if relation.get("blocking")
+    }
+    for state in payload.report_inputs.validation.relations:
+        if state.get("id") in blocking and state.get("holds") is False:
+            return state
+    return None
 
 
 class BatchConflictError(Exception):
@@ -47,6 +62,15 @@ class BatchService:
         return BatchRecord(**record)
 
     def freeze_batch(self, uid: str, batch_id: str, payload: FreezePayload) -> BatchRecord:
+        blocking = _blocking_finding(payload)
+        if blocking is not None:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    f"Cannot freeze: blocking finding '{blocking['id']}' "
+                    "does not hold"
+                ),
+            )
         try:
             record, reason = self._repo.freeze(
                 uid,

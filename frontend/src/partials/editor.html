@@ -173,5 +173,8 @@
                   ></span>
                   <span x-text="'SAI ' + styleSai"></span>
                 </span>
+                <div class="footer-findings" x-data="{ get findingItems() { return findings; } }">
+                  <load src="src/partials/findings.html" />
+                </div>
               </footer>
             </div>

@@ -157,6 +157,52 @@ def test_foreign_and_missing_are_404():
     assert exc.value.status_code == 404
 
 
+def test_freeze_refuses_a_violated_blocking_finding_from_the_artifact():
+    svc = BatchService(FakeRepo())
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload())
+    payload = freeze_payload(
+        report_inputs=ReportInputs(
+            validation=ValidationBundle(
+                relations=[
+                    {
+                        "id": "mash_tun_not_overfilled",
+                        "holds": False,
+                        "blocking": False,
+                    }
+                ]
+            )
+        )
+    )
+
+    with pytest.raises(HTTPException) as exc:
+        svc.freeze_batch("u1", rec.id, payload)
+
+    assert exc.value.status_code == 409
+    assert "mash_tun_not_overfilled" in exc.value.detail
+    assert svc.get_batch("u1", rec.id).status == "draft"
+
+
+def test_freeze_allows_a_violated_non_blocking_finding():
+    svc = BatchService(FakeRepo())
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload())
+    payload = freeze_payload(
+        report_inputs=ReportInputs(
+            validation=ValidationBundle(
+                relations=[
+                    {
+                        "id": "mash_thickness_below_ceiling",
+                        "holds": False,
+                        "blocking": False,
+                    }
+                ]
+            )
+        )
+    )
+
+    frozen = svc.freeze_batch("u1", rec.id, payload)
+    assert frozen.status == "frozen"
+
+
 def test_freeze_creates_immutable_linked_record():
     svc = BatchService(FakeRepo())
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="Saison", roots={"mash.grain_temp_c": 20}))

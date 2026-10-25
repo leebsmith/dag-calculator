@@ -4,3 +4,4 @@
 
 export { projectFields, resolveCollectionColumns, displayValue } from "./producer/projection.js";
 export { valuate, nonlinearFns, produce } from "./producer/valuation.js";
+export { createFindingFormatter } from "./producer/finding.js";

@@ -57,7 +57,7 @@ function fieldSpec(artifact, ref) {
   return null;
 }
 
-function dimensionOf(artifact, path) {
+export function dimensionOf(artifact, path) {
   const ref = resolveReference(artifact, path);
   if (!ref) return null;
   if (ref.suffix.length === 0 && ref.kind === "node") {

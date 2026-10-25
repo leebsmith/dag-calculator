@@ -89,6 +89,8 @@ function fakeApp() {
   return {
     loaded: null,
     boundaryPending: false,
+    boundaryError: null,
+    findings: [],
     draftState: () => ({
       identity: DEFAULT_IDENTITY,
       roots: { "mash.grain_temp_c": 20 },
@@ -357,6 +359,50 @@ test("freezeActive refuses while a boundary solve is pending", async () => {
 
   await assert.rejects(() => persistence.freezeActive(), /boundary solve is pending/);
   assert.equal(client.calls.filter((c) => c.op === "freeze").length, 0);
+});
+
+test("freezeActive refuses a blocking finding and cites it", async () => {
+  const { client, app } = setup();
+  await persistence.createUnsavedDraft();
+  await persistence.flushSave();
+  app.findings = [
+    {
+      id: "mash_tun_not_overfilled",
+      severity: "error",
+      label: "Mash tun capacity",
+      message: "Mash tun peak volume 44.0 L exceeds the tun capacity 40.0 L.",
+    },
+  ];
+
+  await assert.rejects(() => persistence.freezeActive(), /Mash tun capacity/);
+  assert.equal(client.calls.filter((c) => c.op === "freeze").length, 0);
+});
+
+test("freezeActive refuses after a boundary failure", async () => {
+  const { client, app } = setup();
+  await persistence.createUnsavedDraft();
+  await persistence.flushSave();
+  app.boundaryError = { code: "BRACKET_NO_SIGN_CHANGE", message: "no root" };
+
+  await assert.rejects(() => persistence.freezeActive(), /boundary solve failed/);
+  assert.equal(client.calls.filter((c) => c.op === "freeze").length, 0);
+});
+
+test("freezeActive allows a warning-only finding", async () => {
+  const { client, app } = setup();
+  await persistence.createUnsavedDraft();
+  await persistence.flushSave();
+  app.findings = [
+    {
+      id: "mash_thickness_below_ceiling",
+      severity: "warning",
+      label: "Mash thickness ceiling",
+      message: "Mash thickness 5.0 L/kg exceeds the process ceiling 4.17 L/kg.",
+    },
+  ];
+
+  await persistence.freezeActive();
+  assert.equal(client.calls.filter((c) => c.op === "freeze").length, 1);
 });
 
 test("reportBundleForActive previews a draft and reads a frozen bundle", async () => {

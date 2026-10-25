@@ -216,6 +216,15 @@ export async function freezeActive() {
   if (app.boundaryPending) {
     throw new Error("Cannot freeze while a boundary solve is pending");
   }
+  if (app.boundaryError) {
+    const detail =
+      app.boundaryError.message ?? app.boundaryError.code ?? String(app.boundaryError);
+    throw new Error(`Cannot freeze: the boundary solve failed (${detail})`);
+  }
+  const blocking = (app.findings ?? []).find((finding) => finding.severity === "error");
+  if (blocking) {
+    throw new Error(`Cannot freeze: ${blocking.label} — ${blocking.message}`);
+  }
   await client.freezeBatch(active.id, {
     ...app.freezePayload(),
     report_inputs: app.reportInputs(),

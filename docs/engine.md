@@ -159,7 +159,7 @@ createCalculator(artifact, { roots, collections, selections, references, … })
 engine.get(id)            // node value (memoized)
 engine.resolve(path)      // dotted-path value
 engine.call(fnId, args)   // invoke a function
-engine.relationStates()   // [{ id, holds }]
+engine.relationStates()   // [{ id, holds, blocking }]
 engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes; holds:null = unresolved)
 engine.fieldDomainStates()      // [{ selectionNodeId, field, holds, … }]
 engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
@@ -170,6 +170,12 @@ engine.setCollection(id, rows)
 
 engine.topoOrder  adjacency  dependents
 ```
+
+> `relationStates()` carries the artifact's `blocking` flag. The view maps it to
+> its `warning` / `error` severity and composes the message in
+> `views/registry/findings.js`; the engine never owns wording. A violated
+> blocking relation refuses a freeze (client and server); a violated
+> non-blocking relation is a quality/policy warning.
 
 > For a catalog of everything resolvable from a single node id (by accessor),
 > see `docs/dag-artifacts/node-reference.md`.

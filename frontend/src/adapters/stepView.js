@@ -1,10 +1,11 @@
 // Step view composition: evaluates the producer for every step, indexes
 // violations onto their owning slices, and refreshes the card readouts.
 
-import { produce } from "../views/producer.js";
+import { createFindingFormatter, produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
 import { reportError } from "../observability.js";
-import { findingFor } from "../views/registry/findings.js";
+import { dimensionOf } from "../views/registry/catalog.js";
+import { findingFor, findingOperands } from "../views/registry/findings.js";
 import { refreshYeastCard } from "./cards/yeast.js";
 import { refreshStyleCard } from "./cards/style.js";
 import { refreshHopCard } from "./cards/hops.js";
@@ -35,6 +36,42 @@ export function createStepView({
       reportError("stepView.safe", err);
       return [];
     }
+  }
+
+  function readOperand(engine, path) {
+    let value;
+    try {
+      value = engine.resolve(path);
+    } catch (err) {
+      reportError("stepView.findingOperand", err);
+      value = undefined;
+    }
+    return { value, dimension: dimensionOf(artifact, path) };
+  }
+
+  function readConstant(name) {
+    const spec = artifact.constants?.[name];
+    return { value: spec?.value, dimension: spec?.dimension ?? null };
+  }
+
+  function readConstant(name) {
+    const spec = artifact.constants?.[name];
+    return { value: spec?.value, dimension: spec?.dimension ?? null };
+  }
+
+  function computeFindings(engine, relations) {
+    const formatOperand = createFindingFormatter(artifact, engine, ui);
+    const read = (path) => readOperand(engine, path);
+    return (relations ?? [])
+      .filter((relation) => !relation.holds)
+      .map((relation) =>
+        findingFor(
+          relation,
+          findingOperands(relation.id, read, readConstant),
+          formatOperand
+        )
+      )
+      .filter(Boolean);
   }
 
   function compute(app) {
@@ -69,9 +106,19 @@ export function createStepView({
     );
     app.fieldsById = indexFields(all);
     app.relations = safe(() => engine.relationStates());
-    app.findings = app.relations
-      .map((relation) => findingFor(relation))
-      .filter(Boolean);
+    app.findings = computeFindings(engine, app.relations);
+    app.findingsById = Object.fromEntries(
+      app.findings.map((finding) => [finding.id, finding])
+    );
+    let topology;
+    try {
+      topology = engine.get("batch.topology");
+    } catch (err) {
+      reportError("stepView.findingTopology", err);
+      topology = undefined;
+    }
+    app.pinFindingAvailable =
+      app.boundaryStatuses?.["solver.batch"] === "ok" && topology === "runoff_ratio";
     app.domains = safe(() => engine.domainStates());
     app.fieldDomains = fieldDomains;
     app.collectionDomains = collectionDomains;

@@ -56,6 +56,51 @@ export function actionFor(relation) {
   return RELATION_FINDINGS[relation?.id]?.action ?? null;
 }
 
+// Operand paths per relation. The dimension comes from the artifact via the
+// caller's `read`; nothing here declares a unit.
+export function findingOperands(id, read, readConstant = () => ({ value: undefined, dimension: null })) {
+  switch (id) {
+    case "hlt_not_overfilled":
+      return {
+        lhs: read("batch.hlt_starting_volume_l"),
+        rhs: read("equipment.max_hlt_volume_l"),
+      };
+    case "hlt_above_coil_floor":
+      return {
+        lhs: read("batch.hlt_starting_volume_l"),
+        rhs: read("equipment.hlt_coil_floor_l"),
+      };
+    case "hlt_demand_not_overfilled":
+      return {
+        lhs: read("solver.batch.hlt.v_hlt_top_up"),
+        rhs: read("equipment.max_hlt_volume_l"),
+      };
+    case "kettle_not_overfilled":
+      return {
+        lhs: read("solver.batch.v_pre_boil"),
+        rhs: read("equipment.max_kettle_volume_l"),
+      };
+    case "mash_tun_not_overfilled": {
+      const mash = read("mash.mash_phase_volume_l");
+      const sparge = read("mash.sparge_phase_volume_l");
+      const peak = (mash.value ?? -Infinity) >= (sparge.value ?? -Infinity) ? mash : sparge;
+      return { lhs: peak, rhs: read("equipment.max_mash_tun_volume_l") };
+    }
+    case "mash_thickness_above_equipment_floor":
+      return {
+        thickness: read("solver.batch.mash_thickness_l_per_kg"),
+        floor: read("equipment.min_lgr_l_per_kg"),
+      };
+    case "mash_thickness_below_ceiling":
+      return {
+        thickness: read("solver.batch.mash_thickness_l_per_kg"),
+        ceiling: readConstant("max_mash_thickness_l_per_kg"),
+      };
+    default:
+      return {};
+  }
+}
+
 // `operands` and `format` are optional so the metadata (id, label, severity,
 // action) can be enumerated before a boundary solve produces values. Step 6
 // supplies both to render the message.

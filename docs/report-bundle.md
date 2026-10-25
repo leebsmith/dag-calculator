@@ -176,6 +176,9 @@ Telemetry events (`telemetry.<boundary>.telemetry[]`) carry
 - The bundle schema recomputes `content_hash` and rejects a mismatch.
 - A bundle cannot be recomputed under a newer artifact. That is a new batch
   (fork + re-freeze) by design.
+- A batch cannot be frozen while any blocking relation finding stands, so a
+  frozen bundle never contains one. Frozen bundles are **not** retro-validated;
+  the archive is a record of feasible batches.
 - Preview bundles carry the same hashes but are not stored and not renderable as
   a fact.
 

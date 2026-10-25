@@ -12,6 +12,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/chooser.html",
   "./src/partials/batch-setup.html",
   "./src/partials/editor.html",
+  "./src/partials/findings.html",
 ];
 
 // App-level files that may declare <load src>: index.html plus the allowlisted
