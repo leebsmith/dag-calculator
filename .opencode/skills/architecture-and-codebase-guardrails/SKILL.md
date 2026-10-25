@@ -106,6 +106,19 @@ distinction with explicit allowlists.
 - No unsafe URLs: external links must pass through `fmt.safeHref(url)` — only
   `http:`/`https:` is allowed.
 
+**Numeric input contract (`type="number"`):**
+
+- Every editable numeric input commits on `@change` (format/clamp on blur).
+- If it also solves live via `@input`, the handler must be one of the buffered
+  adapters — `editNumberInput`, `editCellInput`, `editDraftCellInput`,
+  `editWaterNumber`, `editWaterTargetInput`, or `librarySetField` — and `:value`
+  must go through `inputDraft(...)` (or `libraryFieldDisplay`). The raw text lives
+  in `inputDrafts` (`frontend/src/adapters/fieldActions.js`); clearing it on blur
+  restores the formatted value.
+- Never put `toFixed`, `formatWithDecimals`, or `Math.*` in a numeric input tag
+  with `@input`; formatting readouts is fine, formatting mid-keystroke is not.
+- Guard: `tests/guards/number-input-contract.test.js`.
+
 **Forbidden in JavaScript adapters:**
 
 - Do not re-implement formatting that already exists in the `utils.js` barrel.
