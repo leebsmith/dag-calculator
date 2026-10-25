@@ -11,9 +11,9 @@ from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSpargeTopology,
     GristBillRow,
-    _canonicalize,
-    _js_float_to_string,
 )
+from app.schemas.canonical import canonicalize as _canonicalize
+from app.schemas.canonical import js_float_to_string as _js_float_to_string
 
 FIXTURE = json.loads(
     (

@@ -80,6 +80,7 @@ function fakeClient() {
 function fakeApp() {
   return {
     loaded: null,
+    boundaryPending: false,
     draftState: () => ({
       identity: DEFAULT_IDENTITY,
       roots: { "mash.grain_temp_c": 20 },
@@ -91,6 +92,11 @@ function fakeApp() {
       this.loaded = state;
     },
     freezePayload: () => ({ valuation: {}, provenance: {} }),
+    reportInputs: () => ({
+      validation: { relations: [], domains: [], field_domains: [], collection_domains: [] },
+      telemetry: {},
+    }),
+    reportCatalog: () => ({ dimensions: {}, nodes: {} }),
   };
 }
 
@@ -320,11 +326,29 @@ test("freezeActive posts the app's freeze payload, and only for drafts", async (
 
   const freeze = client.calls.find((c) => c.op === "freeze");
   assert.ok(freeze);
-  assert.deepEqual(freeze.payload, { valuation: {}, provenance: {} });
+  assert.deepEqual(freeze.payload, {
+    valuation: {},
+    provenance: {},
+    report_inputs: {
+      validation: { relations: [], domains: [], field_domains: [], collection_domains: [] },
+      telemetry: {},
+    },
+    catalog: { dimensions: {}, nodes: {} },
+  });
 
   persistence.clearActive();
   await persistence.freezeActive();
   assert.equal(client.calls.filter((c) => c.op === "freeze").length, 1);
+});
+
+test("freezeActive refuses while a boundary solve is pending", async () => {
+  const { client, app } = setup();
+  await persistence.createUnsavedDraft();
+  await persistence.flushSave();
+  app.boundaryPending = true;
+
+  await assert.rejects(() => persistence.freezeActive(), /boundary solve is pending/);
+  assert.equal(client.calls.filter((c) => c.op === "freeze").length, 0);
 });
 
 test("list, restore, and deletePermanent delegate to the client", async () => {

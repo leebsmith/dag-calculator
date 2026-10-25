@@ -191,7 +191,14 @@ export async function fork(frozenId) {
 
 export async function freezeActive() {
   if (!active || active.status !== "draft") return;
-  await client.freezeBatch(active.id, app.freezePayload());
+  if (app.boundaryPending) {
+    throw new Error("Cannot freeze while a boundary solve is pending");
+  }
+  await client.freezeBatch(active.id, {
+    ...app.freezePayload(),
+    report_inputs: app.reportInputs(),
+    catalog: app.reportCatalog(),
+  });
 }
 
 export function queueSave({ delay = 400 } = {}) {

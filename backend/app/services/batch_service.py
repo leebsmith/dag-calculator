@@ -5,9 +5,11 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import Depends, HTTPException
+from pydantic import ValidationError
 
 from app.repositories.batch_repo import BatchRepoDep, BatchRepository
 from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
+from app.services.report_bundle_service import build_report_bundle
 
 
 class BatchConflictError(Exception):
@@ -44,7 +46,19 @@ class BatchService:
         return BatchRecord(**record)
 
     def freeze_batch(self, uid: str, batch_id: str, payload: FreezePayload) -> BatchRecord:
-        record, reason = self._repo.freeze(uid, batch_id, payload.model_dump())
+        try:
+            record, reason = self._repo.freeze(
+                uid,
+                batch_id,
+                payload.model_dump(),
+                bundle_factory=lambda frozen_id, frozen: build_report_bundle(
+                    frozen_id=frozen_id, record=frozen, payload=payload
+                ),
+            )
+        except ValidationError as exc:
+            raise HTTPException(
+                status_code=422, detail=f"Report bundle rejected: {exc}"
+            ) from exc
         if reason == "missing":
             raise HTTPException(status_code=404, detail="Batch not found")
         if reason == "frozen":

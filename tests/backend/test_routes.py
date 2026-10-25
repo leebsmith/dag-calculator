@@ -186,6 +186,56 @@ def test_freeze_returns_201_and_links_the_parent(client):
     assert frozen["valuation"] == {"batch.target_abv": 5.5}
 
 
+def test_freeze_accepts_report_inputs_and_catalog(client, service):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    payload = {
+        "valuation": {"batch.target_abv": 5.5},
+        "report_inputs": {
+            "validation": {"relations": [{"id": "r", "holds": True}]},
+            "telemetry": {
+                "solver.batch": {
+                    "binding": "batch_sparge_solver",
+                    "fingerprint": "sha256:fp",
+                    "telemetry": [],
+                    "warnings": [],
+                    "notes": [],
+                }
+            },
+        },
+        "catalog": {
+            "dimensions": {},
+            "nodes": {
+                "batch.target_abv": {
+                    "label": "Target ABV",
+                    "dimension": "abv",
+                    "unit": "pct",
+                    "decimals": 1,
+                }
+            },
+        },
+    }
+
+    response = client.post(f"/batches/{created['id']}/freeze", json=payload)
+
+    assert response.status_code == 201
+    frozen = response.json()
+    bundle = service._repo.bundles[frozen["id"]]
+    assert bundle["catalog"]["nodes"]["batch.target_abv"]["label"] == "Target ABV"
+    assert bundle["telemetry"]["solver.batch"]["binding"] == "batch_sparge_solver"
+    assert bundle["validation"]["relations"][0]["id"] == "r"
+
+
+def test_freeze_rejects_a_bundle_with_undeclared_nodes(client):
+    created = client.put("/batches/b1", json=draft_body()).json()
+
+    response = client.post(
+        f"/batches/{created['id']}/freeze", json={"valuation": {"nope": 1}}
+    )
+
+    assert response.status_code == 422
+    assert "undeclared nodes" in response.json()["detail"]
+
+
 def test_freezing_a_frozen_batch_is_409(client, service):
     created = client.put("/batches/b1", json=draft_body()).json()
     frozen = client.post(f"/batches/{created['id']}/freeze", json={}).json()

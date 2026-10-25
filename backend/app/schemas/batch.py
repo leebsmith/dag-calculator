@@ -7,6 +7,8 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, StringConstraints, model_validator
 
+from app.schemas.report_bundle import CatalogContent, ReportInputs
+
 logger = logging.getLogger("app.schemas.batch")
 
 # Log-only draft-size ceiling (C2): warn above this so we can review real P99
@@ -80,6 +82,10 @@ class FreezePayload(BaseModel):
     provenance: dict[str, dict[str, Any]] = Field(default_factory=dict)
     conformance: dict[str, Any] | None = None
     schema_version: int = 3
+    # Bundle inputs captured in the browser. Optional so an older client still
+    # freezes; the bundle then carries empty validation/telemetry/catalog.
+    report_inputs: ReportInputs | None = None
+    catalog: CatalogContent | None = None
 
 
 class BatchRecord(BaseModel):

@@ -16,6 +16,7 @@ from firebase_admin import firestore
 from app.database.firestore import get_db
 
 COLLECTION = "batches"
+REPORT_BUNDLES = "report_bundles"
 
 # List bounding + instrumentation (B5 step 1): order server-side, cap the read,
 # and warn as the collection approaches the cap so we can move to paging before
@@ -34,6 +35,9 @@ class BatchRepository:
 
     def _collection(self, uid: str):
         return self._db.collection("users").document(uid).collection(COLLECTION)
+
+    def _bundles(self, uid: str):
+        return self._db.collection("users").document(uid).collection(REPORT_BUNDLES)
 
     def list_batches(self, uid: str, limit: int = LIST_LIMIT) -> list[dict[str, Any]]:
         docs = (
@@ -153,7 +157,11 @@ class BatchRepository:
         return True
 
     def freeze(
-        self, uid: str, batch_id: str, data: dict[str, Any]
+        self,
+        uid: str,
+        batch_id: str,
+        data: dict[str, Any],
+        bundle_factory=None,
     ) -> tuple[dict[str, Any] | None, str | None]:
         """Atomically snapshot a draft into an immutable frozen batch.
 
@@ -198,7 +206,10 @@ class BatchRepository:
                 "updated_at": now,
                 "frozen_at": now,
             }
+            bundle = bundle_factory(new_ref.id, record) if bundle_factory else None
             transaction.set(new_ref, record)
+            if bundle is not None:
+                transaction.set(self._bundles(uid).document(new_ref.id), bundle)
             return self._record(uid, new_ref.id, record), None
 
         return _freeze(self._db.transaction())

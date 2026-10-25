@@ -7,6 +7,15 @@ from conftest import FakeBatchRepo as FakeRepo
 from fastapi import HTTPException
 
 from app.schemas.batch import DraftPayload, FreezePayload
+from app.schemas.report_bundle import (
+    BoundaryTelemetry,
+    CatalogContent,
+    DimensionSpec,
+    NodePresentation,
+    ReportBundle,
+    ReportInputs,
+    ValidationBundle,
+)
 from app.services.batch_service import BatchConflictError, BatchService
 
 
@@ -154,13 +163,13 @@ def test_freeze_creates_immutable_linked_record():
         "u1",
         rec.id,
         FreezePayload(
-            valuation={"mash.grain_temp_c": 20.0, "solver.batch.sg_post_boil": 1.055},
+            valuation={"mash.grain_temp_c": 20.0, "solver.batch": {"sg_post_boil": 1.055}},
             provenance={"batch.yeast": {"source_template_id": "y1", "source_revision": "abc"}},
         ),
     )
     assert frozen.status == "frozen"
     assert frozen.parent_batch_id == rec.id
-    assert frozen.valuation["solver.batch.sg_post_boil"] == 1.055
+    assert frozen.valuation["solver.batch"]["sg_post_boil"] == 1.055
     assert frozen.provenance["batch.yeast"]["source_template_id"] == "y1"
 
     # the source draft is untouched and still editable
@@ -180,7 +189,9 @@ def test_cannot_freeze_twice():
 def test_fork_from_frozen_carries_state_and_lineage():
     svc = BatchService(FakeRepo())
     draft = svc.upsert_draft("u1", "batch-a", DraftPayload(name="Saison", roots={"mash.grain_temp_c": 20}))
-    frozen = svc.freeze_batch("u1", draft.id, FreezePayload(valuation={"x": 1}))
+    frozen = svc.freeze_batch(
+        "u1", draft.id, FreezePayload(valuation={"batch.target_abv": 5.5})
+    )
 
     # a frozen batch keeps the editable state for lossless forking
     assert frozen.roots == {"mash.grain_temp_c": 20}
@@ -197,3 +208,75 @@ def test_fork_from_frozen_carries_state_and_lineage():
     )
     assert fork.parent_batch_id == frozen.id
     assert fork.roots == {"mash.grain_temp_c": 20}
+
+
+def test_freeze_emits_a_valid_report_bundle():
+    repo = FakeRepo()
+    svc = BatchService(repo)
+    rec = svc.upsert_draft(
+        "u1",
+        "batch-a",
+        DraftPayload(name="Saison", roots={"mash.grain_temp_c": 20}, schema_version=4),
+    )
+
+    frozen = svc.freeze_batch(
+        "u1",
+        rec.id,
+        FreezePayload(
+            valuation={"mash.grain_temp_c": 20.0},
+            provenance={"batch.yeast": {"source_template_id": "y1"}},
+            report_inputs=ReportInputs(
+                validation=ValidationBundle(
+                    relations=[{"id": "hlt_not_overfilled", "holds": True}]
+                ),
+                telemetry={
+                    "solver.batch": BoundaryTelemetry(
+                        binding="batch_sparge_solver",
+                        fingerprint="sha256:fp",
+                        warnings=["thin mash"],
+                    )
+                },
+            ),
+            catalog=CatalogContent(
+                dimensions={
+                    "temperature": DimensionSpec(base_unit="degC", kind="affine"),
+                },
+                nodes={
+                    "mash.grain_temp_c": NodePresentation(
+                        label="Grain temperature",
+                        dimension="temperature",
+                        unit="degC",
+                        decimals=1,
+                    )
+                },
+            ),
+        ),
+    )
+
+    bundle = ReportBundle.model_validate(repo.bundles[frozen.id])
+    assert bundle.bundle_format == 1
+    assert bundle.batch.id == frozen.id
+    assert bundle.batch.parent_batch_id == rec.id
+    assert bundle.batch.name == "Saison"
+    assert bundle.batch.frozen_at == frozen.frozen_at
+    assert bundle.artifact.schema_version == 7
+    assert bundle.artifact.hash.startswith("sha256:")
+    assert bundle.catalog.hash.startswith("sha256:")
+    assert bundle.catalog.nodes["mash.grain_temp_c"].dimension == "temperature"
+    assert bundle.state.valuation == {"mash.grain_temp_c": 20.0}
+    assert bundle.state.roots == {"mash.grain_temp_c": 20}
+    assert bundle.state.provenance == {"batch.yeast": {"source_template_id": "y1"}}
+    assert bundle.validation.relations[0]["holds"] is True
+    assert bundle.telemetry["solver.batch"].fingerprint == "sha256:fp"
+    assert bundle.telemetry["solver.batch"].warnings == ["thin mash"]
+    assert bundle.content_hash.startswith("sha256:")
+
+
+def test_freeze_rejects_a_bundle_that_cannot_be_sealed():
+    svc = BatchService(FakeRepo())
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))
+
+    with pytest.raises(HTTPException) as exc:
+        svc.freeze_batch("u1", rec.id, FreezePayload(valuation={"nope": 1}))
+    assert exc.value.status_code == 422
+    assert "undeclared nodes" in exc.value.detail

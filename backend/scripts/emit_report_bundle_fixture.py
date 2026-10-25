@@ -1,0 +1,226 @@
+"""Regenerate tests/conformance/fixtures/report-bundle.json.
+
+The fixture is a sample freeze bundle (real artifact + a representative state,
+catalog, validation, and telemetry). Tests validate it on every run; re-run this
+script in the same commit as any artifact change so the pinned artifact hash
+stays current.
+
+    cd backend && uv run python scripts/emit_report_bundle_fixture.py
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from app.schemas.batch import FreezePayload
+from app.schemas.report_bundle import (
+    BoundaryTelemetry,
+    CatalogContent,
+    DimensionSpec,
+    NodePresentation,
+    ReportInputs,
+    ValidationBundle,
+)
+from app.services.report_bundle_service import build_report_bundle
+
+OUT = (
+    Path(__file__).resolve().parents[2]
+    / "tests"
+    / "conformance"
+    / "fixtures"
+    / "report-bundle.json"
+)
+
+RECORD = {
+    "name": "House Pale",
+    "status": "frozen",
+    "frozen_at": 1_700_000_000.0,
+    "parent_batch_id": "draft-1",
+    "identity": {
+        "equipment": {
+            "id": "herms-30l",
+            "name": "HERMS 30L",
+            "max_hlt_volume_l": 30.0,
+            "max_kettle_volume_l": 40.0,
+        },
+        "water.source": {
+            "report_id": "w-2026-01",
+            "laboratory": "Ward Labs",
+            "calcium_ca": 42.0,
+            "total_alkalinity_caco3": 38.0,
+        },
+        "style": {"id": "18B", "name": "American Pale Ale", "og_min": 1.045, "og_max": 1.060},
+    },
+    "roots": {
+        "batch.v_ferm": 20.0,
+        "batch.target_abv": 5.5,
+        "mash.grain_temp_c": 20.0,
+        "water.target_mash_ph": 5.4,
+    },
+    "collections": {
+        "mash.rests": [
+            {
+                "rest_id": "beta",
+                "use_temp_c": 67.0,
+                "duration_min": 60.0,
+                "enabled": True,
+            }
+        ]
+    },
+    "selections": {
+        "batch.yeast": {"id": "us-05", "name": "SafAle US-05"},
+        "water.target_profile": {"id": "pale-ale", "name": "Pale ale target"},
+    },
+    "provenance": {
+        "batch.yeast": {"source_template_id": "us-05"},
+        "water.target_profile": {"source_template_id": "pale-ale"},
+    },
+    "conformance": {"og": {"holds": True}, "ibu": {"holds": True}},
+    "valuation": {
+        "batch.v_ferm": 20.0,
+        "batch.target_abv": 5.5,
+        "batch.realized_abv": 5.62,
+        "mash.grain_temp_c": 20.0,
+        "mash.strike_water_temp_c": 68.3,
+        "mash.rests": [
+            {
+                "rest_id": "beta",
+                "use_temp_c": 67.0,
+                "duration_min": 60.0,
+                "enabled": True,
+            }
+        ],
+        "solver.batch": {
+            "sg_post_boil": 1.055,
+            "v_pre_boil": 24.0,
+            "m_grist": 4.7,
+            "cascade.v_strike": 14.0,
+            "cascade.v_sparge": 14.0,
+            "cascade.sg_pre_boil": 1.048,
+            "cascade.v_post_boil": 21.0,
+            "max_achievable_abv": 10.0,
+            "aa_wort": 0.76,
+            "aa_batch": 0.75,
+        },
+        "solver.water": {
+            "strategy": "CALCIUM_FLOOR",
+            "prescription.predicted_mash_ph": 5.42,
+            "prescription.residual_hlt_water_l": 0.0,
+            "mash_additions.gypsum_kg": 0.002,
+            "mash_additions.acid_l": 0.0005,
+            "total_added_salt_mass_g": 3.0,
+            "added_mineral_tds_ppm": 150.0,
+        },
+        "solver.hops": {
+            "boil_rows": [{"minutes": 60.0, "ibu": 30.0, "mass_kg": 0.024}],
+            "whirlpool_rows": [],
+            "boil_mass_kg": 0.024,
+            "whirlpool_mass_kg": 0.0,
+            "total_mass_kg": 0.024,
+        },
+    },
+}
+
+PAYLOAD = FreezePayload(
+    valuation=RECORD["valuation"],
+    valuation_format="outputs",
+    provenance=RECORD["provenance"],
+    conformance=RECORD["conformance"],
+    schema_version=4,
+    report_inputs=ReportInputs(
+        validation=ValidationBundle(
+            relations=[{"id": "hlt_not_overfilled", "holds": True}],
+            domains=[{"nodeId": "batch.target_abv", "bounded": True, "holds": True}],
+            field_domains=[{"nodeId": "batch.yeast", "field": "attenuation_pct", "holds": True}],
+            collection_domains=[
+                {"nodeId": "mash.rests", "index": 0, "field": "use_temp_c", "holds": True}
+            ],
+        ),
+        telemetry={
+            "solver.batch": BoundaryTelemetry(
+                binding="batch_sparge_solver",
+                fingerprint="sha256:1111",
+                warnings=[],
+                notes=[],
+            ),
+            "solver.water": BoundaryTelemetry(
+                binding="water_chemistry_solver",
+                fingerprint="sha256:2222",
+                telemetry=[
+                    {
+                        "code": "ROUTER_MODE_1_LINEAR_FLAVOR",
+                        "severity": "INFO",
+                        "message": "Sulfate/chloride targets only.",
+                    }
+                ],
+                warnings=[],
+                notes=[],
+            ),
+            "solver.hops": BoundaryTelemetry(
+                binding="hop_bitterness_solver",
+                fingerprint="sha256:3333",
+                warnings=[],
+                notes=[],
+            ),
+        },
+    ),
+    catalog=CatalogContent(
+        dimensions={
+            "temperature": DimensionSpec(base_unit="degC", kind="affine"),
+            "volume": DimensionSpec(base_unit="L", kind="linear"),
+            "mass": DimensionSpec(base_unit="kg", kind="linear"),
+            "gravity": DimensionSpec(
+                base_unit="SG",
+                kind="nonlinear",
+                units={"Plato": {"fwd": "sg_to_plato", "inv": "plato_to_sg"}},
+            ),
+        },
+        nodes={
+            "batch.v_ferm": NodePresentation(
+                label="Fermenter volume", dimension="volume", unit="L", decimals=1
+            ),
+            "batch.target_abv": NodePresentation(
+                label="Target ABV", dimension="abv", unit="pct", decimals=1
+            ),
+            "mash.grain_temp_c": NodePresentation(
+                label="Grain temperature", dimension="temperature", unit="degC", decimals=1
+            ),
+            "mash.strike_water_temp_c": NodePresentation(
+                label="Strike water temp", dimension="temperature", unit="degC", decimals=1
+            ),
+            "mash.rests.use_temp_c": NodePresentation(
+                label="Temp", dimension="temperature", unit="degC", decimals=1
+            ),
+            "solver.batch.cascade.v_strike": NodePresentation(
+                label="Strike Volume", dimension="volume", unit="L", decimals=1
+            ),
+            "solver.water.prescription.predicted_mash_ph": NodePresentation(
+                label="Predicted mash pH", dimension="ph", unit="pH", decimals=2
+            ),
+            "solver.water.mash_additions.gypsum_kg": NodePresentation(
+                label="Mash gypsum", dimension="mass", unit="g", decimals=1
+            ),
+            "solver.hops.total_mass_kg": NodePresentation(
+                label="Total hop mass", dimension="mass", unit="g", decimals=1
+            ),
+            "batch.yeast.name": NodePresentation(label="Yeast"),
+            "equipment.max_hlt_volume_l": NodePresentation(
+                label="Max HLT", dimension="volume", unit="L", decimals=1
+            ),
+            "style.og_min": NodePresentation(
+                label="OG min", dimension="gravity", unit="SG", decimals=3
+            ),
+        },
+    ),
+)
+
+
+def main() -> None:
+    bundle = build_report_bundle(frozen_id="frozen-1", record=RECORD, payload=PAYLOAD)
+    OUT.write_text(json.dumps(bundle, indent=2) + "\n")
+    print(f"wrote {OUT.relative_to(OUT.parents[3])}")
+
+
+if __name__ == "__main__":
+    main()

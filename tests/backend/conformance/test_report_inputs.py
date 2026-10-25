@@ -9,7 +9,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from app.schemas.report_bundle import BoundaryTelemetry, ValidationBundle
+from app.schemas.report_bundle import (
+    BoundaryTelemetry,
+    CatalogContent,
+    NodePresentation,
+    ValidationBundle,
+)
 
 FIXTURE = json.loads(
     (
@@ -27,3 +32,8 @@ def test_validation_block_matches_the_fixture():
 
 def test_telemetry_entry_matches_the_fixture():
     assert list(BoundaryTelemetry.model_fields) == FIXTURE["telemetry"]
+
+
+def test_catalog_blocks_match_the_fixture():
+    assert list(CatalogContent.model_fields) == FIXTURE["catalog"]
+    assert list(NodePresentation.model_fields) == FIXTURE["catalog_node"]

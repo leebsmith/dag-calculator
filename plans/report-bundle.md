@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [off-graph-identity]
 blocks: []
 gate: a frozen batch emits one `report_bundle` document that validates against the guarded schema; it is self-sufficient for rendering with no joins and no re-resolution
-status: proposed
+status: active (R1–R4 landed; renderer pending)
 ---
 
 # Report Bundle
@@ -47,7 +47,7 @@ artifact or the payload.
 ```jsonc
 {
   "bundle_format": 1,
-  "artifact": { "schema_version": 6, "hash": "sha256:…", "content": { … } },
+  "artifact": { "schema_version": 7, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dim>": { "base_unit", "kind", "units": { "<unit>": { "factor", "offset", "fwd", "inv" } } } },
@@ -66,9 +66,9 @@ artifact or the payload.
 |---|---|---|
 | `artifact` | the whole artifact document | validated by the engine's own validator; pinned by `hash` |
 | `catalog.dimensions` | base unit, kind, per-unit factor/offset or fwd/inv | mirrors the artifact's dimension shape |
-| `catalog.nodes` | per-path presentation | keys resolve by the engine's dotted-path rule |
+| `catalog.nodes` | per-path presentation: `label`, `dimension`, `unit`, `decimals`, `step`, `options`, `option_labels` | keys resolve by the engine's dotted-path rule; **every** resolvable path is emitted |
 | `batch.identity` | the three component snapshots | the document header |
-| `state.valuation` | all 77 node ids → values | authoritative; boundaries are plain output maps |
+| `state.valuation` | all 86 node ids → values | authoritative; boundaries are plain output maps |
 | `state.roots` | explicitly-set roots only | authored-vs-inherited (`hasRoot`); **never** used to recompute |
 | `state.collections` | raw rows | same data as valuation's collection entries |
 | `state.selections` | remaining component snapshots | target profile, yeast |
@@ -80,7 +80,7 @@ artifact or the payload.
 
 ### The embed decision, quantified
 
-Measured on a real boot: artifact 68.5 KB, valuation 6.7 KB (77 nodes, empty
+Measured on a real boot: artifact 68.5 KB, valuation 6.7 KB (86 nodes, empty
 collections), `freezePayload()` 8.1 KB, `draftState()` 6.8 KB, `conformance`
 1.3 KB. Embedding the artifact + catalog costs ≈ 75 KB fixed; the variable part is
 collection rows.
@@ -104,7 +104,8 @@ cross-references.
    - every `batch.identity` namespace is declared in `artifact.identity`;
    - every `catalog.nodes` key resolves to a node, selection field, boundary
      output, or identity field.
-4. `content_hash` recomputes from the canonicalized content.
+4. `content_hash` recomputes from the canonicalized content (`ReportBundle.seal`;
+   the validator rejects a mismatch).
 5. A committed fixture bundle is validated in CI, so the shape cannot drift
    silently. Any shape change bumps `bundle_format` and regenerates the fixture in
    the same commit.
@@ -125,14 +126,16 @@ cross-references.
 
 ---
 
-## 5. Open questions (implementation choices)
+## 5. Implementation choices (settled)
 
-1. **Emitter seam** — extend `freezePayload()` or add a separate `reportBundle()`.
-   Does freeze become a two-document write (batch + bundle) that must be atomic?
-2. **Document path** — top-level collection keyed by batch id, or a subcollection
-   under the batch.
-3. **`catalog.nodes` scope** — every artifact node (simple, larger) or only paths a
-   template may reference (needs the template at freeze).
+1. **Emitter seam** — separate `reportInputs()` / `reportCatalog()` producers; the
+   server assembles the bundle inside the existing freeze transaction. Two
+   documents, one transaction: the freeze fails if the bundle cannot be sealed.
+2. **Document path** — sibling collection `users/{uid}/report_bundles/{frozen_id}`,
+   keyed by the *new* frozen id. `BatchRecord` stays lean.
+3. **`catalog.nodes` scope** — every resolvable path (nodes, selection fields,
+   collection fields, boundary outputs, identity fields), with a humanized label
+   fallback. 315 entries for the current artifact.
 
 ---
 
@@ -140,11 +143,12 @@ cross-references.
 
 | Stage | Work | Gate |
 |---|---|---|
-| R1 | `backend/app/schemas/report_bundle.py` — guarded models + cross-reference validators; minimal fixture test | pytest green |
-| R2 | Freeze-time capture: persist `boundaryExtras` (binding, fingerprint, messages) and the four validation states | frontend tests |
-| R3 | Catalog resolution in the browser (dimensions from the artifact, presentation from the registries) | unit tests |
-| R4 | `reportBundle()` emitter + JS shape check; atomic write path | end-to-end freeze test |
-| R5 | Fixture committed + CI validation; docs (`engine.md`, `node-reference.md`, `semantics.md` §3.2) | `make verify` |
+| R1 ✅ | `backend/app/schemas/report_bundle.py` — guarded models + cross-reference validators; fixture test | pytest green |
+| R2 ✅ | Freeze-time capture: `reportInputs()` (four validation states + per-boundary binding/fingerprint/messages) | frontend tests |
+| R3 ✅ | `reportCatalog()` — dimensions from the artifact, presentation from the registries + step labels | unit tests |
+| R4 ✅ | Server-side emitter + `content_hash` enforcement; atomic sibling write | end-to-end freeze test |
+| R5 ✅ | Committed fixture (`tests/conformance/fixtures/report-bundle.json`) + freshness test | `make verify` |
+| R6 | Prose docs (`engine.md`, `node-reference.md`, `semantics.md` §3.2) | renderer stage |
 
 ---
 

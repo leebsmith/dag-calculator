@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from app.schemas.report_bundle import BUNDLE_FORMAT, ReportBundle
 
 ARTIFACT = {
-    "schema_version": 6,
+    "schema_version": 7,
     "dimensions": {
         "volume": {"base_unit": "L", "kind": "linear", "units": {"gal": {"factor": 3.785411784}}}
     },
@@ -43,7 +43,7 @@ IDENTITY = {
 def bundle(**overrides) -> dict:
     base = {
         "bundle_format": BUNDLE_FORMAT,
-        "artifact": {"schema_version": 6, "hash": "sha256:artifact", "content": ARTIFACT},
+        "artifact": {"schema_version": 7, "hash": "sha256:artifact", "content": ARTIFACT},
         "catalog": {
             "hash": "sha256:catalog",
             "dimensions": {"volume": {"base_unit": "L", "kind": "linear", "units": {}}},
@@ -89,10 +89,9 @@ def bundle(**overrides) -> dict:
                 "notes": ["ok"],
             }
         },
-        "content_hash": "sha256:content",
     }
     base.update(overrides)
-    return base
+    return ReportBundle.seal(base).model_dump(mode="json")
 
 
 def test_a_well_formed_bundle_validates() -> None:
@@ -163,3 +162,21 @@ def test_collection_state_must_name_a_collection_node() -> None:
     state = bundle()["state"] | {"collections": {"batch.v_ferm": []}}
     with pytest.raises(ValidationError, match="non-collection node"):
         ReportBundle.model_validate(bundle(state=state))
+
+
+def test_content_hash_must_match_the_body() -> None:
+    tampered = bundle()
+    tampered["batch"]["name"] = "Edited after sealing"
+    with pytest.raises(ValidationError, match="content_hash does not match"):
+        ReportBundle.model_validate(tampered)
+
+
+def test_catalog_nodes_may_declare_their_dimension() -> None:
+    catalog = bundle()["catalog"] | {
+        "nodes": {"batch.v_ferm": {"label": "V", "dimension": "volume", "unit": "L", "decimals": 1}}
+    }
+    parsed = ReportBundle.model_validate(bundle(catalog=catalog))
+    entry = parsed.catalog.nodes["batch.v_ferm"]
+    assert entry.dimension == "volume"
+    assert entry.unit == "L"
+    assert entry.decimals == 1

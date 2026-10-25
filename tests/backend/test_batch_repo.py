@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import logging
 
+import pytest
+
 from app.repositories.batch_repo import BatchRepository, get_batch_repo
 
 
@@ -124,8 +126,10 @@ class FakeUserDocument:
         self._uid = uid
 
     def collection(self, name):
-        assert name == "batches"
-        return self._db.batches.setdefault(self._uid, FakeCollection())
+        if name == "batches":
+            return self._db.batches.setdefault(self._uid, FakeCollection())
+        assert name == "report_bundles"
+        return self._db.bundles.setdefault(self._uid, FakeCollection())
 
 
 class FakeUsersCollection:
@@ -139,6 +143,7 @@ class FakeUsersCollection:
 class FakeDb:
     def __init__(self):
         self.batches = {}
+        self.bundles = {}
         self.last_transaction = None
 
     def collection(self, name):
@@ -157,6 +162,10 @@ def repo():
 
 def user_docs(db, uid):
     return db.batches.setdefault(uid, FakeCollection()).docs
+
+
+def user_bundles(db, uid):
+    return db.bundles.setdefault(uid, FakeCollection()).docs
 
 
 def test_create_stamps_status_and_timestamps_under_the_user_path():
@@ -297,6 +306,52 @@ def test_freeze_creates_a_linked_immutable_snapshot_in_the_same_path():
     assert frozen["frozen_at"] == frozen["created_at"]
     assert frozen["id"].startswith("auto-")
     assert frozen["id"] in user_docs(db, "u1")
+
+
+def test_freeze_writes_the_bundle_in_the_same_transaction():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "Saison"})
+    seen = {}
+
+    def factory(frozen_id, record):
+        seen["frozen_id"] = frozen_id
+        seen["record"] = record
+        return {"bundle_format": 1, "batch": {"id": frozen_id}}
+
+    frozen, reason = store.freeze("u1", "b1", {"valuation": {}}, bundle_factory=factory)
+
+    assert reason is None
+    assert seen["frozen_id"] == frozen["id"]
+    assert seen["record"]["status"] == "frozen"
+    assert user_bundles(db, "u1")[frozen["id"]] == {
+        "bundle_format": 1,
+        "batch": {"id": frozen["id"]},
+    }
+    assert db.last_transaction.calls[-2] == ("set", frozen["id"])
+
+
+def test_a_failing_bundle_aborts_the_freeze():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "Saison"})
+
+    def factory(frozen_id, record):
+        raise ValueError("bad bundle")
+
+    with pytest.raises(ValueError):
+        store.freeze("u1", "b1", {"valuation": {}}, bundle_factory=factory)
+
+    assert user_bundles(db, "u1") == {}
+    assert set(user_docs(db, "u1")) == {"b1"}
+
+
+def test_freeze_without_a_factory_writes_no_bundle():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "Saison"})
+
+    frozen, _ = store.freeze("u1", "b1", {"valuation": {}})
+
+    assert frozen["id"] in user_docs(db, "u1")
+    assert user_bundles(db, "u1") == {}
 
 
 def test_freeze_refuses_foreign_or_missing_drafts():

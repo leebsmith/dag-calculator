@@ -100,8 +100,8 @@ Unchanged from `plans/report-bundle.md`. Two amendments fall out of rendering:
   `solver.water.mash_additions.gypsum_kg`). The schema's `_resolves` already
   supports this; R3 must actually populate those entries, not just node paths.
 - `content_hash` must be **recomputed and checked**, not merely accepted as a
-  string. `backend/app/schemas/report_bundle.py` currently validates everything
-  except that; R4 closes the gap.
+  string. Landed: `ReportBundle.seal` stamps it and the validator rejects a
+  mismatch.
 
 ### 5.2 Report spec
 
@@ -272,9 +272,9 @@ the amendments below are this plan's.
 
 | Stage | Work | Gate |
 |---|---|---|
-| R2 | Freeze-time capture: per-boundary `{binding, fingerprint, telemetry, warnings, notes}` and the four validation states. Bundle-only — `BatchRecord` stays lean. | frontend tests |
-| R3 | Catalog resolution in the browser: dimensions from the artifact, presentation from the existing registries, **including boundary output paths**. | unit tests |
-| R4 | `reportBundle()` assembly **server-side**, inside the existing `_freeze` transaction, keyed to the newly created frozen id. Browser ships only the presentation catalog + state; the server supplies the vendored artifact content and hashes. Plus `content_hash` recomputation. | end-to-end freeze test |
+| R2 ✅ | Freeze-time capture: per-boundary `{binding, fingerprint, telemetry, warnings, notes}` and the four validation states. Bundle-only — `BatchRecord` stays lean. | frontend tests |
+| R3 ✅ | Catalog resolution in the browser: dimensions from the artifact, presentation from the existing registries, **including boundary output paths**. | unit tests |
+| R4 ✅ | Server-side assembly inside the existing `_freeze` transaction, keyed to the newly created frozen id. Browser ships only the presentation catalog + state; the server supplies the vendored artifact content and hashes, and enforces `content_hash`. | end-to-end freeze test |
 
 R4 deviates from `plans/report-bundle.md` §5.1 on two points, deliberately:
 
@@ -330,7 +330,7 @@ is part of this plan's scope, not a follow-up.
 | 6 | Route | route tests, `make check` |
 | 7 | Formatting parity fixture | parity test |
 | 8 | Dockerfile + fonts + deploy switch | image build, deployed smoke render |
-| 9 | Retirement: delete `render_markdown` + `tests/backend/test_recipe_render.py`; mark `plans/recipe-pipeline.md` and `plans/recipe-yaml-grammar.md` superseded; update `TODO.md` | `make verify` |
+| 9 ✅ | Retirement: deleted `recipe_document.py` + `recipe_render.py` + their test (commit `0f25d41`); the YAML plans stay marked superseded. Remaining: `TODO.md` cleanup as part of the renderer slice. | `make verify` |
 
 Steps 1–3 are the unblock; steps 4–5 can proceed in parallel against the
 committed fixture.

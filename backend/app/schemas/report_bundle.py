@@ -11,7 +11,9 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validator
+
+from app.schemas.canonical import sha256_canonical
 
 BUNDLE_FORMAT = 1
 
@@ -43,6 +45,7 @@ class DimensionSpec(BundleModel):
 
 class NodePresentation(BundleModel):
     label: str
+    dimension: str | None = None
     unit: str | None = None
     decimals: int | None = None
     step: str | None = None
@@ -50,10 +53,15 @@ class NodePresentation(BundleModel):
     option_labels: dict[str, str] | None = None
 
 
-class Catalog(BundleModel):
-    hash: str
+class CatalogContent(BundleModel):
+    """Presentation facts as the browser captures them, before hashing."""
+
     dimensions: dict[str, DimensionSpec] = Field(default_factory=dict)
     nodes: dict[str, NodePresentation] = Field(default_factory=dict)
+
+
+class Catalog(CatalogContent):
+    hash: str
 
 
 class BatchHeader(BundleModel):
@@ -88,6 +96,18 @@ class BoundaryTelemetry(BundleModel):
     notes: list[str] = Field(default_factory=list)
 
 
+class ReportInputs(BundleModel):
+    """Freeze-time capture: validation outcome and per-boundary telemetry."""
+
+    validation: ValidationBundle = Field(default_factory=ValidationBundle)
+    telemetry: dict[str, BoundaryTelemetry] = Field(default_factory=dict)
+
+
+def bundle_content_hash(content: dict[str, Any]) -> str:
+    """Hash everything in the bundle except ``content_hash`` itself."""
+    return sha256_canonical({key: value for key, value in content.items() if key != "content_hash"})
+
+
 class ReportBundle(BundleModel):
     bundle_format: Literal[1] = BUNDLE_FORMAT
     artifact: ArtifactBundle
@@ -98,6 +118,13 @@ class ReportBundle(BundleModel):
     validation: ValidationBundle = Field(default_factory=ValidationBundle)
     telemetry: dict[str, BoundaryTelemetry] = Field(default_factory=dict)
     content_hash: str
+
+    @classmethod
+    def seal(cls, content: dict[str, Any]) -> ReportBundle:
+        """Validate a bundle, then stamp the hash of its canonical body."""
+        draft = cls.model_validate({**content, "content_hash": ""}, context={"sealing": True})
+        digest = bundle_content_hash(draft.model_dump(mode="json"))
+        return cls.model_validate({**draft.model_dump(mode="json"), "content_hash": digest})
 
     @model_validator(mode="after")
     def _cross_references(self) -> ReportBundle:
@@ -140,6 +167,17 @@ class ReportBundle(BundleModel):
             if not isinstance(rows, list):
                 raise ValueError(f'collection "{node_id}" rows must be a list')
 
+        return self
+
+    @model_validator(mode="after")
+    def _content_hash_matches(self, info: ValidationInfo) -> ReportBundle:
+        if info.context and info.context.get("sealing"):
+            return self
+        expected = bundle_content_hash(self.model_dump(mode="json"))
+        if self.content_hash != expected:
+            raise ValueError(
+                f"content_hash does not match the bundle body: {self.content_hash} != {expected}"
+            )
         return self
 
 

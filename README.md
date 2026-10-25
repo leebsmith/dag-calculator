@@ -155,9 +155,10 @@ re-synced into the inventory fails the gate.
 The **mechanical** half of doc drift is guarded; the **prose** half is a manual
 discipline. After any change to `data/artifact.json`:
 
-1. **Re-sync the inventory** (the guard forces this):
+1. **Re-sync the inventory and the bundle fixture** (guards force both):
    ```bash
    node scripts/emit-artifact-inventory.mjs
+   cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
    ```
 2. **Grep the prose** for what you touched, and update the narrative that still
    describes the old model:

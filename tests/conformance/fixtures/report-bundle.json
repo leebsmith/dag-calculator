@@ -1,0 +1,4289 @@
+{
+  "bundle_format": 1,
+  "artifact": {
+    "schema_version": 7,
+    "hash": "sha256:a098e5ba99631f6c64c33429556dd5cee9c37c21f53107ff8d272538e30c6670",
+    "content": {
+      "schema_version": 7,
+      "meta": {
+        "name": "batch-brewing-calculator-logic",
+        "description": "Canonical business-logic DAG (schema_version 7, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+        "status": "complete"
+      },
+      "identity": {
+        "equipment": "equipment",
+        "water.source": "water_report",
+        "style": "style"
+      },
+      "dimensions": {
+        "temperature": {
+          "base_unit": "degC",
+          "kind": "affine",
+          "units": {
+            "degF": {
+              "factor": 1.8,
+              "offset": 32
+            }
+          }
+        },
+        "temperature_delta": {
+          "base_unit": "dC",
+          "kind": "linear",
+          "units": {
+            "dF": {
+              "factor": 0.5555555555555556
+            }
+          }
+        },
+        "temperature_delta_per_time": {
+          "base_unit": "dC_per_min",
+          "kind": "linear",
+          "units": {
+            "dF_per_min": {
+              "factor": 0.5555555555555556
+            }
+          }
+        },
+        "time": {
+          "base_unit": "min",
+          "kind": "linear",
+          "units": {
+            "hr": {
+              "factor": 60
+            },
+            "day": {
+              "factor": 1440
+            }
+          }
+        },
+        "volume": {
+          "base_unit": "L",
+          "kind": "linear",
+          "units": {
+            "gal": {
+              "factor": 3.785411784
+            },
+            "qt": {
+              "factor": 0.946352946
+            },
+            "ml": {
+              "factor": 0.001
+            }
+          }
+        },
+        "volume_per_time": {
+          "base_unit": "L_per_hr",
+          "kind": "linear",
+          "units": {
+            "gal_per_hr": {
+              "factor": 3.785411784
+            }
+          }
+        },
+        "mass": {
+          "base_unit": "kg",
+          "kind": "linear",
+          "units": {
+            "lb": {
+              "factor": 0.45359237
+            },
+            "g": {
+              "factor": 0.001
+            },
+            "oz": {
+              "factor": 0.028349523125
+            }
+          }
+        },
+        "gravity": {
+          "base_unit": "SG",
+          "kind": "nonlinear",
+          "units": {
+            "Plato": {
+              "fwd": "sg_to_plato",
+              "inv": "plato_to_sg"
+            }
+          }
+        },
+        "grain_color": {
+          "base_unit": "Lovibond",
+          "kind": "linear",
+          "units": {
+            "EBC": {
+              "factor": 0.5076142131979695
+            }
+          }
+        },
+        "beer_color": {
+          "base_unit": "SRM",
+          "kind": "linear",
+          "units": {
+            "EBC": {
+              "factor": 0.5076142131979695
+            }
+          }
+        },
+        "specific_heat": {
+          "base_unit": "kcal_per_kg_degC",
+          "kind": "linear",
+          "units": {
+            "btu_per_lb_degF": {
+              "factor": 1
+            }
+          }
+        },
+        "mash_thickness": {
+          "base_unit": "L_per_kg",
+          "kind": "linear",
+          "units": {
+            "qt_per_lb": {
+              "factor": 2.08635
+            }
+          }
+        },
+        "extract_yield": {
+          "base_unit": "L_deg_per_kg",
+          "kind": "linear",
+          "units": {
+            "gal_deg_per_lb": {
+              "factor": 8.3454
+            }
+          }
+        },
+        "total_extract": {
+          "base_unit": "L_deg",
+          "kind": "linear",
+          "units": {
+            "gal_pts": {
+              "factor": 3.785411784
+            }
+          }
+        },
+        "ph": {
+          "base_unit": "pH",
+          "kind": "linear",
+          "units": {}
+        },
+        "concentration": {
+          "base_unit": "ppm",
+          "kind": "linear",
+          "units": {}
+        },
+        "percentage": {
+          "base_unit": "fraction",
+          "kind": "linear",
+          "units": {
+            "pct": {
+              "factor": 0.01
+            }
+          }
+        },
+        "abv": {
+          "base_unit": "pct",
+          "kind": "linear",
+          "units": {}
+        },
+        "ibu": {
+          "base_unit": "IBU",
+          "kind": "linear",
+          "units": {}
+        },
+        "reference": {
+          "base_unit": "id",
+          "kind": "identity",
+          "units": {}
+        },
+        "dimensionless": {
+          "base_unit": "1",
+          "kind": "identity",
+          "units": {}
+        }
+      },
+      "constants": {
+        "cutaia_a": {
+          "value": 0.372,
+          "dimension": "dimensionless"
+        },
+        "cutaia_b": {
+          "value": 0.00357,
+          "dimension": "dimensionless"
+        },
+        "ethanol_density": {
+          "value": 0.7907,
+          "dimension": "dimensionless"
+        },
+        "mash_thermal_factor": {
+          "value": 0.41,
+          "dimension": "dimensionless"
+        },
+        "water_specific_heat": {
+          "value": 1,
+          "dimension": "specific_heat"
+        },
+        "default_grain_temp_c": {
+          "value": 20,
+          "dimension": "temperature"
+        },
+        "default_equipment_profile_id": {
+          "value": "herms-30l",
+          "dimension": "reference"
+        },
+        "default_target_abv": {
+          "value": 5.5,
+          "dimension": "abv"
+        },
+        "default_calcium_floor_ppm": {
+          "value": 50,
+          "dimension": "concentration"
+        },
+        "default_target_ibu": {
+          "value": 30,
+          "dimension": "ibu"
+        },
+        "default_v_ferm_l": {
+          "value": 20,
+          "dimension": "volume"
+        },
+        "default_attenuation_derate": {
+          "value": 1,
+          "dimension": "percentage"
+        },
+        "default_grain_moisture_fraction": {
+          "value": 0.04,
+          "dimension": "percentage"
+        },
+        "default_boil_time_min": {
+          "value": 60,
+          "dimension": "time"
+        },
+        "default_mash_thickness_l_per_kg": {
+          "value": 2.6079,
+          "dimension": "mash_thickness"
+        },
+        "default_mash_heating_rate_c_per_min": {
+          "value": 1,
+          "dimension": "temperature_delta_per_time"
+        },
+        "default_runoff_ratio": {
+          "value": 1,
+          "dimension": "dimensionless"
+        },
+        "sucrose_yield_ldk": {
+          "value": 385.641,
+          "dimension": "extract_yield"
+        },
+        "v_bar": {
+          "value": 0.625,
+          "dimension": "mash_thickness"
+        },
+        "k_abs_true": {
+          "value": 1.67,
+          "dimension": "mash_thickness"
+        },
+        "rho_water": {
+          "value": 1,
+          "dimension": "dimensionless"
+        },
+        "default_shrinkage_fraction": {
+          "value": 0.04,
+          "dimension": "percentage"
+        },
+        "default_target_mash_ph": {
+          "value": 5.4,
+          "dimension": "ph"
+        },
+        "bicarbonate_eq_weight": {
+          "value": 61,
+          "dimension": "dimensionless"
+        },
+        "caco3_eq_weight": {
+          "value": 50,
+          "dimension": "dimensionless"
+        },
+        "mash_ph_optimal_low": {
+          "value": 5.2,
+          "dimension": "ph"
+        },
+        "mash_ph_optimal_high": {
+          "value": 5.6,
+          "dimension": "ph"
+        },
+        "mcu_metric_to_imperial_factor": {
+          "value": 8.3454,
+          "dimension": "dimensionless"
+        }
+      },
+      "taxonomies": {
+        "malt_category": [
+          "BASE",
+          "CRYSTAL",
+          "ROASTED",
+          "ACID"
+        ],
+        "ph_status": [
+          "OPTIMAL",
+          "LOW",
+          "HIGH"
+        ],
+        "topology": [
+          "r_l_to_g",
+          "runoff_ratio"
+        ],
+        "strategy": [
+          "FLAVOR",
+          "CALCIUM_FLOOR",
+          "OPTIMIZE",
+          "AUTO",
+          "HYBRID",
+          "BASELINE",
+          "CUSTOM"
+        ],
+        "ion": [
+          "ca",
+          "mg",
+          "na",
+          "so4",
+          "cl",
+          "alk"
+        ],
+        "salt_distribution": [
+          "MASH_ONLY",
+          "PROPORTIONAL"
+        ],
+        "acid_medium": [
+          "LACTIC_88",
+          "PHOSPHORIC_10",
+          "PHOSPHORIC_85"
+        ],
+        "alkaline_agent": [
+          "BAKING_SODA",
+          "CHALK",
+          "PICKLING_LIME"
+        ],
+        "gypsum_form": [
+          "GYPSUM_DIHYDRATE",
+          "GYPSUM_ANHYDROUS"
+        ],
+        "cacl2_form": [
+          "CACL2_DIHYDRATE",
+          "CACL2_ANHYDROUS"
+        ],
+        "flocculation": [
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "form": [
+          "Dry",
+          "Liquid"
+        ],
+        "style_type": [
+          "beer",
+          "mead",
+          "cider"
+        ],
+        "fermentation": [
+          "ale",
+          "lager",
+          "wild",
+          "mixed"
+        ],
+        "mash_rest": [
+          "phytase",
+          "ferulic",
+          "beta_glucan",
+          "protein",
+          "beta_amylase",
+          "alpha_amylase",
+          "beta_alpha_amylase",
+          "mash_out"
+        ],
+        "mash_preset": [
+          "single_infusion",
+          "custom",
+          "belgian_saison",
+          "belgian_tripel",
+          "german_pils",
+          "berliner_weisse",
+          "english_brown",
+          "american_pale"
+        ],
+        "wet_hop_product_type": [
+          "raw_whole_cones",
+          "frozen_whole_cones",
+          "map_whole_cones",
+          "liquid_extract",
+          "cryo_powder",
+          "terpene_isolate"
+        ],
+        "wet_hop_application_stage": [
+          "whirlpool",
+          "active_fermentation",
+          "cold_side"
+        ],
+        "hop_unit": [
+          "oz",
+          "g",
+          "ml"
+        ],
+        "whirlpool_hop_form": [
+          "t90_pellet",
+          "flowable_extract"
+        ]
+      },
+      "functions": {
+        "calculate_strike_water_base_temp": {
+          "params": [
+            "t_target",
+            "t_grain",
+            "thickness"
+          ],
+          "returns": "temperature",
+          "body": {
+            "op": "+",
+            "args": [
+              {
+                "ref": "t_target"
+              },
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "op": "/",
+                    "args": [
+                      {
+                        "const": "mash_thermal_factor"
+                      },
+                      {
+                        "ref": "thickness"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "-",
+                    "args": [
+                      {
+                        "ref": "t_target"
+                      },
+                      {
+                        "ref": "t_grain"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "calculate_tun_thermal_offset": {
+          "params": [
+            "t_target",
+            "tun_initial",
+            "specific_heat",
+            "tun_mass",
+            "water_mass"
+          ],
+          "returns": "temperature_delta",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "ref": "specific_heat"
+                      },
+                      {
+                        "ref": "tun_mass"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "const": "water_specific_heat"
+                      },
+                      {
+                        "ref": "water_mass"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "-",
+                "args": [
+                  {
+                    "ref": "t_target"
+                  },
+                  {
+                    "ref": "tun_initial"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "ramp_time_min": {
+          "params": [
+            "delta_temp",
+            "rate"
+          ],
+          "returns": "time",
+          "body": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "rate"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "delta_temp"
+                  },
+                  {
+                    "ref": "rate"
+                  }
+                ]
+              },
+              0
+            ]
+          }
+        },
+        "sg_to_plato": {
+          "params": [
+            "sg"
+          ],
+          "returns": "gravity",
+          "body": {
+            "op": "-",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "-",
+                    "args": [
+                      {
+                        "op": "*",
+                        "args": [
+                          135.997,
+                          {
+                            "op": "pow",
+                            "args": [
+                              {
+                                "ref": "sg"
+                              },
+                              3
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "*",
+                        "args": [
+                          630.272,
+                          {
+                            "op": "pow",
+                            "args": [
+                              {
+                                "ref": "sg"
+                              },
+                              2
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      1111.14,
+                      {
+                        "ref": "sg"
+                      }
+                    ]
+                  }
+                ]
+              },
+              616.868
+            ]
+          }
+        },
+        "plato_to_sg": {
+          "params": [
+            "plato"
+          ],
+          "returns": "gravity",
+          "body": {
+            "op": "+",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      1.0000131,
+                      {
+                        "op": "*",
+                        "args": [
+                          0.00386777,
+                          {
+                            "ref": "plato"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      1.27447e-05,
+                      {
+                        "op": "pow",
+                        "args": [
+                          {
+                            "ref": "plato"
+                          },
+                          2
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "*",
+                "args": [
+                  6.34964e-08,
+                  {
+                    "op": "pow",
+                    "args": [
+                      {
+                        "ref": "plato"
+                      },
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "apply_attenuation_factor": {
+          "params": [
+            "aa",
+            "factor"
+          ],
+          "returns": "percentage",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "aa"
+              },
+              {
+                "ref": "factor"
+              }
+            ]
+          }
+        },
+        "realized_fg": {
+          "params": [
+            "og_sg",
+            "aa"
+          ],
+          "returns": "gravity",
+          "body": {
+            "call": "plato_to_sg",
+            "args": [
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "call": "sg_to_plato",
+                    "args": [
+                      {
+                        "ref": "og_sg"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "-",
+                    "args": [
+                      1,
+                      {
+                        "ref": "aa"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "realized_abv": {
+          "params": [
+            "og_sg",
+            "aa"
+          ],
+          "returns": "abv",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "const": "cutaia_a"
+                      },
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "const": "cutaia_b"
+                          },
+                          {
+                            "call": "sg_to_plato",
+                            "args": [
+                              {
+                                "ref": "og_sg"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "-",
+                    "args": [
+                      {
+                        "call": "sg_to_plato",
+                        "args": [
+                          {
+                            "ref": "og_sg"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "call": "sg_to_plato",
+                            "args": [
+                              {
+                                "ref": "og_sg"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "-",
+                            "args": [
+                              1,
+                              {
+                                "ref": "aa"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "call": "plato_to_sg",
+                    "args": [
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "call": "sg_to_plato",
+                            "args": [
+                              {
+                                "ref": "og_sg"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "-",
+                            "args": [
+                              1,
+                              {
+                                "ref": "aa"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "const": "ethanol_density"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "extract_yield_ldk": {
+          "params": [
+            "yield_fraction"
+          ],
+          "returns": "extract_yield",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "yield_fraction"
+              },
+              {
+                "const": "sucrose_yield_ldk"
+              }
+            ]
+          }
+        },
+        "bicarbonate_from_alkalinity": {
+          "params": [
+            "alkalinity_caco3"
+          ],
+          "returns": "concentration",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "alkalinity_caco3"
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "const": "bicarbonate_eq_weight"
+                  },
+                  {
+                    "const": "caco3_eq_weight"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "alkalinity_from_bicarbonate": {
+          "params": [
+            "bicarbonate_hco3"
+          ],
+          "returns": "concentration",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "bicarbonate_hco3"
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "const": "caco3_eq_weight"
+                  },
+                  {
+                    "const": "bicarbonate_eq_weight"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "sugar_gravity_points": {
+          "params": [
+            "mass_kg",
+            "yield_fraction",
+            "v_ferm_l"
+          ],
+          "returns": "gravity",
+          "body": {
+            "op": "/",
+            "args": [
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "ref": "mass_kg"
+                      },
+                      {
+                        "ref": "yield_fraction"
+                      }
+                    ]
+                  },
+                  {
+                    "const": "sucrose_yield_ldk"
+                  }
+                ]
+              },
+              {
+                "ref": "v_ferm_l"
+              }
+            ]
+          }
+        },
+        "morey_mcu_to_srm": {
+          "params": [
+            "mcu"
+          ],
+          "returns": "beer_color",
+          "body": {
+            "op": "*",
+            "args": [
+              1.4922,
+              {
+                "op": "pow",
+                "args": [
+                  {
+                    "ref": "mcu"
+                  },
+                  0.6859
+                ]
+              }
+            ]
+          }
+        },
+        "cutaia_abv_plato": {
+          "params": [
+            "oe",
+            "ae"
+          ],
+          "returns": "abv",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "const": "cutaia_a"
+                      },
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "const": "cutaia_b"
+                          },
+                          {
+                            "ref": "oe"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "-",
+                    "args": [
+                      {
+                        "ref": "oe"
+                      },
+                      {
+                        "ref": "ae"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "call": "plato_to_sg",
+                    "args": [
+                      {
+                        "ref": "ae"
+                      }
+                    ]
+                  },
+                  {
+                    "const": "ethanol_density"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "blend_ion": {
+          "params": [
+            "mash",
+            "hlt",
+            "run1",
+            "run2",
+            "sparge"
+          ],
+          "returns": "concentration",
+          "body": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "op": "+",
+                        "args": [
+                          {
+                            "ref": "run1"
+                          },
+                          {
+                            "ref": "run2"
+                          }
+                        ]
+                      },
+                      {
+                        "ref": "sparge"
+                      }
+                    ]
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "ref": "mash"
+                          },
+                          {
+                            "op": "+",
+                            "args": [
+                              {
+                                "ref": "run1"
+                              },
+                              {
+                                "ref": "run2"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "ref": "hlt"
+                          },
+                          {
+                            "ref": "sparge"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "op": "+",
+                        "args": [
+                          {
+                            "ref": "run1"
+                          },
+                          {
+                            "ref": "run2"
+                          }
+                        ]
+                      },
+                      {
+                        "ref": "sparge"
+                      }
+                    ]
+                  }
+                ]
+              },
+              null
+            ]
+          }
+        },
+        "sulfate_chloride_ratio": {
+          "params": [
+            "sulfate",
+            "chloride"
+          ],
+          "returns": "dimensionless",
+          "body": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "chloride"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "sulfate"
+                  },
+                  {
+                    "ref": "chloride"
+                  }
+                ]
+              },
+              null
+            ]
+          }
+        }
+      },
+      "primitive_schemas": {
+        "malt": {
+          "id": {},
+          "name": {},
+          "maltster": {},
+          "standard_malt": {},
+          "standard_name": {},
+          "family": {},
+          "generic_description": {},
+          "category": {
+            "taxonomy": "malt_category"
+          },
+          "yield_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "fermentability_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "moisture_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "color_lovibond": {
+            "dimension": "grain_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {}
+        },
+        "sugar": {
+          "id": {},
+          "name": {},
+          "maltster": {},
+          "yield_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "fermentability_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "color_lovibond": {
+            "dimension": "grain_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {}
+        },
+        "yeast": {
+          "id": {},
+          "name": {},
+          "manufacturer": {},
+          "attenuation_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "flocculation": {
+            "taxonomy": "flocculation"
+          },
+          "alcohol_tolerance": {},
+          "form": {
+            "taxonomy": "form"
+          },
+          "temp_low_c": {
+            "dimension": "temperature"
+          },
+          "temp_high_c": {
+            "dimension": "temperature"
+          },
+          "recipes": {},
+          "url": {},
+          "notes": {}
+        },
+        "hop": {
+          "id": {},
+          "name": {},
+          "synonym": {},
+          "category": {},
+          "purpose": {},
+          "origin": {},
+          "alpha_rating": {},
+          "recipes_count": {},
+          "alpha_acid_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "alpha_acid_min_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "alpha_acid_max_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "beta_acid_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "pairings": {},
+          "flavor_profiles": {},
+          "notes": {},
+          "url": {}
+        },
+        "hop_product": {
+          "id": {},
+          "name": {},
+          "manufacturer": {},
+          "brand": {},
+          "variety_id": {},
+          "product_form": {
+            "taxonomy": "whirlpool_hop_form"
+          },
+          "purpose": {},
+          "alpha_acid_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "alpha_acid_min_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "alpha_acid_max_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "beta_acid_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "total_oil_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "t90_replacement_ratio": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {},
+          "url": {}
+        },
+        "style": {
+          "id": {},
+          "name": {},
+          "forked_from_id": {},
+          "forked_from_name": {},
+          "category_id": {},
+          "category_name": {},
+          "type": {
+            "taxonomy": "style_type"
+          },
+          "overall_impression": {},
+          "aroma": {},
+          "appearance": {},
+          "flavor": {},
+          "mouthfeel": {},
+          "comments": {},
+          "history": {},
+          "characteristic_ingredients": {},
+          "style_comparison": {},
+          "entry_instructions": {},
+          "commercial_examples": {},
+          "tags": {},
+          "og_min": {
+            "dimension": "gravity",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "og_max": {
+            "dimension": "gravity",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "fg_min": {
+            "dimension": "gravity",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "fg_max": {
+            "dimension": "gravity",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "ibu_min": {
+            "dimension": "ibu",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "ibu_max": {
+            "dimension": "ibu",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "srm_min": {
+            "dimension": "beer_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "srm_max": {
+            "dimension": "beer_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "abv_min": {
+            "dimension": "abv",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "abv_max": {
+            "dimension": "abv",
+            "domain": {
+              "gte": 0
+            }
+          }
+        },
+        "equipment": {
+          "id": {},
+          "name": {},
+          "description": {},
+          "max_kettle_volume_l": {
+            "dimension": "volume",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "max_mash_tun_volume_l": {
+            "dimension": "volume",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "max_hlt_volume_l": {
+            "dimension": "volume",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "mash_dead_space_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "mash_transfer_loss_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "kettle_dead_space_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "kettle_transfer_loss_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "trub_loss_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "hlt_dead_space_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "hlt_transfer_loss_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "nominal_boil_off_rate_l_per_hr": {
+            "dimension": "volume_per_time",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "grain_absorption_factor_l_per_kg": {
+            "dimension": "mash_thickness",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "mash_heating_rate_c_per_min": {
+            "dimension": "temperature_delta_per_time",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "min_lgr_l_per_kg": {
+            "dimension": "mash_thickness",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "nominal_conversion_efficiency": {
+            "dimension": "percentage",
+            "domain": {
+              "gt": 0,
+              "lte": 1
+            }
+          },
+          "shrinkage_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 0.2
+            }
+          },
+          "hlt_coil_floor_l": {
+            "dimension": "volume",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "mash_tun_specific_heat": {
+            "dimension": "specific_heat",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "mash_tun_mass_kg": {
+            "dimension": "mass",
+            "domain": {
+              "gt": 0
+            }
+          }
+        },
+        "grist_row": {
+          "catalog_id": {},
+          "name": {},
+          "category": {
+            "taxonomy": "malt_category"
+          },
+          "parts": {
+            "dimension": "dimensionless"
+          },
+          "pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "yield_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "fermentability_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "moisture_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "color_lovibond": {
+            "dimension": "grain_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {}
+        },
+        "sugar_row": {
+          "sugar_id": {},
+          "name": {},
+          "mass_kg": {
+            "dimension": "mass",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "yield_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "fermentability_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "color_lovibond": {
+            "dimension": "grain_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {}
+        },
+        "trace_malt_row": {
+          "catalog_id": {},
+          "name": {},
+          "category": {
+            "taxonomy": "malt_category"
+          },
+          "mass_kg": {
+            "dimension": "mass",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "yield_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "fermentability_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "color_lovibond": {
+            "dimension": "grain_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {}
+        },
+        "boil_hop_row": {
+          "hop_id": {},
+          "name": {},
+          "alpha_acid_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "boil_time_fraction": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "parts": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          }
+        },
+        "whirlpool_hop_row": {
+          "hop_id": {},
+          "name": {},
+          "product_form": {
+            "taxonomy": "whirlpool_hop_form",
+            "default": "t90_pellet"
+          },
+          "alpha_acid_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "t90_replacement_ratio": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "duration_min": {
+            "dimension": "time",
+            "default": 30,
+            "domain": {
+              "gte": 0
+            }
+          },
+          "initial_temp_c": {
+            "dimension": "temperature",
+            "default": 99,
+            "domain": {
+              "gte": 0,
+              "lte": 100
+            }
+          },
+          "parts": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "notes": {}
+        },
+        "boil_hop_result": {
+          "minutes": {
+            "dimension": "time"
+          },
+          "ibu": {
+            "dimension": "ibu"
+          },
+          "mass_kg": {
+            "dimension": "mass"
+          }
+        },
+        "whirlpool_hop_result": {
+          "minutes": {
+            "dimension": "time"
+          },
+          "ibu": {
+            "dimension": "ibu"
+          },
+          "mass_kg": {
+            "dimension": "mass"
+          },
+          "effective_minutes": {
+            "dimension": "time"
+          }
+        },
+        "mash_rest": {
+          "rest_id": {
+            "taxonomy": "mash_rest"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "use_temp_c": {
+            "dimension": "temperature"
+          },
+          "duration_min": {
+            "dimension": "time"
+          }
+        },
+        "mash_rest_definition": {
+          "rest_id": {
+            "taxonomy": "mash_rest"
+          },
+          "name": {},
+          "temp_min_c": {
+            "dimension": "temperature"
+          },
+          "temp_max_c": {
+            "dimension": "temperature"
+          },
+          "default_duration_min": {
+            "dimension": "time"
+          },
+          "purpose": {},
+          "sequence": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          }
+        },
+        "water_grist_row": {
+          "mass_kg": {
+            "dimension": "mass",
+            "domain": {
+              "gt": 0
+            }
+          },
+          "color_lovibond": {
+            "dimension": "grain_color",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "grain_type": {
+            "taxonomy": "malt_category"
+          }
+        },
+        "water_report": {
+          "report_id": {},
+          "date_received": {},
+          "date_reported": {},
+          "laboratory": {},
+          "sample_id": {},
+          "source_name": {},
+          "location": {},
+          "ph": {
+            "dimension": "ph",
+            "domain": {
+              "gte": 0,
+              "lte": 14
+            }
+          },
+          "tds_ppm": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "electrical_conductivity_mmho_cm": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "calcium_ca": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "magnesium_mg": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "sodium_na": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "potassium_k": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "chloride_cl": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "sulfate_so4": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "bicarbonate_hco3": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "total_alkalinity_caco3": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "total_hardness_caco3": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "nitrate_no3_n": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "total_phosphorus_p": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "total_iron_fe": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "notes": {}
+        },
+        "water_target": {
+          "id": {},
+          "name": {},
+          "description": {},
+          "calcium_ca": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "magnesium_mg": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "sodium_na": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "sulfate_so4": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "chloride_cl": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "alkalinity_as_caco3": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "calcium_floor_ppm": {
+            "dimension": "concentration",
+            "domain": {
+              "gte": 0
+            },
+            "default": 50
+          },
+          "mode": {
+            "taxonomy": "strategy"
+          },
+          "notes": {}
+        },
+        "water_pinned_ion": {
+          "ion": {
+            "taxonomy": "ion"
+          }
+        },
+        "dry_hop_row": {
+          "product_type": {
+            "taxonomy": "wet_hop_product_type"
+          },
+          "variety": {},
+          "quantity": {
+            "dimension": "dimensionless"
+          },
+          "unit": {
+            "taxonomy": "hop_unit"
+          },
+          "application_stage": {
+            "taxonomy": "wet_hop_application_stage"
+          },
+          "time_of_application": {},
+          "contact_duration_hours": {
+            "dimension": "time"
+          },
+          "notes": {}
+        },
+        "brew_day_step": {
+          "step_id": {},
+          "section": {},
+          "name": {},
+          "enabled": {
+            "type": "boolean"
+          },
+          "instructions": {}
+        }
+      },
+      "nodes": {
+        "batch.target_abv": {
+          "kind": "root",
+          "dimension": "abv",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "lt",
+                "args": [
+                  {
+                    "ref": "style.abv_min"
+                  },
+                  {
+                    "ref": "style.abv_max"
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "style.abv_min"
+                      },
+                      {
+                        "ref": "style.abv_max"
+                      }
+                    ]
+                  },
+                  2
+                ]
+              },
+              {
+                "const": "default_target_abv"
+              }
+            ]
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.target_ibu": {
+          "kind": "root",
+          "dimension": "ibu",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "lt",
+                "args": [
+                  {
+                    "ref": "style.ibu_min"
+                  },
+                  {
+                    "ref": "style.ibu_max"
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "style.ibu_min"
+                      },
+                      {
+                        "ref": "style.ibu_max"
+                      }
+                    ]
+                  },
+                  2
+                ]
+              },
+              {
+                "const": "default_target_ibu"
+              }
+            ]
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "batch.target_srm": {
+          "kind": "root",
+          "dimension": "beer_color",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "lt",
+                "args": [
+                  {
+                    "ref": "style.srm_min"
+                  },
+                  {
+                    "ref": "style.srm_max"
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "style.srm_min"
+                      },
+                      {
+                        "ref": "style.srm_max"
+                      }
+                    ]
+                  },
+                  2
+                ]
+              },
+              null
+            ]
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "batch.whirlpool_ibu_fraction": {
+          "kind": "root",
+          "dimension": "percentage",
+          "default": 0,
+          "domain": {
+            "gte": 0,
+            "lte": 1
+          }
+        },
+        "batch.whirlpool_ambient_temp_c": {
+          "kind": "root",
+          "dimension": "temperature",
+          "default": 20,
+          "domain": {
+            "gte": -20,
+            "lte": 50
+          }
+        },
+        "batch.whirlpool_cooling_time_constant_min": {
+          "kind": "root",
+          "dimension": "time",
+          "default": 108.7,
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.v_ferm": {
+          "kind": "root",
+          "dimension": "volume",
+          "default": {
+            "const": "default_v_ferm_l"
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.boil_time_min": {
+          "kind": "root",
+          "dimension": "time",
+          "default": {
+            "const": "default_boil_time_min"
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.boil_off_rate_l_per_hr": {
+          "kind": "root",
+          "dimension": "volume_per_time",
+          "default": {
+            "ref": "equipment.nominal_boil_off_rate_l_per_hr"
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.conversion_efficiency": {
+          "kind": "root",
+          "dimension": "percentage",
+          "default": {
+            "ref": "equipment.nominal_conversion_efficiency"
+          },
+          "domain": {
+            "gt": 0,
+            "lte": 1
+          }
+        },
+        "batch.topology": {
+          "kind": "choice",
+          "taxonomy": "topology",
+          "default": "r_l_to_g"
+        },
+        "batch.intensive_value": {
+          "kind": "root",
+          "dimension": "mash_thickness",
+          "default": {
+            "const": "default_mash_thickness_l_per_kg"
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.hlt_starting_volume_l": {
+          "kind": "root",
+          "dimension": "volume",
+          "default": {
+            "ref": "equipment.max_hlt_volume_l"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "batch.yeast_id": {
+          "kind": "root",
+          "dimension": "reference",
+          "default": ""
+        },
+        "batch.attenuation_derate": {
+          "kind": "root",
+          "dimension": "percentage",
+          "default": {
+            "const": "default_attenuation_derate"
+          },
+          "domain": {
+            "gt": 0,
+            "lte": 1
+          }
+        },
+        "batch.yeast_cap": {
+          "kind": "derived",
+          "inputs": {
+            "selector": "batch.yeast_id",
+            "aa": "batch.yeast.attenuation_pct",
+            "derate": "batch.attenuation_derate"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "ne",
+                "args": [
+                  {
+                    "ref": "selector"
+                  },
+                  ""
+                ]
+              },
+              {
+                "call": "apply_attenuation_factor",
+                "args": [
+                  {
+                    "ref": "aa"
+                  },
+                  {
+                    "ref": "derate"
+                  }
+                ]
+              },
+              null
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.grain_moisture_fraction": {
+          "kind": "root",
+          "dimension": "percentage",
+          "default": {
+            "const": "default_grain_moisture_fraction"
+          },
+          "domain": {
+            "gte": 0,
+            "lte": 1
+          }
+        },
+        "batch.sugars": {
+          "kind": "collection",
+          "item_schema": "sugar_row"
+        },
+        "batch.boil_hops": {
+          "kind": "collection",
+          "item_schema": "boil_hop_row"
+        },
+        "batch.whirlpool_hops": {
+          "kind": "collection",
+          "item_schema": "whirlpool_hop_row"
+        },
+        "batch.yeast": {
+          "kind": "selection",
+          "output": {
+            "schema": "yeast"
+          },
+          "ref": "batch.yeast_id"
+        },
+        "batch.fermentation": {
+          "kind": "choice",
+          "taxonomy": "fermentation",
+          "default": "ale"
+        },
+        "water.target_profile_id": {
+          "kind": "root",
+          "dimension": "reference",
+          "default": ""
+        },
+        "water.target_profile": {
+          "kind": "selection",
+          "output": {
+            "schema": "water_target"
+          },
+          "ref": "water.target_profile_id"
+        },
+        "water.target.calcium_ca": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "ref": "water.target_profile.calcium_ca"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.target.magnesium_mg": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "ref": "water.target_profile.magnesium_mg"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.target.sodium_na": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "ref": "water.target_profile.sodium_na"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.target.sulfate_so4": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "ref": "water.target_profile.sulfate_so4"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.target.chloride_cl": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "ref": "water.target_profile.chloride_cl"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.target.alkalinity_as_caco3": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "ref": "water.target_profile.alkalinity_as_caco3"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.calcium_floor_ppm": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "water.target_profile.calcium_floor_ppm"
+                  },
+                  0
+                ]
+              },
+              {
+                "ref": "water.target_profile.calcium_floor_ppm"
+              },
+              {
+                "const": "default_calcium_floor_ppm"
+              }
+            ]
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "water.target_mash_ph": {
+          "kind": "root",
+          "dimension": "ph",
+          "default": {
+            "const": "default_target_mash_ph"
+          },
+          "domain": {
+            "gte": 4,
+            "lte": 7
+          }
+        },
+        "water.strategy": {
+          "kind": "choice",
+          "taxonomy": "strategy",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "ne",
+                "args": [
+                  {
+                    "ref": "water.target_profile_id"
+                  },
+                  ""
+                ]
+              },
+              {
+                "ref": "water.target_profile.mode"
+              },
+              "AUTO"
+            ]
+          }
+        },
+        "water.salt_distribution": {
+          "kind": "choice",
+          "taxonomy": "salt_distribution",
+          "default": "PROPORTIONAL"
+        },
+        "water.acid_medium": {
+          "kind": "choice",
+          "taxonomy": "acid_medium",
+          "default": "LACTIC_88"
+        },
+        "water.gypsum_form": {
+          "kind": "choice",
+          "taxonomy": "gypsum_form",
+          "default": "GYPSUM_DIHYDRATE"
+        },
+        "water.cacl2_form": {
+          "kind": "choice",
+          "taxonomy": "cacl2_form",
+          "default": "CACL2_DIHYDRATE"
+        },
+        "water.preferred_alkaline_agent": {
+          "kind": "choice",
+          "taxonomy": "alkaline_agent",
+          "default": "PICKLING_LIME"
+        },
+        "water.kettle_blend.calcium_ca": {
+          "kind": "derived",
+          "inputs": {
+            "mash": "solver.water.post_salt_mash_ions.calcium_ca",
+            "hlt": "solver.water.post_salt_hlt_ions.calcium_ca",
+            "run1": "solver.batch.cascade.v_run1",
+            "run2": "solver.batch.cascade.v_run2",
+            "sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "call": "blend_ion",
+            "args": [
+              {
+                "ref": "mash"
+              },
+              {
+                "ref": "hlt"
+              },
+              {
+                "ref": "run1"
+              },
+              {
+                "ref": "run2"
+              },
+              {
+                "ref": "sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.kettle_blend.magnesium_mg": {
+          "kind": "derived",
+          "inputs": {
+            "mash": "solver.water.post_salt_mash_ions.magnesium_mg",
+            "hlt": "solver.water.post_salt_hlt_ions.magnesium_mg",
+            "run1": "solver.batch.cascade.v_run1",
+            "run2": "solver.batch.cascade.v_run2",
+            "sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "call": "blend_ion",
+            "args": [
+              {
+                "ref": "mash"
+              },
+              {
+                "ref": "hlt"
+              },
+              {
+                "ref": "run1"
+              },
+              {
+                "ref": "run2"
+              },
+              {
+                "ref": "sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.kettle_blend.sodium_na": {
+          "kind": "derived",
+          "inputs": {
+            "mash": "solver.water.post_salt_mash_ions.sodium_na",
+            "hlt": "solver.water.post_salt_hlt_ions.sodium_na",
+            "run1": "solver.batch.cascade.v_run1",
+            "run2": "solver.batch.cascade.v_run2",
+            "sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "call": "blend_ion",
+            "args": [
+              {
+                "ref": "mash"
+              },
+              {
+                "ref": "hlt"
+              },
+              {
+                "ref": "run1"
+              },
+              {
+                "ref": "run2"
+              },
+              {
+                "ref": "sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.kettle_blend.sulfate_so4": {
+          "kind": "derived",
+          "inputs": {
+            "mash": "solver.water.post_salt_mash_ions.sulfate_so4",
+            "hlt": "solver.water.post_salt_hlt_ions.sulfate_so4",
+            "run1": "solver.batch.cascade.v_run1",
+            "run2": "solver.batch.cascade.v_run2",
+            "sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "call": "blend_ion",
+            "args": [
+              {
+                "ref": "mash"
+              },
+              {
+                "ref": "hlt"
+              },
+              {
+                "ref": "run1"
+              },
+              {
+                "ref": "run2"
+              },
+              {
+                "ref": "sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.kettle_blend.chloride_cl": {
+          "kind": "derived",
+          "inputs": {
+            "mash": "solver.water.post_salt_mash_ions.chloride_cl",
+            "hlt": "solver.water.post_salt_hlt_ions.chloride_cl",
+            "run1": "solver.batch.cascade.v_run1",
+            "run2": "solver.batch.cascade.v_run2",
+            "sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "call": "blend_ion",
+            "args": [
+              {
+                "ref": "mash"
+              },
+              {
+                "ref": "hlt"
+              },
+              {
+                "ref": "run1"
+              },
+              {
+                "ref": "run2"
+              },
+              {
+                "ref": "sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.kettle_blend.alkalinity_as_caco3": {
+          "kind": "derived",
+          "inputs": {
+            "mash": "solver.water.post_salt_mash_ions.alkalinity_as_caco3",
+            "hlt": "solver.water.post_salt_hlt_ions.alkalinity_as_caco3",
+            "run1": "solver.batch.cascade.v_run1",
+            "run2": "solver.batch.cascade.v_run2",
+            "sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "call": "blend_ion",
+            "args": [
+              {
+                "ref": "mash"
+              },
+              {
+                "ref": "hlt"
+              },
+              {
+                "ref": "run1"
+              },
+              {
+                "ref": "run2"
+              },
+              {
+                "ref": "sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.kettle_blend.sulfate_chloride_ratio": {
+          "kind": "derived",
+          "inputs": {
+            "sulfate": "water.kettle_blend.sulfate_so4",
+            "chloride": "water.kettle_blend.chloride_cl"
+          },
+          "expr": {
+            "call": "sulfate_chloride_ratio",
+            "args": [
+              {
+                "ref": "sulfate"
+              },
+              {
+                "ref": "chloride"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "dimensionless"
+          }
+        },
+        "water.target.sulfate_chloride_ratio": {
+          "kind": "derived",
+          "inputs": {
+            "sulfate": "water.target.sulfate_so4",
+            "chloride": "water.target.chloride_cl"
+          },
+          "expr": {
+            "call": "sulfate_chloride_ratio",
+            "args": [
+              {
+                "ref": "sulfate"
+              },
+              {
+                "ref": "chloride"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "dimensionless"
+          }
+        },
+        "grist.major_malts": {
+          "kind": "collection",
+          "item_schema": "grist_row"
+        },
+        "grist.trace_malts": {
+          "kind": "collection",
+          "item_schema": "trace_malt_row"
+        },
+        "mash.grain_temp_c": {
+          "kind": "root",
+          "dimension": "temperature",
+          "default": {
+            "const": "default_grain_temp_c"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "mash.tun_initial_temp_c": {
+          "kind": "root",
+          "dimension": "temperature",
+          "default": {
+            "const": "default_grain_temp_c"
+          },
+          "domain": {
+            "gte": 0
+          }
+        },
+        "mash.rests": {
+          "kind": "collection",
+          "item_schema": "mash_rest"
+        },
+        "water.pinned_ions": {
+          "kind": "collection",
+          "item_schema": "water_pinned_ion"
+        },
+        "solver.batch": {
+          "kind": "boundary",
+          "binding": "batch_sparge_solver",
+          "resolution": "iterative",
+          "inputs": {
+            "target_abv": "batch.target_abv",
+            "apparent_attenuation": "batch.yeast_cap",
+            "v_ferm": "batch.v_ferm",
+            "topology": "batch.topology",
+            "intensive_value": "batch.intensive_value",
+            "grain_bill": "grist.major_malts",
+            "grain_moisture_fraction": "batch.grain_moisture_fraction",
+            "s_late_add": "batch.s_late_add",
+            "v_kettle_dead": "equipment.kettle_dead_space_l",
+            "v_kettle_transfer": "equipment.kettle_transfer_loss_l",
+            "v_trub": "equipment.trub_loss_l",
+            "delta_v_evap": "batch.delta_v_evap",
+            "v_dead": "equipment.mash_dead_space_l",
+            "mash_transfer_loss": "equipment.mash_transfer_loss_l",
+            "eta_conv": "batch.conversion_efficiency",
+            "f_shrink": "equipment.shrinkage_pct",
+            "hlt_starting_volume_l": "batch.hlt_starting_volume_l",
+            "hlt_dead_space_l": "equipment.hlt_dead_space_l",
+            "hlt_transfer_loss_l": "equipment.hlt_transfer_loss_l",
+            "hlt_coil_floor_l": "equipment.hlt_coil_floor_l",
+            "max_hlt_volume_l": "equipment.max_hlt_volume_l"
+          },
+          "outputs": {
+            "sg_post_boil": {
+              "dimension": "gravity"
+            },
+            "v_pre_boil": {
+              "dimension": "volume"
+            },
+            "s_post_boil_target": {
+              "dimension": "mass"
+            },
+            "m_grist": {
+              "dimension": "mass"
+            },
+            "cascade.v_strike": {
+              "dimension": "volume"
+            },
+            "cascade.v_run1": {
+              "dimension": "volume"
+            },
+            "cascade.v_run2": {
+              "dimension": "volume"
+            },
+            "cascade.v_sparge": {
+              "dimension": "volume"
+            },
+            "cascade.v_absorption": {
+              "dimension": "volume"
+            },
+            "cascade.v_mc": {
+              "dimension": "volume"
+            },
+            "cascade.v_sol": {
+              "dimension": "volume"
+            },
+            "cascade.s_run1": {
+              "dimension": "mass"
+            },
+            "cascade.s_run2": {
+              "dimension": "mass"
+            },
+            "cascade.sg_pre_boil": {
+              "dimension": "gravity"
+            },
+            "cascade.v_post_boil": {
+              "dimension": "volume"
+            },
+            "max_achievable_abv": {
+              "dimension": "percentage"
+            },
+            "aa_wort": {
+              "dimension": "percentage"
+            },
+            "aa_batch": {
+              "dimension": "percentage"
+            },
+            "hlt.v_hlt_debt": {
+              "dimension": "volume"
+            },
+            "hlt.v_hlt_after_strike": {
+              "dimension": "volume"
+            },
+            "hlt.v_hlt_top_up": {
+              "dimension": "volume"
+            },
+            "hlt.v_sparge_deliverable": {
+              "dimension": "volume"
+            },
+            "mash_thickness_l_per_kg": {
+              "dimension": "mash_thickness"
+            }
+          },
+          "domain": {
+            "codes": [
+              "INVALID_TARGET_ABV",
+              "INVALID_ATTENUATION",
+              "ABV_UNREACHABLE",
+              "INVALID_FERM_VOLUME",
+              "INVALID_SHRINKAGE",
+              "EXTRACT_TARGET_NON_POSITIVE",
+              "INVALID_YIELD",
+              "DEGENERATE_BRACKET",
+              "BRACKET_NO_SIGN_CHANGE",
+              "UNKNOWN_TOPOLOGY",
+              "INVALID_INTENSIVE_VALUE",
+              "MASH_TOO_THIN",
+              "HLT_TOO_SMALL",
+              "INVALID_GRAIN_BILL_NORMALIZATION"
+            ]
+          }
+        },
+        "batch.realized_fg": {
+          "kind": "derived",
+          "inputs": {
+            "og_sg": "solver.batch.sg_post_boil",
+            "aa": "solver.batch.aa_batch"
+          },
+          "expr": {
+            "call": "realized_fg",
+            "args": [
+              {
+                "ref": "og_sg"
+              },
+              {
+                "ref": "aa"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "gravity"
+          }
+        },
+        "batch.realized_abv": {
+          "kind": "derived",
+          "inputs": {
+            "og_sg": "solver.batch.sg_post_boil",
+            "aa": "solver.batch.aa_batch"
+          },
+          "expr": {
+            "call": "realized_abv",
+            "args": [
+              {
+                "ref": "og_sg"
+              },
+              {
+                "ref": "aa"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "abv"
+          }
+        },
+        "batch.boil_target_ibu": {
+          "kind": "derived",
+          "inputs": {
+            "target_ibu": "batch.target_ibu",
+            "whirlpool_target_ibu": "batch.whirlpool_target_ibu"
+          },
+          "expr": {
+            "op": "-",
+            "args": [
+              {
+                "ref": "target_ibu"
+              },
+              {
+                "ref": "whirlpool_target_ibu"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "ibu"
+          }
+        },
+        "batch.whirlpool_target_ibu": {
+          "kind": "derived",
+          "inputs": {
+            "target_ibu": "batch.target_ibu",
+            "whirlpool_fraction": "batch.whirlpool_ibu_fraction"
+          },
+          "expr": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "target_ibu"
+              },
+              {
+                "ref": "whirlpool_fraction"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "ibu"
+          }
+        },
+        "batch.total_water_used": {
+          "kind": "derived",
+          "inputs": {
+            "v_strike": "solver.batch.cascade.v_strike",
+            "v_sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "ref": "v_strike"
+              },
+              {
+                "ref": "v_sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
+        "batch.sparge_salted_volume": {
+          "kind": "derived",
+          "inputs": {
+            "v_hlt_after_strike": "solver.batch.hlt.v_hlt_after_strike",
+            "v_hlt_top_up": "solver.batch.hlt.v_hlt_top_up"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "ref": "v_hlt_after_strike"
+              },
+              {
+                "ref": "v_hlt_top_up"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
+        "batch.surplus_sparge_capacity": {
+          "kind": "derived",
+          "inputs": {
+            "v_sparge_deliverable": "solver.batch.hlt.v_sparge_deliverable",
+            "v_sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "op": "-",
+            "args": [
+              {
+                "ref": "v_sparge_deliverable"
+              },
+              {
+                "ref": "v_sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
+        "batch.runnings_ratio": {
+          "kind": "derived",
+          "inputs": {
+            "v_run1": "solver.batch.cascade.v_run1",
+            "v_run2": "solver.batch.cascade.v_run2"
+          },
+          "expr": {
+            "op": "/",
+            "args": [
+              {
+                "ref": "v_run1"
+              },
+              {
+                "ref": "v_run2"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "dimensionless"
+          }
+        },
+        "batch.shrinkage_volume_l": {
+          "kind": "derived",
+          "inputs": {
+            "v_post_boil": "solver.batch.cascade.v_post_boil",
+            "f_shrink": "equipment.shrinkage_pct"
+          },
+          "expr": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "v_post_boil"
+              },
+              {
+                "ref": "f_shrink"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
+        "solver.water": {
+          "kind": "boundary",
+          "binding": "water_chemistry_solver",
+          "resolution": "iterative",
+          "inputs": {
+            "grist": "grist.major_malts",
+            "trace_malts": "grist.trace_malts",
+            "m_grist": "solver.batch.m_grist",
+            "source.calcium_ca": "water.source.calcium_ca",
+            "source.magnesium_mg": "water.source.magnesium_mg",
+            "source.sodium_na": "water.source.sodium_na",
+            "source.sulfate_so4": "water.source.sulfate_so4",
+            "source.chloride_cl": "water.source.chloride_cl",
+            "source.alkalinity_as_caco3": "water.source.total_alkalinity_caco3",
+            "target.calcium_ca": "water.target.calcium_ca",
+            "target.magnesium_mg": "water.target.magnesium_mg",
+            "target.sodium_na": "water.target.sodium_na",
+            "target.sulfate_so4": "water.target.sulfate_so4",
+            "target.chloride_cl": "water.target.chloride_cl",
+            "target.alkalinity_as_caco3": "water.target.alkalinity_as_caco3",
+            "v_mash_treat_l": "solver.batch.cascade.v_strike",
+            "v_hlt_treat_l": "batch.sparge_salted_volume",
+            "v_hlt_debt_l": "solver.batch.hlt.v_hlt_debt",
+            "v_sparge_demand_l": "solver.batch.cascade.v_sparge",
+            "mash_thickness_l_per_kg": "solver.batch.mash_thickness_l_per_kg",
+            "target_mash_ph": "water.target_mash_ph",
+            "strategy": "water.strategy",
+            "salt_distribution": "water.salt_distribution",
+            "acid_medium": "water.acid_medium",
+            "gypsum_form": "water.gypsum_form",
+            "cacl2_form": "water.cacl2_form",
+            "preferred_alkaline_agent": "water.preferred_alkaline_agent",
+            "calcium_floor_ppm": "water.calcium_floor_ppm",
+            "custom_pinned_ions": "water.pinned_ions"
+          },
+          "outputs": {
+            "strategy": {
+              "taxonomy": "strategy"
+            },
+            "prescription.predicted_mash_ph": {
+              "dimension": "ph"
+            },
+            "prescription.mash_ph_status": {
+              "taxonomy": "ph_status"
+            },
+            "prescription.residual_hlt_water_l": {
+              "dimension": "volume"
+            },
+            "mash_additions.gypsum_kg": {
+              "dimension": "mass"
+            },
+            "mash_additions.cacl2_kg": {
+              "dimension": "mass"
+            },
+            "mash_additions.epsom_kg": {
+              "dimension": "mass"
+            },
+            "mash_additions.nacl_kg": {
+              "dimension": "mass"
+            },
+            "mash_additions.acid_l": {
+              "dimension": "volume"
+            },
+            "mash_additions.baking_soda_kg": {
+              "dimension": "mass"
+            },
+            "mash_additions.chalk_kg": {
+              "dimension": "mass"
+            },
+            "mash_additions.pickling_lime_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.gypsum_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.cacl2_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.epsom_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.nacl_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.acid_l": {
+              "dimension": "volume"
+            },
+            "sparge_additions.baking_soda_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.chalk_kg": {
+              "dimension": "mass"
+            },
+            "sparge_additions.pickling_lime_kg": {
+              "dimension": "mass"
+            },
+            "post_salt_mash_ions.calcium_ca": {
+              "dimension": "concentration"
+            },
+            "post_salt_mash_ions.magnesium_mg": {
+              "dimension": "concentration"
+            },
+            "post_salt_mash_ions.sodium_na": {
+              "dimension": "concentration"
+            },
+            "post_salt_mash_ions.sulfate_so4": {
+              "dimension": "concentration"
+            },
+            "post_salt_mash_ions.chloride_cl": {
+              "dimension": "concentration"
+            },
+            "post_salt_mash_ions.alkalinity_as_caco3": {
+              "dimension": "concentration"
+            },
+            "post_salt_hlt_ions.calcium_ca": {
+              "dimension": "concentration"
+            },
+            "post_salt_hlt_ions.magnesium_mg": {
+              "dimension": "concentration"
+            },
+            "post_salt_hlt_ions.sodium_na": {
+              "dimension": "concentration"
+            },
+            "post_salt_hlt_ions.sulfate_so4": {
+              "dimension": "concentration"
+            },
+            "post_salt_hlt_ions.chloride_cl": {
+              "dimension": "concentration"
+            },
+            "post_salt_hlt_ions.alkalinity_as_caco3": {
+              "dimension": "concentration"
+            },
+            "grist_buckets_kg.BASE": {
+              "dimension": "mass"
+            },
+            "grist_buckets_kg.CRYSTAL": {
+              "dimension": "mass"
+            },
+            "grist_buckets_kg.ROASTED": {
+              "dimension": "mass"
+            },
+            "grist_buckets_kg.ACID": {
+              "dimension": "mass"
+            },
+            "post_dose_mash_ions.calcium_ca": {
+              "dimension": "concentration"
+            },
+            "post_dose_mash_ions.magnesium_mg": {
+              "dimension": "concentration"
+            },
+            "post_dose_mash_ions.sodium_na": {
+              "dimension": "concentration"
+            },
+            "post_dose_mash_ions.sulfate_so4": {
+              "dimension": "concentration"
+            },
+            "post_dose_mash_ions.chloride_cl": {
+              "dimension": "concentration"
+            },
+            "post_dose_mash_ions.alkalinity_as_caco3": {
+              "dimension": "concentration"
+            },
+            "total_added_salt_mass_g": {
+              "dimension": "mass"
+            },
+            "added_mineral_tds_ppm": {
+              "dimension": "concentration"
+            }
+          },
+          "domain": {
+            "codes": [
+              "INVALID_MASH_VOLUME",
+              "INVALID_SPARGE_VOLUME",
+              "UNKNOWN_GRAIN_TYPE",
+              "UNKNOWN_ACID_MEDIUM",
+              "UNKNOWN_ALKALINE_AGENT",
+              "UNKNOWN_SALT_FORM",
+              "SALT_SOLVE_FAILED",
+              "UNKNOWN_STRATEGY",
+              "PINNED_IONS_REQUIRED"
+            ]
+          }
+        },
+        "solver.hops": {
+          "kind": "boundary",
+          "binding": "hop_bitterness_solver",
+          "resolution": "direct",
+          "inputs": {
+            "boil_hops": "batch.boil_hops",
+            "whirlpool_hops": "batch.whirlpool_hops",
+            "boil_target_ibu": "batch.boil_target_ibu",
+            "whirlpool_target_ibu": "batch.whirlpool_target_ibu",
+            "boil_time_min": "batch.boil_time_min",
+            "pre_boil_gravity": "solver.batch.cascade.sg_pre_boil",
+            "post_boil_gravity": "solver.batch.sg_post_boil",
+            "post_boil_volume_l": "solver.batch.cascade.v_post_boil",
+            "whirlpool_ambient_temp_c": "batch.whirlpool_ambient_temp_c",
+            "whirlpool_cooling_time_constant_min": "batch.whirlpool_cooling_time_constant_min"
+          },
+          "outputs": {
+            "boil_rows": {
+              "type": "collection",
+              "item_schema": "boil_hop_result"
+            },
+            "whirlpool_rows": {
+              "type": "collection",
+              "item_schema": "whirlpool_hop_result"
+            },
+            "boil_mass_kg": {
+              "dimension": "mass"
+            },
+            "whirlpool_mass_kg": {
+              "dimension": "mass"
+            },
+            "total_mass_kg": {
+              "dimension": "mass"
+            }
+          },
+          "domain": {
+            "codes": [
+              "INVALID_HOP_INPUT",
+              "INVALID_GRAVITY",
+              "INVALID_VOLUME",
+              "INVALID_COOLING_CONSTANT",
+              "UNKNOWN_PRODUCT_FORM"
+            ]
+          }
+        },
+        "mash.dough_in_target_temp_c": {
+          "kind": "derived",
+          "inputs": {
+            "rests": "mash.rests"
+          },
+          "expr": {
+            "op": "min",
+            "coll": {
+              "ref": "rests"
+            },
+            "as": "rest",
+            "value": {
+              "ref": "rest.use_temp_c"
+            },
+            "where": {
+              "op": "and",
+              "args": [
+                {
+                  "ref": "rest.enabled"
+                },
+                {
+                  "op": "ne",
+                  "args": [
+                    {
+                      "ref": "rest.rest_id"
+                    },
+                    "mash_out"
+                  ]
+                },
+                {
+                  "op": "ne",
+                  "args": [
+                    {
+                      "ref": "rest.rest_id"
+                    },
+                    "dough_in"
+                  ]
+                }
+              ]
+            }
+          },
+          "output": {
+            "dimension": "temperature"
+          }
+        },
+        "mash.heating_rate_c_per_min": {
+          "kind": "derived",
+          "inputs": {
+            "rate": "equipment.mash_heating_rate_c_per_min"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "rate"
+                  },
+                  0
+                ]
+              },
+              {
+                "ref": "rate"
+              },
+              {
+                "const": "default_mash_heating_rate_c_per_min"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "temperature_delta_per_time"
+          }
+        },
+        "mash.enabled_min_temp_c": {
+          "kind": "derived",
+          "inputs": {
+            "rests": "mash.rests"
+          },
+          "expr": {
+            "op": "min",
+            "coll": {
+              "ref": "rests"
+            },
+            "as": "rest",
+            "value": {
+              "ref": "rest.use_temp_c"
+            },
+            "where": {
+              "ref": "rest.enabled"
+            }
+          },
+          "output": {
+            "dimension": "temperature"
+          }
+        },
+        "mash.enabled_max_temp_c": {
+          "kind": "derived",
+          "inputs": {
+            "rests": "mash.rests"
+          },
+          "expr": {
+            "op": "max",
+            "coll": {
+              "ref": "rests"
+            },
+            "as": "rest",
+            "value": {
+              "ref": "rest.use_temp_c"
+            },
+            "where": {
+              "ref": "rest.enabled"
+            }
+          },
+          "output": {
+            "dimension": "temperature"
+          }
+        },
+        "mash.ramp_time_min": {
+          "kind": "derived",
+          "inputs": {
+            "t_min": "mash.enabled_min_temp_c",
+            "t_max": "mash.enabled_max_temp_c",
+            "rate": "mash.heating_rate_c_per_min"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "t_max"
+                  },
+                  {
+                    "ref": "t_min"
+                  }
+                ]
+              },
+              {
+                "call": "ramp_time_min",
+                "args": [
+                  {
+                    "op": "-",
+                    "args": [
+                      {
+                        "ref": "t_max"
+                      },
+                      {
+                        "ref": "t_min"
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "rate"
+                  }
+                ]
+              },
+              {
+                "call": "ramp_time_min",
+                "args": [
+                  0,
+                  {
+                    "ref": "rate"
+                  }
+                ]
+              }
+            ]
+          },
+          "output": {
+            "dimension": "time"
+          }
+        },
+        "mash.total_time_min": {
+          "kind": "derived",
+          "inputs": {
+            "rests": "mash.rests",
+            "ramp": "mash.ramp_time_min"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "op": "sum",
+                "coll": {
+                  "ref": "rests"
+                },
+                "as": "rest",
+                "where": {
+                  "op": "and",
+                  "args": [
+                    {
+                      "ref": "rest.enabled"
+                    },
+                    {
+                      "op": "ne",
+                      "args": [
+                        {
+                          "ref": "rest.duration_min"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                },
+                "body": {
+                  "ref": "rest.duration_min"
+                }
+              },
+              {
+                "ref": "ramp"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "time"
+          }
+        },
+        "mash.strike_water_temp_base_c": {
+          "kind": "derived",
+          "inputs": {
+            "t_target": "mash.dough_in_target_temp_c",
+            "t_grain": "mash.grain_temp_c",
+            "thickness": "solver.batch.mash_thickness_l_per_kg"
+          },
+          "expr": {
+            "call": "calculate_strike_water_base_temp",
+            "args": [
+              {
+                "ref": "t_target"
+              },
+              {
+                "ref": "t_grain"
+              },
+              {
+                "ref": "thickness"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "temperature"
+          }
+        },
+        "mash.strike_water_tun_offset_c": {
+          "kind": "derived",
+          "inputs": {
+            "t_target": "mash.dough_in_target_temp_c",
+            "tun_initial": "mash.tun_initial_temp_c",
+            "specific_heat": "equipment.mash_tun_specific_heat",
+            "tun_mass": "equipment.mash_tun_mass_kg",
+            "water_mass": "solver.batch.cascade.v_strike"
+          },
+          "expr": {
+            "call": "calculate_tun_thermal_offset",
+            "args": [
+              {
+                "ref": "t_target"
+              },
+              {
+                "ref": "tun_initial"
+              },
+              {
+                "ref": "specific_heat"
+              },
+              {
+                "ref": "tun_mass"
+              },
+              {
+                "ref": "water_mass"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "temperature_delta"
+          }
+        },
+        "mash.strike_water_temp_c": {
+          "kind": "derived",
+          "inputs": {
+            "base": "mash.strike_water_temp_base_c",
+            "offset": "mash.strike_water_tun_offset_c"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "ref": "base"
+              },
+              {
+                "ref": "offset"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "temperature"
+          }
+        },
+        "grist.weighted_lovibond": {
+          "kind": "derived",
+          "inputs": {
+            "rows": "grist.major_malts"
+          },
+          "expr": {
+            "op": "weighted_avg",
+            "coll": {
+              "ref": "rows"
+            },
+            "as": "row",
+            "value": {
+              "ref": "row.color_lovibond"
+            },
+            "weight": {
+              "ref": "row.pct"
+            }
+          },
+          "output": {
+            "dimension": "grain_color"
+          }
+        },
+        "grist.weighted_yield_fraction": {
+          "kind": "derived",
+          "inputs": {
+            "rows": "grist.major_malts"
+          },
+          "expr": {
+            "op": "weighted_avg",
+            "coll": {
+              "ref": "rows"
+            },
+            "as": "row",
+            "value": {
+              "ref": "row.yield_fraction"
+            },
+            "weight": {
+              "ref": "row.pct"
+            }
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "grist.sugars_mass": {
+          "kind": "derived",
+          "inputs": {
+            "sugars": "batch.sugars"
+          },
+          "expr": {
+            "op": "sum",
+            "coll": {
+              "ref": "sugars"
+            },
+            "as": "row",
+            "body": {
+              "ref": "row.mass_kg"
+            }
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "grist.sugar_weighted_lovibond": {
+          "kind": "derived",
+          "inputs": {
+            "rows": "batch.sugars"
+          },
+          "expr": {
+            "op": "weighted_avg",
+            "coll": {
+              "ref": "rows"
+            },
+            "as": "row",
+            "value": {
+              "ref": "row.color_lovibond"
+            },
+            "weight": {
+              "ref": "row.mass_kg"
+            }
+          },
+          "output": {
+            "dimension": "grain_color"
+          }
+        },
+        "grist.trace_malts_mass": {
+          "kind": "derived",
+          "inputs": {
+            "rows": "grist.trace_malts"
+          },
+          "expr": {
+            "op": "sum",
+            "coll": {
+              "ref": "rows"
+            },
+            "as": "row",
+            "body": {
+              "ref": "row.mass_kg"
+            }
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "grist.trace_weighted_lovibond": {
+          "kind": "derived",
+          "inputs": {
+            "rows": "grist.trace_malts"
+          },
+          "expr": {
+            "op": "weighted_avg",
+            "coll": {
+              "ref": "rows"
+            },
+            "as": "row",
+            "value": {
+              "ref": "row.color_lovibond"
+            },
+            "weight": {
+              "ref": "row.mass_kg"
+            }
+          },
+          "output": {
+            "dimension": "grain_color"
+          }
+        },
+        "grist.mcu": {
+          "kind": "derived",
+          "inputs": {
+            "grist_mass": "solver.batch.m_grist",
+            "lovibond": "grist.weighted_lovibond",
+            "sugars_mass": "grist.sugars_mass",
+            "sugar_lovibond": "grist.sugar_weighted_lovibond",
+            "trace_mass": "grist.trace_malts_mass",
+            "trace_lovibond": "grist.trace_weighted_lovibond",
+            "volume": "solver.batch.cascade.v_post_boil"
+          },
+          "expr": {
+            "op": "*",
+            "args": [
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "op": "+",
+                        "args": [
+                          {
+                            "op": "*",
+                            "args": [
+                              {
+                                "ref": "grist_mass"
+                              },
+                              {
+                                "ref": "lovibond"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "*",
+                            "args": [
+                              {
+                                "ref": "sugars_mass"
+                              },
+                              {
+                                "ref": "sugar_lovibond"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "ref": "trace_mass"
+                          },
+                          {
+                            "ref": "trace_lovibond"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "volume"
+                  }
+                ]
+              },
+              {
+                "const": "mcu_metric_to_imperial_factor"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "dimensionless"
+          }
+        },
+        "grist.finished_beer_srm": {
+          "kind": "derived",
+          "inputs": {
+            "mcu": "grist.mcu"
+          },
+          "expr": {
+            "call": "morey_mcu_to_srm",
+            "args": [
+              {
+                "ref": "mcu"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "beer_color"
+          }
+        },
+        "batch.s_late_add": {
+          "kind": "derived",
+          "inputs": {
+            "sugars": "batch.sugars"
+          },
+          "expr": {
+            "op": "sum",
+            "coll": {
+              "ref": "sugars"
+            },
+            "as": "row",
+            "body": {
+              "op": "*",
+              "args": [
+                {
+                  "ref": "row.mass_kg"
+                },
+                {
+                  "ref": "row.yield_fraction"
+                }
+              ]
+            }
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.delta_v_evap": {
+          "kind": "derived",
+          "inputs": {
+            "rate": "batch.boil_off_rate_l_per_hr",
+            "boil_time": "batch.boil_time_min"
+          },
+          "expr": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "rate"
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "boil_time"
+                  },
+                  60
+                ]
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
+        "batch.dry_hops": {
+          "kind": "collection",
+          "item_schema": "dry_hop_row"
+        },
+        "batch.brew_day_steps": {
+          "kind": "collection",
+          "item_schema": "brew_day_step"
+        },
+        "mash.preset_id": {
+          "kind": "choice",
+          "taxonomy": "mash_preset",
+          "default": "single_infusion"
+        }
+      },
+      "relations": [
+        {
+          "id": "hlt_not_overfilled",
+          "predicate": {
+            "op": "le",
+            "lhs": {
+              "ref": "batch.hlt_starting_volume_l"
+            },
+            "rhs": {
+              "ref": "equipment.max_hlt_volume_l"
+            }
+          }
+        },
+        {
+          "id": "hlt_above_coil_floor",
+          "predicate": {
+            "op": "ge",
+            "lhs": {
+              "ref": "batch.hlt_starting_volume_l"
+            },
+            "rhs": {
+              "ref": "equipment.hlt_coil_floor_l"
+            }
+          }
+        },
+        {
+          "id": "kettle_not_overfilled",
+          "predicate": {
+            "op": "le",
+            "lhs": {
+              "ref": "solver.batch.v_pre_boil"
+            },
+            "rhs": {
+              "ref": "equipment.max_kettle_volume_l"
+            }
+          }
+        },
+        {
+          "id": "mash_thickness_above_husk_floor",
+          "predicate": {
+            "op": "ge",
+            "lhs": {
+              "ref": "solver.batch.mash_thickness_l_per_kg"
+            },
+            "rhs": {
+              "const": "k_abs_true"
+            }
+          }
+        },
+        {
+          "id": "target_abv_reachable",
+          "predicate": {
+            "op": "le",
+            "lhs": {
+              "ref": "batch.target_abv"
+            },
+            "rhs": {
+              "ref": "solver.batch.max_achievable_abv"
+            }
+          }
+        },
+        {
+          "id": "mash_thickness_above_equipment_floor",
+          "predicate": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "lhs": {
+                  "ref": "equipment.min_lgr_l_per_kg"
+                },
+                "rhs": 0
+              },
+              {
+                "op": "ge",
+                "lhs": {
+                  "ref": "solver.batch.mash_thickness_l_per_kg"
+                },
+                "rhs": {
+                  "ref": "equipment.min_lgr_l_per_kg"
+                }
+              },
+              true
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "catalog": {
+    "dimensions": {
+      "temperature": {
+        "base_unit": "degC",
+        "kind": "affine",
+        "units": {}
+      },
+      "volume": {
+        "base_unit": "L",
+        "kind": "linear",
+        "units": {}
+      },
+      "mass": {
+        "base_unit": "kg",
+        "kind": "linear",
+        "units": {}
+      },
+      "gravity": {
+        "base_unit": "SG",
+        "kind": "nonlinear",
+        "units": {
+          "Plato": {
+            "factor": null,
+            "offset": null,
+            "fwd": "sg_to_plato",
+            "inv": "plato_to_sg"
+          }
+        }
+      }
+    },
+    "nodes": {
+      "batch.v_ferm": {
+        "label": "Fermenter volume",
+        "dimension": "volume",
+        "unit": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.target_abv": {
+        "label": "Target ABV",
+        "dimension": "abv",
+        "unit": "pct",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.grain_temp_c": {
+        "label": "Grain temperature",
+        "dimension": "temperature",
+        "unit": "degC",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.strike_water_temp_c": {
+        "label": "Strike water temp",
+        "dimension": "temperature",
+        "unit": "degC",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.rests.use_temp_c": {
+        "label": "Temp",
+        "dimension": "temperature",
+        "unit": "degC",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_strike": {
+        "label": "Strike Volume",
+        "dimension": "volume",
+        "unit": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.prescription.predicted_mash_ph": {
+        "label": "Predicted mash pH",
+        "dimension": "ph",
+        "unit": "pH",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.gypsum_kg": {
+        "label": "Mash gypsum",
+        "dimension": "mass",
+        "unit": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.total_mass_kg": {
+        "label": "Total hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.name": {
+        "label": "Yeast",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.max_hlt_volume_l": {
+        "label": "Max HLT",
+        "dimension": "volume",
+        "unit": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "style.og_min": {
+        "label": "OG min",
+        "dimension": "gravity",
+        "unit": "SG",
+        "decimals": 3,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      }
+    },
+    "hash": "sha256:298e76abb8ff46f015b20cb294c9546d7dc59a21b9a282bf07a7a87677490fc1"
+  },
+  "batch": {
+    "id": "frozen-1",
+    "name": "House Pale",
+    "status": "frozen",
+    "frozen_at": 1700000000.0,
+    "parent_batch_id": "draft-1",
+    "identity": {
+      "equipment": {
+        "id": "herms-30l",
+        "name": "HERMS 30L",
+        "max_hlt_volume_l": 30.0,
+        "max_kettle_volume_l": 40.0
+      },
+      "water.source": {
+        "report_id": "w-2026-01",
+        "laboratory": "Ward Labs",
+        "calcium_ca": 42.0,
+        "total_alkalinity_caco3": 38.0
+      },
+      "style": {
+        "id": "18B",
+        "name": "American Pale Ale",
+        "og_min": 1.045,
+        "og_max": 1.06
+      }
+    }
+  },
+  "state": {
+    "valuation": {
+      "batch.v_ferm": 20.0,
+      "batch.target_abv": 5.5,
+      "batch.realized_abv": 5.62,
+      "mash.grain_temp_c": 20.0,
+      "mash.strike_water_temp_c": 68.3,
+      "mash.rests": [
+        {
+          "rest_id": "beta",
+          "use_temp_c": 67.0,
+          "duration_min": 60.0,
+          "enabled": true
+        }
+      ],
+      "solver.batch": {
+        "sg_post_boil": 1.055,
+        "v_pre_boil": 24.0,
+        "m_grist": 4.7,
+        "cascade.v_strike": 14.0,
+        "cascade.v_sparge": 14.0,
+        "cascade.sg_pre_boil": 1.048,
+        "cascade.v_post_boil": 21.0,
+        "max_achievable_abv": 10.0,
+        "aa_wort": 0.76,
+        "aa_batch": 0.75
+      },
+      "solver.water": {
+        "strategy": "CALCIUM_FLOOR",
+        "prescription.predicted_mash_ph": 5.42,
+        "prescription.residual_hlt_water_l": 0.0,
+        "mash_additions.gypsum_kg": 0.002,
+        "mash_additions.acid_l": 0.0005,
+        "total_added_salt_mass_g": 3.0,
+        "added_mineral_tds_ppm": 150.0
+      },
+      "solver.hops": {
+        "boil_rows": [
+          {
+            "minutes": 60.0,
+            "ibu": 30.0,
+            "mass_kg": 0.024
+          }
+        ],
+        "whirlpool_rows": [],
+        "boil_mass_kg": 0.024,
+        "whirlpool_mass_kg": 0.0,
+        "total_mass_kg": 0.024
+      }
+    },
+    "roots": {
+      "batch.v_ferm": 20.0,
+      "batch.target_abv": 5.5,
+      "mash.grain_temp_c": 20.0,
+      "water.target_mash_ph": 5.4
+    },
+    "collections": {
+      "mash.rests": [
+        {
+          "rest_id": "beta",
+          "use_temp_c": 67.0,
+          "duration_min": 60.0,
+          "enabled": true
+        }
+      ]
+    },
+    "selections": {
+      "batch.yeast": {
+        "id": "us-05",
+        "name": "SafAle US-05"
+      },
+      "water.target_profile": {
+        "id": "pale-ale",
+        "name": "Pale ale target"
+      }
+    },
+    "provenance": {
+      "batch.yeast": {
+        "source_template_id": "us-05"
+      },
+      "water.target_profile": {
+        "source_template_id": "pale-ale"
+      }
+    }
+  },
+  "conformance": {
+    "og": {
+      "holds": true
+    },
+    "ibu": {
+      "holds": true
+    }
+  },
+  "validation": {
+    "relations": [
+      {
+        "id": "hlt_not_overfilled",
+        "holds": true
+      }
+    ],
+    "domains": [
+      {
+        "nodeId": "batch.target_abv",
+        "bounded": true,
+        "holds": true
+      }
+    ],
+    "field_domains": [
+      {
+        "nodeId": "batch.yeast",
+        "field": "attenuation_pct",
+        "holds": true
+      }
+    ],
+    "collection_domains": [
+      {
+        "nodeId": "mash.rests",
+        "index": 0,
+        "field": "use_temp_c",
+        "holds": true
+      }
+    ]
+  },
+  "telemetry": {
+    "solver.batch": {
+      "binding": "batch_sparge_solver",
+      "fingerprint": "sha256:1111",
+      "telemetry": [],
+      "warnings": [],
+      "notes": []
+    },
+    "solver.water": {
+      "binding": "water_chemistry_solver",
+      "fingerprint": "sha256:2222",
+      "telemetry": [
+        {
+          "code": "ROUTER_MODE_1_LINEAR_FLAVOR",
+          "severity": "INFO",
+          "message": "Sulfate/chloride targets only."
+        }
+      ],
+      "warnings": [],
+      "notes": []
+    },
+    "solver.hops": {
+      "binding": "hop_bitterness_solver",
+      "fingerprint": "sha256:3333",
+      "telemetry": [],
+      "warnings": [],
+      "notes": []
+    }
+  },
+  "content_hash": "sha256:bebf51b41c7a64d8112fb92e9a852b108b462e04bc9483203f215a0014ac6bae"
+}

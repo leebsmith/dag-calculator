@@ -73,6 +73,17 @@ test("the four validation blocks are present and non-empty for a booted batch", 
   assert.doesNotThrow(() => JSON.stringify(validation));
 });
 
+test("the catalog blocks match the shared shape fixture", async () => {
+  const app = createTestApp();
+  await app.boot();
+  const catalog = app.reportCatalog();
+
+  assert.deepEqual(Object.keys(catalog).sort(), [...SHAPE.catalog].sort());
+  for (const entry of Object.values(catalog.nodes)) {
+    assert.deepEqual(Object.keys(entry).sort(), [...SHAPE.catalog_node].sort());
+  }
+});
+
 test("the shared shape fixture names declared boundary nodes", () => {
   const declared = new Set(BOUNDARY_IDS);
   for (const id of Object.keys(artifactFixture().nodes)) {

@@ -118,6 +118,7 @@ class FakeBatchRepo:
 
     def __init__(self):
         self._docs: dict[str, dict] = {}
+        self.bundles: dict[str, dict] = {}
         self._clock = 1.0
 
     def _now(self):
@@ -200,7 +201,7 @@ class FakeBatchRepo:
         del self._docs[batch_id]
         return True
 
-    def freeze(self, uid, batch_id, data):
+    def freeze(self, uid, batch_id, data, bundle_factory=None):
         source = self._docs.get(batch_id)
         if not source or source["uid"] != uid:
             return None, "missing"
@@ -225,4 +226,6 @@ class FakeBatchRepo:
             "frozen_at": now,
         }
         self._docs[r["id"]] = r
+        if bundle_factory is not None:
+            self.bundles[r["id"]] = bundle_factory(r["id"], r)
         return r, None
