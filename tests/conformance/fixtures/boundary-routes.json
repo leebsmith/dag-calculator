@@ -1,0 +1,14 @@
+{
+  "batch_sparge_solver": {
+    "path": "/solve/batch",
+    "response_model": "BatchSolverResponse"
+  },
+  "water_chemistry_solver": {
+    "path": "/solve/water",
+    "response_model": "WaterSolverResponse"
+  },
+  "hop_bitterness_solver": {
+    "path": "/solve/hops",
+    "response_model": "HopSolverResponse"
+  }
+}

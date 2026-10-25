@@ -4,7 +4,7 @@
 
 import { flattenResponse, postJSON } from "./apiClient.js";
 
-const BOUNDARY_URLS = {
+export const BOUNDARY_URLS = {
   batch_sparge_solver: "/solve/batch",
   water_chemistry_solver: "/solve/water",
   hop_bitterness_solver: "/solve/hops",

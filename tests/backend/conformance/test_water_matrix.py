@@ -13,6 +13,7 @@ import math
 import pytest
 
 from app.core.water import (
+    MASH_PH_TARGET_TOLERANCE,
     GrainEntry,
     SolverValidationError,
     WaterChemistryInput,
@@ -184,6 +185,19 @@ def _assert_invariants(inp: WaterChemistryInput, out) -> None:
 
     assert 3.5 < out.predicted_mash_ph < 7.5
     assert out.mash_ph_status == mash_ph_status(out.predicted_mash_ph)
+
+    codes = {event["code"] for event in out.telemetry}
+    assert "TARGET_MASH_PH_MISSED" not in codes
+    if "TARGET_MASH_PH_UNREACHABLE" not in codes:
+        assert out.predicted_mash_ph == pytest.approx(
+            inp.target_mash_ph, abs=MASH_PH_TARGET_TOLERANCE
+        )
+    for event in out.telemetry:
+        if event["code"] in {
+            "ENZYMATIC_ACID_DOSE_PRESCRIBED",
+            "ENZYMATIC_ALKALINE_DOSE_PRESCRIBED",
+        }:
+            assert event["context"]["ph_after"] == pytest.approx(out.predicted_mash_ph)
 
     # Salts only add: the five mineral ions never fall below the source.
     for ion in ("ca", "mg", "na", "so4", "cl"):

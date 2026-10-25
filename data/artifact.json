@@ -2734,7 +2734,8 @@
           "UNKNOWN_TOPOLOGY",
           "INVALID_INTENSIVE_VALUE",
           "MASH_TOO_THIN",
-          "HLT_TOO_SMALL"
+          "HLT_TOO_SMALL",
+          "INVALID_GRAIN_BILL_NORMALIZATION"
         ]
       }
     },
@@ -3106,7 +3107,8 @@
           "UNKNOWN_SALT_FORM",
           "SALT_SOLVE_FAILED",
           "ION_TARGET_OUT_OF_RANGE",
-          "UNKNOWN_STRATEGY"
+          "UNKNOWN_STRATEGY",
+          "PINNED_IONS_REQUIRED"
         ]
       }
     },
@@ -3151,8 +3153,7 @@
           "INVALID_GRAVITY",
           "INVALID_VOLUME",
           "INVALID_COOLING_CONSTANT",
-          "UNKNOWN_PRODUCT_FORM",
-          "HOP_SOLVE_FAILED"
+          "UNKNOWN_PRODUCT_FORM"
         ]
       }
     },

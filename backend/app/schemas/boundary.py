@@ -150,6 +150,16 @@ class WaterSolverErrorCode(StrEnum):
     PINNED_IONS_REQUIRED = "PINNED_IONS_REQUIRED"
 
 
+class HopSolverErrorCode(StrEnum):
+    """Error codes declared on solver.hops error surface."""
+
+    INVALID_HOP_INPUT = "INVALID_HOP_INPUT"
+    INVALID_GRAVITY = "INVALID_GRAVITY"
+    INVALID_VOLUME = "INVALID_VOLUME"
+    INVALID_COOLING_CONSTANT = "INVALID_COOLING_CONSTANT"
+    UNKNOWN_PRODUCT_FORM = "UNKNOWN_PRODUCT_FORM"
+
+
 class SolverErrorResponse(BoundaryModel):
     """Standardized failure envelope for boundary requests."""
 
