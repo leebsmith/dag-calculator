@@ -11,9 +11,6 @@
         <div class="synthesized-header">
           <span class="synthesized-title" x-text="selectedYeast.name"></span>
           <div class="synthesized-actions">
-            <button type="button" class="btn btn-secondary text-xs" @click="toggleYeastChooser()">
-              <span x-text="yeastChooserOpen ? 'Hide chooser' : 'Change yeast'"></span>
-            </button>
             <button type="button" class="btn btn-secondary text-xs" @click="clearYeastSelection()">
               Clear
             </button>
@@ -25,16 +22,68 @@
             <span class="tabular-nums" x-text="yeastAttenuation(selectedYeast)"></span>
           </div>
           <div class="form-group">
-            <label class="form-label" for="yeast-derate">Batch derate</label>
+            <div class="form-label">
+              <label for="yeast-derate">Batch derate (points)</label>
+              <button
+                type="button"
+                class="btn-link text-xs"
+                @click="toggleDerateHelp()"
+                :aria-expanded="derateHelpOpen ? 'true' : 'false'"
+                aria-controls="yeast-derate-help"
+              >Why?</button>
+            </div>
             <input
               id="yeast-derate"
               type="number"
-              step="0.1"
+              min="0"
+              max="25"
+              step="0.5"
               class="form-input"
-              :value="yeastField('batch.attenuation_derate').display"
+              :value="yeastField('batch.attenuation_derate_points').display"
               @change="commitYeastDerate($event.target)"
             />
-            <span class="form-hint">Percent of the strain limit; default 100%</span>
+            <span class="form-hint">Points off the strain's published maximum; 0 = no derate</span>
+            <div
+              id="yeast-derate-help"
+              class="text-xs text-muted"
+              x-show="derateHelpOpen"
+              style="display: none"
+            >
+              <p>
+                Assuming a healthy pitch, adequate oxygenation, and tight temperature
+                control, derate the lab's maximum published apparent attenuation by
+                2–5 points.
+              </p>
+              <p>
+                Labs measure attenuation on a standardized, highly fermentable wort
+                (typically 1.040–1.050 OG, 100% pale base malt, mashed near
+                149°F/65°C). Homebrew recipes rarely match that, so expect the middle
+                or lower half of the published range.
+              </p>
+              <p>
+                <strong>Mash temperature.</strong> 148–150°F (64–66°C): 0 points.
+                152–154°F (67–68°C): 2–3 points. 156–158°F (69–70°C): 4–5 points.
+                Higher rests leave more unfermentable dextrins.
+              </p>
+              <p>
+                <strong>Specialty malts.</strong> At 10–20% crystal, caramel, or roasted
+                malt, add 2–3 points.
+              </p>
+              <p>
+                <strong>High gravity.</strong> Above 1.070 OG, add 2–4 points for the
+                extra osmotic and alcohol stress on the yeast.
+              </p>
+              <p>
+                <strong>Worked example.</strong> An 80% strain, 10% crystal, mashed at
+                153°F: 2–3 points for the mash plus 2–3 for the malt = 4–6 points, so
+                expect 74–76%.
+              </p>
+              <p>
+                The calculator does not infer this from your mash or grain bill; enter
+                your judgment. The cap only lowers the batch attenuation when it sits
+                below the wort's own attenuation (<code>min(AA_wort, cap)</code>).
+              </p>
+            </div>
           </div>
         </div>
         <div class="step-grid-2col">
@@ -62,7 +111,7 @@
       </div>
     </template>
 
-    <div x-show="!selectedYeast || yeastChooserOpen">
+    <div>
         <!-- Filters -->
       <div class="step-grid-2col">
         <div class="form-group">

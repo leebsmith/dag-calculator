@@ -48,7 +48,7 @@ export const steps = [
     partial: "./src/partials/step-yeast.html",
     fields: [
       "batch.yeast_id",
-      "batch.attenuation_derate",
+      "batch.attenuation_derate_points",
       "batch.yeast_cap",
       "batch.yeast.attenuation_pct",
       "batch.yeast.flocculation",

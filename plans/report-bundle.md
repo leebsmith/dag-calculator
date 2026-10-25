@@ -47,7 +47,7 @@ artifact or the payload.
 ```jsonc
 {
   "bundle_format": 1,
-  "artifact": { "schema_version": 7, "hash": "sha256:…", "content": { … } },
+  "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dim>": { "base_unit", "kind", "units": { "<unit>": { "factor", "offset", "fwd", "inv" } } } },

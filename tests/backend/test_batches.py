@@ -7,6 +7,7 @@ from conftest import FakeBatchRepo as FakeRepo
 from conftest import freeze_payload
 from fastapi import HTTPException
 
+from app.artifact import load_artifact
 from app.schemas.batch import DraftPayload
 from app.schemas.report_bundle import (
     BoundaryTelemetry,
@@ -267,7 +268,7 @@ def test_freeze_emits_a_valid_report_bundle():
     assert bundle.batch.parent_batch_id == rec.id
     assert bundle.batch.name == "Saison"
     assert bundle.batch.frozen_at == frozen.frozen_at
-    assert bundle.artifact.schema_version == 7
+    assert bundle.artifact.schema_version == load_artifact()["schema_version"]
     assert bundle.artifact.hash.startswith("sha256:")
     assert bundle.catalog.hash.startswith("sha256:")
     assert bundle.catalog.nodes["mash.grain_temp_c"].dimension == "temperature"

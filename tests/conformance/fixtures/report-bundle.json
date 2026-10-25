@@ -1,13 +1,13 @@
 {
   "bundle_format": 1,
   "artifact": {
-    "schema_version": 7,
-    "hash": "sha256:a098e5ba99631f6c64c33429556dd5cee9c37c21f53107ff8d272538e30c6670",
+    "schema_version": 8,
+    "hash": "sha256:ba5b456dc027f9972b5a4e12428c069542354ad936562d10505d456f9356f81a",
     "content": {
-      "schema_version": 7,
+      "schema_version": 8,
       "meta": {
         "name": "batch-brewing-calculator-logic",
-        "description": "Canonical business-logic DAG (schema_version 7, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+        "description": "Canonical business-logic DAG (schema_version 8, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
         "status": "complete"
       },
       "identity": {
@@ -244,8 +244,8 @@
           "value": 20,
           "dimension": "volume"
         },
-        "default_attenuation_derate": {
-          "value": 1,
+        "default_attenuation_derate_points": {
+          "value": 0,
           "dimension": "percentage"
         },
         "default_grain_moisture_fraction": {
@@ -679,24 +679,6 @@
                     ]
                   }
                 ]
-              }
-            ]
-          }
-        },
-        "apply_attenuation_factor": {
-          "params": [
-            "aa",
-            "factor"
-          ],
-          "returns": "percentage",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "aa"
-              },
-              {
-                "ref": "factor"
               }
             ]
           }
@@ -2243,15 +2225,15 @@
           "dimension": "reference",
           "default": ""
         },
-        "batch.attenuation_derate": {
+        "batch.attenuation_derate_points": {
           "kind": "root",
           "dimension": "percentage",
           "default": {
-            "const": "default_attenuation_derate"
+            "const": "default_attenuation_derate_points"
           },
           "domain": {
-            "gt": 0,
-            "lte": 1
+            "gte": 0,
+            "lte": 0.25
           }
         },
         "batch.yeast_cap": {
@@ -2259,7 +2241,7 @@
           "inputs": {
             "selector": "batch.yeast_id",
             "aa": "batch.yeast.attenuation_pct",
-            "derate": "batch.attenuation_derate"
+            "points": "batch.attenuation_derate_points"
           },
           "expr": {
             "op": "if",
@@ -2274,13 +2256,32 @@
                 ]
               },
               {
-                "call": "apply_attenuation_factor",
+                "op": "if",
                 "args": [
                   {
-                    "ref": "aa"
+                    "op": "gt",
+                    "args": [
+                      {
+                        "ref": "aa"
+                      },
+                      {
+                        "ref": "points"
+                      }
+                    ]
                   },
                   {
-                    "ref": "derate"
+                    "op": "-",
+                    "args": [
+                      {
+                        "ref": "aa"
+                      },
+                      {
+                        "ref": "points"
+                      }
+                    ]
+                  },
+                  {
+                    "const": "default_attenuation_derate_points"
                   }
                 ]
               },
@@ -4379,5 +4380,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:7455288f59a1f1909f101741438be9ed1c77d151f0730086b3a326242d1a215b"
+  "content_hash": "sha256:f0d2da3fbdcc34ba76c0e19c96d9f5e7796424f61e66947de8f8b539e101683a"
 }

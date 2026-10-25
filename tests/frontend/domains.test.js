@@ -27,9 +27,10 @@ test("default values satisfy their domains or are unresolved", () => {
 test("checkDomain() flags out-of-range values", () => {
   assert.equal(checkDomain(artifact, "batch.target_abv", 0, noRef).holds, false); // gt 0
   assert.equal(checkDomain(artifact, "batch.target_abv", 5.5, noRef).holds, true);
-  assert.equal(checkDomain(artifact, "batch.attenuation_derate", 0, noRef).holds, false); // gt 0
-  assert.equal(checkDomain(artifact, "batch.attenuation_derate", 1.01, noRef).holds, false); // lte 1
-  assert.equal(checkDomain(artifact, "batch.attenuation_derate", 0.95, noRef).holds, true);
+  assert.equal(checkDomain(artifact, "batch.attenuation_derate_points", -0.01, noRef).holds, false); // gte 0
+  assert.equal(checkDomain(artifact, "batch.attenuation_derate_points", 0.26, noRef).holds, false); // lte 0.25
+  assert.equal(checkDomain(artifact, "batch.attenuation_derate_points", 0.04, noRef).holds, true);
+  assert.equal(checkDomain(artifact, "batch.attenuation_derate_points", 0, noRef).holds, true);
   assert.equal(checkDomain(artifact, "water.target_mash_ph", 8.0, noRef).holds, false); // lte 7
   assert.equal(checkDomain(artifact, "water.target_mash_ph", 5.4, noRef).holds, true);
 });

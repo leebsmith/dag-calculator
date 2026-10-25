@@ -27,7 +27,7 @@ export function registerYeastCard(app, ctx) {
     yeastSearchNotes: false,
     yeastManufacturerFilter: "",
     yeastAttenuationFilter: "",
-    yeastChooserOpen: false,
+    derateHelpOpen: false,
 
     yeastAttenuation(y) {
       return y ? `${formatPercent(y.attenuation_pct)}%` : "";
@@ -39,7 +39,6 @@ export function registerYeastCard(app, ctx) {
       this.setRoot(N.selection, id);
       this.pickSelection(N.selection, id);
       this.yeastSearchNotes = false;
-      this.yeastChooserOpen = false;
       this.scheduleSolve();
       this.notify();
     },
@@ -48,13 +47,12 @@ export function registerYeastCard(app, ctx) {
       this.setRoot(N.selection, "");
       this.pickSelection(N.selection, "");
       this.yeastSearchNotes = false;
-      this.yeastChooserOpen = true;
       this.scheduleSolve();
       this.notify();
     },
 
-    toggleYeastChooser() {
-      this.yeastChooserOpen = !this.yeastChooserOpen;
+    toggleDerateHelp() {
+      this.derateHelpOpen = !this.derateHelpOpen;
     },
 
     toggleYeastSearchNotes() {
@@ -75,7 +73,7 @@ export function registerYeastCard(app, ctx) {
       const previous = this.master.getRoot(N.derate);
       const previousDisplay = field.display ?? formatPercent(previous);
       const value = Number(raw);
-      if (raw === "" || !Number.isFinite(value) || value <= 0 || value > 100) {
+      if (raw === "" || !Number.isFinite(value) || value < 0 || value > 25) {
         if (element) element.value = previousDisplay;
         return;
       }
@@ -183,4 +181,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
 
-export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "yeastChooserOpen", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastChooser", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "derateHelpOpen", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleDerateHelp", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];

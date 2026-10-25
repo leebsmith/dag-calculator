@@ -161,7 +161,9 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       this.inputDrafts = {};
+      const legacyDerate = state?.roots?.["batch.attenuation_derate"];
       session.rebuild(state);
+      const migratedDerate = this.migrateAttenuationDerate(legacyDerate);
       this.onBatchLoad?.();
       const migrated = dropLegacyDoughIn();
       const seeded = this.seedIdentityResiduals();
@@ -169,8 +171,21 @@ export function createStepApp(options = {}) {
       const synced = this.syncWaterTargets?.() ?? false;
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (seeded || materialized || synced || migrated) this.notify();
+      if (seeded || materialized || synced || migrated || migratedDerate) this.notify();
       this.syncNav();
+    },
+
+    // Drafts saved before the derate became points stored a multiplier of the
+    // strain maximum. Convert it once, using the selected strain's published
+    // attenuation; the old root is dropped by the rebuild.
+    migrateAttenuationDerate(legacy) {
+      if (typeof legacy !== "number" || !Number.isFinite(legacy)) return false;
+      if (this.master.getRoot("batch.attenuation_derate_points") !== undefined) return false;
+      const aa = session.engine.resolve("batch.yeast.attenuation_pct");
+      if (typeof aa !== "number" || !Number.isFinite(aa)) return false;
+      const points = Math.min(0.25, Math.max(0, (1 - legacy) * aa));
+      this.setRoot("batch.attenuation_derate_points", points);
+      return true;
     },
 
     // Seed the creation-time residuals from the batch's identity snapshot when

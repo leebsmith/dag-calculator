@@ -112,41 +112,69 @@ test("yeast card: tier filters toggle on and off", async () => {
   assert.equal(app.yeastAttenuationFilter, "");
 });
 
-test("yeast card: selecting a strain collapses the chooser and it can reopen", async () => {
+test("yeast card: the chooser is always mounted and Clear empties the selection", async () => {
   const app = await bootedApp();
-  assert.equal(app.yeastChooserOpen, false);
-
-  app.toggleYeastChooser();
-  assert.equal(app.yeastChooserOpen, true);
-  app.toggleYeastChooser();
-  assert.equal(app.yeastChooserOpen, false);
+  assert.equal(app.selectedYeast?.id, "fermentis-safale-american-ale-us-05");
 
   app.clearYeastSelection();
-  assert.equal(app.yeastChooserOpen, true);
   assert.equal(app.selectedYeast, null);
 });
 
-test("yeast card: derate commits on blur and resets invalid input", async () => {
+test("yeast card: the derate help toggles", async () => {
   const app = await bootedApp();
-  const input = { value: "95" };
+  assert.equal(app.derateHelpOpen, false);
+  app.toggleDerateHelp();
+  assert.equal(app.derateHelpOpen, true);
+  app.toggleDerateHelp();
+  assert.equal(app.derateHelpOpen, false);
+});
+
+test("yeast card: derate is points off the strain maximum", async () => {
+  const app = await bootedApp();
+  const aa = app.engine.resolve("batch.yeast.attenuation_pct");
+
+  const input = { value: "4" };
   app.commitYeastDerate(input);
-  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
+  assert.ok(Math.abs(app.engine.get("batch.yeast_cap") - (aa - 0.04)) < 1e-9);
 
-  const previous = app.yeastField("batch.attenuation_derate").display;
-  const invalid = { value: "0" };
-  app.commitYeastDerate(invalid);
-  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
-  assert.equal(invalid.value, previous);
+  const previous = app.yeastField("batch.attenuation_derate_points").display;
+  const negative = { value: "-1" };
+  app.commitYeastDerate(negative);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
+  assert.equal(negative.value, previous);
 
-  const tooHigh = { value: "101" };
+  const tooHigh = { value: "26" };
   app.commitYeastDerate(tooHigh);
-  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
   assert.equal(tooHigh.value, previous);
 
   const empty = { value: "" };
   app.commitYeastDerate(empty);
-  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate") - 0.95) < 1e-9);
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
   assert.equal(empty.value, previous);
+
+  const zero = { value: "0" };
+  app.commitYeastDerate(zero);
+  assert.equal(app.master.getRoot("batch.attenuation_derate_points"), 0);
+  assert.equal(app.engine.get("batch.yeast_cap"), aa);
+});
+
+test("yeast card: a legacy multiplier derate migrates to points on load", async () => {
+  const app = await bootedApp();
+  const aa = app.engine.resolve("batch.yeast.attenuation_pct");
+
+  await app.loadState({
+    roots: {
+      "batch.yeast_id": "fermentis-safale-american-ale-us-05",
+      "batch.attenuation_derate": 0.95,
+    },
+    collections: {},
+    selections: {},
+  });
+
+  const points = app.master.getRoot("batch.attenuation_derate_points");
+  assert.ok(Math.abs(points - (1 - 0.95) * aa) < 1e-9);
 });
 
 // --- Late additions --------------------------------------------------------

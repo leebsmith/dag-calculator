@@ -66,7 +66,7 @@ It is built in three stages:
 
 2. **Yeast cap**
 
-   `yeast_cap = yeast.attenuation_pct × batch.attenuation_derate`
+   `yeast_cap = max(0, yeast.attenuation_pct − batch.attenuation_derate_points)`
 
    `AA_batch = min(AA_wort, yeast_cap)`
 

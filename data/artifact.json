@@ -1,8 +1,8 @@
 {
-  "schema_version": 7,
+  "schema_version": 8,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 7, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 8, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
   },
   "identity": {
@@ -239,8 +239,8 @@
       "value": 20,
       "dimension": "volume"
     },
-    "default_attenuation_derate": {
-      "value": 1,
+    "default_attenuation_derate_points": {
+      "value": 0,
       "dimension": "percentage"
     },
     "default_grain_moisture_fraction": {
@@ -674,21 +674,6 @@
                 ]
               }
             ]
-          }
-        ]
-      }
-    },
-    "apply_attenuation_factor": {
-      "params": ["aa", "factor"],
-      "returns": "percentage",
-      "body": {
-        "op": "*",
-        "args": [
-          {
-            "ref": "aa"
-          },
-          {
-            "ref": "factor"
           }
         ]
       }
@@ -2193,15 +2178,15 @@
       "dimension": "reference",
       "default": ""
     },
-    "batch.attenuation_derate": {
+    "batch.attenuation_derate_points": {
       "kind": "root",
       "dimension": "percentage",
       "default": {
-        "const": "default_attenuation_derate"
+        "const": "default_attenuation_derate_points"
       },
       "domain": {
-        "gt": 0,
-        "lte": 1
+        "gte": 0,
+        "lte": 0.25
       }
     },
     "batch.yeast_cap": {
@@ -2209,7 +2194,7 @@
       "inputs": {
         "selector": "batch.yeast_id",
         "aa": "batch.yeast.attenuation_pct",
-        "derate": "batch.attenuation_derate"
+        "points": "batch.attenuation_derate_points"
       },
       "expr": {
         "op": "if",
@@ -2224,13 +2209,32 @@
             ]
           },
           {
-            "call": "apply_attenuation_factor",
+            "op": "if",
             "args": [
               {
-                "ref": "aa"
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "aa"
+                  },
+                  {
+                    "ref": "points"
+                  }
+                ]
               },
               {
-                "ref": "derate"
+                "op": "-",
+                "args": [
+                  {
+                    "ref": "aa"
+                  },
+                  {
+                    "ref": "points"
+                  }
+                ]
+              },
+              {
+                "const": "default_attenuation_derate_points"
               }
             ]
           },

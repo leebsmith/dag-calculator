@@ -48,7 +48,7 @@ Firestore transaction.
 ```jsonc
 {
   "bundle_format": 1,
-  "artifact": { "schema_version": 7, "hash": "sha256:…", "content": { … } },
+  "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dimension>": { "base_unit", "kind", "units": { … } } },

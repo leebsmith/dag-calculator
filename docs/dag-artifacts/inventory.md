@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **7**
+- `schema_version`: **8**
 
 ## Dimensions
 
@@ -88,7 +88,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | id | params | returns |
 |---|---|---|
 | `alkalinity_from_bicarbonate` | bicarbonate_hco3 | `concentration` |
-| `apply_attenuation_factor` | aa, factor | `percentage` |
 | `bicarbonate_from_alkalinity` | alkalinity_caco3 | `concentration` |
 | `blend_ion` | mash, hlt, run1, run2, sparge | `concentration` |
 | `calculate_strike_water_base_temp` | t_target, t_grain, thickness | `temperature` |
@@ -112,7 +111,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `caco3_eq_weight` | 50 | `dimensionless` |
 | `cutaia_a` | 0.372 | `dimensionless` |
 | `cutaia_b` | 0.00357 | `dimensionless` |
-| `default_attenuation_derate` | 1 | `percentage` |
+| `default_attenuation_derate_points` | 0 | `percentage` |
 | `default_boil_time_min` | 60 | `time` |
 | `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
@@ -141,7 +140,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | kind |
 |---|---|
-| `batch.attenuation_derate` | root |
+| `batch.attenuation_derate_points` | root |
 | `batch.boil_hops` | collection |
 | `batch.boil_off_rate_l_per_hr` | root |
 | `batch.boil_target_ibu` | derived |
