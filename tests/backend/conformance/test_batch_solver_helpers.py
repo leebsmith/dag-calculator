@@ -46,7 +46,7 @@ def simple_bill():
 def test_metric_constants_match_documented_standards():
     assert GAMMA_METRIC == 385.641
     assert V_BAR_METRIC == 0.625
-    assert K_ABS_TRUE_METRIC == 1.67
+    assert K_ABS_TRUE_METRIC == 1.043176
     assert RHO_WATER_METRIC == 1.00
     assert F_SHRINK_DEFAULT == 0.04
 
@@ -122,16 +122,20 @@ def test_composite_volumetric_expansion_zero_efficiency():
 
 
 def test_retained_volume_known_value():
-    # 1.67 * 5.0 + 0.5 = 8.35 + 0.5 = 8.85
-    assert retained_volume(m_grist=5.0, k_abs_true=1.67, v_dead=0.5) == pytest.approx(8.85)
+    # 1.043176 * 5.0 + 0.5 = 5.21588 + 0.5 = 5.71588
+    assert retained_volume(m_grist=5.0, k_abs_true=1.043176, v_dead=0.5) == pytest.approx(
+        5.71588
+    )
 
 
 def test_retained_volume_zero_mass():
-    assert retained_volume(m_grist=0.0, k_abs_true=1.67, v_dead=0.5) == pytest.approx(0.5)
+    assert retained_volume(m_grist=0.0, k_abs_true=1.043176, v_dead=0.5) == pytest.approx(0.5)
 
 
 def test_retained_volume_zero_dead_space():
-    assert retained_volume(m_grist=5.0, k_abs_true=1.67, v_dead=0.0) == pytest.approx(8.35)
+    assert retained_volume(m_grist=5.0, k_abs_true=1.043176, v_dead=0.0) == pytest.approx(
+        5.21588
+    )
 
 
 # ---------------------------------------------------------------------------

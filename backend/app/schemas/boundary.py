@@ -129,6 +129,7 @@ class BatchSolverRequest(BoundaryModel):
     mash_transfer_loss: Annotated[float, Field(ge=0.0, default=0.0, description="Mash-tun transfer (hose/pump) loss in Liters")]
     eta_conv: Annotated[float, Field(gt=0.0, le=1.0, description="Mash conversion efficiency fraction")]
     f_shrink: Annotated[float, Field(ge=0.0, lt=1.0, default=0.04, description="Thermal shrinkage fraction")]
+    k_abs_true: Annotated[float, Field(gt=0.0, default=1.043176, description="Grain absorption coefficient in L/kg (per-rig)")]
     hlt_starting_volume_l: Annotated[float, Field(ge=0.0, description="Brew-day initial HLT fill in Liters")]
     hlt_dead_space_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT dead space loss in Liters")]
     hlt_transfer_loss_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT transfer debt in Liters")]

@@ -121,11 +121,13 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 `mash_transfer_loss_l`, `kettle_dead_space_l`, `kettle_transfer_loss_l`,
 `hlt_dead_space_l`, `hlt_transfer_loss_l`, `trub_loss_l` (all `volume`),
 `boil_off_rate_l_per_hr` (`volume/time`), `grain_absorption_factor_l_per_kg`
-(`volume/mass`), `mash_heating_rate_c_per_min` (`temperature_delta/time`),
+(`mash_thickness`), `mash_heating_rate_c_per_min` (`temperature_delta/time`),
 `min_lgr_l_per_kg` (`volume/mass`), `conversion_efficiency` and `shrinkage_pct`
 (`percentage`), `mash_tun_specific_heat` (`specific_heat`), `mash_tun_mass_kg`
 (`mass`). The ramp rate is seeded at 1 °C/min; the minimum LGR at 1.1 qt/lb
-(2.295 L/kg).
+(2.295 L/kg). `grain_absorption_factor_l_per_kg` is the authoritative absorption
+coefficient: both shipped rigs seed Palmer's baseline 0.125 gal/lb (1.043176 L/kg),
+and `constants.k_abs_true` is the fallback when no rig value is supplied.
 `hlt_starting_volume_l` is **batch-level**, not an equipment field.
 
 ### 2.5 `water_report` / `water_target`

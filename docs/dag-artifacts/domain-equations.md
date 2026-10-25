@@ -149,7 +149,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 ### 2.4 Derivation — two-stage batch lauter
 
 Single-strike, single-sparge extraction is modelled as two equilibrium stages. All
-symbols are declared as artifact constants; none are restated numerically here.
+symbols are artifact constants or per-rig equipment inputs; none are restated
+numerically here.
 
 Mash generation (`E` is the dry-basis composite yield, already net of grain moisture):
 
@@ -188,7 +189,7 @@ the batch attenuation, computed through the artifact functions `cutaia_abv_plato
 
 | Symbol | Constant |
 |---|---|
-| `k_abs_true` | `k_abs_true` (absorption; value pending D15) |
+| `k_abs_true` | per-rig `equipment.grain_absorption_factor_l_per_kg`; `k_abs_true` is the fallback |
 | `v_bar` | `v_bar` |
 | `gamma` | `sucrose_yield_ldk` |
 | `rho_water` | `rho_water` |
@@ -254,8 +255,8 @@ the wort mass balance, only the deliverable sparge volume and salt-dosing volume
 Mash tun to kettle: the kettle receives the mash liquid minus absorption, dead space and
 transfer loss. Transfer loss therefore carries **wort, not water** — it removes extract as
 well as volume. The solver writes this as `V_drain = V_pre + mash_transfer_loss`, and the
-concentration denominator must be the drain volume. Phase 3 and Phase 4 must use the same
-drain volume (see §2.7).
+concentration denominator is the drain volume. Phase 3 and Phase 4 use the same drain
+volume, so the grist is sized for the extract the loss carries away.
 
 Kettle to fermenter: shrink the entire hot volume first, then subtract the additives.
 
@@ -265,13 +266,11 @@ Applying shrinkage to the net volume instead would incorrectly shrink the losses
 
 ### 2.7 Pending corrections
 
-This derivation is the intended model. The implementation currently deviates in four ways,
+This derivation is the intended model. The implementation currently deviates in two ways,
 each decided in [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md):
 
 | Deviation | Decision |
 |---|---|
-| Absorption constant is 0.200 gal/lb; the per-rig field is declared but unused | D15 |
-| Phase 3 solves against `V_pre`; Phase 4 builds the cascade against `V_drain` — the mass is not compensated for the extract carried out by the loss | D12 |
 | No physical floor on the *derived* thickness in `{V_pre, r}` | D21 |
 | Tun capacity declared but unchecked; no upper thickness ceiling | D14, D3/D4 |
 

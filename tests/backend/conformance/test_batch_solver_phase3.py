@@ -133,8 +133,8 @@ def test_solve_grist_mass_rejects_non_positive_extract_target(standard_case):
 
 
 def test_solve_grist_mass_rejects_infeasible_target(standard_case):
-    # A 4 kg extract target exceeds what the 25 L pre-boil anchor can supply,
+    # A 5 kg extract target exceeds what the 25 L pre-boil anchor can supply,
     # so the residual stays negative across the whole bracket.
     with pytest.raises(SolverValidationError) as exc:
-        solve_grist_mass(**{**standard_case, "s_post_boil_target": 4.0})
+        solve_grist_mass(**{**standard_case, "s_post_boil_target": 5.0})
     assert exc.value.code == "BRACKET_NO_SIGN_CHANGE"

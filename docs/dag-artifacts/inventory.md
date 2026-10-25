@@ -126,7 +126,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `ethanol_density` | 0.7907 | `dimensionless` |
-| `k_abs_true` | 1.67 | `mash_thickness` |
+| `k_abs_true` | 1.043176 | `mash_thickness` |
 | `mash_ph_optimal_high` | 5.6 | `ph` |
 | `mash_ph_optimal_low` | 5.2 | `ph` |
 | `mash_thermal_factor` | 0.41 | `dimensionless` |

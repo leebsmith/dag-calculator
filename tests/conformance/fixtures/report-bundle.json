@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 8,
-    "hash": "sha256:ba5b456dc027f9972b5a4e12428c069542354ad936562d10505d456f9356f81a",
+    "hash": "sha256:bee617a02c734ac62c9fbca0ce39fa5481e392d55564d1c61a1d76511b3ae869",
     "content": {
       "schema_version": 8,
       "meta": {
@@ -277,7 +277,7 @@
           "dimension": "mash_thickness"
         },
         "k_abs_true": {
-          "value": 1.67,
+          "value": 1.043176,
           "dimension": "mash_thickness"
         },
         "rho_water": {
@@ -2779,6 +2779,7 @@
             "delta_v_evap": "batch.delta_v_evap",
             "v_dead": "equipment.mash_dead_space_l",
             "mash_transfer_loss": "equipment.mash_transfer_loss_l",
+            "k_abs_true": "equipment.grain_absorption_factor_l_per_kg",
             "eta_conv": "batch.conversion_efficiency",
             "f_shrink": "equipment.shrinkage_pct",
             "hlt_starting_volume_l": "batch.hlt_starting_volume_l",
@@ -4380,5 +4381,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:f0d2da3fbdcc34ba76c0e19c96d9f5e7796424f61e66947de8f8b539e101683a"
+  "content_hash": "sha256:4c60b2f3a78976bb65df59fcf0befd756b09a8310762e0933df66fc7fc20d0a4"
 }

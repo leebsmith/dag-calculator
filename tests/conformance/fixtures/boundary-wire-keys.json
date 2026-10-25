@@ -10,6 +10,7 @@
     "hlt_starting_volume_l",
     "hlt_transfer_loss_l",
     "intensive_value",
+    "k_abs_true",
     "mash_transfer_loss",
     "max_hlt_volume_l",
     "s_late_add",

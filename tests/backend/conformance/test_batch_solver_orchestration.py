@@ -5,9 +5,11 @@ import math
 import pytest
 
 from app.core.batch_solver import (
+    GAMMA_METRIC,
     BatchSolverInput,
     GrainBillEntry,
     SolverValidationError,
+    kettle_cold_volume,
     solve_batch,
 )
 
@@ -66,6 +68,53 @@ def test_solve_batch_is_pure(standard_inputs):
     first = solve_batch(standard_inputs)
     second = solve_batch(standard_inputs)
     assert first == second
+
+
+def assert_cascade_reproduces_target(inputs):
+    result = solve_batch(inputs)
+    cascade = result.cascade
+    v_drain = result.v_pre_boil + inputs.mash_transfer_loss
+    tun_extract = cascade.s_run1 + cascade.s_run2
+    kettle_extract = (tun_extract * result.v_pre_boil / v_drain) + inputs.s_late_add
+
+    assert kettle_extract == pytest.approx(result.s_post_boil_target)
+
+    v_kettle_cold = kettle_cold_volume(
+        inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+    )
+    realized_sg = 1.0 + (kettle_extract * GAMMA_METRIC / (1000.0 * v_kettle_cold))
+    assert realized_sg == pytest.approx(result.sg_post_boil)
+
+    pre_boil_extract = tun_extract * result.v_pre_boil / v_drain
+    assert cascade.sg_pre_boil == pytest.approx(
+        1.0 + (pre_boil_extract * GAMMA_METRIC / (1000.0 * result.v_pre_boil))
+    )
+    return result
+
+
+def test_cascade_reproduces_the_phase1_target(standard_inputs):
+    assert_cascade_reproduces_target(standard_inputs)
+
+
+def test_cascade_reproduces_the_target_in_runoff_topology(standard_inputs):
+    inputs = BatchSolverInput(
+        **{
+            **standard_inputs.__dict__,
+            "v_ferm": 10.0,
+            "topology": "runoff_ratio",
+            "intensive_value": 1.0,
+        }
+    )
+    assert_cascade_reproduces_target(inputs)
+
+
+def test_m_grist_responds_to_mash_transfer_loss(standard_inputs):
+    no_loss = solve_batch(
+        BatchSolverInput(**{**standard_inputs.__dict__, "mash_transfer_loss": 0.0})
+    )
+    result = solve_batch(standard_inputs)
+
+    assert result.m_grist > no_loss.m_grist
 
 
 def test_solve_batch_runoff_ratio_topology(standard_inputs):

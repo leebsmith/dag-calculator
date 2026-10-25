@@ -272,7 +272,7 @@
       "dimension": "mash_thickness"
     },
     "k_abs_true": {
-      "value": 1.67,
+      "value": 1.043176,
       "dimension": "mash_thickness"
     },
     "rho_water": {
@@ -2638,6 +2638,7 @@
     "delta_v_evap": "batch.delta_v_evap",
     "v_dead": "equipment.mash_dead_space_l",
     "mash_transfer_loss": "equipment.mash_transfer_loss_l",
+    "k_abs_true": "equipment.grain_absorption_factor_l_per_kg",
     "eta_conv": "batch.conversion_efficiency",
         "f_shrink": "equipment.shrinkage_pct",
         "hlt_starting_volume_l": "batch.hlt_starting_volume_l",

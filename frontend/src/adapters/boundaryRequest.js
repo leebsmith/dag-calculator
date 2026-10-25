@@ -75,6 +75,7 @@ export const BATCH_FIELDS = {
   delta_v_evap: { path: "batch.delta_v_evap" },
   v_dead: { path: "equipment.mash_dead_space_l" },
   mash_transfer_loss: { path: "equipment.mash_transfer_loss_l" },
+  k_abs_true: { path: "equipment.grain_absorption_factor_l_per_kg" },
   eta_conv: { path: "batch.conversion_efficiency" },
   f_shrink: { path: "equipment.shrinkage_pct" },
   hlt_starting_volume_l: { path: "batch.hlt_starting_volume_l" },

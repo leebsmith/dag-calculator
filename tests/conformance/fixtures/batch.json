@@ -1,5 +1,5 @@
 {
-  "fingerprint": "47e8b7f04cdc5d89d00158b2b86e36a57f78452b688163f4de71f04823c39ec8",
+  "fingerprint": "3d888e3702db921309f35798e7c9c5c4ee66f4e30c9ab0b5c0c26060125162ae",
   "request": {
     "apparent_attenuation": 0.75,
     "delta_v_evap": 3.0,
@@ -24,6 +24,7 @@
     "hlt_starting_volume_l": 25.0,
     "hlt_transfer_loss_l": 0.0,
     "intensive_value": 3.0,
+    "k_abs_true": 1.043176,
     "mash_transfer_loss": 0.0,
     "max_hlt_volume_l": 30.0,
     "s_late_add": 0.0,

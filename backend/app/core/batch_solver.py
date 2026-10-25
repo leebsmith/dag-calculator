@@ -59,8 +59,12 @@ Equals the frontend ``SUCROSE_YIELD_LDK``; both derive from sucrose
 V_BAR_METRIC: float = 0.625
 """Apparent specific volume of dissolved extract in L/kg."""
 
-K_ABS_TRUE_METRIC: float = 1.67
-"""True husk absorption coefficient in L/kg."""
+K_ABS_TRUE_METRIC: float = 1.043176
+"""True husk absorption coefficient in L/kg (Palmer baseline, 0.125 gal/lb).
+
+The per-rig ``equipment.grain_absorption_factor_l_per_kg`` is authoritative;
+this constant is the fallback when no rig value is supplied.
+"""
 
 RHO_WATER_METRIC: float = 1.00
 """Density of water at strike temperature in kg/L."""
@@ -547,6 +551,7 @@ def grist_mass_residual(
     k_abs_true: float = K_ABS_TRUE_METRIC,
     v_bar: float = V_BAR_METRIC,
     topology: str = "r_l_to_g",
+    mash_transfer_loss: float = 0.0,
 ) -> float:
     """Evaluate the cleared-denominator cubic residual ``P(M_grist)``.
 
@@ -559,21 +564,28 @@ def grist_mass_residual(
     * ``D1(M) = V_strike + c_vol * M``
     * ``D2(M) = V_sparge + V_dead + k_abs_true * M``
 
+    ``V_drain = V_pre_boil + mash_transfer_loss`` is the volume the tun must
+    yield. The hose holds homogeneous wort, so the discarded transfer volume
+    carries extract at ``S_tun / V_drain`` and the kettle receives
+    ``S_tun * V_pre_boil / V_drain``. The residual therefore targets the tun
+    extract ``(S_target - S_late) * V_drain / V_pre_boil`` and uses
+    ``V_drain`` for both sparge topologies.
+
     Under the ``{V_pre_boil, R_L:G}`` topology (``topology="r_l_to_g"``):
 
     * ``V_strike = R_L:G * M``
-    * ``V_sparge = V_pre_boil - V_run1``, with ``V_run1`` derived from the tun
-      mass balance. Because ``V_sparge`` itself depends on ``M``, the residual
-      is evaluated by first computing ``V_run1`` and then subtracting.
+    * ``V_sparge = V_drain - V_run1``, with ``V_run1`` derived from the tun
+      mass balance.
 
     Under the ``{V_pre_boil, r}`` topology (``topology="runoff_ratio"``):
 
-    * ``V_sparge = V_pre_boil / (r + 1)`` (static, independent of ``M``)
+    * ``V_sparge = V_drain / (r + 1)`` (static, independent of ``M``)
     * ``V_strike`` is reversed from the tun mass balance to absorb retention.
 
-    See ``domain-equations.md`` §2.5.
+    See ``domain-equations.md`` §2.5–2.6.
     """
     c_vol = (mc_bar / RHO_WATER_METRIC) + (v_bar * eta_conv * yield_fraction)
+    v_drain = v_pre_boil + mash_transfer_loss
 
     v_mc = moisture_volume(m_grist, mc_bar)
     s_conv = converted_extract(m_grist, yield_fraction, eta_conv)
@@ -582,18 +594,18 @@ def grist_mass_residual(
 
     if topology == "runoff_ratio":
         # Static sparge split; reverse the tun mass balance for V_strike.
-        v_sparge = v_pre_boil / (r_l_to_g + 1.0)
-        v_run1 = v_pre_boil - v_sparge
+        v_sparge = v_drain / (r_l_to_g + 1.0)
+        v_run1 = v_drain - v_sparge
         v_strike = v_run1 + v_ret - v_mc - v_sol
     else:
         v_strike = r_l_to_g * m_grist
         v_run1 = v_strike + v_mc + v_sol - v_ret
-        v_sparge = v_pre_boil - v_run1
+        v_sparge = v_drain - v_run1
 
     d1 = v_strike + (c_vol * m_grist)
     d2 = v_sparge + v_dead + (k_abs_true * m_grist)
 
-    delta_s = s_post_boil_target - s_late_add
+    delta_s = (s_post_boil_target - s_late_add) * (v_drain / v_pre_boil)
     return (eta_conv * yield_fraction * m_grist) * (
         (d1 * d2) - (v_ret**2)
     ) - (delta_s * d1 * d2)
@@ -611,6 +623,7 @@ def solve_grist_mass(
     k_abs_true: float = K_ABS_TRUE_METRIC,
     v_bar: float = V_BAR_METRIC,
     topology: str = "r_l_to_g",
+    mash_transfer_loss: float = 0.0,
 ) -> float:
     """Phase 3: resolve the dry grist mass ``M_grist`` via Brent's method.
 
@@ -633,6 +646,9 @@ def solve_grist_mass(
         k_abs_true: True husk absorption coefficient, in L/kg.
         v_bar: Apparent specific volume of dissolved extract, in L/kg.
         topology: Either ``"r_l_to_g"`` or ``"runoff_ratio"``.
+        mash_transfer_loss: Mash tun transfer (hose/pump) loss, in liters. The
+            loss carries wort at the tun concentration, so the grist must
+            generate extract for the drain volume, not just the kettle target.
 
     Returns:
         The converged dry grist mass ``M_grist``, in kg.
@@ -641,7 +657,7 @@ def solve_grist_mass(
         SolverValidationError: If the bracket is degenerate or the residual
             does not change sign across it.
 
-    See ``domain-equations.md`` §2.5.
+    See ``domain-equations.md`` §2.5–2.6.
     """
     if topology not in ("r_l_to_g", "runoff_ratio"):
         raise SolverValidationError(
@@ -698,6 +714,7 @@ def solve_grist_mass(
             k_abs_true=k_abs_true,
             v_bar=v_bar,
             topology=topology,
+            mash_transfer_loss=mash_transfer_loss,
         )
 
     f_a = residual(a)
@@ -775,16 +792,20 @@ def stage_extract_split(
 def calculate_sg_pre_boil(
     s_run1: float,
     s_run2: float,
-    v_pre_boil: float,
+    v_drain: float,
     gamma: float = GAMMA_METRIC,
 ) -> float:
     """Phase 4: assemble the consolidated pre-boil specific gravity.
 
-    ``SG_pre_boil = 1 + ((S_run1 + S_run2) * gamma) / (1000 * V_pre_boil)``
+    ``SG_pre_boil = 1 + ((S_run1 + S_run2) * gamma) / (1000 * V_drain)``
 
-    See ``domain-equations.md`` §2.4.
+    The runnings leaving the tun are homogeneous, so the transfer loss holds
+    wort at the same concentration; the denominator is therefore the drain
+    volume, not the smaller kettle volume.
+
+    See ``domain-equations.md`` §2.6.
     """
-    return 1.0 + (((s_run1 + s_run2) * gamma) / (1000.0 * v_pre_boil))
+    return 1.0 + (((s_run1 + s_run2) * gamma) / (1000.0 * v_drain))
 
 
 @dataclass(frozen=True)
@@ -944,7 +965,7 @@ def resolve_stage_cascade(
         v_sol=v_sol,
         v_sparge=v_sparge,
     )
-    sg_pre_boil = calculate_sg_pre_boil(s_run1, s_run2, v_pre_boil, gamma)
+    sg_pre_boil = calculate_sg_pre_boil(s_run1, s_run2, v_drain, gamma)
 
     # Hot-side kettle balance: V_post_boil_hot = V_pre_boil - delta_v_evap.
     # (Late-addition displacement is not yet modeled on the hot side; when it
@@ -1102,6 +1123,9 @@ class BatchSolverInput:
         mash_transfer_loss: Mash tun transfer (hose/pump) loss, in liters.
         eta_conv: Mash conversion efficiency as a fraction.
         f_shrink: Thermal contraction coefficient (default 4%).
+        k_abs_true: Grain absorption coefficient, in L/kg. The equipment
+            profile's ``grain_absorption_factor_l_per_kg`` is authoritative;
+            the module constant is the fallback.
         hlt_starting_volume_l: Volume of liquor in the HLT at the start of the
             brew day, in liters. Batch-level parameter; the frontend pre-fills
             it from the equipment profile's ``max_hlt_volume_l``. Consumed by
@@ -1137,6 +1161,7 @@ class BatchSolverInput:
     hlt_coil_floor_l: float
     max_hlt_volume_l: float
     f_shrink: float = F_SHRINK_DEFAULT
+    k_abs_true: float = K_ABS_TRUE_METRIC
 
 
 @dataclass(frozen=True)
@@ -1245,7 +1270,9 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         s_post_boil_target=reversal.s_post_boil_target,
         s_late_add=inputs.s_late_add,
         v_dead=inputs.v_dead,
+        k_abs_true=inputs.k_abs_true,
         topology=inputs.topology,
+        mash_transfer_loss=inputs.mash_transfer_loss,
     )
 
     # Phase 4: stage volume & gravity cascade.
@@ -1260,6 +1287,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         v_dead=inputs.v_dead,
         delta_v_evap=inputs.delta_v_evap,
         mash_transfer_loss=inputs.mash_transfer_loss,
+        k_abs_true=inputs.k_abs_true,
     )
 
     # HLT water budget: derived from the cascade's sparge demand.

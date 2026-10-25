@@ -56,6 +56,7 @@ def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
         hlt_coil_floor_l=req.hlt_coil_floor_l,
         max_hlt_volume_l=req.max_hlt_volume_l,
         f_shrink=req.f_shrink,
+        k_abs_true=req.k_abs_true,
     )
 
 

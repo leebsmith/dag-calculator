@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from app.core import batch_solver, water
-from app.schemas.boundary import WaterSolverRequest
+from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest
 
 ARTIFACT = json.loads(
     (Path(__file__).resolve().parents[3] / "data" / "artifact.json").read_text()
@@ -47,3 +47,8 @@ def test_water_constant_matches_artifact(python_name, artifact_name):
 def test_default_mash_ph_matches_artifact():
     field = WaterSolverRequest.model_fields["target_mash_ph"]
     assert field.default == CONSTANTS["default_target_mash_ph"]
+
+
+def test_batch_request_absorption_default_matches_artifact():
+    field = BatchSolverRequest.model_fields["k_abs_true"]
+    assert field.default == CONSTANTS["k_abs_true"]
