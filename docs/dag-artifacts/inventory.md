@@ -235,6 +235,5 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `hlt_not_overfilled` |
 | `kettle_not_overfilled` |
 | `mash_thickness_above_equipment_floor` |
-| `mash_thickness_above_husk_floor` |
 | `target_abv_reachable` |
 

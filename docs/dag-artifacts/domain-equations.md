@@ -266,12 +266,11 @@ Applying shrinkage to the net volume instead would incorrectly shrink the losses
 
 ### 2.7 Pending corrections
 
-This derivation is the intended model. The implementation currently deviates in two ways,
+This derivation is the intended model. The implementation currently deviates in one way,
 each decided in [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md):
 
 | Deviation | Decision |
 |---|---|
-| No physical floor on the *derived* thickness in `{V_pre, r}` | D21 |
 | Tun capacity declared but unchecked; no upper thickness ceiling | D14, D3/D4 |
 
 Each correction lands here in the same commit as its code, per the atomic-docs rule in

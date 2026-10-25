@@ -3774,18 +3774,6 @@
       }
     },
     {
-      "id": "mash_thickness_above_husk_floor",
-      "predicate": {
-        "op": "ge",
-        "lhs": {
-          "ref": "solver.batch.mash_thickness_l_per_kg"
-        },
-        "rhs": {
-          "const": "k_abs_true"
-        }
-      }
-    },
-    {
       "id": "target_abv_reachable",
       "predicate": {
         "op": "le",

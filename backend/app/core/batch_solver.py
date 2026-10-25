@@ -37,6 +37,7 @@ Black-box boundary contract:
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -664,6 +665,14 @@ def solve_grist_mass(
             "UNKNOWN_TOPOLOGY",
             f"Unknown constraint topology: {topology!r}.",
         )
+    if not math.isfinite(r_l_to_g) or r_l_to_g <= 0.0:
+        raise SolverValidationError(
+            "INVALID_INTENSIVE_VALUE",
+            (
+                f"Intensive constraint must be positive and finite; got "
+                f"{r_l_to_g}."
+            ),
+        )
     if yield_fraction <= 0.0:
         raise SolverValidationError(
             "INVALID_YIELD",
@@ -683,12 +692,12 @@ def solve_grist_mass(
     # P(M_grist) monotonic and the bracket sign-change test fail. Catch it
     # here (Phase 3) rather than in Phase 4, so the user sees MASH_TOO_THIN
     # instead of the opaque BRACKET_NO_SIGN_CHANGE.
-    if topology == "r_l_to_g" and r_l_to_g < K_ABS_TRUE_METRIC:
+    if topology == "r_l_to_g" and r_l_to_g < k_abs_true:
         raise SolverValidationError(
             "MASH_TOO_THIN",
             (
                 f"Liquor-to-grist ratio ({r_l_to_g:.2f} L/kg) is below the "
-                f"husk absorption floor ({K_ABS_TRUE_METRIC} L/kg). The grain "
+                f"husk absorption floor ({k_abs_true} L/kg). The grain "
                 f"bed would retain more liquid than the strike provides."
             ),
         )
@@ -907,17 +916,20 @@ def resolve_stage_cascade(
             "UNKNOWN_TOPOLOGY",
             f"Unknown constraint topology: {topology!r}.",
         )
-    if intensive_value <= 0.0:
+    if not math.isfinite(intensive_value) or intensive_value <= 0.0:
         raise SolverValidationError(
             "INVALID_INTENSIVE_VALUE",
-            f"Intensive constraint must be positive; got {intensive_value}.",
+            (
+                f"Intensive constraint must be positive and finite; got "
+                f"{intensive_value}."
+            ),
         )
-    if topology == "r_l_to_g" and intensive_value < K_ABS_TRUE_METRIC:
+    if topology == "r_l_to_g" and intensive_value < k_abs_true:
         raise SolverValidationError(
             "MASH_TOO_THIN",
             (
                 f"Liquor-to-grist ratio ({intensive_value:.2f} L/kg) is below "
-                f"the husk absorption floor ({K_ABS_TRUE_METRIC} L/kg). The "
+                f"the husk absorption floor ({k_abs_true} L/kg). The "
                 f"grain bed would retain more liquid than the strike provides."
             ),
         )
@@ -983,6 +995,19 @@ def resolve_stage_cascade(
         mash_thickness_l_per_kg = v_strike / m_grist
     else:
         mash_thickness_l_per_kg = 0.0
+
+    # In the runoff topology the strike is reverse-derived from the split, so a
+    # sub-absorption strike never appears as negative runnings; it appears only
+    # as a derived thickness below the bed's absorption capacity.
+    if topology == "runoff_ratio" and mash_thickness_l_per_kg < k_abs_true:
+        raise SolverValidationError(
+            "MASH_TOO_THIN",
+            (
+                f"Derived mash thickness ({mash_thickness_l_per_kg:.2f} L/kg) "
+                f"is below the husk absorption floor ({k_abs_true} L/kg). The "
+                f"strike water cannot wet the grain bed."
+            ),
+        )
 
     return StageCascade(
         v_strike=v_strike,
@@ -1162,6 +1187,21 @@ class BatchSolverInput:
     max_hlt_volume_l: float
     f_shrink: float = F_SHRINK_DEFAULT
     k_abs_true: float = K_ABS_TRUE_METRIC
+
+    def __post_init__(self) -> None:
+        if self.topology not in ("r_l_to_g", "runoff_ratio"):
+            raise SolverValidationError(
+                "UNKNOWN_TOPOLOGY",
+                f"Unknown constraint topology: {self.topology!r}.",
+            )
+        if not math.isfinite(self.intensive_value) or self.intensive_value <= 0.0:
+            raise SolverValidationError(
+                "INVALID_INTENSIVE_VALUE",
+                (
+                    f"Intensive constraint must be positive and finite; got "
+                    f"{self.intensive_value}."
+                ),
+            )
 
 
 @dataclass(frozen=True)

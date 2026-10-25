@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 8,
-    "hash": "sha256:bee617a02c734ac62c9fbca0ce39fa5481e392d55564d1c61a1d76511b3ae869",
+    "hash": "sha256:407c14488834c404c935461bf02f79e5b9659c376ae70198af0e6df79f92cd3b",
     "content": {
       "schema_version": 8,
       "meta": {
@@ -3915,18 +3915,6 @@
           }
         },
         {
-          "id": "mash_thickness_above_husk_floor",
-          "predicate": {
-            "op": "ge",
-            "lhs": {
-              "ref": "solver.batch.mash_thickness_l_per_kg"
-            },
-            "rhs": {
-              "const": "k_abs_true"
-            }
-          }
-        },
-        {
           "id": "target_abv_reachable",
           "predicate": {
             "op": "le",
@@ -4381,5 +4369,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:4c60b2f3a78976bb65df59fcf0befd756b09a8310762e0933df66fc7fc20d0a4"
+  "content_hash": "sha256:f314ad83cdb6fd5cd68bbb7396a0026d3e2baac5a4ecc000610d33b40c45c823"
 }

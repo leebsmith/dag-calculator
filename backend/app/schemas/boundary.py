@@ -118,7 +118,7 @@ class BatchSolverRequest(BoundaryModel):
     apparent_attenuation: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast attenuation cap fraction")]
     v_ferm: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Target cold fermenter volume in Liters")]
     topology: BatchSpargeTopology = Field(description="Runoff model topology")
-    intensive_value: Annotated[float, Field(gt=0.0, le=1000.0, description="R_L:G ratio (L/kg) or runoff ratio r")]
+    intensive_value: Annotated[float, Field(gt=0.0, description="R_L:G ratio (L/kg) or runoff ratio r")]
     grain_bill: list[GristBillRow] = Field(min_length=1, max_length=50, description="Normalized grain bill rows")
     s_late_add: Annotated[float, Field(ge=0.0, default=0.0, description="Late-addition kettle extract in kg")]
     v_kettle_dead: Annotated[float, Field(ge=0.0, default=0.0, description="Kettle/chiller dead space in Liters")]
