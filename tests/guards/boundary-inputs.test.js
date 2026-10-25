@@ -10,8 +10,10 @@ import { readFileSync } from "node:fs";
 
 import {
   BATCH_FIELDS,
+  HOP_FIELDS,
   WATER_FIELDS,
   buildBatchRequest,
+  buildHopRequest,
   buildWaterRequest,
 } from "../../frontend/src/adapters/boundaryRequest.js";
 import { loadArtifact } from "../frontend/helpers.js";
@@ -80,7 +82,12 @@ test("water request builder reads exactly the declared solver.water inputs", () 
   assertExactDeclared(buildWaterRequest, WATER_FIELDS, "solver.water");
 });
 
+test("hop request builder reads exactly the declared solver.hops inputs", () => {
+  assertExactDeclared(buildHopRequest, HOP_FIELDS, "solver.hops");
+});
+
 test("wire keys match the shared backend contract fixture", () => {
   assert.deepEqual(wireKeys(BATCH_FIELDS), WIRE_KEYS.batch);
   assert.deepEqual(wireKeys(WATER_FIELDS), WIRE_KEYS.water);
+  assert.deepEqual(wireKeys(HOP_FIELDS), WIRE_KEYS.hop);
 });

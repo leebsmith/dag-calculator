@@ -20,6 +20,7 @@ test("relationStates() evaluates every declared relation", () => {
       "hlt_above_coil_floor",
       "hlt_not_overfilled",
       "kettle_not_overfilled",
+      "mash_thickness_above_equipment_floor",
       "mash_thickness_above_husk_floor",
       "target_abv_reachable",
     ]
@@ -31,6 +32,7 @@ test("relations hold under the default fixtures", () => {
   assert.equal(states.hlt_not_overfilled, true); // 30 <= 30
   assert.equal(states.kettle_not_overfilled, true); // 24 <= 40 (boundary output)
   assert.equal(states.mash_thickness_above_husk_floor, true); // 3.0 >= 1.67 (const)
+  assert.equal(states.mash_thickness_above_equipment_floor, true); // 3.0 >= 2.295
   assert.equal(states.target_abv_reachable, true); // 5.5 <= 10.0 (boundary output)
 });
 
@@ -55,3 +57,11 @@ test("hlt_above_coil_floor bounds the HLT fill from below", () => {
   );
 });
 
+
+test("the equipment LGR floor is report-only and tolerates a missing field", () => {
+  const legacy = makeFixturesWithYeast();
+  delete legacy.identity.equipment.min_lgr_l_per_kg;
+  const e = createCalculator(artifact, legacy);
+  const states = Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds]));
+  assert.equal(states.mash_thickness_above_equipment_floor, true);
+});

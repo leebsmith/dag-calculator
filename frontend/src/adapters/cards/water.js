@@ -5,7 +5,7 @@
 // and roots — no engine path resolution leaks into the template. Node ids live
 // in the registry (WATER_NODES).
 
-import { fieldOr, formatQuantity, formatValue, formatWithDecimals } from "../../utils.js";
+import { fieldOr, formatQuantity, formatValue, formatWithDecimals, joinNonEmpty } from "../../utils.js";
 import {
   WATER_ION_BY_PIN,
   WATER_IONS,
@@ -229,6 +229,27 @@ export function registerWaterCard(app, ctx) {
       this.waterTargetLocked = false;
       this.setRoot(N.strategy, strategyForHeld(checkedPins(engine)));
       this.scheduleSolve();
+      this.notify();
+    },
+
+    editWaterNumber(key, field, raw) {
+      this.setInputDraft(key, raw);
+      this.edit(field, raw);
+    },
+
+    commitWaterNumber(key, field) {
+      this.clearInputDraft(key);
+      this.commitField(field);
+      this.notify();
+    },
+
+    editWaterTargetInput(pin, raw) {
+      this.setInputDraft(this.inputKey("ion", pin), raw);
+      this.editWaterTarget(pin, raw);
+    },
+
+    commitWaterTargetInput(pin) {
+      this.clearInputDraft(this.inputKey("ion", pin));
       this.notify();
     },
 
@@ -479,16 +500,24 @@ export function refreshWaterCard(app, ctx) {
     const residualField = fieldOr(app.fieldsById, N.residualHlt);
 
     const sourceComponent = engine.identity?.[N.sourceReport] ?? {};
+    const sourceTitle =
+      sourceComponent.source_name || sourceComponent.laboratory || sourceComponent.report_id || "";
+    const sourceDetail = joinNonEmpty(
+      [
+        sourceComponent.laboratory && sourceComponent.laboratory !== sourceTitle
+          ? sourceComponent.laboratory
+          : "",
+        sourceComponent.report_id ? `report ${sourceComponent.report_id}` : "",
+        sourceComponent.date_reported || "",
+      ],
+      " · "
+    );
     app.waterPlan = {
       source: {
-        id: N.sourceReport,
-        label: "Source report",
-        value: sourceComponent.report_id ?? "",
-        options: [],
-        optionLabels: {},
-        hint: sourceComponent.laboratory || "Fixed by the batch identity",
-        editable: false,
-        target: null,
+        label: "Source water",
+        title: sourceTitle,
+        detail: sourceDetail,
+        hint: "Fixed by the batch identity",
       },
       target: fieldOr(app.fieldsById, N.targetProfileId),
       floor: fieldOr(app.fieldsById, N.calciumFloor),
@@ -580,6 +609,10 @@ export const KEYS = [
   "waterWarningCount",
   "toggleWaterDetails",
   "waterTargetOptions",
+  "editWaterNumber",
+  "commitWaterNumber",
+  "editWaterTargetInput",
+  "commitWaterTargetInput",
   "waterTargetSelection",
   "selectWaterTarget",
   "toggleWaterTarget",

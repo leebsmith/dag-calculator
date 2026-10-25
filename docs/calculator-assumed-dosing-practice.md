@@ -51,7 +51,7 @@ Consequences worth stating plainly:
 
 | Quantity | Node | Definition |
 |---|---|---|
-| Mash treatment volume | `water.v_mash_treat_l` (= `solver.batch.cascade.v_strike`) | Strike water |
+| Mash treatment volume | `solver.batch.cascade.v_strike` | Strike water |
 | HLT at brew-day start | `batch.hlt_starting_volume_l` | Root; defaults to `equipment.max_hlt_volume_l` |
 | HLT after strike | `solver.batch.hlt.v_hlt_after_strike` | `hlt_starting_volume_l − v_strike` |
 | HLT top-up target | `solver.batch.hlt.v_hlt_target` | `max(hlt_coil_floor_l, v_sparge_demand + v_hlt_debt)` |
@@ -60,8 +60,8 @@ Consequences worth stating plainly:
 | Delivered sparge | `solver.batch.hlt.v_sparge_deliverable` | `salted_volume − v_hlt_debt` |
 | HLT debt | `solver.batch.hlt.v_hlt_debt` | `hlt_dead_space_l + hlt_transfer_loss_l` |
 
-`water.v_hlt_treat_l` derives from `batch.sparge_salted_volume` — the liquor actually
-in the HLT when you dose. It is **not** the delivered sparge volume: dosing by
+The water boundary reads `batch.sparge_salted_volume` — the liquor actually in
+the HLT when you dose. It is **not** the delivered sparge volume: dosing by
 concentration means liquor left behind (dead space, transfer loss, surplus) stays
 correctly salted, while the delivered sparge carries the right concentration.
 

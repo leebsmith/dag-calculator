@@ -10,6 +10,60 @@ import { SYSTEM_NODES as N } from "../views/registry/system.js";
 
 export function installFieldActions(app, { artifact, session, refToSelectionMap }) {
   Object.assign(app, {
+    inputDrafts: {},
+
+    // Number inputs keep the user's raw text while focused; the engine still
+    // receives every keystroke, but the DOM value is not reformatted until the
+    // field commits on blur.
+    inputKey(prefix, ...parts) {
+      return [prefix, ...parts].join(":");
+    },
+
+    inputDraft(key, fallback) {
+      return Object.prototype.hasOwnProperty.call(this.inputDrafts, key)
+        ? this.inputDrafts[key]
+        : fallback;
+    },
+
+    setInputDraft(key, raw) {
+      this.inputDrafts[key] = raw;
+    },
+
+    clearInputDraft(key) {
+      delete this.inputDrafts[key];
+    },
+
+    editNumberInput(key, field, raw) {
+      this.setInputDraft(key, raw);
+      this.edit(field, raw);
+    },
+
+    commitNumberInput(key, field) {
+      this.clearInputDraft(key);
+      this.commitField(field);
+      this.notify();
+    },
+
+    editCellInput(key, field, rowIndex, columnId, raw) {
+      this.setInputDraft(key, raw);
+      this.editCell(field, rowIndex, columnId, raw);
+    },
+
+    commitCellInput(key) {
+      this.clearInputDraft(key);
+      this.notify();
+    },
+
+    editDraftCellInput(key, rowIndex, columnId, raw) {
+      this.setInputDraft(key, raw);
+      this.editDraftCell(rowIndex, columnId, raw);
+    },
+
+    commitDraftCellInput(key) {
+      this.clearInputDraft(key);
+      this.notify();
+    },
+
     // Clamp an editable value to the envelope of its selected component, when
     // one applies (a batch root bounded by a selection's fields). Returns the
     // clamped value; an unset optional selection contributes no bounds.
@@ -211,4 +265,4 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
   });
 }
 
-export const KEYS = ["clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];
+export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

@@ -3,6 +3,7 @@
 Defines the request, response, and error taxonomy models for:
 - solver.batch (batch_sparge_solver: scipy.optimize.brentq)
 - solver.water (water_chemistry_solver: scipy.optimize.linprog)
+- solver.hops (hop_bitterness_solver: Tinseth + Arrhenius cooling integral)
 """
 
 from __future__ import annotations
@@ -250,6 +251,67 @@ class BatchSolverResponse(BoundaryModel):
 # -----------------------------------------------------------------------------
 # Solver 2: Water Chemistry Solver (solver.water)
 # -----------------------------------------------------------------------------
+
+class WhirlpoolHopForm(StrEnum):
+    T90_PELLET = "t90_pellet"
+    FLOWABLE_EXTRACT = "flowable_extract"
+
+
+class BoilHopRow(BoundaryModel):
+    """One boil addition as sent to the hop boundary."""
+
+    alpha_acid_pct: Annotated[float, Field(ge=0.0, le=1.0)]
+    boil_time_fraction: Annotated[float, Field(ge=0.0, le=1.0)]
+    pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
+
+
+class WhirlpoolHopRow(BoundaryModel):
+    """One whirlpool addition as sent to the hop boundary."""
+
+    alpha_acid_pct: Annotated[float, Field(ge=0.0, le=1.0)]
+    duration_min: Annotated[float, Field(ge=0.0)]
+    initial_temp_c: Annotated[float, Field(ge=0.0, le=100.0)]
+    pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
+    product_form: WhirlpoolHopForm = WhirlpoolHopForm.T90_PELLET
+
+
+class HopSolverRequest(BoundaryModel):
+    """Input contract for hop_bitterness_solver (Tinseth + Arrhenius)."""
+
+    boil_hops: list[BoilHopRow] = Field(default_factory=list, max_length=50)
+    whirlpool_hops: list[WhirlpoolHopRow] = Field(default_factory=list, max_length=50)
+    boil_target_ibu: Annotated[float, Field(ge=0.0)]
+    whirlpool_target_ibu: Annotated[float, Field(ge=0.0)]
+    boil_time_min: Annotated[float, Field(ge=0.0)]
+    pre_boil_gravity: Annotated[float, Field(gt=0.0)]
+    post_boil_gravity: Annotated[float, Field(gt=0.0)]
+    post_boil_volume_l: Annotated[float, Field(gt=0.0)]
+    whirlpool_ambient_temp_c: Annotated[float, Field(ge=-20.0, le=50.0)]
+    whirlpool_cooling_time_constant_min: Annotated[float, Field(gt=0.0)]
+
+
+class BoilHopResult(BoundaryModel):
+    minutes: Annotated[float, Field(ge=0.0)]
+    ibu: Annotated[float, Field(ge=0.0)]
+    mass_kg: float | None = None
+
+
+class WhirlpoolHopResult(BoundaryModel):
+    minutes: Annotated[float, Field(ge=0.0)]
+    ibu: Annotated[float, Field(ge=0.0)]
+    mass_kg: float | None = None
+    effective_minutes: Annotated[float, Field(ge=0.0)]
+
+
+class HopSolverResponse(BoundaryModel):
+    """Output contract for hop_bitterness_solver."""
+
+    boil_rows: list[BoilHopResult]
+    whirlpool_rows: list[WhirlpoolHopResult]
+    boil_mass_kg: float
+    whirlpool_mass_kg: float
+    total_mass_kg: float
+
 
 class WaterStrategy(StrEnum):
     FLAVOR = "FLAVOR"

@@ -44,12 +44,11 @@ test("boil hops: parts renormalize when an addition is removed", () => {
   assert.ok(Math.abs(app.hopRows[0].pct - 1) < 1e-9);
 });
 
-test("both hop mass pills seed from the saved mass preference", () => {
+test("the hop mass unit seeds from the saved mass preference", () => {
   const app = createTestApp();
   app.boot();
 
   assert.equal(app.hopMassUnit, "g");
-  assert.equal(app.whirlpoolHopMassUnit, "g");
 });
 
 test("hop mass unit cycles and changes the readout", () => {
@@ -73,7 +72,7 @@ test("hop mass unit cycles and changes the readout", () => {
   assert.equal(app.hopMassUnit, "g");
 });
 
-test("the two hop mass pills are independent once seeded", () => {
+test("one hop mass pill follows the master until overridden", () => {
   const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
@@ -88,20 +87,20 @@ test("the two hop mass pills are independent once seeded", () => {
   app.saveWhirlpoolHopEditor();
   app.compute();
 
-  app.toggleHopMassUnit(); // lb — boil only
-  assert.equal(app.hopMassUnit, "lb");
-  assert.equal(app.whirlpoolHopMassUnit, "g");
-  assert.match(app.hopMass(app.hopRows[0]), /lb$/);
-  assert.match(app.whirlpoolHopMass(app.whirlpoolHopRows[0]), /g$/);
-
-  app.toggleWhirlpoolHopMassUnit(); // lb — whirlpool only
-  assert.equal(app.hopMassUnit, "lb");
-  assert.equal(app.whirlpoolHopMassUnit, "lb");
-  assert.match(app.whirlpoolHopMass(app.whirlpoolHopRows[0]), /lb$/);
-
-  app.toggleHopMassUnit(); // kg — boil only
+  app.setUnit("mass", "kg");
+  assert.equal(app.hopMassUnit, "kg");
+  assert.match(app.hopMass(app.hopRows[0]), /kg$/);
+  assert.match(app.whirlpoolHopMass(app.whirlpoolHopRows[0]), /kg$/);
   assert.match(app.boilHopTotalMassDisplay, /kg$/);
-  assert.match(app.whirlpoolHopTotalMassDisplay, /lb$/);
+  assert.match(app.whirlpoolHopTotalMassDisplay, /kg$/);
+
+  app.toggleHopMassUnit(); // kg -> oz override
+  assert.equal(app.hopMassUnit, "oz");
+  assert.match(app.hopMass(app.hopRows[0]), /oz$/);
+  assert.match(app.whirlpoolHopMass(app.whirlpoolHopRows[0]), /oz$/);
+
+  app.setUnit("mass", "lb");
+  assert.equal(app.hopMassUnit, "oz"); // the override survives a master change
 });
 
 test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", () => {
@@ -168,7 +167,7 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", ()
   const extract = app.whirlpoolHopRows[0];
   assert.equal(extract.product_form, "flowable_extract");
   assert.match(app.hopForm(extract), /extract/i);
-  assert.equal(app.whirlpoolHopMassUnit, "g");
+  assert.equal(app.hopMassUnit, "g");
   assert.match(app.whirlpoolHopMass(extract), /g$/);
   assert.equal(extract.ibu, 10);
   assert.ok(extract.mass_kg > 0);
@@ -216,16 +215,24 @@ test("inspector shows the T-90 equivalent only when the row carries a ratio", ()
   app.openWhirlpoolHopSearch();
   app.setWhirlpoolHopCatalogForm("flowable_extract");
   app.addCatalogWhirlpoolHop("dynaboost-citra");
+  app.saveWhirlpoolHopEditor();
+  app.openWhirlpoolHopEditor();
   app.inspectWhirlpoolHopRow(0);
   assert.match(app.whirlpoolHopT90Equivalent, /T-90 equivalent \(1:10\)/);
 
+  app.openWhirlpoolHopSearch();
   app.setWhirlpoolHopCatalogForm("flowable_extract");
   app.addCatalogWhirlpoolHop("flowable-co2-extract-generic");
+  app.saveWhirlpoolHopEditor();
+  app.openWhirlpoolHopEditor();
   app.inspectWhirlpoolHopRow(1);
   assert.match(app.whirlpoolHopT90Equivalent, /T-90 equivalent \(1:8\)/);
 
+  app.openWhirlpoolHopSearch();
   app.setWhirlpoolHopCatalogForm("t90_pellet");
   app.addCatalogWhirlpoolHop("cascade");
+  app.saveWhirlpoolHopEditor();
+  app.openWhirlpoolHopEditor();
   app.inspectWhirlpoolHopRow(2);
   assert.equal(app.whirlpoolHopT90Equivalent, "");
 });
@@ -291,4 +298,68 @@ test("total hop mass includes boil and whirlpool additions", () => {
   assert.equal(app.whirlpoolHopRows.length, 1);
   assert.ok(app.hopTotalMassKg > app.hopRows[0].mass_kg);
   assert.ok(app.hopTotalMassKg > app.whirlpoolHopRows[0].mass_kg);
+});
+
+test("http: the hop boundary rows merge into the card", async () => {
+  const calls = [];
+  const batch = {
+    sg_post_boil: 1.055,
+    v_pre_boil: 24.0,
+    s_post_boil_target: 2.6,
+    m_grist: 4.7,
+    cascade: {
+      v_strike: 14.0,
+      v_run1: 10.0,
+      v_run2: 14.0,
+      v_sparge: 14.0,
+      s_run1: 2.0,
+      s_run2: 0.6,
+      sg_pre_boil: 1.048,
+      v_post_boil: 21.0,
+      mash_thickness_l_per_kg: 3.0,
+    },
+    max_achievable_abv: 10.0,
+    aa_wort: 0.76,
+    aa_batch: 0.75,
+    hlt: { v_hlt_debt: 1.0, v_hlt_after_strike: 16.0, v_hlt_top_up: 0.0, v_sparge_deliverable: 15.0 },
+    mash_thickness_l_per_kg: 3.0,
+  };
+  const water = {
+    strategy: "CALCIUM_FLOOR",
+    prescription: { predicted_mash_ph: 5.4, mash_ph_status: "OPTIMAL", residual_hlt_water_l: 0.0 },
+  };
+  const hops = {
+    boil_rows: [{ minutes: 60.0, ibu: 40.0, mass_kg: 0.02 }],
+    whirlpool_rows: [],
+    boil_mass_kg: 0.02,
+    whirlpool_mass_kg: 0.0,
+    total_mass_kg: 0.02,
+  };
+  const fetchImpl = async (url, opts) => {
+    calls.push({ url, body: JSON.parse(opts.body) });
+    const body = url === "/solve/batch" ? batch : url === "/solve/water" ? water : hops;
+    return { ok: true, status: 200, json: async () => body };
+  };
+  const app = createTestApp({ useHttp: true, fetchImpl });
+  await app.loadState({
+    roots: { "batch.target_ibu": 40, "batch.whirlpool_ibu_fraction": 0 },
+    collections: {
+      "batch.boil_hops": [
+        {
+          hop_id: "cascade",
+          name: "Cascade",
+          alpha_acid_pct: 0.06,
+          boil_time_fraction: 1,
+          parts: 10,
+          pct: 1,
+        },
+      ],
+    },
+  });
+  await app.solveNow();
+
+  assert.ok(calls.some((call) => call.url === "/solve/hops"));
+  assert.equal(app.hopRows[0].mass_kg, 0.02);
+  assert.equal(app.hopRows[0].minutes, 60);
+  assert.equal(app.hopRows[0].ibu, 40);
 });

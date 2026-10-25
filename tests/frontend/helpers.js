@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 
 import { BOUNDARY_BUILDERS } from "../../frontend/src/adapters/boundaryRequest.js";
+import { STUB_BOUNDARIES } from "../../frontend/src/adapters/stubBoundaries.js";
 
 export function loadArtifact() {
   const path = new URL("../../frontend/src/engine/artifact.json", import.meta.url);
@@ -32,6 +33,8 @@ export const EQUIPMENT = {
   hlt_coil_floor_l: 4.0,
   mash_tun_specific_heat: 0.12,
   mash_tun_mass_kg: 6.5,
+  mash_heating_rate_c_per_min: 1.0,
+  min_lgr_l_per_kg: 2.295,
 };
 
 export const STYLE = {
@@ -170,6 +173,7 @@ export function makeFixtures() {
   const boundaries = {
     batch_sparge_solver: () => batchOutputs(),
     water_chemistry_solver: () => waterOutputs(),
+    hop_bitterness_solver: STUB_BOUNDARIES.hop_bitterness_solver,
   };
 
   const roots = {

@@ -39,9 +39,9 @@
             :id="f.id"
             type="number"
             step="0.1"
-            :value="f.display"
-            @input="edit(f, $event.target.value)"
-            @change="commitField(f)"
+            :value="inputDraft(inputKey('field', f.id), f.display)"
+            @input="editNumberInput(inputKey('field', f.id), f, $event.target.value)"
+            @change="commitNumberInput(inputKey('field', f.id), f)"
           />
           <span class="form-hint" x-show="f.rangeHint" x-text="'Allowed: ' + f.rangeHint"></span>
           <span class="form-hint" x-show="f.hint" x-text="f.hint"></span>
@@ -184,8 +184,9 @@
                           <input
                             class="form-input"
                             :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && f.rowValidations[ri][c.id].holds === false }"
-                            :value="row[c.id]"
-                            @input="editCell(f, ri, c.id, $event.target.value)"
+                            :value="inputDraft(inputKey('cell', f.id, ri, c.id), row[c.id])"
+                            @input="editCellInput(inputKey('cell', f.id, ri, c.id), f, ri, c.id, $event.target.value)"
+                            @change="commitCellInput(inputKey('cell', f.id, ri, c.id))"
                           />
                         </template>
                         <template x-if="!c.editable">

@@ -40,6 +40,7 @@ function fieldSpec(spec) {
   if (spec.dimension) parts.push(`dimension ${spec.dimension}`);
   if (spec.taxonomy) parts.push(`taxonomy ${spec.taxonomy}`);
   if (spec.type) parts.push(`type ${spec.type}`);
+  if (spec.item_schema) parts.push(`item_schema ${spec.item_schema}`);
   if (spec.domain) parts.push(`domain ${stableStringify(spec.domain)}`);
   if (spec.default !== undefined) parts.push(`default ${stableStringify(spec.default)}`);
   return parts.join(", ") || "—";

@@ -1,4 +1,5 @@
-// Tinseth bitterness math (host-side, view-only; mirrors views/hamilton.js).
+// Tinseth bitterness math. Offline boundary stub only; production uses
+// backend/app/core/hop_solver.py.
 //
 // Glenn Tinseth's utilization model:
 //   bigness     = 1.65 * 0.000125^(SG_boil - 1)

@@ -211,7 +211,7 @@ Shared values and the single test surface that pins each:
 | Water equivalents, calcium floor, mash-pH window and default | `bicarbonate_eq_weight`, `default_calcium_floor_ppm`, `mash_ph_optimal_low/high`, `default_target_mash_ph` | engine functions | `core/water.py`, `WaterSolverRequest` | `tests/backend/conformance/test_artifact_constants.py` |
 | ASBC Plato↔SG, Cutaia ABV, maximum achievable ABV, Phase 1 SG-from-ABV | `plato_to_sg`, `sg_to_plato`, `realized_abv` | engine functions | `core/utils.py`, `batch_solver` | `tests/conformance/numeric-parity.test.js` + `tests/backend/conformance/test_numeric_parity.py` on `tests/conformance/fixtures/numeric-parity.json` |
 | Canonical JSON + SHA-256 fingerprint | n/a | `engine/boundary.js` | `schemas/boundary.py` | `tests/frontend/boundary.test.js` + `tests/backend/test_fingerprint.py` on `tests/conformance/fixtures/canonical-json.json` |
-| Boundary wire keys | node `inputs` aliases | declarative `BATCH_FIELDS` / `WATER_FIELDS` | Pydantic model fields | `tests/guards/boundary-inputs.test.js` + `tests/backend/conformance/test_boundary_wire_contract.py` on `tests/conformance/fixtures/boundary-wire-keys.json` |
+| Boundary wire keys | node `inputs` aliases | declarative `BATCH_FIELDS` / `WATER_FIELDS` / `HOP_FIELDS` | Pydantic model fields | `tests/guards/boundary-inputs.test.js` + `tests/backend/conformance/test_boundary_wire_contract.py` on `tests/conformance/fixtures/boundary-wire-keys.json` |
 
 The JS `realized_abv` function defines the Cutaia model in the SG domain; the
 Python `cutaia_abv` defines it in the Plato domain. Parity is asserted through
@@ -227,11 +227,11 @@ constant or numeric-parity test on the untouched side.
 
 ## Host-side rules
 
-Not every rule belongs in the artifact. Hamilton normalization, Tinseth hop
-back-calculation, whirlpool cooling/IBU math (promotion spike pending), style
+Not every rule belongs in the artifact. Hamilton normalization, style
 conformance, seed-derived copy-in, fermentation geometry, mash ordering and
 validation, the Belgian-knob advisory, and presentation overrides are host-side
-by design. `docs/adding-a-node.md` §"Artifact-owned vs host-side rules" lists the
+by design. Hop bitterness math is a sealed backend boundary (`solver.hops`); its
+JS copies are the offline stub only. `docs/adding-a-node.md` §"Artifact-owned vs host-side rules" lists the
 owner and location of each; `tests/guards/presentation-ids.test.js` keeps card
 modules and the producer free of literal node ids.
 
@@ -250,8 +250,8 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 `batch.yeast_cap = batch.yeast.attenuation_pct × batch.attenuation_derate`.
 The batch solver computes the extract-weighted wort AA from the grain-bill
 fermentability values and the late-addition sugar (`F = 1.0`), clamps it to
-`batch.yeast_cap`, and returns `aa_batch`. `batch.apparent_attenuation` displays
-the solved value; `batch.wort_aa` displays the pre-cap blend. The batch is
+`batch.yeast_cap`, and returns `aa_batch`. `solver.batch.aa_batch` displays
+the solved value; `solver.batch.aa_wort` displays the pre-cap blend. The batch is
 unresolved until a yeast is selected. Conversion efficiency remains a separate
 gravity correction, not an attenuation correction. See
 `docs/fermentability-and-yield.md`.

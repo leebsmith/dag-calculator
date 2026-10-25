@@ -164,15 +164,15 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(target("magnesium_mg"), 3);
   assert.equal(target("sodium_na"), 4);
   assert.equal(target("alkalinity_as_caco3"), 15);
-  assert.equal(app.engine.get("water.calcium_floor_ppm"), 50);
+  assert.equal(app.engine.get("water.calcium_floor_ppm"), 15);
   assert.equal(app.waterSummary.mode, "OPTIMIZE");
   assert.equal(app.waterSummary.checkedPins.length, 6);
   assert.equal(app.waterTargetLocked, false);
 
   app.selectWaterTarget("hoppy-ipa");
   app.compute();
-  assert.equal(target("sulfate_so4"), 250);
-  assert.equal(target("chloride_cl"), 50);
+  assert.equal(target("sulfate_so4"), 140);
+  assert.equal(target("chloride_cl"), 70);
   for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "alkalinity_as_caco3"]) {
     assert.equal(Number.isFinite(target(ion)), false, `${ion} must not survive the profile switch`);
   }
@@ -180,6 +180,12 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(app.waterSummary.mode, "CALCIUM_FLOOR");
   assert.deepEqual(app.waterSummary.checkedPins, ["so4", "cl"]);
   assert.equal(app.master.getRoot("water.target_profile_id"), "hoppy-ipa");
+
+  app.selectWaterTarget("burton-ipa");
+  app.compute();
+  assert.equal(target("sulfate_so4"), 250);
+  assert.equal(target("chloride_cl"), 50);
+  assert.equal(app.master.getRoot("water.target_profile_id"), "burton-ipa");
 });
 
 test("toggling a checked ion detaches the preset", () => {
@@ -244,7 +250,8 @@ test("source ions render only in the comparison grid", async () => {
   for (const { ion } of WATER_IONS) {
     assert.ok(!ids.includes(`water.source_report.${ion}`), `${ion} readout must be gone`);
   }
-  assert.equal(app.waterPlan.source.id, "water.source");
+  assert.equal(app.waterPlan.source.title, "Ward Labs");
+  assert.match(app.waterPlan.source.detail, /report 25138/);
   assert.equal(app.waterPlan.target.id, "water.target_profile_id");
   assert.equal(app.waterPlan.mashPh.id, "water.target_mash_ph");
   assert.equal(app.waterTreatmentFields.length, 5);
@@ -266,7 +273,7 @@ test("water readouts use the fixed precision policy", async () => {
     chloride_cl: 25,
     total_alkalinity_caco3: 80,
   });
-  app.selectWaterTarget("hoppy-ipa");
+  app.selectWaterTarget("burton-ipa");
   app.compute();
 
   const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
@@ -348,6 +355,9 @@ test("the selector lists constraints first and keeps the pseudo-options at the e
   assert.equal(options.at(-1).value, "freeform");
   const labels = Object.fromEntries(options.map((option) => [option.value, option.label]));
   assert.equal(labels["hoppy-ipa"], "SO₄/Cl — Hoppy / IPA");
+  assert.equal(labels["burton-ipa"], "SO₄/Cl — Burton-style IPA");
+  assert.equal(labels["west-coast-ipa"], "SO₄/Cl — West Coast IPA");
+  assert.equal(labels["hazy-ipa"], "SO₄/Cl — Hazy IPA");
   assert.equal(labels["malty-amber"], "SO₄/Cl/Alk — Malty / Amber");
   assert.equal(labels["soft-pilsner"], "All six — Soft Pilsner");
 
@@ -359,6 +369,9 @@ test("every shipped profile declares a non-empty target set", () => {
     "soft-pilsner": ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
     "balanced-pale": ["sulfate_so4", "chloride_cl"],
     "hoppy-ipa": ["sulfate_so4", "chloride_cl"],
+    "burton-ipa": ["sulfate_so4", "chloride_cl"],
+    "west-coast-ipa": ["sulfate_so4", "chloride_cl"],
+    "hazy-ipa": ["sulfate_so4", "chloride_cl"],
     "malty-amber": ["sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
     "dark-stout": ["sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
     "belgian-golden-tripel": ["sulfate_so4", "chloride_cl"],

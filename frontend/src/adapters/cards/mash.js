@@ -5,6 +5,8 @@ import * as mash from "../../views/mash.js";
 import { toBase } from "../../engine/index.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
+import { formatWithDecimals, unitSymbol } from "../../utils.js";
+import { reportError } from "../../observability.js";
 import { MASH_NODES as N } from "../../views/registry/mash.js";
 
 export function registerMashCard(app, ctx) {
@@ -16,6 +18,9 @@ export function registerMashCard(app, ctx) {
     mashRests: [],
     mashDoughInTempC: null,
     mashTotalTimeMin: null,
+    mashRampTimeMin: null,
+    mashThicknessLPerKg: null,
+    minLgrLPerKg: null,
     mashModalOpen: false,
     mashDraft: [],
     mashDraftDirty: false,
@@ -245,6 +250,84 @@ export function registerMashCard(app, ctx) {
         return this.mashTotalTimeMin;
       },
     },
+    rampTimeMin: {
+      configurable: true,
+      get() {
+        return this.mashRampTimeMin;
+      },
+    },
+    restTimeMin: {
+      configurable: true,
+      get() {
+        const total = this.mashTotalTimeMin;
+        const ramp = this.mashRampTimeMin;
+        if (!Number.isFinite(total) || !Number.isFinite(ramp)) return total;
+        return Math.max(0, total - ramp);
+      },
+    },
+    mashThicknessUnitId: {
+      configurable: true,
+      get() {
+        return this.unitMode?.mash_thickness ?? "L_per_kg";
+      },
+    },
+    mashThicknessUnit: {
+      configurable: true,
+      get() {
+        return unitSymbol(UNIT_SYMBOLS, "mash_thickness", this.mashThicknessUnitId) ?? this.mashThicknessUnitId;
+      },
+    },
+    mashThicknessDisplay: {
+      configurable: true,
+      get() {
+        const v = this.mashThicknessLPerKg;
+        if (!Number.isFinite(v)) return "";
+        return formatWithDecimals(
+          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine)),
+          2
+        );
+      },
+    },
+    minLgrDisplay: {
+      configurable: true,
+      get() {
+        const v = this.minLgrLPerKg;
+        if (!Number.isFinite(v)) return "";
+        return formatWithDecimals(
+          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine)),
+          2
+        );
+      },
+    },
+    mashLgrBelowFloor: {
+      configurable: true,
+      get() {
+        const t = this.mashThicknessLPerKg;
+        const min = this.minLgrLPerKg;
+        return Number.isFinite(t) && Number.isFinite(min) && t < min;
+      },
+    },
+    mashLgrSummary: {
+      configurable: true,
+      get() {
+        const t = this.mashThicknessDisplay;
+        if (!t) return "";
+        const unit = this.mashThicknessUnit;
+        const min = this.minLgrDisplay;
+        return min
+          ? `Mash thickness ${t} ${unit} · equipment minimum ${min} ${unit}`
+          : `Mash thickness ${t} ${unit}`;
+      },
+    },
+    mashTimeSummary: {
+      configurable: true,
+      get() {
+        const ramp = this.rampTimeMin;
+        const rests = this.restTimeMin;
+        if (!Number.isFinite(ramp) || !Number.isFinite(rests)) return "";
+        return `incl. ${ramp} min ramp (${rests} min rests)`;
+      },
+    },
     sortedMashDraftRests: {
       configurable: true,
       get() {
@@ -264,6 +347,14 @@ export function refreshMashCard(app, ctx) {
   app.mashRests = (ctx.engine.get(N.rests) ?? []).filter((r) => r.rest_id !== "dough_in");
   app.mashDoughInTempC = ctx.engine.get(N.doughInTarget);
   app.mashTotalTimeMin = ctx.engine.get(N.totalTime);
+  app.mashRampTimeMin = ctx.engine.get(N.rampTime);
+  try {
+    app.mashThicknessLPerKg = ctx.engine.resolve(N.mashThickness) ?? null;
+  } catch (err) {
+    reportError("mashCard.mashThickness", err);
+    app.mashThicknessLPerKg = null;
+  }
+  app.minLgrLPerKg = ctx.engine.identity?.equipment?.min_lgr_l_per_kg ?? null;
 }
 
-export const KEYS = ["mashRests", "mashDoughInTempC", "mashTotalTimeMin", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "sortedMashDraftRests", "isMashDraftValid"];
+export const KEYS = ["mashRests", "mashDoughInTempC", "mashTotalTimeMin", "mashRampTimeMin", "mashThicknessLPerKg", "minLgrLPerKg", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "rampTimeMin", "restTimeMin", "mashThicknessUnitId", "mashThicknessUnit", "mashThicknessDisplay", "minLgrDisplay", "mashLgrBelowFloor", "mashLgrSummary", "mashTimeSummary", "sortedMashDraftRests", "isMashDraftValid"];

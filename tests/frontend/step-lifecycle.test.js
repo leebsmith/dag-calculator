@@ -80,7 +80,11 @@ test("scheduled solves and status writes target the reactive binding", async () 
   assert.equal(proxy.computes, 1);
 
   app.teardown();
-  assert.deepEqual(Object.keys(proxy.boundaryStatuses).sort(), ["solver.batch", "solver.water"]);
+  assert.deepEqual(Object.keys(proxy.boundaryStatuses).sort(), [
+    "solver.batch",
+    "solver.hops",
+    "solver.water",
+  ]);
   assert.equal(proxy.boundaryError, null);
 });
 

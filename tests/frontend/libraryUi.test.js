@@ -123,8 +123,8 @@ test("display converts base values to the active unit and input converts back", 
   app.selectLibraryTab("malt");
   app.libraryDraft = { yield_fraction: 0.8, color_lovibond: 10, name: "Pale" };
 
-  assert.equal(app.libraryFieldDisplay("yield_fraction"), 80);
-  assert.equal(app.libraryFieldDisplay("color_lovibond"), 19.7);
+  assert.equal(app.libraryFieldDisplay("yield_fraction"), "80.0");
+  assert.equal(app.libraryFieldDisplay("color_lovibond"), "19.7");
   assert.equal(app.libraryFieldDisplay("missing"), "");
 
   app.librarySetField("yield_fraction", "80");

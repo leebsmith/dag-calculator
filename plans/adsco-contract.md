@@ -158,6 +158,10 @@ Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
   winning solve token only; cleared on `reset`/supersede/error.
 - Exposed to the water card as a view model (`waterTelemetry`); no engine/artifact
   change. Parity `ALLOW` for `solver.water` becomes `{warnings, notes, telemetry}`.
+- Dose events (`ENZYMATIC_ACID_DOSE_PRESCRIBED` /
+  `ENZYMATIC_ALKALINE_DOSE_PRESCRIBED`) are emitted after the corrected pH is
+  computed and carry `ph_after`; the message names the model-predicted pH after
+  dosing, not just the target.
 
 ## Metrics
 

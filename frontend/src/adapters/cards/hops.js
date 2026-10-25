@@ -2,22 +2,14 @@
 // cooling integral), both authored by IBU share.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
-import { massFromIbu } from "../../views/hops.js";
-import {
-  DEFAULT_AMBIENT_TEMP_C,
-  DEFAULT_COOLING_TIME_CONSTANT_MIN,
-  DEFAULT_INITIAL_TEMP_C,
-  DEFAULT_K_PER_MIN,
-  DEFAULT_REST_DURATION_MIN,
-  whirlpoolMassKg,
-} from "../../views/whirlpool.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS, unitDecimals } from "../../views/registry/units.js";
-import { HOP_NODES as N } from "../../views/registry/hops.js";
+import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
 import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
 import { reportError } from "../../observability.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
+const HOP_MASS_KEY = "hop.mass";
 
 const WHIRLPOOL_HOP_FORMS = [
   { value: "t90_pellet", label: "T-90 pellets" },
@@ -43,8 +35,8 @@ function makeWhirlpoolRow(hop) {
     name: hop.name,
     product_form: hop.product_form ?? "t90_pellet",
     alpha_acid_pct: hop.alpha_acid_pct,
-    duration_min: DEFAULT_REST_DURATION_MIN,
-    initial_temp_c: DEFAULT_INITIAL_TEMP_C,
+    duration_min: WHIRLPOOL_ROW_DEFAULTS.durationMin,
+    initial_temp_c: WHIRLPOOL_ROW_DEFAULTS.initialTempC,
     parts: 10,
     pct: 0,
   };
@@ -57,88 +49,47 @@ function makeWhirlpoolRow(hop) {
 function resolveOrNull(engine, path) {
   try {
     return engine.resolve(path);
-  } catch {
+  } catch (err) {
+    reportError("hops.resolve", err);
     return null;
   }
 }
 
-function finiteNumber(value, fallback) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-function computeHopRows(engine) {
-  const rows = engine.get(N.collection) ?? [];
-  const boilIbu = Number(engine.get(N.boilIbu)) || 0;
-  const boilTimeMin = Number(engine.get(N.boilTime)) || 0;
-
-  let gravity = null;
-  let volume = null;
-  try {
-    gravity = engine.resolve(N.preBoilGravity);
-  } catch (err) {
-    reportError("hops.preBoilGravity", err);
-    gravity = null;
-  }
-  try {
-    volume = engine.resolve(N.postBoilVolume);
-  } catch (err) {
-    reportError("hops.postBoilVolume", err);
-    volume = null;
-  }
-
-  return rows.map((row) => {
-    const minutes = (Number(row.boil_time_fraction) || 0) * boilTimeMin;
-    const ibu = (Number(row.pct) || 0) * boilIbu;
-    const mass = massFromIbu(ibu, Number(row.alpha_acid_pct) || 0, minutes, gravity, volume);
-    return { ...row, minutes, ibu, mass_kg: mass };
+function mergeBoilRows(rows, results, boilIbu, boilTimeMin) {
+  return (rows ?? []).map((row, index) => {
+    const result = results?.[index] ?? {};
+    const minutes = Number(result.minutes);
+    const ibu = Number(result.ibu);
+    return {
+      ...row,
+      minutes: Number.isFinite(minutes)
+        ? minutes
+        : (Number(row.boil_time_fraction) || 0) * boilTimeMin,
+      ibu: Number.isFinite(ibu) ? ibu : (Number(row.pct) || 0) * boilIbu,
+      mass_kg: typeof result.mass_kg === "number" ? result.mass_kg : null,
+    };
   });
 }
 
-function whirlpoolContext(engine) {
-  const whirlpoolIbu = Number(engine.get(N.whirlpoolIbu)) || 0;
-  const ambientTempC = finiteNumber(engine.get(N.whirlpoolAmbient), DEFAULT_AMBIENT_TEMP_C);
-  const timeConstantMin = finiteNumber(
-    engine.get(N.whirlpoolCoolingTimeConstant),
-    DEFAULT_COOLING_TIME_CONSTANT_MIN
-  );
-  return {
-    whirlpoolIbu,
-    ambientTempC,
-    kPerMin: timeConstantMin > 0 ? 1 / timeConstantMin : DEFAULT_K_PER_MIN,
-    gravity: resolveOrNull(engine, N.postBoilGravity),
-    volume: resolveOrNull(engine, N.postBoilVolume),
-  };
-}
-
-function computeWhirlpoolRow(row, context) {
-  const { whirlpoolIbu, ambientTempC, kPerMin, gravity, volume } = context;
-  const minutes = Number(row.duration_min) || 0;
-  const initialTempC = Number(row.initial_temp_c) || DEFAULT_INITIAL_TEMP_C;
-  const productForm = row.product_form ?? "t90_pellet";
-  const ibu = (Number(row.pct) || 0) * whirlpoolIbu;
-  const mass = whirlpoolMassKg({
-    ibu,
-    alphaFraction: Number(row.alpha_acid_pct) || 0,
-    volumeL: volume,
-    gravity,
-    durationMin: minutes,
-    initialTempC,
-    ambientTempC,
-    kPerMin,
-    productForm,
+function mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume) {
+  return (rows ?? []).map((row, index) => {
+    const result = results?.[index] ?? {};
+    const minutes = Number(result.minutes);
+    const ibu = Number(result.ibu);
+    const mass = typeof result.mass_kg === "number" ? result.mass_kg : null;
+    const doseGPerGal =
+      typeof mass === "number" && volume > 0 ? (mass * 1000) / (volume / 3.785411784) : null;
+    return {
+      ...row,
+      product_form: row.product_form ?? "t90_pellet",
+      minutes: Number.isFinite(minutes) ? minutes : Number(row.duration_min) || 0,
+      ibu: Number.isFinite(ibu) ? ibu : (Number(row.pct) || 0) * whirlpoolIbu,
+      mass_kg: mass,
+      effective_minutes:
+        typeof result.effective_minutes === "number" ? result.effective_minutes : null,
+      dose_g_per_gal: doseGPerGal,
+    };
   });
-  const doseGPerGal =
-    typeof mass === "number" && volume > 0
-      ? (mass * 1000) / (volume / 3.785411784)
-      : null;
-  return { ...row, product_form: productForm, minutes, ibu, mass_kg: mass, dose_g_per_gal: doseGPerGal };
-}
-
-function computeWhirlpoolRows(engine) {
-  const rows = engine.get(N.whirlpoolCollection) ?? [];
-  const context = whirlpoolContext(engine);
-  return rows.map((row) => computeWhirlpoolRow(row, context));
 }
 
 export function registerHopCard(app, ctx) {
@@ -187,11 +138,6 @@ export function registerHopCard(app, ctx) {
 
   const { engine, artifact, ui } = ctx;
 
-  // Both pools are seeded from the saved Mass preference (grams when nothing is
-  // stored — hops are charged in grams, and the dimension's base unit is kg).
-  // They stay independent after that: each has its own pill.
-  const massUnit = ui.unitMode.mass ?? "g";
-
   const formatMass = (kg, unit) => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
@@ -214,8 +160,6 @@ export function registerHopCard(app, ctx) {
   Object.assign(app, {
     hopRows: [],
     whirlpoolHopRows: [],
-    hopMassUnit: massUnit,
-    whirlpoolHopMassUnit: massUnit,
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
 
@@ -226,11 +170,9 @@ export function registerHopCard(app, ctx) {
     },
 
     toggleHopMassUnit() {
-      this.hopMassUnit = cycleUnit(HOP_MASS_UNITS, this.hopMassUnit);
-    },
-
-    toggleWhirlpoolHopMassUnit() {
-      this.whirlpoolHopMassUnit = cycleUnit(HOP_MASS_UNITS, this.whirlpoolHopMassUnit);
+      const inherited = this.unitMode?.mass ?? "g";
+      const next = cycleUnit(HOP_MASS_UNITS, this.hopMassUnit);
+      this.setFieldUnit(HOP_MASS_KEY, next === inherited ? null : next);
     },
 
     hopMass(row) {
@@ -238,7 +180,7 @@ export function registerHopCard(app, ctx) {
     },
 
     whirlpoolHopMass(row) {
-      return formatMass(row?.mass_kg, this.whirlpoolHopMassUnit);
+      return formatMass(row?.mass_kg, this.hopMassUnit);
     },
 
     hopForm(row) {
@@ -315,6 +257,12 @@ export function registerHopCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
+    hopMassUnit: {
+      configurable: true,
+      get() {
+        return this.unitMode?.[HOP_MASS_KEY] ?? this.unitMode?.mass ?? "g";
+      },
+    },
     boilIbuField: {
       configurable: true,
       get() {
@@ -366,9 +314,9 @@ export function registerHopCard(app, ctx) {
         ) {
           return "";
         }
-        const computed = computeWhirlpoolRow(row, whirlpoolContext(ctx.engine));
-        if (!isFiniteNumber(computed.mass_kg)) return "";
-        const equivalent = computed.mass_kg * row.t90_replacement_ratio;
+        const saved = this.whirlpoolHopRows[this.whirlpoolHopActiveIndex];
+        if (!isFiniteNumber(saved?.mass_kg)) return "";
+        const equivalent = saved.mass_kg * row.t90_replacement_ratio;
         return `${formatMass(equivalent, "g")} T-90 equivalent (1:${row.t90_replacement_ratio})`;
       },
     },
@@ -463,7 +411,7 @@ export function registerHopCard(app, ctx) {
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
         if (!masses.length) return rows.length ? "—" : "";
-        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.whirlpoolHopMassUnit);
+        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
     whirlpoolHopDoseWarning: {
@@ -484,8 +432,23 @@ export function registerHopCard(app, ctx) {
 }
 
 export function refreshHopCard(app, ctx) {
-  app.hopRows = computeHopRows(ctx.engine);
-  app.whirlpoolHopRows = computeWhirlpoolRows(ctx.engine);
+  const engine = ctx.engine;
+  const boilIbu = Number(engine.get(N.boilIbu)) || 0;
+  const boilTimeMin = Number(engine.get(N.boilTime)) || 0;
+  const whirlpoolIbu = Number(engine.get(N.whirlpoolIbu)) || 0;
+  const volume = resolveOrNull(engine, N.postBoilVolume);
+  app.hopRows = mergeBoilRows(
+    engine.get(N.collection),
+    resolveOrNull(engine, N.boilRows),
+    boilIbu,
+    boilTimeMin
+  );
+  app.whirlpoolHopRows = mergeWhirlpoolRows(
+    engine.get(N.whirlpoolCollection),
+    resolveOrNull(engine, N.whirlpoolRows),
+    whirlpoolIbu,
+    volume
+  );
 }
 
 export const KEYS = [
@@ -494,12 +457,10 @@ export const KEYS = [
   "hopRows",
   "whirlpoolHopRows",
   "hopMassUnit",
-  "whirlpoolHopMassUnit",
   "whirlpoolHopForms",
   "whirlpoolHopCatalogForm",
   "setWhirlpoolHopCatalogForm",
   "toggleHopMassUnit",
-  "toggleWhirlpoolHopMassUnit",
   "hopMass",
   "whirlpoolHopMass",
   "hopForm",

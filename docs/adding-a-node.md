@@ -151,8 +151,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 |---|---|---|
 | Node ids, constants, formulas, dimensions, domains, boundary inputs | artifact | `data/artifact.json` |
 | Hamilton normalization of authored `parts` into `pct`/`w_i` | host | `frontend/src/views/hamilton.js` |
-| Tinseth hop mass back-calculation from IBU shares | host | `frontend/src/views/hops.js` |
-| Whirlpool cooling/IBU math | host (promotion spike pending) | `frontend/src/views/whirlpool.js` |
+| Tinseth hop mass and whirlpool cooling/IBU math | backend boundary | `backend/app/core/hop_solver.py` (`solver.hops`); JS copies in `views/hops.js` / `views/whirlpool.js` are the offline stub only |
 | Style-conformance judgement and badges | host | `frontend/src/engine/styleConformance.js`, `views/producer/conformance.js` |
 | Residual seed-derived copy-in (only values the AST cannot express) | host | `frontend/src/views/seedDerivations.js` |
 | Fermentation geometry (styles' OE/AE feasible regions) | host geometry; ASBC/Cutaia primitives call artifact functions | `frontend/src/engine/fermentation.js`, `engine/artifactFunctions.js` |

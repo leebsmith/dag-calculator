@@ -160,6 +160,7 @@ export function createStepApp(options = {}) {
     // A selection whose snapshot is missing (legacy draft) is materialised from
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
+      this.inputDrafts = {};
       session.rebuild(state);
       this.onBatchLoad?.();
       const migrated = dropLegacyDoughIn();
@@ -304,6 +305,7 @@ export function createStepApp(options = {}) {
     // engine has no boundary result yet, so skip compute (the editor is
     // unmounted while signed out and re-solves on the next loadState/boot).
     teardown() {
+      this.inputDrafts = {};
       runner.reset();
       session.reset(baselineRoots);
       ui.activeIndex = 0;

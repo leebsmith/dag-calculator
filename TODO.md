@@ -2,13 +2,11 @@
 
 ## Next (in order)
 
-1. **Whirlpool engine promotion** — the host-side cooling model and IBU-share
-   schedule landed (`docs/whirlpool-hopping-model.md`, `views/whirlpool.js`);
-   remaining work is promoting Tinseth/whirlpool math into the artifact and
-   replacing the manual `batch.whirlpool_ibu_fraction` with schedule-derived
-   IBU. Spike complete: the grammar needs `exp`/`ln` plus a deterministic
-   quadrature primitive; see `plans/hop-math-promotion.md`. Full objective is
-   unchanged and deferred to a later implementation pass.
+1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
+   backend boundary `solver.hops` (`docs/whirlpool-hopping-model.md`); the
+   remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
+   schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
+   copies are the offline stub only.
 2. **Summary reporting** — rendered recipe document (`plans/recipe-pipeline.md`,
    `plans/recipe-yaml-grammar.md`) + staged brew-day checklist.
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
@@ -32,10 +30,6 @@
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
-* **Mash ramp time** — `mash.total_time_min` is only the sum of enabled rest
-  durations. Including heat-up time needs a ramp-rate model (equipment or batch
-  input), each step's starting temperature, and the target temperature. The
-  earlier ramp-rate unit was removed with the mash attenuation estimator.
 * **Surface and fit the grain thermal factor** — `mash_thermal_factor` (0.41)
   drives `mash.strike_water_temp_base_c` but has no readout. Surface it near
   Strike Water Temp, then move it toward an equipment-scoped value estimated
@@ -86,6 +80,9 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
+* Mash ramp time (`mash.ramp_time_min`, equipment ramp rate) + minimum-LGR warning
+* Hop bitterness boundary (`solver.hops`, Tinseth + Arrhenius) with offline stub
+* On-blur numeric input formatting (raw draft text, live solve)
 * Record library foundation (server records, copy-forward, Google allowlist, user-scoped batches) — `plans/archive/record-library-foundation.md`
 * Water chemistry cleanup (read-only records, copy-forward ions, RO-as-report, treated-water vs target, SO4:Cl intent, dose basis + brew-day instruction) — `plans/archive/water-chemistry-cleanup.md`
 * Bounded buffer-capacity mash pH model (`plans/archive/mash-ph-buffer-capacity.md`)

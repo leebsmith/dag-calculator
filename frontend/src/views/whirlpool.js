@@ -1,5 +1,6 @@
 // Whirlpool bitterness: Arrhenius isomerization over Newton cooling, integrated
-// into the Tinseth time/gravity factors. Host-side like views/hops.js.
+// into the Tinseth time/gravity factors. Offline boundary stub only; production
+// uses backend/app/core/hop_solver.py.
 
 export const DEFAULT_AMBIENT_TEMP_C = 20;
 export const DEFAULT_K_PER_MIN = 0.0092;

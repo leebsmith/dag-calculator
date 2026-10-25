@@ -63,7 +63,7 @@ Reductions operate over a collection and carry a **lambda binding**: `coll` (a
 reference to a collection node), `as` (the element alias), and `body` (an
 expression over the alias). The alias is available inside `body` as `{ "ref": "alias.field" }`.
 
-A value-reduction (`sum` / `weighted_avg` / `min`) MAY carry an optional
+A value-reduction (`sum` / `weighted_avg` / `min` / `max`) MAY carry an optional
 **`where`** predicate — a boolean expression over the alias. When present, only
 items whose `where` is truthy are reduced (**filter-then-reduce**). Truthiness is
 plain falsiness: `undefined`, `null`, `false`, `0`, and `""` are excluded.
@@ -75,6 +75,7 @@ plain falsiness: `undefined`, `null`, `false`, `0`, and `""` are excluded.
 | `sum` | `{ "op":"sum", "coll":..., "as":"row", "body":..., "where"?:<predicate> }` | Σ `body` |
 | `weighted_avg` | `{ "op":"weighted_avg", "coll":..., "as":"row", "value":..., "weight":..., "where"?:<predicate> }` | Σ(value·weight) / Σ(weight) |
 | `min` | `{ "op":"min", "coll":..., "as":"row", "value":..., "where"?:<predicate> }` | smallest finite `value` |
+| `max` | `{ "op":"max", "coll":..., "as":"row", "value":..., "where"?:<predicate> }` | largest finite `value` |
 
 ```jsonc
 { "op": "sum", "coll": { "ref": "grist.major_malts" }, "as": "row",
@@ -85,10 +86,10 @@ plain falsiness: `undefined`, `null`, `false`, `0`, and `""` are excluded.
   "value": { "ref": "rest.use_temp_c" }, "where": { "ref": "rest.enabled" } }
 ```
 
-`min` requires a **numeric** `value` (an ordered quantity); it skips
-non-finite/`null` values and returns `undefined` when no finite value remains
-(e.g. an empty schedule). `count` / `max` are **not** in the set; add them only
-if a derived node requires them.
+`min`/`max` require a **numeric** `value` (an ordered quantity); they skip
+non-finite/`null` values and return `undefined` when no finite value remains
+(e.g. an empty schedule). `count` is **not** in the set; add it only if a derived
+node requires it.
 
 ---
 

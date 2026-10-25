@@ -22,7 +22,9 @@ test("mash card defaults to a single-infusion schedule with every canonical rest
   assert.equal(app.doughInInheritedTempC, 67.0);
   assert.equal(app.doughInDisplay, "67.0");
 
-  assert.equal(app.totalMashTimeMin, 70);
+  assert.equal(app.totalMashTimeMin, 79);
+  assert.equal(app.rampTimeMin, 9);
+  assert.equal(app.restTimeMin, 70);
 });
 
 test("onMashPresetChange applies a preset, seeds durations, and leaves mash-out alone", async () => {

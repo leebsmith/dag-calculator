@@ -6,6 +6,8 @@ export const MASH_NODES = {
   strikeTemp: "mash.strike_water_temp_c",
   doughInTarget: "mash.dough_in_target_temp_c",
   totalTime: "mash.total_time_min",
+  rampTime: "mash.ramp_time_min",
+  mashThickness: "solver.batch.mash_thickness_l_per_kg",
   slice: "mash",
 };
 

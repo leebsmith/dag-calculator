@@ -14,7 +14,8 @@ export function valuateCollection(field, engine, artifact, collectionDomains, nl
         out[col.id] = fromBase(artifact, col.dimension, col.displayUnit, row[col.id], nl);
       }
       // Round/format displayed numbers so converted values don't leak float
-      // fuzz (e.g. 80.00000000000001); honor a column `decimals`.
+      // fuzz (e.g. 80.00000000000001); honor a column `decimals`. Editable inputs
+      // override this with their raw draft text while focused.
       if (typeof out[col.id] === "number") {
         out[col.id] =
           col.decimals != null

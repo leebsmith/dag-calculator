@@ -1,7 +1,7 @@
 """FastAPI application: the JSON seam between the browser and the sealed solvers.
 
 The browser never talks to Firestore directly; it POSTs JSON to these routes and
-receives JSON back. Both boundary endpoints delegate to the pure service
+receives JSON back. The boundary endpoints delegate to the pure service
 adapters, which wrap the sealed ``app.core`` solvers.
 """
 
@@ -25,13 +25,20 @@ from app.schemas.batch import BatchPatch, BatchRecord, DraftPayload, FreezePaylo
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSolverResponse,
+    HopSolverRequest,
+    HopSolverResponse,
     SolverErrorResponse,
     WaterSolverRequest,
     WaterSolverResponse,
 )
 from app.schemas.catalog import CatalogItem, CatalogItemCreate
 from app.schemas.ids import validate_doc_id
-from app.services import SolverServiceError, solve_batch_request, solve_water_request
+from app.services import (
+    SolverServiceError,
+    solve_batch_request,
+    solve_hop_request,
+    solve_water_request,
+)
 from app.services.batch_service import BatchConflictError, BatchServiceDep
 from app.services.catalog_service import (
     CatalogServiceDep,
@@ -84,6 +91,19 @@ def solve_water(req: WaterSolverRequest, _user: RateLimitedUser) -> WaterSolverR
     """Resolve the water-chemistry boundary (linear program)."""
     try:
         return solve_water_request(req)
+    except SolverServiceError as exc:
+        return JSONResponse(
+            status_code=422,
+            content=SolverErrorResponse(
+                code=exc.code, message=exc.message, details=exc.details
+            ).model_dump(),
+        )
+
+@app.post("/solve/hops", response_model=HopSolverResponse)
+def solve_hops(req: HopSolverRequest, _user: RateLimitedUser) -> HopSolverResponse | JSONResponse:
+    """Resolve the hop-bitterness boundary (Tinseth + Arrhenius)."""
+    try:
+        return solve_hop_request(req)
     except SolverServiceError as exc:
         return JSONResponse(
             status_code=422,

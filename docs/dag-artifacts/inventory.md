@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **6**
+- `schema_version`: **7**
 
 ## Dimensions
 
@@ -25,6 +25,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `specific_heat` | `kcal_per_kg_degC` | linear | `btu_per_lb_degF` (factor 1) |
 | `temperature` | `degC` | affine | `degF` (factor 1.8, offset 32) |
 | `temperature_delta` | `dC` | linear | `dF` (factor 0.5555555555555556) |
+| `temperature_delta_per_time` | `dC_per_min` | linear | `dF_per_min` (factor 0.5555555555555556) |
 | `time` | `min` | linear | `day` (factor 1440), `hr` (factor 60) |
 | `total_extract` | `L_deg` | linear | `gal_pts` (factor 3.785411784) |
 | `volume` | `L` | linear | `gal` (factor 3.785411784), `ml` (factor 0.001), `qt` (factor 0.946352946) |
@@ -60,10 +61,11 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | fields |
 |---|---|
+| `boil_hop_result` | `ibu` (dimension ibu), `mass_kg` (dimension mass), `minutes` (dimension time) |
 | `boil_hop_row` | `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `boil_time_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `hop_id` (—), `name` (—), `parts` (dimension dimensionless, domain {"gte":0}), `pct` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `brew_day_step` | `enabled` (type boolean), `instructions` (—), `name` (—), `section` (—), `step_id` (—) |
 | `dry_hop_row` | `application_stage` (taxonomy wet_hop_application_stage), `contact_duration_hours` (dimension time), `notes` (—), `product_type` (taxonomy wet_hop_product_type), `quantity` (dimension dimensionless), `time_of_application` (—), `unit` (taxonomy hop_unit), `variety` (—) |
-| `equipment` | `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `hlt_coil_floor_l` (dimension volume, domain {"gte":0}), `hlt_dead_space_l` (dimension volume, domain {"gte":0}), `hlt_transfer_loss_l` (dimension volume, domain {"gte":0}), `id` (—), `kettle_dead_space_l` (dimension volume, domain {"gte":0}), `kettle_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_dead_space_l` (dimension volume, domain {"gte":0}), `mash_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_tun_mass_kg` (dimension mass, domain {"gt":0}), `mash_tun_specific_heat` (dimension specific_heat, domain {"gt":0}), `max_hlt_volume_l` (dimension volume, domain {"gt":0}), `max_kettle_volume_l` (dimension volume, domain {"gt":0}), `max_mash_tun_volume_l` (dimension volume, domain {"gt":0}), `name` (—), `nominal_boil_off_rate_l_per_hr` (dimension volume_per_time, domain {"gt":0}), `nominal_conversion_efficiency` (dimension percentage, domain {"gt":0,"lte":1}), `shrinkage_pct` (dimension percentage, domain {"gte":0,"lte":0.2}), `trub_loss_l` (dimension volume, domain {"gte":0}) |
+| `equipment` | `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `hlt_coil_floor_l` (dimension volume, domain {"gte":0}), `hlt_dead_space_l` (dimension volume, domain {"gte":0}), `hlt_transfer_loss_l` (dimension volume, domain {"gte":0}), `id` (—), `kettle_dead_space_l` (dimension volume, domain {"gte":0}), `kettle_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_dead_space_l` (dimension volume, domain {"gte":0}), `mash_heating_rate_c_per_min` (dimension temperature_delta_per_time, domain {"gt":0}), `mash_transfer_loss_l` (dimension volume, domain {"gte":0}), `mash_tun_mass_kg` (dimension mass, domain {"gt":0}), `mash_tun_specific_heat` (dimension specific_heat, domain {"gt":0}), `max_hlt_volume_l` (dimension volume, domain {"gt":0}), `max_kettle_volume_l` (dimension volume, domain {"gt":0}), `max_mash_tun_volume_l` (dimension volume, domain {"gt":0}), `min_lgr_l_per_kg` (dimension mash_thickness, domain {"gt":0}), `name` (—), `nominal_boil_off_rate_l_per_hr` (dimension volume_per_time, domain {"gt":0}), `nominal_conversion_efficiency` (dimension percentage, domain {"gt":0,"lte":1}), `shrinkage_pct` (dimension percentage, domain {"gte":0,"lte":0.2}), `trub_loss_l` (dimension volume, domain {"gte":0}) |
 | `grist_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `hop` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_rating` (—), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `category` (—), `flavor_profiles` (—), `id` (—), `name` (—), `notes` (—), `origin` (—), `pairings` (—), `purpose` (—), `recipes_count` (—), `synonym` (—), `url` (—) |
 | `hop_product` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `brand` (—), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `product_form` (taxonomy whirlpool_hop_form), `purpose` (—), `t90_replacement_ratio` (dimension dimensionless, domain {"gte":0}), `total_oil_pct` (dimension percentage, domain {"gte":0,"lte":1}), `url` (—), `variety_id` (—) |
@@ -78,6 +80,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water_pinned_ion` | `ion` (taxonomy ion) |
 | `water_report` | `bicarbonate_hco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `chloride_cl` (dimension concentration, domain {"gte":0}), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain {"gte":0}), `laboratory` (—), `location` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `nitrate_no3_n` (dimension concentration, domain {"gte":0}), `notes` (—), `ph` (dimension ph, domain {"gte":0,"lte":14}), `potassium_k` (dimension concentration, domain {"gte":0}), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `source_name` (—), `sulfate_so4` (dimension concentration, domain {"gte":0}), `tds_ppm` (dimension concentration, domain {"gte":0}), `total_alkalinity_caco3` (dimension concentration, domain {"gte":0}), `total_hardness_caco3` (dimension concentration, domain {"gte":0}), `total_iron_fe` (dimension concentration, domain {"gte":0}), `total_phosphorus_p` (dimension concentration, domain {"gte":0}) |
 | `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `mode` (taxonomy strategy), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
+| `whirlpool_hop_result` | `effective_minutes` (dimension time), `ibu` (dimension ibu), `mass_kg` (dimension mass), `minutes` (dimension time) |
 | `whirlpool_hop_row` | `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `duration_min` (dimension time, domain {"gte":0}, default 30), `hop_id` (—), `initial_temp_c` (dimension temperature, domain {"gte":0,"lte":100}, default 99), `name` (—), `notes` (—), `parts` (dimension dimensionless, domain {"gte":0}), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `product_form` (taxonomy whirlpool_hop_form, default "t90_pellet"), `t90_replacement_ratio` (dimension dimensionless, domain {"gte":0}) |
 | `yeast` | `alcohol_tolerance` (—), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `recipes` (—), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
 
@@ -93,9 +96,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `calculate_tun_thermal_offset` | t_target, tun_initial, specific_heat, tun_mass, water_mass | `temperature_delta` |
 | `cutaia_abv_plato` | oe, ae | `abv` |
 | `extract_yield_ldk` | yield_fraction | `extract_yield` |
-| `mash_ph_status` | ph | `ph_status` |
 | `morey_mcu_to_srm` | mcu | `beer_color` |
 | `plato_to_sg` | plato | `gravity` |
+| `ramp_time_min` | delta_temp, rate | `time` |
 | `realized_abv` | og_sg, aa | `abv` |
 | `realized_fg` | og_sg, aa | `gravity` |
 | `sg_to_plato` | sg | `gravity` |
@@ -116,6 +119,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
 | `default_grain_moisture_fraction` | 0.04 | `percentage` |
 | `default_grain_temp_c` | 20 | `temperature` |
+| `default_mash_heating_rate_c_per_min` | 1 | `temperature_delta_per_time` |
 | `default_mash_thickness_l_per_kg` | 2.6079 | `mash_thickness` |
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
@@ -138,7 +142,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | kind |
 |---|---|
-| `batch.apparent_attenuation` | derived |
 | `batch.attenuation_derate` | root |
 | `batch.boil_hops` | collection |
 | `batch.boil_off_rate_l_per_hr` | root |
@@ -171,7 +174,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.whirlpool_hops` | collection |
 | `batch.whirlpool_ibu_fraction` | root |
 | `batch.whirlpool_target_ibu` | derived |
-| `batch.wort_aa` | derived |
 | `batch.yeast` | selection |
 | `batch.yeast_cap` | derived |
 | `batch.yeast_id` | root |
@@ -186,8 +188,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grist.weighted_lovibond` | derived |
 | `grist.weighted_yield_fraction` | derived |
 | `mash.dough_in_target_temp_c` | derived |
+| `mash.enabled_max_temp_c` | derived |
+| `mash.enabled_min_temp_c` | derived |
 | `mash.grain_temp_c` | root |
+| `mash.heating_rate_c_per_min` | derived |
 | `mash.preset_id` | choice |
+| `mash.ramp_time_min` | derived |
 | `mash.rests` | collection |
 | `mash.strike_water_temp_base_c` | derived |
 | `mash.strike_water_temp_c` | derived |
@@ -195,6 +201,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash.total_time_min` | derived |
 | `mash.tun_initial_temp_c` | root |
 | `solver.batch` | boundary |
+| `solver.hops` | boundary |
 | `solver.water` | boundary |
 | `water.acid_medium` | choice |
 | `water.cacl2_form` | choice |
@@ -207,8 +214,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.kettle_blend.sodium_na` | derived |
 | `water.kettle_blend.sulfate_chloride_ratio` | derived |
 | `water.kettle_blend.sulfate_so4` | derived |
-| `water.mash_ph_status` | derived |
-| `water.mash_thickness_l_per_kg` | derived |
 | `water.pinned_ions` | collection |
 | `water.preferred_alkaline_agent` | choice |
 | `water.salt_distribution` | choice |
@@ -223,10 +228,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.target_mash_ph` | root |
 | `water.target_profile` | selection |
 | `water.target_profile_id` | root |
-| `water.v_hlt_debt_l` | derived |
-| `water.v_hlt_treat_l` | derived |
-| `water.v_mash_treat_l` | derived |
-| `water.v_sparge_demand_l` | derived |
 
 ## Relations
 
@@ -235,6 +236,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `hlt_above_coil_floor` |
 | `hlt_not_overfilled` |
 | `kettle_not_overfilled` |
+| `mash_thickness_above_equipment_floor` |
 | `mash_thickness_above_husk_floor` |
 | `target_abv_reachable` |
 

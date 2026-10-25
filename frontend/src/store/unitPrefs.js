@@ -8,6 +8,10 @@ import { nodeDimension } from "../engine/units.js";
 
 const STORAGE_KEY = "brew_unit_preferences";
 
+// Presentation-only card-level unit overrides that do not correspond to a
+// schema field (the hop card has one mass pill for a computed total).
+const CARD_UNIT_KEYS = { "hop.mass": "mass" };
+
 // The dimension of a field id (node id or dotted reference path). Mirrors the
 // producer's `describe` dimension resolution.
 function fieldDimension(artifact, id) {
@@ -26,6 +30,9 @@ function fieldDimension(artifact, id) {
   if (owner.kind === "selection") {
     return artifact.primitive_schemas?.[owner.output?.schema]?.[ref.suffix[0]]?.dimension ?? null;
   }
+  if (owner.kind === "collection") {
+    return artifact.primitive_schemas?.[owner.item_schema]?.[ref.suffix[0]]?.dimension ?? null;
+  }
   return null;
 }
 
@@ -36,7 +43,7 @@ export function sanitizeUnitMode(artifact, raw) {
   const dimensions = artifact.dimensions ?? {};
   for (const [key, unitId] of Object.entries(raw)) {
     if (typeof unitId !== "string") continue;
-    const dim = key in dimensions ? key : fieldDimension(artifact, key);
+    const dim = key in dimensions ? key : CARD_UNIT_KEYS[key] ?? fieldDimension(artifact, key);
     if (!dim) continue;
     const def = dimensions[dim];
     if (!def) continue;

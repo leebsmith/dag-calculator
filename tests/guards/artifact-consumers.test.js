@@ -30,10 +30,6 @@ const PARITY_CONSTANTS = new Set([
   "default_target_mash_ph",
 ]);
 
-// A deliberate interpretation of a boundary taxonomy, asserted by
-// tests/frontend/engine.test.js; the water card reads the boundary path.
-const INTERPRETATION_NODES = new Set(["water.mash_ph_status"]);
-
 // Read by the water card through WATER_NODES; no artifact expression consumes
 // them. They are the derived kettle-blend/ratio readouts.
 const HOST_NODES = new Set([
@@ -112,11 +108,11 @@ test("every derived node is reachable from the graph or the manifest", () => {
   for (const [id, node] of Object.entries(a.nodes)) {
     if (node.kind !== "derived") continue;
     assert.ok(
-      refs.has(id) || manifest.has(id) || INTERPRETATION_NODES.has(id) || HOST_NODES.has(id),
+      refs.has(id) || manifest.has(id) || HOST_NODES.has(id),
       `derived node "${id}" is unreachable`
     );
   }
-  for (const id of [...INTERPRETATION_NODES, ...HOST_NODES]) {
+  for (const id of [...HOST_NODES]) {
     assert.equal(a.nodes[id]?.kind, "derived", `allowlisted node "${id}" is not derived`);
   }
 });

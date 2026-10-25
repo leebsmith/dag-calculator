@@ -43,10 +43,18 @@ const WATER = {
   },
 };
 
+const HOP = {
+  boil_rows: [],
+  whirlpool_rows: [],
+  boil_mass_kg: 0,
+  whirlpool_mass_kg: 0,
+  total_mass_kg: 0,
+};
+
 const requests = [];
 const fetchImpl = async (url, opts) => {
   requests.push({ url, body: JSON.parse(opts.body) });
-  const body = url.includes("batch") ? BATCH : WATER;
+  const body = url.includes("batch") ? BATCH : url.includes("hops") ? HOP : WATER;
   return { ok: true, status: 200, json: async () => body };
 };
 

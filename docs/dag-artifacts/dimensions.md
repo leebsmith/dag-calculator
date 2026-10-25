@@ -97,6 +97,7 @@ constants.
 | `specific_heat` | energy / (mass · ΔT) | BTU/(lb·°F) = kcal/(kg·°C) exactly → factor **1.0** |
 | `total_extract` | volume · gravity | gal·pts = **3.785411784** L·° |
 | `extract_yield` | volume · gravity / mass | L·°/kg ↔ gal·°/lb = 3.785411784 ÷ 0.45359237 = **8.3454** |
+| `temperature_delta_per_time` | Δtemperature / time | °C/min ↔ °F/min = 0.5555… (delta-only, no offset) |
 
 These recovered constants **match** the known-good code (2.08635, 3.785411784,
 8.3454, and the specific-heat identity). The derived model explains what the code

@@ -43,9 +43,9 @@ test("MCU converts metric color density with the plain lb/kg x L/gal factor", ()
   assert.ok(Math.abs(srm - 38.27) < 0.01);
 });
 
-test("end-to-end: boundary output feeds an interpretation (taxonomy)", () => {
+test("end-to-end: boundary output carries a taxonomy", () => {
   const e = engine();
-  assert.equal(e.get("water.mash_ph_status"), "OPTIMAL");
+  assert.equal(e.resolve("solver.water.prescription.mash_ph_status"), "OPTIMAL");
 });
 
 test("resolve() handles dotted sub-refs (boundary output + selection field)", () => {

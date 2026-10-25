@@ -1,6 +1,13 @@
 // Presentation metadata for the hops slice (boil + whirlpool additions).
+export const WHIRLPOOL_ROW_DEFAULTS = {
+  durationMin: 30,
+  initialTempC: 99,
+};
+
 export const HOP_NODES = {
   collection: "batch.boil_hops",
+  boilRows: "solver.hops.boil_rows",
+  whirlpoolRows: "solver.hops.whirlpool_rows",
   whirlpoolCollection: "batch.whirlpool_hops",
   boilIbu: "batch.boil_target_ibu",
   whirlpoolIbu: "batch.whirlpool_target_ibu",
@@ -8,8 +15,6 @@ export const HOP_NODES = {
   whirlpoolAmbient: "batch.whirlpool_ambient_temp_c",
   whirlpoolCoolingTimeConstant: "batch.whirlpool_cooling_time_constant_min",
   boilTime: "batch.boil_time_min",
-  preBoilGravity: "solver.batch.cascade.sg_pre_boil",
-  postBoilGravity: "solver.batch.sg_post_boil",
   postBoilVolume: "solver.batch.cascade.v_post_boil",
   slice: "hops",
 };

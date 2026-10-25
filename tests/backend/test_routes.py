@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from conftest import FakeBatchRepo, make_batch_request, make_water_request
+from conftest import FakeBatchRepo, make_batch_request, make_hop_request, make_water_request
 from fastapi.testclient import TestClient
 
 from app.auth.deps import get_current_user, require_allowed_user
@@ -12,6 +12,7 @@ from app.schemas.batch import DraftPayload, FreezePayload
 from app.services.batch_service import BatchService, get_batch_service
 from app.services.batch_solver_service import solve_batch_request
 from app.services.errors import SolverServiceError
+from app.services.hop_solver_service import solve_hop_request
 from app.services.water_solver_service import solve_water_request
 
 UID = "user-1"
@@ -54,6 +55,7 @@ def test_auth_is_enforced_on_every_route(anon_client):
         ("GET", "/batches/b1", None),
         ("POST", "/solve/batch", make_batch_request().model_dump(mode="json")),
         ("POST", "/solve/water", make_water_request().model_dump(mode="json")),
+        ("POST", "/solve/hops", make_hop_request().model_dump(mode="json")),
         ("GET", "/catalog/equipment", None),
         ("POST", "/catalog/equipment", {"component": {"name": "Rig"}}),
         ("GET", "/catalog/equipment/missing", None),
@@ -82,6 +84,16 @@ def test_water_solver_returns_the_response_contract(client):
 
     assert response.status_code == 200
     assert response.json() == solve_water_request(request).model_dump(mode="json")
+
+
+def test_hop_solver_returns_the_response_contract(client):
+    request = make_hop_request()
+    response = client.post("/solve/hops", json=request.model_dump(mode="json"))
+
+    assert response.status_code == 200
+    assert response.json() == solve_hop_request(request).model_dump(mode="json")
+    assert len(response.json()["boil_rows"]) == 1
+    assert len(response.json()["whirlpool_rows"]) == 1
 
 
 def test_request_validation_uses_fastapi_detail_shape(client):

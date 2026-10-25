@@ -24,10 +24,37 @@
   "hoppy-ipa": {
     "id": "hoppy-ipa",
     "name": "Hoppy / IPA",
-    "description": "Sulfate-forward profile that accentuates hop bitterness.",
+    "description": "Balanced sulfate-forward profile for hop-forward ales.",
+    "calcium_floor_ppm": 50,
+    "sulfate_so4": 140,
+    "chloride_cl": 70,
+    "mode": "CALCIUM_FLOOR"
+  },
+  "burton-ipa": {
+    "id": "burton-ipa",
+    "name": "Burton-style IPA",
+    "description": "Historic Burton sulfate level; dry, minerally bitterness.",
     "calcium_floor_ppm": 50,
     "sulfate_so4": 250,
     "chloride_cl": 50,
+    "mode": "CALCIUM_FLOOR"
+  },
+  "west-coast-ipa": {
+    "id": "west-coast-ipa",
+    "name": "West Coast IPA",
+    "description": "Crisp, sulfate-leaning profile for bitter West Coast ales.",
+    "calcium_floor_ppm": 50,
+    "sulfate_so4": 180,
+    "chloride_cl": 60,
+    "mode": "CALCIUM_FLOOR"
+  },
+  "hazy-ipa": {
+    "id": "hazy-ipa",
+    "name": "Hazy IPA",
+    "description": "Chloride-forward profile for soft, juicy New England ales.",
+    "calcium_floor_ppm": 50,
+    "sulfate_so4": 80,
+    "chloride_cl": 240,
     "mode": "CALCIUM_FLOOR"
   },
   "malty-amber": {

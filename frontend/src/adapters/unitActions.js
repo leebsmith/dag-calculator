@@ -24,6 +24,14 @@ export function installUnitActions(app, { artifact, ui }) {
       this.compute();
     },
 
+    setFieldUnit(fieldId, unit) {
+      if (unit) ui.unitMode[fieldId] = unit;
+      else delete ui.unitMode[fieldId];
+      this.unitMode = { ...ui.unitMode };
+      saveUnitMode(ui.unitMode, artifact.schema_version);
+      this.compute();
+    },
+
     // Per-field unit override: cycle the field through its dimension's units,
     // dropping the override when it lands back on the field's inherited unit
     // (the pinned registry `displayUnit`, else the master menu pick, else base).
@@ -53,4 +61,4 @@ export function installUnitActions(app, { artifact, ui }) {
   });
 }
 
-export const KEYS = ["setUnit", "resetUnits", "toggleFieldUnit", "toggleUnits", "closeUnits"];
+export const KEYS = ["setUnit", "setFieldUnit", "resetUnits", "toggleFieldUnit", "toggleUnits", "closeUnits"];

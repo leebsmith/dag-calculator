@@ -110,6 +110,8 @@
         </table>
       </div>
 
+      <p class="form-hint" :class="mashLgrBelowFloor ? 'text-warning' : 'text-muted'" x-text="mashLgrSummary"></p>
+
       <div class="metric-strip">
         <div class="metric-cell">
           <span class="metric-cell-label">Grain Temperature</span>
@@ -118,9 +120,9 @@
               type="number"
               step="0.1"
               class="form-input tabular-nums"
-              :value="mashField('mash.grain_temp_c').display"
-              @input="edit(mashField('mash.grain_temp_c'), $event.target.value)"
-              @change="commitField(mashField('mash.grain_temp_c'))"
+              :value="inputDraft(inputKey('field', 'mash.grain_temp_c'), mashField('mash.grain_temp_c').display)"
+              @input="editNumberInput(inputKey('field', 'mash.grain_temp_c'), mashField('mash.grain_temp_c'), $event.target.value)"
+              @change="commitNumberInput(inputKey('field', 'mash.grain_temp_c'), mashField('mash.grain_temp_c'))"
             />
             <span class="metric-cell-unit" x-text="mashField('mash.grain_temp_c').unit"></span>
           </div>
@@ -133,9 +135,9 @@
               type="number"
               step="0.1"
               class="form-input tabular-nums"
-              :value="mashField('mash.tun_initial_temp_c').display"
-              @input="edit(mashField('mash.tun_initial_temp_c'), $event.target.value)"
-              @change="commitField(mashField('mash.tun_initial_temp_c'))"
+              :value="inputDraft(inputKey('field', 'mash.tun_initial_temp_c'), mashField('mash.tun_initial_temp_c').display)"
+              @input="editNumberInput(inputKey('field', 'mash.tun_initial_temp_c'), mashField('mash.tun_initial_temp_c'), $event.target.value)"
+              @change="commitNumberInput(inputKey('field', 'mash.tun_initial_temp_c'), mashField('mash.tun_initial_temp_c'))"
             />
             <span class="metric-cell-unit" x-text="mashField('mash.tun_initial_temp_c').unit"></span>
           </div>
@@ -161,6 +163,7 @@
             <span class="metric-cell-val" x-text="totalMashTimeMin"></span>
             <span class="metric-cell-unit">min</span>
           </div>
+          <span class="text-xs text-muted" x-show="rampTimeMin > 0" x-text="mashTimeSummary"></span>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import { dialogRestore } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
+import { formatWithDecimals } from "../utils.js";
 
 const LINEAGE_FIELDS = new Set(["forked_from_id", "forked_from_name"]);
 
@@ -286,10 +287,20 @@ export function registerLibraryUi(app, ctx) {
       if (value === undefined || value === null) return "";
       const spec = this.libraryFields.find((f) => f.field === field);
       if (!spec || spec.kind !== "number") return value;
+      if (typeof this.inputDraft === "function") {
+        const draft = this.inputDraft(this.inputKey("library", field), undefined);
+        if (draft !== undefined) return draft;
+      }
       if (!spec.unitId || spec.dimension == null) return value;
       const shown = displayValue(artifact, spec.dimension, spec.unitId, value, nl());
-      if (spec.decimals != null) return Number(shown.toFixed(spec.decimals));
-      return Math.round(shown * 1000) / 1000;
+      return formatWithDecimals(shown, spec.decimals);
+    },
+
+    libraryCommitField(field) {
+      if (typeof this.clearInputDraft === "function") {
+        this.clearInputDraft(this.inputKey("library", field));
+      }
+      this.libraryDraft = { ...this.libraryDraft };
     },
 
     librarySetField(field, value) {
@@ -298,6 +309,9 @@ export function registerLibraryUi(app, ctx) {
       if (value === "") {
         delete next[field];
       } else if (spec?.kind === "number") {
+        if (typeof this.setInputDraft === "function") {
+          this.setInputDraft(this.inputKey("library", field), value);
+        }
         let n = Number(value);
         if (Number.isFinite(n) && spec.unitId && spec.dimension != null) {
           n = toBase(artifact, spec.dimension, spec.unitId, n, nl());
@@ -378,4 +392,4 @@ export function registerLibraryUi(app, ctx) {
   });
 }
 
-export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];
+export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];

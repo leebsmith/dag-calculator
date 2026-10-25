@@ -37,7 +37,16 @@ const WATER = {
   },
 };
 
+const HOP = {
+  boil_rows: [],
+  whirlpool_rows: [],
+  boil_mass_kg: 0,
+  whirlpool_mass_kg: 0,
+  total_mass_kg: 0,
+};
+
 function mockFetch(responses) {
+  if (!responses["/solve/hops"]) responses["/solve/hops"] = { status: 200, body: HOP };
   const calls = [];
   const fetchImpl = async (url, opts) => {
     calls.push({ url, body: JSON.parse(opts.body) });
@@ -54,7 +63,11 @@ function makeApp(options) {
 test("offline (default): boundaries are stubbed and reported ok", async () => {
   const app = makeApp();
   await app.boot();
-  assert.deepEqual(app.boundaryStatuses, { "solver.batch": "ok", "solver.water": "ok" });
+  assert.deepEqual(app.boundaryStatuses, {
+    "solver.batch": "ok",
+    "solver.hops": "ok",
+    "solver.water": "ok",
+  });
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryPending, false);
 });
@@ -90,9 +103,12 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
   const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
 
-  assert.equal(calls.length, 2);
-  assert.equal(calls[0].url, "/solve/batch"); // batch before water
-  assert.equal(calls[1].url, "/solve/water");
+  assert.equal(calls.length, 3);
+  assert.equal(calls[0].url, "/solve/batch"); // batch is the shared dependency
+  assert.deepEqual(
+    calls.slice(1).map((call) => call.url).sort(),
+    ["/solve/hops", "/solve/water"]
+  );
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryStatuses["solver.batch"], "ok");
   assert.equal(app.boundaryStatuses["solver.water"], "ok");
@@ -147,7 +163,7 @@ test("http: a debounced burst collapses into one batch + one water request", asy
   app.scheduleSolve();
   app.scheduleSolve();
   await new Promise((r) => setTimeout(r, 50));
-  assert.equal(calls.length, 2, "burst of edits collapses to one batch + one water POST");
+  assert.equal(calls.length, 3, "burst of edits collapses to one POST per boundary");
 });
 
 test("http: concurrent solveNow calls dedupe by fingerprint", async () => {
@@ -157,7 +173,7 @@ test("http: concurrent solveNow calls dedupe by fingerprint", async () => {
   });
   const app = makeApp({ useHttp: true, fetchImpl });
   await Promise.all([app.solveNow(), app.solveNow()]);
-  assert.equal(calls.length, 2, "concurrent solves share one POST per fingerprint");
+  assert.equal(calls.length, 3, "concurrent solves share one POST per fingerprint");
 });
 
 test("http: a superseded solve discards its result", async () => {
@@ -314,7 +330,7 @@ test("http: loadState seeds missing derived roots from the selected profile", as
 
   const water = calls.find((c) => c.url === "/solve/water").body;
   assert.equal(water.target.sulfate_so4, 111, "explicit root wins");
-  assert.equal(water.target.chloride_cl, 50, "missing root seeded from the profile");
+  assert.equal(water.target.chloride_cl, 70, "missing root seeded from the profile");
   assert.equal(water.target.calcium_ca, 0, "the profile declares only the ions it targets");
   assert.equal(water.strategy, "CALCIUM_FLOOR", "strategy derives from the profile's target set");
   assert.deepEqual(water.custom_pinned_ions, ["so4", "cl"], "checked set seeded from positive targets");
@@ -350,7 +366,10 @@ test("http: refreshLibraryItems resolves the boundary before computing", async (
 
   await app.refreshLibraryItems();
 
-  assert.deepEqual(calls.map((c) => c.url), ["/solve/batch", "/solve/water"]);
+  assert.deepEqual(
+    calls.map((c) => c.url),
+    ["/solve/batch", "/solve/hops", "/solve/water"]
+  );
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryStatuses["solver.batch"], "ok");
   assert.equal(app.boundaryStatuses["solver.water"], "ok");

@@ -59,8 +59,9 @@
                           step="0.1"
                           min="0"
                           class="form-input table-input-parts"
-                          :value="row[c.id]"
-                          @input="editDraftCell(ri, c.id, $event.target.value)"
+                          :value="inputDraft(inputKey('draft', draftNodeId, ri, c.id), row[c.id])"
+                          @input="editDraftCellInput(inputKey('draft', draftNodeId, ri, c.id), ri, c.id, $event.target.value)"
+                          @change="commitDraftCellInput(inputKey('draft', draftNodeId, ri, c.id))"
                         />
                       </template>
                       <template x-if="!c.editable">
@@ -213,7 +214,7 @@
                     max="100"
                     class="form-input text-xs"
                     :value="fmt.toPercentValue(hopActiveRow.alpha_acid_pct, 1)"
-                    @input="setMaltField(hopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
+                    @change="setMaltField(hopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
                   />
                   <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
                 </div>

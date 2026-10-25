@@ -142,6 +142,20 @@ test("rejects boundary binding, input, and output drift", () => {
   const badOutputTaxonomy = clone();
   node(badOutputTaxonomy, "boundary").outputs[outputName] = { taxonomy: "nope" };
   assert.throws(() => validateArtifact(badOutputTaxonomy), /has unknown taxonomy "nope"/);
+
+  const badCollection = clone();
+  badCollection.nodes["solver.hops"].outputs.boil_rows = {
+    type: "collection",
+    item_schema: "nope",
+  };
+  assert.throws(() => validateArtifact(badCollection), /unknown item_schema "nope"/);
+
+  const noKind = clone();
+  noKind.nodes["solver.hops"].outputs.boil_rows = {};
+  assert.throws(
+    () => validateArtifact(noKind),
+    /must declare a dimension, taxonomy, boolean, or collection type/
+  );
 });
 
 test("rejects primitive schema drift", () => {

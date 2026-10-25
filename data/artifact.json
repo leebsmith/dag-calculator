@@ -1,8 +1,8 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 6, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 7, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
   },
   "identity": {
@@ -26,6 +26,15 @@
       "kind": "linear",
       "units": {
         "dF": {
+          "factor": 0.5555555555555556
+        }
+      }
+    },
+    "temperature_delta_per_time": {
+      "base_unit": "dC_per_min",
+      "kind": "linear",
+      "units": {
+        "dF_per_min": {
           "factor": 0.5555555555555556
         }
       }
@@ -245,6 +254,10 @@
     "default_mash_thickness_l_per_kg": {
       "value": 2.6079,
       "dimension": "mash_thickness"
+    },
+    "default_mash_heating_rate_c_per_min": {
+      "value": 1,
+      "dimension": "temperature_delta_per_time"
     },
     "default_runoff_ratio": {
       "value": 1,
@@ -511,6 +524,39 @@
               }
             ]
           }
+        ]
+      }
+    },
+    "ramp_time_min": {
+      "params": [
+        "delta_temp",
+        "rate"
+      ],
+      "returns": "time",
+      "body": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "rate"
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "ref": "delta_temp"
+              },
+              {
+                "ref": "rate"
+              }
+            ]
+          },
+          0
         ]
       }
     },
@@ -914,47 +960,6 @@
                 "ref": "mcu"
               },
               0.6859
-            ]
-          }
-        ]
-      }
-    },
-    "mash_ph_status": {
-      "params": [
-        "ph"
-      ],
-      "returns": "ph_status",
-      "body": {
-        "op": "if",
-        "args": [
-          {
-            "op": "gt",
-            "args": [
-              {
-                "ref": "ph"
-              },
-              {
-                "const": "mash_ph_optimal_high"
-              }
-            ]
-          },
-          "HIGH",
-          {
-            "op": "if",
-            "args": [
-              {
-                "op": "lt",
-                "args": [
-                  {
-                    "ref": "ph"
-                  },
-                  {
-                    "const": "mash_ph_optimal_low"
-                  }
-                ]
-              },
-              "LOW",
-              "OPTIMAL"
             ]
           }
         ]
@@ -1507,6 +1512,18 @@
           "gt": 0
         }
       },
+      "mash_heating_rate_c_per_min": {
+        "dimension": "temperature_delta_per_time",
+        "domain": {
+          "gt": 0
+        }
+      },
+      "min_lgr_l_per_kg": {
+        "dimension": "mash_thickness",
+        "domain": {
+          "gt": 0
+        }
+      },
       "nominal_conversion_efficiency": {
         "dimension": "percentage",
         "domain": {
@@ -1730,6 +1747,31 @@
         }
       },
       "notes": {}
+    },
+    "boil_hop_result": {
+      "minutes": {
+        "dimension": "time"
+      },
+      "ibu": {
+        "dimension": "ibu"
+      },
+      "mass_kg": {
+        "dimension": "mass"
+      }
+    },
+    "whirlpool_hop_result": {
+      "minutes": {
+        "dimension": "time"
+      },
+      "ibu": {
+        "dimension": "ibu"
+      },
+      "mass_kg": {
+        "dimension": "mass"
+      },
+      "effective_minutes": {
+        "dimension": "time"
+      }
     },
     "mash_rest": {
       "rest_id": {
@@ -2155,30 +2197,6 @@
       "dimension": "reference",
       "default": ""
     },
-    "batch.apparent_attenuation": {
-      "kind": "derived",
-      "inputs": {
-        "aa": "solver.batch.aa_batch"
-      },
-      "expr": {
-        "ref": "aa"
-      },
-      "output": {
-        "dimension": "percentage"
-      }
-    },
-    "batch.wort_aa": {
-      "kind": "derived",
-      "inputs": {
-        "aa": "solver.batch.aa_wort"
-      },
-      "expr": {
-        "ref": "aa"
-      },
-      "output": {
-        "dimension": "percentage"
-      }
-    },
     "batch.attenuation_derate": {
       "kind": "root",
       "dimension": "percentage",
@@ -2321,7 +2339,26 @@
     "water.calcium_floor_ppm": {
       "kind": "root",
       "dimension": "concentration",
-      "default": { "const": "default_calcium_floor_ppm" },
+      "default": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "water.target_profile.calcium_floor_ppm"
+              },
+              0
+            ]
+          },
+          {
+            "ref": "water.target_profile.calcium_floor_ppm"
+          },
+          {
+            "const": "default_calcium_floor_ppm"
+          }
+        ]
+      },
       "domain": {
         "gte": 0
       }
@@ -2373,18 +2410,6 @@
       "kind": "choice",
       "taxonomy": "alkaline_agent",
       "default": "PICKLING_LIME"
-    },
-    "water.v_hlt_treat_l": {
-      "kind": "derived",
-      "inputs": {
-        "v": "batch.sparge_salted_volume"
-      },
-      "expr": {
-        "ref": "v"
-      },
-      "output": {
-        "dimension": "volume"
-      }
     },
     "water.kettle_blend.calcium_ca": {
       "kind": "derived",
@@ -2922,11 +2947,11 @@
         "target.sulfate_so4": "water.target.sulfate_so4",
         "target.chloride_cl": "water.target.chloride_cl",
         "target.alkalinity_as_caco3": "water.target.alkalinity_as_caco3",
-        "v_mash_treat_l": "water.v_mash_treat_l",
-        "v_hlt_treat_l": "water.v_hlt_treat_l",
-        "v_hlt_debt_l": "water.v_hlt_debt_l",
-        "v_sparge_demand_l": "water.v_sparge_demand_l",
-        "mash_thickness_l_per_kg": "water.mash_thickness_l_per_kg",
+        "v_mash_treat_l": "solver.batch.cascade.v_strike",
+        "v_hlt_treat_l": "batch.sparge_salted_volume",
+        "v_hlt_debt_l": "solver.batch.hlt.v_hlt_debt",
+        "v_sparge_demand_l": "solver.batch.cascade.v_sparge",
+        "mash_thickness_l_per_kg": "solver.batch.mash_thickness_l_per_kg",
         "target_mash_ph": "water.target_mash_ph",
         "strategy": "water.strategy",
         "salt_distribution": "water.salt_distribution",
@@ -3085,6 +3110,52 @@
         ]
       }
     },
+    "solver.hops": {
+      "kind": "boundary",
+      "binding": "hop_bitterness_solver",
+      "resolution": "direct",
+      "inputs": {
+        "boil_hops": "batch.boil_hops",
+        "whirlpool_hops": "batch.whirlpool_hops",
+        "boil_target_ibu": "batch.boil_target_ibu",
+        "whirlpool_target_ibu": "batch.whirlpool_target_ibu",
+        "boil_time_min": "batch.boil_time_min",
+        "pre_boil_gravity": "solver.batch.cascade.sg_pre_boil",
+        "post_boil_gravity": "solver.batch.sg_post_boil",
+        "post_boil_volume_l": "solver.batch.cascade.v_post_boil",
+        "whirlpool_ambient_temp_c": "batch.whirlpool_ambient_temp_c",
+        "whirlpool_cooling_time_constant_min": "batch.whirlpool_cooling_time_constant_min"
+      },
+      "outputs": {
+        "boil_rows": {
+          "type": "collection",
+          "item_schema": "boil_hop_result"
+        },
+        "whirlpool_rows": {
+          "type": "collection",
+          "item_schema": "whirlpool_hop_result"
+        },
+        "boil_mass_kg": {
+          "dimension": "mass"
+        },
+        "whirlpool_mass_kg": {
+          "dimension": "mass"
+        },
+        "total_mass_kg": {
+          "dimension": "mass"
+        }
+      },
+      "domain": {
+        "codes": [
+          "INVALID_HOP_INPUT",
+          "INVALID_GRAVITY",
+          "INVALID_VOLUME",
+          "INVALID_COOLING_CONSTANT",
+          "UNKNOWN_PRODUCT_FORM",
+          "HOP_SOLVE_FAILED"
+        ]
+      }
+    },
     "mash.dough_in_target_temp_c": {
       "kind": "derived",
       "inputs": {
@@ -3130,37 +3201,174 @@
         "dimension": "temperature"
       }
     },
-    "mash.total_time_min": {
+    "mash.heating_rate_c_per_min": {
+      "kind": "derived",
+      "inputs": {
+        "rate": "equipment.mash_heating_rate_c_per_min"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "rate"
+              },
+              0
+            ]
+          },
+          {
+            "ref": "rate"
+          },
+          {
+            "const": "default_mash_heating_rate_c_per_min"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "temperature_delta_per_time"
+      }
+    },
+    "mash.enabled_min_temp_c": {
       "kind": "derived",
       "inputs": {
         "rests": "mash.rests"
       },
       "expr": {
-        "op": "sum",
+        "op": "min",
         "coll": {
           "ref": "rests"
         },
         "as": "rest",
+        "value": {
+          "ref": "rest.use_temp_c"
+        },
         "where": {
-          "op": "and",
-          "args": [
-            {
-              "ref": "rest.enabled"
+          "ref": "rest.enabled"
+        }
+      },
+      "output": {
+        "dimension": "temperature"
+      }
+    },
+    "mash.enabled_max_temp_c": {
+      "kind": "derived",
+      "inputs": {
+        "rests": "mash.rests"
+      },
+      "expr": {
+        "op": "max",
+        "coll": {
+          "ref": "rests"
+        },
+        "as": "rest",
+        "value": {
+          "ref": "rest.use_temp_c"
+        },
+        "where": {
+          "ref": "rest.enabled"
+        }
+      },
+      "output": {
+        "dimension": "temperature"
+      }
+    },
+    "mash.ramp_time_min": {
+      "kind": "derived",
+      "inputs": {
+        "t_min": "mash.enabled_min_temp_c",
+        "t_max": "mash.enabled_max_temp_c",
+        "rate": "mash.heating_rate_c_per_min"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "t_max"
+              },
+              {
+                "ref": "t_min"
+              }
+            ]
+          },
+          {
+            "call": "ramp_time_min",
+            "args": [
+              {
+                "op": "-",
+                "args": [
+                  {
+                    "ref": "t_max"
+                  },
+                  {
+                    "ref": "t_min"
+                  }
+                ]
+              },
+              {
+                "ref": "rate"
+              }
+            ]
+          },
+          {
+            "call": "ramp_time_min",
+            "args": [
+              0,
+              {
+                "ref": "rate"
+              }
+            ]
+          }
+        ]
+      },
+      "output": {
+        "dimension": "time"
+      }
+    },
+    "mash.total_time_min": {
+      "kind": "derived",
+      "inputs": {
+        "rests": "mash.rests",
+        "ramp": "mash.ramp_time_min"
+      },
+      "expr": {
+        "op": "+",
+        "args": [
+          {
+            "op": "sum",
+            "coll": {
+              "ref": "rests"
             },
-            {
-              "op": "ne",
+            "as": "rest",
+            "where": {
+              "op": "and",
               "args": [
                 {
-                  "ref": "rest.duration_min"
+                  "ref": "rest.enabled"
                 },
-                null
+                {
+                  "op": "ne",
+                  "args": [
+                    {
+                      "ref": "rest.duration_min"
+                    },
+                    null
+                  ]
+                }
               ]
+            },
+            "body": {
+              "ref": "rest.duration_min"
             }
-          ]
-        },
-        "body": {
-          "ref": "rest.duration_min"
-        }
+          },
+          {
+            "ref": "ramp"
+          }
+        ]
       },
       "output": {
         "dimension": "time"
@@ -3516,71 +3724,6 @@
         "dimension": "volume"
       }
     },
-    "water.v_mash_treat_l": {
-      "kind": "derived",
-      "inputs": {
-        "v_strike": "solver.batch.cascade.v_strike"
-      },
-      "expr": {
-        "ref": "v_strike"
-      },
-      "output": {
-        "dimension": "volume"
-      }
-    },
-    "water.v_sparge_demand_l": {
-      "kind": "derived",
-      "inputs": {
-        "v_sparge": "solver.batch.cascade.v_sparge"
-      },
-      "expr": {
-        "ref": "v_sparge"
-      },
-      "output": {
-        "dimension": "volume"
-      }
-    },
-    "water.v_hlt_debt_l": {
-      "kind": "derived",
-      "inputs": {
-        "v_hlt_debt": "solver.batch.hlt.v_hlt_debt"
-      },
-      "expr": {
-        "ref": "v_hlt_debt"
-      },
-      "output": {
-        "dimension": "volume"
-      }
-    },
-    "water.mash_thickness_l_per_kg": {
-      "kind": "derived",
-      "inputs": {
-        "thickness": "solver.batch.mash_thickness_l_per_kg"
-      },
-      "expr": {
-        "ref": "thickness"
-      },
-      "output": {
-        "dimension": "mash_thickness"
-      }
-    },
-    "water.mash_ph_status": {
-      "kind": "derived",
-      "inputs": {
-        "ph": "solver.water.prescription.predicted_mash_ph"
-      },
-      "expr": {
-        "call": "mash_ph_status",
-        "args": [
-          {
-            "ref": "ph"
-          }
-        ]
-      },
-      "output": {
-        "taxonomy": "ph_status"
-      }
-    },
     "batch.dry_hops": {
       "kind": "collection",
       "item_schema": "dry_hop_row"
@@ -3654,6 +3797,31 @@
         "rhs": {
           "ref": "solver.batch.max_achievable_abv"
         }
+      }
+    },
+    {
+      "id": "mash_thickness_above_equipment_floor",
+      "predicate": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "lhs": {
+              "ref": "equipment.min_lgr_l_per_kg"
+            },
+            "rhs": 0
+          },
+          {
+            "op": "ge",
+            "lhs": {
+              "ref": "solver.batch.mash_thickness_l_per_kg"
+            },
+            "rhs": {
+              "ref": "equipment.min_lgr_l_per_kg"
+            }
+          },
+          true
+        ]
       }
     }
   ]

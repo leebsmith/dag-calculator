@@ -76,8 +76,8 @@ export const WATER_NODES = {
   cacl2Form: "water.cacl2_form",
   acidMedium: "water.acid_medium",
   alkalineAgent: "water.preferred_alkaline_agent",
-  vMashTreat: "water.v_mash_treat_l",
-  vHltTreat: "water.v_hlt_treat_l",
+  vMashTreat: "solver.batch.cascade.v_strike",
+  vHltTreat: "batch.sparge_salted_volume",
   spargeSaltedVolume: "batch.sparge_salted_volume",
   vSpargeDeliverable: "solver.batch.hlt.v_sparge_deliverable",
   vRun1: "solver.batch.cascade.v_run1",
@@ -98,7 +98,6 @@ export const WATER_NODES = {
   strategy: "water.strategy",
   target: "water.target",
   targetProfileId: "water.target_profile_id",
-  sourceReportId: null,
   targetMashPh: "water.target_mash_ph",
   predictedPh: "solver.water.prescription.predicted_mash_ph",
   phStatus: "solver.water.prescription.mash_ph_status",
@@ -110,10 +109,6 @@ export const WATER_NODES = {
 };
 
 export const waterRegistry = {
-  "water.source": {
-    label: "Source report",
-    optionLabel: (report) => report?.laboratory || report?.source_name || report?.report_id,
-  },
   "water.target_profile_id": {
     label: "Targets",
     control: "water-target-selector",
@@ -168,7 +163,7 @@ export const waterRegistry = {
     },
   },
   "water.target_mash_ph": { label: "Target mash pH", unit: "pH" },
-  "water.v_hlt_treat_l": { label: "Sparge salt dosing volume", unit: "L" },
+  "batch.sparge_salted_volume": { label: "Sparge salt dosing volume", unit: "L" },
 
   "solver.water.prescription.predicted_mash_ph": { label: "Predicted mash pH", unit: "pH", decimals: 2 },
   "solver.water.prescription.mash_ph_status": { label: "Mash pH status" },

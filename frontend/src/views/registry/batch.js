@@ -24,12 +24,12 @@ export const batchRegistry = {
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
-  "batch.apparent_attenuation": {
+  "solver.batch.aa_batch": {
     label: "Batch attenuation",
     displayUnit: "pct",
     hint: "Solver output: min(wort attenuation, yeast cap). It differs from wort attenuation only when the yeast cap binds.",
   },
-  "batch.wort_aa": {
+  "solver.batch.aa_wort": {
     label: "Wort attenuation",
     displayUnit: "pct",
     hint: "Extract-weighted pre-cap blend. Batch attenuation is this value clamped by the yeast cap.",

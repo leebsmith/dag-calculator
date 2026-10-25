@@ -1,8 +1,11 @@
 # Whirlpool Hopping Model
 
-Canonical theory and equations for whirlpool bitterness. The implementation is
-host-side (like the Tinseth boil helpers); the artifact owns the hop charges,
-targets, and the rest/cooling inputs.
+Canonical theory and equations for whirlpool bitterness. The production
+implementation is the sealed backend boundary `solver.hops`
+(`backend/app/core/hop_solver.py`), like the batch and water solvers. The
+artifact owns the hop charges, targets, and the rest/cooling inputs. The
+JavaScript `views/whirlpool.js` / `views/hops.js` copies are retained only as
+the offline boundary stub.
 
 Status: implemented model for T-90 pellets and flowable CO₂ extracts,
 target-driven IBU, per-charge rest duration and initial temperature, and

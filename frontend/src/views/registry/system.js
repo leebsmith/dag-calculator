@@ -4,7 +4,7 @@
 export const SYSTEM_NODES = {
   topology: "batch.topology",
   intensiveValue: "batch.intensive_value",
-  apparentAttenuation: "batch.apparent_attenuation",
+  apparentAttenuation: "solver.batch.aa_batch",
   majorMalts: "grist.major_malts",
   boilHops: "batch.boil_hops",
   whirlpoolHops: "batch.whirlpool_hops",

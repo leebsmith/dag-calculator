@@ -1,9 +1,11 @@
 # Hop-math promotion — spike findings
 
-Status: spike complete; implementation deferred. Objective is unchanged: move
-Tinseth/whirlpool math out of `frontend/src/views/whirlpool.js` and
-`frontend/src/views/hops.js` into the artifact, leaving the host responsible
-only for input editing, formatting, and presentation.
+Status: superseded. The production path is now the sealed backend boundary
+`solver.hops` (`backend/app/core/hop_solver.py`), chosen to avoid adding
+`exp`/`ln`/quadrature to the artifact grammar. The JavaScript
+`views/whirlpool.js` / `views/hops.js` copies remain only as the offline stub.
+This document is retained as the spike record; the options and acceptance
+criteria below are historical.
 
 ## Objective
 

@@ -121,8 +121,11 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
 `mash_transfer_loss_l`, `kettle_dead_space_l`, `kettle_transfer_loss_l`,
 `hlt_dead_space_l`, `hlt_transfer_loss_l`, `trub_loss_l` (all `volume`),
 `boil_off_rate_l_per_hr` (`volume/time`), `grain_absorption_factor_l_per_kg`
-(`volume/mass`), `conversion_efficiency` and `shrinkage_pct` (`percentage`),
-`mash_tun_specific_heat` (`specific_heat`), `mash_tun_mass_kg` (`mass`).
+(`volume/mass`), `mash_heating_rate_c_per_min` (`temperature_delta/time`),
+`min_lgr_l_per_kg` (`volume/mass`), `conversion_efficiency` and `shrinkage_pct`
+(`percentage`), `mash_tun_specific_heat` (`specific_heat`), `mash_tun_mass_kg`
+(`mass`). The ramp rate is seeded at 1 °C/min; the minimum LGR at 1.1 qt/lb
+(2.295 L/kg).
 `hlt_starting_volume_l` is **batch-level**, not an equipment field.
 
 ### 2.5 `water_report` / `water_target`
@@ -135,7 +138,9 @@ The hardware/loss constants: `max_kettle_volume_l`, `max_mash_tun_volume_l`,
   non-lab convention (`RO / Distilled (definition)`), zero ions, no lab dates — it
   is a definition, not a measurement.
 - `water_target` — `{ id, name, description, <ions>, calcium_floor_ppm, mode, notes }`
-  (presets like Balanced Pale, Hoppy/IPA…). A profile declares **only the ions its
+  (presets like Balanced Pale, Hoppy/IPA, Burton-style IPA, West Coast IPA,
+  Hazy IPA). `calcium_floor_ppm` is inherited by the batch root when the preset
+  is selected; `mode` is retained as authored metadata. A profile declares **only the ions its
   `mode` targets** — flavour profiles carry SO₄/Cl, buffer profiles add
   alkalinity, and only the all-six clone profile carries every ion. `mode` is
   authored metadata: applying a profile writes `water.strategy = AUTO` and the

@@ -173,12 +173,15 @@ namespace → error.
 
 - `binding` — a **dedicated slug** naming the host-registered implementation
   (distinct from the node id). The engine maps this to native code.
-- `resolution` — `iterative` (root-finding / linear program). The artifact
-  declares *that* it iterates, never *how*.
+- `resolution` — `iterative` (root-finding / linear program) or `direct` (a
+  closed-form solver). The artifact declares *that* it iterates, never *how*.
 - `inputs`/`outputs` — the declared contract. Each output is a **value spec**:
-  `{dimension}` | `{taxonomy}` | `{type:"boolean"}`. Nested host responses are
-  **flattened to dotted output keys** (e.g. `cascade.v_strike`, `hlt.v_hlt_debt`),
-  reusing the dotted-path resolution of §1.1.
+  `{dimension}` | `{taxonomy}` | `{type:"boolean"}` | `{type:"collection",
+  item_schema}`. Nested host responses are **flattened to dotted output keys**
+  (e.g. `cascade.v_strike`, `hlt.v_hlt_debt`), reusing the dotted-path resolution
+  of §1.1. A collection output is an opaque list of schema-conforming rows (the
+  hop solver's per-addition results); it is presentation-read, not an
+  expression input.
 - `domain` — the **feasibility/error surface**: the set of `code` values the
   boundary can raise (mirrors the implementation's `SolverValidationError` codes).
 - A boundary is **opaque**: no `expr`, no body. Its interior is host code.
@@ -272,14 +275,15 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **6**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **7**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `identity` (all objects), `nodes` (all objects), and
   `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.
 - `derived.expr` and `functions.*.body` must be valid AST (see
   `expression-language.md`).
-- `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`/`schema`.
+- `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`/`schema`;
+  a boundary output may also be a collection (`type:collection` + `item_schema`).
   A selection's `output` is `{schema: <id>}`. A schema field may also carry
   `{type:"boolean"}` for a flag (e.g. `enabled`).
 - Every `inputs`/`ref`/`{ref}` path must resolve to a declared node, a declared

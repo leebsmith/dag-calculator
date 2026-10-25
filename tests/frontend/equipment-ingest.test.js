@@ -39,6 +39,8 @@ test("imperial profile converts to metric and drops imperial keys", () => {
         grain_absorption_factor_qt_per_lb: 0.4601,
         mash_tun_mass_lb: 14.33,
         mash_tun_specific_heat_btu_per_lb_f: 0.12,
+        mash_heating_rate_f_per_min: 1.8,
+        min_lgr_qt_per_lb: 1.1,
         nominal_conversion_efficiency: 0.9,
         shrinkage_pct: 0.04,
       },
@@ -55,6 +57,8 @@ test("imperial profile converts to metric and drops imperial keys", () => {
   approx(out.grain_absorption_factor_l_per_kg, 0.4601 * 2.08635); // ~0.96 L/kg
   approx(out.mash_tun_mass_kg, 14.33 * 0.45359237); // ~6.5 kg
   approx(out.mash_tun_specific_heat, 0.12); // BTU/(lb·°F) == kcal/(kg·°C)
+  approx(out.mash_heating_rate_c_per_min, 1.0); // 1.8 °F/min × 0.5555
+  approx(out.min_lgr_l_per_kg, 1.1 * 2.08635); // 1.1 qt/lb
 
   // Unitless fields are untouched.
   assert.equal(out.nominal_conversion_efficiency, 0.9);
@@ -64,6 +68,8 @@ test("imperial profile converts to metric and drops imperial keys", () => {
   assert.ok(!("max_hlt_volume_gal" in out));
   assert.ok(!("mash_tun_mass_lb" in out));
   assert.ok(!("mash_tun_specific_heat_btu_per_lb_f" in out));
+  assert.ok(!("mash_heating_rate_f_per_min" in out));
+  assert.ok(!("min_lgr_qt_per_lb" in out));
 });
 
 test("flat (unwrapped) profiles are treated as metric", () => {

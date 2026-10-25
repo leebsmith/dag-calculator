@@ -1043,45 +1043,18 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     mash_acid_ml = 0.0
     stage2_agent_g = 0.0
     alk_correction_ppm = 0.0
+    dose_event: dict[str, Any] | None = None
 
     if meq_l > 0.0:
         total_acid_meq = meq_l * inp.v_mash_treat_l
         mash_acid_ml = acid_volume_ml(total_acid_meq, inp.acid_medium, inp.target_mash_ph)
         alk_correction_ppm = -meq_l * 50.0
-        events.append(
-            TelemetryEvent(
-                code="ENZYMATIC_ACID_DOSE_PRESCRIBED",
-                category="ENZYMATIC",
-                severity="INFO",
-                message=f"Mash acidification prescribed: {mash_acid_ml:.2f} mL of {inp.acid_medium} ({total_acid_meq:.1f} mEq) required to shift mash from pH {ph_stage1:.2f} to target pH {inp.target_mash_ph:.2f}.",
-                context={
-                    "volume_ml": mash_acid_ml,
-                    "acid_medium": inp.acid_medium,
-                    "meq_total": total_acid_meq,
-                    "ph_start": ph_stage1,
-                    "ph_target": inp.target_mash_ph,
-                },
-            )
-        )
+        dose_event = {"kind": "acid", "meq_total": total_acid_meq}
     elif meq_l < 0.0:
         total_alk_meq = abs(meq_l) * inp.v_mash_treat_l
         stage2_agent_g = alkaline_agent_mass_g(total_alk_meq, inp.preferred_alkaline_agent)
         alk_correction_ppm = total_alk_meq / inp.v_mash_treat_l * 50.0
-        events.append(
-            TelemetryEvent(
-                code="ENZYMATIC_ALKALINE_DOSE_PRESCRIBED",
-                category="ENZYMATIC",
-                severity="INFO",
-                message=f"Mash buffering prescribed: {stage2_agent_g:.2f} g of {inp.preferred_alkaline_agent} ({total_alk_meq:.1f} mEq) required to raise mash pH from {ph_stage1:.2f} to target pH {inp.target_mash_ph:.2f}.",
-                context={
-                    "mass_g": stage2_agent_g,
-                    "agent": inp.preferred_alkaline_agent,
-                    "meq_total": total_alk_meq,
-                    "ph_start": ph_stage1,
-                    "ph_target": inp.target_mash_ph,
-                },
-            )
-        )
+        dose_event = {"kind": "alkaline", "meq_total": total_alk_meq}
         if inp.preferred_alkaline_agent == "CHALK":
             events.append(
                 TelemetryEvent(
@@ -1104,6 +1077,52 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     ra_dose = residual_alkalinity(post_dose["ca"], post_dose["mg"], post_dose.get("alk", 0.0))
     predicted_ph = predict_mash_ph(grist_acidity, ra_dose, inp.v_mash_treat_l, inp.mash_thickness_l_per_kg)
     status = mash_ph_status(predicted_ph)
+
+    if dose_event is not None:
+        if dose_event["kind"] == "acid":
+            events.append(
+                TelemetryEvent(
+                    code="ENZYMATIC_ACID_DOSE_PRESCRIBED",
+                    category="ENZYMATIC",
+                    severity="INFO",
+                    message=(
+                        f"Mash acidification prescribed: {mash_acid_ml:.2f} mL of {inp.acid_medium} "
+                        f"({dose_event['meq_total']:.1f} mEq) required to shift mash from pH "
+                        f"{ph_stage1:.2f} toward target pH {inp.target_mash_ph:.2f}; model "
+                        f"predicts pH {predicted_ph:.2f} after dosing."
+                    ),
+                    context={
+                        "volume_ml": mash_acid_ml,
+                        "acid_medium": inp.acid_medium,
+                        "meq_total": dose_event["meq_total"],
+                        "ph_start": ph_stage1,
+                        "ph_target": inp.target_mash_ph,
+                        "ph_after": predicted_ph,
+                    },
+                )
+            )
+        else:
+            events.append(
+                TelemetryEvent(
+                    code="ENZYMATIC_ALKALINE_DOSE_PRESCRIBED",
+                    category="ENZYMATIC",
+                    severity="INFO",
+                    message=(
+                        f"Mash buffering prescribed: {stage2_agent_g:.2f} g of "
+                        f"{inp.preferred_alkaline_agent} ({dose_event['meq_total']:.1f} mEq) "
+                        f"required to raise mash pH from {ph_stage1:.2f} toward target pH "
+                        f"{inp.target_mash_ph:.2f}; model predicts pH {predicted_ph:.2f} after dosing."
+                    ),
+                    context={
+                        "mass_g": stage2_agent_g,
+                        "agent": inp.preferred_alkaline_agent,
+                        "meq_total": dose_event["meq_total"],
+                        "ph_start": ph_stage1,
+                        "ph_target": inp.target_mash_ph,
+                        "ph_after": predicted_ph,
+                    },
+                )
+            )
 
     if not (MASH_PH_MODEL_MIN <= predicted_ph <= MASH_PH_MODEL_MAX):
         events.append(

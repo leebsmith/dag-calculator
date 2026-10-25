@@ -176,3 +176,18 @@ def test_error_surface_complete():
         "PINNED_IONS_REQUIRED",
     }
     assert declared == expected
+
+
+def test_dose_telemetry_reports_the_corrected_predicted_ph():
+    resp = solve_water_request(make_water_request())
+    dose_events = [
+        event
+        for event in resp.telemetry
+        if event["code"] in {"ENZYMATIC_ACID_DOSE_PRESCRIBED", "ENZYMATIC_ALKALINE_DOSE_PRESCRIBED"}
+    ]
+    assert dose_events, "expected a prescribed dose for the default fixture"
+    for event in dose_events:
+        assert "model predicts pH" in event["message"]
+        assert event["context"]["ph_after"] == pytest.approx(
+            resp.prescription.predicted_mash_ph
+        )

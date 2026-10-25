@@ -132,6 +132,16 @@ function applyReduction(expr, ctx) {
       }
       return result;
     }
+    case "max": {
+      // Maximum of the finite `value`s; undefined when none remain.
+      let result;
+      for (const el of items) {
+        const value = evaluate(expr.value, withElement(el));
+        if (typeof value !== "number" || !Number.isFinite(value)) continue;
+        if (result === undefined || value > result) result = value;
+      }
+      return result;
+    }
     default:
       throw new Error(`Unknown reduction op: ${expr.op}`);
   }

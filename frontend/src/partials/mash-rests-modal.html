@@ -77,7 +77,7 @@
                       min="0"
                       class="form-input tabular-nums"
                       :value="rest.duration_min"
-                      @input="setMashDraftDuration(rest.rest_id, $event.target.value)"
+                      @change="setMashDraftDuration(rest.rest_id, $event.target.value)"
                     />
                   </td>
                   <td class="text-xs text-muted" x-text="restPurpose(rest.rest_id)"></td>

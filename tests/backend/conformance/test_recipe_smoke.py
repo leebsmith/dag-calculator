@@ -19,8 +19,14 @@ from pathlib import Path
 import pytest
 
 from app.core.water import GRAIN_ACIDITY
-from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest, WaterStrategy
+from app.schemas.boundary import (
+    BatchSolverRequest,
+    HopSolverRequest,
+    WaterSolverRequest,
+    WaterStrategy,
+)
 from app.services.batch_solver_service import solve_batch_request
+from app.services.hop_solver_service import solve_hop_request
 from app.services.water_solver_service import solve_water_request
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -48,18 +54,24 @@ def test_default_recipe_generates_end_to_end():
 
     # The adapter resolved both boundaries without error.
     assert emitted["boundaryError"] is None, emitted["boundaryError"]
-    assert emitted["statuses"] == {"solver.batch": "ok", "solver.water": "ok"}
+    assert emitted["statuses"] == {
+        "solver.batch": "ok",
+        "solver.hops": "ok",
+        "solver.water": "ok",
+    }
 
     bodies = {r["url"]: r["body"] for r in emitted["requests"]}
-    assert set(bodies) == {"/solve/batch", "/solve/water"}
+    assert set(bodies) == {"/solve/batch", "/solve/hops", "/solve/water"}
 
     # 1) Both bodies satisfy the deployed contracts (this is the 422 gate).
     batch_req = BatchSolverRequest(**bodies["/solve/batch"])
     water_req = WaterSolverRequest(**bodies["/solve/water"])
+    hop_req = HopSolverRequest(**bodies["/solve/hops"])
 
     # 2) The sealed solvers return a complete recipe.
     batch = solve_batch_request(batch_req)
     water = solve_water_request(water_req)
+    hop = solve_hop_request(hop_req)
 
     scalars = [
         batch.sg_post_boil,
@@ -83,6 +95,9 @@ def test_default_recipe_generates_end_to_end():
         batch.mash_thickness_l_per_kg,
         water.prescription.predicted_mash_ph,
         water.prescription.residual_hlt_water_l,
+        hop.boil_mass_kg,
+        hop.whirlpool_mass_kg,
+        hop.total_mass_kg,
     ]
     assert all(math.isfinite(v) for v in scalars), "recipe contains non-finite values"
     assert batch.m_grist > 0.0 and batch.sg_post_boil > 1.0

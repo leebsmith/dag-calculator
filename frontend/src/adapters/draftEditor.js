@@ -176,7 +176,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       get() {
         const columns = this.draftColumns;
         const nl = nonlinearFns(artifact, session.getEngine());
-        return this.draftRows.map((row) => {
+        return this.draftRows.map((row, ri) => {
           const out = { ...row };
           for (const col of columns) {
             let v = row[col.id];
@@ -186,7 +186,12 @@ export function installDraftEditor(app, { artifact, ui, session }) {
             if (typeof v === "number") {
               v = formatWithDecimals(v, col.decimals);
             }
-            out[col.id] = v;
+            if (col.editable && typeof this.inputDraft === "function") {
+              const key = `draft:${this.draftNodeId}:${ri}:${col.id}`;
+              out[col.id] = this.inputDraft(key, v);
+            } else {
+              out[col.id] = v;
+            }
           }
           return out;
         });

@@ -49,5 +49,17 @@
     "v_hlt_treat_l",
     "v_mash_treat_l",
     "v_sparge_demand_l"
+  ],
+  "hop": [
+    "boil_hops",
+    "boil_target_ibu",
+    "boil_time_min",
+    "post_boil_gravity",
+    "post_boil_volume_l",
+    "pre_boil_gravity",
+    "whirlpool_ambient_temp_c",
+    "whirlpool_cooling_time_constant_min",
+    "whirlpool_hops",
+    "whirlpool_target_ibu"
   ]
 }

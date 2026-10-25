@@ -121,11 +121,11 @@ export const WATER_FIELDS = {
   "target.sulfate_so4": { path: "water.target.sulfate_so4", default: 0 },
   "target.chloride_cl": { path: "water.target.chloride_cl", default: 0 },
   "target.alkalinity_as_caco3": { path: "water.target.alkalinity_as_caco3", default: 0 },
-  v_mash_treat_l: { path: "water.v_mash_treat_l" },
-  v_hlt_treat_l: { path: "water.v_hlt_treat_l" },
-  v_hlt_debt_l: { path: "water.v_hlt_debt_l" },
-  v_sparge_demand_l: { path: "water.v_sparge_demand_l" },
-  mash_thickness_l_per_kg: { path: "water.mash_thickness_l_per_kg" },
+  v_mash_treat_l: { path: "solver.batch.cascade.v_strike" },
+  v_hlt_treat_l: { path: "batch.sparge_salted_volume" },
+  v_hlt_debt_l: { path: "solver.batch.hlt.v_hlt_debt" },
+  v_sparge_demand_l: { path: "solver.batch.cascade.v_sparge" },
+  mash_thickness_l_per_kg: { path: "solver.batch.mash_thickness_l_per_kg" },
   target_mash_ph: { path: "water.target_mash_ph" },
   strategy: { path: "water.strategy" },
   salt_distribution: { path: "water.salt_distribution" },
@@ -143,8 +143,47 @@ export const WATER_FIELDS = {
   },
 };
 
+// HopSolverRequest: one entry per solver.hops declared input. The hop rows are
+// sent as the closed fields the backend consumes; names/ids stay host-side.
+export const HOP_FIELDS = {
+  boil_hops: {
+    path: "batch.boil_hops",
+    read: "get",
+    build: (resolved) =>
+      (resolved.boil_hops ?? []).map((row) => ({
+        alpha_acid_pct: row.alpha_acid_pct,
+        boil_time_fraction: row.boil_time_fraction,
+        pct: row.pct,
+      })),
+  },
+  whirlpool_hops: {
+    path: "batch.whirlpool_hops",
+    read: "get",
+    build: (resolved) =>
+      (resolved.whirlpool_hops ?? []).map((row) => ({
+        alpha_acid_pct: row.alpha_acid_pct,
+        duration_min: row.duration_min,
+        initial_temp_c: row.initial_temp_c,
+        pct: row.pct,
+        product_form: row.product_form ?? "t90_pellet",
+      })),
+  },
+  boil_target_ibu: { path: "batch.boil_target_ibu" },
+  whirlpool_target_ibu: { path: "batch.whirlpool_target_ibu" },
+  boil_time_min: { path: "batch.boil_time_min" },
+  pre_boil_gravity: { path: "solver.batch.cascade.sg_pre_boil" },
+  post_boil_gravity: { path: "solver.batch.sg_post_boil" },
+  post_boil_volume_l: { path: "solver.batch.cascade.v_post_boil" },
+  whirlpool_ambient_temp_c: { path: "batch.whirlpool_ambient_temp_c" },
+  whirlpool_cooling_time_constant_min: { path: "batch.whirlpool_cooling_time_constant_min" },
+};
+
 export function buildBatchRequest(engine) {
   return buildFromMap(engine, BATCH_FIELDS);
+}
+
+export function buildHopRequest(engine) {
+  return buildFromMap(engine, HOP_FIELDS);
 }
 
 export function buildWaterRequest(engine) {
@@ -155,4 +194,5 @@ export function buildWaterRequest(engine) {
 export const BOUNDARY_BUILDERS = {
   batch_sparge_solver: buildBatchRequest,
   water_chemistry_solver: buildWaterRequest,
+  hop_bitterness_solver: buildHopRequest,
 };

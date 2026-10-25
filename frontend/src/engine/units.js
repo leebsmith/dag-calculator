@@ -221,6 +221,7 @@ export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
         return elemDim(expr.body);
       case "weighted_avg":
       case "min":
+      case "max":
         return elemDim(expr.value);
       case "map":
       case "filter":

@@ -7,6 +7,7 @@ import { flattenResponse, postJSON } from "./apiClient.js";
 const BOUNDARY_URLS = {
   batch_sparge_solver: "/solve/batch",
   water_chemistry_solver: "/solve/water",
+  hop_bitterness_solver: "/solve/hops",
 };
 
 // AI AGENT HOOKS: Use this runner factory for every boundary solve scheduling,

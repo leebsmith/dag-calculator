@@ -27,7 +27,7 @@ export const STYLE_NODES = {
     ibu: "batch.target_ibu",
     srm: "grist.finished_beer_srm",
   },
-  apparentAttenuation: "batch.apparent_attenuation",
+  apparentAttenuation: "solver.batch.aa_batch",
   yeastCap: "batch.yeast_cap",
   fermVolume: "batch.v_ferm",
   postBoilVolume: "solver.batch.cascade.v_post_boil",

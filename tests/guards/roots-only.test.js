@@ -21,9 +21,9 @@ test("A4: roots-only master store", () => {
 });
 
 // A4b: a draft that predates a root→derived migration must not carry the stale
-// key into the store. `water.v_hlt_treat_l` is derived since the water cleanup.
+// key into the store. `batch.total_water_used` is derived, not a root.
 test("A4b: stale non-root draft keys are filtered on load", async () => {
   const app = createStepApp();
-  await app.loadState({ roots: { "water.v_hlt_treat_l": 15.0 } });
-  assert.ok(!("water.v_hlt_treat_l" in app.master.allRoots()));
+  await app.loadState({ roots: { "batch.total_water_used": 15.0 } });
+  assert.ok(!("batch.total_water_used" in app.master.allRoots()));
 });

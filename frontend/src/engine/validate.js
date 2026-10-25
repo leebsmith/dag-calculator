@@ -3,7 +3,7 @@
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6];
+const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6, 7];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -113,12 +113,27 @@ function validateBoundary(artifact, id, node, dimensions, taxonomies) {
   if (node.outputs === null || typeof node.outputs !== "object") {
     throw new Error(`Boundary "${id}" must declare an "outputs" object`);
   }
+  const schemas = artifact.primitive_schemas ?? {};
   for (const [name, out] of Object.entries(node.outputs)) {
+    if (out === null || typeof out !== "object") {
+      throw new Error(`Boundary "${id}" output "${name}" must be an object`);
+    }
+    if (out.type === "collection") {
+      if (!out.item_schema || !schemas[out.item_schema]) {
+        throw new Error(
+          `Boundary "${id}" output "${name}" has unknown item_schema "${out.item_schema}"`
+        );
+      }
+      continue;
+    }
     if (out.dimension && !dimensions[out.dimension]) {
       throw new Error(`Boundary "${id}" output "${name}" has unknown dimension "${out.dimension}"`);
     }
     if (out.taxonomy && !taxonomies[out.taxonomy]) {
       throw new Error(`Boundary "${id}" output "${name}" has unknown taxonomy "${out.taxonomy}"`);
+    }
+    if (!out.dimension && !out.taxonomy && out.type !== "boolean") {
+      throw new Error(`Boundary "${id}" output "${name}" must declare a dimension, taxonomy, boolean, or collection type`);
     }
   }
 }

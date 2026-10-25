@@ -13,6 +13,7 @@ test("sanitizeUnitMode keeps valid keys and drops stale ones", () => {
     "mash.grain_temp_c": "degC",                             // valid field override
     "solver.batch.mash_thickness_l_per_kg": "qt_per_lb",     // valid dotted field
     "equipment.mash_tun_mass_kg": "lb",                      // valid selection field (mass)
+    "hop.mass": "lb",                                        // card-level presentation override
     nonexistent_dim: "x",                                    // unknown dimension -> dropped
     "mash.nope": "degF",                                     // unknown field -> dropped
     "batch.target_abv": "gal",                               // valid field, invalid unit -> dropped
@@ -25,6 +26,7 @@ test("sanitizeUnitMode keeps valid keys and drops stale ones", () => {
   assert.equal(out["mash.grain_temp_c"], "degC");
   assert.equal(out["solver.batch.mash_thickness_l_per_kg"], "qt_per_lb");
   assert.equal(out["equipment.mash_tun_mass_kg"], "lb");
+  assert.equal(out["hop.mass"], "lb");
   for (const key of ["nonexistent_dim", "mash.nope", "batch.target_abv", "volume", "batch.topology"]) {
     assert.ok(!(key in out), `expected "${key}" to be dropped`);
   }

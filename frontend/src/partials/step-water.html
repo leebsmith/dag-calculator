@@ -12,23 +12,9 @@
 
       <div class="step-grid-2col">
         <div class="form-group">
-          <label class="form-label" :for="waterPlan.source.id">
-            <span x-text="waterPlan.source.label || 'Source report'"></span>
-          </label>
-          <select
-            class="form-select"
-            :id="waterPlan.source.id"
-            :value="waterPlan.source.value"
-            @change="edit(waterPlan.source, $event.target.value)"
-          >
-            <template x-for="opt in (waterPlan.source.options || [])" :key="opt">
-              <option
-                :value="opt"
-                :selected="opt === waterPlan.source.value"
-                x-text="fmt.optionLabel(waterPlan.source.optionLabels, opt)"
-              ></option>
-            </template>
-          </select>
+          <span class="form-label" x-text="waterPlan.source.label"></span>
+          <p class="text-sm font-medium" x-text="waterPlan.source.title || '—'"></p>
+          <p class="text-xs text-muted" x-show="waterPlan.source.detail" x-text="waterPlan.source.detail"></p>
           <span class="form-hint" x-show="waterPlan.source.hint" x-text="waterPlan.source.hint"></span>
         </div>
 
@@ -62,9 +48,9 @@
             :id="waterPlan.floor.id"
             type="number"
             step="1"
-            :value="waterPlan.floor.display"
-            @input="edit(waterPlan.floor, $event.target.value)"
-            @change="commitField(waterPlan.floor)"
+            :value="inputDraft(inputKey('water', waterPlan.floor.id), waterPlan.floor.display)"
+            @input="editWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor, $event.target.value)"
+            @change="commitWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor)"
           />
           <span class="form-hint" x-show="waterPlan.floor.hint" x-text="waterPlan.floor.hint"></span>
           <span class="form-hint text-danger" x-show="waterPlan.floor.validation && waterPlan.floor.validation.holds === false">Outside the allowed range</span>
@@ -79,9 +65,9 @@
             :id="waterPlan.mashPh.id"
             type="number"
             step="0.1"
-            :value="waterPlan.mashPh.display"
-            @input="edit(waterPlan.mashPh, $event.target.value)"
-            @change="commitField(waterPlan.mashPh)"
+            :value="inputDraft(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh.display)"
+            @input="editWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh, $event.target.value)"
+            @change="commitWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh)"
           />
           <span class="form-hint" x-show="waterPlan.mashPh.hint" x-text="waterPlan.mashPh.hint"></span>
           <span class="form-hint text-danger" x-show="waterPlan.mashPh.validation && waterPlan.mashPh.validation.holds === false">Outside the allowed range</span>
@@ -125,10 +111,11 @@
                       :min="r.sourceValue ?? 0"
                       step="1"
                       class="form-input tabular-nums"
-                      :value="r.targetValue"
+                      :value="inputDraft(inputKey('ion', r.pin), r.targetValue)"
                       :aria-label="r.inputLabel"
                       :aria-invalid="r.belowSource ? 'true' : null"
-                      @input="editWaterTarget(r.pin, $event.target.value)"
+                      @input="editWaterTargetInput(r.pin, $event.target.value)"
+                      @change="commitWaterTargetInput(r.pin)"
                     />
                   </template>
                   <template x-if="!r.checked">

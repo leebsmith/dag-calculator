@@ -262,6 +262,7 @@
                 :id="'library-field-' + f.field"
                 :value="libraryFieldDisplay(f.field)"
                 @input="librarySetField(f.field, $event.target.value)"
+                @change="libraryCommitField(f.field)"
               />
             </template>
             <template x-if="f.kind === 'text'">
