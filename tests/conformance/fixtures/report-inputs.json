@@ -1,0 +1,4 @@
+{
+  "validation": ["relations", "domains", "field_domains", "collection_domains"],
+  "telemetry": ["binding", "fingerprint", "telemetry", "warnings", "notes"]
+}

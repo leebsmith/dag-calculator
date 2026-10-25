@@ -69,7 +69,7 @@ export function decorateProvenance(out, field, engine, artifact) {
   for (const src of sources) {
     let component;
     try {
-      component = engine.get(src.selection);
+      component = src.identity ? engine.identity?.[src.identity] : engine.get(src.selection);
     } catch (err) {
       reportError("producer.provenance.component", err);
       component = null;

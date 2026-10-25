@@ -58,7 +58,34 @@ export function installSnapshot(app, { artifact, master, session }) {
         conformance: this.styleConformanceReport?.() ?? null,
       };
     },
+
+    // Freeze-time report inputs: captured, never recomputed. The fingerprint is
+    // the one the engine applied, not a fresh request fingerprint — an edit in
+    // the debounce window would otherwise pair telemetry with a different solve.
+    reportInputs() {
+      const engine = session.getEngine();
+      const validation = {
+        relations: engine.relationStates(),
+        domains: engine.domainStates(),
+        field_domains: engine.fieldDomainStates(),
+        collection_domains: engine.collectionDomainStates(),
+      };
+      const telemetry = {};
+      for (const id of session.boundaryNodes) {
+        const result = engine.get(id);
+        if (!result || typeof result.fingerprint !== "string") continue;
+        const extra = this.boundaryExtras?.[id] ?? {};
+        telemetry[id] = {
+          binding: artifact.nodes[id].binding,
+          fingerprint: result.fingerprint,
+          telemetry: extra.telemetry ?? [],
+          warnings: extra.warnings ?? [],
+          notes: extra.notes ?? [],
+        };
+      }
+      return { validation, telemetry };
+    },
   });
 }
 
-export const KEYS = ["draftState", "freezePayload"];
+export const KEYS = ["draftState", "freezePayload", "reportInputs"];

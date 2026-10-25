@@ -437,7 +437,9 @@ export function limitHeadroom(envelope, oe, ae) {
 const normalizeTag = (t) => (t ?? "").trim().toLowerCase().replace(/\s+/g, "-");
 
 export function styleTagSet(style) {
-  return new Set((style?.tags ?? "").split(",").map(normalizeTag));
+  const raw = style?.tags ?? "";
+  const tags = Array.isArray(raw) ? raw : String(raw).split(",");
+  return new Set(tags.map(normalizeTag));
 }
 
 export function styleFermentation(style) {

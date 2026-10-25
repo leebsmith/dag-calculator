@@ -50,7 +50,7 @@ export const STYLE = {
   srm_max: 14,
   abv_min: 5.5,
   abv_max: 7.5,
-  tags: ["ale"],
+  tags: "ale",
 };
 
 export const WATER_SOURCE = {
