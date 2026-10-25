@@ -8,6 +8,13 @@ status: proposed
 
 # Warnings — Post-Solve Surfacing & LIFO Tracking
 
+> **See also:** [`batch-solver-correctness.md`](batch-solver-correctness.md) (D13, D16, D17, D22).
+> That plan extends this one: severity becomes artifact-declared (`blocking` on relations),
+> capacity overruns become `error` findings that do **not** block the solve but **do** block
+> freezing, and the footer count gains full enumeration alongside it. Pick **one** severity
+> vocabulary across both documents when this is built; do not ship `hard/soft` and `error/warning`
+> side by side.
+
 ## Goal
 
 A persistent footer bar that continuously displays, in LIFO order, soft

@@ -22,6 +22,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate, node reference |
 | [`docs/engine.md`](docs/engine.md) | **living** — how the reference engine works (data structures + interpreter) |
 | [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
+| [`docs/vision.md`](docs/vision.md) | **living** — why the calculator is a solver, where boundaries belong, what it refuses to do, review checklist |
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-conformance.md`](docs/style-conformance.md) | **living** — style-conformance assessor (adherence index + drift status) |
 | [`docs/report-bundle.md`](docs/report-bundle.md) | **living** — the frozen report-bundle contract: blocks, path resolution, units, nullability |

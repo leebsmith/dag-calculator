@@ -3,7 +3,7 @@ Batch solver: canonical mass and volume balance for single-strike, single-sparge
 batch sparging.
 
 This module implements the four-phase pipeline described in
-``docs/batch-math/unified-treatment.md`` and mapped in
+``docs/dag-artifacts/domain-equations.md`` §2.4–2.6 and mapped in
 ``docs/batch-math/dependency-graph.md``.
 
 Stage 1.0 scope: shared pure helpers and frozen result dataclasses only.
@@ -28,8 +28,8 @@ Black-box boundary contract:
   ``scipy.optimize.brentq``).
 * Domain: inputs failing a physical or numerical gate raise
   ``SolverValidationError`` (a ``ValueError`` subclass) carrying a ``code``.
-* Provenance: ``docs/batch-math/unified-treatment.md`` and
-  ``docs/batch-math/batch-sparge-non-linear-root-finding-v2.md``.
+* Provenance: the legacy ``docs/batch-math/`` treatment (not present in this
+  repository), consolidated in ``docs/dag-artifacts/domain-equations.md`` §2.4–2.6.
 * Scope: imports nothing from ``app.*`` except the shared equation layer
   ``app.core.utils``; the service layer maps request schemas onto the
   dataclasses defined here.
@@ -118,8 +118,7 @@ def composite_yield_fraction(grain_bill: Sequence[GrainBillEntry]) -> float:
 
     ``E = sum_i( w_i * DBFG_i * (1 - MC_i) )``
 
-    See ``unified-treatment.md`` §2 (Mash Solute Generation) and
-    ``batch-sparge-non-linear-root-finding-v2.md`` §1.1.
+    See ``domain-equations.md`` §2.4.
     """
     return sum(
         entry.w_i * entry.yield_i * (1.0 - entry.mc_i) for entry in grain_bill
@@ -131,7 +130,7 @@ def composite_moisture_fraction(grain_bill: Sequence[GrainBillEntry]) -> float:
 
     ``MC_bar = sum_i( w_i * MC_i )``
 
-    See ``batch-sparge-non-linear-root-finding-v2.md`` §1.1.
+    See ``domain-equations.md`` §2.4.
     """
     return sum(entry.w_i * entry.mc_i for entry in grain_bill)
 
@@ -186,7 +185,7 @@ def composite_volumetric_expansion(
     ``MC_bar / rho_water`` term reduces to ``MC_bar``. The parameter is kept
     explicit in the signature for clarity and future unit-system support.
 
-    See ``batch-sparge-non-linear-root-finding-v2.md`` §1.1.
+    See ``domain-equations.md`` §2.4.
     """
     return (mc_bar / RHO_WATER_METRIC) + (v_bar * eta_conv * yield_fraction)
 
@@ -196,7 +195,7 @@ def retained_volume(m_grist: float, k_abs_true: float, v_dead: float) -> float:
 
     ``V_ret = k_abs_true * M_grist + V_dead``
 
-    See ``unified-treatment.md`` §2 (Retention Kinetics).
+    See ``domain-equations.md`` §2.4.
     """
     return (k_abs_true * m_grist) + v_dead
 
@@ -206,7 +205,7 @@ def moisture_volume(m_grist: float, mc_bar: float) -> float:
 
     ``V_mc = M_grist * MC_bar / rho_water``
 
-    See ``unified-treatment.md`` §2 (Mash Solute Generation).
+    See ``domain-equations.md`` §2.4.
     """
     return (m_grist * mc_bar) / RHO_WATER_METRIC
 
@@ -216,7 +215,7 @@ def solute_displacement_volume(s_conv: float, v_bar: float) -> float:
 
     ``V_sol = v_bar * S_conv``
 
-    See ``unified-treatment.md`` §2 (Mash Solute Generation).
+    See ``domain-equations.md`` §2.4.
     """
     return v_bar * s_conv
 
@@ -228,7 +227,7 @@ def converted_extract(
 
     ``S_conv = eta_conv * E * M_grist``
 
-    See ``unified-treatment.md`` §2 (Mash Solute Generation).
+    See ``domain-equations.md`` §2.4.
     """
     return eta_conv * yield_fraction * m_grist
 
@@ -237,18 +236,18 @@ def converted_extract(
 # Phase 1: Cold-Side Inverse Resolution
 # ---------------------------------------------------------------------------
 #
-# Stage 5 reconciliation: the ASBC conversion polynomials are now sourced from
-# ``app.core.utils``, which implements the official ASBC 3rd-order (Plato -> SG)
-# and cubic (SG -> Plato) polynomials. ``unified-treatment.md`` §6's snippet
-# used simplified coefficients; ``utils.py`` is authoritative. The local
-# aliases below preserve the solver's public API without duplicating the math.
+# Stage 5 reconciliation: the ASBC conversion polynomials are sourced from
+# ``app.core.utils`` (official ASBC 3rd-order Plato -> SG and cubic SG -> Plato).
+# The artifact exposes them as the functions ``plato_to_sg`` / ``sg_to_plato``,
+# and ``utils.py`` carries the Python coefficients. The local aliases below
+# preserve the solver's public API without duplicating the math.
 
 
 def asbc_plato_to_sg(plato: float) -> float:
     """Convert degrees Plato to specific gravity (ASBC 3rd-order polynomial).
 
-    Delegates to ``app.core.utils.plato_to_sg``. See ``unified-treatment.md``
-    §6 and ``utils.py`` for the authoritative coefficients.
+    Delegates to ``app.core.utils.plato_to_sg``; the artifact function
+    ``plato_to_sg`` carries the same coefficients.
     """
     return plato_to_sg(plato)
 
@@ -256,8 +255,8 @@ def asbc_plato_to_sg(plato: float) -> float:
 def asbc_sg_to_plato(sg: float) -> float:
     """Convert specific gravity to degrees Plato (ASBC cubic polynomial).
 
-    Delegates to ``app.core.utils.sg_to_plato``. See ``unified-treatment.md``
-    §6 and ``utils.py`` for the authoritative coefficients.
+    Delegates to ``app.core.utils.sg_to_plato``; the artifact function
+    ``sg_to_plato`` carries the same coefficients.
     """
     return sg_to_plato(sg)
 
@@ -269,7 +268,7 @@ def cutaia_abv(oe_plato: float, apparent_attenuation: float) -> float:
     ``abw = (0.372 + 0.00357 * oe_plato) * (oe_plato - ae_plato)``
     ``abv = abw * (fg_sg / 0.7907)``
 
-    See ``unified-treatment.md`` §6.
+    See ``domain-equations.md`` §2.4.
     """
     ae_plato = oe_plato * (1.0 - apparent_attenuation)
 
@@ -329,7 +328,7 @@ def solve_sg_post_boil_from_abv(
         SolverValidationError: If the inputs are outside the physical domain
             or the target ABV is unreachable within the 0-40 °P bracket.
 
-    See ``unified-treatment.md`` §5 Phase 1 and §6.
+    See ``domain-equations.md`` §2.5.
     """
     if target_abv <= 0:
         raise SolverValidationError(
@@ -388,7 +387,7 @@ def kettle_cold_volume(
 
     ``V_kettle_cold = V_ferm + V_kettle_dead * (1 - f_shrink)``
 
-    See ``unified-treatment.md`` §5 Phase 2.
+    See ``domain-equations.md`` §2.5.
     """
     return v_ferm + (v_kettle_dead * (1.0 - f_shrink))
 
@@ -400,7 +399,7 @@ def post_boil_extract_target(
 
     ``S_post_boil_target = 1000 * (SG_post_boil - 1) * V_kettle_cold / gamma``
 
-    See ``unified-treatment.md`` §5 Phase 2.
+    See ``domain-equations.md`` §2.5.
     """
     return (1000.0 * (sg_post_boil - 1.0) * v_kettle_cold) / gamma
 
@@ -422,10 +421,10 @@ def pre_boil_volume(
 
     The cold-side additive losses (kettle dead space, kettle transfer loss,
     trub) are added to ``V_ferm`` before the shrinkage is reversed, per
-    ``plans/vessel-loss-model.md`` §4.2 (shrink the entire hot volume, then
+    ``domain-equations.md`` §2.6 (shrink the entire hot volume, then
     subtract the additive losses).
 
-    See ``unified-treatment.md`` §5 Phase 2.
+    See ``domain-equations.md`` §2.5.
     """
     return (
         ((v_ferm + v_kettle_dead + v_kettle_transfer + v_trub) / (1.0 - f_shrink))
@@ -471,7 +470,7 @@ def resolve_volumetric_reversal(
             outside ``[0, 1)``, or the extract target is not strictly greater
             than the late-addition extract mass.
 
-    See ``unified-treatment.md`` §5 Phase 2.
+    See ``domain-equations.md`` §2.5.
     """
     if v_ferm <= 0:
         raise SolverValidationError(
@@ -513,8 +512,8 @@ def resolve_volumetric_reversal(
 # Phase 3: Grist Mass Resolution (1D Root-Finding)
 # ---------------------------------------------------------------------------
 #
-# Stage 1.3 implements only the {V_pre_boil, R_L:G} constraint topology.
-# The {V_pre_boil, r} topology is deferred to Stage 1.4.
+# Both constraint topologies are implemented: {V_pre_boil, R_L:G} and
+# {V_pre_boil, r}. See domain-equations.md §2.5.
 
 
 def grist_mass_bracket(
@@ -527,7 +526,7 @@ def grist_mass_bracket(
     ``a = max(0.0, (S_post_boil_target - S_late_add) / E)``
     ``b = (S_post_boil_target - S_late_add) / (0.50 * E)``
 
-    See ``unified-treatment.md`` §4.
+    See ``domain-equations.md`` §2.5.
     """
     delta_s = s_post_boil_target - s_late_add
     a = max(0.0, delta_s / yield_fraction)
@@ -572,7 +571,7 @@ def grist_mass_residual(
     * ``V_sparge = V_pre_boil / (r + 1)`` (static, independent of ``M``)
     * ``V_strike`` is reversed from the tun mass balance to absorb retention.
 
-    See ``unified-treatment.md`` §4.
+    See ``domain-equations.md`` §2.5.
     """
     c_vol = (mc_bar / RHO_WATER_METRIC) + (v_bar * eta_conv * yield_fraction)
 
@@ -642,7 +641,7 @@ def solve_grist_mass(
         SolverValidationError: If the bracket is degenerate or the residual
             does not change sign across it.
 
-    See ``unified-treatment.md`` §4 and §5 Phase 3.
+    See ``domain-equations.md`` §2.5.
     """
     if topology not in ("r_l_to_g", "runoff_ratio"):
         raise SolverValidationError(
@@ -734,7 +733,7 @@ def first_runnings_volume(
 
     ``V_run1 = V_strike + V_mc + V_sol - V_ret``
 
-    See ``unified-treatment.md`` §2 (Runoff Volumetrics and Kettle Balance).
+    See ``domain-equations.md`` §2.4.
     """
     return v_strike + v_mc + v_sol - v_ret
 
@@ -744,7 +743,7 @@ def second_runnings_volume(v_pre_boil: float, v_run1: float) -> float:
 
     ``V_run2 = V_pre_boil - V_run1``
 
-    See ``unified-treatment.md`` §2 (Runoff Volumetrics and Kettle Balance).
+    See ``domain-equations.md`` §2.4.
     """
     return v_pre_boil - v_run1
 
@@ -764,8 +763,7 @@ def stage_extract_split(
     ``S_run1 = S_conv * (1 - R_f1)``
     ``S_run2 = (S_conv * R_f1) * (1 - R_f2)``
 
-    See ``unified-treatment.md`` §2 (Stage Extract Distribution and Specific
-    Gravity).
+    See ``domain-equations.md`` §2.4.
     """
     r_f1 = v_ret / (v_strike + v_mc + v_sol)
     r_f2 = v_ret / (v_sparge + v_ret)
@@ -784,7 +782,7 @@ def calculate_sg_pre_boil(
 
     ``SG_pre_boil = 1 + ((S_run1 + S_run2) * gamma) / (1000 * V_pre_boil)``
 
-    See ``unified-treatment.md`` §2 and §6.
+    See ``domain-equations.md`` §2.4.
     """
     return 1.0 + (((s_run1 + s_run2) * gamma) / (1000.0 * v_pre_boil))
 
@@ -856,7 +854,7 @@ def resolve_stage_cascade(
 
     ``V_drain = V_pre_boil + mash_transfer_loss``: the mash tun must drain the
     kettle target plus the volume retained in its transfer hose/pump, per
-    ``plans/vessel-loss-model.md`` §4.1.
+    ``domain-equations.md`` §2.6.
 
     Args:
         m_grist: Converged dry grist mass, in kg (from Phase 3).
@@ -881,7 +879,7 @@ def resolve_stage_cascade(
         SolverValidationError: If ``topology`` is unknown or the intensive
             value is non-positive.
 
-    See ``unified-treatment.md`` §5 Phase 4.
+    See ``domain-equations.md`` §2.5.
     """
     if topology not in ("r_l_to_g", "runoff_ratio"):
         raise SolverValidationError(
@@ -987,7 +985,7 @@ def resolve_stage_cascade(
 #
 # The HLT holds water, not wort, so this budget never enters the extract mass
 # balance. It constrains how much liquor the HLT can deliver as sparge water.
-# See ``plans/vessel-loss-model.md`` §4.4.
+# See ``domain-equations.md`` §2.6.
 
 
 @dataclass(frozen=True)
@@ -1049,7 +1047,7 @@ def resolve_hlt_water_budget(
         SolverValidationError: If the top-up target exceeds the HLT's maximum
             capacity (``HLT_TOO_SMALL``).
 
-    See ``plans/vessel-loss-model.md`` §4.4.
+    See ``domain-equations.md`` §2.6.
     """
     v_hlt_debt = hlt_dead_space_l + hlt_transfer_loss_l
     v_hlt_after_strike = hlt_starting_volume_l - v_strike_drawn
@@ -1110,8 +1108,7 @@ class BatchSolverInput:
             the HLT water budget (top-up and deliverable sparge volume), not
             by the extract mass balance.
         hlt_dead_space_l: Liquor trapped below the HLT drain port, in liters.
-            Permanently undeliverable debt (see ``plans/vessel-loss-model.md``
-            §4.4.1).
+            Permanently undeliverable debt (see ``domain-equations.md`` §2.6).
         hlt_transfer_loss_l: Liquor permanently held in the HLT hose and pump,
             in liters. Permanently undeliverable debt.
         hlt_coil_floor_l: Minimum HLT volume required to submerge the HERMS
@@ -1197,7 +1194,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
     Raises:
         SolverValidationError: Propagated from any phase's validation gate.
 
-    See ``unified-treatment.md`` §5.
+    See ``domain-equations.md`` §2.5.
     """
     validate_grain_bill_normalization(inputs.grain_bill)
     yield_fraction = composite_yield_fraction(inputs.grain_bill)

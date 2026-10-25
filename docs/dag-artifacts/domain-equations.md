@@ -9,6 +9,15 @@ sweep verifies against the known-good code.
 > math derives from `docs/good-enough-water-chemistry-calculator.md` and
 > `scripts/water-chemistry-module.py` (Bru'n Water port). The color math derives
 > from `docs/srm-ebc-and-lovibond-reference.md`.
+>
+> **Provenance (batch).** The batch math was originally specified in the legacy
+> `docs/batch-math/` treatment (`unified-treatment.md`,
+> `batch-sparge-non-linear-root-finding-v2.md`) and `plans/vessel-loss-model.md`
+> in the predecessor repository. Those files are **not** vendored here; §2.4–2.7
+> below consolidates the parts that remain authoritative, and the solver's
+> docstrings point here rather than at them. Two of their statements are
+> **superseded** — the absorption coefficient (D15) and the transfer-loss
+> accounting (D12) in [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md).
 
 ---
 
@@ -136,6 +145,138 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 `INVALID_FERM_VOLUME` · `INVALID_SHRINKAGE` · `EXTRACT_TARGET_NON_POSITIVE` ·
 `INVALID_YIELD` · `DEGENERATE_BRACKET` · `BRACKET_NO_SIGN_CHANGE` ·
 `UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL`.
+
+### 2.4 Derivation — two-stage batch lauter
+
+Single-strike, single-sparge extraction is modelled as two equilibrium stages. All
+symbols are declared as artifact constants; none are restated numerically here.
+
+Mash generation (`E` is the dry-basis composite yield, already net of grain moisture):
+
+    S_conv = eta_conv · E · M
+    V_mc   = M · MC_bar / rho_water
+    V_sol  = v_bar · S_conv
+    V_ret  = k_abs_true · M + V_dead
+
+Retention and lauter efficiency:
+
+    R_f1     = V_ret / (V_strike + V_mc + V_sol)
+    R_f2     = V_ret / (V_sparge + V_ret)
+    eta_lauter = 1 - R_f1 · R_f2
+
+so the kettle receives
+
+    S_post = S_conv · (1 - R_f1 · R_f2) + S_late
+
+Runnings, volumes, and gravities:
+
+    V_run1 = V_strike + V_mc + V_sol - V_ret
+    V_run2 = V_sparge
+    V_pre  = V_run1 + V_run2
+    S_run1 = S_conv · (1 - R_f1)
+    S_run2 = S_conv · R_f1 · (1 - R_f2)
+    SG_pre = 1 + (S_run1 + S_run2) · gamma / (1000 · V_pre)
+
+Cold-side reversal (Phases 1–2). `SG_post` is the Cutaia inversion of the target ABV at
+the batch attenuation, computed through the artifact functions `cutaia_abv_plato`,
+`sg_to_plato` and `plato_to_sg`:
+
+    V_kettle_cold  = V_ferm + V_kettle_dead · (1 - f_shrink)
+    S_post_target  = 1000 · (SG_post - 1) · V_kettle_cold / gamma
+    V_pre          = (V_ferm + V_kettle_dead + V_kettle_transfer + V_trub) / (1 - f_shrink)
+                     + delta_v_evap - v_bar · S_late
+
+| Symbol | Constant |
+|---|---|
+| `k_abs_true` | `k_abs_true` (absorption; value pending D15) |
+| `v_bar` | `v_bar` |
+| `gamma` | `sucrose_yield_ldk` |
+| `rho_water` | `rho_water` |
+| `f_shrink` | `default_shrinkage_fraction` |
+
+### 2.5 Constraint topologies and the residual
+
+The liquid subsystem has two degrees of freedom, so it needs two constraints, at least one
+of them extensive. The solver consumes `{V_pre, intensive}`; `V_ferm` is the user input and
+is reversed into `V_pre` first. `r = V_run1 / V_sparge`, so equal runnings is `r = 1` —
+where lauter efficiency (`eta_lauter` above) is at its maximum, because both retention
+fractions are minimised there.
+
+    {V_pre, R_L:G}  V_strike = L:G · M;  V_run1 from the tun balance;
+                    V_sparge = V_drain - V_run1
+    {V_pre, r}      V_sparge = V_drain / (r + 1)          (static)
+                    V_run1   = V_drain - V_sparge         (static)
+                    V_strike = V_run1 + V_ret - V_mc - V_sol   (reversed post-solve)
+
+`V_drain = V_pre + mash_transfer_loss` — the tun must yield the kettle target plus the
+volume held in its transfer plumbing (§2.6).
+
+The residual Brent's method solves, in cleared-denominator form:
+
+    c_vol = MC_bar / rho_water + v_bar · eta_conv · E
+    D1    = V_strike + c_vol · M
+    D2    = V_sparge + V_dead + k_abs_true · M
+    P(M)  = (eta_conv · E · M) · (D1 · D2 - V_ret²)
+            - (S_post_target - S_late) · D1 · D2
+
+Bracket:
+
+    a = max(0, (S_post_target - S_late) / E)
+    b = (S_post_target - S_late) / (0.5 · E)
+
+**Identity — do not "simplify" it away.** Under `{V_pre, r}`, `V_run1` and `V_sparge` are
+static, so
+
+    D1 = V_strike + c_vol · M = (V_run1 + V_ret - V_mc - V_sol) + (V_mc + V_sol)
+       = V_run1 + V_ret
+
+exactly. Moisture and displaced extract therefore **cancel in the residual** — the runoff
+solve is insensitive to them, unlike `{V_pre, R_L:G}` where `D1 = M · (L:G + c_vol)`. They
+must nonetheless stay in the strike reversal, because the reported thickness is
+`V_strike / M` and *is* sensitive to them. Dropping them shifts thickness by `c_vol`
+(≈ 0.39 L/kg for the reference grist), which at small `r` crosses the absorption floor:
+at `r = 0.001`, 5% ABV, 20 L the coded thickness is 1.348 L/kg and the "simplified" one is
+1.741 L/kg, against a floor of 1.67. Two guards pin this: `D1` explicit equals `D1`
+simplified, and `thickness` equals `(V_run1 + V_ret - V_mc - V_sol) / M`.
+
+### 2.6 Loss taxonomy and volume accounting
+
+| Class | Example | Property | Enters |
+|---|---|---|---|
+| Dead space | mash tun below the false bottom; kettle below the drain | vessel geometry | extract and water |
+| Transfer loss | hose and pump after a vessel | plumbing | extract and water |
+| Trub | kettle, post-boil | process / recipe | extract |
+| Thermal shrinkage | kettle to pitching temperature | multiplicative | volume only |
+
+HLT dead space and HLT transfer loss are **water debt, not extract loss**: they never enter
+the wort mass balance, only the deliverable sparge volume and salt-dosing volume.
+
+Mash tun to kettle: the kettle receives the mash liquid minus absorption, dead space and
+transfer loss. Transfer loss therefore carries **wort, not water** — it removes extract as
+well as volume. The solver writes this as `V_drain = V_pre + mash_transfer_loss`, and the
+concentration denominator must be the drain volume. Phase 3 and Phase 4 must use the same
+drain volume (see §2.7).
+
+Kettle to fermenter: shrink the entire hot volume first, then subtract the additives.
+
+    V_packaged = V_post · (1 - f_shrink) - V_trub - V_kettle_dead - V_kettle_transfer
+
+Applying shrinkage to the net volume instead would incorrectly shrink the losses themselves.
+
+### 2.7 Pending corrections
+
+This derivation is the intended model. The implementation currently deviates in four ways,
+each decided in [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md):
+
+| Deviation | Decision |
+|---|---|
+| Absorption constant is 0.200 gal/lb; the per-rig field is declared but unused | D15 |
+| Phase 3 solves against `V_pre`; Phase 4 builds the cascade against `V_drain` — the mass is not compensated for the extract carried out by the loss | D12 |
+| No physical floor on the *derived* thickness in `{V_pre, r}` | D21 |
+| Tun capacity declared but unchecked; no upper thickness ceiling | D14, D3/D4 |
+
+Each correction lands here in the same commit as its code, per the atomic-docs rule in
+`AGENTS.md`.
 
 ---
 

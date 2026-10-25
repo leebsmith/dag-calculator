@@ -17,6 +17,9 @@ seam, solvers, Firebase auth, and Firestore persistence.
   reconciled UI model) and `plans/adsco-contract.md` (reconciled solver decisions)
   are living too. `docs/historical/` and the vendored `docs/adsco/*` specs are
   **frozen** — do not maintain.
+- **`docs/vision.md` is the intent layer**: the inversion thesis, why a boundary
+  sits where it does, what the tool refuses to do, and the review checklist. It
+  constrains design decisions; it never overrides the artifact.
 
 ## Layout
 
