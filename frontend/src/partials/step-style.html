@@ -73,26 +73,26 @@
               <line
                 x-show="stylePreview.ray"
                 class="extract-ray"
-                :x1="stylePreview.ray?.x1"
-                :y1="stylePreview.ray?.y1"
-                :x2="stylePreview.ray?.x2"
-                :y2="stylePreview.ray?.y2"
+                :x1="stylePreview.ray?.x1 ?? 0"
+                :y1="stylePreview.ray?.y1 ?? 0"
+                :x2="stylePreview.ray?.x2 ?? 0"
+                :y2="stylePreview.ray?.y2 ?? 0"
               />
               <line
                 x-show="stylePreview.advised"
                 class="extract-advised"
                 :x1="stylePreview.marker.x"
                 :y1="stylePreview.marker.y"
-                :x2="stylePreview.advised?.x"
-                :y2="stylePreview.advised?.y"
+                :x2="stylePreview.advised?.x ?? 0"
+                :y2="stylePreview.advised?.y ?? 0"
               />
               <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
               <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
               <circle
                 x-show="stylePreview.advised"
                 class="extract-advised-marker"
-                :cx="stylePreview.advised?.x"
-                :cy="stylePreview.advised?.y"
+                :cx="stylePreview.advised?.x ?? 0"
+                :cy="stylePreview.advised?.y ?? 0"
                 r="2.5"
               />
             </svg>
