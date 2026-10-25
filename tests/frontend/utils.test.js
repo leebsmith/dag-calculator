@@ -12,6 +12,7 @@ import {
   displayOrDash,
   fieldOr,
   firstNonEmptyString,
+  safeFilename,
   formatColumnHeader,
   formatDate,
   formatFieldLabel,
@@ -350,4 +351,14 @@ test("formatDate renders a short date or a dash", () => {
     "Oct 21, 2026"
   );
   assert.equal(formatDate(Date.UTC(2026, 9, 21, 12) / 1000, { locale: "not-a-locale" }).length > 0, true);
+});
+
+test("safeFilename slugifies a download name", () => {
+  assert.equal(safeFilename("House Pale"), "house-pale.json");
+  assert.equal(safeFilename("House Pale / v2", "report-bundle.json"), "house-pale-v2.report-bundle.json");
+  assert.equal(safeFilename("  ---  "), "batch.json");
+  assert.equal(safeFilename(null), "batch.json");
+  assert.equal(safeFilename(42), "batch.json");
+  assert.equal(safeFilename("Saison", ".json"), "saison.json");
+  assert.equal(safeFilename("Saison", ""), "saison.json");
 });

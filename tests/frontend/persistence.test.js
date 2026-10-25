@@ -74,6 +74,14 @@ function fakeClient() {
     async freezeBatch(id, payload) {
       calls.push({ op: "freeze", id, payload });
     },
+    async getReportBundle(id) {
+      calls.push({ op: "report-bundle", id });
+      return { batch: { id }, content_hash: "sha256:stored" };
+    },
+    async previewReportBundle(id, payload) {
+      calls.push({ op: "preview-bundle", id, payload });
+      return { batch: { id, status: "draft", frozen_at: null } };
+    },
   };
 }
 
@@ -349,6 +357,42 @@ test("freezeActive refuses while a boundary solve is pending", async () => {
 
   await assert.rejects(() => persistence.freezeActive(), /boundary solve is pending/);
   assert.equal(client.calls.filter((c) => c.op === "freeze").length, 0);
+});
+
+test("reportBundleForActive previews a draft and reads a frozen bundle", async () => {
+  const { client } = setup();
+  await persistence.createUnsavedDraft({ name: "Saison" });
+  await persistence.flushSave();
+
+  const preview = await persistence.reportBundleForActive();
+  assert.equal(preview.name, "Saison");
+  assert.equal(preview.bundle.batch.status, "draft");
+  const call = client.calls.find((c) => c.op === "preview-bundle");
+  assert.ok(call);
+  assert.deepEqual(call.payload.report_inputs, {
+    validation: { relations: [], domains: [], field_domains: [], collection_domains: [] },
+    telemetry: {},
+  });
+  assert.deepEqual(call.payload.catalog, { dimensions: {}, nodes: {} });
+
+  const frozen = await persistence.reportBundleFor("frozen-1", "House Pale");
+  assert.deepEqual(frozen, {
+    name: "House Pale",
+    bundle: { batch: { id: "frozen-1" }, content_hash: "sha256:stored" },
+  });
+  assert.ok(client.calls.some((c) => c.op === "report-bundle" && c.id === "frozen-1"));
+});
+
+test("reportBundleForActive refuses while a boundary solve is pending", async () => {
+  const { app } = setup();
+  await persistence.createUnsavedDraft();
+  await persistence.flushSave();
+  app.boundaryPending = true;
+
+  await assert.rejects(
+    () => persistence.reportBundleForActive(),
+    /boundary solve is pending/
+  );
 });
 
 test("list, restore, and deletePermanent delegate to the client", async () => {

@@ -502,3 +502,14 @@ def test_freeze_after_trash_still_snapshots_with_trashed_false():
     assert frozen["status"] == "frozen"
     assert frozen["trashed"] is False
     assert frozen["parent_batch_id"] == "b1"
+
+
+def test_get_report_bundle_is_path_scoped_and_only_exists_after_freeze():
+    store, db = repo()
+    store.create("u1", "b1", {"name": "A"})
+    assert store.get_report_bundle("u1", "b1") is None
+
+    frozen, _ = store.freeze("u1", "b1", {}, bundle_factory=bundle_stub)
+
+    assert store.get_report_bundle("u1", frozen["id"]) == {"batch": {"id": frozen["id"]}}
+    assert store.get_report_bundle("u2", frozen["id"]) is None

@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException
 from pydantic import ValidationError
 
 from app.repositories.batch_repo import BatchRepoDep, BatchRepository
 from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
+from app.schemas.report_bundle import ReportBundle
 from app.services.report_bundle_service import build_report_bundle
 
 
@@ -64,6 +65,58 @@ class BatchService:
         if reason == "frozen":
             raise HTTPException(status_code=409, detail="Already frozen")
         return BatchRecord(**record)
+
+    def report_bundle(self, uid: str, batch_id: str) -> dict[str, Any]:
+        """Return the immutable bundle stored beside a frozen batch."""
+        record = self._repo.get(uid, batch_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        if record.get("status") != "frozen":
+            raise HTTPException(
+                status_code=409,
+                detail="Drafts have no report bundle; request a preview instead",
+            )
+        stored = self._repo.get_report_bundle(uid, batch_id)
+        if stored is None:
+            raise HTTPException(
+                status_code=409,
+                detail="This frozen batch predates report bundles; fork and re-freeze it",
+            )
+        try:
+            return ReportBundle.model_validate(stored).model_dump(mode="json")
+        except ValidationError as exc:
+            raise HTTPException(
+                status_code=500, detail=f"Stored report bundle is invalid: {exc}"
+            ) from exc
+
+    def preview_report_bundle(
+        self, uid: str, batch_id: str, payload: FreezePayload
+    ) -> dict[str, Any]:
+        """Assemble a bundle for a draft without persisting a frozen batch."""
+        record = self._repo.get(uid, batch_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        if record.get("status") == "frozen":
+            raise HTTPException(
+                status_code=409, detail="Frozen batches serve their stored bundle"
+            )
+        preview = {
+            **record,
+            "status": "draft",
+            "frozen_at": None,
+            "parent_batch_id": None,
+            "valuation": payload.valuation,
+            "provenance": payload.provenance,
+            "conformance": payload.conformance,
+        }
+        try:
+            return build_report_bundle(
+                frozen_id=record["id"], record=preview, payload=payload
+            )
+        except ValidationError as exc:
+            raise HTTPException(
+                status_code=422, detail=f"Report bundle rejected: {exc}"
+            ) from exc
 
     def set_trashed(self, uid: str, batch_id: str, trashed: bool) -> BatchRecord:
         record = self._repo.set_trashed(uid, batch_id, trashed)

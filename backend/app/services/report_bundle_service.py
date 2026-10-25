@@ -44,8 +44,8 @@ def build_report_bundle(
         "batch": {
             "id": frozen_id,
             "name": record.get("name", "Untitled"),
-            "status": "frozen",
-            "frozen_at": record["frozen_at"],
+            "status": record.get("status", "frozen"),
+            "frozen_at": record.get("frozen_at"),
             "parent_batch_id": record.get("parent_batch_id"),
             "identity": record.get("identity", {}),
         },

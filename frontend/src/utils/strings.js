@@ -64,3 +64,22 @@ export function optionLabel(labels, value) {
   }
   return value;
 }
+
+/**
+ * Filesystem-safe download name: lowercase, alphanumeric runs joined by `-`.
+ *
+ * @param {unknown} name
+ * @param {string} [suffix="json"]
+ * @returns {string} e.g. `house-pale.json`; `batch.json` when the name is unusable.
+ * @note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.
+ */
+export function safeFilename(name, suffix = "json") {
+  const slug = String(typeof name === "string" ? name : "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  const extension = String(suffix ?? "")
+    .replace(/^\.+/, "")
+    .replace(/[^a-z0-9.]+/gi, "-");
+  return `${slug || "batch"}.${extension || "json"}`;
+}

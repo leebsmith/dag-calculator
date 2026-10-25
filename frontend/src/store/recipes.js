@@ -6,6 +6,8 @@
 // injected `anchor` (popover placement), which keeps it testable in node while
 // `main.js` supplies the viewport-aware implementation.
 
+import { downloadJSON } from "../adapters/download.js";
+import { safeFilename } from "../utils.js";
 import {
   SCOPE_LABELS,
   batchesForScope,
@@ -14,7 +16,12 @@ import {
   parentLabel,
 } from "./recipeList.js";
 
-export function createRecipesStore({ persistence, getSetup, anchor = () => "" } = {}) {
+export function createRecipesStore({
+  persistence,
+  getSetup,
+  anchor = () => "",
+  download = downloadJSON,
+} = {}) {
   return {
     view: "batches", // "batches" | "editor"
     scope: "all", // "all" | "drafts" | "frozen" | "trash"
@@ -277,6 +284,20 @@ export function createRecipesStore({ persistence, getSetup, anchor = () => "" } 
     async freeze() {
       await persistence.freezeActive();
       await this.refresh();
+    },
+
+    async downloadActiveBundle() {
+      const file = await persistence.reportBundleForActive();
+      if (!file) return;
+      download(file.bundle, safeFilename(file.name, "report-bundle.json"));
+    },
+
+    async downloadRowBundle() {
+      const batch = this.rowMenu;
+      this.closeRowMenu();
+      if (!batch || batch.status !== "frozen") return;
+      const file = await persistence.reportBundleFor(batch.id, batch.name);
+      download(file.bundle, safeFilename(file.name, "report-bundle.json"));
     },
   };
 }

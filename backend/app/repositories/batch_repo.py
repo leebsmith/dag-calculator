@@ -68,6 +68,10 @@ class BatchRepository:
             return None
         return self._record(uid, batch_id, doc.to_dict())
 
+    def get_report_bundle(self, uid: str, batch_id: str) -> dict[str, Any] | None:
+        doc = self._bundles(uid).document(batch_id).get()
+        return doc.to_dict() if doc.exists else None
+
     def create(self, uid: str, batch_id: str, data: dict[str, Any]) -> dict[str, Any]:
         now = time.time()
         record = {

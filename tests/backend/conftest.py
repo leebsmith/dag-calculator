@@ -136,6 +136,12 @@ class FakeBatchRepo:
         r = self._docs.get(batch_id)
         return r if r and r["uid"] == uid else None
 
+    def get_report_bundle(self, uid, batch_id):
+        r = self._docs.get(batch_id)
+        if not r or r["uid"] != uid:
+            return None
+        return self.bundles.get(batch_id)
+
     def create(self, uid, batch_id, data):
         now = self._now()
         r = {

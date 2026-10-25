@@ -42,3 +42,14 @@ export function freezeBatch(batchId, payload) {
 export function getBatch(batchId) {
   return requestJSON(`/batches/${encodeURIComponent(batchId)}`);
 }
+
+export function getReportBundle(batchId) {
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`);
+}
+
+export function previewReportBundle(batchId, payload) {
+  return requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`, {
+    method: "POST",
+    body: payload,
+  });
+}

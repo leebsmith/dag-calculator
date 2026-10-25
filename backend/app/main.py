@@ -221,6 +221,29 @@ def freeze_batch(
     return service.freeze_batch(user["uid"], batch_id, payload)
 
 
+@app.get("/batches/{batch_id}/report-bundle")
+def get_report_bundle(
+    batch_id: str,
+    user: AllowedUser,
+    service: BatchServiceDep,
+) -> dict:
+    """Download the immutable bundle written beside a frozen batch."""
+    validate_doc_id(batch_id)
+    return service.report_bundle(user["uid"], batch_id)
+
+
+@app.post("/batches/{batch_id}/report-bundle")
+def preview_report_bundle(
+    batch_id: str,
+    payload: FreezePayload,
+    user: AllowedUser,
+    service: BatchServiceDep,
+) -> dict:
+    """Assemble a draft's bundle for download without freezing the batch."""
+    validate_doc_id(batch_id)
+    return service.preview_report_bundle(user["uid"], batch_id, payload)
+
+
 @app.get("/batches/{batch_id}", response_model=BatchRecord)
 def get_batch(
     batch_id: str,

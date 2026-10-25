@@ -68,7 +68,7 @@ class BatchHeader(BundleModel):
     id: str
     name: str
     status: Literal["draft", "frozen"] = "frozen"
-    frozen_at: float
+    frozen_at: float | None = None
     parent_batch_id: str | None = None
     identity: dict[str, dict[str, Any]]
 

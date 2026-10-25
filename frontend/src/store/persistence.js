@@ -189,6 +189,28 @@ export async function fork(frozenId) {
   return created;
 }
 
+// Report bundle for the active batch: the stored fact when frozen, an
+// unpersisted preview when drafting. Refuses mid-solve, like freeze.
+export async function reportBundleForActive() {
+  if (!active) return null;
+  if (app.boundaryPending) {
+    throw new Error("Cannot build a report bundle while a boundary solve is pending");
+  }
+  const bundle =
+    active.status === "frozen"
+      ? await client.getReportBundle(active.id)
+      : await client.previewReportBundle(active.id, {
+          ...app.freezePayload(),
+          report_inputs: app.reportInputs(),
+          catalog: app.reportCatalog(),
+        });
+  return { name: active.name, bundle };
+}
+
+export async function reportBundleFor(id, name) {
+  return { name, bundle: await client.getReportBundle(id) };
+}
+
 export async function freezeActive() {
   if (!active || active.status !== "draft") return;
   if (app.boundaryPending) {

@@ -40,6 +40,8 @@ function fakePersistence(overrides = {}) {
     restore: record("restore"),
     deletePermanent: record("deletePermanent"),
     freezeActive: record("freezeActive"),
+    reportBundleForActive: async () => ({ name: "Active batch", bundle: { id: "active" } }),
+    reportBundleFor: async (id, name) => ({ name, bundle: { id } }),
     flushSave: record("flushSave"),
     saveNow: record("saveNow"),
     resolveConflictByReload: record("reload"),
@@ -51,9 +53,13 @@ function setupStub() {
   return { opened: 0, openModal() { this.opened += 1; } };
 }
 
-function makeStore(persistence = fakePersistence(), anchor = () => "right:0px; top:8px") {
+function makeStore(
+  persistence = fakePersistence(),
+  anchor = () => "right:0px; top:8px",
+  download = () => {}
+) {
   const setup = setupStub();
-  const store = createRecipesStore({ persistence, getSetup: () => setup, anchor });
+  const store = createRecipesStore({ persistence, getSetup: () => setup, anchor, download });
   return { store, persistence, setup };
 }
 
@@ -400,4 +406,43 @@ test("canCreateBatch follows the setup prerequisites", () => {
   const setup = { prerequisiteStatus: () => ({ ready: false, missing: ["styles"] }) };
   const store = createRecipesStore({ persistence: fakePersistence(), getSetup: () => setup });
   assert.equal(store.canCreateBatch, false);
+});
+
+
+test("downloadActiveBundle hands the bundle and a safe filename to the downloader", async () => {
+  const files = [];
+  const persistence = fakePersistence({
+    reportBundleForActive: async () => ({
+      name: "House Pale / v2",
+      bundle: { id: "active" },
+    }),
+  });
+  const { store } = makeStore(persistence, () => "", (bundle, filename) =>
+    files.push({ bundle, filename })
+  );
+
+  await store.downloadActiveBundle();
+
+  assert.deepEqual(files, [
+    { bundle: { id: "active" }, filename: "house-pale-v2.report-bundle.json" },
+  ]);
+});
+
+test("downloadRowBundle only serves frozen rows and closes the menu", async () => {
+  const files = [];
+  const { store } = makeStore(fakePersistence(), () => "", (bundle, filename) =>
+    files.push({ bundle, filename })
+  );
+
+  store.rowMenu = { id: "frozen", name: "Saison", status: "draft" };
+  await store.downloadRowBundle();
+  assert.deepEqual(files, []);
+  assert.equal(store.rowMenu, null);
+
+  store.rowMenu = { id: "frozen", name: "Saison", status: "frozen" };
+  await store.downloadRowBundle();
+  assert.deepEqual(files, [
+    { bundle: { id: "frozen" }, filename: "saison.report-bundle.json" },
+  ]);
+  assert.equal(store.rowMenu, null);
 });

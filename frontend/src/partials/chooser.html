@@ -182,6 +182,14 @@
       <button
         type="button"
         class="landing-menu-item"
+        x-show="$store.recipes.rowMenu.status === 'frozen'"
+        @click="$store.recipes.downloadRowBundle()"
+      >
+        Download bundle
+      </button>
+      <button
+        type="button"
+        class="landing-menu-item"
         @click="$store.recipes.startRename()"
       >
         Rename

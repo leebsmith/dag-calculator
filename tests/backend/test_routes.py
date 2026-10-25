@@ -335,3 +335,82 @@ def test_malformed_batch_id_returns_404(client):
     assert client.get("/batches/..").status_code == 404
     assert client.get("/batches/" + "a" * 65).status_code == 404
     assert client.get("/batches/bad!id").status_code == 404
+
+
+def test_report_bundle_requires_a_frozen_batch(client):
+    created = client.put("/batches/b1", json=draft_body()).json()
+
+    response = client.get(f"/batches/{created['id']}/report-bundle")
+
+    assert response.status_code == 409
+    assert "preview" in response.json()["detail"]
+
+
+def test_report_bundle_missing_batch_is_404(client):
+    assert client.get("/batches/missing/report-bundle").status_code == 404
+
+
+def test_report_bundle_returns_the_stored_bundle(client):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    payload = freeze_payload({"batch.target_abv": 5.5}).model_dump(mode="json")
+    frozen = client.post(f"/batches/{created['id']}/freeze", json=payload).json()
+
+    response = client.get(f"/batches/{frozen['id']}/report-bundle")
+
+    assert response.status_code == 200
+    bundle = response.json()
+    assert bundle["batch"]["id"] == frozen["id"]
+    assert bundle["batch"]["status"] == "frozen"
+    assert bundle["batch"]["frozen_at"] == frozen["frozen_at"]
+    assert bundle["content_hash"].startswith("sha256:")
+
+
+def test_report_bundle_409_when_the_frozen_batch_predates_bundles(client, service):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    payload = freeze_payload().model_dump(mode="json")
+    frozen = client.post(f"/batches/{created['id']}/freeze", json=payload).json()
+    service._repo.bundles.pop(frozen["id"])
+
+    response = client.get(f"/batches/{frozen['id']}/report-bundle")
+
+    assert response.status_code == 409
+    assert "predates report bundles" in response.json()["detail"]
+
+
+def test_report_bundle_preview_does_not_persist(client, service):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    before = set(service._repo._docs)
+
+    payload = freeze_payload({"batch.target_abv": 5.5}).model_dump(mode="json")
+    response = client.post(f"/batches/{created['id']}/report-bundle", json=payload)
+
+    assert response.status_code == 200
+    bundle = response.json()
+    assert bundle["batch"]["id"] == created["id"]
+    assert bundle["batch"]["status"] == "draft"
+    assert bundle["batch"]["frozen_at"] is None
+    assert bundle["batch"]["parent_batch_id"] is None
+    assert bundle["state"]["valuation"] == {"batch.target_abv": 5.5}
+    assert set(service._repo._docs) == before
+    assert service._repo.bundles == {}
+
+
+def test_report_bundle_preview_rejects_a_frozen_batch(client):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    payload = freeze_payload().model_dump(mode="json")
+    frozen = client.post(f"/batches/{created['id']}/freeze", json=payload).json()
+
+    response = client.post(f"/batches/{frozen['id']}/report-bundle", json=payload)
+
+    assert response.status_code == 409
+    assert "stored bundle" in response.json()["detail"]
+
+
+def test_report_bundle_preview_rejects_an_unsealable_bundle(client):
+    created = client.put("/batches/b1", json=draft_body()).json()
+    payload = freeze_payload({"nope": 1}).model_dump(mode="json")
+
+    response = client.post(f"/batches/{created['id']}/report-bundle", json=payload)
+
+    assert response.status_code == 422
+    assert "undeclared nodes" in response.json()["detail"]
