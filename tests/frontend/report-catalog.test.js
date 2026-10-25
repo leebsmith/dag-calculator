@@ -126,3 +126,14 @@ test("the app exposes the same catalog through the snapshot installer", async ()
   await app.boot();
   assert.deepEqual(app.reportCatalog(), catalog);
 });
+
+test("the catalog covers every node in the freeze valuation", async () => {
+  const app = createTestApp();
+  await app.boot();
+  app.setRoot("batch.target_ibu", 42);
+  const { valuation } = app.freezePayload();
+  const nodes = app.reportCatalog().nodes;
+
+  const missing = Object.keys(valuation).filter((id) => !(id in nodes));
+  assert.deepEqual(missing, [], `uncovered valuation nodes: ${missing.join(", ")}`);
+});

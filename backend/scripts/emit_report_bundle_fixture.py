@@ -94,31 +94,13 @@ RECORD = {
         "solver.batch": {
             "sg_post_boil": 1.055,
             "v_pre_boil": 24.0,
-            "m_grist": 4.7,
-            "cascade.v_strike": 14.0,
-            "cascade.v_sparge": 14.0,
-            "cascade.sg_pre_boil": 1.048,
-            "cascade.v_post_boil": 21.0,
-            "max_achievable_abv": 10.0,
-            "aa_wort": 0.76,
-            "aa_batch": 0.75,
         },
         "solver.water": {
             "strategy": "CALCIUM_FLOOR",
             "prescription.predicted_mash_ph": 5.42,
-            "prescription.residual_hlt_water_l": 0.0,
-            "mash_additions.gypsum_kg": 0.002,
-            "mash_additions.acid_l": 0.0005,
             "total_added_salt_mass_g": 3.0,
-            "added_mineral_tds_ppm": 150.0,
         },
-        "solver.hops": {
-            "boil_rows": [{"minutes": 60.0, "ibu": 30.0, "mass_kg": 0.024}],
-            "whirlpool_rows": [],
-            "boil_mass_kg": 0.024,
-            "whirlpool_mass_kg": 0.0,
-            "total_mass_kg": 0.024,
-        },
+        "solver.hops": {"total_mass_kg": 0.024},
     },
 }
 
@@ -192,9 +174,42 @@ PAYLOAD = FreezePayload(
             "mash.rests.use_temp_c": NodePresentation(
                 label="Temp", dimension="temperature", unit="degC", decimals=1
             ),
+            "solver.batch": NodePresentation(label="Batch solver"),
+            "solver.batch.sg_post_boil": NodePresentation(
+                label="Post-boil gravity", dimension="gravity", unit="SG", decimals=3
+            ),
+            "solver.batch.v_pre_boil": NodePresentation(
+                label="Pre-boil volume", dimension="volume", unit="L", decimals=1
+            ),
             "solver.batch.cascade.v_strike": NodePresentation(
                 label="Strike Volume", dimension="volume", unit="L", decimals=1
             ),
+            "batch.realized_abv": NodePresentation(
+                label="Realized ABV", dimension="abv", unit="pct", decimals=1
+            ),
+            "mash.rests": NodePresentation(label="Mash rests"),
+            "mash.rests.rest_id": NodePresentation(label="Step"),
+            "mash.rests.duration_min": NodePresentation(
+                label="Time", dimension="time", unit="min", decimals=0
+            ),
+            "mash.rests.enabled": NodePresentation(label="Enabled"),
+            "solver.water": NodePresentation(label="Water solver"),
+            "solver.water.strategy": NodePresentation(
+                label="Strategy",
+                options=[
+                    "FLAVOR",
+                    "CALCIUM_FLOOR",
+                    "OPTIMIZE",
+                    "AUTO",
+                    "HYBRID",
+                    "BASELINE",
+                    "CUSTOM",
+                ],
+            ),
+            "solver.water.total_added_salt_mass_g": NodePresentation(
+                label="Added salt mass", dimension="mass", unit="g", decimals=1
+            ),
+            "solver.hops": NodePresentation(label="Hop solver"),
             "solver.water.prescription.predicted_mash_ph": NodePresentation(
                 label="Predicted mash pH", dimension="ph", unit="pH", decimals=2
             ),

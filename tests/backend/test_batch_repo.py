@@ -168,6 +168,10 @@ def user_bundles(db, uid):
     return db.bundles.setdefault(uid, FakeCollection()).docs
 
 
+def bundle_stub(frozen_id, record):
+    return {"batch": {"id": frozen_id}}
+
+
 def test_create_stamps_status_and_timestamps_under_the_user_path():
     store, db = repo()
 
@@ -289,6 +293,7 @@ def test_freeze_creates_a_linked_immutable_snapshot_in_the_same_path():
             "conformance": {"sai": 92},
             "schema_version": 3,
         },
+        bundle_factory=bundle_stub,
     )
 
     assert reason is None
@@ -344,24 +349,14 @@ def test_a_failing_bundle_aborts_the_freeze():
     assert set(user_docs(db, "u1")) == {"b1"}
 
 
-def test_freeze_without_a_factory_writes_no_bundle():
-    store, db = repo()
-    store.create("u1", "b1", {"name": "Saison"})
-
-    frozen, _ = store.freeze("u1", "b1", {"valuation": {}})
-
-    assert frozen["id"] in user_docs(db, "u1")
-    assert user_bundles(db, "u1") == {}
-
-
 def test_freeze_refuses_foreign_or_missing_drafts():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})
     before = len(user_docs(db, "u1"))
 
-    record, reason = store.freeze("u2", "b1", {})
+    record, reason = store.freeze("u2", "b1", {}, bundle_factory=bundle_stub)
     assert record is None and reason == "missing"
-    record, reason = store.freeze("u1", "missing", {})
+    record, reason = store.freeze("u1", "missing", {}, bundle_factory=bundle_stub)
     assert record is None and reason == "missing"
     assert len(user_docs(db, "u1")) == before
 
@@ -470,7 +465,9 @@ def test_freeze_reads_before_it_writes():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})
 
-    frozen, reason = store.freeze("u1", "b1", {"valuation": {"x": 1}})
+    frozen, reason = store.freeze(
+        "u1", "b1", {"valuation": {"x": 1}}, bundle_factory=bundle_stub
+    )
 
     assert reason is None
     assert db.last_transaction.calls[0][0] == "begin"
@@ -483,10 +480,12 @@ def test_freeze_refuses_an_already_frozen_record():
     store, db = repo()
     store.create("u1", "b1", {"name": "A"})
 
-    frozen, reason = store.freeze("u1", "b1", {})
+    frozen, reason = store.freeze("u1", "b1", {}, bundle_factory=bundle_stub)
     assert reason is None
 
-    again, reason = store.freeze("u1", frozen["id"], {})
+    again, reason = store.freeze(
+        "u1", frozen["id"], {}, bundle_factory=bundle_stub
+    )
     assert reason == "frozen"
     assert again["status"] == "frozen"
     assert len([d for d in user_docs(db, "u1") if d != "b1"]) == 1
@@ -497,7 +496,7 @@ def test_freeze_after_trash_still_snapshots_with_trashed_false():
     store.create("u1", "b1", {"name": "A"})
     store.set_trashed("u1", "b1", True)
 
-    frozen, reason = store.freeze("u1", "b1", {})
+    frozen, reason = store.freeze("u1", "b1", {}, bundle_factory=bundle_stub)
 
     assert reason is None
     assert frozen["status"] == "frozen"

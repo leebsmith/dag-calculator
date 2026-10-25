@@ -167,6 +167,27 @@ class ReportBundle(BundleModel):
             if not isinstance(rows, list):
                 raise ValueError(f'collection "{node_id}" rows must be a list')
 
+        exposed = set()
+        for node_id, value in self.state.valuation.items():
+            exposed.add(node_id)
+            if isinstance(value, dict):
+                exposed.update(f"{node_id}.{key}" for key in value)
+            elif isinstance(value, list):
+                for row in value:
+                    if isinstance(row, dict):
+                        exposed.update(f"{node_id}.{key}" for key in row)
+        uncovered = sorted(exposed - set(self.catalog.nodes))
+        if uncovered:
+            raise ValueError(
+                "catalog does not cover the solved state: " + ", ".join(uncovered)
+            )
+
+        orphaned = sorted(set(self.telemetry) - set(self.state.valuation))
+        if orphaned:
+            raise ValueError(
+                "telemetry names unsolved boundaries: " + ", ".join(orphaned)
+            )
+
         return self
 
     @model_validator(mode="after")

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import pytest
 from conftest import FakeBatchRepo as FakeRepo
+from conftest import freeze_payload
 from fastapi import HTTPException
 
-from app.schemas.batch import DraftPayload, FreezePayload
+from app.schemas.batch import DraftPayload
 from app.schemas.report_bundle import (
     BoundaryTelemetry,
     CatalogContent,
@@ -46,7 +47,7 @@ def test_list_is_uid_scoped():
 def test_upsert_frozen_is_409():
     svc = BatchService(FakeRepo())
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload())
-    frozen = svc.freeze_batch("u1", rec.id, FreezePayload())
+    frozen = svc.freeze_batch("u1", rec.id, freeze_payload())
 
     with pytest.raises(BatchConflictError) as exc:
         svc.upsert_draft("u1", frozen.id, DraftPayload())
@@ -107,7 +108,7 @@ def test_rename_draft_and_frozen_metadata():
     assert renamed.name == "Session IPA"
     assert renamed.updated_at > rec.updated_at
 
-    frozen = svc.freeze_batch("u1", rec.id, FreezePayload(valuation={"batch.target_abv": 5.5}))
+    frozen = svc.freeze_batch("u1", rec.id, freeze_payload({"batch.target_abv": 5.5}))
     renamed_frozen = svc.rename_batch("u1", frozen.id, "Session IPA (v1)")
     assert renamed_frozen.name == "Session IPA (v1)"
     assert renamed_frozen.valuation == frozen.valuation
@@ -162,8 +163,8 @@ def test_freeze_creates_immutable_linked_record():
     frozen = svc.freeze_batch(
         "u1",
         rec.id,
-        FreezePayload(
-            valuation={"mash.grain_temp_c": 20.0, "solver.batch": {"sg_post_boil": 1.055}},
+        freeze_payload(
+            {"mash.grain_temp_c": 20.0, "solver.batch": {"sg_post_boil": 1.055}},
             provenance={"batch.yeast": {"source_template_id": "y1", "source_revision": "abc"}},
         ),
     )
@@ -179,10 +180,10 @@ def test_freeze_creates_immutable_linked_record():
 def test_cannot_freeze_twice():
     svc = BatchService(FakeRepo())
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload())
-    frozen = svc.freeze_batch("u1", rec.id, FreezePayload())
+    frozen = svc.freeze_batch("u1", rec.id, freeze_payload())
 
     with pytest.raises(HTTPException) as exc:
-        svc.freeze_batch("u1", frozen.id, FreezePayload())
+        svc.freeze_batch("u1", frozen.id, freeze_payload())
     assert exc.value.status_code == 409
 
 
@@ -190,7 +191,7 @@ def test_fork_from_frozen_carries_state_and_lineage():
     svc = BatchService(FakeRepo())
     draft = svc.upsert_draft("u1", "batch-a", DraftPayload(name="Saison", roots={"mash.grain_temp_c": 20}))
     frozen = svc.freeze_batch(
-        "u1", draft.id, FreezePayload(valuation={"batch.target_abv": 5.5})
+        "u1", draft.id, freeze_payload({"batch.target_abv": 5.5})
     )
 
     # a frozen batch keeps the editable state for lossless forking
@@ -222,8 +223,8 @@ def test_freeze_emits_a_valid_report_bundle():
     frozen = svc.freeze_batch(
         "u1",
         rec.id,
-        FreezePayload(
-            valuation={"mash.grain_temp_c": 20.0},
+        freeze_payload(
+            {"mash.grain_temp_c": 20.0, "solver.batch": {"sg_post_boil": 1.055}},
             provenance={"batch.yeast": {"source_template_id": "y1"}},
             report_inputs=ReportInputs(
                 validation=ValidationBundle(
@@ -247,7 +248,14 @@ def test_freeze_emits_a_valid_report_bundle():
                         dimension="temperature",
                         unit="degC",
                         decimals=1,
-                    )
+                    ),
+                    "solver.batch": NodePresentation(label="Batch solver"),
+                    "solver.batch.sg_post_boil": NodePresentation(
+                        label="Post-boil gravity",
+                        dimension="gravity",
+                        unit="SG",
+                        decimals=3,
+                    ),
                 },
             ),
         ),
@@ -263,7 +271,8 @@ def test_freeze_emits_a_valid_report_bundle():
     assert bundle.artifact.hash.startswith("sha256:")
     assert bundle.catalog.hash.startswith("sha256:")
     assert bundle.catalog.nodes["mash.grain_temp_c"].dimension == "temperature"
-    assert bundle.state.valuation == {"mash.grain_temp_c": 20.0}
+    assert bundle.state.valuation["mash.grain_temp_c"] == 20.0
+    assert bundle.state.valuation["solver.batch"]["sg_post_boil"] == 1.055
     assert bundle.state.roots == {"mash.grain_temp_c": 20}
     assert bundle.state.provenance == {"batch.yeast": {"source_template_id": "y1"}}
     assert bundle.validation.relations[0]["holds"] is True
@@ -277,6 +286,6 @@ def test_freeze_rejects_a_bundle_that_cannot_be_sealed():
     rec = svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))
 
     with pytest.raises(HTTPException) as exc:
-        svc.freeze_batch("u1", rec.id, FreezePayload(valuation={"nope": 1}))
+        svc.freeze_batch("u1", rec.id, freeze_payload({"nope": 1}))
     assert exc.value.status_code == 422
     assert "undeclared nodes" in exc.value.detail

@@ -161,7 +161,8 @@ class BatchRepository:
         uid: str,
         batch_id: str,
         data: dict[str, Any],
-        bundle_factory=None,
+        *,
+        bundle_factory,
     ) -> tuple[dict[str, Any] | None, str | None]:
         """Atomically snapshot a draft into an immutable frozen batch.
 
@@ -206,10 +207,9 @@ class BatchRepository:
                 "updated_at": now,
                 "frozen_at": now,
             }
-            bundle = bundle_factory(new_ref.id, record) if bundle_factory else None
+            bundle = bundle_factory(new_ref.id, record)
             transaction.set(new_ref, record)
-            if bundle is not None:
-                transaction.set(self._bundles(uid).document(new_ref.id), bundle)
+            transaction.set(self._bundles(uid).document(new_ref.id), bundle)
             return self._record(uid, new_ref.id, record), None
 
         return _freeze(self._db.transaction())

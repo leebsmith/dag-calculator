@@ -4040,11 +4040,127 @@
         "options": null,
         "option_labels": null
       },
+      "solver.batch": {
+        "label": "Batch solver",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.sg_post_boil": {
+        "label": "Post-boil gravity",
+        "dimension": "gravity",
+        "unit": "SG",
+        "decimals": 3,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.v_pre_boil": {
+        "label": "Pre-boil volume",
+        "dimension": "volume",
+        "unit": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.batch.cascade.v_strike": {
         "label": "Strike Volume",
         "dimension": "volume",
         "unit": "L",
         "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.realized_abv": {
+        "label": "Realized ABV",
+        "dimension": "abv",
+        "unit": "pct",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.rests": {
+        "label": "Mash rests",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.rests.rest_id": {
+        "label": "Step",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.rests.duration_min": {
+        "label": "Time",
+        "dimension": "time",
+        "unit": "min",
+        "decimals": 0,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "mash.rests.enabled": {
+        "label": "Enabled",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water": {
+        "label": "Water solver",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.strategy": {
+        "label": "Strategy",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "FLAVOR",
+          "CALCIUM_FLOOR",
+          "OPTIMIZE",
+          "AUTO",
+          "HYBRID",
+          "BASELINE",
+          "CUSTOM"
+        ],
+        "option_labels": null
+      },
+      "solver.water.total_added_salt_mass_g": {
+        "label": "Added salt mass",
+        "dimension": "mass",
+        "unit": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops": {
+        "label": "Hop solver",
+        "dimension": null,
+        "unit": null,
+        "decimals": null,
         "step": null,
         "options": null,
         "option_labels": null
@@ -4104,7 +4220,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:298e76abb8ff46f015b20cb294c9546d7dc59a21b9a282bf07a7a87677490fc1"
+    "hash": "sha256:ea6fd098eb54feddf2c80673effdfd7093b791a305aa72a5cc643fc26af137a8"
   },
   "batch": {
     "id": "frozen-1",
@@ -4150,36 +4266,14 @@
       ],
       "solver.batch": {
         "sg_post_boil": 1.055,
-        "v_pre_boil": 24.0,
-        "m_grist": 4.7,
-        "cascade.v_strike": 14.0,
-        "cascade.v_sparge": 14.0,
-        "cascade.sg_pre_boil": 1.048,
-        "cascade.v_post_boil": 21.0,
-        "max_achievable_abv": 10.0,
-        "aa_wort": 0.76,
-        "aa_batch": 0.75
+        "v_pre_boil": 24.0
       },
       "solver.water": {
         "strategy": "CALCIUM_FLOOR",
         "prescription.predicted_mash_ph": 5.42,
-        "prescription.residual_hlt_water_l": 0.0,
-        "mash_additions.gypsum_kg": 0.002,
-        "mash_additions.acid_l": 0.0005,
-        "total_added_salt_mass_g": 3.0,
-        "added_mineral_tds_ppm": 150.0
+        "total_added_salt_mass_g": 3.0
       },
       "solver.hops": {
-        "boil_rows": [
-          {
-            "minutes": 60.0,
-            "ibu": 30.0,
-            "mass_kg": 0.024
-          }
-        ],
-        "whirlpool_rows": [],
-        "boil_mass_kg": 0.024,
-        "whirlpool_mass_kg": 0.0,
         "total_mass_kg": 0.024
       }
     },
@@ -4285,5 +4379,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:bebf51b41c7a64d8112fb92e9a852b108b462e04bc9483203f215a0014ac6bae"
+  "content_hash": "sha256:7455288f59a1f1909f101741438be9ed1c77d151f0730086b3a326242d1a215b"
 }

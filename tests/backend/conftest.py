@@ -229,3 +229,36 @@ class FakeBatchRepo:
         if bundle_factory is not None:
             self.bundles[r["id"]] = bundle_factory(r["id"], r)
         return r, None
+
+
+def freeze_payload(valuation=None, **overrides):
+    """A minimal valid freeze payload whose catalog covers its own state."""
+    from app.schemas.batch import FreezePayload
+    from app.schemas.report_bundle import (
+        CatalogContent,
+        NodePresentation,
+        ReportInputs,
+    )
+
+    valuation = dict(valuation or {})
+    paths = set()
+    for node_id, value in valuation.items():
+        paths.add(node_id)
+        if isinstance(value, dict):
+            paths.update(f"{node_id}.{key}" for key in value)
+        elif isinstance(value, list):
+            for row in value:
+                if isinstance(row, dict):
+                    paths.update(f"{node_id}.{key}" for key in row)
+
+    return FreezePayload(
+        valuation=valuation,
+        report_inputs=overrides.pop("report_inputs", ReportInputs()),
+        catalog=overrides.pop(
+            "catalog",
+            CatalogContent(
+                nodes={path: NodePresentation(label=path) for path in sorted(paths)}
+            ),
+        ),
+        **overrides,
+    )

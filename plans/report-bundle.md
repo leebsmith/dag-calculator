@@ -99,11 +99,15 @@ cross-references.
    before writing, so a malformed bundle never reaches storage.
 3. Cross-reference validators, against the embedded artifact:
    - every `state.valuation` key names a declared node;
-   - every `telemetry` key names a boundary node and its `binding` matches;
+   - every `telemetry` key names a boundary node and its `binding` matches, and
+     names a node that is present in `state.valuation`;
    - every `catalog.dimensions` key is a declared dimension;
    - every `batch.identity` namespace is declared in `artifact.identity`;
    - every `catalog.nodes` key resolves to a node, selection field, boundary
-     output, or identity field.
+     output, or identity field;
+   - **coverage**: every node id, boundary-output key, selection field, and
+     collection row field exposed in `state.valuation` has a `catalog.nodes`
+     entry. A required-but-empty catalog cannot pass.
 4. `content_hash` recomputes from the canonicalized content (`ReportBundle.seal`;
    the validator rejects a mismatch).
 5. A committed fixture bundle is validated in CI, so the shape cannot drift
@@ -131,6 +135,8 @@ cross-references.
 1. **Emitter seam** — separate `reportInputs()` / `reportCatalog()` producers; the
    server assembles the bundle inside the existing freeze transaction. Two
    documents, one transaction: the freeze fails if the bundle cannot be sealed.
+   Both producer blocks are **required** on `FreezePayload`, and the repository's
+   `freeze` requires a bundle factory — there is no freeze path without a bundle.
 2. **Document path** — sibling collection `users/{uid}/report_bundles/{frozen_id}`,
    keyed by the *new* frozen id. `BatchRecord` stays lean.
 3. **`catalog.nodes` scope** — every resolvable path (nodes, selection fields,
@@ -146,7 +152,7 @@ cross-references.
 | R1 ✅ | `backend/app/schemas/report_bundle.py` — guarded models + cross-reference validators; fixture test | pytest green |
 | R2 ✅ | Freeze-time capture: `reportInputs()` (four validation states + per-boundary binding/fingerprint/messages) | frontend tests |
 | R3 ✅ | `reportCatalog()` — dimensions from the artifact, presentation from the registries + step labels | unit tests |
-| R4 ✅ | Server-side emitter + `content_hash` enforcement; atomic sibling write | end-to-end freeze test |
+| R4 ✅ | Server-side emitter + `content_hash` enforcement + catalog-coverage guard; atomic sibling write; required request blocks | end-to-end freeze test |
 | R5 ✅ | Committed fixture (`tests/conformance/fixtures/report-bundle.json`) + freshness test | `make verify` |
 | R6 | Prose docs (`engine.md`, `node-reference.md`, `semantics.md` §3.2) | renderer stage |
 

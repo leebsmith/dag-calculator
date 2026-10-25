@@ -82,10 +82,10 @@ class FreezePayload(BaseModel):
     provenance: dict[str, dict[str, Any]] = Field(default_factory=dict)
     conformance: dict[str, Any] | None = None
     schema_version: int = 3
-    # Bundle inputs captured in the browser. Optional so an older client still
-    # freezes; the bundle then carries empty validation/telemetry/catalog.
-    report_inputs: ReportInputs | None = None
-    catalog: CatalogContent | None = None
+    # Bundle inputs captured in the browser. Required: a freeze always emits a
+    # self-sufficient bundle, and there is no legacy client without them.
+    report_inputs: ReportInputs
+    catalog: CatalogContent
 
 
 class BatchRecord(BaseModel):

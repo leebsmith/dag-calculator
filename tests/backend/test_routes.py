@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import pytest
-from conftest import FakeBatchRepo, make_batch_request, make_hop_request, make_water_request
+from conftest import (
+    FakeBatchRepo,
+    freeze_payload,
+    make_batch_request,
+    make_hop_request,
+    make_water_request,
+)
 from fastapi.testclient import TestClient
 
 from app.auth.deps import get_current_user, require_allowed_user
 from app.main import app
-from app.schemas.batch import DraftPayload, FreezePayload
+from app.schemas.batch import DraftPayload
 from app.services.batch_service import BatchService, get_batch_service
 from app.services.batch_solver_service import solve_batch_request
 from app.services.errors import SolverServiceError
@@ -161,7 +167,7 @@ def test_upsert_with_a_stale_baseline_returns_the_conflict_envelope(client):
 
 def test_upsert_against_a_frozen_batch_returns_the_same_conflict_envelope(client, service):
     created = client.put("/batches/b1", json=draft_body()).json()
-    frozen = service.freeze_batch(UID, created["id"], FreezePayload())
+    frozen = service.freeze_batch(UID, created["id"], freeze_payload())
 
     response = client.put(f"/batches/{frozen.id}", json=draft_body())
 
@@ -175,7 +181,7 @@ def test_upsert_against_a_frozen_batch_returns_the_same_conflict_envelope(client
 
 def test_freeze_returns_201_and_links_the_parent(client):
     created = client.put("/batches/b1", json=draft_body()).json()
-    payload = {"valuation": {"batch.target_abv": 5.5}, "provenance": {}}
+    payload = freeze_payload({"batch.target_abv": 5.5}).model_dump(mode="json")
 
     response = client.post(f"/batches/{created['id']}/freeze", json=payload)
 
@@ -189,7 +195,10 @@ def test_freeze_returns_201_and_links_the_parent(client):
 def test_freeze_accepts_report_inputs_and_catalog(client, service):
     created = client.put("/batches/b1", json=draft_body()).json()
     payload = {
-        "valuation": {"batch.target_abv": 5.5},
+        "valuation": {
+            "batch.target_abv": 5.5,
+            "solver.batch": {"sg_post_boil": 1.055},
+        },
         "report_inputs": {
             "validation": {"relations": [{"id": "r", "holds": True}]},
             "telemetry": {
@@ -210,7 +219,14 @@ def test_freeze_accepts_report_inputs_and_catalog(client, service):
                     "dimension": "abv",
                     "unit": "pct",
                     "decimals": 1,
-                }
+                },
+                "solver.batch": {"label": "Batch solver"},
+                "solver.batch.sg_post_boil": {
+                    "label": "Post-boil gravity",
+                    "dimension": "gravity",
+                    "unit": "SG",
+                    "decimals": 3,
+                },
             },
         },
     }
@@ -229,7 +245,8 @@ def test_freeze_rejects_a_bundle_with_undeclared_nodes(client):
     created = client.put("/batches/b1", json=draft_body()).json()
 
     response = client.post(
-        f"/batches/{created['id']}/freeze", json={"valuation": {"nope": 1}}
+        f"/batches/{created['id']}/freeze",
+        json=freeze_payload({"nope": 1}).model_dump(mode="json"),
     )
 
     assert response.status_code == 422
@@ -238,9 +255,10 @@ def test_freeze_rejects_a_bundle_with_undeclared_nodes(client):
 
 def test_freezing_a_frozen_batch_is_409(client, service):
     created = client.put("/batches/b1", json=draft_body()).json()
-    frozen = client.post(f"/batches/{created['id']}/freeze", json={}).json()
+    body = freeze_payload().model_dump(mode="json")
+    frozen = client.post(f"/batches/{created['id']}/freeze", json=body).json()
 
-    response = client.post(f"/batches/{frozen['id']}/freeze", json={})
+    response = client.post(f"/batches/{frozen['id']}/freeze", json=body)
     assert response.status_code == 409
     assert response.json()["detail"] == "Already frozen"
 
@@ -258,7 +276,7 @@ def test_trash_and_restore_routes(client):
 
 def test_rename_route_updates_the_name_and_keeps_state(client, service):
     created = client.put("/batches/b1", json=draft_body()).json()
-    frozen_record = service.freeze_batch(UID, created["id"], FreezePayload())
+    frozen_record = service.freeze_batch(UID, created["id"], freeze_payload())
 
     renamed = client.patch("/batches/b1", json={"name": "  Session IPA  "})
     assert renamed.status_code == 200

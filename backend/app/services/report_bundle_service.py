@@ -13,12 +13,7 @@ from typing import Any
 from app.artifact import load_artifact
 from app.schemas.batch import FreezePayload
 from app.schemas.canonical import sha256_canonical
-from app.schemas.report_bundle import (
-    BUNDLE_FORMAT,
-    CatalogContent,
-    ReportBundle,
-    ReportInputs,
-)
+from app.schemas.report_bundle import BUNDLE_FORMAT, ReportBundle
 
 
 def _plain(value: Any) -> Any:
@@ -35,9 +30,8 @@ def build_report_bundle(
 ) -> dict[str, Any]:
     """Assemble and seal one immutable bundle for a newly frozen batch."""
     artifact = _plain(load_artifact())
-    catalog = payload.catalog or CatalogContent()
-    catalog_body = catalog.model_dump(mode="json")
-    inputs = payload.report_inputs or ReportInputs()
+    catalog_body = payload.catalog.model_dump(mode="json")
+    inputs = payload.report_inputs
 
     content = {
         "bundle_format": BUNDLE_FORMAT,
