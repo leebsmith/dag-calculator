@@ -233,6 +233,31 @@ export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
   return null;
 }
 
+// Verify every root's non-literal default infers the root's declared dimension.
+// Bare numbers are literals in the declared dimension; bare strings are only
+// valid for reference roots.
+export function validateRootDefaults(artifact) {
+  for (const [id, node] of Object.entries(artifact.nodes)) {
+    if (node.kind !== "root") continue;
+    const value = node.default;
+    if (Array.isArray(value)) {
+      throw new Error(`Root "${id}" default must be an expression or a scalar literal`);
+    }
+    if (value === null || typeof value !== "object") {
+      if (typeof value === "string" && node.dimension !== "reference") {
+        throw new Error(`Root "${id}" has a string default but dimension "${node.dimension}"`);
+      }
+      continue;
+    }
+    const inferred = inferExprDimension(artifact, value, {});
+    if (inferred !== null && inferred !== node.dimension) {
+      throw new Error(
+        `Root "${id}" declares dimension "${node.dimension}" but its default infers "${inferred}"`
+      );
+    }
+  }
+}
+
 // Verify every dimensioned derived node's expression is dimension-consistent.
 export function validateDerivedDimensions(artifact) {
   for (const [id, node] of Object.entries(artifact.nodes)) {

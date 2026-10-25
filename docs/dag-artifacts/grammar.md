@@ -94,6 +94,9 @@ namespace → error.
   `{call}` / a bare literal. Evaluated when the root is unset; a default that
   reads a selection field is the sanctioned way to inherit a component value
   (e.g. `batch.boil_off_rate_l_per_hr` → `equipment.nominal_boil_off_rate_l_per_hr`).
+  A non-literal default must infer the root's declared dimension; bare numbers
+  are read in that dimension and bare strings are only valid for `reference`
+  roots.
   A set root overrides its default and is never overwritten by later component
   changes.
 - `domain` — **unary bounds** on this node (see §4.1).

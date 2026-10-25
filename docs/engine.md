@@ -21,7 +21,8 @@ The engine owns the **State** and **Derived** layers; the view only reads them.
 
 1. **Load & validate** — `createCalculator(artifact, options)` calls
    `loadArtifact`, which runs `validateArtifact` (structure: node kinds, dangling
-   refs, choice defaults, output shapes) and `validateDerivedDimensions`
+   refs, choice defaults, output shapes), `validateRootDefaults` (dimension
+   inference on non-literal root defaults), and `validateDerivedDimensions`
    (dimension inference on every `derived` node). It throws on any violation.
 2. **Build the graph** — `buildGraph` derives `adjacency` (node → its declared
    dependencies) and `dependents` (node → its consumers) from `inputs`/`ref`

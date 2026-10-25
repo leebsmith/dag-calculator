@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { validateArtifact } from "../../frontend/src/engine/validate.js";
+import { validateRootDefaults } from "../../frontend/src/engine/units.js";
 import { artifact } from "../guards/util.js";
 
 function clone() {
@@ -193,4 +194,23 @@ test("rejects relation drift", () => {
     { id: "r1", predicate: { op: "le", lhs: { ref: "nope.missing" }, rhs: { const: 1 } } },
   ];
   assert.throws(() => validateArtifact(badPredicate), /Relation "r1" references unknown/);
+});
+
+
+test("root defaults must infer the root dimension", () => {
+  assert.equal(validateRootDefaults(clone()), undefined);
+
+  const wrongDimension = clone();
+  wrongDimension.nodes["batch.target_abv"].default = { ref: "batch.v_ferm" };
+  assert.throws(
+    () => validateRootDefaults(wrongDimension),
+    /declares dimension "abv" but its default infers "volume"/
+  );
+
+  const stringDefault = clone();
+  stringDefault.nodes["batch.v_ferm"].default = "oops";
+  assert.throws(
+    () => validateRootDefaults(stringDefault),
+    /has a string default but dimension "volume"/
+  );
 });
