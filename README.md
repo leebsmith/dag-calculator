@@ -24,6 +24,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-conformance.md`](docs/style-conformance.md) | **living** — style-conformance assessor (adherence index + drift status) |
+| [`docs/report-bundle.md`](docs/report-bundle.md) | **living** — the frozen report-bundle contract: blocks, path resolution, units, nullability |
 | [`docs/whirlpool-hopping-model.md`](docs/whirlpool-hopping-model.md) | **living** — whirlpool bitterness theory, equations, constants, and reference vectors |
 | [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — extract yield vs fermentability, mixed-wort AA, yeast cap |
 | [`docs/belgian-knob.md`](docs/belgian-knob.md) | **living** — advisory sugar dose to shift AA/ABV at fixed AE |
@@ -150,14 +151,20 @@ artifact migration. See [`docs/historical/README.md`](docs/historical/README.md)
 `artifact-docs-sync` guard in `make test` — so an artifact change that isn't
 re-synced into the inventory fails the gate.
 
+`docs/report-bundle-glossary.md` is generated the same way
+(`node scripts/emit-report-bundle-glossary.mjs`) and guarded by
+`glossary-sync`.
+
 ## Maintaining the docs
 
 The **mechanical** half of doc drift is guarded; the **prose** half is a manual
 discipline. After any change to `data/artifact.json`:
 
-1. **Re-sync the inventory and the bundle fixture** (guards force both):
+1. **Re-sync the inventory, the bundle glossary, and the bundle fixture**
+   (guards force all three):
    ```bash
    node scripts/emit-artifact-inventory.mjs
+   node scripts/emit-report-bundle-glossary.mjs
    cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
    ```
 2. **Grep the prose** for what you touched, and update the narrative that still

@@ -217,7 +217,8 @@ logic in Python.
 
 Responsibilities, in order:
 
-1. Resolve the frozen batch; refuse drafts.
+1. Resolve the frozen batch; refuse drafts (draft bundles exist only as
+   unpersisted previews for authoring — `batch.status: "draft"`).
 2. Validate the spec (`doc_kind`, unknown section ids → 422).
 3. Create a temp root; write `report.json` (the bundle) and the templates into it.
 4. Compile with fixed argv: `--root <temp>`, `--font-path <vendored>`,

@@ -139,6 +139,10 @@ cross-references.
    `freeze` requires a bundle factory — there is no freeze path without a bundle.
 2. **Document path** — sibling collection `users/{uid}/report_bundles/{frozen_id}`,
    keyed by the *new* frozen id. `BatchRecord` stays lean.
+   **Download/preview:** `GET /batches/{id}/report-bundle` serves the stored fact;
+   `POST` assembles a draft preview (`batch.status: "draft"`,
+   `frozen_at: null`) and persists nothing. The renderer refuses non-frozen
+   bundles.
 3. **`catalog.nodes` scope** — every resolvable path (nodes, selection fields,
    collection fields, boundary outputs, identity fields), with a humanized label
    fallback. 315 entries for the current artifact.
@@ -154,7 +158,7 @@ cross-references.
 | R3 ✅ | `reportCatalog()` — dimensions from the artifact, presentation from the registries + step labels | unit tests |
 | R4 ✅ | Server-side emitter + `content_hash` enforcement + catalog-coverage guard; atomic sibling write; required request blocks | end-to-end freeze test |
 | R5 ✅ | Committed fixture (`tests/conformance/fixtures/report-bundle.json`) + freshness test | `make verify` |
-| R6 | Prose docs (`engine.md`, `node-reference.md`, `semantics.md` §3.2) | renderer stage |
+| R6 ✅ | `docs/report-bundle.md` + generated `docs/report-bundle-glossary.md` + `scripts/describe-report-bundle.mjs` | `make verify` |
 
 ---
 
