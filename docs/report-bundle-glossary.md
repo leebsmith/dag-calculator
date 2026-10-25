@@ -159,7 +159,7 @@ _19 paths_
 | `mash.enabled_min_temp_c` | Enabled Min Temp C | derived | temperature | degC (°C) | 1 | — |
 | `mash.grain_temp_c` | Grain temperature | root | temperature | degC (°C) | 1 | — |
 | `mash.heating_rate_c_per_min` | Heating Rate C Per Min | derived | temperature_delta_per_time | dC_per_min (°C/min) | 2 | — |
-| `mash.mash_phase_volume_l` | Mash Phase Volume L | derived | volume | L | 1 | — |
+| `mash.mash_phase_volume_l` | Mash volume | derived | volume | L | 1 | — |
 | `mash.preset_id` | Preset ID | choice | — | — | — | single_infusion, custom, belgian_saison, belgian_tripel, german_pils, berliner_weisse, english_brown, american_pale |
 | `mash.ramp_time_min` | Ramp Time Min | derived | time | min | 0 | — |
 | `mash.rests` | Rests | collection | — | — | — | — |

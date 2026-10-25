@@ -136,6 +136,7 @@ export const steps = [
           { label: "Grist Mass", value: "solver.batch.m_grist" },
           { label: "Post-Boil Volume", value: "solver.batch.cascade.v_post_boil" },
           { label: "Mash Thickness", value: "solver.batch.mash_thickness_l_per_kg" },
+          { label: "Mash Volume (grist + strike)", value: "mash.mash_phase_volume_l" },
           { label: "Runnings Ratio (r, V1/V2)", value: "batch.runnings_ratio" },
         ],
       },

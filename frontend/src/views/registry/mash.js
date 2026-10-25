@@ -19,4 +19,8 @@ export const mashRegistry = {
   "mash.strike_water_temp_base_c": { label: "Strike base temp", unit: "°C" },
   "mash.strike_water_tun_offset_c": { label: "Tun thermal offset" },
   "mash.strike_water_temp_c": { label: "Strike water temp", unit: "°C" },
+  "mash.mash_phase_volume_l": {
+    label: "Mash volume",
+    hint: "Grist displacement + strike water (tun occupancy; excludes dead space).",
+  },
 };

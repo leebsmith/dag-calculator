@@ -116,6 +116,20 @@ test("pinMashThickness writes max(default, rig floor) only in runoff", async () 
   assert.equal(app.engine.get("batch.mash_thickness_l_per_kg"), 3.0);
 });
 
+test("Batch Sparge exposes the mash volume readout", async () => {
+  const app = makeApp();
+  await app.boot();
+
+  const table = app.fieldsBySlice.batch.find((field) => field.id === "derived-anchors");
+  assert.ok(table);
+  const row = table.rows.find(
+    (entry) => entry.cells.label?.text === "Mash Volume (grist + strike)"
+  );
+  assert.ok(row);
+  assert.match(row.cells.value.display, /^\d+\.\d$/);
+  assert.equal(row.cells.value.unit, "L");
+});
+
 test("offline: a missing yeast leaves the batch unresolved", async () => {
   const app = createStepApp();
   await app.boot();
