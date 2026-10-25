@@ -4,6 +4,7 @@
 import { produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
 import { reportError } from "../observability.js";
+import { findingFor } from "../views/registry/findings.js";
 import { refreshYeastCard } from "./cards/yeast.js";
 import { refreshStyleCard } from "./cards/style.js";
 import { refreshHopCard } from "./cards/hops.js";
@@ -68,6 +69,9 @@ export function createStepView({
     );
     app.fieldsById = indexFields(all);
     app.relations = safe(() => engine.relationStates());
+    app.findings = app.relations
+      .map((relation) => findingFor(relation))
+      .filter(Boolean);
     app.domains = safe(() => engine.domainStates());
     app.fieldDomains = fieldDomains;
     app.collectionDomains = collectionDomains;

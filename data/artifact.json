@@ -2153,11 +2153,21 @@
       "taxonomy": "topology",
       "default": "r_l_to_g"
     },
-    "batch.intensive_value": {
+    "batch.mash_thickness_l_per_kg": {
       "kind": "root",
       "dimension": "mash_thickness",
       "default": {
         "const": "default_mash_thickness_l_per_kg"
+      },
+      "domain": {
+        "gt": 0
+      }
+    },
+    "batch.runoff_ratio": {
+      "kind": "root",
+      "dimension": "dimensionless",
+      "default": {
+        "const": "default_runoff_ratio"
       },
       "domain": {
         "gt": 0
@@ -2628,7 +2638,8 @@
         "apparent_attenuation": "batch.yeast_cap",
         "v_ferm": "batch.v_ferm",
         "topology": "batch.topology",
-        "intensive_value": "batch.intensive_value",
+        "intensive_value": "batch.mash_thickness_l_per_kg",
+        "runoff_ratio": "batch.runoff_ratio",
         "grain_bill": "grist.major_malts",
         "grain_moisture_fraction": "batch.grain_moisture_fraction",
         "s_late_add": "batch.s_late_add",

@@ -112,6 +112,7 @@ export function createStepApp(options = {}) {
     fieldsBySlice: {},
     fieldsById: {},
     relations: [],
+    findings: [],
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
     boundaryStatuses: Object.fromEntries(

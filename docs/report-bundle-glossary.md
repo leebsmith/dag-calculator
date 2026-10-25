@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_83 paths_
+_84 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -59,10 +59,11 @@ _83 paths_
 | `batch.fermentation` | Fermentation | choice | — | — | — | ale, lager, wild, mixed |
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
-| `batch.intensive_value` | Intensive value | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
+| `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.realized_abv` | ABV | derived | abv | pct | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
 | `batch.runnings_ratio` | Runnings Ratio (r, V1/V2) | derived | dimensionless | 1 | — | — |
+| `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | 1 | — | — |
 | `batch.s_late_add` | Total extract | derived | mass | kg | 1 | — |
 | `batch.shrinkage_volume_l` | − Shrinkage | derived | volume | L | 1 | — |
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |

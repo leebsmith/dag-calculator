@@ -55,7 +55,12 @@ export const BATCH_FIELDS = {
   apparent_attenuation: { path: "batch.yeast_cap" },
   v_ferm: { path: "batch.v_ferm" },
   topology: { path: "batch.topology" },
-  intensive_value: { path: "batch.intensive_value" },
+  intensive_value: {
+    path: "batch.mash_thickness_l_per_kg",
+    build: (resolved) =>
+      resolved.topology === "runoff_ratio" ? resolved.runoff_ratio : resolved.intensive_value,
+  },
+  runoff_ratio: { path: "batch.runoff_ratio", wire: null },
   grain_bill: {
     path: "grist.major_malts",
     read: "get",

@@ -81,8 +81,7 @@ export function valuateScalar(field, engine, ctx, nl) {
     applyPresentation(
       out,
       presentation,
-      { get: (id) => engine.get(id), resolve: (path) => engine.resolve(path) },
-      formatValue
+      { get: (id) => engine.get(id), resolve: (path) => engine.resolve(path) }
     );
   }
   return out;

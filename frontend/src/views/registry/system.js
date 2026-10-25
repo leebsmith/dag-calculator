@@ -3,7 +3,8 @@
 
 export const SYSTEM_NODES = {
   topology: "batch.topology",
-  intensiveValue: "batch.intensive_value",
+  mashThickness: "batch.mash_thickness_l_per_kg",
+  runoffRatio: "batch.runoff_ratio",
   apparentAttenuation: "solver.batch.aa_batch",
   majorMalts: "grist.major_malts",
   boilHops: "batch.boil_hops",

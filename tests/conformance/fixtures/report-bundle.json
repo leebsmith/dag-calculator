@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 8,
-    "hash": "sha256:407c14488834c404c935461bf02f79e5b9659c376ae70198af0e6df79f92cd3b",
+    "hash": "sha256:710bd90e8c89d6dac1526a97f1760475e718f11b39bc12355d94af1cce69c560",
     "content": {
       "schema_version": 8,
       "meta": {
@@ -2200,11 +2200,21 @@
           "taxonomy": "topology",
           "default": "r_l_to_g"
         },
-        "batch.intensive_value": {
+        "batch.mash_thickness_l_per_kg": {
           "kind": "root",
           "dimension": "mash_thickness",
           "default": {
             "const": "default_mash_thickness_l_per_kg"
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.runoff_ratio": {
+          "kind": "root",
+          "dimension": "dimensionless",
+          "default": {
+            "const": "default_runoff_ratio"
           },
           "domain": {
             "gt": 0
@@ -2769,7 +2779,8 @@
             "apparent_attenuation": "batch.yeast_cap",
             "v_ferm": "batch.v_ferm",
             "topology": "batch.topology",
-            "intensive_value": "batch.intensive_value",
+            "intensive_value": "batch.mash_thickness_l_per_kg",
+            "runoff_ratio": "batch.runoff_ratio",
             "grain_bill": "grist.major_malts",
             "grain_moisture_fraction": "batch.grain_moisture_fraction",
             "s_late_add": "batch.s_late_add",
@@ -4369,5 +4380,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:f314ad83cdb6fd5cd68bbb7396a0026d3e2baac5a4ecc000610d33b40c45c823"
+  "content_hash": "sha256:848316842e6cd2e6c13b0056391f328463606cf82da0d37d3c93af620568de00"
 }

@@ -136,14 +136,16 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       this.notify();
     },
 
-    // Switching topology reinterprets the intensive value (L/kg vs dimensionless
-    // r), so reset it to the topology's sensible default (mirrors the legacy
-    // onTopologyChange).
+    // Switching topology reinterprets which intensive root is live, so reset the
+    // newly active root to its topology's sensible default (mirrors the legacy
+    // onTopologyChange). The inactive root is left untouched.
     resetIntensiveValue(topology) {
-      const constant =
-        topology === "runoff_ratio" ? "default_runoff_ratio" : "default_mash_thickness_l_per_kg";
+      const [nodeId, constant] =
+        topology === "runoff_ratio"
+          ? [N.runoffRatio, "default_runoff_ratio"]
+          : [N.mashThickness, "default_mash_thickness_l_per_kg"];
       const value = artifact.constants[constant]?.value;
-      if (typeof value === "number") this.setRoot(N.intensiveValue, value);
+      if (typeof value === "number") this.setRoot(nodeId, value);
     },
 
     // Push the residual (non-declarable) roots that a selection still has to

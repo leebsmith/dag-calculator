@@ -152,10 +152,11 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.fermentation` | choice |
 | `batch.grain_moisture_fraction` | root |
 | `batch.hlt_starting_volume_l` | root |
-| `batch.intensive_value` | root |
+| `batch.mash_thickness_l_per_kg` | root |
 | `batch.realized_abv` | derived |
 | `batch.realized_fg` | derived |
 | `batch.runnings_ratio` | derived |
+| `batch.runoff_ratio` | root |
 | `batch.s_late_add` | derived |
 | `batch.shrinkage_volume_l` | derived |
 | `batch.sparge_salted_volume` | derived |

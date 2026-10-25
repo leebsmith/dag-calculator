@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import logging
+from pathlib import Path
 
 import pytest
 from conftest import make_batch_request, make_water_request
@@ -15,6 +17,10 @@ from app.schemas.boundary import (
     GristBillRow,
     WaterSolverRequest,
     WaterStrategy,
+)
+
+ARTIFACT = json.loads(
+    (Path(__file__).resolve().parents[2] / "data" / "artifact.json").read_text()
 )
 
 
@@ -70,6 +76,15 @@ def test_invalid_domain_rejected():
         make_batch_request(target_abv=0.0)
     with pytest.raises(ValidationError):
         make_batch_request(apparent_attenuation=1.5)
+
+
+def test_intensive_value_bound_matches_the_split_roots():
+    for root in ("batch.mash_thickness_l_per_kg", "batch.runoff_ratio"):
+        assert ARTIFACT["nodes"][root]["domain"] == {"gt": 0}
+
+    with pytest.raises(ValidationError):
+        make_batch_request(intensive_value=0.0)
+    assert make_batch_request(intensive_value=1e-9).intensive_value == 1e-9
 
 
 def test_fingerprint_present_and_stable():

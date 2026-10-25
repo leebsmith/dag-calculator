@@ -11,28 +11,6 @@ export const CONFORMANCE_FIELD_MAP = {
   "grist.finished_beer_srm": "srm",
 };
 
-const INTENSIVE_VALUE = {
-  switch: {
-    path: "batch.topology",
-    cases: {
-      runoff_ratio: {
-        label: "Runoff Ratio r",
-        dimension: null,
-        unit: null,
-        unitId: null,
-        toggleable: false,
-        customized: false,
-        rawDisplay: true,
-        hint: "V_run1 / V_run2; 1.0 is equal runnings.",
-      },
-    },
-    fallback: {
-      label: "Liquor-to-Grist Ratio",
-      hint: "Strike water per grist mass; follows the Mash Thickness unit preference.",
-    },
-  },
-};
-
 const TARGET_ABV = {
   hint: {
     path: "solver.batch.max_achievable_abv",
@@ -41,7 +19,6 @@ const TARGET_ABV = {
 };
 
 const FIELD_OVERRIDES = {
-  "batch.intensive_value": INTENSIVE_VALUE,
   "batch.target_abv": TARGET_ABV,
 };
 
@@ -58,12 +35,7 @@ export function presentationFor(id) {
   return FIELD_OVERRIDES[id] ?? null;
 }
 
-export function applyPresentation(out, rule, readers, formatValue) {
-  if (rule.switch) {
-    const variant = rule.switch.cases[readers.get(rule.switch.path)] ?? rule.switch.fallback;
-    Object.assign(out, variant);
-    if (variant.rawDisplay) out.display = formatValue(out.value);
-  }
+export function applyPresentation(out, rule, readers) {
   if (rule.hint) {
     let value;
     try {
