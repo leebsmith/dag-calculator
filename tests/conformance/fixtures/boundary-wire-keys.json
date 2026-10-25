@@ -13,6 +13,8 @@
     "k_abs_true",
     "mash_transfer_loss",
     "max_hlt_volume_l",
+    "max_kettle_volume_l",
+    "max_mash_tun_volume_l",
     "s_late_add",
     "target_abv",
     "topology",

@@ -144,7 +144,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 `INVALID_TARGET_ABV` · `INVALID_ATTENUATION` · `ABV_UNREACHABLE` ·
 `INVALID_FERM_VOLUME` · `INVALID_SHRINKAGE` · `EXTRACT_TARGET_NON_POSITIVE` ·
 `INVALID_YIELD` · `DEGENERATE_BRACKET` · `BRACKET_NO_SIGN_CHANGE` ·
-`UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL`.
+`UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL` ·
+`KETTLE_TOO_SMALL` · `MASH_TUN_TOO_SMALL`.
 
 ### 2.4 Derivation — two-stage batch lauter
 
@@ -280,6 +281,13 @@ Applying shrinkage to the net volume instead would incorrectly shrink the losses
 None. The derivation above and the implementation agree; the decisions that
 closed the earlier deviations are recorded in
 [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md).
+
+The solver also reports `max_feasible_abv` beside `max_achievable_abv`, with a
+`binding_constraint` of `fermentation | volume | tun | kettle | hlt`. The bound
+is found by bisecting the same pipeline against the rig's capacity limits; it
+never changes the target solve. A bracket failure is replaced by
+`KETTLE_TOO_SMALL`, `MASH_TUN_TOO_SMALL` or `HLT_TOO_SMALL` when the
+upper-bound capacity check is definitive.
 
 Each correction lands here in the same commit as its code, per the atomic-docs rule in
 `AGENTS.md`.

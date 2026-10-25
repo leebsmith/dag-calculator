@@ -55,6 +55,8 @@ def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
         hlt_transfer_loss_l=req.hlt_transfer_loss_l,
         hlt_coil_floor_l=req.hlt_coil_floor_l,
         max_hlt_volume_l=req.max_hlt_volume_l,
+        max_kettle_volume_l=req.max_kettle_volume_l,
+        max_mash_tun_volume_l=req.max_mash_tun_volume_l,
         f_shrink=req.f_shrink,
         k_abs_true=req.k_abs_true,
     )
@@ -82,6 +84,8 @@ def _to_response(result) -> BatchSolverResponse:
             v_post_boil=cascade.v_post_boil,
         ),
         max_achievable_abv=result.max_achievable_abv,
+        max_feasible_abv=result.max_feasible_abv,
+        binding_constraint=result.binding_constraint,
         aa_wort=result.aa_wort,
         aa_batch=result.aa_batch,
         hlt=BatchHltOutputs(

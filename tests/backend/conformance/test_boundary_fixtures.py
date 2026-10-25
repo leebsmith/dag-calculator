@@ -61,6 +61,8 @@ def canonical_batch() -> BatchSolverRequest:
         hlt_transfer_loss_l=0.0,
         hlt_coil_floor_l=0.0,
         max_hlt_volume_l=30.0,
+        max_kettle_volume_l=40.0,
+        max_mash_tun_volume_l=40.0,
     )
 
 

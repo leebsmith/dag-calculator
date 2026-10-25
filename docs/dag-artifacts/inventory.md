@@ -37,6 +37,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 |---|---|
 | `acid_medium` | `LACTIC_88`, `PHOSPHORIC_10`, `PHOSPHORIC_85` |
 | `alkaline_agent` | `BAKING_SODA`, `CHALK`, `PICKLING_LIME` |
+| `binding_constraint` | `fermentation`, `volume`, `tun`, `kettle`, `hlt` |
 | `cacl2_form` | `CACL2_DIHYDRATE`, `CACL2_ANHYDROUS` |
 | `fermentation` | `ale`, `lager`, `wild`, `mixed` |
 | `flocculation` | `Low`, `Medium`, `High` |

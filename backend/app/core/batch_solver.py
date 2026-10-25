@@ -67,6 +67,12 @@ The per-rig ``equipment.grain_absorption_factor_l_per_kg`` is authoritative;
 this constant is the fallback when no rig value is supplied.
 """
 
+GRAIN_DISPLACEMENT_METRIC: float = 0.667632
+"""Grain displacement in L/kg (Palmer, 0.32 qt/lb).
+
+Used only for capacity diagnostics; it never enters the extract mass balance.
+"""
+
 RHO_WATER_METRIC: float = 1.00
 """Density of water at strike temperature in kg/L."""
 
@@ -1164,6 +1170,11 @@ class BatchSolverInput:
             coil, in liters. A constraint, not a debt.
         max_hlt_volume_l: Maximum HLT capacity, in liters. Used to gate the
             top-up target (``HLT_TOO_SMALL``).
+        max_kettle_volume_l: Maximum kettle capacity, in liters. Diagnostic
+            only: it never constrains the solve, but it bounds ``max_feasible_abv``
+            and names a bracket failure.
+        max_mash_tun_volume_l: Maximum mash tun capacity, in liters. Diagnostic
+            only, like ``max_kettle_volume_l``.
     """
 
     target_abv: float
@@ -1185,6 +1196,8 @@ class BatchSolverInput:
     hlt_transfer_loss_l: float
     hlt_coil_floor_l: float
     max_hlt_volume_l: float
+    max_kettle_volume_l: float
+    max_mash_tun_volume_l: float
     f_shrink: float = F_SHRINK_DEFAULT
     k_abs_true: float = K_ABS_TRUE_METRIC
 
@@ -1220,6 +1233,10 @@ class BatchSolverResult:
         aa_wort: The extract-weighted wort fermentability before the yeast cap.
         aa_batch: The wort AA clamped by the yeast cap; the solver's final AA.
         hlt: The HLT water budget (top-up and deliverable sparge volume).
+        max_feasible_abv: The largest target ABV that both solves and fits the
+            rig's capacity limits, as a percentage.
+        binding_constraint: Which limit sets ``max_feasible_abv``:
+            ``fermentation``, ``volume``, ``tun``, ``kettle``, or ``hlt``.
         mash_thickness_l_per_kg: Resolved liquor-to-grist ratio, in L/kg.
             Surfaced at the top level (in addition to ``cascade``) because the
             Mash Card reads it directly to derive strike water temperature
@@ -1236,38 +1253,127 @@ class BatchSolverResult:
     aa_wort: float
     aa_batch: float
     hlt: HltWaterBudget
+    max_feasible_abv: float
+    binding_constraint: str
     mash_thickness_l_per_kg: float
 
 
-def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
-    """Top-level orchestrator composing Phases 1-4.
+@dataclass(frozen=True)
+class _Pipeline:
+    sg_post_boil: float
+    reversal: VolumetricReversal
+    m_grist: float
+    cascade: StageCascade
+    hlt: HltWaterBudget
+    aa_wort: float
+    aa_batch: float
 
-    Pipeline:
 
-    1. Phase 1: isolate ``SG_post_boil`` from the target ABV and attenuation.
-    2. Phase 2: reverse kettle mechanics to derive ``V_pre_boil`` and
-       ``S_post_boil_target``.
-    3. Phase 3: resolve ``M_grist`` via Brent's method.
-    4. Phase 4: cascade stage volumes and gravities.
+def tun_peak_volume_l(
+    m_grist: float,
+    cascade: StageCascade,
+    v_dead: float,
+    displacement: float = GRAIN_DISPLACEMENT_METRIC,
+) -> float:
+    """Largest tun occupancy across the mash and sparge phases, in liters.
 
-    Args:
-        inputs: The frozen ``BatchSolverInput`` bundle.
-
-    Returns:
-        A frozen ``BatchSolverResult`` with all derived anchors.
-
-    Raises:
-        SolverValidationError: Propagated from any phase's validation gate.
-
-    See ``domain-equations.md`` §2.5.
+    ``V_mash = displacement * M + v_strike``; ``V_sparge = displacement * M +
+    v_absorption + v_dead + v_sparge``. The binding phase changes with gravity.
     """
+    mash_phase = (displacement * m_grist) + cascade.v_strike
+    sparge_phase = (
+        (displacement * m_grist) + cascade.v_absorption + v_dead + cascade.v_sparge
+    )
+    return max(mash_phase, sparge_phase)
+
+
+def _capacity_violation(inputs: BatchSolverInput, pipeline: _Pipeline) -> str | None:
+    if pipeline.reversal.v_pre_boil > inputs.max_kettle_volume_l:
+        return "kettle"
+    peak = tun_peak_volume_l(pipeline.m_grist, pipeline.cascade, inputs.v_dead)
+    if peak > inputs.max_mash_tun_volume_l:
+        return "tun"
+    return None
+
+
+def _diagnose_bracket(
+    inputs: BatchSolverInput,
+    reversal: VolumetricReversal,
+    yield_fraction: float,
+    mc_bar: float,
+    eta_conv: float,
+) -> SolverValidationError | None:
+    """Name the capacity limit that makes the bracket infeasible, if definitive.
+
+    Evaluated at the bracket's upper bound, where the residual has the most
+    extract available. If no capacity limit is exceeded there, the numerical
+    failure is left untouched.
+    """
+    _, upper = grist_mass_bracket(
+        reversal.s_post_boil_target, inputs.s_late_add, yield_fraction
+    )
+    if not math.isfinite(upper) or upper <= 0.0:
+        return None
+    try:
+        cascade = resolve_stage_cascade(
+            m_grist=upper,
+            v_pre_boil=reversal.v_pre_boil,
+            topology=inputs.topology,
+            intensive_value=inputs.intensive_value,
+            yield_fraction=yield_fraction,
+            mc_bar=mc_bar,
+            eta_conv=eta_conv,
+            v_dead=inputs.v_dead,
+            delta_v_evap=inputs.delta_v_evap,
+            mash_transfer_loss=inputs.mash_transfer_loss,
+            k_abs_true=inputs.k_abs_true,
+        )
+    except SolverValidationError:
+        return None
+
+    if reversal.v_pre_boil > inputs.max_kettle_volume_l:
+        return SolverValidationError(
+            "KETTLE_TOO_SMALL",
+            (
+                f"Kettle capacity exceeded: pre-boil volume "
+                f"{reversal.v_pre_boil:.1f} L exceeds "
+                f"{inputs.max_kettle_volume_l:.1f} L."
+            ),
+        )
+    peak = tun_peak_volume_l(upper, cascade, inputs.v_dead)
+    if peak > inputs.max_mash_tun_volume_l:
+        return SolverValidationError(
+            "MASH_TUN_TOO_SMALL",
+            (
+                f"Mash tun capacity exceeded: the tun needs {peak:.1f} L of "
+                f"{inputs.max_mash_tun_volume_l:.1f} L at the bracket bound."
+            ),
+        )
+    try:
+        resolve_hlt_water_budget(
+            hlt_starting_volume_l=inputs.hlt_starting_volume_l,
+            v_strike_drawn=cascade.v_strike,
+            v_sparge_demand=cascade.v_sparge,
+            hlt_dead_space_l=inputs.hlt_dead_space_l,
+            hlt_transfer_loss_l=inputs.hlt_transfer_loss_l,
+            hlt_coil_floor_l=inputs.hlt_coil_floor_l,
+            max_hlt_volume_l=inputs.max_hlt_volume_l,
+        )
+    except SolverValidationError as exc:
+        if exc.code == "HLT_TOO_SMALL":
+            return exc
+        raise
+    return None
+
+
+def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
     validate_grain_bill_normalization(inputs.grain_bill)
     yield_fraction = composite_yield_fraction(inputs.grain_bill)
     mc_bar = composite_moisture_fraction(inputs.grain_bill)
     aa_malt = composite_fermentability_fraction(inputs.grain_bill)
 
     def solve_phase_1(aa: float):
-        sg = solve_sg_post_boil_from_abv(inputs.target_abv, aa)
+        sg = solve_sg_post_boil_from_abv(target_abv, aa)
         rev = resolve_volumetric_reversal(
             v_ferm=inputs.v_ferm,
             sg_post_boil=sg,
@@ -1300,22 +1406,29 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
 
     sg_post_boil, reversal = solve_phase_1(aa_batch)
 
-    # Phase 3: grist mass resolution.
-    m_grist = solve_grist_mass(
-        v_pre_boil=reversal.v_pre_boil,
-        r_l_to_g=inputs.intensive_value,
-        yield_fraction=yield_fraction,
-        mc_bar=mc_bar,
-        eta_conv=inputs.eta_conv,
-        s_post_boil_target=reversal.s_post_boil_target,
-        s_late_add=inputs.s_late_add,
-        v_dead=inputs.v_dead,
-        k_abs_true=inputs.k_abs_true,
-        topology=inputs.topology,
-        mash_transfer_loss=inputs.mash_transfer_loss,
-    )
+    try:
+        m_grist = solve_grist_mass(
+            v_pre_boil=reversal.v_pre_boil,
+            r_l_to_g=inputs.intensive_value,
+            yield_fraction=yield_fraction,
+            mc_bar=mc_bar,
+            eta_conv=inputs.eta_conv,
+            s_post_boil_target=reversal.s_post_boil_target,
+            s_late_add=inputs.s_late_add,
+            v_dead=inputs.v_dead,
+            k_abs_true=inputs.k_abs_true,
+            topology=inputs.topology,
+            mash_transfer_loss=inputs.mash_transfer_loss,
+        )
+    except SolverValidationError as exc:
+        if exc.code in ("BRACKET_NO_SIGN_CHANGE", "DEGENERATE_BRACKET"):
+            cause = _diagnose_bracket(
+                inputs, reversal, yield_fraction, mc_bar, inputs.eta_conv
+            )
+            if cause is not None:
+                raise cause from exc
+        raise
 
-    # Phase 4: stage volume & gravity cascade.
     cascade = resolve_stage_cascade(
         m_grist=m_grist,
         v_pre_boil=reversal.v_pre_boil,
@@ -1330,7 +1443,6 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         k_abs_true=inputs.k_abs_true,
     )
 
-    # HLT water budget: derived from the cascade's sparge demand.
     hlt = resolve_hlt_water_budget(
         hlt_starting_volume_l=inputs.hlt_starting_volume_l,
         v_strike_drawn=cascade.v_strike,
@@ -1341,15 +1453,115 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         max_hlt_volume_l=inputs.max_hlt_volume_l,
     )
 
-    return BatchSolverResult(
+    return _Pipeline(
         sg_post_boil=sg_post_boil,
-        v_pre_boil=reversal.v_pre_boil,
-        s_post_boil_target=reversal.s_post_boil_target,
+        reversal=reversal,
         m_grist=m_grist,
         cascade=cascade,
-        max_achievable_abv=max_achievable_abv(aa_batch),
+        hlt=hlt,
         aa_wort=aa_wort,
         aa_batch=aa_batch,
-        hlt=hlt,
-        mash_thickness_l_per_kg=cascade.mash_thickness_l_per_kg,
+    )
+
+
+def _feasible_bound(
+    inputs: BatchSolverInput, fermentation_ceiling: float
+) -> tuple[float, str]:
+    def probe(target_abv: float) -> str | None:
+        if target_abv <= 0.0:
+            return "volume"
+        try:
+            pipeline = _solve_pipeline(inputs, target_abv)
+        except SolverValidationError as exc:
+            if exc.code == "ABV_UNREACHABLE":
+                return "fermentation"
+            if exc.code == "HLT_TOO_SMALL":
+                return "hlt"
+            if exc.code == "MASH_TUN_TOO_SMALL":
+                return "tun"
+            if exc.code == "KETTLE_TOO_SMALL":
+                return "kettle"
+            if exc.code in (
+                "BRACKET_NO_SIGN_CHANGE",
+                "DEGENERATE_BRACKET",
+                "MASH_TOO_THIN",
+                "EXTRACT_TARGET_NON_POSITIVE",
+                "INVALID_YIELD",
+            ):
+                return "volume"
+            raise
+        return _capacity_violation(inputs, pipeline)
+
+    low = None
+    low_reason = None
+    for candidate in range(1, 20):
+        reason = probe(float(candidate))
+        if reason is None:
+            low = float(candidate)
+            break
+        if low_reason is None:
+            low_reason = reason
+    if low is None:
+        return 0.0, low_reason or "volume"
+
+    high = max(fermentation_ceiling, low)
+    high_reason = probe(high)
+    if high_reason is None:
+        return high, "fermentation"
+
+    for _ in range(30):
+        mid = (low + high) / 2.0
+        if probe(mid) is None:
+            low = mid
+        else:
+            high = mid
+    return low, probe(high) or "fermentation"
+
+
+def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
+    """Top-level orchestrator composing Phases 1-4.
+
+    Pipeline:
+
+    1. Phase 1: isolate ``SG_post_boil`` from the target ABV and attenuation.
+    2. Phase 2: reverse kettle mechanics to derive ``V_pre_boil`` and
+       ``S_post_boil_target``.
+    3. Phase 3: resolve ``M_grist`` via Brent's method.
+    4. Phase 4: cascade stage volumes and gravities.
+
+    The feasible-ABV bound is found by bisecting the same pipeline against the
+    rig's capacity limits; it never changes the target solve.
+
+    Args:
+        inputs: The frozen ``BatchSolverInput`` bundle.
+
+    Returns:
+        A frozen ``BatchSolverResult`` with all derived anchors.
+
+    Raises:
+        SolverValidationError: Propagated from any phase's validation gate. A
+            bracket failure is replaced by a named capacity code when the
+            upper-bound check is definitive.
+
+    See ``domain-equations.md`` §2.5.
+    """
+    pipeline = _solve_pipeline(inputs, inputs.target_abv)
+    fermentation_ceiling = max_achievable_abv(pipeline.aa_batch)
+    max_feasible_abv, binding_constraint = _feasible_bound(
+        inputs, fermentation_ceiling
+    )
+
+    return BatchSolverResult(
+        sg_post_boil=pipeline.sg_post_boil,
+        v_pre_boil=pipeline.reversal.v_pre_boil,
+        s_post_boil_target=pipeline.reversal.s_post_boil_target,
+        m_grist=pipeline.m_grist,
+        cascade=pipeline.cascade,
+        max_achievable_abv=fermentation_ceiling,
+        aa_wort=pipeline.aa_wort,
+        aa_batch=pipeline.aa_batch,
+        hlt=pipeline.hlt,
+        max_feasible_abv=max_feasible_abv,
+        binding_constraint=binding_constraint,
+        mash_thickness_l_per_kg=pipeline.cascade.mash_thickness_l_per_kg,
     )

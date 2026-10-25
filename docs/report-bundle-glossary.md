@@ -244,13 +244,14 @@ _61 paths_
 
 ## Solver — batch sparge
 
-_24 paths_
+_26 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `solver.batch` | Batch | boundary | — | — | — | — |
 | `solver.batch.aa_batch` | Batch attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.aa_wort` | Wort attenuation | output | percentage | pct (%) | 1 | — |
+| `solver.batch.binding_constraint` | Binding Constraint | output | — | — | — | fermentation, volume, tun, kettle, hlt |
 | `solver.batch.cascade.s_run1` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.s_run2` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.sg_pre_boil` | Gravity | output | gravity | Plato (°P) | 1 | — |
@@ -269,6 +270,7 @@ _24 paths_
 | `solver.batch.m_grist` | Grist Mass | output | mass | kg | 1 | — |
 | `solver.batch.mash_thickness_l_per_kg` | Mash Thickness | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `solver.batch.max_achievable_abv` | Max Achievable ABV | output | percentage | pct (%) | 1 | — |
+| `solver.batch.max_feasible_abv` | Max Feasible ABV | output | percentage | pct (%) | 1 | — |
 | `solver.batch.s_post_boil_target` | Post-Boil Extract Target | output | mass | kg | 1 | — |
 | `solver.batch.sg_post_boil` | Post-boil gravity | output | gravity | Plato (°P) | 1 | — |
 | `solver.batch.v_pre_boil` | Pre-boil kettle | output | volume | L | 1 | — |

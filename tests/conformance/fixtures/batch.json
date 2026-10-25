@@ -1,5 +1,5 @@
 {
-  "fingerprint": "3d888e3702db921309f35798e7c9c5c4ee66f4e30c9ab0b5c0c26060125162ae",
+  "fingerprint": "bacc33c991ec80239acc8668ac28a64bcb0f0ba4e1bf53b38ef2f28c77d9f59a",
   "request": {
     "apparent_attenuation": 0.75,
     "delta_v_evap": 3.0,
@@ -27,6 +27,8 @@
     "k_abs_true": 1.043176,
     "mash_transfer_loss": 0.0,
     "max_hlt_volume_l": 30.0,
+    "max_kettle_volume_l": 40.0,
+    "max_mash_tun_volume_l": 40.0,
     "s_late_add": 0.0,
     "target_abv": 5.5,
     "topology": "r_l_to_g",

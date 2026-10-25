@@ -48,6 +48,8 @@ BASE_INPUT = dict(
     hlt_transfer_loss_l=0.946,
     hlt_coil_floor_l=12.0,
     max_hlt_volume_l=38.0,
+    max_kettle_volume_l=40.0,
+    max_mash_tun_volume_l=40.0,
 )
 
 BASE_GRIST = dict(
@@ -91,6 +93,8 @@ TRIGGERS = {
     "INVALID_INTENSIVE_VALUE": lambda: _input(intensive_value=-1.0),
     "MASH_TOO_THIN": lambda: _solve_grist(r_l_to_g=1.0),
     "HLT_TOO_SMALL": lambda: _solve(max_hlt_volume_l=1.0),
+    "KETTLE_TOO_SMALL": lambda: _solve(target_abv=12.0, max_kettle_volume_l=10.0),
+    "MASH_TUN_TOO_SMALL": lambda: _solve(target_abv=12.0, max_mash_tun_volume_l=10.0),
     "INVALID_GRAIN_BILL_NORMALIZATION": lambda: _solve(
         grain_bill=[
             GrainBillEntry(w_i=0.6, yield_i=0.8, mc_i=0.0, fermentability_i=0.8),

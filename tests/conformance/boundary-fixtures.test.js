@@ -73,6 +73,8 @@ const BATCH_VALUES = {
   "equipment.hlt_transfer_loss_l": 0.0,
   "equipment.hlt_coil_floor_l": 0.0,
   "equipment.max_hlt_volume_l": 30.0,
+  "equipment.max_kettle_volume_l": 40.0,
+  "equipment.max_mash_tun_volume_l": 40.0,
 };
 
 const WATER_VALUES = {

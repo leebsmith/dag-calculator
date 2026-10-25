@@ -88,6 +88,8 @@ export const BATCH_FIELDS = {
   hlt_transfer_loss_l: { path: "equipment.hlt_transfer_loss_l" },
   hlt_coil_floor_l: { path: "equipment.hlt_coil_floor_l" },
   max_hlt_volume_l: { path: "equipment.max_hlt_volume_l" },
+  max_kettle_volume_l: { path: "equipment.max_kettle_volume_l" },
+  max_mash_tun_volume_l: { path: "equipment.max_mash_tun_volume_l" },
 };
 
 // WaterSolverRequest: one entry per solver.water declared input. `solver.batch`

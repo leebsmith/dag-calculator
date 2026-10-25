@@ -86,6 +86,8 @@ export const STUB_BOUNDARIES = {
     "cascade.sg_pre_boil": 1.048,
     "cascade.v_post_boil": 21.0,
     max_achievable_abv: 10.0,
+    max_feasible_abv: 10.0,
+    binding_constraint: "fermentation",
     aa_wort: 0.76,
     aa_batch: 0.75,
     "hlt.v_hlt_debt": 1.0,

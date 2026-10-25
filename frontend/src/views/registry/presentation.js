@@ -13,8 +13,16 @@ export const CONFORMANCE_FIELD_MAP = {
 
 const TARGET_ABV = {
   hint: {
-    path: "solver.batch.max_achievable_abv",
-    format: (max) => `Max at current attenuation: ${max.toFixed(1)}%.`,
+    path: "solver.batch.max_feasible_abv",
+    detail: "solver.batch.binding_constraint",
+    extra: "solver.batch.max_achievable_abv",
+    format: (max, binding, attenuation) => {
+      const ceiling =
+        typeof attenuation === "number"
+          ? `; attenuation ceiling ${attenuation.toFixed(1)}%`
+          : "";
+      return `Max feasible: ${max.toFixed(1)}% (${binding})${ceiling}.`;
+    },
   },
 };
 
@@ -38,14 +46,18 @@ export function presentationFor(id) {
 export function applyPresentation(out, rule, readers) {
   if (rule.hint) {
     let value;
+    let detail;
+    let extra;
     try {
       value = readers.resolve(rule.hint.path);
+      detail = rule.hint.detail ? readers.resolve(rule.hint.detail) : undefined;
+      extra = rule.hint.extra ? readers.resolve(rule.hint.extra) : undefined;
     } catch (err) {
       reportError("presentation.hint", err);
       value = null;
     }
     if (typeof value === "number" && Number.isFinite(value)) {
-      out.hint = rule.hint.format(value);
+      out.hint = rule.hint.format(value, detail, extra);
     }
   }
 }

@@ -205,6 +205,8 @@ def test_solve_batch_end_to_end():
     assert resp.mash_thickness_l_per_kg >= 1.67
     assert resp.hlt.v_hlt_top_up >= 0.0
     assert resp.max_achievable_abv > 0.0
+    assert 0.0 < resp.max_feasible_abv <= resp.max_achievable_abv
+    assert resp.binding_constraint in {"fermentation", "volume", "tun", "kettle", "hlt"}
     for v in resp.cascade.model_dump().values():
         if isinstance(v, float):
             assert v == v  # finite, not NaN
@@ -316,7 +318,8 @@ def test_error_surface_complete():
         "INVALID_FERM_VOLUME", "INVALID_SHRINKAGE", "EXTRACT_TARGET_NON_POSITIVE",
         "INVALID_YIELD", "DEGENERATE_BRACKET", "BRACKET_NO_SIGN_CHANGE",
         "UNKNOWN_TOPOLOGY", "INVALID_INTENSIVE_VALUE", "MASH_TOO_THIN",
-        "HLT_TOO_SMALL", "INVALID_GRAIN_BILL_NORMALIZATION",
+        "HLT_TOO_SMALL", "KETTLE_TOO_SMALL", "MASH_TUN_TOO_SMALL",
+        "INVALID_GRAIN_BILL_NORMALIZATION",
     }
     assert declared == expected
 

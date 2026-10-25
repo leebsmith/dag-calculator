@@ -40,6 +40,8 @@ def standard_inputs():
         hlt_transfer_loss_l=0.946,
         hlt_coil_floor_l=12.0,
         max_hlt_volume_l=38.0,
+        max_kettle_volume_l=40.0,
+        max_mash_tun_volume_l=40.0,
     )
 
 
@@ -115,6 +117,23 @@ def test_m_grist_responds_to_mash_transfer_loss(standard_inputs):
     result = solve_batch(standard_inputs)
 
     assert result.m_grist > no_loss.m_grist
+
+
+def test_feasibility_bound_names_the_tun(standard_inputs):
+    result = solve_batch(standard_inputs)
+
+    assert result.max_feasible_abv < result.max_achievable_abv
+    assert result.binding_constraint == "tun"
+
+
+def test_bracket_failure_names_the_tun(standard_inputs):
+    inputs = BatchSolverInput(**{**standard_inputs.__dict__, "target_abv": 9.0})
+
+    with pytest.raises(SolverValidationError) as exc:
+        solve_batch(inputs)
+
+    assert exc.value.code == "MASH_TUN_TOO_SMALL"
+    assert "40.0 L" in exc.value.message
 
 
 def test_solve_batch_runoff_ratio_topology(standard_inputs):

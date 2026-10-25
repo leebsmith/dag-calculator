@@ -23,6 +23,7 @@ BATCH_PINS = [
     ("GAMMA_METRIC", "sucrose_yield_ldk"),
     ("V_BAR_METRIC", "v_bar"),
     ("K_ABS_TRUE_METRIC", "k_abs_true"),
+    ("GRAIN_DISPLACEMENT_METRIC", "grain_displacement_l_per_kg"),
     ("RHO_WATER_METRIC", "rho_water"),
     ("F_SHRINK_DEFAULT", "default_shrinkage_fraction"),
 ]

@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:cd93342298920f5f1730051bab8b4e48df9a5c807fd055f22637c796003330d0",
+    "hash": "sha256:264cc7407ad0865f9af753fef88f15456292ed8d9fae83c513df651cfd92973b",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -336,6 +336,13 @@
         "topology": [
           "r_l_to_g",
           "runoff_ratio"
+        ],
+        "binding_constraint": [
+          "fermentation",
+          "volume",
+          "tun",
+          "kettle",
+          "hlt"
         ],
         "strategy": [
           "FLAVOR",
@@ -2822,7 +2829,9 @@
             "hlt_dead_space_l": "equipment.hlt_dead_space_l",
             "hlt_transfer_loss_l": "equipment.hlt_transfer_loss_l",
             "hlt_coil_floor_l": "equipment.hlt_coil_floor_l",
-            "max_hlt_volume_l": "equipment.max_hlt_volume_l"
+            "max_hlt_volume_l": "equipment.max_hlt_volume_l",
+            "max_kettle_volume_l": "equipment.max_kettle_volume_l",
+            "max_mash_tun_volume_l": "equipment.max_mash_tun_volume_l"
           },
           "outputs": {
             "sg_post_boil": {
@@ -2873,6 +2882,12 @@
             "max_achievable_abv": {
               "dimension": "percentage"
             },
+            "max_feasible_abv": {
+              "dimension": "percentage"
+            },
+            "binding_constraint": {
+              "taxonomy": "binding_constraint"
+            },
             "aa_wort": {
               "dimension": "percentage"
             },
@@ -2910,6 +2925,8 @@
               "INVALID_INTENSIVE_VALUE",
               "MASH_TOO_THIN",
               "HLT_TOO_SMALL",
+              "KETTLE_TOO_SMALL",
+              "MASH_TUN_TOO_SMALL",
               "INVALID_GRAIN_BILL_NORMALIZATION"
             ]
           }
@@ -4523,5 +4540,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:5d6675bf432c9871fe86a6b0a62d4d9dfeea90e9627f0098ce21e11181d79eb0"
+  "content_hash": "sha256:ba85bc642aa9187d40bf57d9a6676d0a058c8f1bd082759f30c87f3583c363e5"
 }

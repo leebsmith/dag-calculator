@@ -55,6 +55,8 @@ class BatchSolverErrorCode(StrEnum):
     INVALID_INTENSIVE_VALUE = "INVALID_INTENSIVE_VALUE"
     MASH_TOO_THIN = "MASH_TOO_THIN"
     HLT_TOO_SMALL = "HLT_TOO_SMALL"
+    KETTLE_TOO_SMALL = "KETTLE_TOO_SMALL"
+    MASH_TUN_TOO_SMALL = "MASH_TUN_TOO_SMALL"
     INVALID_GRAIN_BILL_NORMALIZATION = "INVALID_GRAIN_BILL_NORMALIZATION"
 
 
@@ -135,6 +137,8 @@ class BatchSolverRequest(BoundaryModel):
     hlt_transfer_loss_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT transfer debt in Liters")]
     hlt_coil_floor_l: Annotated[float, Field(ge=0.0, default=0.0, description="HLT coil immersion floor in Liters")]
     max_hlt_volume_l: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Maximum HLT capacity in Liters")]
+    max_kettle_volume_l: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Maximum kettle capacity in Liters")]
+    max_mash_tun_volume_l: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Maximum mash tun capacity in Liters")]
 
     @model_validator(mode="after")
     def _check_grain_bill_normalization(self) -> BatchSolverRequest:
@@ -165,6 +169,16 @@ class BatchHltOutputs(BoundaryModel):
     v_sparge_deliverable: Annotated[float, Field(description="Available deliverable sparge volume from HLT (L)")]
 
 
+class BindingConstraint(StrEnum):
+    """Which capability limit sets ``max_feasible_abv``."""
+
+    FERMENTATION = "fermentation"
+    VOLUME = "volume"
+    TUN = "tun"
+    KETTLE = "kettle"
+    HLT = "hlt"
+
+
 class BatchSolverResponse(BoundaryModel):
     """Output contract for batch_sparge_solver."""
 
@@ -174,6 +188,8 @@ class BatchSolverResponse(BoundaryModel):
     m_grist: Annotated[float, Field(description="Total required grist mass (kg)")]
     cascade: BatchCascadeOutputs
     max_achievable_abv: Annotated[float, Field(description="Upper bound achievable ABV given geometry")]
+    max_feasible_abv: Annotated[float, Field(description="Largest ABV that solves and fits the rig")]
+    binding_constraint: Annotated[BindingConstraint, Field(description="Limit that sets max_feasible_abv")]
     aa_wort: Annotated[float, Field(description="Extract-weighted wort fermentability")]
     aa_batch: Annotated[float, Field(description="Wort AA clamped by the yeast cap")]
     hlt: BatchHltOutputs
