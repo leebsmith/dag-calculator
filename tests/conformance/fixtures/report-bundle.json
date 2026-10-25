@@ -1,13 +1,13 @@
 {
   "bundle_format": 1,
   "artifact": {
-    "schema_version": 8,
-    "hash": "sha256:710bd90e8c89d6dac1526a97f1760475e718f11b39bc12355d94af1cce69c560",
+    "schema_version": 9,
+    "hash": "sha256:cd93342298920f5f1730051bab8b4e48df9a5c807fd055f22637c796003330d0",
     "content": {
-      "schema_version": 8,
+      "schema_version": 9,
       "meta": {
         "name": "batch-brewing-calculator-logic",
-        "description": "Canonical business-logic DAG (schema_version 8, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+        "description": "Canonical business-logic DAG (schema_version 9, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
         "status": "complete"
       },
       "identity": {
@@ -278,6 +278,14 @@
         },
         "k_abs_true": {
           "value": 1.043176,
+          "dimension": "mash_thickness"
+        },
+        "grain_displacement_l_per_kg": {
+          "value": 0.667632,
+          "dimension": "mash_thickness"
+        },
+        "max_mash_thickness_l_per_kg": {
+          "value": 4.1727,
           "dimension": "mash_thickness"
         },
         "rho_water": {
@@ -1144,6 +1152,23 @@
                 ]
               },
               null
+            ]
+          }
+        },
+        "grain_displacement_volume": {
+          "params": [
+            "m_grist"
+          ],
+          "returns": "volume",
+          "body": {
+            "op": "*",
+            "args": [
+              {
+                "ref": "m_grist"
+              },
+              {
+                "const": "grain_displacement_l_per_kg"
+              }
             ]
           }
         }
@@ -3603,6 +3628,76 @@
             "dimension": "temperature"
           }
         },
+        "mash.mash_phase_volume_l": {
+          "kind": "derived",
+          "inputs": {
+            "m_grist": "solver.batch.m_grist",
+            "v_strike": "solver.batch.cascade.v_strike"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "call": "grain_displacement_volume",
+                "args": [
+                  {
+                    "ref": "m_grist"
+                  }
+                ]
+              },
+              {
+                "ref": "v_strike"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
+        "mash.sparge_phase_volume_l": {
+          "kind": "derived",
+          "inputs": {
+            "m_grist": "solver.batch.m_grist",
+            "v_absorption": "solver.batch.cascade.v_absorption",
+            "mash_dead_space_l": "equipment.mash_dead_space_l",
+            "v_sparge": "solver.batch.cascade.v_sparge"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "call": "grain_displacement_volume",
+                        "args": [
+                          {
+                            "ref": "m_grist"
+                          }
+                        ]
+                      },
+                      {
+                        "ref": "v_absorption"
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "mash_dead_space_l"
+                  }
+                ]
+              },
+              {
+                "ref": "v_sparge"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "volume"
+          }
+        },
         "grist.weighted_lovibond": {
           "kind": "derived",
           "inputs": {
@@ -3891,6 +3986,7 @@
       "relations": [
         {
           "id": "hlt_not_overfilled",
+          "blocking": true,
           "predicate": {
             "op": "le",
             "lhs": {
@@ -3903,6 +3999,7 @@
         },
         {
           "id": "hlt_above_coil_floor",
+          "blocking": false,
           "predicate": {
             "op": "ge",
             "lhs": {
@@ -3914,7 +4011,21 @@
           }
         },
         {
+          "id": "hlt_demand_not_overfilled",
+          "blocking": true,
+          "predicate": {
+            "op": "le",
+            "lhs": {
+              "ref": "solver.batch.hlt.v_hlt_top_up"
+            },
+            "rhs": {
+              "ref": "equipment.max_hlt_volume_l"
+            }
+          }
+        },
+        {
           "id": "kettle_not_overfilled",
+          "blocking": true,
           "predicate": {
             "op": "le",
             "lhs": {
@@ -3926,19 +4037,38 @@
           }
         },
         {
-          "id": "target_abv_reachable",
+          "id": "mash_tun_not_overfilled",
+          "blocking": true,
           "predicate": {
             "op": "le",
             "lhs": {
-              "ref": "batch.target_abv"
+              "op": "if",
+              "args": [
+                {
+                  "op": "ge",
+                  "lhs": {
+                    "ref": "mash.mash_phase_volume_l"
+                  },
+                  "rhs": {
+                    "ref": "mash.sparge_phase_volume_l"
+                  }
+                },
+                {
+                  "ref": "mash.mash_phase_volume_l"
+                },
+                {
+                  "ref": "mash.sparge_phase_volume_l"
+                }
+              ]
             },
             "rhs": {
-              "ref": "solver.batch.max_achievable_abv"
+              "ref": "equipment.max_mash_tun_volume_l"
             }
           }
         },
         {
           "id": "mash_thickness_above_equipment_floor",
+          "blocking": false,
           "predicate": {
             "op": "if",
             "args": [
@@ -3960,6 +4090,19 @@
               },
               true
             ]
+          }
+        },
+        {
+          "id": "mash_thickness_below_ceiling",
+          "blocking": false,
+          "predicate": {
+            "op": "le",
+            "lhs": {
+              "ref": "solver.batch.mash_thickness_l_per_kg"
+            },
+            "rhs": {
+              "const": "max_mash_thickness_l_per_kg"
+            }
           }
         }
       ]
@@ -4380,5 +4523,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:848316842e6cd2e6c13b0056391f328463606cf82da0d37d3c93af620568de00"
+  "content_hash": "sha256:5d6675bf432c9871fe86a6b0a62d4d9dfeea90e9627f0098ce21e11181d79eb0"
 }

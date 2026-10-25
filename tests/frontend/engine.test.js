@@ -78,7 +78,11 @@ test("loadArtifact rejects a relation with a dangling ref", () => {
   const bad = structuredClone(artifact);
   bad.relations = [
     ...bad.relations,
-    { id: "bad_ref", predicate: { op: "le", lhs: { ref: "does.not.exist" }, rhs: 1 } },
+    {
+      id: "bad_ref",
+      blocking: false,
+      predicate: { op: "le", lhs: { ref: "does.not.exist" }, rhs: 1 },
+    },
   ];
   assert.throws(() => loadArtifact(bad), /unknown node\/field/);
 });

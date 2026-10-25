@@ -17,20 +17,34 @@ export const RELATION_FINDINGS = {
     message: ({ lhs, rhs }, format) =>
       `HLT fill ${format(lhs)} is below the coil immersion floor ${format(rhs)}.`,
   },
+  hlt_demand_not_overfilled: {
+    label: "HLT liquor demand",
+    message: ({ lhs, rhs }, format) =>
+      `HLT top-up ${format(lhs)} exceeds the HLT capacity ${format(rhs)}.`,
+  },
   kettle_not_overfilled: {
     label: "Kettle capacity",
     message: ({ lhs, rhs }, format) =>
       `Pre-boil volume ${format(lhs)} exceeds the kettle capacity ${format(rhs)}.`,
   },
-  target_abv_reachable: {
-    label: "Target ABV reachability",
+  mash_tun_not_overfilled: {
+    label: "Mash tun capacity",
     message: ({ lhs, rhs }, format) =>
-      `Target ABV ${format(lhs)} exceeds the attenuation ceiling ${format(rhs)}.`,
+      `Mash tun peak volume ${format(lhs)} exceeds the tun capacity ${format(rhs)}.`,
   },
   mash_thickness_above_equipment_floor: {
     label: "Rig mash thickness floor",
     message: ({ thickness, floor }, format) =>
       `Mash thickness ${format(thickness)} is below the rig's minimum ${format(floor)}.`,
+  },
+  mash_thickness_below_ceiling: {
+    label: "Mash thickness ceiling",
+    message: ({ thickness, ceiling }, format) =>
+      `Mash thickness ${format(thickness)} exceeds the process ceiling ${format(ceiling)}.`,
+    action: {
+      handler: "pinMashThickness",
+      label: "Use the rig-default mash thickness",
+    },
   },
 };
 

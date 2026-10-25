@@ -255,6 +255,7 @@ non-finite computed number (e.g. `NaN`) is still a violation.
 
 ```jsonc
 { "id": "hlt_not_overfilled",
+  "blocking": true,
   "predicate": { "op": "le",
                  "lhs": { "ref": "batch.hlt_starting_volume_l" },
                  "rhs": { "ref": "equipment.max_hlt_volume_l" } } }
@@ -262,6 +263,15 @@ non-finite computed number (e.g. `NaN`) is still a violation.
 
 A relation is a predicate over two or more nodes that no single node owns. It is
 a first-class invariant, evaluated by the engine and surfaced to the view.
+
+`blocking` is a required boolean domain fact, not presentation vocabulary.
+`true` marks a capability limit: a batch that fails it cannot exist (an
+overfilled tun, a kettle that cannot hold the pre-boil volume). `false` marks a
+quality/policy finding (a thin mash, a rig preference). The view maps `blocking`
+to its `error`/`warning` severity; the artifact never names those words.
+
+The AST has no scalar `min`/`max`. Use `if(a >= b, a, b)` for the larger of two
+values — `mash_tun_not_overfilled` compares the peak phase volume this way.
 
 Predicate referents may include selection fields. Because `and`/`or`/`if`
 **short-circuit**, an optional selection is guarded with a conditional, e.g.
@@ -278,7 +288,7 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **8**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **9**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `identity` (all objects), `nodes` (all objects), and
   `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in

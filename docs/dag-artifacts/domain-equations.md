@@ -195,6 +195,17 @@ the batch attenuation, computed through the artifact functions `cutaia_abv_plato
 | `rho_water` | `rho_water` |
 | `f_shrink` | `default_shrinkage_fraction` |
 
+Tun occupancy uses Palmer's displacement `grain_displacement_l_per_kg` (0.32 qt/lb
+= 0.667632 L/kg). The binding phase changes with gravity, so both are derived and
+the relation compares the larger:
+
+    V_mash_phase   = displacement · M + V_strike
+    V_sparge_phase = displacement · M + V_absorption + V_dead + V_sparge
+
+The upper thickness limit is a process convention, not an equipment field:
+`max_mash_thickness_l_per_kg` = 2.0 qt/lb = 4.1727 L/kg. It is enforced by a
+warning-only relation; no value is ever clamped to it.
+
 ### 2.5 Constraint topologies and the residual
 
 The liquid subsystem has two degrees of freedom, so it needs two constraints, at least one
@@ -266,12 +277,9 @@ Applying shrinkage to the net volume instead would incorrectly shrink the losses
 
 ### 2.7 Pending corrections
 
-This derivation is the intended model. The implementation currently deviates in one way,
-each decided in [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md):
-
-| Deviation | Decision |
-|---|---|
-| Tun capacity declared but unchecked; no upper thickness ceiling | D14, D3/D4 |
+None. The derivation above and the implementation agree; the decisions that
+closed the earlier deviations are recorded in
+[`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md).
 
 Each correction lands here in the same commit as its code, per the atomic-docs rule in
 `AGENTS.md`.

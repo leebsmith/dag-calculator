@@ -3,7 +3,7 @@
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-export const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8];
+export const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -82,6 +82,9 @@ export function validateArtifact(artifact) {
   for (const relation of artifact.relations ?? []) {
     if (!relation || typeof relation !== "object" || !relation.id) {
       throw new Error("Each relation must be an object with an id");
+    }
+    if (typeof relation.blocking !== "boolean") {
+      throw new Error(`Relation "${relation.id}" must declare a boolean "blocking"`);
     }
     for (const path of collectRefs(relation.predicate)) {
       checkRefResolves(artifact, path, `Relation "${relation.id}"`);

@@ -140,3 +140,24 @@ the corrected pH and the full dose (salts + agent + acid).
   explicit `:selected` on any select, keyboard/aria for the target checkboxes
   and the target inputs.
 - Thresholds aligned: Na 0–50, Cl 0–300, SO₄ 400, Mg 50.
+
+## Batch findings (planned)
+
+Batch relations are enumerated, not summed into a bare badge. Each finding
+shows its label, the two formatted operands (in the user's unit mode) and a
+severity derived from the artifact's `blocking` flag: `error` = unbrewable on
+this rig, `warning` = quality/policy. The footer count remains as a summary
+badge only.
+
+- **Capacity** — kettle, mash tun (peak of the mash and sparge phases) and HLT
+  liquor demand report critically: the solve completes and every readout stays
+  alive, but the batch cannot be frozen.
+- **Mash thickness ceiling** — a policy warning when the resolved thickness
+  exceeds 2.0 qt/lb (4.1727 L/kg). Because it is advisory, it never clamps.
+- **Pin affordance** — a one-shot action inside that warning, visible only when
+  the thickness is implied (`runoff_ratio`) and boundary status is `ok`. It
+  writes `max(default_mash_thickness, equipment.min_lgr_l_per_kg)` to
+  `batch.mash_thickness_l_per_kg` and disappears; it promises nothing about
+  capacity. An authored thickness gets the warning, never a rewrite.
+- **Freeze** — refused while the solve failed or any blocking finding stands;
+  the refusal cites the finding.

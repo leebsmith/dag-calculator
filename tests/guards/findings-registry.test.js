@@ -21,17 +21,25 @@ const SAMPLES = {
     lhs: { value: 3, dimension: "volume" },
     rhs: { value: 4, dimension: "volume" },
   },
+  hlt_demand_not_overfilled: {
+    lhs: { value: 5, dimension: "volume" },
+    rhs: { value: 30, dimension: "volume" },
+  },
   kettle_not_overfilled: {
     lhs: { value: 44, dimension: "volume" },
     rhs: { value: 40, dimension: "volume" },
   },
-  target_abv_reachable: {
-    lhs: { value: 9, dimension: "percentage" },
-    rhs: { value: 8.1, dimension: "percentage" },
+  mash_tun_not_overfilled: {
+    lhs: { value: 44, dimension: "volume" },
+    rhs: { value: 40, dimension: "volume" },
   },
   mash_thickness_above_equipment_floor: {
     thickness: { value: 2.0, dimension: "mash_thickness" },
     floor: { value: 2.295, dimension: "mash_thickness" },
+  },
+  mash_thickness_below_ceiling: {
+    thickness: { value: 5.0, dimension: "mash_thickness" },
+    ceiling: { value: 4.1727, dimension: "mash_thickness" },
   },
 };
 
@@ -78,4 +86,12 @@ test("metadata is available before a solve and actions are explicit", () => {
     assert.equal(finding.message, null);
     assert.deepEqual(finding.action, actionFor(relation));
   }
+});
+
+test("the thickness ceiling carries the one-shot pin action", () => {
+  const ceiling = RELATIONS.find((relation) => relation.id === "mash_thickness_below_ceiling");
+  assert.deepEqual(actionFor(ceiling), {
+    handler: "pinMashThickness",
+    label: "Use the rig-default mash thickness",
+  });
 });

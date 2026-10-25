@@ -174,7 +174,10 @@ and deleting the old one. Existing batches are unaffected.
   in `relations`. They restrict *what is valid*, and are annotations, not nodes.
   The engine **evaluates** both and surfaces the result to the view
   (report-only: `relationStates()` / `domainStates()`); a violated invariant is a
-  presentation concern, not a computation failure. Bounds may reference a
+  presentation concern, not a computation failure. Every relation also declares
+  `blocking`: `true` marks a capability limit (no brewable batch exists),
+  `false` a quality/policy finding. The engine exposes it beside `holds`; the
+  view chooses the wording and severity. Bounds may reference a
   selected component's fields; a bound that cannot be resolved (e.g. an unset
   optional selection) is **not applicable** and skipped. Primitive-schema fields
   may also declare `domain`s, evaluated for the fields of a selected component

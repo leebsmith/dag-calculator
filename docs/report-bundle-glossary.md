@@ -150,7 +150,7 @@ _28 paths_
 
 ## Mash
 
-_17 paths_
+_19 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -159,6 +159,7 @@ _17 paths_
 | `mash.enabled_min_temp_c` | Enabled Min Temp C | derived | temperature | degC (°C) | 1 | — |
 | `mash.grain_temp_c` | Grain temperature | root | temperature | degC (°C) | 1 | — |
 | `mash.heating_rate_c_per_min` | Heating Rate C Per Min | derived | temperature_delta_per_time | dC_per_min (°C/min) | 2 | — |
+| `mash.mash_phase_volume_l` | Mash Phase Volume L | derived | volume | L | 1 | — |
 | `mash.preset_id` | Preset ID | choice | — | — | — | single_infusion, custom, belgian_saison, belgian_tripel, german_pils, berliner_weisse, english_brown, american_pale |
 | `mash.ramp_time_min` | Ramp Time Min | derived | time | min | 0 | — |
 | `mash.rests` | Rests | collection | — | — | — | — |
@@ -166,6 +167,7 @@ _17 paths_
 | `mash.rests.enabled` | Enabled | field | — | — | — | — |
 | `mash.rests.rest_id` | Rest ID | field | — | — | — | phytase, ferulic, beta_glucan, protein, beta_amylase, alpha_amylase, beta_alpha_amylase, mash_out |
 | `mash.rests.use_temp_c` | Use Temp C | field | temperature | degC (°C) | 1 | — |
+| `mash.sparge_phase_volume_l` | Sparge Phase Volume L | derived | volume | L | 1 | — |
 | `mash.strike_water_temp_base_c` | Strike base temp | derived | temperature | degC (°C) | 1 | — |
 | `mash.strike_water_temp_c` | Strike water temp | derived | temperature | degC (°C) | 1 | — |
 | `mash.strike_water_tun_offset_c` | Tun thermal offset | derived | temperature_delta | dC (Δ°C) | 1 | — |

@@ -18,10 +18,12 @@ test("relationStates() evaluates every declared relation", () => {
     states.map((s) => s.id).sort(),
     [
       "hlt_above_coil_floor",
+      "hlt_demand_not_overfilled",
       "hlt_not_overfilled",
       "kettle_not_overfilled",
       "mash_thickness_above_equipment_floor",
-      "target_abv_reachable",
+      "mash_thickness_below_ceiling",
+      "mash_tun_not_overfilled",
     ]
   );
 });
@@ -29,9 +31,11 @@ test("relationStates() evaluates every declared relation", () => {
 test("relations hold under the default fixtures", () => {
   const states = Object.fromEntries(engine().relationStates().map((s) => [s.id, s.holds]));
   assert.equal(states.hlt_not_overfilled, true); // 30 <= 30
+  assert.equal(states.hlt_demand_not_overfilled, true); // 0 <= 30
   assert.equal(states.kettle_not_overfilled, true); // 24 <= 40 (boundary output)
   assert.equal(states.mash_thickness_above_equipment_floor, true); // 3.0 >= 2.295
-  assert.equal(states.target_abv_reachable, true); // 5.5 <= 10.0 (boundary output)
+  assert.equal(states.mash_thickness_below_ceiling, true); // 3.0 <= 4.1727
+  assert.equal(states.mash_tun_not_overfilled, true); // 17.1 <= 40 (phase volumes)
 });
 
 test("a violated relation reports holds:false", () => {

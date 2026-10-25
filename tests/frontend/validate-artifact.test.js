@@ -191,9 +191,17 @@ test("rejects relation drift", () => {
 
   const badPredicate = clone();
   badPredicate.relations = [
-    { id: "r1", predicate: { op: "le", lhs: { ref: "nope.missing" }, rhs: { const: 1 } } },
+    {
+      id: "r1",
+      blocking: false,
+      predicate: { op: "le", lhs: { ref: "nope.missing" }, rhs: { const: 1 } },
+    },
   ];
   assert.throws(() => validateArtifact(badPredicate), /Relation "r1" references unknown/);
+
+  const noBlocking = clone();
+  noBlocking.relations = [{ id: "r1", predicate: { op: "le", lhs: 1, rhs: 1 } }];
+  assert.throws(() => validateArtifact(noBlocking), /Relation "r1" must declare a boolean "blocking"/);
 });
 
 

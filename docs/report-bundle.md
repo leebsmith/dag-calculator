@@ -48,7 +48,7 @@ Firestore transaction.
 ```jsonc
 {
   "bundle_format": 1,
-  "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
+  "artifact": { "schema_version": 9, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dimension>": { "base_unit", "kind", "units": { … } } },
@@ -153,7 +153,7 @@ exists.
 ## 6. Validation and telemetry shapes
 
 ```jsonc
-"relations":           [{ "id": "hlt_not_overfilled", "holds": true }],
+"relations":           [{ "id": "hlt_not_overfilled", "holds": true, "blocking": true }],
 "domains":             [{ "nodeId": "batch.target_abv", "bounded": true, "holds": true }],
 "field_domains":       [{ "selectionNodeId": "batch.yeast", "field": "attenuation_pct", "bounded": true, "holds": true }],
 "collection_domains":  [{ "nodeId": "mash.rests", "index": 0, "field": "use_temp_c", "bounded": true, "holds": true }]

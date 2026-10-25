@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **8**
+- `schema_version`: **9**
 
 ## Dimensions
 
@@ -94,6 +94,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `calculate_tun_thermal_offset` | t_target, tun_initial, specific_heat, tun_mass, water_mass | `temperature_delta` |
 | `cutaia_abv_plato` | oe, ae | `abv` |
 | `extract_yield_ldk` | yield_fraction | `extract_yield` |
+| `grain_displacement_volume` | m_grist | `volume` |
 | `morey_mcu_to_srm` | mcu | `beer_color` |
 | `plato_to_sg` | plato | `gravity` |
 | `ramp_time_min` | delta_temp, rate | `time` |
@@ -126,10 +127,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `ethanol_density` | 0.7907 | `dimensionless` |
+| `grain_displacement_l_per_kg` | 0.667632 | `mash_thickness` |
 | `k_abs_true` | 1.043176 | `mash_thickness` |
 | `mash_ph_optimal_high` | 5.6 | `ph` |
 | `mash_ph_optimal_low` | 5.2 | `ph` |
 | `mash_thermal_factor` | 0.41 | `dimensionless` |
+| `max_mash_thickness_l_per_kg` | 4.1727 | `mash_thickness` |
 | `mcu_metric_to_imperial_factor` | 8.3454 | `dimensionless` |
 | `rho_water` | 1 | `dimensionless` |
 | `sucrose_yield_ldk` | 385.641 | `extract_yield` |
@@ -191,9 +194,11 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash.enabled_min_temp_c` | derived |
 | `mash.grain_temp_c` | root |
 | `mash.heating_rate_c_per_min` | derived |
+| `mash.mash_phase_volume_l` | derived |
 | `mash.preset_id` | choice |
 | `mash.ramp_time_min` | derived |
 | `mash.rests` | collection |
+| `mash.sparge_phase_volume_l` | derived |
 | `mash.strike_water_temp_base_c` | derived |
 | `mash.strike_water_temp_c` | derived |
 | `mash.strike_water_tun_offset_c` | derived |
@@ -230,11 +235,13 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 ## Relations
 
-| id |
-|---|
-| `hlt_above_coil_floor` |
-| `hlt_not_overfilled` |
-| `kettle_not_overfilled` |
-| `mash_thickness_above_equipment_floor` |
-| `target_abv_reachable` |
+| id | blocking |
+|---|---|
+| `hlt_above_coil_floor` | false |
+| `hlt_demand_not_overfilled` | true |
+| `hlt_not_overfilled` | true |
+| `kettle_not_overfilled` | true |
+| `mash_thickness_above_equipment_floor` | false |
+| `mash_thickness_below_ceiling` | false |
+| `mash_tun_not_overfilled` | true |
 

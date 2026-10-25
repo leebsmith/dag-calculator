@@ -32,5 +32,6 @@ export function relationStates(artifact, resolveRef) {
   return (artifact.relations ?? []).map((relation) => ({
     id: relation.id,
     holds: evaluatePredicate(artifact, relation.predicate, resolveRef),
+    blocking: relation.blocking === true,
   }));
 }

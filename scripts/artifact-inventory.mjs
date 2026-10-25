@@ -121,10 +121,12 @@ export function buildInventory(artifact) {
 
   lines.push("## Relations");
   lines.push("");
-  lines.push("| id |");
-  lines.push("|---|");
-  for (const id of (artifact.relations ?? []).map((r) => r.id).sort()) {
-    lines.push(`| \`${id}\` |`);
+  lines.push("| id | blocking |");
+  lines.push("|---|---|");
+  for (const relation of [...(artifact.relations ?? [])].sort((a, b) =>
+    a.id.localeCompare(b.id)
+  )) {
+    lines.push(`| \`${relation.id}\` | ${relation.blocking} |`);
   }
   lines.push("");
 
