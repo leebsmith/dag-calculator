@@ -2,10 +2,11 @@
 
 ## In flight
 
-* **Fermentability provenance (Pass 1)** — producer-first across
-  `malt_database` → `dag-calculator`; commit contract in
-  `plans/fermentability-provenance.md`. Pass 2 (sugar F, bounds, STA1) and
-  Pass 3 (late-addition pin) are gated on it.
+* **Attenuation refactor (Passes 2–3)** — extract-composition model, basis
+  conversion, late-addition intents; commit contract in
+  `plans/attenuation-refactor.md`. Starts with the producer basis tags (A5).
+* **Fermentability provenance (Pass 1)** — landed; commit record in
+  `plans/fermentability-provenance.md`.
 
 ## Next (in order)
 
