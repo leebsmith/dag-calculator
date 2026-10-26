@@ -1963,9 +1963,63 @@ samp {
 }
 
 .extract-preview {
+  display: block;
+  width: 100%;
+  max-width: 376px;
+  height: auto;
+  margin-inline: auto;
   border: 1px solid var(--sys-border-subtle);
   border-radius: var(--radius-md);
   background-color: var(--sys-surface-subtle);
+}
+
+.extract-frame {
+  fill: none;
+  stroke: var(--sys-border-subtle);
+  stroke-width: 1;
+}
+
+.extract-contours {
+  fill: none;
+  stroke: var(--sys-border-strong);
+  stroke-width: 0.75;
+  opacity: 0.55;
+}
+
+.extract-locus {
+  fill: none;
+  stroke: var(--sys-color-action-primary);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 3;
+}
+
+.extract-pin {
+  fill: none;
+  stroke: var(--sys-color-warning-accent);
+  stroke-width: 1.25;
+}
+
+.extract-ticks {
+  stroke: var(--sys-border-strong);
+  stroke-width: 1;
+}
+
+.extract-tick {
+  fill: var(--sys-text-muted);
+  font-size: var(--text-nano);
+  font-variant-numeric: tabular-nums;
+}
+
+.extract-axis {
+  fill: var(--sys-text-muted);
+  font-size: var(--text-nano);
+  letter-spacing: 0.02em;
+}
+
+.extract-pin-label {
+  fill: var(--sys-color-warning-accent);
+  font-size: var(--text-nano);
+  font-weight: 600;
 }
 
 .extract-region {
@@ -1987,13 +2041,6 @@ samp {
   fill: var(--sys-color-action-primary);
   stroke: var(--sys-surface-default);
   stroke-width: 1;
-}
-
-.extract-ray {
-  stroke: var(--sys-color-action-primary);
-  stroke-width: 1;
-  stroke-dasharray: 4 2;
-  opacity: 0.7;
 }
 
 .extract-readouts {

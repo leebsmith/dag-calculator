@@ -76,23 +76,72 @@
           <div class="extract-picker">
             <svg
               class="extract-preview"
-              :width="stylePreview.width"
-              :height="stylePreview.height"
+              viewBox="0 0 376 366"
+              role="img"
+              :aria-label="stylePreview.summary"
             >
-              <polygon class="extract-region" :points="stylePreview.polygon" />
-              <line
-                x-show="stylePreview.ray"
-                class="extract-ray"
-                :x1="stylePreview.ray?.x1 ?? 0"
-                :y1="stylePreview.ray?.y1 ?? 0"
-                :x2="stylePreview.ray?.x2 ?? 0"
-                :y2="stylePreview.ray?.y2 ?? 0"
+              <defs>
+                <clipPath id="ferment-space-plot">
+                  <rect
+                    :x="stylePreview.plot.x"
+                    :y="stylePreview.plot.y"
+                    :width="stylePreview.plot.w"
+                    :height="stylePreview.plot.h"
+                  />
+                </clipPath>
+              </defs>
+              <rect
+                class="extract-frame"
+                :x="stylePreview.plot.x"
+                :y="stylePreview.plot.y"
+                :width="stylePreview.plot.w"
+                :height="stylePreview.plot.h"
               />
-              <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
-              <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
+              <g clip-path="url(#ferment-space-plot)">
+                <path class="extract-contours" :d="stylePreview.contours" />
+                <polygon class="extract-region" :points="stylePreview.polygon" />
+                <path class="extract-locus" :d="stylePreview.locus" />
+                <path class="extract-pin" :d="stylePreview.pinPath" />
+                <circle
+                  class="extract-safest"
+                  :cx="stylePreview.safest.x"
+                  :cy="stylePreview.safest.y"
+                  r="3"
+                />
+                <circle
+                  class="extract-marker"
+                  :cx="stylePreview.marker.x"
+                  :cy="stylePreview.marker.y"
+                  r="3.5"
+                />
+              </g>
+              <path class="extract-ticks" :d="stylePreview.tickMarks" />
+              <text class="extract-tick" :x="stylePreview.ticks.x[0].x" :y="stylePreview.ticks.x[0].y" text-anchor="middle" x-text="stylePreview.ticks.x[0].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.x[1].x" :y="stylePreview.ticks.x[1].y" text-anchor="middle" x-text="stylePreview.ticks.x[1].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.x[2].x" :y="stylePreview.ticks.x[2].y" text-anchor="middle" x-text="stylePreview.ticks.x[2].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.x[3].x" :y="stylePreview.ticks.x[3].y" text-anchor="middle" x-text="stylePreview.ticks.x[3].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.x[4].x" :y="stylePreview.ticks.x[4].y" text-anchor="middle" x-text="stylePreview.ticks.x[4].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.y[0].x" :y="stylePreview.ticks.y[0].y" text-anchor="end" x-text="stylePreview.ticks.y[0].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.y[1].x" :y="stylePreview.ticks.y[1].y" text-anchor="end" x-text="stylePreview.ticks.y[1].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.y[2].x" :y="stylePreview.ticks.y[2].y" text-anchor="end" x-text="stylePreview.ticks.y[2].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.y[3].x" :y="stylePreview.ticks.y[3].y" text-anchor="end" x-text="stylePreview.ticks.y[3].label"></text>
+              <text class="extract-tick" :x="stylePreview.ticks.y[4].x" :y="stylePreview.ticks.y[4].y" text-anchor="end" x-text="stylePreview.ticks.y[4].label"></text>
+              <text class="extract-axis" x="4" y="10">AE (°P)</text>
+              <text class="extract-axis" x="364" y="362" text-anchor="end">OE (°P)</text>
+              <text
+                class="extract-pin-label"
+                :x="stylePreview.pinLabelX"
+                :y="stylePreview.pinLabelY"
+                :text-anchor="stylePreview.pinLabelAnchor"
+                x-text="stylePreview.pinLabel"
+              ></text>
             </svg>
           </div>
-          <span class="form-hint">OE and AE are solved readouts; the ray is shown only when ABV is the pin.</span>
+          <span class="form-hint">
+            The dot is this batch. Contours are ABV; the line is this grain bill at every
+            size. OG reads off the horizontal axis, FG off the vertical; the axes are not
+            to equal scale.
+          </span>
           <div class="extract-readouts">
             <div class="extract-readout">
               <span class="form-label">OG (SG)</span>

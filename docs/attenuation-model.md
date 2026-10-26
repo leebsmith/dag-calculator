@@ -206,6 +206,42 @@ warnings (A18).
 The Belgian knob is retired; the general ABV+FG composition-solving mode is
 deferred.
 
+### 6.2 Shape and level
+
+Composition is intensive. It fixes the ratio of residual to original extract,
+not the amount of extract, so one composition is a **locus** in the fermentation
+plane and a pin selects one point on it:
+
+```
+plane of (OG, FG)     2-D    ABV is a function on it, not an axis
+  + composition       1-D    fixes AE/OE: one locus remains
+  + pin               0-D    selects the level
+```
+
+Two parameters are always needed: **shape** (authored) and **level** (solved).
+Composition alone can never name a beer, because any ratio can be brewed at any
+size. This is why cycling the pin re-solves the masses: `mass = level × shape`,
+and the pin is the only thing setting the level.
+
+The composition is many-dimensional as a recipe — grist proportions, per-malt
+yield and fermentability, sugar share, yeast cap — but only one scalar of it
+reaches the gravity algebra: the extract-weighted real fermentability. The rest
+shows up in colour, bitterness and flavour, none of which appear in the OG/FG/ABV
+relation.
+
+Consequences:
+
+- The three pins are three points on the **same** locus in share mode; the ratio
+  `AE/OE` is constant across them (measured drift is the yeast cap being
+  converted at the candidate OE).
+- In dose mode the locus bends, because `share = dose / E(OE)` moves with the
+  level, so the authored mass is not a fixed shape.
+- A pinned ABV is an **iso-ABV contour**, not an axis. Only OG and FG can be
+  read off this plane by projection.
+- Absolute mass is the other way to close the model: proportions plus bill mass
+  in kg also give two parameters. That is the "solve the brew length" variant,
+  not implemented.
+
 ## 7. Assumption register
 
 A1–A17 are the final register for the attenuation refactor. A row is executable

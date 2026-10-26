@@ -74,6 +74,118 @@ export function oeForAbvAtAe(ae, targetAbv) {
   return roots.length ? roots[0] : null;
 }
 
+// Cutaia real extract at one extract point (%), mirroring
+// utils.cutaia_real_extract. The artifact function takes (abw, ae).
+export function cutaiaRealExtract(oe, ae) {
+  const abw =
+    (artifactConstant("cutaia_a") + artifactConstant("cutaia_b") * oe) * (oe - ae);
+  return callArtifactFunction("cutaia_real_extract", [abw, ae]);
+}
+
+// AE that holds a real extract at one OE. The regression is monotone in AE, so
+// bisection lands within display precision.
+export function apparentExtractForRealExtract(oe, realExtract) {
+  if (!Number.isFinite(oe) || oe <= 0) return null;
+  if (!Number.isFinite(realExtract) || realExtract < 0 || realExtract > oe) return null;
+  const f = (ae) => cutaiaRealExtract(oe, ae) - realExtract;
+  if (f(0) > 0 || f(oe) < 0) return null;
+  let lo = 0;
+  let hi = oe;
+  for (let i = 0; i < 80; i += 1) {
+    const mid = (lo + hi) / 2;
+    if (f(mid) < 0) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+// The extract points one shape can take, clipped to a box: hold the real
+// extract fraction and sweep OE. This is the locus a scale change follows, so
+// pinning a size moves the batch along it and never off it.
+export function compositionLocus({ oeMin, oeMax, aeMin, aeMax, oe, ae, samples = 25 }) {
+  if (!(oeMax > oeMin) || !(aeMax > aeMin) || !Number.isFinite(oe) || !(oe > 0)) {
+    return [];
+  }
+  const realExtract = cutaiaRealExtract(oe, ae);
+  if (!Number.isFinite(realExtract)) return [];
+  const rdf = (oe - realExtract) / oe;
+  const aeAt = (value) => apparentExtractForRealExtract(value, value * (1 - rdf));
+
+  const crossing = (target) => {
+    let lo = oeMin;
+    let hi = oeMax;
+    const fLo = aeAt(lo);
+    const fHi = aeAt(hi);
+    if (fLo === null || fHi === null) return null;
+    if ((fLo - target) * (fHi - target) > 0) return null;
+    for (let i = 0; i < 60; i += 1) {
+      const mid = (lo + hi) / 2;
+      const value = aeAt(mid);
+      if (value === null) return null;
+      if ((value - target) * (fLo - target) <= 0) hi = mid;
+      else lo = mid;
+    }
+    return (lo + hi) / 2;
+  };
+
+  const xLo = Math.max(oeMin, crossing(aeMin) ?? oeMin);
+  const xHi = Math.min(oeMax, crossing(aeMax) ?? oeMax);
+  if (!(xHi > xLo)) return [];
+  const middle = aeAt((xLo + xHi) / 2);
+  if (middle === null || middle < aeMin - 1e-9 || middle > aeMax + 1e-9) return [];
+
+  const points = [];
+  for (let i = 0; i < samples; i += 1) {
+    const value = xLo + ((xHi - xLo) * i) / (samples - 1);
+    const pointAe = aeAt(value);
+    if (pointAe === null) continue;
+    points.push([value, pointAe]);
+  }
+  return points;
+}
+
+// One iso-ABV contour clipped to an (OE, AE) box. `oeForAbvAtAe` is increasing
+// in AE, so the box intersection is the AE interval between the two x edges.
+export function abvContour({ oeMin, oeMax, aeMin, aeMax, targetAbv, samples = 25 }) {
+  if (!(oeMax > oeMin) || !(aeMax > aeMin) || !Number.isFinite(targetAbv)) return [];
+  const oeAt = (ae) => oeForAbvAtAe(ae, targetAbv);
+  const aeFor = (oe) => {
+    const top = oeMax * 1.5;
+    let lo = 0;
+    let hi = top;
+    const fLo = oeAt(lo);
+    if (fLo === null || !Number.isFinite(fLo)) return null;
+    if (fLo >= oe) return 0;
+    let fHi = oeAt(hi);
+    if (fHi === null || !Number.isFinite(fHi)) return null;
+    if (fHi <= oe) return null;
+    for (let i = 0; i < 60; i += 1) {
+      const mid = (lo + hi) / 2;
+      const value = oeAt(mid);
+      if (value === null || !Number.isFinite(value)) return null;
+      if (value < oe) lo = mid;
+      else hi = mid;
+    }
+    return (lo + hi) / 2;
+  };
+
+  const start = aeFor(oeMin);
+  const end = aeFor(oeMax);
+  if (start === null || end === null) return [];
+  const lo = Math.max(start, aeMin);
+  const hi = Math.min(end, aeMax);
+  if (!(hi > lo)) return [];
+
+  const points = [];
+  for (let i = 0; i < samples; i += 1) {
+    const ae = lo + ((hi - lo) * i) / (samples - 1);
+    const oe = oeAt(ae);
+    if (oe === null || !Number.isFinite(oe)) continue;
+    points.push([oe, ae]);
+  }
+  return points;
+}
+
 // Advisory sugar vector: hold AE, raise OE until the target AA or ABV is met.
 // Pure; never mutates a recipe. `sucroseKg` is the ingredient mass at
 // `yieldSucrose` (1.0 for sucrose).

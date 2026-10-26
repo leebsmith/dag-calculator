@@ -203,6 +203,34 @@ dose and the parts from each row's extract; afterward both authored states
 round-trip. "Adopt current dose" and "Adopt share into masses" are explicit
 re-sync actions, not implicit rewrites.
 
+### Fermentation space (Style card)
+
+The Style card plots the batch in the extract plane: `x = OE` (°P), `y = AE`
+(°P). The plot is square, with independent axis scales — the style window is
+about 8 °P by 2 °P, so the square is a 4× vertical stretch. That distortion is
+accepted because the iso-ABV contours fill the area with the third variable.
+
+| Element | Meaning | Moves when the pin changes? |
+| --- | --- | --- |
+| Style region | OG band ∧ FG band ∧ ABV band (a lens, not a rectangle) | no |
+| Iso-ABV contours, every 1 % | `AE = f(OE, ABV)` | no |
+| Composition locus | this batch's shape: one real extract, swept over OE | no |
+| Pinned locus | vertical (OG), horizontal (FG), contour (ABV) | which one is drawn |
+| Solved dot | the realized batch | **yes — along the locus** |
+| Safest point | Chebyshev centre of the region | no |
+
+Reading grammar: **OG is the vertical projection, FG the horizontal projection,
+ABV is which contour the dot sits on.** ABV is never read by projection, because
+it is a scalar field over the plane rather than an axis. Both axes tick five
+times and label in °P; SG and the exact ABV stay in the readout row below, which
+remains the source of truth.
+
+The plotted batch is the **solved** one, so the dot's projections are realized
+gravity, not the stored targets; the dormant targets are not drawn. Cycling the
+pin moves the dot because it changes the level, not the shape — the locus holds
+still. In dose mode the locus bends slightly, because the sugar share moves with
+the level.
+
 ### Scale pin and preview matrix
 
 The Late Additions card carries a collapsible **Pin preview** when sugar is

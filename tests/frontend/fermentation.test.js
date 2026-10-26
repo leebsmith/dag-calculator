@@ -12,6 +12,9 @@ import {
   targetFromExtract,
   extractFromTarget,
   limitHeadroom,
+  abvContour,
+  apparentExtractForRealExtract,
+  cutaiaRealExtract,
 } from "../../frontend/src/engine/fermentation.js";
 
 const BLACK_IPA = { og_min: 1.05, og_max: 1.085, fg_min: 1.01, fg_max: 1.018, abv_min: 5.5, abv_max: 9 };
@@ -118,4 +121,41 @@ test("limitHeadroom reports the tightest of the six style limits", () => {
   assert.ok(nearest);
   assert.ok(["OG min", "OG max", "FG min", "FG max", "ABV min", "ABV max"].includes(nearest.label));
   assert.ok(nearest.headroom >= 0);
+});
+
+test("the real-extract inversion holds the ratio it was given", () => {
+  for (const oe of [10, 14, 18, 22]) {
+    for (const rdf of [0.5, 0.6, 0.7]) {
+      const ae = apparentExtractForRealExtract(oe, oe * (1 - rdf));
+      assert.ok(ae !== null, `oe=${oe} rdf=${rdf} must solve`);
+      assert.ok(Math.abs(cutaiaRealExtract(oe, ae) / oe - (1 - rdf)) < 1e-9);
+    }
+  }
+});
+
+test("apparent extract falls as the real extract falls", () => {
+  const firm = apparentExtractForRealExtract(18, 18 * 0.5);
+  const dry = apparentExtractForRealExtract(18, 18 * 0.3);
+  assert.ok(dry < firm);
+});
+
+test("the real-extract inversion refuses out-of-domain targets", () => {
+  assert.equal(apparentExtractForRealExtract(0, 1), null);
+  assert.equal(apparentExtractForRealExtract(18, -1), null);
+  assert.equal(apparentExtractForRealExtract(18, 19), null);
+});
+
+test("an iso-ABV contour is clipped to the box and holds its ABV", () => {
+  const box = { oeMin: 12, oeMax: 20, aeMin: 2, aeMax: 5, targetAbv: 7 };
+  const points = abvContour(box);
+  assert.ok(points.length >= 2);
+  for (const [oe, ae] of points) {
+    assert.ok(oe >= box.oeMin - 1e-9 && oe <= box.oeMax + 1e-9, `oe ${oe} outside`);
+    assert.ok(ae >= box.aeMin - 1e-9 && ae <= box.aeMax + 1e-9, `ae ${ae} outside`);
+    assert.ok(Math.abs(cutaiaAbv(oe, ae) - box.targetAbv) < 1e-6);
+  }
+});
+
+test("a contour that misses the box returns nothing", () => {
+  assert.deepEqual(abvContour({ oeMin: 12, oeMax: 20, aeMin: 2, aeMax: 5, targetAbv: 40 }), []);
 });
