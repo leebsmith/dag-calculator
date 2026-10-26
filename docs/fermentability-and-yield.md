@@ -100,6 +100,18 @@ Malt extract and sugar extract are composed by extract mass. Sugar contributes
 solve, the composition block is evaluated inside the batch solver at each
 candidate OG. An upstream scalar would be circular.
 
+### Late-addition intent
+
+The same split is authorable from the sugar side. `batch.late_addition_intent`
+is `dose` (mass) or `share` (sugar extract ÷ total post-boil extract). Share
+mode sends `sugar_extract_share` on the wire and `s_late_add = 0`; the solver
+evaluates `E_sugar = share · E(OE)` per candidate, so the sugar mass follows
+gravity without a host iteration. `F_sugar` is still `1.0`; a non-fermentable
+late addition (lactose) belongs to dose mode. Row `parts` allocate the budget by
+the same Hamilton rule as the grist, and `resolved_mass_kg` is the recorded
+result, never a request input. The full register is in
+`docs/attenuation-model.md` §6.
+
 ## Vendor pitfalls
 
 “70 % fermentable” can mean:

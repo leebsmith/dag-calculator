@@ -94,6 +94,33 @@ export function createStepView({
       if (advisory) findings.push(advisory);
     }
 
+    // A share without sugar is an authored intent the solver cannot honor, and
+    // a very high share nearly empties the malt target. Both are advisories:
+    // they describe the authored state, not a boundary failure.
+    let intent;
+    let sugarShare;
+    let sugars;
+    try {
+      intent = engine.get("batch.late_addition_intent");
+      sugarShare = engine.get("batch.sugar_extract_share");
+      sugars = engine.get("batch.sugars");
+    } catch (err) {
+      reportError("stepView.sugarShareAdvisory", err);
+      intent = "dose";
+      sugarShare = 0;
+      sugars = [];
+    }
+    if (intent === "share" && typeof sugarShare === "number") {
+      if (sugarShare > 0 && (sugars ?? []).length === 0) {
+        const advisory = hostFinding("sugar_share_without_sugar");
+        if (advisory) findings.push(advisory);
+      }
+      if (sugarShare > 0.9) {
+        const advisory = hostFinding("sugar_share_high");
+        if (advisory) findings.push(advisory);
+      }
+    }
+
     return findings;
   }
 

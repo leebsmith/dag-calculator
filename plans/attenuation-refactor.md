@@ -92,7 +92,8 @@ substantially (real 0.87 displays as apparent ≈1.08).
 ## 5. Commit sequence
 
 Ordering: A5 → D0 → D1 → D2 → D3; D4a → D4b → D5 in parallel after D1; P3a
-after D2; P3b is a design gate.
+after D2; P3b's design is closed (`plans/late-addition-intent.md`) and landed;
+P3c closes the program.
 
 ### A5 — `Tag fermentability basis and method on the malt export`
 
@@ -266,17 +267,22 @@ Repo: `dag-calculator`. Depends on: D2.
 - **Done when:** a designer sees what the current sugar dose is doing without
   changing the pin.
 
-### P3b — `Add the late-addition intent pin` (design gate)
+### P3b — `Add the late-addition intent pin` (design closed)
 
-Repo: `dag-calculator`. Depends on: P3a **and an explicit decision** on:
+Repo: `dag-calculator`. Depends on: P3a. **The commit contract is
+`plans/late-addition-intent.md`; do not start it from this summary.**
 
-1. affordance — batch-level mode vs per-row annotation;
-2. the free variable per intent — sugar mass input (ABV readout) vs ABV target
-   (sugar mass solved) vs OG fixed (malt solved);
-3. whether the pin is a wire field or a host-side inversion.
+The design gate is resolved:
 
-Do not start this commit until those are answered in the conversation and
-recorded here. The commit contract will be written at that point.
+1. affordance — a batch-level `dose | share` mode (per-row annotation
+   superseded);
+2. free variable — the sugar share of **total post-boil extract**, with
+   Hamilton allocation of the sugar extract among late-addition rows;
+3. inversion site — a **wire field** (`sugar_extract_share`, `0 = dose`), solved
+   in Phase 1; the host derives row masses after the solve.
+
+ABV remains the scale pin; OG-pinned mode is deferred. Implementation landed;
+P3c closes the program.
 
 ### P3c — `Close the attenuation refactor`
 

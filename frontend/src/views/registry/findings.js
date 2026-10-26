@@ -57,6 +57,18 @@ export const HOST_FINDINGS = {
       "The selected strain does not publish a STA1 result. The model treats it as " +
       "non-diastaticus (d = 0); confirm with the lab before packaging.",
   },
+  sugar_share_without_sugar: {
+    label: "Sugar share without sugar",
+    message: () =>
+      "The batch authors a sugar-extract share but has no late-addition rows. " +
+      "Add a sugar or switch back to dose mode; the share alone adds no extract.",
+  },
+  sugar_share_high: {
+    label: "High sugar share",
+    message: () =>
+      "The sugar share exceeds 90% of total extract. The malt target is nearly " +
+      "empty, so the grist bracket may degenerate; check the add rows and the share.",
+  },
 };
 
 export function hostFinding(id) {

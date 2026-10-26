@@ -4,6 +4,13 @@
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import { sugarEffect } from "../../views/producer/sugarEffect.js";
+import {
+  MAX_SUGAR_SHARE,
+  resolvedSugarMasses,
+  sugarPartsFromDose,
+  sugarShareFromDose,
+} from "../../views/producer/sugarAllocation.js";
+import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { reportError } from "../../observability.js";
 import {
   formatPercent,
@@ -19,6 +26,8 @@ function makeRow(sugar) {
     sugar_id: sugar.id,
     name: sugar.name,
     mass_kg: 0,
+    parts: 0,
+    resolved_mass_kg: 0,
     yield_fraction: sugar.yield_fraction,
     yield_basis: sugar.yield_basis,
     yield_provenance: sugar.yield_provenance,
@@ -29,6 +38,20 @@ function makeRow(sugar) {
     color_lovibond: sugar.color_lovibond,
     notes: sugar.notes,
   };
+}
+
+function numberAt(engine, path, fallback = 0) {
+  try {
+    const value = engine.resolve(path);
+    return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  } catch (err) {
+    reportError("lateAdditions.number", err);
+    return fallback;
+  }
+}
+
+function rounded(value) {
+  return Math.round((Number(value) || 0) * 1e6) / 1e6;
 }
 
 // The current dose's effect at the solved pin. Every operand comes from the
@@ -75,17 +98,123 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarField(id) {
       return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
     },
+
+    // Dose → share: seed the authored share and the row weights from the
+    // current dose, but only on the first switch (an authored share or parts
+    // round-trips untouched). The explicit adopt action forces a re-sync.
+    seedShareFromDose(force = false) {
+      const rows = ctx.engine.get(N.collection) ?? [];
+      const currentShare = Number(ctx.engine.get(N.share)) || 0;
+      const currentParts = rows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
+      if (!force && (currentShare > 0 || currentParts > 0)) return false;
+      const total = numberAt(ctx.engine, N.effect.extractTotal);
+      const share = sugarShareFromDose(rows, total);
+      this.setRoot(N.share, Math.min(MAX_SUGAR_SHARE, share));
+      const parts = sugarPartsFromDose(rows);
+      ctx.engine.setCollection(
+        N.collection,
+        rows.map((row, index) => ({ ...row, parts: rounded(parts[index]) }))
+      );
+      return true;
+    },
+
+    setLateAdditionIntent(value) {
+      const field = this.lateIntentField;
+      if (!field || value === this.lateAdditionIntent) return;
+      if (value === "share") this.seedShareFromDose(false);
+      this.edit(field, value);
+    },
+
+    // Explicit re-sync so an authored dose can overwrite the share/parts pair.
+    adoptLateAdditionDose() {
+      if (!this.seedShareFromDose(true)) return;
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    // Explicit re-sync so the resolved share allocation can overwrite the dose.
+    adoptLateAdditionShare() {
+      const rows = ctx.engine.get(N.collection) ?? [];
+      if (!rows.length) return;
+      const share = Number(ctx.engine.get(N.share)) || 0;
+      const resolved = resolvedSugarMasses({
+        rows,
+        budgetKg: share * numberAt(ctx.engine, N.effect.extractTotal),
+        share,
+      });
+      ctx.engine.setCollection(
+        N.collection,
+        rows.map((row, index) => {
+          const mass = rounded(resolved[index]?.massKg);
+          return { ...row, mass_kg: mass, resolved_mass_kg: mass };
+        })
+      );
+      this.scheduleSolve();
+      this.notify();
+    },
   });
 
   Object.defineProperties(app, {
+    lateAdditionIntent: {
+      configurable: true,
+      get() {
+        return ctx.engine.get(N.intent) ?? "dose";
+      },
+    },
+    lateIntentField: {
+      configurable: true,
+      get() {
+        return this.fieldsById[N.intent] ?? null;
+      },
+    },
+    sugarShareField: {
+      configurable: true,
+      get() {
+        return this.fieldsById[N.share] ?? null;
+      },
+    },
+    // The live row allocation at the current solve: `resolved_mass_kg` is a
+    // recorded result, never a request input.
+    sugarResolvedRows: {
+      configurable: true,
+      get() {
+        const rows = ctx.engine.get(N.collection) ?? [];
+        const share = Number(ctx.engine.get(N.share)) || 0;
+        return resolvedSugarMasses({
+          rows,
+          budgetKg: share * numberAt(ctx.engine, N.effect.extractTotal),
+          share,
+        });
+      },
+    },
     lateSugarField: {
       configurable: true,
       get() {
-        return (
+        const field =
           (this.fieldsBySlice[N.slice] ?? []).find(
             (f) => f.control === "collection-table"
-          ) ?? null
-        );
+          ) ?? null;
+        if (!field) return null;
+        const column = field.columns?.find((c) => c.id === "resolved_mass_kg");
+        const resolved = this.sugarResolvedRows;
+        if (!column || resolved.length !== field.rows.length) return field;
+        const nl = nonlinearFns(ctx.artifact, ctx.engine);
+        return {
+          ...field,
+          rows: field.rows.map((row, index) => {
+            const shown = displayValue(
+              ctx.artifact,
+              "mass",
+              column.displayUnit,
+              resolved[index]?.massKg ?? 0,
+              nl
+            );
+            return {
+              ...row,
+              resolved_mass_kg: formatWithDecimals(shown, column.decimals ?? 2),
+            };
+          }),
+        };
       },
     },
     sugarMassField: {
@@ -140,9 +269,23 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarDraftExtractDisplay: {
       configurable: true,
       get() {
-        return this.draftMassDisplay(
-          (r) => (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0)
+        if (this.lateAdditionIntent !== "share") {
+          return this.draftMassDisplay(
+            (r) => (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0)
+          );
+        }
+        const column = this.draftColumns.find((c) => c.id === "mass_kg");
+        const budget =
+          (Number(ctx.engine.get(N.share)) || 0) *
+          numberAt(ctx.engine, N.effect.extractTotal);
+        const shown = displayValue(
+          ctx.artifact,
+          "mass",
+          column?.displayUnit,
+          budget,
+          nonlinearFns(ctx.artifact, ctx.engine)
         );
+        return `${formatWithDecimals(shown, column?.decimals)}${column?.unit ? " " + column.unit : ""}`;
       },
     },
     sugarResultLabel: {
@@ -161,6 +304,45 @@ export function registerLateAdditionsCard(app, ctx) {
 }
 
 export function refreshLateAdditionsCard(app, ctx) {
-  app.sugarList = ctx.engine.get(N.collection) ?? [];
+  const rows = ctx.engine.get(N.collection) ?? [];
+  app.sugarList = rows;
+  if (!rows.length) return;
+  const share = Number(ctx.engine.get(N.share)) || 0;
+  const total = numberAt(ctx.engine, N.effect.extractTotal);
+  const resolved = resolvedSugarMasses({
+    rows,
+    budgetKg: share * total,
+    share,
+  });
+  let changed = false;
+  const next = rows.map((row, index) => {
+    const mass = rounded(resolved[index]?.massKg);
+    if (Math.abs((Number(row.resolved_mass_kg) || 0) - mass) > 1e-9) changed = true;
+    return { ...row, resolved_mass_kg: mass };
+  });
+  // Recorded result, not a request input: updating the collection here cannot
+  // change the next solve. No scheduleSolve/notify, so there is no feedback loop.
+  if (changed) ctx.engine.setCollection(N.collection, next);
 }
-export const KEYS = [...catalogDraftKeys("sugar", "Sugar"), "sugarList", "sugarField", "lateSugarField", "sugarMassField", "sugarColorField", "lateExtractField", "sugarEffect", "sugarEffectDisplay", "sugarDraftMassDisplay", "sugarDraftExtractDisplay", "sugarResultLabel"];
+export const KEYS = [
+  ...catalogDraftKeys("sugar", "Sugar"),
+  "sugarList",
+  "sugarField",
+  "lateAdditionIntent",
+  "lateIntentField",
+  "sugarShareField",
+  "sugarResolvedRows",
+  "lateSugarField",
+  "sugarMassField",
+  "sugarColorField",
+  "lateExtractField",
+  "sugarEffect",
+  "sugarEffectDisplay",
+  "sugarDraftMassDisplay",
+  "sugarDraftExtractDisplay",
+  "sugarResultLabel",
+  "seedShareFromDose",
+  "setLateAdditionIntent",
+  "adoptLateAdditionDose",
+  "adoptLateAdditionShare",
+];

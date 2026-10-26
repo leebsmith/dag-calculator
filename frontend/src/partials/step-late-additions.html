@@ -8,10 +8,59 @@
     <div class="table-header-toolbar">
       <div>
         <h3 class="modal-drawer-title">Late Sugar Additions</h3>
-        <p class="text-xs text-muted">Kettle sugars, dosed by mass; they feed the batch solver's late extract.</p>
+        <p class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
+          ? 'Kettle sugars authored as a share of total extract; the solver derives the row masses.'
+          : 'Kettle sugars, dosed by mass; they feed the batch solver\'s late extract.'"></p>
       </div>
       <button type="button" class="btn-primary text-xs" @click="openSugarEditor()">Configure Sugars ⚙</button>
     </div>
+
+    <template x-if="lateIntentField">
+      <div class="form-group">
+        <label class="form-label" :for="lateIntentField.id" x-text="lateIntentField.label"></label>
+        <select
+          class="form-select"
+          :id="lateIntentField.id"
+          :value="lateIntentField.value"
+          @change="setLateAdditionIntent($event.target.value)"
+        >
+          <template x-for="opt in (lateIntentField.options || [])" :key="opt">
+            <option
+              :value="opt"
+              :selected="opt === lateIntentField.value"
+              x-text="fmt.optionLabel(lateIntentField.optionLabels, opt)"
+            ></option>
+          </template>
+        </select>
+        <span class="form-hint" x-text="lateIntentField.hint"></span>
+      </div>
+    </template>
+
+    <template x-if="lateAdditionIntent === 'share' && sugarShareField">
+      <div class="form-group">
+        <label class="form-label" :for="sugarShareField.id" x-text="sugarShareField.label"></label>
+        <input
+          class="form-input"
+          type="number"
+          step="0.1"
+          min="0"
+          max="95"
+          :id="sugarShareField.id"
+          :value="inputDraft(inputKey('field', sugarShareField.id), sugarShareField.display)"
+          @input="editNumberInput(inputKey('field', sugarShareField.id), sugarShareField, $event.target.value)"
+          @change="commitNumberInput(inputKey('field', sugarShareField.id), sugarShareField)"
+        />
+        <span class="form-hint" x-text="sugarShareField.hint"></span>
+        <div class="table-action-cell">
+          <button type="button" class="btn-outline text-xs" @click="adoptLateAdditionDose()">
+            Adopt current dose
+          </button>
+          <button type="button" class="btn-outline text-xs" @click="adoptLateAdditionShare()">
+            Adopt share into masses
+          </button>
+        </div>
+      </div>
+    </template>
 
     <template x-if="lateSugarField">
       <div class="data-table-container">
@@ -47,6 +96,7 @@
       Fermentable is the real share of extract. <span aria-hidden="true">~</span> assumed
       prior · <span aria-hidden="true">≥</span> published minimum (a floor) ·
       <span aria-hidden="true">≈</span> converted from apparent attenuation at 12 °P.
+      In share mode, Parts weight the sugar-extract budget and Mass is derived.
     </p>
 
     <div class="grain-bill-summary" x-show="lateSugarField && lateSugarField.rows.length > 0">
@@ -100,6 +150,7 @@
         <p class="text-xs text-muted">
           At the current ABV pin. Sugar is fully fermentable, so it adds alcohol and
           extract but no FG; the view shows what removing this dose would change.
+          In share mode the dose is the sugar-extract budget derived from the share.
         </p>
       </div>
     </template>

@@ -60,6 +60,8 @@ const BATCH_VALUES = {
   "batch.mash_thickness_l_per_kg": 3.0,
   "batch.runoff_ratio": 1.0,
   "batch.s_late_add": 0.0,
+  "batch.s_late_add_request": 0.0,
+  "batch.sugar_share_request": 0.0,
   "equipment.kettle_dead_space_l": 0.0,
   "equipment.kettle_transfer_loss_l": 0.0,
   "equipment.trub_loss_l": 0.0,

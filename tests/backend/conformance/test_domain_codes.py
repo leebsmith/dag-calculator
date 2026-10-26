@@ -101,6 +101,7 @@ TRIGGERS = {
             GrainBillEntry(w_i=0.5, yield_i=0.7, mc_i=0.0, fermentability_i=0.5),
         ]
     ),
+    "INVALID_SUGAR_SHARE": lambda: _solve(sugar_extract_share=1.0),
 }
 
 

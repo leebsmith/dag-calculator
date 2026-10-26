@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_94 paths_
+_102 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -59,14 +59,20 @@ _94 paths_
 | `batch.fermentation` | Fermentation | choice | — | — | — | ale, lager, wild, mixed |
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
+| `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.realized_abv` | ABV | derived | abv | pct | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
 | `batch.runnings_ratio` | Runnings Ratio (r, V1/V2) | derived | dimensionless | 1 | — | — |
 | `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | 1 | — | — |
-| `batch.s_late_add` | Total extract | derived | mass | kg | 1 | — |
+| `batch.s_late_add` | Dose extract | derived | mass | kg | 1 | — |
+| `batch.s_late_add_request` | S Late Add Request | derived | mass | kg | 1 | — |
 | `batch.shrinkage_volume_l` | − Shrinkage | derived | volume | L | 1 | — |
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
+| `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
+| `batch.sugar_extract_total` | Late extract | derived | mass | kg | 2 | — |
+| `batch.sugar_parts_total` | Sugar Parts Total | derived | dimensionless | 1 | — | — |
+| `batch.sugar_share_request` | Sugar Share Request | derived | percentage | pct (%) | 1 | — |
 | `batch.sugars` | Late additions | collection | — | — | — | — |
 | `batch.sugars.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
 | `batch.sugars.fermentability_basis` | Fermentability Basis | field | — | — | — | — |
@@ -76,6 +82,8 @@ _94 paths_
 | `batch.sugars.mass_kg` | Mass | field | mass | kg | 1 | — |
 | `batch.sugars.name` | Sugar | field | — | — | — | — |
 | `batch.sugars.notes` | Notes | field | — | — | — | — |
+| `batch.sugars.parts` | Parts | field | dimensionless | 1 | 2 | — |
+| `batch.sugars.resolved_mass_kg` | Resolved mass | field | mass | kg | 2 | — |
 | `batch.sugars.sugar_id` | Sugar ID | field | — | — | — | — |
 | `batch.sugars.yield_basis` | Yield Basis | field | — | — | — | — |
 | `batch.sugars.yield_fraction` | Yield | field | percentage | pct (%) | 1 | — |

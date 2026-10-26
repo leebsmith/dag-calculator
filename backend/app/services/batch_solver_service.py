@@ -44,6 +44,7 @@ def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
             for row in req.grain_bill
         ],
         s_late_add=req.s_late_add,
+        sugar_extract_share=req.sugar_extract_share,
         v_kettle_dead=req.v_kettle_dead,
         v_kettle_transfer=req.v_kettle_transfer,
         v_trub=req.v_trub,

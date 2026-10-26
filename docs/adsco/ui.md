@@ -157,9 +157,27 @@ extract is at or below zero (a diastaticus fermentation), the field displays
 `≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value is
 unchanged; the conformance layer still sees the computed gravity.
 
+### Late-addition intent
+
+Late additions are authored either as a **dose** (mass) or as a **share** of
+total post-boil extract. The mode is a batch-level control; switching it does
+not discard the other representation:
+
+| Mode | Editable | Read-only | Meaning |
+| --- | --- | --- | --- |
+| Dose | Mass | Resolved mass | the authored sugar mass feeds the solver's late extract |
+| Share | Parts | Mass | parts weight the sugar-extract budget; the solver derives the share per candidate gravity |
+
+The share root is bounded at 95 % and warns above 90 %. A share above zero with
+no sugar rows raises the `sugar_share_without_sugar` advisory; it never silently
+adds extract. The first dose → share switch seeds the share from the current
+dose and the parts from each row's extract; afterward both authored states
+round-trip. "Adopt current dose" and "Adopt share into masses" are explicit
+re-sync actions, not implicit rewrites.
+
 ### Sugar effect (late additions)
 
-The Late Additions summary shows what the current dose is doing **at the ABV
+The Late Additions summary shows what the current sugar is doing **at the ABV
 pin**, without asking the designer to unpin it:
 
 | Readout | Meaning |
@@ -173,7 +191,9 @@ pin**, without asking the designer to unpin it:
 The decomposition holds the solved apparent extract and removes the sugar's
 extract share from OE. It is a host-side readout derived from the batch solve:
 nothing is persisted, no root changes, and the ABV pin is untouched. It answers
-"what is this dose buying me?" — not a second solver result.
+"what is this sugar buying me?" — not a second solver result. In share mode the
+sugar input is `batch.sugar_extract_total` (the solved budget), so the deltas
+remain meaningful when the dose is derived rather than authored.
 
 ## Guardrails / a11y
 
@@ -193,6 +213,10 @@ badge only.
 - **Diastaticus status** — a selected strain with no published STA1 result
   raises the `sta1_unknown` warning (not blocking): the model treats it as
   non-diastaticus, and the message names that assumption.
+- **Sugar share** — a positive share with no sugar rows raises
+  `sugar_share_without_sugar`; a share above 90 % raises `sugar_share_high`.
+  Both are non-blocking advisories: they describe the authored intent, and the
+  solve reports the truth of what was authored.
 - **Capacity** — kettle, mash tun (peak of the mash and sparge phases) and HLT
   liquor demand report critically: the solve completes and every readout stays
   alive, but the batch cannot be frozen.

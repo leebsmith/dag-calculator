@@ -7,6 +7,8 @@ export const SYSTEM_NODES = {
   runoffRatio: "batch.runoff_ratio",
   apparentAttenuation: "solver.batch.apparent_attenuation",
   majorMalts: "grist.major_malts",
+  sugars: "batch.sugars",
+  lateAdditionIntent: "batch.late_addition_intent",
   boilHops: "batch.boil_hops",
   whirlpoolHops: "batch.whirlpool_hops",
 };

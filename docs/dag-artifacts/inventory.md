@@ -45,6 +45,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `gypsum_form` | `GYPSUM_DIHYDRATE`, `GYPSUM_ANHYDROUS` |
 | `hop_unit` | `oz`, `g`, `ml` |
 | `ion` | `ca`, `mg`, `na`, `so4`, `cl`, `alk` |
+| `late_addition_intent` | `dose`, `share` |
 | `malt_category` | `BASE`, `CRYSTAL`, `ROASTED`, `ACID` |
 | `mash_preset` | `single_infusion`, `custom`, `belgian_saison`, `belgian_tripel`, `german_pils`, `berliner_weisse`, `english_brown`, `american_pale` |
 | `mash_rest` | `phytase`, `ferulic`, `beta_glucan`, `protein`, `beta_amylase`, `alpha_amylase`, `beta_alpha_amylase`, `mash_out` |
@@ -74,7 +75,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash_rest_definition` | `default_duration_min` (dimension time), `name` (—), `purpose` (—), `rest_id` (taxonomy mash_rest), `sequence` (dimension dimensionless, domain {"gte":0}), `temp_max_c` (dimension temperature), `temp_min_c` (dimension temperature) |
 | `style` | `abv_max` (dimension abv, domain {"gte":0}), `abv_min` (dimension abv, domain {"gte":0}), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain {"gte":0}), `fg_min` (dimension gravity, domain {"gte":0}), `flavor` (—), `forked_from_id` (—), `forked_from_name` (—), `history` (—), `ibu_max` (dimension ibu, domain {"gte":0}), `ibu_min` (dimension ibu, domain {"gte":0}), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain {"gte":0}), `og_min` (dimension gravity, domain {"gte":0}), `overall_impression` (—), `srm_max` (dimension beer_color, domain {"gte":0}), `srm_min` (dimension beer_color, domain {"gte":0}), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
 | `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `id` (—), `maltster` (—), `name` (—), `notes` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
-| `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
+| `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `parts` (dimension dimensionless, domain {"gte":0}), `resolved_mass_kg` (dimension mass, domain {"gte":0}), `sugar_id` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
 | `trace_malt_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
 | `water_pinned_ion` | `ion` (taxonomy ion) |
@@ -173,14 +174,20 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.fermentation` | choice |
 | `batch.grain_moisture_fraction` | root |
 | `batch.hlt_starting_volume_l` | root |
+| `batch.late_addition_intent` | choice |
 | `batch.mash_thickness_l_per_kg` | root |
 | `batch.realized_abv` | derived |
 | `batch.realized_fg` | derived |
 | `batch.runnings_ratio` | derived |
 | `batch.runoff_ratio` | root |
 | `batch.s_late_add` | derived |
+| `batch.s_late_add_request` | derived |
 | `batch.shrinkage_volume_l` | derived |
 | `batch.sparge_salted_volume` | derived |
+| `batch.sugar_extract_share` | root |
+| `batch.sugar_extract_total` | derived |
+| `batch.sugar_parts_total` | derived |
+| `batch.sugar_share_request` | derived |
 | `batch.sugars` | collection |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |

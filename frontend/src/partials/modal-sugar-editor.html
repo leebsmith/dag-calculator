@@ -13,7 +13,7 @@
     tabindex="-1"
     x-effect="dialogFocus($el, sugarEditorOpen)"
   >
-    <div class="modal-workspace-header">
+      <div class="modal-workspace-header">
       <div class="modal-workspace-header-title">
         <h2 class="modal-workspace-title" id="sugar-editor-title">Late Additions Editor</h2>
         <span class="status-badge badge-info text-xs" x-text="sugarDraftMassDisplay"></span>
@@ -27,9 +27,9 @@
     <div class="modal-workspace-body">
       <div class="modal-workspace-main">
         <div class="table-header-toolbar">
-          <span class="text-xs text-muted">
-            Dose sugars by mass. Yield and color come from the catalog.
-          </span>
+          <span class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
+            ? 'Edit parts; the mass is derived from the sugar-extract budget.'
+            : 'Dose sugars by mass. Yield and color come from the catalog.'"></span>
           <button type="button" class="btn-primary text-xs" @click="openSugarSearch()" :aria-expanded="(sugarDrawer !== null) ? 'true' : 'false'" aria-controls="sugar-drawer">
             ＋ Add Sugar from Catalog
           </button>
@@ -91,7 +91,7 @@
             <tfoot>
               <tr>
                 <td :colspan="draftColumns.length + 1" class="tabular-nums">
-                  <span class="font-bold">Total extract:</span>
+                  <span class="font-bold" x-text="lateAdditionIntent === 'share' ? 'Sugar budget:' : 'Total extract:'"></span>
                   <span x-text="' ' + sugarDraftExtractDisplay"></span>
                 </td>
               </tr>

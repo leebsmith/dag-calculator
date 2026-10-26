@@ -9,6 +9,8 @@ import { artifact } from "./util.js";
 const INTENTIONAL_UNCHECKED = [
   "batch.delta_v_evap",
   "batch.runnings_ratio",
+  "batch.s_late_add_request",
+  "batch.sugar_share_request",
   "batch.yeast_cap",
   "grist.mcu",
 ];

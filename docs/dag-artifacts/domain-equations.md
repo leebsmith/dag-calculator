@@ -78,10 +78,12 @@ AA_app     = (OE − AE) / OE              # may exceed 1
 
 `F_malt` is the extract-weighted real fermentability of the grain bill; the
 yeast cap is apparent and converts per candidate `OE`; sugar keeps `F_sugar =
-1.0` and is never capped; `d` is the diastaticus dextrin share (0 until D5). The
+1.0` and is never capped; `d` is the diastaticus dextrin share (0 or 1, D5). The
 artifact declares the Cutaia regression as `cutaia_real_extract`; the host-side
 ingredient conversion (`apparentToRealAttenuation`) wraps it at 12 °P, and the
-Python solver mirrors both.
+Python solver mirrors both. In share mode `E_sugar` is `sugar_extract_share ·
+E(OE)` instead of a fixed dose, so the block is evaluated per candidate with
+the composition moving alongside gravity.
 
 Apparent extract may fall below 0 °P when the residue is small enough (full
 dextrin consumption), so `plato_to_sg` accepts a small negative domain.
@@ -107,11 +109,17 @@ dextrin consumption), so `plato_to_sg` accepts a small negative domain.
 ### 1.4 Late additions (kettle sugars)
 
 ```
-s_late_add = Σ (mass_kg · yield_fraction)
+s_late_add = Σ (mass_kg · yield_fraction)          # dose mode
+sugar_extract_share = S_late / S_post_boil_target  # share mode
+S_late = if share mode then sugar_extract_share · S_post_boil_target else s_late_add
 ```
 
 The sugar's extract contribution in gravity points is
 `(mass_kg · yield_fraction · sucrose_yield_ldk) / v_ferm`.
+
+The sugar-share model has its own register and allocation rules in
+`docs/attenuation-model.md` §6. `parts` weights the sugar budget in share mode
+(Hamilton, same rule as §1.6); `resolved_mass_kg` is the recorded result.
 
 ### 1.5 Gravity conversions
 
@@ -143,7 +151,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `topology` | taxonomy | `r_l_to_g` \| `runoff_ratio` |
 | `intensive_value` | mash_thickness / dimensionless | `R_L:G` (L/kg) or `r` |
 | `grain_bill` | collection | rows `{ w_i, yield_i, mc_i, fermentability_i }` (Σw=1); `fermentability_i` is a **real** fraction of the row's extract |
-| `s_late_add` | mass | late-addition extract (kg) |
+| `s_late_add` | mass | late-addition extract (kg) in dose mode; 0 in share mode |
+| `sugar_extract_share` | percentage (fraction) | sugar extract ÷ total post-boil extract, `[0, 1)`; 0 selects dose mode |
 | `v_kettle_dead`, `delta_v_evap`, `v_dead` | volume | kettle/chiller dead space, boil-off, mash-tun dead space (L) |
 | `eta_conv` | percentage (fraction) | mash conversion efficiency |
 | `f_shrink` | percentage (fraction) | thermal contraction (~4%) |
@@ -172,7 +181,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 `INVALID_FERM_VOLUME` · `INVALID_SHRINKAGE` · `EXTRACT_TARGET_NON_POSITIVE` ·
 `INVALID_YIELD` · `DEGENERATE_BRACKET` · `BRACKET_NO_SIGN_CHANGE` ·
 `UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL` ·
-`KETTLE_TOO_SMALL` · `MASH_TUN_TOO_SMALL`.
+`KETTLE_TOO_SMALL` · `MASH_TUN_TOO_SMALL` · `INVALID_GRAIN_BILL_NORMALIZATION` ·
+`INVALID_SUGAR_SHARE`.
 
 ### 2.4 Derivation — two-stage batch lauter
 

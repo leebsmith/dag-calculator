@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const DOC = readFileSync(`${ROOT}docs/attenuation-model.md`, "utf8");
 
-const SECTION = DOC.split("## 6. Assumption register")[1]?.split("\n## ")[0] ?? "";
+const SECTION = DOC.split("Assumption register")[1]?.split("\n## ")[0] ?? "";
 const ROWS = SECTION.split("\n")
   .map((line) => line.trim())
   .filter((line) => /^\| A\d+ \|/.test(line))
@@ -22,8 +22,8 @@ const ROWS = SECTION.split("\n")
     return { id: cells[0], treatment: cells[2], enforcement: cells[3] };
   });
 
-test("the register covers A1–A15", () => {
-  const expected = Array.from({ length: 15 }, (_, index) => `A${index + 1}`);
+test("the register covers A1–A17", () => {
+  const expected = Array.from({ length: 17 }, (_, index) => `A${index + 1}`);
   assert.deepEqual(ROWS.map((row) => row.id), expected);
 });
 

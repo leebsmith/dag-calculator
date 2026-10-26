@@ -96,6 +96,38 @@ is 1.000. Held as a parameter so a future per-row sugar F can be threaded.
 """
 
 
+def sugar_extract_for(
+    sugar_extract_share: float,
+    extract_total_kg: float,
+    dose_kg: float,
+) -> float:
+    """Resolve the late-addition extract mass for a candidate batch.
+
+    ``0`` is the dose sentinel: the caller's ``s_late_add`` is authoritative.
+    A positive share is the sugar's fraction of total post-boil extract, so the
+    mass moves with the candidate gravity and the solver has no host iteration.
+
+    Raises:
+        SolverValidationError: If the share is non-finite, negative, or ``>= 1``
+            (a malt-free wort has no capacity constraint to solve against).
+    """
+    if sugar_extract_share == 0.0:
+        return dose_kg
+    if (
+        not math.isfinite(sugar_extract_share)
+        or sugar_extract_share < 0.0
+        or sugar_extract_share >= 1.0
+    ):
+        raise SolverValidationError(
+            "INVALID_SUGAR_SHARE",
+            (
+                "Sugar extract share must be in [0, 1); got "
+                f"{sugar_extract_share}."
+            ),
+        )
+    return sugar_extract_share * extract_total_kg
+
+
 # ---------------------------------------------------------------------------
 # Errors
 # ---------------------------------------------------------------------------
@@ -668,17 +700,19 @@ def solve_oe_from_composition(
     gamma: float = GAMMA_METRIC,
     dextrin_consumption: float = 0.0,
     sugar_fermentability: float = SUGAR_FERMENTABILITY,
+    sugar_extract_share: float = 0.0,
 ) -> float:
     """Phase 1 (composition path): root-find ``OE`` so the target ABV holds.
 
     The composition block is evaluated per candidate ``OE``: the extract target
     (and therefore the malt/sugar share) moves with the candidate, and the
-    yeast cap converts to real space at that same ``OE``.
+    yeast cap converts to real space at that same ``OE``. A positive
+    ``sugar_extract_share`` replaces the fixed dose with ``share · E(OE)``.
 
     Raises:
-        SolverValidationError: On an invalid target or cap, when the late
-            addition alone exceeds the 40 °P extract ceiling
-            (``EXTRACT_TARGET_NON_POSITIVE``), or when the target is beyond the
+        SolverValidationError: On an invalid target, cap, or share; when the
+            late addition alone exceeds the 40 °P extract ceiling
+            (``EXTRACT_TARGET_NON_POSITIVE``); or when the target is beyond the
             composition's ceiling (``ABV_UNREACHABLE``).
     """
     if target_abv <= 0:
@@ -700,23 +734,29 @@ def solve_oe_from_composition(
             asbc_plato_to_sg(oe_plato), v_kettle_cold, gamma
         )
 
-    if extract_at(40.0) <= s_late_add:
+    def sugar_at(oe_plato: float) -> float:
+        return sugar_extract_for(
+            sugar_extract_share, extract_at(oe_plato), s_late_add
+        )
+
+    if extract_at(40.0) <= sugar_at(40.0):
         raise SolverValidationError(
             "EXTRACT_TARGET_NON_POSITIVE",
             (
-                f"Late-addition extract ({s_late_add:.4f} kg) alone exceeds the "
-                "40 °P kettle extract ceiling."
+                f"Late-addition extract ({sugar_at(40.0):.4f} kg) alone exceeds "
+                "the 40 °P kettle extract ceiling."
             ),
         )
 
     def abv_at(oe_plato: float) -> float:
         extract_total = extract_at(oe_plato)
-        if extract_total <= s_late_add:
+        sugar = sugar_at(oe_plato)
+        if extract_total <= sugar:
             return 0.0
         return resolve_wort_composition(
             oe_plato=oe_plato,
             extract_total_kg=extract_total,
-            s_late_add=s_late_add,
+            s_late_add=sugar,
             malt_fermentability=malt_fermentability,
             yeast_cap_apparent=yeast_cap_apparent,
             dextrin_consumption=dextrin_consumption,
@@ -1381,6 +1421,9 @@ class BatchSolverInput:
         sta1: Vendor STA1 QC result. ``True`` consumes the malt's dextrin
             residue (``d = 1``); ``False`` is an ordinary strain; ``None``
             means "not published" and models as ``d = 0`` with an advisory.
+        sugar_extract_share: Sugar extract as a fraction of total post-boil
+            extract. ``0`` means dose mode (``s_late_add`` is authoritative);
+            a positive share is solved per candidate ``OE``.
         hlt_starting_volume_l: Volume of liquor in the HLT at the start of the
             brew day, in liters. Batch-level parameter; the frontend pre-fills
             it from the equipment profile's ``max_hlt_volume_l``. Consumed by
@@ -1425,6 +1468,7 @@ class BatchSolverInput:
     f_shrink: float = F_SHRINK_DEFAULT
     k_abs_true: float = K_ABS_TRUE_METRIC
     sta1: bool | None = None
+    sugar_extract_share: float = 0.0
 
     def __post_init__(self) -> None:
         if self.topology not in ("r_l_to_g", "runoff_ratio"):
@@ -1438,6 +1482,18 @@ class BatchSolverInput:
                 (
                     f"Intensive constraint must be positive and finite; got "
                     f"{self.intensive_value}."
+                ),
+            )
+        if (
+            not math.isfinite(self.sugar_extract_share)
+            or self.sugar_extract_share < 0.0
+            or self.sugar_extract_share >= 1.0
+        ):
+            raise SolverValidationError(
+                "INVALID_SUGAR_SHARE",
+                (
+                    "Sugar extract share must be in [0, 1); got "
+                    f"{self.sugar_extract_share}."
                 ),
             )
 
@@ -1532,6 +1588,7 @@ def _diagnose_bracket(
     yield_fraction: float,
     mc_bar: float,
     eta_conv: float,
+    s_late_add: float,
 ) -> SolverValidationError | None:
     """Name the capacity limit that makes the bracket infeasible, if definitive.
 
@@ -1540,7 +1597,7 @@ def _diagnose_bracket(
     failure is left untouched.
     """
     _, upper = grist_mass_bracket(
-        reversal.s_post_boil_target, inputs.s_late_add, yield_fraction
+        reversal.s_post_boil_target, s_late_add, yield_fraction
     )
     if not math.isfinite(upper) or upper <= 0.0:
         return None
@@ -1623,12 +1680,22 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
 
     if aa_malt is None:
         # Legacy scalar path: a caller that supplies no per-row fermentability
-        # keeps the original apparent-attenuation inversion.
+        # keeps the original apparent-attenuation inversion. Share mode is a
+        # composition feature and has no meaning without per-row F.
+        if inputs.sugar_extract_share > 0.0:
+            raise SolverValidationError(
+                "INVALID_SUGAR_SHARE",
+                (
+                    "Share mode requires per-row fermentability; the grain "
+                    "bill omits it."
+                ),
+            )
         cap = inputs.malt_attenuation_cap
         apparent_attenuation = cap
         real_attenuation = cap
         sg_post_boil, reversal = solve_phase_1(apparent_attenuation)
         max_abv = max_achievable_abv(apparent_attenuation)
+        s_late_add = inputs.s_late_add
     else:
         # Extract composition: the solver's ABV-first inversion, with the
         # composition block (and the cap conversion) evaluated per candidate.
@@ -1642,8 +1709,14 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             v_kettle_cold=v_kettle_cold,
             s_late_add=inputs.s_late_add,
             dextrin_consumption=dextrin_consumption,
+            sugar_extract_share=inputs.sugar_extract_share,
         )
         sg_post_boil = asbc_plato_to_sg(oe_plato)
+        s_late_add = sugar_extract_for(
+            inputs.sugar_extract_share,
+            post_boil_extract_target(sg_post_boil, v_kettle_cold, GAMMA_METRIC),
+            inputs.s_late_add,
+        )
         reversal = resolve_volumetric_reversal(
             v_ferm=inputs.v_ferm,
             sg_post_boil=sg_post_boil,
@@ -1651,25 +1724,28 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             v_kettle_transfer=inputs.v_kettle_transfer,
             v_trub=inputs.v_trub,
             delta_v_evap=inputs.delta_v_evap,
-            s_late_add=inputs.s_late_add,
+            s_late_add=s_late_add,
             f_shrink=inputs.f_shrink,
         )
         composition = resolve_wort_composition(
             oe_plato=oe_plato,
             extract_total_kg=reversal.s_post_boil_target,
-            s_late_add=inputs.s_late_add,
+            s_late_add=s_late_add,
             malt_fermentability=aa_malt,
             yeast_cap_apparent=inputs.malt_attenuation_cap,
             dextrin_consumption=dextrin_consumption,
         )
         real_attenuation = composition.real_attenuation
         apparent_attenuation = composition.apparent_attenuation
+        ceiling_extract = post_boil_extract_target(
+            asbc_plato_to_sg(40.0), v_kettle_cold, GAMMA_METRIC
+        )
         ceiling = resolve_wort_composition(
             oe_plato=40.0,
-            extract_total_kg=post_boil_extract_target(
-                asbc_plato_to_sg(40.0), v_kettle_cold, GAMMA_METRIC
+            extract_total_kg=ceiling_extract,
+            s_late_add=sugar_extract_for(
+                inputs.sugar_extract_share, ceiling_extract, inputs.s_late_add
             ),
-            s_late_add=inputs.s_late_add,
             malt_fermentability=aa_malt,
             yeast_cap_apparent=inputs.malt_attenuation_cap,
             dextrin_consumption=dextrin_consumption,
@@ -1684,7 +1760,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             mc_bar=mc_bar,
             eta_conv=inputs.eta_conv,
             s_post_boil_target=reversal.s_post_boil_target,
-            s_late_add=inputs.s_late_add,
+            s_late_add=s_late_add,
             v_dead=inputs.v_dead,
             k_abs_true=inputs.k_abs_true,
             topology=inputs.topology,
@@ -1693,7 +1769,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
     except SolverValidationError as exc:
         if exc.code in ("BRACKET_NO_SIGN_CHANGE", "DEGENERATE_BRACKET"):
             cause = _diagnose_bracket(
-                inputs, reversal, yield_fraction, mc_bar, inputs.eta_conv
+                inputs, reversal, yield_fraction, mc_bar, inputs.eta_conv, s_late_add
             )
             if cause is not None:
                 raise cause from exc

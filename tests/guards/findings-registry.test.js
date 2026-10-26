@@ -57,7 +57,11 @@ test("every finding has sample operands for the message test", () => {
 });
 
 test("host-only advisories are declared, warned, and never block", () => {
-  assert.deepEqual(Object.keys(HOST_FINDINGS), ["sta1_unknown"]);
+  assert.deepEqual(Object.keys(HOST_FINDINGS), [
+    "sta1_unknown",
+    "sugar_share_without_sugar",
+    "sugar_share_high",
+  ]);
 
   const advisory = hostFinding("sta1_unknown");
   assert.equal(advisory.severity, "warning");
@@ -65,6 +69,14 @@ test("host-only advisories are declared, warned, and never block", () => {
   assert.match(advisory.message, /STA1/);
   assert.match(advisory.message, /d = 0/);
   assert.equal(hostFinding("not_a_finding"), null);
+
+  const shareWithoutSugar = hostFinding("sugar_share_without_sugar");
+  assert.equal(shareWithoutSugar.severity, "warning");
+  assert.match(shareWithoutSugar.message, /no late-addition rows/);
+
+  const highShare = hostFinding("sugar_share_high");
+  assert.equal(highShare.severity, "warning");
+  assert.match(highShare.message, /90%/);
 });
 
 test("severity follows the artifact blocking flag", () => {

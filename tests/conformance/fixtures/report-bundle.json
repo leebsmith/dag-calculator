@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:34566f3757f667b9120324820d42c1e8ee0d9e1deab10ff35d57a686b42561cc",
+    "hash": "sha256:c8f1c913a7bfa864fa8357c1674db91ef3182c92d2e23157782e268e0b575b94",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -508,6 +508,10 @@
         "whirlpool_hop_form": [
           "t90_pellet",
           "flowable_extract"
+        ],
+        "late_addition_intent": [
+          "dose",
+          "share"
         ]
       },
       "functions": {
@@ -1809,6 +1813,18 @@
               "gte": 0
             }
           },
+          "parts": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
+          },
+          "resolved_mass_kg": {
+            "dimension": "mass",
+            "domain": {
+              "gte": 0
+            }
+          },
           "yield_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -2539,6 +2555,20 @@
           "kind": "collection",
           "item_schema": "sugar_row"
         },
+        "batch.late_addition_intent": {
+          "kind": "choice",
+          "taxonomy": "late_addition_intent",
+          "default": "dose"
+        },
+        "batch.sugar_extract_share": {
+          "kind": "root",
+          "dimension": "percentage",
+          "default": 0,
+          "domain": {
+            "gte": 0,
+            "lte": 0.95
+          }
+        },
         "batch.boil_hops": {
           "kind": "collection",
           "item_schema": "boil_hop_row"
@@ -3006,7 +3036,8 @@
             "runoff_ratio": "batch.runoff_ratio",
             "grain_bill": "grist.major_malts",
             "grain_moisture_fraction": "batch.grain_moisture_fraction",
-            "s_late_add": "batch.s_late_add",
+            "s_late_add": "batch.s_late_add_request",
+            "sugar_extract_share": "batch.sugar_share_request",
             "v_kettle_dead": "equipment.kettle_dead_space_l",
             "v_kettle_transfer": "equipment.kettle_transfer_loss_l",
             "v_trub": "equipment.trub_loss_l",
@@ -3118,7 +3149,8 @@
               "HLT_TOO_SMALL",
               "KETTLE_TOO_SMALL",
               "MASH_TUN_TOO_SMALL",
-              "INVALID_GRAIN_BILL_NORMALIZATION"
+              "INVALID_GRAIN_BILL_NORMALIZATION",
+              "INVALID_SUGAR_SHARE"
             ]
           }
         },
@@ -3953,6 +3985,92 @@
         "grist.sugars_mass": {
           "kind": "derived",
           "inputs": {
+            "sugars": "batch.sugars",
+            "intent": "batch.late_addition_intent",
+            "budget": "batch.sugar_extract_total",
+            "parts_total": "batch.sugar_parts_total"
+          },
+          "expr": {
+            "op": "sum",
+            "coll": {
+              "ref": "sugars"
+            },
+            "as": "row",
+            "body": {
+              "op": "if",
+              "args": [
+                {
+                  "op": "and",
+                  "args": [
+                    {
+                      "op": "eq",
+                      "args": [
+                        {
+                          "ref": "intent"
+                        },
+                        "share"
+                      ]
+                    },
+                    {
+                      "op": "gt",
+                      "args": [
+                        {
+                          "ref": "parts_total"
+                        },
+                        0
+                      ]
+                    },
+                    {
+                      "op": "gt",
+                      "args": [
+                        {
+                          "ref": "row.yield_fraction"
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "/",
+                  "args": [
+                    {
+                      "op": "*",
+                      "args": [
+                        {
+                          "op": "/",
+                          "args": [
+                            {
+                              "ref": "row.parts"
+                            },
+                            {
+                              "ref": "parts_total"
+                            }
+                          ]
+                        },
+                        {
+                          "ref": "budget"
+                        }
+                      ]
+                    },
+                    {
+                      "ref": "row.yield_fraction"
+                    }
+                  ]
+                },
+                {
+                  "ref": "row.mass_kg"
+                }
+              ]
+            }
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.sugar_parts_total": {
+          "kind": "derived",
+          "inputs": {
             "sugars": "batch.sugars"
           },
           "expr": {
@@ -3962,17 +4080,20 @@
             },
             "as": "row",
             "body": {
-              "ref": "row.mass_kg"
+              "ref": "row.parts"
             }
           },
           "output": {
-            "dimension": "mass"
+            "dimension": "dimensionless"
           }
         },
         "grist.sugar_weighted_lovibond": {
           "kind": "derived",
           "inputs": {
-            "rows": "batch.sugars"
+            "rows": "batch.sugars",
+            "intent": "batch.late_addition_intent",
+            "budget": "batch.sugar_extract_total",
+            "parts_total": "batch.sugar_parts_total"
           },
           "expr": {
             "op": "weighted_avg",
@@ -3984,7 +4105,71 @@
               "ref": "row.color_lovibond"
             },
             "weight": {
-              "ref": "row.mass_kg"
+              "op": "if",
+              "args": [
+                {
+                  "op": "and",
+                  "args": [
+                    {
+                      "op": "eq",
+                      "args": [
+                        {
+                          "ref": "intent"
+                        },
+                        "share"
+                      ]
+                    },
+                    {
+                      "op": "gt",
+                      "args": [
+                        {
+                          "ref": "parts_total"
+                        },
+                        0
+                      ]
+                    },
+                    {
+                      "op": "gt",
+                      "args": [
+                        {
+                          "ref": "row.yield_fraction"
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "/",
+                  "args": [
+                    {
+                      "op": "*",
+                      "args": [
+                        {
+                          "op": "/",
+                          "args": [
+                            {
+                              "ref": "row.parts"
+                            },
+                            {
+                              "ref": "parts_total"
+                            }
+                          ]
+                        },
+                        {
+                          "ref": "budget"
+                        }
+                      ]
+                    },
+                    {
+                      "ref": "row.yield_fraction"
+                    }
+                  ]
+                },
+                {
+                  "ref": "row.mass_kg"
+                }
+              ]
             }
           },
           "output": {
@@ -4145,6 +4330,102 @@
                 }
               ]
             }
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.s_late_add_request": {
+          "kind": "derived",
+          "inputs": {
+            "intent": "batch.late_addition_intent",
+            "dose": "batch.s_late_add"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "eq",
+                "args": [
+                  {
+                    "ref": "intent"
+                  },
+                  "share"
+                ]
+              },
+              0,
+              {
+                "ref": "dose"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.sugar_share_request": {
+          "kind": "derived",
+          "inputs": {
+            "intent": "batch.late_addition_intent",
+            "share": "batch.sugar_extract_share"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "eq",
+                "args": [
+                  {
+                    "ref": "intent"
+                  },
+                  "share"
+                ]
+              },
+              {
+                "ref": "share"
+              },
+              0
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.sugar_extract_total": {
+          "kind": "derived",
+          "inputs": {
+            "intent": "batch.late_addition_intent",
+            "share": "batch.sugar_extract_share",
+            "dose": "batch.s_late_add",
+            "target": "solver.batch.s_post_boil_target"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "eq",
+                "args": [
+                  {
+                    "ref": "intent"
+                  },
+                  "share"
+                ]
+              },
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "ref": "share"
+                  },
+                  {
+                    "ref": "target"
+                  }
+                ]
+              },
+              {
+                "ref": "dose"
+              }
+            ]
           },
           "output": {
             "dimension": "mass"
@@ -4731,5 +5012,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:43cfe1fe7052b1f94a9f06dffeada0e2c005094234777970082cc0489937756f"
+  "content_hash": "sha256:bde0e20bc1743a1fba0104edcd7d7d5758c3239847b06b4cbc16484001aa4e7b"
 }

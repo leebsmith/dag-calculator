@@ -162,13 +162,22 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       configurable: true,
       get() {
         if (!this.draftNodeId) return [];
-        return resolveCollectionColumns(
+        const columns = resolveCollectionColumns(
           artifact,
           registry,
           this.draftNodeId,
           this.draftEntry(),
           ui.unitMode
         );
+        if (this.draftNodeId === N.sugars) {
+          const shareMode =
+            session.getEngine().get(N.lateAdditionIntent) === "share";
+          for (const column of columns) {
+            if (column.id === "mass_kg") column.editable = !shareMode;
+            if (column.id === "parts") column.editable = shareMode;
+          }
+        }
+        return columns;
       },
     },
     draftDisplayRows: {

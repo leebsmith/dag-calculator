@@ -142,7 +142,43 @@ selection has no QC result (the boundary input guard treats null as "not ready")
 while the advisory reads the selection directly; the solver also accepts
 `sta1: null` from a direct caller and models it as `false`.
 
-## 6. Assumption register
+## 6. Late-addition intent (P3b)
+
+The batch solver is ABV-first: `target_abv` is the scale constraint and total
+grist is an output. Sugar is an input (`s_late_add`), so "solve sugar mass for a
+target ABV" has no residual. The missing degree of freedom is **composition**,
+and it already exists inside the block:
+
+```
+sugar_share = (sugar extract) / (total post-boil extract)
+```
+
+`batch.late_addition_intent` (`dose | share`) selects which representation is
+authored. In dose mode the request carries the authored `s_late_add`; in share
+mode it carries `sugar_extract_share = s` and `s_late_add = 0`, and the solver
+evaluates `S = s · E(OE)` per candidate. No equation changes: this is the D1
+composition block with a different source for `S`.
+
+- `0` is the dose sentinel on the wire. A positive share must be `< 1`; a
+  malt-free share raises `INVALID_SUGAR_SHARE`. The UI bounds the root at 0.95
+  and warns above 0.90.
+- Share mode covers fully fermentable late additions (`F_sugar = 1.0`). A
+  non-fermentable sugar (lactose) belongs to dose mode; per-sugar `F` on the
+  wire is deferred.
+- Rows carry both representations: `mass_kg` (authored dose) and `parts` (share
+  weights). The active mode decides which is authored. Share mode derives
+  `resolved_mass_kg` from the solved sugar budget with Hamilton allocation; it
+  never overwrites `mass_kg` except through the explicit "adopt" action.
+- The first `dose → share` switch seeds the share from the current dose and the
+  row parts from each row's current extract. After that, switching does not
+  overwrite either side, so both authored states round-trip exactly. Explicit
+  "adopt current dose" / "adopt share into masses" re-sync on request.
+- `batch.sugar_extract_total` is the operative sugar extract for readouts and
+  weighted color; `batch.s_late_add` remains the authored dose.
+- The frozen bundle records the mode, the share, the parts, and the resolved
+  masses. A frozen batch never re-solves.
+
+## 7. Assumption register
 
 | # | Assumption | Treatment | Enforcement |
 |---|---|---|---|
@@ -161,8 +197,10 @@ while the advisory reads the selection directly; the solver also accepts
 | A13 | derate points apply before conversion | order stated in `docs/engine.md` | `tests/frontend/selection-validation.test.js` |
 | A14 | vendor ranges use the high end | low/high stored, cap = high | `tests/guards/seed-rebuild.test.js`, `tests/conformance/seed-conformance.test.js` |
 | A15 | Cutaia inverse vs mass-derived RE | residual asserted | `tests/backend/conformance/test_numeric_parity.py` |
+| A16 | sugar share allocates extract by Hamilton parts | 0.1 % split, masses derived | `tests/frontend/late-addition-intent.test.js` |
+| A17 | share mode covers fully fermentable sugars only | `F_sugar = 1.0`; lactose stays dose-mode | `tests/frontend/late-addition-intent.test.js` |
 
-## 7. References
+## 8. References
 
 - `docs/fermentability-and-yield.md` — the two ingredient axes and provenance.
 - `docs/dag-artifacts/domain-equations.md` §1–§2 — the equations and the sealed

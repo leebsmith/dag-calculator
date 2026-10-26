@@ -1,5 +1,5 @@
 {
-  "fingerprint": "8d63b3b1b65500ebf99f5ca679ddfd4d1df3e5e0350e4bfe059e6823239ea541",
+  "fingerprint": "5c912bd9f91c4ac2b239c5ab8a78168c342ac9d28e6d55484905b55a4fc9b0a2",
   "request": {
     "delta_v_evap": 3.0,
     "eta_conv": 0.95,
@@ -31,6 +31,7 @@
     "max_mash_tun_volume_l": 40.0,
     "s_late_add": 0.0,
     "sta1": false,
+    "sugar_extract_share": 0.0,
     "target_abv": 5.5,
     "topology": "r_l_to_g",
     "v_dead": 0.0,

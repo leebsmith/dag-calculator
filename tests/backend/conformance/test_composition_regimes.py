@@ -18,6 +18,9 @@ from app.core.batch_solver import (
     GAMMA_METRIC,
     BatchSolverInput,
     GrainBillEntry,
+    SolverValidationError,
+    kettle_cold_volume,
+    post_boil_extract_target,
     resolve_wort_composition,
     solve_batch,
 )
@@ -220,3 +223,51 @@ def test_wire_sugar_and_sta1_compose():
     # the fixed-ABV solve needs less malt.
     assert sweet.real_attenuation == pytest.approx(1.0, abs=1e-9)
     assert sweet.m_grist < plain.m_grist
+
+
+# --- P3b: sugar-extract share ----------------------------------------------
+
+
+def test_share_mode_resolves_the_sugar_mass_in_one_solve():
+    share = 0.10
+    inputs = _solver_input(sugar_extract_share=share)
+    result = solve_batch(inputs)
+
+    v_cold = kettle_cold_volume(inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink)
+    extract_total = post_boil_extract_target(result.sg_post_boil, v_cold, GAMMA_METRIC)
+    sugar_extract = share * extract_total
+    assert sugar_extract / extract_total == pytest.approx(share)
+
+    composition = resolve_wort_composition(
+        oe_plato=sg_to_plato(result.sg_post_boil),
+        extract_total_kg=extract_total,
+        s_late_add=sugar_extract,
+        malt_fermentability=0.643,
+        yeast_cap_apparent=1.0,
+    )
+    assert composition.abv_pct == pytest.approx(inputs.target_abv, abs=1e-3)
+
+
+def test_share_mode_replaces_the_dose_with_less_malt():
+    plain = solve_batch(_solver_input())
+    shared = solve_batch(_solver_input(sugar_extract_share=0.10))
+
+    # Sugar contributes fully fermentable extract, so the same ABV pin needs
+    # less total extract and less malt.
+    assert shared.m_grist < plain.m_grist
+    assert shared.s_post_boil_target < plain.s_post_boil_target
+    assert shared.sg_post_boil < plain.sg_post_boil
+
+
+def test_share_mode_rejects_a_malt_free_share():
+    with pytest.raises(SolverValidationError) as exc:
+        solve_batch(_solver_input(sugar_extract_share=1.0))
+    assert exc.value.code == "INVALID_SUGAR_SHARE"
+
+
+def test_wire_share_mode_runs_in_one_boundary_call():
+    plain = _wire()
+    shared = _wire(sugar_extract_share=0.10)
+
+    assert shared.m_grist < plain.m_grist
+    assert shared.s_post_boil_target < plain.s_post_boil_target
