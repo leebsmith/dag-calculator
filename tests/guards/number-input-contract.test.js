@@ -13,6 +13,7 @@ const BUFFERED_HANDLERS = [
   "editDraftCellInput",
   "editWaterNumber",
   "editWaterTargetInput",
+  "editScaleTargetInput",
   "librarySetField",
 ];
 

@@ -83,6 +83,17 @@ test("switching the pin updates the label and target without waiting for a solve
   assert.equal(app.scalePreviewRows.find((row) => row.active).pin, "abv");
 });
 
+test("the target input commits as it is typed", async () => {
+  const app = await appWithSugar();
+  app.setScalePin("abv");
+  app.editScaleTargetInput("8.5");
+  assert.equal(app.engine.get("batch.target_abv"), 8.5);
+  assert.equal(app.inputDraft("field:scale-target", ""), "8.5");
+  app.commitScaleTargetInput("8.5");
+  assert.equal(app.engine.get("batch.target_abv"), 8.5);
+  assert.equal(app.inputDraft("field:scale-target", ""), "");
+});
+
 test("the ABV target is a free pin, not a fixed-AA clamp", async () => {
   const app = await appWithSugar();
   app.setScalePin("abv");

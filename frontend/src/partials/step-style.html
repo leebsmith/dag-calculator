@@ -61,8 +61,9 @@
                 type="number"
                 class="form-input"
                 :step="activeScaleTargetStep"
-                :value="activeScaleTargetDisplay"
-                @change="setScaleTarget($event.target.value)"
+                :value="inputDraft(inputKey('field', 'scale-target'), activeScaleTargetDisplay)"
+                @input="editScaleTargetInput($event.target.value)"
+                @change="commitScaleTargetInput($event.target.value)"
               />
               <span class="text-xs text-muted" x-text="activeScaleTargetUnit"></span>
             </div>
@@ -70,6 +71,7 @@
               Free target. Style conflicts are warnings; the solver realizes the other two
               gravity/strength axes.
             </span>
+            <span class="form-hint text-warning" x-show="scaleTargetMismatch" x-text="scaleTargetMismatch"></span>
           </div>
           <div class="extract-picker">
             <svg

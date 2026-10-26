@@ -82,6 +82,7 @@ export function registerStyleCard(app, ctx) {
     activeScaleTargetDisplay: "",
     activeScaleTargetUnit: "%",
     activeScaleTargetStep: "0.1",
+    scaleTargetMismatch: "",
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
     targetSrm: 0,
@@ -243,6 +244,7 @@ export function registerStyleCard(app, ctx) {
       if (!SCALE_PINS.some((pin) => pin.value === value)) return;
       if (value === this.scalePin) return;
       this.setRoot(N.scalePin, value);
+      this.clearInputDraft(this.inputKey("field", "scale-target"));
       this.syncScalePinState();
       this.syncScalePreviewState?.();
       this.scheduleSolve();
@@ -259,6 +261,17 @@ export function registerStyleCard(app, ctx) {
       this.syncScalePinState();
       this.scheduleSolve();
       this.notify();
+    },
+
+    editScaleTargetInput(raw) {
+      const key = this.inputKey("field", "scale-target");
+      this.setInputDraft(key, raw);
+      this.setScaleTarget(raw);
+    },
+
+    commitScaleTargetInput(raw) {
+      this.clearInputDraft(this.inputKey("field", "scale-target"));
+      this.setScaleTarget(raw);
     },
 
     resetScaleTarget() {
@@ -574,6 +587,11 @@ export function registerStyleCard(app, ctx) {
   });
 }
 
+function fmtTarget(pin, value) {
+  if (pin === "abv") return `${formatWithDecimals(value, 1)}%`;
+  return formatGravity(value);
+}
+
 export function refreshStyleCard(app, ctx) {
   app.selectedStyleId = ctx.engine.identity?.style?.id ?? "";
   const read = (path) => {
@@ -593,6 +611,22 @@ export function refreshStyleCard(app, ctx) {
   app.syncScalePinState();
   app.computeStyleTarget();
   app.refreshTargets();
+
+  const target = app.activeScaleTarget;
+  const info = app.styleTargetInfo;
+  let mismatch = "";
+  if (target != null && info) {
+    const realized =
+      app.scalePin === "abv" ? info.abv : app.scalePin === "og" ? info.og : info.fg;
+    const tolerance = app.scalePin === "abv" ? 0.15 : 0.002;
+    if (Number.isFinite(realized) && Math.abs(realized - target) > tolerance) {
+      const status = app.boundaryStatuses?.[N.solverBatch] ?? "unknown";
+      mismatch =
+        `Target ${fmtTarget(app.scalePin, target)} vs realized ` +
+        `${fmtTarget(app.scalePin, realized)} — solve ${status}.`;
+    }
+  }
+  app.scaleTargetMismatch = mismatch;
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "syncScalePinState", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "syncScalePinState", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "scaleTargetMismatch", "editScaleTargetInput", "commitScaleTargetInput", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

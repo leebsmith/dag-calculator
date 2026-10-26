@@ -35,6 +35,7 @@ export const STYLE_NODES = {
   targetOg: "batch.target_og",
   targetFg: "batch.target_fg",
   scalePin: "batch.scale_pin",
+  solverBatch: "solver.batch",
   slice: "batch",
 };
 
