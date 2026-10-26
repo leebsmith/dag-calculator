@@ -102,6 +102,7 @@ TRIGGERS = {
         ]
     ),
     "INVALID_SUGAR_SHARE": lambda: _solve(sugar_extract_share=1.0),
+    "INVALID_SUGAR_FERMENTABILITY": lambda: _solve(sugar_fermentability=1.5),
 }
 
 

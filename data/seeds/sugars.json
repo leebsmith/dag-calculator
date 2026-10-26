@@ -4,7 +4,7 @@
     "name": "5 Lovibond Golden Belgian Candi Syrup",
     "maltster": "L.D. Carlson",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.99,
     "color_lovibond": 5,
     "notes": "5 Lovibond Golden Belgian Candi Syrup Golden Candi Syrup is an unparalleled, superior quality rich golden syrup. Golden is a rich translucent 24 karat gold and adds a pronounced caramel and light fruit palate to authentic Belgian Tripels, Saisons, Golden Ales, and Bier de Garde.",
     "yield_basis": "extract",
@@ -15,6 +15,17 @@
       "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
       "retrieved_at": "2026-10-19T21:46:17Z",
       "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS attenuation spectrum",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Candi Syrup, Inc.",
+      "url": "https://www.candisyrup.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "2f07d1a47fd2f74f1458e9a80d4c402765f09fc948235bd4104c539f6ff57b0b",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "amber-candi-syrup": {
@@ -40,7 +51,7 @@
     "name": "Belgian Candi Syrup - Extra Dark",
     "maltster": "L.D. Carlson",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.86,
     "color_lovibond": 177.74,
     "notes": "Extra Dark Belgian Candi Syrup The richest, darkest Belgian candi syrup. Imparts hints of dark raisin and extra dark stone fruit on top of a roasty, dark caramel palate. Superb for Belgian style ales and brew that need a full body and indescribable flavor. SRM 240",
     "yield_basis": "extract",
@@ -51,6 +62,17 @@
       "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
       "retrieved_at": "2026-10-19T21:46:17Z",
       "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS attenuation spectrum",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Candi Syrup, Inc.",
+      "url": "https://www.candisyrup.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "50f0ff5b007fe181ed8da56ab6c364a4ee1805af4e20427e6b3fd4608a442486",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "blonde-soft-candi-sugar": {
@@ -204,7 +226,7 @@
     "name": "Cane (Beet) Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": "",
     "yield_basis": "extract",
@@ -215,6 +237,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "definitional; ASBC Sugars and Syrups-15",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "definitional",
+      "url": "https://www.asbcnet.org/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "d21c247ab8234bb2ad3e4f4a63f35bff4699b5214eb4d7d23723925b8d221821",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "cbw-bavarian-wheat-dme": {
@@ -461,7 +494,7 @@
     "id": "clarified-brown-rice-syrup-42de",
     "name": "Clarified Brown Rice Syrup 42DE",
     "maltster": "Briess",
-    "yield_fraction": null,
+    "yield_fraction": 0.7892,
     "fermentability_fraction": 0.7,
     "color_lovibond": 2,
     "notes": "Neutral flavor",
@@ -475,7 +508,17 @@
       "note": "published as fermentability"
     },
     "fermentability_basis": "real",
-    "fermentability_method": "Fermentability"
+    "fermentability_method": "Fermentability",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "2556b8476f1dac167248fea979eede6fe389fb991a620454ef593a9389891de9",
+      "note": "vendor TDS; HPLC profile; derived as dry matter × extract efficiency"
+    }
   },
   "clear-belgian-candi-sugar": {
     "id": "clear-belgian-candi-sugar",
@@ -500,7 +543,7 @@
     "name": "Corn Sugar (Dextrose)",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 1,
     "color_lovibond": 0.56,
     "notes": "",
     "yield_basis": "extract",
@@ -511,6 +554,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "CRA B-48; vendor TDS",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Cargill / Ingredion",
+      "url": "https://www.cargill.com/food-beverage/na/en/starches-sweeteners",
+      "retrieved_at": "2026-10-26",
+      "sha256": "4552704b7380ad85ad2b8dbac7b55d752203dd9306a52a55245d78fa4e67ce2c",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "corn-syrup": {
@@ -518,7 +572,7 @@
     "name": "Corn Syrup",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.8,
     "color_lovibond": 1.3,
     "notes": "",
     "yield_basis": "extract",
@@ -529,6 +583,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "CRA E-26; vendor HPLC profile",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Cargill / Ingredion",
+      "url": "https://www.cargill.com/food-beverage/na/en/starches-sweeteners",
+      "retrieved_at": "2026-10-26",
+      "sha256": "74dd5a71f7932ab08d53105ca8ef4a1e416143798fb41687803bc4bebb67571c",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "d-180-candi-syrup": {
@@ -536,7 +601,7 @@
     "name": "D-180 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.86,
     "color_lovibond": 133.44,
     "notes": "D-180 is a premium extra dark Belgian candi syrup is perfect for use in dark Belgian ales. This premium extra dark Belgian candi syrup has deep flavors of fresh ground coffee, dark fruit, and toasted bread. Perfect for use in dark Belgian ales. 180 SRM, 1.032 PPG.",
     "yield_basis": "extract",
@@ -547,6 +612,17 @@
       "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
       "retrieved_at": "2026-10-19T21:46:17Z",
       "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS attenuation spectrum",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Candi Syrup, Inc.",
+      "url": "https://www.candisyrup.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "50f0ff5b007fe181ed8da56ab6c364a4ee1805af4e20427e6b3fd4608a442486",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "d-45-candi-syrup": {
@@ -554,7 +630,7 @@
     "name": "D-45 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.935,
     "color_lovibond": 33.78,
     "notes": "This premium amber Belgian candi syrup is perfect for amber and brown Belgian ales. The syrup has flavors of toffee, vanilla, and toasted bread. 45 SRM, 1.032 PPG.",
     "yield_basis": "extract",
@@ -565,6 +641,17 @@
       "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
       "retrieved_at": "2026-10-19T21:46:17Z",
       "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS attenuation spectrum",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Candi Syrup, Inc.",
+      "url": "https://www.candisyrup.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "0abf5a6ca7db8a3477fcc78ead3811b786d1f4dc724ff9a2e4840fc00c024bdc",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "d-90-candi-syrup": {
@@ -572,7 +659,7 @@
     "name": "D-90 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.935,
     "color_lovibond": 67,
     "notes": "This premium dark candi syrup creates subtle chocolate, toffee, and toasted bread flavors in dark Belgian ales. D-90 is a versatile dark candi syrup. This syrup creates an unmistakable and subtle chocolate back-palate, toffee, and toasted bread flavors.",
     "yield_basis": "extract",
@@ -583,6 +670,17 @@
       "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
       "retrieved_at": "2026-10-19T21:46:17Z",
       "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS attenuation spectrum",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Candi Syrup, Inc.",
+      "url": "https://www.candisyrup.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "56f53ea9aec34170bd15dc283f3690576e23ad3ed23f2f2c90558aebee4fbd28",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "dark-belgian-candi-sugar": {
@@ -644,7 +742,7 @@
     "name": "Invert Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.99,
     "color_lovibond": 0.56,
     "notes": "",
     "yield_basis": "extract",
@@ -655,6 +753,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS; ICUMSA GS1/3/7-5",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Ragus / ASR Group",
+      "url": "https://www.ragus.co.uk/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "f7eec510ebcc14f394dc98876dca37ba45982c196b84bf8323fbc92f08f12f61",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "maltoferm-organic-10000-lme": {
@@ -702,7 +811,7 @@
     "name": "Maple Syrup",
     "maltster": "Brewtarget",
     "yield_fraction": 0.652,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.98,
     "color_lovibond": 26.4,
     "notes": "",
     "yield_basis": "extract",
@@ -713,6 +822,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS; refractometric dry substance",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "USDA / maple grade standards",
+      "url": "https://www.ams.usda.gov/grades-standards/maple-syrup",
+      "retrieved_at": "2026-10-26",
+      "sha256": "a0e1e0c549a9ec66299534ddd8e6c6b3382ab831aa8999c0e97182dfd9deb01f",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "milk-sugar-lactose": {
@@ -720,7 +840,7 @@
     "name": "Milk Sugar (Lactose)",
     "maltster": "Brewtarget",
     "yield_fraction": 0.761,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0,
     "color_lovibond": 0.56,
     "notes": "",
     "yield_basis": "extract",
@@ -731,6 +851,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "definitional; lactose is not fermented by brewer's yeast",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "definitional",
+      "url": "https://www.asbcnet.org/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "7c427f2e7e97f30a2d9d52485c708771f91b67a20150dbded5e30576e55267aa",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "molasses": {
@@ -738,7 +869,7 @@
     "name": "Molasses",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.8,
     "color_lovibond": 59.62,
     "notes": "",
     "yield_basis": "extract",
@@ -749,6 +880,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS; ICUMSA GS4-13",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "ASR Group",
+      "url": "https://www.asr-group.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "1dad48067ce22c1cce677eceb06337387a62f5aa4ec3f0f3b7337ce9a9c1ec9d",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "simplicity-candi-syrup": {
@@ -756,7 +898,7 @@
     "name": "Simplicity Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 0.99,
     "color_lovibond": 0.56,
     "notes": "A premium clear Belgian candi syrup made from beet sugar. Provides clean honey-like flavor to light Belgian Ales. Great for Tripels, Golden Strong ales, or anytime you're looking for increased drinkability and complexity. 0 SRM, 1.032 ppg.",
     "yield_basis": "extract",
@@ -767,6 +909,17 @@
       "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
       "retrieved_at": "2026-10-19T21:46:17Z",
       "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "vendor TDS attenuation spectrum",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Candi Syrup, Inc.",
+      "url": "https://www.candisyrup.com/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "2f07d1a47fd2f74f1458e9a80d4c402765f09fc948235bd4104c539f6ff57b0b",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "sugar-table-sucrose": {
@@ -774,7 +927,7 @@
     "name": "Sugar, Table (Sucrose)",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": null,
+    "fermentability_fraction": 1,
     "color_lovibond": 1.3,
     "notes": "",
     "yield_basis": "extract",
@@ -785,6 +938,17 @@
       "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
       "retrieved_at": "2026-10-19T21:30:16Z",
       "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "definitional; ASBC Sugars and Syrups-15",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "definitional",
+      "url": "https://www.asbcnet.org/",
+      "retrieved_at": "2026-10-26",
+      "sha256": "d21c247ab8234bb2ad3e4f4a63f35bff4699b5214eb4d7d23723925b8d221821",
+      "note": "Citation fingerprint of the vendor/method tuple; page bytes pending capture."
     }
   },
   "turbinado": {

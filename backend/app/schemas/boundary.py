@@ -59,6 +59,7 @@ class BatchSolverErrorCode(StrEnum):
     MASH_TUN_TOO_SMALL = "MASH_TUN_TOO_SMALL"
     INVALID_GRAIN_BILL_NORMALIZATION = "INVALID_GRAIN_BILL_NORMALIZATION"
     INVALID_SUGAR_SHARE = "INVALID_SUGAR_SHARE"
+    INVALID_SUGAR_FERMENTABILITY = "INVALID_SUGAR_FERMENTABILITY"
 
 
 class WaterSolverErrorCode(StrEnum):
@@ -135,6 +136,7 @@ class BatchSolverRequest(BoundaryModel):
     grain_bill: list[GristBillRow] = Field(min_length=1, max_length=50, description="Normalized grain bill rows")
     s_late_add: Annotated[float, Field(ge=0.0, default=0.0, description="Late-addition kettle extract in kg")]
     sugar_extract_share: Annotated[float, Field(ge=0.0, lt=1.0, default=0.0, description="Sugar extract as a fraction of total post-boil extract; 0 = dose mode")]
+    sugar_fermentability: Annotated[float, Field(ge=0.0, le=1.0, default=1.0, description="Extract-weighted real fermentability of the late-addition blend")]
     v_kettle_dead: Annotated[float, Field(ge=0.0, default=0.0, description="Kettle/chiller dead space in Liters")]
     v_kettle_transfer: Annotated[float, Field(ge=0.0, default=0.0, description="Kettle/chiller transfer loss in Liters")]
     v_trub: Annotated[float, Field(ge=0.0, default=0.0, description="Kettle trub loss in Liters")]

@@ -101,6 +101,7 @@ export const BATCH_FIELDS = {
   grain_moisture_fraction: { path: "batch.grain_moisture_fraction", wire: null },
   s_late_add: { path: "batch.s_late_add_request" },
   sugar_extract_share: { path: "batch.sugar_share_request" },
+  sugar_fermentability: { path: "batch.sugar_fermentability_effective", default: 1.0 },
   v_kettle_dead: { path: "equipment.kettle_dead_space_l" },
   v_kettle_transfer: { path: "equipment.kettle_transfer_loss_l" },
   v_trub: { path: "equipment.trub_loss_l" },

@@ -38,6 +38,9 @@ const CROSSWALK_PATH = fileURLToPath(
 const STANDARD_LIST_PATH = fileURLToPath(
   new URL("../data/sources/standard-malts.json", import.meta.url)
 );
+const SUGAR_OVERLAY_PATH = fileURLToPath(
+  new URL("../data/sources/sugar-fermentability.json", import.meta.url)
+);
 
 const MALT_TYPES = new Set(["malt", "adjunct"]);
 const SUGAR_TYPES = new Set(["sugar", "syrup", "extract"]);
@@ -311,15 +314,104 @@ function backfillColor(seed) {
   }
 }
 
-export function buildSeeds(rows, crosswalk, standardList) {
+// Audited sugar overlay: fills nulls only. Existing non-null figures win; a
+// disagreement is reported for review rather than silently overwritten.
+const SUGAR_YIELD_TOLERANCE = 0.005;
+const SUGAR_FERMENTABILITY_TOLERANCE = 0.02;
+
+export function loadSugarOverlay(path = SUGAR_OVERLAY_PATH) {
+  const source = JSON.parse(readFileSync(path, "utf8"));
+  if (source.schema_version !== 1) {
+    throw new Error(
+      `sugar overlay has schema_version ${source.schema_version}; expected 1`
+    );
+  }
+  const overlay = new Map();
+  for (const entry of source.entries) {
+    overlay.set(entry.id, entry);
+    for (const alias of entry.aliases ?? []) overlay.set(alias, entry);
+  }
+  return overlay;
+}
+
+function roundedYield(value) {
+  return Math.round(value * 1e4) / 1e4;
+}
+
+function overlayProvenance(entry, note) {
+  return {
+    bound: "point",
+    kind: "vendor",
+    vendor: entry.vendor,
+    url: entry.url,
+    retrieved_at: entry.retrieved_at,
+    sha256: entry.sha256,
+    note: note ?? entry.provenance_note ?? entry.method,
+  };
+}
+
+export function applySugarOverlay(seed, overlay) {
+  const conflicts = [];
+  for (const [rowId, row] of Object.entries(seed)) {
+    const entry = overlay.get(row.id ?? rowId);
+    if (!entry) continue;
+
+    const sourceYield = roundedYield(
+      entry.dry_matter_fraction * entry.extract_efficiency_factor
+    );
+    if (row.yield_fraction == null) {
+      row.yield_fraction = sourceYield;
+      row.yield_basis = "extract";
+      row.yield_provenance = overlayProvenance(
+        entry,
+        `${entry.method}; derived as dry matter × extract efficiency`
+      );
+    } else if (Math.abs(row.yield_fraction - sourceYield) > SUGAR_YIELD_TOLERANCE) {
+      conflicts.push({
+        id: row.id ?? rowId,
+        field: "yield_fraction",
+        seed: row.yield_fraction,
+        source: sourceYield,
+        overlay: entry.id,
+      });
+    }
+
+    if (row.fermentability_fraction == null) {
+      row.fermentability_fraction = entry.rdf;
+      row.fermentability_basis = "real";
+      row.fermentability_method = entry.method;
+      row.fermentability_provenance = overlayProvenance(entry);
+    } else if (
+      Math.abs(row.fermentability_fraction - entry.rdf) >
+      SUGAR_FERMENTABILITY_TOLERANCE
+    ) {
+      conflicts.push({
+        id: row.id ?? rowId,
+        field: "fermentability_fraction",
+        seed: row.fermentability_fraction,
+        source: entry.rdf,
+        overlay: entry.id,
+      });
+    }
+  }
+  return conflicts;
+}
+
+export function buildSeeds(rows, crosswalk, standardList, overlay = loadSugarOverlay()) {
   const { malts, sugars, excluded } = splitByType(rows);
 
   const maltSeed = toIdKeyedMap(dedupeMalts(malts).map(maltComponent), true, crosswalk, standardList);
   const sugarSeed = toIdKeyedMap(sugars.map(sugarComponent), false, crosswalk, standardList);
 
   backfillColor(maltSeed);
+  const sugarConflicts = applySugarOverlay(sugarSeed, overlay);
 
-  return { malts: sorted(maltSeed), sugars: sorted(sugarSeed), excluded: excluded.length };
+  return {
+    malts: sorted(maltSeed),
+    sugars: sorted(sugarSeed),
+    excluded: excluded.length,
+    sugarConflicts,
+  };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -333,7 +425,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
   const crosswalk = JSON.parse(readFileSync(CROSSWALK_PATH, "utf8"));
   const standardList = JSON.parse(readFileSync(STANDARD_LIST_PATH, "utf8"));
-  const { malts, sugars, excluded } = buildSeeds(source.entries, crosswalk, standardList);
+  const { malts, sugars, excluded, sugarConflicts } = buildSeeds(
+    source.entries,
+    crosswalk,
+    standardList
+  );
 
   writeSorted(MALTS_OUTPUT, malts);
   writeSorted(SUGARS_OUTPUT, sugars);
@@ -341,4 +437,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     `wrote ${Object.keys(malts).length} malts and ${Object.keys(sugars).length} sugars; ` +
       `excluded ${excluded} rows (black extracts or malt with fermentability basis)`
   );
+  if (sugarConflicts.length) {
+    console.log(
+      `sugar overlay: ${sugarConflicts.length} non-null conflict(s) kept for review:`
+    );
+    for (const conflict of sugarConflicts) {
+      console.log(`  ${conflict.id}.${conflict.field}: seed ${conflict.seed} vs source ${conflict.source}`);
+    }
+  }
 }

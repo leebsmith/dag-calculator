@@ -31,7 +31,7 @@ masses and scale once.
 ```
 cap_real   = apparent_to_real(OE, yeast_cap_apparent)
 F_malt_eff = min(F_malt, cap_real)
-UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)
+UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_eff)
 RE         = OE · UE / E
 AE         = inverse_cutaia(RE)               # may be ≤ 0
 ABW        = Cutaia(OE, AE)
@@ -40,7 +40,9 @@ AA_app     = (OE − AE) / OE                   # may exceed 1
 RDF        = (OE − RE) / OE
 ```
 
-`F_sugar = 1.0` today (the sugar prior); `d = 0` until D5 wires STA1. The
+`F_eff` is the extract-weighted **real** fermentability of the late-addition
+blend (see `docs/sugar-database.md`); it is `1.0` only when every sugar in the
+blend is fully fermentable. `d = 1` only for a confirmed STA1 strain. The
 inversion solves the Cutaia real-extract regression for `AE`; when the residue
 is small enough (a diastaticus fermentation) `AE < 0` is the only solution, so
 `plato_to_sg` evaluates the ASBC polynomial on a small negative domain.
@@ -120,8 +122,10 @@ gravity-invariant.
 - The cap is the yeast's **apparent** attenuation (strain × batch derate). It
   converts to real space at the candidate `OE` and clamps **malt** fermentability
   only: `F_malt_eff = min(F_malt, cap_real)`.
-- Sugar extract keeps `F_sugar = 1.0` and is never clamped, so a sugar addition
-  can push apparent attenuation past the yeast cap (regime 2).
+- Sugar extract keeps its own `F_eff` and is never clamped by the yeast cap, so
+  a sugar addition can push apparent attenuation past the malt cap (regime 2).
+  A non-fermentable blend (`F_eff < 1`) leaves its own residue; the sugar share
+  is total extract, not fermentable extract.
 - `d` (D5) applies to the malt residue only: `(1 − F_malt_eff)(1 − d)`. A
   non-fermentable late addition (lactose) keeps its own residue regardless of
   `d` (A6).
@@ -162,9 +166,9 @@ composition block with a different source for `S`.
 - `0` is the dose sentinel on the wire. A positive share must be `< 1`; a
   malt-free share raises `INVALID_SUGAR_SHARE`. The UI bounds the root at 0.95
   and warns above 0.90.
-- Share mode covers fully fermentable late additions (`F_sugar = 1.0`). A
-  non-fermentable sugar (lactose) belongs to dose mode; per-sugar `F` on the
-  wire is deferred.
+- Share mode supports mixed blends through `F_eff`; a non-fermentable sugar
+  (lactose) is represented by its row RDF, not by forcing dose mode. Per-row
+  F on the wire is unnecessary: the solver consumes the blend scalar.
 - Rows carry both representations: `mass_kg` (authored dose) and `parts` (share
   weights). The active mode decides which is authored. Share mode derives
   `resolved_mass_kg` from the solved sugar budget with Hamilton allocation; it
@@ -202,11 +206,12 @@ that every enforcement path exists and that the row set stays complete.
 | A14 | vendor ranges use the high end | low/high stored, cap = high | `tests/guards/seed-rebuild.test.js`, `tests/conformance/seed-conformance.test.js` |
 | A15 | Cutaia inverse vs mass-derived RE | residual asserted | `tests/backend/conformance/test_numeric_parity.py` |
 | A16 | sugar share allocates extract by Hamilton parts | 0.1 % split, masses derived | `tests/frontend/late-addition-intent.test.js` |
-| A17 | share mode covers fully fermentable sugars only | `F_sugar = 1.0`; lactose stays dose-mode | `tests/frontend/late-addition-intent.test.js` |
+| A17 | mixed sugar blends use one effective RDF | `F_eff`, extract-weighted; share is total extract | `tests/guards/sugar-fermentability-contract.test.js`, `tests/backend/conformance/test_composition_regimes.py` |
 
 ## 8. References
 
 - `docs/fermentability-and-yield.md` — the two ingredient axes and provenance.
+- `docs/sugar-database.md` — the audited sugar source, tiers and `F_eff`.
 - `docs/dag-artifacts/domain-equations.md` §1–§2 — the equations and the sealed
   boundary contract.
 - `plans/attenuation-refactor.md` — the commit contract for passes 2–3 (landed).

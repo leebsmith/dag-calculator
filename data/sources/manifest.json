@@ -63,6 +63,19 @@
       "rows": 89,
       "sha256": "573bb37f30d30525847aaf8fffb9e1c2a211047bdb4f14fed76e3d02307fd23b"
     },
+    "sugar-fermentability.json": {
+      "mechanism": "curated+vendor",
+      "upstream": "Primary vendor TDS/COA and ASBC/EBC/ICUMSA/CRA methods (see docs/sugar-database.md)",
+      "builder": "scripts/build-fermentables-seed.mjs",
+      "rows": 12,
+      "sha256": "ee4478024d35dfb31028be7ad3958d3c8d56632256803bc9f6fba5afec50594d"
+    },
+    "sugar-fermentability.schema.json": {
+      "mechanism": "contract",
+      "upstream": "plans/pin-matrix.md (pinned)",
+      "rows": 9,
+      "sha256": "55a684f6feade3abf32dbcb3de869cd3ef0345fc4bfa7fb7b4a75659b89a2b18"
+    },
     "whitelabs-yeasts.json": {
       "mechanism": "scrape",
       "upstream": "https://www.whitelabs.com/yeast-bank",

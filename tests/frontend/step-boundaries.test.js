@@ -345,9 +345,9 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
   const batch = calls.find((c) => c.url === "/solve/batch").body;
   const water = calls.find((c) => c.url === "/solve/water").body;
 
-  // Full Pydantic contract: 25 declared batch inputs.
-  assert.equal(Object.keys(batch).length, 25);
-  for (const k of ["target_abv", "malt_attenuation_cap", "sta1", "sugar_extract_share", "topology", "grain_bill", "eta_conv", "k_abs_true", "max_kettle_volume_l", "max_mash_tun_volume_l"]) {
+  // Full Pydantic contract: 26 declared batch inputs.
+  assert.equal(Object.keys(batch).length, 26);
+  for (const k of ["target_abv", "malt_attenuation_cap", "sta1", "sugar_extract_share", "sugar_fermentability", "topology", "grain_bill", "eta_conv", "k_abs_true", "max_kettle_volume_l", "max_mash_tun_volume_l"]) {
     assert.ok(k in batch, `batch request missing ${k}`);
   }
   // Grain rows are renamed to the backend's GristBillRow keys (no raw catalog keys).

@@ -186,6 +186,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.sparge_salted_volume` | derived |
 | `batch.sugar_extract_share` | root |
 | `batch.sugar_extract_total` | derived |
+| `batch.sugar_fermentability_effective` | derived |
 | `batch.sugar_parts_total` | derived |
 | `batch.sugar_share_request` | derived |
 | `batch.sugars` | collection |

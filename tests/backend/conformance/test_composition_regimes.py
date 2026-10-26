@@ -271,3 +271,25 @@ def test_wire_share_mode_runs_in_one_boundary_call():
 
     assert shared.m_grist < plain.m_grist
     assert shared.s_post_boil_target < plain.s_post_boil_target
+
+
+# --- P1: effective sugar fermentability -------------------------------------
+
+
+def test_effective_sugar_fermentability_carries_the_blend_residue():
+    fully = solve_batch(_solver_input(s_late_add=0.5, sugar_fermentability=1.0))
+    half = solve_batch(_solver_input(s_late_add=0.5, sugar_fermentability=0.5))
+    none = solve_batch(_solver_input(s_late_add=0.5, sugar_fermentability=0.0))
+
+    assert half.real_attenuation < fully.real_attenuation
+    assert half.apparent_attenuation < fully.apparent_attenuation
+    assert none.real_attenuation < half.real_attenuation
+    assert none.apparent_attenuation < half.apparent_attenuation
+
+
+def test_wire_effective_sugar_fermentability_is_a_single_scalar():
+    fully = _wire(s_late_add=0.5, sugar_fermentability=1.0)
+    mixed = _wire(s_late_add=0.5, sugar_fermentability=0.5)
+
+    assert mixed.real_attenuation < fully.real_attenuation
+    assert mixed.apparent_attenuation < fully.apparent_attenuation

@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_102 paths_
+_103 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -71,6 +71,7 @@ _102 paths_
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
 | `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
 | `batch.sugar_extract_total` | Late extract | derived | mass | kg | 2 | — |
+| `batch.sugar_fermentability_effective` | Sugar Fermentability Effective | derived | percentage | pct (%) | 1 | — |
 | `batch.sugar_parts_total` | Sugar Parts Total | derived | dimensionless | 1 | — | — |
 | `batch.sugar_share_request` | Sugar Share Request | derived | percentage | pct (%) | 1 | — |
 | `batch.sugars` | Late additions | collection | — | — | — | — |

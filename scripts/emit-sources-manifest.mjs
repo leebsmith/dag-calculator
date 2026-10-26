@@ -62,6 +62,16 @@ const META = {
     mechanism: "contract",
     upstream: "malt_database schema/malt.schema.json (pinned)",
   },
+  "sugar-fermentability.json": {
+    mechanism: "curated+vendor",
+    upstream:
+      "Primary vendor TDS/COA and ASBC/EBC/ICUMSA/CRA methods (see docs/sugar-database.md)",
+    builder: "scripts/build-fermentables-seed.mjs",
+  },
+  "sugar-fermentability.schema.json": {
+    mechanism: "contract",
+    upstream: "plans/pin-matrix.md (pinned)",
+  },
   "standard-malts.json": {
     mechanism: "vendor+extend",
     upstream: "malt_database standard_malts.tsv (extended)",

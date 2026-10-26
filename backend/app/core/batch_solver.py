@@ -1469,6 +1469,7 @@ class BatchSolverInput:
     k_abs_true: float = K_ABS_TRUE_METRIC
     sta1: bool | None = None
     sugar_extract_share: float = 0.0
+    sugar_fermentability: float = 1.0
 
     def __post_init__(self) -> None:
         if self.topology not in ("r_l_to_g", "runoff_ratio"):
@@ -1494,6 +1495,18 @@ class BatchSolverInput:
                 (
                     "Sugar extract share must be in [0, 1); got "
                     f"{self.sugar_extract_share}."
+                ),
+            )
+        if (
+            not math.isfinite(self.sugar_fermentability)
+            or self.sugar_fermentability < 0.0
+            or self.sugar_fermentability > 1.0
+        ):
+            raise SolverValidationError(
+                "INVALID_SUGAR_FERMENTABILITY",
+                (
+                    "Sugar fermentability must be in [0, 1]; got "
+                    f"{self.sugar_fermentability}."
                 ),
             )
 
@@ -1710,6 +1723,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             s_late_add=inputs.s_late_add,
             dextrin_consumption=dextrin_consumption,
             sugar_extract_share=inputs.sugar_extract_share,
+            sugar_fermentability=inputs.sugar_fermentability,
         )
         sg_post_boil = asbc_plato_to_sg(oe_plato)
         s_late_add = sugar_extract_for(
@@ -1734,6 +1748,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             malt_fermentability=aa_malt,
             yeast_cap_apparent=inputs.malt_attenuation_cap,
             dextrin_consumption=dextrin_consumption,
+            sugar_fermentability=inputs.sugar_fermentability,
         )
         real_attenuation = composition.real_attenuation
         apparent_attenuation = composition.apparent_attenuation
@@ -1749,6 +1764,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             malt_fermentability=aa_malt,
             yeast_cap_apparent=inputs.malt_attenuation_cap,
             dextrin_consumption=dextrin_consumption,
+            sugar_fermentability=inputs.sugar_fermentability,
         )
         max_abv = ceiling.abv_pct
 

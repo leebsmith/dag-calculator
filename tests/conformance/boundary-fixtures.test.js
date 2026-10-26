@@ -62,6 +62,7 @@ const BATCH_VALUES = {
   "batch.s_late_add": 0.0,
   "batch.s_late_add_request": 0.0,
   "batch.sugar_share_request": 0.0,
+  "batch.sugar_fermentability_effective": 1.0,
   "equipment.kettle_dead_space_l": 0.0,
   "equipment.kettle_transfer_loss_l": 0.0,
   "equipment.trub_loss_l": 0.0,

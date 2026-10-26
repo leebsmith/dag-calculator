@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:c8f1c913a7bfa864fa8357c1674db91ef3182c92d2e23157782e268e0b575b94",
+    "hash": "sha256:3c13124830de160ffbc944b4f2ec03b09b1c2d6fad4cb1f014d266d5d5fce769",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -3038,6 +3038,7 @@
             "grain_moisture_fraction": "batch.grain_moisture_fraction",
             "s_late_add": "batch.s_late_add_request",
             "sugar_extract_share": "batch.sugar_share_request",
+            "sugar_fermentability": "batch.sugar_fermentability_effective",
             "v_kettle_dead": "equipment.kettle_dead_space_l",
             "v_kettle_transfer": "equipment.kettle_transfer_loss_l",
             "v_trub": "equipment.trub_loss_l",
@@ -3150,7 +3151,8 @@
               "KETTLE_TOO_SMALL",
               "MASH_TUN_TOO_SMALL",
               "INVALID_GRAIN_BILL_NORMALIZATION",
-              "INVALID_SUGAR_SHARE"
+              "INVALID_SUGAR_SHARE",
+              "INVALID_SUGAR_FERMENTABILITY"
             ]
           }
         },
@@ -4431,6 +4433,64 @@
             "dimension": "mass"
           }
         },
+        "batch.sugar_fermentability_effective": {
+          "kind": "derived",
+          "inputs": {
+            "sugars": "batch.sugars",
+            "intent": "batch.late_addition_intent"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "eq",
+                "args": [
+                  {
+                    "ref": "intent"
+                  },
+                  "share"
+                ]
+              },
+              {
+                "op": "weighted_avg",
+                "coll": {
+                  "ref": "sugars"
+                },
+                "as": "row",
+                "value": {
+                  "ref": "row.fermentability_fraction"
+                },
+                "weight": {
+                  "ref": "row.parts"
+                }
+              },
+              {
+                "op": "weighted_avg",
+                "coll": {
+                  "ref": "sugars"
+                },
+                "as": "row",
+                "value": {
+                  "ref": "row.fermentability_fraction"
+                },
+                "weight": {
+                  "op": "*",
+                  "args": [
+                    {
+                      "ref": "row.mass_kg"
+                    },
+                    {
+                      "ref": "row.yield_fraction"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
         "batch.delta_v_evap": {
           "kind": "derived",
           "inputs": {
@@ -5012,5 +5072,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:bde0e20bc1743a1fba0104edcd7d7d5758c3239847b06b4cbc16484001aa4e7b"
+  "content_hash": "sha256:bfe2a56e94f4def0f16fdae2b6563489f53d01167922c7414b9a812465e3405a"
 }

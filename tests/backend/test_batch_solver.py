@@ -334,6 +334,7 @@ def test_error_surface_complete():
         "UNKNOWN_TOPOLOGY", "INVALID_INTENSIVE_VALUE", "MASH_TOO_THIN",
         "HLT_TOO_SMALL", "KETTLE_TOO_SMALL", "MASH_TUN_TOO_SMALL",
         "INVALID_GRAIN_BILL_NORMALIZATION", "INVALID_SUGAR_SHARE",
+        "INVALID_SUGAR_FERMENTABILITY",
     }
     assert declared == expected
 

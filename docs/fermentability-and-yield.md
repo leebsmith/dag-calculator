@@ -50,7 +50,9 @@ Typical **real** values:
 - Crystal/caramel: ~0.40–0.50
 - Roasted: ~0.10–0.20
 - Acidulated: base-like, ~0.64
-- Simple sugars, extracts, syrups: 1.0
+- Simple sugars: 1.0 (real); liquid invert, candi syrups, molasses and extracts
+  take their audited RDF (see `docs/sugar-database.md`) — never the `1.0` prior
+  when a measured figure exists.
 
 ### Category defaults
 
@@ -106,11 +108,13 @@ The same split is authorable from the sugar side. `batch.late_addition_intent`
 is `dose` (mass) or `share` (sugar extract ÷ total post-boil extract). Share
 mode sends `sugar_extract_share` on the wire and `s_late_add = 0`; the solver
 evaluates `E_sugar = share · E(OE)` per candidate, so the sugar mass follows
-gravity without a host iteration. `F_sugar` is still `1.0`; a non-fermentable
-late addition (lactose) belongs to dose mode. Row `parts` allocate the budget by
-the same Hamilton rule as the grist, and `resolved_mass_kg` is the recorded
-result, never a request input. The full register is in
-`docs/attenuation-model.md` §6.
+gravity without a host iteration. The solver consumes one effective real
+fermentability, `F_eff`, the extract-weighted RDF of the blend; mixed blends
+(lactose + molasses) are therefore representable in share mode. Row `parts`
+allocate the sugar extract by the same Hamilton rule as the grist, and
+`resolved_mass_kg` is the recorded result, never a request input. The full
+register is in `docs/attenuation-model.md` §6; the sugar audit is
+`docs/sugar-database.md`.
 
 ## Vendor pitfalls
 
