@@ -80,6 +80,16 @@ function convert(row, usedSlugs) {
   usedSlugs.add(id);
 
   const component = { id, name, manufacturer, attenuation_pct };
+  // Aggregator-level citation: the scrape publishes no per-page hash or fetch
+  // time, so Pass 1 records the profile URL and the aggregator. The vendor
+  // fetch (STA1, ranges) upgrades this to a per-document citation.
+  component.attenuation_provenance = {
+    bound: "point",
+    kind: "aggregator",
+    vendor: "Beer Analytics",
+    note: "aggregator scrape; no per-page hash in Pass 1",
+  };
+  if (row.url) component.attenuation_provenance.url = row.url;
   if (flocculation) component.flocculation = flocculation;
   if (row.tolerance) component.alcohol_tolerance = row.tolerance;
   if (row.form) component.form = row.form;

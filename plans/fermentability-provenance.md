@@ -1,9 +1,27 @@
 # Fermentability provenance — Pass 1 refactor plan
 
-Status: planned. Pass 1 of three. Producer-first across two repos:
-`malt_database` (capture) then `dag-calculator` (consume). This document is the
-commit contract: each commit lists what it owns, what it must not touch, and the
-gate that proves it.
+Status: **Pass 1 landed**. Producer `malt_database` `823fd6e`, `53852f0`,
+`afe1d4f`, `b26bc0a` (pushed); consumer `dag-calculator` `a82c7f5` (B1) and
+`2957f46` (B2), plus B3 (yeast provenance). Pass 2 (sugar F, bounds as floors,
+STA1) and Pass 3 (the pin) remain.
+
+Deviations from the staging below, recorded so Pass 2 inherits the real shape:
+
+- Provenance is keyed by the **source key** (the intermediate file stem), not
+  the row's brand: Northern Brewer's dump carries L.D. Carlson products, and the
+  citation belongs to the document. `source_id` is `<source>/<product-slug>`.
+- Yield bounds are `unknown` in Pass 1 (the extract qualifier is unparsed);
+  fermentability bounds are point/min.
+- The consumer's row schemas (`grist_row`, `sugar_row`, `trace_malt_row`) had to
+  declare the provenance fields, not just the catalog schemas, or the report
+  catalog could not cover a frozen batch.
+- Ingestion resolution lives in the engine (`ingredientPriors.js`), not in
+  `catalogDraft.js`: collection rows are resolved when they enter evaluation, so
+  direct engine callers and the session see the same rows.
+- Yeast citations are aggregator-level (`kind: "aggregator"`, no page hash).
+
+This document was the commit contract: each commit lists what it owns, what it
+must not touch, and the gate that proves it.
 
 ## 1. Problem
 

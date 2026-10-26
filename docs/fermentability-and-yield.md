@@ -137,6 +137,11 @@ batches that already exist.
 bound; using a floor as one (rather than silently treating it as a point) is
 deferred with the late-addition work.
 
+Yeast provenance is **aggregator-level** in Pass 1: `kind: "aggregator"` with
+the profile URL and no per-page hash, because the beer-analytics scrape caches
+no pages. The vendor fetch (STA1, attenuation ranges) upgrades it to a
+per-document citation.
+
 ## Tests
 
 - `F` defaults by category; scraped values win.
