@@ -43,12 +43,6 @@ function assignWire(out, wire, value) {
   assignWire(out[head], rest.join("."), value);
 }
 
-export const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
-
-function fermentabilityOf(row) {
-  return row.fermentability_fraction ?? CATEGORY_DEFAULT_F[row.category] ?? 0.81;
-}
-
 // BatchSolverRequest: one entry per solver.batch declared input.
 export const BATCH_FIELDS = {
   target_abv: { path: "batch.target_abv" },
@@ -69,7 +63,9 @@ export const BATCH_FIELDS = {
         w_i: row.pct,
         yield_i: row.yield_fraction,
         mc_i: row.moisture_fraction ?? resolved.grain_moisture_fraction,
-        fermentability_i: fermentabilityOf(row),
+        // Copy-forward resolution guarantees a figure; a row that still lacks
+        // one is a malformed batch, not a place to invent a default.
+        fermentability_i: row.fermentability_fraction,
       })),
   },
   grain_moisture_fraction: { path: "batch.grain_moisture_fraction", wire: null },

@@ -36,7 +36,7 @@ test("representative readouts use the dimension policy", async () => {
   assert.equal(display("equipment.nominal_boil_off_rate_l_per_hr"), "3.0");
   assert.equal(display("grist.trace_malts_mass"), "0.00");
   assert.equal(display("grist.sugars_mass"), "0.0");
-  assert.equal(display("grist.weighted_yield_fraction"), "78.8");
+  assert.equal(display("grist.weighted_yield_fraction"), "79.2");
   assert.equal(display("batch.whirlpool_cooling_time_constant_min"), "108.7");
   assert.equal(unit("mash.strike_water_tun_offset_c"), "Δ°C");
 });

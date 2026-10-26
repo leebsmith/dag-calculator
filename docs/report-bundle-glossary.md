@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_85 paths_
+_88 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -70,11 +70,14 @@ _85 paths_
 | `batch.sugars` | Late additions | collection | — | — | — | — |
 | `batch.sugars.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
 | `batch.sugars.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
+| `batch.sugars.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
 | `batch.sugars.mass_kg` | Mass | field | mass | kg | 1 | — |
 | `batch.sugars.name` | Sugar | field | — | — | — | — |
 | `batch.sugars.notes` | Notes | field | — | — | — | — |
 | `batch.sugars.sugar_id` | Sugar ID | field | — | — | — | — |
+| `batch.sugars.yield_basis` | Yield Basis | field | — | — | — | — |
 | `batch.sugars.yield_fraction` | Yield | field | percentage | pct (%) | 1 | — |
+| `batch.sugars.yield_provenance` | Yield Provenance | field | — | — | — | — |
 | `batch.surplus_sparge_capacity` | surplus sparge capacity | derived | volume | L | 1 | — |
 | `batch.target_abv` | Target ABV | root | abv | pct | 1 | — |
 | `batch.target_ibu` | Target IBU | root | ibu | IBU | 1 | — |
@@ -116,7 +119,7 @@ _85 paths_
 
 ## Grist
 
-_28 paths_
+_34 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -126,12 +129,15 @@ _28 paths_
 | `grist.major_malts.category` | Type | field | — | — | — | BASE, CRYSTAL, ROASTED, ACID |
 | `grist.major_malts.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
 | `grist.major_malts.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
+| `grist.major_malts.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
 | `grist.major_malts.moisture_fraction` | Moisture Fraction | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.name` | Malt | field | — | — | — | — |
 | `grist.major_malts.notes` | Notes | field | — | — | — | — |
 | `grist.major_malts.parts` | Parts | field | dimensionless | 1 | — | — |
 | `grist.major_malts.pct` | Pct | field | percentage | pct (%) | 1 | — |
+| `grist.major_malts.yield_basis` | Yield Basis | field | — | — | — | — |
 | `grist.major_malts.yield_fraction` | Yield | field | percentage | pct (%) | 1 | — |
+| `grist.major_malts.yield_provenance` | Yield Provenance | field | — | — | — | — |
 | `grist.mcu` | Mcu | derived | dimensionless | 1 | — | — |
 | `grist.sugar_weighted_lovibond` | Weighted sugar color | derived | grain_color | EBC | 1 | — |
 | `grist.sugars_mass` | Total sugar mass | derived | mass | kg | 1 | — |
@@ -140,10 +146,13 @@ _28 paths_
 | `grist.trace_malts.category` | Type | field | — | — | — | BASE, CRYSTAL, ROASTED, ACID |
 | `grist.trace_malts.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
 | `grist.trace_malts.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
+| `grist.trace_malts.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
 | `grist.trace_malts.mass_kg` | Mass | field | mass | oz | 2 | — |
 | `grist.trace_malts.name` | Malt | field | — | — | — | — |
 | `grist.trace_malts.notes` | Notes | field | — | — | — | — |
+| `grist.trace_malts.yield_basis` | Yield Basis | field | — | — | — | — |
 | `grist.trace_malts.yield_fraction` | Yield | field | percentage | pct (%) | 1 | — |
+| `grist.trace_malts.yield_provenance` | Yield Provenance | field | — | — | — | — |
 | `grist.trace_malts_mass` | Trace malt mass | derived | mass | oz | 2 | — |
 | `grist.trace_weighted_lovibond` | Weighted trace color | derived | grain_color | EBC | 1 | — |
 | `grist.weighted_lovibond` | Weighted grist color | derived | grain_color | EBC | 1 | — |

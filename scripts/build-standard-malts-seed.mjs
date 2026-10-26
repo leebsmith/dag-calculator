@@ -22,13 +22,26 @@ const FAMILY_CATEGORY = {
   toasted: "ROASTED",
 };
 
-const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
-
 export function median(values) {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+function numeric(values) {
+  return values.filter((n) => typeof n === "number");
+}
+
+// A representative aggregates published figures, so its citation names the
+// statistic and the members it came from rather than a single document.
+function derivedProvenance(members) {
+  return {
+    bound: "point",
+    kind: "derived",
+    stat: "median",
+    from: members.map((m) => m.id).sort(),
+  };
 }
 
 // Strict-majority category over the members; null on a tie.
@@ -57,16 +70,21 @@ export function buildStandardMalts(malts) {
   for (const [stdId, ms] of groups) {
     const first = ms[0];
     const category = majorityCategory(ms) ?? FAMILY_CATEGORY[first.family] ?? "BASE";
+    const yields = numeric(ms.map((m) => m.yield_fraction));
+    const fermentabilities = numeric(ms.map((m) => m.fermentability_fraction));
     const rep = {
       id: `std:${stdId}`,
       name: first.standard_name,
       maltster: "Generic",
       category,
-      yield_fraction: median(ms.map((m) => m.yield_fraction).filter((n) => typeof n === "number")),
-      fermentability_fraction:
-        median(ms.map((m) => m.fermentability_fraction).filter((n) => typeof n === "number")) ||
-        CATEGORY_DEFAULT_F[category] ||
-        0.81,
+      yield_fraction: yields.length ? median(yields) : null,
+      ...(yields.length
+        ? { yield_basis: "extract", yield_provenance: derivedProvenance(ms) }
+        : {}),
+      fermentability_fraction: fermentabilities.length ? median(fermentabilities) : null,
+      ...(fermentabilities.length
+        ? { fermentability_provenance: derivedProvenance(ms) }
+        : {}),
       color_lovibond: median(ms.map((m) => m.color_lovibond).filter((n) => typeof n === "number")),
       notes: first.generic_description,
       standard_malt: stdId,

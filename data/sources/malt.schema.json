@@ -9,9 +9,13 @@
   "properties": {
     "name":           { "type": "string" },
     "maltster":       { "type": "string", "enum": ["Briess","Simpsons","Fawcett","Weyermann","Bairds","Dingemans","Muntons","Gambrinus","Great Western","Bestmalz","Canada Malting","Crisp","Brewtarget","Williams Brewing","Northern Brewer","L.D. Carlson"] },
+    "source_id":      { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$" },
+    "source_url":     { "type": "string", "minLength": 1 },
     "yield_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
     "yield_basis":    { "type": "string", "enum": ["extract", "fermentability"] },
-    "fermentability_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
+    "yield_provenance":       { "$ref": "#/$defs/provenance" },
+    "fermentability_fraction": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "fermentability_provenance": { "$ref": "#/$defs/provenance" },
     "color_lovibond": { "type": "number", "minimum": 0 },
     "moisture":       { "type": "number", "minimum": 0, "maximum": 100 },
     "notes":          { "type": "string" },
@@ -29,5 +33,22 @@
       "then": { "not": { "required": ["category"] } },
       "else": { "required": ["category"] }
     }
-  ]
+  ],
+  "$defs": {
+    "provenance": {
+      "$comment": "Citation for one published figure. The importer copies this shape verbatim; it never translates it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bound", "kind", "vendor", "url", "retrieved_at", "sha256"],
+      "properties": {
+        "bound":        { "type": "string", "enum": ["point", "min", "max", "unknown"] },
+        "kind":         { "type": "string", "enum": ["vendor"] },
+        "vendor":       { "type": "string", "minLength": 1 },
+        "url":          { "type": "string", "minLength": 1 },
+        "retrieved_at": { "type": "string", "minLength": 1 },
+        "sha256":       { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "note":         { "type": "string" }
+      }
+    }
+  }
 }

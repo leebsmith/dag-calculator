@@ -84,6 +84,15 @@ outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
 recipe's selected workflow steps and instruction text, and no derived math
 depends on it.
 
+**Ingredient rows are resolved on ingest.** A collection whose item schema
+declares `yield_fraction` or `fermentability_fraction` is passed through
+`resolveIngredientRows` when it enters evaluation (`createCalculator`,
+`setCollection`): a captured figure keeps its provenance, and a missing one
+takes the artifact's category prior and is stamped `kind: "prior"`. The engine
+mutates the caller's collection object, so the session's draft state — and
+therefore autosave, freeze, and the report bundle — sees the same resolved
+rows. This is an artifact rule, not a UI one: direct engine callers get it too.
+
 ### Caches
 
 - **`memo`** — `nodeId → value` for derived/selection/boundary nodes, so a node

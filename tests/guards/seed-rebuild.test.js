@@ -41,7 +41,24 @@ test("A9: fermentable seeds rebuild from the scrape and the crosswalk", () => {
   assert.deepEqual(sugars, json("data/seeds/sugars.json"));
 });
 
-test("fermentability-basis extracts are restored with F=1; black extracts are excluded", () => {
+test("a source without a fermentability figure stays null in the seed", () => {
+  const rows = [
+    {
+      name: "Plain Malt",
+      maltster: "Test",
+      product_type: "malt",
+      category: "BASE",
+      yield_fraction: 0.8,
+      color_lovibond: 2,
+    },
+  ];
+
+  const { malts } = buildFermentables(rows, {}, {});
+  assert.equal(malts["plain-malt"].fermentability_fraction, null);
+  assert.equal(malts["plain-malt"].fermentability_provenance, undefined);
+});
+
+test("fermentability-basis extracts store the published figure as fermentability", () => {
   const rows = [
     {
       name: "Test Dry Extract",
@@ -49,6 +66,14 @@ test("fermentability-basis extracts are restored with F=1; black extracts are ex
       product_type: "extract",
       yield_fraction: 0.75,
       yield_basis: "fermentability",
+      yield_provenance: {
+        bound: "point",
+        kind: "vendor",
+        vendor: "Test",
+        url: "https://example.invalid/dry",
+        retrieved_at: "2026-01-01T00:00:00Z",
+        sha256: "0".repeat(64),
+      },
       color_lovibond: 3,
     },
     {
@@ -72,8 +97,11 @@ test("fermentability-basis extracts are restored with F=1; black extracts are ex
 
   const { sugars, malts, excluded } = buildFermentables(rows, {}, {});
   assert.equal(excluded, 2);
-  assert.equal(sugars["test-dry-extract"].yield_fraction, 0.75);
-  assert.equal(sugars["test-dry-extract"].fermentability_fraction, 1);
+  const extract = sugars["test-dry-extract"];
+  assert.equal(extract.yield_fraction, null, "a fermentability figure is not an extract");
+  assert.equal(extract.fermentability_fraction, 0.75);
+  assert.equal(extract.yield_basis, undefined);
+  assert.equal(extract.fermentability_provenance.sha256, "0".repeat(64));
   assert.equal(sugars["maltoferm-a-6000-black-lme"], undefined);
   assert.equal(malts["test-fermentability-malt"], undefined);
 });

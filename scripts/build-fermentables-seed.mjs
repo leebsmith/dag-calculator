@@ -43,8 +43,6 @@ const MALT_TYPES = new Set(["malt", "adjunct"]);
 const SUGAR_TYPES = new Set(["sugar", "syrup", "extract"]);
 
 const CATEGORY_MAP = { ACIDULATED: "ACID" };
-const CATEGORY_DEFAULT_YIELD = { BASE: 0.8, CRYSTAL: 0.74, ROASTED: 0.6, ACID: 0.74 };
-const CATEGORY_DEFAULT_F = { BASE: 0.81, CRYSTAL: 0.5, ROASTED: 0.15, ACID: 0.8 };
 const EXCLUDED_EXTRACTS = new Set([
   "Maltoferm A-6000 Black LME",
   "Maltoferm A-6001 Black DME",
@@ -132,21 +130,30 @@ function dedupeMalts(rows) {
     for (const candidate of group.slice(1)) winner = prefer(winner, candidate);
 
     // Backfill missing yield/colour/moisture/fermentability from sibling records
-    // of the same name.
-    for (const field of [
-      "yield_fraction",
-      "color_lovibond",
-      "moisture",
-      "fermentability_fraction",
+    // of the same name, carrying the sibling's citation with the figure.
+    for (const [field, provenanceField] of [
+      ["yield_fraction", "yield_provenance"],
+      ["color_lovibond", null],
+      ["moisture", null],
+      ["fermentability_fraction", "fermentability_provenance"],
     ]) {
       if (hasValue(winner[field])) continue;
       const sibling = group.find((r) => hasValue(r[field]));
-      if (sibling) winner = { ...winner, [field]: sibling[field] };
+      if (!sibling) continue;
+      winner = { ...winner, [field]: sibling[field] };
+      if (provenanceField && sibling[provenanceField]) {
+        winner[provenanceField] = sibling[provenanceField];
+      }
     }
 
     deduped.push(winner);
   }
   return deduped;
+}
+
+function provenanceOf(row, field) {
+  const value = row[field];
+  return value && typeof value === "object" ? { ...value } : undefined;
 }
 
 function maltComponent(row) {
@@ -156,13 +163,22 @@ function maltComponent(row) {
     name: row.name.trim(),
     maltster: row.maltster,
     category,
-    yield_fraction:
-      row.yield_fraction ?? CATEGORY_DEFAULT_YIELD[category] ?? 0.8,
-    fermentability_fraction:
-      row.fermentability_fraction ?? CATEGORY_DEFAULT_F[category] ?? 0.8,
+    yield_fraction: hasValue(row.yield_fraction) ? row.yield_fraction : null,
+    fermentability_fraction: hasValue(row.fermentability_fraction)
+      ? row.fermentability_fraction
+      : null,
     color_lovibond: hasValue(row.color_lovibond) ? row.color_lovibond : 0,
     notes: notesFor(row),
   };
+  if (hasValue(row.yield_fraction)) {
+    if (row.yield_basis) component.yield_basis = row.yield_basis;
+    const yieldProvenance = provenanceOf(row, "yield_provenance");
+    if (yieldProvenance) component.yield_provenance = yieldProvenance;
+  }
+  const fermentabilityProvenance = provenanceOf(row, "fermentability_provenance");
+  if (fermentabilityProvenance) {
+    component.fermentability_provenance = fermentabilityProvenance;
+  }
   // Datasheet moisture is a percent; 0 means "not published" (absent).
   if (hasValue(row.moisture) && row.moisture > 0) {
     component.moisture_fraction = row.moisture / 100;
@@ -170,16 +186,46 @@ function maltComponent(row) {
   return component;
 }
 
+// A `fermentability` yield basis means the published number is a fermentability
+// figure, not an extract. Store it once, as fermentability, and leave the yield
+// for the copy-forward resolver.
 function sugarComponent(row) {
+  const fermentabilityBasis = row.yield_basis === "fermentability";
   const component = {
     id: slugify(row.name),
     name: row.name.trim(),
     maltster: row.maltster,
-    yield_fraction: row.yield_fraction ?? 0.95,
-    fermentability_fraction: row.fermentability_fraction ?? 1.0,
+    yield_fraction: fermentabilityBasis
+      ? null
+      : hasValue(row.yield_fraction)
+        ? row.yield_fraction
+        : null,
+    fermentability_fraction: fermentabilityBasis
+      ? hasValue(row.yield_fraction)
+        ? row.yield_fraction
+        : null
+      : hasValue(row.fermentability_fraction)
+        ? row.fermentability_fraction
+        : null,
     color_lovibond: hasValue(row.color_lovibond) ? row.color_lovibond : 0,
     notes: notesFor(row),
   };
+  if (!fermentabilityBasis) {
+    if (hasValue(row.yield_fraction) && row.yield_basis) {
+      component.yield_basis = row.yield_basis;
+    }
+    const yieldProvenance = provenanceOf(row, "yield_provenance");
+    if (yieldProvenance && hasValue(row.yield_fraction)) {
+      component.yield_provenance = yieldProvenance;
+    }
+  }
+  const fermentabilityProvenance = provenanceOf(
+    row,
+    fermentabilityBasis ? "yield_provenance" : "fermentability_provenance"
+  );
+  if (fermentabilityProvenance) {
+    component.fermentability_provenance = fermentabilityProvenance;
+  }
   return component;
 }
 

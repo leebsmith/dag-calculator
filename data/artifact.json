@@ -1648,6 +1648,16 @@
           "lte": 1
         }
       },
+      "yield_basis": {},
+      "yield_provenance": {},
+      "fermentability_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "fermentability_provenance": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1686,6 +1696,16 @@
           "lte": 1
         }
       },
+      "yield_basis": {},
+      "yield_provenance": {},
+      "fermentability_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "fermentability_provenance": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1720,6 +1740,16 @@
           "lte": 1
         }
       },
+      "yield_basis": {},
+      "yield_provenance": {},
+      "fermentability_fraction": {
+        "dimension": "percentage",
+        "domain": {
+          "gte": 0,
+          "lte": 1
+        }
+      },
+      "fermentability_provenance": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {

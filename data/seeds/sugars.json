@@ -4,386 +4,773 @@
     "name": "5 Lovibond Golden Belgian Candi Syrup",
     "maltster": "L.D. Carlson",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 5,
-    "notes": "5 Lovibond Golden Belgian Candi Syrup Golden Candi Syrup is an unparalleled, superior quality rich golden syrup. Golden is a rich translucent 24 karat gold and adds a pronounced caramel and light fruit palate to authentic Belgian Tripels, Saisons, Golden Ales, and Bier de Garde."
+    "notes": "5 Lovibond Golden Belgian Candi Syrup Golden Candi Syrup is an unparalleled, superior quality rich golden syrup. Golden is a rich translucent 24 karat gold and adds a pronounced caramel and light fruit palate to authentic Belgian Tripels, Saisons, Golden Ales, and Bier de Garde.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "amber-candi-syrup": {
     "id": "amber-candi-syrup",
     "name": "Amber Candi Syrup",
     "maltster": "Williams Brewing",
     "yield_fraction": 0.7925,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 150.45,
-    "notes": "Pure invert sugar syrup with a mixture of sucrose, glucose and fructose, made from beet and cane sugars. Color rated at 300-500 EBC, contributes rich, fruity rum-like profile. Produced by caramelizing the sugar, which makes it difficult to replicate with American-produced white sugar alternatives. P"
+    "notes": "Pure invert sugar syrup with a mixture of sucrose, glucose and fructose, made from beet and cane sugars. Color rated at 300-500 EBC, contributes rich, fruity rum-like profile. Produced by caramelizing the sugar, which makes it difficult to replicate with American-produced white sugar alternatives. P",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Williams Brewing",
+      "url": "https://www.williamsbrewing.com/Home-Brewing-Supplies/Malted-Grain-Sugar/Sugar-Maltodextrin/1-Lb-Belgian-Amber-Candi-Syrup",
+      "retrieved_at": "2026-10-19T21:39:46Z",
+      "sha256": "75fa1c0824f3353126ba16024b5248c13add55d2f0284cb2ac0d3279a41696ac"
+    }
   },
   "belgian-candi-syrup-extra-dark": {
     "id": "belgian-candi-syrup-extra-dark",
     "name": "Belgian Candi Syrup - Extra Dark",
     "maltster": "L.D. Carlson",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 177.74,
-    "notes": "Extra Dark Belgian Candi Syrup The richest, darkest Belgian candi syrup. Imparts hints of dark raisin and extra dark stone fruit on top of a roasty, dark caramel palate. Superb for Belgian style ales and brew that need a full body and indescribable flavor. SRM 240"
+    "notes": "Extra Dark Belgian Candi Syrup The richest, darkest Belgian candi syrup. Imparts hints of dark raisin and extra dark stone fruit on top of a roasty, dark caramel palate. Superb for Belgian style ales and brew that need a full body and indescribable flavor. SRM 240",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "blonde-soft-candi-sugar": {
     "id": "blonde-soft-candi-sugar",
     "name": "Blonde Soft Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 49.28,
-    "notes": "Soft Blonde Candi Sugar (Geel) Soft Blonde Candi Sugar (Geel) is the ideal addition for homebrewers crafting Belgian ales, Tripels, and Belgian Blondes. Its delicate caramelized sugar, honey-like sweetness, and subtle aromatic complexity elevate your brews authentically. Made from premium beet and c"
+    "notes": "Soft Blonde Candi Sugar (Geel) Soft Blonde Candi Sugar (Geel) is the ideal addition for homebrewers crafting Belgian ales, Tripels, and Belgian Blondes. Its delicate caramelized sugar, honey-like sweetness, and subtle aromatic complexity elevate your brews authentically. Made from premium beet and c",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "briessweet-white-grain-sorghum-extract-45de-high-maltose": {
     "id": "briessweet-white-grain-sorghum-extract-45de-high-maltose",
     "name": "BriesSweet™ White Grain Sorghum Extract 45DE High Maltose",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 3,
-    "notes": "Neutral Flavor"
+    "notes": "Neutral Flavor",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "brown-soft-candi-sugar": {
     "id": "brown-soft-candi-sugar",
     "name": "Brown Soft Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 210.41,
-    "notes": "Soft Brown Candi Sugar (Bruin) Soft Brown Candi Sugar (Bruin) brings complexity, depth, and authentic Belgian flavor to your dubbels, quadrupels, and specialty dark ales. Crafted from select beet and cane sugars, this brewing sugar imparts rich molasses, caramel undertones, and mild dark-fruit notes"
+    "notes": "Soft Brown Candi Sugar (Bruin) Soft Brown Candi Sugar (Bruin) brings complexity, depth, and authentic Belgian flavor to your dubbels, quadrupels, and specialty dark ales. Crafted from select beet and cane sugars, this brewing sugar imparts rich molasses, caramel undertones, and mild dark-fruit notes",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "brown-sugar-dark": {
     "id": "brown-sugar-dark",
     "name": "Brown Sugar, Dark",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 37.47,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "brown-sugar-light": {
     "id": "brown-sugar-light",
     "name": "Brown Sugar, Light",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 6.47,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "candi-sugar-amber": {
     "id": "candi-sugar-amber",
     "name": "Candi Sugar, Amber",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 55.93,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "candi-sugar-clear": {
     "id": "candi-sugar-clear",
     "name": "Candi Sugar, Clear",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 1.3,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "candi-sugar-dark": {
     "id": "candi-sugar-dark",
     "name": "Candi Sugar, Dark",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 203.57,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "cane-beet-sugar": {
     "id": "cane-beet-sugar",
     "name": "Cane (Beet) Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 0.56,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "cbw-bavarian-wheat-dme": {
     "id": "cbw-bavarian-wheat-dme",
     "name": "CBW Bavarian Wheat DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 3,
-    "notes": "Neutral, malty"
+    "notes": "Neutral, malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-bavarian-wheat-lme": {
     "id": "cbw-bavarian-wheat-lme",
     "name": "CBW Bavarian Wheat LME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 3,
-    "notes": "Neutral, malty"
+    "notes": "Neutral, malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-golden-light-dme": {
     "id": "cbw-golden-light-dme",
     "name": "CBW Golden Light DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 4,
-    "notes": "Malty"
+    "notes": "Malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-golden-light-lme": {
     "id": "cbw-golden-light-lme",
     "name": "CBW Golden Light LME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 4,
-    "notes": "Malty"
+    "notes": "Malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-munich-lme": {
     "id": "cbw-munich-lme",
     "name": "CBW Munich LME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 8,
-    "notes": "Rich malty, biscuity"
+    "notes": "Rich malty, biscuity",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-pale-ale-dme": {
     "id": "cbw-pale-ale-dme",
     "name": "CBW Pale Ale DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 6,
-    "notes": "Rich malt, hints of biscuit and nuts"
+    "notes": "Rich malt, hints of biscuit and nuts",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-pilsen-light-dme": {
     "id": "cbw-pilsen-light-dme",
     "name": "CBW Pilsen Light DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 2,
-    "notes": "Subtle malty"
+    "notes": "Subtle malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-pilsen-light-lme": {
     "id": "cbw-pilsen-light-lme",
     "name": "CBW Pilsen Light LME",
     "maltster": "Briess",
-    "yield_fraction": 0.76,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.76,
     "color_lovibond": 2,
-    "notes": "Subtle malty"
+    "notes": "Subtle malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-sparkling-amber-dme": {
     "id": "cbw-sparkling-amber-dme",
     "name": "CBW Sparkling Amber DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 11,
-    "notes": "Sweet, malty, caramel"
+    "notes": "Sweet, malty, caramel",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-sparkling-amber-lme": {
     "id": "cbw-sparkling-amber-lme",
     "name": "CBW Sparkling Amber LME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 11,
-    "notes": "Sweet, malty, caramel"
+    "notes": "Sweet, malty, caramel",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-traditional-dark-dme": {
     "id": "cbw-traditional-dark-dme",
     "name": "CBW Traditional Dark DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 30,
-    "notes": "Sweet, intense malty"
+    "notes": "Sweet, intense malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "cbw-traditional-dark-lme": {
     "id": "cbw-traditional-dark-lme",
     "name": "CBW Traditional Dark LME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 30,
-    "notes": "Sweet, intense malty"
+    "notes": "Sweet, intense malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "clarified-brown-rice-syrup-42de": {
     "id": "clarified-brown-rice-syrup-42de",
     "name": "Clarified Brown Rice Syrup 42DE",
     "maltster": "Briess",
-    "yield_fraction": 0.7,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.7,
     "color_lovibond": 2,
-    "notes": "Neutral flavor"
+    "notes": "Neutral flavor",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "clear-belgian-candi-sugar": {
     "id": "clear-belgian-candi-sugar",
     "name": "Clear Belgian Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 0,
-    "notes": "Imported from Belgium, this sugar is refined from sugar beets, and is 100% fermentable. 0°L."
+    "notes": "Imported from Belgium, this sugar is refined from sugar beets, and is 100% fermentable. 0°L.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "corn-sugar-dextrose": {
     "id": "corn-sugar-dextrose",
     "name": "Corn Sugar (Dextrose)",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 0.56,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "corn-syrup": {
     "id": "corn-syrup",
     "name": "Corn Syrup",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 1.3,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "d-180-candi-syrup": {
     "id": "d-180-candi-syrup",
     "name": "D-180 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 133.44,
-    "notes": "D-180 is a premium extra dark Belgian candi syrup is perfect for use in dark Belgian ales. This premium extra dark Belgian candi syrup has deep flavors of fresh ground coffee, dark fruit, and toasted bread. Perfect for use in dark Belgian ales. 180 SRM, 1.032 PPG."
+    "notes": "D-180 is a premium extra dark Belgian candi syrup is perfect for use in dark Belgian ales. This premium extra dark Belgian candi syrup has deep flavors of fresh ground coffee, dark fruit, and toasted bread. Perfect for use in dark Belgian ales. 180 SRM, 1.032 PPG.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "d-45-candi-syrup": {
     "id": "d-45-candi-syrup",
     "name": "D-45 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 33.78,
-    "notes": "This premium amber Belgian candi syrup is perfect for amber and brown Belgian ales. The syrup has flavors of toffee, vanilla, and toasted bread. 45 SRM, 1.032 PPG."
+    "notes": "This premium amber Belgian candi syrup is perfect for amber and brown Belgian ales. The syrup has flavors of toffee, vanilla, and toasted bread. 45 SRM, 1.032 PPG.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "d-90-candi-syrup": {
     "id": "d-90-candi-syrup",
     "name": "D-90 Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 67,
-    "notes": "This premium dark candi syrup creates subtle chocolate, toffee, and toasted bread flavors in dark Belgian ales. D-90 is a versatile dark candi syrup. This syrup creates an unmistakable and subtle chocolate back-palate, toffee, and toasted bread flavors."
+    "notes": "This premium dark candi syrup creates subtle chocolate, toffee, and toasted bread flavors in dark Belgian ales. D-90 is a versatile dark candi syrup. This syrup creates an unmistakable and subtle chocolate back-palate, toffee, and toasted bread flavors.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "dark-belgian-candi-sugar": {
     "id": "dark-belgian-candi-sugar",
     "name": "Dark Belgian Candi Sugar",
     "maltster": "Northern Brewer",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 275,
-    "notes": "Imported from Belgium, this sugar is refined from sugar beets, and is 100% fermentable. Rated at 275°L; actual color contribution is lower."
+    "notes": "Imported from Belgium, this sugar is refined from sugar beets, and is 100% fermentable. Rated at 275°L; actual color contribution is lower.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "dark-candi-syrup": {
     "id": "dark-candi-syrup",
     "name": "Dark Candi Syrup",
     "maltster": "Williams Brewing",
     "yield_fraction": 0.795,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 862.45,
-    "notes": "Pure invert sugar syrup with a mixture of sucrose, glucose and fructose, made from beet and cane sugars. Color rated at 1900-2700 EBC, contributes strong dark pit fruit and coffee character. Great for your dark Belgian Ales, and really good on pancakes and waffles! This is the darkest grade of candi"
+    "notes": "Pure invert sugar syrup with a mixture of sucrose, glucose and fructose, made from beet and cane sugars. Color rated at 1900-2700 EBC, contributes strong dark pit fruit and coffee character. Great for your dark Belgian Ales, and really good on pancakes and waffles! This is the darkest grade of candi",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Williams Brewing",
+      "url": "https://www.williamsbrewing.com/Home-Brewing-Supplies/Malted-Grain-Sugar/Belgian-Candi-Syrups/1-Lb-Belgian-Dark-Candi-Syrup",
+      "retrieved_at": "2026-10-19T21:39:34Z",
+      "sha256": "2f4b10791c3960feca9b59d90e5c9817fc3e65b6608086ba954b681cd25ae255"
+    }
   },
   "dememera-sugar": {
     "id": "dememera-sugar",
     "name": "Dememera Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 2.04,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "invert-sugar": {
     "id": "invert-sugar",
     "name": "Invert Sugar",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 0.56,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "maltoferm-organic-10000-lme": {
     "id": "maltoferm-organic-10000-lme",
     "name": "Maltoferm Organic 10000 LME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 4,
-    "notes": "Malty"
+    "notes": "Malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "maltoferm-organic-10001-powder-dme": {
     "id": "maltoferm-organic-10001-powder-dme",
     "name": "Maltoferm Organic 10001 Powder DME",
     "maltster": "Briess",
-    "yield_fraction": 0.75,
-    "fermentability_fraction": 1,
+    "yield_fraction": null,
+    "fermentability_fraction": 0.75,
     "color_lovibond": 4,
-    "notes": "Malty"
+    "notes": "Malty",
+    "fermentability_provenance": {
+      "bound": "point",
+      "kind": "vendor",
+      "vendor": "Briess",
+      "url": "https://brewingwithbriess.com/products/",
+      "retrieved_at": "2026-10-19T20:54:14Z",
+      "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
+      "note": "published as fermentability"
+    }
   },
   "maple-syrup": {
     "id": "maple-syrup",
     "name": "Maple Syrup",
     "maltster": "Brewtarget",
     "yield_fraction": 0.652,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 26.4,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "milk-sugar-lactose": {
     "id": "milk-sugar-lactose",
     "name": "Milk Sugar (Lactose)",
     "maltster": "Brewtarget",
     "yield_fraction": 0.761,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 0.56,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "molasses": {
     "id": "molasses",
     "name": "Molasses",
     "maltster": "Brewtarget",
     "yield_fraction": 0.783,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 59.62,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "simplicity-candi-syrup": {
     "id": "simplicity-candi-syrup",
     "name": "Simplicity Candi Syrup",
     "maltster": "Northern Brewer",
     "yield_fraction": 0.6957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 0.56,
-    "notes": "A premium clear Belgian candi syrup made from beet sugar. Provides clean honey-like flavor to light Belgian Ales. Great for Tripels, Golden Strong ales, or anytime you're looking for increased drinkability and complexity. 0 SRM, 1.032 ppg."
+    "notes": "A premium clear Belgian candi syrup made from beet sugar. Provides clean honey-like flavor to light Belgian Ales. Great for Tripels, Golden Strong ales, or anytime you're looking for increased drinkability and complexity. 0 SRM, 1.032 ppg.",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Northern Brewer",
+      "url": "https://www.northernbrewer.com/collections/belgian-candi-sugar/products.json?limit=250",
+      "retrieved_at": "2026-10-19T21:46:17Z",
+      "sha256": "b2cd8f9466a4dccadb1ce2f7109612cac978ac6be82a6373dcea62a062ffd1e7"
+    }
   },
   "sugar-table-sucrose": {
     "id": "sugar-table-sucrose",
     "name": "Sugar, Table (Sucrose)",
     "maltster": "Brewtarget",
     "yield_fraction": 1,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 1.3,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   },
   "turbinado": {
     "id": "turbinado",
     "name": "Turbinado",
     "maltster": "Brewtarget",
     "yield_fraction": 0.957,
-    "fermentability_fraction": 1,
+    "fermentability_fraction": null,
     "color_lovibond": 7.94,
-    "notes": ""
+    "notes": "",
+    "yield_basis": "extract",
+    "yield_provenance": {
+      "bound": "unknown",
+      "kind": "vendor",
+      "vendor": "Brewtarget",
+      "url": "https://raw.githubusercontent.com/Brewtarget/brewtarget/main/data/default_db.sqlite",
+      "retrieved_at": "2026-10-19T21:30:16Z",
+      "sha256": "6c8e9fb20b2cf487927c4031032b1b74eb8804de14487eb6ad4233618023bed4"
+    }
   }
 }

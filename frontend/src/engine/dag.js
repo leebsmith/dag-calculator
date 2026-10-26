@@ -4,6 +4,7 @@
 import { evaluate } from "./ast.js";
 import { BoundaryCache, canonicalFingerprint } from "./boundary.js";
 import { domainStates, fieldDomainStates, collectionDomainStates } from "./domains.js";
+import { resolveIngredientCollections, resolveIngredientRows } from "./ingredientPriors.js";
 import { getField, resolveReference } from "./paths.js";
 import { relationStates } from "./relations.js";
 
@@ -85,7 +86,9 @@ export function createEngine(artifact, options = {}) {
   }
   const roots = new Map(Object.entries(options.roots ?? {}));
   const references = options.references ?? {};
-  const collections = options.collections ?? {};
+  // Resolved in place so the session's draft state (the same object) sees the
+  // prior-resolved rows that the engine evaluates.
+  const collections = resolveIngredientCollections(artifact, options.collections ?? {});
   const selections = options.selections ?? {};
   const boundaries = options.boundaries ?? {};
   const boundaryRequests = options.boundaryRequests ?? {};
@@ -305,7 +308,7 @@ export function createEngine(artifact, options = {}) {
       if (artifact.nodes[nodeId]?.kind !== "collection") {
         throw new Error(`"${nodeId}" is not a collection node`);
       }
-      collections[nodeId] = rows;
+      collections[nodeId] = resolveIngredientRows(artifact, nodeId, rows);
       invalidate(nodeId);
     },
     // Boundary seam (async host I/O lives in the adapter). Resolve a boundary's

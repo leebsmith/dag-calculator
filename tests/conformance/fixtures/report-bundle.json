@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:b3f272c4f1631920f458da0999479b93e50f1be239f36250a1bb682a6942abc2",
+    "hash": "sha256:504271cec2259a9540bcd989c6b5f73d35e3ed8841f83968736adc3a2900d062",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -1653,6 +1653,8 @@
               "lte": 1
             }
           },
+          "yield_basis": {},
+          "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1660,6 +1662,7 @@
               "lte": 1
             }
           },
+          "fermentability_provenance": {},
           "moisture_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1691,6 +1694,8 @@
               "lte": 1
             }
           },
+          "yield_basis": {},
+          "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1698,6 +1703,7 @@
               "lte": 1
             }
           },
+          "fermentability_provenance": {},
           "color_lovibond": {
             "dimension": "grain_color",
             "domain": {
@@ -1725,6 +1731,8 @@
               "lte": 1
             }
           },
+          "yield_basis": {},
+          "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1732,6 +1740,7 @@
               "lte": 1
             }
           },
+          "fermentability_provenance": {},
           "color_lovibond": {
             "dimension": "grain_color",
             "domain": {
@@ -4595,5 +4604,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:7845d423e82ef5d77c5d35c7622b90adb3f10cd7f17a4c8e7a34b6d7eb581ea1"
+  "content_hash": "sha256:a485ab57c4c8774a4863db2ea4d5b3dc611f36178b3546637469a5d6c6848d5f"
 }

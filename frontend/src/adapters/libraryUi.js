@@ -16,6 +16,11 @@ import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/u
 import { formatWithDecimals } from "../utils.js";
 
 const LINEAGE_FIELDS = new Set(["forked_from_id", "forked_from_name"]);
+// Producer-contract metadata: citations and the yield basis are captured, not
+// authored, so they never render as library inputs.
+const CAPTURE_FIELDS = new Set(["yield_basis"]);
+const isCapturedField = (field) =>
+  LINEAGE_FIELDS.has(field) || CAPTURE_FIELDS.has(field) || field.endsWith("_provenance");
 
 function tabList(kinds) {
   return kinds.map((id) => ({ id, label: CATALOGS[id].label }));
@@ -137,7 +142,7 @@ export function registerLibraryUi(app, ctx) {
         const meta = CATALOGS[this.activeKind];
         const schema = artifact.primitive_schemas?.[meta?.schema] ?? {};
         return Object.entries(schema)
-          .filter(([field]) => field !== meta.idField && !LINEAGE_FIELDS.has(field))
+          .filter(([field]) => field !== meta.idField && !isCapturedField(field))
           .map(([field, spec]) => {
             if (spec.taxonomy) {
               return {

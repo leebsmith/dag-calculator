@@ -5,7 +5,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { CATEGORY_DEFAULT_F } from "../../frontend/src/adapters/boundaryRequest.js";
 import { PRODUCT_FORM_UTILIZATION } from "../../frontend/src/views/whirlpool.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import { artifact, read } from "./util.js";
@@ -37,12 +36,27 @@ test("every enabled preset rest has a temperature and duration", () => {
   }
 });
 
-test("malt_category covers the batch fermentability fallback map", () => {
+test("malt_category covers the fermentability and yield priors", () => {
   const a = artifact();
-  assert.deepEqual(
-    [...taxonomy(a, "malt_category")].sort(),
-    Object.keys(CATEGORY_DEFAULT_F).sort()
-  );
+  for (const category of taxonomy(a, "malt_category")) {
+    const suffix = category.toLowerCase();
+    for (const prefix of ["fermentability_prior", "yield_prior"]) {
+      const id = `${prefix}_${suffix}`;
+      assert.equal(
+        typeof a.constants[id]?.value,
+        "number",
+        `missing prior constant ${id}`
+      );
+    }
+  }
+  for (const id of [
+    "fermentability_prior_sugar",
+    "fermentability_prior_default",
+    "yield_prior_extract",
+    "yield_prior_default",
+  ]) {
+    assert.equal(typeof a.constants[id]?.value, "number", `missing prior constant ${id}`);
+  }
 });
 
 test("whirlpool_hop_form covers the product utilization map", () => {
