@@ -117,7 +117,7 @@ class BatchSolverRequest(BoundaryModel):
     """Input contract for batch_sparge_solver (Brent's method root-finding)."""
 
     target_abv: Annotated[float, Field(gt=0.0, le=100.0, description="Target ABV in percent (e.g. 5.5)")]
-    apparent_attenuation: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast attenuation cap fraction")]
+    malt_attenuation_cap: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast apparent-attenuation cap on malt; converted to real per candidate OE")]
     v_ferm: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Target cold fermenter volume in Liters")]
     topology: BatchSpargeTopology = Field(description="Runoff model topology")
     intensive_value: Annotated[float, Field(gt=0.0, description="R_L:G ratio (L/kg) or runoff ratio r")]
@@ -190,8 +190,8 @@ class BatchSolverResponse(BoundaryModel):
     max_achievable_abv: Annotated[float, Field(description="Upper bound achievable ABV given geometry")]
     max_feasible_abv: Annotated[float, Field(description="Largest ABV that solves and fits the rig")]
     binding_constraint: Annotated[BindingConstraint, Field(description="Limit that sets max_feasible_abv")]
-    aa_wort: Annotated[float, Field(description="Extract-weighted wort fermentability")]
-    aa_batch: Annotated[float, Field(description="Wort AA clamped by the yeast cap")]
+    real_attenuation: Annotated[float, Field(description="Solved real attenuation (RDF)")]
+    apparent_attenuation: Annotated[float, Field(description="Solved apparent attenuation; may exceed 1")]
     hlt: BatchHltOutputs
     mash_thickness_l_per_kg: Annotated[float, Field(description="Resolved mash thickness (L/kg)")]
 

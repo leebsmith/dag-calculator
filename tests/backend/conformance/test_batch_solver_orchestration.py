@@ -19,7 +19,7 @@ def standard_inputs():
     """A plausible 20 L batch: ~5 kg grist, 3:1 L:G, 75% conversion."""
     return BatchSolverInput(
         target_abv=5.0,
-        apparent_attenuation=0.75,
+        malt_attenuation_cap=0.75,
         v_ferm=20.0,
         topology="r_l_to_g",
         intensive_value=3.0,

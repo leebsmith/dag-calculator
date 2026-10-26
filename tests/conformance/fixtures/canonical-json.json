@@ -2,7 +2,7 @@
   "batch": {
     "request": {
       "target_abv": 5.5,
-      "apparent_attenuation": 0.75,
+      "malt_attenuation_cap": 0.75,
       "v_ferm": 20.0,
       "topology": "r_l_to_g",
       "intensive_value": 3.0,
@@ -32,8 +32,8 @@
       "max_kettle_volume_l": 40.0,
       "max_mash_tun_volume_l": 40.0
     },
-    "canonical": "{\"apparent_attenuation\":0.75,\"delta_v_evap\":3,\"eta_conv\":0.95,\"f_shrink\":0.04,\"grain_bill\":[{\"fermentability_i\":0.8,\"mc_i\":0.04,\"w_i\":1,\"yield_i\":0.8}],\"hlt_coil_floor_l\":0,\"hlt_dead_space_l\":0,\"hlt_starting_volume_l\":25,\"hlt_transfer_loss_l\":0,\"intensive_value\":3,\"k_abs_true\":1.043176,\"mash_transfer_loss\":0,\"max_hlt_volume_l\":30,\"max_kettle_volume_l\":40,\"max_mash_tun_volume_l\":40,\"s_late_add\":0,\"target_abv\":5.5,\"topology\":\"r_l_to_g\",\"v_dead\":0,\"v_ferm\":20,\"v_kettle_dead\":0,\"v_kettle_transfer\":0,\"v_trub\":0}",
-    "fingerprint": "32c88f855ae179a0858014e14d5b8fd677d73dca996bfa70727a72a3c98ce2f3"
+    "canonical": "{\"delta_v_evap\":3,\"eta_conv\":0.95,\"f_shrink\":0.04,\"grain_bill\":[{\"fermentability_i\":0.8,\"mc_i\":0.04,\"w_i\":1,\"yield_i\":0.8}],\"hlt_coil_floor_l\":0,\"hlt_dead_space_l\":0,\"hlt_starting_volume_l\":25,\"hlt_transfer_loss_l\":0,\"intensive_value\":3,\"k_abs_true\":1.043176,\"malt_attenuation_cap\":0.75,\"mash_transfer_loss\":0,\"max_hlt_volume_l\":30,\"max_kettle_volume_l\":40,\"max_mash_tun_volume_l\":40,\"s_late_add\":0,\"target_abv\":5.5,\"topology\":\"r_l_to_g\",\"v_dead\":0,\"v_ferm\":20,\"v_kettle_dead\":0,\"v_kettle_transfer\":0,\"v_trub\":0}",
+    "fingerprint": "a5b232acb1e770182e238be0d1784a000e5fbacdd6e0e4e4cb89d1cbf8f06dd1"
   },
   "floats": [
     {

@@ -116,7 +116,7 @@ _90 paths_
 | `batch.yeast.temp_high_c` | Temp High C | field | temperature | degC (°C) | 1 | — |
 | `batch.yeast.temp_low_c` | Temp Low C | field | temperature | degC (°C) | 1 | — |
 | `batch.yeast.url` | URL | field | — | — | — | — |
-| `batch.yeast_cap` | Yeast attenuation cap | derived | percentage | pct (%) | 1 | — |
+| `batch.yeast_cap` | Malt attenuation cap | derived | percentage | pct (%) | 1 | — |
 | `batch.yeast_id` | Yeast | root | reference | id | — | — |
 
 ## Grist
@@ -265,8 +265,7 @@ _26 paths_
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `solver.batch` | Batch | boundary | — | — | — | — |
-| `solver.batch.aa_batch` | Batch attenuation | output | percentage | pct (%) | 1 | — |
-| `solver.batch.aa_wort` | Wort attenuation | output | percentage | pct (%) | 1 | — |
+| `solver.batch.apparent_attenuation` | Apparent attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.binding_constraint` | Binding Constraint | output | — | — | — | fermentation, volume, tun, kettle, hlt |
 | `solver.batch.cascade.s_run1` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.s_run2` | Extract | output | mass | kg | 1 | — |
@@ -287,6 +286,7 @@ _26 paths_
 | `solver.batch.mash_thickness_l_per_kg` | Mash Thickness | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `solver.batch.max_achievable_abv` | Max Achievable ABV | output | percentage | pct (%) | 1 | — |
 | `solver.batch.max_feasible_abv` | Max Feasible ABV | output | percentage | pct (%) | 1 | — |
+| `solver.batch.real_attenuation` | Real attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.s_post_boil_target` | Post-Boil Extract Target | output | mass | kg | 1 | — |
 | `solver.batch.sg_post_boil` | Post-boil gravity | output | gravity | Plato (°P) | 1 | — |
 | `solver.batch.v_pre_boil` | Pre-boil kettle | output | volume | L | 1 | — |

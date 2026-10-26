@@ -20,6 +20,6 @@ test("only the residuals are host-seeded", () => {
 });
 
 test("apparent attenuation and target ABV are not host-seeded roots", () => {
-  assert.deepEqual(seedDerivations("solver.batch.aa_batch"), []);
+  assert.deepEqual(seedDerivations("solver.batch.apparent_attenuation"), []);
   assert.deepEqual(seedDerivations("batch.target_abv"), []);
 });

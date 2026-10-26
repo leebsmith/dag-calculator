@@ -29,7 +29,7 @@ assert_field_parity(BatchSolverRequest, BatchSolverInput)
 def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
     return BatchSolverInput(
         target_abv=req.target_abv,
-        apparent_attenuation=req.apparent_attenuation,
+        malt_attenuation_cap=req.malt_attenuation_cap,
         v_ferm=req.v_ferm,
         topology=req.topology.value,
         intensive_value=req.intensive_value,
@@ -86,8 +86,8 @@ def _to_response(result) -> BatchSolverResponse:
         max_achievable_abv=result.max_achievable_abv,
         max_feasible_abv=result.max_feasible_abv,
         binding_constraint=result.binding_constraint,
-        aa_wort=result.aa_wort,
-        aa_batch=result.aa_batch,
+        real_attenuation=result.real_attenuation,
+        apparent_attenuation=result.apparent_attenuation,
         hlt=BatchHltOutputs(
             v_hlt_debt=hlt.v_hlt_debt,
             v_hlt_after_strike=hlt.v_hlt_after_strike,

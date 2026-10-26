@@ -27,7 +27,7 @@ DECLARED_CODES = set(ARTIFACT["nodes"]["solver.batch"]["domain"]["codes"])
 
 BASE_INPUT = dict(
     target_abv=5.0,
-    apparent_attenuation=0.75,
+    malt_attenuation_cap=0.75,
     v_ferm=20.0,
     topology="r_l_to_g",
     intensive_value=3.0,
@@ -78,7 +78,7 @@ def _solve_grist(**overrides):
 
 TRIGGERS = {
     "INVALID_TARGET_ABV": lambda: _solve(target_abv=0.0),
-    "INVALID_ATTENUATION": lambda: _solve(apparent_attenuation=0.0),
+    "INVALID_ATTENUATION": lambda: _solve(malt_attenuation_cap=0.0),
     "ABV_UNREACHABLE": lambda: _solve(target_abv=25.0),
     "INVALID_FERM_VOLUME": lambda: _solve(v_ferm=0.0),
     "INVALID_SHRINKAGE": lambda: _solve(f_shrink=1.0),

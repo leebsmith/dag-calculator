@@ -1,13 +1,12 @@
 # The attenuation model
 
-**Status:** D1 landed. This document is the canonical statement of the model; the
-code implements it. Pass 1 made the ingredient data honest (`F` is now a real
-mass fraction) and D1 makes the solver consume it: extract composition is the
-primitive, and both real and apparent attenuation are derived from it.
+**Status:** D1 and D2 landed. This document is the canonical statement of the
+model; the code implements it. Pass 1 made the ingredient data honest (`F` is
+now a real mass fraction) and D1 makes the solver consume it: extract composition
+is the primitive, and both real and apparent attenuation are derived from it.
 
-The wire still speaks the old field names in D1 (`solver.batch.aa_wort` /
-`aa_batch`); D2 renames them to `real_attenuation` / `apparent_attenuation` and
-`apparent_attenuation` → `malt_attenuation_cap` on the request.
+The wire speaks `malt_attenuation_cap` on the request and emits
+`real_attenuation` + `apparent_attenuation` on the response.
 
 ## 1. The primitive
 

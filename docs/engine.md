@@ -268,15 +268,15 @@ The batch solver treats the grain-bill fermentability values as **real** shares
 of extract, converts the apparent cap to real space at each candidate `OE`,
 clamps the malt (late-addition sugar keeps `F = 1.0` and is never clamped),
 forms the residual extract, and inverts the Cutaia regression for apparent
-extract. It returns `aa_batch` (the solved **apparent** attenuation, which a
-sugar addition can push past the cap) and `aa_wort` (the solved **real**
-attenuation, RDF). The batch is unresolved until a yeast is selected.
+extract. It returns `apparent_attenuation` (the solved **apparent**
+attenuation, which a sugar addition can push past the cap) and
+`real_attenuation` (the solved **real** attenuation, RDF). The batch is unresolved until a yeast is selected.
 Conversion efficiency remains a separate gravity correction, not an attenuation
 correction. See `docs/attenuation-model.md` and
 `docs/fermentability-and-yield.md`.
 
 The Style step's **Target ABV** input is the primary fermentation control. It
-moves along the fixed-AA ray `AE = OE · (1 − aa_batch)` and is clamped to the
+moves along the fixed-AA ray `AE = OE · (1 − apparent_attenuation)` and is clamped to the
 ray ∩ style-region interval; OE/AE are readouts. A new batch starts at the
 style's ABV-band midpoint and re-centers on the first yeast selection. The Batch
 step's Target ABV field is a read-only display of the same root. The advisory

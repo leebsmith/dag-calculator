@@ -136,7 +136,7 @@ def test_a_non_fermentable_sugar_survives_dextrin_consumption():
 def _solver_input(**overrides) -> BatchSolverInput:
     values = dict(
         target_abv=5.5,
-        apparent_attenuation=1.0,
+        malt_attenuation_cap=1.0,
         v_ferm=20.0,
         topology="r_l_to_g",
         intensive_value=3.0,
@@ -164,14 +164,14 @@ def _solver_input(**overrides) -> BatchSolverInput:
 def test_solver_reports_real_and_apparent_attenuation():
     result = solve_batch(_solver_input())
 
-    assert result.aa_wort == pytest.approx(0.643, abs=5e-4)
-    assert result.aa_batch == pytest.approx(0.810, abs=5e-3)
-    assert result.aa_batch > result.aa_wort
+    assert result.real_attenuation == pytest.approx(0.643, abs=5e-4)
+    assert result.apparent_attenuation == pytest.approx(0.810, abs=5e-3)
+    assert result.apparent_attenuation > result.real_attenuation
 
 
 def test_solver_sugar_raises_apparent_attenuation_past_the_malt_baseline():
     plain = solve_batch(_solver_input())
     sweet = solve_batch(_solver_input(s_late_add=0.5))
 
-    assert sweet.aa_wort > plain.aa_wort
-    assert sweet.aa_batch > plain.aa_batch
+    assert sweet.real_attenuation > plain.real_attenuation
+    assert sweet.apparent_attenuation > plain.apparent_attenuation

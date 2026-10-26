@@ -175,8 +175,8 @@ const BATCH_RESPONSE = {
     mash_thickness_l_per_kg: 3.0,
   },
   max_achievable_abv: 10.0,
-  aa_wort: 0.76,
-  aa_batch: 0.75,
+  real_attenuation: 0.76,
+  apparent_attenuation: 0.75,
   hlt: {
     v_hlt_debt: 1.0,
     v_hlt_after_strike: 16.0,

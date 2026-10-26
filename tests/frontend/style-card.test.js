@@ -27,8 +27,8 @@ const HTTP_BATCH = {
     mash_thickness_l_per_kg: 3.0,
   },
   max_achievable_abv: 10.0,
-  aa_wort: 0.76,
-  aa_batch: 0.75,
+  real_attenuation: 0.76,
+  apparent_attenuation: 0.75,
   hlt: { v_hlt_debt: 1.0, v_hlt_after_strike: 16.0, v_hlt_top_up: 0.0, v_sparge_deliverable: 15.0 },
   mash_thickness_l_per_kg: 3.0,
 };
@@ -86,7 +86,7 @@ test("the sealed style declaration seeds the residual targets", async () => {
   assert.deepEqual(app.styleIbuBounds, [40, 70]);
   assert.equal(app.master.getRoot("batch.fermentation"), "ale");
 
-  const aa = app.engine.resolve("solver.batch.aa_batch");
+  const aa = app.engine.resolve("solver.batch.apparent_attenuation");
   const abv = app.master.getRoot("batch.target_abv");
   assert.ok(typeof aa === "number" && aa > 0 && aa <= 1);
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
@@ -122,14 +122,14 @@ test("the fermentation navigator writes the batch targets, not the declaration",
   const info = app.styleTargetInfo;
 
   assert.ok(info.og > 1);
-  assert.ok(Math.abs(app.engine.resolve("solver.batch.aa_batch") - info.aa) < 1e-9);
+  assert.ok(Math.abs(app.engine.resolve("solver.batch.apparent_attenuation") - info.aa) < 1e-9);
   assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-9);
 });
 
 test("the ABV input writes the target and clamps to the fixed-AA ray", async () => {
   const app = await appWithStyle("21A");
   const bounds = app.styleAbvBounds;
-  const aa = app.engine.resolve("solver.batch.aa_batch");
+  const aa = app.engine.resolve("solver.batch.apparent_attenuation");
   assert.ok(bounds);
   assert.ok(raySegment(app.styleRegion, aa));
 

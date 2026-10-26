@@ -75,7 +75,7 @@ def test_invalid_domain_rejected():
     with pytest.raises(ValidationError):
         make_batch_request(target_abv=0.0)
     with pytest.raises(ValidationError):
-        make_batch_request(apparent_attenuation=1.5)
+        make_batch_request(malt_attenuation_cap=1.5)
 
 
 def test_intensive_value_bound_matches_the_split_roots():

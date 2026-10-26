@@ -1,7 +1,6 @@
 {
-  "fingerprint": "93847d1b52abcc2720539d3153e230064507e5ed0694fb36e4460a6f10f78968",
+  "fingerprint": "e41497e8c0f0edd7d22ef1e21fba31099e148588839ff75ff61b9ba16a72db5d",
   "request": {
-    "apparent_attenuation": 0.75,
     "delta_v_evap": 3.0,
     "eta_conv": 0.95,
     "f_shrink": 0.04,
@@ -25,6 +24,7 @@
     "hlt_transfer_loss_l": 0.0,
     "intensive_value": 3.0,
     "k_abs_true": 1.043176,
+    "malt_attenuation_cap": 0.75,
     "mash_transfer_loss": 0.0,
     "max_hlt_volume_l": 30.0,
     "max_kettle_volume_l": 40.0,

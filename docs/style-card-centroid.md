@@ -75,8 +75,8 @@ ABV* = ABV(OE*, AE*)
 The centroid's `ABV*` is a reference point, not the seed: the workspace now
 starts `batch.target_abv` at the ABV-band midpoint and re-centers it on the
 fixed-AA ray once a yeast is selected (see §8). `AA*` is the style point's
-implied attenuation; the solver's `solver.batch.aa_batch` is
-`min(AA_wort, yeast_cap)` and is the value the navigator constrains to.
+implied attenuation; the solver's `solver.batch.apparent_attenuation` is the
+value the navigator constrains to.
 
 ## 7. Conformance
 
@@ -92,11 +92,11 @@ centroid is only a reference. The Style card exposes **ABV as the target
 control** on the **fixed-AA ray**:
 
 ```
-AE = OE · (1 − aa_batch)
+AE = OE · (1 − apparent_attenuation)
 ```
 
-- **One degree of freedom.** `aa_batch` comes from the solved recipe and yeast
-  cap. The target ABV input moves the OE/AE point along that ray; the ray's
+- **One degree of freedom.** `apparent_attenuation` comes from the solved recipe
+  and yeast cap. The target ABV input moves the OE/AE point along that ray; the ray's
   intersection with the feasible polygon is the reachable interval
   (`raySegment`). OE and AE are readouts, never independent controls.
 - **Initialization.** A new batch seeds `batch.target_abv` to

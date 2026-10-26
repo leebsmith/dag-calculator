@@ -138,7 +138,7 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | Field | Dimension | Meaning |
 |---|---|---|
 | `target_abv` | percentage | desired ABV (%) |
-| `apparent_attenuation` | percentage (fraction) | yeast apparent-attenuation cap (strain × batch derate), (0, 1]; converted to real per candidate `OE` and applied to malt only |
+| `malt_attenuation_cap` | percentage (fraction) | yeast apparent-attenuation cap (strain × batch derate), (0, 1]; converted to real per candidate `OE` and applied to malt only |
 | `v_ferm` | volume | target cold fermenter volume (L) |
 | `topology` | taxonomy | `r_l_to_g` \| `runoff_ratio` |
 | `intensive_value` | mash_thickness / dimensionless | `R_L:G` (L/kg) or `r` |
@@ -161,8 +161,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `m_grist` | mass |
 | `cascade` `{ v_strike, v_run1, v_run2, v_sparge, s_run1, s_run2, sg_pre_boil, v_post_boil, mash_thickness_l_per_kg }` | volumes / masses / gravity |
 | `max_achievable_abv` | percentage |
-| `aa_wort` | percentage — solved real attenuation (RDF); renamed `real_attenuation` in D2 |
-| `aa_batch` | percentage — solved apparent attenuation; may exceed 1; renamed `apparent_attenuation` in D2 |
+| `real_attenuation` | percentage — solved real attenuation (RDF) |
+| `apparent_attenuation` | percentage — solved apparent attenuation; may exceed 1 |
 | `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
 

@@ -1358,7 +1358,7 @@ class BatchSolverInput:
 
     Attributes:
         target_abv: Desired alcohol by volume, as a percentage (e.g. 5.5).
-        apparent_attenuation: The yeast's apparent attenuation cap as a fraction
+        malt_attenuation_cap: The yeast's apparent attenuation cap as a fraction
             in (0, 1] (the strain's typical attenuation times the batch derate).
             Converted to real space per candidate ``OE`` before it clamps the
             malt's fermentability.
@@ -1399,7 +1399,7 @@ class BatchSolverInput:
     """
 
     target_abv: float
-    apparent_attenuation: float
+    malt_attenuation_cap: float
     v_ferm: float
     topology: str
     intensive_value: float
@@ -1452,12 +1452,11 @@ class BatchSolverResult:
             attenuation and composition, as a percentage. Echoed back so the
             frontend can bound the target-ABV input without duplicating the
             Cutaia model.
-        aa_wort: The solved batch's real attenuation (RDF), after the cap and
-            any dextrin consumption. Renamed ``real_attenuation`` on the wire
-            once the wire rename lands.
-        aa_batch: The solved batch's apparent attenuation, after the cap and
-            any dextrin consumption. May exceed 1 when diastaticus consumes the
-            dextrin residue. Renamed ``apparent_attenuation`` on the wire.
+        real_attenuation: The solved batch's real attenuation (RDF), after the
+            cap and any dextrin consumption.
+        apparent_attenuation: The solved batch's apparent attenuation, after the
+            cap and any dextrin consumption. May exceed 1 when diastaticus
+            consumes the dextrin residue.
         hlt: The HLT water budget (top-up and deliverable sparge volume).
         max_feasible_abv: The largest target ABV that both solves and fits the
             rig's capacity limits, as a percentage.
@@ -1476,8 +1475,8 @@ class BatchSolverResult:
     m_grist: float
     cascade: StageCascade
     max_achievable_abv: float
-    aa_wort: float
-    aa_batch: float
+    real_attenuation: float
+    apparent_attenuation: float
     hlt: HltWaterBudget
     max_feasible_abv: float
     binding_constraint: str
@@ -1491,8 +1490,8 @@ class _Pipeline:
     m_grist: float
     cascade: StageCascade
     hlt: HltWaterBudget
-    aa_wort: float
-    aa_batch: float
+    real_attenuation: float
+    apparent_attenuation: float
     max_abv: float
 
 
@@ -1616,11 +1615,11 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
     if aa_malt is None:
         # Legacy scalar path: a caller that supplies no per-row fermentability
         # keeps the original apparent-attenuation inversion.
-        cap = inputs.apparent_attenuation
-        aa_batch = cap
-        aa_wort = cap
-        sg_post_boil, reversal = solve_phase_1(aa_batch)
-        max_abv = max_achievable_abv(aa_batch)
+        cap = inputs.malt_attenuation_cap
+        apparent_attenuation = cap
+        real_attenuation = cap
+        sg_post_boil, reversal = solve_phase_1(apparent_attenuation)
+        max_abv = max_achievable_abv(apparent_attenuation)
     else:
         # Extract composition: the solver's ABV-first inversion, with the
         # composition block (and the cap conversion) evaluated per candidate.
@@ -1629,7 +1628,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
         )
         oe_plato = solve_oe_from_composition(
             target_abv=target_abv,
-            yeast_cap_apparent=inputs.apparent_attenuation,
+            yeast_cap_apparent=inputs.malt_attenuation_cap,
             malt_fermentability=aa_malt,
             v_kettle_cold=v_kettle_cold,
             s_late_add=inputs.s_late_add,
@@ -1650,10 +1649,10 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             extract_total_kg=reversal.s_post_boil_target,
             s_late_add=inputs.s_late_add,
             malt_fermentability=aa_malt,
-            yeast_cap_apparent=inputs.apparent_attenuation,
+            yeast_cap_apparent=inputs.malt_attenuation_cap,
         )
-        aa_wort = composition.real_attenuation
-        aa_batch = composition.apparent_attenuation
+        real_attenuation = composition.real_attenuation
+        apparent_attenuation = composition.apparent_attenuation
         ceiling = resolve_wort_composition(
             oe_plato=40.0,
             extract_total_kg=post_boil_extract_target(
@@ -1661,7 +1660,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             ),
             s_late_add=inputs.s_late_add,
             malt_fermentability=aa_malt,
-            yeast_cap_apparent=inputs.apparent_attenuation,
+            yeast_cap_apparent=inputs.malt_attenuation_cap,
         )
         max_abv = ceiling.abv_pct
 
@@ -1718,8 +1717,8 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
         m_grist=m_grist,
         cascade=cascade,
         hlt=hlt,
-        aa_wort=aa_wort,
-        aa_batch=aa_batch,
+        real_attenuation=real_attenuation,
+        apparent_attenuation=apparent_attenuation,
         max_abv=max_abv,
     )
 
@@ -1818,8 +1817,8 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         m_grist=pipeline.m_grist,
         cascade=pipeline.cascade,
         max_achievable_abv=fermentation_ceiling,
-        aa_wort=pipeline.aa_wort,
-        aa_batch=pipeline.aa_batch,
+        real_attenuation=pipeline.real_attenuation,
+        apparent_attenuation=pipeline.apparent_attenuation,
         hlt=pipeline.hlt,
         max_feasible_abv=max_feasible_abv,
         binding_constraint=binding_constraint,

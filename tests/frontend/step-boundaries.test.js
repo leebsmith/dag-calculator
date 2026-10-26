@@ -22,8 +22,8 @@ const BATCH = {
     mash_thickness_l_per_kg: 3.0,
   },
   max_achievable_abv: 10.0,
-  aa_wort: 0.76,
-  aa_batch: 0.75,
+  real_attenuation: 0.76,
+  apparent_attenuation: 0.75,
   hlt: { v_hlt_debt: 1.0, v_hlt_after_strike: 16.0, v_hlt_top_up: 0.0, v_sparge_deliverable: 15.0 },
   mash_thickness_l_per_kg: 3.0,
 };
@@ -347,7 +347,7 @@ test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async
 
   // Full Pydantic contract: 23 declared batch inputs.
   assert.equal(Object.keys(batch).length, 23);
-  for (const k of ["target_abv", "apparent_attenuation", "topology", "grain_bill", "eta_conv", "k_abs_true", "max_kettle_volume_l", "max_mash_tun_volume_l"]) {
+  for (const k of ["target_abv", "malt_attenuation_cap", "topology", "grain_bill", "eta_conv", "k_abs_true", "max_kettle_volume_l", "max_mash_tun_volume_l"]) {
     assert.ok(k in batch, `batch request missing ${k}`);
   }
   // Grain rows are renamed to the backend's GristBillRow keys (no raw catalog keys).

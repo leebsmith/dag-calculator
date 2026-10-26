@@ -224,32 +224,32 @@ def _oe_plato(resp) -> float:
 
 def test_all_malt_wort_real_attenuation_is_the_malt_baseline():
     resp = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.50), apparent_attenuation=1.0)
+        make_batch_request(grain_bill=_fermentable_bill(0.50), malt_attenuation_cap=1.0)
     )
-    assert resp.aa_wort == pytest.approx(0.50)
-    assert resp.aa_batch > resp.aa_wort, "apparent attenuation exceeds the real fraction"
-    assert apparent_to_real_attenuation(_oe_plato(resp), resp.aa_batch) == pytest.approx(
+    assert resp.real_attenuation == pytest.approx(0.50)
+    assert resp.apparent_attenuation > resp.real_attenuation, "apparent attenuation exceeds the real fraction"
+    assert apparent_to_real_attenuation(_oe_plato(resp), resp.apparent_attenuation) == pytest.approx(
         0.50, abs=1e-5
     )
 
 
 def test_yeast_cap_binds_in_real_space():
     capped = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.95), apparent_attenuation=0.70)
+        make_batch_request(grain_bill=_fermentable_bill(0.95), malt_attenuation_cap=0.70)
     )
-    assert capped.aa_batch == pytest.approx(0.70)
-    assert capped.aa_wort == pytest.approx(
+    assert capped.apparent_attenuation == pytest.approx(0.70)
+    assert capped.real_attenuation == pytest.approx(
         apparent_to_real_attenuation(_oe_plato(capped), 0.70), abs=1e-5
     )
-    assert capped.aa_wort < capped.aa_batch
+    assert capped.real_attenuation < capped.apparent_attenuation
 
 
 def test_cap_above_the_baseline_leaves_the_malt_untouched():
     resp = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.50), apparent_attenuation=0.90)
+        make_batch_request(grain_bill=_fermentable_bill(0.50), malt_attenuation_cap=0.90)
     )
-    assert resp.aa_wort == pytest.approx(0.50)
-    assert apparent_to_real_attenuation(_oe_plato(resp), resp.aa_batch) == pytest.approx(
+    assert resp.real_attenuation == pytest.approx(0.50)
+    assert apparent_to_real_attenuation(_oe_plato(resp), resp.apparent_attenuation) == pytest.approx(
         0.50, abs=1e-5
     )
     assert resp.max_achievable_abv > 0.0
@@ -258,52 +258,52 @@ def test_cap_above_the_baseline_leaves_the_malt_untouched():
 def test_sugar_raises_the_apparent_attenuation_past_the_cap():
     cap = 0.90
     malt_only = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.85), apparent_attenuation=cap)
+        make_batch_request(grain_bill=_fermentable_bill(0.85), malt_attenuation_cap=cap)
     )
     sweet = solve_batch_request(
         make_batch_request(
             grain_bill=_fermentable_bill(0.85),
-            apparent_attenuation=cap,
+            malt_attenuation_cap=cap,
             s_late_add=0.4,
         )
     )
-    assert malt_only.aa_batch == pytest.approx(cap)
-    assert sweet.aa_wort > malt_only.aa_wort
-    assert sweet.aa_batch > cap, "the cap applies to malt only; sugar is uncapped"
+    assert malt_only.apparent_attenuation == pytest.approx(cap)
+    assert sweet.real_attenuation > malt_only.real_attenuation
+    assert sweet.apparent_attenuation > cap, "the cap applies to malt only; sugar is uncapped"
 
 
 def test_sugar_blend_matches_the_extract_share():
     resp = solve_batch_request(
         make_batch_request(
             grain_bill=_fermentable_bill(0.50),
-            apparent_attenuation=1.0,
+            malt_attenuation_cap=1.0,
             s_late_add=0.4,
         )
     )
     malt_extract = resp.s_post_boil_target - 0.4
     expected = (malt_extract * 0.50 + 0.4) / resp.s_post_boil_target
-    assert resp.aa_wort == pytest.approx(expected, rel=1e-9)
+    assert resp.real_attenuation == pytest.approx(expected, rel=1e-9)
 
 
 def test_derated_cap_changes_the_batch_apparent_attenuation():
     full = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.50), apparent_attenuation=0.90)
+        make_batch_request(grain_bill=_fermentable_bill(0.50), malt_attenuation_cap=0.90)
     )
     derated = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.50), apparent_attenuation=0.855)
+        make_batch_request(grain_bill=_fermentable_bill(0.50), malt_attenuation_cap=0.855)
     )
-    assert full.aa_wort == pytest.approx(0.50)
-    assert derated.aa_wort == pytest.approx(0.50)
+    assert full.real_attenuation == pytest.approx(0.50)
+    assert derated.real_attenuation == pytest.approx(0.50)
     capped = solve_batch_request(
-        make_batch_request(grain_bill=_fermentable_bill(0.90), apparent_attenuation=0.855)
+        make_batch_request(grain_bill=_fermentable_bill(0.90), malt_attenuation_cap=0.855)
     )
-    assert capped.aa_batch == pytest.approx(0.855)
+    assert capped.apparent_attenuation == pytest.approx(0.855)
 
 
 def test_legacy_rows_without_fermentability_fall_back_to_the_cap():
-    resp = solve_batch_request(make_batch_request(apparent_attenuation=0.75))
-    assert resp.aa_wort == pytest.approx(0.75)
-    assert resp.aa_batch == pytest.approx(0.75)
+    resp = solve_batch_request(make_batch_request(malt_attenuation_cap=0.75))
+    assert resp.real_attenuation == pytest.approx(0.75)
+    assert resp.apparent_attenuation == pytest.approx(0.75)
 
 
 def test_solve_batch_runoff_ratio_topology():
@@ -316,7 +316,7 @@ def test_solve_batch_runoff_ratio_topology():
 
 def test_service_propagates_error():
     with pytest.raises(SolverServiceError) as exc:
-        solve_batch_request(make_batch_request(target_abv=25.0, apparent_attenuation=0.5))
+        solve_batch_request(make_batch_request(target_abv=25.0, malt_attenuation_cap=0.5))
     assert exc.value.code == "ABV_UNREACHABLE"
 
 

@@ -1,6 +1,5 @@
 {
   "batch": [
-    "apparent_attenuation",
     "delta_v_evap",
     "eta_conv",
     "f_shrink",
@@ -11,6 +10,7 @@
     "hlt_transfer_loss_l",
     "intensive_value",
     "k_abs_true",
+    "malt_attenuation_cap",
     "mash_transfer_loss",
     "max_hlt_volume_l",
     "max_kettle_volume_l",

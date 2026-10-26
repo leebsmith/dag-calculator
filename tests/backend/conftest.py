@@ -32,7 +32,7 @@ from app.schemas.boundary import (
 def make_batch_request(**overrides) -> BatchSolverRequest:
     kwargs: dict = {
         "target_abv": 5.5,
-        "apparent_attenuation": 0.75,
+        "malt_attenuation_cap": 0.75,
         "v_ferm": 20.0,
         "topology": BatchSpargeTopology.R_L_TO_G,
         "intensive_value": 3.0,

@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:995777b5bfb12ca44a15e7db82d55683ad97b8816e1571969d1b6c8546a1ac02",
+    "hash": "sha256:ffae0b3d4d5dd0bf090544d6e688310dcdd408ea56f91bbb5f4273554377803a",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -2980,7 +2980,7 @@
           "resolution": "iterative",
           "inputs": {
             "target_abv": "batch.target_abv",
-            "apparent_attenuation": "batch.yeast_cap",
+            "malt_attenuation_cap": "batch.yeast_cap",
             "v_ferm": "batch.v_ferm",
             "topology": "batch.topology",
             "intensive_value": "batch.mash_thickness_l_per_kg",
@@ -3060,10 +3060,10 @@
             "binding_constraint": {
               "taxonomy": "binding_constraint"
             },
-            "aa_wort": {
+            "real_attenuation": {
               "dimension": "percentage"
             },
-            "aa_batch": {
+            "apparent_attenuation": {
               "dimension": "percentage"
             },
             "hlt.v_hlt_debt": {
@@ -3107,7 +3107,7 @@
           "kind": "derived",
           "inputs": {
             "og_sg": "solver.batch.sg_post_boil",
-            "aa": "solver.batch.aa_batch"
+            "aa": "solver.batch.apparent_attenuation"
           },
           "expr": {
             "call": "realized_fg",
@@ -3128,7 +3128,7 @@
           "kind": "derived",
           "inputs": {
             "og_sg": "solver.batch.sg_post_boil",
-            "aa": "solver.batch.aa_batch"
+            "aa": "solver.batch.apparent_attenuation"
           },
           "expr": {
             "call": "realized_abv",
@@ -4712,5 +4712,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:f2c0c885792b520e69328746fe3382d1988a304b3020fcca8cc192c9634d9f57"
+  "content_hash": "sha256:129d20d080b5e6bbff9ee13885182606bdd3f17310194ddec7dea9e50de79dce"
 }

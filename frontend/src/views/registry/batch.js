@@ -31,15 +31,15 @@ export const batchRegistry = {
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
-  "solver.batch.aa_batch": {
-    label: "Batch attenuation",
+  "solver.batch.apparent_attenuation": {
+    label: "Apparent attenuation",
     displayUnit: "pct",
-    hint: "Solver output: min(wort attenuation, yeast cap). It differs from wort attenuation only when the yeast cap binds.",
+    hint: "Solver output: the batch's apparent attenuation. Sugar is uncapped, so it can exceed the yeast's malt attenuation cap.",
   },
-  "solver.batch.aa_wort": {
-    label: "Wort attenuation",
+  "solver.batch.real_attenuation": {
+    label: "Real attenuation",
     displayUnit: "pct",
-    hint: "Extract-weighted pre-cap blend. Batch attenuation is this value clamped by the yeast cap.",
+    hint: "Solver output: the share of extract actually fermented (RDF), after the yeast cap and any dextrin consumption.",
   },
   "batch.grain_moisture_fraction": {
     label: "Fallback grain moisture (when a malt has none)",

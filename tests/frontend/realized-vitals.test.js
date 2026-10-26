@@ -10,7 +10,7 @@ test("realized FG and ABV derived nodes match the canonical fermentation math", 
   app.compute();
 
   const og = app.freezePayload().valuation["solver.batch"].sg_post_boil; // stub: 1.055
-  const aa = app.freezePayload().valuation["solver.batch"].aa_batch; // stub aa_batch: 0.75
+  const aa = app.freezePayload().valuation["solver.batch"].apparent_attenuation; // stub apparent_attenuation: 0.75
   const oe = sgToPlato(og);
   const ae = oe * (1 - aa);
 
