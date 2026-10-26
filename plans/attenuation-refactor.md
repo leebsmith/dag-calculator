@@ -1,9 +1,9 @@
 # Attenuation refactor — Passes 2 and 3
 
-Status: planned. Successor to `plans/fermentability-provenance.md` (Pass 1,
-landed). This document is the commit contract for the rest of the program: each
-commit names the files to read first, the files it owns, what it must not touch,
-and the gate that proves it.
+Status: **landed**. A5 → P3c are in; the last commit closed the program.
+Successor to `plans/fermentability-provenance.md` (Pass 1, landed). This document
+was the commit contract for the program: each commit named the files to read
+first, the files it owned, what it must not touch, and the gate that proved it.
 
 Read this document, then only the context files listed for the commit you are
 doing. Do not read the whole repository per commit.
@@ -267,7 +267,7 @@ Repo: `dag-calculator`. Depends on: D2.
 - **Done when:** a designer sees what the current sugar dose is doing without
   changing the pin.
 
-### P3b — `Add the late-addition intent pin` (design closed)
+### P3b — `Add the late-addition intent pin` (landed)
 
 Repo: `dag-calculator`. Depends on: P3a. **The commit contract is
 `plans/late-addition-intent.md`; do not start it from this summary.**
@@ -287,6 +287,7 @@ P3c closes the program.
 ### P3c — `Close the attenuation refactor`
 
 Repo: `dag-calculator` (and a status line in `malt_database`). Depends on: all.
+**Landed:** this commit.
 
 - **Owns:** this plan's status, `TODO.md`, the register's final state,
   cross-links from `docs/attenuation-model.md`.

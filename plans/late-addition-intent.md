@@ -1,6 +1,6 @@
 # Late-addition intent pin — P3b commit contract
 
-Status: **implemented** (P3b landed). P3c closes the attenuation refactor.
+Status: **implemented** (P3b landed); the program closed at P3c.
 Successor to `plans/attenuation-refactor.md` P3a (landed).
 
 The design gate in `plans/attenuation-refactor.md` §"P3b" is resolved in this

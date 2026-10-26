@@ -2,11 +2,7 @@
 
 ## In flight
 
-* **Attenuation refactor (Passes 2–3)** — extract-composition model, basis
-  conversion, late-addition intents; commit contract in
-  `plans/attenuation-refactor.md`. Starts with the producer basis tags (A5).
-* **Fermentability provenance (Pass 1)** — landed; commit record in
-  `plans/fermentability-provenance.md`.
+* Nothing in flight; the attenuation refactor closed at P3c.
 
 ## Next (in order)
 
@@ -88,6 +84,15 @@ Not needed by the current artifact; add only when a node requires them:
 * True nested boundary outputs (currently flattened to dotted keys).
 
 ## Done
+
+* **Attenuation refactor (Passes 2–3)** — extract-composition model, real/apparent
+  basis conversion, malt-only cap, diastaticus dextrin consumption, and the
+  late-addition intent pin (dose \| share of extract) —
+  `plans/attenuation-refactor.md`, `plans/late-addition-intent.md`,
+  `docs/attenuation-model.md`.
+* **Fermentability provenance (Pass 1)** — `malt_database` basis/method tags and
+  the vendored source contract; commit record in
+  `plans/fermentability-provenance.md`.
 
 * Batch solver correctness (absorption, transfer loss, physical floor, capacity
   findings, feasible ABV, findings enumeration, freeze gate) —

@@ -180,6 +180,10 @@ composition block with a different source for `S`.
 
 ## 7. Assumption register
 
+A1–A17 are the final register for the attenuation refactor. A row is executable
+where the claim is testable; `tests/guards/attenuation-register.test.js` checks
+that every enforcement path exists and that the row set stays complete.
+
 | # | Assumption | Treatment | Enforcement |
 |---|---|---|---|
 | A1 | basis unknown for a source | `unspecified → real` | `tests/frontend/boundaryRequest.test.js` |
@@ -205,4 +209,5 @@ composition block with a different source for `S`.
 - `docs/fermentability-and-yield.md` — the two ingredient axes and provenance.
 - `docs/dag-artifacts/domain-equations.md` §1–§2 — the equations and the sealed
   boundary contract.
-- `plans/attenuation-refactor.md` — the commit contract for passes 2–3.
+- `plans/attenuation-refactor.md` — the commit contract for passes 2–3 (landed).
+- `plans/late-addition-intent.md` — the P3b commit contract (landed).
