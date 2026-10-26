@@ -130,6 +130,32 @@ importer reinterprets it.
 - Not a claim that a maltster's limit is your brewery's result.
 - Not a time-dependent diastaticus model: `d = 1` is a limit, not a rate.
 
+## Vendor yeast source (White Labs)
+
+`data/sources/whitelabs-yeasts.json` is a committed vendor scrape of
+`https://www.whitelabs.com/yeast-bank` (`make scrape-whitelabs`). It exists
+because the aggregator gives one attenuation number per strain, while the model
+needs an **apparent range** and the **STA1** status:
+
+| Field | Meaning |
+|---|---|
+| `strain`, `name` | `WLP001`, `California Ale Yeast` |
+| `attenuation_text` | the page's verbatim range (`73% - 85%`) |
+| `attenuation_low_pct`, `attenuation_high_pct` | the range in percent |
+| `attenuation_basis` | `apparent` — the vendor publishes apparent attenuation |
+| `flocculation`, `alcohol_tolerance`, `temp_low_c`, `temp_high_c` | display data |
+| `sta1_text` | the page's QC line (`Positive` / `Negative`) |
+| `sta1` | tri-state: `true` (positive), `false` (negative), `null` (not published) |
+| `url`, `sha256`, `retrieved_at` | the page and the hash/time it was read |
+
+The vendor range uses the **high end** as the malt cap (A14 in
+`attenuation-model.md`); the low end is stored for display. `sta1: null` is not
+a negative: D5 models it as `d = 0` and raises an advisory, because a silent
+"assume negative" would hide a diastaticus risk. The seed builder does not
+consume this file yet (D4b); the guard
+`tests/guards/whitelabs-yeast-contract.test.js` pins the shape and
+`tests/guards/sources-manifest.test.js` pins the content hash.
+
 ## Provenance and priors
 
 A catalog record carries the figure it was captured with, and a citation for it:

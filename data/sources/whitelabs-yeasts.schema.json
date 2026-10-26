@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "whitelabs-yeasts.schema.json",
+  "title": "White Labs yeast vendor source",
+  "$comment": "Pinned shape for data/sources/whitelabs-yeasts.json; the scraper is the only producer. Bump schema_version on a breaking change.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source", "upstream", "generated_at", "entries"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "source": { "const": "White Labs" },
+    "upstream": { "type": "string", "minLength": 1 },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "entries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/entry" } }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "strain",
+        "name",
+        "attenuation_text",
+        "attenuation_low_pct",
+        "attenuation_high_pct",
+        "attenuation_basis",
+        "flocculation",
+        "alcohol_tolerance",
+        "temp_low_c",
+        "temp_high_c",
+        "sta1_text",
+        "sta1",
+        "retrieved_at",
+        "sha256"
+      ],
+      "properties": {
+        "url": { "type": "string", "pattern": "^https://www\\.whitelabs\\.com/yeast-single\\?id=[0-9]+&type=YEAST$" },
+        "strain": { "type": "string", "pattern": "^[A-Z]+[0-9]+[A-Z0-9]*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "attenuation_text": { "type": "string" },
+        "attenuation_low_pct": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "attenuation_high_pct": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "attenuation_basis": { "const": "apparent" },
+        "flocculation": { "type": "string" },
+        "alcohol_tolerance": { "type": "string" },
+        "temp_low_c": { "type": ["number", "null"] },
+        "temp_high_c": { "type": ["number", "null"] },
+        "sta1_text": { "type": "string" },
+        "sta1": { "type": ["boolean", "null"] },
+        "retrieved_at": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    }
+  }
+}

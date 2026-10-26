@@ -26,7 +26,7 @@ BJCP_EDITION ?= 2021
 
 .PHONY: help hooks local-dev check test test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
-        scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
+        scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
 help:
 	@echo "Usage: make <target>"
@@ -44,6 +44,7 @@ help:
 	@echo "  build           Production frontend bundle + dist assertions"
 	@echo "  seeds           Rebuild normalized seed catalogs from data/sources/"
 	@echo "  scrape-yeasts   Crawl beer-analytics.com yeasts -> data/sources/"
+	@echo "  scrape-whitelabs Crawl whitelabs.com yeasts -> data/sources/"
 	@echo "  scrape-hops     Crawl beer-analytics.com hops -> data/sources/"
 	@echo "                  (LIMIT=N for a trial, OUT=path to override output)"
 	@echo "  aggregate-bjcp  Re-aggregate cached BJCP HTML into data/sources/"
@@ -151,6 +152,10 @@ seeds-hop-products: seeds-hops
 
 scrape-yeasts:
 	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/yeast_scraper.py \
+		$(if $(LIMIT),--limit $(LIMIT),) $(if $(OUT),--out $(OUT),)
+
+scrape-whitelabs:
+	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/whitelabs_yeast_scraper.py \
 		$(if $(LIMIT),--limit $(LIMIT),) $(if $(OUT),--out $(OUT),)
 
 scrape-hops:

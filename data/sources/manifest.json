@@ -62,6 +62,19 @@
       "scraper": "scripts/vendor-standard-malts.py",
       "rows": 89,
       "sha256": "573bb37f30d30525847aaf8fffb9e1c2a211047bdb4f14fed76e3d02307fd23b"
+    },
+    "whitelabs-yeasts.json": {
+      "mechanism": "scrape",
+      "upstream": "https://www.whitelabs.com/yeast-bank",
+      "scraper": "scripts/scrape/whitelabs_yeast_scraper.py",
+      "rows": 172,
+      "sha256": "66187d2607e47f5769b41c5cda4ffadc5be942b60e053493f223bbdd1614c9a4"
+    },
+    "whitelabs-yeasts.schema.json": {
+      "mechanism": "contract",
+      "upstream": "scripts/scrape/whitelabs_yeast_scraper.py (pinned)",
+      "rows": 9,
+      "sha256": "6d9982b7268f5d0668d876b57a7eb8c5068ae60807e0dc0c412e9e9aeb81527f"
     }
   }
 }

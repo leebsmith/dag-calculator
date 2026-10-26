@@ -49,6 +49,15 @@ const META = {
     mechanism: "scrape",
     upstream: "malt_database (local scrape)",
   },
+  "whitelabs-yeasts.json": {
+    mechanism: "scrape",
+    upstream: "https://www.whitelabs.com/yeast-bank",
+    scraper: "scripts/scrape/whitelabs_yeast_scraper.py",
+  },
+  "whitelabs-yeasts.schema.json": {
+    mechanism: "contract",
+    upstream: "scripts/scrape/whitelabs_yeast_scraper.py (pinned)",
+  },
   "malt.schema.json": {
     mechanism: "contract",
     upstream: "malt_database schema/malt.schema.json (pinned)",
