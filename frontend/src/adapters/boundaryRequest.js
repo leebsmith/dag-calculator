@@ -67,6 +67,9 @@ function assignWire(out, wire, value) {
 // BatchSolverRequest: one entry per solver.batch declared input.
 export const BATCH_FIELDS = {
   target_abv: { path: "batch.target_abv" },
+  scale_pin: { path: "batch.scale_pin" },
+  target_og: { path: "batch.target_og" },
+  target_fg: { path: "batch.target_fg" },
   malt_attenuation_cap: { path: "batch.yeast_cap" },
   // Tri-state vendor QC. The solver only needs "diastaticus or not", so an
   // unknown status is sent as false (d = 0) and surfaced as a host-side

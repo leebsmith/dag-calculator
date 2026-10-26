@@ -60,6 +60,11 @@ class BatchSolverErrorCode(StrEnum):
     INVALID_GRAIN_BILL_NORMALIZATION = "INVALID_GRAIN_BILL_NORMALIZATION"
     INVALID_SUGAR_SHARE = "INVALID_SUGAR_SHARE"
     INVALID_SUGAR_FERMENTABILITY = "INVALID_SUGAR_FERMENTABILITY"
+    INVALID_SCALE_PIN = "INVALID_SCALE_PIN"
+    INVALID_TARGET_OG = "INVALID_TARGET_OG"
+    INVALID_TARGET_FG = "INVALID_TARGET_FG"
+    FG_UNREACHABLE = "FG_UNREACHABLE"
+    FG_BELOW_ZERO_WITHOUT_STA1 = "FG_BELOW_ZERO_WITHOUT_STA1"
 
 
 class WaterSolverErrorCode(StrEnum):
@@ -103,6 +108,12 @@ class BatchSpargeTopology(StrEnum):
     RUNOFF_RATIO = "runoff_ratio"
 
 
+class ScalePin(StrEnum):
+    ABV = "abv"
+    OG = "og"
+    FG = "fg"
+
+
 class GristBillRow(BoundaryModel):
     """Normalized grain bill entry (w_i normalized fraction summing to 1.0)."""
 
@@ -119,6 +130,9 @@ class BatchSolverRequest(BoundaryModel):
     """Input contract for batch_sparge_solver (Brent's method root-finding)."""
 
     target_abv: Annotated[float, Field(gt=0.0, le=100.0, description="Target ABV in percent (e.g. 5.5)")]
+    scale_pin: ScalePin = Field(default=ScalePin.ABV, description="Active gravity/strength constraint")
+    target_og: Annotated[float | None, Field(default=None, gt=0.0, description="Target OG for the OG pin (SG)")]
+    target_fg: Annotated[float | None, Field(default=None, gt=0.0, description="Target FG for the FG pin (SG)")]
     malt_attenuation_cap: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast apparent-attenuation cap on malt; converted to real per candidate OE")]
     sta1: Annotated[
         bool | None,
@@ -193,6 +207,17 @@ class BindingConstraint(StrEnum):
     HLT = "hlt"
 
 
+class ScalePreviewRow(BoundaryModel):
+    """One hypothetical solve at a persisted scale target."""
+
+    pin: ScalePin
+    og: Annotated[float, Field(description="Post-boil gravity at this target (SG); 0 when infeasible")]
+    fg: Annotated[float, Field(description="Final gravity at this target (SG); 0 when infeasible")]
+    abv: Annotated[float, Field(description="ABV at this target (%); 0 when infeasible")]
+    ok: Annotated[bool, Field(description="Whether the target solved")]
+    reason: Annotated[str, Field(default="", description="Error code when ok is false")]
+
+
 class BatchSolverResponse(BoundaryModel):
     """Output contract for batch_sparge_solver."""
 
@@ -208,6 +233,7 @@ class BatchSolverResponse(BoundaryModel):
     apparent_attenuation: Annotated[float, Field(description="Solved apparent attenuation; may exceed 1")]
     hlt: BatchHltOutputs
     mash_thickness_l_per_kg: Annotated[float, Field(description="Resolved mash thickness (L/kg)")]
+    previews: list[ScalePreviewRow] = Field(default_factory=list)
 
 
 # -----------------------------------------------------------------------------

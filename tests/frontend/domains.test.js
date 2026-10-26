@@ -13,7 +13,7 @@ test("domainStates() covers every bounded root/choice node", () => {
     (n) => (n.kind === "root" || n.kind === "choice") && n.domain
   ).length;
   assert.equal(states.length, expected);
-  assert.equal(states.length, 26);
+  assert.equal(states.length, 28);
 });
 
 test("default values satisfy their domains or are unresolved", () => {

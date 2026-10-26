@@ -62,7 +62,9 @@ const IDENTITY_DERIVED = [
   "batch.conversion_efficiency",
   "batch.hlt_starting_volume_l",
   "batch.target_abv",
+  "batch.target_fg",
   "batch.target_ibu",
+  "batch.target_og",
   "batch.target_srm",
 ];
 

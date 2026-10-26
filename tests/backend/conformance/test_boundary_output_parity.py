@@ -18,6 +18,7 @@ from app.schemas.boundary import (
     BatchSolverResponse,
     BoilHopResult,
     HopSolverResponse,
+    ScalePreviewRow,
     WaterSolverResponse,
     WhirlpoolHopResult,
 )
@@ -42,6 +43,7 @@ CASES = [
 COLLECTION_MODELS = {
     "boil_rows": BoilHopResult,
     "whirlpool_rows": WhirlpoolHopResult,
+    "previews": ScalePreviewRow,
 }
 
 
@@ -59,7 +61,17 @@ def test_boundary_outputs_match_response_fields(boundary_id, model):
 def test_hop_collection_item_schemas_match_result_models():
     outputs = ARTIFACT["nodes"]["solver.hops"]["outputs"]
     for output_name, model in COLLECTION_MODELS.items():
+        if output_name not in outputs:
+            continue
         spec = outputs[output_name]
         assert spec.get("type") == "collection", output_name
         schema = ARTIFACT["primitive_schemas"][spec["item_schema"]]
         assert set(schema) == set(model.model_fields), output_name
+
+
+def test_batch_preview_collection_matches_its_model():
+    outputs = ARTIFACT["nodes"]["solver.batch"]["outputs"]
+    spec = outputs["previews"]
+    assert spec.get("type") == "collection"
+    schema = ARTIFACT["primitive_schemas"][spec["item_schema"]]
+    assert set(schema) == set(ScalePreviewRow.model_fields)

@@ -24,6 +24,7 @@ from app.schemas.boundary import (
     IonProfile,
     PreferredAlkalineAgent,
     SaltDistribution,
+    ScalePin,
     WaterGristRow,
     WaterSolverRequest,
     WaterStrategy,
@@ -42,6 +43,9 @@ _WATER_GRIST = [(1.5, "BASE"), (40.0, "CRYSTAL")]
 def canonical_batch() -> BatchSolverRequest:
     return BatchSolverRequest(
         target_abv=5.5,
+        scale_pin=ScalePin.ABV,
+        target_og=1.052,
+        target_fg=1.012,
         malt_attenuation_cap=0.75,
         sta1=False,
         v_ferm=20.0,

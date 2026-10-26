@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:3c13124830de160ffbc944b4f2ec03b09b1c2d6fad4cb1f014d266d5d5fce769",
+    "hash": "sha256:1a6ea12cdfa8a28825d4163be21807c727cb5830ef87e68077b8cb872252e0d0",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -247,6 +247,14 @@
         "default_target_abv": {
           "value": 5.5,
           "dimension": "abv"
+        },
+        "default_target_og": {
+          "value": 1.05,
+          "dimension": "gravity"
+        },
+        "default_target_fg": {
+          "value": 1.012,
+          "dimension": "gravity"
         },
         "default_calcium_floor_ppm": {
           "value": 50,
@@ -512,6 +520,11 @@
         "late_addition_intent": [
           "dose",
           "share"
+        ],
+        "scale_pin": [
+          "abv",
+          "og",
+          "fg"
         ]
       },
       "functions": {
@@ -1852,6 +1865,24 @@
           },
           "notes": {}
         },
+        "scale_preview_row": {
+          "pin": {
+            "taxonomy": "scale_pin"
+          },
+          "og": {
+            "dimension": "gravity"
+          },
+          "fg": {
+            "dimension": "gravity"
+          },
+          "abv": {
+            "dimension": "percentage"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "reason": {}
+        },
         "trace_malt_row": {
           "catalog_id": {},
           "name": {},
@@ -2275,6 +2306,97 @@
               },
               {
                 "const": "default_target_abv"
+              }
+            ]
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.scale_pin": {
+          "kind": "choice",
+          "taxonomy": "scale_pin",
+          "default": "abv"
+        },
+        "batch.target_og": {
+          "kind": "root",
+          "dimension": "gravity",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "lt",
+                "args": [
+                  {
+                    "ref": "style.og_min"
+                  },
+                  {
+                    "ref": "style.og_max"
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "style.og_min"
+                      },
+                      {
+                        "ref": "style.og_max"
+                      }
+                    ]
+                  },
+                  2
+                ]
+              },
+              {
+                "const": "default_target_og"
+              }
+            ]
+          },
+          "domain": {
+            "gt": 0
+          }
+        },
+        "batch.target_fg": {
+          "kind": "root",
+          "dimension": "gravity",
+          "default": {
+            "op": "if",
+            "args": [
+              {
+                "op": "lt",
+                "args": [
+                  {
+                    "ref": "style.fg_min"
+                  },
+                  {
+                    "ref": "style.fg_max"
+                  }
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "op": "+",
+                    "args": [
+                      {
+                        "ref": "style.fg_min"
+                      },
+                      {
+                        "ref": "style.fg_max"
+                      }
+                    ]
+                  },
+                  2
+                ]
+              },
+              {
+                "const": "default_target_fg"
               }
             ]
           },
@@ -3028,6 +3150,9 @@
           "resolution": "iterative",
           "inputs": {
             "target_abv": "batch.target_abv",
+            "scale_pin": "batch.scale_pin",
+            "target_og": "batch.target_og",
+            "target_fg": "batch.target_fg",
             "malt_attenuation_cap": "batch.yeast_cap",
             "sta1": "batch.yeast.sta1",
             "v_ferm": "batch.v_ferm",
@@ -3131,6 +3256,10 @@
             },
             "mash_thickness_l_per_kg": {
               "dimension": "mash_thickness"
+            },
+            "previews": {
+              "type": "collection",
+              "item_schema": "scale_preview_row"
             }
           },
           "domain": {
@@ -3152,7 +3281,12 @@
               "MASH_TUN_TOO_SMALL",
               "INVALID_GRAIN_BILL_NORMALIZATION",
               "INVALID_SUGAR_SHARE",
-              "INVALID_SUGAR_FERMENTABILITY"
+              "INVALID_SUGAR_FERMENTABILITY",
+              "INVALID_SCALE_PIN",
+              "INVALID_TARGET_OG",
+              "INVALID_TARGET_FG",
+              "FG_UNREACHABLE",
+              "FG_BELOW_ZERO_WITHOUT_STA1"
             ]
           }
         },
@@ -5072,5 +5206,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:bfe2a56e94f4def0f16fdae2b6563489f53d01167922c7414b9a812465e3405a"
+  "content_hash": "sha256:2cd04e4e92a3191565e960b3c86466b57f82b6d3de07f3aeec6276140259155f"
 }

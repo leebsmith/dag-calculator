@@ -103,6 +103,11 @@ TRIGGERS = {
     ),
     "INVALID_SUGAR_SHARE": lambda: _solve(sugar_extract_share=1.0),
     "INVALID_SUGAR_FERMENTABILITY": lambda: _solve(sugar_fermentability=1.5),
+    "INVALID_SCALE_PIN": lambda: _solve(scale_pin="bogus"),
+    "INVALID_TARGET_OG": lambda: _solve(scale_pin="og", target_og=None),
+    "INVALID_TARGET_FG": lambda: _solve(scale_pin="fg", target_fg=None),
+    "FG_UNREACHABLE": lambda: _solve(scale_pin="fg", target_fg=1.10),
+    "FG_BELOW_ZERO_WITHOUT_STA1": lambda: _solve(scale_pin="fg", target_fg=0.995),
 }
 
 

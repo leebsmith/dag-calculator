@@ -19,6 +19,7 @@ from app.schemas.boundary import (
     BatchHltOutputs,
     BatchSolverRequest,
     BatchSolverResponse,
+    ScalePreviewRow,
 )
 from app.services.errors import SolverServiceError
 from app.services.parity import assert_field_parity
@@ -29,6 +30,9 @@ assert_field_parity(BatchSolverRequest, BatchSolverInput)
 def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
     return BatchSolverInput(
         target_abv=req.target_abv,
+        scale_pin=req.scale_pin.value,
+        target_og=req.target_og,
+        target_fg=req.target_fg,
         malt_attenuation_cap=req.malt_attenuation_cap,
         sta1=req.sta1,
         v_ferm=req.v_ferm,
@@ -98,6 +102,17 @@ def _to_response(result) -> BatchSolverResponse:
             v_sparge_deliverable=hlt.v_sparge_deliverable,
         ),
         mash_thickness_l_per_kg=result.mash_thickness_l_per_kg,
+        previews=[
+            ScalePreviewRow(
+                pin=row.pin,
+                og=row.og,
+                fg=row.fg,
+                abv=row.abv,
+                ok=row.ok,
+                reason=row.reason,
+            )
+            for row in result.previews
+        ],
     )
 
 

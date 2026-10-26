@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_103 paths_
+_106 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -67,6 +67,7 @@ _103 paths_
 | `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | 1 | — | — |
 | `batch.s_late_add` | Dose extract | derived | mass | kg | 1 | — |
 | `batch.s_late_add_request` | S Late Add Request | derived | mass | kg | 1 | — |
+| `batch.scale_pin` | Scale Pin | choice | — | — | — | abv, og, fg |
 | `batch.shrinkage_volume_l` | − Shrinkage | derived | volume | L | 1 | — |
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
 | `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
@@ -91,7 +92,9 @@ _103 paths_
 | `batch.sugars.yield_provenance` | Yield Provenance | field | — | — | — | — |
 | `batch.surplus_sparge_capacity` | surplus sparge capacity | derived | volume | L | 1 | — |
 | `batch.target_abv` | Target ABV | root | abv | pct | 1 | — |
+| `batch.target_fg` | Target FG | root | gravity | Plato (°P) | 1 | — |
 | `batch.target_ibu` | Target IBU | root | ibu | IBU | 1 | — |
+| `batch.target_og` | Target OG | root | gravity | Plato (°P) | 1 | — |
 | `batch.target_srm` | Target SRM | root | beer_color | EBC | 1 | — |
 | `batch.topology` | Constraint Topology | choice | — | — | — | r_l_to_g, runoff_ratio |
 | `batch.total_water_used` | Total Water Used | derived | volume | L | 1 | — |
@@ -273,7 +276,7 @@ _61 paths_
 
 ## Solver — batch sparge
 
-_26 paths_
+_27 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -299,6 +302,7 @@ _26 paths_
 | `solver.batch.mash_thickness_l_per_kg` | Mash Thickness | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `solver.batch.max_achievable_abv` | Max Achievable ABV | output | percentage | pct (%) | 1 | — |
 | `solver.batch.max_feasible_abv` | Max Feasible ABV | output | percentage | pct (%) | 1 | — |
+| `solver.batch.previews` | Previews | output | — | — | — | — |
 | `solver.batch.real_attenuation` | Real attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.s_post_boil_target` | Post-Boil Extract Target | output | mass | kg | 1 | — |
 | `solver.batch.sg_post_boil` | Post-boil gravity | output | gravity | Plato (°P) | 1 | — |

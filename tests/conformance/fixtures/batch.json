@@ -1,5 +1,5 @@
 {
-  "fingerprint": "2484a9ebddb0df211134cb259202ba4d02e84e095ea1b20b453ea81cb87917df",
+  "fingerprint": "69c9c472d294231c5e37b375497b0870e4911630e3e823556fcd4c10334ed0d0",
   "request": {
     "delta_v_evap": 3.0,
     "eta_conv": 0.95,
@@ -30,10 +30,13 @@
     "max_kettle_volume_l": 40.0,
     "max_mash_tun_volume_l": 40.0,
     "s_late_add": 0.0,
+    "scale_pin": "abv",
     "sta1": false,
     "sugar_extract_share": 0.0,
     "sugar_fermentability": 1.0,
     "target_abv": 5.5,
+    "target_fg": 1.012,
+    "target_og": 1.052,
     "topology": "r_l_to_g",
     "v_dead": 0.0,
     "v_ferm": 20.0,

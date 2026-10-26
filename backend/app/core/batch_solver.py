@@ -1424,6 +1424,14 @@ class BatchSolverInput:
         sugar_extract_share: Sugar extract as a fraction of total post-boil
             extract. ``0`` means dose mode (``s_late_add`` is authoritative);
             a positive share is solved per candidate ``OE``.
+        sugar_fermentability: Extract-weighted real fermentability of the
+            late-addition blend (0..1).
+        scale_pin: Which gravity/strength constraint is active:
+            ``abv`` (default), ``og``, or ``fg``.
+        target_og: Post-boil original gravity for the OG pin, SG. Ignored by
+            the active solve when another pin is selected; used by the preview
+            block.
+        target_fg: Final gravity for the FG pin, SG. Same preview rule.
         hlt_starting_volume_l: Volume of liquor in the HLT at the start of the
             brew day, in liters. Batch-level parameter; the frontend pre-fills
             it from the equipment profile's ``max_hlt_volume_l``. Consumed by
@@ -1470,12 +1478,20 @@ class BatchSolverInput:
     sta1: bool | None = None
     sugar_extract_share: float = 0.0
     sugar_fermentability: float = 1.0
+    scale_pin: str = "abv"
+    target_og: float | None = None
+    target_fg: float | None = None
 
     def __post_init__(self) -> None:
         if self.topology not in ("r_l_to_g", "runoff_ratio"):
             raise SolverValidationError(
                 "UNKNOWN_TOPOLOGY",
                 f"Unknown constraint topology: {self.topology!r}.",
+            )
+        if self.scale_pin not in ("abv", "og", "fg"):
+            raise SolverValidationError(
+                "INVALID_SCALE_PIN",
+                f"Unknown scale pin: {self.scale_pin!r}.",
             )
         if not math.isfinite(self.intensive_value) or self.intensive_value <= 0.0:
             raise SolverValidationError(
@@ -1509,6 +1525,41 @@ class BatchSolverInput:
                     f"{self.sugar_fermentability}."
                 ),
             )
+        if self.target_og is not None and (
+            not math.isfinite(self.target_og) or self.target_og <= 0.0
+        ):
+            raise SolverValidationError(
+                "INVALID_TARGET_OG",
+                f"Target OG must be positive and finite; got {self.target_og}.",
+            )
+        if self.target_fg is not None and (
+            not math.isfinite(self.target_fg) or self.target_fg <= 0.0
+        ):
+            raise SolverValidationError(
+                "INVALID_TARGET_FG",
+                f"Target FG must be positive and finite; got {self.target_fg}.",
+            )
+
+
+@dataclass(frozen=True)
+class ScalePreview:
+    """One hypothetical solve at a persisted scale target.
+
+    Attributes:
+        pin: ``abv``, ``og``, or ``fg``.
+        og: Post-boil gravity at that target, SG (0 when infeasible).
+        fg: Final gravity at that target, SG (0 when infeasible).
+        abv: ABV at that target, % (0 when infeasible).
+        ok: Whether the target could be solved.
+        reason: Error code (or empty) when ``ok`` is false.
+    """
+
+    pin: str
+    og: float
+    fg: float
+    abv: float
+    ok: bool
+    reason: str
 
 
 @dataclass(frozen=True)
@@ -1540,6 +1591,8 @@ class BatchSolverResult:
             Mash Card reads it directly to derive strike water temperature
             (design record Q3/Q12). Under ``r_l_to_g`` it equals the input
             ``R_L:G``; under ``runoff_ratio`` it is derived from the cascade.
+        previews: One hypothetical gravity/strength row per scale pin, at that
+            pin's persisted target. Diagnostics only; never the active solve.
     """
 
     sg_post_boil: float
@@ -1554,6 +1607,7 @@ class BatchSolverResult:
     max_feasible_abv: float
     binding_constraint: str
     mash_thickness_l_per_kg: float
+    previews: tuple[ScalePreview, ...]
 
 
 @dataclass(frozen=True)
@@ -1666,7 +1720,250 @@ def _diagnose_bracket(
     return None
 
 
-def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
+@dataclass(frozen=True)
+class _GravityState:
+    oe_plato: float
+    sg_post_boil: float
+    extract_total_kg: float
+    sugar_extract_kg: float
+    composition: WortComposition
+
+
+def _target_for(inputs: BatchSolverInput, pin: str) -> float | None:
+    if pin == "abv":
+        return inputs.target_abv
+    if pin == "og":
+        return inputs.target_og
+    if pin == "fg":
+        return inputs.target_fg
+    raise SolverValidationError(
+        "INVALID_SCALE_PIN", f"Unknown scale pin: {pin!r}."
+    )
+
+
+def _abv_ceiling(
+    inputs: BatchSolverInput,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+) -> float:
+    ceiling_extract = post_boil_extract_target(
+        asbc_plato_to_sg(40.0), v_kettle_cold, GAMMA_METRIC
+    )
+    sugar = sugar_extract_for(
+        inputs.sugar_extract_share, ceiling_extract, inputs.s_late_add
+    )
+    if ceiling_extract <= sugar:
+        return 0.0
+    return resolve_wort_composition(
+        oe_plato=40.0,
+        extract_total_kg=ceiling_extract,
+        s_late_add=sugar,
+        malt_fermentability=aa_malt,
+        yeast_cap_apparent=inputs.malt_attenuation_cap,
+        dextrin_consumption=dextrin_consumption,
+        sugar_fermentability=inputs.sugar_fermentability,
+    ).abv_pct
+
+
+def _resolve_gravity(
+    inputs: BatchSolverInput,
+    pin: str,
+    target: float | None,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+) -> _GravityState:
+    """Resolve OE, extract and composition for one active scale pin."""
+
+    if pin == "abv":
+        oe_plato = solve_oe_from_composition(
+            target_abv=target if target is not None else 0.0,
+            yeast_cap_apparent=inputs.malt_attenuation_cap,
+            malt_fermentability=aa_malt,
+            v_kettle_cold=v_kettle_cold,
+            s_late_add=inputs.s_late_add,
+            dextrin_consumption=dextrin_consumption,
+            sugar_extract_share=inputs.sugar_extract_share,
+            sugar_fermentability=inputs.sugar_fermentability,
+        )
+        sg_post_boil = asbc_plato_to_sg(oe_plato)
+        extract_total = post_boil_extract_target(
+            sg_post_boil, v_kettle_cold, GAMMA_METRIC
+        )
+        sugar = sugar_extract_for(
+            inputs.sugar_extract_share, extract_total, inputs.s_late_add
+        )
+    elif pin == "og":
+        if target is None or not math.isfinite(target) or target <= 1.0:
+            raise SolverValidationError(
+                "INVALID_TARGET_OG",
+                f"Target OG must be greater than 1.000; got {target}.",
+            )
+        sg_post_boil = target
+        oe_plato = sg_to_plato(sg_post_boil)
+        extract_total = post_boil_extract_target(
+            sg_post_boil, v_kettle_cold, GAMMA_METRIC
+        )
+        sugar = sugar_extract_for(
+            inputs.sugar_extract_share, extract_total, inputs.s_late_add
+        )
+        if extract_total <= sugar:
+            raise SolverValidationError(
+                "EXTRACT_TARGET_NON_POSITIVE",
+                (
+                    f"Post-boil extract target ({extract_total:.4f} kg) must "
+                    f"exceed late-addition extract ({sugar:.4f} kg)."
+                ),
+            )
+    elif pin == "fg":
+        if target is None or not math.isfinite(target) or target <= 0.0:
+            raise SolverValidationError(
+                "INVALID_TARGET_FG",
+                f"Target FG must be positive; got {target}.",
+            )
+        if target < 1.0 and inputs.sta1 is not True:
+            raise SolverValidationError(
+                "FG_BELOW_ZERO_WITHOUT_STA1",
+                (
+                    "An FG below 1.000 requires a diastaticus strain "
+                    "(sta1 = true); select one or raise the target."
+                ),
+            )
+        target_ae = sg_to_plato(target)
+
+        def residual(oe_plato: float) -> float | None:
+            sg = asbc_plato_to_sg(oe_plato)
+            extract_total = post_boil_extract_target(
+                sg, v_kettle_cold, GAMMA_METRIC
+            )
+            sugar = sugar_extract_for(
+                inputs.sugar_extract_share, extract_total, inputs.s_late_add
+            )
+            if extract_total <= sugar:
+                # No malt extract at this candidate: outside the physical
+                # domain, not a residual to bracket.
+                return None
+            composition = resolve_wort_composition(
+                oe_plato=oe_plato,
+                extract_total_kg=extract_total,
+                s_late_add=sugar,
+                malt_fermentability=aa_malt,
+                yeast_cap_apparent=inputs.malt_attenuation_cap,
+                dextrin_consumption=dextrin_consumption,
+                sugar_fermentability=inputs.sugar_fermentability,
+            )
+            return composition.apparent_extract_plato - target_ae
+
+        grid = [1e-9, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0]
+        bracket = None
+        previous_oe = None
+        previous = None
+        for candidate in grid:
+            current = residual(candidate)
+            if current is None:
+                previous_oe = None
+                previous = None
+                continue
+            if abs(current) < 1e-12:
+                bracket = (candidate, candidate)
+                break
+            if previous is not None and previous * current < 0.0:
+                bracket = (previous_oe, candidate)
+                break
+            previous_oe, previous = candidate, current
+        if bracket is None:
+            raise SolverValidationError(
+                "FG_UNREACHABLE",
+                (
+                    f"Target FG {target:.4f} is not reachable within the "
+                    "0-40 °P bracket at this composition."
+                ),
+            )
+        if bracket[0] == bracket[1]:
+            oe_plato = bracket[0]
+        else:
+            oe_plato = brentq(
+                lambda x: residual(x)  # type: ignore[arg-type]
+                if residual(x) is not None
+                else 0.0,
+                bracket[0],
+                bracket[1],
+            )
+        sg_post_boil = asbc_plato_to_sg(oe_plato)
+        extract_total = post_boil_extract_target(
+            sg_post_boil, v_kettle_cold, GAMMA_METRIC
+        )
+        sugar = sugar_extract_for(
+            inputs.sugar_extract_share, extract_total, inputs.s_late_add
+        )
+    else:
+        raise SolverValidationError(
+            "INVALID_SCALE_PIN", f"Unknown scale pin: {pin!r}."
+        )
+
+    if extract_total <= sugar:
+        raise SolverValidationError(
+            "EXTRACT_TARGET_NON_POSITIVE",
+            (
+                f"Post-boil extract target ({extract_total:.4f} kg) must "
+                f"exceed late-addition extract ({sugar:.4f} kg)."
+            ),
+        )
+    composition = resolve_wort_composition(
+        oe_plato=oe_plato,
+        extract_total_kg=extract_total,
+        s_late_add=sugar,
+        malt_fermentability=aa_malt,
+        yeast_cap_apparent=inputs.malt_attenuation_cap,
+        dextrin_consumption=dextrin_consumption,
+        sugar_fermentability=inputs.sugar_fermentability,
+    )
+    return _GravityState(
+        oe_plato=oe_plato,
+        sg_post_boil=sg_post_boil,
+        extract_total_kg=extract_total,
+        sugar_extract_kg=sugar,
+        composition=composition,
+    )
+
+
+def _preview_rows(
+    inputs: BatchSolverInput,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+) -> tuple[ScalePreview, ...]:
+    rows: list[ScalePreview] = []
+    for pin in ("abv", "og", "fg"):
+        try:
+            state = _resolve_gravity(
+                inputs,
+                pin,
+                _target_for(inputs, pin),
+                v_kettle_cold,
+                aa_malt,
+                dextrin_consumption,
+            )
+        except SolverValidationError as exc:
+            rows.append(ScalePreview(pin, 0.0, 0.0, 0.0, False, exc.code))
+            continue
+        rows.append(
+            ScalePreview(
+                pin,
+                state.sg_post_boil,
+                asbc_plato_to_sg(state.composition.apparent_extract_plato),
+                state.composition.abv_pct,
+                True,
+                "",
+            )
+        )
+    return tuple(rows)
+
+
+def _solve_pipeline(
+    inputs: BatchSolverInput, pin: str, target: float | None
+) -> _Pipeline:
     validate_grain_bill_normalization(inputs.grain_bill)
     yield_fraction = composite_yield_fraction(inputs.grain_bill)
     mc_bar = composite_moisture_fraction(inputs.grain_bill)
@@ -1678,7 +1975,9 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
     dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
 
     def solve_phase_1(aa: float):
-        sg = solve_sg_post_boil_from_abv(target_abv, aa)
+        sg = solve_sg_post_boil_from_abv(
+            target if target is not None else 0.0, aa
+        )
         rev = resolve_volumetric_reversal(
             v_ferm=inputs.v_ferm,
             sg_post_boil=sg,
@@ -1693,13 +1992,13 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
 
     if aa_malt is None:
         # Legacy scalar path: a caller that supplies no per-row fermentability
-        # keeps the original apparent-attenuation inversion. Share mode is a
-        # composition feature and has no meaning without per-row F.
-        if inputs.sugar_extract_share > 0.0:
+        # keeps the original apparent-attenuation inversion. Share mode and the
+        # OG/FG pins are composition features and have no meaning without it.
+        if pin != "abv" or inputs.sugar_extract_share > 0.0:
             raise SolverValidationError(
-                "INVALID_SUGAR_SHARE",
+                "INVALID_SCALE_PIN",
                 (
-                    "Share mode requires per-row fermentability; the grain "
+                    "This scale pin requires per-row fermentability; the grain "
                     "bill omits it."
                 ),
             )
@@ -1710,27 +2009,14 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
         max_abv = max_achievable_abv(apparent_attenuation)
         s_late_add = inputs.s_late_add
     else:
-        # Extract composition: the solver's ABV-first inversion, with the
-        # composition block (and the cap conversion) evaluated per candidate.
         v_kettle_cold = kettle_cold_volume(
             inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
         )
-        oe_plato = solve_oe_from_composition(
-            target_abv=target_abv,
-            yeast_cap_apparent=inputs.malt_attenuation_cap,
-            malt_fermentability=aa_malt,
-            v_kettle_cold=v_kettle_cold,
-            s_late_add=inputs.s_late_add,
-            dextrin_consumption=dextrin_consumption,
-            sugar_extract_share=inputs.sugar_extract_share,
-            sugar_fermentability=inputs.sugar_fermentability,
+        state = _resolve_gravity(
+            inputs, pin, target, v_kettle_cold, aa_malt, dextrin_consumption
         )
-        sg_post_boil = asbc_plato_to_sg(oe_plato)
-        s_late_add = sugar_extract_for(
-            inputs.sugar_extract_share,
-            post_boil_extract_target(sg_post_boil, v_kettle_cold, GAMMA_METRIC),
-            inputs.s_late_add,
-        )
+        sg_post_boil = state.sg_post_boil
+        s_late_add = state.sugar_extract_kg
         reversal = resolve_volumetric_reversal(
             v_ferm=inputs.v_ferm,
             sg_post_boil=sg_post_boil,
@@ -1741,32 +2027,12 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             s_late_add=s_late_add,
             f_shrink=inputs.f_shrink,
         )
-        composition = resolve_wort_composition(
-            oe_plato=oe_plato,
-            extract_total_kg=reversal.s_post_boil_target,
-            s_late_add=s_late_add,
-            malt_fermentability=aa_malt,
-            yeast_cap_apparent=inputs.malt_attenuation_cap,
-            dextrin_consumption=dextrin_consumption,
-            sugar_fermentability=inputs.sugar_fermentability,
-        )
+        composition = state.composition
         real_attenuation = composition.real_attenuation
         apparent_attenuation = composition.apparent_attenuation
-        ceiling_extract = post_boil_extract_target(
-            asbc_plato_to_sg(40.0), v_kettle_cold, GAMMA_METRIC
+        max_abv = _abv_ceiling(
+            inputs, v_kettle_cold, aa_malt, dextrin_consumption
         )
-        ceiling = resolve_wort_composition(
-            oe_plato=40.0,
-            extract_total_kg=ceiling_extract,
-            s_late_add=sugar_extract_for(
-                inputs.sugar_extract_share, ceiling_extract, inputs.s_late_add
-            ),
-            malt_fermentability=aa_malt,
-            yeast_cap_apparent=inputs.malt_attenuation_cap,
-            dextrin_consumption=dextrin_consumption,
-            sugar_fermentability=inputs.sugar_fermentability,
-        )
-        max_abv = ceiling.abv_pct
 
     try:
         m_grist = solve_grist_mass(
@@ -1834,7 +2100,7 @@ def _feasible_bound(
         if target_abv <= 0.0:
             return "volume"
         try:
-            pipeline = _solve_pipeline(inputs, target_abv)
+            pipeline = _solve_pipeline(inputs, "abv", target_abv)
         except SolverValidationError as exc:
             if exc.code == "ABV_UNREACHABLE":
                 return "fermentation"
@@ -1886,14 +2152,16 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
 
     Pipeline:
 
-    1. Phase 1: isolate ``SG_post_boil`` from the target ABV and attenuation.
+    1. Phase 1: isolate the active scale target (ABV, OG, or FG) and the
+       composition block.
     2. Phase 2: reverse kettle mechanics to derive ``V_pre_boil`` and
        ``S_post_boil_target``.
     3. Phase 3: resolve ``M_grist`` via Brent's method.
     4. Phase 4: cascade stage volumes and gravities.
 
-    The feasible-ABV bound is found by bisecting the same pipeline against the
-    rig's capacity limits; it never changes the target solve.
+    The feasible-ABV bound is found by bisecting the ABV pipeline against the
+    rig's capacity limits; it never changes the active target solve. The preview
+    rows are diagnostics at the three persisted targets.
 
     Args:
         inputs: The frozen ``BatchSolverInput`` bundle.
@@ -1908,11 +2176,28 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
 
     See ``domain-equations.md`` §2.5.
     """
-    pipeline = _solve_pipeline(inputs, inputs.target_abv)
+    pin = inputs.scale_pin
+    target = _target_for(inputs, pin)
+    pipeline = _solve_pipeline(inputs, pin, target)
     fermentation_ceiling = pipeline.max_abv
     max_feasible_abv, binding_constraint = _feasible_bound(
         inputs, fermentation_ceiling
     )
+
+    aa_malt = composite_fermentability_fraction(inputs.grain_bill)
+    if aa_malt is None:
+        previews = tuple(
+            ScalePreview(p, 0.0, 0.0, 0.0, False, "INVALID_ATTENUATION")
+            for p in ("abv", "og", "fg")
+        )
+    else:
+        v_kettle_cold = kettle_cold_volume(
+            inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+        )
+        dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
+        previews = _preview_rows(
+            inputs, v_kettle_cold, aa_malt, dextrin_consumption
+        )
 
     return BatchSolverResult(
         sg_post_boil=pipeline.sg_post_boil,
@@ -1927,4 +2212,5 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         max_feasible_abv=max_feasible_abv,
         binding_constraint=binding_constraint,
         mash_thickness_l_per_kg=pipeline.cascade.mash_thickness_l_per_kg,
+        previews=previews,
     )

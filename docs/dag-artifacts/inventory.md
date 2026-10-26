@@ -51,6 +51,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash_rest` | `phytase`, `ferulic`, `beta_glucan`, `protein`, `beta_amylase`, `alpha_amylase`, `beta_alpha_amylase`, `mash_out` |
 | `ph_status` | `OPTIMAL`, `LOW`, `HIGH` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
+| `scale_pin` | `abv`, `og`, `fg` |
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE`, `AUTO`, `HYBRID`, `BASELINE`, `CUSTOM` |
 | `style_type` | `beer`, `mead`, `cider` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
@@ -73,6 +74,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `malt` | `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `family` (—), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `generic_description` (—), `id` (—), `maltster` (—), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `standard_malt` (—), `standard_name` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
 | `mash_rest_definition` | `default_duration_min` (dimension time), `name` (—), `purpose` (—), `rest_id` (taxonomy mash_rest), `sequence` (dimension dimensionless, domain {"gte":0}), `temp_max_c` (dimension temperature), `temp_min_c` (dimension temperature) |
+| `scale_preview_row` | `abv` (dimension percentage), `fg` (dimension gravity), `og` (dimension gravity), `ok` (type boolean), `pin` (taxonomy scale_pin), `reason` (—) |
 | `style` | `abv_max` (dimension abv, domain {"gte":0}), `abv_min` (dimension abv, domain {"gte":0}), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain {"gte":0}), `fg_min` (dimension gravity, domain {"gte":0}), `flavor` (—), `forked_from_id` (—), `forked_from_name` (—), `history` (—), `ibu_max` (dimension ibu, domain {"gte":0}), `ibu_min` (dimension ibu, domain {"gte":0}), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain {"gte":0}), `og_min` (dimension gravity, domain {"gte":0}), `overall_impression` (—), `srm_max` (dimension beer_color, domain {"gte":0}), `srm_min` (dimension beer_color, domain {"gte":0}), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
 | `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `id` (—), `maltster` (—), `name` (—), `notes` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
 | `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_method` (—), `fermentability_provenance` (—), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `parts` (dimension dimensionless, domain {"gte":0}), `resolved_mass_kg` (dimension mass, domain {"gte":0}), `sugar_id` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
@@ -130,8 +132,10 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
 | `default_target_abv` | 5.5 | `abv` |
+| `default_target_fg` | 1.012 | `gravity` |
 | `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
+| `default_target_og` | 1.05 | `gravity` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `ethanol_density` | 0.7907 | `dimensionless` |
 | `fermentability_prior_acid` | 0.635 | `percentage` |
@@ -182,6 +186,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.runoff_ratio` | root |
 | `batch.s_late_add` | derived |
 | `batch.s_late_add_request` | derived |
+| `batch.scale_pin` | choice |
 | `batch.shrinkage_volume_l` | derived |
 | `batch.sparge_salted_volume` | derived |
 | `batch.sugar_extract_share` | root |
@@ -192,7 +197,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.sugars` | collection |
 | `batch.surplus_sparge_capacity` | derived |
 | `batch.target_abv` | root |
+| `batch.target_fg` | root |
 | `batch.target_ibu` | root |
+| `batch.target_og` | root |
 | `batch.target_srm` | root |
 | `batch.topology` | choice |
 | `batch.total_water_used` | derived |
