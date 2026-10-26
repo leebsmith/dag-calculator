@@ -15,7 +15,6 @@ const ALLOW = new Map([
   ["solver.water.grist_buckets_kg.", "grist-bucket diagnostic for future reporting"],
   ["solver.water.total_added_salt_mass_g", "mineral-mass diagnostic for future reporting"],
   ["solver.water.added_mineral_tds_ppm", "TDS diagnostic for future reporting"],
-  ["solver.batch.previews", "pin-preview diagnostics; consumed by the Late Additions panel in P3"],
 ]);
 
 function collectStrings(value, out = new Set()) {

@@ -8,10 +8,6 @@ import { artifactConstant, callArtifactFunction } from "./artifactFunctions.js";
 // Solver extract-point conversion (kg extract per GU·L), matching
 // backend/app/core/batch_solver.py::GAMMA_METRIC.
 export const GAMMA_METRIC = 385.641;
-// Sucrose is 100% extract; the app's relative yield is 1.0.
-export const SUCROSE_YIELD = 1.0;
-// The current AA can sit a hair above the cap after a style-target inverse.
-const CAP_EPS = 1e-3;
 
 // ASBC Table 1 cubic (SG -> degrees Plato).
 export function sgToPlato(sg) {
@@ -81,75 +77,6 @@ export function oeForAbvAtAe(ae, targetAbv) {
 // Advisory sugar vector: hold AE, raise OE until the target AA or ABV is met.
 // Pure; never mutates a recipe. `sucroseKg` is the ingredient mass at
 // `yieldSucrose` (1.0 for sucrose).
-export function sugarAdvisory({
-  oe,
-  ae,
-  yeastCap,
-  volumeL,
-  targetAa,
-  targetAbv,
-  yieldSucrose = SUCROSE_YIELD,
-}) {
-  const currentAa = oe > 0 ? (oe - ae) / oe : null;
-  const currentAbv = cutaiaAbv(oe, ae);
-  const cap = Number.isFinite(yeastCap) ? yeastCap : 1;
-  const base = { oe, ae, volumeL, currentAa, currentAbv, yeastCap: cap };
-
-  if (!(oe > 0) || !(ae >= 0) || ae >= oe) {
-    return { ok: false, reason: "invalid_state", ...base };
-  }
-  if (!(volumeL > 0)) {
-    return { ok: false, reason: "no_volume", ...base };
-  }
-  if (!(yieldSucrose > 0)) {
-    return { ok: false, reason: "invalid_yield", ...base };
-  }
-
-  let targetOe;
-  if (targetAa !== undefined && targetAa !== null) {
-    if (!Number.isFinite(targetAa)) return { ok: false, reason: "invalid_target", ...base };
-    if (targetAa < currentAa - 1e-12) {
-      return { ok: false, reason: "below_current_aa", ...base };
-    }
-    if (targetAa >= 1) return { ok: false, reason: "impossible_aa", ...base };
-    if (targetAa > cap + CAP_EPS) {
-      return { ok: false, reason: "above_yeast_cap", ...base };
-    }
-    targetOe = ae / (1 - targetAa);
-  } else if (targetAbv !== undefined && targetAbv !== null) {
-    if (!Number.isFinite(targetAbv)) return { ok: false, reason: "invalid_target", ...base };
-    if (targetAbv < currentAbv - 1e-12) {
-      return { ok: false, reason: "below_current_abv", ...base };
-    }
-    targetOe = oeForAbvAtAe(ae, targetAbv);
-    if (targetOe === null || targetOe < oe - 1e-9) {
-      return { ok: false, reason: "abv_unreachable", ...base };
-    }
-  } else {
-    return { ok: false, reason: "no_target", ...base };
-  }
-
-  const deltaOe = Math.max(0, targetOe - oe);
-  const targetAaValue = 1 - ae / targetOe;
-  if (targetAaValue > cap + CAP_EPS) {
-    return { ok: false, reason: "above_yeast_cap", ...base };
-  }
-  const dose =
-    deltaOe === 0
-      ? 0
-      : (extractMassKg(targetOe, volumeL) - extractMassKg(oe, volumeL)) / yieldSucrose;
-
-  return {
-    ok: true,
-    ...base,
-    targetOe,
-    deltaOe,
-    targetAa: targetAaValue,
-    targetAbv: cutaiaAbv(targetOe, ae),
-    sucroseKg: Math.max(0, dose),
-  };
-}
-
 // ABV along a fixed-OE (vertical) edge is monotone decreasing in AE; bisect.
 function verticalCrossing(oe, aeMin, aeMax, targetAbv) {  const f = (ae) => cutaiaAbv(oe, ae) - targetAbv;
   let lo = aeMin;

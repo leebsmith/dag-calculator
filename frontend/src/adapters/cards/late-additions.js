@@ -13,6 +13,7 @@ import {
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { reportError } from "../../observability.js";
 import {
+  formatGravity,
   formatPercent,
   formatPercentRounded,
   formatValueWithUnit,
@@ -52,6 +53,30 @@ function numberAt(engine, path, fallback = 0) {
 
 function rounded(value) {
   return Math.round((Number(value) || 0) * 1e6) / 1e6;
+}
+
+const SCALE_PINS = [
+  { value: "abv", label: "ABV" },
+  { value: "og", label: "OG" },
+  { value: "fg", label: "FG" },
+];
+
+function envelopeState(value, min, max) {
+  if (
+    typeof value !== "number" ||
+    !Number.isFinite(value) ||
+    typeof min !== "number" ||
+    typeof max !== "number"
+  ) {
+    return "na";
+  }
+  return value >= min && value <= max ? "in" : "out";
+}
+
+function envelopeClass(state) {
+  if (state === "out") return "text-danger";
+  if (state === "in") return "status-badge-success";
+  return "";
 }
 
 // The current dose's effect at the solved pin. Every operand comes from the
@@ -94,9 +119,42 @@ export function registerLateAdditionsCard(app, ctx) {
   Object.assign(app, {
     // Rows for the read-only summary card (refreshed by refreshLateAdditionsCard).
     sugarList: [],
+    latePinPanelOpen: false,
+    latePinPanelSeen: false,
 
     sugarField(id) {
       return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
+    },
+
+    setScalePin(value) {
+      if (!SCALE_PINS.some((pin) => pin.value === value)) return;
+      if (value === this.scalePin) return;
+      this.setRoot(N.scalePin, value);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    setScaleTarget(value) {
+      const pin = this.scalePin;
+      if (pin === "abv" && typeof this.setStyleTargetAbv === "function") {
+        this.setStyleTargetAbv(value);
+        return;
+      }
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric) || numeric <= 0) return;
+      this.setRoot(this.activeScaleTargetRoot, numeric);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    resetScaleTarget() {
+      this.unsetRoot(this.activeScaleTargetRoot);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    toggleLatePinPanel() {
+      this.latePinPanelOpen = !this.latePinPanelOpen;
     },
 
     // Dose → share: seed the authored share and the row weights from the
@@ -171,6 +229,139 @@ export function registerLateAdditionsCard(app, ctx) {
       configurable: true,
       get() {
         return this.fieldsById[N.share] ?? null;
+      },
+    },
+    scalePin: {
+      configurable: true,
+      get() {
+        return ctx.engine.get(N.scalePin) ?? "abv";
+      },
+    },
+    scalePinOptions: {
+      configurable: true,
+      get() {
+        return SCALE_PINS;
+      },
+    },
+    activeScaleTargetRoot: {
+      configurable: true,
+      get() {
+        if (this.scalePin === "og") return N.targetOg;
+        if (this.scalePin === "fg") return N.targetFg;
+        return N.targetAbv;
+      },
+    },
+    activeScaleTargetLabel: {
+      configurable: true,
+      get() {
+        if (this.scalePin === "og") return "Target OG";
+        if (this.scalePin === "fg") return "Target FG";
+        return "Target ABV";
+      },
+    },
+    activeScaleTarget: {
+      configurable: true,
+      get() {
+        const value = ctx.engine.get(this.activeScaleTargetRoot);
+        return typeof value === "number" && Number.isFinite(value) ? value : null;
+      },
+    },
+    activeScaleTargetDisplay: {
+      configurable: true,
+      get() {
+        const value = this.activeScaleTarget;
+        if (value == null) return "";
+        return this.scalePin === "abv"
+          ? formatWithDecimals(value, 1)
+          : formatGravity(value);
+      },
+    },
+    activeScaleTargetUnit: {
+      configurable: true,
+      get() {
+        return this.scalePin === "abv" ? "%" : "SG";
+      },
+    },
+    activeScaleTargetStep: {
+      configurable: true,
+      get() {
+        return this.scalePin === "abv" ? "0.1" : "0.001";
+      },
+    },
+    scalePreviews: {
+      configurable: true,
+      get() {
+        try {
+          const rows = ctx.engine.resolve(N.preview);
+          return Array.isArray(rows) ? rows : [];
+        } catch (err) {
+          reportError("lateAdditions.scalePreviews", err);
+          return [];
+        }
+      },
+    },
+    scalePreviewRows: {
+      configurable: true,
+      get() {
+        const style = ctx.engine.identity?.style ?? {};
+        const active = this.scalePin;
+        return this.scalePreviews.map((row) => {
+          const label =
+            SCALE_PINS.find((pin) => pin.value === row.pin)?.label ?? row.pin;
+          const ogState = row.ok
+            ? envelopeState(row.og, style.og_min, style.og_max)
+            : "out";
+          const fgState = row.ok
+            ? envelopeState(row.fg, style.fg_min, style.fg_max)
+            : "out";
+          const abvState = row.ok
+            ? envelopeState(row.abv, style.abv_min, style.abv_max)
+            : "out";
+          return {
+            pin: row.pin,
+            pinLabel: label,
+            active: row.pin === active,
+            ok: row.ok === true,
+            statusLabel: row.ok ? "" : row.reason || "unreachable",
+            ogDisplay: row.ok ? formatGravity(row.og) : "—",
+            fgDisplay: row.ok ? formatGravity(row.fg) : "—",
+            abvDisplay: row.ok ? formatWithDecimals(row.abv, 1) : "—",
+            ogClass: envelopeClass(ogState),
+            fgClass: envelopeClass(fgState),
+            abvClass: envelopeClass(abvState),
+          };
+        });
+      },
+    },
+    previewCompositionCaption: {
+      configurable: true,
+      get() {
+        const intent = ctx.engine.get(N.intent) ?? "dose";
+        if (intent === "share") {
+          const share = Number(ctx.engine.get(N.share)) || 0;
+          return `Previews hold ${formatPercent(share, 1)} of extract`;
+        }
+        const dose = Number(ctx.engine.get(N.dose)) || 0;
+        return `Previews hold ${formatWithDecimals(dose, 2)} kg sugar extract`;
+      },
+    },
+    sugarIsActive: {
+      configurable: true,
+      get() {
+        const rows = ctx.engine.get(N.collection) ?? [];
+        if (!rows.length) return false;
+        const intent = ctx.engine.get(N.intent) ?? "dose";
+        if (intent === "share") {
+          const share = Number(ctx.engine.get(N.share)) || 0;
+          return share > 0 && rows.some((row) => (Number(row.parts) || 0) > 0);
+        }
+        return rows.some((row) => (Number(row.mass_kg) || 0) > 0);
+      },
+    },
+    latePinPanelVisible: {
+      configurable: true,
+      get() {
+        return this.sugarIsActive;
       },
     },
     // The live row allocation at the current solve: `resolved_mass_kg` is a
@@ -306,6 +497,15 @@ export function registerLateAdditionsCard(app, ctx) {
 export function refreshLateAdditionsCard(app, ctx) {
   const rows = ctx.engine.get(N.collection) ?? [];
   app.sugarList = rows;
+  const active = app.sugarIsActive;
+  if (active && !app.latePinPanelSeen) {
+    app.latePinPanelSeen = true;
+    app.latePinPanelOpen = true;
+  }
+  if (!active) {
+    app.latePinPanelSeen = false;
+    app.latePinPanelOpen = false;
+  }
   if (!rows.length) return;
   const share = Number(ctx.engine.get(N.share)) || 0;
   const total = numberAt(ctx.engine, N.effect.extractTotal);
@@ -345,4 +545,23 @@ export const KEYS = [
   "setLateAdditionIntent",
   "adoptLateAdditionDose",
   "adoptLateAdditionShare",
+  "latePinPanelOpen",
+  "latePinPanelSeen",
+  "setScalePin",
+  "setScaleTarget",
+  "resetScaleTarget",
+  "toggleLatePinPanel",
+  "scalePin",
+  "scalePinOptions",
+  "activeScaleTargetRoot",
+  "activeScaleTargetLabel",
+  "activeScaleTarget",
+  "activeScaleTargetDisplay",
+  "activeScaleTargetUnit",
+  "activeScaleTargetStep",
+  "scalePreviews",
+  "scalePreviewRows",
+  "previewCompositionCaption",
+  "sugarIsActive",
+  "latePinPanelVisible",
 ];

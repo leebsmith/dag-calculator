@@ -7,6 +7,11 @@ export const LATE_ADDITION_NODES = {
   color: "grist.sugar_weighted_lovibond",
   extract: "batch.sugar_extract_total",
   dose: "batch.s_late_add",
+  preview: "solver.batch.previews",
+  scalePin: "batch.scale_pin",
+  targetAbv: "batch.target_abv",
+  targetOg: "batch.target_og",
+  targetFg: "batch.target_fg",
   // Sugar-effect operands (read-only; the panel never writes a root).
   effect: {
     extractTotal: "solver.batch.s_post_boil_target",

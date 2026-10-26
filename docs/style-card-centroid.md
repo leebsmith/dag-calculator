@@ -112,9 +112,9 @@ AE = OE · (1 − apparent_attenuation)
   Style step is the only editor. The underlying root is still
   `batch.target_abv`, so the solver contract is unchanged.
 - **Reset** returns to the midpoint of the ray's intersection with the polygon.
-- **Advisory Belgian knob.** The card also shows the sucrose dose needed to
-  raise AA/ABV at fixed AE. It is advisory only and never mutates the recipe
-  (`docs/belgian-knob.md`).
+- **Scale pin.** ABV is the default; OG and FG pins use persisted targets and
+  solve the other two gravity/strength axes. The fixed-AA ray is drawn only in
+  ABV mode. The retired Belgian knob is documented in `docs/belgian-knob.md`.
 
 ## 9. Model-free brew risk
 

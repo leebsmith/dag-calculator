@@ -1996,18 +1996,6 @@ samp {
   opacity: 0.7;
 }
 
-.extract-advised {
-  stroke: var(--sys-color-success-accent);
-  stroke-width: 1.25;
-  stroke-dasharray: 3 2;
-}
-
-.extract-advised-marker {
-  fill: var(--sys-color-success-accent);
-  stroke: var(--sys-surface-default);
-  stroke-width: 1;
-}
-
 .extract-readouts {
   display: flex;
   flex-wrap: wrap;

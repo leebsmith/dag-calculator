@@ -174,7 +174,6 @@ test("the ABV cache keeps the style card off the boundary during an edit", async
 
   assert.deepEqual(app.styleAbvBounds, before);
   assert.ok(app.stylePreview);
-  assert.ok(app.styleBelgian);
   assert.deepEqual(
     Object.keys(errorCounters()).filter((key) => key.includes("No boundary binding registered")),
     []
@@ -215,25 +214,6 @@ test("the batch Target ABV is a read-only readout", async () => {
   assert.equal(field.control, "readout");
   assert.equal(field.editable, false);
   assert.equal(field.target, null);
-});
-
-test("the Belgian advisory is a readout and does not mutate the recipe", async () => {
-  const app = await appWithStyle("21A");
-  app.styleExtract = { oe: 12, ae: 4 };
-
-  const targetBefore = app.master.getRoot("batch.target_abv");
-  const gristBefore = app.engine.get("grist.major_malts");
-
-  app.setBelgianTargetAa(70);
-  const advisory = app.styleBelgian;
-  assert.equal(advisory.ok, true, advisory.reason);
-  assert.ok(advisory.sucroseKg > 0);
-  assert.match(app.styleBelgianMessage, /sucrose/);
-  assert.equal(advisory.ae, 4);
-  assert.ok(advisory.targetOe > 12);
-
-  assert.equal(app.master.getRoot("batch.target_abv"), targetBefore);
-  assert.deepEqual(app.engine.get("grist.major_malts"), gristBefore);
 });
 
 test("IBU/GU uses the planned target and the navigator's OG", async () => {

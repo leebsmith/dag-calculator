@@ -165,7 +165,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 | Residual seed-derived copy-in (only values the AST cannot express) | host | `frontend/src/views/seedDerivations.js` |
 | Fermentation geometry (styles' OE/AE feasible regions) | host geometry; ASBC/Cutaia primitives call artifact functions | `frontend/src/engine/fermentation.js`, `engine/artifactFunctions.js` |
 | Mash ordering, schedule validation, and preset application | host | `frontend/src/views/mash.js`, `adapters/cards/mash.js` |
-| Belgian-knob advisory (AA/ABV sugar dose) | host | `frontend/src/adapters/cards/style.js`, `docs/belgian-knob.md` |
+| Scale-pin targets/previews (ABV/OG/FG) | host | `frontend/src/adapters/cards/{style,late-additions}.js`, `docs/attenuation-model.md` §6.1 |
 | Water readout deltas and ratio formatting | host | `frontend/src/adapters/cards/water.js`, `views/waterRatio.js` |
 | Presentation overrides (polymorphic labels, hints, clamp envelopes) | host | `frontend/src/views/registry/presentation.js` |
 | Card node-id references | host registry | `frontend/src/views/registry/*.js` |

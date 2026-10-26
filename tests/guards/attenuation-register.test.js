@@ -22,8 +22,8 @@ const ROWS = SECTION.split("\n")
     return { id: cells[0], treatment: cells[2], enforcement: cells[3] };
   });
 
-test("the register covers A1–A17", () => {
-  const expected = Array.from({ length: 17 }, (_, index) => `A${index + 1}`);
+test("the register covers A1–A18", () => {
+  const expected = Array.from({ length: 18 }, (_, index) => `A${index + 1}`);
   assert.deepEqual(ROWS.map((row) => row.id), expected);
 });
 

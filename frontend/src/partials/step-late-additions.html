@@ -62,6 +62,97 @@
       </div>
     </template>
 
+    <template x-if="latePinPanelVisible">
+      <div class="synthesized-card">
+        <div class="synthesized-header">
+          <h3 class="synthesized-title">Pin preview</h3>
+          <button
+            type="button"
+            class="btn-outline text-xs"
+            @click="toggleLatePinPanel()"
+            x-text="latePinPanelOpen ? 'Hide' : 'Show'"
+          ></button>
+        </div>
+        <div x-show="latePinPanelOpen">
+          <p class="form-hint" x-text="previewCompositionCaption"></p>
+
+          <div class="filter-pills-container">
+            <template x-for="opt in scalePinOptions" :key="opt.value">
+              <label class="filter-pill" :class="{ 'is-active': scalePin === opt.value }" :aria-pressed="(scalePin === opt.value) ? 'true' : 'false'">
+                <input
+                  type="radio"
+                  name="scale-pin"
+                  :value="opt.value"
+                  :checked="scalePin === opt.value"
+                  @change="setScalePin(opt.value)"
+                />
+                <span x-text="opt.label"></span>
+              </label>
+            </template>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="scale-target" x-text="activeScaleTargetLabel"></label>
+            <div class="table-action-cell">
+              <input
+                id="scale-target"
+                type="number"
+                class="form-input"
+                :step="activeScaleTargetStep"
+                :value="activeScaleTargetDisplay"
+                @change="setScaleTarget($event.target.value)"
+              />
+              <span class="text-xs text-muted" x-text="activeScaleTargetUnit"></span>
+              <button type="button" class="btn-outline text-xs" @click="resetScaleTarget()">
+                Reset to style
+              </button>
+            </div>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Pin</th>
+                  <th class="text-right">OG</th>
+                  <th class="text-right">FG</th>
+                  <th class="text-right">ABV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="row in scalePreviewRows" :key="row.pin">
+                  <tr :class="{ 'font-bold': row.active }">
+                    <td>
+                      <span x-text="row.pinLabel"></span>
+                      <span class="text-xs text-danger" x-show="!row.ok" x-text="row.statusLabel"></span>
+                    </td>
+                    <td class="text-right tabular-nums">
+                      <span :class="row.ogClass" x-text="row.ogDisplay"></span>
+                    </td>
+                    <td class="text-right tabular-nums">
+                      <span :class="row.fgClass" x-text="row.fgDisplay"></span>
+                    </td>
+                    <td class="text-right tabular-nums">
+                      <span :class="row.abvClass" x-text="row.abvDisplay"></span>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="scalePreviewRows.length === 0">
+                  <tr>
+                    <td colspan="4" class="table-empty-cell">Solve the batch to preview the three pins.</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <p class="form-hint">
+            The active row is the batch; the others are hypothetical solves at their own
+            targets. Style conflicts are warnings, never freeze gates.
+          </p>
+        </div>
+      </div>
+    </template>
+
     <template x-if="lateSugarField">
       <div class="data-table-container">
         <table class="data-table">

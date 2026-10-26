@@ -36,33 +36,53 @@
         <div class="synthesized-card">
           <div class="synthesized-header">
             <h3 class="synthesized-title">Fermentation target</h3>
-            <button type="button" class="btn btn-secondary text-xs" @click="resetStyleTarget()">
-              Reset to midpoint
+            <button type="button" class="btn btn-secondary text-xs" @click="resetScaleTarget()">
+              Reset to style
             </button>
           </div>
           <div class="form-group">
-            <label class="form-label" for="style-target-abv">Target ABV (%)</label>
-            <input
-              id="style-target-abv"
-              type="number"
-              step="0.1"
-              class="form-input"
-              :min="fmt.formatWithDecimals(styleAbvBounds?.[0], 3, { dash: '0' })"
-              :max="fmt.formatWithDecimals(styleAbvBounds?.[1], 3, { dash: '100' })"
-              :value="fmt.formatWithDecimals(styleAbvTarget, 1)"
-              :disabled="!styleAbvBounds"
-              @change="setStyleTargetAbv($event.target)"
-            />
-            <span class="form-hint" x-show="styleAbvBounds">
-              Clamped to the fixed-AA ray inside the style's feasible region.
-            </span>
-            <span class="form-hint" x-show="!styleAbvBounds && !styleBelgian">
-              Select a yeast to set the target ABV.
-            </span>
-            <span class="form-hint" x-show="!styleAbvBounds && styleBelgian">
-              The fixed-AA ray misses the style region; adjust the grist or yeast.
-            </span>
+            <label class="form-label" for="style-scale-pin">Scale pin</label>
+            <select
+              id="style-scale-pin"
+              class="form-select"
+              :value="scalePin"
+              @change="setScalePin($event.target.value)"
+            >
+              <template x-for="opt in scalePinOptions" :key="opt.value">
+                <option :value="opt.value" :selected="opt.value === scalePin" x-text="opt.label"></option>
+              </template>
+            </select>
+            <span class="form-hint" x-text="activeScaleTargetLabel + ': ' + activeScaleTargetDisplay + ' ' + activeScaleTargetUnit"></span>
           </div>
+          <template x-if="scalePin === 'abv'">
+            <div class="form-group">
+              <label class="form-label" for="style-target-abv">Target ABV (%)</label>
+              <input
+                id="style-target-abv"
+                type="number"
+                step="0.1"
+                class="form-input"
+                :min="fmt.formatWithDecimals(styleAbvBounds?.[0], 3, { dash: '0' })"
+                :max="fmt.formatWithDecimals(styleAbvBounds?.[1], 3, { dash: '100' })"
+                :value="fmt.formatWithDecimals(styleAbvTarget, 1)"
+                :disabled="!styleAbvBounds"
+                @change="setStyleTargetAbv($event.target)"
+              />
+              <span class="form-hint" x-show="styleAbvBounds">
+                Clamped to the fixed-AA ray inside the style's feasible region.
+              </span>
+              <span class="form-hint" x-show="!styleAbvBounds">
+                Select a yeast to set the target ABV.
+              </span>
+            </div>
+          </template>
+          <template x-if="scalePin !== 'abv'">
+            <div class="form-group">
+              <span class="form-label" x-text="activeScaleTargetLabel"></span>
+              <span class="field-value" x-text="activeScaleTargetDisplay + ' ' + activeScaleTargetUnit"></span>
+              <span class="form-hint">Edit this target in Late Additions. Style conflicts are warnings.</span>
+            </div>
+          </template>
           <div class="extract-picker">
             <svg
               class="extract-preview"
@@ -78,26 +98,11 @@
                 :x2="stylePreview.ray?.x2 ?? 0"
                 :y2="stylePreview.ray?.y2 ?? 0"
               />
-              <line
-                x-show="stylePreview.advised"
-                class="extract-advised"
-                :x1="stylePreview.marker.x"
-                :y1="stylePreview.marker.y"
-                :x2="stylePreview.advised?.x ?? 0"
-                :y2="stylePreview.advised?.y ?? 0"
-              />
               <circle class="extract-safest" :cx="stylePreview.safest.x" :cy="stylePreview.safest.y" r="3" />
               <circle class="extract-marker" :cx="stylePreview.marker.x" :cy="stylePreview.marker.y" r="2.5" />
-              <circle
-                x-show="stylePreview.advised"
-                class="extract-advised-marker"
-                :cx="stylePreview.advised?.x ?? 0"
-                :cy="stylePreview.advised?.y ?? 0"
-                r="2.5"
-              />
             </svg>
           </div>
-          <span class="form-hint">OE and AE follow the fixed-AA ray; they are readouts, not independent controls.</span>
+          <span class="form-hint">OE and AE are solved readouts; the ray is shown only when ABV is the pin.</span>
           <div class="extract-readouts">
             <div class="extract-readout">
               <span class="form-label">OG (SG)</span>
@@ -128,43 +133,6 @@
             </div>
           </div>
 
-          <div class="synthesized-header" style="margin-top: 0.75rem">
-            <h4 class="synthesized-title">Belgian knob (advisory)</h4>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="belgian-target-aa">Target attenuation</label>
-            <input
-              id="belgian-target-aa"
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              class="form-input"
-              :value="fmt.formatWithDecimals((styleBelgian?.targetAa ?? styleBelgian?.currentAa ?? 0) * 100, 1)"
-              @change="setBelgianTargetAa($event.target.value)"
-            />
-          </div>
-          <template x-if="styleBelgian?.ok">
-            <div>
-              <p class="form-hint" x-text="styleBelgianMessage"></p>
-              <p class="text-xs text-muted" x-show="styleBelgian.sucroseKg > 0">
-                OE <span x-text="fmt.formatWithDecimals(styleBelgian.oe, 1)"></span> →
-                <span x-text="fmt.formatWithDecimals(styleBelgian.targetOe, 1)"></span> °P;
-                AE <span x-text="fmt.formatWithDecimals(styleBelgian.ae, 1)"></span> °P;
-                AA <span x-text="fmt.formatPercent(styleBelgian.currentAa)"></span> →
-                <span x-text="fmt.formatPercent(styleBelgian.targetAa)"></span>;
-                ABV <span x-text="fmt.formatPercentValue(styleBelgian.currentAbv)"></span> →
-                <span x-text="fmt.formatPercentValue(styleBelgian.targetAbv)"></span>
-              </p>
-            </div>
-          </template>
-          <template x-if="styleBelgian && !styleBelgian.ok">
-            <p class="form-hint" x-text="styleBelgianMessage"></p>
-          </template>
-          <p class="form-hint" x-show="styleExtract && !styleBelgian">
-            Select a yeast to compute the advisory.
-          </p>
-          <p class="form-hint">Advisory only; it does not change the recipe.</p>
         </div>
       </template>
 

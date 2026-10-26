@@ -13,7 +13,7 @@ import {
   cutaiaAbv,
   limitHeadroom,
   raySegment,
-  sugarAdvisory,
+  sgToPlato,
 } from "../../engine/fermentation.js";
 import { styleConformance } from "../../engine/styleConformance.js";
 import { STYLE_NODES as N } from "../../views/registry/style.js";
@@ -79,7 +79,6 @@ export function registerStyleCard(app, ctx) {
     styleSolvedAa: null,
     styleSolvedCap: null,
     styleSolvedVolume: null,
-    belgianTargetAa: null,
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
     targetSrm: 0,
@@ -120,6 +119,23 @@ export function registerStyleCard(app, ctx) {
       this.styleSafestPoint = this.styleRegion.length >= 3 ? chebyshevCenter(this.styleRegion) : null;
       this.styleExtract = null;
       if (this.styleRegion.length < 3) return;
+      // The solved batch is the graph marker for the OG/FG pins. The ABV pin
+      // keeps the target inverse so the navigator stays honest before a solve.
+      if (this.scalePin !== "abv") {
+        const solvedOg = engine.resolve(N.realized.og);
+        const solvedAa = engine.resolve(N.apparentAttenuation);
+        if (
+          typeof solvedOg === "number" &&
+          Number.isFinite(solvedOg) &&
+          solvedOg > 1.0 &&
+          typeof solvedAa === "number" &&
+          Number.isFinite(solvedAa)
+        ) {
+          const oe = sgToPlato(solvedOg);
+          this.styleExtract = { oe, ae: oe * (1 - solvedAa) };
+          return;
+        }
+      }
       const aa = this.styleSolvedAa;
       const abv = engine.get(N.targetAbv);
       const inverse =
@@ -186,6 +202,7 @@ export function registerStyleCard(app, ctx) {
     // center it on the feasible ray interval. After that, only clamp when the
     // ray changes underneath a user-owned value.
     centerOrClampStyleAbv() {
+      if (this.scalePin !== "abv") return false;
       const bounds = this.styleAbvBounds;
       if (!bounds) return false;
       const current = engine.get(N.targetAbv);
@@ -216,13 +233,6 @@ export function registerStyleCard(app, ctx) {
       this.styleSolvedAa = null;
       this.styleSolvedCap = null;
       this.styleSolvedVolume = null;
-      this.belgianTargetAa = null;
-    },
-
-    setBelgianTargetAa(value) {
-      const n = Number(value);
-      this.belgianTargetAa = Number.isFinite(n) ? n / 100 : null;
-      this.notify();
     },
 
     resetStyleTarget() {
@@ -343,55 +353,6 @@ export function registerStyleCard(app, ctx) {
         return targetFromExtract(this.styleExtract.oe, this.styleExtract.ae);
       },
     },
-    // Advisory-only Belgian knob: hold AE, raise OE with sucrose. Never mutates
-    // the recipe or the solver state.
-    styleBelgian: {
-      configurable: true,
-      get() {
-        if (!this.styleExtract) return null;
-        const currentAa =
-          this.styleExtract.oe > 0
-            ? (this.styleExtract.oe - this.styleExtract.ae) / this.styleExtract.oe
-            : null;
-        const targetAa = Number.isFinite(this.belgianTargetAa)
-          ? this.belgianTargetAa
-          : currentAa;
-        const cap = this.styleSolvedCap;
-        if (!Number.isFinite(cap)) return null;
-        const volume = this.styleSolvedVolume;
-        if (!Number.isFinite(volume)) return null;
-        return sugarAdvisory({
-          oe: this.styleExtract.oe,
-          ae: this.styleExtract.ae,
-          yeastCap: cap,
-          volumeL: volume,
-          targetAa,
-        });
-      },
-    },
-    styleBelgianMessage: {
-      configurable: true,
-      get() {
-        const a = this.styleBelgian;
-        if (!a) return "";
-        if (!a.ok) {
-          return {
-            invalid_state: "Enter a valid OE/AE point first.",
-            no_volume: "The batch volume is unresolved.",
-            invalid_yield: "Sucrose yield must be positive.",
-            invalid_target: "Enter a target attenuation.",
-            below_current_aa: "Sugar cannot lower attenuation; pick a higher target.",
-            impossible_aa: "100% attenuation is not physically reachable.",
-            above_yeast_cap: "That exceeds the yeast's attenuation cap.",
-            below_current_abv: "Sugar cannot lower ABV at fixed AE.",
-            abv_unreachable: "That ABV is unreachable at the current apparent extract.",
-            no_target: "Enter a target.",
-          }[a.reason] ?? "Infeasible target.";
-        }
-        if (a.sucroseKg < 1e-9) return "No sucrose needed at this target.";
-        return `Add ${formatWithDecimals(a.sucroseKg, 3, { dash: "—" })} kg sucrose`;
-      },
-    },
     styleTargetRisk: {
       configurable: true,
       get() {
@@ -434,8 +395,10 @@ export function registerStyleCard(app, ctx) {
         const sx = (x) => xOffset + (x - xMin) * scale;
         const sy = (y) => height - yOffset - (y - yMin) * scale;
         const aa = this.styleSolvedAa;
-        const ray = Number.isFinite(aa) ? raySegment(region, aa) : null;
-        const belgian = this.styleBelgian;
+        const ray =
+          this.scalePin === "abv" && Number.isFinite(aa)
+            ? raySegment(region, aa)
+            : null;
         return {
           width,
           height,
@@ -453,10 +416,6 @@ export function registerStyleCard(app, ctx) {
                 y2: sy(ray.aeMax).toFixed(1),
               }
             : null,
-          advised:
-            belgian?.ok && belgian.deltaOe > 1e-9
-              ? { x: sx(belgian.targetOe).toFixed(1), y: sy(this.styleExtract.ae).toFixed(1) }
-              : null,
         };
       },
     },
@@ -607,4 +566,4 @@ export function refreshStyleCard(app, ctx) {
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "belgianTargetAa", "setBelgianTargetAa", "styleBelgian", "styleBelgianMessage", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

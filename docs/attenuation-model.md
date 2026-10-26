@@ -47,10 +47,11 @@ inversion solves the Cutaia real-extract regression for `AE`; when the residue
 is small enough (a diastaticus fermentation) `AE < 0` is the only solution, so
 `plato_to_sg` evaluates the ASBC polynomial on a small negative domain.
 
-The ABV-first inversion is unchanged in shape: root-find `OE` over 0–40 °P so
-`ABV(target)` holds, evaluating the composition block at every candidate (the
-extract target — and therefore the malt/sugar share and the cap conversion —
-moves with `OE`). `AE := OE(1 − AA)` no longer appears in the batch pipeline.
+The ABV-first inversion is the default pin. The same composition block also
+supports an OG pin (the target fixes `OE`; the grist absorbs the remainder) and
+an FG pin (root-find `OE` so the composition's apparent extract matches the
+target). In every case the active target is the only scale constraint, and the
+other two gravity/strength values are solved.
 
 ## 2. The four regimes
 
@@ -182,6 +183,26 @@ composition block with a different source for `S`.
 - The frozen bundle records the mode, the share, the parts, and the resolved
   masses. A frozen batch never re-solves.
 
+### 6.1 Scale pins
+
+Three recipe pins are supported:
+
+| Pin | Fixed | Solved | Sugar-share increase |
+|---|---|---|---|
+| ABV | target ABV | OG, FG | OG ↓, FG ↓, ABV = |
+| OG | target OG | ABV, FG | OG =, FG ↓, ABV ↑ |
+| FG | target FG | OG, ABV | OG ↑, FG =, ABV ↑ |
+
+The targets live on batch roots (`target_abv`, `target_og`, `target_fg`) and
+default from the immutable style midpoints. The active pin is
+`batch.scale_pin`; dose/share stays a separate composition axis. One preview
+call returns the three rows at their persisted targets; previews hold the
+authored composition and never drive the active solve. Style envelope conflicts
+are warnings (A18).
+
+The Belgian knob is retired; the general ABV+FG composition-solving mode is
+deferred.
+
 ## 7. Assumption register
 
 A1–A17 are the final register for the attenuation refactor. A row is executable
@@ -207,6 +228,7 @@ that every enforcement path exists and that the row set stays complete.
 | A15 | Cutaia inverse vs mass-derived RE | residual asserted | `tests/backend/conformance/test_numeric_parity.py` |
 | A16 | sugar share allocates extract by Hamilton parts | 0.1 % split, masses derived | `tests/frontend/late-addition-intent.test.js` |
 | A17 | mixed sugar blends use one effective RDF | `F_eff`, extract-weighted; share is total extract | `tests/guards/sugar-fermentability-contract.test.js`, `tests/backend/conformance/test_composition_regimes.py` |
+| A18 | scale previews are hypothetical; style conflicts are warnings | active pin is the batch; one call, three rows | `tests/frontend/pin-matrix.test.js`, `tests/backend/conformance/test_scale_pins.py` |
 
 ## 8. References
 

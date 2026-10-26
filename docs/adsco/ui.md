@@ -175,6 +175,35 @@ dose and the parts from each row's extract; afterward both authored states
 round-trip. "Adopt current dose" and "Adopt share into masses" are explicit
 re-sync actions, not implicit rewrites.
 
+### Scale pin and preview matrix
+
+The Late Additions card carries a collapsible **Pin preview** when sugar is
+authored. It shows one row per scale pin — ABV, OG, FG — with the realized OG,
+FG and ABV at that pin's persisted target:
+
+| Pin | OG | FG | ABV |
+| --- | --- | --- | --- |
+| ABV | solved | solved | target |
+| OG | target | solved | solved |
+| FG | solved | target | solved |
+
+The active row is the batch; the other two are hypothetical previews. Cells are
+green inside the style envelope, red outside, and neutral without an envelope.
+One backend preview call returns all three rows; it skips grist and cascade.
+Previews are read-only; selecting a radio makes that pin active, and the active
+target is edited in the panel. The composition representation is held fixed and
+named above the table (`Previews hold 0.5 kg sugar extract` / `Previews hold 10 %
+of extract`).
+
+The panel expands when sugar is first authored and collapses when no sugar
+contributes. The Late Additions card and its “Configure Sugars” button remain.
+The Style card mirrors the active pin and target, owns the style reset, and
+keeps the pin control reachable when the preview is collapsed.
+
+Style conflicts are warnings, never freeze gates. The retired Belgian knob was
+the special-case ABV-at-fixed-AE sugar advisory; the general ABV+FG
+composition-solving mode is deferred.
+
 ### Sugar effect (late additions)
 
 The Late Additions summary shows what the current sugar is doing **at the ABV

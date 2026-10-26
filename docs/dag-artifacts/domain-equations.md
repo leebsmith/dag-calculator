@@ -145,7 +145,11 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 
 | Field | Dimension | Meaning |
 |---|---|---|
-| `target_abv` | percentage | desired ABV (%) |
+| `target_abv` | percentage | target ABV (%) when `scale_pin = abv`; preview target otherwise |
+| `scale_pin` | taxonomy | `abv` \| `og` \| `fg` — the active gravity/strength constraint |
+| `target_og` | gravity | target OG (SG) for the OG pin and the OG preview |
+| `target_fg` | gravity | target FG (SG) for the FG pin and the FG preview |
+| `sugar_fermentability` | percentage (fraction) | extract-weighted real RDF of the late-addition blend |
 | `malt_attenuation_cap` | percentage (fraction) | yeast apparent-attenuation cap (strain × batch derate), (0, 1]; converted to real per candidate `OE` and applied to malt only |
 | `v_ferm` | volume | target cold fermenter volume (L) |
 | `topology` | taxonomy | `r_l_to_g` \| `runoff_ratio` |
@@ -174,6 +178,7 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `apparent_attenuation` | percentage — solved apparent attenuation; may exceed 1 |
 | `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
+| `previews` | collection of `{ pin, og, fg, abv, ok, reason }` — hypothetical solves at the three persisted targets |
 
 ### 2.3 Domain / error surface
 
@@ -182,7 +187,9 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 `INVALID_YIELD` · `DEGENERATE_BRACKET` · `BRACKET_NO_SIGN_CHANGE` ·
 `UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL` ·
 `KETTLE_TOO_SMALL` · `MASH_TUN_TOO_SMALL` · `INVALID_GRAIN_BILL_NORMALIZATION` ·
-`INVALID_SUGAR_SHARE`.
+`INVALID_SUGAR_SHARE` · `INVALID_SUGAR_FERMENTABILITY` · `INVALID_SCALE_PIN` ·
+`INVALID_TARGET_OG` · `INVALID_TARGET_FG` · `FG_UNREACHABLE` ·
+`FG_BELOW_ZERO_WITHOUT_STA1`.
 
 ### 2.4 Derivation — two-stage batch lauter
 

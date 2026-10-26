@@ -245,8 +245,9 @@ constant or numeric-parity test on the untouched side.
 
 Not every rule belongs in the artifact. Hamilton normalization, style
 conformance, seed-derived copy-in, fermentation geometry, mash ordering and
-validation, the Belgian-knob advisory, and presentation overrides are host-side
-by design. Hop bitterness math is a sealed backend boundary (`solver.hops`); its
+validation, and presentation overrides are host-side
+by design. The retired Belgian-knob advisory is no longer part of the card; the
+scale-pin targets and previews are the replacement. Hop bitterness math is a sealed backend boundary (`solver.hops`); its
 JS copies are the offline stub only. `docs/adding-a-node.md` §"Artifact-owned vs host-side rules" lists the
 owner and location of each; `tests/guards/presentation-ids.test.js` keeps card
 modules and the producer free of literal node ids.
@@ -275,13 +276,14 @@ Conversion efficiency remains a separate gravity correction, not an attenuation
 correction. See `docs/attenuation-model.md` and
 `docs/fermentability-and-yield.md`.
 
-The Style step's **Target ABV** input is the primary fermentation control. It
-moves along the fixed-AA ray `AE = OE · (1 − apparent_attenuation)` and is clamped to the
-ray ∩ style-region interval; OE/AE are readouts. A new batch starts at the
-style's ABV-band midpoint and re-centers on the first yeast selection. The Batch
-step's Target ABV field is a read-only display of the same root. The advisory
-Belgian knob holds AE and adds sucrose (OE rises) without mutating the recipe;
-see `docs/belgian-knob.md` and `docs/style-card-centroid.md`.
+The Style step's **Target ABV** input is the primary fermentation control when
+ABV is the active scale pin. It moves along the fixed-AA ray
+`AE = OE · (1 − apparent_attenuation)` and is clamped to the ray ∩ style-region
+interval; OE/AE are readouts. A new batch starts at the style's ABV-band midpoint
+and re-centers on the first yeast selection. The Batch step's Target ABV field is
+a read-only display of the same root. OG and FG pins use their own persisted
+targets and show the solved batch point; the fixed-AA ray is drawn only in ABV
+mode. The Belgian knob is retired (see `docs/belgian-knob.md`).
 
 Water source ions are **read-only selection readouts** (the boundary reads them
 straight from `water.source_report`). Water target ions and the calcium floor are

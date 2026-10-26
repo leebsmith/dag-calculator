@@ -94,6 +94,9 @@ residue only.
 Cutaia real-extract regression, and may be ≤ 0. `F_i` appears exactly once, in
 the residue term; it is never applied again at the AE step.
 
+The scale pin (`batch.scale_pin`) chooses which of ABV, OG, or FG is fixed; the
+other two are solved. See `docs/attenuation-model.md` §6.1.
+
 ## Mixed worts
 
 Malt extract and sugar extract are composed by extract mass. Sugar contributes
