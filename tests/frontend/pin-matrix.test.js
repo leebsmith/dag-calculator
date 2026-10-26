@@ -68,6 +68,21 @@ test("the active target edits and resets to the identity default", async () => {
   assert.equal(app.engine.get("batch.target_og"), 1.05);
 });
 
+test("switching the pin updates the label and target without waiting for a solve", async () => {
+  const app = await appWithSugar();
+
+  app.setScalePin("fg");
+  assert.equal(app.scalePin, "fg");
+  assert.equal(app.activeScaleTargetLabel, "Target FG");
+  assert.equal(app.activeScaleTargetDisplay, "1.012");
+
+  app.setScalePin("abv");
+  assert.equal(app.scalePin, "abv");
+  assert.equal(app.activeScaleTargetLabel, "Target ABV");
+  assert.equal(app.activeScaleTargetDisplay, "5.5");
+  assert.equal(app.scalePreviewRows.find((row) => row.active).pin, "abv");
+});
+
 test("the ABV target is a free pin, not a fixed-AA clamp", async () => {
   const app = await appWithSugar();
   app.setScalePin("abv");

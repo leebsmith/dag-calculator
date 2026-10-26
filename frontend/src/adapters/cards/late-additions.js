@@ -121,6 +121,9 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarList: [],
     latePinPanelOpen: false,
     latePinPanelSeen: false,
+    latePinPanelVisible: false,
+    scalePreviewRows: [],
+    previewCompositionCaption: "",
 
     sugarField(id) {
       return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
@@ -129,6 +132,54 @@ export function registerLateAdditionsCard(app, ctx) {
     toggleLatePinPanel() {
       this.latePinPanelOpen = !this.latePinPanelOpen;
     },
+
+    syncScalePreviewState() {
+      let rows = [];
+      try {
+        const raw = ctx.engine.resolve(N.preview);
+        rows = Array.isArray(raw) ? raw : [];
+      } catch (err) {
+        reportError("lateAdditions.scalePreviews", err);
+      }
+      const style = ctx.engine.identity?.style ?? {};
+      const active = this.scalePin;
+      this.scalePreviewRows = rows.map((row) => {
+        const label =
+          SCALE_PINS.find((pin) => pin.value === row.pin)?.label ?? row.pin;
+        const ogState = row.ok
+          ? envelopeState(row.og, style.og_min, style.og_max)
+          : "out";
+        const fgState = row.ok
+          ? envelopeState(row.fg, style.fg_min, style.fg_max)
+          : "out";
+        const abvState = row.ok
+          ? envelopeState(row.abv, style.abv_min, style.abv_max)
+          : "out";
+        return {
+          pin: row.pin,
+          pinLabel: label,
+          active: row.pin === active,
+          ok: row.ok === true,
+          statusLabel: row.ok ? "" : row.reason || "unreachable",
+          ogDisplay: row.ok ? formatGravity(row.og) : "—",
+          fgDisplay: row.ok ? formatGravity(row.fg) : "—",
+          abvDisplay: row.ok ? formatWithDecimals(row.abv, 1) : "—",
+          ogClass: envelopeClass(ogState),
+          fgClass: envelopeClass(fgState),
+          abvClass: envelopeClass(abvState),
+        };
+      });
+
+      const intent = ctx.engine.get(N.intent) ?? "dose";
+      if (intent === "share") {
+        const share = Number(ctx.engine.get(N.share)) || 0;
+        this.previewCompositionCaption = `Previews hold ${formatPercent(share, 1)} of extract`;
+      } else {
+        const dose = Number(ctx.engine.get(N.dose)) || 0;
+        this.previewCompositionCaption = `Previews hold ${formatWithDecimals(dose, 2)} kg sugar extract`;
+      }
+    },
+
 
     // Dose → share: seed the authored share and the row weights from the
     // current dose, but only on the first switch (an authored share or parts
@@ -204,63 +255,6 @@ export function registerLateAdditionsCard(app, ctx) {
         return this.fieldsById[N.share] ?? null;
       },
     },
-    scalePreviews: {
-      configurable: true,
-      get() {
-        try {
-          const rows = ctx.engine.resolve(N.preview);
-          return Array.isArray(rows) ? rows : [];
-        } catch (err) {
-          reportError("lateAdditions.scalePreviews", err);
-          return [];
-        }
-      },
-    },
-    scalePreviewRows: {
-      configurable: true,
-      get() {
-        const style = ctx.engine.identity?.style ?? {};
-        const active = this.scalePin;
-        return this.scalePreviews.map((row) => {
-          const label =
-            SCALE_PINS.find((pin) => pin.value === row.pin)?.label ?? row.pin;
-          const ogState = row.ok
-            ? envelopeState(row.og, style.og_min, style.og_max)
-            : "out";
-          const fgState = row.ok
-            ? envelopeState(row.fg, style.fg_min, style.fg_max)
-            : "out";
-          const abvState = row.ok
-            ? envelopeState(row.abv, style.abv_min, style.abv_max)
-            : "out";
-          return {
-            pin: row.pin,
-            pinLabel: label,
-            active: row.pin === active,
-            ok: row.ok === true,
-            statusLabel: row.ok ? "" : row.reason || "unreachable",
-            ogDisplay: row.ok ? formatGravity(row.og) : "—",
-            fgDisplay: row.ok ? formatGravity(row.fg) : "—",
-            abvDisplay: row.ok ? formatWithDecimals(row.abv, 1) : "—",
-            ogClass: envelopeClass(ogState),
-            fgClass: envelopeClass(fgState),
-            abvClass: envelopeClass(abvState),
-          };
-        });
-      },
-    },
-    previewCompositionCaption: {
-      configurable: true,
-      get() {
-        const intent = ctx.engine.get(N.intent) ?? "dose";
-        if (intent === "share") {
-          const share = Number(ctx.engine.get(N.share)) || 0;
-          return `Previews hold ${formatPercent(share, 1)} of extract`;
-        }
-        const dose = Number(ctx.engine.get(N.dose)) || 0;
-        return `Previews hold ${formatWithDecimals(dose, 2)} kg sugar extract`;
-      },
-    },
     sugarIsActive: {
       configurable: true,
       get() {
@@ -272,12 +266,6 @@ export function registerLateAdditionsCard(app, ctx) {
           return share > 0 && rows.some((row) => (Number(row.parts) || 0) > 0);
         }
         return rows.some((row) => (Number(row.mass_kg) || 0) > 0);
-      },
-    },
-    latePinPanelVisible: {
-      configurable: true,
-      get() {
-        return this.sugarIsActive;
       },
     },
     // The live row allocation at the current solve: `resolved_mass_kg` is a
@@ -413,7 +401,8 @@ export function registerLateAdditionsCard(app, ctx) {
 export function refreshLateAdditionsCard(app, ctx) {
   const rows = ctx.engine.get(N.collection) ?? [];
   app.sugarList = rows;
-  const active = app.sugarIsActive;
+  app.latePinPanelVisible = app.sugarIsActive;
+  const active = app.latePinPanelVisible;
   if (active && !app.latePinPanelSeen) {
     app.latePinPanelSeen = true;
     app.latePinPanelOpen = true;
@@ -422,6 +411,7 @@ export function refreshLateAdditionsCard(app, ctx) {
     app.latePinPanelSeen = false;
     app.latePinPanelOpen = false;
   }
+  app.syncScalePreviewState();
   if (!rows.length) return;
   const share = Number(ctx.engine.get(N.share)) || 0;
   const total = numberAt(ctx.engine, N.effect.extractTotal);
@@ -464,9 +454,9 @@ export const KEYS = [
   "latePinPanelOpen",
   "latePinPanelSeen",
   "toggleLatePinPanel",
-  "scalePreviews",
   "scalePreviewRows",
   "previewCompositionCaption",
   "sugarIsActive",
   "latePinPanelVisible",
+  "syncScalePreviewState",
 ];

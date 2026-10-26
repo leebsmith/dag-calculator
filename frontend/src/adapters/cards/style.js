@@ -72,6 +72,16 @@ export function registerStyleCard(app, ctx) {
     styleSolvedAa: null,
     styleSolvedCap: null,
     styleSolvedVolume: null,
+    // Reactive mirrors of the active pin/target. Alpine only re-renders on
+    // property assignments; getters over the non-reactive engine go stale.
+    scalePin: "abv",
+    scalePinLabel: "ABV",
+    activeScaleTargetRoot: N.targetAbv,
+    activeScaleTarget: null,
+    activeScaleTargetLabel: "Target ABV",
+    activeScaleTargetDisplay: "",
+    activeScaleTargetUnit: "%",
+    activeScaleTargetStep: "0.1",
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
     targetSrm: 0,
@@ -207,10 +217,34 @@ export function registerStyleCard(app, ctx) {
       this.resetScaleTarget();
     },
 
+    syncScalePinState() {
+      const pin = engine.get(N.scalePin) ?? "abv";
+      const root =
+        pin === "og" ? N.targetOg : pin === "fg" ? N.targetFg : N.targetAbv;
+      const label = SCALE_PINS.find((entry) => entry.value === pin)?.label ?? "ABV";
+      const raw = engine.get(root);
+      const value = typeof raw === "number" && Number.isFinite(raw) ? raw : null;
+      this.scalePin = pin;
+      this.scalePinLabel = label;
+      this.activeScaleTargetRoot = root;
+      this.activeScaleTarget = value;
+      this.activeScaleTargetLabel = `Target ${label}`;
+      this.activeScaleTargetUnit = pin === "abv" ? "%" : "SG";
+      this.activeScaleTargetStep = pin === "abv" ? "0.1" : "0.001";
+      this.activeScaleTargetDisplay =
+        value == null
+          ? ""
+          : pin === "abv"
+            ? formatWithDecimals(value, 1)
+            : formatGravity(value);
+    },
+
     setScalePin(value) {
       if (!SCALE_PINS.some((pin) => pin.value === value)) return;
       if (value === this.scalePin) return;
       this.setRoot(N.scalePin, value);
+      this.syncScalePinState();
+      this.syncScalePreviewState?.();
       this.scheduleSolve();
       this.notify();
     },
@@ -222,12 +256,14 @@ export function registerStyleCard(app, ctx) {
         this.scalePin === "abv" ? Math.round(numeric * 10) / 10 : numeric;
       this.setRoot(this.activeScaleTargetRoot, target);
       this.styleAbvTouched = this.scalePin === "abv" ? true : this.styleAbvTouched;
+      this.syncScalePinState();
       this.scheduleSolve();
       this.notify();
     },
 
     resetScaleTarget() {
       this.unsetRoot(this.activeScaleTargetRoot);
+      this.syncScalePinState();
       this.scheduleSolve();
       this.notify();
     },
@@ -332,65 +368,10 @@ export function registerStyleCard(app, ctx) {
         return this.styleTargetInfo?.abv ?? null;
       },
     },
-    scalePin: {
-      configurable: true,
-      get() {
-        return engine.get(N.scalePin) ?? "abv";
-      },
-    },
     scalePinOptions: {
       configurable: true,
       get() {
         return SCALE_PINS;
-      },
-    },
-    scalePinLabel: {
-      configurable: true,
-      get() {
-        return SCALE_PINS.find((pin) => pin.value === this.scalePin)?.label ?? "ABV";
-      },
-    },
-    activeScaleTargetRoot: {
-      configurable: true,
-      get() {
-        if (this.scalePin === "og") return N.targetOg;
-        if (this.scalePin === "fg") return N.targetFg;
-        return N.targetAbv;
-      },
-    },
-    activeScaleTargetLabel: {
-      configurable: true,
-      get() {
-        return `Target ${this.scalePinLabel}`;
-      },
-    },
-    activeScaleTarget: {
-      configurable: true,
-      get() {
-        const value = engine.get(this.activeScaleTargetRoot);
-        return typeof value === "number" && Number.isFinite(value) ? value : null;
-      },
-    },
-    activeScaleTargetDisplay: {
-      configurable: true,
-      get() {
-        const value = this.activeScaleTarget;
-        if (value == null) return "";
-        return this.scalePin === "abv"
-          ? formatWithDecimals(value, 1)
-          : formatGravity(value);
-      },
-    },
-    activeScaleTargetUnit: {
-      configurable: true,
-      get() {
-        return this.scalePin === "abv" ? "%" : "SG";
-      },
-    },
-    activeScaleTargetStep: {
-      configurable: true,
-      get() {
-        return this.scalePin === "abv" ? "0.1" : "0.001";
       },
     },
     styleTargetInfo: {
@@ -609,8 +590,9 @@ export function refreshStyleCard(app, ctx) {
   app.styleSolvedVolume = Number.isFinite(postBoilVolume)
     ? postBoilVolume
     : ctx.engine.get(N.fermVolume);
+  app.syncScalePinState();
   app.computeStyleTarget();
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "syncScalePinState", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
