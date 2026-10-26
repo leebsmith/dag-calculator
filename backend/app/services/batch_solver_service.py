@@ -30,6 +30,7 @@ def _to_input(req: BatchSolverRequest) -> BatchSolverInput:
     return BatchSolverInput(
         target_abv=req.target_abv,
         malt_attenuation_cap=req.malt_attenuation_cap,
+        sta1=req.sta1,
         v_ferm=req.v_ferm,
         topology=req.topology.value,
         intensive_value=req.intensive_value,

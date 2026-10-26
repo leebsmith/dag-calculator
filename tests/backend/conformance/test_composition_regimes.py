@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import pytest
+from conftest import make_batch_request
 
 from app.core.batch_solver import (
     GAMMA_METRIC,
@@ -21,6 +22,8 @@ from app.core.batch_solver import (
     solve_batch,
 )
 from app.core.utils import sg_to_plato
+from app.schemas.boundary import GristBillRow
+from app.services import solve_batch_request
 
 MALT_F = 0.643
 MALT_KG = 4.0
@@ -175,3 +178,45 @@ def test_solver_sugar_raises_apparent_attenuation_past_the_malt_baseline():
 
     assert sweet.real_attenuation > plain.real_attenuation
     assert sweet.apparent_attenuation > plain.apparent_attenuation
+
+
+# --- D5: STA1 at the wire ---------------------------------------------------
+
+
+def _wire(**overrides):
+    return solve_batch_request(
+        make_batch_request(
+            grain_bill=[
+                GristBillRow(w_i=1.0, yield_i=0.80, mc_i=0.04, fermentability_i=0.643)
+            ],
+            **overrides,
+        )
+    )
+
+
+def test_wire_sta1_consumes_the_malt_residue():
+    positive = _wire(sta1=True)
+    negative = _wire(sta1=False)
+
+    assert positive.real_attenuation == pytest.approx(1.0, abs=1e-9)
+    assert positive.apparent_attenuation > 1.0
+    assert positive.apparent_attenuation > negative.apparent_attenuation
+
+
+def test_wire_unknown_sta1_is_not_diastaticus():
+    unknown = _wire(sta1=None)
+    negative = _wire(sta1=False)
+
+    assert unknown.real_attenuation == pytest.approx(negative.real_attenuation)
+    assert unknown.apparent_attenuation == pytest.approx(negative.apparent_attenuation)
+    assert unknown.real_attenuation < 1.0
+
+
+def test_wire_sugar_and_sta1_compose():
+    plain = _wire(sta1=True)
+    sweet = _wire(sta1=True, s_late_add=0.5)
+
+    # d empties the malt residue; sugar then only adds fermentable extract, so
+    # the fixed-ABV solve needs less malt.
+    assert sweet.real_attenuation == pytest.approx(1.0, abs=1e-9)
+    assert sweet.m_grist < plain.m_grist

@@ -48,6 +48,29 @@ export const RELATION_FINDINGS = {
   },
 };
 
+// Host-only advisories: they describe a missing input rather than a numerical
+// violation, so they have no artifact relation. Never blocking.
+export const HOST_FINDINGS = {
+  sta1_unknown: {
+    label: "Diastaticus status unknown",
+    message: () =>
+      "The selected strain does not publish a STA1 result. The model treats it as " +
+      "non-diastaticus (d = 0); confirm with the lab before packaging.",
+  },
+};
+
+export function hostFinding(id) {
+  const entry = HOST_FINDINGS[id];
+  if (!entry) return null;
+  return {
+    id,
+    label: entry.label,
+    severity: "warning",
+    message: entry.message(),
+    action: null,
+  };
+}
+
 export function severityFor(relation) {
   return relation?.blocking ? "error" : "warning";
 }

@@ -157,10 +157,12 @@ The cap therefore rises from the aggregator's midpoint to the vendor's top for
 most White Labs strains. Unmatched rows keep the aggregator citation and no
 range.
 
-`sta1: null` is not a negative: D5 models it as `d = 0` and raises an advisory,
-because a silent "assume negative" would hide a diastaticus risk. The white
-label strains sold under other brands (The Yeast Bay, …) match by the same
-strain code, so their vendor data travels with them.
+`sta1: null` is not a negative: D5 models it as `d = 0` and raises the
+`sta1_unknown` advisory, because a silent "assume negative" would hide a
+diastaticus risk. A `true` result consumes the malt's dextrin residue in the
+solver (the composition block's `d = 1`); sugar is untouched. The white label
+strains sold under other brands (The Yeast Bay, …) match by the same strain
+code, so their vendor data travels with them.
 
 The guard `tests/guards/whitelabs-yeast-contract.test.js` pins the source
 shape, `tests/guards/sources-manifest.test.js` pins the content hash, and

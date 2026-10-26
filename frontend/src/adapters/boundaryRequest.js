@@ -33,7 +33,15 @@ function fermentabilityAsReal(row) {
 function buildFromMap(engine, fields) {
   const resolved = {};
   for (const [alias, rule] of Object.entries(fields)) {
-    const value = rule.read === "get" ? engine.get(rule.path) : engine.resolve(rule.path);
+    let value;
+    try {
+      value = rule.read === "get" ? engine.get(rule.path) : engine.resolve(rule.path);
+    } catch (err) {
+      // A declared default covers an unselected reference (e.g. no yeast yet);
+      // without one the failure is real and must surface.
+      if (!("default" in rule)) throw err;
+      value = undefined;
+    }
     resolved[alias] = value == null && "default" in rule ? rule.default : value;
   }
 
@@ -60,6 +68,15 @@ function assignWire(out, wire, value) {
 export const BATCH_FIELDS = {
   target_abv: { path: "batch.target_abv" },
   malt_attenuation_cap: { path: "batch.yeast_cap" },
+  // Tri-state vendor QC. The solver only needs "diastaticus or not", so an
+  // unknown status is sent as false (d = 0) and surfaced as a host-side
+  // advisory (findings registry: sta1_unknown); null never enters the boundary
+  // input guard, which treats null as "not ready".
+  sta1: {
+    path: "batch.yeast.sta1",
+    default: false,
+    build: (resolved) => resolved.sta1 === true,
+  },
   v_ferm: { path: "batch.v_ferm" },
   topology: { path: "batch.topology" },
   intensive_value: {

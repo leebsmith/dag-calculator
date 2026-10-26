@@ -172,6 +172,9 @@ severity derived from the artifact's `blocking` flag: `error` = unbrewable on
 this rig, `warning` = quality/policy. The footer count remains as a summary
 badge only.
 
+- **Diastaticus status** — a selected strain with no published STA1 result
+  raises the `sta1_unknown` warning (not blocking): the model treats it as
+  non-diastaticus, and the message names that assumption.
 - **Capacity** — kettle, mash tun (peak of the mash and sparge phases) and HLT
   liquor demand report critically: the solve completes and every readout stays
   alive, but the batch cannot be frozen.

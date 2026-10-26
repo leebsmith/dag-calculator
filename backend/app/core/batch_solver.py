@@ -1378,6 +1378,9 @@ class BatchSolverInput:
         k_abs_true: Grain absorption coefficient, in L/kg. The equipment
             profile's ``grain_absorption_factor_l_per_kg`` is authoritative;
             the module constant is the fallback.
+        sta1: Vendor STA1 QC result. ``True`` consumes the malt's dextrin
+            residue (``d = 1``); ``False`` is an ordinary strain; ``None``
+            means "not published" and models as ``d = 0`` with an advisory.
         hlt_starting_volume_l: Volume of liquor in the HLT at the start of the
             brew day, in liters. Batch-level parameter; the frontend pre-fills
             it from the equipment profile's ``max_hlt_volume_l``. Consumed by
@@ -1421,6 +1424,7 @@ class BatchSolverInput:
     max_mash_tun_volume_l: float
     f_shrink: float = F_SHRINK_DEFAULT
     k_abs_true: float = K_ABS_TRUE_METRIC
+    sta1: bool | None = None
 
     def __post_init__(self) -> None:
         if self.topology not in ("r_l_to_g", "runoff_ratio"):
@@ -1598,6 +1602,11 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
     mc_bar = composite_moisture_fraction(inputs.grain_bill)
     aa_malt = composite_fermentability_fraction(inputs.grain_bill)
 
+    # A diastaticus strain consumes the malt's dextrin residue (d = 1). An
+    # unknown status is modelled as d = 0 and surfaced as a host-side finding,
+    # never as a silent negative.
+    dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
+
     def solve_phase_1(aa: float):
         sg = solve_sg_post_boil_from_abv(target_abv, aa)
         rev = resolve_volumetric_reversal(
@@ -1632,6 +1641,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             malt_fermentability=aa_malt,
             v_kettle_cold=v_kettle_cold,
             s_late_add=inputs.s_late_add,
+            dextrin_consumption=dextrin_consumption,
         )
         sg_post_boil = asbc_plato_to_sg(oe_plato)
         reversal = resolve_volumetric_reversal(
@@ -1650,6 +1660,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             s_late_add=inputs.s_late_add,
             malt_fermentability=aa_malt,
             yeast_cap_apparent=inputs.malt_attenuation_cap,
+            dextrin_consumption=dextrin_consumption,
         )
         real_attenuation = composition.real_attenuation
         apparent_attenuation = composition.apparent_attenuation
@@ -1661,6 +1672,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
             s_late_add=inputs.s_late_add,
             malt_fermentability=aa_malt,
             yeast_cap_apparent=inputs.malt_attenuation_cap,
+            dextrin_consumption=dextrin_consumption,
         )
         max_abv = ceiling.abv_pct
 

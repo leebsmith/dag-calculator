@@ -188,3 +188,21 @@ test("the card copies provenance and basis onto batch rows and converts apparent
   assert.ok(sent < 0.70, `expected a real fraction, got ${sent}`);
   assert.ok(Math.abs(sent - 0.635) < 5e-3);
 });
+
+test("an unknown STA1 status is never silent", async () => {
+  const app = createTestApp();
+  await app.boot();
+
+  app.selectYeast("fermentis-safale-american-ale-us-05");
+  app.compute();
+  assert.ok(app.findingsById.sta1_unknown, "unknown status must surface");
+  assert.equal(app.findingsById.sta1_unknown.severity, "warning");
+
+  app.selectYeast("white-labs-california-ale-wlp001");
+  app.compute();
+  assert.equal(app.findingsById.sta1_unknown, undefined, "negative is silent");
+
+  app.selectYeast("the-yeast-bay-dry-belgian-ale-wlp4025");
+  app.compute();
+  assert.equal(app.findingsById.sta1_unknown, undefined, "positive is silent");
+});

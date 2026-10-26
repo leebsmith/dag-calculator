@@ -53,7 +53,8 @@ function stubEngine(
 
 const BATCH_VALUES = {
   "batch.target_abv": 5.5,
-  "batch.yeast_cap": 0.75,  "batch.grain_moisture_fraction": 0.04,
+  "batch.yeast_cap": 0.75,
+  "batch.yeast.sta1": false,  "batch.grain_moisture_fraction": 0.04,
   "batch.v_ferm": 20.0,
   "batch.topology": "r_l_to_g",
   "batch.mash_thickness_l_per_kg": 3.0,

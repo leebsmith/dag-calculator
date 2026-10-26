@@ -118,6 +118,16 @@ class BatchSolverRequest(BoundaryModel):
 
     target_abv: Annotated[float, Field(gt=0.0, le=100.0, description="Target ABV in percent (e.g. 5.5)")]
     malt_attenuation_cap: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast apparent-attenuation cap on malt; converted to real per candidate OE")]
+    sta1: Annotated[
+        bool | None,
+        Field(
+            default=None,
+            description=(
+                "Vendor STA1 QC result. True consumes the malt dextrin residue; "
+                "false or null models as non-diastaticus (null is flagged)."
+            ),
+        ),
+    ]
     v_ferm: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Target cold fermenter volume in Liters")]
     topology: BatchSpargeTopology = Field(description="Runoff model topology")
     intensive_value: Annotated[float, Field(gt=0.0, description="R_L:G ratio (L/kg) or runoff ratio r")]

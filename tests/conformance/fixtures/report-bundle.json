@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:98339fe88a41ea57f53d299dde9ae0416511aea89286494dfe881668cbff0f1d",
+    "hash": "sha256:34566f3757f667b9120324820d42c1e8ee0d9e1deab10ff35d57a686b42561cc",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -2999,6 +2999,7 @@
           "inputs": {
             "target_abv": "batch.target_abv",
             "malt_attenuation_cap": "batch.yeast_cap",
+            "sta1": "batch.yeast.sta1",
             "v_ferm": "batch.v_ferm",
             "topology": "batch.topology",
             "intensive_value": "batch.mash_thickness_l_per_kg",
@@ -4730,5 +4731,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:f36189216185239b560d95e7def4cb0e30fc32ac22848e2f6509f75680e652a3"
+  "content_hash": "sha256:43cfe1fe7052b1f94a9f06dffeada0e2c005094234777970082cc0489937756f"
 }

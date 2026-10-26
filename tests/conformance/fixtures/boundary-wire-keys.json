@@ -16,6 +16,7 @@
     "max_kettle_volume_l",
     "max_mash_tun_volume_l",
     "s_late_add",
+    "sta1",
     "target_abv",
     "topology",
     "v_dead",

@@ -128,6 +128,20 @@ gravity-invariant.
 - `bound: "min"` is reported, not propagated: the solver uses the printed value
   as a point and the UI labels it a floor (A8, D3).
 
+### 5.1 Diastaticus
+
+`sta1` is a tri-state vendor field (D4b). `true` sets `d = 1`: the malt's dextrin
+residue is consumed, apparent extract may go negative, and apparent attenuation
+may exceed 1. `false` is an ordinary strain. `null` (not published) is modelled
+as `d = 0` **and** surfaced as the host advisory `sta1_unknown` — the model never
+treats a missing QC result as a confirmed negative. Sugar is never touched by
+`d`; a non-fermentable sugar keeps its own residue.
+
+The wire carries `sta1` as a boolean. The request builder sends `false` when the
+selection has no QC result (the boundary input guard treats null as "not ready"),
+while the advisory reads the selection directly; the solver also accepts
+`sta1: null` from a direct caller and models it as `false`.
+
 ## 6. Assumption register
 
 | # | Assumption | Treatment | Enforcement |
@@ -136,7 +150,7 @@ gravity-invariant.
 | A2 | ingredient conversion at fixed 12 °P | max ΔAA 0.022 across 8–24 °P | `tests/backend/conformance/test_basis_conversion.py` |
 | A3 | yeast attenuation is apparent | converted per candidate `OE` | `tests/backend/conformance/test_composition_regimes.py` |
 | A4 | STA1 = full dextrin consumption | `d = 1`, malt residue only, time ignored | `tests/backend/conformance/test_composition_regimes.py` |
-| A5 | `sta1: null` | `d = 0` + advisory | `tests/backend/conformance/test_composition_regimes.py` |
+| A5 | `sta1: null` | `d = 0` + advisory | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
 | A6 | sugar immune to `d` | lactose stays unfermented | `tests/backend/conformance/test_composition_regimes.py` |
 | A7 | priors are converted apparent observations | values + round-trip | `tests/backend/conformance/test_basis_conversion.py` |
 | A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/attenuation-display.test.js` |

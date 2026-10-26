@@ -59,6 +59,7 @@ def canonical_batch() -> BatchSolverRequest:
     return BatchSolverRequest(
         target_abv=5.5,
         malt_attenuation_cap=0.75,
+        sta1=False,
         v_ferm=20.0,
         topology=BatchSpargeTopology.R_L_TO_G,
         intensive_value=3.0,

@@ -2,9 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  HOST_FINDINGS,
   RELATION_FINDINGS,
   actionFor,
   findingFor,
+  hostFinding,
   severityFor,
 } from "../../frontend/src/views/registry/findings.js";
 import { artifact } from "./util.js";
@@ -52,6 +54,17 @@ test("every declared relation has a finding entry", () => {
 
 test("every finding has sample operands for the message test", () => {
   assert.deepEqual(Object.keys(SAMPLES).sort(), Object.keys(RELATION_FINDINGS).sort());
+});
+
+test("host-only advisories are declared, warned, and never block", () => {
+  assert.deepEqual(Object.keys(HOST_FINDINGS), ["sta1_unknown"]);
+
+  const advisory = hostFinding("sta1_unknown");
+  assert.equal(advisory.severity, "warning");
+  assert.equal(advisory.action, null);
+  assert.match(advisory.message, /STA1/);
+  assert.match(advisory.message, /d = 0/);
+  assert.equal(hostFinding("not_a_finding"), null);
 });
 
 test("severity follows the artifact blocking flag", () => {

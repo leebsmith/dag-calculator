@@ -2879,6 +2879,7 @@
       "inputs": {
         "target_abv": "batch.target_abv",
         "malt_attenuation_cap": "batch.yeast_cap",
+        "sta1": "batch.yeast.sta1",
         "v_ferm": "batch.v_ferm",
         "topology": "batch.topology",
         "intensive_value": "batch.mash_thickness_l_per_kg",

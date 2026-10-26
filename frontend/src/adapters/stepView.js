@@ -5,7 +5,11 @@ import { createFindingFormatter, produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
 import { reportError } from "../observability.js";
 import { dimensionOf } from "../views/registry/catalog.js";
-import { findingFor, findingOperands } from "../views/registry/findings.js";
+import {
+  findingFor,
+  findingOperands,
+  hostFinding,
+} from "../views/registry/findings.js";
 import { refreshYeastCard } from "./cards/yeast.js";
 import { refreshStyleCard } from "./cards/style.js";
 import { refreshHopCard } from "./cards/hops.js";
@@ -62,7 +66,7 @@ export function createStepView({
   function computeFindings(engine, relations) {
     const formatOperand = createFindingFormatter(artifact, engine, ui);
     const read = (path) => readOperand(engine, path);
-    return (relations ?? [])
+    const findings = (relations ?? [])
       .filter((relation) => !relation.holds)
       .map((relation) =>
         findingFor(
@@ -72,6 +76,25 @@ export function createStepView({
         )
       )
       .filter(Boolean);
+
+    // Unknown STA1 is never silent: no vendor result means d = 0, with a
+    // visible advisory. A selected strain without a QC field is the same case.
+    let yeastId;
+    let sta1;
+    try {
+      yeastId = engine.get("batch.yeast_id");
+      sta1 = engine.resolve("batch.yeast.sta1");
+    } catch (err) {
+      reportError("stepView.sta1Advisory", err);
+      yeastId = "";
+      sta1 = null;
+    }
+    if (yeastId && sta1 == null) {
+      const advisory = hostFinding("sta1_unknown");
+      if (advisory) findings.push(advisory);
+    }
+
+    return findings;
   }
 
   function compute(app) {

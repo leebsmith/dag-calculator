@@ -15,12 +15,12 @@ def plato_to_sg(plato: float) -> float:
 
     Apparent extract may fall below 0 °P when a diastaticus-style fermentation
     consumes the dextrin residue (an apparent attenuation above 100 %), so the
-    polynomial is evaluated on a small negative domain. The floor is a domain
-    guard, not a physical claim: the Cutaia model's most extreme residue at
-    40 °P sits near −3 °P.
+    polynomial is evaluated on a negative domain. The floor is a guard for the
+    regression's extrapolation, not a physical claim: at 40 °P with the residue
+    fully consumed the inverted regression reaches about −14 °P.
     """
-    if plato < -10.0:
-        raise ValueError("Degrees Plato below -10 is outside the ASBC domain.")
+    if plato < -20.0:
+        raise ValueError("Degrees Plato below -20 is outside the ASBC domain.")
 
     return (
         1.0000131
