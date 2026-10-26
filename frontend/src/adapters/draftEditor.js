@@ -172,10 +172,18 @@ export function installDraftEditor(app, { artifact, ui, session }) {
         if (this.draftNodeId === N.sugars) {
           const shareMode =
             session.getEngine().get(N.lateAdditionIntent) === "share";
-          for (const column of columns) {
+          const visible = columns
+            .filter((column) =>
+              shareMode ? column.id !== "mass_kg" : column.id !== "resolved_mass_kg"
+            )
+            .map((column) =>
+              column.id === "resolved_mass_kg" ? { ...column, label: "Mass" } : column
+            );
+          for (const column of visible) {
             if (column.id === "mass_kg") column.editable = !shareMode;
             if (column.id === "parts") column.editable = shareMode;
           }
+          return visible;
         }
         return columns;
       },

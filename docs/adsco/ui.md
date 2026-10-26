@@ -165,8 +165,13 @@ not discard the other representation:
 
 | Mode | Editable | Read-only | Meaning |
 | --- | --- | --- | --- |
-| Dose | Mass | Resolved mass | the authored sugar mass feeds the solver's late extract |
-| Share | Parts | Mass | parts weight the sugar-extract budget; the solver derives the share per candidate gravity |
+| Dose | Mass | Resolved mass (hidden) | the authored sugar mass feeds the solver's late extract |
+| Share | Parts | Mass (derived) | parts weight the sugar-extract budget; the solver derives the share per candidate gravity |
+
+Only the active representation is displayed. In share mode, a zero share
+derives a zero mass; “Adopt share into masses” at zero therefore clears the
+dose masses. The dormant `mass_kg` stays in the row so switching back to dose
+round-trips it.
 
 The share root is bounded at 95 % and warns above 90 %. A share above zero with
 no sugar rows raises the `sugar_share_without_sugar` advisory; it never silently

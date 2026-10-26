@@ -219,10 +219,12 @@ export function registerLateAdditionsCard(app, ctx) {
       const rows = ctx.engine.get(N.collection) ?? [];
       if (!rows.length) return;
       const share = Number(ctx.engine.get(N.share)) || 0;
+      const intent = ctx.engine.get(N.intent) ?? "dose";
       const resolved = resolvedSugarMasses({
         rows,
         budgetKg: share * numberAt(ctx.engine, N.effect.extractTotal),
         share,
+        mode: intent,
       });
       ctx.engine.setCollection(
         N.collection,
@@ -275,10 +277,12 @@ export function registerLateAdditionsCard(app, ctx) {
       get() {
         const rows = ctx.engine.get(N.collection) ?? [];
         const share = Number(ctx.engine.get(N.share)) || 0;
+        const intent = ctx.engine.get(N.intent) ?? "dose";
         return resolvedSugarMasses({
           rows,
           budgetKg: share * numberAt(ctx.engine, N.effect.extractTotal),
           share,
+          mode: intent,
         });
       },
     },
@@ -290,12 +294,20 @@ export function registerLateAdditionsCard(app, ctx) {
             (f) => f.control === "collection-table"
           ) ?? null;
         if (!field) return null;
-        const column = field.columns?.find((c) => c.id === "resolved_mass_kg");
+        const shareMode = (ctx.engine.get(N.intent) ?? "dose") === "share";
+        const columns = (field.columns ?? [])
+          .filter((c) => (shareMode ? c.id !== "mass_kg" : c.id !== "resolved_mass_kg"))
+          .map((c) =>
+            c.id === "resolved_mass_kg" ? { ...c, label: "Mass" } : c
+          );
+        if (!shareMode) return { ...field, columns };
+        const column = columns.find((c) => c.id === "resolved_mass_kg");
         const resolved = this.sugarResolvedRows;
-        if (!column || resolved.length !== field.rows.length) return field;
+        if (!column || resolved.length !== field.rows.length) return { ...field, columns };
         const nl = nonlinearFns(ctx.artifact, ctx.engine);
         return {
           ...field,
+          columns,
           rows: field.rows.map((row, index) => {
             const shown = displayValue(
               ctx.artifact,
@@ -358,7 +370,28 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarDraftMassDisplay: {
       configurable: true,
       get() {
-        return this.draftMassDisplay((r) => Number(r.mass_kg) || 0);
+        if (this.lateAdditionIntent !== "share") {
+          return this.draftMassDisplay((r) => Number(r.mass_kg) || 0);
+        }
+        const share = Number(ctx.engine.get(N.share)) || 0;
+        const total = numberAt(ctx.engine, N.effect.extractTotal);
+        const rows = this.draftRows ?? [];
+        const resolved = resolvedSugarMasses({
+          rows,
+          budgetKg: share * total,
+          share,
+          mode: "share",
+        });
+        const mass = resolved.reduce((sum, row) => sum + row.massKg, 0);
+        const column = this.draftColumns.find((c) => c.id === "resolved_mass_kg");
+        const shown = displayValue(
+          ctx.artifact,
+          "mass",
+          column?.displayUnit,
+          mass,
+          nonlinearFns(ctx.artifact, ctx.engine)
+        );
+        return `${formatWithDecimals(shown, column?.decimals)}${column?.unit ? " " + column.unit : ""}`;
       },
     },
     sugarDraftExtractDisplay: {
@@ -415,10 +448,12 @@ export function refreshLateAdditionsCard(app, ctx) {
   if (!rows.length) return;
   const share = Number(ctx.engine.get(N.share)) || 0;
   const total = numberAt(ctx.engine, N.effect.extractTotal);
+  const intent = ctx.engine.get(N.intent) ?? "dose";
   const resolved = resolvedSugarMasses({
     rows,
     budgetKg: share * total,
     share,
+    mode: intent,
   });
   let changed = false;
   const next = rows.map((row, index) => {

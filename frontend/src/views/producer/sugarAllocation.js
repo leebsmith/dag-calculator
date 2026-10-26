@@ -35,9 +35,10 @@ export function sugarShareFromDose(rows, extractTotalKg) {
   return Math.min(MAX_SUGAR_SHARE, dose / total);
 }
 
-export function resolvedSugarMasses({ rows, budgetKg, share }) {
+export function resolvedSugarMasses({ rows, budgetKg, share, mode }) {
   const list = rows ?? [];
-  if (!(Number(share) > 0)) {
+  const shareMode = mode ?? (Number(share) > 0 ? "share" : "dose");
+  if (shareMode !== "share") {
     return list.map((row) => ({
       extractKg: finiteNonNegative(Number(row.mass_kg)) * finiteNonNegative(Number(row.yield_fraction)),
       massKg: finiteNonNegative(Number(row.mass_kg)),
