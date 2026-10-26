@@ -187,6 +187,13 @@ test("a new batch seeds the style ABV midpoint and leaves it free", async () => 
   assert.equal(app.styleAbvTouched, false);
 });
 
+test("the style card exposes the blend AA, malt cap, and sugar lift", async () => {
+  const app = await appWithStyle("21A");
+  assert.equal(app.attenuationBlend, app.styleSolvedAa);
+  assert.equal(app.attenuationCap, app.styleSolvedCap);
+  assert.ok(app.attenuationSugarLift >= 0);
+});
+
 test("the batch Target ABV is a read-only readout", async () => {
   const app = await appWithStyle("21A");
   const field = app.fieldsById["batch.target_abv"];

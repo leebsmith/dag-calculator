@@ -157,6 +157,18 @@ extract is at or below zero (a diastaticus fermentation), the field displays
 `≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value is
 unchanged; the conformance layer still sees the computed gravity.
 
+### Attenuation cap readout
+
+The Style card shows three related figures:
+
+- **Apparent attenuation** — the solved blend AA;
+- **Malt attenuation cap** — the selected yeast's apparent cap after derate;
+- **Sugar lift above cap** — `max(0, blend AA − malt cap)`.
+
+The cap applies to malt only. A fully fermentable sugar share is uncapped, so
+the blend can exceed the cap. A 77 % malt cap with a 0.5 lb dextrose addition
+can report 79.6 % blend AA: the +2.6 points is the sugar, not a solver error.
+
 ### Late-addition intent
 
 Late additions are authored either as a **dose** (mass) or as a **share** of

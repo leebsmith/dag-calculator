@@ -16,6 +16,7 @@ import {
   sgToPlato,
 } from "../../engine/fermentation.js";
 import { styleConformance } from "../../engine/styleConformance.js";
+import { attenuationCapSummary } from "../../views/producer/attenuationCap.js";
 import { STYLE_NODES as N } from "../../views/registry/style.js";
 import {
   bitternessRatio,
@@ -83,6 +84,9 @@ export function registerStyleCard(app, ctx) {
     activeScaleTargetUnit: "%",
     activeScaleTargetStep: "0.1",
     scaleTargetMismatch: "",
+    attenuationBlend: null,
+    attenuationCap: null,
+    attenuationSugarLift: null,
 
     // Reactive mirrors of the target roots (refreshed in computeStyleCard).
     targetSrm: 0,
@@ -604,6 +608,10 @@ export function refreshStyleCard(app, ctx) {
   };
   app.styleSolvedAa = read(N.apparentAttenuation);
   app.styleSolvedCap = read(N.yeastCap);
+  const attenuation = attenuationCapSummary(app.styleSolvedAa, app.styleSolvedCap);
+  app.attenuationBlend = attenuation.blend;
+  app.attenuationCap = attenuation.cap;
+  app.attenuationSugarLift = attenuation.lift;
   const postBoilVolume = read(N.postBoilVolume);
   app.styleSolvedVolume = Number.isFinite(postBoilVolume)
     ? postBoilVolume
@@ -629,4 +637,4 @@ export function refreshStyleCard(app, ctx) {
   app.scaleTargetMismatch = mismatch;
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "syncScalePinState", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "scaleTargetMismatch", "editScaleTargetInput", "commitScaleTargetInput", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "syncScalePinState", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "scaleTargetMismatch", "attenuationBlend", "attenuationCap", "attenuationSugarLift", "editScaleTargetInput", "commitScaleTargetInput", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
