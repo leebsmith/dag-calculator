@@ -1,6 +1,7 @@
 # Late-addition intent pin — P3b commit contract
 
-Status: **implemented** (P3b landed); the program closed at P3c.
+Status: **implemented** (P3b landed); the program closed at P3c, and the scale
+pins/sugar successor is `plans/pin-matrix.md`.
 Successor to `plans/attenuation-refactor.md` P3a (landed).
 
 The design gate in `plans/attenuation-refactor.md` §"P3b" is resolved in this
@@ -58,8 +59,8 @@ that share an authored constraint:
    overwrite either side: both authored states round-trip exactly, with no
    materialization and no rounding drift. Explicit "adopt current dose" and
    "adopt share" actions re-sync on request.
-9. **ABV remains the scale pin.** OG-pinned mode is deferred; the share is
-   orthogonal to the scale axis.
+9. **ABV remains the scale pin in P3b.** OG/FG pins are added by the successor
+   `plans/pin-matrix.md`; the share remains orthogonal to the scale axis.
 10. **One partial.** `step-late-additions.html` renders both modes from
     mode-aware columns/inputs; `modal-sugar-editor.html` edits `parts` in share
     mode and shows mass read-only. No second template.

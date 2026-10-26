@@ -85,6 +85,10 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
+* **Scale pins and audited sugar database** — ABV/OG/FG recipe pins, the live
+  pin-preview matrix, effective sugar fermentability, and the three-tier sugar
+  source — `plans/pin-matrix.md`, `docs/sugar-database.md`,
+  `docs/attenuation-model.md` §6.1.
 * **Attenuation refactor (Passes 2–3)** — extract-composition model, real/apparent
   basis conversion, malt-only cap, diastaticus dextrin consumption, and the
   late-addition intent pin (dose \| share of extract) —

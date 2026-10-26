@@ -238,3 +238,4 @@ that every enforcement path exists and that the row set stays complete.
   boundary contract.
 - `plans/attenuation-refactor.md` — the commit contract for passes 2–3 (landed).
 - `plans/late-addition-intent.md` — the P3b commit contract (landed).
+- `plans/pin-matrix.md` — the scale-pin and sugar-database contract (landed).

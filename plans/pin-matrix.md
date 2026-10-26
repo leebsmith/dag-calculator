@@ -1,7 +1,10 @@
 # Scale pins and sugar data — commit contract
 
-Status: **planned**. Successor to `plans/attenuation-refactor.md` (closed at P3c)
-and `plans/late-addition-intent.md` (P3b, landed).
+Status: **landed**. P1–P4 are in. The sugar database and effective
+fermentability landed first; the three scale pins and preview block landed next;
+the pin matrix and Style-card rework followed; this commit closes the feature.
+Successor to `plans/attenuation-refactor.md` (closed at P3c) and
+`plans/late-addition-intent.md` (P3b, landed).
 
 This document is the executable contract for the next feature: an audited sugar
 database, an effective late-addition fermentability on the wire, three scale
@@ -205,6 +208,7 @@ Repo: `dag-calculator`.
 
 - **Owns:** plan status, `TODO.md`, cross-links, final register.
 - **Gate:** `make verify-full`.
+- **Landed:** this commit.
 
 ## 6. Context discipline
 
@@ -222,3 +226,20 @@ Repo: `dag-calculator`.
 - Hot-side late-addition volume displacement.
 - Fermentation-space graph upgrade (real scales, palette); the graph stays,
   becomes pin-aware, and is upgraded later.
+
+## 8. Landing notes
+
+- The sugar overlay is null-fill only. Twelve non-null seed yields still
+  disagree with the audited source (corn sugar, invert, candi syrups, molasses,
+  maple, corn syrup) and are kept for review; the seed diff fills the missing
+  RDFs (lactose 0, molasses 0.80, candi/invert ranges) and the missing rice
+  syrup yield. The conflicts are printed by every seed build and listed in
+  `docs/sugar-database.md`.
+- Sugar provenance hashes are citation fingerprints of the vendor/method tuple
+  until page bytes are captured; the source manifest pins the committed file.
+- The preview block is one `solver.batch` call; the active ABV path and the
+  oracle are unchanged.
+- The Belgian knob and its helper are removed; the ABV+FG composition-solving
+  mode remains deferred.
+- The Style card mirrors the active pin/target and keeps the pin selector, so
+  the pin remains changeable when the sugar panel is collapsed.
