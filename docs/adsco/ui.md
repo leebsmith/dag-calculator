@@ -21,6 +21,17 @@ No "Solve" button. The live DAG recomputes on every edit, debounced through
 `boundaryRunner`. Invalid/incomplete states surface as live warnings and a
 pending/error boundary status, never a blocked submit.
 
+### Card readouts are refresh-time snapshots
+
+Alpine only tracks dependencies it can see, and the engine is not reactive. A
+getter that reads the engine registers nothing, so a template bound to it
+freezes at its first render. Every card readout derived from the engine is
+therefore a **mirror**: the card's `refresh*` function assigns a plain property,
+and the getter returns that property. Never bind a partial to a live engine
+read. `tests/guards/engine-read-mirrors.test.js` enforces this; the three
+allowlisted getters read the engine behind `fieldsBySlice`/`draftRows`, which
+every refresh reassigns.
+
 ## Card layout
 
 The water card is four labelled regions, in this order:
@@ -224,8 +235,8 @@ composition-solving mode is deferred.
 
 ### Sugar effect (late additions)
 
-The Late Additions summary shows what the current sugar is doing **at the ABV
-pin**, without asking the designer to unpin it:
+The Late Additions summary shows what the current sugar is doing **at the active
+scale pin**, without asking the designer to unpin it:
 
 | Readout | Meaning |
 | --- | --- |
@@ -237,7 +248,7 @@ pin**, without asking the designer to unpin it:
 
 The decomposition holds the solved apparent extract and removes the sugar's
 extract share from OE. It is a host-side readout derived from the batch solve:
-nothing is persisted, no root changes, and the ABV pin is untouched. It answers
+nothing is persisted, no root changes, and the active pin is untouched. It answers
 "what is this sugar buying me?" — not a second solver result. In share mode the
 sugar input is `batch.sugar_extract_total` (the solved budget), so the deltas
 remain meaningful when the dose is derived rather than authored.

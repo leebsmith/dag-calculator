@@ -209,11 +209,10 @@
             <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.grist"></span>
           </div>
         </div>
-        <p class="text-xs text-muted">
-          At the current ABV pin. Sugar is fully fermentable, so it adds alcohol and
-          extract but no FG; the view shows what removing this dose would change.
-          In share mode the dose is the sugar-extract budget derived from the share.
-        </p>
+        <p
+          class="text-xs text-muted"
+          x-text="`At the ${scalePinLabel} pin. Sugar is fully fermentable, so it adds alcohol and extract but no FG; the view shows what removing this dose would change. In share mode the dose is the sugar-extract budget derived from the share.`"
+        ></p>
       </div>
     </template>
   </div>

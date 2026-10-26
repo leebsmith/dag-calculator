@@ -350,32 +350,18 @@ export function registerWaterCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
+    waterTargetOptionsState: { configurable: true, writable: true, value: null },
+    waterTargetProfileId: { configurable: true, writable: true, value: null },
     waterTargetOptions: {
       configurable: true,
       get() {
-        const records = ctx.cache.references.water_target ?? {};
-        const presets = Object.entries(records)
-          .map(([id, profile]) => {
-            const held = heldFromProfile(profile);
-            return {
-              value: id,
-              label: `${constraintLabel(held)} — ${profile?.name ?? id}`,
-              size: held.length,
-            };
-          })
-          .filter((option) => option.size > 0)
-          .sort((a, b) => a.size - b.size || a.label.localeCompare(b.label));
-        return [
-          { value: "none", label: "No targets — no ion targets" },
-          ...presets.map(({ value, label }) => ({ value, label })),
-          { value: "freeform", label: "Freeform entry — compose your own set" },
-        ];
+        return this.waterTargetOptionsState ?? [];
       },
     },
     waterTargetSelection: {
       configurable: true,
       get() {
-        const id = engine.get(N.targetProfileId) ?? "";
+        const id = this.waterTargetProfileId ?? "";
         if (id) {
           return this.waterTargetOptions.some((option) => option.value === id) ? id : "freeform";
         }
@@ -385,8 +371,30 @@ export function registerWaterCard(app, ctx) {
   });
 }
 
+function waterTargetOptionsOf(cache) {
+  const records = cache.references.water_target ?? {};
+  const presets = Object.entries(records)
+    .map(([id, profile]) => {
+      const held = heldFromProfile(profile);
+      return {
+        value: id,
+        label: `${constraintLabel(held)} — ${profile?.name ?? id}`,
+        size: held.length,
+      };
+    })
+    .filter((option) => option.size > 0)
+    .sort((a, b) => a.size - b.size || a.label.localeCompare(b.label));
+  return [
+    { value: "none", label: "No targets — no ion targets" },
+    ...presets.map(({ value, label }) => ({ value, label })),
+    { value: "freeform", label: "Freeform entry — compose your own set" },
+  ];
+}
+
 export function refreshWaterCard(app, ctx) {
   const engine = ctx.engine;
+  app.waterTargetProfileId = engine.get(N.targetProfileId) ?? "";
+  app.waterTargetOptionsState = waterTargetOptionsOf(ctx.cache);
   try {
     const proportional = engine.get(N.saltDistribution) === "PROPORTIONAL";
     const strike = num(engine, N.vMashTreat);
@@ -610,6 +618,8 @@ export const KEYS = [
   "waterWarningCount",
   "toggleWaterDetails",
   "waterTargetOptions",
+  "waterTargetOptionsState",
+  "waterTargetProfileId",
   "editWaterNumber",
   "commitWaterNumber",
   "editWaterTargetInput",

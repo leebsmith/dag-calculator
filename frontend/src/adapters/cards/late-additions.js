@@ -101,6 +101,23 @@ function currentSugarEffect(engine) {
   });
 }
 
+// Templates bind these strings, so they are built once per refresh. A getter
+// that reads the engine directly registers no Alpine dependency and never
+// re-runs after its first read.
+function sugarEffectDisplayOf(effect) {
+  if (!effect?.active) return null;
+  const signed = (value, decimals, suffix = "") =>
+    `${value >= 0 ? "+" : ""}${formatWithDecimals(value, decimals)}${suffix}`;
+  return {
+    share: formatPercent(effect.share),
+    og: signed(effect.ogPoints, 3),
+    fg: "+0.000",
+    abv: signed(effect.abvPoints, 2, "%"),
+    grist:
+      effect.gristKg == null ? "—" : `${formatWithDecimals(effect.gristKg, 2)} kg`,
+  };
+}
+
 export function registerLateAdditionsCard(app, ctx) {
   installCatalogDraft(app, ctx, {
     prefix: "sugar",
@@ -205,6 +222,7 @@ export function registerLateAdditionsCard(app, ctx) {
       if (!field || value === this.lateAdditionIntent) return;
       if (value === "share") this.seedShareFromDose(false);
       this.edit(field, value);
+      this.lateAdditionIntentState = value;
     },
 
     // Explicit re-sync so an authored dose can overwrite the share/parts pair.
@@ -239,10 +257,13 @@ export function registerLateAdditionsCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
+    lateAdditionIntentState: { configurable: true, writable: true, value: null },
+    sugarEffectState: { configurable: true, writable: true, value: null },
+    sugarEffectDisplayState: { configurable: true, writable: true, value: null },
     lateAdditionIntent: {
       configurable: true,
       get() {
-        return ctx.engine.get(N.intent) ?? "dose";
+        return this.lateAdditionIntentState ?? "dose";
       },
     },
     lateIntentField: {
@@ -345,26 +366,13 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarEffect: {
       configurable: true,
       get() {
-        return currentSugarEffect(ctx.engine);
+        return this.sugarEffectState ?? sugarEffect({});
       },
     },
     sugarEffectDisplay: {
       configurable: true,
       get() {
-        const effect = currentSugarEffect(ctx.engine);
-        if (!effect.active) return null;
-        const signed = (value, decimals, suffix = "") =>
-          `${value >= 0 ? "+" : ""}${formatWithDecimals(value, decimals)}${suffix}`;
-        return {
-          share: formatPercent(effect.share),
-          og: signed(effect.ogPoints, 3),
-          fg: "+0.000",
-          abv: signed(effect.abvPoints, 2, "%"),
-          grist:
-            effect.gristKg == null
-              ? "—"
-              : `${formatWithDecimals(effect.gristKg, 2)} kg`,
-        };
+        return this.sugarEffectDisplayState ?? null;
       },
     },
     sugarDraftMassDisplay: {
@@ -433,6 +441,10 @@ export function registerLateAdditionsCard(app, ctx) {
 
 export function refreshLateAdditionsCard(app, ctx) {
   const rows = ctx.engine.get(N.collection) ?? [];
+  const effect = currentSugarEffect(ctx.engine);
+  app.lateAdditionIntentState = ctx.engine.get(N.intent) ?? "dose";
+  app.sugarEffectState = effect;
+  app.sugarEffectDisplayState = sugarEffectDisplayOf(effect);
   app.sugarList = rows;
   app.latePinPanelVisible = app.sugarIsActive;
   const active = app.latePinPanelVisible;
@@ -448,12 +460,11 @@ export function refreshLateAdditionsCard(app, ctx) {
   if (!rows.length) return;
   const share = Number(ctx.engine.get(N.share)) || 0;
   const total = numberAt(ctx.engine, N.effect.extractTotal);
-  const intent = ctx.engine.get(N.intent) ?? "dose";
   const resolved = resolvedSugarMasses({
     rows,
     budgetKg: share * total,
     share,
-    mode: intent,
+    mode: app.lateAdditionIntentState,
   });
   let changed = false;
   const next = rows.map((row, index) => {
@@ -477,8 +488,11 @@ export const KEYS = [
   "sugarMassField",
   "sugarColorField",
   "lateExtractField",
+  "lateAdditionIntentState",
   "sugarEffect",
+  "sugarEffectState",
   "sugarEffectDisplay",
+  "sugarEffectDisplayState",
   "sugarDraftMassDisplay",
   "sugarDraftExtractDisplay",
   "sugarResultLabel",
