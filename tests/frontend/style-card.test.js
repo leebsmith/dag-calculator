@@ -5,7 +5,6 @@ import { createTestApp, TEST_YEAST_ID } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { identityFixture } from "./helpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
-import { raySegment } from "../../frontend/src/engine/fermentation.js";
 import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
 const cache = createReferenceCache();
@@ -87,7 +86,7 @@ test("the sealed style declaration seeds the residual targets", async () => {
   assert.equal(app.master.getRoot("batch.fermentation"), "ale");
 
   const aa = app.engine.resolve("solver.batch.apparent_attenuation");
-  const abv = app.master.getRoot("batch.target_abv");
+  const abv = app.engine.get("batch.target_abv");
   assert.ok(typeof aa === "number" && aa > 0 && aa <= 1);
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
 });
@@ -115,53 +114,35 @@ test("a stats-less style leaves the residuals unseeded", async () => {
   assert.equal(app.master.getRoot("batch.target_abv"), undefined);
 });
 
-test("the fermentation navigator writes the batch targets, not the declaration", async () => {
+test("the style navigator reads the solved targets", async () => {
   const app = await appWithStyle("21A");
-
-  app.resetStyleTarget();
   const info = app.styleTargetInfo;
 
   assert.ok(info.og > 1);
-  assert.ok(Math.abs(app.engine.resolve("solver.batch.apparent_attenuation") - info.aa) < 1e-9);
-  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - info.abv) < 1e-9);
+  assert.ok(
+    Math.abs(app.engine.resolve("solver.batch.apparent_attenuation") - info.aa) < 1e-9
+  );
+  assert.ok(
+    Math.abs(app.engine.resolve("batch.realized_abv") - info.abv) < 1e-6
+  );
 });
 
-test("the ABV input writes the target and clamps to the fixed-AA ray", async () => {
+test("the ABV target is free and is not clamped to the fixed-AA ray", async () => {
   const app = await appWithStyle("21A");
   const bounds = app.styleAbvBounds;
-  const aa = app.engine.resolve("solver.batch.apparent_attenuation");
   assert.ok(bounds);
-  assert.ok(raySegment(app.styleRegion, aa));
 
-  const target = Math.round(((bounds[0] + bounds[1]) / 2) * 10) / 10;
+  const target = Math.round((bounds[1] + 1.0) * 10) / 10;
   app.setStyleTargetAbv(target);
-  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - target) < 1e-9);
-  const { oe, ae } = app.styleExtract;
-  const ray = raySegment(app.styleRegion, aa);
-  assert.ok(oe >= ray.oeMin - 1e-9 && oe <= ray.oeMax + 1e-9);
-  assert.ok(Math.abs(ae - oe * (1 - aa)) < 1e-9);
-  assert.ok(Math.abs(app.styleTargetInfo.abv - target) < 1e-9);
-  assert.equal(app.styleAbvTouched, true);
+  assert.equal(app.master.getRoot("batch.target_abv"), target);
 
   app.compute();
-  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - target) < 1e-9);
+  assert.equal(app.master.getRoot("batch.target_abv"), target);
 
   const invalid = { value: "" };
   app.setStyleTargetAbv(invalid);
-  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - target) < 1e-9);
+  assert.equal(app.master.getRoot("batch.target_abv"), target);
   assert.equal(invalid.value, target.toFixed(1));
-
-  app.setStyleTargetAbv(bounds[1] + 10);
-  const high = app.master.getRoot("batch.target_abv");
-  assert.ok(high <= bounds[1] + 1e-9);
-  assert.ok(high >= bounds[0] - 1e-9);
-  assert.equal(Math.round(high * 10) / 10, high);
-
-  app.setStyleTargetAbv(bounds[0] - 10);
-  const low = app.master.getRoot("batch.target_abv");
-  assert.ok(low >= bounds[0] - 1e-9);
-  assert.ok(low <= bounds[1] + 1e-9);
-  assert.equal(Math.round(low * 10) / 10, low);
 });
 
 test("the ABV cache keeps the style card off the boundary during an edit", async () => {
@@ -181,7 +162,7 @@ test("the ABV cache keeps the style card off the boundary during an edit", async
   app.teardown();
 });
 
-test("a new batch seeds the style ABV midpoint and centers it on the first yeast", async () => {
+test("a new batch seeds the style ABV midpoint and leaves it free", async () => {
   const app = createStepApp();
   await app.loadState({
     identity: {
@@ -201,10 +182,8 @@ test("a new batch seeds the style ABV midpoint and centers it on the first yeast
   app.selectYeast(TEST_YEAST_ID);
   app.compute();
 
-  const bounds = app.styleAbvBounds;
-  assert.ok(bounds);
-  const midpoint = Math.round(((bounds[0] + bounds[1]) / 2) * 10) / 10;
-  assert.ok(Math.abs(app.master.getRoot("batch.target_abv") - midpoint) < 1e-9);
+  assert.equal(app.master.getRoot("batch.target_abv"), undefined);
+  assert.equal(app.engine.get("batch.target_abv"), 6.5);
   assert.equal(app.styleAbvTouched, false);
 });
 

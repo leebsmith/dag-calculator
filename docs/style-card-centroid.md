@@ -88,33 +88,24 @@ style's band. Any change to the Cutaia/ASBC constants must be regenerated there.
 ## 8. ABV target control
 
 Many styles span a wide ABV band (e.g. Black IPA: 5.5–9.0), so a single
-centroid is only a reference. The Style card exposes **ABV as the target
-control** on the **fixed-AA ray**:
+centroid is only a reference. The Style card owns the **scale pin** and its
+active target:
 
-```
-AE = OE · (1 − apparent_attenuation)
-```
-
-- **One degree of freedom.** `apparent_attenuation` comes from the solved recipe
-  and yeast cap. The target ABV input moves the OE/AE point along that ray; the ray's
-  intersection with the feasible polygon is the reachable interval
-  (`raySegment`). OE and AE are readouts, never independent controls.
-- **Initialization.** A new batch seeds `batch.target_abv` to
-  `(style.abv_min + style.abv_max) / 2`. The input is disabled until a yeast
-  gives the ray a slope. On the first yeast selection the target is re-centered
-  to the midpoint of the feasible ray interval. After that the user's value is
-  authoritative: edits clamp to the interval, and recipe changes only clamp if
-  the value falls outside it.
-- **Input.** A one-decimal number field. Values are clamped and quantized
-  inward to the ray ∩ polygon interval; invalid input resets to the previous
-  value.
-- **Read-only display.** The Batch step's Target ABV field is a readout; the
-  Style step is the only editor. The underlying root is still
-  `batch.target_abv`, so the solver contract is unchanged.
-- **Reset** returns to the midpoint of the ray's intersection with the polygon.
-- **Scale pin.** ABV is the default; OG and FG pins use persisted targets and
-  solve the other two gravity/strength axes. The fixed-AA ray is drawn only in
-  ABV mode. The retired Belgian knob is documented in `docs/belgian-knob.md`.
+- **Three pins.** ABV, OG, or FG is the active constraint; the other two are
+  solved from the composition. Dose/share remains a separate axis.
+- **Free target.** The active target is authored, not clamped to the fixed-AA
+  ray. ABV accepts a one-decimal value; OG/FG accept a three-decimal gravity.
+  Style-envelope conflicts are warnings. The solver realizes the other axes.
+- **Initialization.** A new batch seeds each target from the style midpoint via
+  the artifact defaults. The user's value is authoritative; a solve never
+  rewrites it. “Reset to style” unsets the active target root, so the identity
+  default re-evaluates.
+- **Graph.** The marker is the solved batch point for every pin. The fixed-AA
+  ray is drawn only when ABV is the pin; it is a visualization of the current
+  realization, not a constraint.
+- **Read-only display.** The Batch step shows the active target as a readout;
+  the Style step is the editor for the pin and target. The Late Additions panel
+  previews the three pins but never edits them.
 
 ## 9. Model-free brew risk
 

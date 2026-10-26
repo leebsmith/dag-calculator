@@ -42,25 +42,18 @@ const ENVELOPE_INPUTS = [
   { id: N.envelope.abvMax, step: "0.1" },
 ];
 
-const ABV_EPS = 1e-9;
-// A one-decimal target can sit a few hundredths outside a recomputed ray
-// interval; re-solving for that would oscillate. Clamp only beyond half a step.
-const ABV_CLAMP_EPS = 0.05;
+
+const SCALE_PINS = [
+  { value: "abv", label: "ABV" },
+  { value: "og", label: "OG" },
+  { value: "fg", label: "FG" },
+];
 
 function abvInterval(ray) {
   if (!ray) return null;
   const a = cutaiaAbv(ray.oeMin, ray.aeMin);
   const b = cutaiaAbv(ray.oeMax, ray.aeMax);
   return Number.isFinite(a) && Number.isFinite(b) ? [Math.min(a, b), Math.max(a, b)] : null;
-}
-
-// Clamp to the interval and quantize inward to the input's 0.1 grid.
-function quantizeAbv(value, [low, high]) {
-  const lowQ = Math.ceil(low * 10 - ABV_EPS) / 10;
-  const highQ = Math.floor(high * 10 + ABV_EPS) / 10;
-  if (lowQ > highQ) return (low + high) / 2;
-  const rounded = Math.round(value * 10) / 10;
-  return Math.min(highQ, Math.max(lowQ, rounded));
 }
 
 export function registerStyleCard(app, ctx) {
@@ -119,22 +112,20 @@ export function registerStyleCard(app, ctx) {
       this.styleSafestPoint = this.styleRegion.length >= 3 ? chebyshevCenter(this.styleRegion) : null;
       this.styleExtract = null;
       if (this.styleRegion.length < 3) return;
-      // The solved batch is the graph marker for the OG/FG pins. The ABV pin
-      // keeps the target inverse so the navigator stays honest before a solve.
-      if (this.scalePin !== "abv") {
-        const solvedOg = engine.resolve(N.realized.og);
-        const solvedAa = engine.resolve(N.apparentAttenuation);
-        if (
-          typeof solvedOg === "number" &&
-          Number.isFinite(solvedOg) &&
-          solvedOg > 1.0 &&
-          typeof solvedAa === "number" &&
-          Number.isFinite(solvedAa)
-        ) {
-          const oe = sgToPlato(solvedOg);
-          this.styleExtract = { oe, ae: oe * (1 - solvedAa) };
-          return;
-        }
+      // The solved batch is the graph marker for every pin; the target inverse
+      // is only the pre-solve fallback.
+      const solvedOg = engine.resolve(N.realized.og);
+      const solvedAa = engine.resolve(N.apparentAttenuation);
+      if (
+        typeof solvedOg === "number" &&
+        Number.isFinite(solvedOg) &&
+        solvedOg > 1.0 &&
+        typeof solvedAa === "number" &&
+        Number.isFinite(solvedAa)
+      ) {
+        const oe = sgToPlato(solvedOg);
+        this.styleExtract = { oe, ae: oe * (1 - solvedAa) };
+        return;
       }
       const aa = this.styleSolvedAa;
       const abv = engine.get(N.targetAbv);
@@ -158,14 +149,15 @@ export function registerStyleCard(app, ctx) {
       }
     },
 
-    // Persist an ABV target and point the OE/AE preview at the fixed-AA ray.
-    // Returns false when the ray is unavailable or the inverse cannot resolve.
+    // Persist a free ABV target. The fixed-AA ray is a visualization, not a
+    // constraint; the solver realizes OG/FG from the composition.
     writeStyleAbv(value) {
+      if (!Number.isFinite(value) || value <= 0) return false;
       const aa = this.styleSolvedAa;
-      if (!Number.isFinite(aa) || aa >= 1) return false;
-      const inverse = extractFromTarget(aa, value);
-      if (!inverse) return false;
-      this.styleExtract = inverse;
+      if (Number.isFinite(aa) && aa < 1) {
+        const inverse = extractFromTarget(aa, value);
+        if (inverse) this.styleExtract = inverse;
+      }
       this.setRoot(N.targetAbv, value);
       this.styleAbvCentered = true;
       return true;
@@ -176,17 +168,12 @@ export function registerStyleCard(app, ctx) {
         valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
       const raw = element ? element.value : valueOrElement;
       const previous = this.styleAbvTarget;
-      const bounds = this.styleAbvBounds;
       const numeric = Number(raw);
-      if (!bounds) {
+      if (raw === "" || raw === null || !Number.isFinite(numeric) || numeric <= 0) {
         if (element) element.value = formatWithDecimals(previous, 1);
         return;
       }
-      if (raw === "" || raw === null || !Number.isFinite(numeric)) {
-        if (element) element.value = formatWithDecimals(previous, 1);
-        return;
-      }
-      const target = quantizeAbv(numeric, bounds);
+      const target = Math.round(numeric * 10) / 10;
       if (!this.writeStyleAbv(target)) {
         if (element) element.value = formatWithDecimals(previous, 1);
         return;
@@ -198,31 +185,12 @@ export function registerStyleCard(app, ctx) {
       this.notify();
     },
 
-    // Seed the target from the style band at creation; once a yeast exists,
-    // center it on the feasible ray interval. After that, only clamp when the
-    // ray changes underneath a user-owned value.
     centerOrClampStyleAbv() {
-      if (this.scalePin !== "abv") return false;
-      const bounds = this.styleAbvBounds;
-      if (!bounds) return false;
-      const current = engine.get(N.targetAbv);
-      if (!this.styleAbvCentered && !this.styleAbvTouched) {
-        return this.writeStyleAbv(quantizeAbv((bounds[0] + bounds[1]) / 2, bounds));
-      }
-      if (
-        Number.isFinite(current) &&
-        (current < bounds[0] - ABV_CLAMP_EPS || current > bounds[1] + ABV_CLAMP_EPS)
-      ) {
-        return this.writeStyleAbv(quantizeAbv(current, bounds));
-      }
       return false;
     },
 
     afterCompute() {
-      if (this.centerOrClampStyleAbv()) {
-        this.scheduleSolve();
-        this.notify();
-      }
+      return;
     },
 
     onBatchLoad() {
@@ -236,12 +204,30 @@ export function registerStyleCard(app, ctx) {
     },
 
     resetStyleTarget() {
-      const bounds = this.styleAbvBounds;
-      if (!bounds) return;
-      const target = quantizeAbv((bounds[0] + bounds[1]) / 2, bounds);
-      if (!this.writeStyleAbv(target)) return;
-      this.styleAbvTouched = true;
-      this.styleAbvCentered = true;
+      this.resetScaleTarget();
+    },
+
+    setScalePin(value) {
+      if (!SCALE_PINS.some((pin) => pin.value === value)) return;
+      if (value === this.scalePin) return;
+      this.setRoot(N.scalePin, value);
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    setScaleTarget(value) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric) || numeric <= 0) return;
+      const target =
+        this.scalePin === "abv" ? Math.round(numeric * 10) / 10 : numeric;
+      this.setRoot(this.activeScaleTargetRoot, target);
+      this.styleAbvTouched = this.scalePin === "abv" ? true : this.styleAbvTouched;
+      this.scheduleSolve();
+      this.notify();
+    },
+
+    resetScaleTarget() {
+      this.unsetRoot(this.activeScaleTargetRoot);
       this.scheduleSolve();
       this.notify();
     },
@@ -344,6 +330,67 @@ export function registerStyleCard(app, ctx) {
         const target = engine.get(N.targetAbv);
         if (Number.isFinite(target)) return target;
         return this.styleTargetInfo?.abv ?? null;
+      },
+    },
+    scalePin: {
+      configurable: true,
+      get() {
+        return engine.get(N.scalePin) ?? "abv";
+      },
+    },
+    scalePinOptions: {
+      configurable: true,
+      get() {
+        return SCALE_PINS;
+      },
+    },
+    scalePinLabel: {
+      configurable: true,
+      get() {
+        return SCALE_PINS.find((pin) => pin.value === this.scalePin)?.label ?? "ABV";
+      },
+    },
+    activeScaleTargetRoot: {
+      configurable: true,
+      get() {
+        if (this.scalePin === "og") return N.targetOg;
+        if (this.scalePin === "fg") return N.targetFg;
+        return N.targetAbv;
+      },
+    },
+    activeScaleTargetLabel: {
+      configurable: true,
+      get() {
+        return `Target ${this.scalePinLabel}`;
+      },
+    },
+    activeScaleTarget: {
+      configurable: true,
+      get() {
+        const value = engine.get(this.activeScaleTargetRoot);
+        return typeof value === "number" && Number.isFinite(value) ? value : null;
+      },
+    },
+    activeScaleTargetDisplay: {
+      configurable: true,
+      get() {
+        const value = this.activeScaleTarget;
+        if (value == null) return "";
+        return this.scalePin === "abv"
+          ? formatWithDecimals(value, 1)
+          : formatGravity(value);
+      },
+    },
+    activeScaleTargetUnit: {
+      configurable: true,
+      get() {
+        return this.scalePin === "abv" ? "%" : "SG";
+      },
+    },
+    activeScaleTargetStep: {
+      configurable: true,
+      get() {
+        return this.scalePin === "abv" ? "0.1" : "0.001";
       },
     },
     styleTargetInfo: {
@@ -566,4 +613,4 @@ export function refreshStyleCard(app, ctx) {
   app.refreshTargets();
 }
 
-export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];
+export const KEYS = ["selectedStyleId", "styleRegion", "styleEnvelope", "styleSafestPoint", "styleExtract", "styleConformance", "styleSai", "styleAbvTouched", "styleAbvCentered", "styleSolvedAa", "styleSolvedCap", "styleSolvedVolume", "targetSrm", "targetIbu", "whirlpoolFraction", "boilIbu", "whirlpoolIbu", "styleGravity", "styleVitals", "computeStyleTarget", "writeStyleAbv", "setStyleTargetAbv", "centerOrClampStyleAbv", "afterCompute", "onBatchLoad", "resetStyleTarget", "scalePin", "scalePinOptions", "scalePinLabel", "activeScaleTargetRoot", "activeScaleTargetLabel", "activeScaleTarget", "activeScaleTargetDisplay", "activeScaleTargetUnit", "activeScaleTargetStep", "setScalePin", "setScaleTarget", "resetScaleTarget", "styleTargetNearest", "refreshTargets", "setTargetSrm", "setTargetIbu", "setWhirlpoolFraction", "styleConformanceReport", "selectedStyle", "styleAbvBounds", "styleAbvTarget", "styleTargetInfo", "styleTargetRisk", "stylePreview", "styleSrmBounds", "styleIbuBounds", "srmTargetField", "ibuTargetField", "srmTargetProvenance", "ibuTargetProvenance", "fermentationField", "fermentationProvenance", "styleEnvelopeFields", "ibuGu", "ibuGuDisplay", "whirlpoolPctDisplay", "boilIbuDisplay", "whirlpoolIbuDisplay"];

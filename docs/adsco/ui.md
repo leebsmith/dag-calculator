@@ -189,16 +189,17 @@ FG and ABV at that pin's persisted target:
 
 The active row is the batch; the other two are hypothetical previews. Cells are
 green inside the style envelope, red outside, and neutral without an envelope.
-One backend preview call returns all three rows; it skips grist and cascade.
-Previews are read-only; selecting a radio makes that pin active, and the active
-target is edited in the panel. The composition representation is held fixed and
-named above the table (`Previews hold 0.5 kg sugar extract` / `Previews hold 10 %
-of extract`).
+One backend preview call returns all three rows when sugar is authored; no-sugar
+batches skip the preview solves. Previews are read-only. The pin selector and
+active target live on the Style card; the panel only shows the table and names
+the composition representation (`Previews hold 0.5 kg sugar extract` /
+`Previews hold 10 % of extract`).
 
 The panel expands when sugar is first authored and collapses when no sugar
 contributes. The Late Additions card and its “Configure Sugars” button remain.
-The Style card mirrors the active pin and target, owns the style reset, and
-keeps the pin control reachable when the preview is collapsed.
+The Style card owns the pin selector, active target, style reset, and the
+pin-aware graph; the Late Additions panel never edits them, so the pin remains
+reachable for batches with no sugar.
 
 Style conflicts are warnings, never freeze gates. The retired Belgian knob was
 the special-case ABV-at-fixed-AE sugar advisory; the general ABV+FG

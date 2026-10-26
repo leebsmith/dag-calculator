@@ -71,8 +71,13 @@ def test_fg_pin_hits_the_apparent_extract_target():
     assert result.sg_post_boil > 1.012
 
 
-def test_previews_are_three_rows_and_match_the_active_solve():
+def test_previews_are_empty_without_sugar():
     result = solve_batch(_input())
+    assert result.previews == ()
+
+
+def test_previews_are_three_rows_and_match_the_active_solve():
+    result = solve_batch(_input(s_late_add=0.4))
     assert [row.pin for row in result.previews] == ["abv", "og", "fg"]
     assert all(row.ok for row in result.previews)
 
@@ -88,7 +93,7 @@ def test_preview_rows_hold_the_authored_composition():
 
 
 def test_infeasible_preview_is_reported_not_raised():
-    result = solve_batch(_input(target_fg=1.10))
+    result = solve_batch(_input(target_fg=1.10, s_late_add=0.4))
     by_pin = {row.pin: row for row in result.previews}
     assert by_pin["abv"].ok is True
     assert by_pin["fg"].ok is False

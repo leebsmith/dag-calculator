@@ -195,9 +195,9 @@ Three recipe pins are supported:
 
 The targets live on batch roots (`target_abv`, `target_og`, `target_fg`) and
 default from the immutable style midpoints. The active pin is
-`batch.scale_pin`; dose/share stays a separate composition axis. One preview
-call returns the three rows at their persisted targets; previews hold the
-authored composition and never drive the active solve. Style envelope conflicts
+`batch.scale_pin`; dose/share stays a separate composition axis. When sugar is
+authored, one preview call returns the three rows at their persisted targets;
+previews hold the authored composition and never drive the active solve. Style envelope conflicts
 are warnings (A18).
 
 The Belgian knob is retired; the general ABV+FG composition-solving mode is

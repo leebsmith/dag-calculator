@@ -68,6 +68,16 @@ test("the active target edits and resets to the identity default", async () => {
   assert.equal(app.engine.get("batch.target_og"), 1.05);
 });
 
+test("the ABV target is a free pin, not a fixed-AA clamp", async () => {
+  const app = await appWithSugar();
+  app.setScalePin("abv");
+  app.compute();
+  app.setScaleTarget("6.0");
+  app.compute();
+  assert.equal(app.engine.get("batch.target_abv"), 6.0);
+  assert.equal(app.activeScaleTargetDisplay, "6.0");
+});
+
 test("the composition caption follows dose and share", async () => {
   const app = await appWithSugar();
   assert.match(app.previewCompositionCaption, /kg sugar extract/);

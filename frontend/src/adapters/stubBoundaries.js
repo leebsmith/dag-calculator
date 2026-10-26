@@ -69,7 +69,9 @@ function hopOutputs(inputs = {}) {
 }
 
 export const STUB_BOUNDARIES = {
-  batch_sparge_solver: () => ({
+  batch_sparge_solver: (inputs = {}) => {
+    const hasSugar = (inputs.s_late_add ?? 0) > 0 || (inputs.sugar_extract_share ?? 0) > 0;
+    return {
     sg_post_boil: 1.055,
     v_pre_boil: 24.0,
     s_post_boil_target: 2.6,
@@ -95,12 +97,15 @@ export const STUB_BOUNDARIES = {
     "hlt.v_hlt_top_up": 0.0,
     "hlt.v_sparge_deliverable": 15.0,
     mash_thickness_l_per_kg: 3.0,
-    previews: [
-      { pin: "abv", og: 1.055, fg: 1.012, abv: 5.5, ok: true, reason: "" },
-      { pin: "og", og: 1.052, fg: 1.011, abv: 5.3, ok: true, reason: "" },
-      { pin: "fg", og: 1.058, fg: 1.012, abv: 5.9, ok: true, reason: "" },
-    ],
-  }),
+    previews: hasSugar
+      ? [
+          { pin: "abv", og: 1.055, fg: 1.012, abv: 5.5, ok: true, reason: "" },
+          { pin: "og", og: 1.052, fg: 1.011, abv: 5.3, ok: true, reason: "" },
+          { pin: "fg", og: 1.058, fg: 1.012, abv: 5.9, ok: true, reason: "" },
+        ]
+      : [],
+    };
+  },
   hop_bitterness_solver: hopOutputs,
   water_chemistry_solver: () => ({
     strategy: "CALCIUM_FLOOR",

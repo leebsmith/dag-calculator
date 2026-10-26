@@ -76,39 +76,10 @@
         <div x-show="latePinPanelOpen">
           <p class="form-hint" x-text="previewCompositionCaption"></p>
 
-          <div class="filter-pills-container">
-            <template x-for="opt in scalePinOptions" :key="opt.value">
-              <label class="filter-pill" :class="{ 'is-active': scalePin === opt.value }" :aria-pressed="(scalePin === opt.value) ? 'true' : 'false'">
-                <input
-                  type="radio"
-                  name="scale-pin"
-                  :value="opt.value"
-                  :checked="scalePin === opt.value"
-                  @change="setScalePin(opt.value)"
-                />
-                <span x-text="opt.label"></span>
-              </label>
-            </template>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="scale-target" x-text="activeScaleTargetLabel"></label>
-            <div class="table-action-cell">
-              <input
-                id="scale-target"
-                type="number"
-                class="form-input"
-                :step="activeScaleTargetStep"
-                :value="activeScaleTargetDisplay"
-                @change="setScaleTarget($event.target.value)"
-              />
-              <span class="text-xs text-muted" x-text="activeScaleTargetUnit"></span>
-              <button type="button" class="btn-outline text-xs" @click="resetScaleTarget()">
-                Reset to style
-              </button>
-            </div>
-          </div>
-
+          <p class="form-hint">
+            Pin: <span class="font-bold" x-text="scalePinLabel"></span> — change the pin and
+            target on the Style step.
+          </p>
           <div class="data-table-container">
             <table class="data-table">
               <thead>

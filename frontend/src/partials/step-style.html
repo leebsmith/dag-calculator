@@ -52,37 +52,25 @@
                 <option :value="opt.value" :selected="opt.value === scalePin" x-text="opt.label"></option>
               </template>
             </select>
-            <span class="form-hint" x-text="activeScaleTargetLabel + ': ' + activeScaleTargetDisplay + ' ' + activeScaleTargetUnit"></span>
           </div>
-          <template x-if="scalePin === 'abv'">
-            <div class="form-group">
-              <label class="form-label" for="style-target-abv">Target ABV (%)</label>
+          <div class="form-group">
+            <label class="form-label" for="style-scale-target" x-text="activeScaleTargetLabel"></label>
+            <div class="table-action-cell">
               <input
-                id="style-target-abv"
+                id="style-scale-target"
                 type="number"
-                step="0.1"
                 class="form-input"
-                :min="fmt.formatWithDecimals(styleAbvBounds?.[0], 3, { dash: '0' })"
-                :max="fmt.formatWithDecimals(styleAbvBounds?.[1], 3, { dash: '100' })"
-                :value="fmt.formatWithDecimals(styleAbvTarget, 1)"
-                :disabled="!styleAbvBounds"
-                @change="setStyleTargetAbv($event.target)"
+                :step="activeScaleTargetStep"
+                :value="activeScaleTargetDisplay"
+                @change="setScaleTarget($event.target.value)"
               />
-              <span class="form-hint" x-show="styleAbvBounds">
-                Clamped to the fixed-AA ray inside the style's feasible region.
-              </span>
-              <span class="form-hint" x-show="!styleAbvBounds">
-                Select a yeast to set the target ABV.
-              </span>
+              <span class="text-xs text-muted" x-text="activeScaleTargetUnit"></span>
             </div>
-          </template>
-          <template x-if="scalePin !== 'abv'">
-            <div class="form-group">
-              <span class="form-label" x-text="activeScaleTargetLabel"></span>
-              <span class="field-value" x-text="activeScaleTargetDisplay + ' ' + activeScaleTargetUnit"></span>
-              <span class="form-hint">Edit this target in Late Additions. Style conflicts are warnings.</span>
-            </div>
-          </template>
+            <span class="form-hint">
+              Free target. Style conflicts are warnings; the solver realizes the other two
+              gravity/strength axes.
+            </span>
+          </div>
           <div class="extract-picker">
             <svg
               class="extract-preview"

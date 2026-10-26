@@ -126,33 +126,6 @@ export function registerLateAdditionsCard(app, ctx) {
       return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
     },
 
-    setScalePin(value) {
-      if (!SCALE_PINS.some((pin) => pin.value === value)) return;
-      if (value === this.scalePin) return;
-      this.setRoot(N.scalePin, value);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    setScaleTarget(value) {
-      const pin = this.scalePin;
-      if (pin === "abv" && typeof this.setStyleTargetAbv === "function") {
-        this.setStyleTargetAbv(value);
-        return;
-      }
-      const numeric = Number(value);
-      if (!Number.isFinite(numeric) || numeric <= 0) return;
-      this.setRoot(this.activeScaleTargetRoot, numeric);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    resetScaleTarget() {
-      this.unsetRoot(this.activeScaleTargetRoot);
-      this.scheduleSolve();
-      this.notify();
-    },
-
     toggleLatePinPanel() {
       this.latePinPanelOpen = !this.latePinPanelOpen;
     },
@@ -229,63 +202,6 @@ export function registerLateAdditionsCard(app, ctx) {
       configurable: true,
       get() {
         return this.fieldsById[N.share] ?? null;
-      },
-    },
-    scalePin: {
-      configurable: true,
-      get() {
-        return ctx.engine.get(N.scalePin) ?? "abv";
-      },
-    },
-    scalePinOptions: {
-      configurable: true,
-      get() {
-        return SCALE_PINS;
-      },
-    },
-    activeScaleTargetRoot: {
-      configurable: true,
-      get() {
-        if (this.scalePin === "og") return N.targetOg;
-        if (this.scalePin === "fg") return N.targetFg;
-        return N.targetAbv;
-      },
-    },
-    activeScaleTargetLabel: {
-      configurable: true,
-      get() {
-        if (this.scalePin === "og") return "Target OG";
-        if (this.scalePin === "fg") return "Target FG";
-        return "Target ABV";
-      },
-    },
-    activeScaleTarget: {
-      configurable: true,
-      get() {
-        const value = ctx.engine.get(this.activeScaleTargetRoot);
-        return typeof value === "number" && Number.isFinite(value) ? value : null;
-      },
-    },
-    activeScaleTargetDisplay: {
-      configurable: true,
-      get() {
-        const value = this.activeScaleTarget;
-        if (value == null) return "";
-        return this.scalePin === "abv"
-          ? formatWithDecimals(value, 1)
-          : formatGravity(value);
-      },
-    },
-    activeScaleTargetUnit: {
-      configurable: true,
-      get() {
-        return this.scalePin === "abv" ? "%" : "SG";
-      },
-    },
-    activeScaleTargetStep: {
-      configurable: true,
-      get() {
-        return this.scalePin === "abv" ? "0.1" : "0.001";
       },
     },
     scalePreviews: {
@@ -547,18 +463,7 @@ export const KEYS = [
   "adoptLateAdditionShare",
   "latePinPanelOpen",
   "latePinPanelSeen",
-  "setScalePin",
-  "setScaleTarget",
-  "resetScaleTarget",
   "toggleLatePinPanel",
-  "scalePin",
-  "scalePinOptions",
-  "activeScaleTargetRoot",
-  "activeScaleTargetLabel",
-  "activeScaleTarget",
-  "activeScaleTargetDisplay",
-  "activeScaleTargetUnit",
-  "activeScaleTargetStep",
   "scalePreviews",
   "scalePreviewRows",
   "previewCompositionCaption",

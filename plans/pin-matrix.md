@@ -34,16 +34,18 @@ seed also conflates as-is and dry basis and ADF with RDF.
 2. **Three persisted targets.** `batch.target_abv` (exists), `batch.target_og`,
    `batch.target_fg`. Roots default directly from the immutable style identity
    (midpoints); no style-change path exists.
-3. **Active target editing.** The active target is editable in the pin-panel
-   row; the Style card mirrors the same root and owns the style reset and the
-   graph.
+3. **Active target editing on the Style card.** The Style card owns the pin
+   selector, the active target input, the style reset, and the graph. The Late
+   Additions panel is a read-only preview; it never edits the pin or target.
 4. **Preview matrix.** One backend preview call returns three lightweight rows
-   (OG/FG/ABV + status). Rows are read-only previews at their own persisted
-   targets; the active row is the batch. No auto-suggest.
+   (OG/FG/ABV + status) when sugar is authored; no sugar means no preview
+   solves. Rows are read-only previews at their own persisted targets; the
+   active row is the batch. No auto-suggest.
 5. **Panel behaviour.** The matrix expands when sugar is first authored and
    collapses when no sugar contributes (active sugar extract ≤ 0). The Late
    Additions card and its “Configure Sugars” button never go away. The Style
-   card always exposes the active pin and target.
+   card always exposes the active pin and target, so the pin is reachable for
+   the ~85% of batches with no sugar.
 6. **Warnings only.** Style envelope conflicts never block the solve or freeze.
 7. **Composition is held in the authored representation.** Previews hold the
    authored dose in dose mode and the authored extract share in share mode; the
@@ -197,9 +199,9 @@ Repo: `dag-calculator`.
   draftEditor.js`; `frontend/src/engine/fermentation.js`;
   `tests/frontend/{style-card,belgian-knob,late-addition-intent,
   attenuation-display}.test.js`; `docs/adsco/ui.md`.
-- **Owns:** the collapsible 3×3 matrix, radios, active target input, read-only
-  previews, red/green states, composition caption; Style-card pin mirror,
-  pin-aware graph, Belgian-knob removal.
+- **Owns:** the collapsible 3×3 read-only matrix, red/green states and
+  composition caption in Late Additions; Style-card pin selector, active target
+  input, style reset, pin-aware graph, and Belgian-knob removal.
 - **Must not touch:** solver, wire, seeds.
 - **Gate:** `make verify`; matrix states; active pin changes; no-style branch
   absent; knob gone; ABV-only path unchanged.
@@ -237,9 +239,11 @@ Repo: `dag-calculator`.
   `docs/sugar-database.md`.
 - Sugar provenance hashes are citation fingerprints of the vendor/method tuple
   until page bytes are captured; the source manifest pins the committed file.
-- The preview block is one `solver.batch` call; the active ABV path and the
-  oracle are unchanged.
+- The preview block is one `solver.batch` call when sugar is authored; no-sugar
+  batches skip the three preview solves. The active ABV path and the oracle are
+  unchanged.
 - The Belgian knob and its helper are removed; the ABV+FG composition-solving
   mode remains deferred.
-- The Style card mirrors the active pin/target and keeps the pin selector, so
-  the pin remains changeable when the sugar panel is collapsed.
+- The Style card owns the pin selector, active target, and style reset; the
+  Late Additions panel is read-only, so the pin remains reachable for batches
+  with no sugar.

@@ -32,6 +32,9 @@ export const STYLE_NODES = {
   fermVolume: "batch.v_ferm",
   postBoilVolume: "solver.batch.cascade.v_post_boil",
   targetAbv: "batch.target_abv",
+  targetOg: "batch.target_og",
+  targetFg: "batch.target_fg",
+  scalePin: "batch.scale_pin",
   slice: "batch",
 };
 

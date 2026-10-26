@@ -2185,7 +2185,12 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
     )
 
     aa_malt = composite_fermentability_fraction(inputs.grain_bill)
-    if aa_malt is None:
+    has_sugar = inputs.s_late_add > 0.0 or inputs.sugar_extract_share > 0.0
+    if not has_sugar:
+        # The preview matrix is a sugar-composition diagnostic. 85% of batches
+        # never open it, so skip the three lightweight solves entirely.
+        previews = ()
+    elif aa_malt is None:
         previews = tuple(
             ScalePreview(p, 0.0, 0.0, 0.0, False, "INVALID_ATTENUATION")
             for p in ("abv", "og", "fg")

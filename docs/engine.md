@@ -276,14 +276,14 @@ Conversion efficiency remains a separate gravity correction, not an attenuation
 correction. See `docs/attenuation-model.md` and
 `docs/fermentability-and-yield.md`.
 
-The Style step's **Target ABV** input is the primary fermentation control when
-ABV is the active scale pin. It moves along the fixed-AA ray
-`AE = OE · (1 − apparent_attenuation)` and is clamped to the ray ∩ style-region
-interval; OE/AE are readouts. A new batch starts at the style's ABV-band midpoint
-and re-centers on the first yeast selection. The Batch step's Target ABV field is
-a read-only display of the same root. OG and FG pins use their own persisted
-targets and show the solved batch point; the fixed-AA ray is drawn only in ABV
-mode. The Belgian knob is retired (see `docs/belgian-knob.md`).
+The Style step owns the **scale pin** (ABV/OG/FG) and its active target. The
+target is free: the solver takes it and realizes the other two gravity/strength
+axes from the composition. It is not clamped to the fixed-AA ray; the ray is a
+drawing of the current realization and appears only in ABV mode. A new batch
+seeds the target from the style midpoint, and the user's value is never
+rewritten by a solve. Style conflicts are warnings. The Batch step shows the
+active target as a read-only display of the same root. The Belgian knob is
+retired (see `docs/belgian-knob.md`).
 
 Water source ions are **read-only selection readouts** (the boundary reads them
 straight from `water.source_report`). Water target ions and the calcium floor are
