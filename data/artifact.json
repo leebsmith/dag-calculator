@@ -243,6 +243,54 @@
       "value": 0,
       "dimension": "percentage"
     },
+    "fermentability_prior_base": {
+      "value": 0.81,
+      "dimension": "percentage"
+    },
+    "fermentability_prior_crystal": {
+      "value": 0.5,
+      "dimension": "percentage"
+    },
+    "fermentability_prior_roasted": {
+      "value": 0.15,
+      "dimension": "percentage"
+    },
+    "fermentability_prior_acid": {
+      "value": 0.8,
+      "dimension": "percentage"
+    },
+    "fermentability_prior_sugar": {
+      "value": 1,
+      "dimension": "percentage"
+    },
+    "fermentability_prior_default": {
+      "value": 0.81,
+      "dimension": "percentage"
+    },
+    "yield_prior_base": {
+      "value": 0.8,
+      "dimension": "percentage"
+    },
+    "yield_prior_crystal": {
+      "value": 0.74,
+      "dimension": "percentage"
+    },
+    "yield_prior_roasted": {
+      "value": 0.6,
+      "dimension": "percentage"
+    },
+    "yield_prior_acid": {
+      "value": 0.74,
+      "dimension": "percentage"
+    },
+    "yield_prior_extract": {
+      "value": 0.95,
+      "dimension": "percentage"
+    },
+    "yield_prior_default": {
+      "value": 0.8,
+      "dimension": "percentage"
+    },
     "default_grain_moisture_fraction": {
       "value": 0.04,
       "dimension": "percentage"
@@ -1194,6 +1242,8 @@
           "lte": 1
         }
       },
+      "yield_basis": {},
+      "yield_provenance": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1201,6 +1251,7 @@
           "lte": 1
         }
       },
+      "fermentability_provenance": {},
       "moisture_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1227,6 +1278,8 @@
           "lte": 1
         }
       },
+      "yield_basis": {},
+      "yield_provenance": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1234,6 +1287,7 @@
           "lte": 1
         }
       },
+      "fermentability_provenance": {},
       "color_lovibond": {
         "dimension": "grain_color",
         "domain": {
@@ -1253,6 +1307,7 @@
           "lte": 1
         }
       },
+      "attenuation_provenance": {},
       "flocculation": {
         "taxonomy": "flocculation"
       },

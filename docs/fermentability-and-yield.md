@@ -117,6 +117,26 @@ fermentability value as extract yield.
 - Not a claim that a malt's Congress limit is your brewery's result.
 - Not a replacement for the yeast cap or the per-batch derate.
 
+## Provenance and priors
+
+A catalog record carries the figure it was captured with, and a citation for it:
+`fermentability_provenance`/`yield_provenance` (and `attenuation_provenance`
+for yeasts) record the source URL, the cached document's `sha256`, the retrieval
+time, the vendor, and the **bound** the source states — `point`, `min`, `max`,
+or `unknown` (used for published extracts whose qualifier is not yet parsed).
+A `null` figure means the source is silent; the export never imputes.
+
+Priors live in the artifact, not in the seed builder or an adapter table
+(`fermentability_prior_*`, `yield_prior_*`). They resolve **copy-forward**: when
+a catalog record is added to a batch, the row is written with the resolved value
+and `kind: "prior"` provenance. A frozen batch therefore records whether each
+number was measured or assumed, and changing a prior later never rewrites
+batches that already exist.
+
+`bound: "min"` is a floor, not a point estimate. Pass 1 stores the value and the
+bound; using a floor as one (rather than silently treating it as a point) is
+deferred with the late-addition work.
+
 ## Tests
 
 - `F` defaults by category; scraped values win.

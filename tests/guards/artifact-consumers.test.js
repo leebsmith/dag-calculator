@@ -14,6 +14,20 @@ import { artifact } from "./util.js";
 const HOST_CONSTANTS = new Set([
   "default_runoff_ratio",
   "default_equipment_profile_id",
+  // Ingredient priors, resolved copy-forward when a catalog record enters a
+  // batch; no artifact expression reads them.
+  "fermentability_prior_base",
+  "fermentability_prior_crystal",
+  "fermentability_prior_roasted",
+  "fermentability_prior_acid",
+  "fermentability_prior_sugar",
+  "fermentability_prior_default",
+  "yield_prior_base",
+  "yield_prior_crystal",
+  "yield_prior_roasted",
+  "yield_prior_acid",
+  "yield_prior_extract",
+  "yield_prior_default",
 ]);
 
 // Restated by the Python solvers and pinned to this file by

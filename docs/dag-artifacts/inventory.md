@@ -69,11 +69,11 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grist_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `hop` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_rating` (—), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `category` (—), `flavor_profiles` (—), `id` (—), `name` (—), `notes` (—), `origin` (—), `pairings` (—), `purpose` (—), `recipes_count` (—), `synonym` (—), `url` (—) |
 | `hop_product` | `alpha_acid_max_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_min_pct` (dimension percentage, domain {"gte":0,"lte":1}), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `beta_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `brand` (—), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `product_form` (taxonomy whirlpool_hop_form), `purpose` (—), `t90_replacement_ratio` (dimension dimensionless, domain {"gte":0}), `total_oil_pct` (dimension percentage, domain {"gte":0,"lte":1}), `url` (—), `variety_id` (—) |
-| `malt` | `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `family` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `generic_description` (—), `id` (—), `maltster` (—), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `standard_malt` (—), `standard_name` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `malt` | `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `family` (—), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_provenance` (—), `generic_description` (—), `id` (—), `maltster` (—), `moisture_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `name` (—), `notes` (—), `standard_malt` (—), `standard_name` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
 | `mash_rest_definition` | `default_duration_min` (dimension time), `name` (—), `purpose` (—), `rest_id` (taxonomy mash_rest), `sequence` (dimension dimensionless, domain {"gte":0}), `temp_max_c` (dimension temperature), `temp_min_c` (dimension temperature) |
 | `style` | `abv_max` (dimension abv, domain {"gte":0}), `abv_min` (dimension abv, domain {"gte":0}), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain {"gte":0}), `fg_min` (dimension gravity, domain {"gte":0}), `flavor` (—), `forked_from_id` (—), `forked_from_name` (—), `history` (—), `ibu_max` (dimension ibu, domain {"gte":0}), `ibu_min` (dimension ibu, domain {"gte":0}), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain {"gte":0}), `og_min` (dimension gravity, domain {"gte":0}), `overall_impression` (—), `srm_max` (dimension beer_color, domain {"gte":0}), `srm_min` (dimension beer_color, domain {"gte":0}), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
-| `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `id` (—), `maltster` (—), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
+| `sugar` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `fermentability_provenance` (—), `id` (—), `maltster` (—), `name` (—), `notes` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `yield_provenance` (—) |
 | `sugar_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `sugar_id` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `trace_malt_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain {"gte":0}), `fermentability_fraction` (dimension percentage, domain {"gte":0,"lte":1}), `mass_kg` (dimension mass, domain {"gte":0}), `name` (—), `notes` (—), `yield_fraction` (dimension percentage, domain {"gte":0,"lte":1}) |
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain {"gte":0}), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain {"gt":0}) |
@@ -82,7 +82,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water_target` | `alkalinity_as_caco3` (dimension concentration, domain {"gte":0}), `calcium_ca` (dimension concentration, domain {"gte":0}), `calcium_floor_ppm` (dimension concentration, domain {"gte":0}, default 50), `chloride_cl` (dimension concentration, domain {"gte":0}), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain {"gte":0}), `mode` (taxonomy strategy), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain {"gte":0}), `sulfate_so4` (dimension concentration, domain {"gte":0}) |
 | `whirlpool_hop_result` | `effective_minutes` (dimension time), `ibu` (dimension ibu), `mass_kg` (dimension mass), `minutes` (dimension time) |
 | `whirlpool_hop_row` | `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `duration_min` (dimension time, domain {"gte":0}, default 30), `hop_id` (—), `initial_temp_c` (dimension temperature, domain {"gte":0,"lte":100}, default 99), `name` (—), `notes` (—), `parts` (dimension dimensionless, domain {"gte":0}), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `product_form` (taxonomy whirlpool_hop_form, default "t90_pellet"), `t90_replacement_ratio` (dimension dimensionless, domain {"gte":0}) |
-| `yeast` | `alcohol_tolerance` (—), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `recipes` (—), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
+| `yeast` | `alcohol_tolerance` (—), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_provenance` (—), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `recipes` (—), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
 
 ## Functions
 
@@ -128,6 +128,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_v_ferm_l` | 20 | `volume` |
 | `ethanol_density` | 0.7907 | `dimensionless` |
+| `fermentability_prior_acid` | 0.8 | `percentage` |
+| `fermentability_prior_base` | 0.81 | `percentage` |
+| `fermentability_prior_crystal` | 0.5 | `percentage` |
+| `fermentability_prior_default` | 0.81 | `percentage` |
+| `fermentability_prior_roasted` | 0.15 | `percentage` |
+| `fermentability_prior_sugar` | 1 | `percentage` |
 | `grain_displacement_l_per_kg` | 0.667632 | `mash_thickness` |
 | `k_abs_true` | 1.043176 | `mash_thickness` |
 | `mash_ph_optimal_high` | 5.6 | `ph` |
@@ -139,6 +145,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `sucrose_yield_ldk` | 385.641 | `extract_yield` |
 | `v_bar` | 0.625 | `mash_thickness` |
 | `water_specific_heat` | 1 | `specific_heat` |
+| `yield_prior_acid` | 0.74 | `percentage` |
+| `yield_prior_base` | 0.8 | `percentage` |
+| `yield_prior_crystal` | 0.74 | `percentage` |
+| `yield_prior_default` | 0.8 | `percentage` |
+| `yield_prior_extract` | 0.95 | `percentage` |
+| `yield_prior_roasted` | 0.6 | `percentage` |
 
 ## Nodes
 

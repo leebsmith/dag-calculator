@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:264cc7407ad0865f9af753fef88f15456292ed8d9fae83c513df651cfd92973b",
+    "hash": "sha256:b3f272c4f1631920f458da0999479b93e50f1be239f36250a1bb682a6942abc2",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -246,6 +246,54 @@
         },
         "default_attenuation_derate_points": {
           "value": 0,
+          "dimension": "percentage"
+        },
+        "fermentability_prior_base": {
+          "value": 0.81,
+          "dimension": "percentage"
+        },
+        "fermentability_prior_crystal": {
+          "value": 0.5,
+          "dimension": "percentage"
+        },
+        "fermentability_prior_roasted": {
+          "value": 0.15,
+          "dimension": "percentage"
+        },
+        "fermentability_prior_acid": {
+          "value": 0.8,
+          "dimension": "percentage"
+        },
+        "fermentability_prior_sugar": {
+          "value": 1,
+          "dimension": "percentage"
+        },
+        "fermentability_prior_default": {
+          "value": 0.81,
+          "dimension": "percentage"
+        },
+        "yield_prior_base": {
+          "value": 0.8,
+          "dimension": "percentage"
+        },
+        "yield_prior_crystal": {
+          "value": 0.74,
+          "dimension": "percentage"
+        },
+        "yield_prior_roasted": {
+          "value": 0.6,
+          "dimension": "percentage"
+        },
+        "yield_prior_acid": {
+          "value": 0.74,
+          "dimension": "percentage"
+        },
+        "yield_prior_extract": {
+          "value": 0.95,
+          "dimension": "percentage"
+        },
+        "yield_prior_default": {
+          "value": 0.8,
           "dimension": "percentage"
         },
         "default_grain_moisture_fraction": {
@@ -1199,6 +1247,8 @@
               "lte": 1
             }
           },
+          "yield_basis": {},
+          "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1206,6 +1256,7 @@
               "lte": 1
             }
           },
+          "fermentability_provenance": {},
           "moisture_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1232,6 +1283,8 @@
               "lte": 1
             }
           },
+          "yield_basis": {},
+          "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -1239,6 +1292,7 @@
               "lte": 1
             }
           },
+          "fermentability_provenance": {},
           "color_lovibond": {
             "dimension": "grain_color",
             "domain": {
@@ -1258,6 +1312,7 @@
               "lte": 1
             }
           },
+          "attenuation_provenance": {},
           "flocculation": {
             "taxonomy": "flocculation"
           },
@@ -4540,5 +4595,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:ba85bc642aa9187d40bf57d9a6676d0a058c8f1bd082759f30c87f3583c363e5"
+  "content_hash": "sha256:7845d423e82ef5d77c5d35c7622b90adb3f10cd7f17a4c8e7a34b6d7eb581ea1"
 }
