@@ -134,6 +134,29 @@ the ions it declares a number for (`null` floats).
 Unchanged two-destination checklist (mash grist / HLT after top-up), now fed by
 the corrected pH and the full dose (salts + agent + acid).
 
+## Ingredient figures (attenuation)
+
+The fermentables, late-addition, and trace tables show the **real** fermentable
+share of extract. The figure carries a marker so an assumption is never rendered
+as data:
+
+| Marker | Meaning | Example |
+| --- | --- | --- |
+| *(none)* | captured, real basis, point value | `87.0%` |
+| `≥` | the source published a minimum; the value is a floor | `≥87.0%` |
+| `≈` | converted from an apparent figure at the fixed 12 °P reference | `≈63.5%` |
+| `~` | assumed prior (no published figure) | `~64.3%` |
+
+Markers compose (`≥≈63.5%` for a Dingemans minimum published as final
+attenuation). The underlying value is the real fraction the solver consumes;
+the marker is presentation only. A prior is stamped `kind: "prior"` in the row's
+provenance, and the same marker applies to a prior yield.
+
+The realized **FG** readout floors at SG 1.000 (0 °P in Plato): when apparent
+extract is at or below zero (a diastaticus fermentation), the field displays
+`≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value is
+unchanged; the conformance layer still sees the computed gravity.
+
 ## Guardrails / a11y
 
 - Named handlers, `fmt.*` for all numbers/deltas, no inline logic (A8/A10),

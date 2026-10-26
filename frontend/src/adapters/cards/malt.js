@@ -5,6 +5,7 @@
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel, formatPercent, formatValueWithUnit, formatWithDecimals } from "../../utils.js";
+import { figureMarkFor } from "../../views/producer/table.js";
 
 const MAX_VISIBLE = 25;
 const MAX_MAJOR_MALTS = 8;
@@ -26,7 +27,12 @@ function makeRow(malt) {
     parts: 10,
     pct: 0,
     yield_fraction: malt.yield_fraction,
+    yield_basis: malt.yield_basis,
+    yield_provenance: malt.yield_provenance,
     fermentability_fraction: malt.fermentability_fraction,
+    fermentability_provenance: malt.fermentability_provenance,
+    fermentability_basis: malt.fermentability_basis,
+    fermentability_method: malt.fermentability_method,
     moisture_fraction: malt.moisture_fraction,
     color_lovibond: malt.color_lovibond,
     notes: malt.notes,
@@ -65,6 +71,15 @@ export function registerMaltCard(app, ctx) {
     // Trace = under 2% of the bill (matches the legacy threshold).
     maltIsTrace(row) {
       return (row.pct || 0) < 0.02;
+    },
+
+    // Resolved real fermentability with its provenance marker (prior, floor,
+    // or apparent-converted); blank when the row has no figure.
+    maltFermentable(row) {
+      if (typeof row?.fermentability_fraction !== "number") return "";
+      return `${figureMarkFor("fermentability_fraction", row)}${formatPercent(
+        row.fermentability_fraction
+      )}`;
     },
 
     cloneDraftMalt(ri) {
@@ -150,4 +165,4 @@ export function registerMaltCard(app, ctx) {
 export function refreshMaltCard(app, ctx) {
   app.gristRows = sortGristRows(ctx.engine.get(N.majorMalts) ?? []);
 }
-export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltIsTrace", "cloneDraftMalt", "maltWeightedColor", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];
+export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltIsTrace", "maltFermentable", "cloneDraftMalt", "maltWeightedColor", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];

@@ -45,6 +45,10 @@ export const GENERATED_PATHS = GENERATORS.flatMap((generator) => generator.outpu
 
 export const FROZEN_PREFIXES = ["docs/historical/", "docs/adsco/"];
 
+// AGENTS.md keeps docs/adsco/ui.md (the reconciled UI model) living while the
+// vendored specs around it are frozen.
+export const LIVING_EXCEPTIONS = new Set(["docs/adsco/ui.md"]);
+
 export const LOCK_PAIRS = [
   ["package.json", "package-lock.json"],
   ["frontend/package.json", "frontend/package-lock.json"],
@@ -56,6 +60,7 @@ export function findViolations({ staged, dirtyGenerated = [] }) {
   const violations = [];
 
   for (const path of staged) {
+    if (LIVING_EXCEPTIONS.has(path)) continue;
     const frozen = FROZEN_PREFIXES.find((prefix) => path.startsWith(prefix));
     if (frozen) {
       violations.push(

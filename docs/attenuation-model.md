@@ -139,10 +139,10 @@ gravity-invariant.
 | A5 | `sta1: null` | `d = 0` + advisory | `tests/backend/conformance/test_composition_regimes.py` |
 | A6 | sugar immune to `d` | lactose stays unfermented | `tests/backend/conformance/test_composition_regimes.py` |
 | A7 | priors are converted apparent observations | values + round-trip | `tests/backend/conformance/test_basis_conversion.py` |
-| A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/card-display.test.js` |
+| A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/attenuation-display.test.js` |
 | A9 | trace malts colour-only | no extract, no fermentability | `tests/guards/seed-rebuild.test.js` |
 | A10 | hot-side sugar displacement unmodelled | bounded by `v_bar·s_late_add` | doc only |
-| A11 | `AE_app ≤ 0` | computed and displayed (`≤ 1.000` FG policy) | `tests/backend/conformance/test_composition_regimes.py` |
+| A11 | `AE_app ≤ 0` | computed and displayed (`≤ 1.000` FG policy) | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
 | A12 | frozen bundles never re-solve | embedded artifact | `tests/backend/conformance/test_report_bundle_fixture.py` |
 | A13 | derate points apply before conversion | order stated in `docs/engine.md` | `tests/frontend/selection-validation.test.js` |
 | A14 | vendor ranges use the high end | low/high stored | `tests/conformance/seed-conformance.test.js` |

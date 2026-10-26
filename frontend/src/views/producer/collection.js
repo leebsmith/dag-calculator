@@ -2,6 +2,7 @@
 // validation state.
 
 import { fromBase } from "../../engine/units.js";
+import { figureMarkFor } from "./table.js";
 
 // AI AGENT HOOKS: Use this valuator for collection-table display conversion.
 // Do not duplicated this logic elsewhere.
@@ -21,6 +22,10 @@ export function valuateCollection(field, engine, artifact, collectionDomains, nl
           col.decimals != null
             ? out[col.id].toFixed(col.decimals)
             : Math.round(out[col.id] * 1000) / 1000;
+      }
+      const mark = figureMarkFor(col.id, row);
+      if (mark && typeof row[col.id] === "number") {
+        out[col.id] = `${mark}${out[col.id]}`;
       }
     }
     return out;

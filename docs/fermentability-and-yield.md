@@ -148,7 +148,9 @@ batches that already exist.
 
 `bound: "min"` is a floor, not a point estimate. The solver uses the printed
 value as a point; the bound travels in provenance and the ingredient tables mark
-it as a floor (D3, assumption A8).
+it as a floor (`≥`), an apparent conversion as `≈`, and an assumed prior as `~`
+(D3, assumption A8). `docs/adsco/ui.md` §"Ingredient figures" is the display
+contract.
 
 Yeast provenance is **aggregator-level** in Pass 1: `kind: "aggregator"` with
 the profile URL and no per-page hash, because the beer-analytics scrape caches

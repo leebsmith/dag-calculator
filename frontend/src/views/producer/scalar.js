@@ -78,11 +78,12 @@ export function valuateScalar(field, engine, ctx, nl) {
   // The artifact stays the sole owner of value semantics.
   const presentation = presentationFor(field.id);
   if (presentation) {
-    applyPresentation(
-      out,
-      presentation,
-      { get: (id) => engine.get(id), resolve: (path) => engine.resolve(path) }
-    );
+    applyPresentation(out, presentation, {
+      get: (id) => engine.get(id),
+      resolve: (path) => engine.resolve(path),
+      displayFloor: (base) =>
+        unitId && artifact ? fromBase(artifact, field.dimension, unitId, base, nl) : base,
+    });
   }
   return out;
 }

@@ -28,6 +28,10 @@ const TARGET_ABV = {
 
 const FIELD_OVERRIDES = {
   "batch.target_abv": TARGET_ABV,
+  // Apparent extract can sit at or below 0 °P when diastaticus consumes the
+  // dextrin residue. The FG readout is a floor at SG 1.000 (0 °P in Plato),
+  // never a sub-gravity number.
+  "batch.realized_fg": { floor: { value: 1.0, marker: "≤ " } },
 };
 
 export const CLAMP_BOUNDS = {
@@ -44,6 +48,23 @@ export function presentationFor(id) {
 }
 
 export function applyPresentation(out, rule, readers) {
+  if (rule.floor && typeof out.value === "number" && out.value < rule.floor.value) {
+    const decimals = out.decimals ?? 3;
+    const shownFloor = readers.displayFloor
+      ? readers.displayFloor(rule.floor.value)
+      : rule.floor.value;
+    const text =
+      typeof shownFloor === "number"
+        ? (Object.is(Number(shownFloor.toFixed(decimals)), -0)
+            ? 0
+            : Number(shownFloor.toFixed(decimals))
+          ).toFixed(decimals)
+        : shownFloor;
+    out.display = `${rule.floor.marker}${text}`;
+    out.floored = true;
+    out.hint =
+      "Apparent extract is at or below 0 °P; the reading is floored at SG 1.000.";
+  }
   if (rule.hint) {
     let value;
     let detail;

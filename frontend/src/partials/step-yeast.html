@@ -80,8 +80,10 @@
               </p>
               <p>
                 The calculator does not infer this from your mash or grain bill; enter
-                your judgment. The cap only lowers the batch attenuation when it sits
-                below the wort's own attenuation (<code>min(AA_wort, cap)</code>).
+                your judgment. The published attenuation is <strong>apparent</strong>;
+                the solver converts it to real attenuation and caps the malt's
+                fermentability only. Sugar is never capped, so a late addition can
+                lift the batch's apparent attenuation past this cap.
               </p>
             </div>
           </div>
@@ -230,6 +232,6 @@
   
     </div>
 
-    <p class="form-hint">The batch attenuation is solved from the grist and the yeast cap.</p>
+    <p class="form-hint">The batch attenuation is solved from the grist composition and the yeast cap.</p>
   </div>
 </section>

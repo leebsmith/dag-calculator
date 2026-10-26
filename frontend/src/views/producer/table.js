@@ -7,6 +7,32 @@ import { describeField } from "./projection.js";
 import { formatValue } from "./format.js";
 import { reportError } from "../../observability.js";
 
+// Display markers for an ingredient figure. The number itself never changes:
+//   ~  assumed prior (no published figure)
+//   ≥  published minimum — a floor, not a point estimate
+//   ≈  converted from an apparent attenuation at the fixed 12 °P reference
+const FIGURE_COLUMNS = {
+  fermentability_fraction: {
+    provenance: "fermentability_provenance",
+    apparent: (row) => row.fermentability_basis === "apparent",
+  },
+  yield_fraction: { provenance: "yield_provenance", apparent: () => false },
+};
+
+export function figureMarker(provenance, { apparent = false } = {}) {
+  const marks = [];
+  if (provenance?.kind === "prior") marks.push("~");
+  if (provenance?.bound === "min") marks.push("≥");
+  if (apparent) marks.push("≈");
+  return marks.join("");
+}
+
+export function figureMarkFor(columnId, row) {
+  const figure = FIGURE_COLUMNS[columnId];
+  if (!figure || !row) return "";
+  return figureMarker(row[figure.provenance], { apparent: figure.apparent(row) });
+}
+
 function cellDisplay(artifact, dimension, value, unitMode, nl, meta = {}) {
   if (typeof value !== "number" || !dimension) return { display: formatValue(value), unit: null };
   const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dimension);
@@ -55,7 +81,10 @@ export function valuateTable(field, artifact, engine, unitMode, nl, registry = {
         dimension = null;
       }
       const d = cellDisplay(artifact, dimension, value, unitMode, nl, registry[ref] ?? {});
-      cells[col.id] = { display: d.display, unit: d.unit };
+      const mark = figureMarkFor(col.id, row);
+      cells[col.id] = mark
+        ? { display: `${mark}${d.display}`, unit: d.unit }
+        : { display: d.display, unit: d.unit };
     }
     let note = null;
     if (row.note) {

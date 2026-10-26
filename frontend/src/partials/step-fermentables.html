@@ -16,8 +16,9 @@
     <div class="data-table-container">
       <table class="data-table">
         <colgroup>
-          <col style="width: 46%" />
-          <col style="width: 18%" />
+          <col style="width: 38%" />
+          <col style="width: 14%" />
+          <col style="width: 12%" />
           <col style="width: 16%" />
           <col style="width: 20%" />
         </colgroup>
@@ -27,6 +28,7 @@
             <th>Type</th>
             <th class="text-right">Parts</th>
             <th class="text-right">Malt %</th>
+            <th class="text-right">Fermentable</th>
           </tr>
         </thead>
         <tbody>
@@ -47,11 +49,12 @@
                   x-text="fmt.formatPercent(row.pct)"
                 ></span>
               </td>
+              <td class="text-right tabular-nums" x-text="maltFermentable(row)"></td>
             </tr>
           </template>
           <template x-if="gristRows.length === 0">
             <tr>
-              <td colspan="4" class="table-empty-cell">
+              <td colspan="5" class="table-empty-cell">
                 No malts yet. Click “Configure Malts” to build your grain bill.
               </td>
             </tr>
@@ -59,6 +62,12 @@
         </tbody>
       </table>
     </div>
+
+    <p class="text-xs text-muted">
+      Fermentable is the real share of extract. <span aria-hidden="true">~</span> assumed
+      prior · <span aria-hidden="true">≥</span> published minimum (a floor) ·
+      <span aria-hidden="true">≈</span> converted from apparent attenuation at 12 °P.
+    </p>
 
     <div class="grain-bill-summary" x-show="gristRows.length > 0">
       <div class="grain-bill-summary-item">

@@ -45,6 +45,11 @@ test("frozen docs cannot be staged", () => {
   assert.deepEqual(findViolations({ staged: ["docs/historical-notes.md"] }), []);
 });
 
+test("the reconciled UI model is living, not frozen", () => {
+  assert.deepEqual(findViolations({ staged: ["docs/adsco/ui.md"] }), []);
+  assert.equal(findViolations({ staged: ["docs/adsco/ui-model-vendored.md"] }).length, 1);
+});
+
 test("an artifact change demands the report bundle fixture", () => {
   const violations = findViolations({ staged: ["data/artifact.json"] });
   assert.equal(violations.length, 1);
