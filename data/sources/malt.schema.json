@@ -16,6 +16,8 @@
     "yield_provenance":       { "$ref": "#/$defs/provenance" },
     "fermentability_fraction": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
     "fermentability_provenance": { "$ref": "#/$defs/provenance" },
+    "fermentability_basis":  { "type": "string", "enum": ["real", "apparent", "unspecified"] },
+    "fermentability_method": { "type": "string", "minLength": 1 },
     "color_lovibond": { "type": "number", "minimum": 0 },
     "moisture":       { "type": "number", "minimum": 0, "maximum": 100 },
     "notes":          { "type": "string" },

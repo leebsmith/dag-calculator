@@ -43,7 +43,7 @@
       "mechanism": "scrape",
       "upstream": "malt_database (local scrape)",
       "rows": 467,
-      "sha256": "b59bdad9373b6c6e80dee7784b2bed839c802c9b886a332d799a46b3d1c53193"
+      "sha256": "209e51bbf9058e910b713aa9c169cf6dd1f20653beae53551c051088f3ac75b0"
     },
     "malt-standard-crosswalk.json": {
       "mechanism": "unknown",
@@ -54,7 +54,7 @@
       "mechanism": "contract",
       "upstream": "malt_database schema/malt.schema.json (pinned)",
       "rows": 10,
-      "sha256": "2d284379bd90f9e9a1a31966c58ad26ddbc833a06a66850883f81bd6afdd6b6f"
+      "sha256": "f6e7e167a514fa1547a50da0baa40117d8cea2f7b54f31c596a47d9106c38c93"
     },
     "standard-malts.json": {
       "mechanism": "vendor+extend",

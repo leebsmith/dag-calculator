@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-26T12:26:55.955140+00:00",
+  "generated_at": "2026-10-26T14:28:07.154492+00:00",
   "entries": [
     {
       "name": "Amber Malt",
@@ -141,7 +141,9 @@
         "url": "https://www.bairds-malt.co.uk/distilling-malts/distilling-malt/",
         "retrieved_at": "2026-10-19T16:18:20Z",
         "sha256": "1c63ee259a2d7628dc665bc9b389f0aa971be9c6491df8cf2e6d15d04ea94772"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "IoB"
     },
     {
       "name": "Extra Dark Crystal Malt",
@@ -238,7 +240,9 @@
         "url": "https://www.bairds-malt.co.uk/distilling-malts/heavily-peated-malt/",
         "retrieved_at": "2026-10-19T16:18:36Z",
         "sha256": "0e0bb225a393d2693bda4fa54f806e9e86a64256553343055fbd26cab03348b3"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "IoB"
     },
     {
       "name": "High Enzyme Distilling Malt",
@@ -346,7 +350,9 @@
         "url": "https://www.bairds-malt.co.uk/distilling-malts/lightly-peated-malt/",
         "retrieved_at": "2026-10-19T16:19:06Z",
         "sha256": "e260a4bfea190b388f16f3f8e7cf74b4c2ab3a237360f8b08215638761e87b2e"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "IoB"
     },
     {
       "name": "London Lager Malt",
@@ -509,7 +515,9 @@
         "url": "https://www.bairds-malt.co.uk/distilling-malts/medium-peated-malt/",
         "retrieved_at": "2026-10-19T16:19:22Z",
         "sha256": "25256be587bdcc0bf153f4705db6c1630d56e9ea0627f5a699ee4bb914fd88e8"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "IoB"
     },
     {
       "name": "Organic Malt",
@@ -2156,7 +2164,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Carabrown Malt",
@@ -2507,7 +2517,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Bavarian Wheat LME",
@@ -2528,7 +2540,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Golden Light DME",
@@ -2549,7 +2563,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Golden Light LME",
@@ -2570,7 +2586,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Munich LME",
@@ -2591,7 +2609,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Pale Ale DME",
@@ -2612,7 +2632,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Pilsen Light DME",
@@ -2633,7 +2655,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Pilsen Light LME",
@@ -2654,7 +2678,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Sparkling Amber DME",
@@ -2675,7 +2701,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Sparkling Amber LME",
@@ -2696,7 +2724,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Traditional Dark DME",
@@ -2717,7 +2747,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "CBW Traditional Dark LME",
@@ -2738,7 +2770,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Chocolate Malt",
@@ -2771,7 +2805,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Crystal Red Malt",
@@ -2938,7 +2974,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Maltoferm A-6001 Black DME",
@@ -2959,7 +2997,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Maltoferm Organic 10000 LME",
@@ -2980,7 +3020,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Maltoferm Organic 10001 Powder DME",
@@ -3001,7 +3043,9 @@
         "retrieved_at": "2026-10-19T20:54:14Z",
         "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
         "note": "published as fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability"
     },
     {
       "name": "Midnight Wheat Malt",
@@ -4894,6 +4938,8 @@
         "retrieved_at": "2026-10-19T20:20:02Z",
         "sha256": "2185debd9082404a17414c5a9e15f3e1ca273c5a1e029291b9d3cb5084ae4342"
       },
+      "fermentability_basis": "real",
+      "fermentability_method": "IoB",
       "sold_out": false
     },
     {
@@ -5020,6 +5066,8 @@
         "retrieved_at": "2026-10-19T20:20:23Z",
         "sha256": "9c9ff076c310b729431e9c7e64e1e31843344a60ead84198be791a9e34f188fb"
       },
+      "fermentability_basis": "real",
+      "fermentability_method": "IoB",
       "sold_out": false
     },
     {
@@ -5119,7 +5167,9 @@
         "url": "https://dingemansmout.be/malt/amber-aromatic%C2%AE-md",
         "retrieved_at": "2026-10-19T19:45:43Z",
         "sha256": "80fe49b773aeea3a4d09264420b3a513cef339bb27cd42efe56cfc84b1e1db37"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Aroma 100 MD",
@@ -5150,7 +5200,9 @@
         "url": "https://dingemansmout.be/malt/aroma-100-md",
         "retrieved_at": "2026-10-19T19:45:54Z",
         "sha256": "f6a6dcb7079d4af7ad46664a5f87c181814499ea0a42af2709c4db9f7ec2dce9"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Aroma 150 MD",
@@ -5181,7 +5233,9 @@
         "url": "https://dingemansmout.be/malt/aroma-150-md",
         "retrieved_at": "2026-10-19T19:46:05Z",
         "sha256": "37f44405f24894b9970592c449a2fc7c4ac77bfed83f16d881136badb2e23ec2"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Biscuit® 50 MD",
@@ -5421,7 +5475,9 @@
         "url": "https://dingemansmout.be/malt/maris-otter-md",
         "retrieved_at": "2026-10-19T19:48:06Z",
         "sha256": "0011c4964d60c1af72ff979ef09a32016db1db7781034460b4ca0f825b93de0c"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Melanoidin MD",
@@ -5540,7 +5596,9 @@
         "url": "https://dingemansmout.be/malt/munich-15-md",
         "retrieved_at": "2026-10-19T19:49:01Z",
         "sha256": "1d6542158b7894a972c3bddb858e8677f7ed818437377762916332a49ed0ad3e"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Oat Malt MD",
@@ -5659,7 +5717,9 @@
         "url": "https://dingemansmout.be/malt/organic-munich-md",
         "retrieved_at": "2026-10-19T19:49:56Z",
         "sha256": "ed58832ece0d3058eec888572886712f7ad5fd31b7b6a61a53340ef6fe2657cc"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Organic Pale Ale MD",
@@ -5690,7 +5750,9 @@
         "url": "https://dingemansmout.be/malt/organic-pale-ale-md",
         "retrieved_at": "2026-10-19T19:50:07Z",
         "sha256": "cc9b6aacddcfacc948df9d26e18d90af4ef7d761aecf8daad911f47e987f0c38"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Organic Pilsen MD Belgium Origin",
@@ -5721,7 +5783,9 @@
         "url": "https://dingemansmout.be/malt/organic-pilsen-md-belgium-origin",
         "retrieved_at": "2026-10-19T19:50:29Z",
         "sha256": "f7992778851d96a9e2507dfac9f55322fad624ab3e7dedbaeab205677a940256"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Organic Pilsen MD",
@@ -5752,7 +5816,9 @@
         "url": "https://dingemansmout.be/malt/organic-pilsen-md",
         "retrieved_at": "2026-10-19T19:50:18Z",
         "sha256": "7598e85c72b5e5853ffe963f6419f2acb6f7e6e3e77d25a0b898a9d73456819c"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Organic Wheat Malt MD",
@@ -5783,7 +5849,9 @@
         "url": "https://dingemansmout.be/malt/organic-wheat-malt-md",
         "retrieved_at": "2026-10-19T19:50:40Z",
         "sha256": "5e713e22b0e925bab36381efa82c1584ef9c014189c808ee346ee44ca9a09aba"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Pale Ale 9 MD",
@@ -5814,7 +5882,9 @@
         "url": "https://dingemansmout.be/malt/pale-ale-9-md",
         "retrieved_at": "2026-10-19T19:50:51Z",
         "sha256": "33b29f76fbb565bbbc91dd8f2eed937e2cc5ee76cf609c4cb85a09d14f5a4112"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Pealed Roasted Barley MD",
@@ -5867,7 +5937,9 @@
         "url": "https://dingemansmout.be/malt/pilsen-md-belgium-origin",
         "retrieved_at": "2026-10-19T19:51:24Z",
         "sha256": "c6e1df1909fb5851efd6ae3a3054a11a3b795035c94ca366aaacbe858695d95c"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Pilsen MD",
@@ -5898,7 +5970,9 @@
         "url": "https://dingemansmout.be/malt/pilsen-md",
         "retrieved_at": "2026-10-19T19:51:13Z",
         "sha256": "d100e33b04606cf08fc6438162584ff850ddaac84110ac89bcacef290f27748e"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Rye Malt MD",
@@ -5929,7 +6003,9 @@
         "url": "https://dingemansmout.be/malt/rye-malt-md",
         "retrieved_at": "2026-10-19T19:51:35Z",
         "sha256": "a4e74733b6c121e9288ae88eb089eedc76478a457847f30997514c5facd61bda"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Special B® MD",
@@ -5993,7 +6069,9 @@
         "url": "https://dingemansmout.be/malt/wheat-malt-md",
         "retrieved_at": "2026-10-19T19:52:08Z",
         "sha256": "7e0dba964d779ca4f17519c61e56544d675286f8ec17e8eb73013024aaf947ef"
-      }
+      },
+      "fermentability_basis": "apparent",
+      "fermentability_method": "Final attenuation"
     },
     {
       "name": "Amber Malt",
@@ -8344,7 +8422,9 @@
         "retrieved_at": "2026-10-19T16:54:47Z",
         "sha256": "f4bb44d8bf48936c8c019f0172fb22bb42a238a6bc71aacf9315a867da4079fb",
         "note": "published as un-boiled fermentability"
-      }
+      },
+      "fermentability_basis": "real",
+      "fermentability_method": "Fermentability % (un-boiled)"
     },
     {
       "name": "Premium English Caramalt",
