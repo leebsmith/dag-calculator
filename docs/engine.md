@@ -264,12 +264,15 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 | `batch.attenuation_derate_points` | — | per-batch root | points subtracted from the strain limit; starts at 0 |
 
 `batch.yeast_cap = max(0, batch.yeast.attenuation_pct − batch.attenuation_derate_points)`.
-The batch solver computes the extract-weighted wort AA from the grain-bill
-fermentability values and the late-addition sugar (`F = 1.0`), clamps it to
-`batch.yeast_cap`, and returns `aa_batch`. `solver.batch.aa_batch` displays
-the solved value; `solver.batch.aa_wort` displays the pre-cap blend. The batch is
-unresolved until a yeast is selected. Conversion efficiency remains a separate
-gravity correction, not an attenuation correction. See
+The batch solver treats the grain-bill fermentability values as **real** shares
+of extract, converts the apparent cap to real space at each candidate `OE`,
+clamps the malt (late-addition sugar keeps `F = 1.0` and is never clamped),
+forms the residual extract, and inverts the Cutaia regression for apparent
+extract. It returns `aa_batch` (the solved **apparent** attenuation, which a
+sugar addition can push past the cap) and `aa_wort` (the solved **real**
+attenuation, RDF). The batch is unresolved until a yeast is selected.
+Conversion efficiency remains a separate gravity correction, not an attenuation
+correction. See `docs/attenuation-model.md` and
 `docs/fermentability-and-yield.md`.
 
 The Style step's **Target ABV** input is the primary fermentation control. It

@@ -1,0 +1,157 @@
+# The attenuation model
+
+**Status:** D1 landed. This document is the canonical statement of the model; the
+code implements it. Pass 1 made the ingredient data honest (`F` is now a real
+mass fraction) and D1 makes the solver consume it: extract composition is the
+primitive, and both real and apparent attenuation are derived from it.
+
+The wire still speaks the old field names in D1 (`solver.batch.aa_wort` /
+`aa_batch`); D2 renames them to `real_attenuation` / `apparent_attenuation` and
+`apparent_attenuation` → `malt_attenuation_cap` on the request.
+
+## 1. The primitive
+
+A malt's published fermentability is the share of its **extract** that is
+fermentable. Call it `F`, a real mass fraction. Everything else follows:
+
+```
+E        = extract mass                       # kg, post-boil
+E_malt   = extract from the grain bill        # kg
+E_sugar  = s_late_add                         # kg (late-addition extract)
+UE       = unfermented extract                # kg
+FE       = E − UE                             # kg, fermented
+RE       = UE                                 # real extract, by definition
+```
+
+`OE` is the post-boil original extract in °P. Because °P is extract mass per
+solution mass, `RE/OE = UE/E`; the composition block can therefore work in
+masses and scale once.
+
+### The block
+
+```
+cap_real   = apparent_to_real(OE, yeast_cap_apparent)
+F_malt_eff = min(F_malt, cap_real)
+UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)
+RE         = OE · UE / E
+AE         = inverse_cutaia(RE)               # may be ≤ 0
+ABW        = Cutaia(OE, AE)
+ABV        = ABW · plato_to_sg(AE) / 0.7907
+AA_app     = (OE − AE) / OE                   # may exceed 1
+RDF        = (OE − RE) / OE
+```
+
+`F_sugar = 1.0` today (the sugar prior); `d = 0` until D5 wires STA1. The
+inversion solves the Cutaia real-extract regression for `AE`; when the residue
+is small enough (a diastaticus fermentation) `AE < 0` is the only solution, so
+`plato_to_sg` evaluates the ASBC polynomial on a small negative domain.
+
+The ABV-first inversion is unchanged in shape: root-find `OE` over 0–40 °P so
+`ABV(target)` holds, evaluating the composition block at every candidate (the
+extract target — and therefore the malt/sugar share and the cap conversion —
+moves with `OE`). `AE := OE(1 − AA)` no longer appears in the batch pipeline.
+
+## 2. The four regimes
+
+| Regime | What must hold | Test |
+|---|---|---|
+| pure grist | real-basis rows round-trip: `F = 0.643` displays `AA_app = 0.810` at 12 °P | `test_basis_conversion.py` |
+| + sugar (`F = 1`) | `UE` (mass) flat, `OE` up, `AA_app` up, `ABV` up; the yeast cap cannot suppress sugar | `test_composition_regimes.py` |
+| + STA1 (`d = 1`) | `UE → 0`; `AE_app` may be negative; `AA_app` may exceed 1 | `test_composition_regimes.py` |
+| + both | sugar adds fermentable extract only; `d` touches the malt residue only | `test_composition_regimes.py` |
+
+The first regime is *why* the priors do not move the default recipe: the old
+apparent prior `0.810` and the new real prior `0.643` are the same observation.
+
+## 3. Basis audit
+
+Ingredient `F` is real. The producer tags each captured figure with the basis it
+was published on and the verbatim method label; the audit that decided the
+basis is:
+
+| Source | Basis | Method (verbatim) | Evidence |
+|---|---|---|---|
+| Bairds | real | `IoB` | extract 77.5 × 0.870 = 67.4 vs published fermentable extract 67.3 (4/4, Δ ≤ 0.1) |
+| Crisp | real | `IoB` | 78.6 × 0.872 = 68.5; PSY 410 laa/t ≈ 68.5 × 6.0 |
+| Simpsons | real | `Fermentability % (un-boiled)` | 82.9 × 0.87 = 72.1; dry PSY 430 ≈ 72.1 × 5.96 |
+| Briess extracts | real | `Fermentability` | vendor terminology; no yield published, assumption recorded |
+| Dingemans | apparent (assumed) | `Final attenuation` | uniform `min 80.0 %` on 15 products; `0.80` apparent → `0.635` real |
+
+`fermentability_basis` and `fermentability_method` travel with every captured
+figure; the consumer treats `unspecified` as real (A1) and converts only
+`apparent` rows.
+
+## 4. The apparent→real conversion
+
+There is exactly **one** ingredient conversion point: the request builder, at a
+fixed 12 °P reference (`frontend/src/engine/fermentation.js:
+apparentToRealAttenuation`). The wire carries real `F`; the solver converts the
+yeast's apparent cap per candidate `OE` because `cap_real` is a wort property
+that moves with gravity.
+
+The Cutaia regression fixes the conversion:
+
+```
+apparent 0.810 → real 0.643
+apparent 0.800 → real 0.635
+apparent 0.500 → real 0.398
+apparent 0.150 → real 0.121
+```
+
+The old category priors were apparent observations. They are stored in real
+space (converted at 12 °P), so displaying them reproduces today's numbers:
+
+| Prior | Old (apparent) | New (real) |
+|---|---|---|
+| `fermentability_prior_base` | 0.810 | 0.643 |
+| `fermentability_prior_acid` | 0.800 | 0.635 |
+| `fermentability_prior_crystal` | 0.500 | 0.398 |
+| `fermentability_prior_roasted` | 0.150 | 0.121 |
+| `fermentability_prior_default` | 0.810 | 0.643 |
+| `fermentability_prior_sugar` | 1.000 | 1.000 |
+
+**Error bound (A2).** Assuming the 12 °P reference when the actual wort is
+8–24 °P moves the displayed apparent attenuation by at most **0.022** for these
+priors (worst at 24 °P), asserted in `test_basis_conversion.py`. The conversion
+is a display/audit convenience, not a claim that a malt's limit is
+gravity-invariant.
+
+## 5. The cap and sugar
+
+- The cap is the yeast's **apparent** attenuation (strain × batch derate). It
+  converts to real space at the candidate `OE` and clamps **malt** fermentability
+  only: `F_malt_eff = min(F_malt, cap_real)`.
+- Sugar extract keeps `F_sugar = 1.0` and is never clamped, so a sugar addition
+  can push apparent attenuation past the yeast cap (regime 2).
+- `d` (D5) applies to the malt residue only: `(1 − F_malt_eff)(1 − d)`. A
+  non-fermentable late addition (lactose) keeps its own residue regardless of
+  `d` (A6).
+- `bound: "min"` is reported, not propagated: the solver uses the printed value
+  as a point and the UI labels it a floor (A8, D3).
+
+## 6. Assumption register
+
+| # | Assumption | Treatment | Enforcement |
+|---|---|---|---|
+| A1 | basis unknown for a source | `unspecified → real` | `tests/frontend/boundaryRequest.test.js` |
+| A2 | ingredient conversion at fixed 12 °P | max ΔAA 0.022 across 8–24 °P | `tests/backend/conformance/test_basis_conversion.py` |
+| A3 | yeast attenuation is apparent | converted per candidate `OE` | `tests/backend/conformance/test_composition_regimes.py` |
+| A4 | STA1 = full dextrin consumption | `d = 1`, malt residue only, time ignored | `tests/backend/conformance/test_composition_regimes.py` |
+| A5 | `sta1: null` | `d = 0` + advisory | `tests/backend/conformance/test_composition_regimes.py` |
+| A6 | sugar immune to `d` | lactose stays unfermented | `tests/backend/conformance/test_composition_regimes.py` |
+| A7 | priors are converted apparent observations | values + round-trip | `tests/backend/conformance/test_basis_conversion.py` |
+| A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/card-display.test.js` |
+| A9 | trace malts colour-only | no extract, no fermentability | `tests/guards/seed-rebuild.test.js` |
+| A10 | hot-side sugar displacement unmodelled | bounded by `v_bar·s_late_add` | doc only |
+| A11 | `AE_app ≤ 0` | computed and displayed (`≤ 1.000` FG policy) | `tests/backend/conformance/test_composition_regimes.py` |
+| A12 | frozen bundles never re-solve | embedded artifact | `tests/backend/conformance/test_report_bundle_fixture.py` |
+| A13 | derate points apply before conversion | order stated in `docs/engine.md` | `tests/frontend/selection-validation.test.js` |
+| A14 | vendor ranges use the high end | low/high stored | `tests/conformance/seed-conformance.test.js` |
+| A15 | Cutaia inverse vs mass-derived RE | residual asserted | `tests/backend/conformance/test_numeric_parity.py` |
+
+## 7. References
+
+- `docs/fermentability-and-yield.md` — the two ingredient axes and provenance.
+- `docs/dag-artifacts/domain-equations.md` §1–§2 — the equations and the sealed
+  boundary contract.
+- `plans/attenuation-refactor.md` — the commit contract for passes 2–3.

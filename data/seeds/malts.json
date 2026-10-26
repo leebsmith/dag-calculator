@@ -64,6 +64,8 @@
       "retrieved_at": "2026-10-19T19:45:43Z",
       "sha256": "80fe49b773aeea3a4d09264420b3a513cef339bb27cd42efe56cfc84b1e1db37"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "aromatic-malt",
     "standard_name": "Aromatic Malt",
@@ -144,6 +146,8 @@
       "retrieved_at": "2026-10-19T19:45:54Z",
       "sha256": "f6a6dcb7079d4af7ad46664a5f87c181814499ea0a42af2709c4db9f7ec2dce9"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "melanoidin-malt",
     "standard_name": "Melanoidin Malt",
@@ -176,6 +180,8 @@
       "retrieved_at": "2026-10-19T19:46:05Z",
       "sha256": "37f44405f24894b9970592c449a2fc7c4ac77bfed83f16d881136badb2e23ec2"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "brown-malt",
     "standard_name": "Brown Malt",
@@ -3730,6 +3736,8 @@
       "retrieved_at": "2026-10-19T16:18:20Z",
       "sha256": "1c63ee259a2d7628dc665bc9b389f0aa971be9c6491df8cf2e6d15d04ea94772"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "IoB",
     "moisture_fraction": 0.045,
     "standard_malt": "distilling-malt",
     "standard_name": "Distilling Malt",
@@ -4962,6 +4970,8 @@
       "retrieved_at": "2026-10-19T16:18:36Z",
       "sha256": "0e0bb225a393d2693bda4fa54f806e9e86a64256553343055fbd26cab03348b3"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "IoB",
     "moisture_fraction": 0.05,
     "standard_malt": "peated-malt",
     "standard_name": "Peated Malt",
@@ -5327,6 +5337,8 @@
       "retrieved_at": "2026-10-19T16:19:06Z",
       "sha256": "e260a4bfea190b388f16f3f8e7cf74b4c2ab3a237360f8b08215638761e87b2e"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "IoB",
     "moisture_fraction": 0.05,
     "standard_malt": "peated-malt",
     "standard_name": "Peated Malt",
@@ -5638,6 +5650,8 @@
       "retrieved_at": "2026-10-19T19:48:06Z",
       "sha256": "0011c4964d60c1af72ff979ef09a32016db1db7781034460b4ca0f825b93de0c"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "maris-otter",
     "standard_name": "Maris Otter",
@@ -5790,6 +5804,8 @@
       "retrieved_at": "2026-10-19T16:19:22Z",
       "sha256": "25256be587bdcc0bf153f4705db6c1630d56e9ea0627f5a699ee4bb914fd88e8"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "IoB",
     "moisture_fraction": 0.05,
     "standard_malt": "peated-malt",
     "standard_name": "Peated Malt",
@@ -5996,6 +6012,8 @@
       "retrieved_at": "2026-10-19T19:49:01Z",
       "sha256": "1d6542158b7894a972c3bddb858e8677f7ed818437377762916332a49ed0ad3e"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "munich-light",
     "standard_name": "Munich Light",
@@ -6470,6 +6488,8 @@
       "retrieved_at": "2026-10-19T19:49:56Z",
       "sha256": "ed58832ece0d3058eec888572886712f7ad5fd31b7b6a61a53340ef6fe2657cc"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "munich-light",
     "standard_name": "Munich Light",
@@ -6502,6 +6522,8 @@
       "retrieved_at": "2026-10-19T19:50:07Z",
       "sha256": "cc9b6aacddcfacc948df9d26e18d90af4ef7d761aecf8daad911f47e987f0c38"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "pale-ale-malt",
     "standard_name": "Pale Ale Malt",
@@ -6534,6 +6556,8 @@
       "retrieved_at": "2026-10-19T19:50:18Z",
       "sha256": "7598e85c72b5e5853ffe963f6419f2acb6f7e6e3e77d25a0b898a9d73456819c"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "pilsner-malt",
     "standard_name": "Pilsner Malt",
@@ -6566,6 +6590,8 @@
       "retrieved_at": "2026-10-19T19:50:29Z",
       "sha256": "f7992778851d96a9e2507dfac9f55322fad624ab3e7dedbaeab205677a940256"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "pilsner-malt",
     "standard_name": "Pilsner Malt",
@@ -6598,6 +6624,8 @@
       "retrieved_at": "2026-10-19T19:50:40Z",
       "sha256": "5e713e22b0e925bab36381efa82c1584ef9c014189c808ee346ee44ca9a09aba"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.065,
     "standard_malt": "wheat-malt",
     "standard_name": "Wheat Malt",
@@ -6630,6 +6658,8 @@
       "retrieved_at": "2026-10-19T19:50:51Z",
       "sha256": "33b29f76fbb565bbbc91dd8f2eed937e2cc5ee76cf609c4cb85a09d14f5a4112"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "pale-ale-malt",
     "standard_name": "Pale Ale Malt",
@@ -6860,6 +6890,8 @@
       "retrieved_at": "2026-10-19T20:20:02Z",
       "sha256": "2185debd9082404a17414c5a9e15f3e1ca273c5a1e029291b9d3cb5084ae4342"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "IoB",
     "moisture_fraction": 0.043,
     "standard_malt": "distilling-malt",
     "standard_name": "Distilling Malt",
@@ -6916,6 +6948,8 @@
       "retrieved_at": "2026-10-19T19:51:13Z",
       "sha256": "d100e33b04606cf08fc6438162584ff850ddaac84110ac89bcacef290f27748e"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "pilsner-malt",
     "standard_name": "Pilsner Malt",
@@ -6948,6 +6982,8 @@
       "retrieved_at": "2026-10-19T19:51:24Z",
       "sha256": "c6e1df1909fb5851efd6ae3a3054a11a3b795035c94ca366aaacbe858695d95c"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.045,
     "standard_malt": "pilsner-malt",
     "standard_name": "Pilsner Malt",
@@ -7029,6 +7065,8 @@
       "sha256": "f4bb44d8bf48936c8c019f0172fb22bb42a238a6bc71aacf9315a867da4079fb",
       "note": "published as un-boiled fermentability"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability % (un-boiled)",
     "moisture_fraction": 0.045,
     "standard_malt": "distilling-malt",
     "standard_name": "Distilling Malt",
@@ -7462,6 +7500,8 @@
       "retrieved_at": "2026-10-19T19:51:35Z",
       "sha256": "a4e74733b6c121e9288ae88eb089eedc76478a457847f30997514c5facd61bda"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.06,
     "standard_malt": "rye-malt",
     "standard_name": "Rye Malt",
@@ -7629,6 +7669,8 @@
       "retrieved_at": "2026-10-19T20:20:23Z",
       "sha256": "9c9ff076c310b729431e9c7e64e1e31843344a60ead84198be791a9e34f188fb"
     },
+    "fermentability_basis": "real",
+    "fermentability_method": "IoB",
     "moisture_fraction": 0.043,
     "standard_malt": "peated-malt",
     "standard_name": "Peated Malt",
@@ -8184,6 +8226,8 @@
       "retrieved_at": "2026-10-19T19:52:08Z",
       "sha256": "7e0dba964d779ca4f17519c61e56544d675286f8ec17e8eb73013024aaf947ef"
     },
+    "fermentability_basis": "apparent",
+    "fermentability_method": "Final attenuation",
     "moisture_fraction": 0.065,
     "standard_malt": "wheat-malt",
     "standard_name": "Wheat Malt",

@@ -34,7 +34,7 @@ from app.schemas.boundary import (
 FIXTURE_DIR = Path(__file__).resolve().parents[3] / "tests" / "conformance" / "fixtures"
 
 # Canonical host state (mirrored by the node test's stub engine).
-_GRIST = [(0.8, 0.8, 0.04, 0.81), (0.2, 0.74, 0.04, 0.5)]
+_GRIST = [(0.8, 0.8, 0.04, 0.643), (0.2, 0.74, 0.04, 0.398)]
 _M_GRIST = 4.7
 _WATER_GRIST = [(1.5, "BASE"), (40.0, "CRYSTAL")]
 

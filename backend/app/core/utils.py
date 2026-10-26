@@ -12,9 +12,15 @@ def plato_to_sg(plato: float) -> float:
     """Converts degrees Plato to Specific Gravity (20°C/20°C)
 
     using the official ASBC 3rd-order polynomial.
+
+    Apparent extract may fall below 0 °P when a diastaticus-style fermentation
+    consumes the dextrin residue (an apparent attenuation above 100 %), so the
+    polynomial is evaluated on a small negative domain. The floor is a domain
+    guard, not a physical claim: the Cutaia model's most extreme residue at
+    40 °P sits near −3 °P.
     """
-    if plato < 0:
-        raise ValueError("Degrees Plato cannot be negative.")
+    if plato < -10.0:
+        raise ValueError("Degrees Plato below -10 is outside the ASBC domain.")
 
     return (
         1.0000131
@@ -36,6 +42,72 @@ def sg_to_plato(sg: float) -> float:
     return ((135.997 * sg - 630.272) * sg + 1111.14) * sg - 616.868
 
 
+# Cutaia et al. (2009) real-extract regression:
+#   RE = a·ABW + b·AE − c·(ABW·AE) − d·AE²
+CUTAIA_RE_ABW: float = 0.49681569
+CUTAIA_RE_AE: float = 1.0015341
+CUTAIA_RE_ABW_AE: float = 0.00059105
+CUTAIA_RE_AE2: float = 0.00029431
+
+
+def cutaia_abw(oe: float, ae: float) -> float:
+    """Alcohol by weight (%) via Cutaia, Reid, & Speers (2009)."""
+    return (0.372 + 0.00357 * oe) * (oe - ae)
+
+
+def cutaia_real_extract(oe: float, ae: float) -> float:
+    """Real extract (°P) from original/apparent extract via the Cutaia fit.
+
+    This is the coefficient set the artifact calls ``cutaia_real_extract``; the
+    JS and Python sides are pinned together by ``numeric-parity.json``.
+    """
+    abw = cutaia_abw(oe, ae)
+    return (
+        CUTAIA_RE_ABW * abw
+        + CUTAIA_RE_AE * ae
+        - CUTAIA_RE_ABW_AE * (abw * ae)
+        - CUTAIA_RE_AE2 * (ae * ae)
+    )
+
+
+def apparent_to_real_attenuation(oe: float, apparent_attenuation: float) -> float:
+    """Convert an apparent attenuation to the real attenuation at ``oe``.
+
+    ``AE = OE·(1 − AA_app)`` then ``RDF = (OE − RE) / OE`` with ``RE`` from the
+    Cutaia regression. Ingredient figures use the fixed 12 °P reference; the
+    yeast cap converts per candidate ``OE``.
+
+    Raises:
+        ValueError: If ``oe`` is not positive or the attenuation is outside
+            (0, 1].
+    """
+    if oe <= 0:
+        raise ValueError("Original extract must be greater than 0.")
+    if not (0.0 < apparent_attenuation <= 1.0):
+        raise ValueError("Apparent attenuation must be in (0, 1].")
+
+    ae = oe * (1.0 - apparent_attenuation)
+    return (oe - cutaia_real_extract(oe, ae)) / oe
+
+
+def apparent_extract_for_real_extract(oe: float, real_extract: float) -> float:
+    """Invert the Cutaia regression: apparent extract for a given real extract.
+
+    The regression is monotonic in ``AE``, so the root is unique. ``AE`` may be
+    negative when the residual extract is small enough that only a beer with
+    apparent extract below 0 °P can hold it (the dextrin-consumption regime).
+    """
+    if oe <= 0:
+        raise ValueError("Original extract must be greater than 0.")
+    if real_extract < 0.0 or real_extract > oe:
+        raise ValueError("Real extract must be within [0, OE].")
+
+    def residual(ae: float) -> float:
+        return cutaia_real_extract(oe, ae) - real_extract
+
+    return brentq(residual, -oe, oe, xtol=1e-12, rtol=1e-14)
+
+
 def calculate_abv_and_attenuation(oe: float, ae: float) -> dict[str, float]:
     """Calculates ABV, Apparent Attenuation (AA), and Real Degree of
 
@@ -47,7 +119,7 @@ def calculate_abv_and_attenuation(oe: float, ae: float) -> dict[str, float]:
         raise ValueError("Apparent extract (AE) cannot exceed Original extract (OE).")
 
     # Alcohol by weight (w/w %) via Cutaia, Reid, & Speers (2009)
-    abw = (0.372 + 0.00357 * oe) * (oe - ae)
+    abw = cutaia_abw(oe, ae)
 
     # Convert AE to specific gravity for volumetric expansion
     fg = plato_to_sg(ae)
@@ -57,12 +129,7 @@ def calculate_abv_and_attenuation(oe: float, ae: float) -> dict[str, float]:
     apparent_attenuation = (oe - ae) / oe
 
     # Real Extract (RE) via Cutaia et al. regression
-    real_extract = (
-        0.49681569 * abw
-        + 1.0015341 * ae
-        - 0.00059105 * (abw * ae)
-        - 0.00029431 * (ae**2)
-    )
+    real_extract = cutaia_real_extract(oe, ae)
 
     # Real Degree of Fermentation (RDF)
     rdf = (oe - real_extract) / oe

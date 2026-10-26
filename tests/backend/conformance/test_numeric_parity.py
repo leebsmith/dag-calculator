@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from app.core.batch_solver import cutaia_abv, solve_sg_post_boil_from_abv
-from app.core.utils import plato_to_sg, sg_to_plato
+from app.core.utils import cutaia_real_extract, plato_to_sg, sg_to_plato
 
 FIXTURE = json.loads(
     (Path(__file__).resolve().parents[2] / "conformance" / "fixtures" / "numeric-parity.json").read_text()
@@ -43,4 +43,11 @@ def test_max_achievable_abv(case):
 def test_phase1_sg_from_abv(case):
     assert solve_sg_post_boil_from_abv(case["target_abv"], case["aa"]) == pytest.approx(
         case["sg"], rel=1e-12, abs=1e-12
+    )
+
+
+@pytest.mark.parametrize("case", FIXTURE["cutaia_real_extract"])
+def test_cutaia_real_extract(case):
+    assert cutaia_real_extract(case["oe"], case["ae"]) == pytest.approx(
+        case["re"], rel=1e-12, abs=1e-12
     )

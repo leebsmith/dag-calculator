@@ -43,7 +43,13 @@ from dataclasses import dataclass
 
 from scipy.optimize import brentq
 
-from app.core.utils import plato_to_sg, sg_to_plato
+from app.core.utils import (
+    apparent_extract_for_real_extract,
+    apparent_to_real_attenuation,
+    cutaia_abw,
+    plato_to_sg,
+    sg_to_plato,
+)
 
 # ---------------------------------------------------------------------------
 # Physical constants (metric standards; see inputs-and-outputs.md)
@@ -78,6 +84,16 @@ RHO_WATER_METRIC: float = 1.00
 
 F_SHRINK_DEFAULT: float = 0.04
 """Thermal contraction coefficient (dimensionless)."""
+
+ETHANOL_DENSITY_METRIC: float = 0.7907
+"""Density of ethanol relative to water at 20 °C (matches ``ethanol_density``)."""
+
+SUGAR_FERMENTABILITY: float = 1.0
+"""Fermentable share of late-addition (sugar) extract.
+
+Late additions reach the kettle as dissolved sugar; the artifact's sugar prior
+is 1.000. Held as a parameter so a future per-row sugar F can be threaded.
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -517,6 +533,209 @@ def resolve_volumetric_reversal(
         s_post_boil_target=s_post_boil_target,
         v_pre_boil=v_pre_boil,
     )
+
+
+# ---------------------------------------------------------------------------
+# Phase 1b: Extract-composition attenuation
+# ---------------------------------------------------------------------------
+#
+# Extract composition is the primitive: malt extract ferments in proportion to
+# its fermentable share ``F`` (a real fraction), capped by the yeast's
+# attenuation converted into real space; sugar extract keeps its own ``F`` and
+# is never capped; a diastaticus strain consumes the malt's dextrin residue
+# (``d = 1``). ``UE``/``FE`` are masses; ``RE``/``AE`` in °P follow from the
+# Cutaia regression. Apparent extract (and attenuation) may go below 0 / above
+# 1 in the dextrin-consumption regime.
+#
+# See ``docs/attenuation-model.md`` and ``domain-equations.md`` §1–§2.
+
+
+@dataclass(frozen=True)
+class WortComposition:
+    """The attenuated state implied by the wort's extract composition.
+
+    Attributes:
+        oe_plato: Original extract of the post-boil wort, in °P.
+        extract_total_kg: Total post-boil extract (malt + late addition), kg.
+        malt_extract_kg: Malt-derived extract mass, kg.
+        sugar_extract_kg: Late-addition extract mass, kg.
+        malt_fermentability: Effective malt fermentability after the cap.
+        real_extract_kg: Unfermented extract mass ``UE``, kg.
+        real_extract_plato: ``RE`` in °P (``UE`` scaled by ``OE``/``E``).
+        apparent_extract_plato: ``AE`` inverted from the Cutaia regression.
+        real_attenuation: ``(OE − RE) / OE``.
+        apparent_attenuation: ``(OE − AE) / OE``; may exceed 1.
+        abw_pct: Alcohol by weight, %.
+        abv_pct: Alcohol by volume, %.
+    """
+
+    oe_plato: float
+    extract_total_kg: float
+    malt_extract_kg: float
+    sugar_extract_kg: float
+    malt_fermentability: float
+    real_extract_kg: float
+    real_extract_plato: float
+    apparent_extract_plato: float
+    real_attenuation: float
+    apparent_attenuation: float
+    abw_pct: float
+    abv_pct: float
+
+
+def resolve_wort_composition(
+    oe_plato: float,
+    extract_total_kg: float,
+    s_late_add: float,
+    malt_fermentability: float,
+    yeast_cap_apparent: float,
+    *,
+    dextrin_consumption: float = 0.0,
+    sugar_fermentability: float = SUGAR_FERMENTABILITY,
+) -> WortComposition:
+    """Evaluate the extract-composition block at one candidate ``OE``.
+
+    ``F_malt_eff = min(F_malt, cap_real(OE))``
+    ``UE = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)``
+    ``RE = OE·UE/E``; ``AE`` is inverted from the Cutaia RE regression.
+
+    Args:
+        oe_plato: Post-boil original extract, in °P.
+        extract_total_kg: Post-boil extract mass (malt + late addition), kg.
+        s_late_add: Late-addition extract mass, kg.
+        malt_fermentability: Extract-weighted real fermentability of the malt.
+        yeast_cap_apparent: The yeast's apparent attenuation cap, fraction.
+        dextrin_consumption: ``d`` — the share of the malt residue a
+            diastaticus strain consumes (0 or 1 today).
+        sugar_fermentability: Fermentable share of late-addition extract.
+
+    Raises:
+        SolverValidationError: If the extract target cannot cover the late
+            addition, or the attenuation inputs are outside their domains.
+    """
+    if not (0.0 <= dextrin_consumption <= 1.0):
+        raise SolverValidationError(
+            "INVALID_ATTENUATION",
+            f"Dextrin consumption must be in [0, 1]; got {dextrin_consumption}.",
+        )
+    if extract_total_kg <= s_late_add:
+        raise SolverValidationError(
+            "EXTRACT_TARGET_NON_POSITIVE",
+            (
+                f"Post-boil extract target ({extract_total_kg:.4f} kg) must "
+                f"exceed late-addition extract ({s_late_add:.4f} kg)."
+            ),
+        )
+
+    malt_extract_kg = extract_total_kg - s_late_add
+    cap_real = apparent_to_real_attenuation(oe_plato, yeast_cap_apparent)
+    malt_fermentability_eff = min(max(malt_fermentability, 0.0), cap_real)
+
+    real_extract_kg = (
+        malt_extract_kg
+        * (1.0 - malt_fermentability_eff)
+        * (1.0 - dextrin_consumption)
+    ) + (s_late_add * (1.0 - sugar_fermentability))
+    real_extract_plato = oe_plato * (real_extract_kg / extract_total_kg)
+
+    ae_plato = apparent_extract_for_real_extract(oe_plato, real_extract_plato)
+    abw = cutaia_abw(oe_plato, ae_plato)
+    abv = abw * asbc_plato_to_sg(ae_plato) / ETHANOL_DENSITY_METRIC
+
+    return WortComposition(
+        oe_plato=oe_plato,
+        extract_total_kg=extract_total_kg,
+        malt_extract_kg=malt_extract_kg,
+        sugar_extract_kg=s_late_add,
+        malt_fermentability=malt_fermentability_eff,
+        real_extract_kg=real_extract_kg,
+        real_extract_plato=real_extract_plato,
+        apparent_extract_plato=ae_plato,
+        real_attenuation=(oe_plato - real_extract_plato) / oe_plato,
+        apparent_attenuation=(oe_plato - ae_plato) / oe_plato,
+        abw_pct=abw,
+        abv_pct=abv,
+    )
+
+
+def solve_oe_from_composition(
+    target_abv: float,
+    yeast_cap_apparent: float,
+    malt_fermentability: float,
+    v_kettle_cold: float,
+    s_late_add: float,
+    *,
+    gamma: float = GAMMA_METRIC,
+    dextrin_consumption: float = 0.0,
+    sugar_fermentability: float = SUGAR_FERMENTABILITY,
+) -> float:
+    """Phase 1 (composition path): root-find ``OE`` so the target ABV holds.
+
+    The composition block is evaluated per candidate ``OE``: the extract target
+    (and therefore the malt/sugar share) moves with the candidate, and the
+    yeast cap converts to real space at that same ``OE``.
+
+    Raises:
+        SolverValidationError: On an invalid target or cap, when the late
+            addition alone exceeds the 40 °P extract ceiling
+            (``EXTRACT_TARGET_NON_POSITIVE``), or when the target is beyond the
+            composition's ceiling (``ABV_UNREACHABLE``).
+    """
+    if target_abv <= 0:
+        raise SolverValidationError(
+            "INVALID_TARGET_ABV",
+            f"Target ABV must be positive; got {target_abv}.",
+        )
+    if not (0.0 < yeast_cap_apparent <= 1.0):
+        raise SolverValidationError(
+            "INVALID_ATTENUATION",
+            (
+                "Apparent attenuation must be in (0, 1]; got "
+                f"{yeast_cap_apparent}."
+            ),
+        )
+
+    def extract_at(oe_plato: float) -> float:
+        return post_boil_extract_target(
+            asbc_plato_to_sg(oe_plato), v_kettle_cold, gamma
+        )
+
+    if extract_at(40.0) <= s_late_add:
+        raise SolverValidationError(
+            "EXTRACT_TARGET_NON_POSITIVE",
+            (
+                f"Late-addition extract ({s_late_add:.4f} kg) alone exceeds the "
+                "40 °P kettle extract ceiling."
+            ),
+        )
+
+    def abv_at(oe_plato: float) -> float:
+        extract_total = extract_at(oe_plato)
+        if extract_total <= s_late_add:
+            return 0.0
+        return resolve_wort_composition(
+            oe_plato=oe_plato,
+            extract_total_kg=extract_total,
+            s_late_add=s_late_add,
+            malt_fermentability=malt_fermentability,
+            yeast_cap_apparent=yeast_cap_apparent,
+            dextrin_consumption=dextrin_consumption,
+            sugar_fermentability=sugar_fermentability,
+        ).abv_pct
+
+    def residual(oe_plato: float) -> float:
+        return abv_at(oe_plato) - target_abv
+
+    lower = 1e-9
+    if residual(lower) * residual(40.0) > 0.0:
+        raise SolverValidationError(
+            "ABV_UNREACHABLE",
+            (
+                f"Target ABV of {target_abv}% is not reachable within the "
+                "0-40 °P bracket at this extract composition."
+            ),
+        )
+    return brentq(residual, lower, 40.0)
 
 
 # ---------------------------------------------------------------------------
@@ -1139,8 +1358,10 @@ class BatchSolverInput:
 
     Attributes:
         target_abv: Desired alcohol by volume, as a percentage (e.g. 5.5).
-        apparent_attenuation: Yeast attenuation cap as a fraction in (0, 1]
-            (the strain's typical attenuation times the batch derate).
+        apparent_attenuation: The yeast's apparent attenuation cap as a fraction
+            in (0, 1] (the strain's typical attenuation times the batch derate).
+            Converted to real space per candidate ``OE`` before it clamps the
+            malt's fermentability.
         v_ferm: Target cold fermenter volume, in liters.
         topology: Either ``"r_l_to_g"`` or ``"runoff_ratio"``.
         intensive_value: ``R_L:G`` (L/kg) or ``r`` (dimensionless).
@@ -1228,10 +1449,15 @@ class BatchSolverResult:
         m_grist: Converged dry grist mass, in kg.
         cascade: The Phase 4 stage volume and gravity cascade.
         max_achievable_abv: The Phase 1 bracket ceiling for the given
-            attenuation, as a percentage. Echoed back so the frontend can
-            bound the target-ABV input without duplicating the Cutaia model.
-        aa_wort: The extract-weighted wort fermentability before the yeast cap.
-        aa_batch: The wort AA clamped by the yeast cap; the solver's final AA.
+            attenuation and composition, as a percentage. Echoed back so the
+            frontend can bound the target-ABV input without duplicating the
+            Cutaia model.
+        aa_wort: The solved batch's real attenuation (RDF), after the cap and
+            any dextrin consumption. Renamed ``real_attenuation`` on the wire
+            once the wire rename lands.
+        aa_batch: The solved batch's apparent attenuation, after the cap and
+            any dextrin consumption. May exceed 1 when diastaticus consumes the
+            dextrin residue. Renamed ``apparent_attenuation`` on the wire.
         hlt: The HLT water budget (top-up and deliverable sparge volume).
         max_feasible_abv: The largest target ABV that both solves and fits the
             rig's capacity limits, as a percentage.
@@ -1267,6 +1493,7 @@ class _Pipeline:
     hlt: HltWaterBudget
     aa_wort: float
     aa_batch: float
+    max_abv: float
 
 
 def tun_peak_volume_l(
@@ -1386,25 +1613,57 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
         )
         return sg, rev
 
-    cap = inputs.apparent_attenuation
     if aa_malt is None:
+        # Legacy scalar path: a caller that supplies no per-row fermentability
+        # keeps the original apparent-attenuation inversion.
+        cap = inputs.apparent_attenuation
         aa_batch = cap
         aa_wort = cap
+        sg_post_boil, reversal = solve_phase_1(aa_batch)
+        max_abv = max_achievable_abv(aa_batch)
     else:
-        aa_batch = min(max(aa_malt, 1e-9), cap)
-        for _ in range(50):
-            _, rev = solve_phase_1(aa_batch)
-            total = rev.s_post_boil_target
-            malt = total - inputs.s_late_add
-            aa_wort = (malt * aa_malt + inputs.s_late_add) / total
-            aa_new = min(max(aa_wort, 1e-9), cap)
-            if abs(aa_new - aa_batch) <= 1e-10:
-                aa_batch = aa_new
-                break
-            aa_batch = aa_new
-        aa_wort = min(max(aa_wort, 1e-9), 1.0)
-
-    sg_post_boil, reversal = solve_phase_1(aa_batch)
+        # Extract composition: the solver's ABV-first inversion, with the
+        # composition block (and the cap conversion) evaluated per candidate.
+        v_kettle_cold = kettle_cold_volume(
+            inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+        )
+        oe_plato = solve_oe_from_composition(
+            target_abv=target_abv,
+            yeast_cap_apparent=inputs.apparent_attenuation,
+            malt_fermentability=aa_malt,
+            v_kettle_cold=v_kettle_cold,
+            s_late_add=inputs.s_late_add,
+        )
+        sg_post_boil = asbc_plato_to_sg(oe_plato)
+        reversal = resolve_volumetric_reversal(
+            v_ferm=inputs.v_ferm,
+            sg_post_boil=sg_post_boil,
+            v_kettle_dead=inputs.v_kettle_dead,
+            v_kettle_transfer=inputs.v_kettle_transfer,
+            v_trub=inputs.v_trub,
+            delta_v_evap=inputs.delta_v_evap,
+            s_late_add=inputs.s_late_add,
+            f_shrink=inputs.f_shrink,
+        )
+        composition = resolve_wort_composition(
+            oe_plato=oe_plato,
+            extract_total_kg=reversal.s_post_boil_target,
+            s_late_add=inputs.s_late_add,
+            malt_fermentability=aa_malt,
+            yeast_cap_apparent=inputs.apparent_attenuation,
+        )
+        aa_wort = composition.real_attenuation
+        aa_batch = composition.apparent_attenuation
+        ceiling = resolve_wort_composition(
+            oe_plato=40.0,
+            extract_total_kg=post_boil_extract_target(
+                asbc_plato_to_sg(40.0), v_kettle_cold, GAMMA_METRIC
+            ),
+            s_late_add=inputs.s_late_add,
+            malt_fermentability=aa_malt,
+            yeast_cap_apparent=inputs.apparent_attenuation,
+        )
+        max_abv = ceiling.abv_pct
 
     try:
         m_grist = solve_grist_mass(
@@ -1461,6 +1720,7 @@ def _solve_pipeline(inputs: BatchSolverInput, target_abv: float) -> _Pipeline:
         hlt=hlt,
         aa_wort=aa_wort,
         aa_batch=aa_batch,
+        max_abv=max_abv,
     )
 
 
@@ -1546,7 +1806,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
     See ``domain-equations.md`` §2.5.
     """
     pipeline = _solve_pipeline(inputs, inputs.target_abv)
-    fermentation_ceiling = max_achievable_abv(pipeline.aa_batch)
+    fermentation_ceiling = pipeline.max_abv
     max_feasible_abv, binding_constraint = _feasible_bound(
         inputs, fermentation_ceiling
     )

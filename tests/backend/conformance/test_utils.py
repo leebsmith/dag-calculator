@@ -41,8 +41,11 @@ def test_plato_to_sg_standard_wort():
 
 
 def test_plato_to_sg_invalid_plato():
-    with pytest.raises(ValueError, match="Degrees Plato cannot be negative."):
-        plato_to_sg(-1.5)
+    # Apparent extract may cross 0 °P in the dextrin-consumption regime; the
+    # polynomial is evaluated on a small negative domain with a floor.
+    with pytest.raises(ValueError, match="outside the ASBC domain"):
+        plato_to_sg(-10.5)
+    assert plato_to_sg(-3.0) < 1.0
 
 
 def test_roundtrip_conversion():

@@ -29,6 +29,21 @@ export function cutaiaAbv(oe, ae) {
   return callArtifactFunction("cutaia_abv_plato", [oe, ae]);
 }
 
+// Ingredient fermentability is a real mass fraction of extract. Sources that
+// publish an apparent attenuation (e.g. Dingemans' "Final attenuation") convert
+// here, at the fixed reference gravity the priors were reconciled against.
+export const INGREDIENT_REFERENCE_PLATO = 12;
+
+export function apparentToRealAttenuation(apparentAttenuation, oe = INGREDIENT_REFERENCE_PLATO) {
+  if (!Number.isFinite(apparentAttenuation) || !(oe > 0)) return apparentAttenuation;
+  const aa = Math.min(Math.max(apparentAttenuation, 0), 1);
+  const ae = oe * (1 - aa);
+  const abw =
+    (artifactConstant("cutaia_a") + artifactConstant("cutaia_b") * oe) * (oe - ae);
+  const re = callArtifactFunction("cutaia_real_extract", [abw, ae]);
+  return (oe - re) / oe;
+}
+
 // ABV along a fixed-AE (horizontal) edge is quadratic in OE; solve for OE.
 function horizontalCrossings(ae, targetAbv) {
   const ethanolDensity = artifactConstant("ethanol_density");

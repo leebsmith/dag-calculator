@@ -87,7 +87,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "brown-soft-candi-sugar": {
     "id": "brown-soft-candi-sugar",
@@ -231,7 +233,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-bavarian-wheat-lme": {
     "id": "cbw-bavarian-wheat-lme",
@@ -249,7 +253,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-golden-light-dme": {
     "id": "cbw-golden-light-dme",
@@ -267,7 +273,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-golden-light-lme": {
     "id": "cbw-golden-light-lme",
@@ -285,7 +293,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-munich-lme": {
     "id": "cbw-munich-lme",
@@ -303,7 +313,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-pale-ale-dme": {
     "id": "cbw-pale-ale-dme",
@@ -321,7 +333,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-pilsen-light-dme": {
     "id": "cbw-pilsen-light-dme",
@@ -339,7 +353,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-pilsen-light-lme": {
     "id": "cbw-pilsen-light-lme",
@@ -357,7 +373,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-sparkling-amber-dme": {
     "id": "cbw-sparkling-amber-dme",
@@ -375,7 +393,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-sparkling-amber-lme": {
     "id": "cbw-sparkling-amber-lme",
@@ -393,7 +413,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-traditional-dark-dme": {
     "id": "cbw-traditional-dark-dme",
@@ -411,7 +433,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "cbw-traditional-dark-lme": {
     "id": "cbw-traditional-dark-lme",
@@ -429,7 +453,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "clarified-brown-rice-syrup-42de": {
     "id": "clarified-brown-rice-syrup-42de",
@@ -447,7 +473,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "clear-belgian-candi-sugar": {
     "id": "clear-belgian-candi-sugar",
@@ -645,7 +673,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "maltoferm-organic-10001-powder-dme": {
     "id": "maltoferm-organic-10001-powder-dme",
@@ -663,7 +693,9 @@
       "retrieved_at": "2026-10-19T20:54:14Z",
       "sha256": "cd4307add1d071d55229a0d624d4ab0edcbf7ce3615c05944f3fe9d14c94f1aa",
       "note": "published as fermentability"
-    }
+    },
+    "fermentability_basis": "real",
+    "fermentability_method": "Fermentability"
   },
   "maple-syrup": {
     "id": "maple-syrup",

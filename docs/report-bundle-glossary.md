@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_88 paths_
+_90 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -69,7 +69,9 @@ _88 paths_
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
 | `batch.sugars` | Late additions | collection | — | — | — | — |
 | `batch.sugars.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
+| `batch.sugars.fermentability_basis` | Fermentability Basis | field | — | — | — | — |
 | `batch.sugars.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
+| `batch.sugars.fermentability_method` | Fermentability Method | field | — | — | — | — |
 | `batch.sugars.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
 | `batch.sugars.mass_kg` | Mass | field | mass | kg | 1 | — |
 | `batch.sugars.name` | Sugar | field | — | — | — | — |
@@ -119,7 +121,7 @@ _88 paths_
 
 ## Grist
 
-_34 paths_
+_38 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -128,7 +130,9 @@ _34 paths_
 | `grist.major_malts.catalog_id` | Catalog ID | field | — | — | — | — |
 | `grist.major_malts.category` | Type | field | — | — | — | BASE, CRYSTAL, ROASTED, ACID |
 | `grist.major_malts.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
+| `grist.major_malts.fermentability_basis` | Fermentability Basis | field | — | — | — | — |
 | `grist.major_malts.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
+| `grist.major_malts.fermentability_method` | Fermentability Method | field | — | — | — | — |
 | `grist.major_malts.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
 | `grist.major_malts.moisture_fraction` | Moisture Fraction | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.name` | Malt | field | — | — | — | — |
@@ -145,7 +149,9 @@ _34 paths_
 | `grist.trace_malts.catalog_id` | Catalog ID | field | — | — | — | — |
 | `grist.trace_malts.category` | Type | field | — | — | — | BASE, CRYSTAL, ROASTED, ACID |
 | `grist.trace_malts.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
+| `grist.trace_malts.fermentability_basis` | Fermentability Basis | field | — | — | — | — |
 | `grist.trace_malts.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
+| `grist.trace_malts.fermentability_method` | Fermentability Method | field | — | — | — | — |
 | `grist.trace_malts.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
 | `grist.trace_malts.mass_kg` | Mass | field | mass | oz | 2 | — |
 | `grist.trace_malts.name` | Malt | field | — | — | — | — |

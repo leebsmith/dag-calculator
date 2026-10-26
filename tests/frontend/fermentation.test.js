@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { styleCentroid, sgToPlato, platoToSg, cutaiaAbv } from "../../frontend/src/engine/fermentation.js";
+import { styleCentroid, sgToPlato, platoToSg, cutaiaAbv, apparentToRealAttenuation } from "../../frontend/src/engine/fermentation.js";
 import {
   feasibleVertices,
   pointInRegion,
@@ -27,6 +27,26 @@ test("sgToPlato and platoToSg match backend reference points", () => {
 test("cutaiaAbv matches backend calculate_abv_and_attenuation", () => {
   assert.ok(Math.abs(cutaiaAbv(15.146, 2.875) - 6.687) < 1e-2);
   assert.ok(Math.abs(cutaiaAbv(8.154, 1.003) - 3.642) < 1e-2);
+});
+
+test("apparent ingredient attenuation converts to real at 12 °P", () => {
+  const cases = [
+    [0.81, 0.643],
+    [0.80, 0.635],
+    [0.50, 0.398],
+    [0.15, 0.121],
+  ];
+  for (const [apparent, real] of cases) {
+    assert.ok(
+      Math.abs(apparentToRealAttenuation(apparent) - real) < 5e-4,
+      `${apparent} -> ${apparentToRealAttenuation(apparent)} (expected ~${real})`
+    );
+  }
+  assert.ok(
+    Math.abs(
+      apparentToRealAttenuation(1) - (1 - 0.49681569 * (0.372 + 0.00357 * 12))
+    ) < 1e-12
+  );
 });
 
 test("styleCentroid lands inside the style's ABV band", () => {

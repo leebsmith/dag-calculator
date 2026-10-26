@@ -5,10 +5,11 @@ Two axes, often conflated by vendors:
 - **`yield_fraction`** — extract yield. For malts it is the dry-basis fine-grind
   extract; the solver applies `(1 - moisture)` to get the as-is yield. For
   sugars/extracts it is the as-is sugar-point contribution (water included).
-- **`fermentability_fraction`** — the fraction of that extract that is
-  fermentable. This is what scales AA.
+- **`fermentability_fraction`** — the share of that extract that ferments. It
+  is a **real** mass fraction; `1 − F` is the unfermentable (dextrin) share.
 
-They are independent. Knowing one does not give the other.
+They are independent. Knowing one does not give the other. The composition model
+that consumes `F` is stated in [`attenuation-model.md`](attenuation-model.md).
 
 ## `yield_fraction` (extract yield)
 
@@ -24,71 +25,80 @@ an as-is sugar-point contribution; it is stored directly in
 Do not rename the field. Treat its basis as ingredient-type-specific:
 malt = dry basis, sugar/extract = as-is.
 
-## `fermentability_fraction` (limit of attenuation)
+## `fermentability_fraction` (real fermentable share)
 
-A maltster measures this with a Congress Mash and a standard, highly
-attenuative lab yeast pushed to completion. It is a **limit**, not the user's
-yeast performance:
+A maltster measures the share of the malt's extract that its standard
+attenuative lab fermentation consumes. The figure is published under different
+names and on different bases:
 
-- Base malts: ~0.78–0.83
-- Crystal/caramel: ~0.40–0.60
+- **Real** (a fraction of extract): Bairds/Crisp IoB, Simpsons un-boiled
+  fermentability, Briess extracts. Stored as-is.
+- **Apparent** (a Congress-mash attenuation, which can exceed the real share):
+  Dingemans' "Final attenuation". Converted to real at 12 °P where the data is
+  ingested (see below).
+
+The source schema carries `fermentability_basis` (`real` | `apparent` |
+`unspecified`) and `fermentability_method` (the source's own label). The consumer
+converts `apparent` rows once, in the boundary request builder, at the fixed
+12 °P reference; the wire and the solver speak real fractions only.
+`unspecified` is treated as real and flagged (assumption A1 in
+`attenuation-model.md`).
+
+Typical **real** values:
+
+- Base malts: ~0.60–0.65 for ordinary pale malt; distilling malts publish ~0.85–0.87
+- Crystal/caramel: ~0.40–0.50
 - Roasted: ~0.10–0.20
-- Acidulated: base-like, ~0.80
+- Acidulated: base-like, ~0.64
 - Simple sugars, extracts, syrups: 1.0
-
-The value describes the carbohydrate profile: `F` is the share of extract that
-is fermentable, `1 − F` the unfermentable dextrin share.
 
 ### Category defaults
 
 Where a scrape has no `fermentability_fraction`:
 
-| Category | Default |
-|---|---|
-| `BASE` | 0.81 |
-| `CRYSTAL` | 0.50 |
-| `ROASTED` | 0.15 |
-| `ACID` | 0.80 |
+| Category | Prior (real) | Old apparent observation |
+|---|---|---|
+| `BASE` | 0.643 | 0.810 |
+| `CRYSTAL` | 0.398 | 0.500 |
+| `ROASTED` | 0.121 | 0.150 |
+| `ACID` | 0.635 | 0.800 |
+| `sugar` | 1.000 | 1.000 |
 
-A scraped per-malt value wins over the default. The defaults are Congress-Mash
-priors, not mash-schedule predictions.
+The priors are the old apparent observations converted at 12 °P, so a recipe
+resolved from priors displays the same apparent attenuation as before (A7). A
+scraped per-malt value wins over the prior.
 
-## The batch AA
+## The batch attenuation block
 
-`AA_batch` is not an ingredient value and is not the user's mash prediction.
-It is built in three stages:
+`AA_batch` is not an ingredient value and is not a mash-schedule prediction. The
+solver evaluates extract composition at the candidate `OE`:
 
-1. **Extract-weighted wort baseline**
+```
+cap_real   = apparent_to_real(OE, yeast_cap_apparent)
+F_malt_eff = min(F_malt, cap_real)
+UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)
+RE         = OE · UE / E
+AE         = inverse_cutaia(RE)
+AA_app     = (OE − AE) / OE          # may exceed 1
+```
 
-   `AA_wort = Σ(extract_i · F_i) / Σ extract_i`
+`F_malt` is the extract-weighted real fermentability of the grain bill. The
+yeast cap applies to **malt only**, in real space; sugar keeps `F_sugar = 1.0`
+and is never clamped, so a sugar addition can lift apparent attenuation past the
+cap. `d` is the diastaticus dextrin-consumption share (D5); it acts on the malt
+residue only.
 
-   Extract-weighted, not mass-weighted. Sugars use `F = 1.0`.
-
-2. **Yeast cap**
-
-   `yeast_cap = max(0, yeast.attenuation_pct − batch.attenuation_derate_points)`
-
-   `AA_batch = min(AA_wort, yeast_cap)`
-
-3. **Final gravity**
-
-   `AE = OE · (1 − AA_batch)`
-
-`F_i` appears only in step 1. It is never multiplied by `AA_batch` and never
-applied again at the AE step. That would double-count attenuation.
-
-There is no mash modifier in this iteration. The malt `F` is the Congress-Mash
-limit; a future mash model may modify it relative to Congress, but that is a
-separate, calibrated feature.
+`AE = OE · (1 − AA)` is no longer a model step: `AE` comes from inverting the
+Cutaia real-extract regression, and may be ≤ 0. `F_i` appears exactly once, in
+the residue term; it is never applied again at the AE step.
 
 ## Mixed worts
 
-Malt extract and sugar extract are blended by extract mass:
-
-`AA_wort = (s_malt · AA_malt + s_sugar · 1.0) / (s_malt + s_sugar)`
-
-With sugars, the split depends on the solve, so `AA_wort` is computed inside
-the batch solver at each candidate OG. An upstream scalar would be circular.
+Malt extract and sugar extract are composed by extract mass. Sugar contributes
+`E_sugar` fully fermentable extract and no residue; malt contributes
+`E_malt · (1 − F_malt_eff)` residue. Because the extract split depends on the
+solve, the composition block is evaluated inside the batch solver at each
+candidate OG. An upstream scalar would be circular.
 
 ## Vendor pitfalls
 
@@ -101,7 +111,10 @@ The first affects OE; the second affects AE. They are not interchangeable.
 
 The source schema carries `yield_basis` (`extract` or `fermentability`) and an
 optional `fermentability_fraction`. The seed builder must not treat a
-fermentability value as extract yield.
+fermentability value as extract yield. Briess publishes fermentability (not
+extract) for some extracts; those rows keep the number in `yield_fraction` with
+`yield_basis: "fermentability"` and a `fermentability_basis` tag, and the
+importer reinterprets it.
 
 ## Data exclusions
 
@@ -114,8 +127,8 @@ fermentability value as extract yield.
 ## What this is not
 
 - Not the removed mash-schedule attenuation estimator.
-- Not a claim that a malt's Congress limit is your brewery's result.
-- Not a replacement for the yeast cap or the per-batch derate.
+- Not a claim that a maltster's limit is your brewery's result.
+- Not a time-dependent diastaticus model: `d = 1` is a limit, not a rate.
 
 ## Provenance and priors
 
@@ -123,7 +136,7 @@ A catalog record carries the figure it was captured with, and a citation for it:
 `fermentability_provenance`/`yield_provenance` (and `attenuation_provenance`
 for yeasts) record the source URL, the cached document's `sha256`, the retrieval
 time, the vendor, and the **bound** the source states — `point`, `min`, `max`,
-or `unknown` (used for published extracts whose qualifier is not yet parsed).
+or `unknown` (used for published extracts whose qualifier is not parsed yet).
 A `null` figure means the source is silent; the export never imputes.
 
 Priors live in the artifact, not in the seed builder or an adapter table
@@ -133,20 +146,21 @@ and `kind: "prior"` provenance. A frozen batch therefore records whether each
 number was measured or assumed, and changing a prior later never rewrites
 batches that already exist.
 
-`bound: "min"` is a floor, not a point estimate. Pass 1 stores the value and the
-bound; using a floor as one (rather than silently treating it as a point) is
-deferred with the late-addition work.
+`bound: "min"` is a floor, not a point estimate. The solver uses the printed
+value as a point; the bound travels in provenance and the ingredient tables mark
+it as a floor (D3, assumption A8).
 
 Yeast provenance is **aggregator-level** in Pass 1: `kind: "aggregator"` with
 the profile URL and no per-page hash, because the beer-analytics scrape caches
 no pages. The vendor fetch (STA1, attenuation ranges) upgrades it to a
-per-document citation.
+per-document citation (D4).
 
 ## Tests
 
-- `F` defaults by category; scraped values win.
+- `F` defaults by category in real space; scraped values win.
+- Apparent figures convert at 12 °P and round-trip to the old display.
 - Extracts carry `F = 1.0`; black extracts excluded.
-- Extract-weighted AA, not mass-weighted.
-- Sugar blend raises AA; cap clamps.
-- Derate changes the cap, not the wort baseline.
-- `AE = OE(1 − AA_batch)` with no second `F` application.
+- The composition block reproduces the four regimes.
+- Sugar raises apparent attenuation past the yeast cap.
+- The derate changes the cap before conversion, not the malt baseline.
+- `AE` is inverted from `RE`: no second `F` application.

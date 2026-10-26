@@ -207,6 +207,22 @@
       "value": 0.7907,
       "dimension": "dimensionless"
     },
+    "cutaia_re_abw": {
+      "value": 0.49681569,
+      "dimension": "dimensionless"
+    },
+    "cutaia_re_ae": {
+      "value": 1.0015341,
+      "dimension": "dimensionless"
+    },
+    "cutaia_re_abw_ae": {
+      "value": 0.00059105,
+      "dimension": "dimensionless"
+    },
+    "cutaia_re_ae2": {
+      "value": 0.00029431,
+      "dimension": "dimensionless"
+    },
     "mash_thermal_factor": {
       "value": 0.41,
       "dimension": "dimensionless"
@@ -244,19 +260,19 @@
       "dimension": "percentage"
     },
     "fermentability_prior_base": {
-      "value": 0.81,
+      "value": 0.643,
       "dimension": "percentage"
     },
     "fermentability_prior_crystal": {
-      "value": 0.5,
+      "value": 0.398,
       "dimension": "percentage"
     },
     "fermentability_prior_roasted": {
-      "value": 0.15,
+      "value": 0.121,
       "dimension": "percentage"
     },
     "fermentability_prior_acid": {
-      "value": 0.8,
+      "value": 0.635,
       "dimension": "percentage"
     },
     "fermentability_prior_sugar": {
@@ -264,7 +280,7 @@
       "dimension": "percentage"
     },
     "fermentability_prior_default": {
-      "value": 0.81,
+      "value": 0.643,
       "dimension": "percentage"
     },
     "yield_prior_base": {
@@ -1072,6 +1088,88 @@
         ]
       }
     },
+    "cutaia_real_extract": {
+      "params": [
+        "abw",
+        "ae"
+      ],
+      "returns": "gravity",
+      "body": {
+        "op": "-",
+        "args": [
+          {
+            "op": "-",
+            "args": [
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "const": "cutaia_re_abw"
+                      },
+                      {
+                        "ref": "abw"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "const": "cutaia_re_ae"
+                      },
+                      {
+                        "ref": "ae"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "const": "cutaia_re_abw_ae"
+                      },
+                      {
+                        "ref": "abw"
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "ae"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "*",
+            "args": [
+              {
+                "op": "*",
+                "args": [
+                  {
+                    "const": "cutaia_re_ae2"
+                  },
+                  {
+                    "ref": "ae"
+                  }
+                ]
+              },
+              {
+                "ref": "ae"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "blend_ion": {
       "params": [
         "mash",
@@ -1252,6 +1350,8 @@
         }
       },
       "fermentability_provenance": {},
+      "fermentability_basis": {},
+      "fermentability_method": {},
       "moisture_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1288,6 +1388,8 @@
         }
       },
       "fermentability_provenance": {},
+      "fermentability_basis": {},
+      "fermentability_method": {},
       "color_lovibond": {
         "dimension": "grain_color",
         "domain": {
@@ -1658,6 +1760,8 @@
         }
       },
       "fermentability_provenance": {},
+      "fermentability_basis": {},
+      "fermentability_method": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1706,6 +1810,8 @@
         }
       },
       "fermentability_provenance": {},
+      "fermentability_basis": {},
+      "fermentability_method": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {
@@ -1750,6 +1856,8 @@
         }
       },
       "fermentability_provenance": {},
+      "fermentability_basis": {},
+      "fermentability_method": {},
       "fermentability_fraction": {
         "dimension": "percentage",
         "domain": {

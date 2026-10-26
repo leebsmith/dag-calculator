@@ -136,6 +136,8 @@ function dedupeMalts(rows) {
       ["color_lovibond", null],
       ["moisture", null],
       ["fermentability_fraction", "fermentability_provenance"],
+      ["fermentability_basis", null],
+      ["fermentability_method", null],
     ]) {
       if (hasValue(winner[field])) continue;
       const sibling = group.find((r) => hasValue(r[field]));
@@ -178,6 +180,12 @@ function maltComponent(row) {
   const fermentabilityProvenance = provenanceOf(row, "fermentability_provenance");
   if (fermentabilityProvenance) {
     component.fermentability_provenance = fermentabilityProvenance;
+  }
+  if (hasValue(row.fermentability_basis)) {
+    component.fermentability_basis = row.fermentability_basis;
+  }
+  if (hasValue(row.fermentability_method)) {
+    component.fermentability_method = row.fermentability_method;
   }
   // Datasheet moisture is a percent; 0 means "not published" (absent).
   if (hasValue(row.moisture) && row.moisture > 0) {
@@ -225,6 +233,12 @@ function sugarComponent(row) {
   );
   if (fermentabilityProvenance) {
     component.fermentability_provenance = fermentabilityProvenance;
+  }
+  if (hasValue(row.fermentability_basis)) {
+    component.fermentability_basis = row.fermentability_basis;
+  }
+  if (hasValue(row.fermentability_method)) {
+    component.fermentability_method = row.fermentability_method;
   }
   return component;
 }

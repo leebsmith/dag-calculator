@@ -13,6 +13,19 @@
 // Hamilton stays host-side (TODO/L3): `w_i` here is the normalized `pct` the
 // grist table authors (`frontend/src/views/hamilton.js`), never an engine value.
 
+import { apparentToRealAttenuation } from "../engine/fermentation.js";
+
+// The wire carries a real fermentable fraction. A captured apparent figure
+// (Dingemans-style "final attenuation") converts at the fixed 12 °P reference;
+// real figures and real-space priors pass through. `unspecified` is treated as
+// real and flagged in the docs (assumption A1).
+function fermentabilityAsReal(row) {
+  const value = row.fermentability_fraction;
+  return row.fermentability_basis === "apparent"
+    ? apparentToRealAttenuation(value)
+    : value;
+}
+
 // AI AGENT HOOKS: Use this helper for building every boundary request body from
 // its declarative field map. Do not duplicated this logic elsewhere — each map
 // key is one artifact-declared boundary input, and `wire: null` marks an input
@@ -65,7 +78,7 @@ export const BATCH_FIELDS = {
         mc_i: row.moisture_fraction ?? resolved.grain_moisture_fraction,
         // Copy-forward resolution guarantees a figure; a row that still lacks
         // one is a malformed batch, not a place to invent a default.
-        fermentability_i: row.fermentability_fraction,
+        fermentability_i: fermentabilityAsReal(row),
       })),
   },
   grain_moisture_fraction: { path: "batch.grain_moisture_fraction", wire: null },

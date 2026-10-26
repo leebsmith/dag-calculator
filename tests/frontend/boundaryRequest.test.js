@@ -29,6 +29,39 @@ test("buildBatchRequest sends per-row moisture with the batch fallback", () => {
   assert.equal(request.grain_bill[1].mc_i, 0.04, "absent moisture falls back to batch value");
 });
 
+test("buildBatchRequest carries a real fermentable fraction on the wire", () => {
+  const rows = [
+    {
+      pct: 0.5,
+      yield_fraction: 0.8,
+      fermentability_fraction: 0.643,
+      fermentability_basis: "real",
+    },
+    {
+      pct: 0.5,
+      yield_fraction: 0.8,
+      fermentability_fraction: 0.5,
+      fermentability_basis: "apparent",
+    },
+  ];
+  const request = buildBatchRequest(stubEngine(rows, 0.04));
+
+  assert.equal(request.grain_bill[0].fermentability_i, 0.643, "real passes through");
+  assert.ok(
+    Math.abs(request.grain_bill[1].fermentability_i - 0.398) < 5e-4,
+    "apparent converts at the 12 °P reference"
+  );
+});
+
+test("buildBatchRequest treats an unspecified basis as real", () => {
+  const rows = [
+    { pct: 0.5, yield_fraction: 0.8, fermentability_fraction: 0.87 },
+    { pct: 0.5, yield_fraction: 0.8, fermentability_fraction: 0.398 },
+  ];
+  const request = buildBatchRequest(stubEngine(rows, 0.04));
+  assert.equal(request.grain_bill[0].fermentability_i, 0.87);
+});
+
 test("buildBatchRequest selects the intensive root by topology", () => {
   const lgr = buildBatchRequest(
     stubEngine([], 0.04, {

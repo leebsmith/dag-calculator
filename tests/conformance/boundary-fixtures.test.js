@@ -23,8 +23,8 @@ function fixture(name) {
 
 // The raw FRONTEND grist rows the engine resolves (pct already Hamilton-normalized).
 const GRIST = [
-  { catalog_id: "pilsner", name: "Pilsner", category: "BASE", parts: 80, pct: 0.8, yield_fraction: 0.8, fermentability_fraction: 0.81, color_lovibond: 1.5 },
-  { catalog_id: "crystal-40", name: "Crystal 40", category: "CRYSTAL", parts: 20, pct: 0.2, yield_fraction: 0.74, fermentability_fraction: 0.5, color_lovibond: 40 },
+  { catalog_id: "pilsner", name: "Pilsner", category: "BASE", parts: 80, pct: 0.8, yield_fraction: 0.8, fermentability_fraction: 0.643, fermentability_basis: "real", color_lovibond: 1.5 },
+  { catalog_id: "crystal-40", name: "Crystal 40", category: "CRYSTAL", parts: 20, pct: 0.2, yield_fraction: 0.74, fermentability_fraction: 0.398, fermentability_basis: "real", color_lovibond: 40 },
 ];
 
 const M_GRIST = 4.7;

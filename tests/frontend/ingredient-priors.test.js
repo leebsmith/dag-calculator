@@ -17,7 +17,7 @@ test("a missing fermentability takes the category prior and is stamped", () => {
     { catalog_id: "x", name: "Crystal", category: "CRYSTAL", yield_fraction: 0.74 },
   ]);
 
-  assert.equal(row.fermentability_fraction, 0.5);
+  assert.equal(row.fermentability_fraction, 0.398);
   assert.deepEqual(row.fermentability_provenance, {
     bound: "point",
     kind: "prior",
@@ -84,6 +84,6 @@ test("rows are resolved when they enter the engine", async () => {
   ]);
 
   const [row] = app.engine.get("grist.major_malts");
-  assert.equal(row.fermentability_fraction, 0.15);
+  assert.equal(row.fermentability_fraction, 0.121);
   assert.equal(row.fermentability_provenance.kind, "prior");
 });

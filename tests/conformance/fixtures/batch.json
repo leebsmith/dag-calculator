@@ -1,5 +1,5 @@
 {
-  "fingerprint": "bacc33c991ec80239acc8668ac28a64bcb0f0ba4e1bf53b38ef2f28c77d9f59a",
+  "fingerprint": "93847d1b52abcc2720539d3153e230064507e5ed0694fb36e4460a6f10f78968",
   "request": {
     "apparent_attenuation": 0.75,
     "delta_v_evap": 3.0,
@@ -7,13 +7,13 @@
     "f_shrink": 0.04,
     "grain_bill": [
       {
-        "fermentability_i": 0.81,
+        "fermentability_i": 0.643,
         "mc_i": 0.04,
         "w_i": 0.8,
         "yield_i": 0.8
       },
       {
-        "fermentability_i": 0.5,
+        "fermentability_i": 0.398,
         "mc_i": 0.04,
         "w_i": 0.2,
         "yield_i": 0.74

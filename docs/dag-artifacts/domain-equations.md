@@ -59,6 +59,33 @@ Sucrose reference yields:
 A malt's yield in gravity points: `yield × sucrose_yield`; the weighted grist
 extract yield is the `pct`-weighted average of the malts' yields.
 
+### 1.2.1 Extract composition and attenuation
+
+`fermentability_fraction` is a **real** mass fraction of a malt's extract. The
+composition block turns extract mass into the attenuated state (full statement in
+[`../attenuation-model.md`](../attenuation-model.md)):
+
+```
+cap_real   = apparent_to_real(OE, yeast_cap_apparent)
+F_malt_eff = min(F_malt, cap_real)
+UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)
+RE         = OE · UE / E
+AE         = inverse_cutaia(RE)          # the Cutaia RE regression, inverted
+ABW        = (cutaia_a + cutaia_b·OE)·(OE − AE)
+ABV        = ABW · plato_to_sg(AE) / ethanol_density
+AA_app     = (OE − AE) / OE              # may exceed 1
+```
+
+`F_malt` is the extract-weighted real fermentability of the grain bill; the
+yeast cap is apparent and converts per candidate `OE`; sugar keeps `F_sugar =
+1.0` and is never capped; `d` is the diastaticus dextrin share (0 until D5). The
+artifact declares the Cutaia regression as `cutaia_real_extract`; the host-side
+ingredient conversion (`apparentToRealAttenuation`) wraps it at 12 °P, and the
+Python solver mirrors both.
+
+Apparent extract may fall below 0 °P when the residue is small enough (full
+dextrin consumption), so `plato_to_sg` accepts a small negative domain.
+
 ### 1.3 Color
 
 - **Weighted grist Lovibond** (`grain_color`) — the `pct`-weighted average of the
@@ -111,11 +138,11 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | Field | Dimension | Meaning |
 |---|---|---|
 | `target_abv` | percentage | desired ABV (%) |
-| `apparent_attenuation` | percentage (fraction) | yeast attenuation cap (strain × batch derate), (0, 1] |
+| `apparent_attenuation` | percentage (fraction) | yeast apparent-attenuation cap (strain × batch derate), (0, 1]; converted to real per candidate `OE` and applied to malt only |
 | `v_ferm` | volume | target cold fermenter volume (L) |
 | `topology` | taxonomy | `r_l_to_g` \| `runoff_ratio` |
 | `intensive_value` | mash_thickness / dimensionless | `R_L:G` (L/kg) or `r` |
-| `grain_bill` | collection | rows `{ w_i, yield_i, mc_i, fermentability_i }` (Σw=1) |
+| `grain_bill` | collection | rows `{ w_i, yield_i, mc_i, fermentability_i }` (Σw=1); `fermentability_i` is a **real** fraction of the row's extract |
 | `s_late_add` | mass | late-addition extract (kg) |
 | `v_kettle_dead`, `delta_v_evap`, `v_dead` | volume | kettle/chiller dead space, boil-off, mash-tun dead space (L) |
 | `eta_conv` | percentage (fraction) | mash conversion efficiency |
@@ -134,8 +161,8 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `m_grist` | mass |
 | `cascade` `{ v_strike, v_run1, v_run2, v_sparge, s_run1, s_run2, sg_pre_boil, v_post_boil, mash_thickness_l_per_kg }` | volumes / masses / gravity |
 | `max_achievable_abv` | percentage |
-| `aa_wort` | percentage |
-| `aa_batch` | percentage |
+| `aa_wort` | percentage — solved real attenuation (RDF); renamed `real_attenuation` in D2 |
+| `aa_batch` | percentage — solved apparent attenuation; may exceed 1; renamed `apparent_attenuation` in D2 |
 | `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
 
@@ -179,9 +206,10 @@ Runnings, volumes, and gravities:
     S_run2 = S_conv · R_f1 · (1 - R_f2)
     SG_pre = 1 + (S_run1 + S_run2) · gamma / (1000 · V_pre)
 
-Cold-side reversal (Phases 1–2). `SG_post` is the Cutaia inversion of the target ABV at
-the batch attenuation, computed through the artifact functions `cutaia_abv_plato`,
-`sg_to_plato` and `plato_to_sg`:
+Cold-side reversal (Phases 1–2). `SG_post` comes from the ABV-first inversion: the
+solver root-finds `OE` so the target ABV holds, evaluating the extract-composition
+block (§1.2.1) at every candidate. The composition block, in turn, uses the artifact
+functions `cutaia_real_extract`, `cutaia_abv_plato`, `sg_to_plato` and `plato_to_sg`:
 
     V_kettle_cold  = V_ferm + V_kettle_dead · (1 - f_shrink)
     S_post_target  = 1000 · (SG_post - 1) · V_kettle_cold / gamma

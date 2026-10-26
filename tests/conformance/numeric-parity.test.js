@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
+import { artifactConstant } from "../../frontend/src/engine/artifactFunctions.js";
 import { identityFixture, loadArtifact } from "../frontend/helpers.js";
 
 const artifact = loadArtifact();
@@ -52,5 +53,13 @@ test("numeric parity: maximum achievable ABV", () => {
 test("numeric parity: Phase 1 SG-from-ABV inverse", () => {
   for (const { target_abv, aa, sg } of fixture.phase1_sg_from_abv) {
     close(call("realized_abv", [sg, aa]), target_abv, `target=${target_abv} aa=${aa}`, 1e-3);
+  }
+});
+
+test("numeric parity: Cutaia real extract", () => {
+  for (const { oe, ae, re } of fixture.cutaia_real_extract) {
+    const abw =
+      (artifactConstant("cutaia_a") + artifactConstant("cutaia_b") * oe) * (oe - ae);
+    close(call("cutaia_real_extract", [abw, ae]), re, `oe=${oe} ae=${ae}`);
   }
 });
