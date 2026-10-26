@@ -45,7 +45,11 @@ seam, solvers, Firebase auth, and Firestore persistence.
 
 After any `data/artifact.json` change:
 
-    node scripts/emit-artifact-inventory.mjs   # REQUIRED — guarded by make test
+    make generate   # eager: inventory, glossary, manifest, seeds, bundle fixture
+
+`make hooks` installs the committed pre-commit hook (`.githooks/`), which reruns
+the Node generators and stages what changed. The hook is a convenience: `make
+test` remains the gate.
 
 ## Governance & Modes
 

@@ -159,15 +159,16 @@ re-synced into the inventory fails the gate.
 ## Maintaining the docs
 
 The **mechanical** half of doc drift is guarded; the **prose** half is a manual
-discipline. After any change to `data/artifact.json`:
+discipline. After any change to `data/artifact.json` (and any change under
+`data/sources/` or the presentation registries):
 
-1. **Re-sync the inventory, the bundle glossary, and the bundle fixture**
-   (guards force all three):
+1. **Regenerate everything local** — inventory, bundle glossary, sources
+   manifest, seeds, and the bundle fixture (guards force all five):
    ```bash
-   node scripts/emit-artifact-inventory.mjs
-   node scripts/emit-report-bundle-glossary.mjs
-   cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
+   make generate
    ```
+   `make hooks` installs a pre-commit hook that reruns the Node generators and
+   stages what changed; the bundle fixture still needs `make generate`.
 2. **Grep the prose** for what you touched, and update the narrative that still
    describes the old model:
    ```bash

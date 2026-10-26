@@ -24,7 +24,7 @@ EMULATOR_FLAGS  := $(if $(EMULATOR_IMPORT),--import=$(EMULATOR_DATA)) --export-o
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help local-dev check test test-fuzz test-oracle coverage verify verify-full build clear reset-data seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help hooks local-dev check test test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
         scrape-yeasts scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
 
@@ -39,6 +39,8 @@ help:
 	@echo "  coverage        Frontend + backend coverage reports"
 	@echo "  verify          check + test + production build (hermetic)"
 	@echo "  verify-full     verify + test-oracle (needs the legacy checkout)"
+	@echo "  generate        Regenerate every locally computable generated artifact"
+	@echo "  hooks           Install the committed git hooks (core.hooksPath)"
 	@echo "  build           Production frontend bundle + dist assertions"
 	@echo "  seeds           Rebuild normalized seed catalogs from data/sources/"
 	@echo "  scrape-yeasts   Crawl beer-analytics.com yeasts -> data/sources/"
@@ -107,6 +109,22 @@ verify: check test build
 
 verify-full: verify test-oracle
 	@echo "verify-full: all gates passed, oracle snapshot current"
+
+# --- Generated artifacts & hooks ---------------------------------------------
+# The Node generators are run by .githooks/pre-commit (install once per clone
+# with `make hooks`). The bundle fixture needs the backend toolchain, so it
+# stays here and is enforced by the conformance guard in `make test`.
+generate:
+	node scripts/emit-artifact-inventory.mjs
+	node scripts/emit-report-bundle-glossary.mjs
+	node scripts/emit-sources-manifest.mjs
+	$(MAKE) --no-print-directory seeds
+	cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
+
+hooks:
+	git config core.hooksPath .githooks
+	chmod +x .githooks/pre-commit
+	@echo "Git hooks installed from .githooks/"
 
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/

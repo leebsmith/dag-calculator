@@ -115,16 +115,19 @@ createCalculator(artifact); // throws if the artifact is invalid
 
 The quickest real check is `make test` — it builds the engine in many places.
 
-## 5. Re-sync the inventory
+## 5. Re-sync the generated artifacts
 
-`docs/dag-artifacts/inventory.md` is generated from the artifact and guarded. After
-any artifact change:
+`docs/dag-artifacts/inventory.md`, `docs/report-bundle-glossary.md`,
+`data/sources/manifest.json`, the seed catalogs, and the report bundle fixture
+are generated from the artifact and the sources, and all are guarded. After any
+artifact, source, or registry change:
 
 ```bash
-node scripts/emit-artifact-inventory.mjs
+make generate
 ```
 
-`make test`'s `artifact-docs-sync` guard fails if you skip this.
+`make test`'s `artifact-docs-sync`, `glossary-sync`, `sources-manifest`, and
+`seed-rebuild` guards fail if you skip this.
 
 ## 6. Test it
 
@@ -143,7 +146,7 @@ guard fails if those diverge or a profile omits the field.
 
 - [ ] Node + any supporting declaration added to `data/artifact.json`
 - [ ] `createCalculator`/`make test` loads without validation errors
-- [ ] `node scripts/emit-artifact-inventory.mjs` regenerated `inventory.md`
+- [ ] `make generate` regenerated the inventory, glossary, manifest, seeds, and fixture
 - [ ] an engine test asserts the new value
 - [ ] `make check` + `make test` green
 
