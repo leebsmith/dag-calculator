@@ -148,13 +148,24 @@ needs an **apparent range** and the **STA1** status:
 | `sta1` | tri-state: `true` (positive), `false` (negative), `null` (not published) |
 | `url`, `sha256`, `retrieved_at` | the page and the hash/time it was read |
 
-The vendor range uses the **high end** as the malt cap (A14 in
-`attenuation-model.md`); the low end is stored for display. `sta1: null` is not
-a negative: D5 models it as `d = 0` and raises an advisory, because a silent
-"assume negative" would hide a diastaticus risk. The seed builder does not
-consume this file yet (D4b); the guard
-`tests/guards/whitelabs-yeast-contract.test.js` pins the shape and
-`tests/guards/sources-manifest.test.js` pins the content hash.
+The seed builder consumes it (D4b): every aggregator row whose name carries a
+`WLP` strain code is matched to its vendor page and stores both range ends
+(`attenuation_low_pct`, `attenuation_high_pct`), `attenuation_basis:
+"apparent"`, the tri-state `sta1`, and a per-page vendor citation. The **high
+end is the cap** (A14 in `attenuation-model.md`); the low end is display data.
+The cap therefore rises from the aggregator's midpoint to the vendor's top for
+most White Labs strains. Unmatched rows keep the aggregator citation and no
+range.
+
+`sta1: null` is not a negative: D5 models it as `d = 0` and raises an advisory,
+because a silent "assume negative" would hide a diastaticus risk. The white
+label strains sold under other brands (The Yeast Bay, …) match by the same
+strain code, so their vendor data travels with them.
+
+The guard `tests/guards/whitelabs-yeast-contract.test.js` pins the source
+shape, `tests/guards/sources-manifest.test.js` pins the content hash, and
+`tests/guards/seed-rebuild.test.js` pins the cap/high-end and tri-state
+behaviour.
 
 ## Provenance and priors
 

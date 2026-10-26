@@ -17,7 +17,11 @@ test("A9: styles seed is a pure rebuild of its source", () => {
 });
 
 test("A9: yeasts seed is a pure rebuild of its source", () => {
-  assert.deepEqual(buildYeasts(json("data/sources/beer-analytics-yeasts.json")), json("data/seeds/yeasts.json"));
+  const vendor = json("data/sources/whitelabs-yeasts.json").entries;
+  assert.deepEqual(
+    buildYeasts(json("data/sources/beer-analytics-yeasts.json"), vendor),
+    json("data/seeds/yeasts.json")
+  );
 });
 
 test("A9: hops seed is a pure rebuild of its source", () => {
@@ -122,4 +126,68 @@ test("a row with both axes keeps extract yield and fermentability", () => {
   const { sugars } = buildFermentables(rows, {}, {});
   assert.equal(sugars["test-dual-basis"].yield_fraction, 0.8);
   assert.equal(sugars["test-dual-basis"].fermentability_fraction, 0.75);
+});
+
+// --- Vendor yeast ranges and STA1 ----------------------------------------
+
+const AGGREGATOR_ROW = {
+  title: "White Labs · Test Ale WLP999",
+  url: "https://www.beer-analytics.com/yeasts/ale/test/",
+  form: "Liquid",
+  attenuation: "70.0%",
+  flocculation: "Medium",
+  tolerance: "10.0%",
+  temperature: "18.0 – 21.0°C",
+  recipes: "3",
+};
+
+function vendorEntry(overrides = {}) {
+  return {
+    strain: "WLP999",
+    name: "Test Ale Yeast",
+    attenuation_text: "72% - 80%",
+    attenuation_low_pct: 72,
+    attenuation_high_pct: 80,
+    attenuation_basis: "apparent",
+    sta1: false,
+    url: "https://www.whitelabs.com/yeast-single?id=999&type=YEAST",
+    retrieved_at: "2026-01-01T00:00:00Z",
+    sha256: "1".repeat(64),
+    ...overrides,
+  };
+}
+
+test("a vendor range stores both ends and uses the high end as the cap", () => {
+  const seed = buildYeasts([AGGREGATOR_ROW], [vendorEntry()]);
+  const strain = seed["white-labs-test-ale-wlp999"];
+
+  assert.equal(strain.attenuation_low_pct, 0.72);
+  assert.equal(strain.attenuation_high_pct, 0.8);
+  assert.equal(strain.attenuation_pct, 0.8, "the cap is the high end (A14)");
+  assert.equal(strain.attenuation_basis, "apparent");
+  assert.equal(strain.attenuation_provenance.kind, "vendor");
+  assert.equal(strain.attenuation_provenance.sha256, "1".repeat(64));
+  assert.equal(strain.attenuation_provenance.url, vendorEntry().url);
+});
+
+test("STA1 is carried tri-state", () => {
+  for (const [sta1, expected] of [
+    [true, true],
+    [false, false],
+    [null, null],
+  ]) {
+    const seed = buildYeasts([AGGREGATOR_ROW], [vendorEntry({ sta1 })]);
+    assert.equal(seed["white-labs-test-ale-wlp999"].sta1, expected);
+  }
+});
+
+test("an unmatched strain keeps the aggregator citation", () => {
+  const seed = buildYeasts([AGGREGATOR_ROW], [
+    vendorEntry({ strain: "WLP000", name: "Other" }),
+  ]);
+  const strain = seed["white-labs-test-ale-wlp999"];
+
+  assert.equal(strain.attenuation_provenance.kind, "aggregator");
+  assert.equal(strain.sta1, undefined);
+  assert.equal(strain.attenuation_pct, 0.7);
 });

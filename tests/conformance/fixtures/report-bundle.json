@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:ffae0b3d4d5dd0bf090544d6e688310dcdd408ea56f91bbb5f4273554377803a",
+    "hash": "sha256:98339fe88a41ea57f53d299dde9ae0416511aea89286494dfe881668cbff0f1d",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -1415,6 +1415,24 @@
             }
           },
           "attenuation_provenance": {},
+          "attenuation_low_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "attenuation_high_pct": {
+            "dimension": "percentage",
+            "domain": {
+              "gte": 0,
+              "lte": 1
+            }
+          },
+          "attenuation_basis": {},
+          "sta1": {
+            "type": "boolean"
+          },
           "flocculation": {
             "taxonomy": "flocculation"
           },
@@ -4712,5 +4730,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:129d20d080b5e6bbff9ee13885182606bdd3f17310194ddec7dea9e50de79dce"
+  "content_hash": "sha256:f36189216185239b560d95e7def4cb0e30fc32ac22848e2f6509f75680e652a3"
 }

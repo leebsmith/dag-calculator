@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_90 paths_
+_94 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -104,6 +104,9 @@ _90 paths_
 | `batch.whirlpool_target_ibu` | Whirlpool IBU | derived | ibu | IBU | 1 | — |
 | `batch.yeast` | Yeast | selection | — | — | — | — |
 | `batch.yeast.alcohol_tolerance` | Alcohol tolerance | field | — | — | — | — |
+| `batch.yeast.attenuation_basis` | Attenuation Basis | field | — | — | — | — |
+| `batch.yeast.attenuation_high_pct` | Attenuation High Pct | field | percentage | pct (%) | 1 | — |
+| `batch.yeast.attenuation_low_pct` | Attenuation Low Pct | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_pct` | Typical attenuation | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_provenance` | Attenuation Provenance | field | — | — | — | — |
 | `batch.yeast.flocculation` | Flocculation | field | — | — | — | Low, Medium, High |
@@ -113,6 +116,7 @@ _90 paths_
 | `batch.yeast.name` | Name | field | — | — | — | — |
 | `batch.yeast.notes` | Notes | field | — | — | — | — |
 | `batch.yeast.recipes` | Recipes | field | — | — | — | — |
+| `batch.yeast.sta1` | Sta1 | field | — | — | — | — |
 | `batch.yeast.temp_high_c` | Temp High C | field | temperature | degC (°C) | 1 | — |
 | `batch.yeast.temp_low_c` | Temp Low C | field | temperature | degC (°C) | 1 | — |
 | `batch.yeast.url` | URL | field | — | — | — | — |
