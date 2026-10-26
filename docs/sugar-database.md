@@ -52,8 +52,8 @@ The builder applies the audited source as a **null-fill overlay**:
 - a disagreement is reported by the build and kept for review — never silently
   overwritten.
 
-The current review list is the non-null yield conflicts (corn sugar, invert,
-candi syrups, molasses, maple, corn syrup). They are known and documented; a
+The current review list is the non-null conflicts (corn sugar, invert,
+candi syrups, molasses, maple, corn syrup, and the rice-syrup RDF). They are known and documented; a
 future correction pass can promote them.
 
 Definitional rows are explicit: lactose `RDF = 0`; sucrose and pure dextrose
