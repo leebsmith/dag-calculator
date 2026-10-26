@@ -1,5 +1,12 @@
 # TODO
 
+## In flight
+
+* **Fermentability provenance (Pass 1)** — producer-first across
+  `malt_database` → `dag-calculator`; commit contract in
+  `plans/fermentability-provenance.md`. Pass 2 (sugar F, bounds, STA1) and
+  Pass 3 (late-addition pin) are gated on it.
+
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
