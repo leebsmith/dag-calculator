@@ -1550,6 +1550,9 @@ class ScalePreview:
         og: Post-boil gravity at that target, SG (0 when infeasible).
         fg: Final gravity at that target, SG (0 when infeasible).
         abv: ABV at that target, % (0 when infeasible).
+        sugar_extract_share: Sugar extract as a share of that row's total
+            post-boil extract (0 when infeasible). A fixed dose is a
+            different share at each candidate gravity.
         ok: Whether the target could be solved.
         reason: Error code (or empty) when ``ok`` is false.
     """
@@ -1558,6 +1561,7 @@ class ScalePreview:
     og: float
     fg: float
     abv: float
+    sugar_extract_share: float
     ok: bool
     reason: str
 
@@ -1946,14 +1950,21 @@ def _preview_rows(
                 dextrin_consumption,
             )
         except SolverValidationError as exc:
-            rows.append(ScalePreview(pin, 0.0, 0.0, 0.0, False, exc.code))
+            rows.append(ScalePreview(pin, 0.0, 0.0, 0.0, 0.0, False, exc.code))
             continue
+        composition = state.composition
+        share = (
+            composition.sugar_extract_kg / composition.extract_total_kg
+            if composition.extract_total_kg > 0.0
+            else 0.0
+        )
         rows.append(
             ScalePreview(
                 pin,
                 state.sg_post_boil,
-                asbc_plato_to_sg(state.composition.apparent_extract_plato),
-                state.composition.abv_pct,
+                asbc_plato_to_sg(composition.apparent_extract_plato),
+                composition.abv_pct,
+                share,
                 True,
                 "",
             )
@@ -2192,7 +2203,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         previews = ()
     elif aa_malt is None:
         previews = tuple(
-            ScalePreview(p, 0.0, 0.0, 0.0, False, "INVALID_ATTENUATION")
+            ScalePreview(p, 0.0, 0.0, 0.0, 0.0, False, "INVALID_ATTENUATION")
             for p in ("abv", "og", "fg")
         )
     else:

@@ -1887,6 +1887,9 @@
       "abv": {
         "dimension": "percentage"
       },
+      "sugar_extract_share": {
+        "dimension": "percentage"
+      },
       "ok": {
         "type": "boolean"
       },

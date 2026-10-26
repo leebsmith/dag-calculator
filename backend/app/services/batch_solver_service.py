@@ -108,6 +108,7 @@ def _to_response(result) -> BatchSolverResponse:
                 og=row.og,
                 fg=row.fg,
                 abv=row.abv,
+                sugar_extract_share=row.sugar_extract_share,
                 ok=row.ok,
                 reason=row.reason,
             )

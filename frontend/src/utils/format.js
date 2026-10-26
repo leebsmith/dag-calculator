@@ -260,6 +260,34 @@ export function formatGravityRange(
 }
 
 /**
+ * Format a fraction range as one percentage span.
+ *
+ * Both ends share a single `%` suffix, and a span whose ends round equal
+ * collapses to the single value.
+ *
+ * @param {unknown} low
+ * @param {unknown} high
+ * @param {{ decimals?: number, separator?: string, dash?: string }} [options]
+ * @returns {string} e.g. `"5.3–6.2%"`, `"5.3%"`, or `"—"`.
+ * @note STRICT UTILITY: Do not write custom logic for this in Alpine expressions; import and call this function.
+ */
+export function formatPercentRange(
+  low,
+  high,
+  { decimals = 1, separator = "–", dash = DASH } = {}
+) {
+  const places = normalizeDecimals(decimals, 1);
+  const a = toFiniteOrNull(low);
+  const b = toFiniteOrNull(high);
+  if (a === null || b === null) {
+    return formatPercent(a ?? b, places, { dash });
+  }
+  const left = (a * 100).toFixed(places);
+  const right = (b * 100).toFixed(places);
+  return left === right ? `${left}%` : `${left}${separator}${right}%`;
+}
+
+/**
  * Format a value plus an optional unit symbol. Symbols listed in `tightUnits`
  * (default `"%"`) are appended without a space; everything else gets one.
  *

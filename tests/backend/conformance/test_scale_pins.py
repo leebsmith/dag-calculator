@@ -5,9 +5,12 @@ from __future__ import annotations
 import pytest
 
 from app.core.batch_solver import (
+    GAMMA_METRIC,
     BatchSolverInput,
     GrainBillEntry,
     SolverValidationError,
+    kettle_cold_volume,
+    post_boil_extract_target,
     solve_batch,
 )
 from app.core.utils import plato_to_sg, sg_to_plato
@@ -90,6 +93,33 @@ def test_preview_rows_hold_the_authored_composition():
     dose = solve_batch(_input(s_late_add=0.4))
     share = solve_batch(_input(sugar_extract_share=0.10))
     assert dose.previews[0].og != pytest.approx(share.previews[0].og, abs=1e-6)
+
+
+def test_preview_rows_carry_the_share_they_actually_hold():
+    inputs = _input(s_late_add=0.4)
+    result = solve_batch(inputs)
+    cold = kettle_cold_volume(inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink)
+
+    for row in result.previews:
+        extract = post_boil_extract_target(row.og, cold, GAMMA_METRIC)
+        assert row.sugar_extract_share == pytest.approx(0.4 / extract, rel=1e-9)
+
+    shares = {round(row.sugar_extract_share, 9) for row in result.previews}
+    assert len(shares) == 3, "a fixed dose is a different share at each gravity"
+
+
+def test_share_mode_previews_report_the_authored_share():
+    result = solve_batch(_input(sugar_extract_share=0.10))
+    assert [row.sugar_extract_share for row in result.previews] == pytest.approx(
+        [0.10, 0.10, 0.10], abs=1e-12
+    )
+
+
+def test_infeasible_preview_reports_no_share():
+    result = solve_batch(_input(target_fg=1.10, s_late_add=0.4))
+    by_pin = {row.pin: row for row in result.previews}
+    assert by_pin["fg"].ok is False
+    assert by_pin["fg"].sugar_extract_share == 0.0
 
 
 def test_infeasible_preview_is_reported_not_raised():

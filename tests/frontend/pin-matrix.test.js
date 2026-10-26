@@ -104,6 +104,30 @@ test("the ABV target is a free pin, not a fixed-AA clamp", async () => {
   assert.equal(app.activeScaleTargetDisplay, "6.0");
 });
 
+test("each preview row reports the extract share it holds", async () => {
+  const app = await appWithSugar();
+  assert.deepEqual(
+    app.scalePreviewRows.map((row) => row.shareDisplay),
+    ["8.3%", "8.7%", "8.1%"]
+  );
+});
+
+test("the dose caption spans the shares the rows hold", async () => {
+  const app = await appWithSugar();
+  assert.match(app.previewCompositionCaption, /kg sugar extract/);
+  assert.match(app.previewCompositionCaption, /8\.1–8\.7% of extract/);
+});
+
+test("the dose caption follows the sugar table's mass unit", async () => {
+  const app = await appWithSugar();
+  app.setUnit("mass", "lb");
+  assert.match(app.previewCompositionCaption, /lb sugar extract/);
+  assert.doesNotMatch(app.previewCompositionCaption, /kg sugar extract/);
+
+  app.setUnit("mass", "kg");
+  assert.match(app.previewCompositionCaption, /kg sugar extract/);
+});
+
 test("the composition caption follows dose and share", async () => {
   const app = await appWithSugar();
   assert.match(app.previewCompositionCaption, /kg sugar extract/);

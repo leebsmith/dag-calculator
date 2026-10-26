@@ -2,7 +2,7 @@
   "bundle_format": 1,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:1a6ea12cdfa8a28825d4163be21807c727cb5830ef87e68077b8cb872252e0d0",
+    "hash": "sha256:45fa06bca074f3744e4f11183f0f9ef4d69c3c9e08c3547f73b1d0adb6dc0002",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -1876,6 +1876,9 @@
             "dimension": "gravity"
           },
           "abv": {
+            "dimension": "percentage"
+          },
+          "sugar_extract_share": {
             "dimension": "percentage"
           },
           "ok": {
@@ -5206,5 +5209,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:2cd04e4e92a3191565e960b3c86466b57f82b6d3de07f3aeec6276140259155f"
+  "content_hash": "sha256:81c3469eae5ea12880bf7135194a65a7258f09a3a28bf63b7e9b7f54504183a3"
 }

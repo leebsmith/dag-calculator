@@ -222,6 +222,7 @@ Import paths (from the file doing the importing; `utils.js` is a barrel):
 | Fraction → number for `<input :value>` | `toPercentValue(fraction, decimals = 1, { dash })` | No `%` sign |
 | Specific gravity readout | `formatGravity(sg, decimals = 3, { dash })` | |
 | OG/FG range | `formatGravityRange(low, high, { decimals, separator, dash })` | `"1.040–1.055"` |
+| Fraction range → percent span | `formatPercentRange(low, high, { decimals, separator, dash })` | `"5.3–6.2%"`; one `%` suffix, collapses when both ends round equal |
 | Generic range | `formatRange(low, high, formatter, { separator, dash })` | Degrades to the known side or the dash |
 
 ### Units, quantities, labels

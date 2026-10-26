@@ -88,6 +88,7 @@
                   <th class="text-right">OG</th>
                   <th class="text-right">FG</th>
                   <th class="text-right">ABV</th>
+                  <th class="text-right">Extract share</th>
                 </tr>
               </thead>
               <tbody>
@@ -106,11 +107,12 @@
                     <td class="text-right tabular-nums">
                       <span :class="row.abvClass" x-text="row.abvDisplay"></span>
                     </td>
+                    <td class="text-right tabular-nums" x-text="row.shareDisplay"></td>
                   </tr>
                 </template>
                 <template x-if="scalePreviewRows.length === 0">
                   <tr>
-                    <td colspan="4" class="table-empty-cell">Solve the batch to preview the three pins.</td>
+                    <td colspan="5" class="table-empty-cell">Solve the batch to preview the three pins.</td>
                   </tr>
                 </template>
               </tbody>

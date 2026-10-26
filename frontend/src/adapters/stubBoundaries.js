@@ -99,9 +99,33 @@ export const STUB_BOUNDARIES = {
     mash_thickness_l_per_kg: 3.0,
     previews: hasSugar
       ? [
-          { pin: "abv", og: 1.055, fg: 1.012, abv: 5.5, ok: true, reason: "" },
-          { pin: "og", og: 1.052, fg: 1.011, abv: 5.3, ok: true, reason: "" },
-          { pin: "fg", og: 1.058, fg: 1.012, abv: 5.9, ok: true, reason: "" },
+          {
+            pin: "abv",
+            og: 1.055,
+            fg: 1.012,
+            abv: 5.5,
+            sugar_extract_share: 0.083,
+            ok: true,
+            reason: "",
+          },
+          {
+            pin: "og",
+            og: 1.052,
+            fg: 1.011,
+            abv: 5.3,
+            sugar_extract_share: 0.087,
+            ok: true,
+            reason: "",
+          },
+          {
+            pin: "fg",
+            og: 1.058,
+            fg: 1.012,
+            abv: 5.9,
+            sugar_extract_share: 0.081,
+            ok: true,
+            reason: "",
+          },
         ]
       : [],
     };

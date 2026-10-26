@@ -214,6 +214,16 @@ class ScalePreviewRow(BoundaryModel):
     og: Annotated[float, Field(description="Post-boil gravity at this target (SG); 0 when infeasible")]
     fg: Annotated[float, Field(description="Final gravity at this target (SG); 0 when infeasible")]
     abv: Annotated[float, Field(description="ABV at this target (%); 0 when infeasible")]
+    sugar_extract_share: Annotated[
+        float,
+        Field(
+            default=0.0,
+            description=(
+                "Sugar extract as a share of this row's post-boil extract; "
+                "0 when infeasible"
+            ),
+        ),
+    ]
     ok: Annotated[bool, Field(description="Whether the target solved")]
     reason: Annotated[str, Field(default="", description="Error code when ok is false")]
 

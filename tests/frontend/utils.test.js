@@ -19,6 +19,7 @@ import {
   formatGravity,
   formatGravityRange,
   formatPercent,
+  formatPercentRange,
   formatPercentRounded,
   formatPercentValue,
   formatQuantity,
@@ -126,6 +127,18 @@ test("formatRange and formatGravityRange degrade gracefully", () => {
   assert.equal(formatRange(null, null), "—");
   assert.equal(formatRange(null, null, null, { dash: "" }), "");
   assert.equal(formatRange(1, 2, (v) => `x${v}`), "x1–x2");
+});
+
+test("formatPercentRange shares one suffix and collapses equal ends", () => {
+  assert.equal(formatPercentRange(0.053, 0.062), "5.3–6.2%");
+  assert.equal(formatPercentRange(0.053, 0.053), "5.3%");
+  assert.equal(formatPercentRange(0.0526, 0.0531), "5.3%");
+  assert.equal(formatPercentRange(0.1, 1), "10.0–100.0%");
+  assert.equal(formatPercentRange(0.053, 0.062, { decimals: 0 }), "5–6%");
+  assert.equal(formatPercentRange(null, 0.062), "6.2%");
+  assert.equal(formatPercentRange(0.053, null), "5.3%");
+  assert.equal(formatPercentRange(null, null), "—");
+  assert.equal(formatPercentRange(null, null, { dash: "" }), "");
 });
 
 test("formatValueWithUnit joins units and keeps percent tight", () => {

@@ -209,19 +209,26 @@ The Late Additions card carries a collapsible **Pin preview** when sugar is
 authored. It shows one row per scale pin — ABV, OG, FG — with the realized OG,
 FG and ABV at that pin's persisted target:
 
-| Pin | OG | FG | ABV |
-| --- | --- | --- | --- |
-| ABV | solved | solved | target |
-| OG | target | solved | solved |
-| FG | solved | target | solved |
+| Pin | OG | FG | ABV | Extract share |
+| --- | --- | --- | --- | --- |
+| ABV | solved | solved | target | solved |
+| OG | target | solved | solved | solved |
+| FG | solved | target | solved | solved |
 
 The active row is the batch; the other two are hypothetical previews. Cells are
 green inside the style envelope, red outside, and neutral without an envelope.
 One backend preview call returns all three rows when sugar is authored; no-sugar
 batches skip the preview solves. Previews are read-only. The pin selector and
 active target live on the Style card; the panel only shows the table and names
-the composition representation (`Previews hold 0.5 kg sugar extract` /
-`Previews hold 10 % of extract`).
+the composition representation.
+
+The **Extract share** column is the sugar extract each row actually holds. In
+share mode it is the authored fraction, identical in every row. In dose mode the
+mass is fixed, so the share is `dose / E(OE)` and differs per row — a fixed dose
+is a smaller fraction of a bigger batch. The caption states what is held: the
+exact share in share mode, the dose plus the span of shares in dose mode
+(`Previews hold 0.50 lb sugar extract · 5.3–6.2% of extract`), quoted in the
+sugar table's display unit.
 
 The panel expands when sugar is first authored and collapses when no sugar
 contributes. The Late Additions card and its “Configure Sugars” button remain.

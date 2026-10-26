@@ -15,6 +15,7 @@ import { reportError } from "../../observability.js";
 import {
   formatGravity,
   formatPercent,
+  formatPercentRange,
   formatPercentRounded,
   formatValueWithUnit,
   formatWithDecimals,
@@ -181,6 +182,8 @@ export function registerLateAdditionsCard(app, ctx) {
           ogDisplay: row.ok ? formatGravity(row.og) : "—",
           fgDisplay: row.ok ? formatGravity(row.fg) : "—",
           abvDisplay: row.ok ? formatWithDecimals(row.abv, 1) : "—",
+          shareValue: row.ok ? row.sugar_extract_share : null,
+          shareDisplay: row.ok ? formatPercent(row.sugar_extract_share, 1) : "—",
           ogClass: envelopeClass(ogState),
           fgClass: envelopeClass(fgState),
           abvClass: envelopeClass(abvState),
@@ -193,10 +196,38 @@ export function registerLateAdditionsCard(app, ctx) {
         this.previewCompositionCaption = `Previews hold ${formatPercent(share, 1)} of extract`;
       } else {
         const dose = Number(ctx.engine.get(N.dose)) || 0;
-        this.previewCompositionCaption = `Previews hold ${formatWithDecimals(dose, 2)} kg sugar extract`;
+        const shares = this.scalePreviewRows
+          .map((row) => row.shareValue)
+          .filter((value) => typeof value === "number" && Number.isFinite(value));
+        const span = shares.length
+          ? ` · ${formatPercentRange(Math.min(...shares), Math.max(...shares))} of extract`
+          : "";
+        this.previewCompositionCaption =
+          `Previews hold ${this.previewDoseDisplay(dose)} sugar extract${span}`;
       }
     },
 
+    // The caption quotes the dose in the sugar table's display unit, not the
+    // canonical kg, so the line and the table agree.
+    previewDoseDisplay(kg) {
+      const field = (this.fieldsBySlice[N.slice] ?? []).find(
+        (f) => f.control === "collection-table"
+      );
+      const column =
+        field?.columns?.find((c) => c.id === "resolved_mass_kg") ??
+        field?.columns?.find((c) => c.id === "mass_kg") ??
+        null;
+      const shown = displayValue(
+        ctx.artifact,
+        "mass",
+        column?.displayUnit,
+        kg,
+        nonlinearFns(ctx.artifact, ctx.engine)
+      );
+      return `${formatWithDecimals(shown, column?.decimals ?? 2)}${
+        column?.unit ? " " + column.unit : ""
+      }`;
+    },
 
     // Dose → share: seed the authored share and the row weights from the
     // current dose, but only on the first switch (an authored share or parts
@@ -504,6 +535,7 @@ export const KEYS = [
   "latePinPanelSeen",
   "toggleLatePinPanel",
   "scalePreviewRows",
+  "previewDoseDisplay",
   "previewCompositionCaption",
   "sugarIsActive",
   "latePinPanelVisible",
