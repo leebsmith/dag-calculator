@@ -40,7 +40,9 @@ export async function requestJSON(
       /* non-JSON error body */
     }
     // FastAPI request-validation errors arrive as a `detail` array; turn them
-    // into a readable message instead of an opaque "HTTP 422".
+    // into a readable message instead of an opaque "HTTP 422". Raised
+    // HTTPExceptions arrive as a plain string `detail` and carry the server's
+    // own explanation (for example a rejected report bundle).
     const validation = Array.isArray(payload.detail)
       ? payload.detail
           .map((d) => {
@@ -49,9 +51,10 @@ export async function requestJSON(
           })
           .join("; ")
       : null;
+    const detail = typeof payload.detail === "string" ? payload.detail : null;
     throw new SolverError(
-      payload.code ?? (validation ? "VALIDATION" : "HTTP_ERROR"),
-      payload.message ?? validation ?? `HTTP ${res.status}`,
+      payload.code ?? ((validation || res.status === 422) ? "VALIDATION" : "HTTP_ERROR"),
+      payload.message ?? validation ?? detail ?? `HTTP ${res.status}`,
       payload.details ?? {}
     );
   }

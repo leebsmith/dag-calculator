@@ -12,12 +12,21 @@ export const DRAFT_SCHEMA_VERSION = 4;
 export const VALUATION_FORMAT = "outputs";
 
 // AI AGENT HOOKS: Use this helper for the persisted value of a frozen node.
-// Boundary nodes store their plain output map, never engine cache wrappers.
+// Boundary nodes store their plain output map, never engine cache wrappers, and
+// only the outputs the artifact declares. Solver responses carry advisory
+// lists (warnings, notes, telemetry) that belong in report_inputs.telemetry,
+// never in the valuation the report catalog has to cover.
 // Do not duplicated this logic elsewhere.
 function frozenValue(engine, node, id) {
   const value = engine.get(id);
   if (value === undefined) return null;
-  return node.kind === "boundary" ? value.outputs : value;
+  if (node.kind !== "boundary") return value;
+  const outputs = value.outputs ?? {};
+  return Object.fromEntries(
+    Object.keys(node.outputs ?? {})
+      .filter((key) => key in outputs)
+      .map((key) => [key, outputs[key]])
+  );
 }
 
 // AI AGENT HOOKS: Use this snapshot installer for draft autosave state and

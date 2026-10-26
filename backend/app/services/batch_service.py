@@ -43,6 +43,11 @@ class BatchConflictError(Exception):
         self.current = current
 
 
+def _bundle_rejection(exc: ValidationError) -> str:
+    """The validator's own messages, without pydantic's input-value dump."""
+    return "; ".join(error.get("msg", "") for error in exc.errors()) or str(exc)
+
+
 class BatchService:
     def __init__(self, repo: BatchRepository) -> None:
         self._repo = repo
@@ -82,7 +87,7 @@ class BatchService:
             )
         except ValidationError as exc:
             raise HTTPException(
-                status_code=422, detail=f"Report bundle rejected: {exc}"
+                status_code=422, detail=f"Report bundle rejected: {_bundle_rejection(exc)}"
             ) from exc
         if reason == "missing":
             raise HTTPException(status_code=404, detail="Batch not found")
@@ -139,7 +144,7 @@ class BatchService:
             )
         except ValidationError as exc:
             raise HTTPException(
-                status_code=422, detail=f"Report bundle rejected: {exc}"
+                status_code=422, detail=f"Report bundle rejected: {_bundle_rejection(exc)}"
             ) from exc
 
     def set_trashed(self, uid: str, batch_id: str, trashed: bool) -> BatchRecord:

@@ -137,3 +137,104 @@ test("the catalog covers every node in the freeze valuation", async () => {
   const missing = Object.keys(valuation).filter((id) => !(id in nodes));
   assert.deepEqual(missing, [], `uncovered valuation nodes: ${missing.join(", ")}`);
 });
+
+// Mirror of ReportBundle._cross_references coverage: every node id, boundary
+// output, selection field, and collection row field exposed by the valuation
+// must have a catalog entry.
+function exposedPaths(valuation) {
+  const exposed = new Set();
+  for (const [id, value] of Object.entries(valuation)) {
+    exposed.add(id);
+    if (Array.isArray(value)) {
+      for (const row of value) {
+        if (row && typeof row === "object") {
+          for (const key of Object.keys(row)) exposed.add(`${id}.${key}`);
+        }
+      }
+    } else if (value && typeof value === "object") {
+      for (const key of Object.keys(value)) exposed.add(`${id}.${key}`);
+    }
+  }
+  return exposed;
+}
+
+const BATCH_RESPONSE = {
+  sg_post_boil: 1.055,
+  v_pre_boil: 24.0,
+  s_post_boil_target: 2.6,
+  m_grist: 4.7,
+  cascade: {
+    v_strike: 14.0,
+    v_run1: 10.0,
+    v_run2: 14.0,
+    v_sparge: 14.0,
+    s_run1: 2.0,
+    s_run2: 0.6,
+    sg_pre_boil: 1.048,
+    v_post_boil: 21.0,
+    mash_thickness_l_per_kg: 3.0,
+  },
+  max_achievable_abv: 10.0,
+  aa_wort: 0.76,
+  aa_batch: 0.75,
+  hlt: {
+    v_hlt_debt: 1.0,
+    v_hlt_after_strike: 16.0,
+    v_hlt_top_up: 0.0,
+    v_sparge_deliverable: 15.0,
+  },
+  mash_thickness_l_per_kg: 3.0,
+};
+
+const HOP_RESPONSE = {
+  boil_rows: [],
+  whirlpool_rows: [],
+  boil_mass_kg: 0,
+  whirlpool_mass_kg: 0,
+  total_mass_kg: 0,
+};
+
+// The live water boundary always returns its advisory lists beside the
+// declared outputs; only the declared ones belong in the valuation.
+const WATER_RESPONSE = {
+  strategy: "CALCIUM_FLOOR",
+  prescription: {
+    predicted_mash_ph: 5.4,
+    mash_ph_status: "OPTIMAL",
+    residual_hlt_water_l: 0.0,
+  },
+  warnings: ["Mash pH is above target"],
+  notes: ["Sparge acid is not prescribed"],
+  telemetry: [{ code: "ROUTER_MODE_1_LINEAR_FLAVOR", severity: "INFO", message: "m" }],
+};
+
+const BOUNDARY_RESPONSES = {
+  "/solve/batch": BATCH_RESPONSE,
+  "/solve/hops": HOP_RESPONSE,
+  "/solve/water": WATER_RESPONSE,
+};
+
+async function fetchBoundary(url) {
+  const body = BOUNDARY_RESPONSES[url];
+  return { ok: Boolean(body), status: body ? 200 : 500, json: async () => body ?? {} };
+}
+
+test("an HTTP-solved valuation drops boundary advisories and stays catalog-covered", async () => {
+  const app = createTestApp({ useHttp: true, fetchImpl: fetchBoundary });
+  await app.boot();
+  assert.equal(app.boundaryStatuses["solver.water"], "ok");
+
+  const { valuation } = app.freezePayload();
+  const declared = Object.keys(artifact.nodes["solver.water"].outputs);
+
+  for (const key of ["warnings", "notes", "telemetry"]) {
+    assert.equal(key in valuation["solver.water"], false, `advisory "${key}" leaked`);
+  }
+  for (const key of Object.keys(valuation["solver.water"])) {
+    assert.ok(declared.includes(key), `solver.water.${key} is not a declared output`);
+  }
+
+  const nodes = app.reportCatalog().nodes;
+  const missing = [...exposedPaths(valuation)].filter((path) => !(path in nodes));
+  assert.deepEqual(missing, [], `uncovered valuation paths: ${missing.join(", ")}`);
+});

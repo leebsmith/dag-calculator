@@ -113,6 +113,48 @@ test("requestJSON turns a FastAPI validation array into a readable VALIDATION er
   );
 });
 
+test("requestJSON surfaces a string detail from a raised HTTPException", async (t) => {
+  const { impl } = stubFetch(t, {
+    ok: false,
+    status: 422,
+    json: async () => ({ detail: "Report bundle rejected: catalog does not cover the state" }),
+  });
+
+  await assert.rejects(
+    () =>
+      requestJSON("/batches/b1/report-bundle", {
+        method: "POST",
+        body: {},
+        fetchImpl: impl,
+      }),
+    (err) => {
+      assert.equal(err.code, "VALIDATION");
+      assert.equal(
+        err.message,
+        "Report bundle rejected: catalog does not cover the state"
+      );
+      return true;
+    }
+  );
+});
+
+test("requestJSON keeps HTTP_ERROR for a non-422 string detail", async (t) => {
+  const { impl } = stubFetch(t, {
+    ok: false,
+    status: 409,
+    json: async () => ({ detail: "Drafts have no report bundle; request a preview instead" }),
+  });
+
+  await assert.rejects(
+    () => requestJSON("/batches/b1/report-bundle", { fetchImpl: impl }),
+    (err) => {
+      assert.equal(err.code, "HTTP_ERROR");
+      assert.equal(err.message, "Drafts have no report bundle; request a preview instead");
+      return true;
+    }
+  );
+});
+
 test("flattenResponse leaves array and scalar roots empty", () => {
   assert.deepEqual(flattenResponse([1, 2, 3]), {});
   assert.deepEqual(flattenResponse(7), {});

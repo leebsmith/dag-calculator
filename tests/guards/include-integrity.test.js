@@ -8,6 +8,7 @@ import { ROOT, read, existsSync, join } from "./util.js";
 // single generic partial, so comparison is over the unique sets. Non-step
 // includes (e.g. the app-level library surface) are allowlisted explicitly.
 const EXTRA_PARTIALS = [
+  "./src/partials/action-error.html",
   "./src/partials/library.html",
   "./src/partials/chooser.html",
   "./src/partials/batch-setup.html",

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createRecipesStore } from "../../frontend/src/store/recipes.js";
+import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
 const NOW = Date.UTC(2026, 9, 21, 12) / 1000;
 
@@ -445,4 +446,84 @@ test("downloadRowBundle only serves frozen rows and closes the menu", async () =
     { bundle: { id: "frozen" }, filename: "saison.report-bundle.json" },
   ]);
   assert.equal(store.rowMenu, null);
+});
+
+test("a failed bundle download surfaces the server message instead of the console", async () => {
+  resetErrorObservability();
+  const files = [];
+  const persistence = fakePersistence({
+    reportBundleForActive: async () => {
+      throw new Error("Report bundle rejected: catalog does not cover the solved state");
+    },
+  });
+  const { store } = makeStore(persistence, () => "", (bundle, filename) =>
+    files.push({ bundle, filename })
+  );
+
+  const { logged } = await quiet(() => store.downloadActiveBundle());
+
+  assert.deepEqual(files, [], "a failed bundle must not download");
+  assert.deepEqual(store.actionError, {
+    title: "Couldn't build the report bundle",
+    message: "Report bundle rejected: catalog does not cover the solved state",
+  });
+  assert.equal(logged.length, 1, "the failure is reported once");
+  assert.deepEqual(Object.keys(errorCounters()), [
+    "recipes.downloadActiveBundle: Report bundle rejected: catalog does not cover the solved state",
+  ]);
+});
+
+test("a failed row bundle download surfaces the server message", async () => {
+  resetErrorObservability();
+  const { store } = makeStore(
+    fakePersistence({
+      reportBundleFor: async () => {
+        throw new Error("Drafts have no report bundle; request a preview instead");
+      },
+    })
+  );
+  store.rowMenu = { id: "frozen", name: "Saison", status: "frozen" };
+
+  await quiet(() => store.downloadRowBundle());
+
+  assert.equal(store.rowMenu, null);
+  assert.equal(store.actionError.title, "Couldn't build the report bundle");
+  assert.equal(
+    store.actionError.message,
+    "Drafts have no report bundle; request a preview instead"
+  );
+});
+
+test("a failed freeze surfaces its message and skips the list refresh", async () => {
+  resetErrorObservability();
+  const persistence = fakePersistence({
+    freezeActive: async () => {
+      throw new Error("Cannot freeze: the boundary solve failed (HTTP 422)");
+    },
+  });
+  const { store } = makeStore(persistence);
+
+  await quiet(() => store.freeze());
+
+  assert.deepEqual(store.actionError, {
+    title: "Couldn't freeze this batch",
+    message: "Cannot freeze: the boundary solve failed (HTTP 422)",
+  });
+  assert.deepEqual(
+    persistence.calls.filter(([name]) => name === "list"),
+    [],
+    "a failed freeze must not reload the list"
+  );
+});
+
+test("a successful action and dismiss both clear the banner", async () => {
+  const { store } = makeStore();
+
+  store.actionError = { title: "Couldn't freeze this batch", message: "boom" };
+  await store.downloadActiveBundle();
+  assert.equal(store.actionError, null);
+
+  store.actionError = { title: "Couldn't freeze this batch", message: "boom" };
+  store.dismissActionError();
+  assert.equal(store.actionError, null);
 });

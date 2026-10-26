@@ -1,0 +1,8 @@
+<div class="alert alert-warning" x-show="$store.recipes.actionError" role="alert">
+  <div class="alert-header">
+    <span class="alert-dot"></span>
+    <span x-text="$store.recipes.actionError?.title ?? ''"></span>
+  </div>
+  <p x-text="$store.recipes.actionError?.message ?? ''"></p>
+  <button type="button" class="btn-outline" @click="$store.recipes.dismissActionError()">Dismiss</button>
+</div>

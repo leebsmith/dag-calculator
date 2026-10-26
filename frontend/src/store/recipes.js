@@ -7,6 +7,7 @@
 // `main.js` supplies the viewport-aware implementation.
 
 import { downloadJSON } from "../adapters/download.js";
+import { reportError } from "../observability.js";
 import { safeFilename } from "../utils.js";
 import {
   SCOPE_LABELS,
@@ -31,6 +32,7 @@ export function createRecipesStore({
     loadError: false,
     saveState: "idle", // "idle" | "dirty" | "saving" | "error" | "conflict"
     conflictRemote: null,
+    actionError: null, // { title, message } | null — the last failed freeze/download
     sort: "modified", // "modified" | "title"
     sortOpen: false,
     sortMenuStyle: "",
@@ -230,12 +232,22 @@ export function createRecipesStore({
       return persistence.saveNow();
     },
 
+    dismissActionError() {
+      this.actionError = null;
+    },
+
+    recordActionFailure(title, scope, err) {
+      this.actionError = { title, message: err?.message ?? String(err) };
+      reportError(scope, err);
+    },
+
     async newBatch() {
       getSetup().openModal();
     },
 
     async openDraft(id) {
       await persistence.open(id);
+      this.actionError = null;
       this.scope = "all";
       this.view = "editor";
       this.syncActive();
@@ -243,6 +255,7 @@ export function createRecipesStore({
 
     async forkFrozen(id) {
       await persistence.fork(id);
+      this.actionError = null;
       this.scope = "all";
       this.view = "editor";
       await this.refresh();
@@ -259,6 +272,7 @@ export function createRecipesStore({
       await this.refresh();
       this.renamingId = null;
       this.sortOpen = false;
+      this.actionError = null;
       this.view = "batches";
       this.syncActive();
     },
@@ -282,12 +296,29 @@ export function createRecipesStore({
     },
 
     async freeze() {
-      await persistence.freezeActive();
+      this.actionError = null;
+      try {
+        await persistence.freezeActive();
+      } catch (err) {
+        this.recordActionFailure("Couldn't freeze this batch", "recipes.freeze", err);
+        return;
+      }
       await this.refresh();
     },
 
     async downloadActiveBundle() {
-      const file = await persistence.reportBundleForActive();
+      this.actionError = null;
+      let file;
+      try {
+        file = await persistence.reportBundleForActive();
+      } catch (err) {
+        this.recordActionFailure(
+          "Couldn't build the report bundle",
+          "recipes.downloadActiveBundle",
+          err
+        );
+        return;
+      }
       if (!file) return;
       download(file.bundle, safeFilename(file.name, "report-bundle.json"));
     },
@@ -296,7 +327,18 @@ export function createRecipesStore({
       const batch = this.rowMenu;
       this.closeRowMenu();
       if (!batch || batch.status !== "frozen") return;
-      const file = await persistence.reportBundleFor(batch.id, batch.name);
+      this.actionError = null;
+      let file;
+      try {
+        file = await persistence.reportBundleFor(batch.id, batch.name);
+      } catch (err) {
+        this.recordActionFailure(
+          "Couldn't build the report bundle",
+          "recipes.downloadRowBundle",
+          err
+        );
+        return;
+      }
       download(file.bundle, safeFilename(file.name, "report-bundle.json"));
     },
   };
