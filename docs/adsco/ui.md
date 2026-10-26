@@ -157,6 +157,24 @@ extract is at or below zero (a diastaticus fermentation), the field displays
 `≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value is
 unchanged; the conformance layer still sees the computed gravity.
 
+### Sugar effect (late additions)
+
+The Late Additions summary shows what the current dose is doing **at the ABV
+pin**, without asking the designer to unpin it:
+
+| Readout | Meaning |
+| --- | --- |
+| Extract share | sugar extract ÷ total post-boil extract |
+| ΔOG | gravity points added by the dose at the current kettle volume |
+| ΔFG | `+0.000` — sugar is fully fermentable and leaves no residual extract |
+| ΔABV | alcohol contributed by the sugar's extract share |
+| Malt displaced | malt mass that would supply the same extract at the current grist yield |
+
+The decomposition holds the solved apparent extract and removes the sugar's
+extract share from OE. It is a host-side readout derived from the batch solve:
+nothing is persisted, no root changes, and the ABV pin is untouched. It answers
+"what is this dose buying me?" — not a second solver result.
+
 ## Guardrails / a11y
 
 - Named handlers, `fmt.*` for all numbers/deltas, no inline logic (A8/A10),

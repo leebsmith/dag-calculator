@@ -4,6 +4,14 @@ export const LATE_ADDITION_NODES = {
   mass: "grist.sugars_mass",
   color: "grist.sugar_weighted_lovibond",
   extract: "batch.s_late_add",
+  // Sugar-effect operands (read-only; the panel never writes a root).
+  effect: {
+    extractTotal: "solver.batch.s_post_boil_target",
+    sgPostBoil: "solver.batch.sg_post_boil",
+    apparentAttenuation: "solver.batch.apparent_attenuation",
+    gristYield: "grist.weighted_yield_fraction",
+    grainMoisture: "batch.grain_moisture_fraction",
+  },
   slice: "late-additions",
 };
 

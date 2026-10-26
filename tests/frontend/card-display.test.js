@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 
 import { createTestApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
+import { sugarEffect } from "../../frontend/src/views/producer/sugarEffect.js";
 
 const cache = createReferenceCache();
 
@@ -218,6 +219,63 @@ test("late additions: the draft mass and extract readouts follow the open draft"
 
   app.cancelSugarEditor();
   assert.equal(app.sugarEditorOpen, false);
+});
+
+test("late additions: the sugar effect is derived at the current pin", async () => {
+  const app = await bootedApp();
+  const sugar = app.sugarCatalog[0];
+
+  assert.equal(app.sugarEffect.active, false, "no dose, no effect");
+  assert.equal(app.sugarEffectDisplay, null);
+
+  app.openSugarEditor();
+  app.addCatalogSugar(sugar.id);
+  app.editDraftCell(0, "mass_kg", 0.5);
+  app.saveSugarEditor();
+  await app.solveNow();
+  app.compute();
+
+  const effect = app.sugarEffect;
+  assert.equal(effect.active, true);
+  assert.ok(effect.share > 0 && effect.share < 1);
+  assert.ok(effect.ogPoints > 0, "sugar raises the extract");
+  assert.equal(effect.fgPoints, 0, "sugar leaves no residual extract");
+  assert.ok(effect.abvPoints > 0, "sugar contributes alcohol");
+  assert.ok(effect.gristKg > 0, "sugar displaces malt at the pin");
+
+  assert.equal(app.sugarEffectDisplay.share, `${(effect.share * 100).toFixed(1)}%`);
+  assert.match(app.sugarEffectDisplay.og, /^\+0\./);
+  assert.match(app.sugarEffectDisplay.abv, /^\+\d/);
+});
+
+test("late additions: reading the sugar effect does not change the recipe", async () => {
+  const app = await bootedApp();
+  const sugar = app.sugarCatalog[0];
+  app.openSugarEditor();
+  app.addCatalogSugar(sugar.id);
+  app.editDraftCell(0, "mass_kg", 0.5);
+  app.saveSugarEditor();
+  await app.solveNow();
+  app.compute();
+
+  const before = JSON.stringify(app.draftState());
+  void app.sugarEffect;
+  void app.sugarEffectDisplay;
+  assert.equal(JSON.stringify(app.draftState()), before, "readouts must not mutate state");
+  assert.equal(app.master.getRoot("batch.target_abv"), undefined);
+});
+
+test("sugarEffect is defensive about incomplete batches", () => {
+  assert.equal(sugarEffect({}).active, false);
+  assert.equal(
+    sugarEffect({
+      extractTotalKg: 0,
+      sugarExtractKg: 0.5,
+      sgPostBoil: 1.05,
+      apparentAttenuation: 0.75,
+    }).active,
+    false
+  );
 });
 
 // --- Trace malts -----------------------------------------------------------

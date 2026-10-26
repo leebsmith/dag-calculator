@@ -3,7 +3,15 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
-import { formatPercentRounded, formatValueWithUnit, resultCounter } from "../../utils.js";
+import { sugarEffect } from "../../views/producer/sugarEffect.js";
+import { reportError } from "../../observability.js";
+import {
+  formatPercent,
+  formatPercentRounded,
+  formatValueWithUnit,
+  formatWithDecimals,
+  resultCounter,
+} from "../../utils.js";
 
 
 function makeRow(sugar) {
@@ -21,6 +29,28 @@ function makeRow(sugar) {
     color_lovibond: sugar.color_lovibond,
     notes: sugar.notes,
   };
+}
+
+// The current dose's effect at the solved pin. Every operand comes from the
+// batch solve; the panel never sets a root.
+function currentSugarEffect(engine) {
+  const read = (path, fallback) => {
+    try {
+      const value = engine.resolve(path);
+      return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+    } catch (err) {
+      reportError("lateAdditions.sugarEffect", err);
+      return fallback;
+    }
+  };
+  return sugarEffect({
+    extractTotalKg: read(N.effect.extractTotal, 0),
+    sugarExtractKg: read(N.extract, 0),
+    sgPostBoil: read(N.effect.sgPostBoil, 0),
+    apparentAttenuation: read(N.effect.apparentAttenuation, 0),
+    gristYield: read(N.effect.gristYield, 0),
+    grainMoisture: read(N.effect.grainMoisture, 0),
+  });
 }
 
 export function registerLateAdditionsCard(app, ctx) {
@@ -76,6 +106,31 @@ export function registerLateAdditionsCard(app, ctx) {
         return this.sugarField(N.extract);
       },
     },
+    sugarEffect: {
+      configurable: true,
+      get() {
+        return currentSugarEffect(ctx.engine);
+      },
+    },
+    sugarEffectDisplay: {
+      configurable: true,
+      get() {
+        const effect = currentSugarEffect(ctx.engine);
+        if (!effect.active) return null;
+        const signed = (value, decimals, suffix = "") =>
+          `${value >= 0 ? "+" : ""}${formatWithDecimals(value, decimals)}${suffix}`;
+        return {
+          share: formatPercent(effect.share),
+          og: signed(effect.ogPoints, 3),
+          fg: "+0.000",
+          abv: signed(effect.abvPoints, 2, "%"),
+          grist:
+            effect.gristKg == null
+              ? "—"
+              : `${formatWithDecimals(effect.gristKg, 2)} kg`,
+        };
+      },
+    },
     sugarDraftMassDisplay: {
       configurable: true,
       get() {
@@ -108,4 +163,4 @@ export function registerLateAdditionsCard(app, ctx) {
 export function refreshLateAdditionsCard(app, ctx) {
   app.sugarList = ctx.engine.get(N.collection) ?? [];
 }
-export const KEYS = [...catalogDraftKeys("sugar", "Sugar"), "sugarList", "sugarField", "lateSugarField", "sugarMassField", "sugarColorField", "lateExtractField", "sugarDraftMassDisplay", "sugarDraftExtractDisplay", "sugarResultLabel"];
+export const KEYS = [...catalogDraftKeys("sugar", "Sugar"), "sugarList", "sugarField", "lateSugarField", "sugarMassField", "sugarColorField", "lateExtractField", "sugarEffect", "sugarEffectDisplay", "sugarDraftMassDisplay", "sugarDraftExtractDisplay", "sugarResultLabel"];

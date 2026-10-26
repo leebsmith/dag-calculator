@@ -72,6 +72,37 @@
         ></span>
       </div>
     </div>
+
+    <template x-if="sugarEffectDisplay">
+      <div>
+        <div class="grain-bill-summary">
+          <div class="grain-bill-summary-item">
+            <span class="text-xs text-muted">Extract share</span>
+            <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.share"></span>
+          </div>
+          <div class="grain-bill-summary-item">
+            <span class="text-xs text-muted">ΔOG</span>
+            <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.og"></span>
+          </div>
+          <div class="grain-bill-summary-item">
+            <span class="text-xs text-muted">ΔFG</span>
+            <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.fg"></span>
+          </div>
+          <div class="grain-bill-summary-item">
+            <span class="text-xs text-muted">ΔABV</span>
+            <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.abv"></span>
+          </div>
+          <div class="grain-bill-summary-item">
+            <span class="text-xs text-muted">Malt displaced</span>
+            <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.grist"></span>
+          </div>
+        </div>
+        <p class="text-xs text-muted">
+          At the current ABV pin. Sugar is fully fermentable, so it adds alcohol and
+          extract but no FG; the view shows what removing this dose would change.
+        </p>
+      </div>
+    </template>
   </div>
 
   <load src="src/partials/modal-sugar-editor.html" />
