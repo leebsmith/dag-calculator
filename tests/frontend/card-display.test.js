@@ -113,6 +113,32 @@ test("yeast card: tier filters toggle on and off", async () => {
   assert.equal(app.yeastAttenuationFilter, "");
 });
 
+test("yeast card: diastaticus pills filter the tri-state STA1 field", async () => {
+  const app = await bootedApp();
+  const tiers = app.yeastDiastaticusTiers;
+  assert.deepEqual(tiers.map((tier) => tier.key), ["positive", "negative", "unknown"]);
+  assert.equal(
+    tiers.reduce((sum, tier) => sum + tier.count, 0),
+    app.yeastCatalog.length
+  );
+
+  app.toggleYeastDiastaticus("positive");
+  assert.ok(app.filteredYeasts.length > 0);
+  assert.ok(app.filteredYeasts.every((y) => y.sta1 === true));
+
+  app.toggleYeastDiastaticus("negative");
+  assert.ok(app.filteredYeasts.length > 0);
+  assert.ok(app.filteredYeasts.every((y) => y.sta1 === false));
+
+  app.toggleYeastDiastaticus("unknown");
+  assert.ok(app.filteredYeasts.length > 0);
+  assert.ok(app.filteredYeasts.every((y) => y.sta1 !== true && y.sta1 !== false));
+
+  app.toggleYeastDiastaticus("");
+  assert.equal(app.yeastDiastaticusFilter, "");
+  assert.equal(app.filteredYeasts.length, app.yeastCatalog.length);
+});
+
 test("yeast card: the chooser is always mounted and Clear empties the selection", async () => {
   const app = await bootedApp();
   assert.equal(app.selectedYeast?.id, "fermentis-safale-american-ale-us-05");
@@ -217,7 +243,13 @@ test("late additions: the draft mass and extract readouts follow the open draft"
   assert.match(app.sugarDraftMassDisplay, /\d/);
   assert.match(app.sugarDraftExtractDisplay, /\d/);
 
+  assert.equal(app.draftDirty, true);
   app.cancelSugarEditor();
+  assert.equal(app.draftDiscardOpen, true);
+  assert.equal(app.sugarEditorOpen, true);
+
+  app.confirmDraftDiscard();
+  assert.equal(app.draftDiscardOpen, false);
   assert.equal(app.sugarEditorOpen, false);
 });
 

@@ -101,9 +101,24 @@
         </div>
       </div>
 
-      <div class="modal-drawer-scrim" x-show="traceDrawer !== null" @click="closeTraceDrawer()"></div>
+      <div
+        class="modal-drawer-scrim"
+        x-show="traceDrawer !== null"
+        x-transition.opacity.duration.200ms
+        @click="closeTraceDrawer()"
+      ></div>
 
-      <div class="modal-workspace-drawer" id="trace-drawer" x-show="traceDrawer !== null">
+      <div
+        class="modal-workspace-drawer"
+        id="trace-drawer"
+        x-show="traceDrawer !== null"
+        x-transition:enter="modal-drawer-enter"
+        x-transition:enter-start="modal-drawer-enter-start"
+        x-transition:enter-end="modal-drawer-enter-end"
+        x-transition:leave="modal-drawer-leave"
+        x-transition:leave-start="modal-drawer-leave-start"
+        x-transition:leave-end="modal-drawer-leave-end"
+      >
         <div class="modal-drawer-header">
           <h3
             class="modal-drawer-title"
@@ -336,5 +351,7 @@
         </div>
       </div>
     </div>
+
+    <load src="src/partials/draft-discard-confirm.html" />
   </div>
 </div>

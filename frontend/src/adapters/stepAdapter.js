@@ -10,6 +10,7 @@ import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { identityDerivations } from "../views/seedDerivations.js";
+import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
 import { createLibrary } from "../store/library.js";
 import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
@@ -172,10 +173,32 @@ export function createStepApp(options = {}) {
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
+      const sugarParts = this.seedSugarShareParts();
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (seeded || materialized || synced || migrated || migratedDerate) this.notify();
+      if (seeded || materialized || synced || migrated || migratedDerate || sugarParts) {
+        this.notify();
+      }
       this.syncNav();
+    },
+
+    // A saved batch can author a positive sugar share while every row's parts
+    // are still zero (rows predate the catalog's equal-weight default). The
+    // solver honors the share, so a zero-weight table would show 0 lb of sugar
+    // beside a real extract budget. Give that unmigrated state equal weights.
+    seedSugarShareParts() {
+      if (session.engine.get("batch.late_addition_intent") !== "share") return false;
+      const share = Number(session.engine.get("batch.sugar_extract_share")) || 0;
+      if (!(share > 0)) return false;
+      const rows = session.engine.get("batch.sugars");
+      if (!Array.isArray(rows) || rows.length === 0) return false;
+      const total = rows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
+      if (total > 0) return false;
+      session.engine.setCollection(
+        "batch.sugars",
+        rows.map((row) => ({ ...row, parts: EQUAL_SUGAR_PARTS }))
+      );
+      return true;
     },
 
     // Drafts saved before the derate became points stored a multiplier of the

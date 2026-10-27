@@ -159,7 +159,24 @@
           ></button>
         </template>
       </div>
-  
+
+      <!-- Diastaticus status (vendor STA1 QC) -->
+      <div class="filter-pills-container">
+        <template x-for="t in yeastDiastaticusTiers" :key="'d-' + t.key">
+          <button
+            type="button"
+            class="filter-pill"
+            :class="{ 'is-active': yeastDiastaticusFilter === t.key }" :aria-pressed="(yeastDiastaticusFilter === t.key) ? 'true' : 'false'"
+            @click="toggleYeastDiastaticus(t.key)"
+            x-text="t.label + ' · ' + t.count"
+          ></button>
+        </template>
+      </div>
+      <p class="form-hint">
+        STA1 is the vendor's diastaticus marker. A strain with no published result
+        is modelled as non-diastaticus (d = 0).
+      </p>
+
       <!-- Result counter -->
       <div
         class="catalog-result-counter"

@@ -81,6 +81,11 @@ export function installCatalogDraft(app, ctx, config) {
     },
 
     [`cancel${Cap}Editor`]() {
+      // The draft is scratch state: a changed draft asks before it is dropped.
+      if (this.draftDirty) {
+        this.draftDiscardOpen = true;
+        return;
+      }
       this.closeDraft();
       this[`${prefix}Drawer`] = null;
       this[`${prefix}ActiveIndex`] = null;
@@ -168,7 +173,8 @@ export function installCatalogDraft(app, ctx, config) {
 
     [`handle${Cap}Escape`]() {
       if (!this[`${prefix}EditorOpen`]) return;
-      if (this[`${prefix}Drawer`] !== null) this[`close${Cap}Drawer`]();
+      if (this.draftDiscardOpen) this.dismissDraftDiscard();
+      else if (this[`${prefix}Drawer`] !== null) this[`close${Cap}Drawer`]();
       else this[`cancel${Cap}Editor`]();
     },
 

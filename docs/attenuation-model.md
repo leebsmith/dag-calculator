@@ -145,7 +145,10 @@ treats a missing QC result as a confirmed negative. Sugar is never touched by
 The wire carries `sta1` as a boolean. The request builder sends `false` when the
 selection has no QC result (the boundary input guard treats null as "not ready"),
 while the advisory reads the selection directly; the solver also accepts
-`sta1: null` from a direct caller and models it as `false`.
+`sta1: null` from a direct caller and models it as `false`. The yeast picker
+exposes the same tri-state as filters (`Diastaticus`, `Non-diastaticus`,
+`Unknown`), so the QC coverage is visible before a strain is chosen: a missing
+STA1 result is a filterable bucket, never a silent "no".
 
 ## 6. Late-addition intent (P3b)
 
@@ -174,6 +177,11 @@ composition block with a different source for `S`.
   weights). The active mode decides which is authored. Share mode derives
   `resolved_mass_kg` from the solved sugar budget with Hamilton allocation; it
   never overwrites `mass_kg` except through the explicit "adopt" action.
+- A share needs weights. Catalog rows start at `parts = 10` and the first
+  `dose → share` switch seeds each row's extract; when that dose is zero it
+  seeds an equal weight per row instead of zeros. A positive share whose rows
+  carry no weights is completed on save and repaired on load, so the derived
+  masses always account for the budget; a zero share is how sugar is removed.
 - The first `dose → share` switch seeds the share from the current dose and the
   row parts from each row's current extract. After that, switching does not
   overwrite either side, so both authored states round-trip exactly. Explicit

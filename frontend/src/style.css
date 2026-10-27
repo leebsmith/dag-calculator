@@ -502,6 +502,7 @@ samp {
    ========================================================================== */
 
 .modal-dialog-workspace {
+  position: relative;
   max-width: var(--container-modal-workspace, 72rem);
   height: min(88vh, 960px);
   padding: var(--space-0);
@@ -596,6 +597,65 @@ samp {
   background-color: var(--sys-surface-elevated);
   border-left: 1px solid var(--sys-border-subtle);
   box-shadow: var(--sys-shadow-xl);
+}
+
+.modal-drawer-enter,
+.modal-drawer-leave {
+  transition: transform var(--transition-drawer);
+}
+
+.modal-drawer-enter-start,
+.modal-drawer-leave-end {
+  transform: translateX(100%);
+}
+
+.modal-drawer-enter-end,
+.modal-drawer-leave-start {
+  transform: translateX(0);
+}
+
+.modal-confirm-layer {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background-color: var(--sys-surface-scrim);
+  backdrop-filter: var(--sys-backdrop-blur-subtle);
+}
+
+.modal-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--container-modal-dialog);
+  padding: var(--space-5);
+  background-color: var(--sys-surface-elevated);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--sys-shadow-xl);
+}
+
+.modal-confirm-title {
+  margin: var(--space-0);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
+.modal-confirm-body {
+  margin: var(--space-0);
+  font-size: var(--text-sm);
+  color: var(--sys-text-secondary);
+}
+
+.modal-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
 }
 
 .modal-drawer-header {
@@ -1938,6 +1998,9 @@ samp {
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+  .modal-drawer-enter,
+  .modal-drawer-leave,
+  .modal-confirm-layer,
   .btn,
   .btn-close,
   .btn-action-icon,

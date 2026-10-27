@@ -1,0 +1,33 @@
+<!-- Dirty-draft guard: Cancel on a changed draft asks before discarding it. ---->
+<div
+  class="modal-confirm-layer"
+  x-show="draftDiscardOpen"
+  x-transition.opacity.duration.150ms
+  @click.self="dismissDraftDiscard()"
+>
+  <div
+    class="modal-confirm"
+    role="alertdialog"
+    aria-modal="true"
+    aria-label="Discard unsaved changes?"
+    x-effect="draftDiscardOpen && $nextTick(() => $refs.draftDiscardKeep?.focus())"
+  >
+    <h3 class="modal-confirm-title">Discard unsaved changes?</h3>
+    <p class="modal-confirm-body">
+      This editor has changes that have not been saved. Cancel discards them.
+    </p>
+    <div class="modal-confirm-actions">
+      <button
+        type="button"
+        class="btn-outline text-xs"
+        x-ref="draftDiscardKeep"
+        @click="dismissDraftDiscard()"
+      >
+        Keep editing
+      </button>
+      <button type="button" class="btn-primary text-xs" @click="confirmDraftDiscard()">
+        Discard changes
+      </button>
+    </div>
+  </div>
+</div>

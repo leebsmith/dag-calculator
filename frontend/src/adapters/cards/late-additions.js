@@ -5,6 +5,7 @@ import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import { sugarEffect } from "../../views/producer/sugarEffect.js";
 import {
+  EQUAL_SUGAR_PARTS,
   MAX_SUGAR_SHARE,
   resolvedSugarMasses,
   sugarPartsFromDose,
@@ -28,7 +29,9 @@ function makeRow(sugar) {
     sugar_id: sugar.id,
     name: sugar.name,
     mass_kg: 0,
-    parts: 0,
+    // Share mode weights rows by parts; a catalog add must never be weightless,
+    // or a positive share would solve a budget that no row holds.
+    parts: EQUAL_SUGAR_PARTS,
     resolved_mass_kg: 0,
     yield_fraction: sugar.yield_fraction,
     yield_basis: sugar.yield_basis,
@@ -240,10 +243,14 @@ export function registerLateAdditionsCard(app, ctx) {
       const total = numberAt(ctx.engine, N.effect.extractTotal);
       const share = sugarShareFromDose(rows, total);
       this.setRoot(N.share, Math.min(MAX_SUGAR_SHARE, share));
-      const parts = sugarPartsFromDose(rows);
+      const extract = sugarPartsFromDose(rows);
+      const weighted = extract.some((value) => value > 0);
       ctx.engine.setCollection(
         N.collection,
-        rows.map((row, index) => ({ ...row, parts: rounded(parts[index]) }))
+        rows.map((row, index) => ({
+          ...row,
+          parts: rounded(weighted ? extract[index] : EQUAL_SUGAR_PARTS),
+        }))
       );
       return true;
     },

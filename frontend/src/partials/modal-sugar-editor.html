@@ -100,11 +100,26 @@
         </div>
       </div>
 
-      <div class="modal-drawer-scrim" x-show="sugarDrawer !== null" @click="closeSugarDrawer()"></div>
+      <div
+        class="modal-drawer-scrim"
+        x-show="sugarDrawer !== null"
+        x-transition.opacity.duration.200ms
+        @click="closeSugarDrawer()"
+      ></div>
 
-      <div class="modal-workspace-drawer" id="sugar-drawer" x-show="sugarDrawer !== null">
+      <div
+        class="modal-workspace-drawer"
+        id="sugar-drawer"
+        x-show="sugarDrawer !== null"
+        x-transition:enter="modal-drawer-enter"
+        x-transition:enter-start="modal-drawer-enter-start"
+        x-transition:enter-end="modal-drawer-enter-end"
+        x-transition:leave="modal-drawer-leave"
+        x-transition:leave-start="modal-drawer-leave-start"
+        x-transition:leave-end="modal-drawer-leave-end"
+      >
         <div class="modal-drawer-header">
-          <h3 class="modal-drawer-title">Sugar Catalog</h3>
+          <h3 class="modal-drawer-title">Sugar Catalog Browser</h3>
           <button type="button" class="btn-close text-xs" @click="closeSugarDrawer()">✕</button>
         </div>
 
@@ -171,5 +186,7 @@
         </div>
       </div>
     </div>
+
+    <load src="src/partials/draft-discard-confirm.html" />
   </div>
 </div>

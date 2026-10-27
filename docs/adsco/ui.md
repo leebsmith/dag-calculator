@@ -200,8 +200,12 @@ The share root is bounded at 95 % and warns above 90 %. A share above zero with
 no sugar rows raises the `sugar_share_without_sugar` advisory; it never silently
 adds extract. The first dose → share switch seeds the share from the current
 dose and the parts from each row's extract; afterward both authored states
-round-trip. "Adopt current dose" and "Adopt share into masses" are explicit
-re-sync actions, not implicit rewrites.
+round-trip. A dose of zero seeds equal row weights, catalog additions start at
+equal weight, and a share with no row weights is completed on save and repaired
+on load — so the derived masses always account for the budget. A positive share
+therefore always carries weights; set the share to zero to remove sugar.
+"Adopt current dose" and "Adopt share into masses" are explicit re-sync actions,
+not implicit rewrites.
 
 ### Fermentation space (Style card)
 

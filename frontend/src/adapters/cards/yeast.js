@@ -18,6 +18,14 @@ function attenuationTier(pct) {
   return "super";
 }
 
+// Vendor QC is tri-state and sparse: most seeds publish no STA1 result, so
+// "unknown" is a real bucket, not a missing value to hide.
+function diastaticusTier(yeast) {
+  if (yeast?.sta1 === true) return "positive";
+  if (yeast?.sta1 === false) return "negative";
+  return "unknown";
+}
+
 export function registerYeastCard(app, ctx) {
   const { cache } = ctx;
 
@@ -27,6 +35,7 @@ export function registerYeastCard(app, ctx) {
     yeastSearchNotes: false,
     yeastManufacturerFilter: "",
     yeastAttenuationFilter: "",
+    yeastDiastaticusFilter: "",
     derateHelpOpen: false,
 
     yeastAttenuation(y) {
@@ -61,6 +70,10 @@ export function registerYeastCard(app, ctx) {
 
     toggleYeastAttenuation(value) {
       this.yeastAttenuationFilter = toggleFilter(this.yeastAttenuationFilter, value);
+    },
+
+    toggleYeastDiastaticus(value) {
+      this.yeastDiastaticusFilter = toggleFilter(this.yeastDiastaticusFilter, value);
     },
 
     // Commit the derate on blur/change, not per keystroke. Empty, invalid, or
@@ -113,15 +126,29 @@ export function registerYeastCard(app, ctx) {
         ];
       },
     },
+    yeastDiastaticusTiers: {
+      configurable: true,
+      get() {
+        const counts = { positive: 0, negative: 0, unknown: 0 };
+        for (const yeast of this.yeastCatalog) counts[diastaticusTier(yeast)] += 1;
+        return [
+          { key: "positive", label: "Diastaticus", count: counts.positive },
+          { key: "negative", label: "Non-diastaticus", count: counts.negative },
+          { key: "unknown", label: "Unknown", count: counts.unknown },
+        ];
+      },
+    },
     filteredYeasts: {
       configurable: true,
       get() {
         const m = this.yeastManufacturerFilter;
         const t = this.yeastAttenuationFilter;
+        const d = this.yeastDiastaticusFilter;
         const items = this.yeastCatalog.filter(
           (y) =>
             (!m || y.manufacturer === m) &&
-            (!t || attenuationTier(y.attenuation_pct) === t)
+            (!t || attenuationTier(y.attenuation_pct) === t) &&
+            (!d || diastaticusTier(y) === d)
         );
         return filterCatalog(items, {
           query: this.yeastSearchQuery,
@@ -181,4 +208,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
 
-export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "derateHelpOpen", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleDerateHelp", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "derateHelpOpen", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleDerateHelp", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];

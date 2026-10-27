@@ -5,9 +5,14 @@
 import { toBase } from "../engine/index.js";
 import { hamiltonPct } from "../views/hamilton.js";
 import { displayValue, nonlinearFns, resolveCollectionColumns } from "../views/producer.js";
+import {
+  EQUAL_SUGAR_PARTS,
+  resolvedSugarMasses,
+} from "../views/producer/sugarAllocation.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
+import { reportError } from "../observability.js";
 import { formatWithDecimals, preferredUnit, unitSymbol } from "../utils.js";
 
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
@@ -18,6 +23,8 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     draftOpen: false,
     draftNodeId: "",
     draftRows: [],
+    draftBaseline: "",
+    draftDiscardOpen: false,
 
     draftEntry() {
       for (const step of steps) {
@@ -50,6 +57,8 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       this.draftNodeId = nodeId;
       this.draftRows = JSON.parse(JSON.stringify(session.getEngine().get(nodeId) ?? []));
       this.normalizeDraft();
+      this.draftBaseline = this.draftSnapshot();
+      this.draftDiscardOpen = false;
       this.draftOpen = true;
     },
 
@@ -57,9 +66,28 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       this.draftOpen = false;
       this.draftRows = [];
       this.draftNodeId = "";
+      this.draftBaseline = "";
+      this.draftDiscardOpen = false;
+    },
+
+    // Cancel is destructive: the draft is scratch state, so a changed draft
+    // asks before it is thrown away. Save calls closeDraft directly and never
+    // prompts.
+    dismissDraftDiscard() {
+      this.draftDiscardOpen = false;
+    },
+
+    confirmDraftDiscard() {
+      this.draftDiscardOpen = false;
+      this.closeDraft();
+    },
+
+    draftSnapshot() {
+      return JSON.stringify(this.draftRows ?? []);
     },
 
     saveDraft() {
+      this.seedSugarShareWeights();
       session.engine.setCollection(
         this.draftNodeId,
         JSON.parse(JSON.stringify(this.normalizeDraft()))
@@ -83,7 +111,60 @@ export function installDraftEditor(app, { artifact, ui, session }) {
           r.pct = pcts[i];
         });
       }
+      if (this.draftNodeId === N.sugars && this.draftRows.length) {
+        this.deriveDraftSugarMasses();
+      }
       return this.draftRows;
+    },
+
+    // Share mode records the derived mass per row; the draft table binds that
+    // recorded value, so it is refreshed here as parts change (the engine
+    // refresh writes the saved rows, not the scratch copy).
+    deriveDraftSugarMasses() {
+      const engine = session.getEngine();
+      let intent;
+      let budget;
+      try {
+        intent = engine.get(N.lateAdditionIntent);
+        budget = engine.resolve("batch.sugar_extract_total");
+      } catch (err) {
+        reportError("draftEditor.deriveDraftSugarMasses", err);
+        return;
+      }
+      if (intent !== "share") return;
+      const resolved = resolvedSugarMasses({
+        rows: this.draftRows,
+        budgetKg: typeof budget === "number" && Number.isFinite(budget) ? budget : 0,
+        mode: "share",
+      });
+      this.draftRows.forEach((row, index) => {
+        row.resolved_mass_kg = resolved[index]?.massKg ?? 0;
+      });
+    },
+
+    // A positive share owns a budget, so saving rows with no weights would show
+    // zero mass beside a live extract. Complete the draft with equal weights;
+    // the load repair applies the same rule to already-saved batches.
+    seedSugarShareWeights() {
+      if (this.draftNodeId !== N.sugars || !this.draftRows.length) return false;
+      const engine = session.getEngine();
+      let intent;
+      let share;
+      try {
+        intent = engine.get(N.lateAdditionIntent);
+        share = Number(engine.get("batch.sugar_extract_share")) || 0;
+      } catch (err) {
+        reportError("draftEditor.seedSugarShareWeights", err);
+        return false;
+      }
+      if (intent !== "share" || !(share > 0)) return false;
+      const total = this.draftRows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
+      if (total > 0) return false;
+      this.draftRows.forEach((row) => {
+        row.parts = EQUAL_SUGAR_PARTS;
+      });
+      this.deriveDraftSugarMasses();
+      return true;
     },
 
     // Edit a draft cell: the input carries a display value; store its base.
@@ -158,6 +239,12 @@ export function installDraftEditor(app, { artifact, ui, session }) {
   });
 
   Object.defineProperties(app, {
+    draftDirty: {
+      configurable: true,
+      get() {
+        return this.draftOpen && this.draftBaseline !== this.draftSnapshot();
+      },
+    },
     draftColumns: {
       configurable: true,
       get() {
@@ -217,4 +304,4 @@ export function installDraftEditor(app, { artifact, ui, session }) {
   });
 }
 
-export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftEntry", "draftMassDisplay", "openDraft", "closeDraft", "saveDraft", "normalizeDraft", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows"];
+export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "deriveDraftSugarMasses", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows"];

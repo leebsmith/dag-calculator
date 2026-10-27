@@ -9,6 +9,10 @@ import { hamiltonPct } from "../hamilton.js";
 
 export const MAX_SUGAR_SHARE = 0.95;
 export const HIGH_SUGAR_SHARE = 0.9;
+// Share mode weights rows by parts. A row with no authored weight (a catalog
+// add, or a batch saved before the weight existed) starts equal to its peers, so
+// a positive sugar budget is never left unallocated.
+export const EQUAL_SUGAR_PARTS = 10;
 
 function finiteNonNegative(value) {
   return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 0;
