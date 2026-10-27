@@ -16,7 +16,8 @@ Writes the sources for a report-renderer notebook:
                authoring checklist, bundle contract, Typst notes, the generated
                path glossary, the template sources, and the format-parity test.
                Default: .local/report-notebook-seed.md
-  OUT-values   one line per resolved path in a real bundle, produced by
+  OUT-values   one line per resolved path in a real bundle — value, label,
+               unit, symbol — plus the taxonomy option labels, produced by
                scripts/describe-report-bundle.mjs. Written only with --bundle;
                the path is OUT with "-values.txt" replacing ".md"
                (default .local/report-notebook-seed-values.txt).

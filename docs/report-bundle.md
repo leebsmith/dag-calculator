@@ -216,7 +216,9 @@ Rendered: `Grain temperature 20.0 °C`; the rest row's temp `67.0 °C`.
 - [`report-bundle-glossary.md`](report-bundle-glossary.md) — generated list of
   every path with label, dimension, unit, and precision.
 - `node scripts/describe-report-bundle.mjs <bundle.json>` — print a downloaded
-  bundle as `path = value (label, unit)` for every resolved path.
+  bundle as `path = value (label, unit)` for every resolved path, plus an
+  `option labels` block for taxonomies (the one catalog field the path list
+  omits: it names values, not their display text).
 - The bundle is validated on every `make test` via the committed fixture
   (`tests/conformance/fixtures/report-bundle.json`). Regenerate it with
   `cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py`.

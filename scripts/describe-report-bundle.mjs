@@ -1,5 +1,5 @@
 // Describe a downloaded report bundle: every resolved path with its base-unit
-// value, label, and unit. Authoring aid for the first hand-written report.
+// value, label, unit, and taxonomy labels. Authoring aid for a report section.
 //
 //   node scripts/describe-report-bundle.mjs <bundle.json>
 
@@ -48,6 +48,21 @@ function walk(value, path, metaPath, out) {
   out.push({ path, metaPath, value });
 }
 
+// Option labels are the one catalog field a path/unit dump would otherwise
+// drop: the glossary lists taxonomy values, not their display text.
+function optionLabelLines(bundle) {
+  const lines = [];
+  for (const [path, meta] of Object.entries(bundle.catalog?.nodes ?? {}).sort()) {
+    const labels = meta?.option_labels;
+    if (!labels || Object.keys(labels).length === 0) continue;
+    const pairs = Object.keys(labels)
+      .sort()
+      .map((key) => `${key}=${labels[key]}`);
+    lines.push(`  ${path}: ${pairs.join(", ")}`);
+  }
+  return lines;
+}
+
 function formatLeaf(value) {
   if (value === null) return "null";
   if (typeof value === "string") return JSON.stringify(value);
@@ -83,6 +98,11 @@ function main(argv) {
   for (const row of rows) {
     const meta = metaFor(bundle, row.metaPath);
     lines.push(`${row.path} = ${formatLeaf(row.value)}${displayMeta(meta)}`);
+  }
+
+  const optionLabels = optionLabelLines(bundle);
+  if (optionLabels.length) {
+    lines.push("", "option labels", ...optionLabels);
   }
 
   const telemetry = bundle.telemetry ?? {};
