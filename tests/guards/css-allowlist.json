@@ -112,15 +112,6 @@
     },
     {
       "context": "",
-      "declarations": "align-items: center; display: flex; flex-shrink: 0; gap: var(--space-2)",
-      "selectors": [
-        ".catalog-item-actions",
-        ".recipes-row-actions"
-      ],
-      "reason": "Coincidental row layout across catalog and recipe actions."
-    },
-    {
-      "context": "",
       "declarations": "background-color: var(--sys-surface-default); border-radius: var(--radius-lg); border: 1px solid var(--sys-border-subtle); overflow-x: auto",
       "selectors": [
         ".data-table-container",

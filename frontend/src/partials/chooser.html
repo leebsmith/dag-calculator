@@ -130,28 +130,16 @@
                     </td>
                     <td class="landing-col-date" x-text="$store.recipes.dateLabel(b.updated_at)"></td>
                     <td class="landing-col-actions">
-                      <template x-if="$store.recipes.scope === 'trash'">
-                        <div class="recipes-row-actions">
-                          <button type="button" class="btn-outline text-xs" @click="$store.recipes.restoreRow(b)">
-                            Restore
-                          </button>
-                          <button type="button" class="btn-outline text-xs" @click="$store.recipes.deleteRow(b)">
-                            Delete permanently
-                          </button>
-                        </div>
-                      </template>
-                      <template x-if="$store.recipes.scope !== 'trash'">
-                        <button
-                          type="button"
-                          class="landing-kebab"
-                          aria-label="Batch actions"
-                          :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id ? 'true' : 'false'"
-                          aria-controls="batch-row-menu"
-                          @click.stop="$store.recipes.openRowMenu(b, $event)"
-                        >
-                          ⋮
-                        </button>
-                      </template>
+                      <button
+                        type="button"
+                        class="landing-kebab"
+                        aria-label="Batch actions"
+                        :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id ? 'true' : 'false'"
+                        aria-controls="batch-row-menu"
+                        @click.stop="$store.recipes.openRowMenu(b, $event)"
+                      >
+                        ⋮
+                      </button>
                     </td>
                   </tr>
                 </template>
@@ -176,7 +164,15 @@
       <button
         type="button"
         class="landing-menu-item"
-        x-show="$store.recipes.rowMenu.status === 'frozen'"
+        x-show="$store.recipes.rowMenu.trashed"
+        @click="$store.recipes.restoreRow($store.recipes.rowMenu)"
+      >
+        Restore
+      </button>
+      <button
+        type="button"
+        class="landing-menu-item"
+        x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
         @click="$store.recipes.forkRow()"
       >
         Fork a copy
@@ -184,7 +180,7 @@
       <button
         type="button"
         class="landing-menu-item"
-        x-show="$store.recipes.rowMenu.status === 'frozen'"
+        x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
         @click="$store.recipes.downloadRowBundle()"
       >
         Download bundle
@@ -192,6 +188,7 @@
       <button
         type="button"
         class="landing-menu-item"
+        x-show="!$store.recipes.rowMenu.trashed"
         @click="$store.recipes.startRename()"
       >
         Rename
@@ -199,9 +196,18 @@
       <button
         type="button"
         class="landing-menu-item"
+        x-show="!$store.recipes.rowMenu.trashed"
         @click="$store.recipes.trashRow()"
       >
         Move to trash
+      </button>
+      <button
+        type="button"
+        class="landing-menu-item text-danger"
+        x-show="$store.recipes.rowMenu.trashed"
+        @click="$store.recipes.deleteRow($store.recipes.rowMenu)"
+      >
+        Delete permanently
       </button>
     </div>
   </template>

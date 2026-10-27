@@ -1395,13 +1395,6 @@ samp {
   color: var(--sys-color-action-subtle-text);
 }
 
-.recipes-row-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
 .editor {
   flex: 1;
   min-height: 0;
