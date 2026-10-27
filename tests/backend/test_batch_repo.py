@@ -321,7 +321,7 @@ def test_freeze_writes_the_bundle_in_the_same_transaction():
     def factory(frozen_id, record):
         seen["frozen_id"] = frozen_id
         seen["record"] = record
-        return {"bundle_format": 1, "batch": {"id": frozen_id}}
+        return {"bundle_format": 2, "batch": {"id": frozen_id}}
 
     frozen, reason = store.freeze("u1", "b1", {"valuation": {}}, bundle_factory=factory)
 
@@ -329,7 +329,7 @@ def test_freeze_writes_the_bundle_in_the_same_transaction():
     assert seen["frozen_id"] == frozen["id"]
     assert seen["record"]["status"] == "frozen"
     assert user_bundles(db, "u1")[frozen["id"]] == {
-        "bundle_format": 1,
+        "bundle_format": 2,
         "batch": {"id": frozen["id"]},
     }
     assert db.last_transaction.calls[-2] == ("set", frozen["id"])

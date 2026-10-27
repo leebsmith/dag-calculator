@@ -61,7 +61,7 @@ _106 paths_
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
 | `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
-| `batch.realized_abv` | ABV | derived | abv | pct | 1 | — |
+| `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
 | `batch.runnings_ratio` | Runnings Ratio (r, V1/V2) | derived | dimensionless | 1 | — | — |
 | `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | 1 | — | — |
@@ -91,7 +91,7 @@ _106 paths_
 | `batch.sugars.yield_fraction` | Yield | field | percentage | pct (%) | 1 | — |
 | `batch.sugars.yield_provenance` | Yield Provenance | field | — | — | — | — |
 | `batch.surplus_sparge_capacity` | surplus sparge capacity | derived | volume | L | 1 | — |
-| `batch.target_abv` | Target ABV | root | abv | pct | 1 | — |
+| `batch.target_abv` | Target ABV | root | abv | pct (%) | 1 | — |
 | `batch.target_fg` | Target FG | root | gravity | Plato (°P) | 1 | — |
 | `batch.target_ibu` | Target IBU | root | ibu | IBU | 1 | — |
 | `batch.target_og` | Target OG | root | gravity | Plato (°P) | 1 | — |
@@ -408,8 +408,8 @@ _29 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
-| `style.abv_max` | ABV max | identity | abv | pct | 1 | — |
-| `style.abv_min` | ABV min | identity | abv | pct | 1 | — |
+| `style.abv_max` | ABV max | identity | abv | pct (%) | 1 | — |
+| `style.abv_min` | ABV min | identity | abv | pct (%) | 1 | — |
 | `style.appearance` | Appearance | identity | — | — | — | — |
 | `style.aroma` | Aroma | identity | — | — | — | — |
 | `style.category_id` | Category ID | identity | — | — | — | — |

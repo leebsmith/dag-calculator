@@ -53,6 +53,7 @@ test("every entry carries a non-empty label and only declared metadata", () => {
     "label",
     "dimension",
     "unit",
+    "symbol",
     "decimals",
     "step",
     "options",
@@ -71,6 +72,10 @@ test("every entry carries a non-empty label and only declared metadata", () => {
         entry.unit === dim.base_unit || entry.unit in (dim.units ?? {}),
         `${path} names unknown unit ${entry.unit}`
       );
+      assert.ok(
+        typeof entry.symbol === "string" && entry.symbol.length > 0,
+        `${path} has a unit without a display symbol`
+      );
     }
     if (entry.decimals !== null) {
       assert.ok(Number.isInteger(entry.decimals) && entry.decimals >= 0, path);
@@ -81,6 +86,7 @@ test("every entry carries a non-empty label and only declared metadata", () => {
 test("registry labels and display units win over fallbacks", () => {
   assert.equal(catalog.nodes["mash.grain_temp_c"].label, "Grain temperature");
   assert.equal(catalog.nodes["mash.grain_temp_c"].unit, "degC");
+  assert.equal(catalog.nodes["mash.grain_temp_c"].symbol, "°C");
   assert.equal(catalog.nodes["mash.grain_temp_c"].decimals, 1);
 
   assert.equal(catalog.nodes["solver.water.mash_additions.gypsum_kg"].label, "Mash gypsum");

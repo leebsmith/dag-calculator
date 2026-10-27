@@ -1,11 +1,26 @@
 {
-  "validation": ["relations", "domains", "field_domains", "collection_domains"],
-  "telemetry": ["binding", "fingerprint", "telemetry", "warnings", "notes"],
-  "catalog": ["dimensions", "nodes"],
+  "validation": [
+    "relations",
+    "domains",
+    "field_domains",
+    "collection_domains"
+  ],
+  "telemetry": [
+    "binding",
+    "fingerprint",
+    "telemetry",
+    "warnings",
+    "notes"
+  ],
+  "catalog": [
+    "dimensions",
+    "nodes"
+  ],
   "catalog_node": [
     "label",
     "dimension",
     "unit",
+    "symbol",
     "decimals",
     "step",
     "options",

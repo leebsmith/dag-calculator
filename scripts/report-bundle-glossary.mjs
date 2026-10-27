@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 
 import { resolveReference } from "../frontend/src/engine/paths.js";
 import { buildReportCatalog } from "../frontend/src/views/registry/catalog.js";
-import { UNIT_SYMBOLS } from "../frontend/src/views/registry/units.js";
 
 const GROUP_ORDER = [
   "batch",
@@ -49,8 +48,10 @@ function kindOf(artifact, path) {
 
 function unitCell(entry) {
   if (!entry.unit) return "—";
-  const symbol = UNIT_SYMBOLS[entry.dimension]?.[entry.unit];
-  return symbol && symbol !== entry.unit ? `${entry.unit} (${symbol})` : entry.unit;
+  // `symbol` is what the readout shows; the unit id is the conversion handle.
+  return entry.symbol && entry.symbol !== entry.unit
+    ? `${entry.unit} (${entry.symbol})`
+    : entry.unit;
 }
 
 function dash(value) {

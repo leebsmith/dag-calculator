@@ -160,37 +160,37 @@ PAYLOAD = FreezePayload(
         },
         nodes={
             "batch.v_ferm": NodePresentation(
-                label="Fermenter volume", dimension="volume", unit="L", decimals=1
+                label="Fermenter volume", dimension="volume", unit="L", symbol="L", decimals=1
             ),
             "batch.target_abv": NodePresentation(
-                label="Target ABV", dimension="abv", unit="pct", decimals=1
+                label="Target ABV", dimension="abv", unit="pct", symbol="%", decimals=1
             ),
             "mash.grain_temp_c": NodePresentation(
-                label="Grain temperature", dimension="temperature", unit="degC", decimals=1
+                label="Grain temperature", dimension="temperature", unit="degC", symbol="°C", decimals=1
             ),
             "mash.strike_water_temp_c": NodePresentation(
-                label="Strike water temp", dimension="temperature", unit="degC", decimals=1
+                label="Strike water temp", dimension="temperature", unit="degC", symbol="°C", decimals=1
             ),
             "mash.rests.use_temp_c": NodePresentation(
-                label="Temp", dimension="temperature", unit="degC", decimals=1
+                label="Temp", dimension="temperature", unit="degC", symbol="°C", decimals=1
             ),
             "solver.batch": NodePresentation(label="Batch solver"),
             "solver.batch.sg_post_boil": NodePresentation(
-                label="Post-boil gravity", dimension="gravity", unit="SG", decimals=3
+                label="Post-boil gravity", dimension="gravity", unit="SG", symbol="SG", decimals=3
             ),
             "solver.batch.v_pre_boil": NodePresentation(
-                label="Pre-boil volume", dimension="volume", unit="L", decimals=1
+                label="Pre-boil volume", dimension="volume", unit="L", symbol="L", decimals=1
             ),
             "solver.batch.cascade.v_strike": NodePresentation(
-                label="Strike Volume", dimension="volume", unit="L", decimals=1
+                label="Strike Volume", dimension="volume", unit="L", symbol="L", decimals=1
             ),
             "batch.realized_abv": NodePresentation(
-                label="Realized ABV", dimension="abv", unit="pct", decimals=1
+                label="Realized ABV", dimension="abv", unit="pct", symbol="%", decimals=1
             ),
             "mash.rests": NodePresentation(label="Mash rests"),
             "mash.rests.rest_id": NodePresentation(label="Step"),
             "mash.rests.duration_min": NodePresentation(
-                label="Time", dimension="time", unit="min", decimals=0
+                label="Time", dimension="time", unit="min", symbol="min", decimals=0
             ),
             "mash.rests.enabled": NodePresentation(label="Enabled"),
             "solver.water": NodePresentation(label="Water solver"),
@@ -207,24 +207,24 @@ PAYLOAD = FreezePayload(
                 ],
             ),
             "solver.water.total_added_salt_mass_g": NodePresentation(
-                label="Added salt mass", dimension="mass", unit="g", decimals=1
+                label="Added salt mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
             "solver.hops": NodePresentation(label="Hop solver"),
             "solver.water.prescription.predicted_mash_ph": NodePresentation(
-                label="Predicted mash pH", dimension="ph", unit="pH", decimals=2
+                label="Predicted mash pH", dimension="ph", unit="pH", symbol="pH", decimals=2
             ),
             "solver.water.mash_additions.gypsum_kg": NodePresentation(
-                label="Mash gypsum", dimension="mass", unit="g", decimals=1
+                label="Mash gypsum", dimension="mass", unit="g", symbol="g", decimals=1
             ),
             "solver.hops.total_mass_kg": NodePresentation(
-                label="Total hop mass", dimension="mass", unit="g", decimals=1
+                label="Total hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
             "batch.yeast.name": NodePresentation(label="Yeast"),
             "equipment.max_hlt_volume_l": NodePresentation(
-                label="Max HLT", dimension="volume", unit="L", decimals=1
+                label="Max HLT", dimension="volume", unit="L", symbol="L", decimals=1
             ),
             "style.og_min": NodePresentation(
-                label="OG min", dimension="gravity", unit="SG", decimals=3
+                label="OG min", dimension="gravity", unit="SG", symbol="SG", decimals=3
             ),
         },
     ),

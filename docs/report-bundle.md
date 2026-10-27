@@ -47,12 +47,12 @@ Firestore transaction.
 
 ```jsonc
 {
-  "bundle_format": 1,
+  "bundle_format": 2,
   "artifact": { "schema_version": 9, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dimension>": { "base_unit", "kind", "units": { … } } },
-    "nodes": { "<path>": { "label", "dimension", "unit", "decimals", "step", "options", "option_labels" } }
+    "nodes": { "<path>": { "label", "dimension", "unit", "symbol", "decimals", "step", "options", "option_labels" } }
   },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity" },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
@@ -66,7 +66,7 @@ Firestore transaction.
 | Block | Notes |
 |---|---|
 | `artifact` | The whole artifact as of freeze. Free-form to the bundle schema — validated by the engine before freeze and pinned by `hash`. |
-| `catalog` | Presentation metadata for **every** path the state exposes. `hash` covers `dimensions + nodes`. `unit` is a **unit id**, not a symbol. |
+| `catalog` | Presentation metadata for **every** path the state exposes. `hash` covers `dimensions + nodes`. `unit` is a **unit id** for conversion; `symbol` is the display suffix and is required wherever `unit` is set. |
 | `batch.identity` | The three component snapshots: `equipment`, `water.source`, `style`. |
 | `state.valuation` | `node id → value` for every node. Boundary nodes map to their plain output map. |
 | `state.roots` | Explicitly authored roots only. Never used to recompute anything. |
@@ -78,8 +78,10 @@ Firestore transaction.
 | `telemetry` | Per solved boundary: binding, applied fingerprint, structured events, warnings, notes. |
 | `content_hash` | Canonical hash of everything except itself. |
 
-`bundle_format` is a literal discriminator (`1`). Unknown fields are rejected;
-unknown formats are refused.
+`bundle_format` is a literal discriminator (`2`). Unknown fields are rejected;
+unknown formats are refused. A shape change bumps the format and regenerates the
+fixture in the same commit; bundles written under an older format are refused
+rather than read optimistically.
 
 ---
 
@@ -114,7 +116,7 @@ minutes. There are no pre-formatted strings.
 
 To display one:
 
-1. Read `catalog.nodes[path]` → `dimension`, `unit` (unit id), `decimals`.
+1. Read `catalog.nodes[path]` → `dimension`, `unit` (unit id), `symbol`, `decimals`.
 2. Convert from base to that unit using `catalog.dimensions[dimension]`:
    - `linear`: `display = base / unit.factor`
    - `affine`: `display = base * unit.factor + unit.offset`
@@ -123,9 +125,9 @@ To display one:
      only nonlinear dimension today (`sg_to_plato` / `plato_to_sg`).
    - `identity`: unchanged.
 3. Round to `decimals` (null means "no fixed precision").
-4. Append the unit **symbol**. The bundle carries ids, not symbols; the
-   [glossary](report-bundle-glossary.md) lists both, and the frontend keeps the
-   symbol map in `views/registry/units.js`.
+4. Append `catalog.nodes[path].symbol` (the display suffix). The unit id is the
+   conversion handle; the symbol is what the readout shows, so a registry pin of
+   `"%"` on ABV survives even though its unit id is `pct`.
 
 Worked examples: `28.0 L`, `1.056 SG`, `13.6 °P`, `12.2 g`, `5.5 %`, `0.714`
 (dimensionless, no symbol).

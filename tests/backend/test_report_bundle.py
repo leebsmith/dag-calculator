@@ -48,7 +48,7 @@ def bundle(**overrides) -> dict:
             "hash": "sha256:catalog",
             "dimensions": {"volume": {"base_unit": "L", "kind": "linear", "units": {}}},
             "nodes": {
-                "batch.v_ferm": {"label": "Fermenter volume", "unit": "L", "decimals": 1},
+                "batch.v_ferm": {"label": "Fermenter volume", "unit": "L", "symbol": "L", "decimals": 1},
                 "mash.rests": {"label": "Mash rests"},
                 "mash.rests.rest_id": {"label": "Step"},
                 "mash.rests.use_temp_c": {"label": "Rest temperature"},
@@ -101,7 +101,7 @@ def bundle(**overrides) -> dict:
 
 def test_a_well_formed_bundle_validates() -> None:
     parsed = ReportBundle.model_validate(bundle())
-    assert parsed.bundle_format == 1
+    assert parsed.bundle_format == 2
     assert parsed.batch.identity["equipment"]["name"] == "Test rig"
 
 
@@ -112,7 +112,7 @@ def test_unknown_fields_are_rejected() -> None:
 
 def test_unknown_bundle_format_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(bundle_format=2))
+        ReportBundle.model_validate(bundle(bundle_format=3))
 
 
 def test_valuation_must_name_declared_nodes() -> None:
@@ -183,7 +183,7 @@ def test_catalog_nodes_may_declare_their_dimension() -> None:
     catalog = bundle()["catalog"]
     catalog = catalog | {
         "nodes": catalog["nodes"]
-        | {"batch.v_ferm": {"label": "V", "dimension": "volume", "unit": "L", "decimals": 1}}
+        | {"batch.v_ferm": {"label": "V", "dimension": "volume", "unit": "L", "symbol": "L", "decimals": 1}}
     }
     parsed = ReportBundle.model_validate(bundle(catalog=catalog))
     entry = parsed.catalog.nodes["batch.v_ferm"]

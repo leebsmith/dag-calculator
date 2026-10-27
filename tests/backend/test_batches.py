@@ -294,6 +294,7 @@ def test_freeze_emits_a_valid_report_bundle():
                         label="Grain temperature",
                         dimension="temperature",
                         unit="degC",
+                        symbol="°C",
                         decimals=1,
                     ),
                     "solver.batch": NodePresentation(label="Batch solver"),
@@ -301,6 +302,7 @@ def test_freeze_emits_a_valid_report_bundle():
                         label="Post-boil gravity",
                         dimension="gravity",
                         unit="SG",
+                        symbol="SG",
                         decimals=3,
                     ),
                 },
@@ -309,7 +311,7 @@ def test_freeze_emits_a_valid_report_bundle():
     )
 
     bundle = ReportBundle.model_validate(repo.bundles[frozen.id])
-    assert bundle.bundle_format == 1
+    assert bundle.bundle_format == 2
     assert bundle.batch.id == frozen.id
     assert bundle.batch.parent_batch_id == rec.id
     assert bundle.batch.name == "Saison"

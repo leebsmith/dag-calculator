@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 
 from app.schemas.canonical import sha256_canonical
 
-BUNDLE_FORMAT = 1
+BUNDLE_FORMAT = 2
 
 
 class BundleModel(BaseModel):
@@ -47,6 +47,7 @@ class NodePresentation(BundleModel):
     label: str
     dimension: str | None = None
     unit: str | None = None
+    symbol: str | None = None
     decimals: int | None = None
     step: str | None = None
     options: list[str] | None = None
@@ -109,7 +110,7 @@ def bundle_content_hash(content: dict[str, Any]) -> str:
 
 
 class ReportBundle(BundleModel):
-    bundle_format: Literal[1] = BUNDLE_FORMAT
+    bundle_format: Literal[2] = BUNDLE_FORMAT
     artifact: ArtifactBundle
     catalog: Catalog
     batch: BatchHeader
@@ -157,6 +158,19 @@ class ReportBundle(BundleModel):
         for path in self.catalog.nodes:
             if not _resolves(path, nodes, identity, schemas):
                 raise ValueError(f'catalog path "{path}" resolves to no node, field, or namespace')
+
+        # A dimensioned node with a unit must name the symbol the readout shows.
+        # Without it a generator prints the unit id ("5.6 pct" for ABV), which is
+        # a silent presentation regression rather than a missing value.
+        missing_symbol = sorted(
+            path
+            for path, entry in self.catalog.nodes.items()
+            if entry.unit is not None and not entry.symbol
+        )
+        if missing_symbol:
+            raise ValueError(
+                "catalog unit without a display symbol: " + ", ".join(missing_symbol)
+            )
 
         for node_id, rows in self.state.collections.items():
             node = nodes.get(node_id)

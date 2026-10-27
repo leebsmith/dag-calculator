@@ -8,7 +8,7 @@ import { resolveReference } from "../../engine/paths.js";
 import { nodeDimension, valueSpecOf } from "../../engine/units.js";
 import { registry } from "./index.js";
 import { steps } from "../steps.js";
-import { UNIT_DIMENSIONS, unitDecimals } from "./units.js";
+import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "./units.js";
 import { WATER_IONS } from "./water.js";
 
 const LABEL_WORDS = {
@@ -99,6 +99,22 @@ function resolveUnit(artifact, dimensionId, spec) {
   return entry?.default ?? dim.base_unit;
 }
 
+// The symbol the readout shows. `resolveUnit` returns an id, so a registry that
+// pins a bare symbol ("%" for ABV) has nowhere to live in the unit field; the
+// report needs it, or it prints the id ("5.6 pct").
+function resolveSymbol(artifact, dimensionId, unitId, spec) {
+  const dim = artifact.dimensions?.[dimensionId];
+  if (!dim) return null;
+  const symbols = unitSymbols(dimensionId);
+  for (const candidate of [spec.displayUnit, spec.unit]) {
+    if (!candidate) continue;
+    if (symbols.has(candidate)) return candidate;
+    const isUnitId = candidate === dim.base_unit || candidate in (dim.units ?? {});
+    if (!isUnitId) return candidate;
+  }
+  return UNIT_SYMBOLS[dimensionId]?.[unitId] ?? unitId ?? null;
+}
+
 // Step rows carry readout labels the registry may not repeat ("− Grain
 // absorption"), and table columns label a path per column. Registry labels win.
 function collectStepLabels(node, labels, columns) {
@@ -172,6 +188,7 @@ export function buildReportCatalog(artifact) {
       label: spec.label ?? stepLabels.get(path) ?? ionLabel(path) ?? humanize(path),
       dimension: dimension && artifact.dimensions?.[dimension] ? dimension : null,
       unit,
+      symbol: dimension ? resolveSymbol(artifact, dimension, unit, spec) : null,
       decimals: spec.decimals ?? (dimension ? unitDecimals(dimension, unit) : null),
       step: spec.step ?? null,
       options: taxonomy ? [...artifact.taxonomies[taxonomy]] : null,
