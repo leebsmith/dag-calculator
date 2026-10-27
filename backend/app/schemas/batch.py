@@ -87,6 +87,7 @@ class FreezePayload(BaseModel):
     report_inputs: ReportInputs
     catalog: CatalogContent
     formatted: dict[str, FormattedValue]
+    formatted_tables: dict[str, list[dict[str, FormattedValue]]]
 
 
 class BatchRecord(BaseModel):

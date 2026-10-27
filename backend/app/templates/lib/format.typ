@@ -2,7 +2,7 @@
 // every figure arrives pre-formatted from the bundle (`formatted`), so this
 // module only looks paths up. No unit conversion, rounding, or symbol choice.
 
-#import "bundle.typ": bundle, batch, state, catalog, display-values
+#import "bundle.typ": bundle, batch, state, catalog, display-values, display-tables
 
 #let path-panic(path, why) = panic("report path " + path + ": " + why)
 
@@ -34,6 +34,15 @@
 
 // True only when the producer emitted a display string for this path.
 #let present-formatted(path) = path in display-values
+
+// Per-row display cells for a collection table. Absent/empty means the block
+// has no rows to print.
+#let formatted-table(collection) = {
+  if collection not in display-tables { return () }
+  display-tables.at(collection)
+}
+
+#let present-formatted-table(collection) = formatted-table(collection).len() > 0
 
 // The printed value, including the symbol ("12.4 °P", "75.6%").
 #let formatted-text(path) = formatted(path).at("text")

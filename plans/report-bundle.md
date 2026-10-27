@@ -46,7 +46,7 @@ artifact or the payload.
 
 ```jsonc
 {
-  "bundle_format": 3,
+  "bundle_format": 4,
   "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
@@ -54,6 +54,7 @@ artifact or the payload.
     "nodes": { "<path>": { "label", "unit", "decimals", "step", "options", "option_labels" } }
   },
   "formatted": { "<path>": { "text": "12.4 °P", "number": "12.4", "unit": "°P" } },
+  "formatted_tables": { "<collection>": [ { "<column>": { "text", "number", "unit" } } ] },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity": { equipment, water_source, style } },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
   "conformance": { … },
@@ -69,6 +70,7 @@ artifact or the payload.
 | `catalog.dimensions` | base unit, kind, per-unit factor/offset or fwd/inv | mirrors the artifact's dimension shape |
 | `catalog.nodes` | per-path presentation: `label`, `dimension`, `unit`, `decimals`, `step`, `options`, `option_labels` | keys resolve by the engine's dotted-path rule; **every** resolvable path is emitted |
 | `formatted` | per-path display strings, unit-aware at freeze | the only display source a generator reads |
+| `formatted_tables` | per-row display cells for collection tables (grist) | derived amounts, PPG, and shares are producer-side |
 | `batch.identity` | the three component snapshots | the document header |
 | `state.valuation` | all 86 node ids → values | authoritative; boundaries are plain output maps |
 | `state.roots` | explicitly-set roots only | authored-vs-inherited (`hasRoot`); **never** used to recompute |
@@ -96,7 +98,7 @@ The schema is deliberately **small**: it does not duplicate the artifact schema.
 engine has already validated it); the bundle schema enforces *bundle* structure and
 cross-references.
 
-1. `bundle_format` is a literal discriminator (currently `3`); unknown ⇒ refuse.
+1. `bundle_format` is a literal discriminator (currently `4`); unknown ⇒ refuse.
 2. Pydantic with `extra="forbid"` on every model; the emitter runs the same check
    before writing, so a malformed bundle never reaches storage.
 3. Cross-reference validators, against the embedded artifact:
@@ -111,7 +113,9 @@ cross-references.
      collection row field exposed in `state.valuation` has a `catalog.nodes`
      entry. A required-but-empty catalog cannot pass;
    - every `formatted` key names a catalog path, and a path whose catalog entry
-     has a unit carries the `number`/`unit` split.
+     has a unit carries the `number`/`unit` split;
+   - every `formatted_tables` key names a collection node, with non-empty cell
+     text.
 4. `content_hash` recomputes from the canonicalized content (`ReportBundle.seal`;
    the validator rejects a mismatch).
 5. A committed fixture bundle is validated in CI, so the shape cannot drift

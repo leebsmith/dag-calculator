@@ -2,6 +2,7 @@
 export const FERMENTABLE_NODES = {
   majorMalts: "grist.major_malts",
   traceMalts: "grist.trace_malts",
+  gristMass: "solver.batch.m_grist",
   weightedLovibond: "grist.weighted_lovibond",
   weightedYield: "grist.weighted_yield_fraction",
   traceMass: "grist.trace_malts_mass",

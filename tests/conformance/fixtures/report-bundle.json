@@ -1,5 +1,5 @@
 {
-  "bundle_format": 3,
+  "bundle_format": 4,
   "artifact": {
     "schema_version": 9,
     "hash": "sha256:8c87b95ee67d917b561cda2a9a6b57f74b4ec23e51d1aba80cc3ba2b3733807e",
@@ -5437,6 +5437,116 @@
         "options": null,
         "option_labels": null
       },
+      "grist.major_malts": {
+        "label": "Grain bill",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.major_malts.name": {
+        "label": "Fermentable",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.major_malts.parts": {
+        "label": "Parts",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.major_malts.pct": {
+        "label": "Bill share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.major_malts.yield_fraction": {
+        "label": "Yield",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.major_malts.color_lovibond": {
+        "label": "Color",
+        "dimension": "grain_color",
+        "unit": "Lovibond",
+        "symbol": "\u00b0L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.trace_malts": {
+        "label": "Trace malts",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.trace_malts.name": {
+        "label": "Fermentable",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.trace_malts.mass_kg": {
+        "label": "Mass",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.trace_malts.yield_fraction": {
+        "label": "Yield",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.trace_malts.color_lovibond": {
+        "label": "Color",
+        "dimension": "grain_color",
+        "unit": "Lovibond",
+        "symbol": "\u00b0L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.water": {
         "label": "Water solver",
         "dimension": null,
@@ -5546,7 +5656,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:16baefa6f889d3b66669e64dae7e4344f8c702685fce59e595790624ab43826b"
+    "hash": "sha256:885823c1d19784d5072634f28ab7a90008061395e84053a8378fdd796897f433"
   },
   "batch": {
     "id": "frozen-1",
@@ -5596,6 +5706,30 @@
           "enabled": true
         }
       ],
+      "grist.major_malts": [
+        {
+          "name": "American 2-row",
+          "pct": 0.85,
+          "parts": 85.0,
+          "yield_fraction": 0.78,
+          "color_lovibond": 1.8
+        },
+        {
+          "name": "Crystal 40",
+          "pct": 0.15,
+          "parts": 15.0,
+          "yield_fraction": 0.74,
+          "color_lovibond": 40.0
+        }
+      ],
+      "grist.trace_malts": [
+        {
+          "name": "Carafa Special II",
+          "mass_kg": 0.1,
+          "yield_fraction": 0.6,
+          "color_lovibond": 500.0
+        }
+      ],
       "solver.batch": {
         "sg_post_boil": 1.055,
         "v_pre_boil": 25.4,
@@ -5638,6 +5772,30 @@
           "use_temp_c": 67.0,
           "duration_min": 60.0,
           "enabled": true
+        }
+      ],
+      "grist.major_malts": [
+        {
+          "name": "American 2-row",
+          "pct": 0.85,
+          "parts": 85.0,
+          "yield_fraction": 0.78,
+          "color_lovibond": 1.8
+        },
+        {
+          "name": "Crystal 40",
+          "pct": 0.15,
+          "parts": 15.0,
+          "yield_fraction": 0.74,
+          "color_lovibond": 40.0
+        }
+      ],
+      "grist.trace_malts": [
+        {
+          "name": "Carafa Special II",
+          "mass_kg": 0.1,
+          "yield_fraction": 0.6,
+          "color_lovibond": 500.0
         }
       ]
     },
@@ -5802,6 +5960,93 @@
       "unit": "kg"
     }
   },
+  "formatted_tables": {
+    "grist.major_malts": [
+      {
+        "name": {
+          "text": "American 2-row",
+          "number": null,
+          "unit": null
+        },
+        "amount": {
+          "text": "4.3 kg",
+          "number": "4.3",
+          "unit": "kg"
+        },
+        "ppg": {
+          "text": "36.0",
+          "number": "36.0",
+          "unit": null
+        },
+        "color": {
+          "text": "1.8 \u00b0L",
+          "number": "1.8",
+          "unit": "\u00b0L"
+        },
+        "bill_pct": {
+          "text": "85.0%",
+          "number": "85.0",
+          "unit": "%"
+        }
+      },
+      {
+        "name": {
+          "text": "Crystal 40",
+          "number": null,
+          "unit": null
+        },
+        "amount": {
+          "text": "0.8 kg",
+          "number": "0.8",
+          "unit": "kg"
+        },
+        "ppg": {
+          "text": "34.2",
+          "number": "34.2",
+          "unit": null
+        },
+        "color": {
+          "text": "40.0 \u00b0L",
+          "number": "40.0",
+          "unit": "\u00b0L"
+        },
+        "bill_pct": {
+          "text": "15.0%",
+          "number": "15.0",
+          "unit": "%"
+        }
+      }
+    ],
+    "grist.trace_malts": [
+      {
+        "name": {
+          "text": "Carafa Special II",
+          "number": null,
+          "unit": null
+        },
+        "amount": {
+          "text": "0.1 kg",
+          "number": "0.1",
+          "unit": "kg"
+        },
+        "ppg": {
+          "text": "27.7",
+          "number": "27.7",
+          "unit": null
+        },
+        "color": {
+          "text": "500.0 \u00b0L",
+          "number": "500.0",
+          "unit": "\u00b0L"
+        },
+        "bill_pct": {
+          "text": "2.0%",
+          "number": "2.0",
+          "unit": "%"
+        }
+      }
+    ]
+  },
   "conformance": {
     "og": {
       "holds": true
@@ -5869,5 +6114,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:ab60b19afdd1b4858b82c76144308f57e7c9823aad9e5007a12fb49557d47e54"
+  "content_hash": "sha256:7d342ddbc35c11d81c1a879622bd8ac5ba594af0e8a26e412f06d2ad4910c85d"
 }

@@ -33,6 +33,32 @@ OUT = (
     / "report-bundle.json"
 )
 
+MAJOR_MALTS = [
+    {
+        "name": "American 2-row",
+        "pct": 0.85,
+        "parts": 85.0,
+        "yield_fraction": 0.78,
+        "color_lovibond": 1.8,
+    },
+    {
+        "name": "Crystal 40",
+        "pct": 0.15,
+        "parts": 15.0,
+        "yield_fraction": 0.74,
+        "color_lovibond": 40.0,
+    },
+]
+
+TRACE_MALTS = [
+    {
+        "name": "Carafa Special II",
+        "mass_kg": 0.1,
+        "yield_fraction": 0.60,
+        "color_lovibond": 500.0,
+    },
+]
+
 RECORD = {
     "name": "House Pale",
     "status": "frozen",
@@ -73,7 +99,9 @@ RECORD = {
                 "duration_min": 60.0,
                 "enabled": True,
             }
-        ]
+        ],
+        "grist.major_malts": MAJOR_MALTS,
+        "grist.trace_malts": TRACE_MALTS,
     },
     "selections": {
         "batch.yeast": {"id": "us-05", "name": "SafAle US-05"},
@@ -98,6 +126,8 @@ RECORD = {
                 "enabled": True,
             }
         ],
+        "grist.major_malts": MAJOR_MALTS,
+        "grist.trace_malts": TRACE_MALTS,
         # The volume-ledger rows reconcile: (V_post 22.4 + late 0.5) * 0.96
         # - (kettle dead 1.0 + transfer 0.5 + trub 0.5) = V_ferm 20.0.
         "solver.batch": {
@@ -275,6 +305,29 @@ PAYLOAD = FreezePayload(
                 label="Time", dimension="time", unit="min", symbol="min", decimals=0
             ),
             "mash.rests.enabled": NodePresentation(label="Enabled"),
+            "grist.major_malts": NodePresentation(label="Grain bill"),
+            "grist.major_malts.name": NodePresentation(label="Fermentable"),
+            "grist.major_malts.parts": NodePresentation(label="Parts"),
+            "grist.major_malts.pct": NodePresentation(
+                label="Bill share", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "grist.major_malts.yield_fraction": NodePresentation(
+                label="Yield", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "grist.major_malts.color_lovibond": NodePresentation(
+                label="Color", dimension="grain_color", unit="Lovibond", symbol="°L", decimals=1
+            ),
+            "grist.trace_malts": NodePresentation(label="Trace malts"),
+            "grist.trace_malts.name": NodePresentation(label="Fermentable"),
+            "grist.trace_malts.mass_kg": NodePresentation(
+                label="Mass", dimension="mass", unit="kg", symbol="kg", decimals=1
+            ),
+            "grist.trace_malts.yield_fraction": NodePresentation(
+                label="Yield", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "grist.trace_malts.color_lovibond": NodePresentation(
+                label="Color", dimension="grain_color", unit="Lovibond", symbol="°L", decimals=1
+            ),
             "solver.water": NodePresentation(label="Water solver"),
             "solver.water.strategy": NodePresentation(
                 label="Strategy",
@@ -339,6 +392,33 @@ PAYLOAD = FreezePayload(
         "equipment.kettle_transfer_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
         "equipment.trub_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
         "solver.batch.m_grist": FormattedValue(text="5.0 kg", number="5.0", unit="kg"),
+    },
+    formatted_tables={
+        "grist.major_malts": [
+            {
+                "name": FormattedValue(text="American 2-row"),
+                "amount": FormattedValue(text="4.3 kg", number="4.3", unit="kg"),
+                "ppg": FormattedValue(text="36.0", number="36.0"),
+                "color": FormattedValue(text="1.8 °L", number="1.8", unit="°L"),
+                "bill_pct": FormattedValue(text="85.0%", number="85.0", unit="%"),
+            },
+            {
+                "name": FormattedValue(text="Crystal 40"),
+                "amount": FormattedValue(text="0.8 kg", number="0.8", unit="kg"),
+                "ppg": FormattedValue(text="34.2", number="34.2"),
+                "color": FormattedValue(text="40.0 °L", number="40.0", unit="°L"),
+                "bill_pct": FormattedValue(text="15.0%", number="15.0", unit="%"),
+            },
+        ],
+        "grist.trace_malts": [
+            {
+                "name": FormattedValue(text="Carafa Special II"),
+                "amount": FormattedValue(text="0.1 kg", number="0.1", unit="kg"),
+                "ppg": FormattedValue(text="27.7", number="27.7"),
+                "color": FormattedValue(text="500.0 °L", number="500.0", unit="°L"),
+                "bill_pct": FormattedValue(text="2.0%", number="2.0", unit="%"),
+            },
+        ],
     },
 )
 

@@ -41,8 +41,9 @@ Rules:
   not with a line number.
 - **Read display strings from the bundle.** `formatted-text(path)`,
   `formatted-number(path)`, and `formatted-unit(path)` return the producer's
-  frozen strings; `option-label(path, raw)` maps taxonomies. Never convert,
-  round, or choose a unit in Typst.
+  frozen strings; `option-label(path, raw)` maps taxonomies; collection tables
+  use `formatted-table(collection)`. Never convert, round, or choose a unit in
+  Typst.
 - **Do not invent Typst API.** If a function is not in `typst-notes.md` or in
   `lib/`, it is unverified; check it against the pinned binary before relying on
   it.
@@ -80,6 +81,7 @@ cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
 
 Enrich both the raw value (`state.valuation` / identity) and its **`formatted`
 entry** (`{ text, number, unit }`), because sections print the formatted string.
+For a row table, add the collection's rows and its `formatted_tables` cells.
 Do not enrich the fixture speculatively — the first section that needs a block
 is the change that justifies it.
 

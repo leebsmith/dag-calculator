@@ -78,6 +78,9 @@ The generator does no numeric work. Every scalar the bundle exposes arrives in
 
 - `text` is what a section prints; `number`/`unit` split the figure for tables
   that align them in separate columns.
+- Collection tables (the grist lists) read `formatted_tables[collection]`: one
+  cell map per row, with derived columns (amounts, PPG, bill share) computed by
+  the producer.
 - `lib/format.typ` exposes `formatted(path)`, `formatted-text(path)`,
   `formatted-number(path)`, `formatted-unit(path)`, and
   `present-formatted(path)`. There is no conversion, rounding, or symbol choice

@@ -47,7 +47,7 @@ Firestore transaction.
 
 ```jsonc
 {
-  "bundle_format": 3,
+  "bundle_format": 4,
   "artifact": { "schema_version": 9, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
@@ -56,6 +56,15 @@ Firestore transaction.
   },
   "formatted": {
     "<path>": { "text": "12.4 °P", "number": "12.4", "unit": "°P" }
+  },
+  "formatted_tables": {
+    "grist.major_malts": [
+      { "name": { "text": "American 2-row" },
+        "amount": { "text": "4.3 kg", "number": "4.3", "unit": "kg" },
+        "ppg": { "text": "36.0", "number": "36.0" },
+        "color": { "text": "1.8 °L", "number": "1.8", "unit": "°L" },
+        "bill_pct": { "text": "85.0%", "number": "85.0", "unit": "%" } }
+    ]
   },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity" },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
@@ -71,6 +80,7 @@ Firestore transaction.
 | `artifact` | The whole artifact as of freeze. Free-form to the bundle schema — validated by the engine before freeze and pinned by `hash`. |
 | `catalog` | Structural presentation: labels, dimensions, options, and the unit/symbol/decimals metadata. The unit choice reflects the batch's display preferences at freeze. |
 | `formatted` | The display strings the report prints, one per scalar path the bundle exposes: `text` (number + symbol), plus `number`/`unit` for tables that align them separately. Produced by the same formatter the UI uses; the report never converts, rounds, or chooses a symbol. |
+| `formatted_tables` | Per-row display cells for collection tables (major and trace grist): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and bill shares; the report only lays them out. |
 | `batch.identity` | The three component snapshots: `equipment`, `water.source`, `style`. |
 | `state.valuation` | `node id → value` for every node. Boundary nodes map to their plain output map. |
 | `state.roots` | Explicitly authored roots only. Never used to recompute anything. |
@@ -82,7 +92,7 @@ Firestore transaction.
 | `telemetry` | Per solved boundary: binding, applied fingerprint, structured events, warnings, notes. |
 | `content_hash` | Canonical hash of everything except itself. |
 
-`bundle_format` is a literal discriminator (`3`). Unknown fields are rejected;
+`bundle_format` is a literal discriminator (`4`). Unknown fields are rejected;
 unknown formats are refused. A shape change bumps the format and regenerates the
 fixture in the same commit; bundles written under an older format are refused
 rather than read optimistically.
@@ -137,6 +147,9 @@ minutes. Raw values are the record; they are never display-ready.
   converts.
 - Taxonomy values keep their raw string in `state`; `formatted[path].text`
   carries the option label when the catalog declares one.
+- Collection tables (grist) read `formatted_tables[collection]`, one dict per
+  row. Derived columns (mass from the solved grist and bill share, PPG from
+  yield, trace bill share from total mass) are computed by the producer.
 
 Absent values (unsolved boundaries, unset selections) have no `formatted`
 entry; absence is meaningful, not zero.

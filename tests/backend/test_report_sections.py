@@ -155,6 +155,26 @@ def test_batch_facts_renders_alone_and_in_the_full_report() -> None:
         assert (root / "report.pdf").stat().st_size > 0
 
 
+def test_grist_tables_are_present_and_optional() -> None:
+    source = (
+        '#import "lib/format.typ": present-formatted-table\n'
+        "#metadata((\n"
+        '  major: present-formatted-table("grist.major_malts"),\n'
+        '  trace: present-formatted-table("grist.trace_malts"),\n'
+        ")) <probe>\n"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, source) == {"major": True, "trace": True}
+
+    bundle = fixture()
+    del bundle["formatted_tables"]["grist.major_malts"]
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, source) == {"major": False, "trace": True}
+        render(root, "batch-facts")
+
+
 def test_volume_ledger_is_present_with_the_cascade_and_equipment() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), BUNDLE)

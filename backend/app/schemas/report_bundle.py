@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 
 from app.schemas.canonical import sha256_canonical
 
-BUNDLE_FORMAT = 3
+BUNDLE_FORMAT = 4
 
 
 class BundleModel(BaseModel):
@@ -123,12 +123,15 @@ def bundle_content_hash(content: dict[str, Any]) -> str:
 
 
 class ReportBundle(BundleModel):
-    bundle_format: Literal[3] = BUNDLE_FORMAT
+    bundle_format: Literal[4] = BUNDLE_FORMAT
     artifact: ArtifactBundle
     catalog: Catalog
     batch: BatchHeader
     state: StateBundle
     formatted: dict[str, FormattedValue] = Field(default_factory=dict)
+    formatted_tables: dict[str, list[dict[str, FormattedValue]]] = Field(
+        default_factory=dict
+    )
     conformance: dict[str, Any] | None = None
     validation: ValidationBundle = Field(default_factory=ValidationBundle)
     telemetry: dict[str, BoundaryTelemetry] = Field(default_factory=dict)
@@ -197,6 +200,21 @@ class ReportBundle(BundleModel):
                 raise ValueError(
                     f'formatted path "{path}" has a display unit but no number/unit split'
                 )
+
+        # Per-row display strings for collection tables (grist, hops, …). Keys
+        # name declared collection nodes; cells are the same FormattedValue.
+        for collection, rows in self.formatted_tables.items():
+            node = nodes.get(collection)
+            if not node or node.get("kind") != "collection":
+                raise ValueError(
+                    f'formatted table "{collection}" is not a collection node'
+                )
+            for row in rows:
+                for column, cell in row.items():
+                    if not cell.text:
+                        raise ValueError(
+                            f'formatted table "{collection}.{column}" has no text'
+                        )
 
         for node_id, rows in self.state.collections.items():
             node = nodes.get(node_id)

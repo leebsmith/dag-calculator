@@ -204,6 +204,7 @@ export async function reportBundleForActive() {
           report_inputs: app.reportInputs(),
           catalog: app.reportCatalog(),
           formatted: app.reportFormatted(),
+          formatted_tables: app.reportFormattedTables(),
         });
   return { name: active.name, bundle };
 }
@@ -231,6 +232,7 @@ export async function freezeActive() {
     report_inputs: app.reportInputs(),
     catalog: app.reportCatalog(),
     formatted: app.reportFormatted(),
+    formatted_tables: app.reportFormattedTables(),
   });
 }
 

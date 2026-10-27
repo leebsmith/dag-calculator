@@ -94,6 +94,7 @@ def bundle(**overrides) -> dict:
                 "notes": ["ok"],
             }
         },
+        "formatted_tables": {},
     }
     base.update(overrides)
     return ReportBundle.seal(base).model_dump(mode="json")
@@ -101,7 +102,7 @@ def bundle(**overrides) -> dict:
 
 def test_a_well_formed_bundle_validates() -> None:
     parsed = ReportBundle.model_validate(bundle())
-    assert parsed.bundle_format == 3
+    assert parsed.bundle_format == 4
     assert parsed.batch.identity["equipment"]["name"] == "Test rig"
 
 
@@ -112,7 +113,7 @@ def test_unknown_fields_are_rejected() -> None:
 
 def test_unknown_bundle_format_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(bundle_format=2))
+        ReportBundle.model_validate(bundle(bundle_format=3))
 
 
 def test_valuation_must_name_declared_nodes() -> None:
@@ -236,10 +237,20 @@ def test_dimensioned_formatted_values_need_the_number_unit_split() -> None:
         ReportBundle.model_validate(bundle(formatted=formatted))
 
 
+def test_formatted_tables_must_name_collection_nodes() -> None:
+    with pytest.raises(ValidationError, match="not a collection node"):
+        ReportBundle.model_validate(bundle(formatted_tables={"batch.v_ferm": []}))
+
+    with pytest.raises(ValidationError, match="has no text"):
+        ReportBundle.model_validate(
+            bundle(formatted_tables={"mash.rests": [{"name": {"text": ""}}]})
+        )
+
+
 def test_freeze_payload_requires_the_bundle_inputs() -> None:
     from app.schemas.batch import FreezePayload
 
     with pytest.raises(ValidationError) as exc:
         FreezePayload()
     missing = {error["loc"][0] for error in exc.value.errors()}
-    assert missing == {"report_inputs", "catalog", "formatted"}
+    assert missing == {"report_inputs", "catalog", "formatted", "formatted_tables"}

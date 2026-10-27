@@ -17,13 +17,14 @@ Anything not here and not in the templates is unverified — check before using 
 From `lib/format.typ`: `req(container, path)`, `opt(container, path)`,
 `node(path)`, `formatted(path)`, `formatted-text(path)`,
 `formatted-number(path)`, `formatted-unit(path)`, `present-formatted(path)`,
+`formatted-table(collection)`, `present-formatted-table(collection)`,
 `option-label(path, raw)`.
 
-`formatted` reads the bundle's pre-formatted display records; the generator never
-converts, rounds, or picks a symbol. Raw numbers stay in `state.valuation` for
-the record, but sections print `formatted` strings. Component names live in
-`batch.identity` and are also present as `formatted["equipment.name"].text`,
-etc.
+`formatted` reads the bundle's pre-formatted display records; `formatted-table`
+reads the per-row cells for a collection. The generator never converts, rounds,
+or picks a symbol. Raw numbers stay in `state.valuation` for the record, but
+sections print `formatted` strings. Component names live in `batch.identity`
+and are also present as `formatted["equipment.name"].text`, etc.
 
 From `lib/bundle.typ`: `bundle`, `batch`, `state`, `catalog`, `display-values`,
 `is-frozen`.

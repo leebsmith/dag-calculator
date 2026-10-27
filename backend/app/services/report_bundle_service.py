@@ -45,6 +45,13 @@ def build_report_bundle(
             path: entry.model_dump(mode="json")
             for path, entry in payload.formatted.items()
         },
+        "formatted_tables": {
+            collection: [
+                {column: cell.model_dump(mode="json") for column, cell in row.items()}
+                for row in rows
+            ]
+            for collection, rows in payload.formatted_tables.items()
+        },
         "batch": {
             "id": frozen_id,
             "name": record.get("name", "Untitled"),

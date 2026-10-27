@@ -67,3 +67,27 @@ test("formatted strings are names for text paths and skip collection fields", as
   const topology = formatted["batch.topology"];
   assert.equal(typeof topology.text, "string");
 });
+
+test("grist tables carry formatted row cells", async () => {
+  const app = await booted();
+  const tables = app.reportFormattedTables();
+
+  const major = tables["grist.major_malts"];
+  assert.ok(major.length > 0);
+  const row = major[0];
+  assert.equal(typeof row.name.text, "string");
+  assert.ok(row.amount.text.endsWith("kg") || row.amount.text.endsWith("lb"));
+  assert.match(row.ppg.text, /^\d+\.\d$/);
+  assert.equal(typeof row.color.text, "string");
+  assert.equal(row.bill_pct.unit, "%");
+
+  assert.deepEqual(tables["grist.trace_malts"], []);
+
+  app.engine.setCollection("grist.trace_malts", [
+    { name: "Carafa", mass_kg: 0.1, yield_fraction: 0.6, color_lovibond: 500 },
+  ]);
+  const trace = app.reportFormattedTables()["grist.trace_malts"];
+  assert.equal(trace.length, 1);
+  assert.equal(trace[0].name.text, "Carafa");
+  assert.equal(trace[0].bill_pct.unit, "%");
+});

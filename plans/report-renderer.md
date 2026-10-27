@@ -139,8 +139,10 @@ refused rather than read optimistically.
 no unit conversion, rounding, or symbol choice in Typst. The browser freeze
 payload now computes `formatted[path] = { text, number, unit }` with the same
 formatter the UI uses at the unit preference in force, and `bundle_format` bumps
-to `3`. Bundles written under format 2 are refused rather than rendered without
-display strings.
+to `3`. Format 4 adds `formatted_tables` — per-row cells for collection tables
+(major/trace grist), with derived amounts, PPG, and bill shares computed by the
+producer. Bundles written under an older format are refused rather than rendered
+without display strings.
 
 ### 5.2 Report spec
 
@@ -260,6 +262,8 @@ conversion or rounding.
 - Nonlinear units (SG ↔ °P) are handled by the producer's engine functions, not
   by a Typst helper.
 - `catalog.nodes[path].option_labels` still maps taxonomy values for labels.
+- Collection tables read `formatted_tables[collection]`; the producer owns the
+  derived columns (solved mass × bill share, PPG from yield, trace mass share).
 - The display strings are covered by `content_hash`, so a frozen report is a
   stable view of the freeze-time presentation; changing unit preferences later
   does not rewrite it.

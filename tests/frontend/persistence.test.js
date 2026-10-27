@@ -108,6 +108,7 @@ function fakeApp() {
     }),
     reportCatalog: () => ({ dimensions: {}, nodes: {} }),
     reportFormatted: () => ({}),
+    reportFormattedTables: () => ({}),
   };
 }
 
@@ -346,6 +347,7 @@ test("freezeActive posts the app's freeze payload, and only for drafts", async (
     },
     catalog: { dimensions: {}, nodes: {} },
     formatted: {},
+    formatted_tables: {},
   });
 
   persistence.clearActive();
