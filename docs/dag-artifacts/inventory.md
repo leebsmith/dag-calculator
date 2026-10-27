@@ -179,6 +179,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.grain_moisture_fraction` | root |
 | `batch.hlt_starting_volume_l` | root |
 | `batch.late_addition_intent` | choice |
+| `batch.late_addition_volume_l` | derived |
 | `batch.mash_thickness_l_per_kg` | root |
 | `batch.realized_abv` | derived |
 | `batch.realized_fg` | derived |

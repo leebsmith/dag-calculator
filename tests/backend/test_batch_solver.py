@@ -6,6 +6,7 @@ import pytest
 from conftest import make_batch_request
 
 from app.core.batch_solver import (
+    V_BAR_METRIC,
     GrainBillEntry,
     SolverValidationError,
     composite_fermentability_fraction,
@@ -130,6 +131,24 @@ def test_pre_boil_volume_accounts_for_post_boil_losses():
     assert result.v_pre_boil == pytest.approx(
         (20.0 + 1.0 + 0.5 + 0.5) / (1.0 - 0.04) + 3.0
     )
+
+
+def test_ledger_reconciles_with_the_late_addition_volume():
+    # The solver shrinks the wort to make room for the sugar, so the ledger's
+    # cold chain must add V_late back before shrinkage:
+    # (V_post_wort + v_bar * S_late) * (1 - f_shrink) - losses = V_ferm.
+    s_late = 0.9
+    losses = 1.0 + 0.5 + 0.5
+    result = resolve_volumetric_reversal(
+        v_ferm=20.0, sg_post_boil=1.05, v_kettle_dead=1.0,
+        delta_v_evap=3.0, s_late_add=s_late, v_kettle_transfer=0.5, v_trub=0.5,
+    )
+    v_post = result.v_pre_boil - 3.0
+    v_late = V_BAR_METRIC * s_late
+    assert v_post + v_late == pytest.approx(
+        (20.0 + losses) / (1.0 - 0.04)
+    )
+    assert (v_post + v_late) * (1.0 - 0.04) - losses == pytest.approx(20.0)
 
 
 # ---------------------------------------------------------------------------

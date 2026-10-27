@@ -267,7 +267,7 @@ that every enforcement path exists and that the row set stays complete.
 | A7 | priors are converted apparent observations | values + round-trip | `tests/backend/conformance/test_basis_conversion.py` |
 | A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/attenuation-display.test.js` |
 | A9 | trace malts colour-only | no extract, no fermentability | `tests/guards/seed-rebuild.test.js` |
-| A10 | hot-side sugar displacement unmodelled | bounded by `v_bar·s_late_add` | doc only |
+| A10 | post-boil cascade volume is wort-only | `V_post` excludes sugar (hop utilisation); the ledger adds `v_bar·S_late` back | `tests/backend/test_batch_solver.py`, `tests/frontend/late-addition-parts.test.js` |
 | A11 | `AE_app ≤ 0` | computed and displayed (`≤ 1.000` FG policy) | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
 | A12 | frozen bundles never re-solve | embedded artifact | `tests/backend/conformance/test_report_bundle_fixture.py` |
 | A13 | derate points apply before conversion | order stated in `docs/engine.md` | `tests/frontend/selection-validation.test.js` |

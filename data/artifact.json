@@ -3345,13 +3345,22 @@
       "kind": "derived",
       "inputs": {
         "v_post_boil": "solver.batch.cascade.v_post_boil",
+        "late_volume": "batch.late_addition_volume_l",
         "f_shrink": "equipment.shrinkage_pct"
       },
       "expr": {
         "op": "*",
         "args": [
           {
-            "ref": "v_post_boil"
+            "op": "+",
+            "args": [
+              {
+                "ref": "v_post_boil"
+              },
+              {
+                "ref": "late_volume"
+              }
+            ]
           },
           {
             "ref": "f_shrink"
@@ -4448,6 +4457,26 @@
       },
       "output": {
         "dimension": "mass"
+      }
+    },
+    "batch.late_addition_volume_l": {
+      "kind": "derived",
+      "inputs": {
+        "extract": "batch.sugar_extract_total"
+      },
+      "expr": {
+        "op": "*",
+        "args": [
+          {
+            "const": "v_bar"
+          },
+          {
+            "ref": "extract"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "volume"
       }
     },
     "batch.sugar_fermentability_effective": {

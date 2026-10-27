@@ -8,6 +8,7 @@ import { artifact } from "./util.js";
 // set. A new one must be reviewed (add here), not silently skipped.
 const INTENTIONAL_UNCHECKED = [
   "batch.delta_v_evap",
+  "batch.late_addition_volume_l",
   "batch.runnings_ratio",
   "batch.s_late_add_request",
   "batch.sugar_share_request",

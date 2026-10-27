@@ -241,6 +241,10 @@ functions `cutaia_real_extract`, `cutaia_abv_plato`, `sg_to_plato` and `plato_to
 | `rho_water` | `rho_water` |
 | `f_shrink` | `default_shrinkage_fraction` |
 
+`v_bar · S_late` is the dissolved late addition's displacement volume
+(`V_late`). The solver subtracts it from the hot pre-boil, so the fermenter
+target is the total cold volume — wort plus sugar — not the wort alone.
+
 Tun occupancy uses Palmer's displacement `grain_displacement_l_per_kg` (0.32 qt/lb
 = 0.667632 L/kg). The binding phase changes with gravity, so both are derived and
 the relation compares the larger:
@@ -317,7 +321,13 @@ volume, so the grist is sized for the extract the loss carries away.
 
 Kettle to fermenter: shrink the entire hot volume first, then subtract the additives.
 
-    V_packaged = V_post · (1 - f_shrink) - V_trub - V_kettle_dead - V_kettle_transfer
+    V_packaged = (V_post + V_late) · (1 - f_shrink)
+                 - V_trub - V_kettle_dead - V_kettle_transfer
+
+`V_post` is the wort-only post-boil volume (the hop-utilisation volume);
+`V_late = v_bar · S_late` is the dissolved late addition, added at knockout and
+shrunk with the wort. The volume ledger reports both rows, so the cold chain
+closes on `V_ferm`.
 
 Applying shrinkage to the net volume instead would incorrectly shrink the losses themselves.
 

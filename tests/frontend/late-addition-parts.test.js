@@ -115,6 +115,31 @@ test("saving a share draft with no weights completes them", async () => {
   assert.ok(row.resolved_mass_kg > 0);
 });
 
+test("the late-addition volume feeds the ledger's shrinkage base", async () => {
+  const app = createTestApp();
+  const water = Object.values(cache.references.water_report ?? {})[0] ?? {};
+  await app.loadState({
+    identity: {
+      style: cache.references.style["21A"] ?? {},
+      equipment: cache.references.equipment?.["herms-30l"] ?? {},
+      "water.source": water,
+    },
+    roots: { "batch.late_addition_intent": "dose" },
+    collections: { "batch.sugars": [{ ...ROW, mass_kg: 1.0, yield_fraction: 0.9 }] },
+    selections: {},
+  });
+  await app.boot();
+
+  const extract = app.engine.get("batch.sugar_extract_total");
+  const lateVolume = app.engine.get("batch.late_addition_volume_l");
+  assert.ok(Math.abs(lateVolume - extract * 0.625) < 1e-9);
+
+  const post = app.engine.resolve("solver.batch.cascade.v_post_boil");
+  const shrink = app.engine.resolve("equipment.shrinkage_pct");
+  const shrinkage = app.engine.get("batch.shrinkage_volume_l");
+  assert.ok(Math.abs(shrinkage - (post + lateVolume) * shrink) < 1e-9);
+});
+
 test("a zero share never invents row weights", async () => {
   const app = createTestApp();
   await app.boot();

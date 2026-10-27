@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_106 paths_
+_107 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -60,6 +60,7 @@ _106 paths_
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
 | `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
+| `batch.late_addition_volume_l` | ＋ Late-addition volume | derived | volume | L | 1 | — |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
@@ -288,7 +289,7 @@ _27 paths_
 | `solver.batch.cascade.sg_pre_boil` | Gravity | output | gravity | Plato (°P) | 1 | — |
 | `solver.batch.cascade.v_absorption` | − Grain absorption | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_mc` | Grain moisture (per malt, backfilled) | output | volume | L | 1 | — |
-| `solver.batch.cascade.v_post_boil` | Post-boil (hot) | output | volume | L | 1 | — |
+| `solver.batch.cascade.v_post_boil` | Post-boil (wort, hot) | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_run1` | First runnings | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_run2` | Second runnings | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_sol` | Dissolved extract | output | volume | L | 1 | — |
