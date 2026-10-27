@@ -4799,17 +4799,116 @@
       "temperature": {
         "base_unit": "degC",
         "kind": "affine",
-        "units": {}
+        "units": {
+          "degF": {
+            "factor": 1.8,
+            "offset": 32.0,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "temperature_delta": {
+        "base_unit": "dC",
+        "kind": "linear",
+        "units": {
+          "dF": {
+            "factor": 0.5555555555555556,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "temperature_delta_per_time": {
+        "base_unit": "dC_per_min",
+        "kind": "linear",
+        "units": {
+          "dF_per_min": {
+            "factor": 0.5555555555555556,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "time": {
+        "base_unit": "min",
+        "kind": "linear",
+        "units": {
+          "hr": {
+            "factor": 60.0,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          },
+          "day": {
+            "factor": 1440.0,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
       },
       "volume": {
         "base_unit": "L",
         "kind": "linear",
-        "units": {}
+        "units": {
+          "gal": {
+            "factor": 3.785411784,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          },
+          "qt": {
+            "factor": 0.946352946,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          },
+          "ml": {
+            "factor": 0.001,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "volume_per_time": {
+        "base_unit": "L_per_hr",
+        "kind": "linear",
+        "units": {
+          "gal_per_hr": {
+            "factor": 3.785411784,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
       },
       "mass": {
         "base_unit": "kg",
         "kind": "linear",
-        "units": {}
+        "units": {
+          "lb": {
+            "factor": 0.45359237,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          },
+          "g": {
+            "factor": 0.001,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          },
+          "oz": {
+            "factor": 0.028349523125,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
       },
       "gravity": {
         "base_unit": "SG",
@@ -4822,6 +4921,120 @@
             "inv": "plato_to_sg"
           }
         }
+      },
+      "grain_color": {
+        "base_unit": "Lovibond",
+        "kind": "linear",
+        "units": {
+          "EBC": {
+            "factor": 0.5076142131979695,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "beer_color": {
+        "base_unit": "SRM",
+        "kind": "linear",
+        "units": {
+          "EBC": {
+            "factor": 0.5076142131979695,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "specific_heat": {
+        "base_unit": "kcal_per_kg_degC",
+        "kind": "linear",
+        "units": {
+          "btu_per_lb_degF": {
+            "factor": 1.0,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "mash_thickness": {
+        "base_unit": "L_per_kg",
+        "kind": "linear",
+        "units": {
+          "qt_per_lb": {
+            "factor": 2.08635,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "extract_yield": {
+        "base_unit": "L_deg_per_kg",
+        "kind": "linear",
+        "units": {
+          "gal_deg_per_lb": {
+            "factor": 8.3454,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "total_extract": {
+        "base_unit": "L_deg",
+        "kind": "linear",
+        "units": {
+          "gal_pts": {
+            "factor": 3.785411784,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "ph": {
+        "base_unit": "pH",
+        "kind": "linear",
+        "units": {}
+      },
+      "concentration": {
+        "base_unit": "ppm",
+        "kind": "linear",
+        "units": {}
+      },
+      "percentage": {
+        "base_unit": "fraction",
+        "kind": "linear",
+        "units": {
+          "pct": {
+            "factor": 0.01,
+            "offset": null,
+            "fwd": null,
+            "inv": null
+          }
+        }
+      },
+      "abv": {
+        "base_unit": "pct",
+        "kind": "linear",
+        "units": {}
+      },
+      "ibu": {
+        "base_unit": "IBU",
+        "kind": "linear",
+        "units": {}
+      },
+      "reference": {
+        "base_unit": "id",
+        "kind": "identity",
+        "units": {}
+      },
+      "dimensionless": {
+        "base_unit": "1",
+        "kind": "identity",
+        "units": {}
       }
     },
     "nodes": {
@@ -5074,7 +5287,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:7dc71d1aaadc99466eda472b8d4721be29010986876ff11b5775c8acd92a4e82"
+    "hash": "sha256:f80d4cb131f987185655be6b25da017702cc282077d95b3d5fe677c8539415b0"
   },
   "batch": {
     "id": "frozen-1",
@@ -5233,5 +5446,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:09355e9306793f1f280793c59305392cea1d2ee9e7d48b075e1bac3f7854edbb"
+  "content_hash": "sha256:eae4dd94b6309ea4fb57fd0eeda067347eda432a11b98478d57a75d6c30fde46"
 }

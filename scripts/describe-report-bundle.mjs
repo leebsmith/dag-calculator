@@ -17,8 +17,11 @@ function metaFor(bundle, path) {
 
 function displayMeta(meta) {
   if (!meta) return "";
-  const symbol = UNIT_SYMBOLS[meta.dimension]?.[meta.unit];
-  const unit = meta.unit ? ` [${symbol ?? meta.unit}]` : "";
+  const symbol = meta.symbol ?? UNIT_SYMBOLS[meta.dimension]?.[meta.unit] ?? meta.unit;
+  let unit = "";
+  if (meta.unit) {
+    unit = symbol && symbol !== meta.unit ? ` [${meta.unit} → ${symbol}]` : ` [${meta.unit}]`;
+  }
   return `  // ${meta.label}${unit}`;
 }
 

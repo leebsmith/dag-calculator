@@ -13,11 +13,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from app.artifact import load_artifact
 from app.schemas.batch import FreezePayload
 from app.schemas.report_bundle import (
     BoundaryTelemetry,
     CatalogContent,
-    DimensionSpec,
     NodePresentation,
     ReportInputs,
     ValidationBundle,
@@ -147,17 +147,11 @@ PAYLOAD = FreezePayload(
             ),
         },
     ),
+    # The catalog's dimension block is the artifact's, verbatim: production
+    # copies it through `buildReportCatalog`, so a hand-built thinner copy would
+    # let a broken helper pass the fixture and fail in production.
     catalog=CatalogContent(
-        dimensions={
-            "temperature": DimensionSpec(base_unit="degC", kind="affine"),
-            "volume": DimensionSpec(base_unit="L", kind="linear"),
-            "mass": DimensionSpec(base_unit="kg", kind="linear"),
-            "gravity": DimensionSpec(
-                base_unit="SG",
-                kind="nonlinear",
-                units={"Plato": {"fwd": "sg_to_plato", "inv": "plato_to_sg"}},
-            ),
-        },
+        dimensions=load_artifact()["dimensions"],
         nodes={
             "batch.v_ferm": NodePresentation(
                 label="Fermenter volume", dimension="volume", unit="L", symbol="L", decimals=1
