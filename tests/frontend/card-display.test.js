@@ -232,6 +232,23 @@ test("late additions: the sugar draft fields resolve inside the card's slice", a
   assert.match(app.sugarResultLabel, /sugar/);
 });
 
+test("late additions: the configure row counts the authored sugars", async () => {
+  const app = await bootedApp();
+  assert.equal(app.sugarCountLabel, "No sugars");
+
+  app.openSugarEditor();
+  app.addCatalogSugar(app.sugarCatalog[0].id);
+  app.saveSugarEditor();
+  app.compute();
+  assert.equal(app.sugarCountLabel, "1 sugar");
+
+  app.openSugarEditor();
+  app.addCatalogSugar(app.sugarCatalog[1].id);
+  app.saveSugarEditor();
+  app.compute();
+  assert.equal(app.sugarCountLabel, "2 sugars");
+});
+
 test("late additions: the draft mass and extract readouts follow the open draft", async () => {
   const app = await bootedApp();
   const sugar = app.sugarCatalog[0];

@@ -30,17 +30,32 @@ async function appWithSugar() {
   return app;
 }
 
-test("the panel appears and opens when sugar is first authored", async () => {
+test("the panel appears collapsed when sugar is first authored", async () => {
   const app = await appWithSugar();
   assert.equal(app.latePinPanelVisible, true);
-  assert.equal(app.latePinPanelOpen, true);
+  assert.equal(app.latePinPanelOpen, false);
   assert.equal(app.scalePin, "abv");
   assert.equal(app.scalePreviewRows.length, 3);
   assert.equal(app.scalePreviewRows.filter((row) => row.active).length, 1);
 });
 
+test("the panel opens on request and stays open across a re-solve", async () => {
+  const app = await appWithSugar();
+
+  app.toggleLatePinPanel();
+  assert.equal(app.latePinPanelOpen, true);
+  app.compute();
+  assert.equal(app.latePinPanelOpen, true);
+
+  app.toggleLatePinPanel();
+  assert.equal(app.latePinPanelOpen, false);
+});
+
 test("the panel collapses when no sugar is active", async () => {
   const app = await appWithSugar();
+  app.toggleLatePinPanel();
+  assert.equal(app.latePinPanelOpen, true);
+
   app.engine.setCollection("batch.sugars", []);
   app.compute();
   assert.equal(app.latePinPanelVisible, false);

@@ -262,7 +262,7 @@ exact share in share mode, the dose plus the span of shares in dose mode
 (`Previews hold 0.50 lb sugar extract · 5.3–6.2% of extract`), quoted in the
 sugar table's display unit.
 
-The panel expands when sugar is first authored and collapses when no sugar
+The panel starts collapsed, expands on request, and collapses when no sugar
 contributes. The Late Additions card and its “Configure Sugars” button remain.
 The Style card owns the pin selector, active target, style reset, and the
 pin-aware graph; the Late Additions panel never edits them, so the pin remains

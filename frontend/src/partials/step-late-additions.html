@@ -5,14 +5,11 @@
   </div>
 
   <div class="step-card-content">
-    <div class="table-header-toolbar">
-      <div>
-        <h3 class="modal-drawer-title">Late Sugar Additions</h3>
-        <p class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
-          ? 'Kettle sugars authored as a share of total extract; the solver derives the row masses.'
-          : 'Kettle sugars, dosed by mass; they feed the batch solver\'s late extract.'"></p>
-      </div>
-      <button type="button" class="btn-primary text-xs" @click="openSugarEditor()">Configure Sugars ⚙</button>
+    <div>
+      <h3 class="modal-drawer-title">Late Sugar Additions</h3>
+      <p class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
+        ? 'Kettle sugars authored as a share of total extract; the solver derives the row masses.'
+        : 'Kettle sugars, dosed by mass; they feed the batch solver\'s late extract.'"></p>
     </div>
 
     <template x-if="lateIntentField">
@@ -61,6 +58,48 @@
         </div>
       </div>
     </template>
+
+    <div class="table-header-toolbar">
+      <span class="text-xs text-muted" x-text="sugarCountLabel"></span>
+      <button type="button" class="btn-primary text-xs" @click="openSugarEditor()">Configure Sugars ⚙</button>
+    </div>
+
+    <template x-if="lateSugarField">
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <template x-for="c in lateSugarField.columns" :key="c.id">
+                <th :class="c.dimension ? 'text-right' : ''" x-text="fmt.formatColumnHeader(c)"></th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(row, ri) in lateSugarField.rows" :key="ri">
+              <tr>
+                <template x-for="c in lateSugarField.columns" :key="c.id">
+                  <td :class="c.dimension ? 'text-right tabular-nums' : ''" x-text="row[c.id]"></td>
+                </template>
+              </tr>
+            </template>
+            <template x-if="lateSugarField.rows.length === 0">
+              <tr>
+                <td :colspan="lateSugarField.columns.length" class="table-empty-cell">
+                  No sugars yet. Click “Configure Sugars” to add late additions.
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <p class="text-xs text-muted">
+      Fermentable is the real share of extract. <span aria-hidden="true">~</span> assumed
+      prior · <span aria-hidden="true">≥</span> published minimum (a floor) ·
+      <span aria-hidden="true">≈</span> converted from apparent attenuation at 12 °P.
+      In share mode, Parts weight the sugar-extract budget and Mass is derived.
+    </p>
 
     <template x-if="latePinPanelVisible">
       <div class="synthesized-card">
@@ -125,43 +164,6 @@
         </div>
       </div>
     </template>
-
-    <template x-if="lateSugarField">
-      <div class="data-table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <template x-for="c in lateSugarField.columns" :key="c.id">
-                <th :class="c.dimension ? 'text-right' : ''" x-text="fmt.formatColumnHeader(c)"></th>
-              </template>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="(row, ri) in lateSugarField.rows" :key="ri">
-              <tr>
-                <template x-for="c in lateSugarField.columns" :key="c.id">
-                  <td :class="c.dimension ? 'text-right tabular-nums' : ''" x-text="row[c.id]"></td>
-                </template>
-              </tr>
-            </template>
-            <template x-if="lateSugarField.rows.length === 0">
-              <tr>
-                <td :colspan="lateSugarField.columns.length" class="table-empty-cell">
-                  No sugars yet. Click “Configure Sugars” to add late additions.
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-    </template>
-
-    <p class="text-xs text-muted">
-      Fermentable is the real share of extract. <span aria-hidden="true">~</span> assumed
-      prior · <span aria-hidden="true">≥</span> published minimum (a floor) ·
-      <span aria-hidden="true">≈</span> converted from apparent attenuation at 12 °P.
-      In share mode, Parts weight the sugar-extract budget and Mass is derived.
-    </p>
 
     <div class="grain-bill-summary" x-show="lateSugarField && lateSugarField.rows.length > 0">
       <div class="grain-bill-summary-item">

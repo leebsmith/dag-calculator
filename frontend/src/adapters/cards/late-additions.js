@@ -20,6 +20,7 @@ import {
   formatPercentRounded,
   formatValueWithUnit,
   formatWithDecimals,
+  countLabel,
   resultCounter,
 } from "../../utils.js";
 
@@ -141,7 +142,6 @@ export function registerLateAdditionsCard(app, ctx) {
     // Rows for the read-only summary card (refreshed by refreshLateAdditionsCard).
     sugarList: [],
     latePinPanelOpen: false,
-    latePinPanelSeen: false,
     latePinPanelVisible: false,
     scalePreviewRows: [],
     previewCompositionCaption: "",
@@ -474,6 +474,12 @@ export function registerLateAdditionsCard(app, ctx) {
         });
       },
     },
+    sugarCountLabel: {
+      configurable: true,
+      get() {
+        return this.sugarList.length ? countLabel(this.sugarList.length, "sugar") : "No sugars";
+      },
+    },
   });
 }
 
@@ -485,15 +491,7 @@ export function refreshLateAdditionsCard(app, ctx) {
   app.sugarEffectDisplayState = sugarEffectDisplayOf(effect);
   app.sugarList = rows;
   app.latePinPanelVisible = app.sugarIsActive;
-  const active = app.latePinPanelVisible;
-  if (active && !app.latePinPanelSeen) {
-    app.latePinPanelSeen = true;
-    app.latePinPanelOpen = true;
-  }
-  if (!active) {
-    app.latePinPanelSeen = false;
-    app.latePinPanelOpen = false;
-  }
+  if (!app.latePinPanelVisible) app.latePinPanelOpen = false;
   app.syncScalePreviewState();
   if (!rows.length) return;
   const share = Number(ctx.engine.get(N.share)) || 0;
@@ -534,12 +532,12 @@ export const KEYS = [
   "sugarDraftMassDisplay",
   "sugarDraftExtractDisplay",
   "sugarResultLabel",
+  "sugarCountLabel",
   "seedShareFromDose",
   "setLateAdditionIntent",
   "adoptLateAdditionDose",
   "adoptLateAdditionShare",
   "latePinPanelOpen",
-  "latePinPanelSeen",
   "toggleLatePinPanel",
   "scalePreviewRows",
   "previewDoseDisplay",
