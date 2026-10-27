@@ -1,47 +1,64 @@
 #!/usr/bin/env bash
-# Concatenate the report-renderer seed set into one Markdown document for a
-# notebook/LLM context. Documents come through as-is, code sources are fenced.
-#
-#   scripts/seed-report-notebook.sh [--glossary] [--bundle PATH] [OUT]
-#   OUT=/tmp/seed.md scripts/seed-report-notebook.sh
-#
-# --glossary    append the generated path index (labels, units, decimals)
-# --bundle P    append `scripts/describe-report-bundle.mjs` output for a bundle
-#               (also honoured as the BUNDLE environment variable)
-#
-# Default output is .local/report-notebook-seed.md (gitignored).
+# Concatenate the report-renderer reference set into one Markdown document, and
+# optionally describe a real bundle into a second, small one.
 set -euo pipefail
 
 root=$(git rev-parse --show-toplevel)
 cd "$root"
 
-with_glossary=0
+usage() {
+  cat <<'TXT'
+usage: scripts/seed-report-notebook.sh [--bundle PATH] [OUT]
+
+Writes the sources for a report-renderer notebook:
+
+  OUT          the master concatenation — design record, renderer contract,
+               authoring checklist, bundle contract, Typst notes, the generated
+               path glossary, the template sources, and the format-parity test.
+               Default: .local/report-notebook-seed.md
+  OUT-values   one line per resolved path in a real bundle, produced by
+               scripts/describe-report-bundle.mjs. Written only with --bundle;
+               the path is OUT with "-values.txt" replacing ".md"
+               (default .local/report-notebook-seed-values.txt).
+
+options:
+  --bundle PATH   describe a downloaded report bundle into the -values file
+  -h, --help      show this text
+
+environment:
+  OUT             alternative to the positional output path
+  BUNDLE          alternative to --bundle
+TXT
+}
+
+with_values=""
 out=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --glossary) with_glossary=1 ;;
-    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+    -h|--help) usage; exit 0 ;;
     --bundle)
-      [ "$#" -ge 2 ] || { echo "--bundle needs a path" >&2; exit 1; }
-      BUNDLE=$2
+      [ "$#" -ge 2 ] || { echo "--bundle needs a path" >&2; usage >&2; exit 1; }
+      with_values=$2
       shift
       ;;
-    --bundle=*) BUNDLE=${1#--bundle=} ;;
+    --bundle=*) with_values=${1#--bundle=} ;;
+    -*) echo "unknown option: $1" >&2; usage >&2; exit 1 ;;
     *) out="$1" ;;
   esac
   shift
 done
 out=${out:-${OUT:-.local/report-notebook-seed.md}}
+with_values=${with_values:-${BUNDLE:-}}
 
-# Prose and reference first, then the data, then the code that consumes it.
+# Prose and reference first, then the code that consumes them.
 documents=(
   plans/report-renderer.md
   docs/report-renderer.md
   docs/adding-a-section.md
   docs/report-bundle.md
   docs/typst-notes.md
+  docs/report-bundle-glossary.md
 )
-[ "$with_glossary" -eq 1 ] && documents+=(docs/report-bundle-glossary.md)
 
 code=(
   backend/app/templates/report.typ
@@ -54,11 +71,16 @@ missing=0
 for f in "${documents[@]}" "${code[@]}"; do
   [ -f "$f" ] || { echo "missing: $f" >&2; missing=1; }
 done
-if [ -n "${BUNDLE:-}" ] && [ ! -f "$BUNDLE" ]; then
-  echo "missing bundle: $BUNDLE" >&2
+if [ -n "$with_values" ] && [ ! -f "$with_values" ]; then
+  echo "missing bundle: $with_values" >&2
   missing=1
 fi
 [ "$missing" -eq 0 ] || { echo "refusing to write a partial seed document" >&2; exit 1; }
+
+values_out="${out%.md}-values.txt"
+if [ -n "$with_values" ] && [ "$values_out" = "$out" ]; then
+  values_out="${out}-values.txt"
+fi
 
 mkdir -p "$(dirname "$out")"
 : > "$out"
@@ -109,15 +131,15 @@ emit_file() { # $1 = source path, $2 = display label
 }
 
 for f in "${documents[@]}"; do emit_file "$f" "$f"; done
-
-if [ -n "${BUNDLE:-}" ]; then
-  described=.local/report-notebook-describe.txt
-  node scripts/describe-report-bundle.mjs "$BUNDLE" > "$described"
-  emit_file "$described" "report bundle $(basename "$BUNDLE") — scripts/describe-report-bundle.mjs"
-  rm -f "$described"
-fi
-
 for f in "${code[@]}"; do emit_file "$f" "$f"; done
 
-printf 'seed: %s sources -> %s (%s bytes)\n' \
+printf 'master: %s sources -> %s (%s bytes)\n' \
   "$emitted" "$out" "$(wc -c < "$out" | tr -d ' ')"
+
+if [ -n "$with_values" ]; then
+  node scripts/describe-report-bundle.mjs "$with_values" > "$values_out"
+  printf 'values: %s -> %s (%s bytes)\n' \
+    "$(basename "$with_values")" "$values_out" "$(wc -c < "$values_out" | tr -d ' ')"
+elif [ -f "$values_out" ]; then
+  echo "note: $values_out is from a previous run; regenerate with --bundle" >&2
+fi
