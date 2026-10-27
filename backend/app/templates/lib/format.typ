@@ -2,7 +2,7 @@
 // catalog metadata. Every accessor panics with the dotted path it was given, so
 // a template mistake names a bundle path rather than a line number.
 
-#import "bundle.typ": bundle, state, catalog
+#import "bundle.typ": bundle, batch, state, catalog
 
 #let path-panic(path, why) = panic("report path " + path + ": " + why)
 
@@ -21,9 +21,35 @@
   if type(container) == dictionary { container.at(path, default: none) } else { none }
 }
 
-// The longest node-id prefix of `path` that the valuation holds, then the
-// remaining suffix walks into a boundary output map, selection, or row.
-#let value(path) = {
+// A component field (`equipment.mash_dead_space_l`, `style.og_min`, or the
+// two-segment `water.source.calcium_ca`) lives in `batch.identity`, not in the
+// node valuation. Returns `none` when the namespace or field is absent.
+#let identity-value(path) = {
+  let parts = path.split(".")
+  if parts.len() < 2 { return none }
+  let namespace = if parts.at(0) == "water" and parts.len() > 2 and parts.at(1) == "source" {
+    "water.source"
+  } else {
+    parts.at(0)
+  }
+  let container = opt(batch.identity, namespace)
+  if container == none { return none }
+  let rest = if namespace == "water.source" { parts.slice(2) } else { parts.slice(1) }
+  let current = container
+  while rest.len() > 0 {
+    if type(current) != dictionary { return none }
+    let key = rest.at(0)
+    if key not in current { return none }
+    current = current.at(key)
+    rest = rest.slice(1)
+  }
+  current
+}
+
+// Non-panicking resolution: (found, value). The longest valuation prefix wins;
+// the remaining suffix may be an array index or a flattened boundary output key
+// (`cascade.v_strike` is one key, not two nested members).
+#let lookup(path) = {
   let parts = path.split(".")
   let node-id = none
   let suffix = ()
@@ -34,21 +60,47 @@
       suffix = parts.slice(i)
     }
   }
-  if node-id == none { path-panic(path, "no node in state.valuation") }
+  if node-id == none {
+    let fallback = identity-value(path)
+    if fallback != none { return (true, fallback) }
+    return (false, none)
+  }
   let current = state.valuation.at(node-id)
-  for part in suffix {
+  let rest = suffix
+  while rest.len() > 0 {
     if type(current) == array {
-      let index = int(part)
-      if index < 0 or index >= current.len() { path-panic(path, "row index out of range") }
+      let index = int(rest.at(0))
+      if index < 0 or index >= current.len() { return (false, none) }
       current = current.at(index)
+      rest = rest.slice(1)
     } else if type(current) == dictionary {
-      if part not in current { path-panic(path, "missing output key") }
-      current = current.at(part)
+      let i = rest.len()
+      let matched = false
+      while i > 0 {
+        let key = rest.slice(0, i).join(".")
+        if key in current {
+          current = current.at(key)
+          rest = rest.slice(i)
+          matched = true
+          break
+        }
+        i -= 1
+      }
+      if not matched { return (false, none) }
     } else {
-      path-panic(path, "cannot descend into a scalar")
+      return (false, none)
     }
   }
-  current
+  (true, current)
+}
+
+// Required value lookup. Identity paths fall back to `batch.identity`.
+#let value(path) = {
+  let found = lookup(path)
+  if not found.at(0) {
+    path-panic(path, "no node in state.valuation or batch.identity")
+  }
+  found.at(1)
 }
 
 #let node(path) = {
@@ -56,14 +108,11 @@
   catalog.nodes.at(path)
 }
 
+// True only when the full path resolves — an output map that exists without the
+// key a section reads is absent, not zero.
 #let present-value(path) = {
-  let parts = path.split(".")
-  let node-id = none
-  for i in range(1, parts.len() + 1) {
-    let candidate = parts.slice(0, i).join(".")
-    if candidate in state.valuation { node-id = candidate }
-  }
-  node-id != none
+  let found = lookup(path)
+  found.at(0) and found.at(1) != none
 }
 
 // Fixed-decimal text. `decimals: none` matches the frontend's formatValue:
@@ -120,6 +169,20 @@
     entry.at("unit", default: none),
     entry.at("decimals", default: none),
     entry.at("symbol", default: none),
+    path: path
+  )
+}
+
+// The same conversion and rounding as `display`, without the unit symbol. Use
+// when the unit is a separate column (accounting tables align the numbers).
+#let display-number(path) = {
+  let entry = node(path)
+  format-value(
+    value(path),
+    entry.at("dimension", default: none),
+    entry.at("unit", default: none),
+    entry.at("decimals", default: none),
+    none,
     path: path
   )
 }

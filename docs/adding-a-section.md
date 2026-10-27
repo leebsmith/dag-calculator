@@ -48,13 +48,15 @@ Rules:
 
 ## 2. Add the registry line
 
-In `backend/app/templates/report.typ`, inside the marker block:
+Add the import beside the other imports at the top of
+`backend/app/templates/report.typ` (the marker block parses registry entries
+only, so an import line there fails the guard):
 
 ```typst
 #import "sections/<id>.typ": present-<id>, render-<id>
 ```
 
-and, in canonical position:
+Then, inside the marker block, in canonical position:
 
 ```typst
 (id: "<id>", title: "<Title>", present: present-<id>, render: render-<id>),

@@ -7,8 +7,9 @@ Anything not here and not in the templates is unverified — check before using 
 
 - `backend/app/templates/TYPST_VERSION` pins `0.15.1`. `make report-dev` refuses
   to run on a different binary; `test_report_format_parity.py` asserts it.
-- No vendored fonts yet: the binary's embedded set (Libertinus Serif, New
-  Computer Modern, DejaVu Sans Mono). `theme.typ` names Libertinus Serif.
+- Fonts are vendored: **IBM Plex Sans** (variable Roman + Italic) in
+  `backend/app/templates/fonts/`, SIL OFL. Every report compile passes
+  `--font-path … --ignore-system-fonts`; `theme.typ` names IBM Plex Sans.
 - Typst is not a Python dependency: shell out to the binary (`TYPST_BIN`).
 
 ## The only API a section may use
@@ -16,7 +17,13 @@ Anything not here and not in the templates is unverified — check before using 
 From `lib/format.typ`: `req(container, path)`, `opt(container, path)`,
 `value(path)`, `node(path)`, `present-value(path)`,
 `format-value(number, dimension, unit, decimals, symbol, path: "")`,
-`display(path)`, `option-label(path, raw)`.
+`display(path)`, `display-number(path)`, `option-label(path, raw)`.
+
+`value`, `present-value`, and the display helpers resolve a valuation path,
+then fall back to `batch.identity` for component fields (`equipment.*`,
+`style.*`, `water.source.*`). Boundary outputs are flattened keys inside the
+boundary map (`cascade.v_strike`), so a dotted suffix matches the longest key,
+not necessarily one segment.
 
 From `lib/bundle.typ`: `bundle`, `batch`, `state`, `catalog`, `is-frozen`.
 
@@ -117,7 +124,7 @@ typst eval 'query(<label>)' --in probe.typ --root <dir>
 
 ```typst
 set page(
-  paper: "a4",
+  paper: "a4",   // report.typ resolves a4 | us-letter from the spec + units
   margin: (x: 19mm, top: 18mm, bottom: 21mm),
   footer: context [ ... counter(page).display("1 / 1") ... ],
 )
@@ -129,7 +136,7 @@ Rules: `line(length: 100%, stroke: 0.6pt + rgb("#b9b1a4"))`.
 ## Outputs
 
 - `--format png` needs `{p}` in the output path. A4 lands at 1191 × 1684,
-  8-bit RGBA at the default resolution.
+  US Letter at 1224 × 1584, 8-bit RGBA at the default resolution.
 - Format is inferred from the output extension when `--format` is omitted.
 - `--root` is a real boundary: anything outside it is rejected, symlinks
   included.
@@ -150,7 +157,9 @@ Rules: `line(length: 100%, stroke: 0.6pt + rgb("#b9b1a4"))`.
 ## Determinism checklist
 
 - No `datetime.today()`, no system clock reads.
-- No fonts outside the binary's embedded set (until fonts are vendored).
+- Only the vendored IBM Plex Sans set: pass `--font-path` and
+  `--ignore-system-fonts`, so a system copy can never stand in. A render test
+  asserts the family resolves from the vendored path.
 - Do not depend on dictionary iteration order for computed output.
 - Same bundle + spec + binary ⇒ byte-identical PDF
   (`test_report_format_parity.py::test_the_bundle_renders_deterministically`).

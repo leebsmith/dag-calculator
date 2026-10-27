@@ -25,6 +25,7 @@ Two rules that explain most of the shape:
 | `backend/app/templates/lib/bundle.typ` | loads the bundle from `sys.inputs` |
 | `backend/app/templates/lib/format.typ` | dotted-path accessors, unit conversion, display strings |
 | `backend/app/templates/sections/*.typ` | one module per section: `present()` + `render()` |
+| `backend/app/templates/fonts/*` | vendored IBM Plex Sans (variable Roman + Italic) + OFL |
 | `backend/app/templates/TYPST_VERSION` | the pinned `typst` version |
 
 The split is for review and for the render key: a styling change must not
@@ -49,11 +50,17 @@ make report-pages BUNDLE=~/Downloads/house-pale-report-bundle.json
 
 # A single section, i.e. the standalone sheet:
 make report-pages BUNDLE=… SECTIONS=water-chemistry
+
+# US Letter instead of the unit-derived default:
+make report-pages BUNDLE=… PAPER=letter
 ```
 
 `.local/` is gitignored and disposable. `make report-dev` refuses to run when
 the installed `typst` does not match `TYPST_VERSION`: a version mismatch moves
-line breaks, which reads as a template bug and is not one.
+line breaks, which reads as a template bug and is not one. Both targets compile
+with `--font-path backend/app/templates/fonts --ignore-system-fonts`, so the
+local loop uses the vendored face and never a system substitute; the render
+tests assert the family resolves from that path.
 
 The bundle reaches Typst as a **path input** (`--input bundle=/…`), resolved
 against `--root`. The service passes `/report.json` from its temp root; the
@@ -87,6 +94,13 @@ CI and the image always have it.
 |---|---|---|
 | `sections` | comma-separated section ids | all |
 | `doc_kind` | `recipe` | `recipe` |
+| `paper` | `a4`, `letter`, `auto` | `auto` |
+
+`paper=auto` follows the bundle’s display units: two of the three markers —
+`batch.v_ferm` volume in `gal`/`qt`, `solver.batch.m_grist` mass in `lb`/`oz`,
+`mash.strike_water_temp_c` in `degF` — select US Letter; otherwise A4. An
+explicit `a4`/`letter` overrides the inference. The resolved paper is part of
+the canonical spec, so it changes the render key.
 
 `include = requested ∧ present`: the spec asks, the bundle answers. A requested
 section whose data is absent does not render — it is not rendered as zeros. One
@@ -107,7 +121,9 @@ different token, which is the divergence the product accepts.
 ## Status
 
 Landed: the template tree, the registry contract and its guards, the formatting
-vector, the pinned version, and the local loop. Not yet landed: the section
-modules themselves (authored one at a time — see
+vector, the pinned version, the local loop, and the first section — the
+**Volume Ledger** (`sections/volume-ledger.typ`), with identity-path resolution
+and `display-number` added to `lib/format.typ`. Not yet landed: the remaining
+section modules (authored one at a time — see
 [`adding-a-section.md`](adding-a-section.md)), the FastAPI routes,
 `report_render.py`, and the image that ships the binary.

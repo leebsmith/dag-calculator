@@ -49,7 +49,15 @@ def stage_root(tmp: Path) -> Path:
 
 def run_typst(argv: list[str], root: Path) -> subprocess.CompletedProcess[str]:
     completed = subprocess.run(
-        [TYPST, *argv, "--root", str(root)],
+        [
+            TYPST,
+            *argv,
+            "--root",
+            str(root),
+            "--font-path",
+            str(root / "fonts"),
+            "--ignore-system-fonts",
+        ],
         capture_output=True,
         text=True,
         timeout=120,

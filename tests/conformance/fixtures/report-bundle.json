@@ -5147,8 +5147,168 @@
         "options": null,
         "option_labels": null
       },
+      "solver.batch.m_grist": {
+        "label": "Grist mass",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.batch.cascade.v_strike": {
         "label": "Strike Volume",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_mc": {
+        "label": "Grain moisture",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_sol": {
+        "label": "Dissolved extract",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_absorption": {
+        "label": "Grain absorption",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_run1": {
+        "label": "First runnings",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_sparge": {
+        "label": "Sparge water",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_run2": {
+        "label": "Second runnings",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.v_post_boil": {
+        "label": "Post-boil volume",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.delta_v_evap": {
+        "label": "Boil-off",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.late_addition_volume_l": {
+        "label": "Late-addition volume",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.shrinkage_volume_l": {
+        "label": "Shrinkage",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.mash_dead_space_l": {
+        "label": "Mash dead space",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.mash_transfer_loss_l": {
+        "label": "Mash transfer loss",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.kettle_dead_space_l": {
+        "label": "Kettle dead space",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.kettle_transfer_loss_l": {
+        "label": "Kettle transfer",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.trub_loss_l": {
+        "label": "Trub",
         "dimension": "volume",
         "unit": "L",
         "symbol": "L",
@@ -5316,7 +5476,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:f80d4cb131f987185655be6b25da017702cc282077d95b3d5fe677c8539415b0"
+    "hash": "sha256:0bdc0d3353a3b569d069611844c26f6e53e57ada35708bf45b22fa82f4825712"
   },
   "batch": {
     "id": "frozen-1",
@@ -5329,7 +5489,12 @@
         "id": "herms-30l",
         "name": "HERMS 30L",
         "max_hlt_volume_l": 30.0,
-        "max_kettle_volume_l": 40.0
+        "max_kettle_volume_l": 40.0,
+        "mash_dead_space_l": 0.5,
+        "mash_transfer_loss_l": 0.5,
+        "kettle_dead_space_l": 1.0,
+        "kettle_transfer_loss_l": 0.5,
+        "trub_loss_l": 0.5
       },
       "water.source": {
         "report_id": "w-2026-01",
@@ -5362,8 +5527,20 @@
       ],
       "solver.batch": {
         "sg_post_boil": 1.055,
-        "v_pre_boil": 24.0
+        "v_pre_boil": 25.4,
+        "m_grist": 5.0,
+        "cascade.v_strike": 15.0,
+        "cascade.v_mc": 0.2,
+        "cascade.v_sol": 1.5,
+        "cascade.v_absorption": 8.0,
+        "cascade.v_run1": 8.2,
+        "cascade.v_sparge": 17.2,
+        "cascade.v_run2": 17.2,
+        "cascade.v_post_boil": 22.4
       },
+      "batch.delta_v_evap": 3.0,
+      "batch.late_addition_volume_l": 0.5,
+      "batch.shrinkage_volume_l": 0.9,
       "solver.water": {
         "strategy": "CALCIUM_FLOOR",
         "prescription.predicted_mash_ph": 5.42,
@@ -5475,5 +5652,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:c1885b2b2693976841290105a5ca99b747dc573396dc1b28a00e5a9354cf8b86"
+  "content_hash": "sha256:28858e85be70b83e3b3a4a02a5da7084e049b216ebb0a5ad47c01fb1cc16a789"
 }

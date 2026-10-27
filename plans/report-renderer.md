@@ -107,6 +107,9 @@ sha256( bundle.content_hash
       ‖ typst_version ‖ fontset_hash )
 ```
 
+`fontset_hash` covers the vendored `backend/app/templates/fonts/*` set;
+`theme_hash` covers `theme.typ`, including the paper choice wired through it.
+
 The key is the `ETag` for frozen batches and the footer's ancestry token. No
 bytes are stored. A change to the bundle, the spec, the template, or the
 toolchain produces a different key by construction.
@@ -140,6 +143,7 @@ Query parameters on the render route:
 |---|---|---|
 | `doc_kind` | `recipe` (reserved for future kinds) | `recipe` |
 | `sections` | comma-separated section ids | all |
+| `paper` | `a4`, `letter`, `auto` | `auto` (resolved from display units) |
 | `standalone` | derived: true when exactly one section survives | — |
 
 `standalone` is not a parameter: it is inferred from the resolved selection, so
@@ -166,7 +170,7 @@ surface as "nothing solved yet" rather than a failure.
 | `backend/app/templates/lib/format.typ` | defensive accessors, unit conversion, display strings | the formatting rule changes |
 | `backend/app/templates/sections/*.typ` | one file per section: `present` predicate + `render` | content changes |
 | `backend/app/templates/TYPST_VERSION` | pinned binary version | never, except a deliberate bump |
-| `backend/app/templates/fonts/*` | vendored font set | deferred; the binary's embedded fonts are used until a face is needed |
+| `backend/app/templates/fonts/*` | vendored IBM Plex Sans (variable Roman + Italic) + OFL | a deliberate typeface change |
 
 The split exists for hash hygiene and review: a styling change must not
 invalidate a content identity, and a section must be reviewable in isolation.
@@ -439,7 +443,7 @@ the first section should be.
 |---|---|
 | Compile error from a mistyped node id | Defensive accessor panic with the dotted path; fixture covers every path |
 | Typst version drift changes layout | Version pinned in `TYPST_VERSION`, checked by `make report-dev` and at service startup, embedded in the render key |
-| Font set drift changes metrics | Binary's embedded fonts until a face is needed; then vendored + `--font-path` only, with determinism tests |
+| Font set drift changes metrics | IBM Plex Sans vendored under `templates/fonts/`, compiled with `--font-path` + `--ignore-system-fonts`; a missing face fails the render tests |
 | Formatting forks from the frontend | Parity vector (§6.5) |
 | A section silently renders nothing | Empty-selection is a 422; presence predicates are tested per fixture |
 | Registry order becomes accidental | Generated `docs/report-sections.md` makes every order change a reviewed diff |

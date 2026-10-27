@@ -2,8 +2,9 @@
 // supplies appearance, and the registry below supplies section order.
 
 #import "theme.typ": document
-#import "lib/bundle.typ": bundle, batch, is-frozen
+#import "lib/bundle.typ": bundle, batch, catalog, is-frozen
 #import "lib/format.typ": display, opt
+#import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 
 // === registry:begin ===
 // One line per section, in canonical render order. Each entry names a module in
@@ -11,6 +12,7 @@
 // lib/bundle.typ and take no arguments.
 //   (id: "…", title: "…", present: <fn>, render: <fn>),
 #let sections = (
+  (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
 )
 // === registry:end ===
 
@@ -21,15 +23,38 @@
   bundle.content_hash.slice(7, 15)
 }
 
+// Paper is a view choice. `auto` follows the batch's display units: two of the
+// three markers (volume, mass, temperature) must be US customary for US Letter.
+#let unit-of(path) = if path in catalog.nodes {
+  catalog.nodes.at(path).at("unit", default: none)
+} else { none }
+
+#let us-markers = (
+  unit-of("batch.v_ferm") in ("gal", "qt"),
+  unit-of("solver.batch.m_grist") in ("lb", "oz"),
+  unit-of("mash.strike_water_temp_c") == "degF",
+)
+
+#let paper-input = sys.inputs.at("paper", default: "auto")
+#let paper = if paper-input == "auto" or paper-input == "" {
+  if us-markers.filter(marker => marker).len() >= 2 { "us-letter" } else { "a4" }
+} else if paper-input == "a4" {
+  "a4"
+} else if paper-input == "letter" {
+  "us-letter"
+} else {
+  panic("report spec: unknown paper " + paper-input + " (auto, a4, letter)")
+}
+
 // The spec: `sections` is a comma-separated subset (absent means all). The
 // selection is a view — it never reaches the bundle and cannot reorder the
 // registry.
 #let wanted = sys.inputs.at("sections", default: "")
 #let requested(id) = wanted == "" or wanted.split(",").contains(id)
-#let included = sections.filter(section => requested(section.id) and section.present())
+#let included = sections.filter(section => requested(section.id) and (section.present)())
 #let standalone = included.len() == 1
 
-#show: rest => document(batch: batch, token: token, rest)
+#show: rest => document(batch: batch, token: token, paper: paper, rest)
 
 #let identity = batch.identity
 #let identity-name(namespace, fallback-key) = {
@@ -85,7 +110,7 @@
 // subset but cannot reorder.
 #for section in included {
   heading(level: 1, section.title)
-  section.render()
+  (section.render)()
 }
 
 #if sections.len() == 0 {

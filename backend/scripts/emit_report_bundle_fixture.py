@@ -43,6 +43,11 @@ RECORD = {
             "name": "HERMS 30L",
             "max_hlt_volume_l": 30.0,
             "max_kettle_volume_l": 40.0,
+            "mash_dead_space_l": 0.5,
+            "mash_transfer_loss_l": 0.5,
+            "kettle_dead_space_l": 1.0,
+            "kettle_transfer_loss_l": 0.5,
+            "trub_loss_l": 0.5,
         },
         "water.source": {
             "report_id": "w-2026-01",
@@ -91,10 +96,24 @@ RECORD = {
                 "enabled": True,
             }
         ],
+        # The volume-ledger rows reconcile: (V_post 22.4 + late 0.5) * 0.96
+        # - (kettle dead 1.0 + transfer 0.5 + trub 0.5) = V_ferm 20.0.
         "solver.batch": {
             "sg_post_boil": 1.055,
-            "v_pre_boil": 24.0,
+            "v_pre_boil": 25.4,
+            "m_grist": 5.0,
+            "cascade.v_strike": 15.0,
+            "cascade.v_mc": 0.2,
+            "cascade.v_sol": 1.5,
+            "cascade.v_absorption": 8.0,
+            "cascade.v_run1": 8.2,
+            "cascade.v_sparge": 17.2,
+            "cascade.v_run2": 17.2,
+            "cascade.v_post_boil": 22.4,
         },
+        "batch.delta_v_evap": 3.0,
+        "batch.late_addition_volume_l": 0.5,
+        "batch.shrinkage_volume_l": 0.9,
         "solver.water": {
             "strategy": "CALCIUM_FLOOR",
             "prescription.predicted_mash_ph": 5.42,
@@ -175,8 +194,56 @@ PAYLOAD = FreezePayload(
             "solver.batch.v_pre_boil": NodePresentation(
                 label="Pre-boil volume", dimension="volume", unit="L", symbol="L", decimals=1
             ),
+            "solver.batch.m_grist": NodePresentation(
+                label="Grist mass", dimension="mass", unit="kg", symbol="kg", decimals=1
+            ),
             "solver.batch.cascade.v_strike": NodePresentation(
                 label="Strike Volume", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_mc": NodePresentation(
+                label="Grain moisture", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_sol": NodePresentation(
+                label="Dissolved extract", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_absorption": NodePresentation(
+                label="Grain absorption", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_run1": NodePresentation(
+                label="First runnings", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_sparge": NodePresentation(
+                label="Sparge water", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_run2": NodePresentation(
+                label="Second runnings", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.v_post_boil": NodePresentation(
+                label="Post-boil volume", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "batch.delta_v_evap": NodePresentation(
+                label="Boil-off", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "batch.late_addition_volume_l": NodePresentation(
+                label="Late-addition volume", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "batch.shrinkage_volume_l": NodePresentation(
+                label="Shrinkage", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "equipment.mash_dead_space_l": NodePresentation(
+                label="Mash dead space", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "equipment.mash_transfer_loss_l": NodePresentation(
+                label="Mash transfer loss", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "equipment.kettle_dead_space_l": NodePresentation(
+                label="Kettle dead space", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "equipment.kettle_transfer_loss_l": NodePresentation(
+                label="Kettle transfer", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "equipment.trub_loss_l": NodePresentation(
+                label="Trub", dimension="volume", unit="L", symbol="L", decimals=1
             ),
             "batch.realized_abv": NodePresentation(
                 label="Realized ABV", dimension="abv", unit="pct", symbol="%", decimals=1

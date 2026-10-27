@@ -17,6 +17,6 @@ Presence predicates decide whether a requested section renders at all
 value so an unsolved boundary never renders plausible zeros. The authoring
 checklist is [`adding-a-section.md`](adding-a-section.md).
 
-No sections are registered yet. The document renders its chrome, identity
-block, and ancestry footer from the bundle alone; sections land one commit
-at a time.
+| # | id | title | presence | source |
+|---|---|---|---|---|
+| 1 | `volume-ledger` | Volume Ledger | `present-volume-ledger` | [`sections/volume-ledger.typ`](../backend/app/templates/sections/volume-ledger.typ) |

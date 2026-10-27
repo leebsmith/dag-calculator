@@ -3,8 +3,20 @@
   "bundle": "tests/conformance/fixtures/report-bundle.json",
   "paths": [
     {
+      "path": "batch.delta_v_evap",
+      "display": "3.0 L"
+    },
+    {
+      "path": "batch.late_addition_volume_l",
+      "display": "0.5 L"
+    },
+    {
       "path": "batch.realized_abv",
       "display": "5.6%"
+    },
+    {
+      "path": "batch.shrinkage_volume_l",
+      "display": "0.9 L"
     },
     {
       "path": "batch.target_abv",

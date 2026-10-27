@@ -13,13 +13,13 @@
   )
 ]
 
-#let document(batch: none, token: "", body) = {
+#let document(batch: none, token: "", paper: "a4", body) = {
   set page(
-    paper: "a4",
+    paper: paper,
     margin: (x: 19mm, top: 18mm, bottom: 21mm),
     footer: footer(batch, token),
   )
-  set text(font: "Libertinus Serif", size: 9.5pt, fill: rgb("#1a1a1a"))
+  set text(font: "IBM Plex Sans", size: 9.5pt, fill: rgb("#1a1a1a"))
   set par(leading: 0.62em)
   set heading(numbering: none)
 

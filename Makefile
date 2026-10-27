@@ -37,6 +37,7 @@ help:
 	@echo
 	@echo "  local-dev       Run frontend + Firebase emulators + backend"
 	@echo "  report-dev      Watch the report templates against a downloaded bundle"
+	@echo "                  (PAPER=auto|a4|letter, SECTIONS=a,b)"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
 	@echo "  test-fuzz       Seeded water-solver invariant sweep (CASES=200 SEED=...)"
@@ -76,7 +77,9 @@ local-dev:
 # (editor toolbar -> Download bundle). `.local/` is gitignored and disposable.
 # The typst binary is not a project dependency; it must match TYPST_VERSION.
 REPORT_DIR := .local/report
+REPORT_FONTS := backend/app/templates/fonts
 SECTIONS   ?=
+PAPER      ?= auto
 
 report-dev:
 	@test -n "$(BUNDLE)" || (echo "Usage: make report-dev BUNDLE=<downloaded report-bundle.json>"; exit 1)
@@ -87,8 +90,10 @@ report-dev:
 	  fi
 	@mkdir -p $(REPORT_DIR)
 	@cp "$(BUNDLE)" $(REPORT_DIR)/report.json
-	typst watch --root . --input bundle=/$(REPORT_DIR)/report.json \
+	typst watch --root . --font-path $(REPORT_FONTS) --ignore-system-fonts \
+		--input bundle=/$(REPORT_DIR)/report.json \
 		--input sections=$(SECTIONS) \
+		--input paper=$(PAPER) \
 		backend/app/templates/report.typ $(REPORT_DIR)/report.pdf
 
 # One-shot PNG burst (one file per page) for a quick visual check.
@@ -97,8 +102,10 @@ report-pages:
 	@test -f "$(BUNDLE)" || (echo "No such bundle: $(BUNDLE)"; exit 1)
 	@mkdir -p $(REPORT_DIR)
 	@cp "$(BUNDLE)" $(REPORT_DIR)/report.json
-	typst compile --format png --root . --input bundle=/$(REPORT_DIR)/report.json \
+	typst compile --format png --root . --font-path $(REPORT_FONTS) --ignore-system-fonts \
+		--input bundle=/$(REPORT_DIR)/report.json \
 		--input sections=$(SECTIONS) \
+		--input paper=$(PAPER) \
 		backend/app/templates/report.typ '$(REPORT_DIR)/page-{p}.png'
 	@ls -l $(REPORT_DIR)/page-*.png
 
