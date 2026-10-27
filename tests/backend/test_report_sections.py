@@ -122,6 +122,38 @@ PRESENCE_PROBE = (
     "#metadata(present-volume-ledger()) <probe>\n"
 )
 
+BATCH_FACTS_PROBE = (
+    '#import "sections/batch-facts.typ": present-batch-facts\n'
+    "#metadata(present-batch-facts()) <probe>\n"
+)
+
+
+def test_batch_facts_is_present_with_the_realized_values() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, BATCH_FACTS_PROBE) is True
+
+
+def test_batch_facts_is_absent_without_a_realized_fact() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["solver.batch.apparent_attenuation"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, BATCH_FACTS_PROBE) is False
+        render(root, "batch-facts")
+
+
+def test_batch_facts_renders_alone_and_in_the_full_report() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+
+        render(root, "batch-facts")
+        assert (root / "report.pdf").stat().st_size > 0
+
+        render(root)
+        assert (root / "report.pdf").stat().st_size > 0
+
 
 def test_volume_ledger_is_present_with_the_cascade_and_equipment() -> None:
     with tempfile.TemporaryDirectory() as tmp:
@@ -134,6 +166,8 @@ def test_volume_ledger_is_absent_without_the_cascade_output() -> None:
     outputs = bundle["state"]["valuation"]["solver.batch"]
     for key in [key for key in outputs if key.startswith("cascade.")]:
         del outputs[key]
+    for path in [path for path in bundle["formatted"] if path.startswith("solver.batch.cascade.")]:
+        del bundle["formatted"][path]
 
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
@@ -143,10 +177,10 @@ def test_volume_ledger_is_absent_without_the_cascade_output() -> None:
 
 def test_identity_values_resolve_from_the_component_snapshot() -> None:
     source = (
-        '#import "lib/format.typ": display, display-number\n'
+        '#import "lib/format.typ": formatted-number, formatted-text\n'
         "#metadata((\n"
-        '  full: display("equipment.mash_dead_space_l"),\n'
-        '  number: display-number("equipment.mash_dead_space_l"),\n'
+        '  full: formatted-text("equipment.mash_dead_space_l"),\n'
+        '  number: formatted-number("equipment.mash_dead_space_l"),\n'
         ")) <probe>\n"
     )
     with tempfile.TemporaryDirectory() as tmp:

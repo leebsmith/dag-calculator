@@ -35,13 +35,14 @@ Rules:
 - **Presence keys off output existence, not value.** A boundary output map that
   is absent hides the section; a map that is present with a zero total still
   renders. Writing `value == 0` as a predicate is how a report invents eight
-  confident `0 g` rows.
+  confident `0 g` rows. In Typst, test `present-formatted(path)`.
 - **No unguarded member access.** Use `req(container, path)` and `opt(container,
   path)` from `lib/format.typ`; a missing key must panic with the dotted path,
   not with a line number.
-- **Read display strings from the bundle metadata.** `display(path)` handles the
-  unit conversion, precision, and symbol; `option-label(path, raw)` handles
-  taxonomies. Do not hardcode a unit or a decimal count.
+- **Read display strings from the bundle.** `formatted-text(path)`,
+  `formatted-number(path)`, and `formatted-unit(path)` return the producer's
+  frozen strings; `option-label(path, raw)` maps taxonomies. Never convert,
+  round, or choose a unit in Typst.
 - **Do not invent Typst API.** If a function is not in `typst-notes.md` or in
   `lib/`, it is unverified; check it against the pinned binary before relying on
   it.
@@ -77,6 +78,8 @@ hand-authored representative bundle) and regenerate:
 cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
 ```
 
+Enrich both the raw value (`state.valuation` / identity) and its **`formatted`
+entry** (`{ text, number, unit }`), because sections print the formatted string.
 Do not enrich the fixture speculatively — the first section that needs a block
 is the change that justifies it.
 
@@ -108,8 +111,9 @@ a declared presence predicate).
   nothing; a present one must render.
 - **Isolation:** the section compiles alone (`make report-pages … SECTIONS=<id>`)
   as well as in the full set.
-- **Formatting:** if the section introduces a new unit or precision path, extend
-  the synthetic cases in `scripts/report-format-vector.mjs` and regenerate.
+- **Formatting:** section output is producer-owned. If a value needs a different
+  display, add or adjust the `formatted` entry in the bundle, not a Typst
+  formatter.
 
 ## Checklist
 

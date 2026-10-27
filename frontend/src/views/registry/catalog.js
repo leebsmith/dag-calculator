@@ -85,16 +85,25 @@ function unitSymbols(dimensionId) {
   return new Map((entry?.units ?? []).map(([id, symbol]) => [symbol, id]));
 }
 
-function resolveUnit(artifact, dimensionId, spec) {
+function resolveUnit(artifact, dimensionId, spec, unitMode = {}, path = "") {
   const dim = artifact.dimensions?.[dimensionId];
   if (!dim) return null;
   const symbols = unitSymbols(dimensionId);
-  for (const candidate of [spec.displayUnit, spec.unit]) {
-    if (!candidate) continue;
+  const valid = (candidate) => {
+    if (!candidate) return null;
     if (candidate === dim.base_unit || candidate in (dim.units ?? {})) return candidate;
-    const bySymbol = symbols.get(candidate);
-    if (bySymbol) return bySymbol;
+    return symbols.get(candidate) ?? null;
+  };
+  // Same precedence the UI uses: per-field override -> registry pin -> master
+  // (dimension) pick -> dimension default -> base unit.
+  const fieldPick = valid(unitMode?.[path]);
+  if (fieldPick) return fieldPick;
+  for (const candidate of [spec.displayUnit, spec.unit]) {
+    const pinned = valid(candidate);
+    if (pinned) return pinned;
   }
+  const masterPick = valid(unitMode?.[dimensionId]);
+  if (masterPick) return masterPick;
   const entry = UNIT_DIMENSIONS.find((d) => d.id === dimensionId);
   return entry?.default ?? dim.base_unit;
 }
@@ -105,6 +114,8 @@ function resolveUnit(artifact, dimensionId, spec) {
 function resolveSymbol(artifact, dimensionId, unitId, spec) {
   const dim = artifact.dimensions?.[dimensionId];
   if (!dim) return null;
+  const fromUnit = UNIT_SYMBOLS[dimensionId]?.[unitId];
+  if (fromUnit) return fromUnit;
   const symbols = unitSymbols(dimensionId);
   for (const candidate of [spec.displayUnit, spec.unit]) {
     if (!candidate) continue;
@@ -112,7 +123,7 @@ function resolveSymbol(artifact, dimensionId, unitId, spec) {
     const isUnitId = candidate === dim.base_unit || candidate in (dim.units ?? {});
     if (!isUnitId) return candidate;
   }
-  return UNIT_SYMBOLS[dimensionId]?.[unitId] ?? unitId ?? null;
+  return unitId ?? null;
 }
 
 // Step rows carry readout labels the registry may not repeat ("− Grain
@@ -174,7 +185,7 @@ function resolvablePaths(artifact) {
 
 // AI AGENT HOOKS: Use this builder for the report bundle's catalog block. It is
 // presentation metadata only; never feed it back into the artifact or engine.
-export function buildReportCatalog(artifact) {
+export function buildReportCatalog(artifact, unitMode = {}) {
   const stepLabels = new Map();
   collectStepLabels(steps, stepLabels, new Map());
 
@@ -183,7 +194,7 @@ export function buildReportCatalog(artifact) {
     const spec = registry[path] ?? {};
     const dimension = dimensionOf(artifact, path);
     const taxonomy = taxonomyOf(artifact, path);
-    const unit = dimension ? resolveUnit(artifact, dimension, spec) : null;
+    const unit = dimension ? resolveUnit(artifact, dimension, spec, unitMode, path) : null;
     nodes[path] = {
       label: spec.label ?? stepLabels.get(path) ?? ionLabel(path) ?? humanize(path),
       dimension: dimension && artifact.dimensions?.[dimension] ? dimension : null,

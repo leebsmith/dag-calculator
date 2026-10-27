@@ -7,7 +7,7 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, StringConstraints, model_validator
 
-from app.schemas.report_bundle import CatalogContent, ReportInputs
+from app.schemas.report_bundle import CatalogContent, FormattedValue, ReportInputs
 
 logger = logging.getLogger("app.schemas.batch")
 
@@ -86,6 +86,7 @@ class FreezePayload(BaseModel):
     # self-sufficient bundle, and there is no legacy client without them.
     report_inputs: ReportInputs
     catalog: CatalogContent
+    formatted: dict[str, FormattedValue]
 
 
 class BatchRecord(BaseModel):

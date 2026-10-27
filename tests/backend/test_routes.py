@@ -231,6 +231,7 @@ def test_freeze_accepts_report_inputs_and_catalog(client, service):
                 },
             },
         },
+        "formatted": {},
     }
 
     response = client.post(f"/batches/{created['id']}/freeze", json=payload)

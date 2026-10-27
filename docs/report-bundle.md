@@ -47,12 +47,15 @@ Firestore transaction.
 
 ```jsonc
 {
-  "bundle_format": 2,
+  "bundle_format": 3,
   "artifact": { "schema_version": 9, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dimension>": { "base_unit", "kind", "units": { … } } },
     "nodes": { "<path>": { "label", "dimension", "unit", "symbol", "decimals", "step", "options", "option_labels" } }
+  },
+  "formatted": {
+    "<path>": { "text": "12.4 °P", "number": "12.4", "unit": "°P" }
   },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity" },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
@@ -66,7 +69,8 @@ Firestore transaction.
 | Block | Notes |
 |---|---|
 | `artifact` | The whole artifact as of freeze. Free-form to the bundle schema — validated by the engine before freeze and pinned by `hash`. |
-| `catalog` | Presentation metadata for **every** path the state exposes. `hash` covers `dimensions + nodes`. `unit` is a **unit id** for conversion; `symbol` is the display suffix and is required wherever `unit` is set. |
+| `catalog` | Structural presentation: labels, dimensions, options, and the unit/symbol/decimals metadata. The unit choice reflects the batch's display preferences at freeze. |
+| `formatted` | The display strings the report prints, one per scalar path the bundle exposes: `text` (number + symbol), plus `number`/`unit` for tables that align them separately. Produced by the same formatter the UI uses; the report never converts, rounds, or chooses a symbol. |
 | `batch.identity` | The three component snapshots: `equipment`, `water.source`, `style`. |
 | `state.valuation` | `node id → value` for every node. Boundary nodes map to their plain output map. |
 | `state.roots` | Explicitly authored roots only. Never used to recompute anything. |
@@ -78,7 +82,7 @@ Firestore transaction.
 | `telemetry` | Per solved boundary: binding, applied fingerprint, structured events, warnings, notes. |
 | `content_hash` | Canonical hash of everything except itself. |
 
-`bundle_format` is a literal discriminator (`2`). Unknown fields are rejected;
+`bundle_format` is a literal discriminator (`3`). Unknown fields are rejected;
 unknown formats are refused. A shape change bumps the format and regenerates the
 fixture in the same commit; bundles written under an older format are refused
 rather than read optimistically.
@@ -101,6 +105,7 @@ prefix, exactly like the engine:
 | `equipment.max_hlt_volume_l` | `batch.identity.equipment.max_hlt_volume_l` |
 | `style.og_min` | `batch.identity.style.og_min` |
 | `water.source.calcium_ca` | `batch.identity["water.source"].calcium_ca` |
+| any scalar display | `formatted[path]` |
 
 Boundary outputs are flattened inside the boundary map: the key is everything
 after the boundary node id (`cascade.v_strike`, `hlt.v_hlt_debt`,
@@ -112,29 +117,30 @@ after the boundary node id (`cascade.v_strike`, `hlt.v_hlt_debt`,
 
 Every number in `state` and `batch.identity` is in the artifact's **base unit**
 for its dimension — litres, kilograms, degrees Celsius, SG, fraction, ppm, IBU,
-minutes. There are no pre-formatted strings.
+minutes. Raw values are the record; they are never display-ready.
 
-To display one:
+`formatted[path]` is the display source:
 
-1. Read `catalog.nodes[path]` → `dimension`, `unit` (unit id), `symbol`, `decimals`.
-2. Convert from base to that unit using `catalog.dimensions[dimension]`:
-   - `linear`: `display = base / unit.factor`
-   - `affine`: `display = base * unit.factor + unit.offset`
-   - `nonlinear`: apply the unit's `fwd` function (the function ids are in the
-     catalog; the formulas are in `artifact.content.functions`). Gravity is the
-     only nonlinear dimension today (`sg_to_plato` / `plato_to_sg`).
-   - `identity`: unchanged.
-3. Round to `decimals` (null means "no fixed precision").
-4. Append `catalog.nodes[path].symbol` (the display suffix). The unit id is the
-   conversion handle; the symbol is what the readout shows, so a registry pin of
-   `"%"` on ABV survives even though its unit id is `pct`.
+```jsonc
+"batch.target_og": { "text": "12.4 °P", "number": "12.4", "unit": "°P" },
+"batch.target_abv": { "text": "5.5%", "number": "5.5", "unit": "%" },
+"equipment.name":  { "text": "HERMS 30L" }
+```
 
-Worked examples: `28.0 L`, `1.056 SG`, `13.6 °P`, `12.2 g`, `5.5 %`, `0.714`
-(dimensionless, no symbol).
+- The browser's freeze payload computes it with the **same formatter the UI
+  uses**, at the unit preference in force at freeze (`unitMode`: per-field
+  override → registry pin → per-dimension choice → dimension default).
+- `text` is number + symbol (`%` is tight; other symbols take a space).
+- `number` and `unit` split the figure for tables that align the numbers and
+  units in separate columns.
+- Nonlinear units (SG ↔ °P) are handled by the producer; the report never
+  converts.
+- Taxonomy values keep their raw string in `state`; `formatted[path].text`
+  carries the option label when the catalog declares one.
 
-Taxonomy values are bare artifact strings (e.g. `"runoff_ratio"`).
-`catalog.nodes[path].option_labels` maps them to display text when a label
-exists.
+Absent values (unsolved boundaries, unset selections) have no `formatted`
+entry; absence is meaningful, not zero.
+
 
 ---
 

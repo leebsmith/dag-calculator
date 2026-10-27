@@ -165,7 +165,6 @@ generate:
 	node scripts/emit-sources-manifest.mjs
 	$(MAKE) --no-print-directory seeds
 	cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
-	node scripts/emit-report-format-vector.mjs
 
 hooks:
 	git config core.hooksPath .githooks

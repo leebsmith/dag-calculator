@@ -3,7 +3,8 @@
 
 #import "theme.typ": document
 #import "lib/bundle.typ": bundle, batch, catalog, is-frozen
-#import "lib/format.typ": display, opt
+#import "lib/format.typ": opt
+#import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 
 // === registry:begin ===
@@ -12,6 +13,7 @@
 // lib/bundle.typ and take no arguments.
 //   (id: "…", title: "…", present: <fn>, render: <fn>),
 #let sections = (
+  (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
 )
 // === registry:end ===

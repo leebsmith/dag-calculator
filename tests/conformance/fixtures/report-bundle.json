@@ -1,5 +1,5 @@
 {
-  "bundle_format": 2,
+  "bundle_format": 3,
   "artifact": {
     "schema_version": 9,
     "hash": "sha256:8c87b95ee67d917b561cda2a9a6b57f74b4ec23e51d1aba80cc3ba2b3733807e",
@@ -5130,9 +5130,19 @@
       "solver.batch.sg_post_boil": {
         "label": "Post-boil gravity",
         "dimension": "gravity",
-        "unit": "SG",
-        "symbol": "SG",
-        "decimals": 3,
+        "unit": "Plato",
+        "symbol": "\u00b0P",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.apparent_attenuation": {
+        "label": "Apparent attenuation",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
         "step": null,
         "options": null,
         "option_labels": null
@@ -5327,6 +5337,66 @@
         "options": null,
         "option_labels": null
       },
+      "batch.realized_fg": {
+        "label": "Final gravity",
+        "dimension": "gravity",
+        "unit": "Plato",
+        "symbol": "\u00b0P",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.target_ibu": {
+        "label": "Target IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "grist.finished_beer_srm": {
+        "label": "Beer color",
+        "dimension": "beer_color",
+        "unit": "SRM",
+        "symbol": "SRM",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "equipment.name": {
+        "label": "Equipment",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "style.name": {
+        "label": "Style",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.source_name": {
+        "label": "Water source",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "mash.rests": {
         "label": "Mash rests",
         "dimension": null,
@@ -5476,7 +5546,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:0bdc0d3353a3b569d069611844c26f6e53e57ada35708bf45b22fa82f4825712"
+    "hash": "sha256:16baefa6f889d3b66669e64dae7e4344f8c702685fce59e595790624ab43826b"
   },
   "batch": {
     "id": "frozen-1",
@@ -5499,6 +5569,7 @@
       "water.source": {
         "report_id": "w-2026-01",
         "laboratory": "Ward Labs",
+        "source_name": "City tap",
         "calcium_ca": 42.0,
         "total_alkalinity_caco3": 38.0
       },
@@ -5536,8 +5607,12 @@
         "cascade.v_run1": 8.2,
         "cascade.v_sparge": 17.2,
         "cascade.v_run2": 17.2,
-        "cascade.v_post_boil": 22.4
+        "cascade.v_post_boil": 22.4,
+        "apparent_attenuation": 0.756
       },
+      "batch.target_ibu": 40.0,
+      "batch.realized_fg": 1.012,
+      "grist.finished_beer_srm": 6.0,
       "batch.delta_v_evap": 3.0,
       "batch.late_addition_volume_l": 0.5,
       "batch.shrinkage_volume_l": 0.9,
@@ -5583,6 +5658,148 @@
       "water.target_profile": {
         "source_template_id": "pale-ale"
       }
+    }
+  },
+  "formatted": {
+    "equipment.name": {
+      "text": "HERMS 30L",
+      "number": null,
+      "unit": null
+    },
+    "style.name": {
+      "text": "American Pale Ale",
+      "number": null,
+      "unit": null
+    },
+    "water.source.source_name": {
+      "text": "City tap",
+      "number": null,
+      "unit": null
+    },
+    "solver.batch.sg_post_boil": {
+      "text": "13.6 \u00b0P",
+      "number": "13.6",
+      "unit": "\u00b0P"
+    },
+    "batch.realized_fg": {
+      "text": "3.1 \u00b0P",
+      "number": "3.1",
+      "unit": "\u00b0P"
+    },
+    "solver.batch.apparent_attenuation": {
+      "text": "75.6%",
+      "number": "75.6",
+      "unit": "%"
+    },
+    "batch.realized_abv": {
+      "text": "5.6%",
+      "number": "5.6",
+      "unit": "%"
+    },
+    "batch.target_ibu": {
+      "text": "40.0 IBU",
+      "number": "40.0",
+      "unit": "IBU"
+    },
+    "grist.finished_beer_srm": {
+      "text": "6.0 SRM",
+      "number": "6.0",
+      "unit": "SRM"
+    },
+    "solver.batch.cascade.v_strike": {
+      "text": "15.0 L",
+      "number": "15.0",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_mc": {
+      "text": "0.2 L",
+      "number": "0.2",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_sol": {
+      "text": "1.5 L",
+      "number": "1.5",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_absorption": {
+      "text": "8.0 L",
+      "number": "8.0",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_run1": {
+      "text": "8.2 L",
+      "number": "8.2",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_sparge": {
+      "text": "17.2 L",
+      "number": "17.2",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_run2": {
+      "text": "17.2 L",
+      "number": "17.2",
+      "unit": "L"
+    },
+    "solver.batch.cascade.v_post_boil": {
+      "text": "22.4 L",
+      "number": "22.4",
+      "unit": "L"
+    },
+    "solver.batch.v_pre_boil": {
+      "text": "25.4 L",
+      "number": "25.4",
+      "unit": "L"
+    },
+    "batch.delta_v_evap": {
+      "text": "3.0 L",
+      "number": "3.0",
+      "unit": "L"
+    },
+    "batch.late_addition_volume_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L"
+    },
+    "batch.shrinkage_volume_l": {
+      "text": "0.9 L",
+      "number": "0.9",
+      "unit": "L"
+    },
+    "batch.v_ferm": {
+      "text": "20.0 L",
+      "number": "20.0",
+      "unit": "L"
+    },
+    "equipment.mash_dead_space_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L"
+    },
+    "equipment.mash_transfer_loss_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L"
+    },
+    "equipment.kettle_dead_space_l": {
+      "text": "1.0 L",
+      "number": "1.0",
+      "unit": "L"
+    },
+    "equipment.kettle_transfer_loss_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L"
+    },
+    "equipment.trub_loss_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L"
+    },
+    "solver.batch.m_grist": {
+      "text": "5.0 kg",
+      "number": "5.0",
+      "unit": "kg"
     }
   },
   "conformance": {
@@ -5652,5 +5869,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:28858e85be70b83e3b3a4a02a5da7084e049b216ebb0a5ad47c01fb1cc16a789"
+  "content_hash": "sha256:ab60b19afdd1b4858b82c76144308f57e7c9823aad9e5007a12fb49557d47e54"
 }

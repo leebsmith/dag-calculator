@@ -18,6 +18,7 @@ from app.schemas.batch import FreezePayload
 from app.schemas.report_bundle import (
     BoundaryTelemetry,
     CatalogContent,
+    FormattedValue,
     NodePresentation,
     ReportInputs,
     ValidationBundle,
@@ -52,6 +53,7 @@ RECORD = {
         "water.source": {
             "report_id": "w-2026-01",
             "laboratory": "Ward Labs",
+            "source_name": "City tap",
             "calcium_ca": 42.0,
             "total_alkalinity_caco3": 38.0,
         },
@@ -110,7 +112,11 @@ RECORD = {
             "cascade.v_sparge": 17.2,
             "cascade.v_run2": 17.2,
             "cascade.v_post_boil": 22.4,
+            "apparent_attenuation": 0.756,
         },
+        "batch.target_ibu": 40.0,
+        "batch.realized_fg": 1.012,
+        "grist.finished_beer_srm": 6.0,
         "batch.delta_v_evap": 3.0,
         "batch.late_addition_volume_l": 0.5,
         "batch.shrinkage_volume_l": 0.9,
@@ -189,7 +195,10 @@ PAYLOAD = FreezePayload(
             ),
             "solver.batch": NodePresentation(label="Batch solver"),
             "solver.batch.sg_post_boil": NodePresentation(
-                label="Post-boil gravity", dimension="gravity", unit="SG", symbol="SG", decimals=3
+                label="Post-boil gravity", dimension="gravity", unit="Plato", symbol="°P", decimals=1
+            ),
+            "solver.batch.apparent_attenuation": NodePresentation(
+                label="Apparent attenuation", dimension="percentage", unit="pct", symbol="%", decimals=1
             ),
             "solver.batch.v_pre_boil": NodePresentation(
                 label="Pre-boil volume", dimension="volume", unit="L", symbol="L", decimals=1
@@ -248,6 +257,18 @@ PAYLOAD = FreezePayload(
             "batch.realized_abv": NodePresentation(
                 label="Realized ABV", dimension="abv", unit="pct", symbol="%", decimals=1
             ),
+            "batch.realized_fg": NodePresentation(
+                label="Final gravity", dimension="gravity", unit="Plato", symbol="°P", decimals=1
+            ),
+            "batch.target_ibu": NodePresentation(
+                label="Target IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "grist.finished_beer_srm": NodePresentation(
+                label="Beer color", dimension="beer_color", unit="SRM", symbol="SRM", decimals=1
+            ),
+            "equipment.name": NodePresentation(label="Equipment"),
+            "style.name": NodePresentation(label="Style"),
+            "water.source.source_name": NodePresentation(label="Water source"),
             "mash.rests": NodePresentation(label="Mash rests"),
             "mash.rests.rest_id": NodePresentation(label="Step"),
             "mash.rests.duration_min": NodePresentation(
@@ -289,6 +310,36 @@ PAYLOAD = FreezePayload(
             ),
         },
     ),
+    formatted={
+        "equipment.name": FormattedValue(text="HERMS 30L"),
+        "style.name": FormattedValue(text="American Pale Ale"),
+        "water.source.source_name": FormattedValue(text="City tap"),
+        "solver.batch.sg_post_boil": FormattedValue(text="13.6 °P", number="13.6", unit="°P"),
+        "batch.realized_fg": FormattedValue(text="3.1 °P", number="3.1", unit="°P"),
+        "solver.batch.apparent_attenuation": FormattedValue(text="75.6%", number="75.6", unit="%"),
+        "batch.realized_abv": FormattedValue(text="5.6%", number="5.6", unit="%"),
+        "batch.target_ibu": FormattedValue(text="40.0 IBU", number="40.0", unit="IBU"),
+        "grist.finished_beer_srm": FormattedValue(text="6.0 SRM", number="6.0", unit="SRM"),
+        "solver.batch.cascade.v_strike": FormattedValue(text="15.0 L", number="15.0", unit="L"),
+        "solver.batch.cascade.v_mc": FormattedValue(text="0.2 L", number="0.2", unit="L"),
+        "solver.batch.cascade.v_sol": FormattedValue(text="1.5 L", number="1.5", unit="L"),
+        "solver.batch.cascade.v_absorption": FormattedValue(text="8.0 L", number="8.0", unit="L"),
+        "solver.batch.cascade.v_run1": FormattedValue(text="8.2 L", number="8.2", unit="L"),
+        "solver.batch.cascade.v_sparge": FormattedValue(text="17.2 L", number="17.2", unit="L"),
+        "solver.batch.cascade.v_run2": FormattedValue(text="17.2 L", number="17.2", unit="L"),
+        "solver.batch.cascade.v_post_boil": FormattedValue(text="22.4 L", number="22.4", unit="L"),
+        "solver.batch.v_pre_boil": FormattedValue(text="25.4 L", number="25.4", unit="L"),
+        "batch.delta_v_evap": FormattedValue(text="3.0 L", number="3.0", unit="L"),
+        "batch.late_addition_volume_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
+        "batch.shrinkage_volume_l": FormattedValue(text="0.9 L", number="0.9", unit="L"),
+        "batch.v_ferm": FormattedValue(text="20.0 L", number="20.0", unit="L"),
+        "equipment.mash_dead_space_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
+        "equipment.mash_transfer_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
+        "equipment.kettle_dead_space_l": FormattedValue(text="1.0 L", number="1.0", unit="L"),
+        "equipment.kettle_transfer_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
+        "equipment.trub_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
+        "solver.batch.m_grist": FormattedValue(text="5.0 kg", number="5.0", unit="kg"),
+    },
 )
 
 

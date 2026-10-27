@@ -203,6 +203,7 @@ export async function reportBundleForActive() {
           ...app.freezePayload(),
           report_inputs: app.reportInputs(),
           catalog: app.reportCatalog(),
+          formatted: app.reportFormatted(),
         });
   return { name: active.name, bundle };
 }
@@ -229,6 +230,7 @@ export async function freezeActive() {
     ...app.freezePayload(),
     report_inputs: app.reportInputs(),
     catalog: app.reportCatalog(),
+    formatted: app.reportFormatted(),
   });
 }
 

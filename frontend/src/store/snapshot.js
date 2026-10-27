@@ -3,6 +3,7 @@
 // the persistent payload shape.
 
 import { buildReportCatalog } from "../views/registry/catalog.js";
+import { buildReportFormatted } from "../views/producer/reportFormat.js";
 
 // Batch payload shape revision (independent of the artifact grammar version).
 export const DRAFT_SCHEMA_VERSION = 4;
@@ -98,12 +99,17 @@ export function installSnapshot(app, { artifact, master, session }) {
       return { validation, telemetry };
     },
 
-    // Per-path presentation for the report bundle. Static for a given artifact,
-    // so it is rebuilt only when the installer is (app boot).
+    // Per-path presentation for the report bundle. Unit-aware: the frozen
+    // bundle keeps the units this batch was displaying at freeze.
     reportCatalog() {
-      return buildReportCatalog(artifact);
+      return buildReportCatalog(artifact, this.unitMode);
+    },
+
+    // Freeze-time display strings. The report reads these and never converts.
+    reportFormatted() {
+      return buildReportFormatted(artifact, this.reportCatalog(), session.getEngine());
     },
   });
 }
 
-export const KEYS = ["draftState", "freezePayload", "reportInputs", "reportCatalog"];
+export const KEYS = ["draftState", "freezePayload", "reportInputs", "reportCatalog", "reportFormatted"];

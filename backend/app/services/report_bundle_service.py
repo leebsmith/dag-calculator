@@ -41,6 +41,10 @@ def build_report_bundle(
             "content": artifact,
         },
         "catalog": {"hash": sha256_canonical(catalog_body), **catalog_body},
+        "formatted": {
+            path: entry.model_dump(mode="json")
+            for path, entry in payload.formatted.items()
+        },
         "batch": {
             "id": frozen_id,
             "name": record.get("name", "Untitled"),

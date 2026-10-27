@@ -48,23 +48,23 @@ template improves.
 | 12 | **Typst ships in the image.** A Dockerfile replaces Cloud Run buildpacks. |
 | 13 | **Drafts render.** A preview is a first-class request, not a developer privilege: a draft renders at any time before freeze, from a bundle the client already holds. |
 | 14 | **One input type.** The renderer takes a bundle. `GET` resolves the stored bundle for a frozen batch; `POST` accepts a bundle in the body for a draft. The renderer never asks whether the bundle is a fact. |
-| 16 | **The bundle carries the display symbol.** `unit` converts, `symbol` renders; both live in `catalog.nodes`. |
+| 16 | **The bundle carries the display strings.** `formatted[path]` is the only display source (`text`, `number`, `unit`); the generator never converts or rounds. `catalog` keeps labels, dimensions, options, and unit ids for structure and the paper rule. |
 | 15 | **Divergence is expected.** A report generated earlier and a report generated later from the same frozen bundle may differ when the template or toolchain changes. The footer names the bundle and toolchain so the divergence is attributable, not tracked. |
 
 ## 3. Why this supersedes the projector
 
 The earlier design (projector → `RecipeDocument` → markdown → PDF) put content
 composition in Python and duplicated the artifact's presentation metadata into a
-second model. Under the bundle contract that duplication is unnecessary:
-`catalog.nodes` already carries the per-path `label`, `unit`, `decimals`,
-`step`, `options`, and `option_labels` a generator needs to format and label
-without the frontend.
+second model. Under the bundle contract that duplication is unnecessary, and
+formatting belongs to the freeze side: `catalog.nodes` carries the per-path
+label/metadata and `formatted` carries the strings a generator prints.
 
 Two consequences, both accepted:
 
-- **Unit/decimals formatting is implemented twice** — once in the frontend
-  (`docs/display-precision.md`) and once in a ~30-line Typst helper driven by
-  the bundle's own metadata. §6.4 pins the two together with a parity fixture.
+- **Formatting is implemented once.** The browser freeze payload runs the same
+  formatter as the UI (including nonlinear units and the user's unit mode) and
+  stores `formatted`; the generator is a string compositor with no conversion or
+  rounding code.
 - **Content edits are `.typ` edits.** Section shape, order, prose, and styling
   change without touching Python or redeploying a projector.
 
@@ -134,6 +134,13 @@ about a value, exactly what the catalog block exists for, so the field is added
 there, required wherever `unit` is set, and `bundle_format` bumps to `2` with the
 fixture regenerated in the same commit. Bundles written under format 1 are
 refused rather than read optimistically.
+
+**Amended — `formatted` (format 3).** The generator must be numerically dumb:
+no unit conversion, rounding, or symbol choice in Typst. The browser freeze
+payload now computes `formatted[path] = { text, number, unit }` with the same
+formatter the UI uses at the unit preference in force, and `bundle_format` bumps
+to `3`. Bundles written under format 2 are refused rather than rendered without
+display strings.
 
 ### 5.2 Report spec
 
@@ -244,23 +251,20 @@ titles, and prose are authoring decisions made one section at a time (§11).
 
 ### 6.5 Formatting
 
-All leaf values are base-unit numbers plus presentation metadata (bundle
-decision 2: no pre-formatted strings). One helper converts by the dimension's
-unit entry and rounds to `catalog.nodes[path].decimals`, appending the unit
-symbol; option-bearing values map through `option_labels`.
+Formatting is a **freeze-time** concern. The browser computes `formatted[path]`
+with the same formatter the UI uses (unit preference per field/dimension,
+linear/affine/nonlinear conversion, decimals, symbol) and freezes it. The report
+reads `formatted-text`, `formatted-number`, and `formatted-unit`; it does no
+conversion or rounding.
 
-Conversion kinds supported: `linear`, `affine`, and identity/base-unit
-short-circuits. **Nonlinear units (`fwd`/`inv` function ids, e.g. SG ↔ °P) are
-not evaluable from the bundle** — the function body lives in the engine. The
-helper panics naming the path rather than guessing, and the first section that
-needs a nonlinear readout adds a named function to `lib/format.typ` with the
-same parity treatment. Nothing silently formats a nonlinear value as its base.
-
-The drift risk is the rounding rule, not the unit math (unit math is pinned by
-the artifact's own `unit-roundtrip` guard). Mitigation: a committed vector of
-`(value, dimension, unit, decimals) → display string`, generated from the
-frontend's own `fromBase` + `toFixed` + `UNIT_SYMBOLS`, compared against Typst
-output by a test that skips loudly when `typst` is absent.
+- Nonlinear units (SG ↔ °P) are handled by the producer's engine functions, not
+  by a Typst helper.
+- `catalog.nodes[path].option_labels` still maps taxonomy values for labels.
+- The display strings are covered by `content_hash`, so a frozen report is a
+  stable view of the freeze-time presentation; changing unit preferences later
+  does not rewrite it.
+- There is no Typst formatting vector: the frontend formatter is the single
+  implementation, exercised by its own producer tests.
 
 ### 6.6 Defensive accessors
 
@@ -279,7 +283,7 @@ objects lack absent keys, and a discriminated `kind` is a bare string. Therefore
 The document emits `#metadata(...)` under a label with the resolved section ids
 and page count. After compiling, `typst query` extracts it as JSON. This is how
 the API learns what actually rendered without duplicating predicate logic in
-Python. The same mechanism backs the formatting-parity probe (§10).
+Python. The same mechanism backs the render probe (§10).
 
 ### 6.8 Ancestry footer
 
@@ -395,8 +399,9 @@ is part of this plan's scope, not a follow-up.
   present with zero additions, empty collections, populated collections. Every
   registered section appears with both a present and an absent case; the check
   is vacuous while the registry is empty and non-vacuous the moment it is not.
-- **Formatting parity.** Typst display strings vs a frontend-generated vector
-  (§6.5), extracted via `typst query` rather than pixel comparison.
+- **Producer formatting.** The frontend formatter is the single implementation;
+  its tests cover units, nonlinear gravity, and per-field/dimension overrides.
+  There is no Typst formatting vector.
 - **Registry contract.** `scripts/report-sections.mjs` parses the registry
   literal and `sections/`; the guard asserts one entry per file and one file per
   entry, filename equal to id, no duplicate ids, and a declared presence
@@ -419,8 +424,9 @@ is part of this plan's scope, not a follow-up.
 
 | # | Work | Gate |
 |---|---|---|
-| 0 ✅ | Scaffold: `TYPST_VERSION`, `lib/bundle.typ`, `lib/format.typ`, `theme.typ`, `report.typ` with an empty registry and spec filtering, ancestry footer, `make report-dev`/`report-pages`, docs, the registry generator + guards, the formatting vector + parity test, and `catalog.nodes.symbol` (`bundle_format` 2). | `make verify`; fixture compiles chrome-only |
-| 1 | First section: prose, presence predicate, table layout, fixture enrichment if the section needs a block the fixture lacks. | N+1 compiles + presence matrix |
+| 0 ✅ | Scaffold: `TYPST_VERSION`, `lib/bundle.typ`, `lib/format.typ`, `theme.typ`, `report.typ` with an empty registry and spec filtering, ancestry footer, `make report-dev`/`report-pages`, docs, the registry generator + guards, and `catalog.nodes.symbol` (`bundle_format` 2). | `make verify`; fixture compiles chrome-only |
+| 0b ✅ | Formatting moves into the bundle: `formatted[path]` with `{ text, number, unit }`, produced by the browser formatter with the user's unit mode; Typst becomes a string compositor (`bundle_format` 3). | producer tests, render/section tests |
+| 1 ✅ | First sections: **batch-facts** (identity names + realized OG/FG/AA/ABV/IBU/colour) and **volume-ledger** (accounting table from strike to fermenter), with fixture enrichment. | standalone + full compiles, presence matrix |
 | 2 | `report_render.py` — bundle in, artifacts out, spec validation, `typst query` | error-path tests |
 | 3 | `GET` route (frozen) + `ETag` | route tests, `make check` |
 | 4 | `POST` route (draft bundle) + browser preview | route tests |
@@ -444,10 +450,9 @@ the first section should be.
 | Compile error from a mistyped node id | Defensive accessor panic with the dotted path; fixture covers every path |
 | Typst version drift changes layout | Version pinned in `TYPST_VERSION`, checked by `make report-dev` and at service startup, embedded in the render key |
 | Font set drift changes metrics | IBM Plex Sans vendored under `templates/fonts/`, compiled with `--font-path` + `--ignore-system-fonts`; a missing face fails the render tests |
-| Formatting forks from the frontend | Parity vector (§6.5) |
+| Formatting forks from the frontend | One formatter at freeze; sections print `formatted` strings |
 | A section silently renders nothing | Empty-selection is a 422; presence predicates are tested per fixture |
 | Registry order becomes accidental | Generated `docs/report-sections.md` makes every order change a reviewed diff |
-| Nonlinear unit silently rendered as base | Helper panics on `fwd`/`inv` instead of converting |
 | Local `make verify` no longer hermetic | Accepted; render tests skip loudly without `typst` |
 | Long unbroken tokens overflow a cell | Typst does not raise; pathological fixture + visual check |
 

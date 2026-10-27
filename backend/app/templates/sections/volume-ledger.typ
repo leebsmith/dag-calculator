@@ -1,7 +1,7 @@
 // Volume ledger: strike water down to the cold fermenter, including the
 // dissolved late addition. Reads the frozen solve; never recomputes.
 
-#import "../lib/format.typ": display-number, node, present-value
+#import "../lib/format.typ": formatted-number, formatted-unit, present-formatted
 
 #let rows = (
   (label: "Strike water", path: "solver.batch.cascade.v_strike"),
@@ -27,8 +27,8 @@
 // The cascade exists only after a solve, and the loss rows read the sealed
 // equipment identity. Either missing means the ledger has no fact to print.
 #let present-volume-ledger() = (
-  present-value("solver.batch.cascade.v_strike")
-    and present-value("equipment.mash_dead_space_l")
+  present-formatted("solver.batch.cascade.v_strike")
+    and present-formatted("equipment.mash_dead_space_l")
 )
 
 #let cell(body, bold: false) = if bold { text(weight: "bold")[#body] } else { body }
@@ -45,10 +45,11 @@
 #let ledger-row(row) = {
   let subtract = row.at("subtract", default: false)
   let bold = row.at("bold", default: false)
+  let unit = formatted-unit(row.path)
   (
     cell(row.label, bold: bold),
-    cell(figure(display-number(row.path), subtract: subtract), bold: bold),
-    node(row.path).at("symbol", default: ""),
+    cell(figure(formatted-number(row.path), subtract: subtract), bold: bold),
+    if unit == none { "" } else { unit },
   )
 }
 

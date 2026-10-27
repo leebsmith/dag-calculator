@@ -69,24 +69,25 @@ mechanism, no staging step in the edit cycle.
 
 ## Formatting
 
-`catalog.nodes[path]` carries everything a readout needs: `label`, `dimension`,
-`unit` (conversion handle), `symbol` (display suffix), `decimals`, and
-`option_labels` for taxonomies. `lib/format.typ:display(path)` converts from the
-base unit, rounds to `decimals`, and appends the symbol — matching
-[`display-precision.md`](display-precision.md).
+The generator does no numeric work. Every scalar the bundle exposes arrives in
+`formatted[path]`:
 
-Two limits, both deliberate:
+```jsonc
+{ "text": "12.4 °P", "number": "12.4", "unit": "°P" }
+```
 
-- **Nonlinear units** (SG ↔ °P) need a function the bundle cannot carry, so the
-  helper panics naming the path instead of printing a base value. The first
-  section that needs one adds a named function to `lib/format.typ`.
-- **Null precision** falls back to the frontend's `formatValue`: integers
-  verbatim, everything else trimmed to three decimals.
-
-`tests/conformance/fixtures/report-format-vector.json` is generated from the
-frontend's own formatter and compared against Typst output by
-`tests/backend/test_report_format_parity.py`. Both skip loudly without `typst`;
-CI and the image always have it.
+- `text` is what a section prints; `number`/`unit` split the figure for tables
+  that align them in separate columns.
+- `lib/format.typ` exposes `formatted(path)`, `formatted-text(path)`,
+  `formatted-number(path)`, `formatted-unit(path)`, and
+  `present-formatted(path)`. There is no conversion, rounding, or symbol choice
+  in Typst.
+- The **producer** (the browser freeze payload) computes the strings with the
+  same formatter the UI uses, at the unit preference in force at freeze
+  (per-field override → registry pin → per-dimension choice → default). Nonlinear
+  units (SG ↔ °P) are handled there.
+- `catalog` keeps the structural metadata — labels, dimension ids, unit ids,
+  options — for labelling, option mapping, and the paper rule.
 
 ## Spec
 
@@ -120,10 +121,10 @@ different token, which is the divergence the product accepts.
 
 ## Status
 
-Landed: the template tree, the registry contract and its guards, the formatting
-vector, the pinned version, the local loop, and the first section — the
-**Volume Ledger** (`sections/volume-ledger.typ`), with identity-path resolution
-and `display-number` added to `lib/format.typ`. Not yet landed: the remaining
-section modules (authored one at a time — see
-[`adding-a-section.md`](adding-a-section.md)), the FastAPI routes,
-`report_render.py`, and the image that ships the binary.
+Landed: the template tree, the registry contract and its guards, the pinned
+version, the local loop, the bundle-carried display strings (`formatted`,
+format 3) that make the generator a string compositor, and the first sections —
+**Batch Facts** (`sections/batch-facts.typ`) and the **Volume Ledger**
+(`sections/volume-ledger.typ`). Not yet landed: the remaining section modules
+(authored one at a time — see [`adding-a-section.md`](adding-a-section.md)), the
+FastAPI routes, `report_render.py`, and the image that ships the binary.

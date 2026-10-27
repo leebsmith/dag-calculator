@@ -27,7 +27,7 @@ what the generator is handed.
 | # | Decision |
 |---|---|
 | 1 | **Embedded.** The bundle carries `artifact` and `catalog` content inline, plus their hashes. Measured ≈ 80–100 KB/batch — inside Firestore's 1 MiB limit. |
-| 2 | **Raw + catalog.** Values stay base-unit numbers. Formatting metadata ships beside them: dimension units **and** per-path presentation (label, unit, decimals, step, options). **No pre-formatted strings.** |
+| 2 | **Raw + catalog + formatted strings.** Values stay base-unit numbers, with presentation metadata beside them (label, unit, decimals, step, options) **and** a per-path `formatted` block (`text`, `number`, `unit`) produced by the browser at the unit preference in force at freeze. Report generators print the strings and never convert, round, or choose a symbol. |
 | 3 | **No ancestry.** `parent_batch_id` is carried because the record has it; no chain, no stamps, no drift tracking. |
 | 4 | **Sibling document** keyed by the batch id, written once at freeze, immutable. `BatchRecord` stays lean. |
 | 5 | **Frozen only.** Live drafts have no bundle; identity remains mutable until freeze. |
@@ -46,13 +46,14 @@ artifact or the payload.
 
 ```jsonc
 {
-  "bundle_format": 1,
+  "bundle_format": 3,
   "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dim>": { "base_unit", "kind", "units": { "<unit>": { "factor", "offset", "fwd", "inv" } } } },
     "nodes": { "<path>": { "label", "unit", "decimals", "step", "options", "option_labels" } }
   },
+  "formatted": { "<path>": { "text": "12.4 °P", "number": "12.4", "unit": "°P" } },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity": { equipment, water_source, style } },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
   "conformance": { … },
@@ -67,6 +68,7 @@ artifact or the payload.
 | `artifact` | the whole artifact document | validated by the engine's own validator; pinned by `hash` |
 | `catalog.dimensions` | base unit, kind, per-unit factor/offset or fwd/inv | mirrors the artifact's dimension shape |
 | `catalog.nodes` | per-path presentation: `label`, `dimension`, `unit`, `decimals`, `step`, `options`, `option_labels` | keys resolve by the engine's dotted-path rule; **every** resolvable path is emitted |
+| `formatted` | per-path display strings, unit-aware at freeze | the only display source a generator reads |
 | `batch.identity` | the three component snapshots | the document header |
 | `state.valuation` | all 86 node ids → values | authoritative; boundaries are plain output maps |
 | `state.roots` | explicitly-set roots only | authored-vs-inherited (`hasRoot`); **never** used to recompute |
@@ -94,7 +96,7 @@ The schema is deliberately **small**: it does not duplicate the artifact schema.
 engine has already validated it); the bundle schema enforces *bundle* structure and
 cross-references.
 
-1. `bundle_format` is a literal discriminator (currently `1`); unknown ⇒ refuse.
+1. `bundle_format` is a literal discriminator (currently `3`); unknown ⇒ refuse.
 2. Pydantic with `extra="forbid"` on every model; the emitter runs the same check
    before writing, so a malformed bundle never reaches storage.
 3. Cross-reference validators, against the embedded artifact:
@@ -107,7 +109,9 @@ cross-references.
      output, or identity field;
    - **coverage**: every node id, boundary-output key, selection field, and
      collection row field exposed in `state.valuation` has a `catalog.nodes`
-     entry. A required-but-empty catalog cannot pass.
+     entry. A required-but-empty catalog cannot pass;
+   - every `formatted` key names a catalog path, and a path whose catalog entry
+     has a unit carries the `number`/`unit` split.
 4. `content_hash` recomputes from the canonicalized content (`ReportBundle.seal`;
    the validator rejects a mismatch).
 5. A committed fixture bundle is validated in CI, so the shape cannot drift
@@ -118,8 +122,11 @@ cross-references.
 
 ## 4. Consequences
 
-- **Formatting is the generator's job.** Identical output requires the same
-  `catalog.hash`. A different unit profile can be applied later without the app.
+- **Formatting is the producer's job.** The browser freezes `formatted` strings
+  at the unit preference in force, using the same formatter as the UI. A report
+  generator needs no conversion code; identical output requires the same
+  `content_hash` (which covers `formatted`). Changing the display-unit switcher
+  later does not rewrite a frozen fact.
 - **No re-render from source.** A bundle cannot be recomputed under a newer
   artifact; that is a new batch (fork + re-solve) by design.
 - **Bundle size grows with rows**, not with the catalog (fixed ≈ 75 KB).

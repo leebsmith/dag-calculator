@@ -15,17 +15,18 @@ Anything not here and not in the templates is unverified — check before using 
 ## The only API a section may use
 
 From `lib/format.typ`: `req(container, path)`, `opt(container, path)`,
-`value(path)`, `node(path)`, `present-value(path)`,
-`format-value(number, dimension, unit, decimals, symbol, path: "")`,
-`display(path)`, `display-number(path)`, `option-label(path, raw)`.
+`node(path)`, `formatted(path)`, `formatted-text(path)`,
+`formatted-number(path)`, `formatted-unit(path)`, `present-formatted(path)`,
+`option-label(path, raw)`.
 
-`value`, `present-value`, and the display helpers resolve a valuation path,
-then fall back to `batch.identity` for component fields (`equipment.*`,
-`style.*`, `water.source.*`). Boundary outputs are flattened keys inside the
-boundary map (`cascade.v_strike`), so a dotted suffix matches the longest key,
-not necessarily one segment.
+`formatted` reads the bundle's pre-formatted display records; the generator never
+converts, rounds, or picks a symbol. Raw numbers stay in `state.valuation` for
+the record, but sections print `formatted` strings. Component names live in
+`batch.identity` and are also present as `formatted["equipment.name"].text`,
+etc.
 
-From `lib/bundle.typ`: `bundle`, `batch`, `state`, `catalog`, `is-frozen`.
+From `lib/bundle.typ`: `bundle`, `batch`, `state`, `catalog`, `display-values`,
+`is-frozen`.
 
 Anything else a section needs belongs in `lib/` first, not inline.
 
@@ -44,7 +45,7 @@ Anything else a section needs belongs in `lib/` first, not inline.
 
 ## Identifiers
 
-Kebab-case is valid: `format-value`, `is-frozen`, `render-key`. Subtraction
+Kebab-case is valid: `formatted-number`, `is-frozen`, `render-key`. Subtraction
 needs spaces (`a - b`), so `a-b` is one identifier.
 
 ## Dicts, arrays, absence
@@ -79,14 +80,13 @@ argument `body` is positional".
 ## Numbers
 
 ```typst
-calc.pow(10.0, decimals)          // float base
-calc.round(x * scale) / scale
-calc.trunc(x)  calc.abs(x)  str(int(x))
+calc.pow(10.0, n)                 // float base
+calc.round(x)  calc.trunc(x)  calc.abs(x)  str(int(x))
 ```
 
-There is no `toFixed`. Fixed decimals are `str(...)` plus manual zero padding
-after splitting on `"."`; a `decimals` of `none` means "no fixed precision"
-(integers verbatim, otherwise three decimals, matching the frontend).
+The generator does not format numbers. Figures arrive as strings in
+`bundle.formatted`; sections read `formatted-number(path)` / `formatted-text(path)`.
+Do not reintroduce `toFixed`-style rounding here.
 
 ## Strings
 
@@ -149,10 +149,10 @@ Rules: `line(length: 100%, stroke: 0.6pt + rgb("#b9b1a4"))`.
 4. `str(1.5)` is `"1.5"`, not `"1.50"` — pad explicitly.
 5. `calc.pow(10, n)` with an int base; use `10.0`.
 6. Assuming a global `bundle`; import `lib/bundle.typ`.
-7. Re-deriving unit conversion or precision inside a section — `display(path)`
-   owns both, and the parity vector pins it.
-8. Formatting a nonlinear unit (SG ↔ °P) by hand; `format-value` panics on
-   purpose until a named function is added.
+7. Re-deriving unit conversion, rounding, or symbols inside a section — the
+   bundle's `formatted` strings are the only display source.
+8. Doing arithmetic on a value to make a display string; ask the producer for a
+   new formatted field instead.
 
 ## Determinism checklist
 

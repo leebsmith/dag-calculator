@@ -15,13 +15,26 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 
 from app.schemas.canonical import sha256_canonical
 
-BUNDLE_FORMAT = 2
+BUNDLE_FORMAT = 3
 
 
 class BundleModel(BaseModel):
     """Reject unknown fields so a shape change cannot pass silently."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
+
+
+class FormattedValue(BundleModel):
+    """A value as the browser would display it, frozen at freeze.
+
+    ``text`` is what a report prints (number + symbol). ``number`` and ``unit``
+    exist for tables that align the figures in one column and the unit in
+    another. The report generator never converts or rounds.
+    """
+
+    text: str
+    number: str | None = None
+    unit: str | None = None
 
 
 class ArtifactBundle(BundleModel):
@@ -110,11 +123,12 @@ def bundle_content_hash(content: dict[str, Any]) -> str:
 
 
 class ReportBundle(BundleModel):
-    bundle_format: Literal[2] = BUNDLE_FORMAT
+    bundle_format: Literal[3] = BUNDLE_FORMAT
     artifact: ArtifactBundle
     catalog: Catalog
     batch: BatchHeader
     state: StateBundle
+    formatted: dict[str, FormattedValue] = Field(default_factory=dict)
     conformance: dict[str, Any] | None = None
     validation: ValidationBundle = Field(default_factory=ValidationBundle)
     telemetry: dict[str, BoundaryTelemetry] = Field(default_factory=dict)
@@ -171,6 +185,18 @@ class ReportBundle(BundleModel):
             raise ValueError(
                 "catalog unit without a display symbol: " + ", ".join(missing_symbol)
             )
+
+        # Formatted strings are the only display source a report reads. Every
+        # one must name a catalog path, and a dimensioned value must carry the
+        # number/unit split (the ledger aligns those columns).
+        for path, entry in self.formatted.items():
+            if path not in self.catalog.nodes:
+                raise ValueError(f'formatted path "{path}" is not in the catalog')
+            spec = self.catalog.nodes[path]
+            if spec.unit is not None and (entry.number is None or entry.unit is None):
+                raise ValueError(
+                    f'formatted path "{path}" has a display unit but no number/unit split'
+                )
 
         for node_id, rows in self.state.collections.items():
             node = nodes.get(node_id)

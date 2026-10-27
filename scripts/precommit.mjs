@@ -26,12 +26,6 @@ export const GENERATORS = [
     outputs: ["docs/report-sections.md"],
   },
   {
-    name: "report format vector",
-    command: process.execPath,
-    args: ["scripts/emit-report-format-vector.mjs"],
-    outputs: ["tests/conformance/fixtures/report-format-vector.json"],
-  },
-  {
     name: "sources manifest",
     command: process.execPath,
     args: ["scripts/emit-sources-manifest.mjs"],

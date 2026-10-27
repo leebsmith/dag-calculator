@@ -107,6 +107,7 @@ function fakeApp() {
       telemetry: {},
     }),
     reportCatalog: () => ({ dimensions: {}, nodes: {} }),
+    reportFormatted: () => ({}),
   };
 }
 
@@ -344,6 +345,7 @@ test("freezeActive posts the app's freeze payload, and only for drafts", async (
       telemetry: {},
     },
     catalog: { dimensions: {}, nodes: {} },
+    formatted: {},
   });
 
   persistence.clearActive();

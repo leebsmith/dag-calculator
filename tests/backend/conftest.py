@@ -268,5 +268,6 @@ def freeze_payload(valuation=None, **overrides):
                 nodes={path: NodePresentation(label=path) for path in sorted(paths)}
             ),
         ),
+        formatted=overrides.pop("formatted", {}),
         **overrides,
     )

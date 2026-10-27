@@ -101,7 +101,7 @@ def bundle(**overrides) -> dict:
 
 def test_a_well_formed_bundle_validates() -> None:
     parsed = ReportBundle.model_validate(bundle())
-    assert parsed.bundle_format == 2
+    assert parsed.bundle_format == 3
     assert parsed.batch.identity["equipment"]["name"] == "Test rig"
 
 
@@ -112,7 +112,7 @@ def test_unknown_fields_are_rejected() -> None:
 
 def test_unknown_bundle_format_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(bundle_format=3))
+        ReportBundle.model_validate(bundle(bundle_format=2))
 
 
 def test_valuation_must_name_declared_nodes() -> None:
@@ -224,10 +224,22 @@ def test_telemetry_must_name_a_solved_boundary():
         ReportBundle.model_validate(bundle(state=state, telemetry=telemetry))
 
 
+def test_formatted_paths_must_be_in_the_catalog() -> None:
+    formatted = {"not.a.path": {"text": "x"}}
+    with pytest.raises(ValidationError, match="is not in the catalog"):
+        ReportBundle.model_validate(bundle(formatted=formatted))
+
+
+def test_dimensioned_formatted_values_need_the_number_unit_split() -> None:
+    formatted = {"batch.v_ferm": {"text": "20.0 L"}}
+    with pytest.raises(ValidationError, match="number/unit split"):
+        ReportBundle.model_validate(bundle(formatted=formatted))
+
+
 def test_freeze_payload_requires_the_bundle_inputs() -> None:
     from app.schemas.batch import FreezePayload
 
     with pytest.raises(ValidationError) as exc:
         FreezePayload()
     missing = {error["loc"][0] for error in exc.value.errors()}
-    assert missing == {"report_inputs", "catalog"}
+    assert missing == {"report_inputs", "catalog", "formatted"}
