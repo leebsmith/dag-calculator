@@ -40,7 +40,7 @@
     - *Style:* #fact-text("style.name")
   ]
   v(4pt)
-  heading(level: 2)[Batch Results]
+  heading(level: 2)[Batch Solver Results]
   [
     *OG:* #formatted-text("solver.batch.sg_post_boil"),
     *FG:* #formatted-text("batch.realized_fg"),
