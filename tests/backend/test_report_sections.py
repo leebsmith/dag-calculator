@@ -127,6 +127,18 @@ BATCH_FACTS_PROBE = (
     "#metadata(present-batch-facts()) <probe>\n"
 )
 
+YEAST_PRESENCE_PROBE = (
+    '#import "sections/yeast.typ": present-yeast\n'
+    "#metadata(present-yeast()) <probe>\n"
+)
+
+# The two gates the yeast layout branches on: a non-zero derate earns the
+# subtraction row, and a diastaticus-positive strain earns the warning.
+YEAST_GATES_PROBE = (
+    '#import "sections/yeast.typ": diastaticus, presents-derate\n'
+    "#metadata((sta1: diastaticus(), derate: presents-derate())) <probe>\n"
+)
+
 
 def test_batch_facts_is_present_with_the_realized_values() -> None:
     with tempfile.TemporaryDirectory() as tmp:
@@ -301,3 +313,46 @@ def test_the_vendored_font_resolves_without_system_fonts() -> None:
         check=True,
     )
     assert "IBM Plex Sans" in completed.stdout
+
+
+def test_yeast_is_present_with_a_selected_strain() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, YEAST_PRESENCE_PROBE) is True
+
+
+def test_yeast_is_absent_without_a_selected_strain() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["batch.yeast.name"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, YEAST_PRESENCE_PROBE) is False
+        render(root, "yeast")
+
+
+def test_the_derate_row_and_the_warning_follow_the_state() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, YEAST_GATES_PROBE) == {"sta1": True, "derate": True}
+
+    bundle = fixture()
+    bundle["state"]["valuation"]["batch.attenuation_derate_points"] = 0
+    bundle["state"]["valuation"]["batch.yeast"]["sta1"] = False
+    bundle["formatted"]["batch.attenuation_derate_points"] = {"text": "0.0 pts"}
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, YEAST_GATES_PROBE) == {"sta1": False, "derate": False}
+        render(root, "yeast")
+
+
+def test_yeast_renders_alone_and_in_the_full_report() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+
+        render(root, "yeast")
+        assert (root / "report.pdf").stat().st_size > 0
+
+        render(root)
+        assert (root / "report.pdf").stat().st_size > 0

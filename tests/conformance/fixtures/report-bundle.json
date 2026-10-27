@@ -5715,6 +5715,126 @@
         "options": null,
         "option_labels": null
       },
+      "batch.yeast": {
+        "label": "Yeast",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.manufacturer": {
+        "label": "Manufacturer",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.form": {
+        "label": "Form",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.fermentation": {
+        "label": "Fermentation",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "ale",
+          "lager",
+          "wild",
+          "mixed"
+        ],
+        "option_labels": {
+          "ale": "Ale",
+          "lager": "Lager",
+          "wild": "Wild",
+          "mixed": "Mixed"
+        }
+      },
+      "batch.yeast.attenuation_pct": {
+        "label": "Typical attenuation",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.attenuation_derate_points": {
+        "label": "Batch derate (points)",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "pts",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast_cap": {
+        "label": "Malt attenuation cap",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.temp_low_c": {
+        "label": "Temp low",
+        "dimension": "temperature",
+        "unit": "degC",
+        "symbol": "\u00b0C",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.temp_high_c": {
+        "label": "Temp high",
+        "dimension": "temperature",
+        "unit": "degC",
+        "symbol": "\u00b0C",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.flocculation": {
+        "label": "Flocculation",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.yeast.sta1": {
+        "label": "STA1",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "batch.yeast_id": {
         "label": "Yeast",
         "dimension": "reference",
@@ -5746,7 +5866,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:46d2db2e756cb97d0f052673bed7070134ebea1fa8d6d8af79585a9f15b93075"
+    "hash": "sha256:a5bd58a31459c299dc8e88a4bb5c46aed9adfe7fa0cc68a47c4c41f61d2998d8"
   },
   "batch": {
     "id": "frozen-1",
@@ -5786,6 +5906,19 @@
       "batch.v_ferm": 20.0,
       "batch.target_abv": 5.5,
       "batch.yeast_id": "us-05",
+      "batch.fermentation": "ale",
+      "batch.attenuation_derate_points": 0.03,
+      "batch.yeast_cap": 0.73,
+      "batch.yeast": {
+        "name": "SafAle US-05",
+        "manufacturer": "Fermentis",
+        "form": "Dry",
+        "attenuation_pct": 0.76,
+        "temp_low_c": 15.0,
+        "temp_high_c": 22.0,
+        "flocculation": "Medium",
+        "sta1": true
+      },
       "batch.realized_abv": 5.62,
       "mash.grain_temp_c": 20.0,
       "mash.strike_water_temp_c": 68.3,
@@ -5864,6 +5997,8 @@
     "roots": {
       "batch.v_ferm": 20.0,
       "batch.target_abv": 5.5,
+      "batch.fermentation": "ale",
+      "batch.attenuation_derate_points": 0.03,
       "mash.grain_temp_c": 20.0,
       "water.target_mash_ph": 5.4
     },
@@ -5915,7 +6050,14 @@
     "selections": {
       "batch.yeast": {
         "id": "us-05",
-        "name": "SafAle US-05"
+        "name": "SafAle US-05",
+        "manufacturer": "Fermentis",
+        "form": "Dry",
+        "attenuation_pct": 0.76,
+        "temp_low_c": 15.0,
+        "temp_high_c": 22.0,
+        "flocculation": "Medium",
+        "sta1": true
       },
       "water.target_profile": {
         "id": "pale-ale",
@@ -5939,6 +6081,61 @@
     },
     "batch.yeast_id": {
       "text": "us-05",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast.name": {
+      "text": "SafAle US-05",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast.manufacturer": {
+      "text": "Fermentis",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast.form": {
+      "text": "Dry",
+      "number": null,
+      "unit": null
+    },
+    "batch.fermentation": {
+      "text": "Ale",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast.attenuation_pct": {
+      "text": "76.0%",
+      "number": "76.0",
+      "unit": "%"
+    },
+    "batch.attenuation_derate_points": {
+      "text": "3.0 pts",
+      "number": "3.0",
+      "unit": "pts"
+    },
+    "batch.yeast_cap": {
+      "text": "73.0%",
+      "number": "73.0",
+      "unit": "%"
+    },
+    "batch.yeast.temp_low_c": {
+      "text": "15.0 \u00b0C",
+      "number": "15.0",
+      "unit": "\u00b0C"
+    },
+    "batch.yeast.temp_high_c": {
+      "text": "22.0 \u00b0C",
+      "number": "22.0",
+      "unit": "\u00b0C"
+    },
+    "batch.yeast.flocculation": {
+      "text": "Medium",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast.sta1": {
+      "text": "true",
       "number": null,
       "unit": null
     },
@@ -6311,5 +6508,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:62d1a233ec4d5d60d6ca90a5cba73deccb376e54db9942e5478a17af064e02b2"
+  "content_hash": "sha256:d6143acfdada919bde875f67d4ace77ca91faad62ff481283d45a2e55ab15bb7"
 }

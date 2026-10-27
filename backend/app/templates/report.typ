@@ -5,6 +5,7 @@
 #import "lib/bundle.typ": bundle, batch, catalog, is-frozen
 #import "lib/format.typ": opt
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
+#import "sections/yeast.typ": present-yeast, render-yeast
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 
 // === registry:begin ===
@@ -14,6 +15,7 @@
 //   (id: "…", title: "…", present: <fn>, render: <fn>),
 #let sections = (
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
+  (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
 )
 // === registry:end ===

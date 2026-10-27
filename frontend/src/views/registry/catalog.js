@@ -118,6 +118,9 @@ function resolveSymbol(artifact, dimensionId, unitId, spec) {
   const dim = artifact.dimensions?.[dimensionId];
   if (!dim) return null;
   if (dim.kind === "identity") return null;
+  // A registry pin wins: the derate is percentage points, and the percentage
+  // dimension's registered symbol would print it as one.
+  if (spec.symbol) return spec.symbol;
   const fromUnit = UNIT_SYMBOLS[dimensionId]?.[unitId];
   if (fromUnit) return fromUnit;
   const symbols = unitSymbols(dimensionId);

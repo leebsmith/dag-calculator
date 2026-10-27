@@ -231,6 +231,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         label: meta.label ?? id,
         unit: meta.unit ?? null,
         displayUnit: meta.displayUnit ?? null,
+        symbol: meta.symbol ?? null,
         decimals: meta.decimals ?? null,
         hint: meta.hint ?? null,
         options,

@@ -41,7 +41,9 @@ export function valuateScalar(field, engine, ctx, nl) {
     unitId && typeof value === "number" && artifact
       ? fromBase(artifact, field.dimension, unitId, value, nl)
       : value;
-  const symbol = unitId ? UNIT_SYMBOLS[field.dimension]?.[unitId] ?? unitId : null;
+  const symbol = unitId
+    ? field.symbol ?? UNIT_SYMBOLS[field.dimension]?.[unitId] ?? unitId
+    : null;
   // A toggleable field with no unit id and no registry `unit` (e.g. equipment
   // conversion efficiency) still needs a pill label — fall back to the
   // dimension's base-unit symbol (so a fraction reads "×1", not blank).

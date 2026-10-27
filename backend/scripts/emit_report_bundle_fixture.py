@@ -101,6 +101,8 @@ RECORD = {
     "roots": {
         "batch.v_ferm": 20.0,
         "batch.target_abv": 5.5,
+        "batch.fermentation": "ale",
+        "batch.attenuation_derate_points": 0.03,
         "mash.grain_temp_c": 20.0,
         "water.target_mash_ph": 5.4,
     },
@@ -118,7 +120,17 @@ RECORD = {
         "batch.sugars": SUGARS,
     },
     "selections": {
-        "batch.yeast": {"id": "us-05", "name": "SafAle US-05"},
+        "batch.yeast": {
+            "id": "us-05",
+            "name": "SafAle US-05",
+            "manufacturer": "Fermentis",
+            "form": "Dry",
+            "attenuation_pct": 0.76,
+            "temp_low_c": 15.0,
+            "temp_high_c": 22.0,
+            "flocculation": "Medium",
+            "sta1": True,
+        },
         "water.target_profile": {"id": "pale-ale", "name": "Pale ale target"},
     },
     "provenance": {
@@ -130,6 +142,19 @@ RECORD = {
         "batch.v_ferm": 20.0,
         "batch.target_abv": 5.5,
         "batch.yeast_id": "us-05",
+        "batch.fermentation": "ale",
+        "batch.attenuation_derate_points": 0.03,
+        "batch.yeast_cap": 0.73,
+        "batch.yeast": {
+            "name": "SafAle US-05",
+            "manufacturer": "Fermentis",
+            "form": "Dry",
+            "attenuation_pct": 0.76,
+            "temp_low_c": 15.0,
+            "temp_high_c": 22.0,
+            "flocculation": "Medium",
+            "sta1": True,
+        },
         "batch.realized_abv": 5.62,
         "mash.grain_temp_c": 20.0,
         "mash.strike_water_temp_c": 68.3,
@@ -387,6 +412,43 @@ PAYLOAD = FreezePayload(
                 label="Total hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
             "batch.yeast.name": NodePresentation(label="Yeast"),
+            "batch.yeast": NodePresentation(label="Yeast"),
+            "batch.yeast.manufacturer": NodePresentation(label="Manufacturer"),
+            "batch.yeast.form": NodePresentation(label="Form"),
+            "batch.fermentation": NodePresentation(
+                label="Fermentation",
+                options=["ale", "lager", "wild", "mixed"],
+                option_labels={"ale": "Ale", "lager": "Lager", "wild": "Wild", "mixed": "Mixed"},
+            ),
+            "batch.yeast.attenuation_pct": NodePresentation(
+                label="Typical attenuation",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.attenuation_derate_points": NodePresentation(
+                label="Batch derate (points)",
+                dimension="percentage",
+                unit="pct",
+                symbol="pts",
+                decimals=1,
+            ),
+            "batch.yeast_cap": NodePresentation(
+                label="Malt attenuation cap",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.yeast.temp_low_c": NodePresentation(
+                label="Temp low", dimension="temperature", unit="degC", symbol="°C", decimals=1
+            ),
+            "batch.yeast.temp_high_c": NodePresentation(
+                label="Temp high", dimension="temperature", unit="degC", symbol="°C", decimals=1
+            ),
+            "batch.yeast.flocculation": NodePresentation(label="Flocculation"),
+            "batch.yeast.sta1": NodePresentation(label="STA1"),
             "batch.yeast_id": NodePresentation(label="Yeast", dimension="reference"),
             "equipment.max_hlt_volume_l": NodePresentation(
                 label="Max HLT", dimension="volume", unit="L", symbol="L", decimals=1
@@ -399,6 +461,17 @@ PAYLOAD = FreezePayload(
     formatted={
         "equipment.name": FormattedValue(text="HERMS 30L"),
         "batch.yeast_id": FormattedValue(text="us-05"),
+        "batch.yeast.name": FormattedValue(text="SafAle US-05"),
+        "batch.yeast.manufacturer": FormattedValue(text="Fermentis"),
+        "batch.yeast.form": FormattedValue(text="Dry"),
+        "batch.fermentation": FormattedValue(text="Ale"),
+        "batch.yeast.attenuation_pct": FormattedValue(text="76.0%", number="76.0", unit="%"),
+        "batch.attenuation_derate_points": FormattedValue(text="3.0 pts", number="3.0", unit="pts"),
+        "batch.yeast_cap": FormattedValue(text="73.0%", number="73.0", unit="%"),
+        "batch.yeast.temp_low_c": FormattedValue(text="15.0 °C", number="15.0", unit="°C"),
+        "batch.yeast.temp_high_c": FormattedValue(text="22.0 °C", number="22.0", unit="°C"),
+        "batch.yeast.flocculation": FormattedValue(text="Medium"),
+        "batch.yeast.sta1": FormattedValue(text="true"),
         "style.name": FormattedValue(text="American Pale Ale"),
         "water.source.source_name": FormattedValue(text="City tap"),
         "solver.batch.sg_post_boil": FormattedValue(text="13.6 °P", number="13.6", unit="°P"),

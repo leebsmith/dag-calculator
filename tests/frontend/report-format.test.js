@@ -28,6 +28,19 @@ test("formatted values carry text, number, and the display symbol", async () => 
   assert.equal(formatted["batch.yeast_id"].text, app.selectedYeastId);
 });
 
+test("the batch derate is points off the strain maximum, not a percentage", async () => {
+  const app = await booted();
+
+  app.setRoot("batch.attenuation_derate_points", 0.04);
+  assert.deepEqual(app.reportFormatted()["batch.attenuation_derate_points"], {
+    text: "4.0 pts",
+    number: "4.0",
+    unit: "pts",
+  });
+  // The ceiling it feeds is still an attenuation percentage.
+  assert.equal(app.reportCatalog().nodes["batch.yeast_cap"].symbol, "%");
+});
+
 test("unit switches are captured in the catalog and the formatted strings", async () => {
   const app = await booted();
 

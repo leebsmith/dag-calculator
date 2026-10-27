@@ -28,7 +28,7 @@ _107 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
-| `batch.attenuation_derate_points` | Batch derate (points) | root | percentage | pct (%) | 1 | — |
+| `batch.attenuation_derate_points` | Batch derate (points) | root | percentage | pct (pts) | 1 | — |
 | `batch.boil_hops` | Boil hops | collection | — | — | — | — |
 | `batch.boil_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.boil_time_fraction` | Boil remaining | field | percentage | pct (%) | 1 | — |

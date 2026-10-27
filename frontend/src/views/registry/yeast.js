@@ -13,6 +13,7 @@ export const yeastRegistry = {
   "batch.attenuation_derate_points": {
     label: "Batch derate (points)",
     displayUnit: "pct",
+    symbol: "pts",
     hint: "Percentage points subtracted from the strain's published attenuation. 0 = no derate.",
   },
   "batch.yeast_cap": {
