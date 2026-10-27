@@ -12,6 +12,9 @@ SCRAPE_DEPS := --with-requirements $(SCRAPE_DIR)/requirements.txt
 LIMIT ?=
 OUT   ?=
 
+# Pinned report toolchain version (read by report-dev and checked in tests).
+TYPST_VERSION := $(shell cat backend/app/templates/TYPST_VERSION 2>/dev/null)
+
 # Emulator data: import only when a prior export exists, so a fresh checkout (or a
 # wiped emulator-data dir) starts quietly instead of warning about missing
 # import metadata.
@@ -26,12 +29,14 @@ BJCP_EDITION ?= 2021
 
 .PHONY: help hooks local-dev check test test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
-        scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy
+        scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy \
+        report-dev report-pages
 
 help:
 	@echo "Usage: make <target>"
 	@echo
 	@echo "  local-dev       Run frontend + Firebase emulators + backend"
+	@echo "  report-dev      Watch the report templates against a downloaded bundle"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
 	@echo "  test-fuzz       Seeded water-solver invariant sweep (CASES=200 SEED=...)"
@@ -65,6 +70,37 @@ local-dev:
 		"cd frontend && npm run dev" \
 		"mkdir -p $(EMULATOR_DATA) && npx firebase emulators:start --project $(PROJECT_ID) $(EMULATOR_FLAGS)" \
 		"cd backend && FIREBASE_PROJECT_ID=$(PROJECT_ID) FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ALLOWED_EMAILS=dev@localhost uv run uvicorn app.main:app --reload --port 8000"
+
+# --- Report templates --------------------------------------------------------
+# Iterate on backend/app/templates against a bundle downloaded from the app
+# (editor toolbar -> Download bundle). `.local/` is gitignored and disposable.
+# The typst binary is not a project dependency; it must match TYPST_VERSION.
+REPORT_DIR := .local/report
+SECTIONS   ?=
+
+report-dev:
+	@test -n "$(BUNDLE)" || (echo "Usage: make report-dev BUNDLE=<downloaded report-bundle.json>"; exit 1)
+	@test -f "$(BUNDLE)" || (echo "No such bundle: $(BUNDLE)"; exit 1)
+	@actual=$$(typst --version 2>/dev/null | cut -d' ' -f2); \
+	  if [ "$$actual" != "$(TYPST_VERSION)" ]; then \
+	    echo "typst $$actual does not match the pinned $(TYPST_VERSION)"; exit 1; \
+	  fi
+	@mkdir -p $(REPORT_DIR)
+	@cp "$(BUNDLE)" $(REPORT_DIR)/report.json
+	typst watch --root . --input bundle=/$(REPORT_DIR)/report.json \
+		--input sections=$(SECTIONS) \
+		backend/app/templates/report.typ $(REPORT_DIR)/report.pdf
+
+# One-shot PNG burst (one file per page) for a quick visual check.
+report-pages:
+	@test -n "$(BUNDLE)" || (echo "Usage: make report-pages BUNDLE=<downloaded report-bundle.json>"; exit 1)
+	@test -f "$(BUNDLE)" || (echo "No such bundle: $(BUNDLE)"; exit 1)
+	@mkdir -p $(REPORT_DIR)
+	@cp "$(BUNDLE)" $(REPORT_DIR)/report.json
+	typst compile --format png --root . --input bundle=/$(REPORT_DIR)/report.json \
+		--input sections=$(SECTIONS) \
+		backend/app/templates/report.typ '$(REPORT_DIR)/page-{p}.png'
+	@ls -l $(REPORT_DIR)/page-*.png
 
 # --- Verification ------------------------------------------------------------
 check:
@@ -118,9 +154,11 @@ verify-full: verify test-oracle
 generate:
 	node scripts/emit-artifact-inventory.mjs
 	node scripts/emit-report-bundle-glossary.mjs
+	node scripts/emit-report-sections.mjs
 	node scripts/emit-sources-manifest.mjs
 	$(MAKE) --no-print-directory seeds
 	cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
+	node scripts/emit-report-format-vector.mjs
 
 hooks:
 	git config core.hooksPath .githooks

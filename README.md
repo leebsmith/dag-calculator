@@ -26,6 +26,10 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/historical/`](docs/historical/) | **frozen** ingestion/validation snapshots (not maintained) |
 | [`docs/style-conformance.md`](docs/style-conformance.md) | **living** — style-conformance assessor (adherence index + drift status) |
 | [`docs/report-bundle.md`](docs/report-bundle.md) | **living** — the frozen report-bundle contract: blocks, path resolution, units, nullability |
+| [`docs/report-renderer.md`](docs/report-renderer.md) | **living** — the Typst renderer: dev loop, section contract, routes |
+| [`docs/adding-a-section.md`](docs/adding-a-section.md) | **living** — recipe: add a section to the report |
+| [`docs/report-sections.md`](docs/report-sections.md) | **generated** — canonical section order, presence predicates, source files |
+| [`docs/typst-notes.md`](docs/typst-notes.md) | **living** — verified Typst 0.15.1 idioms and the template API |
 | [`docs/whirlpool-hopping-model.md`](docs/whirlpool-hopping-model.md) | **living** — whirlpool bitterness theory, equations, constants, and reference vectors |
 | [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — extract yield vs fermentability, mixed-wort AA, yeast cap |
 | [`docs/belgian-knob.md`](docs/belgian-knob.md) | **living** — advisory sugar dose to shift AA/ABV at fixed AE |

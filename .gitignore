@@ -16,3 +16,6 @@ firestore-debug.log
 ui-debug.log
 firebase-export-*/
 *.swp
+
+# Local report scratch (downloaded bundles, rendered pages)
+.local/

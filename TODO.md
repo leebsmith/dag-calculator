@@ -12,8 +12,11 @@
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
 2. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`)
-   + staged brew-day checklist. Precursor landed: the freeze bundle
-   (`plans/report-bundle.md` R1–R4); next is the Typst section set and renderer.
+   + staged brew-day checklist. Landed: the freeze bundle
+   (`plans/report-bundle.md` R1–R4), the template scaffold, the registry contract
+   and its guards, the formatting parity vector, and the local loop
+   (`make report-dev` / `report-pages`, `docs/report-renderer.md`). Next: sections
+   one at a time (`docs/adding-a-section.md`), then `report_render.py` + routes.
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 

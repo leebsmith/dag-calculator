@@ -4,26 +4,31 @@ program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [report-bundle]
 blocks: []
-gate: a frozen batch renders PDF and per-page PNG preview from the bundle alone; sections prune on absence; make check/test green
-status: proposed
+gate: a downloaded bundle renders to a printable PDF and per-page PNGs from the scaffold alone; a section added later renders and is drift-guarded; make check/test green
+status: active (scaffold landed; sections at a time)
 ---
 
 # Report Renderer — Typst-composed, bundle-driven
 
-Status: proposed. Supersedes the markdown/PDF path in `plans/recipe-pipeline.md`
+Status: active. Supersedes the markdown/PDF path in `plans/recipe-pipeline.md`
 and the YAML grammar in `plans/recipe-yaml-grammar.md`. The bundle contract in
 `plans/report-bundle.md` is unchanged; this plan consumes it.
 
 ## 1. Goal
 
-A frozen batch renders to a printable PDF and a per-page PNG preview from the
-bundle alone, with no second source of truth and no Python presentation model.
-Typst owns composition, layout, and typography; Python owns the guard, the
-process boundary, and the HTTP surface.
+A bundle renders to a printable PDF and a per-page PNG preview from the bundle
+alone, with no second source of truth and no Python presentation model. Typst
+owns composition, layout, and typography; Python owns the guard, the process
+boundary, and the HTTP surface.
 
-The renderer is a **pure function** of its inputs. Same bundle + same spec +
-same Typst version + same fonts ⇒ byte-identical output. That property is what
-makes an immutable frozen report meaningful.
+The renderer is a **pure function** of its inputs: same bundle + same spec +
+same Typst version + same fonts ⇒ same output. That property is what makes a
+rendered report meaningful as a view of a frozen fact.
+
+A report is **never a stored artifact**. It is generated before freeze as a
+preview and after freeze from the immutable bundle. Freezing stores the bundle
+(the fact); the report is derived, regenerable, and allowed to differ later if a
+template improves.
 
 ## 2. Locked decisions
 
@@ -37,10 +42,14 @@ makes an immutable frozen report meaningful.
 | 6 | **`doc_kind` is reserved.** v1 ships `recipe` only. Inventory and shopping are different facts and out of scope. |
 | 7 | **Spec travels in the URL.** No stored presets. |
 | 8 | **Standalone sheets.** A single-section request suppresses document title and outline. |
-| 9 | **PDF + PNG.** Print is PDF; preview is one PNG per page at 144 ppi, both from one source file. |
-| 10 | **No persistence.** Rendered output is never stored. `ETag` is the render key. |
-| 11 | **Pinned environment.** Typst binary on PATH, fonts vendored in-repo, creation timestamp pinned to `frozen_at`, `--root` confined to a temp dir. |
+| 9 | **PDF + PNG.** Print is PDF; preview is one PNG per page, both from one source file. |
+| 10 | **No persistence.** Nothing rendered is stored — not bytes, not a render key. The render key is an `ETag`; ancestry is printed in the document footer. |
+| 11 | **Pinned environment.** Typst binary version pinned in-repo (`backend/app/templates/TYPST_VERSION`), creation timestamp pinned to `frozen_at`, `--root` confined to a temp dir. Fonts use the binary's embedded set until a face is actually needed. |
 | 12 | **Typst ships in the image.** A Dockerfile replaces Cloud Run buildpacks. |
+| 13 | **Drafts render.** A preview is a first-class request, not a developer privilege: a draft renders at any time before freeze, from a bundle the client already holds. |
+| 14 | **One input type.** The renderer takes a bundle. `GET` resolves the stored bundle for a frozen batch; `POST` accepts a bundle in the body for a draft. The renderer never asks whether the bundle is a fact. |
+| 16 | **The bundle carries the display symbol.** `unit` converts, `symbol` renders; both live in `catalog.nodes`. |
+| 15 | **Divergence is expected.** A report generated earlier and a report generated later from the same frozen bundle may differ when the template or toolchain changes. The footer names the bundle and toolchain so the divergence is attributable, not tracked. |
 
 ## 3. Why this supersedes the projector
 
@@ -61,9 +70,9 @@ Two consequences, both accepted:
 
 A walker over structured JSON was also considered and rejected: interpolating
 document strings into Typst markup requires escaping `#`, `*`, `_`, `[`, `]`,
-`$`, `@`, and backticks, so arbitrary prose (recipe notes, a value like `2 * 3`)
-would eventually break a render. Under the chosen design all strings reach
-Typst as data, not syntax.
+`$`, `@`, and backticks, so arbitrary prose (recipe notes, a value like
+`2 * 3`) would eventually break a render. Under the chosen design all strings
+reach Typst as data, not syntax.
 
 ## 4. Architecture
 
@@ -72,9 +81,21 @@ Typst as data, not syntax.
                           │
    request spec ────┐     ├──▶ report_render.py ──▶ temp root ──▶ typst compile
    (query params)   │     │                                        ├─ report.pdf
-                    └─────┘                                        └─ report-{p}.png
-                                                                   └─ typst query (meta)
+                     └─────┘                                        └─ report-{p}.png
+                                                                    └─ typst query (meta)
 ```
+
+Transports:
+
+| Batch | Route | Shape |
+|---|---|---|
+| Frozen | `GET /batches/{id}/report?format=pdf\|png&page=n` | PDF, or one PNG per request; `ETag` is the render key |
+| Draft | `POST /batches/{id}/report` (bundle in body) | all pages in one response; no `ETag` reproducibility claim |
+
+Per-page delivery is only sound where a page request is cheap and idempotent,
+i.e. against a stored bundle. A draft page request would re-upload ~80–100 KB
+and recompile, and an in-process cache is not viable on Cloud Run's multiple
+instances. Hence: frozen pages individually, draft pages batched.
 
 Render key:
 
@@ -86,9 +107,9 @@ sha256( bundle.content_hash
       ‖ typst_version ‖ fontset_hash )
 ```
 
-The key is the `ETag`; no bytes are stored. A client or any intermediary caches
-by it, and a change to the bundle, the spec, the template, or the toolchain
-produces a different key by construction.
+The key is the `ETag` for frozen batches and the footer's ancestry token. No
+bytes are stored. A change to the bundle, the spec, the template, or the
+toolchain produces a different key by construction.
 
 ## 5. Inputs
 
@@ -98,10 +119,18 @@ Unchanged from `plans/report-bundle.md`. Two amendments fall out of rendering:
 
 - `catalog.nodes` keys must resolve for boundary output paths (e.g.
   `solver.water.mash_additions.gypsum_kg`). The schema's `_resolves` already
-  supports this; R3 must actually populate those entries, not just node paths.
+  supports this; R3 populates those entries.
 - `content_hash` must be **recomputed and checked**, not merely accepted as a
   string. Landed: `ReportBundle.seal` stamps it and the validator rejects a
   mismatch.
+
+**Amended — `catalog.nodes[path].symbol`.** `unit` is a conversion handle, so a
+registry that pins a bare symbol (`"%"` for ABV) had nowhere to live and a
+generator could only print the id (`5.6 pct`). Symbols are presentation metadata
+about a value, exactly what the catalog block exists for, so the field is added
+there, required wherever `unit` is set, and `bundle_format` bumps to `2` with the
+fixture regenerated in the same commit. Bundles written under format 1 are
+refused rather than read optimistically.
 
 ### 5.2 Report spec
 
@@ -122,27 +151,49 @@ Two distinct predicates, deliberately:
 - **present** — the section's data exists in the bundle (§6.3).
 
 `include = requested ∧ present`. An empty result is a render-time error, not a
-blank page (§7.2).
+blank page (§7.2), and on a draft it is an ordinary occurrence that the UI must
+surface as "nothing solved yet" rather than a failure.
 
-## 6. Typst layout
+## 6. Typst tree
 
 ### 6.1 Files
 
 | Path | Role | Changes when |
 |---|---|---|
-| `backend/app/templates/report.typ` | entry point + static section registry | a section is added or removed |
+| `backend/app/templates/report.typ` | entry point, document chrome, static section registry | a section is added or removed |
 | `backend/app/templates/theme.typ` | `#set` / `#show`: page, fonts, rules, spacing, title/outline | styling changes |
+| `backend/app/templates/lib/bundle.typ` | loads `report.json` from `sys.inputs`, exports `bundle`/`state`/`catalog` | the input contract changes |
+| `backend/app/templates/lib/format.typ` | defensive accessors, unit conversion, display strings | the formatting rule changes |
 | `backend/app/templates/sections/*.typ` | one file per section: `present` predicate + `render` | content changes |
-| `backend/app/templates/fonts/*` | vendored font set | never (pinned) |
+| `backend/app/templates/TYPST_VERSION` | pinned binary version | never, except a deliberate bump |
+| `backend/app/templates/fonts/*` | vendored font set | deferred; the binary's embedded fonts are used until a face is needed |
 
 The split exists for hash hygiene and review: a styling change must not
 invalidate a content identity, and a section must be reviewable in isolation.
 `theme.typ` is where `#set page(...)`, `#set text(font: ...)`, and
-`#show heading: ...` live, so the walker emits semantic structure and the theme
-decides appearance — the same separation `docs/style-rulebook.md` enforces for
-CSS tokens.
+`#show heading: ...` live, so the renderer emits semantic structure and the
+theme decides appearance — the same separation `docs/style-rulebook.md`
+enforces for CSS tokens.
 
-### 6.2 Registry without reflection
+### 6.2 Input contract
+
+`lib/bundle.typ` loads the bundle once:
+
+```
+#let bundle = json(sys.inputs.at("bundle", default: "report.json"))
+```
+
+The input is a **path**, not content, so the service and the local loop use the
+same mechanism:
+
+- service: temp root, `--root <temp> --input bundle=report.json`
+- local: `--root .` `--input bundle=.local/report/report.json`
+
+`sys.inputs` for the path is what keeps the local loop Python-free; the
+alternative (staging a copy of the template tree per run) reintroduces a build
+step into the edit cycle.
+
+### 6.3 Registry without reflection
 
 Typst cannot look up an import by string at compile time. The registry is a
 static literal in `report.typ` mapping section id → `{ title, present, render }`,
@@ -151,8 +202,12 @@ is the only place Typst's lack of dynamism costs anything, and it is ~15 lines
 of boilerplate.
 
 Canonical order is registry order. `sections=` filters it; it never reorders it.
+The registry is delimited by marker comments and each entry is one line in a
+fixed shape, because `scripts/report-sections.mjs` parses it to generate
+`docs/report-sections.md` and to guard the section contract (§10). An
+unparsable entry is a hard error, never a silently skipped one.
 
-### 6.3 Presence predicates
+### 6.4 Presence predicates
 
 Grounded in the current artifact:
 
@@ -180,19 +235,30 @@ Presentational inputs (`water.salt_distribution`, `water.acid_medium`,
 `water.gypsum_form`, `water.cacl2_form`) are choices that *describe* the salt
 table; they are read for display, never used as presence.
 
-### 6.4 Formatting
+This table is a **candidate inventory**, not a commitment: the section set,
+titles, and prose are authoring decisions made one section at a time (§11).
+
+### 6.5 Formatting
 
 All leaf values are base-unit numbers plus presentation metadata (bundle
 decision 2: no pre-formatted strings). One helper converts by the dimension's
 unit entry and rounds to `catalog.nodes[path].decimals`, appending the unit
 symbol; option-bearing values map through `option_labels`.
 
-The rule itself is trivial; the risk is drift from the frontend. Mitigation: a
-committed fixture whose Typst output is diffed against a known
-frontend-formatted vector (CSV of path → display string). If either side
-changes the rule without the other, the gate fails.
+Conversion kinds supported: `linear`, `affine`, and identity/base-unit
+short-circuits. **Nonlinear units (`fwd`/`inv` function ids, e.g. SG ↔ °P) are
+not evaluable from the bundle** — the function body lives in the engine. The
+helper panics naming the path rather than guessing, and the first section that
+needs a nonlinear readout adds a named function to `lib/format.typ` with the
+same parity treatment. Nothing silently formats a nonlinear value as its base.
 
-### 6.5 Defensive accessors
+The drift risk is the rounding rule, not the unit math (unit math is pinned by
+the artifact's own `unit-roundtrip` guard). Mitigation: a committed vector of
+`(value, dimension, unit, decimals) → display string`, generated from the
+frontend's own `fromBase` + `toFixed` + `UNIT_SYMBOLS`, compared against Typst
+output by a test that skips loudly when `typst` is absent.
+
+### 6.6 Defensive accessors
 
 The bundle is untyped at the Typst boundary: `null` becomes `none` (a value),
 objects lack absent keys, and a discriminated `kind` is a bare string. Therefore:
@@ -204,12 +270,21 @@ objects lack absent keys, and a discriminated `kind` is a bare string. Therefore
   legitimately renderable.
 - No unguarded member access anywhere in `sections/`.
 
-### 6.6 Metadata out
+### 6.7 Metadata out
 
 The document emits `#metadata(...)` under a label with the resolved section ids
-and page count. After compiling, `typst query` extracts it as JSON (see §7.2).
-This is how the API learns what actually rendered without duplicating predicate
-logic in Python.
+and page count. After compiling, `typst query` extracts it as JSON. This is how
+the API learns what actually rendered without duplicating predicate logic in
+Python. The same mechanism backs the formatting-parity probe (§10).
+
+### 6.8 Ancestry footer
+
+Every document prints, in the footer: `batch.id`, `frozen_at`, and the render
+key (or, before the renderer exists, the `content_hash`) truncated to eight hex
+characters. Eight characters identify the bundle *and* the template/toolchain
+that printed it, so a printed sheet is traceable with no registry and no version
+history. A reprint after a template edit shows a different token, which is the
+"divergence noted, not tracked" property.
 
 ## 7. Backend
 
@@ -217,46 +292,58 @@ logic in Python.
 
 Responsibilities, in order:
 
-1. Resolve the frozen batch; refuse drafts (draft bundles exist only as
-   unpersisted previews for authoring — `batch.status: "draft"`).
+1. Take a validated `ReportBundle` plus the spec. It does **not** judge whether
+   the bundle is a fact; the route decides where it came from.
 2. Validate the spec (`doc_kind`, unknown section ids → 422).
-3. Create a temp root; write `report.json` (the bundle) and the templates into it.
-4. Compile with fixed argv: `--root <temp>`, `--font-path <vendored>`,
-   `--creation-timestamp <batch.frozen_at>`, `--format pdf`, then `--format png`
-   with a `{p}` pattern at 144 ppi.
+3. Create a temp root; copy the template tree in; write `report.json`.
+4. Compile with fixed argv: `--root <temp>`, `--font-path <vendored>` (when
+   fonts are vendored), `--creation-timestamp <frozen_at>` when present,
+   `--format pdf`, or `--format png` with a `{p}` pattern.
 5. Run `typst query` for the metadata label.
 6. Return the artifacts plus the resolved section ids and page count.
 
 No shell, no user-supplied paths, no user-supplied Typst. The template set is
 in-repo and versioned; the bundle enters as data only. `--root` confinement is
-what makes that a boundary rather than a convention.
+what makes that a boundary rather than a convention. `--creation-timestamp` is
+omitted for drafts — a preview makes no reproducibility claim.
 
 `typst` is **not** a Python dependency: the module shells out to the binary on
-PATH (`TYPST_BIN` override). `pyproject.toml` is unchanged.
+PATH (`TYPST_BIN` override). `pyproject.toml` is unchanged. The binary's
+`--version` is checked against `backend/app/templates/TYPST_VERSION` at startup;
+a mismatch fails fast rather than producing a differently-typeset document.
 
-### 7.2 Route
+### 7.2 Routes
 
-`GET /batches/{batch_id}/report?doc_kind=recipe&format=pdf|png&sections=…`
+`GET /batches/{batch_id}/report?doc_kind=recipe&format=pdf|png&sections=…&page=n`
 
 - `404` — batch missing, or belongs to another user.
-- `409` — batch is a draft (no bundle exists).
+- `409` — batch is a draft (use `POST`), or a frozen batch predates bundles.
 - `422` — unknown section id, unknown `doc_kind`, or an empty resolved selection.
-- `200` — PDF (`format=pdf`) or a page (PNG) plus `ETag`, `Content-Length`, and
+- `200` — PDF, or one PNG page, plus `ETag`, `Content-Length`, and
   `X-Report-Sections` / `X-Report-Pages` headers carrying the resolved selection.
 
-Auth reuses the existing dependency. The route is read-only and idempotent.
+`POST /batches/{batch_id}/report` takes `{ bundle }` (the same document
+`POST /report-bundle` produces), validates it, and returns every page plus the
+resolved selection. `409` if the batch is frozen (the stored bundle is
+authoritative). Draft previews carry no `ETag` guarantee.
+
+Auth reuses the existing dependency. Both routes are read-only and idempotent.
 
 Empty selection is a hard error rather than a blank document: a page that
 silently renders nothing is indistinguishable from a rendering bug, and the
 water-solver sections make it an ordinary occurrence on a draft-quality solve.
+The UI treats `422` as "nothing to report yet", not as a failure.
 
 ### 7.3 No persistence
 
-Rendering is ~100–500 ms with pinned fonts. Storing PDF + N PNGs would collide
-with Firestore's 1 MiB document limit and the bundle already sitting beside the
-batch. The render key is exposed as `ETag`, so caching happens where it belongs:
-in the client and any intermediary. This is revisited only if measured latency
-justifies it.
+Rendering is ~100–500 ms with pinned fonts. Storing the output would collide
+with Firestore's 1 MiB document limit (a dense A4 page at 144 ppi is 300–900 KB
+as PNG), duplicate the bundle, and invent a version history the product does not
+want. A Typst text PDF for a recipe is tens to a few hundred KB; even so, it is
+derived, and the bundle is the fact.
+
+The render key is exposed as `ETag`, so caching happens in the client and any
+intermediary. Revisit only if measured latency justifies it.
 
 ### 7.4 Boundaries
 
@@ -266,26 +353,18 @@ justifies it.
 `app/schemas/boundary.py`) and is promoted to a public helper rather than
 imported by name.
 
-## 8. Bundle work (precursor, in order)
+## 8. Bundle work (precursor)
 
-Rendering has no input until these land. `plans/report-bundle.md` stages them;
-the amendments below are this plan's.
+Rendering has no input until these landed; they have. `plans/report-bundle.md`
+stages them.
 
 | Stage | Work | Gate |
 |---|---|---|
 | R2 ✅ | Freeze-time capture: per-boundary `{binding, fingerprint, telemetry, warnings, notes}` and the four validation states. Bundle-only — `BatchRecord` stays lean. | frontend tests |
 | R3 ✅ | Catalog resolution in the browser: dimensions from the artifact, presentation from the existing registries, **including boundary output paths**. | unit tests |
 | R4 ✅ | Server-side assembly inside the existing `_freeze` transaction, keyed to the newly created frozen id. Browser ships only the presentation catalog + state; the server supplies the vendored artifact content and hashes, and enforces `content_hash`. | end-to-end freeze test |
-
-R4 deviates from `plans/report-bundle.md` §5.1 on two points, deliberately:
-
-- **Server-side assembly.** `backend/app/artifact.py` already ships the artifact
-  at runtime (`app/_vendor`), so the freeze request need not carry ~68 KB of
-  artifact content. It also keeps `content_hash` next to the canonicalizer.
-- **Write location.** `BatchRepo.freeze()` creates a *new* document
-  (`collection.document()`, `parent_batch_id` set), so the bundle must be keyed
-  by the new frozen id and written in the same transaction. The two writes are
-  atomic or the freeze fails.
+| R5 ✅ | Committed fixture + freshness test. | `make verify` |
+| R6 ✅ | `docs/report-bundle.md` + generated glossary + `scripts/describe-report-bundle.mjs`. | `make verify` |
 
 ## 9. Image and deploy
 
@@ -295,7 +374,7 @@ which uses buildpacks. The renderer requires:
 - a pinned `typst` binary (static musl, ~40–60 MB) — a multi-stage Dockerfile,
   minimal runtime base;
 - the vendored artifact copy that `deploy-backend` already stages;
-- the template tree and fonts;
+- the template tree;
 - `TYPST_BIN` wired to the binary.
 
 Introducing `backend/Dockerfile` switches Cloud Run off buildpacks. That switch
@@ -303,18 +382,31 @@ is part of this plan's scope, not a follow-up.
 
 ## 10. Tests and gates
 
+- **Scaffold renders alone.** The committed fixture compiles with an empty
+  section registry: chrome, identity header, and footer — no sections. This is
+  what makes commit 0 reviewable and the dev loop useful on day one.
 - **Section isolation.** Each section compiles alone, plus the full set: N+1
   compiles per fixture. Deliberately not the 2^N combination space.
 - **Presence matrix.** One fixture per boundary case: solver absent, solver
-  present with zero additions, empty collections, populated collections.
-- **Formatting parity.** Typst display strings vs a frontend-formatted vector
-  (§6.4).
-- **Guard.** The committed bundle fixture validates against
-  `ReportBundle`, including recomputed `content_hash`, on every `make test`.
-- **Error paths.** Unknown section id, empty selection, draft batch, foreign
-  batch.
+  present with zero additions, empty collections, populated collections. Every
+  registered section appears with both a present and an absent case; the check
+  is vacuous while the registry is empty and non-vacuous the moment it is not.
+- **Formatting parity.** Typst display strings vs a frontend-generated vector
+  (§6.5), extracted via `typst query` rather than pixel comparison.
+- **Registry contract.** `scripts/report-sections.mjs` parses the registry
+  literal and `sections/`; the guard asserts one entry per file and one file per
+  entry, filename equal to id, no duplicate ids, and a declared presence
+  predicate. `docs/report-sections.md` is generated from the same parse and
+  freshness-guarded, so canonical order is visible in every diff instead of
+  being an accident of authoring order.
+- **Unit symbols.** The bundle validator rejects any node with a `unit` but no
+  `symbol`, so a generator cannot fall back to printing the unit id.
+- **Guard.** The committed bundle fixture validates against `ReportBundle`,
+  including recomputed `content_hash`, on every `make test`.
+- **Error paths.** Unknown section id, empty selection, draft `GET`, frozen
+  `POST`, foreign batch.
 - **Determinism.** Two compiles of the same input produce identical PDF bytes —
-  this is the test that catches an unpinned timestamp or font.
+  the test that catches an unpinned timestamp or font.
 - **Render tests skip loudly when `typst` is absent** (local); CI and the image
   have it. This is an accepted weakening of `make verify`, recorded here rather
   than discovered later.
@@ -323,46 +415,55 @@ is part of this plan's scope, not a follow-up.
 
 | # | Work | Gate |
 |---|---|---|
-| 1 | R2 freeze capture | frontend tests |
-| 2 | R3 catalog resolution | unit tests |
-| 3 | R4 server-side bundle + atomic write + fixture | end-to-end freeze test |
-| 4 | `sections/*.typ`, `report.typ`, `theme.typ` against the fixture bundle | N+1 compiles |
-| 5 | `report_render.py` | error-path tests |
-| 6 | Route | route tests, `make check` |
-| 7 | Formatting parity fixture | parity test |
-| 8 | Dockerfile + fonts + deploy switch | image build, deployed smoke render |
-| 9 ✅ | Retirement: deleted `recipe_document.py` + `recipe_render.py` + their test (commit `0f25d41`); the YAML plans stay marked superseded. Remaining: `TODO.md` cleanup as part of the renderer slice. | `make verify` |
+| 0 ✅ | Scaffold: `TYPST_VERSION`, `lib/bundle.typ`, `lib/format.typ`, `theme.typ`, `report.typ` with an empty registry and spec filtering, ancestry footer, `make report-dev`/`report-pages`, docs, the registry generator + guards, the formatting vector + parity test, and `catalog.nodes.symbol` (`bundle_format` 2). | `make verify`; fixture compiles chrome-only |
+| 1 | First section: prose, presence predicate, table layout, fixture enrichment if the section needs a block the fixture lacks. | N+1 compiles + presence matrix |
+| 2 | `report_render.py` — bundle in, artifacts out, spec validation, `typst query` | error-path tests |
+| 3 | `GET` route (frozen) + `ETag` | route tests, `make check` |
+| 4 | `POST` route (draft bundle) + browser preview | route tests |
+| 5 | Dockerfile + deploy switch | image build, deployed smoke render |
+| 6 | Retirement: `TODO.md` cleanup as part of the renderer slice | `make verify` |
 
-Steps 1–3 are the unblock; steps 4–5 can proceed in parallel against the
-committed fixture.
+Sections repeat step 1 indefinitely; each is one commit. Steps 1–2 are
+independent of 3–5, so section authoring and the service can proceed in
+parallel.
+
+**Scaffold first, and deliberately section-agnostic.** The first section is not
+chosen yet, and nothing in step 0 depends on it. The scaffold's renderable
+output is the document chrome, which is what every section inherits; iterating
+on it against a real downloaded bundle is also the cheapest way to decide what
+the first section should be.
 
 ## 12. Risks
 
 | Risk | Mitigation |
 |---|---|
 | Compile error from a mistyped node id | Defensive accessor panic with the dotted path; fixture covers every path |
-| Typst version drift changes layout | Version pinned in the image and in the render key |
-| Font set drift changes metrics | Fonts vendored, `--font-path` only, parity + determinism tests |
-| Formatting forks from the frontend | Parity fixture (§6.4) |
+| Typst version drift changes layout | Version pinned in `TYPST_VERSION`, checked by `make report-dev` and at service startup, embedded in the render key |
+| Font set drift changes metrics | Binary's embedded fonts until a face is needed; then vendored + `--font-path` only, with determinism tests |
+| Formatting forks from the frontend | Parity vector (§6.5) |
 | A section silently renders nothing | Empty-selection is a 422; presence predicates are tested per fixture |
+| Registry order becomes accidental | Generated `docs/report-sections.md` makes every order change a reviewed diff |
+| Nonlinear unit silently rendered as base | Helper panics on `fwd`/`inv` instead of converting |
 | Local `make verify` no longer hermetic | Accepted; render tests skip loudly without `typst` |
 | Long unbroken tokens overflow a cell | Typst does not raise; pathological fixture + visual check |
 
 ## 13. Non-goals
 
-- Inventory, shopping lists, or any report whose fact is not a frozen batch.
-- Stored render artifacts or a render cache.
+- Inventory, shopping lists, or any report whose fact is not a batch bundle.
+- Stored render artifacts, a render cache, or a report version history.
 - User-authored templates, or template hot-swap.
 - Markdown output of any kind.
 - Recomputing domain values at render time.
+- Defining the report's section set up front (authoring decision, made per
+  section).
 
 ## 14. Open items
 
-1. **Section inventory and prose.** The section list in §6.3 is inferred from
-   the artifact's collections and boundaries; the actual report's section set,
-   titles, and prose are authoring decisions not yet made.
+1. **Section inventory and prose.** §6.4 is a candidate list inferred from the
+   artifact's collections and boundaries. The actual set, titles, and prose are
+   authoring decisions made one section at a time.
 2. **`standalone` chrome.** §6.1 puts title/outline suppression in the theme;
-   the exact one-sheet layout (header block, footer, page numbers) is unsketched.
-3. **PNG delivery shape.** One request per page with `X-Report-Pages`, or a
-   single response carrying all pages (multipart / zip)? Leans per-page with a
-   client-side page stepper.
+   the exact one-sheet layout (header block, footer, page numbers) is unsketched
+   and only becomes a requirement when a single-section sheet is requested.
+3. **Nonlinear readouts.** SG ↔ °P needs a named function in `lib/format.typ`;
+   deferred until a section formats a gravity in Plato.
