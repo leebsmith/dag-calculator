@@ -142,15 +142,29 @@
                           <span x-text="row.cells[c.id].text"></span>
                         </template>
                         <template x-if="row.cells[c.id] && row.cells[c.id].display !== undefined">
-                          <span x-text="row.cells[c.id].display"></span>
-                          <span x-text="row.cells[c.id].unit ? ' ' + row.cells[c.id].unit : ''"></span>
+                          <span>
+                            <span
+                              class="table-accounting-sign"
+                              x-show="f.accounting"
+                              x-text="row.subtract ? '(' : ''"
+                            ></span>
+                            <span x-text="row.cells[c.id].display"></span>
+                            <span
+                              class="table-accounting-sign"
+                              x-show="f.accounting"
+                              x-text="row.subtract ? ')' : ''"
+                            ></span>
+                            <span x-text="row.cells[c.id].unit ? ' ' + row.cells[c.id].unit : ''"></span>
+                          </span>
                         </template>
                         <template x-if="!row.cells[c.id]">
                           <span>—</span>
                         </template>
                         <template x-if="c.id === f.columns[f.columns.length - 1].id">
-                          <div class="text-xs text-muted" x-show="row.hint" x-text="'(' + row.hint + ')'"></div>
-                          <div class="text-xs text-muted" x-show="row.note && row.note.show" x-text="'(' + row.note.label + ': ' + fmt.formatQuantity(row.note, { dash: '' }) + ')'"></div>
+                          <div>
+                            <div class="text-xs text-muted" x-show="row.hint" x-text="'(' + row.hint + ')'"></div>
+                            <div class="text-xs text-muted" x-show="row.note && row.note.show" x-text="'(' + row.note.label + ': ' + fmt.formatQuantity(row.note, { dash: '' }) + ')'"></div>
+                          </div>
                         </template>
                       </td>
                     </template>

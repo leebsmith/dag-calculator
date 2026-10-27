@@ -46,7 +46,7 @@ _107 paths_
 | `batch.brew_day_steps.section` | Section | field | — | — | — | — |
 | `batch.brew_day_steps.step_id` | Step | field | — | — | — | — |
 | `batch.conversion_efficiency` | Conversion efficiency | root | percentage | pct (%) | 1 | — |
-| `batch.delta_v_evap` | − Boil-off | derived | volume | L | 1 | — |
+| `batch.delta_v_evap` | Boil-off | derived | volume | L | 1 | — |
 | `batch.dry_hops` | Dry hops | collection | — | — | — | — |
 | `batch.dry_hops.application_stage` | Stage | field | — | — | — | whirlpool, active_fermentation, cold_side |
 | `batch.dry_hops.contact_duration_hours` | Contact duration | field | time | hr | 1 | — |
@@ -60,7 +60,7 @@ _107 paths_
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
 | `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
-| `batch.late_addition_volume_l` | ＋ Late-addition volume | derived | volume | L | 1 | — |
+| `batch.late_addition_volume_l` | Late-addition volume | derived | volume | L | 1 | — |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
@@ -69,7 +69,7 @@ _107 paths_
 | `batch.s_late_add` | Dose extract | derived | mass | kg | 1 | — |
 | `batch.s_late_add_request` | S Late Add Request | derived | mass | kg | 1 | — |
 | `batch.scale_pin` | Scale Pin | choice | — | — | — | abv, og, fg |
-| `batch.shrinkage_volume_l` | − Shrinkage | derived | volume | L | 1 | — |
+| `batch.shrinkage_volume_l` | Shrinkage | derived | volume | L | 1 | — |
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
 | `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
 | `batch.sugar_extract_total` | Late extract | derived | mass | kg | 2 | — |
@@ -287,7 +287,7 @@ _27 paths_
 | `solver.batch.cascade.s_run1` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.s_run2` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.sg_pre_boil` | Gravity | output | gravity | Plato (°P) | 1 | — |
-| `solver.batch.cascade.v_absorption` | − Grain absorption | output | volume | L | 1 | — |
+| `solver.batch.cascade.v_absorption` | Grain absorption | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_mc` | Grain moisture (per malt, backfilled) | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_post_boil` | Post-boil (wort, hot) | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_run1` | First runnings | output | volume | L | 1 | — |
@@ -386,11 +386,11 @@ _22 paths_
 | `equipment.hlt_dead_space_l` | Hlt Dead Space L | identity | volume | L | 1 | — |
 | `equipment.hlt_transfer_loss_l` | Hlt Transfer Loss L | identity | volume | L | 1 | — |
 | `equipment.id` | ID | identity | — | — | — | — |
-| `equipment.kettle_dead_space_l` | − Kettle dead space | identity | volume | L | 1 | — |
-| `equipment.kettle_transfer_loss_l` | − Kettle transfer | identity | volume | L | 1 | — |
-| `equipment.mash_dead_space_l` | − Mash dead space | identity | volume | L | 1 | — |
+| `equipment.kettle_dead_space_l` | Kettle dead space | identity | volume | L | 1 | — |
+| `equipment.kettle_transfer_loss_l` | Kettle transfer | identity | volume | L | 1 | — |
+| `equipment.mash_dead_space_l` | Mash dead space | identity | volume | L | 1 | — |
 | `equipment.mash_heating_rate_c_per_min` | Mash ramp rate | identity | temperature_delta_per_time | dC_per_min (°C/min) | 2 | — |
-| `equipment.mash_transfer_loss_l` | − Mash transfer loss | identity | volume | L | 1 | — |
+| `equipment.mash_transfer_loss_l` | Mash transfer loss | identity | volume | L | 1 | — |
 | `equipment.mash_tun_mass_kg` | Mash tun mass | identity | mass | kg | 1 | — |
 | `equipment.mash_tun_specific_heat` | Mash tun specific heat | identity | specific_heat | kcal_per_kg_degC (kcal/(kg·°C)) | 2 | — |
 | `equipment.max_hlt_volume_l` | Max HLT volume | identity | volume | L | 1 | — |
@@ -401,7 +401,7 @@ _22 paths_
 | `equipment.nominal_boil_off_rate_l_per_hr` | Nominal boil-off rate | identity | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `equipment.nominal_conversion_efficiency` | Nominal conversion efficiency | identity | percentage | pct (%) | 1 | — |
 | `equipment.shrinkage_pct` | Shrinkage | identity | percentage | pct (%) | 1 | — |
-| `equipment.trub_loss_l` | − Trub | identity | volume | L | 1 | — |
+| `equipment.trub_loss_l` | Trub | identity | volume | L | 1 | — |
 
 ## Identity — style
 

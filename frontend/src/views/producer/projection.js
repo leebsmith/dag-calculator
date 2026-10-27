@@ -150,6 +150,7 @@ function tableField(step, entry) {
     control: "readout-table",
     title: entry.title ?? entry.table,
     header: entry.columns.length > 2,
+    accounting: entry.accounting === true,
     columns: entry.columns.map((c) => ({
       id: c.id,
       label: c.label ?? c.id,

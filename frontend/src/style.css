@@ -40,6 +40,13 @@ samp {
   font-variant-numeric: tabular-nums;
 }
 
+/* Accounting sign slots: a fixed-width cell on each side of a ledger figure so
+   parentheses on subtractions never shift the decimal point. */
+.table-accounting-sign {
+  display: inline-block;
+  width: 1ch;
+}
+
 /* ==========================================================================
    2. Buttons & Interactive Controls
    ========================================================================== */

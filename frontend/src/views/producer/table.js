@@ -119,6 +119,7 @@ export function valuateTable(field, artifact, engine, unitMode, nl, registry = {
       hint: row.hint != null ? String(row.hint) : null,
       note,
       bold: !!row.bold,
+      subtract: row.subtract === true,
     };
   });
   return { ...field, rows };
