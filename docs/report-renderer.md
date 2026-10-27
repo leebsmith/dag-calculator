@@ -78,9 +78,12 @@ The generator does no numeric work. Every scalar the bundle exposes arrives in
 
 - `text` is what a section prints; `number`/`unit` split the figure for tables
   that align them in separate columns.
-- Collection tables (the grist lists) read `formatted_tables[collection]`: one
-  cell map per row, with derived columns (amounts, PPG, bill share) computed by
-  the producer.
+- Collection tables (the grist and sugar lists) read `formatted_tables[collection]`:
+  one cell map per row, with derived columns (amounts, PPG, bill share) computed
+  by the producer.
+- Weighted readouts read `formatted_summaries[collection]` (`color`,
+  `extract_yield`), plus the `overall` aggregate across tables; the producer
+  does the weighting, and trace malts contribute no extract to the overall.
 - `lib/format.typ` exposes `formatted(path)`, `formatted-text(path)`,
   `formatted-number(path)`, `formatted-unit(path)`, and
   `present-formatted(path)`. There is no conversion, rounding, or symbol choice
@@ -113,6 +116,11 @@ surviving section makes a standalone sheet, which suppresses the document chrome
 Canonical order is registry order; `sections=` cannot reorder it. The generated
 [`report-sections.md`](report-sections.md) lists the order, the presence
 predicate, and the source file for every section.
+
+Each section renders inside a non-breakable block, so a section that does not fit
+on the remaining page moves whole to the next one instead of splitting a table
+mid-row. The document therefore paginates at section boundaries; a section taller
+than one page would overflow rather than break, and should be split.
 
 ## Ancestry
 

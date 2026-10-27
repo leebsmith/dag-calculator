@@ -102,6 +102,13 @@ test("registry labels and display units win over fallbacks", () => {
   }
 });
 
+test("identity dimensions carry no display unit", () => {
+  for (const path of ["batch.yeast_id", "batch.sugars.parts"]) {
+    assert.equal(catalog.nodes[path].unit, null, path);
+    assert.equal(catalog.nodes[path].symbol, null, path);
+  }
+});
+
 test("taxonomies become options with their labels", () => {
   const topology = catalog.nodes["batch.topology"];
   assert.deepEqual(topology.options, artifact.taxonomies.topology);

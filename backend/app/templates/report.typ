@@ -109,10 +109,13 @@
 }
 
 // Registry order is canonical: filter preserves it, so the spec selects a
-// subset but cannot reorder.
+// subset but cannot reorder. A section is a reading unit: keep it on one page
+// when it fits, rather than splitting a table across a page break.
 #for section in included {
-  heading(level: 1, section.title)
-  (section.render)()
+  block(breakable: false, {
+    heading(level: 1, section.title)
+    (section.render)()
+  })
 }
 
 #if sections.len() == 0 {

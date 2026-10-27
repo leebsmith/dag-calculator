@@ -88,6 +88,9 @@ function unitSymbols(dimensionId) {
 function resolveUnit(artifact, dimensionId, spec, unitMode = {}, path = "") {
   const dim = artifact.dimensions?.[dimensionId];
   if (!dim) return null;
+  // Identity dimensions are not quantities: `reference` values are ids and
+  // `dimensionless` values have no unit to convert.
+  if (dim.kind === "identity") return null;
   const symbols = unitSymbols(dimensionId);
   const valid = (candidate) => {
     if (!candidate) return null;
@@ -114,6 +117,7 @@ function resolveUnit(artifact, dimensionId, spec, unitMode = {}, path = "") {
 function resolveSymbol(artifact, dimensionId, unitId, spec) {
   const dim = artifact.dimensions?.[dimensionId];
   if (!dim) return null;
+  if (dim.kind === "identity") return null;
   const fromUnit = UNIT_SYMBOLS[dimensionId]?.[unitId];
   if (fromUnit) return fromUnit;
   const symbols = unitSymbols(dimensionId);

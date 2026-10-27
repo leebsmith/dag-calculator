@@ -47,7 +47,7 @@ Firestore transaction.
 
 ```jsonc
 {
-  "bundle_format": 4,
+  "bundle_format": 5,
   "artifact": { "schema_version": 9, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
@@ -66,6 +66,16 @@ Firestore transaction.
         "bill_pct": { "text": "85.0%", "number": "85.0", "unit": "%" } }
     ]
   },
+  "formatted_summaries": {
+    "grist.major_malts": {
+      "color": { "text": "7.5 °L", "number": "7.5", "unit": "°L" },
+      "extract_yield": { "text": "77.4%", "number": "77.4", "unit": "%" }
+    },
+    "overall": {
+      "color": { "text": "31.7 °L", "number": "31.7", "unit": "°L" },
+      "extract_yield": { "text": "77.6%", "number": "77.6", "unit": "%" }
+    }
+  },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity" },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
   "conformance": { … } | null,
@@ -80,7 +90,8 @@ Firestore transaction.
 | `artifact` | The whole artifact as of freeze. Free-form to the bundle schema — validated by the engine before freeze and pinned by `hash`. |
 | `catalog` | Structural presentation: labels, dimensions, options, and the unit/symbol/decimals metadata. The unit choice reflects the batch's display preferences at freeze. |
 | `formatted` | The display strings the report prints, one per scalar path the bundle exposes: `text` (number + symbol), plus `number`/`unit` for tables that align them separately. Produced by the same formatter the UI uses; the report never converts, rounds, or chooses a symbol. |
-| `formatted_tables` | Per-row display cells for collection tables (major and trace grist): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and bill shares; the report only lays them out. |
+| `formatted_tables` | Per-row display cells for collection tables (major grist, trace malts, sugars): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and bill shares; the report only lays them out. |
+| `formatted_summaries` | Mass-weighted colour and extract yield per fermentable table, plus the `overall` aggregate. Keys name a collection node or the literal `overall`; the producer does the weighing. |
 | `batch.identity` | The three component snapshots: `equipment`, `water.source`, `style`. |
 | `state.valuation` | `node id → value` for every node. Boundary nodes map to their plain output map. |
 | `state.roots` | Explicitly authored roots only. Never used to recompute anything. |
@@ -92,7 +103,7 @@ Firestore transaction.
 | `telemetry` | Per solved boundary: binding, applied fingerprint, structured events, warnings, notes. |
 | `content_hash` | Canonical hash of everything except itself. |
 
-`bundle_format` is a literal discriminator (`4`). Unknown fields are rejected;
+`bundle_format` is a literal discriminator (`5`). Unknown fields are rejected;
 unknown formats are refused. A shape change bumps the format and regenerates the
 fixture in the same commit; bundles written under an older format are refused
 rather than read optimistically.
@@ -147,9 +158,17 @@ minutes. Raw values are the record; they are never display-ready.
   converts.
 - Taxonomy values keep their raw string in `state`; `formatted[path].text`
   carries the option label when the catalog declares one.
-- Collection tables (grist) read `formatted_tables[collection]`, one dict per
-  row. Derived columns (mass from the solved grist and bill share, PPG from
-  yield, trace bill share from total mass) are computed by the producer.
+- Identity dimensions (`reference`, `dimensionless`) carry no display unit:
+  reference values are ids (text), dimensionless values are unitless numbers.
+- Collection tables (grist, sugars) read `formatted_tables[collection]`, one
+  dict per row. Derived columns (mass from the solved grist and bill share, PPG
+  from yield, trace and sugar bill shares from total fermentable mass) are
+  computed by the producer.
+- Summaries read `formatted_summaries[collection]`, with `color` and
+  `extract_yield` weighted by operative mass. Colour weighs all three tables;
+  the overall extract yield covers only the grain bill and sugars, because trace
+  malts are colour- and mash-pH-only. `overall` is absent when no fermentable
+  row has mass.
 
 Absent values (unsolved boundaries, unset selections) have no `formatted`
 entry; absence is meaningful, not zero.

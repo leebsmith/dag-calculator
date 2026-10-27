@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 
 from app.schemas.canonical import sha256_canonical
 
-BUNDLE_FORMAT = 4
+BUNDLE_FORMAT = 5
 
 
 class BundleModel(BaseModel):
@@ -35,6 +35,17 @@ class FormattedValue(BundleModel):
     text: str
     number: str | None = None
     unit: str | None = None
+
+
+class FormattedSummary(BundleModel):
+    """A table's mass-weighted colour and extract yield, pre-formatted.
+
+    ``color`` and ``extract_yield`` are the same frozen display records a row
+    cell uses. Absent when the table has no rows to weigh.
+    """
+
+    color: FormattedValue | None = None
+    extract_yield: FormattedValue | None = None
 
 
 class ArtifactBundle(BundleModel):
@@ -123,7 +134,7 @@ def bundle_content_hash(content: dict[str, Any]) -> str:
 
 
 class ReportBundle(BundleModel):
-    bundle_format: Literal[4] = BUNDLE_FORMAT
+    bundle_format: Literal[5] = BUNDLE_FORMAT
     artifact: ArtifactBundle
     catalog: Catalog
     batch: BatchHeader
@@ -132,6 +143,7 @@ class ReportBundle(BundleModel):
     formatted_tables: dict[str, list[dict[str, FormattedValue]]] = Field(
         default_factory=dict
     )
+    formatted_summaries: dict[str, FormattedSummary] = Field(default_factory=dict)
     conformance: dict[str, Any] | None = None
     validation: ValidationBundle = Field(default_factory=ValidationBundle)
     telemetry: dict[str, BoundaryTelemetry] = Field(default_factory=dict)
@@ -196,7 +208,11 @@ class ReportBundle(BundleModel):
             if path not in self.catalog.nodes:
                 raise ValueError(f'formatted path "{path}" is not in the catalog')
             spec = self.catalog.nodes[path]
-            if spec.unit is not None and (entry.number is None or entry.unit is None):
+            dim = dimensions.get(spec.dimension) if spec.dimension else None
+            numeric = (dim or {}).get("kind") in ("linear", "affine", "nonlinear")
+            if spec.unit is not None and numeric and (
+                entry.number is None or entry.unit is None
+            ):
                 raise ValueError(
                     f'formatted path "{path}" has a display unit but no number/unit split'
                 )
@@ -215,6 +231,20 @@ class ReportBundle(BundleModel):
                         raise ValueError(
                             f'formatted table "{collection}.{column}" has no text'
                         )
+
+        # Per-table weighted summaries: the collection they summarise, or the
+        # literal "overall" aggregate across tables. Cells are display strings.
+        for key, summary in self.formatted_summaries.items():
+            if key != "overall":
+                node = nodes.get(key)
+                if not node or node.get("kind") != "collection":
+                    raise ValueError(
+                        f'formatted summary "{key}" is not a collection node or "overall"'
+                    )
+            for column in ("color", "extract_yield"):
+                cell = getattr(summary, column)
+                if cell is not None and not cell.text:
+                    raise ValueError(f'formatted summary "{key}.{column}" has no text')
 
         for node_id, rows in self.state.collections.items():
             node = nodes.get(node_id)

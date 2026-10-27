@@ -18,10 +18,12 @@ From `lib/format.typ`: `req(container, path)`, `opt(container, path)`,
 `node(path)`, `formatted(path)`, `formatted-text(path)`,
 `formatted-number(path)`, `formatted-unit(path)`, `present-formatted(path)`,
 `formatted-table(collection)`, `present-formatted-table(collection)`,
+`formatted-summary(collection)`, `present-formatted-summary(collection)`,
 `option-label(path, raw)`.
 
 `formatted` reads the bundle's pre-formatted display records; `formatted-table`
-reads the per-row cells for a collection. The generator never converts, rounds,
+reads the per-row cells for a collection and `formatted-summary` its weighted
+colour and extract yield. The generator never converts, rounds,
 or picks a symbol. Raw numbers stay in `state.valuation` for the record, but
 sections print `formatted` strings. Component names live in `batch.identity`
 and are also present as `formatted["equipment.name"].text`, etc.

@@ -1,5 +1,5 @@
 {
-  "bundle_format": 4,
+  "bundle_format": 5,
   "artifact": {
     "schema_version": 9,
     "hash": "sha256:8c87b95ee67d917b561cda2a9a6b57f74b4ec23e51d1aba80cc3ba2b3733807e",
@@ -5547,6 +5547,86 @@
         "options": null,
         "option_labels": null
       },
+      "batch.sugars": {
+        "label": "Late additions",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.sugar_id": {
+        "label": "Sugar ID",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.name": {
+        "label": "Sugar",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.mass_kg": {
+        "label": "Mass",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.parts": {
+        "label": "Parts",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.resolved_mass_kg": {
+        "label": "Resolved mass",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.yield_fraction": {
+        "label": "Yield",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugars.color_lovibond": {
+        "label": "Color",
+        "dimension": "grain_color",
+        "unit": "Lovibond",
+        "symbol": "\u00b0L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.water": {
         "label": "Water solver",
         "dimension": null,
@@ -5635,6 +5715,16 @@
         "options": null,
         "option_labels": null
       },
+      "batch.yeast_id": {
+        "label": "Yeast",
+        "dimension": "reference",
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "equipment.max_hlt_volume_l": {
         "label": "Max HLT",
         "dimension": "volume",
@@ -5656,7 +5746,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:885823c1d19784d5072634f28ab7a90008061395e84053a8378fdd796897f433"
+    "hash": "sha256:46d2db2e756cb97d0f052673bed7070134ebea1fa8d6d8af79585a9f15b93075"
   },
   "batch": {
     "id": "frozen-1",
@@ -5695,6 +5785,7 @@
     "valuation": {
       "batch.v_ferm": 20.0,
       "batch.target_abv": 5.5,
+      "batch.yeast_id": "us-05",
       "batch.realized_abv": 5.62,
       "mash.grain_temp_c": 20.0,
       "mash.strike_water_temp_c": 68.3,
@@ -5728,6 +5819,17 @@
           "mass_kg": 0.1,
           "yield_fraction": 0.6,
           "color_lovibond": 500.0
+        }
+      ],
+      "batch.sugars": [
+        {
+          "sugar_id": "d-180",
+          "name": "Candi Syrup D-180",
+          "mass_kg": 0.5,
+          "parts": 10.0,
+          "resolved_mass_kg": 0.5,
+          "yield_fraction": 0.8,
+          "color_lovibond": 180.0
         }
       ],
       "solver.batch": {
@@ -5797,6 +5899,17 @@
           "yield_fraction": 0.6,
           "color_lovibond": 500.0
         }
+      ],
+      "batch.sugars": [
+        {
+          "sugar_id": "d-180",
+          "name": "Candi Syrup D-180",
+          "mass_kg": 0.5,
+          "parts": 10.0,
+          "resolved_mass_kg": 0.5,
+          "yield_fraction": 0.8,
+          "color_lovibond": 180.0
+        }
       ]
     },
     "selections": {
@@ -5821,6 +5934,11 @@
   "formatted": {
     "equipment.name": {
       "text": "HERMS 30L",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast_id": {
+      "text": "us-05",
       "number": null,
       "unit": null
     },
@@ -6040,12 +6158,91 @@
           "unit": "\u00b0L"
         },
         "bill_pct": {
-          "text": "2.0%",
-          "number": "2.0",
+          "text": "1.8%",
+          "number": "1.8",
+          "unit": "%"
+        }
+      }
+    ],
+    "batch.sugars": [
+      {
+        "name": {
+          "text": "Candi Syrup D-180",
+          "number": null,
+          "unit": null
+        },
+        "amount": {
+          "text": "0.5 kg",
+          "number": "0.5",
+          "unit": "kg"
+        },
+        "ppg": {
+          "text": "37.0",
+          "number": "37.0",
+          "unit": null
+        },
+        "color": {
+          "text": "180.0 \u00b0L",
+          "number": "180.0",
+          "unit": "\u00b0L"
+        },
+        "bill_pct": {
+          "text": "8.9%",
+          "number": "8.9",
           "unit": "%"
         }
       }
     ]
+  },
+  "formatted_summaries": {
+    "grist.major_malts": {
+      "color": {
+        "text": "7.5 \u00b0L",
+        "number": "7.5",
+        "unit": "\u00b0L"
+      },
+      "extract_yield": {
+        "text": "77.4%",
+        "number": "77.4",
+        "unit": "%"
+      }
+    },
+    "grist.trace_malts": {
+      "color": {
+        "text": "500.0 \u00b0L",
+        "number": "500.0",
+        "unit": "\u00b0L"
+      },
+      "extract_yield": {
+        "text": "60.0%",
+        "number": "60.0",
+        "unit": "%"
+      }
+    },
+    "batch.sugars": {
+      "color": {
+        "text": "180.0 \u00b0L",
+        "number": "180.0",
+        "unit": "\u00b0L"
+      },
+      "extract_yield": {
+        "text": "80.0%",
+        "number": "80.0",
+        "unit": "%"
+      }
+    },
+    "overall": {
+      "color": {
+        "text": "31.7 \u00b0L",
+        "number": "31.7",
+        "unit": "\u00b0L"
+      },
+      "extract_yield": {
+        "text": "77.6%",
+        "number": "77.6",
+        "unit": "%"
+      }
+    }
   },
   "conformance": {
     "og": {
@@ -6114,5 +6311,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:7d342ddbc35c11d81c1a879622bd8ac5ba594af0e8a26e412f06d2ad4910c85d"
+  "content_hash": "sha256:62d1a233ec4d5d60d6ca90a5cba73deccb376e54db9942e5478a17af064e02b2"
 }

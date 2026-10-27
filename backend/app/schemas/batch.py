@@ -7,7 +7,12 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, StringConstraints, model_validator
 
-from app.schemas.report_bundle import CatalogContent, FormattedValue, ReportInputs
+from app.schemas.report_bundle import (
+    CatalogContent,
+    FormattedSummary,
+    FormattedValue,
+    ReportInputs,
+)
 
 logger = logging.getLogger("app.schemas.batch")
 
@@ -88,6 +93,7 @@ class FreezePayload(BaseModel):
     catalog: CatalogContent
     formatted: dict[str, FormattedValue]
     formatted_tables: dict[str, list[dict[str, FormattedValue]]]
+    formatted_summaries: dict[str, FormattedSummary]
 
 
 class BatchRecord(BaseModel):

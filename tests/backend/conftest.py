@@ -270,5 +270,6 @@ def freeze_payload(valuation=None, **overrides):
         ),
         formatted=overrides.pop("formatted", {}),
         formatted_tables=overrides.pop("formatted_tables", {}),
+        formatted_summaries=overrides.pop("formatted_summaries", {}),
         **overrides,
     )

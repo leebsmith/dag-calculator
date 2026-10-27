@@ -311,7 +311,7 @@ def test_freeze_emits_a_valid_report_bundle():
     )
 
     bundle = ReportBundle.model_validate(repo.bundles[frozen.id])
-    assert bundle.bundle_format == 4
+    assert bundle.bundle_format == 5
     assert bundle.batch.id == frozen.id
     assert bundle.batch.parent_batch_id == rec.id
     assert bundle.batch.name == "Saison"

@@ -8,6 +8,8 @@ import { displayValue, nonlinearFns } from "../producer.js";
 import { formatValue } from "../../utils.js";
 import { reportError } from "../../observability.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
+import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
+import { resolvedSugarMasses } from "./sugarAllocation.js";
 
 // Collection fields are row values, not scalars: the catalog lists them for a
 // report that indexes a row, but there is no single value to format.
@@ -50,6 +52,11 @@ function rowName(row) {
   return { text: String(row?.name ?? "") };
 }
 
+function finiteNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 export function buildReportFormatted(artifact, catalog, engine) {
   const nl = nonlinearFns(artifact, engine);
   const formatted = {};
@@ -80,53 +87,162 @@ export function buildReportFormatted(artifact, catalog, engine) {
   return formatted;
 }
 
-// Per-row display strings for the grist tables. Major amounts are the solved
-// grist mass times the authored bill share; trace amounts are authored masses.
-// Trace bill shares are mass shares of the total fermentable mass (major +
-// trace) because trace rows have no authored bill percentage.
+// The solved grist mass, or null when the batch has no extract solution yet.
+function gristMassOf(engine) {
+  try {
+    const mass = engine.resolve(N.gristMass);
+    return typeof mass === "number" && Number.isFinite(mass) ? mass : null;
+  } catch (err) {
+    reportError("reportTables.gristMass", err);
+    return null;
+  }
+}
+
+// The operative mass of every fermentable row. Major amounts are the solved
+// grist mass times the authored bill share; trace amounts are authored masses;
+// sugar amounts come from the same allocator the late-additions table binds, so
+// share mode reports the mass the UI shows.
+function fermentableRows(engine, gristMass) {
+  const major = (engine.get(N.majorMalts) ?? []).map((row) => ({
+    row,
+    mass: gristMass == null ? 0 : gristMass * finiteNumber(row.pct),
+    color: finiteNumber(row.color_lovibond),
+    yield: finiteNumber(row.yield_fraction),
+  }));
+  const trace = (engine.get(N.traceMalts) ?? []).map((row) => ({
+    row,
+    mass: finiteNumber(row.mass_kg),
+    color: finiteNumber(row.color_lovibond),
+    yield: finiteNumber(row.yield_fraction),
+  }));
+  const sugarRaw = engine.get(L.collection) ?? [];
+  const mode = engine.get(L.intent) ?? "dose";
+  let budget = 0;
+  try {
+    const resolvedBudget = engine.resolve(L.extract);
+    if (typeof resolvedBudget === "number" && Number.isFinite(resolvedBudget)) {
+      budget = resolvedBudget;
+    }
+  } catch (err) {
+    reportError("reportTables.sugarExtract", err);
+  }
+  const resolved = resolvedSugarMasses({
+    rows: sugarRaw,
+    budgetKg: budget,
+    mode,
+  });
+  const sugar = sugarRaw.map((row, index) => ({
+    row,
+    mass: finiteNumber(resolved[index]?.massKg),
+    color: finiteNumber(row.color_lovibond),
+    yield: finiteNumber(row.yield_fraction),
+  }));
+  return { major, trace, sugar };
+}
+
+// Per-row display strings for the fermentable tables. Bill shares for trace and
+// sugar rows are mass shares of the total fermentable mass because only the
+// grain bill carries an authored percentage.
 export function buildReportTables(artifact, catalog, engine) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const majorId = N.majorMalts;
   const traceId = N.traceMalts;
+  const sugarId = L.collection;
   const gristMassPath = N.gristMass;
   const majorColor = `${majorId}.color_lovibond`;
   const majorPct = `${majorId}.pct`;
   const traceMass = `${traceId}.mass_kg`;
   const traceColor = `${traceId}.color_lovibond`;
-  const mGrist = engine.resolve(gristMassPath);
-  const gristMass = typeof mGrist === "number" && Number.isFinite(mGrist) ? mGrist : null;
+  const sugarMass = `${sugarId}.mass_kg`;
+  const sugarColor = `${sugarId}.color_lovibond`;
 
-  const major = engine.get(majorId) ?? [];
-  const majorRows = major.map((row) => {
-    const pct = Number(row.pct) || 0;
-    const amount = gristMass == null ? null : gristMass * pct;
-    return {
-      name: rowName(row),
-      amount: formatEntry(artifact, nodes[gristMassPath], amount, nl),
-      ppg: formatPpg(artifact, Number(row.yield_fraction)),
-      color: formatEntry(artifact, nodes[majorColor], Number(row.color_lovibond), nl),
-      bill_pct: formatEntry(artifact, nodes[majorPct], pct, nl),
-    };
+  const gristMass = gristMassOf(engine);
+  const { major, trace, sugar } = fermentableRows(engine, gristMass);
+  const totalMass = [...major, ...trace, ...sugar].reduce((sum, row) => sum + row.mass, 0);
+  const share = (mass) => (totalMass > 0 ? mass / totalMass : 0);
+
+  const tableRow = (row, amountPath, colorPath) => ({
+    name: rowName(row.row),
+    amount: formatEntry(artifact, nodes[amountPath], row.mass, nl),
+    ppg: formatPpg(artifact, row.row.yield_fraction),
+    color: formatEntry(artifact, nodes[colorPath], row.color, nl),
+    bill_pct: formatEntry(artifact, nodes[majorPct], share(row.mass), nl),
   });
 
-  const trace = engine.get(traceId) ?? [];
-  const traceTotalMass = trace.reduce((sum, row) => sum + (Number(row.mass_kg) || 0), 0);
-  const totalMass = (gristMass ?? 0) + traceTotalMass;
-  const traceRows = trace.map((row) => {
-    const mass = Number(row.mass_kg) || 0;
-    const share = totalMass > 0 ? mass / totalMass : 0;
-    return {
-      name: rowName(row),
-      amount: formatEntry(artifact, nodes[traceMass], mass, nl),
-      ppg: formatPpg(artifact, Number(row.yield_fraction)),
-      color: formatEntry(artifact, nodes[traceColor], Number(row.color_lovibond), nl),
-      bill_pct: formatEntry(artifact, nodes[majorPct], share, nl),
-    };
-  });
+  const majorRows = major.map((row) => ({
+    name: rowName(row.row),
+    amount: formatEntry(artifact, nodes[gristMassPath], row.mass, nl),
+    ppg: formatPpg(artifact, row.row.yield_fraction),
+    color: formatEntry(artifact, nodes[majorColor], row.color, nl),
+    bill_pct: formatEntry(artifact, nodes[majorPct], finiteNumber(row.row.pct), nl),
+  }));
 
   return {
     [majorId]: majorRows,
-    [traceId]: traceRows,
+    [traceId]: trace.map((row) => tableRow(row, traceMass, traceColor)),
+    [sugarId]: sugar.map((row) => tableRow(row, sugarMass, sugarColor)),
   };
+}
+
+// Mass-weighted colour and extract yield per table, plus the overall aggregate.
+// Colour weighs every fermentable; extract yield covers the grain bill and the
+// sugars because trace malts are colour- and mash-pH-only (A9).
+export function buildReportSummaries(artifact, catalog, engine) {
+  const nl = nonlinearFns(artifact, engine);
+  const nodes = catalog.nodes ?? {};
+  const gristMass = gristMassOf(engine);
+  const { major, trace, sugar } = fermentableRows(engine, gristMass);
+
+  const weigh = (rows) => {
+    const mass = rows.reduce((sum, row) => sum + row.mass, 0);
+    if (!(mass > 0)) return { mass: 0, color: null, extractYield: null };
+    const color = rows.reduce((sum, row) => sum + row.color * row.mass, 0) / mass;
+    const extract = rows.reduce((sum, row) => sum + row.yield * row.mass, 0) / mass;
+    return { mass, color, extractYield: extract };
+  };
+
+  const summaryOf = (color, extractYield, colorPath, yieldPath) => ({
+    color: color == null ? null : formatEntry(artifact, nodes[colorPath], color, nl),
+    extract_yield:
+      extractYield == null
+        ? null
+        : formatEntry(artifact, nodes[yieldPath], extractYield, nl),
+  });
+
+  const majorValues = weigh(major);
+  const traceValues = weigh(trace);
+  const sugarValues = weigh(sugar);
+  const overallColor = weigh([...major, ...trace, ...sugar]);
+  const overallYield = weigh([...major, ...sugar]);
+
+  const summaries = {
+    [N.majorMalts]: summaryOf(
+      majorValues.color,
+      majorValues.extractYield,
+      N.weightedLovibond,
+      N.weightedYield
+    ),
+    [N.traceMalts]: summaryOf(
+      traceValues.color,
+      traceValues.extractYield,
+      N.traceColor,
+      `${N.traceMalts}.yield_fraction`
+    ),
+    [L.collection]: summaryOf(
+      sugarValues.color,
+      sugarValues.extractYield,
+      L.color,
+      `${L.collection}.yield_fraction`
+    ),
+  };
+  if (overallColor.mass > 0) {
+    summaries.overall = summaryOf(
+      overallColor.color,
+      overallYield.extractYield,
+      N.weightedLovibond,
+      N.weightedYield
+    );
+  }
+  return summaries;
 }

@@ -205,6 +205,7 @@ export async function reportBundleForActive() {
           catalog: app.reportCatalog(),
           formatted: app.reportFormatted(),
           formatted_tables: app.reportFormattedTables(),
+          formatted_summaries: app.reportFormattedSummaries(),
         });
   return { name: active.name, bundle };
 }
@@ -233,6 +234,7 @@ export async function freezeActive() {
     catalog: app.reportCatalog(),
     formatted: app.reportFormatted(),
     formatted_tables: app.reportFormattedTables(),
+    formatted_summaries: app.reportFormattedSummaries(),
   });
 }
 

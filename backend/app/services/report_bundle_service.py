@@ -52,6 +52,10 @@ def build_report_bundle(
             ]
             for collection, rows in payload.formatted_tables.items()
         },
+        "formatted_summaries": {
+            key: summary.model_dump(mode="json")
+            for key, summary in payload.formatted_summaries.items()
+        },
         "batch": {
             "id": frozen_id,
             "name": record.get("name", "Untitled"),

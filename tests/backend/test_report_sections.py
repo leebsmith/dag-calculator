@@ -79,7 +79,7 @@ def render(root: Path, sections: str | None = None, paper: str | None = None) ->
 
 
 def page_size(root: Path, paper: str = "auto") -> tuple[float, float]:
-    target = root / "report.svg"
+    target = root / "page-{p}.svg"
     run_typst(
         [
             "compile",
@@ -94,7 +94,7 @@ def page_size(root: Path, paper: str = "auto") -> tuple[float, float]:
         ],
         root,
     )
-    head = target.read_text()[:400]
+    head = (root / "page-1.svg").read_text()[:400]
     width = re.search(r'width="([0-9.]+)pt"', head)
     height = re.search(r'height="([0-9.]+)pt"', head)
     assert width and height, "SVG page box missing"
@@ -161,17 +161,55 @@ def test_grist_tables_are_present_and_optional() -> None:
         "#metadata((\n"
         '  major: present-formatted-table("grist.major_malts"),\n'
         '  trace: present-formatted-table("grist.trace_malts"),\n'
+        '  sugars: present-formatted-table("batch.sugars"),\n'
         ")) <probe>\n"
     )
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, source) == {"major": True, "trace": True}
+        assert probe(root, source) == {"major": True, "trace": True, "sugars": True}
 
     bundle = fixture()
     del bundle["formatted_tables"]["grist.major_malts"]
+    del bundle["formatted_tables"]["batch.sugars"]
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
-        assert probe(root, source) == {"major": False, "trace": True}
+        assert probe(root, source) == {"major": False, "trace": True, "sugars": False}
+        render(root, "batch-facts")
+
+
+def test_summaries_are_present_and_print_the_frozen_cells() -> None:
+    source = (
+        '#import "lib/format.typ": formatted-summary, present-formatted-summary\n'
+        "#metadata((\n"
+        '  major: present-formatted-summary("grist.major_malts"),\n'
+        '  sugars: present-formatted-summary("batch.sugars"),\n'
+        '  overall: present-formatted-summary("overall"),\n'
+        '  color: formatted-summary("overall").at("color").at("text"),\n'
+        '  yield: formatted-summary("overall").at("extract_yield").at("text"),\n'
+        ")) <probe>\n"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, source) == {
+            "major": True,
+            "sugars": True,
+            "overall": True,
+            "color": "31.7 °L",
+            "yield": "77.6%",
+        }
+
+    bundle = fixture()
+    del bundle["formatted_summaries"]["overall"]
+    presence = (
+        '#import "lib/format.typ": present-formatted-summary\n'
+        "#metadata((\n"
+        '  major: present-formatted-summary("grist.major_malts"),\n'
+        '  overall: present-formatted-summary("overall"),\n'
+        ")) <probe>\n"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, presence) == {"major": True, "overall": False}
         render(root, "batch-facts")
 
 

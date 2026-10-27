@@ -49,11 +49,12 @@ make report-dev BUNDLE=~/Downloads/house-pale-report-bundle.json \
 
 ```
 {
-  "bundle_format": 4,                    // literal discriminator
+  "bundle_format": 5,                    // literal discriminator
   "artifact":   { … },                   // whole artifact as of freeze
   "catalog":    { … },                   // presentation metadata for every exposed path
   "formatted":  { … },                   // per-path display strings (the only display source)
   "formatted_tables": { … },             // per-row cells for collection tables
+  "formatted_summaries": { … },          // weighted colour and extract yield per table
   "batch":      { … },                   // identity + freeze header
   "state":      { … },                   // the solved batch
   "conformance": { … } | null,           // style adherence at freeze
@@ -143,6 +144,7 @@ Invariants the schema enforces
 - Any catalog entry with unit must also carry symbol.
 - formatted keys must name catalog paths, and a unit-bearing path must carry the number/unit split.
 - formatted_tables keys must name collection nodes; cells are display strings.
+- formatted_summaries keys name collection nodes or `overall`; `color` and `extract_yield` are display strings.
 - Collection state keys must be collection nodes with a known item schema; values are lists of objects.
 - The catalog must cover the solved state: every valuation entry and every one-level row/output key needs a catalog path.
 - Telemetry keys must be boundary nodes with a matching binding, must be solved, and never be orphaned.

@@ -3,7 +3,11 @@
 // the persistent payload shape.
 
 import { buildReportCatalog } from "../views/registry/catalog.js";
-import { buildReportFormatted, buildReportTables } from "../views/producer/reportFormat.js";
+import {
+  buildReportFormatted,
+  buildReportSummaries,
+  buildReportTables,
+} from "../views/producer/reportFormat.js";
 
 // Batch payload shape revision (independent of the artifact grammar version).
 export const DRAFT_SCHEMA_VERSION = 4;
@@ -113,7 +117,11 @@ export function installSnapshot(app, { artifact, master, session }) {
     reportFormattedTables() {
       return buildReportTables(artifact, this.reportCatalog(), session.getEngine());
     },
+
+    reportFormattedSummaries() {
+      return buildReportSummaries(artifact, this.reportCatalog(), session.getEngine());
+    },
   });
 }
 
-export const KEYS = ["draftState", "freezePayload", "reportInputs", "reportCatalog", "reportFormatted", "reportFormattedTables"];
+export const KEYS = ["draftState", "freezePayload", "reportInputs", "reportCatalog", "reportFormatted", "reportFormattedTables", "reportFormattedSummaries"];

@@ -34,7 +34,7 @@ _107 paths_
 | `batch.boil_hops.boil_time_fraction` | Boil remaining | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.boil_hops.name` | Hop | field | — | — | — | — |
-| `batch.boil_hops.parts` | Parts | field | dimensionless | 1 | — | — |
+| `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
@@ -52,7 +52,7 @@ _107 paths_
 | `batch.dry_hops.contact_duration_hours` | Contact duration | field | time | hr | 1 | — |
 | `batch.dry_hops.notes` | Notes | field | — | — | — | — |
 | `batch.dry_hops.product_type` | Type | field | — | — | — | raw_whole_cones, frozen_whole_cones, map_whole_cones, liquid_extract, cryo_powder, terpene_isolate |
-| `batch.dry_hops.quantity` | Quantity | field | dimensionless | 1 | — | — |
+| `batch.dry_hops.quantity` | Quantity | field | dimensionless | — | — | — |
 | `batch.dry_hops.time_of_application` | When | field | — | — | — | — |
 | `batch.dry_hops.unit` | Unit | field | — | — | — | oz, g, ml |
 | `batch.dry_hops.variety` | Variety | field | — | — | — | — |
@@ -64,8 +64,8 @@ _107 paths_
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
-| `batch.runnings_ratio` | Runnings Ratio (r, V1/V2) | derived | dimensionless | 1 | — | — |
-| `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | 1 | — | — |
+| `batch.runnings_ratio` | Runnings Ratio (r, V1/V2) | derived | dimensionless | — | — | — |
+| `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | — | — | — |
 | `batch.s_late_add` | Dose extract | derived | mass | kg | 1 | — |
 | `batch.s_late_add_request` | S Late Add Request | derived | mass | kg | 1 | — |
 | `batch.scale_pin` | Scale Pin | choice | — | — | — | abv, og, fg |
@@ -74,7 +74,7 @@ _107 paths_
 | `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
 | `batch.sugar_extract_total` | Late extract | derived | mass | kg | 2 | — |
 | `batch.sugar_fermentability_effective` | Sugar Fermentability Effective | derived | percentage | pct (%) | 1 | — |
-| `batch.sugar_parts_total` | Sugar Parts Total | derived | dimensionless | 1 | — | — |
+| `batch.sugar_parts_total` | Sugar Parts Total | derived | dimensionless | — | — | — |
 | `batch.sugar_share_request` | Sugar Share Request | derived | percentage | pct (%) | 1 | — |
 | `batch.sugars` | Late additions | collection | — | — | — | — |
 | `batch.sugars.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
@@ -85,7 +85,7 @@ _107 paths_
 | `batch.sugars.mass_kg` | Mass | field | mass | kg | 1 | — |
 | `batch.sugars.name` | Sugar | field | — | — | — | — |
 | `batch.sugars.notes` | Notes | field | — | — | — | — |
-| `batch.sugars.parts` | Parts | field | dimensionless | 1 | 2 | — |
+| `batch.sugars.parts` | Parts | field | dimensionless | — | 2 | — |
 | `batch.sugars.resolved_mass_kg` | Resolved mass | field | mass | kg | 2 | — |
 | `batch.sugars.sugar_id` | Sugar ID | field | — | — | — | — |
 | `batch.sugars.yield_basis` | Yield Basis | field | — | — | — | — |
@@ -109,10 +109,10 @@ _107 paths_
 | `batch.whirlpool_hops.initial_temp_c` | Initial temp | field | temperature | degC (°C) | 1 | — |
 | `batch.whirlpool_hops.name` | Hop | field | — | — | — | — |
 | `batch.whirlpool_hops.notes` | Notes | field | — | — | — | — |
-| `batch.whirlpool_hops.parts` | Parts | field | dimensionless | 1 | — | — |
+| `batch.whirlpool_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.whirlpool_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract |
-| `batch.whirlpool_hops.t90_replacement_ratio` | T90 Replacement Ratio | field | dimensionless | 1 | — | — |
+| `batch.whirlpool_hops.t90_replacement_ratio` | T90 Replacement Ratio | field | dimensionless | — | — | — |
 | `batch.whirlpool_ibu_fraction` | Whirlpool IBU share | root | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_target_ibu` | Whirlpool IBU | derived | ibu | IBU | 1 | — |
 | `batch.yeast` | Yeast | selection | — | — | — | — |
@@ -134,7 +134,7 @@ _107 paths_
 | `batch.yeast.temp_low_c` | Temp Low C | field | temperature | degC (°C) | 1 | — |
 | `batch.yeast.url` | URL | field | — | — | — | — |
 | `batch.yeast_cap` | Malt attenuation cap | derived | percentage | pct (%) | 1 | — |
-| `batch.yeast_id` | Yeast | root | reference | id | — | — |
+| `batch.yeast_id` | Yeast | root | reference | — | — | — |
 
 ## Grist
 
@@ -154,12 +154,12 @@ _38 paths_
 | `grist.major_malts.moisture_fraction` | Moisture Fraction | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.name` | Malt | field | — | — | — | — |
 | `grist.major_malts.notes` | Notes | field | — | — | — | — |
-| `grist.major_malts.parts` | Parts | field | dimensionless | 1 | — | — |
+| `grist.major_malts.parts` | Parts | field | dimensionless | — | — | — |
 | `grist.major_malts.pct` | Pct | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.yield_basis` | Yield Basis | field | — | — | — | — |
 | `grist.major_malts.yield_fraction` | Yield | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.yield_provenance` | Yield Provenance | field | — | — | — | — |
-| `grist.mcu` | Mcu | derived | dimensionless | 1 | — | — |
+| `grist.mcu` | Mcu | derived | dimensionless | — | — | — |
 | `grist.sugar_weighted_lovibond` | Weighted sugar color | derived | grain_color | EBC | 1 | — |
 | `grist.sugars_mass` | Total sugar mass | derived | mass | kg | 1 | — |
 | `grist.trace_malts` | Trace malts | collection | — | — | — | — |
@@ -222,7 +222,7 @@ _61 paths_
 | `water.kettle_blend.chloride_cl` | Chloride | derived | concentration | ppm | 1 | — |
 | `water.kettle_blend.magnesium_mg` | Magnesium | derived | concentration | ppm | 1 | — |
 | `water.kettle_blend.sodium_na` | Sodium | derived | concentration | ppm | 1 | — |
-| `water.kettle_blend.sulfate_chloride_ratio` | Sulfate Chloride Ratio | derived | dimensionless | 1 | — | — |
+| `water.kettle_blend.sulfate_chloride_ratio` | Sulfate Chloride Ratio | derived | dimensionless | — | — | — |
 | `water.kettle_blend.sulfate_so4` | Sulfate | derived | concentration | ppm | 1 | — |
 | `water.pinned_ions` | Pinned Ions | collection | — | — | — | — |
 | `water.pinned_ions.ion` | Ion | field | — | — | — | ca, mg, na, so4, cl, alk |
@@ -233,7 +233,7 @@ _61 paths_
 | `water.source.chloride_cl` | Chloride | identity | concentration | ppm | 1 | — |
 | `water.source.date_received` | Date Received | identity | — | — | — | — |
 | `water.source.date_reported` | Date Reported | identity | — | — | — | — |
-| `water.source.electrical_conductivity_mmho_cm` | Electrical Conductivity Mmho Cm | identity | dimensionless | 1 | — | — |
+| `water.source.electrical_conductivity_mmho_cm` | Electrical Conductivity Mmho Cm | identity | dimensionless | — | — | — |
 | `water.source.laboratory` | Laboratory | identity | — | — | — | — |
 | `water.source.location` | Location | identity | — | — | — | — |
 | `water.source.magnesium_mg` | Magnesium | identity | concentration | ppm | 1 | — |
@@ -257,7 +257,7 @@ _61 paths_
 | `water.target.chloride_cl` | Chloride | root | concentration | ppm | 1 | — |
 | `water.target.magnesium_mg` | Magnesium | root | concentration | ppm | 1 | — |
 | `water.target.sodium_na` | Sodium | root | concentration | ppm | 1 | — |
-| `water.target.sulfate_chloride_ratio` | Sulfate Chloride Ratio | derived | dimensionless | 1 | — | — |
+| `water.target.sulfate_chloride_ratio` | Sulfate Chloride Ratio | derived | dimensionless | — | — | — |
 | `water.target.sulfate_so4` | Sulfate | root | concentration | ppm | 1 | — |
 | `water.target_mash_ph` | Target mash pH | root | ph | pH | 2 | — |
 | `water.target_profile` | Target Profile | selection | — | — | — | — |
@@ -273,7 +273,7 @@ _61 paths_
 | `water.target_profile.notes` | Notes | field | — | — | — | — |
 | `water.target_profile.sodium_na` | Sodium | field | concentration | ppm | 1 | — |
 | `water.target_profile.sulfate_so4` | Sulfate | field | concentration | ppm | 1 | — |
-| `water.target_profile_id` | Targets | root | reference | id | — | — |
+| `water.target_profile_id` | Targets | root | reference | — | — | — |
 
 ## Solver — batch sparge
 

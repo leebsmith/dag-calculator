@@ -140,8 +140,9 @@ no unit conversion, rounding, or symbol choice in Typst. The browser freeze
 payload now computes `formatted[path] = { text, number, unit }` with the same
 formatter the UI uses at the unit preference in force, and `bundle_format` bumps
 to `3`. Format 4 adds `formatted_tables` — per-row cells for collection tables
-(major/trace grist), with derived amounts, PPG, and bill shares computed by the
-producer. Bundles written under an older format are refused rather than rendered
+(major/trace grist, sugars), with derived amounts, PPG, and bill shares computed
+by the producer. Format 5 adds `formatted_summaries`: the mass-weighted colour
+and extract yield per table plus an `overall` aggregate, weighed producer-side. Bundles written under an older format are refused rather than rendered
 without display strings.
 
 ### 5.2 Report spec
@@ -263,7 +264,11 @@ conversion or rounding.
   by a Typst helper.
 - `catalog.nodes[path].option_labels` still maps taxonomy values for labels.
 - Collection tables read `formatted_tables[collection]`; the producer owns the
-  derived columns (solved mass × bill share, PPG from yield, trace mass share).
+  derived columns (solved mass × bill share, PPG from yield, trace and sugar
+  mass shares).
+- Weighted readouts read `formatted_summaries`; colour weighs every fermentable,
+  the overall extract yield only the grain bill and sugars (trace is
+  colour-only).
 - The display strings are covered by `content_hash`, so a frozen report is a
   stable view of the freeze-time presentation; changing unit preferences later
   does not rewrite it.

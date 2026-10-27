@@ -18,6 +18,7 @@ from app.schemas.batch import FreezePayload
 from app.schemas.report_bundle import (
     BoundaryTelemetry,
     CatalogContent,
+    FormattedSummary,
     FormattedValue,
     NodePresentation,
     ReportInputs,
@@ -56,6 +57,18 @@ TRACE_MALTS = [
         "mass_kg": 0.1,
         "yield_fraction": 0.60,
         "color_lovibond": 500.0,
+    },
+]
+
+SUGARS = [
+    {
+        "sugar_id": "d-180",
+        "name": "Candi Syrup D-180",
+        "mass_kg": 0.5,
+        "parts": 10.0,
+        "resolved_mass_kg": 0.5,
+        "yield_fraction": 0.80,
+        "color_lovibond": 180.0,
     },
 ]
 
@@ -102,6 +115,7 @@ RECORD = {
         ],
         "grist.major_malts": MAJOR_MALTS,
         "grist.trace_malts": TRACE_MALTS,
+        "batch.sugars": SUGARS,
     },
     "selections": {
         "batch.yeast": {"id": "us-05", "name": "SafAle US-05"},
@@ -115,6 +129,7 @@ RECORD = {
     "valuation": {
         "batch.v_ferm": 20.0,
         "batch.target_abv": 5.5,
+        "batch.yeast_id": "us-05",
         "batch.realized_abv": 5.62,
         "mash.grain_temp_c": 20.0,
         "mash.strike_water_temp_c": 68.3,
@@ -128,6 +143,7 @@ RECORD = {
         ],
         "grist.major_malts": MAJOR_MALTS,
         "grist.trace_malts": TRACE_MALTS,
+        "batch.sugars": SUGARS,
         # The volume-ledger rows reconcile: (V_post 22.4 + late 0.5) * 0.96
         # - (kettle dead 1.0 + transfer 0.5 + trub 0.5) = V_ferm 20.0.
         "solver.batch": {
@@ -328,6 +344,22 @@ PAYLOAD = FreezePayload(
             "grist.trace_malts.color_lovibond": NodePresentation(
                 label="Color", dimension="grain_color", unit="Lovibond", symbol="°L", decimals=1
             ),
+            "batch.sugars": NodePresentation(label="Late additions"),
+            "batch.sugars.sugar_id": NodePresentation(label="Sugar ID"),
+            "batch.sugars.name": NodePresentation(label="Sugar"),
+            "batch.sugars.mass_kg": NodePresentation(
+                label="Mass", dimension="mass", unit="kg", symbol="kg", decimals=1
+            ),
+            "batch.sugars.parts": NodePresentation(label="Parts"),
+            "batch.sugars.resolved_mass_kg": NodePresentation(
+                label="Resolved mass", dimension="mass", unit="kg", symbol="kg", decimals=2
+            ),
+            "batch.sugars.yield_fraction": NodePresentation(
+                label="Yield", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.sugars.color_lovibond": NodePresentation(
+                label="Color", dimension="grain_color", unit="Lovibond", symbol="°L", decimals=1
+            ),
             "solver.water": NodePresentation(label="Water solver"),
             "solver.water.strategy": NodePresentation(
                 label="Strategy",
@@ -355,6 +387,7 @@ PAYLOAD = FreezePayload(
                 label="Total hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
             "batch.yeast.name": NodePresentation(label="Yeast"),
+            "batch.yeast_id": NodePresentation(label="Yeast", dimension="reference"),
             "equipment.max_hlt_volume_l": NodePresentation(
                 label="Max HLT", dimension="volume", unit="L", symbol="L", decimals=1
             ),
@@ -365,6 +398,7 @@ PAYLOAD = FreezePayload(
     ),
     formatted={
         "equipment.name": FormattedValue(text="HERMS 30L"),
+        "batch.yeast_id": FormattedValue(text="us-05"),
         "style.name": FormattedValue(text="American Pale Ale"),
         "water.source.source_name": FormattedValue(text="City tap"),
         "solver.batch.sg_post_boil": FormattedValue(text="13.6 °P", number="13.6", unit="°P"),
@@ -416,9 +450,36 @@ PAYLOAD = FreezePayload(
                 "amount": FormattedValue(text="0.1 kg", number="0.1", unit="kg"),
                 "ppg": FormattedValue(text="27.7", number="27.7"),
                 "color": FormattedValue(text="500.0 °L", number="500.0", unit="°L"),
-                "bill_pct": FormattedValue(text="2.0%", number="2.0", unit="%"),
+                "bill_pct": FormattedValue(text="1.8%", number="1.8", unit="%"),
             },
         ],
+        "batch.sugars": [
+            {
+                "name": FormattedValue(text="Candi Syrup D-180"),
+                "amount": FormattedValue(text="0.5 kg", number="0.5", unit="kg"),
+                "ppg": FormattedValue(text="37.0", number="37.0"),
+                "color": FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
+                "bill_pct": FormattedValue(text="8.9%", number="8.9", unit="%"),
+            },
+        ],
+    },
+    formatted_summaries={
+        "grist.major_malts": FormattedSummary(
+            color=FormattedValue(text="7.5 °L", number="7.5", unit="°L"),
+            extract_yield=FormattedValue(text="77.4%", number="77.4", unit="%"),
+        ),
+        "grist.trace_malts": FormattedSummary(
+            color=FormattedValue(text="500.0 °L", number="500.0", unit="°L"),
+            extract_yield=FormattedValue(text="60.0%", number="60.0", unit="%"),
+        ),
+        "batch.sugars": FormattedSummary(
+            color=FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
+            extract_yield=FormattedValue(text="80.0%", number="80.0", unit="%"),
+        ),
+        "overall": FormattedSummary(
+            color=FormattedValue(text="31.7 °L", number="31.7", unit="°L"),
+            extract_yield=FormattedValue(text="77.6%", number="77.6", unit="%"),
+        ),
     },
 )
 

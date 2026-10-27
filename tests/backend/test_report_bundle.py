@@ -10,7 +10,8 @@ from app.schemas.report_bundle import BUNDLE_FORMAT, ReportBundle
 ARTIFACT = {
     "schema_version": 7,
     "dimensions": {
-        "volume": {"base_unit": "L", "kind": "linear", "units": {"gal": {"factor": 3.785411784}}}
+        "volume": {"base_unit": "L", "kind": "linear", "units": {"gal": {"factor": 3.785411784}}},
+        "reference": {"base_unit": "id", "kind": "identity", "units": {}},
     },
     "primitive_schemas": {
         "equipment": {"name": {}, "max_hlt_volume_l": {"dimension": "volume"}},
@@ -20,6 +21,7 @@ ARTIFACT = {
     "nodes": {
         "mash.rests": {"kind": "collection", "item_schema": "mash_rest"},
         "batch.v_ferm": {"kind": "root", "dimension": "volume"},
+        "batch.yeast_id": {"kind": "root", "dimension": "reference"},
         "solver.batch": {
             "kind": "boundary",
             "binding": "batch_sparge_solver",
@@ -48,7 +50,19 @@ def bundle(**overrides) -> dict:
             "hash": "sha256:catalog",
             "dimensions": {"volume": {"base_unit": "L", "kind": "linear", "units": {}}},
             "nodes": {
-                "batch.v_ferm": {"label": "Fermenter volume", "unit": "L", "symbol": "L", "decimals": 1},
+                "batch.v_ferm": {
+                    "label": "Fermenter volume",
+                    "dimension": "volume",
+                    "unit": "L",
+                    "symbol": "L",
+                    "decimals": 1,
+                },
+                "batch.yeast_id": {
+                    "label": "Yeast",
+                    "dimension": "reference",
+                    "unit": "id",
+                    "symbol": "id",
+                },
                 "mash.rests": {"label": "Mash rests"},
                 "mash.rests.rest_id": {"label": "Step"},
                 "mash.rests.use_temp_c": {"label": "Rest temperature"},
@@ -69,6 +83,7 @@ def bundle(**overrides) -> dict:
         "state": {
             "valuation": {
                 "batch.v_ferm": 20,
+                "batch.yeast_id": "us-05",
                 "mash.rests": [{"rest_id": "dough_in", "use_temp_c": 67}],
                 "solver.batch": {"cascade.v_strike": 14},
                 "water.target_profile": {"name": "rig"},
@@ -95,6 +110,7 @@ def bundle(**overrides) -> dict:
             }
         },
         "formatted_tables": {},
+        "formatted_summaries": {},
     }
     base.update(overrides)
     return ReportBundle.seal(base).model_dump(mode="json")
@@ -102,7 +118,7 @@ def bundle(**overrides) -> dict:
 
 def test_a_well_formed_bundle_validates() -> None:
     parsed = ReportBundle.model_validate(bundle())
-    assert parsed.bundle_format == 4
+    assert parsed.bundle_format == 5
     assert parsed.batch.identity["equipment"]["name"] == "Test rig"
 
 
@@ -113,7 +129,7 @@ def test_unknown_fields_are_rejected() -> None:
 
 def test_unknown_bundle_format_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(bundle_format=3))
+        ReportBundle.model_validate(bundle(bundle_format=4))
 
 
 def test_valuation_must_name_declared_nodes() -> None:
@@ -237,6 +253,14 @@ def test_dimensioned_formatted_values_need_the_number_unit_split() -> None:
         ReportBundle.model_validate(bundle(formatted=formatted))
 
 
+def test_text_formatted_reference_values_do_not_need_a_split() -> None:
+    # `batch.yeast_id` is a reference (identity dimension): the value is an id
+    # string, so a unit-bearing catalog entry must not demand number/unit.
+    ReportBundle.model_validate(
+        bundle(formatted={"batch.yeast_id": {"text": "us-05"}})
+    )
+
+
 def test_formatted_tables_must_name_collection_nodes() -> None:
     with pytest.raises(ValidationError, match="not a collection node"):
         ReportBundle.model_validate(bundle(formatted_tables={"batch.v_ferm": []}))
@@ -247,10 +271,30 @@ def test_formatted_tables_must_name_collection_nodes() -> None:
         )
 
 
+def test_formatted_summaries_name_a_collection_or_the_overall_aggregate() -> None:
+    summary = {"color": {"text": "7.5 °L"}, "extract_yield": {"text": "77.4%"}}
+    ReportBundle.model_validate(bundle(formatted_summaries={"mash.rests": summary}))
+    ReportBundle.model_validate(bundle(formatted_summaries={"overall": summary}))
+
+    with pytest.raises(ValidationError, match="not a collection node or"):
+        ReportBundle.model_validate(bundle(formatted_summaries={"batch.v_ferm": summary}))
+
+    with pytest.raises(ValidationError, match="has no text"):
+        ReportBundle.model_validate(
+            bundle(formatted_summaries={"overall": {"color": {"text": ""}}})
+        )
+
+
 def test_freeze_payload_requires_the_bundle_inputs() -> None:
     from app.schemas.batch import FreezePayload
 
     with pytest.raises(ValidationError) as exc:
         FreezePayload()
     missing = {error["loc"][0] for error in exc.value.errors()}
-    assert missing == {"report_inputs", "catalog", "formatted", "formatted_tables"}
+    assert missing == {
+        "report_inputs",
+        "catalog",
+        "formatted",
+        "formatted_tables",
+        "formatted_summaries",
+    }

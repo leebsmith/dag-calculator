@@ -9,5 +9,6 @@
 #let catalog = bundle.catalog
 #let display-values = bundle.formatted
 #let display-tables = bundle.formatted_tables
+#let display-summaries = bundle.formatted_summaries
 
 #let is-frozen = batch.frozen_at != none
