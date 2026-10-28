@@ -2,6 +2,7 @@
 // to a realized-vital field.
 
 import { CONFORMANCE_FIELD_MAP } from "../registry/presentation.js";
+import { formatValue } from "../../utils.js";
 
 function conformanceHint(c) {
   if (!c || !c.violatedBoundary) return null;
@@ -12,7 +13,7 @@ function conformanceHint(c) {
       : c.status === "drift"
         ? "out of style"
         : "near style limit";
-  return `${dir} style limit ${Number(c.violatedBoundary.toFixed(3))} (${tier})`;
+  return `${dir} style limit ${formatValue(c.violatedBoundary)} (${tier})`;
 }
 
 // AI AGENT HOOKS: Use this decorator for style-conformance badges.

@@ -13,7 +13,7 @@ import { registry, steps } from "../views/steps.js";
 import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
 import { reportError } from "../observability.js";
-import { formatWithDecimals, preferredUnit, unitSymbol } from "../utils.js";
+import { formatWithDecimals, preferredUnit, roundTo, unitSymbol } from "../utils.js";
 
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
@@ -215,7 +215,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
 
     colorDisplay(value) {
       if (typeof value !== "number" || !Number.isFinite(value)) return "";
-      return Math.round(displayValue(artifact, "grain_color", this.grainColorUnit(), value) * 10) / 10;
+      return roundTo(displayValue(artifact, "grain_color", this.grainColorUnit(), value), 1);
     },
 
     setColorField(ri, value) {

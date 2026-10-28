@@ -5,6 +5,7 @@ import { resolveReference } from "../../engine/paths.js";
 import { fromBase } from "../../engine/units.js";
 import { rendererFor } from "../renderers.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
+import { unitSymbol } from "../../utils.js";
 
 function defaultControl(node) {
   if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
@@ -108,7 +109,7 @@ export function resolveCollectionColumns(artifact, registry, collectionId, entry
       label: meta.label ?? c,
       dimension: spec.dimension ?? null,
       displayUnit: unitId,
-      unit: shownUnitId ? UNIT_SYMBOLS[spec.dimension]?.[shownUnitId] ?? shownUnitId : null,
+      unit: shownUnitId ? unitSymbol(UNIT_SYMBOLS, spec.dimension, shownUnitId) : null,
       decimals: meta.decimals ?? unitDecimals(spec.dimension, shownUnitId),
       editable: inputs ? inputs.has(c) : true,
     };

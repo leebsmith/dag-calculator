@@ -19,7 +19,7 @@ import {
 import { attenuationCapSummary } from "../../../views/producer/attenuationCap.js";
 import { stylePlotModel } from "../../../views/producer/stylePlot.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
-import { formatWithDecimals } from "../../../utils.js";
+import { formatWithDecimals, roundTo } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
 
 function abvInterval(ray) {
@@ -128,7 +128,7 @@ export function registerStyleNavigator(app, ctx) {
         if (element) element.value = formatWithDecimals(previous, 1);
         return;
       }
-      const target = Math.round(numeric * 10) / 10;
+      const target = roundTo(numeric, 1);
       if (!this.writeStyleAbv(target)) {
         if (element) element.value = formatWithDecimals(previous, 1);
         return;

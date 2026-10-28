@@ -1,14 +1,19 @@
 // Phase 0 of plans/archive/decomposition-and-display-contract.md: the display contract
-// is prose only outside templates, but the adapters are where most formatting
-// happens. Phase 1 emptied the allowlist: every numeric readout now routes
-// through the utils barrel (the producer's `cell.js` is the shared rule for
-// views). Any new violation fails immediately.
+// is prose only outside templates, so the guard pins the layer where formatting
+// happens. Phase 1 emptied the allowlist; the scope now covers the producer and
+// the presentation registry as well as the adapters, because `cell.js` is the
+// shared rule for views just as the barrel is for adapters. Any new violation
+// fails immediately.
 
 import test from "node:test";
 import assert from "node:assert/strict";
 import { read, rel, walk } from "./util.js";
 
-const SCOPE = "frontend/src/adapters";
+const SCOPES = [
+  "frontend/src/adapters",
+  "frontend/src/views/producer",
+  "frontend/src/views/registry",
+];
 
 const RULES = [
   {
@@ -23,12 +28,12 @@ const RULES = [
   },
   {
     id: "math-round-scale",
-    pattern: /Math\.round\s*\([^;\n]*\*\s*(?:1000|1e6)\s*\)\s*\//,
+    pattern: /Math\.round\s*\([^;\n]*\*\s*(?:10|100|1000|1e\d+)\s*\)\s*\//,
     fix: "roundTo(value, decimals)",
   },
   {
     id: "unit-symbol-fallback",
-    pattern: /\bUNIT_SYMBOLS\b[^\n]*\?\?/,
+    pattern: /\bUNIT_SYMBOLS\b\s*(?:\[|\.[A-Za-z_$])[^\n]*\?\?/,
     fix: "unitSymbol(UNIT_SYMBOLS, dimension, unitId, fallback)",
   },
 ];
@@ -44,20 +49,22 @@ function blankStatements(source) {
 
 function scan() {
   const found = new Map();
-  for (const abs of walk(SCOPE, [".js"])) {
-    const file = rel(abs);
-    blankStatements(read(file))
-      .split("\n")
-      .forEach((line, index) => {
-        const match = line.trim();
-        if (!match || /^(\/\/|\*|\/\*)/.test(match)) return;
-        const rules = RULES.filter((rule) => rule.pattern.test(match)).map((rule) => rule.id);
-        if (rules.length === 0) return;
-        const key = `${file}\n${match}`;
-        const hit = found.get(key) ?? { file, match, rules, lines: [] };
-        hit.lines.push(index + 1);
-        found.set(key, hit);
-      });
+  for (const scope of SCOPES) {
+    for (const abs of walk(scope, [".js"])) {
+      const file = rel(abs);
+      blankStatements(read(file))
+        .split("\n")
+        .forEach((line, index) => {
+          const match = line.trim();
+          if (!match || /^(\/\/|\*|\/\*)/.test(match)) return;
+          const rules = RULES.filter((rule) => rule.pattern.test(match)).map((rule) => rule.id);
+          if (rules.length === 0) return;
+          const key = `${file}\n${match}`;
+          const hit = found.get(key) ?? { file, match, rules, lines: [] };
+          hit.lines.push(index + 1);
+          found.set(key, hit);
+        });
+    }
   }
   return found;
 }
@@ -74,7 +81,7 @@ function allowlistByKey() {
   return byKey;
 }
 
-test("adapters format through the utils barrel only", () => {
+test("formatting routes through the utils barrel or the cell rule", () => {
   const allow = allowlistByKey();
   const unlisted = [...scan().values()].filter((hit) => !allow.has(keyOf(hit)));
 
@@ -125,7 +132,9 @@ test("the rules still catch the constructs they describe", () => {
     ["to-fixed", "`${value.toFixed(1)} %`"],
     ["percent-times-100", "`${(row.alpha_acid_pct * 100).toFixed(1)}%`"],
     ["math-round-scale", "return String(Math.round(fraction * 1000) / 10);"],
+    ["math-round-scale", "const target = Math.round(numeric * 10) / 10;"],
     ["unit-symbol-fallback", "`${UNIT_SYMBOLS.mass?.[unit] ?? unit}`"],
+    ["unit-symbol-fallback", "unit: UNIT_SYMBOLS[dimension]?.[unit] ?? unit,"],
   ];
   for (const [id, sample] of samples) {
     const rule = RULES.find((candidate) => candidate.id === id);
@@ -137,5 +146,10 @@ test("the rules still catch the constructs they describe", () => {
     symbolRule.pattern.test('unitSymbol(UNIT_SYMBOLS, "mass", unit)'),
     false,
     "the barrel helper is the fix, not a violation"
+  );
+  assert.equal(
+    symbolRule.pattern.test('unitSymbol(UNIT_SYMBOLS, dimension, unitId) : meta.unit ?? null'),
+    false,
+    "the helper's own call is not an inline fallback"
   );
 });

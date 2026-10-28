@@ -2,6 +2,7 @@
 // artifact values; they never feed back into the artifact, engine, or solvers.
 
 import { reportError } from "../../observability.js";
+import { formatPercentValue, formatWithDecimals, roundTo } from "../../utils.js";
 
 export const CONFORMANCE_FIELD_MAP = {
   "solver.batch.sg_post_boil": "og",
@@ -19,9 +20,9 @@ const TARGET_ABV = {
     format: (max, binding, attenuation) => {
       const ceiling =
         typeof attenuation === "number"
-          ? `; attenuation ceiling ${attenuation.toFixed(1)}%`
+          ? `; attenuation ceiling ${formatPercentValue(attenuation, 1)}`
           : "";
-      return `Max feasible: ${max.toFixed(1)}% (${binding})${ceiling}.`;
+      return `Max feasible: ${formatPercentValue(max, 1)} (${binding})${ceiling}.`;
     },
   },
 };
@@ -53,13 +54,11 @@ export function applyPresentation(out, rule, readers) {
     const shownFloor = readers.displayFloor
       ? readers.displayFloor(rule.floor.value)
       : rule.floor.value;
-    const text =
-      typeof shownFloor === "number"
-        ? (Object.is(Number(shownFloor.toFixed(decimals)), -0)
-            ? 0
-            : Number(shownFloor.toFixed(decimals))
-          ).toFixed(decimals)
-        : shownFloor;
+    let text = shownFloor;
+    if (typeof shownFloor === "number") {
+      const rounded = roundTo(shownFloor, decimals);
+      text = formatWithDecimals(Object.is(rounded, -0) ? 0 : rounded, decimals);
+    }
     out.display = `${rule.floor.marker}${text}`;
     out.floored = true;
     out.hint =

@@ -9,6 +9,7 @@ import {
   formatGravity,
   formatWithDecimals,
   provenanceFor,
+  roundTo,
   toPercentValue,
 } from "../../../utils.js";
 
@@ -83,7 +84,7 @@ export function registerStyleTargets(app, ctx) {
       const numeric = Number(value);
       if (!Number.isFinite(numeric) || numeric <= 0) return;
       const target =
-        this.scalePin === "abv" ? Math.round(numeric * 10) / 10 : numeric;
+        this.scalePin === "abv" ? roundTo(numeric, 1) : numeric;
       this.setRoot(this.activeScaleTargetRoot, target);
       this.styleAbvTouched = this.scalePin === "abv" ? true : this.styleAbvTouched;
       this.syncScalePinState();
