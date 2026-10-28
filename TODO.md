@@ -4,7 +4,11 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phase 0 (contract guards) is the first commit; see
+  Phase 0 (contract guards) landed: `tests/guards/adapter-format-contract.test.js`
+  baselines 33 adapter formatting sites, and
+  `tests/guards/import-direction.test.js` baselines three `store → adapters`
+  imports. Next is Phase 1, one cell formatter (`views/producer/cell.js`),
+  which drives the adapter allowlist to zero. See
   `plans/decomposition-and-display-contract.md` for the per-phase context
   contract.
 

@@ -1,6 +1,6 @@
 # Decomposition & display contract
 
-Status: **approved, not started**. Phase 0 is the first commit.
+Status: **in flight**. Phase 0 (contract guards) landed; Phase 1 is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -116,6 +116,12 @@ the CSS guard's semantics.
 
 **Handoff.** The allowlist counts are the progress bar for Phase 1; `make check`
 now fails on new violations.
+
+**Landed.** 33 adapter-format entries (the `toFixed` / `* 100` / `Math.round`
+scale-and-divide / `UNIT_SYMBOLS` families, grouped per source line) and the
+three `store → adapters` imports. `backend/pyproject.toml` needed no change:
+`tach` already pins the backend layering and no ruff rule expresses the frontend
+contract; the guard is the enforcement point.
 
 ### Phase 1 — One cell formatter (1 day)
 
