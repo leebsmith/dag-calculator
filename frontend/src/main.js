@@ -2,6 +2,7 @@ import Alpine from "alpinejs";
 
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
+import { reportError } from "./observability.js";
 import { getSession } from "./adapters/authClient.js";
 import * as libraryClient from "./adapters/libraryClient.js";
 import {
@@ -109,7 +110,7 @@ async function applyAuth(user) {
   try {
     session = await getSession();
   } catch (err) {
-    console.error("session check failed", err);
+    reportError("main.session", err);
     auth.sessionError = true;
     auth.blocked = false;
     auth.user = null;
@@ -135,7 +136,7 @@ async function applyAuth(user) {
     try {
       await refreshWithRetry(recipes);
     } catch (err) {
-      console.error("recipe list failed", err);
+      reportError("main.recipeList", err);
       recipes.loadError = true;
     }
     await stepApp.library.refresh();
@@ -155,7 +156,7 @@ async function applyAuth(user) {
         if (!imported) return null;
         return stepApp.library.refresh().then(() => stepApp.refreshLibraryItems());
       })
-      .catch((err) => console.error("legacy library import failed", err));
+      .catch((err) => reportError("main.legacyImport", err));
   }
 }
 
@@ -173,11 +174,11 @@ async function refreshWithRetry(recipes, attempts = 6) {
   }
 }
 
-getRedirectResult().catch((err) => console.error("redirect sign-in failed", err));
+getRedirectResult().catch((err) => reportError("main.redirectSignIn", err));
 
 onAuthStateChanged((user) => {
   latestUser = user;
-  applyAuth(user).catch((err) => console.error("auth handling failed", err));
+  applyAuth(user).catch((err) => reportError("main.auth", err));
 });
 
 Alpine.data("stepCalculator", () => {
@@ -192,11 +193,11 @@ Alpine.data("stepCalculator", () => {
   app.onRecordsChanged = () => {
     Alpine.store("setup")
       .refreshAssets()
-      .catch((err) => console.error("setup refresh failed", err));
+      .catch((err) => reportError("main.setupRefresh", err));
   };
   stepApp = app;
   // Auth may have resolved before this factory ran — land on Batches now.
-  if (latestUser !== undefined) applyAuth(latestUser).catch((err) => console.error("auth handling failed", err));
+  if (latestUser !== undefined) applyAuth(latestUser).catch((err) => reportError("main.auth", err));
   return app;
 });
 

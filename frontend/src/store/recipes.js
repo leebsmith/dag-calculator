@@ -199,7 +199,7 @@ export function createRecipesStore({
         await persistence.renameBatch(batch.id, name);
         await this.refresh();
       } catch (err) {
-        console.error("rename failed", err);
+        reportError("recipes.rename", err);
       }
     },
 
@@ -211,7 +211,7 @@ export function createRecipesStore({
         await persistence.trashBatch(batch.id);
         await this.refresh();
       } catch (err) {
-        console.error("trash failed", err);
+        reportError("recipes.trash", err);
       }
     },
 
@@ -221,7 +221,7 @@ export function createRecipesStore({
         await persistence.restore(batch.id);
         await this.refresh();
       } catch (err) {
-        console.error("restore failed", err);
+        reportError("recipes.restore", err);
       }
     },
 
@@ -231,7 +231,7 @@ export function createRecipesStore({
         await persistence.deletePermanent(batch.id);
         await this.refresh();
       } catch (err) {
-        console.error("delete failed", err);
+        reportError("recipes.delete", err);
       }
     },
 

@@ -6,6 +6,7 @@
 // current batch untouched.
 
 import { CATALOGS, CATALOG_KINDS } from "./userCatalog.js";
+import { reportError } from "../observability.js";
 
 export const LEGACY_STORAGE_KEY = "brew_user_catalog";
 
@@ -128,7 +129,7 @@ export function createLibrary({ client = EMPTY_CLIENT, kinds = CATALOG_KINDS, on
             await store.create(kind, copy);
             imported += 1;
           } catch (err) {
-            console.error(`library import failed for ${kind}:${legacyId}`, err);
+            reportError(`library.import ${kind}:${legacyId}`, err);
           }
         }
       }

@@ -324,7 +324,7 @@ export function createStepApp(options = {}) {
         await this.library.create(catalog, copy);
         await this.refreshLibraryItems();
       } catch (err) {
-        console.error(`duplicate ${catalog} failed`, err);
+        reportError(`stepAdapter.duplicate ${catalog}`, err);
       }
     },
 
@@ -338,7 +338,7 @@ export function createStepApp(options = {}) {
       this.library
         .refresh()
         .then(() => this.refreshLibraryItems())
-        .catch((err) => console.error("library refresh failed", err));
+        .catch((err) => reportError("stepAdapter.libraryRefresh", err));
       this.syncNav();
     },
 

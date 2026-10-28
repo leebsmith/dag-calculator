@@ -66,6 +66,13 @@ const SOURCE_RULES = {
   "no-duplicate-imports": "error",
   "no-fallthrough": "error",
   "consistent-return": "error",
+  "no-console": "error",
+};
+
+const CONSOLE_SINK = {
+  "observability.js": "implements the sink",
+  "store/persistence.js":
+    "an autosave failure logs on every attempt; the sink dedupes by scope:message",
 };
 
 
@@ -146,5 +153,10 @@ export default [
         },
       ],
     },
+  })),
+  ...Object.entries(CONSOLE_SINK).map(([file, reason]) => ({
+    name: `console-sink: ${reason}`,
+    files: [`frontend/src/${file}`, `src/${file}`],
+    rules: { "no-console": "off" },
   })),
 ];

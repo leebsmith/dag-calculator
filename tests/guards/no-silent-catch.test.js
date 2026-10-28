@@ -13,8 +13,8 @@ const ALLOW = new Map([
   ["frontend/src/adapters/libraryUi.js", "libraryErrors form state"],
   ["frontend/src/store/unitPrefs.js", "localStorage access"],
   ["frontend/src/store/library.js", "localStorage / JSON.parse"],
-  ["frontend/src/store/recipes.js", "loadError / console.error"],
   ["frontend/src/store/persistence.js", "saveState / console.error"],
+  ["frontend/src/store/recipes.js", "recordActionFailure surfaces the error in the UI"],
   ["frontend/src/store/setup.js", "setup error state"],
 ]);
 
