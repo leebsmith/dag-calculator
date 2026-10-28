@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.responses import JSONResponse
 
 from app.artifact import data_dir
@@ -21,7 +21,13 @@ from app.auth.deps import (
     session_payload,
 )
 from app.auth.throttle import RateLimitedError, RateLimitedUser
-from app.schemas.batch import BatchPatch, BatchRecord, DraftPayload, FreezePayload
+from app.schemas.batch import (
+    BatchPatch,
+    BatchRecord,
+    DraftPayload,
+    FreezePayload,
+    ReportRenderPayload,
+)
 from app.schemas.boundary import (
     BatchSolverRequest,
     BatchSolverResponse,
@@ -43,6 +49,12 @@ from app.services.batch_service import BatchConflictError, BatchServiceDep
 from app.services.catalog_service import (
     CatalogServiceDep,
     CatalogValidationError,
+)
+from app.services.report_render import (
+    RenderedReport,
+    ReportSpec,
+    ReportSpecError,
+    parse_spec,
 )
 
 app = FastAPI(title="dag-calculator backend")
@@ -242,6 +254,71 @@ def preview_report_bundle(
     """Assemble a draft's bundle for download without freezing the batch."""
     validate_doc_id(batch_id)
     return service.preview_report_bundle(user["uid"], batch_id, payload)
+
+
+def _report_spec(
+    *, doc_kind: str, fmt: str, sections: str, paper: str, page: int
+) -> ReportSpec:
+    try:
+        return parse_spec(
+            doc_kind=doc_kind, fmt=fmt, sections=sections, paper=paper, page=page
+        )
+    except ReportSpecError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+def _report_response(rendered: RenderedReport) -> Response:
+    headers = {
+        "Content-Length": str(len(rendered.data)),
+        "X-Report-Sections": ",".join(rendered.sections),
+        "X-Report-Pages": str(rendered.pages),
+    }
+    if rendered.key is not None:
+        headers["ETag"] = f'"{rendered.key}"'
+    return Response(
+        content=rendered.data, media_type=rendered.media_type, headers=headers
+    )
+
+
+@app.get("/batches/{batch_id}/report")
+def get_report(
+    batch_id: str,
+    user: AllowedUser,
+    service: BatchServiceDep,
+    doc_kind: str = "recipe",
+    sections: str = "",
+    paper: str = "auto",
+    page: int = 1,
+    fmt: str = Query("pdf", alias="format"),
+) -> Response:
+    """Render the stored bundle of a frozen batch."""
+    validate_doc_id(batch_id)
+    spec = _report_spec(
+        doc_kind=doc_kind, fmt=fmt, sections=sections, paper=paper, page=page
+    )
+    return _report_response(service.render_report(user["uid"], batch_id, spec))
+
+
+@app.post("/batches/{batch_id}/report")
+def preview_report(
+    batch_id: str,
+    payload: ReportRenderPayload,
+    user: AllowedUser,
+    service: BatchServiceDep,
+    doc_kind: str = "recipe",
+    sections: str = "",
+    paper: str = "auto",
+    page: int = 1,
+    fmt: str = Query("pdf", alias="format"),
+) -> Response:
+    """Render a draft's posted bundle without persisting it."""
+    validate_doc_id(batch_id)
+    spec = _report_spec(
+        doc_kind=doc_kind, fmt=fmt, sections=sections, paper=paper, page=page
+    )
+    return _report_response(
+        service.render_preview(user["uid"], batch_id, payload.bundle, spec)
+    )
 
 
 @app.get("/batches/{batch_id}", response_model=BatchRecord)

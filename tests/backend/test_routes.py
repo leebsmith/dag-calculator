@@ -58,6 +58,8 @@ def test_auth_is_enforced_on_every_route(anon_client):
         ("PATCH", "/batches/b1", {"trashed": True}),
         ("DELETE", "/batches/b1", None),
         ("POST", "/batches/b1/freeze", {}),
+        ("GET", "/batches/b1/report", None),
+        ("POST", "/batches/b1/report", {"bundle": {}}),
         ("GET", "/batches/b1", None),
         ("POST", "/solve/batch", make_batch_request().model_dump(mode="json")),
         ("POST", "/solve/water", make_water_request().model_dump(mode="json")),

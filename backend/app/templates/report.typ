@@ -58,6 +58,13 @@
 // selection is a view — it never reaches the bundle and cannot reorder the
 // registry.
 #let wanted = sys.inputs.at("sections", default: "")
+#let known = sections.map(section => section.id)
+// A spec error, not a template crash: the service maps this panic to 422.
+#for id in wanted.split(",").filter(entry => entry != "") {
+  if id not in known {
+    panic("report spec: unknown section " + id)
+  }
+}
 #let requested(id) = wanted == "" or wanted.split(",").contains(id)
 #let included = sections.filter(section => requested(section.id) and (section.present)())
 #let standalone = included.len() == 1
@@ -137,10 +144,14 @@
 }
 
 // Machine-readable identity: the printed page truncates, the document does not.
-#metadata((
-  batch_id: batch.id,
-  content_hash: bundle.content_hash,
-  render_key: token,
-  sections: included.map(section => section.id),
-)) <report-meta>
+// `pages` needs layout, so the block runs in context after pagination.
+#context [
+  #metadata((
+    batch_id: batch.id,
+    content_hash: bundle.content_hash,
+    render_key: token,
+    sections: included.map(section => section.id),
+    pages: counter(page).final().first(),
+  )) <report-meta>
+]
 

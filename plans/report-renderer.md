@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-bundle]
 blocks: []
 gate: a downloaded bundle renders to a printable PDF and per-page PNGs from the scaffold alone; a section added later renders and is drift-guarded; make check/test green
-status: active (five sections landed; render service next)
+status: active (five sections and the render service landed; sections continue)
 ---
 
 # Report Renderer — Typst-composed, bundle-driven
@@ -342,25 +342,31 @@ omitted for drafts — a preview makes no reproducibility claim.
 
 `typst` is **not** a Python dependency: the module shells out to the binary on
 PATH (`TYPST_BIN` override). `pyproject.toml` is unchanged. The binary's
-`--version` is checked against `backend/app/templates/TYPST_VERSION` at startup;
-a mismatch fails fast rather than producing a differently-typeset document.
+`--version` is checked on first use against
+`backend/app/templates/TYPST_VERSION`; a missing or mismatched binary answers
+`503` rather than producing a differently-typeset document.
 
 ### 7.2 Routes
 
-`GET /batches/{batch_id}/report?doc_kind=recipe&format=pdf|png&sections=…&page=n`
+`GET /batches/{batch_id}/report?doc_kind=recipe&format=pdf|png&sections=…&paper=…&page=n`
 
 - `404` — batch missing, or belongs to another user.
 - `409` — batch is a draft (use `POST`), or a frozen batch predates bundles.
-- `422` — unknown section id, unknown `doc_kind`, or an empty resolved selection.
-- `200` — PDF, or one PNG page, plus `ETag`, `Content-Length`, and
-  `X-Report-Sections` / `X-Report-Pages` headers carrying the resolved selection.
+- `422` — unknown section id, unknown `doc_kind`/`paper`/`format`, a page beyond
+  the document, or a selection that resolves to nothing.
+- `503` — Typst missing or not the pinned version; `500` — a template failure.
+- `200` — the artifact, plus `Content-Length` and `X-Report-Sections` /
+  `X-Report-Pages`; a frozen render also carries `ETag`.
 
-`POST /batches/{batch_id}/report` takes `{ bundle }` (the same document
-`POST /report-bundle` produces), validates it, and returns every page plus the
-resolved selection. `409` if the batch is frozen (the stored bundle is
-authoritative). Draft previews carry no `ETag` guarantee.
+`POST /batches/{batch_id}/report` takes `{ bundle }` (the document
+`POST /report-bundle` produces) and renders one artifact from it. It requires a
+**draft** batch and a draft-shaped bundle, and `409`s a frozen batch (the stored
+bundle is authoritative). A preview carries no `ETag`: its PDF embeds the compile
+time, so the same tag would not mean the same bytes.
 
-Auth reuses the existing dependency. Both routes are read-only and idempotent.
+Unknown section ids are rejected by the template's registry — one source of truth
+— and mapped from its `report spec:` panic to `422`. Both routes are read-only and
+idempotent.
 
 Empty selection is a hard error rather than a blank document: a page that
 silently renders nothing is indistinguishable from a rendering bug, and the

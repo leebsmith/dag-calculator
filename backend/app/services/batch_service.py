@@ -12,6 +12,15 @@ from app.repositories.batch_repo import BatchRepoDep, BatchRepository
 from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
 from app.schemas.report_bundle import ReportBundle
 from app.services.report_bundle_service import build_report_bundle
+from app.services.report_render import (
+    RenderedReport,
+    ReportRenderError,
+    ReportSpec,
+    ReportSpecError,
+)
+from app.services.report_render import (
+    render as render_bundle,
+)
 
 
 def _blocking_finding(payload: FreezePayload) -> dict[str, Any] | None:
@@ -95,8 +104,8 @@ class BatchService:
             raise HTTPException(status_code=409, detail="Already frozen")
         return BatchRecord(**record)
 
-    def report_bundle(self, uid: str, batch_id: str) -> dict[str, Any]:
-        """Return the immutable bundle stored beside a frozen batch."""
+    def _stored_bundle(self, uid: str, batch_id: str) -> ReportBundle:
+        """The validated bundle stored beside a frozen batch."""
         record = self._repo.get(uid, batch_id)
         if record is None:
             raise HTTPException(status_code=404, detail="Batch not found")
@@ -112,10 +121,63 @@ class BatchService:
                 detail="This frozen batch predates report bundles; fork and re-freeze it",
             )
         try:
-            return ReportBundle.model_validate(stored).model_dump(mode="json")
+            return ReportBundle.model_validate(stored)
         except ValidationError as exc:
             raise HTTPException(
                 status_code=500, detail=f"Stored report bundle is invalid: {exc}"
+            ) from exc
+
+    def report_bundle(self, uid: str, batch_id: str) -> dict[str, Any]:
+        """Return the immutable bundle stored beside a frozen batch."""
+        return self._stored_bundle(uid, batch_id).model_dump(mode="json")
+
+    def render_report(
+        self, uid: str, batch_id: str, spec: ReportSpec
+    ) -> RenderedReport:
+        """Render a frozen batch's stored bundle."""
+        return self._render(self._stored_bundle(uid, batch_id), spec)
+
+    def render_preview(
+        self,
+        uid: str,
+        batch_id: str,
+        bundle_payload: dict[str, Any],
+        spec: ReportSpec,
+    ) -> RenderedReport:
+        """Render a posted bundle for a draft, persisting nothing."""
+        record = self._repo.get(uid, batch_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        if record.get("status") == "frozen":
+            raise HTTPException(
+                status_code=409, detail="Frozen batches render their stored bundle"
+            )
+        try:
+            bundle = ReportBundle.model_validate(bundle_payload)
+        except ValidationError as exc:
+            raise HTTPException(
+                status_code=422, detail=f"Report bundle rejected: {_bundle_rejection(exc)}"
+            ) from exc
+        if bundle.batch.id != record["id"]:
+            raise HTTPException(
+                status_code=422,
+                detail="Report bundle belongs to a different batch",
+            )
+        if bundle.batch.status != "draft":
+            raise HTTPException(
+                status_code=422, detail="Report preview needs a draft bundle"
+            )
+        return self._render(bundle, spec)
+
+    @staticmethod
+    def _render(bundle: ReportBundle, spec: ReportSpec) -> RenderedReport:
+        try:
+            return render_bundle(bundle, spec)
+        except ReportSpecError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        except ReportRenderError as exc:
+            raise HTTPException(
+                status_code=503 if exc.unavailable else 500, detail=str(exc)
             ) from exc
 
     def preview_report_bundle(

@@ -96,6 +96,12 @@ class FreezePayload(BaseModel):
     formatted_summaries: dict[str, FormattedSummary]
 
 
+class ReportRenderPayload(BaseModel):
+    """A draft's assembled bundle, posted for rendering without persisting it."""
+
+    bundle: dict[str, Any]
+
+
 class BatchRecord(BaseModel):
     """A persisted batch as returned by the API (draft or frozen)."""
 

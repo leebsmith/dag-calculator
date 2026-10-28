@@ -120,6 +120,39 @@ the canonical spec, so it changes the render key.
 section whose data is absent does not render — it is not rendered as zeros. One
 surviving section makes a standalone sheet, which suppresses the document chrome.
 
+## Rendering service
+
+`app/services/report_render.py` copies the template tree into a temp root, writes
+the bundle beside it, and shells out to the pinned Typst binary. The bundle is
+data, the templates are code: no user-supplied path or Typst source reaches the
+compiler, and `--root` confinement is what makes that a boundary. The binary is
+resolved on first use (`TYPST_BIN`, else `typst` on `PATH`) and its version must
+match `templates/TYPST_VERSION`, otherwise the route answers `503`.
+
+| Route | Serves |
+|---|---|
+| `GET /batches/{id}/report` | the stored bundle of a frozen batch |
+| `POST /batches/{id}/report` | a draft's posted `{ "bundle": … }`, persisting nothing |
+
+Both accept `doc_kind`, `sections`, `paper`, `format=pdf|png` and `page` (the PNG
+page to export). `pdf` is the default; a PNG response is one page, selected by
+`page`.
+
+- `200` — the artifact, with `ETag`, `Content-Length`, `X-Report-Sections` and
+  `X-Report-Pages`.
+- `404` — missing batch, or another user's.
+- `409` — a draft on `GET`, a frozen batch on `POST`, or a frozen batch that
+  predates bundles.
+- `422` — unknown section id, unknown `doc_kind`/`paper`/`format`, a page beyond
+  the document, or a selection that resolves to nothing (a blank page is
+  indistinguishable from a rendering bug, so it is refused).
+- `503` — Typst missing or not the pinned version; `500` — a template failure.
+
+The `ETag` hashes the bundle's `content_hash`, the template tree and the spec, so a
+template edit or a different unit preference revalidates. Only frozen renders carry
+one: a preview embeds its compile time, so the same tag would not mean the same
+bytes. Nothing is persisted — the bundle is the fact and the render is derived.
+
 Canonical order is registry order; `sections=` cannot reorder it. The generated
 [`report-sections.md`](report-sections.md) lists the order, the presence
 predicate, and the source file for every section.

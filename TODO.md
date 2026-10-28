@@ -11,19 +11,16 @@
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-2. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`).
-   Landed: the freeze bundle (`plans/report-bundle.md`), the template scaffold, the
-   registry contract and its guards, the local loop (`make report-dev` /
-   `report-pages`), and five sections — Brewhouse, Batch Facts, Yeast, Volume
-   Ledger, Liquor Ledger (`docs/report-sections.md`). Next: `report_render.py` +
-   `GET /batches/{id}/report` with the render gates (determinism, section
-   isolation, error paths), then the remaining sections (Later).
+2. **Report sections** — the bundle, the render service (`GET`/`POST
+   /batches/{id}/report`), and five sections have landed; the rest are queued in
+   Later, starting with the hop sections once the schedule-derived IBU split
+   lands.
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
 
-* Staged notes (covered by "Summary reporting" above):
+* Staged notes (the brew-day checklist, queued in Later):
   * Day before
   * Day of
   * Before underletting
@@ -123,6 +120,10 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
+* **Report render service** — `report_render.py` plus `GET`/`POST
+  `/batches/{id}/report`: temp-root compile with the pinned binary, PDF or one PNG
+  page, section/page headers, an `ETag` for frozen renders, and 422/409/503
+  mapping — `docs/report-renderer.md`.
 * **Report process sections** — Brewhouse (first) and Liquor Ledger (last), the HLT
   target/required outputs, brewhouse efficiency, and the display-only sparge-water target —
   `plans/report-process-sections.md`.
