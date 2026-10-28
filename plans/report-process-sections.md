@@ -1,11 +1,11 @@
 ---
-title: Report process sections — Brewhouse, Liquor Ledger, brewhouse efficiency
+title: Report process sections — Brewhouse, Liquor Ledger, fermentable readouts
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [report-renderer, report-bundle]
 blocks: []
 gate: a frozen bundle renders a Brewhouse section (process inputs plus the conversion/brewhouse efficiency pair) and a Liquor Ledger that closes on the sparge demand, from values the bundle already carries; the generator stays numeric-free
-status: implemented (three commits landed)
+status: implemented (phase 1); phase 2 planned
 ---
 
 # Report process sections
@@ -186,5 +186,67 @@ Gate: `make verify`.
 - **Sparge temperature kinetics** — heating and cooling are deliberately not
   modelled; the target is a number, not a prediction.
 - **HLT heating time / energy** — not modelled.
-- **Below-cap attenuation** and the **extract-contribution table** — separate
-  `TODO.md` entries.
+- **Below-cap attenuation** and the **extract-contribution table** — phase 2
+  below.
+
+---
+
+# Phase 2 — fermentable readouts
+
+Two content additions after phase 1: an extract view of the fermentable tables,
+and the grist's attenuation limit when it is the binding constraint.
+
+## 8. Extract-contribution table
+
+A fourth table in **Batch Facts**, after the sugars table:
+
+```
+Extract Contribution
+| Fermentable     | Amount | Extract | Extract % |
+| American 2-row  | 4.3 kg | 3.4 kg  | 77.6%     |
+| Crystal 40      | 0.8 kg | 0.6 kg  | 13.0%     |
+| Candi Syrup D-180 | 0.5 kg | 0.4 kg | 9.4%      |
+```
+
+- **Rows** come from `grist.major_malts` + `batch.sugars`; trace malts are
+  excluded (they are colour and mash-pH only, A9).
+- **Extract** is the potential contribution: `mass × yield × (1 − moisture)` for
+  malt, `mass × yield` for sugar. It is a mass, in the unit mode's mass unit —
+  points stay in the PPG column of the mass tables.
+- **Extract %** is Hamilton-normalised across malt + sugar, so it sums to exactly
+  100.0 and sits beside the mass-based `Grist %` of the other tables. This is
+  where a sugar's 9.8 % of grist mass and 9.4 % of extract become two numbers.
+- **No total row.** Typst cannot sum, and the percentage column already closes at
+  100; a total would need a producer-emitted string for one figure.
+- **Contract:** `extract` and `extract_pct` join the existing row cells (no
+  synthetic table key — `formatted_tables` keys must name collection nodes), so
+  `bundle_format` bumps to **7**.
+
+## 9. Below-cap grist attenuation
+
+The mirror of *Above malt cap*: when the grist itself is the binding constraint,
+realized attenuation sits below the yeast's cap and nothing explains it.
+
+- **Boundary output** `grist_attenuation`: the grist's extract-weighted real
+  fermentability converted to apparent at the batch's `OE` —
+  `RE = OE · (1 − F)`, `AE` from `apparent_extract_for_real_extract`, then
+  `(OE − AE) / OE`. It uses the **uncapped** composite (`aa_malt`), so the value is
+  the grist's own ceiling rather than the clamped one.
+- **Legacy path** (no per-row fermentability): the value falls back to the cap, so
+  the row never prints.
+- **Report:** a **Grist attenuation** row in the Yeast chain, beside the cap,
+  printed **only when it is below the cap**. Presence is a template comparison of
+  two state values (`solver.batch.grist_attenuation < batch.yeast_cap`), matching
+  the existing `presents-derate()` idiom; the figure itself is the frozen string.
+- It is deliberately **not** a signed delta: with sugar present, realized sits
+  above the grist limit, so `realized − cap` cannot express "below".
+
+## 10. Commit sequence (phase 2)
+
+1. **Above-cap: one definition** — `style.js` reads
+   `batch.attenuation_above_cap`; `attenuationCapSummary` keeps blend/cap and drops
+   `lift`. No contract change.
+2. **Extract table** — producer columns, `bundle_format` 7, fourth table, fixture,
+   docs. Gate: `make verify`.
+3. **Below-cap** — boundary output, Yeast row, conformance test for the conversion,
+   fixture, docs. Gate: `make verify`.
