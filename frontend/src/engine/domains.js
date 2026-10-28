@@ -23,7 +23,7 @@ function resolveLimit(limit, artifact, resolveRef) {
 // Evaluate a domain spec against a value. A bound that cannot be resolved
 // (e.g. a {ref} to a field of an unset optional selection) is treated as
 // "not applicable" and skipped, rather than failing the value.
-function evaluateDomain(domain, value, resolveLimit) {
+function evaluateDomain(domain, value, resolveLimitFn) {
   // No value yet: absence is not a violation. Only an actually-invalid value is.
   if (value === undefined || value === null) {
     return { bounded: true, holds: null, reason: "unresolved" };
@@ -34,7 +34,7 @@ function evaluateDomain(domain, value, resolveLimit) {
   for (const [op, limitExpr] of Object.entries(domain)) {
     const test = OPS[op];
     if (!test) continue;
-    const limit = resolveLimit(limitExpr);
+    const limit = resolveLimitFn(limitExpr);
     if (limit === undefined || limit === null || Number.isNaN(limit)) continue;
     if (!test(value, limit)) return { bounded: true, holds: false, op, limit };
   }

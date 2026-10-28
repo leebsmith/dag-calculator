@@ -152,7 +152,7 @@ async function applyAuth(user) {
     stepApp.library
       .importLegacy()
       .then(({ imported }) => {
-        if (!imported) return;
+        if (!imported) return null;
         return stepApp.library.refresh().then(() => stepApp.refreshLibraryItems());
       })
       .catch((err) => console.error("legacy library import failed", err));

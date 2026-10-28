@@ -332,7 +332,7 @@ export async function saveNow({ force = false } = {}) {
       dirty = false;
       conflictRemote = null;
       setSaveState("idle");
-      return updated;
+      return;
     } catch (err) {
       if (err?.code === "CONFLICT") {
         markConflict(err.details?.current ?? null);

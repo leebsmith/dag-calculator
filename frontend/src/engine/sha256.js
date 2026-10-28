@@ -30,7 +30,7 @@ function utf8Encode(str) {
   }
   const out = [];
   for (let i = 0; i < str.length; i++) {
-    let c = str.codePointAt(i);
+    const c = str.codePointAt(i);
     if (c > 0xffff) i++;
     if (c < 0x80) {
       out.push(c);

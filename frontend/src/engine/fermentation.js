@@ -156,7 +156,7 @@ export function abvContour({ oeMin, oeMax, aeMin, aeMax, targetAbv, samples = 25
     const fLo = oeAt(lo);
     if (fLo === null || !Number.isFinite(fLo)) return null;
     if (fLo >= oe) return 0;
-    let fHi = oeAt(hi);
+    const fHi = oeAt(hi);
     if (fHi === null || !Number.isFinite(fHi)) return null;
     if (fHi <= oe) return null;
     for (let i = 0; i < 60; i += 1) {

@@ -44,8 +44,8 @@ import { reportError } from "../observability.js";
 
 // Pre-landing-page bootstrap: the seed default equipment, no water source, no
 // style. The landing page replaces this with the batch's identity snapshot.
-function bootstrapIdentity(artifact, cache) {
-  const equipmentId = artifact.constants?.default_equipment_profile_id?.value;
+function bootstrapIdentity(artifactSpec, cache) {
+  const equipmentId = artifactSpec.constants?.default_equipment_profile_id?.value;
   return {
     equipment: cache.references.equipment?.[equipmentId] ?? {},
     "water.source": {},
