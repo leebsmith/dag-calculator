@@ -189,6 +189,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 |---|---|---|
 | Node ids, constants, formulas, dimensions, domains, boundary inputs | artifact | `data/artifact.json` |
 | Hamilton normalization of authored `parts` into `pct`/`w_i` | host | `frontend/src/views/hamilton.js` |
+| Late-addition sugar share: parts → share of the sugar budget → resolved mass | host allocation rule; the reported mass is the artifact field | `frontend/src/views/producer/sugarAllocation.js`; `batch.sugars.fields.resolved_mass_kg` in `data/artifact.json` |
 | Tinseth hop mass and whirlpool cooling/IBU math | backend boundary | `backend/app/core/hop_solver.py` (`solver.hops`); JS copies in `views/hops.js` / `views/whirlpool.js` are the offline stub only |
 | Style-conformance judgement and badges | host | `frontend/src/engine/styleConformance.js`, `views/producer/conformance.js` |
 | Residual seed-derived copy-in (only values the AST cannot express) | host | `frontend/src/views/seedDerivations.js` |

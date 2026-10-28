@@ -133,6 +133,10 @@ namespace → error.
   consumes the collection. Inputs resolve in authored mode, so the boundary and
   the field both read the authored `item_schema` rows and cannot recurse.
 - Addressed via dotted sub-refs; reduced over by `map`/`filter`/`sum`/`weighted_avg`.
+- Hamilton largest-remainder allocation cannot be expressed in the language, so
+  the values that need it are hosted: `pct` (a boundary input) and the
+  late-addition sugar share. They are the only two host-normalized values; both
+  are recorded in `adding-a-node.md`'s host-side table.
 
 ### 2.3 `selection`
 
