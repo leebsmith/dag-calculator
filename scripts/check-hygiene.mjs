@@ -20,7 +20,7 @@ const ROOT = fileURLToPath(new URL("../", import.meta.url));
 
 const args = process.argv.slice(2);
 const sinceIndex = args.indexOf("--since");
-const since = sinceIndex >= 0 ? args[sinceIndex + 1] : null;
+const requested = sinceIndex >= 0 ? args[sinceIndex + 1] : null;
 
 const git = (...argv) =>
   execFileSync("git", argv, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
@@ -56,12 +56,16 @@ function workingContent(path) {
 
 const failures = [];
 
+// A force-push (or a base commit that was never fetched) leaves nothing to walk.
+// Falling back to the working tree keeps the invariants covered and says so,
+// rather than failing a legitimate push on a missing reference.
+let since = requested;
 if (since) {
   try {
     git("rev-parse", "--verify", `${since}^{commit}`);
   } catch {
-    console.error(`check-hygiene: no such revision for --since: ${since}`);
-    process.exit(1);
+    console.error(`check-hygiene: base ${since} is not in this clone; checking the working tree only`);
+    since = null;
   }
 }
 
