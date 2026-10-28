@@ -3189,6 +3189,15 @@
         "hlt.v_sparge_deliverable": {
           "dimension": "volume"
         },
+        "hlt.v_hlt_required": {
+          "dimension": "volume"
+        },
+        "hlt.v_hlt_target": {
+          "dimension": "volume"
+        },
+        "brewhouse_efficiency": {
+          "dimension": "percentage"
+        },
         "mash_thickness_l_per_kg": {
           "dimension": "mash_thickness"
         },

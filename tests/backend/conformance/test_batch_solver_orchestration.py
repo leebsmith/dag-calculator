@@ -169,8 +169,38 @@ def test_solve_batch_hlt_budget_is_consistent(standard_inputs):
     assert hlt.v_hlt_after_strike == pytest.approx(
         standard_inputs.hlt_starting_volume_l - result.cascade.v_strike
     )
+    assert hlt.v_hlt_required == pytest.approx(
+        result.cascade.v_sparge + hlt.v_hlt_debt
+    )
+    assert hlt.v_hlt_target == pytest.approx(
+        max(standard_inputs.hlt_coil_floor_l, hlt.v_hlt_required)
+    )
+    assert hlt.v_hlt_top_up == pytest.approx(
+        max(0.0, hlt.v_hlt_target - hlt.v_hlt_after_strike)
+    )
     # Deliverable sparge must cover the cascade's sparge demand.
     assert hlt.v_sparge_deliverable >= result.cascade.v_sparge - 1e-6
+
+
+def test_brewhouse_efficiency_is_below_conversion(standard_inputs):
+    result = solve_batch(standard_inputs)
+
+    # Malt extract into the fermenter over the grist's potential. Lauter
+    # retention and the kettle's dead space both sit below the mash conversion
+    # figure, so this can never reach eta_conv.
+    assert 0.0 < result.brewhouse_efficiency < standard_inputs.eta_conv
+
+    yield_fraction = 0.80 * 0.80 * (1 - 0.04) + 0.20 * 0.70 * (1 - 0.05)
+    v_kettle_cold = kettle_cold_volume(
+        standard_inputs.v_ferm,
+        standard_inputs.v_kettle_dead,
+        standard_inputs.f_shrink,
+    )
+    expected = (
+        (result.s_post_boil_target - standard_inputs.s_late_add)
+        * (standard_inputs.v_ferm / v_kettle_cold)
+    ) / (result.m_grist * yield_fraction)
+    assert result.brewhouse_efficiency == pytest.approx(expected)
 
 
 def test_solve_batch_raises_hlt_too_small(standard_inputs):

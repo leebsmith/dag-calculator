@@ -30,8 +30,16 @@ const BATCH = {
   max_achievable_abv: 10.0,
   real_attenuation: 0.76,
   apparent_attenuation: 0.75,
-  hlt: { v_hlt_debt: 1.0, v_hlt_after_strike: 16.0, v_hlt_top_up: 0.0, v_sparge_deliverable: 15.0 },
+  hlt: {
+    v_hlt_debt: 1.0,
+    v_hlt_after_strike: 16.0,
+    v_hlt_top_up: 0.0,
+    v_sparge_deliverable: 15.0,
+    v_hlt_required: 15.0,
+    v_hlt_target: 15.0,
+  },
   mash_thickness_l_per_kg: 3.0,
+  brewhouse_efficiency: 0.82,
   previews: [],
 };
 

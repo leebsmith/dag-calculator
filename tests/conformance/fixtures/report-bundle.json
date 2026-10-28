@@ -2,7 +2,7 @@
   "bundle_format": 6,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:1376ef9bd2a416e31f06629b086e7aa091bdab714a2968164cf76a6cecb5ad8f",
+    "hash": "sha256:3286ab6422abc6132ea3b26e3029e2c942be951133444cfedb5e3009c0943c27",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -3309,6 +3309,15 @@
             "hlt.v_sparge_deliverable": {
               "dimension": "volume"
             },
+            "hlt.v_hlt_required": {
+              "dimension": "volume"
+            },
+            "hlt.v_hlt_target": {
+              "dimension": "volume"
+            },
+            "brewhouse_efficiency": {
+              "dimension": "percentage"
+            },
             "mash_thickness_l_per_kg": {
               "dimension": "mash_thickness"
             },
@@ -6591,5 +6600,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:622aa15ba2c544350129ae7ebba532273bb5981388e2a9c1da2a205097e67508"
+  "content_hash": "sha256:b87b542f5c835ee5f94321c7d98ae1ebda1bf4480b1f34cfefba469f2c7cd12c"
 }

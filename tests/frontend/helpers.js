@@ -95,6 +95,9 @@ export function batchOutputs() {
     "hlt.v_hlt_after_strike": 16.0,
     "hlt.v_hlt_top_up": 0.0,
     "hlt.v_sparge_deliverable": 15.0,
+    "hlt.v_hlt_required": 15.0,
+    "hlt.v_hlt_target": 15.0,
+    "brewhouse_efficiency": 0.82,
     mash_thickness_l_per_kg: 3.0,
   };
 }

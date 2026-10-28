@@ -279,6 +279,34 @@ def solute_displacement_volume(s_conv: float, v_bar: float) -> float:
     return v_bar * s_conv
 
 
+def brewhouse_efficiency(
+    *,
+    extract_total_kg: float,
+    sugar_extract_kg: float,
+    m_grist: float,
+    yield_fraction: float,
+    v_ferm: float,
+    v_kettle_cold: float,
+) -> float:
+    """Malt extract into the fermenter as a share of the grist's potential.
+
+    ``BE = (S_malt · V_ferm / V_kettle_cold) / (M_grist · E)``, where
+    ``S_malt = extract_total − sugar_extract`` is the malt extract recovered in
+    the kettle. Late-addition sugar is excluded from the numerator and the
+    denominator.
+
+    This is deliberately **not** ``eta_conv · V_ferm / V_kettle_cold``: lauter
+    retention is already inside ``m_grist`` (``grist_mass_residual`` solves for
+    the *recovered* extract), so the potential extract exceeds the converted
+    extract by the absorption, dead-space and transfer losses.
+    """
+    potential = m_grist * yield_fraction
+    if potential <= 0.0 or v_kettle_cold <= 0.0:
+        return 0.0
+    malt_extract = max(0.0, extract_total_kg - sugar_extract_kg)
+    return (malt_extract * (v_ferm / v_kettle_cold)) / potential
+
+
 def converted_extract(
     m_grist: float, yield_fraction: float, eta_conv: float
 ) -> float:
@@ -1311,12 +1339,18 @@ class HltWaterBudget:
         v_hlt_top_up: Liquor added to the HLT before the sparge, in liters.
         v_sparge_deliverable: Sparge volume actually deliverable to the mash
             tun, in liters.
+        v_hlt_required: Liquor the HLT must hold before the sparge, in liters
+            (``v_sparge_demand + v_hlt_debt``).
+        v_hlt_target: The top-up target, in liters — the larger of the coil
+            floor and ``v_hlt_required``.
     """
 
     v_hlt_debt: float
     v_hlt_after_strike: float
     v_hlt_top_up: float
     v_sparge_deliverable: float
+    v_hlt_required: float
+    v_hlt_target: float
 
 
 def resolve_hlt_water_budget(
@@ -1384,6 +1418,8 @@ def resolve_hlt_water_budget(
         v_hlt_after_strike=v_hlt_after_strike,
         v_hlt_top_up=v_hlt_top_up,
         v_sparge_deliverable=v_sparge_deliverable,
+        v_hlt_required=v_hlt_required,
+        v_hlt_target=v_hlt_target,
     )
 
 
@@ -1595,6 +1631,9 @@ class BatchSolverResult:
             Mash Card reads it directly to derive strike water temperature
             (design record Q3/Q12). Under ``r_l_to_g`` it equals the input
             ``R_L:G``; under ``runoff_ratio`` it is derived from the cascade.
+        brewhouse_efficiency: Malt extract into the fermenter as a share of the
+            grist's potential extract, excluding late additions. Always below
+            ``conversion_efficiency`` because it also carries lauter retention.
         previews: One hypothetical gravity/strength row per scale pin, at that
             pin's persisted target. Diagnostics only; never the active solve.
     """
@@ -1611,6 +1650,7 @@ class BatchSolverResult:
     max_feasible_abv: float
     binding_constraint: str
     mash_thickness_l_per_kg: float
+    brewhouse_efficiency: float
     previews: tuple[ScalePreview, ...]
 
 
@@ -1624,6 +1664,7 @@ class _Pipeline:
     real_attenuation: float
     apparent_attenuation: float
     max_abv: float
+    brewhouse_efficiency: float
 
 
 def tun_peak_volume_l(
@@ -1985,6 +2026,10 @@ def _solve_pipeline(
     # never as a silent negative.
     dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
 
+    v_kettle_cold = kettle_cold_volume(
+        inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+    )
+
     def solve_phase_1(aa: float):
         sg = solve_sg_post_boil_from_abv(
             target if target is not None else 0.0, aa
@@ -2020,9 +2065,6 @@ def _solve_pipeline(
         max_abv = max_achievable_abv(apparent_attenuation)
         s_late_add = inputs.s_late_add
     else:
-        v_kettle_cold = kettle_cold_volume(
-            inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
-        )
         state = _resolve_gravity(
             inputs, pin, target, v_kettle_cold, aa_malt, dextrin_consumption
         )
@@ -2101,6 +2143,14 @@ def _solve_pipeline(
         real_attenuation=real_attenuation,
         apparent_attenuation=apparent_attenuation,
         max_abv=max_abv,
+        brewhouse_efficiency=brewhouse_efficiency(
+            extract_total_kg=reversal.s_post_boil_target,
+            sugar_extract_kg=s_late_add,
+            m_grist=m_grist,
+            yield_fraction=yield_fraction,
+            v_ferm=inputs.v_ferm,
+            v_kettle_cold=v_kettle_cold,
+        ),
     )
 
 
@@ -2228,5 +2278,6 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         max_feasible_abv=max_feasible_abv,
         binding_constraint=binding_constraint,
         mash_thickness_l_per_kg=pipeline.cascade.mash_thickness_l_per_kg,
+        brewhouse_efficiency=pipeline.brewhouse_efficiency,
         previews=previews,
     )

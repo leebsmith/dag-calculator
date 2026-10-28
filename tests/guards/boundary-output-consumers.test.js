@@ -15,6 +15,11 @@ const ALLOW = new Map([
   ["solver.water.grist_buckets_kg.", "grist-bucket diagnostic for future reporting"],
   ["solver.water.total_added_salt_mass_g", "mineral-mass diagnostic for future reporting"],
   ["solver.water.added_mineral_tds_ppm", "TDS diagnostic for future reporting"],
+  // Surfaced by the report's process sections (plans/report-process-sections.md);
+  // the registry/manifest consumer lands with them.
+  ["solver.batch.hlt.v_hlt_target", "Liquor Ledger section (report)"],
+  ["solver.batch.hlt.v_hlt_required", "Liquor Ledger section (report)"],
+  ["solver.batch.brewhouse_efficiency", "Brewhouse section (report)"],
 ]);
 
 function collectStrings(value, out = new Set()) {

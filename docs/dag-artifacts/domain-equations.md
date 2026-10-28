@@ -176,8 +176,9 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `max_achievable_abv` | percentage |
 | `real_attenuation` | percentage — solved real attenuation (RDF) |
 | `apparent_attenuation` | percentage — solved apparent attenuation; may exceed 1 |
-| `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable }` | volume |
+| `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable, v_hlt_required, v_hlt_target }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
+| `brewhouse_efficiency` | percentage — malt extract into the fermenter over the grist's potential; excludes late additions |
 | `previews` | collection of `{ pin, og, fg, abv, ok, reason }` — hypothetical solves at the three persisted targets |
 
 ### 2.3 Domain / error surface
@@ -312,6 +313,29 @@ simplified, and `thickness` equals `(V_run1 + V_ret - V_mc - V_sol) / M`.
 
 HLT dead space and HLT transfer loss are **water debt, not extract loss**: they never enter
 the wort mass balance, only the deliverable sparge volume and salt-dosing volume.
+
+HLT budget, resolved once the cascade fixes the strike draw and the sparge demand:
+
+    V_hlt_debt        = hlt_dead_space_l + hlt_transfer_loss_l
+    V_hlt_after_strike = hlt_starting_volume_l - V_strike
+    V_hlt_required    = V_sparge + V_hlt_debt
+    V_hlt_target      = max(hlt_coil_floor_l, V_hlt_required)
+    V_hlt_top_up      = max(0, V_hlt_target - V_hlt_after_strike)
+    V_sparge_deliverable = V_hlt_after_strike + V_hlt_top_up - V_hlt_debt
+
+The top-up is cold water, so the HLT temperature after it is **not** modelled; the
+process target for the second underlet is an authored display-only value
+(`batch.sparge_water_temp_c`), never a prediction.
+
+Brewhouse efficiency is the malt extract that reaches the fermenter over the grist's
+potential extract:
+
+    BE = [ (S_post - S_late) · V_ferm / V_kettle_cold ] / (E · M)
+
+Late-addition sugar is excluded from both sides. **This is not
+`eta_conv · V_ferm / V_kettle_cold`**: `M` is solved against the *recovered* kettle
+extract, so absorption, dead space and hose transfer are already inside it and
+`BE < eta_conv` for every batch.
 
 Mash tun to kettle: the kettle receives the mash liquid minus absorption, dead space and
 transfer loss. Transfer loss therefore carries **wort, not water** — it removes extract as

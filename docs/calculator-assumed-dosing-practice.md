@@ -55,6 +55,7 @@ Consequences worth stating plainly:
 | HLT at brew-day start | `batch.hlt_starting_volume_l` | Root; defaults to `equipment.max_hlt_volume_l` |
 | HLT after strike | `solver.batch.hlt.v_hlt_after_strike` | `hlt_starting_volume_l − v_strike` |
 | HLT top-up target | `solver.batch.hlt.v_hlt_target` | `max(hlt_coil_floor_l, v_sparge_demand + v_hlt_debt)` |
+| HLT required volume | `solver.batch.hlt.v_hlt_required` | `v_sparge_demand + v_hlt_debt` |
 | HLT top-up | `solver.batch.hlt.v_hlt_top_up` | `max(0, target − after_strike)` |
 | **Dose volume** | `batch.sparge_salted_volume` | `after_strike + top_up` |
 | Delivered sparge | `solver.batch.hlt.v_sparge_deliverable` | `salted_volume − v_hlt_debt` |

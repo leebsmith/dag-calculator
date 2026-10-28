@@ -278,13 +278,14 @@ _61 paths_
 
 ## Solver — batch sparge
 
-_27 paths_
+_30 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `solver.batch` | Batch | boundary | — | — | — | — |
 | `solver.batch.apparent_attenuation` | Apparent attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.binding_constraint` | Binding Constraint | output | — | — | — | fermentation, volume, tun, kettle, hlt |
+| `solver.batch.brewhouse_efficiency` | Brewhouse Efficiency | output | percentage | pct (%) | 1 | — |
 | `solver.batch.cascade.s_run1` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.s_run2` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.sg_pre_boil` | Gravity | output | gravity | Plato (°P) | 1 | — |
@@ -298,6 +299,8 @@ _27 paths_
 | `solver.batch.cascade.v_strike` | Strike water | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_after_strike` | V Hlt After Strike | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_debt` | V Hlt Debt | output | volume | L | 1 | — |
+| `solver.batch.hlt.v_hlt_required` | V Hlt Required | output | volume | L | 1 | — |
+| `solver.batch.hlt.v_hlt_target` | V Hlt Target | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_top_up` | HLT Top-Up | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_sparge_deliverable` | Sparge Deliverable | output | volume | L | 1 | — |
 | `solver.batch.m_grist` | Grist Mass | output | mass | kg | 1 | — |

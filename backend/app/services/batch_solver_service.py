@@ -100,8 +100,11 @@ def _to_response(result) -> BatchSolverResponse:
             v_hlt_after_strike=hlt.v_hlt_after_strike,
             v_hlt_top_up=hlt.v_hlt_top_up,
             v_sparge_deliverable=hlt.v_sparge_deliverable,
+            v_hlt_required=hlt.v_hlt_required,
+            v_hlt_target=hlt.v_hlt_target,
         ),
         mash_thickness_l_per_kg=result.mash_thickness_l_per_kg,
+        brewhouse_efficiency=result.brewhouse_efficiency,
         previews=[
             ScalePreviewRow(
                 pin=row.pin,

@@ -192,9 +192,11 @@ class BatchCascadeOutputs(BoundaryModel):
 
 class BatchHltOutputs(BoundaryModel):
     v_hlt_debt: Annotated[float, Field(description="Undeliverable HLT debt volume (L)")]
-    v_hlt_after_strike: Annotated[float, Field(description="HLT volume remaining after strike strike delivery (L)")]
+    v_hlt_after_strike: Annotated[float, Field(description="HLT volume remaining after strike delivery (L)")]
     v_hlt_top_up: Annotated[float, Field(description="Required HLT cold water addition (L)")]
     v_sparge_deliverable: Annotated[float, Field(description="Available deliverable sparge volume from HLT (L)")]
+    v_hlt_required: Annotated[float, Field(description="Liquor the HLT must hold before the sparge (L)")]
+    v_hlt_target: Annotated[float, Field(description="Top-up target, max of coil floor and required (L)")]
 
 
 class BindingConstraint(StrEnum):
@@ -243,6 +245,10 @@ class BatchSolverResponse(BoundaryModel):
     apparent_attenuation: Annotated[float, Field(description="Solved apparent attenuation; may exceed 1")]
     hlt: BatchHltOutputs
     mash_thickness_l_per_kg: Annotated[float, Field(description="Resolved mash thickness (L/kg)")]
+    brewhouse_efficiency: Annotated[
+        float,
+        Field(description="Malt extract into the fermenter over the grist's potential; excludes late additions"),
+    ]
     previews: list[ScalePreviewRow] = Field(default_factory=list)
 
 
