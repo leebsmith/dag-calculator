@@ -3,7 +3,7 @@
 ## In flight
 
 * **Alpine root maintainability** — the program after the decomposition contract
-  (`plans/decomposition-and-display-contract.md` §3); scope it before writing
+  (`plans/archive/decomposition-and-display-contract.md` §3); scope it before writing
   code. The single reactive root is a framework requirement and
   `installer-contract` keeps it correct, but nothing keeps it comprehensible: 16
   installers declare 567 keys and the assembled app exposes 440 enumerable
@@ -142,8 +142,11 @@ Not needed by the current artifact; add only when a node requires them:
   `adapters/cards/style/` over a pure `views/producer/stylePlot.js`; and
   `services/bundle_integrity.py` owns the bundle's twelve cross-reference checks
   behind `parse_bundle` / `seal_bundle` —
-  `plans/decomposition-and-display-contract.md`.
+  `plans/archive/decomposition-and-display-contract.md`.
 
+* **Report bundle** — the freeze-time, self-sufficient render input: guarded
+  schema, the server-side assembly that owns the artifact and the canonical
+  content hash, and the committed fixture — `plans/archive/report-bundle.md`.
 * **Report render service** — `report_render.py` plus `GET`/`POST
   `/batches/{id}/report`: temp-root compile with the pinned binary, PDF or one PNG
   page, section/page headers, an `ETag` for frozen renders, and 422/409/503
@@ -155,25 +158,29 @@ Not needed by the current artifact; add only when a node requires them:
   target/required outputs, brewhouse efficiency, the display-only sparge-water target,
   and a ledger that closes on the sparge demand (the top-up target is a floor, so a
   full HLT reads as available liquor plus surplus, never a negative underlet) —
-  `plans/report-process-sections.md`.
+  `plans/archive/report-process-sections.md`.
 * **Report fermentable readouts** — the extract-contribution table, the below-cap grist
   attenuation row, and the sugar lift collapsed onto the artifact node — same plan, phase 2.
 * **Scale pins and audited sugar database** — ABV/OG/FG recipe pins, the live
   pin-preview matrix, effective sugar fermentability, and the three-tier sugar
-  source — `plans/pin-matrix.md`, `docs/sugar-database.md`,
+  source — `plans/archive/pin-matrix.md`, `docs/sugar-database.md`,
   `docs/attenuation-model.md` §6.1.
 * **Attenuation refactor (Passes 2–3)** — extract-composition model, real/apparent
   basis conversion, malt-only cap, diastaticus dextrin consumption, and the
   late-addition intent pin (dose \| share of extract) —
-  `plans/attenuation-refactor.md`, `plans/late-addition-intent.md`,
+  `plans/archive/attenuation-refactor.md`, `plans/archive/late-addition-intent.md`,
   `docs/attenuation-model.md`.
 * **Fermentability provenance (Pass 1)** — `malt_database` basis/method tags and
   the vendored source contract; commit record in
-  `plans/fermentability-provenance.md`.
+  `plans/archive/fermentability-provenance.md`.
 
 * Batch solver correctness (absorption, transfer loss, physical floor, capacity
   findings, feasible ABV, findings enumeration, freeze gate) —
-  `plans/batch-solver-correctness.md`
+  `plans/archive/batch-solver-correctness.md`
+* Fermentability and the Belgian knob (reconciled design) — `plans/archive/fermentability-and-belgian-knob.md`
+* Off-graph identity (equipment, water source, and style as immutable context records) — `plans/archive/off-graph-identity.md`
+* Model honesty (absence vs. defaults, selection types, seed defaults) — `plans/archive/model-absence-and-seed-defaults.md`
+* Landing page & batch setup — `plans/archive/landing-and-batch-setup.md`
 * Mash ramp time (`mash.ramp_time_min`, equipment ramp rate) + minimum-LGR warning
 * Hop bitterness boundary (`solver.hops`, Tinseth + Arrhenius) with offline stub
 * On-blur numeric input formatting (raw draft text, live solve)
@@ -190,7 +197,7 @@ Not needed by the current artifact; add only when a node requires them:
 * Recipe landing page (freeze rail, sortable library, row menus, inline rename)
 * Batches view (scope filters, identity columns, lineage), Library Sources/Ingredients
   split, style as a catalog kind with fork/seal, selection-only new-batch dialog,
-  read-only workspace identity, batch-scoped hop alpha — `plans/batches-view-and-record-layer.md`
+  read-only workspace identity, batch-scoped hop alpha — `plans/archive/batches-view-and-record-layer.md`
 * Water pin visibility & coverage (pin/float rendering from one ion registry, profile
   intent, Mode 5 cap, beer × water × settings test matrix) —
-  `plans/water-pin-visibility-and-test-matrix.md`
+  `plans/archive/water-pin-visibility-and-test-matrix.md`

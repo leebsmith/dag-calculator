@@ -1,10 +1,10 @@
 # Late-addition intent pin — P3b commit contract
 
 Status: **implemented** (P3b landed); the program closed at P3c, and the scale
-pins/sugar successor is `plans/pin-matrix.md`.
-Successor to `plans/attenuation-refactor.md` P3a (landed).
+pins/sugar successor is `plans/archive/pin-matrix.md`.
+Successor to `plans/archive/attenuation-refactor.md` P3a (landed).
 
-The design gate in `plans/attenuation-refactor.md` §"P3b" is resolved in this
+The design gate in `plans/archive/attenuation-refactor.md` §"P3b" is resolved in this
 document. Read this file before touching the P3b code; do not re-derive the
 decisions.
 
@@ -60,7 +60,7 @@ that share an authored constraint:
    materialization and no rounding drift. Explicit "adopt current dose" and
    "adopt share" actions re-sync on request.
 9. **ABV remains the scale pin in P3b.** OG/FG pins are added by the successor
-   `plans/pin-matrix.md`; the share remains orthogonal to the scale axis.
+   `plans/archive/pin-matrix.md`; the share remains orthogonal to the scale axis.
 10. **One partial.** `step-late-additions.html` renders both modes from
     mode-aware columns/inputs; `modal-sugar-editor.html` edits `parts` in share
     mode and shows mass read-only. No second template.
@@ -138,8 +138,8 @@ artifact expressions. The adopt actions are host actions.
 
 **Context to read first** (only these):
 
-- `plans/late-addition-intent.md` (this file) and the P3b/P3c sections of
-  `plans/attenuation-refactor.md`;
+- `plans/archive/late-addition-intent.md` (this file) and the P3b/P3c sections of
+  `plans/archive/attenuation-refactor.md`;
 - `backend/app/core/batch_solver.py` (`solve_oe_from_composition`,
   `resolve_wort_composition`, `_solve_pipeline`, `_diagnose_bracket`);
 - `backend/app/schemas/boundary.py`, `backend/app/services/batch_solver_service.py`;

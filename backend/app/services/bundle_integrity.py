@@ -1,4 +1,4 @@
-"""Cross-reference integrity for a sealed report bundle (plans/report-bundle.md).
+"""Cross-reference integrity for a sealed report bundle (plans/archive/report-bundle.md).
 
 `schemas/report_bundle.py` owns transport shape: the guarded models, the declared
 enums, and the canonical `content_hash`. This module owns graph truth — a bundle

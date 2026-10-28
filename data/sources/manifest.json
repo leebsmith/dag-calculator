@@ -72,7 +72,7 @@
     },
     "sugar-fermentability.schema.json": {
       "mechanism": "contract",
-      "upstream": "plans/pin-matrix.md (pinned)",
+      "upstream": "plans/archive/pin-matrix.md (pinned)",
       "rows": 9,
       "sha256": "55a684f6feade3abf32dbcb3de869cd3ef0345fc4bfa7fb7b4a75659b89a2b18"
     },

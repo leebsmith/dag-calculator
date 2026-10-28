@@ -1,7 +1,7 @@
 # Attenuation refactor — Passes 2 and 3
 
 Status: **landed**. A5 → P3c are in; the last commit closed the program.
-Successor to `plans/fermentability-provenance.md` (Pass 1, landed). This document
+Successor to `plans/archive/fermentability-provenance.md` (Pass 1, landed). This document
 was the commit contract for the program: each commit named the files to read
 first, the files it owned, what it must not touch, and the gate that proved it.
 
@@ -92,7 +92,7 @@ substantially (real 0.87 displays as apparent ≈1.08).
 ## 5. Commit sequence
 
 Ordering: A5 → D0 → D1 → D2 → D3; D4a → D4b → D5 in parallel after D1; P3a
-after D2; P3b's design is closed (`plans/late-addition-intent.md`) and landed;
+after D2; P3b's design is closed (`plans/archive/late-addition-intent.md`) and landed;
 P3c closes the program.
 
 ### A5 — `Tag fermentability basis and method on the malt export`
@@ -140,7 +140,7 @@ Repo: `dag-calculator`. Depends on: D0. **The behaviour-changing commit.**
   `tests/conformance/fixtures/{batch,numeric-parity,oracle-parity}.json`;
   `tests/conformance/emit-default-requests.mjs`;
   `docs/dag-artifacts/domain-equations.md` (§1–§2);
-  `docs/fermentability-and-yield.md`; `plans/fermentability-provenance.md`.
+  `docs/fermentability-and-yield.md`; `plans/archive/fermentability-provenance.md`.
 - **Owns:** `backend/app/core/batch_solver.py`; `backend/app/core/utils.py`
   (inverse regression + negative-Plato path); `data/artifact.json` (prior
   **values**, row `fermentability_basis`/`fermentability_method` fields);
@@ -270,7 +270,7 @@ Repo: `dag-calculator`. Depends on: D2.
 ### P3b — `Add the late-addition intent pin` (landed)
 
 Repo: `dag-calculator`. Depends on: P3a. **The commit contract is
-`plans/late-addition-intent.md`; do not start it from this summary.**
+`plans/archive/late-addition-intent.md`; do not start it from this summary.**
 
 The design gate is resolved:
 

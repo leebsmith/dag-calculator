@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [off-graph-identity]
 blocks: []
 gate: a frozen batch emits one `report_bundle` document that validates against the guarded schema; it is self-sufficient for rendering with no joins and no re-resolution
-status: active (R1–R4 landed; renderer pending)
+status: complete (R1–R6 landed; rendering is the separate, still-active report-renderer plan)
 ---
 
 # Report Bundle

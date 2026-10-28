@@ -17,7 +17,7 @@ sweep verifies against the known-good code.
 > below consolidates the parts that remain authoritative, and the solver's
 > docstrings point here rather than at them. Two of their statements are
 > **superseded** — the absorption coefficient (D15) and the transfer-loss
-> accounting (D12) in [`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md).
+> accounting (D12) in [`plans/archive/batch-solver-correctness.md`](../../plans/archive/batch-solver-correctness.md).
 
 ---
 
@@ -371,7 +371,7 @@ Applying shrinkage to the net volume instead would incorrectly shrink the losses
 
 None. The derivation above and the implementation agree; the decisions that
 closed the earlier deviations are recorded in
-[`plans/batch-solver-correctness.md`](../../plans/batch-solver-correctness.md).
+[`plans/archive/batch-solver-correctness.md`](../../plans/archive/batch-solver-correctness.md).
 
 The solver also reports `max_feasible_abv` beside `max_achievable_abv`, with a
 `binding_constraint` of `fermentation | volume | tun | kettle | hlt`. The bound

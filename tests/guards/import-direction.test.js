@@ -1,4 +1,4 @@
-// Phase 0 of plans/decomposition-and-display-contract.md: the frontend's module
+// Phase 0 of plans/archive/decomposition-and-display-contract.md: the frontend's module
 // layers are pinned before anything moves, so a split cannot quietly invert a
 // dependency. Lower ranks may not import higher ranks; the current violations
 // are baselined below with a reason and fail the guard when they go stale.

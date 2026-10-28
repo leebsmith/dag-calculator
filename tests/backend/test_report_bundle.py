@@ -1,4 +1,4 @@
-"""Guard tests for the report bundle schema (plans/report-bundle.md).
+"""Guard tests for the report bundle schema (plans/archive/report-bundle.md).
 
 `ReportBundle.model_validate` enforces transport shape and the canonical hash;
 `services.bundle_integrity` enforces graph truth, so the cross-reference cases here

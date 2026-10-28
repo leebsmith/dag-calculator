@@ -1,4 +1,4 @@
-"""Server-side assembly of the freeze-time report bundle (plans/report-bundle.md).
+"""Server-side assembly of the freeze-time report bundle (plans/archive/report-bundle.md).
 
 The browser ships the state, validation, telemetry, and presentation catalog; the
 server owns the vendored artifact, its hashes, and the canonical content hash.

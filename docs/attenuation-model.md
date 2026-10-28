@@ -283,6 +283,6 @@ that every enforcement path exists and that the row set stays complete.
 - `docs/sugar-database.md` — the audited sugar source, tiers and `F_eff`.
 - `docs/dag-artifacts/domain-equations.md` §1–§2 — the equations and the sealed
   boundary contract.
-- `plans/attenuation-refactor.md` — the commit contract for passes 2–3 (landed).
-- `plans/late-addition-intent.md` — the P3b commit contract (landed).
-- `plans/pin-matrix.md` — the scale-pin and sugar-database contract (landed).
+- `plans/archive/attenuation-refactor.md` — the commit contract for passes 2–3 (landed).
+- `plans/archive/late-addition-intent.md` — the P3b commit contract (landed).
+- `plans/archive/pin-matrix.md` — the scale-pin and sugar-database contract (landed).

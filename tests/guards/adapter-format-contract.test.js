@@ -1,4 +1,4 @@
-// Phase 0 of plans/decomposition-and-display-contract.md: the display contract
+// Phase 0 of plans/archive/decomposition-and-display-contract.md: the display contract
 // is prose only outside templates, but the adapters are where most formatting
 // happens. Phase 1 emptied the allowlist: every numeric readout now routes
 // through the utils barrel (the producer's `cell.js` is the shared rule for

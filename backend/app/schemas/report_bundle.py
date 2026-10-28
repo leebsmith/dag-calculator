@@ -1,4 +1,4 @@
-"""Guarded schema for the report bundle (plans/report-bundle.md).
+"""Guarded schema for the report bundle (plans/archive/report-bundle.md).
 
 The bundle is the only input a report generator consumes: artifact and catalog as of
 freeze, the whole solved state, the captured validation outcome, and solver

@@ -12,7 +12,7 @@ status: active (five sections and the render service landed; sections continue)
 
 Status: active. Supersedes the markdown/PDF path in `plans/recipe-pipeline.md`
 and the YAML grammar in `plans/recipe-yaml-grammar.md`. The bundle contract in
-`plans/report-bundle.md` is unchanged; this plan consumes it.
+`plans/archive/report-bundle.md` is unchanged; this plan consumes it.
 
 ## 1. Goal
 
@@ -118,7 +118,7 @@ toolchain produces a different key by construction.
 
 ### 5.1 Bundle
 
-Unchanged from `plans/report-bundle.md`. Two amendments fall out of rendering:
+Unchanged from `plans/archive/report-bundle.md`. Two amendments fall out of rendering:
 
 - `catalog.nodes` keys must resolve for boundary output paths (e.g.
   `solver.water.mash_additions.gypsum_kg`). The schema's `_resolves` already
@@ -399,7 +399,7 @@ imported by name.
 
 ## 8. Bundle work (precursor)
 
-Rendering has no input until these landed; they have. `plans/report-bundle.md`
+Rendering has no input until these landed; they have. `plans/archive/report-bundle.md`
 stages them.
 
 | Stage | Work | Gate |

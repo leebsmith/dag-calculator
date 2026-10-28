@@ -14,7 +14,7 @@ status: partially shipped
 > badge, and a violated blocking finding refuses a freeze client- and
 > server-side. The LIFO style/trace queue (W.1–W.5) remains proposed.
 
-> **See also:** [`batch-solver-correctness.md`](batch-solver-correctness.md) (D13, D16, D17, D22).
+> **See also:** [`batch-solver-correctness.md`](archive/batch-solver-correctness.md) (D13, D16, D17, D22).
 > That plan extends this one: severity becomes artifact-declared (`blocking` on relations),
 > capacity overruns become `error` findings that do **not** block the solve but **do** block
 > freezing, and the footer count gains full enumeration alongside it. Pick **one** severity

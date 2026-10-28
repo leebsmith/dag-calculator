@@ -8,7 +8,7 @@ canonical hash) is owned by `backend/app/schemas/report_bundle.py`; graph truth
 named checks in `backend/app/services/bundle_integrity.py`, which also owns the
 only checked constructors and the producer path
 (`backend/app/services/report_bundle_service.py` calls `seal_bundle`). The design
-record is [`plans/report-bundle.md`](../plans/report-bundle.md).
+record is [`plans/archive/report-bundle.md`](../plans/archive/report-bundle.md).
 
 A companion path index lives in
 [`report-bundle-glossary.md`](report-bundle-glossary.md) (generated from the

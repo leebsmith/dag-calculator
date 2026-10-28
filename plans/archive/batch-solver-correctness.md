@@ -14,7 +14,7 @@ status: shipped
 > solver's diagnostic/feasibility pass, so those two limits are wire inputs;
 > they never constrain the solve (D14/D16 still hold).
 
-An audit of the batch-sparge path against the vision in [`docs/vision.md`](../docs/vision.md):
+An audit of the batch-sparge path against the vision in [`docs/vision.md`](../../docs/vision.md):
 the solver must invert targets into sizes deterministically, declare infeasibility, and never
 report numbers it cannot justify.
 

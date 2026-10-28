@@ -81,7 +81,7 @@ projector + renderer the service will expose.
 | artifact | `data/artifact.json` | repo (shipped to backend) |
 | units | `data/units.json` | repo (shipped) — symbols/precision/defaults |
 | recipe schema | `data/recipe.yaml` | authored |
-| **identity** | `{ equipment, "water.source", style }` component snapshots | the batch's immutable identity (see `plans/off-graph-identity.md`) |
+| **identity** | `{ equipment, "water.source", style }` component snapshots | the batch's immutable identity (see `plans/archive/off-graph-identity.md`) |
 | **valuation** | `node-id → value` (boundary nodes → `{outputs, fingerprint}`) | a **frozen** `BatchRecord.valuation`, or a fixture |
 | unit profile | `{ master: {dim→unit}, overrides: {node→unit} }` | explicit argument |
 

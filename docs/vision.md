@@ -154,5 +154,5 @@ looks fine in tests and rots within a release.
 | What are the domain formulas? | `docs/dag-artifacts/domain-equations.md` |
 | How is it interpreted? | `docs/engine.md` |
 | How do I add a value? | `docs/adding-a-node.md` |
-| Why these batch-solver rules? | `plans/batch-solver-correctness.md` |
+| Why these batch-solver rules? | `plans/archive/batch-solver-correctness.md` |
 | Current work queue | `TODO.md` |

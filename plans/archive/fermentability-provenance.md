@@ -1,9 +1,11 @@
 # Fermentability provenance — Pass 1 refactor plan
 
-Status: **Pass 1 landed**. Producer `malt_database` `823fd6e`, `53852f0`,
-`afe1d4f`, `b26bc0a` (pushed); consumer `dag-calculator` `a82c7f5` (B1) and
-`2957f46` (B2), plus B3 (yeast provenance). Pass 2 (sugar F, bounds as floors,
-STA1) and Pass 3 (the pin) remain.
+Status: **complete**. Pass 1 landed in the producer (`malt_database` `823fd6e`,
+`53852f0`, `afe1d4f`, `b26bc0a`; consumer `dag-calculator` `a82c7f5` (B1),
+`2957f46` (B2), plus B3 yeast provenance). The passes this plan deferred landed
+elsewhere: Pass 2 (sugar F, bounds as floors, STA1) and Pass 3 (the pin) as
+`plans/archive/attenuation-refactor.md` and
+`plans/archive/late-addition-intent.md`.
 
 Deviations from the staging below, recorded so Pass 2 inherits the real shape:
 

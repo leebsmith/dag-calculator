@@ -3,8 +3,8 @@
 Status: **landed**. P1–P4 are in. The sugar database and effective
 fermentability landed first; the three scale pins and preview block landed next;
 the pin matrix and Style-card rework followed; this commit closes the feature.
-Successor to `plans/attenuation-refactor.md` (closed at P3c) and
-`plans/late-addition-intent.md` (P3b, landed).
+Successor to `plans/archive/attenuation-refactor.md` (closed at P3c) and
+`plans/archive/late-addition-intent.md` (P3b, landed).
 
 This document is the executable contract for the next feature: an audited sugar
 database, an effective late-addition fermentability on the wire, three scale

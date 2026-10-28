@@ -1,5 +1,8 @@
 # Fermentation space: shape, level, and the square
 
+Status: **complete**. The Style card's plot is `views/producer/stylePlot.js` over
+the geometry in `engine/fermentation.js`, with the spec's 1 % contour cadence.
+
 The Style card's fermentation graph showed a moving dot with no axes, no scale,
 and a fixed-AA ray drawn only under the ABV pin. Cycling the pin moved the dot,
 which reads as a bug because nothing on the chart said what the dot *is*.

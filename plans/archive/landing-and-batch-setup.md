@@ -14,7 +14,7 @@ The landing page is **engine-free**: it needs persistence and the library only. 
 first screen that requires an engine is the style parameterization screen, entered
 after the new-batch modal writes the identity.
 
-This is a consequence of `plans/off-graph-identity.md` (identity required at engine
+This is a consequence of `plans/archive/off-graph-identity.md` (identity required at engine
 construction), and it is a feature: the page cannot accidentally perform domain maths.
 
 ---
