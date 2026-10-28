@@ -95,7 +95,8 @@ declared beside `item_schema` (never inside it):
 }
 ```
 - `inputs` — alias → dotted path; every path must resolve (same rule as a
-  `derived` node). They are the collection's only graph edges.
+  `derived` node). They are **read-side** edges: they invalidate the collection,
+  never order it, and they resolve against authored rows.
 - `row.<field>` reads an authored `item_schema` field. The alias is reserved, a
   computed field may not shadow an authored field, and one computed field may not
   read another.

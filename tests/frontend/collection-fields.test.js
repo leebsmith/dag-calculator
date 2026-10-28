@@ -74,16 +74,60 @@ test("a computed row field reads authored row values and its declared inputs", (
   assert.equal(rows[0].pct, 0.5, "authored fields survive alongside computed ones");
 });
 
-test("a computed row field may read a boundary output the boundary does not consume", () => {
+test("a row field's inputs are read-side edges, not ordering dependencies", () => {
   const doc = synthetic();
-  const { adjacency } = buildGraph(doc);
-  assert.deepEqual(adjacency["batch.rows"], ["solver.scale"]);
-  assert.deepEqual(adjacency["solver.scale"], ["batch.parts_total"]);
+  const { adjacency, dependents } = buildGraph(doc);
+  assert.deepEqual(adjacency["batch.rows"], [], "a field never orders the graph");
+  assert.ok(dependents["solver.scale"].includes("batch.rows"), "it still invalidates the rows");
 });
 
-test("a computed row field referencing a boundary that consumes the collection is a cycle", () => {
+test("a computed row field may read the boundary its collection feeds", () => {
   const doc = synthetic({ boundaryInputs: { rows: "batch.rows" } });
-  assert.throws(() => create(doc), /Cycle detected/);
+  let seen = null;
+  const engine = createCalculator(doc, {
+    boundaries: {
+      scale_solver: ({ rows }) => {
+        seen = rows;
+        return { m_grist: rows.reduce((sum, row) => sum + row.parts, 0) / 100 };
+      },
+    },
+    collections: { "batch.rows": [{ parts: 100, pct: 0.5 }, { parts: 50, pct: 0.25 }] },
+  });
+  assert.deepEqual(
+    engine.get("batch.rows").map((row) => row.mass_kg),
+    [0.75, 0.375]
+  );
+  assert.equal("mass_kg" in seen[0], false, "the boundary reads authored rows only");
+});
+
+test("a field input that reduces its own collection reads the authored rows", () => {
+  const fields = {
+    mass_kg: {
+      inputs: { total: "batch.parts_sum", m_grist: "solver.scale.m_grist" },
+      expr: {
+        op: "/",
+        args: [{ ref: "row.parts" }, { ref: "total" }],
+      },
+      output: { dimension: "dimensionless" },
+    },
+  };
+  const doc = synthetic({ fields });
+  doc.nodes["batch.parts_sum"] = {
+    kind: "derived",
+    inputs: { rows: "batch.rows" },
+    expr: {
+      op: "sum",
+      coll: { ref: "rows" },
+      as: "row",
+      body: { ref: "row.parts" },
+    },
+    output: { dimension: "dimensionless" },
+  };
+  const engine = create(doc);
+  assert.deepEqual(
+    engine.get("batch.rows").map((row) => row.mass_kg),
+    [100 / 150, 50 / 150]
+  );
 });
 
 test("computed row fields are materialized on read, never written into collection state", () => {

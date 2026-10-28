@@ -56,8 +56,10 @@ computed, it is *not* a root.
 The dependency graph comes **only** from declared `inputs`, `ref`, `relations`,
 and `{ref}`s inside a node `default` (a default is a lazy expression, so its refs
 are dependencies). A `collection`'s computed `fields` declare their own `inputs`,
-which are edges of the collection node. There is **no read-tracking /
-auto-inference**. A dependency that is not declared does not exist.
+which are **read-side** edges: they invalidate the collection but never order it,
+because a field reads the authored rows through the boundary seam (§2.4). There is
+**no read-tracking / auto-inference**. A dependency that is not declared does not
+exist.
 
 ### 2.3 Domain-core-only
 
@@ -82,7 +84,10 @@ re-copy on every component change and to clear on every detach. A set root is an
 It also extends to rows: a `collection`'s computed `fields` are derived values.
 The engine materializes them into a copy of each row when the collection is read
 and never writes them back into collection state, so a draft row holds exactly
-the authored `item_schema` fields.
+the authored `item_schema` fields. A field's declared `inputs` are read in
+**authored mode** — collections resolve without their own computed fields — so a
+field may read the very boundary the collection feeds, and a boundary request
+never carries a computed row value.
 
 ### 2.5 Identity is memory, not state
 

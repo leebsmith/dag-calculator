@@ -56,12 +56,12 @@ changes.
 ### The graph (`buildGraph`)
 
 - **`adjacency`** — `nodeId → [dependencyNodeIds]`, built from each node's
-  declared `inputs` (derived/boundary, and each of a collection's computed
-  `fields`), `ref` (selection), and any `{ref}` in a root/choice `default` (a
-  default is evaluated lazily when the node is unset, so its refs are real
-  dependencies, not hidden ones). A collection with no computed fields has no
-  edges out.
-- **`dependents`** — the reverse: `nodeId → [consumerNodeIds]`.
+  declared `inputs` (derived/boundary), `ref` (selection), and any `{ref}` in a
+  root/choice `default` (a default is evaluated lazily when the node is unset, so
+  its refs are real dependencies, not hidden ones). A collection's computed
+  `fields` add **no** adjacency edges: they are read-side overlays.
+- **`dependents`** — the reverse: `nodeId → [consumerNodeIds]`, including the
+  collections whose computed fields read the node.
 - **`topoOrder`** — a deterministic topological sort of all nodes.
 
 These are what make the DAG **explicit**: no edge exists unless declared.

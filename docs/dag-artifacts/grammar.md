@@ -128,10 +128,10 @@ namespace → error.
   `item_schema` field and may not read another computed field, so evaluation is
   strictly row-local plus its declared inputs. Computed fields are materialized
   on **evaluation**, never written into collection state (`semantics.md` §2.4).
-- A field's `inputs` may reference a boundary output the boundary does not
-  consume; the collection then carries an edge to that boundary. A reference that
-  closes a cycle (a boundary that consumes the collection itself) is a load-time
-  error.
+- A field's `inputs` are **read-side**: they invalidate the collection but add no
+  ordering edge, so a field may read any node — including the boundary that
+  consumes the collection. Inputs resolve in authored mode, so the boundary and
+  the field both read the authored `item_schema` rows and cannot recurse.
 - Addressed via dotted sub-refs; reduced over by `map`/`filter`/`sum`/`weighted_avg`.
 
 ### 2.3 `selection`
