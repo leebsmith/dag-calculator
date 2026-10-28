@@ -4,19 +4,25 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–4 landed: the adapter-format allowlist is empty, every numeric readout
+  Phases 0–5 landed: the adapter-format allowlist is empty, every numeric readout
   routes through `views/producer/cell.js` (`formatCell` / `cellLabel`), backend
   errors and capacity limits share one class and one table in `core/errors.py`,
   collections can declare row-scoped computed `fields` (grammar revision 10,
-  payload still 3), and the fermentable rows read `grist_row.mass_kg` /
+  payload still 3), the fermentable rows read `grist_row.mass_kg` /
   `extract_kg` / `sugar_row.resolved_mass_kg` from the artifact — host writes are
   deleted, `reportFormat.fermentableRows` is gone, and the Fermentables card shows
-  mass and extract. Phase 4 amended Phase 3's edge rule: field inputs are
-  read-side edges resolved in authored mode, so a field may read the boundary its
-  collection feeds while every boundary request still carries authored rows only.
-  Next is Phase 5, the `core/batch/` package split along the existing phase
-  boundaries, behind a re-export shim (arithmetic unchanged, oracle snapshot
-  identical). Outstanding operational check: re-freeze the saved batch by hand on
+  mass and extract — and `core/batch_solver.py` is now the ten-module
+  `core/batch/` package (`constants` → `inputs` → `helpers` → `composition` →
+  `volumetric` → `grist` → `cascade` → `hlt` → `orchestration` → `diagnostics`,
+  mapped in the package docstring) with the shim deleted and every importer
+  pointed at the owner module; arithmetic and the oracle fixture are unchanged.
+  Phase 4 amended Phase 3's edge rule: field inputs are read-side edges resolved
+  in authored mode, so a field may read the boundary its collection feeds while
+  every boundary request still carries authored rows only.
+  Next is Phase 6, the `core/water/` package split and the telemetry-as-findings
+  channel (`solve_water_chemistry` decomposed into phases, per-code event
+  factories, the `warnings.append` reconciliation loop deleted).
+  Outstanding operational check: re-freeze the saved batch by hand on
   `make local-dev` and confirm the printed bundle matches the screen (emulator
   data is untracked). See `plans/decomposition-and-display-contract.md` for the
   per-phase context contract.

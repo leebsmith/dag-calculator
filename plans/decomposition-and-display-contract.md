@@ -1,8 +1,8 @@
 # Decomposition & display contract
 
 Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), 2
-(error and constraint truth), 3 (per-row computed fields), and 4 (row migration)
-landed; Phase 5 is next.
+(error and constraint truth), 3 (per-row computed fields), 4 (row migration), and
+5 (`core/batch/`) landed; Phase 6 is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -395,6 +395,27 @@ after the shim removal.
 `Point imports at the batch solver package`.
 
 **Handoff.** Record the module map. The same recipe now applies to water.
+
+**Landed.** `app.core.batch` is ten modules in pipeline order — `constants`
+(physical constants + `sugar_extract_for`), `inputs` (`GrainBillEntry`,
+`BatchSolverInput`), `helpers` (the composites and shared volumetric
+primitives), `composition` (Phase 1 and 1b), `volumetric` (Phase 2), `grist`
+(Phase 3), `cascade` (Phase 4), `hlt`, `orchestration` (result types, scale-pin
+resolution, pipeline, `solve_batch`, the feasible bound), and `diagnostics`
+(capacity loads, bracket diagnosis). The map is the package docstring's table.
+The first commit left `batch_solver.py` as an explicit `__all__` shim; the
+second pointed the service and every test at the owner modules and deleted it.
+`composition` owns the extract split's *use* while `ExtractSplit` itself stayed
+in `volumetric` (its own phase), so composition imports Phase 2 — the split is
+their shared seam rather than a backwards dependency. `_capacity_violation`
+stayed beside `_Pipeline` in `orchestration` (its argument type) so diagnostics
+never imports the pipeline; `_capacity_loads` and `_diagnose_bracket` moved out.
+No arithmetic moved: an AST comparison proves all 73 top-level statements are
+byte-identical to the pre-split module, `test_boundary_error_contract` now walks
+the package directory for raise sites, and `make test` reports the same 692
+passed / 1 skipped with an unchanged oracle fixture before and after the shim
+removal. Two living docs that named the old path now name the package
+(`domain-equations.md` §2, `calculator-assumed-dosing-practice.md` §3).
 
 ### Phase 6 — `core/water/` package and findings channel (2–3 days)
 
