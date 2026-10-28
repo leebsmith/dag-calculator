@@ -1,10 +1,10 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (5 of 8 card groups: `hops`,
-`late-additions`, `malt`, `trace-malts`, `yeast`). Phases 3–5 remain: extract the
-logic that does not belong in the root and ratchet the shape the linter and the
-ownership guard can now see.
+(`55f6485`), and Phase 2 has begun (6 of 8 card groups: `hops`,
+`late-additions`, `malt`, `trace-malts`, `yeast`, `mash`). Phases 3–5 remain:
+extract the logic that does not belong in the root and ratchet the shape the
+linter and the ownership guard can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -456,6 +456,46 @@ record); `malt-rows.test.js` gained the two drawer-formatter cases; `card-displa
 pins the trace slice readouts and `catalogDraft` the meta-composition contract.
 The generated ownership index is unchanged — no member was renamed. Gate:
 `make check`; `make test` (896 frontend, 697 backend).
+
+**Progress — `mash`, 6 of 8 groups.** `views/producer/mashRows.js` owns the
+card's readouts: the rest catalogue labels (`restLabel`, `restPurposeLabel`), the
+recommended-band predicate (`isRestOutsideBand`), the canonical row defaults and
+the canon ↔ schedule join (`materializeMashRests`, `canonicalRestRows`), the
+temperature rule in its three shapes (`temperatureLabel` at 1dp,
+`thicknessLabel` at 2dp, `wholeTemperature` / `restTempRangeLabel` in whole
+display units), and the schedule summaries (`mashTimeLabel`, `restMinutes`,
+`mashTimeSummaryLabel`, `isLgrBelowFloor`, `lgrSummary`). The adapter is 349
+lines (from 378); every member keeps its name and `KEYS` entry and delegates
+with the state it reads.
+
+Two notes:
+
+1. **The "6 no-`this` methods" is exact for this card, and one of the six was
+   already a delegation.** `getRestDefinition`, `restName`, `restPurpose`,
+   `isRestOutOfRange`, `_materializeRests` and the `mashPresetLabels` getter
+   touch no `this`; `mashPresetLabels` already returned
+   `views/mash.js`'s `MASH_PRESET_LABELS`, so it needed no move and the module
+   does not re-export it. The extra extractions are the display policy that was
+   only reachable through `this`: two identical 1dp temperature labels
+   (`restUseTempDisplay`, `doughInDisplay`), two identical 2dp thickness labels
+   (`mashThicknessDisplay`, `minLgrDisplay`), the whole-minute readouts, the LGR
+   floor + summary line, and the canon join behind `canonicalMashRests`.
+2. **Unit conversion and the artifact slice stay with the wiring.**
+   `_convert` reads `artifact`, `engine`, and `ui.unitMode`; `mashField`,
+   `strikeWaterTempDisplay`, and the three `unitSymbol` getters read the field
+   models and the unit tracker. `mashPresetId`/`mashPresetIdState`,
+   `sortedMashRests`/`enabledMashRests`, `sortedMashDraftRests` and
+   `isMashDraftValid` are one-line delegations to `views/mash.js` and were
+   already pure.
+
+`tests/frontend/mash-rows.test.js` covers the module without booting the app (7
+cases: the canon labels, the advisory band, the materialized order with mash-out
+on, the canon join, the display-unit labels, the whole-minute time readouts, and
+the LGR floor/summary); `mash-card.test.js`, `mash-preset-mirror.test.js` and
+`card-display` pin the rendered strings unchanged (`62–65`, `incl. 14 min ramp
+(70 min rests)`, `84`, the bound numbers). The generated ownership index is
+unchanged — no member was renamed. Gate: `make check`; `make test` (903
+frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.

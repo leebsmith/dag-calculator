@@ -1,11 +1,29 @@
 // Mash profile card: preset + rest schedule + strike water. Bespoke (not a
-// catalog draft editor); pure mash logic lives in views/mash.js.
+// catalog draft editor); pure mash logic lives in views/mash.js and the card's
+// readouts in views/producer/mashRows.js.
 
 import * as mash from "../../views/mash.js";
 import { toBase } from "../../engine/index.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
+import {
+  canonicalRestRows,
+  isLgrBelowFloor,
+  isRestOutsideBand,
+  lgrSummary,
+  mashTimeLabel,
+  mashTimeSummaryLabel,
+  materializeMashRests,
+  restDefinition,
+  restLabel,
+  restMinutes,
+  restPurposeLabel,
+  restTempRangeLabel,
+  temperatureLabel,
+  thicknessLabel,
+  wholeTemperature,
+} from "../../views/producer/mashRows.js";
 import { UNIT_SYMBOLS } from "../../views/registry/units.js";
-import { formatWithDecimals, unitSymbol } from "../../utils.js";
+import { unitSymbol } from "../../utils.js";
 import { reportError } from "../../observability.js";
 import { MASH_NODES as N } from "../../views/registry/mash.js";
 
@@ -35,45 +53,40 @@ export function registerMashCard(app, ctx) {
 
     restUseTempDisplay(rest) {
       if (!rest || rest.use_temp_c == null) return "";
-      const v = this._convert("temperature", rest.use_temp_c, "degC");
-      return Number.isFinite(v) ? formatWithDecimals(v, 1) : "";
+      return temperatureLabel(this._convert("temperature", rest.use_temp_c, "degC"));
     },
 
     restTempRangeDisplay(restId) {
-      const def = mash.getCanonicalRest(restId);
+      const def = restDefinition(restId);
       if (!def || def.temp_min_c == null || def.temp_max_c == null) return "";
-      const min = this._convert("temperature", def.temp_min_c, "degC");
-      const max = this._convert("temperature", def.temp_max_c, "degC");
-      return `${Math.round(min)}–${Math.round(max)}`;
+      return restTempRangeLabel(
+        this._convert("temperature", def.temp_min_c, "degC"),
+        this._convert("temperature", def.temp_max_c, "degC")
+      );
     },
 
     restBoundDisplay(restId, bound) {
-      const def = mash.getCanonicalRest(restId);
+      const def = restDefinition(restId);
       if (!def) return "";
       const base = bound === "min" ? def.temp_min_c : def.temp_max_c;
       if (base == null) return "";
-      return Math.round(this._convert("temperature", base, "degC"));
+      return wholeTemperature(this._convert("temperature", base, "degC"));
     },
 
     getRestDefinition(restId) {
-      return mash.getCanonicalRest(restId);
+      return restDefinition(restId);
     },
 
     restName(restId) {
-      const def = mash.getCanonicalRest(restId);
-      return def ? def.name : restId;
+      return restLabel(restId);
     },
 
     restPurpose(restId) {
-      const def = mash.getCanonicalRest(restId);
-      return def ? def.purpose : "";
+      return restPurposeLabel(restId);
     },
 
     isRestOutOfRange(restId, useTempC) {
-      const rest = mash.getCanonicalRest(restId);
-      if (!rest || rest.temp_min_c == null || rest.temp_max_c == null) return false;
-      if (typeof useTempC !== "number" || isNaN(useTempC)) return false;
-      return useTempC < rest.temp_min_c || useTempC > rest.temp_max_c;
+      return isRestOutsideBand(restId, useTempC);
     },
 
     // Field-model accessor for the metric strip (reuses producer display/write).
@@ -88,19 +101,7 @@ export function registerMashCard(app, ctx) {
     },
 
     _materializeRests(rows) {
-      const byId = new Map(rows.filter((r) => r.rest_id !== "dough_in").map((r) => [r.rest_id, r]));
-      const order = [...mash.CANONICAL_RESTS.map((r) => r.rest_id), mash.MASH_OUT_REST.rest_id];
-      return order.map((id) => {
-        const existing = byId.get(id);
-        if (existing) return { ...existing };
-        const isMashOut = id === mash.MASH_OUT_REST.rest_id;
-        return {
-          rest_id: id,
-          enabled: isMashOut,
-          use_temp_c: null,
-          duration_min: isMashOut ? mash.MASH_OUT_REST.default_duration_min : null,
-        };
-      });
+      return materializeMashRests(rows);
     },
 
     _writeMashRests(rows) {
@@ -205,16 +206,7 @@ export function registerMashCard(app, ctx) {
     canonicalMashRests: {
       configurable: true,
       get() {
-        const byId = new Map(this.mashRests.map((r) => [r.rest_id, r]));
-        return [...mash.CANONICAL_RESTS, mash.MASH_OUT_REST].map((def) => {
-          const row = byId.get(def.rest_id);
-          return {
-            ...def,
-            enabled: row ? !!row.enabled : def.rest_id === mash.MASH_OUT_REST.rest_id,
-            use_temp_c: row ? row.use_temp_c : null,
-            duration_min: row ? row.duration_min : null,
-          };
-        });
+        return canonicalRestRows(this.mashRests);
       },
     },
     sortedMashRests: {
@@ -247,8 +239,7 @@ export function registerMashCard(app, ctx) {
       get() {
         const v = this.doughInInheritedTempC;
         if (v == null) return "";
-        const d = this._convert("temperature", v, "degC");
-        return Number.isFinite(d) ? formatWithDecimals(d, 1) : "";
+        return temperatureLabel(this._convert("temperature", v, "degC"));
       },
     },
     totalMashTimeMin: {
@@ -257,14 +248,10 @@ export function registerMashCard(app, ctx) {
         return this.mashTotalTimeMin;
       },
     },
-    // The ramp is ΔT ÷ heating rate, so the total is fractional; the readout is
-    // whole minutes, matching the rest durations and the report.
     totalMashTimeDisplay: {
       configurable: true,
       get() {
-        return Number.isFinite(this.totalMashTimeMin)
-          ? String(Math.round(this.totalMashTimeMin))
-          : "";
+        return mashTimeLabel(this.totalMashTimeMin);
       },
     },
     rampTimeMin: {
@@ -276,10 +263,7 @@ export function registerMashCard(app, ctx) {
     restTimeMin: {
       configurable: true,
       get() {
-        const total = this.mashTotalTimeMin;
-        const ramp = this.mashRampTimeMin;
-        if (!Number.isFinite(total) || !Number.isFinite(ramp)) return total;
-        return Math.max(0, total - ramp);
+        return restMinutes(this.mashTotalTimeMin, this.mashRampTimeMin);
       },
     },
     mashThicknessUnitId: {
@@ -299,9 +283,8 @@ export function registerMashCard(app, ctx) {
       get() {
         const v = this.mashThicknessLPerKg;
         if (!Number.isFinite(v)) return "";
-        return formatWithDecimals(
-          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine)),
-          2
+        return thicknessLabel(
+          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine))
         );
       },
     },
@@ -310,39 +293,27 @@ export function registerMashCard(app, ctx) {
       get() {
         const v = this.minLgrLPerKg;
         if (!Number.isFinite(v)) return "";
-        return formatWithDecimals(
-          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine)),
-          2
+        return thicknessLabel(
+          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine))
         );
       },
     },
     mashLgrBelowFloor: {
       configurable: true,
       get() {
-        const t = this.mashThicknessLPerKg;
-        const min = this.minLgrLPerKg;
-        return Number.isFinite(t) && Number.isFinite(min) && t < min;
+        return isLgrBelowFloor(this.mashThicknessLPerKg, this.minLgrLPerKg);
       },
     },
     mashLgrSummary: {
       configurable: true,
       get() {
-        const t = this.mashThicknessDisplay;
-        if (!t) return "";
-        const unit = this.mashThicknessUnit;
-        const min = this.minLgrDisplay;
-        return min
-          ? `Mash thickness ${t} ${unit} · equipment minimum ${min} ${unit}`
-          : `Mash thickness ${t} ${unit}`;
+        return lgrSummary(this.mashThicknessDisplay, this.mashThicknessUnit, this.minLgrDisplay);
       },
     },
     mashTimeSummary: {
       configurable: true,
       get() {
-        const ramp = this.rampTimeMin;
-        const rests = this.restTimeMin;
-        if (!Number.isFinite(ramp) || !Number.isFinite(rests)) return "";
-        return `incl. ${Math.round(ramp)} min ramp (${Math.round(rests)} min rests)`;
+        return mashTimeSummaryLabel(this.rampTimeMin, this.restTimeMin);
       },
     },
     sortedMashDraftRests: {

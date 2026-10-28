@@ -2,9 +2,14 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 2, the `mash`
-  rest helpers (6 no-`this` methods), the sixth of eight** (`trace-malts`
-  landed: `views/producer/traceMaltRows.js` holds the catalogue→draft row default
+* **Alpine maintainability and module linting** — **next: Phase 2,
+  `catalogDraft` (13 helpers), the seventh of eight** (`mash` landed:
+  `views/producer/mashRows.js` holds the rest catalogue labels, the advisory
+  temperature band, the canonical row defaults + canon↔schedule join, the
+  1dp/2dp/whole-unit temperature labels, and the time and LGR summary lines; the
+  adapter is 349 lines from 378, every member keeps its name and `KEYS` entry
+  and delegates; covered by `tests/frontend/mash-rows.test.js` (7 cases);
+  `trace-malts` landed: `views/producer/traceMaltRows.js` holds the catalogue→draft row default
   (`makeTraceMaltRow`: zero mass, the provenance/basis/method/colour/notes the
   boundary reads, no parts or moisture); the drawer subtitle and group line were
   byte-identical to the grain bill's, so they went to `gristRows.js` as
@@ -38,7 +43,7 @@
   declarations on `installers.js`, with one owner per member; and today's 47
   cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
   135 reader/key pairs — that the ownership guard checks exactly. Remaining
-  groups after `mash`: `catalogDraft` (13), `fieldActions` helpers (5). The three
+  groups after `catalogDraft`: `fieldActions` helpers (5). The three
   phases after Phase 2:
   split the two ~50-line card computations and declare the refresh pipeline,
   ratchet size and complexity, and invert the store's three client imports.
