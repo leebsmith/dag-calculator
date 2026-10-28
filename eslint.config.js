@@ -52,10 +52,6 @@ const restrictedImports = (layer, { ignore = [] } = {}) => [
   },
 ];
 
-const CLIENT_SEAM =
-  "This file reaches an adapter client directly: no client seam in the store yet. " +
-  "The import-direction guard records it; do not add another adapter import here.";
-
 const SOURCE_RULES = {
   "no-undef": "error",
   "no-unused-vars": "error",
@@ -294,22 +290,6 @@ export default [
   ...["utils.js", "observability.js", "firebase.js", "firebaseConfig.js"].map((file) => ({
     files: [`frontend/src/${file}`, `src/${file}`],
     rules: { "no-restricted-imports": restrictedImports(file) },
-  })),
-  ...["persistence", "setup", "recipes"].map((name) => ({
-    files: [`frontend/src/store/${name}.js`, `src/store/${name}.js`],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: HIGHER("store").filter((group) => group !== "**/adapters/**"),
-              message: CLIENT_SEAM,
-            },
-          ],
-        },
-      ],
-    },
   })),
   ...Object.entries(CONSOLE_SINK).map(([file, reason]) => ({
     name: `console-sink: ${reason}`,

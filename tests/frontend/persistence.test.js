@@ -139,6 +139,16 @@ function setup() {
   return { client, app };
 }
 
+test("the batch seam fails loudly when no client was injected", async () => {
+  persistence.setClient(null);
+  assert.throws(
+    () => persistence.list(),
+    /no batch client injected; main\.js must call setClient\(\)/
+  );
+  // Restore the seam for the suites that follow.
+  persistence.setClient(fakeClient());
+});
+
 test("opening a pre-identity record fails loudly", async () => {
   const { client } = setup();
   await client.upsertBatch("legacy", { name: "Legacy", roots: {}, identity: null });

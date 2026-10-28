@@ -4,7 +4,15 @@ import { createStepApp } from "./adapters/stepAdapter.js";
 import { setTokenProvider } from "./adapters/apiClient.js";
 import { reportError } from "./observability.js";
 import { getSession } from "./adapters/authClient.js";
+import * as batchClient from "./adapters/batchClient.js";
 import * as libraryClient from "./adapters/libraryClient.js";
+import {
+  closeReportTab,
+  downloadBlob,
+  downloadJSON,
+  openReportTab,
+  showReport,
+} from "./adapters/download.js";
 import {
   getIdToken,
   getRedirectResult,
@@ -17,6 +25,7 @@ import { createSetupStore } from "./store/setup.js";
 import { createRecipesStore } from "./store/recipes.js";
 
 setTokenProvider(getIdToken);
+persistence.setClient(batchClient);
 
 // Anchor a fixed-position popover under (or above) its trigger. Fixed
 // positioning keeps menus out of the batches body's scroll clipping.
@@ -41,6 +50,7 @@ Alpine.store("auth", {
 });
 
 const setupStore = createSetupStore({
+  client: libraryClient,
   onCreated: () => {
     const recipes = Alpine.store("recipes");
     recipes.scope = "all";
@@ -54,14 +64,19 @@ const setupStore = createSetupStore({
 Alpine.store("setup", setupStore);
 
 // The Batches controller is a factory so its state machine is testable without
-// Alpine or a DOM; main.js supplies the persistence seam, the setup store, and
-// the viewport-aware popover anchoring.
+// Alpine or a DOM; main.js supplies the persistence seam, the setup store, the
+// viewport-aware popover anchoring, and the download/report-tab clients.
 Alpine.store(
   "recipes",
   createRecipesStore({
     persistence,
     getSetup: () => Alpine.store("setup"),
     anchor: anchorStyle,
+    download: downloadJSON,
+    downloadFile: downloadBlob,
+    openTab: openReportTab,
+    showTab: showReport,
+    closeTab: closeReportTab,
   })
 );
 

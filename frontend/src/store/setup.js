@@ -1,6 +1,6 @@
 // Batch setup: the identity triplet (style / equipment / water source) and the
 // user-owned assets it is drawn from. Engine-free by design — this store only
-// touches the catalog client, the seed reference cache, and persistence.
+// touches the injected catalog client, the seed reference cache, and persistence.
 //
 // Every mutation goes through `this.state` (the object Alpine observes through
 // its reactive proxy). Writing a closure-captured raw object would update the
@@ -12,7 +12,6 @@
 // only selects from what is already there.
 
 import { createLibrary } from "./library.js";
-import * as libraryClient from "../adapters/libraryClient.js";
 import { createReferenceCache } from "./referenceCache.js";
 import * as persistence from "./persistence.js";
 
@@ -34,7 +33,7 @@ const UNKNOWN_WATER = {
   total_alkalinity_caco3: 0,
 };
 
-export function createSetupStore({ onCreated, client = libraryClient } = {}) {
+export function createSetupStore({ onCreated, client } = {}) {
   const cache = createReferenceCache();
   const library = createLibrary({
     client,

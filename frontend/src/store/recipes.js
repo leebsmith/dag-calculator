@@ -2,17 +2,10 @@
 // the transitions between the list and the workspace.
 //
 // Pure partitioning and labelling live in `recipeList.js`; this module owns the
-// stateful surface the templates bind against. It is DOM-free apart from the
-// injected `anchor` (popover placement), which keeps it testable in node while
-// `main.js` supplies the viewport-aware implementation.
+// stateful surface the templates bind against. It is DOM-free: the popover
+// anchor, the download trigger, and the report tab are injected by `main.js`,
+// which keeps the store testable in node.
 
-import {
-  closeReportTab,
-  downloadBlob,
-  downloadJSON,
-  openReportTab,
-  showReport,
-} from "../adapters/download.js";
 import { reportError } from "../observability.js";
 import { safeFilename } from "../utils.js";
 import {
@@ -27,11 +20,11 @@ export function createRecipesStore({
   persistence,
   getSetup,
   anchor = () => "",
-  download = downloadJSON,
-  downloadFile = downloadBlob,
-  openTab = openReportTab,
-  showTab = showReport,
-  closeTab = closeReportTab,
+  download,
+  downloadFile,
+  openTab,
+  showTab,
+  closeTab,
 } = {}) {
   return {
     view: "batches", // "batches" | "editor"

@@ -1,11 +1,11 @@
 // Batch manager: the browser-side persistence seam. Owns the active batch
 // (draft or frozen) and drives autosave / freeze / restore / trash. The step
-// adapter is bound via `bindApp` so loads/autosaves can read + write its state.
+// adapter is bound via `bindApp` so loads/autosaves can read + write its state,
+// and the batch client is injected via `setClient` by the composition root.
 
-import * as batchClient from "../adapters/batchClient.js";
 import { DRAFT_SCHEMA_VERSION } from "./snapshot.js";
 
-let client = batchClient;
+let client = null;
 let app = null;
 let active = null; // { id, name, status, trashed, persisted, updated_at }
 let dirty = false; // unsaved edits since last successful sync
@@ -40,6 +40,18 @@ export function setClient(c) {
   client = c;
 }
 
+// The client is injected at boot; a store that never received one is a wiring
+// bug, so the failure names the missing seam instead of surfacing as a
+// "cannot read properties of null" deep inside an autosave.
+function batchSeam() {
+  if (!client) {
+    throw new Error(
+      "persistence: no batch client injected; main.js must call setClient() before use"
+    );
+  }
+  return client;
+}
+
 export function bindApp(stepApp) {
   app = stepApp;
 }
@@ -61,7 +73,7 @@ export function clearActive() {
 }
 
 export function list() {
-  return client.listBatches();
+  return batchSeam().listBatches();
 }
 
 export class UnsupportedBatchError extends Error {
@@ -126,7 +138,7 @@ export async function createUnsavedDraft({ name = "Untitled batch" } = {}) {
 }
 
 export async function open(batchId) {
-  const b = await client.getBatch(batchId);
+  const b = await batchSeam().getBatch(batchId);
   assertSupported(b);
   active = {
     id: b.id,
@@ -157,9 +169,9 @@ export async function renameActive(name) {
 // Fork a frozen batch into a new editable draft, preserving lineage and the
 // frozen batch's copied-forward selections.
 export async function fork(frozenId) {
-  const frozen = await client.getBatch(frozenId);
+  const frozen = await batchSeam().getBatch(frozenId);
   assertSupported(frozen);
-  const created = await client.upsertBatch(crypto.randomUUID(), {
+  const created = await batchSeam().upsertBatch(crypto.randomUUID(), {
     name: `${frozen.name} (copy)`,
     parent_batch_id: frozen.id,
     parent_name: frozen.name,
@@ -198,8 +210,8 @@ export async function reportBundleForActive() {
   }
   const bundle =
     active.status === "frozen"
-      ? await client.getReportBundle(active.id)
-      : await client.previewReportBundle(active.id, {
+      ? await batchSeam().getReportBundle(active.id)
+      : await batchSeam().previewReportBundle(active.id, {
           ...app.freezePayload(),
           report_inputs: app.reportInputs(),
           catalog: app.reportCatalog(),
@@ -211,27 +223,27 @@ export async function reportBundleForActive() {
 }
 
 export async function reportBundleFor(id, name) {
-  return { name, bundle: await client.getReportBundle(id) };
+  return { name, bundle: await batchSeam().getReportBundle(id) };
 }
 
 // The registered sections, in canonical order, for the report picker.
 export async function reportSections() {
-  return (await client.getReportSections()).sections;
+  return (await batchSeam().getReportSections()).sections;
 }
 
 // Rendered report for a stored batch (frozen): the server already has the bundle.
 export async function reportFor(id, params) {
-  return client.getReport(id, params);
+  return batchSeam().getReport(id, params);
 }
 
 // Rendered report for the active batch. A frozen batch is served from its stored
 // bundle; a draft is previewed through the bundle the browser builds here.
 export async function reportForActive(params) {
   if (!active) return null;
-  if (active.status === "frozen") return client.getReport(active.id, params);
+  if (active.status === "frozen") return batchSeam().getReport(active.id, params);
   const file = await reportBundleForActive();
   if (!file) return null;
-  return client.postReport(active.id, file.bundle, params);
+  return batchSeam().postReport(active.id, file.bundle, params);
 }
 
 export async function freezeActive() {
@@ -248,7 +260,7 @@ export async function freezeActive() {
   if (blocking) {
     throw new Error(`Cannot freeze: ${blocking.label} — ${blocking.message}`);
   }
-  await client.freezeBatch(active.id, {
+  await batchSeam().freezeBatch(active.id, {
     ...app.freezePayload(),
     report_inputs: app.reportInputs(),
     catalog: app.reportCatalog(),
@@ -291,28 +303,28 @@ export async function trashActive() {
     return;
   }
   await saveNow();
-  await client.setTrashed(active.id, true);
+  await batchSeam().setTrashed(active.id, true);
   clearActive();
 }
 
 export function restore(batchId) {
-  return client.setTrashed(batchId, false);
+  return batchSeam().setTrashed(batchId, false);
 }
 
 export async function trashBatch(batchId) {
-  const record = await client.setTrashed(batchId, true);
+  const record = await batchSeam().setTrashed(batchId, true);
   if (active?.id === batchId) clearActive();
   return record;
 }
 
 export async function renameBatch(batchId, name) {
-  const record = await client.renameBatch(batchId, name);
+  const record = await batchSeam().renameBatch(batchId, name);
   if (active?.id === batchId) active = { ...active, name: record.name };
   return record;
 }
 
 export function deletePermanent(batchId) {
-  return client.deleteBatch(batchId);
+  return batchSeam().deleteBatch(batchId);
 }
 
 export async function saveNow({ force = false } = {}) {
@@ -322,7 +334,7 @@ export async function saveNow({ force = false } = {}) {
     setSaveState("saving");
     const payload = { name: active.name, ...app.draftState() };
     try {
-      const updated = await client.upsertBatch(
+      const updated = await batchSeam().upsertBatch(
         active.id,
         payload,
         active.updated_at ?? undefined,

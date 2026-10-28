@@ -1,7 +1,7 @@
 // Phase 0 of plans/archive/decomposition-and-display-contract.md: the frontend's module
 // layers are pinned before anything moves, so a split cannot quietly invert a
-// dependency. Lower ranks may not import higher ranks; the current violations
-// are baselined below with a reason and fail the guard when they go stale.
+// dependency. Lower ranks may not import higher ranks; any recorded exception
+// carries a reason and fails the guard when it goes stale.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -35,26 +35,12 @@ const FILE_LAYER = {
   "main.js": "main",
 };
 
-// Store persistence reaches boundary clients directly. Deliberate until a
-// client-injection seam lands; the store/adapters inversion is not part of the
-// decomposition program, so the direction is recorded rather than assumed.
-const ALLOW = [
-  {
-    file: "frontend/src/store/persistence.js",
-    specifier: "../adapters/batchClient.js",
-    reason: "autosave calls the batch client directly; no client seam in the store yet",
-  },
-  {
-    file: "frontend/src/store/recipes.js",
-    specifier: "../adapters/download.js",
-    reason: "recipe export calls the download helper directly; no client seam in the store yet",
-  },
-  {
-    file: "frontend/src/store/setup.js",
-    specifier: "../adapters/libraryClient.js",
-    reason: "library bootstrap calls the client directly; no client seam in the store yet",
-  },
-];
+// The store used to reach boundary clients directly (autosave, download,
+// library bootstrap). Phase 5 of plans/alpine-maintainability-and-module-linting.md
+// inverted those three: `main.js` injects the clients, so no inversion is
+// allowed here. Keep the list empty; a new entry needs the same program's
+// decision, not a local exception.
+const ALLOW = [];
 
 function stripComments(source) {
   return source
