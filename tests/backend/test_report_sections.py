@@ -228,6 +228,40 @@ def test_batch_facts_is_absent_without_a_realized_fact() -> None:
         render(root, "batch-facts")
 
 
+def test_the_short_id_truncates_with_an_ellipsis() -> None:
+    source = (
+        '#import "lib/format.typ": short-id\n'
+        "#metadata((\n"
+        '  long: short-id("f2bee3d3-ef7b-4025-996a-0919e2a3b794"),\n'
+        '  short: short-id("frozen-1"),\n'
+        ")) <probe>\n"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, source) == {"long": "f2bee3d3…", "short": "frozen-1"}
+
+
+def test_the_document_metadata_carries_the_full_identity() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        completed = run_typst(
+            ["query", "--input", "bundle=/report.json", str(root / "report.typ"), "<report-meta>"],
+            root,
+        )
+    payload = json.loads(completed.stdout)
+    assert len(payload) == 1
+    meta = payload[0]["value"]
+    assert meta["batch_id"] == "frozen-1"
+    assert meta["content_hash"].startswith("sha256:")
+    assert meta["sections"] == [
+        "brewhouse",
+        "batch-facts",
+        "yeast",
+        "volume-ledger",
+        "liquor-ledger",
+    ]
+
+
 def test_the_renderer_expects_the_current_bundle_format() -> None:
     source = (TEMPLATES / "lib" / "bundle.typ").read_text()
     declared = re.search(r"#let bundle-format = (\d+)", source)

@@ -3,7 +3,7 @@
 
 #import "theme.typ": document
 #import "lib/bundle.typ": bundle, batch, catalog, is-frozen
-#import "lib/format.typ": opt
+#import "lib/format.typ": opt, short-id
 #import "sections/brewhouse.typ": present-brewhouse, render-brewhouse
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/yeast.typ": present-yeast, render-yeast
@@ -80,6 +80,7 @@
 
 #let meta-parts = (
   if is-frozen { "Frozen " + freeze-date } else { "Draft preview" },
+  "Batch " + short-id(batch.id),
 )
 
 // A single-section sheet suppresses the document chrome: it is a page to carry,
@@ -92,22 +93,27 @@
     text(size: 9pt, fill: rgb("#6b6b6b"))[Brew report · #meta-parts.join(" · ")]
   })
 
-  let rows = (
-    ("Equipment", identity-name("equipment", "name")),
-    ("Water source", identity-name("water.source", "source_name")),
-    ("Style", identity-name("style", "name")),
-    ("Batch", batch.id),
-  )
-  let present-rows = rows.filter(row => row.at(1) != none)
-  if present-rows.len() > 0 {
-    grid(
-      columns: (60pt, 1fr, 60pt, 1fr),
-      column-gutter: 8pt,
-      row-gutter: 2pt,
-      ..present-rows
-        .map(row => (text(fill: rgb("#6b6b6b"), row.at(0)), str(row.at(1))))
-        .flatten(),
+  // Identity appears once: Batch Basics carries equipment, water source and
+  // style, so the chrome only supplies them for a selection without that
+  // section. Repeating them here would duplicate the block.
+  let carries-identity = included.any(section => section.id == "batch-facts")
+  if not carries-identity {
+    let rows = (
+      ("Equipment", identity-name("equipment", "name")),
+      ("Water source", identity-name("water.source", "source_name")),
+      ("Style", identity-name("style", "name")),
     )
+    let present-rows = rows.filter(row => row.at(1) != none)
+    if present-rows.len() > 0 {
+      grid(
+        columns: (60pt, 1fr, 60pt, 1fr),
+        column-gutter: 8pt,
+        row-gutter: 2pt,
+        ..present-rows
+          .map(row => (text(fill: rgb("#6b6b6b"), row.at(0)), str(row.at(1))))
+          .flatten(),
+      )
+    }
   }
 
   v(10pt)
@@ -129,3 +135,12 @@
     ancestry footer render from a downloaded bundle; sections land one at a time.
   ]
 }
+
+// Machine-readable identity: the printed page truncates, the document does not.
+#metadata((
+  batch_id: batch.id,
+  content_hash: bundle.content_hash,
+  render_key: token,
+  sections: included.map(section => section.id),
+)) <report-meta>
+

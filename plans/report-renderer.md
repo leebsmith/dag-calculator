@@ -289,6 +289,8 @@ objects lack absent keys, and a discriminated `kind` is a bare string. Therefore
   a walker.
 - One optional accessor returning `none`, used only where an omission is
   legitimately renderable.
+- The document emits `#metadata(<report-meta>)` with the full batch id, content
+  hash, render key and resolved section ids; the printed chrome truncates the id.
 - No unguarded member access anywhere in `sections/`.
 
 ### 6.7 Metadata out

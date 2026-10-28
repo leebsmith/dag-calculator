@@ -63,6 +63,14 @@
 // The display symbol ("°P", "%", "L"), or none.
 #let formatted-unit(path) = formatted(path).at("unit", default: none)
 
+// First `width` characters of an identifier; an ellipsis marks truncation. The
+// printed page quotes the short form, the document metadata keeps the full one.
+#let short-id(id, width: 8) = if id.len() > width {
+  id.slice(0, width) + "…"
+} else {
+  id
+}
+
 #let option-label(path, raw) = {
   let labels = node(path).at("option_labels", default: none)
   if labels == none { return str(raw) }

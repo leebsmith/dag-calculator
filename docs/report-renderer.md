@@ -131,13 +131,23 @@ each subsection, so it can break between subsections and fill the page instead o
 pushing a blank one. A unit taller than a page would overflow rather than break,
 which is the signal to split it.
 
-## Ancestry
+## Chrome and ancestry
 
-The footer prints the batch id, the freeze date, and eight hex characters of the
-render key (the content hash until the service lands). Eight characters identify
-the bundle **and** the template/toolchain that printed it, so a printed sheet is
-traceable with no registry — and a reprint after a template edit shows a
-different token, which is the divergence the product accepts.
+The chrome is the batch name, one meta line — `Brew report · Frozen <date> · Batch
+<short id>` — and a rule. **Identity is not repeated here**: Batch Basics carries
+equipment, water source and style, so the chrome only supplies them when the
+selection excludes Batch Facts. Every report therefore prints identity exactly
+once, and a standalone sheet (which suppresses the chrome) keeps it.
+
+The short batch id is the first eight characters plus an ellipsis. The full id, the
+content hash, the render key and the resolved section ids are emitted as
+`#metadata(<report-meta>)`, so a service or script can read what the page truncates.
+
+The footer prints the batch name and eight hex characters of the render key (the
+content hash until the service lands). Eight characters identify the bundle **and**
+the template/toolchain that printed it, so a printed sheet is traceable with no
+registry — and a reprint after a template edit shows a different token, which is
+the divergence the product accepts.
 
 ## Status
 

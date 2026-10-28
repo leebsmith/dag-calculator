@@ -19,7 +19,7 @@ From `lib/format.typ`: `req(container, path)`, `opt(container, path)`,
 `formatted-number(path)`, `formatted-unit(path)`, `present-formatted(path)`,
 `formatted-table(collection)`, `present-formatted-table(collection)`,
 `formatted-summary(collection)`, `present-formatted-summary(collection)`,
-`option-label(path, raw)`.
+`option-label(path, raw)`, `short-id(id)`.
 
 `formatted` reads the bundle's pre-formatted display records; `formatted-table`
 reads the per-row cells for a collection and `formatted-summary` its weighted
