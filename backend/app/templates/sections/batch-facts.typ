@@ -77,68 +77,81 @@
   reference only.
 ]
 
+// Each subsection is one reading unit: a heading never separates from its table
+// or paragraph, but the section may break between subsections so a long batch
+// does not push a whole page of white space.
 #let render-batch-facts() = {
-  heading(level: 2)[Batch Basics]
-  [
-    - *Equipment:* #fact-text("equipment.name")
-    - *Water Source:* #first-fact((
-        "water.source.source_name",
-        "water.source.laboratory",
-        "water.source.report_id",
-      ))
-    - *Style:* #fact-text("style.name")
-  ]
+  block(breakable: false, {
+    heading(level: 2)[Batch Basics]
+    [
+      - *Equipment:* #fact-text("equipment.name")
+      - *Water Source:* #first-fact((
+          "water.source.source_name",
+          "water.source.laboratory",
+          "water.source.report_id",
+        ))
+      - *Style:* #fact-text("style.name")
+    ]
+  })
   v(4pt)
-  heading(level: 2)[Batch Solver Results]
-  [
-    *Pre-boil:* #formatted-text("solver.batch.cascade.sg_pre_boil"),
-    *OG:* #formatted-text("solver.batch.sg_post_boil"),
-    *FG:* #formatted-text("batch.realized_fg"),
-    *AA%:* #formatted-text("solver.batch.apparent_attenuation"),
-    *ABV%:* #formatted-text("batch.realized_abv"),
-    *IBU:* #formatted-text("batch.target_ibu"),
-    *SRM:* #formatted-text("grist.finished_beer_srm")
-  ]
+  block(breakable: false, {
+    heading(level: 2)[Batch Solver Results]
+    [
+      *Pre-boil:* #formatted-text("solver.batch.cascade.sg_pre_boil"),
+      *OG:* #formatted-text("solver.batch.sg_post_boil"),
+      *FG:* #formatted-text("batch.realized_fg"),
+      *AA%:* #formatted-text("solver.batch.apparent_attenuation"),
+      *ABV%:* #formatted-text("batch.realized_abv"),
+      *IBU:* #formatted-text("batch.target_ibu"),
+      *SRM:* #formatted-text("grist.finished_beer_srm")
+    ]
+  })
 
   if present-formatted-table("grist.major_malts") {
     v(4pt)
-    heading(level: 2)[Major Grist Fermentables]
-    fermentable-table(
-      "grist.major_malts",
-      pct-columns: (([Major %], "own_pct"), ([Grist %], "grist_pct")),
-    )
-    v(2pt)
-    summary-line("grist.major_malts")
+    block(breakable: false, {
+      heading(level: 2)[Major Grist Fermentables]
+      fermentable-table(
+        "grist.major_malts",
+        pct-columns: (([Major %], "own_pct"), ([Grist %], "grist_pct")),
+      )
+      v(2pt)
+      summary-line("grist.major_malts")
+    })
   }
 
   if present-formatted-table("grist.trace_malts") {
     v(4pt)
-    heading(level: 2)[Trace Malts]
-    fermentable-table(
-      "grist.trace_malts",
-      pct-columns: (([Trace %], "own_pct"), ([Grist %], "grist_pct")),
-    )
-    v(2pt)
-    summary-line("grist.trace_malts")
-    v(2pt)
-    trace-note
+    block(breakable: false, {
+      heading(level: 2)[Trace Malts]
+      fermentable-table(
+        "grist.trace_malts",
+        pct-columns: (([Trace %], "own_pct"), ([Grist %], "grist_pct")),
+      )
+      v(2pt)
+      summary-line("grist.trace_malts")
+      v(2pt)
+      trace-note
+    })
   }
 
   if present-formatted-table("batch.sugars") {
     v(4pt)
-    heading(level: 2)[Sugars & Syrups]
-    fermentable-table(
-      "batch.sugars",
-      name-header: [Sugar],
-      pct-columns: (([Grist %], "grist_pct"),),
-    )
-    v(2pt)
-    summary-line("batch.sugars")
-    v(2pt)
-    text(size: 8pt, fill: rgb("#6b6b6b"))[
-      Grist % is a share of grist mass (major + trace), not of extract, so the
-      sugar line sits outside the grist's 100 %.
-    ]
+    block(breakable: false, {
+      heading(level: 2)[Sugars & Syrups]
+      fermentable-table(
+        "batch.sugars",
+        name-header: [Sugar],
+        pct-columns: (([Grist %], "grist_pct"),),
+      )
+      v(2pt)
+      summary-line("batch.sugars")
+      v(2pt)
+      text(size: 8pt, fill: rgb("#6b6b6b"))[
+        Grist % is a share of grist mass (major + trace), not of extract, so the
+        sugar line sits outside the grist's 100 %.
+      ]
+    })
   }
 
   // Extract view: the same fermentables ranked by what they contribute, not by
@@ -146,37 +159,41 @@
   let extract-rows = formatted-table("grist.major_malts") + formatted-table("batch.sugars")
   if extract-rows.len() > 0 {
     v(4pt)
-    heading(level: 2)[Extract Contribution]
-    table(
-      columns: (auto, auto, auto, auto),
-      align: (left, right, right, right),
-      stroke: none,
-      inset: (x: 3pt, y: 2pt),
-      table.header([Fermentable], [Amount], [Extract], [Extract %]),
-      ..extract-rows
-        .map(row => (
-          row.at("name").at("text"),
-          row.at("amount").at("text"),
-          row.at("extract").at("text"),
-          row.at("extract_pct").at("text"),
-        ))
-        .flatten(),
-    )
-    v(2pt)
-    text(size: 8pt, fill: rgb("#6b6b6b"))[
-      Extract is the potential contribution: mass × yield, net of malt moisture.
-      Its share is by extract, so it differs from the mass-based Grist %.
-    ]
+    block(breakable: false, {
+      heading(level: 2)[Extract Contribution]
+      table(
+        columns: (auto, auto, auto, auto),
+        align: (left, right, right, right),
+        stroke: none,
+        inset: (x: 3pt, y: 2pt),
+        table.header([Fermentable], [Amount], [Extract], [Extract %]),
+        ..extract-rows
+          .map(row => (
+            row.at("name").at("text"),
+            row.at("amount").at("text"),
+            row.at("extract").at("text"),
+            row.at("extract_pct").at("text"),
+          ))
+          .flatten(),
+      )
+      v(2pt)
+      text(size: 8pt, fill: rgb("#6b6b6b"))[
+        Extract is the potential contribution: mass × yield, net of malt moisture.
+        Its share is by extract, so it differs from the mass-based Grist %.
+      ]
+    })
   }
 
   if present-formatted-summary("overall") {
     v(4pt)
-    heading(level: 2)[Overall Fermentables]
-    summary-line("overall")
-    v(2pt)
-    text(size: 8pt, fill: rgb("#6b6b6b"))[
-      Color covers every fermentable; extract yield covers the grain bill and the
-      sugars. Trace malts contribute no extract.
-    ]
+    block(breakable: false, {
+      heading(level: 2)[Overall Fermentables]
+      summary-line("overall")
+      v(2pt)
+      text(size: 8pt, fill: rgb("#6b6b6b"))[
+        Color covers every fermentable; extract yield covers the grain bill and the
+        sugars. Trace malts contribute no extract.
+      ]
+    })
   }
 }

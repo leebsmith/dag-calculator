@@ -53,7 +53,7 @@
   )
 }
 
-#let render-volume-ledger() = {
+#let render-volume-ledger() = block(breakable: false, {
   text(size: 9pt, fill: rgb("#6b6b6b"))[
     Water and wort volume from strike to the cold fermenter. Parentheses mark
     subtractions; the chain closes on the fermenter target.
@@ -66,4 +66,4 @@
     inset: (x: 3pt, y: 2pt),
     ..rows.map(ledger-row).flatten(),
   )
-}
+})

@@ -28,7 +28,7 @@
   )
 }
 
-#let render-liquor-ledger() = {
+#let render-liquor-ledger() = block(breakable: false, {
   let fill-label = [HLT fill (heated to #text-or("mash.strike_water_temp_c"))]
   let top-up-label = [Top-up (cold) to #text-or("solver.batch.hlt.v_hlt_target")]
   let second-label = [Second underlet (target #text-or("batch.sparge_water_temp_c"))]
@@ -52,4 +52,4 @@
     not a prediction: heating and cooling are not modelled. Surplus is liquor
     deliverable beyond the sparge demand.
   ]
-}
+})

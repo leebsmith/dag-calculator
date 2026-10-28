@@ -21,7 +21,7 @@
   ("Grain moisture", "batch.grain_moisture_fraction"),
 )
 
-#let render-brewhouse() = {
+#let render-brewhouse() = block(breakable: false, {
   table(
     columns: (1fr, auto),
     align: (left, right),
@@ -36,4 +36,4 @@
     lauter and kettle losses. Late additions are excluded from both sides of the
     brewhouse figure.
   ]
-}
+})

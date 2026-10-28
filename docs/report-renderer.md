@@ -124,10 +124,12 @@ Canonical order is registry order; `sections=` cannot reorder it. The generated
 [`report-sections.md`](report-sections.md) lists the order, the presence
 predicate, and the source file for every section.
 
-Each section renders inside a non-breakable block, so a section that does not fit
-on the remaining page moves whole to the next one instead of splitting a table
-mid-row. The document therefore paginates at section boundaries; a section taller
-than one page would overflow rather than break, and should be split.
+Keep-together is applied at the **reading unit**, not the section: a heading never
+separates from the table or paragraph it introduces, and a table never splits
+mid-row. Short sections wrap their whole body; a long section (Batch Facts) wraps
+each subsection, so it can break between subsections and fill the page instead of
+pushing a blank one. A unit taller than a page would overflow rather than break,
+which is the signal to split it.
 
 ## Ancestry
 

@@ -143,7 +143,7 @@
   )
 }
 
-#let render-yeast() = {
+#let render-yeast() = block(breakable: false, {
   text(size: 11pt, weight: "medium", header-line())
   v(2pt)
   text(size: 9pt, fill: rgb("#4a4a4a"), temperature-line())
@@ -163,4 +163,4 @@
       ],
     )
   }
-}
+})

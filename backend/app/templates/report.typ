@@ -118,10 +118,8 @@
 // subset but cannot reorder. A section is a reading unit: keep it on one page
 // when it fits, rather than splitting a table across a page break.
 #for section in included {
-  block(breakable: false, {
-    heading(level: 1, section.title)
-    (section.render)()
-  })
+  heading(level: 1, section.title)
+  (section.render)()
 }
 
 #if sections.len() == 0 {
