@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-bundle]
 blocks: []
 gate: a downloaded bundle renders to a printable PDF and per-page PNGs from the scaffold alone; a section added later renders and is drift-guarded; make check/test green
-status: active (scaffold landed; sections at a time)
+status: active (five sections landed; render service next)
 ---
 
 # Report Renderer — Typst-composed, bundle-driven
@@ -252,6 +252,16 @@ rows. Predicates test output existence first, magnitude second.
 Presentational inputs (`water.salt_distribution`, `water.acid_medium`,
 `water.gypsum_form`, `water.cacl2_form`) are choices that *describe* the salt
 table; they are read for display, never used as presence.
+
+**Landed:** Brewhouse, Batch Facts (identity, modeled metrics, and the four
+fermentable tables), Yeast, Volume Ledger, Liquor Ledger — `docs/report-sections.md`
+is the generated list. Sugars and the major/trace grists are tables inside Batch
+Facts, not standalone sections; the predicates above remain the record for the rest.
+
+**Remaining, in queue order:** hop sections (after the schedule-derived IBU split),
+mash rests, the water trio (pinned ions → salt dosing → chemistry), style
+conformance. The brew-day checklist is last, pending the carry-forward design; the
+Boil section follows the hop sections.
 
 This table is a **candidate inventory**, not a commitment: the section set,
 titles, and prose are authoring decisions made one section at a time (§11).

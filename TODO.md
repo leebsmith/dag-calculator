@@ -11,12 +11,13 @@
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-2. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`)
-   + staged brew-day checklist. Landed: the freeze bundle
-   (`plans/report-bundle.md` R1–R4), the template scaffold, the registry contract
-   and its guards, the formatting parity vector, and the local loop
-   (`make report-dev` / `report-pages`, `docs/report-renderer.md`). Next: sections
-   one at a time (`docs/adding-a-section.md`), then `report_render.py` + routes.
+2. **Summary reporting** — Typst-rendered recipe report (`plans/report-renderer.md`).
+   Landed: the freeze bundle (`plans/report-bundle.md`), the template scaffold, the
+   registry contract and its guards, the local loop (`make report-dev` /
+   `report-pages`), and five sections — Brewhouse, Batch Facts, Yeast, Volume
+   Ledger, Liquor Ledger (`docs/report-sections.md`). Next: `report_render.py` +
+   `GET /batches/{id}/report` with the render gates (determinism, section
+   isolation, error paths), then the remaining sections (Later).
 3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
@@ -71,6 +72,40 @@
   registry, pinned to the Python router by a fixture. Moving it into `data/artifact.json`
   would remove the duplication outright, but `constants` is scalar-only today, so it
   needs a non-scalar value kind (grammar + `schema_version` + inventory + docs).
+
+### Report sections
+
+One bullet per remaining section; the presence predicates are in
+`plans/report-renderer.md` §6.4. Queue order is the order below.
+
+* **Boil hops section** — `batch.boil_hops` rows; addition list with alpha, boil
+  remaining, and IBU share. Needs the schedule-derived split (Next #1) before the
+  share is meaningful. The deferred Boil section, when it lands, is where this
+  schedule and the pre/post gravity pair sit.
+* **Whirlpool hops section** — `batch.whirlpool_hops` rows; duration, initial
+  temperature, product form, IBU share. Same split dependency.
+* **Dry hops section** — `batch.dry_hops` rows; variety, quantity/unit, contact
+  duration, application stage.
+* **Mash rests section** — `mash.rests` rows; step, temperature, duration, enabled.
+  Strike temperature already prints in Brewhouse.
+* **Pinned ions section** — `water.pinned_ions` rows; the checked targets and their
+  values, so a reader can see what constrained the water solver.
+* **Salt dosing section** — `solver.water` present and `total_added_salt_mass_g > 0`;
+  mash and sparge additions against their dose volumes (`cascade.v_strike`,
+  `batch.sparge_salted_volume`).
+* **Water chemistry section** — `solver.water` present; predicted mash pH and the
+  realized ion profile against the target.
+* **Style conformance section** — `conformance` is not `null`; SAI and the
+  per-pillar verdicts already captured at freeze.
+* **Brew-day checklist enhancement** — settle what the checklist *is* before
+  authoring it. Today `batch.brew_day_steps` is a seeded list of nine moments with
+  static instructions. The open idea is carry-forward: inline the batch's own facts
+  per step — HLT fill and target temperature, first underlet volume, mash salt and
+  acid doses, top-up, sparge volume and temperature, boil time, hop additions,
+  knockout volume — so the sheet is executable without cross-reading the ledgers.
+  Needs decisions on which section owns each fact, copy vs reference, and
+  draft-vs-frozen behaviour; potentially a large change to the seeds and the data
+  model. Deliberately last.
 
 
 ## Engine robustness follow-ups
