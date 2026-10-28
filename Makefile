@@ -118,6 +118,8 @@ check:
 	@echo "Checking backend linting and architectural boundaries..."
 	cd backend && uv run ruff check . ../tests/backend ../scripts
 	cd backend && uv run tach check
+	@echo "Checking repo hygiene..."
+	node scripts/check-hygiene.mjs
 	@echo "Checking Firebase config..."
 	node scripts/check-firebase-config.mjs
 

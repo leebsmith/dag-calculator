@@ -67,39 +67,69 @@ export const LOCK_PAIRS = [
   ["backend/pyproject.toml", "backend/uv.lock"],
 ];
 
-export function findViolations({ staged, dirtyGenerated = [] }) {
+export function isFrozenPath(path) {
+  if (LIVING_EXCEPTIONS.has(path)) return false;
+  return FROZEN_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+// A manifest's dependency blocks, normalised to a comparable string. The lock
+// pair exists to catch a dependency change without its lockfile; editing a
+// script, a version field, or a tool setting is not that, and demanding a fresh
+// lockfile for it is how a rule gets worked around instead of followed.
+export function dependencyFingerprint(path, text) {
+  if (path.endsWith(".json")) {
+    const doc = JSON.parse(text);
+    return JSON.stringify([
+      doc.dependencies ?? {},
+      doc.devDependencies ?? {},
+      doc.optionalDependencies ?? {},
+      doc.peerDependencies ?? {},
+    ]);
+  }
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(
+      (line) => /^"[^"]+"\s*,?$/.test(line) || /^(dependencies|requires-python|dev)\s*=/.test(line)
+    )
+    .join("\n");
+}
+
+export function findViolations({ staged, dirtyGenerated = [], changedDeps = null }) {
   const stagedSet = new Set(staged);
-  const violations = [];
+  return [
+    ...frozenViolations(staged),
+    ...fixtureViolations(stagedSet),
+    ...lockViolations(stagedSet, changedDeps),
+    ...dirtyGenerated.map(
+      (path) =>
+        `${path} has unstaged edits; refusing to regenerate over them — stage or discard them first`
+    ),
+  ];
+}
 
-  for (const path of staged) {
-    if (LIVING_EXCEPTIONS.has(path)) continue;
+function frozenViolations(staged) {
+  return staged.filter((path) => isFrozenPath(path)).map((path) => {
     const frozen = FROZEN_PREFIXES.find((prefix) => path.startsWith(prefix));
-    if (frozen) {
-      violations.push(
-        `${path} is under ${frozen}, which is frozen (see AGENTS.md); use --no-verify only if this is intentional`
-      );
-    }
-  }
+    return `${path} is under ${frozen}, which is frozen (see AGENTS.md); use --no-verify only if this is intentional`;
+  });
+}
 
-  if (stagedSet.has(ARTIFACT) && !stagedSet.has(ARTIFACT_FIXTURE)) {
-    violations.push(
-      `${ARTIFACT} is staged but ${ARTIFACT_FIXTURE} is not — run \`make generate\``
-    );
-  }
+function fixtureViolations(stagedSet) {
+  if (!stagedSet.has(ARTIFACT) || stagedSet.has(ARTIFACT_FIXTURE)) return [];
+  return [`${ARTIFACT} is staged but ${ARTIFACT_FIXTURE} is not — run \`make generate\``];
+}
 
+function lockViolations(stagedSet, changedDeps) {
+  const out = [];
   for (const [manifest, lock] of LOCK_PAIRS) {
-    if (stagedSet.has(manifest) && !stagedSet.has(lock)) {
-      violations.push(`${manifest} is staged but ${lock} is not — regenerate the lockfile`);
+    if (!stagedSet.has(manifest)) continue;
+    if (changedDeps && !changedDeps.has(manifest)) continue;
+    if (!stagedSet.has(lock)) {
+      out.push(`${manifest} is staged but ${lock} is not — regenerate the lockfile`);
     }
   }
-
-  for (const path of dirtyGenerated) {
-    violations.push(
-      `${path} has unstaged edits; refusing to regenerate over them — stage or discard them first`
-    );
-  }
-
-  return violations;
+  return out;
 }
 
 function git(args, options = {}) {
@@ -125,10 +155,39 @@ function hasWorktreeEdits(path) {
   }
 }
 
+function blob(ref) {
+  try {
+    return git(["show", ref]);
+  } catch {
+    return null;
+  }
+}
+
+function changedManifests(staged) {
+  const changed = new Set();
+  for (const [manifest] of LOCK_PAIRS) {
+    if (!staged.includes(manifest)) continue;
+    const before = blob(`HEAD:${manifest}`);
+    const after = blob(`:${manifest}`);
+    if (before === null || after === null) {
+      changed.add(manifest);
+      continue;
+    }
+    if (dependencyFingerprint(manifest, before) !== dependencyFingerprint(manifest, after)) {
+      changed.add(manifest);
+    }
+  }
+  return changed;
+}
+
 function main() {
   const staged = stagedPaths();
   const dirtyGenerated = GENERATED_PATHS.filter(hasWorktreeEdits);
-  const violations = findViolations({ staged, dirtyGenerated });
+  const violations = findViolations({
+    staged,
+    dirtyGenerated,
+    changedDeps: changedManifests(staged),
+  });
 
   if (violations.length > 0) {
     console.error("pre-commit: refusing to continue");

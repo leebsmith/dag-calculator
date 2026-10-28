@@ -8,7 +8,9 @@ import {
   GENERATED_PATHS,
   GENERATORS,
   LOCK_PAIRS,
+  dependencyFingerprint,
   findViolations,
+  isFrozenPath,
 } from "../../scripts/precommit.mjs";
 
 const ROOT = new URL("../../", import.meta.url).pathname;
@@ -72,4 +74,51 @@ test("unstaged edits to a generated file block regeneration", () => {
   });
   assert.equal(violations.length, 1);
   assert.match(violations[0], /unstaged edits/);
+});
+
+test("a manifest change without a dependency change needs no lockfile", () => {
+  for (const [manifest, lock] of LOCK_PAIRS) {
+    assert.deepEqual(
+      findViolations({ staged: [manifest, lock], changedDeps: new Set() }),
+      [],
+      `${manifest} alone should not demand ${lock}`
+    );
+    assert.equal(findViolations({ staged: [manifest], changedDeps: new Set([manifest]) }).length, 1);
+  }
+});
+
+test("the dependency fingerprint ignores non-dependency edits", () => {
+  const before = '{"dependencies":{"a":"1"},"scripts":{"test":"x"}}';
+  const scriptOnly = '{"dependencies":{"a":"1"},"scripts":{"test":"y"}}';
+  const bumped = '{"dependencies":{"a":"2"}}';
+  assert.equal(
+    dependencyFingerprint("package.json", before),
+    dependencyFingerprint("package.json", scriptOnly)
+  );
+  assert.notEqual(
+    dependencyFingerprint("package.json", before),
+    dependencyFingerprint("package.json", bumped)
+  );
+});
+
+test("the TOML fingerprint reads requirement lines, not tool settings", () => {
+  const base = '[project]\ndependencies = [\n  "fastapi>=1",\n]\n\n[tool.ruff]\nline-length = 100\n';
+  const retuned = `[project]\ndependencies = [\n  "fastapi>=1",\n]\n\n[tool.ruff]\nline-length = 120\n`;
+  const bumped = '[project]\ndependencies = [\n  "fastapi>=2",\n]\n\n[tool.ruff]\nline-length = 100\n';
+  assert.equal(
+    dependencyFingerprint("pyproject.toml", base),
+    dependencyFingerprint("pyproject.toml", retuned)
+  );
+  assert.notEqual(
+    dependencyFingerprint("pyproject.toml", base),
+    dependencyFingerprint("pyproject.toml", bumped)
+  );
+});
+
+test("the frozen predicate keeps the reconciled UI model living", () => {
+  assert.equal(isFrozenPath("docs/adsco/ui.md"), false);
+  for (const prefix of FROZEN_PREFIXES) {
+    assert.equal(isFrozenPath(`${prefix}anything.md`), true);
+  }
+  assert.equal(isFrozenPath("docs/engine.md"), false);
 });
