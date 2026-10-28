@@ -75,7 +75,15 @@ Ranked by cost per future change:
 
 ## 4. Phases
 
-Each phase assumes the previous commit is green. Read only the listed context.
+Each phase assumes the previous commit is green.
+
+**Reading discipline.** Paths in a phase's read list are relative to
+`frontend/src/` unless they start with `frontend/`, `tests/`, `scripts/`,
+`backend/`, or `docs/`. A phase reads its `Read first` list plus the files it
+edits, and nothing else. A repo-wide grep is allowed only to find the call sites
+of a symbol being moved; do not follow what the grep returns. The `Do not read`
+line is binding: if a phase seems to need something on it, stop and record why in
+that phase's `Landed.` note rather than widening the read.
 
 ### Phase 0 — Lint the frontend source (½ day)
 
@@ -86,6 +94,9 @@ complexity thresholds wait for Phase 4.
 `tests/**`), `frontend/package.json` `lint`, `Makefile` `check:`,
 `tests/guards/import-direction.test.js` (the layer map to mirror),
 `frontend/src/main.js` (the global surface).
+
+**Do not read.** `adapters/cards/**`, `views/**`, `store/**`, `engine/**`,
+`partials/**`, backend, `docs/**`. Nothing on those paths changes shape here.
 
 **Owns.** `eslint.config.js`, `frontend/package.json` (the `lint` script),
 `Makefile` (`check:`), the violations the new rules surface.
@@ -118,6 +129,10 @@ reason; a new one fails.
 `frontend/src/adapters/installers.js`, `tests/guards/installer-contract.test.js`,
 `tests/guards/alpine-handlers.test.js`, `frontend/src/views/steps.js` (partial ↔
 card mapping), `scripts/emit-artifact-inventory.mjs` (the generator pattern).
+
+**Do not read.** Card bodies (`adapters/cards/**`), `views/**` other than
+`steps.js`, `store/**`, `engine/**`, `partials/**` (read a partial only when the
+new template rule reports it), backend.
 
 **Owns.** `contract.js`, `installers.js` (shared-interface declarations),
 `scripts/emit-ownership-index.mjs` (new), `docs/frontend-ownership.md` (generated),
@@ -155,10 +170,14 @@ becomes a view function or disappears.
 
 **Goal.** Adapters stop formatting rows; the 67 no-`this` methods move to `views`.
 
-**Read first.** The inventory from Phase 1; `views/producer/{cell,collection,table}.js`
-(the existing pure surface), `views/hamilton.js`, `views/waterRatio.js`,
-`adapters/cards/{hops,malt,yeast,trace-malts,mash,water,late-additions,catalogDraft}.js`,
-`tests/frontend/{hops-card,malt-card,card-display,water-card,late-addition-*}.test.js`.
+**Read first.** The generated ownership index; the pure surface the extracted
+function will live beside — `views/producer/cell.js`, `views/producer/collection.js`,
+`views/producer/table.js`, and the one analogous module (`views/hamilton.js` or
+`views/waterRatio.js`) whose shape the new module copies. Then, **for the card in
+hand only**: its adapter, its test suite, and the partial that binds it.
+
+**Do not read.** `engine/**`, `store/**`, `partials/**` other than the card's own,
+backend, `docs/**`, and the seven cards not currently being extracted.
 
 **Owns.** New `views/producer/<card>Rows.js` (or `<card>Fields.js`) modules; the
 adapters that delegate to them; `frontend/src/views.js` barrel if one is added.
@@ -167,9 +186,10 @@ adapters that delegate to them; `frontend/src/views.js` barrel if one is added.
 and names; the body becomes a one-line delegation. A formatter that needs app
 state stays in the adapter. Row/field formatters are pure `(row) → string`.
 
-**Work.** Extract in this order, one commit each:
-`hops` (10) → `late-additions` (9) → `malt` (2) → `yeast` (2) → `trace-malts` (3)
-→ `mash` rest helpers (6) → `catalogDraft` (13) → `fieldActions` helpers (5).
+**Work.** One card per commit, in this order:
+`hops` (10 no-`this` methods) → `late-additions` (9) → `malt` (2) → `yeast` (2) →
+`trace-malts` (3) → `mash` rest helpers (6) → `catalogDraft` (13) →
+`fieldActions` helpers (5). Each commit reads only its own card's three files.
 
 **Gate.** The card's own suite plus `card-display` stay green; the adapter method
 count and file size shrink; `make check`.
@@ -188,6 +208,9 @@ reason; card refresh order is data.
 `adapters/cards/style/{navigator,targets}.js` (`computeStyleTarget`,
 `syncScalePinState`), `engine/fermentation.js`, `views/producer/stylePlot.js`,
 `adapters/stepView.js`, `tests/frontend/{style-card,late-additions-*,fermentation-space}.test.js`.
+
+**Do not read.** The water, hop, malt, mash, yeast, trace-malts, brew-day and
+catalog cards; `store/**`; `partials/**`; backend; report code.
 
 **Owns.** New `views/producer/{scalePreview,styleTarget}.js`; `adapters/stepView.js`;
 `adapters/cards/*` (delegations); `tests/frontend/step-pipeline.test.js` (new).
@@ -222,6 +245,10 @@ regress.
 
 **Read first.** `eslint.config.js`, the Phase 2–3 diff, `docs/frontend-ownership.md`.
 
+**Do not read.** Any source file. This phase only chooses thresholds and named
+overrides from violations the linter reports; a threshold that needs code read to
+justify is a threshold that is wrong.
+
 **Owns.** `eslint.config.js`, a small `/* eslint-disable */`-free allowlist
 expressed as per-file rule overrides with reasons, `Makefile` if `check` needs it.
 
@@ -243,6 +270,9 @@ baseline file.
 **Read first.** `store/{persistence,setup,recipes}.js`, `adapters/{batchClient,libraryClient,download}.js`,
 `main.js`, `tests/guards/import-direction.test.js` (the three baselined entries),
 `tests/frontend/persistence.test.js`, `tests/frontend/recipes.test.js`.
+
+**Do not read.** Cards, `views/**`, `partials/**`, `engine/**`, backend. The
+seam is between the store and three client modules; nothing else participates.
 
 **Owns.** `store/*`, `main.js`, `tests/guards/import-direction.test.js`,
 `tests/frontend/*` fakes.
