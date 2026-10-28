@@ -140,7 +140,7 @@ test-fuzz:
 
 coverage:
 	@echo "Frontend coverage (loaded modules)..."
-	cd frontend && node --test --experimental-test-coverage "../tests/**/*.test.js"
+	cd frontend && node ../scripts/run-tests.mjs --experimental-test-coverage
 	@echo "Backend coverage..."
 	cd backend && uv run --with pytest-cov pytest ../tests/backend/ -p no:tach --cov=app --cov-report=term-missing
 	@rm -f backend/.coverage
