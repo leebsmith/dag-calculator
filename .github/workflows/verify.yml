@@ -1,0 +1,57 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Install backend dependencies
+        run: uv sync --project backend --frozen
+
+      - name: Lint, boundaries, hygiene
+        run: make check
+
+      - name: Hygiene over the pushed range
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -n "$BASE" ] && [ "$BASE" != "0000000000000000000000000000000000000000" ]; then
+            node scripts/check-hygiene.mjs --since "$BASE"
+          else
+            node scripts/check-hygiene.mjs
+          fi
+
+      - name: Tests
+        run: make test
+
+      - name: Production build
+        run: make build
+
+# Deliberately not run here:
+#   make test-fuzz    — seeded generative search; a failure is a case to
+#                       reproduce from its seed, not a diff to review.
+#   make test-oracle  — reads the legacy checkout via BREWING_ORACLE_REPO.
+# `make verify-full` stays the local gate for both.
