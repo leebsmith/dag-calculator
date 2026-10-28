@@ -2,7 +2,11 @@
 
 ## In flight
 
-* Nothing in flight; the attenuation refactor closed at P3c.
+* **Decomposition & display contract** — nine phases, one display rule, one
+  error/constraint truth, one derivation site, and the solver package splits.
+  Phase 0 (contract guards) is the first commit; see
+  `plans/decomposition-and-display-contract.md` for the per-phase context
+  contract.
 
 ## Next (in order)
 
@@ -33,6 +37,17 @@
 
 ## Later
 
+* **Alpine root maintainability** — the single reactive root is a framework
+  requirement and `installer-contract` keeps it correct, but nothing keeps it
+  comprehensible: 16 installers declare 567 keys and the assembled app exposes
+  440 enumerable members plus 180 non-enumerable getters (~620 members on one
+  object). Flat scope means a partial may call any card's method (A8 checks
+  existence, not ownership); `Object.assign` and `Object.defineProperties`
+  co-exist so enumerability is bespoke per card; card refresh order is implicit.
+  Directions: namespaced members (`app.style.*`), one `defineCard()` helper, A8
+  extended to ownership, a generated ownership index from `INSTALLERS`. Schedule
+  after the decomposition program — `plans/decomposition-and-display-contract.md`
+  §3.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
