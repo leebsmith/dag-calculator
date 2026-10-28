@@ -2,15 +2,18 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — six phases, planned in
-  `plans/alpine-maintainability-and-module-linting.md`: lint the frontend source
-  (it has one rule today), give every app member an owner backed by a generated
-  index, extract the 67 no-`this` formatters out of the adapters, split the two
-  ~50-line card computations, ratchet size and complexity, and invert the store's
-  three client imports. Measured at `d285ffa`: 19 installers declare 567 members
-  (388 enumerable, 179 hidden); 13 of 19 installers read keys owned elsewhere
-  (≥166 foreign keys); 353 adapter methods, 28 hot. Each phase lands its own
-  `Landed.` note and the program archives to `plans/archive/` when closed.
+* **Alpine maintainability and module linting** — **next: Phase 0, `Put the
+  frontend source under a lint contract`** (the source runs one rule today, so
+  nothing catches a stray `console`, a loose comparison, or a layering breach at
+  edit time). The five phases that follow: give every app member an owner backed
+  by a generated index, extract the 67 no-`this` formatters out of the adapters,
+  split the two ~50-line card computations and declare the refresh pipeline,
+  ratchet size and complexity, and invert the store's three client imports.
+  Measured at `d285ffa`: 19 installers declare 567 members (388 enumerable, 179
+  hidden); 13 of 19 installers read keys owned elsewhere (≥166 foreign keys); 353
+  adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program
+  archives to `plans/archive/` when closed — every phase, gate, read fence and
+  commit is in `plans/alpine-maintainability-and-module-linting.md`.
 
 ## Next (in order)
 
