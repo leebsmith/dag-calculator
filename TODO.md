@@ -4,11 +4,11 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phase 0 (contract guards) landed: `tests/guards/adapter-format-contract.test.js`
-  baselines 33 adapter formatting sites, and
-  `tests/guards/import-direction.test.js` baselines three `store → adapters`
-  imports. Next is Phase 1, one cell formatter (`views/producer/cell.js`),
-  which drives the adapter allowlist to zero. See
+  Phases 0–1 landed: the adapter-format allowlist is empty, and every numeric
+  readout routes through `views/producer/cell.js` (`formatCell` / `cellLabel`).
+  Next is Phase 2, backend error and constraint truth: one
+  `SolverValidationError`, one code → binding-constraint table, one
+  extract/sugar derivation helper (`core/errors.py`). See
   `plans/decomposition-and-display-contract.md` for the per-phase context
   contract.
 

@@ -13,7 +13,7 @@ import { dialogRestore } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
-import { formatWithDecimals } from "../utils.js";
+import { formatWithDecimals, unitSymbol } from "../utils.js";
 
 const LINEAGE_FIELDS = new Set(["forked_from_id", "forked_from_name"]);
 // Producer-contract metadata: citations and the yield basis are captured, not
@@ -171,7 +171,7 @@ export function registerLibraryUi(app, ctx) {
               kind: "number",
               dimension: spec.dimension,
               unitId,
-              symbol: UNIT_SYMBOLS[spec.dimension]?.[unitId] ?? unitId,
+              symbol: unitSymbol(UNIT_SYMBOLS, spec.dimension, unitId),
               decimals: unitDecimals(spec.dimension, unitId),
             };
           });

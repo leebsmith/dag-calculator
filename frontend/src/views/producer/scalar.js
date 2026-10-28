@@ -4,8 +4,9 @@
 import { refKey, resolveReference } from "../../engine/paths.js";
 import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
+import { unitSymbol } from "../../utils.js";
 import { applyPresentation, presentationFor } from "../registry/presentation.js";
-import { formatValue } from "./format.js";
+import { formatCell } from "./cell.js";
 import { reportError } from "../../observability.js";
 
 // AI AGENT HOOKS: Use this valuator for scalar field resolution and display
@@ -41,14 +42,11 @@ export function valuateScalar(field, engine, ctx, nl) {
     unitId && typeof value === "number" && artifact
       ? fromBase(artifact, field.dimension, unitId, value, nl)
       : value;
-  const symbol = unitId
-    ? field.symbol ?? UNIT_SYMBOLS[field.dimension]?.[unitId] ?? unitId
-    : null;
+  const symbol = unitId ? field.symbol ?? unitSymbol(UNIT_SYMBOLS, field.dimension, unitId) : null;
   // A toggleable field with no unit id and no registry `unit` (e.g. equipment
   // conversion efficiency) still needs a pill label — fall back to the
   // dimension's base-unit symbol (so a fraction reads "×1", not blank).
-  const fallbackSymbol =
-    !symbol && toggleable ? UNIT_SYMBOLS[field.dimension]?.[baseUnitId] ?? null : null;
+  const fallbackSymbol = !symbol && toggleable ? unitSymbol(UNIT_SYMBOLS, field.dimension, baseUnitId, null) : null;
   // Display precision: registry override → unit-level → dimension fallback.
   // A null `unitId` (no preference set) still displays the base unit, so
   // resolve precision against the effective unit the value is shown in.
@@ -56,10 +54,9 @@ export function valuateScalar(field, engine, ctx, nl) {
   // Editable number inputs render their natural value (no fixed-decimal
   // padding) so a debounced re-render never rewrites "6" into "6.0" while the
   // user is mid-keystroke. Readouts keep their pinned precision.
-  const display =
-    field.control !== "number" && decimals != null && typeof shown === "number"
-      ? shown.toFixed(decimals)
-      : formatValue(shown);
+  const display = formatCell(shown, {
+    decimals: field.control === "number" ? null : decimals,
+  }).display;
   const out = {
     ...field,
     value,

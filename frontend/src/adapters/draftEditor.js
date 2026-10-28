@@ -212,7 +212,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     // color_lovibond value, mirroring the collection grids' unit handling.
     colorUnit() {
       const unitId = this.grainColorUnit();
-      return unitSymbol(UNIT_SYMBOLS, "grain_color", unitId) ?? unitId;
+      return unitSymbol(UNIT_SYMBOLS, "grain_color", unitId);
     },
 
     grainColorUnit() {

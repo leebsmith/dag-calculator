@@ -5,12 +5,12 @@
 
 import { resolveReference } from "../../engine/paths.js";
 import { displayValue, nonlinearFns } from "../producer.js";
-import { formatValue } from "../../utils.js";
 import { reportError } from "../../observability.js";
 import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { resolvedSugarMasses } from "./sugarAllocation.js";
+import { cellLabel, formatCell } from "./cell.js";
 
 // Collection fields are row values, not scalars: the catalog lists them for a
 // report that indexes a row, but there is no single value to format.
@@ -24,18 +24,14 @@ function formatEntry(artifact, entry, value, nl) {
   if (!entry || value === null || value === undefined) return { text: "—" };
   if (typeof value !== "number") return { text: String(value) };
   const shown = displayValue(artifact, entry.dimension, entry.unit, value, nl);
-  const number =
-    entry.decimals != null && typeof shown === "number"
-      ? shown.toFixed(entry.decimals)
-      : formatValue(shown);
-  const symbol = entry.symbol ?? null;
-  return symbol
+  const cell = formatCell(shown, { decimals: entry.decimals });
+  return entry.symbol
     ? {
-        text: symbol === "%" ? `${number}${symbol}` : `${number} ${symbol}`,
-        number,
-        unit: symbol,
+        text: cellLabel(cell.display, { symbol: entry.symbol }),
+        number: cell.display,
+        unit: entry.symbol,
       }
-    : { text: number, number };
+    : { text: cell.display, number: cell.display };
 }
 
 function formatPpg(artifact, yieldFraction) {
@@ -45,7 +41,7 @@ function formatPpg(artifact, yieldFraction) {
   const factor =
     (artifact.constants?.sucrose_yield_ldk?.value ?? 0) /
     (artifact.dimensions?.extract_yield?.units?.gal_deg_per_lb?.factor ?? 1);
-  const number = (yieldFraction * factor).toFixed(1);
+  const number = formatCell(yieldFraction * factor, { decimals: 1 }).display;
   return { text: number, number };
 }
 

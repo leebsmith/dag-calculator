@@ -4,7 +4,7 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
-import { countLabel, formatPercent, formatValueWithUnit, formatWithDecimals } from "../../utils.js";
+import { countLabel, formatPercent, formatValueWithUnit, formatWithDecimals, toPercentValue } from "../../utils.js";
 import { figureMarkFor } from "../../views/producer/table.js";
 
 const MAX_VISIBLE = 25;
@@ -132,23 +132,23 @@ export function registerMaltCard(app, ctx) {
     maltValidation: {
       configurable: true,
       get() {
-        const total = Number((this.maltTotalPct * 100).toFixed(1));
+        const total = toPercentValue(this.maltTotalPct, 1);
         if (total === 100) {
           return { type: "balanced", label: "100.0% Balanced", class: "badge-success" };
         }
         if (total === 0) return { type: "unconfigured", label: "Unconfigured", class: "badge-muted" };
         if (total < 100) {
-          const remaining = (100 - total).toFixed(1);
+          const remaining = formatWithDecimals(100 - total, 1);
           return {
             type: "deficit",
-            label: `${total.toFixed(1)}% (Remaining ${remaining}%)`,
+            label: `${formatWithDecimals(total, 1)}% (Remaining ${remaining}%)`,
             class: "badge-amber",
           };
         }
-        const excess = (total - 100).toFixed(1);
+        const excess = formatWithDecimals(total - 100, 1);
         return {
           type: "surplus",
-          label: `${total.toFixed(1)}% (Excess +${excess}%)`,
+          label: `${formatWithDecimals(total, 1)}% (Excess +${excess}%)`,
           class: "badge-danger",
         };
       },

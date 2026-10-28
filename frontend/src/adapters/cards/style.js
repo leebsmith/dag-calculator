@@ -30,6 +30,7 @@ import {
   formatPercentValue,
   formatWithDecimals,
   provenanceFor,
+  toPercentValue,
 } from "../../utils.js";
 import { reportError } from "../../observability.js";
 
@@ -461,8 +462,8 @@ export function registerStyleCard(app, ctx) {
         const bottom = top + PLOT_PX;
         const sx = (oe) => left + ((oe - xMin) / (xMax - xMin)) * PLOT_PX;
         const sy = (ae) => bottom - ((ae - yMin) / (yMax - yMin)) * PLOT_PX;
-        const px = (value) => sx(value).toFixed(1);
-        const py = (value) => sy(value).toFixed(1);
+        const px = (value) => formatWithDecimals(sx(value), 1);
+        const py = (value) => formatWithDecimals(sy(value), 1);
 
         const corners = [
           [xMin, yMin],
@@ -499,12 +500,12 @@ export function registerStyleCard(app, ctx) {
             const x = sx(sgToPlato(target));
             pinPath = `M${px(sgToPlato(target))} ${top} L${px(sgToPlato(target))} ${bottom}`;
             pinLabel = `OG ${formatGravity(target)}`;
-            pinLabelAt = { x: (x + 4).toFixed(1), y: top + 12, anchor: "start" };
+            pinLabelAt = { x: formatWithDecimals(x + 4, 1), y: top + 12, anchor: "start" };
           } else if (pin === "fg") {
             const y = sy(sgToPlato(target));
             pinPath = `M${left} ${py(sgToPlato(target))} L${right} ${py(sgToPlato(target))}`;
             pinLabel = `FG ${formatGravity(target)}`;
-            pinLabelAt = { x: right - 4, y: (y - 4).toFixed(1), anchor: "end" };
+            pinLabelAt = { x: right - 4, y: formatWithDecimals(y - 4, 1), anchor: "end" };
           } else {
             const contour = abvContour({
               oeMin: xMin,
@@ -519,7 +520,7 @@ export function registerStyleCard(app, ctx) {
               const topMost = contour.slice().sort((a, b) => b[1] - a[1])[0];
               pinLabelAt = {
                 x: px(topMost[0]),
-                y: (sy(topMost[1]) + 12).toFixed(1),
+                y: formatWithDecimals(sy(topMost[1]) + 12, 1),
                 anchor: "middle",
               };
             }
@@ -565,7 +566,7 @@ export function registerStyleCard(app, ctx) {
             })),
             y: tickValues(yMin, yMax).map((value) => ({
               x: left - 6,
-              y: (sy(value) + 3).toFixed(1),
+              y: formatWithDecimals(sy(value) + 3, 1),
               label: formatWithDecimals(value, 1),
             })),
           },
@@ -685,28 +686,28 @@ export function registerStyleCard(app, ctx) {
     ibuGuDisplay: {
       configurable: true,
       get() {
-        return typeof this.ibuGu === "number" ? this.ibuGu.toFixed(2) : "—";
+        return formatWithDecimals(this.ibuGu, 2, { dash: "—" });
       },
     },
     whirlpoolPctDisplay: {
       configurable: true,
       get() {
         const fraction = this.whirlpoolFraction;
-        return typeof fraction === "number" ? Math.round(fraction * 100) : 0;
+        return typeof fraction === "number" ? toPercentValue(fraction, 0) : 0;
       },
     },
     boilIbuDisplay: {
       configurable: true,
       get() {
         const ibu = this.boilIbu;
-        return typeof ibu === "number" ? ibu.toFixed(1) : "—";
+        return typeof ibu === "number" ? formatWithDecimals(ibu, 1) : "—";
       },
     },
     whirlpoolIbuDisplay: {
       configurable: true,
       get() {
         const ibu = this.whirlpoolIbu;
-        return typeof ibu === "number" ? ibu.toFixed(1) : "—";
+        return typeof ibu === "number" ? formatWithDecimals(ibu, 1) : "—";
       },
     },
   });

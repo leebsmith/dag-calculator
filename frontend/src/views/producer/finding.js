@@ -3,8 +3,9 @@
 
 import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
+import { unitSymbol } from "../../utils.js";
 import { nonlinearFns } from "./valuation.js";
-import { formatValue } from "./format.js";
+import { formatCell, cellLabel } from "./cell.js";
 
 export function createFindingFormatter(artifact, engine, ui) {
   const unitMode = ui?.unitMode ?? {};
@@ -13,11 +14,10 @@ export function createFindingFormatter(artifact, engine, ui) {
     if (typeof value !== "number" || !Number.isFinite(value)) return "—";
     const dim = UNIT_DIMENSIONS.find((entry) => entry.id === dimension);
     const unitId = dim ? unitMode[dimension] ?? dim.default ?? dim.units[0][0] : null;
-    if (!unitId) return formatValue(value);
+    if (!unitId) return formatCell(value).display;
     const shown = fromBase(artifact, dimension, unitId, value, nl);
     const decimals = unitDecimals(dimension, unitId);
-    const text = decimals != null ? Number(shown).toFixed(decimals) : formatValue(shown);
-    const symbol = UNIT_SYMBOLS[dimension]?.[unitId] ?? unitId;
-    return `${text} ${symbol}`.trim();
+    const symbol = unitSymbol(UNIT_SYMBOLS, dimension, unitId);
+    return cellLabel(shown, { decimals, symbol });
   };
 }

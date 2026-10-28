@@ -36,7 +36,7 @@ export function registerMashCard(app, ctx) {
     restUseTempDisplay(rest) {
       if (!rest || rest.use_temp_c == null) return "";
       const v = this._convert("temperature", rest.use_temp_c, "degC");
-      return Number.isFinite(v) ? v.toFixed(1) : "";
+      return Number.isFinite(v) ? formatWithDecimals(v, 1) : "";
     },
 
     restTempRangeDisplay(restId) {
@@ -239,7 +239,7 @@ export function registerMashCard(app, ctx) {
       configurable: true,
       get() {
         const unitId = this.unitMode?.temperature ?? "degC";
-        return UNIT_SYMBOLS.temperature[unitId] ?? unitId;
+        return unitSymbol(UNIT_SYMBOLS, "temperature", unitId);
       },
     },
     doughInDisplay: {
@@ -248,7 +248,7 @@ export function registerMashCard(app, ctx) {
         const v = this.doughInInheritedTempC;
         if (v == null) return "";
         const d = this._convert("temperature", v, "degC");
-        return Number.isFinite(d) ? d.toFixed(1) : "";
+        return Number.isFinite(d) ? formatWithDecimals(d, 1) : "";
       },
     },
     totalMashTimeMin: {
@@ -291,7 +291,7 @@ export function registerMashCard(app, ctx) {
     mashThicknessUnit: {
       configurable: true,
       get() {
-        return unitSymbol(UNIT_SYMBOLS, "mash_thickness", this.mashThicknessUnitId) ?? this.mashThicknessUnitId;
+        return unitSymbol(UNIT_SYMBOLS, "mash_thickness", this.mashThicknessUnitId);
       },
     },
     mashThicknessDisplay: {

@@ -3,18 +3,18 @@
 
 import { filterCatalog } from "../../views/catalog.js";
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
-import { resultCounter, toggleFilter } from "../../utils.js";
+import { resultCounter, toggleFilter, toPercentValue } from "../../utils.js";
 
 const MAX_VISIBLE = 25;
 
-const formatPercent = (f) => (typeof f === "number" ? String(Math.round(f * 1000) / 10) : "");
+// A fraction as a percentage number without the "%" suffix, e.g. "75" / "75.5".
+const percentText = (fraction) => String(toPercentValue(fraction, 1));
 
 function attenuationTier(pct) {
   if (typeof pct !== "number") return "";
-  const p = pct * 100;
-  if (p < 70.5) return "low";
-  if (p < 75.5) return "medium";
-  if (p < 82.5) return "high";
+  if (pct < 0.705) return "low";
+  if (pct < 0.755) return "medium";
+  if (pct < 0.825) return "high";
   return "super";
 }
 
@@ -39,7 +39,7 @@ export function registerYeastCard(app, ctx) {
     derateHelpOpen: false,
 
     yeastAttenuation(y) {
-      return y ? `${formatPercent(y.attenuation_pct)}%` : "";
+      return y ? `${percentText(y.attenuation_pct)}%` : "";
     },
 
     // Selecting a strain records the selection and snapshot. The batch AA is
@@ -84,14 +84,14 @@ export function registerYeastCard(app, ctx) {
       const raw = element ? element.value : valueOrElement;
       const field = this.yeastField(N.derate);
       const previous = this.master.getRoot(N.derate);
-      const previousDisplay = field.display ?? formatPercent(previous);
+      const previousDisplay = field.display ?? percentText(previous);
       const value = Number(raw);
       if (raw === "" || !Number.isFinite(value) || value < 0 || value > 25) {
         if (element) element.value = previousDisplay;
         return;
       }
       this.setRoot(N.derate, value / 100);
-      if (element) element.value = formatPercent(value / 100);
+      if (element) element.value = percentText(value / 100);
       this.scheduleSolve();
       this.notify();
     },

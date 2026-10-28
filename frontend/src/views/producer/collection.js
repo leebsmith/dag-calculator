@@ -3,6 +3,7 @@
 
 import { fromBase } from "../../engine/units.js";
 import { figureMarkFor } from "./table.js";
+import { formatCell } from "./cell.js";
 
 // AI AGENT HOOKS: Use this valuator for collection-table display conversion.
 // Do not duplicated this logic elsewhere.
@@ -14,14 +15,12 @@ export function valuateCollection(field, engine, artifact, collectionDomains, nl
       if (col.displayUnit && col.dimension && typeof row[col.id] === "number") {
         out[col.id] = fromBase(artifact, col.dimension, col.displayUnit, row[col.id], nl);
       }
-      // Round/format displayed numbers so converted values don't leak float
-      // fuzz (e.g. 80.00000000000001); honor a column `decimals`. Editable inputs
-      // override this with their raw draft text while focused.
+      // Converted values can carry float fuzz (e.g. 80.00000000000001), so every
+      // numeric cell goes through the one display rule; a column `decimals` pins
+      // it, otherwise it trims. Editable inputs keep their raw draft text while
+      // focused.
       if (typeof out[col.id] === "number") {
-        out[col.id] =
-          col.decimals != null
-            ? out[col.id].toFixed(col.decimals)
-            : Math.round(out[col.id] * 1000) / 1000;
+        out[col.id] = formatCell(out[col.id], { decimals: col.decimals }).display;
       }
       const mark = figureMarkFor(col.id, row);
       if (mark && typeof row[col.id] === "number") {

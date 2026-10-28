@@ -22,6 +22,7 @@ import {
   formatWithDecimals,
   countLabel,
   resultCounter,
+  roundTo,
 } from "../../utils.js";
 
 
@@ -57,7 +58,7 @@ function numberAt(engine, path, fallback = 0) {
 }
 
 function rounded(value) {
-  return Math.round((Number(value) || 0) * 1e6) / 1e6;
+  return roundTo(Number(value) || 0, 6);
 }
 
 const SCALE_PINS = [

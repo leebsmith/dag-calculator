@@ -1,6 +1,7 @@
 # Decomposition & display contract
 
-Status: **in flight**. Phase 0 (contract guards) landed; Phase 1 is next.
+Status: **in flight**. Phases 0 (contract guards) and 1 (one cell formatter)
+landed; Phase 2 is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -158,6 +159,18 @@ shrinks to zero.
 
 **Handoff.** Record the new helper's path and signature in the guardrails skill's
 function index. Later phases assume it exists.
+
+**Landed.** `views/producer/cell.js` exports `formatCell(value, { decimals,
+symbol }) → { display, unit }` and `cellLabel(value, { decimals, symbol, dash })`;
+`table`/`scalar`/`finding`/`collection`/`reportFormat` call it, and the deleted
+`views/producer/format.js` re-export shim had no other consumer. The adapter
+allowlist is empty. The `unit-symbol-fallback` rule now matches only the inline
+`??` fallback (`UNIT_SYMBOLS[d]?.[u] ?? u`), so `unitSymbol(UNIT_SYMBOLS, …)` —
+which the rule's own fix text prescribes — is no longer a violation. The card
+sites route through the barrel (`formatPercent`, `formatPercentRange`,
+`toPercentValue`, `formatWithDecimals`), and `Math.round(v * 1000) / 1000` is
+gone. The report-bundle fixture did not move: it is emitted from the backend
+record, not the JS producer.
 
 ### Phase 2 — Backend error and constraint truth (½ day)
 

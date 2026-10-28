@@ -3,8 +3,9 @@
 
 import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
+import { unitSymbol } from "../../utils.js";
 import { describeField } from "./projection.js";
-import { formatValue } from "./format.js";
+import { formatCell } from "./cell.js";
 import { reportError } from "../../observability.js";
 
 // Display markers for an ingredient figure. The number itself never changes:
@@ -34,16 +35,15 @@ export function figureMarkFor(columnId, row) {
 }
 
 function cellDisplay(artifact, dimension, value, unitMode, nl, meta = {}) {
-  if (typeof value !== "number" || !dimension) return { display: formatValue(value), unit: null };
+  if (typeof value !== "number" || !dimension) return formatCell(value);
   const dimDef = UNIT_DIMENSIONS.find((d) => d.id === dimension);
   const unitId = dimDef
     ? meta.displayUnit ?? unitMode[dimension] ?? dimDef.default ?? dimDef.units[0][0]
     : null;
   const shown = dimDef && unitId ? fromBase(artifact, dimension, unitId, value, nl) : value;
   const decimals = meta.decimals ?? unitDecimals(dimension, unitId);
-  const display = decimals != null ? shown.toFixed(decimals) : formatValue(shown);
-  const symbol = dimDef ? UNIT_SYMBOLS[dimension]?.[unitId] ?? unitId : meta.unit ?? null;
-  return { display, unit: symbol };
+  const symbol = dimDef ? unitSymbol(UNIT_SYMBOLS, dimension, unitId) : meta.unit ?? null;
+  return formatCell(shown, { decimals, symbol });
 }
 
 // AI AGENT HOOKS: Use this valuator for readout-table cells and notes.
@@ -70,7 +70,7 @@ export function valuateTable(field, artifact, engine, unitMode, nl, registry = {
         continue;
       }
       if (typeof value !== "number") {
-        cells[col.id] = { text: formatValue(value) };
+        cells[col.id] = { text: formatCell(value).display };
         continue;
       }
       let dimension = null;

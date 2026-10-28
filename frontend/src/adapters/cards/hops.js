@@ -5,7 +5,7 @@ import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS, unitDecimals } from "../../views/registry/units.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
-import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
+import { countLabel, cycleUnit, formatPercent, formatPercentRange, formatValueWithUnit, formatWithDecimals, isFiniteNumber, resultCounter, toPercentValue, unitSymbol } from "../../utils.js";
 import { reportError } from "../../observability.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
@@ -141,7 +141,11 @@ export function registerHopCard(app, ctx) {
   const formatMass = (kg, unit) => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
     const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
-    return `${value.toFixed(unitDecimals("mass", unit))} ${UNIT_SYMBOLS.mass?.[unit] ?? unit}`;
+    return formatValueWithUnit(
+      formatWithDecimals(value, unitDecimals("mass", unit)),
+      unitSymbol(UNIT_SYMBOLS, "mass", unit),
+      { dash: "—" }
+    );
   };
 
   const formatTemp = (tempC) => {
@@ -154,7 +158,11 @@ export function registerHopCard(app, ctx) {
       tempC,
       nonlinearFns(artifact, engine)
     );
-    return `${formatWithDecimals(value, 1)} ${UNIT_SYMBOLS.temperature?.[unitId] ?? unitId}`;
+    return formatValueWithUnit(
+      formatWithDecimals(value, unitDecimals("temperature", unitId)),
+      unitSymbol(UNIT_SYMBOLS, "temperature", unitId),
+      { dash: "—" }
+    );
   };
 
   Object.assign(app, {
@@ -193,7 +201,7 @@ export function registerHopCard(app, ctx) {
 
     hopAlpha(row) {
       return typeof row?.alpha_acid_pct === "number"
-        ? `${(row.alpha_acid_pct * 100).toFixed(1)}%`
+        ? formatPercent(row.alpha_acid_pct, 1)
         : "—";
     },
 
@@ -201,7 +209,7 @@ export function registerHopCard(app, ctx) {
     // context (a descriptive range, never a gate).
     hopAlphaInput(row) {
       return typeof row?.alpha_acid_pct === "number"
-        ? Number((row.alpha_acid_pct * 100).toFixed(2))
+        ? toPercentValue(row.alpha_acid_pct, 2)
         : "";
     },
 
@@ -210,7 +218,7 @@ export function registerHopCard(app, ctx) {
       const lo = record?.alpha_acid_min_pct;
       const hi = record?.alpha_acid_max_pct;
       if (!isFiniteNumber(lo) || !isFiniteNumber(hi)) return "";
-      return `stock ${(lo * 100).toFixed(1)}–${(hi * 100).toFixed(1)}%`;
+      return `stock ${formatPercentRange(lo, hi, { decimals: 1 })}`;
     },
 
     hopAlphaOutsideStock(row) {
@@ -238,12 +246,14 @@ export function registerHopCard(app, ctx) {
 
     hopBoilPct(row) {
       return typeof row?.boil_time_fraction === "number"
-        ? `${Math.round(row.boil_time_fraction * 100)}%`
+        ? formatPercent(row.boil_time_fraction, 0)
         : "—";
     },
 
     hopMinutes(row) {
-      return typeof row?.minutes === "number" ? `${row.minutes.toFixed(0)} min` : "—";
+      return typeof row?.minutes === "number"
+        ? formatValueWithUnit(formatWithDecimals(row.minutes, 0), "min")
+        : "—";
     },
 
     hopTemp(row) {
@@ -251,11 +261,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopIbu(row) {
-      return typeof row?.ibu === "number" ? row.ibu.toFixed(1) : "—";
+      return typeof row?.ibu === "number" ? formatWithDecimals(row.ibu, 1) : "—";
     },
 
     hopPct(row) {
-      return typeof row?.pct === "number" ? `${(row.pct * 100).toFixed(1)}%` : "—";
+      return typeof row?.pct === "number" ? formatPercent(row.pct, 1) : "—";
     },
   });
 
@@ -449,7 +459,7 @@ export function registerHopCard(app, ctx) {
         if (!doses.length) return "";
         const worst = Math.max(...doses);
         return worst > 4
-          ? `Flowable extract dose ${worst.toFixed(2)} g/gal exceeds the 4 g/gal saturation ceiling.`
+          ? `Flowable extract dose ${formatWithDecimals(worst, 2)} g/gal exceeds the 4 g/gal saturation ceiling.`
           : "";
       },
     },

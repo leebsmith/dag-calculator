@@ -139,6 +139,9 @@ distinction with explicit allowlists.
   Grep first.
 - Do not add `Math.round(v * 1000) / 1000`, `(v * 100).toFixed(1)`,
   `col.decimals != null ? v.toFixed(...)`, or `UNIT_SYMBOLS[d]?.[u] ?? u` elsewhere.
+  Adapters call the barrel; the producer's five readout surfaces call
+  `views/producer/cell.js`. `tests/guards/adapter-format-contract.test.js` has no
+  allowlist — a new inline site fails `make check`.
 - Do not put engine- or artifact-dependent conversion in the utils barrel
   (`toBase`, `displayValue`, `nonlinearFns`, `UNIT_DIMENSIONS` defaults). Those
   stay in `views/producer` and the adapters.
@@ -212,6 +215,8 @@ Import paths (from the file doing the importing; `utils.js` is a barrel):
 | UI task | Function to import and call | Notes |
 | --- | --- | --- |
 | Any scalar → display string | `formatValue(value)` | Integers verbatim, others trimmed to 3dp, `""` for null/NaN/Infinity |
+| Producer readout (number + symbol) | `formatCell(value, { decimals, symbol })` → `{ display, unit }` | `frontend/src/views/producer/cell.js`; the one rule for `table`/`scalar`/`finding`/`collection`/`reportFormat`. Value is already converted — never call `fromBase` here |
+| Producer readout as one label | `cellLabel(value, { decimals, symbol, dash })` | Same module; `%` binds tight, other symbols get a space |
 | Fixed-decimal display | `formatWithDecimals(value, decimals, { dash })` | `decimals = null` trims to 3dp |
 | Round a number (not display) | `roundTo(value, decimals)` | Returns `number|null` |
 | Numeric coercion of input | `toFiniteOrNull(value)` | Trims strings, rejects booleans/arrays/blank/Infinity |
