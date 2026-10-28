@@ -191,7 +191,12 @@ test("the style card exposes the blend AA, malt cap, and sugar lift", async () =
   const app = await appWithStyle("21A");
   assert.equal(app.attenuationBlend, app.styleSolvedAa);
   assert.equal(app.attenuationCap, app.styleSolvedCap);
-  assert.ok(app.attenuationSugarLift >= 0);
+  // The lift is the artifact node, null while the blend sits at or below the cap.
+  assert.equal(
+    app.attenuationSugarLift,
+    app.engine.resolve("batch.attenuation_above_cap") ?? null
+  );
+  assert.equal(app.attenuationSugarLift, null);
 });
 
 test("the batch Target ABV is a read-only readout", async () => {

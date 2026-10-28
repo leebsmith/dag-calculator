@@ -29,6 +29,7 @@ export const STYLE_NODES = {
   },
   apparentAttenuation: "solver.batch.apparent_attenuation",
   yeastCap: "batch.yeast_cap",
+  aboveCap: "batch.attenuation_above_cap",
   fermVolume: "batch.v_ferm",
   postBoilVolume: "solver.batch.cascade.v_post_boil",
   targetAbv: "batch.target_abv",

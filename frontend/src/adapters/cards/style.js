@@ -732,7 +732,9 @@ export function refreshStyleCard(app, ctx) {
   const attenuation = attenuationCapSummary(app.styleSolvedAa, app.styleSolvedCap);
   app.attenuationBlend = attenuation.blend;
   app.attenuationCap = attenuation.cap;
-  app.attenuationSugarLift = attenuation.lift;
+  // The delta is the artifact's value, so the card and the report cannot drift.
+  // It is null when nothing exceeds the cap, which the partial renders as "—".
+  app.attenuationSugarLift = read(N.aboveCap) ?? null;
   const postBoilVolume = read(N.postBoilVolume);
   app.styleSolvedVolume = Number.isFinite(postBoilVolume)
     ? postBoilVolume
