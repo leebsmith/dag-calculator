@@ -2,18 +2,22 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 2, `Move card
-  row formatters into pure view modules`, starting with the hop card** (Phase 1
-  landed in `55f6485`: the surface check walks own properties, so the 179 hidden
-  members are governed too; `docs/frontend-ownership.md` is generated from the
-  new `modules`/`partials` declarations on `installers.js`, with one owner per
-  member; and today's 47 cross-owner keys sit in a reasoned `SHARED` interface
-  — 15 of 19 installers, 135 reader/key pairs — that the ownership guard
-  checks exactly). Phase 2 extracts the 67 no-`this` formatters out of the
-  adapters, one card per commit, starting with `hops` (10 methods). The three
-  phases after it: split the two ~50-line card computations and declare the
-  refresh pipeline, ratchet size and complexity, and invert the store's three
-  client imports.
+* **Alpine maintainability and module linting** — **next: Phase 2, the
+  `late-additions` card group (9 no-`this` methods), the second of eight**
+  (`hops` landed: `views/producer/hopRows.js` holds the 9 pure row readouts plus
+  the whirlpool form label table; the adapter delegates in one line, 535 → 522
+  lines, and `hopTemp` stays because it reads the display unit; covered by
+  `tests/frontend/hop-rows.test.js`). Phase 1 landed in `55f6485`: the surface
+  check walks own properties, so the 179 hidden members are governed too;
+  `docs/frontend-ownership.md` is generated from the new `modules`/`partials`
+  declarations on `installers.js`, with one owner per member; and today's 47
+  cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
+  135 reader/key pairs — that the ownership guard checks exactly. Remaining
+  groups after `late-additions`: `malt` (2), `yeast` (2), `trace-malts` (3),
+  `mash` rest helpers (6), `catalogDraft` (13), `fieldActions` helpers (5). The
+  three phases after Phase 2: split the two ~50-line card computations and
+  declare the refresh pipeline, ratchet size and complexity, and invert the
+  store's three client imports.
   Measured at `55f6485`: 19 installers declare 567 members (388 enumerable, 179
   hidden); 353 adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program
   archives to `plans/archive/` when closed — every phase, gate, read fence and

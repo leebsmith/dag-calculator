@@ -1,8 +1,9 @@
 # Alpine maintainability and module linting
 
-Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`) and Phase 1 landed
-(`55f6485`). Phases 2–5 remain: extract the logic that does not belong in the
-root and ratchet the shape the linter and the ownership guard can now see.
+Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
+(`55f6485`), and Phase 2 has begun (`hops`, one of eight card groups). Phases 3–5
+remain: extract the logic that does not belong in the root and ratchet the shape
+the linter and the ownership guard can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -311,6 +312,26 @@ state stays in the adapter. Row/field formatters are pure `(row) → string`.
 count and file size shrink; `make check`.
 
 **Commit.** `Move card row formatters into pure view modules` (one per card group)
+
+**Progress — `hops`, 1 of 8 groups.** `views/producer/hopRows.js` owns the nine
+pure row readouts (`hopFormLabel`, `hopAlphaLabel`, `hopAlphaInputValue`,
+`hopAlphaStockLabel`, `hopAlphaIsOutsideStock`, `hopBoilPctLabel`,
+`hopMinutesLabel`, `hopIbuLabel`, `hopPctLabel`) and the `WHIRLPOOL_HOP_FORMS`
+label table, which is display data. The adapter methods keep their names and
+`KEYS` entries and delegate in one line; `hopAlphaRange` / `hopAlphaOutsideStock`
+take the catalogue record as an argument, so the `ctx.cache.references` lookup
+stays in the card. Two notes:
+
+1. **9 of the 10 counted methods moved.** `hopTemp` reads the display unit
+   (`ui.unitMode.temperature`) and the artifact through `displayValue`, so it
+   stays beside `hopMass` / `whirlpoolHopMass`, which need the hop mass unit —
+   the plan's "a formatter that needs app state stays in the adapter".
+2. `hopMinutes` and `hopIbu` now print through `views/producer/cell.js`
+   (`cellLabel`), the one numeric readout rule, producing the same strings.
+
+`tests/frontend/hop-rows.test.js` covers the module without booting the app; the
+adapter is 522 lines (from 535). Gate: `make check`; `make test` (871 frontend,
+697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.

@@ -5,16 +5,23 @@ import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { UNIT_SYMBOLS, unitDecimals } from "../../views/registry/units.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
-import { countLabel, cycleUnit, formatPercent, formatPercentRange, formatValueWithUnit, formatWithDecimals, isFiniteNumber, resultCounter, toPercentValue, unitSymbol } from "../../utils.js";
+import {
+  hopAlphaInputValue,
+  hopAlphaIsOutsideStock,
+  hopAlphaLabel,
+  hopAlphaStockLabel,
+  hopBoilPctLabel,
+  hopFormLabel,
+  hopIbuLabel,
+  hopMinutesLabel,
+  hopPctLabel,
+  WHIRLPOOL_HOP_FORMS,
+} from "../../views/producer/hopRows.js";
+import { countLabel, cycleUnit, formatPercent, formatValueWithUnit, formatWithDecimals, isFiniteNumber, resultCounter, unitSymbol } from "../../utils.js";
 import { reportError } from "../../observability.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 const HOP_MASS_KEY = "hop.mass";
-
-const WHIRLPOOL_HOP_FORMS = [
-  { value: "t90_pellet", label: "T-90 pellets" },
-  { value: "flowable_extract", label: "Flowable CO₂ extract" },
-];
 
 const MAX_VISIBLE = 25;
 
@@ -195,39 +202,23 @@ export function registerHopCard(app, ctx) {
     },
 
     hopForm(row) {
-      const value = row?.product_form ?? "t90_pellet";
-      return WHIRLPOOL_HOP_FORMS.find((form) => form.value === value)?.label ?? value;
+      return hopFormLabel(row);
     },
 
     hopAlpha(row) {
-      return typeof row?.alpha_acid_pct === "number"
-        ? formatPercent(row.alpha_acid_pct, 1)
-        : "—";
+      return hopAlphaLabel(row);
     },
 
-    // The batch row owns the measured value; the catalogue's alpha band is
-    // context (a descriptive range, never a gate).
     hopAlphaInput(row) {
-      return typeof row?.alpha_acid_pct === "number"
-        ? toPercentValue(row.alpha_acid_pct, 2)
-        : "";
+      return hopAlphaInputValue(row);
     },
 
     hopAlphaRange(row) {
-      const record = ctx.cache.references.hop?.[row?.hop_id];
-      const lo = record?.alpha_acid_min_pct;
-      const hi = record?.alpha_acid_max_pct;
-      if (!isFiniteNumber(lo) || !isFiniteNumber(hi)) return "";
-      return `stock ${formatPercentRange(lo, hi, { decimals: 1 })}`;
+      return hopAlphaStockLabel(ctx.cache.references.hop?.[row?.hop_id]);
     },
 
     hopAlphaOutsideStock(row) {
-      const record = ctx.cache.references.hop?.[row?.hop_id];
-      const lo = record?.alpha_acid_min_pct;
-      const hi = record?.alpha_acid_max_pct;
-      const value = row?.alpha_acid_pct;
-      if (!isFiniteNumber(lo) || !isFiniteNumber(hi) || !isFiniteNumber(value)) return false;
-      return value < lo || value > hi;
+      return hopAlphaIsOutsideStock(row, ctx.cache.references.hop?.[row?.hop_id]);
     },
 
     // Batch-scoped measurement edit: the row is batch data, not a record. The
@@ -245,15 +236,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopBoilPct(row) {
-      return typeof row?.boil_time_fraction === "number"
-        ? formatPercent(row.boil_time_fraction, 0)
-        : "—";
+      return hopBoilPctLabel(row);
     },
 
     hopMinutes(row) {
-      return typeof row?.minutes === "number"
-        ? formatValueWithUnit(formatWithDecimals(row.minutes, 0), "min")
-        : "—";
+      return hopMinutesLabel(row);
     },
 
     hopTemp(row) {
@@ -261,11 +248,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopIbu(row) {
-      return typeof row?.ibu === "number" ? formatWithDecimals(row.ibu, 1) : "—";
+      return hopIbuLabel(row);
     },
 
     hopPct(row) {
-      return typeof row?.pct === "number" ? formatPercent(row.pct, 1) : "—";
+      return hopPctLabel(row);
     },
   });
 
