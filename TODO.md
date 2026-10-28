@@ -1,29 +1,5 @@
 # TODO
 
-## In flight
-
-* **Alpine maintainability and module linting** — **next: Phase 5, invert the
-  store's three client imports.** `store/{persistence,setup,recipes}.js` stop
-  importing adapters and the composition root injects the clients instead; the
-  three per-file `no-restricted-imports` overrides and their `import-direction`
-  allowlist entries are deleted, not reworded, and autosave timing and the
-  download flow stay as they are. Phase 4 landed (`Cap card size and complexity
-  in the linter`): the shape ratchet is on in `eslint.config.js` — `complexity 12`,
-  `max-depth 4`, `max-lines-per-function 80`, `max-lines 400`, `max-params 5`,
-  `max-statements 40`, all at error — and the first pass found 96 violations in 45
-  files. Every survivor is a named override beside the rules: 19 surface
-  declarers at 450 lines per function, grammar dispatch at 300, and 48 pins
-  (complexity 27 files, statements 8, params 4, depth 2, file size 7) set to the
-  count the linter reported, so a pin is both the ceiling and the burn-down
-  target. That is the plan's one failed metric — ≤10 hot methods was the target,
-  and 27 files exceed complexity 12, mostly in the artifact interpreter and the
-  projection registry, which Phases 2–3 never touched. Burning those pins down is
-  queued as Phase 6, after Phase 5. Phases 0–3 (the lint contract, the ownership
-  index, the eight card-group extractions, the style/late-addition splits and
-  `CARD_REFRESHES`) are recorded in the same plan; every phase, gate, deviation
-  and commit is in `plans/alpine-maintainability-and-module-linting.md`, and the
-  program archives to `plans/archive/` when closed.
-
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
@@ -53,6 +29,17 @@
 
 ## Later
 
+* **Shape-pin burn-down** — the lint program left 48 functions in 27 files pinned
+  above `complexity 12` and seven files pinned above 400 lines, each at the value
+  the linter reported, so none can regress; the pins in `eslint.config.js` are the
+  work queue. The interpreter leads (`engine/units.js` 93,
+  `views/producer/projection.js` 39, `engine/validate.js` 34,
+  `views/producer/scalar.js` 33, `engine/ast.js` 22 — dispatch over the grammar,
+  so the split is a table per node kind), then the solve and refresh paths
+  (`boundaryRunner.js` 35 / 210 lines, `cards/water.js` 38 / 639 lines,
+  `stepView.js` 19) and the stores (`userCatalog.js` 33, `unitPrefs.js` 27,
+  `library.js` 18). Each split lowers its pin in the same commit rather than
+  re-pinning, and deletes the pin once the file is under the ceiling.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
@@ -139,6 +126,16 @@ Not needed by the current artifact; add only when a node requires them:
 * True nested boundary outputs (currently flattened to dotted keys).
 
 ## Done
+
+* **Alpine maintainability and module linting** — five phases: a lint contract over
+  `frontend/src` (semantic rules, DOM scoped to `adapters`/`main.js`, console output
+  routed through `reportError`); the generated ownership index and `SHARED`
+  interface over 567 members; eight card-group formatter extractions into
+  `views/producer/`; the style-target and scale-preview splits plus the declared
+  `CARD_REFRESHES` pipeline; the size and complexity ratchet (48 pins and three
+  grouped overrides, all named); and the store's three client imports inverted at
+  the composition root —
+  `plans/archive/alpine-maintainability-and-module-linting.md`.
 
 * **Decomposition & display contract** — nine phases: the adapter-format allowlist
   is empty and every numeric readout routes through `views/producer/cell.js`

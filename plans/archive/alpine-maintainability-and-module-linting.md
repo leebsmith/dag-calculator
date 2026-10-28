@@ -1,11 +1,11 @@
 # Alpine maintainability and module linting
 
-Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
+Status: **complete**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
 (`55f6485`), Phase 2 landed (8 of 8 card groups: `hops`, `late-additions`,
 `malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`, `fieldActions`), Phase 3
-landed (`6b9585c`), and Phase 4 landed (`df6028a`). Phase 5 remains: invert the
-store's three client imports. Phase 6 — burning down the shape pins Phase 4
-inherited — is queued, not started.
+landed (`6b9585c`), Phase 4 landed (`df6028a`), and Phase 5 landed (the store's
+three client imports). One follow-up left the program: the shape pins Phase 4
+inherited, queued in `TODO.md` as the pin burn-down.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -720,7 +720,7 @@ Three deviations:
    `views/producer/scalar.js` 33, `store/userCatalog.js` 33). Phase 2–3 never
    touched those paths, so the count is inherited, not a regression. Pinning them
    is the honest landing; the alternative was to leave the whole source uncapped
-   until an unplanned refactor. The burn-down is Phase 6 below.
+   until an unplanned refactor. The burn-down is queued in `TODO.md` under Later.
 2. **`max-lines` landed at 400, not 500.** The plan allowed either; 400 is the
    number the program committed to, so the rule keeps it and the seven files above
    it carry pins (water 650, hops / fermentation / format 550, stepAdapter /
@@ -763,25 +763,50 @@ allowlist entries are deleted, not reworded.
 
 **Commit.** `Inject the batch and library clients at the composition root`
 
-### Phase 6 — Burn down the shape pins (queued, unestimated)
+**Landed.** `3ce97b8`. `main.js` is the only module that names a client; the
+store holds whichever one it was given:
 
-Phase 4 pinned 48 complex functions and 7 oversized files at their reported
-counts. This phase lowers them to the ceilings, deleting each pin as its file
-complies, in the order the pins point:
+- **`persistence`** — `setClient(batchClient)` runs once beside
+  `setTokenProvider`, so the module starts at `null`. Every call site goes
+  through `batchSeam()`, which throws
+  `persistence: no batch client injected; main.js must call setClient() before use`
+  rather than a null-property error deep inside an autosave retry.
+- **`setup`** — `createSetupStore({ client })` hands the catalog client to
+  `createLibrary`; `main.js` supplies `libraryClient`. Without one, the library
+  keeps its `EMPTY_CLIENT` default, which is the state the suites that never
+  fetch already exercised.
+- **`recipes`** — the five download/tab parameters lost their adapter defaults;
+  `main.js` passes `downloadJSON`, `downloadBlob`, `openReportTab`, `showReport`,
+  `closeReportTab` beside the `anchor` it already supplied.
 
-1. **The interpreter** — `engine/units.js` (93), `projection.js` (39),
-   `engine/validate.js` (34), `scalar.js` (33), `engine/ast.js` (22) are dispatch
-   over the artifact grammar; the split is a table per node kind, not a decision
-   tree.
-2. **The solve and refresh paths** — `boundaryRunner.js` (35, 210 lines),
-   `cards/water.js` (38, 639 lines), `stepView.js` (19).
-3. **The stores** — `store/userCatalog.js` (33), `store/unitPrefs.js` (27),
-   `store/library.js` (18).
-4. **File sizes** — `cards/water.js`, `cards/hops.js`, `utils/format.js`,
-   `engine/fermentation.js`, `store/recipes.js`.
+Two deviations:
 
-**Gate.** After each step, `make check` with the corresponding pin removed rather
-than re-pinned; `make test` unchanged.
+1. **Phase 0's eslint override went with the imports.** The three per-file
+   `no-restricted-imports` entries and `CLIENT_SEAM` are deleted, not reworded,
+   so `store/**` now falls under the generated layer rule that already forbids
+   `**/adapters/**`. The lint contract and the import-direction guard say the
+   same thing again. The guard's `ALLOW` list is empty and its header records
+   why; its second test now fails any entry that reappears stale.
+2. **`store/library.js` kept its `EMPTY_CLIENT` default.** It is not one of the
+   three seams: the injection point is the setup store that constructs it, and
+   the library's empty default is what keeps a fetch-less store usable without a
+   second injection path.
+
+Behaviour is unchanged: autosave timing, retry delays, the dedupe override on the
+autosave report, the conflict path, and the download/tab flow all run through the
+same code. `tests/frontend/persistence.test.js` gained one case pinning the
+missing-seam message, since the wiring itself lives in `main.js` and no suite
+boots it.
+
+Gate: `make check` (import-direction allowlist empty, eslint and tach clean);
+`make test` (937 frontend, 697 backend + 1 skipped).
+
+### Phase 6 — Removed from the program
+
+The pin burn-down originally written here left the program when it closed: the
+pins are Phase 4's, the work is a separate refactor, and it is queued in
+`TODO.md` under Later as **Shape-pin burn-down**, with the pin list in
+`eslint.config.js` as the authoritative queue.
 
 ## 5. What this buys
 
@@ -795,10 +820,10 @@ than re-pinned; `make test` unchanged.
 
 **Metrics to hold at the end:** 0 ungoverned foreign reads; 0 no-`this` methods
 in adapters; ≤10 hot methods, each in a named override (**Phase 4 measured 48
-functions in 27 files, all pinned — the gap is Phase 6**); ≤1 lint rule → ~20;
-maximum adapter file ≤ 500 lines, target 400 (**measured 639 in `cards/water.js`,
-four adapters above 400 — Phase 6**); refresh list explicit; store imports no
-adapters.
+functions in 27 files, all pinned — the gap is the queued pin burn-down**); ≤1
+lint rule → ~20; maximum adapter file ≤ 500 lines, target 400 (**measured 639 in
+`cards/water.js`, four adapters above 400 — same burn-down**); refresh list
+explicit; store imports no adapters.
 
 ## 6. Risks and non-goals
 

@@ -116,7 +116,7 @@ export const INSTALLERS = [
 ];
 
 // Cross-owner reads, baselined by Phase 1 of
-// `plans/alpine-maintainability-and-module-linting.md`. `owners` lists the
+// `plans/archive/alpine-maintainability-and-module-linting.md`. `owners` lists the
 // installers that may read the key; the installer that declares it is implicit
 // and must not be listed. Each entry carries why the read exists and fails the
 // guard when no read is left, so this list is the work queue for the phases

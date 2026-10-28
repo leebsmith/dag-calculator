@@ -36,10 +36,11 @@ const FILE_LAYER = {
 };
 
 // The store used to reach boundary clients directly (autosave, download,
-// library bootstrap). Phase 5 of plans/alpine-maintainability-and-module-linting.md
-// inverted those three: `main.js` injects the clients, so no inversion is
-// allowed here. Keep the list empty; a new entry needs the same program's
-// decision, not a local exception.
+// library bootstrap). Phase 5 of
+// `plans/archive/alpine-maintainability-and-module-linting.md` inverted those
+// three: `main.js` injects the clients, so no inversion is allowed here. Keep
+// the list empty; a new entry needs the same program's decision, not a local
+// exception.
 const ALLOW = [];
 
 function stripComments(source) {
