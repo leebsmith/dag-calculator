@@ -2,7 +2,7 @@
   "bundle_format": 6,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:3286ab6422abc6132ea3b26e3029e2c942be951133444cfedb5e3009c0943c27",
+    "hash": "sha256:3451bddc3d5d911976eae4582ab24d939ae9deb924d9f4d377c70a4d157d126d",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -327,6 +327,10 @@
         "default_boil_time_min": {
           "value": 60,
           "dimension": "time"
+        },
+        "default_sparge_water_temp_c": {
+          "value": 76,
+          "dimension": "temperature"
         },
         "default_mash_thickness_l_per_kg": {
           "value": 2.6079,
@@ -2591,6 +2595,17 @@
           },
           "domain": {
             "gte": 0
+          }
+        },
+        "batch.sparge_water_temp_c": {
+          "kind": "root",
+          "dimension": "temperature",
+          "default": {
+            "const": "default_sparge_water_temp_c"
+          },
+          "domain": {
+            "gte": 0,
+            "lte": 100
           }
         },
         "batch.yeast_id": {
@@ -6600,5 +6615,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:b87b542f5c835ee5f94321c7d98ae1ebda1bf4480b1f34cfefba469f2c7cd12c"
+  "content_hash": "sha256:5ea589e54d44fdd0268500ea1761ce07165041a94a49235d41bba42d11523092"
 }

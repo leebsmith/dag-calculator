@@ -18,6 +18,12 @@ test("end-to-end: strike-water chain resolves through the batch boundary", () =>
   assert.ok(Math.abs(e.get("mash.strike_water_temp_c") - 76.04190476190476) < 1e-6);
 });
 
+test("the sparge water target defaults to the process constant", () => {
+  const e = engine();
+  assert.equal(e.resolve("batch.sparge_water_temp_c"), 76);
+  assert.equal(artifact.constants.default_sparge_water_temp_c.value, 76);
+});
+
 test("end-to-end: identity resolves read-only to the supplied component", () => {
   const e = engine();
   assert.equal(e.resolve("equipment.mash_tun_mass_kg"), 6.5);

@@ -323,6 +323,10 @@
       "value": 60,
       "dimension": "time"
     },
+    "default_sparge_water_temp_c": {
+      "value": 76,
+      "dimension": "temperature"
+    },
     "default_mash_thickness_l_per_kg": {
       "value": 2.6079,
       "dimension": "mash_thickness"
@@ -2565,6 +2569,17 @@
       },
       "domain": {
         "gte": 0
+      }
+    },
+    "batch.sparge_water_temp_c": {
+      "kind": "root",
+      "dimension": "temperature",
+      "default": {
+        "const": "default_sparge_water_temp_c"
+      },
+      "domain": {
+        "gte": 0,
+        "lte": 100
       }
     },
     "batch.yeast_id": {

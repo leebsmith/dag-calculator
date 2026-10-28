@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_108 paths_
+_109 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -72,6 +72,7 @@ _108 paths_
 | `batch.scale_pin` | Scale Pin | choice | — | — | — | abv, og, fg |
 | `batch.shrinkage_volume_l` | Shrinkage | derived | volume | L | 1 | — |
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
+| `batch.sparge_water_temp_c` | Sparge water temperature | root | temperature | degC (°C) | 1 | — |
 | `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
 | `batch.sugar_extract_total` | Late extract | derived | mass | kg | 2 | — |
 | `batch.sugar_fermentability_effective` | Sugar Fermentability Effective | derived | percentage | pct (%) | 1 | — |
@@ -285,7 +286,7 @@ _30 paths_
 | `solver.batch` | Batch | boundary | — | — | — | — |
 | `solver.batch.apparent_attenuation` | Apparent attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.binding_constraint` | Binding Constraint | output | — | — | — | fermentation, volume, tun, kettle, hlt |
-| `solver.batch.brewhouse_efficiency` | Brewhouse Efficiency | output | percentage | pct (%) | 1 | — |
+| `solver.batch.brewhouse_efficiency` | Brewhouse efficiency | output | percentage | pct (%) | 1 | — |
 | `solver.batch.cascade.s_run1` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.s_run2` | Extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.sg_pre_boil` | Gravity | output | gravity | Plato (°P) | 1 | — |

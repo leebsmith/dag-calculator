@@ -28,6 +28,10 @@ export const batchRegistry = {
     hint: "V_run1 / V_run2; 1.0 is equal runnings.",
   },
   "batch.hlt_starting_volume_l": { label: "HLT starting volume", unit: "L" },
+  "batch.sparge_water_temp_c": {
+    label: "Sparge water temperature",
+    hint: "Target HLT temperature for the second underlet. Display only — heating and cooling are not modelled, so this never changes the solve.",
+  },
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
@@ -35,6 +39,11 @@ export const batchRegistry = {
     label: "Apparent attenuation",
     displayUnit: "pct",
     hint: "Solver output: the batch's apparent attenuation. Sugar is uncapped, so it can exceed the yeast's malt attenuation cap.",
+  },
+  "solver.batch.brewhouse_efficiency": {
+    label: "Brewhouse efficiency",
+    displayUnit: "pct",
+    hint: "Solver output: malt extract into the fermenter over the grist's potential. Excludes late additions and always sits below conversion efficiency.",
   },
   "solver.batch.real_attenuation": {
     label: "Real attenuation",

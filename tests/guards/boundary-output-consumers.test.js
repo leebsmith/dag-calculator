@@ -19,7 +19,6 @@ const ALLOW = new Map([
   // the registry/manifest consumer lands with them.
   ["solver.batch.hlt.v_hlt_target", "Liquor Ledger section (report)"],
   ["solver.batch.hlt.v_hlt_required", "Liquor Ledger section (report)"],
-  ["solver.batch.brewhouse_efficiency", "Brewhouse section (report)"],
 ]);
 
 function collectStrings(value, out = new Set()) {

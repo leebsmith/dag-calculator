@@ -131,6 +131,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_mash_thickness_l_per_kg` | 2.6079 | `mash_thickness` |
 | `default_runoff_ratio` | 1 | `dimensionless` |
 | `default_shrinkage_fraction` | 0.04 | `percentage` |
+| `default_sparge_water_temp_c` | 76 | `temperature` |
 | `default_target_abv` | 5.5 | `abv` |
 | `default_target_fg` | 1.012 | `gravity` |
 | `default_target_ibu` | 30 | `ibu` |
@@ -191,6 +192,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.scale_pin` | choice |
 | `batch.shrinkage_volume_l` | derived |
 | `batch.sparge_salted_volume` | derived |
+| `batch.sparge_water_temp_c` | root |
 | `batch.sugar_extract_share` | root |
 | `batch.sugar_extract_total` | derived |
 | `batch.sugar_fermentability_effective` | derived |
