@@ -101,21 +101,44 @@ complexity thresholds wait for Phase 4.
 **Owns.** `eslint.config.js`, `frontend/package.json` (the `lint` script),
 `Makefile` (`check:`), the violations the new rules surface.
 
-**Must not change.** No new dependency. No behavioural change. `eqeqeq` uses
+**Must not change.** No new dependency. No user-visible change. `eqeqeq` uses
 `smart` so the `== null` idiom stays. `no-undef` gets an explicit browser-globals
-block; do not reach for `env: browser` (flat config has no such key). Warnings
-must fail (`--max-warnings 0`).
+block — `window`, `document`, `navigator`, `localStorage`, `fetch`, `setTimeout`,
+`clearTimeout`, `setInterval`, `clearInterval`, `requestAnimationFrame`,
+`cancelAnimationFrame`, `URL`, `Blob`, `crypto`, `console`; do not reach for
+`env: browser` (flat config has no such key), and add a name only when the linter
+reports it. Warnings must fail (`--max-warnings 0`).
+
+**The three store imports stay.** `no-restricted-imports` mirrors
+`import-direction`'s ranks, but `store/{persistence,setup,recipes}.js` each import
+an adapter today. Give those three a per-file override carrying the guard's own
+reason ("no client seam in the store yet") and leave the inversion to Phase 5.
+Inverting them here fails Phase 5's premise and widens the read.
 
 **Rules to land.** `no-undef`, `no-unused-vars` (error), `eqeqeq` (smart),
-`no-shadow`, `prefer-const`, `no-var`, `no-console` (allow `reportError`'s file
-only if justified), `no-duplicate-imports`, `no-fallthrough`,
+`no-shadow`, `prefer-const`, `no-var`, `no-console` (`observability.js` is the one
+file allowed to implement the sink), `no-duplicate-imports`, `no-fallthrough`,
 `consistent-return`, `no-restricted-imports` mirroring `import-direction`'s
 ranks, `no-restricted-syntax` forbidding `document.`/`window.` outside
 `adapters`/`main.js`.
 
+**Work.** (1) Add the `frontend/src/**/*.js` config block with the globals and
+rules above. (2) Fix the mechanical reports: `no-shadow`, `prefer-const`, and the
+handful of loose comparisons `smart` does not allow. (3) Add the three per-file
+overrides. (4) Route console output last, and read this first: `reportError`
+**dedupes by `scope:message`**, so a conversion changes behaviour when a site can
+fail repeatedly — `tests/frontend/{recipes,persistence,library,observability}.test.js`
+spy on `console.error` and may expect one log per call. Give each of the 15 sites
+a stable scope, run those four suites, and where a site must log every
+occurrence leave `console.error` under a named per-file override with the reason.
+`tests/guards/no-silent-catch.test.js` already accepts `reportError(`, so the
+guard needs no change.
+
 **Gate.** `cd frontend && npm run lint`; `make check`; `make test` unchanged.
 
-**Commit.** `Put the frontend source under a lint contract`
+**Commit.** `Put the frontend source under a lint contract`. Split the console
+routing into its own commit (`Route console output through the error sink`) so
+the rule change and the dedupe audit stay reviewable.
 
 **Handoff.** Every later phase may now rely on the linter to catch a stray
 `console`, a shadowed binding, or a layering violation at edit time.
