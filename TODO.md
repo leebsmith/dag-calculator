@@ -56,19 +56,12 @@
   for malt, `mass × yield` for sugar, trace excluded — A9) with each row's share of total extract.
   That is where a sugar's 9.8 % of grist mass and 9.4 % of extract become two visible numbers.
   Needs producer extract columns and a home: a fourth table in Batch Facts, or its own section.
-* **Brewhouse section** — first report section (registry order: brewhouse, batch-facts, yeast,
-  volume-ledger). The process inputs that produce the numbers: target ABV, topology, conversion
-  efficiency, mash thickness, runoff ratio, boil time, boil-off rate, grain moisture. All are
-  defaulted roots, so presence keys off `batch.conversion_efficiency` only to give the fixture an
-  absent case. Boil-off *rate* lives here; the boil-off *volume* stays in the volume ledger.
-  Target ABV is read here rather than beside the realized ABV in Batch Facts. Needs fixture
-  enrichment (valuation + catalog + formatted per path) and render tests; no bundle-format change.
-* **HLT section** — the hot-liquor chain is solved but never printed: starting volume, dead space,
-  transfer loss, coil floor, volume after strike, top-up, sparge deliverable, and the HLT debt
-  (`hlt.v_hlt_debt` = dead space + transfer loss). Distinct from the volume ledger, which follows
-  wort from strike to fermenter. Showing the top-up *target* needs `v_hlt_target` exposed as a
-  boundary output first (artifact `outputs` + schema + parity fixture), since only the
-  dosing-practice doc references it today.
+* **Report process sections** — Brewhouse (first) and Liquor Ledger (last), plus the three
+  boundary outputs they need: `v_hlt_target`, `v_hlt_required`, and `brewhouse_efficiency`.
+  Decisions, layouts, and the three-commit sequence: `plans/report-process-sections.md`.
+* **Brewhouse efficiency** — malt-only extract into the fermenter over the grist's potential;
+  a boundary output rather than a report-side derivation, because lauter retention is already
+  inside `m_grist` (so it is not `η_conv × volume recovery`). Same plan, commit 1.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
