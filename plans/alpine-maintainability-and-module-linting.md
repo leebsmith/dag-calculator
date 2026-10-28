@@ -2,9 +2,10 @@
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
 (`55f6485`), Phase 2 landed (8 of 8 card groups: `hops`, `late-additions`,
-`malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`, `fieldActions`), and
-Phase 3 landed (`6b9585c`). Phases 4–5 remain: ratchet the shape the linter and
-the ownership guard can now see, and invert the store's three client imports.
+`malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`, `fieldActions`), Phase 3
+landed (`6b9585c`), and Phase 4 landed (`df6028a`). Phase 5 remains: invert the
+store's three client imports. Phase 6 — burning down the shape pins Phase 4
+inherited — is queued, not started.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -683,7 +684,63 @@ baseline file.
 
 **Commit.** `Cap card size and complexity in the linter`
 
-**Handoff.** Phase 5's store change must fit the new ceilings.
+**Landed.** `df6028a`. `SHAPE_RULES` in `eslint.config.js` — `complexity 12`, `max-depth 4`,
+`max-lines-per-function 80`, `max-lines 400`, `max-params 5`,
+`max-statements 40`, all `error`, over the same `frontend/src/**` block Phase 0
+created. No source file was read or edited: the phase chose ceilings and
+recorded what the linter reported. The first pass was **96 violations in 45
+files**; every survivor is a named override beside the rules, in seven shapes:
+
+- **surface declarers** — 19 files at `max-lines-per-function: 450`
+  (19 `install*` / `register*` / `create*Store` functions). Every member is
+  declared one key at a time, and the ownership index plus the surface guard are
+  that contract; a line count adds nothing.
+- **grammar dispatch** — `engine/{dag,units,validate}.js` at 300 lines per
+  function; **one pass per file** — `boundaryRunner.js` and `stylePlot.js` at 210.
+- **complexity pins**, 13 under "grammar dispatch" (`engine/units.js` 93 down to
+  `views/registry/presentation.js` 14) and 14 under "lifecycle branches"
+  (`adapters/cards/water.js` 38 down to `store/persistence.js` 13).
+- **statement pins** (8 functions, 65 → 42), **param pins** (5 functions in 4
+  files, 7 → 6), **depth pins** (2 functions, 5), **file-size pins** (7 files,
+  650 → 450).
+
+A pin is the count the linter reported, not a round number, so the pin is the
+ceiling *and* the burn-down target: when a split lowers a function's count, the
+pin is lowered in the same commit, and a pin that no longer matches its file is
+deleted. A probe (a 13-branch arrow under `utils/`) failed the build, so the
+ratchet binds on new code as well as old.
+
+Three deviations:
+
+1. **The §5 metric "≤10 hot methods, each in a named override" does not hold.**
+   The two methods Phase 3 split were the two *card* hot spots; the ratchet sees
+   the whole source, and 48 functions in 27 files sit above complexity 12, led by
+   the artifact interpreter (`engine/units.js` 93, `views/producer/projection.js`
+   39, `adapters/boundaryRunner.js` 35, `engine/validate.js` 34,
+   `views/producer/scalar.js` 33, `store/userCatalog.js` 33). Phase 2–3 never
+   touched those paths, so the count is inherited, not a regression. Pinning them
+   is the honest landing; the alternative was to leave the whole source uncapped
+   until an unplanned refactor. The burn-down is Phase 6 below.
+2. **`max-lines` landed at 400, not 500.** The plan allowed either; 400 is the
+   number the program committed to, so the rule keeps it and the seven files above
+   it carry pins (water 650, hops / fermentation / format 550, stepAdapter /
+   recipes 500, late-additions 450) rather than the ceiling being relaxed
+   everywhere. The plan's "maximum adapter file ≤ 500 (target 400)" metric fails
+   today: the largest is `cards/water.js` at 639, four adapters sit above 400
+   (`water`, `hops`, `stepAdapter`, `late-additions`), and `utils/format.js` (514)
+   and `engine/fermentation.js` (506) also carry pins.
+3. **Exceptions are grouped by reason, not written one per violation.** 45
+   per-file entries would have been a baseline in config clothing; six pin tables
+   plus three grouped overrides say why each shape is legitimate, and the table
+   entry is where the count lives.
+
+Gate: `make check` (eslint clean, stylelint clean, ruff clean, tach clean);
+`make test` (936 frontend, 697 backend + 1 skipped, unchanged).
+
+**Handoff.** Phase 5's store change must fit `complexity 12` and
+`max-lines-per-function 80` — `store/recipes.js` is already at the 450-line
+surface-declarer ceiling and `store/library.js` carries a complexity pin, so a new
+branch in either is a lint error, not a review note.
 
 ### Phase 5 — Invert the store's client imports (½ day)
 
@@ -706,6 +763,26 @@ allowlist entries are deleted, not reworded.
 
 **Commit.** `Inject the batch and library clients at the composition root`
 
+### Phase 6 — Burn down the shape pins (queued, unestimated)
+
+Phase 4 pinned 48 complex functions and 7 oversized files at their reported
+counts. This phase lowers them to the ceilings, deleting each pin as its file
+complies, in the order the pins point:
+
+1. **The interpreter** — `engine/units.js` (93), `projection.js` (39),
+   `engine/validate.js` (34), `scalar.js` (33), `engine/ast.js` (22) are dispatch
+   over the artifact grammar; the split is a table per node kind, not a decision
+   tree.
+2. **The solve and refresh paths** — `boundaryRunner.js` (35, 210 lines),
+   `cards/water.js` (38, 639 lines), `stepView.js` (19).
+3. **The stores** — `store/userCatalog.js` (33), `store/unitPrefs.js` (27),
+   `store/library.js` (18).
+4. **File sizes** — `cards/water.js`, `cards/hops.js`, `utils/format.js`,
+   `engine/fermentation.js`, `store/recipes.js`.
+
+**Gate.** After each step, `make check` with the corresponding pin removed rather
+than re-pinned; `make test` unchanged.
+
 ## 5. What this buys
 
 | Change | Today | After |
@@ -717,9 +794,11 @@ allowlist entries are deleted, not reworded.
 | Find who owns a member | grep 6k lines | generated index |
 
 **Metrics to hold at the end:** 0 ungoverned foreign reads; 0 no-`this` methods
-in adapters; ≤10 hot methods, each in a named override; ≤1 lint rule → ~20;
-maximum adapter file ≤ 500 lines (target 400); refresh list explicit; store
-imports no adapters.
+in adapters; ≤10 hot methods, each in a named override (**Phase 4 measured 48
+functions in 27 files, all pinned — the gap is Phase 6**); ≤1 lint rule → ~20;
+maximum adapter file ≤ 500 lines, target 400 (**measured 639 in `cards/water.js`,
+four adapters above 400 — Phase 6**); refresh list explicit; store imports no
+adapters.
 
 ## 6. Risks and non-goals
 

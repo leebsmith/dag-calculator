@@ -2,27 +2,27 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 4, turn on the size
-  and complexity ratchet.** `eslint.config.js` only: `complexity: 12`,
-  `max-depth: 4`, `max-lines-per-function: 80`, `max-lines: 400`, `max-params: 5`,
-  `max-statements: 40` at error, each surviving exception a named per-file
-  override with a reason — no baseline file. Phase 3 landed in `6b9585c`:
-  `computeStyleTarget` (54 lines, complexity 20) is now
-  `views/producer/styleTarget.js` — the region → extract chain, the pin table and
-  the eight pin mirrors, the target-mismatch line — and the adapter reads the
-  engine only behind a region-length guard, so a style-less batch still touches no
-  boundary (`navigator.js` 274 → 240, `targets.js` 291 → 262);
-  `syncScalePreviewState` (55) is `views/producer/scalePreview.js`, the preview pin
-  matrix and its caption consuming `lateAdditionRows.js` (`late-additions.js` 452
-  → 415); and `stepView.compute` (86) is three named steps — `produceFields`,
-  `indexStatus`, `refreshCards` — over the exported `CARD_REFRESHES` list, pinned
-  by `tests/frontend/step-pipeline.test.js`, which fails when a card's
-  `refresh*Card` export is missing from the list or the order drifts. Phase 5 then
-  inverts the store's three client imports. Phases 0–2 (the lint contract, the
-  ownership index, the eight card-group extractions) are recorded in the same
-  plan; every phase, gate, read fence, deviation and commit is in
-  `plans/alpine-maintainability-and-module-linting.md`, and the program archives to
-  `plans/archive/` when closed.
+* **Alpine maintainability and module linting** — **next: Phase 5, invert the
+  store's three client imports.** `store/{persistence,setup,recipes}.js` stop
+  importing adapters and the composition root injects the clients instead; the
+  three per-file `no-restricted-imports` overrides and their `import-direction`
+  allowlist entries are deleted, not reworded, and autosave timing and the
+  download flow stay as they are. Phase 4 landed (`Cap card size and complexity
+  in the linter`): the shape ratchet is on in `eslint.config.js` — `complexity 12`,
+  `max-depth 4`, `max-lines-per-function 80`, `max-lines 400`, `max-params 5`,
+  `max-statements 40`, all at error — and the first pass found 96 violations in 45
+  files. Every survivor is a named override beside the rules: 19 surface
+  declarers at 450 lines per function, grammar dispatch at 300, and 48 pins
+  (complexity 27 files, statements 8, params 4, depth 2, file size 7) set to the
+  count the linter reported, so a pin is both the ceiling and the burn-down
+  target. That is the plan's one failed metric — ≤10 hot methods was the target,
+  and 27 files exceed complexity 12, mostly in the artifact interpreter and the
+  projection registry, which Phases 2–3 never touched. Burning those pins down is
+  queued as Phase 6, after Phase 5. Phases 0–3 (the lint contract, the ownership
+  index, the eight card-group extractions, the style/late-addition splits and
+  `CARD_REFRESHES`) are recorded in the same plan; every phase, gate, deviation
+  and commit is in `plans/alpine-maintainability-and-module-linting.md`, and the
+  program archives to `plans/archive/` when closed.
 
 ## Next (in order)
 
