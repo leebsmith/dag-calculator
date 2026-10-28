@@ -9,7 +9,7 @@ What the calculator assumes you do with water-treatment additions, so a mismatch
 between the model and your brew day is visible instead of silent.
 
 This doc describes **assumed practice only**. The chemistry lives in
-`data/artifact.json` and `backend/app/core/water.py`; the numbers live in
+`data/artifact.json` and `backend/app/core/water/`; the numbers live in
 `docs/dag-artifacts/domain-equations.md` and `docs/dag-artifacts/inventory.md`.
 
 ## 1. The two destinations

@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from app.core.hop_solver import PRODUCT_FORM_UTILIZATION
-from app.core.water import (
+from app.core.water.constants import (
     ACID_PROPERTIES,
     ALKALINE_AGENT_EQUIV,
     GRAIN_ACIDITY,

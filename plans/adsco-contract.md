@@ -97,7 +97,10 @@ decision** that the code will follow.
 Added telemetry codes (host-side, not the error surface): `PINNED_TARGET_BELOW_SOURCE`,
 `FLAVOR_TARGET_BELOW_SOURCE` (salts only add), `ROUTER_AUTO_BEST_FIT` (AUTO
 fall-through to Mode 3), `GUARDRAIL_PH_MODEL_OUT_OF_RANGE` (prediction outside
-3.5-7.5, i.e. the linear pH model is extrapolating).
+3.5-7.5, i.e. the linear pH model is extrapolating), `GUARDRAIL_CALCIUM_BELOW_FLOOR`
+(post-dose calcium audit, promoted from a bare warning), and
+`OPT_CLONE_CONSTRAINT_RELAXED` / `OPT_SPARSE_EQUALITIES_ONLY` (engine notes,
+promoted to events when findings became a single channel).
 
 Removed: `OPTIMIZE_NOT_IMPLEMENTED` (now implemented), `SOURCE_NOT_FOUND`,
 `MISSING_SOURCE`. Renamed: `UNKNOWN_ACID` → `UNKNOWN_ACID_MEDIUM`.
@@ -164,6 +167,11 @@ Mg ≤ 50, SO₄ ≤ 400, sparge pH ≤ 5.80, contaminant gates.
 
 - `WaterSolverResponse.telemetry: list[TelemetryEvent]` (code, category, severity,
   message, context).
+- **Events are the only findings source.** `warnings` and `notes` are projections
+  of the stream (`core/water/telemetry.py:derive_findings`): `WARNING` events
+  become warnings; `NOTE`/`INFO` `OPTIMIZATION` and `GUARDRAIL` events become
+  notes. There is no second wording of a fact and no reconciliation loop; the
+  message wording is a per-code factory.
 - `boundaryRunner` retains `telemetry`/`warnings`/`notes` per boundary from the
   winning solve token only; cleared on `reset`/supersede/error.
 - Exposed to the water card as a view model (`waterTelemetry`); no engine/artifact

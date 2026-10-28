@@ -20,7 +20,7 @@ from conformance.test_water_matrix import (
     _request,
 )
 
-from app.core.water import solve_water_chemistry
+from app.core.water.orchestration import solve_water_chemistry
 
 CASES = int(os.environ.get("WATER_FUZZ_CASES", "0"))
 SEED = int(os.environ.get("WATER_FUZZ_SEED", "20261022"))

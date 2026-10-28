@@ -12,14 +12,11 @@ import math
 
 import pytest
 
-from app.core.water import (
-    MASH_PH_TARGET_TOLERANCE,
-    GrainEntry,
-    SolverValidationError,
-    WaterChemistryInput,
-    mash_ph_status,
-    solve_water_chemistry,
-)
+from app.core.errors import SolverValidationError
+from app.core.water.chemistry import mash_ph_status
+from app.core.water.constants import MASH_PH_TARGET_TOLERANCE
+from app.core.water.inputs import GrainEntry, WaterChemistryInput
+from app.core.water.orchestration import solve_water_chemistry
 
 IONS = ("ca", "mg", "na", "so4", "cl", "alk")
 SALTS = ("gypsum_g", "cacl2_g", "epsom_g", "nacl_g")

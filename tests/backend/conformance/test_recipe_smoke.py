@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from app.core.water import GRAIN_ACIDITY
+from app.core.water.constants import GRAIN_ACIDITY
 from app.schemas.boundary import (
     BatchSolverRequest,
     HopSolverRequest,

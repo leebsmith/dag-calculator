@@ -4,12 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from app.core.water import (
-    GrainEntry,
-    WaterChemistryInput,
-    predict_mash_ph,
-    solve_water_chemistry,
-)
+from app.core.water.chemistry import predict_mash_ph
+from app.core.water.inputs import GrainEntry, WaterChemistryInput
+from app.core.water.orchestration import solve_water_chemistry
 
 V, T = 15.0, 3.0
 
@@ -49,7 +46,7 @@ def test_typical_base_malt_lands_in_window():
 
 
 def test_invalid_volume_still_raises():
-    from app.core.water import SolverValidationError
+    from app.core.errors import SolverValidationError
 
     with pytest.raises(SolverValidationError) as exc:
         predict_mash_ph(20.0, 0.0, 0.0, T)

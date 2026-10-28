@@ -1,8 +1,9 @@
 # Decomposition & display contract
 
 Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), 2
-(error and constraint truth), 3 (per-row computed fields), 4 (row migration), and
-5 (`core/batch/`) landed; Phase 6 is next.
+(error and constraint truth), 3 (per-row computed fields), 4 (row migration),
+5 (`core/batch/`), and 6 (`core/water/` + one findings channel) landed; Phase 7
+is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -449,6 +450,49 @@ asserted once, centrally.
 
 **Handoff.** Record the per-code factory module path. Adding a finding is now one
 factory edit.
+
+**Landed.** `app.core.water` is nine modules in pipeline order — `constants`
+(physical constants and table lookups), `telemetry` (`TelemetryEvent`, one
+factory per finding code, the `TELEMETRY_CODES` declared surface,
+`derive_findings`), `inputs` (`GrainEntry`, `WaterChemistryInput`), `chemistry`
+(grist acidity, residual alkalinity, the bounded mash-pH model, acid/alkaline
+dosing), `salts` (`SaltDose`, dose-to-ion stoichiometry), `router` (the AUTO
+classifier), `engines` (the two LPs and the least-squares cloner), `dosing`
+(`solve_salt_dose`), and `orchestration` (`WaterChemistryOutput`, the phases,
+`solve_water_chemistry`). The map is the package docstring's table; `water.py`
+is deleted and every importer names its owner module, so `tach.toml` needed no
+change.
+
+`solve_water_chemistry` is now orchestration over named phases: `_gate_inputs`
+(volume gates, contaminants, floor override), `_stage1_ions` (post-salt mash/HLT
+vectors), `_resolve_mash_correction` (the pH inversion and the stage-2 acid or
+alkaline demand, returned as a `MashCorrection`), `_post_dose_ions` (the
+corrected vector and predicted pH), `_emit_mash_findings`, `_resolve_sparge_acid`,
+`_resolve_allocations`, and `_emit_operational_findings`. The boundary function
+composes them; it no longer contains chemistry, prose, or event literals.
+
+Findings have one truth. Every message is a factory in `core/water/telemetry.py`
+and `warnings`/`notes` are `derive_findings` projections of the event stream —
+the `warnings.append` sites and the end-of-function reconciliation loop are
+deleted. The four duplicate wordings it existed to paper over are gone: the short
+HLT-surplus, magnesium, and sulfate warnings and the short "calcium floor
+unreachable with pinned flavor targets" note each collapse into their canonical
+event message. The bare calcium-floor audit becomes
+`GUARDRAIL_CALCIUM_BELOW_FLOOR` (so the finding survives the channel change), the
+cloner/sparse fallback notes become `OPT_CLONE_CONSTRAINT_RELAXED` and
+`OPT_SPARSE_EQUALITIES_ONLY`, and the LP fallback note folds into the existing
+`OPT_LP_RELAXATION_APPLIED`. `solve_salt_dose` keeps its three-tuple signature,
+with `notes` now projected from the events it emitted.
+
+No arithmetic moved: a 19,440-case sweep (beers × waters × targets × strategies ×
+pH targets × agents × acids × distributions × floors) matches the pre-split
+module on every numeric field, and every pre-split telemetry `(code, message)`
+pair is still emitted. `make test` is 694 passed / 1 skipped — the previous 692
+plus the two new contract tests — and `make test-fuzz CASES=200` is green. The
+central assertion is
+`test_warnings_and_notes_are_the_telemetry_projection` (the findings policy is
+restated once, independently, and compared against every case);
+`test_emitted_codes_are_members_of_the_declared_surface` pins the vocabulary.
 
 ### Phase 7 — Style card (1–2 days)
 

@@ -5,16 +5,16 @@ from __future__ import annotations
 import pytest
 from conftest import make_water_request
 
-from app.core.water import (
-    GrainEntry,
-    SolverValidationError,
-    _salt_ion_coeffs,
+from app.core.errors import SolverValidationError
+from app.core.water.chemistry import (
     acid_volume_ml,
     alkaline_agent_mass_g,
     predict_mash_ph,
     resolve_grist,
-    solve_salt_dose,
 )
+from app.core.water.dosing import solve_salt_dose
+from app.core.water.inputs import GrainEntry
+from app.core.water.salts import _salt_ion_coeffs
 from app.schemas.boundary import (
     MashPhStatus,
     SaltDistribution,

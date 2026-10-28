@@ -72,7 +72,7 @@ per row, and the boundary computes the weighted `MC_bar = Σ wᵢ·mcᵢ`.
 
 Mash pH/acidity is **not** a seed field either. The water solver derives grain
 acidity from `category` + `color_lovibond` (a category color-slope model in
-`backend/app/core/water.py`). There is no per-malt `di_ph`/`buffer_index` to
+`backend/app/core/water/chemistry.py`). There is no per-malt `di_ph`/`buffer_index` to
 source or maintain.
 
 ### 2.2 `sugar`

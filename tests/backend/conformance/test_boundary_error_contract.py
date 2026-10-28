@@ -29,7 +29,7 @@ ARTIFACT = json.loads(
 
 CASES = [
     ("solver.batch", BatchSolverErrorCode, "batch", CAPACITY_CODES),
-    ("solver.water", WaterSolverErrorCode, "water.py", frozenset()),
+    ("solver.water", WaterSolverErrorCode, "water", frozenset()),
     ("solver.hops", HopSolverErrorCode, "hop_solver.py", frozenset()),
 ]
 

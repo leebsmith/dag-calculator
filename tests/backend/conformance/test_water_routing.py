@@ -18,12 +18,10 @@ from pathlib import Path
 
 import pytest
 
-from app.core.water import (
-    SolverValidationError,
-    infer_adsco_mode,
-    ions_added_ppm,
-    solve_salt_dose,
-)
+from app.core.errors import SolverValidationError
+from app.core.water.dosing import solve_salt_dose
+from app.core.water.router import infer_adsco_mode
+from app.core.water.salts import ions_added_ppm
 
 FIXTURE = (
     Path(__file__).resolve().parents[2] / "conformance" / "fixtures" / "ion-constraints.json"

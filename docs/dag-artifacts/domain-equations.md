@@ -388,8 +388,8 @@ Each correction lands here in the same commit as its code, per the atomic-docs r
 ## 3. Black-box contract: water-chemistry solver
 
 **Binding:** `water_chemistry_solver` · **Resolution:** `iterative` (linear
-program via `scipy.optimize.linprog`). **Realization:** the module
-`backend/app/core/water.py`, sealed and opaque.
+program via `scipy.optimize.linprog`). **Realization:** the package
+`backend/app/core/water/` (entry point `orchestration.py`), sealed and opaque.
 
 ### 3.1 Inputs
 
@@ -446,8 +446,8 @@ unmodelled grist/SMB contributions — lives in
 | `total_added_salt_mass_g` | mass — total dosed salt mass (flavor salts + agent) |
 | `added_mineral_tds_ppm` | concentration — added mineral mass normalized to the mash volume |
 | `grist_buckets_kg` | mass (per grain type) |
-| `warnings` / `notes` | text |
-| `telemetry` | host-side only (not a DAG output) |
+| `warnings` / `notes` | text — projections of `telemetry`, one wording per finding |
+| `telemetry` | host-side only (not a DAG output); one factory per code in `core/water/telemetry.py` |
 
 Derived water readouts: `water.kettle_blend.<ion>` volume-weights the treated
 mash and HLT vectors by `v_run1 + v_run2` and `v_sparge`;

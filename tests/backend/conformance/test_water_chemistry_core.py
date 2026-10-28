@@ -1,23 +1,20 @@
 import pytest
 
-from app.core.water import (
-    GrainEntry,
-    SaltDose,
-    SolverValidationError,
-    WaterChemistryInput,
+from app.core.errors import SolverValidationError
+from app.core.water.chemistry import (
     acid_volume_ml,
-    add_ions,
     alkaline_agent_mass_g,
     bicarbonate_from_alkalinity,
-    ions_added_ppm,
     mash_ph_status,
     predict_mash_ph,
     residual_alkalinity,
     residual_alkalinity_for_target_ph,
     resolve_grist,
-    solve_salt_dose,
-    solve_water_chemistry,
 )
+from app.core.water.dosing import solve_salt_dose
+from app.core.water.inputs import GrainEntry, WaterChemistryInput
+from app.core.water.orchestration import solve_water_chemistry
+from app.core.water.salts import SaltDose, add_ions, ions_added_ppm
 
 
 def _ions(**overrides):

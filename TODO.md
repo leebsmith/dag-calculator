@@ -4,14 +4,14 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–5 landed: the adapter-format allowlist is empty, every numeric readout
+  Phases 0–6 landed: the adapter-format allowlist is empty, every numeric readout
   routes through `views/producer/cell.js` (`formatCell` / `cellLabel`), backend
   errors and capacity limits share one class and one table in `core/errors.py`,
   collections can declare row-scoped computed `fields` (grammar revision 10,
   payload still 3), the fermentable rows read `grist_row.mass_kg` /
   `extract_kg` / `sugar_row.resolved_mass_kg` from the artifact — host writes are
   deleted, `reportFormat.fermentableRows` is gone, and the Fermentables card shows
-  mass and extract — and `core/batch_solver.py` is now the ten-module
+  mass and extract — and `core/batch_solver.py` became the ten-module
   `core/batch/` package (`constants` → `inputs` → `helpers` → `composition` →
   `volumetric` → `grist` → `cascade` → `hlt` → `orchestration` → `diagnostics`,
   mapped in the package docstring) with the shim deleted and every importer
@@ -19,9 +19,17 @@
   Phase 4 amended Phase 3's edge rule: field inputs are read-side edges resolved
   in authored mode, so a field may read the boundary its collection feeds while
   every boundary request still carries authored rows only.
-  Next is Phase 6, the `core/water/` package split and the telemetry-as-findings
-  channel (`solve_water_chemistry` decomposed into phases, per-code event
-  factories, the `warnings.append` reconciliation loop deleted).
+  Phase 6 turned `core/water.py` into the nine-module `core/water/` package
+  (`constants` → `telemetry` → `inputs` → `chemistry` → `salts` → `router` →
+  `engines` → `dosing` → `orchestration`), decomposed `solve_water_chemistry`
+  into named phases, and made `core/water/telemetry.py` the only findings
+  channel: one factory per code, `TELEMETRY_CODES` as the declared surface, and
+  `warnings`/`notes` projected from the events — the `warnings.append` sites and
+  the reconciliation loop are gone. A 19,440-case sweep matches the pre-split
+  module on every numeric field and keeps every pre-split telemetry message.
+  Next is Phase 7, the style-card split: `views/producer/stylePlot.js` for the
+  SVG projection and `adapters/cards/style/` modules behind the same KEYS, with
+  no new app members.
   Outstanding operational check: re-freeze the saved batch by hand on
   `make local-dev` and confirm the printed bundle matches the screen (emulator
   data is untracked). See `plans/decomposition-and-display-contract.md` for the

@@ -7,12 +7,9 @@ keys / dataclasses and the schema's ``IonProfile`` / ``WaterSolverResponse``.
 
 from __future__ import annotations
 
-from app.core.water import (
-    GrainEntry,
-    SolverValidationError,
-    WaterChemistryInput,
-    solve_water_chemistry,
-)
+from app.core.errors import SolverValidationError
+from app.core.water.inputs import GrainEntry, WaterChemistryInput
+from app.core.water.orchestration import solve_water_chemistry
 from app.schemas.boundary import (
     IonProfile,
     MashPhStatus,
@@ -106,7 +103,7 @@ def _to_input(req: WaterSolverRequest) -> WaterChemistryInput:
 def _post_hlt_ions(result, req: WaterSolverRequest) -> IonProfile:
     """Reconstruct the treated HLT vector from the sealed core's documented rule.
 
-    ``core/water.py`` computes ``post_hlt = source + added`` under
+    ``core/water/orchestration.py`` computes ``post_hlt = source + added`` under
     ``PROPORTIONAL`` and bare ``source`` under ``MASH_ONLY``, but does not return
     it. Both are derivable here: under ``PROPORTIONAL`` the HLT vector equals the
     mash vector (same per-litre dose, by construction); under ``MASH_ONLY`` it is
