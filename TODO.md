@@ -3,8 +3,17 @@
 ## In flight
 
 * **Alpine maintainability and module linting** — **next: Phase 2,
-  `catalogDraft` (13 helpers), the seventh of eight** (`mash` landed:
-  `views/producer/mashRows.js` holds the rest catalogue labels, the advisory
+  `fieldActions` helpers (5), the eighth and last of eight** (`catalogDraft`
+  landed: `views/producer/catalogDrawer.js` holds the drawer readouts the four
+  catalogue cards share — the two meta composers, the draft set (`activeCatalogIds`)
+  and the inspected row (`activeDraftRow`), the category/family pill tables, the
+  standard browser (`catalogStandardGroups`) and its selection name, the
+  brand/name product matches, the filtered → visible → truncated chain, and the
+  two filter toggles; the adapter is 319 lines from 333, every member keeps its
+  name and `KEYS` entry and delegates, and `catalogDraftKeys` is untouched;
+  covered by `tests/frontend/catalog-drawer.test.js` (10 cases) with
+  `catalogDraft.test.js` (25) and the four card suites pinning the strings.
+  `mash` landed: `views/producer/mashRows.js` holds the rest catalogue labels, the advisory
   temperature band, the canonical row defaults + canon↔schedule join, the
   1dp/2dp/whole-unit temperature labels, and the time and LGR summary lines; the
   adapter is 349 lines from 378, every member keeps its name and `KEYS` entry
@@ -43,7 +52,7 @@
   declarations on `installers.js`, with one owner per member; and today's 47
   cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
   135 reader/key pairs — that the ownership guard checks exactly. Remaining
-  groups after `catalogDraft`: `fieldActions` helpers (5). The three
+  group: `fieldActions` helpers (5), the last of eight. The three
   phases after Phase 2:
   split the two ~50-line card computations and declare the refresh pipeline,
   ratchet size and complexity, and invert the store's three client imports.

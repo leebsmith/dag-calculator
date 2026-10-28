@@ -2,7 +2,8 @@
 //
 // Installs the repeated state, getters, and handlers onto the reactive `app`
 // object. Cards supply only their config; bespoke behaviour stays in the card
-// module. See plans/card-refactor.md.
+// module and the pure readouts live in views/producer/catalogDrawer.js. See
+// plans/card-refactor.md.
 //
 // config:
 //   prefix         state/handler stem ("hop")
@@ -31,9 +32,23 @@
 // binding and the direct-call tests behave unchanged. Getters are installed with
 // Object.defineProperties (Object.assign would collapse them to values).
 
-import { catalogCategories, familyOptions, filterCatalog, standardGroups } from "../../views/catalog.js";
+import {
+  activeCatalogIds,
+  activeDraftRow,
+  catalogCategoryPills,
+  catalogFamilyPills,
+  catalogGroupMeta,
+  catalogItemMeta,
+  catalogProductMatches,
+  catalogStandardGroups,
+  filteredCatalogItems,
+  isCatalogTruncated,
+  standardSelectionName,
+  toggledCategoryFilter,
+  toggledFamilyFilter,
+  visibleCatalogItems,
+} from "../../views/producer/catalogDrawer.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
-import { joinNonEmpty } from "../../utils.js";
 
 export function installCatalogDraft(app, ctx, config) {
   const {
@@ -150,14 +165,14 @@ export function installCatalogDraft(app, ctx, config) {
     },
 
     [`toggle${Cap}Category`](category) {
-      const current = this[`${prefix}CategoryFilter`];
-      this[`${prefix}CategoryFilter`] = current.includes(category)
-        ? current.filter((c) => c !== category)
-        : [...current, category];
+      this[`${prefix}CategoryFilter`] = toggledCategoryFilter(
+        this[`${prefix}CategoryFilter`],
+        category
+      );
     },
 
     [`toggle${Cap}Family`](family) {
-      this[`${prefix}Family`] = this[`${prefix}Family`] === family ? "" : family;
+      this[`${prefix}Family`] = toggledFamilyFilter(this[`${prefix}Family`], family);
       this[`${prefix}Standard`] = "";
     },
 
@@ -179,21 +194,15 @@ export function installCatalogDraft(app, ctx, config) {
     },
 
     [`${prefix}ItemMeta`](item) {
-      if (!itemMeta || !item || typeof item !== "object") return "";
-      return joinNonEmpty(itemMeta(item));
+      return catalogItemMeta(item, itemMeta);
     },
 
     [`${prefix}GroupMeta`](group) {
-      if (!groupMeta || !group || typeof group !== "object") return "";
-      return joinNonEmpty(groupMeta(group), " · ");
+      return catalogGroupMeta(group, groupMeta);
     },
   };
 
   Object.assign(app, state, methods);
-
-  function activeIds() {
-    return new Set((this.draftRows ?? []).map((row) => row[idField]).filter(Boolean));
-  }
 
   const getters = {
     [`${prefix}EditorOpen`]() {
@@ -205,38 +214,24 @@ export function installCatalogDraft(app, ctx, config) {
     },
     [`${prefix}Categories`]() {
       void this.catalogRevision;
-      return categoryField ? catalogCategories(catalog(), (item) => item[categoryField]) : [];
+      return catalogCategoryPills(catalog(), categoryField);
     },
     [`${prefix}Families`]() {
       if (!standardField) return [];
       void this.catalogRevision;
-      return familyOptions(catalog(), (item) => item[familyField]);
+      return catalogFamilyPills(catalog(), familyField);
     },
     [`${prefix}StandardGroups`]() {
       if (!standardField) return [];
       void this.catalogRevision;
-      const q = String(this[`${prefix}Search`] ?? "").trim().toLowerCase();
-      const family = this[`${prefix}Family`];
-      const added = activeIds.call(this);
-      let items = catalog();
-      // Representative (`std:`) entries are not producer variants — exclude them
-      // from the browser counts.
-      items = items.filter((item) => !String(item.id ?? "").startsWith("std:"));
-      if (family) items = items.filter((item) => item[familyField] === family);
-      if (q) {
-        items = filterCatalog(items, {
-          activeIds: added,
-          query: q,
-          searchFields: [standardNameField, standardDescriptionField].filter(Boolean),
-        });
-      } else {
-        items = items.filter((item) => !added.has(item.id));
-      }
-      return standardGroups(items, {
-        idOf: (item) => item[standardField],
-        nameOf: standardNameField ? (item) => item[standardNameField] : undefined,
-        descriptionOf: standardDescriptionField ? (item) => item[standardDescriptionField] : undefined,
-        familyOf: familyField ? (item) => item[familyField] : undefined,
+      return catalogStandardGroups(catalog(), {
+        standardField,
+        standardNameField,
+        standardDescriptionField,
+        familyField,
+        query: this[`${prefix}Search`],
+        family: this[`${prefix}Family`],
+        added: activeCatalogIds(this.draftRows, idField),
       });
     },
     // Brand/name matches surfaced beside the standard groups, so a query like
@@ -248,62 +243,54 @@ export function installCatalogDraft(app, ctx, config) {
       const query = String(this[`${prefix}Search`] ?? "").trim();
       if (!query) return [];
       void this.catalogRevision;
-      let items = catalog().filter((item) => !String(item.id ?? "").startsWith("std:"));
-      if (standardField && this[`${prefix}Family`]) {
-        items = items.filter((item) => item[familyField] === this[`${prefix}Family`]);
-      }
-      const fields = [...new Set([...searchFields, ...(brandField ? [brandField] : [])])];
-      return filterCatalog(items, {
-        activeIds: activeIds.call(this),
+      return catalogProductMatches(catalog(), {
         query,
+        standardField,
+        family: this[`${prefix}Family`],
+        familyField,
         categories: this[`${prefix}CategoryFilter`],
-        categoryOf: categoryField ? (item) => item[categoryField] : null,
-        searchFields: fields,
+        categoryField,
+        searchFields,
+        brandField,
         includeNotes: this[`${prefix}SearchNotes`],
-      }).slice(0, productSearchLimit);
+        added: activeCatalogIds(this.draftRows, idField),
+        limit: productSearchLimit,
+      });
     },
     [`${prefix}StandardName`]() {
-      if (!standardField || !this[`${prefix}Standard`]) return "";
-      const item = catalog().find((i) => i[standardField] === this[`${prefix}Standard`]);
-      return item && standardNameField ? item[standardNameField] : this[`${prefix}Standard`] ?? "";
+      return standardSelectionName(catalog(), {
+        standardField,
+        standard: this[`${prefix}Standard`],
+        standardNameField,
+      });
     },
     [`${prefix}FilteredCatalog`]() {
       void this.catalogRevision;
-      let items = catalog();
-      if (standardField && this[`${prefix}Standard`]) {
-        items = items.filter((item) => item[standardField] === this[`${prefix}Standard`]);
-      }
-      const filtered = filterCatalog(items, {
-        activeIds: activeIds.call(this),
+      return filteredCatalogItems(catalog(), {
+        standardField,
+        standard: this[`${prefix}Standard`],
+        added: activeCatalogIds(this.draftRows, idField),
         query: this[`${prefix}Search`],
         categories: this[`${prefix}CategoryFilter`],
-        categoryOf: categoryField ? (item) => item[categoryField] : null,
+        categoryField,
         searchFields,
         includeNotes: this[`${prefix}SearchNotes`],
       });
-      // In a standard's drill-down, surface the generic representative first.
-      if (standardField && this[`${prefix}Standard`]) {
-        filtered.sort((a, b) => {
-          const ar = String(a.id ?? "").startsWith("std:") ? 0 : 1;
-          const br = String(b.id ?? "").startsWith("std:") ? 0 : 1;
-          return ar - br || String(a.name ?? "").localeCompare(String(b.name ?? ""));
-        });
-      }
-      return filtered;
     },
     [`${prefix}VisibleCatalog`]() {
-      if (standardField && this[`${prefix}Standard`]) {
-        return this[`${prefix}FilteredCatalog`];
-      }
-      return this[`${prefix}FilteredCatalog`].slice(0, maxVisible);
+      return visibleCatalogItems(this[`${prefix}FilteredCatalog`], {
+        drilledIn: !!(standardField && this[`${prefix}Standard`]),
+        maxVisible,
+      });
     },
     [`${prefix}CatalogTruncated`]() {
-      if (standardField && this[`${prefix}Standard`]) return false;
-      return this[`${prefix}FilteredCatalog`].length > maxVisible;
+      return isCatalogTruncated(this[`${prefix}FilteredCatalog`], {
+        drilledIn: !!(standardField && this[`${prefix}Standard`]),
+        maxVisible,
+      });
     },
     [`${prefix}ActiveRow`]() {
-      const index = this[`${prefix}ActiveIndex`];
-      return index == null ? null : this.draftRows[index] ?? null;
+      return activeDraftRow(this.draftRows, this[`${prefix}ActiveIndex`]);
     },
   };
 

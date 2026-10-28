@@ -1,10 +1,10 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (6 of 8 card groups: `hops`,
-`late-additions`, `malt`, `trace-malts`, `yeast`, `mash`). Phases 3–5 remain:
-extract the logic that does not belong in the root and ratchet the shape the
-linter and the ownership guard can now see.
+(`55f6485`), and Phase 2 has begun (7 of 8 card groups: `hops`,
+`late-additions`, `malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`).
+Phases 3–5 remain: extract the logic that does not belong in the root and ratchet
+the shape the linter and the ownership guard can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -496,6 +496,48 @@ the LGR floor/summary); `mash-card.test.js`, `mash-preset-mirror.test.js` and
 (70 min rests)`, `84`, the bound numbers). The generated ownership index is
 unchanged — no member was renamed. Gate: `make check`; `make test` (903
 frontend, 697 backend).
+
+**Progress — `catalogDraft`, 7 of 8 groups.** `views/producer/catalogDrawer.js`
+owns the drawer readouts the four catalogue cards share: the two meta composers
+(`catalogItemMeta` / `catalogGroupMeta`), the draft set and the inspected row
+(`activeCatalogIds`, `activeDraftRow`), the pill tables (`catalogCategoryPills` /
+`catalogFamilyPills`), the standard browser and its selection name
+(`catalogStandardGroups`, `standardSelectionName`), the brand/name product
+matches (`catalogProductMatches`), the filtered → visible → truncated chain
+(`filteredCatalogItems`, `visibleCatalogItems`, `isCatalogTruncated`), and the
+two filter toggles (`toggledCategoryFilter`, `toggledFamilyFilter`). The adapter
+is 319 lines (from 333); every member keeps its name and `KEYS` entry and
+delegates with the state it reads, and `catalogDraftKeys` is untouched.
+
+Three notes:
+
+1. **The "13 no-`this` helpers" is a proxy that this card contradicts.** Only
+   `itemMeta`/`groupMeta` have bodies that touch no `this` at all; the rest read
+   the reactive state as `this[`${prefix}…`]`, which is the whole point of the
+   shared installer — each readout was re-derived per prefix. Fourteen functions
+   moved: the eleven catalogue/draft readouts, the two meta composers, and the
+   two toggle branches (counted as one helper). What stays is wiring:
+   `${prefix}EditorOpen` (the draft lifecycle), `${prefix}Catalog` (its body is
+   the `catalogRevision` touch plus the seed-cache lookup), and every handler,
+   which assigns state.
+2. **The store lookup and the reactivity touch stay in the adapter.**
+   `SEED_KEY_TO_CATALOG` is a store import and `views` may not reach up a layer,
+   so `catalogNameOf` resolution stays beside `duplicateCatalog${Cap}`; likewise
+   `void this.catalogRevision` and the `standardField` / empty-query guards that
+   decide *whether* the getter reads the cache.
+3. **The drill-down flag is one predicate.** `visibleCatalogItems` and
+   `isCatalogTruncated` take `drilledIn` rather than the two config fields, so
+   the cap and the truncation badge cannot disagree about whether a standard is
+   selected.
+
+`tests/frontend/catalog-drawer.test.js` covers the module without booting the
+app (10 cases: the meta composers, the draft set, the pills, the standard
+browser, the brand search with its cap and pills, the selection name, the
+filtered/drill-down order, the cap/truncation pair, the active row, the
+toggles); `catalogDraft.test.js` (25 cases) plus the hop, malt, trace-malt and
+late-addition suites and `card-display` pin the rendered strings unchanged. The
+generated ownership index is unchanged — no member was renamed. Gate:
+`make check`; `make test` (913 frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.
