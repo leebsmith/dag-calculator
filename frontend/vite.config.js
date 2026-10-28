@@ -29,6 +29,7 @@ export default defineConfig({
       "/batches": "http://127.0.0.1:8000",
       "/catalog": "http://127.0.0.1:8000",
       "/session": "http://127.0.0.1:8000",
+      "/report": "http://127.0.0.1:8000",
       "/api": "http://127.0.0.1:8000",
     },
   },
