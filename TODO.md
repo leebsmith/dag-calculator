@@ -2,19 +2,20 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 1, `Give every
-  app member an owner`** (Phase 0 landed in `b2467f9` + `614f20a`:
-  `frontend/src` now runs twelve rules at error from the one root
-  `eslint.config.js`, and `no-console` routes through `reportError` except the
-  autosave site). Phase 1 extends the surface check to hidden getters, generates
-  `docs/frontend-ownership.md`, and baselines today's 166 foreign reads into a
-  reasoned `SHARED` interface. The four phases after it: extract the 67 no-`this`
-  formatters out of the adapters, split the two ~50-line card computations and
-  declare the refresh pipeline, ratchet size and complexity, and invert the
-  store's three client imports.
-  Measured at `d285ffa`: 19 installers declare 567 members (388 enumerable, 179
-  hidden); 13 of 19 installers read keys owned elsewhere (≥166 foreign keys); 353
-  adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program
+* **Alpine maintainability and module linting** — **next: Phase 2, `Move card
+  row formatters into pure view modules`, starting with the hop card** (Phase 1
+  landed in `55f6485`: the surface check walks own properties, so the 179 hidden
+  members are governed too; `docs/frontend-ownership.md` is generated from the
+  new `modules`/`partials` declarations on `installers.js`, with one owner per
+  member; and today's 47 cross-owner keys sit in a reasoned `SHARED` interface
+  — 15 of 19 installers, 135 reader/key pairs — that the ownership guard
+  checks exactly). Phase 2 extracts the 67 no-`this` formatters out of the
+  adapters, one card per commit, starting with `hops` (10 methods). The three
+  phases after it: split the two ~50-line card computations and declare the
+  refresh pipeline, ratchet size and complexity, and invert the store's three
+  client imports.
+  Measured at `55f6485`: 19 installers declare 567 members (388 enumerable, 179
+  hidden); 353 adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program
   archives to `plans/archive/` when closed — every phase, gate, read fence and
   commit is in `plans/alpine-maintainability-and-module-linting.md`.
 

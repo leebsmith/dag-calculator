@@ -1,8 +1,8 @@
 # Alpine maintainability and module linting
 
-Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`). Phases 1–5 remain:
-make the single reactive root comprehensible, extract the logic that does not
-belong in it, and ratchet the shape the linter can now see.
+Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`) and Phase 1 landed
+(`55f6485`). Phases 2–5 remain: extract the logic that does not belong in the
+root and ratchet the shape the linter and the ownership guard can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -235,6 +235,49 @@ silent exemption: each entry carries a reason and fails when stale. A8 stays
 **Gate.** `make check`; `make test`; the ownership index is current.
 
 **Commit.** `Give every app member an owner`
+
+**Landed.** `55f6485`. The surface check now walks
+`Object.getOwnPropertyNames(app)` minus `BASE_KEYS`, so the 179 hidden members
+are governed by the same contract as the 388 enumerable ones (the guard test
+gained a synthetic hidden getter and an assertion that the assembled app has
+hidden members). `installers.js` became the ownership ledger: each entry carries
+the `modules` a read scan attributes `this.<member>`/`app.<member>` reads to and
+the `partials` it owns. `docs/frontend-ownership.md` is generated from it
+(installer → modules → members → card partials → foreign reads, then a member
+table with owner/surface/template count and the `SHARED` interface) by
+`node scripts/emit-ownership-index.mjs`, wired into `make generate` and the
+pre-commit hook, and freshness-tested against the builder in
+`scripts/frontend-ownership.mjs`.
+
+Baseline: 19 installers, 567 members (388 enumerable, 179 hidden), 15 card
+partials, 47 cross-owner keys read by 15 of 19 installers (135 distinct
+reader/key pairs). The `SHARED` list groups the reasons by interface — the
+`draft*` grid and lifecycle, the `input*` map, the shared field verbs, the modal
+focus trap, and the genuine card coupling (`scalePin`/`syncScalePreviewState`,
+`waterTargetOptions`, `maltCategories`, `styleConformanceReport`). The
+`ownership` guard requires an exact match: a read by an unlisted installer
+fails, a listed installer that stopped reading fails, as does an unreasoned,
+duplicated or undeclared-key entry.
+
+Two deviations, both narrower than the plan:
+
+1. **`owners` means the readers.** An entry keeps the plan's
+   `{ key, owners, reason }` shape, but the declaring installer is implicit and
+   `owners` lists every installer that may read the key. Listing the owner too
+   would repeat the `installers.js` declaration in 47 places for no signal; the
+   guard rejects it explicitly.
+2. **A card partial can have several owners.** `steps.js` maps a step to a
+   partial but not a partial to an installer, so `partials` lives on the
+   installer entries. `step-style.html` belongs to the four style installers and
+   `step-fermentables.html` to `malt` + `traceMalts`; bindings inside a card's
+   owner set are not cross-owner reads. Foreign bindings from a partial are
+   attributed to each of its owners, which is why the `input*` readers include
+   all four style installers.
+
+The ≥166 figure in §1 is not reproducible from the declaration; the honest
+baseline is 47 keys, so that is what `SHARED` records, and the guard checks the
+135 reader/key pairs exactly rather than trusting the key count. Gate: `make
+check`; `make test` (867 frontend, 697 backend).
 
 **Handoff.** The shared list is the work queue for Phases 2–3: each entry either
 becomes a view function or disappears.
