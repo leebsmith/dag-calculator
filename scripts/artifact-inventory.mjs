@@ -119,6 +119,27 @@ export function buildInventory(artifact) {
   }
   lines.push("");
 
+  const fielded = sortedKeys(artifact.nodes).filter(
+    (id) => artifact.nodes[id].kind === "collection" && artifact.nodes[id].fields
+  );
+  if (fielded.length) {
+    lines.push("## Collection computed fields");
+    lines.push("");
+    lines.push("| collection | field | output | inputs | expr |");
+    lines.push("|---|---|---|---|---|");
+    for (const id of fielded) {
+      for (const [name, spec] of Object.entries(artifact.nodes[id].fields)) {
+        const inputs = sortedKeys(spec.inputs ?? {})
+          .map((alias) => `${alias} ← \`${spec.inputs[alias]}\``)
+          .join(", ");
+        lines.push(
+          `| \`${id}\` | \`${name}\` | ${fieldSpec(spec.output)} | ${inputs || "—"} | \`${stableStringify(spec.expr)}\` |`
+        );
+      }
+    }
+    lines.push("");
+  }
+
   lines.push("## Relations");
   lines.push("");
   lines.push("| id | blocking |");

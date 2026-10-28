@@ -3,7 +3,7 @@
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-export const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+export const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -42,9 +42,7 @@ export function validateArtifact(artifact) {
         checkDefaultRefs(artifact, node, `Root "${id}"`);
         break;
       case "collection":
-        if (!schemas[node.item_schema]) {
-          throw new Error(`Collection "${id}" references unknown schema "${node.item_schema}"`);
-        }
+        validateCollection(artifact, id, node, dimensions, taxonomies, constants, functions);
         break;
       case "selection":
         if (!node.output || !node.output.schema) {
@@ -92,6 +90,55 @@ export function validateArtifact(artifact) {
   }
 
   return artifact;
+}
+
+const ROW_ALIAS = "row";
+
+// A collection's `fields` are row-scoped computed values. They are shaped like a
+// `derived` node without the node wrapper (inputs + expr + one value spec) and
+// never appear in `item_schema`, which describes authored fields only.
+function validateCollection(artifact, id, node, dimensions, taxonomies, constants, functions) {
+  const schema = artifact.primitive_schemas?.[node.item_schema];
+  if (!schema) {
+    throw new Error(`Collection "${id}" references unknown schema "${node.item_schema}"`);
+  }
+  if (node.fields === undefined) return;
+  if (node.fields === null || typeof node.fields !== "object" || Array.isArray(node.fields)) {
+    throw new Error(`Collection "${id}" "fields" must be an object`);
+  }
+  for (const [name, spec] of Object.entries(node.fields)) {
+    const label = `Collection "${id}" field "${name}"`;
+    if (Object.prototype.hasOwnProperty.call(schema, name)) {
+      throw new Error(`${label} shadows an item_schema field`);
+    }
+    if (spec === null || typeof spec !== "object") {
+      throw new Error(`${label} must be an object`);
+    }
+    if (spec.inputs === null || typeof spec.inputs !== "object") {
+      throw new Error(`${label} must declare an "inputs" object`);
+    }
+    for (const [alias, path] of Object.entries(spec.inputs)) {
+      if (alias === ROW_ALIAS || alias.startsWith(`${ROW_ALIAS}.`)) {
+        throw new Error(`${label} input "${alias}" collides with the reserved "row" alias`);
+      }
+      checkRefResolves(artifact, path, `${label} input "${alias}"`);
+    }
+    checkOutput(spec, label);
+    if (spec.output.dimension && !dimensions[spec.output.dimension]) {
+      throw new Error(`${label} has unknown dimension "${spec.output.dimension}"`);
+    }
+    if (spec.output.taxonomy && !taxonomies[spec.output.taxonomy]) {
+      throw new Error(`${label} has unknown taxonomy "${spec.output.taxonomy}"`);
+    }
+    checkExprIds(artifact, spec.expr, constants, functions, `${label} expr`);
+    for (const path of collectRefs(spec.expr)) {
+      if (path !== ROW_ALIAS && !path.startsWith(`${ROW_ALIAS}.`)) continue;
+      const field = path.slice(ROW_ALIAS.length + 1);
+      if (!Object.prototype.hasOwnProperty.call(schema, field)) {
+        throw new Error(`${label} references unknown row field "${path}"`);
+      }
+    }
+  }
 }
 
 function validateDerived(artifact, id, node, constants, functions) {

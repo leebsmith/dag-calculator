@@ -107,11 +107,31 @@ namespace → error.
 "grist.major_malts": {
   "kind": "collection",
   "item_schema": "grist_row",
-  "default": { "call": "default_major_malts", "args": [] }
+  "default": { "call": "default_major_malts", "args": [] },
+  "fields": {
+    "mass_kg": {
+      "inputs": { "m_grist": "solver.batch.m_grist" },
+      "expr": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "m_grist" } ] },
+      "output": { "dimension": "mass" }
+    }
+  }
 }
 ```
 
-- `item_schema` — a primitive-schema id defining each element's fields.
+- `item_schema` — a primitive-schema id defining each element's **authored**
+  fields only.
+- `fields` — optional **row-scoped computed values**, keyed by field name. Each
+  entry has the shape of a `derived` node minus the node wrapper: `inputs`
+  (alias → dotted path), `expr`, and `output` (one value spec, as in §2.4). The
+  alias `row` is reserved and bound to the element, so `{ref: "row.pct"}` reads
+  an authored `item_schema` field. A computed field may not shadow an
+  `item_schema` field and may not read another computed field, so evaluation is
+  strictly row-local plus its declared inputs. Computed fields are materialized
+  on **evaluation**, never written into collection state (`semantics.md` §2.4).
+- A field's `inputs` may reference a boundary output the boundary does not
+  consume; the collection then carries an edge to that boundary. A reference that
+  closes a cycle (a boundary that consumes the collection itself) is a load-time
+  error.
 - Addressed via dotted sub-refs; reduced over by `map`/`filter`/`sum`/`weighted_avg`.
 
 ### 2.3 `selection`
@@ -215,7 +235,7 @@ But they fall into three semantic kinds:
 
 | Kind | Where declared | Meaning |
 |---|---|---|
-| **data** | a `derived`/`boundary` node's `inputs` | value → value dependency |
+| **data** | a `derived`/`boundary` node's `inputs`, a `collection` node's `fields` inputs | value → value dependency |
 | **reference** | a `selection` node's `ref` | id → resolved component value |
 | **relation** | the `relations` array | an n-ary domain invariant (edge carrying a predicate) |
 
@@ -288,15 +308,16 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **9**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **10**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `identity` (all objects), `nodes` (all objects), and
   `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.
 - `derived.expr` and `functions.*.body` must be valid AST (see
-  `expression-language.md`).
+  `expression-language.md`). So must a `collection.fields.*.expr`.
 - `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`/`schema`;
   a boundary output may also be a collection (`type:collection` + `item_schema`).
+  A `collection.fields` entry carries the same value spec as a `derived.output`.
   A selection's `output` is `{schema: <id>}`. A schema field may also carry
   `{type:"boolean"}` for a flag (e.g. `enabled`).
 - Every `inputs`/`ref`/`{ref}` path must resolve to a declared node, a declared

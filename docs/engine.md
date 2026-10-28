@@ -56,10 +56,11 @@ changes.
 ### The graph (`buildGraph`)
 
 - **`adjacency`** — `nodeId → [dependencyNodeIds]`, built from each node's
-  declared `inputs` (derived/boundary), `ref` (selection), and any `{ref}` in a
-  root/choice `default` (a default is evaluated lazily when the node is unset,
-  so its refs are real dependencies, not hidden ones). Collections have no edges
-  out.
+  declared `inputs` (derived/boundary, and each of a collection's computed
+  `fields`), `ref` (selection), and any `{ref}` in a root/choice `default` (a
+  default is evaluated lazily when the node is unset, so its refs are real
+  dependencies, not hidden ones). A collection with no computed fields has no
+  edges out.
 - **`dependents`** — the reverse: `nodeId → [consumerNodeIds]`.
 - **`topoOrder`** — a deterministic topological sort of all nodes.
 
@@ -106,11 +107,18 @@ rows. This is an artifact rule, not a UI one: direct engine callers get it too.
 
 ```text
 root/choice   → roots.get(nodeId) ?? evaluate(node.default)
-collection    → collections[nodeId] ?? []
+collection    → collections[nodeId] ?? []   (+ computed `fields`, per row)
 selection     → selections[nodeId] ?? reference component (empty ref → {})
 derived       → evaluate(node.expr, ctx(  resolve node.inputs  ))
 boundary      → request body → fingerprint → cache hit | boundaries[binding](body)
 ```
+
+A collection's computed `fields` (grammar §2.2) are evaluated per row into a
+**copy** of that row: the draft's collection state keeps only the authored
+`item_schema` fields, and `row.<field>` in a field expression reads that authored
+row. Like a derived node, a field resolves its declared `inputs` once per row, so
+the collection is memoized under its own node id and invalidated through the same
+dependency edges.
 
 A boundary's **request body** is the resolved declared `inputs` by default; when
 the host registers a per-binding request adapter (`options.boundaryRequests`), it

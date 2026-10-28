@@ -91,6 +91,21 @@ non-finite/`null` values and return `undefined` when no finite value remains
 (e.g. an empty schedule). `count` is **not** in the set; add it only if a derived
 node requires it.
 
+### 3.1 Row-scoped computed fields
+
+A `collection`'s `fields` entries (grammar §2.2) use the same binding idea
+without the reduction wrapper: the alias is fixed to `row` and bound to the
+element, so `{ "ref": "row.pct" }` reads an authored `item_schema` field. Every
+value from outside the row comes through the field's declared `inputs` aliases:
+
+```jsonc
+"mass_kg": {
+  "inputs": { "m_grist": "solver.batch.m_grist" },
+  "expr": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "m_grist" } ] },
+  "output": { "dimension": "mass" }
+}
+```
+
 ---
 
 ## 4. Function calls

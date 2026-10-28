@@ -1,7 +1,8 @@
 # Decomposition & display contract
 
-Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), and 2
-(error and constraint truth) landed; Phase 3 is next.
+Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), 2
+(error and constraint truth), and 3 (per-row computed fields) landed; Phase 4 is
+next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -259,6 +260,26 @@ diff.
 **Commit.** `Declare per-row computed fields on collections`
 
 **Handoff.** The feature exists and is documented but unused. Phase 4 consumes it.
+
+**Landed.** `collection.fields` is a map of field name → `{ inputs, expr, output }`
+— the `derived` node shape without the node wrapper, with the alias `row` reserved
+and bound to the element (`row.pct`) and every external value declared in
+`inputs`. `validate.js` rejects a field that shadows an `item_schema` field, a
+colliding input alias, a dangling input, an undeclared output dimension/taxonomy,
+a malformed value spec, an unknown constant/function, and an unknown `row.*`
+field; `units.js` gains `validateCollectionFields` (run from `loadArtifact`) to
+infer the expression's dimension against `row`'s item schema, matching the derived
+rule. `dag.js` adds one edge per field input path (so a field may read a boundary
+output the boundary does not consume, while a boundary that consumes the
+collection is a load-time cycle) and materializes the values into a **copy** of
+each row on read — collection state keeps authored `item_schema` fields only.
+Grammar 9 → 10; payload stays 3. `make generate` moved only the artifact
+description/version, the inventory version line, and the report-bundle fixture
+(hash + version). Tests: `tests/frontend/collection-fields.test.js` (evaluation,
+non-persistence, invalidation, the boundary-output case, the cycle, and every
+validation error). The inventory generator grew a
+`## Collection computed fields` section that is emitted once a collection
+declares a field.
 
 ### Phase 4 — Migrate rows, add card columns, re-freeze (1 day)
 

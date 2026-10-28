@@ -79,6 +79,32 @@ Append to `nodes`.
 "batch.dry_hops": { "kind": "collection", "item_schema": "dry_hop_row" }
 ```
 
+**Computed row field (collection `fields`)** — a derived value scoped to one row,
+declared beside `item_schema` (never inside it):
+```jsonc
+"grist.major_malts": {
+  "kind": "collection",
+  "item_schema": "grist_row",
+  "fields": {
+    "mass_kg": {
+      "inputs": { "m_grist": "solver.batch.m_grist" },
+      "expr": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "m_grist" } ] },
+      "output": { "dimension": "mass" }
+    }
+  }
+}
+```
+- `inputs` — alias → dotted path; every path must resolve (same rule as a
+  `derived` node). They are the collection's only graph edges.
+- `row.<field>` reads an authored `item_schema` field. The alias is reserved, a
+  computed field may not shadow an authored field, and one computed field may not
+  read another.
+- `output` — exactly one of `{ dimension }`, `{ taxonomy }`, `{ type: "boolean" }`,
+  and it must match what the expression infers.
+- The value is materialized when the engine reads the collection. No host code
+  writes it into collection state, and no request/freeze path needs to (the row
+  copy it receives already carries it).
+
 **Derived value**
 ```jsonc
 "batch.total_boil_time_min": {
@@ -100,7 +126,9 @@ Append to `nodes`.
   `expression-language.md`.
 - **`output`** — exactly **one** of `{ dimension }`, `{ taxonomy }`, or
   `{ type: "boolean" }`, and it must match what the expression infers
-  (`validateDerivedDimensions` checks this).
+  (`validateDerivedDimensions` checks this). A collection `fields` entry follows
+  the same rule, with the `row` alias bound to the element
+  (`validateCollectionFields` checks it).
 
 ## 4. Validate
 

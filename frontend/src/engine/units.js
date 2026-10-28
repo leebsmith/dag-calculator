@@ -275,6 +275,32 @@ export function validateRootDefaults(artifact) {
   }
 }
 
+// Verify every dimensioned computed collection field is dimension-consistent.
+// The field expression binds the reserved `row` alias to the item schema, so
+// `row.pct` infers the authored field's dimension.
+export function validateCollectionFields(artifact) {
+  for (const [id, node] of Object.entries(artifact.nodes)) {
+    if (node.kind !== "collection" || !node.fields) continue;
+    const schema = artifact.primitive_schemas?.[node.item_schema] ?? {};
+    for (const [name, spec] of Object.entries(node.fields)) {
+      if (!spec.output?.dimension) continue;
+      const inputDims = {};
+      for (const [alias, path] of Object.entries(spec.inputs ?? {})) {
+        inputDims[alias] = inferExprDimension(artifact, { ref: path }, {});
+      }
+      const inferred = inferExprDimension(artifact, spec.expr, inputDims, {
+        elem: { alias: "row", schema },
+      });
+      if (inferred !== null && inferred !== spec.output.dimension) {
+        throw new Error(
+          `Collection "${id}" field "${name}" declares dimension "${spec.output.dimension}" ` +
+            `but its expression infers "${inferred}"`
+        );
+      }
+    }
+  }
+}
+
 // Verify every dimensioned derived node's expression is dimension-consistent.
 export function validateDerivedDimensions(artifact) {
   for (const [id, node] of Object.entries(artifact.nodes)) {

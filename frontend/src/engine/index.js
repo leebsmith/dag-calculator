@@ -1,13 +1,14 @@
 // Engine public API: load + validate an artifact and build a calculator.
 
 import { createEngine } from "./dag.js";
-import { validateDerivedDimensions, validateRootDefaults } from "./units.js";
+import { validateDerivedDimensions, validateCollectionFields, validateRootDefaults } from "./units.js";
 import { validateArtifact } from "./validate.js";
 
 export function loadArtifact(artifact) {
   validateArtifact(artifact);
   validateRootDefaults(artifact);
   validateDerivedDimensions(artifact);
+  validateCollectionFields(artifact);
   return artifact;
 }
 
@@ -31,5 +32,6 @@ export {
   nodeDimension,
   valueSpecOf,
   validateDerivedDimensions,
+  validateCollectionFields,
   validateRootDefaults,
 } from "./units.js";

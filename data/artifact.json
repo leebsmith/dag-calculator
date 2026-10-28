@@ -1,8 +1,8 @@
 {
-  "schema_version": 9,
+  "schema_version": 10,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 9, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 10, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
   },
   "identity": {

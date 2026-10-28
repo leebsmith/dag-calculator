@@ -1,13 +1,13 @@
 {
   "bundle_format": 7,
   "artifact": {
-    "schema_version": 9,
-    "hash": "sha256:74231eae87e2fa902106c4e70363345a3bf8f45bb0995136494273fe899dd9d1",
+    "schema_version": 10,
+    "hash": "sha256:93ca11de6f00171fef78a2b2974a923d86bdb74d180edaf80d121b88b71f39b6",
     "content": {
-      "schema_version": 9,
+      "schema_version": 10,
       "meta": {
         "name": "batch-brewing-calculator-logic",
-        "description": "Canonical business-logic DAG (schema_version 9, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+        "description": "Canonical business-logic DAG (schema_version 10, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
         "status": "complete"
       },
       "identity": {
@@ -6971,5 +6971,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:2285853dc58e2be3445b4b06c548059d5203e5a43fd096424f86f5f7be582382"
+  "content_hash": "sha256:68c72238335a0ac6366bb594654251babdcd40405c796e1dd9871b957fabd1a5"
 }

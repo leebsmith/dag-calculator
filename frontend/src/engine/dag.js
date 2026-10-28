@@ -23,6 +23,15 @@ export function buildGraph(artifact) {
         const r = resolveReference(artifact, path);
         if (r?.kind === "node") deps.push(r.nodeId);
       }
+    } else if (node.kind === "collection") {
+      // A computed row field reads its declared `inputs` once per row, so each
+      // path is a real edge. `row.<field>` reads stay inside the collection.
+      for (const spec of Object.values(node.fields ?? {})) {
+        for (const path of Object.values(spec.inputs ?? {})) {
+          const r = resolveReference(artifact, path);
+          if (r?.kind === "node") deps.push(r.nodeId);
+        }
+      }
     } else if (node.kind === "selection") {
       const r = resolveReference(artifact, node.ref);
       if (r?.kind === "node") deps.push(r.nodeId);
@@ -34,8 +43,8 @@ export function buildGraph(artifact) {
         if (r?.kind === "node") deps.push(r.nodeId);
       }
     }
-    adjacency[id] = deps;
-    for (const dep of deps) dependents[dep].push(id);
+    adjacency[id] = [...new Set(deps)];
+    for (const dep of adjacency[id]) dependents[dep].push(id);
   }
 
   const topoOrder = topologicalSort(adjacency, dependents);
@@ -179,9 +188,13 @@ export function createEngine(artifact, options = {}) {
     },
   };
 
-  function derivedCtx(inputValues) {
+  function derivedCtx(inputValues, row = null) {
     return {
       resolveRef(name) {
+        if (row) {
+          if (name === "row") return row;
+          if (name.startsWith("row.")) return getField(row, name.slice("row.".length));
+        }
         if (Object.prototype.hasOwnProperty.call(inputValues, name)) return inputValues[name];
         return resolveValue(name);
       },
@@ -194,14 +207,32 @@ export function createEngine(artifact, options = {}) {
     };
   }
 
+  // Row-scoped computed fields, evaluated per row on read. They are derived
+  // values: materialized into a copy of the row, never written into collection
+  // state (semantics.md §2.4).
+  function computedRowFields(node, row) {
+    const values = {};
+    for (const [name, spec] of Object.entries(node.fields)) {
+      const inputValues = {};
+      for (const [alias, path] of Object.entries(spec.inputs)) {
+        inputValues[alias] = resolveValue(path);
+      }
+      values[name] = evaluate(spec.expr, derivedCtx(inputValues, row));
+    }
+    return values;
+  }
+
   function evaluateNode(nodeId) {
     const node = artifact.nodes[nodeId];
     switch (node.kind) {
       case "root":
       case "choice":
         return roots.has(nodeId) ? roots.get(nodeId) : evaluate(node.default, topLevelCtx);
-      case "collection":
-        return collections[nodeId] ?? [];
+      case "collection": {
+        const rows = collections[nodeId] ?? [];
+        if (!node.fields) return rows;
+        return rows.map((row) => ({ ...row, ...computedRowFields(node, row) }));
+      }
       case "selection": {
         const refValue = get(node.ref);
         // No component chosen: `""` is the canonical empty id, and a null batch

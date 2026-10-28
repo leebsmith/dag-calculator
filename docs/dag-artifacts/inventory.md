@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **9**
+- `schema_version`: **10**
 
 ## Dimensions
 

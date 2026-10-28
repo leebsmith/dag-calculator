@@ -4,12 +4,17 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–2 landed: the adapter-format allowlist is empty, every numeric
+  Phases 0–3 landed: the adapter-format allowlist is empty, every numeric
   readout routes through `views/producer/cell.js` (`formatCell` / `cellLabel`),
-  and backend errors and capacity limits share one class and one table in
-  `core/errors.py`. Next is Phase 3, grammar: per-row computed collection
-  `fields`, separate from `item_schema`, at grammar revision 10 with the payload
-  still at 3. See `plans/decomposition-and-display-contract.md` for the
+  backend errors and capacity limits share one class and one table in
+  `core/errors.py`, and collections can declare row-scoped computed `fields`
+  (grammar revision 10, payload still 3; the feature is documented and unused).
+  Next is Phase 4, rows: `grist_row.mass_kg` / `extract_kg` and
+  `sugar_row.resolved_mass_kg` become computed fields, host writes
+  (`fieldActions.js`, `draftEditor.js`, `cards/late-additions.js`) are deleted,
+  `reportFormat.fermentableRows` stops re-deriving mass, and the Fermentables
+  card gains the mass/extract columns. Then regenerate and re-freeze the saved
+  batch by hand. See `plans/decomposition-and-display-contract.md` for the
   per-phase context contract.
 
 ## Next (in order)

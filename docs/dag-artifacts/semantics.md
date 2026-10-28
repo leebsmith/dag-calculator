@@ -55,8 +55,9 @@ computed, it is *not* a root.
 
 The dependency graph comes **only** from declared `inputs`, `ref`, `relations`,
 and `{ref}`s inside a node `default` (a default is a lazy expression, so its refs
-are dependencies). There is **no read-tracking / auto-inference**. A dependency
-that is not declared does not exist.
+are dependencies). A `collection`'s computed `fields` declare their own `inputs`,
+which are edges of the collection node. There is **no read-tracking /
+auto-inference**. A dependency that is not declared does not exist.
 
 ### 2.3 Domain-core-only
 
@@ -77,6 +78,11 @@ copy component values into roots (push) when the artifact can express the
 inheritance as a default (pull) — the copy needs a synchroniser that remembers to
 re-copy on every component change and to clear on every detach. A set root is an
 **override** and survives later component changes.
+
+It also extends to rows: a `collection`'s computed `fields` are derived values.
+The engine materializes them into a copy of each row when the collection is read
+and never writes them back into collection state, so a draft row holds exactly
+the authored `item_schema` fields.
 
 ### 2.5 Identity is memory, not state
 
