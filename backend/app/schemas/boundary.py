@@ -249,6 +249,10 @@ class BatchSolverResponse(BoundaryModel):
         float,
         Field(description="Malt extract into the fermenter over the grist's potential; excludes late additions"),
     ]
+    grist_attenuation: Annotated[
+        float,
+        Field(description="The grist's apparent attenuation limit; below the yeast cap when the grist binds"),
+    ]
     previews: list[ScalePreviewRow] = Field(default_factory=list)
 
 

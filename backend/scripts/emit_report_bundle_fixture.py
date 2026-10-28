@@ -206,6 +206,7 @@ RECORD = {
             "hlt.v_hlt_required": 18.2,
             "hlt.v_hlt_target": 18.2,
             "brewhouse_efficiency": 0.819,
+            "grist_attenuation": 0.71,
         },
         "batch.target_ibu": 40.0,
         "batch.realized_fg": 1.012,
@@ -317,6 +318,9 @@ PAYLOAD = FreezePayload(
             ),
             "solver.batch.brewhouse_efficiency": NodePresentation(
                 label="Brewhouse efficiency", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "solver.batch.grist_attenuation": NodePresentation(
+                label="Grist attenuation", dimension="percentage", unit="pct", symbol="%", decimals=1
             ),
             "solver.batch.hlt.v_hlt_debt": NodePresentation(
                 label="HLT debt", dimension="volume", unit="L", symbol="L", decimals=1
@@ -570,6 +574,7 @@ PAYLOAD = FreezePayload(
         "batch.topology": FormattedValue(text="Liquor-to-grist ratio"),
         "batch.conversion_efficiency": FormattedValue(text="90.0%", number="90.0", unit="%"),
         "solver.batch.brewhouse_efficiency": FormattedValue(text="81.9%", number="81.9", unit="%"),
+        "solver.batch.grist_attenuation": FormattedValue(text="71.0%", number="71.0", unit="%"),
         "batch.mash_thickness_l_per_kg": FormattedValue(text="3.0 L/kg", number="3.0", unit="L/kg"),
         "batch.runoff_ratio": FormattedValue(text="1.5", number="1.5"),
         "batch.boil_time_min": FormattedValue(text="60 min", number="60", unit="min"),

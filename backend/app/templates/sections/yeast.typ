@@ -57,6 +57,30 @@
   yeast.at("sta1", default: none) == true
 }
 
+// The grist sets its own ceiling when it ferments below the yeast's cap: the
+// solver clamps malt fermentability one-sided, so a less fermentable grist
+// lands under the cap with nothing else explaining it. The row prints only when
+// the grist is the binding constraint (the same presence-comparison idiom as the
+// derate row); the figure itself is a frozen string.
+#let grist-attenuation() = {
+  let solver = state.valuation.at("solver.batch", default: none)
+  if type(solver) != dictionary { return none }
+  solver.at("grist_attenuation", default: none)
+}
+
+#let grist-below-cap() = {
+  let grist = grist-attenuation()
+  let cap = state.valuation.at("batch.yeast_cap", default: none)
+  if grist == none or cap == none { false } else { grist < cap }
+}
+
+#let below-cap-rows() = if grist-below-cap() {
+  (
+    [Grist attenuation],
+    text-or("solver.batch.grist_attenuation"),
+  )
+} else { () }
+
 // The blend can exceed the malt cap: sugar extract is never capped, and a
 // diastaticus strain consumes the malt's dextrin residue. The producer omits
 // the value when nothing exceeds the cap, so the row disappears rather than
@@ -100,7 +124,7 @@
       text(fill: rgb("#4a4a4a"), text-or("solver.batch.apparent_attenuation")),
     ),
   )
-  let rows = head + above-cap-rows() + realized
+  let rows = head + below-cap-rows() + above-cap-rows() + realized
 
   grid(
     columns: (1fr, auto),

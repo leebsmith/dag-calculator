@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-renderer, report-bundle]
 blocks: []
 gate: a frozen bundle renders a Brewhouse section (process inputs plus the conversion/brewhouse efficiency pair) and a Liquor Ledger that closes on the sparge demand, from values the bundle already carries; the generator stays numeric-free
-status: implemented (phase 1); phase 2 in progress
+status: implemented (phase 1 and phase 2)
 ---
 
 # Report process sections

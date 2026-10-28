@@ -98,6 +98,7 @@ export function batchOutputs() {
     "hlt.v_hlt_required": 15.0,
     "hlt.v_hlt_target": 15.0,
     "brewhouse_efficiency": 0.82,
+    "grist_attenuation": 0.72,
     mash_thickness_l_per_kg: 3.0,
   };
 }

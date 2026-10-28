@@ -105,6 +105,7 @@ def _to_response(result) -> BatchSolverResponse:
         ),
         mash_thickness_l_per_kg=result.mash_thickness_l_per_kg,
         brewhouse_efficiency=result.brewhouse_efficiency,
+        grist_attenuation=result.grist_attenuation,
         previews=[
             ScalePreviewRow(
                 pin=row.pin,

@@ -3213,6 +3213,9 @@
         "brewhouse_efficiency": {
           "dimension": "percentage"
         },
+        "grist_attenuation": {
+          "dimension": "percentage"
+        },
         "mash_thickness_l_per_kg": {
           "dimension": "mash_thickness"
         },

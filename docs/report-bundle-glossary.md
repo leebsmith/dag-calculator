@@ -279,7 +279,7 @@ _61 paths_
 
 ## Solver — batch sparge
 
-_30 paths_
+_31 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -298,6 +298,7 @@ _30 paths_
 | `solver.batch.cascade.v_sol` | Dissolved extract | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_sparge` | Sparge water | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_strike` | Strike water | output | volume | L | 1 | — |
+| `solver.batch.grist_attenuation` | Grist Attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.hlt.v_hlt_after_strike` | V Hlt After Strike | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_debt` | V Hlt Debt | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_required` | V Hlt Required | output | volume | L | 1 | — |

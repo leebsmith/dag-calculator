@@ -12,6 +12,7 @@ from app.core.batch_solver import (
     kettle_cold_volume,
     solve_batch,
 )
+from app.core.utils import apparent_extract_for_real_extract, sg_to_plato
 
 
 @pytest.fixture
@@ -158,6 +159,41 @@ def test_solve_batch_propagates_validation_errors(standard_inputs):
     with pytest.raises(SolverValidationError) as exc:
         solve_batch(inputs)
     assert exc.value.code == "INVALID_TARGET_ABV"
+
+
+def test_grist_attenuation_is_the_apparent_limit(standard_inputs):
+    inputs = BatchSolverInput(
+        **{
+            **standard_inputs.__dict__,
+            "grain_bill": [
+                GrainBillEntry(w_i=0.80, yield_i=0.80, mc_i=0.04, fermentability_i=0.50),
+                GrainBillEntry(w_i=0.20, yield_i=0.70, mc_i=0.05, fermentability_i=0.40),
+            ],
+        }
+    )
+    result = solve_batch(inputs)
+
+    extracts = [0.80 * 0.80 * (1 - 0.04), 0.20 * 0.70 * (1 - 0.05)]
+    fermentability = (
+        extracts[0] * 0.50 + extracts[1] * 0.40
+    ) / sum(extracts)
+    oe = sg_to_plato(result.sg_post_boil)
+    apparent_extract = apparent_extract_for_real_extract(oe, oe * (1 - fermentability))
+    expected = (oe - apparent_extract) / oe
+
+    # The solver's OE differs in the last digits from the inversion of its own
+    # post-boil gravity, hence the loose absolute tolerance.
+    assert result.grist_attenuation == pytest.approx(expected, abs=1e-5)
+    assert result.grist_attenuation < standard_inputs.malt_attenuation_cap
+
+
+def test_grist_attenuation_falls_back_to_the_cap_without_row_fermentability(
+    standard_inputs,
+):
+    result = solve_batch(standard_inputs)
+    assert result.grist_attenuation == pytest.approx(
+        standard_inputs.malt_attenuation_cap
+    )
 
 
 def test_solve_batch_hlt_budget_is_consistent(standard_inputs):

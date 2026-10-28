@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:3451bddc3d5d911976eae4582ab24d939ae9deb924d9f4d377c70a4d157d126d",
+    "hash": "sha256:74231eae87e2fa902106c4e70363345a3bf8f45bb0995136494273fe899dd9d1",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -3333,6 +3333,9 @@
             "brewhouse_efficiency": {
               "dimension": "percentage"
             },
+            "grist_attenuation": {
+              "dimension": "percentage"
+            },
             "mash_thickness_l_per_kg": {
               "dimension": "mash_thickness"
             },
@@ -5289,6 +5292,16 @@
         "options": null,
         "option_labels": null
       },
+      "solver.batch.grist_attenuation": {
+        "label": "Grist attenuation",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.batch.hlt.v_hlt_debt": {
         "label": "HLT debt",
         "dimension": "volume",
@@ -6138,7 +6151,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:213b17a476e242e510da915f6bec66d02a55378c6da74ec10c03e5eaac9861f8"
+    "hash": "sha256:e6da409071e717fd2d3a4b620658129f44eac39771221544299ae2f60de8d576"
   },
   "batch": {
     "id": "frozen-1",
@@ -6271,7 +6284,8 @@
         "hlt.v_sparge_deliverable": 17.2,
         "hlt.v_hlt_required": 18.2,
         "hlt.v_hlt_target": 18.2,
-        "brewhouse_efficiency": 0.819
+        "brewhouse_efficiency": 0.819,
+        "grist_attenuation": 0.71
       },
       "batch.target_ibu": 40.0,
       "batch.realized_fg": 1.012,
@@ -6471,6 +6485,11 @@
     "solver.batch.brewhouse_efficiency": {
       "text": "81.9%",
       "number": "81.9",
+      "unit": "%"
+    },
+    "solver.batch.grist_attenuation": {
+      "text": "71.0%",
+      "number": "71.0",
       "unit": "%"
     },
     "batch.mash_thickness_l_per_kg": {
@@ -6952,5 +6971,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:67f02ce80a4c706147d0b0f92ca55ae042a9046ce53258083d78d729eac843ed"
+  "content_hash": "sha256:2285853dc58e2be3445b4b06c548059d5203e5a43fd096424f86f5f7be582382"
 }

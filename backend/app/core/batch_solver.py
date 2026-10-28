@@ -279,6 +279,23 @@ def solute_displacement_volume(s_conv: float, v_bar: float) -> float:
     return v_bar * s_conv
 
 
+def grist_apparent_attenuation(
+    oe_plato: float, real_fermentability: float | None, fallback: float
+) -> float:
+    """The grist's real fermentability expressed as apparent attenuation.
+
+    ``RE = OE · (1 − F)``; ``AE`` from the Cutaia real-extract regression; then
+    ``(OE − AE) / OE``. The fallback is the yeast's cap, used when the grain bill
+    publishes no per-row fermentability (legacy scalar path) so the readout never
+    claims a shortfall it cannot see.
+    """
+    if real_fermentability is None or oe_plato <= 0.0:
+        return fallback
+    real_extract = oe_plato * (1.0 - real_fermentability)
+    apparent_extract = apparent_extract_for_real_extract(oe_plato, real_extract)
+    return (oe_plato - apparent_extract) / oe_plato
+
+
 def brewhouse_efficiency(
     *,
     extract_total_kg: float,
@@ -1634,6 +1651,10 @@ class BatchSolverResult:
         brewhouse_efficiency: Malt extract into the fermenter as a share of the
             grist's potential extract, excluding late additions. Always below
             ``conversion_efficiency`` because it also carries lauter retention.
+        grist_attenuation: The grist's extract-weighted fermentability expressed
+            as apparent attenuation at the solved OE. Below the yeast cap when
+            the grist is the binding constraint; equal to the cap on the legacy
+            scalar path.
         previews: One hypothetical gravity/strength row per scale pin, at that
             pin's persisted target. Diagnostics only; never the active solve.
     """
@@ -1651,6 +1672,7 @@ class BatchSolverResult:
     binding_constraint: str
     mash_thickness_l_per_kg: float
     brewhouse_efficiency: float
+    grist_attenuation: float
     previews: tuple[ScalePreview, ...]
 
 
@@ -1665,6 +1687,7 @@ class _Pipeline:
     apparent_attenuation: float
     max_abv: float
     brewhouse_efficiency: float
+    grist_attenuation: float
 
 
 def tun_peak_volume_l(
@@ -2064,6 +2087,7 @@ def _solve_pipeline(
         sg_post_boil, reversal = solve_phase_1(apparent_attenuation)
         max_abv = max_achievable_abv(apparent_attenuation)
         s_late_add = inputs.s_late_add
+        oe_plato = sg_to_plato(sg_post_boil)
     else:
         state = _resolve_gravity(
             inputs, pin, target, v_kettle_cold, aa_malt, dextrin_consumption
@@ -2086,6 +2110,7 @@ def _solve_pipeline(
         max_abv = _abv_ceiling(
             inputs, v_kettle_cold, aa_malt, dextrin_consumption
         )
+        oe_plato = state.oe_plato
 
     try:
         m_grist = solve_grist_mass(
@@ -2150,6 +2175,11 @@ def _solve_pipeline(
             yield_fraction=yield_fraction,
             v_ferm=inputs.v_ferm,
             v_kettle_cold=v_kettle_cold,
+        ),
+        grist_attenuation=grist_apparent_attenuation(
+            oe_plato=oe_plato,
+            real_fermentability=aa_malt,
+            fallback=inputs.malt_attenuation_cap,
         ),
     )
 
@@ -2279,5 +2309,6 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         binding_constraint=binding_constraint,
         mash_thickness_l_per_kg=pipeline.cascade.mash_thickness_l_per_kg,
         brewhouse_efficiency=pipeline.brewhouse_efficiency,
+        grist_attenuation=pipeline.grist_attenuation,
         previews=previews,
     )

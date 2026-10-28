@@ -179,6 +179,7 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the module
 | `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable, v_hlt_required, v_hlt_target }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
 | `brewhouse_efficiency` | percentage — malt extract into the fermenter over the grist's potential; excludes late additions |
+| `grist_attenuation` | percentage — the grist's apparent attenuation limit at the solved OE |
 | `previews` | collection of `{ pin, og, fg, abv, ok, reason }` — hypothetical solves at the three persisted targets |
 
 ### 2.3 Domain / error surface
@@ -336,6 +337,17 @@ Late-addition sugar is excluded from both sides. **This is not
 `eta_conv · V_ferm / V_kettle_cold`**: `M` is solved against the *recovered* kettle
 extract, so absorption, dead space and hose transfer are already inside it and
 `BE < eta_conv` for every batch.
+
+The grist's own limit, when it binds before the yeast cap:
+
+    F_grist = Σ extract_i · F_i / Σ extract_i        (real, uncapped)
+    RE      = OE · (1 − F_grist)
+    AE      = apparent_extract_for_real_extract(OE, RE)
+    AA_grist = (OE − AE) / OE
+
+It is reported in apparent space so it can sit beside the cap and the realized
+figure. Without per-row fermentability (legacy scalar path) it falls back to the
+cap, so the report never claims a shortfall it cannot see.
 
 Mash tun to kettle: the kettle receives the mash liquid minus absorption, dead space and
 transfer loss. Transfer loss therefore carries **wort, not water** — it removes extract as

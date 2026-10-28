@@ -35,27 +35,6 @@
 
 ## Later
 
-* **Below-cap attenuation readout** — the report (and the Style card) surface the lift above the
-  malt cap, but not the opposite case: the solver clamps malt fermentability one-sided
-  (`F_eff = min(F_grist, cap_real)`), so a grist less fermentable than the yeast's ceiling yields
-  realized AA *below* the cap with nothing on the page explaining it. The honest figure is the
-  grist's extract-weighted real fermentability (`composite_fermentability_fraction` in
-  `core/batch_solver.py`) against `cap_real`; `aa_malt` exists only inside the solver request, and
-  neither a boundary output nor an artifact node exposes it. Needs either a `malt_fermentability`
-  boundary output or an artifact `grist.weighted_fermentability` (extract-weighted: parts × yield ×
-  (1 − moisture)), plus the OE-dependent real→apparent conversion if it is to join the apparent
-  chain without mixing bases. Deferred when the above-cap row landed
-  (`batch.attenuation_above_cap`).
-* **Above-cap: one definition** — the Style card still derives the lift in
-  `views/producer/attenuationCap.js` (`max(0, blend − cap)`), while the artifact now carries the
-  same delta as `batch.attenuation_above_cap`. Point the card at the node so the readout and the
-  report cannot drift; keep "Sugar lift above cap" as the card's wording (the node is neutral about
-  the cause).
-* **Extract-contribution table** — the fermentable tables report mass; an extract view would
-  recapitulate every mash component by its extract contribution (`mass × yield × (1 − moisture)`
-  for malt, `mass × yield` for sugar, trace excluded — A9) with each row's share of total extract.
-  That is where a sugar's 9.8 % of grist mass and 9.4 % of extract become two visible numbers.
-  Needs producer extract columns and a home: a fourth table in Batch Facts, or its own section.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
@@ -112,6 +91,8 @@ Not needed by the current artifact; add only when a node requires them:
 * **Report process sections** — Brewhouse (first) and Liquor Ledger (last), the HLT
   target/required outputs, brewhouse efficiency, and the display-only sparge-water target —
   `plans/report-process-sections.md`.
+* **Report fermentable readouts** — the extract-contribution table, the below-cap grist
+  attenuation row, and the sugar lift collapsed onto the artifact node — same plan, phase 2.
 * **Scale pins and audited sugar database** — ABV/OG/FG recipe pins, the live
   pin-preview matrix, effective sugar fermentability, and the three-tier sugar
   source — `plans/pin-matrix.md`, `docs/sugar-database.md`,

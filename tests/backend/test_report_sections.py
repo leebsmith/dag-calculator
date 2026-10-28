@@ -144,6 +144,12 @@ YEAST_PRESENCE_PROBE = (
     "#metadata(present-yeast()) <probe>\n"
 )
 
+# The grist row prints only when the grist is the binding constraint.
+YEAST_GRIST_PROBE = (
+    '#import "sections/yeast.typ": grist-below-cap\n'
+    "#metadata(grist-below-cap()) <probe>\n"
+)
+
 # The two gates the yeast layout branches on: a non-zero derate earns the
 # subtraction row, and a diastaticus-positive strain earns the warning.
 YEAST_GATES_PROBE = (
@@ -451,6 +457,21 @@ def test_the_above_cap_row_appears_only_when_the_cap_is_exceeded() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, ABOVE_CAP_PROBE) == {"present": False, "text": ""}
+        render(root, "yeast")
+
+
+def test_the_grist_attenuation_row_follows_the_state() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, YEAST_GRIST_PROBE) is True
+
+    bundle = fixture()
+    # At or above the cap the grist is no longer the binding constraint.
+    bundle["state"]["valuation"]["solver.batch"]["grist_attenuation"] = 0.74
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, YEAST_GRIST_PROBE) is False
         render(root, "yeast")
 
 
