@@ -153,8 +153,44 @@ test("http: a missing yeast blocks the batch without a solver error", async () =
   assert.equal(app.engine.get("solver.batch"), undefined);
 });
 
-test("http: pre-resolves both boundaries in topo order and computes", async () => {
-  const { fetchImpl, calls } = mockFetch({
+test("http: a saved share-mode sugar draft seeds parts before the first solve", async () => {
+  const { fetchImpl } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = makeApp({ useHttp: true, fetchImpl });
+  const yeast = app.engine.get("batch.yeast");
+
+  await app.loadState({
+    roots: {
+      "batch.late_addition_intent": "share",
+      "batch.sugar_extract_share": 0.2,
+      "batch.yeast_id": "fermentis-safale-american-ale-us-05",
+    },
+    collections: {
+      "batch.sugars": [
+        {
+          sugar_id: "dextrose",
+          name: "Dextrose",
+          mass_kg: 0.5,
+          parts: 0,
+          yield_fraction: 0.9,
+          yield_basis: "extract",
+          fermentability_fraction: 1,
+          fermentability_basis: "real",
+          color_lovibond: 0,
+          notes: "",
+        },
+      ],
+    },
+    selections: { "batch.yeast": yeast },
+  });
+
+  assert.ok(app.engine.getAuthored("batch.sugars")[0].parts > 0, "equal weights seeded");
+  assert.equal(app.boundaryError, null);
+});
+
+test("http: pre-resolves both boundaries in topo order and computes", async () => {  const { fetchImpl, calls } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
   });

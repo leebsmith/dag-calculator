@@ -186,11 +186,13 @@ export function createStepApp(options = {}) {
     // are still zero (rows predate the catalog's equal-weight default). The
     // solver honors the share, so a zero-weight table would show 0 lb of sugar
     // beside a real extract budget. Give that unmigrated state equal weights.
+    // This runs before the first solve, so the rows are read authored: a
+    // computed row field may read the batch boundary, which has no result yet.
     seedSugarShareParts() {
       if (session.engine.get("batch.late_addition_intent") !== "share") return false;
       const share = Number(session.engine.get("batch.sugar_extract_share")) || 0;
       if (!(share > 0)) return false;
-      const rows = session.engine.get("batch.sugars");
+      const rows = session.engine.getAuthored("batch.sugars");
       if (!Array.isArray(rows) || rows.length === 0) return false;
       const total = rows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
       if (total > 0) return false;
