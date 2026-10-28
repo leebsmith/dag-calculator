@@ -37,9 +37,9 @@ const OPS = {
 function domainHolds(domain, value) {
   if (!domain) return true;
   for (const [op, limit] of Object.entries(domain)) {
-    const test = OPS[op];
-    if (!test) continue;
-    if (typeof limit === "number" && !test(value, limit)) return false;
+    const check = OPS[op];
+    if (!check) continue;
+    if (typeof limit === "number" && !check(value, limit)) return false;
   }
   return true;
 }

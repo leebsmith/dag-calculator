@@ -34,7 +34,7 @@ def parse_bjcp_directory(directory="."):
     html_files = glob.glob(os.path.join(directory, "*.html"))
 
     for file_path in html_files:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             soup = BeautifulSoup(f, "html.parser")
 
         articles = soup.find_all("article", class_="style")

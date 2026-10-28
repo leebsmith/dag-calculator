@@ -3,8 +3,9 @@ import json
 import time
 from pathlib import Path
 from urllib.parse import urljoin
-from bs4 import BeautifulSoup
+
 import requests
+from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.beer-analytics.com"
 INDEX_URL = f"{BASE_URL}/yeasts/"

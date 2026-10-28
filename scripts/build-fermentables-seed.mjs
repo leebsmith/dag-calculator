@@ -128,7 +128,7 @@ function dedupeMalts(rows) {
   }
 
   const deduped = [];
-  for (const [key, group] of groups) {
+  for (const [, group] of groups) {
     let winner = group[0];
     for (const candidate of group.slice(1)) winner = prefer(winner, candidate);
 
@@ -286,9 +286,9 @@ function writeSorted(path, seed) {
 }
 
 function median(values) {
-  const sorted = [...values].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  const ordered = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(ordered.length / 2);
+  return ordered.length % 2 ? ordered[mid] : (ordered[mid - 1] + ordered[mid]) / 2;
 }
 
 // Backfill color_lovibond === 0 (a "no colour published" sentinel) from the

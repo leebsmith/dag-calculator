@@ -1,8 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { styleCentroid, sgToPlato, platoToSg, cutaiaAbv, apparentToRealAttenuation } from "../../frontend/src/engine/fermentation.js";
 import {
+  styleCentroid,
+  sgToPlato,
+  platoToSg,
+  cutaiaAbv,
+  apparentToRealAttenuation,
   feasibleVertices,
   pointInRegion,
   oeSliceAt,

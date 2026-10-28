@@ -113,10 +113,10 @@ report-pages:
 check:
 	@echo "Checking frontend linting..."
 	cd frontend && npm run lint
-	@echo "Checking test linting..."
-	./frontend/node_modules/.bin/eslint --config eslint.config.js --max-warnings 0 tests
+	@echo "Checking test and script linting..."
+	./frontend/node_modules/.bin/eslint --config eslint.config.js --max-warnings 0 tests scripts
 	@echo "Checking backend linting and architectural boundaries..."
-	cd backend && uv run ruff check . ../tests/backend
+	cd backend && uv run ruff check . ../tests/backend ../scripts
 	cd backend && uv run tach check
 	@echo "Checking Firebase config..."
 	node scripts/check-firebase-config.mjs
@@ -138,7 +138,7 @@ test-fuzz:
 
 coverage:
 	@echo "Frontend coverage (loaded modules)..."
-	cd frontend && node --test --experimental-test-coverage ../tests/frontend/*.test.js ../tests/conformance/*.test.js ../tests/guards/*.test.js
+	cd frontend && node --test --experimental-test-coverage "../tests/**/*.test.js"
 	@echo "Backend coverage..."
 	cd backend && uv run --with pytest-cov pytest ../tests/backend/ -p no:tach --cov=app --cov-report=term-missing
 	@rm -f backend/.coverage

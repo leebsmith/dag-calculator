@@ -202,10 +202,6 @@ export function ownershipGaps(installers = INSTALLERS, shared = SHARED) {
   };
 }
 
-function sortedEntries(map) {
-  return [...map].sort(([a], [b]) => a.localeCompare(b));
-}
-
 export function buildOwnershipIndex(installers = INSTALLERS, shared = SHARED) {
   const app = createStepApp();
   const enumerable = new Set(Object.keys(app));

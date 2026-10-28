@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+
 
 class VitalRange(BaseModel):
     min: float
@@ -21,10 +21,10 @@ class BJCPStyleTarget(BaseModel):
     aroma: str
     flavor: str
     mouthfeel: str
-    comments: Optional[str] = None
-    history: Optional[str] = None
-    characteristic_ingredients: Optional[str] = None
-    style_comparison: Optional[str] = None
+    comments: str | None = None
+    history: str | None = None
+    characteristic_ingredients: str | None = None
+    style_comparison: str | None = None
     vital_statistics: VitalStatistics
-    commercial_examples: List[str]
-    style_attributes: List[str]
+    commercial_examples: list[str]
+    style_attributes: list[str]

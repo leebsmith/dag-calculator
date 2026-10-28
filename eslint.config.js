@@ -18,6 +18,16 @@ const BROWSER_GLOBALS = {
   console: "readonly",
 };
 
+const NODE_GLOBALS = {
+  console: "readonly",
+  process: "readonly",
+  URL: "readonly",
+  crypto: "readonly",
+  setTimeout: "readonly",
+  clearTimeout: "readonly",
+  structuredClone: "readonly",
+};
+
 const IMPORT_RANKS = {
   "utils.js": 1,
   "observability.js": 2,
@@ -75,15 +85,24 @@ const SHAPE_RULES = {
 };
 
 const shapeException = (reason, files, rules) => ({
-  name: `shape: ${reason}`,
+  name: `shape-group: ${reason}`,
   files: files.flatMap((file) => [`frontend/src/${file}`, `src/${file}`]),
   rules,
 });
 
 const shapePins = (reason, rule, pins) =>
-  Object.entries(pins).map(([file, ceiling]) =>
-    shapeException(reason, [file], { [rule]: ["error", ceiling] }),
-  );
+  Object.entries(pins).map(([file, ceiling]) => ({
+    name: `shape-pin: ${reason}`,
+    files: [`frontend/src/${file}`, `src/${file}`],
+    rules: { [rule]: ["error", ceiling] },
+  }));
+
+const shapePinsAt = (reason, rule, pins) =>
+  Object.entries(pins).map(([file, ceiling]) => ({
+    name: `shape-pin: ${reason}`,
+    files: [file],
+    rules: { [rule]: ["error", ceiling] },
+  }));
 
 const SURFACE_DECLARERS = [
   "adapters/cards/catalogDraft.js",
@@ -163,21 +182,52 @@ const DEPTH_PINS = {
   "engine/dag.js": 5,
 };
 
-const FILE_LINE_PINS = {
-  "adapters/cards/hops.js": 550,
-  "adapters/cards/late-additions.js": 450,
-  "adapters/cards/water.js": 650,
-  "adapters/stepAdapter.js": 500,
-  "engine/fermentation.js": 550,
-  "store/recipes.js": 500,
-  "utils/format.js": 550,
+const FUNCTION_LINE_PINS = {
+  "engine/dag.js": 295,
+  "engine/units.js": 105,
+  "engine/validate.js": 86,
+  "adapters/boundaryRunner.js": 210,
+  "views/producer/stylePlot.js": 137,
 };
+
+const FILE_LINE_PINS = {
+  "adapters/cards/hops.js": 522,
+  "adapters/cards/late-additions.js": 415,
+  "adapters/cards/water.js": 639,
+  "adapters/stepAdapter.js": 436,
+  "engine/fermentation.js": 506,
+  "store/recipes.js": 465,
+  "utils/format.js": 514,
+};
+
+const SCRIPT_COMPLEXITY = {
+  "scripts/artifact-inventory.mjs": 16,
+  "scripts/build-fermentables-seed.mjs": 16,
+  "scripts/build-hop-products-seed.mjs": 14,
+  "scripts/build-hops-seed.mjs": 20,
+  "scripts/build-styles-seed.mjs": 14,
+  "scripts/build-yeasts-seed.mjs": 14,
+  "scripts/describe-report-bundle.mjs": 35,
+  "scripts/frontend-ownership.mjs": 19,
+};
+
+const SCRIPT_STATEMENTS = {
+  "scripts/artifact-inventory.mjs": 75,
+  "scripts/frontend-ownership.mjs": 45,
+};
+
+const SCRIPT_FUNCTION_LINES = { "scripts/artifact-inventory.mjs": 107 };
+
+const SCRIPT_FILE_LINES = { "scripts/build-fermentables-seed.mjs": 448 };
 
 const CONSOLE_SINK = {
   "observability.js": "implements the sink",
   "store/persistence.js":
     "an autosave failure logs on every attempt; the sink dedupes by scope:message",
 };
+
+const CLI_CONSOLE =
+  "a CLI's stdout is its interface: the seed builders report counts, the emitters write the file they generated";
 
 
 const DOM_RULES = {
@@ -197,22 +247,23 @@ const DOM_RULES = {
 export default [
   {
     files: ["tests/**/*.{js,mjs}"],
+    linterOptions: { reportUnusedDisableDirectives: "error" },
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
-      globals: {
-        console: "readonly",
-        process: "readonly",
-        URL: "readonly",
-        crypto: "readonly",
-        setTimeout: "readonly",
-        clearTimeout: "readonly",
-        structuredClone: "readonly",
-      },
+      globals: NODE_GLOBALS,
     },
-    rules: {
-      "no-unused-vars": "warn",
+    rules: SOURCE_RULES,
+  },
+  {
+    files: ["scripts/**/*.mjs"],
+    linterOptions: { reportUnusedDisableDirectives: "error" },
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: NODE_GLOBALS,
     },
+    rules: { ...SOURCE_RULES, ...SHAPE_RULES },
   },
   {
     files: ["frontend/src/**/*.js", "src/**/*.js"],
@@ -233,15 +284,10 @@ export default [
     SURFACE_DECLARERS,
     { "max-lines-per-function": ["error", 450] },
   ),
-  shapeException(
-    "grammar dispatch: the interpreter and the projection registry carry one branch per node kind, so the function length follows the grammar",
-    ["engine/dag.js", "engine/units.js", "engine/validate.js"],
-    { "max-lines-per-function": ["error", 300] },
-  ),
-  shapeException(
-    "one pass per file: the solver schedule and the plot model are single compositions with their steps inlined",
-    ["adapters/boundaryRunner.js", "views/producer/stylePlot.js"],
-    { "max-lines-per-function": ["error", 210] },
+  ...shapePins(
+    "one function per file: the graph build, the dimension table, the validator, the solver schedule and the plot model are single passes",
+    "max-lines-per-function",
+    FUNCTION_LINE_PINS,
   ),
   ...shapePins(
     "grammar dispatch: one branch per node kind, pinned at today's count; lower the pin as cases move to tables",
@@ -273,6 +319,36 @@ export default [
     "max-lines",
     FILE_LINE_PINS,
   ),
+  ...shapePinsAt(
+    "source adapters: the seed builders and emitters branch once per upstream column or record shape, pinned at the reported count",
+    "complexity",
+    SCRIPT_COMPLEXITY,
+  ),
+  ...shapePinsAt(
+    "source adapters: the seed builders and emitters inline their pass, pinned at the reported count",
+    "max-statements",
+    SCRIPT_STATEMENTS,
+  ),
+  ...shapePinsAt(
+    "source adapters: one emitter pass per file, pinned at the reported count",
+    "max-lines-per-function",
+    SCRIPT_FUNCTION_LINES,
+  ),
+  ...shapePinsAt(
+    "file size: a pre-ratchet size, frozen here, never raised",
+    "max-lines",
+    SCRIPT_FILE_LINES,
+  ),
+  {
+    name: `console-cli: ${CLI_CONSOLE}`,
+    files: ["scripts/**/*.mjs", "tests/**/emit-*.mjs"],
+    rules: { "no-console": "off" },
+  },
+  {
+    name: "console-spy: the suite swaps console.error to assert what the error sink logged",
+    files: ["tests/frontend/recipes.test.js"],
+    rules: { "no-console": "off" },
+  },
   {
     files: ["frontend/src/**/*.js", "src/**/*.js"],
     ignores: [

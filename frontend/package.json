@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "node --test ../tests/frontend/*.test.js ../tests/conformance/*.test.js ../tests/guards/*.test.js",
+    "test": "node --test \"../tests/**/*.test.js\"",
     "lint": "eslint src && stylelint \"src/**/*.css\""
   },
   "keywords": [],

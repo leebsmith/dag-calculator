@@ -1,9 +1,10 @@
-import sys
 import re
+import sys
 import time
+from pathlib import Path
+
 import requests
 from bs4 import BeautifulSoup
-from pathlib import Path
 
 BJCP_URL = "https://www.bjcp.org/beer-styles/beer-style-guidelines/"
 
@@ -12,7 +13,7 @@ def main():
         'User-Agent': 'BJCP-Personal-Scrape (+mailto:leeb@lee-smith.org)',
         'From': 'leeb@lee-smith.org'  # Optional, but good practice
     }
-    
+
     # 1. Use a Session to pool HTTP connections (faster and more efficient)
     session = requests.Session()
     session.headers.update(custom_headers)
@@ -38,13 +39,13 @@ def main():
     category_pattern = re.compile(r"https://www\.bjcp\.org/style/(\d{4})/\d+/([a-z\-]+)/?")
 
     beers = {}
-    
+
     # Extract links and deduplicate them simultaneously
     for link in first_article.find_all('a'):
         href = link.get('href')
         if not href:
             continue
-            
+
         match = category_pattern.search(href)
         if match:
             yr, beer_name = match.groups()
@@ -65,27 +66,27 @@ def main():
 
         dir_path = Path(f"./{yr}")
         dir_path.mkdir(parents=True, exist_ok=True)
-        
+
         file_name = f"{beer_name}.html"
         full_path = dir_path / file_name
-        
+
         # Skip if file already exists (makes the script resumable if it fails halfway)
         if full_path.exists():
             print(f"Already exists, skipping: {full_path}")
             continue
 
         print(f"Fetching: {beer_name} ({yr})")
-        
+
         try:
             cat_response = session.get(href)
             cat_response.raise_for_status()
-            
+
             cat_soup = BeautifulSoup(cat_response.text, 'html.parser')
             article = cat_soup.find('article')
 
             if article and article.parent:
                 container = article.parent  # BUG FIX: .parent is a property, not a method
-                
+
                 # BUG FIX: Must cast the container to a string before writing
                 full_path.write_text(str(container), encoding="utf-8")
             else:

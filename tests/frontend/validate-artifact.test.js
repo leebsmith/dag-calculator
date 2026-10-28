@@ -10,7 +10,7 @@ function clone() {
 }
 
 function nodeId(doc, kind) {
-  const entry = Object.entries(doc.nodes).find(([, node]) => node.kind === kind);
+  const entry = Object.entries(doc.nodes).find(([, candidate]) => candidate.kind === kind);
   assert.ok(entry, `fixture has no ${kind} node`);
   return entry[0];
 }

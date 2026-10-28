@@ -38,7 +38,6 @@ const PROSE_FIELDS = [
 // vital_statistics.<key>.{min,max} -> seed <key>_min / <key>_max.
 const STAT_FIELDS = ["ibu", "srm", "og", "fg", "abv"];
 
-const isCategoryHeader = (styleId) => /^\d+$/.test(styleId);
 const isStyleLevel = (styleId) => /[A-Za-z]$/.test(styleId);
 
 // The BJCP site uses "-" for "not applicable"; treat it like an empty value.

@@ -153,9 +153,9 @@ test("target roots inherit the style midpoint or fall back", () => {
   assert.equal(withStyle.get("batch.target_srm"), 10);
   assert.equal(withStyle.get("batch.whirlpool_ibu_fraction"), 0);
 
-  const fixtures = makeFixtures();
-  fixtures.identity.style = {};
-  const noStyle = createCalculator(artifact, fixtures);
+  const styleless = makeFixtures();
+  styleless.identity.style = {};
+  const noStyle = createCalculator(artifact, styleless);
   assert.equal(noStyle.get("batch.target_ibu"), 30);
   assert.equal(noStyle.get("batch.target_srm"), null);
 });
