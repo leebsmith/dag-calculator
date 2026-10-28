@@ -4,13 +4,13 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–1 landed: the adapter-format allowlist is empty, and every numeric
-  readout routes through `views/producer/cell.js` (`formatCell` / `cellLabel`).
-  Next is Phase 2, backend error and constraint truth: one
-  `SolverValidationError`, one code → binding-constraint table, one
-  extract/sugar derivation helper (`core/errors.py`). See
-  `plans/decomposition-and-display-contract.md` for the per-phase context
-  contract.
+  Phases 0–2 landed: the adapter-format allowlist is empty, every numeric
+  readout routes through `views/producer/cell.js` (`formatCell` / `cellLabel`),
+  and backend errors and capacity limits share one class and one table in
+  `core/errors.py`. Next is Phase 3, grammar: per-row computed collection
+  `fields`, separate from `item_schema`, at grammar revision 10 with the payload
+  still at 3. See `plans/decomposition-and-display-contract.md` for the
+  per-phase context contract.
 
 ## Next (in order)
 

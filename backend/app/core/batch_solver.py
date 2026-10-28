@@ -43,6 +43,14 @@ from dataclasses import dataclass
 
 from scipy.optimize import brentq
 
+from app.core.errors import (
+    CAPACITY_BY_CONSTRAINT,
+    CapacityLoads,
+    SolverValidationError,
+    binding_constraint_for,
+    capacity_error,
+    exceeded_capacity,
+)
 from app.core.utils import (
     apparent_extract_for_real_extract,
     apparent_to_real_attenuation,
@@ -126,24 +134,6 @@ def sugar_extract_for(
             ),
         )
     return sugar_extract_share * extract_total_kg
-
-
-# ---------------------------------------------------------------------------
-# Errors
-# ---------------------------------------------------------------------------
-
-
-class SolverValidationError(ValueError):
-    """Raised when the solver's inputs fail a physical or numerical gate.
-
-    Carries a machine-readable ``code`` alongside the human-readable message
-    so the API layer can map it to a structured error response.
-    """
-
-    def __init__(self, code: str, message: str) -> None:
-        super().__init__(message)
-        self.code = code
-        self.message = message
 
 
 # ---------------------------------------------------------------------------
@@ -508,6 +498,57 @@ def post_boil_extract_target(
     return (1000.0 * (sg_post_boil - 1.0) * v_kettle_cold) / gamma
 
 
+@dataclass(frozen=True)
+class ExtractSplit:
+    """Post-boil extract target divided into malt and late-addition shares."""
+
+    extract_total_kg: float
+    sugar_extract_kg: float
+
+    @property
+    def malt_extract_kg(self) -> float:
+        """Malt extract available to the grain bill, in kg."""
+        return self.extract_total_kg - self.sugar_extract_kg
+
+
+def resolve_extract_split(
+    sg_post_boil: float,
+    v_kettle_cold: float,
+    sugar_extract_share: float,
+    s_late_add: float,
+    gamma: float = GAMMA_METRIC,
+) -> ExtractSplit:
+    """Derive the post-boil extract target and the late-addition share.
+
+    A zero share keeps the fixed ``s_late_add`` dose; a positive share moves the
+    sugar mass with the candidate gravity.
+
+    Raises:
+        SolverValidationError: If the share is outside ``[0, 1)``
+            (``INVALID_SUGAR_SHARE``).
+    """
+    extract_total = post_boil_extract_target(sg_post_boil, v_kettle_cold, gamma)
+    sugar = sugar_extract_for(sugar_extract_share, extract_total, s_late_add)
+    return ExtractSplit(extract_total_kg=extract_total, sugar_extract_kg=sugar)
+
+
+def require_malt_extract(split: ExtractSplit) -> None:
+    """Gate a split that leaves no malt extract to solve against.
+
+    Raises:
+        SolverValidationError: When the late addition alone covers the target
+            (``EXTRACT_TARGET_NON_POSITIVE``).
+    """
+    if split.malt_extract_kg <= 0.0:
+        raise SolverValidationError(
+            "EXTRACT_TARGET_NON_POSITIVE",
+            (
+                f"Post-boil extract target ({split.extract_total_kg:.4f} kg) must "
+                f"exceed late-addition extract ({split.sugar_extract_kg:.4f} kg)."
+            ),
+        )
+
+
 def pre_boil_volume(
     v_ferm: float,
     v_kettle_dead: float,
@@ -588,18 +629,9 @@ def resolve_volumetric_reversal(
         )
 
     v_kettle_cold = kettle_cold_volume(v_ferm, v_kettle_dead, f_shrink)
-    s_post_boil_target = post_boil_extract_target(
-        sg_post_boil, v_kettle_cold, gamma
-    )
-
-    if (s_post_boil_target - s_late_add) <= 0.0:
-        raise SolverValidationError(
-            "EXTRACT_TARGET_NON_POSITIVE",
-            (
-                f"Post-boil extract target ({s_post_boil_target:.4f} kg) must "
-                f"exceed late-addition extract ({s_late_add:.4f} kg)."
-            ),
-        )
+    split = resolve_extract_split(sg_post_boil, v_kettle_cold, 0.0, s_late_add, gamma)
+    require_malt_extract(split)
+    s_post_boil_target = split.extract_total_kg
 
     v_pre_boil = pre_boil_volume(
         v_ferm, v_kettle_dead, v_kettle_transfer, v_trub, delta_v_evap, s_late_add, v_bar, f_shrink
@@ -695,14 +727,9 @@ def resolve_wort_composition(
             "INVALID_ATTENUATION",
             f"Dextrin consumption must be in [0, 1]; got {dextrin_consumption}.",
         )
-    if extract_total_kg <= s_late_add:
-        raise SolverValidationError(
-            "EXTRACT_TARGET_NON_POSITIVE",
-            (
-                f"Post-boil extract target ({extract_total_kg:.4f} kg) must "
-                f"exceed late-addition extract ({s_late_add:.4f} kg)."
-            ),
-        )
+    require_malt_extract(
+        ExtractSplit(extract_total_kg=extract_total_kg, sugar_extract_kg=s_late_add)
+    )
 
     malt_extract_kg = extract_total_kg - s_late_add
     cap_real = apparent_to_real_attenuation(oe_plato, yeast_cap_apparent)
@@ -774,34 +801,33 @@ def solve_oe_from_composition(
             ),
         )
 
-    def extract_at(oe_plato: float) -> float:
-        return post_boil_extract_target(
-            asbc_plato_to_sg(oe_plato), v_kettle_cold, gamma
+    def split_at(oe_plato: float) -> ExtractSplit:
+        return resolve_extract_split(
+            asbc_plato_to_sg(oe_plato),
+            v_kettle_cold,
+            sugar_extract_share,
+            s_late_add,
+            gamma,
         )
 
-    def sugar_at(oe_plato: float) -> float:
-        return sugar_extract_for(
-            sugar_extract_share, extract_at(oe_plato), s_late_add
-        )
-
-    if extract_at(40.0) <= sugar_at(40.0):
+    ceiling = split_at(40.0)
+    if ceiling.malt_extract_kg <= 0.0:
         raise SolverValidationError(
             "EXTRACT_TARGET_NON_POSITIVE",
             (
-                f"Late-addition extract ({sugar_at(40.0):.4f} kg) alone exceeds "
-                "the 40 °P kettle extract ceiling."
+                f"Late-addition extract ({ceiling.sugar_extract_kg:.4f} kg) alone "
+                "exceeds the 40 °P kettle extract ceiling."
             ),
         )
 
     def abv_at(oe_plato: float) -> float:
-        extract_total = extract_at(oe_plato)
-        sugar = sugar_at(oe_plato)
-        if extract_total <= sugar:
+        split = split_at(oe_plato)
+        if split.malt_extract_kg <= 0.0:
             return 0.0
         return resolve_wort_composition(
             oe_plato=oe_plato,
-            extract_total_kg=extract_total,
-            s_late_add=sugar,
+            extract_total_kg=split.extract_total_kg,
+            s_late_add=split.sugar_extract_kg,
             malt_fermentability=malt_fermentability,
             yeast_cap_apparent=yeast_cap_apparent,
             dextrin_consumption=dextrin_consumption,
@@ -988,14 +1014,9 @@ def solve_grist_mass(
             "INVALID_YIELD",
             f"Composite extract yield must be positive; got {yield_fraction}.",
         )
-    if (s_post_boil_target - s_late_add) <= 0.0:
-        raise SolverValidationError(
-            "EXTRACT_TARGET_NON_POSITIVE",
-            (
-                f"Post-boil extract target ({s_post_boil_target:.4f} kg) must "
-                f"exceed late-addition extract ({s_late_add:.4f} kg)."
-            ),
-        )
+    require_malt_extract(
+        ExtractSplit(extract_total_kg=s_post_boil_target, sugar_extract_kg=s_late_add)
+    )
     # Physical realizability pre-check: under the {V_pre_boil, R_L:G}
     # topology, a mash thickness below the husk absorption floor guarantees
     # negative first runnings for any grist mass, which makes the residual
@@ -1370,6 +1391,22 @@ class HltWaterBudget:
     v_hlt_target: float
 
 
+def hlt_top_up_target(
+    v_sparge_demand: float,
+    hlt_dead_space_l: float,
+    hlt_transfer_loss_l: float,
+    hlt_coil_floor_l: float,
+) -> float:
+    """Liquor the HLT must hold before the sparge, in liters.
+
+    ``V_hlt_target = max(hlt_coil_floor_l, V_sparge_demand + V_hlt_debt)``
+
+    See ``domain-equations.md`` §2.6.
+    """
+    v_hlt_debt = hlt_dead_space_l + hlt_transfer_loss_l
+    return max(hlt_coil_floor_l, v_sparge_demand + v_hlt_debt)
+
+
 def resolve_hlt_water_budget(
     hlt_starting_volume_l: float,
     v_strike_drawn: float,
@@ -1415,17 +1452,13 @@ def resolve_hlt_water_budget(
     v_hlt_after_strike = hlt_starting_volume_l - v_strike_drawn
 
     v_hlt_required = v_sparge_demand + v_hlt_debt
-    v_hlt_target = max(hlt_coil_floor_l, v_hlt_required)
+    v_hlt_target = hlt_top_up_target(
+        v_sparge_demand, hlt_dead_space_l, hlt_transfer_loss_l, hlt_coil_floor_l
+    )
 
+    hlt_limit = CAPACITY_BY_CONSTRAINT["hlt"]
     if v_hlt_target > max_hlt_volume_l:
-        raise SolverValidationError(
-            "HLT_TOO_SMALL",
-            (
-                f"HLT top-up target ({v_hlt_target:.2f} L) exceeds the HLT's "
-                f"maximum capacity ({max_hlt_volume_l:.2f} L). The HLT cannot "
-                f"hold enough liquor to cover the coil and deliver the sparge."
-            ),
-        )
+        raise capacity_error(hlt_limit, v_hlt_target, max_hlt_volume_l)
 
     v_hlt_top_up = max(0.0, v_hlt_target - v_hlt_after_strike)
     v_sparge_deliverable = v_hlt_after_strike + v_hlt_top_up - v_hlt_debt
@@ -1708,13 +1741,33 @@ def tun_peak_volume_l(
     return max(mash_phase, sparge_phase)
 
 
+def _capacity_loads(
+    inputs: BatchSolverInput,
+    v_pre_boil: float,
+    m_grist: float,
+    cascade: StageCascade,
+) -> CapacityLoads:
+    """Measure every capacity limit at one candidate batch."""
+    return CapacityLoads(
+        v_pre_boil=v_pre_boil,
+        peak_mash_tun_l=tun_peak_volume_l(m_grist, cascade, inputs.v_dead),
+        hlt_target_l=hlt_top_up_target(
+            v_sparge_demand=cascade.v_sparge,
+            hlt_dead_space_l=inputs.hlt_dead_space_l,
+            hlt_transfer_loss_l=inputs.hlt_transfer_loss_l,
+            hlt_coil_floor_l=inputs.hlt_coil_floor_l,
+        ),
+    )
+
+
 def _capacity_violation(inputs: BatchSolverInput, pipeline: _Pipeline) -> str | None:
-    if pipeline.reversal.v_pre_boil > inputs.max_kettle_volume_l:
-        return "kettle"
-    peak = tun_peak_volume_l(pipeline.m_grist, pipeline.cascade, inputs.v_dead)
-    if peak > inputs.max_mash_tun_volume_l:
-        return "tun"
-    return None
+    loads = _capacity_loads(
+        inputs, pipeline.reversal.v_pre_boil, pipeline.m_grist, pipeline.cascade
+    )
+    exceeded = exceeded_capacity(loads, inputs)
+    if exceeded is None:
+        return None
+    return exceeded[0].constraint
 
 
 def _diagnose_bracket(
@@ -1753,39 +1806,12 @@ def _diagnose_bracket(
     except SolverValidationError:
         return None
 
-    if reversal.v_pre_boil > inputs.max_kettle_volume_l:
-        return SolverValidationError(
-            "KETTLE_TOO_SMALL",
-            (
-                f"Kettle capacity exceeded: pre-boil volume "
-                f"{reversal.v_pre_boil:.1f} L exceeds "
-                f"{inputs.max_kettle_volume_l:.1f} L."
-            ),
-        )
-    peak = tun_peak_volume_l(upper, cascade, inputs.v_dead)
-    if peak > inputs.max_mash_tun_volume_l:
-        return SolverValidationError(
-            "MASH_TUN_TOO_SMALL",
-            (
-                f"Mash tun capacity exceeded: the tun needs {peak:.1f} L of "
-                f"{inputs.max_mash_tun_volume_l:.1f} L at the bracket bound."
-            ),
-        )
-    try:
-        resolve_hlt_water_budget(
-            hlt_starting_volume_l=inputs.hlt_starting_volume_l,
-            v_strike_drawn=cascade.v_strike,
-            v_sparge_demand=cascade.v_sparge,
-            hlt_dead_space_l=inputs.hlt_dead_space_l,
-            hlt_transfer_loss_l=inputs.hlt_transfer_loss_l,
-            hlt_coil_floor_l=inputs.hlt_coil_floor_l,
-            max_hlt_volume_l=inputs.max_hlt_volume_l,
-        )
-    except SolverValidationError as exc:
-        if exc.code == "HLT_TOO_SMALL":
-            return exc
-        raise
-    return None
+    loads = _capacity_loads(inputs, reversal.v_pre_boil, upper, cascade)
+    exceeded = exceeded_capacity(loads, inputs)
+    if exceeded is None:
+        return None
+    limit, load, cap = exceeded
+    return capacity_error(limit, load, cap)
 
 
 @dataclass(frozen=True)
@@ -1815,18 +1841,18 @@ def _abv_ceiling(
     aa_malt: float,
     dextrin_consumption: float,
 ) -> float:
-    ceiling_extract = post_boil_extract_target(
-        asbc_plato_to_sg(40.0), v_kettle_cold, GAMMA_METRIC
+    ceiling = resolve_extract_split(
+        asbc_plato_to_sg(40.0),
+        v_kettle_cold,
+        inputs.sugar_extract_share,
+        inputs.s_late_add,
     )
-    sugar = sugar_extract_for(
-        inputs.sugar_extract_share, ceiling_extract, inputs.s_late_add
-    )
-    if ceiling_extract <= sugar:
+    if ceiling.malt_extract_kg <= 0.0:
         return 0.0
     return resolve_wort_composition(
         oe_plato=40.0,
-        extract_total_kg=ceiling_extract,
-        s_late_add=sugar,
+        extract_total_kg=ceiling.extract_total_kg,
+        s_late_add=ceiling.sugar_extract_kg,
         malt_fermentability=aa_malt,
         yeast_cap_apparent=inputs.malt_attenuation_cap,
         dextrin_consumption=dextrin_consumption,
@@ -1856,11 +1882,8 @@ def _resolve_gravity(
             sugar_fermentability=inputs.sugar_fermentability,
         )
         sg_post_boil = asbc_plato_to_sg(oe_plato)
-        extract_total = post_boil_extract_target(
-            sg_post_boil, v_kettle_cold, GAMMA_METRIC
-        )
-        sugar = sugar_extract_for(
-            inputs.sugar_extract_share, extract_total, inputs.s_late_add
+        split = resolve_extract_split(
+            sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
         )
     elif pin == "og":
         if target is None or not math.isfinite(target) or target <= 1.0:
@@ -1870,20 +1893,9 @@ def _resolve_gravity(
             )
         sg_post_boil = target
         oe_plato = sg_to_plato(sg_post_boil)
-        extract_total = post_boil_extract_target(
-            sg_post_boil, v_kettle_cold, GAMMA_METRIC
+        split = resolve_extract_split(
+            sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
         )
-        sugar = sugar_extract_for(
-            inputs.sugar_extract_share, extract_total, inputs.s_late_add
-        )
-        if extract_total <= sugar:
-            raise SolverValidationError(
-                "EXTRACT_TARGET_NON_POSITIVE",
-                (
-                    f"Post-boil extract target ({extract_total:.4f} kg) must "
-                    f"exceed late-addition extract ({sugar:.4f} kg)."
-                ),
-            )
     elif pin == "fg":
         if target is None or not math.isfinite(target) or target <= 0.0:
             raise SolverValidationError(
@@ -1902,20 +1914,17 @@ def _resolve_gravity(
 
         def residual(oe_plato: float) -> float | None:
             sg = asbc_plato_to_sg(oe_plato)
-            extract_total = post_boil_extract_target(
-                sg, v_kettle_cold, GAMMA_METRIC
+            split = resolve_extract_split(
+                sg, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
             )
-            sugar = sugar_extract_for(
-                inputs.sugar_extract_share, extract_total, inputs.s_late_add
-            )
-            if extract_total <= sugar:
+            if split.malt_extract_kg <= 0.0:
                 # No malt extract at this candidate: outside the physical
                 # domain, not a residual to bracket.
                 return None
             composition = resolve_wort_composition(
                 oe_plato=oe_plato,
-                extract_total_kg=extract_total,
-                s_late_add=sugar,
+                extract_total_kg=split.extract_total_kg,
+                s_late_add=split.sugar_extract_kg,
                 malt_fermentability=aa_malt,
                 yeast_cap_apparent=inputs.malt_attenuation_cap,
                 dextrin_consumption=dextrin_consumption,
@@ -1959,29 +1968,19 @@ def _resolve_gravity(
                 bracket[1],
             )
         sg_post_boil = asbc_plato_to_sg(oe_plato)
-        extract_total = post_boil_extract_target(
-            sg_post_boil, v_kettle_cold, GAMMA_METRIC
-        )
-        sugar = sugar_extract_for(
-            inputs.sugar_extract_share, extract_total, inputs.s_late_add
+        split = resolve_extract_split(
+            sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
         )
     else:
         raise SolverValidationError(
             "INVALID_SCALE_PIN", f"Unknown scale pin: {pin!r}."
         )
 
-    if extract_total <= sugar:
-        raise SolverValidationError(
-            "EXTRACT_TARGET_NON_POSITIVE",
-            (
-                f"Post-boil extract target ({extract_total:.4f} kg) must "
-                f"exceed late-addition extract ({sugar:.4f} kg)."
-            ),
-        )
+    require_malt_extract(split)
     composition = resolve_wort_composition(
         oe_plato=oe_plato,
-        extract_total_kg=extract_total,
-        s_late_add=sugar,
+        extract_total_kg=split.extract_total_kg,
+        s_late_add=split.sugar_extract_kg,
         malt_fermentability=aa_malt,
         yeast_cap_apparent=inputs.malt_attenuation_cap,
         dextrin_consumption=dextrin_consumption,
@@ -1990,8 +1989,8 @@ def _resolve_gravity(
     return _GravityState(
         oe_plato=oe_plato,
         sg_post_boil=sg_post_boil,
-        extract_total_kg=extract_total,
-        sugar_extract_kg=sugar,
+        extract_total_kg=split.extract_total_kg,
+        sugar_extract_kg=split.sugar_extract_kg,
         composition=composition,
     )
 
@@ -2193,23 +2192,10 @@ def _feasible_bound(
         try:
             pipeline = _solve_pipeline(inputs, "abv", target_abv)
         except SolverValidationError as exc:
-            if exc.code == "ABV_UNREACHABLE":
-                return "fermentation"
-            if exc.code == "HLT_TOO_SMALL":
-                return "hlt"
-            if exc.code == "MASH_TUN_TOO_SMALL":
-                return "tun"
-            if exc.code == "KETTLE_TOO_SMALL":
-                return "kettle"
-            if exc.code in (
-                "BRACKET_NO_SIGN_CHANGE",
-                "DEGENERATE_BRACKET",
-                "MASH_TOO_THIN",
-                "EXTRACT_TARGET_NON_POSITIVE",
-                "INVALID_YIELD",
-            ):
-                return "volume"
-            raise
+            reason = binding_constraint_for(exc.code)
+            if reason is None:
+                raise
+            return reason
         return _capacity_violation(inputs, pipeline)
 
     low = None

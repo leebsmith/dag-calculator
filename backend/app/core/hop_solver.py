@@ -15,6 +15,8 @@ import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+from app.core.errors import SolverValidationError
+
 KG_PER_OZ = 0.028349523125
 L_PER_GAL = 3.785411784
 TINSETH_FACTOR = 7489.0
@@ -29,15 +31,6 @@ PRODUCT_FORM_UTILIZATION = {
 
 SIMPSON_TOLERANCE = 1e-10
 SIMPSON_MAX_DEPTH = 20
-
-
-class SolverValidationError(ValueError):
-    """Typed validation failure surfaced by the boundary error contract."""
-
-    def __init__(self, code: str, message: str) -> None:
-        super().__init__(message)
-        self.code = code
-        self.message = message
 
 
 @dataclass(frozen=True)

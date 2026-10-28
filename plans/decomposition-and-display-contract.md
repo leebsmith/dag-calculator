@@ -1,7 +1,7 @@
 # Decomposition & display contract
 
-Status: **in flight**. Phases 0 (contract guards) and 1 (one cell formatter)
-landed; Phase 2 is next.
+Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), and 2
+(error and constraint truth) landed; Phase 3 is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -204,6 +204,24 @@ member of its enum.
 
 **Handoff.** `core/errors.py` exists and the constraint table is the single edit
 point for a new capacity limit. Phase 5 relies on that shape.
+
+**Landed.** `core/errors.py` owns `SolverValidationError` (imported and
+re-exported by `batch_solver.py`, `water.py`, `hop_solver.py` — one class, one
+`isinstance` for all three boundaries), `CapacityLoads`, the `CapacityLimit`
+table (`CAPACITY_LIMITS`: constraint, code, measured-load field, capacity
+attribute, message), and `BINDING_BY_CODE`. `_capacity_loads` measures all three
+loads once, `exceeded_capacity` is the single comparison, `capacity_error` the
+single raiser, and `binding_constraint_for` the single code → constraint lookup,
+so `_diagnose_bracket`, `_capacity_violation`, `_feasible_bound`, and
+`resolve_hlt_water_budget` all read the same table. `hlt_top_up_target` exposes
+the top-up expression with its association order intact. `ExtractSplit`,
+`resolve_extract_split`, and `require_malt_extract` replace the repeated
+extract → sugar → guard blocks; `_resolve_gravity` builds one split per pin and
+guards it once (the OG branch's duplicate guard is gone). No arithmetic, wording,
+or oracle moved. `test_boundary_error_contract` counts the capacity table as part
+of the batch boundary's raised surface, since those codes are no longer literal
+`SolverValidationError` calls; `test_domain_codes` still proves each has a
+trigger.
 
 ### Phase 3 — Grammar: per-row computed fields (1 day)
 

@@ -1,6 +1,11 @@
 """Boundary error-code contract: the artifact's declared error surface must mirror
 the Python error enums exactly. A code added to one side only is a contract drift:
 the frontend/domain readers see one set, while the solver raises another.
+
+Capacity codes are raised through the shared table in ``app.core.errors`` rather
+than at a literal ``raise`` site, so the table counts as part of the batch
+boundary's raised surface. ``test_domain_codes`` still proves each one has a
+trigger.
 """
 
 from __future__ import annotations
@@ -11,6 +16,7 @@ from pathlib import Path
 
 import pytest
 
+from app.core.errors import CAPACITY_CODES
 from app.schemas.boundary import (
     BatchSolverErrorCode,
     HopSolverErrorCode,
@@ -22,9 +28,9 @@ ARTIFACT = json.loads(
 )
 
 CASES = [
-    ("solver.batch", BatchSolverErrorCode, "batch_solver.py"),
-    ("solver.water", WaterSolverErrorCode, "water.py"),
-    ("solver.hops", HopSolverErrorCode, "hop_solver.py"),
+    ("solver.batch", BatchSolverErrorCode, "batch_solver.py", CAPACITY_CODES),
+    ("solver.water", WaterSolverErrorCode, "water.py", frozenset()),
+    ("solver.hops", HopSolverErrorCode, "hop_solver.py", frozenset()),
 ]
 
 CORE = Path(__file__).resolve().parents[3] / "backend" / "app" / "core"
@@ -47,11 +53,13 @@ def raised_codes(filename: str) -> set[str]:
     return codes
 
 
-@pytest.mark.parametrize(("boundary_id", "enum", "filename"), CASES)
-def test_boundary_error_codes_match_artifact_and_core(boundary_id, enum, filename):
+@pytest.mark.parametrize(("boundary_id", "enum", "filename", "shared"), CASES)
+def test_boundary_error_codes_match_artifact_and_core(
+    boundary_id, enum, filename, shared
+):
     declared = set(ARTIFACT["nodes"][boundary_id]["domain"]["codes"])
     expected = {code.value for code in enum}
-    raised = raised_codes(filename)
+    raised = raised_codes(filename) | shared
     assert declared == expected, (
         f"{boundary_id} domain codes drift from {enum.__name__}: "
         f"artifact-only={sorted(declared - expected)}, enum-only={sorted(expected - declared)}"

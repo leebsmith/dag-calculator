@@ -28,6 +28,8 @@ from typing import Any
 import numpy as np
 from scipy.optimize import linprog, minimize
 
+from app.core.errors import SolverValidationError
+
 # ---------------------------------------------------------------------------
 # Physical and Chemical Constants
 # ---------------------------------------------------------------------------
@@ -137,14 +139,6 @@ ALKALINE_AGENT_EQUIV = {
 # ---------------------------------------------------------------------------
 # Exceptions & Telemetry Contracts
 # ---------------------------------------------------------------------------
-
-class SolverValidationError(ValueError):
-    """Raised when water-chemistry inputs fail a physical, numerical, or domain gate."""
-
-    def __init__(self, code: str, message: str) -> None:
-        super().__init__(message)
-        self.code = code
-        self.message = message
 
 
 @dataclass(frozen=True)
