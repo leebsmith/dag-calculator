@@ -439,8 +439,8 @@ _29 paths_
 | `style.og_max` | OG max | identity | gravity | SG | 3 | — |
 | `style.og_min` | OG min | identity | gravity | SG | 3 | — |
 | `style.overall_impression` | Overall Impression | identity | — | — | — | — |
-| `style.srm_max` | SRM max | identity | beer_color | SRM | 1 | — |
-| `style.srm_min` | SRM min | identity | beer_color | SRM | 1 | — |
+| `style.srm_max` | SRM max | identity | beer_color | EBC | 1 | — |
+| `style.srm_min` | SRM min | identity | beer_color | EBC | 1 | — |
 | `style.style_comparison` | Style Comparison | identity | — | — | — | — |
 | `style.tags` | Tags | identity | — | — | — | — |
 | `style.type` | Type | identity | — | — | — | beer, mead, cider |

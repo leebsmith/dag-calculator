@@ -97,14 +97,14 @@ function resolveUnit(artifact, dimensionId, spec, unitMode = {}, path = "") {
     if (candidate === dim.base_unit || candidate in (dim.units ?? {})) return candidate;
     return symbols.get(candidate) ?? null;
   };
-  // Same precedence the UI uses: per-field override -> registry pin -> master
-  // (dimension) pick -> dimension default -> base unit.
+  // Same precedence the UI uses (views/producer/scalar.js): per-field override
+  // -> `displayUnit` pin -> master (dimension) pick -> dimension default ->
+  // base unit. A bare registry `unit` is the field's own unit metadata, not a
+  // display pin: pinning it here would freeze base units that the UI converts.
   const fieldPick = valid(unitMode?.[path]);
   if (fieldPick) return fieldPick;
-  for (const candidate of [spec.displayUnit, spec.unit]) {
-    const pinned = valid(candidate);
-    if (pinned) return pinned;
-  }
+  const pinned = valid(spec.displayUnit);
+  if (pinned) return pinned;
   const masterPick = valid(unitMode?.[dimensionId]);
   if (masterPick) return masterPick;
   const entry = UNIT_DIMENSIONS.find((d) => d.id === dimensionId);

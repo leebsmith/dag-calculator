@@ -102,6 +102,27 @@ test("registry labels and display units win over fallbacks", () => {
   }
 });
 
+test("display units follow the mode: a registry unit is not a pin", () => {
+  const us = buildReportCatalog(artifact, {
+    volume: "gal",
+    mass: "lb",
+    temperature: "degF",
+    volume_per_time: "gal_per_hr",
+  });
+
+  // Fields whose registry entry carries a bare `unit` still follow the mode.
+  assert.equal(us.nodes["batch.v_ferm"].unit, "gal");
+  assert.equal(us.nodes["batch.hlt_starting_volume_l"].unit, "gal");
+  assert.equal(us.nodes["batch.sugars.mass_kg"].unit, "lb");
+  assert.equal(us.nodes["mash.strike_water_temp_c"].unit, "degF");
+  assert.equal(us.nodes["batch.boil_off_rate_l_per_hr"].unit, "gal_per_hr");
+
+  // Deliberate pins stay put.
+  assert.equal(us.nodes["solver.water.mash_additions.gypsum_kg"].unit, "g");
+  assert.equal(us.nodes["grist.trace_malts.mass_kg"].unit, "oz");
+  assert.equal(us.nodes["equipment.min_lgr_l_per_kg"].unit, "qt_per_lb");
+});
+
 test("identity dimensions carry no display unit", () => {
   for (const path of ["batch.yeast_id", "batch.sugars.parts"]) {
     assert.equal(catalog.nodes[path].unit, null, path);
