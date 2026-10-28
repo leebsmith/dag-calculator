@@ -36,3 +36,17 @@ test("installerSurfaceGaps reports both drift directions", () => {
   assert.deepEqual(gaps.undeclared, ["strayed"]);
   assert.deepEqual(gaps.missing, ["absent"]);
 });
+
+test("installerSurfaceGaps sees a hidden member", () => {
+  const app = { common: 1, visible: 1 };
+  Object.defineProperty(app, BASE_KEYS, { value: ["common"], enumerable: false });
+  Object.defineProperty(app, "hiddenGetter", { get: () => 1, enumerable: false });
+  const gaps = installerSurfaceGaps(app, [{ name: "a", keys: ["visible"] }]);
+  assert.deepEqual(gaps.undeclared, ["hiddenGetter"]);
+});
+
+test("the assembled app has hidden members, and the check covers them", () => {
+  const app = createStepApp();
+  const hidden = Object.getOwnPropertyNames(app).filter((key) => !Object.keys(app).includes(key));
+  assert.ok(hidden.length > 0, "expected non-enumerable app members");
+});

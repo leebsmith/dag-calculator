@@ -14,6 +14,12 @@ export const GENERATORS = [
     outputs: ["docs/dag-artifacts/inventory.md"],
   },
   {
+    name: "frontend ownership",
+    command: process.execPath,
+    args: ["scripts/emit-ownership-index.mjs"],
+    outputs: ["docs/frontend-ownership.md"],
+  },
+  {
     name: "report bundle glossary",
     command: process.execPath,
     args: ["scripts/emit-report-bundle-glossary.mjs"],

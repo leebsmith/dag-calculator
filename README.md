@@ -160,6 +160,11 @@ re-synced into the inventory fails the gate.
 (`node scripts/emit-report-bundle-glossary.mjs`) and guarded by
 `glossary-sync`.
 
+`docs/frontend-ownership.md` is generated from
+`frontend/src/adapters/installers.js` (`node scripts/emit-ownership-index.mjs`)
+and checked by `tests/guards/ownership.test.js` — an installer or card-partial
+change that isn't re-synced fails the gate.
+
 ## Maintaining the docs
 
 The **mechanical** half of doc drift is guarded; the **prose** half is a manual
@@ -167,7 +172,8 @@ discipline. After any change to `data/artifact.json` (and any change under
 `data/sources/` or the presentation registries):
 
 1. **Regenerate everything local** — inventory, bundle glossary, sources
-   manifest, seeds, and the bundle fixture (guards force all five):
+   manifest, seeds, the frontend ownership index, and the bundle fixture (guards
+   force all six):
    ```bash
    make generate
    ```

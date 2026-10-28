@@ -32,6 +32,9 @@ export const BASE_KEYS = Symbol.for("dag.installerBaseKeys");
  * exist. Both directions matter — an undeclared member is invisible to the
  * collision check, and a declared key that no installer assigns is stale.
  *
+ * The walk is own-property based, not enumerable-key based: a hidden getter is
+ * still part of the surface, and `Object.keys` would let it escape the check.
+ *
  * @param {object} app
  * @param {Array<{ name: string, keys: string[] }>} installers
  * @returns {{ undeclared: string[], missing: string[] }}
@@ -39,7 +42,9 @@ export const BASE_KEYS = Symbol.for("dag.installerBaseKeys");
 export function installerSurfaceGaps(app, installers) {
   const base = new Set(app[BASE_KEYS] ?? []);
   const declared = new Set(installers.flatMap(({ keys }) => keys));
-  const undeclared = Object.keys(app).filter((key) => !base.has(key) && !declared.has(key));
+  const undeclared = Object.getOwnPropertyNames(app).filter(
+    (key) => !base.has(key) && !declared.has(key)
+  );
   const missing = [...declared].filter((key) => !(key in app));
   return { undeclared, missing };
 }
