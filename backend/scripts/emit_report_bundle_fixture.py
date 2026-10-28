@@ -620,6 +620,8 @@ PAYLOAD = FreezePayload(
                 "color": FormattedValue(text="1.8 °L", number="1.8", unit="°L"),
                 "own_pct": FormattedValue(text="85.0%", number="85.0", unit="%"),
                 "grist_pct": FormattedValue(text="83.3%", number="83.3", unit="%"),
+                "extract": FormattedValue(text="3.3 kg", number="3.3", unit="kg"),
+                "extract_pct": FormattedValue(text="77.6%", number="77.6", unit="%"),
             },
             {
                 "name": FormattedValue(text="Crystal 40"),
@@ -628,6 +630,8 @@ PAYLOAD = FreezePayload(
                 "color": FormattedValue(text="40.0 °L", number="40.0", unit="°L"),
                 "own_pct": FormattedValue(text="15.0%", number="15.0", unit="%"),
                 "grist_pct": FormattedValue(text="14.7%", number="14.7", unit="%"),
+                "extract": FormattedValue(text="0.6 kg", number="0.6", unit="kg"),
+                "extract_pct": FormattedValue(text="13.0%", number="13.0", unit="%"),
             },
         ],
         "grist.trace_malts": [
@@ -647,6 +651,8 @@ PAYLOAD = FreezePayload(
                 "ppg": FormattedValue(text="37.0", number="37.0"),
                 "color": FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
                 "grist_pct": FormattedValue(text="9.8%", number="9.8", unit="%"),
+                "extract": FormattedValue(text="0.4 kg", number="0.4", unit="kg"),
+                "extract_pct": FormattedValue(text="9.4%", number="9.4", unit="%"),
             },
         ],
     },

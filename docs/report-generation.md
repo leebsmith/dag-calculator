@@ -49,7 +49,7 @@ make report-dev BUNDLE=~/Downloads/house-pale-report-bundle.json \
 
 ```
 {
-  "bundle_format": 6,                    // literal discriminator
+  "bundle_format": 7,                    // literal discriminator
   "artifact":   { … },                   // whole artifact as of freeze
   "catalog":    { … },                   // presentation metadata for every exposed path
   "formatted":  { … },                   // per-path display strings (the only display source)

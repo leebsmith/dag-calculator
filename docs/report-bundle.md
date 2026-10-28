@@ -64,7 +64,9 @@ Firestore transaction.
         "ppg": { "text": "36.0", "number": "36.0" },
         "color": { "text": "1.8 °L", "number": "1.8", "unit": "°L" },
         "own_pct": { "text": "85.0%", "number": "85.0", "unit": "%" },
-        "grist_pct": { "text": "83.3%", "number": "83.3", "unit": "%" } }
+        "grist_pct": { "text": "83.3%", "number": "83.3", "unit": "%" },
+        "extract": { "text": "3.3 kg", "number": "3.3", "unit": "kg" },
+        "extract_pct": { "text": "77.6%", "number": "77.6", "unit": "%" } }
     ]
   },
   "formatted_summaries": {
@@ -91,7 +93,7 @@ Firestore transaction.
 | `artifact` | The whole artifact as of freeze. Free-form to the bundle schema — validated by the engine before freeze and pinned by `hash`. |
 | `catalog` | Structural presentation: labels, dimensions, options, and the unit/symbol/decimals metadata. The unit choice reflects the batch's display preferences at freeze. |
 | `formatted` | The display strings the report prints, one per scalar path the bundle exposes: `text` (number + symbol), plus `number`/`unit` for tables that align them separately. Produced by the same formatter the UI uses; the report never converts, rounds, or chooses a symbol. |
-| `formatted_tables` | Per-row display cells for collection tables (major grist, trace malts, sugars): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and shares; the report only lays them out. Columns: `own_pct` (share within the row's own table — the authored grain bill for major malts, the mass share for trace malts) and `grist_pct` (share of grist mass, major + trace) on the grist tables; `grist_pct` only on sugars. Percentage columns are largest-remainder normalised to sum to 100.0; a sugar's share sits outside that 100. |
+| `formatted_tables` | Per-row display cells for collection tables (major grist, trace malts, sugars): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and shares; the report only lays them out. Columns: `own_pct` (share within the row's own table — the authored grain bill for major malts, the mass share for trace malts) and `grist_pct` (share of grist mass, major + trace) on the grist tables; `grist_pct` only on sugars; `extract` (mass) and `extract_pct` on malt and sugar rows, the potential extract share. Percentage columns are largest-remainder normalised to sum to 100.0; a sugar's mass share sits outside the grist's 100. |
 | `formatted_summaries` | Mass-weighted colour and extract yield per fermentable table, plus the `overall` aggregate. Keys name a collection node or the literal `overall`; the producer does the weighing. |
 | `batch.identity` | The three component snapshots: `equipment`, `water.source`, `style`. |
 | `state.valuation` | `node id → value` for every node. Boundary nodes map to their plain output map. |
@@ -104,7 +106,7 @@ Firestore transaction.
 | `telemetry` | Per solved boundary: binding, applied fingerprint, structured events, warnings, notes. |
 | `content_hash` | Canonical hash of everything except itself. |
 
-`bundle_format` is a literal discriminator (`6`). Unknown fields are rejected;
+`bundle_format` is a literal discriminator (`7`). Unknown fields are rejected;
 unknown formats are refused. A shape change bumps the format and regenerates the
 fixture in the same commit; bundles written under an older format are refused
 rather than read optimistically.
@@ -165,7 +167,9 @@ minutes. Raw values are the record; they are never display-ready.
   dict per row. Derived columns (mass from the solved grist and bill share, PPG
   from yield, the within-table and grist shares) are computed by the producer.
   Grist is the malt charge, major + trace; a sugar's `grist_pct` is its mass
-  against that charge, not part of the 100.
+  against that charge, not part of the 100. The `extract` columns are the
+  potential contribution (mass × yield, net of malt moisture) and its share of
+  total extract; trace malts carry no extract and are absent from that view.
 - Summaries read `formatted_summaries[collection]`, with `color` and
   `extract_yield` weighted by operative mass. Colour weighs all three tables;
   the overall extract yield covers only the grain bill and sugars, because trace

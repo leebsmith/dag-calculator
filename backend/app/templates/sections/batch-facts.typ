@@ -141,6 +141,34 @@
     ]
   }
 
+  // Extract view: the same fermentables ranked by what they contribute, not by
+  // mass. Trace malts are absent — they carry colour, not extract.
+  let extract-rows = formatted-table("grist.major_malts") + formatted-table("batch.sugars")
+  if extract-rows.len() > 0 {
+    v(4pt)
+    heading(level: 2)[Extract Contribution]
+    table(
+      columns: (auto, auto, auto, auto),
+      align: (left, right, right, right),
+      stroke: none,
+      inset: (x: 3pt, y: 2pt),
+      table.header([Fermentable], [Amount], [Extract], [Extract %]),
+      ..extract-rows
+        .map(row => (
+          row.at("name").at("text"),
+          row.at("amount").at("text"),
+          row.at("extract").at("text"),
+          row.at("extract_pct").at("text"),
+        ))
+        .flatten(),
+    )
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[
+      Extract is the potential contribution: mass × yield, net of malt moisture.
+      Its share is by extract, so it differs from the mass-based Grist %.
+    ]
+  }
+
   if present-formatted-summary("overall") {
     v(4pt)
     heading(level: 2)[Overall Fermentables]

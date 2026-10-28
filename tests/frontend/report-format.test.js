@@ -150,6 +150,13 @@ test("grist shares partition the grain and sugar sits outside it", async () => {
   assert.equal("own_pct" in sugar, false);
   const gristMass = 4.7 + 0.1;
   assert.equal(sugar.grist_pct.number, ((SUGAR_ROW.mass_kg / gristMass) * 100).toFixed(1));
+
+  // The extract view excludes trace malts and closes at 100 %.
+  const extractRows = [...tables["grist.major_malts"], ...tables["batch.sugars"]];
+  const extractSum = extractRows.reduce((sum, row) => sum + Number(row.extract_pct.number), 0);
+  assert.equal(extractSum.toFixed(1), "100.0");
+  assert.ok(extractRows.every((row) => row.extract.text.endsWith("kg") || row.extract.text.endsWith("lb")));
+  assert.equal("extract" in tables["grist.trace_malts"][0], false);
 });
 
 test("sugars join the fermentable tables and the summaries", async () => {

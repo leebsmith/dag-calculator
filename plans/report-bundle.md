@@ -46,7 +46,7 @@ artifact or the payload.
 
 ```jsonc
 {
-  "bundle_format": 6,
+  "bundle_format": 7,
   "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
@@ -100,7 +100,7 @@ The schema is deliberately **small**: it does not duplicate the artifact schema.
 engine has already validated it); the bundle schema enforces *bundle* structure and
 cross-references.
 
-1. `bundle_format` is a literal discriminator (currently `6`); unknown ⇒ refuse.
+1. `bundle_format` is a literal discriminator (currently `7`); unknown ⇒ refuse.
 2. Pydantic with `extra="forbid"` on every model; the emitter runs the same check
    before writing, so a malformed bundle never reaches storage.
 3. Cross-reference validators, against the embedded artifact:

@@ -104,17 +104,24 @@ function gristMassOf(engine) {
 // sugar amounts come from the same allocator the late-additions table binds, so
 // share mode reports the mass the UI shows.
 function fermentableRows(engine, gristMass) {
-  const major = (engine.get(N.majorMalts) ?? []).map((row) => ({
-    row,
-    mass: gristMass == null ? 0 : gristMass * finiteNumber(row.pct),
-    color: finiteNumber(row.color_lovibond),
-    yield: finiteNumber(row.yield_fraction),
-  }));
+  const major = (engine.get(N.majorMalts) ?? []).map((row) => {
+    const mass = gristMass == null ? 0 : gristMass * finiteNumber(row.pct);
+    const yieldFraction = finiteNumber(row.yield_fraction);
+    return {
+      row,
+      mass,
+      color: finiteNumber(row.color_lovibond),
+      yield: yieldFraction,
+      // Potential extract: dry-basis yield net of the malt's moisture.
+      extract: mass * yieldFraction * (1 - finiteNumber(row.moisture_fraction)),
+    };
+  });
   const trace = (engine.get(N.traceMalts) ?? []).map((row) => ({
     row,
     mass: finiteNumber(row.mass_kg),
     color: finiteNumber(row.color_lovibond),
     yield: finiteNumber(row.yield_fraction),
+    extract: 0,
   }));
   const sugarRaw = engine.get(L.collection) ?? [];
   const mode = engine.get(L.intent) ?? "dose";
@@ -137,6 +144,7 @@ function fermentableRows(engine, gristMass) {
     mass: finiteNumber(resolved[index]?.massKg),
     color: finiteNumber(row.color_lovibond),
     yield: finiteNumber(row.yield_fraction),
+    extract: finiteNumber(resolved[index]?.massKg) * finiteNumber(row.yield_fraction),
   }));
   return { major, trace, sugar };
 }
@@ -167,6 +175,8 @@ export function buildReportTables(artifact, catalog, engine) {
   const gristTotal = gristRows.reduce((sum, row) => sum + row.mass, 0);
   const gristShares = hamiltonPct(gristRows.map((row) => row.mass));
   const traceShares = hamiltonPct(trace.map((row) => row.mass));
+  const extractRows = [...major, ...sugar];
+  const extractShares = hamiltonPct(extractRows.map((row) => row.extract));
 
   const pctCell = (fraction) =>
     fraction == null
@@ -189,6 +199,8 @@ export function buildReportTables(artifact, catalog, engine) {
     color: formatEntry(artifact, nodes[majorColor], row.color, nl),
     own_pct: pctCell(finiteNumber(row.row.pct)),
     grist_pct: pctCell(gristShares[index]),
+    extract: formatEntry(artifact, nodes[gristMassPath], row.extract, nl),
+    extract_pct: pctCell(extractShares[index]),
   }));
 
   const traceRows = trace.map((row, index) =>
@@ -201,12 +213,14 @@ export function buildReportTables(artifact, catalog, engine) {
     )
   );
 
-  const sugarRows = sugar.map((row) => ({
+  const sugarRows = sugar.map((row, index) => ({
     name: rowName(row.row),
     amount: formatEntry(artifact, nodes[sugarMass], row.mass, nl),
     ppg: formatPpg(artifact, row.row.yield_fraction),
     color: formatEntry(artifact, nodes[sugarColor], row.color, nl),
     grist_pct: pctCell(gristTotal > 0 ? row.mass / gristTotal : null),
+    extract: formatEntry(artifact, nodes[sugarMass], row.extract, nl),
+    extract_pct: pctCell(extractShares[major.length + index]),
   }));
 
   return {

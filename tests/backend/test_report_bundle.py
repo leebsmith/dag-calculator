@@ -118,7 +118,7 @@ def bundle(**overrides) -> dict:
 
 def test_a_well_formed_bundle_validates() -> None:
     parsed = ReportBundle.model_validate(bundle())
-    assert parsed.bundle_format == 6
+    assert parsed.bundle_format == 7
     assert parsed.batch.identity["equipment"]["name"] == "Test rig"
 
 
@@ -129,7 +129,7 @@ def test_unknown_fields_are_rejected() -> None:
 
 def test_unknown_bundle_format_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(bundle_format=5))
+        ReportBundle.model_validate(bundle(bundle_format=6))
 
 
 def test_valuation_must_name_declared_nodes() -> None:

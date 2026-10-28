@@ -145,7 +145,8 @@ by the producer. Format 5 adds `formatted_summaries`: the mass-weighted colour
 and extract yield per table plus an `overall` aggregate, weighed producer-side.
 Format 6 splits the percentage columns into `own_pct` (within a table) and
 `grist_pct` (share of major + trace), so sugar is measured against the grist
-rather than inside the fermentable total. Bundles written under an older format are refused rather than rendered
+rather than inside the fermentable total. Format 7 adds `extract` and
+`extract_pct` to the malt and sugar rows for the extract-contribution table. Bundles written under an older format are refused rather than rendered
 without display strings.
 
 ### 5.2 Report spec

@@ -8,7 +8,7 @@
 // The renderer reads only bundles at the format it was written against: older
 // ones lack the display blocks or columns the sections address. Refuse with the
 // version in the message rather than a missing-key panic inside a table.
-#let bundle-format = 6
+#let bundle-format = 7
 #let actual-format = bundle.at("bundle_format", default: none)
 #if actual-format != bundle-format {
   panic(

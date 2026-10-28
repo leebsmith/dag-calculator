@@ -79,9 +79,11 @@ The generator does no numeric work. Every scalar the bundle exposes arrives in
 - `text` is what a section prints; `number`/`unit` split the figure for tables
   that align them in separate columns.
 - Collection tables (the grist and sugar lists) read `formatted_tables[collection]`:
-  one cell map per row, with derived columns (amounts, PPG, `own_pct`, `grist_pct`)
-  computed by the producer. Grist is major + trace; sugar is measured against it,
-  so the three tables' shares do not partition to 100.
+  one cell map per row, with derived columns (amounts, PPG, `own_pct`, `grist_pct`,
+  `extract`, `extract_pct`) computed by the producer. Grist is major + trace; sugar
+  is measured against it, so the three tables' shares do not partition to 100. The
+  extract columns feed the fourth table, read by concatenating the malt and sugar
+  rows; trace malts carry no extract.
 - Weighted readouts read `formatted_summaries[collection]` (`color`,
   `extract_yield`), plus the `overall` aggregate across tables; the producer
   does the weighting, and trace malts contribute no extract to the overall.

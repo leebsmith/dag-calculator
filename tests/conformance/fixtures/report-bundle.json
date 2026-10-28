@@ -1,5 +1,5 @@
 {
-  "bundle_format": 6,
+  "bundle_format": 7,
   "artifact": {
     "schema_version": 9,
     "hash": "sha256:3451bddc3d5d911976eae4582ab24d939ae9deb924d9f4d377c70a4d157d126d",
@@ -6706,6 +6706,16 @@
           "text": "83.3%",
           "number": "83.3",
           "unit": "%"
+        },
+        "extract": {
+          "text": "3.3 kg",
+          "number": "3.3",
+          "unit": "kg"
+        },
+        "extract_pct": {
+          "text": "77.6%",
+          "number": "77.6",
+          "unit": "%"
         }
       },
       {
@@ -6737,6 +6747,16 @@
         "grist_pct": {
           "text": "14.7%",
           "number": "14.7",
+          "unit": "%"
+        },
+        "extract": {
+          "text": "0.6 kg",
+          "number": "0.6",
+          "unit": "kg"
+        },
+        "extract_pct": {
+          "text": "13.0%",
+          "number": "13.0",
           "unit": "%"
         }
       }
@@ -6800,6 +6820,16 @@
         "grist_pct": {
           "text": "9.8%",
           "number": "9.8",
+          "unit": "%"
+        },
+        "extract": {
+          "text": "0.4 kg",
+          "number": "0.4",
+          "unit": "kg"
+        },
+        "extract_pct": {
+          "text": "9.4%",
+          "number": "9.4",
           "unit": "%"
         }
       }
@@ -6922,5 +6952,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:0eadac71f8dbb373f261b66f198c3e643f18c3eda5cf96a9f32202f8bd91ad65"
+  "content_hash": "sha256:67f02ce80a4c706147d0b0f92ca55ae042a9046ce53258083d78d729eac843ed"
 }
