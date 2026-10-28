@@ -65,6 +65,48 @@ test("toggleMashRest marks the schedule custom, seeds temp and duration, and all
   assert.equal(app.mashRests.find((r) => r.rest_id === "mash_out").enabled, false);
 });
 
+test("the combined amylase rest and the beta/alpha pair exclude each other", async () => {
+  const app = createTestApp();
+  await app.boot();
+
+  app.toggleMashRest("beta_amylase", true);
+  assert.equal(app.mashRests.find((r) => r.rest_id === "beta_amylase").enabled, true);
+  assert.equal(
+    app.mashRests.find((r) => r.rest_id === "beta_alpha_amylase").enabled,
+    false,
+    "the combined rest yields to a single one"
+  );
+
+  // The two singles may coexist: that is the step mash.
+  app.toggleMashRest("alpha_amylase", true);
+  assert.equal(app.mashRests.find((r) => r.rest_id === "alpha_amylase").enabled, true);
+  assert.equal(app.mashRests.find((r) => r.rest_id === "beta_amylase").enabled, true);
+
+  app.toggleMashRest("beta_alpha_amylase", true);
+  assert.deepEqual(
+    app.enabledMashRests
+      .filter((r) => r.rest_id !== "mash_out")
+      .map((r) => r.rest_id),
+    ["beta_alpha_amylase"],
+    "the combined rest clears both singles"
+  );
+  assert.equal(
+    app.mashRests.find((r) => r.rest_id === "alpha_amylase").use_temp_c,
+    70.0,
+    "the switched-off row keeps its temperature"
+  );
+});
+
+test("mash time readouts are whole minutes", async () => {
+  const app = createTestApp();
+  await app.boot();
+  app.mashTotalTimeMin = 83.77777777777777;
+  app.mashRampTimeMin = 13.777777777777779;
+
+  assert.equal(app.totalMashTimeDisplay, "84");
+  assert.equal(app.mashTimeSummary, "incl. 14 min ramp (70 min rests)");
+});
+
 test("dough-in target tracks ticked and configured rests", async () => {
   const app = createTestApp();
   await app.boot();

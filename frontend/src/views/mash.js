@@ -44,6 +44,19 @@ export const MASH_PRESET_LABELS = Object.freeze(
   )
 );
 
+// The combined saccharification rest is an alternative to the beta/alpha pair,
+// not an additional step. The singles may coexist (a step mash); the combined
+// rest never joins them.
+export const AMYLASE_COMBINED = "beta_alpha_amylase";
+export const AMYLASE_SINGLES = Object.freeze(["beta_amylase", "alpha_amylase"]);
+
+/** Rest ids that must switch off when `restId` is enabled. */
+export function conflictingRests(restId) {
+  if (restId === AMYLASE_COMBINED) return AMYLASE_SINGLES;
+  if (AMYLASE_SINGLES.includes(restId)) return [AMYLASE_COMBINED];
+  return [];
+}
+
 const REST_BY_ID = new Map(DEFINITIONS.map((rest) => [rest.rest_id, rest]));
 
 /** Look up a canonical rest definition by `rest_id`. */
