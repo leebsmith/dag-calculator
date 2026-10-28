@@ -30,9 +30,10 @@
 ## Later
 
 * **Shape-pin burn-down** — the lint program left 48 functions in 27 files pinned
-  above `complexity 12` and seven files pinned above 400 lines, each at the value
-  the linter reported, so none can regress; the pins in `eslint.config.js` are the
-  work queue. The interpreter leads (`engine/units.js` 93,
+  above `complexity 12` and seven files pinned above 400 lines. The pins are
+  measured by `tests/guards/shape-pins.test.js`, so an improvement must lower its
+  pin in the same commit and the table cannot go stale; the pins in
+  `eslint.config.js` are the work queue. The interpreter leads (`engine/units.js` 93,
   `views/producer/projection.js` 39, `engine/validate.js` 34,
   `views/producer/scalar.js` 33, `engine/ast.js` 22 — dispatch over the grammar,
   so the split is a table per node kind), then the solve and refresh paths
@@ -126,6 +127,20 @@ Not needed by the current artifact; add only when a node requires them:
 * True nested boundary outputs (currently flattened to dotted keys).
 
 ## Done
+
+* **Drift gates** — the script layer joined the lint contract (`scripts/**` under
+  eslint rules plus the shape caps for `.mjs`, ruff for the `.py` scrapers; the
+  guard suite runs under the full source rules), test discovery is recursive, and
+  `make check` re-checks the two pre-commit rules a `--no-verify` commit would
+  bypass (`scripts/check-hygiene.mjs`: frozen paths, manifest/lock pairs — with
+  the lock demanded only when the dependency blocks actually change). Every shape
+  pin is now re-measured against the linter (`scripts/shape-pins.mjs`), so a pin
+  must be lowered in the commit that improves its file. Prose docs are held to the
+  paths they cite: every backticked dotted token in a living doc must resolve to
+  the artifact, the report catalog, or the bundle fixture
+  (`tests/guards/docs-claims.test.js`), which found and fixed six stale
+  citations. CI (`.github/workflows/verify.yml`) runs `make check`, `make test`,
+  and `make build` on every push and PR.
 
 * **Alpine maintainability and module linting** — five phases: a lint contract over
   `frontend/src` (semantic rules, DOM scoped to `adapters`/`main.js`, console output

@@ -37,11 +37,15 @@ seam, solvers, Firebase auth, and Firestore persistence.
 ## Commands
 
     make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
-    make check       # eslint/stylelint + ruff + tach
+    make check       # eslint/stylelint (src, tests, scripts) + ruff + tach + repo hygiene
     make test        # frontend (node --test) + backend pytest
     make test-fuzz   # seeded water-solver invariant sweep (CASES=200 SEED=...)
     make verify      # check + test + production build (hermetic)
     make verify-full # verify + oracle-snapshot check against the legacy checkout
+
+CI runs `make check`, `make test`, and `make build` on every push and pull request
+(`.github/workflows/verify.yml`). `make test-fuzz` and `make test-oracle` stay
+local: one is generative, the other reads the legacy checkout.
 
 After any `data/artifact.json` change:
 
@@ -49,7 +53,8 @@ After any `data/artifact.json` change:
 
 `make hooks` installs the committed pre-commit hook (`.githooks/`), which reruns
 the Node generators and stages what changed. The hook is a convenience: `make
-test` remains the gate.
+check` re-checks the frozen-path and manifest/lock rules, and `make test` remains
+the gate.
 
 ## Governance & Modes
 
@@ -63,8 +68,18 @@ test` remains the gate.
 ## Conventions
 
 - **JS** (frontend): ES modules, `node --test` for tests, eslint + stylelint.
+- **Scripts** (`.mjs` seed builders and emitters, `.py` scrapers): the same lint
+  contract as the source — eslint rules plus the shape caps for `.mjs`, ruff for
+  `.py`. A script's stdout is its interface, so `no-console` is off there.
 - **Python** (backend): `uv run`, pytest, ruff (line-length 100), tach boundary
   checks. Scraper deps are isolated per-pipeline and never enter the backend.
+- **Docs are checked, not only trusted.** Generated docs are byte-compared by
+  their guards; prose docs are held to the paths they cite — every backticked
+  dotted token in a living doc must resolve to a node, schema, boundary output,
+  section, report-catalog path, or bundle key
+  (`tests/guards/docs-claims.test.js`). A plan may cite ids it proposes by
+  declaring `<!-- claims: proposed a.b c.d -->`. Frozen docs and
+  `plans/archive/` are exempt.
 - **Commits**: concise imperative subject (`Pin the malt-database import contract`).
 - **Artifact changes are atomic with their docs.** A model change is not done
   until `inventory.md` is re-emitted and the relevant prose doc updated in the
