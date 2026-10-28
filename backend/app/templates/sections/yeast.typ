@@ -23,8 +23,17 @@
   parts.join(" · ")
 }
 
-// "15.0–22.0 °C · Medium flocculation". The bundle has no range entry: the dash
-// and the shared unit are the one join this section performs.
+// STA1 is a tri-state in the state: positive, negative, or unknown. It reads as a
+// compact suffix on the strain line and still gates the warning below.
+#let sta1-status() = {
+  let yeast = state.valuation.at("batch.yeast", default: none)
+  if type(yeast) != dictionary { return none }
+  let sta1 = yeast.at("sta1", default: none)
+  if sta1 == true { "STA1+" } else if sta1 == false { "STA1−" } else { "STA1?" }
+}
+
+// "15.0–22.0 °C · Medium flocculation · STA1+". The bundle has no range entry:
+// the dash and the shared unit are the one join this section performs.
 #let temperature-line() = {
   let low = "batch.yeast.temp_low_c"
   let high = "batch.yeast.temp_high_c"
@@ -40,7 +49,7 @@
   } else {
     none
   }
-  (range, flocculation).filter(entry => entry != none).join(" · ")
+  (range, flocculation, sta1-status()).filter(entry => entry != none).join(" · ")
 }
 
 #let derate-points() = state.valuation.at("batch.attenuation_derate_points", default: 0)

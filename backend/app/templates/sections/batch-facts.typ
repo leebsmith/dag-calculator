@@ -95,7 +95,7 @@
   })
   v(4pt)
   block(breakable: false, {
-    heading(level: 2)[Batch Solver Results]
+    heading(level: 2)[Modeled Metrics]
     [
       *Pre-boil:* #formatted-text("solver.batch.cascade.sg_pre_boil"),
       *OG:* #formatted-text("solver.batch.sg_post_boil"),

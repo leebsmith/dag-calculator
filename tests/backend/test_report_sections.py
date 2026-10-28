@@ -150,6 +150,11 @@ YEAST_GRIST_PROBE = (
     "#metadata(grist-below-cap()) <probe>\n"
 )
 
+YEAST_STRAIN_PROBE = (
+    '#import "sections/yeast.typ": temperature-line\n'
+    "#metadata(temperature-line()) <probe>\n"
+)
+
 # The two gates the yeast layout branches on: a non-zero derate earns the
 # subtraction row, and a diastaticus-positive strain earns the warning.
 YEAST_GATES_PROBE = (
@@ -452,6 +457,25 @@ def test_yeast_is_absent_without_a_selected_strain() -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, YEAST_PRESENCE_PROBE) is False
         render(root, "yeast")
+
+
+def test_the_strain_line_carries_the_sta1_status() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, YEAST_STRAIN_PROBE) == (
+            "15.0–22.0 °C · Medium flocculation · STA1+"
+        )
+
+    for value, label in ((False, "STA1−"), (None, "STA1?")):
+        bundle = fixture()
+        yeast = bundle["state"]["valuation"]["batch.yeast"]
+        if value is None:
+            yeast.pop("sta1", None)
+        else:
+            yeast["sta1"] = value
+        with tempfile.TemporaryDirectory() as tmp:
+            root = stage_root(Path(tmp), bundle)
+            assert probe(root, YEAST_STRAIN_PROBE).endswith(" · " + label)
 
 
 def test_the_derate_row_and_the_warning_follow_the_state() -> None:
