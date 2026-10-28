@@ -8,7 +8,7 @@ differ; decisions are recorded in `plans/adsco-contract.md` (§ Locked decisions
 
 - **Mode**: `water.strategy` (radio), the only persisted mode selector.
 - **Target values**: six editable roots `water.target.<ion>`.
-- **Calcium floor**: `water.target.calcium_floor_ppm` (or its root), editable.
+- **Calcium floor**: `water.target_profile.calcium_floor_ppm` (or its root), editable.
 - **Mode-5 pins**: `water.pinned_ions` collection.
 - **Template**: a quick-fill affordance, **not** persisted selection. Applying a
   template sets mode + values + floor, then becomes inert; the dropdown shows a

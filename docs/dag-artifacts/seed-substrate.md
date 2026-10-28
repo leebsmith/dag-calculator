@@ -181,7 +181,7 @@ normalization:
 - `vital_statistics` ranges are flattened to `*_min`/`*_max`, arrays are joined
   to comma-delimited strings, and the site's `-` placeholders are omitted.
 
-Selecting a style (the `batch.style` selection) copy-ins its ranges into the
+Selecting a style (the `style` identity record) copy-ins its ranges into the
 `batch.style_*_min/_max` envelope roots and sets `batch.fermentation` from its
 tags. `batch.target_abv` inherits the artifact default
 `(style.abv_min + style.abv_max) / 2`; the host only seeds

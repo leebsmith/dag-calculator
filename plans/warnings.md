@@ -5,6 +5,8 @@ target_repo: ~/Development/dag-calculator
 depends_on: [trace-malts]
 status: partially shipped
 ---
+<!-- claims: proposed prescription.sparge_tannin_warning -->
+
 
 # Warnings — Post-Solve Surfacing & LIFO Tracking
 

@@ -19,7 +19,7 @@ It complements `grammar.md` (node *shape*) and `docs/engine.md` (runtime *API*).
     asserts `component[idField] === key`.
   - **collection rows** have no id — identity is **positional** (array index).
     Their `catalog_id`/`sugar_id`/`rest_id` are foreign keys, not row identity.
-  - **reference roots** (`batch.equipment_profile_id`, `batch.yeast_id`) hold a
+  - **reference roots** (`water.target_profile_id`, `batch.yeast_id`) hold a
     component id string — a foreign key resolved via `references[schema][value]`.
 - Namespacing and dotted-path resolution: see `grammar.md` §1.1.
 

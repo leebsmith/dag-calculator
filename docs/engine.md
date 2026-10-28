@@ -294,7 +294,7 @@ active target as a read-only display of the same root. The Belgian knob is
 retired (see `docs/belgian-knob.md`).
 
 Water source ions are **read-only selection readouts** (the boundary reads them
-straight from `water.source_report`). Water target ions and the calcium floor are
+straight from `water.source`). Water target ions and the calcium floor are
 **editable roots** (`water.target.*`), seeded from the
 selected `water.target_profile` on copy-in, along with the template's `mode`
 (`water.strategy`). The assumed dosing practice is documented in

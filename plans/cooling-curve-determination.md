@@ -6,6 +6,7 @@ depends_on: [water-pin-visibility-and-test-matrix, whirlpool-hopping-model]
 blocks: []
 gate: make verify
 ---
+<!-- claims: proposed batch.cooling_curve_id batch.cooling_curve batch.records -->
 
 # Plan — Cooling curve determination
 

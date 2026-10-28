@@ -414,7 +414,7 @@ program via `scipy.optimize.linprog`). **Realization:** the package
 
 The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 `chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃). `source`
-is read from the `water.source_report` selection (copied forward from records,
+is read from the `water.source` identity record (copied forward from records,
 read-only in the batch); `target` is read from the editable `water.target.*`
 roots, seeded from the selected preset's declared ions. The routed `strategy` is
 derived from the checked set (`checked ∩ positive target`): `{}` → `BASELINE`,

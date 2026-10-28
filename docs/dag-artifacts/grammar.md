@@ -44,7 +44,7 @@ remainder as (a) a field of a selection/collection, or (b) an output of a
 boundary. For example, `solver.batch.mash_thickness_l_per_kg` is the
 `mash_thickness_l_per_kg` output of the `solver.batch` boundary;
 `equipment.mash_tun_specific_heat` is the `mash_tun_specific_heat` field of the
-`equipment.profile` selection's schema.
+`equipment` identity schema, read through `batch.identity`.
 
 > For everything resolvable from a node id at runtime (valuation, domain state,
 > topology, provenance, view metadata), see `node-reference.md`.
@@ -141,10 +141,10 @@ namespace → error.
 ### 2.3 `selection`
 
 ```jsonc
-"equipment.profile": {
+"water.target_profile": {
   "kind": "selection",
-  "output": { "schema": "equipment" },
-  "ref": "batch.equipment_profile_id"
+  "output": { "schema": "water_target" },
+  "ref": "water.target_profile_id"
 }
 ```
 
