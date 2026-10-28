@@ -28,7 +28,7 @@ ARTIFACT = json.loads(
 )
 
 CASES = [
-    ("solver.batch", BatchSolverErrorCode, "batch_solver.py", CAPACITY_CODES),
+    ("solver.batch", BatchSolverErrorCode, "batch", CAPACITY_CODES),
     ("solver.water", WaterSolverErrorCode, "water.py", frozenset()),
     ("solver.hops", HopSolverErrorCode, "hop_solver.py", frozenset()),
 ]
@@ -36,20 +36,23 @@ CASES = [
 CORE = Path(__file__).resolve().parents[3] / "backend" / "app" / "core"
 
 
-def raised_codes(filename: str) -> set[str]:
-    tree = ast.parse((CORE / filename).read_text())
+def raised_codes(target: str) -> set[str]:
+    path = CORE / target
+    files = sorted(path.glob("*.py")) if path.is_dir() else [path]
     codes: set[str] = set()
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        func = node.func
-        name = func.id if isinstance(func, ast.Name) else getattr(func, "attr", None)
-        if name != "SolverValidationError":
-            continue
-        arg = node.args[0] if node.args else None
-        if not (isinstance(arg, ast.Constant) and isinstance(arg.value, str)):
-            raise AssertionError(f"{filename}:{node.lineno}: non-literal error code")
-        codes.add(arg.value)
+    for file in files:
+        tree = ast.parse(file.read_text())
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            name = func.id if isinstance(func, ast.Name) else getattr(func, "attr", None)
+            if name != "SolverValidationError":
+                continue
+            arg = node.args[0] if node.args else None
+            if not (isinstance(arg, ast.Constant) and isinstance(arg.value, str)):
+                raise AssertionError(f"{file.name}:{node.lineno}: non-literal error code")
+            codes.add(arg.value)
     return codes
 
 
