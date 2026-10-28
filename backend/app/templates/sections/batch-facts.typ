@@ -109,12 +109,16 @@
 
   if present-formatted-table("grist.major_malts") {
     v(4pt)
+    // The authored bill share equals the grist share unless trace malts dilute
+    // the denominator, so the column only earns its place beside a trace table.
+    let major-columns = if present-formatted-table("grist.trace_malts") {
+      (([Major %], "own_pct"), ([Grist %], "grist_pct"))
+    } else {
+      (([Grist %], "grist_pct"),)
+    }
     block(breakable: false, {
       heading(level: 2)[Major Grist Fermentables]
-      fermentable-table(
-        "grist.major_malts",
-        pct-columns: (([Major %], "own_pct"), ([Grist %], "grist_pct")),
-      )
+      fermentable-table("grist.major_malts", pct-columns: major-columns)
       v(2pt)
       summary-line("grist.major_malts")
     })
@@ -122,12 +126,16 @@
 
   if present-formatted-table("grist.trace_malts") {
     v(4pt)
+    // A single trace malt is always 100 % of itself; the column only says
+    // something once there is more than one.
+    let trace-columns = if formatted-table("grist.trace_malts").len() > 1 {
+      (([Trace %], "own_pct"), ([Grist %], "grist_pct"))
+    } else {
+      (([Grist %], "grist_pct"),)
+    }
     block(breakable: false, {
       heading(level: 2)[Trace Malts]
-      fermentable-table(
-        "grist.trace_malts",
-        pct-columns: (([Trace %], "own_pct"), ([Grist %], "grist_pct")),
-      )
+      fermentable-table("grist.trace_malts", pct-columns: trace-columns)
       v(2pt)
       summary-line("grist.trace_malts")
       v(2pt)
