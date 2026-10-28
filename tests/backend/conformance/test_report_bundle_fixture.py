@@ -10,7 +10,7 @@ import importlib.util
 import json
 from pathlib import Path
 
-from app.schemas.report_bundle import ReportBundle
+from app.services.bundle_integrity import parse_bundle
 
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "tests" / "conformance" / "fixtures" / "report-bundle.json"
@@ -30,7 +30,7 @@ def _fixture() -> dict:
 
 
 def test_the_fixture_validates_and_hashes_are_prefixed():
-    bundle = ReportBundle.model_validate(_fixture())
+    bundle = parse_bundle(_fixture())
     assert bundle.bundle_format == 7
     assert bundle.artifact.hash.startswith("sha256:")
     assert bundle.catalog.hash.startswith("sha256:")
@@ -38,7 +38,7 @@ def test_the_fixture_validates_and_hashes_are_prefixed():
 
 
 def test_the_fixture_is_a_self_sufficient_freeze():
-    bundle = ReportBundle.model_validate(_fixture())
+    bundle = parse_bundle(_fixture())
     assert bundle.batch.id == "frozen-1"
     assert bundle.batch.status == "frozen"
     assert bundle.batch.parent_batch_id == "draft-1"

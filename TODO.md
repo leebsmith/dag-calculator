@@ -2,44 +2,20 @@
 
 ## In flight
 
-* **Decomposition & display contract** — nine phases, one display rule, one
-  error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–7 landed: the adapter-format allowlist is empty, every numeric readout
-  routes through `views/producer/cell.js` (`formatCell` / `cellLabel`), backend
-  errors and capacity limits share one class and one table in `core/errors.py`,
-  collections can declare row-scoped computed `fields` (grammar revision 10,
-  payload still 3), the fermentable rows read `grist_row.mass_kg` /
-  `extract_kg` / `sugar_row.resolved_mass_kg` from the artifact — host writes are
-  deleted, `reportFormat.fermentableRows` is gone, and the Fermentables card shows
-  mass and extract — and `core/batch_solver.py` became the ten-module
-  `core/batch/` package (`constants` → `inputs` → `helpers` → `composition` →
-  `volumetric` → `grist` → `cascade` → `hlt` → `orchestration` → `diagnostics`,
-  mapped in the package docstring) with the shim deleted and every importer
-  pointed at the owner module; arithmetic and the oracle fixture are unchanged.
-  Phase 4 amended Phase 3's edge rule: field inputs are read-side edges resolved
-  in authored mode, so a field may read the boundary its collection feeds while
-  every boundary request still carries authored rows only.
-  Phase 6 turned `core/water.py` into the nine-module `core/water/` package
-  (`constants` → `telemetry` → `inputs` → `chemistry` → `salts` → `router` →
-  `engines` → `dosing` → `orchestration`), decomposed `solve_water_chemistry`
-  into named phases, and made `core/water/telemetry.py` the only findings
-  channel: one factory per code, `TELEMETRY_CODES` as the declared surface, and
-  `warnings`/`notes` projected from the events — the `warnings.append` sites and
-  the reconciliation loop are gone. A 19,440-case sweep matches the pre-split
-  module on every numeric field and keeps every pre-split telemetry message.
-  Phase 7 moved the SVG projection into `views/producer/stylePlot.js`
-  (`stylePlotModel`, now tested without the Alpine harness) and split the card
-  into `adapters/cards/style/` — `declaration` (7 keys) → `navigator` (25) →
-  `targets` (36) → `conformance` (4), one installer each — leaving
-  `cards/style.js` a composition root with no member added, renamed, or dropped.
-  Next is Phase 8, bundle integrity: the 130-line
-  `ReportBundle._cross_references` validator becomes named checks in
-  `services/bundle_integrity.py`, `seal()` validates once, and every existing
-  error message survives verbatim.
-  Outstanding operational check: re-freeze the saved batch by hand on
-  `make local-dev` and confirm the printed bundle matches the screen (emulator
-  data is untracked). See `plans/decomposition-and-display-contract.md` for the
-  per-phase context contract.
+* **Alpine root maintainability** — the program after the decomposition contract
+  (`plans/decomposition-and-display-contract.md` §3); scope it before writing
+  code. The single reactive root is a framework requirement and
+  `installer-contract` keeps it correct, but nothing keeps it comprehensible: 16
+  installers declare 567 keys and the assembled app exposes 440 enumerable
+  members plus 180 non-enumerable getters (~620 members on one object). Flat scope
+  means a partial may call any card's method (A8 checks existence, not
+  ownership); `Object.assign` and `Object.defineProperties` co-exist so
+  enumerability is bespoke per card; card refresh order is implicit. Directions:
+  namespaced members (`app.style.*`), one `defineCard()` helper, A8 extended to
+  ownership, a generated ownership index from `INSTALLERS`.
+* **Operational re-freeze** — the closed program left one check a test cannot own:
+  re-freeze the saved batch by hand on `make local-dev` and confirm the printed
+  bundle matches the screen (emulator data is untracked).
 
 ## Next (in order)
 
@@ -70,17 +46,6 @@
 
 ## Later
 
-* **Alpine root maintainability** — the single reactive root is a framework
-  requirement and `installer-contract` keeps it correct, but nothing keeps it
-  comprehensible: 16 installers declare 567 keys and the assembled app exposes
-  440 enumerable members plus 180 non-enumerable getters (~620 members on one
-  object). Flat scope means a partial may call any card's method (A8 checks
-  existence, not ownership); `Object.assign` and `Object.defineProperties`
-  co-exist so enumerability is bespoke per card; card refresh order is implicit.
-  Directions: namespaced members (`app.style.*`), one `defineCard()` helper, A8
-  extended to ownership, a generated ownership index from `INSTALLERS`. Schedule
-  after the decomposition program — `plans/decomposition-and-display-contract.md`
-  §3.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
@@ -167,6 +132,20 @@ Not needed by the current artifact; add only when a node requires them:
 * True nested boundary outputs (currently flattened to dotted keys).
 
 ## Done
+
+* **Decomposition & display contract** — nine phases: the adapter-format allowlist
+  is empty and every numeric readout routes through `views/producer/cell.js`
+  (`formatCell` / `cellLabel`); backend errors and capacity limits share one class
+  and one table in `core/errors.py`; collections declare row-scoped computed
+  `fields` (grammar 10, payload 3) and the fermentable rows read
+  `grist_row.mass_kg` / `extract_kg` / `sugar_row.resolved_mass_kg` from the
+  artifact; `core/batch_solver.py` became the ten-module `core/batch/` package and
+  `core/water.py` the nine-module `core/water/` package, with
+  `core/water/telemetry.py` the only findings channel; the style card split into
+  `adapters/cards/style/` over a pure `views/producer/stylePlot.js`; and
+  `services/bundle_integrity.py` owns the bundle's twelve cross-reference checks
+  behind `parse_bundle` / `seal_bundle` —
+  `plans/decomposition-and-display-contract.md`.
 
 * **Report render service** — `report_render.py` plus `GET`/`POST
   `/batches/{id}/report`: temp-root compile with the pinned binary, PDF or one PNG

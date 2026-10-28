@@ -14,11 +14,11 @@ from app.schemas.report_bundle import (
     CatalogContent,
     DimensionSpec,
     NodePresentation,
-    ReportBundle,
     ReportInputs,
     ValidationBundle,
 )
 from app.services.batch_service import BatchConflictError, BatchService
+from app.services.bundle_integrity import parse_bundle
 
 
 def test_upsert_creates_then_updates():
@@ -310,7 +310,7 @@ def test_freeze_emits_a_valid_report_bundle():
         ),
     )
 
-    bundle = ReportBundle.model_validate(repo.bundles[frozen.id])
+    bundle = parse_bundle(repo.bundles[frozen.id])
     assert bundle.bundle_format == 7
     assert bundle.batch.id == frozen.id
     assert bundle.batch.parent_batch_id == rec.id

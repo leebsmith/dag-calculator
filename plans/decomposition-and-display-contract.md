@@ -1,9 +1,10 @@
 # Decomposition & display contract
 
-Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), 2
+Status: **closed**. Phases 0 (contract guards), 1 (one cell formatter), 2
 (error and constraint truth), 3 (per-row computed fields), 4 (row migration),
-5 (`core/batch/`), 6 (`core/water/` + one findings channel), and 7 (the style
-card split) landed; Phase 8 is next.
+5 (`core/batch/`), 6 (`core/water/` + one findings channel), 7 (the style
+card split), and 8 (bundle integrity) landed. The follow-on program — the Alpine
+root, §3 — is the next TODO.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -578,6 +579,44 @@ stays fail-closed. Sealing still stamps a canonical hash.
 direct coverage today.
 
 **Commit.** `Split bundle integrity out of the schema module`
+
+**Landed.** `services/bundle_integrity.py` owns twelve named checks —
+`check_valuation_nodes`, `check_telemetry_bindings`, `check_catalog_dimensions`,
+`check_identity_namespaces`, `check_catalog_paths`, `check_catalog_symbols`,
+`check_formatted_values`, `check_formatted_tables`, `check_formatted_summaries`,
+`check_collection_state`, `check_catalog_coverage`, `check_telemetry_coverage` —
+in the order the old validator ran them, with every message verbatim. `CHECKS` is
+the declared surface and `verify()` runs it; `check_collection_state` is one
+check with three rules because they all describe the same row block.
+
+The layering forced the phase's one deviation. `tach` pins `app.schemas` with no
+dependencies, so the schema cannot import the service; a `ReportBundle` validator
+that cannot reach the checks cannot be the enforcement point. The constructors
+therefore moved with the checks and the schema kept transport shape: the shape
+models, `bundle_content_hash`, and `_content_hash_matches` stay in
+`schemas/report_bundle.py`, while `parse_bundle` (shape + hash, then checks) is the
+read seam and `seal_bundle` the write seam. `ReportBundle.seal` is deleted rather
+than left as a shape-only alias — reaching for `model_validate` directly checks
+the shape but not the references, which the module docstrings now say. Both seams
+raise: the checks raise `BundleIntegrityError(ValueError)`, so the batch service
+catches `(ValidationError, BundleIntegrityError)` at freeze, preview, posted
+preview, and stored-bundle read, and `_bundle_rejection` prints the message rather
+than a pydantic dump. A stored bundle still fails closed (`500`); a posted one
+still maps to `422`.
+
+`seal_bundle` validates once: one `model_validate` under the sealing context, the
+checks, then `bundle_content_hash` stamped onto the validated draft with
+`model_copy` — no second validation of a body that was already checked. The
+canonical hash is unchanged (same canonical dump, same `sha256_canonical`), so the
+committed fixture did not move.
+
+Two per-check tests cover the checks that had none: `catalog unit without a
+display symbol` (through `seal_bundle`) and `names an unknown item schema`
+(calling `check_collection_state` on a `model_copy` — the one case that cannot be
+reached through a seam because path resolution fails first). `make test` is 696
+backend passes (694 plus the two) and 853 frontend passes, unchanged.
+`docs/report-bundle.md` names both owners; `docs/report-generation.md`'s invariant
+list now names `bundle_format == 7` and `seal_bundle`.
 
 ## 5. Report sections, re-sequenced
 

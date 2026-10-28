@@ -14,6 +14,7 @@ from app.auth.deps import get_current_user, require_allowed_user
 from app.main import app
 from app.schemas.report_bundle import ReportBundle
 from app.services.batch_service import BatchService, get_batch_service
+from app.services.bundle_integrity import parse_bundle, seal_bundle
 from app.services.report_render import (
     ReportRenderError,
     ReportSpecError,
@@ -43,14 +44,14 @@ def bundle_dict() -> dict:
 
 
 def bundle() -> ReportBundle:
-    return ReportBundle.model_validate(bundle_dict())
+    return parse_bundle(bundle_dict())
 
 
 def draft_bundle_dict() -> dict:
     """The fixture reshaped as the draft preview the client would post."""
     data = bundle_dict()
     data["batch"].update({"status": "draft", "frozen_at": None, "parent_batch_id": None})
-    return ReportBundle.seal(data).model_dump(mode="json")
+    return seal_bundle(data).model_dump(mode="json")
 
 
 def test_a_frozen_bundle_renders_a_pdf() -> None:
@@ -86,7 +87,7 @@ def test_an_empty_resolved_selection_is_a_spec_error() -> None:
     del data["formatted"]["batch.target_ibu"]  # batch-facts loses its presence
 
     with pytest.raises(ReportSpecError, match="nothing to report"):
-        render(ReportBundle.seal(data), parse_spec(sections="batch-facts"))
+        render(seal_bundle(data), parse_spec(sections="batch-facts"))
 
 
 def test_frozen_renders_are_byte_identical() -> None:

@@ -2,10 +2,13 @@
 
 A frozen batch emits one self-sufficient JSON document — the **report bundle** —
 that a report generator consumes with no joins, no catalogue lookups, and no
-re-solving. The contract is owned by
-`backend/app/schemas/report_bundle.py`; the producer is
-`backend/app/services/report_bundle_service.py`; the design record is
-[`plans/report-bundle.md`](../plans/report-bundle.md).
+re-solving. Transport shape (the guarded models, the declared enums, the
+canonical hash) is owned by `backend/app/schemas/report_bundle.py`; graph truth
+(whether the bundle's cross-references name what the artifact declares) is the
+named checks in `backend/app/services/bundle_integrity.py`, which also owns the
+only checked constructors and the producer path
+(`backend/app/services/report_bundle_service.py` calls `seal_bundle`). The design
+record is [`plans/report-bundle.md`](../plans/report-bundle.md).
 
 A companion path index lives in
 [`report-bundle-glossary.md`](report-bundle-glossary.md) (generated from the
@@ -24,8 +27,9 @@ artifact + presentation registries).
 - `GET` returns `409` for a draft and `409` for a frozen batch whose bundle
   predates this feature (fork and re-freeze; there is no backfill).
 - `POST` returns `409` for a frozen batch.
-- Both are validated with `ReportBundle` on read. A stored document that no
-  longer satisfies the schema fails loudly (`500`) rather than rendering blanks.
+- Both are validated with `parse_bundle` on read — transport shape, the canonical
+  hash, and every cross-reference check. A stored document that no longer
+  satisfies them fails loudly (`500`) rather than rendering blanks.
 - The POST body is the freeze payload (`valuation`, `provenance`,
   `conformance`, `report_inputs`, `catalog`) — exactly what freezing sends.
 

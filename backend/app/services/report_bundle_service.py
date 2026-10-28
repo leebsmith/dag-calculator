@@ -13,7 +13,8 @@ from typing import Any
 from app.artifact import load_artifact
 from app.schemas.batch import FreezePayload
 from app.schemas.canonical import sha256_canonical
-from app.schemas.report_bundle import BUNDLE_FORMAT, ReportBundle
+from app.schemas.report_bundle import BUNDLE_FORMAT
+from app.services.bundle_integrity import seal_bundle
 
 
 def _plain(value: Any) -> Any:
@@ -78,4 +79,4 @@ def build_report_bundle(
             for node_id, entry in inputs.telemetry.items()
         },
     }
-    return ReportBundle.seal(content).model_dump(mode="json")
+    return seal_bundle(content).model_dump(mode="json")

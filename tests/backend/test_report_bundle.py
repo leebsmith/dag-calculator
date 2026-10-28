@@ -1,11 +1,22 @@
-"""Guard tests for the report bundle schema (plans/report-bundle.md)."""
+"""Guard tests for the report bundle schema (plans/report-bundle.md).
+
+`ReportBundle.model_validate` enforces transport shape and the canonical hash;
+`services.bundle_integrity` enforces graph truth, so the cross-reference cases here
+go through `seal_bundle` (the write seam) or the named check itself.
+"""
 
 from __future__ import annotations
 
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.report_bundle import BUNDLE_FORMAT, ReportBundle
+from app.schemas.report_bundle import BUNDLE_FORMAT
+from app.services.bundle_integrity import (
+    BundleIntegrityError,
+    check_collection_state,
+    parse_bundle,
+    seal_bundle,
+)
 
 ARTIFACT = {
     "schema_version": 7,
@@ -42,7 +53,8 @@ IDENTITY = {
 }
 
 
-def bundle(**overrides) -> dict:
+def content(**overrides) -> dict:
+    """An unsealed bundle body; the tests hand it to the seam they are testing."""
     base = {
         "bundle_format": BUNDLE_FORMAT,
         "artifact": {"schema_version": 7, "hash": "sha256:artifact", "content": ARTIFACT},
@@ -113,51 +125,55 @@ def bundle(**overrides) -> dict:
         "formatted_summaries": {},
     }
     base.update(overrides)
-    return ReportBundle.seal(base).model_dump(mode="json")
+    return base
+
+
+def bundle(**overrides) -> dict:
+    return seal_bundle(content(**overrides)).model_dump(mode="json")
 
 
 def test_a_well_formed_bundle_validates() -> None:
-    parsed = ReportBundle.model_validate(bundle())
+    parsed = parse_bundle(bundle())
     assert parsed.bundle_format == 7
     assert parsed.batch.identity["equipment"]["name"] == "Test rig"
 
 
 def test_unknown_fields_are_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(unexpected="nope"))
+        parse_bundle(bundle(unexpected="nope"))
 
 
 def test_unknown_bundle_format_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        ReportBundle.model_validate(bundle(bundle_format=6))
+        parse_bundle(bundle(bundle_format=6))
 
 
 def test_valuation_must_name_declared_nodes() -> None:
-    state = bundle()["state"] | {"valuation": {"nope": 1}}
-    with pytest.raises(ValidationError, match="undeclared nodes: nope"):
-        ReportBundle.model_validate(bundle(state=state))
+    state = content()["state"] | {"valuation": {"nope": 1}}
+    with pytest.raises(BundleIntegrityError, match="undeclared nodes: nope"):
+        seal_bundle(content(state=state))
 
 
 def test_telemetry_must_target_a_matching_boundary() -> None:
-    bad_key = bundle() | {"telemetry": {"mash.rests": bundle()["telemetry"]["solver.batch"]}}
-    with pytest.raises(ValidationError, match="is not a boundary node"):
-        ReportBundle.model_validate(bad_key)
+    bad_key = {"mash.rests": content()["telemetry"]["solver.batch"]}
+    with pytest.raises(BundleIntegrityError, match="is not a boundary node"):
+        seal_bundle(content(telemetry=bad_key))
 
-    bad_binding = bundle()["telemetry"]["solver.batch"] | {"binding": "other"}
-    with pytest.raises(ValidationError, match="does not match"):
-        ReportBundle.model_validate(bundle(telemetry={"solver.batch": bad_binding}))
+    bad_binding = content()["telemetry"]["solver.batch"] | {"binding": "other"}
+    with pytest.raises(BundleIntegrityError, match="does not match"):
+        seal_bundle(content(telemetry={"solver.batch": bad_binding}))
 
 
 def test_catalog_dimensions_must_be_declared() -> None:
-    catalog = bundle()["catalog"] | {"dimensions": {"pressure": {"base_unit": "bar", "kind": "linear"}}}
-    with pytest.raises(ValidationError, match="undeclared dimensions: pressure"):
-        ReportBundle.model_validate(bundle(catalog=catalog))
+    catalog = content()["catalog"] | {"dimensions": {"pressure": {"base_unit": "bar", "kind": "linear"}}}
+    with pytest.raises(BundleIntegrityError, match="undeclared dimensions: pressure"):
+        seal_bundle(content(catalog=catalog))
 
 
 def test_identity_namespaces_must_be_declared() -> None:
-    batch = bundle()["batch"] | {"identity": {"yeast": {"id": "y"}}}
-    with pytest.raises(ValidationError, match="identity namespaces not declared: yeast"):
-        ReportBundle.model_validate(bundle(batch=batch))
+    batch = content()["batch"] | {"identity": {"yeast": {"id": "y"}}}
+    with pytest.raises(BundleIntegrityError, match="identity namespaces not declared: yeast"):
+        seal_bundle(content(batch=batch))
 
 
 @pytest.mark.parametrize(
@@ -170,39 +186,58 @@ def test_identity_namespaces_must_be_declared() -> None:
     ],
 )
 def test_known_catalog_paths_resolve(path: str) -> None:
-    catalog = bundle()["catalog"]
+    catalog = content()["catalog"]
     nodes = catalog["nodes"] | {path: {"label": "x"}}
-    parsed = ReportBundle.model_validate(bundle(catalog=catalog | {"nodes": nodes}))
+    parsed = parse_bundle(bundle(catalog=catalog | {"nodes": nodes}))
     assert parsed.catalog.nodes[path].label == "x"
 
 
 def test_unknown_catalog_paths_are_rejected() -> None:
-    catalog = bundle()["catalog"]
+    catalog = content()["catalog"]
     catalog = catalog | {"nodes": catalog["nodes"] | {"mash.nope": {"label": "x"}}}
-    with pytest.raises(ValidationError, match="resolves to no node"):
-        ReportBundle.model_validate(bundle(catalog=catalog))
+    with pytest.raises(BundleIntegrityError, match="resolves to no node"):
+        seal_bundle(content(catalog=catalog))
+
+
+def test_catalog_units_must_name_a_display_symbol() -> None:
+    catalog = content()["catalog"]
+    nodes = catalog["nodes"] | {
+        "batch.v_ferm": {"label": "V", "dimension": "volume", "unit": "L"}
+    }
+    with pytest.raises(BundleIntegrityError, match="catalog unit without a display symbol"):
+        seal_bundle(content(catalog=catalog | {"nodes": nodes}))
 
 
 def test_collection_state_must_name_a_collection_node() -> None:
-    state = bundle()["state"] | {"collections": {"batch.v_ferm": []}}
-    with pytest.raises(ValidationError, match="non-collection node"):
-        ReportBundle.model_validate(bundle(state=state))
+    state = content()["state"] | {"collections": {"batch.v_ferm": []}}
+    with pytest.raises(BundleIntegrityError, match="non-collection node"):
+        seal_bundle(content(state=state))
+
+
+def test_collection_state_must_name_a_declared_item_schema() -> None:
+    parsed = parse_bundle(bundle())
+    undeclared = parsed.artifact.content | {"primitive_schemas": {}}
+    broken = parsed.model_copy(
+        update={"artifact": parsed.artifact.model_copy(update={"content": undeclared})}
+    )
+    with pytest.raises(BundleIntegrityError, match="names an unknown item schema"):
+        check_collection_state(broken)
 
 
 def test_content_hash_must_match_the_body() -> None:
     tampered = bundle()
     tampered["batch"]["name"] = "Edited after sealing"
     with pytest.raises(ValidationError, match="content_hash does not match"):
-        ReportBundle.model_validate(tampered)
+        parse_bundle(tampered)
 
 
 def test_catalog_nodes_may_declare_their_dimension() -> None:
-    catalog = bundle()["catalog"]
+    catalog = content()["catalog"]
     catalog = catalog | {
         "nodes": catalog["nodes"]
         | {"batch.v_ferm": {"label": "V", "dimension": "volume", "unit": "L", "symbol": "L", "decimals": 1}}
     }
-    parsed = ReportBundle.model_validate(bundle(catalog=catalog))
+    parsed = parse_bundle(bundle(catalog=catalog))
     entry = parsed.catalog.nodes["batch.v_ferm"]
     assert entry.dimension == "volume"
     assert entry.unit == "L"
@@ -210,79 +245,73 @@ def test_catalog_nodes_may_declare_their_dimension() -> None:
 
 
 def test_catalog_must_cover_every_solved_node():
-    catalog = bundle()["catalog"]
+    catalog = content()["catalog"]
     nodes = {k: v for k, v in catalog["nodes"].items() if k != "solver.batch"}
-    with pytest.raises(ValidationError, match="catalog does not cover the solved state"):
-        ReportBundle.model_validate(bundle(catalog=catalog | {"nodes": nodes}))
+    with pytest.raises(BundleIntegrityError, match="catalog does not cover the solved state"):
+        seal_bundle(content(catalog=catalog | {"nodes": nodes}))
 
 
 def test_catalog_must_cover_boundary_outputs_in_the_state():
-    catalog = bundle()["catalog"]
+    catalog = content()["catalog"]
     nodes = {
         k: v for k, v in catalog["nodes"].items() if k != "solver.batch.cascade.v_strike"
     }
-    with pytest.raises(ValidationError, match="solver.batch.cascade.v_strike"):
-        ReportBundle.model_validate(bundle(catalog=catalog | {"nodes": nodes}))
+    with pytest.raises(BundleIntegrityError, match="solver.batch.cascade.v_strike"):
+        seal_bundle(content(catalog=catalog | {"nodes": nodes}))
 
 
 def test_catalog_must_cover_collection_row_fields():
-    catalog = bundle()["catalog"]
+    catalog = content()["catalog"]
     nodes = {k: v for k, v in catalog["nodes"].items() if k != "mash.rests.use_temp_c"}
-    with pytest.raises(ValidationError, match="mash.rests.use_temp_c"):
-        ReportBundle.model_validate(bundle(catalog=catalog | {"nodes": nodes}))
+    with pytest.raises(BundleIntegrityError, match="mash.rests.use_temp_c"):
+        seal_bundle(content(catalog=catalog | {"nodes": nodes}))
 
 
 def test_telemetry_must_name_a_solved_boundary():
-    telemetry = bundle()["telemetry"] | {
-        "solver.batch": bundle()["telemetry"]["solver.batch"],
+    telemetry = content()["telemetry"] | {
+        "solver.batch": content()["telemetry"]["solver.batch"],
     }
-    state = bundle()["state"] | {"valuation": {"batch.v_ferm": 20}}
-    with pytest.raises(ValidationError, match="telemetry names unsolved boundaries"):
-        ReportBundle.model_validate(bundle(state=state, telemetry=telemetry))
+    state = content()["state"] | {"valuation": {"batch.v_ferm": 20}}
+    with pytest.raises(BundleIntegrityError, match="telemetry names unsolved boundaries"):
+        seal_bundle(content(state=state, telemetry=telemetry))
 
 
 def test_formatted_paths_must_be_in_the_catalog() -> None:
     formatted = {"not.a.path": {"text": "x"}}
-    with pytest.raises(ValidationError, match="is not in the catalog"):
-        ReportBundle.model_validate(bundle(formatted=formatted))
+    with pytest.raises(BundleIntegrityError, match="is not in the catalog"):
+        seal_bundle(content(formatted=formatted))
 
 
 def test_dimensioned_formatted_values_need_the_number_unit_split() -> None:
     formatted = {"batch.v_ferm": {"text": "20.0 L"}}
-    with pytest.raises(ValidationError, match="number/unit split"):
-        ReportBundle.model_validate(bundle(formatted=formatted))
+    with pytest.raises(BundleIntegrityError, match="number/unit split"):
+        seal_bundle(content(formatted=formatted))
 
 
 def test_text_formatted_reference_values_do_not_need_a_split() -> None:
     # `batch.yeast_id` is a reference (identity dimension): the value is an id
     # string, so a unit-bearing catalog entry must not demand number/unit.
-    ReportBundle.model_validate(
-        bundle(formatted={"batch.yeast_id": {"text": "us-05"}})
-    )
+    parse_bundle(bundle(formatted={"batch.yeast_id": {"text": "us-05"}}))
 
 
 def test_formatted_tables_must_name_collection_nodes() -> None:
-    with pytest.raises(ValidationError, match="not a collection node"):
-        ReportBundle.model_validate(bundle(formatted_tables={"batch.v_ferm": []}))
+    with pytest.raises(BundleIntegrityError, match="not a collection node"):
+        seal_bundle(content(formatted_tables={"batch.v_ferm": []}))
 
-    with pytest.raises(ValidationError, match="has no text"):
-        ReportBundle.model_validate(
-            bundle(formatted_tables={"mash.rests": [{"name": {"text": ""}}]})
-        )
+    with pytest.raises(BundleIntegrityError, match="has no text"):
+        seal_bundle(content(formatted_tables={"mash.rests": [{"name": {"text": ""}}]}))
 
 
 def test_formatted_summaries_name_a_collection_or_the_overall_aggregate() -> None:
     summary = {"color": {"text": "7.5 °L"}, "extract_yield": {"text": "77.4%"}}
-    ReportBundle.model_validate(bundle(formatted_summaries={"mash.rests": summary}))
-    ReportBundle.model_validate(bundle(formatted_summaries={"overall": summary}))
+    parse_bundle(bundle(formatted_summaries={"mash.rests": summary}))
+    parse_bundle(bundle(formatted_summaries={"overall": summary}))
 
-    with pytest.raises(ValidationError, match="not a collection node or"):
-        ReportBundle.model_validate(bundle(formatted_summaries={"batch.v_ferm": summary}))
+    with pytest.raises(BundleIntegrityError, match="not a collection node or"):
+        seal_bundle(content(formatted_summaries={"batch.v_ferm": summary}))
 
-    with pytest.raises(ValidationError, match="has no text"):
-        ReportBundle.model_validate(
-            bundle(formatted_summaries={"overall": {"color": {"text": ""}}})
-        )
+    with pytest.raises(BundleIntegrityError, match="has no text"):
+        seal_bundle(content(formatted_summaries={"overall": {"color": {"text": ""}}}))
 
 
 def test_freeze_payload_requires_the_bundle_inputs() -> None:

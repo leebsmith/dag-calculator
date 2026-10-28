@@ -135,9 +135,9 @@ Models are extra="forbid" and frozen: unknown fields are rejected, not ignored.
 
 ```
 
-Invariants the schema enforces
+Invariants the schema and `services/bundle_integrity.py` enforce
 
-- bundle_format == 3; content_hash must equal the canonical hash of everything else (recomputed by ReportBundle.seal()).
+- bundle_format == 7; content_hash must equal the canonical hash of everything else (recomputed by `seal_bundle()`).
 - state.valuation keys must be declared artifact nodes; boundary nodes carry a flattened output map (cascade.v_strike, hlt.v_hlt_debt).
 - catalog.dimensions must be declared in the artifact; batch.identity namespaces must be declared.
 - Every catalog.nodes[path] must resolve: exact node, longest node prefix + boundary output / selection / collection field, or longest identity namespace + schema field.

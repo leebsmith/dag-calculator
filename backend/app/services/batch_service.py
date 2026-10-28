@@ -11,6 +11,10 @@ from app.artifact import load_artifact
 from app.repositories.batch_repo import BatchRepoDep, BatchRepository
 from app.schemas.batch import BatchRecord, DraftPayload, FreezePayload
 from app.schemas.report_bundle import ReportBundle
+from app.services.bundle_integrity import (
+    BundleIntegrityError,
+    parse_bundle,
+)
 from app.services.report_bundle_service import build_report_bundle
 from app.services.report_render import (
     RenderedReport,
@@ -52,8 +56,10 @@ class BatchConflictError(Exception):
         self.current = current
 
 
-def _bundle_rejection(exc: ValidationError) -> str:
+def _bundle_rejection(exc: ValidationError | BundleIntegrityError) -> str:
     """The validator's own messages, without pydantic's input-value dump."""
+    if not isinstance(exc, ValidationError):
+        return str(exc)
     return "; ".join(error.get("msg", "") for error in exc.errors()) or str(exc)
 
 
@@ -94,7 +100,7 @@ class BatchService:
                     frozen_id=frozen_id, record=frozen, payload=payload
                 ),
             )
-        except ValidationError as exc:
+        except (ValidationError, BundleIntegrityError) as exc:
             raise HTTPException(
                 status_code=422, detail=f"Report bundle rejected: {_bundle_rejection(exc)}"
             ) from exc
@@ -121,8 +127,8 @@ class BatchService:
                 detail="This frozen batch predates report bundles; fork and re-freeze it",
             )
         try:
-            return ReportBundle.model_validate(stored)
-        except ValidationError as exc:
+            return parse_bundle(stored)
+        except (ValidationError, BundleIntegrityError) as exc:
             raise HTTPException(
                 status_code=500, detail=f"Stored report bundle is invalid: {exc}"
             ) from exc
@@ -153,8 +159,8 @@ class BatchService:
                 status_code=409, detail="Frozen batches render their stored bundle"
             )
         try:
-            bundle = ReportBundle.model_validate(bundle_payload)
-        except ValidationError as exc:
+            bundle = parse_bundle(bundle_payload)
+        except (ValidationError, BundleIntegrityError) as exc:
             raise HTTPException(
                 status_code=422, detail=f"Report bundle rejected: {_bundle_rejection(exc)}"
             ) from exc
@@ -204,7 +210,7 @@ class BatchService:
             return build_report_bundle(
                 frozen_id=record["id"], record=preview, payload=payload
             )
-        except ValidationError as exc:
+        except (ValidationError, BundleIntegrityError) as exc:
             raise HTTPException(
                 status_code=422, detail=f"Report bundle rejected: {_bundle_rejection(exc)}"
             ) from exc
