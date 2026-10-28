@@ -2,73 +2,27 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 3, split the two
-  ~50-line card computations and declare the refresh pipeline** (`fieldActions`
-  landed: `views/producer/authoring.js` holds the input-draft key composer
-  (`fieldInputKey`), the parts → pct Hamilton normalization both collection kinds
-  repeated (`normalizedRowShares`), and the type-appropriate blank-row defaults
-  (`rowDefaults`); `clampToSelection` now returns the strict `utils.js` `clamp`
-  result over its resolved bounds, the adapter is 276 lines from 293, every
-  member keeps its name and `KEYS` entry and delegates; covered by
-  `tests/frontend/authoring.test.js` (6 cases) with `number-input.test.js` and
-  `selection-validation.test.js` pinning the app paths. Phase 2 is complete,
-  eight of eight). `catalogDraft`
-  landed: `views/producer/catalogDrawer.js` holds the drawer readouts the four
-  catalogue cards share — the two meta composers, the draft set (`activeCatalogIds`)
-  and the inspected row (`activeDraftRow`), the category/family pill tables, the
-  standard browser (`catalogStandardGroups`) and its selection name, the
-  brand/name product matches, the filtered → visible → truncated chain, and the
-  two filter toggles; the adapter is 319 lines from 333, every member keeps its
-  name and `KEYS` entry and delegates, and `catalogDraftKeys` is untouched;
-  covered by `tests/frontend/catalog-drawer.test.js` (10 cases) with
-  `catalogDraft.test.js` (25) and the four card suites pinning the strings.
-  `mash` landed: `views/producer/mashRows.js` holds the rest catalogue labels, the advisory
-  temperature band, the canonical row defaults + canon↔schedule join, the
-  1dp/2dp/whole-unit temperature labels, and the time and LGR summary lines; the
-  adapter is 349 lines from 378, every member keeps its name and `KEYS` entry
-  and delegates; covered by `tests/frontend/mash-rows.test.js` (7 cases);
-  `trace-malts` landed: `views/producer/traceMaltRows.js` holds the catalogue→draft row default
-  (`makeTraceMaltRow`: zero mass, the provenance/basis/method/colour/notes the
-  boundary reads, no parts or moisture); the drawer subtitle and group line were
-  byte-identical to the grain bill's, so they went to `gristRows.js` as
-  `maltItemMeta` / `maltGroupMeta` and both cards import them; the adapter is 68
-  lines from 90, `malt.js` 173 from 175, every member keeps its name and `KEYS`
-  entry and delegates; covered by `tests/frontend/trace-malt-rows.test.js` (3
-  cases) plus two drawer-formatter cases in `malt-rows.test.js`. `yeast`
-  landed: `views/producer/yeastRows.js` holds the attenuation label and its bare
-  percent form, the band classifier + `YEAST_ATTENUATION_TIERS`, the tri-state
-  STA1 bucket + counted pills, the temperature band label, and the chooser cap
-  (`YEAST_ROW_LIMIT` / `isYeastListTruncated` / `yeastResultLabel`); the adapter
-  is 187 lines from 211, every member keeps its name and `KEYS` entry and
-  delegates with the state it reads; covered by
-  `tests/frontend/yeast-rows.test.js` (8 cases). `malt` landed:
-  `views/producer/gristRows.js` holds the trace threshold, the fermentable label
-  with its provenance marker, the summary ordering, the parts/percent totals, the
-  balance badge, and the 8-row limit; the adapter is 175 lines from 201 and every
-  getter keeps its name and delegates with the state it reads; covered by
-  `tests/frontend/malt-rows.test.js`. `late-additions` landed:
-  `views/producer/lateAdditionRows.js` holds the nine pure readouts — the
-  dose-effect labels, the table/catalog counters, the `sugarActive` derivation,
-  the display-unit join, and the preview pin labels + envelope classes; the
-  adapter is 452 lines from 494 and keeps `syncScalePreviewState` for Phase 3;
-  covered by `tests/frontend/late-addition-rows.test.js`. `hops` landed:
-  `views/producer/hopRows.js` holds the 9 pure row readouts plus the whirlpool
-  form label table; the adapter delegates in one line, 535 → 522 lines, and
-  `hopTemp` stays because it reads the display unit; covered by
-  `tests/frontend/hop-rows.test.js`). Phase 1 landed in `55f6485`: the surface
-  check walks own properties, so the 179 hidden members are governed too;
-  `docs/frontend-ownership.md` is generated from the new `modules`/`partials`
-  declarations on `installers.js`, with one owner per member; and today's 47
-  cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
-  135 reader/key pairs — that the ownership guard checks exactly. Phase 2 is
-  closed; the last group was `fieldActions` (5 helpers). Phases 3–5
-  remain: split the two ~50-line card computations and declare the refresh
-  pipeline, ratchet size and complexity, and invert the store's three client
-  imports.
-  Measured at `55f6485`: 19 installers declare 567 members (388 enumerable, 179
-  hidden); 353 adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program
-  archives to `plans/archive/` when closed — every phase, gate, read fence and
-  commit is in `plans/alpine-maintainability-and-module-linting.md`.
+* **Alpine maintainability and module linting** — **next: Phase 4, turn on the size
+  and complexity ratchet.** `eslint.config.js` only: `complexity: 12`,
+  `max-depth: 4`, `max-lines-per-function: 80`, `max-lines: 400`, `max-params: 5`,
+  `max-statements: 40` at error, each surviving exception a named per-file
+  override with a reason — no baseline file. Phase 3 landed in `6b9585c`:
+  `computeStyleTarget` (54 lines, complexity 20) is now
+  `views/producer/styleTarget.js` — the region → extract chain, the pin table and
+  the eight pin mirrors, the target-mismatch line — and the adapter reads the
+  engine only behind a region-length guard, so a style-less batch still touches no
+  boundary (`navigator.js` 274 → 240, `targets.js` 291 → 262);
+  `syncScalePreviewState` (55) is `views/producer/scalePreview.js`, the preview pin
+  matrix and its caption consuming `lateAdditionRows.js` (`late-additions.js` 452
+  → 415); and `stepView.compute` (86) is three named steps — `produceFields`,
+  `indexStatus`, `refreshCards` — over the exported `CARD_REFRESHES` list, pinned
+  by `tests/frontend/step-pipeline.test.js`, which fails when a card's
+  `refresh*Card` export is missing from the list or the order drifts. Phase 5 then
+  inverts the store's three client imports. Phases 0–2 (the lint contract, the
+  ownership index, the eight card-group extractions) are recorded in the same
+  plan; every phase, gate, read fence, deviation and commit is in
+  `plans/alpine-maintainability-and-module-linting.md`, and the program archives to
+  `plans/archive/` when closed.
 
 ## Next (in order)
 

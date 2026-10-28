@@ -1,10 +1,10 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 landed (8 of 8 card groups: `hops`, `late-additions`,
-`malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`, `fieldActions`).
-Phases 3–5 remain: extract the logic that does not belong in the root and ratchet
-the shape the linter and the ownership guard can now see.
+(`55f6485`), Phase 2 landed (8 of 8 card groups: `hops`, `late-additions`,
+`malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`, `fieldActions`), and
+Phase 3 landed (`6b9585c`). Phases 4–5 remain: ratchet the shape the linter and
+the ownership guard can now see, and invert the store's three client imports.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -608,6 +608,54 @@ stays precomputed.
 `make test`.
 
 **Commit.** `Split the style and late-addition computations out of the cards`
+
+**Landed.** `6b9585c`. Two modules and one declared pipeline:
+
+- `views/producer/styleTarget.js` (101 lines) owns the fermentation-target
+  derivation: `styleRegionState(envelope)` (the complete-envelope predicate, the
+  feasible vertices, the safest point), `styleExtractPoint({ region, solvedOg,
+  solvedAa, fallbackAa, targetAbv })` (solved point → target inverse → fixed-AA
+  ray → centroid), the `SCALE_PINS` table, `scalePinState` (the eight pin mirrors,
+  including the ABV-vs-SG unit and step), and `scaleTargetMismatch` behind
+  `scaleTargetLabel`. `computeStyleTarget` is 24 lines from 54 (complexity 20) and
+  `navigator.js` is 240 lines from 274. `syncScalePinState` is nine lines from 21
+  and `refreshStyleTargets` ten from 20; `targets.js` is 262 lines from 291 and
+  imports the pin table instead of declaring it.
+- `views/producer/scalePreview.js` (72 lines) owns the preview pin matrix
+  (`scalePreviewRows`), the caption (`scalePreviewCaption`) and their composition
+  (`scalePreviewState`), consuming `scaleEnvelopeState` / `scaleEnvelopeClass` /
+  `scalePinLabel` from `lateAdditionRows.js` and `isFiniteNumber` /
+  `formatPercentRange` from the barrel. `syncScalePreviewState` is 22 lines from
+  55 (complexity 21); `late-additions.js` is 415 lines from 452.
+- `stepView.compute()` is six lines: `produceFields(engine)`, `indexStatus()`,
+  `refreshCards()`. The order is the exported `CARD_REFRESHES` list (nine entries,
+  yeast → style → malt → traceMalts → hop → lateAdditions → mash → brewDay →
+  water). `tests/frontend/step-pipeline.test.js` reads `adapters/cards/**`,
+  collects every `refresh…Card` export, and fails unless each appears exactly once
+  in the list, in the declared order; a boot case asserts `compute()` fills the
+  produced field index, the status buckets and the style/late-addition snapshots.
+  `stepView.js` grew 215 → 231 lines: the order is data now, and a duplicated
+  `readConstant` went away.
+
+Two deviations, both narrower than the plan:
+
+1. **The style target is two functions, not one.** `computeStyleTarget` returned
+   early when the style region had fewer than three vertices, so a style-less *or*
+   boundary-less batch never resolved `batch.realized_og` /
+   `apparent_attenuation`. A single `styleTargetState({ envelope, solvedOg, … })`
+   resolves both before the region check, and `step-boundaries` caught it ("No
+   boundary binding registered"). The split keeps the guard where the reads are:
+   `styleRegionState` is total, and `styleExtractPoint` runs only behind
+   `styleRegion.length >= 3`.
+2. **`syncScalePinState` moved although it fits the ceiling.** It was 21 lines,
+   not one of the two hot methods, but the pin table it reads was already moving
+   and the mapping is the same pure derivation as the mirrors; leaving it behind
+   would have split one rule across two layers. The same argument moved
+   `fmtTarget` → `scaleTargetLabel` and the mismatch comparison →
+   `scaleTargetMismatch`, which removed the nested display ternary from the
+   adapter.
+
+Gate: `make check`; `make test` (936 frontend, 697 backend).
 
 **Handoff.** Adding a card refresh is one list entry plus one export; forgetting
 either fails a test.
