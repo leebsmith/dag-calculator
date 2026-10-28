@@ -26,7 +26,7 @@ Read this before touching the process sections; do not re-derive the decisions.
 |---|---|
 | 1 | **Brewhouse is the first section.** Registry order becomes `brewhouse`, `batch-facts`, `yeast`, `volume-ledger`. |
 | 2 | **Brewhouse contents** — target ABV, topology, conversion efficiency, brewhouse efficiency, mash thickness, runoff ratio, boil time, boil-off rate, grain moisture. All defaulted roots except the two efficiencies. |
-| 3 | **Liquor Ledger is last**, titled *Liquor Ledger* (not "HLT"), and is process-ordered: fill → first underlet → after strike → top-up → debt → salted sparge → second underlet → surplus. |
+| 3 | **Liquor Ledger is last**, titled *Liquor Ledger* (not "HLT"), and is process-ordered: fill → first underlet → after strike → top-up → debt → second underlet (available) → sparge demand → surplus. The top-up target is a **floor**, never a destination. |
 | 4 | **No dedicated Boil section yet.** Boil time and rate are Brewhouse fields; volumes are the ledger; hops are candidate sections of their own. Pre-boil gravity joins the solver-results line instead. |
 | 5 | **`v_hlt_target` and `v_hlt_required` become boundary outputs.** `docs/calculator-assumed-dosing-practice.md` already names `solver.batch.hlt.v_hlt_target`; today the value is computed and discarded. |
 | 6 | **Sparge water temperature is an authored, display-only target** — `batch.sparge_water_temp_c`, default 76 °C. Heating and cooling are not modelled: the HLT is heated to strike temperature, the top-up is cold, and the model cannot say what the sparge temperature actually is. The report prints the *target*. |
@@ -80,9 +80,21 @@ v_sparge_deliverable = v_hlt_after_strike + v_hlt_top_up − v_hlt_debt
 
 All six are outputs as of commit 1. `required` is exposed to name the sparge
 demand behind the target but is not printed: it equals the target unless the coil
-floor binds. The ledger closes:
-`fill − strike = after_strike`; `after_strike + top_up = target`;
-`target − debt = deliverable`.
+floor binds. The target is a **floor**: a full HLT is never drained to reach it,
+so the top-up clamps at zero and the excess stays in the vessel. The ledger closes
+at both ends:
+
+```
+fill − strike                      = after_strike
+after_strike + top_up              = max(after_strike, target)   # never < after_strike
+max(after_strike, target) − debt   = deliverable
+deliverable − sparge_demand        = surplus
+```
+
+When `after_strike > target` the second identity holds with a zero top-up, and the
+surplus carries the overage. Printing the target as a *destination* ("Top-up to
+18.2 L") was the original bug: it made the column fail to add up on a full HLT and
+invited reading the second underlet as negative.
 
 ---
 
@@ -107,18 +119,22 @@ Brewhouse
 
 ```
 Liquor Ledger
-HLT fill (heated to 68.3 °C)   30.0 L
-First underlet                (15.0) L
-HLT after strike               15.0 L
-Top-up (cold) to 18.2 L          3.2 L
-HLT debt                      (1.0) L
-Second underlet (target 76.0 °C) 17.2 L
-Surplus                          0.0 L
+HLT fill (heated to 68.3 °C)                          30.0 L
+First underlet                                       (15.0) L
+HLT after strike                                      15.0 L
+Top-up (cold) toward the 18.2 L minimum                3.2 L
+HLT debt                                              (1.0) L
+Second underlet available (target 76.0 °C)            17.2 L
+Sparge demand                                       (17.2) L
+Surplus                                                0.0 L
 ```
 
 The ledger uses the volume ledger's accounting idiom: subtractions in
 parentheses, bold intermediate totals (after strike, deliverable). The sparge
 temperature rides on the second-underlet row as a *target*, never as an actual.
+"Available" is the deliverable HLT liquor; the sparge demand row and the surplus
+make up the difference, so a full HLT (zero top-up) reads as an overage instead of
+an unexplained shortfall.
 
 ---
 

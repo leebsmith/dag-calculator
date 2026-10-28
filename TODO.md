@@ -156,7 +156,9 @@ Not needed by the current artifact; add only when a node requires them:
   Build report… modal on frozen rows and in the editor: Preview opens a tab, Download saves
   `<batch>-<n>-sections.pdf` — `docs/report-renderer.md`.
 * **Report process sections** — Brewhouse (first) and Liquor Ledger (last), the HLT
-  target/required outputs, brewhouse efficiency, and the display-only sparge-water target —
+  target/required outputs, brewhouse efficiency, the display-only sparge-water target,
+  and a ledger that closes on the sparge demand (the top-up target is a floor, so a
+  full HLT reads as available liquor plus surplus, never a negative underlet) —
   `plans/report-process-sections.md`.
 * **Report fermentable readouts** — the extract-contribution table, the below-cap grist
   attenuation row, and the sugar lift collapsed onto the artifact node — same plan, phase 2.

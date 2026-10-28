@@ -30,8 +30,12 @@
 
 #let render-liquor-ledger() = block(breakable: false, {
   let fill-label = [HLT fill (heated to #text-or("mash.strike_water_temp_c"))]
-  let top-up-label = [Top-up (cold) to #text-or("solver.batch.hlt.v_hlt_target")]
-  let second-label = [Second underlet (target #text-or("batch.sparge_water_temp_c"))]
+  let top-up-label = [
+    Top-up (cold) toward the #text-or("solver.batch.hlt.v_hlt_target") minimum
+  ]
+  let second-label = [
+    Second underlet available (target #text-or("batch.sparge_water_temp_c"))
+  ]
 
   table(
     columns: (1fr, auto, auto),
@@ -44,12 +48,15 @@
     ..row(top-up-label, "solver.batch.hlt.v_hlt_top_up"),
     ..row([HLT debt], "solver.batch.hlt.v_hlt_debt", subtract: true),
     ..row(second-label, "solver.batch.hlt.v_sparge_deliverable", bold: true),
+    ..row([Sparge demand], "solver.batch.cascade.v_sparge", subtract: true),
     ..row([Surplus], "batch.surplus_sparge_capacity"),
   )
   v(6pt)
   text(size: 8pt, fill: rgb("#6b6b6b"))[
     The top-up is cold water, so the second underlet's temperature is a target,
-    not a prediction: heating and cooling are not modelled. Surplus is liquor
-    deliverable beyond the sparge demand.
+    not a prediction: heating and cooling are not modelled. The top-up target is
+    a minimum (the coil floor, or the sparge demand plus HLT losses), so liquor
+    already in the HLT above it is never drained: surplus is available liquor
+    less the sparge demand.
   ]
 })
