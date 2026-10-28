@@ -3,6 +3,16 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
+import {
+  columnValueLabel,
+  scaleEnvelopeClass,
+  scaleEnvelopeState,
+  scalePinLabel,
+  sugarActive,
+  sugarCatalogCountLabel,
+  sugarEffectLabels,
+  sugarTableCountLabel,
+} from "../../views/producer/lateAdditionRows.js";
 import { sugarEffect } from "../../views/producer/sugarEffect.js";
 import {
   EQUAL_SUGAR_PARTS,
@@ -20,8 +30,6 @@ import {
   formatPercentRounded,
   formatValueWithUnit,
   formatWithDecimals,
-  countLabel,
-  resultCounter,
   roundTo,
 } from "../../utils.js";
 
@@ -60,30 +68,6 @@ function rounded(value) {
   return roundTo(Number(value) || 0, 6);
 }
 
-const SCALE_PINS = [
-  { value: "abv", label: "ABV" },
-  { value: "og", label: "OG" },
-  { value: "fg", label: "FG" },
-];
-
-function envelopeState(value, min, max) {
-  if (
-    typeof value !== "number" ||
-    !Number.isFinite(value) ||
-    typeof min !== "number" ||
-    typeof max !== "number"
-  ) {
-    return "na";
-  }
-  return value >= min && value <= max ? "in" : "out";
-}
-
-function envelopeClass(state) {
-  if (state === "out") return "text-danger";
-  if (state === "in") return "status-badge-success";
-  return "";
-}
-
 // The current dose's effect at the solved pin. Every operand comes from the
 // batch solve; the panel never sets a root.
 function currentSugarEffect(engine) {
@@ -104,23 +88,6 @@ function currentSugarEffect(engine) {
     gristYield: read(N.effect.gristYield, 0),
     grainMoisture: read(N.effect.grainMoisture, 0),
   });
-}
-
-// Templates bind these strings, so they are built once per refresh. A getter
-// that reads the engine directly registers no Alpine dependency and never
-// re-runs after its first read.
-function sugarEffectDisplayOf(effect) {
-  if (!effect?.active) return null;
-  const signed = (value, decimals, suffix = "") =>
-    `${value >= 0 ? "+" : ""}${formatWithDecimals(value, decimals)}${suffix}`;
-  return {
-    share: formatPercent(effect.share),
-    og: signed(effect.ogPoints, 3),
-    fg: "+0.000",
-    abv: signed(effect.abvPoints, 2, "%"),
-    grist:
-      effect.gristKg == null ? "—" : `${formatWithDecimals(effect.gristKg, 2)} kg`,
-  };
 }
 
 export function registerLateAdditionsCard(app, ctx) {
@@ -165,20 +132,18 @@ export function registerLateAdditionsCard(app, ctx) {
       const style = ctx.engine.identity?.style ?? {};
       const active = this.scalePin;
       this.scalePreviewRows = rows.map((row) => {
-        const label =
-          SCALE_PINS.find((pin) => pin.value === row.pin)?.label ?? row.pin;
         const ogState = row.ok
-          ? envelopeState(row.og, style.og_min, style.og_max)
+          ? scaleEnvelopeState(row.og, style.og_min, style.og_max)
           : "out";
         const fgState = row.ok
-          ? envelopeState(row.fg, style.fg_min, style.fg_max)
+          ? scaleEnvelopeState(row.fg, style.fg_min, style.fg_max)
           : "out";
         const abvState = row.ok
-          ? envelopeState(row.abv, style.abv_min, style.abv_max)
+          ? scaleEnvelopeState(row.abv, style.abv_min, style.abv_max)
           : "out";
         return {
           pin: row.pin,
-          pinLabel: label,
+          pinLabel: scalePinLabel(row.pin),
           active: row.pin === active,
           ok: row.ok === true,
           statusLabel: row.ok ? "" : row.reason || "unreachable",
@@ -187,9 +152,9 @@ export function registerLateAdditionsCard(app, ctx) {
           abvDisplay: row.ok ? formatWithDecimals(row.abv, 1) : "—",
           shareValue: row.ok ? row.sugar_extract_share : null,
           shareDisplay: row.ok ? formatPercent(row.sugar_extract_share, 1) : "—",
-          ogClass: envelopeClass(ogState),
-          fgClass: envelopeClass(fgState),
-          abvClass: envelopeClass(abvState),
+          ogClass: scaleEnvelopeClass(ogState),
+          fgClass: scaleEnvelopeClass(fgState),
+          abvClass: scaleEnvelopeClass(abvState),
         };
       });
 
@@ -227,9 +192,7 @@ export function registerLateAdditionsCard(app, ctx) {
         kg,
         nonlinearFns(ctx.artifact, ctx.engine)
       );
-      return `${formatWithDecimals(shown, column?.decimals ?? 2)}${
-        column?.unit ? " " + column.unit : ""
-      }`;
+      return columnValueLabel(shown, column, 2);
     },
 
     // Dose → share: seed the authored share and the row weights from the
@@ -319,14 +282,11 @@ export function registerLateAdditionsCard(app, ctx) {
     sugarIsActive: {
       configurable: true,
       get() {
-        const rows = ctx.engine.get(N.collection) ?? [];
-        if (!rows.length) return false;
-        const intent = ctx.engine.get(N.intent) ?? "dose";
-        if (intent === "share") {
-          const share = Number(ctx.engine.get(N.share)) || 0;
-          return share > 0 && rows.some((row) => (Number(row.parts) || 0) > 0);
-        }
-        return rows.some((row) => (Number(row.mass_kg) || 0) > 0);
+        return sugarActive({
+          rows: ctx.engine.get(N.collection) ?? [],
+          intent: ctx.engine.get(N.intent) ?? "dose",
+          share: Number(ctx.engine.get(N.share)) || 0,
+        });
       },
     },
     lateSugarField: {
@@ -402,7 +362,7 @@ export function registerLateAdditionsCard(app, ctx) {
           mass,
           nonlinearFns(ctx.artifact, ctx.engine)
         );
-        return `${formatWithDecimals(shown, column?.decimals)}${column?.unit ? " " + column.unit : ""}`;
+        return columnValueLabel(shown, column);
       },
     },
     sugarDraftExtractDisplay: {
@@ -424,25 +384,23 @@ export function registerLateAdditionsCard(app, ctx) {
           budget,
           nonlinearFns(ctx.artifact, ctx.engine)
         );
-        return `${formatWithDecimals(shown, column?.decimals)}${column?.unit ? " " + column.unit : ""}`;
+        return columnValueLabel(shown, column);
       },
     },
     sugarResultLabel: {
       configurable: true,
       get() {
-        return resultCounter({
+        return sugarCatalogCountLabel({
           shown: this.sugarVisibleCatalog.length,
           total: this.sugarFilteredCatalog.length,
-          noun: "sugar",
           truncated: this.sugarCatalogTruncated,
-          truncatedHint: "refine search",
         });
       },
     },
     sugarCountLabel: {
       configurable: true,
       get() {
-        return this.sugarList.length ? countLabel(this.sugarList.length, "sugar") : "No sugars";
+        return sugarTableCountLabel(this.sugarList.length);
       },
     },
   });
@@ -453,7 +411,7 @@ export function refreshLateAdditionsCard(app, ctx) {
   const effect = currentSugarEffect(ctx.engine);
   app.lateAdditionIntentState = ctx.engine.get(N.intent) ?? "dose";
   app.sugarEffectState = effect;
-  app.sugarEffectDisplayState = sugarEffectDisplayOf(effect);
+  app.sugarEffectDisplayState = sugarEffectLabels(effect);
   app.sugarList = rows;
   app.latePinPanelVisible = app.sugarIsActive;
   if (!app.latePinPanelVisible) app.latePinPanelOpen = false;

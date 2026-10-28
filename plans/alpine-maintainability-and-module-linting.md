@@ -1,9 +1,9 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (`hops`, one of eight card groups). Phases 3–5
-remain: extract the logic that does not belong in the root and ratchet the shape
-the linter and the ownership guard can now see.
+(`55f6485`), and Phase 2 has begun (2 of 8 card groups: `hops`,
+`late-additions`). Phases 3–5 remain: extract the logic that does not belong in
+the root and ratchet the shape the linter and the ownership guard can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -332,6 +332,35 @@ stays in the card. Two notes:
 `tests/frontend/hop-rows.test.js` covers the module without booting the app; the
 adapter is 522 lines (from 535). Gate: `make check`; `make test` (871 frontend,
 697 backend).
+
+**Progress — `late-additions`, 2 of 8 groups.** `views/producer/lateAdditionRows.js`
+owns the card's nine pure readouts: the `sugarEffectLabels` block (signed ΔOG /
+ΔABV, the frozen `+0.000` ΔFG, the displaced-malt label), the table and catalog
+counters, the `sugarActive` derivation, the `columnValueLabel` display-unit join
+that `previewDoseDisplay` and both draft badges repeated, and the preview pin
+labels + envelope state/class table (`LATE_SCALE_PINS`,
+`scaleEnvelopeState`/`scaleEnvelopeClass`, `scalePinLabel`). The adapter is 452
+lines (from 494) and keeps `syncScalePreviewState`, which now reads the label
+and class helpers instead of inlining them.
+
+Two notes:
+
+1. **The "9 no-`this` methods" is a proxy the card does not satisfy literally.**
+   A scan of the assigned surface finds one method whose body touches no `this`:
+   the `sugarIsActive` getter. The nine extractions are the display derivations —
+   three were module-level helpers (`sugarEffectDisplayOf`, `envelopeState`,
+   `envelopeClass`), one was a label lookup inlined in `syncScalePreviewState`,
+   and the rest were getter bodies or the repeated unit join. What stays is
+   wiring: `numberAt` / `currentSugarEffect` (engine reads), `makeRow`
+   (catalog → row), `rounded` (dose arithmetic).
+2. **Phase 3 inherits the preview pieces.** `syncScalePreviewState` is still the
+   Phase 3 target; when it moves to `views/producer/scalePreview.js` it should
+   consume `LATE_SCALE_PINS` and the envelope helpers from this module rather
+   than re-declare them.
+
+`tests/frontend/late-addition-rows.test.js` covers the module without booting the
+app (7 cases); the four late-addition suites and `card-display` pin the rendered
+strings unchanged. Gate: `make check`; `make test` (878 frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.
