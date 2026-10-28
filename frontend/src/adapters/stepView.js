@@ -1,5 +1,7 @@
 // Step view composition: evaluates the producer for every step, indexes
-// violations onto their owning slices, and refreshes the card readouts.
+// violations onto their owning slices, and refreshes the card readouts. The
+// refresh order is the `CARD_REFRESHES` list below, not the call order in
+// `compute`: adding a card is one entry plus its export.
 
 import { createFindingFormatter, produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
@@ -19,6 +21,20 @@ import { refreshMaltCard } from "./cards/malt.js";
 import { refreshMashCard } from "./cards/mash.js";
 import { refreshBrewDayCard } from "./cards/brew-day.js";
 import { refreshWaterCard } from "./cards/water.js";
+
+// Order matters: the yeast card owns the attenuation readouts the style card
+// quotes, and both run before the cards that read their solved snapshots.
+export const CARD_REFRESHES = [
+  { card: "yeast", refresh: refreshYeastCard },
+  { card: "style", refresh: refreshStyleCard },
+  { card: "malt", refresh: refreshMaltCard },
+  { card: "traceMalts", refresh: refreshTraceMaltsCard },
+  { card: "hop", refresh: refreshHopCard },
+  { card: "lateAdditions", refresh: refreshLateAdditionsCard },
+  { card: "mash", refresh: refreshMashCard },
+  { card: "brewDay", refresh: refreshBrewDayCard },
+  { card: "water", refresh: refreshWaterCard },
+];
 
 export function createStepView({
   artifact,
@@ -51,11 +67,6 @@ export function createStepView({
       value = undefined;
     }
     return { value, dimension: dimensionOf(artifact, path) };
-  }
-
-  function readConstant(name) {
-    const spec = artifact.constants?.[name];
-    return { value: spec?.value, dimension: spec?.dimension ?? null };
   }
 
   function readConstant(name) {
@@ -124,8 +135,7 @@ export function createStepView({
     return findings;
   }
 
-  function compute(app) {
-    const engine = session.getEngine();
+  function produceFields(app, engine) {
     const fieldDomains = safe(() => engine.fieldDomainStates());
     const fieldDomainIndex = {};
     for (const d of fieldDomains) {
@@ -172,13 +182,14 @@ export function createStepView({
     app.domains = safe(() => engine.domainStates());
     app.fieldDomains = fieldDomains;
     app.collectionDomains = collectionDomains;
-    refreshYeastCard(app, cardCtx);
-    refreshStyleCard(app, cardCtx);
+  }
+
+  function indexStatus(app) {
     app.violationCount =
       app.relations.filter((r) => !r.holds).length +
       app.domains.filter((d) => d.holds === false).length +
-      fieldDomains.filter((d) => d.holds === false).length +
-      collectionDomains.filter((d) => d.holds === false).length;
+      app.fieldDomains.filter((d) => d.holds === false).length +
+      app.collectionDomains.filter((d) => d.holds === false).length;
 
     app.stepStatus = {};
     for (const step of steps) app.stepStatus[step.slice] = { relations: [], domains: [] };
@@ -192,24 +203,29 @@ export function createStepView({
       if (d.holds !== false) continue;
       app.stepStatus[d.nodeId.split(".")[0]]?.domains.push(d);
     }
-    for (const d of fieldDomains) {
+    for (const d of app.fieldDomains) {
       if (d.holds !== false) continue;
       const path = `${d.namespace ?? d.selectionNodeId}.${d.field}`;
       const slice = fieldSlice.get(path) ?? selectionSlice.get(d.namespace ?? d.selectionNodeId);
       app.stepStatus[slice]?.domains.push(d);
     }
-    for (const d of collectionDomains) {
+    for (const d of app.collectionDomains) {
       if (d.holds !== false) continue;
       app.stepStatus[fieldSlice.get(d.nodeId)]?.domains.push(d);
     }
-    refreshMaltCard(app, cardCtx);
-    refreshTraceMaltsCard(app, cardCtx);
-    refreshHopCard(app, cardCtx);
-    refreshLateAdditionsCard(app, cardCtx);
-    refreshMashCard(app, cardCtx);
-    refreshBrewDayCard(app, cardCtx);
-    refreshWaterCard(app, cardCtx);
   }
+
+  function refreshCards(app) {
+    for (const { refresh } of CARD_REFRESHES) refresh(app, cardCtx);
+  }
+
+  function compute(app) {
+    const engine = session.getEngine();
+    produceFields(app, engine);
+    indexStatus(app);
+    refreshCards(app);
+  }
+
 
   return { compute };
 }

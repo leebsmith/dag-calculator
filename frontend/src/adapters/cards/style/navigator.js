@@ -4,20 +4,16 @@
 // projection in views/producer/stylePlot.js; this module owns the card state.
 
 import {
-  chebyshevCenter,
   cutaiaAbv,
   edgeMargin,
   extractFromTarget,
-  feasibleVertices,
   limitHeadroom,
-  pointInRegion,
-  polygonCentroid,
   raySegment,
-  sgToPlato,
   targetFromExtract,
 } from "../../../engine/fermentation.js";
 import { attenuationCapSummary } from "../../../views/producer/attenuationCap.js";
 import { stylePlotModel } from "../../../views/producer/stylePlot.js";
+import { styleExtractPoint, styleRegionState } from "../../../views/producer/styleTarget.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import { formatWithDecimals, roundTo } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
@@ -50,58 +46,28 @@ export function registerStyleNavigator(app, ctx) {
     // The region comes from the envelope (batch.style_* roots) so it tracks
     // envelope edits (WYSIWYG).
     computeStyleTarget() {
-      const envelope = {
-        ogMin: engine.resolve(N.envelope.ogMin),
-        ogMax: engine.resolve(N.envelope.ogMax),
-        fgMin: engine.resolve(N.envelope.fgMin),
-        fgMax: engine.resolve(N.envelope.fgMax),
-        abvMin: engine.resolve(N.envelope.abvMin),
-        abvMax: engine.resolve(N.envelope.abvMax),
-      };
-      const complete =
-        envelope.ogMin < envelope.ogMax &&
-        envelope.fgMin < envelope.fgMax &&
-        envelope.abvMin < envelope.abvMax;
-      this.styleEnvelope = complete ? envelope : null;
-      this.styleRegion = complete ? feasibleVertices(envelope) : [];
-      this.styleSafestPoint = this.styleRegion.length >= 3 ? chebyshevCenter(this.styleRegion) : null;
-      this.styleExtract = null;
-      if (this.styleRegion.length < 3) return;
-      // The solved batch is the graph marker for every pin; the target inverse
-      // is only the pre-solve fallback.
-      const solvedOg = engine.resolve(N.realized.og);
-      const solvedAa = engine.resolve(N.apparentAttenuation);
-      if (
-        typeof solvedOg === "number" &&
-        Number.isFinite(solvedOg) &&
-        solvedOg > 1.0 &&
-        typeof solvedAa === "number" &&
-        Number.isFinite(solvedAa)
-      ) {
-        const oe = sgToPlato(solvedOg);
-        this.styleExtract = { oe, ae: oe * (1 - solvedAa) };
-        return;
-      }
-      const aa = this.styleSolvedAa;
-      const abv = engine.get(N.targetAbv);
-      const inverse =
-        typeof aa === "number" && typeof abv === "number" ? extractFromTarget(aa, abv) : null;
-      if (
-        inverse &&
-        (pointInRegion(this.styleRegion, inverse.oe, inverse.ae) ||
-          edgeMargin(this.styleRegion, inverse.oe, inverse.ae) < 1e-6)
-      ) {
-        this.styleExtract = inverse;
-      } else {
-        const ray = Number.isFinite(aa) ? raySegment(this.styleRegion, aa) : null;
-        if (ray) {
-          const oe = (ray.oeMin + ray.oeMax) / 2;
-          this.styleExtract = { oe, ae: oe * (1 - aa) };
-        } else {
-          const centroid = polygonCentroid(this.styleRegion);
-          if (centroid) this.styleExtract = { oe: centroid[0], ae: centroid[1] };
-        }
-      }
+      Object.assign(
+        this,
+        styleRegionState({
+          ogMin: engine.resolve(N.envelope.ogMin),
+          ogMax: engine.resolve(N.envelope.ogMax),
+          fgMin: engine.resolve(N.envelope.fgMin),
+          fgMax: engine.resolve(N.envelope.fgMax),
+          abvMin: engine.resolve(N.envelope.abvMin),
+          abvMax: engine.resolve(N.envelope.abvMax),
+        })
+      );
+      // A short region touches no boundary: the solved reads stay behind it.
+      this.styleExtract =
+        this.styleRegion.length < 3
+          ? null
+          : styleExtractPoint({
+              region: this.styleRegion,
+              solvedOg: engine.resolve(N.realized.og),
+              solvedAa: engine.resolve(N.apparentAttenuation),
+              fallbackAa: this.styleSolvedAa,
+              targetAbv: engine.get(N.targetAbv),
+            });
     },
 
     // Persist a free ABV target. The fixed-AA ray is a visualization, not a

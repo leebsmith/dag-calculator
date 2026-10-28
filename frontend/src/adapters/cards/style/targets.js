@@ -4,25 +4,18 @@
 
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import {
+  SCALE_PINS,
+  scalePinState,
+  scaleTargetMismatch,
+} from "../../../views/producer/styleTarget.js";
+import {
   bitternessRatio,
   boundsOf,
-  formatGravity,
   formatWithDecimals,
   provenanceFor,
   roundTo,
   toPercentValue,
 } from "../../../utils.js";
-
-const SCALE_PINS = [
-  { value: "abv", label: "ABV" },
-  { value: "og", label: "OG" },
-  { value: "fg", label: "FG" },
-];
-
-function fmtTarget(pin, value) {
-  if (pin === "abv") return `${formatWithDecimals(value, 1)}%`;
-  return formatGravity(value);
-}
 
 export function registerStyleTargets(app, ctx) {
   const { engine } = ctx;
@@ -51,22 +44,10 @@ export function registerStyleTargets(app, ctx) {
       const pin = engine.get(N.scalePin) ?? "abv";
       const root =
         pin === "og" ? N.targetOg : pin === "fg" ? N.targetFg : N.targetAbv;
-      const label = SCALE_PINS.find((entry) => entry.value === pin)?.label ?? "ABV";
-      const raw = engine.get(root);
-      const value = typeof raw === "number" && Number.isFinite(raw) ? raw : null;
-      this.scalePin = pin;
-      this.scalePinLabel = label;
-      this.activeScaleTargetRoot = root;
-      this.activeScaleTarget = value;
-      this.activeScaleTargetLabel = `Target ${label}`;
-      this.activeScaleTargetUnit = pin === "abv" ? "%" : "SG";
-      this.activeScaleTargetStep = pin === "abv" ? "0.1" : "0.001";
-      this.activeScaleTargetDisplay =
-        value == null
-          ? ""
-          : pin === "abv"
-            ? formatWithDecimals(value, 1)
-            : formatGravity(value);
+      Object.assign(
+        this,
+        scalePinState({ pin, root, value: engine.get(root) })
+      );
     },
 
     setScalePin(value) {
@@ -233,22 +214,12 @@ export function registerStyleTargets(app, ctx) {
 export function refreshStyleTargets(app) {
   app.syncScalePinState();
   app.refreshTargets();
-
-  const target = app.activeScaleTarget;
-  const info = app.styleTargetInfo;
-  let mismatch = "";
-  if (target != null && info) {
-    const realized =
-      app.scalePin === "abv" ? info.abv : app.scalePin === "og" ? info.og : info.fg;
-    const tolerance = app.scalePin === "abv" ? 0.15 : 0.002;
-    if (Number.isFinite(realized) && Math.abs(realized - target) > tolerance) {
-      const status = app.boundaryStatuses?.[N.solverBatch] ?? "unknown";
-      mismatch =
-        `Target ${fmtTarget(app.scalePin, target)} vs realized ` +
-        `${fmtTarget(app.scalePin, realized)} — solve ${status}.`;
-    }
-  }
-  app.scaleTargetMismatch = mismatch;
+  app.scaleTargetMismatch = scaleTargetMismatch({
+    pin: app.scalePin,
+    target: app.activeScaleTarget,
+    info: app.styleTargetInfo,
+    status: app.boundaryStatuses?.[N.solverBatch] ?? "unknown",
+  });
 }
 
 export const KEYS = [

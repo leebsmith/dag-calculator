@@ -5,14 +5,12 @@ import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import {
   columnValueLabel,
-  scaleEnvelopeClass,
-  scaleEnvelopeState,
-  scalePinLabel,
   sugarActive,
   sugarCatalogCountLabel,
   sugarEffectLabels,
   sugarTableCountLabel,
 } from "../../views/producer/lateAdditionRows.js";
+import { scalePreviewState } from "../../views/producer/scalePreview.js";
 import { sugarEffect } from "../../views/producer/sugarEffect.js";
 import {
   EQUAL_SUGAR_PARTS,
@@ -24,12 +22,8 @@ import {
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { reportError } from "../../observability.js";
 import {
-  formatGravity,
-  formatPercent,
-  formatPercentRange,
   formatPercentRounded,
   formatValueWithUnit,
-  formatWithDecimals,
   roundTo,
 } from "../../utils.js";
 
@@ -129,50 +123,19 @@ export function registerLateAdditionsCard(app, ctx) {
       } catch (err) {
         reportError("lateAdditions.scalePreviews", err);
       }
-      const style = ctx.engine.identity?.style ?? {};
-      const active = this.scalePin;
-      this.scalePreviewRows = rows.map((row) => {
-        const ogState = row.ok
-          ? scaleEnvelopeState(row.og, style.og_min, style.og_max)
-          : "out";
-        const fgState = row.ok
-          ? scaleEnvelopeState(row.fg, style.fg_min, style.fg_max)
-          : "out";
-        const abvState = row.ok
-          ? scaleEnvelopeState(row.abv, style.abv_min, style.abv_max)
-          : "out";
-        return {
-          pin: row.pin,
-          pinLabel: scalePinLabel(row.pin),
-          active: row.pin === active,
-          ok: row.ok === true,
-          statusLabel: row.ok ? "" : row.reason || "unreachable",
-          ogDisplay: row.ok ? formatGravity(row.og) : "—",
-          fgDisplay: row.ok ? formatGravity(row.fg) : "—",
-          abvDisplay: row.ok ? formatWithDecimals(row.abv, 1) : "—",
-          shareValue: row.ok ? row.sugar_extract_share : null,
-          shareDisplay: row.ok ? formatPercent(row.sugar_extract_share, 1) : "—",
-          ogClass: scaleEnvelopeClass(ogState),
-          fgClass: scaleEnvelopeClass(fgState),
-          abvClass: scaleEnvelopeClass(abvState),
-        };
-      });
-
       const intent = ctx.engine.get(N.intent) ?? "dose";
-      if (intent === "share") {
-        const share = Number(ctx.engine.get(N.share)) || 0;
-        this.previewCompositionCaption = `Previews hold ${formatPercent(share, 1)} of extract`;
-      } else {
-        const dose = Number(ctx.engine.get(N.dose)) || 0;
-        const shares = this.scalePreviewRows
-          .map((row) => row.shareValue)
-          .filter((value) => typeof value === "number" && Number.isFinite(value));
-        const span = shares.length
-          ? ` · ${formatPercentRange(Math.min(...shares), Math.max(...shares))} of extract`
-          : "";
-        this.previewCompositionCaption =
-          `Previews hold ${this.previewDoseDisplay(dose)} sugar extract${span}`;
-      }
+      const share = Number(ctx.engine.get(N.share)) || 0;
+      const dose = Number(ctx.engine.get(N.dose)) || 0;
+      const state = scalePreviewState({
+        rows,
+        style: ctx.engine.identity?.style ?? {},
+        pin: this.scalePin,
+        intent,
+        share,
+        doseLabel: intent === "share" ? "" : this.previewDoseDisplay(dose),
+      });
+      this.scalePreviewRows = state.rows;
+      this.previewCompositionCaption = state.caption;
     },
 
     // The caption quotes the dose in the sugar table's display unit, not the
