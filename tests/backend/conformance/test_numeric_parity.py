@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from app.core.batch_solver import cutaia_abv, solve_sg_post_boil_from_abv
+from app.core.batch.composition import cutaia_abv, solve_sg_post_boil_from_abv
 from app.core.utils import cutaia_real_extract, plato_to_sg, sg_to_plato
 
 FIXTURE = json.loads(

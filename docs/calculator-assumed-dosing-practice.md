@@ -67,7 +67,7 @@ concentration means liquor left behind (dead space, transfer loss, surplus) stay
 correctly salted, while the delivered sparge carries the right concentration.
 
 The fill rule is the batch solver's, not a calculator invention
-(`backend/app/core/batch_solver.py`, `resolve_hlt_water_budget`): top up to
+(`backend/app/core/batch/hlt.py`, `resolve_hlt_water_budget`): top up to
 whichever is greater, the volume needed to cover the HERMS coil or the volume needed
 to deliver the sparge plus the HLT debt.
 

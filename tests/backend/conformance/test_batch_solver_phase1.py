@@ -7,13 +7,13 @@ import math
 
 import pytest
 
-from app.core.batch_solver import (
-    SolverValidationError,
+from app.core.batch.composition import (
     asbc_plato_to_sg,
     asbc_sg_to_plato,
     cutaia_abv,
     solve_sg_post_boil_from_abv,
 )
+from app.core.errors import SolverValidationError
 from app.core.utils import plato_to_sg, sg_to_plato
 
 # ---------------------------------------------------------------------------

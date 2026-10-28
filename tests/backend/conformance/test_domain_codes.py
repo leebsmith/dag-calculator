@@ -12,13 +12,10 @@ from pathlib import Path
 
 import pytest
 
-from app.core.batch_solver import (
-    BatchSolverInput,
-    GrainBillEntry,
-    SolverValidationError,
-    solve_batch,
-    solve_grist_mass,
-)
+from app.core.batch.grist import solve_grist_mass
+from app.core.batch.inputs import BatchSolverInput, GrainBillEntry
+from app.core.batch.orchestration import solve_batch
+from app.core.errors import SolverValidationError
 
 ARTIFACT = json.loads(
     (Path(__file__).resolve().parents[3] / "data" / "artifact.json").read_text()

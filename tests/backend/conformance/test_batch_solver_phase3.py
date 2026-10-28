@@ -8,12 +8,12 @@ import math
 
 import pytest
 
-from app.core.batch_solver import (
-    SolverValidationError,
+from app.core.batch.grist import (
     grist_mass_bracket,
     grist_mass_residual,
     solve_grist_mass,
 )
+from app.core.errors import SolverValidationError
 
 # ---------------------------------------------------------------------------
 # Fixtures

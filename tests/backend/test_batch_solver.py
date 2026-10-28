@@ -5,19 +5,18 @@ from __future__ import annotations
 import pytest
 from conftest import make_batch_request
 
-from app.core.batch_solver import (
-    V_BAR_METRIC,
-    GrainBillEntry,
-    SolverValidationError,
+from app.core.batch.composition import max_achievable_abv, solve_sg_post_boil_from_abv
+from app.core.batch.constants import V_BAR_METRIC
+from app.core.batch.grist import solve_grist_mass
+from app.core.batch.helpers import (
     composite_fermentability_fraction,
     composite_yield_fraction,
-    max_achievable_abv,
-    resolve_hlt_water_budget,
-    resolve_volumetric_reversal,
-    solve_grist_mass,
-    solve_sg_post_boil_from_abv,
     validate_grain_bill_normalization,
 )
+from app.core.batch.hlt import resolve_hlt_water_budget
+from app.core.batch.inputs import GrainBillEntry
+from app.core.batch.volumetric import resolve_volumetric_reversal
+from app.core.errors import SolverValidationError
 from app.core.utils import apparent_to_real_attenuation, sg_to_plato
 from app.schemas.boundary import BatchSolverErrorCode, GristBillRow
 from app.services import SolverServiceError, solve_batch_request

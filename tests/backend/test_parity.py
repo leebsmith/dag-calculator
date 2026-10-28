@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pytest
 from pydantic import BaseModel
 
-from app.core.batch_solver import BatchSolverInput
+from app.core.batch.inputs import BatchSolverInput
 from app.core.water import WaterChemistryInput
 from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest
 from app.services.parity import assert_field_parity

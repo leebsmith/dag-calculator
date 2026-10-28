@@ -14,16 +14,12 @@ from __future__ import annotations
 import pytest
 from conftest import make_batch_request
 
-from app.core.batch_solver import (
-    GAMMA_METRIC,
-    BatchSolverInput,
-    GrainBillEntry,
-    SolverValidationError,
-    kettle_cold_volume,
-    post_boil_extract_target,
-    resolve_wort_composition,
-    solve_batch,
-)
+from app.core.batch.composition import resolve_wort_composition
+from app.core.batch.constants import GAMMA_METRIC
+from app.core.batch.inputs import BatchSolverInput, GrainBillEntry
+from app.core.batch.orchestration import solve_batch
+from app.core.batch.volumetric import kettle_cold_volume, post_boil_extract_target
+from app.core.errors import SolverValidationError
 from app.core.utils import sg_to_plato
 from app.schemas.boundary import GristBillRow
 from app.services import solve_batch_request

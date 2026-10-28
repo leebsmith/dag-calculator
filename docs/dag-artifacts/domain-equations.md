@@ -138,8 +138,8 @@ solver consumes the resulting `w_i` fractions.)
 ## 2. Black-box contract: batch-sparge solver
 
 **Binding:** `batch_sparge_solver` · **Resolution:** `iterative` (bracketed
-root-finding via `scipy.optimize.brentq`). **Realization:** the module
-`backend/app/core/batch_solver.py`, sealed and opaque.
+root-finding via `scipy.optimize.brentq`). **Realization:** the package
+`backend/app/core/batch/`, sealed and opaque.
 
 ### 2.1 Inputs
 

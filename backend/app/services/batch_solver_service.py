@@ -8,12 +8,9 @@ module lives in ``app.services`` and is the sole seam between the pure
 
 from __future__ import annotations
 
-from app.core.batch_solver import (
-    BatchSolverInput,
-    GrainBillEntry,
-    SolverValidationError,
-    solve_batch,
-)
+from app.core.batch.inputs import BatchSolverInput, GrainBillEntry
+from app.core.batch.orchestration import solve_batch
+from app.core.errors import SolverValidationError
 from app.schemas.boundary import (
     BatchCascadeOutputs,
     BatchHltOutputs,

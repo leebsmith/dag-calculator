@@ -11,7 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from app.core import batch_solver, water
+from app.core import water
+from app.core.batch import constants as batch_constants
 from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest
 
 ARTIFACT = json.loads(
@@ -37,7 +38,7 @@ WATER_PINS = [
 
 @pytest.mark.parametrize(("python_name", "artifact_name"), BATCH_PINS)
 def test_batch_solver_constant_matches_artifact(python_name, artifact_name):
-    assert getattr(batch_solver, python_name) == CONSTANTS[artifact_name]
+    assert getattr(batch_constants, python_name) == CONSTANTS[artifact_name]
 
 
 @pytest.mark.parametrize(("python_name", "artifact_name"), WATER_PINS)

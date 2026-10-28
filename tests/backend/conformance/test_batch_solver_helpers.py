@@ -1,4 +1,4 @@
-"""Unit tests for the shared pure helpers in ``backend/app/core/batch_solver.py``.
+"""Unit tests for the shared pure helpers in ``backend/app/core/batch/helpers.py``.
 
 Stage 1.0 scope: composite constants and stage-volume helpers only.
 """
@@ -7,14 +7,14 @@ import math
 
 import pytest
 
-from app.core.batch_solver import (
+from app.core.batch.constants import (
     F_SHRINK_DEFAULT,
     GAMMA_METRIC,
     K_ABS_TRUE_METRIC,
     RHO_WATER_METRIC,
     V_BAR_METRIC,
-    GrainBillEntry,
-    SolverValidationError,
+)
+from app.core.batch.helpers import (
     composite_moisture_fraction,
     composite_volumetric_expansion,
     composite_yield_fraction,
@@ -23,6 +23,8 @@ from app.core.batch_solver import (
     retained_volume,
     solute_displacement_volume,
 )
+from app.core.batch.inputs import GrainBillEntry
+from app.core.errors import SolverValidationError
 
 # ---------------------------------------------------------------------------
 # Fixtures
