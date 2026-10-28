@@ -1,0 +1,301 @@
+# Alpine maintainability and module linting
+
+Status: **in flight**. Phases 0–5; none landed yet. Six phases to make the single
+reactive root comprehensible, extract the logic that does not belong in it, and put
+the frontend source under a lint contract for the first time.
+
+Each phase appends its own `Landed.` paragraph under its commit line — what moved,
+what deviated, and the counts the gate reported — so this file is the audit trail,
+not just the spec.
+
+This is the program named in `plans/archive/decomposition-and-display-contract.md`
+§3. It assumes that program is closed and does not reopen any of its decisions.
+
+## 1. Why — measured at `d285ffa`
+
+| Signal | Value | Where it hurts |
+|---|---|---|
+| Declared app members | **567** (268 methods, 173 getters, 126 state) on one object | Flat scope: nothing says which card owns what |
+| Enumerable / hidden | 388 / 179 | The surface guard uses `Object.keys`, so 179 members escape the collision check until they are declared |
+| Installers | 19 (`hop` 110, `lateAdditions` 65, `mash` 51, `malt` 46, `libraryUi` 41, `traceMalts` 41) | One card per installer is the only unit of ownership |
+| Cross-card reads | **13 of 19** installers read keys owned elsewhere; **≥166** distinct foreign keys | A8 checks that a method exists, not that the caller owns it |
+| Template surface | 388 members referenced; 179 unreferenced (55 hidden + 124 internal) | No way to tell public API from internal plumbing |
+| Adapter methods | 353; **67 use no `this`**; **28 hot** (≥25 lines or complexity ≥8) | Pure logic sits in wiring; two methods carry complexity 21 and 20 |
+| Adapter size | 6,132 lines; `water` 639, `hops` 535, `late-additions` 494 | Cards are files, not modules |
+| Lint | `frontend/src` runs **one rule** (`no-unused-vars`, warn); `eslint src` is silent | No `no-undef`, no `eqeqeq`, no complexity, no import restrictions |
+| Loose equality | 40 lines (mostly the `== null` idiom, allowed by `smart`) | Cheap to fix now, impossible later |
+| `console.*` | 16 | Bypasses `reportError` |
+| Store → adapters | 3 imports (`persistence`, `setup`, `recipes`) | State depends on host wiring |
+| Refresh order | `stepView.compute()` is 215 lines calling 9 `refresh*Card` in declaration order | Extending a card means editing a screen function |
+
+Nothing here is breakage. It is the shape that makes the next card expensive.
+
+## 2. Decisions (locked)
+
+1. **No new dependencies.** ESLint core rules, the existing `eslint` binary, and
+   Node scripts only. No `eslint-plugin-boundaries`, no `dependency-cruiser`.
+2. **Keep the single reactive root.** It is an Alpine requirement; the fix is
+   ownership, not a second object.
+3. **No wholesale namespacing (`app.style.*`).** 567 keys × every template binding
+   for no measured failure. Namespacing is the pattern for *new* cards; existing
+   cards keep flat members. Revisit only if the ownership guard cannot express a
+   real boundary.
+4. **Pure logic moves down**: `adapters` = wiring and Alpine assignment;
+   `views` = display models and pure derivations; `utils` = formatting and
+   generic helpers; `engine` = artifact interpretation. The layering already
+   exists and is guarded; this program enforces it inside files, not just between
+   them.
+5. **New rules start at error, not warn.** `make check` must fail. Rules whose
+   thresholds are currently exceeded (size/complexity) land only after the phase
+   that brings the code under them.
+6. **The ownership index is generated and freshness-tested**, exactly like
+   `docs/dag-artifacts/inventory.md`.
+
+## 3. Separation-of-concerns findings
+
+Ranked by cost per future change:
+
+1. **No ownership at call sites.** 166 foreign-key reads across 13 installers.
+   `inputKey`/`setInputDraft`/`draftRows` are deliberately shared, but they are
+   indistinguishable from private card state in the code and in review.
+2. **Pure logic in adapters.** 67 methods touch no `this`; row/field formatters
+   (`hopForm`, `hopAlpha`, `maltIsTrace`, `restName`, …) are the obvious bulk.
+3. **Domain computation in cards.** `syncScalePreviewState` (55 lines, complexity
+   21) and `computeStyleTarget` (54, 20) implement reachable-state maths that
+   belongs in `views/` where it can be tested without Alpine.
+4. **A screen function owns card sequencing.** `stepView.compute()` mixes
+   `produce()`, finding/status indexing, and nine card refreshes.
+5. **The store imports host clients** (3 files). The composition root is the only
+   place that should know adapters exist.
+6. **The surface check is enumerable-only**, so hidden getters are declared after
+   the fact or not at all (Phase 7 of the last program found one this way).
+7. **The lint contract is empty.** Every other finding is something a lint rule
+   could have held: strict equality, unused bindings, complexity ceilings,
+   restricted imports, banned globals.
+
+## 4. Phases
+
+Each phase assumes the previous commit is green. Read only the listed context.
+
+### Phase 0 — Lint the frontend source (½ day)
+
+**Goal.** `frontend/src` stops being unlinted. Semantic rules only; size and
+complexity thresholds wait for Phase 4.
+
+**Read first.** `eslint.config.js` (the whole file — it currently matches only
+`tests/**`), `frontend/package.json` `lint`, `Makefile` `check:`,
+`tests/guards/import-direction.test.js` (the layer map to mirror),
+`frontend/src/main.js` (the global surface).
+
+**Owns.** `eslint.config.js`, `frontend/package.json` (the `lint` script),
+`Makefile` (`check:`), the violations the new rules surface.
+
+**Must not change.** No new dependency. No behavioural change. `eqeqeq` uses
+`smart` so the `== null` idiom stays. `no-undef` gets an explicit browser-globals
+block; do not reach for `env: browser` (flat config has no such key). Warnings
+must fail (`--max-warnings 0`).
+
+**Rules to land.** `no-undef`, `no-unused-vars` (error), `eqeqeq` (smart),
+`no-shadow`, `prefer-const`, `no-var`, `no-console` (allow `reportError`'s file
+only if justified), `no-duplicate-imports`, `no-fallthrough`,
+`consistent-return`, `no-restricted-imports` mirroring `import-direction`'s
+ranks, `no-restricted-syntax` forbidding `document.`/`window.` outside
+`adapters`/`main.js`.
+
+**Gate.** `cd frontend && npm run lint`; `make check`; `make test` unchanged.
+
+**Commit.** `Put the frontend source under a lint contract`
+
+**Handoff.** Every later phase may now rely on the linter to catch a stray
+`console`, a shadowed binding, or a layering violation at edit time.
+
+### Phase 1 — Ownership: extend the surface check and govern foreign reads (1 day)
+
+**Goal.** Every member has an owner; every cross-owner read is declared with a
+reason; a new one fails.
+
+**Read first.** `frontend/src/adapters/contract.js` (`installerSurfaceGaps`),
+`frontend/src/adapters/installers.js`, `tests/guards/installer-contract.test.js`,
+`tests/guards/alpine-handlers.test.js`, `frontend/src/views/steps.js` (partial ↔
+card mapping), `scripts/emit-artifact-inventory.mjs` (the generator pattern).
+
+**Owns.** `contract.js`, `installers.js` (shared-interface declarations),
+`scripts/emit-ownership-index.mjs` (new), `docs/frontend-ownership.md` (generated),
+`Makefile` `generate:`, `tests/guards/installer-contract.test.js`, a new
+`tests/guards/ownership.test.js`, the card partials the template rule touches.
+
+**Must not change.** No member renamed or removed. The shared list is data, not a
+silent exemption: each entry carries a reason and fails when stale. A8 stays
+"every handler calls an app method"; ownership is added beside it, not instead.
+
+**Work.**
+
+1. `installerSurfaceGaps` uses `Object.getOwnPropertyNames(app)` (minus
+   `BASE_KEYS`) instead of `Object.keys`, so hidden getters are covered.
+2. Generate `docs/frontend-ownership.md`: installer → keys → template-usage
+   (partial count), emitted by `make generate`, freshness-tested like the
+   glossary.
+3. `SHARED` interface in `installers.js`: `{ key, owners: [...], reason }`.
+   Baseline today's foreign reads into it, grouped so the review sees the real
+   shape (`draft*` and `input*` are shared infrastructure; `waterTargetLocked`,
+   `scalePin`, `preview*` are card coupling).
+4. `tests/guards/ownership.test.js`:
+   - a module may read another installer's key only through `SHARED`;
+   - a card partial may reference only its own card's keys + `fmt` + base;
+   - every `SHARED` entry is used and reasoned.
+
+**Gate.** `make check`; `make test`; the ownership index is current.
+
+**Commit.** `Give every app member an owner`
+
+**Handoff.** The shared list is the work queue for Phases 2–3: each entry either
+becomes a view function or disappears.
+
+### Phase 2 — Extract pure row and field formatters (2 days)
+
+**Goal.** Adapters stop formatting rows; the 67 no-`this` methods move to `views`.
+
+**Read first.** The inventory from Phase 1; `views/producer/{cell,collection,table}.js`
+(the existing pure surface), `views/hamilton.js`, `views/waterRatio.js`,
+`adapters/cards/{hops,malt,yeast,trace-malts,mash,water,late-additions,catalogDraft}.js`,
+`tests/frontend/{hops-card,malt-card,card-display,water-card,late-addition-*}.test.js`.
+
+**Owns.** New `views/producer/<card>Rows.js` (or `<card>Fields.js`) modules; the
+adapters that delegate to them; `frontend/src/views.js` barrel if one is added.
+
+**Must not change.** No rendered string changes. Methods keep their KEYS entries
+and names; the body becomes a one-line delegation. A formatter that needs app
+state stays in the adapter. Row/field formatters are pure `(row) → string`.
+
+**Work.** Extract in this order, one commit each:
+`hops` (10) → `late-additions` (9) → `malt` (2) → `yeast` (2) → `trace-malts` (3)
+→ `mash` rest helpers (6) → `catalogDraft` (13) → `fieldActions` helpers (5).
+
+**Gate.** The card's own suite plus `card-display` stay green; the adapter method
+count and file size shrink; `make check`.
+
+**Commit.** `Move card row formatters into pure view modules` (one per card group)
+
+**Handoff.** The `views/producer/` surface now holds everything that formats a
+row, and can be tested without booting the app.
+
+### Phase 3 — Split the hot computations and declare the refresh pipeline (2 days)
+
+**Goal.** No card method above complexity 12 or 40 lines without a recorded
+reason; card refresh order is data.
+
+**Read first.** `adapters/cards/late-additions.js` (`syncScalePreviewState`),
+`adapters/cards/style/{navigator,targets}.js` (`computeStyleTarget`,
+`syncScalePinState`), `engine/fermentation.js`, `views/producer/stylePlot.js`,
+`adapters/stepView.js`, `tests/frontend/{style-card,late-additions-*,fermentation-space}.test.js`.
+
+**Owns.** New `views/producer/{scalePreview,styleTarget}.js`; `adapters/stepView.js`;
+`adapters/cards/*` (delegations); `tests/frontend/step-pipeline.test.js` (new).
+
+**Must not change.** No solved-value or formatting change. `refresh*Card` keeps
+its signature and order; the order moves into a declared list. The style plot
+stays precomputed.
+
+**Work.**
+
+1. `syncScalePreviewState` → `views/producer/scalePreview.js` returning the
+   preview state; the adapter assigns the result.
+2. `computeStyleTarget` → `views/producer/styleTarget.js` over
+   `engine/fermentation.js` primitives.
+3. `stepView.compute()` becomes three named steps — `produceFields`, `indexStatus`,
+   `refreshCards` — with `CARD_REFRESHES = [yeast, style, malt, traceMalts, hop,
+   lateAdditions, mash, brewDay, water]`. A test asserts every installer that
+   exports `refresh*Card` appears exactly once, in the declared order.
+
+**Gate.** `style-card`, `late-additions-*`, `fermentation-space`, `step-pipeline`;
+`make test`.
+
+**Commit.** `Split the style and late-addition computations out of the cards`
+
+**Handoff.** Adding a card refresh is one list entry plus one export; forgetting
+either fails a test.
+
+### Phase 4 — Turn on the size and complexity ratchet (½ day)
+
+**Goal.** The thresholds that Phase 0 deferred now hold, so the shape cannot
+regress.
+
+**Read first.** `eslint.config.js`, the Phase 2–3 diff, `docs/frontend-ownership.md`.
+
+**Owns.** `eslint.config.js`, a small `/* eslint-disable */`-free allowlist
+expressed as per-file rule overrides with reasons, `Makefile` if `check` needs it.
+
+**Rules to land.** `complexity: 12`, `max-depth: 4`, `max-lines-per-function: 80`,
+`max-lines: 500` (or 400 after the splits), `max-params: 5`,
+`max-statements: 40`. Any surviving exception is a named override, not a
+baseline file.
+
+**Gate.** `make check`; `make test`.
+
+**Commit.** `Cap card size and complexity in the linter`
+
+**Handoff.** Phase 5's store change must fit the new ceilings.
+
+### Phase 5 — Invert the store's client imports (½ day)
+
+**Goal.** The store stops importing adapters; the composition root injects clients.
+
+**Read first.** `store/{persistence,setup,recipes}.js`, `adapters/{batchClient,libraryClient,download}.js`,
+`main.js`, `tests/guards/import-direction.test.js` (the three baselined entries),
+`tests/frontend/persistence.test.js`, `tests/frontend/recipes.test.js`.
+
+**Owns.** `store/*`, `main.js`, `tests/guards/import-direction.test.js`,
+`tests/frontend/*` fakes.
+
+**Must not change.** Behaviour; autosave timing; the download flow. The three
+allowlist entries are deleted, not reworded.
+
+**Gate.** `make check` (import-direction allowlist now empty); `make test`.
+
+**Commit.** `Inject the batch and library clients at the composition root`
+
+## 5. What this buys
+
+| Change | Today | After |
+|---|---|---|
+| Add a card | edit installer, KEYS, partial, `stepView.compute`, hope nothing collides | KEYS + installer + partial + one refresh entry; three guards fail if a step is missed |
+| Add a cross-card read | invisible | one `SHARED` entry with a reason |
+| Add a row formatter | a method on the app | a pure function in `views/` with a unit test |
+| Change a threshold | silent | lint error |
+| Find who owns a member | grep 6k lines | generated index |
+
+**Metrics to hold at the end:** 0 ungoverned foreign reads; 0 no-`this` methods
+in adapters; ≤10 hot methods, each in a named override; ≤1 lint rule → ~20;
+maximum adapter file ≤ 500 lines (target 400); refresh list explicit; store
+imports no adapters.
+
+## 6. Risks and non-goals
+
+- **Risk — lint noise.** `no-undef` with an incomplete globals list produces
+  false positives. Mitigation: enumerate the browser surface from the existing
+  code (`document`, `window`, `navigator`, `localStorage`, `fetch`, timers,
+  `requestAnimationFrame`, `CustomEvent`, `URL`, `Blob`) and add only what is
+  used.
+- **Risk — ownership guard churn.** 166 baselined reads is a large starting list.
+  Mitigation: group by interface (`draft*`, `input*`, `scale*`, `preview*`), not
+  per key, and let Phases 2–3 delete most groups.
+- **Risk — extraction changes a string.** Mitigation: every extraction phase is
+  gated by the card suites that already assert display strings; no formatting
+  code is touched.
+- **Non-goal — a second reactive root.** Alpine requires one; the program fixes
+  ownership, not object count.
+- **Non-goal — renaming members.** No key is renamed in this program; renames
+  would break templates, tests, and saved drafts in one commit for no ownership
+  gain.
+- **Non-goal — TypeScript or a new framework.** Out of scope; the lint contract
+  is the cheap approximation.
+
+## 7. Order and cost
+
+Phases 0–1 are half the value for a day and a half: the linter and the ownership
+index are what make the rest of the program reviewable. Phases 2–3 are the actual
+reduction and carry all the regression risk, so they land card by card. Phases 4–5
+close the loop. Total ≈ 6½ days, four of them mechanical extraction.
+
+Each phase is independently committable and green; stopping after Phase 1 still
+leaves the repo measurably better governed.

@@ -2,17 +2,15 @@
 
 ## In flight
 
-* **Alpine root maintainability** — the program after the decomposition contract
-  (`plans/archive/decomposition-and-display-contract.md` §3); scope it before writing
-  code. The single reactive root is a framework requirement and
-  `installer-contract` keeps it correct, but nothing keeps it comprehensible: 16
-  installers declare 567 keys and the assembled app exposes 440 enumerable
-  members plus 180 non-enumerable getters (~620 members on one object). Flat scope
-  means a partial may call any card's method (A8 checks existence, not
-  ownership); `Object.assign` and `Object.defineProperties` co-exist so
-  enumerability is bespoke per card; card refresh order is implicit. Directions:
-  namespaced members (`app.style.*`), one `defineCard()` helper, A8 extended to
-  ownership, a generated ownership index from `INSTALLERS`.
+* **Alpine maintainability and module linting** — six phases, planned in
+  `plans/alpine-maintainability-and-module-linting.md`: lint the frontend source
+  (it has one rule today), give every app member an owner backed by a generated
+  index, extract the 67 no-`this` formatters out of the adapters, split the two
+  ~50-line card computations, ratchet size and complexity, and invert the store's
+  three client imports. Measured at `d285ffa`: 19 installers declare 567 members
+  (388 enumerable, 179 hidden); 13 of 19 installers read keys owned elsewhere
+  (≥166 foreign keys); 353 adapter methods, 28 hot. Each phase lands its own
+  `Landed.` note and the program archives to `plans/archive/` when closed.
 
 ## Next (in order)
 
