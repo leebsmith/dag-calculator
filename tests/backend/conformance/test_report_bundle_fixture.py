@@ -31,7 +31,7 @@ def _fixture() -> dict:
 
 def test_the_fixture_validates_and_hashes_are_prefixed():
     bundle = ReportBundle.model_validate(_fixture())
-    assert bundle.bundle_format == 5
+    assert bundle.bundle_format == 6
     assert bundle.artifact.hash.startswith("sha256:")
     assert bundle.catalog.hash.startswith("sha256:")
     assert bundle.content_hash.startswith("sha256:")

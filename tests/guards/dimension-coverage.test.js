@@ -7,6 +7,7 @@ import { artifact } from "./util.js";
 // Derived nodes whose dimension cannot be inferred are a deliberate, documented
 // set. A new one must be reviewed (add here), not silently skipped.
 const INTENTIONAL_UNCHECKED = [
+  "batch.attenuation_above_cap",
   "batch.delta_v_evap",
   "batch.late_addition_volume_l",
   "batch.runnings_ratio",

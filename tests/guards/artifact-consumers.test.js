@@ -44,9 +44,11 @@ const PARITY_CONSTANTS = new Set([
   "default_target_mash_ph",
 ]);
 
-// Read by the water card through WATER_NODES; no artifact expression consumes
-// them. They are the derived kettle-blend/ratio readouts.
+// Read by host presentation only — the water card through WATER_NODES, the
+// above-cap readout through the report catalog's formatted pass. No artifact
+// expression consumes them.
 const HOST_NODES = new Set([
+  "batch.attenuation_above_cap",
   "water.kettle_blend.calcium_ca",
   "water.kettle_blend.magnesium_mg",
   "water.kettle_blend.sodium_na",

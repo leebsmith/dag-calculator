@@ -46,7 +46,7 @@ artifact or the payload.
 
 ```jsonc
 {
-  "bundle_format": 5,
+  "bundle_format": 6,
   "artifact": { "schema_version": 8, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
@@ -54,7 +54,7 @@ artifact or the payload.
     "nodes": { "<path>": { "label", "unit", "decimals", "step", "options", "option_labels" } }
   },
   "formatted": { "<path>": { "text": "12.4 °P", "number": "12.4", "unit": "°P" } },
-  "formatted_tables": { "<collection>": [ { "<column>": { "text", "number", "unit" } } ] },
+  "formatted_tables": { "<collection>": [ { "<column>": { "text", "number", "unit" } } ] },  // own_pct, grist_pct
   "formatted_summaries": { "<collection|overall>": { "color": { … }, "extract_yield": { … } } },
   "batch": { "id", "name", "status", "frozen_at", "parent_batch_id", "identity": { equipment, water_source, style } },
   "state": { "valuation", "roots", "collections", "selections", "provenance" },
@@ -71,7 +71,7 @@ artifact or the payload.
 | `catalog.dimensions` | base unit, kind, per-unit factor/offset or fwd/inv | mirrors the artifact's dimension shape |
 | `catalog.nodes` | per-path presentation: `label`, `dimension`, `unit`, `decimals`, `step`, `options`, `option_labels` | keys resolve by the engine's dotted-path rule; **every** resolvable path is emitted |
 | `formatted` | per-path display strings, unit-aware at freeze | the only display source a generator reads |
-| `formatted_tables` | per-row display cells for collection tables (grist, sugars) | derived amounts, PPG, and shares are producer-side |
+| `formatted_tables` | per-row display cells for collection tables (grist, sugars) | derived amounts, PPG, and shares are producer-side; `own_pct` within the table, `grist_pct` of major + trace |
 | `formatted_summaries` | mass-weighted colour and extract yield per table + `overall` | the producer weighs; trace never contributes extract |
 | `batch.identity` | the three component snapshots | the document header |
 | `state.valuation` | all 86 node ids → values | authoritative; boundaries are plain output maps |
@@ -100,7 +100,7 @@ The schema is deliberately **small**: it does not duplicate the artifact schema.
 engine has already validated it); the bundle schema enforces *bundle* structure and
 cross-references.
 
-1. `bundle_format` is a literal discriminator (currently `5`); unknown ⇒ refuse.
+1. `bundle_format` is a literal discriminator (currently `6`); unknown ⇒ refuse.
 2. Pydantic with `extra="forbid"` on every model; the emitter runs the same check
    before writing, so a malformed bundle never reaches storage.
 3. Cross-reference validators, against the embedded artifact:

@@ -35,6 +35,40 @@
 
 ## Later
 
+* **Below-cap attenuation readout** — the report (and the Style card) surface the lift above the
+  malt cap, but not the opposite case: the solver clamps malt fermentability one-sided
+  (`F_eff = min(F_grist, cap_real)`), so a grist less fermentable than the yeast's ceiling yields
+  realized AA *below* the cap with nothing on the page explaining it. The honest figure is the
+  grist's extract-weighted real fermentability (`composite_fermentability_fraction` in
+  `core/batch_solver.py`) against `cap_real`; `aa_malt` exists only inside the solver request, and
+  neither a boundary output nor an artifact node exposes it. Needs either a `malt_fermentability`
+  boundary output or an artifact `grist.weighted_fermentability` (extract-weighted: parts × yield ×
+  (1 − moisture)), plus the OE-dependent real→apparent conversion if it is to join the apparent
+  chain without mixing bases. Deferred when the above-cap row landed
+  (`batch.attenuation_above_cap`).
+* **Above-cap: one definition** — the Style card still derives the lift in
+  `views/producer/attenuationCap.js` (`max(0, blend − cap)`), while the artifact now carries the
+  same delta as `batch.attenuation_above_cap`. Point the card at the node so the readout and the
+  report cannot drift; keep "Sugar lift above cap" as the card's wording (the node is neutral about
+  the cause).
+* **Extract-contribution table** — the fermentable tables report mass; an extract view would
+  recapitulate every mash component by its extract contribution (`mass × yield × (1 − moisture)`
+  for malt, `mass × yield` for sugar, trace excluded — A9) with each row's share of total extract.
+  That is where a sugar's 9.8 % of grist mass and 9.4 % of extract become two visible numbers.
+  Needs producer extract columns and a home: a fourth table in Batch Facts, or its own section.
+* **Brewhouse section** — first report section (registry order: brewhouse, batch-facts, yeast,
+  volume-ledger). The process inputs that produce the numbers: target ABV, topology, conversion
+  efficiency, mash thickness, runoff ratio, boil time, boil-off rate, grain moisture. All are
+  defaulted roots, so presence keys off `batch.conversion_efficiency` only to give the fixture an
+  absent case. Boil-off *rate* lives here; the boil-off *volume* stays in the volume ledger.
+  Target ABV is read here rather than beside the realized ABV in Batch Facts. Needs fixture
+  enrichment (valuation + catalog + formatted per path) and render tests; no bundle-format change.
+* **HLT section** — the hot-liquor chain is solved but never printed: starting volume, dead space,
+  transfer loss, coil floor, volume after strike, top-up, sparge deliverable, and the HLT debt
+  (`hlt.v_hlt_debt` = dead space + transfer loss). Distinct from the volume ledger, which follows
+  wort from strike to fermenter. Showing the top-up *target* needs `v_hlt_target` exposed as a
+  boundary output first (artifact `outputs` + schema + parity fixture), since only the
+  dosing-practice doc references it today.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.

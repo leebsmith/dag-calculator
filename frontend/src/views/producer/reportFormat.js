@@ -7,6 +7,7 @@ import { resolveReference } from "../../engine/paths.js";
 import { displayValue, nonlinearFns } from "../producer.js";
 import { formatValue } from "../../utils.js";
 import { reportError } from "../../observability.js";
+import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { resolvedSugarMasses } from "./sugarAllocation.js";
@@ -140,9 +141,12 @@ function fermentableRows(engine, gristMass) {
   return { major, trace, sugar };
 }
 
-// Per-row display strings for the fermentable tables. Bill shares for trace and
-// sugar rows are mass shares of the total fermentable mass because only the
-// grain bill carries an authored percentage.
+// Per-row display strings for the fermentable tables. Grist is the malt charge
+// (major + trace); sugars are measured against it, so the three tables' shares
+// do not partition to 100. `own_pct` is the row's share of its own table (the
+// authored grain bill for major malts, the mass share for trace malts), and
+// `grist_pct` is its share of the whole grist. Both are largest-remainder
+// normalised so each column sums to exactly 100.0.
 export function buildReportTables(artifact, catalog, engine) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
@@ -159,29 +163,56 @@ export function buildReportTables(artifact, catalog, engine) {
 
   const gristMass = gristMassOf(engine);
   const { major, trace, sugar } = fermentableRows(engine, gristMass);
-  const totalMass = [...major, ...trace, ...sugar].reduce((sum, row) => sum + row.mass, 0);
-  const share = (mass) => (totalMass > 0 ? mass / totalMass : 0);
+  const gristRows = [...major, ...trace];
+  const gristTotal = gristRows.reduce((sum, row) => sum + row.mass, 0);
+  const gristShares = hamiltonPct(gristRows.map((row) => row.mass));
+  const traceShares = hamiltonPct(trace.map((row) => row.mass));
 
-  const tableRow = (row, amountPath, colorPath) => ({
+  const pctCell = (fraction) =>
+    fraction == null
+      ? { text: "—" }
+      : formatEntry(artifact, nodes[majorPct], fraction, nl);
+
+  const tableRow = (row, amountPath, colorPath, ownPct, gristPct) => ({
     name: rowName(row.row),
     amount: formatEntry(artifact, nodes[amountPath], row.mass, nl),
     ppg: formatPpg(artifact, row.row.yield_fraction),
     color: formatEntry(artifact, nodes[colorPath], row.color, nl),
-    bill_pct: formatEntry(artifact, nodes[majorPct], share(row.mass), nl),
+    own_pct: pctCell(ownPct),
+    grist_pct: pctCell(gristPct),
   });
 
-  const majorRows = major.map((row) => ({
+  const majorRows = major.map((row, index) => ({
     name: rowName(row.row),
     amount: formatEntry(artifact, nodes[gristMassPath], row.mass, nl),
     ppg: formatPpg(artifact, row.row.yield_fraction),
     color: formatEntry(artifact, nodes[majorColor], row.color, nl),
-    bill_pct: formatEntry(artifact, nodes[majorPct], finiteNumber(row.row.pct), nl),
+    own_pct: pctCell(finiteNumber(row.row.pct)),
+    grist_pct: pctCell(gristShares[index]),
+  }));
+
+  const traceRows = trace.map((row, index) =>
+    tableRow(
+      row,
+      traceMass,
+      traceColor,
+      traceShares[index],
+      gristShares[major.length + index]
+    )
+  );
+
+  const sugarRows = sugar.map((row) => ({
+    name: rowName(row.row),
+    amount: formatEntry(artifact, nodes[sugarMass], row.mass, nl),
+    ppg: formatPpg(artifact, row.row.yield_fraction),
+    color: formatEntry(artifact, nodes[sugarColor], row.color, nl),
+    grist_pct: pctCell(gristTotal > 0 ? row.mass / gristTotal : null),
   }));
 
   return {
     [majorId]: majorRows,
-    [traceId]: trace.map((row) => tableRow(row, traceMass, traceColor)),
-    [sugarId]: sugar.map((row) => tableRow(row, sugarMass, sugarColor)),
+    [traceId]: traceRows,
+    [sugarId]: sugarRows,
   };
 }
 

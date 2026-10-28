@@ -21,6 +21,12 @@ export const yeastRegistry = {
     displayUnit: "pct",
     hint: "Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped.",
   },
+  "batch.attenuation_above_cap": {
+    label: "Above malt cap",
+    displayUnit: "pct",
+    symbol: "pts",
+    hint: "Apparent attenuation above the malt cap: uncapped sugar extract, or dextrin consumption by a diastaticus strain. Absent when the cap is not exceeded.",
+  },
   "batch.yeast.flocculation": { label: "Flocculation" },
   "batch.yeast.alcohol_tolerance": { label: "Alcohol tolerance" },
 };

@@ -166,6 +166,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | kind |
 |---|---|
+| `batch.attenuation_above_cap` | derived |
 | `batch.attenuation_derate_points` | root |
 | `batch.boil_hops` | collection |
 | `batch.boil_off_rate_l_per_hr` | root |

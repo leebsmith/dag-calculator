@@ -1,8 +1,8 @@
 {
-  "bundle_format": 5,
+  "bundle_format": 6,
   "artifact": {
     "schema_version": 9,
-    "hash": "sha256:8c87b95ee67d917b561cda2a9a6b57f74b4ec23e51d1aba80cc3ba2b3733807e",
+    "hash": "sha256:1376ef9bd2a416e31f06629b086e7aa091bdab714a2968164cf76a6cecb5ad8f",
     "content": {
       "schema_version": 9,
       "meta": {
@@ -2655,6 +2655,58 @@
                   },
                   {
                     "const": "default_attenuation_derate_points"
+                  }
+                ]
+              },
+              null
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.attenuation_above_cap": {
+          "kind": "derived",
+          "inputs": {
+            "aa": "solver.batch.apparent_attenuation",
+            "cap": "batch.yeast_cap"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "gt",
+                    "args": [
+                      {
+                        "ref": "cap"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "op": "gt",
+                    "args": [
+                      {
+                        "ref": "aa"
+                      },
+                      {
+                        "ref": "cap"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "-",
+                "args": [
+                  {
+                    "ref": "aa"
+                  },
+                  {
+                    "ref": "cap"
                   }
                 ]
               },
@@ -5795,6 +5847,16 @@
         "options": null,
         "option_labels": null
       },
+      "batch.attenuation_above_cap": {
+        "label": "Above malt cap",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "pts",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "batch.yeast.temp_low_c": {
         "label": "Temp low",
         "dimension": "temperature",
@@ -5866,7 +5928,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:a5bd58a31459c299dc8e88a4bb5c46aed9adfe7fa0cc68a47c4c41f61d2998d8"
+    "hash": "sha256:c30dfe5d23e3e3113a4044bd132a4bc4bea7f66a150e12135fd52bf9c836fa7c"
   },
   "batch": {
     "id": "frozen-1",
@@ -5909,6 +5971,7 @@
       "batch.fermentation": "ale",
       "batch.attenuation_derate_points": 0.03,
       "batch.yeast_cap": 0.73,
+      "batch.attenuation_above_cap": 0.026,
       "batch.yeast": {
         "name": "SafAle US-05",
         "manufacturer": "Fermentis",
@@ -6119,6 +6182,11 @@
       "number": "73.0",
       "unit": "%"
     },
+    "batch.attenuation_above_cap": {
+      "text": "2.6 pts",
+      "number": "2.6",
+      "unit": "pts"
+    },
     "batch.yeast.temp_low_c": {
       "text": "15.0 \u00b0C",
       "number": "15.0",
@@ -6298,9 +6366,14 @@
           "number": "1.8",
           "unit": "\u00b0L"
         },
-        "bill_pct": {
+        "own_pct": {
           "text": "85.0%",
           "number": "85.0",
+          "unit": "%"
+        },
+        "grist_pct": {
+          "text": "83.3%",
+          "number": "83.3",
           "unit": "%"
         }
       },
@@ -6325,9 +6398,14 @@
           "number": "40.0",
           "unit": "\u00b0L"
         },
-        "bill_pct": {
+        "own_pct": {
           "text": "15.0%",
           "number": "15.0",
+          "unit": "%"
+        },
+        "grist_pct": {
+          "text": "14.7%",
+          "number": "14.7",
           "unit": "%"
         }
       }
@@ -6354,9 +6432,14 @@
           "number": "500.0",
           "unit": "\u00b0L"
         },
-        "bill_pct": {
-          "text": "1.8%",
-          "number": "1.8",
+        "own_pct": {
+          "text": "100.0%",
+          "number": "100.0",
+          "unit": "%"
+        },
+        "grist_pct": {
+          "text": "2.0%",
+          "number": "2.0",
           "unit": "%"
         }
       }
@@ -6383,9 +6466,9 @@
           "number": "180.0",
           "unit": "\u00b0L"
         },
-        "bill_pct": {
-          "text": "8.9%",
-          "number": "8.9",
+        "grist_pct": {
+          "text": "9.8%",
+          "number": "9.8",
           "unit": "%"
         }
       }
@@ -6508,5 +6591,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:d6143acfdada919bde875f67d4ace77ca91faad62ff481283d45a2e55ab15bb7"
+  "content_hash": "sha256:622aa15ba2c544350129ae7ebba532273bb5981388e2a9c1da2a205097e67508"
 }

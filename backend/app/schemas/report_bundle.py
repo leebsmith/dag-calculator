@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 
 from app.schemas.canonical import sha256_canonical
 
-BUNDLE_FORMAT = 5
+BUNDLE_FORMAT = 6
 
 
 class BundleModel(BaseModel):
@@ -134,7 +134,7 @@ def bundle_content_hash(content: dict[str, Any]) -> str:
 
 
 class ReportBundle(BundleModel):
-    bundle_format: Literal[5] = BUNDLE_FORMAT
+    bundle_format: Literal[6] = BUNDLE_FORMAT
     artifact: ArtifactBundle
     catalog: Catalog
     batch: BatchHeader

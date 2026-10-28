@@ -16,6 +16,8 @@ from typing import Any
 
 import pytest
 
+from app.schemas.report_bundle import BUNDLE_FORMAT
+
 ROOT = Path(__file__).resolve().parents[2]
 TEMPLATES = ROOT / "backend" / "app" / "templates"
 BUNDLE = ROOT / "tests" / "conformance" / "fixtures" / "report-bundle.json"
@@ -154,6 +156,23 @@ def test_batch_facts_is_absent_without_a_realized_fact() -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, BATCH_FACTS_PROBE) is False
         render(root, "batch-facts")
+
+
+def test_the_renderer_expects_the_current_bundle_format() -> None:
+    source = (TEMPLATES / "lib" / "bundle.typ").read_text()
+    declared = re.search(r"#let bundle-format = (\d+)", source)
+    assert declared, "bundle.typ must declare the bundle format it reads"
+    assert int(declared.group(1)) == BUNDLE_FORMAT
+
+
+def test_an_older_bundle_is_refused_with_its_version() -> None:
+    bundle = fixture()
+    bundle["bundle_format"] = 5
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        with pytest.raises(AssertionError, match="format 5 is not supported"):
+            render(root, "batch-facts")
 
 
 def test_batch_facts_renders_alone_and_in_the_full_report() -> None:
@@ -344,6 +363,30 @@ def test_the_derate_row_and_the_warning_follow_the_state() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, YEAST_GATES_PROBE) == {"sta1": False, "derate": False}
+        render(root, "yeast")
+
+
+ABOVE_CAP_PROBE = (
+    '#import "lib/format.typ": formatted-text, present-formatted\n'
+    "#metadata((\n"
+    '  present: present-formatted("batch.attenuation_above_cap"),\n'
+    '  text: if present-formatted("batch.attenuation_above_cap") '
+    '{ formatted-text("batch.attenuation_above_cap") } else { "" },\n'
+    ")) <probe>\n"
+)
+
+
+def test_the_above_cap_row_appears_only_when_the_cap_is_exceeded() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, ABOVE_CAP_PROBE) == {"present": True, "text": "2.6 pts"}
+
+    bundle = fixture()
+    del bundle["formatted"]["batch.attenuation_above_cap"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, ABOVE_CAP_PROBE) == {"present": False, "text": ""}
         render(root, "yeast")
 
 

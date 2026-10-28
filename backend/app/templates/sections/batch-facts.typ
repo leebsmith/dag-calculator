@@ -28,26 +28,32 @@
   "—"
 }
 
-// One fermentable table: amounts, names, PPG, colour, and bill share. Everything
-// is a frozen display string; only the column layout lives here.
-#let fermentable-table(collection, name-header: [Fermentable]) = {
+// One fermentable table: amounts, names, PPG, colour, then the percentage
+// columns the caller names (major: authored share + grist share; trace: trace
+// share + grist share; sugars: grist share only). Everything is a frozen
+// display string; only the column layout lives here.
+#let fermentable-table(
+  collection,
+  name-header: [Fermentable],
+  pct-columns: (),
+) = {
   let rows = formatted-table(collection)
   if rows.len() == 0 { return }
   let color-unit = rows.at(0).at("color").at("unit", default: "")
+  let columns = (
+    ([Amount], "amount"),
+    (name-header, "name"),
+    ([PPG], "ppg"),
+    ([#color-unit], "color"),
+  ) + pct-columns
   table(
-    columns: (auto, auto, auto, auto, auto),
-    align: (right, left, right, right, right),
+    columns: (auto,) * columns.len(),
+    align: (right, left, right, right) + (right,) * pct-columns.len(),
     stroke: none,
     inset: (x: 3pt, y: 2pt),
-    table.header([Amount], name-header, [PPG], [#color-unit], [Bill %]),
+    table.header(..columns.map(column => column.at(0))),
     ..rows
-      .map(row => (
-        row.at("amount").at("text"),
-        row.at("name").at("text"),
-        row.at("ppg").at("text"),
-        row.at("color").at("text"),
-        row.at("bill_pct").at("text"),
-      ))
+      .map(row => columns.map(column => row.at(column.at(1)).at("text")))
       .flatten(),
   )
 }
@@ -96,7 +102,10 @@
   if present-formatted-table("grist.major_malts") {
     v(4pt)
     heading(level: 2)[Major Grist Fermentables]
-    fermentable-table("grist.major_malts")
+    fermentable-table(
+      "grist.major_malts",
+      pct-columns: (([Major %], "own_pct"), ([Grist %], "grist_pct")),
+    )
     v(2pt)
     summary-line("grist.major_malts")
   }
@@ -104,7 +113,10 @@
   if present-formatted-table("grist.trace_malts") {
     v(4pt)
     heading(level: 2)[Trace Malts]
-    fermentable-table("grist.trace_malts")
+    fermentable-table(
+      "grist.trace_malts",
+      pct-columns: (([Trace %], "own_pct"), ([Grist %], "grist_pct")),
+    )
     v(2pt)
     summary-line("grist.trace_malts")
     v(2pt)
@@ -114,9 +126,18 @@
   if present-formatted-table("batch.sugars") {
     v(4pt)
     heading(level: 2)[Sugars & Syrups]
-    fermentable-table("batch.sugars", name-header: [Sugar])
+    fermentable-table(
+      "batch.sugars",
+      name-header: [Sugar],
+      pct-columns: (([Grist %], "grist_pct"),),
+    )
     v(2pt)
     summary-line("batch.sugars")
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[
+      Grist % is a share of grist mass (major + trace), not of extract, so the
+      sugar line sits outside the grist's 100 %.
+    ]
   }
 
   if present-formatted-summary("overall") {

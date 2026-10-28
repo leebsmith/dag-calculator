@@ -79,11 +79,16 @@ The generator does no numeric work. Every scalar the bundle exposes arrives in
 - `text` is what a section prints; `number`/`unit` split the figure for tables
   that align them in separate columns.
 - Collection tables (the grist and sugar lists) read `formatted_tables[collection]`:
-  one cell map per row, with derived columns (amounts, PPG, bill share) computed
-  by the producer.
+  one cell map per row, with derived columns (amounts, PPG, `own_pct`, `grist_pct`)
+  computed by the producer. Grist is major + trace; sugar is measured against it,
+  so the three tables' shares do not partition to 100.
 - Weighted readouts read `formatted_summaries[collection]` (`color`,
   `extract_yield`), plus the `overall` aggregate across tables; the producer
   does the weighting, and trace malts contribute no extract to the overall.
+- A readout delta a section prints (attenuation above the malt cap) is an
+  **artifact node**, not producer formatting or Typst arithmetic: the node is
+  null when the delta does not apply, so the row disappears like any other
+  absent value.
 - `lib/format.typ` exposes `formatted(path)`, `formatted-text(path)`,
   `formatted-number(path)`, `formatted-unit(path)`, and
   `present-formatted(path)`. There is no conversion, rounding, or symbol choice

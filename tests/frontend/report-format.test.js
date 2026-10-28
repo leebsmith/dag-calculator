@@ -82,6 +82,16 @@ test("formatted strings are names for text paths and skip collection fields", as
   assert.equal(typeof topology.text, "string");
 });
 
+test("the above-cap delta is omitted when the malt cap holds", async () => {
+  const app = await booted();
+  const realized = app.engine.resolve("solver.batch.apparent_attenuation");
+  const cap = app.engine.resolve("batch.yeast_cap");
+  assert.ok(realized <= cap);
+
+  // A null value produces no formatted entry, so the report row disappears.
+  assert.equal("batch.attenuation_above_cap" in app.reportFormatted(), false);
+});
+
 test("grist tables carry formatted row cells", async () => {
   const app = await booted();
   const tables = app.reportFormattedTables();
@@ -93,7 +103,8 @@ test("grist tables carry formatted row cells", async () => {
   assert.ok(row.amount.text.endsWith("kg") || row.amount.text.endsWith("lb"));
   assert.match(row.ppg.text, /^\d+\.\d$/);
   assert.equal(typeof row.color.text, "string");
-  assert.equal(row.bill_pct.unit, "%");
+  assert.equal(row.own_pct.unit, "%");
+  assert.equal(row.grist_pct.unit, "%");
 
   assert.deepEqual(tables["grist.trace_malts"], []);
 
@@ -103,7 +114,8 @@ test("grist tables carry formatted row cells", async () => {
   const trace = app.reportFormattedTables()["grist.trace_malts"];
   assert.equal(trace.length, 1);
   assert.equal(trace[0].name.text, "Carafa");
-  assert.equal(trace[0].bill_pct.unit, "%");
+  assert.equal(trace[0].own_pct.unit, "%");
+  assert.equal(trace[0].grist_pct.unit, "%");
 });
 
 const SUGAR_ROW = {
@@ -116,6 +128,30 @@ const SUGAR_ROW = {
   color_lovibond: 180,
 };
 
+test("grist shares partition the grain and sugar sits outside it", async () => {
+  const app = await booted();
+  app.engine.setCollection("grist.trace_malts", [
+    { name: "Carafa", mass_kg: 0.1, yield_fraction: 0.6, color_lovibond: 500 },
+  ]);
+  app.engine.setCollection("batch.sugars", [{ ...SUGAR_ROW }]);
+
+  const tables = app.reportFormattedTables();
+  const grist = [...tables["grist.major_malts"], ...tables["grist.trace_malts"]];
+  const gristSum = grist.reduce((sum, row) => sum + Number(row.grist_pct.number), 0);
+  assert.equal(gristSum.toFixed(1), "100.0");
+
+  const traceSum = tables["grist.trace_malts"].reduce(
+    (sum, row) => sum + Number(row.own_pct.number),
+    0
+  );
+  assert.equal(traceSum.toFixed(1), "100.0");
+
+  const sugar = tables["batch.sugars"][0];
+  assert.equal("own_pct" in sugar, false);
+  const gristMass = 4.7 + 0.1;
+  assert.equal(sugar.grist_pct.number, ((SUGAR_ROW.mass_kg / gristMass) * 100).toFixed(1));
+});
+
 test("sugars join the fermentable tables and the summaries", async () => {
   const app = await booted();
   app.setUnit("grain_color", "Lovibond");
@@ -127,7 +163,7 @@ test("sugars join the fermentable tables and the summaries", async () => {
   assert.equal(sugar[0].amount.text, "0.5 kg");
   assert.equal(sugar[0].ppg.text, "37.0");
   assert.equal(sugar[0].color.text, "180.0 °L");
-  assert.equal(sugar[0].bill_pct.unit, "%");
+  assert.equal(sugar[0].grist_pct.unit, "%");
 
   const summaries = app.reportFormattedSummaries();
   assert.equal(summaries["batch.sugars"].color.text, "180.0 °L");

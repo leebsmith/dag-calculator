@@ -57,6 +57,17 @@
   yeast.at("sta1", default: none) == true
 }
 
+// The blend can exceed the malt cap: sugar extract is never capped, and a
+// diastaticus strain consumes the malt's dextrin residue. The producer omits
+// the value when nothing exceeds the cap, so the row disappears rather than
+// printing "+0.0 pts".
+#let above-cap-rows() = if present-formatted("batch.attenuation_above_cap") {
+  (
+    [Above malt cap],
+    "+ " + formatted-text("batch.attenuation_above_cap"),
+  )
+} else { () }
+
 // The chain is one derivation: published attenuation, less the batch derate,
 // clamped to the malt ceiling. A zero derate collapses it to the ceiling alone,
 // so a report never prints a subtraction of nothing.
@@ -66,7 +77,7 @@
   // marks only the value column.
   let sep = (bottom: 0.6pt + rgb("#b9b1a4"))
   let hair = (top: 0.4pt + rgb("#c9c2b6"))
-  let rows = if with-derate {
+  let head = if with-derate {
     (
       [Typical attenuation],
       text-or("batch.yeast.attenuation_pct"),
@@ -74,25 +85,22 @@
       table.cell(stroke: sep, "− " + text-or("batch.attenuation_derate_points")),
       [Malt attenuation cap],
       text-or("batch.yeast_cap"),
-      text(fill: rgb("#4a4a4a"))[Realized (Batch Facts)],
-      table.cell(
-        stroke: hair,
-        inset: (x: 0pt, y: 4pt, top: 8pt),
-        text(fill: rgb("#4a4a4a"), text-or("solver.batch.apparent_attenuation")),
-      ),
     )
   } else {
     (
       [Typical attenuation = cap],
       text-or("batch.yeast.attenuation_pct"),
-      text(fill: rgb("#4a4a4a"))[Realized (Batch Facts)],
-      table.cell(
-        stroke: hair,
-        inset: (x: 0pt, y: 4pt, top: 8pt),
-        text(fill: rgb("#4a4a4a"), text-or("solver.batch.apparent_attenuation")),
-      ),
     )
   }
+  let realized = (
+    text(fill: rgb("#4a4a4a"))[Realized (Batch Facts)],
+    table.cell(
+      stroke: hair,
+      inset: (x: 0pt, y: 4pt, top: 8pt),
+      text(fill: rgb("#4a4a4a"), text-or("solver.batch.apparent_attenuation")),
+    ),
+  )
+  let rows = head + above-cap-rows() + realized
 
   grid(
     columns: (1fr, auto),

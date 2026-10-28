@@ -180,6 +180,12 @@ The cap applies to malt only. A fully fermentable sugar share is uncapped, so
 the blend can exceed the cap. A 77 % malt cap with a 0.5 lb dextrose addition
 can report 79.6 % blend AA: the +2.6 points is the sugar, not a solver error.
 
+The delta is the artifact value `batch.attenuation_above_cap` — `max(0, blend
+AA − malt cap)`, null when the cap holds, so a readout can drop the figure
+instead of printing `+0.0`. The report prints it as **Above malt cap**; the
+node is deliberately neutral about the cause, which can be sugar extract or
+dextrin consumption by a diastaticus strain.
+
 ### Late-addition intent
 
 Late additions are authored either as a **dose** (mass) or as a **share** of

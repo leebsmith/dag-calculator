@@ -2639,6 +2639,58 @@
         "dimension": "percentage"
       }
     },
+    "batch.attenuation_above_cap": {
+      "kind": "derived",
+      "inputs": {
+        "aa": "solver.batch.apparent_attenuation",
+        "cap": "batch.yeast_cap"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "and",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "cap"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "aa"
+                  },
+                  {
+                    "ref": "cap"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "-",
+            "args": [
+              {
+                "ref": "aa"
+              },
+              {
+                "ref": "cap"
+              }
+            ]
+          },
+          null
+        ]
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
     "batch.grain_moisture_fraction": {
       "kind": "root",
       "dimension": "percentage",

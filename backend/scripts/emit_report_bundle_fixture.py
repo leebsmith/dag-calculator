@@ -145,6 +145,7 @@ RECORD = {
         "batch.fermentation": "ale",
         "batch.attenuation_derate_points": 0.03,
         "batch.yeast_cap": 0.73,
+        "batch.attenuation_above_cap": 0.026,
         "batch.yeast": {
             "name": "SafAle US-05",
             "manufacturer": "Fermentis",
@@ -441,6 +442,13 @@ PAYLOAD = FreezePayload(
                 symbol="%",
                 decimals=1,
             ),
+            "batch.attenuation_above_cap": NodePresentation(
+                label="Above malt cap",
+                dimension="percentage",
+                unit="pct",
+                symbol="pts",
+                decimals=1,
+            ),
             "batch.yeast.temp_low_c": NodePresentation(
                 label="Temp low", dimension="temperature", unit="degC", symbol="°C", decimals=1
             ),
@@ -468,6 +476,9 @@ PAYLOAD = FreezePayload(
         "batch.yeast.attenuation_pct": FormattedValue(text="76.0%", number="76.0", unit="%"),
         "batch.attenuation_derate_points": FormattedValue(text="3.0 pts", number="3.0", unit="pts"),
         "batch.yeast_cap": FormattedValue(text="73.0%", number="73.0", unit="%"),
+        "batch.attenuation_above_cap": FormattedValue(
+            text="2.6 pts", number="2.6", unit="pts"
+        ),
         "batch.yeast.temp_low_c": FormattedValue(text="15.0 °C", number="15.0", unit="°C"),
         "batch.yeast.temp_high_c": FormattedValue(text="22.0 °C", number="22.0", unit="°C"),
         "batch.yeast.flocculation": FormattedValue(text="Medium"),
@@ -507,14 +518,16 @@ PAYLOAD = FreezePayload(
                 "amount": FormattedValue(text="4.3 kg", number="4.3", unit="kg"),
                 "ppg": FormattedValue(text="36.0", number="36.0"),
                 "color": FormattedValue(text="1.8 °L", number="1.8", unit="°L"),
-                "bill_pct": FormattedValue(text="85.0%", number="85.0", unit="%"),
+                "own_pct": FormattedValue(text="85.0%", number="85.0", unit="%"),
+                "grist_pct": FormattedValue(text="83.3%", number="83.3", unit="%"),
             },
             {
                 "name": FormattedValue(text="Crystal 40"),
                 "amount": FormattedValue(text="0.8 kg", number="0.8", unit="kg"),
                 "ppg": FormattedValue(text="34.2", number="34.2"),
                 "color": FormattedValue(text="40.0 °L", number="40.0", unit="°L"),
-                "bill_pct": FormattedValue(text="15.0%", number="15.0", unit="%"),
+                "own_pct": FormattedValue(text="15.0%", number="15.0", unit="%"),
+                "grist_pct": FormattedValue(text="14.7%", number="14.7", unit="%"),
             },
         ],
         "grist.trace_malts": [
@@ -523,7 +536,8 @@ PAYLOAD = FreezePayload(
                 "amount": FormattedValue(text="0.1 kg", number="0.1", unit="kg"),
                 "ppg": FormattedValue(text="27.7", number="27.7"),
                 "color": FormattedValue(text="500.0 °L", number="500.0", unit="°L"),
-                "bill_pct": FormattedValue(text="1.8%", number="1.8", unit="%"),
+                "own_pct": FormattedValue(text="100.0%", number="100.0", unit="%"),
+                "grist_pct": FormattedValue(text="2.0%", number="2.0", unit="%"),
             },
         ],
         "batch.sugars": [
@@ -532,7 +546,7 @@ PAYLOAD = FreezePayload(
                 "amount": FormattedValue(text="0.5 kg", number="0.5", unit="kg"),
                 "ppg": FormattedValue(text="37.0", number="37.0"),
                 "color": FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
-                "bill_pct": FormattedValue(text="8.9%", number="8.9", unit="%"),
+                "grist_pct": FormattedValue(text="9.8%", number="9.8", unit="%"),
             },
         ],
     },
