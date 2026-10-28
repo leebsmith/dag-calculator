@@ -2,13 +2,16 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 0, `Put the
-  frontend source under a lint contract`** (the source runs one rule today, so
-  nothing catches a stray `console`, a loose comparison, or a layering breach at
-  edit time). The five phases that follow: give every app member an owner backed
-  by a generated index, extract the 67 no-`this` formatters out of the adapters,
-  split the two ~50-line card computations and declare the refresh pipeline,
-  ratchet size and complexity, and invert the store's three client imports.
+* **Alpine maintainability and module linting** — **next: Phase 1, `Give every
+  app member an owner`** (Phase 0 landed in `b2467f9` + `614f20a`:
+  `frontend/src` now runs twelve rules at error from the one root
+  `eslint.config.js`, and `no-console` routes through `reportError` except the
+  autosave site). Phase 1 extends the surface check to hidden getters, generates
+  `docs/frontend-ownership.md`, and baselines today's 166 foreign reads into a
+  reasoned `SHARED` interface. The four phases after it: extract the 67 no-`this`
+  formatters out of the adapters, split the two ~50-line card computations and
+  declare the refresh pipeline, ratchet size and complexity, and invert the
+  store's three client imports.
   Measured at `d285ffa`: 19 installers declare 567 members (388 enumerable, 179
   hidden); 13 of 19 installers read keys owned elsewhere (≥166 foreign keys); 353
   adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program

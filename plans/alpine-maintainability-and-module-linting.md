@@ -1,8 +1,8 @@
 # Alpine maintainability and module linting
 
-Status: **in flight**. Phases 0–5; none landed yet. Six phases to make the single
-reactive root comprehensible, extract the logic that does not belong in it, and put
-the frontend source under a lint contract for the first time.
+Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`). Phases 1–5 remain:
+make the single reactive root comprehensible, extract the logic that does not
+belong in it, and ratchet the shape the linter can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -139,6 +139,56 @@ guard needs no change.
 **Commit.** `Put the frontend source under a lint contract`. Split the console
 routing into its own commit (`Route console output through the error sink`) so
 the rule change and the dedupe audit stay reviewable.
+
+**Landed.** `b2467f9` and `614f20a`. The rule change lives in one root
+`eslint.config.js`: the file the plan read matched only `tests/**`, and the
+`frontend/eslint.config.js` that `npm run lint` actually used is deleted — it ran
+`no-unused-vars: warn` over `src` and nothing else. ESLint resolves the config by
+walking up from the cwd, so `frontend/package.json` is untouched. Two deviations,
+both recorded here rather than widened:
+
+1. **`--max-warnings 0` became a config setting.** Every rule the src block lands
+   is `error`, so the only warning the block can emit is an unused disable
+   directive; it is now `error` via `linterOptions`. Adding `--max-warnings 0` to
+   the `lint` script would have staged `frontend/package.json` without a lockfile
+   change, and `scripts/precommit.mjs` refuses that pair.
+2. **The layer table is generated, not transcribed.** `no-restricted-imports`
+   mirrors `import-direction`'s ranks from a `HIGHER(layer)` helper over the same
+   rank map, so a layer added in one place is a one-line edit in the other. The
+   three store imports get a per-file override whose pattern message carries the
+   guard's reason ("no client seam in the store yet"); the store override forbids
+   every higher layer except `adapters/` in those three files only, and the
+   import-direction guard still owns that boundary.
+
+The first pass reported 14 violations: 2 `no-undef` (`URLSearchParams`,
+`TextEncoder` — added to the browser-globals block, which now also names
+`URLSearchParams`, `TextEncoder`, timers, `URL`, `Blob`, `crypto`, `console`), 7
+`no-restricted-syntax` that were all inside `adapters/` and `main.js` and
+disappeared once the DOM rule was scoped to exclude them, 2 `no-shadow` (a
+`bootstrapIdentity` parameter hiding the artifact module import; `evaluateDomain`'s
+`resolveLimit` parameter hiding the helper it wraps), 2 `prefer-const`, and 2
+`consistent-return` (`saveNow`'s mixed `return updated`/`return` — no caller reads
+the value; a `.then` callback that mixed `return` with a promise). `eqeqeq`
+`smart` reported nothing, so the `== null` idiom never came up.
+`docs/**` needed nothing.
+
+Console routing: 16 `console.*` sites, 15 outside the sink. Fourteen now call
+`reportError` with stable scopes (`main.session`, `main.recipeList`,
+`main.legacyImport`, `main.redirectSignIn`, `main.setupRefresh`, `main.auth`,
+`stepAdapter.duplicate <catalog>`, `stepAdapter.libraryRefresh`, `recipes.rename`,
+`recipes.trash`, `recipes.restore`, `recipes.delete`,
+`library.import <kind>:<legacyId>`) and the four spy suites pass unchanged: the
+recipes guard's three row verbs still log three times because each scope is
+distinct, and the library guard still sees one log per failed component. One site
+kept `console.error` — the autosave report in `store/persistence.js`, where the
+sink's `scope:message` dedupe would silence every retry of an offline draft and
+`persistence.test.js` pins the message; it sits under a named
+`console-sink: an autosave failure logs on every attempt…` override, alongside
+`observability.js` itself. `tests/guards/no-silent-catch.test.js` needed no rule
+change; its `recipes.js` allowlist entry was re-reasoned from "console.error" to
+`recordActionFailure`, which is what those catches actually surface now.
+
+Gate: `make check`, `make test` (856 frontend, 697 backend).
 
 **Handoff.** Every later phase may now rely on the linter to catch a stray
 `console`, a shadowed binding, or a layering violation at edit time.
