@@ -81,9 +81,7 @@ export function stylePlotModel({ region, point, safestPoint, pin, target }) {
   for (let abv = Math.ceil(abvLow); abv <= Math.floor(abvHigh); abv += 1) {
     targets.push(abv);
   }
-  const step = targets.length > 6 ? 2 : 1;
   const contours = targets
-    .filter((_, index) => index % step === 0)
     .map((abv) =>
       polylinePath(
         abvContour({ oeMin: xMin, oeMax: xMax, aeMin: yMin, aeMax: yMax, targetAbv: abv }),

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   chebyshevCenter,
+  cutaiaAbv,
   feasibleVertices,
 } from "../../frontend/src/engine/fermentation.js";
 import { stylePlotModel } from "../../frontend/src/views/producer/stylePlot.js";
@@ -63,6 +64,31 @@ test("the plot model projects the region, the point, and every tick", () => {
   assert.match(model.summary, /Contours are iso-ABV every 1%/);
   assert.ok(model.contours.startsWith("M"));
   assert.ok(model.locus.startsWith("M"));
+});
+
+test("every integer ABV in the window keeps its own contour", () => {
+  const envelope = {
+    ogMin: 1.028,
+    ogMax: 1.1,
+    fgMin: 1.004,
+    fgMax: 1.035,
+    abvMin: 2.5,
+    abvMax: 11.5,
+  };
+  const region = feasibleVertices(envelope);
+  const safestPoint = chebyshevCenter(region);
+  const model = stylePlotModel({
+    region,
+    point: { oe: safestPoint.oe, ae: safestPoint.ae },
+    safestPoint,
+    pin: "abv",
+    target: 6.5,
+  });
+
+  const abvs = region.map(([oe, ae]) => cutaiaAbv(oe, ae));
+  const integers = Math.floor(Math.max(...abvs)) - Math.ceil(Math.min(...abvs)) + 1;
+  assert.ok(integers > 6);
+  assert.ok((model.contours.match(/M/g) ?? []).length >= integers);
 });
 
 test("the ABV pin draws an iso-ABV contour with its own label", () => {
