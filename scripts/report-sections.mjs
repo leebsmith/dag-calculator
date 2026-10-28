@@ -75,6 +75,15 @@ export function findContractViolations(sections, files) {
   return violations;
 }
 
+// The manifest the app and the service read: id + title, in registry order.
+export function buildSectionsManifest(sections) {
+  return `${JSON.stringify(
+    sections.map(({ id, title }) => ({ id, title })),
+    null,
+    2
+  )}\n`;
+}
+
 export function buildSectionsDoc(sections) {
   const lines = [
     "# Report sections",

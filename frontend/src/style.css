@@ -504,6 +504,20 @@ samp {
   gap: var(--space-4);
 }
 
+.report-picker-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.report-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
 /* ==========================================================================
    7b. Grain bill editor (workspace modal + catalog / inspector drawers)
    ========================================================================== */

@@ -189,9 +189,9 @@
         type="button"
         class="landing-menu-item"
         x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
-        @click="$store.recipes.downloadRowReport()"
+        @click="$store.recipes.openReportPicker($store.recipes.rowMenu)"
       >
-        Download report
+        Build report…
       </button>
       <button
         type="button"

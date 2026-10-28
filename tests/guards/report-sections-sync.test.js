@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   buildSectionsDoc,
+  buildSectionsManifest,
   findContractViolations,
   parseRegistry,
   readRegistry,
@@ -34,6 +35,19 @@ test("report section table is in sync with the registry literal", () => {
     actual,
     expected,
     "docs/report-sections.md is stale — run `node scripts/emit-report-sections.mjs`"
+  );
+});
+
+test("the app-facing section manifest is in sync with the registry", () => {
+  const expected = buildSectionsManifest(readRegistry());
+  const actual = readFileSync(
+    fileURLToPath(new URL("../../backend/app/templates/sections.json", import.meta.url)),
+    "utf8"
+  );
+  assert.equal(
+    actual,
+    expected,
+    "sections.json is stale — run `node scripts/emit-report-sections.mjs`"
   );
 });
 

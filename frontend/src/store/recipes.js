@@ -48,6 +48,11 @@ export function createRecipesStore({
     sortMenuStyle: "",
     rowMenu: null,
     rowMenuStyle: "",
+    // Report picker: null target = the active batch (editor), else the row.
+    reportPickerOpen: false,
+    reportPickerTarget: null,
+    reportSections: [],
+    reportSelection: [],
     renamingId: null,
     renameValue: "",
 
@@ -352,41 +357,88 @@ export function createRecipesStore({
       download(file.bundle, safeFilename(file.name, "report-bundle.json"));
     },
 
-    // Frozen rows render from the server's stored bundle.
-    async downloadRowReport() {
-      const batch = this.rowMenu;
-      this.closeRowMenu();
-      if (!batch || batch.status !== "frozen") return;
+    // A frozen row passes itself; the editor opens the picker for the active
+    // batch. The section list is fetched once and cached.
+    async openReportPicker(batch = null) {
+      if (batch) this.closeRowMenu();
       this.actionError = null;
-      let report;
-      try {
-        report = await persistence.reportFor(batch.id);
-      } catch (err) {
-        this.recordActionFailure(
-          "Couldn't build the report",
-          "recipes.downloadRowReport",
-          err
-        );
-        return;
+      this.reportPickerTarget = batch;
+      this.reportPickerOpen = true;
+      if (!this.reportSections.length) {
+        try {
+          this.reportSections = await persistence.reportSections();
+        } catch (err) {
+          this.reportPickerOpen = false;
+          this.reportPickerTarget = null;
+          this.recordActionFailure(
+            "Couldn't load the report sections",
+            "recipes.openReportPicker",
+            err
+          );
+          return;
+        }
       }
-      if (!report) return;
-      downloadFile(report.blob, safeFilename(batch.name, "pdf"));
+      this.reportSelection = this.reportSections.map((section) => section.id);
     },
 
-    // The editor is the only place a draft's report can be built: the bundle
-    // needs the live engine's formatted strings and catalog. The tab opens
-    // before the render (popup blockers) and is closed again on failure.
-    async previewActiveReport() {
+    closeReportPicker() {
+      this.reportPickerOpen = false;
+      this.reportPickerTarget = null;
+    },
+
+    toggleReportSection(id) {
+      this.reportSelection = this.reportSelection.includes(id)
+        ? this.reportSelection.filter((selected) => selected !== id)
+        : [...this.reportSelection, id];
+    },
+
+    selectAllReportSections() {
+      this.reportSelection = this.reportSections.map((section) => section.id);
+    },
+
+    clearReportSections() {
+      this.reportSelection = [];
+    },
+
+    // Selecting everything is the default, so it sends no `sections` at all.
+    reportSectionsParam() {
+      if (!this.reportSections.length) return {};
+      return this.reportSelection.length === this.reportSections.length
+        ? {}
+        : { sections: this.reportSelection.join(",") };
+    },
+
+    reportFilename() {
+      const name = this.reportPickerTarget?.name ?? this.activeName;
+      const base = safeFilename(name, "pdf");
+      const total = this.reportSections.length;
+      const count = this.reportSelection.length;
+      return total > 0 && count < total
+        ? base.replace(/\.pdf$/, `-${count}-sections.pdf`)
+        : base;
+    },
+
+    async renderSelectedReport() {
+      const params = this.reportSectionsParam();
+      const target = this.reportPickerTarget;
+      return target
+        ? persistence.reportFor(target.id, params)
+        : persistence.reportForActive(params);
+    },
+
+    // The tab opens before the render (popup blockers) and closes on failure.
+    async previewSelectedReport() {
+      if (!this.reportSelection.length) return;
       this.actionError = null;
       const tab = openTab();
       let report;
       try {
-        report = await persistence.reportForActive();
+        report = await this.renderSelectedReport();
       } catch (err) {
         closeTab(tab);
         this.recordActionFailure(
           "Couldn't build the report",
-          "recipes.previewActiveReport",
+          "recipes.previewSelectedReport",
           err
         );
         return;
@@ -395,7 +447,26 @@ export function createRecipesStore({
         closeTab(tab);
         return;
       }
-      showTab(tab, report.blob, safeFilename(this.activeName, "pdf"));
+      showTab(tab, report.blob, this.reportFilename());
+    },
+
+    async downloadSelectedReport() {
+      if (!this.reportSelection.length) return;
+      this.actionError = null;
+      let report;
+      try {
+        report = await this.renderSelectedReport();
+      } catch (err) {
+        this.recordActionFailure(
+          "Couldn't build the report",
+          "recipes.downloadSelectedReport",
+          err
+        );
+        return;
+      }
+      if (!report) return;
+      downloadFile(report.blob, this.reportFilename());
+      this.closeReportPicker();
     },
   };
 }

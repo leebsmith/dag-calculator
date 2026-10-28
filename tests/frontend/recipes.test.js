@@ -43,8 +43,12 @@ function fakePersistence(overrides = {}) {
     freezeActive: record("freezeActive"),
     reportBundleForActive: async () => ({ name: "Active batch", bundle: { id: "active" } }),
     reportBundleFor: async (id, name) => ({ name, bundle: { id } }),
-    reportFor: async (id) => ({ blob: { id }, type: "application/pdf" }),
-    reportForActive: async () => ({ blob: { id: "active" }, type: "application/pdf" }),
+    reportFor: async (id, params) => ({ blob: { id, params }, type: "application/pdf" }),
+    reportForActive: async (params) => ({ blob: { id: "active", params }, type: "application/pdf" }),
+    reportSections: async () => [
+      { id: "brewhouse", title: "Brewhouse" },
+      { id: "batch-facts", title: "Batch Facts" },
+    ],
     flushSave: record("flushSave"),
     saveNow: record("saveNow"),
     resolveConflictByReload: record("reload"),
@@ -482,47 +486,89 @@ test("downloadRowBundle only serves frozen rows and closes the menu", async () =
   assert.equal(store.rowMenu, null);
 });
 
-test("downloadRowReport serves frozen rows from the stored report", async () => {
-  const files = [];
-  const { store } = makeStore(fakePersistence(), () => "", () => {}, (blob, filename) =>
-    files.push({ blob, filename })
-  );
+test("the report picker loads the section list once and preselects all", async () => {
+  let loads = 0;
+  const persistence = fakePersistence({
+    reportSections: async () => {
+      loads += 1;
+      return [
+        { id: "brewhouse", title: "Brewhouse" },
+        { id: "batch-facts", title: "Batch Facts" },
+      ];
+    },
+  });
+  const { store } = makeStore(persistence);
 
-  store.rowMenu = { id: "frozen", name: "Saison", status: "draft" };
-  await store.downloadRowReport();
-  assert.deepEqual(files, []);
-  assert.equal(store.rowMenu, null);
+  await store.openReportPicker();
+  assert.equal(store.reportPickerOpen, true);
+  assert.deepEqual(store.reportSelection, ["brewhouse", "batch-facts"]);
+  assert.deepEqual(store.reportSectionsParam(), {}, "all sections sends no param");
 
-  store.rowMenu = { id: "frozen", name: "Saison", status: "frozen" };
-  await store.downloadRowReport();
-  assert.deepEqual(files, [
-    { blob: { id: "frozen" }, filename: "saison.pdf" },
-  ]);
-  assert.equal(store.rowMenu, null);
+  await store.openReportPicker();
+  assert.equal(loads, 1, "the list is cached after the first open");
 });
 
-test("previewActiveReport opens the rendered blob in the tab it opened", async () => {
+test("the picker narrows the params and the filename", async () => {
+  const { store } = makeStore();
+  await store.openReportPicker({ id: "frozen", name: "House Pale", status: "frozen" });
+
+  assert.equal(store.reportFilename(), "house-pale.pdf");
+
+  store.clearReportSections();
+  store.toggleReportSection("brewhouse");
+  assert.deepEqual(store.reportSectionsParam(), { sections: "brewhouse" });
+  assert.equal(store.reportFilename(), "house-pale-1-sections.pdf");
+
+  store.selectAllReportSections();
+  assert.deepEqual(store.reportSectionsParam(), {});
+  assert.equal(store.reportFilename(), "house-pale.pdf");
+});
+
+test("previewSelectedReport renders the chosen subset into a tab", async () => {
   const tab = tabStub();
+  const calls = [];
+  const persistence = fakePersistence({
+    reportFor: async (id, params) => {
+      calls.push({ id, params });
+      return { blob: { id }, type: "application/pdf" };
+    },
+  });
+  const { store } = makeStore(persistence, () => "", () => {}, () => {}, tab);
+  await store.openReportPicker({ id: "frozen", name: "House Pale", status: "frozen" });
+  store.toggleReportSection("batch-facts");
+
+  await store.previewSelectedReport();
+
+  assert.deepEqual(calls, [{ id: "frozen", params: { sections: "brewhouse" } }]);
+  assert.deepEqual(tab.shown, [
+    {
+      tab: tab.tabs[0],
+      blob: { id: "frozen" },
+      filename: "house-pale-1-sections.pdf",
+    },
+  ]);
+});
+
+test("downloadSelectedReport saves the selection and closes the picker", async () => {
+  const files = [];
   const { store } = makeStore(
-    fakePersistence({
-      reportForActive: async () => ({ blob: { kind: "pdf" }, type: "application/pdf" }),
-    }),
+    fakePersistence(),
     () => "",
     () => {},
-    () => {},
-    tab
+    (blob, filename) => files.push({ blob, filename })
   );
-  store.activeName = "House Pale / v2";
+  store.activeName = "Active batch";
+  await store.openReportPicker();
 
-  await store.previewActiveReport();
+  await store.downloadSelectedReport();
 
-  assert.equal(tab.tabs.length, 1, "one tab is opened before the render");
-  assert.deepEqual(tab.shown, [
-    { tab: tab.tabs[0], blob: { kind: "pdf" }, filename: "house-pale-v2.pdf" },
+  assert.deepEqual(files, [
+    { blob: { id: "active", params: {} }, filename: "active-batch.pdf" },
   ]);
+  assert.equal(store.reportPickerOpen, false);
 });
 
-test("a failed report preview closes the tab and surfaces the message", async () => {
+test("a failed selected report closes the tab and surfaces the message", async () => {
   resetErrorObservability();
   const tab = tabStub();
   const { store } = makeStore(
@@ -536,8 +582,9 @@ test("a failed report preview closes the tab and surfaces the message", async ()
     () => {},
     tab
   );
+  await store.openReportPicker();
 
-  const { logged } = await quiet(() => store.previewActiveReport());
+  const { logged } = await quiet(() => store.previewSelectedReport());
 
   assert.equal(tab.tabs[0].closed, true, "the blank tab must not be left behind");
   assert.deepEqual(tab.shown, []);
@@ -545,6 +592,23 @@ test("a failed report preview closes the tab and surfaces the message", async ()
     title: "Couldn't build the report",
     message: "nothing to report: no requested section is present",
   });
+  assert.equal(logged.length, 1);
+});
+
+test("a failed section load closes the picker and reports", async () => {
+  resetErrorObservability();
+  const { store } = makeStore(
+    fakePersistence({
+      reportSections: async () => {
+        throw new Error("HTTP 500");
+      },
+    })
+  );
+
+  const { logged } = await quiet(() => store.openReportPicker());
+
+  assert.equal(store.reportPickerOpen, false);
+  assert.equal(store.actionError.title, "Couldn't load the report sections");
   assert.equal(logged.length, 1);
 });
 

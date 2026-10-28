@@ -214,19 +214,24 @@ export async function reportBundleFor(id, name) {
   return { name, bundle: await client.getReportBundle(id) };
 }
 
+// The registered sections, in canonical order, for the report picker.
+export async function reportSections() {
+  return (await client.getReportSections()).sections;
+}
+
 // Rendered report for a stored batch (frozen): the server already has the bundle.
-export async function reportFor(id) {
-  return client.getReport(id);
+export async function reportFor(id, params) {
+  return client.getReport(id, params);
 }
 
 // Rendered report for the active batch. A frozen batch is served from its stored
 // bundle; a draft is previewed through the bundle the browser builds here.
-export async function reportForActive() {
+export async function reportForActive(params) {
   if (!active) return null;
-  if (active.status === "frozen") return client.getReport(active.id);
+  if (active.status === "frozen") return client.getReport(active.id, params);
   const file = await reportBundleForActive();
   if (!file) return null;
-  return client.postReport(active.id, file.bundle);
+  return client.postReport(active.id, file.bundle, params);
 }
 
 export async function freezeActive() {

@@ -55,6 +55,7 @@ from app.services.report_render import (
     ReportSpec,
     ReportSpecError,
     parse_spec,
+    report_sections,
 )
 
 app = FastAPI(title="dag-calculator backend")
@@ -278,6 +279,16 @@ def _report_response(rendered: RenderedReport) -> Response:
     return Response(
         content=rendered.data, media_type=rendered.media_type, headers=headers
     )
+
+
+@app.get(
+    "/report/sections",
+    tags=["report"],
+    summary="List the registered report sections",
+)
+def list_report_sections(user: AllowedUser) -> dict:
+    """The sections a report can be assembled from, in canonical order."""
+    return {"sections": report_sections()}
 
 
 @app.get(

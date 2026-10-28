@@ -1,0 +1,22 @@
+[
+  {
+    "id": "brewhouse",
+    "title": "Brewhouse"
+  },
+  {
+    "id": "batch-facts",
+    "title": "Batch Facts"
+  },
+  {
+    "id": "yeast",
+    "title": "Yeast"
+  },
+  {
+    "id": "volume-ledger",
+    "title": "Volume Ledger"
+  },
+  {
+    "id": "liquor-ledger",
+    "title": "Liquor Ledger"
+  }
+]

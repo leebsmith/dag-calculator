@@ -131,8 +131,14 @@ match `templates/TYPST_VERSION`, otherwise the route answers `503`.
 
 | Route | Serves |
 |---|---|
+| `GET /report/sections` | the registered section ids and titles, in canonical order |
 | `GET /batches/{id}/report` | the stored bundle of a frozen batch |
 | `POST /batches/{id}/report` | a draft's posted `{ "bundle": … }`, persisting nothing |
+
+The section list is generated from the Typst registry
+(`scripts/emit-report-sections.mjs` → `backend/app/templates/sections.json`) and
+freshness-guarded, so the picker and the renderer cannot disagree about what
+exists or what order it prints in.
 
 Both accept `doc_kind`, `sections`, `paper`, `format=pdf|png` and `page` (the PNG
 page to export). `pdf` is the default; a PNG response is one page, selected by
@@ -166,12 +172,17 @@ curl -H "Authorization: Bearer $TOKEN" -o house-pale.pdf \
 and offline it is `batch.id` in the downloaded bundle (the report prints only the
 first eight characters; the full value is in its metadata).
 
-In the UI, a frozen row's menu has **Download report**, which saves the PDF. The
-editor toolbar has **Preview report** for the open draft: the tab is opened in the
-click handler before the render (or the popup blocker eats it) and filled with the
-blob afterwards; a failed render closes it and shows the action banner. The PDF is
-titled with the batch name, so the tab reads sensibly instead of showing a blob
-URL.
+In the UI, **Build report…** — in a frozen row's menu or the editor toolbar — opens
+the section picker. It lists the registered sections in canonical order, starts
+with all selected, and offers **Preview** and **Download**. Preview opens a tab:
+the tab is created in the click handler before the render (after the `await` a
+popup blocker would eat it) and filled with the blob afterwards; a failed render
+closes it and shows the action banner. Download saves and closes the picker.
+
+Sections without data are dropped by the server, so the selection is a request,
+not a guarantee. A subset is named `<batch>-<n>-sections.pdf`; everything is
+`<batch>.pdf`. The PDF is titled with the batch name, so a tab reads sensibly
+instead of showing a blob URL.
 
 Canonical order is registry order; `sections=` cannot reorder it. The generated
 [`report-sections.md`](report-sections.md) lists the order, the presence

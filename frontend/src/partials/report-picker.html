@@ -1,0 +1,65 @@
+<!-- Report sections picker: assemble a subset of the registered sections. -------->
+<div
+  class="modal-backdrop"
+  x-show="$store.recipes.reportPickerOpen"
+  @click.self="$store.recipes.closeReportPicker()"
+  @keydown.escape.window="$store.recipes.closeReportPicker()"
+>
+  <div
+    class="modal-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="report-picker-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, $store.recipes.reportPickerOpen)"
+  >
+    <h2 class="modal-workspace-title" id="report-picker-title">Report sections</h2>
+    <p class="form-hint">
+      Sections without data for this batch are left out. They always print in the
+      order below.
+    </p>
+
+    <div class="form-group">
+      <template x-for="section in $store.recipes.reportSections" :key="section.id">
+        <label class="report-picker-row">
+          <input
+            type="checkbox"
+            class="form-checkbox"
+            :checked="$store.recipes.reportSelection.includes(section.id)"
+            @change="$store.recipes.toggleReportSection(section.id)"
+          />
+          <span x-text="section.title"></span>
+        </label>
+      </template>
+    </div>
+
+    <div class="report-picker-actions">
+      <button type="button" class="btn-outline text-xs" @click="$store.recipes.selectAllReportSections()">
+        All
+      </button>
+      <button type="button" class="btn-outline text-xs" @click="$store.recipes.clearReportSections()">
+        None
+      </button>
+      <span class="form-hint" x-text="$store.recipes.reportSelection.length + ' of ' + $store.recipes.reportSections.length + ' selected'"></span>
+      <button type="button" class="btn-outline text-xs" @click="$store.recipes.closeReportPicker()">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn-outline text-xs"
+        :disabled="!$store.recipes.reportSelection.length"
+        @click="$store.recipes.previewSelectedReport()"
+      >
+        Preview
+      </button>
+      <button
+        type="button"
+        class="btn-primary text-xs"
+        :disabled="!$store.recipes.reportSelection.length"
+        @click="$store.recipes.downloadSelectedReport()"
+      >
+        Download
+      </button>
+    </div>
+  </div>
+</div>

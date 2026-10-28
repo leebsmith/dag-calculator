@@ -68,6 +68,10 @@ function reportPath(batchId, params = {}) {
   return `/batches/${encodeURIComponent(batchId)}/report${query ? `?${query}` : ""}`;
 }
 
+export function getReportSections() {
+  return requestJSON("/report/sections");
+}
+
 export function getReport(batchId, params) {
   return requestBlob(reportPath(batchId, params));
 }

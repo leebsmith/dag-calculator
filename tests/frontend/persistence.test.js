@@ -82,12 +82,16 @@ function fakeClient() {
       calls.push({ op: "preview-bundle", id, payload });
       return { batch: { id, status: "draft", frozen_at: null } };
     },
-    async getReport(id) {
-      calls.push({ op: "report", id });
+    async getReportSections() {
+      calls.push({ op: "report-sections" });
+      return { sections: [{ id: "brewhouse", title: "Brewhouse" }] };
+    },
+    async getReport(id, params) {
+      calls.push({ op: "report", id, params });
       return { blob: { id }, type: "application/pdf" };
     },
-    async postReport(id, bundle) {
-      calls.push({ op: "preview-report", id, bundle });
+    async postReport(id, bundle, params) {
+      calls.push({ op: "preview-report", id, bundle, params });
       return { blob: { id }, type: "application/pdf" };
     },
     markFrozen(id) {
@@ -444,6 +448,31 @@ test("reportBundleForActive previews a draft and reads a frozen bundle", async (
     bundle: { batch: { id: "frozen-1" }, content_hash: "sha256:stored" },
   });
   assert.ok(client.calls.some((c) => c.op === "report-bundle" && c.id === "frozen-1"));
+});
+
+test("reportSections reads the registry manifest", async () => {
+  const { client } = setup();
+
+  const sections = await persistence.reportSections();
+
+  assert.deepEqual(sections, [{ id: "brewhouse", title: "Brewhouse" }]);
+  assert.ok(client.calls.some((call) => call.op === "report-sections"));
+});
+
+test("the section selection reaches both report paths", async () => {
+  const { client } = setup();
+  await persistence.createUnsavedDraft({ name: "Saison" });
+  await persistence.flushSave();
+
+  await persistence.reportForActive({ sections: "yeast" });
+  const post = client.calls.find((call) => call.op === "preview-report");
+  assert.deepEqual(post.params, { sections: "yeast" });
+
+  await persistence.reportFor("frozen-1", { sections: "batch-facts" });
+  const get = client.calls.find(
+    (call) => call.op === "report" && call.id === "frozen-1"
+  );
+  assert.deepEqual(get.params, { sections: "batch-facts" });
 });
 
 test("reportFor reads a stored batch's rendered report", async () => {

@@ -124,6 +124,9 @@ Not needed by the current artifact; add only when a node requires them:
   `/batches/{id}/report`: temp-root compile with the pinned binary, PDF or one PNG
   page, section/page headers, an `ETag` for frozen renders, and 422/409/503
   mapping — `docs/report-renderer.md`.
+* **Report section picker** — `GET /report/sections` from the generated manifest, and a
+  Build report… modal on frozen rows and in the editor: Preview opens a tab, Download saves
+  `<batch>-<n>-sections.pdf` — `docs/report-renderer.md`.
 * **Report process sections** — Brewhouse (first) and Liquor Ledger (last), the HLT
   target/required outputs, brewhouse efficiency, and the display-only sparge-water target —
   `plans/report-process-sections.md`.

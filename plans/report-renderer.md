@@ -368,6 +368,11 @@ Unknown section ids are rejected by the template's registry — one source of tr
 — and mapped from its `report spec:` panic to `422`. Both routes are read-only and
 idempotent.
 
+`GET /report/sections` serves the manifest generated from that same registry
+(`backend/app/templates/sections.json`, freshness-guarded by the sections-sync
+test). The app's **Build report…** picker builds a subset from it and passes
+`sections` to either render route; a subset is named `<batch>-<n>-sections.pdf`.
+
 Empty selection is a hard error rather than a blank document: a page that
 silently renders nothing is indistinguishable from a rendering bug, and the
 water-solver sections make it an ordinary occurrence on a draft-quality solve.

@@ -26,6 +26,7 @@ from app.schemas.report_bundle import ReportBundle
 
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
 PINNED_TYPST = (TEMPLATES / "TYPST_VERSION").read_text().strip()
+SECTIONS_MANIFEST = TEMPLATES / "sections.json"
 
 FORMATS = ("pdf", "png")
 PAPERS = ("auto", "a4", "letter")
@@ -72,6 +73,15 @@ class RenderedReport:
     pages: int
     page: int
     key: str | None
+
+
+def report_sections() -> list[dict[str, str]]:
+    """The registered sections, in canonical render order.
+
+    Generated from the Typst registry by ``scripts/emit-report-sections.mjs`` and
+    freshness-guarded, so the picker and the renderer cannot disagree.
+    """
+    return json.loads(SECTIONS_MANIFEST.read_text(encoding="utf-8"))
 
 
 def parse_spec(

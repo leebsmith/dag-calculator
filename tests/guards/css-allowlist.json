@@ -106,9 +106,10 @@
       "selectors": [
         ".modal-workspace-header-actions",
         ".recipes-actions",
-        ".boundary-status"
+        ".boundary-status",
+        ".report-picker-row"
       ],
-      "reason": "Coincidental row layout across workspace, recipes, and boundary status."
+      "reason": "Coincidental row layout across workspace, recipes, boundary status, and the report picker's checkbox rows."
     },
     {
       "context": "",
