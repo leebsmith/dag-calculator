@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:93ca11de6f00171fef78a2b2974a923d86bdb74d180edaf80d121b88b71f39b6",
+    "hash": "sha256:78f374d0a34d394dd0d869300c20300081d0d7ea4e232300540caea679cd2696",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -1836,12 +1836,6 @@
               "gte": 0
             }
           },
-          "resolved_mass_kg": {
-            "dimension": "mass",
-            "domain": {
-              "gte": 0
-            }
-          },
           "yield_fraction": {
             "dimension": "percentage",
             "domain": {
@@ -2745,7 +2739,86 @@
         },
         "batch.sugars": {
           "kind": "collection",
-          "item_schema": "sugar_row"
+          "item_schema": "sugar_row",
+          "fields": {
+            "resolved_mass_kg": {
+              "inputs": {
+                "intent": "batch.late_addition_intent",
+                "budget": "batch.sugar_extract_total",
+                "parts_total": "batch.sugar_parts_total"
+              },
+              "expr": {
+                "op": "if",
+                "args": [
+                  {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "eq",
+                        "args": [
+                          {
+                            "ref": "intent"
+                          },
+                          "share"
+                        ]
+                      },
+                      {
+                        "op": "gt",
+                        "args": [
+                          {
+                            "ref": "parts_total"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "op": "gt",
+                        "args": [
+                          {
+                            "ref": "row.yield_fraction"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "/",
+                    "args": [
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "op": "/",
+                            "args": [
+                              {
+                                "ref": "row.parts"
+                              },
+                              {
+                                "ref": "parts_total"
+                              }
+                            ]
+                          },
+                          {
+                            "ref": "budget"
+                          }
+                        ]
+                      },
+                      {
+                        "ref": "row.yield_fraction"
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "row.mass_kg"
+                  }
+                ]
+              },
+              "output": {
+                "dimension": "mass"
+              }
+            }
+          }
         },
         "batch.late_addition_intent": {
           "kind": "choice",
@@ -3180,7 +3253,105 @@
         },
         "grist.major_malts": {
           "kind": "collection",
-          "item_schema": "grist_row"
+          "item_schema": "grist_row",
+          "fields": {
+            "mass_kg": {
+              "inputs": {
+                "m_grist": "solver.batch.m_grist"
+              },
+              "expr": {
+                "op": "*",
+                "args": [
+                  {
+                    "ref": "row.pct"
+                  },
+                  {
+                    "ref": "m_grist"
+                  }
+                ]
+              },
+              "output": {
+                "dimension": "mass"
+              }
+            },
+            "extract_kg": {
+              "inputs": {
+                "m_grist": "solver.batch.m_grist",
+                "grain_moisture": "batch.grain_moisture_fraction"
+              },
+              "expr": {
+                "op": "-",
+                "args": [
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "ref": "row.pct"
+                          },
+                          {
+                            "ref": "m_grist"
+                          }
+                        ]
+                      },
+                      {
+                        "ref": "row.yield_fraction"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "*",
+                    "args": [
+                      {
+                        "op": "*",
+                        "args": [
+                          {
+                            "op": "*",
+                            "args": [
+                              {
+                                "ref": "row.pct"
+                              },
+                              {
+                                "ref": "m_grist"
+                              }
+                            ]
+                          },
+                          {
+                            "ref": "row.yield_fraction"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "if",
+                        "args": [
+                          {
+                            "op": "gt",
+                            "args": [
+                              {
+                                "ref": "row.moisture_fraction"
+                              },
+                              0
+                            ]
+                          },
+                          {
+                            "ref": "row.moisture_fraction"
+                          },
+                          {
+                            "ref": "grain_moisture"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "output": {
+                "dimension": "mass"
+              }
+            }
+          }
         },
         "grist.trace_malts": {
           "kind": "collection",
@@ -6822,8 +6993,8 @@
           "unit": null
         },
         "amount": {
-          "text": "0.5 kg",
-          "number": "0.5",
+          "text": "0.50 kg",
+          "number": "0.50",
           "unit": "kg"
         },
         "ppg": {
@@ -6971,5 +7142,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:68c72238335a0ac6366bb594654251babdcd40405c796e1dd9871b957fabd1a5"
+  "content_hash": "sha256:99622f337d3de474ba3d4630c4c4c5512c9e06957d35bb0e475d17b0b028d240"
 }

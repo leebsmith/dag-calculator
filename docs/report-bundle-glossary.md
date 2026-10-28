@@ -140,7 +140,7 @@ _109 paths_
 
 ## Grist
 
-_38 paths_
+_40 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -149,10 +149,12 @@ _38 paths_
 | `grist.major_malts.catalog_id` | Catalog ID | field | — | — | — | — |
 | `grist.major_malts.category` | Type | field | — | — | — | BASE, CRYSTAL, ROASTED, ACID |
 | `grist.major_malts.color_lovibond` | Color | field | grain_color | EBC | 1 | — |
+| `grist.major_malts.extract_kg` | Extract | field | mass | kg | 1 | — |
 | `grist.major_malts.fermentability_basis` | Fermentability Basis | field | — | — | — | — |
 | `grist.major_malts.fermentability_fraction` | Fermentable | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.fermentability_method` | Fermentability Method | field | — | — | — | — |
 | `grist.major_malts.fermentability_provenance` | Fermentability Provenance | field | — | — | — | — |
+| `grist.major_malts.mass_kg` | Mass | field | mass | kg | 1 | — |
 | `grist.major_malts.moisture_fraction` | Moisture Fraction | field | percentage | pct (%) | 1 | — |
 | `grist.major_malts.name` | Malt | field | — | — | — | — |
 | `grist.major_malts.notes` | Notes | field | — | — | — | — |

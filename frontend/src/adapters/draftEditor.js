@@ -111,16 +111,14 @@ export function installDraftEditor(app, { artifact, ui, session }) {
           r.pct = pcts[i];
         });
       }
-      if (this.draftNodeId === N.sugars && this.draftRows.length) {
-        this.deriveDraftSugarMasses();
-      }
       return this.draftRows;
     },
 
-    // Share mode records the derived mass per row; the draft table binds that
-    // recorded value, so it is refreshed here as parts change (the engine
-    // refresh writes the saved rows, not the scratch copy).
-    deriveDraftSugarMasses() {
+    // Share mode's per-row mass is computed by the artifact on read; a draft is
+    // scratch state that is not in the collection, so its preview runs the same
+    // allocation without writing the result into the rows.
+    draftResolvedRows() {
+      if (this.draftNodeId !== N.sugars || !this.draftRows.length) return [];
       const engine = session.getEngine();
       let intent;
       let budget;
@@ -128,17 +126,14 @@ export function installDraftEditor(app, { artifact, ui, session }) {
         intent = engine.get(N.lateAdditionIntent);
         budget = engine.resolve("batch.sugar_extract_total");
       } catch (err) {
-        reportError("draftEditor.deriveDraftSugarMasses", err);
-        return;
+        reportError("draftEditor.draftResolvedRows", err);
+        return [];
       }
-      if (intent !== "share") return;
-      const resolved = resolvedSugarMasses({
+      if (intent !== "share") return [];
+      return resolvedSugarMasses({
         rows: this.draftRows,
         budgetKg: typeof budget === "number" && Number.isFinite(budget) ? budget : 0,
         mode: "share",
-      });
-      this.draftRows.forEach((row, index) => {
-        row.resolved_mass_kg = resolved[index]?.massKg ?? 0;
       });
     },
 
@@ -163,7 +158,6 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       this.draftRows.forEach((row) => {
         row.parts = EQUAL_SUGAR_PARTS;
       });
-      this.deriveDraftSugarMasses();
       return true;
     },
 
@@ -280,10 +274,16 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       get() {
         const columns = this.draftColumns;
         const nl = nonlinearFns(artifact, session.getEngine());
+        const resolved = this.draftResolvedRows();
         return this.draftRows.map((row, ri) => {
           const out = { ...row };
           for (const col of columns) {
             let v = row[col.id];
+            // A computed field has no draft value: preview it from the same
+            // allocation the engine applies on read.
+            if (col.id === "resolved_mass_kg") {
+              v = resolved[ri]?.massKg ?? row[col.id] ?? 0;
+            }
             if (col.displayUnit && col.dimension && typeof v === "number") {
               v = displayValue(artifact, col.dimension, col.displayUnit, v, nl);
             }
@@ -304,4 +304,4 @@ export function installDraftEditor(app, { artifact, ui, session }) {
   });
 }
 
-export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "deriveDraftSugarMasses", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows"];
+export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows"];

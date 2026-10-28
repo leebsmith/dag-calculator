@@ -167,7 +167,7 @@ test("sugars join the fermentable tables and the summaries", async () => {
   const sugar = app.reportFormattedTables()["batch.sugars"];
   assert.equal(sugar.length, 1);
   assert.equal(sugar[0].name.text, "Candi Syrup D-180");
-  assert.equal(sugar[0].amount.text, "0.5 kg");
+  assert.equal(sugar[0].amount.text, "0.50 kg");
   assert.equal(sugar[0].ppg.text, "37.0");
   assert.equal(sugar[0].color.text, "180.0 °L");
   assert.equal(sugar[0].grist_pct.unit, "%");

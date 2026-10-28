@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { refreshMaltCard, registerMaltCard, sortGristRows } from "../../frontend/src/adapters/cards/malt.js";
 import { FERMENTABLE_NODES as N } from "../../frontend/src/views/registry/fermentables.js";
+import { artifact as artifactFixture } from "../guards/util.js";
 
 function setup() {
   const app = {
@@ -112,7 +113,7 @@ test("refreshMaltCard sorts the engine grist rows onto the summary card", () => 
     get: (id) => (id === N.majorMalts ? [{ name: "Crystal", parts: 20 }, { name: "Pils", parts: 80 }] : []),
   };
 
-  refreshMaltCard(app, { engine });
+  refreshMaltCard(app, { engine, artifact: artifactFixture(), ui: {} });
 
   assert.deepEqual(app.gristRows.map((row) => row.name), ["Pils", "Crystal"]);
 });

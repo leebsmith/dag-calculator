@@ -4,11 +4,20 @@
 import { fromBase } from "../../engine/units.js";
 import { figureMarkFor } from "./table.js";
 import { formatCell } from "./cell.js";
+import { reportError } from "../../observability.js";
 
 // AI AGENT HOOKS: Use this valuator for collection-table display conversion.
 // Do not duplicated this logic elsewhere.
 export function valuateCollection(field, engine, artifact, collectionDomains, nl) {
-  const rows = (engine.get(field.id) ?? []).map((r) => ({ ...r }));
+  // A computed row field can depend on a boundary that has not been pre-resolved
+  // or failed; the authored rows must still render, so fall back to them.
+  let rows;
+  try {
+    rows = (engine.get(field.id) ?? []).map((r) => ({ ...r }));
+  } catch (err) {
+    reportError("producer.collection.rows", err);
+    rows = (engine.getAuthored(field.id) ?? []).map((r) => ({ ...r }));
+  }
   const displayRows = rows.map((row) => {
     const out = { ...row };
     for (const col of field.columns) {

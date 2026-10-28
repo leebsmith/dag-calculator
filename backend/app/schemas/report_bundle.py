@@ -306,6 +306,8 @@ def _resolves(path: str, nodes: dict[str, Any], identity: dict[str, str], schema
             declared = node.get("outputs") or {}
             return ".".join(suffix) in declared
         if node.get("kind") in {"selection", "collection"}:
+            if node.get("kind") == "collection" and suffix[0] in (node.get("fields") or {}):
+                return True
             schema_id = (node.get("output") or {}).get("schema") or node.get("item_schema")
             schema = schemas.get(schema_id) or {}
             return suffix[0] in schema

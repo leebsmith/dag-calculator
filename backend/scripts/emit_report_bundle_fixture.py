@@ -652,7 +652,7 @@ PAYLOAD = FreezePayload(
         "batch.sugars": [
             {
                 "name": FormattedValue(text="Candi Syrup D-180"),
-                "amount": FormattedValue(text="0.5 kg", number="0.5", unit="kg"),
+                "amount": FormattedValue(text="0.50 kg", number="0.50", unit="kg"),
                 "ppg": FormattedValue(text="37.0", number="37.0"),
                 "color": FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
                 "grist_pct": FormattedValue(text="9.8%", number="9.8", unit="%"),

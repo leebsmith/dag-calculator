@@ -49,6 +49,12 @@ function fieldSpec(artifact, ref) {
   if (ref.suffix.length === 0) return null;
   const suffix = ref.suffix.join(".");
   if (node?.kind === "boundary") return node.outputs?.[suffix] ?? null;
+  if (node?.kind === "collection") {
+    // A computed row field is `collection.fields.<name>.output`, shaped like a
+    // schema field spec but never part of `item_schema`.
+    const computed = node.fields?.[ref.suffix[0]]?.output;
+    if (computed) return computed;
+  }
   if (node?.kind === "selection" || node?.kind === "collection") {
     const spec = valueSpecOf(artifact, ref.nodeId);
     const schemaId = spec?.schema ?? spec?.item_schema;
@@ -177,6 +183,7 @@ function resolvablePaths(artifact) {
     if (node.kind === "collection") {
       const schema = artifact.primitive_schemas?.[node.item_schema] ?? {};
       for (const field of Object.keys(schema)) paths.add(`${id}.${field}`);
+      for (const field of Object.keys(node.fields ?? {})) paths.add(`${id}.${field}`);
     }
     if (node.kind === "boundary") {
       for (const output of Object.keys(node.outputs ?? {})) paths.add(`${id}.${output}`);

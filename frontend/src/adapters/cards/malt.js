@@ -6,6 +6,9 @@ import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel, formatPercent, formatValueWithUnit, formatWithDecimals, toPercentValue } from "../../utils.js";
 import { figureMarkFor } from "../../views/producer/table.js";
+import { displayValue, nonlinearFns, resolveCollectionColumns } from "../../views/producer.js";
+import { registry } from "../../views/steps.js";
+import { reportError } from "../../observability.js";
 
 const MAX_VISIBLE = 25;
 const MAX_MAJOR_MALTS = 8;
@@ -163,6 +166,36 @@ export function registerMaltCard(app, ctx) {
 }
 
 export function refreshMaltCard(app, ctx) {
-  app.gristRows = sortGristRows(ctx.engine.get(N.majorMalts) ?? []);
+  // Mass and extract are artifact-computed row fields; the summary table shows
+  // them in the mass column's display unit, formatted at refresh time.
+  const columns = resolveCollectionColumns(
+    ctx.artifact,
+    registry,
+    N.majorMalts,
+    { columns: ["mass_kg", "extract_kg"] },
+    ctx.ui?.unitMode ?? {}
+  );
+  const nl = nonlinearFns(ctx.artifact, ctx.engine);
+  const cellFor = (column) => (kg) => {
+    if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
+    const shown = displayValue(ctx.artifact, "mass", column?.displayUnit, kg, nl);
+    return `${formatWithDecimals(shown, column?.decimals)}${column?.unit ? " " + column.unit : ""}`;
+  };
+  const massCell = cellFor(columns[0]);
+  const extractCell = cellFor(columns[1]);
+  // The computed fields read the batch boundary, which may be unresolved or
+  // failed; the authored rows still render.
+  let rows;
+  try {
+    rows = ctx.engine.get(N.majorMalts) ?? [];
+  } catch (err) {
+    reportError("maltCard.rows", err);
+    rows = ctx.engine.getAuthored(N.majorMalts) ?? [];
+  }
+  app.gristRows = sortGristRows(rows).map((row) => ({
+    ...row,
+    massDisplay: massCell(row.mass_kg),
+    extractDisplay: extractCell(row.extract_kg),
+  }));
 }
 export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltIsTrace", "maltFermentable", "cloneDraftMalt", "maltWeightedColor", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];

@@ -34,7 +34,6 @@ function makeRow(sugar) {
     // Share mode weights rows by parts; a catalog add must never be weightless,
     // or a positive share would solve a budget that no row holds.
     parts: EQUAL_SUGAR_PARTS,
-    resolved_mass_kg: 0,
     yield_fraction: sugar.yield_fraction,
     yield_basis: sugar.yield_basis,
     yield_provenance: sugar.yield_provenance,
@@ -287,7 +286,7 @@ export function registerLateAdditionsCard(app, ctx) {
         N.collection,
         rows.map((row, index) => {
           const mass = rounded(resolved[index]?.massKg);
-          return { ...row, mass_kg: mass, resolved_mass_kg: mass };
+          return { ...row, mass_kg: mass };
         })
       );
       this.scheduleSolve();
@@ -330,25 +329,11 @@ export function registerLateAdditionsCard(app, ctx) {
         return rows.some((row) => (Number(row.mass_kg) || 0) > 0);
       },
     },
-    // The live row allocation at the current solve: `resolved_mass_kg` is a
-    // recorded result, never a request input.
-    sugarResolvedRows: {
-      configurable: true,
-      get() {
-        const rows = ctx.engine.get(N.collection) ?? [];
-        const share = Number(ctx.engine.get(N.share)) || 0;
-        const intent = ctx.engine.get(N.intent) ?? "dose";
-        return resolvedSugarMasses({
-          rows,
-          budgetKg: share * numberAt(ctx.engine, N.effect.extractTotal),
-          share,
-          mode: intent,
-        });
-      },
-    },
     lateSugarField: {
       configurable: true,
       get() {
+        // The live row allocation at the current solve: `resolved_mass_kg` is a
+        // computed field, never a request input.
         const field =
           (this.fieldsBySlice[N.slice] ?? []).find(
             (f) => f.control === "collection-table"
@@ -360,28 +345,7 @@ export function registerLateAdditionsCard(app, ctx) {
           .map((c) =>
             c.id === "resolved_mass_kg" ? { ...c, label: "Mass" } : c
           );
-        if (!shareMode) return { ...field, columns };
-        const column = columns.find((c) => c.id === "resolved_mass_kg");
-        const resolved = this.sugarResolvedRows;
-        if (!column || resolved.length !== field.rows.length) return { ...field, columns };
-        const nl = nonlinearFns(ctx.artifact, ctx.engine);
-        return {
-          ...field,
-          columns,
-          rows: field.rows.map((row, index) => {
-            const shown = displayValue(
-              ctx.artifact,
-              "mass",
-              column.displayUnit,
-              resolved[index]?.massKg ?? 0,
-              nl
-            );
-            return {
-              ...row,
-              resolved_mass_kg: formatWithDecimals(shown, column.decimals ?? 2),
-            };
-          }),
-        };
+        return { ...field, columns };
       },
     },
     sugarMassField: {
@@ -494,24 +458,6 @@ export function refreshLateAdditionsCard(app, ctx) {
   app.latePinPanelVisible = app.sugarIsActive;
   if (!app.latePinPanelVisible) app.latePinPanelOpen = false;
   app.syncScalePreviewState();
-  if (!rows.length) return;
-  const share = Number(ctx.engine.get(N.share)) || 0;
-  const total = numberAt(ctx.engine, N.effect.extractTotal);
-  const resolved = resolvedSugarMasses({
-    rows,
-    budgetKg: share * total,
-    share,
-    mode: app.lateAdditionIntentState,
-  });
-  let changed = false;
-  const next = rows.map((row, index) => {
-    const mass = rounded(resolved[index]?.massKg);
-    if (Math.abs((Number(row.resolved_mass_kg) || 0) - mass) > 1e-9) changed = true;
-    return { ...row, resolved_mass_kg: mass };
-  });
-  // Recorded result, not a request input: updating the collection here cannot
-  // change the next solve. No scheduleSolve/notify, so there is no feedback loop.
-  if (changed) ctx.engine.setCollection(N.collection, next);
 }
 export const KEYS = [
   ...catalogDraftKeys("sugar", "Sugar"),
@@ -520,7 +466,6 @@ export const KEYS = [
   "lateAdditionIntent",
   "lateIntentField",
   "sugarShareField",
-  "sugarResolvedRows",
   "lateSugarField",
   "sugarMassField",
   "sugarColorField",

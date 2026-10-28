@@ -1,8 +1,8 @@
 # Decomposition & display contract
 
 Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), 2
-(error and constraint truth), and 3 (per-row computed fields) landed; Phase 4 is
-next.
+(error and constraint truth), 3 (per-row computed fields), and 4 (row migration)
+landed; Phase 5 is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -269,10 +269,12 @@ colliding input alias, a dangling input, an undeclared output dimension/taxonomy
 a malformed value spec, an unknown constant/function, and an unknown `row.*`
 field; `units.js` gains `validateCollectionFields` (run from `loadArtifact`) to
 infer the expression's dimension against `row`'s item schema, matching the derived
-rule. `dag.js` adds one edge per field input path (so a field may read a boundary
-output the boundary does not consume, while a boundary that consumes the
-collection is a load-time cycle) and materializes the values into a **copy** of
-each row on read — collection state keeps authored `item_schema` fields only.
+rule. `dag.js` gives each field input a **read-side** edge (a `dependents` entry,
+not an `adjacency` one) and resolves it in authored mode, so a field may read the
+very boundary its collection feeds. The values are materialized into a **copy** of
+each row on read; collection state keeps authored `item_schema` fields only.
+(Phase 4 amended the edge rule from the original "one edge per input / cycle";
+the motivation is recorded there.)
 Grammar 9 → 10; payload stays 3. `make generate` moved only the artifact
 description/version, the inventory version line, and the report-bundle fixture
 (hash + version). Tests: `tests/frontend/collection-fields.test.js` (evaluation,
@@ -318,12 +320,49 @@ column normalization.
 re-freeze on `make local-dev` and confirm the printed bundle matches the screen;
 `validation-parity` green.
 
-**Commits.** `Read the grain bill's mass from the artifact, not the report`, then
-`Show mass and extract on the fermentables card`. Re-freezing is an operational
-check, not a commit (emulator data is untracked).
+**Commits.** `Let computed row fields read the boundary they feed` (the engine
+amendment Phase 3's edge rule required), then
+`Read the fermentable masses from the artifact` (the row migration and the card
+columns). Re-freezing is an operational check, not a commit (emulator data is
+untracked).
 
 **Handoff.** Every later report section reads computed fields directly.
 `reportFormat.fermentableRows` no longer exists.
+
+**Landed.** The batch boundary consumes both collections (`grain_bill`,
+`s_late_add_request` → `batch.sugars`), so a row field reading `solver.batch`
+closed a load-time cycle under Phase 3's edge rule. Nothing in the phase could
+work until that was amended, so `dag.js` now treats every field input as a
+**read-side** edge and resolves it in **authored mode** — the same mode every
+boundary request uses (`resolveBoundaryInputs`). That makes "a request never
+carries a derived row value" structural rather than a convention, and it lets a
+field read the boundary it feeds because the boundary reads the authored rows.
+`getAuthored` exposes the authored read; the producer's collection valuator and
+`refreshMaltCard` fall back to it when a boundary is unresolved or failed, so the
+authored rows still render.
+
+`grist.major_malts.fields.mass_kg` is `m_grist × pct`; `extract_kg` is
+`mass × yield × (1 − moisture)` with `batch.grain_moisture_fraction` as the
+fallback for a row without a moisture figure — the boundary's own `mc_i` rule —
+expressed as `mass·yield − mass·yield·moisture` because the dimension algebra has
+no `1 − fraction`. `batch.sugars.fields.resolved_mass_kg` carries the share-mode
+allocation (`(parts / parts_total) × budget / yield`) and falls back to the
+authored dose. `sugar_row.resolved_mass_kg` left `item_schema`.
+
+`reportFormat.fermentableRows` is gone: `buildReportTables` / `buildReportSummaries`
+read `mass_kg`, `extract_kg`, and `resolved_mass_kg` from the catalog (the sugar
+extract is still `mass × yield`). The sugar amount column now takes the resolved
+field's precision, so a 0.5 kg sugar prints `0.50 kg`. Host writes are deleted:
+`refreshLateAdditionsCard` no longer records resolved masses,
+`adoptLateAdditionShare` writes only the authored dose, and the draft editor
+previews the allocation (`draftResolvedRows`) instead of stamping it into scratch
+rows. `resolveCollectionColumns`, `buildReportCatalog`, and the backend bundle
+validator's `_resolves` all accept computed-field paths.
+
+The Fermentables card gained Mass and Extract columns (`refreshMaltCard` formats
+them in the mass display unit). Outstanding: the operational re-freeze on
+`make local-dev` (emulator data is untracked) and confirming the printed bundle
+matches the screen.
 
 ### Phase 5 — `core/batch/` package (2 days)
 

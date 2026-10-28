@@ -16,6 +16,8 @@ export const fermentablesRegistry = {
   "grist.major_malts.category": { label: "Type" },
   "grist.major_malts.pct": { label: "Pct", displayUnit: "pct" },
   "grist.major_malts.parts": { label: "Parts" },
+  "grist.major_malts.mass_kg": { label: "Mass" },
+  "grist.major_malts.extract_kg": { label: "Extract" },
   "grist.major_malts.yield_fraction": { label: "Yield", displayUnit: "pct" },
   "grist.major_malts.fermentability_fraction": { label: "Fermentable", displayUnit: "pct" },
   "grist.major_malts.color_lovibond": { label: "Color" },

@@ -34,6 +34,7 @@ export function createSession({ artifact, cache, master, useHttp = false, select
   const engineRef = {
     identity: identitySnapshot,
     get: (id) => engine.get(id),
+    getAuthored: (id) => engine.getAuthored(id),
     resolve: (path) => engine.resolve(path),
     call: (fnId, args) => engine.call(fnId, args),
     setRoot: (id, value) => engine.setRoot(id, value),

@@ -16,11 +16,13 @@
     <div class="data-table-container">
       <table class="data-table">
         <colgroup>
-          <col style="width: 38%" />
-          <col style="width: 14%" />
+          <col style="width: 30%" />
+          <col style="width: 11%" />
+          <col style="width: 10%" />
           <col style="width: 12%" />
-          <col style="width: 16%" />
-          <col style="width: 20%" />
+          <col style="width: 13%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
         </colgroup>
         <thead>
           <tr>
@@ -28,6 +30,8 @@
             <th>Type</th>
             <th class="text-right">Parts</th>
             <th class="text-right">Malt %</th>
+            <th class="text-right">Mass</th>
+            <th class="text-right">Extract</th>
             <th class="text-right">Fermentable</th>
           </tr>
         </thead>
@@ -49,12 +53,14 @@
                   x-text="fmt.formatPercent(row.pct)"
                 ></span>
               </td>
+              <td class="text-right tabular-nums" x-text="row.massDisplay"></td>
+              <td class="text-right tabular-nums" x-text="row.extractDisplay"></td>
               <td class="text-right tabular-nums" x-text="maltFermentable(row)"></td>
             </tr>
           </template>
           <template x-if="gristRows.length === 0">
             <tr>
-              <td colspan="5" class="table-empty-cell">
+              <td colspan="7" class="table-empty-cell">
                 No malts yet. Click “Configure Malts” to build your grain bill.
               </td>
             </tr>

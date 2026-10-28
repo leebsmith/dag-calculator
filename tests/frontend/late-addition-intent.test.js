@@ -91,7 +91,10 @@ test("adopt actions re-sync the other representation on request", async () => {
 
   const adopted = app.engine.get("batch.sugars")[0];
   assert.ok(Math.abs(adopted.mass_kg - (0.2 * 2.6) / 0.9) < 1e-6);
-  assert.equal(adopted.mass_kg, adopted.resolved_mass_kg);
+  assert.ok(
+    Math.abs(adopted.mass_kg - adopted.resolved_mass_kg) < 1e-6,
+    "the authored dose and the computed mass agree after adoption"
+  );
 
   app.adoptLateAdditionDose();
   app.compute();

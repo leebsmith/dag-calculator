@@ -93,8 +93,10 @@ export function resolveCollectionColumns(artifact, registry, collectionId, entry
   }
   const schema = artifact.primitive_schemas[node.item_schema] ?? {};
   const inputs = entry.inputs ? new Set(entry.inputs) : null;
-  return (entry.columns ?? Object.keys(schema)).map((c) => {
-    const spec = schema[c] ?? {};
+  return (entry.columns ?? [...Object.keys(schema), ...Object.keys(node.fields ?? {})]).map((c) => {
+    // A computed row field carries its value spec on the field, not in
+    // `item_schema`; its dimension still drives the display unit.
+    const spec = schema[c] ?? node.fields?.[c]?.output ?? {};
     const meta = registry[`${collectionId}.${c}`] ?? {};
     const dimDef = spec.dimension ? UNIT_DIMENSIONS.find((d) => d.id === spec.dimension) : null;
     const unitId = spec.dimension

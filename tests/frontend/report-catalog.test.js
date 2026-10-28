@@ -28,6 +28,7 @@ function expectedPaths() {
       for (const field of Object.keys(artifact.primitive_schemas[node.item_schema] ?? {})) {
         paths.add(`${id}.${field}`);
       }
+      for (const field of Object.keys(node.fields ?? {})) paths.add(`${id}.${field}`);
     }
     if (node.kind === "boundary") {
       for (const output of Object.keys(node.outputs ?? {})) paths.add(`${id}.${output}`);

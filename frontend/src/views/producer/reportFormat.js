@@ -9,7 +9,6 @@ import { reportError } from "../../observability.js";
 import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
-import { resolvedSugarMasses } from "./sugarAllocation.js";
 import { cellLabel, formatCell } from "./cell.js";
 
 // Collection fields are row values, not scalars: the catalog lists them for a
@@ -84,34 +83,18 @@ export function buildReportFormatted(artifact, catalog, engine) {
   return formatted;
 }
 
-// The solved grist mass, or null when the batch has no extract solution yet.
-function gristMassOf(engine) {
-  try {
-    const mass = engine.resolve(N.gristMass);
-    return typeof mass === "number" && Number.isFinite(mass) ? mass : null;
-  } catch (err) {
-    reportError("reportTables.gristMass", err);
-    return null;
-  }
-}
-
-// The operative mass of every fermentable row. Major amounts are the solved
-// grist mass times the authored bill share; trace amounts are authored masses;
-// sugar amounts come from the same allocator the late-additions table binds, so
-// share mode reports the mass the UI shows.
-function fermentableRows(engine, gristMass) {
-  const major = (engine.get(N.majorMalts) ?? []).map((row) => {
-    const mass = gristMass == null ? 0 : gristMass * finiteNumber(row.pct);
-    const yieldFraction = finiteNumber(row.yield_fraction);
-    return {
-      row,
-      mass,
-      color: finiteNumber(row.color_lovibond),
-      yield: yieldFraction,
-      // Potential extract: dry-basis yield net of the malt's moisture.
-      extract: mass * yieldFraction * (1 - finiteNumber(row.moisture_fraction)),
-    };
-  });
+// The operative per-row amounts, read from the artifact: `grist_row.mass_kg` /
+// `extract_kg` and `sugar_row.resolved_mass_kg` are computed collection fields,
+// so the report never re-derives a mass. Trace malts are dosed by authored mass
+// and contribute no extract (A9).
+function readFermentables(engine) {
+  const major = (engine.get(N.majorMalts) ?? []).map((row) => ({
+    row,
+    mass: finiteNumber(row.mass_kg),
+    color: finiteNumber(row.color_lovibond),
+    yield: finiteNumber(row.yield_fraction),
+    extract: finiteNumber(row.extract_kg),
+  }));
   const trace = (engine.get(N.traceMalts) ?? []).map((row) => ({
     row,
     mass: finiteNumber(row.mass_kg),
@@ -119,29 +102,16 @@ function fermentableRows(engine, gristMass) {
     yield: finiteNumber(row.yield_fraction),
     extract: 0,
   }));
-  const sugarRaw = engine.get(L.collection) ?? [];
-  const mode = engine.get(L.intent) ?? "dose";
-  let budget = 0;
-  try {
-    const resolvedBudget = engine.resolve(L.extract);
-    if (typeof resolvedBudget === "number" && Number.isFinite(resolvedBudget)) {
-      budget = resolvedBudget;
-    }
-  } catch (err) {
-    reportError("reportTables.sugarExtract", err);
-  }
-  const resolved = resolvedSugarMasses({
-    rows: sugarRaw,
-    budgetKg: budget,
-    mode,
+  const sugar = (engine.get(L.collection) ?? []).map((row) => {
+    const mass = finiteNumber(row.resolved_mass_kg);
+    return {
+      row,
+      mass,
+      color: finiteNumber(row.color_lovibond),
+      yield: finiteNumber(row.yield_fraction),
+      extract: mass * finiteNumber(row.yield_fraction),
+    };
   });
-  const sugar = sugarRaw.map((row, index) => ({
-    row,
-    mass: finiteNumber(resolved[index]?.massKg),
-    color: finiteNumber(row.color_lovibond),
-    yield: finiteNumber(row.yield_fraction),
-    extract: finiteNumber(resolved[index]?.massKg) * finiteNumber(row.yield_fraction),
-  }));
   return { major, trace, sugar };
 }
 
@@ -157,16 +127,16 @@ export function buildReportTables(artifact, catalog, engine) {
   const majorId = N.majorMalts;
   const traceId = N.traceMalts;
   const sugarId = L.collection;
-  const gristMassPath = N.gristMass;
+  const majorMass = `${majorId}.mass_kg`;
+  const majorExtract = `${majorId}.extract_kg`;
   const majorColor = `${majorId}.color_lovibond`;
   const majorPct = `${majorId}.pct`;
   const traceMass = `${traceId}.mass_kg`;
   const traceColor = `${traceId}.color_lovibond`;
-  const sugarMass = `${sugarId}.mass_kg`;
+  const sugarMass = `${sugarId}.resolved_mass_kg`;
   const sugarColor = `${sugarId}.color_lovibond`;
 
-  const gristMass = gristMassOf(engine);
-  const { major, trace, sugar } = fermentableRows(engine, gristMass);
+  const { major, trace, sugar } = readFermentables(engine);
   const gristRows = [...major, ...trace];
   const gristTotal = gristRows.reduce((sum, row) => sum + row.mass, 0);
   const gristShares = hamiltonPct(gristRows.map((row) => row.mass));
@@ -190,12 +160,12 @@ export function buildReportTables(artifact, catalog, engine) {
 
   const majorRows = major.map((row, index) => ({
     name: rowName(row.row),
-    amount: formatEntry(artifact, nodes[gristMassPath], row.mass, nl),
+    amount: formatEntry(artifact, nodes[majorMass], row.mass, nl),
     ppg: formatPpg(artifact, row.row.yield_fraction),
     color: formatEntry(artifact, nodes[majorColor], row.color, nl),
     own_pct: pctCell(finiteNumber(row.row.pct)),
     grist_pct: pctCell(gristShares[index]),
-    extract: formatEntry(artifact, nodes[gristMassPath], row.extract, nl),
+    extract: formatEntry(artifact, nodes[majorExtract], row.extract, nl),
     extract_pct: pctCell(extractShares[index]),
   }));
 
@@ -232,8 +202,7 @@ export function buildReportTables(artifact, catalog, engine) {
 export function buildReportSummaries(artifact, catalog, engine) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
-  const gristMass = gristMassOf(engine);
-  const { major, trace, sugar } = fermentableRows(engine, gristMass);
+  const { major, trace, sugar } = readFermentables(engine);
 
   const weigh = (rows) => {
     const mass = rows.reduce((sum, row) => sum + row.mass, 0);

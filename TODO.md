@@ -4,17 +4,21 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–3 landed: the adapter-format allowlist is empty, every numeric
-  readout routes through `views/producer/cell.js` (`formatCell` / `cellLabel`),
-  backend errors and capacity limits share one class and one table in
-  `core/errors.py`, and collections can declare row-scoped computed `fields`
-  (grammar revision 10, payload still 3; the feature is documented and unused).
-  Next is Phase 4, rows: `grist_row.mass_kg` / `extract_kg` and
-  `sugar_row.resolved_mass_kg` become computed fields, host writes
-  (`fieldActions.js`, `draftEditor.js`, `cards/late-additions.js`) are deleted,
-  `reportFormat.fermentableRows` stops re-deriving mass, and the Fermentables
-  card gains the mass/extract columns. Then regenerate and re-freeze the saved
-  batch by hand. See `plans/decomposition-and-display-contract.md` for the
+  Phases 0–4 landed: the adapter-format allowlist is empty, every numeric readout
+  routes through `views/producer/cell.js` (`formatCell` / `cellLabel`), backend
+  errors and capacity limits share one class and one table in `core/errors.py`,
+  collections can declare row-scoped computed `fields` (grammar revision 10,
+  payload still 3), and the fermentable rows read `grist_row.mass_kg` /
+  `extract_kg` / `sugar_row.resolved_mass_kg` from the artifact — host writes are
+  deleted, `reportFormat.fermentableRows` is gone, and the Fermentables card shows
+  mass and extract. Phase 4 amended Phase 3's edge rule: field inputs are
+  read-side edges resolved in authored mode, so a field may read the boundary its
+  collection feeds while every boundary request still carries authored rows only.
+  Next is Phase 5, the `core/batch/` package split along the existing phase
+  boundaries, behind a re-export shim (arithmetic unchanged, oracle snapshot
+  identical). Outstanding operational check: re-freeze the saved batch by hand on
+  `make local-dev` and confirm the printed bundle matches the screen (emulator
+  data is untracked). See `plans/decomposition-and-display-contract.md` for the
   per-phase context contract.
 
 ## Next (in order)
