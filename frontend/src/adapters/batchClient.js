@@ -1,7 +1,7 @@
 // Batch (draft/frozen) persistence client over the JSON seam. Browser-only —
 // not imported by node tests.
 
-import { requestJSON } from "./apiClient.js";
+import { requestBlob, requestJSON } from "./apiClient.js";
 
 export function listBatches() {
   return requestJSON("/batches");
@@ -51,5 +51,30 @@ export function previewReportBundle(batchId, payload) {
   return requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`, {
     method: "POST",
     body: payload,
+  });
+}
+
+const REPORT_PARAMS = ["doc_kind", "sections", "paper", "format", "page"];
+
+function reportPath(batchId, params = {}) {
+  const search = new URLSearchParams();
+  for (const key of REPORT_PARAMS) {
+    const value = params[key];
+    if (value !== undefined && value !== null && value !== "") {
+      search.set(key, String(value));
+    }
+  }
+  const query = search.toString();
+  return `/batches/${encodeURIComponent(batchId)}/report${query ? `?${query}` : ""}`;
+}
+
+export function getReport(batchId, params) {
+  return requestBlob(reportPath(batchId, params));
+}
+
+export function postReport(batchId, bundle, params) {
+  return requestBlob(reportPath(batchId, params), {
+    method: "POST",
+    body: { bundle },
   });
 }

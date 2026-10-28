@@ -214,6 +214,21 @@ export async function reportBundleFor(id, name) {
   return { name, bundle: await client.getReportBundle(id) };
 }
 
+// Rendered report for a stored batch (frozen): the server already has the bundle.
+export async function reportFor(id) {
+  return client.getReport(id);
+}
+
+// Rendered report for the active batch. A frozen batch is served from its stored
+// bundle; a draft is previewed through the bundle the browser builds here.
+export async function reportForActive() {
+  if (!active) return null;
+  if (active.status === "frozen") return client.getReport(active.id);
+  const file = await reportBundleForActive();
+  if (!file) return null;
+  return client.postReport(active.id, file.bundle);
+}
+
 export async function freezeActive() {
   if (!active || active.status !== "draft") return;
   if (app.boundaryPending) {

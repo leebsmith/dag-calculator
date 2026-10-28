@@ -280,7 +280,22 @@ def _report_response(rendered: RenderedReport) -> Response:
     )
 
 
-@app.get("/batches/{batch_id}/report")
+@app.get(
+    "/batches/{batch_id}/report",
+    tags=["report"],
+    summary="Render a frozen batch's report",
+    response_class=Response,
+    responses={
+        200: {
+            "description": "The rendered report",
+            "content": {"application/pdf": {}, "image/png": {}},
+        },
+        404: {"description": "Batch not found"},
+        409: {"description": "Draft batch, or a frozen batch without a stored bundle"},
+        422: {"description": "Unknown section, bad spec value, or an empty selection"},
+        503: {"description": "Typst is missing or not the pinned version"},
+    },
+)
 def get_report(
     batch_id: str,
     user: AllowedUser,
@@ -299,7 +314,22 @@ def get_report(
     return _report_response(service.render_report(user["uid"], batch_id, spec))
 
 
-@app.post("/batches/{batch_id}/report")
+@app.post(
+    "/batches/{batch_id}/report",
+    tags=["report"],
+    summary="Render a draft's posted bundle",
+    response_class=Response,
+    responses={
+        200: {
+            "description": "The rendered report",
+            "content": {"application/pdf": {}, "image/png": {}},
+        },
+        404: {"description": "Batch not found"},
+        409: {"description": "The batch is frozen; render its stored bundle instead"},
+        422: {"description": "Rejected bundle, or a bad spec value"},
+        503: {"description": "Typst is missing or not the pinned version"},
+    },
+)
 def preview_report(
     batch_id: str,
     payload: ReportRenderPayload,

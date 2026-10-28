@@ -82,6 +82,17 @@ function fakeClient() {
       calls.push({ op: "preview-bundle", id, payload });
       return { batch: { id, status: "draft", frozen_at: null } };
     },
+    async getReport(id) {
+      calls.push({ op: "report", id });
+      return { blob: { id }, type: "application/pdf" };
+    },
+    async postReport(id, bundle) {
+      calls.push({ op: "preview-report", id, bundle });
+      return { blob: { id }, type: "application/pdf" };
+    },
+    markFrozen(id) {
+      docs.get(id).status = "frozen";
+    },
   };
 }
 
@@ -433,6 +444,35 @@ test("reportBundleForActive previews a draft and reads a frozen bundle", async (
     bundle: { batch: { id: "frozen-1" }, content_hash: "sha256:stored" },
   });
   assert.ok(client.calls.some((c) => c.op === "report-bundle" && c.id === "frozen-1"));
+});
+
+test("reportFor reads a stored batch's rendered report", async () => {
+  const { client } = setup();
+
+  const report = await persistence.reportFor("frozen-1");
+
+  assert.deepEqual(report, { blob: { id: "frozen-1" }, type: "application/pdf" });
+  assert.ok(client.calls.some((call) => call.op === "report" && call.id === "frozen-1"));
+});
+
+test("reportForActive previews a draft and reads a frozen batch", async () => {
+  const { client } = setup();
+  await persistence.createUnsavedDraft({ name: "Saison" });
+  await persistence.flushSave();
+
+  const draft = await persistence.reportForActive();
+  assert.equal(draft.type, "application/pdf");
+  const post = client.calls.find((call) => call.op === "preview-report");
+  assert.ok(post, "the draft's bundle is posted for rendering");
+  assert.equal(post.bundle.batch.status, "draft");
+
+  await client.upsertBatch("frozen-2", { name: "Frozen", roots: {}, collections: {} });
+  client.markFrozen("frozen-2");
+  await persistence.open("frozen-2");
+
+  const frozen = await persistence.reportForActive();
+  assert.deepEqual(frozen, { blob: { id: "frozen-2" }, type: "application/pdf" });
+  assert.ok(client.calls.some((call) => call.op === "report" && call.id === "frozen-2"));
 });
 
 test("reportBundleForActive refuses while a boundary solve is pending", async () => {

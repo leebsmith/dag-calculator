@@ -43,6 +43,8 @@ function fakePersistence(overrides = {}) {
     freezeActive: record("freezeActive"),
     reportBundleForActive: async () => ({ name: "Active batch", bundle: { id: "active" } }),
     reportBundleFor: async (id, name) => ({ name, bundle: { id } }),
+    reportFor: async (id) => ({ blob: { id }, type: "application/pdf" }),
+    reportForActive: async () => ({ blob: { id: "active" }, type: "application/pdf" }),
     flushSave: record("flushSave"),
     saveNow: record("saveNow"),
     resolveConflictByReload: record("reload"),
@@ -57,10 +59,17 @@ function setupStub() {
 function makeStore(
   persistence = fakePersistence(),
   anchor = () => "right:0px; top:8px",
-  download = () => {}
+  download = () => {},
+  downloadFile = download
 ) {
   const setup = setupStub();
-  const store = createRecipesStore({ persistence, getSetup: () => setup, anchor, download });
+  const store = createRecipesStore({
+    persistence,
+    getSetup: () => setup,
+    anchor,
+    download,
+    downloadFile,
+  });
   return { store, persistence, setup };
 }
 
@@ -446,6 +455,68 @@ test("downloadRowBundle only serves frozen rows and closes the menu", async () =
     { bundle: { id: "frozen" }, filename: "saison.report-bundle.json" },
   ]);
   assert.equal(store.rowMenu, null);
+});
+
+test("downloadRowReport serves frozen rows from the stored report", async () => {
+  const files = [];
+  const { store } = makeStore(fakePersistence(), () => "", () => {}, (blob, filename) =>
+    files.push({ blob, filename })
+  );
+
+  store.rowMenu = { id: "frozen", name: "Saison", status: "draft" };
+  await store.downloadRowReport();
+  assert.deepEqual(files, []);
+  assert.equal(store.rowMenu, null);
+
+  store.rowMenu = { id: "frozen", name: "Saison", status: "frozen" };
+  await store.downloadRowReport();
+  assert.deepEqual(files, [
+    { blob: { id: "frozen" }, filename: "saison.pdf" },
+  ]);
+  assert.equal(store.rowMenu, null);
+});
+
+test("downloadActiveReport hands the blob and a safe filename to the downloader", async () => {
+  const files = [];
+  const { store } = makeStore(
+    fakePersistence({
+      reportForActive: async () => ({ blob: { kind: "pdf" }, type: "application/pdf" }),
+    }),
+    () => "",
+    () => {},
+    (blob, filename) => files.push({ blob, filename })
+  );
+  store.activeName = "House Pale / v2";
+
+  await store.downloadActiveReport();
+
+  assert.deepEqual(files, [
+    { blob: { kind: "pdf" }, filename: "house-pale-v2.pdf" },
+  ]);
+});
+
+test("a failed report download surfaces the server message", async () => {
+  resetErrorObservability();
+  const files = [];
+  const { store } = makeStore(
+    fakePersistence({
+      reportForActive: async () => {
+        throw new Error("nothing to report: no requested section is present");
+      },
+    }),
+    () => "",
+    () => {},
+    (blob, filename) => files.push({ blob, filename })
+  );
+
+  const { logged } = await quiet(() => store.downloadActiveReport());
+
+  assert.deepEqual(files, [], "a failed report must not download");
+  assert.deepEqual(store.actionError, {
+    title: "Couldn't build the report",
+    message: "nothing to report: no requested section is present",
+  });
+  assert.equal(logged.length, 1);
 });
 
 test("a failed bundle download surfaces the server message instead of the console", async () => {

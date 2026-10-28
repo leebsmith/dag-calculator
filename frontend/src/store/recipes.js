@@ -6,7 +6,7 @@
 // injected `anchor` (popover placement), which keeps it testable in node while
 // `main.js` supplies the viewport-aware implementation.
 
-import { downloadJSON } from "../adapters/download.js";
+import { downloadBlob, downloadJSON } from "../adapters/download.js";
 import { reportError } from "../observability.js";
 import { safeFilename } from "../utils.js";
 import {
@@ -22,6 +22,7 @@ export function createRecipesStore({
   getSetup,
   anchor = () => "",
   download = downloadJSON,
+  downloadFile = downloadBlob,
 } = {}) {
   return {
     view: "batches", // "batches" | "editor"
@@ -340,6 +341,46 @@ export function createRecipesStore({
         return;
       }
       download(file.bundle, safeFilename(file.name, "report-bundle.json"));
+    },
+
+    // Frozen rows render from the server's stored bundle.
+    async downloadRowReport() {
+      const batch = this.rowMenu;
+      this.closeRowMenu();
+      if (!batch || batch.status !== "frozen") return;
+      this.actionError = null;
+      let report;
+      try {
+        report = await persistence.reportFor(batch.id);
+      } catch (err) {
+        this.recordActionFailure(
+          "Couldn't build the report",
+          "recipes.downloadRowReport",
+          err
+        );
+        return;
+      }
+      if (!report) return;
+      downloadFile(report.blob, safeFilename(batch.name, "pdf"));
+    },
+
+    // The editor is the only place a draft's report can be built: the bundle
+    // needs the live engine's formatted strings and catalog.
+    async downloadActiveReport() {
+      this.actionError = null;
+      let report;
+      try {
+        report = await persistence.reportForActive();
+      } catch (err) {
+        this.recordActionFailure(
+          "Couldn't build the report",
+          "recipes.downloadActiveReport",
+          err
+        );
+        return;
+      }
+      if (!report) return;
+      downloadFile(report.blob, safeFilename(this.activeName, "pdf"));
     },
   };
 }

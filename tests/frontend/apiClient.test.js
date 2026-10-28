@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { flattenResponse, requestJSON, setTokenProvider } from "../../frontend/src/adapters/apiClient.js";
+import {
+  flattenResponse,
+  requestBlob,
+  requestJSON,
+  setTokenProvider,
+} from "../../frontend/src/adapters/apiClient.js";
 
 const BATCH = {
   sg_post_boil: 1.055,
@@ -44,6 +49,59 @@ function stubFetch(t, response) {
     },
   };
 }
+
+function stubBlobFetch(t, response) {
+  const calls = [];
+  t.after(() => setTokenProvider(async () => null));
+  return {
+    calls,
+    impl: async (url, init) => {
+      calls.push({ url, init });
+      return response;
+    },
+  };
+}
+
+test("requestBlob returns the artifact and the selection headers", async (t) => {
+  const headers = {
+    "Content-Type": "application/pdf",
+    "X-Report-Sections": "brewhouse,batch-facts",
+    "X-Report-Pages": "3",
+    ETag: '"abc"',
+  };
+  const { calls, impl } = stubBlobFetch(t, {
+    ok: true,
+    status: 200,
+    blob: async () => ({ type: "application/pdf" }),
+    headers: { get: (name) => headers[name] ?? null },
+  });
+  setTokenProvider(async () => "token-123");
+
+  const report = await requestBlob("/batches/b1/report", { fetchImpl: impl });
+
+  assert.equal(calls[0].init.headers.Authorization, "Bearer token-123");
+  assert.equal(report.type, "application/pdf");
+  assert.equal(report.sections, "brewhouse,batch-facts");
+  assert.equal(report.pages, 3);
+  assert.equal(report.etag, '"abc"');
+});
+
+test("requestBlob surfaces the server's refusal message", async (t) => {
+  const { impl } = stubBlobFetch(t, {
+    ok: false,
+    status: 422,
+    json: async () => ({ detail: "nothing to report: no section is present" }),
+  });
+
+  await assert.rejects(
+    () => requestBlob("/batches/b1/report", { fetchImpl: impl }),
+    /nothing to report/
+  );
+  await assert.rejects(
+    () => requestBlob("/batches/b1/report", { fetchImpl: impl }),
+    (err) => err.code === "VALIDATION"
+  );
+});
 
 test("requestJSON attaches the injected bearer token", async (t) => {
   const { calls, impl } = stubFetch(t, { ok: true, status: 200, json: async () => ({ ok: true }) });

@@ -153,6 +153,20 @@ template edit or a different unit preference revalidates. Only frozen renders ca
 one: a preview embeds its compile time, so the same tag would not mean the same
 bytes. Nothing is persisted — the bundle is the fact and the render is derived.
 
+The routes are annotated for FastAPI's schema, so `GET /docs` and
+`/openapi.json` show them with their query parameters, the two response content
+types, and the status codes above.
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" -o house-pale.pdf \
+  "$API/batches/$BATCH_ID/report?format=pdf"
+```
+
+`BATCH_ID` is the record id: in the app it is the id behind a row's menu action,
+and offline it is `batch.id` in the downloaded bundle (the report prints only the
+first eight characters; the full value is in its metadata). In the UI, a frozen
+row's menu has **Download report**; the editor toolbar has it for the open draft.
+
 Canonical order is registry order; `sections=` cannot reorder it. The generated
 [`report-sections.md`](report-sections.md) lists the order, the presence
 predicate, and the source file for every section.
