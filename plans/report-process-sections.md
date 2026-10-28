@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-renderer, report-bundle]
 blocks: []
 gate: a frozen bundle renders a Brewhouse section (process inputs plus the conversion/brewhouse efficiency pair) and a Liquor Ledger that closes on the sparge demand, from values the bundle already carries; the generator stays numeric-free
-status: planned (decision record; build not started)
+status: implemented (three commits landed)
 ---
 
 # Report process sections
@@ -58,12 +58,12 @@ the target, accounting for absorption, tun dead space and hose transfer. `M·E` 
 therefore larger than `η_conv·E·M` by the retention, and `BE < η_conv` for every
 batch. A test must pin a computed value, not an identity.
 
-Open at implementation: whether the recovery ratio uses the ledger's full cold
-volume (`V_ferm / ((V_post + late)(1 − shrink))`) or the solver's narrower
-`v_kettle_cold = V_ferm + dead·(1 − shrink)`, which excludes transfer and trub.
-The recommendation is the ledger basis, because the readout claims "into the
-fermenter" and the ledger is the volume authority. Record whichever is chosen in
-`domain-equations.md` next to the formula.
+**Resolved at implementation:** the recovery ratio uses the solver's
+`v_kettle_cold = V_ferm + dead·(1 − shrink)`, not the ledger's larger cold volume.
+The extract target is defined on that basis, so mixing in the ledger's basis would
+charge transfer and trub against extract a second time — the model treats those as
+volumetric losses that never enter the extract chain. Recorded in
+`domain-equations.md` §2.6.
 
 ---
 
@@ -78,9 +78,11 @@ v_hlt_top_up        = max(0, v_hlt_target − v_hlt_after_strike)
 v_sparge_deliverable = v_hlt_after_strike + v_hlt_top_up − v_hlt_debt
 ```
 
-Only `debt`, `after_strike`, `top_up` and `deliverable` are outputs today;
-`required` and `target` are locals. The ledger closes:
-`fill − strike + top_up − debt = deliverable`.
+All six are outputs as of commit 1. `required` is exposed to name the sparge
+demand behind the target but is not printed: it equals the target unless the coil
+floor binds. The ledger closes:
+`fill − strike = after_strike`; `after_strike + top_up = target`;
+`target − debt = deliverable`.
 
 ---
 
@@ -89,7 +91,7 @@ Only `debt`, `after_strike`, `top_up` and `deliverable` are outputs today;
 ```
 Brewhouse
 - Target ABV            5.5%
-- Topology              R:L to G
+- Topology              Liquor-to-grist ratio
 - Conversion efficiency 90.0%
 - Brewhouse efficiency  81.9%
 - Mash thickness        3.0 L/kg
@@ -105,14 +107,13 @@ Brewhouse
 
 ```
 Liquor Ledger
-HLT fill                30.0 L   (heated to 68.3 °C)
-First underlet         (15.0) L
-HLT after strike        15.0 L
-Top-up (cold)            3.2 L   → 18.2 L target
-HLT debt               (1.0) L
-Salted sparge volume    18.2 L
-Second underlet         17.2 L   (target 76.0 °C)
-Surplus                  0.0 L
+HLT fill (heated to 68.3 °C)   30.0 L
+First underlet                (15.0) L
+HLT after strike               15.0 L
+Top-up (cold) to 18.2 L          3.2 L
+HLT debt                      (1.0) L
+Second underlet (target 76.0 °C) 17.2 L
+Surplus                          0.0 L
 ```
 
 The ledger uses the volume ledger's accounting idiom: subtractions in
@@ -125,10 +126,10 @@ temperature rides on the second-underlet row as a *target*, never as an actual.
 
 | Value | Path | State |
 |---|---|---|
-| HLT target | `solver.batch.hlt.v_hlt_target` | **new output** |
-| HLT required | `solver.batch.hlt.v_hlt_required` | **new output** |
-| Brewhouse efficiency | `solver.batch.brewhouse_efficiency` | **new output** |
-| Sparge water temperature | `batch.sparge_water_temp_c` | **new root** (+ `default_sparge_water_temp_c`) |
+| HLT target | `solver.batch.hlt.v_hlt_target` | landed (commit 1) |
+| HLT required | `solver.batch.hlt.v_hlt_required` | landed (commit 1) |
+| Brewhouse efficiency | `solver.batch.brewhouse_efficiency` | landed (commit 1) |
+| Sparge water temperature | `batch.sparge_water_temp_c` | landed (commit 2), default 76 °C |
 | HLT fill / debt / after strike / top-up / deliverable | `batch.hlt_starting_volume_l`, `solver.batch.hlt.*` | exist |
 | Strike draw | `solver.batch.cascade.v_strike` | exists |
 | Salted sparge volume, surplus | `batch.sparge_salted_volume`, `batch.surplus_sparge_capacity` | exist |

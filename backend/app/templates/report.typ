@@ -4,9 +4,11 @@
 #import "theme.typ": document
 #import "lib/bundle.typ": bundle, batch, catalog, is-frozen
 #import "lib/format.typ": opt
+#import "sections/brewhouse.typ": present-brewhouse, render-brewhouse
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/yeast.typ": present-yeast, render-yeast
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
+#import "sections/liquor-ledger.typ": present-liquor-ledger, render-liquor-ledger
 
 // === registry:begin ===
 // One line per section, in canonical render order. Each entry names a module in
@@ -14,9 +16,11 @@
 // lib/bundle.typ and take no arguments.
 //   (id: "…", title: "…", present: <fn>, render: <fn>),
 #let sections = (
+  (id: "brewhouse", title: "Brewhouse", present: present-brewhouse, render: render-brewhouse),
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
   (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
+  (id: "liquor-ledger", title: "Liquor Ledger", present: present-liquor-ledger, render: render-liquor-ledger),
 )
 // === registry:end ===
 

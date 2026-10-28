@@ -124,6 +124,16 @@ PRESENCE_PROBE = (
     "#metadata(present-volume-ledger()) <probe>\n"
 )
 
+BREWHOUSE_PRESENCE_PROBE = (
+    '#import "sections/brewhouse.typ": present-brewhouse\n'
+    "#metadata(present-brewhouse()) <probe>\n"
+)
+
+LIQUOR_PRESENCE_PROBE = (
+    '#import "sections/liquor-ledger.typ": present-liquor-ledger\n'
+    "#metadata(present-liquor-ledger()) <probe>\n"
+)
+
 BATCH_FACTS_PROBE = (
     '#import "sections/batch-facts.typ": present-batch-facts\n'
     "#metadata(present-batch-facts()) <probe>\n"
@@ -140,6 +150,60 @@ YEAST_GATES_PROBE = (
     '#import "sections/yeast.typ": diastaticus, presents-derate\n'
     "#metadata((sta1: diastaticus(), derate: presents-derate())) <probe>\n"
 )
+
+
+def test_brewhouse_is_present_with_the_process_inputs() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, BREWHOUSE_PRESENCE_PROBE) is True
+
+
+def test_brewhouse_is_absent_without_a_process_input() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["batch.conversion_efficiency"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, BREWHOUSE_PRESENCE_PROBE) is False
+        render(root, "brewhouse")
+
+
+def test_brewhouse_renders_alone_and_in_the_full_report() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+
+        render(root, "brewhouse")
+        assert (root / "report.pdf").stat().st_size > 0
+
+        render(root)
+        assert (root / "report.pdf").stat().st_size > 0
+
+
+def test_liquor_ledger_is_present_with_the_hlt_budget() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+        assert probe(root, LIQUOR_PRESENCE_PROBE) is True
+
+
+def test_liquor_ledger_is_absent_without_the_hlt_budget() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["solver.batch.hlt.v_hlt_debt"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, LIQUOR_PRESENCE_PROBE) is False
+        render(root, "liquor-ledger")
+
+
+def test_liquor_ledger_renders_alone_and_in_the_full_report() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), BUNDLE)
+
+        render(root, "liquor-ledger")
+        assert (root / "report.pdf").stat().st_size > 0
+
+        render(root)
+        assert (root / "report.pdf").stat().st_size > 0
 
 
 def test_batch_facts_is_present_with_the_realized_values() -> None:

@@ -56,12 +56,6 @@
   for malt, `mass × yield` for sugar, trace excluded — A9) with each row's share of total extract.
   That is where a sugar's 9.8 % of grist mass and 9.4 % of extract become two visible numbers.
   Needs producer extract columns and a home: a fourth table in Batch Facts, or its own section.
-* **Report process sections** — Brewhouse (first) and Liquor Ledger (last), plus the three
-  boundary outputs they need: `v_hlt_target`, `v_hlt_required`, and `brewhouse_efficiency`.
-  Decisions, layouts, and the three-commit sequence: `plans/report-process-sections.md`.
-* **Brewhouse efficiency** — malt-only extract into the fermenter over the grist's potential;
-  a boundary output rather than a report-side derivation, because lauter retention is already
-  inside `m_grist` (so it is not `η_conv × volume recovery`). Same plan, commit 1.
 * **Deferred local-view save** — the advisory target and style ABV input still call
   the batch autosave hook; move them to a deferred/queued save after the
   cache-only render fix is settled.
@@ -115,6 +109,9 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
+* **Report process sections** — Brewhouse (first) and Liquor Ledger (last), the HLT
+  target/required outputs, brewhouse efficiency, and the display-only sparge-water target —
+  `plans/report-process-sections.md`.
 * **Scale pins and audited sugar database** — ABV/OG/FG recipe pins, the live
   pin-preview matrix, effective sugar fermentability, and the three-tier sugar
   source — `plans/pin-matrix.md`, `docs/sugar-database.md`,

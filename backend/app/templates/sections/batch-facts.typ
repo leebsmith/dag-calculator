@@ -91,6 +91,7 @@
   v(4pt)
   heading(level: 2)[Batch Solver Results]
   [
+    *Pre-boil:* #formatted-text("solver.batch.cascade.sg_pre_boil"),
     *OG:* #formatted-text("solver.batch.sg_post_boil"),
     *FG:* #formatted-text("batch.realized_fg"),
     *AA%:* #formatted-text("solver.batch.apparent_attenuation"),

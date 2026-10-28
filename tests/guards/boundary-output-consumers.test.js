@@ -15,10 +15,7 @@ const ALLOW = new Map([
   ["solver.water.grist_buckets_kg.", "grist-bucket diagnostic for future reporting"],
   ["solver.water.total_added_salt_mass_g", "mineral-mass diagnostic for future reporting"],
   ["solver.water.added_mineral_tds_ppm", "TDS diagnostic for future reporting"],
-  // Surfaced by the report's process sections (plans/report-process-sections.md);
-  // the registry/manifest consumer lands with them.
-  ["solver.batch.hlt.v_hlt_target", "Liquor Ledger section (report)"],
-  ["solver.batch.hlt.v_hlt_required", "Liquor Ledger section (report)"],
+  ["solver.batch.hlt.v_hlt_required", "names the sparge demand behind the top-up target; equal to it unless the coil floor binds"],
 ]);
 
 function collectStrings(value, out = new Set()) {
@@ -44,6 +41,16 @@ function registrySourceStrings() {
   return out;
 }
 
+// The report sections address boundary outputs as dotted string literals, so a
+// value printed only by Typst still has a consumer.
+function templateSourceStrings() {
+  const out = new Set();
+  for (const file of walk("backend/app/templates", [".typ"]).map(rel)) {
+    for (const match of read(file).matchAll(/"([^"]*)"/g)) { if (match[1]) out.add(match[1]); }
+  }
+  return out;
+}
+
 function consumedReferences() {
   const consumed = new Set();
   for (const node of Object.values(artifact().nodes)) {
@@ -54,6 +61,7 @@ function consumedReferences() {
   collectStrings(steps, consumed);
   collectStrings(registry, consumed);
   for (const path of registrySourceStrings()) consumed.add(path);
+  for (const path of templateSourceStrings()) consumed.add(path);
   // A reference to the boundary node itself is not a consumer of its outputs.
   for (const [id, node] of Object.entries(artifact().nodes)) {
     if (node.kind === "boundary") consumed.delete(id);

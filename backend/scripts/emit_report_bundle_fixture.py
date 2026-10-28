@@ -82,6 +82,9 @@ RECORD = {
             "id": "herms-30l",
             "name": "HERMS 30L",
             "max_hlt_volume_l": 30.0,
+            "hlt_dead_space_l": 0.5,
+            "hlt_transfer_loss_l": 0.5,
+            "hlt_coil_floor_l": 4.0,
             "max_kettle_volume_l": 40.0,
             "mash_dead_space_l": 0.5,
             "mash_transfer_loss_l": 0.5,
@@ -141,6 +144,16 @@ RECORD = {
     "valuation": {
         "batch.v_ferm": 20.0,
         "batch.target_abv": 5.5,
+        "batch.topology": "r_l_to_g",
+        "batch.conversion_efficiency": 0.90,
+        "batch.mash_thickness_l_per_kg": 3.0,
+        "batch.runoff_ratio": 1.5,
+        "batch.boil_time_min": 60.0,
+        "batch.boil_off_rate_l_per_hr": 3.0,
+        "batch.sparge_water_temp_c": 76.0,
+        "batch.grain_moisture_fraction": 0.04,
+        "batch.hlt_starting_volume_l": 30.0,
+        "batch.surplus_sparge_capacity": 0.0,
         "batch.yeast_id": "us-05",
         "batch.fermentation": "ale",
         "batch.attenuation_derate_points": 0.03,
@@ -184,7 +197,15 @@ RECORD = {
             "cascade.v_sparge": 17.2,
             "cascade.v_run2": 17.2,
             "cascade.v_post_boil": 22.4,
+            "cascade.sg_pre_boil": 1.045,
             "apparent_attenuation": 0.756,
+            "hlt.v_hlt_debt": 1.0,
+            "hlt.v_hlt_after_strike": 15.0,
+            "hlt.v_hlt_top_up": 3.2,
+            "hlt.v_sparge_deliverable": 17.2,
+            "hlt.v_hlt_required": 18.2,
+            "hlt.v_hlt_target": 18.2,
+            "brewhouse_efficiency": 0.819,
         },
         "batch.target_ibu": 40.0,
         "batch.realized_fg": 1.012,
@@ -255,6 +276,65 @@ PAYLOAD = FreezePayload(
             ),
             "batch.target_abv": NodePresentation(
                 label="Target ABV", dimension="abv", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.topology": NodePresentation(
+                label="Topology",
+                options=["r_l_to_g", "runoff_ratio"],
+                option_labels={
+                    "r_l_to_g": "Liquor-to-grist ratio",
+                    "runoff_ratio": "Runnings ratio",
+                },
+            ),
+            "batch.conversion_efficiency": NodePresentation(
+                label="Conversion efficiency", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.mash_thickness_l_per_kg": NodePresentation(
+                label="Mash thickness", dimension="mash_thickness", unit="L_per_kg", symbol="L/kg", decimals=1
+            ),
+            "batch.runoff_ratio": NodePresentation(
+                label="Runoff ratio", dimension="dimensionless", decimals=1
+            ),
+            "batch.boil_time_min": NodePresentation(
+                label="Boil time", dimension="time", unit="min", symbol="min", decimals=0
+            ),
+            "batch.boil_off_rate_l_per_hr": NodePresentation(
+                label="Boil-off rate", dimension="volume_per_time", unit="L_per_hr", symbol="L/hr", decimals=1
+            ),
+            "batch.sparge_water_temp_c": NodePresentation(
+                label="Sparge water temperature", dimension="temperature", unit="degC", symbol="°C", decimals=1
+            ),
+            "batch.grain_moisture_fraction": NodePresentation(
+                label="Grain moisture", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.hlt_starting_volume_l": NodePresentation(
+                label="HLT fill", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "batch.surplus_sparge_capacity": NodePresentation(
+                label="Sparge surplus", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.cascade.sg_pre_boil": NodePresentation(
+                label="Pre-boil gravity", dimension="gravity", unit="Plato", symbol="°P", decimals=1
+            ),
+            "solver.batch.brewhouse_efficiency": NodePresentation(
+                label="Brewhouse efficiency", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "solver.batch.hlt.v_hlt_debt": NodePresentation(
+                label="HLT debt", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.hlt.v_hlt_after_strike": NodePresentation(
+                label="HLT after strike", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.hlt.v_hlt_top_up": NodePresentation(
+                label="HLT top-up", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.hlt.v_sparge_deliverable": NodePresentation(
+                label="Sparge deliverable", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.hlt.v_hlt_required": NodePresentation(
+                label="HLT required", dimension="volume", unit="L", symbol="L", decimals=1
+            ),
+            "solver.batch.hlt.v_hlt_target": NodePresentation(
+                label="HLT top-up target", dimension="volume", unit="L", symbol="L", decimals=1
             ),
             "mash.grain_temp_c": NodePresentation(
                 label="Grain temperature", dimension="temperature", unit="degC", symbol="°C", decimals=1
@@ -485,6 +565,26 @@ PAYLOAD = FreezePayload(
         "batch.yeast.sta1": FormattedValue(text="true"),
         "style.name": FormattedValue(text="American Pale Ale"),
         "water.source.source_name": FormattedValue(text="City tap"),
+        "batch.target_abv": FormattedValue(text="5.5%", number="5.5", unit="%"),
+        "mash.strike_water_temp_c": FormattedValue(text="68.3 °C", number="68.3", unit="°C"),
+        "batch.topology": FormattedValue(text="Liquor-to-grist ratio"),
+        "batch.conversion_efficiency": FormattedValue(text="90.0%", number="90.0", unit="%"),
+        "solver.batch.brewhouse_efficiency": FormattedValue(text="81.9%", number="81.9", unit="%"),
+        "batch.mash_thickness_l_per_kg": FormattedValue(text="3.0 L/kg", number="3.0", unit="L/kg"),
+        "batch.runoff_ratio": FormattedValue(text="1.5", number="1.5"),
+        "batch.boil_time_min": FormattedValue(text="60 min", number="60", unit="min"),
+        "batch.boil_off_rate_l_per_hr": FormattedValue(text="3.0 L/hr", number="3.0", unit="L/hr"),
+        "batch.sparge_water_temp_c": FormattedValue(text="76.0 °C", number="76.0", unit="°C"),
+        "batch.grain_moisture_fraction": FormattedValue(text="4.0%", number="4.0", unit="%"),
+        "batch.hlt_starting_volume_l": FormattedValue(text="30.0 L", number="30.0", unit="L"),
+        "batch.surplus_sparge_capacity": FormattedValue(text="0.0 L", number="0.0", unit="L"),
+        "solver.batch.cascade.sg_pre_boil": FormattedValue(text="11.2 °P", number="11.2", unit="°P"),
+        "solver.batch.hlt.v_hlt_debt": FormattedValue(text="1.0 L", number="1.0", unit="L"),
+        "solver.batch.hlt.v_hlt_after_strike": FormattedValue(text="15.0 L", number="15.0", unit="L"),
+        "solver.batch.hlt.v_hlt_top_up": FormattedValue(text="3.2 L", number="3.2", unit="L"),
+        "solver.batch.hlt.v_sparge_deliverable": FormattedValue(text="17.2 L", number="17.2", unit="L"),
+        "solver.batch.hlt.v_hlt_required": FormattedValue(text="18.2 L", number="18.2", unit="L"),
+        "solver.batch.hlt.v_hlt_target": FormattedValue(text="18.2 L", number="18.2", unit="L"),
         "solver.batch.sg_post_boil": FormattedValue(text="13.6 °P", number="13.6", unit="°P"),
         "batch.realized_fg": FormattedValue(text="3.1 °P", number="3.1", unit="°P"),
         "solver.batch.apparent_attenuation": FormattedValue(text="75.6%", number="75.6", unit="%"),
