@@ -13,9 +13,6 @@
   enumerability is bespoke per card; card refresh order is implicit. Directions:
   namespaced members (`app.style.*`), one `defineCard()` helper, A8 extended to
   ownership, a generated ownership index from `INSTALLERS`.
-* **Operational re-freeze** — the closed program left one check a test cannot own:
-  re-freeze the saved batch by hand on `make local-dev` and confirm the printed
-  bundle matches the screen (emulator data is untracked).
 
 ## Next (in order)
 
