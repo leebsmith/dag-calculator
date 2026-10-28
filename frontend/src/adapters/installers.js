@@ -14,7 +14,10 @@ import { KEYS as modalFocusKeys } from "./modalFocus.js";
 import { KEYS as libraryUiKeys } from "./libraryUi.js";
 import { KEYS as snapshotKeys } from "../store/snapshot.js";
 import { KEYS as yeastKeys } from "./cards/yeast.js";
-import { KEYS as styleKeys } from "./cards/style.js";
+import { KEYS as styleDeclarationKeys } from "./cards/style/declaration.js";
+import { KEYS as styleNavigatorKeys } from "./cards/style/navigator.js";
+import { KEYS as styleTargetsKeys } from "./cards/style/targets.js";
+import { KEYS as styleConformanceKeys } from "./cards/style/conformance.js";
 import { KEYS as hopKeys } from "./cards/hops.js";
 import { KEYS as lateAdditionsKeys } from "./cards/late-additions.js";
 import { KEYS as traceMaltsKeys } from "./cards/trace-malts.js";
@@ -31,7 +34,10 @@ export const INSTALLERS = [
   { name: "snapshot", keys: snapshotKeys },
   { name: "libraryUi", keys: libraryUiKeys },
   { name: "yeast", keys: yeastKeys },
-  { name: "style", keys: styleKeys },
+  { name: "styleDeclaration", keys: styleDeclarationKeys },
+  { name: "styleNavigator", keys: styleNavigatorKeys },
+  { name: "styleTargets", keys: styleTargetsKeys },
+  { name: "styleConformance", keys: styleConformanceKeys },
   { name: "hop", keys: hopKeys },
   { name: "lateAdditions", keys: lateAdditionsKeys },
   { name: "traceMalts", keys: traceMaltsKeys },

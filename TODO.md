@@ -4,7 +4,7 @@
 
 * **Decomposition & display contract** — nine phases, one display rule, one
   error/constraint truth, one derivation site, and the solver package splits.
-  Phases 0–6 landed: the adapter-format allowlist is empty, every numeric readout
+  Phases 0–7 landed: the adapter-format allowlist is empty, every numeric readout
   routes through `views/producer/cell.js` (`formatCell` / `cellLabel`), backend
   errors and capacity limits share one class and one table in `core/errors.py`,
   collections can declare row-scoped computed `fields` (grammar revision 10,
@@ -27,9 +27,15 @@
   `warnings`/`notes` projected from the events — the `warnings.append` sites and
   the reconciliation loop are gone. A 19,440-case sweep matches the pre-split
   module on every numeric field and keeps every pre-split telemetry message.
-  Next is Phase 7, the style-card split: `views/producer/stylePlot.js` for the
-  SVG projection and `adapters/cards/style/` modules behind the same KEYS, with
-  no new app members.
+  Phase 7 moved the SVG projection into `views/producer/stylePlot.js`
+  (`stylePlotModel`, now tested without the Alpine harness) and split the card
+  into `adapters/cards/style/` — `declaration` (7 keys) → `navigator` (25) →
+  `targets` (36) → `conformance` (4), one installer each — leaving
+  `cards/style.js` a composition root with no member added, renamed, or dropped.
+  Next is Phase 8, bundle integrity: the 130-line
+  `ReportBundle._cross_references` validator becomes named checks in
+  `services/bundle_integrity.py`, `seal()` validates once, and every existing
+  error message survives verbatim.
   Outstanding operational check: re-freeze the saved batch by hand on
   `make local-dev` and confirm the printed bundle matches the screen (emulator
   data is untracked). See `plans/decomposition-and-display-contract.md` for the

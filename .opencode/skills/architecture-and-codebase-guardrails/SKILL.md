@@ -217,6 +217,7 @@ Import paths (from the file doing the importing; `utils.js` is a barrel):
 | Any scalar → display string | `formatValue(value)` | Integers verbatim, others trimmed to 3dp, `""` for null/NaN/Infinity |
 | Producer readout (number + symbol) | `formatCell(value, { decimals, symbol })` → `{ display, unit }` | `frontend/src/views/producer/cell.js`; the one rule for `table`/`scalar`/`finding`/`collection`/`reportFormat`. Value is already converted — never call `fromBase` here |
 | Producer readout as one label | `cellLabel(value, { decimals, symbol, dash })` | Same module; `%` binds tight, other symbols get a space |
+| Precomputed SVG plot model | `stylePlotModel({ region, point, safestPoint, pin, target })` → model or `null` | `frontend/src/views/producer/stylePlot.js`; the fermentation-target projection. Pure; templates bind the coordinates and never measure |
 | Fixed-decimal display | `formatWithDecimals(value, decimals, { dash })` | `decimals = null` trims to 3dp |
 | Round a number (not display) | `roundTo(value, decimals)` | Returns `number|null` |
 | Numeric coercion of input | `toFiniteOrNull(value)` | Trims strings, rejects booleans/arrays/blank/Infinity |

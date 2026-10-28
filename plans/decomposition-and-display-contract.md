@@ -2,8 +2,8 @@
 
 Status: **in flight**. Phases 0 (contract guards), 1 (one cell formatter), 2
 (error and constraint truth), 3 (per-row computed fields), 4 (row migration),
-5 (`core/batch/`), and 6 (`core/water/` + one findings channel) landed; Phase 7
-is next.
+5 (`core/batch/`), 6 (`core/water/` + one findings channel), and 7 (the style
+card split) landed; Phase 8 is next.
 
 This is the commit contract for a nine-phase cleanup of the things the feature
 run left behind: one display rule, one error/constraint truth, one derivation
@@ -521,6 +521,38 @@ precomputed, so templates never measure.
 
 **Handoff.** Record the new KEYS ownership list. This phase is the worked example
 for the Alpine-root TODO in §3.
+
+**Landed.** `views/producer/stylePlot.js` exports
+`stylePlotModel({ region, point, safestPoint, pin, target })`, returning the model
+the template binds or `null` when there is nothing to draw. It owns the fixed
+320 px square, its margins, the tick ladder, the polyline builder, and every label
+format; the region vertices, contours, and composition locus still come from
+`engine/fermentation.js`. `tests/frontend/style-plot.test.js` exercises it without
+the Alpine harness: the three pin geometries, the unpinned case, the degenerate
+region, and the projected coordinates and summary.
+
+`adapters/cards/style.js` is now a composition root (~20 lines) over four modules
+under `adapters/cards/style/`, each exporting `KEYS`. The split is a partition of
+the old member list — no app member was added, renamed, or dropped; the declared
+KEYS gained one entry (`conformanceSummary`, below):
+
+| Module | KEYS | Members |
+|---|---|---|
+| `declaration.js` | 7 | `selectedStyleId`, `selectedStyle`, `styleGravity`, `styleVitals`, `fermentationField`, `fermentationProvenance`, `styleEnvelopeFields` |
+| `navigator.js` | 25 | `styleRegion`, `styleEnvelope`, `styleSafestPoint`, `styleExtract`, `styleAbvTouched`, `styleAbvCentered`, `styleSolvedAa`, `styleSolvedCap`, `styleSolvedVolume`, `attenuationBlend`, `attenuationCap`, `attenuationSugarLift`, `computeStyleTarget`, `writeStyleAbv`, `setStyleTargetAbv`, `centerOrClampStyleAbv`, `afterCompute`, `onBatchLoad`, `resetStyleTarget`, `styleTargetNearest`, `styleAbvBounds`, `styleAbvTarget`, `styleTargetInfo`, `styleTargetRisk`, `stylePreview` |
+| `targets.js` | 36 | `scalePin`, `scalePinLabel`, `activeScaleTargetRoot`, `activeScaleTarget`, `activeScaleTargetLabel`, `activeScaleTargetDisplay`, `activeScaleTargetUnit`, `activeScaleTargetStep`, `scaleTargetMismatch`, `targetSrm`, `targetIbu`, `whirlpoolFraction`, `boilIbu`, `whirlpoolIbu`, `syncScalePinState`, `setScalePin`, `setScaleTarget`, `editScaleTargetInput`, `commitScaleTargetInput`, `resetScaleTarget`, `refreshTargets`, `setTargetSrm`, `setTargetIbu`, `setWhirlpoolFraction`, `scalePinOptions`, `styleSrmBounds`, `styleIbuBounds`, `srmTargetField`, `ibuTargetField`, `srmTargetProvenance`, `ibuTargetProvenance`, `ibuGu`, `ibuGuDisplay`, `whirlpoolPctDisplay`, `boilIbuDisplay`, `whirlpoolIbuDisplay` |
+| `conformance.js` | 4 | `styleConformance`, `styleSai`, `styleConformanceReport`, `conformanceSummary` |
+
+`conformanceSummary` is the one key the old list never declared: it is a
+non-enumerable getter, so the surface check could not see it and it went
+unguarded rather than missing. `INSTALLERS` names the four modules,
+`styleDeclaration` / `styleNavigator` / `styleTargets` / `styleConformance`, so a
+collision inside the card is now reported against the module that caused it.
+`refreshStyleCard` keeps the old order — declaration, then the solved navigator
+state (which sets the extract point), then the pin mirrors and the target
+mismatch that read it. No arithmetic, formatting, or template moved; `make test`
+reports 853 frontend passes (848 plus the five plot tests) and the same 694
+backend passes.
 
 ### Phase 8 — Bundle integrity (½ day)
 
