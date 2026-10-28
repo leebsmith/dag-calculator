@@ -163,7 +163,9 @@
                         <template x-if="c.id === f.columns[f.columns.length - 1].id">
                           <div>
                             <div class="text-xs text-muted" x-show="row.hint" x-text="'(' + row.hint + ')'"></div>
-                            <div class="text-xs text-muted" x-show="row.note && row.note.show" x-text="'(' + row.note.label + ': ' + fmt.formatQuantity(row.note, { dash: '' }) + ')'"></div>
+                            <template x-if="row.note && row.note.show">
+                              <div class="text-xs text-muted" x-text="'(' + row.note.label + ': ' + fmt.formatQuantity(row.note, { dash: '' }) + ')'"></div>
+                            </template>
                           </div>
                         </template>
                       </td>

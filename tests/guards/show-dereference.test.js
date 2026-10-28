@@ -21,6 +21,10 @@ const VOID = new Set([
 const TAG = /<(\/?)([a-zA-Z][\w-]*)((?:"[^"]*"|'[^']*'|[^>])*)>/g;
 const ATTR = /([^\s=]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
 const IDENT = /^[A-Za-z_$][\w$]*$/;
+const PATH = String.raw`[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[[^\]]+\])*`;
+// `x-show="row.note && row.note.show"` still makes `row.note` nullable for the
+// subtree: the flag is the leading path, not only a bare identifier.
+const LEADING_FLAG = new RegExp(String.raw`^!?\s*(${PATH})\s*(?:&&|\|\||\?|$)`);
 const EVALUATED = /^(x-text|x-html|x-for|x-model|x-init|x-effect|x-show|x-if|:|x-bind:)/;
 
 function attrsOf(source) {
@@ -29,8 +33,12 @@ function attrsOf(source) {
   return out;
 }
 
+function escapeRe(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function isGuarded(expression, ident) {
-  const id = ident.replace(/[$]/g, "\\$");
+  const id = escapeRe(ident);
   return new RegExp(`(?:${id}\\s*(?:&&|\\|\\||\\?|===|!==|==|!=)|!\\s*${id}\\b)`).test(expression);
 }
 
@@ -59,6 +67,8 @@ test("A10: nullable x-show flags are not dereferenced by evaluated directives", 
         if (name === "x-show") {
           const flag = value.trim().replace(/^!\s*/, "");
           if (IDENT.test(flag)) shows.add(flag);
+          const leading = value.trim().match(LEADING_FLAG);
+          if (leading && !IDENT.test(leading[1])) shows.add(leading[1]);
         }
         if (name === "x-if") {
           if (IDENT.test(value.trim())) guards.add(value.trim());
