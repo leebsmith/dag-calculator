@@ -2,8 +2,16 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 2, the
-  `trace-malts` card group (3 no-`this` methods), the fifth of eight** (`yeast`
+* **Alpine maintainability and module linting** — **next: Phase 2, the `mash`
+  rest helpers (6 no-`this` methods), the sixth of eight** (`trace-malts`
+  landed: `views/producer/traceMaltRows.js` holds the catalogue→draft row default
+  (`makeTraceMaltRow`: zero mass, the provenance/basis/method/colour/notes the
+  boundary reads, no parts or moisture); the drawer subtitle and group line were
+  byte-identical to the grain bill's, so they went to `gristRows.js` as
+  `maltItemMeta` / `maltGroupMeta` and both cards import them; the adapter is 68
+  lines from 90, `malt.js` 173 from 175, every member keeps its name and `KEYS`
+  entry and delegates; covered by `tests/frontend/trace-malt-rows.test.js` (3
+  cases) plus two drawer-formatter cases in `malt-rows.test.js`. `yeast`
   landed: `views/producer/yeastRows.js` holds the attenuation label and its bare
   percent form, the band classifier + `YEAST_ATTENUATION_TIERS`, the tri-state
   STA1 bucket + counted pills, the temperature band label, and the chooser cap
@@ -30,8 +38,8 @@
   declarations on `installers.js`, with one owner per member; and today's 47
   cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
   135 reader/key pairs — that the ownership guard checks exactly. Remaining
-  groups after `trace-malts`: `mash` rest helpers (6), `catalogDraft` (13),
-  `fieldActions` helpers (5). The three phases after Phase 2:
+  groups after `mash`: `catalogDraft` (13), `fieldActions` helpers (5). The three
+  phases after Phase 2:
   split the two ~50-line card computations and declare the refresh pipeline,
   ratchet size and complexity, and invert the store's three client imports.
   Measured at `55f6485`: 19 installers declare 567 members (388 enumerable, 179

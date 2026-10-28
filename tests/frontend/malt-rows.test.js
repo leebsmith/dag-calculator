@@ -10,6 +10,8 @@ import {
   isTraceMalt,
   MALT_ROW_LIMIT,
   maltFermentableLabel,
+  maltGroupMeta,
+  maltItemMeta,
   sortGristRows,
 } from "../../frontend/src/views/producer/gristRows.js";
 
@@ -87,4 +89,22 @@ test("gristValidationState reports unconfigured, deficit, balanced, and surplus"
 test("isMaltAtLimit trips at the row limit, not before", () => {
   assert.equal(isMaltAtLimit(MALT_ROW_LIMIT - 1), false);
   assert.equal(isMaltAtLimit(MALT_ROW_LIMIT), true);
+});
+
+test("maltItemMeta composes the category, colour, and notes subtitle", () => {
+  assert.deepEqual(maltItemMeta({ category: "BASE", color_lovibond: 3.5, notes: "Sweet" }), [
+    "BASE",
+    "3.5 °L",
+    "Sweet",
+  ]);
+  assert.deepEqual(maltItemMeta({ category: "BASE" }).filter(Boolean), ["BASE"]);
+  assert.deepEqual(maltItemMeta({}).filter(Boolean), []);
+});
+
+test("maltGroupMeta pairs the standard description with its count", () => {
+  assert.deepEqual(maltGroupMeta({ description: "Pale base malts", count: 2 }), [
+    "Pale base malts",
+    "2 malts",
+  ]);
+  assert.deepEqual(maltGroupMeta({ description: "One", count: 1 }), ["One", "1 malt"]);
 });

@@ -1,10 +1,10 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (4 of 8 card groups: `hops`,
-`late-additions`, `malt`, `yeast`). Phases 3–5 remain: extract the logic that does not
-belong in the root and ratchet the shape the linter and the ownership guard can
-now see.
+(`55f6485`), and Phase 2 has begun (5 of 8 card groups: `hops`,
+`late-additions`, `malt`, `trace-malts`, `yeast`). Phases 3–5 remain: extract the
+logic that does not belong in the root and ratchet the shape the linter and the
+ownership guard can now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -424,6 +424,38 @@ cases); `card-display` pins the rendered strings unchanged (`75.5%`,
 `18–22°C`, the counter sentence, the STA1 bucket counts). The generated
 ownership index is unchanged — no member was renamed. Gate: `make check`;
 `make test` (891 frontend, 697 backend).
+
+**Progress — `trace-malts`, 5 of 8 groups.** `views/producer/traceMaltRows.js`
+owns the catalogue→draft row default (`makeTraceMaltRow`): the mass starts at
+zero and the yield/fermentability provenance, basis, method, colour, and notes
+are the fields the boundary reads. The drawer's subtitle and group lines were
+byte-identical to the grain bill's, so they moved to the grain-bill module
+instead of a second copy — `maltItemMeta` and `maltGroupMeta` in
+`views/producer/gristRows.js`, imported by both cards. The trace adapter is 68
+lines (from 90); `malt.js` is 173 (from 175). Every member keeps its name and
+`KEYS` entry.
+
+Two notes:
+
+1. **The "3 no-`this` methods" is a proxy that misses this card both ways.** No
+   app member here has a `this`-free body — `traceField` and its four getters
+   all read `this.fieldsBySlice` / `this.draftMassDisplay`; what the file did
+   declare without `this` were three functions: the row default and the two
+   drawer formatters. Those are what moved. `traceField` and the three field
+   getters stay because the artifact slice is app state,
+   `traceDraftMassDisplay` because it delegates to the shared draft helper, and
+   `refreshTraceMaltsCard` because it is the engine read.
+2. **The shared catalogue display lives with the grain bill, not the trace
+   card.** The malt catalogue is one catalogue browsed by two cards, so its
+   `°L`/notes subtitle and counted group line belong beside the grain-bill
+   readouts; a trace-only module would have re-declared them and drifted.
+
+`tests/frontend/trace-malt-rows.test.js` covers the row default without booting
+the app (3 cases: the copied provenance, the absent parts/moisture, a sparse
+record); `malt-rows.test.js` gained the two drawer-formatter cases; `card-display`
+pins the trace slice readouts and `catalogDraft` the meta-composition contract.
+The generated ownership index is unchanged — no member was renamed. Gate:
+`make check`; `make test` (896 frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.

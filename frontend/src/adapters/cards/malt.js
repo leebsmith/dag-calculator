@@ -4,7 +4,7 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
-import { countLabel, formatValueWithUnit, formatWithDecimals } from "../../utils.js";
+import { formatWithDecimals } from "../../utils.js";
 import {
   gristDraftTotalsLabel,
   gristTotalParts,
@@ -13,6 +13,8 @@ import {
   isMaltAtLimit,
   isTraceMalt,
   maltFermentableLabel,
+  maltGroupMeta,
+  maltItemMeta,
   sortGristRows,
 } from "../../views/producer/gristRows.js";
 import { displayValue, nonlinearFns, resolveCollectionColumns } from "../../views/producer.js";
@@ -58,12 +60,8 @@ export function registerMaltCard(app, ctx) {
     makeRow,
     maxVisible: MAX_VISIBLE,
     canAdd: (target) => !target.maltAtLimit,
-    itemMeta: (item) => [
-      item.category,
-      formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
-      item.notes,
-    ],
-    groupMeta: (group) => [group.description, countLabel(group.count, "malt")],
+    itemMeta: maltItemMeta,
+    groupMeta: maltGroupMeta,
   });
 
   Object.assign(app, {

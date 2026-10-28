@@ -1,11 +1,28 @@
 // Malt card readouts: the grain-bill table formatters, the parts/percent
-// balance badge, and the draft totals line. Pure `(row|value) => …`; the card
-// owns the draft rows, the catalogue lookup, and the engine refresh.
+// balance badge, the draft totals line, and the catalogue drawer's display
+// strings the trace card shares. Pure `(row|value) => …`; the card owns the
+// draft rows, the catalogue lookup, and the engine refresh.
 
-import { formatPercent, formatWithDecimals, toPercentValue } from "../../utils.js";
+import {
+  countLabel,
+  formatPercent,
+  formatValueWithUnit,
+  formatWithDecimals,
+  toPercentValue,
+} from "../../utils.js";
 import { figureMarkFor } from "./table.js";
 
 export const MALT_ROW_LIMIT = 8;
+
+// The malt catalogue drawer's subtitle parts (category · colour · notes) and its
+// standard-group parts; the grain-bill and trace cards browse the same catalogue.
+export function maltItemMeta(item) {
+  return [item.category, formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }), item.notes];
+}
+
+export function maltGroupMeta(group) {
+  return [group.description, countLabel(group.count, "malt")];
+}
 
 // Summary-card order: largest parts first, then name (case-insensitive).
 export function sortGristRows(rows) {

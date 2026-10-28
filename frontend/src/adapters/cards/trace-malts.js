@@ -3,26 +3,8 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
-import { countLabel, formatValueWithUnit } from "../../utils.js";
-
-
-function makeRow(malt) {
-  return {
-    catalog_id: malt.id,
-    name: malt.name,
-    category: malt.category,
-    mass_kg: 0,
-    yield_fraction: malt.yield_fraction,
-    yield_basis: malt.yield_basis,
-    yield_provenance: malt.yield_provenance,
-    fermentability_fraction: malt.fermentability_fraction,
-    fermentability_provenance: malt.fermentability_provenance,
-    fermentability_basis: malt.fermentability_basis,
-    fermentability_method: malt.fermentability_method,
-    color_lovibond: malt.color_lovibond,
-    notes: malt.notes,
-  };
-}
+import { maltGroupMeta, maltItemMeta } from "../../views/producer/gristRows.js";
+import { makeTraceMaltRow } from "../../views/producer/traceMaltRows.js";
 
 export function registerTraceMaltsCard(app, ctx) {
   installCatalogDraft(app, ctx, {
@@ -38,13 +20,9 @@ export function registerTraceMaltsCard(app, ctx) {
     familyField: "family",
     brandField: "maltster",
     productSearchLimit: 10,
-    makeRow,
-    itemMeta: (item) => [
-      item.category,
-      formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
-      item.notes,
-    ],
-    groupMeta: (group) => [group.description, countLabel(group.count, "malt")],
+    makeRow: makeTraceMaltRow,
+    itemMeta: maltItemMeta,
+    groupMeta: maltGroupMeta,
   });
 
   Object.assign(app, {
