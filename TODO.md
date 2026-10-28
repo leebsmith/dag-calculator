@@ -2,8 +2,15 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 2, the `yeast`
-  card group (2 no-`this` methods), the fourth of eight** (`malt` landed:
+* **Alpine maintainability and module linting** — **next: Phase 2, the
+  `trace-malts` card group (3 no-`this` methods), the fifth of eight** (`yeast`
+  landed: `views/producer/yeastRows.js` holds the attenuation label and its bare
+  percent form, the band classifier + `YEAST_ATTENUATION_TIERS`, the tri-state
+  STA1 bucket + counted pills, the temperature band label, and the chooser cap
+  (`YEAST_ROW_LIMIT` / `isYeastListTruncated` / `yeastResultLabel`); the adapter
+  is 187 lines from 211, every member keeps its name and `KEYS` entry and
+  delegates with the state it reads; covered by
+  `tests/frontend/yeast-rows.test.js` (8 cases). `malt` landed:
   `views/producer/gristRows.js` holds the trace threshold, the fermentable label
   with its provenance marker, the summary ordering, the parts/percent totals, the
   balance badge, and the 8-row limit; the adapter is 175 lines from 201 and every
@@ -23,8 +30,8 @@
   declarations on `installers.js`, with one owner per member; and today's 47
   cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
   135 reader/key pairs — that the ownership guard checks exactly. Remaining
-  groups after `yeast`: `trace-malts` (3), `mash` rest helpers (6),
-  `catalogDraft` (13), `fieldActions` helpers (5). The three phases after Phase 2:
+  groups after `trace-malts`: `mash` rest helpers (6), `catalogDraft` (13),
+  `fieldActions` helpers (5). The three phases after Phase 2:
   split the two ~50-line card computations and declare the refresh pipeline,
   ratchet size and complexity, and invert the store's three client imports.
   Measured at `55f6485`: 19 installers declare 567 members (388 enumerable, 179

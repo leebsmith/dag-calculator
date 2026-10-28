@@ -3,28 +3,19 @@
 
 import { filterCatalog } from "../../views/catalog.js";
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
-import { resultCounter, toggleFilter, toPercentValue } from "../../utils.js";
-
-const MAX_VISIBLE = 25;
-
-// A fraction as a percentage number without the "%" suffix, e.g. "75" / "75.5".
-const percentText = (fraction) => String(toPercentValue(fraction, 1));
-
-function attenuationTier(pct) {
-  if (typeof pct !== "number") return "";
-  if (pct < 0.705) return "low";
-  if (pct < 0.755) return "medium";
-  if (pct < 0.825) return "high";
-  return "super";
-}
-
-// Vendor QC is tri-state and sparse: most seeds publish no STA1 result, so
-// "unknown" is a real bucket, not a missing value to hide.
-function diastaticusTier(yeast) {
-  if (yeast?.sta1 === true) return "positive";
-  if (yeast?.sta1 === false) return "negative";
-  return "unknown";
-}
+import { toggleFilter } from "../../utils.js";
+import {
+  attenuationLabel,
+  attenuationTier,
+  diastaticusTier,
+  diastaticusTiers,
+  isYeastListTruncated,
+  percentText,
+  temperatureRangeLabel,
+  YEAST_ATTENUATION_TIERS,
+  YEAST_ROW_LIMIT,
+  yeastResultLabel,
+} from "../../views/producer/yeastRows.js";
 
 export function registerYeastCard(app, ctx) {
   const { cache } = ctx;
@@ -39,7 +30,7 @@ export function registerYeastCard(app, ctx) {
     derateHelpOpen: false,
 
     yeastAttenuation(y) {
-      return y ? `${percentText(y.attenuation_pct)}%` : "";
+      return attenuationLabel(y);
     },
 
     // Selecting a strain records the selection and snapshot. The batch AA is
@@ -118,24 +109,13 @@ export function registerYeastCard(app, ctx) {
     yeastAttenuationTiers: {
       configurable: true,
       get() {
-        return [
-          { key: "low", label: "Low 65–70%" },
-          { key: "medium", label: "Medium 71–75%" },
-          { key: "high", label: "High 76–82%" },
-          { key: "super", label: "Super 83%+" },
-        ];
+        return YEAST_ATTENUATION_TIERS;
       },
     },
     yeastDiastaticusTiers: {
       configurable: true,
       get() {
-        const counts = { positive: 0, negative: 0, unknown: 0 };
-        for (const yeast of this.yeastCatalog) counts[diastaticusTier(yeast)] += 1;
-        return [
-          { key: "positive", label: "Diastaticus", count: counts.positive },
-          { key: "negative", label: "Non-diastaticus", count: counts.negative },
-          { key: "unknown", label: "Unknown", count: counts.unknown },
-        ];
+        return diastaticusTiers(this.yeastCatalog);
       },
     },
     filteredYeasts: {
@@ -160,7 +140,7 @@ export function registerYeastCard(app, ctx) {
     visibleYeasts: {
       configurable: true,
       get() {
-        return this.filteredYeasts.slice(0, MAX_VISIBLE);
+        return this.filteredYeasts.slice(0, YEAST_ROW_LIMIT);
       },
     },
     yeastResultCount: {
@@ -172,19 +152,17 @@ export function registerYeastCard(app, ctx) {
     isYeastListTruncated: {
       configurable: true,
       get() {
-        return this.yeastResultCount > MAX_VISIBLE;
+        return isYeastListTruncated(this.yeastResultCount);
       },
     },
     yeastResultLabel: {
       configurable: true,
       get() {
-        return resultCounter({
-          shown: this.visibleYeasts.length,
-          total: this.yeastResultCount,
-          noun: "matching strain",
-          truncated: this.isYeastListTruncated,
-          truncatedHint: "refine search or filters",
-        });
+        return yeastResultLabel(
+          this.visibleYeasts.length,
+          this.yeastResultCount,
+          this.isYeastListTruncated
+        );
       },
     },
     selectedYeast: {
@@ -196,9 +174,7 @@ export function registerYeastCard(app, ctx) {
     selectedYeastTemp: {
       configurable: true,
       get() {
-        const y = this.selectedYeast;
-        if (!y || typeof y.temp_low_c !== "number" || typeof y.temp_high_c !== "number") return "";
-        return `${y.temp_low_c}–${y.temp_high_c}°C`;
+        return temperatureRangeLabel(this.selectedYeast);
       },
     },
   });

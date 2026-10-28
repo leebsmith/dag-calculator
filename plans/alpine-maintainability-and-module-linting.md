@@ -1,8 +1,8 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (3 of 8 card groups: `hops`,
-`late-additions`, `malt`). Phases 3–5 remain: extract the logic that does not
+(`55f6485`), and Phase 2 has begun (4 of 8 card groups: `hops`,
+`late-additions`, `malt`, `yeast`). Phases 3–5 remain: extract the logic that does not
 belong in the root and ratchet the shape the linter and the ownership guard can
 now see.
 
@@ -393,6 +393,37 @@ cases, including the sort case moved out of `malt-card.test.js`);
 `maltFermentable`) and `card-display` pin the rendered strings unchanged. The
 generated ownership index is unchanged — no member was renamed. Gate:
 `make check`; `make test` (883 frontend, 697 backend).
+
+**Progress — `yeast`, 4 of 8 groups.** `views/producer/yeastRows.js` owns the
+card's readouts: the attenuation label and its bare percent form
+(`attenuationLabel`, `percentText`), the band classifier (`attenuationTier`) and
+the `YEAST_ATTENUATION_TIERS` label table it buckets into, the tri-state STA1
+bucket (`diastaticusTier`) with its counted pill table (`diastaticusTiers`), the
+temperature band label (`temperatureRangeLabel`), and the chooser's display cap
+(`YEAST_ROW_LIMIT`, `isYeastListTruncated`, `yeastResultLabel`). The adapter is
+187 lines (from 211); every member keeps its name and `KEYS` entry and delegates
+with the state it reads.
+
+Two notes:
+
+1. **The "2 no-`this` methods" is a lower bound again.** Only `yeastAttenuation`
+   and the `yeastAttenuationTiers` getter touch no `this`; the rest of the
+   extraction is display policy that happened to be reachable through
+   `this.yeastCatalog` — the tier counts, the truncation flag, the result
+   sentence. The pills' label tables are display data, so they moved the way
+   `WHIRLPOOL_HOP_FORMS` did. `diastaticusTiers(catalog)` takes the catalogue as
+   an argument, so `cache.references.yeast` stays in the card.
+2. **`MAX_VISIBLE` (25) became `YEAST_ROW_LIMIT` in the module.** Unlike the malt
+   drawer window, this one number is both the search window and the truncation
+   rule the counter reports, and the badge and the slice must agree; the card
+   imports it. `yeastManufacturers`, `filteredYeasts`, and `selectedYeast` stay:
+   they read the cache, the filter state, and `filterCatalog`.
+
+`tests/frontend/yeast-rows.test.js` covers the module without booting the app (8
+cases); `card-display` pins the rendered strings unchanged (`75.5%`,
+`18–22°C`, the counter sentence, the STA1 bucket counts). The generated
+ownership index is unchanged — no member was renamed. Gate: `make check`;
+`make test` (891 frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.
