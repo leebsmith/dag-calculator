@@ -164,8 +164,14 @@ curl -H "Authorization: Bearer $TOKEN" -o house-pale.pdf \
 
 `BATCH_ID` is the record id: in the app it is the id behind a row's menu action,
 and offline it is `batch.id` in the downloaded bundle (the report prints only the
-first eight characters; the full value is in its metadata). In the UI, a frozen
-row's menu has **Download report**; the editor toolbar has it for the open draft.
+first eight characters; the full value is in its metadata).
+
+In the UI, a frozen row's menu has **Download report**, which saves the PDF. The
+editor toolbar has **Preview report** for the open draft: the tab is opened in the
+click handler before the render (or the popup blocker eats it) and filled with the
+blob afterwards; a failed render closes it and shows the action banner. The PDF is
+titled with the batch name, so the tab reads sensibly instead of showing a blob
+URL.
 
 Canonical order is registry order; `sections=` cannot reorder it. The generated
 [`report-sections.md`](report-sections.md) lists the order, the presence

@@ -60,7 +60,8 @@ function makeStore(
   persistence = fakePersistence(),
   anchor = () => "right:0px; top:8px",
   download = () => {},
-  downloadFile = download
+  downloadFile = download,
+  tab = { open: () => null, show: () => {}, close: () => {} }
 ) {
   const setup = setupStub();
   const store = createRecipesStore({
@@ -69,8 +70,32 @@ function makeStore(
     anchor,
     download,
     downloadFile,
+    openTab: tab.open,
+    showTab: tab.show,
+    closeTab: tab.close,
   });
   return { store, persistence, setup };
+}
+
+function tabStub() {
+  const tabs = [];
+  const shown = [];
+  return {
+    tabs,
+    shown,
+    open: () => {
+      const tab = {
+        closed: false,
+        close() {
+          this.closed = true;
+        },
+      };
+      tabs.push(tab);
+      return tab;
+    },
+    show: (tab, blob, filename) => shown.push({ tab, blob, filename }),
+    close: (tab) => tab?.close(),
+  };
 }
 
 function quiet(fn) {
@@ -476,28 +501,30 @@ test("downloadRowReport serves frozen rows from the stored report", async () => 
   assert.equal(store.rowMenu, null);
 });
 
-test("downloadActiveReport hands the blob and a safe filename to the downloader", async () => {
-  const files = [];
+test("previewActiveReport opens the rendered blob in the tab it opened", async () => {
+  const tab = tabStub();
   const { store } = makeStore(
     fakePersistence({
       reportForActive: async () => ({ blob: { kind: "pdf" }, type: "application/pdf" }),
     }),
     () => "",
     () => {},
-    (blob, filename) => files.push({ blob, filename })
+    () => {},
+    tab
   );
   store.activeName = "House Pale / v2";
 
-  await store.downloadActiveReport();
+  await store.previewActiveReport();
 
-  assert.deepEqual(files, [
-    { blob: { kind: "pdf" }, filename: "house-pale-v2.pdf" },
+  assert.equal(tab.tabs.length, 1, "one tab is opened before the render");
+  assert.deepEqual(tab.shown, [
+    { tab: tab.tabs[0], blob: { kind: "pdf" }, filename: "house-pale-v2.pdf" },
   ]);
 });
 
-test("a failed report download surfaces the server message", async () => {
+test("a failed report preview closes the tab and surfaces the message", async () => {
   resetErrorObservability();
-  const files = [];
+  const tab = tabStub();
   const { store } = makeStore(
     fakePersistence({
       reportForActive: async () => {
@@ -506,12 +533,14 @@ test("a failed report download surfaces the server message", async () => {
     }),
     () => "",
     () => {},
-    (blob, filename) => files.push({ blob, filename })
+    () => {},
+    tab
   );
 
-  const { logged } = await quiet(() => store.downloadActiveReport());
+  const { logged } = await quiet(() => store.previewActiveReport());
 
-  assert.deepEqual(files, [], "a failed report must not download");
+  assert.equal(tab.tabs[0].closed, true, "the blank tab must not be left behind");
+  assert.deepEqual(tab.shown, []);
   assert.deepEqual(store.actionError, {
     title: "Couldn't build the report",
     message: "nothing to report: no requested section is present",

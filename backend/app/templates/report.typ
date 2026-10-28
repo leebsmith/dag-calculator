@@ -1,7 +1,7 @@
 // Report entry point. Composition only: the bundle supplies facts, the theme
 // supplies appearance, and the registry below supplies section order.
 
-#import "theme.typ": document
+#import "theme.typ": document as report-document
 #import "lib/bundle.typ": bundle, batch, catalog, is-frozen
 #import "lib/format.typ": opt, short-id
 #import "sections/brewhouse.typ": present-brewhouse, render-brewhouse
@@ -69,7 +69,14 @@
 #let included = sections.filter(section => requested(section.id) and (section.present)())
 #let standalone = included.len() == 1
 
-#show: rest => document(batch: batch, token: token, paper: paper, rest)
+// The PDF title is what a browser tab shows for a blob URL; the theme function
+// shadows the built-in `document`, hence the rename above.
+#set document(
+  title: if batch != none { batch.name } else { "Brew report" },
+  author: "dag-calculator",
+)
+
+#show: rest => report-document(batch: batch, token: token, paper: paper, rest)
 
 #let identity = batch.identity
 #let identity-name(namespace, fallback-key) = {

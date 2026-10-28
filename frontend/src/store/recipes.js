@@ -6,7 +6,13 @@
 // injected `anchor` (popover placement), which keeps it testable in node while
 // `main.js` supplies the viewport-aware implementation.
 
-import { downloadBlob, downloadJSON } from "../adapters/download.js";
+import {
+  closeReportTab,
+  downloadBlob,
+  downloadJSON,
+  openReportTab,
+  showReport,
+} from "../adapters/download.js";
 import { reportError } from "../observability.js";
 import { safeFilename } from "../utils.js";
 import {
@@ -23,6 +29,9 @@ export function createRecipesStore({
   anchor = () => "",
   download = downloadJSON,
   downloadFile = downloadBlob,
+  openTab = openReportTab,
+  showTab = showReport,
+  closeTab = closeReportTab,
 } = {}) {
   return {
     view: "batches", // "batches" | "editor"
@@ -365,22 +374,28 @@ export function createRecipesStore({
     },
 
     // The editor is the only place a draft's report can be built: the bundle
-    // needs the live engine's formatted strings and catalog.
-    async downloadActiveReport() {
+    // needs the live engine's formatted strings and catalog. The tab opens
+    // before the render (popup blockers) and is closed again on failure.
+    async previewActiveReport() {
       this.actionError = null;
+      const tab = openTab();
       let report;
       try {
         report = await persistence.reportForActive();
       } catch (err) {
+        closeTab(tab);
         this.recordActionFailure(
           "Couldn't build the report",
-          "recipes.downloadActiveReport",
+          "recipes.previewActiveReport",
           err
         );
         return;
       }
-      if (!report) return;
-      downloadFile(report.blob, safeFilename(this.activeName, "pdf"));
+      if (!report) {
+        closeTab(tab);
+        return;
+      }
+      showTab(tab, report.blob, safeFilename(this.activeName, "pdf"));
     },
   };
 }
