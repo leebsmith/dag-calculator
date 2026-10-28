@@ -1,8 +1,8 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (7 of 8 card groups: `hops`,
-`late-additions`, `malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`).
+(`55f6485`), and Phase 2 landed (8 of 8 card groups: `hops`, `late-additions`,
+`malt`, `trace-malts`, `yeast`, `mash`, `catalogDraft`, `fieldActions`).
 Phases 3–5 remain: extract the logic that does not belong in the root and ratchet
 the shape the linter and the ownership guard can now see.
 
@@ -538,6 +538,37 @@ toggles); `catalogDraft.test.js` (25 cases) plus the hop, malt, trace-malt and
 late-addition suites and `card-display` pin the rendered strings unchanged. The
 generated ownership index is unchanged — no member was renamed. Gate:
 `make check`; `make test` (913 frontend, 697 backend).
+
+**Progress — `fieldActions`, 8 of 8 groups.** `views/producer/authoring.js`
+owns the five authoring helpers: the input-draft key composer (`fieldInputKey`),
+the parts → pct Hamilton normalization that `normalizeGrist` and
+`normalizeHopRows` both repeated (`normalizedRowShares`, one rule for the grist
+and the two hop pools), and the type-appropriate defaults a blank row is seeded
+with (`rowDefaults(schema, taxonomies)`). The adapter is 276 lines (from 293);
+every member keeps its name and `KEYS` entry.
+
+Two notes:
+
+1. **The "5 helpers" is exact, with one relocation.** Four methods touched no
+   `this` (`inputKey`, `clampToSelection`, `normalizeGrist`,
+   `normalizeHopRows`); the fifth is `addRow`'s inline default builder, which is
+   pure but was reachable only through the engine write. The two normalizers were
+   byte-identical, so they collapse into one module function rather than two; the
+   clamp body duplicated the strict `clamp` utility (`utils/format.js`), so that
+   helper went there instead of a third copy — `clampToSelection` now keeps the
+   envelope lookup and the engine read and returns `clamp(value, low, high)`.
+2. **The wiring is unchanged.** `inputKey` still takes `(prefix, ...parts)`, so
+   the ten partial bindings and the style/water cards that compose keys keep
+   their call shape; `normalizeGrist`/`normalizeHopRows` keep their names and the
+   node-id dispatch in `editCell`/`removeRow`; `rowDefaults` takes the artifact's
+   taxonomies, so the `artifact` read stays in the adapter.
+
+`tests/frontend/authoring.test.js` covers the module without booting the app (6
+cases: the key shapes, the Hamilton result and its exact 0.1% total, empty and
+zero-weight rows, the five schema branches, a missing schema);
+`number-input.test.js` and `selection-validation.test.js` pin the app paths. The
+generated ownership index is unchanged — no member was renamed. Gate:
+`make check`; `make test` (919 frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.

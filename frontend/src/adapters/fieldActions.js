@@ -2,7 +2,8 @@
 // seed-derived resets, selection copy-in, and row add/remove/normalization.
 
 import { toBase } from "../engine/index.js";
-import { hamiltonPct } from "../views/hamilton.js";
+import { clamp } from "../utils.js";
+import { fieldInputKey, normalizedRowShares, rowDefaults } from "../views/producer/authoring.js";
 import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { clampBoundsFor } from "../views/registry/presentation.js";
@@ -16,7 +17,7 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     // receives every keystroke, but the DOM value is not reformatted until the
     // field commits on blur.
     inputKey(prefix, ...parts) {
-      return [prefix, ...parts].join(":");
+      return fieldInputKey(prefix, ...parts);
     },
 
     inputDraft(key, fallback) {
@@ -72,11 +73,7 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const bounds = clampBoundsFor(nodeId);
       if (!bounds) return value;
       const engine = session.getEngine();
-      const low = engine.resolve(bounds.low);
-      const high = engine.resolve(bounds.high);
-      if (typeof low === "number" && value < low) value = low;
-      if (typeof high === "number" && value > high) value = high;
-      return value;
+      return clamp(value, engine.resolve(bounds.low), engine.resolve(bounds.high));
     },
 
     edit(field, value) {
@@ -233,17 +230,7 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const engine = session.getEngine();
       const node = artifact.nodes[field.target.nodeId];
       const schema = artifact.primitive_schemas[node.item_schema] ?? {};
-      // Seed a row with type-appropriate defaults (numbers, first taxonomy
-      // member, schema default) rather than empty strings, so a new row is
-      // well-formed and doesn't POST a request that fails validation.
-      const defaults = {};
-      for (const [key, spec] of Object.entries(schema)) {
-        if (spec.default !== undefined) defaults[key] = spec.default;
-        else if (spec.type === "boolean") defaults[key] = false;
-        else if (spec.taxonomy) defaults[key] = artifact.taxonomies[spec.taxonomy]?.[0] ?? "";
-        else if (spec.dimension) defaults[key] = 0;
-        else defaults[key] = "";
-      }
+      const defaults = rowDefaults(schema, artifact.taxonomies);
       engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), defaults]);
       this.scheduleSolve();
       this.notify();
@@ -268,16 +255,12 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     // Hamilton-normalize the grain bill's `pct` (fractions summing to 1) from its
     // `parts`.
     normalizeGrist(rows) {
-      if (!rows.length) return rows;
-      const pcts = hamiltonPct(rows.map((row) => row.parts));
-      return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
+      return normalizedRowShares(rows);
     },
 
     // Hamilton-normalize the boil-hop IBU shares (`pct`) from their `parts`.
     normalizeHopRows(rows) {
-      if (!rows.length) return rows;
-      const pcts = hamiltonPct(rows.map((row) => row.parts));
-      return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
+      return normalizedRowShares(rows);
     },
 
     // Dispatch a collection-table's add-row action: a bespoke handler named by

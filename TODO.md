@@ -2,8 +2,17 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 2,
-  `fieldActions` helpers (5), the eighth and last of eight** (`catalogDraft`
+* **Alpine maintainability and module linting** — **next: Phase 3, split the two
+  ~50-line card computations and declare the refresh pipeline** (`fieldActions`
+  landed: `views/producer/authoring.js` holds the input-draft key composer
+  (`fieldInputKey`), the parts → pct Hamilton normalization both collection kinds
+  repeated (`normalizedRowShares`), and the type-appropriate blank-row defaults
+  (`rowDefaults`); `clampToSelection` now returns the strict `utils.js` `clamp`
+  result over its resolved bounds, the adapter is 276 lines from 293, every
+  member keeps its name and `KEYS` entry and delegates; covered by
+  `tests/frontend/authoring.test.js` (6 cases) with `number-input.test.js` and
+  `selection-validation.test.js` pinning the app paths. Phase 2 is complete,
+  eight of eight). `catalogDraft`
   landed: `views/producer/catalogDrawer.js` holds the drawer readouts the four
   catalogue cards share — the two meta composers, the draft set (`activeCatalogIds`)
   and the inspected row (`activeDraftRow`), the category/family pill tables, the
@@ -51,11 +60,11 @@
   `docs/frontend-ownership.md` is generated from the new `modules`/`partials`
   declarations on `installers.js`, with one owner per member; and today's 47
   cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
-  135 reader/key pairs — that the ownership guard checks exactly. Remaining
-  group: `fieldActions` helpers (5), the last of eight. The three
-  phases after Phase 2:
-  split the two ~50-line card computations and declare the refresh pipeline,
-  ratchet size and complexity, and invert the store's three client imports.
+  135 reader/key pairs — that the ownership guard checks exactly. Phase 2 is
+  closed; the last group was `fieldActions` (5 helpers). Phases 3–5
+  remain: split the two ~50-line card computations and declare the refresh
+  pipeline, ratchet size and complexity, and invert the store's three client
+  imports.
   Measured at `55f6485`: 19 installers declare 567 members (388 enumerable, 179
   hidden); 353 adapter methods, 28 hot. Each phase lands its own `Landed.` note; the program
   archives to `plans/archive/` when closed — every phase, gate, read fence and
