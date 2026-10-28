@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { refreshMaltCard, registerMaltCard, sortGristRows } from "../../frontend/src/adapters/cards/malt.js";
+import { refreshMaltCard, registerMaltCard } from "../../frontend/src/adapters/cards/malt.js";
 import { FERMENTABLE_NODES as N } from "../../frontend/src/views/registry/fermentables.js";
 import { artifact as artifactFixture } from "../guards/util.js";
 
@@ -28,18 +28,6 @@ function setup() {
   registerMaltCard(app, { cache: { seeds: { malts: {} } } });
   return app;
 }
-
-test("sortGristRows orders by parts then name, case-insensitively", () => {
-  const rows = [
-    { name: "b", parts: 10 },
-    { name: "A", parts: 30 },
-    { name: "a", parts: 10 },
-    { name: "c" },
-  ];
-
-  assert.deepEqual(sortGristRows(rows).map((row) => row.name), ["A", "a", "b", "c"]);
-  assert.deepEqual(rows.map((row) => row.name), ["b", "A", "a", "c"]);
-});
 
 test("maltIsTrace marks rows under two percent", () => {
   const app = setup();

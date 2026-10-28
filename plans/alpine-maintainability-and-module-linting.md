@@ -1,9 +1,10 @@
 # Alpine maintainability and module linting
 
 Status: **in flight**. Phase 0 landed (`b2467f9`, `614f20a`), Phase 1 landed
-(`55f6485`), and Phase 2 has begun (2 of 8 card groups: `hops`,
-`late-additions`). Phases 3–5 remain: extract the logic that does not belong in
-the root and ratchet the shape the linter and the ownership guard can now see.
+(`55f6485`), and Phase 2 has begun (3 of 8 card groups: `hops`,
+`late-additions`, `malt`). Phases 3–5 remain: extract the logic that does not
+belong in the root and ratchet the shape the linter and the ownership guard can
+now see.
 
 Each phase appends its own `Landed.` paragraph under its commit line — what moved,
 what deviated, and the counts the gate reported — so this file is the audit trail,
@@ -361,6 +362,37 @@ Two notes:
 `tests/frontend/late-addition-rows.test.js` covers the module without booting the
 app (7 cases); the four late-addition suites and `card-display` pin the rendered
 strings unchanged. Gate: `make check`; `make test` (878 frontend, 697 backend).
+
+**Progress — `malt`, 3 of 8 groups.** `views/producer/gristRows.js` owns the
+card's readouts: the trace threshold (`isTraceMalt`), the fermentable label with
+its provenance marker (`maltFermentableLabel`), the summary-card ordering
+(`sortGristRows`), the parts/percent totals (`gristTotalParts`, `gristTotalPct`,
+`gristDraftTotalsLabel`), the balance badge (`gristValidationState`), and the
+row limit (`MALT_ROW_LIMIT`, `isMaltAtLimit`). The adapter is 175 lines (from
+201); every getter keeps its name and delegates with the state it reads, and the
+two methods that the surface scan counts as no-`this` delegate in one line.
+
+Two notes:
+
+1. **The "2 no-`this` methods" is again a lower bound.** Only `maltIsTrace` and
+   `maltFermentable` touch no `this`, but `maltValidation` and `maltDraftTotals`
+   were formatting bodies wrapped around a getter's value; they became
+   `gristValidationState(pct) → badge` and `gristDraftTotalsLabel(parts, pct) →
+   string`. `sortGristRows` was already pure and module-level in the adapter — it
+   moved because ordering a display table is a display derivation, and the card
+   suite now boots the app only.
+2. **The catalogue policy stays with the wiring.** `MAX_VISIBLE` (25) is the
+   drawer's search window and stays beside `installCatalogDraft`; the 8-row
+   `MALT_ROW_LIMIT` moved because the balance badge and the clone refusal share
+   the same rule. `maltWeightedColor`/`maltWeightedYield` still read
+   `fieldsBySlice`: the artifact slice is app state, not formatting.
+
+`tests/frontend/malt-rows.test.js` covers the module without booting the app (6
+cases, including the sort case moved out of `malt-card.test.js`);
+`malt-card.test.js`, `attenuation-display` (which asserts the provenance marks on
+`maltFermentable`) and `card-display` pin the rendered strings unchanged. The
+generated ownership index is unchanged — no member was renamed. Gate:
+`make check`; `make test` (883 frontend, 697 backend).
 
 **Handoff.** The `views/producer/` surface now holds everything that formats a
 row, and can be tested without booting the app.

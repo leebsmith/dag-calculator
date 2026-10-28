@@ -4,23 +4,22 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
-import { countLabel, formatPercent, formatValueWithUnit, formatWithDecimals, toPercentValue } from "../../utils.js";
-import { figureMarkFor } from "../../views/producer/table.js";
+import { countLabel, formatValueWithUnit, formatWithDecimals } from "../../utils.js";
+import {
+  gristDraftTotalsLabel,
+  gristTotalParts,
+  gristTotalPct,
+  gristValidationState,
+  isMaltAtLimit,
+  isTraceMalt,
+  maltFermentableLabel,
+  sortGristRows,
+} from "../../views/producer/gristRows.js";
 import { displayValue, nonlinearFns, resolveCollectionColumns } from "../../views/producer.js";
 import { registry } from "../../views/steps.js";
 import { reportError } from "../../observability.js";
 
 const MAX_VISIBLE = 25;
-const MAX_MAJOR_MALTS = 8;
-
-// Summary-card order: largest parts first, then name (case-insensitive).
-export function sortGristRows(rows) {
-  return [...rows].sort(
-    (a, b) =>
-      (Number(b.parts) || 0) - (Number(a.parts) || 0) ||
-      String(a.name ?? "").localeCompare(String(b.name ?? ""), undefined, { sensitivity: "base" })
-  );
-}
 
 function makeRow(malt) {
   return {
@@ -71,18 +70,12 @@ export function registerMaltCard(app, ctx) {
     // Grain-bill rows for the summary card (refreshed by refreshMaltCard).
     gristRows: [],
 
-    // Trace = under 2% of the bill (matches the legacy threshold).
     maltIsTrace(row) {
-      return (row.pct || 0) < 0.02;
+      return isTraceMalt(row);
     },
 
-    // Resolved real fermentability with its provenance marker (prior, floor,
-    // or apparent-converted); blank when the row has no figure.
     maltFermentable(row) {
-      if (typeof row?.fermentability_fraction !== "number") return "";
-      return `${figureMarkFor("fermentability_fraction", row)}${formatPercent(
-        row.fermentability_fraction
-      )}`;
+      return maltFermentableLabel(row);
     },
 
     cloneDraftMalt(ri) {
@@ -116,50 +109,31 @@ export function registerMaltCard(app, ctx) {
     maltTotalParts: {
       configurable: true,
       get() {
-        return this.draftRows.reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+        return gristTotalParts(this.draftRows);
       },
     },
     maltTotalPct: {
       configurable: true,
       get() {
-        return this.draftRows.reduce((sum, r) => sum + (r.pct || 0), 0);
+        return gristTotalPct(this.draftRows);
       },
     },
     maltDraftTotals: {
       configurable: true,
       get() {
-        const parts = formatWithDecimals(this.maltTotalParts, 1);
-        return `${parts} parts · ${formatPercent(this.maltTotalPct)}`;
+        return gristDraftTotalsLabel(this.maltTotalParts, this.maltTotalPct);
       },
     },
     maltValidation: {
       configurable: true,
       get() {
-        const total = toPercentValue(this.maltTotalPct, 1);
-        if (total === 100) {
-          return { type: "balanced", label: "100.0% Balanced", class: "badge-success" };
-        }
-        if (total === 0) return { type: "unconfigured", label: "Unconfigured", class: "badge-muted" };
-        if (total < 100) {
-          const remaining = formatWithDecimals(100 - total, 1);
-          return {
-            type: "deficit",
-            label: `${formatWithDecimals(total, 1)}% (Remaining ${remaining}%)`,
-            class: "badge-amber",
-          };
-        }
-        const excess = formatWithDecimals(total - 100, 1);
-        return {
-          type: "surplus",
-          label: `${formatWithDecimals(total, 1)}% (Excess +${excess}%)`,
-          class: "badge-danger",
-        };
+        return gristValidationState(this.maltTotalPct);
       },
     },
     maltAtLimit: {
       configurable: true,
       get() {
-        return this.draftRows.length >= MAX_MAJOR_MALTS;
+        return isMaltAtLimit(this.draftRows.length);
       },
     },
   });

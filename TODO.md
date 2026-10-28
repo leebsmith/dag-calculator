@@ -2,9 +2,14 @@
 
 ## In flight
 
-* **Alpine maintainability and module linting** — **next: Phase 2, the `malt`
-  card group (2 no-`this` methods), the third of eight** (`late-additions`
-  landed: `views/producer/lateAdditionRows.js` holds the nine pure readouts — the
+* **Alpine maintainability and module linting** — **next: Phase 2, the `yeast`
+  card group (2 no-`this` methods), the fourth of eight** (`malt` landed:
+  `views/producer/gristRows.js` holds the trace threshold, the fermentable label
+  with its provenance marker, the summary ordering, the parts/percent totals, the
+  balance badge, and the 8-row limit; the adapter is 175 lines from 201 and every
+  getter keeps its name and delegates with the state it reads; covered by
+  `tests/frontend/malt-rows.test.js`. `late-additions` landed:
+  `views/producer/lateAdditionRows.js` holds the nine pure readouts — the
   dose-effect labels, the table/catalog counters, the `sugarActive` derivation,
   the display-unit join, and the preview pin labels + envelope classes; the
   adapter is 452 lines from 494 and keeps `syncScalePreviewState` for Phase 3;
@@ -18,7 +23,7 @@
   declarations on `installers.js`, with one owner per member; and today's 47
   cross-owner keys sit in a reasoned `SHARED` interface — 15 of 19 installers,
   135 reader/key pairs — that the ownership guard checks exactly. Remaining
-  groups after `malt`: `yeast` (2), `trace-malts` (3), `mash` rest helpers (6),
+  groups after `yeast`: `trace-malts` (3), `mash` rest helpers (6),
   `catalogDraft` (13), `fieldActions` helpers (5). The three phases after Phase 2:
   split the two ~50-line card computations and declare the refresh pipeline,
   ratchet size and complexity, and invert the store's three client imports.
