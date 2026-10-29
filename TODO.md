@@ -7,16 +7,12 @@
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-2. **Report sections** — the bundle, the render service (`GET`/`POST
-   /batches/{id}/report`), and five sections have landed; the rest are queued in
-   Later, starting with the hop sections once the schedule-derived IBU split
-   lands.
-3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+2. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
 
-* Staged notes (the brew-day checklist, queued in Later):
+* Staged notes (the brew-day checklist):
   * Day before
   * Day of
   * Before underletting
@@ -29,27 +25,14 @@
 
 ## Later
 
-* **Shape-pin burn-down** — the lint program left 48 functions in 27 files pinned
-  above `complexity 12` and seven files pinned above 400 lines. The pins are
-  measured by `tests/guards/shape-pins.test.js`, so an improvement must lower its
-  pin in the same commit and the table cannot go stale; the pins in
-  `eslint.config.js` are the work queue. The interpreter leads (`engine/units.js` 93,
-  `views/producer/projection.js` 39, `engine/validate.js` 34,
-  `views/producer/scalar.js` 33, `engine/ast.js` 22 — dispatch over the grammar,
-  so the split is a table per node kind), then the solve and refresh paths
-  (`boundaryRunner.js` 35 / 210 lines, `cards/water.js` 38 / 639 lines,
-  `stepView.js` 19) and the stores (`userCatalog.js` 33, `unitPrefs.js` 27,
-  `library.js` 18). Each split lowers its pin in the same commit rather than
-  re-pinning, and deletes the pin once the file is under the ceiling.
-* **Deferred local-view save** — the advisory target and style ABV input still call
-  the batch autosave hook; move them to a deferred/queued save after the
-  cache-only render fix is settled.
 * **Surface and fit the grain thermal factor** — `mash_thermal_factor` (0.41)
   drives `mash.strike_water_temp_base_c` but has no readout. Surface it near
   Strike Water Temp, then move it toward an equipment-scoped value estimated
   from observed strike-water outcomes (rolling average / regression). Needs a
   rig-level observation record.
-* Dry hopping (computed WetHopCard; currently description-only)
+* **Dry hopping** — the schedule renders (`batch.dry_hops` rows with
+  `wet_hop_product_type` / `wet_hop_application_stage`); what is missing is the
+  computed WetHopCard (wet-hop absorption and loss).
 * Realtime cross-tab / multi-device sync (Firestore `onSnapshot`)
 * Offline resilience (IndexedDB write-ahead overlay)
 * Unit scaling (`plans/unit-scaling.md`)
@@ -70,9 +53,9 @@
   (`boundaryRunner.js` scheduleSolve) is tests-only. Revisit only if profiling shows jank
   as field count grows (cooling curves, style-water axis).
 * **Water grid status chips** — `docs/adsco/ui.md` specifies Exact / Floor / Buffer /
-  Floating / Compromise / Below-buffer per ion; the card renders only `Target` / `Auto`.
-  Needs per-ion constraint state surfaced from the boundary (telemetry now carries only
-  free-text messages).
+  Floating / Compromise / Below-buffer per ion; the card renders `Target` / `Best fit` /
+  `Buffer` / `Auto` / `No value`. Needs the remaining states surfaced from the
+  boundary (telemetry still carries only free-text messages).
 * **Artifact-declared routing** — the mode → pin-set mapping lives in the presentation
   registry, pinned to the Python router by a fixture. Moving it into `data/artifact.json`
   would remove the duplication outright, but `constants` is scalar-only today, so it
@@ -80,8 +63,10 @@
 
 ### Report sections
 
-One bullet per remaining section; the presence predicates are in
-`plans/report-renderer.md` §6.4. Queue order is the order below.
+Five sections have landed — Brewhouse, Batch Facts, Yeast, Volume Ledger and
+Liquor Ledger — with the bundle and the render service (`GET`/`POST
+/batches/{id}/report`). One bullet per remaining section; the presence predicates
+are in `plans/report-renderer.md` §6.4. Queue order is the order below.
 
 * **Boil hops section** — `batch.boil_hops` rows; addition list with alpha, boil
   remaining, and IBU share. Needs the schedule-derived split (Next #1) before the
@@ -102,15 +87,22 @@ One bullet per remaining section; the presence predicates are in
   realized ion profile against the target.
 * **Style conformance section** — `conformance` is not `null`; SAI and the
   per-pillar verdicts already captured at freeze.
-* **Brew-day checklist enhancement** — settle what the checklist *is* before
-  authoring it. Today `batch.brew_day_steps` is a seeded list of nine moments with
-  static instructions. The open idea is carry-forward: inline the batch's own facts
-  per step — HLT fill and target temperature, first underlet volume, mash salt and
-  acid doses, top-up, sparge volume and temperature, boil time, hop additions,
-  knockout volume — so the sheet is executable without cross-reading the ledgers.
-  Needs decisions on which section owns each fact, copy vs reference, and
-  draft-vs-frozen behaviour; potentially a large change to the seeds and the data
-  model. Deliberately last.
+
+### Low priority
+
+* **Shape-pin burn-down** — the complexity ratchet and its guard landed with the
+  lint program (`tests/guards/shape-pins.test.js` re-measures every pin, so a
+  ceiling can only be lowered). What is left is the residue it recorded: 45
+  functions in 26 `frontend/src` files above `complexity 12`, seven files above
+  400 lines, plus the script layer's pins from the drift-gates program. The
+  interpreter leads (`views/producer/projection.js` 39, `engine/validate.js` 34,
+  `views/producer/scalar.js` 33, `engine/ast.js` 22 — dispatch over the grammar,
+  so the split is a table per node kind), then the solve and refresh paths
+  (`boundaryRunner.js` 35 / 210 lines, `cards/water.js` 38 / 639 lines,
+  `stepView.js` 19) and the stores (`userCatalog.js` 33, `unitPrefs.js` 27,
+  `library.js` 18). Each split lowers its pin in the same commit and deletes it
+  once the file is under the ceiling. Cleanup, not a gate: `engine/units.js` (93)
+  was the one that mattered and is now under the ceiling.
 
 
 ## Engine robustness follow-ups
