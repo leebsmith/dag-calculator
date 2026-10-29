@@ -20,7 +20,6 @@ TYPST_VERSION := $(shell cat backend/app/templates/TYPST_VERSION 2>/dev/null)
 # import metadata.
 EMULATOR_DATA   := emulator-data
 EMULATOR_IMPORT := $(wildcard $(EMULATOR_DATA)/firebase-export-metadata.json)
-EMULATOR_FLAGS  := $(if $(EMULATOR_IMPORT),--import=$(EMULATOR_DATA)) --export-on-exit=$(EMULATOR_DATA)
 
 # BJCP re-aggregation reads a local HTML cache (not committed).
 #   make aggregate-bjcp BJCP_CACHE=~/MyPythonEnvironment/bjcp_scraper/2021
@@ -68,18 +67,14 @@ help:
 # --- Local development -------------------------------------------------------
 # Everything the local run owns outside the browser's localStorage lives in
 # emulator-data/ (Firestore documents plus Auth accounts), gitignored. The import
-# runs only when a snapshot exists; the exit snapshot only fires on a graceful
-# stop, which is why `make save-data` and `make clean` exist.
+# runs only when a snapshot exists. scripts/local-dev.mjs owns the export: it
+# saves every SAVE_INTERVAL_MINUTES (default 5) and once more on Ctrl+C, before
+# the emulator is stopped. `make save-data` and `make clean` remain for an
+# on-demand snapshot and for reclaiming ports.
 local-dev: local-data
 	@echo "Starting local emulators and development servers..."
 	@echo "Access the app at http://localhost:5173"
-	@npx concurrently \
-		--kill-others \
-		--names "VITE,FIREBASE,UV" \
-		--prefix-colors "blue,yellow,green" \
-		"cd frontend && npm run dev" \
-		"mkdir -p $(EMULATOR_DATA) && npx firebase emulators:start --project $(PROJECT_ID) $(EMULATOR_FLAGS)" \
-		"cd backend && FIREBASE_PROJECT_ID=$(PROJECT_ID) FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ALLOWED_EMAILS=dev@localhost uv run uvicorn app.main:app --reload --port 8000"
+	@node scripts/local-dev.mjs
 
 # Prints which data the next run starts from; runnable on its own to inspect it.
 local-data:

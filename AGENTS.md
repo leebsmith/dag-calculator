@@ -86,13 +86,13 @@ pre-commit hook is a convenience: `make check` re-checks the frozen-path and
 manifest/lock rules, and `make test` remains the gate.
 
 Local state is `emulator-data/` (gitignored): the Firestore documents and the
-Auth emulator's accounts. `make save-data` snapshots the running emulators,
-`make clean` saves and then stops, `make local-dev` imports the snapshot on
-start, and `make reset-data` deletes it. Only the exit snapshot depends on a
-graceful stop, so an interrupted session is lost unless you saved; `make
-local-data` prints which state the next run starts from. Unit preferences are the
-one exception — they live in the browser's `localStorage` and never reach the
-emulator.
+Auth emulator's accounts. `make local-dev` imports the snapshot on start and
+`scripts/local-dev.mjs` saves it every five minutes and once more on Ctrl+C —
+before the emulator stops, because a terminal interrupt otherwise kills it
+first. `make save-data` takes an on-demand snapshot, `make clean` saves and then
+stops, and `make reset-data` deletes the snapshot; `make local-data` prints which
+state the next run starts from. Unit preferences are the one exception — they
+live in the browser's `localStorage` and never reach the emulator.
 
 ## Governance & Modes
 
