@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { ionDelta } from "../../frontend/src/adapters/cards/water.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import waterTargetProfiles from "../../data/seeds/water_target_profiles.json" with { type: "json" };
@@ -12,9 +12,7 @@ async function loadWaterSource(app, source) {
   app.compute();
 }
 
-test("kettle blend nodes reduce to the treated vector and the helper weights volumes", () => {
-  const app = createTestApp();
-  app.boot();
+test("kettle blend nodes reduce to the treated vector and the helper weights volumes", withFreshApp((app) => {
   app.compute();
 
   // Stub fixtures: both vessels carry the same treated vector.
@@ -24,11 +22,9 @@ test("kettle blend nodes reduce to the treated vector and the helper weights vol
   }
   assert.equal(app.engine.call("blend_ion", [100, 0, 10, 0, 10]), 50);
   assert.equal(app.engine.call("blend_ion", [10, 10, 0, 0, 0]), null);
-});
+}));
 
-test("kettle and target sulfate:chloride ratios come from the artifact", () => {
-  const app = createTestApp();
-  app.boot();
+test("kettle and target sulfate:chloride ratios come from the artifact", withFreshApp((app) => {
   app.compute();
 
   assert.ok(Math.abs(app.engine.get("water.kettle_blend.sulfate_chloride_ratio") - 2) < 1e-9);
@@ -41,7 +37,7 @@ test("kettle and target sulfate:chloride ratios come from the artifact", () => {
   app.setRoot("water.target.chloride_cl", 0);
   app.compute();
   assert.equal(app.engine.get("water.target.sulfate_chloride_ratio"), null);
-});
+}));
 
 test("ionDelta is null when either side is missing", () => {
   assert.equal(ionDelta(10, 6), 4);
@@ -49,9 +45,7 @@ test("ionDelta is null when either side is missing", () => {
   assert.equal(ionDelta(10, undefined), null);
 });
 
-test("the water summary and brew-day instruction branch on the mode", () => {
-  const app = createTestApp();
-  app.boot();
+test("the water summary and brew-day instruction branch on the mode", withFreshApp((app) => {
   app.setRoot("water.salt_distribution", "MASH_ONLY");
   app.compute();
 
@@ -64,11 +58,9 @@ test("the water summary and brew-day instruction branch on the mode", () => {
   assert.equal(app.waterSummary.proportional, true);
   assert.match(app.waterInstruction("batch-sparge"), /add .* to the HLT/i);
   assert.match(app.waterInstruction("brew-day-setup"), /metabisulfite/i);
-});
+}));
 
-test("the checked set drives the grid and the derived strategy", () => {
-  const app = createTestApp();
-  app.boot();
+test("the checked set drives the grid and the derived strategy", withFreshApp((app) => {
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("so4");
   app.editWaterTarget("so4", "250");
@@ -91,7 +83,7 @@ test("the checked set drives the grid and the derived strategy", () => {
     assert.equal(rows[ion].valueText, "(Auto)");
     assert.equal(rows[ion].deltaText, "—");
   }
-});
+}));
 
 test("checking an ion seeds a value from the water source", async () => {
   const app = createTestApp();
@@ -119,9 +111,7 @@ test("checking an ion seeds a value from the water source", async () => {
   assert.equal(app.master.getRoot("water.target.sulfate_so4"), 75);
 });
 
-test("clearing a checked ion's value unchecks it", () => {
-  const app = createTestApp();
-  app.boot();
+test("clearing a checked ion's value unchecks it", withFreshApp((app) => {
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("so4");
   app.compute();
@@ -133,11 +123,9 @@ test("clearing a checked ion's value unchecks it", () => {
   assert.equal(row.checked, false);
   assert.equal(app.master.getRoot("water.target.sulfate_so4"), undefined);
   assert.deepEqual(app.waterSummary.checkedPins, []);
-});
+}));
 
-test("No targets locks the grid; Freeform unlocks it", () => {
-  const app = createTestApp();
-  app.boot();
+test("No targets locks the grid; Freeform unlocks it", withFreshApp((app) => {
   assert.equal(app.waterTargetLocked, true, "an untargeted draft opens locked");
 
   app.toggleWaterTarget("so4");
@@ -151,11 +139,9 @@ test("No targets locks the grid; Freeform unlocks it", () => {
   app.compute();
   assert.deepEqual(app.waterSummary.checkedPins, ["ca"]);
   assert.equal(app.waterSummary.mode, "CUSTOM");
-});
+}));
 
-test("presets clear the previous targets, fill their ions and derive the strategy", () => {
-  const app = createTestApp();
-  app.boot();
+test("presets clear the previous targets, fill their ions and derive the strategy", withFreshApp((app) => {
   const target = (ion) => app.engine.get(`water.target.${ion}`);
 
   app.selectWaterTarget("soft-pilsner");
@@ -186,11 +172,9 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(target("sulfate_so4"), 250);
   assert.equal(target("chloride_cl"), 50);
   assert.equal(app.master.getRoot("water.target_profile_id"), "burton-ipa");
-});
+}));
 
-test("toggling a checked ion detaches the preset", () => {
-  const app = createTestApp();
-  app.boot();
+test("toggling a checked ion detaches the preset", withFreshApp((app) => {
   app.selectWaterTarget("hoppy-ipa");
   app.toggleWaterTarget("cl");
   app.compute();
@@ -199,11 +183,9 @@ test("toggling a checked ion detaches the preset", () => {
   assert.equal(app.waterTargetSelection, "freeform");
   assert.deepEqual(app.waterSummary.checkedPins, ["so4"]);
   assert.equal(app.waterSummary.mode, "CUSTOM");
-});
+}));
 
-test("target changes recalculate immediately and queue a save", () => {
-  const app = createTestApp();
-  app.boot();
+test("target changes recalculate immediately and queue a save", withFreshApp((app) => {
   let saves = 0;
   app.onChange = () => {
     saves += 1;
@@ -229,7 +211,7 @@ test("target changes recalculate immediately and queue a save", () => {
   assert.equal(edited.valueText, "300.0");
   assert.notEqual(edited.deltaText, "—");
   assert.equal(saves, 3, "editing a target recalculates and queues a save");
-});
+}));
 
 test("source ions render only in the comparison grid", async () => {
   const app = createTestApp();
@@ -285,9 +267,7 @@ test("water readouts use the fixed precision policy", async () => {
   assert.equal(app.waterPrescription.doseVolumeText, "16.0 L");
 });
 
-test("prescription suppresses doses that round to zero", () => {
-  const app = createTestApp();
-  app.boot();
+test("prescription suppresses doses that round to zero", withFreshApp((app) => {
 
   assert.equal(app.waterPrescription.suppressed, true);
   assert.ok(app.waterPrescription.mash.length > 0);
@@ -297,11 +277,9 @@ test("prescription suppresses doses that round to zero", () => {
   );
   assert.equal(app.waterPrescription.sparge.length, 1);
   assert.equal(app.waterPrescription.spargeAcidPrescribed, false);
-});
+}));
 
-test("telemetry severity drives the warning count and keeps the full log in details", () => {
-  const app = createTestApp();
-  app.boot();
+test("telemetry severity drives the warning count and keeps the full log in details", withFreshApp((app) => {
   app.boundaryExtras["solver.water"] = {
     telemetry: [
       { severity: "WARNING", code: "w", message: "warning message" },
@@ -314,11 +292,9 @@ test("telemetry severity drives the warning count and keeps the full log in deta
   assert.equal(app.waterWarningCount, 2);
   assert.equal(app.waterSummary.warningLabel, "2 warnings");
   assert.equal(app.waterDetails.telemetry.length, 3);
-});
+}));
 
-test("five and six checked are allowed and warned", () => {
-  const app = createTestApp();
-  app.boot();
+test("five and six checked are allowed and warned", withFreshApp((app) => {
   app.selectWaterTarget("freeform");
   for (const pin of ["ca", "mg", "na", "so4"]) {
     app.toggleWaterTarget(pin);
@@ -343,11 +319,9 @@ test("five and six checked are allowed and warned", () => {
   assert.match(app.waterSummary.targetLine, /best fit, nothing held exactly/);
   assert.match(app.waterSummary.targetWarning, /best fit, not exact/);
   assert.match(app.waterSummary.targetWarning, /guarantees no individual target/);
-});
+}));
 
-test("the selector lists constraints first and keeps the pseudo-options at the ends", () => {
-  const app = createTestApp();
-  app.boot();
+test("the selector lists constraints first and keeps the pseudo-options at the ends", withFreshApp((app) => {
   app.compute();
 
   const options = app.waterTargetOptions;
@@ -362,7 +336,7 @@ test("the selector lists constraints first and keeps the pseudo-options at the e
   assert.equal(labels["soft-pilsner"], "All six — Soft Pilsner");
 
   assert.equal(app.waterTargetSelection, "none");
-});
+}));
 
 test("every shipped profile declares a non-empty target set", () => {
   const modes = {
@@ -387,9 +361,7 @@ test("every shipped profile declares a non-empty target set", () => {
   }
 });
 
-test("the brew-day payload carries the derived water instruction", () => {
-  const app = createTestApp();
-  app.boot();
+test("the brew-day payload carries the derived water instruction", withFreshApp((app) => {
   app.toggleBrewDayStep("dough-in", true);
   app.compute();
 
@@ -397,4 +369,4 @@ test("the brew-day payload carries the derived water instruction", () => {
   const mashing = sections.find((s) => s.id === "mashing");
   const doughIn = mashing.steps.find((row) => row.id === "dough-in");
   assert.match(doughIn.instructions, /dose the dry grist before underletting/i);
-});
+}));
