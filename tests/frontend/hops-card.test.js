@@ -350,6 +350,14 @@ test("total hop mass includes boil and whirlpool additions", withFreshApp((app) 
   assert.ok(app.hopTotalMassKg > app.whirlpoolHopRows[0].mass_kg);
 }));
 
+test("whirlpool assumptions help toggles from the card", withFreshApp((app) => {
+  assert.equal(app.whirlpoolHelpOpen, false);
+  app.toggleWhirlpoolHelp();
+  assert.equal(app.whirlpoolHelpOpen, true);
+  app.toggleWhirlpoolHelp();
+  assert.equal(app.whirlpoolHelpOpen, false);
+}));
+
 test("http: the hop boundary rows merge into the card", async () => {
   const calls = [];
   const batch = {

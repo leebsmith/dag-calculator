@@ -36,6 +36,10 @@ samp {
   font-size: var(--text-sm);
 }
 
+[x-cloak] {
+  display: none;
+}
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
@@ -2005,6 +2009,11 @@ samp {
   letter-spacing: 0.05em;
   color: var(--sys-text-secondary);
   white-space: nowrap;
+}
+
+.whirlpool-assumptions {
+  margin: var(--space-2) 0 var(--space-4);
+  padding-left: var(--space-5);
 }
 
 /* ==========================================================================

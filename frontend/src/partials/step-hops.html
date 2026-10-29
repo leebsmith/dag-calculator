@@ -108,6 +108,23 @@
     <section class="step-section">
       <div class="step-section-header">
         <h3 class="step-section-title">Whirlpool</h3>
+        <button
+          type="button"
+          class="unit-badge"
+          @click="toggleWhirlpoolHelp()"
+          :aria-expanded="whirlpoolHelpOpen ? 'true' : 'false'"
+          aria-controls="whirlpool-assumptions"
+          title="Whirlpool assumptions"
+        >? Assumptions</button>
+      </div>
+
+      <div
+        id="whirlpool-assumptions"
+        x-cloak
+        x-show="whirlpoolHelpOpen"
+        x-transition.opacity.duration.150ms
+      >
+        <load src="src/partials/whirlpool-assumptions.html" />
       </div>
 
       <div class="step-grid-2col">
@@ -263,7 +280,6 @@
         Rests run to knockout; a start temperature is the wort temperature when the
         charge goes in.
       </p>
-      <load src="src/partials/whirlpool-assumptions.html" />
     </section>
 
     <div class="grain-bill-summary" x-show="hopRows.length > 0 || whirlpoolHopRows.length > 0">

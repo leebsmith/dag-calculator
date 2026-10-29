@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **581** (388 enumerable, 193 hidden)
+- Declared members: **583** (390 enumerable, 193 hidden)
 - Installers: **19**
 - Card partials: **15**
 - Installers reading another installer's key: **15 of 19**
@@ -24,7 +24,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 118 | 3 | 22 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 120 | 3 | 22 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 65 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 41 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 46 | 2 | 22 |
@@ -508,6 +508,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `toggleUnits` | `unitActions` | public | 1 |
 | `toggleWaterDetails` | `water` | public | 1 |
 | `toggleWaterTarget` | `water` | public | 1 |
+| `toggleWhirlpoolHelp` | `hop` | public | 1 |
 | `toggleWhirlpoolHopCategory` | `hop` | public | 1 |
 | `toggleWhirlpoolHopFamily` | `hop` | public | 0 |
 | `toggleWhirlpoolHopSearchNotes` | `hop` | public | 1 |
@@ -561,6 +562,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `whirlpoolAmbientField` | `hop` | hidden | 1 |
 | `whirlpoolCoolingField` | `hop` | hidden | 1 |
 | `whirlpoolFraction` | `styleTargets` | public | 1 |
+| `whirlpoolHelpOpen` | `hop` | public | 1 |
 | `whirlpoolHopActiveIndex` | `hop` | public | 1 |
 | `whirlpoolHopActiveRow` | `hop` | hidden | 1 |
 | `whirlpoolHopCatalog` | `hop` | hidden | 0 |

@@ -137,11 +137,16 @@ export function registerHopCard(app, ctx) {
     hopBoundaryTotalMassKg: null,
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
+    whirlpoolHelpOpen: false,
 
     setWhirlpoolHopCatalogForm(value) {
       this.whirlpoolHopCatalogForm = value;
       this.whirlpoolHopSearch = "";
       this.whirlpoolHopCategoryFilter = [];
+    },
+
+    toggleWhirlpoolHelp() {
+      this.whirlpoolHelpOpen = !this.whirlpoolHelpOpen;
     },
 
     toggleHopMassUnit() {
@@ -218,46 +223,6 @@ export function registerHopCard(app, ctx) {
       configurable: true,
       get() {
         return this.unitMode?.[HOP_MASS_KEY] ?? this.unitMode?.mass ?? "g";
-      },
-    },
-    boilIbuField: {
-      configurable: true,
-      get() {
-        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.boilIbu) ?? null;
-      },
-    },
-    whirlpoolIbuField: {
-      configurable: true,
-      get() {
-        return (
-          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.whirlpoolIbu) ?? null
-        );
-      },
-    },
-    totalIbuField: {
-      configurable: true,
-      get() {
-        return (
-          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.totalIbu) ?? null
-        );
-      },
-    },
-    whirlpoolAmbientField: {
-      configurable: true,
-      get() {
-        return (
-          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.whirlpoolAmbient) ?? null
-        );
-      },
-    },
-    whirlpoolCoolingField: {
-      configurable: true,
-      get() {
-        return (
-          (this.fieldsBySlice[N.slice] ?? []).find(
-            (f) => f.id === N.whirlpoolCoolingTimeConstant
-          ) ?? null
-        );
       },
     },
     whirlpoolHopT90Equivalent: {
@@ -414,6 +379,21 @@ export function registerHopCard(app, ctx) {
       timelineFor: whirlpoolTimeline,
     }),
   });
+
+  for (const [key, id] of Object.entries({
+    boilIbuField: N.boilIbu,
+    whirlpoolIbuField: N.whirlpoolIbu,
+    totalIbuField: N.totalIbu,
+    whirlpoolAmbientField: N.whirlpoolAmbient,
+    whirlpoolCoolingField: N.whirlpoolCoolingTimeConstant,
+  })) {
+    Object.defineProperty(app, key, {
+      configurable: true,
+      get() {
+        return (this.fieldsBySlice[N.slice] ?? []).find((field) => field.id === id) ?? null;
+      },
+    });
+  }
 }
 
 export function refreshHopCard(app, ctx) {
@@ -451,6 +431,8 @@ export const KEYS = [
   "whirlpoolHopForms",
   "whirlpoolHopCatalogForm",
   "setWhirlpoolHopCatalogForm",
+  "whirlpoolHelpOpen",
+  "toggleWhirlpoolHelp",
   "toggleHopMassUnit",
   "hopMass",
   "whirlpoolHopMass",
