@@ -4,7 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 import { steps } from "../../frontend/src/views/steps.js";
 
 const SUBTRACTIONS = [
@@ -29,8 +29,7 @@ function ledgerEntry() {
 }
 
 async function bootedLedger() {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   return app.fieldsBySlice.batch.find((field) => field.id === "volume-ledger");
 }
 

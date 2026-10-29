@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { walk, read, rel } from "./util.js";
-import { createTestApp } from "../frontend/appHelpers.js";
+import { sharedTestApp } from "../frontend/appHelpers.js";
 
 // A8a: unit conversion is display-only — `units.fromBase` is referenced only by
 // the producer (and the units module itself).
@@ -27,9 +27,8 @@ test("A8a: units.fromBase used only by the producer", () => {
 });
 
 // A8b: unit mode converts the DISPLAY, but writes to the store stay in base units.
-test("A8b: unit mode converts display; writes store base", () => {
-  const app = createTestApp();
-  app.boot();
+test("A8b: unit mode converts display; writes store base", async () => {
+  const app = await sharedTestApp();
   app.setUnit("temperature", "degF");
 
   const strike = app.fieldsBySlice.mash.find((f) => f.id === "mash.strike_water_temp_c");
@@ -45,9 +44,8 @@ test("A8b: unit mode converts display; writes store base", () => {
 // when toggled back. The `customized` accent marks ONLY a deliberate per-field
 // deviation from the inherited unit — a master (dimension-level) pick is the
 // inherited unit, so its pills are NOT accented.
-test("A8c: per-field unit override", () => {
-  const app = createTestApp();
-  app.boot();
+test("A8c: per-field unit override", async () => {
+  const app = await sharedTestApp();
   const grain = () => app.fieldsBySlice.mash.find((f) => f.id === "mash.grain_temp_c");
 
   app.setUnit("temperature", "degF");
@@ -72,9 +70,8 @@ test("A8c: per-field unit override", () => {
 
 // A8d: a registry `displayUnit` defaults the readout to that unit while the
 // canonical value stays in the base unit (kg/L), with no override recorded.
-test("A8d: registry displayUnit defaults the display (g/ml)", () => {
-  const app = createTestApp();
-  app.boot();
+test("A8d: registry displayUnit defaults the display (g/ml)", async () => {
+  const app = await sharedTestApp();
 
   const gypsum = app.fieldsBySlice.water.find((f) => f.id === "solver.water.mash_additions.gypsum_kg");
   assert.equal(gypsum.value, 0.002, "canonical value stays kg");
@@ -91,9 +88,8 @@ test("A8d: registry displayUnit defaults the display (g/ml)", () => {
 
 // A8e: a collection column with a `displayUnit` renders in that unit, and the
 // write stores the base value (cell conversion for collection tables).
-test("A8e: collection cell displayUnit converts display; write stores base", () => {
-  const app = createTestApp();
-  app.boot();
+test("A8e: collection cell displayUnit converts display; write stores base", async () => {
+  const app = await sharedTestApp();
   const table = () => app.fieldsBySlice["dry-hops"].find((f) => f.control === "collection-table");
 
   app.addRow(table());

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { hamiltonPct } from "../../frontend/src/views/hamilton.js";
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 test("hamilton: exact allocations pass through at 0.1% resolution", () => {
   assert.deepEqual(hamiltonPct([80, 20]), [0.8, 0.2]);
@@ -32,9 +32,8 @@ test("hamilton: degenerate input yields all zeros", () => {
   assert.deepEqual(hamiltonPct([]), []);
 });
 
-test("hamilton: editing grist parts renormalizes pct across the bill", () => {
-  const app = createTestApp();
-  app.boot();
+test("hamilton: editing grist parts renormalizes pct across the bill", async () => {
+  const app = await sharedTestApp();
   const table = () => app.fieldsBySlice.fermentables.find((f) => f.control === "collection-table");
 
   // Seed bill: 80/20 -> pct 0.8/0.2. Re-author the first row's parts.

@@ -7,7 +7,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { sharedTestApp } from "../frontend/appHelpers.js";
 import { WATER_IONS, strategyForHeld } from "../../frontend/src/views/registry/water.js";
 
 const fixture = JSON.parse(
@@ -18,9 +18,8 @@ const PIN_BY_ION = Object.fromEntries(WATER_IONS.map((row) => [row.ion, row.pin]
 const ION_BY_PIN = Object.fromEntries(WATER_IONS.map((row) => [row.pin, row.ion]));
 const ALL_PINS = WATER_IONS.map((row) => row.pin);
 
-function appFor(pins) {
-  const app = createStepApp();
-  app.boot();
+async function appFor(pins) {
+  const app = await sharedTestApp();
   app.selectWaterTarget("freeform");
   for (const ion of Object.keys(PIN_BY_ION)) {
     app.setRoot(`water.target.${ion}`, fixture.target[PIN_BY_ION[ion]]);
@@ -37,7 +36,7 @@ function constrained(rows) {
     .sort();
 }
 
-test("the checked set routes to the solver's observed constraint set", () => {
+test("the checked set routes to the solver's observed constraint set", async () => {
   const cases = [
     { mode: "BASELINE", pins: [] },
     { mode: "CALCIUM_FLOOR", pins: fixture.modes.CALCIUM_FLOOR },
@@ -45,7 +44,7 @@ test("the checked set routes to the solver's observed constraint set", () => {
     { mode: "OPTIMIZE", pins: ALL_PINS },
   ];
   for (const { mode, pins } of cases) {
-    const app = appFor(pins);
+    const app = await appFor(pins);
     assert.equal(app.waterSummary.mode, mode, mode);
     assert.equal(app.waterSummary.ions.length, WATER_IONS.length, mode);
     if (mode === "OPTIMIZE") {
@@ -66,16 +65,16 @@ test("the checked set routes to the solver's observed constraint set", () => {
   }
 });
 
-test("BASELINE constrains nothing, matching the solver", () => {
-  const app = appFor([]);
+test("BASELINE constrains nothing, matching the solver", async () => {
+  const app = await appFor([]);
   assert.deepEqual(constrained(app.waterSummary.ions), fixture.modes.BASELINE);
   for (const row of app.waterSummary.ions) assert.equal(row.valueText, "(Auto)");
 });
 
-test("CUSTOM constrains exactly the checked ions", () => {
+test("CUSTOM constrains exactly the checked ions", async () => {
   for (const [key, expected] of Object.entries(fixture.pin_examples)) {
     const pins = key.split(",");
-    const app = appFor(pins);
+    const app = await appFor(pins);
     assert.equal(app.waterSummary.mode, "CUSTOM", key);
     assert.deepEqual(constrained(app.waterSummary.ions), [...expected].sort(), key);
     for (const row of app.waterSummary.ions) {
@@ -89,8 +88,8 @@ test("FLAVOR is not reachable: the checked set cannot express a floor-less pair"
   assert.ok(fixture.modes.FLAVOR.length > 0, "fixture still documents the legacy alias");
 });
 
-test("every fixture ion maps to a grid row and back", () => {
-  const app = appFor(["so4", "cl"]);
+test("every fixture ion maps to a grid row and back", async () => {
+  const app = await appFor(["so4", "cl"]);
   assert.deepEqual(
     app.waterSummary.ions.map((row) => row.ion).sort(),
     Object.keys(PIN_BY_ION).sort()

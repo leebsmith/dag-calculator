@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { sharedTestApp } from "../frontend/appHelpers.js";
 import { read, rel, walk } from "./util.js";
 
 const JS_GLOBALS = new Set([
@@ -32,8 +32,8 @@ function calledNames(expression) {
   return names;
 }
 
-test("A8: every Alpine handler calls a method on the step app", () => {
-  const app = createStepApp();
+test("A8: every Alpine handler calls a method on the step app", async () => {
+  const app = await sharedTestApp();
   const files = [
     "frontend/index.html",
     ...walk("frontend/src/partials", [".html"]).map(rel).sort(),

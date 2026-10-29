@@ -2,13 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
-import { createTestApp } from "../frontend/appHelpers.js";
+import { sharedTestApp } from "../frontend/appHelpers.js";
 import { valuateTable } from "../../frontend/src/views/producer/table.js";
 import { loadArtifact, makeFixturesWithYeast } from "../frontend/helpers.js";
 
 test("every numeric readout resolves to a decimal policy", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   const seen = new Map();
   for (const fields of Object.values(app.fieldsBySlice)) {
     for (const field of fields) if (!seen.has(field.id)) seen.set(field.id, field);
@@ -21,8 +20,7 @@ test("every numeric readout resolves to a decimal policy", async () => {
 });
 
 test("representative readouts use the dimension policy", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   const byId = new Map();
   for (const fields of Object.values(app.fieldsBySlice)) {
     for (const field of fields) if (!byId.has(field.id)) byId.set(field.id, field);
@@ -42,8 +40,7 @@ test("representative readouts use the dimension policy", async () => {
 });
 
 test("collection columns inherit the dimension policy", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   const table = app.fieldsBySlice.hops.find((f) => f.id === "batch.whirlpool_hops");
   const columns = Object.fromEntries(table.columns.map((c) => [c.id, c]));
   assert.equal(columns.duration_min.decimals, 0);

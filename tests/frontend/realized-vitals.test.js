@@ -1,13 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 import { sgToPlato, platoToSg, cutaiaAbv } from "../../frontend/src/engine/fermentation.js";
 
-test("realized FG and ABV derived nodes match the canonical fermentation math", () => {
-  const app = createTestApp();
-  app.boot();
-  app.compute();
+test("realized FG and ABV derived nodes match the canonical fermentation math", async () => {
+  const app = await sharedTestApp();
 
   const og = app.freezePayload().valuation["solver.batch"].sg_post_boil; // stub: 1.055
   const aa = app.freezePayload().valuation["solver.batch"].apparent_attenuation; // stub apparent_attenuation: 0.75

@@ -11,9 +11,10 @@
 // dependency. The whole backend wall is reported separately, so the difference
 // is the process start and collection the files share.
 //
-// The boot column is a source scan: the file calls `createTestApp(` or
-// `createStepApp(`. It says a suite boots an app, not how many times it boots
-// one.
+// The boot column is a source scan: the file calls `createTestApp(`,
+// `createStepApp(`, `sharedTestApp(` or `withFreshApp(`. It says a suite boots
+// an app, not how many times it boots one — and since the shared helpers boot one
+// app per suite process, a converted suite still boots one.
 //
 // Usage, from the repo root:
 //   node scripts/test-cost.mjs              # both lanes
@@ -31,7 +32,12 @@ import { fileURLToPath } from "node:url";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const FRONTEND_DIRS = ["tests/frontend", "tests/conformance", "tests/guards"];
 const BACKEND_DIR = "tests/backend";
-const BOOTS_APP = [/\bcreateTestApp\s*\(/, /\bcreateStepApp\s*\(/];
+const BOOTS_APP = [
+  /\bcreateTestApp\s*\(/,
+  /\bcreateStepApp\s*\(/,
+  /\bsharedTestApp\s*\(/,
+  /\bwithFreshApp\s*\(/,
+];
 const OUTPUT_LIMIT = 64 * 1024 * 1024;
 
 function collect(dir, matches, out = []) {

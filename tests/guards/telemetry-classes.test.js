@@ -1,12 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "../frontend/appHelpers.js";
+import { sharedTestApp } from "../frontend/appHelpers.js";
 import { read } from "./util.js";
 
 test("telemetry severity classes exist in the stylesheet", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   const css = read("frontend/src/style.css");
 
   for (const severity of ["INFO", "WARNING", "ERROR", "NOTE"]) {
