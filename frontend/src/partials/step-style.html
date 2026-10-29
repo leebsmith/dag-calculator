@@ -77,6 +77,7 @@
             <svg
               class="extract-preview"
               viewBox="0 0 376 366"
+              x-effect="$el.setAttribute('viewBox', stylePreview.viewBox)"
               role="img"
               :aria-label="stylePreview.summary"
             >
@@ -90,13 +91,6 @@
                   />
                 </clipPath>
               </defs>
-              <rect
-                class="extract-frame"
-                :x="stylePreview.plot.x"
-                :y="stylePreview.plot.y"
-                :width="stylePreview.plot.w"
-                :height="stylePreview.plot.h"
-              />
               <g clip-path="url(#ferment-space-plot)">
                 <path class="extract-contours" :d="stylePreview.contours" />
                 <polygon class="extract-region" :points="stylePreview.polygon" />
@@ -115,6 +109,13 @@
                   r="3.5"
                 />
               </g>
+              <rect
+                class="extract-frame"
+                :x="stylePreview.plot.x"
+                :y="stylePreview.plot.y"
+                :width="stylePreview.plot.w"
+                :height="stylePreview.plot.h"
+              />
               <path class="extract-ticks" :d="stylePreview.tickMarks" />
               <text class="extract-tick" :x="stylePreview.ticks.x[0].x" :y="stylePreview.ticks.x[0].y" text-anchor="middle" x-text="stylePreview.ticks.x[0].label"></text>
               <text class="extract-tick" :x="stylePreview.ticks.x[1].x" :y="stylePreview.ticks.x[1].y" text-anchor="middle" x-text="stylePreview.ticks.x[1].label"></text>
@@ -126,8 +127,21 @@
               <text class="extract-tick" :x="stylePreview.ticks.y[2].x" :y="stylePreview.ticks.y[2].y" text-anchor="end" x-text="stylePreview.ticks.y[2].label"></text>
               <text class="extract-tick" :x="stylePreview.ticks.y[3].x" :y="stylePreview.ticks.y[3].y" text-anchor="end" x-text="stylePreview.ticks.y[3].label"></text>
               <text class="extract-tick" :x="stylePreview.ticks.y[4].x" :y="stylePreview.ticks.y[4].y" text-anchor="end" x-text="stylePreview.ticks.y[4].label"></text>
-              <text class="extract-axis" x="4" y="10">AE (°P)</text>
-              <text class="extract-axis" x="364" y="362" text-anchor="end">OE (°P)</text>
+              <text
+                class="extract-axis"
+                :x="stylePreview.axes.y.x"
+                :y="stylePreview.axes.y.y"
+                :text-anchor="stylePreview.axes.y.anchor"
+                :transform="stylePreview.axes.y.transform"
+                x-text="stylePreview.axes.y.label"
+              ></text>
+              <text
+                class="extract-axis"
+                :x="stylePreview.axes.x.x"
+                :y="stylePreview.axes.x.y"
+                :text-anchor="stylePreview.axes.x.anchor"
+                x-text="stylePreview.axes.x.label"
+              ></text>
               <text
                 class="extract-pin-label"
                 :x="stylePreview.pinLabelX"

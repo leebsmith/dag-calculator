@@ -164,7 +164,7 @@ const STATEMENT_PINS = {
   "adapters/stepAdapter.js": 35,
   "engine/sha256.js": 44,
   "main.js": 53,
-  "views/producer/stylePlot.js": 46,
+  "views/producer/stylePlot.js": 28,
   "views/producer/table.js": 42,
 };
 
@@ -184,7 +184,7 @@ const FUNCTION_LINE_PINS = {
   "engine/dag.js": 301,
   "engine/validate.js": 86,
   "adapters/boundaryRunner.js": 213,
-  "views/producer/stylePlot.js": 137,
+  "views/producer/stylePlot.js": 116,
 };
 
 const FILE_LINE_PINS = {

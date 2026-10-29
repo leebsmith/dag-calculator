@@ -102,7 +102,9 @@ active target:
   default re-evaluates.
 - **Graph.** The marker is the solved batch point for every pin. The fixed-AA
   ray is drawn only when ABV is the pin; it is a visualization of the current
-  realization, not a constraint.
+  realization, not a constraint. The window is the union of the style region and
+  the batch point, so a batch outside the style still shows its dot; the pin
+  label is clamped inside the frame.
 - **Read-only display.** The Batch step shows the active target as a readout;
   the Style step is the editor for the pin and target. The Late Additions panel
   previews the three pins but never edits them.

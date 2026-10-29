@@ -35,6 +35,76 @@ function polylinePath(points, px, py) {
     .join(" ");
 }
 
+// Axis captions: the y caption rotates into the left margin so it never collides
+// with the tick column; the x caption sits centered under the plot.
+function plotAxes(left, top) {
+  const midX = left + PLOT_PX / 2;
+  const midY = top + PLOT_PX / 2;
+  return {
+    y: {
+      x: left - 34,
+      y: midY,
+      anchor: "middle",
+      transform: `rotate(-90 ${left - 34} ${midY})`,
+      label: "AE (°P)",
+    },
+    x: {
+      x: midX,
+      y: PLOT_HEIGHT - 6,
+      anchor: "middle",
+      label: "OE (°P)",
+    },
+  };
+}
+
+// The pinned target's geometry. Labels are clamped so a target outside the frame
+// still names itself inside the plot instead of running over the border.
+function pinModel({ pin, target, bounds, frame, project }) {
+  const { left, top, right, bottom } = frame;
+  const { sx, sy, px, py } = project;
+  let pinPath = "";
+  let pinLabel = "";
+  let pinLabelAt = { x: 0, y: 0, anchor: "start" };
+  const LABEL_HALF = 30;
+  if (!Number.isFinite(target)) return { pinPath, pinLabel, pinLabelAt };
+
+  if (pin === "og") {
+    const x = sx(sgToPlato(target));
+    pinPath = `M${px(sgToPlato(target))} ${top} L${px(sgToPlato(target))} ${bottom}`;
+    pinLabel = `OG ${formatGravity(target)}`;
+    pinLabelAt = {
+      x: formatWithDecimals(Math.min(Math.max(x + 4, left + 2), right - LABEL_HALF * 2), 1),
+      y: top + 12,
+      anchor: "start",
+    };
+  } else if (pin === "fg") {
+    const y = sy(sgToPlato(target));
+    pinPath = `M${left} ${py(sgToPlato(target))} L${right} ${py(sgToPlato(target))}`;
+    pinLabel = `FG ${formatGravity(target)}`;
+    pinLabelAt = {
+      x: right - 4,
+      y: formatWithDecimals(Math.min(Math.max(y - 4, top + 12), bottom - 8), 1),
+      anchor: "end",
+    };
+  } else {
+    const contour = abvContour({ ...bounds, targetAbv: target });
+    pinPath = polylinePath(contour, px, py);
+    if (pinPath) {
+      pinLabel = `ABV ${formatPercentValue(target, 1)}`;
+      const topMost = contour.slice().sort((a, b) => b[1] - a[1])[0];
+      pinLabelAt = {
+        x: formatWithDecimals(
+          Math.min(Math.max(sx(topMost[0]), left + LABEL_HALF), right - LABEL_HALF),
+          1
+        ),
+        y: formatWithDecimals(sy(topMost[1]) + 12, 1),
+        anchor: "middle",
+      };
+    }
+  }
+  return { pinPath, pinLabel, pinLabelAt };
+}
+
 /**
  * Project a fermentation region and the batch's extract point onto the plot.
  * Independent axis scales (the style window is ~8 x 2 °P, so the square is a 4x
@@ -51,8 +121,12 @@ function polylinePath(points, px, py) {
 export function stylePlotModel({ region, point, safestPoint, pin, target }) {
   if (!Array.isArray(region) || region.length < 3 || !point || !safestPoint) return null;
 
-  const xs = region.map(([x]) => x);
-  const ys = region.map(([, y]) => y);
+  // The window is the union of the style region and the batch's extract point:
+  // a batch outside the envelope still shows its dot instead of being clipped by
+  // the frame. The safest point is inside the region by construction, but it
+  // joins the union so the model stays correct if that ever changes.
+  const xs = region.map(([x]) => x).concat([point.oe, safestPoint.oe]);
+  const ys = region.map(([, y]) => y).concat([point.ae, safestPoint.ae]);
   const padX = ((Math.max(...xs) - Math.min(...xs)) || 1) * 0.03;
   const padY = ((Math.max(...ys) - Math.min(...ys)) || 1) * 0.03;
   const xMin = Math.min(...xs) - padX;
@@ -92,40 +166,13 @@ export function stylePlotModel({ region, point, safestPoint, pin, target }) {
     .filter(Boolean)
     .join(" ");
 
-  let pinPath = "";
-  let pinLabel = "";
-  let pinLabelAt = { x: 0, y: 0, anchor: "start" };
-  if (Number.isFinite(target)) {
-    if (pin === "og") {
-      const x = sx(sgToPlato(target));
-      pinPath = `M${px(sgToPlato(target))} ${top} L${px(sgToPlato(target))} ${bottom}`;
-      pinLabel = `OG ${formatGravity(target)}`;
-      pinLabelAt = { x: formatWithDecimals(x + 4, 1), y: top + 12, anchor: "start" };
-    } else if (pin === "fg") {
-      const y = sy(sgToPlato(target));
-      pinPath = `M${left} ${py(sgToPlato(target))} L${right} ${py(sgToPlato(target))}`;
-      pinLabel = `FG ${formatGravity(target)}`;
-      pinLabelAt = { x: right - 4, y: formatWithDecimals(y - 4, 1), anchor: "end" };
-    } else {
-      const contour = abvContour({
-        oeMin: xMin,
-        oeMax: xMax,
-        aeMin: yMin,
-        aeMax: yMax,
-        targetAbv: target,
-      });
-      pinPath = polylinePath(contour, px, py);
-      if (pinPath) {
-        pinLabel = `ABV ${formatPercentValue(target, 1)}`;
-        const topMost = contour.slice().sort((a, b) => b[1] - a[1])[0];
-        pinLabelAt = {
-          x: px(topMost[0]),
-          y: formatWithDecimals(sy(topMost[1]) + 12, 1),
-          anchor: "middle",
-        };
-      }
-    }
-  }
+  const { pinPath, pinLabel, pinLabelAt } = pinModel({
+    pin,
+    target,
+    bounds: { oeMin: xMin, oeMax: xMax, aeMin: yMin, aeMax: yMax },
+    frame: { left, top, right, bottom },
+    project: { sx, sy, px, py },
+  });
 
   const locus = polylinePath(
     compositionLocus({
@@ -144,6 +191,8 @@ export function stylePlotModel({ region, point, safestPoint, pin, target }) {
   return {
     width: PLOT_WIDTH,
     height: PLOT_HEIGHT,
+    viewBox: `0 0 ${PLOT_WIDTH} ${PLOT_HEIGHT}`,
+    axes: plotAxes(left, top),
     plot: { x: left, y: top, w: PLOT_PX, h: PLOT_PX },
     polygon: region.map(([oe, ae]) => `${px(oe)},${py(ae)}`).join(" "),
     contours,

@@ -111,6 +111,56 @@ test("the OG pin draws a vertical line and the FG pin a horizontal one", () => {
   assert.equal(fg.pinLabelAnchor, "end");
 });
 
+test("a batch point outside the style region still lands inside the frame", () => {
+  const input = fixture();
+  const regionMinOe = Math.min(...input.region.map(([oe]) => oe));
+  const point = { oe: regionMinOe - 1.5, ae: input.point.ae };
+  const model = stylePlotModel({ ...input, point });
+
+  const markerX = coordinate(model.marker.x);
+  const markerY = coordinate(model.marker.y);
+  assert.ok(markerX >= model.plot.x && markerX <= model.plot.x + model.plot.w);
+  assert.ok(markerY >= model.plot.y && markerY <= model.plot.y + model.plot.h);
+  assert.ok(markerX < model.plot.x + 40, "the dot sits near the widened left edge");
+
+  const regionX = model.polygon
+    .split(" ")
+    .map((pair) => coordinate(pair.split(",")[0]));
+  assert.ok(Math.min(...regionX) > model.plot.x + 1, "the region moved off the left edge");
+});
+
+test("the axis labels live in the margins, clear of the tick labels", () => {
+  const model = stylePlotModel(fixture());
+
+  assert.equal(model.viewBox, "0 0 376 366");
+  assert.equal(model.axes.y.label, "AE (°P)");
+  assert.equal(model.axes.y.anchor, "middle");
+  assert.match(model.axes.y.transform, /^rotate\(-90 10 172\)$/);
+  assert.ok(model.axes.y.x < model.plot.x - 20, "rotated label clears the y tick column");
+  assert.ok(model.axes.y.y > model.plot.y && model.axes.y.y < model.plot.y + model.plot.h);
+
+  assert.equal(model.axes.x.label, "OE (°P)");
+  assert.ok(model.axes.x.x > model.plot.x && model.axes.x.x < model.plot.x + model.plot.w);
+  assert.ok(model.axes.x.y > model.plot.y + model.plot.h, "below the plot");
+  assert.ok(model.axes.x.y < model.height);
+});
+
+test("the pin label never leaves the plot frame", () => {
+  for (const target of [5.5, 6.5, 7.4]) {
+    const model = stylePlotModel(fixture({ pin: "abv", target }));
+    const x = coordinate(model.pinLabelX);
+    assert.ok(x >= model.plot.x && x <= model.plot.x + model.plot.w, `ABV ${target} label`);
+  }
+
+  const offWindow = stylePlotModel(fixture({ pin: "og", target: 1.2 }));
+  const ogX = coordinate(offWindow.pinLabelX);
+  assert.ok(ogX >= offWindow.plot.x && ogX <= offWindow.plot.x + offWindow.plot.w);
+
+  const fg = stylePlotModel(fixture({ pin: "fg", target: 1.014 }));
+  const fgY = coordinate(fg.pinLabelY);
+  assert.ok(fgY > fg.plot.y && fgY < fg.plot.y + fg.plot.h);
+});
+
 test("an unpinned plot has no pin geometry", () => {
   const model = stylePlotModel(fixture({ target: null }));
   assert.equal(model.pinPath, "");
