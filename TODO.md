@@ -1,5 +1,17 @@
 # TODO
 
+## In flight
+
+* **Optimize local testing** — **next: Phase 0, the test-cost ledger.** The plan is
+  `plans/optimize-local-testing.md`; it was measured on this box (i3-6100U, 2C/4T),
+  where `make test` is 56.9 s of which 18–23 s is the backend and 30–35 s the
+  frontend. Order: ledger → `make quick` (check, then the affected suites, with a
+  declared coupling table and a full-suite fallback) → concurrency 12 → memoized
+  artifact validation and graph → reset-instead-of-rebuild in the harness →
+  backend render fixture → re-measure and stop. The affected lane is a pre-filter,
+  never evidence: `make test` stays the gate, CI stays full, a pre-push hook runs
+  it, and the program closes by archiving the plan and recording the numbers here.
+
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
