@@ -1,11 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 
-test("boil hops: parts normalize to IBU shares and mass back-calculates", () => {
-  const app = createTestApp();
-  app.boot();
+test("boil hops: parts normalize to IBU shares and mass back-calculates", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0);
 
@@ -28,11 +26,9 @@ test("boil hops: parts normalize to IBU shares and mass back-calculates", () => 
   const citra = app.hopRows.find((r) => r.hop_id === "citra");
   assert.ok(cascade.mass_kg > citra.mass_kg);
   assert.match(app.hopTotalMassDisplay, /(oz|g|kg|lb)/);
-});
+}));
 
-test("boil hops: parts renormalize when an addition is removed", () => {
-  const app = createTestApp();
-  app.boot();
+test("boil hops: parts renormalize when an addition is removed", withFreshApp((app) => {
   app.openHopEditor();
   app.addCatalogHop("cascade");
   app.addCatalogHop("citra");
@@ -42,18 +38,14 @@ test("boil hops: parts renormalize when an addition is removed", () => {
 
   assert.equal(app.hopRows.length, 1);
   assert.ok(Math.abs(app.hopRows[0].pct - 1) < 1e-9);
-});
+}));
 
-test("the hop mass unit seeds from the saved mass preference", () => {
-  const app = createTestApp();
-  app.boot();
+test("the hop mass unit seeds from the saved mass preference", withFreshApp((app) => {
 
   assert.equal(app.hopMassUnit, "g");
-});
+}));
 
-test("hop mass unit cycles and changes the readout", () => {
-  const app = createTestApp();
-  app.boot();
+test("hop mass unit cycles and changes the readout", withFreshApp((app) => {
   app.openHopEditor();
   app.addCatalogHop("cascade");
   app.saveHopEditor();
@@ -70,11 +62,9 @@ test("hop mass unit cycles and changes the readout", () => {
   app.toggleHopMassUnit(); // oz
   app.toggleHopMassUnit(); // back to g
   assert.equal(app.hopMassUnit, "g");
-});
+}));
 
-test("one hop mass pill follows the master until overridden", () => {
-  const app = createTestApp();
-  app.boot();
+test("one hop mass pill follows the master until overridden", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
 
@@ -101,11 +91,9 @@ test("one hop mass pill follows the master until overridden", () => {
 
   app.setUnit("mass", "lb");
   assert.equal(app.hopMassUnit, "oz"); // the override survives a master change
-});
+}));
 
-test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", () => {
-  const app = createTestApp();
-  app.boot();
+test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
 
@@ -128,11 +116,9 @@ test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", (
   const citra = app.whirlpoolHopRows.find((r) => r.hop_id === "citra");
   assert.ok(cascade.mass_kg > citra.mass_kg);
   assert.match(app.whirlpoolHopTotalMassDisplay, /(oz|g|kg|lb)/);
-});
+}));
 
-test("whirlpool hops: rest duration and initial temperature drive the mass", () => {
-  const app = createTestApp();
-  app.boot();
+test("whirlpool hops: rest duration and initial temperature drive the mass", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
   app.openWhirlpoolHopEditor();
@@ -151,11 +137,9 @@ test("whirlpool hops: rest duration and initial temperature drive the mass", () 
   const coolShort = app.whirlpoolHopRows[0].mass_kg;
 
   assert.ok(coolShort > hotLong, `${coolShort} should exceed ${hotLong}`);
-});
+}));
 
-test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", () => {
-  const app = createTestApp();
-  app.boot();
+test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
   app.openWhirlpoolHopEditor();
@@ -178,8 +162,10 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", ()
   app.compute();
   const pellet = app.whirlpoolHopRows[0];
   assert.ok(extract.mass_kg < pellet.mass_kg, "extract needs less mass at the same alpha");
-});
+}));
 
+// The catalog form this case leaves set is card-local state, which a reset does
+// not clear, so it keeps its own boot.
 test("whirlpool catalog switches to products and copies form, alpha, and ratio", () => {
   const app = createTestApp();
   app.boot();
@@ -204,6 +190,8 @@ test("whirlpool catalog switches to products and copies form, alpha, and ratio",
   assert.match(app.whirlpoolHopMass(row), /g$/);
 });
 
+// The inspector this case leaves open is card-local state, which a reset does not
+// clear, so it keeps its own boot.
 test("inspector shows the T-90 equivalent only when the row carries a ratio", () => {
   const app = createTestApp();
   app.boot();
@@ -237,9 +225,7 @@ test("inspector shows the T-90 equivalent only when the row carries a ratio", ()
   assert.equal(app.whirlpoolHopT90Equivalent, "");
 });
 
-test("flowable extract doses above the 4 g/gal ceiling warn", () => {
-  const app = createTestApp();
-  app.boot();
+test("flowable extract doses above the 4 g/gal ceiling warn", withFreshApp((app) => {
   app.setTargetIbu(100);
   app.setWhirlpoolFraction(1);
   app.openWhirlpoolHopEditor();
@@ -249,11 +235,9 @@ test("flowable extract doses above the 4 g/gal ceiling warn", () => {
   app.compute();
 
   assert.match(app.whirlpoolHopDoseWarning, /4 g\/gal/);
-});
+}));
 
-test("whirlpool ambient follows the global temperature unit", () => {
-  const app = createTestApp();
-  app.boot();
+test("whirlpool ambient follows the global temperature unit", withFreshApp((app) => {
   app.setUnit("temperature", "degF");
 
   assert.equal(app.whirlpoolAmbientField.unit, "°F");
@@ -261,11 +245,9 @@ test("whirlpool ambient follows the global temperature unit", () => {
 
   app.edit(app.whirlpoolAmbientField, "77");
   assert.equal(app.master.getRoot("batch.whirlpool_ambient_temp_c"), 25);
-});
+}));
 
-test("whirlpool cooling time constant changes the required mass", () => {
-  const app = createTestApp();
-  app.boot();
+test("whirlpool cooling time constant changes the required mass", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
   app.openWhirlpoolHopEditor();
@@ -279,11 +261,9 @@ test("whirlpool cooling time constant changes the required mass", () => {
   const fastCoolingMass = app.whirlpoolHopRows[0].mass_kg;
 
   assert.ok(fastCoolingMass > slowCoolingMass, `${fastCoolingMass} should exceed ${slowCoolingMass}`);
-});
+}));
 
-test("total hop mass includes boil and whirlpool additions", () => {
-  const app = createTestApp();
-  app.boot();
+test("total hop mass includes boil and whirlpool additions", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
   app.openHopEditor();
@@ -298,7 +278,7 @@ test("total hop mass includes boil and whirlpool additions", () => {
   assert.equal(app.whirlpoolHopRows.length, 1);
   assert.ok(app.hopTotalMassKg > app.hopRows[0].mass_kg);
   assert.ok(app.hopTotalMassKg > app.whirlpoolHopRows[0].mass_kg);
-});
+}));
 
 test("http: the hop boundary rows merge into the card", async () => {
   const calls = [];
