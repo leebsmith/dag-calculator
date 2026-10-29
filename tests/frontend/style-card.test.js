@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp, TEST_YEAST_ID } from "./appHelpers.js";
+import { createTestApp, sharedTestApp, TEST_YEAST_ID } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { identityFixture } from "./helpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
@@ -248,15 +248,14 @@ test("fieldsById indexes the projected models and powers the envelope grid", asy
   }
 });
 
-test("utils namespace is exposed to templates", () => {
-  const app = createTestApp();
+test("utils namespace is exposed to templates", async () => {
+  const app = await sharedTestApp();
   assert.equal(typeof app.fmt.formatGravity, "function");
   assert.equal(app.fmt.formatQuantity({ display: "1.5", unit: "kg" }), "1.5 kg");
 });
 
-test("the style card carries no water-flavor intent fields", () => {
-  const app = createTestApp();
-  app.boot();
+test("the style card carries no water-flavor intent fields", async () => {
+  const app = await sharedTestApp();
 
   const ids = app.fieldsBySlice.style.map((f) => f.id);
   assert.equal(ids.some((id) => id.startsWith("batch.sulfate_chloride")), false);
