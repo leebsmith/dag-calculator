@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -13,6 +14,7 @@ from fastapi.testclient import TestClient
 from app.auth.deps import get_current_user, require_allowed_user
 from app.main import app
 from app.schemas.report_bundle import ReportBundle
+from app.services import batch_service
 from app.services.batch_service import BatchService, get_batch_service
 from app.services.bundle_integrity import parse_bundle, seal_bundle
 from app.services.report_render import (
@@ -54,8 +56,44 @@ def draft_bundle_dict() -> dict:
     return seal_bundle(data).model_dump(mode="json")
 
 
-def test_a_frozen_bundle_renders_a_pdf() -> None:
-    rendered = render(bundle(), parse_spec())
+@pytest.fixture(scope="session")
+def render_once():
+    """One compile per (bundle, spec) for the session.
+
+    The determinism case renders directly, so its two compiles stay independent
+    of this cache.
+    """
+    cache = {}
+
+    def render_once(bundle_obj, spec):
+        key = (
+            bundle_obj.content_hash,
+            spec.doc_kind,
+            spec.fmt,
+            spec.sections,
+            spec.paper,
+            spec.page,
+            os.environ.get("TYPST_BIN"),
+        )
+        if key not in cache:
+            cache[key] = render(bundle_obj, spec)
+        return cache[key]
+
+    return render_once
+
+
+@pytest.fixture(scope="session")
+def frozen_report(render_once):
+    return render_once(bundle(), parse_spec())
+
+
+@pytest.fixture(scope="session")
+def second_frozen_report():
+    return render(bundle(), parse_spec())
+
+
+def test_a_frozen_bundle_renders_a_pdf(frozen_report) -> None:
+    rendered = frozen_report
 
     assert rendered.data.startswith(b"%PDF")
     assert rendered.media_type == "application/pdf"
@@ -64,8 +102,8 @@ def test_a_frozen_bundle_renders_a_pdf() -> None:
     assert rendered.key is not None and len(rendered.key) == 16
 
 
-def test_a_png_request_returns_one_page() -> None:
-    rendered = render(bundle(), parse_spec(fmt="png", page=2))
+def test_a_png_request_returns_one_page(render_once) -> None:
+    rendered = render_once(bundle(), parse_spec(fmt="png", page=2))
 
     assert rendered.data.startswith(b"\x89PNG")
     assert rendered.media_type == "image/png"
@@ -90,16 +128,16 @@ def test_an_empty_resolved_selection_is_a_spec_error() -> None:
         render(seal_bundle(data), parse_spec(sections="batch-facts"))
 
 
-def test_frozen_renders_are_byte_identical() -> None:
-    assert render(bundle(), parse_spec()).data == render(bundle(), parse_spec()).data
+def test_frozen_renders_are_byte_identical(frozen_report, second_frozen_report) -> None:
+    assert frozen_report.data == second_frozen_report.data
 
 
-def test_the_render_key_tracks_the_spec() -> None:
-    base = render(bundle(), parse_spec())
-
-    assert base.key == render(bundle(), parse_spec()).key
-    assert base.key != render(bundle(), parse_spec(paper="letter")).key
-    assert base.key != render(bundle(), parse_spec(fmt="png")).key
+def test_the_render_key_tracks_the_spec(
+    frozen_report, second_frozen_report, render_once
+) -> None:
+    assert frozen_report.key == second_frozen_report.key
+    assert frozen_report.key != render_once(bundle(), parse_spec(paper="letter")).key
+    assert frozen_report.key != render_once(bundle(), parse_spec(fmt="png")).key
 
 
 def test_a_mismatched_typst_binary_is_unavailable(monkeypatch) -> None:
@@ -111,7 +149,10 @@ def test_a_mismatched_typst_binary_is_unavailable(monkeypatch) -> None:
 
 
 @pytest.fixture
-def service():
+def service(monkeypatch, render_once):
+    """The service renders through the session cache, so a route case reuses the
+    compile its spec already has."""
+    monkeypatch.setattr(batch_service, "render_bundle", render_once)
     svc = BatchService(FakeBatchRepo())
     app.dependency_overrides[get_batch_service] = lambda: svc
     app.dependency_overrides[get_current_user] = lambda: {"uid": UID, "token": "test"}

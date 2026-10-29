@@ -1,7 +1,7 @@
 # Optimize local testing
 
-Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–4
-landed 2026-10-29, Phases 5–6 proposed. Target machine: ASUS NUC6i3SYH —
+Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–5
+landed 2026-10-29, Phase 6 proposed. Target machine: ASUS NUC6i3SYH —
 Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every baseline
 number below was measured on this box on 2026-10-29; none is extrapolated.
 
@@ -859,6 +859,63 @@ compile, and table-drive the seven cases over the compiled document.
 
 **Predictions.** −3 to −4 s. This comes before `pytest-xdist` because cutting
 serial work is worth more than adding workers to two physical cores.
+
+**Landed.** 2026-10-29 — `Compile the report once per paper in the backend suite`.
+A note cannot carry the sha of the commit that contains it; `git log --grep
+"Compile the report once per paper in the backend suite"` finds it.
+
+| Gate | Before | After |
+|---|---|---|
+| `node scripts/test-cost.mjs --backend` | 21.9 s wall, 16.3 s inside rows — render 5452 ms, sections 3642 ms | 18.7 s and 18.0 s wall, 12.1 / 12.4 s inside rows — render 3348 ms, sections 2192 ms |
+| the two files, back to back, twice | 10.36 s / 10.07 s | 7.82 s / 7.81 s |
+| typst invocations in the two files (a PATH wrapper around the pinned binary) | 37 compile, 41 eval, 1 query | 28 compile, 36 eval, 1 query |
+| `test_a_section_renders_alone_and_in_the_full_report` | five cases, five full compiles plus five section compiles | five cases, six compiles: one full document and one per section set |
+| `test_frozen_renders_are_byte_identical` | two independent compiles | two independent compiles |
+| a route GET of the frozen batch | compiles the default spec itself | shares the session's default-spec compile when another case rendered it (four compiles across the pdf unit cases, the key case and the route; one when the route runs alone) |
+| `make test` | 697 passed, 1 skipped (backend); 960 pass (frontend) | 697 passed, 1 skipped; 960 pass — 41.4–43.0 s over three runs |
+| `make check` | — | 8.7–13.9 s |
+| `make coverage` (frontend) | 96.11 / 86.56 / 91.52 % | unchanged |
+| `make coverage` (backend) | 96 % of 3207 statements, 118 missed | unchanged |
+
+Deviations:
+
+- **Five `*_renders_alone_and_in_the_full_report` cases exist, not seven.**
+  `backend/app/templates/sections.json` registers five sections, and the tree has
+  carried one such case per section since each landed; the plan's count is stale.
+  All five are in the table, so the contract's shape holds at the tree's size.
+- **The cache key is wider than (paper, section set).** A png page 2 is not a pdf
+  page 1, so the key is (content hash, doc_kind, format, sections, paper, page,
+  `TYPST_BIN`). That is the blocked-if's coupling: a section set alone would let a
+  case pass on a document compiled for a different header state. The two png
+  cases keep their own compiles.
+- **`test_report_render.py` memoizes the production render.** A session-scoped
+  `render_once()` fixture keys the production `render()`, and the `service`
+  fixture patches the service's `render_bundle` import to it, so a route case
+  reuses the compile its spec already has. The png route and the draft preview
+  still compile end to end because their specs are unique, and the
+  mismatched-binary case calls `render()` directly so a cache hit cannot mask it.
+- **The determinism compile is a pair shared by two cases.** `frozen_report` and
+  `second_frozen_report` are two independent compiles;
+  `test_frozen_renders_are_byte_identical` compares their bytes and
+  `test_the_render_key_tracks_the_spec` compares their keys, so key stability is
+  not a cache hit compared with itself. Before this phase the default spec was
+  compiled five times across those two cases and
+  `test_a_frozen_bundle_renders_a_pdf`.
+- **The sections file also shares one staged template root.** `shared_root` stages
+  the template tree and the fixture bundle once; the base-bundle probes, the
+  metadata query and the page-size cases read it, and `compiled()` writes its
+  outputs there. The contract named compiles; this is the same reuse one level up
+  (about 150 ms of `copytree` removed) and it is why seventeen cases lost their
+  `tempfile` wrappers without changing an assertion.
+- **The test count is unchanged.** 47 items in the two files before and after —
+  the five alone/full cases became five parametrized items — and the backend still
+  reports 697 passed, 1 skipped. No assertion changed value.
+- **The prediction held.** The plan predicted −3 to −4 s; the ledger's two-file
+  rows fell 3.55 s and the backend wall fell 3.2–3.9 s across two runs. Unlike
+  Phase 4's saving, this one is inside pytest rows rather than wall noise.
+
+Coverage: frontend 96.11 / 86.56 / 91.52 % → unchanged; backend 96 % of 3207
+statements (118 missed) → unchanged.
 
 ### 3.7 Phase 6 — Re-measure and record (½ day)
 

@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,8 @@ TYPST = shutil.which("typst")
 pytestmark = pytest.mark.skipif(
     TYPST is None, reason="typst binary not installed; render gates skipped"
 )
+
+SECTION_IDS = ("brewhouse", "batch-facts", "yeast", "volume-ledger", "liquor-ledger")
 
 
 def stage_root(tmp: Path, bundle: Path | dict[str, Any]) -> Path:
@@ -70,14 +73,22 @@ def probe(root: Path, source: str) -> Any:
     return payload[0]["value"]
 
 
-def render(root: Path, sections: str | None = None, paper: str | None = None) -> None:
+def compile_argv(
+    root: Path,
+    target: Path,
+    sections: str | None = None,
+    paper: str | None = None,
+) -> list[str]:
     argv = ["compile", "--input", "bundle=/report.json"]
     if sections is not None:
         argv += ["--input", f"sections={sections}"]
     if paper is not None:
         argv += ["--input", f"paper={paper}"]
-    argv += [str(root / "report.typ"), str(root / "report.pdf")]
-    run_typst(argv, root)
+    return [*argv, str(root / "report.typ"), str(target)]
+
+
+def render(root: Path, sections: str | None = None, paper: str | None = None) -> None:
+    run_typst(compile_argv(root, root / "report.pdf", sections, paper), root)
 
 
 def page_size(root: Path, paper: str = "auto") -> tuple[float, float]:
@@ -117,6 +128,28 @@ def us_customary(bundle: dict[str, Any]) -> dict[str, Any]:
 
 def fixture() -> dict[str, Any]:
     return json.loads(BUNDLE.read_text())
+
+
+@pytest.fixture(scope="session")
+def shared_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The fixture bundle staged once, for every case that reads the base bundle."""
+    return stage_root(tmp_path_factory.mktemp("shared"), BUNDLE)
+
+
+@pytest.fixture(scope="session")
+def compiled(shared_root: Path) -> Callable[..., Path]:
+    """One compile per (paper, section set) over the shared bundle."""
+    cache: dict[tuple[str, str], Path] = {}
+
+    def compiled(sections: str | None = None, paper: str | None = None) -> Path:
+        key = (paper or "auto", sections or "")
+        if key not in cache:
+            target = shared_root / f"shared-{len(cache)}.pdf"
+            run_typst(compile_argv(shared_root, target, sections, paper), shared_root)
+            cache[key] = target
+        return cache[key]
+
+    return compiled
 
 
 PRESENCE_PROBE = (
@@ -163,10 +196,8 @@ YEAST_GATES_PROBE = (
 )
 
 
-def test_brewhouse_is_present_with_the_process_inputs() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, BREWHOUSE_PRESENCE_PROBE) is True
+def test_brewhouse_is_present_with_the_process_inputs(shared_root: Path) -> None:
+    assert probe(shared_root, BREWHOUSE_PRESENCE_PROBE) is True
 
 
 def test_brewhouse_is_absent_without_a_process_input() -> None:
@@ -179,21 +210,16 @@ def test_brewhouse_is_absent_without_a_process_input() -> None:
         render(root, "brewhouse")
 
 
-def test_brewhouse_renders_alone_and_in_the_full_report() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-
-        render(root, "brewhouse")
-        assert (root / "report.pdf").stat().st_size > 0
-
-        render(root)
-        assert (root / "report.pdf").stat().st_size > 0
+@pytest.mark.parametrize("section", SECTION_IDS)
+def test_a_section_renders_alone_and_in_the_full_report(
+    compiled: Callable[..., Path], section: str
+) -> None:
+    assert compiled(section).stat().st_size > 0
+    assert compiled().stat().st_size > 0
 
 
-def test_liquor_ledger_is_present_with_the_hlt_budget() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, LIQUOR_PRESENCE_PROBE) is True
+def test_liquor_ledger_is_present_with_the_hlt_budget(shared_root: Path) -> None:
+    assert probe(shared_root, LIQUOR_PRESENCE_PROBE) is True
 
 
 def test_liquor_ledger_is_absent_without_the_hlt_budget() -> None:
@@ -206,21 +232,8 @@ def test_liquor_ledger_is_absent_without_the_hlt_budget() -> None:
         render(root, "liquor-ledger")
 
 
-def test_liquor_ledger_renders_alone_and_in_the_full_report() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-
-        render(root, "liquor-ledger")
-        assert (root / "report.pdf").stat().st_size > 0
-
-        render(root)
-        assert (root / "report.pdf").stat().st_size > 0
-
-
-def test_batch_facts_is_present_with_the_realized_values() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, BATCH_FACTS_PROBE) is True
+def test_batch_facts_is_present_with_the_realized_values(shared_root: Path) -> None:
+    assert probe(shared_root, BATCH_FACTS_PROBE) is True
 
 
 def test_batch_facts_is_absent_without_a_realized_fact() -> None:
@@ -233,7 +246,7 @@ def test_batch_facts_is_absent_without_a_realized_fact() -> None:
         render(root, "batch-facts")
 
 
-def test_the_short_id_truncates_with_an_ellipsis() -> None:
+def test_the_short_id_truncates_with_an_ellipsis(shared_root: Path) -> None:
     source = (
         '#import "lib/format.typ": short-id\n'
         "#metadata((\n"
@@ -241,18 +254,20 @@ def test_the_short_id_truncates_with_an_ellipsis() -> None:
         '  short: short-id("frozen-1"),\n'
         ")) <probe>\n"
     )
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, source) == {"long": "f2bee3d3…", "short": "frozen-1"}
+    assert probe(shared_root, source) == {"long": "f2bee3d3…", "short": "frozen-1"}
 
 
-def test_the_document_metadata_carries_the_full_identity() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        completed = run_typst(
-            ["query", "--input", "bundle=/report.json", str(root / "report.typ"), "<report-meta>"],
-            root,
-        )
+def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> None:
+    completed = run_typst(
+        [
+            "query",
+            "--input",
+            "bundle=/report.json",
+            str(shared_root / "report.typ"),
+            "<report-meta>",
+        ],
+        shared_root,
+    )
     payload = json.loads(completed.stdout)
     assert len(payload) == 1
     meta = payload[0]["value"]
@@ -284,18 +299,7 @@ def test_an_older_bundle_is_refused_with_its_version() -> None:
             render(root, "batch-facts")
 
 
-def test_batch_facts_renders_alone_and_in_the_full_report() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-
-        render(root, "batch-facts")
-        assert (root / "report.pdf").stat().st_size > 0
-
-        render(root)
-        assert (root / "report.pdf").stat().st_size > 0
-
-
-def test_grist_tables_are_present_and_optional() -> None:
+def test_grist_tables_are_present_and_optional(shared_root: Path) -> None:
     source = (
         '#import "lib/format.typ": present-formatted-table\n'
         "#metadata((\n"
@@ -304,9 +308,7 @@ def test_grist_tables_are_present_and_optional() -> None:
         '  sugars: present-formatted-table("batch.sugars"),\n'
         ")) <probe>\n"
     )
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, source) == {"major": True, "trace": True, "sugars": True}
+    assert probe(shared_root, source) == {"major": True, "trace": True, "sugars": True}
 
     bundle = fixture()
     del bundle["formatted_tables"]["grist.major_malts"]
@@ -317,7 +319,7 @@ def test_grist_tables_are_present_and_optional() -> None:
         render(root, "batch-facts")
 
 
-def test_summaries_are_present_and_print_the_frozen_cells() -> None:
+def test_summaries_are_present_and_print_the_frozen_cells(shared_root: Path) -> None:
     source = (
         '#import "lib/format.typ": formatted-summary, present-formatted-summary\n'
         "#metadata((\n"
@@ -328,15 +330,13 @@ def test_summaries_are_present_and_print_the_frozen_cells() -> None:
         '  yield: formatted-summary("overall").at("extract_yield").at("text"),\n'
         ")) <probe>\n"
     )
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, source) == {
-            "major": True,
-            "sugars": True,
-            "overall": True,
-            "color": "31.7 °L",
-            "yield": "77.6%",
-        }
+    assert probe(shared_root, source) == {
+        "major": True,
+        "sugars": True,
+        "overall": True,
+        "color": "31.7 °L",
+        "yield": "77.6%",
+    }
 
     bundle = fixture()
     del bundle["formatted_summaries"]["overall"]
@@ -353,10 +353,8 @@ def test_summaries_are_present_and_print_the_frozen_cells() -> None:
         render(root, "batch-facts")
 
 
-def test_volume_ledger_is_present_with_the_cascade_and_equipment() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, PRESENCE_PROBE) is True
+def test_volume_ledger_is_present_with_the_cascade_and_equipment(shared_root: Path) -> None:
+    assert probe(shared_root, PRESENCE_PROBE) is True
 
 
 def test_volume_ledger_is_absent_without_the_cascade_output() -> None:
@@ -373,7 +371,7 @@ def test_volume_ledger_is_absent_without_the_cascade_output() -> None:
         render(root, "volume-ledger")
 
 
-def test_identity_values_resolve_from_the_component_snapshot() -> None:
+def test_identity_values_resolve_from_the_component_snapshot(shared_root: Path) -> None:
     source = (
         '#import "lib/format.typ": formatted-number, formatted-text\n'
         "#metadata((\n"
@@ -381,49 +379,28 @@ def test_identity_values_resolve_from_the_component_snapshot() -> None:
         '  number: formatted-number("equipment.mash_dead_space_l"),\n'
         ")) <probe>\n"
     )
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        resolved = probe(root, source)
-
-    assert resolved == {"full": "0.5 L", "number": "0.5"}
+    assert probe(shared_root, source) == {"full": "0.5 L", "number": "0.5"}
 
 
-def test_volume_ledger_renders_alone_and_in_the_full_report() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-
-        render(root, "volume-ledger")
-        assert (root / "report.pdf").stat().st_size > 0
-
-        render(root)
-        assert (root / "report.pdf").stat().st_size > 0
-
-
-def test_paper_auto_follows_the_display_units() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        metric = stage_root(Path(tmp), BUNDLE)
-        assert page_size(metric) == A4
+def test_paper_auto_follows_the_display_units(shared_root: Path) -> None:
+    assert page_size(shared_root) == A4
 
     with tempfile.TemporaryDirectory() as tmp:
         customary = stage_root(Path(tmp), us_customary(fixture()))
         assert page_size(customary) == US_LETTER
 
 
-def test_paper_spec_overrides_the_unit_default() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert page_size(root, "letter") == US_LETTER
+def test_paper_spec_overrides_the_unit_default(shared_root: Path) -> None:
+    assert page_size(shared_root, "letter") == US_LETTER
 
     with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), us_customary(fixture()))
-        assert page_size(root, "a4") == A4
+        customary = stage_root(Path(tmp), us_customary(fixture()))
+        assert page_size(customary, "a4") == A4
 
 
-def test_unknown_paper_fails_loudly() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        with pytest.raises(AssertionError, match="unknown paper"):
-            page_size(root, "legal")
+def test_unknown_paper_fails_loudly(shared_root: Path) -> None:
+    with pytest.raises(AssertionError, match="unknown paper"):
+        page_size(shared_root, "legal")
 
 
 def test_the_vendored_font_resolves_without_system_fonts() -> None:
@@ -443,10 +420,8 @@ def test_the_vendored_font_resolves_without_system_fonts() -> None:
     assert "IBM Plex Sans" in completed.stdout
 
 
-def test_yeast_is_present_with_a_selected_strain() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, YEAST_PRESENCE_PROBE) is True
+def test_yeast_is_present_with_a_selected_strain(shared_root: Path) -> None:
+    assert probe(shared_root, YEAST_PRESENCE_PROBE) is True
 
 
 def test_yeast_is_absent_without_a_selected_strain() -> None:
@@ -459,12 +434,10 @@ def test_yeast_is_absent_without_a_selected_strain() -> None:
         render(root, "yeast")
 
 
-def test_the_strain_line_carries_the_sta1_status() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, YEAST_STRAIN_PROBE) == (
-            "15.0–22.0 °C · Medium flocculation · STA1+"
-        )
+def test_the_strain_line_carries_the_sta1_status(shared_root: Path) -> None:
+    assert probe(shared_root, YEAST_STRAIN_PROBE) == (
+        "15.0–22.0 °C · Medium flocculation · STA1+"
+    )
 
     for value, label in ((False, "STA1−"), (None, "STA1?")):
         bundle = fixture()
@@ -478,10 +451,8 @@ def test_the_strain_line_carries_the_sta1_status() -> None:
             assert probe(root, YEAST_STRAIN_PROBE).endswith(" · " + label)
 
 
-def test_the_derate_row_and_the_warning_follow_the_state() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, YEAST_GATES_PROBE) == {"sta1": True, "derate": True}
+def test_the_derate_row_and_the_warning_follow_the_state(shared_root: Path) -> None:
+    assert probe(shared_root, YEAST_GATES_PROBE) == {"sta1": True, "derate": True}
 
     bundle = fixture()
     bundle["state"]["valuation"]["batch.attenuation_derate_points"] = 0
@@ -504,10 +475,8 @@ ABOVE_CAP_PROBE = (
 )
 
 
-def test_the_above_cap_row_appears_only_when_the_cap_is_exceeded() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, ABOVE_CAP_PROBE) == {"present": True, "text": "2.6 pts"}
+def test_the_above_cap_row_appears_only_when_the_cap_is_exceeded(shared_root: Path) -> None:
+    assert probe(shared_root, ABOVE_CAP_PROBE) == {"present": True, "text": "2.6 pts"}
 
     bundle = fixture()
     del bundle["formatted"]["batch.attenuation_above_cap"]
@@ -518,10 +487,8 @@ def test_the_above_cap_row_appears_only_when_the_cap_is_exceeded() -> None:
         render(root, "yeast")
 
 
-def test_the_grist_attenuation_row_follows_the_state() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-        assert probe(root, YEAST_GRIST_PROBE) is True
+def test_the_grist_attenuation_row_follows_the_state(shared_root: Path) -> None:
+    assert probe(shared_root, YEAST_GRIST_PROBE) is True
 
     bundle = fixture()
     # At or above the cap the grist is no longer the binding constraint.
@@ -531,14 +498,3 @@ def test_the_grist_attenuation_row_follows_the_state() -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, YEAST_GRIST_PROBE) is False
         render(root, "yeast")
-
-
-def test_yeast_renders_alone_and_in_the_full_report() -> None:
-    with tempfile.TemporaryDirectory() as tmp:
-        root = stage_root(Path(tmp), BUNDLE)
-
-        render(root, "yeast")
-        assert (root / "report.pdf").stat().st_size > 0
-
-        render(root)
-        assert (root / "report.pdf").stat().st_size > 0
