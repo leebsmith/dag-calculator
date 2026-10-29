@@ -57,6 +57,21 @@ plus a declared coupling table for guards that read a surface they do not import
 harness). A change is not done until `make test` is green; `make hooks` installs
 `.githooks/pre-push`, which runs it on every push.
 
+When an agent uses the loop, the contract is:
+
+- `make quick` finds failures; `make test` claims done. Loop green is never
+  evidence of completion, and the pre-push hook is a safety net, not permission.
+- Quote the selector's `N of M suites` line and its reason: `fallback:` means the
+  command already is the gate, and `0 of N suites` means the diff against `BASE`
+  is empty and nothing ran — loop before committing, or pass `BASE=<ref>`.
+- Escalate on a fallback, on an empty selection, or on a failure outside the
+  selected suites; a failure outside is a mapping gap, so fix the coupling table
+  rather than re-looping.
+- `data/**`, `docs/**` and the harness are full-suite fallbacks by design: a
+  "quick" run over them costs the gate.
+- Do not run `check` and `quick` back to back, and do not run `test`
+  mid-iteration.
+
 After any `data/artifact.json` change:
 
     make generate   # eager: inventory, glossary, manifest, seeds, bundle fixture
