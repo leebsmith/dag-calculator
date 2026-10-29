@@ -14,14 +14,25 @@
 // refused rather than passed through. `--files` and `--dirs` must be the last
 // option; everything before them is passed to node, so
 // `--experimental-test-coverage` keeps working.
+//
+// Concurrency:
+//   These suites are latency-bound, so the runner defaults `--test-concurrency`
+//   to three times `os.availableParallelism()` — 12 on the 2-core/4-thread box,
+//   which measured 26.5 s against 35.5 s at node's default of parallelism - 1.
+//   TEST_CONCURRENCY overrides the default (a positive integer, refused
+//   otherwise) so CI can tune independently; an explicit `--test-concurrency`
+//   passed through by a caller wins over both.
 
 import { execFileSync } from "node:child_process";
 import { appendFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { availableParallelism } from "node:os";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const DIRS = ["tests/frontend", "tests/conformance", "tests/guards"];
+const CONCURRENCY_MULTIPLIER = 3;
+const CONCURRENCY_ENV = "TEST_CONCURRENCY";
 
 function collect(dir, out = []) {
   for (const entry of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
@@ -98,10 +109,30 @@ function label(args, files) {
   return `${files.length} files across ${dirs.join(", ")}`;
 }
 
+function concurrency(argv, failures) {
+  if (argv.some((arg) => arg === "--test-concurrency" || arg.startsWith("--test-concurrency="))) {
+    return null;
+  }
+  const override = process.env[CONCURRENCY_ENV];
+  if (override === undefined || override === "") {
+    const available = availableParallelism();
+    return {
+      value: String(CONCURRENCY_MULTIPLIER * available),
+      reason: `${CONCURRENCY_MULTIPLIER} x ${available} available`,
+    };
+  }
+  if (!/^[1-9]\d*$/.test(override)) {
+    failures.push(`${CONCURRENCY_ENV}=${override} is not a positive integer`);
+    return null;
+  }
+  return { value: override, reason: `${CONCURRENCY_ENV}=${override}` };
+}
+
 function main() {
   const argv = process.argv.slice(2);
   const modes = argv.filter((arg) => arg === "--files" || arg === "--dirs");
   const failures = modes.length > 1 ? ["--files and --dirs are exclusive"] : [];
+  const lanes = concurrency(argv, failures);
   const args = parseArgs(argv);
   const files = failures.length > 0 ? [] : select(args, failures);
 
@@ -115,11 +146,13 @@ function main() {
   const nodeArgs = [
     "--test",
     ...args.passthrough,
+    ...(lanes ? [`--test-concurrency=${lanes.value}`] : []),
     ...files.map((file) => relative(process.cwd(), join(ROOT, file))),
   ];
 
   const summary = label(args, files);
   console.log(`run-tests: ${summary}`);
+  if (lanes) console.log(`run-tests: concurrency ${lanes.value} (${lanes.reason})`);
   if (process.env.GITHUB_STEP_SUMMARY) {
     appendFileSync(process.env.GITHUB_STEP_SUMMARY, `**Frontend suites:** ${summary}\n`);
   }

@@ -1,7 +1,7 @@
 # Optimize local testing
 
-Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0
-and 1 landed 2026-10-29, Phases 2–6 proposed. Target machine: ASUS NUC6i3SYH —
+Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–2
+landed 2026-10-29, Phases 3–6 proposed. Target machine: ASUS NUC6i3SYH —
 Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every baseline
 number below was measured on this box on 2026-10-29; none is extrapolated.
 
@@ -572,6 +572,48 @@ override so CI can tune independently. Frontend gap at concurrency 12, measured:
 | Frontend (with guards) | 35.5 s | 26.5 s |
 
 **Predictions.** `make test` ≈ 48 s.
+
+**Landed.** 2026-10-29 — `Run the frontend suites at the measured concurrency`.
+
+| Gate | Before | After |
+|---|---|---|
+| `make test` | 47.0 s (node's default: parallelism − 1 = 3) | 48.8 s, then 40.5 s, 38.3 s and 44.3 s on the committed tree — 154 files, 954 tests pass; backend 697 passed, 1 skipped |
+| Frontend suite wall, back to back on one box | 30.3 s / 27.6 s at 3 | 25.2 s / 25.5 s at 12 |
+| `node scripts/test-cost.mjs` | 154 files, 954 tests, 41 boot an app, 65.9 s serial; backend 51 files, 698 tests, 17.0 s wall | 70.2 s serial, then 47.9 s serial on a frontend-only rerun; backend 19.3 s wall |
+| `make coverage` | 96.06 / 86.51 / 91.31 %; backend 96 % of 3207 statements, 118 missed | unchanged: 96.06 / 86.51 / 91.31 %; 96 % of 3207, 118 missed |
+| `make check` | — | 6.4–7.0 s |
+
+Deviations:
+
+- **The default is computed, not pinned to 12.** The contract says three times
+  available parallelism, not twelve; `scripts/run-tests.mjs` reads
+  `os.availableParallelism()` (4 here, so 12) and multiplies, so a smaller box
+  does not inherit a number measured somewhere else. `TEST_CONCURRENCY` overrides
+  it — refused unless it is a positive integer — and an explicit
+  `--test-concurrency` passed through by a caller wins over both.
+- **The runner prints the lane count.** `run-tests: concurrency 12 (3 x 4
+  available)` records which limit produced a timing; the old default was silent,
+  so no transcript showed it. The line is omitted when the caller supplied the
+  flag, since the caller then owns it. Printing it is what makes the default
+  auditable rather than inferred.
+- **The first `make test` did not improve** (47.0 → 48.8 s): the frontend lane
+  fell 30.8 → 28.5 s but the backend lane rose 14.2 → 18.3 s on a box whose load
+  average sat between 3.9 and 14. Later runs recorded 40.5 s, 38.3 s and 44.3 s
+  on the committed tree, the frontend lane at 23–27 s each time. The back-to-back
+  frontend A/B above is this phase's honest measurement; the gate number is a
+  recording and moves with whatever else the box is doing.
+- **The ledger cannot show this phase.** Each of its frontend rows runs in its own
+  process, so concurrency only moves work between rows. Its two runs here (65.9
+  and 70.2 s serial, then 47.9 s on a rerun with the backend lane skipped) differ
+  by more than the change could produce and bracket Phase 1's 46.0 s: the
+  instrument is insensitive, not regressed.
+- **The change reaches every caller of the runner** — `make test`, `make
+  test-guards`, `make coverage`, `make test-affected` — because it lives in the
+  runner's default rather than in a Makefile flag. `make test` remains the same
+  command; only the node invocation it builds gains one flag.
+
+Coverage: frontend 96.06 % lines / 86.51 % branches / 91.31 % functions →
+unchanged; backend 96 % (3207 statements, 118 missed) → unchanged.
 
 ### 3.4 Phase 3 — Cold start: validate and build the graph once (½ day)
 
