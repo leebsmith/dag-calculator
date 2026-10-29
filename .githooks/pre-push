@@ -1,0 +1,10 @@
+#!/bin/sh
+# `make quick` is a pre-filter, never evidence: it runs only the suites the
+# working diff can reach. This hook is what keeps that honest — a push runs the
+# full gate. Installed by `make hooks`.
+set -eu
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+exec make test

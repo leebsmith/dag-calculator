@@ -1,10 +1,9 @@
 # Optimize local testing
 
-Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phase 0
-(the ledger) landed 2026-10-29, Phases 1–6 proposed. Target machine: ASUS
-NUC6i3SYH — Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every
-baseline number below was measured on this box on 2026-10-29; none is
-extrapolated.
+Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0
+and 1 landed 2026-10-29, Phases 2–6 proposed. Target machine: ASUS NUC6i3SYH —
+Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every baseline
+number below was measured on this box on 2026-10-29; none is extrapolated.
 
 ## 0. Execution model
 
@@ -471,6 +470,81 @@ compare against these exactly.
    only (8.7 s at concurrency 8) for artifact, seed and documentation edits.
 6. **Pre-push hook** running `make test`, installed by `make hooks`, documented in
    AGENTS.md as the reason the loop may be narrow.
+
+**Landed.** 2026-10-29 — `Add the local quick loop: check, then the affected suites`.
+
+| Gate | Before | After |
+|---|---|---|
+| `make quick`, this branch's diff | — | 38.0–45.1 s over two runs (check + the full frontend suite: the diff changes the harness) |
+| `make quick`, synthetic 12-path selection | — | 84 of 154 suites (539 tests) in 23.3 s; ≈ 35 s with `check` |
+| `make test` | 56.1 s (Phase 0) | 48.1–60.9 s over two runs — 154 files, 954 tests; backend 697 passed, 1 skipped |
+| `make test-guards` | — | 10.7 s — 59 files, 176 tests |
+| `make check` | 8.5 s (Phase 0) | 7.3–11.5 s over two runs |
+| `node scripts/test-cost.mjs` | 153 files, 949 tests, 46.6 s serial (Phase 0) | 154 files, 954 tests, 46.0 s serial; backend 51 files, 698 tests, 15.4 s wall |
+| `make coverage` | 96.06 / 86.51 / 91.31 | unchanged; backend 96 % of 3207 statements |
+| `.githooks/pre-push` | — | runs `make test`: 954 frontend and 697 backend tests passed |
+
+The selector on this branch (under 12 paths, so a synthetic set follows it):
+
+```text
+$ node scripts/test-affected.mjs --dry-run
+test-affected: 7 changed paths against main
+frontend: 154 of 154 suites
+  fallback: full frontend suite — Makefile matches Makefile: the harness decides what runs; mapping a harness change cannot be trusted
+backend: skipped — no backend/** or data/** path changed
+test-affected: dry run; nothing executed
+
+$ node scripts/test-affected.mjs --dry-run --paths <12 synthetic frontend/src modules>
+test-affected: 12 changed paths an explicit list
+frontend: 84 of 154 suites
+  mapped by imports (77): tests/conformance/ion-constraints.test.js, tests/conformance/numeric-parity.test.js, tests/conformance/parity.test.js, tests/conformance/seed-conformance.test.js, tests/conformance/validation-parity.test.js, tests/frontend/artifact-functions.test.js, tests/frontend/attenuation-above-cap.test.js, tests/frontend/attenuation-display.test.js, tests/frontend/batchClient.test.js, tests/frontend/boundaryRequest.test.js, tests/frontend/brew-day-card.test.js, tests/frontend/card-display.test.js, tests/frontend/collection-fields.test.js, tests/frontend/dag.test.js, tests/frontend/dimension-inference.test.js, tests/frontend/domains.test.js, tests/frontend/draft-discard.test.js, tests/frontend/engine.test.js, tests/frontend/equipment-ingest.test.js, tests/frontend/equipment-legacy.test.js, tests/frontend/fermentation-space.test.js, tests/frontend/freeze-shape.test.js, tests/frontend/hamilton.test.js, tests/frontend/hops-card.test.js, tests/frontend/ingredient-priors.test.js, tests/frontend/late-addition-effect-mirror.test.js, tests/frontend/late-addition-intent.test.js, tests/frontend/late-addition-parts.test.js, tests/frontend/late-addition-share-zero.test.js, tests/frontend/library.test.js, tests/frontend/libraryUi.test.js, tests/frontend/malt-card.test.js, tests/frontend/mash-card.test.js, tests/frontend/mash-preset-mirror.test.js, tests/frontend/number-input.test.js, tests/frontend/persistence.test.js, tests/frontend/pin-matrix.test.js, tests/frontend/realized-vitals.test.js, tests/frontend/relations.test.js, tests/frontend/report-catalog.test.js, tests/frontend/report-format.test.js, tests/frontend/report-inputs.test.js, tests/frontend/selection-validation.test.js, tests/frontend/selections.test.js, tests/frontend/setup.test.js, tests/frontend/step-boundaries.test.js, tests/frontend/step-lifecycle.test.js, tests/frontend/step-pipeline.test.js, tests/frontend/style-card.test.js, tests/frontend/unit-decimals.test.js, tests/frontend/unitPrefs.test.js, tests/frontend/units.test.js, tests/frontend/userCatalog.test.js, tests/frontend/volume-ledger.test.js, tests/frontend/water-card.test.js, tests/frontend/water-gate.test.js, tests/frontend/water-ratio.test.js, tests/frontend/water-target-mirror.test.js, tests/guards/alpine-handlers.test.js, tests/guards/artifact-consumers.test.js, tests/guards/boundary-inputs.test.js, tests/guards/boundary-output-consumers.test.js, tests/guards/boundary-routes.test.js, tests/guards/determinism.test.js, tests/guards/dimension-coverage.test.js, tests/guards/display-only-units.test.js, tests/guards/display-precision.test.js, tests/guards/include-integrity.test.js, tests/guards/installer-contract.test.js, tests/guards/manifest-integrity.test.js, tests/guards/option-labels.test.js, tests/guards/ownership.test.js, tests/guards/roots-only.test.js, tests/guards/store-surface.test.js, tests/guards/telemetry-classes.test.js, tests/guards/unit-menu-coverage.test.js, tests/guards/write-targets.test.js
+  declared coupling (14): tests/guards/alpine-handlers.test.js, tests/guards/api-proxy.test.js, tests/guards/boundary-output-consumers.test.js, tests/guards/dimension-coverage.test.js, tests/guards/display-only-units.test.js, tests/guards/engine-access.test.js, tests/guards/engine-read-mirrors.test.js, tests/guards/import-direction.test.js, tests/guards/installer-contract.test.js, tests/guards/no-reactivity.test.js, tests/guards/ownership.test.js, tests/guards/presentation-ids.test.js, tests/guards/store-surface.test.js, tests/guards/taxonomy-coverage.test.js
+backend: skipped — no backend/** or data/** path changed
+test-affected: dry run; nothing executed
+```
+
+Deviations:
+
+- **The 12-path loop missed the prediction: 84 suites, not ~24, and ≈ 35 s, not
+  ≤ 20 s.** The selection is not a bug: the transitive walk enters the harness at
+  `tests/frontend/appHelpers.js` → `frontend/src/adapters/stepAdapter.js`, the
+  composition root that installs every card, so every suite that boots the app
+  reaches almost every card module. Measured over all 123 `frontend/src/*.js`
+  modules, the median module selects 49 of 154 suites (`units.js` 73, `main.js`
+  3). The plan's §1 median of 11 is a direct-import count and does not describe
+  this graph. The loop still turns that edit's 46 s of suite time into 23 s; the
+  remaining gap is Phase 2's concurrency and Phase 3's cold start.
+- **The coupling table is wider than the four seeded rules**, because the seeded
+  table alone under-runs the guards that read a surface by path. Added, each with
+  a reason in `RULES`: the fifteen template and stylesheet readers (a full-suite
+  fallback there would have made every partial edit a gate run), the whole-tree
+  guards (`import-direction`, `display-only-units`, `engine-access`), the store
+  readers, the plan/claims coupling, and the harness and configuration globals.
+  `tests/guards/test-affected-coupling.test.js` fails when any named suite or
+  literal path stops existing; verified by planting `no-such-suite` and watching
+  it fail, then restoring.
+- **`tests/**/helpers.js` became `tests/**/*helpers.js`** (likewise `*util.js`):
+  the literal seeded glob does not match `tests/frontend/appHelpers.js`, which is
+  the harness file Phase 4 edits. `tests/**/*.json` was added for suite data read
+  by path.
+- **The backend lane walks the `app.*` import closure** and falls back to the
+  whole backend for `backend/app/core/**`, `schemas/**`, `templates/**`, a
+  dependency change, or a changed file no suite imports; the lane is skipped
+  entirely when no `backend/**` or `data/**` path changed.
+- **`scripts/run-tests.mjs` gained `--files` and `--dirs`** with their own
+  refusal semantics: an empty list, a path outside the three roots, a non-suite,
+  a missing file, and the two flags together all exit non-zero. Default discovery
+  is unchanged, so `npm test` prints the same line and `make test` is
+  byte-for-byte the same command.
+- **Untracked files join the change set.** `git diff` omits them, and an agent's
+  new module must not vanish from the loop.
+- **`--paths` was added** for checking the mapping against a selection that is
+  not a branch diff; it is what produced the synthetic report above.
+- The pre-push refusal stays with §7: proving the hook blocks a red push needs a
+  deliberately red tree.
+
+Coverage: frontend 96.06 % lines / 86.51 % branches / 91.31 % functions →
+unchanged; backend 96 % → 96 % (3207 statements, 118 missed).
 
 **Predictions.** `make quick` on a 12-file edit selects ~24 suites and runs in
 ≤ 20 s; `make test` unchanged.

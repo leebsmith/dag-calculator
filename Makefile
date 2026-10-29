@@ -27,7 +27,7 @@ EMULATOR_FLAGS  := $(if $(EMULATOR_IMPORT),--import=$(EMULATOR_DATA)) --export-o
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help hooks local-dev check test test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy \
         report-dev report-pages
@@ -40,6 +40,9 @@ help:
 	@echo "                  (PAPER=auto|a4|letter, SECTIONS=a,b)"
 	@echo "  check           Frontend/backend lint + architectural boundaries"
 	@echo "  test            Frontend + backend test suites"
+	@echo "  quick           check + the suites the working diff can reach (the loop)"
+	@echo "  test-affected   The suites the working diff can reach (BASE=<ref>)"
+	@echo "  test-guards     The guard suites only"
 	@echo "  test-fuzz       Seeded water-solver invariant sweep (CASES=200 SEED=...)"
 	@echo "  test-oracle     Check the oracle snapshot against the legacy checkout"
 	@echo "  coverage        Frontend + backend coverage reports"
@@ -129,6 +132,18 @@ test:
 	@echo "Running backend pytest..."
 	cd backend && uv run pytest ../tests/backend/
 
+# The local loop: check first, then only the suites the working diff can reach.
+# A pre-filter, never evidence — `make test` is the gate, and .githooks/pre-push
+# runs it.
+test-affected:
+	node scripts/test-affected.mjs
+
+test-guards:
+	node scripts/run-tests.mjs --dirs tests/guards
+
+quick: check test-affected
+	@echo "quick: check and the affected suites passed (make test is still the gate)"
+
 test-oracle:
 	node tests/conformance/emit-oracle-fixture.mjs --check
 
@@ -171,8 +186,8 @@ generate:
 
 hooks:
 	git config core.hooksPath .githooks
-	chmod +x .githooks/pre-commit
-	@echo "Git hooks installed from .githooks/"
+	chmod +x .githooks/pre-commit .githooks/pre-push
+	@echo "Git hooks installed from .githooks/ (pre-commit refreshes generated artifacts; pre-push runs make test)"
 
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/

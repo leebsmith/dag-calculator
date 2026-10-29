@@ -36,25 +36,35 @@ seam, solvers, Firebase auth, and Firestore persistence.
 
 ## Commands
 
-    make local-dev   # Vite + Firebase emulators + uvicorn (http://localhost:5173)
-    make check       # eslint/stylelint (src, tests, scripts) + ruff + tach + repo hygiene
-    make test        # frontend (node --test) + backend pytest
-    make test-fuzz   # seeded water-solver invariant sweep (CASES=200 SEED=...)
-    make verify      # check + test + production build (hermetic)
-    make verify-full # verify + oracle-snapshot check against the legacy checkout
+    make local-dev      # Vite + Firebase emulators + uvicorn (http://localhost:5173)
+    make check          # eslint/stylelint (src, tests, scripts) + ruff + tach + repo hygiene
+    make test           # frontend (node --test) + backend pytest — the gate
+    make quick          # check + the suites the working diff can reach (the loop)
+    make test-affected  # only those suites (BASE=<ref>, default main)
+    make test-guards    # the guard suites only (artifact, seed and documentation edits)
+    make test-fuzz      # seeded water-solver invariant sweep (CASES=200 SEED=...)
+    make verify         # check + test + production build (hermetic)
+    make verify-full    # verify + oracle-snapshot check against the legacy checkout
 
 CI runs `make check`, `make test`, and `make build` on every push and pull request
 (`.github/workflows/verify.yml`). `make test-fuzz` and `make test-oracle` stay
 local: one is generative, the other reads the legacy checkout.
 
+`make quick` is the local loop, not the gate: it runs `make check` and then only
+the suites the working diff can reach. The selector is a pre-filter — imports,
+plus a declared coupling table for guards that read a surface they do not import
+— and it falls back to the full suite for global inputs (`data/`, `docs/`, the
+harness). A change is not done until `make test` is green; `make hooks` installs
+`.githooks/pre-push`, which runs it on every push.
+
 After any `data/artifact.json` change:
 
     make generate   # eager: inventory, glossary, manifest, seeds, bundle fixture
 
-`make hooks` installs the committed pre-commit hook (`.githooks/`), which reruns
-the Node generators and stages what changed. The hook is a convenience: `make
-check` re-checks the frozen-path and manifest/lock rules, and `make test` remains
-the gate.
+`make hooks` installs the committed git hooks (`.githooks/`): pre-commit reruns
+the Node generators and stages what changed, pre-push runs `make test`. The
+pre-commit hook is a convenience: `make check` re-checks the frozen-path and
+manifest/lock rules, and `make test` remains the gate.
 
 ## Governance & Modes
 
