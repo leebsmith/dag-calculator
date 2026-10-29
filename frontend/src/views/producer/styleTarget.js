@@ -13,6 +13,7 @@ import {
   raySegment,
   sgToPlato,
 } from "../../engine/fermentation.js";
+import { statusFor } from "../../engine/styleConformance.js";
 import { formatGravity, formatWithDecimals, isFiniteNumber } from "../../utils.js";
 
 // The pin's own unit: ABV is free percent, OG/FG are specific gravity.
@@ -24,6 +25,30 @@ export const SCALE_PINS = [
 
 export function scaleTargetLabel(pin, value) {
   return pin === "abv" ? `${formatWithDecimals(value, 1)}%` : formatGravity(value);
+}
+
+// The style sliders may move two just-noticeable differences beyond the envelope:
+// enough for a deliberate deviation, and still on the assessor's scale so the note
+// can name the band the score will use. Scoring itself is unchanged — it grades
+// the realized value against the absolute envelope.
+export const ALLOWANCE_JND = 2;
+
+export function allowanceBounds(bounds, tau) {
+  if (!Array.isArray(bounds) || !isFiniteNumber(tau)) return null;
+  const [low, high] = bounds;
+  if (!isFiniteNumber(low) || !isFiniteNumber(high)) return null;
+  return [Math.max(0, low - ALLOWANCE_JND * tau), high + ALLOWANCE_JND * tau];
+}
+
+export function targetDrift(value, bounds, tau, { unit, decimals } = {}) {
+  if (!Array.isArray(bounds) || !isFiniteNumber(value)) return { outside: false, text: "" };
+  const drift = statusFor(value, bounds[0], bounds[1], tau);
+  if (drift.status === "within") return { outside: false, text: "" };
+  const direction = value < bounds[0] ? "below" : "above";
+  return {
+    outside: true,
+    text: `${formatWithDecimals(drift.deviation, decimals)} ${unit} ${direction} style — ${drift.status}`,
+  };
 }
 
 // Reactive mirrors of the active pin, its target root, and the target itself.

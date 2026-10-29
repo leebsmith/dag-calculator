@@ -5,8 +5,10 @@
 
 import { feasibleVertices, sgToPlato } from "./fermentation.js";
 
-// One just-noticeable-difference band per dimension, in its native unit.
-const TAU = {
+// One just-noticeable-difference band per dimension, in its native unit. The
+// style card's target allowance is expressed in these bands, so the slider and
+// the assessor cannot disagree about how far a deviation is.
+export const TAU = {
   og: 0.002, // SG
   fg: 0.002, // SG
   abv: 0.2, // %
@@ -28,7 +30,7 @@ function complete(min, max) {
   return Number.isFinite(min) && Number.isFinite(max) && min < max;
 }
 
-function statusFor(value, low, high, tau) {
+export function statusFor(value, low, high, tau) {
   let violatedBoundary = null;
   let deviation = 0;
   if (value < low) {

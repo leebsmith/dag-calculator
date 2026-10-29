@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **567** (388 enumerable, 179 hidden)
+- Declared members: **573** (388 enumerable, 185 hidden)
 - Installers: **19**
 - Card partials: **15**
 - Installers reading another installer's key: **15 of 19**
@@ -22,7 +22,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 27 | 1 | 0 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 7 | 1 | 3 |
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
-| `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 36 | 1 | 8 |
+| `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 110 | 3 | 22 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 65 | 2 | 24 |
@@ -208,6 +208,8 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `ibuGu` | `styleTargets` | hidden | 0 |
 | `ibuGuDisplay` | `styleTargets` | hidden | 1 |
 | `ibuTargetField` | `styleTargets` | hidden | 1 |
+| `ibuTargetNote` | `styleTargets` | hidden | 1 |
+| `ibuTargetOutside` | `styleTargets` | hidden | 1 |
 | `ibuTargetProvenance` | `styleTargets` | hidden | 1 |
 | `identityTabs` | `libraryUi` | hidden | 1 |
 | `inputDraft` | `fieldActions` | public | 10 |
@@ -410,6 +412,8 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `sortedMashRests` | `mash` | hidden | 0 |
 | `sourceKind` | `libraryUi` | public | 1 |
 | `srmTargetField` | `styleTargets` | hidden | 1 |
+| `srmTargetNote` | `styleTargets` | hidden | 1 |
+| `srmTargetOutside` | `styleTargets` | hidden | 1 |
 | `srmTargetProvenance` | `styleTargets` | hidden | 1 |
 | `strikeWaterTempDisplay` | `mash` | public | 1 |
 | `styleAbvBounds` | `styleNavigator` | hidden | 0 |
@@ -423,6 +427,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleExtract` | `styleNavigator` | public | 1 |
 | `styleGravity` | `styleDeclaration` | public | 0 |
 | `styleIbuBounds` | `styleTargets` | hidden | 1 |
+| `styleIbuSliderBounds` | `styleTargets` | hidden | 1 |
 | `stylePreview` | `styleNavigator` | hidden | 1 |
 | `styleRegion` | `styleNavigator` | public | 0 |
 | `styleSafestPoint` | `styleNavigator` | public | 0 |
@@ -431,6 +436,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleSolvedCap` | `styleNavigator` | public | 0 |
 | `styleSolvedVolume` | `styleNavigator` | public | 0 |
 | `styleSrmBounds` | `styleTargets` | hidden | 1 |
+| `styleSrmSliderBounds` | `styleTargets` | hidden | 1 |
 | `styleTargetInfo` | `styleNavigator` | hidden | 1 |
 | `styleTargetNearest` | `styleNavigator` | public | 1 |
 | `styleTargetRisk` | `styleNavigator` | hidden | 1 |

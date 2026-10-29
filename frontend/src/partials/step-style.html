@@ -212,13 +212,13 @@
               @click="resetField(srmTargetField)"
             >↺</button>
           </label>
-          <template x-if="styleSrmBounds">
+          <template x-if="styleSrmSliderBounds">
             <div>
               <input
                 type="range"
                 class="target-slider"
-                :min="styleSrmBounds[0]"
-                :max="styleSrmBounds[1]"
+                :min="styleSrmSliderBounds[0]"
+                :max="styleSrmSliderBounds[1]"
                 step="0.5"
                 :value="targetSrm"
                 @input="setTargetSrm($event.target.value)"
@@ -229,6 +229,7 @@
                 <span class="tabular-nums" x-text="fmt.formatWithDecimals(targetSrm, 0) + ' SRM'"></span>
                 <span class="text-xs text-muted" x-text="'Style ' + fmt.formatRange(styleSrmBounds[0], styleSrmBounds[1]) + ' SRM'"></span>
               </div>
+              <span class="form-hint text-warning" x-show="srmTargetOutside" x-text="srmTargetNote"></span>
             </div>
           </template>
           <span class="form-hint" x-show="!styleSrmBounds">No SRM range in this style's envelope.</span>
@@ -250,13 +251,13 @@
               @click="resetField(ibuTargetField)"
             >↺</button>
           </label>
-          <template x-if="styleIbuBounds">
+          <template x-if="styleIbuSliderBounds">
             <div>
               <input
                 type="range"
                 class="target-slider"
-                :min="styleIbuBounds[0]"
-                :max="styleIbuBounds[1]"
+                :min="styleIbuSliderBounds[0]"
+                :max="styleIbuSliderBounds[1]"
                 step="1"
                 :value="targetIbu"
                 @input="setTargetIbu($event.target.value)"
@@ -267,6 +268,7 @@
                 <span class="tabular-nums" x-text="fmt.formatWithDecimals(targetIbu, 1) + ' IBU'"></span>
                 <span class="text-xs text-muted" x-text="'Style ' + fmt.formatRange(styleIbuBounds[0], styleIbuBounds[1]) + ' IBU'"></span>
               </div>
+              <span class="form-hint text-warning" x-show="ibuTargetOutside" x-text="ibuTargetNote"></span>
             </div>
           </template>
           <span class="form-hint" x-show="!styleIbuBounds">No IBU range in this style's envelope.</span>

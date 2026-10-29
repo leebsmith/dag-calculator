@@ -91,6 +91,25 @@ test("the sealed style declaration seeds the residual targets", async () => {
   assert.ok(typeof abv === "number" && abv >= 5.5 && abv <= 7.5);
 });
 
+test("the target sliders allow two JNDs beyond the envelope and name the drift band", async () => {
+  const app = await appWithStyle("21A");
+
+  assert.deepEqual(app.styleSrmSliderBounds, [3, 17]);
+  assert.deepEqual(app.styleIbuSliderBounds, [34, 76]);
+  assert.equal(app.srmTargetOutside, false);
+  assert.equal(app.ibuTargetOutside, false);
+
+  app.setTargetSrm(2);
+  assert.equal(app.targetSrm, 2);
+  assert.equal(app.srmTargetOutside, true);
+  assert.equal(app.srmTargetNote, "4.0 SRM below style — severe");
+
+  app.setTargetIbu(76);
+  assert.equal(app.targetIbu, 76);
+  assert.equal(app.ibuTargetOutside, true);
+  assert.equal(app.ibuTargetNote, "6 IBU above style — drift");
+});
+
 test("the style declaration is read-only and has no workspace selector", async () => {
   const app = await appWithStyle("21A");
 

@@ -5,9 +5,12 @@
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import {
   SCALE_PINS,
+  allowanceBounds,
   scalePinState,
   scaleTargetMismatch,
+  targetDrift,
 } from "../../../views/producer/styleTarget.js";
+import { TAU } from "../../../engine/styleConformance.js";
 import {
   bitternessRatio,
   boundsOf,
@@ -146,6 +149,48 @@ export function registerStyleTargets(app, ctx) {
         return boundsOf(this.fieldsById, N.envelope.ibuMin, N.envelope.ibuMax);
       },
     },
+    // The sliders reach two just-noticeable differences past the envelope; the
+    // envelope getters above stay the style's absolute bounds (scoring reads them).
+    styleSrmSliderBounds: {
+      configurable: true,
+      get() {
+        return allowanceBounds(this.styleSrmBounds, TAU.srm);
+      },
+    },
+    styleIbuSliderBounds: {
+      configurable: true,
+      get() {
+        return allowanceBounds(this.styleIbuBounds, TAU.ibu);
+      },
+    },
+    srmTargetOutside: {
+      configurable: true,
+      get() {
+        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, { unit: "SRM", decimals: 1 })
+          .outside;
+      },
+    },
+    srmTargetNote: {
+      configurable: true,
+      get() {
+        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, { unit: "SRM", decimals: 1 })
+          .text;
+      },
+    },
+    ibuTargetOutside: {
+      configurable: true,
+      get() {
+        return targetDrift(this.targetIbu, this.styleIbuBounds, TAU.ibu, { unit: "IBU", decimals: 0 })
+          .outside;
+      },
+    },
+    ibuTargetNote: {
+      configurable: true,
+      get() {
+        return targetDrift(this.targetIbu, this.styleIbuBounds, TAU.ibu, { unit: "IBU", decimals: 0 })
+          .text;
+      },
+    },
     // The SRM/IBU target roots live on the batch slice, but the style card shows
     // them as sliders; expose their field models (with `seeded`/`seededValue`)
     // for the seed provenance affordance.
@@ -250,6 +295,12 @@ export const KEYS = [
   "scalePinOptions",
   "styleSrmBounds",
   "styleIbuBounds",
+  "styleSrmSliderBounds",
+  "styleIbuSliderBounds",
+  "srmTargetOutside",
+  "srmTargetNote",
+  "ibuTargetOutside",
+  "ibuTargetNote",
   "srmTargetField",
   "ibuTargetField",
   "srmTargetProvenance",

@@ -1,5 +1,13 @@
 # TODO
 
+## Now
+
+**Style targets: ±2 JND sliders** — the IBU and SRM sliders on the Style card reach
+two just-noticeable differences past the style envelope (SRM ±3, IBU ±6, from the
+assessor's `TAU`), so a deliberate deviation is possible; an out-of-style target
+shows a note with the deviation and the band the score will use. Scoring is
+unchanged: it grades the realized value against the absolute envelope.
+
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
