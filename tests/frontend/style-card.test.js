@@ -181,6 +181,23 @@ test("the ABV cache keeps the style card off the boundary during an edit", async
   app.teardown();
 });
 
+test("the style plot model is built once per input set", async () => {
+  const app = await appWithStyle("21A");
+  const model = app.stylePreview;
+  assert.ok(model);
+  assert.equal(app.stylePreview, model, "repeated template reads reuse the model");
+  assert.equal(app.stylePreview, model, "and keep reusing it across a render");
+
+  app.compute();
+  const afterCompute = app.stylePreview;
+  assert.ok(afterCompute);
+
+  app.setScalePin("og");
+  const afterPin = app.stylePreview;
+  assert.notEqual(afterPin, afterCompute, "a new pin rebuilds the model");
+  assert.equal(app.stylePreview, afterPin);
+});
+
 test("a new batch seeds the style ABV midpoint and leaves it free", async () => {
   const app = createStepApp();
   await app.loadState({

@@ -25,6 +25,32 @@ function abvInterval(ray) {
   return Number.isFinite(a) && Number.isFinite(b) ? [Math.min(a, b), Math.max(a, b)] : null;
 }
 
+// The plot model is a pure function of five inputs and the template reads it
+// ~53 times per render. Cache the model against their identities: a compute
+// replaces the region/extract objects, so the model is rebuilt once per solve
+// instead of once per binding.
+let stylePreviewCache = null;
+
+function stylePreviewFor(app) {
+  const inputs = [
+    app.styleRegion,
+    app.styleExtract,
+    app.styleSafestPoint,
+    app.scalePin,
+    app.activeScaleTarget,
+  ];
+  if (
+    stylePreviewCache &&
+    inputs.every((value, index) => value === stylePreviewCache.inputs[index])
+  ) {
+    return stylePreviewCache.model;
+  }
+  const [region, point, safestPoint, pin, target] = inputs;
+  const model = stylePlotModel({ region, point, safestPoint, pin, target });
+  stylePreviewCache = { inputs, model };
+  return model;
+}
+
 export function registerStyleNavigator(app, ctx) {
   const { engine } = ctx;
 
@@ -175,13 +201,7 @@ export function registerStyleNavigator(app, ctx) {
     stylePreview: {
       configurable: true,
       get() {
-        return stylePlotModel({
-          region: this.styleRegion,
-          point: this.styleExtract,
-          safestPoint: this.styleSafestPoint,
-          pin: this.scalePin,
-          target: this.activeScaleTarget,
-        });
+        return stylePreviewFor(this);
       },
     },
   });
