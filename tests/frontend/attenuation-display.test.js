@@ -12,7 +12,7 @@ import { valuateScalar } from "../../frontend/src/views/producer/scalar.js";
 import { figureMarkFor } from "../../frontend/src/views/producer/table.js";
 import { nonlinearFns } from "../../frontend/src/views/producer/valuation.js";
 import { callArtifactFunction } from "../../frontend/src/engine/artifactFunctions.js";
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 import { loadArtifact } from "./helpers.js";
 
 const artifact = loadArtifact();
@@ -167,8 +167,7 @@ test("a normal realized FG is displayed unfloored", () => {
 });
 
 test("the card copies provenance and basis onto batch rows and converts apparent F", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
 
   app.openMaltEditor();
   app.addCatalogMalt("pilsen-md");
@@ -190,8 +189,7 @@ test("the card copies provenance and basis onto batch rows and converts apparent
 });
 
 test("an unknown STA1 status is never silent", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
 
   app.selectYeast("fermentis-safale-american-ale-us-05");
   app.compute();

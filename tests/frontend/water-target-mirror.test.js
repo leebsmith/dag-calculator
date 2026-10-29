@@ -5,17 +5,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 function bootedApp() {
-  const app = createTestApp();
-  app.boot();
-  app.compute();
-  return app;
+  return sharedTestApp();
 }
 
-test("the target options are mirrored from the reference cache", () => {
-  const app = bootedApp();
+test("the target options are mirrored from the reference cache", async () => {
+  const app = await bootedApp();
 
   assert.ok(app.waterTargetOptions.length > 2);
   assert.equal(app.waterTargetOptions, app.waterTargetOptionsState);
@@ -26,8 +23,8 @@ test("the target options are mirrored from the reference cache", () => {
   assert.equal(app.waterTargetOptions.at(-1).value, "freeform");
 });
 
-test("a preset selection is mirrored on refresh", () => {
-  const app = bootedApp();
+test("a preset selection is mirrored on refresh", async () => {
+  const app = await bootedApp();
 
   app.selectWaterTarget("hoppy-ipa");
   app.compute();
@@ -36,8 +33,8 @@ test("a preset selection is mirrored on refresh", () => {
   assert.equal(app.waterTargetSelection, "hoppy-ipa");
 });
 
-test("dropping the preset falls back to freeform after the refresh", () => {
-  const app = bootedApp();
+test("dropping the preset falls back to freeform after the refresh", async () => {
+  const app = await bootedApp();
   app.selectWaterTarget("hoppy-ipa");
   app.compute();
 
@@ -48,8 +45,8 @@ test("dropping the preset falls back to freeform after the refresh", () => {
   assert.equal(app.waterTargetSelection, "freeform");
 });
 
-test("the select is a snapshot, not a live engine read", () => {
-  const app = bootedApp();
+test("the select is a snapshot, not a live engine read", async () => {
+  const app = await bootedApp();
   app.selectWaterTarget("burton-ipa");
   app.compute();
 

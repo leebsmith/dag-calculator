@@ -4,7 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 import {
   resolvedSugarMasses,
   sugarShareFromDose,
@@ -28,8 +28,7 @@ const SUGAR = {
 };
 
 async function appWithSugar(overrides = {}) {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...SUGAR, ...overrides }]);
   app.compute();
   return app;
@@ -102,8 +101,7 @@ test("adopt actions re-sync the other representation on request", async () => {
 });
 
 test("share-mode guardrails are advisories, never silent", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
 
   app.setRoot("batch.late_addition_intent", "share");
   app.setRoot("batch.sugar_extract_share", 0.1);

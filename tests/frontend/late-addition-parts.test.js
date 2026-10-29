@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, sharedTestApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 
 const cache = createReferenceCache();
@@ -99,8 +99,7 @@ test("loading a legacy share batch repairs zero row weights", async () => {
 });
 
 test("saving a share draft with no weights completes them", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...ROW }]);
   app.setRoot("batch.late_addition_intent", "share");
   app.setRoot("batch.sugar_extract_share", 0.15);
@@ -141,8 +140,7 @@ test("the late-addition volume feeds the ledger's shrinkage base", async () => {
 });
 
 test("a zero share never invents row weights", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...ROW, parts: 0 }]);
   app.setRoot("batch.late_addition_intent", "share");
   app.setRoot("batch.sugar_extract_share", 0);

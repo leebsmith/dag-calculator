@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 const ROW = {
   sugar_id: "dextrose",
@@ -25,8 +25,7 @@ const ROW = {
 };
 
 async function dosedApp() {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...ROW }]);
   app.engine.setRoot("batch.late_addition_intent", "dose");
   app.compute();

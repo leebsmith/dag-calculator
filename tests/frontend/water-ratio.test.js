@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { ratioReadout } from "../../frontend/src/views/waterRatio.js";
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 test("ratioReadout compares the kettle ratio to the target-implied ratio", () => {
   const compared = ratioReadout(2, 3);
@@ -19,9 +19,8 @@ test("ratioReadout compares the kettle ratio to the target-implied ratio", () =>
   assert.equal(asSolvedOnly.asSolvedText, "2.0 : 1");
 });
 
-test("the water summary compares against the target only when both flavor ions are checked with values", () => {
-  const app = createTestApp();
-  app.boot();
+test("the water summary compares against the target only when both flavor ions are checked with values", async () => {
+  const app = await sharedTestApp();
   app.selectWaterTarget("freeform");
   app.setRoot("water.salt_distribution", "PROPORTIONAL");
   app.toggleWaterTarget("so4");

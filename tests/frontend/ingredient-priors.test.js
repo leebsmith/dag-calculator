@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 
 import { resolveIngredientRows } from "../../frontend/src/engine/ingredientPriors.js";
 import { artifact as artifactFixture } from "../guards/util.js";
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 const artifact = artifactFixture();
 const resolve = (nodeId, rows) => resolveIngredientRows(artifact, nodeId, rows);
@@ -68,8 +68,7 @@ test("non-ingredient collections pass through untouched", () => {
 });
 
 test("rows are resolved when they enter the engine", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
 
   app.engine.setCollection("grist.major_malts", [
     {

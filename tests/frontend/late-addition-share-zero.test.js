@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 import { resolvedSugarMasses } from "../../frontend/src/views/producer/sugarAllocation.js";
 
 const ROW = {
@@ -44,8 +44,7 @@ test("dose mode keeps the authored mass at share zero", () => {
 });
 
 async function shareZeroApp() {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...ROW }]);
   app.setRoot("batch.late_addition_intent", "share");
   app.setRoot("batch.sugar_extract_share", 0);
@@ -82,8 +81,7 @@ test("adopt share at zero clears the dose masses", async () => {
 });
 
 test("dose mode shows the authored mass and hides resolved mass", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...ROW }]);
   app.setRoot("batch.late_addition_intent", "dose");
   app.compute();
