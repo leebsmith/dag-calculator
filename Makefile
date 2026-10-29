@@ -29,7 +29,7 @@ BJCP_EDITION ?= 2021
 
 .PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
-        scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-backend deploy-frontend destroy \
+        scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
         report-dev report-pages
 
 help:
@@ -60,7 +60,8 @@ help:
 	@echo "                  (BJCP_CACHE=<dir> BJCP_EDITION=2021)"
 	@echo "  clean           Stop local processes and reclaim ports (alias: clear)"
 	@echo "  reset-data      Delete local emulator data (drafts, frozen batches, library)"
-	@echo "  deploy          Deploy backend (Cloud Run) + frontend (Firebase)"
+	@echo "  deploy          Deploy Firestore rules, backend (Cloud Run) and frontend"
+	@echo "  deploy-rules    Deploy firestore.rules only"
 	@echo "  destroy         Tear down the deployed services"
 
 # --- Local development -------------------------------------------------------
@@ -251,7 +252,13 @@ reset-data:
 	@echo "Local data cleared; the next local-dev starts empty."
 
 # --- Deploy ------------------------------------------------------------------
-deploy: deploy-backend deploy-frontend
+deploy: deploy-rules deploy-backend deploy-frontend
+
+# The rules are deny-all for clients and the Admin SDK bypasses them, so they
+# deploy first: a stale ruleset is the only failure mode worth ordering against.
+deploy-rules:
+	@echo "Deploying Firestore security rules..."
+	npx firebase deploy --only firestore:rules --project $(PROJECT_ID)
 
 # The backend is deployed `--allow-unauthenticated` on purpose: Firebase Hosting
 # proxies a browser that cannot hold an IAM identity, so access control lives in

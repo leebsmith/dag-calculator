@@ -97,9 +97,13 @@ Deployment notes:
   artifact directory at startup.
 - Set the production allowlist on Cloud Run, e.g.
   `gcloud run services update dag-calculator-backend --region us-east4 --update-env-vars ALLOWED_EMAILS=you@example.com`.
-- Batches live at `users/{uid}/batches/{id}`; catalog records at
-  `users/{uid}/catalog_items/{id}`. Firestore security rules should scope both to
-  the authenticated uid (the browser only talks to the API).
+- `make deploy-rules` deploys `firestore.rules`; `make deploy` runs it before the
+  backend and hosting, so the deployed rules never lag the file.
+- Batches live at `users/{uid}/batches/{id}`, frozen render input at
+  `users/{uid}/report_bundles/{id}`, and catalog records at
+  `users/{uid}/catalog_items/{id}`. `firestore.rules` denies every client read and
+  write: the browser is an Auth-only client and all Firestore access goes through
+  the backend's Admin SDK, which bypasses rules.
 
 ## Seeds & scraping
 
