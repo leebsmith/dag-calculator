@@ -37,6 +37,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 ## Commands
 
     make local-dev      # Vite + Firebase emulators + uvicorn (http://localhost:5173)
+    make save-data      # snapshot emulator data (Firestore + Auth) to emulator-data/
     make check          # eslint/stylelint (src, tests, scripts) + ruff + tach + repo hygiene
     make test           # frontend (node --test) + backend pytest — the gate
     make quick          # check + the suites the working diff can reach (the loop)
@@ -80,6 +81,15 @@ After any `data/artifact.json` change:
 the Node generators and stages what changed, pre-push runs `make test`. The
 pre-commit hook is a convenience: `make check` re-checks the frozen-path and
 manifest/lock rules, and `make test` remains the gate.
+
+Local state is `emulator-data/` (gitignored): the Firestore documents and the
+Auth emulator's accounts. `make save-data` snapshots the running emulators,
+`make clean` saves and then stops, `make local-dev` imports the snapshot on
+start, and `make reset-data` deletes it. Only the exit snapshot depends on a
+graceful stop, so an interrupted session is lost unless you saved; `make
+local-data` prints which state the next run starts from. Unit preferences are the
+one exception — they live in the browser's `localStorage` and never reach the
+emulator.
 
 ## Governance & Modes
 

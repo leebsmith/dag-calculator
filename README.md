@@ -42,6 +42,7 @@ backend with Firebase auth and Firestore persistence.
 
 ```
 make local-dev   # Vite + Firebase emulators + uvicorn
+make save-data   # snapshot emulator data (Firestore + Auth) to emulator-data/
 make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
 make test-fuzz   # seeded water-solver invariant sweep (CASES=200 SEED=...)
@@ -63,6 +64,27 @@ asserts only the solver's structural invariants over pseudo-random, physically
 plausible inputs. It is deliberately outside `verify` — the case count is a
 parameter (`CASES`) and a failure names a seed (`SEED`) to reproduce, not a diff
 to review.
+
+## Local data
+
+A local run touches no cloud resources. Everything it owns outside the browser
+lives in `emulator-data/` (gitignored): the Firestore documents — batches, frozen
+report bundles, catalog items — and the Auth emulator's accounts. `make
+local-dev` imports that snapshot when one exists and otherwise starts empty;
+`make save-data` snapshots the running emulators; `make clean` saves and then
+stops — including an emulator orphaned by a killed session, which is how port
+8080 normally ends up taken — so reclaiming ports does not lose the session.
+
+The exit snapshot and `--export-on-exit` only fire on a graceful stop, so a
+`SIGKILL`ed, crashed or OOM-killed session loses that session's work: run `make
+save-data` before anything risky. `make local-dev` prints which state it is
+starting from, and warns when `emulator-data/` exists without a snapshot, which
+means an earlier export was interrupted. `make reset-data` deletes the directory
+and is the only destructive clear.
+
+Unit preferences are the exception: they are device-local `localStorage`
+(`brew_unit_preferences`) and never reach the emulator, so they survive a data
+reset and do not travel between browsers.
 
 ## Auth & deployment
 

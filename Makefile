@@ -27,7 +27,7 @@ EMULATOR_FLAGS  := $(if $(EMULATOR_IMPORT),--import=$(EMULATOR_DATA)) --export-o
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
         report-dev report-pages
@@ -58,14 +58,19 @@ help:
 	@echo "                  (LIMIT=N for a trial, OUT=path to override output)"
 	@echo "  aggregate-bjcp  Re-aggregate cached BJCP HTML into data/sources/"
 	@echo "                  (BJCP_CACHE=<dir> BJCP_EDITION=2021)"
-	@echo "  clean           Stop local processes and reclaim ports (alias: clear)"
+	@echo "  save-data       Snapshot emulator data (Firestore + Auth) to emulator-data/"
+	@echo "  clean           Save emulator data, stop local processes, reclaim ports (alias: clear)"
 	@echo "  reset-data      Delete local emulator data (drafts, frozen batches, library)"
 	@echo "  deploy          Deploy Firestore rules, backend (Cloud Run) and frontend"
 	@echo "  deploy-rules    Deploy firestore.rules only"
 	@echo "  destroy         Tear down the deployed services"
 
 # --- Local development -------------------------------------------------------
-local-dev:
+# Everything the local run owns outside the browser's localStorage lives in
+# emulator-data/ (Firestore documents plus Auth accounts), gitignored. The import
+# runs only when a snapshot exists; the exit snapshot only fires on a graceful
+# stop, which is why `make save-data` and `make clean` exist.
+local-dev: local-data
 	@echo "Starting local emulators and development servers..."
 	@echo "Access the app at http://localhost:5173"
 	@npx concurrently \
@@ -75,6 +80,23 @@ local-dev:
 		"cd frontend && npm run dev" \
 		"mkdir -p $(EMULATOR_DATA) && npx firebase emulators:start --project $(PROJECT_ID) $(EMULATOR_FLAGS)" \
 		"cd backend && FIREBASE_PROJECT_ID=$(PROJECT_ID) FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ALLOWED_EMAILS=dev@localhost uv run uvicorn app.main:app --reload --port 8000"
+
+# Prints which data the next run starts from; runnable on its own to inspect it.
+local-data:
+	@if [ -n "$(EMULATOR_IMPORT)" ]; then \
+		echo "Local data: importing $(EMULATOR_DATA)/ (snapshot of $$(date -r $(EMULATOR_IMPORT) '+%Y-%m-%d %H:%M'))"; \
+	elif [ -d $(EMULATOR_DATA) ]; then \
+		echo "Local data: $(EMULATOR_DATA)/ holds no snapshot; starting empty (make save-data writes one)"; \
+	else \
+		echo "Local data: none; make save-data (or make clean) writes $(EMULATOR_DATA)/"; \
+	fi
+
+# Snapshot the running emulators. Unlike the exit snapshot this does not depend on
+# how the process stops, so it is the save to run before anything risky.
+save-data:
+	@echo "Saving emulator data to $(EMULATOR_DATA)/..."
+	@npx firebase emulators:export $(EMULATOR_DATA) --force --project $(PROJECT_ID) \
+		|| { echo "save-data: no emulator hub is reachable; start make local-dev first"; exit 1; }
 
 # --- Report templates --------------------------------------------------------
 # Iterate on backend/app/templates against a bundle downloaded from the app
@@ -237,9 +259,16 @@ aggregate-bjcp:
 # --- Cleanup -----------------------------------------------------------------
 clear: clean
 
+# Save before stopping: reclaiming ports must not be the accident that loses the
+# session, and the export needs the emulator still up. The second pkill is for an
+# emulator orphaned by a killed session — it keeps the port and cannot be
+# exported, which is how `local-dev` ends up failing with "port taken".
 clean:
-	@echo "Cleaning up local environment..."
+	@echo "Saving emulator data, then reclaiming ports..."
+	@npx firebase emulators:export $(EMULATOR_DATA) --force --project $(PROJECT_ID) \
+		|| echo "clean: no running emulator; $(EMULATOR_DATA)/ keeps its last snapshot"
 	@pkill -INT -f '[f]irebase emulators:start' || true
+	@pkill -INT -f '[c]loud-firestore-emulator.*--project_id $(PROJECT_ID)' || true
 	@pkill -f '[v]ite' || true
 	@pkill -f '[u]vicorn app.main:app' || true
 	@echo "Ports reclaimed."
