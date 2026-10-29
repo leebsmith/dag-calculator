@@ -324,8 +324,8 @@ export const steps = [
     id: "dry-hops",
     slice: "dry-hops",
     title: "Dry Hopping",
-    subtitle: "Dry-hop schedule",
-    partial: "./src/partials/step-card.html",
+    subtitle: "Application event, contact time & hop type",
+    partial: "./src/partials/step-dry-hops.html",
     fields: [{ collection: "batch.dry_hops" }],
   },
 ];

@@ -1,0 +1,170 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <h2 class="card-title" x-text="activeStep.title"></h2>
+    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+  </div>
+
+  <div class="step-card-content">
+    <div class="table-header-toolbar">
+      <div>
+        <h3 class="modal-drawer-title">Schedule</h3>
+        <p class="text-xs text-muted">
+          Applied in fermentation (cold side). Nothing here is solved: the event and the
+          contact end record what you intend, not what the calculator predicts.
+        </p>
+      </div>
+      <button type="button" class="btn-primary text-xs" @click="addDryHop()">＋ Add dry hop</button>
+    </div>
+
+    <template x-for="(row, ri) in dryHopRows" :key="ri">
+      <div class="synthesized-card">
+        <div class="table-header-toolbar">
+          <span class="font-medium" x-text="dryHopTitle(row)"></span>
+          <button
+            type="button"
+            class="btn-action-icon btn-action-danger"
+            title="Remove"
+            :aria-label="'Remove ' + dryHopTitle(row)"
+            @click="removeDryHop(ri)"
+          >
+            🗑
+          </button>
+        </div>
+
+        <div class="step-grid-2col">
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-variety-' + ri">Hop</label>
+            <input
+              :id="'dry-hop-variety-' + ri"
+              class="form-input"
+              type="text"
+              :value="row.variety"
+              @change="setDryHopField(ri, 'variety', $event.target.value)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-type-' + ri">Type</label>
+            <select
+              :id="'dry-hop-type-' + ri"
+              class="form-select"
+              :value="row.product_type"
+              @change="setDryHopField(ri, 'product_type', $event.target.value)"
+            >
+              <template x-for="opt in dryHopProductOptions" :key="opt.value">
+                <option :value="opt.value" :selected="opt.value === row.product_type" x-text="opt.label"></option>
+              </template>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-quantity-' + ri">Quantity</label>
+            <input
+              :id="'dry-hop-quantity-' + ri"
+              class="form-input"
+              type="number"
+              step="1"
+              min="0"
+              :value="row.quantity"
+              @change="setDryHopNumber(ri, 'quantity', $event.target.value)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-unit-' + ri">Unit</label>
+            <select
+              :id="'dry-hop-unit-' + ri"
+              class="form-select"
+              :value="row.unit"
+              @change="setDryHopField(ri, 'unit', $event.target.value)"
+            >
+              <template x-for="opt in dryHopUnitOptions" :key="opt.value">
+                <option :value="opt.value" :selected="opt.value === row.unit" x-text="opt.label"></option>
+              </template>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-event-' + ri">Applied at</label>
+            <select
+              :id="'dry-hop-event-' + ri"
+              class="form-select"
+              :value="row.application_event"
+              @change="setDryHopField(ri, 'application_event', $event.target.value)"
+            >
+              <template x-for="opt in dryHopEventOptions" :key="opt.value">
+                <option
+                  :value="opt.value"
+                  :selected="opt.value === row.application_event"
+                  x-text="opt.label"
+                ></option>
+              </template>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-contact-' + ri">Contact (hours)</label>
+            <input
+              :id="'dry-hop-contact-' + ri"
+              class="form-input"
+              type="number"
+              step="1"
+              min="0"
+              :value="dryHopContactHours(row)"
+              @change="setDryHopContactHours(ri, $event.target.value)"
+            />
+            <span class="form-hint">Clears the end event below.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-until-' + ri">…or until</label>
+            <select
+              :id="'dry-hop-until-' + ri"
+              class="form-select"
+              :value="row.contact_until ?? ''"
+              @change="setDryHopContactUntil(ri, $event.target.value)"
+            >
+              <option value="" :selected="!row.contact_until">— no end event —</option>
+              <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
+                <option
+                  :value="opt.value"
+                  :selected="opt.value === row.contact_until"
+                  x-text="opt.label"
+                ></option>
+              </template>
+            </select>
+            <span class="form-hint">Clears the contact hours above.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-detail-' + ri">Detail</label>
+            <input
+              :id="'dry-hop-detail-' + ri"
+              class="form-input"
+              type="text"
+              :value="row.time_of_application"
+              placeholder="e.g. 50% attenuation, day 3"
+              @change="setDryHopField(ri, 'time_of_application', $event.target.value)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" :for="'dry-hop-notes-' + ri">Notes</label>
+            <input
+              :id="'dry-hop-notes-' + ri"
+              class="form-input"
+              type="text"
+              :value="row.notes"
+              @change="setDryHopField(ri, 'notes', $event.target.value)"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <p class="form-hint" x-show="dryHopRows.length === 0">
+      No dry hops yet. Add an addition to record when it goes in, how long it stays, and
+      what form it takes.
+    </p>
+  </div>
+</section>

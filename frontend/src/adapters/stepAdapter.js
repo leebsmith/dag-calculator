@@ -24,6 +24,7 @@ import { registerTraceMaltsCard } from "./cards/trace-malts.js";
 import { registerMaltCard } from "./cards/malt.js";
 import { registerMashCard } from "./cards/mash.js";
 import { registerBrewDayCard } from "./cards/brew-day.js";
+import { registerDryHopCard } from "./cards/dry-hops.js";
 import { registerWaterCard } from "./cards/water.js";
 import { registerLibraryUi } from "./libraryUi.js";
 import { registry, steps } from "../views/steps.js";
@@ -52,6 +53,12 @@ function bootstrapIdentity(artifactSpec, cache) {
     style: {},
   };
 }
+
+const CARD_INSTALLERS = [
+  registerYeastCard, registerStyleCard, registerHopCard, registerLateAdditionsCard,
+  registerTraceMaltsCard, registerMaltCard, registerMashCard, registerBrewDayCard,
+  registerDryHopCard, registerWaterCard, registerLibraryUi,
+];
 
 export function createStepApp(options = {}) {
   const { master, ui } = createAppStore();
@@ -404,16 +411,9 @@ export function createStepApp(options = {}) {
   installUnitActions(app, { artifact, ui });
   installSnapshot(app, { artifact, cache, master, session });
 
-  registerYeastCard(app, cardCtx);
-  registerStyleCard(app, cardCtx);
-  registerHopCard(app, cardCtx);
-  registerLateAdditionsCard(app, cardCtx);
-  registerTraceMaltsCard(app, cardCtx);
-  registerMaltCard(app, cardCtx);
-  registerMashCard(app, cardCtx);
-  registerBrewDayCard(app, cardCtx);
-  registerWaterCard(app, cardCtx);
-  registerLibraryUi(app, cardCtx);
+  for (const register of CARD_INSTALLERS) {
+    register(app, cardCtx);
+  }
 
   function syncLibrary() {
     cache.syncLibraryItems(library.items());

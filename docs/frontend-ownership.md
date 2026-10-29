@@ -3,10 +3,10 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **583** (390 enumerable, 193 hidden)
-- Installers: **19**
-- Card partials: **15**
-- Installers reading another installer's key: **15 of 19**
+- Declared members: **596** (403 enumerable, 193 hidden)
+- Installers: **20**
+- Card partials: **16**
+- Installers reading another installer's key: **15 of 20**
 - Cross-owner keys declared in `SHARED`: **47**
 
 ## Installers
@@ -30,6 +30,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 46 | 2 | 22 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 11 | 1 | 1 |
+| `dryHops` | `frontend/src/adapters/cards/dry-hops.js` | 13 | 1 | 0 |
 | `water` | `frontend/src/adapters/cards/water.js` | 29 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |
 
@@ -56,6 +57,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `addCatalogTrace` | `traceMalts` | public | 1 |
 | `addCatalogWhirlpoolHop` | `hop` | public | 1 |
 | `addDraftRow` | `draftEditor` | public | 0 |
+| `addDryHop` | `dryHops` | public | 1 |
 | `addRow` | `fieldActions` | public | 0 |
 | `adoptLateAdditionDose` | `lateAdditions` | public | 1 |
 | `adoptLateAdditionShare` | `lateAdditions` | public | 1 |
@@ -137,6 +139,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `draftRows` | `draftEditor` | public | 5 |
 | `draftSnapshot` | `draftEditor` | public | 0 |
 | `draftState` | `snapshot` | public | 0 |
+| `dryHopContactHours` | `dryHops` | public | 1 |
+| `dryHopContactUntilOptions` | `dryHops` | public | 1 |
+| `dryHopEventOptions` | `dryHops` | public | 1 |
+| `dryHopProductOptions` | `dryHops` | public | 1 |
+| `dryHopRows` | `dryHops` | public | 1 |
+| `dryHopTitle` | `dryHops` | public | 1 |
+| `dryHopUnitOptions` | `dryHops` | public | 1 |
 | `duplicateCatalogHop` | `hop` | public | 1 |
 | `duplicateCatalogMalt` | `malt` | public | 1 |
 | `duplicateCatalogSugar` | `lateAdditions` | public | 1 |
@@ -334,6 +343,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `rampTimeMin` | `mash` | hidden | 1 |
 | `refreshTargets` | `styleTargets` | public | 0 |
 | `removeDraftRow` | `draftEditor` | public | 1 |
+| `removeDryHop` | `dryHops` | public | 1 |
 | `removeHop` | `hop` | public | 1 |
 | `removeMalt` | `malt` | public | 1 |
 | `removeRow` | `fieldActions` | public | 1 |
@@ -393,6 +403,10 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `selectedYeastTemp` | `yeast` | hidden | 1 |
 | `setBrewDayInstruction` | `brewDay` | public | 1 |
 | `setColorField` | `draftEditor` | public | 2 |
+| `setDryHopContactHours` | `dryHops` | public | 1 |
+| `setDryHopContactUntil` | `dryHops` | public | 1 |
+| `setDryHopField` | `dryHops` | public | 1 |
+| `setDryHopNumber` | `dryHops` | public | 1 |
 | `setFieldUnit` | `unitActions` | public | 0 |
 | `setHopAlpha` | `hop` | public | 1 |
 | `setInputDraft` | `fieldActions` | public | 0 |

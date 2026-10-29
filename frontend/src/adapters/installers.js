@@ -29,6 +29,7 @@ import { KEYS as traceMaltsKeys } from "./cards/trace-malts.js";
 import { KEYS as maltKeys } from "./cards/malt.js";
 import { KEYS as mashKeys } from "./cards/mash.js";
 import { KEYS as brewDayKeys } from "./cards/brew-day.js";
+import { KEYS as dryHopKeys } from "./cards/dry-hops.js";
 import { KEYS as waterKeys } from "./cards/water.js";
 
 const NAVIGATION = ["frontend/src/adapters/navigation.js"];
@@ -53,6 +54,7 @@ const MALT = ["frontend/src/adapters/cards/malt.js"];
 const MALT_AND_CATALOG = [...MALT, CATALOG_DRAFT];
 const MASH = ["frontend/src/adapters/cards/mash.js"];
 const BREW_DAY = ["frontend/src/adapters/cards/brew-day.js"];
+const DRY_HOPS = ["frontend/src/adapters/cards/dry-hops.js"];
 const WATER = ["frontend/src/adapters/cards/water.js"];
 const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
 
@@ -111,6 +113,7 @@ export const INSTALLERS = [
   },
   { name: "mash", modules: MASH, keys: mashKeys, partials: ["step-mash.html", "mash-rests-modal.html"] },
   { name: "brewDay", modules: BREW_DAY, keys: brewDayKeys, partials: ["step-brew-day.html"] },
+  { name: "dryHops", modules: DRY_HOPS, keys: dryHopKeys, partials: ["step-dry-hops.html"] },
   { name: "water", modules: WATER, keys: waterKeys, partials: ["step-water.html"] },
   { name: "modalFocus", modules: MODAL_FOCUS, keys: modalFocusKeys },
 ];

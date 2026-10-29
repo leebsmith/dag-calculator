@@ -5,11 +5,16 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: make verify
-status: proposed
+status: shipped
 ---
 <!-- claims: proposed batch.dry_hops.application_event batch.dry_hops.contact_until batch.dry_hops.contact_duration_min -->
 
 # Hop documents — folder, vocabulary, and the dry-hop card
+
+> **Shipped.** The folder, the index and the two vocabulary renames landed as
+> described; the card shipped with the three axes, the `hop_application_event`
+> and `hop_contact_until` taxonomies, and `contact_duration_min` replacing the
+> misnamed `contact_duration_hours` (the `time` dimension stores base minutes).
 
 ## Problem
 

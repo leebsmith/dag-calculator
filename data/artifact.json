@@ -506,6 +506,24 @@
       "flowable_extract",
       "terpene_isolate"
     ],
+    "hop_application_event": [
+      "pitch",
+      "high_krausen",
+      "mid_fermentation",
+      "terminal",
+      "post_diacetyl",
+      "cold_crash",
+      "packaging"
+    ],
+    "hop_contact_until": [
+      "terminal_gravity",
+      "vdk_clearance",
+      "hop_creep_plateau",
+      "biotransformation_equilibrium",
+      "next_charge",
+      "cold_crash",
+      "packaging"
+    ],
     "hop_unit": [
       "oz",
       "g",
@@ -2257,24 +2275,35 @@
       }
     },
     "dry_hop_row": {
-      "product_type": {
-        "taxonomy": "hop_product_type"
-      },
       "variety": {},
+      "product_type": {
+        "taxonomy": "hop_product_type",
+        "default": "t90_pellet"
+      },
       "quantity": {
         "dimension": "dimensionless"
       },
       "unit": {
-        "taxonomy": "hop_unit"
+        "taxonomy": "hop_unit",
+        "default": "g"
       },
       "application_stage": {
         "taxonomy": "hop_addition_stage",
         "default": "fermentation"
       },
-      "time_of_application": {},
-      "contact_duration_hours": {
-        "dimension": "time"
+      "application_event": {
+        "taxonomy": "hop_application_event",
+        "default": "high_krausen"
       },
+      "contact_duration_min": {
+        "dimension": "time",
+        "default": null
+      },
+      "contact_until": {
+        "taxonomy": "hop_contact_until",
+        "default": null
+      },
+      "time_of_application": {},
       "notes": {}
     },
     "brew_day_step": {

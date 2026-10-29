@@ -126,6 +126,9 @@
                           <template x-if="step.id === 'late-additions'">
                             <load src="src/partials/step-late-additions.html" />
                           </template>
+                          <template x-if="step.id === 'dry-hops'">
+                            <load src="src/partials/step-dry-hops.html" />
+                          </template>
                           <template x-if="step.id === 'mash'">
                             <load src="src/partials/step-mash.html" />
                           </template>
@@ -135,7 +138,7 @@
                           <template x-if="step.id === 'brew-day'">
                             <load src="src/partials/step-brew-day.html" />
                           </template>
-                          <template x-if="step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'hops' && step.id !== 'late-additions' && step.id !== 'mash' && step.id !== 'water' && step.id !== 'brew-day'">
+                          <template x-if="step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'hops' && step.id !== 'late-additions' && step.id !== 'dry-hops' && step.id !== 'mash' && step.id !== 'water' && step.id !== 'brew-day'">
                             <load src="src/partials/step-card.html" />
                           </template>
                         </div>

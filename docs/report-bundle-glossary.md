@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_109 paths_
+_111 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -49,14 +49,16 @@ _109 paths_
 | `batch.conversion_efficiency` | Conversion efficiency | root | percentage | pct (%) | 1 | — |
 | `batch.delta_v_evap` | Boil-off | derived | volume | L | 1 | — |
 | `batch.dry_hops` | Dry hops | collection | — | — | — | — |
+| `batch.dry_hops.application_event` | Applied at | field | — | — | — | pitch, high_krausen, mid_fermentation, terminal, post_diacetyl, cold_crash, packaging |
 | `batch.dry_hops.application_stage` | Stage | field | — | — | — | mash, boil, whirlpool, fermentation |
-| `batch.dry_hops.contact_duration_hours` | Contact duration | field | time | hr | 1 | — |
+| `batch.dry_hops.contact_duration_min` | Contact | field | time | hr | 1 | — |
+| `batch.dry_hops.contact_until` | Contact until | field | — | — | — | terminal_gravity, vdk_clearance, hop_creep_plateau, biotransformation_equilibrium, next_charge, cold_crash, packaging |
 | `batch.dry_hops.notes` | Notes | field | — | — | — | — |
 | `batch.dry_hops.product_type` | Type | field | — | — | — | t90_pellet, lupulin_pellet, flowable_extract, terpene_isolate |
 | `batch.dry_hops.quantity` | Quantity | field | dimensionless | — | — | — |
-| `batch.dry_hops.time_of_application` | When | field | — | — | — | — |
+| `batch.dry_hops.time_of_application` | Detail | field | — | — | — | — |
 | `batch.dry_hops.unit` | Unit | field | — | — | — | oz, g, ml |
-| `batch.dry_hops.variety` | Variety | field | — | — | — | — |
+| `batch.dry_hops.variety` | Hop | field | — | — | — | — |
 | `batch.fermentation` | Fermentation | choice | — | — | — | ale, lager, wild, mixed |
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |

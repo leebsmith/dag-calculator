@@ -20,6 +20,7 @@ import { refreshTraceMaltsCard } from "./cards/trace-malts.js";
 import { refreshMaltCard } from "./cards/malt.js";
 import { refreshMashCard } from "./cards/mash.js";
 import { refreshBrewDayCard } from "./cards/brew-day.js";
+import { refreshDryHopCard } from "./cards/dry-hops.js";
 import { refreshWaterCard } from "./cards/water.js";
 
 // Order matters: the yeast card owns the attenuation readouts the style card
@@ -33,6 +34,7 @@ export const CARD_REFRESHES = [
   { card: "lateAdditions", refresh: refreshLateAdditionsCard },
   { card: "mash", refresh: refreshMashCard },
   { card: "brewDay", refresh: refreshBrewDayCard },
+  { card: "dryHops", refresh: refreshDryHopCard },
   { card: "water", refresh: refreshWaterCard },
 ];
 

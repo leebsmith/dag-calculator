@@ -10,24 +10,12 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ## Next (in order)
 
-1. **Rebuild the dry-hopping card** — replace the generic collection table with
-   a bespoke card on three axes: **application** (`application_stage` plus a new
-   `hop_application_event` taxonomy: pitch, high krausen, mid-fermentation,
-   terminal, post-diacetyl, cold crash, packaging), **contact**
-   (`contact_duration_min` *or* a new `hop_contact_until` taxonomy: terminal
-   gravity, VDK clearance, hop-creep plateau, biotransformation equilibrium, next
-   charge, cold crash, packaging — exactly one, card-enforced), and **hop type**
-   (`hop_product_type`). Source: `docs/hops/reference/dry-hopping-times-and-conditions.md`.
-   Descriptive only: no fermentation model exists, so neither the event nor the
-   termination trigger may be presented as a prediction. Shape:
-   `step-dry-hops.html` + `adapters/cards/dry-hops.js` + installer `KEYS`/partials
-   + `editor.html` branch + `views/steps.js` partial + ownership regen.
-2. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
+1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
    backend boundary `solver.hops` (`docs/hops/whirlpool-hopping-model.md`); the
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+2. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -142,6 +130,14 @@ Not needed by the current artifact; add only when a node requires them:
 * True nested boundary outputs (currently flattened to dotted keys).
 
 ## Done
+
+* **Dry-hopping card** — the generic collection table became a bespoke schedule
+  on three axes: application event, contact time, and hop type. The row carries
+  `hop_application_event` and `hop_contact_until` taxonomies, the contact
+  duration is authored in hours and stored in base minutes, and the two contact
+  fields are mutually exclusive by construction (each setter clears the other).
+  Descriptive only: no fermentation model exists, so neither the event nor the
+  trigger is presented as a prediction (`plans/hops-documentation-and-dry-hop-card.md`).
 
 * **Optimize local testing** — seven phases (0–6): a per-file test-cost ledger;
   `make quick` (check, then the suites the diff can reach, with a declared coupling

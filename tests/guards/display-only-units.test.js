@@ -93,11 +93,11 @@ test("A8e: collection cell displayUnit converts display; write stores base", asy
   const table = () => app.fieldsBySlice["dry-hops"].find((f) => f.control === "collection-table");
 
   app.addRow(table());
-  app.editCell(table(), 0, "contact_duration_hours", "48");
+  app.editCell(table(), 0, "contact_duration_min", "48");
 
-  assert.equal(table().rows[0].contact_duration_hours, "48.0", "cell displays in hours");
+  assert.equal(table().rows[0].contact_duration_min, "48.0", "cell displays in hours");
   assert.equal(
-    app.draftState().collections["batch.dry_hops"][0].contact_duration_hours,
+    app.draftState().collections["batch.dry_hops"][0].contact_duration_min,
     2880,
     "canonical value is stored in base minutes (48 hr)"
   );

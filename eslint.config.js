@@ -161,7 +161,7 @@ const LIFECYCLE_COMPLEXITY = {
 const STATEMENT_PINS = {
   "adapters/boundaryRunner.js": 65,
   "adapters/cards/water.js": 63,
-  "adapters/stepAdapter.js": 43,
+  "adapters/stepAdapter.js": 35,
   "engine/sha256.js": 44,
   "main.js": 53,
   "views/producer/stylePlot.js": 46,

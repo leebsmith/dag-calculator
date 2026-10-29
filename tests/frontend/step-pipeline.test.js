@@ -21,6 +21,7 @@ const DECLARED_ORDER = [
   "lateAdditions",
   "mash",
   "brewDay",
+  "dryHops",
   "water",
 ];
 
@@ -63,6 +64,7 @@ test("the pipeline order is the declared order", () => {
     "refreshLateAdditionsCard",
     "refreshMashCard",
     "refreshBrewDayCard",
+    "refreshDryHopCard",
     "refreshWaterCard",
   ]);
 });

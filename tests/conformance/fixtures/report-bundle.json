@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:6994e26a6e475d23887d13c9dd8c466817b607953acd781b0537afd92f4ba3f3",
+    "hash": "sha256:2e084d758cf7348c80b39ec1423abf8d739f5f5be3e0a57f72b0b82f124e55e6",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -510,6 +510,24 @@
           "lupulin_pellet",
           "flowable_extract",
           "terpene_isolate"
+        ],
+        "hop_application_event": [
+          "pitch",
+          "high_krausen",
+          "mid_fermentation",
+          "terminal",
+          "post_diacetyl",
+          "cold_crash",
+          "packaging"
+        ],
+        "hop_contact_until": [
+          "terminal_gravity",
+          "vdk_clearance",
+          "hop_creep_plateau",
+          "biotransformation_equilibrium",
+          "next_charge",
+          "cold_crash",
+          "packaging"
         ],
         "hop_unit": [
           "oz",
@@ -2241,24 +2259,35 @@
           }
         },
         "dry_hop_row": {
-          "product_type": {
-            "taxonomy": "hop_product_type"
-          },
           "variety": {},
+          "product_type": {
+            "taxonomy": "hop_product_type",
+            "default": "t90_pellet"
+          },
           "quantity": {
             "dimension": "dimensionless"
           },
           "unit": {
-            "taxonomy": "hop_unit"
+            "taxonomy": "hop_unit",
+            "default": "g"
           },
           "application_stage": {
             "taxonomy": "hop_addition_stage",
             "default": "fermentation"
           },
-          "time_of_application": {},
-          "contact_duration_hours": {
-            "dimension": "time"
+          "application_event": {
+            "taxonomy": "hop_application_event",
+            "default": "high_krausen"
           },
+          "contact_duration_min": {
+            "dimension": "time",
+            "default": null
+          },
+          "contact_until": {
+            "taxonomy": "hop_contact_until",
+            "default": null
+          },
+          "time_of_application": {},
           "notes": {}
         },
         "brew_day_step": {
@@ -7146,5 +7175,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:ac93c27e57d33f014de088786b0f2283d585973606d7800ff494fe5349e21d38"
+  "content_hash": "sha256:15ed0bca5869ea018793db4de4e624aaf14fbdf5b8ff84adc60783e86d054cf2"
 }
