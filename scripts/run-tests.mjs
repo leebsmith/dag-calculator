@@ -5,7 +5,7 @@
 // itself, refuses an empty directory, and hands the list to the test runner.
 
 import { execFileSync } from "node:child_process";
-import { readdirSync, statSync } from "node:fs";
+import { appendFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -46,6 +46,14 @@ const argv = [
   ...process.argv.slice(2),
   ...files.map((file) => relative(process.cwd(), join(ROOT, file))),
 ];
+
+console.log(`run-tests: ${files.length} files across ${DIRS.join(", ")}`);
+if (process.env.GITHUB_STEP_SUMMARY) {
+  appendFileSync(
+    process.env.GITHUB_STEP_SUMMARY,
+    `**Frontend suites:** ${files.length} files discovered across ${DIRS.join(", ")}\n`
+  );
+}
 
 let status = 0;
 try {
