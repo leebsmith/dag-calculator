@@ -212,6 +212,16 @@ fingerprint }`; the adapter performs the I/O and calls
 evaluation hits the cache synchronously. `hasBoundaryResult(fingerprint)` checks
 whether a solve is already available.
 
+A solve that leaves a node unresolved is a modeled state, not a wiring error:
+the adapter calls `markBoundaryUnavailable(id)` for every node the solve did not
+realize (failed, blocked, or never reached), so reads — and the derived values
+above them — degrade to `undefined` and the cards render placeholders underneath
+the surfaced `boundaryError`/status. A boundary that is *neither* marked nor
+pre-resolved still throws `No boundary binding registered…`, which is what keeps
+a premature compute visible to the error observability counters.
+`clearBoundaryUnavailable()` runs at the start of the next solve and restores the
+strict invariant.
+
 `inputs` here is the **request body**. The artifact's declared `inputs` are
 resolved into frontend shapes (flat roots, raw collection rows), but the
 backend's `extra="forbid"` models use different shapes (normalized grain-bill

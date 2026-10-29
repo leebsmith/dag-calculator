@@ -204,6 +204,7 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
 });
 
 test("http: a solver error surfaces as boundaryError and marks the boundary failed", async () => {
+  resetErrorObservability();
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
@@ -211,9 +212,12 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   await app.boot();
   assert.equal(app.boundaryError.code, "MASH_TOO_THIN");
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
+  assert.equal(app.engine.get("solver.batch"), undefined, "a failed boundary degrades to absent");
+  assert.deepEqual(boundaryBindingErrors(), [], "the failure is boundary state, not a render error");
 });
 
 test("http: a failed water solve still renders the target grid", async () => {
+  resetErrorObservability();
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": {
@@ -232,6 +236,7 @@ test("http: a failed water solve still renders the target grid", async () => {
     assert.equal(row.deltaText, "—");
     assert.notEqual(row.sourceText, undefined);
   }
+  assert.deepEqual(boundaryBindingErrors(), []);
 });
 
 test("http: a debounced burst collapses into one batch + one water request", async () => {
@@ -323,6 +328,7 @@ test("http: a completed solve leaves an open draft editor intact", async () => {
 });
 
 test("http: a failed solve leaves an open draft editor intact", async () => {
+  resetErrorObservability();
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
@@ -338,6 +344,7 @@ test("http: a failed solve leaves an open draft editor intact", async () => {
   assert.equal(app.draftOpen, true);
   assert.equal(app.draftNodeId, "batch.sugars");
   assert.equal(app.draftRows.length, 1);
+  assert.deepEqual(boundaryBindingErrors(), []);
 });
 
 test("saveDraft and closeDraft still close the editor", withFreshApp(async (app) => {

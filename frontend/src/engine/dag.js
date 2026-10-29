@@ -2,7 +2,7 @@
 // sort, lazy memoization. No read-tracking, no reactive inference.
 
 import { evaluate } from "./ast.js";
-import { BoundaryCache, canonicalFingerprint } from "./boundary.js";
+import { BoundaryCache, canonicalFingerprint, createBoundaryUnavailable } from "./boundary.js";
 import { domainStates, fieldDomainStates, collectionDomainStates } from "./domains.js";
 import { resolveIngredientCollections, resolveIngredientRows } from "./ingredientPriors.js";
 import { getField, resolveReference } from "./paths.js";
@@ -118,6 +118,7 @@ export function createEngine(artifact, options = {}) {
   const boundaries = options.boundaries ?? {};
   const boundaryRequests = options.boundaryRequests ?? {};
   const boundaryCache = options.boundaryCache ?? new BoundaryCache();
+  const boundaryUnavailable = createBoundaryUnavailable(artifact, invalidate);
 
   const { adjacency, dependents, topoOrder } = buildGraph(artifact);
   // Two valuations: the default reads every node in full (collections carry
@@ -290,6 +291,7 @@ export function createEngine(artifact, options = {}) {
         return evaluate(node.expr, derivedCtx(inputValues, null, authored));
       }
       case "boundary": {
+        if (boundaryUnavailable.has(nodeId)) return undefined;
         const inputValues = resolveBoundaryInputs(node);
         if (
           Object.values(inputValues).some(
@@ -394,6 +396,10 @@ export function createEngine(artifact, options = {}) {
     hasBoundaryResult(fingerprint) {
       return boundaryCache.has(fingerprint);
     },
+    // An unavailable realization degrades on read; the runner surfaces the
+    // status, and the next solve clears the marks.
+    markBoundaryUnavailable: boundaryUnavailable.mark,
+    clearBoundaryUnavailable: boundaryUnavailable.clear,
     invalidate,
   };
 }

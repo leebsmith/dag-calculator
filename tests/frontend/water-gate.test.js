@@ -7,7 +7,6 @@ import { createTestApp } from "./appHelpers.js";
 async function loadWaterSource(app, source) {
   const identity = { ...app.engine.identity, "water.source": source };
   await app.loadState({ identity, roots: {}, collections: {}, selections: {} });
-  app.compute();
 }
 
 const SOURCE = { ca: 40, mg: 8, na: 20, so4: 30, cl: 25, alk: 80 };

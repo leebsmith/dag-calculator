@@ -56,3 +56,27 @@ export class BoundaryCache {
     this.store.set(fingerprint, result);
   }
 }
+
+// A boundary the host could not realize this round (failed, blocked, or never
+// reached) is a modeled state, not a wiring error: reads degrade to `undefined`
+// until the next solve clears the mark, so dependent views render placeholders
+// under the surfaced boundary status.
+export function createBoundaryUnavailable(artifact, invalidate) {
+  const unavailable = new Set();
+  return {
+    has: (nodeId) => unavailable.has(nodeId),
+    mark(nodeId) {
+      if (artifact.nodes[nodeId]?.kind !== "boundary") {
+        throw new Error(`"${nodeId}" is not a boundary node`);
+      }
+      unavailable.add(nodeId);
+      invalidate(nodeId);
+    },
+    clear() {
+      for (const nodeId of [...unavailable]) {
+        unavailable.delete(nodeId);
+        invalidate(nodeId);
+      }
+    },
+  };
+}

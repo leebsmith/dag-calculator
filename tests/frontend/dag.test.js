@@ -72,6 +72,39 @@ test("lazy memoization: boundary evaluated once per unique input", () => {
   assert.equal(calls, 1, "boundary should be called exactly once");
 });
 
+test("a failed boundary degrades to undefined until it is cleared", () => {
+  const artifact = syntheticArtifact({
+    base: { kind: "root", dimension: "dimensionless", default: 1 },
+    solver: {
+      kind: "boundary",
+      binding: "b",
+      inputs: { x: "base" },
+      outputs: { y: { dimension: "dimensionless" } },
+    },
+    derived: {
+      kind: "derived",
+      inputs: { y: "solver.y" },
+      expr: { ref: "y" },
+      output: { dimension: "dimensionless" },
+    },
+  });
+  const engine = createCalculator(artifact);
+  assert.throws(() => engine.get("solver"), /No boundary binding registered/);
+
+  engine.markBoundaryUnavailable("solver");
+  assert.equal(engine.get("solver"), undefined);
+  assert.equal(engine.resolve("solver.y"), undefined);
+  assert.equal(engine.get("derived"), undefined);
+
+  engine.clearBoundaryUnavailable();
+  assert.throws(() => engine.get("solver"), /No boundary binding registered/);
+});
+
+test("markBoundaryUnavailable refuses a non-boundary node", () => {
+  const engine = createCalculator(loadArtifact(), makeFixturesWithYeast());
+  assert.throws(() => engine.markBoundaryUnavailable("batch.target_abv"), /not a boundary node/);
+});
+
 test("setRoot invalidates dependents and recomputes", () => {
   const artifact = loadArtifact();
   const fixtures = makeFixturesWithYeast();

@@ -159,7 +159,7 @@ const LIFECYCLE_COMPLEXITY = {
 };
 
 const STATEMENT_PINS = {
-  "adapters/boundaryRunner.js": 65,
+  "adapters/boundaryRunner.js": 67,
   "adapters/cards/water.js": 63,
   "adapters/stepAdapter.js": 35,
   "engine/sha256.js": 44,
@@ -181,9 +181,9 @@ const DEPTH_PINS = {
 };
 
 const FUNCTION_LINE_PINS = {
-  "engine/dag.js": 295,
+  "engine/dag.js": 301,
   "engine/validate.js": 86,
-  "adapters/boundaryRunner.js": 210,
+  "adapters/boundaryRunner.js": 213,
   "views/producer/stylePlot.js": 137,
 };
 
@@ -192,6 +192,7 @@ const FILE_LINE_PINS = {
   "adapters/cards/late-additions.js": 415,
   "adapters/cards/water.js": 639,
   "adapters/stepAdapter.js": 436,
+  "engine/dag.js": 405,
   "engine/fermentation.js": 506,
   "store/recipes.js": 465,
   "utils/format.js": 514,

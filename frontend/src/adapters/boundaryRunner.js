@@ -10,6 +10,15 @@ export const BOUNDARY_URLS = {
   hop_bitterness_solver: "/solve/hops",
 };
 
+// A node the solve did not realize (failed, blocked, or never reached) degrades
+// on read instead of throwing the pre-resolution invariant into every
+// dependent; its status is already the surfaced signal.
+function markUnavailableBoundaries(engine, nodes, statuses) {
+  for (const id of nodes) {
+    if (statuses[id] !== "ok") engine.markBoundaryUnavailable(id);
+  }
+}
+
 // AI AGENT HOOKS: Use this runner factory for every boundary solve scheduling,
 // status, and error transition. Do not duplicated this logic elsewhere.
 export function createBoundaryRunner({
@@ -75,6 +84,7 @@ export function createBoundaryRunner({
     }
     const engine = session.getEngine();
     const token = ++solveToken;
+    engine.clearBoundaryUnavailable();
 
     // Boundary nodes are topologically ordered, and the water boundary's inputs
     // depend on the batch boundary's outputs, so a node's request can only be
@@ -184,6 +194,7 @@ export function createBoundaryRunner({
 
     if (token !== solveToken) return;
     error = firstError;
+    markUnavailableBoundaries(engine, nodes, statuses);
     emit();
     compute();
   }
@@ -203,6 +214,7 @@ export function createBoundaryRunner({
     solveToken++;
     clearTimer();
     inflight.clear();
+    session.getEngine().clearBoundaryUnavailable();
     for (const id of session.boundaryNodes) {
       statuses[id] = useHttp ? "pending" : "ok";
       extras[id] = null;

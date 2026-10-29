@@ -32,9 +32,12 @@ function wrapLoadState(app, options) {
       seedYeast(app);
       if (options.useHttp) await app.solveNow();
       else app.compute();
-    } else {
+    } else if (!(options.useHttp && app.boundaryPending)) {
       app.compute();
     }
+    // Otherwise a background solve is already in flight (`loadState` returns
+    // while the boot-time library refresh may still be resolving); it computes
+    // when it lands, and rendering now would read an unresolved boundary.
   };
 }
 
