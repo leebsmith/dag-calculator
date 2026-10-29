@@ -23,7 +23,7 @@ unchanged: it grades the realized value against the absolute envelope.
    `step-dry-hops.html` + `adapters/cards/dry-hops.js` + installer `KEYS`/partials
    + `editor.html` branch + `views/steps.js` partial + ownership regen.
 2. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
-   backend boundary `solver.hops` (`docs/whirlpool-hopping-model.md`); the
+   backend boundary `solver.hops` (`docs/hops/whirlpool-hopping-model.md`); the
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
@@ -245,7 +245,7 @@ Not needed by the current artifact; add only when a node requires them:
 * Flowable whirlpool hop-product seeds (`hop_product` catalog, DynaBoost/Incognito/generic presets, inspector T-90 equivalent) — `plans/archive/hop-product-whirlpool-seeds.md`
 * CSS consolidation & drift guardrails (`plans/archive/css-consolidation.md`)
 * Water chemistry step card (`solver.water` boundary + full card)
-* Whirlpool hop schedule (IBU-share boil/whirlpool pools, Arrhenius cooling integral) — `docs/whirlpool-hopping-model.md`
+* Whirlpool hop schedule (IBU-share boil/whirlpool pools, Arrhenius cooling integral) — `docs/hops/whirlpool-hopping-model.md`
 * Parallel seed builders (malts, sugars, hops, yeasts, styles)
 * Batch/recipe CRUD + menu
 * Recipe landing page (freeze rail, sortable library, row menus, inline rename)

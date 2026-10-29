@@ -30,7 +30,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/adding-a-section.md`](docs/adding-a-section.md) | **living** — recipe: add a section to the report |
 | [`docs/report-sections.md`](docs/report-sections.md) | **generated** — canonical section order, presence predicates, source files |
 | [`docs/typst-notes.md`](docs/typst-notes.md) | **living** — verified Typst 0.15.1 idioms and the template API |
-| [`docs/whirlpool-hopping-model.md`](docs/whirlpool-hopping-model.md) | **living** — whirlpool bitterness theory, equations, constants, and reference vectors |
+| [`docs/hops/`](docs/hops/) | **living** — whirlpool bitterness theory, equations, constants, reference vectors, and the hop background documents |
 | [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — extract yield vs fermentability, mixed-wort AA, yeast cap |
 | [`docs/belgian-knob.md`](docs/belgian-knob.md) | **living** — advisory sugar dose to shift AA/ABV at fixed AE |
 | [`docs/display-precision.md`](docs/display-precision.md) | **living** — decimal precision policy for displayed values |

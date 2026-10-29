@@ -5,7 +5,7 @@ Newton cooling curve. The Python solver is the production path; the JavaScript
 ``views/hops.js`` / ``views/whirlpool.js`` copies are retained only as the
 offline boundary stub.
 
-Reference vectors live in ``docs/whirlpool-hopping-model.md`` and the backend
+Reference vectors live in ``docs/hops/whirlpool-hopping-model.md`` and the backend
 tests. All functions are pure and deterministic.
 """
 
@@ -33,7 +33,7 @@ PRODUCT_FORM_UTILIZATION = {
 # Flowable extracts disperse poorly as the wort cools, so their multiplier is a
 # smooth ramp between the two measured bounds instead of a constant: full value
 # at 90 C and above, the low end at 75 C and below. T-90 pellets and lupulin
-# pellets are static across the window (docs/hot-side-hopping-agent-dosing.md).
+# pellets are static across the window (docs/hops/reference/hot-side-hopping-agent-dosing.md).
 FLOWABLE_LOW_TEMP_C = 75.0
 FLOWABLE_HIGH_TEMP_C = 90.0
 FLOWABLE_LOW_UTILIZATION = 0.80

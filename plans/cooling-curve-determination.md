@@ -290,7 +290,7 @@ Batch:
 Docs/gates:
 
 - regenerate the artifact inventory (new root only),
-- update `docs/whirlpool-hopping-model.md` with the empirical `k` workflow,
+- update `docs/hops/whirlpool-hopping-model.md` with the empirical `k` workflow,
 - update `docs/dag-artifacts/seed-substrate.md` or the record-library docs for
   non-DAG records,
 - `make verify`.

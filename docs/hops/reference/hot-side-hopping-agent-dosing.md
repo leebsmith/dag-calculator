@@ -1,10 +1,17 @@
+---
+title: Hot-side hop dosing frameworks
+status: background reference
+source: generated Gemini conversation, retrieved 2026-10-29
+---
+
 # Hot-side hop dosing frameworks
 
-Status: vendored reference. This is a generated Gemini conversation (retrieved
-2026-10-29) plus one supplier data sheet, kept as the product-form and dosing
-background for the whirlpool model. It is background, not the implementation
-contract: [`whirlpool-hopping-model.md`](whirlpool-hopping-model.md) owns the
-equations, and where the two disagree the model document wins.
+> Imported verbatim; not the contract. It is a generated Gemini conversation
+> (retrieved 2026-10-29) plus one supplier data sheet, kept as the product-form
+> and dosing background for the whirlpool model. The artifact and
+> [`whirlpool-hopping-model.md`](../whirlpool-hopping-model.md) own the
+> equations; where the two disagree, they win. Corrections belong in a living
+> document, not in this transcript.
 
 Sources named by the conversation: the YCH 702 guide (Ollie), BarthHaas
 Spectrum, and Perkins/Malowicki for the activation energy. Appendix A is the

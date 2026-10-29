@@ -211,7 +211,7 @@ Implemented test vectors:
 
 ## 7. Reconciliation with the hot-side reference
 
-`docs/hot-side-hopping-agent-dosing.md` is the broader hot-side product and
+`docs/hops/reference/hot-side-hopping-agent-dosing.md` is the broader hot-side product and
 dosing reference. It discusses product-form multipliers, oil retention,
 humulinones, and perceived bitterness. This document is the implementation
 contract.
@@ -255,9 +255,9 @@ contract.
 - Provided whirlpool modeling note (`modeling-whirlpool-hops.md`, 2026-10-23):
   Arrhenius rate, Newton cooling, numerical effective time, Tinseth extension,
   and the reference vectors.
-- `docs/hot-side-hopping-agent-dosing.md`: the vendored hot-side dosing
-  conversation (retrieved 2026-10-29), which supplies the product-form bands and
-  the oil-retention context; its appendix carries the Yakima Chief Hops
-  early-kettle dosing formula.
+- `docs/hops/reference/hot-side-hopping-agent-dosing.md`: the background
+  hot-side dosing conversation (retrieved 2026-10-29), which supplies the
+  product-form bands and the oil-retention context; its appendix carries the
+  Yakima Chief Hops early-kettle dosing formula.
 - `frontend/src/views/whirlpool.js`: reference implementation.
 - `tests/frontend/whirlpool.test.js`: executable reference vectors.

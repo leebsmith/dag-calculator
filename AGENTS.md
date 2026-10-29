@@ -16,7 +16,9 @@ seam, solvers, Firebase auth, and Firestore persistence.
   **living** and must stay in sync with the artifact. `docs/adsco/ui.md` (the
   reconciled UI model) and `plans/adsco-contract.md` (reconciled solver decisions)
   are living too. `docs/historical/` and the vendored `docs/adsco/*` specs are
-  **frozen** — do not maintain.
+  **frozen** — do not maintain. `docs/hops/README.md` indexes the hop prose and
+  `docs/hops/whirlpool-hopping-model.md` is its living contract; the transcripts
+  under `docs/hops/reference/` are background, not frozen.
 - **`docs/vision.md` is the intent layer**: the inversion thesis, why a boundary
   sits where it does, what the tool refuses to do, and the review checklist. It
   constrains design decisions; it never overrides the artifact.
@@ -31,6 +33,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 | `backend/` | FastAPI app (Python 3.12, `uv`) |
 | `tests/` | frontend engine/conformance/guards + backend pytest |
 | `docs/` | living spec + frozen historical |
+| `docs/hops/` | living hop index + model; background transcripts under `reference/` |
 | `plans/` | execution history + reconciled decisions (`adsco-contract.md`) |
 | `scripts/` | seed builders (`.mjs`) + scrapers (`scrape/`, Python) |
 
