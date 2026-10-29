@@ -1,17 +1,5 @@
 # TODO
 
-## In flight
-
-* **Optimize local testing** — **next: Phase 0, the test-cost ledger.** The plan is
-  `plans/optimize-local-testing.md`; it was measured on this box (i3-6100U, 2C/4T),
-  where `make test` is 56.9 s of which 18–23 s is the backend and 30–35 s the
-  frontend. Order: ledger → `make quick` (check, then the affected suites, with a
-  declared coupling table and a full-suite fallback) → concurrency 12 → memoized
-  artifact validation and graph → reset-instead-of-rebuild in the harness →
-  backend render fixture → re-measure and stop. The affected lane is a pre-filter,
-  never evidence: `make test` stays the gate, CI stays full, a pre-push hook runs
-  it, and the program closes by archiving the plan and recording the numbers here.
-
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
@@ -139,6 +127,23 @@ Not needed by the current artifact; add only when a node requires them:
 * True nested boundary outputs (currently flattened to dotted keys).
 
 ## Done
+
+* **Optimize local testing** — seven phases (0–6): a per-file test-cost ledger;
+  `make quick` (check, then the suites the diff can reach, with a declared coupling
+  table, a full-suite fallback and a pre-push gate hook while `make test` stays the
+  gate); the frontend suites at 3 × available parallelism; memoized artifact
+  validation and graph build; reset instead of rebuild in the harness
+  (`sharedTestApp` / `withFreshApp`, 37 of the 41 app-booting suites sharing an
+  app); and one compile per paper in the backend report suite. Measured on this box
+  (i3-6100U, 2C/4T): `make test` 56.9 → 43.1–45.8 s across the closing runs, `make verify`
+  54.0 s; the
+  closing ledger is 156 frontend files / 960 tests in 47.9 s serial and 51 backend
+  files / 698 tests in 19.8 s; `make quick` runs 1 of 156 suites in 9.6 s on a
+  docs-only diff and 84 of 156 in 23.3 s on a synthetic 12-module diff. Coverage
+  holds at 96.11 / 86.56 / 91.52 % frontend and 96 % of 3207 backend statements.
+  No dependency was added: `pytest-xdist` stays deferred and the pre-push refusal
+  stays manual — `plans/archive/optimize-local-testing.md` §7. The shape-pin
+  burn-down stays queued below.
 
 * **Drift gates** — the script layer joined the lint contract (`scripts/**` under
   eslint rules plus the shape caps for `.mjs`, ruff for the `.py` scrapers; the

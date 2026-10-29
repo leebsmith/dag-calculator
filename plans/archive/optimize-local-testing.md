@@ -1,7 +1,7 @@
 # Optimize local testing
 
-Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–5
-landed 2026-10-29, Phase 6 proposed. Target machine: ASUS NUC6i3SYH —
+Status: **complete**. Reshaped 2026-10-29 for goal-driven execution; all seven
+phases (0–6) landed 2026-10-29. Target machine: ASUS NUC6i3SYH —
 Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every baseline
 number below was measured on this box on 2026-10-29; none is extrapolated.
 
@@ -935,6 +935,61 @@ statements (118 missed) → unchanged.
 options are worth proposing — but only record the recommendation: the
 `pytest-xdist` decision belongs to the user (§7). If nothing is justified, close
 the program.
+
+**Landed.** 2026-10-29 — `Record the local-testing numbers`. A note cannot carry the
+sha of the commit that contains it; `git log --grep "Record the local-testing
+numbers"` finds it, and `git log --stat -1 -- plans/archive/optimize-local-testing.md`
+shows the move.
+
+| Gate | Before | After |
+|---|---|---|
+| `node scripts/test-cost.mjs` | frontend 156 files, 960 tests, 42 boot an app, 55.0 s serial; backend 51 files, 698 tests, 18.7/18.0 s wall, 12.1/12.4 s inside rows — render 3348 ms, sections 2192 ms (Phase 5) | frontend 156 files, 960 tests, 42 boot an app, 47.9 s serial; backend 51 files, 698 tests, 19.8 s wall, 14.3 s inside rows — render 3443 ms, sections 2699 ms |
+| `make coverage` (frontend) | 96.11 / 86.56 / 91.52 % | unchanged: 96.11 / 86.56 / 91.52 % |
+| `make coverage` (backend) | 96 % of 3207 statements, 118 missed | unchanged: 96 % of 3207 statements, 118 missed |
+| `make test` | 41.4–43.0 s (Phase 5) | 43.1–45.8 s over five runs (43.1 s on the code tree, 45.8 s on the committed tree) — 156 files, 960 tests pass; backend 697 passed, 1 skipped |
+| `make check` | 8.7–13.9 s (Phase 5) | 8.9–13.3 s over four runs |
+| `make quick`, this commit's diff | 38.0–45.1 s over two runs (Phase 1, a harness-touching diff) | 9.6 s — 1 of 156 suites (`plans/**` selects `docs-claims`, 5 tests), backend skipped |
+| `make verify` | ≈ 57 s (prediction, never measured) | 54.0 s — check, the full gate and the production build |
+
+The measured closing numbers, against §5's predictions:
+
+| Prediction (§5) | Measured |
+|---|---|
+| Iteration that fails, `make quick` ≤ 20 s | 9.6 s on a docs-only diff; 23.3 s on a synthetic 12-module diff (Phase 1) |
+| Full gate `make test` ~44 s | 43.1–45.8 s, median 43.3 s |
+| Full gate with `xdist` (if taken) ~38 s | not taken |
+| `make verify` ≈ 57 s | 54.0 s |
+
+Deviations:
+
+- **The move is a rename plus a status line, not a rewrite.** `git mv` carries the
+  audit trail; the header now reads `complete` with all seven phases (0–6) landed.
+  The contract's reference sweep found one inbound citation of the old path
+  (`TODO.md`) plus the archive's own index (`plans/archive/README.md`), both updated
+  in this commit; the two mentions left inside this file are the quoted goal
+  contract (§0) and the `git mv` instruction (§8, step 4), kept verbatim as the
+  record of how the program ran. No frozen document cites it, so the blocked-if did
+  not fire.
+- **The backend ledger rows moved back up** — wall 18.0–18.7 → 19.8 s, render
+  3348 → 3443 ms, sections 2192 → 2699 ms — on a box whose load average sat between
+  3 and 6. Phase 5's saving is still visible against its pre-change rows (5452 and
+  3642 ms) and the backend still reports 697 passed, 1 skipped; this is the
+  instrument, not a regression. §2.8: a recording, not a threshold.
+- **The frontend lane is the program's net movement:** 46.6 s serial at Phase 0 →
+  47.9 s here, with the file count up 153 → 156 (the coupling, cold-start and
+  reset-baseline guards), the test count 949 → 960, and the boot count 41 → 42 by
+  the ledger's source scan (37 suites share an app, and the scan counts the helper
+  name, not the boot). The measured wall is where the program paid: `make test`
+  56.9 s → 43.1–45.8 s.
+- **No dependency is proposed.** `pytest-xdist` remains deferred to §7: the box has
+  two physical cores, the backend's serial work is now 14.3 s of rows, and the
+  measured 43.1–45.8 s gate is already at §5's ~44 s prediction. The table-driving
+  option was not needed by any phase and is not proposed. The pre-push refusal is
+  still §7's, demonstrated on a throwaway branch.
+
+Coverage: frontend 96.11 / 86.56 / 91.52 % → unchanged; backend 96 % of 3207
+statements (118 missed) → unchanged. No test was deleted or weakened; 960 frontend
+and 697 backend tests remain the gate.
 
 ## 4. Coverage protocol
 

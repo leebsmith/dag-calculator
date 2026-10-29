@@ -28,6 +28,7 @@ proposed plans.
 | [Decomposition & Display Contract](decomposition-and-display-contract.md) | closed | 2026-10-28 |
 | [Report Bundle](report-bundle.md) | complete | 2026-10-28 |
 | [Report Process Sections](report-process-sections.md) | implemented | 2026-10-28 |
+| [Optimize Local Testing](optimize-local-testing.md) | complete | 2026-10-29 |
 
 Move a plan here when its gate is green and it is recorded under `TODO.md` Done.
 Keep the original filename and front matter; update inbound links in the same
