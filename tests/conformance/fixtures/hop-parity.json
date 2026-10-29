@@ -41,8 +41,8 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.1,
-            "duration_min": 30.0,
-            "initial_temp_c": 99.0,
+            "duration_min": 30,
+            "initial_temp_c": 99,
             "pct": 1.0,
             "product_form": "t90_pellet"
           }
@@ -52,7 +52,7 @@
         "boil_time_min": 60.0,
         "pre_boil_gravity": 1.048,
         "post_boil_gravity": 1.055,
-        "post_boil_volume_l": 21.0,
+        "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
         "whirlpool_cooling_time_constant_min": 108.7
       },
@@ -60,15 +60,15 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30.0,
+            "minutes": 30,
             "ibu": 30.0,
-            "mass_kg": 0.05815423919026304,
+            "mass_kg": 0.055384989705012426,
             "effective_minutes": 14.795319261482318
           }
         ],
         "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.05815423919026304,
-        "total_mass_kg": 0.05815423919026304
+        "whirlpool_mass_kg": 0.055384989705012426,
+        "total_mass_kg": 0.055384989705012426
       }
     },
     {
@@ -78,8 +78,8 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.45,
-            "duration_min": 30.0,
-            "initial_temp_c": 99.0,
+            "duration_min": 30,
+            "initial_temp_c": 99,
             "pct": 1.0,
             "product_form": "flowable_extract"
           }
@@ -89,7 +89,7 @@
         "boil_time_min": 60.0,
         "pre_boil_gravity": 1.048,
         "post_boil_gravity": 1.055,
-        "post_boil_volume_l": 21.0,
+        "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
         "whirlpool_cooling_time_constant_min": 108.7
       },
@@ -97,15 +97,15 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30.0,
+            "minutes": 30,
             "ibu": 30.0,
-            "mass_kg": 0.011237534143045999,
+            "mass_kg": 0.010702413469567617,
             "effective_minutes": 14.795319261482318
           }
         ],
         "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.011237534143045999,
-        "total_mass_kg": 0.011237534143045999
+        "whirlpool_mass_kg": 0.010702413469567617,
+        "total_mass_kg": 0.010702413469567617
       }
     },
     {
@@ -126,8 +126,8 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.1,
-            "duration_min": 20.0,
-            "initial_temp_c": 90.0,
+            "duration_min": 20,
+            "initial_temp_c": 90,
             "pct": 1.0,
             "product_form": "t90_pellet"
           }
@@ -137,7 +137,7 @@
         "boil_time_min": 60.0,
         "pre_boil_gravity": 1.048,
         "post_boil_gravity": 1.055,
-        "post_boil_volume_l": 21.0,
+        "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
         "whirlpool_cooling_time_constant_min": 108.7
       },
@@ -146,29 +146,192 @@
           {
             "minutes": 60.0,
             "ibu": 12.5,
-            "mass_kg": 0.01117768742933739
+            "mass_kg": 0.010645416599368945
           },
           {
             "minutes": 30.0,
             "ibu": 12.5,
-            "mass_kg": 0.01212028515468133
+            "mass_kg": 0.011543128718744125
           }
         ],
         "whirlpool_rows": [
           {
-            "minutes": 20.0,
+            "minutes": 20,
             "ibu": 15.0,
-            "mass_kg": 0.057415607606585206,
+            "mass_kg": 0.054681531053890675,
             "effective_minutes": 6.411417646728922
           }
         ],
-        "boil_mass_kg": 0.023297972584018722,
-        "whirlpool_mass_kg": 0.057415607606585206,
-        "total_mass_kg": 0.08071358019060393
+        "boil_mass_kg": 0.022188545318113068,
+        "whirlpool_mass_kg": 0.054681531053890675,
+        "total_mass_kg": 0.07687007637200374
       }
     },
     {
-      "name": "fuzz-0",
+      "name": "two-charge-passive",
+      "input": {
+        "boil_hops": [],
+        "whirlpool_hops": [
+          {
+            "alpha_acid_pct": 0.1,
+            "duration_min": 30,
+            "initial_temp_c": 99,
+            "pct": 0.6,
+            "product_form": "t90_pellet"
+          },
+          {
+            "alpha_acid_pct": 0.12,
+            "duration_min": 20,
+            "initial_temp_c": 92.0566,
+            "pct": 0.4,
+            "product_form": "t90_pellet"
+          }
+        ],
+        "boil_target_ibu": 0.0,
+        "whirlpool_target_ibu": 25.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [],
+        "whirlpool_rows": [
+          {
+            "minutes": 30,
+            "ibu": 15.0,
+            "mass_kg": 0.027692494852506213,
+            "effective_minutes": 14.795319261482318
+          },
+          {
+            "minutes": 20,
+            "ibu": 10.0,
+            "mass_kg": 0.026799038572501713,
+            "effective_minutes": 7.407206080297871
+          }
+        ],
+        "boil_mass_kg": 0,
+        "whirlpool_mass_kg": 0.054491533425007926,
+        "total_mass_kg": 0.054491533425007926
+      }
+    },
+    {
+      "name": "inferred-chill",
+      "input": {
+        "boil_hops": [],
+        "whirlpool_hops": [
+          {
+            "alpha_acid_pct": 0.2,
+            "duration_min": 30,
+            "initial_temp_c": 99,
+            "pct": 0.5,
+            "product_form": "lupulin_pellet"
+          },
+          {
+            "alpha_acid_pct": 0.2,
+            "duration_min": 20,
+            "initial_temp_c": 76.7,
+            "pct": 0.5,
+            "product_form": "lupulin_pellet"
+          }
+        ],
+        "boil_target_ibu": 0.0,
+        "whirlpool_target_ibu": 20.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [],
+        "whirlpool_rows": [
+          {
+            "minutes": 30,
+            "ibu": 10.0,
+            "mass_kg": 0.011544038490591857,
+            "effective_minutes": 9.81499375449106
+          },
+          {
+            "minutes": 20,
+            "ibu": 10.0,
+            "mass_kg": 0.04051745183792269,
+            "effective_minutes": 2.4268805733066134
+          }
+        ],
+        "boil_mass_kg": 0,
+        "whirlpool_mass_kg": 0.05206149032851455,
+        "total_mass_kg": 0.05206149032851455
+      }
+    },
+    {
+      "name": "three-additions",
+      "input": {
+        "boil_hops": [],
+        "whirlpool_hops": [
+          {
+            "alpha_acid_pct": 0.1,
+            "duration_min": 45,
+            "initial_temp_c": 99.0,
+            "pct": 0.5,
+            "product_form": "t90_pellet"
+          },
+          {
+            "alpha_acid_pct": 0.4,
+            "duration_min": 25,
+            "initial_temp_c": 85.7234,
+            "pct": 0.3,
+            "product_form": "flowable_extract"
+          },
+          {
+            "alpha_acid_pct": 0.18,
+            "duration_min": 10,
+            "initial_temp_c": 73.9469,
+            "pct": 0.2,
+            "product_form": "lupulin_pellet"
+          }
+        ],
+        "boil_target_ibu": 0.0,
+        "whirlpool_target_ibu": 28.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [],
+        "whirlpool_rows": [
+          {
+            "minutes": 45,
+            "ibu": 14.0,
+            "mass_kg": 0.023409536026128237,
+            "effective_minutes": 16.989640871539756
+          },
+          {
+            "minutes": 25,
+            "ibu": 8.4,
+            "mass_kg": 0.008742334176175336,
+            "effective_minutes": 5.061040627921477
+          },
+          {
+            "minutes": 10,
+            "ibu": 5.6000000000000005,
+            "mass_kg": 0.05110231443130115,
+            "effective_minutes": 1.1678600113980435
+          }
+        ],
+        "boil_mass_kg": 0,
+        "whirlpool_mass_kg": 0.08325418463360472,
+        "total_mass_kg": 0.08325418463360472
+      }
+    },
+    {
+      "name": "fuzz-a",
       "input": {
         "boil_hops": [
           {
@@ -179,193 +342,108 @@
         ],
         "whirlpool_hops": [
           {
-            "alpha_acid_pct": 0.1631,
-            "duration_min": 15.6,
-            "initial_temp_c": 82.5,
-            "pct": 0.4890625,
-            "product_form": "flowable_extract"
+            "alpha_acid_pct": 0.107,
+            "duration_min": 40,
+            "initial_temp_c": 98.0,
+            "pct": 0.6,
+            "product_form": "t90_pellet"
           },
           {
-            "alpha_acid_pct": 0.107,
-            "duration_min": 57.0,
-            "initial_temp_c": 84.5,
-            "pct": 0.5109375,
-            "product_form": "t90_pellet"
+            "alpha_acid_pct": 0.1631,
+            "duration_min": 15,
+            "initial_temp_c": 76.9742,
+            "pct": 0.4,
+            "product_form": "flowable_extract"
           }
         ],
         "boil_target_ibu": 30.3,
-        "whirlpool_target_ibu": 0.9,
-        "boil_time_min": 36.0,
-        "pre_boil_gravity": 1.0709,
-        "post_boil_gravity": 1.0428,
-        "post_boil_volume_l": 14.22,
-        "whirlpool_ambient_temp_c": 23.7,
-        "whirlpool_cooling_time_constant_min": 151.3
+        "whirlpool_target_ibu": 9.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
       },
       "expected": {
         "boil_rows": [
           {
-            "minutes": 11.016,
+            "minutes": 18.36,
             "ibu": 30.3,
-            "mass_kg": 0.0976384691848594
+            "mass_kg": 0.07657775223934041
           }
         ],
         "whirlpool_rows": [
           {
-            "minutes": 15.6,
-            "ibu": 0.44015625,
-            "mass_kg": 0.0011188052420842032,
-            "effective_minutes": 3.4812631269855894
+            "minutes": 40,
+            "ibu": 5.3999999999999995,
+            "mass_kg": 0.009375125904306074,
+            "effective_minutes": 14.670722027605796
           },
           {
-            "minutes": 57.0,
-            "ibu": 0.45984375000000005,
-            "mass_kg": 0.000738395300294504,
-            "effective_minutes": 9.125287805638902
-          }
-        ],
-        "boil_mass_kg": 0.0976384691848594,
-        "whirlpool_mass_kg": 0.0018572005423787073,
-        "total_mass_kg": 0.0994956697272381
-      }
-    },
-    {
-      "name": "fuzz-1",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.1386,
-            "boil_time_fraction": 0.338,
-            "pct": 1.0
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.1737,
-            "duration_min": 58.4,
-            "initial_temp_c": 70.7,
-            "pct": 1.0,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 1.3,
-        "whirlpool_target_ibu": 3.6,
-        "boil_time_min": 28.0,
-        "pre_boil_gravity": 1.0756,
-        "post_boil_gravity": 1.0577,
-        "post_boil_volume_l": 36.52,
-        "whirlpool_ambient_temp_c": 20.6,
-        "whirlpool_cooling_time_constant_min": 85.5
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 9.464,
-            "ibu": 1.3,
-            "mass_kg": 0.005393067197650161
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 58.4,
+            "minutes": 15,
             "ibu": 3.6,
-            "mass_kg": 0.04493541685052604,
-            "effective_minutes": 2.328831700032472
+            "mass_kg": 0.0286375896054858,
+            "effective_minutes": 2.025758209866238
           }
         ],
-        "boil_mass_kg": 0.005393067197650161,
-        "whirlpool_mass_kg": 0.04493541685052604,
-        "total_mass_kg": 0.0503284840481762
+        "boil_mass_kg": 0.07657775223934041,
+        "whirlpool_mass_kg": 0.03801271550979187,
+        "total_mass_kg": 0.11459046774913229
       }
     },
     {
-      "name": "fuzz-2",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.0582,
-            "boil_time_fraction": 0.566,
-            "pct": 1.0
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0789,
-            "duration_min": 47.8,
-            "initial_temp_c": 91.9,
-            "pct": 1.0,
-            "product_form": "t90_pellet"
-          }
-        ],
-        "boil_target_ibu": 24.3,
-        "whirlpool_target_ibu": 16.2,
-        "boil_time_min": 111.0,
-        "pre_boil_gravity": 1.031,
-        "post_boil_gravity": 1.1102,
-        "post_boil_volume_l": 36.82,
-        "whirlpool_ambient_temp_c": 21.3,
-        "whirlpool_cooling_time_constant_min": 57.5
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 62.82599999999999,
-            "ibu": 24.3,
-            "mass_kg": 0.0555943285946037
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 47.8,
-            "ibu": 16.2,
-            "mass_kg": 0.21254276748733045,
-            "effective_minutes": 6.889143558392496
-          }
-        ],
-        "boil_mass_kg": 0.0555943285946037,
-        "whirlpool_mass_kg": 0.21254276748733045,
-        "total_mass_kg": 0.26813709608193415
-      }
-    },
-    {
-      "name": "fuzz-3",
+      "name": "fuzz-b",
       "input": {
         "boil_hops": [],
         "whirlpool_hops": [
           {
-            "alpha_acid_pct": 0.0774,
-            "duration_min": 30.5,
-            "initial_temp_c": 86.2,
-            "pct": 1.0,
-            "product_form": "flowable_extract"
+            "alpha_acid_pct": 0.22,
+            "duration_min": 60,
+            "initial_temp_c": 97.0,
+            "pct": 0.7,
+            "product_form": "lupulin_pellet"
+          },
+          {
+            "alpha_acid_pct": 0.1072,
+            "duration_min": 30,
+            "initial_temp_c": 78.4292,
+            "pct": 0.3,
+            "product_form": "t90_pellet"
           }
         ],
-        "boil_target_ibu": 13.0,
-        "whirlpool_target_ibu": 21.1,
-        "boil_time_min": 62.0,
-        "pre_boil_gravity": 1.083,
-        "post_boil_gravity": 1.0475,
-        "post_boil_volume_l": 17.12,
-        "whirlpool_ambient_temp_c": 11.6,
-        "whirlpool_cooling_time_constant_min": 105.8
+        "boil_target_ibu": 0.0,
+        "whirlpool_target_ibu": 15.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
       },
       "expected": {
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30.5,
-            "ibu": 21.1,
-            "mass_kg": 0.08035211390352287,
-            "effective_minutes": 5.724060258122473
+            "minutes": 60,
+            "ibu": 10.5,
+            "mass_kg": 0.007412872155344069,
+            "effective_minutes": 16.476922953111192
+          },
+          {
+            "minutes": 30,
+            "ibu": 4.5,
+            "mass_kg": 0.02631149969876581,
+            "effective_minutes": 3.5265272808116133
           }
         ],
         "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.08035211390352287,
-        "total_mass_kg": 0.08035211390352287
+        "whirlpool_mass_kg": 0.03372437185410988,
+        "total_mass_kg": 0.03372437185410988
       }
     },
     {
-      "name": "fuzz-4",
+      "name": "fuzz-c",
       "input": {
         "boil_hops": [
           {
@@ -377,672 +455,40 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.0361,
-            "duration_min": 35.3,
-            "initial_temp_c": 72.4,
-            "pct": 0.7073825503355705,
-            "product_form": "flowable_extract"
-          },
-          {
-            "alpha_acid_pct": 0.1185,
-            "duration_min": 46.3,
-            "initial_temp_c": 86.0,
-            "pct": 0.29261744966442954,
+            "duration_min": 50,
+            "initial_temp_c": 85.0,
+            "pct": 1.0,
             "product_form": "flowable_extract"
           }
         ],
         "boil_target_ibu": 48.9,
         "whirlpool_target_ibu": 13.9,
-        "boil_time_min": 23.0,
+        "boil_time_min": 60.0,
         "pre_boil_gravity": 1.048,
-        "post_boil_gravity": 1.0567,
-        "post_boil_volume_l": 25.71,
-        "whirlpool_ambient_temp_c": 23.0,
-        "whirlpool_cooling_time_constant_min": 101.0
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
       },
       "expected": {
         "boil_rows": [
           {
-            "minutes": 18.032,
+            "minutes": 47.04,
             "ibu": 48.9,
-            "mass_kg": 0.11277149213823728
+            "mass_kg": 0.053181710644390236
           }
         ],
         "whirlpool_rows": [
           {
-            "minutes": 35.3,
-            "ibu": 9.832617449664431,
-            "mass_kg": 0.392693717806587,
-            "effective_minutes": 2.4492296701818157
-          },
-          {
-            "minutes": 46.3,
-            "ibu": 4.06738255033557,
-            "mass_kg": 0.013493840808924708,
-            "effective_minutes": 7.242551505161672
+            "minutes": 50,
+            "ibu": 13.9,
+            "mass_kg": 0.12215602645452867,
+            "effective_minutes": 7.0388118497980585
           }
         ],
-        "boil_mass_kg": 0.11277149213823728,
-        "whirlpool_mass_kg": 0.4061875586155117,
-        "total_mass_kg": 0.5189590507537489
-      }
-    },
-    {
-      "name": "fuzz-5",
-      "input": {
-        "boil_hops": [],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.1555,
-            "duration_min": 59.1,
-            "initial_temp_c": 91.0,
-            "pct": 0.27574171029668415,
-            "product_form": "flowable_extract"
-          },
-          {
-            "alpha_acid_pct": 0.1072,
-            "duration_min": 58.2,
-            "initial_temp_c": 80.7,
-            "pct": 0.7242582897033158,
-            "product_form": "t90_pellet"
-          }
-        ],
-        "boil_target_ibu": 51.4,
-        "whirlpool_target_ibu": 6.4,
-        "boil_time_min": 30.0,
-        "pre_boil_gravity": 1.0384,
-        "post_boil_gravity": 1.0477,
-        "post_boil_volume_l": 9.77,
-        "whirlpool_ambient_temp_c": 18.5,
-        "whirlpool_cooling_time_constant_min": 38.0
-      },
-      "expected": {
-        "boil_rows": [],
-        "whirlpool_rows": [
-          {
-            "minutes": 59.1,
-            "ibu": 1.7647469458987786,
-            "mass_kg": 0.002331789521397801,
-            "effective_minutes": 4.348770641831882
-          },
-          {
-            "minutes": 58.2,
-            "ibu": 4.635253054101222,
-            "mass_kg": 0.019009033138333045,
-            "effective_minutes": 2.2430122967738795
-          }
-        ],
-        "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.021340822659730845,
-        "total_mass_kg": 0.021340822659730845
-      }
-    },
-    {
-      "name": "fuzz-6",
-      "input": {
-        "boil_hops": [],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0397,
-            "duration_min": 38.0,
-            "initial_temp_c": 75.1,
-            "pct": 1.0,
-            "product_form": "t90_pellet"
-          }
-        ],
-        "boil_target_ibu": 50.2,
-        "whirlpool_target_ibu": 12.4,
-        "boil_time_min": 101.0,
-        "pre_boil_gravity": 1.0467,
-        "post_boil_gravity": 1.0969,
-        "post_boil_volume_l": 17.0,
-        "whirlpool_ambient_temp_c": 22.6,
-        "whirlpool_cooling_time_constant_min": 131.3
-      },
-      "expected": {
-        "boil_rows": [],
-        "whirlpool_rows": [
-          {
-            "minutes": 38.0,
-            "ibu": 12.4,
-            "mass_kg": 0.2441895065858579,
-            "effective_minutes": 3.5003861517296
-          }
-        ],
-        "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.2441895065858579,
-        "total_mass_kg": 0.2441895065858579
-      }
-    },
-    {
-      "name": "fuzz-7",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.1459,
-            "boil_time_fraction": 0.393,
-            "pct": 0.35529830810329477
-          },
-          {
-            "alpha_acid_pct": 0.0781,
-            "boil_time_fraction": 0.655,
-            "pct": 0.6447016918967052
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0743,
-            "duration_min": 45.1,
-            "initial_temp_c": 83.3,
-            "pct": 1.0,
-            "product_form": "t90_pellet"
-          }
-        ],
-        "boil_target_ibu": 4.2,
-        "whirlpool_target_ibu": 16.9,
-        "boil_time_min": 101.0,
-        "pre_boil_gravity": 1.0924,
-        "post_boil_gravity": 1.064,
-        "post_boil_volume_l": 22.54,
-        "whirlpool_ambient_temp_c": 19.0,
-        "whirlpool_cooling_time_constant_min": 157.9
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 39.693000000000005,
-            "ibu": 1.492252894033838,
-            "mass_kg": 0.0016720908786357182
-          },
-          {
-            "minutes": 66.155,
-            "ibu": 2.707747105966162,
-            "mass_kg": 0.004853739058125288
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 45.1,
-            "ibu": 16.9,
-            "mass_kg": 0.08990955781168458,
-            "effective_minutes": 7.356669747000055
-          }
-        ],
-        "boil_mass_kg": 0.006525829936761006,
-        "whirlpool_mass_kg": 0.08990955781168458,
-        "total_mass_kg": 0.0964353877484456
-      }
-    },
-    {
-      "name": "fuzz-8",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.0854,
-            "boil_time_fraction": 0.346,
-            "pct": 1.0
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.1081,
-            "duration_min": 24.9,
-            "initial_temp_c": 74.5,
-            "pct": 1.0,
-            "product_form": "t90_pellet"
-          }
-        ],
-        "boil_target_ibu": 13.5,
-        "whirlpool_target_ibu": 8.8,
-        "boil_time_min": 99.0,
-        "pre_boil_gravity": 1.0433,
-        "post_boil_gravity": 1.1084,
-        "post_boil_volume_l": 30.29,
-        "whirlpool_ambient_temp_c": 22.1,
-        "whirlpool_cooling_time_constant_min": 162.5
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 34.254,
-            "ibu": 13.5,
-            "mass_kg": 0.023826030460984533
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 24.9,
-            "ibu": 8.8,
-            "mass_kg": 0.1586282491807117,
-            "effective_minutes": 2.733382423672289
-          }
-        ],
-        "boil_mass_kg": 0.023826030460984533,
-        "whirlpool_mass_kg": 0.1586282491807117,
-        "total_mass_kg": 0.18245427964169622
-      }
-    },
-    {
-      "name": "fuzz-9",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.0801,
-            "boil_time_fraction": 0.819,
-            "pct": 0.31811894882434305
-          },
-          {
-            "alpha_acid_pct": 0.0393,
-            "boil_time_fraction": 0.46,
-            "pct": 0.681881051175657
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0979,
-            "duration_min": 38.5,
-            "initial_temp_c": 82.9,
-            "pct": 0.4803356056633456,
-            "product_form": "t90_pellet"
-          },
-          {
-            "alpha_acid_pct": 0.0864,
-            "duration_min": 49.9,
-            "initial_temp_c": 75.9,
-            "pct": 0.5196643943366545,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 48.7,
-        "whirlpool_target_ibu": 22.4,
-        "boil_time_min": 27.0,
-        "pre_boil_gravity": 1.0443,
-        "post_boil_gravity": 1.0947,
-        "post_boil_volume_l": 27.48,
-        "whirlpool_ambient_temp_c": 10.3,
-        "whirlpool_cooling_time_constant_min": 132.5
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 22.113,
-            "ibu": 15.492392807745507,
-            "mass_kg": 0.03390623631587512
-          },
-          {
-            "minutes": 12.42,
-            "ibu": 33.2076071922545,
-            "mass_kg": 0.2221169644701868
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 38.5,
-            "ibu": 10.759517566858941,
-            "mass_kg": 0.08835126198480132,
-            "effective_minutes": 5.621526268924308
-          },
-          {
-            "minutes": 49.9,
-            "ibu": 11.64048243314106,
-            "mass_kg": 0.19456954971596407,
-            "effective_minutes": 3.755632545718739
-          }
-        ],
-        "boil_mass_kg": 0.25602320078606194,
-        "whirlpool_mass_kg": 0.2829208117007654,
-        "total_mass_kg": 0.5389440124868273
-      }
-    },
-    {
-      "name": "fuzz-10",
-      "input": {
-        "boil_hops": [],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0292,
-            "duration_min": 30.8,
-            "initial_temp_c": 95.4,
-            "pct": 0.6296296296296297,
-            "product_form": "flowable_extract"
-          },
-          {
-            "alpha_acid_pct": 0.0479,
-            "duration_min": 34.7,
-            "initial_temp_c": 84.3,
-            "pct": 0.3703703703703704,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 59.1,
-        "whirlpool_target_ibu": 10.9,
-        "boil_time_min": 118.0,
-        "pre_boil_gravity": 1.0409,
-        "post_boil_gravity": 1.1005,
-        "post_boil_volume_l": 19.13,
-        "whirlpool_ambient_temp_c": 21.5,
-        "whirlpool_cooling_time_constant_min": 164.1
-      },
-      "expected": {
-        "boil_rows": [],
-        "whirlpool_rows": [
-          {
-            "minutes": 30.8,
-            "ibu": 6.862962962962963,
-            "mass_kg": 0.055454503496011345,
-            "effective_minutes": 14.386600016863358
-          },
-          {
-            "minutes": 34.7,
-            "ibu": 4.037037037037037,
-            "mass_kg": 0.039109424232830696,
-            "effective_minutes": 7.084656604546582
-          }
-        ],
-        "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.09456392772884203,
-        "total_mass_kg": 0.09456392772884203
-      }
-    },
-    {
-      "name": "fuzz-11",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.084,
-            "boil_time_fraction": 0.993,
-            "pct": 0.39944521497919555
-          },
-          {
-            "alpha_acid_pct": 0.1111,
-            "boil_time_fraction": 0.989,
-            "pct": 0.6005547850208045
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.1378,
-            "duration_min": 7.3,
-            "initial_temp_c": 87.6,
-            "pct": 1.0,
-            "product_form": "t90_pellet"
-          }
-        ],
-        "boil_target_ibu": 38.2,
-        "whirlpool_target_ibu": 29.7,
-        "boil_time_min": 43.0,
-        "pre_boil_gravity": 1.0923,
-        "post_boil_gravity": 1.0601,
-        "post_boil_volume_l": 26.1,
-        "whirlpool_ambient_temp_c": 14.1,
-        "whirlpool_cooling_time_constant_min": 158.2
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 42.699,
-            "ibu": 15.258807212205271,
-            "mass_kg": 0.033384952715757414
-          },
-          {
-            "minutes": 42.527,
-            "ibu": 22.941192787794733,
-            "mass_kg": 0.038008048941565925
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 7.3,
-            "ibu": 29.7,
-            "mass_kg": 0.24172978435814932,
-            "effective_minutes": 2.6465641904849324
-          }
-        ],
-        "boil_mass_kg": 0.07139300165732335,
-        "whirlpool_mass_kg": 0.24172978435814932,
-        "total_mass_kg": 0.31312278601547266
-      }
-    },
-    {
-      "name": "fuzz-12",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.0895,
-            "boil_time_fraction": 0.676,
-            "pct": 0.49555160142348753
-          },
-          {
-            "alpha_acid_pct": 0.1318,
-            "boil_time_fraction": 0.348,
-            "pct": 0.5044483985765124
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0485,
-            "duration_min": 52.6,
-            "initial_temp_c": 76.1,
-            "pct": 0.5112,
-            "product_form": "t90_pellet"
-          },
-          {
-            "alpha_acid_pct": 0.0728,
-            "duration_min": 55.1,
-            "initial_temp_c": 88.9,
-            "pct": 0.4888,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 1.6,
-        "whirlpool_target_ibu": 25.4,
-        "boil_time_min": 70.0,
-        "pre_boil_gravity": 1.0457,
-        "post_boil_gravity": 1.099,
-        "post_boil_volume_l": 25.1,
-        "whirlpool_ambient_temp_c": 20.2,
-        "whirlpool_cooling_time_constant_min": 56.5
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 47.32,
-            "ibu": 0.7928825622775801,
-            "mass_kg": 0.0009929256206378516
-          },
-          {
-            "minutes": 24.36,
-            "ibu": 0.8071174377224198,
-            "mass_kg": 0.0009363606571748372
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 52.6,
-            "ibu": 12.98448,
-            "mass_kg": 0.4514478894303198,
-            "effective_minutes": 2.3891627659911148
-          },
-          {
-            "minutes": 55.1,
-            "ibu": 12.415519999999999,
-            "mass_kg": 0.11400832227861755,
-            "effective_minutes": 5.605223746862296
-          }
-        ],
-        "boil_mass_kg": 0.0019292862778126888,
-        "whirlpool_mass_kg": 0.5654562117089373,
-        "total_mass_kg": 0.56738549798675
-      }
-    },
-    {
-      "name": "fuzz-13",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.1242,
-            "boil_time_fraction": 0.85,
-            "pct": 0.5273264401772525
-          },
-          {
-            "alpha_acid_pct": 0.1284,
-            "boil_time_fraction": 0.76,
-            "pct": 0.4726735598227474
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.03,
-            "duration_min": 50.3,
-            "initial_temp_c": 96.7,
-            "pct": 1.0,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 48.6,
-        "whirlpool_target_ibu": 15.9,
-        "boil_time_min": 115.0,
-        "pre_boil_gravity": 1.084,
-        "post_boil_gravity": 1.0838,
-        "post_boil_volume_l": 30.05,
-        "whirlpool_ambient_temp_c": 24.5,
-        "whirlpool_cooling_time_constant_min": 180.0
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 97.75,
-            "ibu": 25.628064992614473,
-            "mass_kg": 0.033858138656859535
-          },
-          {
-            "minutes": 87.4,
-            "ibu": 22.971935007385525,
-            "mass_kg": 0.029667461832272195
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 50.3,
-            "ibu": 15.9,
-            "mass_kg": 0.1268398701792748,
-            "effective_minutes": 21.87809910395397
-          }
-        ],
-        "boil_mass_kg": 0.06352560048913172,
-        "whirlpool_mass_kg": 0.1268398701792748,
-        "total_mass_kg": 0.19036547066840653
-      }
-    },
-    {
-      "name": "fuzz-14",
-      "input": {
-        "boil_hops": [
-          {
-            "alpha_acid_pct": 0.1546,
-            "boil_time_fraction": 0.949,
-            "pct": 1.0
-          }
-        ],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.1027,
-            "duration_min": 30.1,
-            "initial_temp_c": 71.3,
-            "pct": 0.654434250764526,
-            "product_form": "t90_pellet"
-          },
-          {
-            "alpha_acid_pct": 0.0904,
-            "duration_min": 39.7,
-            "initial_temp_c": 88.1,
-            "pct": 0.345565749235474,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 24.1,
-        "whirlpool_target_ibu": 3.9,
-        "boil_time_min": 69.0,
-        "pre_boil_gravity": 1.0403,
-        "post_boil_gravity": 1.1148,
-        "post_boil_volume_l": 10.46,
-        "whirlpool_ambient_temp_c": 12.7,
-        "whirlpool_cooling_time_constant_min": 167.4
-      },
-      "expected": {
-        "boil_rows": [
-          {
-            "minutes": 65.481,
-            "ibu": 24.1,
-            "mass_kg": 0.00635419530065382
-          }
-        ],
-        "whirlpool_rows": [
-          {
-            "minutes": 30.1,
-            "ibu": 2.552293577981651,
-            "mass_kg": 0.020686810640095234,
-            "effective_minutes": 2.3215941029300358
-          },
-          {
-            "minutes": 39.7,
-            "ibu": 1.3477064220183486,
-            "mass_kg": 0.003063051835057295,
-            "effective_minutes": 9.51950360999049
-          }
-        ],
-        "boil_mass_kg": 0.00635419530065382,
-        "whirlpool_mass_kg": 0.02374986247515253,
-        "total_mass_kg": 0.03010405777580635
-      }
-    },
-    {
-      "name": "fuzz-15",
-      "input": {
-        "boil_hops": [],
-        "whirlpool_hops": [
-          {
-            "alpha_acid_pct": 0.0791,
-            "duration_min": 22.1,
-            "initial_temp_c": 88.9,
-            "pct": 0.8013833992094862,
-            "product_form": "flowable_extract"
-          },
-          {
-            "alpha_acid_pct": 0.1182,
-            "duration_min": 48.0,
-            "initial_temp_c": 75.3,
-            "pct": 0.19861660079051385,
-            "product_form": "flowable_extract"
-          }
-        ],
-        "boil_target_ibu": 8.2,
-        "whirlpool_target_ibu": 6.3,
-        "boil_time_min": 119.0,
-        "pre_boil_gravity": 1.0887,
-        "post_boil_gravity": 1.063,
-        "post_boil_volume_l": 27.75,
-        "whirlpool_ambient_temp_c": 15.9,
-        "whirlpool_cooling_time_constant_min": 123.3
-      },
-      "expected": {
-        "boil_rows": [],
-        "whirlpool_rows": [
-          {
-            "minutes": 22.1,
-            "ibu": 5.048715415019763,
-            "mass_kg": 0.03007712312651346,
-            "effective_minutes": 6.467401523868331
-          },
-          {
-            "minutes": 48.0,
-            "ibu": 1.2512845849802372,
-            "mass_kg": 0.012126590914985998,
-            "effective_minutes": 3.599450397158262
-          }
-        ],
-        "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.04220371404149946,
-        "total_mass_kg": 0.04220371404149946
+        "boil_mass_kg": 0.053181710644390236,
+        "whirlpool_mass_kg": 0.12215602645452867,
+        "total_mass_kg": 0.1753377370989189
       }
     }
   ]

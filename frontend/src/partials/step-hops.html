@@ -255,6 +255,15 @@
         x-show="whirlpoolHopTemperatureWarning"
         x-text="whirlpoolHopTemperatureWarning"
       ></p>
+      <p class="form-hint" x-show="whirlpoolZeroRestNote" x-text="whirlpoolZeroRestNote"></p>
+      <template x-for="line in whirlpoolInferredChills" :key="line">
+        <p class="form-hint" x-text="line"></p>
+      </template>
+      <p class="form-hint" x-show="whirlpoolHopRows.length > 0">
+        Rests run to knockout; a start temperature is the wort temperature when the
+        charge goes in.
+      </p>
+      <load src="src/partials/whirlpool-assumptions.html" />
     </section>
 
     <div class="grain-bill-summary" x-show="hopRows.length > 0 || whirlpoolHopRows.length > 0">

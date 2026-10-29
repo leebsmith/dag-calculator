@@ -15,14 +15,17 @@ import {
   hopIbuLabel,
   hopMinutesLabel,
   hopPctLabel,
+  mergeBoilRows,
+  mergeWhirlpoolRows,
   WHIRLPOOL_HOP_FORMS,
 } from "../../views/producer/hopRows.js";
 import { countLabel, cycleUnit, formatPercent, formatValueWithUnit, formatWithDecimals, isFiniteNumber, resultCounter, unitSymbol } from "../../utils.js";
 import { reportError } from "../../observability.js";
-import { productFormUtilization } from "../../views/whirlpool.js";
+import { productFormUtilization, whirlpoolTimeline } from "../../views/whirlpool.js";
 import {
   makeWhirlpoolRow,
   whirlpoolPolicyDescriptors,
+  whirlpoolTimelineDescriptors,
 } from "../../views/producer/whirlpoolPolicy.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
@@ -48,43 +51,6 @@ function resolveOrNull(engine, path) {
     reportError("hops.resolve", err);
     return null;
   }
-}
-
-function mergeBoilRows(rows, results, boilIbu, boilTimeMin) {
-  return (rows ?? []).map((row, index) => {
-    const result = results?.[index] ?? {};
-    const minutes = Number(result.minutes);
-    const ibu = Number(result.ibu);
-    return {
-      ...row,
-      minutes: Number.isFinite(minutes)
-        ? minutes
-        : (Number(row.boil_time_fraction) || 0) * boilTimeMin,
-      ibu: Number.isFinite(ibu) ? ibu : (Number(row.pct) || 0) * boilIbu,
-      mass_kg: typeof result.mass_kg === "number" ? result.mass_kg : null,
-    };
-  });
-}
-
-function mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume) {
-  return (rows ?? []).map((row, index) => {
-    const result = results?.[index] ?? {};
-    const minutes = Number(result.minutes);
-    const ibu = Number(result.ibu);
-    const mass = typeof result.mass_kg === "number" ? result.mass_kg : null;
-    const doseGPerGal =
-      typeof mass === "number" && volume > 0 ? (mass * 1000) / (volume / 3.785411784) : null;
-    return {
-      ...row,
-      product_form: row.product_form ?? "t90_pellet",
-      minutes: Number.isFinite(minutes) ? minutes : Number(row.duration_min) || 0,
-      ibu: Number.isFinite(ibu) ? ibu : (Number(row.pct) || 0) * whirlpoolIbu,
-      mass_kg: mass,
-      effective_minutes:
-        typeof result.effective_minutes === "number" ? result.effective_minutes : null,
-      dose_g_per_gal: doseGPerGal,
-    };
-  });
 }
 
 export function registerHopCard(app, ctx) {
@@ -433,6 +399,20 @@ export function registerHopCard(app, ctx) {
       formatNumber: formatWithDecimals,
       utilizationFor: productFormUtilization,
     }),
+    ...whirlpoolTimelineDescriptors({
+      formatTemp,
+      formatNumber: formatWithDecimals,
+      batchCurve: () => {
+        const ambient = resolveOrNull(engine, N.whirlpoolAmbient);
+        const timeConstant = resolveOrNull(engine, N.whirlpoolCoolingTimeConstant);
+        if (!isFiniteNumber(ambient) || !isFiniteNumber(timeConstant) || timeConstant <= 0) {
+          return null;
+        }
+        return { ambientTempC: ambient, kPerMin: 1 / timeConstant };
+      },
+      reportError,
+      timelineFor: whirlpoolTimeline,
+    }),
   });
 }
 
@@ -507,4 +487,7 @@ export const KEYS = [
   "whirlpoolStartBandHint",
   "setWhirlpoolStartBand",
   "whirlpoolHopTemperatureWarning",
+  "whirlpoolTimelineState",
+  "whirlpoolInferredChills",
+  "whirlpoolZeroRestNote",
 ];

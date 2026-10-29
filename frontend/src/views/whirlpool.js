@@ -88,6 +88,140 @@ export function whirlpoolUtilization(gravity, effectiveMinutes) {
   return gravityFactor * timeFactor;
 }
 
+// Charges share one knockout end, so a duration also fixes the addition time.
+// Two charges within these tolerances are one addition; a posted temperature is
+// compared with the latent curve at that offset: below it is a forced chill,
+// above it is heating (rejected).
+export const WHIRLPOOL_TEMP_TOLERANCE_C = 0.5;
+export const WHIRLPOOL_DURATION_TOLERANCE_MIN = 0.05;
+
+function timelineError(code, message) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
+function requireAboveAmbient(atMin, tempC, ambientTempC) {
+  if (tempC < ambientTempC - WHIRLPOOL_TEMP_TOLERANCE_C) {
+    throw timelineError(
+      "WHIRLPOOL_BELOW_AMBIENT",
+      `Charge at ${atMin.toFixed(1)} min posts ${tempC.toFixed(1)} °C, below the ` +
+        `${ambientTempC.toFixed(1)} °C ambient; the kettle only cools toward ambient.`
+    );
+  }
+}
+
+export function whirlpoolAdditions(rows, endMinutes) {
+  const ordered = [...rows].sort(
+    (a, b) => (Number(b.duration_min) || 0) - (Number(a.duration_min) || 0)
+  );
+  const groups = [];
+  for (const row of ordered) {
+    const duration = Number(row.duration_min) || 0;
+    const temp = Number(row.initial_temp_c) || 0;
+    const last = groups[groups.length - 1];
+    if (last && Math.abs(last.duration - duration) <= WHIRLPOOL_DURATION_TOLERANCE_MIN) {
+      if (Math.abs(last.temp - temp) > WHIRLPOOL_TEMP_TOLERANCE_C) {
+        throw timelineError(
+          "WHIRLPOOL_ADDITION_CONFLICT",
+          `Two whirlpool charges share a ${duration.toFixed(1)}-minute rest but post ` +
+            `${last.temp.toFixed(1)} °C and ${temp.toFixed(1)} °C; one addition time ` +
+            "cannot have two temperatures."
+        );
+      }
+      continue;
+    }
+    groups.push({ duration, at: endMinutes - duration, temp });
+  }
+  return groups;
+}
+
+export function whirlpoolTimeline(
+  rows,
+  { ambientTempC = DEFAULT_AMBIENT_TEMP_C, kPerMin = DEFAULT_K_PER_MIN } = {}
+) {
+  const list = rows ?? [];
+  if (!list.length) {
+    return { endMinutes: 0, segments: [], chills: [], effectiveMinutes: () => 0 };
+  }
+  const endMinutes = Math.max(...list.map((row) => Number(row.duration_min) || 0));
+  const additions = whirlpoolAdditions(list, endMinutes);
+  const first = additions[0];
+  requireAboveAmbient(first.at, first.temp, ambientTempC);
+
+  const segments = [];
+  const chills = [];
+  let currentTime = 0;
+  let currentTemp = first.temp;
+  for (const addition of additions.slice(1)) {
+    requireAboveAmbient(addition.at, addition.temp, ambientTempC);
+    if (addition.at > currentTime + 1e-9) {
+      segments.push({ start: currentTime, end: addition.at, temp: currentTemp });
+      currentTemp = coolingTemperature(
+        addition.at - currentTime,
+        currentTemp,
+        ambientTempC,
+        kPerMin
+      );
+      currentTime = addition.at;
+    }
+    if (addition.temp > currentTemp + WHIRLPOOL_TEMP_TOLERANCE_C) {
+      throw timelineError(
+        "WHIRLPOOL_HEATING",
+        `Charge at ${addition.at.toFixed(1)} min posts ${addition.temp.toFixed(1)} °C, ` +
+          `above the ${currentTemp.toFixed(1)} °C the kettle reaches on the cooling curve; ` +
+          "heating is not modelled."
+      );
+    }
+    if (addition.temp < currentTemp - WHIRLPOOL_TEMP_TOLERANCE_C) {
+      chills.push({ atMin: addition.at, fromTempC: currentTemp, toTempC: addition.temp });
+      currentTemp = addition.temp;
+    }
+  }
+  if (endMinutes > currentTime + 1e-9) {
+    segments.push({ start: currentTime, end: endMinutes, temp: currentTemp });
+  }
+
+  const effectiveMinutes = (startMinutes) => {
+    let total = 0;
+    for (const segment of segments) {
+      const lo = Math.max(startMinutes, segment.start);
+      if (segment.end - lo <= 1e-12) continue;
+      const tempAtLo = coolingTemperature(
+        lo - segment.start,
+        segment.temp,
+        ambientTempC,
+        kPerMin
+      );
+      total += effectiveWhirlpoolMinutes({
+        durationMin: segment.end - lo,
+        initialTempC: tempAtLo,
+        ambientTempC,
+        kPerMin,
+      });
+    }
+    return total;
+  };
+
+  return { endMinutes, segments, chills, effectiveMinutes };
+}
+
+export function whirlpoolMassFromEffective({
+  ibu,
+  alphaFraction,
+  volumeL,
+  gravity,
+  effectiveMinutes,
+  productForm = "t90_pellet",
+  initialTempC = DEFAULT_INITIAL_TEMP_C,
+}) {
+  const utilization =
+    whirlpoolUtilization(gravity, effectiveMinutes) *
+    productFormUtilization(productForm, initialTempC);
+  if (!(ibu > 0) || !(alphaFraction > 0) || !(volumeL > 0) || !(utilization > 0)) return null;
+  return (ibu * volumeL) / (alphaFraction * 1000 * utilization) / 1000;
+}
+
 export function whirlpoolIbu({
   massKg,
   alphaFraction,
@@ -137,10 +271,13 @@ export function whirlpoolMassKg({
     ambientTempC,
     kPerMin,
   });
-  const utilization =
-    whirlpoolUtilization(gravity, effectiveMinutes) *
-    productFormUtilization(productForm, initialTempC);
-  if (!(utilization > 0)) return null;
-  const massG = (ibu * volumeL) / (alphaFraction * 1000 * utilization);
-  return massG / 1000;
+  return whirlpoolMassFromEffective({
+    ibu,
+    alphaFraction,
+    volumeL,
+    gravity,
+    effectiveMinutes,
+    productForm,
+    initialTempC,
+  });
 }

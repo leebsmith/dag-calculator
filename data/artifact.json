@@ -3846,7 +3846,10 @@
           "INVALID_GRAVITY",
           "INVALID_VOLUME",
           "INVALID_COOLING_CONSTANT",
-          "UNKNOWN_PRODUCT_FORM"
+          "UNKNOWN_PRODUCT_FORM",
+          "WHIRLPOOL_HEATING",
+          "WHIRLPOOL_ADDITION_CONFLICT",
+          "WHIRLPOOL_BELOW_AMBIENT"
         ]
       }
     },

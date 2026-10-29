@@ -165,6 +165,38 @@ inverse model.
 - `R_absorption = 0` for extract. The model already uses the post-boil hot
   kettle volume and does not subtract hop vegetative absorption.
 
+### Whirlpool timeline
+
+Charges cannot be removed without emptying the kettle, so every charge rests to
+knockout. That makes a charge's duration its **time to knockout**, and all
+charges share the same end:
+
+```
+t_end   = max(duration_i)
+t_add_i = t_end - duration_i
+```
+
+The solver builds one batch curve. Between additions the wort cools passively at
+the batch cooling constant; at each addition it compares the posted start
+temperature with the latent value there:
+
+| Posted vs latent (tolerance 0.5 °C) | Meaning | Model |
+|---|---|---|
+| within tolerance | passive | no event |
+| below | forced chill | instantaneous drop, then passive from the posted value |
+| above | heating | rejected with `WHIRLPOOL_HEATING` |
+
+Two charges within 0.05 min of the same duration are one addition; if they post
+temperatures more than 0.5 °C apart the request fails with
+`WHIRLPOOL_ADDITION_CONFLICT`. A charge below the ambient temperature fails with
+`WHIRLPOOL_BELOW_AMBIENT`, because the kettle would have to warm. Each charge's
+`t_eff` integrates its own window over that one curve; its mass then follows its
+own IBU share, alpha and form multiplier.
+
+Example: charges at 30 and 20 minutes from 99 °C, the second posted at 76.7 °C,
+infer a chill at 10 minutes (`99 °C → 92.1 °C` passively, then 76.7 °C) and give
+the first charge 9.81 effective minutes; the second gets 2.43.
+
 ## 6. Reference vectors
 
 Implemented test vectors:
@@ -204,9 +236,14 @@ contract.
   extract. Pellet vegetative absorption, pH/fermentation losses, and dry-hop
   contribution are not modelled.
 - The product-form multiplier is a point estimate at the charge's start
-  temperature; it is not integrated through the cooling curve, and the model has
-  no shear or agitation input, so the cool-whirlpool branch assumes either good
-  agitation or the low end of the band.
+  temperature; it is not integrated through the cooling curve, so a flowable
+  charge that spans an inferred chill is approximated by its start value. The
+  model has no shear or agitation input, so the cool-whirlpool branch assumes
+  either good agitation or the low end of the band.
+- Chills are instantaneous: the transient through the dropped range is skipped.
+  After a chill the curve keeps decaying with the batch constant, so a held
+  temperature is under-modelled. Charges are assumed to share one knockout end,
+  which is why durations encode addition order.
 - The boil path has no product-form field: every boil row is modelled as T-90,
   including the standardized bittering products whose supplier formula is in the
   reference's appendix.

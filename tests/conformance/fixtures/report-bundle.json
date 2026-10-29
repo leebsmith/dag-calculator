@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:1910f90c150cac6af38bc3ebf241b6013292fc6aadf18eb0701d67e5f2b7afec",
+    "hash": "sha256:72bea89efc1a69a06063424f426d0a77c34a6c1b94fcbc464c14cfbbfe724816",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -3966,7 +3966,10 @@
               "INVALID_GRAVITY",
               "INVALID_VOLUME",
               "INVALID_COOLING_CONSTANT",
-              "UNKNOWN_PRODUCT_FORM"
+              "UNKNOWN_PRODUCT_FORM",
+              "WHIRLPOOL_HEATING",
+              "WHIRLPOOL_ADDITION_CONFLICT",
+              "WHIRLPOOL_BELOW_AMBIENT"
             ]
           }
         },
@@ -7143,5 +7146,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:86f1db864e51a8349fed2a4e9f4f5c3d3dfddfb36a3de08c2bb59409b42e4e30"
+  "content_hash": "sha256:07612b2890c187bc39600027a190c467c86bf11651151129dc2836df82a79751"
 }

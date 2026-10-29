@@ -1,0 +1,28 @@
+<details class="whirlpool-assumptions">
+  <summary class="form-hint">? Whirlpool assumptions</summary>
+  <ul class="form-hint">
+    <li>
+      Every charge rests until knockout. You cannot pull one early without emptying
+      the kettle, so a charge's rest is its time to knockout and all charges share
+      the same end.
+    </li>
+    <li>
+      A charge's start temperature is the wort temperature when it goes in. The
+      longest rest starts at flameout; a shorter rest starts when its charge is added.
+    </li>
+    <li>Between additions the wort cools passively at the batch cooling constant.</li>
+    <li>
+      A charge colder than that curve implies a chill, which is inferred and shown in
+      the summary. A charge above the curve would need heating, which the calculator
+      refuses.
+    </li>
+    <li>
+      Chills are instantaneous. Afterwards the wort keeps cooling passively; holding a
+      temperature is not modelled.
+    </li>
+    <li>
+      IBU shares split the whirlpool pool; each charge's mass is solved from its own
+      rest and its own form multiplier.
+    </li>
+  </ul>
+</details>

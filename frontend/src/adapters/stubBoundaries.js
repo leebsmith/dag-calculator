@@ -3,7 +3,10 @@
 // host Tinseth/whirlpool implementations; production reads the backend solver.
 
 import { massFromIbu } from "../views/hops.js";
-import { effectiveWhirlpoolMinutes, whirlpoolMassKg } from "../views/whirlpool.js";
+import {
+  whirlpoolMassFromEffective,
+  whirlpoolTimeline,
+} from "../views/whirlpool.js";
 
 function hopOutputs(inputs = {}) {
   const boilRows = (inputs.boil_hops ?? []).map((row) => {
@@ -25,28 +28,25 @@ function hopOutputs(inputs = {}) {
     inputs.whirlpool_cooling_time_constant_min > 0
       ? 1 / inputs.whirlpool_cooling_time_constant_min
       : 0;
+  const timeline = whirlpoolTimeline(inputs.whirlpool_hops ?? [], {
+    ambientTempC: inputs.whirlpool_ambient_temp_c,
+    kPerMin,
+  });
   const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) => {
     const minutes = row.duration_min ?? 0;
     const ibu = (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0);
-    const effectiveMinutes = effectiveWhirlpoolMinutes({
-      durationMin: minutes,
-      initialTempC: row.initial_temp_c,
-      ambientTempC: inputs.whirlpool_ambient_temp_c,
-      kPerMin,
-    });
+    const effectiveMinutes = timeline.effectiveMinutes(timeline.endMinutes - minutes);
     return {
       minutes,
       ibu,
-      mass_kg: whirlpoolMassKg({
+      mass_kg: whirlpoolMassFromEffective({
         ibu,
         alphaFraction: row.alpha_acid_pct ?? 0,
         volumeL: inputs.post_boil_volume_l,
         gravity: inputs.post_boil_gravity,
-        durationMin: minutes,
-        initialTempC: row.initial_temp_c,
-        ambientTempC: inputs.whirlpool_ambient_temp_c,
-        kPerMin,
+        effectiveMinutes,
         productForm: row.product_form ?? "t90_pellet",
+        initialTempC: row.initial_temp_c,
       }),
       effective_minutes: effectiveMinutes,
     };

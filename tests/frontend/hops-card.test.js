@@ -157,6 +157,36 @@ test("whirlpool hops: lupulin defaults, band selector, and the cool-flowable war
   app.setWhirlpoolHopCatalogForm("t90_pellet");
 }));
 
+test("whirlpool hops: a colder later charge shows the inferred chill and a zero rest is a note", withFreshApp((app) => {
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+
+  app.openWhirlpoolHopEditor();
+  app.setWhirlpoolHopCatalogForm("lupulin_pellet");
+  app.addCatalogWhirlpoolHop("cryo-cascade");
+  app.inspectWhirlpoolHopRow(0);
+  app.patchDraftRow(0, { duration_min: 30, initial_temp_c: 99 });
+  app.addCatalogWhirlpoolHop("cryo-citra");
+  app.inspectWhirlpoolHopRow(1);
+  app.patchDraftRow(1, { duration_min: 20, initial_temp_c: 76.7 });
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  assert.equal(app.whirlpoolHopRows.length, 2);
+  assert.match(app.whirlpoolInferredChills[0], /Chill inferred at 10\.0 min/);
+  assert.equal(app.whirlpoolZeroRestNote, "");
+
+  app.openWhirlpoolHopEditor();
+  app.patchDraftRow(1, { duration_min: 0 });
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  assert.equal(app.whirlpoolHopRows[1].mass_kg, null);
+  assert.match(app.whirlpoolZeroRestNote, /0-minute charge/);
+
+  app.setWhirlpoolHopCatalogForm("t90_pellet");
+}));
+
 test("whirlpool hops: rest duration and initial temperature drive the mass", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);

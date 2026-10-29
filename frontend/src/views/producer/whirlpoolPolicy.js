@@ -76,12 +76,7 @@ export function doseWarning(rows, formatNumber) {
 
 // Descriptor map for Object.defineProperties: the card merges it beside its own
 // getters so the policy stays readable and the card file stays under its pin.
-export function whirlpoolPolicyDescriptors({
-  notes,
-  formatTemp,
-  formatNumber,
-  utilizationFor,
-}) {
+export function whirlpoolPolicyDescriptors({ notes, formatTemp, formatNumber, utilizationFor }) {
   const bands = () => startBands(notes, formatTemp);
   return {
     whirlpoolStartBands: {
@@ -126,6 +121,53 @@ export function whirlpoolPolicyDescriptors({
         const band = this.whirlpoolStartBands.find((candidate) => candidate.value === bandId);
         if (!band || this.whirlpoolHopActiveIndex == null) return;
         this.patchDraftRow(this.whirlpoolHopActiveIndex, { initial_temp_c: band.mid });
+      },
+    },
+  };
+}
+
+export function whirlpoolTimelineDescriptors({
+  formatTemp,
+  formatNumber,
+  batchCurve,
+  reportError,
+  timelineFor,
+}) {
+  return {
+    whirlpoolTimelineState: {
+      configurable: true,
+      get() {
+        const curve = batchCurve();
+        if (!curve) return null;
+        try {
+          return timelineFor(this.whirlpoolHopRows, curve);
+        } catch (err) {
+          reportError("hops.whirlpoolTimeline", err);
+          return null;
+        }
+      },
+    },
+    whirlpoolInferredChills: {
+      configurable: true,
+      get() {
+        const state = this.whirlpoolTimelineState;
+        if (!state) return [];
+        return state.chills.map(
+          (chill) =>
+            `Chill inferred at ${formatNumber(chill.atMin, 1)} min: ` +
+            `${formatTemp(chill.fromTempC)} → ${formatTemp(chill.toTempC)}.`
+        );
+      },
+    },
+    whirlpoolZeroRestNote: {
+      configurable: true,
+      get() {
+        const zeroRest = (this.whirlpoolHopRows ?? []).filter(
+          (row) => Number(row.minutes) === 0 && (Number(row.ibu) || 0) > 0
+        );
+        return zeroRest.length
+          ? "A 0-minute charge contributes no IBU; its mass is not computed."
+          : "";
       },
     },
   };

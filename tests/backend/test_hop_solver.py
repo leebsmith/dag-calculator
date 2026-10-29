@@ -197,6 +197,106 @@ def test_request_returns_one_row_per_addition_and_totals():
     assert math.isfinite(response.total_mass_kg)
 
 
+def _two_charge_input(first_temp=99.0, second_temp=76.7, first_duration=30.0, second_duration=20.0):
+    return HopSolverInput(
+        boil_hops=[],
+        whirlpool_hops=[
+            WhirlpoolHopEntry(
+                alpha_acid_pct=0.20,
+                duration_min=first_duration,
+                initial_temp_c=first_temp,
+                pct=0.5,
+                product_form="lupulin_pellet",
+            ),
+            WhirlpoolHopEntry(
+                alpha_acid_pct=0.20,
+                duration_min=second_duration,
+                initial_temp_c=second_temp,
+                pct=0.5,
+                product_form="lupulin_pellet",
+            ),
+        ],
+        boil_target_ibu=0.0,
+        whirlpool_target_ibu=20.0,
+        boil_time_min=60.0,
+        pre_boil_gravity=1.055,
+        post_boil_gravity=1.055,
+        post_boil_volume_l=20.0,
+        whirlpool_ambient_temp_c=20.0,
+        whirlpool_cooling_time_constant_min=108.7,
+    )
+
+
+def test_charges_share_one_timeline_and_a_chill_splits_the_window():
+    chilled = hop_solver.solve_hops(_two_charge_input())
+    passive = hop_solver.solve_hops(
+        _two_charge_input(second_temp=hop_solver.cooling_temperature(10.0, 99.0, 20.0, 1 / 108.7))
+    )
+
+    assert len(chilled.whirlpool_rows) == 2
+    first, second = chilled.whirlpool_rows
+    # The first charge sees the hot 10 minutes plus the chilled 20.
+    assert first.effective_minutes > second.effective_minutes
+    # A chill removes hot exposure, so the first charge needs more mass for its share.
+    assert first.mass_kg > passive.whirlpool_rows[0].mass_kg
+    assert first.effective_minutes == pytest.approx(
+        hop_solver.effective_whirlpool_minutes(10.0, 99.0, 20.0, 1 / 108.7)
+        + hop_solver.effective_whirlpool_minutes(20.0, 76.7, 20.0, 1 / 108.7)
+    )
+
+    timeline = hop_solver.build_whirlpool_timeline(
+        _two_charge_input().whirlpool_hops, 20.0, 1 / 108.7
+    )
+    assert len(timeline.chills) == 1
+    assert timeline.chills[0].at_min == pytest.approx(10.0)
+    assert timeline.chills[0].to_temp_c == pytest.approx(76.7)
+
+
+def test_a_charge_above_the_latent_curve_is_heating():
+    with pytest.raises(hop_solver.SolverValidationError) as exc:
+        hop_solver.solve_hops(_two_charge_input(second_temp=95.0))
+    assert exc.value.code == "WHIRLPOOL_HEATING"
+
+
+def test_two_temperatures_at_one_addition_are_a_conflict():
+    with pytest.raises(hop_solver.SolverValidationError) as exc:
+        hop_solver.build_whirlpool_timeline(
+            [
+                WhirlpoolHopEntry(0.2, 20.0, 80.0, 0.5, "t90_pellet"),
+                WhirlpoolHopEntry(0.2, 20.0, 90.0, 0.5, "t90_pellet"),
+            ],
+            20.0,
+            1 / 108.7,
+        )
+    assert exc.value.code == "WHIRLPOOL_ADDITION_CONFLICT"
+
+
+def test_a_sub_ambient_charge_is_rejected():
+    with pytest.raises(hop_solver.SolverValidationError) as exc:
+        hop_solver.solve_hops(_two_charge_input(first_temp=15.0))
+    assert exc.value.code == "WHIRLPOOL_BELOW_AMBIENT"
+
+
+def test_zero_rest_charge_has_no_mass():
+    inputs = HopSolverInput(
+        boil_hops=[],
+        whirlpool_hops=[
+            WhirlpoolHopEntry(0.2, 0.0, 76.7, 1.0, "lupulin_pellet"),
+        ],
+        boil_target_ibu=0.0,
+        whirlpool_target_ibu=20.0,
+        boil_time_min=60.0,
+        pre_boil_gravity=1.055,
+        post_boil_gravity=1.055,
+        post_boil_volume_l=20.0,
+        whirlpool_ambient_temp_c=20.0,
+        whirlpool_cooling_time_constant_min=108.7,
+    )
+    rows = hop_solver.solve_hops(inputs).whirlpool_rows
+    assert rows[0].effective_minutes == 0.0
+    assert rows[0].mass_kg is None
+
+
 def test_invalid_inputs_raise_typed_errors():
     base = dict(
         boil_hops=[],
