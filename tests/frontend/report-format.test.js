@@ -5,12 +5,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 async function booted() {
-  const app = createTestApp();
-  await app.boot();
-  return app;
+  return sharedTestApp();
 }
 
 test("formatted values carry text, number, and the display symbol", async () => {
