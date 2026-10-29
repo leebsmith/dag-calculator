@@ -131,13 +131,18 @@ Not needed by the current artifact; add only when a node requires them:
 
 ## Done
 
-* **Dry-hopping card** — the generic collection table became a bespoke schedule
-  on three axes: application event, contact time, and hop type. The row carries
-  `hop_application_event` and `hop_contact_until` taxonomies, the contact
-  duration is authored in hours and stored in base minutes, and the two contact
-  fields are mutually exclusive by construction (each setter clears the other).
-  Descriptive only: no fermentation model exists, so neither the event nor the
-  trigger is presented as a prediction (`plans/hops-documentation-and-dry-hop-card.md`).
+* **Dry-hopping card** — a bespoke schedule on three axes: application event,
+  contact time, and hop type, with a "Configure Dry Hops" editor working from
+  the hop and hop-product catalog. The row carries `hop_application_event` and
+  `hop_contact_until` taxonomies, the contact duration is authored in hours and
+  stored in base minutes, and the two contact fields are mutually exclusive by
+  construction (each setter clears the other). Descriptive only: no fermentation
+  model exists, so neither the event nor the trigger is presented as a prediction
+  (`plans/hops-documentation-and-dry-hop-card.md`).
+* **Hop catalogue repeats** — the boil and whirlpool drawers keep offering a hop
+  that is already in the draft and show how many rows are in, because a variety is
+  routinely dosed more than once. Malts, sugars and trace malts still hide what
+  is already in (`allowDuplicates` on the shared catalog-draft mixin).
 
 * **Optimize local testing** — seven phases (0–6): a per-file test-cost ledger;
   `make quick` (check, then the suites the diff can reach, with a declared coupling

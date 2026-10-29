@@ -3,10 +3,10 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **596** (403 enumerable, 193 hidden)
+- Declared members: **641** (429 enumerable, 212 hidden)
 - Installers: **20**
-- Card partials: **16**
-- Installers reading another installer's key: **15 of 20**
+- Card partials: **17**
+- Installers reading another installer's key: **16 of 20**
 - Cross-owner keys declared in `SHARED`: **47**
 
 ## Installers
@@ -24,13 +24,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 120 | 3 | 22 |
-| `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 65 | 2 | 24 |
-| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 41 | 2 | 24 |
-| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 46 | 2 | 22 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 122 | 3 | 22 |
+| `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 66 | 2 | 24 |
+| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 42 | 2 | 24 |
+| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 47 | 2 | 22 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 11 | 1 | 1 |
-| `dryHops` | `frontend/src/adapters/cards/dry-hops.js` | 13 | 1 | 0 |
+| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 53 | 2 | 13 |
 | `water` | `frontend/src/adapters/cards/water.js` | 29 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |
 
@@ -51,13 +51,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `activeScaleTargetRoot` | `styleTargets` | public | 0 |
 | `activeScaleTargetStep` | `styleTargets` | public | 1 |
 | `activeScaleTargetUnit` | `styleTargets` | public | 1 |
+| `addCatalogDryHop` | `dryHops` | public | 1 |
 | `addCatalogHop` | `hop` | public | 1 |
 | `addCatalogMalt` | `malt` | public | 1 |
 | `addCatalogSugar` | `lateAdditions` | public | 1 |
 | `addCatalogTrace` | `traceMalts` | public | 1 |
 | `addCatalogWhirlpoolHop` | `hop` | public | 1 |
 | `addDraftRow` | `draftEditor` | public | 0 |
-| `addDryHop` | `dryHops` | public | 1 |
 | `addRow` | `fieldActions` | public | 0 |
 | `adoptLateAdditionDose` | `lateAdditions` | public | 1 |
 | `adoptLateAdditionShare` | `lateAdditions` | public | 1 |
@@ -78,6 +78,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `brewDaySections` | `brewDay` | hidden | 1 |
 | `canAuthorRecord` | `libraryUi` | hidden | 1 |
 | `canForkRecord` | `libraryUi` | hidden | 1 |
+| `cancelDryHopEditor` | `dryHops` | public | 1 |
 | `cancelHopEditor` | `hop` | public | 1 |
 | `cancelLibraryItem` | `libraryUi` | public | 1 |
 | `cancelMaltEditor` | `malt` | public | 1 |
@@ -87,6 +88,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `canonicalMashRests` | `mash` | hidden | 1 |
 | `centerOrClampStyleAbv` | `styleNavigator` | public | 0 |
 | `clampToSelection` | `fieldActions` | public | 0 |
+| `clearDryHopStandard` | `dryHops` | public | 0 |
 | `clearHopStandard` | `hop` | public | 0 |
 | `clearInputDraft` | `fieldActions` | public | 0 |
 | `clearMaltStandard` | `malt` | public | 1 |
@@ -97,6 +99,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `clearYeastSelection` | `yeast` | public | 1 |
 | `cloneDraftMalt` | `malt` | public | 1 |
 | `closeDraft` | `draftEditor` | public | 0 |
+| `closeDryHopDrawer` | `dryHops` | public | 1 |
 | `closeHopDrawer` | `hop` | public | 1 |
 | `closeLibrary` | `libraryUi` | public | 1 |
 | `closeMaltDrawer` | `malt` | public | 1 |
@@ -122,7 +125,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `copyInCascade` | `fieldActions` | public | 0 |
 | `deleteLibraryItem` | `libraryUi` | public | 1 |
 | `derateHelpOpen` | `yeast` | public | 1 |
-| `dialogFocus` | `modalFocus` | public | 9 |
+| `dialogFocus` | `modalFocus` | public | 10 |
 | `dismissDraftDiscard` | `draftEditor` | public | 1 |
 | `doughInDisplay` | `mash` | hidden | 1 |
 | `doughInInheritedTempC` | `mash` | hidden | 0 |
@@ -136,16 +139,44 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `draftNodeId` | `draftEditor` | public | 5 |
 | `draftOpen` | `draftEditor` | public | 0 |
 | `draftResolvedRows` | `draftEditor` | public | 0 |
-| `draftRows` | `draftEditor` | public | 5 |
+| `draftRows` | `draftEditor` | public | 6 |
 | `draftSnapshot` | `draftEditor` | public | 0 |
 | `draftState` | `snapshot` | public | 0 |
+| `dryHopActiveIndex` | `dryHops` | public | 1 |
+| `dryHopActiveRow` | `dryHops` | hidden | 1 |
+| `dryHopCatalog` | `dryHops` | hidden | 0 |
+| `dryHopCatalogTruncated` | `dryHops` | hidden | 0 |
+| `dryHopCategories` | `dryHops` | hidden | 1 |
+| `dryHopCategoryFilter` | `dryHops` | public | 1 |
 | `dryHopContactHours` | `dryHops` | public | 1 |
+| `dryHopContactLabel` | `dryHops` | public | 2 |
 | `dryHopContactUntilOptions` | `dryHops` | public | 1 |
+| `dryHopDraftCounts` | `dryHops` | hidden | 1 |
+| `dryHopDraftSummary` | `dryHops` | hidden | 1 |
+| `dryHopDrawer` | `dryHops` | public | 1 |
+| `dryHopEditorOpen` | `dryHops` | hidden | 1 |
+| `dryHopEventLabel` | `dryHops` | public | 2 |
 | `dryHopEventOptions` | `dryHops` | public | 1 |
+| `dryHopFamilies` | `dryHops` | hidden | 0 |
+| `dryHopFamily` | `dryHops` | public | 0 |
+| `dryHopFilteredCatalog` | `dryHops` | hidden | 1 |
+| `dryHopGroupMeta` | `dryHops` | public | 0 |
+| `dryHopItemMeta` | `dryHops` | public | 1 |
+| `dryHopProductMatches` | `dryHops` | hidden | 0 |
 | `dryHopProductOptions` | `dryHops` | public | 1 |
+| `dryHopResultLabel` | `dryHops` | hidden | 1 |
 | `dryHopRows` | `dryHops` | public | 1 |
-| `dryHopTitle` | `dryHops` | public | 1 |
+| `dryHopSearch` | `dryHops` | public | 1 |
+| `dryHopSearchNotes` | `dryHops` | public | 1 |
+| `dryHopStandard` | `dryHops` | public | 0 |
+| `dryHopStandardGroups` | `dryHops` | hidden | 0 |
+| `dryHopStandardName` | `dryHops` | hidden | 0 |
+| `dryHopTitle` | `dryHops` | public | 2 |
+| `dryHopTypeLabel` | `dryHops` | public | 2 |
 | `dryHopUnitOptions` | `dryHops` | public | 1 |
+| `dryHopUntilLabel` | `dryHops` | public | 0 |
+| `dryHopVisibleCatalog` | `dryHops` | hidden | 1 |
+| `duplicateCatalogDryHop` | `dryHops` | public | 1 |
 | `duplicateCatalogHop` | `hop` | public | 1 |
 | `duplicateCatalogMalt` | `malt` | public | 1 |
 | `duplicateCatalogSugar` | `lateAdditions` | public | 1 |
@@ -170,6 +201,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `getRestDefinition` | `mash` | public | 0 |
 | `grainColorUnit` | `draftEditor` | public | 0 |
 | `gristRows` | `malt` | public | 1 |
+| `handleDryHopEscape` | `dryHops` | public | 1 |
 | `handleHopEscape` | `hop` | public | 1 |
 | `handleMaltEscape` | `malt` | public | 1 |
 | `handleSugarEscape` | `lateAdditions` | public | 1 |
@@ -187,6 +219,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `hopCatalogTruncated` | `hop` | hidden | 0 |
 | `hopCategories` | `hop` | hidden | 1 |
 | `hopCategoryFilter` | `hop` | public | 1 |
+| `hopDraftCounts` | `hop` | hidden | 1 |
 | `hopDraftPartsTotal` | `hop` | hidden | 1 |
 | `hopDraftSummary` | `hop` | hidden | 1 |
 | `hopDrawer` | `hop` | public | 1 |
@@ -224,6 +257,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `inputDraft` | `fieldActions` | public | 10 |
 | `inputDrafts` | `fieldActions` | public | 0 |
 | `inputKey` | `fieldActions` | public | 10 |
+| `inspectDryHopRow` | `dryHops` | public | 1 |
 | `inspectHopRow` | `hop` | public | 1 |
 | `inspectMaltRow` | `malt` | public | 1 |
 | `inspectSugarRow` | `lateAdditions` | public | 0 |
@@ -271,6 +305,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `maltCatalogTruncated` | `malt` | hidden | 0 |
 | `maltCategories` | `malt` | hidden | 2 |
 | `maltCategoryFilter` | `malt` | public | 0 |
+| `maltDraftCounts` | `malt` | hidden | 0 |
 | `maltDraftTotals` | `malt` | hidden | 1 |
 | `maltDrawer` | `malt` | public | 1 |
 | `maltEditorOpen` | `malt` | hidden | 1 |
@@ -323,6 +358,8 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `onBatchLoad` | `styleNavigator` | public | 0 |
 | `onMashPresetChange` | `mash` | public | 1 |
 | `openDraft` | `draftEditor` | public | 0 |
+| `openDryHopEditor` | `dryHops` | public | 1 |
+| `openDryHopSearch` | `dryHops` | public | 1 |
 | `openHopEditor` | `hop` | public | 1 |
 | `openHopSearch` | `hop` | public | 1 |
 | `openLibrary` | `libraryUi` | public | 1 |
@@ -372,6 +409,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `runCollectionAdd` | `fieldActions` | public | 1 |
 | `runFindingAction` | `fieldActions` | public | 1 |
 | `saveDraft` | `draftEditor` | public | 0 |
+| `saveDryHopEditor` | `dryHops` | public | 1 |
 | `saveHopEditor` | `hop` | public | 1 |
 | `saveLibraryItem` | `libraryUi` | public | 1 |
 | `saveMaltEditor` | `malt` | public | 1 |
@@ -385,6 +423,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `scaleTargetMismatch` | `styleTargets` | public | 1 |
 | `seedShareFromDose` | `lateAdditions` | public | 0 |
 | `seedSugarShareWeights` | `draftEditor` | public | 0 |
+| `selectDryHopStandard` | `dryHops` | public | 0 |
 | `selectHopStandard` | `hop` | public | 0 |
 | `selectLibrarySection` | `libraryUi` | public | 1 |
 | `selectLibraryTab` | `libraryUi` | public | 1 |
@@ -403,10 +442,10 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `selectedYeastTemp` | `yeast` | hidden | 1 |
 | `setBrewDayInstruction` | `brewDay` | public | 1 |
 | `setColorField` | `draftEditor` | public | 2 |
-| `setDryHopContactHours` | `dryHops` | public | 1 |
-| `setDryHopContactUntil` | `dryHops` | public | 1 |
-| `setDryHopField` | `dryHops` | public | 1 |
-| `setDryHopNumber` | `dryHops` | public | 1 |
+| `setDryHopDraftContactHours` | `dryHops` | public | 1 |
+| `setDryHopDraftContactUntil` | `dryHops` | public | 1 |
+| `setDryHopDraftField` | `dryHops` | public | 1 |
+| `setDryHopDraftNumber` | `dryHops` | public | 1 |
 | `setFieldUnit` | `unitActions` | public | 0 |
 | `setHopAlpha` | `hop` | public | 1 |
 | `setInputDraft` | `fieldActions` | public | 0 |
@@ -464,6 +503,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `sugarCategoryFilter` | `lateAdditions` | public | 0 |
 | `sugarColorField` | `lateAdditions` | hidden | 1 |
 | `sugarCountLabel` | `lateAdditions` | hidden | 1 |
+| `sugarDraftCounts` | `lateAdditions` | hidden | 0 |
 | `sugarDraftExtractDisplay` | `lateAdditions` | hidden | 1 |
 | `sugarDraftMassDisplay` | `lateAdditions` | hidden | 1 |
 | `sugarDrawer` | `lateAdditions` | public | 1 |
@@ -502,6 +542,9 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `toggleBrewDaySection` | `brewDay` | public | 1 |
 | `toggleBrewDayStep` | `brewDay` | public | 1 |
 | `toggleDerateHelp` | `yeast` | public | 1 |
+| `toggleDryHopCategory` | `dryHops` | public | 1 |
+| `toggleDryHopFamily` | `dryHops` | public | 0 |
+| `toggleDryHopSearchNotes` | `dryHops` | public | 1 |
 | `toggleFieldUnit` | `unitActions` | public | 1 |
 | `toggleHopCategory` | `hop` | public | 1 |
 | `toggleHopFamily` | `hop` | public | 0 |
@@ -539,6 +582,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `traceCategories` | `traceMalts` | hidden | 0 |
 | `traceCategoryFilter` | `traceMalts` | public | 0 |
 | `traceColorField` | `traceMalts` | hidden | 1 |
+| `traceDraftCounts` | `traceMalts` | hidden | 0 |
 | `traceDraftMassDisplay` | `traceMalts` | hidden | 1 |
 | `traceDrawer` | `traceMalts` | public | 1 |
 | `traceEditorOpen` | `traceMalts` | hidden | 1 |
@@ -585,6 +629,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `whirlpoolHopCategories` | `hop` | hidden | 1 |
 | `whirlpoolHopCategoryFilter` | `hop` | public | 1 |
 | `whirlpoolHopDoseWarning` | `hop` | hidden | 1 |
+| `whirlpoolHopDraftCounts` | `hop` | hidden | 1 |
 | `whirlpoolHopDraftPartsTotal` | `hop` | hidden | 1 |
 | `whirlpoolHopDraftSummary` | `hop` | hidden | 1 |
 | `whirlpoolHopDrawer` | `hop` | public | 1 |
@@ -640,24 +685,24 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | key | owner | readers | reason |
 |---|---|---|---|
 | `activeScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |
-| `addDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `addDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `clearInputDraft` | `fieldActions` | `libraryUi`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
-| `closeDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `closeDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `colorDisplay` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `colorUnit` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `commitDraftCellInput` | `fieldActions` | `hop`, `lateAdditions`, `malt`, `traceMalts` | shared field verbs: the card partials bind the one editing surface |
 | `commitField` | `fieldActions` | `water` | shared field verbs: the card partials bind the one editing surface |
 | `commitNumberInput` | `fieldActions` | `lateAdditions`, `mash` | shared field verbs: the card partials bind the one editing surface |
-| `dialogFocus` | `modalFocus` | `hop`, `lateAdditions`, `malt`, `mash`, `traceMalts` | every modal shares the one focus trap |
-| `dismissDraftDiscard` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `dialogFocus` | `modalFocus` | `hop`, `lateAdditions`, `malt`, `mash`, `traceMalts`, `dryHops` | every modal shares the one focus trap |
+| `dismissDraftDiscard` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `draftColumns` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog editors bind the shared draft grid |
-| `draftDirty` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `draftDiscardOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `draftDirty` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `draftDiscardOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `draftDisplayRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog editors bind the shared draft grid |
 | `draftMassDisplay` | `draftEditor` | `lateAdditions`, `traceMalts` | the catalog editors bind the shared draft grid |
-| `draftNodeId` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog editors bind the shared draft grid |
-| `draftOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog editors bind the shared draft grid |
-| `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog editors bind the shared draft grid |
+| `draftNodeId` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
+| `draftOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
+| `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `edit` | `fieldActions` | `hop`, `lateAdditions`, `water` | shared field verbs: the card partials bind the one editing surface |
 | `editDraftCell` | `draftEditor` | `fieldActions` | fieldActions drives a draft cell edit: the inverse of the shared draft grid |
 | `editDraftCellInput` | `fieldActions` | `hop`, `lateAdditions`, `malt`, `traceMalts` | shared field verbs: the card partials bind the one editing surface |
@@ -665,12 +710,12 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `inputDraft` | `fieldActions` | `draftEditor`, `hop`, `lateAdditions`, `libraryUi`, `malt`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `traceMalts`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `inputKey` | `fieldActions` | `hop`, `lateAdditions`, `libraryUi`, `malt`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `traceMalts`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
-| `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `patchDraftRow` | `draftEditor` | `hop` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `resetField` | `fieldActions` | `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets` | shared field verbs: the card partials bind the one editing surface |
 | `resetScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |
-| `saveDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `saveDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `scalePin` | `styleTargets` | `lateAdditions`, `styleNavigator` | the late-addition card reads the scale pin to preview its dose |
 | `scalePinLabel` | `styleTargets` | `lateAdditions` | the late-addition card reads the scale pin to preview its dose |
 | `selectWaterTarget` | `water` | `fieldActions` | the generic card shell renders the water target selector |

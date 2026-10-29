@@ -23,6 +23,13 @@ export function activeCatalogIds(rows, idField) {
   return new Set((rows ?? []).map((row) => row[idField]).filter(Boolean));
 }
 
+// A hop variety is routinely dosed more than once, so those drawers keep the
+// item visible and show the count instead; the write path still accepts repeats.
+export function addedCatalogIds(rows, idField, allowDuplicates = false) {
+  if (allowDuplicates) return new Set();
+  return activeCatalogIds(rows, idField);
+}
+
 export function catalogCategoryPills(items, categoryField) {
   return categoryField ? catalogCategories(items, (item) => item[categoryField]) : [];
 }

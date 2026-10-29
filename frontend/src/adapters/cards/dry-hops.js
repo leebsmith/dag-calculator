@@ -6,88 +6,167 @@ import { toBase } from "../../engine/index.js";
 import { displayValue } from "../../views/producer.js";
 import { rowDefaults } from "../../views/producer/authoring.js";
 import { DRY_HOP_NODES as N, DRY_HOP_VALUE_LABELS } from "../../views/registry/dry-hops.js";
-import { firstNonEmptyString, formatWithDecimals, isFiniteNumber, optionLabel } from "../../utils.js";
+import {
+  countLabel,
+  firstNonEmptyString,
+  formatWithDecimals,
+  isFiniteNumber,
+  optionLabel,
+  resultCounter,
+} from "../../utils.js";
+import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
+
+const MAX_VISIBLE = 25;
 
 const dryHopTitle = (row) => firstNonEmptyString(row?.variety, "New dry hop");
 
-export function registerDryHopCard(app, ctx) {
-  const { artifact, engine } = ctx;
+function makeDryHopRow(artifact, item) {
+  const node = artifact.nodes[N.collection];
+  const schema = artifact.primitive_schemas[node.item_schema] ?? {};
+  const row = rowDefaults(schema, artifact.taxonomies);
+  row.hop_id = item.id;
+  row.variety = item.name;
+  row.product_type = item.product_form ?? "t90_pellet";
+  return row;
+}
 
-  const options = (taxonomyId) =>
-    (artifact.taxonomies[taxonomyId] ?? []).map((value) => ({
-      value,
-      label: optionLabel(DRY_HOP_VALUE_LABELS[taxonomyId] ?? {}, value),
-    }));
+function dryHopOptions(artifact, taxonomyId) {
+  return (artifact.taxonomies[taxonomyId] ?? []).map((value) => ({
+    value,
+    label: optionLabel(DRY_HOP_VALUE_LABELS[taxonomyId] ?? {}, value),
+  }));
+}
 
-  const readRows = () => engine.get(N.collection) ?? [];
+function dryHopLabel(taxonomyId, value) {
+  return optionLabel(DRY_HOP_VALUE_LABELS[taxonomyId] ?? {}, value);
+}
 
-  const writeRows = (rows) => {
-    engine.setCollection(N.collection, rows);
-    app.dryHopRows = rows;
-    app.scheduleSolve();
-    app.notify();
-  };
+function installDryHopDraft(app, ctx) {
+  const { artifact } = ctx;
+  const seeds = ctx.cache.seeds ?? {};
 
-  const patchRow = (index, changes) =>
-    writeRows(readRows().map((row, i) => (i === index ? { ...row, ...changes } : row)));
+  installCatalogDraft(app, ctx, {
+    prefix: "dryHop",
+    Cap: "DryHop",
+    nodeId: N.collection,
+    seedKey: "hops",
+    catalog: () => [
+      ...Object.values(seeds.hops ?? {}),
+      ...Object.values(seeds.hopProducts ?? {}),
+    ],
+    catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
+    searchFields: ["name", "notes", "manufacturer", "brand"],
+    idField: "hop_id",
+    allowDuplicates: true,
+    categoryField: "purpose",
+    makeRow: (item) => makeDryHopRow(artifact, item),
+    maxVisible: MAX_VISIBLE,
+    itemMeta: (item) => [
+      item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
+      item.manufacturer,
+      item.origin,
+    ],
+  });
+}
+
+function installDryHopReadouts(app, ctx) {
+  const { artifact } = ctx;
 
   Object.assign(app, {
     dryHopRows: [],
-    dryHopProductOptions: options("hop_product_type"),
-    dryHopEventOptions: options("hop_application_event"),
-    dryHopContactUntilOptions: options("hop_contact_until"),
-    dryHopUnitOptions: options("hop_unit"),
+    dryHopProductOptions: dryHopOptions(artifact, "hop_product_type"),
+    dryHopEventOptions: dryHopOptions(artifact, "hop_application_event"),
+    dryHopContactUntilOptions: dryHopOptions(artifact, "hop_contact_until"),
+    dryHopUnitOptions: dryHopOptions(artifact, "hop_unit"),
 
     dryHopTitle,
+
+    dryHopTypeLabel(row) {
+      return dryHopLabel("hop_product_type", row?.product_type);
+    },
+
+    dryHopEventLabel(row) {
+      return dryHopLabel("hop_application_event", row?.application_event);
+    },
+
+    dryHopUntilLabel(row) {
+      return dryHopLabel("hop_contact_until", row?.contact_until);
+    },
 
     // The `time` dimension stores minutes; the card authors hours.
     dryHopContactHours(row) {
       const minutes = row?.contact_duration_min;
-      const hours = displayValue(artifact, "time", "hr", minutes);
-      return isFiniteNumber(minutes) ? formatWithDecimals(hours, 1, { dash: "" }) : "";
+      if (!isFiniteNumber(minutes)) return "";
+      return formatWithDecimals(displayValue(artifact, "time", "hr", minutes), 1, { dash: "" });
     },
 
-    setDryHopField(index, field, value) {
-      patchRow(index, { [field]: value });
+    dryHopContactLabel(row) {
+      const hours = this.dryHopContactHours(row);
+      if (hours) return `${hours} h`;
+      const until = this.dryHopUntilLabel(row);
+      return until ? `until ${until}` : "—";
     },
 
-    setDryHopNumber(index, field, value) {
+    setDryHopDraftField(index, field, value) {
+      this.patchDraftRow(index, { [field]: value });
+    },
+
+    setDryHopDraftNumber(index, field, value) {
       const text = String(value ?? "").trim();
       const number = Number(text);
-      patchRow(index, { [field]: text && Number.isFinite(number) ? number : null });
+      this.patchDraftRow(index, { [field]: text && Number.isFinite(number) ? number : null });
     },
 
     // Exactly one of duration / termination event: each setter clears the other.
-    setDryHopContactHours(index, value) {
+    setDryHopDraftContactHours(index, value) {
       const text = String(value ?? "").trim();
       if (!text) {
-        patchRow(index, { contact_duration_min: null });
+        this.patchDraftRow(index, { contact_duration_min: null });
         return;
       }
       const minutes = toBase(artifact, "time", "hr", Number(text));
-      patchRow(index, {
+      this.patchDraftRow(index, {
         contact_duration_min: Number.isFinite(minutes) ? Math.max(0, minutes) : null,
         contact_until: null,
       });
     },
 
-    setDryHopContactUntil(index, value) {
-      patchRow(index, {
+    setDryHopDraftContactUntil(index, value) {
+      this.patchDraftRow(index, {
         contact_until: value || null,
         contact_duration_min: null,
       });
     },
+  });
+}
 
-    addDryHop() {
-      const node = artifact.nodes[N.collection];
-      const schema = artifact.primitive_schemas[node.item_schema] ?? {};
-      writeRows([...readRows(), rowDefaults(schema, artifact.taxonomies)]);
+function installDryHopSummaries(app) {
+  Object.defineProperties(app, {
+    dryHopDraftSummary: {
+      configurable: true,
+      get() {
+        return countLabel(this.draftRows?.length ?? 0, "addition");
+      },
     },
-
-    removeDryHop(index) {
-      writeRows(readRows().filter((_, i) => i !== index));
+    dryHopResultLabel: {
+      configurable: true,
+      get() {
+        return resultCounter({
+          shown: this.dryHopVisibleCatalog.length,
+          total: this.dryHopFilteredCatalog.length,
+          noun: "hop",
+          truncated: this.dryHopCatalogTruncated,
+          truncatedHint: "refine search or purpose filters",
+        });
+      },
     },
   });
+}
+
+export function registerDryHopCard(app, ctx) {
+  installDryHopDraft(app, ctx);
+  installDryHopReadouts(app, ctx);
+  installDryHopSummaries(app);
 }
 
 export function refreshDryHopCard(app, ctx) {
@@ -95,17 +174,22 @@ export function refreshDryHopCard(app, ctx) {
 }
 
 export const KEYS = [
+  ...catalogDraftKeys("dryHop", "DryHop"),
   "dryHopRows",
   "dryHopProductOptions",
   "dryHopEventOptions",
   "dryHopContactUntilOptions",
   "dryHopUnitOptions",
   "dryHopTitle",
+  "dryHopTypeLabel",
+  "dryHopEventLabel",
+  "dryHopUntilLabel",
   "dryHopContactHours",
-  "setDryHopField",
-  "setDryHopNumber",
-  "setDryHopContactHours",
-  "setDryHopContactUntil",
-  "addDryHop",
-  "removeDryHop",
+  "dryHopContactLabel",
+  "setDryHopDraftField",
+  "setDryHopDraftNumber",
+  "setDryHopDraftContactHours",
+  "setDryHopDraftContactUntil",
+  "dryHopDraftSummary",
+  "dryHopResultLabel",
 ];

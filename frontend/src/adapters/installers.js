@@ -55,6 +55,7 @@ const MALT_AND_CATALOG = [...MALT, CATALOG_DRAFT];
 const MASH = ["frontend/src/adapters/cards/mash.js"];
 const BREW_DAY = ["frontend/src/adapters/cards/brew-day.js"];
 const DRY_HOPS = ["frontend/src/adapters/cards/dry-hops.js"];
+const DRY_HOPS_AND_CATALOG = [...DRY_HOPS, CATALOG_DRAFT];
 const WATER = ["frontend/src/adapters/cards/water.js"];
 const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
 
@@ -113,7 +114,7 @@ export const INSTALLERS = [
   },
   { name: "mash", modules: MASH, keys: mashKeys, partials: ["step-mash.html", "mash-rests-modal.html"] },
   { name: "brewDay", modules: BREW_DAY, keys: brewDayKeys, partials: ["step-brew-day.html"] },
-  { name: "dryHops", modules: DRY_HOPS, keys: dryHopKeys, partials: ["step-dry-hops.html"] },
+  { name: "dryHops", modules: DRY_HOPS_AND_CATALOG, keys: dryHopKeys, partials: ["step-dry-hops.html", "modal-dry-hop-editor.html"] },
   { name: "water", modules: WATER, keys: waterKeys, partials: ["step-water.html"] },
   { name: "modalFocus", modules: MODAL_FOCUS, keys: modalFocusKeys },
 ];
@@ -132,7 +133,7 @@ export const SHARED = [
   },
   {
     key: "addDraftRow",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
@@ -142,7 +143,7 @@ export const SHARED = [
   },
   {
     key: "closeDraft",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
@@ -172,12 +173,12 @@ export const SHARED = [
   },
   {
     key: "dialogFocus",
-    owners: ["hop", "lateAdditions", "malt", "mash", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "mash", "traceMalts", "dryHops"],
     reason: "every modal shares the one focus trap",
   },
   {
     key: "dismissDraftDiscard",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
@@ -187,12 +188,12 @@ export const SHARED = [
   },
   {
     key: "draftDirty",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
     key: "draftDiscardOpen",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
@@ -207,17 +208,17 @@ export const SHARED = [
   },
   {
     key: "draftNodeId",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog editors bind the shared draft grid",
   },
   {
     key: "draftOpen",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog editors bind the shared draft grid",
   },
   {
     key: "draftRows",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog editors bind the shared draft grid",
   },
   {
@@ -282,17 +283,17 @@ export const SHARED = [
   },
   {
     key: "openDraft",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
     key: "patchDraftRow",
-    owners: ["hop"],
+    owners: ["hop", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
     key: "removeDraftRow",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {
@@ -307,7 +308,7 @@ export const SHARED = [
   },
   {
     key: "saveDraft",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
+    owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {

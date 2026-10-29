@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_111 paths_
+_112 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -53,6 +53,7 @@ _111 paths_
 | `batch.dry_hops.application_stage` | Stage | field | — | — | — | mash, boil, whirlpool, fermentation |
 | `batch.dry_hops.contact_duration_min` | Contact | field | time | hr | 1 | — |
 | `batch.dry_hops.contact_until` | Contact until | field | — | — | — | terminal_gravity, vdk_clearance, hop_creep_plateau, biotransformation_equilibrium, next_charge, cold_crash, packaging |
+| `batch.dry_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.dry_hops.notes` | Notes | field | — | — | — | — |
 | `batch.dry_hops.product_type` | Type | field | — | — | — | t90_pellet, lupulin_pellet, flowable_extract, terpene_isolate |
 | `batch.dry_hops.quantity` | Quantity | field | dimensionless | — | — | — |

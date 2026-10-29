@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   activeCatalogIds,
   activeDraftRow,
+  addedCatalogIds,
   catalogCategoryPills,
   catalogFamilyPills,
   catalogGroupMeta,
@@ -80,6 +81,14 @@ test("active ids skip blank catalogue ids", () => {
   const ids = activeCatalogIds([{ catalog_id: "a" }, { catalog_id: "" }, {}, { catalog_id: "b" }], "catalog_id");
   assert.deepEqual([...ids], ["a", "b"]);
   assert.equal(activeCatalogIds(undefined, "catalog_id").size, 0);
+});
+
+test("added ids hide repeats unless the card allows duplicates", () => {
+  const rows = [{ hop_id: "citra" }, { hop_id: "citra" }];
+  assert.deepEqual([...activeCatalogIds(rows, "hop_id")], ["citra"]);
+  assert.deepEqual([...addedCatalogIds(rows, "hop_id")], ["citra"]);
+  assert.deepEqual([...addedCatalogIds(rows, "hop_id", false)], ["citra"]);
+  assert.equal(addedCatalogIds(rows, "hop_id", true).size, 0);
 });
 
 test("category and family pills are empty without their field", () => {

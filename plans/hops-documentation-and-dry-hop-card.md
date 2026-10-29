@@ -15,6 +15,9 @@ status: shipped
 > described; the card shipped with the three axes, the `hop_application_event`
 > and `hop_contact_until` taxonomies, and `contact_duration_min` replacing the
 > misnamed `contact_duration_hours` (the `time` dimension stores base minutes).
+> It was then rebuilt as a table plus a "Configure Dry Hops" editor over the hop
+> and hop-product catalog — the inline form had no catalog and diverged from the
+> other hop cards — and the catalogue drawers gained repeats (`allowDuplicates`).
 
 ## Problem
 

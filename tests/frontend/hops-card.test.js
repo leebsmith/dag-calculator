@@ -40,6 +40,19 @@ test("boil hops: parts renormalize when an addition is removed", withFreshApp((a
   assert.ok(Math.abs(app.hopRows[0].pct - 1) < 1e-9);
 }));
 
+test("a hop already in the draft stays in the catalogue", withFreshApp((app) => {
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  assert.deepEqual(app.hopDraftCounts, { cascade: 1 });
+  assert.ok(
+    app.hopFilteredCatalog.some((item) => item.id === "cascade"),
+    "the drawer still offers the hop, so it can be dosed twice"
+  );
+
+  app.addCatalogHop("cascade");
+  assert.equal(app.hopDraftCounts.cascade, 2);
+}));
+
 test("the hop mass unit seeds from the saved mass preference", withFreshApp((app) => {
   assert.equal(app.hopMassUnit, "g");
 }));

@@ -177,6 +177,12 @@
                         <template x-if="isUserItem(item.id)">
                           <span class="status-badge status-badge-info text-nano">mine</span>
                         </template>
+                        <span
+                          class="status-badge status-badge-info text-nano"
+                          x-show="hopDraftCounts[item.id] > 0"
+                        >
+                          <span x-text="hopDraftCounts[item.id]"></span> in draft
+                        </span>
                       </div>
                       <div
                         class="catalog-item-meta"

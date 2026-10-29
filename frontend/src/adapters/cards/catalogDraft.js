@@ -27,13 +27,16 @@
 //   productSearchLimit optional cap for brand/name matches (default 10)
 //   itemMeta       optional (catalogItem) => parts[]; joined for the card subtitle
 //   groupMeta      optional (standardGroup) => parts[]; joined for a group row
+//   allowDuplicates when true the drawer keeps offering an item already in the
+//                  draft (a hop variety is routinely dosed more than once); the
+//                  card shows the count instead of hiding it
 //
 // Handlers keep using `this` exactly as the inline methods did, so Alpine's
 // binding and the direct-call tests behave unchanged. Getters are installed with
 // Object.defineProperties (Object.assign would collapse them to values).
 
 import {
-  activeCatalogIds,
+  addedCatalogIds,
   activeDraftRow,
   catalogCategoryPills,
   catalogFamilyPills,
@@ -72,11 +75,13 @@ export function installCatalogDraft(app, ctx, config) {
     canAdd = null,
     itemMeta = null,
     groupMeta = null,
+    allowDuplicates,
   } = config;
   const seeds = ctx.cache.seeds ?? {};
   const seedCatalog = () => Object.values(seeds[seedKey] ?? {});
   const catalog = catalogFn ? () => catalogFn() : seedCatalog;
   const findCatalogItem = (id) => catalog().find((item) => item.id === id);
+  const addedIds = (rows) => addedCatalogIds(rows, idField, allowDuplicates === true);
 
   const state = {
     [`${prefix}Drawer`]: null, // "search" | "inspect" | null
@@ -231,7 +236,7 @@ export function installCatalogDraft(app, ctx, config) {
         familyField,
         query: this[`${prefix}Search`],
         family: this[`${prefix}Family`],
-        added: activeCatalogIds(this.draftRows, idField),
+        added: addedIds(this.draftRows),
       });
     },
     // Brand/name matches surfaced beside the standard groups, so a query like
@@ -253,7 +258,7 @@ export function installCatalogDraft(app, ctx, config) {
         searchFields,
         brandField,
         includeNotes: this[`${prefix}SearchNotes`],
-        added: activeCatalogIds(this.draftRows, idField),
+        added: addedIds(this.draftRows),
         limit: productSearchLimit,
       });
     },
@@ -269,7 +274,7 @@ export function installCatalogDraft(app, ctx, config) {
       return filteredCatalogItems(catalog(), {
         standardField,
         standard: this[`${prefix}Standard`],
-        added: activeCatalogIds(this.draftRows, idField),
+        added: addedIds(this.draftRows),
         query: this[`${prefix}Search`],
         categories: this[`${prefix}CategoryFilter`],
         categoryField,
@@ -288,6 +293,14 @@ export function installCatalogDraft(app, ctx, config) {
         drilledIn: !!(standardField && this[`${prefix}Standard`]),
         maxVisible,
       });
+    },
+    [`${prefix}DraftCounts`]() {
+      const counts = {};
+      for (const row of this.draftRows ?? []) {
+        const id = row?.[idField];
+        if (id) counts[id] = (counts[id] ?? 0) + 1;
+      }
+      return counts;
     },
     [`${prefix}ActiveRow`]() {
       return activeDraftRow(this.draftRows, this[`${prefix}ActiveIndex`]);
@@ -315,6 +328,7 @@ export function catalogDraftKeys(prefix, Cap) {
     `${prefix}EditorOpen`, `${prefix}Catalog`, `${prefix}Categories`, `${prefix}Families`,
     `${prefix}StandardGroups`, `${prefix}StandardName`, `${prefix}ProductMatches`,
     `${prefix}FilteredCatalog`,
-    `${prefix}VisibleCatalog`, `${prefix}CatalogTruncated`, `${prefix}ActiveRow`,
+    `${prefix}VisibleCatalog`, `${prefix}CatalogTruncated`, `${prefix}DraftCounts`,
+    `${prefix}ActiveRow`,
   ];
 }

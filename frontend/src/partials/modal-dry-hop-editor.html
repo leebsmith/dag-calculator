@@ -1,0 +1,343 @@
+<!-- Dry Hop Editor (workspace modal): draft table + hop catalog / inspector drawers -->
+<div
+  class="modal-backdrop"
+  x-show="dryHopEditorOpen"
+  @click.self="cancelDryHopEditor()"
+  @keydown.escape.window="handleDryHopEscape()"
+>
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dry-hop-editor-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, dryHopEditorOpen)"
+  >
+    <div class="modal-workspace-header">
+      <div class="modal-workspace-header-title">
+        <h2 class="modal-workspace-title" id="dry-hop-editor-title">Dry Hop Editor</h2>
+        <span class="status-badge badge-info text-xs" x-text="dryHopDraftSummary"></span>
+      </div>
+      <div class="modal-workspace-header-actions">
+        <button type="button" class="btn-outline text-xs" @click="cancelDryHopEditor()">Cancel</button>
+        <button type="button" class="btn-primary text-xs" @click="saveDryHopEditor()">Save &amp; Apply</button>
+      </div>
+    </div>
+
+    <div class="modal-workspace-body">
+      <div class="modal-workspace-main">
+        <div class="table-header-toolbar">
+          <span class="text-xs text-muted">
+            Applied in fermentation (cold side). The event and the contact end record intent; nothing
+            here is solved.
+          </span>
+          <button
+            type="button"
+            class="btn-primary text-xs"
+            @click="openDryHopSearch()"
+            :aria-expanded="(dryHopDrawer !== null) ? 'true' : 'false'"
+            aria-controls="dry-hop-drawer"
+          >
+            ＋ Add from Catalog
+          </button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table is-fixed">
+            <thead>
+              <tr>
+                <th>Hop</th>
+                <th>Type</th>
+                <th class="text-right">Qty</th>
+                <th>Unit</th>
+                <th>Applied at</th>
+                <th>Contact</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(row, ri) in draftRows" :key="ri">
+                <tr>
+                  <td>
+                    <span class="font-medium" x-text="dryHopTitle(row)"></span>
+                  </td>
+                  <td x-text="dryHopTypeLabel(row)"></td>
+                  <td class="text-right tabular-nums" x-text="row.quantity"></td>
+                  <td x-text="row.unit"></td>
+                  <td x-text="dryHopEventLabel(row)"></td>
+                  <td x-text="dryHopContactLabel(row)"></td>
+                  <td class="text-right">
+                    <div class="table-action-cell">
+                      <button type="button" class="btn-action-icon" @click="inspectDryHopRow(ri)" title="Inspect">✎</button>
+                      <button
+                        type="button"
+                        class="btn-action-icon btn-action-danger"
+                        @click="removeDryHop(ri)"
+                        title="Remove"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="draftRows.length === 0">
+                <tr>
+                  <td colspan="7" class="table-empty-cell">
+                    No dry hops in the draft. Click “＋ Add from Catalog”.
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div
+        class="modal-drawer-scrim"
+        x-show="dryHopDrawer !== null"
+        x-transition.opacity.duration.200ms
+        @click="closeDryHopDrawer()"
+      ></div>
+
+      <div
+        class="modal-workspace-drawer"
+        id="dry-hop-drawer"
+        x-show="dryHopDrawer !== null"
+        x-transition:enter="modal-drawer-enter"
+        x-transition:enter-start="modal-drawer-enter-start"
+        x-transition:enter-end="modal-drawer-enter-end"
+        x-transition:leave="modal-drawer-leave"
+        x-transition:leave-start="modal-drawer-leave-start"
+        x-transition:leave-end="modal-drawer-leave-end"
+      >
+        <div class="modal-drawer-header">
+          <h3
+            class="modal-drawer-title"
+            x-text="dryHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Dry Hop Inspector'"
+          ></h3>
+          <button type="button" class="btn-close text-xs" @click="closeDryHopDrawer()">✕</button>
+        </div>
+
+        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': dryHopDrawer === 'search' }">
+          <template x-if="dryHopDrawer === 'search'">
+            <div class="catalog-drawer-content">
+              <div class="catalog-drawer-controls">
+                <div class="catalog-search-wrapper">
+                  <input
+                    type="text"
+                    class="form-input text-xs"
+                    placeholder="Search hops and products by name or maker…"
+                    x-model.debounce.50ms="dryHopSearch"
+                  />
+                </div>
+
+                <div class="filter-pills-container">
+                  <button
+                    type="button"
+                    class="filter-pill"
+                    :class="{ 'is-active': dryHopSearchNotes }"
+                    :aria-pressed="(dryHopSearchNotes) ? 'true' : 'false'"
+                    @click="toggleDryHopSearchNotes()"
+                  >Search notes</button>
+                </div>
+
+                <div class="filter-pills-container">
+                  <template x-for="c in dryHopCategories" :key="c">
+                    <button
+                      type="button"
+                      class="filter-pill"
+                      :class="{ 'is-active': dryHopCategoryFilter.includes(c) }"
+                      :aria-pressed="(dryHopCategoryFilter.includes(c)) ? 'true' : 'false'"
+                      @click="toggleDryHopCategory(c)"
+                      x-text="c"
+                    ></button>
+                  </template>
+                </div>
+
+                <div
+                  class="catalog-result-counter text-xs"
+                  aria-live="polite"
+                  x-text="dryHopResultLabel"
+                ></div>
+              </div>
+              <div class="catalog-drawer-list">
+                <template x-for="item in dryHopVisibleCatalog" :key="item.id">
+                  <div class="catalog-item-card">
+                    <div>
+                      <div class="catalog-item-name">
+                        <span x-text="item.name"></span>
+                        <template x-if="isUserItem(item.id)">
+                          <span class="status-badge status-badge-info text-nano">mine</span>
+                        </template>
+                        <span
+                          class="status-badge status-badge-info text-nano"
+                          x-show="dryHopDraftCounts[item.id] > 0"
+                        >
+                          <span x-text="dryHopDraftCounts[item.id]"></span> in draft
+                        </span>
+                      </div>
+                      <div class="catalog-item-meta" x-text="dryHopItemMeta(item)"></div>
+                    </div>
+                    <div class="catalog-item-actions">
+                      <button
+                        type="button"
+                        class="btn-outline text-xs"
+                        x-show="!isUserItem(item.id)"
+                        @click="duplicateCatalogDryHop(item.id)"
+                        title="Copy to my items"
+                      >
+                        Copy
+                      </button>
+                      <button type="button" class="btn-primary text-xs" @click="addCatalogDryHop(item.id)">
+                        ＋ Add
+                      </button>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="dryHopFilteredCatalog.length === 0">
+                  <div class="table-empty-cell">No matching entries found.</div>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <template x-if="dryHopDrawer === 'inspect'">
+            <template x-if="dryHopActiveRow">
+              <div class="inspector-form">
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-variety">Hop</label>
+                  <input
+                    id="dry-hop-row-variety"
+                    type="text"
+                    class="form-input text-xs"
+                    :value="dryHopActiveRow.variety"
+                    @change="setDryHopDraftField(dryHopActiveIndex, 'variety', $event.target.value)"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-type">Type</label>
+                  <select
+                    id="dry-hop-row-type"
+                    class="form-select text-xs"
+                    :value="dryHopActiveRow.product_type"
+                    @change="setDryHopDraftField(dryHopActiveIndex, 'product_type', $event.target.value)"
+                  >
+                    <template x-for="opt in dryHopProductOptions" :key="opt.value">
+                      <option
+                        :value="opt.value"
+                        :selected="opt.value === dryHopActiveRow.product_type"
+                        x-text="opt.label"
+                      ></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-quantity">Quantity</label>
+                  <input
+                    id="dry-hop-row-quantity"
+                    type="number"
+                    step="1"
+                    min="0"
+                    class="form-input text-xs"
+                    :value="dryHopActiveRow.quantity"
+                    @change="setDryHopDraftNumber(dryHopActiveIndex, 'quantity', $event.target.value)"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-unit">Unit</label>
+                  <select
+                    id="dry-hop-row-unit"
+                    class="form-select text-xs"
+                    :value="dryHopActiveRow.unit"
+                    @change="setDryHopDraftField(dryHopActiveIndex, 'unit', $event.target.value)"
+                  >
+                    <template x-for="opt in dryHopUnitOptions" :key="opt.value">
+                      <option
+                        :value="opt.value"
+                        :selected="opt.value === dryHopActiveRow.unit"
+                        x-text="opt.label"
+                      ></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-event">Applied at</label>
+                  <select
+                    id="dry-hop-row-event"
+                    class="form-select text-xs"
+                    :value="dryHopActiveRow.application_event"
+                    @change="setDryHopDraftField(dryHopActiveIndex, 'application_event', $event.target.value)"
+                  >
+                    <template x-for="opt in dryHopEventOptions" :key="opt.value">
+                      <option
+                        :value="opt.value"
+                        :selected="opt.value === dryHopActiveRow.application_event"
+                        x-text="opt.label"
+                      ></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-contact">Contact (hours)</label>
+                  <input
+                    id="dry-hop-row-contact"
+                    type="number"
+                    step="1"
+                    min="0"
+                    class="form-input text-xs"
+                    :value="dryHopContactHours(dryHopActiveRow)"
+                    @change="setDryHopDraftContactHours(dryHopActiveIndex, $event.target.value)"
+                  />
+                  <span class="form-hint">Clears the end event below.</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-until">…or until</label>
+                  <select
+                    id="dry-hop-row-until"
+                    class="form-select text-xs"
+                    :value="dryHopActiveRow.contact_until ?? ''"
+                    @change="setDryHopDraftContactUntil(dryHopActiveIndex, $event.target.value)"
+                  >
+                    <option value="" :selected="!dryHopActiveRow.contact_until">— no end event —</option>
+                    <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
+                      <option
+                        :value="opt.value"
+                        :selected="opt.value === dryHopActiveRow.contact_until"
+                        x-text="opt.label"
+                      ></option>
+                    </template>
+                  </select>
+                  <span class="form-hint">Clears the contact hours above.</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-detail">Detail</label>
+                  <input
+                    id="dry-hop-row-detail"
+                    type="text"
+                    class="form-input text-xs"
+                    placeholder="e.g. 50% attenuation, day 3"
+                    :value="dryHopActiveRow.time_of_application"
+                    @change="setDryHopDraftField(dryHopActiveIndex, 'time_of_application', $event.target.value)"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="dry-hop-row-notes">Notes</label>
+                  <input
+                    id="dry-hop-row-notes"
+                    type="text"
+                    class="form-input text-xs"
+                    :value="dryHopActiveRow.notes"
+                    @change="setDryHopDraftField(dryHopActiveIndex, 'notes', $event.target.value)"
+                  />
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <load src="src/partials/draft-discard-confirm.html" />
+  </div>
+</div>

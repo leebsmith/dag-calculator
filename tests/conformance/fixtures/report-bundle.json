@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:2e084d758cf7348c80b39ec1423abf8d739f5f5be3e0a57f72b0b82f124e55e6",
+    "hash": "sha256:c636ad1f325e5bfea764708aecdfe8af051d7c9bd23b688a3038c6c812c67eee",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -2259,6 +2259,7 @@
           }
         },
         "dry_hop_row": {
+          "hop_id": {},
           "variety": {},
           "product_type": {
             "taxonomy": "hop_product_type",
@@ -7175,5 +7176,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:15ed0bca5869ea018793db4de4e624aaf14fbdf5b8ff84adc60783e86d054cf2"
+  "content_hash": "sha256:af5c0e00828f5d56b21e789f09979260383bff08a2a8ff0dbbb529a54fe68bab"
 }

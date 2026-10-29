@@ -2275,6 +2275,7 @@
       }
     },
     "dry_hop_row": {
+      "hop_id": {},
       "variety": {},
       "product_type": {
         "taxonomy": "hop_product_type",
