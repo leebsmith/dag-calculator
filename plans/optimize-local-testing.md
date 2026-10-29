@@ -1,9 +1,10 @@
 # Optimize local testing
 
-Status: **proposed**. Reshaped 2026-10-29 for goal-driven execution; no phase has
-landed. Target machine: ASUS NUC6i3SYH — Intel i3-6100U (2 physical cores / 4
-threads), 2.3 GHz, 8 GB. Every baseline number below was measured on this box on
-2026-10-29; none is extrapolated.
+Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phase 0
+(the ledger) landed 2026-10-29, Phases 1–6 proposed. Target machine: ASUS
+NUC6i3SYH — Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every
+baseline number below was measured on this box on 2026-10-29; none is
+extrapolated.
 
 ## 0. Execution model
 
@@ -171,6 +172,261 @@ are to be replaced with measured ones in the Landed note.
 **Work.** One command, run before and after every later phase, so the program is
 audited against one measurement rather than seventeen opinions. Also capture
 `make coverage` (frontend and backend) once, as the preservation baseline.
+
+**Landed.** 2026-10-29 — `Add a test-cost ledger` (a note cannot carry the sha of
+the commit that contains it; `git log --grep "Add a test-cost ledger"` finds it).
+
+| Gate | Before | After |
+|---|---|---|
+| `node scripts/test-cost.mjs` | — | 153 frontend files (949 tests, 41 boot an app, 46.6 s serial) + 51 backend files (698 tests, 21.3 s wall); 68.0 s, exit 0 |
+| `make check` | 9.9 s (§1) | 8.5 s |
+| `make test` | 56.9 s (§1) | 56.1 s (frontend 949 pass; backend 697 pass, 1 skipped) |
+| `make coverage` (frontend) | — | 96.06 % lines, 86.51 % branches, 91.31 % functions |
+| `make coverage` (backend) | — | 96 % of 3207 statements, 118 missed |
+
+Deviations:
+
+- **The backend lane is in the ledger.** Phase 5 reads backend wall time from
+  this script and §1 records a backend row, so a frontend-only ledger would leave
+  that phase without an instrument. Backend rows are each file's pytest testcase
+  time, summed from one JUnit XML run; per-module wall time needs a pytest
+  plugin, and a plugin is a dependency — the contract's blocked-by condition. The
+  suite wall (`21.3 s`) is measured around the run, and the difference to the row
+  sum is process start plus collection shared by every file.
+- **Frontend rows are one process per file** (`node --test-reporter=tap <file>`),
+  serial, so a row is that file's own cost: module import, app boot and its
+  tests. The plan's "Serial (1 core) 85.9 s" came from one runner at
+  `--test-concurrency=1`, which also pays the shared runner parent; the ledger's
+  serial total (46.6 s) is a different instrument and not comparable to it.
+- **The ledger is noisy on this box.** The same tree measured 65.7 s, then
+  48.5 s, then 46.6 s for the frontend lane while a background load average of
+  about 3.0 held the box. Later phases compare rows, and repeat a run when a row
+  moves against the direction the change predicts.
+- **Baseline output**, the exact run recorded above (`node
+  scripts/test-cost.mjs`, both lanes, against this commit's script):
+
+```text
+frontend suites: 153 files, one process each, serial
+     ms  tests  boot  file
+    118     11  -     tests/frontend/apiClient.test.js
+    118      3  -     tests/frontend/artifact-functions.test.js
+    107      9  -     tests/frontend/ast.test.js
+    164      3  -     tests/frontend/attenuation-above-cap.test.js
+     95      2  -     tests/frontend/attenuation-cap.test.js
+    452     10  yes   tests/frontend/attenuation-display.test.js
+    121      6  -     tests/frontend/authoring.test.js
+    112      9  -     tests/frontend/batchClient.test.js
+    105      8  -     tests/frontend/boundary.test.js
+    132      6  -     tests/frontend/boundaryRequest.test.js
+     97      3  -     tests/frontend/boundaryRunner.test.js
+    628      6  yes   tests/frontend/brew-day-card.test.js
+   2351     26  yes   tests/frontend/card-display.test.js
+    316     10  -     tests/frontend/catalog-drawer.test.js
+    207      8  -     tests/frontend/catalog.test.js
+    202     25  -     tests/frontend/catalogDraft.test.js
+    134      9  -     tests/frontend/collection-fields.test.js
+    129      2  -     tests/frontend/conformance-display.test.js
+    209     11  -     tests/frontend/dag.test.js
+    126      3  -     tests/frontend/dimension-inference.test.js
+    181     11  -     tests/frontend/domains.test.js
+    669      6  yes   tests/frontend/draft-discard.test.js
+    236     19  -     tests/frontend/engine.test.js
+    117      3  -     tests/frontend/equipment-ingest.test.js
+    184      1  -     tests/frontend/equipment-legacy.test.js
+   1594      5  yes   tests/frontend/fermentation-space.test.js
+    184     16  -     tests/frontend/fermentation.test.js
+     96      6  -     tests/frontend/firebaseConfig.test.js
+    508      4  yes   tests/frontend/freeze-shape.test.js
+    391      5  yes   tests/frontend/hamilton.test.js
+    104      1  -     tests/frontend/hop-parity.test.js
+    141      4  -     tests/frontend/hop-rows.test.js
+   1357     15  yes   tests/frontend/hops-card.test.js
+     94      5  -     tests/frontend/hops.test.js
+    361      5  yes   tests/frontend/ingredient-priors.test.js
+    666      4  yes   tests/frontend/late-addition-effect-mirror.test.js
+    748      8  yes   tests/frontend/late-addition-intent.test.js
+    698      6  yes   tests/frontend/late-addition-parts.test.js
+    131      7  -     tests/frontend/late-addition-rows.test.js
+    479      5  yes   tests/frontend/late-addition-share-zero.test.js
+    407      6  yes   tests/frontend/library.test.js
+    212     17  -     tests/frontend/libraryUi.test.js
+    183      6  -     tests/frontend/malt-card.test.js
+    134      8  -     tests/frontend/malt-rows.test.js
+    688     11  yes   tests/frontend/mash-card.test.js
+    465      3  yes   tests/frontend/mash-preset-mirror.test.js
+    132      7  -     tests/frontend/mash-rows.test.js
+    105     14  -     tests/frontend/modal-focus.test.js
+     97      7  -     tests/frontend/navigation.test.js
+    454      3  yes   tests/frontend/number-input.test.js
+     85      1  -     tests/frontend/observability.test.js
+    259     36  -     tests/frontend/persistence.test.js
+    876     12  yes   tests/frontend/pin-matrix.test.js
+    407      1  yes   tests/frontend/realized-vitals.test.js
+    139      6  -     tests/frontend/recipeList.test.js
+    177     37  -     tests/frontend/recipes.test.js
+    173      5  -     tests/frontend/relations.test.js
+    770     11  yes   tests/frontend/report-catalog.test.js
+   1088     12  yes   tests/frontend/report-format.test.js
+    728      6  yes   tests/frontend/report-inputs.test.js
+    149      6  -     tests/frontend/scale-preview.test.js
+    126      2  -     tests/frontend/seed-derivations.test.js
+    545      3  yes   tests/frontend/selection-validation.test.js
+    618      6  yes   tests/frontend/selections.test.js
+    291     13  -     tests/frontend/setup.test.js
+     97      1  -     tests/frontend/sha256.test.js
+    121      3  -     tests/frontend/standard-malts.test.js
+   1909     22  yes   tests/frontend/step-boundaries.test.js
+    855      8  yes   tests/frontend/step-lifecycle.test.js
+    379      3  yes   tests/frontend/step-pipeline.test.js
+   1040     13  yes   tests/frontend/style-card.test.js
+    120      7  -     tests/frontend/style-conformance.test.js
+    307      6  -     tests/frontend/style-plot.test.js
+    194      8  -     tests/frontend/style-target.test.js
+    195      3  -     tests/frontend/styles-seed.test.js
+    143      3  -     tests/frontend/trace-malt-rows.test.js
+    417      5  yes   tests/frontend/unit-decimals.test.js
+    116      9  -     tests/frontend/unitPrefs.test.js
+    123     13  -     tests/frontend/units.test.js
+    157      6  -     tests/frontend/userCatalog.test.js
+    199     32  -     tests/frontend/utils.test.js
+    420     11  -     tests/frontend/validate-artifact.test.js
+    408      3  yes   tests/frontend/volume-ledger.test.js
+   1137     19  yes   tests/frontend/water-card.test.js
+    413      5  yes   tests/frontend/water-gate.test.js
+    420      2  yes   tests/frontend/water-ratio.test.js
+    487      4  yes   tests/frontend/water-target-mirror.test.js
+    101      8  -     tests/frontend/whirlpool.test.js
+    157      8  -     tests/frontend/yeast-rows.test.js
+    135      4  -     tests/conformance/boundary-fixtures.test.js
+    673      5  yes   tests/conformance/ion-constraints.test.js
+    268      6  -     tests/conformance/numeric-parity.test.js
+    168      3  -     tests/conformance/parity.test.js
+    198     12  -     tests/conformance/seed-conformance.test.js
+    142      1  -     tests/conformance/validation-parity.test.js
+    144      3  -     tests/guards/adapter-format-contract.test.js
+    363      1  yes   tests/guards/alpine-handlers.test.js
+    111      1  -     tests/guards/api-proxy.test.js
+    169      2  -     tests/guards/artifact-consumers.test.js
+    134      1  -     tests/guards/artifact-docs-sync.test.js
+    130      1  -     tests/guards/artifact-purity.test.js
+     87      2  -     tests/guards/attenuation-register.test.js
+    119      4  -     tests/guards/boundary-inputs.test.js
+    114      1  -     tests/guards/boundary-output-consumers.test.js
+    117      1  -     tests/guards/boundary-routes.test.js
+    115      4  -     tests/guards/control-states.test.js
+    149      1  -     tests/guards/css-classes.test.js
+    125      1  -     tests/guards/css-duplication.test.js
+    273      3  -     tests/guards/describe-bundle.test.js
+    271      1  -     tests/guards/determinism.test.js
+    120      4  -     tests/guards/dialogs.test.js
+    114      1  -     tests/guards/dimension-coverage.test.js
+    514      5  yes   tests/guards/display-only-units.test.js
+    433      4  yes   tests/guards/display-precision.test.js
+    149      5  -     tests/guards/docs-claims.test.js
+    110      1  -     tests/guards/engine-access.test.js
+    139      2  -     tests/guards/engine-read-mirrors.test.js
+    100      4  -     tests/guards/equipment-contract.test.js
+    123      2  -     tests/guards/fermentables-source-contract.test.js
+    115      8  -     tests/guards/findings-registry.test.js
+    119      1  -     tests/guards/glossary-sync.test.js
+    172      3  -     tests/guards/import-direction.test.js
+     94      1  -     tests/guards/include-integrity.test.js
+    341      7  yes   tests/guards/installer-contract.test.js
+     99      3  -     tests/guards/malt-standard-crosswalk.test.js
+    113      3  -     tests/guards/manifest-integrity.test.js
+     91      1  -     tests/guards/mash-input-contract.test.js
+     98      1  -     tests/guards/no-reactivity.test.js
+    106      2  -     tests/guards/no-silent-catch.test.js
+    108      2  -     tests/guards/number-input-contract.test.js
+    160      1  -     tests/guards/option-labels.test.js
+    376      9  -     tests/guards/ownership.test.js
+    103     11  -     tests/guards/precommit-contract.test.js
+     96      1  -     tests/guards/presentation-ids.test.js
+    100      7  -     tests/guards/report-sections-sync.test.js
+    377      2  yes   tests/guards/roots-only.test.js
+     99      2  -     tests/guards/schema-version.test.js
+    238     11  -     tests/guards/seed-rebuild.test.js
+    100      1  -     tests/guards/select-binding.test.js
+   1651      3  -     tests/guards/shape-pins.test.js
+    192      1  -     tests/guards/show-dereference.test.js
+    160      1  -     tests/guards/sources-manifest.test.js
+    128      2  -     tests/guards/standard-malts.test.js
+    206      3  -     tests/guards/store-surface.test.js
+    103      1  -     tests/guards/stub-outputs.test.js
+    114      8  -     tests/guards/sugar-fermentability-contract.test.js
+     98      1  -     tests/guards/svg-length-bindings.test.js
+    116      7  -     tests/guards/taxonomy-coverage.test.js
+    350      1  yes   tests/guards/telemetry-classes.test.js
+    104      2  -     tests/guards/unit-menu-coverage.test.js
+    102      2  -     tests/guards/unit-roundtrip.test.js
+    111      6  -     tests/guards/whitelabs-yeast-contract.test.js
+    144      1  -     tests/guards/write-targets.test.js
+
+frontend totals: 153 files, 949 tests, 41 boot an app, 46.6 s serial
+
+backend suites: 51 files, one pytest run
+     ms  tests  file
+      9     11  tests/backend/conformance/test_artifact_constants.py
+      4      4  tests/backend/conformance/test_basis_conversion.py
+     11     21  tests/backend/conformance/test_batch_solver_helpers.py
+    139     15  tests/backend/conformance/test_batch_solver_orchestration.py
+      8     18  tests/backend/conformance/test_batch_solver_phase1.py
+     12     13  tests/backend/conformance/test_batch_solver_phase3.py
+     16     19  tests/backend/conformance/test_batch_solver_phase4.py
+     63      3  tests/backend/conformance/test_boundary_error_contract.py
+      3      1  tests/backend/conformance/test_boundary_fixtures.py
+      4      5  tests/backend/conformance/test_boundary_output_parity.py
+      3      4  tests/backend/conformance/test_boundary_routes.py
+      4      5  tests/backend/conformance/test_boundary_wire_contract.py
+     16      1  tests/backend/conformance/test_bundle_constructors.py
+    330     17  tests/backend/conformance/test_composition_regimes.py
+     28     27  tests/backend/conformance/test_domain_codes.py
+      5      7  tests/backend/conformance/test_mash_ph_model.py
+     27     27  tests/backend/conformance/test_numeric_parity.py
+    619      1  tests/backend/conformance/test_recipe_smoke.py
+     91      3  tests/backend/conformance/test_report_bundle_fixture.py
+      0      3  tests/backend/conformance/test_report_inputs.py
+      3      1  tests/backend/conformance/test_route_auth_coverage.py
+    247     12  tests/backend/conformance/test_scale_pins.py
+     10     12  tests/backend/conformance/test_taxonomy_coverage.py
+      7     13  tests/backend/conformance/test_utils.py
+      9      1  tests/backend/conformance/test_validation_parity.py
+     50     26  tests/backend/conformance/test_water_chemistry_core.py
+      0      1  tests/backend/conformance/test_water_fuzz.py
+    533     14  tests/backend/conformance/test_water_matrix.py
+    165     85  tests/backend/conformance/test_water_routing.py
+    132      6  tests/backend/conformance/test_water_telemetry_contract.py
+   1253     21  tests/backend/test_artifact.py
+     47     15  tests/backend/test_auth.py
+     25     24  tests/backend/test_batch_repo.py
+    238     29  tests/backend/test_batch_solver.py
+    342     17  tests/backend/test_batches.py
+     83     11  tests/backend/test_catalog.py
+      4      5  tests/backend/test_catalog_repo.py
+     37     26  tests/backend/test_fingerprint.py
+      9      5  tests/backend/test_firebase_wiring.py
+     43     10  tests/backend/test_hop_solver.py
+      1      2  tests/backend/test_ids.py
+      7      5  tests/backend/test_parity.py
+     69     27  tests/backend/test_report_bundle.py
+    346      2  tests/backend/test_report_format_parity.py
+   6064     17  tests/backend/test_report_render.py
+   4578     30  tests/backend/test_report_sections.py
+   1194     29  tests/backend/test_routes.py
+     34     20  tests/backend/test_schemas.py
+     17      2  tests/backend/test_styles_seed.py
+     38      3  tests/backend/test_throttle.py
+     47     22  tests/backend/test_water_solver.py
+
+backend totals: 51 files, 698 tests, 21.3 s wall, 17.0 s inside pytest rows
+
+test-cost: frontend 46.6 s serial, backend 21.3 s wall
+```
+
+Coverage: the preservation baseline, captured on this commit's tree — frontend
+96.06 % lines / 86.51 % branches / 91.31 % functions; backend 96 % of 3207
+statements (118 missed). Phase 0 touches no test or source path, so later phases
+compare against these exactly.
 
 ### 3.2 Phase 1 — `make quick`: check first, then the affected suites (1 day)
 
