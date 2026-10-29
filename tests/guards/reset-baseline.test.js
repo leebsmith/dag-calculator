@@ -3,7 +3,7 @@
 // creation-time steps it deliberately leaves alone (unit prefs, the derived
 // water strategy), so this guard mutates the three stores a test touches —
 // roots, collections and selections — along with unit prefs and navigation, and
-// deep-equals the snapshot against both the boot baseline and a second app's
+// deep-equals the whole app against both the boot baseline and a second app's
 // fresh boot.
 
 import test from "node:test";
@@ -11,38 +11,45 @@ import assert from "node:assert/strict";
 
 import { createTestApp, sharedTestApp } from "../frontend/appHelpers.js";
 
-// Every node's value, so a stale engine shows up even when no field renders it.
-function snapshot(app) {
+// Reactive signals, not state: they only ever count up, so a reset cannot put
+// them back and no assertion reads an absolute value.
+const REVISIONS = new Set(["catalogRevision", "libraryRevision"]);
+
+function isPlain(value) {
+  if (value === null || typeof value !== "object") return false;
+  if (Array.isArray(value)) return true;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+// Every enumerable app value a template can bind to: card-local state included,
+// so a field model that renders correct HTML over a leaked draft still fails.
+// Values are copied because card state is mutated in place (unit prefs live in
+// the store object the app mirrors). A JSON copy keeps the bound data and drops
+// the closures a store object carries, which no template binds to.
+function surface(app) {
+  const out = {};
+  for (const key of Object.keys(app)) {
+    if (REVISIONS.has(key) || typeof app[key] === "function") continue;
+    if (!isPlain(app[key])) continue;
+    out[key] = JSON.parse(JSON.stringify(app[key]));
+  }
+  return out;
+}
+
+// The engine side: every node's value, so a stale engine shows up even when no
+// field renders it.
+function state(app) {
   const draft = app.draftState();
   const payload = app.freezePayload();
-  const fields = {};
-  for (const [slice, list] of Object.entries(app.fieldsBySlice)) {
-    fields[slice] = list.map((field) => ({
-      id: field.id,
-      value: field.value,
-      display: field.display,
-      unit: field.unit,
-      unitId: field.unitId,
-      customized: field.customized,
-      decimals: field.decimals,
-      status: field.status,
-    }));
-  }
   return {
+    surface: surface(app),
     identity: draft.identity,
     roots: draft.roots,
     collections: draft.collections,
     selections: draft.selections,
     valuation: payload.valuation,
     provenance: payload.provenance,
-    fields,
-    unitMode: { ...app.unitMode },
-    findings: app.findings,
-    activeIndex: app.activeIndex,
-    highwater: app.highwater,
-    activeStep: app.activeStep?.id ?? null,
-    boundaryStatuses: app.boundaryStatuses,
-    boundaryBlocked: app.boundaryBlocked,
   };
 }
 
@@ -65,13 +72,13 @@ function mutate(app) {
 
 test("a reset restores the boot baseline", async () => {
   const app = await sharedTestApp();
-  const baseline = snapshot(app);
+  const baseline = state(app);
 
   mutate(app);
-  assert.notDeepEqual(snapshot(app), baseline, "the mutations must move the state");
+  assert.notDeepEqual(state(app), baseline, "the mutations must move the state");
 
   assert.equal(await sharedTestApp(), app, "a suite shares one app");
-  assert.deepEqual(snapshot(app), baseline);
+  assert.deepEqual(state(app), baseline);
 });
 
 test("the reset baseline is what a fresh boot produces", async () => {
@@ -79,5 +86,5 @@ test("the reset baseline is what a fresh boot produces", async () => {
   await fresh.boot();
 
   const app = await sharedTestApp();
-  assert.deepEqual(snapshot(app), snapshot(fresh));
+  assert.deepEqual(state(app), state(fresh));
 });

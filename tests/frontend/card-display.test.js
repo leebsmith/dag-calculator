@@ -1,22 +1,17 @@
 // Display-surface coverage for the cards whose behaviour is exercised
 // elsewhere: the readout getters, filters, and formatting helpers the templates
-// bind to. One app instance per card keeps the setup honest.
+// bind to. Every test starts from the suite's one app reset to its baseline; the
+// style-card cases load a different identity, which a reset cannot restore, so
+// they keep their own boot.
 
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { sugarEffect } from "../../frontend/src/views/producer/sugarEffect.js";
 
 const cache = createReferenceCache();
-
-async function bootedApp() {
-  const app = createTestApp();
-  await app.boot();
-  app.compute();
-  return app;
-}
 
 async function styledApp(styleId = "21A") {
   const app = createTestApp();
@@ -38,8 +33,7 @@ async function styledApp(styleId = "21A") {
 
 // --- Yeast -----------------------------------------------------------------
 
-test("yeast card: attenuation, manufacturer, and tier filters compose", async () => {
-  const app = await bootedApp();
+test("yeast card: attenuation, manufacturer, and tier filters compose", withFreshApp(async (app) => {
   const total = app.yeastCatalog.length;
   assert.ok(total > 0);
 
@@ -60,10 +54,14 @@ test("yeast card: attenuation, manufacturer, and tier filters compose", async ()
 
   app.yeastAttenuationFilter = "";
   assert.equal(app.filteredYeasts.length, total);
-});
+}));
 
+// The search query this case leaves behind is card-local state, which a reset
+// does not clear, so it keeps its own boot.
 test("yeast card: the notes toggle gates note matching", async () => {
-  const app = await bootedApp();
+  const app = createTestApp();
+  await app.boot();
+  app.compute();
   const withNotes = app.yeastCatalog.find((y) => (y.notes ?? "").trim().length > 6);
   assert.ok(withNotes, "a seeded strain needs notes for this test");
   const term = withNotes.notes.split(/\s+/).find((word) => word.length > 5);
@@ -80,8 +78,7 @@ test("yeast card: the notes toggle gates note matching", async () => {
   assert.ok(withNotesIds.length >= withoutNotes.length);
 });
 
-test("yeast card: attenuation formatting and the selected-strain readouts", async () => {
-  const app = await bootedApp();
+test("yeast card: attenuation formatting and the selected-strain readouts", withFreshApp(async (app) => {
   const strain = app.yeastCatalog.find((y) => typeof y.attenuation_pct === "number");
 
   assert.equal(app.yeastAttenuation(strain), `${Math.round(strain.attenuation_pct * 1000) / 10}%`);
@@ -96,25 +93,22 @@ test("yeast card: attenuation formatting and the selected-strain readouts", asyn
   app.selectedYeastId = "";
   assert.equal(app.selectedYeast, null);
   assert.equal(app.selectedYeastTemp, "");
-});
+}));
 
-test("yeast card: the result label reports truncation past the display cap", async () => {
-  const app = await bootedApp();
+test("yeast card: the result label reports truncation past the display cap", withFreshApp(async (app) => {
   assert.match(app.yeastResultLabel, /matching strain/);
   assert.equal(app.isYeastListTruncated, app.yeastResultCount > app.visibleYeasts.length);
   assert.ok(app.visibleYeasts.length <= 25);
-});
+}));
 
-test("yeast card: tier filters toggle on and off", async () => {
-  const app = await bootedApp();
+test("yeast card: tier filters toggle on and off", withFreshApp(async (app) => {
   app.toggleYeastAttenuation("high");
   assert.equal(app.yeastAttenuationFilter, "high");
   app.toggleYeastAttenuation("high");
   assert.equal(app.yeastAttenuationFilter, "");
-});
+}));
 
-test("yeast card: diastaticus pills filter the tri-state STA1 field", async () => {
-  const app = await bootedApp();
+test("yeast card: diastaticus pills filter the tri-state STA1 field", withFreshApp(async (app) => {
   const tiers = app.yeastDiastaticusTiers;
   assert.deepEqual(tiers.map((tier) => tier.key), ["positive", "negative", "unknown"]);
   assert.equal(
@@ -137,27 +131,24 @@ test("yeast card: diastaticus pills filter the tri-state STA1 field", async () =
   app.toggleYeastDiastaticus("");
   assert.equal(app.yeastDiastaticusFilter, "");
   assert.equal(app.filteredYeasts.length, app.yeastCatalog.length);
-});
+}));
 
-test("yeast card: the chooser is always mounted and Clear empties the selection", async () => {
-  const app = await bootedApp();
+test("yeast card: the chooser is always mounted and Clear empties the selection", withFreshApp(async (app) => {
   assert.equal(app.selectedYeast?.id, "fermentis-safale-american-ale-us-05");
 
   app.clearYeastSelection();
   assert.equal(app.selectedYeast, null);
-});
+}));
 
-test("yeast card: the derate help toggles", async () => {
-  const app = await bootedApp();
+test("yeast card: the derate help toggles", withFreshApp(async (app) => {
   assert.equal(app.derateHelpOpen, false);
   app.toggleDerateHelp();
   assert.equal(app.derateHelpOpen, true);
   app.toggleDerateHelp();
   assert.equal(app.derateHelpOpen, false);
-});
+}));
 
-test("yeast card: derate is points off the strain maximum", async () => {
-  const app = await bootedApp();
+test("yeast card: derate is points off the strain maximum", withFreshApp(async (app) => {
   const aa = app.engine.resolve("batch.yeast.attenuation_pct");
 
   const input = { value: "4" };
@@ -185,10 +176,9 @@ test("yeast card: derate is points off the strain maximum", async () => {
   app.commitYeastDerate(zero);
   assert.equal(app.master.getRoot("batch.attenuation_derate_points"), 0);
   assert.equal(app.engine.get("batch.yeast_cap"), aa);
-});
+}));
 
-test("yeast card: a legacy multiplier derate migrates to points on load", async () => {
-  const app = await bootedApp();
+test("yeast card: a legacy multiplier derate migrates to points on load", withFreshApp(async (app) => {
   const aa = app.engine.resolve("batch.yeast.attenuation_pct");
 
   await app.loadState({
@@ -202,12 +192,11 @@ test("yeast card: a legacy multiplier derate migrates to points on load", async 
 
   const points = app.master.getRoot("batch.attenuation_derate_points");
   assert.ok(Math.abs(points - (1 - 0.95) * aa) < 1e-9);
-});
+}));
 
 // --- Late additions --------------------------------------------------------
 
-test("late additions: the sugar draft fields resolve inside the card's slice", async () => {
-  const app = await bootedApp();
+test("late additions: the sugar draft fields resolve inside the card's slice", withFreshApp(async (app) => {
   const sugar = app.sugarCatalog[0];
 
   app.openSugarEditor();
@@ -230,10 +219,9 @@ test("late additions: the sugar draft fields resolve inside the card's slice", a
   app.compute();
   assert.equal(app.sugarList.length, 1);
   assert.match(app.sugarResultLabel, /sugar/);
-});
+}));
 
-test("late additions: the configure row counts the authored sugars", async () => {
-  const app = await bootedApp();
+test("late additions: the configure row counts the authored sugars", withFreshApp(async (app) => {
   assert.equal(app.sugarCountLabel, "No sugars");
 
   app.openSugarEditor();
@@ -247,10 +235,9 @@ test("late additions: the configure row counts the authored sugars", async () =>
   app.saveSugarEditor();
   app.compute();
   assert.equal(app.sugarCountLabel, "2 sugars");
-});
+}));
 
-test("late additions: the draft mass and extract readouts follow the open draft", async () => {
-  const app = await bootedApp();
+test("late additions: the draft mass and extract readouts follow the open draft", withFreshApp(async (app) => {
   const sugar = app.sugarCatalog[0];
 
   app.openSugarEditor();
@@ -268,10 +255,9 @@ test("late additions: the draft mass and extract readouts follow the open draft"
   app.confirmDraftDiscard();
   assert.equal(app.draftDiscardOpen, false);
   assert.equal(app.sugarEditorOpen, false);
-});
+}));
 
-test("late additions: the sugar effect is derived at the current pin", async () => {
-  const app = await bootedApp();
+test("late additions: the sugar effect is derived at the current pin", withFreshApp(async (app) => {
   const sugar = app.sugarCatalog[0];
 
   assert.equal(app.sugarEffect.active, false, "no dose, no effect");
@@ -295,10 +281,9 @@ test("late additions: the sugar effect is derived at the current pin", async () 
   assert.equal(app.sugarEffectDisplay.share, `${(effect.share * 100).toFixed(1)}%`);
   assert.match(app.sugarEffectDisplay.og, /^\+0\./);
   assert.match(app.sugarEffectDisplay.abv, /^\+\d/);
-});
+}));
 
-test("late additions: reading the sugar effect does not change the recipe", async () => {
-  const app = await bootedApp();
+test("late additions: reading the sugar effect does not change the recipe", withFreshApp(async (app) => {
   const sugar = app.sugarCatalog[0];
   app.openSugarEditor();
   app.addCatalogSugar(sugar.id);
@@ -312,7 +297,7 @@ test("late additions: reading the sugar effect does not change the recipe", asyn
   void app.sugarEffectDisplay;
   assert.equal(JSON.stringify(app.draftState()), before, "readouts must not mutate state");
   assert.equal(app.master.getRoot("batch.target_abv"), undefined);
-});
+}));
 
 test("sugarEffect is defensive about incomplete batches", () => {
   assert.equal(sugarEffect({}).active, false);
@@ -329,8 +314,7 @@ test("sugarEffect is defensive about incomplete batches", () => {
 
 // --- Trace malts -----------------------------------------------------------
 
-test("trace malts: the catalog draft installs into the trace slice", async () => {
-  const app = await bootedApp();
+test("trace malts: the catalog draft installs into the trace slice", withFreshApp(async (app) => {
   const malt = app.traceCatalog[0];
 
   app.openTraceEditor();
@@ -348,12 +332,11 @@ test("trace malts: the catalog draft installs into the trace slice", async () =>
   app.compute();
   assert.equal(app.traceMaltRows.length, 1);
   assert.match(app.traceDraftMassDisplay, /\d/);
-});
+}));
 
 // --- Hops ------------------------------------------------------------------
 
-test("hops: the alpha band is context and out-of-band values are flagged", async () => {
-  const app = await bootedApp();
+test("hops: the alpha band is context and out-of-band values are flagged", withFreshApp(async (app) => {
   app.openHopEditor();
   app.addCatalogHop("cascade");
   app.saveHopEditor();
@@ -372,10 +355,9 @@ test("hops: the alpha band is context and out-of-band values are flagged", async
 
   assert.equal(app.hopAlpha(row), `${(row.alpha_acid_pct * 100).toFixed(1)}%`);
   assert.equal(app.hopAlpha({}), "—");
-});
+}));
 
-test("hops: setHopAlpha clamps to 0–100% and leaves other rows alone", async () => {
-  const app = await bootedApp();
+test("hops: setHopAlpha clamps to 0–100% and leaves other rows alone", withFreshApp(async (app) => {
   app.openHopEditor();
   app.addCatalogHop("cascade");
   app.addCatalogHop("citra");
@@ -390,10 +372,9 @@ test("hops: setHopAlpha clamps to 0–100% and leaves other rows alone", async (
 
   app.setHopAlpha("boil", 99, 5);
   assert.equal(app.engine.get("batch.boil_hops").length, 2);
-});
+}));
 
-test("hops: whirlpool form labels and row readouts", async () => {
-  const app = await bootedApp();
+test("hops: whirlpool form labels and row readouts", withFreshApp(async (app) => {
   const row = { product_form: "flowable_extract" };
   assert.match(app.hopForm(row), /extract/i);
   assert.match(app.hopForm({}), /T-90|pellet/i);
@@ -403,7 +384,7 @@ test("hops: whirlpool form labels and row readouts", async () => {
   assert.equal(app.hopPct({}), "—");
   assert.equal(app.hopBoilPct({ boil_time_fraction: 0.25 }), "25%");
   assert.equal(app.hopMinutes({ minutes: 60 }), "60 min");
-});
+}));
 
 // --- Style -----------------------------------------------------------------
 
