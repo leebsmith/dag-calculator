@@ -1,7 +1,7 @@
 # Optimize local testing
 
-Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–2
-landed 2026-10-29, Phases 3–6 proposed. Target machine: ASUS NUC6i3SYH —
+Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–3
+landed 2026-10-29, Phases 4–6 proposed. Target machine: ASUS NUC6i3SYH —
 Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every baseline
 number below was measured on this box on 2026-10-29; none is extrapolated.
 
@@ -637,6 +637,54 @@ rebuild the same graph.
 
 **Predictions.** ~10 ms off every engine build (288 boots plus every reset),
 ~2.4 s serial.
+
+**Landed.** 2026-10-29 — `Validate and graph-build the artifact once per process`.
+
+| Gate | Before | After |
+|---|---|---|
+| one `createCalculator` on the shared artifact | 2.816 ms (50 builds) | 0.016 ms (50 builds) |
+| `loadArtifact` alone | 1.604 ms/call | 0.000 ms/call after the first |
+| `buildGraph` alone | 0.796 ms/call | 0.000 ms/call after the first |
+| `make test` | 38.3–44.3 s on the Phase 2 tree (154 files, 954 tests) | 51.1 s, 52.0 s, 48.8 s, then 46.0 s on the committed tree — 155 files, 958 tests pass; frontend lane 27.1 s, backend 22.8 s; backend 697 passed, 1 skipped |
+| `node scripts/test-cost.mjs` | 61.5 s frontend serial (one run on this tree before the change; the Phase 2 note recorded 47.9–70.2 s) | 55.2 s frontend serial, 155 files, 958 tests; backend 16.6 s wall (19.3 s before) |
+| guard `tests/guards/engine-cold-start.test.js` | — | 4 pass; 3 of the 4 fail against the pre-change engine |
+| `make check` | 6.4–7.0 s (Phase 2) | 8.2 s, then 11.2 s alongside the doc and plan edits |
+| `make coverage` (frontend) | 96.06 / 86.51 / 91.31 % | 96.06 / 86.53 / 91.31 % |
+| `make coverage` (backend) | 96 % of 3207 statements, 118 missed | unchanged |
+
+Deviations:
+
+- **The per-build prediction held; the serial prediction did not, and the ledger
+  cannot see it.** A build costs 2.816 ms before and 0.016 ms after, so 288 boots
+  plus every reset save well under a second of serial work — inside the ledger's
+  run-to-run spread. Its frontend lane moved 61.5 → 55.2 s, which this change
+  cannot account for, and its `boot` column is still a source scan rather than a
+  count. The gate and ledger numbers are recordings; the A/B on one artifact
+  object is this phase's measurement.
+- **`buildGraph` keeps its complexity budget by delegation.** The body moved to
+  `constructGraph` and the exported wrapper does the `WeakMap` lookup; with the
+  branch inline, eslint refused the file at complexity 27 against a maximum of 26
+  and no threshold was raised.
+- **`docs/engine.md` gained one paragraph.** Its lifecycle section reads as if
+  validation and graph construction run on every build; it now says both are
+  memoized on artifact identity and that a clone is a different artifact. The
+  contract did not own that file.
+- **The guard is one file with four assertions**, not one assertion: the first
+  load reads a `Proxy`-wrapped artifact and the second reads nothing; a clone with
+  a bad `schema_version` and a clone with a dangling root default both throw while
+  the already-validated original still loads; the graph object is identical across
+  calls and a clone gets its own; two engines built from one artifact share
+  `adjacency`, `dependents` and the graph. Reuse is keyed on the object a process
+  holds, so the retained graphs are collectable with their artifacts — no path,
+  timestamp or content hash is involved.
+- **The gate did not fall** (38.3–44.3 → 46.0–52.0 s) on a box whose load
+  average moved between 4.3 and 10 across the runs. Per §2.8 that is a recording,
+  not a failed threshold; the win this phase buys is per boot, which Phase 4
+  spends.
+
+Coverage: frontend 96.06 % lines / 86.51 % branches / 91.31 % functions →
+96.06 / 86.53 / 91.31 (the guard exercises both memo branches); backend 96 %
+(3207 statements, 118 missed) → unchanged.
 
 ### 3.5 Phase 4 — Reset instead of rebuild in the harness (one goal per group)
 

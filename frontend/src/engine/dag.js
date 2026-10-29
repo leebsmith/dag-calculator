@@ -8,7 +8,17 @@ import { resolveIngredientCollections, resolveIngredientRows } from "./ingredien
 import { getField, resolveReference } from "./paths.js";
 import { relationStates } from "./relations.js";
 
+const graphs = new WeakMap();
+
 export function buildGraph(artifact) {
+  const cached = graphs.get(artifact);
+  if (cached) return cached;
+  const graph = constructGraph(artifact);
+  graphs.set(artifact, graph);
+  return graph;
+}
+
+function constructGraph(artifact) {
   const adjacency = {};
   const dependents = {};
   for (const id of Object.keys(artifact.nodes)) {

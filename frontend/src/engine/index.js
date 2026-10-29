@@ -4,11 +4,16 @@ import { createEngine } from "./dag.js";
 import { validateDerivedDimensions, validateCollectionFields, validateRootDefaults } from "./units.js";
 import { validateArtifact } from "./validate.js";
 
+const validated = new WeakSet();
+
 export function loadArtifact(artifact) {
-  validateArtifact(artifact);
-  validateRootDefaults(artifact);
-  validateDerivedDimensions(artifact);
-  validateCollectionFields(artifact);
+  if (!validated.has(artifact)) {
+    validateArtifact(artifact);
+    validateRootDefaults(artifact);
+    validateDerivedDimensions(artifact);
+    validateCollectionFields(artifact);
+    validated.add(artifact);
+  }
   return artifact;
 }
 

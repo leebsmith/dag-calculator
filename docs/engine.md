@@ -32,6 +32,12 @@ The engine owns the **State** and **Derived** layers; the view only reads them.
 4. **Invalidate on change** — `setRoot`/`setCollection` drop the
    changed node and *its dependents* from the memo, so the next `get` re-derives.
 
+Both cold-start steps are **memoized on artifact identity**: `loadArtifact`
+validates a given artifact object once per process (a `WeakSet`), and `buildGraph`
+returns the same graph object for it (a `WeakMap`). A clone is a different object,
+so it validates and builds again. Every session reset and every sign-in therefore
+reuses the validated artifact's graph instead of paying for it twice.
+
 There is **no read-tracking and no reactivity**: dependencies exist only where the
 artifact declares them, and a value is recomputed only when a declared ancestor
 changes.
