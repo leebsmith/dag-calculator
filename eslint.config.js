@@ -133,7 +133,6 @@ const GRAMMAR_COMPLEXITY = {
   "engine/fermentation.js": 15,
   "engine/ingredientPriors.js": 17,
   "engine/styleConformance.js": 18,
-  "engine/units.js": 93,
   "engine/validate.js": 34,
   "views/producer/projection.js": 39,
   "views/producer/scalar.js": 33,
@@ -164,7 +163,6 @@ const STATEMENT_PINS = {
   "adapters/cards/water.js": 63,
   "adapters/stepAdapter.js": 43,
   "engine/sha256.js": 44,
-  "engine/units.js": 57,
   "main.js": 53,
   "views/producer/stylePlot.js": 46,
   "views/producer/table.js": 42,
@@ -184,7 +182,6 @@ const DEPTH_PINS = {
 
 const FUNCTION_LINE_PINS = {
   "engine/dag.js": 295,
-  "engine/units.js": 105,
   "engine/validate.js": 86,
   "adapters/boundaryRunner.js": 210,
   "views/producer/stylePlot.js": 137,
