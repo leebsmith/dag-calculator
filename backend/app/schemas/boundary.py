@@ -261,8 +261,12 @@ class BatchSolverResponse(BoundaryModel):
 # -----------------------------------------------------------------------------
 
 class WhirlpoolHopForm(StrEnum):
+    """Mirrors the artifact's `whirlpool_hop_form` taxonomy; guarded by
+    tests/backend/conformance/test_taxonomy_coverage.py."""
+
     T90_PELLET = "t90_pellet"
     FLOWABLE_EXTRACT = "flowable_extract"
+    LUPULIN_PELLET = "lupulin_pellet"
 
 
 class BoilHopRow(BoundaryModel):

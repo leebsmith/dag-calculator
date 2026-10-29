@@ -105,6 +105,27 @@ def test_hop_solver_returns_the_response_contract(client):
     assert len(response.json()["whirlpool_rows"]) == 1
 
 
+def test_hop_solver_accepts_a_lupulin_row_on_the_wire(client):
+    request = make_hop_request(
+        boil_hops=[],
+        whirlpool_hops=[
+            {
+                "alpha_acid_pct": 0.20,
+                "duration_min": 20.0,
+                "initial_temp_c": 76.7,
+                "pct": 1.0,
+                "product_form": "lupulin_pellet",
+            }
+        ],
+    )
+    response = client.post("/solve/hops", json=request.model_dump(mode="json"))
+
+    assert response.status_code == 200
+    rows = response.json()["whirlpool_rows"]
+    assert len(rows) == 1
+    assert rows[0]["mass_kg"] > 0
+
+
 def test_request_validation_uses_fastapi_detail_shape(client):
     response = client.post("/solve/batch", json={"target_abv": 5.5})
 

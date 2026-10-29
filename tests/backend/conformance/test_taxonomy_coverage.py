@@ -24,6 +24,7 @@ from app.schemas.boundary import (
     PreferredAlkalineAgent,
     SaltDistribution,
     WaterStrategy,
+    WhirlpoolHopForm,
 )
 
 ARTIFACT = json.loads(
@@ -54,6 +55,10 @@ CASES = [
 @pytest.mark.parametrize(("taxonomy_id", "expected"), CASES)
 def test_taxonomy_matches_host_map(taxonomy_id, expected):
     assert taxonomy(taxonomy_id) == expected, taxonomy_id
+
+
+def test_whirlpool_hop_form_enum_matches_the_solver_map():
+    assert enum_values(WhirlpoolHopForm) == set(PRODUCT_FORM_UTILIZATION)
 
 
 def test_acid_medium_matches_acid_properties():
