@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { sharedTestApp } from "./appHelpers.js";
 
 const SUGAR = {
   sugar_id: "dextrose",
@@ -23,8 +23,7 @@ const SUGAR = {
 };
 
 async function appWithSugar() {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.engine.setCollection("batch.sugars", [{ ...SUGAR }]);
   app.compute();
   return app;
