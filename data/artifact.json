@@ -494,18 +494,17 @@
       "english_brown",
       "american_pale"
     ],
-    "wet_hop_product_type": [
-      "raw_whole_cones",
-      "frozen_whole_cones",
-      "map_whole_cones",
-      "liquid_extract",
-      "cryo_powder",
-      "terpene_isolate"
-    ],
-    "wet_hop_application_stage": [
+    "hop_addition_stage": [
+      "mash",
+      "boil",
       "whirlpool",
-      "active_fermentation",
-      "cold_side"
+      "fermentation"
+    ],
+    "hop_product_type": [
+      "t90_pellet",
+      "lupulin_pellet",
+      "flowable_extract",
+      "terpene_isolate"
     ],
     "hop_unit": [
       "oz",
@@ -2259,7 +2258,7 @@
     },
     "dry_hop_row": {
       "product_type": {
-        "taxonomy": "wet_hop_product_type"
+        "taxonomy": "hop_product_type"
       },
       "variety": {},
       "quantity": {
@@ -2269,7 +2268,8 @@
         "taxonomy": "hop_unit"
       },
       "application_stage": {
-        "taxonomy": "wet_hop_application_stage"
+        "taxonomy": "hop_addition_stage",
+        "default": "fermentation"
       },
       "time_of_application": {},
       "contact_duration_hours": {

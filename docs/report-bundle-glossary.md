@@ -49,10 +49,10 @@ _109 paths_
 | `batch.conversion_efficiency` | Conversion efficiency | root | percentage | pct (%) | 1 | — |
 | `batch.delta_v_evap` | Boil-off | derived | volume | L | 1 | — |
 | `batch.dry_hops` | Dry hops | collection | — | — | — | — |
-| `batch.dry_hops.application_stage` | Stage | field | — | — | — | whirlpool, active_fermentation, cold_side |
+| `batch.dry_hops.application_stage` | Stage | field | — | — | — | mash, boil, whirlpool, fermentation |
 | `batch.dry_hops.contact_duration_hours` | Contact duration | field | time | hr | 1 | — |
 | `batch.dry_hops.notes` | Notes | field | — | — | — | — |
-| `batch.dry_hops.product_type` | Type | field | — | — | — | raw_whole_cones, frozen_whole_cones, map_whole_cones, liquid_extract, cryo_powder, terpene_isolate |
+| `batch.dry_hops.product_type` | Type | field | — | — | — | t90_pellet, lupulin_pellet, flowable_extract, terpene_isolate |
 | `batch.dry_hops.quantity` | Quantity | field | dimensionless | — | — | — |
 | `batch.dry_hops.time_of_application` | When | field | — | — | — | — |
 | `batch.dry_hops.unit` | Unit | field | — | — | — | oz, g, ml |
