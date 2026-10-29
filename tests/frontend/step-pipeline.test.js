@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { CARD_REFRESHES } from "../../frontend/src/adapters/stepView.js";
-import { createTestApp } from "./appHelpers.js";
+import { withFreshApp } from "./appHelpers.js";
 
 const CARDS = fileURLToPath(new URL("../../frontend/src/adapters/cards/", import.meta.url));
 
@@ -67,9 +67,7 @@ test("the pipeline order is the declared order", () => {
   ]);
 });
 
-test("compute produces fields, indexes status, then refreshes every card", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("compute produces fields, indexes status, then refreshes every card", withFreshApp(async (app) => {
   app.compute();
 
   assert.ok(app.fieldsById["batch.yeast_id"]);
@@ -83,4 +81,4 @@ test("compute produces fields, indexes status, then refreshes every card", async
   assert.ok(Array.isArray(app.sugarList));
   assert.equal(typeof app.sugarCountLabel, "string");
   assert.equal(typeof app.scalePin, "string");
-});
+}));

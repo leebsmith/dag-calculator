@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { unitDecimals } from "../../frontend/src/views/registry/units.js";
-import { createTestApp } from "./appHelpers.js";
+import { withFreshApp } from "./appHelpers.js";
 
 // Per-unit display precision: precision belongs to the unit, not the dimension,
 // so the same field shows a different number of digits when its unit changes.
@@ -37,9 +37,7 @@ test("unitDecimals is null where no precision is declared", () => {
   assert.equal(unitDecimals("unknown_dimension", "x"), null);
 });
 
-test("gravity readouts use the active unit's precision (SG=3, °P=1)", () => {
-  const app = createTestApp();
-  app.boot();
+test("gravity readouts use the active unit's precision (SG=3, °P=1)", withFreshApp((app) => {
   const gravity = () => app.fieldsBySlice.batch.find((f) => f.id === "solver.batch.sg_post_boil");
 
   // Default unit is Plato → one decimal.
@@ -48,11 +46,9 @@ test("gravity readouts use the active unit's precision (SG=3, °P=1)", () => {
   // Switching to SG → three decimals.
   app.setUnit("gravity", "SG");
   assert.equal(gravity().display, "1.055");
-});
+}));
 
-test("editable number inputs render their natural value (no fixed-decimal padding)", () => {
-  const app = createTestApp();
-  app.boot();
+test("editable number inputs render their natural value (no fixed-decimal padding)", withFreshApp((app) => {
   const field = () => app.fieldsBySlice.batch.find((f) => f.id === "batch.v_ferm");
 
   // The volume input must not be padded to the unit's 1-decimal precision, or a
@@ -60,4 +56,4 @@ test("editable number inputs render their natural value (no fixed-decimal paddin
   assert.equal(field().display, "20");
   app.edit(field(), "6");
   assert.equal(field().display, "6");
-});
+}));

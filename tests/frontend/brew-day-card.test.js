@@ -1,12 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 
-test("brew day checklist starts with four sections and twelve disabled rows", async () => {
-  const app = createTestApp();
-  await app.boot();
-
+test("brew day checklist starts with four sections and twelve disabled rows", withFreshApp(async (app) => {
   assert.equal(app.brewDaySections.length, 4);
   assert.equal(app.brewDayRows.length, 12);
   assert.deepEqual(
@@ -17,12 +14,9 @@ test("brew day checklist starts with four sections and twelve disabled rows", as
   assert.equal(app.brewDaySections[1].steps.length, 4);
   assert.ok(app.brewDayRows.every((row) => row.enabled === false));
   assert.ok(app.brewDayRows.every((row) => row.instructions === ""));
-});
+}));
 
-test("toggling a step updates the active count and grouped payload", async () => {
-  const app = createTestApp();
-  await app.boot();
-
+test("toggling a step updates the active count and grouped payload", withFreshApp(async (app) => {
   app.toggleBrewDayStep("advance-prep", true);
 
   assert.equal(app.brewDaySections[0].activeCount, 1);
@@ -45,12 +39,13 @@ test("toggling a step updates the active count and grouped payload", async () =>
     app.brewDayPayload.sections[0].steps[0].instructions,
     "Mill the night before"
   );
-});
+}));
 
+// The open-section set this case leaves behind is card-local state, which a
+// reset does not clear, so it keeps its own boot.
 test("accordion sections open and close independently", async () => {
   const app = createTestApp();
   await app.boot();
-
   assert.equal(app.isBrewDaySectionOpen("preparation"), true);
   assert.equal(app.isBrewDaySectionOpen("mashing"), false);
 
@@ -61,10 +56,7 @@ test("accordion sections open and close independently", async () => {
   assert.equal(app.isBrewDaySectionOpen("mashing"), true);
 });
 
-test("draft and freeze payloads include the checklist rows", async () => {
-  const app = createTestApp();
-  await app.boot();
-
+test("draft and freeze payloads include the checklist rows", withFreshApp(async (app) => {
   app.toggleBrewDayStep("batch-sparge", true);
   app.setBrewDayInstruction("batch-sparge", "Sparge slowly");
 
@@ -82,7 +74,7 @@ test("draft and freeze payloads include the checklist rows", async () => {
     frozenRows.find((row) => row.step_id === "batch-sparge").instructions,
     "Sparge slowly"
   );
-});
+}));
 
 test("loadState hydrates stored rows and materializes the canonical order", async () => {
   const app = createTestApp();
@@ -108,14 +100,11 @@ test("loadState hydrates stored rows and materializes the canonical order", asyn
   assert.equal(app.brewDayRow("advance-prep").enabled, false);
 });
 
-test("teardown restores the disabled defaults", async () => {
-  const app = createTestApp();
-  await app.boot();
-
+test("teardown restores the disabled defaults", withFreshApp(async (app) => {
   app.toggleBrewDayStep("whirlpool", true);
   app.setBrewDayInstruction("whirlpool", "Hold the whirlpool rest");
   app.teardown();
 
   assert.ok(app.brewDayRows.every((row) => row.enabled === false));
   assert.ok(app.brewDayRows.every((row) => row.instructions === ""));
-});
+}));

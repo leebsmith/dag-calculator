@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import { createCalculator } from "../../frontend/src/engine/index.js";
 import { createSession } from "../../frontend/src/adapters/session.js";
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, sharedTestApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { identityFixture, loadArtifact } from "./helpers.js";
 
@@ -54,8 +54,7 @@ test("library edits do not perturb a batch that carries a snapshot", () => {
 });
 
 test("picking a component copies it forward; clearing removes the copy", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
 
   app.selectYeast(YEAST_ID);
   assert.equal(app.draftState().selections["batch.yeast"].name, YEAST.name);

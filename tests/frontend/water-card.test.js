@@ -268,7 +268,6 @@ test("water readouts use the fixed precision policy", async () => {
 });
 
 test("prescription suppresses doses that round to zero", withFreshApp((app) => {
-
   assert.equal(app.waterPrescription.suppressed, true);
   assert.ok(app.waterPrescription.mash.length > 0);
   assert.equal(

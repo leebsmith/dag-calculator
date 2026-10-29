@@ -5,7 +5,6 @@ import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { MASH_PRESETS } from "../../frontend/src/views/mash.js";
 
 test("mash card defaults to a single-infusion schedule with every canonical rest", withFreshApp(async (app) => {
-
   assert.equal(app.mashPresetId, "single_infusion");
 
   const ids = app.mashRests.map((r) => r.rest_id);
@@ -26,7 +25,6 @@ test("mash card defaults to a single-infusion schedule with every canonical rest
 }));
 
 test("onMashPresetChange applies a preset, seeds durations, and leaves mash-out alone", withFreshApp(async (app) => {
-
   app.onMashPresetChange("german_pils");
 
   assert.equal(app.mashPresetId, "german_pils");
@@ -46,7 +44,6 @@ test("onMashPresetChange applies a preset, seeds durations, and leaves mash-out 
 }));
 
 test("toggleMashRest marks the schedule custom, seeds temp and duration, and allows mash-out", withFreshApp(async (app) => {
-
   app.toggleMashRest("protein", true);
 
   assert.equal(app.mashPresetId, "custom");
@@ -60,7 +57,6 @@ test("toggleMashRest marks the schedule custom, seeds temp and duration, and all
 }));
 
 test("the combined amylase rest and the beta/alpha pair exclude each other", withFreshApp(async (app) => {
-
   app.toggleMashRest("beta_amylase", true);
   assert.equal(app.mashRests.find((r) => r.rest_id === "beta_amylase").enabled, true);
   assert.equal(
@@ -98,7 +94,6 @@ test("mash time readouts are whole minutes", withFreshApp(async (app) => {
 }));
 
 test("dough-in target tracks ticked and configured rests", withFreshApp(async (app) => {
-
   app.toggleMashRest("beta_alpha_amylase", false);
   app.toggleMashRest("alpha_amylase", true);
   assert.equal(app.mashDoughInTempC, 70.0);
@@ -114,7 +109,6 @@ test("dough-in target tracks ticked and configured rests", withFreshApp(async (a
 }));
 
 test("Configure Rests modal is draft/cancel: Cancel discards, OK commits", withFreshApp(async (app) => {
-
   app.openMashModal();
   assert.equal(app.mashModalOpen, true);
   assert.ok(app.mashDraft.length > 0);
@@ -141,7 +135,6 @@ test("MASH_PRESETS includes single_infusion and custom as bookends of the matrix
 });
 
 test("custom preset leaves the dough-in target unresolved and keeps mash-out", withFreshApp(async (app) => {
-
   app.onMashPresetChange("custom");
   assert.equal(app.mashPresetId, "custom");
   assert.equal(app.doughInInheritedTempC, undefined);
@@ -151,7 +144,6 @@ test("custom preset leaves the dough-in target unresolved and keeps mash-out", w
 }));
 
 test("mash temperature labels and ranges follow the unit tracker", withFreshApp(async (app) => {
-
   assert.equal(app.temperatureUnit, "°C");
   assert.equal(app.restTempRangeDisplay("beta_amylase"), "62–65");
   assert.equal(app.restTempRangeDisplay("alpha_amylase"), "68–72");

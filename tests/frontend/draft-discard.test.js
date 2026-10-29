@@ -4,12 +4,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, sharedTestApp } from "./appHelpers.js";
 
 async function bootedApp() {
-  const app = createTestApp();
-  await app.boot();
-  return app;
+  return sharedTestApp();
 }
 
 test("an untouched draft cancels without a prompt", async () => {
@@ -59,8 +57,11 @@ test("the sugar editor shares the same dirty guard", async () => {
   assert.equal(app.sugarEditorOpen, false);
 });
 
+// The case ends with the malt editor open, which is card-local state a reset does
+// not clear, so it keeps its own boot.
 test("Escape dismisses the prompt first, then closes the drawer, then cancels", async () => {
-  const app = await bootedApp();
+  const app = createTestApp();
+  await app.boot();
 
   app.openMaltEditor();
   app.editDraftCell(0, "parts", 20);

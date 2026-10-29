@@ -1,11 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, sharedTestApp } from "./appHelpers.js";
 
 test("number inputs keep raw text while editing and format on blur", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   const field = app.fieldsById["batch.boil_time_min"];
 
   app.editNumberInput("field:batch.boil_time_min", field, "1");
@@ -37,8 +36,7 @@ test("draft grid cells keep raw text for the whirlpool temperature", async () =>
 });
 
 test("collection cells keep raw text while editing", async () => {
-  const app = createTestApp();
-  await app.boot();
+  const app = await sharedTestApp();
   app.openHopEditor();
   app.addCatalogHop("cascade");
   app.saveHopEditor();

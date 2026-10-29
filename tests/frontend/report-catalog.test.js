@@ -10,7 +10,7 @@ import { buildReportCatalog } from "../../frontend/src/views/registry/catalog.js
 import { registry } from "../../frontend/src/views/registry/index.js";
 import { resolveReference } from "../../frontend/src/engine/paths.js";
 import { artifact as artifactFixture } from "../guards/util.js";
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 
 const catalog = buildReportCatalog(artifactFixture());
 const artifact = artifactFixture();
@@ -156,22 +156,18 @@ test("the catalog is JSON-serializable", () => {
   assert.doesNotThrow(() => JSON.stringify(catalog));
 });
 
-test("the app exposes the same catalog through the snapshot installer", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("the app exposes the same catalog through the snapshot installer", withFreshApp(async (app) => {
   assert.deepEqual(app.reportCatalog(), catalog);
-});
+}));
 
-test("the catalog covers every node in the freeze valuation", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("the catalog covers every node in the freeze valuation", withFreshApp(async (app) => {
   app.setRoot("batch.target_ibu", 42);
   const { valuation } = app.freezePayload();
   const nodes = app.reportCatalog().nodes;
 
   const missing = Object.keys(valuation).filter((id) => !(id in nodes));
   assert.deepEqual(missing, [], `uncovered valuation nodes: ${missing.join(", ")}`);
-});
+}));
 
 // Mirror of ReportBundle._cross_references coverage: every node id, boundary
 // output, selection field, and collection row field exposed by the valuation

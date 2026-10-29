@@ -1,7 +1,7 @@
 # Optimize local testing
 
-Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–3
-landed 2026-10-29, Phases 4–6 proposed. Target machine: ASUS NUC6i3SYH —
+Status: **in progress**. Reshaped 2026-10-29 for goal-driven execution; Phases 0–4
+landed 2026-10-29, Phases 5–6 proposed. Target machine: ASUS NUC6i3SYH —
 Intel i3-6100U (2 physical cores / 4 threads), 2.3 GHz, 8 GB. Every baseline
 number below was measured on this box on 2026-10-29; none is extrapolated.
 
@@ -745,6 +745,99 @@ test counts for the named files.
 through 4k convert in descending risk order. If a group cannot convert a suite
 safely, it says so and leaves the suite on a fresh boot — that is a valid group
 outcome, not a failed goal.
+
+**Landed.** 2026-10-29 — eleven commits, from `Share the app across read-only
+suites` through `Reset the app between card cases: library and lifecycle suites`.
+A note cannot carry the sha of the commit that contains it; `git log --oneline
+ac252c2..HEAD` lists the group. Each group's commit body carries its own
+equivalence lines and the suites it left on a fresh boot.
+
+| Gate | Before | After |
+|---|---|---|
+| `make test` | 46.0 s (Phase 3 note; 48.8–52.0 s across that phase's runs) | 48.9 s at 4a; 52.7 s and 54.7 s at 4k — 156 files, 960 tests pass; backend 697 passed, 1 skipped. Load average 8–12 across the 4k runs |
+| Frontend lane, back to back against the Phase 3 tree | 36.2 / 29.8 / 29.9 s | 27.6 / 28.3 / 27.3 s |
+| `node scripts/test-cost.mjs` | frontend 58.2 s serial, 155 files, 958 tests, 41 boot an app; backend 51 files, 698 tests, 20.6 s wall (15.7 s inside rows) | frontend 55.0 s serial, 156 files, 960 tests, 42 boot an app; backend 51 files, 698 tests, 18.7 s wall (14.0 s inside rows) |
+| one fresh boot vs one reset | `createTestApp()` + `boot()` 23.0–23.4 ms | `sharedTestApp()` reset 10.4 ms |
+| guard `tests/guards/reset-baseline.test.js` | — | 2 pass; fails when the teardown, the strategy re-derivation or the unit clear is removed from the reset |
+| `make coverage` (frontend) | 96.06 / 86.53 / 91.31 % | 96.11 / 86.56 / 91.52 % |
+| `make coverage` (backend) | 96 % of 3207 statements, 118 missed | unchanged |
+| `make check` | 8.2–11.2 s (Phase 3) | 6.6–8.4 s |
+
+37 of the 41 app-booting suites now share an app: 24 convert every booting case
+and 13 convert the cases whose card-local state a reset can restore. The four
+that keep per-test boots are `installer-contract`, `water-gate`, `library` and
+`fermentation-space`. Per-group equivalence lines and the cases kept on a fresh
+boot are in each group's commit body; by group:
+
+| Group | Suites converted | Kept wholly on fresh boots |
+|---|---|---|
+| 4a | the nine read-only suites | `installer-contract` (booting adds members no installer declares) |
+| 4b | `card-display`, 19 of its 25 booting cases | — |
+| 4c | `step-boundaries`, its six offline cases | — |
+| 4d | `water-card`, 14 of 18 | — |
+| 4e | `hops-card`, 12 of 14 | — |
+| 4f | `style-card`, the two identity-free cases | — |
+| 4g | `pin-matrix`, all 12 | — |
+| 4h | `report-format`, all 12 | — |
+| 4i | `mash-card`, 9 of 10 | — |
+| 4j | `water-ratio`, `water-target-mirror`, `late-addition-intent`, `late-addition-parts`, `late-addition-share-zero`, `late-addition-effect-mirror`, `attenuation-display`, `ingredient-priors` | `water-gate` (one HTTP case) |
+| 4k | `selections`, `selection-validation`, `number-input`, `unit-decimals`, `report-catalog`, `report-inputs`, `freeze-shape`, `mash-preset-mirror`, `step-lifecycle`, `step-pipeline`, `brew-day-card`, `draft-discard` | `library` (failing-client case), `fermentation-space` (every case loads an identity) |
+
+Deviations:
+
+- **`sharedTestApp()` resets on every call.** The plan gave `sharedTestApp()` to
+  read-only suites and `withFreshApp(fn)` to mutating ones, but its own 4a list
+  contains suites that mutate (`hamilton` edits a cell, `roots-only` edits
+  roots, `ion-constraints` sets targets and pins, `display-only-units` switches
+  units), and a module-scoped app with no reset leaks between cases. There is
+  one reset semantic with two call shapes: `sharedTestApp()` for a suite whose
+  cases take the app themselves, `withFreshApp(fn)` as the test-header wrapper.
+- **The reset had to restore three things `teardown()` leaves alone**, each
+  found by the equivalence run, not assumed: the seeded yeast (`createTestApp()`
+  selects it *after* the adapter captured `baselineRoots`, so teardown returns to
+  no yeast), the `water.strategy` root `boot()` derives through
+  `syncWaterTargets()`, and device-local unit prefs, which teardown preserves on
+  purpose and `resetUnits()` clears when a case left any behind. A fourth,
+  identity (style, equipment, water source), cannot be restored from the helper
+  at all — which is why every suite that loads an identity keeps its boots.
+- **Six cases across five suites kept a fresh boot for card-local state**, named
+  in their group commits: `whirlpoolHopCatalogForm` and an open inspector
+  (hops-card), an open malt editor (draft-discard), the Configure Rests modal
+  (mash-card), the open brew-day accordion (brew-day-card), a left-behind search
+  query (card-display). `teardown()` does not clear card-local state; those cases
+  are the boundary the helper documents.
+- **A per-test leak probe was added for the conversion, not shipped.** For every
+  `sharedTestApp()` call it compared the whole enumerable app surface plus the
+  engine's valuation against a fresh boot. It found two suites that were green
+  while later cases started from a polluted app (hops-card's calls 11–14,
+  brew-day-card's 4–5): equivalence alone would have shipped them. It is not in
+  the tree; the committed guard pins the helper's reset, and the suite-level
+  boundary is the reason.
+- **The predicted saving did not materialise.** The plan predicted ~20 s of
+  serial work and the ledger recorded 58.2 → 55.0 s (−3.2 s, −5.5 %); the
+  frontend lane fell ~2.2 s. §1's 80–95 ms boot is not what this tree does: after
+  Phase 3's memoization a fresh `createTestApp()` + `boot()` is 23 ms, and a
+  reset is 10 ms, so converting all 288 boots caps at ~3.7 s — and the cases the
+  card-local boundary keeps on a fresh boot cannot contribute. The remaining
+  per-boot cost is the two `compute()` passes in `createTestApp()` and `boot()`,
+  not the engine build Phase 3 removed.
+- **The ledger's boot column gained the helper names.** It is a source scan for
+  `createTestApp(`/`createStepApp(`; without `sharedTestApp(`/`withFreshApp(` a
+  converted suite would silently drop out of the count that attributes cost. It
+  is the only file outside the group's suites that 4a touched.
+- **4a also refactored `createTestApp()` into `seedYeast()` and
+  `wrapLoadState()`** so the reset re-applies the same selection the constructor
+  does; behaviour is unchanged and the guard's fresh-boot comparison covers it.
+- **Coverage was measured at the phase's ends, not after each group.** Phase 3's
+  note is the before (96.06 / 86.53 / 91.31 %), the final tree is the after
+  (96.11 / 86.56 / 91.52 %); the branch count rose because the guard and the
+  helper's conditional unit reset exercise paths nothing ran before. No group
+  removed a covered line — the diff deletes no assertion and no test name.
+- Blank-line cleanup in four already-converted suites rides in the last group's
+  commit.
+
+Coverage: frontend 96.06 / 86.53 / 91.31 % → 96.11 / 86.56 / 91.52 %; backend
+96 % of 3207 statements (118 missed) → unchanged.
 
 ### 3.6 Phase 5 — Backend serial work before worker count (½ day)
 

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 
 const STYLE = {
   id: "21A",
@@ -88,9 +88,7 @@ test("scheduled solves and status writes target the reactive binding", async () 
   assert.equal(proxy.boundaryError, null);
 });
 
-test("loadState rebinds the mash card to the loaded rest collection", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("loadState rebinds the mash card to the loaded rest collection", withFreshApp(async (app) => {
   const rests = customMashRests(app);
 
   await app.loadState({ collections: { "mash.rests": rests } });
@@ -98,12 +96,9 @@ test("loadState rebinds the mash card to the loaded rest collection", async () =
   const beta = app.mashRests.find((r) => r.rest_id === "beta_alpha_amylase");
   assert.equal(beta.use_temp_c, 68);
   assert.equal(app.doughInInheritedTempC, 68);
-});
+}));
 
-test("loadState drops a legacy dough-in rest row", async () => {
-  const app = createTestApp();
-  await app.boot();
-
+test("loadState drops a legacy dough-in rest row", withFreshApp(async (app) => {
   await app.loadState({
     collections: {
       "mash.rests": [
@@ -116,11 +111,9 @@ test("loadState drops a legacy dough-in rest row", async () => {
 
   assert.equal(app.mashRests.some((r) => r.rest_id === "dough_in"), false);
   assert.equal(app.doughInInheritedTempC, 67);
-});
+}));
 
-test("loadState rebinds the hop card to the loaded rows", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("loadState rebinds the hop card to the loaded rows", withFreshApp(async (app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0);
 
@@ -132,33 +125,26 @@ test("loadState rebinds the hop card to the loaded rows", async () => {
   assert.equal(app.hopRows.length, 1);
   assert.equal(app.hopRows[0].hop_id, "cascade");
   assert.ok(app.hopRows[0].mass_kg > 0);
-});
+}));
 
-test("loadState rebinds the yeast card to the loaded selection", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("loadState rebinds the yeast card to the loaded selection", withFreshApp(async (app) => {
   const yeastId = app.yeastCatalog[0].id;
 
   await app.loadState({ roots: { "batch.yeast_id": yeastId } });
 
   assert.equal(app.selectedYeastId, yeastId);
-});
+}));
 
-test("loadState rebinds draft rows and their readouts", async () => {
-  const app = createTestApp();
-  await app.boot();
-
+test("loadState rebinds draft rows and their readouts", withFreshApp(async (app) => {
   await app.loadState({ collections: { "batch.sugars": SUGAR_ROWS } });
   app.openDraft("batch.sugars");
 
   assert.equal(app.draftRows.length, 1);
   assert.match(app.sugarDraftMassDisplay, /0\.5/);
   app.closeDraft();
-});
+}));
 
-test("teardown restores baseline card state", async () => {
-  const app = createTestApp();
-  await app.boot();
+test("teardown restores baseline card state", withFreshApp(async (app) => {
   app.setTargetIbu(40);
   const yeastId = app.yeastCatalog[0].id;
 
@@ -182,4 +168,4 @@ test("teardown restores baseline card state", async () => {
   assert.equal(app.sugarList.length, 0);
   const beta = app.mashRests.find((r) => r.rest_id === "beta_alpha_amylase");
   assert.equal(beta.use_temp_c, 67);
-});
+}));

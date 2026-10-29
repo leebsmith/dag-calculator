@@ -41,7 +41,6 @@ test("boil hops: parts renormalize when an addition is removed", withFreshApp((a
 }));
 
 test("the hop mass unit seeds from the saved mass preference", withFreshApp((app) => {
-
   assert.equal(app.hopMassUnit, "g");
 }));
 

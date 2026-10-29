@@ -95,7 +95,6 @@ test("the pin action is offered only with an implied thickness", withFreshApp(as
 }));
 
 test("pinMashThickness writes max(default, rig floor) only in runoff", withFreshApp(async (app) => {
-
   app.setRoot("batch.topology", "runoff_ratio");
   app.compute();
   app.pinMashThickness();
@@ -108,7 +107,6 @@ test("pinMashThickness writes max(default, rig floor) only in runoff", withFresh
 }));
 
 test("Batch Sparge exposes the mash volume readout", withFreshApp(async (app) => {
-
   const table = app.fieldsBySlice.batch.find((field) => field.id === "derived-anchors");
   assert.ok(table);
   const row = table.rows.find(
@@ -343,7 +341,6 @@ test("http: a failed solve leaves an open draft editor intact", async () => {
 });
 
 test("saveDraft and closeDraft still close the editor", withFreshApp(async (app) => {
-
   app.openDraft("batch.sugars");
   app.addDraftRow({ sugar_id: "table-sugar", name: "Table Sugar", mass_kg: 0.5 });
   app.saveDraft();
