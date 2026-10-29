@@ -1,7 +1,9 @@
 // Presentation metadata for the hops slice (boil + whirlpool additions).
 export const WHIRLPOOL_ROW_DEFAULTS = {
   durationMin: 30,
-  initialTempC: 99,
+  initialTempC: 95,
+  lupulinDurationMin: 25,
+  lupulinInitialTempC: 76,
 };
 
 export const HOP_NODES = {

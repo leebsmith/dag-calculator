@@ -188,7 +188,7 @@ const FUNCTION_LINE_PINS = {
 };
 
 const FILE_LINE_PINS = {
-  "adapters/cards/hops.js": 522,
+  "adapters/cards/hops.js": 510,
   "adapters/cards/late-additions.js": 415,
   "adapters/cards/water.js": 639,
   "adapters/stepAdapter.js": 436,
@@ -200,7 +200,7 @@ const FILE_LINE_PINS = {
 const SCRIPT_COMPLEXITY = {
   "scripts/artifact-inventory.mjs": 16,
   "scripts/build-fermentables-seed.mjs": 16,
-  "scripts/build-hop-products-seed.mjs": 14,
+  "scripts/build-hop-products-seed.mjs": 13,
   "scripts/build-hops-seed.mjs": 20,
   "scripts/build-styles-seed.mjs": 14,
   "scripts/build-yeasts-seed.mjs": 14,

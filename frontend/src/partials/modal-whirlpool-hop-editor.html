@@ -254,6 +254,31 @@
                   </select>
                 </div>
                 <div class="form-group">
+                  <label class="form-label text-xs" for="whirlpool-hop-row-start">Start temperature</label>
+                  <select
+                    id="whirlpool-hop-row-start"
+                    class="form-select text-xs"
+                    :value="whirlpoolStartBandValue"
+                    @change="setWhirlpoolStartBand($event.target.value)"
+                  >
+                    <template x-for="band in whirlpoolStartBands" :key="band.value">
+                      <option
+                        :value="band.value"
+                        :selected="band.value === whirlpoolStartBandValue"
+                        x-text="band.label"
+                      ></option>
+                    </template>
+                    <option value="custom" :selected="whirlpoolStartBandValue === 'custom'">
+                      Custom (edit the grid temperature)
+                    </option>
+                  </select>
+                  <span
+                    class="form-hint"
+                    x-show="whirlpoolStartBandHint"
+                    x-text="whirlpoolStartBandHint"
+                  ></span>
+                </div>
+                <div class="form-group">
                   <label class="form-label text-xs" for="whirlpool-hop-row-alpha">Alpha acid (%)</label>
                   <input
                     id="whirlpool-hop-row-alpha"

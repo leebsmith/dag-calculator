@@ -514,7 +514,8 @@
     ],
     "whirlpool_hop_form": [
       "t90_pellet",
-      "flowable_extract"
+      "flowable_extract",
+      "lupulin_pellet"
     ],
     "late_addition_intent": [
       "dose",

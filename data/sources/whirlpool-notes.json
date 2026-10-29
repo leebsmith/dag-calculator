@@ -1,0 +1,17 @@
+{
+	"flameout_stand": {
+		"name": "Flameout Stand",
+		"temp_range": [90, 100],
+		"description": "Maximum bittering. Tannin and astringency risk. High volatile oils (e.g. myrcene) evaporative decay."
+	},
+	"astringency_polyphenol_ceiling": {
+		"name": "Astringency / Polyphenol Ceiling",
+		"temp_range": [85,90],
+		"description": "Upper limit to avoid hop bite and tannin extraction."
+	},
+	"isomerization_floor": {
+		"name": "Isomerization Floor",
+		"temp_range": [76, 79],
+		"description": "Below this range, alpha-acid isomerization effectively nears zero. Classic \"cool whirlpool\" or \"hop stand\" temperature. Massive flavor and aroma extraction"
+	}
+}

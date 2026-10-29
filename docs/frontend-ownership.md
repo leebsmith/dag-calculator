@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **573** (388 enumerable, 185 hidden)
+- Declared members: **578** (388 enumerable, 190 hidden)
 - Installers: **19**
 - Card partials: **15**
 - Installers reading another installer's key: **15 of 19**
@@ -24,7 +24,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 110 | 3 | 22 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 115 | 3 | 22 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 65 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 41 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 46 | 2 | 22 |
@@ -408,6 +408,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `setUnit` | `unitActions` | public | 1 |
 | `setWhirlpoolFraction` | `styleTargets` | public | 1 |
 | `setWhirlpoolHopCatalogForm` | `hop` | public | 1 |
+| `setWhirlpoolStartBand` | `hop` | hidden | 1 |
 | `sortedMashDraftRests` | `mash` | hidden | 1 |
 | `sortedMashRests` | `mash` | hidden | 0 |
 | `sourceKind` | `libraryUi` | public | 1 |
@@ -589,12 +590,16 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `whirlpoolHopStandardGroups` | `hop` | hidden | 0 |
 | `whirlpoolHopStandardName` | `hop` | hidden | 0 |
 | `whirlpoolHopT90Equivalent` | `hop` | hidden | 1 |
+| `whirlpoolHopTemperatureWarning` | `hop` | hidden | 1 |
 | `whirlpoolHopTotalMassDisplay` | `hop` | hidden | 1 |
 | `whirlpoolHopVisibleCatalog` | `hop` | hidden | 1 |
 | `whirlpoolIbu` | `styleTargets` | public | 0 |
 | `whirlpoolIbuDisplay` | `styleTargets` | hidden | 1 |
 | `whirlpoolIbuField` | `hop` | hidden | 1 |
 | `whirlpoolPctDisplay` | `styleTargets` | hidden | 1 |
+| `whirlpoolStartBandHint` | `hop` | hidden | 1 |
+| `whirlpoolStartBandValue` | `hop` | hidden | 1 |
+| `whirlpoolStartBands` | `hop` | hidden | 1 |
 | `writeStyleAbv` | `styleNavigator` | public | 0 |
 | `writeWaterState` | `water` | public | 0 |
 | `yeastAttenuation` | `yeast` | public | 1 |

@@ -107,7 +107,7 @@ test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", w
     assert.ok(Math.abs(row.pct - 0.5) < 1e-9, `pct=${row.pct}`);
     assert.ok(Math.abs(row.ibu - 5) < 1e-9, `ibu=${row.ibu}`);
     assert.equal(row.minutes, 30);
-    assert.equal(row.initial_temp_c, 99);
+    assert.equal(row.initial_temp_c, 95);
     assert.ok(typeof row.mass_kg === "number" && row.mass_kg > 0, `mass=${row.mass_kg}`);
   }
 
@@ -115,6 +115,46 @@ test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", w
   const citra = app.whirlpoolHopRows.find((r) => r.hop_id === "citra");
   assert.ok(cascade.mass_kg > citra.mass_kg);
   assert.match(app.whirlpoolHopTotalMassDisplay, /(oz|g|kg|lb)/);
+}));
+
+test("whirlpool hops: lupulin defaults, band selector, and the cool-flowable warning", withFreshApp((app) => {
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+
+  app.openWhirlpoolHopEditor();
+  app.setWhirlpoolHopCatalogForm("lupulin_pellet");
+  app.addCatalogWhirlpoolHop("cryo-cascade");
+  app.inspectWhirlpoolHopRow(0);
+
+  assert.equal(app.whirlpoolHopActiveRow.product_form, "lupulin_pellet");
+  assert.equal(app.whirlpoolHopActiveRow.initial_temp_c, 76);
+  assert.equal(app.whirlpoolHopActiveRow.duration_min, 25);
+  assert.equal(app.whirlpoolHopActiveRow.t90_replacement_ratio, 2);
+  assert.equal(app.whirlpoolStartBandValue, "custom");
+
+  app.setWhirlpoolStartBand("isomerization_floor");
+  assert.equal(app.whirlpoolHopActiveRow.initial_temp_c, 77.5);
+  assert.equal(app.whirlpoolStartBandValue, "isomerization_floor");
+  assert.match(app.whirlpoolStartBandHint, /isomerization/i);
+
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+  assert.equal(app.whirlpoolHopRows[0].product_form, "lupulin_pellet");
+  assert.equal(app.whirlpoolHopTemperatureWarning, "");
+
+  app.openWhirlpoolHopEditor();
+  app.setWhirlpoolHopCatalogForm("flowable_extract");
+  app.addCatalogWhirlpoolHop("dynaboost-centennial");
+  app.inspectWhirlpoolHopRow(app.draftRows.length - 1);
+  app.setWhirlpoolStartBand("isomerization_floor");
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  assert.match(app.whirlpoolHopTemperatureWarning, /disperses poorly/);
+  assert.match(app.whirlpoolHopTemperatureWarning, /0\.8[0-9]/);
+
+  // The catalog form is card-local state the reset does not clear.
+  app.setWhirlpoolHopCatalogForm("t90_pellet");
 }));
 
 test("whirlpool hops: rest duration and initial temperature drive the mass", withFreshApp((app) => {
@@ -138,7 +178,7 @@ test("whirlpool hops: rest duration and initial temperature drive the mass", wit
   assert.ok(coolShort > hotLong, `${coolShort} should exceed ${hotLong}`);
 }));
 
-test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", withFreshApp((app) => {
+test("whirlpool flowable extract uses CoA alpha, grams, and the hot scalar", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
   app.openWhirlpoolHopEditor();
@@ -161,6 +201,7 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the 1.20 scalar", wi
   app.compute();
   const pellet = app.whirlpoolHopRows[0];
   assert.ok(extract.mass_kg < pellet.mass_kg, "extract needs less mass at the same alpha");
+  assert.ok(Math.abs(pellet.mass_kg / extract.mass_kg - 1.15) < 1e-9);
 }));
 
 // The catalog form this case leaves set is card-local state, which a reset does

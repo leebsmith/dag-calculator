@@ -116,7 +116,53 @@ def test_flowable_extract_scales_mass_by_the_product_scalar():
     pellet, _ = hop_solver.whirlpool_mass_kg(product_form="t90_pellet", **common)
     extract, _ = hop_solver.whirlpool_mass_kg(product_form="flowable_extract", **common)
     assert pellet is not None and extract is not None
-    assert pellet / extract == pytest.approx(1.2, abs=1e-12)
+    assert pellet / extract == pytest.approx(1.15, abs=1e-12)
+
+
+def test_lupulin_pellet_scales_mass_by_its_constant():
+    common = {
+        "ibu": 30.0,
+        "alpha_fraction": 0.18,
+        "volume_l": 20.0,
+        "gravity": 1.05,
+        "duration_min": 25.0,
+        "initial_temp_c": 76.0,
+        "ambient_temp_c": 20.0,
+        "k_per_min": 0.0092,
+    }
+    pellet, _ = hop_solver.whirlpool_mass_kg(product_form="t90_pellet", **common)
+    lupulin, _ = hop_solver.whirlpool_mass_kg(product_form="lupulin_pellet", **common)
+    assert pellet is not None and lupulin is not None
+    assert pellet / lupulin == pytest.approx(1.10, abs=1e-12)
+
+
+def test_flowable_extract_multiplier_falls_as_the_wort_cools():
+    assert hop_solver.product_form_utilization("flowable_extract", 99.0) == pytest.approx(1.15)
+    assert hop_solver.product_form_utilization("flowable_extract", 90.0) == pytest.approx(1.15)
+    assert hop_solver.product_form_utilization("flowable_extract", 75.0) == pytest.approx(0.80)
+    assert hop_solver.product_form_utilization("flowable_extract", 60.0) == pytest.approx(0.80)
+    mid = hop_solver.product_form_utilization("flowable_extract", 82.5)
+    assert 0.80 < mid < 1.15
+    assert hop_solver.product_form_utilization("t90_pellet", 75.0) == pytest.approx(1.0)
+    assert hop_solver.product_form_utilization("lupulin_pellet", 75.0) == pytest.approx(1.10)
+
+    common = {
+        "ibu": 30.0,
+        "alpha_fraction": 0.45,
+        "volume_l": 20.0,
+        "gravity": 1.05,
+        "duration_min": 30.0,
+        "ambient_temp_c": 20.0,
+        "k_per_min": 0.0092,
+    }
+    hot, _ = hop_solver.whirlpool_mass_kg(
+        product_form="flowable_extract", initial_temp_c=95.0, **common
+    )
+    cool, _ = hop_solver.whirlpool_mass_kg(
+        product_form="flowable_extract", initial_temp_c=76.0, **common
+    )
+    assert hot is not None and cool is not None
+    assert cool > hot
 
 
 def test_cooling_temperature_follows_newton_decay():

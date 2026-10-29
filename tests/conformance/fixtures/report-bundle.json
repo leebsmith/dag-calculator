@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:78f374d0a34d394dd0d869300c20300081d0d7ea4e232300540caea679cd2696",
+    "hash": "sha256:1910f90c150cac6af38bc3ebf241b6013292fc6aadf18eb0701d67e5f2b7afec",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -519,7 +519,8 @@
         ],
         "whirlpool_hop_form": [
           "t90_pellet",
-          "flowable_extract"
+          "flowable_extract",
+          "lupulin_pellet"
         ],
         "late_addition_intent": [
           "dose",
@@ -7142,5 +7143,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:99622f337d3de474ba3d4630c4c4c5512c9e06957d35bb0e475d17b0b028d240"
+  "content_hash": "sha256:86f1db864e51a8349fed2a4e9f4f5c3d3dfddfb36a3de08c2bb59409b42e4e30"
 }

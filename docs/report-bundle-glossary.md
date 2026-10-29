@@ -113,7 +113,7 @@ _109 paths_
 | `batch.whirlpool_hops.notes` | Notes | field | — | — | — | — |
 | `batch.whirlpool_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.whirlpool_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
-| `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract |
+| `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet |
 | `batch.whirlpool_hops.t90_replacement_ratio` | T90 Replacement Ratio | field | dimensionless | — | — | — |
 | `batch.whirlpool_ibu_fraction` | Whirlpool IBU share | root | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_target_ibu` | Whirlpool IBU | derived | ibu | IBU | 1 | — |

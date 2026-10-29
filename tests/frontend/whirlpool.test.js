@@ -79,9 +79,17 @@ test("mass back-calculation inverts the forward model", () => {
   assert.ok(Math.abs(mass - 0.05) < 1e-12, `mass=${mass}`);
 });
 
-test("flowable extract applies the 1.20 utilization scalar", () => {
+test("product-form multipliers: lupulin constant, flowable temperature-dependent", () => {
   assert.equal(productFormUtilization("t90_pellet"), 1);
-  assert.equal(productFormUtilization("flowable_extract"), 1.2);
+  assert.equal(productFormUtilization("lupulin_pellet"), 1.1);
+  assert.equal(productFormUtilization("flowable_extract", 99), 1.15);
+  assert.equal(productFormUtilization("flowable_extract", 90), 1.15);
+  assert.equal(productFormUtilization("flowable_extract", 75), 0.8);
+  assert.equal(productFormUtilization("flowable_extract", 60), 0.8);
+  const mid = productFormUtilization("flowable_extract", 82.5);
+  assert.ok(mid > 0.8 && mid < 1.15, `mid=${mid}`);
+  assert.equal(productFormUtilization("t90_pellet", 75), 1);
+  assert.equal(productFormUtilization("lupulin_pellet", 75), 1.1);
 
   const common = {
     alphaFraction: 0.45,
@@ -91,12 +99,23 @@ test("flowable extract applies the 1.20 utilization scalar", () => {
   };
   const pelletMass = whirlpoolMassKg({ ibu: 30, ...common, productForm: "t90_pellet" });
   const extractMass = whirlpoolMassKg({ ibu: 30, ...common, productForm: "flowable_extract" });
-  assert.ok(Math.abs(pelletMass / extractMass - 1.2) < 1e-12);
+  assert.ok(Math.abs(pelletMass / extractMass - 1.15) < 1e-12);
   assert.ok(Math.abs(whirlpoolMassKg({ ibu: 30, ...common }) - pelletMass) < 1e-12);
+
+  const lupulinMass = whirlpoolMassKg({ ibu: 30, ...common, productForm: "lupulin_pellet" });
+  assert.ok(Math.abs(pelletMass / lupulinMass - 1.1) < 1e-12);
+
+  const coolMass = whirlpoolMassKg({
+    ibu: 30,
+    ...common,
+    initialTempC: 76,
+    productForm: "flowable_extract",
+  });
+  assert.ok(coolMass > extractMass, "cooler whirlpool needs more extract");
 
   const pellet = whirlpoolIbu({ massKg: 0.02, ...common, productForm: "t90_pellet" });
   const extract = whirlpoolIbu({ massKg: 0.02, ...common, productForm: "flowable_extract" });
-  assert.ok(Math.abs(extract.ibu / pellet.ibu - 1.2) < 1e-12);
+  assert.ok(Math.abs(extract.ibu / pellet.ibu - 1.15) < 1e-12);
 });
 
 test("cooling temperature follows Newton decay", () => {

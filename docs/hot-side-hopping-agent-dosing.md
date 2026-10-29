@@ -1,94 +1,194 @@
-> The implemented whirlpool theory and equations live in
-> [Whirlpool Hopping Model](whirlpool-hopping-model.md). This document remains
-> the product-form and dosing reference; it does not duplicate the model
-> equations.
+# Hot-side hop dosing frameworks
 
-Dosing for modern hot-side hopping agents (flowable $\text{CO}_2$ extracts, cryogenic lupulin powders, and standardized bittering resins) is specified across four primary frameworks depending on whether the product targets isomerized bitterness, aromatic oil load, or direct pellet substitution.
+Status: vendored reference. This is a generated Gemini conversation (retrieved
+2026-10-29) plus one supplier data sheet, kept as the product-form and dosing
+background for the whirlpool model. It is background, not the implementation
+contract: [`whirlpool-hopping-model.md`](whirlpool-hopping-model.md) owns the
+equations, and where the two disagree the model document wins.
 
-Unlike traditional T-90 pellets—which are dosed almost exclusively by gross vegetative weight per unit volume (e.g., $\text{oz/gal}$ or $\text{g/L}$) alongside a variable crop-year alpha acid percentage—newer advanced hop products are chemically standardized, shifting how recipes and brewing calculators must parameterize them.
+Sources named by the conversation: the YCH 702 guide (Ollie), BarthHaas
+Spectrum, and Perkins/Malowicki for the activation energy. Appendix A is the
+Yakima Chief Hops early-kettle data sheet formula.
 
----
+## 1. T-90 pellet equivalence ratios (w/w)
 
-## 1. T-90 Pellet Equivalence Ratios ($w/w$)
+The most common commercial specification for late-boil and whirlpool extracts or
+concentrated powders is a direct mass-to-mass replacement ratio against standard
+T-90 pellets. Because these products strip away non-essential vegetative
+cellulose to eliminate whirlpool trub loss, suppliers standardize their oil and
+resin concentrations to mimic a fixed multiple of raw pellet mass:
 
-The most common commercial specification for late-boil and whirlpool extracts or concentrated powders is a direct mass-to-mass replacement ratio against standard T-90 pellets. Because these products strip away non-essential vegetative cellulose to eliminate whirlpool trub loss, suppliers standardize their oil and resin concentrations to mimic a fixed multiple of raw pellet mass:
+- **Flowable whirlpool extracts** (YCH DynaBoost / 702, Haas Incognito): a
+  `1:6` to `1:10` replacement ratio by weight. `1 g` of DynaBoost replaces `10 g`
+  of T-90 (`1:10`); Incognito is typically `1:6` to `1:8` in the whirlpool.
+- **Cryogenic and enriched lupulin powders** (Cryo Hops, Lupomax): `1:2` (50 %)
+  to `1:1.4` (70 %) mass replacement.
+- **Polyphenol and mouthfeel ceiling**: technical data sheets also specify a
+  maximum substitution percentage (typically 50–75 % of the hot-side bill).
+  Replacing 100 % of T-90 with pure lipid/oil extracts strips hop-derived
+  polyphenols and tannins, thinning mouthfeel, altering protein coagulation and
+  reducing haze stability.
 
-* **Flowable Whirlpool Extracts (e.g., YCH DynaBoost / 702, Haas Incognito):** Specified at a **1:6 to 1:10** replacement ratio by weight. For example, $1\text{ g}$ of DynaBoost replaces $10\text{ g}$ of T-90 pellets ($1:10$), while Incognito is typically specified at $1:6$ to $1:8$ in the whirlpool.
-* **Cryogenic & Enriched Lupulin Powders (e.g., Cryo Hops, Lupomax):** Specified at a **1:2** ($50\%$) to **1:1.4** ($70\%$) mass replacement ratio.
-* **Polyphenol & Mouthfeel Ceiling:** Alongside the equivalence ratio, technical data sheets specify a **maximum substitution percentage** (typically $50\%$ to $75\%$ of the hot-side bill). Replacing $100\%$ of T-90 pellets with pure lipid/oil extracts strips the wort of hop-derived polyphenols and tannins, which can thin out mouthfeel, alter protein coagulation during the hot break, and reduce haze stability in New England IPAs.
+## 2. Target IBU and alpha-acid mass (mg/L)
 
----
+Dedicated hot-side bittering extracts added at the start of the boil (Haas Flex,
+supercritical CO₂ extract) are dosed stoichiometrically by target bitterness
+rather than bulk weight. They lack solid plant matter and enter the kettle
+pre-dissolved, so their isomerization kinetics are faster than whole cones or
+T-90. Dosing requires:
 
-## 2. Target IBU & Alpha Acid Mass ($\text{mg/L}$)
+1. **Target IBU contribution** — the exact mg/L of iso-alpha acids desired.
+2. **Standardized alpha-acid concentration** — pure CO₂ extracts vary by lot
+   (40–65 % alpha); flowable bittering products like Flex are standardized
+   (typically 60 % w/w).
+3. **Modified utilization factor** — standard Tinseth or Rager curves
+   under-predict extract bitterness. Extracts need a `1.15×` to `1.25×`
+   utilization multiplier (32–38 % utilization in a 60-minute boil against
+   25–30 % for pellets).
 
-For dedicated hot-side bittering extracts added at the start of the boil (such as Haas Flex or traditional supercritical $\text{CO}_2$ hop extract), dosing is specified stoichiometrically by target bitterness rather than bulk weight or pellet equivalency.
+```
+mass_extract (g) = target IBU × V_batch (L) / (AA% × U_extract × 1000)
+```
 
-Because these extracts lack solid plant matter and enter the kettle as pre-dissolved or rapidly emulsified liquids, their isomerization kinetics are faster and more efficient than whole cones or T-90 pellets. Dosing requires specifying:
+Appendix A records the supplier form of the same sum.
 
-1. **Target $\text{IBU}$ Contribution:** Defining the exact $\text{mg/L}$ of iso-alpha acids desired from the addition.
-2. **Standardized Alpha Acid Concentration:** Pure $\text{CO}_2$ extracts vary by lot ($40\%\text{ to }65\%$ alpha acids), whereas flowable bittering products like **Flex** are standardized to an exact alpha acid concentration (typically **$60\%\ w/w$**).
-3. **Modified Utilization Factor ($U_{\text{extract}}$):** Standard Tinseth or Rager utilization curves underpredict extract bitterness. Extracts require a **1.15x to 1.25x utilization multiplier** (often achieving $32\%\text{ to }38\%$ utilization in a 60-minute boil compared to $25\%\text{ to }30\%$ for pellets).
+## 3. Direct volumetric and mass-per-volume rates
 
-$$\text{Mass}_{\text{extract}}\ (\text{g}) = \frac{\text{Target IBU} \times V_{\text{batch}}\ (\text{L})}{\text{AA}\% \times U_{\text{extract}} \times 1000}$$
+Flowable hot-side agents are also specified directly by mass or volume per unit
+of knockout wort, bounded by saturation ceilings:
 
----
+- **Whirlpool rates**: commonly `0.5` to `2.0 g/L` (`0.06` to `0.26 oz/gal`).
+  Suppliers cap hot-side extract additions at `2.0 g/L`; above it, lipid phase
+  separation, oily surface slicks and foam degradation follow.
+- **Density**: flowable extracts are viscous at room temperature and are warmed
+  to 40–50 °C before dosing. Product density is typically `0.95–1.05 g/mL`, so a
+  gravimetric dose converts to a volume.
 
-## 3. Direct Volumetric & Mass-per-Volume Rates
+## 4. Total essential oil loading (mL oil / hL)
 
-When formulating a recipe from scratch rather than converting an existing T-90 bill, flowable hot-side agents are specified directly by mass or volume per unit of knockout wort, bounded by saturation ceilings:
+Late hot-side additions are increasingly specified by total volatile oil volume
+per unit wort (mL per hL, i.e. mL per 100 L). Flowable extracts are standardized
+by total oil (DynaBoost 10–12 % v/w against 0.8–3.0 % in raw pellets), which
+isolates aromatic intensity from alpha-acid crop variation:
 
-* **Whirlpool Mass/Volume Rates:** Commonly expressed in **$\text{g/L}$** (metric) or **$\text{oz/bbl}$** / **$\text{g/gal}$** (US). Typical whirlpool dosing for flowable extracts like Incognito or DynaBoost ranges from **$0.5\text{ to }2.0\text{ g/L}$** ($0.06\text{ to }0.26\text{ oz/gal}$). Suppliers explicitly cap hot-side extract additions at a ceiling of **$2.0\text{ g/L}$**; exceeding this threshold risks lipid phase separation, oily surface slicks, and severe foam degradation in the finished beer.
-* **Specific Gravity / Density Conversion ($\rho$):** Because flowable extracts are viscous liquids or pastes at room temperature (usually preheated in a warm water bath to $40^\circ\text{C}\text{--}50^\circ\text{C}$ before dosing), brewers measure them either gravimetrically on a scale or volumetrically in a graduated vessel. Specifications include a product density—typically **$\rho \approx 0.95\text{ to }1.05\text{ g/mL}$**—allowing seamless conversion between $\text{mL}$ and $\text{g}$.
+- Subtle / noble whirlpool: `0.5–1.5 mL/hL`
+- Modern pale ale / West Coast IPA: `2.0–4.0 mL/hL`
+- Saturated hazy IPA: `4.5–8.0+ mL/hL`
 
----
+## 5. Comparison of hot-side dosing specifications
 
-## 4. Total Essential Oil Loading ($\text{mL}$ Oil / $\text{hL}$)
+| Product class | Examples | Primary metric | T-90 equivalence | Modelling adjustment |
+|---|---|---|---|---|
+| Cryogenic lupulin | Cryo Hops, Lupomax | Mass (g/L) | 1:2 (50 % of T-90) | ~50 % less vegetative absorption; +5 % whirlpool utilization |
+| Flowable CO₂ extracts | DynaBoost (YCH 702), Incognito | Equivalence (w/w) or g/L | 1:6 to 1:10 | Zero absorption; `≤2 g/L` ceiling; 10–15 % isomerization penalty in a 75–85 °C whirlpool |
+| Standardized bittering | Haas Flex, supercritical CO₂ | Target IBU (mg/L iso-AA) | exact AA% (60 %) | Zero absorption; `1.15×–1.25×` boil utilization over Tinseth |
+| Hot-side oil fractions | Terpene / sesquiterpene fractions | Volume (mL/hL) | varietal oil equivalent | Zero IBU (AA% = 0); zero absorption; dose at `≤80 °C` |
 
-In precision brewing and software modeling, late-hot-side additions are increasingly specified by **total volatile oil volume per unit of wort** (typically **$\text{mL of oil per hL}$**, which equals $\text{mL per 100 L}$ or $0.038\text{ mL/gal}$).
+## 6. Timing and kinetic trade-offs
 
-Because flowable extracts are standardized by total oil content (for instance, DynaBoost is standardized to **$10\%\text{ to }12\%\ v/w$ total oil** depending on the varietal, compared to $0.8\%\text{ to }3.0\%$ in raw pellets), dosing by oil volume isolates aromatic intensity from alpha-acid crop fluctuations:
+| Product class | Addition timing | Bitterness impact | Aroma / oil impact | Wort and process impact |
+|---|---|---|---|---|
+| Standardized bittering | Early boil (60–90 min) | Maximum isomerization; `+15–25 %` utilization over T-90 | Complete stripping of monoterpenes; clean neutral bitterness | Zero trub, no absorption; polyphenol loss reduces hot-break coagulation |
+| Cryogenic lupulin | Late boil (15–5 min) or whirlpool to 80 °C | Slightly higher utilization (`+5–10 %`) from concentrated lupulin | 10–15 min of boil strips grassy hydrocarbons; sub-85 °C preserves esters | Halved vegetative loss; retains enough polyphenol for flocculation |
+| Flowable CO₂ extracts | Flameout / whirlpool (95–80 °C) or dip hop | Non-isomerized alpha: ~10–15 % utilization at 95 °C, near zero at 80 °C; raw alpha/beta contribute perceived bitterness | Avoids steam distillation; biotransformation when carried into the fermenter | 100 % wort recovery; needs shear and `>75 °C` to emulsify; `>2 g/L` destroys foam |
+| Hot-side oil fractions | Sub-isomerization whirlpool (`≤80 °C`) or inline knockout | Zero IBU; no alpha, beta or iso-alpha | Flash-off critical: dosing at a rolling boil strips the oil | Zero trub, zero polyphenol, zero wort loss |
 
-* **Subtle / Noble Whirlpool:** $0.5\text{ to }1.5\text{ mL oil/hL}$
-* **Modern Pale Ale / West Coast IPA Whirlpool:** $2.0\text{ to }4.0\text{ mL oil/hL}$
-* **Saturated Hazy IPA Whirlpool:** $4.5\text{ to }8.0+\text{ mL oil/hL}$
+- **The 80 °C isomerization threshold**: above it, alpha acids continue to
+  isomerize while myrcene and other monoterpenes flash off. Cooling to 75–80 °C
+  before dosing arrests IBU accumulation and preserves aromatic oil.
+- **Viscosity vs volatility**: cooling below ~70 °C protects aromatics but makes
+  the resin too viscous to emulsify; it smears on kettle walls or settles into
+  the trub cone. Flowables need 80–95 °C and mechanical shear.
 
----
+## 7. Temperature-dependent whirlpool modelling
 
-## Comparison of Hot-Side Dosing Specifications
+The whirlpool is a coupled system: Arrhenius-driven isomerization in one
+direction, vapor-pressure and solubility-driven oil retention in the other, plus
+an emulsification boundary for flowables.
 
-| Product Class | Representative Examples | Primary Dosing Metric | T-90 Equivalence | Key Modeling Adjustments |
-| --- | --- | --- | --- | --- |
-| **Cryogenic Lupulin** | Cryo Hops, Lupomax | Mass ($\text{g/L}$ or $\text{oz/gal}$) | $1:2$ ($50\%$ of T-90 weight) | Reduce vegetative wort absorption loss by $\approx 50\%$; slight boost ($+5\%$) to whirlpool utilization. |
-| **Flowable $\text{CO}_2$ Extracts** | DynaBoost (YCH 702), Incognito | Equivalence ($w/w$) or $\text{g/L}$ ($\text{mL/L}$) | $1:6$ to $1:10$ | **Zero wort absorption loss**; enforce $\le 2\text{ g/L}$ ceiling; apply $10\%\text{--}15\%$ isomerization penalty if added in cooler whirlpools ($75^\circ\text{C}\text{--}85^\circ\text{C}$) due to un-isomerized alpha acids. |
-| **Standardized Bittering** | Haas Flex, Supercritical $\text{CO}_2$ | Target $\text{IBU}$ ($\text{mg/L}$ Iso-AA) | Based on exact $\text{AA}\%$ ($60\%$) | **Zero wort absorption loss**; apply **1.15x–1.25x** boil utilization multiplier over Tinseth pellet baseline. |
-| **Hot-Side Oil Fractions** | Terpene / Sesquiterpene fractions | Volumetric ($\text{mL/hL}$ or $\mu\text{L/L}$) | Varietal oil equivalent | Zero $\text{IBU}$ contribution ($\text{AA}\% = 0$); zero wort absorption; added strictly at whirlpool cooldown ($\le 80^\circ\text{C}$) to prevent flash-off. || Product Class | Typical Addition Timing | Bitterness & Isomerization Impact | Aroma & Volatile Oil Impact | Wort Matrix & Process Impact |
-| --- | --- | --- | --- | --- |
-| **Standardized Bittering** *(Haas Flex, Supercritical $\text{CO}_2$)* | **Early Boil** *(60–90 min)* | **Maximum Isomerization:** Pre-liquefied resins disperse instantly without requiring cellular rupture, accelerating isomerization kinetics (+15% to +25% utilization over T-90 pellets). | **Complete Stripping:** Steam distillation flashes off virtually all monoterpenes (myrcene) and most oxygenated sesquiterpenes, leaving a clean, neutral bittering baseline. | **Zero Trub / Reduced Hot Break:** Adds zero vegetative mass, eliminating boil absorption losses. However, the complete absence of hop polyphenols reduces protein-polyphenol coagulation during the hot break. |
-| **Cryogenic Lupulin** *(Cryo Hops, Lupomax)* | **Late Boil** *(15–5 min)* <br>
+### 7.1 Sub-boiling isomerization
 
-<br>
+Alpha-acid isomerization is first-order with an empirical activation energy of
+about 79.1–88.0 kJ/mol (Perkins/Malowicki). Relative to a 100 °C boil:
 
-<br>**Whirlpool** *(Flameout to $80^\circ\text{C}$)* | **Moderate to Low Isomerization:** Late-boil additions yield slightly higher utilization (+5% to +10%) than T-90s due to concentrated lupulin exposure. Cooling the whirlpool to $80^\circ\text{C}$ halts isomerization while retaining humulinones for soft perceived bitterness. | **Targeted Fractionation:** A 10–15 min boil strips grassy/resinous hydrocarbons while retaining denser, water-soluble oxygenated compounds (linalool, geraniol). Sub-$85^\circ\text{C}$ whirlpooling preserves volatile citrus/tropical esters. | **Halved Vegetative Loss:** Reduces whirlpool trub compaction issues and cuts wort absorption losses by ~50%. Retains enough structural polyphenol content to assist in protein flocculation or NEIPA haze stability without imparting vegetative astringency. |
-| **Flowable $\text{CO}_2$ Extracts** *(DynaBoost / YCH 702, Incognito)* | **Flameout / Whirlpool** *($95^\circ\text{C}$–$80^\circ\text{C}$)* <br>
+```
+f_temp(T) = exp(-(Ea/R) × (1/T - 1/373.15))
+```
 
-<br>
+With `Ea/R ≈ 9500 K`: 98 °C ≈ 0.87, 90 °C ≈ 0.49, 85 °C ≈ 0.34, 80 °C ≈ 0.23,
+75 °C ≈ 0.16 of boiling speed. The implemented model uses `9773 K` instead (see
+the model document's reconciliation section).
 
-<br>**Kettle Carryover** *(Dip Hopping into FV)* | **Temperature-Dependent Solubility:** These are non-isomerized extracts rich in raw alpha acids. At $95^\circ\text{C}$, they achieve ~10%–15% utilization. At $80^\circ\text{C}$, thermal isomerization drops near zero, but warm turbulence dissolves raw alpha and beta acids that contribute to perceived bitterness. | **High Survival / Biotransformation:** Avoiding the rolling boil prevents steam distillation of volatile terpenes. Routing a portion of warm whirlpool wort into the fermenter before pitching ("dip hopping") blows off unpleasant sulfur/myrcene while staging glycosides and terpenols for yeast biotransformation. | **Zero Absorption / Lipid Ceiling:** 100% wort recovery in the whirlpool. Requires vigorous physical shear (pump recirculation or kettle turbulence) and wort temperatures above $75^\circ\text{C}$ to lowers viscosity and emulsify lipids. Dosing above $2\text{ g/L}$ risks un-emulsified oil slicks that destroy foam stability. |
-| **Hot-Side Oil Fractions** *(Distilled Terpene / Varietal Oils)* | **Sub-Isomerization Whirlpool** *($\le 80^\circ\text{C}$)* <br>
+### 7.2 Non-isothermal cooling integral
 
-<br>
+A whirlpool rarely sits at one temperature, so integrate the relative rate over
+the cooling curve and feed the result into the Tinseth time decay:
 
-<br>**Heat Exchanger** *(Knockout inline)* | **Zero Bitterness ($\text{0 IBU}$):** Contains no alpha, beta, or iso-alpha acids. Timing has zero effect on bitterness calculations regardless of contact time or wort gravity. | **Flash-Off Criticality:** Extremely volatile. Adding during a rolling boil or a $98^\circ\text{C}$ flameout causes rapid flash-off into the kettle stack. Must be dosed after cooling the whirlpool below $80^\circ\text{C}$ (or injected inline pre-chiller) to lock soluble aromatic fractions into the liquid phase. | **Pure Solvation:** Zero trub, zero polyphenol contribution, and zero wort loss. Relies strictly on thermal dispersion and alcohol/wort solubility rather than solid extraction mechanics. |
+```
+t_eff = ∫ f_temp(T(t)) dt
+U_wp  = M_form × f_gravity(G) × (1 - exp(-0.04 × t_eff)) / 4.15
+```
 
-### Timing & Kinetic Trade-Offs Across the Hot Side
+### 7.3 The product-form multiplier
 
-* **The $80^\circ\text{C}$ ($176^\circ\text{F}$) Isomerization Threshold:** For both **Cryogenic Lupulin** and **Flowable $\text{CO}_2$ Extracts**, $80^\circ\text{C}$ serves as the primary kinetic boundary. Above this temperature, alpha acids continue to thermally isomerize into iso-alpha acids while low-boiling-point monoterpenes (like myrcene, boiling point $167^\circ\text{C}$ but highly steam-volatile) flash off. Dropping the whirlpool via a heat exchanger or cold liquor addition to $75^\circ\text{C}\text{--}80^\circ\text{C}$ before dosing arrests IBU accumulation and maximizes aromatic oil retention.
-* **Viscosity vs. Volatility in Flowable Extracts:** **Flowable $\text{CO}_2$ Extracts** present a physical trade-off in the whirlpool. If the wort is cooled too aggressively (e.g., below $70^\circ\text{C}$) to protect delicate aromatics, the high viscosity of the resinous extract prevents proper emulsification, causing the extract to smear onto kettle walls or settle into the trub cone rather than dissolving into the wort. They require the thermal energy and mechanical shear of an active, warm whirlpool ($80^\circ\text{C}\text{--}95^\circ\text{C}$) to disperse evenly.To model the $75^\circ\text{C}$ to $98^\circ\text{C}$ ($167^\circ\text{F}$ to $208^\circ\text{F}$) whirlpool window accurately, we have to treat the whirlpool not as a static step, but as a coupled thermodynamic system: **Arrhenius-driven isomerization moving in one direction, and vapor-pressure/solubility-driven oil retention moving in the other.**
+| Form | `M_form` | Notes |
+|---|---|---|
+| T-90 pellets | 1.0 | baseline |
+| Cryo / Lupomax | 1.05–1.10 | static across the temperature window |
+| Flowable CO₂, above 90 °C | ≈1.15 | low viscosity, pre-ruptured resin |
+| Flowable CO₂, near 75 °C, low shear | 0.75–0.85 | lipid viscosity climbs, globules form, utilization falls below T-90 |
 
-Furthermore, when introducing modern hot-side agents (like flowable $\text{CO}_2$ extracts), a third physical boundary emerges: **emulsification viscosity**.
+The document gives both a "10–15 % penalty" and a `0.75–0.85` multiplier for the
+cool case, which are not the same number. The implementation takes the
+`0.75–0.85` endpoints as authoritative.
 
----
+### 7.4 Oil retention and non-iso bitterness (deferred)
 
-## Whirlpool model
+- Split total oil into non-polar hydrocarbons (myrcene, humulene, caryophyllene;
+  70–80 %) and oxygenated terpenoids (linalool, geraniol; 20–30 %). Each decays
+  first-order with a temperature-dependent volatilization constant, capped by
+  aqueous solubility (myrcene saturates around 0.5–1.5 mg/L).
+- Pellets adsorb non-polar oil onto the trub cone; extracts and oil fractions do
+  not.
+- Humulinones (oxidized alpha, 0.2–0.5 % in T-90, 0.5–1.0 % in Cryo/Lupomax) are
+  water-soluble at 75 °C, about 66 % as bitter as iso-alpha, and register on
+  spectrophotometric IBU. Supercritical CO₂ extracts contain almost none.
+- Un-isomerized alpha and hulupones dissolve in warm turbulence up to their
+  solubility limit (~14–20 mg/L, ~5–10 mg/L after fermentation pH drops).
 
-The implemented Arrhenius/Newton/Tinseth model, constants, reference vectors, and limitations are in [Whirlpool Hopping Model](whirlpool-hopping-model.md). Product-form multipliers, oil retention, and perceived-bitterness offsets remain deferred design background rather than implemented behaviour.
+These are recorded as design background; the model outputs iso-alpha IBU only.
+
+### 7.5 Architectural checkpoints
+
+- **Thermal profile vs point temperature**: a single hold temperature, or passive
+  cooling from flameout with an equipment-specific decay constant.
+- **Bitterness output**: true iso-alpha (mg/L) only, or a perceived /
+  spectrophotometric IBU that layers dissolved humulinones from pellets and Cryo
+  against pure CO₂ extracts.
+- **Oil representation**: one normalized surviving-oil yield, or separate
+  hydrocarbon and oxygenated fractions.
+
+The implemented model answers these as: passive Newton cooling from the row's
+initial temperature with a batch-level decay constant, true iso-alpha IBU, and no
+oil prediction.
+
+## Appendix A — Yakima Chief Hops early-kettle dosing formula
+
+From the YCH product data sheet for early-kettle additions:
+
+> Addition during early kettle boil to achieve average bitterness in high
+> gravity wort/beer will typically lead to the isomerisation of 35 % (by HPLC) of
+> the iso-alpha acids in the finished beer. Addition rate is thus calculated as
+> follows:
+>
+> `kg product = IBU / 35 × hl / Alpha%`
+>
+> Where: IBU = international bitterness unit desired, hl = hectolitres of
+> finished beer (1 barrel = 1.173 hectolitre), Alpha % = alpha %w/w content from
+> the CoA as a whole number. Use rates may vary depending on the brewing process
+> and the desired hopping level.
+
+The 35 % is a supplier dosing constant for standardised bittering products, not a
+Tinseth coefficient: it ignores gravity and time, and it sits above the
+`1.15×–1.25×` multiplier band in §2. The model does not implement it; the boil
+path has no product-form field yet.

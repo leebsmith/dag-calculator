@@ -28,7 +28,7 @@ BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
 .PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
-        seeds-fermentables seeds-standard-malts seeds-hop-products \
+        seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
         report-dev report-pages
 
@@ -215,7 +215,7 @@ hooks:
 # --- Seeds & scrapers --------------------------------------------------------
 # Raw scrapes are committed under data/sources/ and normalized into data/seeds/
 # by the .mjs builders. Scrapers are polite (identified UA, 1.5 s throttle).
-seeds: seeds-styles seeds-yeasts seeds-hops seeds-fermentables seeds-standard-malts seeds-hop-products
+seeds: seeds-styles seeds-yeasts seeds-hops seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes
 
 seeds-styles:
 	node scripts/build-styles-seed.mjs
@@ -234,6 +234,9 @@ seeds-standard-malts: seeds-fermentables
 
 seeds-hop-products: seeds-hops
 	node scripts/build-hop-products-seed.mjs
+
+seeds-whirlpool-notes:
+	node scripts/build-whirlpool-notes-seed.mjs
 
 scrape-yeasts:
 	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/yeast_scraper.py \

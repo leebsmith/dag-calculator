@@ -19,6 +19,11 @@ import {
 } from "../../views/producer/hopRows.js";
 import { countLabel, cycleUnit, formatPercent, formatValueWithUnit, formatWithDecimals, isFiniteNumber, resultCounter, unitSymbol } from "../../utils.js";
 import { reportError } from "../../observability.js";
+import { productFormUtilization } from "../../views/whirlpool.js";
+import {
+  makeWhirlpoolRow,
+  whirlpoolPolicyDescriptors,
+} from "../../views/producer/whirlpoolPolicy.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 const HOP_MASS_KEY = "hop.mass";
@@ -34,23 +39,6 @@ function makeRow(hop) {
     parts: 10,
     pct: 0,
   };
-}
-
-function makeWhirlpoolRow(hop) {
-  const row = {
-    hop_id: hop.id,
-    name: hop.name,
-    product_form: hop.product_form ?? "t90_pellet",
-    alpha_acid_pct: hop.alpha_acid_pct,
-    duration_min: WHIRLPOOL_ROW_DEFAULTS.durationMin,
-    initial_temp_c: WHIRLPOOL_ROW_DEFAULTS.initialTempC,
-    parts: 10,
-    pct: 0,
-  };
-  if (isFiniteNumber(hop.t90_replacement_ratio)) {
-    row.t90_replacement_ratio = hop.t90_replacement_ratio;
-  }
-  return row;
 }
 
 function resolveOrNull(engine, path) {
@@ -124,22 +112,25 @@ export function registerHopCard(app, ctx) {
     nodeId: N.whirlpoolCollection,
     seedKey: "hops",
     catalog: () => {
-      const key = app.whirlpoolHopCatalogForm === "flowable_extract" ? "hopProducts" : "hops";
-      return Object.values(ctx.cache.seeds[key] ?? {});
+      if (app.whirlpoolHopCatalogForm === "t90_pellet") {
+        return Object.values(ctx.cache.seeds.hops ?? {});
+      }
+      return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
+        (item) => item.product_form === app.whirlpoolHopCatalogForm
+      );
     },
-    catalogNameOf: (item) =>
-      item.product_form === "flowable_extract" ? "hop_product" : "hop",
+    catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id",
     categoryField: "purpose",
-    makeRow: makeWhirlpoolRow,
+    makeRow: (hop) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS),
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
-      item.product_form === "flowable_extract" ? item.brand ?? "Extract" : item.purpose || "Hop",
+      item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
       isFiniteNumber(item.alpha_acid_pct)
         ? `${formatPercent(item.alpha_acid_pct)} alpha`
         : "alpha n/a",
-      item.product_form === "flowable_extract" ? item.manufacturer : item.origin,
+      item.product_form ? item.manufacturer : item.origin,
     ],
   });
 
@@ -436,20 +427,12 @@ export function registerHopCard(app, ctx) {
         return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
-    whirlpoolHopDoseWarning: {
-      configurable: true,
-      get() {
-        const doses = (this.whirlpoolHopRows ?? [])
-          .filter((r) => r.product_form === "flowable_extract")
-          .map((r) => r.dose_g_per_gal)
-          .filter((d) => typeof d === "number" && Number.isFinite(d));
-        if (!doses.length) return "";
-        const worst = Math.max(...doses);
-        return worst > 4
-          ? `Flowable extract dose ${formatWithDecimals(worst, 2)} g/gal exceeds the 4 g/gal saturation ceiling.`
-          : "";
-      },
-    },
+    ...whirlpoolPolicyDescriptors({
+      notes: ctx.cache?.seeds?.whirlpoolNotes ?? {},
+      formatTemp,
+      formatNumber: formatWithDecimals,
+      utilizationFor: productFormUtilization,
+    }),
   });
 }
 
@@ -519,4 +502,9 @@ export const KEYS = [
   "hopTotalMassDisplay",
   "whirlpoolHopTotalMassDisplay",
   "whirlpoolHopDoseWarning",
+  "whirlpoolStartBands",
+  "whirlpoolStartBandValue",
+  "whirlpoolStartBandHint",
+  "setWhirlpoolStartBand",
+  "whirlpoolHopTemperatureWarning",
 ];

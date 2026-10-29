@@ -1,0 +1,240 @@
+{
+  "constraints": {
+    "start_temp_range": [71, 76],
+    "duration_range": [20, 30],
+    "utilization_factor_scalar": 1.10
+  },
+  "varieties": [
+    {
+      "slug": "amarillo",
+      "hop-name": "Amarillo",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.15, 0.19]
+    },
+    {
+      "slug": "ariana",
+      "hop-name": "Ariana",
+      "manufacturer": [
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.15, 0.20]
+    },
+    {
+      "slug": "azacca",
+      "hop-name": "Azacca",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "bru-1",
+      "hop-name": "BRU-1",
+      "manufacturer": [
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "callista",
+      "hop-name": "Callista",
+      "manufacturer": [
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.05, 0.10]
+    },
+    {
+      "slug": "cascade",
+      "hop-name": "Cascade",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.09, 0.14]
+    },
+    {
+      "slug": "cashmere",
+      "hop-name": "Cashmere",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.12, 0.16]
+    },
+    {
+      "slug": "centennial",
+      "hop-name": "Centennial",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.15, 0.20]
+    },
+    {
+      "slug": "chinook",
+      "hop-name": "Chinook",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "citra",
+      "hop-name": "Citra",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "columbus",
+      "hop-name": "Columbus",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.22, 0.27]
+    },
+    {
+      "slug": "dolcita",
+      "hop-name": "Dolcita",
+      "manufacturer": [
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.15, 0.20]
+    },
+    {
+      "slug": "ekuanot",
+      "hop-name": "Ekuanot",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "el-dorado",
+      "hop-name": "El Dorado",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "hbc-586-krush",
+      "hop-name": "HBC 586 / Krush",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.22, 0.27]
+    },
+    {
+      "slug": "hbc-630",
+      "hop-name": "HBC 630",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "huell-melon",
+      "hop-name": "Huell Melon",
+      "manufacturer": [
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.12, 0.16]
+    },
+    {
+      "slug": "idaho-7",
+      "hop-name": "Idaho 7",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "loral",
+      "hop-name": "Loral",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.17, 0.22]
+    },
+    {
+      "slug": "mosaic",
+      "hop-name": "Mosaic",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "nectaron",
+      "hop-name": "Nectaron",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.18, 0.22]
+    },
+    {
+      "slug": "nelson-sauvin",
+      "hop-name": "Nelson Sauvin",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "sabro",
+      "hop-name": "Sabro",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "simcoe",
+      "hop-name": "Simcoe",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.20, 0.25]
+    },
+    {
+      "slug": "strata",
+      "hop-name": "Strata",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.18, 0.23]
+    },
+    {
+      "slug": "talus",
+      "hop-name": "Talus",
+      "manufacturer": [
+        "Yakima Chief Hops",
+        "BarthHaas"
+      ],
+      "lupulin-alpha-acid-range": [0.15, 0.20]
+    },
+    {
+      "slug": "triumph",
+      "hop-name": "Triumph",
+      "manufacturer": [
+        "Yakima Chief Hops"
+      ],
+      "lupulin-alpha-acid-range": [0.16, 0.21]
+    }
+  ]
+}

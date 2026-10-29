@@ -13,11 +13,26 @@ const RATE_EXPONENT_K = 9773;
 
 export const PRODUCT_FORM_UTILIZATION = {
   t90_pellet: 1.0,
-  flowable_extract: 1.2,
+  flowable_extract: 1.15,
+  lupulin_pellet: 1.1,
 };
 
-export function productFormUtilization(productForm) {
-  return PRODUCT_FORM_UTILIZATION[productForm] ?? 1.0;
+// Flowable extracts disperse poorly as the wort cools, so their multiplier ramps
+// between the two measured bounds; T-90 and lupulin pellets are static.
+export const FLOWABLE_LOW_TEMP_C = 75;
+export const FLOWABLE_HIGH_TEMP_C = 90;
+export const FLOWABLE_LOW_UTILIZATION = 0.8;
+
+export function productFormUtilization(productForm, temperatureC = null) {
+  const base = PRODUCT_FORM_UTILIZATION[productForm] ?? 1.0;
+  if (productForm !== "flowable_extract" || temperatureC === null) return base;
+  if (!Number.isFinite(temperatureC)) return base;
+  if (temperatureC <= FLOWABLE_LOW_TEMP_C) return FLOWABLE_LOW_UTILIZATION;
+  if (temperatureC >= FLOWABLE_HIGH_TEMP_C) return base;
+  const ramp =
+    (temperatureC - FLOWABLE_LOW_TEMP_C) / (FLOWABLE_HIGH_TEMP_C - FLOWABLE_LOW_TEMP_C);
+  const smooth = ramp * ramp * (3 - 2 * ramp);
+  return FLOWABLE_LOW_UTILIZATION + smooth * (base - FLOWABLE_LOW_UTILIZATION);
 }
 
 export function relativeIsomerizationRate(tempC) {
@@ -94,7 +109,8 @@ export function whirlpoolIbu({
     kPerMin,
   });
   const utilization =
-    whirlpoolUtilization(gravity, effectiveMinutes) * productFormUtilization(productForm);
+    whirlpoolUtilization(gravity, effectiveMinutes) *
+    productFormUtilization(productForm, initialTempC);
   const concentrationMgL = (massKg * 1000 * alphaFraction * 1000) / volumeL;
   return {
     ibu: concentrationMgL * utilization,
@@ -122,7 +138,8 @@ export function whirlpoolMassKg({
     kPerMin,
   });
   const utilization =
-    whirlpoolUtilization(gravity, effectiveMinutes) * productFormUtilization(productForm);
+    whirlpoolUtilization(gravity, effectiveMinutes) *
+    productFormUtilization(productForm, initialTempC);
   if (!(utilization > 0)) return null;
   const massG = (ibu * volumeL) / (alphaFraction * 1000 * utilization);
   return massG / 1000;

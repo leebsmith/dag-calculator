@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { buildSeed as buildHops } from "../../scripts/build-hops-seed.mjs";
 import { buildSeed as buildHopProducts } from "../../scripts/build-hop-products-seed.mjs";
+import { buildSeed as buildWhirlpoolNotes } from "../../scripts/build-whirlpool-notes-seed.mjs";
 import { buildSeed as buildYeasts } from "../../scripts/build-yeasts-seed.mjs";
 import { buildSeed as buildStyles } from "../../scripts/build-styles-seed.mjs";
 import { buildSeeds as buildFermentables } from "../../scripts/build-fermentables-seed.mjs";
@@ -28,10 +29,21 @@ test("A9: hops seed is a pure rebuild of its source", () => {
   assert.deepEqual(buildHops(json("data/sources/beer-analytics-hops.json")), json("data/seeds/hops.json"));
 });
 
-test("A9: hop products seed is a pure rebuild of its source", () => {
+test("A9: hop products seed is a pure rebuild of its sources", () => {
   const source = json("data/sources/hop-products.json");
+  const lupulin = json("data/sources/hop-products-lupulin.json");
   const hops = json("data/seeds/hops.json");
-  assert.deepEqual(buildHopProducts(source.entries, hops), json("data/seeds/hop-products.json"));
+  assert.deepEqual(
+    buildHopProducts(source.entries, hops, lupulin),
+    json("data/seeds/hop-products.json")
+  );
+});
+
+test("A9: whirlpool notes seed is a pure rebuild of its source", () => {
+  assert.deepEqual(
+    buildWhirlpoolNotes(json("data/sources/whirlpool-notes.json")),
+    json("data/seeds/whirlpool-notes.json")
+  );
 });
 
 test("A9: fermentable seeds rebuild from the scrape and the crosswalk", () => {

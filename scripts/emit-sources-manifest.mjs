@@ -45,6 +45,17 @@ const META = {
       "Yakima Chief Hops DynaBoost product data sheet; BarthHaas INCOGNITO technical data sheet",
     builder: "scripts/build-hop-products-seed.mjs",
   },
+  "hop-products-lupulin.json": {
+    mechanism: "curated",
+    upstream:
+      "Yakima Chief Hops Cryo Hops and BarthHaas Lupomax lupulin data (variety list, stock alpha ranges)",
+    builder: "scripts/build-hop-products-seed.mjs",
+  },
+  "whirlpool-notes.json": {
+    mechanism: "curated",
+    upstream: "Yakima Chief Hops whirlpool addition data sheet (temperature bands)",
+    builder: "scripts/build-whirlpool-notes-seed.mjs",
+  },
   "malt-database-malts.json": {
     mechanism: "scrape",
     upstream: "malt_database (local scrape)",
@@ -84,6 +95,7 @@ const META = {
 export function rowCount(data) {
   if (Array.isArray(data)) return data.length;
   if (data && Array.isArray(data.entries)) return data.entries.length;
+  if (data && Array.isArray(data.varieties)) return data.varieties.length;
   return Object.keys(data ?? {}).length;
 }
 

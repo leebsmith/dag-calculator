@@ -57,7 +57,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 | `wet_hop_application_stage` | `whirlpool`, `active_fermentation`, `cold_side` |
 | `wet_hop_product_type` | `raw_whole_cones`, `frozen_whole_cones`, `map_whole_cones`, `liquid_extract`, `cryo_powder`, `terpene_isolate` |
-| `whirlpool_hop_form` | `t90_pellet`, `flowable_extract` |
+| `whirlpool_hop_form` | `t90_pellet`, `flowable_extract`, `lupulin_pellet` |
 
 ## Primitive schemas
 

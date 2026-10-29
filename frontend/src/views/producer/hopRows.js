@@ -10,6 +10,7 @@ const DASH = "—";
 export const WHIRLPOOL_HOP_FORMS = [
   { value: "t90_pellet", label: "T-90 pellets" },
   { value: "flowable_extract", label: "Flowable CO₂ extract" },
+  { value: "lupulin_pellet", label: "Lupulin pellet" },
 ];
 
 export function hopFormLabel(row) {

@@ -32,6 +32,13 @@
       "rows": 157,
       "sha256": "d3f794532da832fb7caf88b494af69c92eafe2f06c492860690c00eb81a7abe1"
     },
+    "hop-products-lupulin.json": {
+      "mechanism": "curated",
+      "upstream": "Yakima Chief Hops Cryo Hops and BarthHaas Lupomax lupulin data (variety list, stock alpha ranges)",
+      "builder": "scripts/build-hop-products-seed.mjs",
+      "rows": 27,
+      "sha256": "34f97e8bb0f2432f487afec0a259dc55ed1be0cfd871f484a3525855ceaf7a4f"
+    },
     "hop-products.json": {
       "mechanism": "curated",
       "upstream": "Yakima Chief Hops DynaBoost product data sheet; BarthHaas INCOGNITO technical data sheet",
@@ -75,6 +82,13 @@
       "upstream": "plans/archive/pin-matrix.md (pinned)",
       "rows": 9,
       "sha256": "55a684f6feade3abf32dbcb3de869cd3ef0345fc4bfa7fb7b4a75659b89a2b18"
+    },
+    "whirlpool-notes.json": {
+      "mechanism": "curated",
+      "upstream": "Yakima Chief Hops whirlpool addition data sheet (temperature bands)",
+      "builder": "scripts/build-whirlpool-notes-seed.mjs",
+      "rows": 3,
+      "sha256": "f46b5ac43ae3775120e92a24da3bee3a9be1bfa71a8221317f58e0fd85d999ec"
     },
     "whitelabs-yeasts.json": {
       "mechanism": "scrape",

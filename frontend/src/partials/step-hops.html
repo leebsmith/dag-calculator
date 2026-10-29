@@ -246,7 +246,15 @@
         Flowable extract: weigh the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Typical dose
         varies by product.
       </p>
+      <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'lupulin_pellet')">
+        Lupulin pellets: weigh the stock alpha; substitute at 1:2 T-90 by weight.
+      </p>
       <p class="form-hint text-warning" x-show="whirlpoolHopDoseWarning" x-text="whirlpoolHopDoseWarning"></p>
+      <p
+        class="form-hint text-warning"
+        x-show="whirlpoolHopTemperatureWarning"
+        x-text="whirlpoolHopTemperatureWarning"
+      ></p>
     </section>
 
     <div class="grain-bill-summary" x-show="hopRows.length > 0 || whirlpoolHopRows.length > 0">

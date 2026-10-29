@@ -19,6 +19,7 @@ import styles from "../../../data/seeds/styles.json" with { type: "json" };
 import waterTargets from "../../../data/seeds/water_target_profiles.json" with { type: "json" };
 import waterReports from "../../../data/seeds/water_reports.json" with { type: "json" };
 import mashSchedules from "../../../data/seeds/mash-schedules.json" with { type: "json" };
+import whirlpoolNotes from "../../../data/seeds/whirlpool-notes.json" with { type: "json" };
 import { ingestEquipment } from "./equipmentIngest.js";
 import { CATALOGS } from "./userCatalog.js";
 import { defaultBrewDayRows } from "../views/brewDay.js";
@@ -49,6 +50,7 @@ const BASE_SEEDS = {
   waterTargets,
   waterReports,
   mashSchedules,
+  whirlpoolNotes,
 };
 
 const DEFAULT_GRIST = [
