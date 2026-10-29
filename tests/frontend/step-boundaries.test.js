@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createTestApp } from "./appHelpers.js";
+import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
@@ -60,9 +60,7 @@ function makeApp(options) {
   return createTestApp(options);
 }
 
-test("offline (default): boundaries are stubbed and reported ok", async () => {
-  const app = makeApp();
-  await app.boot();
+test("offline (default): boundaries are stubbed and reported ok", withFreshApp(async (app) => {
   assert.deepEqual(app.boundaryStatuses, {
     "solver.batch": "ok",
     "solver.hops": "ok",
@@ -70,12 +68,9 @@ test("offline (default): boundaries are stubbed and reported ok", async () => {
   });
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryPending, false);
-});
+}));
 
-test("findings enumerate a violated relation with unit-formatted operands", async () => {
-  const app = makeApp();
-  await app.boot();
-
+test("findings enumerate a violated relation with unit-formatted operands", withFreshApp(async (app) => {
   app.setRoot("batch.hlt_starting_volume_l", 50);
   app.compute();
 
@@ -85,11 +80,9 @@ test("findings enumerate a violated relation with unit-formatted operands", asyn
   assert.match(finding.message, /50\.0 L/);
   assert.match(finding.message, /30\.0 L/);
   assert.ok(app.findings.some((entry) => entry.id === "hlt_not_overfilled"));
-});
+}));
 
-test("the pin action is offered only with an implied thickness", async () => {
-  const app = makeApp();
-  await app.boot();
+test("the pin action is offered only with an implied thickness", withFreshApp(async (app) => {
   assert.equal(app.pinFindingAvailable, false);
 
   app.setRoot("batch.topology", "runoff_ratio");
@@ -99,11 +92,9 @@ test("the pin action is offered only with an implied thickness", async () => {
   app.setRoot("batch.topology", "r_l_to_g");
   app.compute();
   assert.equal(app.pinFindingAvailable, false);
-});
+}));
 
-test("pinMashThickness writes max(default, rig floor) only in runoff", async () => {
-  const app = makeApp();
-  await app.boot();
+test("pinMashThickness writes max(default, rig floor) only in runoff", withFreshApp(async (app) => {
 
   app.setRoot("batch.topology", "runoff_ratio");
   app.compute();
@@ -114,11 +105,9 @@ test("pinMashThickness writes max(default, rig floor) only in runoff", async () 
   app.setRoot("batch.mash_thickness_l_per_kg", 3.0);
   app.pinMashThickness();
   assert.equal(app.engine.get("batch.mash_thickness_l_per_kg"), 3.0);
-});
+}));
 
-test("Batch Sparge exposes the mash volume readout", async () => {
-  const app = makeApp();
-  await app.boot();
+test("Batch Sparge exposes the mash volume readout", withFreshApp(async (app) => {
 
   const table = app.fieldsBySlice.batch.find((field) => field.id === "derived-anchors");
   assert.ok(table);
@@ -128,7 +117,7 @@ test("Batch Sparge exposes the mash volume readout", async () => {
   assert.ok(row);
   assert.match(row.cells.value.display, /^\d+\.\d$/);
   assert.equal(row.cells.value.unit, "L");
-});
+}));
 
 test("offline: a missing yeast leaves the batch unresolved", async () => {
   const app = createStepApp();
@@ -353,9 +342,7 @@ test("http: a failed solve leaves an open draft editor intact", async () => {
   assert.equal(app.draftRows.length, 1);
 });
 
-test("saveDraft and closeDraft still close the editor", async () => {
-  const app = makeApp();
-  await app.boot();
+test("saveDraft and closeDraft still close the editor", withFreshApp(async (app) => {
 
   app.openDraft("batch.sugars");
   app.addDraftRow({ sugar_id: "table-sugar", name: "Table Sugar", mass_kg: 0.5 });
@@ -368,7 +355,7 @@ test("saveDraft and closeDraft still close the editor", async () => {
   app.closeDraft();
   assert.equal(app.draftOpen, false);
   assert.equal(app.draftRows.length, 0);
-});
+}));
 
 test("http: posts adapted BatchSolverRequest / WaterSolverRequest bodies", async () => {
   const { fetchImpl, calls } = mockFetch({
