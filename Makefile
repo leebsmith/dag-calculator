@@ -258,18 +258,30 @@ aggregate-bjcp:
 clear: clean
 
 # Save before stopping: reclaiming ports must not be the accident that loses the
-# session, and the export needs the emulator still up. The second pkill is for an
-# emulator orphaned by a killed session — it keeps the port and cannot be
-# exported, which is how `local-dev` ends up failing with "port taken".
+# session, and the export needs the emulator still up. A live supervisor is asked
+# to stop, because it saves on the way down; a supervisor that died left its
+# children detached, and those are reclaimed by port, not by command line. Port
+# 8000 is the one that hides: uvicorn's reloader forks the worker that binds it,
+# and that worker's command line no longer names uvicorn.
 clean:
 	@echo "Saving emulator data, then reclaiming ports..."
-	@npx firebase emulators:export $(EMULATOR_DATA) --force --project $(PROJECT_ID) \
-		|| echo "clean: no running emulator; $(EMULATOR_DATA)/ keeps its last snapshot"
-	@pkill -INT -f '[f]irebase emulators:start' || true
-	@pkill -INT -f '[c]loud-firestore-emulator.*--project_id $(PROJECT_ID)' || true
-	@pkill -f '[v]ite' || true
-	@pkill -f '[u]vicorn app.main:app' || true
-	@echo "Ports reclaimed."
+	@if pgrep -f '[s]cripts/local-dev.mjs' >/dev/null; then \
+		echo "clean: stopping the running session, which saves on the way down"; \
+		pkill -INT -f '[s]cripts/local-dev.mjs'; \
+		i=0; \
+		while pgrep -f '[s]cripts/local-dev.mjs' >/dev/null && [ $$i -lt 20 ]; do \
+			sleep 1; i=$$((i + 1)); \
+		done; \
+	else \
+		npx firebase emulators:export $(EMULATOR_DATA) --force --project $(PROJECT_ID) \
+			|| echo "clean: no emulator is running; $(EMULATOR_DATA)/ keeps its last snapshot"; \
+	fi
+	@node scripts/reclaim-ports.mjs
+	@stale=$$(find . -maxdepth 1 -type d -name 'firebase-export-*' -mmin +60 2>/dev/null); \
+	 if [ -n "$$stale" ]; then \
+		echo "clean: removing the scratch directories failed exports left behind"; \
+		rm -rf $$stale; \
+	 fi
 
 # Destructive: drops every local draft, frozen batch, and library record. Kept
 # separate from `clean` so reclaiming ports never loses data by accident.

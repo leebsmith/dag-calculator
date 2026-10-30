@@ -94,8 +94,12 @@ Auth emulator's accounts. `make local-dev` imports the snapshot on start and
 before the emulator stops, because a terminal interrupt otherwise kills it
 first. `make save-data` takes an on-demand snapshot, `make clean` saves and then
 stops, and `make reset-data` deletes the snapshot; `make local-data` prints which
-state the next run starts from. Unit preferences are the one exception — they
-live in the browser's `localStorage` and never reach the emulator.
+state the next run starts from. `make local-dev` preflights its eight ports and
+refuses to start while one is held; `make clean` reclaims them by port
+(`scripts/reclaim-ports.mjs`, table in `scripts/local-ports.mjs`), because the
+process holding 8000 is uvicorn's forked worker and no command-line match reaches
+it. Unit preferences are the one exception — they live in the browser's
+`localStorage` and never reach the emulator.
 
 ## Governance & Modes
 

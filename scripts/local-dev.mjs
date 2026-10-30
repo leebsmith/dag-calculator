@@ -5,31 +5,58 @@
 // Firestore emulator before its own --export-on-exit can run. This process
 // starts the emulators in their own process group, so the interrupt arrives
 // here only, exports while they are still alive, and only then stops them.
+//
+// The ports are preflighted before anything spawns. A stale session holding one
+// makes a child exit immediately, and an exit here is a shutdown: that shutdown
+// used to fire its export request at an emulator still importing, so a busy port
+// surfaced as a Firestore export failure that named none of it.
 
 import { execFileSync, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { clearInterval, setInterval } from "node:timers";
+import { clearInterval, clearTimeout, setInterval, setTimeout } from "node:timers";
+
+import { LOCAL_PORTS, busyMessage, listening, owners } from "./local-ports.mjs";
 
 const PROJECT = process.env.FIREBASE_PROJECT_ID ?? "dag-calculator";
 const DATA = "emulator-data";
 const METADATA = `${DATA}/firebase-export-metadata.json`;
 const SAVE_MINUTES = Number(process.env.SAVE_INTERVAL_MINUTES ?? 5);
+const EMULATOR_PORTS = [8080, 9099];
+const READY_POLL_MS = 500;
+const STOP_GRACE_MS = 5000;
+const EXIT_DEADLINE_MS = 15_000;
 
 const children = [];
 let stopping = false;
 let timer = null;
+let readyPoll = null;
+let emulatorsReady = false;
+let failure = null;
+
+const stopCode = () => (failure ? 1 : 0);
+
+function running({ child }) {
+  return child.exitCode === null && child.signalCode === null;
+}
 
 function start(name, command, args, options = {}) {
   const child = spawn(command, args, { stdio: "inherit", detached: true, ...options });
   children.push({ name, child });
-  child.on("exit", (code) => {
+  child.on("exit", (code, signal) => {
     if (stopping) return;
-    shutdown(`${name} exited (${code ?? "signal"})`);
+    failure = `${name} exited (${code ?? signal})`;
+    shutdown(failure);
   });
   return child;
 }
 
+// A session that stops before the emulators finish importing has nothing to
+// save, and asking for one turns a busy port into a misleading export error.
 function exportSnapshot() {
+  if (!emulatorsReady) {
+    console.log("[local-dev] the emulators never became ready; no snapshot taken");
+    return;
+  }
   try {
     execFileSync(
       "npx",
@@ -45,8 +72,9 @@ function exportSnapshot() {
 // Every child leads its own process group, so a negative pid reaches the whole
 // tree (npm → vite, npx → firebase → java) and the terminal's interrupt reaches
 // only this process.
-function signalChild({ child }, signal) {
-  if (!child.pid || child.exitCode !== null) return;
+function signalChild(entry, signal) {
+  const { child } = entry;
+  if (!child.pid || !running(entry)) return;
   try {
     process.kill(-child.pid, signal);
   } catch (err) {
@@ -57,36 +85,68 @@ function signalChild({ child }, signal) {
 function shutdown(reason) {
   if (stopping) return;
   stopping = true;
-  if (timer) clearInterval(timer);
-  console.log(`[local-dev] ${reason}; saving emulator data before shutdown`);
+  clearInterval(timer);
+  clearTimeout(readyPoll);
+  console.log(
+    `[local-dev] ${reason}; stopping${emulatorsReady ? " after saving the emulator data" : ""}`
+  );
   exportSnapshot();
 
-  const pending = children.filter(({ child }) => child.exitCode === null);
+  const pending = children.filter(running);
   for (const entry of children) signalChild(entry, "SIGTERM");
 
   const hardStop = setTimeout(() => {
     for (const entry of children) signalChild(entry, "SIGKILL");
-  }, 5000);
+  }, STOP_GRACE_MS);
+  const giveUp = setTimeout(() => process.exit(stopCode()), EXIT_DEADLINE_MS);
 
   Promise.all(
     pending.map(
       ({ child }) =>
         new Promise((resolve) => {
-          if (child.exitCode !== null) resolve();
+          if (child.exitCode !== null || child.signalCode !== null) resolve();
           else child.once("exit", resolve);
         })
     )
   ).then(() => {
     clearTimeout(hardStop);
-    process.exit(0);
+    clearTimeout(giveUp);
+    process.exit(stopCode());
   });
 }
+
+async function preflight() {
+  const busy = [];
+  for (const entry of LOCAL_PORTS) {
+    if (!(await listening(entry.port))) continue;
+    busy.push(busyMessage(entry, owners(entry.port)[0]));
+  }
+  if (!busy.length) return;
+  for (const line of busy) console.error(`[local-dev] ${line}`);
+  console.error("[local-dev] run `make clean` to save the last session and reclaim its ports");
+  process.exit(1);
+}
+
+function watchEmulators() {
+  const tick = async () => {
+    if (stopping || emulatorsReady) return;
+    if ((await Promise.all(EMULATOR_PORTS.map(listening))).every(Boolean)) {
+      emulatorsReady = true;
+      console.log(`[local-dev] emulators ready; saving every ${SAVE_MINUTES} min and on Ctrl+C`);
+      return;
+    }
+    readyPoll = setTimeout(tick, READY_POLL_MS);
+  };
+  readyPoll = setTimeout(tick, READY_POLL_MS);
+}
+
+await preflight();
 
 const imported = existsSync(METADATA);
 console.log(
   imported
-    ? `[local-dev] importing ${DATA}/; saving every ${SAVE_MINUTES} min and on Ctrl+C`
-    : `[local-dev] ${DATA}/ holds no snapshot; starting empty and saving every ${SAVE_MINUTES} min`
+    ? `[local-dev] importing ${DATA}/`
+    : `[local-dev] ${DATA}/ holds no snapshot; starting empty`
 );
 console.log("[local-dev] app: http://localhost:5173");
 
@@ -116,6 +176,8 @@ start("uvicorn", "uv", ["run", "uvicorn", "app.main:app", "--reload", "--reload-
 
 timer = setInterval(exportSnapshot, Math.max(1, SAVE_MINUTES) * 60_000);
 timer.unref();
+
+watchEmulators();
 
 process.on("SIGINT", () => shutdown("interrupted"));
 process.on("SIGTERM", () => shutdown("terminated"));

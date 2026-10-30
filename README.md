@@ -72,15 +72,27 @@ lives in `emulator-data/` (gitignored): the Firestore documents — batches, fro
 report bundles, catalog items — and the Auth emulator's accounts. `make
 local-dev` imports that snapshot when one exists and otherwise starts empty;
 `make save-data` snapshots the running emulators; `make clean` saves and then
-stops — including an emulator orphaned by a killed session, which is how port
-8080 normally ends up taken — so reclaiming ports does not lose the session.
+stops, so reclaiming ports does not lose the session.
+
+The eight ports are the fragile part. `make local-dev` preflights 5173, 8000,
+8080, 9099 and the emulator's UI, hub, logging and hosting ports, and refuses to
+start while one is held, naming the process. `make clean` asks a running
+supervisor to stop (it saves on the way down), exports a surviving emulator
+directly, then reclaims the ports one at a time — escalating a `SIGTERM` that did
+not free a port to `SIGKILL`, and failing if one survives — and removes the
+`firebase-export-*` scratch directories a failed export leaves behind. It
+reclaims by port rather than by command line because a process is not the
+socket: uvicorn's reloader forks the worker that binds 8000, and that worker's
+command line no longer names uvicorn.
 
 The exit snapshot and `--export-on-exit` only fire on a graceful stop, so a
 `SIGKILL`ed, crashed or OOM-killed session loses that session's work: run `make
-save-data` before anything risky. `make local-dev` prints which state it is
-starting from, and warns when `emulator-data/` exists without a snapshot, which
-means an earlier export was interrupted. `make reset-data` deletes the directory
-and is the only destructive clear.
+save-data` before anything risky. Snapshots wait for the emulators to be ready,
+and a session whose child dies at startup exits non-zero and takes none, so a
+startup failure cannot be mistaken for an export failure. `make local-dev` prints
+which state it is starting from, and warns when `emulator-data/` exists without a
+snapshot, which means an earlier export was interrupted. `make reset-data`
+deletes the directory and is the only destructive clear.
 
 Unit preferences are the exception: they are device-local `localStorage`
 (`brew_unit_preferences`) and never reach the emulator, so they survive a data
