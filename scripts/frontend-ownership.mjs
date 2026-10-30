@@ -16,7 +16,7 @@ const ROOT_TEMPLATE = "frontend/index.html";
 const BINDING_ATTR = /\s(?:x-[\w:.-]+|@[\w.:-]+|:[\w.-]+)=(?:"([^"]*)"|'([^']*)')/g;
 const IDENTIFIER = /(?<![\w$.'])([A-Za-z_$][\w$]*)/g;
 const MEMBER_READ = /\b(?:this|app)\.([A-Za-z_$][\w$]*)/g;
-const CARD_PARTIAL = /^(?:step-.*|modal-.*|mash-rests-modal)\.html$/;
+const CARD_PARTIAL = /^(?:step-.*|modal-.*|.*-section|mash-rests-modal)\.html$/;
 
 function read(path) {
   return readFileSync(ROOT + path, "utf8");

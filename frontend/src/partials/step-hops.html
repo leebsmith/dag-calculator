@@ -5,293 +5,326 @@
   </div>
 
   <div class="step-card-content">
-    <div class="table-header-toolbar">
-      <div>
-        <h3 class="modal-drawer-title">Boil Additions</h3>
+    <section class="synthesized-card card-section">
+      <div class="section-header">
+        <button
+          type="button"
+          class="section-toggle"
+          :aria-expanded="isHopSectionOpen('boil') ? 'true' : 'false'"
+          aria-controls="hops-boil"
+          @click="toggleHopSection('boil')"
+        >
+          <span class="section-chevron" aria-hidden="true">▸</span>
+          <span class="section-title">Boil Additions</span>
+          <span class="section-meta" x-text="boilHopSectionMeta"></span>
+        </button>
+        <div class="section-actions">
+          <button
+            type="button"
+            class="unit-badge"
+            title="Change hop mass unit"
+            :aria-label="'Hop mass unit: ' + hopMassUnit + '. Activate to change.'"
+            @click="toggleHopMassUnit()"
+            x-text="hopMassUnit"
+          ></button>
+          <button type="button" class="btn-primary text-xs" @click="openHopEditor()">Configure Hops ⚙</button>
+        </div>
+      </div>
+
+      <div class="section-body" id="hops-boil" x-show="isHopSectionOpen('boil')">
         <p class="text-xs text-muted">Author by IBU share; the hop mass is back-calculated from Tinseth.</p>
-      </div>
-      <div class="recipes-actions">
-        <button
-          type="button"
-          class="unit-badge"
-          title="Change hop mass unit"
-          :aria-label="'Hop mass unit: ' + hopMassUnit + '. Activate to change.'"
-          @click="toggleHopMassUnit()"
-          x-text="hopMassUnit"
-        ></button>
-        <button type="button" class="btn-primary text-xs" @click="openHopEditor()">Configure Hops ⚙</button>
-      </div>
-    </div>
 
-    <div class="data-table-container">
-      <table class="data-table">
-        <colgroup>
-          <col style="width: 40%" />
-          <col style="width: 15%" />
-          <col style="width: 15%" />
-          <col style="width: 5%" />
-          <col style="width: 10%" />
-          <col style="width: 5%" />
-          <col style="width: 10%" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Hop</th>
-            <th class="text-right">Alpha</th>
-            <th class="text-right">Boil</th>
-            <th class="text-right">Parts</th>
-            <th class="text-right">IBU share</th>
-            <th class="text-right">IBU</th>
-            <th class="text-right">Mass</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template x-for="(row, ri) in hopRows" :key="ri">
-            <tr>
-              <td><span class="font-medium" x-text="row.name"></span></td>
-              <td class="text-right tabular-nums">
-                <input
-                  class="form-input table-input-parts"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  :value="hopAlphaInput(row)"
-                  @change="setHopAlpha('boil', ri, $event.target.value)"
-                  :aria-label="'Alpha acid percent for ' + row.name"
-                />
-                <span
-                  class="table-alpha-stock text-muted"
-                  x-show="hopAlphaRange(row)"
-                  :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
-                  x-text="hopAlphaRange(row)"
-                ></span>
-              </td>
-              <td class="text-right tabular-nums">
-                <span x-text="hopBoilPct(row)"></span>
-                <span class="text-xs text-muted" x-text="' · ' + hopMinutes(row)"></span>
-              </td>
-              <td class="text-right tabular-nums" x-text="row.parts"></td>
-              <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
-              <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
-              <td class="text-right tabular-nums" x-text="hopMass(row)"></td>
-            </tr>
-          </template>
-          <template x-if="hopRows.length === 0">
-            <tr>
-              <td colspan="7" class="table-empty-cell">
-                No boil hops yet. Click “Configure Hops” to add additions.
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="grain-bill-summary" x-show="hopRows.length > 0">
-      <div class="grain-bill-summary-item">
-        <span class="text-xs text-muted">Boil IBU target</span>
-        <span
-          class="text-base font-bold tabular-nums"
-          x-text="fmt.formatQuantity(boilIbuField, { fallbackUnit: 'IBU' })"
-        ></span>
-      </div>
-      <div class="grain-bill-summary-item">
-        <span class="text-xs text-muted">Boil hop mass</span>
-        <span class="text-base font-bold tabular-nums" x-text="boilHopTotalMassDisplay"></span>
-      </div>
-    </div>
-
-    <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
-      Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
-    </p>
-
-    <section class="step-section">
-      <div class="step-section-header">
-        <h3 class="step-section-title">Whirlpool</h3>
-        <button
-          type="button"
-          class="unit-badge"
-          @click="toggleWhirlpoolHelp()"
-          :aria-expanded="whirlpoolHelpOpen ? 'true' : 'false'"
-          aria-controls="whirlpool-assumptions"
-          title="Whirlpool assumptions"
-        >? Assumptions</button>
-      </div>
-
-      <div
-        id="whirlpool-assumptions"
-        x-cloak
-        x-show="whirlpoolHelpOpen"
-        x-transition.opacity.duration.150ms
-      >
-        <load src="src/partials/whirlpool-assumptions.html" />
-      </div>
-
-      <div class="step-grid-2col">
-        <template x-if="whirlpoolAmbientField">
-          <div class="form-group">
-            <label
-              class="form-label"
-              :for="whirlpoolAmbientField.id"
-              x-text="fmt.formatFieldLabel(whirlpoolAmbientField.label, whirlpoolAmbientField.unit)"
-            ></label>
-            <input
-              class="form-input"
-              type="number"
-              step="0.1"
-              :id="whirlpoolAmbientField.id"
-              :value="whirlpoolAmbientField.display"
-              @change="edit(whirlpoolAmbientField, $event.target.value)"
-            />
-            <span class="form-hint" x-show="whirlpoolAmbientField.hint" x-text="whirlpoolAmbientField.hint"></span>
-          </div>
-        </template>
-        <template x-if="whirlpoolCoolingField">
-          <div class="form-group">
-            <label
-              class="form-label"
-              :for="whirlpoolCoolingField.id"
-              x-text="fmt.formatFieldLabel(whirlpoolCoolingField.label, whirlpoolCoolingField.unit)"
-            ></label>
-            <input
-              class="form-input"
-              type="number"
-              step="1"
-              min="1"
-              :id="whirlpoolCoolingField.id"
-              :value="whirlpoolCoolingField.display"
-              @change="edit(whirlpoolCoolingField, $event.target.value)"
-            />
-            <span class="form-hint" x-show="whirlpoolCoolingField.hint" x-text="whirlpoolCoolingField.hint"></span>
-          </div>
-        </template>
-      </div>
-
-      <div class="table-header-toolbar">
-        <div>
-          <h3 class="modal-drawer-title">Whirlpool Additions</h3>
-          <p class="text-xs text-muted">Author by IBU share; mass is back-calculated from the cooling integral.</p>
-        </div>
-        <button type="button" class="btn-primary text-xs" @click="openWhirlpoolHopEditor()">Configure Whirlpool Hops ⚙</button>
-      </div>
-
-      <div class="data-table-container">
-        <table class="data-table">
-          <colgroup>
-            <col style="width: 39%" />
-            <col style="width: 15%" />
-            <col style="width: 8%" />
-            <col style="width: 8%" />
-            <col style="width: 5%" />
-            <col style="width: 10%" />
-            <col style="width: 5%" />
-            <col style="width: 10%" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>Hop</th>
-              <th class="text-right">Alpha</th>
-              <th class="text-right">Rest</th>
-              <th class="text-right">Initial</th>
-              <th class="text-right">Parts</th>
-              <th class="text-right">IBU share</th>
-              <th class="text-right">IBU</th>
-              <th class="text-right">Mass</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="(row, ri) in whirlpoolHopRows" :key="ri">
+        <div class="data-table-container">
+          <table class="data-table">
+            <colgroup>
+              <col style="width: 40%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 5%" />
+              <col style="width: 10%" />
+              <col style="width: 5%" />
+              <col style="width: 10%" />
+            </colgroup>
+            <thead>
               <tr>
-                <td>
-                  <div class="font-medium" x-text="row.name"></div>
-                  <div class="text-xs text-muted" x-text="hopForm(row)"></div>
-                </td>
-                <td class="text-right tabular-nums">
-                  <input
-                    class="form-input table-input-parts"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    :value="hopAlphaInput(row)"
-                    @change="setHopAlpha('whirlpool', ri, $event.target.value)"
-                    :aria-label="'Alpha acid percent for ' + row.name"
-                  />
-                  <span
-                    class="table-alpha-stock text-muted"
-                    x-show="hopAlphaRange(row)"
-                    :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
-                    x-text="hopAlphaRange(row)"
-                  ></span>
-                </td>
-                <td class="text-right tabular-nums" x-text="hopMinutes(row)"></td>
-                <td class="text-right tabular-nums" x-text="hopTemp(row)"></td>
-                <td class="text-right tabular-nums" x-text="row.parts"></td>
-                <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
-                <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
-                <td class="text-right tabular-nums" x-text="whirlpoolHopMass(row)"></td>
+                <th>Hop</th>
+                <th class="text-right">Alpha</th>
+                <th class="text-right">Boil</th>
+                <th class="text-right">Parts</th>
+                <th class="text-right">IBU share</th>
+                <th class="text-right">IBU</th>
+                <th class="text-right">Mass</th>
               </tr>
-            </template>
-            <template x-if="whirlpoolHopRows.length === 0">
-              <tr>
-                <td colspan="8" class="table-empty-cell">
-                  No whirlpool hops yet. Click “Configure Whirlpool Hops” to add additions.
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="grain-bill-summary" x-show="whirlpoolHopRows.length > 0">
-        <div class="grain-bill-summary-item">
-          <span class="text-xs text-muted">Whirlpool IBU target</span>
-          <span
-            class="text-base font-bold tabular-nums"
-            x-text="fmt.formatQuantity(whirlpoolIbuField, { fallbackUnit: 'IBU' })"
-          ></span>
+            </thead>
+            <tbody>
+              <template x-for="(row, ri) in hopRows" :key="ri">
+                <tr>
+                  <td><span class="font-medium" x-text="row.name"></span></td>
+                  <td class="text-right tabular-nums">
+                    <input
+                      class="form-input table-input-parts"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      :value="hopAlphaInput(row)"
+                      @change="setHopAlpha('boil', ri, $event.target.value)"
+                      :aria-label="'Alpha acid percent for ' + row.name"
+                    />
+                    <span
+                      class="table-alpha-stock text-muted"
+                      x-show="hopAlphaRange(row)"
+                      :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
+                      x-text="hopAlphaRange(row)"
+                    ></span>
+                  </td>
+                  <td class="text-right tabular-nums">
+                    <span x-text="hopBoilPct(row)"></span>
+                    <span class="text-xs text-muted" x-text="' · ' + hopMinutes(row)"></span>
+                  </td>
+                  <td class="text-right tabular-nums" x-text="row.parts"></td>
+                  <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
+                  <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
+                  <td class="text-right tabular-nums" x-text="hopMass(row)"></td>
+                </tr>
+              </template>
+              <template x-if="hopRows.length === 0">
+                <tr>
+                  <td colspan="7" class="table-empty-cell">
+                    No boil hops yet. Click “Configure Hops” to add additions.
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
         </div>
-        <div class="grain-bill-summary-item">
-          <span class="text-xs text-muted">Whirlpool hop mass</span>
-          <span class="text-base font-bold tabular-nums" x-text="whirlpoolHopTotalMassDisplay"></span>
-        </div>
-      </div>
 
-      <p class="form-hint" x-show="whirlpoolHopRows.length > 0 && whirlpoolHopRows.some((r) => r.mass_kg == null)">
-        Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
-      </p>
-      <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'flowable_extract')">
-        Flowable extract: weigh the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Typical dose
-        varies by product.
-      </p>
-      <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'lupulin_pellet')">
-        Lupulin pellets: weigh the stock alpha; substitute at 1:2 T-90 by weight.
-      </p>
-      <p class="form-hint text-warning" x-show="whirlpoolHopDoseWarning" x-text="whirlpoolHopDoseWarning"></p>
-      <p
-        class="form-hint text-warning"
-        x-show="whirlpoolHopTemperatureWarning"
-        x-text="whirlpoolHopTemperatureWarning"
-      ></p>
-      <p class="form-hint" x-show="whirlpoolZeroRestNote" x-text="whirlpoolZeroRestNote"></p>
-      <template x-for="line in whirlpoolInferredChills" :key="line">
-        <p class="form-hint" x-text="line"></p>
-      </template>
-      <p class="form-hint" x-show="whirlpoolHopRows.length > 0">
-        Rests run to knockout; a start temperature is the wort temperature when the
-        charge goes in.
-      </p>
+        <div class="summary-strip">
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Boil IBU target</span>
+            <span
+              class="text-base font-bold tabular-nums"
+              x-text="fmt.formatQuantity(boilIbuField, { fallbackUnit: 'IBU' })"
+            ></span>
+          </div>
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Boil hop mass</span>
+            <span class="text-base font-bold tabular-nums" x-text="boilHopTotalMassDisplay"></span>
+          </div>
+        </div>
+
+        <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
+          Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
+        </p>
+      </div>
     </section>
 
-    <div class="grain-bill-summary" x-show="hopRows.length > 0 || whirlpoolHopRows.length > 0">
-      <div class="grain-bill-summary-item">
-        <span class="text-xs text-muted">Total IBU target</span>
+    <section class="synthesized-card card-section">
+      <div class="section-header">
+        <button
+          type="button"
+          class="section-toggle"
+          :aria-expanded="isHopSectionOpen('whirlpool') ? 'true' : 'false'"
+          aria-controls="hops-whirlpool"
+          @click="toggleHopSection('whirlpool')"
+        >
+          <span class="section-chevron" aria-hidden="true">▸</span>
+          <span class="section-title">Whirlpool Additions</span>
+          <span class="section-meta" x-text="whirlpoolHopSectionMeta"></span>
+        </button>
+        <div class="section-actions">
+          <button
+            type="button"
+            class="unit-badge"
+            title="Change hop mass unit"
+            :aria-label="'Hop mass unit: ' + hopMassUnit + '. Activate to change.'"
+            @click="toggleHopMassUnit()"
+            x-text="hopMassUnit"
+          ></button>
+          <button type="button" class="btn-primary text-xs" @click="openWhirlpoolHopEditor()">Configure Whirlpool Hops ⚙</button>
+        </div>
+      </div>
+
+      <div class="section-body" id="hops-whirlpool" x-show="isHopSectionOpen('whirlpool')">
+        <p class="text-xs text-muted">Author by IBU share; mass is back-calculated from the cooling integral.</p>
+
+        <div class="step-grid-2col">
+          <template x-if="whirlpoolAmbientField">
+            <div class="form-group">
+              <label
+                class="form-label"
+                :for="whirlpoolAmbientField.id"
+                x-text="fmt.formatFieldLabel(whirlpoolAmbientField.label, whirlpoolAmbientField.unit)"
+              ></label>
+              <input
+                class="form-input"
+                type="number"
+                step="0.1"
+                :id="whirlpoolAmbientField.id"
+                :value="whirlpoolAmbientField.display"
+                @change="edit(whirlpoolAmbientField, $event.target.value)"
+              />
+              <span class="form-hint" x-show="whirlpoolAmbientField.hint" x-text="whirlpoolAmbientField.hint"></span>
+            </div>
+          </template>
+          <template x-if="whirlpoolCoolingField">
+            <div class="form-group">
+              <label
+                class="form-label"
+                :for="whirlpoolCoolingField.id"
+                x-text="fmt.formatFieldLabel(whirlpoolCoolingField.label, whirlpoolCoolingField.unit)"
+              ></label>
+              <input
+                class="form-input"
+                type="number"
+                step="1"
+                min="1"
+                :id="whirlpoolCoolingField.id"
+                :value="whirlpoolCoolingField.display"
+                @change="edit(whirlpoolCoolingField, $event.target.value)"
+              />
+              <span class="form-hint" x-show="whirlpoolCoolingField.hint" x-text="whirlpoolCoolingField.hint"></span>
+            </div>
+          </template>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            class="btn-link text-xs"
+            @click="toggleWhirlpoolHelp()"
+            :aria-expanded="whirlpoolHelpOpen ? 'true' : 'false'"
+            aria-controls="whirlpool-assumptions"
+          >Assumptions</button>
+          <div
+            id="whirlpool-assumptions"
+            x-cloak
+            x-show="whirlpoolHelpOpen"
+            x-transition.opacity.duration.150ms
+          >
+            <load src="src/partials/whirlpool-assumptions.html" />
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <colgroup>
+              <col style="width: 39%" />
+              <col style="width: 15%" />
+              <col style="width: 8%" />
+              <col style="width: 8%" />
+              <col style="width: 5%" />
+              <col style="width: 10%" />
+              <col style="width: 5%" />
+              <col style="width: 10%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Hop</th>
+                <th class="text-right">Alpha</th>
+                <th class="text-right">Rest</th>
+                <th class="text-right">Initial</th>
+                <th class="text-right">Parts</th>
+                <th class="text-right">IBU share</th>
+                <th class="text-right">IBU</th>
+                <th class="text-right">Mass</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(row, ri) in whirlpoolHopRows" :key="ri">
+                <tr>
+                  <td>
+                    <div class="font-medium" x-text="row.name"></div>
+                    <div class="text-xs text-muted" x-text="hopForm(row)"></div>
+                  </td>
+                  <td class="text-right tabular-nums">
+                    <input
+                      class="form-input table-input-parts"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      :value="hopAlphaInput(row)"
+                      @change="setHopAlpha('whirlpool', ri, $event.target.value)"
+                      :aria-label="'Alpha acid percent for ' + row.name"
+                    />
+                    <span
+                      class="table-alpha-stock text-muted"
+                      x-show="hopAlphaRange(row)"
+                      :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
+                      x-text="hopAlphaRange(row)"
+                    ></span>
+                  </td>
+                  <td class="text-right tabular-nums" x-text="hopMinutes(row)"></td>
+                  <td class="text-right tabular-nums" x-text="hopTemp(row)"></td>
+                  <td class="text-right tabular-nums" x-text="row.parts"></td>
+                  <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
+                  <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
+                  <td class="text-right tabular-nums" x-text="whirlpoolHopMass(row)"></td>
+                </tr>
+              </template>
+              <template x-if="whirlpoolHopRows.length === 0">
+                <tr>
+                  <td colspan="8" class="table-empty-cell">
+                    No whirlpool hops yet. Click “Configure Whirlpool Hops” to add additions.
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary-strip">
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Whirlpool IBU target</span>
+            <span
+              class="text-base font-bold tabular-nums"
+              x-text="fmt.formatQuantity(whirlpoolIbuField, { fallbackUnit: 'IBU' })"
+            ></span>
+          </div>
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Whirlpool hop mass</span>
+            <span class="text-base font-bold tabular-nums" x-text="whirlpoolHopTotalMassDisplay"></span>
+          </div>
+        </div>
+
+        <p class="form-hint" x-show="whirlpoolHopRows.length > 0 && whirlpoolHopRows.some((r) => r.mass_kg == null)">
+          Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
+        </p>
+        <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'flowable_extract')">
+          Flowable extract: weigh the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Typical dose
+          varies by product.
+        </p>
+        <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'lupulin_pellet')">
+          Lupulin pellets: weigh the stock alpha; substitute at 1:2 T-90 by weight.
+        </p>
+        <p class="form-hint text-warning" x-show="whirlpoolHopDoseWarning" x-text="whirlpoolHopDoseWarning"></p>
+        <p
+          class="form-hint text-warning"
+          x-show="whirlpoolHopTemperatureWarning"
+          x-text="whirlpoolHopTemperatureWarning"
+        ></p>
+        <p class="form-hint" x-show="whirlpoolZeroRestNote" x-text="whirlpoolZeroRestNote"></p>
+        <template x-for="line in whirlpoolInferredChills" :key="line">
+          <p class="form-hint" x-text="line"></p>
+        </template>
+        <p class="form-hint" x-show="whirlpoolHopRows.length > 0">
+          Rests run to knockout; a start temperature is the wort temperature when the
+          charge goes in.
+        </p>
+      </div>
+    </section>
+
+    <load src="src/partials/hops-dry-section.html" />
+
+    <div class="summary-strip summary-strip--total">
+      <div class="summary-strip-item">
+        <span class="text-xs text-muted">Total IBU target (boil + whirlpool)</span>
         <span
           class="text-base font-bold tabular-nums"
           x-text="fmt.formatQuantity(totalIbuField, { fallbackUnit: 'IBU' })"
         ></span>
       </div>
-      <div class="grain-bill-summary-item">
-        <span class="text-xs text-muted">Total hop mass</span>
+      <div class="summary-strip-item">
+        <span class="text-xs text-muted">Total hop mass (boil + whirlpool)</span>
         <span class="text-base font-bold tabular-nums" x-text="hopTotalMassDisplay"></span>
       </div>
     </div>

@@ -11,7 +11,7 @@
       "selectors": [
         ".btn:focus-visible",
         ".landing-title:focus-visible, .landing-kebab:focus-visible",
-        ".brew-day-section-toggle:focus-visible"
+        ".section-toggle:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
     },
@@ -68,7 +68,7 @@
       "declarations": "display: flex; flex-direction: column; gap: var(--space-1)",
       "selectors": [
         ".step-card-header",
-        ".grain-bill-summary-item"
+        ".summary-strip-item"
       ],
       "reason": "Coincidental column layout; card header and summary item are unrelated."
     },

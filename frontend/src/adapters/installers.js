@@ -114,7 +114,7 @@ export const INSTALLERS = [
   },
   { name: "mash", modules: MASH, keys: mashKeys, partials: ["step-mash.html", "mash-rests-modal.html"] },
   { name: "brewDay", modules: BREW_DAY, keys: brewDayKeys, partials: ["step-brew-day.html"] },
-  { name: "dryHops", modules: DRY_HOPS_AND_CATALOG, keys: dryHopKeys, partials: ["step-dry-hops.html", "modal-dry-hop-editor.html"] },
+  { name: "dryHops", modules: DRY_HOPS_AND_CATALOG, keys: dryHopKeys, partials: ["hops-dry-section.html", "modal-dry-hop-editor.html"] },
   { name: "water", modules: WATER, keys: waterKeys, partials: ["step-water.html"] },
   { name: "modalFocus", modules: MODAL_FOCUS, keys: modalFocusKeys },
 ];

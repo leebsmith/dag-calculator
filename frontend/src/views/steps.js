@@ -238,7 +238,7 @@ export const steps = [
     id: "hops",
     slice: "hops",
     title: "Hops",
-    subtitle: "Boil and whirlpool additions, dosed by IBU share",
+    subtitle: "Boil and whirlpool by IBU share; dry hops by schedule",
     partial: "./src/partials/step-hops.html",
     fields: [
       {
@@ -251,6 +251,7 @@ export const steps = [
         columns: ["name", "alpha_acid_pct", "duration_min", "initial_temp_c", "parts", "pct"],
         inputs: ["duration_min", "initial_temp_c", "parts"],
       },
+      { collection: "batch.dry_hops" },
       "batch.target_ibu",
       "batch.boil_target_ibu",
       "batch.whirlpool_target_ibu",
@@ -319,14 +320,6 @@ export const steps = [
     subtitle: "Choose the steps and notes included in the printed recipe",
     partial: "./src/partials/step-brew-day.html",
     fields: [{ collection: "batch.brew_day_steps" }],
-  },
-  {
-    id: "dry-hops",
-    slice: "dry-hops",
-    title: "Dry Hopping",
-    subtitle: "Application event, contact time & hop type",
-    partial: "./src/partials/step-dry-hops.html",
-    fields: [{ collection: "batch.dry_hops" }],
   },
 ];
 

@@ -7,7 +7,7 @@
   <div class="step-card-content">
     <div class="table-header-toolbar">
       <div>
-        <h3 class="modal-drawer-title">Major Grist Contributors</h3>
+        <h3 class="section-title">Major Grist Contributors</h3>
         <p class="text-xs text-muted">Normalized via the Hamilton largest-remainder algorithm (sums to 100.0%)</p>
       </div>
       <button type="button" class="btn-primary text-xs" @click="openMaltEditor()">Configure Malts ⚙</button>
@@ -75,15 +75,15 @@
       <span aria-hidden="true">≈</span> converted from apparent attenuation at 12 °P.
     </p>
 
-    <div class="grain-bill-summary" x-show="gristRows.length > 0">
-      <div class="grain-bill-summary-item">
+    <div class="summary-strip" x-show="gristRows.length > 0">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Weighted grist color</span>
         <span
           class="text-base font-bold tabular-nums"
           x-text="fmt.formatQuantity(maltWeightedColor)"
         ></span>
       </div>
-      <div class="grain-bill-summary-item">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Weighted extract yield</span>
         <span
           class="text-base font-bold tabular-nums"
@@ -95,7 +95,7 @@
     <!-- Trace / color malts: definite-mass additions (color + mash pH, not extract). -->
     <div class="table-header-toolbar">
       <div>
-        <h3 class="modal-drawer-title">Trace / Color Malts</h3>
+        <h3 class="section-title">Trace / Color Malts</h3>
         <p class="text-xs text-muted">Dosed by mass; they influence color and mash pH, not extract.</p>
       </div>
       <button type="button" class="btn-primary text-xs" @click="openTraceEditor()">Configure Trace Malts ⚙</button>
@@ -131,15 +131,15 @@
       </div>
     </template>
 
-    <div class="grain-bill-summary" x-show="traceMaltRows.length > 0">
-      <div class="grain-bill-summary-item">
+    <div class="summary-strip" x-show="traceMaltRows.length > 0">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Total trace mass</span>
         <span
           class="text-base font-bold tabular-nums"
           x-text="fmt.formatQuantity(traceMassField)"
         ></span>
       </div>
-      <div class="grain-bill-summary-item">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Weighted trace color</span>
         <span
           class="text-base font-bold tabular-nums"

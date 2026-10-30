@@ -1,19 +1,25 @@
-<section class="step-card">
-  <div class="step-card-header">
-    <h2 class="card-title" x-text="activeStep.title"></h2>
-    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
-  </div>
-
-  <div class="step-card-content">
-    <div class="table-header-toolbar">
-      <div>
-        <h3 class="modal-drawer-title">Dry-hop schedule</h3>
-        <p class="text-xs text-muted">
-          Application event, contact time &amp; hop type. Nothing here is solved.
-        </p>
-      </div>
+<section class="synthesized-card card-section">
+  <div class="section-header">
+    <button
+      type="button"
+      class="section-toggle"
+      :aria-expanded="dryHopSectionOpen ? 'true' : 'false'"
+      aria-controls="hops-dry"
+      @click="toggleDryHopSection()"
+    >
+      <span class="section-chevron" aria-hidden="true">▸</span>
+      <span class="section-title">Dry Hops</span>
+      <span class="section-meta" x-text="dryHopSectionMeta"></span>
+    </button>
+    <div class="section-actions">
       <button type="button" class="btn-primary text-xs" @click="openDryHopEditor()">Configure Dry Hops ⚙</button>
     </div>
+  </div>
+
+  <div class="section-body" id="hops-dry" x-show="dryHopSectionOpen">
+    <p class="text-xs text-muted">
+      Application event, contact time &amp; hop type. Nothing here is solved.
+    </p>
 
     <div class="data-table-container">
       <table class="data-table">
@@ -59,7 +65,7 @@
 
     <p class="form-hint" x-show="dryHopRows.length > 0">
       Applied in fermentation (cold side). The event and the contact end record what you intend;
-      there is no fermentation model behind them.
+      there is no fermentation model behind them. Dry hops add no IBU and are not in the card's totals.
     </p>
   </div>
 

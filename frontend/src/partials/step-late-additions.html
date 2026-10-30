@@ -6,7 +6,7 @@
 
   <div class="step-card-content">
     <div>
-      <h3 class="modal-drawer-title">Late Sugar Additions</h3>
+      <h3 class="section-title">Late Sugar Additions</h3>
       <p class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
         ? 'Kettle sugars authored as a share of total extract; the solver derives the row masses.'
         : 'Kettle sugars, dosed by mass; they feed the batch solver\'s late extract.'"></p>
@@ -165,22 +165,22 @@
       </div>
     </template>
 
-    <div class="grain-bill-summary" x-show="lateSugarField && lateSugarField.rows.length > 0">
-      <div class="grain-bill-summary-item">
+    <div class="summary-strip" x-show="lateSugarField && lateSugarField.rows.length > 0">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Total sugar mass</span>
         <span
           class="text-base font-bold tabular-nums"
           x-text="fmt.formatQuantity(sugarMassField)"
         ></span>
       </div>
-      <div class="grain-bill-summary-item">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Weighted sugar color</span>
         <span
           class="text-base font-bold tabular-nums"
           x-text="fmt.formatQuantity(sugarColorField)"
         ></span>
       </div>
-      <div class="grain-bill-summary-item">
+      <div class="summary-strip-item">
         <span class="text-xs text-muted">Late extract</span>
         <span
           class="text-base font-bold tabular-nums"
@@ -191,24 +191,24 @@
 
     <template x-if="sugarEffectDisplay">
       <div>
-        <div class="grain-bill-summary">
-          <div class="grain-bill-summary-item">
+        <div class="summary-strip">
+          <div class="summary-strip-item">
             <span class="text-xs text-muted">Extract share</span>
             <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.share"></span>
           </div>
-          <div class="grain-bill-summary-item">
+          <div class="summary-strip-item">
             <span class="text-xs text-muted">ΔOG</span>
             <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.og"></span>
           </div>
-          <div class="grain-bill-summary-item">
+          <div class="summary-strip-item">
             <span class="text-xs text-muted">ΔFG</span>
             <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.fg"></span>
           </div>
-          <div class="grain-bill-summary-item">
+          <div class="summary-strip-item">
             <span class="text-xs text-muted">ΔABV</span>
             <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.abv"></span>
           </div>
-          <div class="grain-bill-summary-item">
+          <div class="summary-strip-item">
             <span class="text-xs text-muted">Malt displaced</span>
             <span class="text-base font-bold tabular-nums" x-text="sugarEffectDisplay.grist"></span>
           </div>

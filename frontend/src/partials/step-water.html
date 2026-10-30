@@ -152,9 +152,9 @@
       ></button>
     </div>
 
-    <section class="step-section">
-      <div class="step-section-header">
-        <h3 class="step-section-title">Treatment</h3>
+    <section class="step-group">
+      <div class="group-header">
+        <h3 class="group-title">Treatment</h3>
       </div>
       <div class="step-grid-2col">
         <template x-for="f in waterTreatmentFields" :key="f.id">
@@ -182,9 +182,9 @@
       </div>
     </section>
 
-    <section class="step-section">
-      <div class="step-section-header">
-        <h3 class="step-section-title">Prescription</h3>
+    <section class="step-group">
+      <div class="group-header">
+        <h3 class="group-title">Prescription</h3>
       </div>
       <p class="text-xs text-muted" x-text="waterPrescription.destinations"></p>
       <p class="text-sm">
@@ -227,9 +227,9 @@
       </template>
     </section>
 
-    <section class="step-section">
-      <div class="step-section-header">
-        <h3 class="step-section-title">Details</h3>
+    <section class="step-group">
+      <div class="group-header">
+        <h3 class="group-title">Details</h3>
         <button
           type="button"
           class="btn-link text-xs"

@@ -2,9 +2,9 @@
 // cooling integral), both authored by IBU share.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
-import { displayValue, nonlinearFns } from "../../views/producer.js";
-import { UNIT_SYMBOLS, unitDecimals } from "../../views/registry/units.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
+import { createHopFormatters } from "../../views/producer/hopFormat.js";
+import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
 import {
   hopAlphaInputValue,
   hopAlphaIsOutsideStock,
@@ -19,7 +19,7 @@ import {
   mergeWhirlpoolRows,
   WHIRLPOOL_HOP_FORMS,
 } from "../../views/producer/hopRows.js";
-import { countLabel, cycleUnit, formatPercent, formatValueWithUnit, formatWithDecimals, isFiniteNumber, resultCounter, unitSymbol } from "../../utils.js";
+import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
 import { reportError } from "../../observability.js";
 import { productFormUtilization, whirlpoolTimeline } from "../../views/whirlpool.js";
 import {
@@ -102,32 +102,7 @@ export function registerHopCard(app, ctx) {
 
   const { engine, artifact, ui } = ctx;
 
-  const formatMass = (kg, unit) => {
-    if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
-    const value = displayValue(artifact, "mass", unit, kg, nonlinearFns(artifact, engine));
-    return formatValueWithUnit(
-      formatWithDecimals(value, unitDecimals("mass", unit)),
-      unitSymbol(UNIT_SYMBOLS, "mass", unit),
-      { dash: "—" }
-    );
-  };
-
-  const formatTemp = (tempC) => {
-    if (typeof tempC !== "number" || !Number.isFinite(tempC)) return "—";
-    const unitId = ui.unitMode.temperature ?? "degC";
-    const value = displayValue(
-      artifact,
-      "temperature",
-      unitId,
-      tempC,
-      nonlinearFns(artifact, engine)
-    );
-    return formatValueWithUnit(
-      formatWithDecimals(value, unitDecimals("temperature", unitId)),
-      unitSymbol(UNIT_SYMBOLS, "temperature", unitId),
-      { dash: "—" }
-    );
-  };
+  const { formatMass, formatTemp } = createHopFormatters({ artifact, engine, ui });
 
   Object.assign(app, {
     hopRows: [],
@@ -138,6 +113,7 @@ export function registerHopCard(app, ctx) {
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
     whirlpoolHelpOpen: false,
+    ...hopSectionState(),
 
     setWhirlpoolHopCatalogForm(value) {
       this.whirlpoolHopCatalogForm = value;
@@ -302,7 +278,7 @@ export function registerHopCard(app, ctx) {
         const masses = rows
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return rows.length ? "—" : "";
+        if (!masses.length) return "—";
         return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
@@ -327,7 +303,7 @@ export function registerHopCard(app, ctx) {
       configurable: true,
       get() {
         const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
-        if (!rows.length) return "";
+        if (!rows.length) return "—";
         if (
           typeof this.hopBoundaryTotalMassKg === "number" &&
           Number.isFinite(this.hopBoundaryTotalMassKg)
@@ -354,7 +330,7 @@ export function registerHopCard(app, ctx) {
         const masses = rows
           .map((r) => r.mass_kg)
           .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return rows.length ? "—" : "";
+        if (!masses.length) return "—";
         return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
       },
     },
@@ -378,6 +354,7 @@ export function registerHopCard(app, ctx) {
       reportError,
       timelineFor: whirlpoolTimeline,
     }),
+    ...hopSectionMetaDescriptors(),
   });
 
   for (const [key, id] of Object.entries({
@@ -433,6 +410,11 @@ export const KEYS = [
   "setWhirlpoolHopCatalogForm",
   "whirlpoolHelpOpen",
   "toggleWhirlpoolHelp",
+  "hopSections",
+  "toggleHopSection",
+  "isHopSectionOpen",
+  "boilHopSectionMeta",
+  "whirlpoolHopSectionMeta",
   "toggleHopMassUnit",
   "hopMass",
   "whirlpoolHopMass",

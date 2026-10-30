@@ -535,7 +535,7 @@ samp {
   overflow: hidden;
 }
 
-.grain-bill-summary {
+.summary-strip {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-6);
@@ -545,7 +545,11 @@ samp {
   background-color: var(--sys-surface-subtle);
 }
 
-.grain-bill-summary-item {
+.summary-strip--total {
+  border: 1px solid var(--sys-border-subtle);
+}
+
+.summary-strip-item {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -691,13 +695,6 @@ samp {
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--sys-border-subtle);
   background-color: var(--sys-surface-subtle);
-}
-
-.modal-drawer-title {
-  margin: var(--space-0);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--sys-text-primary);
 }
 
 .modal-drawer-body {
@@ -1870,17 +1867,26 @@ samp {
   accent-color: var(--sys-color-action-primary);
 }
 
-/* --- Brew day checklist card --- */
+/* --- Card sections --- */
 
-.brew-day-section {
+.card-section {
   gap: var(--space-2);
 }
 
-.brew-day-section-toggle {
+.section-header {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.section-toggle {
+  display: flex;
+  flex: 1 1 auto;
   align-items: center;
   gap: var(--space-2);
-  width: 100%;
+  min-width: 0;
   padding: var(--space-0);
   font-family: inherit;
   font-size: inherit;
@@ -1891,22 +1897,22 @@ samp {
   cursor: pointer;
 }
 
-.brew-day-section-toggle:focus-visible {
+.section-toggle:focus-visible {
   outline: 2px solid var(--sys-border-focus);
   outline-offset: 2px;
 }
 
-.brew-day-section-chevron {
+.section-chevron {
   display: inline-block;
   color: var(--sys-text-muted);
   transition: transform var(--transition-fast);
 }
 
-.brew-day-section-toggle[aria-expanded="true"] .brew-day-section-chevron {
+.section-toggle[aria-expanded="true"] .section-chevron {
   transform: rotate(90deg);
 }
 
-.brew-day-section-count {
+.section-meta {
   margin-left: auto;
   padding: var(--space-1) var(--space-2);
   font-size: var(--text-xs);
@@ -1917,12 +1923,21 @@ samp {
   white-space: nowrap;
 }
 
-.brew-day-steps {
+.section-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.section-body {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   padding-top: var(--space-2);
 }
+
+/* --- Brew day checklist card --- */
 
 .brew-day-step {
   display: flex;
@@ -1964,6 +1979,13 @@ samp {
   margin: var(--space-0);
 }
 
+.section-title {
+  margin: var(--space-0);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
 .step-card-content {
   container-type: inline-size;
   display: flex;
@@ -1983,7 +2005,7 @@ samp {
   }
 }
 
-.step-section-header {
+.group-header {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
@@ -1991,18 +2013,18 @@ samp {
   margin-top: var(--space-2);
 }
 
-.step-section-header:first-child {
+.group-header:first-child {
   margin-top: var(--space-0);
 }
 
-.step-section-header::after {
+.group-header::after {
   content: "";
   flex: 1;
   height: 1px;
   background-color: var(--sys-border-subtle);
 }
 
-.step-section-title {
+.group-title {
   font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;

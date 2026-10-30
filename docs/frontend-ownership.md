@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **641** (429 enumerable, 212 hidden)
+- Declared members: **649** (434 enumerable, 215 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **16 of 20**
@@ -24,13 +24,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 122 | 3 | 22 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 127 | 3 | 22 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 66 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 42 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 47 | 2 | 22 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 11 | 1 | 1 |
-| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 53 | 2 | 13 |
+| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 56 | 2 | 13 |
 | `water` | `frontend/src/adapters/cards/water.js` | 29 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |
 
@@ -66,6 +66,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `attenuationCap` | `styleNavigator` | public | 1 |
 | `attenuationSugarLift` | `styleNavigator` | public | 1 |
 | `boilHopMassKg` | `hop` | public | 0 |
+| `boilHopSectionMeta` | `hop` | hidden | 1 |
 | `boilHopTotalMassDisplay` | `hop` | hidden | 1 |
 | `boilIbu` | `styleTargets` | public | 0 |
 | `boilIbuDisplay` | `styleTargets` | hidden | 1 |
@@ -168,6 +169,8 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `dryHopRows` | `dryHops` | public | 1 |
 | `dryHopSearch` | `dryHops` | public | 1 |
 | `dryHopSearchNotes` | `dryHops` | public | 1 |
+| `dryHopSectionMeta` | `dryHops` | hidden | 1 |
+| `dryHopSectionOpen` | `dryHops` | public | 1 |
 | `dryHopStandard` | `dryHops` | public | 0 |
 | `dryHopStandardGroups` | `dryHops` | hidden | 0 |
 | `dryHopStandardName` | `dryHops` | hidden | 0 |
@@ -240,6 +243,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `hopRows` | `hop` | public | 1 |
 | `hopSearch` | `hop` | public | 1 |
 | `hopSearchNotes` | `hop` | public | 1 |
+| `hopSections` | `hop` | public | 0 |
 | `hopStandard` | `hop` | public | 0 |
 | `hopStandardGroups` | `hop` | hidden | 0 |
 | `hopStandardName` | `hop` | hidden | 0 |
@@ -264,6 +268,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `inspectTraceRow` | `traceMalts` | public | 1 |
 | `inspectWhirlpoolHopRow` | `hop` | public | 1 |
 | `isBrewDaySectionOpen` | `brewDay` | public | 1 |
+| `isHopSectionOpen` | `hop` | public | 1 |
 | `isMashDraftValid` | `mash` | hidden | 1 |
 | `isRestOutOfRange` | `mash` | public | 1 |
 | `isYeastListTruncated` | `yeast` | hidden | 0 |
@@ -545,11 +550,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `toggleDryHopCategory` | `dryHops` | public | 1 |
 | `toggleDryHopFamily` | `dryHops` | public | 0 |
 | `toggleDryHopSearchNotes` | `dryHops` | public | 1 |
+| `toggleDryHopSection` | `dryHops` | public | 1 |
 | `toggleFieldUnit` | `unitActions` | public | 1 |
 | `toggleHopCategory` | `hop` | public | 1 |
 | `toggleHopFamily` | `hop` | public | 0 |
 | `toggleHopMassUnit` | `hop` | public | 1 |
 | `toggleHopSearchNotes` | `hop` | public | 1 |
+| `toggleHopSection` | `hop` | public | 1 |
 | `toggleLatePinPanel` | `lateAdditions` | public | 1 |
 | `toggleLibrarySearchNotes` | `libraryUi` | public | 1 |
 | `toggleMaltCategory` | `malt` | public | 0 |
@@ -647,6 +654,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `whirlpoolHopRows` | `hop` | public | 1 |
 | `whirlpoolHopSearch` | `hop` | public | 1 |
 | `whirlpoolHopSearchNotes` | `hop` | public | 1 |
+| `whirlpoolHopSectionMeta` | `hop` | hidden | 1 |
 | `whirlpoolHopStandard` | `hop` | public | 0 |
 | `whirlpoolHopStandardGroups` | `hop` | hidden | 0 |
 | `whirlpoolHopStandardName` | `hop` | hidden | 0 |

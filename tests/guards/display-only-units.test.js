@@ -90,7 +90,7 @@ test("A8d: registry displayUnit defaults the display (g/ml)", async () => {
 // write stores the base value (cell conversion for collection tables).
 test("A8e: collection cell displayUnit converts display; write stores base", async () => {
   const app = await sharedTestApp();
-  const table = () => app.fieldsBySlice["dry-hops"].find((f) => f.control === "collection-table");
+  const table = () => app.fieldsBySlice.hops.find((f) => f.id === "batch.dry_hops");
 
   app.addRow(table());
   app.editCell(table(), 0, "contact_duration_min", "48");

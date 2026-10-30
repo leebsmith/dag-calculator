@@ -62,7 +62,7 @@ function mutate(app) {
     "parts",
     "30"
   );
-  app.addRow(app.fieldsBySlice["dry-hops"].find((field) => field.control === "collection-table"));
+  app.addRow(app.fieldsBySlice.hops.find((field) => field.id === "batch.dry_hops"));
   app.clearYeastSelection();
   app.setUnit("temperature", "degF");
   app.toggleFieldUnit(app.fieldsBySlice.mash.find((field) => field.id === "mash.grain_temp_c"));

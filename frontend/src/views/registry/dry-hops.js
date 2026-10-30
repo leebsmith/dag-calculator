@@ -4,7 +4,7 @@
 
 export const DRY_HOP_NODES = {
   collection: "batch.dry_hops",
-  slice: "dry-hops",
+  slice: "hops",
 };
 
 // Display names for the enumerated row values. The values themselves are the

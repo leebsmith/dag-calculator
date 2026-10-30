@@ -74,12 +74,17 @@ function installDryHopReadouts(app, ctx) {
 
   Object.assign(app, {
     dryHopRows: [],
+    dryHopSectionOpen: true,
     dryHopProductOptions: dryHopOptions(artifact, "hop_product_type"),
     dryHopEventOptions: dryHopOptions(artifact, "hop_application_event"),
     dryHopContactUntilOptions: dryHopOptions(artifact, "hop_contact_until"),
     dryHopUnitOptions: dryHopOptions(artifact, "hop_unit"),
 
     dryHopTitle,
+
+    toggleDryHopSection() {
+      this.dryHopSectionOpen = !this.dryHopSectionOpen;
+    },
 
     dryHopTypeLabel(row) {
       return dryHopLabel("hop_product_type", row?.product_type);
@@ -142,6 +147,12 @@ function installDryHopReadouts(app, ctx) {
 
 function installDryHopSummaries(app) {
   Object.defineProperties(app, {
+    dryHopSectionMeta: {
+      configurable: true,
+      get() {
+        return countLabel(this.dryHopRows?.length ?? 0, "addition");
+      },
+    },
     dryHopDraftSummary: {
       configurable: true,
       get() {
@@ -176,6 +187,9 @@ export function refreshDryHopCard(app, ctx) {
 export const KEYS = [
   ...catalogDraftKeys("dryHop", "DryHop"),
   "dryHopRows",
+  "dryHopSectionOpen",
+  "dryHopSectionMeta",
+  "toggleDryHopSection",
   "dryHopProductOptions",
   "dryHopEventOptions",
   "dryHopContactUntilOptions",

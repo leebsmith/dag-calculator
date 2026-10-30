@@ -10,25 +10,27 @@
     </p>
 
     <template x-for="section in brewDaySections" :key="section.id">
-      <div class="synthesized-card brew-day-section">
-        <button
-          type="button"
-          class="brew-day-section-toggle"
-          :aria-expanded="isBrewDaySectionOpen(section.id)"
-          :aria-controls="'brew-day-panel-' + section.id"
-          @click="toggleBrewDaySection(section.id)"
-        >
-          <span class="brew-day-section-chevron" aria-hidden="true">▸</span>
-          <span class="synthesized-title" x-text="section.name"></span>
-          <span
-            class="brew-day-section-count"
-            x-show="section.activeCount > 0"
-            x-text="section.activeCount + (section.activeCount === 1 ? ' step active' : ' steps active')"
-          ></span>
-        </button>
+      <div class="synthesized-card card-section">
+        <div class="section-header">
+          <button
+            type="button"
+            class="section-toggle"
+            :aria-expanded="isBrewDaySectionOpen(section.id) ? 'true' : 'false'"
+            :aria-controls="'brew-day-panel-' + section.id"
+            @click="toggleBrewDaySection(section.id)"
+          >
+            <span class="section-chevron" aria-hidden="true">▸</span>
+            <span class="section-title" x-text="section.name"></span>
+            <span
+              class="section-meta"
+              x-show="section.activeCount > 0"
+              x-text="section.activeCount + (section.activeCount === 1 ? ' step active' : ' steps active')"
+            ></span>
+          </button>
+        </div>
 
         <div
-          class="brew-day-steps"
+          class="section-body"
           :id="'brew-day-panel-' + section.id"
           x-show="isBrewDaySectionOpen(section.id)"
         >
