@@ -219,7 +219,8 @@ Landed: the template tree, the registry contract and its guards, the pinned
 version, the local loop, the bundle-carried display strings (`formatted`,
 `formatted_tables`, `formatted_summaries`) that make the generator a string
 compositor, and the sections — **Brewhouse** (`sections/brewhouse.typ`),
-**Batch Facts**, **Yeast**, the **Volume Ledger** and the **Liquor Ledger**. Not
+**Batch Facts**, **Hops**, **Yeast**, the **Volume Ledger** and the **Liquor
+Ledger**. Not
 yet landed: the remaining section modules (authored one at a time — see
 [`adding-a-section.md`](adding-a-section.md)), the FastAPI routes,
 `report_render.py`, and the image that ships the binary.

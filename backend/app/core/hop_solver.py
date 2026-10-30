@@ -41,6 +41,11 @@ FLOWABLE_LOW_UTILIZATION = 0.80
 SIMPSON_TOLERANCE = 1e-10
 SIMPSON_MAX_DEPTH = 20
 
+# The hot/cool whirlpool split: above 170 F (76.7 C) a charge still bitter-
+# isomerises freely; at or below it, the classic hop stand, it mostly extracts
+# flavour and aroma. Reported as two IBU totals beside the boil/whirlpool split.
+WHIRLPOOL_HOT_TEMP_C = 76.7
+
 # Whirlpool charges share one knockout end, so their durations also encode the
 # addition order. Two charges within these tolerances are one addition, and the
 # posted temperature is compared with the latent curve at that offset.
@@ -132,6 +137,8 @@ class HopSolverResult:
     boil_mass_kg: float
     whirlpool_mass_kg: float
     total_mass_kg: float
+    whirlpool_hot_ibu: float
+    whirlpool_cool_ibu: float
 
 
 def tinseth_utilization(boil_gravity_sg: float, time_min: float) -> float:
@@ -403,6 +410,20 @@ def _validate(inputs: HopSolverInput) -> None:
             )
 
 
+def _split_ibu(
+    charges: Sequence[WhirlpoolHopEntry],
+    results: Sequence[WhirlpoolHopResult],
+    *,
+    above_hot: bool,
+) -> float:
+    """IBU carried by the whirlpool charges on one side of the hot threshold."""
+    total = 0.0
+    for charge, result in zip(charges, results, strict=True):
+        if (charge.initial_temp_c > WHIRLPOOL_HOT_TEMP_C) is above_hot:
+            total += result.ibu
+    return total
+
+
 def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
     """Resolve the hop-bitterness boundary."""
     _validate(inputs)
@@ -455,4 +476,10 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
         boil_mass_kg=boil_mass,
         whirlpool_mass_kg=whirlpool_mass,
         total_mass_kg=boil_mass + whirlpool_mass,
+        whirlpool_hot_ibu=_split_ibu(
+            inputs.whirlpool_hops, whirlpool_rows, above_hot=True
+        ),
+        whirlpool_cool_ibu=_split_ibu(
+            inputs.whirlpool_hops, whirlpool_rows, above_hot=False
+        ),
     )

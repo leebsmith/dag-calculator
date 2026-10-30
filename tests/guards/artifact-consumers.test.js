@@ -49,6 +49,12 @@ const PARITY_CONSTANTS = new Set([
 // expression consumes them.
 const HOST_NODES = new Set([
   "batch.attenuation_above_cap",
+  // IBU split shares: printed by the report's formatted pass, which needs a
+  // catalog path, so they are nodes rather than a view-side ratio.
+  "batch.boil_ibu_share",
+  "batch.whirlpool_ibu_share",
+  "batch.whirlpool_hot_ibu_share",
+  "batch.whirlpool_cool_ibu_share",
   "water.kettle_blend.calcium_ca",
   "water.kettle_blend.magnesium_mg",
   "water.kettle_blend.sodium_na",

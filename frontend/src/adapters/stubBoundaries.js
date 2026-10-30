@@ -59,12 +59,25 @@ function hopOutputs(inputs = {}) {
     (sum, row) => (typeof row.mass_kg === "number" ? sum + row.mass_kg : sum),
     0
   );
+  // The report's hot/cool split: the same threshold the sealed solver uses
+  // (WHIRLPOOL_HOT_TEMP_C in backend/app/core/hop_solver.py).
+  const hotLimit = 76.7;
+  const split = whirlpoolRows.reduce(
+    (total, row, index) => {
+      const hot = (inputs.whirlpool_hops?.[index]?.initial_temp_c ?? 0) > hotLimit;
+      total[hot ? "hot" : "cool"] += row.ibu;
+      return total;
+    },
+    { hot: 0, cool: 0 }
+  );
   return {
     boil_rows: boilRows,
     whirlpool_rows: whirlpoolRows,
     boil_mass_kg: boilMass,
     whirlpool_mass_kg: whirlpoolMass,
     total_mass_kg: boilMass + whirlpoolMass,
+    whirlpool_hot_ibu: split.hot,
+    whirlpool_cool_ibu: split.cool,
   };
 }
 

@@ -72,6 +72,60 @@ SUGARS = [
     },
 ]
 
+BOIL_HOPS = [
+    {
+        "hop_id": "magnum",
+        "name": "Magnum",
+        "alpha_acid_pct": 0.14,
+        "boil_time_fraction": 1.0,
+        "parts": 100,
+        "pct": 1.0,
+    },
+]
+
+WHIRLPOOL_HOPS = [
+    {
+        "hop_id": "citra",
+        "name": "Citra",
+        "product_form": "t90_pellet",
+        "alpha_acid_pct": 0.12,
+        "t90_replacement_ratio": 1.0,
+        "duration_min": 30.0,
+        "initial_temp_c": 95.0,
+        "parts": 70,
+        "pct": 0.7,
+        "notes": "",
+    },
+    {
+        "hop_id": "saaz",
+        "name": "Saaz",
+        "product_form": "t90_pellet",
+        "alpha_acid_pct": 0.035,
+        "t90_replacement_ratio": 1.0,
+        "duration_min": 10.0,
+        "initial_temp_c": 70.0,
+        "parts": 30,
+        "pct": 0.3,
+        "notes": "",
+    },
+]
+
+DRY_HOPS = [
+    {
+        "hop_id": "mosaic",
+        "variety": "Mosaic",
+        "product_type": "t90_pellet",
+        "quantity": 1.0,
+        "unit": "oz",
+        "application_stage": "fermentation",
+        "application_event": "high_krausen",
+        "contact_duration_min": None,
+        "contact_until": "terminal_gravity",
+        "time_of_application": "",
+        "notes": "",
+    },
+]
+
 RECORD = {
     "name": "House Pale",
     "status": "frozen",
@@ -121,6 +175,9 @@ RECORD = {
         "grist.major_malts": MAJOR_MALTS,
         "grist.trace_malts": TRACE_MALTS,
         "batch.sugars": SUGARS,
+        "batch.boil_hops": BOIL_HOPS,
+        "batch.whirlpool_hops": WHIRLPOOL_HOPS,
+        "batch.dry_hops": DRY_HOPS,
     },
     "selections": {
         "batch.yeast": {
@@ -183,6 +240,20 @@ RECORD = {
         "grist.major_malts": MAJOR_MALTS,
         "grist.trace_malts": TRACE_MALTS,
         "batch.sugars": SUGARS,
+        "batch.boil_hops": BOIL_HOPS,
+        "batch.whirlpool_hops": WHIRLPOOL_HOPS,
+        "batch.dry_hops": DRY_HOPS,
+        # 40 IBU total: 30 in the boil, 10 in the whirlpool, split 7 / 3 across
+        # the hot and the cool charge.
+        "batch.whirlpool_ibu_fraction": 0.25,
+        "batch.whirlpool_target_ibu": 10.0,
+        "batch.boil_target_ibu": 30.0,
+        "batch.boil_ibu_share": 0.75,
+        "batch.whirlpool_ibu_share": 0.25,
+        "batch.whirlpool_hot_ibu_share": 0.70,
+        "batch.whirlpool_cool_ibu_share": 0.30,
+        "batch.whirlpool_ambient_temp_c": 20.0,
+        "batch.whirlpool_cooling_time_constant_min": 108.7,
         # The volume-ledger rows reconcile: (V_post 22.4 + late 0.5) * 0.96
         # - (kettle dead 1.0 + transfer 0.5 + trub 0.5) = V_ferm 20.0.
         "solver.batch": {
@@ -219,7 +290,18 @@ RECORD = {
             "prescription.predicted_mash_ph": 5.42,
             "total_added_salt_mass_g": 3.0,
         },
-        "solver.hops": {"total_mass_kg": 0.024},
+        "solver.hops": {
+            "boil_rows": [{"minutes": 60.0, "ibu": 30.0, "mass_kg": 0.030}],
+            "whirlpool_rows": [
+                {"minutes": 30.0, "ibu": 7.0, "mass_kg": 0.035, "effective_minutes": 21.0},
+                {"minutes": 10.0, "ibu": 3.0, "mass_kg": 0.015, "effective_minutes": 4.0},
+            ],
+            "boil_mass_kg": 0.030,
+            "whirlpool_mass_kg": 0.050,
+            "total_mass_kg": 0.080,
+            "whirlpool_hot_ibu": 7.0,
+            "whirlpool_cool_ibu": 3.0,
+        },
     },
 }
 
@@ -496,6 +578,175 @@ PAYLOAD = FreezePayload(
             "solver.hops.total_mass_kg": NodePresentation(
                 label="Total hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
+            "solver.hops.boil_mass_kg": NodePresentation(
+                label="Boil hop mass", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.hops.whirlpool_mass_kg": NodePresentation(
+                label="Whirlpool hop mass", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.hops.whirlpool_hot_ibu": NodePresentation(
+                label="Whirlpool hot IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "solver.hops.whirlpool_cool_ibu": NodePresentation(
+                label="Whirlpool cool IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "solver.hops.boil_rows": NodePresentation(label="Boil hop rows"),
+            "solver.hops.whirlpool_rows": NodePresentation(label="Whirlpool hop rows"),
+            "batch.boil_target_ibu": NodePresentation(
+                label="Boil IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "batch.whirlpool_target_ibu": NodePresentation(
+                label="Whirlpool IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "batch.whirlpool_ibu_fraction": NodePresentation(
+                label="Whirlpool IBU fraction",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.whirlpool_ambient_temp_c": NodePresentation(
+                label="Whirlpool ambient", dimension="temperature", unit="degC", symbol="°C", decimals=1
+            ),
+            "batch.whirlpool_cooling_time_constant_min": NodePresentation(
+                label="Cooling time constant", dimension="time", unit="min", symbol="min", decimals=1
+            ),
+            "batch.boil_ibu_share": NodePresentation(
+                label="Boil IBU share", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.whirlpool_ibu_share": NodePresentation(
+                label="Whirlpool IBU share", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.whirlpool_hot_ibu_share": NodePresentation(
+                label="Whirlpool hot IBU share",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.whirlpool_cool_ibu_share": NodePresentation(
+                label="Whirlpool cool IBU share",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.boil_hops": NodePresentation(label="Boil hops"),
+            "batch.boil_hops.hop_id": NodePresentation(label="Hop ID"),
+            "batch.boil_hops.name": NodePresentation(label="Hop"),
+            "batch.boil_hops.alpha_acid_pct": NodePresentation(
+                label="Alpha", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.boil_hops.boil_time_fraction": NodePresentation(
+                label="Boil remaining", dimension="percentage", unit="pct", symbol="%", decimals=0
+            ),
+            "batch.boil_hops.parts": NodePresentation(label="Parts"),
+            "batch.boil_hops.pct": NodePresentation(
+                label="IBU share", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.whirlpool_hops": NodePresentation(label="Whirlpool hops"),
+            "batch.whirlpool_hops.hop_id": NodePresentation(label="Hop ID"),
+            "batch.whirlpool_hops.name": NodePresentation(label="Hop"),
+            "batch.whirlpool_hops.product_form": NodePresentation(
+                label="Form",
+                options=["t90_pellet", "flowable_extract", "lupulin_pellet"],
+                option_labels={
+                    "t90_pellet": "T-90 pellet",
+                    "flowable_extract": "Flowable extract",
+                    "lupulin_pellet": "Lupulin pellet",
+                },
+            ),
+            "batch.whirlpool_hops.alpha_acid_pct": NodePresentation(
+                label="Alpha", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.whirlpool_hops.t90_replacement_ratio": NodePresentation(
+                label="T-90 ratio", dimension="dimensionless", decimals=2
+            ),
+            "batch.whirlpool_hops.duration_min": NodePresentation(
+                label="Rest", dimension="time", unit="min", symbol="min", decimals=0
+            ),
+            "batch.whirlpool_hops.initial_temp_c": NodePresentation(
+                label="Temp", dimension="temperature", unit="degC", symbol="°C", decimals=1
+            ),
+            "batch.whirlpool_hops.parts": NodePresentation(label="Parts"),
+            "batch.whirlpool_hops.pct": NodePresentation(
+                label="IBU share", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.whirlpool_hops.notes": NodePresentation(label="Notes"),
+            "batch.dry_hops": NodePresentation(label="Dry hops"),
+            "batch.dry_hops.hop_id": NodePresentation(label="Hop ID"),
+            "batch.dry_hops.variety": NodePresentation(label="Hop"),
+            "batch.dry_hops.product_type": NodePresentation(
+                label="Type",
+                options=["t90_pellet", "lupulin_pellet", "flowable_extract", "terpene_isolate"],
+                option_labels={
+                    "t90_pellet": "T-90 pellet",
+                    "lupulin_pellet": "Lupulin pellet",
+                    "flowable_extract": "Flowable extract",
+                    "terpene_isolate": "Terpene isolate",
+                },
+            ),
+            "batch.dry_hops.quantity": NodePresentation(
+                label="Qty", dimension="dimensionless", decimals=1
+            ),
+            "batch.dry_hops.unit": NodePresentation(label="Unit", options=["oz", "g", "ml"]),
+            "batch.dry_hops.application_stage": NodePresentation(
+                label="Stage",
+                options=["mash", "boil", "whirlpool", "fermentation"],
+                option_labels={
+                    "mash": "Mash",
+                    "boil": "Boil",
+                    "whirlpool": "Whirlpool",
+                    "fermentation": "Fermentation",
+                },
+            ),
+            "batch.dry_hops.application_event": NodePresentation(
+                label="Applied at",
+                options=[
+                    "pitch",
+                    "high_krausen",
+                    "mid_fermentation",
+                    "terminal",
+                    "post_diacetyl",
+                    "cold_crash",
+                    "packaging",
+                ],
+                option_labels={
+                    "pitch": "At pitch",
+                    "high_krausen": "High krausen",
+                    "mid_fermentation": "Mid-fermentation",
+                    "terminal": "Terminal gravity",
+                    "post_diacetyl": "Post-diacetyl",
+                    "cold_crash": "Cold crash",
+                    "packaging": "Packaging",
+                },
+            ),
+            "batch.dry_hops.contact_duration_min": NodePresentation(
+                label="Contact", dimension="time", unit="min", symbol="min", decimals=0
+            ),
+            "batch.dry_hops.contact_until": NodePresentation(
+                label="Contact until",
+                options=[
+                    "terminal_gravity",
+                    "vdk_clearance",
+                    "hop_creep_plateau",
+                    "biotransformation_equilibrium",
+                    "next_charge",
+                    "cold_crash",
+                    "packaging",
+                ],
+                option_labels={
+                    "terminal_gravity": "Terminal gravity",
+                    "vdk_clearance": "VDK clearance",
+                    "hop_creep_plateau": "Hop creep plateau",
+                    "biotransformation_equilibrium": "Biotransformation equilibrium",
+                    "next_charge": "Next charge",
+                    "cold_crash": "Cold crash",
+                    "packaging": "Packaging",
+                },
+            ),
+            "batch.dry_hops.time_of_application": NodePresentation(label="Time"),
+            "batch.dry_hops.notes": NodePresentation(label="Notes"),
             "batch.yeast.name": NodePresentation(label="Yeast"),
             "batch.yeast": NodePresentation(label="Yeast"),
             "batch.yeast.manufacturer": NodePresentation(label="Manufacturer"),
@@ -595,6 +846,22 @@ PAYLOAD = FreezePayload(
         "solver.batch.apparent_attenuation": FormattedValue(text="75.6%", number="75.6", unit="%"),
         "batch.realized_abv": FormattedValue(text="5.6%", number="5.6", unit="%"),
         "batch.target_ibu": FormattedValue(text="40.0 IBU", number="40.0", unit="IBU"),
+        "batch.boil_target_ibu": FormattedValue(text="30.0 IBU", number="30.0", unit="IBU"),
+        "batch.whirlpool_target_ibu": FormattedValue(text="10.0 IBU", number="10.0", unit="IBU"),
+        "batch.whirlpool_ibu_fraction": FormattedValue(text="25.0%", number="25.0", unit="%"),
+        "batch.whirlpool_ambient_temp_c": FormattedValue(text="20.0 °C", number="20.0", unit="°C"),
+        "batch.whirlpool_cooling_time_constant_min": FormattedValue(
+            text="108.7 min", number="108.7", unit="min"
+        ),
+        "batch.boil_ibu_share": FormattedValue(text="75.0%", number="75.0", unit="%"),
+        "batch.whirlpool_ibu_share": FormattedValue(text="25.0%", number="25.0", unit="%"),
+        "batch.whirlpool_hot_ibu_share": FormattedValue(text="70.0%", number="70.0", unit="%"),
+        "batch.whirlpool_cool_ibu_share": FormattedValue(text="30.0%", number="30.0", unit="%"),
+        "solver.hops.boil_mass_kg": FormattedValue(text="30.0 g", number="30.0", unit="g"),
+        "solver.hops.whirlpool_mass_kg": FormattedValue(text="50.0 g", number="50.0", unit="g"),
+        "solver.hops.total_mass_kg": FormattedValue(text="80.0 g", number="80.0", unit="g"),
+        "solver.hops.whirlpool_hot_ibu": FormattedValue(text="7.0 IBU", number="7.0", unit="IBU"),
+        "solver.hops.whirlpool_cool_ibu": FormattedValue(text="3.0 IBU", number="3.0", unit="IBU"),
         "grist.finished_beer_srm": FormattedValue(text="6.0 SRM", number="6.0", unit="SRM"),
         "solver.batch.cascade.v_strike": FormattedValue(text="15.0 L", number="15.0", unit="L"),
         "solver.batch.cascade.v_mc": FormattedValue(text="0.2 L", number="0.2", unit="L"),
@@ -658,6 +925,46 @@ PAYLOAD = FreezePayload(
                 "grist_pct": FormattedValue(text="9.8%", number="9.8", unit="%"),
                 "extract": FormattedValue(text="0.4 kg", number="0.4", unit="kg"),
                 "extract_pct": FormattedValue(text="9.4%", number="9.4", unit="%"),
+            },
+        ],
+        "batch.boil_hops": [
+            {
+                "name": FormattedValue(text="Magnum"),
+                "alpha": FormattedValue(text="14.0%", number="14.0", unit="%"),
+                "boil": FormattedValue(text="60 min", number="60", unit="min"),
+                "ibu_share": FormattedValue(text="100.0%", number="100.0", unit="%"),
+                "ibu": FormattedValue(text="30.0 IBU", number="30.0", unit="IBU"),
+                "amount": FormattedValue(text="30.0 g", number="30.0", unit="g"),
+            },
+        ],
+        "batch.whirlpool_hops": [
+            {
+                "name": FormattedValue(text="Citra"),
+                "form": FormattedValue(text="T-90 pellet"),
+                "rest": FormattedValue(text="30 min", number="30", unit="min"),
+                "temp": FormattedValue(text="95.0 °C", number="95.0", unit="°C"),
+                "ibu_share": FormattedValue(text="70.0%", number="70.0", unit="%"),
+                "ibu": FormattedValue(text="7.0 IBU", number="7.0", unit="IBU"),
+                "amount": FormattedValue(text="35.0 g", number="35.0", unit="g"),
+            },
+            {
+                "name": FormattedValue(text="Saaz"),
+                "form": FormattedValue(text="T-90 pellet"),
+                "rest": FormattedValue(text="10 min", number="10", unit="min"),
+                "temp": FormattedValue(text="70.0 °C", number="70.0", unit="°C"),
+                "ibu_share": FormattedValue(text="30.0%", number="30.0", unit="%"),
+                "ibu": FormattedValue(text="3.0 IBU", number="3.0", unit="IBU"),
+                "amount": FormattedValue(text="15.0 g", number="15.0", unit="g"),
+            },
+        ],
+        "batch.dry_hops": [
+            {
+                "name": FormattedValue(text="Mosaic"),
+                "type": FormattedValue(text="T-90 pellet"),
+                "quantity": FormattedValue(text="1.0", number="1.0"),
+                "unit": FormattedValue(text="oz"),
+                "applied": FormattedValue(text="High krausen"),
+                "contact": FormattedValue(text="Terminal gravity"),
             },
         ],
     },

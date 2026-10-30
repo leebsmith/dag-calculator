@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:c137c47d7645129ac8dcbd76c714b7c93ebd98f1df0b2aad2d506cd1ccd3407e",
+    "hash": "sha256:ef58ff59081892a3c822fe2fa0f8e1815864bea377703098c02ed7db02db0695",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -3658,6 +3658,150 @@
             "dimension": "ibu"
           }
         },
+        "batch.boil_ibu_share": {
+          "kind": "derived",
+          "inputs": {
+            "boil": "batch.boil_target_ibu",
+            "total": "batch.target_ibu"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "total"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "boil"
+                  },
+                  {
+                    "ref": "total"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.whirlpool_ibu_share": {
+          "kind": "derived",
+          "inputs": {
+            "whirlpool": "batch.whirlpool_target_ibu",
+            "total": "batch.target_ibu"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "total"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "whirlpool"
+                  },
+                  {
+                    "ref": "total"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.whirlpool_hot_ibu_share": {
+          "kind": "derived",
+          "inputs": {
+            "hot": "solver.hops.whirlpool_hot_ibu",
+            "whirlpool": "batch.whirlpool_target_ibu"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "whirlpool"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "hot"
+                  },
+                  {
+                    "ref": "whirlpool"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.whirlpool_cool_ibu_share": {
+          "kind": "derived",
+          "inputs": {
+            "cool": "solver.hops.whirlpool_cool_ibu",
+            "whirlpool": "batch.whirlpool_target_ibu"
+          },
+          "expr": {
+            "op": "if",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "whirlpool"
+                  },
+                  0
+                ]
+              },
+              {
+                "op": "/",
+                "args": [
+                  {
+                    "ref": "cool"
+                  },
+                  {
+                    "ref": "whirlpool"
+                  }
+                ]
+              },
+              0
+            ]
+          },
+          "output": {
+            "dimension": "percentage"
+          }
+        },
         "batch.total_water_used": {
           "kind": "derived",
           "inputs": {
@@ -3988,6 +4132,12 @@
             },
             "total_mass_kg": {
               "dimension": "mass"
+            },
+            "whirlpool_hot_ibu": {
+              "dimension": "ibu"
+            },
+            "whirlpool_cool_ibu": {
+              "dimension": "ibu"
             }
           },
           "domain": {
@@ -6215,6 +6365,520 @@
         "options": null,
         "option_labels": null
       },
+      "solver.hops.boil_mass_kg": {
+        "label": "Boil hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_mass_kg": {
+        "label": "Whirlpool hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_hot_ibu": {
+        "label": "Whirlpool hot IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_cool_ibu": {
+        "label": "Whirlpool cool IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.boil_rows": {
+        "label": "Boil hop rows",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_rows": {
+        "label": "Whirlpool hop rows",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_target_ibu": {
+        "label": "Boil IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_target_ibu": {
+        "label": "Whirlpool IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_ibu_fraction": {
+        "label": "Whirlpool IBU fraction",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_ambient_temp_c": {
+        "label": "Whirlpool ambient",
+        "dimension": "temperature",
+        "unit": "degC",
+        "symbol": "\u00b0C",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_cooling_time_constant_min": {
+        "label": "Cooling time constant",
+        "dimension": "time",
+        "unit": "min",
+        "symbol": "min",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_ibu_share": {
+        "label": "Boil IBU share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_ibu_share": {
+        "label": "Whirlpool IBU share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hot_ibu_share": {
+        "label": "Whirlpool hot IBU share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_cool_ibu_share": {
+        "label": "Whirlpool cool IBU share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops": {
+        "label": "Boil hops",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops.hop_id": {
+        "label": "Hop ID",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops.name": {
+        "label": "Hop",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops.alpha_acid_pct": {
+        "label": "Alpha",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops.boil_time_fraction": {
+        "label": "Boil remaining",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 0,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops.parts": {
+        "label": "Parts",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.boil_hops.pct": {
+        "label": "IBU share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops": {
+        "label": "Whirlpool hops",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.hop_id": {
+        "label": "Hop ID",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.name": {
+        "label": "Hop",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.product_form": {
+        "label": "Form",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "t90_pellet",
+          "flowable_extract",
+          "lupulin_pellet"
+        ],
+        "option_labels": {
+          "t90_pellet": "T-90 pellet",
+          "flowable_extract": "Flowable extract",
+          "lupulin_pellet": "Lupulin pellet"
+        }
+      },
+      "batch.whirlpool_hops.alpha_acid_pct": {
+        "label": "Alpha",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.t90_replacement_ratio": {
+        "label": "T-90 ratio",
+        "dimension": "dimensionless",
+        "unit": null,
+        "symbol": null,
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.duration_min": {
+        "label": "Rest",
+        "dimension": "time",
+        "unit": "min",
+        "symbol": "min",
+        "decimals": 0,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.initial_temp_c": {
+        "label": "Temp",
+        "dimension": "temperature",
+        "unit": "degC",
+        "symbol": "\u00b0C",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.parts": {
+        "label": "Parts",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.pct": {
+        "label": "IBU share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.whirlpool_hops.notes": {
+        "label": "Notes",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops": {
+        "label": "Dry hops",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops.hop_id": {
+        "label": "Hop ID",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops.variety": {
+        "label": "Hop",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops.product_type": {
+        "label": "Type",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "t90_pellet",
+          "lupulin_pellet",
+          "flowable_extract",
+          "terpene_isolate"
+        ],
+        "option_labels": {
+          "t90_pellet": "T-90 pellet",
+          "lupulin_pellet": "Lupulin pellet",
+          "flowable_extract": "Flowable extract",
+          "terpene_isolate": "Terpene isolate"
+        }
+      },
+      "batch.dry_hops.quantity": {
+        "label": "Qty",
+        "dimension": "dimensionless",
+        "unit": null,
+        "symbol": null,
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops.unit": {
+        "label": "Unit",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "oz",
+          "g",
+          "ml"
+        ],
+        "option_labels": null
+      },
+      "batch.dry_hops.application_stage": {
+        "label": "Stage",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "mash",
+          "boil",
+          "whirlpool",
+          "fermentation"
+        ],
+        "option_labels": {
+          "mash": "Mash",
+          "boil": "Boil",
+          "whirlpool": "Whirlpool",
+          "fermentation": "Fermentation"
+        }
+      },
+      "batch.dry_hops.application_event": {
+        "label": "Applied at",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "pitch",
+          "high_krausen",
+          "mid_fermentation",
+          "terminal",
+          "post_diacetyl",
+          "cold_crash",
+          "packaging"
+        ],
+        "option_labels": {
+          "pitch": "At pitch",
+          "high_krausen": "High krausen",
+          "mid_fermentation": "Mid-fermentation",
+          "terminal": "Terminal gravity",
+          "post_diacetyl": "Post-diacetyl",
+          "cold_crash": "Cold crash",
+          "packaging": "Packaging"
+        }
+      },
+      "batch.dry_hops.contact_duration_min": {
+        "label": "Contact",
+        "dimension": "time",
+        "unit": "min",
+        "symbol": "min",
+        "decimals": 0,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops.contact_until": {
+        "label": "Contact until",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "terminal_gravity",
+          "vdk_clearance",
+          "hop_creep_plateau",
+          "biotransformation_equilibrium",
+          "next_charge",
+          "cold_crash",
+          "packaging"
+        ],
+        "option_labels": {
+          "terminal_gravity": "Terminal gravity",
+          "vdk_clearance": "VDK clearance",
+          "hop_creep_plateau": "Hop creep plateau",
+          "biotransformation_equilibrium": "Biotransformation equilibrium",
+          "next_charge": "Next charge",
+          "cold_crash": "Cold crash",
+          "packaging": "Packaging"
+        }
+      },
+      "batch.dry_hops.time_of_application": {
+        "label": "Time",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.dry_hops.notes": {
+        "label": "Notes",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "batch.yeast.name": {
         "label": "Yeast",
         "dimension": null,
@@ -6386,7 +7050,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:e6da409071e717fd2d3a4b620658129f44eac39771221544299ae2f60de8d576"
+    "hash": "sha256:36ebcfd658bb42085185782de6a74a22b58f989092c04928d090dbbde530eaca"
   },
   "batch": {
     "id": "frozen-1",
@@ -6499,6 +7163,66 @@
           "color_lovibond": 180.0
         }
       ],
+      "batch.boil_hops": [
+        {
+          "hop_id": "magnum",
+          "name": "Magnum",
+          "alpha_acid_pct": 0.14,
+          "boil_time_fraction": 1.0,
+          "parts": 100,
+          "pct": 1.0
+        }
+      ],
+      "batch.whirlpool_hops": [
+        {
+          "hop_id": "citra",
+          "name": "Citra",
+          "product_form": "t90_pellet",
+          "alpha_acid_pct": 0.12,
+          "t90_replacement_ratio": 1.0,
+          "duration_min": 30.0,
+          "initial_temp_c": 95.0,
+          "parts": 70,
+          "pct": 0.7,
+          "notes": ""
+        },
+        {
+          "hop_id": "saaz",
+          "name": "Saaz",
+          "product_form": "t90_pellet",
+          "alpha_acid_pct": 0.035,
+          "t90_replacement_ratio": 1.0,
+          "duration_min": 10.0,
+          "initial_temp_c": 70.0,
+          "parts": 30,
+          "pct": 0.3,
+          "notes": ""
+        }
+      ],
+      "batch.dry_hops": [
+        {
+          "hop_id": "mosaic",
+          "variety": "Mosaic",
+          "product_type": "t90_pellet",
+          "quantity": 1.0,
+          "unit": "oz",
+          "application_stage": "fermentation",
+          "application_event": "high_krausen",
+          "contact_duration_min": null,
+          "contact_until": "terminal_gravity",
+          "time_of_application": "",
+          "notes": ""
+        }
+      ],
+      "batch.whirlpool_ibu_fraction": 0.25,
+      "batch.whirlpool_target_ibu": 10.0,
+      "batch.boil_target_ibu": 30.0,
+      "batch.boil_ibu_share": 0.75,
+      "batch.whirlpool_ibu_share": 0.25,
+      "batch.whirlpool_hot_ibu_share": 0.7,
+      "batch.whirlpool_cool_ibu_share": 0.3,
+      "batch.whirlpool_ambient_temp_c": 20.0,
+      "batch.whirlpool_cooling_time_constant_min": 108.7,
       "solver.batch": {
         "sg_post_boil": 1.055,
         "v_pre_boil": 25.4,
@@ -6534,7 +7258,32 @@
         "total_added_salt_mass_g": 3.0
       },
       "solver.hops": {
-        "total_mass_kg": 0.024
+        "boil_rows": [
+          {
+            "minutes": 60.0,
+            "ibu": 30.0,
+            "mass_kg": 0.03
+          }
+        ],
+        "whirlpool_rows": [
+          {
+            "minutes": 30.0,
+            "ibu": 7.0,
+            "mass_kg": 0.035,
+            "effective_minutes": 21.0
+          },
+          {
+            "minutes": 10.0,
+            "ibu": 3.0,
+            "mass_kg": 0.015,
+            "effective_minutes": 4.0
+          }
+        ],
+        "boil_mass_kg": 0.03,
+        "whirlpool_mass_kg": 0.05,
+        "total_mass_kg": 0.08,
+        "whirlpool_hot_ibu": 7.0,
+        "whirlpool_cool_ibu": 3.0
       }
     },
     "roots": {
@@ -6587,6 +7336,57 @@
           "resolved_mass_kg": 0.5,
           "yield_fraction": 0.8,
           "color_lovibond": 180.0
+        }
+      ],
+      "batch.boil_hops": [
+        {
+          "hop_id": "magnum",
+          "name": "Magnum",
+          "alpha_acid_pct": 0.14,
+          "boil_time_fraction": 1.0,
+          "parts": 100,
+          "pct": 1.0
+        }
+      ],
+      "batch.whirlpool_hops": [
+        {
+          "hop_id": "citra",
+          "name": "Citra",
+          "product_form": "t90_pellet",
+          "alpha_acid_pct": 0.12,
+          "t90_replacement_ratio": 1.0,
+          "duration_min": 30.0,
+          "initial_temp_c": 95.0,
+          "parts": 70,
+          "pct": 0.7,
+          "notes": ""
+        },
+        {
+          "hop_id": "saaz",
+          "name": "Saaz",
+          "product_form": "t90_pellet",
+          "alpha_acid_pct": 0.035,
+          "t90_replacement_ratio": 1.0,
+          "duration_min": 10.0,
+          "initial_temp_c": 70.0,
+          "parts": 30,
+          "pct": 0.3,
+          "notes": ""
+        }
+      ],
+      "batch.dry_hops": [
+        {
+          "hop_id": "mosaic",
+          "variety": "Mosaic",
+          "product_type": "t90_pellet",
+          "quantity": 1.0,
+          "unit": "oz",
+          "application_stage": "fermentation",
+          "application_event": "high_krausen",
+          "contact_duration_min": null,
+          "contact_until": "terminal_gravity",
+          "time_of_application": "",
+          "notes": ""
         }
       ]
     },
@@ -6825,6 +7625,76 @@
     "batch.target_ibu": {
       "text": "40.0 IBU",
       "number": "40.0",
+      "unit": "IBU"
+    },
+    "batch.boil_target_ibu": {
+      "text": "30.0 IBU",
+      "number": "30.0",
+      "unit": "IBU"
+    },
+    "batch.whirlpool_target_ibu": {
+      "text": "10.0 IBU",
+      "number": "10.0",
+      "unit": "IBU"
+    },
+    "batch.whirlpool_ibu_fraction": {
+      "text": "25.0%",
+      "number": "25.0",
+      "unit": "%"
+    },
+    "batch.whirlpool_ambient_temp_c": {
+      "text": "20.0 \u00b0C",
+      "number": "20.0",
+      "unit": "\u00b0C"
+    },
+    "batch.whirlpool_cooling_time_constant_min": {
+      "text": "108.7 min",
+      "number": "108.7",
+      "unit": "min"
+    },
+    "batch.boil_ibu_share": {
+      "text": "75.0%",
+      "number": "75.0",
+      "unit": "%"
+    },
+    "batch.whirlpool_ibu_share": {
+      "text": "25.0%",
+      "number": "25.0",
+      "unit": "%"
+    },
+    "batch.whirlpool_hot_ibu_share": {
+      "text": "70.0%",
+      "number": "70.0",
+      "unit": "%"
+    },
+    "batch.whirlpool_cool_ibu_share": {
+      "text": "30.0%",
+      "number": "30.0",
+      "unit": "%"
+    },
+    "solver.hops.boil_mass_kg": {
+      "text": "30.0 g",
+      "number": "30.0",
+      "unit": "g"
+    },
+    "solver.hops.whirlpool_mass_kg": {
+      "text": "50.0 g",
+      "number": "50.0",
+      "unit": "g"
+    },
+    "solver.hops.total_mass_kg": {
+      "text": "80.0 g",
+      "number": "80.0",
+      "unit": "g"
+    },
+    "solver.hops.whirlpool_hot_ibu": {
+      "text": "7.0 IBU",
+      "number": "7.0",
+      "unit": "IBU"
+    },
+    "solver.hops.whirlpool_cool_ibu": {
+      "text": "3.0 IBU",
+      "number": "3.0",
       "unit": "IBU"
     },
     "grist.finished_beer_srm": {
@@ -7087,6 +7957,150 @@
           "unit": "%"
         }
       }
+    ],
+    "batch.boil_hops": [
+      {
+        "name": {
+          "text": "Magnum",
+          "number": null,
+          "unit": null
+        },
+        "alpha": {
+          "text": "14.0%",
+          "number": "14.0",
+          "unit": "%"
+        },
+        "boil": {
+          "text": "60 min",
+          "number": "60",
+          "unit": "min"
+        },
+        "ibu_share": {
+          "text": "100.0%",
+          "number": "100.0",
+          "unit": "%"
+        },
+        "ibu": {
+          "text": "30.0 IBU",
+          "number": "30.0",
+          "unit": "IBU"
+        },
+        "amount": {
+          "text": "30.0 g",
+          "number": "30.0",
+          "unit": "g"
+        }
+      }
+    ],
+    "batch.whirlpool_hops": [
+      {
+        "name": {
+          "text": "Citra",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "rest": {
+          "text": "30 min",
+          "number": "30",
+          "unit": "min"
+        },
+        "temp": {
+          "text": "95.0 \u00b0C",
+          "number": "95.0",
+          "unit": "\u00b0C"
+        },
+        "ibu_share": {
+          "text": "70.0%",
+          "number": "70.0",
+          "unit": "%"
+        },
+        "ibu": {
+          "text": "7.0 IBU",
+          "number": "7.0",
+          "unit": "IBU"
+        },
+        "amount": {
+          "text": "35.0 g",
+          "number": "35.0",
+          "unit": "g"
+        }
+      },
+      {
+        "name": {
+          "text": "Saaz",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "rest": {
+          "text": "10 min",
+          "number": "10",
+          "unit": "min"
+        },
+        "temp": {
+          "text": "70.0 \u00b0C",
+          "number": "70.0",
+          "unit": "\u00b0C"
+        },
+        "ibu_share": {
+          "text": "30.0%",
+          "number": "30.0",
+          "unit": "%"
+        },
+        "ibu": {
+          "text": "3.0 IBU",
+          "number": "3.0",
+          "unit": "IBU"
+        },
+        "amount": {
+          "text": "15.0 g",
+          "number": "15.0",
+          "unit": "g"
+        }
+      }
+    ],
+    "batch.dry_hops": [
+      {
+        "name": {
+          "text": "Mosaic",
+          "number": null,
+          "unit": null
+        },
+        "type": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "quantity": {
+          "text": "1.0",
+          "number": "1.0",
+          "unit": null
+        },
+        "unit": {
+          "text": "oz",
+          "number": null,
+          "unit": null
+        },
+        "applied": {
+          "text": "High krausen",
+          "number": null,
+          "unit": null
+        },
+        "contact": {
+          "text": "Terminal gravity",
+          "number": null,
+          "unit": null
+        }
+      }
     ]
   },
   "formatted_summaries": {
@@ -7206,5 +8220,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:3dd41905211bc11a8ebb5f35bc8f2507fa8ed5f765162edcba230cb87cf6b41a"
+  "content_hash": "sha256:7898445a6774e78404076fd4cd442f9fd03812a244edf12dea42b46325f5dc63"
 }

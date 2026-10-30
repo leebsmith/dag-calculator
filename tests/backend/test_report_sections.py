@@ -29,7 +29,7 @@ pytestmark = pytest.mark.skipif(
     TYPST is None, reason="typst binary not installed; render gates skipped"
 )
 
-SECTION_IDS = ("brewhouse", "batch-facts", "yeast", "volume-ledger", "liquor-ledger")
+SECTION_IDS = ("brewhouse", "batch-facts", "hops", "yeast", "volume-ledger", "liquor-ledger")
 
 
 def stage_root(tmp: Path, bundle: Path | dict[str, Any]) -> Path:
@@ -172,6 +172,11 @@ BATCH_FACTS_PROBE = (
     "#metadata(present-batch-facts()) <probe>\n"
 )
 
+HOPS_PRESENCE_PROBE = (
+    '#import "sections/hops.typ": present-hops\n'
+    "#metadata(present-hops()) <probe>\n"
+)
+
 YEAST_PRESENCE_PROBE = (
     '#import "sections/yeast.typ": present-yeast\n'
     "#metadata(present-yeast()) <probe>\n"
@@ -194,6 +199,21 @@ YEAST_GATES_PROBE = (
     '#import "sections/yeast.typ": diastaticus, presents-derate\n'
     "#metadata((sta1: diastaticus(), derate: presents-derate())) <probe>\n"
 )
+
+
+def test_hops_is_present_with_the_charges(shared_root: Path) -> None:
+    assert probe(shared_root, HOPS_PRESENCE_PROBE) is True
+
+
+def test_hops_is_absent_without_any_charge() -> None:
+    bundle = fixture()
+    for table in ("batch.boil_hops", "batch.whirlpool_hops", "batch.dry_hops"):
+        del bundle["formatted_tables"][table]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, HOPS_PRESENCE_PROBE) is False
+        render(root, "hops")
 
 
 def test_brewhouse_is_present_with_the_process_inputs(shared_root: Path) -> None:
@@ -276,6 +296,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
     assert meta["sections"] == [
         "brewhouse",
         "batch-facts",
+        "hops",
         "yeast",
         "volume-ledger",
         "liquor-ledger",

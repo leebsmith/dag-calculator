@@ -172,6 +172,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.attenuation_above_cap` | derived |
 | `batch.attenuation_derate_points` | root |
 | `batch.boil_hops` | collection |
+| `batch.boil_ibu_share` | derived |
 | `batch.boil_off_rate_l_per_hr` | root |
 | `batch.boil_target_ibu` | derived |
 | `batch.boil_time_min` | root |
@@ -211,9 +212,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.total_water_used` | derived |
 | `batch.v_ferm` | root |
 | `batch.whirlpool_ambient_temp_c` | root |
+| `batch.whirlpool_cool_ibu_share` | derived |
 | `batch.whirlpool_cooling_time_constant_min` | root |
 | `batch.whirlpool_hops` | collection |
+| `batch.whirlpool_hot_ibu_share` | derived |
 | `batch.whirlpool_ibu_fraction` | root |
+| `batch.whirlpool_ibu_share` | derived |
 | `batch.whirlpool_target_ibu` | derived |
 | `batch.yeast` | selection |
 | `batch.yeast_cap` | derived |

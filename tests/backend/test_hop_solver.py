@@ -195,6 +195,8 @@ def test_request_returns_one_row_per_addition_and_totals():
         response.boil_mass_kg + response.whirlpool_mass_kg
     )
     assert math.isfinite(response.total_mass_kg)
+    assert response.whirlpool_hot_ibu == pytest.approx(20.0)
+    assert response.whirlpool_cool_ibu == pytest.approx(0.0)
 
 
 def _two_charge_input(first_temp=99.0, second_temp=76.7, first_duration=30.0, second_duration=20.0):
@@ -225,6 +227,46 @@ def _two_charge_input(first_temp=99.0, second_temp=76.7, first_duration=30.0, se
         whirlpool_ambient_temp_c=20.0,
         whirlpool_cooling_time_constant_min=108.7,
     )
+
+
+def test_whirlpool_ibu_splits_at_the_hot_threshold():
+    result = hop_solver.solve_hops(_two_charge_input(first_temp=99.0, second_temp=70.0))
+    assert result.whirlpool_hot_ibu == pytest.approx(10.0)
+    assert result.whirlpool_cool_ibu == pytest.approx(10.0)
+    assert result.whirlpool_hot_ibu + result.whirlpool_cool_ibu == pytest.approx(20.0)
+
+
+def test_a_charge_at_the_threshold_counts_as_cool():
+    threshold = hop_solver.WHIRLPOOL_HOT_TEMP_C
+    charges = [
+        (99.0, 30.0, 0.75),
+        (threshold, 20.0, 0.25),
+    ]
+    result = hop_solver.solve_hops(
+        HopSolverInput(
+            boil_hops=[],
+            whirlpool_hops=[
+                WhirlpoolHopEntry(
+                    alpha_acid_pct=0.20,
+                    duration_min=duration,
+                    initial_temp_c=temp,
+                    pct=pct,
+                    product_form="lupulin_pellet",
+                )
+                for temp, duration, pct in charges
+            ],
+            boil_target_ibu=0.0,
+            whirlpool_target_ibu=20.0,
+            boil_time_min=60.0,
+            pre_boil_gravity=1.055,
+            post_boil_gravity=1.055,
+            post_boil_volume_l=20.0,
+            whirlpool_ambient_temp_c=20.0,
+            whirlpool_cooling_time_constant_min=108.7,
+        )
+    )
+    assert result.whirlpool_hot_ibu == pytest.approx(15.0)
+    assert result.whirlpool_cool_ibu == pytest.approx(5.0)
 
 
 def test_charges_share_one_timeline_and_a_chill_splits_the_window():

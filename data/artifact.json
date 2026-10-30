@@ -3538,6 +3538,150 @@
         "dimension": "ibu"
       }
     },
+    "batch.boil_ibu_share": {
+      "kind": "derived",
+      "inputs": {
+        "boil": "batch.boil_target_ibu",
+        "total": "batch.target_ibu"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "total"
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "ref": "boil"
+              },
+              {
+                "ref": "total"
+              }
+            ]
+          },
+          0
+        ]
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
+    "batch.whirlpool_ibu_share": {
+      "kind": "derived",
+      "inputs": {
+        "whirlpool": "batch.whirlpool_target_ibu",
+        "total": "batch.target_ibu"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "total"
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "ref": "whirlpool"
+              },
+              {
+                "ref": "total"
+              }
+            ]
+          },
+          0
+        ]
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
+    "batch.whirlpool_hot_ibu_share": {
+      "kind": "derived",
+      "inputs": {
+        "hot": "solver.hops.whirlpool_hot_ibu",
+        "whirlpool": "batch.whirlpool_target_ibu"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "whirlpool"
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "ref": "hot"
+              },
+              {
+                "ref": "whirlpool"
+              }
+            ]
+          },
+          0
+        ]
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
+    "batch.whirlpool_cool_ibu_share": {
+      "kind": "derived",
+      "inputs": {
+        "cool": "solver.hops.whirlpool_cool_ibu",
+        "whirlpool": "batch.whirlpool_target_ibu"
+      },
+      "expr": {
+        "op": "if",
+        "args": [
+          {
+            "op": "gt",
+            "args": [
+              {
+                "ref": "whirlpool"
+              },
+              0
+            ]
+          },
+          {
+            "op": "/",
+            "args": [
+              {
+                "ref": "cool"
+              },
+              {
+                "ref": "whirlpool"
+              }
+            ]
+          },
+          0
+        ]
+      },
+      "output": {
+        "dimension": "percentage"
+      }
+    },
     "batch.total_water_used": {
       "kind": "derived",
       "inputs": {
@@ -3868,6 +4012,12 @@
         },
         "total_mass_kg": {
           "dimension": "mass"
+        },
+        "whirlpool_hot_ibu": {
+          "dimension": "ibu"
+        },
+        "whirlpool_cool_ibu": {
+          "dimension": "ibu"
         }
       },
       "domain": {

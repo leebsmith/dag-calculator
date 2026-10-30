@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_112 paths_
+_116 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -37,6 +37,7 @@ _112 paths_
 | `batch.boil_hops.name` | Hop | field | — | — | — | — |
 | `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
+| `batch.boil_ibu_share` | Boil IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
 | `batch.boil_time_min` | Boil time | root | time | min | 0 | — |
@@ -106,6 +107,7 @@ _112 paths_
 | `batch.total_water_used` | Total Water Used | derived | volume | L | 1 | — |
 | `batch.v_ferm` | Fermenter volume | root | volume | L | 1 | — |
 | `batch.whirlpool_ambient_temp_c` | Whirlpool ambient | root | temperature | degC (°C) | 1 | — |
+| `batch.whirlpool_cool_ibu_share` | Whirlpool Cool IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_cooling_time_constant_min` | Cooling time constant | root | time | min | 0 | — |
 | `batch.whirlpool_hops` | Whirlpool hops | collection | — | — | — | — |
 | `batch.whirlpool_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
@@ -118,7 +120,9 @@ _112 paths_
 | `batch.whirlpool_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet |
 | `batch.whirlpool_hops.t90_replacement_ratio` | T90 Replacement Ratio | field | dimensionless | — | — | — |
+| `batch.whirlpool_hot_ibu_share` | Whirlpool Hot IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_fraction` | Whirlpool IBU share | root | percentage | pct (%) | 1 | — |
+| `batch.whirlpool_ibu_share` | Whirlpool IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_target_ibu` | Whirlpool IBU | derived | ibu | IBU | 1 | — |
 | `batch.yeast` | Yeast | selection | — | — | — | — |
 | `batch.yeast.alcohol_tolerance` | Alcohol tolerance | field | — | — | — | — |
@@ -375,7 +379,7 @@ _45 paths_
 
 ## Solver — hop bitterness
 
-_6 paths_
+_8 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -383,6 +387,8 @@ _6 paths_
 | `solver.hops.boil_mass_kg` | Boil Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.boil_rows` | Boil Rows | output | — | — | — | — |
 | `solver.hops.total_mass_kg` | Total Mass Kg | output | mass | kg | 1 | — |
+| `solver.hops.whirlpool_cool_ibu` | Whirlpool Cool IBU | output | ibu | IBU | 1 | — |
+| `solver.hops.whirlpool_hot_ibu` | Whirlpool Hot IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.whirlpool_mass_kg` | Whirlpool Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.whirlpool_rows` | Whirlpool Rows | output | — | — | — | — |
 

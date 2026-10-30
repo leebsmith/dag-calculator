@@ -44,13 +44,22 @@ export const DRY_HOP_VALUE_LABELS = {
 export const dryHopsRegistry = {
   "batch.dry_hops": { label: "Dry hops" },
   "batch.dry_hops.variety": { label: "Hop" },
-  "batch.dry_hops.product_type": { label: "Type" },
+  "batch.dry_hops.product_type": {
+    label: "Type",
+    optionLabels: DRY_HOP_VALUE_LABELS.hop_product_type,
+  },
   "batch.dry_hops.quantity": { label: "Quantity" },
   "batch.dry_hops.unit": { label: "Unit" },
   "batch.dry_hops.application_stage": { label: "Stage" },
-  "batch.dry_hops.application_event": { label: "Applied at" },
+  "batch.dry_hops.application_event": {
+    label: "Applied at",
+    optionLabels: DRY_HOP_VALUE_LABELS.hop_application_event,
+  },
   "batch.dry_hops.contact_duration_min": { label: "Contact", displayUnit: "hr" },
-  "batch.dry_hops.contact_until": { label: "Contact until" },
+  "batch.dry_hops.contact_until": {
+    label: "Contact until",
+    optionLabels: DRY_HOP_VALUE_LABELS.hop_contact_until,
+  },
   "batch.dry_hops.time_of_application": { label: "Detail" },
   "batch.dry_hops.notes": { label: "Notes" },
 };

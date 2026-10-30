@@ -116,6 +116,103 @@ test("grist tables carry formatted row cells", async () => {
   assert.equal(trace[0].grist_pct.unit, "%");
 });
 
+const BOIL_HOP = {
+  hop_id: "magnum",
+  name: "Magnum",
+  alpha_acid_pct: 0.14,
+  boil_time_fraction: 1,
+  parts: 100,
+  pct: 1,
+};
+
+const WHIRLPOOL_HOT = {
+  hop_id: "citra",
+  name: "Citra",
+  product_form: "t90_pellet",
+  alpha_acid_pct: 0.12,
+  t90_replacement_ratio: 1,
+  duration_min: 30,
+  initial_temp_c: 95,
+  parts: 70,
+  pct: 0.7,
+  notes: "",
+};
+
+const WHIRLPOOL_COOL = {
+  ...WHIRLPOOL_HOT,
+  hop_id: "saaz",
+  name: "Saaz",
+  alpha_acid_pct: 0.035,
+  duration_min: 10,
+  initial_temp_c: 70,
+  parts: 30,
+  pct: 0.3,
+};
+
+const DRY_HOP = {
+  hop_id: "mosaic",
+  variety: "Mosaic",
+  product_type: "t90_pellet",
+  quantity: 1,
+  unit: "oz",
+  application_stage: "fermentation",
+  application_event: "high_krausen",
+  contact_duration_min: null,
+  contact_until: "terminal_gravity",
+  time_of_application: "",
+  notes: "",
+};
+
+test("hop tables carry the charges, the solved cells and the choice labels", async () => {
+  const app = await booted();
+  app.engine.setCollection("batch.boil_hops", [BOIL_HOP]);
+  app.engine.setCollection("batch.whirlpool_hops", [WHIRLPOOL_HOT, WHIRLPOOL_COOL]);
+  app.engine.setCollection("batch.dry_hops", [DRY_HOP]);
+  app.compute();
+  const tables = app.reportFormattedTables();
+
+  const boil = tables["batch.boil_hops"];
+  assert.equal(boil.length, 1);
+  assert.deepEqual(boil[0].name, { text: "Magnum" });
+  assert.equal(boil[0].alpha.unit, "%");
+  assert.equal(boil[0].ibu_share.unit, "%");
+  assert.equal(typeof boil[0].ibu.text, "string");
+  assert.equal(typeof boil[0].amount.text, "string");
+
+  const whirlpool = tables["batch.whirlpool_hops"];
+  assert.equal(whirlpool.length, 2);
+  assert.equal(whirlpool[0].form.text, "T-90 pellet");
+  assert.equal(whirlpool[0].rest.unit, "min");
+  assert.equal(whirlpool[0].temp.unit, "°C");
+  assert.equal(whirlpool[1].name.text, "Saaz");
+
+  const dry = tables["batch.dry_hops"];
+  assert.equal(dry.length, 1);
+  assert.equal(dry[0].type.text, "T-90 pellet");
+  assert.equal(dry[0].quantity.text, "1");
+  assert.equal(dry[0].unit.text, "oz");
+  assert.equal(dry[0].applied.text, "High krausen");
+  assert.equal(dry[0].contact.text, "Terminal gravity");
+});
+
+test("the IBU split shares are formatted from their artifact nodes", async () => {
+  const app = await booted();
+  const formatted = app.reportFormatted();
+  const catalog = app.reportCatalog().nodes;
+
+  for (const path of [
+    "batch.boil_ibu_share",
+    "batch.whirlpool_ibu_share",
+    "batch.whirlpool_hot_ibu_share",
+    "batch.whirlpool_cool_ibu_share",
+  ]) {
+    assert.equal(formatted[path].unit, "%");
+    assert.equal(catalog[path].dimension, "percentage");
+  }
+  assert.equal(catalog["solver.hops.whirlpool_hot_ibu"].dimension, "ibu");
+  assert.equal(catalog["solver.hops.whirlpool_cool_ibu"].dimension, "ibu");
+});
+
 const SUGAR_ROW = {
   sugar_id: "d-180",
   name: "Candi Syrup D-180",

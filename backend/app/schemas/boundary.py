@@ -326,6 +326,8 @@ class HopSolverResponse(BoundaryModel):
     boil_mass_kg: float
     whirlpool_mass_kg: float
     total_mass_kg: float
+    whirlpool_hot_ibu: Annotated[float, Field(ge=0.0)]
+    whirlpool_cool_ibu: Annotated[float, Field(ge=0.0)]
 
 
 class WaterStrategy(StrEnum):

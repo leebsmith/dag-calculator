@@ -21,6 +21,7 @@ checklist is [`adding-a-section.md`](adding-a-section.md).
 |---|---|---|---|---|
 | 1 | `brewhouse` | Brewhouse | `present-brewhouse` | [`sections/brewhouse.typ`](../backend/app/templates/sections/brewhouse.typ) |
 | 2 | `batch-facts` | Batch Facts | `present-batch-facts` | [`sections/batch-facts.typ`](../backend/app/templates/sections/batch-facts.typ) |
-| 3 | `yeast` | Yeast | `present-yeast` | [`sections/yeast.typ`](../backend/app/templates/sections/yeast.typ) |
-| 4 | `volume-ledger` | Volume Ledger | `present-volume-ledger` | [`sections/volume-ledger.typ`](../backend/app/templates/sections/volume-ledger.typ) |
-| 5 | `liquor-ledger` | Liquor Ledger | `present-liquor-ledger` | [`sections/liquor-ledger.typ`](../backend/app/templates/sections/liquor-ledger.typ) |
+| 3 | `hops` | Hops | `present-hops` | [`sections/hops.typ`](../backend/app/templates/sections/hops.typ) |
+| 4 | `yeast` | Yeast | `present-yeast` | [`sections/yeast.typ`](../backend/app/templates/sections/yeast.typ) |
+| 5 | `volume-ledger` | Volume Ledger | `present-volume-ledger` | [`sections/volume-ledger.typ`](../backend/app/templates/sections/volume-ledger.typ) |
+| 6 | `liquor-ledger` | Liquor Ledger | `present-liquor-ledger` | [`sections/liquor-ledger.typ`](../backend/app/templates/sections/liquor-ledger.typ) |

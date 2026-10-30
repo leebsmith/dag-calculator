@@ -38,7 +38,14 @@ BUNDLE = (
     / "fixtures"
     / "report-bundle.json"
 )
-SECTIONS = ("brewhouse", "batch-facts", "yeast", "volume-ledger", "liquor-ledger")
+SECTIONS = (
+    "brewhouse",
+    "batch-facts",
+    "hops",
+    "yeast",
+    "volume-ledger",
+    "liquor-ledger",
+)
 
 
 def bundle_dict() -> dict:

@@ -197,6 +197,23 @@ Example: charges at 30 and 20 minutes from 99 °C, the second posted at 76.7 °C
 infer a chill at 10 minutes (`99 °C → 92.1 °C` passively, then 76.7 °C) and give
 the first charge 9.81 effective minutes; the second gets 2.43.
 
+### IBU splits
+
+The report prints two splits. The boil/whirlpool split is the authored pool
+division: `batch.boil_target_ibu` and `batch.whirlpool_target_ibu` over
+`batch.target_ibu`, declared as the shares `batch.boil_ibu_share` and
+`batch.whirlpool_ibu_share`.
+
+The hot/cool split cuts the whirlpool pool at **170 °F (76.7 °C)** — the line
+between a hot stand that still isomerizes freely and the cool hop stand where it
+nears zero (§2, and the `isomerization_floor` band in the whirlpool notes). The
+boundary returns the two sums as `solver.hops.whirlpool_hot_ibu` and
+`solver.hops.whirlpool_cool_ibu`; the shares are
+`batch.whirlpool_hot_ibu_share` and `batch.whirlpool_cool_ibu_share`. The
+threshold is `WHIRLPOOL_HOT_TEMP_C` in `backend/app/core/hop_solver.py`; a charge
+exactly at the threshold counts as cool, and the two sums always add up to the
+whirlpool pool.
+
 ## 6. Reference vectors
 
 Implemented test vectors:

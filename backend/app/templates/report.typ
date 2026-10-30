@@ -6,6 +6,7 @@
 #import "lib/format.typ": opt, short-id
 #import "sections/brewhouse.typ": present-brewhouse, render-brewhouse
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
+#import "sections/hops.typ": present-hops, render-hops
 #import "sections/yeast.typ": present-yeast, render-yeast
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 #import "sections/liquor-ledger.typ": present-liquor-ledger, render-liquor-ledger
@@ -18,6 +19,7 @@
 #let sections = (
   (id: "brewhouse", title: "Brewhouse", present: present-brewhouse, render: render-brewhouse),
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
+  (id: "hops", title: "Hops", present: present-hops, render: render-hops),
   (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
   (id: "liquor-ledger", title: "Liquor Ledger", present: present-liquor-ledger, render: render-liquor-ledger),

@@ -8,6 +8,8 @@ import { displayValue, nonlinearFns } from "../producer.js";
 import { reportError } from "../../observability.js";
 import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
+import { HOP_NODES as H } from "../registry/hops.js";
+import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { cellLabel, formatCell } from "./cell.js";
 
@@ -21,7 +23,10 @@ function isCollectionField(artifact, path) {
 
 function formatEntry(artifact, entry, value, nl) {
   if (!entry || value === null || value === undefined) return { text: "—" };
-  if (typeof value !== "number") return { text: String(value) };
+  if (typeof value !== "number") {
+    // A taxonomy value prints its choice label, the way the card's select does.
+    return { text: entry.option_labels?.[value] ?? String(value) };
+  }
   const shown = displayValue(artifact, entry.dimension, entry.unit, value, nl);
   const cell = formatCell(shown, { decimals: entry.decimals });
   return entry.symbol
@@ -193,7 +198,79 @@ export function buildReportTables(artifact, catalog, engine) {
     [majorId]: majorRows,
     [traceId]: traceRows,
     [sugarId]: sugarRows,
+    [H.collection]: hopRows(artifact, catalog, engine, "boil"),
+    [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool"),
+    [D.collection]: dryHopRows(artifact, catalog, engine),
   };
+}
+
+// Hop rows join the authored charge to the row the boundary solved for it, in
+// the order both sides preserve (the card's mergeBoilRows does the same). A
+// row's mass and IBU are solved values; its share, alpha and time are authored.
+function resolvedList(engine, path) {
+  try {
+    const value = engine.resolve(path);
+    return Array.isArray(value) ? value : [];
+  } catch (err) {
+    reportError("reportFormat.hopRows", err);
+    return [];
+  }
+}
+
+function hopRows(artifact, catalog, engine, kind) {
+  const nl = nonlinearFns(artifact, engine);
+  const nodes = catalog.nodes ?? {};
+  const boil = kind === "boil";
+  const collection = boil ? H.collection : H.whirlpoolCollection;
+  const authored = engine.get(collection) ?? [];
+  const solved = resolvedList(engine, boil ? H.boilRows : H.whirlpoolRows);
+  // The solved row values have no catalog path of their own, so each borrows the
+  // display facts of a node with the same dimension: the same unit the user
+  // picked, the same decimals, the same symbol.
+  const ibuEntry = nodes[boil ? H.boilIbu : H.whirlpoolIbu];
+  const massEntry = nodes[boil ? H.boilMass : H.whirlpoolMass];
+  const timeEntry = nodes[boil ? H.boilTime : `${H.whirlpoolCollection}.duration_min`];
+  const tempEntry = nodes[H.whirlpoolAmbient];
+  return authored.map((row, index) => {
+    const result = solved[index] ?? {};
+    const cell = (entry, value) => formatEntry(artifact, entry, value, nl);
+    const base = {
+      name: rowName(row),
+      amount: cell(massEntry, result.mass_kg),
+      ibu_share: cell(nodes[`${collection}.pct`], row.pct),
+      ibu: cell(ibuEntry, result.ibu),
+    };
+    if (boil) {
+      return {
+        ...base,
+        alpha: cell(nodes[`${collection}.alpha_acid_pct`], row.alpha_acid_pct),
+        boil: cell(timeEntry, result.minutes),
+      };
+    }
+    return {
+      ...base,
+      form: cell(nodes[`${collection}.product_form`], row.product_form),
+      rest: cell(timeEntry, row.duration_min),
+      temp: cell(tempEntry, row.initial_temp_c),
+    };
+  });
+}
+
+// Dry hops are descriptive: no IBU, no mass to sum, and their quantity is
+// authored in a unit of the brewer's choosing. Every cell is the authored value
+// or its registry label; nothing is derived.
+function dryHopRows(artifact, catalog, engine) {
+  const nl = nonlinearFns(artifact, engine);
+  const nodes = catalog.nodes ?? {};
+  const cell = (field, value) => formatEntry(artifact, nodes[`${D.collection}.${field}`], value, nl);
+  return (engine.get(D.collection) ?? []).map((row) => ({
+    name: rowName({ name: row.variety }),
+    type: cell("product_type", row.product_type),
+    quantity: cell("quantity", row.quantity),
+    unit: cell("unit", row.unit),
+    applied: cell("application_event", row.application_event),
+    contact: cell("contact_until", row.contact_until),
+  }));
 }
 
 // Mass-weighted colour and extract yield per table, plus the overall aggregate.
