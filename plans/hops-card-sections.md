@@ -53,8 +53,11 @@ The hops card grew in three passes and kept three designs:
   `grain-bill-summary`.
 - The mass-unit pill appears in the boil and whirlpool section headers because
   it changes both solved tables; dry hops omit it (the unit is per row).
-- The "Assumptions" disclosure becomes a `btn-link` toggle inside the whirlpool
-  body, next to the cooling inputs it explains.
+- The "Assumptions" disclosure becomes an underlined chevron toggle inside the
+  whirlpool body, next to the cooling inputs it explains; the opened list sits
+  in a tinted `detail-panel`. The `btn-link` class itself gains the pointer
+  cursor, underline and focus ring it was missing, which also fixes the Water
+  card's "view details" and Show/Hide controls.
 - The Dry Hopping step leaves the manifest. `batch.dry_hops` is declared by the
   Hops step, so attribution and step status follow the one card.
 

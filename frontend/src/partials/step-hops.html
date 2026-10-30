@@ -190,13 +190,17 @@
         <div>
           <button
             type="button"
-            class="btn-link text-xs"
+            class="btn-link text-xs detail-toggle"
             @click="toggleWhirlpoolHelp()"
             :aria-expanded="whirlpoolHelpOpen ? 'true' : 'false'"
             aria-controls="whirlpool-assumptions"
-          >Assumptions</button>
+          >
+            <span class="section-chevron" aria-hidden="true">▸</span>
+            Whirlpool assumptions
+          </button>
           <div
             id="whirlpool-assumptions"
+            class="detail-panel"
             x-cloak
             x-show="whirlpoolHelpOpen"
             x-transition.opacity.duration.150ms

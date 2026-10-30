@@ -9,7 +9,7 @@
       "context": "",
       "declarations": "outline-offset: 2px; outline: 2px solid var(--sys-border-focus)",
       "selectors": [
-        ".btn:focus-visible",
+        ".btn:focus-visible, .btn-link:focus-visible",
         ".landing-title:focus-visible, .landing-kebab:focus-visible",
         ".section-toggle:focus-visible"
       ],

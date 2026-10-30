@@ -74,7 +74,8 @@ samp {
   min-height: var(--target-min-micro);
 }
 
-.btn:focus-visible {
+.btn:focus-visible,
+.btn-link:focus-visible {
   outline: 2px solid var(--sys-border-focus);
   outline-offset: 2px;
 }
@@ -133,10 +134,29 @@ samp {
   border-color: var(--color-transparent);
   color: var(--sys-text-muted);
   padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .btn-link:hover:not(:disabled) {
   color: var(--sys-text-primary);
+}
+
+/* A disclosure one level below a card section: chevron plus the underlined
+   link affordance, for panels that open inside a section body. */
+.detail-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.detail-panel {
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--sys-surface-subtle);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-lg);
 }
 
 .btn-close {
@@ -1908,7 +1928,8 @@ samp {
   transition: transform var(--transition-fast);
 }
 
-.section-toggle[aria-expanded="true"] .section-chevron {
+.section-toggle[aria-expanded="true"] .section-chevron,
+.detail-toggle[aria-expanded="true"] .section-chevron {
   transform: rotate(90deg);
 }
 
@@ -2034,7 +2055,7 @@ samp {
 }
 
 .whirlpool-assumptions {
-  margin: var(--space-2) 0 var(--space-4);
+  margin: var(--space-0);
   padding-left: var(--space-5);
 }
 
