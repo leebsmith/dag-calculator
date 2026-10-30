@@ -210,7 +210,6 @@ test("late additions: the sugar draft fields resolve inside the card's slice", w
 
   assert.ok(app.sugarMassField);
   assert.ok(app.lateSugarField);
-  assert.ok(app.sugarColorField);
   assert.ok(app.lateExtractField);
   assert.equal(app.sugarField(app.sugarMassField.id), app.sugarMassField);
   assert.equal(app.lateSugarField.control, "collection-table");
@@ -325,7 +324,6 @@ test("trace malts: the catalog draft installs into the trace slice", withFreshAp
   assert.equal(app.draftRows[0].catalog_id, malt.id);
   assert.ok(app.traceMaltField);
   assert.ok(app.traceMassField);
-  assert.ok(app.traceColorField);
   assert.match(app.traceMaltField.id, /^grist\.trace_malts/);
 
   app.saveTraceEditor();

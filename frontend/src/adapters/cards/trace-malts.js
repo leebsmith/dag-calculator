@@ -3,7 +3,12 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
-import { maltGroupMeta, maltItemMeta } from "../../views/producer/gristRows.js";
+import { countLabel } from "../../utils.js";
+import {
+  gristSectionMeta,
+  maltGroupMeta,
+  maltItemMeta,
+} from "../../views/producer/gristRows.js";
 import { makeTraceMaltRow } from "../../views/producer/traceMaltRows.js";
 
 export function registerTraceMaltsCard(app, ctx) {
@@ -28,6 +33,11 @@ export function registerTraceMaltsCard(app, ctx) {
   Object.assign(app, {
     // Rows for the summary card (refreshed by refreshTraceMaltsCard).
     traceMaltRows: [],
+    traceSectionOpen: true,
+
+    toggleTraceSection() {
+      this.traceSectionOpen = !this.traceSectionOpen;
+    },
 
     traceField(id) {
       return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
@@ -41,16 +51,20 @@ export function registerTraceMaltsCard(app, ctx) {
         return this.traceField(N.traceMalts);
       },
     },
+    traceSectionMeta: {
+      configurable: true,
+      get() {
+        return gristSectionMeta(
+          this.traceMaltRows,
+          countLabel(this.traceMaltRows.length, "trace malt"),
+          this.traceMassField
+        );
+      },
+    },
     traceMassField: {
       configurable: true,
       get() {
         return this.traceField(N.traceMass);
-      },
-    },
-    traceColorField: {
-      configurable: true,
-      get() {
-        return this.traceField(N.traceColor);
       },
     },
     traceDraftMassDisplay: {
@@ -65,4 +79,4 @@ export function registerTraceMaltsCard(app, ctx) {
 export function refreshTraceMaltsCard(app, ctx) {
   app.traceMaltRows = ctx.engine.get(N.traceMalts) ?? [];
 }
-export const KEYS = [...catalogDraftKeys("trace", "Trace"), "traceMaltRows", "traceField", "traceMaltField", "traceMassField", "traceColorField", "traceDraftMassDisplay"];
+export const KEYS = [...catalogDraftKeys("trace", "Trace"), "traceMaltRows", "traceSectionOpen", "toggleTraceSection", "traceSectionMeta", "traceField", "traceMaltField", "traceMassField", "traceDraftMassDisplay"];

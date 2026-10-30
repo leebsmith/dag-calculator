@@ -143,7 +143,7 @@ _112 paths_
 
 ## Grist
 
-_40 paths_
+_41 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -169,6 +169,7 @@ _40 paths_
 | `grist.mcu` | Mcu | derived | dimensionless | — | — | — |
 | `grist.sugar_weighted_lovibond` | Weighted sugar color | derived | grain_color | EBC | 1 | — |
 | `grist.sugars_mass` | Total sugar mass | derived | mass | kg | 1 | — |
+| `grist.total_mass` | Total bill mass | derived | mass | kg | 1 | — |
 | `grist.trace_malts` | Trace malts | collection | — | — | — | — |
 | `grist.trace_malts.catalog_id` | Catalog ID | field | — | — | — | — |
 | `grist.trace_malts.category` | Type | field | — | — | — | BASE, CRYSTAL, ROASTED, ACID |
@@ -310,7 +311,7 @@ _31 paths_
 | `solver.batch.hlt.v_hlt_target` | V Hlt Target | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_top_up` | HLT Top-Up | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_sparge_deliverable` | Sparge Deliverable | output | volume | L | 1 | — |
-| `solver.batch.m_grist` | Grist Mass | output | mass | kg | 1 | — |
+| `solver.batch.m_grist` | Grist mass | output | mass | kg | 1 | — |
 | `solver.batch.mash_thickness_l_per_kg` | Mash Thickness | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `solver.batch.max_achievable_abv` | Max Achievable ABV | output | percentage | pct (%) | 1 | — |
 | `solver.batch.max_feasible_abv` | Max Feasible ABV | output | percentage | pct (%) | 1 | — |

@@ -1,16 +1,25 @@
-<section class="step-card">
-  <div class="step-card-header">
-    <h2 class="card-title" x-text="activeStep.title"></h2>
-    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+<section class="synthesized-card card-section">
+  <div class="section-header">
+    <button
+      type="button"
+      class="section-toggle"
+      :aria-expanded="sugarSectionOpen ? 'true' : 'false'"
+      aria-controls="fermentables-sugars"
+      @click="toggleSugarSection()"
+    >
+      <span class="section-chevron" aria-hidden="true">▸</span>
+      <span class="section-title">Sugars</span>
+      <span class="section-meta" x-text="sugarSectionMeta"></span>
+    </button>
+    <div class="section-actions">
+      <button type="button" class="btn-primary text-xs" @click="openSugarEditor()">Configure Sugars ⚙</button>
+    </div>
   </div>
 
-  <div class="step-card-content">
-    <div>
-      <h3 class="section-title">Late Sugar Additions</h3>
-      <p class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
-        ? 'Kettle sugars authored as a share of total extract; the solver derives the row masses.'
-        : 'Kettle sugars, dosed by mass; they feed the batch solver\'s late extract.'"></p>
-    </div>
+  <div class="section-body" id="fermentables-sugars" x-show="sugarSectionOpen">
+    <p class="text-xs text-muted" x-text="lateAdditionIntent === 'share'
+      ? 'Kettle sugars authored as a share of total extract; the solver derives the row masses.'
+      : 'Kettle sugars, dosed by mass; they feed the batch solver\'s late extract.'"></p>
 
     <template x-if="lateIntentField">
       <div class="form-group">
@@ -59,11 +68,6 @@
       </div>
     </template>
 
-    <div class="table-header-toolbar">
-      <span class="text-xs text-muted" x-text="sugarCountLabel"></span>
-      <button type="button" class="btn-primary text-xs" @click="openSugarEditor()">Configure Sugars ⚙</button>
-    </div>
-
     <template x-if="lateSugarField">
       <div class="data-table-container">
         <table class="data-table">
@@ -102,17 +106,24 @@
     </p>
 
     <template x-if="latePinPanelVisible">
-      <div class="synthesized-card">
-        <div class="synthesized-header">
-          <h3 class="synthesized-title">Pin preview</h3>
-          <button
-            type="button"
-            class="btn-outline text-xs"
-            @click="toggleLatePinPanel()"
-            x-text="latePinPanelOpen ? 'Hide' : 'Show'"
-          ></button>
-        </div>
-        <div x-show="latePinPanelOpen">
+      <div>
+        <button
+          type="button"
+          class="btn-link text-xs detail-toggle"
+          @click="toggleLatePinPanel()"
+          :aria-expanded="latePinPanelOpen ? 'true' : 'false'"
+          aria-controls="sugar-pin-preview"
+        >
+          <span class="section-chevron" aria-hidden="true">▸</span>
+          Pin preview
+        </button>
+        <div
+          id="sugar-pin-preview"
+          class="detail-panel"
+          x-cloak
+          x-show="latePinPanelOpen"
+          x-transition.opacity.duration.150ms
+        >
           <p class="form-hint" x-text="previewCompositionCaption"></p>
 
           <p class="form-hint">
@@ -166,20 +177,6 @@
     </template>
 
     <div class="summary-strip" x-show="lateSugarField && lateSugarField.rows.length > 0">
-      <div class="summary-strip-item">
-        <span class="text-xs text-muted">Total sugar mass</span>
-        <span
-          class="text-base font-bold tabular-nums"
-          x-text="fmt.formatQuantity(sugarMassField)"
-        ></span>
-      </div>
-      <div class="summary-strip-item">
-        <span class="text-xs text-muted">Weighted sugar color</span>
-        <span
-          class="text-base font-bold tabular-nums"
-          x-text="fmt.formatQuantity(sugarColorField)"
-        ></span>
-      </div>
       <div class="summary-strip-item">
         <span class="text-xs text-muted">Late extract</span>
         <span

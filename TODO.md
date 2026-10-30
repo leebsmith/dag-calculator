@@ -10,9 +10,10 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ## Next (in order)
 
-1. **Hops card sections** — fold Dry Hopping into the Hops step and rebuild the
-   card as three collapsible sections (boil, whirlpool, dry hops) on one section
-   vocabulary (`plans/hops-card-sections.md`).
+1. **Fermentables card sections** — fold Late Additions into the Fermentables step
+   and rebuild the card as three collapsible sections (major grist, trace malts,
+   sugars) with a scoped roll-up and a new `grist.total_mass`
+   (`plans/fermentables-card-sections.md`).
 2. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
    backend boundary `solver.hops` (`docs/hops/whirlpool-hopping-model.md`); the
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a

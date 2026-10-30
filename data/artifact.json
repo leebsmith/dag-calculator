@@ -4529,6 +4529,36 @@
         "dimension": "grain_color"
       }
     },
+    "grist.total_mass": {
+      "kind": "derived",
+      "inputs": {
+        "grist": "solver.batch.m_grist",
+        "trace": "grist.trace_malts_mass",
+        "sugars": "grist.sugars_mass"
+      },
+      "expr": {
+        "op": "+",
+        "args": [
+          {
+            "ref": "grist"
+          },
+          {
+            "op": "+",
+            "args": [
+              {
+                "ref": "trace"
+              },
+              {
+                "ref": "sugars"
+              }
+            ]
+          }
+        ]
+      },
+      "output": {
+        "dimension": "mass"
+      }
+    },
     "grist.mcu": {
       "kind": "derived",
       "inputs": {

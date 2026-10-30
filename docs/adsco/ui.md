@@ -243,9 +243,9 @@ the level.
 
 ### Scale pin and preview matrix
 
-The Late Additions card carries a collapsible **Pin preview** when sugar is
-authored. It shows one row per scale pin — ABV, OG, FG — with the realized OG,
-FG and ABV at that pin's persisted target:
+The Sugars section of the Fermentables card carries a collapsible **Pin preview**
+when sugar is authored. It shows one row per scale pin — ABV, OG, FG — with the
+realized OG, FG and ABV at that pin's persisted target:
 
 | Pin | OG | FG | ABV | Extract share |
 | --- | --- | --- | --- | --- |
@@ -269,18 +269,18 @@ exact share in share mode, the dose plus the span of shares in dose mode
 sugar table's display unit.
 
 The panel starts collapsed, expands on request, and collapses when no sugar
-contributes. The Late Additions card and its “Configure Sugars” button remain.
+contributes. The section keeps its “Configure Sugars” button.
 The Style card owns the pin selector, active target, style reset, and the
-pin-aware graph; the Late Additions panel never edits them, so the pin remains
+pin-aware graph; the sugar panel never edits them, so the pin remains
 reachable for batches with no sugar.
 
 Style conflicts are warnings, never freeze gates. The retired Belgian knob was
 the special-case ABV-at-fixed-AE sugar advisory; the general ABV+FG
 composition-solving mode is deferred.
 
-### Sugar effect (late additions)
+### Sugar effect (fermentables)
 
-The Late Additions summary shows what the current sugar is doing **at the active
+The Sugars summary shows what the current sugar is doing **at the active
 scale pin**, without asking the designer to unpin it:
 
 | Readout | Meaning |

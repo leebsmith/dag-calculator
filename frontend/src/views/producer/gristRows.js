@@ -6,6 +6,7 @@
 import {
   countLabel,
   formatPercent,
+  formatQuantity,
   formatValueWithUnit,
   formatWithDecimals,
   toPercentValue,
@@ -13,6 +14,14 @@ import {
 import { figureMarkFor } from "./table.js";
 
 export const MALT_ROW_LIMIT = 8;
+
+// A card section's header meta: the row count, then the section's mass while it
+// has one. `massField` is the artifact-computed total the section contributes to
+// the bill, so the header sums what the model sums.
+export function gristSectionMeta(rows, countText, massField) {
+  if (!rows.length || !massField) return countText;
+  return `${countText} · ${formatQuantity(massField)}`;
+}
 
 // The malt catalogue drawer's subtitle parts (category · colour · notes) and its
 // standard-group parts; the grain-bill and trace cards browse the same catalogue.

@@ -16,7 +16,7 @@ export const LATE_ADDITION_NODES = {
     gristYield: "grist.weighted_yield_fraction",
     grainMoisture: "batch.grain_moisture_fraction",
   },
-  slice: "late-additions",
+  slice: "fermentables",
 };
 
 export const lateAdditionsRegistry = {

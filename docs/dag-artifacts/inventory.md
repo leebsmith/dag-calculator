@@ -223,6 +223,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `grist.mcu` | derived |
 | `grist.sugar_weighted_lovibond` | derived |
 | `grist.sugars_mass` | derived |
+| `grist.total_mass` | derived |
 | `grist.trace_malts` | collection |
 | `grist.trace_malts_mass` | derived |
 | `grist.trace_weighted_lovibond` | derived |

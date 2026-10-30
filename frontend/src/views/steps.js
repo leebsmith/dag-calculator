@@ -59,7 +59,7 @@ export const steps = [
     id: "fermentables",
     slice: "fermentables",
     title: "Fermentables",
-    subtitle: "Build the grain bill",
+    subtitle: "Grist by parts, trace malts by mass, sugars by dose or share",
     partial: "./src/partials/step-fermentables.html",
     fields: [
       {
@@ -72,19 +72,6 @@ export const steps = [
         columns: ["name", "mass_kg", "yield_fraction", "fermentability_fraction", "color_lovibond"],
         inputs: ["mass_kg"],
       },
-      "grist.weighted_lovibond",
-      "grist.weighted_yield_fraction",
-      "grist.trace_malts_mass",
-      "grist.trace_weighted_lovibond",
-    ],
-  },
-  {
-    id: "late-additions",
-    slice: "late-additions",
-    title: "Late Additions",
-    subtitle: "Sugars and late additions",
-    partial: "./src/partials/step-late-additions.html",
-    fields: [
       "batch.late_addition_intent",
       "batch.sugar_extract_share",
       {
@@ -100,10 +87,13 @@ export const steps = [
         ],
         inputs: ["mass_kg", "parts"],
       },
+      "solver.batch.m_grist",
+      "grist.weighted_yield_fraction",
+      "grist.trace_malts_mass",
+      "grist.sugars_mass",
       "batch.s_late_add",
       "batch.sugar_extract_total",
-      "grist.sugars_mass",
-      "grist.sugar_weighted_lovibond",
+      "grist.total_mass",
     ],
   },
   {

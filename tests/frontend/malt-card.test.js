@@ -76,7 +76,6 @@ test("malt totals and weighted field lookups track the draft rows", () => {
 
   assert.equal(app.maltTotalParts, 100);
   assert.equal(app.maltTotalPct, 1);
-  assert.equal(app.maltWeightedColor.id, N.weightedLovibond);
   assert.equal(app.maltWeightedYield.id, N.weightedYield);
 });
 

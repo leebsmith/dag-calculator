@@ -3,6 +3,8 @@ export const FERMENTABLE_NODES = {
   majorMalts: "grist.major_malts",
   traceMalts: "grist.trace_malts",
   gristMass: "solver.batch.m_grist",
+  totalMass: "grist.total_mass",
+  beerColor: "grist.finished_beer_srm",
   weightedLovibond: "grist.weighted_lovibond",
   weightedYield: "grist.weighted_yield_fraction",
   traceMass: "grist.trace_malts_mass",
@@ -35,4 +37,9 @@ export const fermentablesRegistry = {
   "grist.weighted_yield_fraction": { label: "Weighted extract yield", displayUnit: "pct" },
   "grist.trace_malts_mass": { label: "Trace malt mass", displayUnit: "oz" },
   "grist.trace_weighted_lovibond": { label: "Weighted trace color" },
+  "solver.batch.m_grist": { label: "Grist mass" },
+  "grist.total_mass": {
+    label: "Total bill mass",
+    hint: "Grist, trace malts and sugars together.",
+  },
 };

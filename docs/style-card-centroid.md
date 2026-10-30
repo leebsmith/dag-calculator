@@ -106,8 +106,8 @@ active target:
   the batch point, so a batch outside the style still shows its dot; the pin
   label is clamped inside the frame.
 - **Read-only display.** The Batch step shows the active target as a readout;
-  the Style step is the editor for the pin and target. The Late Additions panel
-  previews the three pins but never edits them.
+  the Style step is the editor for the pin and target. The Sugars section of the
+  Fermentables card previews the three pins but never edits them.
 
 ## 9. Model-free brew risk
 

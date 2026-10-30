@@ -4,9 +4,10 @@
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
-import { formatWithDecimals } from "../../utils.js";
+import { countLabel, formatWithDecimals } from "../../utils.js";
 import {
   gristDraftTotalsLabel,
+  gristSectionMeta,
   gristTotalParts,
   gristTotalPct,
   gristValidationState,
@@ -67,6 +68,11 @@ export function registerMaltCard(app, ctx) {
   Object.assign(app, {
     // Grain-bill rows for the summary card (refreshed by refreshMaltCard).
     gristRows: [],
+    maltSectionOpen: true,
+
+    toggleMaltSection() {
+      this.maltSectionOpen = !this.maltSectionOpen;
+    },
 
     maltIsTrace(row) {
       return isTraceMalt(row);
@@ -86,12 +92,35 @@ export function registerMaltCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
-    maltWeightedColor: {
+    maltMassField: {
       configurable: true,
       get() {
-        return (
-          (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.weightedLovibond) ?? null
+        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.gristMass) ?? null;
+      },
+    },
+    maltSectionMeta: {
+      configurable: true,
+      get() {
+        return gristSectionMeta(
+          this.gristRows,
+          countLabel(this.gristRows.length, "malt"),
+          this.maltMassField
         );
+      },
+    },
+    // The card roll-up: the whole bill's mass and the colour the model derives
+    // from all three sections. The colour stays the Batch step's field, so this
+    // card reads it without claiming it.
+    gristTotalMassField: {
+      configurable: true,
+      get() {
+        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.totalMass) ?? null;
+      },
+    },
+    beerColorField: {
+      configurable: true,
+      get() {
+        return this.fieldsById[N.beerColor] ?? null;
       },
     },
     maltWeightedYield: {
@@ -170,4 +199,4 @@ export function refreshMaltCard(app, ctx) {
     extractDisplay: extractCell(row.extract_kg),
   }));
 }
-export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltIsTrace", "maltFermentable", "cloneDraftMalt", "maltWeightedColor", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];
+export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltSectionOpen", "toggleMaltSection", "maltSectionMeta", "maltMassField", "gristTotalMassField", "beerColorField", "maltIsTrace", "maltFermentable", "cloneDraftMalt", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];

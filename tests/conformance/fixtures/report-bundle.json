@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:c636ad1f325e5bfea764708aecdfe8af051d7c9bd23b688a3038c6c812c67eee",
+    "hash": "sha256:c137c47d7645129ac8dcbd76c714b7c93ebd98f1df0b2aad2d506cd1ccd3407e",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -4649,6 +4649,36 @@
             "dimension": "grain_color"
           }
         },
+        "grist.total_mass": {
+          "kind": "derived",
+          "inputs": {
+            "grist": "solver.batch.m_grist",
+            "trace": "grist.trace_malts_mass",
+            "sugars": "grist.sugars_mass"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "ref": "grist"
+              },
+              {
+                "op": "+",
+                "args": [
+                  {
+                    "ref": "trace"
+                  },
+                  {
+                    "ref": "sugars"
+                  }
+                ]
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
         "grist.mcu": {
           "kind": "derived",
           "inputs": {
@@ -7176,5 +7206,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:af5c0e00828f5d56b21e789f09979260383bff08a2a8ff0dbbb529a54fe68bab"
+  "content_hash": "sha256:3dd41905211bc11a8ebb5f35bc8f2507fa8ed5f765162edcba230cb87cf6b41a"
 }

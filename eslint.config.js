@@ -189,7 +189,7 @@ const FUNCTION_LINE_PINS = {
 
 const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 457,
-  "adapters/cards/late-additions.js": 415,
+  "adapters/cards/late-additions.js": 404,
   "adapters/cards/water.js": 639,
   "adapters/stepAdapter.js": 436,
   "engine/dag.js": 405,

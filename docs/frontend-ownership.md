@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **649** (434 enumerable, 215 hidden)
+- Declared members: **658** (440 enumerable, 218 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **16 of 20**
@@ -25,9 +25,9 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 127 | 3 | 22 |
-| `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 66 | 2 | 24 |
-| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 42 | 2 | 24 |
-| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 47 | 2 | 22 |
+| `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 24 |
+| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 24 |
+| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 22 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 11 | 1 | 1 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 56 | 2 | 13 |
@@ -65,6 +65,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `attenuationBlend` | `styleNavigator` | public | 1 |
 | `attenuationCap` | `styleNavigator` | public | 1 |
 | `attenuationSugarLift` | `styleNavigator` | public | 1 |
+| `beerColorField` | `malt` | hidden | 1 |
 | `boilHopMassKg` | `hop` | public | 0 |
 | `boilHopSectionMeta` | `hop` | hidden | 1 |
 | `boilHopTotalMassDisplay` | `hop` | hidden | 1 |
@@ -204,6 +205,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `getRestDefinition` | `mash` | public | 0 |
 | `grainColorUnit` | `draftEditor` | public | 0 |
 | `gristRows` | `malt` | public | 1 |
+| `gristTotalMassField` | `malt` | hidden | 1 |
 | `handleDryHopEscape` | `dryHops` | public | 1 |
 | `handleHopEscape` | `hop` | public | 1 |
 | `handleMaltEscape` | `malt` | public | 1 |
@@ -321,9 +323,12 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `maltGroupMeta` | `malt` | public | 1 |
 | `maltIsTrace` | `malt` | public | 2 |
 | `maltItemMeta` | `malt` | public | 1 |
+| `maltMassField` | `malt` | hidden | 0 |
 | `maltProductMatches` | `malt` | hidden | 1 |
 | `maltSearch` | `malt` | public | 1 |
 | `maltSearchNotes` | `malt` | public | 1 |
+| `maltSectionMeta` | `malt` | hidden | 1 |
+| `maltSectionOpen` | `malt` | public | 1 |
 | `maltStandard` | `malt` | public | 1 |
 | `maltStandardGroups` | `malt` | hidden | 1 |
 | `maltStandardName` | `malt` | hidden | 1 |
@@ -331,7 +336,6 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `maltTotalPct` | `malt` | hidden | 0 |
 | `maltValidation` | `malt` | hidden | 1 |
 | `maltVisibleCatalog` | `malt` | hidden | 1 |
-| `maltWeightedColor` | `malt` | hidden | 1 |
 | `maltWeightedYield` | `malt` | hidden | 1 |
 | `mashDoughInTempC` | `mash` | public | 0 |
 | `mashDraft` | `mash` | public | 0 |
@@ -506,8 +510,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `sugarCatalogTruncated` | `lateAdditions` | hidden | 0 |
 | `sugarCategories` | `lateAdditions` | hidden | 0 |
 | `sugarCategoryFilter` | `lateAdditions` | public | 0 |
-| `sugarColorField` | `lateAdditions` | hidden | 1 |
-| `sugarCountLabel` | `lateAdditions` | hidden | 1 |
+| `sugarCountLabel` | `lateAdditions` | hidden | 0 |
 | `sugarDraftCounts` | `lateAdditions` | hidden | 0 |
 | `sugarDraftExtractDisplay` | `lateAdditions` | hidden | 1 |
 | `sugarDraftMassDisplay` | `lateAdditions` | hidden | 1 |
@@ -525,11 +528,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `sugarIsActive` | `lateAdditions` | hidden | 0 |
 | `sugarItemMeta` | `lateAdditions` | public | 1 |
 | `sugarList` | `lateAdditions` | public | 0 |
-| `sugarMassField` | `lateAdditions` | hidden | 1 |
+| `sugarMassField` | `lateAdditions` | hidden | 0 |
 | `sugarProductMatches` | `lateAdditions` | hidden | 0 |
 | `sugarResultLabel` | `lateAdditions` | hidden | 1 |
 | `sugarSearch` | `lateAdditions` | public | 1 |
 | `sugarSearchNotes` | `lateAdditions` | public | 1 |
+| `sugarSectionMeta` | `lateAdditions` | hidden | 1 |
+| `sugarSectionOpen` | `lateAdditions` | public | 1 |
 | `sugarShareField` | `lateAdditions` | hidden | 1 |
 | `sugarStandard` | `lateAdditions` | public | 0 |
 | `sugarStandardGroups` | `lateAdditions` | hidden | 0 |
@@ -562,13 +567,16 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `toggleMaltCategory` | `malt` | public | 0 |
 | `toggleMaltFamily` | `malt` | public | 1 |
 | `toggleMaltSearchNotes` | `malt` | public | 1 |
+| `toggleMaltSection` | `malt` | public | 1 |
 | `toggleMashRest` | `mash` | public | 1 |
 | `toggleSugarCategory` | `lateAdditions` | public | 0 |
 | `toggleSugarFamily` | `lateAdditions` | public | 0 |
 | `toggleSugarSearchNotes` | `lateAdditions` | public | 1 |
+| `toggleSugarSection` | `lateAdditions` | public | 1 |
 | `toggleTraceCategory` | `traceMalts` | public | 0 |
 | `toggleTraceFamily` | `traceMalts` | public | 1 |
 | `toggleTraceSearchNotes` | `traceMalts` | public | 1 |
+| `toggleTraceSection` | `traceMalts` | public | 1 |
 | `toggleUnits` | `unitActions` | public | 1 |
 | `toggleWaterDetails` | `water` | public | 1 |
 | `toggleWaterTarget` | `water` | public | 1 |
@@ -588,7 +596,6 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `traceCatalogTruncated` | `traceMalts` | hidden | 0 |
 | `traceCategories` | `traceMalts` | hidden | 0 |
 | `traceCategoryFilter` | `traceMalts` | public | 0 |
-| `traceColorField` | `traceMalts` | hidden | 1 |
 | `traceDraftCounts` | `traceMalts` | hidden | 0 |
 | `traceDraftMassDisplay` | `traceMalts` | hidden | 1 |
 | `traceDrawer` | `traceMalts` | public | 1 |
@@ -600,11 +607,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `traceGroupMeta` | `traceMalts` | public | 1 |
 | `traceItemMeta` | `traceMalts` | public | 1 |
 | `traceMaltField` | `traceMalts` | hidden | 1 |
-| `traceMaltRows` | `traceMalts` | public | 1 |
-| `traceMassField` | `traceMalts` | hidden | 1 |
+| `traceMaltRows` | `traceMalts` | public | 0 |
+| `traceMassField` | `traceMalts` | hidden | 0 |
 | `traceProductMatches` | `traceMalts` | hidden | 1 |
 | `traceSearch` | `traceMalts` | public | 1 |
 | `traceSearchNotes` | `traceMalts` | public | 1 |
+| `traceSectionMeta` | `traceMalts` | hidden | 1 |
+| `traceSectionOpen` | `traceMalts` | public | 1 |
 | `traceStandard` | `traceMalts` | public | 1 |
 | `traceStandardGroups` | `traceMalts` | hidden | 1 |
 | `traceStandardName` | `traceMalts` | hidden | 1 |

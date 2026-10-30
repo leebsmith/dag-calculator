@@ -19,6 +19,7 @@ import {
   sugarPartsFromDose,
   sugarShareFromDose,
 } from "../../views/producer/sugarAllocation.js";
+import { sugarSectionMetaDescriptors, sugarSectionState } from "../../views/producer/sugarSection.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { reportError } from "../../observability.js";
 import {
@@ -102,17 +103,13 @@ export function registerLateAdditionsCard(app, ctx) {
   Object.assign(app, {
     // Rows for the read-only summary card (refreshed by refreshLateAdditionsCard).
     sugarList: [],
-    latePinPanelOpen: false,
     latePinPanelVisible: false,
     scalePreviewRows: [],
     previewCompositionCaption: "",
+    ...sugarSectionState(),
 
     sugarField(id) {
       return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
-    },
-
-    toggleLatePinPanel() {
-      this.latePinPanelOpen = !this.latePinPanelOpen;
     },
 
     syncScalePreviewState() {
@@ -141,9 +138,7 @@ export function registerLateAdditionsCard(app, ctx) {
     // The caption quotes the dose in the sugar table's display unit, not the
     // canonical kg, so the line and the table agree.
     previewDoseDisplay(kg) {
-      const field = (this.fieldsBySlice[N.slice] ?? []).find(
-        (f) => f.control === "collection-table"
-      );
+      const field = (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.collection);
       const column =
         field?.columns?.find((c) => c.id === "resolved_mass_kg") ??
         field?.columns?.find((c) => c.id === "mass_kg") ??
@@ -221,6 +216,7 @@ export function registerLateAdditionsCard(app, ctx) {
   });
 
   Object.defineProperties(app, {
+    ...sugarSectionMetaDescriptors(),
     lateAdditionIntentState: { configurable: true, writable: true, value: null },
     sugarEffectState: { configurable: true, writable: true, value: null },
     sugarEffectDisplayState: { configurable: true, writable: true, value: null },
@@ -257,10 +253,7 @@ export function registerLateAdditionsCard(app, ctx) {
       get() {
         // The live row allocation at the current solve: `resolved_mass_kg` is a
         // computed field, never a request input.
-        const field =
-          (this.fieldsBySlice[N.slice] ?? []).find(
-            (f) => f.control === "collection-table"
-          ) ?? null;
+        const field = (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.collection) ?? null;
         if (!field) return null;
         const shareMode = (ctx.engine.get(N.intent) ?? "dose") === "share";
         const columns = (field.columns ?? [])
@@ -275,12 +268,6 @@ export function registerLateAdditionsCard(app, ctx) {
       configurable: true,
       get() {
         return this.sugarField(N.mass);
-      },
-    },
-    sugarColorField: {
-      configurable: true,
-      get() {
-        return this.sugarField(N.color);
       },
     },
     lateExtractField: {
@@ -383,13 +370,15 @@ export function refreshLateAdditionsCard(app, ctx) {
 export const KEYS = [
   ...catalogDraftKeys("sugar", "Sugar"),
   "sugarList",
+  "sugarSectionOpen",
+  "toggleSugarSection",
+  "sugarSectionMeta",
   "sugarField",
   "lateAdditionIntent",
   "lateIntentField",
   "sugarShareField",
   "lateSugarField",
   "sugarMassField",
-  "sugarColorField",
   "lateExtractField",
   "lateAdditionIntentState",
   "sugarEffect",

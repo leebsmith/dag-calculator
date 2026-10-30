@@ -106,6 +106,10 @@ dextrin consumption), so `plato_to_sg` accepts a small negative domain.
 > the `morey_mcu_to_srm` *function*; the single-malt `morey_lovibond_to_srm`
 > bridge was removed in schema v3.
 
+- **Bill mass** (`mass`) — `grist.total_mass` sums the major grist, the trace
+  malts and the sugars: the three contributions the MCU sum above weights. It is
+  the Fermentables card's roll-up, not a solver input.
+
 ### 1.4 Late additions (kettle sugars)
 
 ```

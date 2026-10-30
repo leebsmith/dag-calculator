@@ -98,7 +98,7 @@ export const INSTALLERS = [
     name: "lateAdditions",
     modules: LATE_ADDITIONS_AND_CATALOG,
     keys: lateAdditionsKeys,
-    partials: ["step-late-additions.html", "modal-sugar-editor.html"],
+    partials: ["fermentables-sugar-section.html", "modal-sugar-editor.html"],
   },
   {
     name: "traceMalts",
