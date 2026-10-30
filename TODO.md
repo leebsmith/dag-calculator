@@ -71,6 +71,12 @@ unchanged: it grades the realized value against the absolute envelope.
   registry, pinned to the Python router by a fixture. Moving it into `data/artifact.json`
   would remove the duplication outright, but `constants` is scalar-only today, so it
   needs a non-scalar value kind (grammar + `schema_version` + inventory + docs).
+* **Recipe critiquers** — two prose-only LLM assistants (mash/yeast/style and
+  boil/whirlpool) that critique a completed recipe against the background
+  documents in `docs/mashing/reference/` and `docs/hops/reference/`; on demand,
+  independently invokable, memoized, never fed back into the model. The program,
+  the shared completion flag, the assistant registry, the dossier contract and
+  the provider decisions are in `plans/recipe-critiquers.md`.
 
 ### Report sections
 
