@@ -10,12 +10,15 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ## Next (in order)
 
-1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
+1. **Hops card sections** — fold Dry Hopping into the Hops step and rebuild the
+   card as three collapsible sections (boil, whirlpool, dry hops) on one section
+   vocabulary (`plans/hops-card-sections.md`).
+2. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
    backend boundary `solver.hops` (`docs/hops/whirlpool-hopping-model.md`); the
    remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
    schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
    copies are the offline stub only.
-2. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
+3. **Footer bar** — style-conformance readouts (gravity/ABV/SRM/IBU) + LIFO
    warnings (`plans/warnings.md`).
 
 ## Before 1st printed recipe
@@ -38,8 +41,6 @@ unchanged: it grades the realized value against the absolute envelope.
   Strike Water Temp, then move it toward an equipment-scoped value estimated
   from observed strike-water outcomes (rolling average / regression). Needs a
   rig-level observation record.
-* **Dry hopping** — the schedule renders (`batch.dry_hops` rows with
-  `hop_product_type` / `hop_addition_stage`); see the `## Next` card rebuild.
 * **Per-field taxonomy subsets** — a `domain: { in: [...] }` form for
   taxonomy-typed schema fields, so a row type can restrict a universal taxonomy
   to its valid members (e.g. a dry-hop row to `fermentation`). Needs grammar,

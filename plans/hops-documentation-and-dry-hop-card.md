@@ -18,6 +18,10 @@ status: shipped
 > It was then rebuilt as a table plus a "Configure Dry Hops" editor over the hop
 > and hop-product catalog — the inline form had no catalog and diverged from the
 > other hop cards — and the catalogue drawers gained repeats (`allowDuplicates`).
+>
+> The separate Dry Hopping step card was later folded into the Hops step as its
+> third section (`plans/hops-card-sections.md`); the row schema and taxonomies
+> below are unchanged.
 
 ## Problem
 
