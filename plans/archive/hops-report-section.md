@@ -1,15 +1,8 @@
----
-title: Hops in the report — one section, four groups, IBU splits
-program: deterministic-dag-calculator
-target_repo: ~/Development/dag-calculator
-depends_on: []
-blocks: []
-gate: make verify
-status: proposed
----
-<!-- claims: proposed solver.hops.whirlpool_hot_ibu solver.hops.whirlpool_cool_ibu batch.boil_ibu_share batch.whirlpool_ibu_share batch.whirlpool_hot_ibu_share batch.whirlpool_cool_ibu_share -->
-
 # Hops in the report — one section, four groups, IBU splits
+
+Status: **landed**. W1–W5 are in: the dev watcher, the boundary split, the four
+share nodes, the section with its tables and splits, and the hop-bearing golden
+bundle.
 
 ## Problem
 
