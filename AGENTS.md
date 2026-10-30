@@ -18,7 +18,9 @@ seam, solvers, Firebase auth, and Firestore persistence.
   are living too. `docs/historical/` and the vendored `docs/adsco/*` specs are
   **frozen** — do not maintain. `docs/hops/README.md` indexes the hop prose and
   `docs/hops/whirlpool-hopping-model.md` is its living contract; the transcripts
-  under `docs/hops/reference/` are background, not frozen.
+  under `docs/hops/reference/` are background, not frozen. `docs/mashing/README.md`
+  indexes the mash prose; its transcript under `docs/mashing/reference/` is
+  background too, and the attenuation model is the living contract.
 - **`docs/vision.md` is the intent layer**: the inversion thesis, why a boundary
   sits where it does, what the tool refuses to do, and the review checklist. It
   constrains design decisions; it never overrides the artifact.
@@ -34,6 +36,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 | `tests/` | frontend engine/conformance/guards + backend pytest |
 | `docs/` | living spec + frozen historical |
 | `docs/hops/` | living hop index + model; background transcripts under `reference/` |
+| `docs/mashing/` | mash index; background transcript under `reference/` |
 | `plans/` | execution history + reconciled decisions (`adsco-contract.md`) |
 | `scripts/` | seed builders (`.mjs`) + scrapers (`scrape/`, Python) |
 
