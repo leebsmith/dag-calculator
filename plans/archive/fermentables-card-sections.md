@@ -1,15 +1,8 @@
----
-title: Fermentables card — one card, three sections
-program: deterministic-dag-calculator
-target_repo: ~/Development/dag-calculator
-depends_on: []
-blocks: []
-gate: make verify
-status: proposed
----
-<!-- claims: proposed grist.total_mass -->
-
 # Fermentables card — one card, three sections
+
+Status: **landed**. W1–W7 are in: `grist.total_mass`, the folded step, the three
+disclosures, the scoped roll-up, the pin preview inside the sugar body, and the
+retired per-section colour strips.
 
 ## Problem
 
