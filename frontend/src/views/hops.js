@@ -14,6 +14,8 @@
 // These helpers take SI inputs (kg, L) and convert internally so the engine and
 // persistence keep base units while the classic empirical formula stays intact.
 
+import { productFormUtilization } from "./whirlpool.js";
+
 const KG_PER_OZ = 0.028349523125;
 const L_PER_GAL = 3.785411784;
 const TINSETH_FACTOR = 7489;
@@ -33,8 +35,16 @@ export function ibuFromMass(massKg, alphaFraction, timeMin, boilGravitySg, volum
   return (utilization * alphaFraction * massOz * TINSETH_FACTOR) / volumeGal;
 }
 
-export function massFromIbu(ibu, alphaFraction, timeMin, boilGravitySg, volumeL) {
-  const utilization = tinsethUtilization(boilGravitySg, timeMin);
+export function massFromIbu({
+  ibu,
+  alphaFraction,
+  timeMin,
+  boilGravitySg,
+  volumeL,
+  productForm = "t90_pellet",
+}) {
+  const utilization =
+    tinsethUtilization(boilGravitySg, timeMin) * productFormUtilization(productForm);
   if (!(ibu > 0) || utilization <= 0 || !(alphaFraction > 0) || !(volumeL > 0)) return null;
   const volumeGal = volumeL / L_PER_GAL;
   const massOz = (ibu * volumeGal) / (utilization * alphaFraction * TINSETH_FACTOR);

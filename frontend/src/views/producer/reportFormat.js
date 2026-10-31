@@ -237,13 +237,14 @@ function hopRows(artifact, catalog, engine, kind) {
     const base = {
       name: rowName(row),
       amount: cell(massEntry, result.mass_kg),
+      alpha: cell(nodes[`${collection}.alpha_acid_pct`], row.alpha_acid_pct),
       ibu_share: cell(nodes[`${collection}.pct`], row.pct),
       ibu: cell(ibuEntry, result.ibu),
     };
     if (boil) {
       return {
         ...base,
-        alpha: cell(nodes[`${collection}.alpha_acid_pct`], row.alpha_acid_pct),
+        form: cell(nodes[`${collection}.product_form`], row.product_form),
         boil: cell(timeEntry, result.minutes),
       };
     }

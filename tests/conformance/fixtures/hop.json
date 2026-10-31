@@ -1,16 +1,18 @@
 {
-  "fingerprint": "6fa7a65020df9eed6a901ad282a54f767792e4847692ba111fa955ec45c0a7ad",
+  "fingerprint": "9ecf9d0c34a97d491e38c480cabd69b4f20bf80d5a569ecf65c8081f353be6d7",
   "request": {
     "boil_hops": [
       {
         "alpha_acid_pct": 0.1,
         "boil_time_fraction": 1.0,
-        "pct": 0.6
+        "pct": 0.6,
+        "product_form": "t90_pellet"
       },
       {
         "alpha_acid_pct": 0.12,
         "boil_time_fraction": 0.5,
-        "pct": 0.4
+        "pct": 0.4,
+        "product_form": "t90_pellet"
       }
     ],
     "boil_target_ibu": 40.0,

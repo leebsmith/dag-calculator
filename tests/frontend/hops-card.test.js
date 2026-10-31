@@ -130,7 +130,7 @@ test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", w
   assert.match(app.whirlpoolHopTotalMassDisplay, /(oz|g|kg|lb)/);
 }));
 
-test("whirlpool hops: lupulin defaults, band selector, and the cool-flowable warning", withFreshApp((app) => {
+test("whirlpool hops: lupulin defaults and the band selector", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
 
@@ -153,18 +153,12 @@ test("whirlpool hops: lupulin defaults, band selector, and the cool-flowable war
   app.saveWhirlpoolHopEditor();
   app.compute();
   assert.equal(app.whirlpoolHopRows[0].product_form, "lupulin_pellet");
-  assert.equal(app.whirlpoolHopTemperatureWarning, "");
 
-  app.openWhirlpoolHopEditor();
-  app.setWhirlpoolHopCatalogForm("flowable_extract");
-  app.addCatalogWhirlpoolHop("dynaboost-centennial");
-  app.inspectWhirlpoolHopRow(app.draftRows.length - 1);
-  app.setWhirlpoolStartBand("isomerization_floor");
-  app.saveWhirlpoolHopEditor();
-  app.compute();
-
-  assert.match(app.whirlpoolHopTemperatureWarning, /disperses poorly/);
-  assert.match(app.whirlpoolHopTemperatureWarning, /0\.8[0-9]/);
+  // The whirlpool sells T-90 or lupulin; extracts are boil products.
+  assert.deepEqual(
+    app.whirlpoolHopForms.map((form) => form.value),
+    ["t90_pellet", "lupulin_pellet"]
+  );
 
   // The catalog form is card-local state the reset does not clear.
   app.setWhirlpoolHopCatalogForm("t90_pellet");
@@ -275,49 +269,67 @@ test("whirlpool catalog switches to products and copies form, alpha, and ratio",
 
 // The inspector this case leaves open is card-local state, which a reset does not
 // clear, so it keeps its own boot.
-test("inspector shows the T-90 equivalent only when the row carries a ratio", () => {
+test("the boil inspector shows the T-90 equivalent only when the row carries a ratio", () => {
   const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
-  app.setWhirlpoolFraction(0.5);
   app.compute();
 
-  app.openWhirlpoolHopEditor();
-  app.openWhirlpoolHopSearch();
-  app.setWhirlpoolHopCatalogForm("flowable_extract");
-  app.addCatalogWhirlpoolHop("dynaboost-citra");
-  app.saveWhirlpoolHopEditor();
-  app.openWhirlpoolHopEditor();
-  app.inspectWhirlpoolHopRow(0);
-  assert.match(app.whirlpoolHopT90Equivalent, /T-90 equivalent \(1:10\)/);
+  app.openHopEditor();
+  app.openHopSearch();
+  app.setHopCatalogForm("flowable_extract");
+  app.addCatalogHop("dynaboost-citra");
+  app.saveHopEditor();
+  app.openHopEditor();
+  app.inspectHopRow(0);
+  assert.match(app.hopT90Equivalent, /T-90 equivalent \(1:10\)/);
 
-  app.openWhirlpoolHopSearch();
-  app.setWhirlpoolHopCatalogForm("flowable_extract");
-  app.addCatalogWhirlpoolHop("flowable-co2-extract-generic");
-  app.saveWhirlpoolHopEditor();
-  app.openWhirlpoolHopEditor();
-  app.inspectWhirlpoolHopRow(1);
-  assert.match(app.whirlpoolHopT90Equivalent, /T-90 equivalent \(1:8\)/);
+  app.openHopSearch();
+  app.setHopCatalogForm("flowable_extract");
+  app.addCatalogHop("flowable-co2-extract-generic");
+  app.saveHopEditor();
+  app.openHopEditor();
+  app.inspectHopRow(1);
+  assert.match(app.hopT90Equivalent, /T-90 equivalent \(1:8\)/);
 
-  app.openWhirlpoolHopSearch();
-  app.setWhirlpoolHopCatalogForm("t90_pellet");
-  app.addCatalogWhirlpoolHop("cascade");
-  app.saveWhirlpoolHopEditor();
-  app.openWhirlpoolHopEditor();
-  app.inspectWhirlpoolHopRow(2);
-  assert.equal(app.whirlpoolHopT90Equivalent, "");
+  app.openHopSearch();
+  app.setHopCatalogForm("t90_pellet");
+  app.addCatalogHop("cascade");
+  app.saveHopEditor();
+  app.openHopEditor();
+  app.inspectHopRow(2);
+  assert.equal(app.hopT90Equivalent, "");
 });
 
-test("flowable extract doses above the 4 g/gal ceiling warn", withFreshApp((app) => {
-  app.setTargetIbu(100);
-  app.setWhirlpoolFraction(1);
-  app.openWhirlpoolHopEditor();
-  app.addCatalogWhirlpoolHop("cascade");
+test("extract doses above the 4 g/gal ceiling warn on the boil", withFreshApp((app) => {
+  app.setTargetIbu(200);
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
   app.patchDraftRow(0, { product_form: "flowable_extract", alpha_acid_pct: 0.45 });
-  app.saveWhirlpoolHopEditor();
+  app.saveHopEditor();
   app.compute();
 
-  assert.match(app.whirlpoolHopDoseWarning, /4 g\/gal/);
+  assert.match(app.hopDoseWarning, /4 g\/gal/);
+}));
+
+test("the boil sells T-90 or an extract, and seeds an extract late", withFreshApp((app) => {
+  assert.deepEqual(
+    app.hopForms.map((form) => form.value),
+    ["t90_pellet", "flowable_extract"]
+  );
+
+  app.openHopEditor();
+  app.setHopCatalogForm("flowable_extract");
+  app.addCatalogHop("dynaboost-citra");
+  app.inspectHopRow(0);
+
+  assert.equal(app.hopActiveRow.product_form, "flowable_extract");
+  assert.equal(app.hopActiveRow.alpha_acid_pct, 0.425);
+  assert.equal(app.hopActiveRow.boil_time_fraction, 0.25);
+  assert.equal(app.hopActiveRow.t90_replacement_ratio, 10);
+  app.cancelHopEditor();
+  // The catalog form is card-local state the reset does not clear.
+  app.setHopCatalogForm("t90_pellet");
 }));
 
 test("whirlpool ambient follows the global temperature unit", withFreshApp((app) => {

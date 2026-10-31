@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:ef58ff59081892a3c822fe2fa0f8e1815864bea377703098c02ed7db02db0695",
+    "hash": "sha256:9649b0c22c91aba087162a6df71dd2958d6333b2e788cac529ff2ab8866276fd",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -534,7 +534,7 @@
           "g",
           "ml"
         ],
-        "whirlpool_hop_form": [
+        "hop_product_form": [
           "t90_pellet",
           "flowable_extract",
           "lupulin_pellet"
@@ -1538,7 +1538,7 @@
           "brand": {},
           "variety_id": {},
           "product_form": {
-            "taxonomy": "whirlpool_hop_form"
+            "taxonomy": "hop_product_form"
           },
           "purpose": {},
           "alpha_acid_pct": {
@@ -1970,13 +1970,17 @@
               "gte": 0,
               "lte": 1
             }
+          },
+          "product_form": {
+            "taxonomy": "hop_product_form",
+            "default": "t90_pellet"
           }
         },
         "whirlpool_hop_row": {
           "hop_id": {},
           "name": {},
           "product_form": {
-            "taxonomy": "whirlpool_hop_form",
+            "taxonomy": "hop_product_form",
             "default": "t90_pellet"
           },
           "alpha_acid_pct": {
@@ -6575,6 +6579,24 @@
         "options": null,
         "option_labels": null
       },
+      "batch.boil_hops.product_form": {
+        "label": "Form",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "t90_pellet",
+          "flowable_extract",
+          "lupulin_pellet"
+        ],
+        "option_labels": {
+          "t90_pellet": "T-90 pellet",
+          "flowable_extract": "Flowable extract",
+          "lupulin_pellet": "Lupulin pellet"
+        }
+      },
       "batch.boil_hops.pct": {
         "label": "IBU share",
         "dimension": "percentage",
@@ -7050,7 +7072,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:36ebcfd658bb42085185782de6a74a22b58f989092c04928d090dbbde530eaca"
+    "hash": "sha256:90c25f47e8bb4812505c10722ad9dda8dd30043d258d9724b433dc3bf4b86ec7"
   },
   "batch": {
     "id": "frozen-1",
@@ -7167,10 +7189,20 @@
         {
           "hop_id": "magnum",
           "name": "Magnum",
+          "product_form": "t90_pellet",
           "alpha_acid_pct": 0.14,
           "boil_time_fraction": 1.0,
-          "parts": 100,
-          "pct": 1.0
+          "parts": 60,
+          "pct": 0.6
+        },
+        {
+          "hop_id": "dynaboost-citra",
+          "name": "DynaBoost Citra",
+          "product_form": "flowable_extract",
+          "alpha_acid_pct": 0.425,
+          "boil_time_fraction": 0.25,
+          "parts": 40,
+          "pct": 0.4
         }
       ],
       "batch.whirlpool_hops": [
@@ -7261,8 +7293,13 @@
         "boil_rows": [
           {
             "minutes": 60.0,
-            "ibu": 30.0,
-            "mass_kg": 0.03
+            "ibu": 18.0,
+            "mass_kg": 0.0186
+          },
+          {
+            "minutes": 15.0,
+            "ibu": 12.0,
+            "mass_kg": 0.0043
           }
         ],
         "whirlpool_rows": [
@@ -7279,9 +7316,9 @@
             "effective_minutes": 4.0
           }
         ],
-        "boil_mass_kg": 0.03,
+        "boil_mass_kg": 0.0229,
         "whirlpool_mass_kg": 0.05,
-        "total_mass_kg": 0.08,
+        "total_mass_kg": 0.0729,
         "whirlpool_hot_ibu": 7.0,
         "whirlpool_cool_ibu": 3.0
       }
@@ -7342,10 +7379,20 @@
         {
           "hop_id": "magnum",
           "name": "Magnum",
+          "product_form": "t90_pellet",
           "alpha_acid_pct": 0.14,
           "boil_time_fraction": 1.0,
-          "parts": 100,
-          "pct": 1.0
+          "parts": 60,
+          "pct": 0.6
+        },
+        {
+          "hop_id": "dynaboost-citra",
+          "name": "DynaBoost Citra",
+          "product_form": "flowable_extract",
+          "alpha_acid_pct": 0.425,
+          "boil_time_fraction": 0.25,
+          "parts": 40,
+          "pct": 0.4
         }
       ],
       "batch.whirlpool_hops": [
@@ -7673,8 +7720,8 @@
       "unit": "%"
     },
     "solver.hops.boil_mass_kg": {
-      "text": "30.0 g",
-      "number": "30.0",
+      "text": "22.9 g",
+      "number": "22.9",
       "unit": "g"
     },
     "solver.hops.whirlpool_mass_kg": {
@@ -7683,8 +7730,8 @@
       "unit": "g"
     },
     "solver.hops.total_mass_kg": {
-      "text": "80.0 g",
-      "number": "80.0",
+      "text": "72.9 g",
+      "number": "72.9",
       "unit": "g"
     },
     "solver.hops.whirlpool_hot_ibu": {
@@ -7965,6 +8012,11 @@
           "number": null,
           "unit": null
         },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
         "alpha": {
           "text": "14.0%",
           "number": "14.0",
@@ -7976,18 +8028,55 @@
           "unit": "min"
         },
         "ibu_share": {
-          "text": "100.0%",
-          "number": "100.0",
+          "text": "60.0%",
+          "number": "60.0",
           "unit": "%"
         },
         "ibu": {
-          "text": "30.0 IBU",
-          "number": "30.0",
+          "text": "18.0 IBU",
+          "number": "18.0",
           "unit": "IBU"
         },
         "amount": {
-          "text": "30.0 g",
-          "number": "30.0",
+          "text": "18.6 g",
+          "number": "18.6",
+          "unit": "g"
+        }
+      },
+      {
+        "name": {
+          "text": "DynaBoost Citra",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "Flowable extract",
+          "number": null,
+          "unit": null
+        },
+        "alpha": {
+          "text": "42.5%",
+          "number": "42.5",
+          "unit": "%"
+        },
+        "boil": {
+          "text": "15 min",
+          "number": "15",
+          "unit": "min"
+        },
+        "ibu_share": {
+          "text": "40.0%",
+          "number": "40.0",
+          "unit": "%"
+        },
+        "ibu": {
+          "text": "12.0 IBU",
+          "number": "12.0",
+          "unit": "IBU"
+        },
+        "amount": {
+          "text": "4.3 g",
+          "number": "4.3",
           "unit": "g"
         }
       }
@@ -8003,6 +8092,11 @@
           "text": "T-90 pellet",
           "number": null,
           "unit": null
+        },
+        "alpha": {
+          "text": "12.0%",
+          "number": "12.0",
+          "unit": "%"
         },
         "rest": {
           "text": "30 min",
@@ -8040,6 +8134,11 @@
           "text": "T-90 pellet",
           "number": null,
           "unit": null
+        },
+        "alpha": {
+          "text": "3.5%",
+          "number": "3.5",
+          "unit": "%"
         },
         "rest": {
           "text": "10 min",
@@ -8220,5 +8319,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:7898445a6774e78404076fd4cd442f9fd03812a244edf12dea42b46325f5dc63"
+  "content_hash": "sha256:264d215e9bdc1f356445a0ea948f175eaff9cfc1a3f5ec52b2b4fbea594bb7ce"
 }

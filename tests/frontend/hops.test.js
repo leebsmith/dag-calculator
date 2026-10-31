@@ -23,7 +23,7 @@ test("one ounce of 6.5% AA in one gallon at 60 min ~ 112 IBU", () => {
 test("massFromIbu inverts ibuFromMass", () => {
   const mass = 0.028;
   const ibu = ibuFromMass(mass, 0.065, 60, 1.05, 19);
-  const back = massFromIbu(ibu, 0.065, 60, 1.05, 19);
+  const back = massFromIbu({ ibu, alphaFraction: 0.065, timeMin: 60, boilGravitySg: 1.05, volumeL: 19 });
   assert.ok(Math.abs(back - mass) < 1e-12);
 });
 
@@ -37,6 +37,6 @@ test("utilization is zero at t=0, monotonic, and approaches its asymptote", () =
 test("guards invalid inputs", () => {
   assert.equal(ibuFromMass(0.028, 0, 60, 1.05, 19), null);
   assert.equal(ibuFromMass(0.028, 0.065, 60, 0, 19), null);
-  assert.equal(massFromIbu(0, 0.065, 60, 1.05, 19), null);
-  assert.equal(massFromIbu(20, 0.065, 60, 1.05, 0), null);
+  assert.equal(massFromIbu({ ibu: 0, alphaFraction: 0.065, timeMin: 60, boilGravitySg: 1.05, volumeL: 19 }), null);
+  assert.equal(massFromIbu({ ibu: 20, alphaFraction: 0.065, timeMin: 60, boilGravitySg: 1.05, volumeL: 0 }), null);
 });

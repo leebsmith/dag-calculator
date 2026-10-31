@@ -30,21 +30,14 @@ PRODUCT_FORM_UTILIZATION = {
     "lupulin_pellet": 1.10,
 }
 
-# Flowable extracts disperse poorly as the wort cools, so their multiplier is a
-# smooth ramp between the two measured bounds instead of a constant: full value
-# at 90 C and above, the low end at 75 C and below. T-90 pellets and lupulin
-# pellets are static across the window (docs/hops/reference/hot-side-hopping-agent-dosing.md).
-FLOWABLE_LOW_TEMP_C = 75.0
-FLOWABLE_HIGH_TEMP_C = 90.0
-FLOWABLE_LOW_UTILIZATION = 0.80
-
 SIMPSON_TOLERANCE = 1e-10
 SIMPSON_MAX_DEPTH = 20
 
-# The hot/cool whirlpool split: above 170 F (76.7 C) a charge still bitter-
-# isomerises freely; at or below it, the classic hop stand, it mostly extracts
-# flavour and aroma. Reported as two IBU totals beside the boil/whirlpool split.
-WHIRLPOOL_HOT_TEMP_C = 76.7
+# The hot/cool whirlpool split is cut by the isomerization floor: above the band
+# the charge still bitter-isomerises freely, at or below it the stand mostly
+# extracts flavour and aroma. The band lives in data/seeds/whirlpool-notes.json
+# (`isomerization_floor`); a coupling test keeps this constant equal to its top.
+ISOMERIZATION_FLOOR_C = 79.0
 
 # Whirlpool charges share one knockout end, so their durations also encode the
 # addition order. Two charges within these tolerances are one addition, and the
@@ -58,6 +51,7 @@ class BoilHopEntry:
     alpha_acid_pct: float
     boil_time_fraction: float
     pct: float
+    product_form: str = "t90_pellet"
 
 
 @dataclass(frozen=True)
@@ -156,9 +150,12 @@ def mass_from_ibu(
     time_min: float,
     boil_gravity_sg: float,
     volume_l: float,
+    product_form: str = "t90_pellet",
 ) -> float | None:
-    """Tinseth inverse: hop mass (kg) that yields ``ibu``."""
-    utilization = tinseth_utilization(boil_gravity_sg, time_min)
+    """Tinseth inverse: hop mass (kg) that yields ``ibu`` for a product form."""
+    utilization = tinseth_utilization(boil_gravity_sg, time_min) * product_form_utilization(
+        product_form
+    )
     if (
         not (ibu > 0.0)
         or utilization <= 0.0
@@ -249,24 +246,15 @@ def whirlpool_utilization(gravity: float, effective_minutes: float) -> float:
     return gravity_factor * time_factor
 
 
-def product_form_utilization(
-    product_form: str, temperature_c: float | None = None
-) -> float:
-    """Product-form scalar, temperature-dependent for flowable extracts."""
-    base = PRODUCT_FORM_UTILIZATION.get(product_form, 1.0)
-    if product_form != "flowable_extract" or temperature_c is None:
-        return base
-    if not math.isfinite(temperature_c):
-        return base
-    if temperature_c <= FLOWABLE_LOW_TEMP_C:
-        return FLOWABLE_LOW_UTILIZATION
-    if temperature_c >= FLOWABLE_HIGH_TEMP_C:
-        return base
-    ramp = (temperature_c - FLOWABLE_LOW_TEMP_C) / (
-        FLOWABLE_HIGH_TEMP_C - FLOWABLE_LOW_TEMP_C
-    )
-    smooth = ramp * ramp * (3.0 - 2.0 * ramp)
-    return FLOWABLE_LOW_UTILIZATION + smooth * (base - FLOWABLE_LOW_UTILIZATION)
+def product_form_utilization(product_form: str) -> float:
+    """Lumped product-form efficiency: adsorption-free and dispersion.
+
+    A flowable extract leaves no vegetative matter behind and its resin is
+    already ruptured, so at boiling heat it delivers more IBU per unit of alpha
+    than a T-90 pellet. The scalar carries both effects at once; the boil applies
+    it isothermally, where heat and shear are at their maximum.
+    """
+    return PRODUCT_FORM_UTILIZATION.get(product_form, 1.0)
 
 
 def whirlpool_mass_kg(
@@ -285,7 +273,7 @@ def whirlpool_mass_kg(
         duration_min, initial_temp_c, ambient_temp_c, k_per_min
     )
     utilization = whirlpool_utilization(gravity, effective_minutes) * product_form_utilization(
-        product_form, initial_temp_c
+        product_form
     )
     return (
         mass_from_whirlpool_utilization(ibu, alpha_fraction, volume_l, utilization),
@@ -399,6 +387,10 @@ def _validate(inputs: HopSolverInput) -> None:
             raise SolverValidationError(
                 "INVALID_HOP_INPUT", "Boil-time fraction must be 0..1."
             )
+        if row.product_form not in PRODUCT_FORM_UTILIZATION:
+            raise SolverValidationError(
+                "UNKNOWN_PRODUCT_FORM", f"Unknown hop product form {row.product_form!r}."
+            )
     for row in inputs.whirlpool_hops:
         if not (0.0 <= row.alpha_acid_pct <= 1.0) or not (0.0 <= row.pct <= 1.0):
             raise SolverValidationError("INVALID_HOP_INPUT", "Hop fractions must be 0..1.")
@@ -419,7 +411,7 @@ def _split_ibu(
     """IBU carried by the whirlpool charges on one side of the hot threshold."""
     total = 0.0
     for charge, result in zip(charges, results, strict=True):
-        if (charge.initial_temp_c > WHIRLPOOL_HOT_TEMP_C) is above_hot:
+        if (charge.initial_temp_c > ISOMERIZATION_FLOOR_C) is above_hot:
             total += result.ibu
     return total
 
@@ -439,6 +431,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
             minutes,
             inputs.pre_boil_gravity,
             inputs.post_boil_volume_l,
+            product_form=row.product_form,
         )
         boil_rows.append(BoilHopResult(minutes=minutes, ibu=ibu, mass_kg=mass))
 
@@ -455,7 +448,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
         )
         utilization = whirlpool_utilization(
             inputs.post_boil_gravity, effective_minutes
-        ) * product_form_utilization(row.product_form, row.initial_temp_c)
+        ) * product_form_utilization(row.product_form)
         mass = mass_from_whirlpool_utilization(
             ibu, row.alpha_acid_pct, inputs.post_boil_volume_l, utilization
         )

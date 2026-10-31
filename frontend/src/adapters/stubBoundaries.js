@@ -15,13 +15,14 @@ function hopOutputs(inputs = {}) {
     return {
       minutes,
       ibu,
-      mass_kg: massFromIbu(
+      mass_kg: massFromIbu({
         ibu,
-        row.alpha_acid_pct ?? 0,
-        minutes,
-        inputs.pre_boil_gravity,
-        inputs.post_boil_volume_l
-      ),
+        alphaFraction: row.alpha_acid_pct ?? 0,
+        timeMin: minutes,
+        boilGravitySg: inputs.pre_boil_gravity,
+        volumeL: inputs.post_boil_volume_l,
+        productForm: row.product_form ?? "t90_pellet",
+      }),
     };
   });
   const kPerMin =
@@ -46,7 +47,6 @@ function hopOutputs(inputs = {}) {
         gravity: inputs.post_boil_gravity,
         effectiveMinutes,
         productForm: row.product_form ?? "t90_pellet",
-        initialTempC: row.initial_temp_c,
       }),
       effective_minutes: effectiveMinutes,
     };

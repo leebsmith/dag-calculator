@@ -119,6 +119,7 @@ test("grist tables carry formatted row cells", async () => {
 const BOIL_HOP = {
   hop_id: "magnum",
   name: "Magnum",
+  product_form: "t90_pellet",
   alpha_acid_pct: 0.14,
   boil_time_fraction: 1,
   parts: 100,
@@ -174,14 +175,17 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   const boil = tables["batch.boil_hops"];
   assert.equal(boil.length, 1);
   assert.deepEqual(boil[0].name, { text: "Magnum" });
+  assert.equal(boil[0].form.text, "T-90 pellet");
   assert.equal(boil[0].alpha.unit, "%");
   assert.equal(boil[0].ibu_share.unit, "%");
   assert.equal(typeof boil[0].ibu.text, "string");
-  assert.equal(typeof boil[0].amount.text, "string");
+  // Hop masses print in grams: the default kg unit renders them as "0.0".
+  assert.equal(boil[0].amount.unit, "g");
 
   const whirlpool = tables["batch.whirlpool_hops"];
   assert.equal(whirlpool.length, 2);
   assert.equal(whirlpool[0].form.text, "T-90 pellet");
+  assert.equal(whirlpool[0].alpha.unit, "%");
   assert.equal(whirlpool[0].rest.unit, "min");
   assert.equal(whirlpool[0].temp.unit, "°C");
   assert.equal(whirlpool[1].name.text, "Saaz");

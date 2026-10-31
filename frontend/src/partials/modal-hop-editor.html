@@ -151,6 +151,23 @@
                     @click="toggleHopSearchNotes()"
                   >Search notes</button>
                 </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="hop-catalog-form">Catalog</label>
+                  <select
+                    id="hop-catalog-form"
+                    class="form-select text-xs"
+                    :value="hopCatalogForm"
+                    @change="setHopCatalogForm($event.target.value)"
+                  >
+                    <template x-for="form in hopForms" :key="form.value">
+                      <option
+                        :value="form.value"
+                        :selected="form.value === hopCatalogForm"
+                        x-text="form.label"
+                      ></option>
+                    </template>
+                  </select>
+                </div>
                 <div class="filter-pills-container">
                   <template x-for="c in hopCategories" :key="c">
                     <button
@@ -239,6 +256,31 @@
                   />
                   <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
                 </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" for="hop-row-form">Form</label>
+                  <select
+                    id="hop-row-form"
+                    class="form-select text-xs"
+                    :value="hopActiveRow.product_form || 't90_pellet'"
+                    @change="patchDraftRow(hopActiveIndex, { product_form: $event.target.value })"
+                  >
+                    <template x-for="form in hopForms" :key="form.value">
+                      <option
+                        :value="form.value"
+                        :selected="form.value === (hopActiveRow.product_form || 't90_pellet')"
+                        x-text="form.label"
+                      ></option>
+                    </template>
+                  </select>
+                </div>
+                <span
+                  class="form-hint"
+                  x-show="hopActiveRow.product_form === 'flowable_extract'"
+                >
+                  Use the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Weighed in grams,
+                  applied late in the boil; a flameout stand is not modelled for extracts.
+                </span>
+                <span class="form-hint" x-show="hopT90Equivalent" x-text="hopT90Equivalent"></span>
               </div>
             </template>
           </template>

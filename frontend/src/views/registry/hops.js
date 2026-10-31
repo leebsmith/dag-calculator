@@ -33,6 +33,14 @@ export const hopsRegistry = {
   "batch.boil_hops.alpha_acid_pct": { label: "Alpha", displayUnit: "pct" },
   "batch.boil_hops.boil_time_fraction": { label: "Boil remaining", displayUnit: "pct" },
   "batch.boil_hops.parts": { label: "Parts" },
+  "batch.boil_hops.product_form": {
+    label: "Form",
+    optionLabels: {
+      t90_pellet: "T-90 pellet",
+      flowable_extract: "Flowable extract",
+      lupulin_pellet: "Lupulin pellet",
+    },
+  },
   "batch.boil_hops.pct": { label: "IBU share", displayUnit: "pct" },
   "batch.whirlpool_hops": { label: "Whirlpool hops" },
   "batch.whirlpool_hops.hop_id": { label: "Hop ID" },
@@ -50,6 +58,9 @@ export const hopsRegistry = {
   "batch.whirlpool_hops.initial_temp_c": { label: "Initial temp", unit: "°C" },
   "batch.whirlpool_hops.parts": { label: "Parts" },
   "batch.whirlpool_hops.pct": { label: "IBU share", displayUnit: "pct" },
+  "solver.hops.boil_mass_kg": { label: "Boil hop mass", displayUnit: "g" },
+  "solver.hops.whirlpool_mass_kg": { label: "Whirlpool hop mass", displayUnit: "g" },
+  "solver.hops.total_mass_kg": { label: "Total hop mass", displayUnit: "g" },
   "batch.boil_target_ibu": { label: "Boil IBU", unit: "IBU" },
   "batch.whirlpool_target_ibu": { label: "Whirlpool IBU", unit: "IBU" },
   "batch.whirlpool_ambient_temp_c": {

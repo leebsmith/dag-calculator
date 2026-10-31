@@ -17,11 +17,13 @@ import {
   hopPctLabel,
   mergeBoilRows,
   mergeWhirlpoolRows,
+  BOIL_HOP_FORMS,
   WHIRLPOOL_HOP_FORMS,
 } from "../../views/producer/hopRows.js";
 import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
 import { reportError } from "../../observability.js";
-import { productFormUtilization, whirlpoolTimeline } from "../../views/whirlpool.js";
+import { whirlpoolTimeline } from "../../views/whirlpool.js";
+import { boilPolicyDescriptors, makeBoilRow } from "../../views/producer/boilPolicy.js";
 import {
   makeWhirlpoolRow,
   whirlpoolPolicyDescriptors,
@@ -32,17 +34,6 @@ const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 const HOP_MASS_KEY = "hop.mass";
 
 const MAX_VISIBLE = 25;
-
-function makeRow(hop) {
-  return {
-    hop_id: hop.id,
-    name: hop.name,
-    alpha_acid_pct: hop.alpha_acid_pct,
-    boil_time_fraction: 1,
-    parts: 10,
-    pct: 0,
-  };
-}
 
 function resolveOrNull(engine, path) {
   try {
@@ -59,16 +50,26 @@ export function registerHopCard(app, ctx) {
     Cap: "Hop",
     nodeId: N.collection,
     seedKey: "hops",
+    catalog: () => {
+      if (app.hopCatalogForm === "t90_pellet") {
+        return Object.values(ctx.cache.seeds.hops ?? {});
+      }
+      return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
+        (item) => item.product_form === app.hopCatalogForm
+      );
+    },
+    catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
+    searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
     categoryField: "purpose",
-    makeRow,
+    makeRow: makeBoilRow,
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
-      item.purpose || "Hop",
+      item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
       isFiniteNumber(item.alpha_acid_pct)
         ? `${formatPercent(item.alpha_acid_pct)} alpha`
         : "alpha n/a",
-      item.origin,
+      item.product_form ? item.manufacturer : item.origin,
     ],
   });
 
@@ -110,10 +111,18 @@ export function registerHopCard(app, ctx) {
     boilHopMassKg: null,
     whirlpoolHopMassKg: null,
     hopBoundaryTotalMassKg: null,
+    hopForms: BOIL_HOP_FORMS,
+    hopCatalogForm: "t90_pellet",
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
     whirlpoolHelpOpen: false,
     ...hopSectionState(),
+
+    setHopCatalogForm(value) {
+      this.hopCatalogForm = value;
+      this.hopSearch = "";
+      this.hopCategoryFilter = [];
+    },
 
     setWhirlpoolHopCatalogForm(value) {
       this.whirlpoolHopCatalogForm = value;
@@ -199,23 +208,6 @@ export function registerHopCard(app, ctx) {
       configurable: true,
       get() {
         return this.unitMode?.[HOP_MASS_KEY] ?? this.unitMode?.mass ?? "g";
-      },
-    },
-    whirlpoolHopT90Equivalent: {
-      configurable: true,
-      get() {
-        const row = this.whirlpoolHopActiveRow;
-        if (
-          !row ||
-          row.product_form !== "flowable_extract" ||
-          !isFiniteNumber(row.t90_replacement_ratio)
-        ) {
-          return "";
-        }
-        const saved = this.whirlpoolHopRows[this.whirlpoolHopActiveIndex];
-        if (!isFiniteNumber(saved?.mass_kg)) return "";
-        const equivalent = saved.mass_kg * row.t90_replacement_ratio;
-        return `${formatMass(equivalent, "g")} T-90 equivalent (1:${row.t90_replacement_ratio})`;
       },
     },
     hopDraftPartsTotal: {
@@ -337,8 +329,11 @@ export function registerHopCard(app, ctx) {
     ...whirlpoolPolicyDescriptors({
       notes: ctx.cache?.seeds?.whirlpoolNotes ?? {},
       formatTemp,
+    }),
+    ...boilPolicyDescriptors({
+      formatMass,
       formatNumber: formatWithDecimals,
-      utilizationFor: productFormUtilization,
+      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
     }),
     ...whirlpoolTimelineDescriptors({
       formatTemp,
@@ -434,7 +429,7 @@ export const KEYS = [
   "totalIbuField",
   "whirlpoolAmbientField",
   "whirlpoolCoolingField",
-  "whirlpoolHopT90Equivalent",
+  "hopT90Equivalent",
   "hopDraftPartsTotal",
   "hopDraftSummary",
   "whirlpoolHopDraftPartsTotal",
@@ -445,12 +440,14 @@ export const KEYS = [
   "hopTotalMassKg",
   "hopTotalMassDisplay",
   "whirlpoolHopTotalMassDisplay",
-  "whirlpoolHopDoseWarning",
+  "hopDoseWarning",
+  "hopForms",
+  "hopCatalogForm",
+  "setHopCatalogForm",
   "whirlpoolStartBands",
   "whirlpoolStartBandValue",
   "whirlpoolStartBandHint",
   "setWhirlpoolStartBand",
-  "whirlpoolHopTemperatureWarning",
   "whirlpoolTimelineState",
   "whirlpoolInferredChills",
   "whirlpoolZeroRestNote",

@@ -263,8 +263,8 @@ class BatchSolverResponse(BoundaryModel):
 # Solver 2: Water Chemistry Solver (solver.water)
 # -----------------------------------------------------------------------------
 
-class WhirlpoolHopForm(StrEnum):
-    """Mirrors the artifact's `whirlpool_hop_form` taxonomy; guarded by
+class HopProductForm(StrEnum):
+    """Mirrors the artifact's `hop_product_form` taxonomy; guarded by
     tests/backend/conformance/test_taxonomy_coverage.py."""
 
     T90_PELLET = "t90_pellet"
@@ -278,6 +278,7 @@ class BoilHopRow(BoundaryModel):
     alpha_acid_pct: Annotated[float, Field(ge=0.0, le=1.0)]
     boil_time_fraction: Annotated[float, Field(ge=0.0, le=1.0)]
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
+    product_form: HopProductForm = HopProductForm.T90_PELLET
 
 
 class WhirlpoolHopRow(BoundaryModel):
@@ -287,7 +288,7 @@ class WhirlpoolHopRow(BoundaryModel):
     duration_min: Annotated[float, Field(ge=0.0)]
     initial_temp_c: Annotated[float, Field(ge=0.0, le=100.0)]
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
-    product_form: WhirlpoolHopForm = WhirlpoolHopForm.T90_PELLET
+    product_form: HopProductForm = HopProductForm.T90_PELLET
 
 
 class HopSolverRequest(BoundaryModel):

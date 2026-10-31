@@ -59,10 +59,10 @@ test("malt_category covers the fermentability and yield priors", () => {
   }
 });
 
-test("whirlpool_hop_form covers the product utilization map", () => {
+test("hop_product_form covers the product utilization map", () => {
   const a = artifact();
   assert.deepEqual(
-    [...taxonomy(a, "whirlpool_hop_form")].sort(),
+    [...taxonomy(a, "hop_product_form")].sort(),
     Object.keys(PRODUCT_FORM_UTILIZATION).sort()
   );
 });

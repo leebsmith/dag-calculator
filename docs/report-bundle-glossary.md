@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_116 paths_
+_117 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -37,6 +37,7 @@ _116 paths_
 | `batch.boil_hops.name` | Hop | field | — | — | — | — |
 | `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet |
 | `batch.boil_ibu_share` | Boil IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
@@ -384,12 +385,12 @@ _8 paths_
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `solver.hops` | Hops | boundary | — | — | — | — |
-| `solver.hops.boil_mass_kg` | Boil Mass Kg | output | mass | kg | 1 | — |
+| `solver.hops.boil_mass_kg` | Boil hop mass | output | mass | g | 1 | — |
 | `solver.hops.boil_rows` | Boil Rows | output | — | — | — | — |
-| `solver.hops.total_mass_kg` | Total Mass Kg | output | mass | kg | 1 | — |
+| `solver.hops.total_mass_kg` | Total hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_cool_ibu` | Whirlpool Cool IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.whirlpool_hot_ibu` | Whirlpool Hot IBU | output | ibu | IBU | 1 | — |
-| `solver.hops.whirlpool_mass_kg` | Whirlpool Mass Kg | output | mass | kg | 1 | — |
+| `solver.hops.whirlpool_mass_kg` | Whirlpool hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_rows` | Whirlpool Rows | output | — | — | — | — |
 
 ## Identity — equipment

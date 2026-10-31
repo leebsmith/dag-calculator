@@ -30,8 +30,43 @@
         ],
         "whirlpool_rows": [],
         "boil_mass_kg": 0.03406533311798062,
-        "whirlpool_mass_kg": 0,
+        "whirlpool_mass_kg": 0.0,
         "total_mass_kg": 0.03406533311798062
+      }
+    },
+    {
+      "name": "boil-extract",
+      "input": {
+        "boil_hops": [
+          {
+            "alpha_acid_pct": 0.425,
+            "boil_time_fraction": 0.25,
+            "pct": 1.0,
+            "product_form": "flowable_extract"
+          }
+        ],
+        "whirlpool_hops": [],
+        "boil_target_ibu": 40.0,
+        "whirlpool_target_ibu": 0.0,
+        "boil_time_min": 60.0,
+        "pre_boil_gravity": 1.048,
+        "post_boil_gravity": 1.055,
+        "post_boil_volume_l": 20.0,
+        "whirlpool_ambient_temp_c": 20.0,
+        "whirlpool_cooling_time_constant_min": 108.7
+      },
+      "expected": {
+        "boil_rows": [
+          {
+            "minutes": 15.0,
+            "ibu": 40.0,
+            "mass_kg": 0.014046450572653624
+          }
+        ],
+        "whirlpool_rows": [],
+        "boil_mass_kg": 0.014046450572653624,
+        "whirlpool_mass_kg": 0.0,
+        "total_mass_kg": 0.014046450572653624
       }
     },
     {
@@ -60,19 +95,19 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30,
+            "minutes": 30.0,
             "ibu": 30.0,
             "mass_kg": 0.055384989705012426,
             "effective_minutes": 14.795319261482318
           }
         ],
-        "boil_mass_kg": 0,
+        "boil_mass_kg": 0.0,
         "whirlpool_mass_kg": 0.055384989705012426,
         "total_mass_kg": 0.055384989705012426
       }
     },
     {
-      "name": "whirlpool-flowable",
+      "name": "whirlpool-lupulin",
       "input": {
         "boil_hops": [],
         "whirlpool_hops": [
@@ -81,7 +116,7 @@
             "duration_min": 30,
             "initial_temp_c": 99,
             "pct": 1.0,
-            "product_form": "flowable_extract"
+            "product_form": "lupulin_pellet"
           }
         ],
         "boil_target_ibu": 0.0,
@@ -97,15 +132,15 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30,
+            "minutes": 30.0,
             "ibu": 30.0,
-            "mass_kg": 0.010702413469567617,
+            "mass_kg": 0.011188886809093418,
             "effective_minutes": 14.795319261482318
           }
         ],
-        "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.010702413469567617,
-        "total_mass_kg": 0.010702413469567617
+        "boil_mass_kg": 0.0,
+        "whirlpool_mass_kg": 0.011188886809093418,
+        "total_mass_kg": 0.011188886809093418
       }
     },
     {
@@ -156,7 +191,7 @@
         ],
         "whirlpool_rows": [
           {
-            "minutes": 20,
+            "minutes": 20.0,
             "ibu": 15.0,
             "mass_kg": 0.054681531053890675,
             "effective_minutes": 6.411417646728922
@@ -200,19 +235,19 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30,
+            "minutes": 30.0,
             "ibu": 15.0,
             "mass_kg": 0.027692494852506213,
             "effective_minutes": 14.795319261482318
           },
           {
-            "minutes": 20,
+            "minutes": 20.0,
             "ibu": 10.0,
             "mass_kg": 0.026799038572501713,
             "effective_minutes": 7.407206080297871
           }
         ],
-        "boil_mass_kg": 0,
+        "boil_mass_kg": 0.0,
         "whirlpool_mass_kg": 0.054491533425007926,
         "total_mass_kg": 0.054491533425007926
       }
@@ -250,19 +285,19 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 30,
+            "minutes": 30.0,
             "ibu": 10.0,
             "mass_kg": 0.011544038490591857,
             "effective_minutes": 9.81499375449106
           },
           {
-            "minutes": 20,
+            "minutes": 20.0,
             "ibu": 10.0,
             "mass_kg": 0.04051745183792269,
             "effective_minutes": 2.4268805733066134
           }
         ],
-        "boil_mass_kg": 0,
+        "boil_mass_kg": 0.0,
         "whirlpool_mass_kg": 0.05206149032851455,
         "total_mass_kg": 0.05206149032851455
       }
@@ -284,7 +319,7 @@
             "duration_min": 25,
             "initial_temp_c": 85.7234,
             "pct": 0.3,
-            "product_form": "flowable_extract"
+            "product_form": "lupulin_pellet"
           },
           {
             "alpha_acid_pct": 0.18,
@@ -307,27 +342,27 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 45,
+            "minutes": 45.0,
             "ibu": 14.0,
             "mass_kg": 0.023409536026128237,
             "effective_minutes": 16.989640871539756
           },
           {
-            "minutes": 25,
+            "minutes": 25.0,
             "ibu": 8.4,
-            "mass_kg": 0.008742334176175336,
+            "mass_kg": 0.008590316801020582,
             "effective_minutes": 5.061040627921477
           },
           {
-            "minutes": 10,
+            "minutes": 10.0,
             "ibu": 5.6000000000000005,
             "mass_kg": 0.05110231443130115,
             "effective_minutes": 1.1678600113980435
           }
         ],
-        "boil_mass_kg": 0,
-        "whirlpool_mass_kg": 0.08325418463360472,
-        "total_mass_kg": 0.08325418463360472
+        "boil_mass_kg": 0.0,
+        "whirlpool_mass_kg": 0.08310216725844997,
+        "total_mass_kg": 0.08310216725844997
       }
     },
     {
@@ -353,7 +388,7 @@
             "duration_min": 15,
             "initial_temp_c": 76.9742,
             "pct": 0.4,
-            "product_form": "flowable_extract"
+            "product_form": "lupulin_pellet"
           }
         ],
         "boil_target_ibu": 30.3,
@@ -375,21 +410,21 @@
         ],
         "whirlpool_rows": [
           {
-            "minutes": 40,
+            "minutes": 40.0,
             "ibu": 5.3999999999999995,
             "mass_kg": 0.009375125904306074,
             "effective_minutes": 14.670722027605796
           },
           {
-            "minutes": 15,
+            "minutes": 15.0,
             "ibu": 3.6,
-            "mass_kg": 0.0286375896054858,
+            "mass_kg": 0.021259304752205273,
             "effective_minutes": 2.025758209866238
           }
         ],
         "boil_mass_kg": 0.07657775223934041,
-        "whirlpool_mass_kg": 0.03801271550979187,
-        "total_mass_kg": 0.11459046774913229
+        "whirlpool_mass_kg": 0.03063443065651135,
+        "total_mass_kg": 0.10721218289585176
       }
     },
     {
@@ -425,19 +460,19 @@
         "boil_rows": [],
         "whirlpool_rows": [
           {
-            "minutes": 60,
+            "minutes": 60.0,
             "ibu": 10.5,
             "mass_kg": 0.007412872155344069,
             "effective_minutes": 16.476922953111192
           },
           {
-            "minutes": 30,
+            "minutes": 30.0,
             "ibu": 4.5,
             "mass_kg": 0.02631149969876581,
             "effective_minutes": 3.5265272808116133
           }
         ],
-        "boil_mass_kg": 0,
+        "boil_mass_kg": 0.0,
         "whirlpool_mass_kg": 0.03372437185410988,
         "total_mass_kg": 0.03372437185410988
       }
@@ -458,7 +493,7 @@
             "duration_min": 50,
             "initial_temp_c": 85.0,
             "pct": 1.0,
-            "product_form": "flowable_extract"
+            "product_form": "lupulin_pellet"
           }
         ],
         "boil_target_ibu": 48.9,
@@ -480,15 +515,15 @@
         ],
         "whirlpool_rows": [
           {
-            "minutes": 50,
+            "minutes": 50.0,
             "ibu": 13.9,
-            "mass_kg": 0.12215602645452867,
+            "mass_kg": 0.11763172917843498,
             "effective_minutes": 7.0388118497980585
           }
         ],
         "boil_mass_kg": 0.053181710644390236,
-        "whirlpool_mass_kg": 0.12215602645452867,
-        "total_mass_kg": 0.1753377370989189
+        "whirlpool_mass_kg": 0.11763172917843498,
+        "total_mass_kg": 0.1708134398228252
       }
     }
   ]

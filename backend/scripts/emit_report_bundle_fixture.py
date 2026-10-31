@@ -76,10 +76,20 @@ BOIL_HOPS = [
     {
         "hop_id": "magnum",
         "name": "Magnum",
+        "product_form": "t90_pellet",
         "alpha_acid_pct": 0.14,
         "boil_time_fraction": 1.0,
-        "parts": 100,
-        "pct": 1.0,
+        "parts": 60,
+        "pct": 0.6,
+    },
+    {
+        "hop_id": "dynaboost-citra",
+        "name": "DynaBoost Citra",
+        "product_form": "flowable_extract",
+        "alpha_acid_pct": 0.425,
+        "boil_time_fraction": 0.25,
+        "parts": 40,
+        "pct": 0.4,
     },
 ]
 
@@ -291,14 +301,17 @@ RECORD = {
             "total_added_salt_mass_g": 3.0,
         },
         "solver.hops": {
-            "boil_rows": [{"minutes": 60.0, "ibu": 30.0, "mass_kg": 0.030}],
+            "boil_rows": [
+                {"minutes": 60.0, "ibu": 18.0, "mass_kg": 0.0186},
+                {"minutes": 15.0, "ibu": 12.0, "mass_kg": 0.0043},
+            ],
             "whirlpool_rows": [
                 {"minutes": 30.0, "ibu": 7.0, "mass_kg": 0.035, "effective_minutes": 21.0},
                 {"minutes": 10.0, "ibu": 3.0, "mass_kg": 0.015, "effective_minutes": 4.0},
             ],
-            "boil_mass_kg": 0.030,
+            "boil_mass_kg": 0.0229,
             "whirlpool_mass_kg": 0.050,
-            "total_mass_kg": 0.080,
+            "total_mass_kg": 0.0729,
             "whirlpool_hot_ibu": 7.0,
             "whirlpool_cool_ibu": 3.0,
         },
@@ -641,6 +654,15 @@ PAYLOAD = FreezePayload(
                 label="Boil remaining", dimension="percentage", unit="pct", symbol="%", decimals=0
             ),
             "batch.boil_hops.parts": NodePresentation(label="Parts"),
+            "batch.boil_hops.product_form": NodePresentation(
+                label="Form",
+                options=["t90_pellet", "flowable_extract", "lupulin_pellet"],
+                option_labels={
+                    "t90_pellet": "T-90 pellet",
+                    "flowable_extract": "Flowable extract",
+                    "lupulin_pellet": "Lupulin pellet",
+                },
+            ),
             "batch.boil_hops.pct": NodePresentation(
                 label="IBU share", dimension="percentage", unit="pct", symbol="%", decimals=1
             ),
@@ -857,9 +879,9 @@ PAYLOAD = FreezePayload(
         "batch.whirlpool_ibu_share": FormattedValue(text="25.0%", number="25.0", unit="%"),
         "batch.whirlpool_hot_ibu_share": FormattedValue(text="70.0%", number="70.0", unit="%"),
         "batch.whirlpool_cool_ibu_share": FormattedValue(text="30.0%", number="30.0", unit="%"),
-        "solver.hops.boil_mass_kg": FormattedValue(text="30.0 g", number="30.0", unit="g"),
+        "solver.hops.boil_mass_kg": FormattedValue(text="22.9 g", number="22.9", unit="g"),
         "solver.hops.whirlpool_mass_kg": FormattedValue(text="50.0 g", number="50.0", unit="g"),
-        "solver.hops.total_mass_kg": FormattedValue(text="80.0 g", number="80.0", unit="g"),
+        "solver.hops.total_mass_kg": FormattedValue(text="72.9 g", number="72.9", unit="g"),
         "solver.hops.whirlpool_hot_ibu": FormattedValue(text="7.0 IBU", number="7.0", unit="IBU"),
         "solver.hops.whirlpool_cool_ibu": FormattedValue(text="3.0 IBU", number="3.0", unit="IBU"),
         "grist.finished_beer_srm": FormattedValue(text="6.0 SRM", number="6.0", unit="SRM"),
@@ -930,17 +952,28 @@ PAYLOAD = FreezePayload(
         "batch.boil_hops": [
             {
                 "name": FormattedValue(text="Magnum"),
+                "form": FormattedValue(text="T-90 pellet"),
                 "alpha": FormattedValue(text="14.0%", number="14.0", unit="%"),
                 "boil": FormattedValue(text="60 min", number="60", unit="min"),
-                "ibu_share": FormattedValue(text="100.0%", number="100.0", unit="%"),
-                "ibu": FormattedValue(text="30.0 IBU", number="30.0", unit="IBU"),
-                "amount": FormattedValue(text="30.0 g", number="30.0", unit="g"),
+                "ibu_share": FormattedValue(text="60.0%", number="60.0", unit="%"),
+                "ibu": FormattedValue(text="18.0 IBU", number="18.0", unit="IBU"),
+                "amount": FormattedValue(text="18.6 g", number="18.6", unit="g"),
+            },
+            {
+                "name": FormattedValue(text="DynaBoost Citra"),
+                "form": FormattedValue(text="Flowable extract"),
+                "alpha": FormattedValue(text="42.5%", number="42.5", unit="%"),
+                "boil": FormattedValue(text="15 min", number="15", unit="min"),
+                "ibu_share": FormattedValue(text="40.0%", number="40.0", unit="%"),
+                "ibu": FormattedValue(text="12.0 IBU", number="12.0", unit="IBU"),
+                "amount": FormattedValue(text="4.3 g", number="4.3", unit="g"),
             },
         ],
         "batch.whirlpool_hops": [
             {
                 "name": FormattedValue(text="Citra"),
                 "form": FormattedValue(text="T-90 pellet"),
+                "alpha": FormattedValue(text="12.0%", number="12.0", unit="%"),
                 "rest": FormattedValue(text="30 min", number="30", unit="min"),
                 "temp": FormattedValue(text="95.0 °C", number="95.0", unit="°C"),
                 "ibu_share": FormattedValue(text="70.0%", number="70.0", unit="%"),
@@ -950,6 +983,7 @@ PAYLOAD = FreezePayload(
             {
                 "name": FormattedValue(text="Saaz"),
                 "form": FormattedValue(text="T-90 pellet"),
+                "alpha": FormattedValue(text="3.5%", number="3.5", unit="%"),
                 "rest": FormattedValue(text="10 min", number="10", unit="min"),
                 "temp": FormattedValue(text="70.0 °C", number="70.0", unit="°C"),
                 "ibu_share": FormattedValue(text="30.0%", number="30.0", unit="%"),

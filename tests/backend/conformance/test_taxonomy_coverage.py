@@ -20,11 +20,11 @@ from app.core.water.constants import (
 from app.schemas.boundary import (
     AcidMedium,
     BatchSpargeTopology,
+    HopProductForm,
     MashPhStatus,
     PreferredAlkalineAgent,
     SaltDistribution,
     WaterStrategy,
-    WhirlpoolHopForm,
 )
 
 ARTIFACT = json.loads(
@@ -42,7 +42,7 @@ def enum_values(enum) -> set[str]:
 
 CASES = [
     ("malt_category", set(GRAIN_ACIDITY)),
-    ("whirlpool_hop_form", set(PRODUCT_FORM_UTILIZATION)),
+    ("hop_product_form", set(PRODUCT_FORM_UTILIZATION)),
     ("strategy", enum_values(WaterStrategy)),
     ("topology", enum_values(BatchSpargeTopology)),
     ("salt_distribution", enum_values(SaltDistribution)),
@@ -57,8 +57,8 @@ def test_taxonomy_matches_host_map(taxonomy_id, expected):
     assert taxonomy(taxonomy_id) == expected, taxonomy_id
 
 
-def test_whirlpool_hop_form_enum_matches_the_solver_map():
-    assert enum_values(WhirlpoolHopForm) == set(PRODUCT_FORM_UTILIZATION)
+def test_hop_product_form_enum_matches_the_solver_map():
+    assert enum_values(HopProductForm) == set(PRODUCT_FORM_UTILIZATION)
 
 
 def test_acid_medium_matches_acid_properties():

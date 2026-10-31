@@ -17,22 +17,11 @@ export const PRODUCT_FORM_UTILIZATION = {
   lupulin_pellet: 1.1,
 };
 
-// Flowable extracts disperse poorly as the wort cools, so their multiplier ramps
-// between the two measured bounds; T-90 and lupulin pellets are static.
-export const FLOWABLE_LOW_TEMP_C = 75;
-export const FLOWABLE_HIGH_TEMP_C = 90;
-export const FLOWABLE_LOW_UTILIZATION = 0.8;
-
-export function productFormUtilization(productForm, temperatureC = null) {
-  const base = PRODUCT_FORM_UTILIZATION[productForm] ?? 1.0;
-  if (productForm !== "flowable_extract" || temperatureC === null) return base;
-  if (!Number.isFinite(temperatureC)) return base;
-  if (temperatureC <= FLOWABLE_LOW_TEMP_C) return FLOWABLE_LOW_UTILIZATION;
-  if (temperatureC >= FLOWABLE_HIGH_TEMP_C) return base;
-  const ramp =
-    (temperatureC - FLOWABLE_LOW_TEMP_C) / (FLOWABLE_HIGH_TEMP_C - FLOWABLE_LOW_TEMP_C);
-  const smooth = ramp * ramp * (3 - 2 * ramp);
-  return FLOWABLE_LOW_UTILIZATION + smooth * (base - FLOWABLE_LOW_UTILIZATION);
+// Product-form efficiency, shared by both processes. A flowable extract leaves no
+// vegetative matter behind and its resin is already ruptured, so it delivers more
+// IBU per unit of alpha; a boil applies the scalar isothermally.
+export function productFormUtilization(productForm) {
+  return PRODUCT_FORM_UTILIZATION[productForm] ?? 1.0;
 }
 
 export function relativeIsomerizationRate(tempC) {
@@ -213,11 +202,9 @@ export function whirlpoolMassFromEffective({
   gravity,
   effectiveMinutes,
   productForm = "t90_pellet",
-  initialTempC = DEFAULT_INITIAL_TEMP_C,
 }) {
   const utilization =
-    whirlpoolUtilization(gravity, effectiveMinutes) *
-    productFormUtilization(productForm, initialTempC);
+    whirlpoolUtilization(gravity, effectiveMinutes) * productFormUtilization(productForm);
   if (!(ibu > 0) || !(alphaFraction > 0) || !(volumeL > 0) || !(utilization > 0)) return null;
   return (ibu * volumeL) / (alphaFraction * 1000 * utilization) / 1000;
 }

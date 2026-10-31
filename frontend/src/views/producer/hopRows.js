@@ -7,15 +7,29 @@ import { cellLabel } from "./cell.js";
 
 const DASH = "—";
 
-export const WHIRLPOOL_HOP_FORMS = [
+// The product matrix: the boil sells T-90 or a flowable extract, the whirlpool
+// T-90 or lupulin powder. Dry hops carry their own authored quantity.
+export const BOIL_HOP_FORMS = [
   { value: "t90_pellet", label: "T-90 pellets" },
   { value: "flowable_extract", label: "Flowable CO₂ extract" },
+];
+
+export const WHIRLPOOL_HOP_FORMS = [
+  { value: "t90_pellet", label: "T-90 pellets" },
   { value: "lupulin_pellet", label: "Lupulin pellet" },
 ];
 
+// The label vocabulary covers every form, including the ones a table does not
+// offer, so a stored row never prints a raw code.
+const HOP_FORM_LABELS = {
+  t90_pellet: "T-90 pellets",
+  flowable_extract: "Flowable CO₂ extract",
+  lupulin_pellet: "Lupulin pellet",
+};
+
 export function hopFormLabel(row) {
   const value = row?.product_form ?? "t90_pellet";
-  return WHIRLPOOL_HOP_FORMS.find((form) => form.value === value)?.label ?? value;
+  return HOP_FORM_LABELS[value] ?? value;
 }
 
 export function hopAlphaLabel(row) {

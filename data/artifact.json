@@ -529,7 +529,7 @@
       "g",
       "ml"
     ],
-    "whirlpool_hop_form": [
+    "hop_product_form": [
       "t90_pellet",
       "flowable_extract",
       "lupulin_pellet"
@@ -1533,7 +1533,7 @@
       "brand": {},
       "variety_id": {},
       "product_form": {
-        "taxonomy": "whirlpool_hop_form"
+        "taxonomy": "hop_product_form"
       },
       "purpose": {},
       "alpha_acid_pct": {
@@ -1986,13 +1986,17 @@
           "gte": 0,
           "lte": 1
         }
+      },
+      "product_form": {
+        "taxonomy": "hop_product_form",
+        "default": "t90_pellet"
       }
     },
     "whirlpool_hop_row": {
       "hop_id": {},
       "name": {},
       "product_form": {
-        "taxonomy": "whirlpool_hop_form",
+        "taxonomy": "hop_product_form",
         "default": "t90_pellet"
       },
       "alpha_acid_pct": {

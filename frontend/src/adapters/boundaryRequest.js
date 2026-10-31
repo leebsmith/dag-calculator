@@ -193,6 +193,7 @@ export const HOP_FIELDS = {
         alpha_acid_pct: row.alpha_acid_pct,
         boil_time_fraction: row.boil_time_fraction,
         pct: row.pct,
+        product_form: row.product_form ?? "t90_pellet",
       })),
   },
   whirlpool_hops: {

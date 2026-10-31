@@ -9,9 +9,10 @@ the offline boundary stub.
 
 Status: implemented model for T-90 pellets, flowable CO₂ extracts and lupulin
 pellets, target-driven IBU, per-charge rest duration and initial temperature, and
-batch-level ambient temperature and cooling time constant. The flowable
-multiplier is temperature-dependent; oil retention, humulinone bitterness, active
-chilling, equipment cooling curves and the boil product forms are deferred.
+batch-level ambient temperature and cooling time constant. Product forms are
+placed by process — T-90 or extract in the boil, T-90 or lupulin in the
+whirlpool. Oil retention, humulinone bitterness, active chilling and
+equipment-specific cooling curves are deferred.
 
 ## 1. Notation
 
@@ -114,20 +115,23 @@ f_time(t_eff) = (1 - exp(-0.04 · t_eff)) / 4.15
 U = f_gravity(G) · f_time(t_eff) · C_trub
 ```
 
-Product-form scalar. T-90 and lupulin are constant across the whirlpool window;
-flowable extract is a smooth ramp between the two measured bounds, because a
-cooling, un-agitated whirlpool no longer emulsifies the resin:
+Product-form scalar. It is a **lumped mechanical efficiency**, not a different
+kinetics: the temperature dependence stays in the Arrhenius integral, and the
+scalar carries only what the form changes about *how much of the alpha reaches
+the wort*. T-90 is the baseline (Tinseth already embeds the pellet's empirical
+trub loss); an extract leaves no vegetative matter behind and its resin is
+already ruptured, so less alpha is lost and it disperses more readily.
 
-| Form | `C_trub` | Notes |
+| Form | `C_trub` | Where it is used |
 |---|---|---|
-| T-90 pellets | 1.00 | Baseline, including the empirical trub loss built into Tinseth |
-| Lupulin pellets | 1.10 | Concentrated lupulin; static across the window |
-| Flowable CO₂ extract, `T0 ≥ 90 °C` | 1.15 | Low viscosity, pre-ruptured resin; no vegetative adsorption |
-| Flowable CO₂ extract, `T0 ≤ 75 °C` | 0.80 | Lipid viscosity dominates; utilization falls below T-90 |
-| Flowable CO₂ extract, 75–90 °C | smoothstep between 0.80 and 1.15 | Evaluated at the row's start temperature |
+| T-90 pellets | 1.00 | Boil and whirlpool — the default |
+| Lupulin pellets | 1.10 | Whirlpool |
+| Flowable CO₂ extract | 1.15 | Boil, applied isothermally |
 
-The multiplier is evaluated at the charge's `initial_temp_c`, not integrated
-through the cooling curve; see §8.
+A boil has no cooling curve, so the extract's scalar is taken at its base value;
+heat and shear are at their maximum there, which is the end of the range the
+`1.15` was measured at. It is an assumption borrowed from that measurement, not a
+measured boil figure.
 
 Forward IBU from a hop charge:
 
@@ -146,15 +150,22 @@ the total IBU target into boil and whirlpool pools; each hop table normalizes
 its `parts` into shares of its own pool and back-calculates mass with the
 inverse model.
 
-### Flowable extract practice
+### Boil extract practice
 
-- Dose gravimetrically; the card derives grams and defaults whirlpool mass to
-  grams. No density or volumetric conversion is used.
+The boil sells T-90 pellets or a flowable CO₂ extract; lupulin powder is a
+whirlpool product. An extract charge is a late addition — the picker seeds 15
+minutes rather than the full boil — because a rolling boil steam-distils the
+extract.
+
+- Dose gravimetrically; the card derives grams and prints hop masses in grams.
+  No density or volumetric conversion is used.
 - Enter the lot certificate-of-analysis alpha. Published product ranges are
   DynaBoost `0.35–0.50` and Incognito `0.20–0.55`; the seeded catalog stores the
   range midpoint (`0.425`, `0.375`) as an editable preset.
-- At equal alpha and IBU target, extract mass is `1 / 1.15` of pellet mass above
-  90 °C, rising to `1 / 0.80` of pellet mass at 75 °C and below.
+- At equal alpha and time, extract mass is `1 / 1.15` of T-90 mass.
+- A flameout charge is not represented: Tinseth's time factor is zero at zero
+  minutes, and a flameout stand is a whirlpool calculation the product does not
+  offer for extracts.
 - Product guidance: DynaBoost `0.15–0.5 g/L`; Incognito `0.5–2.0 g/L`, maximum
   `2 g/L`. The card keeps a generic `4 g/gal` ceiling warning; the product limits
   are informational until dose is modeled.
@@ -204,15 +215,18 @@ division: `batch.boil_target_ibu` and `batch.whirlpool_target_ibu` over
 `batch.target_ibu`, declared as the shares `batch.boil_ibu_share` and
 `batch.whirlpool_ibu_share`.
 
-The hot/cool split cuts the whirlpool pool at **170 °F (76.7 °C)** — the line
-between a hot stand that still isomerizes freely and the cool hop stand where it
-nears zero (§2, and the `isomerization_floor` band in the whirlpool notes). The
-boundary returns the two sums as `solver.hops.whirlpool_hot_ibu` and
-`solver.hops.whirlpool_cool_ibu`; the shares are
-`batch.whirlpool_hot_ibu_share` and `batch.whirlpool_cool_ibu_share`. The
-threshold is `WHIRLPOOL_HOT_TEMP_C` in `backend/app/core/hop_solver.py`; a charge
-exactly at the threshold counts as cool, and the two sums always add up to the
-whirlpool pool.
+The hot/cool split cuts the whirlpool pool at the **top of the isomerization
+floor band** (`79 °C`, `isomerization_floor` in the whirlpool notes): above it a
+charge still isomerises freely, at or below it the stand mostly extracts flavour
+and aroma. Cutting at the band's *top* is what makes the band's own midpoint
+(`77.5 °C`) classify as cool — the card applies the midpoint when a brewer picks
+that band. The boundary returns the two sums as
+`solver.hops.whirlpool_hot_ibu` and `solver.hops.whirlpool_cool_ibu`; the shares
+are `batch.whirlpool_hot_ibu_share` and
+`batch.whirlpool_cool_ibu_share`. The threshold is `ISOMERIZATION_FLOOR_C` in
+`backend/app/core/hop_solver.py`, and a coupling test holds it equal to the
+band's top; a charge exactly at the threshold counts as cool, and the two sums
+always add up to the whirlpool pool.
 
 ## 6. Reference vectors
 
@@ -237,10 +251,10 @@ contract.
   model. The `Ea/R ≈ 9500 K` figure in the hot-side reference is a rounded
   alternate fit and is not used.
 - V1 supports T-90 pellets (`C_trub = 1.0`), lupulin pellets (`C_trub = 1.10`)
-  and flowable CO₂ extracts (`C_trub = 1.15` above 90 °C, `0.80` at 75 °C and
-  below). The hot-side reference's "10–15 % penalty" and its `0.75–0.85`
-  multiplier are not the same number; the implementation takes the `0.75–0.85`
-  endpoints and uses the band midpoint `0.80`.
+  and flowable CO₂ extracts (`C_trub = 1.15`, in the boil). The hot-side
+  reference's `1.15` above 90 °C is the number the extract uses; its separate
+  "10–15 % penalty" for a 75–85 °C whirlpool describes a product placement the
+  calculator does not offer.
 - Oil retention, humulinone bitterness, and perceived-bitterness offsets are
   deferred.
 - Ambient temperature and cooling decay are inputs, not constants in the model
@@ -252,18 +266,14 @@ contract.
 - Product forms are limited to T-90 pellets, lupulin pellets and flowable CO₂
   extract. Pellet vegetative absorption, pH/fermentation losses, and dry-hop
   contribution are not modelled.
-- The product-form multiplier is a point estimate at the charge's start
-  temperature; it is not integrated through the cooling curve, so a flowable
-  charge that spans an inferred chill is approximated by its start value. The
-  model has no shear or agitation input, so the cool-whirlpool branch assumes
-  either good agitation or the low end of the band.
 - Chills are instantaneous: the transient through the dropped range is skipped.
   After a chill the curve keeps decaying with the batch constant, so a held
   temperature is under-modelled. Charges are assumed to share one knockout end,
   which is why durations encode addition order.
-- The boil path has no product-form field: every boil row is modelled as T-90,
-  including the standardized bittering products whose supplier formula is in the
-  reference's appendix.
+- The boil carries a product form: every boil row is T-90 unless it names an
+  extract, which is solved with the `1.15` scalar at boiling temperature. The
+  reference's standardized bittering products (Flex and similar) are not
+  modelled; their supplier formulas are in the appendix.
 - No oil or sensory prediction; the output is IBU only.
 - The cooling constant must be calibrated for a vessel and fill volume.
 

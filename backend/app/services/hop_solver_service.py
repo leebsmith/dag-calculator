@@ -33,6 +33,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
                 alpha_acid_pct=row.alpha_acid_pct,
                 boil_time_fraction=row.boil_time_fraction,
                 pct=row.pct,
+                product_form=row.product_form.value,
             )
             for row in req.boil_hops
         ],

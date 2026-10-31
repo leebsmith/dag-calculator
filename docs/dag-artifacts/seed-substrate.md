@@ -249,26 +249,36 @@ file diverges from the derived medians, so drift is an explicit, reviewable diff
 
 ### 2.9 `hop_product`
 
-Flowable whirlpool hop products: branded extracts (DynaBoost, Incognito) and one
-generic fallback. Keyed by a slug of the product and variety.
+Branded hop products in two families, keyed by a slug of the product and variety:
+**flowable CO₂ extracts** (DynaBoost, Incognito, one generic fallback — 19) and
+**lupulin pellets** (Cryo Hops, Lupomax — 42). The process places them: the boil
+sells T-90 or an extract, the whirlpool T-90 or lupulin.
 
 | Field | Dimension / taxonomy | Domain | Notes |
 |---|---|---|---|
-| `id`, `name`, `manufacturer`, `brand`, `variety_id`, `purpose` | — | — | identity/display metadata; `variety_id` points at a `hop` id |
-| `product_form` | taxonomy `whirlpool_hop_form` | — | `flowable_extract` for the current seed |
+| `id`, `name`, `manufacturer`, `brand`, `variety_id`, `purpose` | — | — | identity/display metadata; `variety_id` points at a `hop` id, except the generic flowable preset |
+| `product_form` | taxonomy `hop_product_form` | — | `flowable_extract` (19) or `lupulin_pellet` (42); `t90_pellet` and `terpene_isolate` are unproductised |
 | `alpha_acid_pct`, `alpha_acid_min_pct`, `alpha_acid_max_pct`, `beta_acid_pct`, `total_oil_pct` | percentage | `[0, 1]` | published product ranges; `alpha_acid_pct` is the range midpoint |
-| `t90_replacement_ratio` | dimensionless | `gte 0` | display-only T-90 equivalence |
+| `t90_replacement_ratio` | dimensionless | `gte 0` | display-only T-90 equivalence: 2 lupulin, 6 Incognito, 8 generic, 10 DynaBoost |
 | `notes`, `url` | — | — | dosing/provenance prose and product page |
 
-The curated source is `data/sources/hop-products.json`, normalized by
-`scripts/build-hop-products-seed.mjs` into `data/seeds/hop-products.json`.
-Percentages are authored as percentages in the source and stored as fractions.
-The builder verifies every `variety_id` against `data/seeds/hops.json`.
+Two curated sources feed it, both normalized by
+`scripts/build-hop-products-seed.mjs` into `data/seeds/hop-products.json`:
+`data/sources/hop-products.json` (the 19 extract entries) and
+`data/sources/hop-products-lupulin.json` (27 lupulin varieties). Percentages are
+authored as percentages in the extract source and as fractions in the lupulin
+source; the seed stores fractions either way. Lupulin alpha is the midpoint of
+the variety's two-value stock range, one product is emitted per listed
+manufacturer (YCH → Cryo Hops, BarthHaas → Lupomax), and two working names are
+aliased to their catalog slugs (`hbc-586-krush` → `krush`, `huell-melon` →
+`hull-melon`). The builder verifies every `variety_id` against
+`data/seeds/hops.json`.
 
-`alpha_acid_pct` is an editable preset, not a lot constant: the whirlpool inspector
+`alpha_acid_pct` is an editable preset, not a lot constant: the boil inspector
 tells the brewer to replace it with the certificate-of-analysis value. The
-`t90_replacement_ratio` feeds only the inspector's informational T-90 equivalent;
-it is never used for IBU back-solving.
+`t90_replacement_ratio` feeds only the inspector's informational T-90 equivalent
+(what the charge would weigh as T-90); IBU back-solving always uses alpha and
+utilization.
 
 ### 2.10 `mash_rest` / `mash-schedules`
 

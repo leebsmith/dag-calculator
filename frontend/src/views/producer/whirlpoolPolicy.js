@@ -44,39 +44,9 @@ export function startBandHint(value, bands) {
   return bands.find((candidate) => candidate.value === value)?.hint ?? "";
 }
 
-export function temperatureWarning(rows, formatTemp, formatNumber, utilizationFor) {
-  const flowables = (rows ?? []).filter(
-    (row) =>
-      row.product_form === "flowable_extract" &&
-      typeof row.initial_temp_c === "number" &&
-      Number.isFinite(row.initial_temp_c)
-  );
-  if (!flowables.length) return "";
-  const coolest = flowables.reduce((a, b) => (a.initial_temp_c <= b.initial_temp_c ? a : b));
-  const multiplier = utilizationFor("flowable_extract", coolest.initial_temp_c);
-  if (multiplier >= 1) return "";
-  return (
-    `Flowable extract at ${formatTemp(coolest.initial_temp_c)} disperses poorly: ` +
-    `utilization falls to ${formatNumber(multiplier, 2)}× a T-90 pellet. ` +
-    "Dose above 80 °C or agitate the whirlpool."
-  );
-}
-
-export function doseWarning(rows, formatNumber) {
-  const doses = (rows ?? [])
-    .filter((row) => row.product_form === "flowable_extract")
-    .map((row) => row.dose_g_per_gal)
-    .filter((dose) => typeof dose === "number" && Number.isFinite(dose));
-  if (!doses.length) return "";
-  const worst = Math.max(...doses);
-  return worst > 4
-    ? `Flowable extract dose ${formatNumber(worst, 2)} g/gal exceeds the 4 g/gal saturation ceiling.`
-    : "";
-}
-
 // Descriptor map for Object.defineProperties: the card merges it beside its own
 // getters so the policy stays readable and the card file stays under its pin.
-export function whirlpoolPolicyDescriptors({ notes, formatTemp, formatNumber, utilizationFor }) {
+export function whirlpoolPolicyDescriptors({ notes, formatTemp }) {
   const bands = () => startBands(notes, formatTemp);
   return {
     whirlpoolStartBands: {
@@ -95,23 +65,6 @@ export function whirlpoolPolicyDescriptors({ notes, formatTemp, formatNumber, ut
       configurable: true,
       get() {
         return startBandHint(this.whirlpoolStartBandValue, bands());
-      },
-    },
-    whirlpoolHopTemperatureWarning: {
-      configurable: true,
-      get() {
-        return temperatureWarning(
-          this.whirlpoolHopRows,
-          formatTemp,
-          formatNumber,
-          utilizationFor
-        );
-      },
-    },
-    whirlpoolHopDoseWarning: {
-      configurable: true,
-      get() {
-        return doseWarning(this.whirlpoolHopRows, formatNumber);
       },
     },
     setWhirlpoolStartBand: {

@@ -12,8 +12,8 @@ from app.core import hop_solver
 from app.core.hop_solver import BoilHopEntry, HopSolverInput, WhirlpoolHopEntry
 from app.schemas.boundary import (
     BoilHopRow,
+    HopProductForm,
     HopSolverRequest,
-    WhirlpoolHopForm,
     WhirlpoolHopRow,
 )
 from app.services.hop_solver_service import solve_hop_request
@@ -31,7 +31,7 @@ def make_request(**overrides) -> HopSolverRequest:
                 duration_min=30.0,
                 initial_temp_c=99.0,
                 pct=1.0,
-                product_form=WhirlpoolHopForm.T90_PELLET,
+                product_form=HopProductForm.T90_PELLET,
             )
         ],
         "boil_target_ibu": 40.0,
@@ -136,35 +136,6 @@ def test_lupulin_pellet_scales_mass_by_its_constant():
     assert pellet / lupulin == pytest.approx(1.10, abs=1e-12)
 
 
-def test_flowable_extract_multiplier_falls_as_the_wort_cools():
-    assert hop_solver.product_form_utilization("flowable_extract", 99.0) == pytest.approx(1.15)
-    assert hop_solver.product_form_utilization("flowable_extract", 90.0) == pytest.approx(1.15)
-    assert hop_solver.product_form_utilization("flowable_extract", 75.0) == pytest.approx(0.80)
-    assert hop_solver.product_form_utilization("flowable_extract", 60.0) == pytest.approx(0.80)
-    mid = hop_solver.product_form_utilization("flowable_extract", 82.5)
-    assert 0.80 < mid < 1.15
-    assert hop_solver.product_form_utilization("t90_pellet", 75.0) == pytest.approx(1.0)
-    assert hop_solver.product_form_utilization("lupulin_pellet", 75.0) == pytest.approx(1.10)
-
-    common = {
-        "ibu": 30.0,
-        "alpha_fraction": 0.45,
-        "volume_l": 20.0,
-        "gravity": 1.05,
-        "duration_min": 30.0,
-        "ambient_temp_c": 20.0,
-        "k_per_min": 0.0092,
-    }
-    hot, _ = hop_solver.whirlpool_mass_kg(
-        product_form="flowable_extract", initial_temp_c=95.0, **common
-    )
-    cool, _ = hop_solver.whirlpool_mass_kg(
-        product_form="flowable_extract", initial_temp_c=76.0, **common
-    )
-    assert hot is not None and cool is not None
-    assert cool > hot
-
-
 def test_cooling_temperature_follows_newton_decay():
     t = hop_solver.cooling_temperature(30.0, 99.0, 20.0, 0.0092)
     assert 79.0 < t < 81.0
@@ -236,8 +207,46 @@ def test_whirlpool_ibu_splits_at_the_hot_threshold():
     assert result.whirlpool_hot_ibu + result.whirlpool_cool_ibu == pytest.approx(20.0)
 
 
-def test_a_charge_at_the_threshold_counts_as_cool():
-    threshold = hop_solver.WHIRLPOOL_HOT_TEMP_C
+def _split_of(*charges):
+    return hop_solver.solve_hops(
+        HopSolverInput(
+            boil_hops=[],
+            whirlpool_hops=[
+                WhirlpoolHopEntry(
+                    alpha_acid_pct=0.20,
+                    duration_min=duration,
+                    initial_temp_c=temp,
+                    pct=pct,
+                    product_form="lupulin_pellet",
+                )
+                for temp, duration, pct in charges
+            ],
+            boil_target_ibu=0.0,
+            whirlpool_target_ibu=20.0,
+            boil_time_min=60.0,
+            pre_boil_gravity=1.055,
+            post_boil_gravity=1.055,
+            post_boil_volume_l=20.0,
+            whirlpool_ambient_temp_c=20.0,
+            whirlpool_cooling_time_constant_min=108.7,
+        )
+    )
+
+
+def test_the_split_follows_the_isomerization_floor_band():
+    floor = json.loads(
+        (Path(__file__).resolve().parents[2] / "data/seeds/whirlpool-notes.json").read_text()
+    )["isomerization_floor"]
+    assert hop_solver.ISOMERIZATION_FLOOR_C == floor["temp_max"]
+    # The band's own midpoint is cool: picking the band means "stop isomerising".
+    assert floor["mid_temp"] < hop_solver.ISOMERIZATION_FLOOR_C
+    result = _split_of((99.0, 30.0, 0.75), (floor["mid_temp"], 20.0, 0.25))
+    assert result.whirlpool_hot_ibu == pytest.approx(15.0)
+    assert result.whirlpool_cool_ibu == pytest.approx(5.0)
+
+
+def test_a_charge_at_the_floor_counts_as_cool():
+    threshold = hop_solver.ISOMERIZATION_FLOOR_C
     charges = [
         (99.0, 30.0, 0.75),
         (threshold, 20.0, 0.25),

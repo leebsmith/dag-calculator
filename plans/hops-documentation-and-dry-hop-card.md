@@ -47,8 +47,8 @@ status: shipped
 - `hop_product_type` replaces `wet_hop_product_type` without whole cones
   (unavailable): `t90_pellet`, `lupulin_pellet`, `flowable_extract`,
   `terpene_isolate`.
-- `whirlpool_hop_form` is **not** merged. It is pinned to the solver's
-  `PRODUCT_FORM_UTILIZATION` map by equality
+- `hop_product_form` (renamed from `whirlpool_hop_form` when the boil gained a
+  form) is pinned to the solver's `PRODUCT_FORM_UTILIZATION` map by equality
   (`tests/guards/taxonomy-coverage.test.js`), so it is a physics contract, not a
   vocabulary.
 - Freezing is for verbatim snapshots (`docs/historical/`, the vendored

@@ -59,7 +59,10 @@
             <tbody>
               <template x-for="(row, ri) in hopRows" :key="ri">
                 <tr>
-                  <td><span class="font-medium" x-text="row.name"></span></td>
+                  <td>
+                    <div class="font-medium" x-text="row.name"></div>
+                    <div class="text-xs text-muted" x-text="hopForm(row)"></div>
+                  </td>
                   <td class="text-right tabular-nums">
                     <input
                       class="form-input table-input-parts"
@@ -115,6 +118,11 @@
         <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
           Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
         </p>
+        <p class="form-hint" x-show="hopRows.some((r) => r.product_form === 'flowable_extract')">
+          Flowable extract: weigh the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Add it late;
+          a flameout stand is not modelled for extracts.
+        </p>
+        <p class="form-hint text-warning" x-show="hopDoseWarning" x-text="hopDoseWarning"></p>
       </div>
     </section>
 
@@ -293,19 +301,9 @@
         <p class="form-hint" x-show="whirlpoolHopRows.length > 0 && whirlpoolHopRows.some((r) => r.mass_kg == null)">
           Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
         </p>
-        <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'flowable_extract')">
-          Flowable extract: weigh the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Typical dose
-          varies by product.
-        </p>
         <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'lupulin_pellet')">
           Lupulin pellets: weigh the stock alpha; substitute at 1:2 T-90 by weight.
         </p>
-        <p class="form-hint text-warning" x-show="whirlpoolHopDoseWarning" x-text="whirlpoolHopDoseWarning"></p>
-        <p
-          class="form-hint text-warning"
-          x-show="whirlpoolHopTemperatureWarning"
-          x-text="whirlpoolHopTemperatureWarning"
-        ></p>
         <p class="form-hint" x-show="whirlpoolZeroRestNote" x-text="whirlpoolZeroRestNote"></p>
         <template x-for="line in whirlpoolInferredChills" :key="line">
           <p class="form-hint" x-text="line"></p>

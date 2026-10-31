@@ -37,6 +37,7 @@
 
 #let boil-columns = (
   ([Hop], "name", left),
+  ([Form], "form", left),
   ([Alpha], "alpha", right),
   ([Boil], "boil", right),
   ([Share], "ibu_share", right),
@@ -47,6 +48,7 @@
 #let whirlpool-columns = (
   ([Hop], "name", left),
   ([Form], "form", left),
+  ([Alpha], "alpha", right),
   ([Rest], "rest", right),
   ([Temp], "temp", right),
   ([Share], "ibu_share", right),
@@ -71,6 +73,11 @@
       v(2pt)
       note[
         Boil IBU: #text-or("batch.boil_target_ibu") · Boil hop mass: #text-or("solver.hops.boil_mass_kg")
+      ]
+      v(2pt)
+      note[
+        Masses are the product to weigh, solved from each charge's alpha and form.
+        The catalog alpha is a stock preset: replace it with the lot certificate.
       ]
     })
   }
@@ -120,10 +127,10 @@
       if present-formatted("batch.whirlpool_hot_ibu_share") {
         v(4pt)
         heading(level: 3)[Whirlpool Hot / Cool]
-        // The threshold is WHIRLPOOL_HOT_TEMP_C in backend/app/core/hop_solver.py.
+        // The cut is ISOMERIZATION_FLOOR_C in backend/app/core/hop_solver.py.
         [
-          - *Hot (> 170 °F, 76.7 °C):* #text-or("batch.whirlpool_hot_ibu_share") (#text-or("solver.hops.whirlpool_hot_ibu"))
-          - *Cool (≤ 170 °F):* #text-or("batch.whirlpool_cool_ibu_share") (#text-or("solver.hops.whirlpool_cool_ibu"))
+          - *Hot (above the floor, > 79 °C):* #text-or("batch.whirlpool_hot_ibu_share") (#text-or("solver.hops.whirlpool_hot_ibu"))
+          - *Cool (at or below it):* #text-or("batch.whirlpool_cool_ibu_share") (#text-or("solver.hops.whirlpool_cool_ibu"))
         ]
       }
     })

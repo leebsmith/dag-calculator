@@ -17,6 +17,7 @@ from app.schemas.boundary import (
     BatchSpargeTopology,
     BoilHopRow,
     GristBillRow,
+    HopProductForm,
     HopSolverRequest,
     IonProfile,
     PreferredAlkalineAgent,
@@ -24,7 +25,6 @@ from app.schemas.boundary import (
     WaterGristRow,
     WaterSolverRequest,
     WaterStrategy,
-    WhirlpoolHopForm,
     WhirlpoolHopRow,
 )
 
@@ -90,7 +90,7 @@ def make_hop_request(**overrides) -> HopSolverRequest:
                 duration_min=30.0,
                 initial_temp_c=99.0,
                 pct=1.0,
-                product_form=WhirlpoolHopForm.T90_PELLET,
+                product_form=HopProductForm.T90_PELLET,
             )
         ],
         "boil_target_ibu": 40.0,
