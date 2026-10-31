@@ -101,6 +101,7 @@
       *OG:* #formatted-text("solver.batch.sg_post_boil"),
       *FG:* #formatted-text("batch.realized_fg"),
       *AA%:* #formatted-text("solver.batch.apparent_attenuation"),
+      *RDF%:* #formatted-text("solver.batch.real_attenuation"),
       *ABV%:* #formatted-text("batch.realized_abv"),
       *IBU:* #formatted-text("batch.target_ibu"),
       *SRM:* #formatted-text("grist.finished_beer_srm")

@@ -10,6 +10,7 @@
 #import "sections/yeast.typ": present-yeast, render-yeast
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 #import "sections/liquor-ledger.typ": present-liquor-ledger, render-liquor-ledger
+#import "sections/limits.typ": present-limits, render-limits
 
 // === registry:begin ===
 // One line per section, in canonical render order. Each entry names a module in
@@ -23,6 +24,7 @@
   (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
   (id: "liquor-ledger", title: "Liquor Ledger", present: present-liquor-ledger, render: render-liquor-ledger),
+  (id: "limits", title: "Limits", present: present-limits, render: render-limits),
 )
 // === registry:end ===
 

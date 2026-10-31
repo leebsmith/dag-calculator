@@ -5837,6 +5837,108 @@
         "options": null,
         "option_labels": null
       },
+      "solver.batch.s_post_boil_target": {
+        "label": "Post-boil extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.s_run1": {
+        "label": "First runnings extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.cascade.s_run2": {
+        "label": "Second runnings extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.real_attenuation": {
+        "label": "Real attenuation",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.max_feasible_abv": {
+        "label": "Max feasible ABV",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.max_achievable_abv": {
+        "label": "Attenuation ceiling",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.binding_constraint": {
+        "label": "Binding limit",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "fermentation",
+          "volume",
+          "tun",
+          "kettle",
+          "hlt"
+        ],
+        "option_labels": {
+          "fermentation": "Fermentation",
+          "volume": "Volume",
+          "tun": "Mash tun",
+          "kettle": "Kettle",
+          "hlt": "HLT"
+        }
+      },
+      "solver.batch.mash_thickness_l_per_kg": {
+        "label": "Liquor-to-grist ratio",
+        "dimension": "mash_thickness",
+        "unit": "L_per_kg",
+        "symbol": "L/kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.runnings_ratio": {
+        "label": "Runnings ratio (r)",
+        "dimension": "dimensionless",
+        "unit": null,
+        "symbol": null,
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.batch.cascade.v_strike": {
         "label": "Strike Volume",
         "dimension": "volume",
@@ -7078,7 +7180,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:90c25f47e8bb4812505c10722ad9dda8dd30043d258d9724b433dc3bf4b86ec7"
+    "hash": "sha256:f756912ef6dc38864d5c7f6a4e456cd18c993c50be13130b634f3b96ebd611cd"
   },
   "batch": {
     "id": "frozen-1",
@@ -7146,6 +7248,7 @@
         "sta1": true
       },
       "batch.realized_abv": 5.62,
+      "batch.runnings_ratio": 0.4767441860465116,
       "mash.grain_temp_c": 20.0,
       "mash.strike_water_temp_c": 68.3,
       "mash.rests": [
@@ -7282,7 +7385,15 @@
         "hlt.v_hlt_required": 18.2,
         "hlt.v_hlt_target": 18.2,
         "brewhouse_efficiency": 0.819,
-        "grist_attenuation": 0.71
+        "grist_attenuation": 0.71,
+        "s_post_boil_target": 2.6,
+        "cascade.s_run1": 2.0,
+        "cascade.s_run2": 0.6,
+        "max_achievable_abv": 8.4,
+        "max_feasible_abv": 7.2,
+        "binding_constraint": "tun",
+        "real_attenuation": 0.68,
+        "mash_thickness_l_per_kg": 3.0
       },
       "batch.target_ibu": 40.0,
       "batch.realized_fg": 1.012,
@@ -7849,6 +7960,51 @@
       "text": "5.0 kg",
       "number": "5.0",
       "unit": "kg"
+    },
+    "solver.batch.s_post_boil_target": {
+      "text": "2.6 kg",
+      "number": "2.6",
+      "unit": "kg"
+    },
+    "solver.batch.cascade.s_run1": {
+      "text": "2.0 kg",
+      "number": "2.0",
+      "unit": "kg"
+    },
+    "solver.batch.cascade.s_run2": {
+      "text": "0.6 kg",
+      "number": "0.6",
+      "unit": "kg"
+    },
+    "solver.batch.real_attenuation": {
+      "text": "68.0%",
+      "number": "68.0",
+      "unit": "%"
+    },
+    "solver.batch.max_feasible_abv": {
+      "text": "7.2%",
+      "number": "7.2",
+      "unit": "%"
+    },
+    "solver.batch.max_achievable_abv": {
+      "text": "8.4%",
+      "number": "8.4",
+      "unit": "%"
+    },
+    "solver.batch.binding_constraint": {
+      "text": "Mash tun",
+      "number": null,
+      "unit": null
+    },
+    "solver.batch.mash_thickness_l_per_kg": {
+      "text": "3.00 L/kg",
+      "number": "3.00",
+      "unit": "L/kg"
+    },
+    "batch.runnings_ratio": {
+      "text": "0.48",
+      "number": "0.48",
+      "unit": null
     }
   },
   "formatted_tables": {
@@ -8325,5 +8481,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:69aa879f5b3b468a41993a0a2db1059aa9a001f93805c8880ece1e47f20aa849"
+  "content_hash": "sha256:9409f0aeb77ccf5692d0e235406122e3250947ca4a196049bab3e0626c1d695a"
 }

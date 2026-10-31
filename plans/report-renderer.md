@@ -254,14 +254,20 @@ Presentational inputs (`water.salt_distribution`, `water.acid_medium`,
 table; they are read for display, never used as presence.
 
 **Landed:** Brewhouse, Batch Facts (identity, modeled metrics, and the four
-fermentable tables), Yeast, Volume Ledger, Liquor Ledger — `docs/report-sections.md`
-is the generated list. Sugars and the major/trace grists are tables inside Batch
-Facts, not standalone sections; the predicates above remain the record for the rest.
+fermentable tables), Hops, Yeast, Volume Ledger, Liquor Ledger, Limits —
+`docs/report-sections.md` is the generated list. Sugars and the major/trace
+grist are tables inside Batch Facts, not standalone sections; the predicates
+above remain the record for the rest.
 
-**Remaining, in queue order:** hop sections (after the schedule-derived IBU split),
-mash rests, the water trio (pinned ions → salt dosing → chemistry), style
-conformance. The brew-day checklist is last, pending the carry-forward design; the
-Boil section follows the hop sections.
+The mash constraint prints as two **solved** values in Brewhouse — the resolved
+liquor-to-grist ratio and the realized runnings ratio — so a reader sees the
+actual L/kg and r under either topology. The authored roots behind them are
+never reported. Limits (last) carries the feasibility ceiling, the binding
+capacity, real attenuation, and the solved extract masses.
+
+**Remaining, in queue order:** mash rests, the water trio (pinned ions → salt
+dosing → chemistry), style conformance. The brew-day checklist is last, pending
+the carry-forward design; the Boil section follows.
 
 This table is a **candidate inventory**, not a commitment: the section set,
 titles, and prose are authoring decisions made one section at a time (§11).

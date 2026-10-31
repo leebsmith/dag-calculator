@@ -78,19 +78,14 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ### Report sections
 
-Five sections have landed — Brewhouse, Batch Facts, Yeast, Volume Ledger and
-Liquor Ledger — with the bundle and the render service (`GET`/`POST
-/batches/{id}/report`). One bullet per remaining section; the presence predicates
-are in `plans/report-renderer.md` §6.4. Queue order is the order below.
+Seven sections have landed — Brewhouse, Batch Facts, Hops, Yeast, Volume Ledger,
+Liquor Ledger and Limits — with the bundle and the render service (`GET`/`POST
+/batches/{id}/report`). Brewhouse prints the two solved mash ratios (L/kg and
+r), and Limits carries the feasibility ceiling, binding capacity, real
+attenuation, and solved extract masses. One bullet per remaining section; the
+presence predicates are in `plans/report-renderer.md` §6.4. Queue order is the
+order below.
 
-* **Boil hops section** — `batch.boil_hops` rows; addition list with alpha, boil
-  remaining, and IBU share. Needs the schedule-derived split (Next #1) before the
-  share is meaningful. The deferred Boil section, when it lands, is where this
-  schedule and the pre/post gravity pair sit.
-* **Whirlpool hops section** — `batch.whirlpool_hops` rows; duration, initial
-  temperature, product form, IBU share. Same split dependency.
-* **Dry hops section** — `batch.dry_hops` rows; variety, quantity/unit, contact
-  duration, application stage.
 * **Mash rests section** — `mash.rests` rows; step, temperature, duration, enabled.
   Strike temperature already prints in Brewhouse.
 * **Pinned ions section** — `water.pinned_ions` rows; the checked targets and their

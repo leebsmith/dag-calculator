@@ -71,7 +71,7 @@ _118 paths_
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
-| `batch.runnings_ratio` | Runnings Ratio (r, V1/V2) | derived | dimensionless | — | — | — |
+| `batch.runnings_ratio` | Runnings ratio (r) | derived | dimensionless | — | 2 | — |
 | `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | — | — | — |
 | `batch.s_late_add` | Dose extract | derived | mass | kg | 1 | — |
 | `batch.s_late_add_request` | S Late Add Request | derived | mass | kg | 1 | — |
@@ -297,10 +297,10 @@ _31 paths_
 |---|---|---|---|---|---|---|
 | `solver.batch` | Batch | boundary | — | — | — | — |
 | `solver.batch.apparent_attenuation` | Apparent attenuation | output | percentage | pct (%) | 1 | — |
-| `solver.batch.binding_constraint` | Binding Constraint | output | — | — | — | fermentation, volume, tun, kettle, hlt |
+| `solver.batch.binding_constraint` | Binding limit | output | — | — | — | fermentation, volume, tun, kettle, hlt |
 | `solver.batch.brewhouse_efficiency` | Brewhouse efficiency | output | percentage | pct (%) | 1 | — |
-| `solver.batch.cascade.s_run1` | Extract | output | mass | kg | 1 | — |
-| `solver.batch.cascade.s_run2` | Extract | output | mass | kg | 1 | — |
+| `solver.batch.cascade.s_run1` | First runnings extract | output | mass | kg | 1 | — |
+| `solver.batch.cascade.s_run2` | Second runnings extract | output | mass | kg | 1 | — |
 | `solver.batch.cascade.sg_pre_boil` | Gravity | output | gravity | Plato (°P) | 1 | — |
 | `solver.batch.cascade.v_absorption` | Grain absorption | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_mc` | Grain moisture (per malt, backfilled) | output | volume | L | 1 | — |
@@ -318,12 +318,12 @@ _31 paths_
 | `solver.batch.hlt.v_hlt_top_up` | HLT Top-Up | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_sparge_deliverable` | Sparge Deliverable | output | volume | L | 1 | — |
 | `solver.batch.m_grist` | Grist mass | output | mass | kg | 1 | — |
-| `solver.batch.mash_thickness_l_per_kg` | Mash Thickness | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
-| `solver.batch.max_achievable_abv` | Max Achievable ABV | output | percentage | pct (%) | 1 | — |
-| `solver.batch.max_feasible_abv` | Max Feasible ABV | output | percentage | pct (%) | 1 | — |
+| `solver.batch.mash_thickness_l_per_kg` | Liquor-to-grist ratio | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
+| `solver.batch.max_achievable_abv` | Attenuation ceiling | output | percentage | pct (%) | 1 | — |
+| `solver.batch.max_feasible_abv` | Max feasible ABV | output | percentage | pct (%) | 1 | — |
 | `solver.batch.previews` | Previews | output | — | — | — | — |
 | `solver.batch.real_attenuation` | Real attenuation | output | percentage | pct (%) | 1 | — |
-| `solver.batch.s_post_boil_target` | Post-Boil Extract Target | output | mass | kg | 1 | — |
+| `solver.batch.s_post_boil_target` | Post-boil extract | output | mass | kg | 1 | — |
 | `solver.batch.sg_post_boil` | Post-boil gravity | output | gravity | Plato (°P) | 1 | — |
 | `solver.batch.v_pre_boil` | Pre-boil kettle | output | volume | L | 1 | — |
 

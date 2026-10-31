@@ -101,6 +101,19 @@ test("registry labels and display units win over fallbacks", () => {
     if (typeof spec.label !== "string" || !catalog.nodes[path]) continue;
     assert.equal(catalog.nodes[path].label, spec.label, path);
   }
+
+  // The report prints the solved ratios and the capacity limit under names a
+  // reader understands, not the raw ids.
+  assert.equal(
+    catalog.nodes["solver.batch.mash_thickness_l_per_kg"].label,
+    "Liquor-to-grist ratio"
+  );
+  assert.equal(catalog.nodes["batch.runnings_ratio"].label, "Runnings ratio (r)");
+  assert.equal(catalog.nodes["solver.batch.binding_constraint"].label, "Binding limit");
+  assert.equal(
+    catalog.nodes["solver.batch.binding_constraint"].option_labels.tun,
+    "Mash tun"
+  );
 });
 
 test("display units follow the mode: a registry unit is not a pin", () => {

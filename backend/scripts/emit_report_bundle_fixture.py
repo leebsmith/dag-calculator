@@ -237,6 +237,8 @@ RECORD = {
             "sta1": True,
         },
         "batch.realized_abv": 5.62,
+        # V_run1 / V_run2 from the solved cascade below.
+        "batch.runnings_ratio": 8.2 / 17.2,
         "mash.grain_temp_c": 20.0,
         "mash.strike_water_temp_c": 68.3,
         "mash.rests": [
@@ -288,6 +290,14 @@ RECORD = {
             "hlt.v_hlt_target": 18.2,
             "brewhouse_efficiency": 0.819,
             "grist_attenuation": 0.71,
+            "s_post_boil_target": 2.6,
+            "cascade.s_run1": 2.0,
+            "cascade.s_run2": 0.6,
+            "max_achievable_abv": 8.4,
+            "max_feasible_abv": 7.2,
+            "binding_constraint": "tun",
+            "real_attenuation": 0.68,
+            "mash_thickness_l_per_kg": 3.0,
         },
         "batch.target_ibu": 40.0,
         "batch.realized_fg": 1.012,
@@ -456,6 +466,65 @@ PAYLOAD = FreezePayload(
             ),
             "solver.batch.m_grist": NodePresentation(
                 label="Grist mass", dimension="mass", unit="kg", symbol="kg", decimals=1
+            ),
+            "solver.batch.s_post_boil_target": NodePresentation(
+                label="Post-boil extract", dimension="mass", unit="kg", symbol="kg", decimals=1
+            ),
+            "solver.batch.cascade.s_run1": NodePresentation(
+                label="First runnings extract",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=1,
+            ),
+            "solver.batch.cascade.s_run2": NodePresentation(
+                label="Second runnings extract",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=1,
+            ),
+            "solver.batch.real_attenuation": NodePresentation(
+                label="Real attenuation",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "solver.batch.max_feasible_abv": NodePresentation(
+                label="Max feasible ABV",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "solver.batch.max_achievable_abv": NodePresentation(
+                label="Attenuation ceiling",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "solver.batch.binding_constraint": NodePresentation(
+                label="Binding limit",
+                options=["fermentation", "volume", "tun", "kettle", "hlt"],
+                option_labels={
+                    "fermentation": "Fermentation",
+                    "volume": "Volume",
+                    "tun": "Mash tun",
+                    "kettle": "Kettle",
+                    "hlt": "HLT",
+                },
+            ),
+            "solver.batch.mash_thickness_l_per_kg": NodePresentation(
+                label="Liquor-to-grist ratio",
+                dimension="mash_thickness",
+                unit="L_per_kg",
+                symbol="L/kg",
+                decimals=2,
+            ),
+            "batch.runnings_ratio": NodePresentation(
+                label="Runnings ratio (r)", dimension="dimensionless", decimals=2
             ),
             "solver.batch.cascade.v_strike": NodePresentation(
                 label="Strike Volume", dimension="volume", unit="L", symbol="L", decimals=1
@@ -904,6 +973,25 @@ PAYLOAD = FreezePayload(
         "equipment.kettle_transfer_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
         "equipment.trub_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
         "solver.batch.m_grist": FormattedValue(text="5.0 kg", number="5.0", unit="kg"),
+        "solver.batch.s_post_boil_target": FormattedValue(
+            text="2.6 kg", number="2.6", unit="kg"
+        ),
+        "solver.batch.cascade.s_run1": FormattedValue(text="2.0 kg", number="2.0", unit="kg"),
+        "solver.batch.cascade.s_run2": FormattedValue(text="0.6 kg", number="0.6", unit="kg"),
+        "solver.batch.real_attenuation": FormattedValue(
+            text="68.0%", number="68.0", unit="%"
+        ),
+        "solver.batch.max_feasible_abv": FormattedValue(
+            text="7.2%", number="7.2", unit="%"
+        ),
+        "solver.batch.max_achievable_abv": FormattedValue(
+            text="8.4%", number="8.4", unit="%"
+        ),
+        "solver.batch.binding_constraint": FormattedValue(text="Mash tun"),
+        "solver.batch.mash_thickness_l_per_kg": FormattedValue(
+            text="3.00 L/kg", number="3.00", unit="L/kg"
+        ),
+        "batch.runnings_ratio": FormattedValue(text="0.48", number="0.48"),
     },
     formatted_tables={
         "grist.major_malts": [

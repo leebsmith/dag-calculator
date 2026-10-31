@@ -26,6 +26,23 @@ test("formatted values carry text, number, and the display symbol", async () => 
   assert.equal(formatted["batch.yeast_id"].text, app.selectedYeastId);
 });
 
+test("the report carries both solved mash ratios and the solver limits", async () => {
+  const app = await booted();
+  const formatted = app.reportFormatted();
+
+  // Both ratios are solved values: the L/kg ratio and the realized V1/V2.
+  assert.equal(formatted["solver.batch.mash_thickness_l_per_kg"].number, "3.00");
+  assert.equal(formatted["solver.batch.mash_thickness_l_per_kg"].unit, "L/kg");
+  assert.equal(formatted["batch.runnings_ratio"].number, "0.71");
+  assert.equal("unit" in formatted["batch.runnings_ratio"], false);
+
+  assert.equal(formatted["solver.batch.max_feasible_abv"].unit, "%");
+  assert.equal(formatted["solver.batch.max_achievable_abv"].unit, "%");
+  assert.equal(formatted["solver.batch.binding_constraint"].text, "Fermentation");
+  assert.equal(formatted["solver.batch.real_attenuation"].text, "76.0%");
+  assert.equal(formatted["solver.batch.s_post_boil_target"].unit, "kg");
+});
+
 test("the batch derate is points off the strain maximum, not a percentage", async () => {
   const app = await booted();
 

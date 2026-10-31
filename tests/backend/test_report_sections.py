@@ -29,7 +29,15 @@ pytestmark = pytest.mark.skipif(
     TYPST is None, reason="typst binary not installed; render gates skipped"
 )
 
-SECTION_IDS = ("brewhouse", "batch-facts", "hops", "yeast", "volume-ledger", "liquor-ledger")
+SECTION_IDS = (
+    "brewhouse",
+    "batch-facts",
+    "hops",
+    "yeast",
+    "volume-ledger",
+    "liquor-ledger",
+    "limits",
+)
 
 
 def stage_root(tmp: Path, bundle: Path | dict[str, Any]) -> Path:
@@ -182,6 +190,17 @@ YEAST_PRESENCE_PROBE = (
     "#metadata(present-yeast()) <probe>\n"
 )
 
+LIMITS_PRESENCE_PROBE = (
+    '#import "sections/limits.typ": present-limits\n'
+    "#metadata(present-limits()) <probe>\n"
+)
+
+# Both ratios print as solved values, whichever constraint the solve held.
+BREWHOUSE_CONSTRAINT_PROBE = (
+    '#import "sections/brewhouse.typ": constraint-rows\n'
+    "#metadata(constraint-rows) <probe>\n"
+)
+
 # The grist row prints only when the grist is the binding constraint.
 YEAST_GRIST_PROBE = (
     '#import "sections/yeast.typ": grist-below-cap\n'
@@ -230,6 +249,35 @@ def test_brewhouse_is_absent_without_a_process_input() -> None:
         render(root, "brewhouse")
 
 
+def test_the_brewhouse_prints_both_solved_ratios(shared_root: Path) -> None:
+    assert probe(shared_root, BREWHOUSE_CONSTRAINT_PROBE) == [
+        ["Constraint", "batch.topology"],
+        ["Liquor-to-grist ratio", "solver.batch.mash_thickness_l_per_kg"],
+        ["Runnings ratio (r)", "batch.runnings_ratio"],
+    ]
+
+
+def test_the_brewhouse_ratios_do_not_depend_on_the_topology(shared_root: Path) -> None:
+    bundle = fixture()
+    bundle["state"]["valuation"]["batch.topology"] = "runoff_ratio"
+    bundle["formatted"]["batch.topology"] = {"text": "Runnings ratio (r)"}
+    bundle["state"]["valuation"]["solver.batch"]["mash_thickness_l_per_kg"] = 3.4
+    bundle["formatted"]["solver.batch.mash_thickness_l_per_kg"] = {
+        "text": "3.40 L/kg",
+        "number": "3.40",
+        "unit": "L/kg",
+    }
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, BREWHOUSE_CONSTRAINT_PROBE) == [
+            ["Constraint", "batch.topology"],
+            ["Liquor-to-grist ratio", "solver.batch.mash_thickness_l_per_kg"],
+            ["Runnings ratio (r)", "batch.runnings_ratio"],
+        ]
+        render(root, "brewhouse")
+
+
 @pytest.mark.parametrize("section", SECTION_IDS)
 def test_a_section_renders_alone_and_in_the_full_report(
     compiled: Callable[..., Path], section: str
@@ -250,6 +298,20 @@ def test_liquor_ledger_is_absent_without_the_hlt_budget() -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, LIQUOR_PRESENCE_PROBE) is False
         render(root, "liquor-ledger")
+
+
+def test_limits_is_present_with_the_feasibility_bound(shared_root: Path) -> None:
+    assert probe(shared_root, LIMITS_PRESENCE_PROBE) is True
+
+
+def test_limits_is_absent_without_a_feasibility_bound() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["solver.batch.max_feasible_abv"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, LIMITS_PRESENCE_PROBE) is False
+        render(root, "limits")
 
 
 def test_batch_facts_is_present_with_the_realized_values(shared_root: Path) -> None:
@@ -300,6 +362,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
         "yeast",
         "volume-ledger",
         "liquor-ledger",
+        "limits",
     ]
 
 

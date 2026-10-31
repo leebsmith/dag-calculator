@@ -50,6 +50,40 @@ export const batchRegistry = {
     displayUnit: "pct",
     hint: "Solver output: the share of extract actually fermented (RDF), after the yeast cap and any dextrin consumption.",
   },
+  "solver.batch.mash_thickness_l_per_kg": {
+    label: "Liquor-to-grist ratio",
+    decimals: 2,
+    hint: "Solver output: the resolved L/kg ratio. Under the runoff-ratio topology it is derived from the tun mass balance rather than authored.",
+  },
+  "batch.runnings_ratio": {
+    label: "Runnings ratio (r)",
+    decimals: 2,
+    hint: "Resolved V_run1 / V_run2. Under the runoff-ratio topology it is the held constraint; under liquor-to-grist it is derived from the split.",
+  },
+  "solver.batch.max_feasible_abv": {
+    label: "Max feasible ABV",
+    displayUnit: "pct",
+    hint: "Solver output: the largest target ABV that both solves and fits the rig.",
+  },
+  "solver.batch.max_achievable_abv": {
+    label: "Attenuation ceiling",
+    displayUnit: "pct",
+    hint: "Solver output: the fermentation/attenuation-only ABV ceiling, before capacity limits.",
+  },
+  "solver.batch.binding_constraint": {
+    label: "Binding limit",
+    hint: "Solver output: the capacity limit that sets the max feasible ABV.",
+    optionLabels: {
+      fermentation: "Fermentation",
+      volume: "Volume",
+      tun: "Mash tun",
+      kettle: "Kettle",
+      hlt: "HLT",
+    },
+  },
+  "solver.batch.s_post_boil_target": { label: "Post-boil extract" },
+  "solver.batch.cascade.s_run1": { label: "First runnings extract" },
+  "solver.batch.cascade.s_run2": { label: "Second runnings extract" },
   "batch.grain_moisture_fraction": {
     label: "Fallback grain moisture (when a malt has none)",
     displayUnit: "pct",
