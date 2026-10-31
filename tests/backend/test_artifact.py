@@ -90,6 +90,23 @@ def test_artifact_path_override_points_at_a_directory(monkeypatch, tmp_path):
     assert artifact_module.data_dir() == DATA
 
 
+def test_an_edited_artifact_is_reloaded_without_a_restart(monkeypatch, tmp_path):
+    source = json.loads((DATA / "artifact.json").read_text(encoding="utf-8"))
+    path = tmp_path / "artifact.json"
+    path.write_text(json.dumps(source), encoding="utf-8")
+    (tmp_path / "catalogs.json").write_text(json.dumps({}), encoding="utf-8")
+    monkeypatch.setenv("ARTIFACT_PATH", str(tmp_path))
+    artifact_module.clear_cache()
+    try:
+        assert "cache_probe" not in artifact_module.load_artifact()
+        # A dev server outlives an edit; the next read must see it.
+        path.write_text(json.dumps({**source, "cache_probe": True}), encoding="utf-8")
+        assert artifact_module.load_artifact()["cache_probe"] is True
+    finally:
+        monkeypatch.delenv("ARTIFACT_PATH")
+        artifact_module.clear_cache()
+
+
 def test_validator_accepts_every_committed_seed_for_its_kind():
     for kind in SEED_FILES:
         for item_id, component in components_for_kind(kind).items():

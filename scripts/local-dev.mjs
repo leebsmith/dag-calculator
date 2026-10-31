@@ -163,9 +163,7 @@ start(
   ],
   {}
 );
-// Watch the artifact too: the backend caches it per process, so an edit under
-// data/ would otherwise leave a running server validating against the old graph.
-start("uvicorn", "uv", ["run", "uvicorn", "app.main:app", "--reload", "--reload-dir", "app", "--reload-dir", "../data", "--port", "8000"], {
+start("uvicorn", "uv", ["run", "uvicorn", "app.main:app", "--reload", "--reload-dir", "app", "--port", "8000"], {
   cwd: "backend",
   env: {
     ...process.env,

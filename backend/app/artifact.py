@@ -27,7 +27,10 @@ _DOMAIN_OPS = {
     "ne": lambda a, b: a != b,
 }
 
-_cache: dict[str, dict[str, Any]] = {}
+# One entry per file, keyed by the file's identity on disk. A dev server outlives
+# an artifact or seed edit, and re-reading should not need a restart: production
+# vendors an immutable copy, so the stat is the only cost.
+_cache: dict[str, tuple[tuple[int, int], dict[str, Any]]] = {}
 
 
 def _repo_data_dir() -> Path:
@@ -64,14 +67,18 @@ def _freeze(value: Any) -> Any:
 
 def _load(name: str) -> dict[str, Any]:
     directory = data_dir()
-    key = f"{directory}:{name}"
-    if key not in _cache:
-        path = directory / name
-        with path.open(encoding="utf-8") as handle:
-            _cache[key] = _freeze(json.load(handle))
-        if name == "artifact.json":
-            logger.info("Resolved artifact data directory: %s", directory)
-    return _cache[key]
+    path = directory / name
+    stat = path.stat()
+    stamp = (stat.st_mtime_ns, stat.st_size)
+    cached = _cache.get(name)
+    if cached and cached[0] == stamp:
+        return cached[1]
+    with path.open(encoding="utf-8") as handle:
+        value = _freeze(json.load(handle))
+    _cache[name] = (stamp, value)
+    if name == "artifact.json":
+        logger.info("Resolved artifact data directory: %s", directory)
+    return value
 
 
 def clear_cache() -> None:
