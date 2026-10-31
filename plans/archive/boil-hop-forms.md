@@ -1,15 +1,8 @@
----
-title: Boil hop forms — extracts in the boil, the floor as the split
-program: deterministic-dag-calculator
-target_repo: ~/Development/dag-calculator
-depends_on: []
-blocks: []
-gate: make verify
-status: proposed
----
-<!-- claims: proposed boil_hop_row.product_form -->
-
 # Boil hop forms — extracts in the boil, the floor as the split
+
+Status: **landed**. W1–W7 are in: the boil form, the picker matrix, the
+isothermal extract scalar, the deleted whirlpool ramp, the floor-anchored split,
+the report columns and gram amounts, and the §2.9 rewrite.
 
 ## Problem
 
