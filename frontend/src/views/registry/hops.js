@@ -33,6 +33,7 @@ export const hopsRegistry = {
   "batch.boil_hops.alpha_acid_pct": { label: "Alpha", displayUnit: "pct" },
   "batch.boil_hops.boil_time_fraction": { label: "Boil remaining", displayUnit: "pct" },
   "batch.boil_hops.parts": { label: "Parts" },
+  "batch.boil_hops.t90_replacement_ratio": { label: "T-90 ratio", decimals: 2 },
   "batch.boil_hops.product_form": {
     label: "Form",
     optionLabels: {

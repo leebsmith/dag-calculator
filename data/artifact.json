@@ -1990,6 +1990,12 @@
       "product_form": {
         "taxonomy": "hop_product_form",
         "default": "t90_pellet"
+      },
+      "t90_replacement_ratio": {
+        "dimension": "dimensionless",
+        "domain": {
+          "gte": 0
+        }
       }
     },
     "whirlpool_hop_row": {

@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_117 paths_
+_118 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -38,6 +38,7 @@ _117 paths_
 | `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet |
+| `batch.boil_hops.t90_replacement_ratio` | T-90 ratio | field | dimensionless | — | 2 | — |
 | `batch.boil_ibu_share` | Boil IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |

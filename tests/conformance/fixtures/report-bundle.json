@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:9649b0c22c91aba087162a6df71dd2958d6333b2e788cac529ff2ab8866276fd",
+    "hash": "sha256:aaf06ba43ddf09bc9b9d8ae3505df39059e58674de886ba51cff61d8ad3f02cf",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -1974,6 +1974,12 @@
           "product_form": {
             "taxonomy": "hop_product_form",
             "default": "t90_pellet"
+          },
+          "t90_replacement_ratio": {
+            "dimension": "dimensionless",
+            "domain": {
+              "gte": 0
+            }
           }
         },
         "whirlpool_hop_row": {
@@ -8319,5 +8325,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:264d215e9bdc1f356445a0ea948f175eaff9cfc1a3f5ec52b2b4fbea594bb7ce"
+  "content_hash": "sha256:69aa879f5b3b468a41993a0a2db1059aa9a001f93805c8880ece1e47f20aa849"
 }
