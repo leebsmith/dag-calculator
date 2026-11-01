@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createTestApp, withFreshApp } from "./appHelpers.js";
+import { CUSTOM_COOLING_CURVE } from "../../frontend/src/adapters/cards/hopsCoolingCurve.js";
 
 test("boil hops: parts normalize to IBU shares and mass back-calculates", withFreshApp((app) => {
   app.setTargetIbu(40);
@@ -445,4 +446,123 @@ test("http: the hop boundary rows merge into the card", async () => {
   assert.equal(app.hopRows[0].mass_kg, 0.02);
   assert.equal(app.hopRows[0].minutes, 60);
   assert.equal(app.hopRows[0].ibu, 40);
+});
+
+function coolingCurveClient() {
+  const docs = new Map();
+  let sequence = 0;
+  return {
+    async listCatalog(kind) {
+      return [...docs.values()].filter((record) => record.kind === kind);
+    },
+    async createCatalog(kind, component) {
+      const id = `curve-${++sequence}`;
+      const record = { id, kind, component: { ...component, id } };
+      docs.set(id, record);
+      return record;
+    },
+    async deleteCatalog(kind, id) {
+      docs.delete(id);
+      return null;
+    },
+  };
+}
+
+function newtonCurve() {
+  return {
+    name: "Garage kettle",
+    start_temp_c: 100,
+    ambient_temp_c: 20,
+    points: [5, 10, 15, 20].map((time) => ({
+      time_min: time,
+      temp_c: 20 + 80 * Math.exp(-0.02 * time),
+    })),
+  };
+}
+
+async function coolingCurveApp(curve = newtonCurve()) {
+  const app = createTestApp({ libraryClient: coolingCurveClient() });
+  await app.library.refresh();
+  const record = await app.library.create("cooling_curve", curve);
+  await app.refreshLibraryItems();
+  app.compute();
+  return { app, id: record.id };
+}
+
+test("cooling curve selection copies only tau and the id", async () => {
+  const { app, id } = await coolingCurveApp();
+  app.setRoot("batch.whirlpool_ambient_temp_c", 25);
+  app.selectCoolingCurve(id);
+
+  assert.equal(app.master.getRoot("batch.cooling_curve_id"), id);
+  assert.ok(
+    Math.abs(app.master.getRoot("batch.whirlpool_cooling_time_constant_min") - 50) < 1e-6
+  );
+  assert.equal(app.master.getRoot("batch.whirlpool_ambient_temp_c"), 25);
+  assert.equal(app.coolingCurveStatus, "Garage kettle");
+  assert.match(app.coolingCurveSummary, /k 0\.0200\/min/);
+  assert.ok(app.coolingCurveWarnings.some((warning) => warning.includes("measured at")));
+});
+
+test("default cooling resets the time constant and clears the id", async () => {
+  const { app, id } = await coolingCurveApp();
+  app.selectCoolingCurve(id);
+  app.selectCoolingCurve("");
+
+  assert.equal(app.master.getRoot("batch.cooling_curve_id"), "");
+  assert.equal(app.master.getRoot("batch.whirlpool_cooling_time_constant_min"), 108.7);
+  assert.equal(app.coolingCurveStatus, "Default cooling");
+  assert.equal(app.coolingCurveValue, "");
+});
+
+test("a manual time-constant edit clears the id and reads as custom", async () => {
+  const { app, id } = await coolingCurveApp();
+  app.selectCoolingCurve(id);
+  app.editWhirlpoolCooling("60");
+
+  assert.equal(app.master.getRoot("batch.cooling_curve_id"), "");
+  assert.equal(app.master.getRoot("batch.whirlpool_cooling_time_constant_min"), 60);
+  assert.equal(app.coolingCurveStatus, "Custom");
+  assert.equal(app.coolingCurveValue, CUSTOM_COOLING_CURVE);
+});
+
+test("an ambient edit keeps the selected curve", async () => {
+  const { app, id } = await coolingCurveApp();
+  app.selectCoolingCurve(id);
+  app.edit(app.whirlpoolAmbientField, "25");
+
+  assert.equal(app.master.getRoot("batch.cooling_curve_id"), id);
+  assert.ok(
+    Math.abs(app.master.getRoot("batch.whirlpool_cooling_time_constant_min") - 50) < 1e-6
+  );
+  assert.equal(app.master.getRoot("batch.whirlpool_ambient_temp_c"), 25);
+});
+
+test("a deleted curve keeps the copied roots and reads as missing", async () => {
+  const { app, id } = await coolingCurveApp();
+  app.selectCoolingCurve(id);
+  await app.library.remove("cooling_curve", id);
+  await app.refreshLibraryItems();
+
+  assert.equal(app.master.getRoot("batch.cooling_curve_id"), id);
+  assert.ok(
+    Math.abs(app.master.getRoot("batch.whirlpool_cooling_time_constant_min") - 50) < 1e-6
+  );
+  assert.equal(app.coolingCurveStatus, "Missing curve");
+  assert.ok(app.coolingCurveWarnings.some((warning) => warning.includes("Missing curve")));
+});
+
+test("the selected curve survives draft load and freeze", async () => {
+  const { app, id } = await coolingCurveApp();
+  app.selectCoolingCurve(id);
+  const state = app.draftState();
+
+  app.teardown();
+  await app.loadState(state);
+
+  assert.equal(app.master.getRoot("batch.cooling_curve_id"), id);
+  assert.ok(
+    Math.abs(app.master.getRoot("batch.whirlpool_cooling_time_constant_min") - 50) < 1e-6
+  );
+  assert.equal(app.freezePayload().valuation["batch.cooling_curve_id"], id);
 });

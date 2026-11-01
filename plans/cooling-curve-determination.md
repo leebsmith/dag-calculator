@@ -1,6 +1,6 @@
 ---
 title: Cooling Curve Determination
-status: proposed
+status: implemented
 program: deterministic-dag-calculator
 depends_on: []
 blocks: [brew-measurement-promotion]

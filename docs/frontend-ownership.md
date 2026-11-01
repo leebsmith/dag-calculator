@@ -3,11 +3,11 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **672** (453 enumerable, 219 hidden)
+- Declared members: **687** (458 enumerable, 229 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **15 of 20**
-- Cross-owner keys declared in `SHARED`: **46**
+- Cross-owner keys declared in `SHARED`: **47**
 
 ## Installers
 
@@ -24,7 +24,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 129 | 3 | 22 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 144 | 3 | 23 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 22 |
@@ -126,7 +126,19 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `computeStyleTarget` | `styleNavigator` | public | 0 |
 | `confirmDraftDiscard` | `draftEditor` | public | 1 |
 | `conformanceSummary` | `styleConformance` | hidden | 1 |
+| `coolingCurveFit` | `hop` | hidden | 0 |
+| `coolingCurveId` | `hop` | hidden | 1 |
+| `coolingCurveIsCustom` | `hop` | hidden | 1 |
+| `coolingCurveMissing` | `hop` | hidden | 1 |
+| `coolingCurveNotice` | `hop` | public | 0 |
+| `coolingCurveOptions` | `hop` | hidden | 1 |
+| `coolingCurveRecord` | `hop` | hidden | 0 |
+| `coolingCurveStatus` | `hop` | hidden | 0 |
+| `coolingCurveSummary` | `hop` | hidden | 1 |
+| `coolingCurveValue` | `hop` | hidden | 1 |
+| `coolingCurveWarnings` | `hop` | hidden | 1 |
 | `copyInCascade` | `fieldActions` | public | 0 |
+| `customCoolingCurveValue` | `hop` | public | 1 |
 | `deleteLibraryItem` | `libraryUi` | public | 1 |
 | `derateHelpOpen` | `yeast` | public | 1 |
 | `dialogFocus` | `modalFocus` | public | 10 |
@@ -198,6 +210,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `editWaterNumber` | `water` | public | 1 |
 | `editWaterTarget` | `water` | public | 0 |
 | `editWaterTargetInput` | `water` | public | 1 |
+| `editWhirlpoolCooling` | `hop` | public | 1 |
 | `enabledMashRests` | `mash` | hidden | 1 |
 | `fermentationField` | `styleDeclaration` | hidden | 1 |
 | `fermentationProvenance` | `styleDeclaration` | hidden | 0 |
@@ -380,6 +393,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `normalizeHopRows` | `fieldActions` | public | 0 |
 | `onBatchLoad` | `styleNavigator` | public | 0 |
 | `onMashPresetChange` | `mash` | public | 1 |
+| `openCoolingCurveLibrary` | `hop` | public | 1 |
 | `openDraft` | `draftEditor` | public | 0 |
 | `openDryHopEditor` | `dryHops` | public | 1 |
 | `openDryHopSearch` | `dryHops` | public | 1 |
@@ -446,6 +460,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `scaleTargetMismatch` | `styleTargets` | public | 1 |
 | `seedShareFromDose` | `lateAdditions` | public | 0 |
 | `seedSugarShareWeights` | `draftEditor` | public | 0 |
+| `selectCoolingCurve` | `hop` | public | 1 |
 | `selectDryHopStandard` | `dryHops` | public | 0 |
 | `selectHopStandard` | `hop` | public | 0 |
 | `selectLibrarySection` | `libraryUi` | public | 1 |
@@ -742,6 +757,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `inputKey` | `fieldActions` | `hop`, `lateAdditions`, `libraryUi`, `malt`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `traceMalts`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `openLibrary` | `libraryUi` | `hop` | the whirlpool picker links to the cooling-curve library tab |
 | `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `resetField` | `fieldActions` | `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets` | shared field verbs: the card partials bind the one editing surface |

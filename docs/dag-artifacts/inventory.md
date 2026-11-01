@@ -181,6 +181,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.brew_checklist` | collection |
 | `batch.checklist_level` | choice |
 | `batch.conversion_efficiency` | root |
+| `batch.cooling_curve_id` | root |
 | `batch.delta_v_evap` | derived |
 | `batch.dry_hops` | collection |
 | `batch.extract_loss_conversion` | derived |

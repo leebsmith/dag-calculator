@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_123 paths_
+_124 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -50,6 +50,7 @@ _123 paths_
 | `batch.brew_checklist.step_id` | Step | field | — | — | — | — |
 | `batch.checklist_level` | Checklist level | choice | — | — | — | critical, info, debug |
 | `batch.conversion_efficiency` | Conversion efficiency | root | percentage | pct (%) | 1 | — |
+| `batch.cooling_curve_id` | Cooling curve | root | reference | — | — | — |
 | `batch.delta_v_evap` | Boil-off | derived | volume | L | 1 | — |
 | `batch.dry_hops` | Dry hops | collection | — | — | — | — |
 | `batch.dry_hops.application_event` | Applied at | field | — | — | — | pitch, high_krausen, mid_fermentation, terminal, post_diacetyl, cold_crash, packaging |

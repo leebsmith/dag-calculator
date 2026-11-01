@@ -35,34 +35,34 @@ ambient stays in the record; the batch keeps its own brew-day ambient.
 
 ## Checklist
 
-- [ ] Add the pure fit helper `frontend/src/views/coolingCurve.js`: finite
+- [x] Add the pure fit helper `frontend/src/views/coolingCurve.js`: finite
   start/ambient, `start > ambient`, usable points with `time > 0` and
   `temp > ambient`, at least two points, strictly increasing unique times,
   positive `k`, `tau`, point count, ignored count, and R².
-- [ ] Add `tests/frontend/coolingCurve.test.js`: exact synthetic recovery, a
+- [x] Add `tests/frontend/coolingCurve.test.js`: exact synthetic recovery, a
   noisy recovery within tolerance, too few points, temperatures at or below
   ambient, non-increasing times, a non-cooling slope, and low-R² reporting.
-- [ ] Add `batch.cooling_curve_id` as a `reference` root with default `""` in
+- [x] Add `batch.cooling_curve_id` as a `reference` root with default `""` in
   `data/artifact.json`.
-- [ ] Register the new root in `frontend/src/views/registry/hops.js` and add it
+- [x] Register the new root in `frontend/src/views/registry/hops.js` and add it
   to the hops step in `frontend/src/views/steps.js`.
-- [ ] Add `frontend/src/adapters/cards/hopsCoolingCurve.js`: curve options,
+- [x] Add `frontend/src/adapters/cards/hopsCoolingCurve.js`: curve options,
   selected record and fit, Default/Custom/Missing status, ambient-mismatch and
   poor-fit warnings, `selectCoolingCurve`, `editWhirlpoolCooling`, and
   `openCoolingCurveLibrary`.
-- [ ] Wire the picker into `frontend/src/adapters/cards/hops.js` and the hop
+- [x] Wire the picker into `frontend/src/adapters/cards/hops.js` and the hop
   installer contract, including the shared `openLibrary` read.
-- [ ] Add the picker, fit summary, warnings, `Manage library` link, and
+- [x] Add the picker, fit summary, warnings, `Manage library` link, and
   manual-time-constant handler to `frontend/src/partials/step-hops.html`.
-- [ ] Add picker tests to `tests/frontend/hops-card.test.js`: selection copies
+- [x] Add picker tests to `tests/frontend/hops-card.test.js`: selection copies
   `1/k` only, Default resets, manual tau clears the id, ambient edit keeps the
   id, and a missing curve keeps the copied roots.
-- [ ] Add persistence tests: the id and time constant survive
+- [x] Add persistence tests: the id and time constant survive
   `draftState`/`loadState` and the id appears in `freezePayload`.
-- [ ] Update `docs/hops/whirlpool-hopping-model.md`, `docs/record-library.md`,
+- [x] Update `docs/hops/whirlpool-hopping-model.md`, `docs/record-library.md`,
   `plans/cooling-curve-determination.md`, and `TODO.md`.
-- [ ] Run `make generate`, `make check`, `make test`, and `make verify`.
-- [ ] Mark this checklist complete and archive the plan.
+- [x] Run `make generate`, `make check`, `make test`, and `make verify`.
+- [x] Mark this checklist complete and archive the plan.
 
 ## Acceptance
 

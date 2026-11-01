@@ -188,7 +188,7 @@ const FUNCTION_LINE_PINS = {
 };
 
 const FILE_LINE_PINS = {
-  "adapters/cards/hops.js": 454,
+  "adapters/cards/hops.js": 458,
   "adapters/cards/late-additions.js": 404,
   "adapters/cards/water.js": 639,
   "adapters/stepAdapter.js": 433,

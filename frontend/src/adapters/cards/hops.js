@@ -2,6 +2,7 @@
 // cooling integral), both authored by IBU share.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
+import { installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
 import { createHopFormatters } from "../../views/producer/hopFormat.js";
 import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
@@ -352,6 +353,8 @@ export function registerHopCard(app, ctx) {
     ...hopSectionMetaDescriptors(),
   });
 
+  installCoolingCurvePicker(app, ctx, { formatTemp });
+
   for (const [key, id] of Object.entries({
     boilIbuField: N.boilIbu,
     whirlpoolIbuField: N.whirlpoolIbu,
@@ -451,4 +454,5 @@ export const KEYS = [
   "whirlpoolTimelineState",
   "whirlpoolInferredChills",
   "whirlpoolZeroRestNote",
+  ...coolingCurveKeys,
 ];

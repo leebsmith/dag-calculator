@@ -188,11 +188,56 @@
                 min="1"
                 :id="whirlpoolCoolingField.id"
                 :value="whirlpoolCoolingField.display"
-                @change="edit(whirlpoolCoolingField, $event.target.value)"
+                @change="editWhirlpoolCooling($event.target.value)"
               />
               <span class="form-hint" x-show="whirlpoolCoolingField.hint" x-text="whirlpoolCoolingField.hint"></span>
             </div>
           </template>
+          <div class="form-group">
+            <label class="form-label" for="whirlpool-cooling-curve">Cooling curve</label>
+            <div class="form-row">
+              <select
+                class="form-input"
+                id="whirlpool-cooling-curve"
+                :value="coolingCurveValue"
+                @change="selectCoolingCurve($event.target.value)"
+              >
+                <option value="" :selected="coolingCurveValue === ''">Default cooling</option>
+                <template x-if="coolingCurveIsCustom">
+                  <option
+                    :value="customCoolingCurveValue"
+                    :selected="coolingCurveValue === customCoolingCurveValue"
+                    x-text="'Custom (manual time constant)'"
+                  ></option>
+                </template>
+                <template x-for="curve in coolingCurveOptions" :key="curve.id">
+                  <option
+                    :value="curve.id"
+                    :selected="curve.id === coolingCurveValue"
+                    x-text="curve.name"
+                  ></option>
+                </template>
+                <template x-if="coolingCurveMissing">
+                  <option
+                    :value="coolingCurveId"
+                    :selected="coolingCurveValue === coolingCurveId"
+                    x-text="'Missing curve — ' + coolingCurveId"
+                  ></option>
+                </template>
+              </select>
+              <button
+                type="button"
+                class="btn-link text-xs"
+                @click="openCoolingCurveLibrary()"
+              >
+                Manage library
+              </button>
+            </div>
+            <span class="form-hint" x-show="coolingCurveSummary" x-text="coolingCurveSummary"></span>
+            <template x-for="warning in coolingCurveWarnings" :key="warning">
+              <span class="form-hint text-warning" x-text="warning"></span>
+            </template>
+          </div>
         </div>
 
         <div>

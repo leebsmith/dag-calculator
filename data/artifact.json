@@ -2581,6 +2581,11 @@
         "gt": 0
       }
     },
+    "batch.cooling_curve_id": {
+      "kind": "root",
+      "dimension": "reference",
+      "default": ""
+    },
     "batch.v_ferm": {
       "kind": "root",
       "dimension": "volume",

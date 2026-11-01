@@ -47,7 +47,10 @@ const STYLE_DECLARATION = ["frontend/src/adapters/cards/style/declaration.js"];
 const STYLE_NAVIGATOR = ["frontend/src/adapters/cards/style/navigator.js"];
 const STYLE_TARGETS = ["frontend/src/adapters/cards/style/targets.js"];
 const STYLE_CONFORMANCE = ["frontend/src/adapters/cards/style/conformance.js"];
-const HOP = ["frontend/src/adapters/cards/hops.js"];
+const HOP = [
+  "frontend/src/adapters/cards/hops.js",
+  "frontend/src/adapters/cards/hopsCoolingCurve.js",
+];
 const CATALOG_DRAFT = "frontend/src/adapters/cards/catalogDraft.js";
 const HOP_AND_CATALOG = [...HOP, CATALOG_DRAFT];
 const LATE_ADDITIONS = ["frontend/src/adapters/cards/late-additions.js"];
@@ -289,6 +292,11 @@ export const SHARED = [
     key: "openDraft",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
+  },
+  {
+    key: "openLibrary",
+    owners: ["hop"],
+    reason: "the whirlpool picker links to the cooling-curve library tab",
   },
   {
     key: "patchDraftRow",

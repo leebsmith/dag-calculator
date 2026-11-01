@@ -40,8 +40,10 @@ The first record kind is `cooling_curve`:
 
 The curve's ambient is **not** copied into a batch. Ambient is an environment
 condition; a curve measured at one ambient can still inform a brew at another.
-The batch keeps `batch.whirlpool_ambient_temp_c` independently, and the future
-picker shows the curve's fitted ambient beside it.
+The batch keeps `batch.whirlpool_ambient_temp_c` independently, and the hops-card
+picker shows the curve's fitted ambient beside it. Selecting a curve fits `k`
+and copies only `1/k` into `batch.whirlpool_cooling_time_constant_min`, with
+`batch.cooling_curve_id` recording the source.
 
 ## Validation
 

@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:fb30c0ce7964f2171c2203d1c5b64136b43efd67b95aba91a303a3343e1f1312",
+    "hash": "sha256:deeca3ce718bdcf92dd7232bd62b36d290def27b87615e5ba2f4b30b25463adf",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -2606,6 +2606,11 @@
           "domain": {
             "gt": 0
           }
+        },
+        "batch.cooling_curve_id": {
+          "kind": "root",
+          "dimension": "reference",
+          "default": ""
         },
         "batch.v_ferm": {
           "kind": "root",
@@ -9900,5 +9905,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:766afa78251e4d13233833ad3ed383d628341852fe6af000fcd735c978731ab6"
+  "content_hash": "sha256:87828d132d45106370b43077bb639f45040164f38e5869d6a4e1f9fee71985ea"
 }

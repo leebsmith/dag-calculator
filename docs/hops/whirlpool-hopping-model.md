@@ -11,8 +11,9 @@ Status: implemented model for T-90 pellets, flowable CO₂ extracts and lupulin
 pellets, target-driven IBU, per-charge rest duration and initial temperature, and
 batch-level ambient temperature and cooling time constant. Product forms are
 placed by process — T-90 or extract in the boil, T-90 or lupulin in the
-whirlpool. Oil retention, humulinone bitterness, active chilling and
-equipment-specific cooling curves are deferred.
+whirlpool. Authored cooling-curve records calibrate the time constant; oil
+retention, humulinone bitterness, active chilling and equipment-level thermal
+simulation are deferred.
 
 ## 1. Notation
 
@@ -93,6 +94,33 @@ smaller, but the exposed headspace and surface-to-volume ratio are larger. A
 value around `0.012–0.015 min⁻¹` is a reasonable starting point unless the
 measured endpoint says otherwise. Slower cooling (smaller `k`) predicts more
 bitterness; faster cooling predicts less.
+
+### Measured curves
+
+The hops card offers `Default cooling`, the built-in `108.7 min` constant, and
+any authored curves in the cooling-curve library. A curve record carries its
+measured date, vessel reference, start and ambient temperatures, and time /
+temperature points. Selecting one fits the log-linear model:
+
+```
+y_i = ln((T_i - T_amb) / (T_start - T_amb))
+k = -slope(t_i, y_i)
+```
+
+The fit ignores points at or below ambient and requires at least two usable
+points with strictly increasing, unique times. It writes `1/k` into
+`batch.whirlpool_cooling_time_constant_min` and records the curve id in
+`batch.cooling_curve_id`.
+
+The curve's ambient is **not** copied into `batch.whirlpool_ambient_temp_c`.
+Ambient is a brew-day condition; the picker shows the measured ambient beside
+the batch value and warns when they differ by 5 °C or more. A fit with
+`R² < 0.98` warns as well, but it never blocks the selection.
+
+`Default cooling` restores `108.7 min` and clears the id. Editing the time
+constant by hand clears the id and reads as `Custom`. Deleting the selected
+record leaves the copied roots in place and reads as `Missing curve`; a
+corrected measurement is a new record.
 
 ## 4. Effective boiling-equivalent time
 
@@ -258,7 +286,8 @@ contract.
 - Oil retention, humulinone bitterness, and perceived-bitterness offsets are
   deferred.
 - Ambient temperature and cooling decay are inputs, not constants in the model
-  code. Equipment-specific cooling curves are a later feature.
+  code. Authored curves calibrate the decay; no equipment-level thermal
+  simulation is attempted.
 
 ## 8. Limitations
 

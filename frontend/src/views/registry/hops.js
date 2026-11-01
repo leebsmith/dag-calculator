@@ -21,6 +21,7 @@ export const HOP_NODES = {
   totalIbu: "batch.target_ibu",
   whirlpoolAmbient: "batch.whirlpool_ambient_temp_c",
   whirlpoolCoolingTimeConstant: "batch.whirlpool_cooling_time_constant_min",
+  coolingCurveId: "batch.cooling_curve_id",
   boilTime: "batch.boil_time_min",
   postBoilVolume: "solver.batch.cascade.v_post_boil",
   slice: "hops",
@@ -73,5 +74,9 @@ export const hopsRegistry = {
     label: "Cooling time constant",
     unit: "min",
     hint: "1/k. 108.7 min = k 0.0092/min; lower means faster cooling.",
+  },
+  "batch.cooling_curve_id": {
+    label: "Cooling curve",
+    hint: "The authored curve that supplied the time constant.",
   },
 };

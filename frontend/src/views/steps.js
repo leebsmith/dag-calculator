@@ -266,6 +266,7 @@ export const steps = [
       "batch.whirlpool_target_ibu",
       "batch.whirlpool_ambient_temp_c",
       "batch.whirlpool_cooling_time_constant_min",
+      "batch.cooling_curve_id",
     ],
   },
   {
