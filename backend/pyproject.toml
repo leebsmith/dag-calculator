@@ -39,5 +39,10 @@ target-version = "py312"
 select = ["E", "F", "I", "W", "UP", "B", "C901"]
 ignore = ["E501"]
 
+# C901 counts branch statements (if / for / while / except / match arms), not
+# `and` / `or` / ternaries: a function whose only control flow is a boolean chain
+# reports 1. So 10 here is stricter in branch terms than the frontend's
+# `complexity 12`, which counts both. A function over the line is split, never
+# exempted; the ceiling moves only with a plan.
 [tool.ruff.lint.mccabe]
-max-complexity = 12
+max-complexity = 10

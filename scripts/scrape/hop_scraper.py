@@ -84,6 +84,27 @@ def clean_inline_text(value):
     return re.sub(r"\s{2,}", " ", value).strip()
 
 
+def _as_recipe_count(value):
+    digits = re.sub(r"[^0-9]", "", value)
+    return int(digits) if digits else None
+
+
+def _as_text(value):
+    return value or None
+
+
+def _as_origin(value):
+    return clean_origin(value) or None
+
+
+DETAIL_FIELDS = {
+    "recipes": ("recipes_count", _as_recipe_count),
+    "purpose": ("purpose", _as_text),
+    "alpha": ("alpha_rating", _as_text),
+    "origin": ("origin", _as_origin),
+}
+
+
 def parse_detail_info(detail_soup, hop):
     """Read the <dl class="detail-info"> key/value pairs into the hop record."""
     dl = detail_soup.find("dl", class_="detail-info")
@@ -94,21 +115,13 @@ def parse_detail_info(detail_soup, hop):
         dd = dt.find_next_sibling("dd")
         if not dd:
             continue
-        value = dd.get_text(" ", strip=True)
-        if key == "recipes":
-            digits = re.sub(r"[^0-9]", "", value)
-            if digits:
-                hop["recipes_count"] = int(digits)
-        elif key == "purpose":
-            if value:
-                hop["purpose"] = value
-        elif key == "alpha":
-            if value:
-                hop["alpha_rating"] = value
-        elif key == "origin":
-            cleaned = clean_origin(value)
-            if cleaned:
-                hop["origin"] = cleaned
+        field = DETAIL_FIELDS.get(key)
+        if field is None:
+            continue
+        name, convert = field
+        converted = convert(dd.get_text(" ", strip=True))
+        if converted is not None:
+            hop[name] = converted
 
 
 def parse_synonym(detail_soup, hop):
@@ -141,33 +154,44 @@ def parse_badges(detail_soup, hop):
                 hop["flavor_profiles"] = values
 
 
+def _range_values(body):
+    result = {}
+    numbers = [float(n) for n in NUMBER_RE.findall(body.get_text(" ", strip=True))]
+    if numbers:
+        result["min"] = min(numbers)
+        result["max"] = max(numbers)
+    strong = body.find("strong")
+    if strong:
+        match = NUMBER_RE.search(strong.get_text())
+        if match:
+            result["median"] = float(match.group())
+    small = body.find("small")
+    if small:
+        unit = small.get_text(strip=True)
+        if unit:
+            result["unit"] = unit
+    return result
+
+
+def _parse_range_card(card):
+    header = card.select_one(".card-header h3")
+    body = card.select_one(".card-body")
+    if not header or not body:
+        return None
+    key = CHARACTERISTIC_KEYS.get(header.get_text(" ", strip=True).lower())
+    if not key:
+        return None
+    return key, _range_values(body)
+
+
 def parse_characteristics(detail_soup, hop):
     """Parse the alpha/beta/amount range cards into nested range objects."""
     ranges = {}
     for card in detail_soup.select("#characteristics div.card"):
-        header = card.select_one(".card-header h3")
-        body = card.select_one(".card-body")
-        if not header or not body:
+        parsed = _parse_range_card(card)
+        if parsed is None:
             continue
-        key = CHARACTERISTIC_KEYS.get(header.get_text(" ", strip=True).lower())
-        if not key:
-            continue
-
-        numbers = [float(n) for n in NUMBER_RE.findall(body.get_text(" ", strip=True))]
-        result = {}
-        if numbers:
-            result["min"] = min(numbers)
-            result["max"] = max(numbers)
-        strong = body.find("strong")
-        if strong:
-            match = NUMBER_RE.search(strong.get_text())
-            if match:
-                result["median"] = float(match.group())
-        small = body.find("small")
-        if small:
-            unit = small.get_text(strip=True)
-            if unit:
-                result["unit"] = unit
+        key, result = parsed
         if result:
             ranges[key] = result
 

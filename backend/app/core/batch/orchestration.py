@@ -640,45 +640,55 @@ def _extract_ledger(
     )
 
 
-def _feasible_bound(
-    inputs: BatchSolverInput, fermentation_ceiling: float
-) -> tuple[float, str]:
-    def probe(target_abv: float) -> str | None:
-        if target_abv <= 0.0:
-            return "volume"
-        try:
-            pipeline = _solve_pipeline(inputs, "abv", target_abv)
-        except SolverValidationError as exc:
-            reason = binding_constraint_for(exc.code)
-            if reason is None:
-                raise
-            return reason
-        return _capacity_violation(inputs, pipeline)
-
-    low = None
-    low_reason = None
-    for candidate in range(1, 20):
-        reason = probe(float(candidate))
+def _feasibility_probe(inputs: BatchSolverInput, target_abv: float) -> str | None:
+    if target_abv <= 0.0:
+        return "volume"
+    try:
+        pipeline = _solve_pipeline(inputs, "abv", target_abv)
+    except SolverValidationError as exc:
+        reason = binding_constraint_for(exc.code)
         if reason is None:
-            low = float(candidate)
-            break
-        if low_reason is None:
-            low_reason = reason
-    if low is None:
-        return 0.0, low_reason or "volume"
+            raise
+        return reason
+    return _capacity_violation(inputs, pipeline)
 
-    high = max(fermentation_ceiling, low)
-    high_reason = probe(high)
-    if high_reason is None:
-        return high, "fermentation"
 
+def _lowest_feasible_abv(inputs: BatchSolverInput) -> tuple[float | None, str | None]:
+    first_reason = None
+    for candidate in range(1, 20):
+        reason = _feasibility_probe(inputs, float(candidate))
+        if reason is None:
+            return float(candidate), first_reason
+        if first_reason is None:
+            first_reason = reason
+    return None, first_reason
+
+
+def _bisect_feasible(
+    inputs: BatchSolverInput, low: float, high: float
+) -> tuple[float, float]:
     for _ in range(30):
         mid = (low + high) / 2.0
-        if probe(mid) is None:
+        if _feasibility_probe(inputs, mid) is None:
             low = mid
         else:
             high = mid
-    return low, probe(high) or "fermentation"
+    return low, high
+
+
+def _feasible_bound(
+    inputs: BatchSolverInput, fermentation_ceiling: float
+) -> tuple[float, str]:
+    low, first_reason = _lowest_feasible_abv(inputs)
+    if low is None:
+        return 0.0, first_reason or "volume"
+
+    high = max(fermentation_ceiling, low)
+    if _feasibility_probe(inputs, high) is None:
+        return high, "fermentation"
+
+    low, high = _bisect_feasible(inputs, low, high)
+    return low, _feasibility_probe(inputs, high) or "fermentation"
 
 
 def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:

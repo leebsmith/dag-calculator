@@ -43,38 +43,43 @@ def _routes() -> list[tuple[str, str, set[str], int]]:
     return found
 
 
+def _route_problem(method: str, path: str, deps: set[str], lineno: int) -> str | None:
+    where = f"{method} {path} (main.py:{lineno})"
+    auth = deps & {"AllowedUser", "CurrentUser", "RateLimitedUser"}
+
+    if path in PUBLIC:
+        if auth:
+            return f"{where}: public route must not carry {sorted(auth)}"
+        return None
+    if not auth:
+        return f"{where}: no auth dependency"
+    if path in SESSION_ONLY:
+        if auth != {"CurrentUser"}:
+            return f"{where}: session must use CurrentUser, found {sorted(auth)}"
+        return None
+    if path.startswith("/solve/"):
+        if "RateLimitedUser" not in auth:
+            return f"{where}: solver route must be rate-limited"
+        return None
+    if "AllowedUser" not in auth:
+        return f"{where}: user-data route must use AllowedUser"
+    return None
+
+
 def test_every_route_declares_its_auth_dependency():
     routes = _routes()
     assert len(routes) >= 13, f"route discovery found only {len(routes)} routes"
 
-    offenders: list[str] = []
-    seen_paths: set[str] = set()
-
-    for method, path, deps, lineno in routes:
-        seen_paths.add(path)
-        where = f"{method} {path} (main.py:{lineno})"
-        auth = deps & {"AllowedUser", "CurrentUser", "RateLimitedUser"}
-
-        if path in PUBLIC:
-            if auth:
-                offenders.append(f"{where}: public route must not carry {sorted(auth)}")
-            continue
-        if not auth:
-            offenders.append(f"{where}: no auth dependency")
-            continue
-        if path in SESSION_ONLY and auth != {"CurrentUser"}:
-            offenders.append(f"{where}: session must use CurrentUser, found {sorted(auth)}")
-            continue
-        if path.startswith("/solve/") and "RateLimitedUser" not in auth:
-            offenders.append(f"{where}: solver route must be rate-limited")
-            continue
-        if not path.startswith("/solve/") and path not in SESSION_ONLY:
-            if "AllowedUser" not in auth:
-                offenders.append(f"{where}: user-data route must use AllowedUser")
-
-        if method != "GET" and path in PUBLIC:
-            offenders.append(f"{where}: mutating route cannot be public")
-
+    offenders = [
+        problem
+        for problem in (
+            _route_problem(method, path, deps, lineno)
+            for method, path, deps, lineno in routes
+        )
+        if problem is not None
+    ]
     assert offenders == [], "route auth drift:\n" + "\n".join(offenders)
+
+    seen_paths = {path for _method, path, _deps, _lineno in routes}
     for path in PUBLIC | SESSION_ONLY:
         assert path in seen_paths, f"stale auth allowlist entry: {path}"
