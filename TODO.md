@@ -3,6 +3,17 @@
 Completed work lives in `plans/archive/<YYYY-MM>/` and in git history; this file
 tracks only what is outstanding.
 
+## Critical
+
+* **Incognito alpha is 21 % off in the catalogue.** The curated extract records
+  carry `alpha_acid_pct` 0.20–0.55 (mid 0.375) on all ten Incognito products;
+  Haas's General Use sheet says **40–55 % (w/w HPLC)**, mid 0.475. Hop mass is the
+  inverse of the allocated IBU through alpha, so every Incognito mass is
+  overstated by 21 % (0.375 / 0.475). Fix it as part of the advanced-product seed
+  pass — in `data/sources/hop-products.json`, then `make seeds-hop-products` — and
+  audit the same field on every curated extract while there. The spec sheets are
+  linked from `data/sources/yvh-products.json`. Do not fix in isolation.
+
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
