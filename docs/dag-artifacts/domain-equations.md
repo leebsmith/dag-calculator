@@ -505,6 +505,12 @@ mash and HLT vectors by `v_run1 + v_run2` and `v_sparge`;
 `water.kettle_blend.sulfate_chloride_ratio` and
 `water.target.sulfate_chloride_ratio` guard `chloride > 0`. The grid shows
 post-addition, kettle, and Δ columns; Δ formatting remains host-side.
+`water.mash_adjustment.calcium_ca` (and the other five working ions) is the net
+source-to-treated-mash change, `post_dose_mash_ions − source`; the
+`ion_net_change` function guards it to null when either vector is absent. The
+report's water-chemistry table prints it as the Adjustment column, so Source +
+Adjustment closes on Final Water. Alkalinity reads the source's
+`total_alkalinity_caco3` and the final's `alkalinity_as_caco3`.
 
 ### 3.3 Domain / error surface
 

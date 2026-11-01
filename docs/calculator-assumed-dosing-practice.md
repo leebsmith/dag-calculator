@@ -100,6 +100,10 @@ profile:
 The kettle block is an **estimate**: it assumes uniform concentration per vessel and
 full mixing. It is not a measurement, and the SO4:Cl readout is derived from it.
 
+The report's water-chemistry section prints the treated mash as Final Water and
+the net source-to-final change (`water.mash_adjustment.calcium_ca` and the other
+working ions) as its Adjustment column.
+
 The distribution mode is still a **declaration**, not an observation. The calculator
 cannot tell whether the grist was dosed, whether the HLT was dosed, or whether the
 volumes matched the plan. Two known failure paths therefore remain *visible but

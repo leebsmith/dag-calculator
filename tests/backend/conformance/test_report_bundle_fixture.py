@@ -147,3 +147,18 @@ def test_the_bundle_ledgers_close():
     assert valuation["batch.extract_loss_transfer"] == pytest.approx(tun - kettle)
     assert valuation["batch.extract_loss_mash"] == pytest.approx(converted - kettle)
     assert valuation["batch.extract_loss_kettle"] == pytest.approx(post - fermenter)
+
+    # Water table: every adjustment row closes Source + Adjustment = Final.
+    source = bundle["batch"]["identity"]["water.source"]
+    for ion, source_key in (
+        ("calcium_ca", "calcium_ca"),
+        ("magnesium_mg", "magnesium_mg"),
+        ("sodium_na", "sodium_na"),
+        ("sulfate_so4", "sulfate_so4"),
+        ("chloride_cl", "chloride_cl"),
+        ("alkalinity_as_caco3", "total_alkalinity_caco3"),
+    ):
+        final = valuation["solver.water"][f"post_dose_mash_ions.{ion}"]
+        adjustment = valuation[f"water.mash_adjustment.{ion}"]
+        assert adjustment == pytest.approx(final - source[source_key])
+        assert source[source_key] + adjustment == pytest.approx(final)

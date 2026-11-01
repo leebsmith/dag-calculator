@@ -102,6 +102,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `cutaia_real_extract` | abw, ae | `gravity` |
 | `extract_yield_ldk` | yield_fraction | `extract_yield` |
 | `grain_displacement_volume` | m_grist | `volume` |
+| `ion_net_change` | final, source | `concentration` |
 | `morey_mcu_to_srm` | mcu | `beer_color` |
 | `plato_to_sg` | plato | `gravity` |
 | `ramp_time_min` | delta_temp, rate | `time` |
@@ -267,6 +268,12 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.kettle_blend.sodium_na` | derived |
 | `water.kettle_blend.sulfate_chloride_ratio` | derived |
 | `water.kettle_blend.sulfate_so4` | derived |
+| `water.mash_adjustment.alkalinity_as_caco3` | derived |
+| `water.mash_adjustment.calcium_ca` | derived |
+| `water.mash_adjustment.chloride_cl` | derived |
+| `water.mash_adjustment.magnesium_mg` | derived |
+| `water.mash_adjustment.sodium_na` | derived |
+| `water.mash_adjustment.sulfate_so4` | derived |
 | `water.pinned_ions` | collection |
 | `water.preferred_alkaline_agent` | choice |
 | `water.salt_distribution` | choice |

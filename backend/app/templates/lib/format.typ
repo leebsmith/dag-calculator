@@ -53,6 +53,16 @@
 
 #let present-formatted-summary(key) = formatted-summary(key) != none
 
+// The telemetry events a frozen boundary captured, or an empty list when the
+// boundary did not run (or the bundle predates telemetry for it).
+#let boundary-telemetry(id) = {
+  let telemetry = opt(bundle, "telemetry")
+  if telemetry == none { return () }
+  let entry = opt(telemetry, id)
+  if entry == none { return () }
+  entry.at("telemetry", default: ())
+}
+
 // The printed value, including the symbol ("12.4 °P", "75.6%").
 #let formatted-text(path) = formatted(path).at("text")
 

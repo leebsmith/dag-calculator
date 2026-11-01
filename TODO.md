@@ -78,13 +78,15 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ### Report sections
 
-Seven sections have landed — Brewhouse, Batch Facts, Hops, Yeast, Volume Ledger,
-Liquor Ledger and Limits — with the bundle and the render service (`GET`/`POST
-/batches/{id}/report`). Brewhouse prints the two solved mash ratios (L/kg and
-r), and Limits carries the feasibility ceiling and binding capacity plus a
-closing extract ledger: potential, conversion inefficiency, converted, mash tun
-and transfer losses, into the kettle, late additions, post-boil, kettle losses,
-into the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
+Eight sections have landed — Brewhouse, Batch Facts, Hops, Yeast, Volume Ledger,
+Liquor Ledger, Water Chemistry and Limits — with the bundle and the render
+service (`GET`/`POST /batches/{id}/report`). Brewhouse prints the two solved mash
+ratios (L/kg and r); Water Chemistry carries the source report, the target
+profile, the source-to-final ion table, predicted mash pH and solver telemetry;
+and Limits carries the feasibility ceiling and binding capacity plus a closing
+extract ledger: potential, conversion inefficiency, converted, mash tun and
+transfer losses, into the kettle, late additions, post-boil, kettle losses, into
+the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
 remaining section; the presence predicates are in `plans/report-renderer.md`
 §6.4. Queue order is the order below.
 
@@ -95,8 +97,6 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
 * **Salt dosing section** — `solver.water` present and `total_added_salt_mass_g > 0`;
   mash and sparge additions against their dose volumes (`cascade.v_strike`,
   `batch.sparge_salted_volume`).
-* **Water chemistry section** — `solver.water` present; predicted mash pH and the
-  realized ion profile against the target.
 * **Style conformance section** — `conformance` is not `null`; SAI and the
   per-pillar verdicts already captured at freeze.
 

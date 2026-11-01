@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:d7ebf162a0da905a40990830be841db34cee1e7bb3e3603b6c1ad693f2067d17",
+    "hash": "sha256:a6929b66480eca6081faad6d6647abb965f06adac4bdf6d99f539fafc5366a5e",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -1307,6 +1307,53 @@
                         "ref": "sparge"
                       }
                     ]
+                  }
+                ]
+              },
+              null
+            ]
+          }
+        },
+        "ion_net_change": {
+          "params": [
+            "final",
+            "source"
+          ],
+          "returns": "concentration",
+          "body": {
+            "op": "if",
+            "args": [
+              {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "gt",
+                    "args": [
+                      {
+                        "ref": "final"
+                      },
+                      -1e+308
+                    ]
+                  },
+                  {
+                    "op": "gt",
+                    "args": [
+                      {
+                        "ref": "source"
+                      },
+                      -1e+308
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "-",
+                "args": [
+                  {
+                    "ref": "final"
+                  },
+                  {
+                    "ref": "source"
                   }
                 ]
               },
@@ -3290,6 +3337,132 @@
           },
           "output": {
             "dimension": "dimensionless"
+          }
+        },
+        "water.mash_adjustment.calcium_ca": {
+          "kind": "derived",
+          "inputs": {
+            "source": "water.source.calcium_ca",
+            "final": "solver.water.post_dose_mash_ions.calcium_ca"
+          },
+          "expr": {
+            "call": "ion_net_change",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.mash_adjustment.magnesium_mg": {
+          "kind": "derived",
+          "inputs": {
+            "source": "water.source.magnesium_mg",
+            "final": "solver.water.post_dose_mash_ions.magnesium_mg"
+          },
+          "expr": {
+            "call": "ion_net_change",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.mash_adjustment.sodium_na": {
+          "kind": "derived",
+          "inputs": {
+            "source": "water.source.sodium_na",
+            "final": "solver.water.post_dose_mash_ions.sodium_na"
+          },
+          "expr": {
+            "call": "ion_net_change",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.mash_adjustment.sulfate_so4": {
+          "kind": "derived",
+          "inputs": {
+            "source": "water.source.sulfate_so4",
+            "final": "solver.water.post_dose_mash_ions.sulfate_so4"
+          },
+          "expr": {
+            "call": "ion_net_change",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.mash_adjustment.chloride_cl": {
+          "kind": "derived",
+          "inputs": {
+            "source": "water.source.chloride_cl",
+            "final": "solver.water.post_dose_mash_ions.chloride_cl"
+          },
+          "expr": {
+            "call": "ion_net_change",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
+          }
+        },
+        "water.mash_adjustment.alkalinity_as_caco3": {
+          "kind": "derived",
+          "inputs": {
+            "source": "water.source.total_alkalinity_caco3",
+            "final": "solver.water.post_dose_mash_ions.alkalinity_as_caco3"
+          },
+          "expr": {
+            "call": "ion_net_change",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "concentration"
           }
         },
         "grist.major_malts": {
@@ -6641,7 +6814,7 @@
         "option_labels": null
       },
       "solver.water.strategy": {
-        "label": "Strategy",
+        "label": "Resolved strategy",
         "dimension": null,
         "unit": null,
         "symbol": null,
@@ -6656,13 +6829,309 @@
           "BASELINE",
           "CUSTOM"
         ],
-        "option_labels": null
+        "option_labels": {
+          "FLAVOR": "Flavor",
+          "CALCIUM_FLOOR": "Calcium floor",
+          "OPTIMIZE": "Best fit (all six)",
+          "AUTO": "Auto",
+          "HYBRID": "Ratio + buffer",
+          "BASELINE": "Baseline",
+          "CUSTOM": "Custom sparse"
+        }
       },
       "solver.water.total_added_salt_mass_g": {
         "label": "Added salt mass",
         "dimension": "mass",
         "unit": "g",
         "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.prescription.mash_ph_status": {
+        "label": "Mash pH status",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "OPTIMAL",
+          "LOW",
+          "HIGH"
+        ],
+        "option_labels": {
+          "OPTIMAL": "Optimal",
+          "LOW": "Low",
+          "HIGH": "High"
+        }
+      },
+      "solver.water.post_dose_mash_ions.calcium_ca": {
+        "label": "Calcium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.post_dose_mash_ions.magnesium_mg": {
+        "label": "Magnesium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.post_dose_mash_ions.sodium_na": {
+        "label": "Sodium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.post_dose_mash_ions.sulfate_so4": {
+        "label": "Sulfate",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.post_dose_mash_ions.chloride_cl": {
+        "label": "Chloride",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.post_dose_mash_ions.alkalinity_as_caco3": {
+        "label": "Alkalinity",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.calcium_ca": {
+        "label": "Calcium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.magnesium_mg": {
+        "label": "Magnesium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.sodium_na": {
+        "label": "Sodium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.sulfate_so4": {
+        "label": "Sulfate",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.chloride_cl": {
+        "label": "Chloride",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.total_alkalinity_caco3": {
+        "label": "Alkalinity",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.laboratory": {
+        "label": "Laboratory",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.source.report_id": {
+        "label": "Report ID",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target_profile.name": {
+        "label": "Target profile",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target.calcium_ca": {
+        "label": "Calcium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target.magnesium_mg": {
+        "label": "Magnesium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target.sodium_na": {
+        "label": "Sodium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target.sulfate_so4": {
+        "label": "Sulfate",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target.chloride_cl": {
+        "label": "Chloride",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.target.alkalinity_as_caco3": {
+        "label": "Alkalinity",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.mash_adjustment.calcium_ca": {
+        "label": "Calcium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.mash_adjustment.magnesium_mg": {
+        "label": "Magnesium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.mash_adjustment.sodium_na": {
+        "label": "Sodium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.mash_adjustment.sulfate_so4": {
+        "label": "Sulfate",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.mash_adjustment.chloride_cl": {
+        "label": "Chloride",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.mash_adjustment.alkalinity_as_caco3": {
+        "label": "Alkalinity",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
         "decimals": 1,
         "step": null,
         "options": null,
@@ -7411,7 +7880,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:5bda60b113f6314f569e0240dbbe61d04eefe6dc5f1bc1b079a3496f9171c1d1"
+    "hash": "sha256:938c173e96585f04a89d11be561cb5305766309e79b5cfd638e2450fad460247"
   },
   "batch": {
     "id": "frozen-1",
@@ -7439,6 +7908,10 @@
         "laboratory": "Ward Labs",
         "source_name": "City tap",
         "calcium_ca": 42.0,
+        "magnesium_mg": 8.0,
+        "sodium_na": 12.0,
+        "sulfate_so4": 20.0,
+        "chloride_cl": 15.0,
         "total_alkalinity_caco3": 38.0
       },
       "style": {
@@ -7643,9 +8116,28 @@
       "batch.delta_v_evap": 3.0,
       "batch.late_addition_volume_l": 0.5,
       "batch.shrinkage_volume_l": 0.9,
+      "water.target.calcium_ca": 50.0,
+      "water.target.magnesium_mg": 10.0,
+      "water.target.sodium_na": 15.0,
+      "water.target.sulfate_so4": 100.0,
+      "water.target.chloride_cl": 60.0,
+      "water.target.alkalinity_as_caco3": 40.0,
+      "water.mash_adjustment.calcium_ca": 10.0,
+      "water.mash_adjustment.magnesium_mg": 2.0,
+      "water.mash_adjustment.sodium_na": 3.0,
+      "water.mash_adjustment.sulfate_so4": 80.0,
+      "water.mash_adjustment.chloride_cl": 45.0,
+      "water.mash_adjustment.alkalinity_as_caco3": -3.0,
       "solver.water": {
-        "strategy": "CALCIUM_FLOOR",
+        "strategy": "OPTIMIZE",
         "prescription.predicted_mash_ph": 5.42,
+        "prescription.mash_ph_status": "OPTIMAL",
+        "post_dose_mash_ions.calcium_ca": 52.0,
+        "post_dose_mash_ions.magnesium_mg": 10.0,
+        "post_dose_mash_ions.sodium_na": 15.0,
+        "post_dose_mash_ions.sulfate_so4": 100.0,
+        "post_dose_mash_ions.chloride_cl": 60.0,
+        "post_dose_mash_ions.alkalinity_as_caco3": 35.0,
         "total_added_salt_mass_g": 3.0
       },
       "solver.hops": {
@@ -7810,7 +8302,15 @@
       },
       "water.target_profile": {
         "id": "pale-ale",
-        "name": "Pale ale target"
+        "name": "Pale ale target",
+        "calcium_floor_ppm": 50.0,
+        "calcium_ca": 50.0,
+        "magnesium_mg": 10.0,
+        "sodium_na": 15.0,
+        "sulfate_so4": 100.0,
+        "chloride_cl": 60.0,
+        "alkalinity_as_caco3": 40.0,
+        "mode": "OPTIMIZE"
       }
     },
     "provenance": {
@@ -7902,6 +8402,156 @@
       "text": "City tap",
       "number": null,
       "unit": null
+    },
+    "water.source.laboratory": {
+      "text": "Ward Labs",
+      "number": null,
+      "unit": null
+    },
+    "water.source.report_id": {
+      "text": "w-2026-01",
+      "number": null,
+      "unit": null
+    },
+    "water.source.calcium_ca": {
+      "text": "42.0 ppm",
+      "number": "42.0",
+      "unit": "ppm"
+    },
+    "water.source.magnesium_mg": {
+      "text": "8.0 ppm",
+      "number": "8.0",
+      "unit": "ppm"
+    },
+    "water.source.sodium_na": {
+      "text": "12.0 ppm",
+      "number": "12.0",
+      "unit": "ppm"
+    },
+    "water.source.sulfate_so4": {
+      "text": "20.0 ppm",
+      "number": "20.0",
+      "unit": "ppm"
+    },
+    "water.source.chloride_cl": {
+      "text": "15.0 ppm",
+      "number": "15.0",
+      "unit": "ppm"
+    },
+    "water.source.total_alkalinity_caco3": {
+      "text": "38.0 ppm",
+      "number": "38.0",
+      "unit": "ppm"
+    },
+    "water.target_profile.name": {
+      "text": "Pale ale target",
+      "number": null,
+      "unit": null
+    },
+    "water.target.calcium_ca": {
+      "text": "50.0 ppm",
+      "number": "50.0",
+      "unit": "ppm"
+    },
+    "water.target.magnesium_mg": {
+      "text": "10.0 ppm",
+      "number": "10.0",
+      "unit": "ppm"
+    },
+    "water.target.sodium_na": {
+      "text": "15.0 ppm",
+      "number": "15.0",
+      "unit": "ppm"
+    },
+    "water.target.sulfate_so4": {
+      "text": "100.0 ppm",
+      "number": "100.0",
+      "unit": "ppm"
+    },
+    "water.target.chloride_cl": {
+      "text": "60.0 ppm",
+      "number": "60.0",
+      "unit": "ppm"
+    },
+    "water.target.alkalinity_as_caco3": {
+      "text": "40.0 ppm",
+      "number": "40.0",
+      "unit": "ppm"
+    },
+    "water.mash_adjustment.calcium_ca": {
+      "text": "10.0 ppm",
+      "number": "10.0",
+      "unit": "ppm"
+    },
+    "water.mash_adjustment.magnesium_mg": {
+      "text": "2.0 ppm",
+      "number": "2.0",
+      "unit": "ppm"
+    },
+    "water.mash_adjustment.sodium_na": {
+      "text": "3.0 ppm",
+      "number": "3.0",
+      "unit": "ppm"
+    },
+    "water.mash_adjustment.sulfate_so4": {
+      "text": "80.0 ppm",
+      "number": "80.0",
+      "unit": "ppm"
+    },
+    "water.mash_adjustment.chloride_cl": {
+      "text": "45.0 ppm",
+      "number": "45.0",
+      "unit": "ppm"
+    },
+    "water.mash_adjustment.alkalinity_as_caco3": {
+      "text": "-3.0 ppm",
+      "number": "-3.0",
+      "unit": "ppm"
+    },
+    "solver.water.strategy": {
+      "text": "Best fit (all six)",
+      "number": null,
+      "unit": null
+    },
+    "solver.water.prescription.predicted_mash_ph": {
+      "text": "5.42 pH",
+      "number": "5.42",
+      "unit": "pH"
+    },
+    "solver.water.prescription.mash_ph_status": {
+      "text": "Optimal",
+      "number": null,
+      "unit": null
+    },
+    "solver.water.post_dose_mash_ions.calcium_ca": {
+      "text": "52.0 ppm",
+      "number": "52.0",
+      "unit": "ppm"
+    },
+    "solver.water.post_dose_mash_ions.magnesium_mg": {
+      "text": "10.0 ppm",
+      "number": "10.0",
+      "unit": "ppm"
+    },
+    "solver.water.post_dose_mash_ions.sodium_na": {
+      "text": "15.0 ppm",
+      "number": "15.0",
+      "unit": "ppm"
+    },
+    "solver.water.post_dose_mash_ions.sulfate_so4": {
+      "text": "100.0 ppm",
+      "number": "100.0",
+      "unit": "ppm"
+    },
+    "solver.water.post_dose_mash_ions.chloride_cl": {
+      "text": "60.0 ppm",
+      "number": "60.0",
+      "unit": "ppm"
+    },
+    "solver.water.post_dose_mash_ions.alkalinity_as_caco3": {
+      "text": "35.0 ppm",
+      "number": "35.0",
+      "unit": "ppm"
     },
     "batch.target_abv": {
       "text": "5.5%",
@@ -8762,13 +9412,28 @@
       "fingerprint": "sha256:2222",
       "telemetry": [
         {
-          "code": "ROUTER_MODE_1_LINEAR_FLAVOR",
+          "code": "ROUTER_MODE_3_NONLINEAR_CLONE",
+          "category": "ROUTER",
           "severity": "INFO",
-          "message": "Sulfate/chloride targets only."
+          "message": "Routed to Non-Linear Cloner Engine (Mode 3: Profile Clone). Objective: Minimizing weighted sum of squared errors (SSE) across all 6 ions simultaneously.",
+          "context": {}
+        },
+        {
+          "code": "OPT_CLONE_WEIGHTED_COMPROMISE",
+          "category": "OPTIMIZATION",
+          "severity": "NOTE",
+          "message": "Profile compromise accepted: Prioritized enzymatic ions (Ca2+ error: +2.0 ppm, Alk error: -5.0 ppm); accepted variance on sensory counter-ions (Na+ error: +0.0 ppm).",
+          "context": {
+            "ca_error": 2.0,
+            "alk_error": -5.0,
+            "na_error": 0.0
+          }
         }
       ],
       "warnings": [],
-      "notes": []
+      "notes": [
+        "Profile compromise accepted: Prioritized enzymatic ions (Ca2+ error: +2.0 ppm, Alk error: -5.0 ppm); accepted variance on sensory counter-ions (Na+ error: +0.0 ppm)."
+      ]
     },
     "solver.hops": {
       "binding": "hop_bitterness_solver",
@@ -8778,5 +9443,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:b8c5c345138debc87be01eb7f9d8de39031ba58818354648ff4234eac65a5c00"
+  "content_hash": "sha256:5894dab21449e89fd2a6f1ac41b104967dd0f18cfcf9e8648cc9f6b53eb887dc"
 }

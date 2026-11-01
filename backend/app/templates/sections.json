@@ -24,6 +24,10 @@
     "title": "Liquor Ledger"
   },
   {
+    "id": "water-chemistry",
+    "title": "Water Chemistry"
+  },
+  {
     "id": "limits",
     "title": "Limits"
   }

@@ -165,8 +165,27 @@ export const waterRegistry = {
   "water.target_mash_ph": { label: "Target mash pH", unit: "pH" },
   "batch.sparge_salted_volume": { label: "Sparge salt dosing volume", unit: "L" },
 
+  "solver.water.strategy": {
+    label: "Resolved strategy",
+    optionLabels: {
+      FLAVOR: "Flavor",
+      CALCIUM_FLOOR: "Calcium floor",
+      OPTIMIZE: "Best fit (all six)",
+      AUTO: "Auto",
+      HYBRID: "Ratio + buffer",
+      BASELINE: "Baseline",
+      CUSTOM: "Custom sparse",
+    },
+  },
   "solver.water.prescription.predicted_mash_ph": { label: "Predicted mash pH", unit: "pH", decimals: 2 },
-  "solver.water.prescription.mash_ph_status": { label: "Mash pH status" },
+  "solver.water.prescription.mash_ph_status": {
+    label: "Mash pH status",
+    optionLabels: {
+      OPTIMAL: "Optimal",
+      LOW: "Low",
+      HIGH: "High",
+    },
+  },
   "solver.water.prescription.residual_hlt_water_l": { label: "Residual HLT water", unit: "L" },
 
   "solver.water.mash_additions.gypsum_kg": { label: "Mash gypsum", displayUnit: "g", decimals: 1 },

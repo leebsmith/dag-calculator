@@ -1309,6 +1309,53 @@
         ]
       }
     },
+    "ion_net_change": {
+      "params": [
+        "final",
+        "source"
+      ],
+      "returns": "concentration",
+      "body": {
+        "op": "if",
+        "args": [
+          {
+            "op": "and",
+            "args": [
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "final"
+                  },
+                  -1e308
+                ]
+              },
+              {
+                "op": "gt",
+                "args": [
+                  {
+                    "ref": "source"
+                  },
+                  -1e308
+                ]
+              }
+            ]
+          },
+          {
+            "op": "-",
+            "args": [
+              {
+                "ref": "final"
+              },
+              {
+                "ref": "source"
+              }
+            ]
+          },
+          null
+        ]
+      }
+    },
     "sulfate_chloride_ratio": {
       "params": [
         "sulfate",
@@ -3170,6 +3217,108 @@
       },
       "output": {
         "dimension": "dimensionless"
+      }
+    },
+    "water.mash_adjustment.calcium_ca": {
+      "kind": "derived",
+      "inputs": {
+        "source": "water.source.calcium_ca",
+        "final": "solver.water.post_dose_mash_ions.calcium_ca"
+      },
+      "expr": {
+        "call": "ion_net_change",
+        "args": [
+          { "ref": "final" },
+          { "ref": "source" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.mash_adjustment.magnesium_mg": {
+      "kind": "derived",
+      "inputs": {
+        "source": "water.source.magnesium_mg",
+        "final": "solver.water.post_dose_mash_ions.magnesium_mg"
+      },
+      "expr": {
+        "call": "ion_net_change",
+        "args": [
+          { "ref": "final" },
+          { "ref": "source" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.mash_adjustment.sodium_na": {
+      "kind": "derived",
+      "inputs": {
+        "source": "water.source.sodium_na",
+        "final": "solver.water.post_dose_mash_ions.sodium_na"
+      },
+      "expr": {
+        "call": "ion_net_change",
+        "args": [
+          { "ref": "final" },
+          { "ref": "source" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.mash_adjustment.sulfate_so4": {
+      "kind": "derived",
+      "inputs": {
+        "source": "water.source.sulfate_so4",
+        "final": "solver.water.post_dose_mash_ions.sulfate_so4"
+      },
+      "expr": {
+        "call": "ion_net_change",
+        "args": [
+          { "ref": "final" },
+          { "ref": "source" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.mash_adjustment.chloride_cl": {
+      "kind": "derived",
+      "inputs": {
+        "source": "water.source.chloride_cl",
+        "final": "solver.water.post_dose_mash_ions.chloride_cl"
+      },
+      "expr": {
+        "call": "ion_net_change",
+        "args": [
+          { "ref": "final" },
+          { "ref": "source" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
+      }
+    },
+    "water.mash_adjustment.alkalinity_as_caco3": {
+      "kind": "derived",
+      "inputs": {
+        "source": "water.source.total_alkalinity_caco3",
+        "final": "solver.water.post_dose_mash_ions.alkalinity_as_caco3"
+      },
+      "expr": {
+        "call": "ion_net_change",
+        "args": [
+          { "ref": "final" },
+          { "ref": "source" }
+        ]
+      },
+      "output": {
+        "dimension": "concentration"
       }
     },
     "grist.major_malts": {

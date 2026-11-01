@@ -36,6 +36,7 @@ SECTION_IDS = (
     "yeast",
     "volume-ledger",
     "liquor-ledger",
+    "water-chemistry",
     "limits",
 )
 
@@ -175,6 +176,21 @@ LIQUOR_PRESENCE_PROBE = (
     "#metadata(present-liquor-ledger()) <probe>\n"
 )
 
+WATER_PRESENCE_PROBE = (
+    '#import "sections/water-chemistry.typ": present-water-chemistry\n'
+    "#metadata(present-water-chemistry()) <probe>\n"
+)
+
+WATER_ROW_PROBE = (
+    '#import "sections/water-chemistry.typ": ion-rows\n'
+    "#metadata(ion-rows.map(row => row.label)) <probe>\n"
+)
+
+WATER_EVENT_PROBE = (
+    '#import "sections/water-chemistry.typ": ordered-events\n'
+    '#metadata(ordered-events().map(event => event.at("severity"))) <probe>\n'
+)
+
 BATCH_FACTS_PROBE = (
     '#import "sections/batch-facts.typ": present-batch-facts\n'
     "#metadata(present-batch-facts()) <probe>\n"
@@ -310,6 +326,49 @@ def test_liquor_ledger_is_absent_without_the_hlt_budget() -> None:
         render(root, "liquor-ledger")
 
 
+def test_water_chemistry_is_present_with_the_treated_mash(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_PRESENCE_PROBE) is True
+
+
+def test_water_chemistry_is_absent_without_the_final_vector() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["solver.water.post_dose_mash_ions.calcium_ca"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_PRESENCE_PROBE) is False
+        render(root, "water-chemistry")
+
+
+def test_the_water_table_has_one_row_per_working_ion(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_ROW_PROBE) == [
+        "Calcium",
+        "Magnesium",
+        "Sodium",
+        "Sulfate",
+        "Chloride",
+        "Alkalinity (as CaCO₃)",
+    ]
+
+
+def test_water_telemetry_reads_problems_first() -> None:
+    # The fixture has a NOTE and an INFO; add a WARNING to prove severity order.
+    bundle = fixture()
+    bundle["telemetry"]["solver.water"]["telemetry"].append(
+        {
+            "code": "GUARDRAIL_TEST",
+            "category": "GUARDRAIL",
+            "severity": "WARNING",
+            "message": "A warning.",
+            "context": {},
+        }
+    )
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_EVENT_PROBE) == ["WARNING", "NOTE", "INFO"]
+
+
 def test_limits_is_present_with_the_feasibility_bound(shared_root: Path) -> None:
     assert probe(shared_root, LIMITS_PRESENCE_PROBE) is True
 
@@ -401,6 +460,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
         "yeast",
         "volume-ledger",
         "liquor-ledger",
+        "water-chemistry",
         "limits",
     ]
 

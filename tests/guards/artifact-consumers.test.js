@@ -63,6 +63,14 @@ const HOST_NODES = new Set([
   "water.kettle_blend.alkalinity_as_caco3",
   "water.kettle_blend.sulfate_chloride_ratio",
   "water.target.sulfate_chloride_ratio",
+  // Net source-to-treated-mash ion change, printed by the report's
+  // water-chemistry table. The UI keeps its own display delta.
+  "water.mash_adjustment.calcium_ca",
+  "water.mash_adjustment.magnesium_mg",
+  "water.mash_adjustment.sodium_na",
+  "water.mash_adjustment.sulfate_so4",
+  "water.mash_adjustment.chloride_cl",
+  "water.mash_adjustment.alkalinity_as_caco3",
 ]);
 
 function collectConstants(value, out) {

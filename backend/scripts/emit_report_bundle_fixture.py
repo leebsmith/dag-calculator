@@ -161,6 +161,10 @@ RECORD = {
             "laboratory": "Ward Labs",
             "source_name": "City tap",
             "calcium_ca": 42.0,
+            "magnesium_mg": 8.0,
+            "sodium_na": 12.0,
+            "sulfate_so4": 20.0,
+            "chloride_cl": 15.0,
             "total_alkalinity_caco3": 38.0,
         },
         "style": {"id": "18B", "name": "American Pale Ale", "og_min": 1.045, "og_max": 1.060},
@@ -201,7 +205,18 @@ RECORD = {
             "flocculation": "Medium",
             "sta1": True,
         },
-        "water.target_profile": {"id": "pale-ale", "name": "Pale ale target"},
+        "water.target_profile": {
+            "id": "pale-ale",
+            "name": "Pale ale target",
+            "calcium_floor_ppm": 50.0,
+            "calcium_ca": 50.0,
+            "magnesium_mg": 10.0,
+            "sodium_na": 15.0,
+            "sulfate_so4": 100.0,
+            "chloride_cl": 60.0,
+            "alkalinity_as_caco3": 40.0,
+            "mode": "OPTIMIZE",
+        },
     },
     "provenance": {
         "batch.yeast": {"source_template_id": "us-05"},
@@ -316,9 +331,28 @@ RECORD = {
         "batch.delta_v_evap": 3.0,
         "batch.late_addition_volume_l": 0.5,
         "batch.shrinkage_volume_l": 0.9,
+        "water.target.calcium_ca": 50.0,
+        "water.target.magnesium_mg": 10.0,
+        "water.target.sodium_na": 15.0,
+        "water.target.sulfate_so4": 100.0,
+        "water.target.chloride_cl": 60.0,
+        "water.target.alkalinity_as_caco3": 40.0,
+        "water.mash_adjustment.calcium_ca": 10.0,
+        "water.mash_adjustment.magnesium_mg": 2.0,
+        "water.mash_adjustment.sodium_na": 3.0,
+        "water.mash_adjustment.sulfate_so4": 80.0,
+        "water.mash_adjustment.chloride_cl": 45.0,
+        "water.mash_adjustment.alkalinity_as_caco3": -3.0,
         "solver.water": {
-            "strategy": "CALCIUM_FLOOR",
+            "strategy": "OPTIMIZE",
             "prescription.predicted_mash_ph": 5.42,
+            "prescription.mash_ph_status": "OPTIMAL",
+            "post_dose_mash_ions.calcium_ca": 52.0,
+            "post_dose_mash_ions.magnesium_mg": 10.0,
+            "post_dose_mash_ions.sodium_na": 15.0,
+            "post_dose_mash_ions.sulfate_so4": 100.0,
+            "post_dose_mash_ions.chloride_cl": 60.0,
+            "post_dose_mash_ions.alkalinity_as_caco3": 35.0,
             "total_added_salt_mass_g": 3.0,
         },
         "solver.hops": {
@@ -366,13 +400,34 @@ PAYLOAD = FreezePayload(
                 fingerprint="sha256:2222",
                 telemetry=[
                     {
-                        "code": "ROUTER_MODE_1_LINEAR_FLAVOR",
+                        "code": "ROUTER_MODE_3_NONLINEAR_CLONE",
+                        "category": "ROUTER",
                         "severity": "INFO",
-                        "message": "Sulfate/chloride targets only.",
-                    }
+                        "message": (
+                            "Routed to Non-Linear Cloner Engine (Mode 3: Profile Clone). "
+                            "Objective: Minimizing weighted sum of squared errors (SSE) across "
+                            "all 6 ions simultaneously."
+                        ),
+                        "context": {},
+                    },
+                    {
+                        "code": "OPT_CLONE_WEIGHTED_COMPROMISE",
+                        "category": "OPTIMIZATION",
+                        "severity": "NOTE",
+                        "message": (
+                            "Profile compromise accepted: Prioritized enzymatic ions "
+                            "(Ca2+ error: +2.0 ppm, Alk error: -5.0 ppm); accepted variance on "
+                            "sensory counter-ions (Na+ error: +0.0 ppm)."
+                        ),
+                        "context": {"ca_error": 2.0, "alk_error": -5.0, "na_error": 0.0},
+                    },
                 ],
                 warnings=[],
-                notes=[],
+                notes=[
+                    "Profile compromise accepted: Prioritized enzymatic ions "
+                    "(Ca2+ error: +2.0 ppm, Alk error: -5.0 ppm); accepted variance on "
+                    "sensory counter-ions (Na+ error: +0.0 ppm)."
+                ],
             ),
             "solver.hops": BoundaryTelemetry(
                 binding="hop_bitterness_solver",
@@ -724,7 +779,7 @@ PAYLOAD = FreezePayload(
             ),
             "solver.water": NodePresentation(label="Water solver"),
             "solver.water.strategy": NodePresentation(
-                label="Strategy",
+                label="Resolved strategy",
                 options=[
                     "FLAVOR",
                     "CALCIUM_FLOOR",
@@ -734,9 +789,98 @@ PAYLOAD = FreezePayload(
                     "BASELINE",
                     "CUSTOM",
                 ],
+                option_labels={
+                    "FLAVOR": "Flavor",
+                    "CALCIUM_FLOOR": "Calcium floor",
+                    "OPTIMIZE": "Best fit (all six)",
+                    "AUTO": "Auto",
+                    "HYBRID": "Ratio + buffer",
+                    "BASELINE": "Baseline",
+                    "CUSTOM": "Custom sparse",
+                },
             ),
             "solver.water.total_added_salt_mass_g": NodePresentation(
                 label="Added salt mass", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.prescription.mash_ph_status": NodePresentation(
+                label="Mash pH status",
+                options=["OPTIMAL", "LOW", "HIGH"],
+                option_labels={"OPTIMAL": "Optimal", "LOW": "Low", "HIGH": "High"},
+            ),
+            "solver.water.post_dose_mash_ions.calcium_ca": NodePresentation(
+                label="Calcium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "solver.water.post_dose_mash_ions.magnesium_mg": NodePresentation(
+                label="Magnesium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "solver.water.post_dose_mash_ions.sodium_na": NodePresentation(
+                label="Sodium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "solver.water.post_dose_mash_ions.sulfate_so4": NodePresentation(
+                label="Sulfate", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "solver.water.post_dose_mash_ions.chloride_cl": NodePresentation(
+                label="Chloride", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "solver.water.post_dose_mash_ions.alkalinity_as_caco3": NodePresentation(
+                label="Alkalinity", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.calcium_ca": NodePresentation(
+                label="Calcium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.magnesium_mg": NodePresentation(
+                label="Magnesium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.sodium_na": NodePresentation(
+                label="Sodium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.sulfate_so4": NodePresentation(
+                label="Sulfate", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.chloride_cl": NodePresentation(
+                label="Chloride", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.total_alkalinity_caco3": NodePresentation(
+                label="Alkalinity", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.source.laboratory": NodePresentation(label="Laboratory"),
+            "water.source.report_id": NodePresentation(label="Report ID"),
+            "water.target_profile.name": NodePresentation(label="Target profile"),
+            "water.target.calcium_ca": NodePresentation(
+                label="Calcium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.target.magnesium_mg": NodePresentation(
+                label="Magnesium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.target.sodium_na": NodePresentation(
+                label="Sodium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.target.sulfate_so4": NodePresentation(
+                label="Sulfate", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.target.chloride_cl": NodePresentation(
+                label="Chloride", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.target.alkalinity_as_caco3": NodePresentation(
+                label="Alkalinity", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.mash_adjustment.calcium_ca": NodePresentation(
+                label="Calcium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.mash_adjustment.magnesium_mg": NodePresentation(
+                label="Magnesium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.mash_adjustment.sodium_na": NodePresentation(
+                label="Sodium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.mash_adjustment.sulfate_so4": NodePresentation(
+                label="Sulfate", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.mash_adjustment.chloride_cl": NodePresentation(
+                label="Chloride", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
+            "water.mash_adjustment.alkalinity_as_caco3": NodePresentation(
+                label="Alkalinity", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
             ),
             "solver.hops": NodePresentation(label="Hop solver"),
             "solver.water.prescription.predicted_mash_ph": NodePresentation(
@@ -999,6 +1143,66 @@ PAYLOAD = FreezePayload(
         "batch.yeast.sta1": FormattedValue(text="true"),
         "style.name": FormattedValue(text="American Pale Ale"),
         "water.source.source_name": FormattedValue(text="City tap"),
+        "water.source.laboratory": FormattedValue(text="Ward Labs"),
+        "water.source.report_id": FormattedValue(text="w-2026-01"),
+        "water.source.calcium_ca": FormattedValue(text="42.0 ppm", number="42.0", unit="ppm"),
+        "water.source.magnesium_mg": FormattedValue(text="8.0 ppm", number="8.0", unit="ppm"),
+        "water.source.sodium_na": FormattedValue(text="12.0 ppm", number="12.0", unit="ppm"),
+        "water.source.sulfate_so4": FormattedValue(text="20.0 ppm", number="20.0", unit="ppm"),
+        "water.source.chloride_cl": FormattedValue(text="15.0 ppm", number="15.0", unit="ppm"),
+        "water.source.total_alkalinity_caco3": FormattedValue(
+            text="38.0 ppm", number="38.0", unit="ppm"
+        ),
+        "water.target_profile.name": FormattedValue(text="Pale ale target"),
+        "water.target.calcium_ca": FormattedValue(text="50.0 ppm", number="50.0", unit="ppm"),
+        "water.target.magnesium_mg": FormattedValue(text="10.0 ppm", number="10.0", unit="ppm"),
+        "water.target.sodium_na": FormattedValue(text="15.0 ppm", number="15.0", unit="ppm"),
+        "water.target.sulfate_so4": FormattedValue(text="100.0 ppm", number="100.0", unit="ppm"),
+        "water.target.chloride_cl": FormattedValue(text="60.0 ppm", number="60.0", unit="ppm"),
+        "water.target.alkalinity_as_caco3": FormattedValue(
+            text="40.0 ppm", number="40.0", unit="ppm"
+        ),
+        "water.mash_adjustment.calcium_ca": FormattedValue(
+            text="10.0 ppm", number="10.0", unit="ppm"
+        ),
+        "water.mash_adjustment.magnesium_mg": FormattedValue(
+            text="2.0 ppm", number="2.0", unit="ppm"
+        ),
+        "water.mash_adjustment.sodium_na": FormattedValue(
+            text="3.0 ppm", number="3.0", unit="ppm"
+        ),
+        "water.mash_adjustment.sulfate_so4": FormattedValue(
+            text="80.0 ppm", number="80.0", unit="ppm"
+        ),
+        "water.mash_adjustment.chloride_cl": FormattedValue(
+            text="45.0 ppm", number="45.0", unit="ppm"
+        ),
+        "water.mash_adjustment.alkalinity_as_caco3": FormattedValue(
+            text="-3.0 ppm", number="-3.0", unit="ppm"
+        ),
+        "solver.water.strategy": FormattedValue(text="Best fit (all six)"),
+        "solver.water.prescription.predicted_mash_ph": FormattedValue(
+            text="5.42 pH", number="5.42", unit="pH"
+        ),
+        "solver.water.prescription.mash_ph_status": FormattedValue(text="Optimal"),
+        "solver.water.post_dose_mash_ions.calcium_ca": FormattedValue(
+            text="52.0 ppm", number="52.0", unit="ppm"
+        ),
+        "solver.water.post_dose_mash_ions.magnesium_mg": FormattedValue(
+            text="10.0 ppm", number="10.0", unit="ppm"
+        ),
+        "solver.water.post_dose_mash_ions.sodium_na": FormattedValue(
+            text="15.0 ppm", number="15.0", unit="ppm"
+        ),
+        "solver.water.post_dose_mash_ions.sulfate_so4": FormattedValue(
+            text="100.0 ppm", number="100.0", unit="ppm"
+        ),
+        "solver.water.post_dose_mash_ions.chloride_cl": FormattedValue(
+            text="60.0 ppm", number="60.0", unit="ppm"
+        ),
+        "solver.water.post_dose_mash_ions.alkalinity_as_caco3": FormattedValue(
+            text="35.0 ppm", number="35.0", unit="ppm"
+        ),
         "batch.target_abv": FormattedValue(text="5.5%", number="5.5", unit="%"),
         "mash.strike_water_temp_c": FormattedValue(text="68.3 °C", number="68.3", unit="°C"),
         "batch.topology": FormattedValue(text="Liquor-to-grist ratio"),

@@ -228,7 +228,7 @@ _19 paths_
 
 ## Water chemistry
 
-_61 paths_
+_67 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -243,6 +243,12 @@ _61 paths_
 | `water.kettle_blend.sodium_na` | Sodium | derived | concentration | ppm | 1 | — |
 | `water.kettle_blend.sulfate_chloride_ratio` | Sulfate Chloride Ratio | derived | dimensionless | — | — | — |
 | `water.kettle_blend.sulfate_so4` | Sulfate | derived | concentration | ppm | 1 | — |
+| `water.mash_adjustment.alkalinity_as_caco3` | Alkalinity | derived | concentration | ppm | 1 | — |
+| `water.mash_adjustment.calcium_ca` | Calcium | derived | concentration | ppm | 1 | — |
+| `water.mash_adjustment.chloride_cl` | Chloride | derived | concentration | ppm | 1 | — |
+| `water.mash_adjustment.magnesium_mg` | Magnesium | derived | concentration | ppm | 1 | — |
+| `water.mash_adjustment.sodium_na` | Sodium | derived | concentration | ppm | 1 | — |
+| `water.mash_adjustment.sulfate_so4` | Sulfate | derived | concentration | ppm | 1 | — |
 | `water.pinned_ions` | Pinned Ions | collection | — | — | — | — |
 | `water.pinned_ions.ion` | Ion | field | — | — | — | ca, mg, na, so4, cl, alk |
 | `water.preferred_alkaline_agent` | Alkaline agent | choice | — | — | — | BAKING_SODA, CHALK, PICKLING_LIME |
@@ -386,7 +392,7 @@ _45 paths_
 | `solver.water.sparge_additions.gypsum_kg` | Sparge gypsum | output | mass | g | 1 | — |
 | `solver.water.sparge_additions.nacl_kg` | Sparge table salt | output | mass | g | 1 | — |
 | `solver.water.sparge_additions.pickling_lime_kg` | Sparge pickling lime | output | mass | g | 1 | — |
-| `solver.water.strategy` | Strategy | output | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, AUTO, HYBRID, BASELINE, CUSTOM |
+| `solver.water.strategy` | Resolved strategy | output | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, AUTO, HYBRID, BASELINE, CUSTOM |
 | `solver.water.total_added_salt_mass_g` | Total Added Salt Mass G | output | mass | kg | 1 | — |
 
 ## Solver — hop bitterness

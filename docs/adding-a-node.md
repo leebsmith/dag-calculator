@@ -196,7 +196,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 | Fermentation geometry (styles' OE/AE feasible regions) | host geometry; ASBC/Cutaia primitives call artifact functions | `frontend/src/engine/fermentation.js`, `engine/artifactFunctions.js` |
 | Mash ordering, schedule validation, and preset application | host | `frontend/src/views/mash.js`, `adapters/cards/mash.js` |
 | Scale-pin targets/previews (ABV/OG/FG) | host | `frontend/src/adapters/cards/{style,late-additions}.js`, `docs/attenuation-model.md` §6.1 |
-| Water readout deltas and ratio formatting | host | `frontend/src/adapters/cards/water.js`, `views/waterRatio.js` |
+| Water readout deltas and ratio formatting | host (UI); the report's source-to-final adjustment is artifact-owned | `frontend/src/adapters/cards/water.js`, `views/waterRatio.js`; `water.mash_adjustment.calcium_ca` in `data/artifact.json` |
 | Presentation overrides (polymorphic labels, hints, clamp envelopes) | host | `frontend/src/views/registry/presentation.js` |
 | Card node-id references | host registry | `frontend/src/views/registry/*.js` |
 

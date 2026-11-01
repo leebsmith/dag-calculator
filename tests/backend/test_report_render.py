@@ -45,6 +45,7 @@ SECTIONS = (
     "yeast",
     "volume-ledger",
     "liquor-ledger",
+    "water-chemistry",
     "limits",
 )
 
