@@ -21,10 +21,12 @@ export const batchRegistry = {
   },
   "batch.mash_thickness_l_per_kg": {
     label: "Liquor-to-Grist Ratio",
+    decimals: 2,
     hint: "Strike water per grist mass; follows the Mash Thickness unit preference.",
   },
   "batch.runoff_ratio": {
     label: "Runoff Ratio r",
+    decimals: 2,
     hint: "V_run1 / V_run2; 1.0 is equal runnings.",
   },
   "batch.hlt_starting_volume_l": { label: "HLT starting volume", unit: "L" },

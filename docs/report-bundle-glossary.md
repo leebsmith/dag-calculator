@@ -78,7 +78,7 @@ _124 paths_
 | `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
 | `batch.runnings_ratio` | Runnings ratio (r) | derived | dimensionless | — | 2 | — |
-| `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | — | — | — |
+| `batch.runoff_ratio` | Runoff Ratio r | root | dimensionless | — | 2 | — |
 | `batch.s_late_add` | Dose extract | derived | mass | kg | 1 | — |
 | `batch.s_late_add_request` | S Late Add Request | derived | mass | kg | 1 | — |
 | `batch.scale_pin` | Scale Pin | choice | — | — | — | abv, og, fg |

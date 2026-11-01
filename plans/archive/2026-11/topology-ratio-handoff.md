@@ -35,23 +35,23 @@ topology switch.
 
 ## Checklist
 
-- [ ] Mark `batch.mash_thickness_l_per_kg` and `batch.runoff_ratio` in the batch
+- [x] Mark `batch.mash_thickness_l_per_kg` and `batch.runoff_ratio` in the batch
   step with their active topology and their inactive solved path.
-- [ ] Project the inactive field as a readout with its solved-path value and a
+- [x] Project the inactive field as a readout with its solved-path value and a
   derived label; keep the active field editable.
-- [ ] Pass the current topology into the field projector and resolve
+- [x] Pass the current topology into the field projector and resolve
   `valuePath` in scalar valuation, with a root fallback while a boundary is
   pending.
-- [ ] Replace `resetIntensiveValue` with a solved-value handoff that runs
+- [x] Replace `resetIntensiveValue` with a solved-value handoff that runs
   before the topology write.
-- [ ] Remove the duplicate Mash Thickness and Runnings Ratio rows from the
+- [x] Remove the duplicate Mash Thickness and Runnings Ratio rows from the
   Derived Anchors table.
-- [ ] Add frontend tests for both swap directions, both handoffs, the inactive
+- [x] Add frontend tests for both swap directions, both handoffs, the inactive
   readout value, and the absence of continuous root write-back.
-- [ ] Keep the existing report test that Brewhouse prints the solved pair under
+- [x] Keep the existing report test that Brewhouse prints the solved pair under
   either topology; update docs if the UI description changes.
-- [ ] Run `make check`, `make test`, and `make verify`.
-- [ ] Archive the plan.
+- [x] Run `make check`, `make test`, and `make verify`.
+- [x] Archive the plan.
 
 ## Acceptance
 

@@ -156,9 +156,18 @@ export function createStepView({
     app.styleConformance = app.styleConformanceReport?.() ?? null;
     app.styleSai = app.styleConformance?.sai ?? null;
 
+    let topology;
+    try {
+      topology = engine.get("batch.topology");
+    } catch (err) {
+      reportError("stepView.topology", err);
+      topology = undefined;
+    }
+
     const all = produce(artifact, steps, registry, engine, {
       references: cache.references,
       ui,
+      topology,
       fieldDomains: fieldDomainIndex,
       collectionDomains: collectionIndex,
       conformance: app.styleConformance,
@@ -172,13 +181,6 @@ export function createStepView({
     app.findingsById = Object.fromEntries(
       app.findings.map((finding) => [finding.id, finding])
     );
-    let topology;
-    try {
-      topology = engine.get("batch.topology");
-    } catch (err) {
-      reportError("stepView.findingTopology", err);
-      topology = undefined;
-    }
     app.pinFindingAvailable =
       app.boundaryStatuses?.["solver.batch"] === "ok" && topology === "runoff_ratio";
     app.domains = safe(() => engine.domainStates());

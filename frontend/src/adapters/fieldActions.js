@@ -8,6 +8,7 @@ import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { clampBoundsFor } from "../views/registry/presentation.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
+import { reportError } from "../observability.js";
 
 export function installFieldActions(app, { artifact, session, refToSelectionMap }) {
   Object.assign(app, {
@@ -86,6 +87,8 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       if (field.control === "number" && field.dimension && field.unitId && value !== "") {
         raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
       }
+      // The handoff must read the old solve before the topology root changes.
+      if (field.target.nodeId === N.topology) this.handoffIntensiveValue(raw);
       // Store the raw value live (no envelope clamp here): clamping on every
       // keystroke fights the user mid-typing, so it is deferred to commitField
       // on blur. The report-only relations still flag out-of-range values.
@@ -93,7 +96,6 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       if (field.control === "selection-picker") {
         this.pickSelection(field.target.nodeId, raw);
       }
-      if (field.target.nodeId === N.topology) this.resetIntensiveValue(raw);
       if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
       this.scheduleSolve();
       this.notify();
@@ -133,15 +135,30 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       this.notify();
     },
 
-    // Switching topology reinterprets which intensive root is live, so reset the
-    // newly active root to its topology's sensible default (mirrors the legacy
-    // onTopologyChange). The inactive root is left untouched.
-    resetIntensiveValue(topology) {
-      const [nodeId, constant] =
+    // Switching topology reinterprets which intensive root is live. The new
+    // active root inherits the current solved value, so the physical mash does
+    // not jump to a constant default; fall back to the default only when the
+    // solve is unavailable.
+    handoffIntensiveValue(topology) {
+      const engine = session.getEngine();
+      const [nodeId, sourcePath, constant] =
         topology === "runoff_ratio"
-          ? [N.runoffRatio, "default_runoff_ratio"]
-          : [N.mashThickness, "default_mash_thickness_l_per_kg"];
-      const value = artifact.constants[constant]?.value;
+          ? [N.runoffRatio, "batch.runnings_ratio", "default_runoff_ratio"]
+          : [
+              N.mashThickness,
+              "solver.batch.mash_thickness_l_per_kg",
+              "default_mash_thickness_l_per_kg",
+            ];
+      let solved;
+      try {
+        solved = engine.resolve(sourcePath);
+      } catch (err) {
+        reportError("fieldActions.handoffIntensiveValue", err);
+      }
+      const value =
+        typeof solved === "number" && Number.isFinite(solved) && solved > 0
+          ? solved
+          : artifact.constants[constant]?.value;
       if (typeof value === "number") this.setRoot(nodeId, value);
     },
 
@@ -273,4 +290,4 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
   });
 }
 
-export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "resetIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];
+export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

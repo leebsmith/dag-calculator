@@ -9,35 +9,53 @@ import { applyPresentation, presentationFor } from "../registry/presentation.js"
 import { formatCell } from "./cell.js";
 import { reportError } from "../../observability.js";
 
+// Resolve a field's value, falling back to its authored root when a mirrored
+// solved path is not available yet. A failure is reported, never swallowed.
+function resolveFieldValue(field, engine) {
+  const sourcePath = field.valuePath ?? field.id;
+  try {
+    return { ok: true, value: engine.resolve(sourcePath) };
+  } catch (err) {
+    if (!field.valuePath) {
+      reportError("producer.scalar.value", err);
+      return { ok: false };
+    }
+    try {
+      return { ok: true, value: engine.resolve(field.id) };
+    } catch (fallbackError) {
+      reportError("producer.scalar.value", fallbackError);
+      return { ok: false };
+    }
+  }
+}
+
+function resolveUnit(field, unitMode) {
+  const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));
+  const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
+  const dimDef = toggleable ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension) : null;
+  const baseUnitId = dimDef?.units[0]?.[0] ?? null;
+  const inheritedUnitId = toggleable
+    ? field.displayUnit ?? unitMode[field.dimension] ?? dimDef?.default ?? null
+    : null;
+  const unitModeKey = field.valuePath ?? field.id;
+  const unitId = toggleable ? unitMode[unitModeKey] ?? inheritedUnitId : null;
+  return { toggleable, baseUnitId, inheritedUnitId, unitId };
+}
+
 // AI AGENT HOOKS: Use this valuator for scalar field resolution and display
 // units. Do not duplicated this logic elsewhere.
 export function valuateScalar(field, engine, ctx, nl) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
   const fieldDomains = ctx.fieldDomains ?? {};
-  // A field whose value cannot be resolved (e.g. a boundary that has not been
-  // pre-resolved or failed) is deferred rather than crashing the view.
-  let value;
-  try {
-    value = engine.resolve(field.id);
-  } catch (err) {
-    reportError("producer.scalar.value", err);
-    return null;
-  }
-  const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));
-  const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
+  const resolved = resolveFieldValue(field, engine);
+  if (!resolved.ok) return null;
+  const value = resolved.value;
   // Display-only unit resolution (the base value stays canonical). A registry
   // `displayUnit` is a PIN — the field's preferred unit (e.g. salt in g) that
   // the master menu must not override. Precedence:
   //   per-field override → pin (displayUnit) → master (menu) → base unit.
-  const dimDef = toggleable ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension) : null;
-  const baseUnitId = dimDef?.units[0]?.[0] ?? null;
-  // Inherited unit = pin → master pick → dimension's preferred default (e.g.
-  // color defaults to EBC, matching the legacy metric default) → base.
-  const inheritedUnitId = toggleable
-    ? field.displayUnit ?? unitMode[field.dimension] ?? dimDef?.default ?? null
-    : null;
-  const unitId = toggleable ? unitMode[field.id] ?? inheritedUnitId : null;
+  const { toggleable, baseUnitId, inheritedUnitId, unitId } = resolveUnit(field, unitMode);
   const shown =
     unitId && typeof value === "number" && artifact
       ? fromBase(artifact, field.dimension, unitId, value, nl)

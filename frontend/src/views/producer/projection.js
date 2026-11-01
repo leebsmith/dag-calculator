@@ -165,6 +165,35 @@ function tableField(step, entry) {
   };
 }
 
+function fieldActivation(entry, info, meta, ctx) {
+  const activeWhen = typeof entry === "object" ? entry.activeWhen : null;
+  const active = !activeWhen || ctx.topology === activeWhen.equals;
+  if (!active) {
+    return { active, role: "readout", control: "readout", editable: false };
+  }
+  const role = (typeof entry === "object" && entry.role) || (info.isInput ? "input" : "readout");
+  let control = (typeof entry === "object" && entry.control) || meta.control;
+  if (!control) control = info.isInput ? defaultControl(info.node) : "readout";
+  return {
+    active,
+    role,
+    control,
+    editable: role === "input" && rendererFor(control).editable,
+  };
+}
+
+function fieldCopy(entry, meta, id, active) {
+  if (active) {
+    return { valuePath: null, label: meta.label ?? id, hint: meta.hint ?? null };
+  }
+  const extra = typeof entry === "object" ? entry : {};
+  return {
+    valuePath: extra.inactiveValuePath ?? null,
+    label: extra.inactiveLabel || meta.label || id,
+    hint: extra.inactiveHint || meta.hint || null,
+  };
+}
+
 // A reference root (dimension "reference") names the selection node whose
 // `ref` points back at it. That selection's schema keys the reference set.
 function referenceSchema(artifact, rootId) {
@@ -202,13 +231,8 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
       const id = typeof entry === "string" ? entry : entry.id;
       const info = describeField(artifact, id);
       const meta = registry[id] ?? {};
-      const role = (typeof entry === "object" && entry.role) || (info.isInput ? "input" : "readout");
-      let control = (typeof entry === "object" && entry.control) || meta.control;
-      if (!control) {
-        if (info.isInput) control = defaultControl(info.node);
-        else control = "readout";
-      }
-      const editable = role === "input" && rendererFor(control).editable;
+      const { active, role, control, editable } = fieldActivation(entry, info, meta, ctx);
+      const { valuePath, label, hint } = fieldCopy(entry, meta, id, active);
 
       let target = null;
       if (editable) {
@@ -231,12 +255,13 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         role,
         control,
         dimension: info.dimension ?? info.taxonomy ?? null,
-        label: meta.label ?? id,
+        label,
         unit: meta.unit ?? null,
         displayUnit: meta.displayUnit ?? null,
         symbol: meta.symbol ?? null,
         decimals: meta.decimals ?? null,
-        hint: meta.hint ?? null,
+        hint,
+        valuePath,
         options,
         optionLabels,
         editable,

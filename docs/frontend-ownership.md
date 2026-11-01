@@ -227,6 +227,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `handleSugarEscape` | `lateAdditions` | public | 1 |
 | `handleTraceEscape` | `traceMalts` | public | 1 |
 | `handleWhirlpoolHopEscape` | `hop` | public | 1 |
+| `handoffIntensiveValue` | `fieldActions` | public | 0 |
 | `hopActiveIndex` | `hop` | public | 1 |
 | `hopActiveRow` | `hop` | hidden | 1 |
 | `hopAlpha` | `hop` | public | 0 |
@@ -430,7 +431,6 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `reportFormattedTables` | `snapshot` | public | 0 |
 | `reportInputs` | `snapshot` | public | 0 |
 | `resetField` | `fieldActions` | public | 2 |
-| `resetIntensiveValue` | `fieldActions` | public | 0 |
 | `resetScaleTarget` | `styleTargets` | public | 1 |
 | `resetSeededRoots` | `fieldActions` | public | 0 |
 | `resetStyleTarget` | `styleNavigator` | public | 0 |
