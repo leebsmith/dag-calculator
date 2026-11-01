@@ -20,7 +20,8 @@
   deferred observations, raw/corrected/method, automated hydrometer and
   refractometer corrections, variance, sealing and the printable Brew Sheet.
   Phase 3 (calibration and cooling-curve promotion) remains. See
-  `plans/brew-checklist.md`, `plans/brew-session.md` and
+  `plans/archive/2026-11/brew-checklist.md`,
+  `plans/archive/2026-11/brew-session.md` and
   `plans/brew-measurement-promotion.md`.
 
 ## Later
@@ -122,7 +123,7 @@ Not needed by the current artifact; add only when a node requires them:
 ## Done
 
 * **Style targets ±2 JND** — SRM/IBU sliders reach two JNDs past the style envelope with a deviation note; scoring still grades the absolute envelope (`7e5866f`).
-* **Dry-hopping card** — event / contact-time / hop-type schedule with a catalog editor, descriptive only — `plans/hops-documentation-and-dry-hop-card.md`.
+* **Dry-hopping card** — event / contact-time / hop-type schedule with a catalog editor, descriptive only — `plans/archive/2026-11/hops-documentation-and-dry-hop-card.md`.
 * **Hop catalogue repeats** — the boil and whirlpool drawers keep a variety already in the draft and show the row count.
 * **Optimize local testing** — test-cost ledger, `make quick`, suite parallelism, memoized validation and graph build, one compile per paper — `plans/archive/2026-10/optimize-local-testing.md`.
 * **Drift gates** — scripts under the lint contract, recursive test discovery, pre-commit rules re-checked in `make check`, re-measured shape pins, docs-claims, CI on every push.

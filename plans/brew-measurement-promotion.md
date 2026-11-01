@@ -11,7 +11,7 @@ gate: make verify
 # Plan — Brew measurement promotion (Phase 3, outline)
 
 This is a scope-level outline. It is blocked by Phase 2 and by the non-DAG record
-schema layer described in [cooling-curve-determination](cooling-curve-determination.md).
+schema layer described in [cooling-curve-determination](archive/2026-11/cooling-curve-determination.md).
 It should not be detailed until that layer exists and a real session log has been
 used.
 
@@ -72,7 +72,7 @@ cooling-curve plan and should land there, not be duplicated here.
 
 - Phase 2's sealed sessions and observation rows.
 - The record schema layer and library merge from
-  [cooling-curve-determination](cooling-curve-determination.md).
+  [cooling-curve-determination](archive/2026-11/cooling-curve-determination.md).
 - The equipment identity copy-forward path in the existing library.
 - A decision on whether a calibration record is a new equipment profile or a child
   record that an equipment profile references.

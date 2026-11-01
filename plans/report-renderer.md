@@ -10,8 +10,9 @@ status: active (ten sections and the render service landed; pinned ions, style c
 
 # Report Renderer — Typst-composed, bundle-driven
 
-Status: active. Supersedes the markdown/PDF path in `plans/recipe-pipeline.md`
-and the YAML grammar in `plans/recipe-yaml-grammar.md`. The bundle contract in
+Status: active. Supersedes the markdown/PDF path in
+`plans/archive/2026-11/recipe-pipeline.md` and the YAML grammar in
+`plans/archive/2026-11/recipe-yaml-grammar.md`. The bundle contract in
 `plans/archive/2026-10/report-bundle.md` is unchanged; this plan consumes it.
 
 ## 1. Goal

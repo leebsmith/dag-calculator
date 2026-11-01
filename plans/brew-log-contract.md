@@ -172,12 +172,12 @@ Derived checks are computed, never stored:
 
 | Phase | Plan | Gate |
 |---|---|---|
-| 1 | [brew-checklist](brew-checklist.md) — planner, levels, report appendix | `make verify` |
-| 2 | [brew-session](brew-session.md) — session log, live and deferred entry, variance, Brew Sheet | `make verify` |
+| 1 | [brew-checklist](archive/2026-11/brew-checklist.md) — planner, levels, report appendix | `make verify` |
+| 2 | [brew-session](archive/2026-11/brew-session.md) — session log, live and deferred entry, variance, Brew Sheet | `make verify` |
 | 3 | [brew-measurement-promotion](brew-measurement-promotion.md) — calibration and cooling-curve records | `make verify` |
 
 Phase 2 is blocked by Phase 1. Phase 3 is blocked by Phase 2 and the record
-schema layer in [cooling-curve-determination](cooling-curve-determination.md).
+schema layer in [cooling-curve-determination](archive/2026-11/cooling-curve-determination.md).
 
 ## 10. Amendment rule
 
