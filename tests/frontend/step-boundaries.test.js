@@ -211,6 +211,7 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   const app = makeApp({ useHttp: true, fetchImpl });
   await app.boot();
   assert.equal(app.boundaryError.code, "MASH_TOO_THIN");
+  assert.equal(app.boundaryError.label, "Mash is too thin for the grain bed");
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
   assert.equal(app.engine.get("solver.batch"), undefined, "a failed boundary degrades to absent");
   assert.deepEqual(boundaryBindingErrors(), [], "the failure is boundary state, not a render error");
@@ -229,6 +230,7 @@ test("http: a failed water solve still renders the target grid", async () => {
   await app.boot();
 
   assert.equal(app.boundaryError.code, "SALT_SOLVE_FAILED");
+  assert.equal(app.boundaryError.label, "No salt dose satisfies the target");
   assert.equal(app.boundaryStatuses["solver.water"], "error");
   assert.equal(app.waterSummary.ions.length, 6);
   for (const row of app.waterSummary.ions) {

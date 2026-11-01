@@ -392,7 +392,7 @@ export function createStepApp(options = {}) {
     onState: ({ statuses, error, extras, blocked }) => {
       const target = reactiveApp ?? app;
       target.boundaryStatuses = statuses;
-      target.boundaryError = error;
+      target.boundaryError = fmt.boundaryErrorView(error);
       target.boundaryExtras = extras;
       target.boundaryBlocked = blocked;
     },

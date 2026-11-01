@@ -74,13 +74,15 @@
                   </div>
                 </div>
 
-                <div class="alert alert-warning" x-show="boundaryError">
-                  <div class="alert-header">
-                    <span class="alert-dot"></span>
-                    <span x-text="'Solver error: ' + (boundaryError && boundaryError.code ? boundaryError.code : 'unknown')"></span>
+                <template x-if="boundaryError">
+                  <div class="alert alert-warning">
+                    <div class="alert-header">
+                      <span class="alert-dot"></span>
+                      <span x-text="boundaryError.label"></span>
+                    </div>
+                    <p x-text="boundaryError.message"></p>
                   </div>
-                  <p x-text="boundaryError && boundaryError.message"></p>
-                </div>
+                </template>
 
                 <load src="src/partials/action-error.html" />
 

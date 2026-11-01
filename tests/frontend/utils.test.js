@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   EMPTY_FIELD,
   bitternessRatio,
+  boundaryErrorView,
   boundsOf,
   cellKind,
   clamp,
@@ -39,6 +40,7 @@ import {
   resultCounter,
   roundTo,
   safeHref,
+  solverErrorLabel,
   toFiniteOrNull,
   toPercentValue,
   toggleFilter,
@@ -374,4 +376,26 @@ test("safeFilename slugifies a download name", () => {
   assert.equal(safeFilename(42), "batch.json");
   assert.equal(safeFilename("Saison", ".json"), "saison.json");
   assert.equal(safeFilename("Saison", ""), "saison.json");
+});
+
+test("solverErrorLabel names declared codes and degrades to a generic label", () => {
+  assert.equal(solverErrorLabel("MASH_TUN_TOO_SMALL"), "Mash tun is too small");
+  assert.equal(
+    solverErrorLabel("BRACKET_NO_SIGN_CHANGE"),
+    "Extract target is not reachable at this mash"
+  );
+  assert.equal(solverErrorLabel("NOT_A_CODE"), "Solver error");
+  assert.equal(solverErrorLabel(""), "Solver error");
+  assert.equal(solverErrorLabel(null), "Solver error");
+  assert.equal(solverErrorLabel(42), "Solver error");
+});
+
+test("boundaryErrorView keeps the raw code and message beside the label", () => {
+  assert.deepEqual(
+    boundaryErrorView({ code: "MASH_TOO_THIN", message: "too thin" }),
+    { code: "MASH_TOO_THIN", message: "too thin", label: "Mash is too thin for the grain bed" }
+  );
+  assert.deepEqual(boundaryErrorView({}), { code: "", message: "", label: "Solver error" });
+  assert.equal(boundaryErrorView(null), null);
+  assert.equal(boundaryErrorView(undefined), null);
 });
