@@ -35,14 +35,17 @@ def first_runnings_volume(
     return v_strike + v_mc + v_sol - v_ret
 
 
-def second_runnings_volume(v_pre_boil: float, v_run1: float) -> float:
+def second_runnings_volume(v_drain: float, v_run1: float) -> float:
     """Compute the second-runnings volume ``V_run2``.
 
-    ``V_run2 = V_pre_boil - V_run1``
+    ``V_run2 = V_drain - V_run1``
+
+    ``V_drain = V_pre + mash_transfer_loss`` is the volume the tun must yield;
+    the second runnings are what the drain still needs after the first runnings.
 
     See ``domain-equations.md`` §2.4.
     """
-    return v_pre_boil - v_run1
+    return v_drain - v_run1
 
 
 def stage_extract_split(

@@ -229,11 +229,11 @@ the kettle receives only the drain's remainder.)
 Runnings, volumes, and gravities:
 
     V_run1 = V_strike + V_mc + V_sol - V_ret
-    V_run2 = V_sparge
-    V_pre  = V_run1 + V_run2
+    V_run2 = V_sparge = V_drain - V_run1
+    V_pre  = V_run1 + V_run2 - mash_transfer_loss
     S_run1 = S_conv · (1 - R_f1)
     S_run2 = S_conv · R_f1 · (1 - R_f2)
-    SG_pre = 1 + (S_run1 + S_run2) · gamma / (1000 · V_pre)
+    SG_pre = 1 + (S_run1 + S_run2) · gamma / (1000 · V_drain)
 
 Cold-side reversal (Phases 1–2). `SG_post` comes from the ABV-first inversion: the
 solver root-finds `OE` so the target ABV holds, evaluating the extract-composition

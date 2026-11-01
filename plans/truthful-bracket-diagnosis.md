@@ -59,11 +59,11 @@ failure's meaning depends on the reader knowing the taxonomy.
 
 ### Step 0 — Fixture truthfulness
 
-- [ ] 1. `backend/scripts/emit_report_bundle_fixture.py`: `cascade.v_sparge` and `cascade.v_run2` → 17.7; HLT `required`/`target` 18.7, `top_up` 3.7, `deliverable` 17.7, `surplus` 0.0; `batch.runnings_ratio` 0.46; recompute runnings and the extract chain from the corrected split (run1 1.641807, run2 1.149739, tun 2.791546, kettle 2.737655, post 3.137655, fermenter 2.852413, losses 0.37152/0.552134/0.053891/0.606025/0.285241, BE 0.736880, pre-boil SG 1.041565) in both the valuation and the formatted block.
-- [ ] 2. `docs/dag-artifacts/domain-equations.md` §2.4: `V_run2 = V_sparge` and `V_run1 + V_run2 = V_pre + mash_transfer_loss`.
-- [ ] 3. `backend/app/core/batch/cascade.py`: `second_runnings_volume`'s first parameter and docstring name `v_drain` (callers already pass the drain).
-- [ ] 4. `tests/backend/conformance/test_report_bundle_fixture.py`: a test asserting the bundle's own runnings, HLT and extract-chain identities (including the derived loss nodes and the kettle basis).
-- [ ] 5. Regenerate the fixture, then render the report to confirm both ledgers close.
+- [x] 1. `backend/scripts/emit_report_bundle_fixture.py`: `cascade.v_sparge` and `cascade.v_run2` → 17.7; HLT `required`/`target` 18.7, `top_up` 3.7, `deliverable` 17.7, `surplus` 0.0; `batch.runnings_ratio` 0.46; recompute runnings and the extract chain from the corrected split (run1 1.641807, run2 1.149739, tun 2.791546, kettle 2.737655, post 3.137655, fermenter 2.852413, losses 0.37152/0.552134/0.053891/0.606025/0.285241, BE 0.736880, pre-boil SG 1.041565) in both the valuation and the formatted block.
+- [x] 2. `docs/dag-artifacts/domain-equations.md` §2.4: `V_run2 = V_sparge` and `V_run1 + V_run2 = V_pre + mash_transfer_loss`.
+- [x] 3. `backend/app/core/batch/cascade.py`: `second_runnings_volume`'s first parameter and docstring name `v_drain` (callers already pass the drain).
+- [x] 4. `tests/backend/conformance/test_report_bundle_fixture.py`: a test asserting the bundle's own runnings, HLT and extract-chain identities (including the derived loss nodes and the kettle basis).
+- [x] 5. Regenerate the fixture, then render the report to confirm both ledgers close.
 
 ### Step 1 — Truthful diagnosis (a + b) and readable codes
 
