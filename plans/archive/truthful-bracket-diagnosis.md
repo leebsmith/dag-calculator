@@ -85,4 +85,4 @@ failure's meaning depends on the reader knowing the taxonomy.
 ### Close
 
 - [x] 17. `make generate`, `make check`, `make test`, `make build`.
-- [ ] 18. Report the suggested new error code (its name, what it would say, and what adding it would touch) without implementing it.
+- [x] 18. Report the suggested new error code (its name, what it would say, and what adding it would touch) without implementing it.
