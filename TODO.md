@@ -5,14 +5,22 @@ tracks only what is outstanding.
 
 ## Critical
 
-* **Incognito alpha is 21 % off in the catalogue.** The curated extract records
-  carry `alpha_acid_pct` 0.20–0.55 (mid 0.375) on all ten Incognito products;
-  Haas's General Use sheet says **40–55 % (w/w HPLC)**, mid 0.475. Hop mass is the
-  inverse of the allocated IBU through alpha, so every Incognito mass is
-  overstated by 21 % (0.375 / 0.475). Fix it as part of the advanced-product seed
-  pass — in `data/sources/hop-products.json`, then `make seeds-hop-products` — and
-  audit the same field on every curated extract while there. The spec sheets are
-  linked from `data/sources/yvh-products.json`. Do not fix in isolation.
+* **Catalogue alphas disagree with the manufacturer sheets.** Hop mass is the
+  inverse of the allocated IBU through alpha, so a wrong alpha scales every mass
+  in that row.
+  - **Incognito** carries `0.20–0.55` (mid `0.375`) on all ten products; Haas's
+    General Use sheet says **40–55 %** (mid `0.475`) — every mass is 21 % high.
+  - **Cryo Hops** ranges do not match YCH's 2022 overview sheet (Cascade `9–14`
+    vs **13–19**, Talus `15–20` vs **10–14**, Amarillo `15–19` vs **11–17**,
+    Cashmere `12–16` vs **14–17**, Citra `20–25` vs **22–28**), and nine varieties
+    share one `20–25` band. Cryo and Lupomax also share one range per variety, so
+    at most one brand's record can be right.
+
+  Fix it as part of the advanced-product seed pass — curate per product and per
+  brand from the linked sheets (`data/sources/hop-products.json`,
+  `data/sources/hop-products-lupulin.json`, then `make seeds`), and audit every
+  product while there. The sheets are captured in `data/sources/yvh-products.json`
+  and the YCH product pages. Do not fix in isolation.
 
 ## Next (in order)
 
