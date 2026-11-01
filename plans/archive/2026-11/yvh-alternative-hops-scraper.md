@@ -49,12 +49,31 @@ Reconnaissance on the live store:
 
 ## Steps
 
-- [ ] Add `scripts/scrape/yvh/scrape_yvh.py` and its isolated requirements
-- [ ] Add the `scrape-yvh` Makefile target and help line
-- [ ] Run it, commit `data/sources/yvh-products.json`, re-emit the sources manifest
-- [ ] Add a source-contract guard for the snapshot
-- [ ] `make check` and `make test` green
+- [x] Add `scripts/scrape/yvh/scrape_yvh.py` and its isolated requirements
+- [x] Add the `scrape-yvh` Makefile target and help line
+- [x] Run it, commit `data/sources/yvh-products.json`, re-emit the sources manifest
+- [x] Add a source-contract guard for the snapshot
+- [x] `make check` and `make test` green
 
 ## Result
 
-Filled in on completion.
+`make scrape-yvh` writes `data/sources/yvh-products.json`: 17 advanced products
+(19 under the store's advanced types, minus antifoam and haze), each with title,
+type, tags, a plain-text description, the manufacturer spec-sheet URLs, and the
+product URL. Two requests for the feed, one more for a second page; `--check`
+re-ran to zero changes, so the snapshot is reproducible.
+
+- The manifest gained the provenance entry (`mechanism: scrape`, upstream, scraper
+  path), so `sources-manifest` holds the hash and row count.
+- `tests/guards/yvh-products-source-contract.test.js` pins the record shape,
+  the sorted order, the https spec links, the brands the hop model needs, and the
+  exclusion of the two processing aids.
+- `make check` and `make test` are green (762 backend tests, the frontend suite,
+  the guards), and `make scrape-yvh CHECK=1` reports `0 change(s)`.
+
+Not in scope, as planned: no PDF is fetched and no seed record is written. The
+spec-sheet URLs are the provenance the curation step reads, and the catalogue
+seed still edits by hand one product at a time. The brands YVH does not stock
+(DynaBoost, Cryo, HyperBoost, CGX, Hop Shot, SubZero, Abstrax) need their own
+sources.
+

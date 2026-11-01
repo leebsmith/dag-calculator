@@ -102,6 +102,13 @@
       "upstream": "scripts/scrape/whitelabs_yeast_scraper.py (pinned)",
       "rows": 9,
       "sha256": "6d9982b7268f5d0668d876b57a7eb8c5068ae60807e0dc0c412e9e9aeb81527f"
+    },
+    "yvh-products.json": {
+      "mechanism": "scrape",
+      "upstream": "https://yakimavalleyhops.com/products.json (advanced hop products)",
+      "scraper": "scripts/scrape/yvh/scrape_yvh.py",
+      "rows": 17,
+      "sha256": "058eeb8b6bfb8fa19b18374967a617c3ecad8bc17591487a910effccc0c83c49"
     }
   }
 }

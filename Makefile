@@ -28,7 +28,7 @@ BJCP_EDITION ?= 2021
 
 .PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes \
-        scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
+        scrape-yeasts scrape-whitelabs scrape-hops scrape-yvh aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
         report-dev report-pages
 
 help:
@@ -55,6 +55,8 @@ help:
 	@echo "  scrape-whitelabs Crawl whitelabs.com yeasts -> data/sources/"
 	@echo "  scrape-hops     Crawl beer-analytics.com hops -> data/sources/"
 	@echo "                  (LIMIT=N for a trial, OUT=path to override output)"
+	@echo "  scrape-yvh      Crawl yakimavalleyhops.com advanced hop products -> data/sources/"
+	@echo "                  (OUT=path to override output, CHECK=1 to diff without writing)"
 	@echo "  aggregate-bjcp  Re-aggregate cached BJCP HTML into data/sources/"
 	@echo "                  (BJCP_CACHE=<dir> BJCP_EDITION=2021)"
 	@echo "  save-data       Snapshot emulator data (Firestore + Auth) to emulator-data/"
@@ -244,6 +246,11 @@ scrape-whitelabs:
 scrape-hops:
 	uv run $(SCRAPE_DEPS) python $(SCRAPE_DIR)/hop_scraper.py \
 		$(if $(LIMIT),--limit $(LIMIT),) $(if $(OUT),--out $(OUT),)
+
+scrape-yvh:
+	uv run --with-requirements $(SCRAPE_DIR)/yvh/requirements.txt \
+		python $(SCRAPE_DIR)/yvh/scrape_yvh.py \
+		$(if $(OUT),--out $(OUT),) $(if $(CHECK),--check,)
 
 # Re-aggregate a local BJCP HTML cache (populate it first with
 # scripts/scrape/bjcp/scrape_bjcp.py). HTML is never committed.

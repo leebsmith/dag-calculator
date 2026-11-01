@@ -56,6 +56,11 @@ const META = {
     upstream: "Yakima Chief Hops whirlpool addition data sheet (temperature bands)",
     builder: "scripts/build-whirlpool-notes-seed.mjs",
   },
+  "yvh-products.json": {
+    mechanism: "scrape",
+    upstream: "https://yakimavalleyhops.com/products.json (advanced hop products)",
+    scraper: "scripts/scrape/yvh/scrape_yvh.py",
+  },
   "malt-database-malts.json": {
     mechanism: "scrape",
     upstream: "malt_database (local scrape)",
