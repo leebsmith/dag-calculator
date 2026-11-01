@@ -223,6 +223,140 @@ def _abv_ceiling(
     ).abv_pct
 
 
+_FG_GRID = (1e-9, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0)
+
+
+def _fg_residual(
+    oe_plato: float,
+    inputs: BatchSolverInput,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+    target_ae: float,
+) -> float | None:
+    sg = asbc_plato_to_sg(oe_plato)
+    split = resolve_extract_split(
+        sg, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
+    )
+    if split.malt_extract_kg <= 0.0:
+        # No malt extract at this candidate: outside the physical domain, not a
+        # residual to bracket.
+        return None
+    composition = resolve_wort_composition(
+        oe_plato=oe_plato,
+        extract_total_kg=split.extract_total_kg,
+        s_late_add=split.sugar_extract_kg,
+        malt_fermentability=aa_malt,
+        yeast_cap_apparent=inputs.malt_attenuation_cap,
+        dextrin_consumption=dextrin_consumption,
+        sugar_fermentability=inputs.sugar_fermentability,
+    )
+    return composition.apparent_extract_plato - target_ae
+
+
+def _bracket_fg(
+    inputs: BatchSolverInput,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+    target_ae: float,
+) -> tuple[float, float] | None:
+    def residual(candidate: float) -> float | None:
+        return _fg_residual(
+            candidate, inputs, v_kettle_cold, aa_malt, dextrin_consumption, target_ae
+        )
+
+    previous_oe = None
+    previous = None
+    for candidate in _FG_GRID:
+        current = residual(candidate)
+        if current is None:
+            previous_oe = None
+            previous = None
+            continue
+        if abs(current) < 1e-12:
+            return candidate, candidate
+        if previous is not None and previous * current < 0.0:
+            return previous_oe, candidate
+        previous_oe, previous = candidate, current
+    return None
+
+
+def _gravity_from_abv(
+    inputs: BatchSolverInput,
+    target: float | None,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+) -> tuple[float, float]:
+    oe_plato = solve_oe_from_composition(
+        target_abv=target if target is not None else 0.0,
+        yeast_cap_apparent=inputs.malt_attenuation_cap,
+        malt_fermentability=aa_malt,
+        v_kettle_cold=v_kettle_cold,
+        s_late_add=inputs.s_late_add,
+        dextrin_consumption=dextrin_consumption,
+        sugar_extract_share=inputs.sugar_extract_share,
+        sugar_fermentability=inputs.sugar_fermentability,
+    )
+    return oe_plato, asbc_plato_to_sg(oe_plato)
+
+
+def _gravity_from_og(
+    target: float | None,
+) -> tuple[float, float]:
+    if target is None or not math.isfinite(target) or target <= 1.0:
+        raise SolverValidationError(
+            "INVALID_TARGET_OG",
+            f"Target OG must be greater than 1.000; got {target}.",
+        )
+    return sg_to_plato(target), target
+
+
+def _gravity_from_fg(
+    inputs: BatchSolverInput,
+    target: float | None,
+    v_kettle_cold: float,
+    aa_malt: float,
+    dextrin_consumption: float,
+) -> tuple[float, float]:
+    if target is None or not math.isfinite(target) or target <= 0.0:
+        raise SolverValidationError(
+            "INVALID_TARGET_FG",
+            f"Target FG must be positive; got {target}.",
+        )
+    if target < 1.0 and inputs.sta1 is not True:
+        raise SolverValidationError(
+            "FG_BELOW_ZERO_WITHOUT_STA1",
+            (
+                "An FG below 1.000 requires a diastaticus strain "
+                "(sta1 = true); select one or raise the target."
+            ),
+        )
+    target_ae = sg_to_plato(target)
+    bracket = _bracket_fg(inputs, v_kettle_cold, aa_malt, dextrin_consumption, target_ae)
+    if bracket is None:
+        raise SolverValidationError(
+            "FG_UNREACHABLE",
+            (
+                f"Target FG {target:.4f} is not reachable within the "
+                "0-40 °P bracket at this composition."
+            ),
+        )
+    if bracket[0] == bracket[1]:
+        oe_plato = bracket[0]
+    else:
+        oe_plato = brentq(
+            lambda x: _fg_residual(
+                x, inputs, v_kettle_cold, aa_malt, dextrin_consumption, target_ae
+            )
+            or 0.0,
+            bracket[0],
+            bracket[1],
+        )
+    return oe_plato, asbc_plato_to_sg(oe_plato)
+
+
 def _resolve_gravity(
     inputs: BatchSolverInput,
     pin: str,
@@ -234,111 +368,23 @@ def _resolve_gravity(
     """Resolve OE, extract and composition for one active scale pin."""
 
     if pin == "abv":
-        oe_plato = solve_oe_from_composition(
-            target_abv=target if target is not None else 0.0,
-            yeast_cap_apparent=inputs.malt_attenuation_cap,
-            malt_fermentability=aa_malt,
-            v_kettle_cold=v_kettle_cold,
-            s_late_add=inputs.s_late_add,
-            dextrin_consumption=dextrin_consumption,
-            sugar_extract_share=inputs.sugar_extract_share,
-            sugar_fermentability=inputs.sugar_fermentability,
-        )
-        sg_post_boil = asbc_plato_to_sg(oe_plato)
-        split = resolve_extract_split(
-            sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
+        oe_plato, sg_post_boil = _gravity_from_abv(
+            inputs, target, v_kettle_cold, aa_malt, dextrin_consumption
         )
     elif pin == "og":
-        if target is None or not math.isfinite(target) or target <= 1.0:
-            raise SolverValidationError(
-                "INVALID_TARGET_OG",
-                f"Target OG must be greater than 1.000; got {target}.",
-            )
-        sg_post_boil = target
-        oe_plato = sg_to_plato(sg_post_boil)
-        split = resolve_extract_split(
-            sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
-        )
+        oe_plato, sg_post_boil = _gravity_from_og(target)
     elif pin == "fg":
-        if target is None or not math.isfinite(target) or target <= 0.0:
-            raise SolverValidationError(
-                "INVALID_TARGET_FG",
-                f"Target FG must be positive; got {target}.",
-            )
-        if target < 1.0 and inputs.sta1 is not True:
-            raise SolverValidationError(
-                "FG_BELOW_ZERO_WITHOUT_STA1",
-                (
-                    "An FG below 1.000 requires a diastaticus strain "
-                    "(sta1 = true); select one or raise the target."
-                ),
-            )
-        target_ae = sg_to_plato(target)
-
-        def residual(oe_plato: float) -> float | None:
-            sg = asbc_plato_to_sg(oe_plato)
-            split = resolve_extract_split(
-                sg, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
-            )
-            if split.malt_extract_kg <= 0.0:
-                # No malt extract at this candidate: outside the physical
-                # domain, not a residual to bracket.
-                return None
-            composition = resolve_wort_composition(
-                oe_plato=oe_plato,
-                extract_total_kg=split.extract_total_kg,
-                s_late_add=split.sugar_extract_kg,
-                malt_fermentability=aa_malt,
-                yeast_cap_apparent=inputs.malt_attenuation_cap,
-                dextrin_consumption=dextrin_consumption,
-                sugar_fermentability=inputs.sugar_fermentability,
-            )
-            return composition.apparent_extract_plato - target_ae
-
-        grid = [1e-9, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0]
-        bracket = None
-        previous_oe = None
-        previous = None
-        for candidate in grid:
-            current = residual(candidate)
-            if current is None:
-                previous_oe = None
-                previous = None
-                continue
-            if abs(current) < 1e-12:
-                bracket = (candidate, candidate)
-                break
-            if previous is not None and previous * current < 0.0:
-                bracket = (previous_oe, candidate)
-                break
-            previous_oe, previous = candidate, current
-        if bracket is None:
-            raise SolverValidationError(
-                "FG_UNREACHABLE",
-                (
-                    f"Target FG {target:.4f} is not reachable within the "
-                    "0-40 °P bracket at this composition."
-                ),
-            )
-        if bracket[0] == bracket[1]:
-            oe_plato = bracket[0]
-        else:
-            oe_plato = brentq(
-                lambda x: residual(x)  # type: ignore[arg-type]
-                if residual(x) is not None
-                else 0.0,
-                bracket[0],
-                bracket[1],
-            )
-        sg_post_boil = asbc_plato_to_sg(oe_plato)
-        split = resolve_extract_split(
-            sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
+        oe_plato, sg_post_boil = _gravity_from_fg(
+            inputs, target, v_kettle_cold, aa_malt, dextrin_consumption
         )
     else:
         raise SolverValidationError(
             "INVALID_SCALE_PIN", f"Unknown scale pin: {pin!r}."
         )
 
+    split = resolve_extract_split(
+        sg_post_boil, v_kettle_cold, inputs.sugar_extract_share, inputs.s_late_add
+    )
     require_malt_extract(split)
     composition = resolve_wort_composition(
         oe_plato=oe_plato,

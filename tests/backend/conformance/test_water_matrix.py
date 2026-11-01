@@ -168,18 +168,19 @@ SCENARIOS = [
 ]
 
 
-def _assert_invariants(inp: WaterChemistryInput, out) -> None:
+def _assert_doses_finite(out) -> None:
     for dose in (out.mash_dose_g, out.sparge_dose_g):
         for key, value in dose.items():
             assert math.isfinite(value) and value >= 0.0, key
     for value in (out.alkaline_agent_g, out.mash_acid_ml, out.sparge_acid_ml):
         assert math.isfinite(value) and value >= 0.0
-
     for field in ("post_salt_mash_ions", "post_dose_mash_ions"):
         ions = getattr(out, field)
         for ion in IONS:
             assert math.isfinite(ions[ion]) and ions[ion] >= 0.0, (field, ion)
 
+
+def _assert_mash_ph(inp: WaterChemistryInput, out) -> None:
     assert 3.5 < out.predicted_mash_ph < 7.5
     assert out.mash_ph_status == mash_ph_status(out.predicted_mash_ph)
 
@@ -196,6 +197,8 @@ def _assert_invariants(inp: WaterChemistryInput, out) -> None:
         }:
             assert event["context"]["ph_after"] == pytest.approx(out.predicted_mash_ph)
 
+
+def _assert_salts_additive(inp: WaterChemistryInput, out) -> None:
     # Salts only add: the five mineral ions never fall below the source.
     for ion in ("ca", "mg", "na", "so4", "cl"):
         assert out.post_dose_mash_ions[ion] >= inp.source[ion] - 1e-6, ion
@@ -203,19 +206,24 @@ def _assert_invariants(inp: WaterChemistryInput, out) -> None:
     if inp.salt_distribution == "MASH_ONLY":
         for salt in SALTS:
             assert out.sparge_dose_g[salt] == 0.0, salt
-    else:
-        ratio = inp.v_hlt_treat_l / inp.v_mash_treat_l
-        for salt in SALTS:
-            assert out.sparge_dose_g[salt] == pytest.approx(
-                out.mash_dose_g[salt] * ratio, abs=1e-9
-            ), salt
+        return
+
+    ratio = inp.v_hlt_treat_l / inp.v_mash_treat_l
+    for salt in SALTS:
+        assert out.sparge_dose_g[salt] == pytest.approx(
+            out.mash_dose_g[salt] * ratio, abs=1e-9
+        ), salt
+
+
+def _assert_invariants(inp: WaterChemistryInput, out) -> None:
+    _assert_doses_finite(out)
+    _assert_mash_ph(inp, out)
+    _assert_salts_additive(inp, out)
 
     assert out.residual_hlt_water_l == pytest.approx(
         max(0.0, inp.v_hlt_treat_l - inp.v_sparge_demand_l)
     )
-
-    again = solve_water_chemistry(inp)
-    assert again == out, "solver must be deterministic"
+    assert solve_water_chemistry(inp) == out, "solver must be deterministic"
 
 
 @pytest.mark.parametrize(("label", "inp", "expect"), SCENARIOS)

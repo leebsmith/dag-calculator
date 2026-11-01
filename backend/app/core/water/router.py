@@ -2,9 +2,52 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 
 from app.core.errors import SolverValidationError
+
+_STRATEGY_GROUPS: tuple[tuple[tuple[str, ...], str, str], ...] = (
+    (("MODE_1", "MODE 1", "FLAVOR_ONLY"), "MODE_1", "CALCIUM_FLOOR"),
+    (("MODE_2", "MODE 2", "HYBRID"), "MODE_2", "HYBRID"),
+    (("MODE_3", "MODE 3", "OPTIMIZE", "CLONE"), "MODE_3", "OPTIMIZE"),
+    (("MODE_4", "MODE 4", "BASELINE", "NONE"), "MODE_4", "BASELINE"),
+    (("MODE_5", "MODE 5", "CUSTOM"), "MODE_5", "CUSTOM"),
+    (("CALCIUM_FLOOR",), "MODE_1", "CALCIUM_FLOOR"),
+    (("FLAVOR",), "MODE_1", "FLAVOR"),
+)
+
+_STRATEGY_MODES: dict[str, tuple[str, str]] = {
+    alias: (mode, canonical) for aliases, mode, canonical in _STRATEGY_GROUPS for alias in aliases
+}
+
+_ALL_IONS = frozenset({"ca", "mg", "na", "alk", "so4", "cl"})
+_FLAVOR_IONS = frozenset({"so4", "cl"})
+_RESIDUAL_IONS = frozenset({"ca", "mg", "na"})
+_CA_MG_ALK_IONS = frozenset({"ca", "mg", "alk"})
+_AUTO_STRATEGIES = frozenset({"AUTO", ""})
+
+
+def _held_ions(target: dict[str, float]) -> set[str]:
+    return {ion for ion, ppm in target.items() if ppm is not None and ppm > 0.0}
+
+
+def _is_full_profile(held: set[str]) -> bool:
+    return _ALL_IONS <= held
+
+
+def _is_ratio_with_buffer(held: set[str]) -> bool:
+    return bool(held & _FLAVOR_IONS) and "alk" in held and not (held & _RESIDUAL_IONS)
+
+
+def _is_sparse_flavor(held: set[str]) -> bool:
+    return bool(held & (_FLAVOR_IONS | {"na"})) and not (held & _CA_MG_ALK_IONS)
+
+
+_AUTO_RULES: tuple[tuple[Callable[[set[str]], bool], str, str], ...] = (
+    (_is_full_profile, "MODE_3", "OPTIMIZE"),
+    (_is_ratio_with_buffer, "MODE_2", "HYBRID"),
+    (_is_sparse_flavor, "MODE_1", "CALCIUM_FLOOR"),
+)
 
 
 def infer_adsco_mode(
@@ -19,54 +62,22 @@ def infer_adsco_mode(
     fell through to the least-squares cloner.
     """
     clean_strat = strategy.upper().strip()
+    explicit = _STRATEGY_MODES.get(clean_strat)
+    if explicit is not None:
+        return (*explicit, False)
 
-    if clean_strat in {"MODE_1", "MODE 1", "FLAVOR_ONLY"}:
-        return "MODE_1", "CALCIUM_FLOOR", False
-    if clean_strat in {"MODE_2", "MODE 2", "HYBRID"}:
-        return "MODE_2", "HYBRID", False
-    if clean_strat in {"MODE_3", "MODE 3", "OPTIMIZE", "CLONE"}:
-        return "MODE_3", "OPTIMIZE", False
-    if clean_strat in {"MODE_4", "MODE 4", "BASELINE", "NONE"}:
-        return "MODE_4", "BASELINE", False
-    if clean_strat in {"MODE_5", "MODE 5", "CUSTOM"}:
-        return "MODE_5", "CUSTOM", False
-
-    if clean_strat == "CALCIUM_FLOOR":
-        return "MODE_1", "CALCIUM_FLOOR", False
-    if clean_strat == "FLAVOR":
-        return "MODE_1", "FLAVOR", False
-
-    if clean_strat not in {"AUTO", ""}:
+    if clean_strat not in _AUTO_STRATEGIES:
         raise SolverValidationError("UNKNOWN_STRATEGY", f"Unknown strategy {strategy!r}.")
 
-    # AUTO Routing: evaluate target vector shape
-    has_target = {k: v for k, v in target.items() if v is not None and v > 0.0}
-
-    if not has_target:
+    held = _held_ions(target)
+    if not held:
         return "MODE_4", "BASELINE", False
 
     if custom_pinned_ions:
         return "MODE_5", "CUSTOM", False
 
-    has_ca = "ca" in has_target
-    has_mg = "mg" in has_target
-    has_na = "na" in has_target
-    has_alk = "alk" in has_target
-    has_so4 = "so4" in has_target
-    has_cl = "cl" in has_target
+    for matches, mode, canonical in _AUTO_RULES:
+        if matches(held):
+            return mode, canonical, False
 
-    # All 6 ions explicitly provided -> Mode 3 (Profile Cloning)
-    if has_ca and has_mg and has_na and has_alk and has_so4 and has_cl:
-        return "MODE_3", "OPTIMIZE", False
-
-    # Flavor ions plus Alkalinity buffer -> Mode 2 (Ratio + Buffer)
-    if (has_so4 or has_cl) and has_alk and not (has_ca or has_mg or has_na):
-        return "MODE_2", "HYBRID", False
-
-    # Only flavor ions (SO4, Cl, and optionally Na) -> Mode 1 (Linear Minimalist)
-    if (has_so4 or has_cl or has_na) and not (has_ca or has_mg or has_alk):
-        return "MODE_1", "CALCIUM_FLOOR", False
-
-    # Any other arbitrary subset: no sparse equality set was named, so fall
-    # through to the least-squares cloner rather than an unactionable state.
     return "MODE_3", "OPTIMIZE", True

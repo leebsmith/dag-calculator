@@ -367,11 +367,14 @@ def mass_from_whirlpool_utilization(
     return (ibu * volume_l) / (alpha_fraction * 1000.0 * utilization) / 1000.0
 
 
-def _validate(inputs: HopSolverInput) -> None:
+def _validate_targets(inputs: HopSolverInput) -> None:
     if not (inputs.boil_target_ibu >= 0.0) or not (inputs.whirlpool_target_ibu >= 0.0):
         raise SolverValidationError("INVALID_HOP_INPUT", "IBU targets must be non-negative.")
     if not (inputs.boil_time_min >= 0.0):
         raise SolverValidationError("INVALID_HOP_INPUT", "Boil time must be non-negative.")
+
+
+def _validate_gravity(inputs: HopSolverInput) -> None:
     if not (inputs.pre_boil_gravity > 0.0) or not (inputs.post_boil_gravity > 0.0):
         raise SolverValidationError("INVALID_GRAVITY", "Gravity must be positive.")
     if not (inputs.post_boil_volume_l > 0.0):
@@ -380,26 +383,43 @@ def _validate(inputs: HopSolverInput) -> None:
         raise SolverValidationError(
             "INVALID_COOLING_CONSTANT", "Cooling time constant must be positive."
         )
-    for row in inputs.boil_hops:
-        if not (0.0 <= row.alpha_acid_pct <= 1.0) or not (0.0 <= row.pct <= 1.0):
-            raise SolverValidationError("INVALID_HOP_INPUT", "Hop fractions must be 0..1.")
+
+
+def _validate_hop_fractions(row: BoilHopEntry | WhirlpoolHopEntry) -> None:
+    if not (0.0 <= row.alpha_acid_pct <= 1.0) or not (0.0 <= row.pct <= 1.0):
+        raise SolverValidationError("INVALID_HOP_INPUT", "Hop fractions must be 0..1.")
+
+
+def _validate_product_form(row: BoilHopEntry | WhirlpoolHopEntry) -> None:
+    if row.product_form not in PRODUCT_FORM_UTILIZATION:
+        raise SolverValidationError(
+            "UNKNOWN_PRODUCT_FORM", f"Unknown hop product form {row.product_form!r}."
+        )
+
+
+def _validate_boil_hops(rows: Sequence[BoilHopEntry]) -> None:
+    for row in rows:
+        _validate_hop_fractions(row)
         if not (0.0 <= row.boil_time_fraction <= 1.0):
             raise SolverValidationError(
                 "INVALID_HOP_INPUT", "Boil-time fraction must be 0..1."
             )
-        if row.product_form not in PRODUCT_FORM_UTILIZATION:
-            raise SolverValidationError(
-                "UNKNOWN_PRODUCT_FORM", f"Unknown hop product form {row.product_form!r}."
-            )
-    for row in inputs.whirlpool_hops:
-        if not (0.0 <= row.alpha_acid_pct <= 1.0) or not (0.0 <= row.pct <= 1.0):
-            raise SolverValidationError("INVALID_HOP_INPUT", "Hop fractions must be 0..1.")
+        _validate_product_form(row)
+
+
+def _validate_whirlpool_hops(rows: Sequence[WhirlpoolHopEntry]) -> None:
+    for row in rows:
+        _validate_hop_fractions(row)
         if not (row.duration_min >= 0.0):
             raise SolverValidationError("INVALID_HOP_INPUT", "Rest duration must be non-negative.")
-        if row.product_form not in PRODUCT_FORM_UTILIZATION:
-            raise SolverValidationError(
-                "UNKNOWN_PRODUCT_FORM", f"Unknown hop product form {row.product_form!r}."
-            )
+        _validate_product_form(row)
+
+
+def _validate(inputs: HopSolverInput) -> None:
+    _validate_targets(inputs)
+    _validate_gravity(inputs)
+    _validate_boil_hops(inputs.boil_hops)
+    _validate_whirlpool_hops(inputs.whirlpool_hops)
 
 
 def _split_ibu(

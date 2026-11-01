@@ -36,6 +36,141 @@ def _solve_lp(c, a_eq=None, b_eq=None, a_ub=None, b_ub=None):
     )
 
 
+def _below_source_events(
+    source: dict[str, float], target: dict[str, float], events: list[TelemetryEvent] | None
+) -> None:
+    if events is None:
+        return
+    for ion in ("so4", "cl"):
+        target_ppm = target.get(ion, 0.0)
+        source_ppm = source.get(ion, 0.0)
+        if target_ppm < source_ppm - 1e-9:
+            events.append(flavor_target_below_source(ion, target_ppm, source_ppm))
+
+
+def _flavor_dose(
+    need_so4: float,
+    need_cl: float,
+    gyp: dict[str, float],
+    cacl2: dict[str, float],
+) -> SaltDose:
+    return SaltDose(
+        gypsum_g_per_l=need_so4 / gyp["so4"] if gyp.get("so4") else 0.0,
+        cacl2_g_per_l=need_cl / cacl2["cl"] if cacl2.get("cl") else 0.0,
+    )
+
+
+def _projected_ca(
+    source_ca: float,
+    flavor: SaltDose,
+    gyp: dict[str, float],
+    cacl2: dict[str, float],
+) -> float:
+    added = (
+        flavor.gypsum_g_per_l * gyp.get("ca", 0.0)
+        + flavor.cacl2_g_per_l * cacl2.get("ca", 0.0)
+    )
+    return source_ca + added
+
+
+def _floor_shortfall_event(
+    source_ca: float,
+    flavor: SaltDose,
+    gyp: dict[str, float],
+    cacl2: dict[str, float],
+    calcium_floor_ppm: float,
+    events: list[TelemetryEvent] | None,
+) -> None:
+    projected = _projected_ca(source_ca, flavor, gyp, cacl2)
+    if projected < calcium_floor_ppm - 1e-6 and events is not None:
+        events.append(calcium_floor_unreachable(projected, calcium_floor_ppm))
+
+
+def _primary_solution(
+    c_primary: list[float],
+    a_eq: list[list[float]],
+    b_eq: list[float],
+    a_ub: list[list[float]],
+    b_ub: list[float],
+    events: list[TelemetryEvent] | None,
+):
+    capped = _solve_lp(c_primary, a_eq, b_eq, a_ub, b_ub)
+    if capped.success:
+        return capped
+    if events is not None:
+        events.append(lp_relaxation_applied())
+    relaxed = _solve_lp(c_primary, a_eq, b_eq, None, None)
+    if not relaxed.success:
+        raise SolverValidationError(
+            "SALT_SOLVE_FAILED", "Salt optimization failed to find a feasible dose."
+        )
+    return relaxed
+
+
+def _tie_broken_solution(
+    x: list[float],
+    opt_primary: float,
+    a_eq: list[list[float]],
+    b_eq: list[float],
+    a_ub: list[list[float]],
+    b_ub: list[float],
+    c_primary: list[float],
+    epsom: dict[str, float],
+    nacl: dict[str, float],
+    events: list[TelemetryEvent] | None,
+) -> list[float]:
+    tol = 1e-6
+    c_secondary = [0.0, 0.0, epsom.get("mg", 0.0), nacl.get("na", 0.0)]
+    secondary_ub = a_ub + [c_primary, [-v for v in c_primary]]
+    secondary_bub = b_ub + [opt_primary + tol, -(opt_primary - tol)]
+    secondary = _solve_lp(c_secondary, a_eq, b_eq, secondary_ub, secondary_bub)
+    if not secondary.success:
+        return x
+    x = [max(0.0, v) for v in secondary.x]
+    opt_secondary = float(secondary.fun)
+
+    c_tertiary = [0.0, 0.0, 1.0, 1.0]
+    tertiary = _solve_lp(
+        c_tertiary,
+        a_eq,
+        b_eq,
+        secondary_ub + [c_secondary, [-v for v in c_secondary]],
+        secondary_bub + [opt_secondary + tol, -(opt_secondary - tol)],
+    )
+    if tertiary.success:
+        x = [max(0.0, v) for v in tertiary.x]
+        if events is not None:
+            events.append(lp_lexicographic_tie_break())
+    return x
+
+
+def _minimal_salt_vector(
+    salts: list[dict[str, float]],
+    gyp: dict[str, float],
+    cacl2: dict[str, float],
+    epsom: dict[str, float],
+    nacl: dict[str, float],
+    need_so4: float,
+    need_cl: float,
+    calcium_cap: float,
+    events: list[TelemetryEvent] | None,
+) -> list[float]:
+    a_eq = [
+        [gyp.get("so4", 0.0), 0.0, epsom.get("so4", 0.0), 0.0],
+        [0.0, cacl2.get("cl", 0.0), 0.0, nacl.get("cl", 0.0)],
+    ]
+    b_eq = [need_so4, need_cl]
+    a_ub = [[gyp.get("ca", 0.0), cacl2.get("ca", 0.0), 0.0, 0.0]]
+    b_ub = [calcium_cap]
+    c_primary = [sum(s.values()) for s in salts]
+
+    res = _primary_solution(c_primary, a_eq, b_eq, a_ub, b_ub, events)
+    x = [max(0.0, val) for val in res.x]
+    return _tie_broken_solution(
+        x, float(res.fun), a_eq, b_eq, a_ub, b_ub, c_primary, epsom, nacl, events
+    )
+
+
 def _solve_linear_minimalist(
     source: dict[str, float],
     target: dict[str, float],
@@ -51,105 +186,35 @@ def _solve_linear_minimalist(
     need_so4 = max(0.0, target.get("so4", 0.0) - source.get("so4", 0.0))
     need_cl = max(0.0, target.get("cl", 0.0) - source.get("cl", 0.0))
 
-    if events is not None:
-        for ion in ("so4", "cl"):
-            target_ppm = target.get(ion, 0.0)
-            source_ppm = source.get(ion, 0.0)
-            if target_ppm < source_ppm - 1e-9:
-                events.append(flavor_target_below_source(ion, target_ppm, source_ppm))
-
+    _below_source_events(source, target, events)
+    flavor = _flavor_dose(need_so4, need_cl, gyp, cacl2)
     if unbounded_ca:
         # Pure unconstrained flavor dosing (Ca floats freely)
-        dose = SaltDose(
-            gypsum_g_per_l=need_so4 / gyp["so4"] if gyp.get("so4") else 0.0,
-            cacl2_g_per_l=need_cl / cacl2["cl"] if cacl2.get("cl") else 0.0,
-        )
-        return dose
+        return flavor
 
-    # Flavor-first calculation: initial projection via gypsum & CaCl2
-    flavor_gyp = need_so4 / gyp["so4"] if gyp.get("so4") else 0.0
-    flavor_cacl2 = need_cl / cacl2["cl"] if cacl2.get("cl") else 0.0
-    ca_from_flavor = flavor_gyp * gyp.get("ca", 0.0) + flavor_cacl2 * cacl2.get("ca", 0.0)
-    projected_ca = source.get("ca", 0.0) + ca_from_flavor
-
-    if source.get("ca", 0.0) < calcium_floor_ppm:
-        if projected_ca < calcium_floor_ppm - 1e-6:
-            if events is not None:
-                events.append(calcium_floor_unreachable(projected_ca, calcium_floor_ppm))
-        return SaltDose(gypsum_g_per_l=flavor_gyp, cacl2_g_per_l=flavor_cacl2)
+    source_ca = source.get("ca", 0.0)
+    if source_ca < calcium_floor_ppm:
+        _floor_shortfall_event(source_ca, flavor, gyp, cacl2, calcium_floor_ppm, events)
+        return flavor
 
     # Hard source: added Ca <= max(0, floor - source)
-    calcium_cap = max(0.0, calcium_floor_ppm - source.get("ca", 0.0))
-
-    a_eq = [
-        [gyp.get("so4", 0.0), 0.0, epsom.get("so4", 0.0), 0.0],
-        [0.0, cacl2.get("cl", 0.0), 0.0, nacl.get("cl", 0.0)],
-    ]
-    b_eq = [need_so4, need_cl]
-
-    a_ub = [[gyp.get("ca", 0.0), cacl2.get("ca", 0.0), 0.0, 0.0]]
-    b_ub = [calcium_cap]
-
-    # Primary objective: minimize total salt ion addition
-    c_primary = [sum(s.values()) for s in salts]
-
-    res = _solve_lp(c_primary, a_eq, b_eq, a_ub, b_ub)
-    if not res.success:
-        if events is not None:
-            events.append(lp_relaxation_applied())
-        res = _solve_lp(c_primary, a_eq, b_eq, None, None)
-        if not res.success:
-            raise SolverValidationError(
-                "SALT_SOLVE_FAILED", "Salt optimization failed to find a feasible dose."
-            )
-
-    x = [max(0.0, val) for val in res.x]
-    opt_primary = float(res.fun)
-
-    # Lexicographic tie-break: balance Mg/Na, prefer flavor salts over Epsom/NaCl
-    tol = 1e-6
-    a_ub_base = a_ub if a_ub else []
-    b_ub_base = b_ub if b_ub else []
-
-    c_secondary = [0.0, 0.0, epsom.get("mg", 0.0), nacl.get("na", 0.0)]
-    res2 = _solve_lp(
-        c_secondary,
-        a_eq,
-        b_eq,
-        a_ub_base + [c_primary, [-v for v in c_primary]],
-        b_ub_base + [opt_primary + tol, -(opt_primary - tol)],
+    x = _minimal_salt_vector(
+        salts,
+        gyp,
+        cacl2,
+        epsom,
+        nacl,
+        need_so4,
+        need_cl,
+        max(0.0, calcium_floor_ppm - source_ca),
+        events,
     )
-    if res2.success:
-        x = [max(0.0, v) for v in res2.x]
-        opt_secondary = float(res2.fun)
-
-        c_tertiary = [0.0, 0.0, 1.0, 1.0]
-        res3 = _solve_lp(
-            c_tertiary,
-            a_eq,
-            b_eq,
-            a_ub_base
-            + [c_primary, [-v for v in c_primary], c_secondary, [-v for v in c_secondary]],
-            b_ub_base
-            + [
-                opt_primary + tol,
-                -(opt_primary - tol),
-                opt_secondary + tol,
-                -(opt_secondary - tol),
-            ],
-        )
-        if res3.success:
-            x = [max(0.0, v) for v in res3.x]
-            if events is not None:
-                events.append(lp_lexicographic_tie_break())
-
-    dose = SaltDose(
+    return SaltDose(
         gypsum_g_per_l=x[0],
         cacl2_g_per_l=x[1],
         epsom_g_per_l=x[2],
         nacl_g_per_l=x[3],
     )
-    return dose
 
 
 def _solve_nonlinear_cloner(

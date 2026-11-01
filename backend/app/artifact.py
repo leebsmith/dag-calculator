@@ -144,41 +144,87 @@ def _missing(value: Any) -> bool:
     return value is None or value == "" or (isinstance(value, list) and len(value) == 0)
 
 
+def _validate_string_value(spec: Any, value: Any, field: str, errors: list[str]) -> None:
+    if not isinstance(value, str):
+        errors.append(f"{field}: must be a string")
+        return
+    if spec.get("format") != "date":
+        return
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        errors.append(f"{field}: must be an ISO date (YYYY-MM-DD)")
+
+
 def _validate_record_scalar(
     artifact: dict[str, Any], spec: Any, value: Any, field: str, errors: list[str]
 ) -> None:
     if not isinstance(spec, Mapping):
         return
-    if spec.get("type") == "list":
+    kind = spec.get("type")
+    if kind == "list":
         _validate_record_list(artifact, spec, value, field, errors)
         return
-    if spec.get("type") == "string":
-        if not isinstance(value, str):
-            errors.append(f"{field}: must be a string")
-            return
-        if spec.get("format") == "date":
-            try:
-                date.fromisoformat(value)
-            except ValueError:
-                errors.append(f"{field}: must be an ISO date (YYYY-MM-DD)")
+    if kind == "string":
+        _validate_string_value(spec, value, field, errors)
         return
     if spec.get("dimension"):
-        if isinstance(value, bool) or not isinstance(value, (int, float)):
-            errors.append(f"{field}: must be a number")
-            return
-        if not math.isfinite(value):
-            errors.append(f"{field}: must be finite")
-            return
-        if _domain_error(spec.get("domain"), value, artifact.get("constants", {})):
-            errors.append(f"{field}: violates {spec.get('domain')}")
+        _validate_dimension_value(artifact, spec, value, field, errors)
         return
     if spec.get("taxonomy"):
-        allowed = artifact.get("taxonomies", {}).get(spec["taxonomy"], [])
-        if value not in allowed:
-            errors.append(f"{field}: '{value}' is not in taxonomy {spec['taxonomy']}")
+        _validate_taxonomy_value(artifact, spec, value, field, errors)
         return
-    if spec.get("type") == "boolean" and not isinstance(value, bool):
+    if kind == "boolean" and not isinstance(value, bool):
         errors.append(f"{field}: must be a boolean")
+
+
+def _validate_rows(
+    artifact: dict[str, Any],
+    item: Mapping[str, Any],
+    value: list[Any],
+    field: str,
+    ordered_by: str | None,
+    errors: list[str],
+) -> list[float]:
+    ordered: list[float] = []
+    for index, row in enumerate(value):
+        if not isinstance(row, dict):
+            errors.append(f"{field}.{index}: row must be an object")
+            continue
+        _validate_row_fields(artifact, item, row, f"{field}.{index}", errors)
+        if ordered_by and isinstance(row.get(ordered_by), (int, float)):
+            ordered.append(row[ordered_by])
+    return ordered
+
+
+def _validate_row_fields(
+    artifact: dict[str, Any],
+    item: Mapping[str, Any],
+    row: dict[str, Any],
+    prefix: str,
+    errors: list[str],
+) -> None:
+    for item_field, item_spec in item.items():
+        row_value = row.get(item_field)
+        if _missing(row_value):
+            if isinstance(item_spec, Mapping) and item_spec.get("required"):
+                errors.append(f"{prefix}.{item_field}: {item_field} is required")
+            continue
+        _validate_record_scalar(artifact, item_spec, row_value, f"{prefix}.{item_field}", errors)
+    for item_field in row:
+        if item_field not in item:
+            errors.append(f'{prefix}.{item_field}: undeclared field "{item_field}"')
+
+
+def _validate_ordering(
+    ordered: list[float], ordered_by: str | None, field: str, errors: list[str]
+) -> None:
+    for index in range(1, len(ordered)):
+        if ordered[index] <= ordered[index - 1]:
+            errors.append(
+                f"{field}.{index}.{ordered_by}: "
+                "times must be strictly increasing and unique"
+            )
 
 
 def _validate_record_list(
@@ -196,32 +242,9 @@ def _validate_record_list(
     if any(isinstance(entry, Mapping) and entry.get("type") == "list" for entry in item.values()):
         errors.append(f"{field}: nested lists are not supported")
         return
-    ordered: list[float] = []
-    for index, row in enumerate(value):
-        if not isinstance(row, dict):
-            errors.append(f"{field}.{index}: row must be an object")
-            continue
-        for item_field, item_spec in item.items():
-            row_value = row.get(item_field)
-            if _missing(row_value):
-                if isinstance(item_spec, Mapping) and item_spec.get("required"):
-                    errors.append(f"{field}.{index}.{item_field}: {item_field} is required")
-                continue
-            _validate_record_scalar(
-                artifact, item_spec, row_value, f"{field}.{index}.{item_field}", errors
-            )
-        for item_field in row:
-            if item_field not in item:
-                errors.append(f'{field}.{index}.{item_field}: undeclared field "{item_field}"')
-        ordered_by = spec.get("ordered_by")
-        if ordered_by and isinstance(row.get(ordered_by), (int, float)):
-            ordered.append(row[ordered_by])
-    for index in range(1, len(ordered)):
-        if ordered[index] <= ordered[index - 1]:
-            errors.append(
-                f"{field}.{index}.{spec.get('ordered_by')}: "
-                "times must be strictly increasing and unique"
-            )
+    ordered_by = spec.get("ordered_by")
+    ordered = _validate_rows(artifact, item, value, field, ordered_by, errors)
+    _validate_ordering(ordered, ordered_by, field, errors)
 
 
 def _validate_record_component(

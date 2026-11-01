@@ -60,17 +60,43 @@ in a config file.
 
 ## Phase 2 — ceiling 12
 
-- [ ] Share the dimension and taxonomy field validators with the record path
-- [ ] Split `_validate_record_scalar` to 12 or below
-- [ ] Split `_validate_record_list` to 12 or below
-- [ ] Split `_resolve_gravity` into one helper per pin, lifting the nested
+- [x] Share the dimension and taxonomy field validators with the record path
+- [x] Split `_validate_record_scalar` to 12 or below
+- [x] Split `_validate_record_list` to 12 or below
+- [x] Split `_resolve_gravity` into one helper per pin, lifting the nested
       residual and grid probe to module functions
-- [ ] Replace the hop solver `_validate` if-chain with a check table
-- [ ] Split `_solve_linear_minimalist` into assembly, solve and telemetry phases
-- [ ] Replace the strategy and ion if-chains in `infer_adsco_mode` with lookup
+- [x] Replace the hop solver `_validate` if-chain with per-group validators
+- [x] Split `_solve_linear_minimalist` into assembly, solve and telemetry phases
+- [x] Replace the strategy and ion if-chains in `infer_adsco_mode` with lookup
       tables
-- [ ] Lower `max-complexity` to 12
-- [ ] `make check` and `make test` green at ceiling 12
+- [x] Lower `max-complexity` to 12
+- [x] `make check` and `make test` green at ceiling 12
+
+## Result
+
+Landed at ceiling 12 across every tree `make check` lints, with zero
+suppressions. `make check` and `make test` are green (762 backend tests, frontend
+suite, 68 guard suites). The measured distribution went from 7 functions above 12
+in `backend/app` to 0, and the scrapers' `parse_bjcp_directory` from 18 to 4.
+
+Three functions sit exactly at the ceiling, so the next branch added to any of
+them fails: `_feasible_bound`, and the already-simple scrapers `main` in
+`scripts/scrape/bjcp/scrape_bjcp.py` and `parse_detail_info` in
+`scripts/scrape/hop_scraper.py`. That is the intended shape of a rung — the gate
+is the forcing function, and the next function over it gets split rather than
+pinned.
+
+Two guard interactions shaped the refactors and are worth remembering:
+
+- **C901 counts branch statements, not booleans or ternaries.** A function with
+  only `and`/`or`/conditional expressions reports 1. This makes a backend 12
+  stricter in branch terms than the frontend's eslint 12, which counts both.
+- **`tests/backend/conformance/test_boundary_error_contract.py` requires a
+  literal error code at every `SolverValidationError` raise site.** A shared
+  `_require(condition, code, message)` helper is therefore illegal in the hop
+  solver, so `_validate` split by input group (targets, gravity, boil rows,
+  whirlpool rows) instead of collapsing to a table. The failure arrived from
+  `make test`, not from lint.
 
 ## Not in scope
 
