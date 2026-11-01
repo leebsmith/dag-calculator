@@ -73,21 +73,20 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ### Report sections
 
-Eight sections have landed — Brewhouse, Batch Facts, Hops, Yeast, Volume Ledger,
-Liquor Ledger, Water Chemistry and Limits — with the bundle and the render
-service (`GET`/`POST /batches/{id}/report`). Brewhouse prints the two solved mash
-ratios (L/kg and r); Water Chemistry carries the source report, the target
-profile, the source-to-final ion table, the mash and sparge treatment doses,
-predicted mash pH and solver telemetry; and Limits carries the feasibility
-ceiling and binding capacity plus a closing
-extract ledger: potential, conversion inefficiency, converted, mash tun and
-transfer losses, into the kettle, late additions, post-boil, kettle losses, into
-the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
-remaining section; the presence predicates are in `plans/report-renderer.md`
-§6.4. Queue order is the order below.
+Ten sections have landed — Brewhouse, Batch Facts, Mash Rests, Hops, Yeast,
+Volume Ledger, Liquor Ledger, Water Chemistry, Limits and the Brew Checklist —
+with the bundle and the render service (`GET`/`POST /batches/{id}/report`).
+Brewhouse prints the two solved mash ratios (L/kg and r); Mash Rests prints only
+the enabled schedule plus the total mash time; Water Chemistry carries the source
+report, the target profile, the source-to-final ion table, the mash and sparge
+treatment doses, predicted mash pH and solver telemetry; and Limits carries the
+feasibility ceiling and binding capacity plus a closing extract ledger:
+potential, conversion inefficiency, converted, mash tun and transfer losses,
+into the kettle, late additions, post-boil, kettle losses, into the fermenter,
+and the kettle-basis brewhouse efficiency. One bullet per remaining section; the
+presence predicates are in `plans/report-renderer.md` §6.4. Queue order is the
+order below.
 
-* **Mash rests section** — `mash.rests` rows; step, temperature, duration, enabled.
-  Strike temperature already prints in Brewhouse.
 * **Pinned ions section** — `water.pinned_ions` rows; the checked targets and their
   values, so a reader can see what constrained the water solver.
 * **Style conformance section** — `conformance` is not `null`; SAI and the

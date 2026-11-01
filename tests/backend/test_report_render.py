@@ -41,6 +41,7 @@ BUNDLE = (
 SECTIONS = (
     "brewhouse",
     "batch-facts",
+    "mash-rests",
     "hops",
     "yeast",
     "volume-ledger",
@@ -144,6 +145,22 @@ def test_the_checklist_section_renders(render_once) -> None:
     assert rendered.data.startswith(b"%PDF")
     assert rendered.sections == ("checklist",)
     assert rendered.pages >= 1
+
+
+def test_the_mash_rests_section_renders(render_once) -> None:
+    rendered = render_once(bundle(), parse_spec(sections="mash-rests"))
+
+    assert rendered.data.startswith(b"%PDF")
+    assert rendered.sections == ("mash-rests",)
+    assert rendered.pages >= 1
+
+
+def test_the_mash_rests_section_hides_without_enabled_rows() -> None:
+    data = bundle_dict()
+    del data["formatted_tables"]["mash.rests"]
+
+    with pytest.raises(ReportSpecError, match="nothing to report"):
+        render(seal_bundle(data), parse_spec(sections="mash-rests"))
 
 
 def test_the_checklist_section_hides_without_rows() -> None:

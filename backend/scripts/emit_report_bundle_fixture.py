@@ -541,6 +541,9 @@ PAYLOAD = FreezePayload(
             "mash.rests.use_temp_c": NodePresentation(
                 label="Temp", dimension="temperature", unit="degC", symbol="°C", decimals=1
             ),
+            "mash.total_time_min": NodePresentation(
+                label="Total mash time", dimension="time", unit="min", symbol="min", decimals=0
+            ),
             "solver.batch": NodePresentation(label="Batch solver"),
             "solver.batch.sg_post_boil": NodePresentation(
                 label="Post-boil gravity", dimension="gravity", unit="Plato", symbol="°P", decimals=1
@@ -1334,6 +1337,7 @@ PAYLOAD = FreezePayload(
         ),
         "batch.target_abv": FormattedValue(text="5.5%", number="5.5", unit="%"),
         "mash.strike_water_temp_c": FormattedValue(text="68.3 °C", number="68.3", unit="°C"),
+        "mash.total_time_min": FormattedValue(text="74 min", number="74", unit="min"),
         "batch.topology": FormattedValue(text="Liquor-to-grist ratio"),
         "batch.conversion_efficiency": FormattedValue(text="90.0%", number="90.0", unit="%"),
         "solver.batch.brewhouse_efficiency": FormattedValue(text="73.7%", number="73.7", unit="%"),
@@ -1481,6 +1485,13 @@ PAYLOAD = FreezePayload(
                 "grist_pct": FormattedValue(text="9.8%", number="9.8", unit="%"),
                 "extract": FormattedValue(text="0.4 kg", number="0.4", unit="kg"),
                 "extract_pct": FormattedValue(text="9.4%", number="9.4", unit="%"),
+            },
+        ],
+        "mash.rests": [
+            {
+                "name": FormattedValue(text="Beta-Amylase Rest"),
+                "temp": FormattedValue(text="67.0 °C", number="67.0", unit="°C"),
+                "time": FormattedValue(text="60 min", number="60", unit="min"),
             },
         ],
         "batch.boil_hops": [

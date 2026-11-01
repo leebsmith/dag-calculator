@@ -29,24 +29,24 @@ table.
 
 ## Checklist
 
-- [ ] Add `mash.rests` labels and `rest_id` option labels to the mash registry,
+- [x] Add `mash.rests` labels and `rest_id` option labels to the mash registry,
   sourced from `data/seeds/mash-rests.json`.
-- [ ] Emit enabled `mash.rests` rows from `buildReportTables`: `name`, `temp`,
+- [x] Emit enabled `mash.rests` rows from `buildReportTables`: `name`, `temp`,
   and `time` display cells in canonical order.
-- [ ] Add `backend/app/templates/sections/mash-rests.typ`: presence predicate,
+- [x] Add `backend/app/templates/sections/mash-rests.typ`: presence predicate,
   total-time line, three-column table, and a short ramp note.
-- [ ] Register `mash-rests` in `report.typ` after `batch-facts`; regenerate the
+- [x] Register `mash-rests` in `report.typ` after `batch-facts`; regenerate the
   section manifest and `docs/report-sections.md`.
-- [ ] Add `formatted_tables["mash.rests"]` and `mash.total_time_min` to the
+- [x] Add `formatted_tables["mash.rests"]` and `mash.total_time_min` to the
   committed report-bundle fixture.
-- [ ] Add frontend tests for enabled-only filtering, catalog labels, and display
+- [x] Add frontend tests for enabled-only filtering, catalog labels, and display
   units.
-- [ ] Add backend tests for section isolation, presence, absence, and the
+- [x] Add backend tests for section isolation, presence, absence, and the
   section metadata list.
-- [ ] Update `docs/report-renderer.md`, `plans/report-renderer.md`, and
+- [x] Update `docs/report-renderer.md`, `plans/report-renderer.md`, and
   `TODO.md` so the section inventory is current.
-- [ ] Run `make generate`, `make check`, `make test`, and `make verify`.
-- [ ] Mark this checklist complete and archive the plan.
+- [x] Run `make generate`, `make check`, `make test`, and `make verify`.
+- [x] Mark this checklist complete and archive the plan.
 
 ## Acceptance
 

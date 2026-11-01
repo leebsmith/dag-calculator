@@ -12,8 +12,10 @@ import { HOP_NODES as H } from "../registry/hops.js";
 import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
+import { MASH_NODES as M } from "../registry/mash.js";
 import { buildChecklistTable } from "./checklist/table.js";
 import { cellLabel, formatCell } from "./cell.js";
+import { restLabel } from "./mashRows.js";
 
 // Collection fields are row values, not scalars: the catalog lists them for a
 // report that indexes a row, but there is no single value to format.
@@ -132,6 +134,24 @@ function checklistTable(artifact, catalog, engine) {
   });
 }
 
+function mashRestRows(artifact, catalog, engine) {
+  const nl = nonlinearFns(artifact, engine);
+  const nodes = catalog.nodes ?? {};
+  const restIdPath = `${M.rests}.rest_id`;
+  return (engine.get(M.rests) ?? [])
+    .filter((row) => row?.enabled)
+    .map((row) => ({
+      name: {
+        text:
+          nodes[restIdPath]?.option_labels?.[row.rest_id] ??
+          restLabel(row.rest_id) ??
+          "",
+      },
+      temp: formatEntry(artifact, nodes[`${M.rests}.use_temp_c`], row.use_temp_c, nl),
+      time: formatEntry(artifact, nodes[`${M.rests}.duration_min`], row.duration_min, nl),
+    }));
+}
+
 // Per-row display strings for the fermentable tables. Grist is the malt charge
 // (major + trace); sugars are measured against it, so the three tables' shares
 // do not partition to 100. `own_pct` is the row's share of its own table (the
@@ -210,6 +230,7 @@ export function buildReportTables(artifact, catalog, engine) {
     [majorId]: majorRows,
     [traceId]: traceRows,
     [sugarId]: sugarRows,
+    [M.rests]: mashRestRows(artifact, catalog, engine),
     [H.collection]: hopRows(artifact, catalog, engine, "boil"),
     [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool"),
     [D.collection]: dryHopRows(artifact, catalog, engine),

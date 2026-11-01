@@ -6095,6 +6095,16 @@
         "options": null,
         "option_labels": null
       },
+      "mash.total_time_min": {
+        "label": "Total mash time",
+        "dimension": "time",
+        "unit": "min",
+        "symbol": "min",
+        "decimals": 0,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.batch": {
         "label": "Batch solver",
         "dimension": null,
@@ -8120,7 +8130,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:0f40eac26530344821134207238e211d8cc5cba5cc5ec6543fe90a1e8a198391"
+    "hash": "sha256:bfdd19e68685f960e291bcb252dc66dc94f24cb49cf40a0fa1102c0c6f37c51d"
   },
   "batch": {
     "id": "frozen-1",
@@ -8879,6 +8889,11 @@
       "number": "68.3",
       "unit": "\u00b0C"
     },
+    "mash.total_time_min": {
+      "text": "74 min",
+      "number": "74",
+      "unit": "min"
+    },
     "batch.topology": {
       "text": "Liquor-to-grist ratio",
       "number": null,
@@ -9430,6 +9445,25 @@
         }
       }
     ],
+    "mash.rests": [
+      {
+        "name": {
+          "text": "Beta-Amylase Rest",
+          "number": null,
+          "unit": null
+        },
+        "temp": {
+          "text": "67.0 \u00b0C",
+          "number": "67.0",
+          "unit": "\u00b0C"
+        },
+        "time": {
+          "text": "60 min",
+          "number": "60",
+          "unit": "min"
+        }
+      }
+    ],
     "batch.boil_hops": [
       {
         "name": {
@@ -9905,5 +9939,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:87828d132d45106370b43077bb639f45040164f38e5869d6a4e1f9fee71985ea"
+  "content_hash": "sha256:7773a361a13cc6021f098c88d6a2c33c85b40e7f60ae28350da8770706cd3189"
 }

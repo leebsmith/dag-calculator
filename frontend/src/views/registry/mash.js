@@ -1,5 +1,11 @@
 // Presentation metadata for the mash slice (labels/units only — never domain
 // values, and never fed back into the artifact).
+import restDefinitions from "../../../../data/seeds/mash-rests.json" with { type: "json" };
+
+const MASH_REST_LABELS = Object.fromEntries(
+  Object.values(restDefinitions).map((rest) => [rest.rest_id, rest.name])
+);
+
 export const MASH_NODES = {
   rests: "mash.rests",
   presetId: "mash.preset_id",
@@ -23,4 +29,9 @@ export const mashRegistry = {
     label: "Mash volume",
     hint: "Grist displacement + strike water (tun occupancy; excludes dead space).",
   },
+  "mash.rests": { label: "Mash rests" },
+  "mash.rests.rest_id": { label: "Step", optionLabels: MASH_REST_LABELS },
+  "mash.rests.use_temp_c": { label: "Temp", unit: "°C" },
+  "mash.rests.duration_min": { label: "Time", unit: "min" },
+  "mash.rests.enabled": { label: "Enabled" },
 };

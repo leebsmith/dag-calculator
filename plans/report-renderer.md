@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-bundle]
 blocks: []
 gate: a downloaded bundle renders to a printable PDF and per-page PNGs from the scaffold alone; a section added later renders and is drift-guarded; make check/test green
-status: active (five sections and the render service landed; sections continue)
+status: active (ten sections and the render service landed; pinned ions, style conformance and the image remain)
 ---
 
 # Report Renderer — Typst-composed, bundle-driven
@@ -236,7 +236,7 @@ Grounded in the current artifact:
 | Dry hops | `batch.dry_hops` has rows |
 | Sugars | `batch.sugars` has rows |
 | Major / trace malts | `grist.major_malts` / `grist.trace_malts` have rows |
-| Mash rests | `mash.rests` has rows |
+| Mash rests | `formatted_tables["mash.rests"]` has rows (enabled only) |
 | Pinned ions | `water.pinned_ions` has rows |
 | Brew checklist | `batch.brew_checklist` has rows |
 | Water chemistry | `formatted["solver.water.post_dose_mash_ions.calcium_ca"]` exists; its Treatment Dosage subsection gates on `formatted["solver.water.mash_additions.gypsum_kg"]` |
@@ -253,11 +253,12 @@ Presentational inputs (`water.salt_distribution`, `water.acid_medium`,
 table; they are read for display, never used as presence.
 
 **Landed:** Brewhouse, Batch Facts (identity, modeled metrics, and the four
-fermentable tables), Hops, Yeast, Volume Ledger, Liquor Ledger, Water Chemistry
-(including the mash and sparge treatment doses), Limits — `docs/report-sections.md`
-is the generated list. Sugars and the major/trace grist are tables inside Batch
-Facts, not standalone sections; the predicates above remain the record for the
-rest.
+fermentable tables), Mash Rests (the enabled schedule and its total mash time),
+Hops, Yeast, Volume Ledger, Liquor Ledger, Water Chemistry (including the mash
+and sparge treatment doses), Limits and the Brew Checklist —
+`docs/report-sections.md` is the generated list. Sugars and the major/trace
+grist are tables inside Batch Facts, not standalone sections; the predicates
+above remain the record for the rest.
 
 The mash constraint prints as two **solved** values in Brewhouse — the resolved
 liquor-to-grist ratio and the realized runnings ratio — so a reader sees the
@@ -265,9 +266,9 @@ actual L/kg and r under either topology. The authored roots behind them are
 never reported. Limits (last) carries the feasibility ceiling, the binding
 capacity, real attenuation, and the solved extract masses.
 
-**Remaining, in queue order:** mash rests, pinned ions, style conformance. The
-brew-day checklist is last, pending the carry-forward design; the Boil section
-follows.
+**Remaining, in queue order:** pinned ions, style conformance. The brew-day
+checklist has landed; the section queue is otherwise complete, apart from the
+image that ships the Typst binary.
 
 This table is a **candidate inventory**, not a commitment: the section set,
 titles, and prose are authoring decisions made one section at a time (§11).

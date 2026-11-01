@@ -219,11 +219,13 @@ Landed: the template tree, the registry contract and its guards, the pinned
 version, the local loop, the bundle-carried display strings (`formatted`,
 `formatted_tables`, `formatted_summaries`) that make the generator a string
 compositor, the FastAPI routes and `report_render.py`, and the sections —
-**Brewhouse** (`sections/brewhouse.typ`), **Batch Facts**, **Hops**, **Yeast**,
-the **Volume Ledger**, the **Liquor Ledger** and **Limits**. Not yet landed: the
-remaining section modules (authored one at a time — see
-[`adding-a-section.md`](adding-a-section.md)) and the image that ships the
-binary.
+**Brewhouse** (`sections/brewhouse.typ`), **Batch Facts**, **Mash Rests**,
+**Hops**, **Yeast**, the **Volume Ledger**, the **Liquor Ledger**, **Water
+Chemistry**, **Limits** and the **Brew Checklist**. Mash Rests prints only the
+enabled schedule and its total mash time; disabled canonical rests stay out of
+the report. Not yet landed: pinned ions, style conformance, and the image that
+ships the binary (authored one at a time — see
+[`adding-a-section.md`](adding-a-section.md)).
 
 The mash constraint is reported as two solved values, never as the authored
 roots: the resolved liquor-to-grist ratio and the realized runnings ratio

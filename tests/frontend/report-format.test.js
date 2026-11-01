@@ -157,6 +157,32 @@ test("grist tables carry formatted row cells", async () => {
   assert.equal(trace[0].grist_pct.unit, "%");
 });
 
+test("mash rests carry only enabled schedule rows and catalog labels", async () => {
+  const app = await booted();
+  const rests = app.reportFormattedTables()["mash.rests"];
+
+  assert.equal(rests.length, 2);
+  assert.deepEqual(
+    rests.map((row) => row.name.text),
+    ["Beta/Alpha-Amylase Rest", "Mash-out"]
+  );
+  assert.equal(rests[0].temp.unit, "°C");
+  assert.equal(rests[0].time.unit, "min");
+  assert.equal(app.reportFormatted()["mash.total_time_min"].unit, "min");
+
+  app.engine.setCollection("mash.rests", [
+    { rest_id: "protein", enabled: true, use_temp_c: 52, duration_min: 15 },
+    { rest_id: "beta_amylase", enabled: false, use_temp_c: 63, duration_min: 40 },
+    { rest_id: "mash_out", enabled: true, use_temp_c: 76, duration_min: 10 },
+  ]);
+  app.compute();
+  const custom = app.reportFormattedTables()["mash.rests"];
+  assert.deepEqual(
+    custom.map((row) => row.name.text),
+    ["Protein Rest", "Mash-out"]
+  );
+});
+
 const BOIL_HOP = {
   hop_id: "magnum",
   name: "Magnum",

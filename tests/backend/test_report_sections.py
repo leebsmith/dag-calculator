@@ -32,6 +32,7 @@ pytestmark = pytest.mark.skipif(
 SECTION_IDS = (
     "brewhouse",
     "batch-facts",
+    "mash-rests",
     "hops",
     "yeast",
     "volume-ledger",
@@ -210,6 +211,16 @@ WATER_DOSE_NONZERO_PROBE = (
 BATCH_FACTS_PROBE = (
     '#import "sections/batch-facts.typ": present-batch-facts\n'
     "#metadata(present-batch-facts()) <probe>\n"
+)
+
+MASH_RESTS_PRESENCE_PROBE = (
+    '#import "sections/mash-rests.typ": present-mash-rests\n'
+    "#metadata(present-mash-rests()) <probe>\n"
+)
+
+MASH_RESTS_ROWS_PROBE = (
+    '#import "lib/format.typ": formatted-table\n'
+    '#metadata(formatted-table("mash.rests").map(row => row.at("name").at("text"))) <probe>\n'
 )
 
 HOPS_PRESENCE_PROBE = (
@@ -463,6 +474,20 @@ def test_batch_facts_is_absent_without_a_realized_fact() -> None:
         render(root, "batch-facts")
 
 
+def test_mash_rests_lists_the_enabled_schedule(shared_root: Path) -> None:
+    assert probe(shared_root, MASH_RESTS_PRESENCE_PROBE) is True
+    assert probe(shared_root, MASH_RESTS_ROWS_PROBE) == ["Beta-Amylase Rest"]
+
+
+def test_mash_rests_is_absent_without_enabled_rows() -> None:
+    bundle = fixture()
+    del bundle["formatted_tables"]["mash.rests"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, MASH_RESTS_PRESENCE_PROBE) is False
+
+
 def test_the_short_id_truncates_with_an_ellipsis(shared_root: Path) -> None:
     source = (
         '#import "lib/format.typ": short-id\n'
@@ -493,6 +518,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
     assert meta["sections"] == [
         "brewhouse",
         "batch-facts",
+        "mash-rests",
         "hops",
         "yeast",
         "volume-ledger",

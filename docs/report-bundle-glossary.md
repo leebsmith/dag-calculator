@@ -215,11 +215,11 @@ _19 paths_
 | `mash.mash_phase_volume_l` | Mash volume | derived | volume | L | 1 | — |
 | `mash.preset_id` | Preset ID | choice | — | — | — | single_infusion, custom, belgian_saison, belgian_tripel, german_pils, berliner_weisse, english_brown, american_pale |
 | `mash.ramp_time_min` | Ramp Time Min | derived | time | min | 0 | — |
-| `mash.rests` | Rests | collection | — | — | — | — |
-| `mash.rests.duration_min` | Duration Min | field | time | min | 0 | — |
+| `mash.rests` | Mash rests | collection | — | — | — | — |
+| `mash.rests.duration_min` | Time | field | time | min | 0 | — |
 | `mash.rests.enabled` | Enabled | field | — | — | — | — |
-| `mash.rests.rest_id` | Rest ID | field | — | — | — | phytase, ferulic, beta_glucan, protein, beta_amylase, alpha_amylase, beta_alpha_amylase, mash_out |
-| `mash.rests.use_temp_c` | Use Temp C | field | temperature | degC (°C) | 1 | — |
+| `mash.rests.rest_id` | Step | field | — | — | — | phytase, ferulic, beta_glucan, protein, beta_amylase, alpha_amylase, beta_alpha_amylase, mash_out |
+| `mash.rests.use_temp_c` | Temp | field | temperature | degC (°C) | 1 | — |
 | `mash.sparge_phase_volume_l` | Sparge Phase Volume L | derived | volume | L | 1 | — |
 | `mash.strike_water_temp_base_c` | Strike base temp | derived | temperature | degC (°C) | 1 | — |
 | `mash.strike_water_temp_c` | Strike water temp | derived | temperature | degC (°C) | 1 | — |
