@@ -195,6 +195,16 @@ LIMITS_PRESENCE_PROBE = (
     "#metadata(present-limits()) <probe>\n"
 )
 
+EXTRACT_LEDGER_PROBE = (
+    '#import "sections/limits.typ": present-extract-ledger\n'
+    "#metadata(present-extract-ledger()) <probe>\n"
+)
+
+EXTRACT_ROW_LABELS_PROBE = (
+    '#import "sections/limits.typ": extract-rows\n'
+    "#metadata(extract-rows.map(row => row.label)) <probe>\n"
+)
+
 # Both ratios print as solved values, whichever constraint the solve held.
 BREWHOUSE_CONSTRAINT_PROBE = (
     '#import "sections/brewhouse.typ": constraint-rows\n'
@@ -312,6 +322,35 @@ def test_limits_is_absent_without_a_feasibility_bound() -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, LIMITS_PRESENCE_PROBE) is False
         render(root, "limits")
+
+
+def test_the_extract_ledger_is_present_with_the_solved_chain(shared_root: Path) -> None:
+    assert probe(shared_root, EXTRACT_LEDGER_PROBE) is True
+
+
+def test_the_extract_ledger_is_absent_without_the_chain() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["solver.batch.extract.s_potential"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, EXTRACT_LEDGER_PROBE) is False
+        # The feasibility block still renders: the ledger is its own gate.
+        render(root, "limits")
+
+
+def test_the_extract_ledger_runs_potential_to_fermenter(shared_root: Path) -> None:
+    assert probe(shared_root, EXTRACT_ROW_LABELS_PROBE) == [
+        "Potential extract (dry basis)",
+        "Conversion inefficiency",
+        "Converted extract",
+        "Mash tun and transfer losses",
+        "Extract into the kettle",
+        "Late additions",
+        "Post-boil extract",
+        "Kettle losses",
+        "Extract into the fermenter",
+    ]
 
 
 def test_batch_facts_is_present_with_the_realized_values(shared_root: Path) -> None:

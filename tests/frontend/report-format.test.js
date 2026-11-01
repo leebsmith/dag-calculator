@@ -38,9 +38,33 @@ test("the report carries both solved mash ratios and the solver limits", async (
 
   assert.equal(formatted["solver.batch.max_feasible_abv"].unit, "%");
   assert.equal(formatted["solver.batch.max_achievable_abv"].unit, "%");
+  // Both limits arrive in percent points; the `abv` dimension must pass them
+  // through, not scale them a second time.
+  assert.equal(formatted["solver.batch.max_feasible_abv"].number, "10.0");
+  assert.equal(formatted["solver.batch.max_achievable_abv"].number, "10.0");
   assert.equal(formatted["solver.batch.binding_constraint"].text, "Fermentation");
   assert.equal(formatted["solver.batch.real_attenuation"].text, "76.0%");
   assert.equal(formatted["solver.batch.s_post_boil_target"].unit, "kg");
+});
+
+test("the extract chain arrives as frozen masses that close", async () => {
+  const app = await booted();
+  const formatted = app.reportFormatted();
+
+  assert.equal(formatted["solver.batch.extract.s_potential"].text, "3.60 kg");
+  assert.equal(formatted["solver.batch.extract.s_converted"].text, "3.00 kg");
+  assert.equal(formatted["solver.batch.extract.s_kettle"].text, "2.60 kg");
+  assert.equal(formatted["solver.batch.extract.s_fermenter"].text, "2.50 kg");
+
+  // The loss rows are differences of solved masses, not re-derivations.
+  assert.equal(formatted["batch.extract_loss_conversion"].text, "0.60 kg");
+  assert.equal(formatted["batch.extract_loss_mash"].text, "0.40 kg");
+  assert.equal(formatted["batch.extract_loss_kettle"].text, "0.10 kg");
+  assert.equal(formatted["batch.extract_loss_retention"].text, "0.30 kg");
+  assert.equal(formatted["batch.extract_loss_transfer"].text, "0.10 kg");
+
+  // Brewhouse efficiency is the kettle figure: malt extract / potential.
+  assert.equal(formatted["solver.batch.brewhouse_efficiency"].text, "72.0%");
 });
 
 test("the batch derate is points off the strain maximum, not a percentage", async () => {

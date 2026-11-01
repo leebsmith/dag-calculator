@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_118 paths_
+_123 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -63,6 +63,11 @@ _118 paths_
 | `batch.dry_hops.time_of_application` | Detail | field | — | — | — | — |
 | `batch.dry_hops.unit` | Unit | field | — | — | — | oz, g, ml |
 | `batch.dry_hops.variety` | Hop | field | — | — | — | — |
+| `batch.extract_loss_conversion` | Conversion inefficiency | derived | mass | kg | 2 | — |
+| `batch.extract_loss_kettle` | Kettle losses | derived | mass | kg | 2 | — |
+| `batch.extract_loss_mash` | Mash tun and transfer losses | derived | mass | kg | 2 | — |
+| `batch.extract_loss_retention` | Mash tun retention | derived | mass | kg | 2 | — |
+| `batch.extract_loss_transfer` | Mash transfer | derived | mass | kg | 2 | — |
 | `batch.fermentation` | Fermentation | choice | — | — | — | ale, lager, wild, mixed |
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
@@ -80,7 +85,7 @@ _118 paths_
 | `batch.sparge_salted_volume` | Sparge salt dosing volume | derived | volume | L | 1 | — |
 | `batch.sparge_water_temp_c` | Sparge water temperature | root | temperature | degC (°C) | 1 | — |
 | `batch.sugar_extract_share` | Sugar share | root | percentage | pct (%) | 1 | — |
-| `batch.sugar_extract_total` | Late extract | derived | mass | kg | 2 | — |
+| `batch.sugar_extract_total` | Late-addition extract | derived | mass | kg | 2 | — |
 | `batch.sugar_fermentability_effective` | Sugar Fermentability Effective | derived | percentage | pct (%) | 1 | — |
 | `batch.sugar_parts_total` | Sugar Parts Total | derived | dimensionless | — | — | — |
 | `batch.sugar_share_request` | Sugar Share Request | derived | percentage | pct (%) | 1 | — |
@@ -291,7 +296,7 @@ _61 paths_
 
 ## Solver — batch sparge
 
-_31 paths_
+_36 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -310,6 +315,11 @@ _31 paths_
 | `solver.batch.cascade.v_sol` | Dissolved extract | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_sparge` | Sparge water | output | volume | L | 1 | — |
 | `solver.batch.cascade.v_strike` | Strike water | output | volume | L | 1 | — |
+| `solver.batch.extract.s_converted` | Converted extract | output | mass | kg | 2 | — |
+| `solver.batch.extract.s_fermenter` | Extract into the fermenter | output | mass | kg | 2 | — |
+| `solver.batch.extract.s_kettle` | Extract into the kettle | output | mass | kg | 2 | — |
+| `solver.batch.extract.s_potential` | Potential extract | output | mass | kg | 2 | — |
+| `solver.batch.extract.s_tun` | Mash tun extract | output | mass | kg | 2 | — |
 | `solver.batch.grist_attenuation` | Grist Attenuation | output | percentage | pct (%) | 1 | — |
 | `solver.batch.hlt.v_hlt_after_strike` | V Hlt After Strike | output | volume | L | 1 | — |
 | `solver.batch.hlt.v_hlt_debt` | V Hlt Debt | output | volume | L | 1 | — |
@@ -319,11 +329,11 @@ _31 paths_
 | `solver.batch.hlt.v_sparge_deliverable` | Sparge Deliverable | output | volume | L | 1 | — |
 | `solver.batch.m_grist` | Grist mass | output | mass | kg | 1 | — |
 | `solver.batch.mash_thickness_l_per_kg` | Liquor-to-grist ratio | output | mash_thickness | L_per_kg (L/kg) | 2 | — |
-| `solver.batch.max_achievable_abv` | Attenuation ceiling | output | percentage | pct (%) | 1 | — |
-| `solver.batch.max_feasible_abv` | Max feasible ABV | output | percentage | pct (%) | 1 | — |
+| `solver.batch.max_achievable_abv` | Attenuation ceiling | output | abv | pct (%) | 1 | — |
+| `solver.batch.max_feasible_abv` | Max feasible ABV | output | abv | pct (%) | 1 | — |
 | `solver.batch.previews` | Previews | output | — | — | — | — |
 | `solver.batch.real_attenuation` | Real attenuation | output | percentage | pct (%) | 1 | — |
-| `solver.batch.s_post_boil_target` | Post-boil extract | output | mass | kg | 1 | — |
+| `solver.batch.s_post_boil_target` | Post-boil extract | output | mass | kg | 2 | — |
 | `solver.batch.sg_post_boil` | Post-boil gravity | output | gravity | Plato (°P) | 1 | — |
 | `solver.batch.v_pre_boil` | Pre-boil kettle | output | volume | L | 1 | — |
 

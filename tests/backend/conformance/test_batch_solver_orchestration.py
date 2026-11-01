@@ -80,7 +80,10 @@ def assert_cascade_reproduces_target(inputs):
     assert kettle_extract == pytest.approx(result.s_post_boil_target)
 
     v_kettle_cold = kettle_cold_volume(
-        inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+        inputs.v_ferm,
+        inputs.v_kettle_dead,
+        inputs.v_kettle_transfer,
+        inputs.v_trub,
     )
     realized_sg = 1.0 + (kettle_extract * GAMMA_METRIC / (1000.0 * v_kettle_cold))
     assert realized_sg == pytest.approx(result.sg_post_boil)
@@ -218,22 +221,73 @@ def test_solve_batch_hlt_budget_is_consistent(standard_inputs):
 def test_brewhouse_efficiency_is_below_conversion(standard_inputs):
     result = solve_batch(standard_inputs)
 
-    # Malt extract into the fermenter over the grist's potential. Lauter
-    # retention and the kettle's dead space both sit below the mash conversion
-    # figure, so this can never reach eta_conv.
+    # Malt extract delivered to the kettle over the grist's potential. Lauter
+    # retention and the mash transfer loss both sit below the mash conversion
+    # figure, so this can never reach eta_conv; the kettle's own losses happen
+    # after this point and are not charged here.
     assert 0.0 < result.brewhouse_efficiency < standard_inputs.eta_conv
 
     yield_fraction = 0.80 * 0.80 * (1 - 0.04) + 0.20 * 0.70 * (1 - 0.05)
+    expected = (result.s_post_boil_target - standard_inputs.s_late_add) / (
+        result.m_grist * yield_fraction
+    )
+    assert result.brewhouse_efficiency == pytest.approx(expected)
+
+
+def test_the_extract_ledger_closes_through_the_kettle(standard_inputs):
+    result = solve_batch(standard_inputs)
+    extract = result.extract
+    yield_fraction = 0.80 * 0.80 * (1 - 0.04) + 0.20 * 0.70 * (1 - 0.05)
+
+    assert extract.s_potential == pytest.approx(result.m_grist * yield_fraction)
+    assert extract.s_converted == pytest.approx(
+        standard_inputs.eta_conv * extract.s_potential
+    )
+    assert extract.s_tun == pytest.approx(
+        result.cascade.s_run1 + result.cascade.s_run2
+    )
+    # The Phase 3 residual sizes the grist for the kettle's malt extract.
+    assert extract.s_kettle == pytest.approx(
+        result.s_post_boil_target - standard_inputs.s_late_add
+    )
+
     v_kettle_cold = kettle_cold_volume(
         standard_inputs.v_ferm,
         standard_inputs.v_kettle_dead,
-        standard_inputs.f_shrink,
+        standard_inputs.v_kettle_transfer,
+        standard_inputs.v_trub,
     )
-    expected = (
-        (result.s_post_boil_target - standard_inputs.s_late_add)
-        * (standard_inputs.v_ferm / v_kettle_cold)
-    ) / (result.m_grist * yield_fraction)
-    assert result.brewhouse_efficiency == pytest.approx(expected)
+    assert extract.s_fermenter == pytest.approx(
+        result.s_post_boil_target * standard_inputs.v_ferm / v_kettle_cold
+    )
+
+    assert (
+        extract.s_potential
+        > extract.s_converted
+        > extract.s_tun
+        > extract.s_kettle
+        > extract.s_fermenter
+        > 0.0
+    )
+
+
+def test_the_extract_target_covers_every_cold_kettle_loss(standard_inputs):
+    result = solve_batch(standard_inputs)
+    cold = kettle_cold_volume(
+        standard_inputs.v_ferm,
+        standard_inputs.v_kettle_dead,
+        standard_inputs.v_kettle_transfer,
+        standard_inputs.v_trub,
+    )
+    assert cold == pytest.approx(
+        standard_inputs.v_ferm
+        + standard_inputs.v_kettle_dead
+        + standard_inputs.v_kettle_transfer
+        + standard_inputs.v_trub
+    )
+    realized = 1.0 + (result.s_post_boil_target * GAMMA_METRIC / (1000.0 * cold))
+    assert realized == pytest.approx(result.sg_post_boil)
+    assert result.extract.s_fermenter < result.s_post_boil_target
 
 
 def test_solve_batch_raises_hlt_too_small(standard_inputs):

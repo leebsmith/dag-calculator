@@ -28,6 +28,7 @@ from app.core.batch.helpers import (
     composite_fermentability_fraction,
     composite_moisture_fraction,
     composite_yield_fraction,
+    converted_extract,
     grist_apparent_attenuation,
     validate_grain_bill_normalization,
 )
@@ -70,6 +71,27 @@ class ScalePreview:
 
 
 @dataclass(frozen=True)
+class ExtractLedger:
+    """The extract accounting chain, in kg.
+
+    Attributes:
+        s_potential: The grist's potential extract, dry basis (``M · E``).
+        s_converted: Extract converted in the mash (``eta_conv · E · M``).
+        s_tun: Extract leaving the mash tun with the runnings.
+        s_kettle: Malt extract delivered to the kettle; equal to
+            ``s_post_boil_target − sugar_extract`` by the Phase 3 residual.
+        s_fermenter: Extract transferred to the fermenter, after the kettle's
+            dead space, transfer and trub losses.
+    """
+
+    s_potential: float
+    s_converted: float
+    s_tun: float
+    s_kettle: float
+    s_fermenter: float
+
+
+@dataclass(frozen=True)
 class BatchSolverResult:
     """Full result of a batch-sparge solve.
 
@@ -98,15 +120,18 @@ class BatchSolverResult:
             Mash Card reads it directly to derive strike water temperature
             (design record Q3/Q12). Under ``r_l_to_g`` it equals the input
             ``R_L:G``; under ``runoff_ratio`` it is derived from the cascade.
-        brewhouse_efficiency: Malt extract into the fermenter as a share of the
-            grist's potential extract, excluding late additions. Always below
-            ``conversion_efficiency`` because it also carries lauter retention.
+        brewhouse_efficiency: Malt extract delivered to the kettle as a share of
+            the grist's potential extract, excluding late additions. Always below
+            ``conversion_efficiency`` because it also carries lauter retention
+            and the mash transfer loss; the kettle's own losses are excluded.
         grist_attenuation: The grist's extract-weighted fermentability expressed
             as apparent attenuation at the solved OE. Below the yeast cap when
             the grist is the binding constraint; equal to the cap on the legacy
             scalar path.
         previews: One hypothetical gravity/strength row per scale pin, at that
             pin's persisted target. Diagnostics only; never the active solve.
+        extract: The extract accounting chain (potential, converted, tun,
+            kettle, fermenter).
     """
 
     sg_post_boil: float
@@ -124,6 +149,7 @@ class BatchSolverResult:
     brewhouse_efficiency: float
     grist_attenuation: float
     previews: tuple[ScalePreview, ...]
+    extract: ExtractLedger
 
 
 @dataclass(frozen=True)
@@ -138,6 +164,7 @@ class _Pipeline:
     max_abv: float
     brewhouse_efficiency: float
     grist_attenuation: float
+    extract: ExtractLedger
 
 
 def _capacity_violation(inputs: BatchSolverInput, pipeline: _Pipeline) -> str | None:
@@ -385,7 +412,10 @@ def _solve_pipeline(
     dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
 
     v_kettle_cold = kettle_cold_volume(
-        inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+        inputs.v_ferm,
+        inputs.v_kettle_dead,
+        inputs.v_kettle_transfer,
+        inputs.v_trub,
     )
 
     def solve_phase_1(aa: float):
@@ -508,14 +538,53 @@ def _solve_pipeline(
             sugar_extract_kg=s_late_add,
             m_grist=m_grist,
             yield_fraction=yield_fraction,
-            v_ferm=inputs.v_ferm,
-            v_kettle_cold=v_kettle_cold,
         ),
         grist_attenuation=grist_apparent_attenuation(
             oe_plato=oe_plato,
             real_fermentability=aa_malt,
             fallback=inputs.malt_attenuation_cap,
         ),
+        extract=_extract_ledger(
+            m_grist=m_grist,
+            yield_fraction=yield_fraction,
+            eta_conv=inputs.eta_conv,
+            cascade=cascade,
+            v_pre_boil=reversal.v_pre_boil,
+            mash_transfer_loss=inputs.mash_transfer_loss,
+            s_post_boil_target=reversal.s_post_boil_target,
+            v_ferm=inputs.v_ferm,
+            v_kettle_cold=v_kettle_cold,
+        ),
+    )
+
+
+def _extract_ledger(
+    *,
+    m_grist: float,
+    yield_fraction: float,
+    eta_conv: float,
+    cascade: StageCascade,
+    v_pre_boil: float,
+    mash_transfer_loss: float,
+    s_post_boil_target: float,
+    v_ferm: float,
+    v_kettle_cold: float,
+) -> ExtractLedger:
+    """Assemble the extract accounting chain from the solved stages.
+
+    The mash transfer loss holds homogeneous wort at the drain concentration
+    (``V_drain = V_pre + mash_transfer_loss``), so the kettle receives
+    ``S_tun · V_pre / V_drain``. The fermenter receives ``S_post · V_ferm /
+    V_kettle_cold``: the kettle's dead space, transfer and trub all carry
+    extract at the post-boil concentration.
+    """
+    s_tun = cascade.s_run1 + cascade.s_run2
+    return ExtractLedger(
+        s_potential=m_grist * yield_fraction,
+        s_converted=converted_extract(m_grist, yield_fraction, eta_conv),
+        s_tun=s_tun,
+        s_kettle=s_tun * (v_pre_boil / (v_pre_boil + mash_transfer_loss)),
+        s_fermenter=s_post_boil_target * (v_ferm / v_kettle_cold),
     )
 
 
@@ -610,7 +679,10 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         )
     else:
         v_kettle_cold = kettle_cold_volume(
-            inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink
+            inputs.v_ferm,
+            inputs.v_kettle_dead,
+            inputs.v_kettle_transfer,
+            inputs.v_trub,
         )
         dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
         previews = _preview_rows(
@@ -633,4 +705,5 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
         brewhouse_efficiency=pipeline.brewhouse_efficiency,
         grist_attenuation=pipeline.grist_attenuation,
         previews=previews,
+        extract=pipeline.extract,
     )

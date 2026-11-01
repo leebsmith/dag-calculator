@@ -13,6 +13,7 @@ from app.core.batch.orchestration import solve_batch
 from app.core.errors import SolverValidationError
 from app.schemas.boundary import (
     BatchCascadeOutputs,
+    BatchExtractOutputs,
     BatchHltOutputs,
     BatchSolverRequest,
     BatchSolverResponse,
@@ -103,6 +104,13 @@ def _to_response(result) -> BatchSolverResponse:
         mash_thickness_l_per_kg=result.mash_thickness_l_per_kg,
         brewhouse_efficiency=result.brewhouse_efficiency,
         grist_attenuation=result.grist_attenuation,
+        extract=BatchExtractOutputs(
+            s_potential=result.extract.s_potential,
+            s_converted=result.extract.s_converted,
+            s_tun=result.extract.s_tun,
+            s_kettle=result.extract.s_kettle,
+            s_fermenter=result.extract.s_fermenter,
+        ),
         previews=[
             ScalePreviewRow(
                 pin=row.pin,

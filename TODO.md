@@ -81,10 +81,12 @@ unchanged: it grades the realized value against the absolute envelope.
 Seven sections have landed — Brewhouse, Batch Facts, Hops, Yeast, Volume Ledger,
 Liquor Ledger and Limits — with the bundle and the render service (`GET`/`POST
 /batches/{id}/report`). Brewhouse prints the two solved mash ratios (L/kg and
-r), and Limits carries the feasibility ceiling, binding capacity, real
-attenuation, and solved extract masses. One bullet per remaining section; the
-presence predicates are in `plans/report-renderer.md` §6.4. Queue order is the
-order below.
+r), and Limits carries the feasibility ceiling and binding capacity plus a
+closing extract ledger: potential, conversion inefficiency, converted, mash tun
+and transfer losses, into the kettle, late additions, post-boil, kettle losses,
+into the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
+remaining section; the presence predicates are in `plans/report-renderer.md`
+§6.4. Queue order is the order below.
 
 * **Mash rests section** — `mash.rests` rows; step, temperature, duration, enabled.
   Strike temperature already prints in Brewhouse.

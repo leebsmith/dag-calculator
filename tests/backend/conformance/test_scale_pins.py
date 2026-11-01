@@ -94,7 +94,12 @@ def test_preview_rows_hold_the_authored_composition():
 def test_preview_rows_carry_the_share_they_actually_hold():
     inputs = _input(s_late_add=0.4)
     result = solve_batch(inputs)
-    cold = kettle_cold_volume(inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink)
+    cold = kettle_cold_volume(
+        inputs.v_ferm,
+        inputs.v_kettle_dead,
+        inputs.v_kettle_transfer,
+        inputs.v_trub,
+    )
 
     for row in result.previews:
         extract = post_boil_extract_target(row.og, cold, GAMMA_METRIC)
@@ -136,12 +141,12 @@ def test_fg_below_one_needs_diastaticus():
 
 
 def test_pin_targets_carry_the_effective_sugar_fermentability():
-    fully = solve_batch(_input(scale_pin="fg", target_fg=1.012, s_late_add=0.4))
+    fully = solve_batch(_input(scale_pin="fg", target_fg=1.012, s_late_add=0.2))
     mixed = solve_batch(
         _input(
             scale_pin="fg",
             target_fg=1.012,
-            s_late_add=0.4,
+            s_late_add=0.2,
             sugar_fermentability=0.5,
         )
     )

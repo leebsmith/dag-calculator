@@ -1901,7 +1901,7 @@
         "dimension": "gravity"
       },
       "abv": {
-        "dimension": "percentage"
+        "dimension": "abv"
       },
       "sugar_extract_share": {
         "dimension": "percentage"
@@ -3390,10 +3390,10 @@
           "dimension": "volume"
         },
         "max_achievable_abv": {
-          "dimension": "percentage"
+          "dimension": "abv"
         },
         "max_feasible_abv": {
-          "dimension": "percentage"
+          "dimension": "abv"
         },
         "binding_constraint": {
           "taxonomy": "binding_constraint"
@@ -3430,6 +3430,21 @@
         },
         "mash_thickness_l_per_kg": {
           "dimension": "mash_thickness"
+        },
+        "extract.s_potential": {
+          "dimension": "mass"
+        },
+        "extract.s_converted": {
+          "dimension": "mass"
+        },
+        "extract.s_tun": {
+          "dimension": "mass"
+        },
+        "extract.s_kettle": {
+          "dimension": "mass"
+        },
+        "extract.s_fermenter": {
+          "dimension": "mass"
         },
         "previews": {
           "type": "collection",
@@ -4951,6 +4966,111 @@
       },
       "output": {
         "dimension": "volume"
+      }
+    },
+    "batch.extract_loss_conversion": {
+      "kind": "derived",
+      "inputs": {
+        "potential": "solver.batch.extract.s_potential",
+        "converted": "solver.batch.extract.s_converted"
+      },
+      "expr": {
+        "op": "-",
+        "args": [
+          {
+            "ref": "potential"
+          },
+          {
+            "ref": "converted"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "mass"
+      }
+    },
+    "batch.extract_loss_retention": {
+      "kind": "derived",
+      "inputs": {
+        "converted": "solver.batch.extract.s_converted",
+        "tun": "solver.batch.extract.s_tun"
+      },
+      "expr": {
+        "op": "-",
+        "args": [
+          {
+            "ref": "converted"
+          },
+          {
+            "ref": "tun"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "mass"
+      }
+    },
+    "batch.extract_loss_transfer": {
+      "kind": "derived",
+      "inputs": {
+        "tun": "solver.batch.extract.s_tun",
+        "kettle": "solver.batch.extract.s_kettle"
+      },
+      "expr": {
+        "op": "-",
+        "args": [
+          {
+            "ref": "tun"
+          },
+          {
+            "ref": "kettle"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "mass"
+      }
+    },
+    "batch.extract_loss_mash": {
+      "kind": "derived",
+      "inputs": {
+        "retention": "batch.extract_loss_retention",
+        "transfer": "batch.extract_loss_transfer"
+      },
+      "expr": {
+        "op": "+",
+        "args": [
+          {
+            "ref": "retention"
+          },
+          {
+            "ref": "transfer"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "mass"
+      }
+    },
+    "batch.extract_loss_kettle": {
+      "kind": "derived",
+      "inputs": {
+        "post": "solver.batch.s_post_boil_target",
+        "fermenter": "solver.batch.extract.s_fermenter"
+      },
+      "expr": {
+        "op": "-",
+        "args": [
+          {
+            "ref": "post"
+          },
+          {
+            "ref": "fermenter"
+          }
+        ]
+      },
+      "output": {
+        "dimension": "mass"
       }
     },
     "batch.sugar_fermentability_effective": {

@@ -228,3 +228,13 @@ binary.
 The mash constraint is reported as two solved values, never as the authored
 roots: the resolved liquor-to-grist ratio and the realized runnings ratio
 (`batch.runnings_ratio`) print in Brewhouse whichever topology the solve held.
+
+Limits prints two blocks. Feasibility is the capacity-bounded ABV ceiling, the
+binding limit and the attenuation ceiling. The extract ledger closes the solved
+chain from the grist's potential to the fermenter:
+`solver.batch.extract.s_potential` → conversion inefficiency → converted →
+mash tun and transfer losses → into the kettle → late additions → post-boil →
+kettle losses → into the fermenter, then brewhouse efficiency. Every row is a
+frozen figure; the three loss rows are artifact nodes that subtract two solved
+masses (`batch.extract_loss_conversion`, `batch.extract_loss_mash`,
+`batch.extract_loss_kettle`), so the generator still does no arithmetic.

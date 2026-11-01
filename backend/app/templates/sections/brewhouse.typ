@@ -46,8 +46,9 @@
   v(4pt)
   text(size: 8pt, fill: rgb("#6b6b6b"))[
     Conversion efficiency is mash recovery alone; brewhouse efficiency is malt
-    extract into the fermenter over the grist's potential, so it also carries
-    lauter and kettle losses. Late additions are excluded from both sides of the
-    brewhouse figure.
+    extract into the kettle over the grist's potential, so it also carries the
+    lauter retention and the mash transfer loss. Late additions are excluded
+    from both sides, and the kettle's own losses are the extract ledger's last
+    subtraction, not this figure's.
   ]
 })

@@ -33,15 +33,23 @@ class VolumetricReversal:
 
 
 def kettle_cold_volume(
-    v_ferm: float, v_kettle_dead: float, f_shrink: float
+    v_ferm: float,
+    v_kettle_dead: float,
+    v_kettle_transfer: float = 0.0,
+    v_trub: float = 0.0,
 ) -> float:
     """Compute the cold kettle volume ``V_kettle_cold``.
 
-    ``V_kettle_cold = V_ferm + V_kettle_dead * (1 - f_shrink)``
+    ``V_kettle_cold = V_ferm + V_kettle_dead + V_kettle_transfer + V_trub``
+
+    The kettle losses are subtracted *after* shrinkage in the volume ledger, so
+    they are already cold-domain volumes and take no shrink factor. All three
+    carry wort at the post-boil concentration, so the extract target covers the
+    extract they remove.
 
     See ``domain-equations.md`` §2.5.
     """
-    return v_ferm + (v_kettle_dead * (1.0 - f_shrink))
+    return v_ferm + v_kettle_dead + v_kettle_transfer + v_trub
 
 
 def post_boil_extract_target(
@@ -186,7 +194,9 @@ def resolve_volumetric_reversal(
             f"Shrinkage coefficient must be in [0, 1); got {f_shrink}.",
         )
 
-    v_kettle_cold = kettle_cold_volume(v_ferm, v_kettle_dead, f_shrink)
+    v_kettle_cold = kettle_cold_volume(
+        v_ferm, v_kettle_dead, v_kettle_transfer, v_trub
+    )
     split = resolve_extract_split(sg_post_boil, v_kettle_cold, 0.0, s_late_add, gamma)
     require_malt_extract(split)
     s_post_boil_target = split.extract_total_kg

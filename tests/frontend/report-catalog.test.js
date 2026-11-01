@@ -144,6 +144,19 @@ test("identity dimensions carry no display unit", () => {
   }
 });
 
+test("the solver's ABV limits are abv values, never rescaled percentages", () => {
+  for (const path of [
+    "solver.batch.max_feasible_abv",
+    "solver.batch.max_achievable_abv",
+  ]) {
+    assert.equal(catalog.nodes[path].dimension, "abv", path);
+    assert.equal(catalog.nodes[path].symbol, "%", path);
+  }
+  // The preview row is a collection item, not a catalog path; its `abv` field is
+  // percent points like the limits it is compared against.
+  assert.equal(artifact.primitive_schemas.scale_preview_row.abv.dimension, "abv");
+});
+
 test("taxonomies become options with their labels", () => {
   const topology = catalog.nodes["batch.topology"];
   assert.deepEqual(topology.options, artifact.taxonomies.topology);

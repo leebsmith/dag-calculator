@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:aaf06ba43ddf09bc9b9d8ae3505df39059e58674de886ba51cff61d8ad3f02cf",
+    "hash": "sha256:2e4f01f7c85c83d3c2b3cba609a804ed4943c1751fee17d2b0420bcea2f0f9a6",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -1892,7 +1892,7 @@
             "dimension": "gravity"
           },
           "abv": {
-            "dimension": "percentage"
+            "dimension": "abv"
           },
           "sugar_extract_share": {
             "dimension": "percentage"
@@ -3510,10 +3510,10 @@
               "dimension": "volume"
             },
             "max_achievable_abv": {
-              "dimension": "percentage"
+              "dimension": "abv"
             },
             "max_feasible_abv": {
-              "dimension": "percentage"
+              "dimension": "abv"
             },
             "binding_constraint": {
               "taxonomy": "binding_constraint"
@@ -3550,6 +3550,21 @@
             },
             "mash_thickness_l_per_kg": {
               "dimension": "mash_thickness"
+            },
+            "extract.s_potential": {
+              "dimension": "mass"
+            },
+            "extract.s_converted": {
+              "dimension": "mass"
+            },
+            "extract.s_tun": {
+              "dimension": "mass"
+            },
+            "extract.s_kettle": {
+              "dimension": "mass"
+            },
+            "extract.s_fermenter": {
+              "dimension": "mass"
             },
             "previews": {
               "type": "collection",
@@ -5073,6 +5088,111 @@
             "dimension": "volume"
           }
         },
+        "batch.extract_loss_conversion": {
+          "kind": "derived",
+          "inputs": {
+            "potential": "solver.batch.extract.s_potential",
+            "converted": "solver.batch.extract.s_converted"
+          },
+          "expr": {
+            "op": "-",
+            "args": [
+              {
+                "ref": "potential"
+              },
+              {
+                "ref": "converted"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.extract_loss_retention": {
+          "kind": "derived",
+          "inputs": {
+            "converted": "solver.batch.extract.s_converted",
+            "tun": "solver.batch.extract.s_tun"
+          },
+          "expr": {
+            "op": "-",
+            "args": [
+              {
+                "ref": "converted"
+              },
+              {
+                "ref": "tun"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.extract_loss_transfer": {
+          "kind": "derived",
+          "inputs": {
+            "tun": "solver.batch.extract.s_tun",
+            "kettle": "solver.batch.extract.s_kettle"
+          },
+          "expr": {
+            "op": "-",
+            "args": [
+              {
+                "ref": "tun"
+              },
+              {
+                "ref": "kettle"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.extract_loss_mash": {
+          "kind": "derived",
+          "inputs": {
+            "retention": "batch.extract_loss_retention",
+            "transfer": "batch.extract_loss_transfer"
+          },
+          "expr": {
+            "op": "+",
+            "args": [
+              {
+                "ref": "retention"
+              },
+              {
+                "ref": "transfer"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.extract_loss_kettle": {
+          "kind": "derived",
+          "inputs": {
+            "post": "solver.batch.s_post_boil_target",
+            "fermenter": "solver.batch.extract.s_fermenter"
+          },
+          "expr": {
+            "op": "-",
+            "args": [
+              {
+                "ref": "post"
+              },
+              {
+                "ref": "fermenter"
+              }
+            ]
+          },
+          "output": {
+            "dimension": "mass"
+          }
+        },
         "batch.sugar_fermentability_effective": {
           "kind": "derived",
           "inputs": {
@@ -5842,7 +5962,7 @@
         "dimension": "mass",
         "unit": "kg",
         "symbol": "kg",
-        "decimals": 1,
+        "decimals": 2,
         "step": null,
         "options": null,
         "option_labels": null
@@ -5867,6 +5987,116 @@
         "options": null,
         "option_labels": null
       },
+      "solver.batch.extract.s_potential": {
+        "label": "Potential extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.extract.s_converted": {
+        "label": "Converted extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.extract.s_tun": {
+        "label": "Mash tun extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.extract.s_kettle": {
+        "label": "Extract into the kettle",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.batch.extract.s_fermenter": {
+        "label": "Extract into the fermenter",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.sugar_extract_total": {
+        "label": "Late-addition extract",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.extract_loss_conversion": {
+        "label": "Conversion inefficiency",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.extract_loss_mash": {
+        "label": "Mash tun and transfer losses",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.extract_loss_retention": {
+        "label": "Mash tun retention",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.extract_loss_transfer": {
+        "label": "Mash transfer",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.extract_loss_kettle": {
+        "label": "Kettle losses",
+        "dimension": "mass",
+        "unit": "kg",
+        "symbol": "kg",
+        "decimals": 2,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.batch.real_attenuation": {
         "label": "Real attenuation",
         "dimension": "percentage",
@@ -5879,7 +6109,7 @@
       },
       "solver.batch.max_feasible_abv": {
         "label": "Max feasible ABV",
-        "dimension": "percentage",
+        "dimension": "abv",
         "unit": "pct",
         "symbol": "%",
         "decimals": 1,
@@ -5889,7 +6119,7 @@
       },
       "solver.batch.max_achievable_abv": {
         "label": "Attenuation ceiling",
-        "dimension": "percentage",
+        "dimension": "abv",
         "unit": "pct",
         "symbol": "%",
         "decimals": 1,
@@ -7180,7 +7410,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:f756912ef6dc38864d5c7f6a4e456cd18c993c50be13130b634f3b96ebd611cd"
+    "hash": "sha256:5bda60b113f6314f569e0240dbbe61d04eefe6dc5f1bc1b079a3496f9171c1d1"
   },
   "batch": {
     "id": "frozen-1",
@@ -7376,7 +7606,7 @@
         "cascade.v_sparge": 17.2,
         "cascade.v_run2": 17.2,
         "cascade.v_post_boil": 22.4,
-        "cascade.sg_pre_boil": 1.045,
+        "cascade.sg_pre_boil": 1.041405,
         "apparent_attenuation": 0.756,
         "hlt.v_hlt_debt": 1.0,
         "hlt.v_hlt_after_strike": 15.0,
@@ -7384,17 +7614,28 @@
         "hlt.v_sparge_deliverable": 17.2,
         "hlt.v_hlt_required": 18.2,
         "hlt.v_hlt_target": 18.2,
-        "brewhouse_efficiency": 0.819,
+        "brewhouse_efficiency": 0.734044,
         "grist_attenuation": 0.71,
-        "s_post_boil_target": 2.6,
-        "cascade.s_run1": 2.0,
-        "cascade.s_run2": 0.6,
+        "s_post_boil_target": 3.12712,
+        "cascade.s_run1": 1.641807,
+        "cascade.s_run2": 1.138997,
+        "extract.s_potential": 3.7152,
+        "extract.s_converted": 3.34368,
+        "extract.s_tun": 2.780804,
+        "extract.s_kettle": 2.72712,
+        "extract.s_fermenter": 2.842837,
         "max_achievable_abv": 8.4,
         "max_feasible_abv": 7.2,
         "binding_constraint": "tun",
         "real_attenuation": 0.68,
         "mash_thickness_l_per_kg": 3.0
       },
+      "batch.sugar_extract_total": 0.4,
+      "batch.extract_loss_conversion": 0.37152,
+      "batch.extract_loss_retention": 0.562876,
+      "batch.extract_loss_transfer": 0.053684,
+      "batch.extract_loss_mash": 0.61656,
+      "batch.extract_loss_kettle": 0.284284,
       "batch.target_ibu": 40.0,
       "batch.realized_fg": 1.012,
       "grist.finished_beer_srm": 6.0,
@@ -7682,8 +7923,8 @@
       "unit": "%"
     },
     "solver.batch.brewhouse_efficiency": {
-      "text": "81.9%",
-      "number": "81.9",
+      "text": "73.4%",
+      "number": "73.4",
       "unit": "%"
     },
     "solver.batch.grist_attenuation": {
@@ -7732,8 +7973,8 @@
       "unit": "L"
     },
     "solver.batch.cascade.sg_pre_boil": {
-      "text": "11.2 \u00b0P",
-      "number": "11.2",
+      "text": "10.3 \u00b0P",
+      "number": "10.3",
       "unit": "\u00b0P"
     },
     "solver.batch.hlt.v_hlt_debt": {
@@ -7962,18 +8203,73 @@
       "unit": "kg"
     },
     "solver.batch.s_post_boil_target": {
-      "text": "2.6 kg",
-      "number": "2.6",
+      "text": "3.13 kg",
+      "number": "3.13",
       "unit": "kg"
     },
     "solver.batch.cascade.s_run1": {
-      "text": "2.0 kg",
-      "number": "2.0",
+      "text": "1.6 kg",
+      "number": "1.6",
       "unit": "kg"
     },
     "solver.batch.cascade.s_run2": {
-      "text": "0.6 kg",
-      "number": "0.6",
+      "text": "1.1 kg",
+      "number": "1.1",
+      "unit": "kg"
+    },
+    "solver.batch.extract.s_potential": {
+      "text": "3.72 kg",
+      "number": "3.72",
+      "unit": "kg"
+    },
+    "solver.batch.extract.s_converted": {
+      "text": "3.34 kg",
+      "number": "3.34",
+      "unit": "kg"
+    },
+    "solver.batch.extract.s_tun": {
+      "text": "2.78 kg",
+      "number": "2.78",
+      "unit": "kg"
+    },
+    "solver.batch.extract.s_kettle": {
+      "text": "2.73 kg",
+      "number": "2.73",
+      "unit": "kg"
+    },
+    "solver.batch.extract.s_fermenter": {
+      "text": "2.84 kg",
+      "number": "2.84",
+      "unit": "kg"
+    },
+    "batch.sugar_extract_total": {
+      "text": "0.40 kg",
+      "number": "0.40",
+      "unit": "kg"
+    },
+    "batch.extract_loss_conversion": {
+      "text": "0.37 kg",
+      "number": "0.37",
+      "unit": "kg"
+    },
+    "batch.extract_loss_mash": {
+      "text": "0.62 kg",
+      "number": "0.62",
+      "unit": "kg"
+    },
+    "batch.extract_loss_retention": {
+      "text": "0.56 kg",
+      "number": "0.56",
+      "unit": "kg"
+    },
+    "batch.extract_loss_transfer": {
+      "text": "0.05 kg",
+      "number": "0.05",
+      "unit": "kg"
+    },
+    "batch.extract_loss_kettle": {
+      "text": "0.28 kg",
+      "number": "0.28",
       "unit": "kg"
     },
     "solver.batch.real_attenuation": {
@@ -8481,5 +8777,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:9409f0aeb77ccf5692d0e235406122e3250947ca4a196049bab3e0626c1d695a"
+  "content_hash": "sha256:6a42fb5be6086c1f3895b6b2b293a9b29fb56f43c562f9673fadb2b895af52c8"
 }

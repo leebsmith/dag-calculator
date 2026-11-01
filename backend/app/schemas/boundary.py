@@ -202,6 +202,16 @@ class BatchHltOutputs(BoundaryModel):
     v_hlt_target: Annotated[float, Field(description="Top-up target, max of coil floor and required (L)")]
 
 
+class BatchExtractOutputs(BoundaryModel):
+    """The extract accounting chain, in kg."""
+
+    s_potential: Annotated[float, Field(description="Grist potential extract, dry basis (kg)")]
+    s_converted: Annotated[float, Field(description="Extract converted in the mash (kg)")]
+    s_tun: Annotated[float, Field(description="Extract leaving the mash tun with the runnings (kg)")]
+    s_kettle: Annotated[float, Field(description="Malt extract delivered to the kettle (kg)")]
+    s_fermenter: Annotated[float, Field(description="Extract transferred to the fermenter (kg)")]
+
+
 class BindingConstraint(StrEnum):
     """Which capability limit sets ``max_feasible_abv``."""
 
@@ -250,12 +260,15 @@ class BatchSolverResponse(BoundaryModel):
     mash_thickness_l_per_kg: Annotated[float, Field(description="Resolved mash thickness (L/kg)")]
     brewhouse_efficiency: Annotated[
         float,
-        Field(description="Malt extract into the fermenter over the grist's potential; excludes late additions"),
+        Field(description="Malt extract delivered to the kettle over the grist's potential; excludes late additions"),
     ]
     grist_attenuation: Annotated[
         float,
         Field(description="The grist's apparent attenuation limit; below the yeast cap when the grist binds"),
     ]
+    extract: BatchExtractOutputs = Field(
+        description="The extract accounting chain from potential to the fermenter"
+    )
     previews: list[ScalePreviewRow] = Field(default_factory=list)
 
 

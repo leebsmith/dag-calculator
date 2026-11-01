@@ -177,13 +177,15 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the package
 | `s_post_boil_target` | mass |
 | `m_grist` | mass |
 | `cascade` `{ v_strike, v_run1, v_run2, v_sparge, s_run1, s_run2, sg_pre_boil, v_post_boil, mash_thickness_l_per_kg }` | volumes / masses / gravity |
-| `max_achievable_abv` | percentage |
+| `max_achievable_abv` | abv — performance ceiling in percent points |
+| `max_feasible_abv` | abv — capacity-bounded ceiling in percent points |
 | `real_attenuation` | percentage — solved real attenuation (RDF) |
 | `apparent_attenuation` | percentage — solved apparent attenuation; may exceed 1 |
 | `hlt` `{ v_hlt_debt, v_hlt_after_strike, v_hlt_top_up, v_sparge_deliverable, v_hlt_required, v_hlt_target }` | volume |
 | `mash_thickness_l_per_kg` | mash_thickness |
-| `brewhouse_efficiency` | percentage — malt extract into the fermenter over the grist's potential; excludes late additions |
+| `brewhouse_efficiency` | percentage — malt extract into the kettle over the grist's potential; excludes late additions |
 | `grist_attenuation` | percentage — the grist's apparent attenuation limit at the solved OE |
+| `extract` `{ s_potential, s_converted, s_tun, s_kettle, s_fermenter }` | mass — the extract accounting chain from potential to the fermenter |
 | `previews` | collection of `{ pin, og, fg, abv, ok, reason }` — hypothetical solves at the three persisted targets |
 
 ### 2.3 Domain / error surface
@@ -216,9 +218,13 @@ Retention and lauter efficiency:
     R_f2     = V_ret / (V_sparge + V_ret)
     eta_lauter = 1 - R_f1 · R_f2
 
-so the kettle receives
+so the tun delivers
 
-    S_post = S_conv · (1 - R_f1 · R_f2) + S_late
+    S_tun  = S_conv · (1 - R_f1 · R_f2) = S_run1 + S_run2
+    S_post = S_tun · V_pre / V_drain + S_late
+
+(`V_drain = V_pre + mash_transfer_loss`, §2.6: the hose holds homogeneous wort, so
+the kettle receives only the drain's remainder.)
 
 Runnings, volumes, and gravities:
 
@@ -234,7 +240,7 @@ solver root-finds `OE` so the target ABV holds, evaluating the extract-compositi
 block (§1.2.1) at every candidate. The composition block, in turn, uses the artifact
 functions `cutaia_real_extract`, `cutaia_abv_plato`, `sg_to_plato` and `plato_to_sg`:
 
-    V_kettle_cold  = V_ferm + V_kettle_dead · (1 - f_shrink)
+    V_kettle_cold  = V_ferm + V_kettle_dead + V_kettle_transfer + V_trub
     S_post_target  = 1000 · (SG_post - 1) · V_kettle_cold / gamma
     V_pre          = (V_ferm + V_kettle_dead + V_kettle_transfer + V_trub) / (1 - f_shrink)
                      + delta_v_evap - v_bar · S_late
@@ -332,15 +338,17 @@ The top-up is cold water, so the HLT temperature after it is **not** modelled; t
 process target for the second underlet is an authored display-only value
 (`batch.sparge_water_temp_c`), never a prediction.
 
-Brewhouse efficiency is the malt extract that reaches the fermenter over the grist's
+Brewhouse efficiency is the malt extract that reaches the kettle over the grist's
 potential extract:
 
-    BE = [ (S_post - S_late) · V_ferm / V_kettle_cold ] / (E · M)
+    BE = (S_post - S_late) / (E · M)
 
-Late-addition sugar is excluded from both sides. **This is not
-`eta_conv · V_ferm / V_kettle_cold`**: `M` is solved against the *recovered* kettle
-extract, so absorption, dead space and hose transfer are already inside it and
-`BE < eta_conv` for every batch.
+Late-addition sugar is excluded from both sides. **This is not `eta_conv ·
+eta_lauter`**: `M` is solved against the *recovered* kettle extract, so absorption,
+dead space and hose transfer are already inside it and `BE < eta_conv` for every
+batch. The kettle's own dead space, transfer and trub losses happen after this
+point, so they are **not** charged here; the extract ledger reports them as the
+kettle-loss row.
 
 The grist's own limit, when it binds before the yeast cap:
 
@@ -371,7 +379,28 @@ closes on `V_ferm`.
 
 Applying shrinkage to the net volume instead would incorrectly shrink the losses themselves.
 
-### 2.7 Pending corrections
+### 2.7 Extract accounting
+
+The solver reports the chain as five thresholds, all masses, in `extract`:
+
+    S_potential = E · M
+    S_converted = eta_conv · E · M
+    S_tun       = S_conv · (1 - R_f1 · R_f2) = s_run1 + s_run2
+    S_kettle    = S_tun · V_pre / V_drain
+    S_post      = S_kettle + S_late                  (the Phase 3 residual's target)
+    S_fermenter = S_post · V_ferm / V_kettle_cold
+
+so each stage is a subtraction a ledger can print:
+
+    conversion inefficiency = S_potential - S_converted
+    mash tun and transfer   = S_converted - S_kettle     (retention + hose)
+    kettle losses           = S_post - S_fermenter       (dead space + transfer + trub)
+
+The kettle losses are charged at the post-boil concentration, which is why
+`V_kettle_cold` includes all three volumes: the fermenter receives
+`S_post · V_ferm / V_kettle_cold`, and the rest is left behind in the kettle.
+
+### 2.8 Pending corrections
 
 None. The derivation above and the implementation agree; the decisions that
 closed the earlier deviations are recorded in

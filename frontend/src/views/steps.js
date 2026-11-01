@@ -144,6 +144,25 @@ export const steps = [
         ],
       },
       {
+        table: "extract-ledger",
+        title: "Extract Ledger",
+        columns: [
+          { id: "label", label: "", kind: "text" },
+          { id: "value", label: "" },
+        ],
+        rows: [
+          { label: "Potential extract", value: "solver.batch.extract.s_potential" },
+          { label: "Conversion inefficiency", value: "batch.extract_loss_conversion" },
+          { label: "Converted extract", value: "solver.batch.extract.s_converted" },
+          { label: "Mash tun and transfer losses", value: "batch.extract_loss_mash" },
+          { label: "Extract into the kettle", value: "solver.batch.extract.s_kettle" },
+          { label: "Late additions", value: "batch.sugar_extract_total" },
+          { label: "Post-boil extract", value: "solver.batch.s_post_boil_target" },
+          { label: "Kettle losses", value: "batch.extract_loss_kettle" },
+          { label: "Extract into the fermenter", value: "solver.batch.extract.s_fermenter" },
+        ],
+      },
+      {
         table: "stage-cascade",
         title: "Stage Cascade",
         columns: [

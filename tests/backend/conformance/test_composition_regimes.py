@@ -229,7 +229,12 @@ def test_share_mode_resolves_the_sugar_mass_in_one_solve():
     inputs = _solver_input(sugar_extract_share=share)
     result = solve_batch(inputs)
 
-    v_cold = kettle_cold_volume(inputs.v_ferm, inputs.v_kettle_dead, inputs.f_shrink)
+    v_cold = kettle_cold_volume(
+        inputs.v_ferm,
+        inputs.v_kettle_dead,
+        inputs.v_kettle_transfer,
+        inputs.v_trub,
+    )
     extract_total = post_boil_extract_target(result.sg_post_boil, v_cold, GAMMA_METRIC)
     sugar_extract = share * extract_total
     assert sugar_extract / extract_total == pytest.approx(share)

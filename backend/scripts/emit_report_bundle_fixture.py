@@ -280,7 +280,7 @@ RECORD = {
             "cascade.v_sparge": 17.2,
             "cascade.v_run2": 17.2,
             "cascade.v_post_boil": 22.4,
-            "cascade.sg_pre_boil": 1.045,
+            "cascade.sg_pre_boil": 1.041405,
             "apparent_attenuation": 0.756,
             "hlt.v_hlt_debt": 1.0,
             "hlt.v_hlt_after_strike": 15.0,
@@ -288,17 +288,28 @@ RECORD = {
             "hlt.v_sparge_deliverable": 17.2,
             "hlt.v_hlt_required": 18.2,
             "hlt.v_hlt_target": 18.2,
-            "brewhouse_efficiency": 0.819,
+            "brewhouse_efficiency": 0.734044,
             "grist_attenuation": 0.71,
-            "s_post_boil_target": 2.6,
-            "cascade.s_run1": 2.0,
-            "cascade.s_run2": 0.6,
+            "s_post_boil_target": 3.12712,
+            "cascade.s_run1": 1.641807,
+            "cascade.s_run2": 1.138997,
+            "extract.s_potential": 3.7152,
+            "extract.s_converted": 3.34368,
+            "extract.s_tun": 2.780804,
+            "extract.s_kettle": 2.72712,
+            "extract.s_fermenter": 2.842837,
             "max_achievable_abv": 8.4,
             "max_feasible_abv": 7.2,
             "binding_constraint": "tun",
             "real_attenuation": 0.68,
             "mash_thickness_l_per_kg": 3.0,
         },
+        "batch.sugar_extract_total": 0.4,
+        "batch.extract_loss_conversion": 0.37152,
+        "batch.extract_loss_retention": 0.562876,
+        "batch.extract_loss_transfer": 0.053684,
+        "batch.extract_loss_mash": 0.61656,
+        "batch.extract_loss_kettle": 0.284284,
         "batch.target_ibu": 40.0,
         "batch.realized_fg": 1.012,
         "grist.finished_beer_srm": 6.0,
@@ -468,7 +479,7 @@ PAYLOAD = FreezePayload(
                 label="Grist mass", dimension="mass", unit="kg", symbol="kg", decimals=1
             ),
             "solver.batch.s_post_boil_target": NodePresentation(
-                label="Post-boil extract", dimension="mass", unit="kg", symbol="kg", decimals=1
+                label="Post-boil extract", dimension="mass", unit="kg", symbol="kg", decimals=2
             ),
             "solver.batch.cascade.s_run1": NodePresentation(
                 label="First runnings extract",
@@ -484,6 +495,83 @@ PAYLOAD = FreezePayload(
                 symbol="kg",
                 decimals=1,
             ),
+            "solver.batch.extract.s_potential": NodePresentation(
+                label="Potential extract",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "solver.batch.extract.s_converted": NodePresentation(
+                label="Converted extract",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "solver.batch.extract.s_tun": NodePresentation(
+                label="Mash tun extract",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "solver.batch.extract.s_kettle": NodePresentation(
+                label="Extract into the kettle",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "solver.batch.extract.s_fermenter": NodePresentation(
+                label="Extract into the fermenter",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "batch.sugar_extract_total": NodePresentation(
+                label="Late-addition extract",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "batch.extract_loss_conversion": NodePresentation(
+                label="Conversion inefficiency",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "batch.extract_loss_mash": NodePresentation(
+                label="Mash tun and transfer losses",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "batch.extract_loss_retention": NodePresentation(
+                label="Mash tun retention",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "batch.extract_loss_transfer": NodePresentation(
+                label="Mash transfer",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
+            "batch.extract_loss_kettle": NodePresentation(
+                label="Kettle losses",
+                dimension="mass",
+                unit="kg",
+                symbol="kg",
+                decimals=2,
+            ),
             "solver.batch.real_attenuation": NodePresentation(
                 label="Real attenuation",
                 dimension="percentage",
@@ -493,14 +581,14 @@ PAYLOAD = FreezePayload(
             ),
             "solver.batch.max_feasible_abv": NodePresentation(
                 label="Max feasible ABV",
-                dimension="percentage",
+                dimension="abv",
                 unit="pct",
                 symbol="%",
                 decimals=1,
             ),
             "solver.batch.max_achievable_abv": NodePresentation(
                 label="Attenuation ceiling",
-                dimension="percentage",
+                dimension="abv",
                 unit="pct",
                 symbol="%",
                 decimals=1,
@@ -915,7 +1003,7 @@ PAYLOAD = FreezePayload(
         "mash.strike_water_temp_c": FormattedValue(text="68.3 °C", number="68.3", unit="°C"),
         "batch.topology": FormattedValue(text="Liquor-to-grist ratio"),
         "batch.conversion_efficiency": FormattedValue(text="90.0%", number="90.0", unit="%"),
-        "solver.batch.brewhouse_efficiency": FormattedValue(text="81.9%", number="81.9", unit="%"),
+        "solver.batch.brewhouse_efficiency": FormattedValue(text="73.4%", number="73.4", unit="%"),
         "solver.batch.grist_attenuation": FormattedValue(text="71.0%", number="71.0", unit="%"),
         "batch.mash_thickness_l_per_kg": FormattedValue(text="3.0 L/kg", number="3.0", unit="L/kg"),
         "batch.runoff_ratio": FormattedValue(text="1.5", number="1.5"),
@@ -925,7 +1013,7 @@ PAYLOAD = FreezePayload(
         "batch.grain_moisture_fraction": FormattedValue(text="4.0%", number="4.0", unit="%"),
         "batch.hlt_starting_volume_l": FormattedValue(text="30.0 L", number="30.0", unit="L"),
         "batch.surplus_sparge_capacity": FormattedValue(text="0.0 L", number="0.0", unit="L"),
-        "solver.batch.cascade.sg_pre_boil": FormattedValue(text="11.2 °P", number="11.2", unit="°P"),
+        "solver.batch.cascade.sg_pre_boil": FormattedValue(text="10.3 °P", number="10.3", unit="°P"),
         "solver.batch.hlt.v_hlt_debt": FormattedValue(text="1.0 L", number="1.0", unit="L"),
         "solver.batch.hlt.v_hlt_after_strike": FormattedValue(text="15.0 L", number="15.0", unit="L"),
         "solver.batch.hlt.v_hlt_top_up": FormattedValue(text="3.2 L", number="3.2", unit="L"),
@@ -974,10 +1062,35 @@ PAYLOAD = FreezePayload(
         "equipment.trub_loss_l": FormattedValue(text="0.5 L", number="0.5", unit="L"),
         "solver.batch.m_grist": FormattedValue(text="5.0 kg", number="5.0", unit="kg"),
         "solver.batch.s_post_boil_target": FormattedValue(
-            text="2.6 kg", number="2.6", unit="kg"
+            text="3.13 kg", number="3.13", unit="kg"
         ),
-        "solver.batch.cascade.s_run1": FormattedValue(text="2.0 kg", number="2.0", unit="kg"),
-        "solver.batch.cascade.s_run2": FormattedValue(text="0.6 kg", number="0.6", unit="kg"),
+        "solver.batch.cascade.s_run1": FormattedValue(text="1.6 kg", number="1.6", unit="kg"),
+        "solver.batch.cascade.s_run2": FormattedValue(text="1.1 kg", number="1.1", unit="kg"),
+        "solver.batch.extract.s_potential": FormattedValue(
+            text="3.72 kg", number="3.72", unit="kg"
+        ),
+        "solver.batch.extract.s_converted": FormattedValue(
+            text="3.34 kg", number="3.34", unit="kg"
+        ),
+        "solver.batch.extract.s_tun": FormattedValue(text="2.78 kg", number="2.78", unit="kg"),
+        "solver.batch.extract.s_kettle": FormattedValue(
+            text="2.73 kg", number="2.73", unit="kg"
+        ),
+        "solver.batch.extract.s_fermenter": FormattedValue(
+            text="2.84 kg", number="2.84", unit="kg"
+        ),
+        "batch.sugar_extract_total": FormattedValue(text="0.40 kg", number="0.40", unit="kg"),
+        "batch.extract_loss_conversion": FormattedValue(
+            text="0.37 kg", number="0.37", unit="kg"
+        ),
+        "batch.extract_loss_mash": FormattedValue(text="0.62 kg", number="0.62", unit="kg"),
+        "batch.extract_loss_retention": FormattedValue(
+            text="0.56 kg", number="0.56", unit="kg"
+        ),
+        "batch.extract_loss_transfer": FormattedValue(
+            text="0.05 kg", number="0.05", unit="kg"
+        ),
+        "batch.extract_loss_kettle": FormattedValue(text="0.28 kg", number="0.28", unit="kg"),
         "solver.batch.real_attenuation": FormattedValue(
             text="68.0%", number="68.0", unit="%"
         ),

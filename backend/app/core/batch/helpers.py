@@ -146,26 +146,25 @@ def brewhouse_efficiency(
     sugar_extract_kg: float,
     m_grist: float,
     yield_fraction: float,
-    v_ferm: float,
-    v_kettle_cold: float,
 ) -> float:
-    """Malt extract into the fermenter as a share of the grist's potential.
+    """Malt extract delivered to the kettle as a share of the grist's potential.
 
-    ``BE = (S_malt · V_ferm / V_kettle_cold) / (M_grist · E)``, where
-    ``S_malt = extract_total − sugar_extract`` is the malt extract recovered in
-    the kettle. Late-addition sugar is excluded from the numerator and the
-    denominator.
+    ``BE = (S_post − S_sugar) / (M_grist · E)``
 
-    This is deliberately **not** ``eta_conv · V_ferm / V_kettle_cold``: lauter
-    retention is already inside ``m_grist`` (``grist_mass_residual`` solves for
-    the *recovered* extract), so the potential extract exceeds the converted
+    The numerator is the malt-only extract in the kettle: late-addition sugar is
+    excluded from both sides. Conversion, lauter retention and the mash transfer
+    loss all sit inside it, so ``BE < eta_conv`` for every batch. The kettle's
+    own dead space, transfer and trub losses happen after this point and are
+    **not** charged here; the extract ledger carries them separately.
+
+    This is deliberately **not** ``eta_conv · eta_lauter``: ``M_grist`` is solved
+    for the *recovered* kettle extract, so the potential exceeds the converted
     extract by the absorption, dead-space and transfer losses.
     """
     potential = m_grist * yield_fraction
-    if potential <= 0.0 or v_kettle_cold <= 0.0:
+    if potential <= 0.0:
         return 0.0
-    malt_extract = max(0.0, extract_total_kg - sugar_extract_kg)
-    return (malt_extract * (v_ferm / v_kettle_cold)) / potential
+    return max(0.0, extract_total_kg - sugar_extract_kg) / potential
 
 
 def converted_extract(
