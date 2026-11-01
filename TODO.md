@@ -91,6 +91,32 @@ tracks only what is outstanding.
   variety already in the draft, unlike the hop drawers, which keep it and show the
   row count (`allowDuplicates` on the shared catalog-draft mixin).
 
+### Flavor charge
+
+A batch addition that carries flavour and aroma but **no IBU**, dosed per volume
+and recorded like any other charge. The reviewed products are captured here rather
+than in the hop catalogue: an alpha-less row in a solver that derives mass from
+IBU is the inversion backwards, and these belong to a different model. The dosing
+bases differ, which is the design work.
+
+| Product | Maker | Where | Dose |
+|---|---|---|---|
+| Spectrum | BarthHaas | dry hop | 1:5–1:10 T-90; 0.5–5 mL oil/hL; ≤1 g/L; ≤80 % of the charge |
+| Prysma | BarthHaas | whirlpool / fermentation / post-filtration | 0.5–1.0 g/L; 1 kg ≈ 5–8 kg T-90 |
+| Aromahop OE | Haas | late boil | 2.5 g/hL |
+| PHA | BarthHaas | post-filtration | to taste |
+| Euphorics | Haas | cold side / finished | 3–6 mL/bbl |
+| Hop Hash | YVH | cold side | untested, variable |
+| HyperBoost | YCH | dry hop | 1:100 T-90 (1:50 Cryo); 25–50 % of the charge |
+| SubZero Hop Kief | Freestyle | dry hop / brite | 0.2 mL/L (no maker sheet yet) |
+| Quantum / Omni / BrewGas / Skyfarm | Abstrax | any stage | 0.065 mL/L start; 0.3–2 oz/bbl |
+
+Open questions when it is scoped: the dose basis per row (mL/L, oz/bbl, mass
+ratio), the application stage (whirlpool, fermentation, bright), whether it prints
+in the report and the brew checklist, and whether it needs its own catalog kind
+rather than a `hop_product` row. The dry-hop card is the nearest surface but it
+models hop contact, not a flavour dose.
+
 ### Report sections
 
 Ten sections have landed — Brewhouse, Batch Facts, Mash Rests, Hops, Yeast,
