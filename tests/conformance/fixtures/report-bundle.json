@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:2e4f01f7c85c83d3c2b3cba609a804ed4943c1751fee17d2b0420bcea2f0f9a6",
+    "hash": "sha256:d7ebf162a0da905a40990830be841db34cee1e7bb3e3603b6c1ad693f2067d17",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -3582,6 +3582,7 @@
               "INVALID_YIELD",
               "DEGENERATE_BRACKET",
               "BRACKET_NO_SIGN_CHANGE",
+              "STRIKE_CEILING_EXCEEDED",
               "UNKNOWN_TOPOLOGY",
               "INVALID_INTENSIVE_VALUE",
               "MASH_TOO_THIN",
@@ -8777,5 +8778,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:ff2ec57d251c139ab862fda6a4d3b7e5bf97eb5d3ea735222a6c6ae83b640901"
+  "content_hash": "sha256:b8c5c345138debc87be01eb7f9d8de39031ba58818354648ff4234eac65a5c00"
 }

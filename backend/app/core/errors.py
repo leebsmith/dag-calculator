@@ -105,6 +105,7 @@ BINDING_BY_CODE: dict[str, str] = {
     **{limit.code: limit.constraint for limit in CAPACITY_LIMITS},
     "ABV_UNREACHABLE": "fermentation",
     "BRACKET_NO_SIGN_CHANGE": "volume",
+    "STRIKE_CEILING_EXCEEDED": "volume",
     "DEGENERATE_BRACKET": "volume",
     "MASH_TOO_THIN": "volume",
     "EXTRACT_TARGET_NON_POSITIVE": "volume",

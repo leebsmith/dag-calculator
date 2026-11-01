@@ -3462,6 +3462,7 @@
           "INVALID_YIELD",
           "DEGENERATE_BRACKET",
           "BRACKET_NO_SIGN_CHANGE",
+          "STRIKE_CEILING_EXCEEDED",
           "UNKNOWN_TOPOLOGY",
           "INVALID_INTENSIVE_VALUE",
           "MASH_TOO_THIN",

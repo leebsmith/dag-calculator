@@ -132,8 +132,10 @@ def _diagnose_bracket(
     batch never filled, because that bound assumes 50% recovery.
 
     When no capacity is exceeded, a bracket failure is the extraction limit
-    itself: the message quotes how much extract the geometry can actually
-    deliver. ``DEGENERATE_BRACKET`` keeps its numerical message (the bracket is
+    itself. A proven strike ceiling raises ``STRIKE_CEILING_EXCEEDED`` with the
+    masses it can deliver and the target needs; where no closed-form ceiling
+    exists (``runoff_ratio``), ``BRACKET_NO_SIGN_CHANGE`` carries the unquantified
+    message. ``DEGENERATE_BRACKET`` keeps its numerical message (the bracket is
     unusable, not unreachable).
     """
 
@@ -184,6 +186,6 @@ def _diagnose_bracket(
     demand = reversal.s_post_boil_target - s_late_add
     if delivered < demand:
         return SolverValidationError(
-            "BRACKET_NO_SIGN_CHANGE", _ceiling_message(delivered, demand)
+            "STRIKE_CEILING_EXCEEDED", _ceiling_message(delivered, demand)
         )
     return SolverValidationError("BRACKET_NO_SIGN_CHANGE", UNREACHABLE_MESSAGE)

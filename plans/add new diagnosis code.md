@@ -44,14 +44,14 @@ trigger that emits it exactly.
 
 ## 3. Execution
 
-- [ ] 1. `data/artifact.json`: add `STRIKE_CEILING_EXCEEDED` to `solver.batch.domain.codes`, beside `BRACKET_NO_SIGN_CHANGE`.
-- [ ] 2. `backend/app/schemas/boundary.py`: add the member to `BatchSolverErrorCode`.
-- [ ] 3. `backend/app/core/errors.py`: map it to `"volume"` in `BINDING_BY_CODE` so the feasibility bisection still attributes the bound instead of re-raising.
-- [ ] 4. `backend/app/core/batch/diagnostics.py`: the quantified branch raises the literal new code; the fallback branches keep `BRACKET_NO_SIGN_CHANGE`.
-- [ ] 5. `frontend/src/utils/strings.js`: add the label ("Extract target exceeds the strike ceiling") — the label guard fails without it.
-- [ ] 6. `tests/backend/conformance/test_domain_codes.py`: a `TRIGGERS` entry (`_solve(target_abv=9.0)` on the standard rig) while `BRACKET_NO_SIGN_CHANGE` keeps its `solve_grist_mass` trigger.
-- [ ] 7. `tests/backend/test_batch_solver.py`: add the code to the error-surface set.
-- [ ] 8. `tests/backend/conformance/test_batch_solver_orchestration.py`: the 9 % case (and its roomy-tun variant) expect the new code; the runoff fallback keeps `BRACKET_NO_SIGN_CHANGE`.
-- [ ] 9. `docs/dag-artifacts/domain-equations.md`: the error-surface list and the §2.5 ceiling paragraph name the code.
-- [ ] 10. `make generate` (artifact hash travels into the report fixture).
-- [ ] 11. `make check`, `make test`, `make build`.
+- [x] 1. `data/artifact.json`: add `STRIKE_CEILING_EXCEEDED` to the `solver.batch` error-code list, beside `BRACKET_NO_SIGN_CHANGE`.
+- [x] 2. `backend/app/schemas/boundary.py`: add the member to `BatchSolverErrorCode`.
+- [x] 3. `backend/app/core/errors.py`: map it to `"volume"` in `BINDING_BY_CODE` so the feasibility bisection still attributes the bound instead of re-raising.
+- [x] 4. `backend/app/core/batch/diagnostics.py`: the quantified branch raises the literal new code; the fallback branches keep `BRACKET_NO_SIGN_CHANGE`.
+- [x] 5. `frontend/src/utils/strings.js`: add the label ("Extract target exceeds the strike ceiling") — the label guard fails without it.
+- [x] 6. `tests/backend/conformance/test_domain_codes.py`: a `TRIGGERS` entry (`_solve(target_abv=9.0)` on the standard rig) while `BRACKET_NO_SIGN_CHANGE` keeps its `solve_grist_mass` trigger.
+- [x] 7. `tests/backend/test_batch_solver.py`: add the code to the error-surface set.
+- [x] 8. `tests/backend/conformance/test_batch_solver_orchestration.py`: the 9 % case (and its roomy-tun variant) expect the new code; the runoff fallback keeps `BRACKET_NO_SIGN_CHANGE`.
+- [x] 9. `docs/dag-artifacts/domain-equations.md`: the error-surface list and the §2.5 ceiling paragraph name the code.
+- [x] 10. `make generate` (artifact hash travels into the report fixture).
+- [x] 11. `make check`, `make test`, `make build`.

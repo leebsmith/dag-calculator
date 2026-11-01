@@ -86,6 +86,8 @@ TRIGGERS = {
     # An unphysically small yield overflows the bracket arithmetic to [inf, inf].
     "DEGENERATE_BRACKET": lambda: _solve_grist(yield_fraction=1e-320),
     "BRACKET_NO_SIGN_CHANGE": lambda: _solve_grist(s_post_boil_target=5.0),
+    # The strike geometry saturates below the target's extract demand.
+    "STRIKE_CEILING_EXCEEDED": lambda: _solve(target_abv=9.0),
     "UNKNOWN_TOPOLOGY": lambda: _input(topology="bogus"),
     "INVALID_INTENSIVE_VALUE": lambda: _input(intensive_value=-1.0),
     "MASH_TOO_THIN": lambda: _solve_grist(r_l_to_g=1.0),

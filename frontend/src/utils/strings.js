@@ -99,6 +99,7 @@ export const SOLVER_ERROR_LABELS = {
   INVALID_YIELD: "The grain bill carries no extract yield",
   DEGENERATE_BRACKET: "The grist mass bracket is degenerate",
   BRACKET_NO_SIGN_CHANGE: "Extract target is not reachable at this mash",
+  STRIKE_CEILING_EXCEEDED: "Extract target exceeds the strike ceiling",
   UNKNOWN_TOPOLOGY: "Unknown mash constraint",
   INVALID_INTENSIVE_VALUE: "Mash thickness or runnings ratio is invalid",
   MASH_TOO_THIN: "Mash is too thin for the grain bed",

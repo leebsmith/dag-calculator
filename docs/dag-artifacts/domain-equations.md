@@ -193,6 +193,7 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the package
 `INVALID_TARGET_ABV` · `INVALID_ATTENUATION` · `ABV_UNREACHABLE` ·
 `INVALID_FERM_VOLUME` · `INVALID_SHRINKAGE` · `EXTRACT_TARGET_NON_POSITIVE` ·
 `INVALID_YIELD` · `DEGENERATE_BRACKET` · `BRACKET_NO_SIGN_CHANGE` ·
+`STRIKE_CEILING_EXCEEDED` ·
 `UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL` ·
 `KETTLE_TOO_SMALL` · `MASH_TUN_TOO_SMALL` · `INVALID_GRAIN_BILL_NORMALIZATION` ·
 `INVALID_SUGAR_SHARE` · `INVALID_SUGAR_FERMENTABILITY` · `INVALID_SCALE_PIN` ·
@@ -309,10 +310,11 @@ while the kettle volume is fixed, so the sparge closes at
 
     M_max = (V_drain + V_dead) / (L:G + MC_bar + v_bar · eta_conv · E - k_abs_true)
 
-and the kettle extract saturates there. A bracket that cannot cross names that
-ceiling and quotes both masses ("at most X kg; the target needs Y kg"). The
-`{V_pre, r}` topology has no ceiling: its runnings split is static, so the lauter
-fractions do not move with `M` and delivery stays linear in it.
+and the kettle extract saturates there. A bracket that cannot cross raises
+`STRIKE_CEILING_EXCEEDED` and quotes both masses ("at most X kg; the target needs
+Y kg"). The `{V_pre, r}` topology has no ceiling: its runnings split is static, so
+the lauter fractions do not move with `M` and delivery stays linear in it; there
+the raw `BRACKET_NO_SIGN_CHANGE` carries an unquantified message.
 
 **Identity — do not "simplify" it away.** Under `{V_pre, r}`, `V_run1` and `V_sparge` are
 static, so

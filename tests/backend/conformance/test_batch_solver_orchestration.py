@@ -135,13 +135,14 @@ def test_feasibility_bound_names_the_tun(standard_inputs):
 def test_bracket_failure_is_not_blamed_on_an_unexceeded_capacity(standard_inputs):
     # 9% ABV on the standard rig: the tun fits the minimum grist the target
     # needs (24.8 L of 40 L), and even a 400 L tun and kettle still fail, so the
-    # limit is the extraction itself — not a vessel.
+    # limit is the strike geometry — not a vessel. The proven ceiling has its own
+    # code, distinct from a bracket that merely fails to cross.
     inputs = BatchSolverInput(**{**standard_inputs.__dict__, "target_abv": 9.0})
 
     with pytest.raises(SolverValidationError) as exc:
         solve_batch(inputs)
 
-    assert exc.value.code == "BRACKET_NO_SIGN_CHANGE"
+    assert exc.value.code == "STRIKE_CEILING_EXCEEDED"
     # The strike geometry, not a vessel, sets the ceiling: the message quotes it.
     assert "deliver at most 4.37 kg" in exc.value.message
     assert "needs 5.06 kg" in exc.value.message
@@ -158,7 +159,7 @@ def test_bracket_failure_is_not_blamed_on_an_unexceeded_capacity(standard_inputs
     )
     with pytest.raises(SolverValidationError) as roomy_exc:
         solve_batch(roomy)
-    assert roomy_exc.value.code == "BRACKET_NO_SIGN_CHANGE"
+    assert roomy_exc.value.code == "STRIKE_CEILING_EXCEEDED"
 
 
 def test_bracket_failure_names_a_tun_that_cannot_fit_the_minimum_grist(
