@@ -77,12 +77,12 @@ failure's meaning depends on the reader knowing the taxonomy.
 
 ### Step 2 — Quantified strike ceiling (c)
 
-- [ ] 13. `backend/app/core/batch/diagnostics.py`: `strike_ceiling_l` — `M_max = (V_drain + V_dead) / (R + MC + v_bar·eta·E − k_abs)` under `r_l_to_g`, `None` when the denominator is non-positive or the topology is `runoff_ratio`.
-- [ ] 14. Same module: at `M_max`, compare kettle delivery with the malt demand; when short, raise `BRACKET_NO_SIGN_CHANGE` quoting both masses; otherwise keep the step 1 message.
-- [ ] 15. `tests/backend/conformance/test_batch_solver_orchestration.py`: the 9 % case quotes 4.37 kg against 5.06 kg; the ceiling helper returns 11.68 kg; a runoff-topology failure keeps the unquantified message.
-- [ ] 16. `docs/dag-artifacts/domain-equations.md` §2.5/§2.6: the strike ceiling and why the runoff topology has none.
+- [x] 13. `backend/app/core/batch/diagnostics.py`: `strike_ceiling_l` — `M_max = (V_drain + V_dead) / (R + MC + v_bar·eta·E − k_abs)` under `r_l_to_g`, `None` when the denominator is non-positive or the topology is `runoff_ratio`.
+- [x] 14. Same module: at `M_max`, compare kettle delivery with the malt demand; when short, raise `BRACKET_NO_SIGN_CHANGE` quoting both masses; otherwise keep the step 1 message.
+- [x] 15. `tests/backend/conformance/test_batch_solver_orchestration.py`: the 9 % case quotes 4.37 kg against 5.06 kg; the ceiling helper returns 11.68 kg; a runoff-topology failure keeps the unquantified message.
+- [x] 16. `docs/dag-artifacts/domain-equations.md` §2.5/§2.6: the strike ceiling and why the runoff topology has none.
 
 ### Close
 
-- [ ] 17. `make generate`, `make check`, `make test`, `make build`.
+- [x] 17. `make generate`, `make check`, `make test`, `make build`.
 - [ ] 18. Report the suggested new error code (its name, what it would say, and what adding it would touch) without implementing it.

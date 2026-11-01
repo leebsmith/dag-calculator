@@ -5,9 +5,14 @@ import math
 import pytest
 
 from app.core.batch.constants import GAMMA_METRIC
+from app.core.batch.diagnostics import strike_ceiling_l
+from app.core.batch.helpers import (
+    composite_moisture_fraction,
+    composite_yield_fraction,
+)
 from app.core.batch.inputs import BatchSolverInput, GrainBillEntry
 from app.core.batch.orchestration import solve_batch
-from app.core.batch.volumetric import kettle_cold_volume
+from app.core.batch.volumetric import VolumetricReversal, kettle_cold_volume
 from app.core.errors import SolverValidationError
 from app.core.utils import apparent_extract_for_real_extract, sg_to_plato
 
@@ -137,7 +142,9 @@ def test_bracket_failure_is_not_blamed_on_an_unexceeded_capacity(standard_inputs
         solve_batch(inputs)
 
     assert exc.value.code == "BRACKET_NO_SIGN_CHANGE"
-    assert "extraction" in exc.value.message
+    # The strike geometry, not a vessel, sets the ceiling: the message quotes it.
+    assert "deliver at most 4.37 kg" in exc.value.message
+    assert "needs 5.06 kg" in exc.value.message
 
     roomy = BatchSolverInput(
         **{
@@ -172,6 +179,53 @@ def test_bracket_failure_names_a_tun_that_cannot_fit_the_minimum_grist(
 
     assert exc.value.code == "MASH_TUN_TOO_SMALL"
     assert "10.0 L" in exc.value.message
+
+
+def test_a_runoff_failure_keeps_the_unquantified_message(standard_inputs):
+    # The runoff topology's lauter fractions are mass-independent, so delivery is
+    # linear in the grist and the strike ceiling does not apply; the message
+    # falls back to naming the extraction limit without figures.
+    inputs = BatchSolverInput(
+        **{
+            **standard_inputs.__dict__,
+            "target_abv": 11.0,
+            "topology": "runoff_ratio",
+            "intensive_value": 0.5,
+        }
+    )
+
+    with pytest.raises(SolverValidationError) as exc:
+        solve_batch(inputs)
+
+    assert exc.value.code == "BRACKET_NO_SIGN_CHANGE"
+    assert "no equipment capacity is exceeded" in exc.value.message
+    assert "deliver at most" not in exc.value.message
+
+
+def test_the_strike_ceiling_closes_the_sparge(standard_inputs):
+    # V_run1(M) == V_drain at the ceiling, so the sparge is exactly zero there.
+    reversal = VolumetricReversal(
+        v_kettle_cold=22.0, s_post_boil_target=5.0, v_pre_boil=26.4375
+    )
+    ceiling = strike_ceiling_l(
+        standard_inputs,
+        reversal,
+        composite_yield_fraction(standard_inputs.grain_bill),
+        composite_moisture_fraction(standard_inputs.grain_bill),
+        standard_inputs.eta_conv,
+    )
+    assert ceiling == pytest.approx(11.68, abs=0.01)
+
+    runoff = BatchSolverInput(
+        **{**standard_inputs.__dict__, "topology": "runoff_ratio", "intensive_value": 1.0}
+    )
+    assert strike_ceiling_l(
+        runoff,
+        reversal,
+        composite_yield_fraction(runoff.grain_bill),
+        composite_moisture_fraction(runoff.grain_bill),
+        runoff.eta_conv,
+    ) is None
 
 
 def test_solve_batch_runoff_ratio_topology(standard_inputs):

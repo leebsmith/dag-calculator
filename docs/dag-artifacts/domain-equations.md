@@ -304,6 +304,16 @@ capacity is already exceeded at `a` — definitive, because every physical mass 
 larger. When the minimum fits, the message reports the extraction limit itself
 rather than blaming a vessel that the batch never fills.
 
+**Strike ceiling.** Under `{V_pre, R_L:G}` the first runnings grow with the grist
+while the kettle volume is fixed, so the sparge closes at
+
+    M_max = (V_drain + V_dead) / (L:G + MC_bar + v_bar · eta_conv · E - k_abs_true)
+
+and the kettle extract saturates there. A bracket that cannot cross names that
+ceiling and quotes both masses ("at most X kg; the target needs Y kg"). The
+`{V_pre, r}` topology has no ceiling: its runnings split is static, so the lauter
+fractions do not move with `M` and delivery stays linear in it.
+
 **Identity — do not "simplify" it away.** Under `{V_pre, r}`, `V_run1` and `V_sparge` are
 static, so
 
