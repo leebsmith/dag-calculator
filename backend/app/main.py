@@ -37,6 +37,13 @@ from app.schemas.boundary import (
     WaterSolverRequest,
     WaterSolverResponse,
 )
+from app.schemas.brew_session import (
+    BrewSession,
+    BrewSessionCreate,
+    BrewSessionPatch,
+    ObservationCreate,
+    ObservationPatch,
+)
 from app.schemas.catalog import CatalogItem, CatalogItemCreate
 from app.schemas.ids import validate_doc_id
 from app.services import (
@@ -46,6 +53,7 @@ from app.services import (
     solve_water_request,
 )
 from app.services.batch_service import BatchConflictError, BatchServiceDep
+from app.services.brew_session_service import BrewSessionServiceDep
 from app.services.catalog_service import (
     CatalogServiceDep,
     CatalogValidationError,
@@ -360,6 +368,81 @@ def preview_report(
     return _report_response(
         service.render_preview(user["uid"], batch_id, payload.bundle, spec)
     )
+
+
+@app.get("/brew-sessions", response_model=list[BrewSession])
+def list_brew_sessions(
+    user: AllowedUser,
+    service: BrewSessionServiceDep,
+    batch_id: str | None = Query(default=None),
+):
+    """List the caller's brew sessions, optionally for one frozen batch."""
+    return service.list_sessions(user["uid"], batch_id)
+
+
+@app.post("/brew-sessions", response_model=BrewSession, status_code=201)
+def create_brew_session(
+    payload: BrewSessionCreate,
+    user: AllowedUser,
+    service: BrewSessionServiceDep,
+):
+    """Create an execution log from a frozen batch and its checklist snapshot."""
+    validate_doc_id(payload.batch_id)
+    return service.create_session(user["uid"], payload)
+
+
+@app.get("/brew-sessions/{session_id}", response_model=BrewSession)
+def get_brew_session(session_id: str, user: AllowedUser, service: BrewSessionServiceDep):
+    """Load one brew session owned by the caller."""
+    validate_doc_id(session_id)
+    return service.get_session(user["uid"], session_id)
+
+
+@app.patch("/brew-sessions/{session_id}", response_model=BrewSession)
+def patch_brew_session(
+    session_id: str,
+    payload: BrewSessionPatch,
+    user: AllowedUser,
+    service: BrewSessionServiceDep,
+):
+    """Update status, steps or notes on an open session."""
+    validate_doc_id(session_id)
+    return service.patch_session(user["uid"], session_id, payload)
+
+
+@app.post("/brew-sessions/{session_id}/observations", response_model=BrewSession)
+def add_brew_observation(
+    session_id: str,
+    payload: ObservationCreate,
+    user: AllowedUser,
+    service: BrewSessionServiceDep,
+):
+    """Append one observation to an open session."""
+    validate_doc_id(session_id)
+    return service.add_observation(user["uid"], session_id, payload)
+
+
+@app.patch("/brew-sessions/{session_id}/observations/{observation_id}", response_model=BrewSession)
+def patch_brew_observation(
+    session_id: str,
+    observation_id: str,
+    payload: ObservationPatch,
+    user: AllowedUser,
+    service: BrewSessionServiceDep,
+):
+    """Correct, annotate or void one observation while the session is open."""
+    validate_doc_id(session_id)
+    validate_doc_id(observation_id)
+    return service.patch_observation(user["uid"], session_id, observation_id, payload)
+
+
+@app.post("/brew-sessions/{session_id}/finalize", response_model=BrewSession)
+def finalize_brew_session(
+    session_id: str, user: AllowedUser, service: BrewSessionServiceDep
+):
+    """Seal a session; later changes are append-only corrections."""
+    validate_doc_id(session_id)
+    return service.finalize_session(user["uid"], session_id)
 
 
 @app.get("/batches/{batch_id}", response_model=BatchRecord)

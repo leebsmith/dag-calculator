@@ -10,10 +10,16 @@ function cell(text) {
 function stepCells(row, phaseName, sectionName) {
   return {
     kind: cell("step"),
+    step_id: cell(row.step_id),
+    metric_id: cell("—"),
+    expected_number: cell("—"),
+    tolerance: cell("—"),
+    correction: cell("—"),
     phase: cell(phaseName),
     section: cell(sectionName),
     title: cell(row.title),
     text: cell(row.text),
+    done_when: cell(row.done_when),
     level: cell(row.level),
     expected: cell("—"),
     unit: cell("—"),
@@ -29,6 +35,11 @@ function stepCells(row, phaseName, sectionName) {
 function observationCells(row, phaseName, sectionName) {
   return {
     kind: cell("observation"),
+    step_id: cell(row.step_id),
+    metric_id: cell(row.metric_id),
+    expected_number: cell(row.expected_number),
+    tolerance: cell(row.tolerance),
+    correction: cell(row.correction),
     phase: cell(phaseName),
     section: cell(sectionName),
     title: cell(row.title),

@@ -63,8 +63,12 @@
             <load src="./src/partials/library.html" />
           </template>
 
+          <template x-if="$store.brewSession.open">
+            <load src="./src/partials/brew-session.html" />
+          </template>
+
           <!-- Recipe landing ------------------------------------------------>
-          <template x-if="$store.recipes.view !== 'editor'">
+          <template x-if="$store.recipes.view !== 'editor' && !$store.brewSession.open">
             <load src="./src/partials/chooser.html" />
           </template>
 

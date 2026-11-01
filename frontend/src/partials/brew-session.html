@@ -1,0 +1,248 @@
+<section class="step-card">
+  <div class="step-card-header">
+    <div>
+      <h2 class="card-title" x-text="$store.brewSession.batchName || 'Brew session'"></h2>
+      <p class="card-subtitle">
+        <span x-text="$store.brewSession.session ? $store.brewSession.statusLabel : 'No session yet'"></span>
+        <span x-show="$store.brewSession.session"> · </span>
+        <span x-show="$store.brewSession.session" x-text="$store.brewSession.levelLabel"></span>
+      </p>
+    </div>
+    <div class="section-actions">
+      <button type="button" class="btn-secondary text-xs" @click="$store.brewSession.close()">
+        Back to recipes
+      </button>
+      <button
+        type="button"
+        class="btn-secondary text-xs"
+        x-show="$store.brewSession.session && !$store.brewSession.sealed"
+        @click="$store.brewSession.finalize()"
+      >
+        Seal session
+      </button>
+    </div>
+  </div>
+
+  <div class="step-card-content">
+    <p class="form-hint" x-show="$store.brewSession.loading">Loading…</p>
+    <p class="alert alert-warning" x-show="$store.brewSession.error" x-text="$store.brewSession.error"></p>
+
+    <template x-if="!$store.brewSession.loading && !$store.brewSession.session">
+      <div class="synthesized-card">
+        <h3 class="synthesized-title">Start a session</h3>
+        <p class="form-hint">
+          The frozen recipe is the plan. The session records what actually happened; the recipe is
+          never changed.
+        </p>
+        <div class="form-group">
+          <label class="form-label text-xs" for="session-started-at">Brew date and time</label>
+          <input
+            id="session-started-at"
+            type="datetime-local"
+            class="form-input"
+            :value="$store.brewSession.startedAt"
+            @change="$store.brewSession.startedAt = $event.target.value"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label text-xs" for="session-level">Level</label>
+          <select
+            id="session-level"
+            class="form-select"
+            :value="$store.brewSession.level"
+            @change="$store.brewSession.level = $event.target.value"
+          >
+            <template x-for="level in $store.brewSession.levels" :key="level.id">
+              <option :value="level.id" :selected="level.id === $store.brewSession.level" x-text="level.name"></option>
+            </template>
+          </select>
+        </div>
+        <button type="button" class="btn-primary text-xs" @click="$store.brewSession.startSession()">
+          Start session
+        </button>
+      </div>
+    </template>
+
+    <template x-if="$store.brewSession.session">
+      <div>
+        <div class="summary-strip">
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Steps</span>
+            <span
+              class="text-base font-bold tabular-nums"
+              x-text="$store.brewSession.summary.done + ' / ' + $store.brewSession.summary.total"
+            ></span>
+          </div>
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Status</span>
+            <select
+              class="form-select text-sm"
+              :value="$store.brewSession.session.status"
+              @change="$store.brewSession.setStatus($event.target.value)"
+            >
+              <template x-for="status in $store.brewSession.statuses" :key="status.id">
+                <option :value="status.id" :selected="status.id === $store.brewSession.session.status" x-text="status.name"></option>
+              </template>
+            </select>
+          </div>
+          <div class="summary-strip-item">
+            <span class="text-xs text-muted">Sessions</span>
+            <select
+              class="form-select text-sm"
+              @change="$store.brewSession.selectSession($event.target.value)"
+            >
+              <template x-for="entry in $store.brewSession.sessions" :key="entry.id">
+                <option :value="entry.id" :selected="entry.id === $store.brewSession.session.id" x-text="entry.started_at ? new Date(entry.started_at * 1000).toLocaleDateString() : entry.id"></option>
+              </template>
+            </select>
+          </div>
+        </div>
+
+        <template x-for="section in $store.brewSession.stepSections" :key="section.key">
+          <div class="synthesized-card card-section">
+            <h3 class="synthesized-title" x-text="section.name"></h3>
+            <p class="text-xs text-muted" x-text="section.phase"></p>
+            <template x-for="row in section.rows" :key="row.step_id.text">
+              <div class="brew-day-step">
+                <label class="brew-day-step-toggle">
+                  <input
+                    type="checkbox"
+                    :checked="$store.brewSession.isStepDone(row)"
+                    @change="$store.brewSession.setStep(row, { done: $event.target.checked })"
+                  />
+                  <span class="font-medium" x-text="row.title.text"></span>
+                </label>
+                <p class="text-sm" x-text="row.text.text"></p>
+                <p class="text-xs text-muted" x-show="row.done_when.text" x-text="'Done when: ' + row.done_when.text"></p>
+                <textarea
+                  class="form-input brew-day-instructions"
+                  rows="2"
+                  :value="$store.brewSession.stepNote(row)"
+                  placeholder="What actually happened?"
+                  @change="$store.brewSession.setStep(row, { note: $event.target.value })"
+                ></textarea>
+                <label class="text-xs">
+                  <input
+                    type="checkbox"
+                    :checked="$store.brewSession.isStepSkipped(row)"
+                    @change="$store.brewSession.setStep(row, { skipped: $event.target.checked })"
+                  />
+                  Skip
+                </label>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <div class="synthesized-card card-section">
+          <h3 class="synthesized-title">Observations</h3>
+          <p class="form-hint">
+            Record raw values. The corrected column is optional; the method is always kept.
+          </p>
+          <template x-for="row in $store.brewSession.observationRows" :key="row.metric_id.text">
+            <div class="brew-day-step">
+              <div class="brew-day-step-toggle">
+                <span class="font-medium" x-text="row.title.text"></span>
+                <span class="text-xs text-muted" x-text="'Expected ' + row.expected.text + ' · ' + row.unit.text + ' · ' + row.method.text"></span>
+              </div>
+
+              <template x-for="observation in $store.brewSession.observationsFor(row.metric_id.text)" :key="observation.id">
+                <p class="text-sm">
+                  <span x-text="'Raw ' + observation.raw.value + ' ' + observation.raw.unit"></span>
+                  <span x-show="observation.corrected" x-text="' · corrected ' + (observation.corrected?.value ?? '') + ' ' + (observation.corrected?.unit ?? '')"></span>
+                  <span x-text="' · ' + observation.method"></span>
+                  <span class="text-xs text-muted" x-text="' · ' + new Date(observation.at * 1000).toLocaleString()"></span>
+                  <button type="button" class="btn-secondary text-xs" x-show="!$store.brewSession.sealed" @click="$store.brewSession.voidObservation(observation)">Void</button>
+                </p>
+              </template>
+
+              <div class="brew-day-instructions-wrap" x-show="!$store.brewSession.sealed">
+                <div class="metric-strip">
+                  <div class="metric-cell">
+                    <span class="metric-cell-label">Raw</span>
+                    <input
+                      type="number"
+                      step="0.001"
+                      class="form-input tabular-nums"
+                      :value="$store.brewSession.draftFor(row).raw"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'raw', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell">
+                    <span class="metric-cell-label">Corrected</span>
+                    <input
+                      type="number"
+                      step="0.001"
+                      class="form-input tabular-nums"
+                      :value="$store.brewSession.draftFor(row).corrected"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'corrected', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell">
+                    <span class="metric-cell-label">Method</span>
+                    <input
+                      type="text"
+                      class="form-input"
+                      :value="$store.brewSession.draftFor(row).method"
+                      @input="$store.brewSession.setDraft(row.metric_id.text, 'method', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell">
+                    <span class="metric-cell-label">Taken at</span>
+                    <input
+                      type="datetime-local"
+                      class="form-input"
+                      :value="$store.brewSession.draftFor(row).at"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'at', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell">
+                    <span class="metric-cell-label">Source</span>
+                    <select
+                      class="form-select"
+                      :value="$store.brewSession.draftFor(row).source"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'source', $event.target.value)"
+                    >
+                      <option value="live">Live</option>
+                      <option value="paper">Paper</option>
+                      <option value="import">Import</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="button" class="btn-primary text-xs" @click="$store.brewSession.addReading(row)">
+                  Add reading
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="synthesized-card card-section">
+          <h3 class="synthesized-title">Variance</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Expected</th>
+                <th>Actual</th>
+                <th>Delta</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="row in $store.brewSession.variance" :key="row.label">
+                <tr>
+                  <td x-text="row.label"></td>
+                  <td x-text="row.expected"></td>
+                  <td x-text="row.actual"></td>
+                  <td x-text="row.delta"></td>
+                  <td x-text="row.verdict"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>

@@ -173,6 +173,14 @@
         type="button"
         class="landing-menu-item"
         x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
+        @click="$store.brewSession.openFor($store.recipes.rowMenu); $store.recipes.closeRowMenu()"
+      >
+        Brew log
+      </button>
+      <button
+        type="button"
+        class="landing-menu-item"
+        x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
         @click="$store.recipes.forkRow()"
       >
         Fork a copy

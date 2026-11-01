@@ -163,7 +163,7 @@ const STATEMENT_PINS = {
   "adapters/cards/water.js": 63,
   "adapters/stepAdapter.js": 34,
   "engine/sha256.js": 44,
-  "main.js": 53,
+  "main.js": 47,
   "views/producer/stylePlot.js": 28,
   "views/producer/table.js": 42,
 };

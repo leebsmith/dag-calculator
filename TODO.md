@@ -22,9 +22,11 @@ unchanged: it grades the realized value against the absolute envelope.
 
 * Brew checklist (the staged-notes replacement) — Phase 1 shipped: the
   generated pre/brew/post checklist with three levels and a printed blank
-  appendix. Next is the brew session (logging, live/deferred observations,
-  variance) and then measurement promotion. See `plans/brew-checklist.md`,
-  `plans/brew-session.md` and `plans/brew-measurement-promotion.md`.
+  appendix. Phase 2 is partially shipped: frozen-batch sessions, checklist
+  state, observations, variance and sealing. Remaining: the printable Brew
+  Sheet, automated corrections and Phase 3 promotion. See
+  `plans/brew-checklist.md`, `plans/brew-session.md` and
+  `plans/brew-measurement-promotion.md`.
 
 ## Later
 

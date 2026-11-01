@@ -1,6 +1,6 @@
 ---
 title: Brew Session — Phase 2 Log
-status: proposed (outline)
+status: partially shipped
 program: deterministic-dag-calculator
 depends_on: [brew-log-contract, brew-checklist]
 blocks: [brew-measurement-promotion]
@@ -10,9 +10,10 @@ gate: make verify
 
 # Plan — Brew session (Phase 2, outline)
 
-This is an interface-level outline. It is detailed enough to constrain the
-implementation, but the task-level breakdown waits until Phase 1 lands and the
-actual frozen checklist table shape is known.
+This started as an interface-level outline. The first implementation pass is
+landed: frozen-batch session creation, checklist state, live and deferred
+observations, raw/corrected/method, variance and sealing. The Brew Sheet render
+and the automated correction helpers remain.
 
 ## Goal
 
@@ -202,6 +203,24 @@ observations append-only and corrections become new rows.
   work.
 - `make verify` is green.
 
+## Landed in the first pass
+
+- `brew_sessions` schema, repository, service and routes.
+- Session creation from a frozen batch, with the frozen checklist table as the
+  plan snapshot.
+- Checklist done/skip/note state, status transitions and sealing.
+- Observation append and void, with raw, corrected, method, source and time.
+- Variance table in the session view.
+- `Brew log` row action and the session view.
+- Tests for the service, routes and frontend controller.
+
+## Remaining
+
+- The printable Brew Sheet render path.
+- Automated hydrometer and refractometer correction helpers; the session accepts
+  a corrected value and keeps the method today.
+- Promotion of calibration and cooling-curve records (Phase 3).
+
 ## Gate
 
-`make verify`. The outline graduates to a task-level plan after Phase 1 is green.
+`make verify`. The remaining items graduate to task-level work in the next pass.

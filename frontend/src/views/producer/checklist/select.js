@@ -68,9 +68,23 @@ function stepRow(step, state, ctx) {
   };
 }
 
-function observationRow(metric, fmt) {
+function observationRow(metric, fmt, engine) {
+  let expectedNumber = "—";
+  if (metric.expected) {
+    try {
+      const value = engine.resolve(metric.expected);
+      if (typeof value === "number") expectedNumber = String(value);
+    } catch (err) {
+      reportError("checklist.expected", err);
+      expectedNumber = "—";
+    }
+  }
   return {
     kind: "observation",
+    metric_id: metric.id,
+    expected_number: expectedNumber,
+    tolerance: JSON.stringify(metric.tolerance ?? {}),
+    correction: metric.correction ?? "none",
     phase: metric.phase,
     section: metric.section,
     step_id: metric.step_id,
@@ -101,11 +115,11 @@ function collectStepRows({ engine, level, state, ctx }) {
   return rows;
 }
 
-function collectObservationRows(fmt, level) {
+function collectObservationRows(fmt, level, engine) {
   const rank = LEVEL_RANK[level] ?? LEVEL_RANK.info;
   return OBSERVATION_METRICS
     .filter((metric) => (LEVEL_RANK[metric.level] ?? LEVEL_RANK.info) <= rank)
-    .map((metric) => observationRow(metric, fmt));
+    .map((metric) => observationRow(metric, fmt, engine));
 }
 
 function groupRows(rows) {
@@ -140,7 +154,7 @@ export function selectChecklistRows({
   const ctx = { artifact, engine, fmt, level };
   const state = stateFor(stateRows);
   const phases = groupRows(collectStepRows({ engine, level, state, ctx }));
-  const observations = collectObservationRows(fmt, level);
+  const observations = collectObservationRows(fmt, level, engine);
   if (observations.length > 0) {
     phases.push({
       id: "observations",

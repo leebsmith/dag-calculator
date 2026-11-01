@@ -16,6 +16,7 @@ const ALLOW = new Map([
   ["frontend/src/store/persistence.js", "saveState / console.error"],
   ["frontend/src/store/recipes.js", "recordActionFailure surfaces the error in the UI"],
   ["frontend/src/store/setup.js", "setup error state"],
+  ["frontend/src/store/brewSessionActions.js", "setError reports through reportError"],
 ]);
 
 const TARGETS = [

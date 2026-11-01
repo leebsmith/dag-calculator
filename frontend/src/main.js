@@ -6,6 +6,7 @@ import { reportError } from "./observability.js";
 import { getSession } from "./adapters/authClient.js";
 import * as batchClient from "./adapters/batchClient.js";
 import * as libraryClient from "./adapters/libraryClient.js";
+import * as sessionClient from "./adapters/sessionClient.js";
 import {
   closeReportTab,
   downloadBlob,
@@ -23,6 +24,7 @@ import {
 import * as persistence from "./store/persistence.js";
 import { createSetupStore } from "./store/setup.js";
 import { createRecipesStore } from "./store/recipes.js";
+import { createBrewSessionStore } from "./store/brewSession.js";
 
 setTokenProvider(getIdToken);
 persistence.setClient(batchClient);
@@ -66,6 +68,11 @@ Alpine.store("setup", setupStore);
 // The Batches controller is a factory so its state machine is testable without
 // Alpine or a DOM; main.js supplies the persistence seam, the setup store, the
 // viewport-aware popover anchoring, and the download/report-tab clients.
+Alpine.store("brewSession", createBrewSessionStore({
+  client: sessionClient,
+  loadBundle: (id, name) => persistence.reportBundleFor(id, name),
+}));
+
 Alpine.store(
   "recipes",
   createRecipesStore({
@@ -105,14 +112,17 @@ async function applyAuth(user) {
   if (!user) {
     stepApp?.teardown();
     persistence.clearActive();
-    recipes.batches = [];
-    recipes.activeId = null;
-    recipes.activeName = "";
-    recipes.view = "batches";
-    recipes.scope = "all";
-    recipes.sortOpen = false;
-    recipes.rowMenu = null;
-    recipes.renamingId = null;
+    Object.assign(recipes, {
+      batches: [],
+      activeId: null,
+      activeName: "",
+      view: "batches",
+      scope: "all",
+      sortOpen: false,
+      rowMenu: null,
+      renamingId: null,
+    });
+    Alpine.store("brewSession").close();
     auth.user = null;
     auth.loading = false;
     return;
