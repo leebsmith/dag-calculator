@@ -1,5 +1,8 @@
 # TODO
 
+Completed work lives in `plans/archive/<YYYY-MM>/` and in git history; this file
+tracks only what is outstanding.
+
 ## Next (in order)
 
 1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
@@ -119,42 +122,3 @@ Not needed by the current artifact; add only when a node requires them:
 * `max` reduction; boolean **input** kind (roots need a dimension, choices a
   taxonomy — no boolean toggle node yet); list literals; map/dict value type.
 * True nested boundary outputs (currently flattened to dotted keys).
-
-## Done
-
-* **Style targets ±2 JND** — SRM/IBU sliders reach two JNDs past the style envelope with a deviation note; scoring still grades the absolute envelope (`7e5866f`).
-* **Dry-hopping card** — event / contact-time / hop-type schedule with a catalog editor, descriptive only — `plans/archive/2026-11/hops-documentation-and-dry-hop-card.md`.
-* **Hop catalogue repeats** — the boil and whirlpool drawers keep a variety already in the draft and show the row count.
-* **Optimize local testing** — test-cost ledger, `make quick`, suite parallelism, memoized validation and graph build, one compile per paper — `plans/archive/2026-10/optimize-local-testing.md`.
-* **Drift gates** — scripts under the lint contract, recursive test discovery, pre-commit rules re-checked in `make check`, re-measured shape pins, docs-claims, CI on every push.
-* **Alpine maintainability and module linting** — lint contract, ownership index, formatter extractions, style-target split, size and complexity ratchet — `plans/archive/2026-10/alpine-maintainability-and-module-linting.md`.
-* **Decomposition & display contract** — empty adapter-format allowlist, one `cell.js` readout path, the batch and water packages, the style card split, bundle integrity — `plans/archive/2026-10/decomposition-and-display-contract.md`.
-* **Report bundle** — freeze-time self-sufficient render input with a guarded schema and a committed fixture — `plans/archive/2026-10/report-bundle.md`.
-* **Report render service** — `GET`/`POST /batches/{id}/report`, pinned Typst binary, ETag, 422/409/503 mapping — `docs/report-renderer.md`.
-* **Report section picker** — `GET /report/sections`, a Build report… modal, preview and download — `docs/report-renderer.md`.
-* **Report process sections** — Brewhouse and Liquor Ledger, HLT targets, the ledger closing on sparge demand — `plans/archive/2026-10/report-process-sections.md`.
-* **Report fermentable readouts** — extract-contribution table, below-cap attenuation row, sugar lift — same plan, phase 2.
-* **Scale pins and audited sugar database** — ABV/OG/FG pins, the pin-preview matrix, effective sugar fermentability, the three-tier sugar source — `plans/archive/2026-10/pin-matrix.md`.
-* **Attenuation refactor (Passes 2–3)** — extract-composition model, basis conversion, malt-only cap, diastaticus dextrin consumption, late-addition intent pin — `plans/archive/2026-10/attenuation-refactor.md`.
-* **Fermentability provenance (Pass 1)** — `malt_database` basis and method tags plus the vendored source contract — `plans/archive/2026-10/fermentability-provenance.md`.
-* **Batch solver correctness** — absorption, transfer loss, physical floor, capacity findings, feasible ABV, freeze gate — `plans/archive/2026-10/batch-solver-correctness.md`.
-* **Fermentability and the Belgian knob** — the reconciled design — `plans/archive/2026-10/fermentability-and-belgian-knob.md`.
-* **Off-graph identity** — equipment, water source and style as immutable context records — `plans/archive/2026-10/off-graph-identity.md`.
-* **Model honesty** — absence vs. defaults, selection types, seed defaults — `plans/archive/2026-10/model-absence-and-seed-defaults.md`.
-* **Landing page & batch setup** — `plans/archive/2026-10/landing-and-batch-setup.md`.
-* **Mash ramp time** — `mash.ramp_time_min`, the equipment ramp rate and the minimum-LGR warning.
-* **Hop bitterness boundary** — `solver.hops`, Tinseth plus Arrhenius, with an offline stub.
-* **On-blur numeric input formatting** — raw draft text with a live solve.
-* **Record library foundation** — server records, copy-forward, Google allowlist, user-scoped batches — `plans/archive/2026-10/record-library-foundation.md`.
-* **Water chemistry cleanup** — read-only records, copy-forward ions, RO-as-report, treated-water vs target, SO4:Cl intent, dose basis — `plans/archive/2026-10/water-chemistry-cleanup.md`.
-* **Bounded buffer-capacity mash pH model** — `plans/archive/2026-10/mash-ph-buffer-capacity.md`.
-* **Selector option labels everywhere** — `plans/archive/2026-10/selector-option-labels.md`.
-* **Flowable whirlpool hop-product seeds** — `hop_product` catalog, DynaBoost/Incognito presets, the inspector T-90 equivalent — `plans/archive/2026-10/hop-product-whirlpool-seeds.md`.
-* **CSS consolidation & drift guardrails** — `plans/archive/2026-10/css-consolidation.md`.
-* **Water chemistry step card** — `solver.water` boundary and the full card.
-* **Whirlpool hop schedule** — IBU-share pools and the Arrhenius cooling integral — `docs/hops/whirlpool-hopping-model.md`.
-* **Parallel seed builders** — malts, sugars, hops, yeasts, styles.
-* **Batch/recipe CRUD + menu**.
-* **Recipe landing page** — freeze rail, sortable library, row menus, inline rename.
-* **Batches view** — scope filters, identity columns, lineage, the Library Sources/Ingredients split, style as a forkable catalog kind — `plans/archive/2026-10/batches-view-and-record-layer.md`.
-* **Water pin visibility & coverage** — pin/float rendering from one ion registry, Mode 5 cap, the beer × water × settings matrix — `plans/archive/2026-10/water-pin-visibility-and-test-matrix.md`.
