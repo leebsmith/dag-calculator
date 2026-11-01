@@ -307,7 +307,7 @@ deploy-rules:
 deploy-backend:
 	@echo "Vendoring the artifact + catalog registry for the deployed image..."
 	mkdir -p backend/app/_vendor
-	cp data/artifact.json data/catalogs.json backend/app/_vendor/
+	cp data/artifact.json data/catalogs.json data/record_schemas.json data/record_catalogs.json backend/app/_vendor/
 	@echo "Exporting uv dependencies for Cloud Buildpacks..."
 	cd backend && uv export --frozen --no-dev -o requirements.txt
 	@echo "Deploying backend to Cloud Run..."

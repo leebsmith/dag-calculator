@@ -152,7 +152,7 @@ const LIFECYCLE_COMPLEXITY = {
   "store/library.js": 18,
   "store/persistence.js": 13,
   "store/unitPrefs.js": 27,
-  "store/userCatalog.js": 33,
+  "store/userCatalog.js": 32,
   "utils/format.js": 14,
   "views/producer/catalogDrawer.js": 15,
   "views/producer/reportFormat.js": 13,

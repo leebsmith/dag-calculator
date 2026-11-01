@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from app.artifact import load_artifact
+from app.artifact import load_artifact, validate_component
 from app.auth.deps import require_allowed_user
 from app.main import app
 from app.services.catalog_service import (
@@ -112,10 +115,10 @@ def test_create_rejects_invalid_components(component):
 
 def test_unknown_kind_is_404():
     with pytest.raises(HTTPException) as exc:
-        service().create_item("u1", "cooling_curve", {})
+        service().create_item("u1", "bogus_kind", {})
     assert exc.value.status_code == 404
     with pytest.raises(HTTPException) as exc:
-        service().list_items("u1", "cooling_curve")
+        service().list_items("u1", "bogus_kind")
     assert exc.value.status_code == 404
 
 
@@ -176,6 +179,70 @@ def test_create_route_maps_validation_to_a_structured_422(client):
 
 def test_unknown_kind_and_missing_items_are_404(client):
     http, _ = client
-    assert http.get("/catalog/cooling_curve").status_code == 404
+    assert http.get("/catalog/bogus_kind").status_code == 404
     assert http.get("/catalog/malt/missing").status_code == 404
     assert http.delete("/catalog/malt/missing").status_code == 404
+
+
+CURVE = {
+    "name": "Garage kettle",
+    "measured_at": "2026-11-01",
+    "ambient_temp_c": 12,
+    "start_temp_c": 99,
+    "points": [
+        {"time_min": 10, "temp_c": 80},
+        {"time_min": 20, "temp_c": 68},
+    ],
+}
+
+
+def test_create_cooling_curve_uses_the_record_schema():
+    created = service().create_item("u1", "cooling_curve", CURVE)
+    assert created.kind == "cooling_curve"
+    assert created.component["id"] == "item-1"
+    assert created.component["points"][0]["temp_c"] == 80
+
+
+@pytest.mark.parametrize(
+    "component",
+    [
+        {**CURVE, "measured_at": ""},
+        {**CURVE, "measured_at": "11/01/2026"},
+        {**CURVE, "points": [{"time_min": 10, "temp_c": 80}]},
+        {
+            **CURVE,
+            "points": [
+                {"time_min": 20, "temp_c": 80},
+                {"time_min": 10, "temp_c": 68},
+            ],
+        },
+        {
+            **CURVE,
+            "points": [{"time_min": 10, "temp_c": 80, "bogus": 1}, {"time_min": 20, "temp_c": 68}],
+        },
+        {**CURVE, "ambient_temp_c": -30},
+        {**CURVE, "unknown": 1},
+    ],
+)
+def test_create_rejects_invalid_cooling_curves(component):
+    with pytest.raises(CatalogValidationError) as exc:
+        service().create_item("u1", "cooling_curve", component)
+    assert exc.value.errors
+
+
+PARITY = json.loads(
+    (
+        Path(__file__).resolve().parents[2]
+        / "tests"
+        / "conformance"
+        / "fixtures"
+        / "record-schema-cases.json"
+    ).read_text()
+)
+
+
+def test_record_schema_fixture_agrees_with_the_python_validator():
+    assert validate_component("cooling_curve", PARITY["valid"]) == []
+    for entry in PARITY["invalid"]:
+        errors = validate_component("cooling_curve", entry["component"])
+        assert any(error.startswith(f"{entry['field']}:") for error in errors), entry["case"]

@@ -1,0 +1,94 @@
+{
+  "valid": {
+    "name": "Garage kettle",
+    "measured_at": "2026-11-01",
+    "ambient_temp_c": 12,
+    "start_temp_c": 99,
+    "points": [
+      { "time_min": 10, "temp_c": 80 },
+      { "time_min": 20, "temp_c": 68 }
+    ]
+  },
+  "invalid": [
+    {
+      "case": "missing measured_at",
+      "component": {
+        "name": "Garage kettle",
+        "ambient_temp_c": 12,
+        "start_temp_c": 99,
+        "points": [
+          { "time_min": 10, "temp_c": 80 },
+          { "time_min": 20, "temp_c": 68 }
+        ]
+      },
+      "field": "measured_at"
+    },
+    {
+      "case": "bad date",
+      "component": {
+        "name": "Garage kettle",
+        "measured_at": "11/01/2026",
+        "ambient_temp_c": 12,
+        "start_temp_c": 99,
+        "points": [
+          { "time_min": 10, "temp_c": 80 },
+          { "time_min": 20, "temp_c": 68 }
+        ]
+      },
+      "field": "measured_at"
+    },
+    {
+      "case": "too few points",
+      "component": {
+        "name": "Garage kettle",
+        "measured_at": "2026-11-01",
+        "ambient_temp_c": 12,
+        "start_temp_c": 99,
+        "points": [{ "time_min": 10, "temp_c": 80 }]
+      },
+      "field": "points"
+    },
+    {
+      "case": "non-increasing times",
+      "component": {
+        "name": "Garage kettle",
+        "measured_at": "2026-11-01",
+        "ambient_temp_c": 12,
+        "start_temp_c": 99,
+        "points": [
+          { "time_min": 20, "temp_c": 80 },
+          { "time_min": 10, "temp_c": 68 }
+        ]
+      },
+      "field": "points.1.time_min"
+    },
+    {
+      "case": "unknown point field",
+      "component": {
+        "name": "Garage kettle",
+        "measured_at": "2026-11-01",
+        "ambient_temp_c": 12,
+        "start_temp_c": 99,
+        "points": [
+          { "time_min": 10, "temp_c": 80, "bogus": 1 },
+          { "time_min": 20, "temp_c": 68 }
+        ]
+      },
+      "field": "points.0.bogus"
+    },
+    {
+      "case": "ambient below domain",
+      "component": {
+        "name": "Garage kettle",
+        "measured_at": "2026-11-01",
+        "ambient_temp_c": -30,
+        "start_temp_c": 99,
+        "points": [
+          { "time_min": 10, "temp_c": 80 },
+          { "time_min": 20, "temp_c": 68 }
+        ]
+      },
+      "field": "ambient_temp_c"
+    }
+  ]
+}

@@ -6,7 +6,7 @@ depends_on: [brew-log-contract]
 blocks: [cooling-curve-determination, brew-measurement-promotion]
 gate: make verify
 ---
-<!-- claims: proposed batch.cooling_curve_id -->
+<!-- claims: proposed batch.cooling_curve_id cooling_curve.measured_at cooling_curve.equipment_id -->
 
 # Plan — non-DAG-record-schema-layer
 
@@ -98,24 +98,24 @@ This is the prerequisite for `plans/cooling-curve-determination.md` and
 
 ## Checklist
 
-- [ ] Add `data/record_schemas.json` and `data/record_catalogs.json`.
-- [ ] Add `data/seeds/cooling_curves.json` and wire `coolingCurves` into the
+- [x] Add `data/record_schemas.json` and `data/record_catalogs.json`.
+- [x] Add `data/seeds/cooling_curves.json` and wire `coolingCurves` into the
   reference cache.
-- [ ] Merge the record catalogs into `frontend/src/store/userCatalog.js`; carry
+- [x] Merge the record catalogs into `frontend/src/store/userCatalog.js`; carry
   `schemaSource` on every catalog meta.
-- [ ] Add the JS record validator: required fields, unknown fields, dimensions,
+- [x] Add the JS record validator: required fields, unknown fields, dimensions,
   domains, taxonomies, strings, booleans, date format, flat lists, `min_items`,
   ordered/unique point times, and nested-list rejection.
-- [ ] Merge the record catalogs and validator into `backend/app/artifact.py`;
+- [x] Merge the record catalogs and validator into `backend/app/artifact.py`;
   switch `catalog_service` to the merged registry.
-- [ ] Add the library list editor for `type: "list"`, a date input, and an
+- [x] Add the library list editor for `type: "list"`, a date input, and an
   optional equipment reference select.
-- [ ] Add the record files to the `deploy-backend` vendor copy.
-- [ ] Add JS and Python tests for the record schema, validator parity, catalog
+- [x] Add the record files to the `deploy-backend` vendor copy.
+- [x] Add JS and Python tests for the record schema, validator parity, catalog
   CRUD, and the library create/read/delete path.
-- [ ] Add `docs/record-library.md` and update the cooling-curve plan with the
+- [x] Add `docs/record-library.md` and update the cooling-curve plan with the
   ambient/no-copy and `measured_at`/`equipment_id` decisions.
-- [ ] Run `make check`, `make test`, and `make verify`.
+- [x] Run `make check`, `make test`, and `make verify`.
 
 ## Acceptance
 

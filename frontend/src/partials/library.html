@@ -249,7 +249,7 @@
                   <option
                     :value="o"
                     :selected="o === libraryFieldDisplay(f.field)"
-                    x-text="o"
+                    x-text="f.optionLabels?.[o] ?? o"
                   ></option>
                 </template>
               </select>
@@ -273,6 +273,55 @@
                 :value="libraryFieldDisplay(f.field)"
                 @input="librarySetField(f.field, $event.target.value)"
               />
+            </template>
+            <template x-if="f.kind === 'date'">
+              <input
+                type="date"
+                class="form-input text-xs"
+                :id="'library-field-' + f.field"
+                :value="libraryFieldDisplay(f.field)"
+                @change="librarySetField(f.field, $event.target.value)"
+              />
+            </template>
+            <template x-if="f.kind === 'list'">
+              <div>
+                <template x-for="(row, index) in libraryPointRows()" :key="index">
+                  <div class="metric-strip">
+                    <template x-for="pf in f.fields" :key="pf.field">
+                      <div class="metric-cell">
+                        <span class="metric-cell-label" x-text="pf.label"></span>
+                        <template x-if="pf.kind === 'number'">
+                          <input
+                            type="number"
+                            step="any"
+                            class="form-input text-xs"
+                            :value="libraryPointDisplay(index, pf.field)"
+                            @change="librarySetPointField(index, pf.field, $event.target.value)"
+                          />
+                        </template>
+                        <template x-if="pf.kind !== 'number'">
+                          <input
+                            type="text"
+                            class="form-input text-xs"
+                            :value="libraryPointDisplay(index, pf.field)"
+                            @change="librarySetPointField(index, pf.field, $event.target.value)"
+                          />
+                        </template>
+                      </div>
+                    </template>
+                    <button
+                      type="button"
+                      class="btn-outline text-xs"
+                      @click="libraryRemovePoint(index)"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </template>
+                <button type="button" class="btn-outline text-xs" @click="libraryAddPoint()">
+                  Add point
+                </button>
+              </div>
             </template>
           </div>
         </template>

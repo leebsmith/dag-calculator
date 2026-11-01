@@ -352,3 +352,29 @@ test("a failed delete surfaces the message in the Library", async () => {
 
   assert.deepEqual(app.libraryErrors, [{ field: "*", message: "record is referenced" }]);
 });
+
+test("cooling curves expose a date, equipment reference and sortable point rows", () => {
+  const { app } = setup();
+  app.openLibrary("cooling_curve");
+  assert.equal(app.activeKind, "cooling_curve");
+  assert.equal(field(app, "measured_at").kind, "date");
+  assert.equal(field(app, "equipment_id").kind, "select");
+  assert.equal(field(app, "points").kind, "list");
+  assert.equal(field(app, "points").fields.length, 2);
+
+  app.newLibraryItem();
+  app.libraryAddPoint();
+  app.libraryAddPoint();
+  app.librarySetPointField(0, "time_min", 20);
+  app.librarySetPointField(0, "temp_c", 68);
+  app.librarySetPointField(1, "time_min", 10);
+  app.librarySetPointField(1, "temp_c", 80);
+  app.librarySortPoints();
+
+  assert.deepEqual(
+    app.libraryPointRows().map((row) => row.time_min),
+    [10, 20]
+  );
+  app.libraryRemovePoint(0);
+  assert.equal(app.libraryPointRows().length, 1);
+});

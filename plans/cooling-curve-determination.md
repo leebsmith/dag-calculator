@@ -2,8 +2,8 @@
 title: Cooling Curve Determination
 status: proposed
 program: deterministic-dag-calculator
-depends_on: [water-pin-visibility-and-test-matrix, whirlpool-hopping-model]
-blocks: []
+depends_on: []
+blocks: [brew-measurement-promotion]
 gate: make verify
 ---
 <!-- claims: proposed batch.cooling_curve_id batch.cooling_curve batch.records -->
@@ -79,6 +79,8 @@ Schema shape:
     "fields": {
       "name": { "type": "string", "required": true },
       "description": { "type": "string" },
+      "measured_at": { "type": "string", "format": "date", "required": true },
+      "equipment_id": { "type": "string", "reference": "equipment" },
       "ambient_temp_c": {
         "dimension": "temperature",
         "domain": { "gte": -20, "lte": 50 }
@@ -159,6 +161,8 @@ Fields:
 - `id` (server-assigned)
 - `name` (title)
 - `description` (optional)
+- `measured_at` (required ISO date; collection time is not brew time)
+- `equipment_id` (optional reference to the equipment record)
 - `ambient_temp_c`
 - `start_temp_c`
 - `points`: `[{ time_min, temp_c }]`
@@ -208,9 +212,10 @@ Behaviour:
    user curves.
 2. Selecting a curve:
    - fits `k`,
-   - copies `ambient_temp_c` into `batch.whirlpool_ambient_temp_c`,
    - copies `1/k` into `batch.whirlpool_cooling_time_constant_min`,
-   - stores `batch.cooling_curve_id`.
+   - stores `batch.cooling_curve_id`,
+   - does **not** copy `ambient_temp_c`; the batch ambient is an independent
+     brew-day condition.
 3. `Default cooling` resets the time constant to `108.7` and clears the id.
 4. Manually editing the time constant clears the id and shows `Custom`.
 5. Deleting the library curve does not change the batch; the copied roots remain.
@@ -226,7 +231,8 @@ needed because the curve is authoring-only.
 
 Add a `Cooling Curves` tab. The generic record form gains a list editor:
 
-- start temperature, ambient temperature, name, notes,
+- measured date, equipment reference, start temperature, ambient temperature,
+  name, notes,
 - point rows with time and temperature,
 - add/remove row,
 - sort by time on save,
@@ -319,12 +325,14 @@ Docs/gates:
 - Copy-forward means a corrected library curve does not retroactively change an
   existing batch.
 
-## Open questions
+## Decisions
 
-- Require `R² >= 0.98`, or warn only? (Current recommendation: warn only.)
-- Seed one reference curve, or rely solely on the `0.0092` fallback?
-- Should the curve’s ambient override `batch.whirlpool_ambient_temp_c`, or only feed
-  the fit? (Current recommendation: copy it, like a water report.)
-- Should duplicate time points be rejected or averaged?
-- Should the first reusable record type after cooling curves be sparge runoff, or wait
-  for a second consumer before generalizing further?
+- R² warns below 0.98; it never rejects the curve.
+- No seed curve; `Default cooling` remains the only built-in.
+- The curve's ambient is stored in the record and used by the fit. It is **not**
+  copied into the batch; `batch.whirlpool_ambient_temp_c` stays an independent
+  brew-day condition.
+- Duplicate and non-increasing time points are rejected.
+- `measured_at` is required and `equipment_id` is optional, because collection
+  and brew happen at different times and on a specific vessel.
+- Wait for a second real consumer before generalizing the record layer further.

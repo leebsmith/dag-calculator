@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **663** (445 enumerable, 218 hidden)
+- Declared members: **672** (453 enumerable, 219 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **15 of 20**
@@ -18,7 +18,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 28 | 0 | 1 |
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 1 |
-| `libraryUi` | `frontend/src/adapters/libraryUi.js` | 41 | 0 | 4 |
+| `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js` | 50 | 0 | 4 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 27 | 1 | 0 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 7 | 1 | 3 |
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
@@ -51,6 +51,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `activeScaleTargetRoot` | `styleTargets` | public | 0 |
 | `activeScaleTargetStep` | `styleTargets` | public | 1 |
 | `activeScaleTargetUnit` | `styleTargets` | public | 1 |
+| `activeSchema` | `libraryUi` | hidden | 0 |
 | `addCatalogDryHop` | `dryHops` | public | 1 |
 | `addCatalogHop` | `hop` | public | 1 |
 | `addCatalogMalt` | `malt` | public | 1 |
@@ -287,6 +288,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `latePinPanelOpen` | `lateAdditions` | public | 1 |
 | `latePinPanelVisible` | `lateAdditions` | public | 1 |
 | `lateSugarField` | `lateAdditions` | hidden | 1 |
+| `libraryAddPoint` | `libraryUi` | public | 1 |
 | `libraryCommitField` | `libraryUi` | public | 1 |
 | `libraryDraft` | `libraryUi` | public | 1 |
 | `libraryError` | `libraryUi` | hidden | 1 |
@@ -295,10 +297,15 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `libraryFields` | `libraryUi` | hidden | 1 |
 | `libraryItemId` | `libraryUi` | public | 1 |
 | `libraryItemTitle` | `libraryUi` | public | 1 |
+| `libraryListField` | `libraryUi` | public | 0 |
 | `libraryLoading` | `libraryUi` | hidden | 1 |
 | `libraryNotice` | `libraryUi` | public | 1 |
 | `libraryOpen` | `libraryUi` | public | 1 |
+| `libraryPointDisplay` | `libraryUi` | public | 1 |
+| `libraryPointRows` | `libraryUi` | public | 1 |
+| `libraryPointSpec` | `libraryUi` | public | 0 |
 | `libraryRecords` | `libraryUi` | hidden | 1 |
+| `libraryRemovePoint` | `libraryUi` | public | 1 |
 | `librarySearch` | `libraryUi` | public | 1 |
 | `librarySearchFields` | `libraryUi` | hidden | 0 |
 | `librarySearchNotes` | `libraryUi` | public | 1 |
@@ -307,7 +314,9 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `librarySeedItemTitle` | `libraryUi` | public | 1 |
 | `librarySeedItems` | `libraryUi` | hidden | 1 |
 | `librarySetField` | `libraryUi` | public | 1 |
+| `librarySetPointField` | `libraryUi` | public | 1 |
 | `librarySetSearch` | `libraryUi` | public | 1 |
+| `librarySortPoints` | `libraryUi` | public | 0 |
 | `libraryTab` | `libraryUi` | public | 1 |
 | `libraryTabs` | `libraryUi` | hidden | 1 |
 | `maltActiveIndex` | `malt` | public | 1 |

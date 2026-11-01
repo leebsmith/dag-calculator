@@ -44,8 +44,9 @@ unchanged: it grades the realized value against the absolute envelope.
 * Offline resilience (IndexedDB write-ahead overlay)
 * Unit scaling (`plans/unit-scaling.md`)
 * Lazy-load seed data (bundle size)
-* **Cooling curves** — named kettle ΔT-over-time profiles feeding the whirlpool model;
-  the first record-library catalog using the non-DAG record schema layer
+* **Cooling curves** — the non-DAG record schema layer is shipped and the
+  `cooling_curve` catalog is creatable. Remaining: the fit helper, the
+  `batch.cooling_curve_id` root, and the hops-card picker
   (`plans/cooling-curve-determination.md`).
 * **Style-conformance water axis** — nothing scores water against the chosen style today:
   `styleConformance.js` covers only `og`/`fg`/`abv`/`ibu`/`srm` and `styles.json` carries

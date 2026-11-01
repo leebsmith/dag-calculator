@@ -1,0 +1,40 @@
+{
+  "cooling_curve": {
+    "fields": {
+      "name": { "type": "string", "required": true },
+      "description": { "type": "string" },
+      "measured_at": { "type": "string", "format": "date", "required": true },
+      "equipment_id": { "type": "string", "reference": "equipment" },
+      "ambient_temp_c": {
+        "dimension": "temperature",
+        "required": true,
+        "domain": { "gte": -20, "lte": 50 }
+      },
+      "start_temp_c": {
+        "dimension": "temperature",
+        "required": true,
+        "domain": { "gte": 0, "lte": 100 }
+      },
+      "points": {
+        "type": "list",
+        "required": true,
+        "min_items": 2,
+        "ordered_by": "time_min",
+        "unique_by": "time_min",
+        "item": {
+          "time_min": {
+            "dimension": "time",
+            "required": true,
+            "domain": { "gt": 0 }
+          },
+          "temp_c": {
+            "dimension": "temperature",
+            "required": true,
+            "domain": { "gte": -20, "lte": 100 }
+          }
+        }
+      },
+      "notes": { "type": "string" }
+    }
+  }
+}

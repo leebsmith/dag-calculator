@@ -11,6 +11,7 @@ import logging
 import math
 import os
 from collections.abc import Mapping
+from datetime import date
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
@@ -93,6 +94,19 @@ def load_catalogs() -> dict[str, Any]:
     return _load("catalogs.json")
 
 
+def load_record_schemas() -> dict[str, Any]:
+    return _load("record_schemas.json")
+
+
+def load_record_catalogs() -> dict[str, Any]:
+    return _load("record_catalogs.json")
+
+
+def load_catalog_registry() -> dict[str, Any]:
+    """The merged artifact-backed and non-DAG record catalogs."""
+    return {**load_catalogs(), **load_record_catalogs()}
+
+
 def _resolve_limit(limit: Any, constants: dict[str, Any]) -> Any:
     if isinstance(limit, (int, float)):
         return limit
@@ -126,19 +140,134 @@ def _is_safe_url(value: Any) -> bool:
     return urlparse(stripped).scheme in ("http", "https")
 
 
+def _missing(value: Any) -> bool:
+    return value is None or value == "" or (isinstance(value, list) and len(value) == 0)
+
+
+def _validate_record_scalar(
+    artifact: dict[str, Any], spec: Any, value: Any, field: str, errors: list[str]
+) -> None:
+    if not isinstance(spec, Mapping):
+        return
+    if spec.get("type") == "list":
+        _validate_record_list(artifact, spec, value, field, errors)
+        return
+    if spec.get("type") == "string":
+        if not isinstance(value, str):
+            errors.append(f"{field}: must be a string")
+            return
+        if spec.get("format") == "date":
+            try:
+                date.fromisoformat(value)
+            except ValueError:
+                errors.append(f"{field}: must be an ISO date (YYYY-MM-DD)")
+        return
+    if spec.get("dimension"):
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            errors.append(f"{field}: must be a number")
+            return
+        if not math.isfinite(value):
+            errors.append(f"{field}: must be finite")
+            return
+        if _domain_error(spec.get("domain"), value, artifact.get("constants", {})):
+            errors.append(f"{field}: violates {spec.get('domain')}")
+        return
+    if spec.get("taxonomy"):
+        allowed = artifact.get("taxonomies", {}).get(spec["taxonomy"], [])
+        if value not in allowed:
+            errors.append(f"{field}: '{value}' is not in taxonomy {spec['taxonomy']}")
+        return
+    if spec.get("type") == "boolean" and not isinstance(value, bool):
+        errors.append(f"{field}: must be a boolean")
+
+
+def _validate_record_list(
+    artifact: dict[str, Any], spec: Any, value: Any, field: str, errors: list[str]
+) -> None:
+    if not isinstance(value, list):
+        errors.append(f"{field}: must be a list")
+        return
+    min_items = spec.get("min_items")
+    if isinstance(min_items, int) and len(value) < min_items:
+        errors.append(f"{field}: needs at least {min_items} rows")
+    item = spec.get("item", {})
+    if not isinstance(item, Mapping):
+        return
+    if any(isinstance(entry, Mapping) and entry.get("type") == "list" for entry in item.values()):
+        errors.append(f"{field}: nested lists are not supported")
+        return
+    ordered: list[float] = []
+    for index, row in enumerate(value):
+        if not isinstance(row, dict):
+            errors.append(f"{field}.{index}: row must be an object")
+            continue
+        for item_field, item_spec in item.items():
+            row_value = row.get(item_field)
+            if _missing(row_value):
+                if isinstance(item_spec, Mapping) and item_spec.get("required"):
+                    errors.append(f"{field}.{index}.{item_field}: {item_field} is required")
+                continue
+            _validate_record_scalar(
+                artifact, item_spec, row_value, f"{field}.{index}.{item_field}", errors
+            )
+        for item_field in row:
+            if item_field not in item:
+                errors.append(f'{field}.{index}.{item_field}: undeclared field "{item_field}"')
+        ordered_by = spec.get("ordered_by")
+        if ordered_by and isinstance(row.get(ordered_by), (int, float)):
+            ordered.append(row[ordered_by])
+    for index in range(1, len(ordered)):
+        if ordered[index] <= ordered[index - 1]:
+            errors.append(
+                f"{field}.{index}.{spec.get('ordered_by')}: "
+                "times must be strictly increasing and unique"
+            )
+
+
+def _validate_record_component(
+    artifact: dict[str, Any], schema: Any, component: Any, meta: dict[str, Any]
+) -> list[str]:
+    if not isinstance(schema, Mapping):
+        return ["*: unknown record schema"]
+    if not isinstance(component, dict):
+        return ["*: component must be an object"]
+    errors: list[str] = []
+    fields = schema.get("fields", {})
+    title_field = meta.get("title_field", "name")
+    if _missing(component.get(title_field)):
+        errors.append(f"{title_field}: {title_field} is required")
+    id_field = meta.get("id_field")
+    if id_field in component and not isinstance(component[id_field], str):
+        errors.append(f"{id_field}: must be a string")
+    for field, spec in fields.items():
+        value = component.get(field)
+        if _missing(value):
+            if isinstance(spec, Mapping) and spec.get("required"):
+                errors.append(f"{field}: {field} is required")
+            continue
+        _validate_record_scalar(artifact, spec, value, field, errors)
+    for field in component:
+        if field not in fields:
+            errors.append(f'{field}: undeclared field "{field}"')
+    return errors
+
+
 def validate_component(kind: str, component: Any) -> list[str]:
     """Validate a component against its catalog kind's primitive schema.
 
     Returns a list of ``"field: message"`` strings; empty means valid.
     """
-    catalogs = load_catalogs()
+    catalogs = load_catalog_registry()
     meta = catalogs.get(kind)
     if meta is None:
         return [f"*: unknown catalog kind '{kind}'"]
+    artifact = load_artifact()
+    if meta.get("schema_source") == "records":
+        schema = load_record_schemas().get(meta["schema"])
+        return _validate_record_component(artifact, schema, component, meta)
     if not isinstance(component, dict):
         return ["*: component must be an object"]
 
-    artifact = load_artifact()
     schema = artifact.get("primitive_schemas", {}).get(meta["schema"])
     if schema is None:
         return [f"*: unknown primitive schema '{meta['schema']}'"]

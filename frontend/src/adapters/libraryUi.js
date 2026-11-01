@@ -8,19 +8,13 @@
 // never references a batch.
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
+import { installLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
+import { installLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
 import { filterCatalog } from "../views/catalog.js";
 import { dialogRestore } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
-import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
-import { formatWithDecimals, unitSymbol } from "../utils.js";
-
-const LINEAGE_FIELDS = new Set(["forked_from_id", "forked_from_name"]);
-// Producer-contract metadata: citations and the yield basis are captured, not
-// authored, so they never render as library inputs.
-const CAPTURE_FIELDS = new Set(["yield_basis"]);
-const isCapturedField = (field) =>
-  LINEAGE_FIELDS.has(field) || CAPTURE_FIELDS.has(field) || field.endsWith("_provenance");
+import { formatWithDecimals } from "../utils.js";
 
 function tabList(kinds) {
   return kinds.map((id) => ({ id, label: CATALOGS[id].label }));
@@ -72,7 +66,7 @@ export function registerLibraryUi(app, ctx) {
     activeKindHasNotes: {
       configurable: true,
       get() {
-        return Boolean(artifact.primitive_schemas?.[CATALOGS[this.activeKind]?.schema]?.notes);
+        return Boolean(this.activeSchema?.notes);
       },
     },
     librarySearchFields: {
@@ -136,47 +130,6 @@ export function registerLibraryUi(app, ctx) {
         return this.library.error();
       },
     },
-    libraryFields: {
-      configurable: true,
-      get() {
-        const meta = CATALOGS[this.activeKind];
-        const schema = artifact.primitive_schemas?.[meta?.schema] ?? {};
-        return Object.entries(schema)
-          .filter(([field]) => field !== meta.idField && !isCapturedField(field))
-          .map(([field, spec]) => {
-            if (spec.taxonomy) {
-              return {
-                field,
-                label: field,
-                kind: "select",
-                options: artifact.taxonomies?.[spec.taxonomy] ?? [],
-              };
-            }
-            if (!spec.dimension) return { field, label: field, kind: "text" };
-            const dimDef = UNIT_DIMENSIONS.find((d) => d.id === spec.dimension);
-            if (!dimDef) {
-              return {
-                field,
-                label: field,
-                kind: "number",
-                dimension: spec.dimension,
-                unitId: null,
-                symbol: null,
-              };
-            }
-            const unitId = this.unitMode[spec.dimension] ?? dimDef.default ?? dimDef.units[0][0];
-            return {
-              field,
-              label: field,
-              kind: "number",
-              dimension: spec.dimension,
-              unitId,
-              symbol: unitSymbol(UNIT_SYMBOLS, spec.dimension, unitId),
-              decimals: unitDecimals(spec.dimension, unitId),
-            };
-          });
-      },
-    },
     // Styles are forked, never authored from scratch: a custom style starts as a
     // copy of an existing declaration.
     canAuthorRecord: {
@@ -198,6 +151,9 @@ export function registerLibraryUi(app, ctx) {
       },
     },
   });
+
+  installLibraryFields(app, ctx);
+  installLibraryListEditor(app, ctx);
 
   async function afterRecordsChanged(store) {
     store.libraryDraft = null;
@@ -362,6 +318,7 @@ export function registerLibraryUi(app, ctx) {
       if (!this.libraryDraft) return;
       const kind = this.activeKind;
       const meta = CATALOGS[kind];
+      this.librarySortPoints();
       const draft = { ...this.libraryDraft };
       delete draft[meta.idField];
       const errors = validateComponent(artifact, kind, draft);
@@ -397,4 +354,4 @@ export function registerLibraryUi(app, ctx) {
   });
 }
 
-export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "libraryFields", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem"];
+export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...libraryFieldKeys, ...libraryListKeys];

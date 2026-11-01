@@ -37,7 +37,11 @@ const FIELD_ACTIONS = ["frontend/src/adapters/fieldActions.js"];
 const DRAFT_EDITOR = ["frontend/src/adapters/draftEditor.js"];
 const UNIT_ACTIONS = ["frontend/src/adapters/unitActions.js"];
 const SNAPSHOT = ["frontend/src/store/snapshot.js"];
-const LIBRARY_UI = ["frontend/src/adapters/libraryUi.js"];
+const LIBRARY_UI = [
+  "frontend/src/adapters/libraryUi.js",
+  "frontend/src/adapters/libraryFields.js",
+  "frontend/src/adapters/libraryListEditor.js",
+];
 const YEAST = ["frontend/src/adapters/cards/yeast.js"];
 const STYLE_DECLARATION = ["frontend/src/adapters/cards/style/declaration.js"];
 const STYLE_NAVIGATOR = ["frontend/src/adapters/cards/style/navigator.js"];

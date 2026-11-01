@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException
 
-from app.artifact import load_artifact, load_catalogs, validate_component
+from app.artifact import load_artifact, load_catalog_registry, validate_component
 from app.repositories.catalog_repo import CatalogRepoDep, CatalogRepository
 from app.schemas.catalog import CatalogItem
 
@@ -23,7 +23,7 @@ class CatalogService:
 
     @staticmethod
     def _meta(kind: str) -> dict:
-        meta = load_catalogs().get(kind)
+        meta = load_catalog_registry().get(kind)
         if meta is None:
             raise HTTPException(status_code=404, detail="Unknown catalog kind")
         return meta

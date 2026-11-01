@@ -1,0 +1,11 @@
+{
+  "cooling_curve": {
+    "label": "Cooling Curve",
+    "schema": "cooling_curve",
+    "schema_source": "records",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": null,
+    "seed_key": "coolingCurves"
+  }
+}
