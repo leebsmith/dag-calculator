@@ -45,7 +45,7 @@ conventional meaning and factors as conversion × lauter × transfer:
 
 The numerator is the malt-only kettle extract; late additions are excluded from
 both sides. This supersedes the fermenter basis recorded in
-`plans/archive/report-process-sections.md` §2 (which stays as history).
+`plans/archive/2026-10/report-process-sections.md` §2 (which stays as history).
 
 ## 3. Ledger
 

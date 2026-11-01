@@ -81,7 +81,7 @@ const META = {
   },
   "sugar-fermentability.schema.json": {
     mechanism: "contract",
-    upstream: "plans/archive/pin-matrix.md (pinned)",
+    upstream: "plans/archive/2026-10/pin-matrix.md (pinned)",
   },
   "standard-malts.json": {
     mechanism: "vendor+extend",

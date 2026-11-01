@@ -22,7 +22,7 @@ test rig at 9 % ABV: the tun measures 24.8 L of 40 L at the *lower* bound `a` bu
 fixed kettle volume and 3 L/kg the first runnings fill the kettle and the sparge
 collapses. The advice ("tun too small") is false and unactionable.
 
-The extract-basis correction that landed in `plans/archive/update-limits-subsection.md`
+The extract-basis correction that landed in `plans/archive/2026-11/update-limits-subsection.md`
 raised required grist ~5 %, so more marginal batches reach this branch and the false
 positive is now common.
 

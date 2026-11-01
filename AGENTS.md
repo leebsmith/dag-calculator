@@ -37,7 +37,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 | `docs/` | living spec + frozen historical |
 | `docs/hops/` | living hop index + model; background transcripts under `reference/` |
 | `docs/mashing/` | mash index; background transcript under `reference/` |
-| `plans/` | execution history + reconciled decisions (`adsco-contract.md`) |
+| `plans/` | execution history + reconciled decisions (`adsco-contract.md`); completed plans under `archive/YYYY-MM/` |
 | `scripts/` | seed builders (`.mjs`) + scrapers (`scrape/`, Python) |
 
 ## Commands
@@ -125,6 +125,9 @@ it. Unit preferences are the one exception — they live in the browser's
   (`tests/guards/docs-claims.test.js`). A plan may cite ids it proposes by
   declaring `<!-- claims: proposed a.b c.d -->`. Frozen docs and
   `plans/archive/` are exempt.
+- **Plans archive by completion month.** Completed plans move to
+  `plans/archive/YYYY-MM/<slug>.md`; the archive root holds only `README.md`
+  and the month folders. `tests/guards/archive-layout.test.js` enforces it.
 - **Commits**: concise imperative subject (`Pin the malt-database import contract`).
 - **Artifact changes are atomic with their docs.** A model change is not done
   until `inventory.md` is re-emitted and the relevant prose doc updated in the

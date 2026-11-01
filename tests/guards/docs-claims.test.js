@@ -26,7 +26,7 @@ test("the claim scope skips frozen docs and archived plans", () => {
   assert.equal(isClaimDoc("docs/historical/tech-stack.md"), false);
   assert.equal(isClaimDoc("docs/adsco/style-selection-and-ion-entry.md"), false);
   assert.equal(isClaimDoc("docs/adsco/ui.md"), true);
-  assert.equal(isClaimDoc("plans/archive/pin-matrix.md"), false);
+  assert.equal(isClaimDoc("plans/archive/2026-10/pin-matrix.md"), false);
   assert.equal(isClaimDoc("plans/warnings.md"), true);
 });
 

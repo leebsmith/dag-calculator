@@ -1,4 +1,4 @@
-// Phase 0 of plans/archive/decomposition-and-display-contract.md: the display contract
+// Phase 0 of plans/archive/2026-10/decomposition-and-display-contract.md: the display contract
 // is prose only outside templates, so the guard pins the layer where formatting
 // happens. Phase 1 emptied the allowlist; the scope now covers the producer and
 // the presentation registry as well as the adapters, because `cell.js` is the

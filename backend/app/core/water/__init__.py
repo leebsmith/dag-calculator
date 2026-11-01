@@ -25,7 +25,7 @@ Black-box boundary contract:
   ``SolverValidationError`` (a ``ValueError`` subclass) carrying a ``code``.
 * Provenance: ``docs/adsco/`` (frozen specs) reconciled in
   ``plans/adsco-contract.md``; the mash-pH model in
-  ``plans/archive/mash-ph-buffer-capacity.md``.
+  ``plans/archive/2026-10/mash-ph-buffer-capacity.md``.
 
 Module map, in pipeline order:
 

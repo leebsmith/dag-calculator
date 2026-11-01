@@ -938,7 +938,7 @@ the program.
 
 **Landed.** 2026-10-29 — `Record the local-testing numbers`. A note cannot carry the
 sha of the commit that contains it; `git log --grep "Record the local-testing
-numbers"` finds it, and `git log --stat -1 -- plans/archive/optimize-local-testing.md`
+numbers"` finds it, and `git log --stat -1 -- plans/archive/2026-10/optimize-local-testing.md`
 shows the move.
 
 | Gate | Before | After |
@@ -1058,7 +1058,7 @@ Three items a goal must not own:
    note.
 3. Update `TODO.md`: the in-flight bullet becomes a **Done** entry with the final
    numbers and the archived pointer; the shape-pin burn-down stays queued.
-4. `git mv plans/optimize-local-testing.md plans/archive/optimize-local-testing.md`
+4. `git mv plans/optimize-local-testing.md plans/archive/2026-10/optimize-local-testing.md`
    and update every reference (`TODO.md`, `AGENTS.md` if it names the file, and any
    comment that points at it).
 5. Install the pre-push hook with `make hooks` and confirm it refuses a push while

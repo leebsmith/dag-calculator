@@ -11,7 +11,7 @@ Each phase appends its own `Landed.` paragraph under its commit line — what mo
 what deviated, and the counts the gate reported — so this file is the audit trail,
 not just the spec.
 
-This is the program named in `plans/archive/decomposition-and-display-contract.md`
+This is the program named in `plans/archive/2026-10/decomposition-and-display-contract.md`
 §3. It assumes that program is closed and does not reopen any of its decisions.
 
 ## 1. Why — measured at `d285ffa`
