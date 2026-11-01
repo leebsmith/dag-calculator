@@ -1,6 +1,6 @@
 ---
 title: Brew Session — Phase 2 Log
-status: partially shipped
+status: shipped
 program: deterministic-dag-calculator
 depends_on: [brew-log-contract, brew-checklist]
 blocks: [brew-measurement-promotion]
@@ -10,10 +10,10 @@ gate: make verify
 
 # Plan — Brew session (Phase 2, outline)
 
-This started as an interface-level outline. The first implementation pass is
-landed: frozen-batch session creation, checklist state, live and deferred
-observations, raw/corrected/method, variance and sealing. The Brew Sheet render
-and the automated correction helpers remain.
+This started as an interface-level outline. The phase is shipped: frozen-batch
+session creation, checklist state, live and deferred observations,
+raw/corrected/method, automated hydrometer and refractometer corrections,
+variance, sealing, and the printable Brew Sheet.
 
 ## Goal
 
@@ -212,15 +212,15 @@ observations append-only and corrections become new rows.
 - Observation append and void, with raw, corrected, method, source and time.
 - Variance table in the session view.
 - `Brew log` row action and the session view.
-- Tests for the service, routes and frontend controller.
+- Automated hydrometer temperature and refractometer alcohol correction helpers.
+- The printable Brew Sheet (`backend/app/templates/brew_session.typ` and
+  `GET /brew-sessions/{id}/report`).
+- Tests for the service, routes, render path and frontend controller.
 
 ## Remaining
 
-- The printable Brew Sheet render path.
-- Automated hydrometer and refractometer correction helpers; the session accepts
-  a corrected value and keeps the method today.
 - Promotion of calibration and cooling-curve records (Phase 3).
 
 ## Gate
 
-`make verify`. The remaining items graduate to task-level work in the next pass.
+`make verify`.

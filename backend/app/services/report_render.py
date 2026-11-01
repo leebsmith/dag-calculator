@@ -167,6 +167,55 @@ def render(bundle: ReportBundle, spec: ReportSpec) -> RenderedReport:
         )
 
 
+def render_session(session: dict, *, paper: str = "a4") -> RenderedReport:
+    """Compile the Brew Sheet from a session document.
+
+    This is deliberately separate from the frozen report bundle: a session is a
+    log, not a fact, and it must not be forced through the bundle schema.
+    """
+    if paper not in ("auto", "a4", "letter"):
+        raise ReportSpecError(f"unknown paper {paper!r} (expected auto, a4 or letter)")
+    binary = _ready_typst()
+    with tempfile.TemporaryDirectory(prefix="session-") as tmp:
+        root = Path(tmp) / "report"
+        shutil.copytree(TEMPLATES, root)
+        (root / "session.json").write_text(
+            json.dumps(session), encoding="utf-8"
+        )
+        chosen = "a4" if paper == "auto" else paper
+        common = [
+            "--root",
+            str(root),
+            "--font-path",
+            str(root / "fonts"),
+            "--ignore-system-fonts",
+            "--input",
+            "session=/session.json",
+            "--input",
+            f"paper={chosen}",
+        ]
+        target = root / "session.pdf"
+        _run(
+            [
+                binary,
+                "compile",
+                str(root / "brew_session.typ"),
+                str(target),
+                "--format",
+                "pdf",
+                *common,
+            ]
+        )
+        return RenderedReport(
+            data=target.read_bytes(),
+            media_type="application/pdf",
+            sections=("session",),
+            pages=0,
+            page=1,
+            key=None,
+        )
+
+
 def _metadata(
     binary: str, root: Path, common: list[str]
 ) -> dict[str, object]:

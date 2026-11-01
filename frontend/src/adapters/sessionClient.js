@@ -1,6 +1,6 @@
 // Brew-session persistence client over the JSON seam.
 
-import { requestJSON } from "./apiClient.js";
+import { requestBlob, requestJSON } from "./apiClient.js";
 
 export function listSessions(batchId) {
   const query = batchId ? `?batch_id=${encodeURIComponent(batchId)}` : "";
@@ -42,4 +42,9 @@ export function finalizeSession(sessionId) {
   return requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}/finalize`, {
     method: "POST",
   });
+}
+
+export function getSessionReport(sessionId, paper = "a4") {
+  const query = paper ? `?paper=${encodeURIComponent(paper)}` : "";
+  return requestBlob(`/brew-sessions/${encodeURIComponent(sessionId)}/report${query}`);
 }

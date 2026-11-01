@@ -22,9 +22,10 @@ unchanged: it grades the realized value against the absolute envelope.
 
 * Brew checklist (the staged-notes replacement) — Phase 1 shipped: the
   generated pre/brew/post checklist with three levels and a printed blank
-  appendix. Phase 2 is partially shipped: frozen-batch sessions, checklist
-  state, observations, variance and sealing. Remaining: the printable Brew
-  Sheet, automated corrections and Phase 3 promotion. See
+  appendix. Phase 2 shipped: frozen-batch sessions, checklist state, live and
+  deferred observations, raw/corrected/method, automated hydrometer and
+  refractometer corrections, variance, sealing and the printable Brew Sheet.
+  Phase 3 (calibration and cooling-curve promotion) remains. See
   `plans/brew-checklist.md`, `plans/brew-session.md` and
   `plans/brew-measurement-promotion.md`.
 

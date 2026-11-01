@@ -42,9 +42,32 @@ frozen checklist table. The verdict uses the metric tolerance: a pH band is an
 absolute range, a volume or gravity tolerance is a plus/minus. Missing readings
 render as "not recorded".
 
+## Corrections
+
+The session offers two automated corrections and stores the raw reading
+alongside the corrected one:
+
+- **Hydrometer temperature** — corrects to 20 C with the water-density
+  polynomial. At the calibration temperature it is a no-op; a hot reading is
+  raised and a cold reading lowered.
+- **Refractometer alcohol** — Terrill's correction from the current Brix and the
+  original Brix. It needs both readings; without them the corrected value stays
+  absent rather than guessed.
+- **pH / ATC** — the meter's temperature-compensated reading is the corrected
+  value.
+
+The user may always enter a corrected value directly. The method and correction
+version travel with the observation.
+
+## Brew Sheet
+
+`GET /brew-sessions/{id}/report` renders the session as a PDF from
+`backend/app/templates/brew_session.typ`: the checklist with ticks and notes, the
+observation table with raw/corrected values, and the variance table. The sheet is
+generated from the session document; the frozen recipe report is a separate
+document.
+
 ## What is not modelled
 
-- The printable Brew Sheet render path.
-- Automated correction formulas.
-- Promotion of calibration or cooling-curve records.
+- Promotion of calibration or cooling-curve records (Phase 3).
 - Sensor ingestion or charts.

@@ -391,6 +391,25 @@ def create_brew_session(
     return service.create_session(user["uid"], payload)
 
 
+@app.get("/brew-sessions/{session_id}/report")
+def get_brew_session_report(
+    session_id: str,
+    user: AllowedUser,
+    service: BrewSessionServiceDep,
+    paper: str = Query(default="a4"),
+):
+    """Render the Brew Sheet for a session."""
+    validate_doc_id(session_id)
+    rendered = service.render_session_report(user["uid"], session_id, paper)
+    return Response(
+        content=rendered.data,
+        media_type=rendered.media_type,
+        headers={
+            "Content-Disposition": f'inline; filename="brew-session-{session_id}.pdf"'
+        },
+    )
+
+
 @app.get("/brew-sessions/{session_id}", response_model=BrewSession)
 def get_brew_session(session_id: str, user: AllowedUser, service: BrewSessionServiceDep):
     """Load one brew session owned by the caller."""

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import shutil
+
 import pytest
 from conftest import FakeBatchRepo
 from fastapi.testclient import TestClient
@@ -186,5 +188,21 @@ def test_routes_create_and_read_a_session(service) -> None:
         )
         assert observed.status_code == 200
         assert len(observed.json()["observations"]) == 1
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.skipif(shutil.which("typst") is None, reason="typst binary not installed")
+def test_report_route_renders_the_brew_sheet(service) -> None:
+    app.dependency_overrides[get_brew_session_service] = lambda: service
+    app.dependency_overrides[get_current_user] = lambda: {"uid": UID, "token": "test"}
+    app.dependency_overrides[require_allowed_user] = lambda: {"uid": UID, "token": "test"}
+    try:
+        client = TestClient(app)
+        created = service.create_session(UID, create_payload())
+        response = client.get(f"/brew-sessions/{created.id}/report")
+        assert response.status_code == 200
+        assert response.content.startswith(b"%PDF")
+        assert response.headers["content-type"] == "application/pdf"
     finally:
         app.dependency_overrides.clear()

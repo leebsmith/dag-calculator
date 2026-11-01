@@ -5,14 +5,16 @@ import { createBrewSessionState } from "./brewSessionModel.js";
 import { brewSessionGetters } from "./brewSessionGetters.js";
 import {
   createObservationActions,
+  createReportActions,
   createSessionLifecycleActions,
   createStepActions,
 } from "./brewSessionActions.js";
 
-export function createBrewSessionStore({ client, loadBundle }) {
+export function createBrewSessionStore({ client, loadBundle, openReport = async () => {} }) {
   const store = {
     ...createBrewSessionState(),
     ...createSessionLifecycleActions({ client, loadBundle }),
+    ...createReportActions({ client, openReport }),
     ...createStepActions({ client }),
     ...createObservationActions({ client }),
   };

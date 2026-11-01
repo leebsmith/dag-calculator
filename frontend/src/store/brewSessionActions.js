@@ -3,6 +3,7 @@
 
 import { reportError } from "../observability.js";
 import { cell, nowLocal, secondsFromLocal } from "./brewSessionModel.js";
+import { correctObservation } from "./observationCorrections.js";
 
 function setError(store, scope, err) {
   store.error = err?.message ?? String(err);
@@ -96,15 +97,6 @@ export function createSessionLifecycleActions({ client, loadBundle }) {
       }
     },
 
-    async refresh() {
-      if (!this.session) return;
-      try {
-        this.session = await client.getSession(this.session.id);
-      } catch (err) {
-        setError(this, "brewSession.refresh", err);
-      }
-    },
-
     close() {
       this.open = false;
       this.session = null;
@@ -113,6 +105,28 @@ export function createSessionLifecycleActions({ client, loadBundle }) {
       this.batchName = "";
       this.observationDrafts = {};
       this.error = null;
+    },
+  };
+}
+
+export function createReportActions({ client, openReport }) {
+  return {
+    async openReport() {
+      if (!this.session) return;
+      try {
+        await openReport(this.session.id);
+      } catch (err) {
+        setError(this, "brewSession.openReport", err);
+      }
+    },
+
+    async refresh() {
+      if (!this.session) return;
+      try {
+        this.session = await client.getSession(this.session.id);
+      } catch (err) {
+        setError(this, "brewSession.refresh", err);
+      }
     },
   };
 }
@@ -165,16 +179,40 @@ export function createStepActions({ client }) {
 function observationPayload(row, draft) {
   const raw = Number(draft.raw);
   if (!Number.isFinite(raw)) return null;
-  const corrected = Number(draft.corrected);
-  const unit = cell(row, "unit") || "—";
+  const rawUnit = draft.rawUnit || cell(row, "unit") || "—";
+  const kind = cell(row, "correction") || "none";
+  const computed = correctObservation({
+    kind,
+    raw,
+    rawUnit,
+    sampleTempC: Number(draft.sampleTempC),
+    brix: Number(draft.brix),
+    originalBrix: Number(draft.originalBrix),
+  });
+  const manual = Number(draft.corrected);
+  const corrected = Number.isFinite(manual)
+    ? { value: manual, unit: rawUnit }
+    : computed;
   return {
     metric_id: cell(row, "metric_id"),
     step_id: cell(row, "step_id") || null,
     at: secondsFromLocal(draft.at),
     source: draft.source || "live",
     method: draft.method || "manual",
-    raw: { value: raw, unit },
-    corrected: Number.isFinite(corrected) ? { value: corrected, unit } : null,
+    raw: { value: raw, unit: rawUnit },
+    corrected,
+    correction:
+      computed && kind !== "none"
+        ? {
+            kind,
+            version: "v1",
+            inputs: {
+              sample_temp_c: Number(draft.sampleTempC),
+              brix: Number(draft.brix),
+              original_brix: Number(draft.originalBrix),
+            },
+          }
+        : null,
     note: draft.note || "",
   };
 }
@@ -199,6 +237,10 @@ export function createObservationActions({ client }) {
           raw: "",
           corrected: "",
           method: cell(row, "method") || "manual",
+          rawUnit: cell(row, "unit") || "—",
+          sampleTempC: "",
+          brix: "",
+          originalBrix: "",
           at: nowLocal(),
           source: "live",
           note: "",

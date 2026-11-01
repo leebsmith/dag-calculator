@@ -71,6 +71,16 @@ Alpine.store("setup", setupStore);
 Alpine.store("brewSession", createBrewSessionStore({
   client: sessionClient,
   loadBundle: (id, name) => persistence.reportBundleFor(id, name),
+  openReport: async (id) => {
+    const tab = openReportTab();
+    try {
+      const blob = await sessionClient.getSessionReport(id);
+      showReport(tab, blob, `brew-session-${id}.pdf`);
+    } catch (err) {
+      closeReportTab(tab);
+      throw err;
+    }
+  },
 }));
 
 Alpine.store(

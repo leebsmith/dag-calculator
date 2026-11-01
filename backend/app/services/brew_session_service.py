@@ -18,6 +18,7 @@ from app.schemas.brew_session import (
     ObservationCreate,
     ObservationPatch,
 )
+from app.services.report_render import RenderedReport, render_session
 
 
 class BrewSessionService:
@@ -131,6 +132,12 @@ class BrewSessionService:
         if row is None:
             raise HTTPException(status_code=404, detail="Brew session not found")
         return BrewSession(**row)
+
+    def render_session_report(
+        self, uid: str, session_id: str, paper: str = "a4"
+    ) -> RenderedReport:
+        session = self.get_session(uid, session_id)
+        return render_session(session.model_dump(mode="json"), paper=paper)
 
     def finalize_session(self, uid: str, session_id: str) -> BrewSession:
         current = self.get_session(uid, session_id)

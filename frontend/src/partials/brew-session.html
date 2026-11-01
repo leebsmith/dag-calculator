@@ -15,6 +15,14 @@
       <button
         type="button"
         class="btn-secondary text-xs"
+        x-show="$store.brewSession.session"
+        @click="$store.brewSession.openReport()"
+      >
+        Brew sheet
+      </button>
+      <button
+        type="button"
+        class="btn-secondary text-xs"
         x-show="$store.brewSession.session && !$store.brewSession.sealed"
         @click="$store.brewSession.finalize()"
       >
@@ -169,6 +177,15 @@
                     />
                   </div>
                   <div class="metric-cell">
+                    <span class="metric-cell-label">Raw unit</span>
+                    <input
+                      type="text"
+                      class="form-input"
+                      :value="$store.brewSession.draftFor(row).rawUnit"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'rawUnit', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell">
                     <span class="metric-cell-label">Corrected</span>
                     <input
                       type="number"
@@ -176,6 +193,36 @@
                       class="form-input tabular-nums"
                       :value="$store.brewSession.draftFor(row).corrected"
                       @change="$store.brewSession.setDraft(row.metric_id.text, 'corrected', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell" x-show="row.correction.text === 'hydrometer_temp'">
+                    <span class="metric-cell-label">Sample °C</span>
+                    <input
+                      type="number"
+                      step="0.1"
+                      class="form-input tabular-nums"
+                      :value="$store.brewSession.draftFor(row).sampleTempC"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'sampleTempC', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell" x-show="row.correction.text === 'refractometer_alcohol'">
+                    <span class="metric-cell-label">Brix</span>
+                    <input
+                      type="number"
+                      step="0.1"
+                      class="form-input tabular-nums"
+                      :value="$store.brewSession.draftFor(row).brix"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'brix', $event.target.value)"
+                    />
+                  </div>
+                  <div class="metric-cell" x-show="row.correction.text === 'refractometer_alcohol'">
+                    <span class="metric-cell-label">Original Brix</span>
+                    <input
+                      type="number"
+                      step="0.1"
+                      class="form-input tabular-nums"
+                      :value="$store.brewSession.draftFor(row).originalBrix"
+                      @change="$store.brewSession.setDraft(row.metric_id.text, 'originalBrix', $event.target.value)"
                     />
                   </div>
                   <div class="metric-cell">
