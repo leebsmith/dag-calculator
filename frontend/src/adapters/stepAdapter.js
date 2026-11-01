@@ -11,6 +11,8 @@ import { createSession } from "./session.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { identityDerivations } from "../views/seedDerivations.js";
 import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
+import { migrateChecklistCollections } from "../views/checklist/catalog.js";
+import { dropLegacyDoughIn } from "./legacyMigrations.js";
 import { createLibrary } from "../store/library.js";
 import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
@@ -80,14 +82,6 @@ export function createStepApp(options = {}) {
   const identity = options.identity ?? bootstrapIdentity(artifact, cache);
   const session = createSession({ artifact, cache, master, useHttp, identity });
 
-  function dropLegacyDoughIn() {
-    const rests = session.engine.get("mash.rests");
-    if (!Array.isArray(rests)) return false;
-    const filtered = rests.filter((rest) => rest?.rest_id !== "dough_in");
-    if (filtered.length === rests.length) return false;
-    session.engine.setCollection("mash.rests", filtered);
-    return true;
-  }
   const attribution = createFieldAttribution(artifact, steps);
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   // The pristine auth-scoped baseline to restore on sign-out.
@@ -173,19 +167,22 @@ export function createStepApp(options = {}) {
     async loadState(state) {
       this.inputDrafts = {};
       const legacyDerate = state?.roots?.["batch.attenuation_derate"];
-      session.rebuild(state);
+      const migratedChecklist = migrateChecklistCollections(state?.collections);
+      session.rebuild({ ...state, collections: migratedChecklist.collections });
       const migratedDerate = this.migrateAttenuationDerate(legacyDerate);
       this.onBatchLoad?.();
-      const migrated = dropLegacyDoughIn();
+      const migrated = dropLegacyDoughIn(session.engine);
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       const sugarParts = this.seedSugarShareParts();
       if (useHttp) await this.solveNow();
       else this.compute();
-      if (seeded || materialized || synced || migrated || migratedDerate || sugarParts) {
-        this.notify();
-      }
+      const changed = [
+        seeded, materialized, synced, migrated,
+        migratedChecklist.changed, migratedDerate, sugarParts,
+      ].some(Boolean);
+      if (changed) this.notify();
       this.syncNav();
     },
 

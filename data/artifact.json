@@ -474,6 +474,11 @@
       "wild",
       "mixed"
     ],
+    "checklist_level": [
+      "critical",
+      "info",
+      "debug"
+    ],
     "mash_rest": [
       "phytase",
       "ferulic",
@@ -2364,14 +2369,13 @@
       "time_of_application": {},
       "notes": {}
     },
-    "brew_day_step": {
+    "brew_checklist_step": {
       "step_id": {},
-      "section": {},
-      "name": {},
-      "enabled": {
+      "note": {},
+      "skipped": {
         "type": "boolean"
       },
-      "instructions": {}
+      "skip_reason": {}
     }
   },
   "nodes": {
@@ -5312,9 +5316,14 @@
       "kind": "collection",
       "item_schema": "dry_hop_row"
     },
-    "batch.brew_day_steps": {
+    "batch.brew_checklist": {
       "kind": "collection",
-      "item_schema": "brew_day_step"
+      "item_schema": "brew_checklist_step"
+    },
+    "batch.checklist_level": {
+      "kind": "choice",
+      "taxonomy": "checklist_level",
+      "default": "info"
     },
     "mash.preset_id": {
       "kind": "choice",

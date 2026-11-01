@@ -6,7 +6,7 @@ depends_on: []
 blocks: [brew-checklist, brew-session, brew-measurement-promotion]
 gate: review
 ---
-<!-- claims: proposed batch.brew_checklist batch.brew_checklist.step_id batch.brew_checklist.note batch.brew_checklist.skipped batch.brew_checklist.skip_reason batch.checklist_level brew_checklist_step brew_checklist_step.step_id brew_checklist_step.note brew_checklist_step.skipped brew_checklist_step.skip_reason checklist_level -->
+<!-- claims: proposed batch.brew_day_steps batch.brew_checklist batch.brew_checklist.step_id batch.brew_checklist.note batch.brew_checklist.skipped batch.brew_checklist.skip_reason batch.checklist_level brew_checklist_step brew_checklist_step.step_id brew_checklist_step.note brew_checklist_step.skipped brew_checklist_step.skip_reason checklist_level -->
 
 # Brew log contract — reconciled design
 

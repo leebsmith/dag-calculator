@@ -238,7 +238,7 @@ Grounded in the current artifact:
 | Major / trace malts | `grist.major_malts` / `grist.trace_malts` have rows |
 | Mash rests | `mash.rests` has rows |
 | Pinned ions | `water.pinned_ions` has rows |
-| Brew-day checklist | `batch.brew_day_steps` has rows |
+| Brew checklist | `batch.brew_checklist` has rows |
 | Water chemistry | `formatted["solver.water.post_dose_mash_ions.calcium_ca"]` exists; its Treatment Dosage subsection gates on `formatted["solver.water.mash_additions.gypsum_kg"]` |
 | Style conformance | `conformance` is not `null` |
 

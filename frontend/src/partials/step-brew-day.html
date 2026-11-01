@@ -5,55 +5,110 @@
   </div>
 
   <div class="step-card-content">
-    <p class="form-hint">
-      Check the steps to include in the printed recipe. Instructions appear when a step is checked.
-    </p>
+    <div class="form-group">
+      <label for="checklist-level" class="form-label text-xs">Checklist level</label>
+      <select
+        id="checklist-level"
+        class="form-select text-sm"
+        :value="brewDayLevel"
+        @change="setBrewDayLevel($event.target.value)"
+      >
+        <template x-for="level in brewDayLevels" :key="level.id">
+          <option :value="level.id" :selected="level.id === brewDayLevel" x-text="level.name"></option>
+        </template>
+      </select>
+      <p class="form-hint">
+        Critical path is the short gate list; Standard is the full brew sheet; Diagnostic adds
+        expected values, methods and model caveats.
+      </p>
+    </div>
 
-    <template x-for="section in brewDaySections" :key="section.id">
+    <template x-for="phase in brewDaySections" :key="phase.id">
       <div class="synthesized-card card-section">
         <div class="section-header">
           <button
             type="button"
             class="section-toggle"
-            :aria-expanded="isBrewDaySectionOpen(section.id) ? 'true' : 'false'"
-            :aria-controls="'brew-day-panel-' + section.id"
-            @click="toggleBrewDaySection(section.id)"
+            :aria-expanded="isBrewDaySectionOpen(phase.id) ? 'true' : 'false'"
+            :aria-controls="'brew-day-panel-' + phase.id"
+            @click="toggleBrewDaySection(phase.id)"
           >
             <span class="section-chevron" aria-hidden="true">▸</span>
-            <span class="section-title" x-text="section.name"></span>
-            <span
-              class="section-meta"
-              x-show="section.activeCount > 0"
-              x-text="section.activeCount + (section.activeCount === 1 ? ' step active' : ' steps active')"
-            ></span>
+            <span class="section-title" x-text="phase.name"></span>
+            <span class="section-meta" x-text="phase.sections.length + ' sections'"></span>
           </button>
         </div>
 
         <div
           class="section-body"
-          :id="'brew-day-panel-' + section.id"
-          x-show="isBrewDaySectionOpen(section.id)"
+          :id="'brew-day-panel-' + phase.id"
+          x-show="isBrewDaySectionOpen(phase.id)"
         >
-          <template x-for="row in section.steps" :key="row.step_id">
-            <div class="brew-day-step">
-              <label class="brew-day-step-toggle">
-                <input
-                  type="checkbox"
-                  :checked="row.enabled"
-                  @change="toggleBrewDayStep(row.step_id, $event.target.checked)"
-                />
-                <span x-text="row.name"></span>
-              </label>
+          <template x-for="section in phase.sections" :key="section.id">
+            <div>
+              <h3 class="synthesized-title" x-text="section.name"></h3>
 
-              <div class="brew-day-instructions-wrap" x-show="row.enabled">
-                <textarea
-                  class="form-input brew-day-instructions"
-                  rows="3"
-                  :value="brewDayInstruction(row)"
-                  :placeholder="waterInstruction(row.step_id) || 'Add instructions for this step'"
-                  @input="setBrewDayInstruction(row.step_id, $event.target.value)"
-                ></textarea>
-              </div>
+              <template x-for="row in section.rows" :key="row.kind + ':' + row.step_id + ':' + row.title">
+                <div class="brew-day-step">
+                  <template x-if="row.kind === 'step'">
+                    <div>
+                      <div class="brew-day-step-toggle">
+                        <span class="font-medium" x-text="row.title"></span>
+                        <span class="text-xs text-muted" x-show="row.auto" x-text="'Preflight'"></span>
+                        <span class="text-xs text-warning" x-show="row.skipped" x-text="'Skipped'"></span>
+                        <span class="text-xs text-muted" x-show="row.not_applicable" x-text="'N/A'"></span>
+                      </div>
+
+                      <p class="text-sm" x-text="row.text"></p>
+                      <p
+                        class="text-xs text-muted"
+                        x-show="row.done_when"
+                        x-text="'Done when: ' + row.done_when"
+                      ></p>
+
+                      <template x-if="!row.auto && !row.not_applicable">
+                        <div class="brew-day-instructions-wrap">
+                          <textarea
+                            class="form-input brew-day-instructions"
+                            rows="2"
+                            :value="row.note"
+                            placeholder="Add a note for this step"
+                            @input="setBrewDayNote(row.step_id, $event.target.value)"
+                          ></textarea>
+
+                          <label class="text-xs">
+                            <input
+                              type="checkbox"
+                              :checked="row.skipped"
+                              @change="setBrewDaySkipped(row.step_id, $event.target.checked)"
+                            />
+                            Skip this step
+                          </label>
+
+                          <input
+                            type="text"
+                            class="form-input text-xs"
+                            x-show="row.skipped"
+                            :value="row.skip_reason"
+                            placeholder="Why skip this step?"
+                            @change="setBrewDaySkipReason(row.step_id, $event.target.value)"
+                          />
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+
+                  <template x-if="row.kind === 'observation'">
+                    <div class="text-sm">
+                      <span class="font-medium" x-text="row.title"></span>
+                      <span
+                        class="text-xs text-muted"
+                        x-text="'Expected ' + row.expected + ' · ' + row.unit + ' · ' + row.method"
+                      ></span>
+                    </div>
+                  </template>
+                </div>
+              </template>
             </div>
           </template>
         </div>

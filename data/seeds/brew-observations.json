@@ -1,0 +1,254 @@
+{
+  "metrics": [
+    {
+      "id": "hlt.fill",
+      "label": "HLT fill",
+      "phase": "brew",
+      "section": "setup",
+      "step_id": "brew-day-setup",
+      "level": "info",
+      "dimension": "volume",
+      "unit": "L",
+      "expected": "batch.hlt_starting_volume_l",
+      "tolerance": {
+        "plus_minus": 0.5
+      },
+      "methods": [
+        "vessel mark",
+        "flow meter"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "L"
+    },
+    {
+      "id": "strike.temp",
+      "label": "Strike temperature",
+      "phase": "brew",
+      "section": "setup",
+      "step_id": "brew-day-setup",
+      "level": "info",
+      "dimension": "temperature",
+      "unit": "degC",
+      "expected": "mash.strike_water_temp_c",
+      "tolerance": {
+        "plus_minus": 1
+      },
+      "methods": [
+        "probe",
+        "thermometer"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "\u00b0C"
+    },
+    {
+      "id": "mash.dough_in_temp",
+      "label": "Dough-in temperature",
+      "phase": "brew",
+      "section": "mash",
+      "step_id": "mash-temp",
+      "level": "info",
+      "dimension": "temperature",
+      "unit": "degC",
+      "expected": "mash.dough_in_target_temp_c",
+      "tolerance": {
+        "plus_minus": 1
+      },
+      "methods": [
+        "probe",
+        "thermometer"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "\u00b0C"
+    },
+    {
+      "id": "mash.ph",
+      "label": "Mash pH",
+      "phase": "brew",
+      "section": "mash",
+      "step_id": "mash-ph",
+      "level": "critical",
+      "dimension": "ph",
+      "unit": "pH",
+      "expected": "water.target_mash_ph",
+      "tolerance": {
+        "min": 5.2,
+        "max": 5.6
+      },
+      "methods": [
+        "pH meter",
+        "test strips"
+      ],
+      "correction": "instrument_atc",
+      "repeatable": false,
+      "symbol": "pH"
+    },
+    {
+      "id": "first_runnings.volume",
+      "label": "First runnings",
+      "phase": "brew",
+      "section": "lauter",
+      "step_id": "first-runnings",
+      "level": "info",
+      "dimension": "volume",
+      "unit": "L",
+      "expected": "solver.batch.cascade.v_run1",
+      "tolerance": {
+        "plus_minus": 0.5
+      },
+      "methods": [
+        "vessel mark"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "L"
+    },
+    {
+      "id": "sparge.volume",
+      "label": "Sparge volume",
+      "phase": "brew",
+      "section": "lauter",
+      "step_id": "batch-sparge",
+      "level": "info",
+      "dimension": "volume",
+      "unit": "L",
+      "expected": "solver.batch.cascade.v_sparge",
+      "tolerance": {
+        "plus_minus": 0.5
+      },
+      "methods": [
+        "vessel mark",
+        "flow meter"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "L"
+    },
+    {
+      "id": "pre_boil.volume",
+      "label": "Pre-boil volume",
+      "phase": "brew",
+      "section": "lauter",
+      "step_id": "pre-boil",
+      "level": "critical",
+      "dimension": "volume",
+      "unit": "L",
+      "expected": "solver.batch.v_pre_boil",
+      "tolerance": {
+        "plus_minus": 0.5
+      },
+      "methods": [
+        "vessel mark"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "L"
+    },
+    {
+      "id": "pre_boil.sg",
+      "label": "Pre-boil gravity",
+      "phase": "brew",
+      "section": "lauter",
+      "step_id": "pre-boil",
+      "level": "critical",
+      "dimension": "gravity",
+      "unit": "SG",
+      "expected": "solver.batch.cascade.sg_pre_boil",
+      "tolerance": {
+        "plus_minus": 0.002
+      },
+      "methods": [
+        "hydrometer",
+        "refractometer"
+      ],
+      "correction": "hydrometer_temp",
+      "repeatable": false,
+      "symbol": "SG"
+    },
+    {
+      "id": "post_boil.volume",
+      "label": "Post-boil volume",
+      "phase": "brew",
+      "section": "boil",
+      "step_id": "flameout",
+      "level": "info",
+      "dimension": "volume",
+      "unit": "L",
+      "expected": "solver.batch.cascade.v_post_boil",
+      "tolerance": {
+        "plus_minus": 0.5
+      },
+      "methods": [
+        "vessel mark"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "L"
+    },
+    {
+      "id": "post_boil.sg",
+      "label": "Post-boil gravity",
+      "phase": "brew",
+      "section": "boil",
+      "step_id": "flameout",
+      "level": "critical",
+      "dimension": "gravity",
+      "unit": "SG",
+      "expected": "solver.batch.sg_post_boil",
+      "tolerance": {
+        "plus_minus": 0.002
+      },
+      "methods": [
+        "hydrometer",
+        "refractometer"
+      ],
+      "correction": "hydrometer_temp",
+      "repeatable": false,
+      "symbol": "SG"
+    },
+    {
+      "id": "ferment.gravity",
+      "label": "Fermentation gravity",
+      "phase": "post",
+      "section": "fermentation",
+      "step_id": "ferment-fg",
+      "level": "critical",
+      "dimension": "gravity",
+      "unit": "SG",
+      "expected": "batch.realized_fg",
+      "tolerance": {
+        "plus_minus": 0.002
+      },
+      "methods": [
+        "hydrometer",
+        "refractometer"
+      ],
+      "correction": "hydrometer_temp",
+      "repeatable": true,
+      "symbol": "SG"
+    },
+    {
+      "id": "package.volume",
+      "label": "Packaged volume",
+      "phase": "post",
+      "section": "packaging",
+      "step_id": "package-record",
+      "level": "critical",
+      "dimension": "volume",
+      "unit": "L",
+      "expected": "batch.v_ferm",
+      "tolerance": {
+        "plus_minus": 0.5
+      },
+      "methods": [
+        "scale",
+        "vessel mark"
+      ],
+      "correction": "none",
+      "repeatable": false,
+      "symbol": "L"
+    }
+  ]
+}

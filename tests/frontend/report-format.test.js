@@ -358,19 +358,43 @@ test("share-mode sugars report the mass the late-additions table shows", async (
   assert.equal(app.reportFormattedSummaries()["batch.sugars"].extract_yield.text, "80.0%");
 });
 
-test("the checklist table carries one generated step and one blank observation row", async () => {
+test("the checklist table carries generated steps and blank observations", async () => {
   const app = await booted();
-  const rows = app.reportFormattedTables()["batch.brew_day_steps"];
+  const rows = app.reportFormattedTables()["batch.brew_checklist"];
 
-  assert.equal(rows.length, 2);
-  assert.equal(rows[0].kind.text, "step");
-  assert.match(rows[0].text.text, /^Fill the HLT to /);
-  assert.equal(rows[1].kind.text, "observation");
-  assert.equal(rows[1].title.text, "Mash pH");
-  assert.equal(rows[1].raw.text, "—");
+  assert.ok(rows.length > 20);
+  const setup = rows.find((row) => row.kind.text === "step" && row.title.text === "Brew day setup");
+  assert.ok(setup);
+  assert.match(setup.text.text, /^Fill the HLT to /);
+  const ph = rows.find((row) => row.kind.text === "observation" && row.title.text === "Mash pH");
+  assert.ok(ph);
+  assert.equal(ph.raw.text, "—");
   for (const row of rows) {
     for (const [column, cell] of Object.entries(row)) {
       assert.ok(cell.text, `${column} must have text`);
     }
   }
+});
+
+test("the checklist level filters the frozen table and names N/A steps", async () => {
+  const app = await booted();
+
+  app.setRoot("batch.checklist_level", "critical");
+  app.compute();
+  const critical = app.reportFormattedTables()["batch.brew_checklist"];
+
+  app.setRoot("batch.checklist_level", "info");
+  app.compute();
+  const info = app.reportFormattedTables()["batch.brew_checklist"];
+
+  app.setRoot("batch.checklist_level", "debug");
+  app.compute();
+  const debug = app.reportFormattedTables()["batch.brew_checklist"];
+
+  assert.ok(critical.length < info.length);
+  assert.ok(debug.length > info.length);
+  assert.ok(critical.every((row) => row.level.text === "critical"));
+  const dryHop = debug.find((row) => row.title.text === "Dry hop");
+  assert.ok(dryHop);
+  assert.match(dryHop.text.text, /^N\/A/);
 });

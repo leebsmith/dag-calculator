@@ -325,10 +325,10 @@ export const steps = [
   {
     id: "brew-day",
     slice: "brew-day",
-    title: "Brew Day Checklist",
-    subtitle: "Choose the steps and notes included in the printed recipe",
+    title: "Brew Checklist",
+    subtitle: "Pre-brew, brew day and post-brew, generated from the solve",
     partial: "./src/partials/step-brew-day.html",
-    fields: [{ collection: "batch.brew_day_steps" }],
+    fields: ["batch.checklist_level", { collection: "batch.brew_checklist" }],
   },
 ];
 

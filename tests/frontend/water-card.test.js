@@ -360,12 +360,10 @@ test("every shipped profile declares a non-empty target set", () => {
   }
 });
 
-test("the brew-day payload carries the derived water instruction", withFreshApp((app) => {
-  app.toggleBrewDayStep("dough-in", true);
-  app.compute();
-
-  const sections = app.brewDayPayload.sections;
-  const mashing = sections.find((s) => s.id === "mashing");
-  const doughIn = mashing.steps.find((row) => row.id === "dough-in");
-  assert.match(doughIn.instructions, /dose the dry grist before underletting/i);
+test("the checklist payload carries the derived water dose", withFreshApp((app) => {
+  const rows = app.brewDayPayload.phases.flatMap((phase) =>
+    phase.sections.flatMap((section) => section.rows)
+  );
+  const doughIn = rows.find((row) => row.step_id === "dough-in");
+  assert.match(doughIn.text, /dose the dry grist before underletting/i);
 }));

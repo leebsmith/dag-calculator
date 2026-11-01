@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:a6929b66480eca6081faad6d6647abb965f06adac4bdf6d99f539fafc5366a5e",
+    "hash": "sha256:fb30c0ce7964f2171c2203d1c5b64136b43efd67b95aba91a303a3343e1f1312",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -478,6 +478,11 @@
           "lager",
           "wild",
           "mixed"
+        ],
+        "checklist_level": [
+          "critical",
+          "info",
+          "debug"
         ],
         "mash_rest": [
           "phytase",
@@ -2348,14 +2353,13 @@
           "time_of_application": {},
           "notes": {}
         },
-        "brew_day_step": {
+        "brew_checklist_step": {
           "step_id": {},
-          "section": {},
-          "name": {},
-          "enabled": {
+          "note": {},
+          "skipped": {
             "type": "boolean"
           },
-          "instructions": {}
+          "skip_reason": {}
         }
       },
       "nodes": {
@@ -5456,9 +5460,14 @@
           "kind": "collection",
           "item_schema": "dry_hop_row"
         },
-        "batch.brew_day_steps": {
+        "batch.brew_checklist": {
           "kind": "collection",
-          "item_schema": "brew_day_step"
+          "item_schema": "brew_checklist_step"
+        },
+        "batch.checklist_level": {
+          "kind": "choice",
+          "taxonomy": "checklist_level",
+          "default": "info"
         },
         "mash.preset_id": {
           "kind": "choice",
@@ -9612,7 +9621,7 @@
         }
       }
     ],
-    "batch.brew_day_steps": [
+    "batch.brew_checklist": [
       {
         "kind": {
           "text": "step",
@@ -9891,5 +9900,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:7a0e112a241480f9226c921d430d6a2c6b9010e91ef5d434f1b7a8d932647431"
+  "content_hash": "sha256:766afa78251e4d13233833ad3ed383d628341852fe6af000fcd735c978731ab6"
 }

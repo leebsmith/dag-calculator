@@ -372,11 +372,6 @@ export const SHARED = [
     reason: "unit toggling is shared between the hop card and the generic card shell",
   },
   {
-    key: "waterInstruction",
-    owners: ["brewDay"],
-    reason: "the brew-day checklist carries the water card's instruction text",
-  },
-  {
     key: "waterTargetOptions",
     owners: ["fieldActions"],
     reason: "the generic card shell renders the water target selector",

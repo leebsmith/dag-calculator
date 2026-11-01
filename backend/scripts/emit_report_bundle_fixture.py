@@ -1535,7 +1535,7 @@ PAYLOAD = FreezePayload(
                 "contact": FormattedValue(text="Terminal gravity"),
             },
         ],
-        "batch.brew_day_steps": [
+        "batch.brew_checklist": [
             {
                 "kind": FormattedValue(text="step"),
                 "phase": FormattedValue(text="Brew day"),

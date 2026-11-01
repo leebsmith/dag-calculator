@@ -87,9 +87,9 @@ These are what make the DAG **explicit**: no edge exists unless declared.
 
 Only roots/choices/collections are mutable; derived values and boundary
 outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
-`batch.brew_day_steps` is an authoring-only collection: it carries the printed
-recipe's selected workflow steps and instruction text, and no derived math
-depends on it.
+`batch.brew_checklist` is an authoring-only collection: it carries the printed
+recipe's checklist rows (step id, note, skip state) and no derived math depends
+on it.
 
 **Ingredient rows are resolved on ingest.** A collection whose item schema
 declares `yield_fraction` or `fermentability_fraction` is passed through

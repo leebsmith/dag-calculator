@@ -3,80 +3,82 @@ import assert from "node:assert/strict";
 
 import { createTestApp, withFreshApp } from "./appHelpers.js";
 
-test("brew day checklist starts with four sections and twelve disabled rows", withFreshApp(async (app) => {
-  assert.equal(app.brewDaySections.length, 4);
-  assert.equal(app.brewDayRows.length, 12);
+function rowsOf(payload) {
+  return payload.phases.flatMap((phase) =>
+    phase.sections.flatMap((section) => section.rows)
+  );
+}
+
+test("brew checklist starts with three phases, fourteen sections and every step", withFreshApp(async (app) => {
+  assert.equal(app.brewDayRows.length, 94);
   assert.deepEqual(
-    app.brewDaySections.map((section) => section.name),
-    ["Preparation", "Mashing & Lautering", "The Boil", "Knockout & Transfer"]
+    app.brewDaySections.map((phase) => phase.name),
+    ["Before brew day", "Brew day", "After brew day", "Observation Log"]
   );
-  assert.equal(app.brewDaySections[0].steps.length, 2);
-  assert.equal(app.brewDaySections[1].steps.length, 4);
-  assert.ok(app.brewDayRows.every((row) => row.enabled === false));
-  assert.ok(app.brewDayRows.every((row) => row.instructions === ""));
+  assert.equal(app.brewDaySections[0].sections.length, 5);
+  assert.equal(app.brewDaySections[1].sections.length, 6);
+  assert.equal(app.brewDaySections[2].sections.length, 3);
+  assert.equal(app.brewDaySections[3].sections.length, 1);
+  assert.ok(app.brewDayRows.every((row) => row.note === ""));
+  assert.ok(app.brewDayRows.every((row) => row.skipped === false));
+  assert.equal(app.brewDayLevel, "info");
 }));
 
-test("toggling a step updates the active count and grouped payload", withFreshApp(async (app) => {
-  app.toggleBrewDayStep("advance-prep", true);
+test("the level changes the rendered rows and the payload", withFreshApp(async (app) => {
+  const infoRows = rowsOf(app.brewDayPayload);
+  assert.ok(infoRows.length > 40);
 
-  assert.equal(app.brewDaySections[0].activeCount, 1);
-  assert.equal(app.brewDaySections[1].activeCount, 0);
-  assert.deepEqual(app.brewDayPayload, {
-    process: "single_batch_batch_sparge",
-    sections: [
-      {
-        id: "preparation",
-        name: "Preparation",
-        steps: [{ id: "advance-prep", name: "Advance Prep", instructions: "" }],
-      },
-    ],
-  });
+  app.setBrewDayLevel("critical");
+  const criticalRows = rowsOf(app.brewDayPayload);
+  assert.equal(app.brewDayLevel, "critical");
+  assert.ok(criticalRows.length > 0);
+  assert.ok(criticalRows.length < infoRows.length);
+  assert.ok(criticalRows.every((row) => row.level === "critical"));
 
-  app.setBrewDayInstruction("advance-prep", "Mill the night before");
-
-  assert.equal(app.brewDayRow("advance-prep").instructions, "Mill the night before");
-  assert.equal(
-    app.brewDayPayload.sections[0].steps[0].instructions,
-    "Mill the night before"
-  );
+  app.setBrewDayLevel("debug");
+  assert.ok(rowsOf(app.brewDayPayload).length >= infoRows.length);
 }));
 
-// The open-section set this case leaves behind is card-local state, which a
-// reset does not clear, so it keeps its own boot.
-test("accordion sections open and close independently", async () => {
+test("notes, skips and skip reasons persist on the row", withFreshApp(async (app) => {
+  app.setBrewDayNote("advance-prep", "Mill the night before");
+  app.setBrewDaySkipped("advance-prep", true);
+  app.setBrewDaySkipReason("advance-prep", "Bought pre-milled");
+
+  assert.equal(app.brewDayRow("advance-prep").note, "Mill the night before");
+  assert.equal(app.brewDayRow("advance-prep").skipped, true);
+  assert.equal(app.brewDayRow("advance-prep").skip_reason, "Bought pre-milled");
+
+  const row = rowsOf(app.brewDayPayload).find((entry) => entry.step_id === "advance-prep");
+  assert.equal(row.note, "Mill the night before");
+  assert.equal(row.skipped, true);
+  assert.equal(row.skip_reason, "Bought pre-milled");
+}));
+
+test("accordion phases open and close independently", async () => {
   const app = createTestApp();
   await app.boot();
-  assert.equal(app.isBrewDaySectionOpen("preparation"), true);
-  assert.equal(app.isBrewDaySectionOpen("mashing"), false);
+  assert.equal(app.isBrewDaySectionOpen("pre"), true);
+  assert.equal(app.isBrewDaySectionOpen("brew"), false);
 
-  app.toggleBrewDaySection("mashing");
-  app.toggleBrewDaySection("preparation");
+  app.toggleBrewDaySection("brew");
+  app.toggleBrewDaySection("pre");
 
-  assert.equal(app.isBrewDaySectionOpen("preparation"), false);
-  assert.equal(app.isBrewDaySectionOpen("mashing"), true);
+  assert.equal(app.isBrewDaySectionOpen("pre"), false);
+  assert.equal(app.isBrewDaySectionOpen("brew"), true);
 });
 
 test("draft and freeze payloads include the checklist rows", withFreshApp(async (app) => {
-  app.toggleBrewDayStep("batch-sparge", true);
-  app.setBrewDayInstruction("batch-sparge", "Sparge slowly");
+  app.setBrewDayNote("batch-sparge", "Sparge slowly");
 
-  const draftRows = app.draftState().collections["batch.brew_day_steps"];
-  assert.equal(draftRows.length, 12);
-  assert.equal(draftRows.find((row) => row.step_id === "batch-sparge").enabled, true);
-  assert.equal(
-    draftRows.find((row) => row.step_id === "batch-sparge").instructions,
-    "Sparge slowly"
-  );
+  const draftRows = app.draftState().collections["batch.brew_checklist"];
+  assert.equal(draftRows.length, 94);
+  assert.equal(draftRows.find((row) => row.step_id === "batch-sparge").note, "Sparge slowly");
 
-  const frozenRows = app.freezePayload().valuation["batch.brew_day_steps"];
-  assert.equal(frozenRows.find((row) => row.step_id === "batch-sparge").enabled, true);
-  assert.equal(
-    frozenRows.find((row) => row.step_id === "batch-sparge").instructions,
-    "Sparge slowly"
-  );
+  const frozenRows = app.freezePayload().valuation["batch.brew_checklist"];
+  assert.equal(frozenRows.find((row) => row.step_id === "batch-sparge").note, "Sparge slowly");
 }));
 
-test("loadState hydrates stored rows and materializes the canonical order", async () => {
+test("loadState migrates the retired brew-day collection", async () => {
   const app = createTestApp();
   await app.boot();
 
@@ -94,17 +96,17 @@ test("loadState hydrates stored rows and materializes the canonical order", asyn
     },
   });
 
-  assert.equal(app.brewDayRows.length, 12);
-  assert.equal(app.brewDayRow("batch-sparge").enabled, true);
-  assert.equal(app.brewDayRow("batch-sparge").instructions, "Sparge slowly");
-  assert.equal(app.brewDayRow("advance-prep").enabled, false);
+  assert.equal(app.brewDayRows.length, 94);
+  assert.equal(app.brewDayRow("batch-sparge").note, "Sparge slowly");
+  assert.equal(app.brewDayRow("advance-prep").note, "");
+  assert.equal(app.draftState().collections["batch.brew_day_steps"], undefined);
 });
 
-test("teardown restores the disabled defaults", withFreshApp(async (app) => {
-  app.toggleBrewDayStep("whirlpool", true);
-  app.setBrewDayInstruction("whirlpool", "Hold the whirlpool rest");
+test("teardown restores the empty defaults", withFreshApp(async (app) => {
+  app.setBrewDayNote("whirlpool", "Hold the whirlpool rest");
+  app.setBrewDaySkipped("whirlpool", true);
   app.teardown();
 
-  assert.ok(app.brewDayRows.every((row) => row.enabled === false));
-  assert.ok(app.brewDayRows.every((row) => row.instructions === ""));
+  assert.ok(app.brewDayRows.every((row) => row.note === ""));
+  assert.ok(app.brewDayRows.every((row) => row.skipped === false));
 }));

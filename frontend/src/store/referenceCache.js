@@ -83,7 +83,7 @@ export function createReferenceCache() {
       "batch.boil_hops": [],
       "batch.whirlpool_hops": [],
       "batch.dry_hops": [],
-      "batch.brew_day_steps": defaultBrewDayRows(),
+      "batch.brew_checklist": defaultBrewDayRows(),
     },
     seeds: { ...BASE_SEEDS },
     libraryIds: new Set(),

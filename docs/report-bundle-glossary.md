@@ -43,12 +43,12 @@ _123 paths_
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
 | `batch.boil_time_min` | Boil time | root | time | min | 0 | — |
-| `batch.brew_day_steps` | Brew day steps | collection | — | — | — | — |
-| `batch.brew_day_steps.enabled` | Include | field | — | — | — | — |
-| `batch.brew_day_steps.instructions` | Instructions | field | — | — | — | — |
-| `batch.brew_day_steps.name` | Name | field | — | — | — | — |
-| `batch.brew_day_steps.section` | Section | field | — | — | — | — |
-| `batch.brew_day_steps.step_id` | Step | field | — | — | — | — |
+| `batch.brew_checklist` | Brew checklist | collection | — | — | — | — |
+| `batch.brew_checklist.note` | Note | field | — | — | — | — |
+| `batch.brew_checklist.skip_reason` | Skip reason | field | — | — | — | — |
+| `batch.brew_checklist.skipped` | Skipped | field | — | — | — | — |
+| `batch.brew_checklist.step_id` | Step | field | — | — | — | — |
+| `batch.checklist_level` | Checklist level | choice | — | — | — | critical, info, debug |
 | `batch.conversion_efficiency` | Conversion efficiency | root | percentage | pct (%) | 1 | — |
 | `batch.delta_v_evap` | Boil-off | derived | volume | L | 1 | — |
 | `batch.dry_hops` | Dry hops | collection | — | — | — | — |

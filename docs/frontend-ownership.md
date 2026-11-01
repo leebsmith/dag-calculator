@@ -3,11 +3,11 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **660** (443 enumerable, 217 hidden)
+- Declared members: **663** (445 enumerable, 218 hidden)
 - Installers: **20**
 - Card partials: **17**
-- Installers reading another installer's key: **16 of 20**
-- Cross-owner keys declared in `SHARED`: **47**
+- Installers reading another installer's key: **15 of 20**
+- Cross-owner keys declared in `SHARED`: **46**
 
 ## Installers
 
@@ -29,7 +29,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 22 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
-| `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 11 | 1 | 1 |
+| `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 14 | 1 | 0 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 56 | 2 | 13 |
 | `water` | `frontend/src/adapters/cards/water.js` | 29 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |
@@ -72,7 +72,8 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `boilIbu` | `styleTargets` | public | 0 |
 | `boilIbuDisplay` | `styleTargets` | hidden | 1 |
 | `boilIbuField` | `hop` | hidden | 1 |
-| `brewDayInstruction` | `brewDay` | public | 1 |
+| `brewDayLevel` | `brewDay` | hidden | 1 |
+| `brewDayLevels` | `brewDay` | public | 1 |
 | `brewDayOpenSections` | `brewDay` | public | 0 |
 | `brewDayPayload` | `brewDay` | hidden | 0 |
 | `brewDayRow` | `brewDay` | public | 0 |
@@ -453,7 +454,10 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `selectedYeast` | `yeast` | hidden | 1 |
 | `selectedYeastId` | `yeast` | public | 1 |
 | `selectedYeastTemp` | `yeast` | hidden | 1 |
-| `setBrewDayInstruction` | `brewDay` | public | 1 |
+| `setBrewDayLevel` | `brewDay` | public | 1 |
+| `setBrewDayNote` | `brewDay` | public | 1 |
+| `setBrewDaySkipReason` | `brewDay` | public | 1 |
+| `setBrewDaySkipped` | `brewDay` | public | 1 |
 | `setColorField` | `draftEditor` | public | 2 |
 | `setDryHopDraftContactHours` | `dryHops` | public | 1 |
 | `setDryHopDraftContactUntil` | `dryHops` | public | 1 |
@@ -555,7 +559,6 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `telemetryLine` | `water` | public | 1 |
 | `temperatureUnit` | `mash` | hidden | 2 |
 | `toggleBrewDaySection` | `brewDay` | public | 1 |
-| `toggleBrewDayStep` | `brewDay` | public | 1 |
 | `toggleDerateHelp` | `yeast` | public | 1 |
 | `toggleDryHopCategory` | `dryHops` | public | 1 |
 | `toggleDryHopFamily` | `dryHops` | public | 0 |
@@ -626,7 +629,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `visibleYeasts` | `yeast` | hidden | 1 |
 | `waterDetails` | `water` | public | 1 |
 | `waterDetailsOpen` | `water` | public | 1 |
-| `waterInstruction` | `water` | public | 1 |
+| `waterInstruction` | `water` | public | 0 |
 | `waterPlan` | `water` | public | 1 |
 | `waterPrescription` | `water` | public | 1 |
 | `waterSummary` | `water` | public | 1 |
@@ -747,6 +750,5 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleTargetInfo` | `styleNavigator` | `styleTargets` | the style target card mirrors the navigator's target readout |
 | `syncScalePreviewState` | `lateAdditions` | `styleTargets` | the style card drives the late-addition scale preview; Phase 3 extracts it |
 | `toggleFieldUnit` | `unitActions` | `fieldActions` | unit toggling is shared between the hop card and the generic card shell |
-| `waterInstruction` | `water` | `brewDay` | the brew-day checklist carries the water card's instruction text |
 | `waterTargetOptions` | `water` | `fieldActions` | the generic card shell renders the water target selector |
 | `waterTargetSelection` | `water` | `fieldActions` | the generic card shell renders the water target selector |

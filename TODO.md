@@ -20,16 +20,11 @@ unchanged: it grades the realized value against the absolute envelope.
 
 ## Before 1st printed recipe
 
-* Staged notes (the brew-day checklist):
-  * Day before
-  * Day of
-  * Before underletting
-  * Before topping up
-  * Before sparging
-  * Before boiling
-  * Before whirlpooling
-  * Before knockout
-  * Before sealing the fermenter
+* Brew checklist (the staged-notes replacement) — Phase 1 shipped: the
+  generated pre/brew/post checklist with three levels and a printed blank
+  appendix. Next is the brew session (logging, live/deferred observations,
+  variance) and then measurement promotion. See `plans/brew-checklist.md`,
+  `plans/brew-session.md` and `plans/brew-measurement-promotion.md`.
 
 ## Later
 

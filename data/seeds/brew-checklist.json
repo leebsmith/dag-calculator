@@ -1,0 +1,1009 @@
+{
+  "process": "single_batch_batch_sparge",
+  "default_level": "info",
+  "levels": [
+    {
+      "id": "critical",
+      "name": "Critical path",
+      "rank": 0
+    },
+    {
+      "id": "info",
+      "name": "Standard",
+      "rank": 1
+    },
+    {
+      "id": "debug",
+      "name": "Diagnostic",
+      "rank": 2
+    }
+  ],
+  "phases": [
+    {
+      "id": "pre",
+      "name": "Before brew day"
+    },
+    {
+      "id": "brew",
+      "name": "Brew day"
+    },
+    {
+      "id": "post",
+      "name": "After brew day"
+    }
+  ],
+  "sections": [
+    {
+      "id": "safety",
+      "name": "Safety & site",
+      "phase": "pre"
+    },
+    {
+      "id": "plan",
+      "name": "Plan",
+      "phase": "pre"
+    },
+    {
+      "id": "procure",
+      "name": "Procure & prep",
+      "phase": "pre"
+    },
+    {
+      "id": "equipment",
+      "name": "Equipment",
+      "phase": "pre"
+    },
+    {
+      "id": "preflight",
+      "name": "Preflight",
+      "phase": "pre"
+    },
+    {
+      "id": "setup",
+      "name": "Setup",
+      "phase": "brew"
+    },
+    {
+      "id": "mash",
+      "name": "Mash",
+      "phase": "brew"
+    },
+    {
+      "id": "lauter",
+      "name": "Lauter",
+      "phase": "brew"
+    },
+    {
+      "id": "boil",
+      "name": "Boil",
+      "phase": "brew"
+    },
+    {
+      "id": "knockout",
+      "name": "Knockout & transfer",
+      "phase": "brew"
+    },
+    {
+      "id": "closeout",
+      "name": "Close-out",
+      "phase": "brew"
+    },
+    {
+      "id": "fermentation",
+      "name": "Fermentation",
+      "phase": "post"
+    },
+    {
+      "id": "packaging",
+      "name": "Packaging",
+      "phase": "post"
+    },
+    {
+      "id": "review",
+      "name": "Review",
+      "phase": "post"
+    }
+  ],
+  "steps": [
+    {
+      "id": "pre-safety-hot",
+      "section": "safety",
+      "level": "critical",
+      "kind": "action",
+      "safety": true,
+      "title": "Hot liquor is safe",
+      "text": "Clamp every hose, use gloves and eye protection, and keep children and pets clear.",
+      "done_when": "Hazards controlled before the HLT is heated."
+    },
+    {
+      "id": "pre-safety-chem",
+      "section": "safety",
+      "level": "critical",
+      "kind": "action",
+      "safety": true,
+      "title": "Acid and alkali handling",
+      "text": "Wear PPE; add acid to water, never water to acid; label every container.",
+      "done_when": "Spill kit and water within reach."
+    },
+    {
+      "id": "pre-safety-co2",
+      "section": "safety",
+      "level": "critical",
+      "kind": "action",
+      "safety": true,
+      "title": "Fermentation CO2 is vented",
+      "text": "Ventilate the fermentation space, fit a blowoff, and never seal a fermenter without an airlock.",
+      "done_when": "The blowoff path is open before the fermenter is sealed."
+    },
+    {
+      "id": "pre-safety-electrical",
+      "section": "safety",
+      "level": "info",
+      "kind": "action",
+      "safety": true,
+      "title": "Electrical and gas",
+      "text": "Use a GFCI, keep leads off the wet floor, and check gas hoses and connections.",
+      "done_when": "No lead or gas hazard remains."
+    },
+    {
+      "id": "pre-safety-glass",
+      "section": "safety",
+      "level": "info",
+      "kind": "action",
+      "safety": true,
+      "title": "Glass and carboy handling",
+      "text": "Inspect glass for cracks and plan the carry before lifting.",
+      "done_when": "A safe carry plan is in place."
+    },
+    {
+      "id": "pre-recipe",
+      "section": "plan",
+      "level": "critical",
+      "kind": "auto",
+      "title": "Recipe solves",
+      "text": "Targets: {{batch.target_abv}} ABV, {{batch.target_ibu}} IBU, {{batch.target_srm}} SRM, {{batch.v_ferm}}.",
+      "done_when": "No blocking finding stands."
+    },
+    {
+      "id": "pre-equipment",
+      "section": "plan",
+      "level": "critical",
+      "kind": "auto",
+      "title": "Equipment matches the rig",
+      "text": "HLT {{equipment.max_hlt_volume_l}}, tun {{equipment.max_mash_tun_volume_l}}, kettle {{equipment.max_kettle_volume_l}}; coil floor {{equipment.hlt_coil_floor_l}}.",
+      "done_when": "Capacities, losses and coil floor are confirmed."
+    },
+    {
+      "id": "pre-volume",
+      "section": "plan",
+      "level": "info",
+      "kind": "check",
+      "title": "Batch volume confirmed",
+      "text": "Fermenter volume {{batch.v_ferm}}.",
+      "done_when": "The volume matches the vessel."
+    },
+    {
+      "id": "pre-binding",
+      "section": "plan",
+      "level": "info",
+      "kind": "check",
+      "title": "Capacity headroom",
+      "text": "Binding limit: {{solver.batch.binding_constraint}}; max feasible ABV {{solver.batch.max_feasible_abv}}.",
+      "done_when": "Headroom is acceptable."
+    },
+    {
+      "id": "pre-water-target",
+      "section": "plan",
+      "level": "info",
+      "kind": "check",
+      "condition": "has_water_target",
+      "title": "Water plan",
+      "text": "Target profile {{water.target_profile_id}}; distribution {{water.salt_distribution}}; acid {{water.acid_medium}}.",
+      "done_when": "Source, targets and treatment forms are confirmed."
+    },
+    {
+      "id": "pre-yeast",
+      "section": "plan",
+      "level": "info",
+      "kind": "check",
+      "condition": "has_yeast",
+      "title": "Yeast plan",
+      "text": "{{batch.yeast.name}}; attenuation cap {{batch.yeast_cap}}; range {{batch.yeast.temp_low_c}} to {{batch.yeast.temp_high_c}}.",
+      "done_when": "Strain, cap and temperature range are confirmed."
+    },
+    {
+      "id": "pre-hops",
+      "section": "plan",
+      "level": "info",
+      "kind": "check",
+      "title": "Hop plan",
+      "text": "Boil {{batch.boil_target_ibu}} IBU; whirlpool {{batch.whirlpool_target_ibu}} IBU; dry hops by schedule.",
+      "done_when": "Shares, forms and masses are confirmed."
+    },
+    {
+      "id": "pre-mash",
+      "section": "plan",
+      "level": "info",
+      "kind": "check",
+      "title": "Mash plan",
+      "text": "Dough-in {{mash.dough_in_target_temp_c}}; strike {{mash.strike_water_temp_c}}; sparge {{batch.sparge_water_temp_c}}; total {{mash.total_time_min}}.",
+      "done_when": "Rests, temperatures and total time are confirmed."
+    },
+    {
+      "id": "pre-level",
+      "section": "plan",
+      "level": "info",
+      "kind": "action",
+      "title": "Checklist level chosen",
+      "text": "Selected level: {{batch.checklist_level}}.",
+      "done_when": "The plan is printed at the selected level."
+    },
+    {
+      "id": "pre-diagnostic",
+      "section": "plan",
+      "level": "debug",
+      "kind": "note",
+      "title": "Diagnostic record",
+      "text": "Record every expected intermediate, assumption, tolerance and model caveat.",
+      "done_when": "The diagnostic checklist is printed."
+    },
+    {
+      "id": "advance-prep",
+      "section": "procure",
+      "level": "critical",
+      "kind": "action",
+      "title": "Ingredients present and weighed",
+      "text": "Grist, hops, yeast, salts, acid, sugar and SMB are present and weighed.",
+      "done_when": "Every ingredient is accounted for."
+    },
+    {
+      "id": "pre-yeast-viability",
+      "section": "procure",
+      "level": "critical",
+      "kind": "check",
+      "title": "Yeast viable and sufficient",
+      "text": "Starter or rehydration plan is ready.",
+      "done_when": "Pitchable yeast is ready."
+    },
+    {
+      "id": "pre-mill",
+      "section": "procure",
+      "level": "info",
+      "kind": "action",
+      "title": "Mill the grain",
+      "text": "Crush to the intended gap; husks intact, no flour.",
+      "done_when": "The crush is even."
+    },
+    {
+      "id": "pre-salts",
+      "section": "procure",
+      "level": "info",
+      "kind": "action",
+      "title": "Weigh the salts",
+      "text": "Mash and sparge salts/acid weighed separately and labelled.",
+      "done_when": "Both doses are bagged and labelled."
+    },
+    {
+      "id": "pre-hop-charges",
+      "section": "procure",
+      "level": "info",
+      "kind": "action",
+      "title": "Weigh the hops",
+      "text": "Boil, whirlpool and dry-hop charges labelled with time and variety.",
+      "done_when": "Every charge is bagged and labelled."
+    },
+    {
+      "id": "pre-sugar",
+      "section": "procure",
+      "level": "info",
+      "kind": "action",
+      "condition": "has_late_sugar",
+      "title": "Weigh the late sugar",
+      "text": "Late sugar weighed and bagged.",
+      "done_when": "The sugar is ready for knockout."
+    },
+    {
+      "id": "pre-water-prep",
+      "section": "procure",
+      "level": "info",
+      "kind": "action",
+      "title": "Prepare the water",
+      "text": "Filter or RO as required; SMB or campden ready.",
+      "done_when": "The liquor is ready to fill."
+    },
+    {
+      "id": "pre-lots",
+      "section": "procure",
+      "level": "debug",
+      "kind": "note",
+      "title": "Record the lots",
+      "text": "Malt lot/moisture, hop lot/alpha, yeast lot and water report date.",
+      "done_when": "The lot record is complete."
+    },
+    {
+      "id": "pre-sanitize",
+      "section": "equipment",
+      "level": "critical",
+      "kind": "action",
+      "title": "Clean and sanitise cold side",
+      "text": "Fermenter, chiller, hoses, valves and airlock.",
+      "done_when": "Cold-side equipment is sanitised."
+    },
+    {
+      "id": "pre-verify-volumes",
+      "section": "equipment",
+      "level": "critical",
+      "kind": "check",
+      "title": "Verify the vessels",
+      "text": "Confirm HLT, tun and kettle volumes and dead spaces.",
+      "done_when": "The rig matches the equipment profile."
+    },
+    {
+      "id": "pre-calibrate",
+      "section": "equipment",
+      "level": "info",
+      "kind": "action",
+      "title": "Calibrate instruments",
+      "text": "Calibrate the thermometer and pH meter.",
+      "done_when": "Both instruments read true."
+    },
+    {
+      "id": "pre-heat-check",
+      "section": "equipment",
+      "level": "info",
+      "kind": "check",
+      "title": "Check heat and plumbing",
+      "text": "Heat source, pump, hoses, clamps and gas.",
+      "done_when": "The rig is ready to heat."
+    },
+    {
+      "id": "pre-measure-losses",
+      "section": "equipment",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Measure the losses",
+      "text": "Measure actual dead space and transfer losses.",
+      "done_when": "The losses are recorded for the next brew."
+    },
+    {
+      "id": "preflight-capacity",
+      "section": "preflight",
+      "level": "critical",
+      "kind": "auto",
+      "title": "Vessels fit the batch",
+      "text": "HLT fill {{batch.hlt_starting_volume_l}}; pre-boil {{solver.batch.v_pre_boil}}; mash {{mash.mash_phase_volume_l}}.",
+      "done_when": "HLT within capacity and above coil floor; kettle and tun fit."
+    },
+    {
+      "id": "preflight-solve",
+      "section": "preflight",
+      "level": "critical",
+      "kind": "auto",
+      "title": "All boundaries solve",
+      "text": "Batch, water and hop boundaries complete.",
+      "done_when": "No boundary error or blocking finding."
+    },
+    {
+      "id": "preflight-thickness",
+      "section": "preflight",
+      "level": "info",
+      "kind": "auto",
+      "title": "Mash thickness",
+      "text": "{{solver.batch.mash_thickness_l_per_kg}} within the rig floor and process ceiling.",
+      "done_when": "The thickness is feasible."
+    },
+    {
+      "id": "preflight-water",
+      "section": "preflight",
+      "level": "info",
+      "kind": "auto",
+      "title": "Water targets",
+      "text": "Calcium floor {{water.calcium_floor_ppm}}; target pH {{water.target_mash_ph}}.",
+      "done_when": "The targets are reachable."
+    },
+    {
+      "id": "preflight-doses",
+      "section": "preflight",
+      "level": "info",
+      "kind": "check",
+      "title": "Doses present",
+      "text": "Hop masses and water doses are present.",
+      "done_when": "Every dose has a number."
+    },
+    {
+      "id": "preflight-expected",
+      "section": "preflight",
+      "level": "debug",
+      "kind": "note",
+      "title": "Expected stage values",
+      "text": "Use the diagnostic appendix for the expected volumes, gravities and temperatures.",
+      "done_when": "The expected values are recorded."
+    },
+    {
+      "id": "brew-day-setup",
+      "section": "setup",
+      "level": "critical",
+      "kind": "action",
+      "provider": "waterSetup",
+      "title": "Brew day setup",
+      "text": "Fill the HLT to {{batch.hlt_starting_volume_l}}; add SMB; heat to strike.",
+      "done_when": "The HLT is at strike temperature."
+    },
+    {
+      "id": "brew-sparge-heat",
+      "section": "setup",
+      "level": "info",
+      "kind": "action",
+      "title": "Heat the sparge liquor",
+      "text": "Heat the HLT to {{batch.sparge_water_temp_c}}. This is a target; heating is not modelled.",
+      "done_when": "The HLT is at the sparge target."
+    },
+    {
+      "id": "brew-sanitize",
+      "section": "setup",
+      "level": "info",
+      "kind": "action",
+      "title": "Re-sanitise the chiller",
+      "text": "If the chiller has been sitting, sanitise it again.",
+      "done_when": "The chiller and line are sanitised."
+    },
+    {
+      "id": "brew-record-hlt",
+      "section": "setup",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Record HLT actuals",
+      "text": "Record the actual HLT volume and temperature.",
+      "done_when": "The actuals are recorded."
+    },
+    {
+      "id": "dough-in",
+      "section": "mash",
+      "level": "critical",
+      "kind": "action",
+      "provider": "waterDoughIn",
+      "title": "Dough-in / underlet",
+      "text": "Dose the dry grist, then underlet {{solver.batch.cascade.v_strike}}.",
+      "done_when": "No dough balls; mash at {{mash.dough_in_target_temp_c}}.",
+      "observations": [
+        "mash.dough_in_temp"
+      ]
+    },
+    {
+      "id": "mash-temp",
+      "section": "mash",
+      "level": "info",
+      "kind": "check",
+      "title": "Dough-in temperature",
+      "text": "Mash at {{mash.dough_in_target_temp_c}}.",
+      "done_when": "The mash is within 1 C of the target.",
+      "observations": [
+        "mash.dough_in_temp"
+      ]
+    },
+    {
+      "id": "mash-ph",
+      "section": "mash",
+      "level": "critical",
+      "kind": "check",
+      "title": "Mash pH",
+      "text": "Target {{water.target_mash_ph}}; band 5.2 to 5.6 at 20 C.",
+      "done_when": "The mash pH is in band.",
+      "observations": [
+        "mash.ph"
+      ]
+    },
+    {
+      "id": "mash-rests",
+      "section": "mash",
+      "level": "info",
+      "kind": "action",
+      "condition": "has_rests",
+      "provider": "mashSchedule",
+      "title": "Hold the rests",
+      "text": "Hold each enabled rest at its temperature and duration.",
+      "done_when": "Every enabled rest is complete."
+    },
+    {
+      "id": "mash-ramp",
+      "section": "mash",
+      "level": "info",
+      "kind": "check",
+      "condition": "has_rests",
+      "title": "Ramp the mash",
+      "text": "Ramp at {{equipment.mash_heating_rate_c_per_min}}; total ramp {{mash.ramp_time_min}}.",
+      "done_when": "The ramp reaches each rest temperature."
+    },
+    {
+      "id": "mash-out",
+      "section": "mash",
+      "level": "info",
+      "kind": "action",
+      "condition": "has_mash_out",
+      "title": "Mash-out",
+      "text": "Heat to 75.5 to 76.7 C for 10 min.",
+      "done_when": "The mash-out is complete."
+    },
+    {
+      "id": "mash-vorlauf",
+      "section": "mash",
+      "level": "info",
+      "kind": "action",
+      "title": "Vorlauf",
+      "text": "Recirculate until the runoff runs clear.",
+      "done_when": "The runoff is clear."
+    },
+    {
+      "id": "mash-conversion",
+      "section": "mash",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Conversion check",
+      "text": "Iodine test negative or refractometer stable.",
+      "done_when": "Conversion is complete."
+    },
+    {
+      "id": "mash-record",
+      "section": "mash",
+      "level": "debug",
+      "kind": "note",
+      "title": "Record the mash",
+      "text": "Record the actual rest temperatures and times.",
+      "done_when": "The mash record is complete."
+    },
+    {
+      "id": "first-runnings",
+      "section": "lauter",
+      "level": "critical",
+      "kind": "action",
+      "title": "First runnings",
+      "text": "Drain the first runnings; expect {{solver.batch.cascade.v_run1}}.",
+      "done_when": "The first runnings are drained and measured.",
+      "observations": [
+        "first_runnings.volume"
+      ]
+    },
+    {
+      "id": "lauter-topup",
+      "section": "lauter",
+      "level": "critical",
+      "kind": "action",
+      "title": "Top up the HLT",
+      "text": "Top up the HLT to {{solver.batch.hlt.v_hlt_target}}; heat to {{batch.sparge_water_temp_c}}.",
+      "done_when": "The HLT holds the target volume."
+    },
+    {
+      "id": "lauter-dose",
+      "section": "lauter",
+      "level": "critical",
+      "kind": "action",
+      "provider": "waterSparge",
+      "title": "Dose the HLT",
+      "text": "Add the sparge salts and acid to the HLT.",
+      "done_when": "The HLT dose is dissolved."
+    },
+    {
+      "id": "batch-sparge",
+      "section": "lauter",
+      "level": "critical",
+      "kind": "action",
+      "title": "Batch sparge",
+      "text": "Add {{solver.batch.cascade.v_sparge}}; stir; rest; drain the second runnings.",
+      "done_when": "The second runnings are drained."
+    },
+    {
+      "id": "pre-boil",
+      "section": "lauter",
+      "level": "critical",
+      "kind": "check",
+      "title": "Pre-boil",
+      "text": "Expect {{solver.batch.v_pre_boil}} at {{solver.batch.cascade.sg_pre_boil}}.",
+      "done_when": "Pre-boil volume and gravity are measured.",
+      "observations": [
+        "pre_boil.volume",
+        "pre_boil.sg"
+      ]
+    },
+    {
+      "id": "lauter-compare",
+      "section": "lauter",
+      "level": "info",
+      "kind": "check",
+      "title": "Compare the runnings",
+      "text": "Compare first and second runnings against the plan.",
+      "done_when": "The runnings match the expected volumes and gravities."
+    },
+    {
+      "id": "lauter-leave",
+      "section": "lauter",
+      "level": "info",
+      "kind": "action",
+      "title": "Leave the losses",
+      "text": "Leave the tun dead space and transfer loss behind.",
+      "done_when": "The losses are left by design."
+    },
+    {
+      "id": "lauter-record",
+      "section": "lauter",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Record the lauter",
+      "text": "Record the runnings gravity, extract and lauter efficiency.",
+      "done_when": "The lauter record is complete."
+    },
+    {
+      "id": "active-boil",
+      "section": "boil",
+      "level": "critical",
+      "kind": "action",
+      "title": "Start the boil",
+      "text": "Rolling boil for {{batch.boil_time_min}}; expect {{batch.delta_v_evap}} boil-off.",
+      "done_when": "A rolling boil is reached and the timer is started."
+    },
+    {
+      "id": "boil-hops",
+      "section": "boil",
+      "level": "critical",
+      "kind": "action",
+      "condition": "has_boil_hops",
+      "provider": "boilHops",
+      "title": "Add the boil hops",
+      "text": "Add each boil charge at its scheduled time.",
+      "done_when": "Every boil charge is added."
+    },
+    {
+      "id": "boil-sugar",
+      "section": "boil",
+      "level": "critical",
+      "kind": "action",
+      "condition": "has_late_sugar",
+      "title": "Add the late sugar",
+      "text": "Add the late sugar at knockout.",
+      "done_when": "The sugar is dissolved."
+    },
+    {
+      "id": "flameout",
+      "section": "boil",
+      "level": "critical",
+      "kind": "check",
+      "title": "Flameout",
+      "text": "Post-boil {{solver.batch.cascade.v_post_boil}} at {{solver.batch.sg_post_boil}}.",
+      "done_when": "Post-boil volume and gravity are measured.",
+      "observations": [
+        "post_boil.volume",
+        "post_boil.sg"
+      ]
+    },
+    {
+      "id": "boil-monitor",
+      "section": "boil",
+      "level": "info",
+      "kind": "check",
+      "title": "Monitor the boil-off",
+      "text": "Compare the boil-off with {{batch.boil_off_rate_l_per_hr}}.",
+      "done_when": "The boil-off is on plan."
+    },
+    {
+      "id": "boil-whirlpool",
+      "section": "boil",
+      "level": "info",
+      "kind": "action",
+      "title": "Form the trub cone",
+      "text": "Whirlpool before transfer.",
+      "done_when": "A trub cone has formed."
+    },
+    {
+      "id": "boil-record",
+      "section": "boil",
+      "level": "debug",
+      "kind": "note",
+      "title": "Record the boil",
+      "text": "Record the hop lot alphas and actual addition times.",
+      "done_when": "The boil record is complete."
+    },
+    {
+      "id": "whirlpool",
+      "section": "knockout",
+      "level": "critical",
+      "kind": "action",
+      "condition": "has_whirlpool_hops",
+      "provider": "whirlpoolHops",
+      "title": "Whirlpool",
+      "text": "Add the whirlpool charges and rest to knockout.",
+      "done_when": "Every whirlpool charge is added and the rest is complete."
+    },
+    {
+      "id": "chilling",
+      "section": "knockout",
+      "level": "critical",
+      "kind": "action",
+      "title": "Chill",
+      "text": "Chill to the pitch temperature.",
+      "done_when": "The wort is at pitch temperature."
+    },
+    {
+      "id": "fermenter-transfer",
+      "section": "knockout",
+      "level": "critical",
+      "kind": "action",
+      "title": "Transfer to the fermenter",
+      "text": "Leave the trub and kettle dead space; package {{batch.v_ferm}}.",
+      "done_when": "The wort is in the fermenter."
+    },
+    {
+      "id": "knockout-aerate",
+      "section": "knockout",
+      "level": "info",
+      "kind": "action",
+      "title": "Aerate",
+      "text": "Aerate or oxygenate the wort.",
+      "done_when": "The wort is aerated."
+    },
+    {
+      "id": "knockout-pitch",
+      "section": "knockout",
+      "level": "critical",
+      "kind": "action",
+      "condition": "has_yeast",
+      "title": "Pitch the yeast",
+      "text": "Pitch {{batch.yeast.name}} at the target temperature.",
+      "done_when": "The yeast is pitched."
+    },
+    {
+      "id": "knockout-seal",
+      "section": "knockout",
+      "level": "critical",
+      "kind": "action",
+      "title": "Seal and label",
+      "text": "Fit the airlock or blowoff, seal the fermenter and label the batch.",
+      "done_when": "The fermenter is sealed and labelled."
+    },
+    {
+      "id": "knockout-og",
+      "section": "knockout",
+      "level": "info",
+      "kind": "measure",
+      "title": "Measure the OG",
+      "text": "Expected {{solver.batch.sg_post_boil}}; volume {{batch.v_ferm}}.",
+      "done_when": "OG and volume are recorded.",
+      "observations": [
+        "post_boil.sg"
+      ]
+    },
+    {
+      "id": "knockout-losses",
+      "section": "knockout",
+      "level": "info",
+      "kind": "note",
+      "title": "Record the transfer losses",
+      "text": "Record kettle dead space, transfer and trub.",
+      "done_when": "The losses are recorded."
+    },
+    {
+      "id": "knockout-record",
+      "section": "knockout",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Record knockout",
+      "text": "Record the cooling curve, chill time and pitch temperature.",
+      "done_when": "The knockout record is complete."
+    },
+    {
+      "id": "close-clean",
+      "section": "closeout",
+      "level": "info",
+      "kind": "action",
+      "title": "Clean the hot side",
+      "text": "Clean the kettle, tun, HLT, hoses and chiller.",
+      "done_when": "The hot side is clean."
+    },
+    {
+      "id": "close-store",
+      "section": "closeout",
+      "level": "info",
+      "kind": "action",
+      "title": "Store the gear",
+      "text": "Dispose of the spent grain and hops; clean and dry the site.",
+      "done_when": "The gear is stored."
+    },
+    {
+      "id": "close-record",
+      "section": "closeout",
+      "level": "info",
+      "kind": "note",
+      "title": "Record the day",
+      "text": "Record the actuals and deviations.",
+      "done_when": "The brew-day record is complete."
+    },
+    {
+      "id": "close-update",
+      "section": "closeout",
+      "level": "debug",
+      "kind": "note",
+      "title": "Update the rig",
+      "text": "Record losses and efficiency for the next brew.",
+      "done_when": "The rig record is updated."
+    },
+    {
+      "id": "ferment-start",
+      "section": "fermentation",
+      "level": "critical",
+      "kind": "check",
+      "title": "Fermentation started",
+      "text": "Check for krausen or gravity movement within 24 to 48 hours.",
+      "done_when": "Fermentation has started."
+    },
+    {
+      "id": "ferment-temp",
+      "section": "fermentation",
+      "level": "critical",
+      "kind": "check",
+      "condition": "has_yeast",
+      "title": "Hold the temperature",
+      "text": "Hold within {{batch.yeast.temp_low_c}} to {{batch.yeast.temp_high_c}}.",
+      "done_when": "The fermenter is in range."
+    },
+    {
+      "id": "ferment-monitor",
+      "section": "fermentation",
+      "level": "info",
+      "kind": "measure",
+      "title": "Monitor fermentation",
+      "text": "Track gravity and krausen through fermentation.",
+      "done_when": "The fermentation is progressing."
+    },
+    {
+      "id": "ferment-diacetyl",
+      "section": "fermentation",
+      "level": "info",
+      "kind": "action",
+      "condition": "is_lager_or_mixed",
+      "title": "Diacetyl rest",
+      "text": "Run a diacetyl rest if the strain or style needs it.",
+      "done_when": "The rest is complete."
+    },
+    {
+      "id": "dry-hop",
+      "section": "fermentation",
+      "level": "info",
+      "kind": "action",
+      "condition": "has_dry_hops",
+      "provider": "dryHopSchedule",
+      "title": "Dry hop",
+      "text": "Add at the recorded event and remove at the recorded endpoint.",
+      "done_when": "The dry hop is complete."
+    },
+    {
+      "id": "cold-crash",
+      "section": "fermentation",
+      "level": "info",
+      "kind": "action",
+      "title": "Cold crash",
+      "text": "Cold crash without suck-back.",
+      "done_when": "The beer is cold and clear."
+    },
+    {
+      "id": "ferment-fg",
+      "section": "fermentation",
+      "level": "critical",
+      "kind": "check",
+      "title": "FG stable",
+      "text": "Expect {{batch.realized_fg}}; stable over 2 to 3 days.",
+      "done_when": "FG is stable.",
+      "observations": [
+        "ferment.gravity"
+      ]
+    },
+    {
+      "id": "ferment-record",
+      "section": "fermentation",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Record fermentation",
+      "text": "Record the gravity and temperature log.",
+      "done_when": "The fermentation record is complete."
+    },
+    {
+      "id": "package-sanitize",
+      "section": "packaging",
+      "level": "critical",
+      "kind": "action",
+      "title": "Sanitise packaging",
+      "text": "Sanitise the packaging equipment.",
+      "done_when": "The packaging equipment is sanitised."
+    },
+    {
+      "id": "package-transfer",
+      "section": "packaging",
+      "level": "critical",
+      "kind": "action",
+      "title": "Transfer the beer",
+      "text": "Transfer off the yeast and trub.",
+      "done_when": "The beer is off the yeast."
+    },
+    {
+      "id": "package-carbonate",
+      "section": "packaging",
+      "level": "info",
+      "kind": "action",
+      "title": "Carbonate",
+      "text": "Prime or force carbonate to your target. Carbonation is not modelled.",
+      "done_when": "The carbonation target is set."
+    },
+    {
+      "id": "package-oxygen",
+      "section": "packaging",
+      "level": "critical",
+      "kind": "action",
+      "title": "Minimise oxygen",
+      "text": "Use a closed transfer where possible.",
+      "done_when": "Oxygen pickup is minimised."
+    },
+    {
+      "id": "package-seal",
+      "section": "packaging",
+      "level": "critical",
+      "kind": "action",
+      "title": "Seal and label",
+      "text": "Seal and label the package.",
+      "done_when": "The package is sealed and labelled."
+    },
+    {
+      "id": "package-condition",
+      "section": "packaging",
+      "level": "info",
+      "kind": "action",
+      "title": "Condition",
+      "text": "Condition at the intended time and temperature.",
+      "done_when": "Conditioning is complete."
+    },
+    {
+      "id": "package-record",
+      "section": "packaging",
+      "level": "debug",
+      "kind": "measure",
+      "title": "Record packaging",
+      "text": "Record yield, FG, ABV and carbonation.",
+      "done_when": "The packaging record is complete.",
+      "observations": [
+        "package.volume"
+      ]
+    },
+    {
+      "id": "review-taste",
+      "section": "review",
+      "level": "info",
+      "kind": "note",
+      "title": "Taste",
+      "text": "Taste and record sensory notes.",
+      "done_when": "The tasting notes are recorded."
+    },
+    {
+      "id": "review-variance",
+      "section": "review",
+      "level": "info",
+      "kind": "note",
+      "title": "Compare with the plan",
+      "text": "Compare actual efficiency and attenuation with the prediction.",
+      "done_when": "The variance is recorded."
+    },
+    {
+      "id": "review-clean",
+      "section": "review",
+      "level": "info",
+      "kind": "action",
+      "title": "Clean and store",
+      "text": "Clean and store the equipment.",
+      "done_when": "The equipment is stored."
+    },
+    {
+      "id": "review-update",
+      "section": "review",
+      "level": "debug",
+      "kind": "note",
+      "title": "Update the recipe",
+      "text": "Record what to change next time.",
+      "done_when": "The next-brew note is recorded."
+    }
+  ]
+}

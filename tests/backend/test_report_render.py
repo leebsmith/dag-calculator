@@ -148,7 +148,7 @@ def test_the_checklist_section_renders(render_once) -> None:
 
 def test_the_checklist_section_hides_without_rows() -> None:
     data = bundle_dict()
-    del data["formatted_tables"]["batch.brew_day_steps"]
+    del data["formatted_tables"]["batch.brew_checklist"]
 
     with pytest.raises(ReportSpecError, match="nothing to report"):
         render(seal_bundle(data), parse_spec(sections="checklist"))
