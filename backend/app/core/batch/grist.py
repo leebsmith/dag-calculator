@@ -39,6 +39,39 @@ def grist_mass_bracket(
     return a, b
 
 
+def strike_ceiling_mass(
+    *,
+    v_pre_boil: float,
+    intensive_value: float,
+    yield_fraction: float,
+    mc_bar: float,
+    eta_conv: float,
+    v_dead: float,
+    k_abs_true: float = K_ABS_TRUE_METRIC,
+    mash_transfer_loss: float = 0.0,
+    topology: str = "r_l_to_g",
+) -> float | None:
+    """Largest grist mass the strike geometry can drain, in kg.
+
+    Under ``r_l_to_g`` the first runnings grow with the grist while the kettle
+    volume is fixed, so the sparge closes at ``M_max``. Above it the residual
+    turns back down, which means the raw bracket's upper bound can lie beyond
+    the physical ceiling even when a root exists below it.
+    """
+    if topology != "r_l_to_g":
+        return None
+    denominator = (
+        intensive_value
+        + mc_bar
+        + (V_BAR_METRIC * eta_conv * yield_fraction)
+        - k_abs_true
+    )
+    if denominator <= 0.0:
+        return None
+    v_drain = v_pre_boil + mash_transfer_loss
+    return (v_drain + v_dead) / denominator
+
+
 def grist_mass_residual(
     m_grist: float,
     v_pre_boil: float,
@@ -203,6 +236,24 @@ def solve_grist_mass(
             "DEGENERATE_BRACKET",
             f"Grist mass bracket is degenerate: a={a}, b={b}.",
         )
+
+    # The raw upper bound assumes 50% recovery and can sit beyond the strike
+    # ceiling. The residual is non-monotonic there: it crosses the target on the
+    # way up, then turns back down when the sparge closes. Clip the bracket at
+    # M_max so a reachable root is not hidden behind an unreachable upper bound.
+    ceiling = strike_ceiling_mass(
+        v_pre_boil=v_pre_boil,
+        intensive_value=r_l_to_g,
+        yield_fraction=yield_fraction,
+        mc_bar=mc_bar,
+        eta_conv=eta_conv,
+        v_dead=v_dead,
+        k_abs_true=k_abs_true,
+        mash_transfer_loss=mash_transfer_loss,
+        topology=topology,
+    )
+    if ceiling is not None and math.isfinite(ceiling) and ceiling > a:
+        b = min(b, ceiling)
 
     def residual(m_grist: float) -> float:
         return grist_mass_residual(

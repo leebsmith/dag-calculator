@@ -12,6 +12,7 @@ from app.core.batch.grist import (
     grist_mass_bracket,
     grist_mass_residual,
     solve_grist_mass,
+    strike_ceiling_mass,
 )
 from app.core.errors import SolverValidationError
 
@@ -103,6 +104,38 @@ def test_solve_grist_mass_root_is_actually_a_root(standard_case):
     m_grist = solve_grist_mass(**standard_case)
     residual = grist_mass_residual(m_grist=m_grist, **standard_case)
     assert residual == pytest.approx(0.0, abs=1e-6)
+
+
+def test_solve_grist_mass_clips_the_bracket_at_the_strike_ceiling(standard_case):
+    # 1.75 qt/lb = 3.6511125 L/kg. The raw upper bound lies beyond M_max, but a
+    # root exists on the reachable side of the ceiling.
+    case = {
+        **standard_case,
+        "r_l_to_g": 3.6511125,
+        "eta_conv": 0.90,
+        "s_post_boil_target": 3.57,
+    }
+    a, b = grist_mass_bracket(
+        case["s_post_boil_target"], case["s_late_add"], case["yield_fraction"]
+    )
+    ceiling = strike_ceiling_mass(
+        v_pre_boil=case["v_pre_boil"],
+        intensive_value=case["r_l_to_g"],
+        yield_fraction=case["yield_fraction"],
+        mc_bar=case["mc_bar"],
+        eta_conv=case["eta_conv"],
+        v_dead=case["v_dead"],
+    )
+    assert ceiling is not None
+    assert a < ceiling < b
+
+    m_grist = solve_grist_mass(**case)
+
+    assert m_grist == pytest.approx(6.177, abs=0.01)
+    assert m_grist < ceiling
+    assert grist_mass_residual(m_grist=m_grist, **case) == pytest.approx(
+        0.0, abs=1e-6
+    )
 
 
 def test_solve_grist_mass_is_pure(standard_case):

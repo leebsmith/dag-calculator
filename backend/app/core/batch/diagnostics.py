@@ -10,8 +10,8 @@ from __future__ import annotations
 import math
 
 from app.core.batch.cascade import StageCascade, resolve_stage_cascade
-from app.core.batch.constants import GRAIN_DISPLACEMENT_METRIC, V_BAR_METRIC
-from app.core.batch.grist import grist_mass_bracket
+from app.core.batch.constants import GRAIN_DISPLACEMENT_METRIC
+from app.core.batch.grist import grist_mass_bracket, strike_ceiling_mass
 from app.core.batch.hlt import hlt_top_up_target
 from app.core.batch.inputs import BatchSolverInput
 from app.core.batch.volumetric import VolumetricReversal
@@ -77,33 +77,21 @@ def strike_ceiling_l(
 ) -> float | None:
     """Largest grist mass the strike geometry can drain, in kg.
 
-    Under ``r_l_to_g`` the first runnings grow with the grist while the kettle
-    volume is fixed, so the sparge shrinks to nothing at
-
-        M_max = (V_drain + V_dead) / (L:G + MC_bar + v_bar·eta_conv·E − k_abs_true)
-
-    from ``V_run1(M) = V_drain``. Beyond it the model would need a negative
-    sparge volume, so no larger grist can be lautered — the extract the batch
-    can deliver saturates there.
-
-    ``runoff_ratio`` has no such ceiling: its runnings split is static, so the
-    lauter fractions do not move with the grist mass and delivery stays linear
-    in it (``None`` is returned to say "no ceiling").
-
-    See ``domain-equations.md`` §2.5.
+    The formula lives in ``grist.strike_ceiling_mass``; this wrapper supplies
+    the batch inputs and the volumetric reversal. See ``domain-equations.md``
+    §2.5.
     """
-    if inputs.topology != "r_l_to_g":
-        return None
-    denominator = (
-        inputs.intensive_value
-        + mc_bar
-        + (V_BAR_METRIC * eta_conv * yield_fraction)
-        - inputs.k_abs_true
+    return strike_ceiling_mass(
+        v_pre_boil=reversal.v_pre_boil,
+        intensive_value=inputs.intensive_value,
+        yield_fraction=yield_fraction,
+        mc_bar=mc_bar,
+        eta_conv=eta_conv,
+        v_dead=inputs.v_dead,
+        k_abs_true=inputs.k_abs_true,
+        mash_transfer_loss=inputs.mash_transfer_loss,
+        topology=inputs.topology,
     )
-    if denominator <= 0.0:
-        return None
-    v_drain = reversal.v_pre_boil + inputs.mash_transfer_loss
-    return (v_drain + inputs.v_dead) / denominator
 
 
 def _ceiling_message(delivered_kg: float, demand_kg: float) -> str:

@@ -310,7 +310,10 @@ while the kettle volume is fixed, so the sparge closes at
 
     M_max = (V_drain + V_dead) / (L:G + MC_bar + v_bar · eta_conv · E - k_abs_true)
 
-and the kettle extract saturates there. A bracket that cannot cross raises
+and the kettle extract saturates there. The residual turns back down past
+`M_max`, so the raw 50%-recovery bracket is clipped at the ceiling before the
+sign-change test; otherwise a root below the ceiling would be hidden by the
+unreachable upper bound. A bracket that still cannot cross raises
 `STRIKE_CEILING_EXCEEDED` and quotes both masses ("at most X kg; the target needs
 Y kg"). The `{V_pre, r}` topology has no ceiling: its runnings split is static, so
 the lauter fractions do not move with `M` and delivery stays linear in it; there

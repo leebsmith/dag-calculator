@@ -28,19 +28,20 @@ ceiling. The user's `1.75 qt/lb` case is a valid mash; the solver must solve it.
 
 ## Checklist
 
-- [ ] Add a shared `strike_ceiling_mass` helper to `backend/app/core/batch/grist.py`
+- [x] Add a shared `strike_ceiling_mass` helper to `backend/app/core/batch/grist.py`
   with the existing ceiling formula.
-- [ ] Clip the upper bracket at that ceiling in `solve_grist_mass` when the
+- [x] Clip the upper bracket at that ceiling in `solve_grist_mass` when the
   topology is `r_l_to_g` and the ceiling is above the lower bound.
-- [ ] Refactor `diagnostics.strike_ceiling_l` to call the shared helper.
-- [ ] Add a regression test for the `1.75 qt/lb` case: target 7.0%, conversion
+- [x] Refactor the diagnostics ceiling helper (`strike_ceiling_l`) to call the
+  shared helper.
+- [x] Add a regression test for the `1.75 qt/lb` case: target 7.0%, conversion
   0.90, intensive 3.6511125 L/kg, solving with positive sparge.
-- [ ] Add a pure Phase 3 test that the clipped bracket still contains the root
+- [x] Add a pure Phase 3 test that the clipped bracket still contains the root
   and a genuinely unreachable target still raises.
-- [ ] Update `docs/dag-artifacts/domain-equations.md` to say the bracket is
+- [x] Update `docs/dag-artifacts/domain-equations.md` to say the bracket is
   clipped at `M_max`.
-- [ ] Run `make check`, `make test`, and `make verify`.
-- [ ] Archive the plan.
+- [x] Run `make check`, `make test`, and `make verify`.
+- [x] Archive the plan.
 
 ## Acceptance
 

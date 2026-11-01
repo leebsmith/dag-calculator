@@ -332,6 +332,19 @@ def test_solve_batch_runoff_ratio_topology():
     assert resp.mash_thickness_l_per_kg > 0.0
 
 
+def test_solve_batch_at_a_normal_qt_per_lb_thickness():
+    # 1.75 qt/lb = 3.6511125 L/kg. The raw bracket's upper bound is beyond the
+    # strike ceiling, but the target is reachable below the ceiling.
+    resp = solve_batch_request(
+        make_batch_request(
+            target_abv=7.0, intensive_value=3.6511125, eta_conv=0.90
+        )
+    )
+
+    assert resp.m_grist == pytest.approx(5.981, rel=1e-3)
+    assert resp.cascade.v_sparge > 0.0
+
+
 def test_service_propagates_error():
     with pytest.raises(SolverServiceError) as exc:
         solve_batch_request(make_batch_request(target_abv=25.0, malt_attenuation_cap=0.5))
