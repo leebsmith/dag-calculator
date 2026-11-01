@@ -357,3 +357,20 @@ test("share-mode sugars report the mass the late-additions table shows", async (
   assert.notEqual(sugar[0].amount.text, "0.0 kg");
   assert.equal(app.reportFormattedSummaries()["batch.sugars"].extract_yield.text, "80.0%");
 });
+
+test("the checklist table carries one generated step and one blank observation row", async () => {
+  const app = await booted();
+  const rows = app.reportFormattedTables()["batch.brew_day_steps"];
+
+  assert.equal(rows.length, 2);
+  assert.equal(rows[0].kind.text, "step");
+  assert.match(rows[0].text.text, /^Fill the HLT to /);
+  assert.equal(rows[1].kind.text, "observation");
+  assert.equal(rows[1].title.text, "Mash pH");
+  assert.equal(rows[1].raw.text, "—");
+  for (const row of rows) {
+    for (const [column, cell] of Object.entries(row)) {
+      assert.ok(cell.text, `${column} must have text`);
+    }
+  }
+});

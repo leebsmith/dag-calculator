@@ -9611,6 +9611,152 @@
           "unit": null
         }
       }
+    ],
+    "batch.brew_day_steps": [
+      {
+        "kind": {
+          "text": "step",
+          "number": null,
+          "unit": null
+        },
+        "phase": {
+          "text": "Brew day",
+          "number": null,
+          "unit": null
+        },
+        "section": {
+          "text": "Setup",
+          "number": null,
+          "unit": null
+        },
+        "title": {
+          "text": "Brew Day Setup",
+          "number": null,
+          "unit": null
+        },
+        "text": {
+          "text": "Fill the HLT to 20.0 L.",
+          "number": null,
+          "unit": null
+        },
+        "level": {
+          "text": "info",
+          "number": null,
+          "unit": null
+        },
+        "expected": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "unit": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "method": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "note": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "skipped": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "raw": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "corrected": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "time": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        }
+      },
+      {
+        "kind": {
+          "text": "observation",
+          "number": null,
+          "unit": null
+        },
+        "phase": {
+          "text": "Brew day",
+          "number": null,
+          "unit": null
+        },
+        "section": {
+          "text": "Mash",
+          "number": null,
+          "unit": null
+        },
+        "title": {
+          "text": "Mash pH",
+          "number": null,
+          "unit": null
+        },
+        "text": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "level": {
+          "text": "critical",
+          "number": null,
+          "unit": null
+        },
+        "expected": {
+          "text": "5.4",
+          "number": "5.4",
+          "unit": null
+        },
+        "unit": {
+          "text": "pH",
+          "number": null,
+          "unit": null
+        },
+        "method": {
+          "text": "pH meter",
+          "number": null,
+          "unit": null
+        },
+        "note": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "skipped": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "raw": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "corrected": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        },
+        "time": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
+        }
+      }
     ]
   },
   "formatted_summaries": {
@@ -9745,5 +9891,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:292c1d0a076cd68cf2f215c164e77e1a45111d7a80a8cea433c3622a339a0d9f"
+  "content_hash": "sha256:7a0e112a241480f9226c921d430d6a2c6b9010e91ef5d434f1b7a8d932647431"
 }

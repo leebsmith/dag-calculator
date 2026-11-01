@@ -44,23 +44,23 @@ catalog.
 
 ## Checklist
 
-- [ ] Add `checklistRows` to `frontend/src/views/producer/reportFormat.js`; emit
+- [x] Add `checklistRows` to `frontend/src/views/producer/reportFormat.js`; emit
   one generated step row and one blank observation row under
   `batch.brew_day_steps`.
-- [ ] Add a frontend test asserting two rows, the step/observation kinds, a
+- [x] Add a frontend test asserting two rows, the step/observation kinds, a
   generated HLT instruction, and non-empty text in every cell.
-- [ ] Add `backend/app/templates/sections/checklist.typ` with a presence predicate
+- [x] Add `backend/app/templates/sections/checklist.typ` with a presence predicate
   and a renderer for both row kinds.
-- [ ] Register the section in `backend/app/templates/report.typ` after Limits.
-- [ ] Add the checklist table to
+- [x] Register the section in `backend/app/templates/report.typ` after Limits.
+- [x] Add the checklist table to
   `backend/scripts/emit_report_bundle_fixture.py` and regenerate the bundle
   fixture.
-- [ ] Add backend tests: the checklist section renders; it is absent when the
+- [x] Add backend tests: the checklist section renders; it is absent when the
   table is missing; the full report section list includes it.
-- [ ] Run `node scripts/emit-report-sections.mjs` to regenerate the report
+- [x] Run `node scripts/emit-report-sections.mjs` to regenerate the report
   section docs and manifest.
-- [ ] Run `make check`.
-- [ ] Run `make test`; fix any failures.
+- [x] Run `make check`.
+- [x] Run `make test`; fix any failures.
 
 ## Acceptance
 

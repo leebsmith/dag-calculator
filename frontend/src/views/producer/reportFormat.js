@@ -11,6 +11,8 @@ import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { HOP_NODES as H } from "../registry/hops.js";
 import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
+import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
+import { WATER_NODES as W } from "../registry/water.js";
 import { cellLabel, formatCell } from "./cell.js";
 
 // Collection fields are row values, not scalars: the catalog lists them for a
@@ -120,6 +122,61 @@ function readFermentables(engine) {
   return { major, trace, sugar };
 }
 
+// Spike rows for the flat checklist table. One generated step and one blank
+// observation row prove the `kind` discriminator and the appendix shape before
+// Phase 1 builds the real catalog. The key is the existing collection; Phase 1
+// renames it to `batch.brew_checklist`.
+function checklistCell({ artifact, catalog, engine, nl, path, fallback }) {
+  try {
+    const cell = formatEntry(artifact, catalog.nodes?.[path], engine.resolve(path), nl);
+    return cell.text && cell.text !== "—" ? cell : { text: fallback };
+  } catch (err) {
+    reportError("reportFormat.checklistRows", err);
+    return { text: fallback };
+  }
+}
+
+function checklistRows(artifact, catalog, engine, nl) {
+  const dash = { text: "—" };
+  const blank = {
+    expected: dash,
+    unit: dash,
+    method: dash,
+    note: dash,
+    skipped: dash,
+    raw: dash,
+    corrected: dash,
+    time: dash,
+  };
+  const cellFor = (path, fallback) =>
+    checklistCell({ artifact, catalog, engine, nl, path, fallback });
+  const hlt = cellFor(W.hltStart, "the planned volume");
+  const ph = cellFor(W.targetMashPh, "—");
+  return [
+    {
+      ...blank,
+      kind: { text: "step" },
+      phase: { text: "Brew day" },
+      section: { text: "Setup" },
+      title: { text: "Brew Day Setup" },
+      text: { text: `Fill the HLT to ${hlt.text}.` },
+      level: { text: "info" },
+    },
+    {
+      ...blank,
+      kind: { text: "observation" },
+      phase: { text: "Brew day" },
+      section: { text: "Mash" },
+      title: { text: "Mash pH" },
+      text: dash,
+      level: { text: "critical" },
+      expected: ph,
+      unit: { text: "pH" },
+      method: { text: "pH meter" },
+    },
+  ];
+}
+
 // Per-row display strings for the fermentable tables. Grist is the malt charge
 // (major + trace); sugars are measured against it, so the three tables' shares
 // do not partition to 100. `own_pct` is the row's share of its own table (the
@@ -201,6 +258,7 @@ export function buildReportTables(artifact, catalog, engine) {
     [H.collection]: hopRows(artifact, catalog, engine, "boil"),
     [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool"),
     [D.collection]: dryHopRows(artifact, catalog, engine),
+    [B.steps]: checklistRows(artifact, catalog, engine, nl),
   };
 }
 

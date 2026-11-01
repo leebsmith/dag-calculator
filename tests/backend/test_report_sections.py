@@ -38,6 +38,7 @@ SECTION_IDS = (
     "liquor-ledger",
     "water-chemistry",
     "limits",
+    "checklist",
 )
 
 
@@ -498,6 +499,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
         "liquor-ledger",
         "water-chemistry",
         "limits",
+        "checklist",
     ]
 
 

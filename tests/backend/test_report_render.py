@@ -47,6 +47,7 @@ SECTIONS = (
     "liquor-ledger",
     "water-chemistry",
     "limits",
+    "checklist",
 )
 
 
@@ -135,6 +136,22 @@ def test_an_empty_resolved_selection_is_a_spec_error() -> None:
 
     with pytest.raises(ReportSpecError, match="nothing to report"):
         render(seal_bundle(data), parse_spec(sections="batch-facts"))
+
+
+def test_the_checklist_section_renders(render_once) -> None:
+    rendered = render_once(bundle(), parse_spec(sections="checklist"))
+
+    assert rendered.data.startswith(b"%PDF")
+    assert rendered.sections == ("checklist",)
+    assert rendered.pages >= 1
+
+
+def test_the_checklist_section_hides_without_rows() -> None:
+    data = bundle_dict()
+    del data["formatted_tables"]["batch.brew_day_steps"]
+
+    with pytest.raises(ReportSpecError, match="nothing to report"):
+        render(seal_bundle(data), parse_spec(sections="checklist"))
 
 
 def test_frozen_renders_are_byte_identical(frozen_report, second_frozen_report) -> None:

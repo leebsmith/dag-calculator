@@ -12,6 +12,7 @@
 #import "sections/liquor-ledger.typ": present-liquor-ledger, render-liquor-ledger
 #import "sections/water-chemistry.typ": present-water-chemistry, render-water-chemistry
 #import "sections/limits.typ": present-limits, render-limits
+#import "sections/checklist.typ": present-checklist, render-checklist
 
 // === registry:begin ===
 // One line per section, in canonical render order. Each entry names a module in
@@ -27,6 +28,7 @@
   (id: "liquor-ledger", title: "Liquor Ledger", present: present-liquor-ledger, render: render-liquor-ledger),
   (id: "water-chemistry", title: "Water Chemistry", present: present-water-chemistry, render: render-water-chemistry),
   (id: "limits", title: "Limits", present: present-limits, render: render-limits),
+  (id: "checklist", title: "Brew Checklist", present: present-checklist, render: render-checklist),
 )
 // === registry:end ===
 
