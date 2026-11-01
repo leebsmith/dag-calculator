@@ -252,13 +252,77 @@ def _validate_record_component(
     return errors
 
 
+def _header_errors(component: dict[str, Any], meta: Mapping[str, Any]) -> list[str]:
+    errors: list[str] = []
+    title_field = meta.get("title_field", "name")
+    title = component.get(title_field)
+    if not isinstance(title, str) or not title.strip():
+        errors.append(f"{title_field}: {title_field} is required")
+    identity = meta.get("id_field")
+    if identity in component and not isinstance(component[identity], str):
+        errors.append(f"{identity}: must be a string")
+    return errors
+
+
+def _validate_dimension_value(
+    artifact: dict[str, Any], spec: Any, value: Any, field: str, errors: list[str]
+) -> None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        errors.append(f"{field}: must be a number")
+        return
+    if not math.isfinite(value):
+        errors.append(f"{field}: must be finite")
+        return
+    if _domain_error(spec.get("domain"), value, artifact.get("constants", {})):
+        errors.append(f"{field}: violates {spec.get('domain')}")
+
+
+def _validate_taxonomy_value(
+    artifact: dict[str, Any], spec: Any, value: Any, field: str, errors: list[str]
+) -> None:
+    allowed = artifact.get("taxonomies", {}).get(spec["taxonomy"], [])
+    if value not in allowed:
+        errors.append(f"{field}: '{value}' is not in taxonomy {spec['taxonomy']}")
+
+
+def _validate_field_value(
+    artifact: dict[str, Any], field: str, spec: Any, value: Any, errors: list[str]
+) -> None:
+    if field == "url":
+        if not _is_safe_url(value):
+            errors.append(f"{field}: must be an http(s) URL")
+        return
+    if spec.get("dimension"):
+        _validate_dimension_value(artifact, spec, value, field, errors)
+        return
+    if spec.get("taxonomy"):
+        _validate_taxonomy_value(artifact, spec, value, field, errors)
+        return
+    if spec.get("type") == "boolean" and not isinstance(value, bool):
+        errors.append(f"{field}: must be a boolean")
+
+
+def _validate_declared_fields(
+    artifact: dict[str, Any],
+    schema: Mapping[str, Any],
+    component: dict[str, Any],
+    errors: list[str],
+) -> None:
+    for field, value in component.items():
+        if field not in schema:
+            errors.append(f"{field}: undeclared field '{field}'")
+            continue
+        if value is None or value == "":
+            continue
+        _validate_field_value(artifact, field, schema[field], value, errors)
+
+
 def validate_component(kind: str, component: Any) -> list[str]:
     """Validate a component against its catalog kind's primitive schema.
 
     Returns a list of ``"field: message"`` strings; empty means valid.
     """
-    catalogs = load_catalog_registry()
-    meta = catalogs.get(kind)
+    meta = load_catalog_registry().get(kind)
     if meta is None:
         return [f"*: unknown catalog kind '{kind}'"]
     artifact = load_artifact()
@@ -267,46 +331,10 @@ def validate_component(kind: str, component: Any) -> list[str]:
         return _validate_record_component(artifact, schema, component, meta)
     if not isinstance(component, dict):
         return ["*: component must be an object"]
-
     schema = artifact.get("primitive_schemas", {}).get(meta["schema"])
     if schema is None:
         return [f"*: unknown primitive schema '{meta['schema']}'"]
 
-    errors: list[str] = []
-    title_field = meta.get("title_field", "name")
-    title = component.get(title_field)
-    if not isinstance(title, str) or not title.strip():
-        errors.append(f"{title_field}: {title_field} is required")
-
-    identity = meta.get("id_field")
-    if identity in component and not isinstance(component[identity], str):
-        errors.append(f"{identity}: must be a string")
-
-    constants = artifact.get("constants", {})
-    for field, value in component.items():
-        if field not in schema:
-            errors.append(f"{field}: undeclared field '{field}'")
-            continue
-        if value is None or value == "":
-            continue
-        spec = schema[field]
-        if field == "url":
-            if not _is_safe_url(value):
-                errors.append(f"{field}: must be an http(s) URL")
-            continue
-        if spec.get("dimension"):
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
-                errors.append(f"{field}: must be a number")
-                continue
-            if not math.isfinite(value):
-                errors.append(f"{field}: must be finite")
-                continue
-            if _domain_error(spec.get("domain"), value, constants):
-                errors.append(f"{field}: violates {spec.get('domain')}")
-        elif spec.get("taxonomy"):
-            allowed = artifact.get("taxonomies", {}).get(spec["taxonomy"], [])
-            if value not in allowed:
-                errors.append(f"{field}: '{value}' is not in taxonomy {spec['taxonomy']}")
-        elif spec.get("type") == "boolean" and not isinstance(value, bool):
-            errors.append(f"{field}: must be a boolean")
+    errors = _header_errors(component, meta)
+    _validate_declared_fields(artifact, schema, component, errors)
     return errors

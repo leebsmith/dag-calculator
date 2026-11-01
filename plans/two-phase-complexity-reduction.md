@@ -14,7 +14,8 @@ re-measured by `tests/guards/shape-pins.test.js`). The backend has none: ruff
 selects `E`, `F`, `I`, `W`, `UP` and `B`, so nothing observes branch growth. This
 plan closes that gap in two rungs rather than one large refactor.
 
-Measured before the change (ruff `C901` at threshold 1 over `backend/app`):
+Measured before the change (ruff `C901` at threshold 1 over `backend/app`, plus
+the two scraper functions the repo-wide gate also reaches at 15):
 
 | Ceiling | Functions failing | Who |
 |---|---|---|
@@ -29,11 +30,14 @@ in a config file.
 
 ## Decisions
 
-- **Scope is `backend/app`.** There is no root `pyproject.toml` or `ruff.toml`, and
-  none in `tests/` or `scripts/`, so ruff resolves defaults for those trees and
-  this gate does not cover them. Accepted: fixtures and seed builders legitimately
-  branch per record or column shape, and the frontend's equivalent contract treats
-  its scripts separately too.
+- **Scope is every tree `make check` lints.** `make check` runs
+  `ruff check . ../tests/backend ../scripts` from `backend/`, and ruff resolves a
+  single config for the invocation: the backend `pyproject.toml`. The gate is
+  therefore repo-wide for Python, not `backend/app` only. That is stricter than
+  the scope recorded when this plan was written, and it caught two scraper
+  functions, `parse_bjcp_directory` (18) and the yeast scraper `main` (16). Both
+  were split in phase 1 rather than exempted, so the gate lands with zero
+  suppressions.
 - **No pin mechanism.** The backend's debt is one function, then zero. Pins exist
   on the frontend because 25 files must stay allowed at 12 while remaining
   visible; that problem does not arise here.
@@ -46,11 +50,13 @@ in a config file.
 
 ## Phase 1 — ceiling 15
 
-- [ ] Add `C901` to the ruff select list in `backend/pyproject.toml`
-- [ ] Add the mccabe block with `max-complexity = 15`
-- [ ] Extract the field-kind dispatch from `validate_component` and the component
+- [x] Add `C901` to the ruff select list in `backend/pyproject.toml`
+- [x] Add the mccabe block with `max-complexity = 15`
+- [x] Extract the field-kind dispatch from `validate_component` and the component
       field walk, preserving every message string and its order
-- [ ] `make check` green at ceiling 15, zero suppressions
+- [x] Split `parse_bjcp_directory` and the yeast scraper `main`, which the
+      repo-wide gate also covered
+- [x] `make check` green at ceiling 15, zero suppressions
 
 ## Phase 2 — ceiling 12
 
@@ -75,4 +81,7 @@ in a config file.
 - **Frontend burndown.** 47 functions above `complexity 12` in 25 files, already
   pinned and tracked in `TODO.md`. Picking up `validateArtifactComponent` is the
   natural first move once the Python validator's shape is settled.
-- **`tests/backend` and `scripts` Python.** No config resolution, see Decisions.
+- **Script pins.** The frontend records its script layer at today's count instead
+  of fixing it. The Python scrapers are fixed instead of pinned: the whole tree had
+  two functions above the ceiling, and a per-function pin mechanism would be more
+  machinery than the fix.

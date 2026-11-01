@@ -17,7 +17,7 @@ HEADERS = {
 }
 
 
-def main():
+def _parse_args():
   parser = argparse.ArgumentParser(description="Scrape beer-analytics.com yeast profiles.")
   parser.add_argument(
       "--limit",
@@ -30,7 +30,60 @@ def main():
       default=str(DEFAULT_OUTPUT),
       help="output path (default: data/sources/beer-analytics-yeasts.json)",
   )
-  args = parser.parse_args()
+  return parser.parse_args()
+
+
+def _collect_links(soup, limit=None):
+  """Individual yeast links are /yeasts/<category>/<strain-name>/; category roots have fewer slashes."""
+  links = set()
+  for a in soup.find_all("a", href=True):
+    href = a["href"]
+    parts = [p for p in href.split("/") if p]
+    if href.startswith("/yeasts/") and len(parts) >= 3:
+      links.add(href)
+  collected = list(links)
+  if limit and limit > 0:
+    collected = collected[:limit]
+  return collected
+
+
+def _parse_detail(detail_soup, full_url):
+  yeast_data = {"url": full_url}
+
+  detail_head = detail_soup.find("div", class_="detail-head")
+  if detail_head:
+    h1 = detail_head.find("h1")
+    if h1:
+      yeast_data["title"] = h1.text.strip()
+
+    dl = detail_head.find("dl", class_="detail-info")
+    if dl:
+      for dt in dl.find_all("dt"):
+        key = dt.text.strip().rstrip(":").lower()
+        dd = dt.find_next_sibling("dd")
+        if dd:
+          yeast_data[key] = dd.text.strip()
+
+  p_tag = detail_soup.select_one("div.detail-long-description p")
+  if p_tag:
+    yeast_data["description"] = p_tag.text.strip()
+
+  return yeast_data
+
+
+def _report_entry(index, total, yeast_data):
+  print(
+      f"[{index+1}/{total}] Scraped:"
+      f" {yeast_data.get('title', 'Unknown Yeast')}"
+  )
+  for k, v in yeast_data.items():
+    if k != "title":
+      print(f"  - {k.capitalize()}: {v}")
+  print("-" * 40)
+
+
+def main():
+  args = _parse_args()
 
   print("Fetching yeast index page...")
   response = requests.get(INDEX_URL, headers=HEADERS)
@@ -40,20 +93,7 @@ def main():
     return
 
   soup = BeautifulSoup(response.text, "html.parser")
-  yeast_links = set()  # Use a set to avoid any duplicate links
-
-  # Find all anchor tags on the page
-  for a in soup.find_all("a", href=True):
-    href = a["href"]
-    # Individual yeast links follow the pattern /yeasts/<category>/<strain-name>/
-    # Category roots have fewer slashes (e.g., /yeasts/ale/ or /yeasts/)
-    parts = [p for p in href.split("/") if p]
-    if href.startswith("/yeasts/") and len(parts) >= 3:
-      yeast_links.add(href)
-
-  yeast_links = list(yeast_links)
-  if args.limit and args.limit > 0:
-    yeast_links = yeast_links[: args.limit]
+  yeast_links = _collect_links(soup, args.limit)
   print(f"Found {len(yeast_links)} unique yeast profiles. Starting crawl...\n")
 
   all_yeasts_data = []
@@ -71,38 +111,10 @@ def main():
         continue
 
       detail_soup = BeautifulSoup(res.text, "html.parser")
-      yeast_data = {"url": full_url}
-
-      detail_head = detail_soup.find("div", class_="detail-head")
-      if detail_head:
-        h1 = detail_head.find("h1")
-        if h1:
-          yeast_data["title"] = h1.text.strip()
-
-        dl = detail_head.find("dl", class_="detail-info")
-        if dl:
-          for dt in dl.find_all("dt"):
-            key = dt.text.strip().rstrip(":").lower()
-            dd = dt.find_next_sibling("dd")
-            if dd:
-              yeast_data[key] = dd.text.strip()
-
-      # Capture the long description using the concise CSS selector approach
-      p_tag = detail_soup.select_one("div.detail-long-description p")
-      if p_tag:
-        yeast_data["description"] = p_tag.text.strip()
-
+      yeast_data = _parse_detail(detail_soup, full_url)
       all_yeasts_data.append(yeast_data)
 
-      # Print terminal output
-      print(
-          f"[{i+1}/{len(yeast_links)}] Scraped:"
-          f" {yeast_data.get('title', 'Unknown Yeast')}"
-      )
-      for k, v in yeast_data.items():
-        if k != "title":
-          print(f"  - {k.capitalize()}: {v}")
-      print("-" * 40)
+      _report_entry(i, len(yeast_links), yeast_data)
 
     except Exception as e:
       print(f"[{i+1}/{len(yeast_links)}] Error occurred on {full_url}: {e}")
