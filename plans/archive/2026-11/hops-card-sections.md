@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: make verify
-status: proposed
+status: shipped
 ---
 
 # Hops card — one card, three collapsible sections

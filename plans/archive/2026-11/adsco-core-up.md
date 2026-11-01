@@ -1,7 +1,10 @@
 # ADSCO core-up — execution plan
 
-Status: draft for review. Implements `plans/adsco-contract.md` behind the
-existing sealed boundary. Each phase is a committable, gate-green unit.
+Status: implemented. Phases A–C and E landed, and Phase D's card rewrite landed
+except its five-mode radio control, which the target-set selector replaced
+(`docs/adsco/ui.md`). Retained as the execution record. Implements
+`plans/adsco-contract.md` behind the existing sealed boundary. Each phase was a
+committable, gate-green unit.
 
 ## Principles
 
