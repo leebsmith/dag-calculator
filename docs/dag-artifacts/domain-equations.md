@@ -298,6 +298,12 @@ Bracket:
     a = max(0, (S_post_target - S_late) / E)
     b = (S_post_target - S_late) / (0.5 · E)
 
+**Bracket diagnosis.** `a` is the mass the target needs at perfect recovery, so no
+solve can succeed with less grist. A failure names a capacity only when that
+capacity is already exceeded at `a` — definitive, because every physical mass is
+larger. When the minimum fits, the message reports the extraction limit itself
+rather than blaming a vessel that the batch never fills.
+
 **Identity — do not "simplify" it away.** Under `{V_pre, r}`, `V_run1` and `V_sparge` are
 static, so
 

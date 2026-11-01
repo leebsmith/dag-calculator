@@ -67,10 +67,10 @@ failure's meaning depends on the reader knowing the taxonomy.
 
 ### Step 1 — Truthful diagnosis (a + b) and readable codes
 
-- [ ] 6. `backend/app/core/batch/diagnostics.py`: probe capacity at the bracket's lower bound; a capacity exceeded there names the limit, otherwise make no capacity claim.
-- [ ] 7. Same module: return the actionable `BRACKET_NO_SIGN_CHANGE` message when no capacity is definitive (leave `DEGENERATE_BRACKET` alone; the original code is passed in).
-- [ ] 8. `backend/app/core/batch/orchestration.py`: pass the failing code into `_diagnose_bracket`.
-- [ ] 9. `tests/backend/conformance/test_batch_solver_orchestration.py`: flip the 9 % case to the honest outcome, assert the tun/kettle are not blamed even when raised to 400 L, and keep a capacity case that still names the tun.
+- [x] 6. `backend/app/core/batch/diagnostics.py`: probe capacity at the bracket's lower bound; a capacity exceeded there names the limit, otherwise make no capacity claim.
+- [x] 7. Same module: return the actionable `BRACKET_NO_SIGN_CHANGE` message when no capacity is definitive (leave `DEGENERATE_BRACKET` alone; the original code is passed in).
+- [x] 8. `backend/app/core/batch/orchestration.py`: pass the failing code into `_diagnose_bracket`.
+- [x] 9. `tests/backend/conformance/test_batch_solver_orchestration.py`: flip the 9 % case to the honest outcome, assert the tun/kettle are not blamed even when raised to 400 L, and keep a capacity case that still names the tun.
 - [ ] 10. `frontend/src/views/registry/errors.js`: the code → label map plus `solverErrorLabel`; `frontend/src/adapters/stepAdapter.js` decorates the boundary error; `frontend/src/partials/editor.html` shows the label instead of the assembled code.
 - [ ] 11. `tests/guards/solver-error-labels.test.js`: every declared boundary code has a label and the map has no stale entries.
 - [ ] 12. `docs/dag-artifacts/domain-equations.md`: note the lower-bound rule on the error surface.

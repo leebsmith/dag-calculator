@@ -494,7 +494,13 @@ def _solve_pipeline(
     except SolverValidationError as exc:
         if exc.code in ("BRACKET_NO_SIGN_CHANGE", "DEGENERATE_BRACKET"):
             cause = _diagnose_bracket(
-                inputs, reversal, yield_fraction, mc_bar, inputs.eta_conv, s_late_add
+                inputs,
+                reversal,
+                yield_fraction,
+                mc_bar,
+                inputs.eta_conv,
+                s_late_add,
+                code=exc.code,
             )
             if cause is not None:
                 raise cause from exc

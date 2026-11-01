@@ -127,14 +127,51 @@ def test_feasibility_bound_names_the_tun(standard_inputs):
     assert result.binding_constraint == "tun"
 
 
-def test_bracket_failure_names_the_tun(standard_inputs):
+def test_bracket_failure_is_not_blamed_on_an_unexceeded_capacity(standard_inputs):
+    # 9% ABV on the standard rig: the tun fits the minimum grist the target
+    # needs (24.8 L of 40 L), and even a 400 L tun and kettle still fail, so the
+    # limit is the extraction itself — not a vessel.
     inputs = BatchSolverInput(**{**standard_inputs.__dict__, "target_abv": 9.0})
 
     with pytest.raises(SolverValidationError) as exc:
         solve_batch(inputs)
 
+    assert exc.value.code == "BRACKET_NO_SIGN_CHANGE"
+    assert "extraction" in exc.value.message
+
+    roomy = BatchSolverInput(
+        **{
+            **standard_inputs.__dict__,
+            "target_abv": 9.0,
+            "max_mash_tun_volume_l": 400.0,
+            "max_kettle_volume_l": 400.0,
+            "hlt_starting_volume_l": 400.0,
+            "max_hlt_volume_l": 400.0,
+        }
+    )
+    with pytest.raises(SolverValidationError) as roomy_exc:
+        solve_batch(roomy)
+    assert roomy_exc.value.code == "BRACKET_NO_SIGN_CHANGE"
+
+
+def test_bracket_failure_names_a_tun_that_cannot_fit_the_minimum_grist(
+    standard_inputs,
+):
+    # 12% ABV: the minimum grist already needs a 32.2 L tun, so the 10 L capacity
+    # is a definitive diagnosis and the lower-bound probe must keep naming it.
+    inputs = BatchSolverInput(
+        **{
+            **standard_inputs.__dict__,
+            "target_abv": 12.0,
+            "max_mash_tun_volume_l": 10.0,
+        }
+    )
+
+    with pytest.raises(SolverValidationError) as exc:
+        solve_batch(inputs)
+
     assert exc.value.code == "MASH_TUN_TOO_SMALL"
-    assert "40.0 L" in exc.value.message
+    assert "10.0 L" in exc.value.message
 
 
 def test_solve_batch_runoff_ratio_topology(standard_inputs):

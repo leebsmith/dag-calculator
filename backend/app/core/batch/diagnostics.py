@@ -60,6 +60,14 @@ def _capacity_loads(
     )
 
 
+UNREACHABLE_MESSAGE = (
+    "This batch's target cannot be reached at the current mash thickness and "
+    "conversion efficiency: no equipment capacity is exceeded by the minimum "
+    "grist the target needs, so the limit is the extraction itself. Thicken the "
+    "mash, raise the conversion efficiency, or lower the target."
+)
+
+
 def _diagnose_bracket(
     inputs: BatchSolverInput,
     reversal: VolumetricReversal,
@@ -67,21 +75,28 @@ def _diagnose_bracket(
     mc_bar: float,
     eta_conv: float,
     s_late_add: float,
+    code: str,
 ) -> SolverValidationError | None:
-    """Name the capacity limit that makes the bracket infeasible, if definitive.
+    """Name the limit that makes a grist-mass bracket infeasible, if definitive.
 
-    Evaluated at the bracket's upper bound, where the residual has the most
-    extract available. If no capacity limit is exceeded there, the numerical
-    failure is left untouched.
+    Evaluated at the bracket's **lower** bound: the mass the target needs at
+    perfect recovery. No solve can succeed with less grist, so a capacity
+    exceeded there is definitive. A capacity that fits there proves nothing, so
+    it is never named — probing the upper bound instead blamed a tun that the
+    batch never filled, because that bound assumes 50% recovery.
+
+    When no capacity is exceeded, a bracket failure is the extraction limit
+    itself; the message says so. ``DEGENERATE_BRACKET`` keeps its numerical
+    message (the bracket is unusable, not unreachable).
     """
-    _, upper = grist_mass_bracket(
+    lower, _ = grist_mass_bracket(
         reversal.s_post_boil_target, s_late_add, yield_fraction
     )
-    if not math.isfinite(upper) or upper <= 0.0:
+    if not math.isfinite(lower) or lower <= 0.0:
         return None
     try:
         cascade = resolve_stage_cascade(
-            m_grist=upper,
+            m_grist=lower,
             v_pre_boil=reversal.v_pre_boil,
             topology=inputs.topology,
             intensive_value=inputs.intensive_value,
@@ -96,9 +111,11 @@ def _diagnose_bracket(
     except SolverValidationError:
         return None
 
-    loads = _capacity_loads(inputs, reversal.v_pre_boil, upper, cascade)
+    loads = _capacity_loads(inputs, reversal.v_pre_boil, lower, cascade)
     exceeded = exceeded_capacity(loads, inputs)
-    if exceeded is None:
+    if exceeded is not None:
+        limit, load, cap = exceeded
+        return capacity_error(limit, load, cap)
+    if code != "BRACKET_NO_SIGN_CHANGE":
         return None
-    limit, load, cap = exceeded
-    return capacity_error(limit, load, cap)
+    return SolverValidationError(code, UNREACHABLE_MESSAGE)
