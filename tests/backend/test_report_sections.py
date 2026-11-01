@@ -191,6 +191,21 @@ WATER_EVENT_PROBE = (
     '#metadata(ordered-events().map(event => event.at("severity"))) <probe>\n'
 )
 
+WATER_DOSAGE_PROBE = (
+    '#import "sections/water-chemistry.typ": present-dosage\n'
+    "#metadata(present-dosage()) <probe>\n"
+)
+
+WATER_DOSE_NONZERO_PROBE = (
+    '#import "sections/water-chemistry.typ": nonzero\n'
+    "#metadata((\n"
+    '  mash_gypsum: nonzero("mash_additions.gypsum_kg"),\n'
+    '  mash_epsom: nonzero("mash_additions.epsom_kg"),\n'
+    '  sparge_gypsum: nonzero("sparge_additions.gypsum_kg"),\n'
+    '  sparge_acid: nonzero("sparge_additions.acid_l"),\n'
+    ")) <probe>\n"
+)
+
 BATCH_FACTS_PROBE = (
     '#import "sections/batch-facts.typ": present-batch-facts\n'
     "#metadata(present-batch-facts()) <probe>\n"
@@ -367,6 +382,27 @@ def test_water_telemetry_reads_problems_first() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, WATER_EVENT_PROBE) == ["WARNING", "NOTE", "INFO"]
+
+
+def test_the_dosage_subsection_is_present_with_the_additions(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_DOSAGE_PROBE) is True
+    assert probe(shared_root, WATER_DOSE_NONZERO_PROBE) == {
+        "mash_gypsum": True,
+        "mash_epsom": False,
+        "sparge_gypsum": True,
+        "sparge_acid": True,
+    }
+
+
+def test_the_dosage_subsection_is_absent_without_the_additions() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["solver.water.mash_additions.gypsum_kg"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_DOSAGE_PROBE) is False
+        # The chemistry table still renders: the dosage is its own gate.
+        render(root, "water-chemistry")
 
 
 def test_limits_is_present_with_the_feasibility_bound(shared_root: Path) -> None:

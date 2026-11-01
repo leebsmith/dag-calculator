@@ -7137,6 +7137,232 @@
         "options": null,
         "option_labels": null
       },
+      "batch.sparge_salted_volume": {
+        "label": "Sparge salt dosing volume",
+        "dimension": "volume",
+        "unit": "L",
+        "symbol": "L",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.salt_distribution": {
+        "label": "Salt distribution",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "MASH_ONLY",
+          "PROPORTIONAL"
+        ],
+        "option_labels": {
+          "MASH_ONLY": "Mash only salts",
+          "PROPORTIONAL": "Split \u2014 grist and HLT"
+        }
+      },
+      "water.gypsum_form": {
+        "label": "Gypsum form",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "GYPSUM_DIHYDRATE",
+          "GYPSUM_ANHYDROUS"
+        ],
+        "option_labels": {
+          "GYPSUM_DIHYDRATE": "Dihydrate (CaSO\u2084\u00b72H\u2082O)",
+          "GYPSUM_ANHYDROUS": "Anhydrous (CaSO\u2084)"
+        }
+      },
+      "water.cacl2_form": {
+        "label": "CaCl2 form",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "CACL2_DIHYDRATE",
+          "CACL2_ANHYDROUS"
+        ],
+        "option_labels": {
+          "CACL2_DIHYDRATE": "Dihydrate (CaCl\u2082\u00b72H\u2082O)",
+          "CACL2_ANHYDROUS": "Anhydrous (CaCl\u2082)"
+        }
+      },
+      "water.acid_medium": {
+        "label": "Acid medium",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "LACTIC_88",
+          "PHOSPHORIC_10",
+          "PHOSPHORIC_85"
+        ],
+        "option_labels": {
+          "LACTIC_88": "88% lactic acid",
+          "PHOSPHORIC_10": "10% phosphoric acid",
+          "PHOSPHORIC_85": "85% phosphoric acid"
+        }
+      },
+      "solver.water.mash_additions.cacl2_kg": {
+        "label": "Mash calcium chloride",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.epsom_kg": {
+        "label": "Mash Epsom salt",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.nacl_kg": {
+        "label": "Mash table salt",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.acid_l": {
+        "label": "Mash acid",
+        "dimension": "volume",
+        "unit": "ml",
+        "symbol": "mL",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.baking_soda_kg": {
+        "label": "Mash baking soda",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.chalk_kg": {
+        "label": "Mash chalk",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.mash_additions.pickling_lime_kg": {
+        "label": "Mash pickling lime",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.gypsum_kg": {
+        "label": "Sparge gypsum",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.cacl2_kg": {
+        "label": "Sparge calcium chloride",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.epsom_kg": {
+        "label": "Sparge Epsom salt",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.nacl_kg": {
+        "label": "Sparge table salt",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.acid_l": {
+        "label": "Sparge acid",
+        "dimension": "volume",
+        "unit": "ml",
+        "symbol": "mL",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.baking_soda_kg": {
+        "label": "Sparge baking soda",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.chalk_kg": {
+        "label": "Sparge chalk",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.water.sparge_additions.pickling_lime_kg": {
+        "label": "Sparge pickling lime",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.hops": {
         "label": "Hop solver",
         "dimension": null,
@@ -7880,7 +8106,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:938c173e96585f04a89d11be561cb5305766309e79b5cfd638e2450fad460247"
+    "hash": "sha256:0f40eac26530344821134207238e211d8cc5cba5cc5ec6543fe90a1e8a198391"
   },
   "batch": {
     "id": "frozen-1",
@@ -8116,6 +8342,11 @@
       "batch.delta_v_evap": 3.0,
       "batch.late_addition_volume_l": 0.5,
       "batch.shrinkage_volume_l": 0.9,
+      "batch.sparge_salted_volume": 18.7,
+      "water.salt_distribution": "PROPORTIONAL",
+      "water.gypsum_form": "GYPSUM_DIHYDRATE",
+      "water.cacl2_form": "CACL2_DIHYDRATE",
+      "water.acid_medium": "LACTIC_88",
       "water.target.calcium_ca": 50.0,
       "water.target.magnesium_mg": 10.0,
       "water.target.sodium_na": 15.0,
@@ -8138,7 +8369,23 @@
         "post_dose_mash_ions.sulfate_so4": 100.0,
         "post_dose_mash_ions.chloride_cl": 60.0,
         "post_dose_mash_ions.alkalinity_as_caco3": 35.0,
-        "total_added_salt_mass_g": 3.0
+        "mash_additions.gypsum_kg": 0.0042,
+        "mash_additions.cacl2_kg": 0.0021,
+        "mash_additions.epsom_kg": 0.0,
+        "mash_additions.nacl_kg": 0.0,
+        "mash_additions.acid_l": 0.0014,
+        "mash_additions.baking_soda_kg": 0.0,
+        "mash_additions.chalk_kg": 0.0,
+        "mash_additions.pickling_lime_kg": 0.0,
+        "sparge_additions.gypsum_kg": 0.0048,
+        "sparge_additions.cacl2_kg": 0.0024,
+        "sparge_additions.epsom_kg": 0.0,
+        "sparge_additions.nacl_kg": 0.0,
+        "sparge_additions.acid_l": 0.001,
+        "sparge_additions.baking_soda_kg": 0.0,
+        "sparge_additions.chalk_kg": 0.0,
+        "sparge_additions.pickling_lime_kg": 0.0,
+        "total_added_salt_mass_g": 0.0135
       },
       "solver.hops": {
         "boil_rows": [
@@ -8552,6 +8799,61 @@
       "text": "35.0 ppm",
       "number": "35.0",
       "unit": "ppm"
+    },
+    "batch.sparge_salted_volume": {
+      "text": "18.7 L",
+      "number": "18.7",
+      "unit": "L"
+    },
+    "water.salt_distribution": {
+      "text": "Split \u2014 grist and HLT",
+      "number": null,
+      "unit": null
+    },
+    "water.gypsum_form": {
+      "text": "Dihydrate (CaSO\u2084\u00b72H\u2082O)",
+      "number": null,
+      "unit": null
+    },
+    "water.cacl2_form": {
+      "text": "Dihydrate (CaCl\u2082\u00b72H\u2082O)",
+      "number": null,
+      "unit": null
+    },
+    "water.acid_medium": {
+      "text": "88% lactic acid",
+      "number": null,
+      "unit": null
+    },
+    "solver.water.mash_additions.gypsum_kg": {
+      "text": "4.2 g",
+      "number": "4.2",
+      "unit": "g"
+    },
+    "solver.water.mash_additions.cacl2_kg": {
+      "text": "2.1 g",
+      "number": "2.1",
+      "unit": "g"
+    },
+    "solver.water.mash_additions.acid_l": {
+      "text": "1.4 mL",
+      "number": "1.4",
+      "unit": "mL"
+    },
+    "solver.water.sparge_additions.gypsum_kg": {
+      "text": "4.8 g",
+      "number": "4.8",
+      "unit": "g"
+    },
+    "solver.water.sparge_additions.cacl2_kg": {
+      "text": "2.4 g",
+      "number": "2.4",
+      "unit": "g"
+    },
+    "solver.water.sparge_additions.acid_l": {
+      "text": "1.0 mL",
+      "number": "1.0",
+      "unit": "mL"
     },
     "batch.target_abv": {
       "text": "5.5%",
@@ -9443,5 +9745,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:5894dab21449e89fd2a6f1ac41b104967dd0f18cfcf9e8648cc9f6b53eb887dc"
+  "content_hash": "sha256:292c1d0a076cd68cf2f215c164e77e1a45111d7a80a8cea433c3622a339a0d9f"
 }

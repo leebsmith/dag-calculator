@@ -26,8 +26,10 @@ reads the per-row cells for a collection and `formatted-summary` its weighted
 colour and extract yield. `boundary-telemetry(id)` returns the frozen event list
 for one boundary (`()` when it did not run). The generator never converts, rounds,
 or picks a symbol. Raw numbers stay in `state.valuation` for the record, but
-sections print `formatted` strings. Component names live in `batch.identity`
-and are also present as `formatted["equipment.name"].text`, etc.
+sections print `formatted` strings. A raw value may be read for a magnitude
+predicate (for example, suppressing a zero dose); the printed figure still comes
+from `formatted`. Component names live in `batch.identity` and are also present
+as `formatted["equipment.name"].text`, etc.
 
 From `lib/bundle.typ`: `bundle`, `batch`, `state`, `catalog`, `display-values`,
 `is-frozen`.

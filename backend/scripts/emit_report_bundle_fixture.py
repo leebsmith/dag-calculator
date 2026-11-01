@@ -331,6 +331,11 @@ RECORD = {
         "batch.delta_v_evap": 3.0,
         "batch.late_addition_volume_l": 0.5,
         "batch.shrinkage_volume_l": 0.9,
+        "batch.sparge_salted_volume": 18.7,
+        "water.salt_distribution": "PROPORTIONAL",
+        "water.gypsum_form": "GYPSUM_DIHYDRATE",
+        "water.cacl2_form": "CACL2_DIHYDRATE",
+        "water.acid_medium": "LACTIC_88",
         "water.target.calcium_ca": 50.0,
         "water.target.magnesium_mg": 10.0,
         "water.target.sodium_na": 15.0,
@@ -353,7 +358,23 @@ RECORD = {
             "post_dose_mash_ions.sulfate_so4": 100.0,
             "post_dose_mash_ions.chloride_cl": 60.0,
             "post_dose_mash_ions.alkalinity_as_caco3": 35.0,
-            "total_added_salt_mass_g": 3.0,
+            "mash_additions.gypsum_kg": 0.0042,
+            "mash_additions.cacl2_kg": 0.0021,
+            "mash_additions.epsom_kg": 0.0,
+            "mash_additions.nacl_kg": 0.0,
+            "mash_additions.acid_l": 0.0014,
+            "mash_additions.baking_soda_kg": 0.0,
+            "mash_additions.chalk_kg": 0.0,
+            "mash_additions.pickling_lime_kg": 0.0,
+            "sparge_additions.gypsum_kg": 0.0048,
+            "sparge_additions.cacl2_kg": 0.0024,
+            "sparge_additions.epsom_kg": 0.0,
+            "sparge_additions.nacl_kg": 0.0,
+            "sparge_additions.acid_l": 0.0010,
+            "sparge_additions.baking_soda_kg": 0.0,
+            "sparge_additions.chalk_kg": 0.0,
+            "sparge_additions.pickling_lime_kg": 0.0,
+            "total_added_salt_mass_g": 0.0135,
         },
         "solver.hops": {
             "boil_rows": [
@@ -882,6 +903,91 @@ PAYLOAD = FreezePayload(
             "water.mash_adjustment.alkalinity_as_caco3": NodePresentation(
                 label="Alkalinity", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
             ),
+            "batch.sparge_salted_volume": NodePresentation(
+                label="Sparge salt dosing volume",
+                dimension="volume",
+                unit="L",
+                symbol="L",
+                decimals=1,
+            ),
+            "water.salt_distribution": NodePresentation(
+                label="Salt distribution",
+                options=["MASH_ONLY", "PROPORTIONAL"],
+                option_labels={
+                    "MASH_ONLY": "Mash only salts",
+                    "PROPORTIONAL": "Split — grist and HLT",
+                },
+            ),
+            "water.gypsum_form": NodePresentation(
+                label="Gypsum form",
+                options=["GYPSUM_DIHYDRATE", "GYPSUM_ANHYDROUS"],
+                option_labels={
+                    "GYPSUM_DIHYDRATE": "Dihydrate (CaSO₄·2H₂O)",
+                    "GYPSUM_ANHYDROUS": "Anhydrous (CaSO₄)",
+                },
+            ),
+            "water.cacl2_form": NodePresentation(
+                label="CaCl2 form",
+                options=["CACL2_DIHYDRATE", "CACL2_ANHYDROUS"],
+                option_labels={
+                    "CACL2_DIHYDRATE": "Dihydrate (CaCl₂·2H₂O)",
+                    "CACL2_ANHYDROUS": "Anhydrous (CaCl₂)",
+                },
+            ),
+            "water.acid_medium": NodePresentation(
+                label="Acid medium",
+                options=["LACTIC_88", "PHOSPHORIC_10", "PHOSPHORIC_85"],
+                option_labels={
+                    "LACTIC_88": "88% lactic acid",
+                    "PHOSPHORIC_10": "10% phosphoric acid",
+                    "PHOSPHORIC_85": "85% phosphoric acid",
+                },
+            ),
+            "solver.water.mash_additions.cacl2_kg": NodePresentation(
+                label="Mash calcium chloride", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.mash_additions.epsom_kg": NodePresentation(
+                label="Mash Epsom salt", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.mash_additions.nacl_kg": NodePresentation(
+                label="Mash table salt", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.mash_additions.acid_l": NodePresentation(
+                label="Mash acid", dimension="volume", unit="ml", symbol="mL", decimals=1
+            ),
+            "solver.water.mash_additions.baking_soda_kg": NodePresentation(
+                label="Mash baking soda", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.mash_additions.chalk_kg": NodePresentation(
+                label="Mash chalk", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.mash_additions.pickling_lime_kg": NodePresentation(
+                label="Mash pickling lime", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.gypsum_kg": NodePresentation(
+                label="Sparge gypsum", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.cacl2_kg": NodePresentation(
+                label="Sparge calcium chloride", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.epsom_kg": NodePresentation(
+                label="Sparge Epsom salt", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.nacl_kg": NodePresentation(
+                label="Sparge table salt", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.acid_l": NodePresentation(
+                label="Sparge acid", dimension="volume", unit="ml", symbol="mL", decimals=1
+            ),
+            "solver.water.sparge_additions.baking_soda_kg": NodePresentation(
+                label="Sparge baking soda", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.chalk_kg": NodePresentation(
+                label="Sparge chalk", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.water.sparge_additions.pickling_lime_kg": NodePresentation(
+                label="Sparge pickling lime", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
             "solver.hops": NodePresentation(label="Hop solver"),
             "solver.water.prescription.predicted_mash_ph": NodePresentation(
                 label="Predicted mash pH", dimension="ph", unit="pH", symbol="pH", decimals=2
@@ -1202,6 +1308,29 @@ PAYLOAD = FreezePayload(
         ),
         "solver.water.post_dose_mash_ions.alkalinity_as_caco3": FormattedValue(
             text="35.0 ppm", number="35.0", unit="ppm"
+        ),
+        "batch.sparge_salted_volume": FormattedValue(text="18.7 L", number="18.7", unit="L"),
+        "water.salt_distribution": FormattedValue(text="Split — grist and HLT"),
+        "water.gypsum_form": FormattedValue(text="Dihydrate (CaSO₄·2H₂O)"),
+        "water.cacl2_form": FormattedValue(text="Dihydrate (CaCl₂·2H₂O)"),
+        "water.acid_medium": FormattedValue(text="88% lactic acid"),
+        "solver.water.mash_additions.gypsum_kg": FormattedValue(
+            text="4.2 g", number="4.2", unit="g"
+        ),
+        "solver.water.mash_additions.cacl2_kg": FormattedValue(
+            text="2.1 g", number="2.1", unit="g"
+        ),
+        "solver.water.mash_additions.acid_l": FormattedValue(
+            text="1.4 mL", number="1.4", unit="mL"
+        ),
+        "solver.water.sparge_additions.gypsum_kg": FormattedValue(
+            text="4.8 g", number="4.8", unit="g"
+        ),
+        "solver.water.sparge_additions.cacl2_kg": FormattedValue(
+            text="2.4 g", number="2.4", unit="g"
+        ),
+        "solver.water.sparge_additions.acid_l": FormattedValue(
+            text="1.0 mL", number="1.0", unit="mL"
         ),
         "batch.target_abv": FormattedValue(text="5.5%", number="5.5", unit="%"),
         "mash.strike_water_temp_c": FormattedValue(text="68.3 °C", number="68.3", unit="°C"),

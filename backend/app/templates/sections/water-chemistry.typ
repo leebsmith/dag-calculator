@@ -1,7 +1,9 @@
 // Water Chemistry: the source report, the selected objective, the ion ledger
-// from source to the treated mash, and the solver's findings. Every figure is
-// the bundle's frozen display string; this section only arranges them.
+// from source to the treated mash, the treatment doses, and the solver's
+// findings. Every figure is the bundle's frozen display string; this section
+// only arranges them.
 
+#import "../lib/bundle.typ": state
 #import "../lib/format.typ": boundary-telemetry, formatted-number, formatted-text, present-formatted
 
 #let ion-rows = (
@@ -44,6 +46,46 @@
 
 #let join-parts(parts) = parts.filter(part => part != none).join(" · ")
 
+// A magnitude predicate only: the printed figure is always the frozen string.
+#let water-output(key) = {
+  let boundary = state.valuation.at("solver.water", default: none)
+  if boundary == none { return none }
+  boundary.at(key, default: none)
+}
+
+#let nonzero(key) = {
+  let value = water-output(key)
+  (type(value) == int or type(value) == float) and value > 0
+}
+
+#let dose-rows(prefix, acid-label) = (
+  (key: prefix + ".gypsum_kg", label: "Gypsum"),
+  (key: prefix + ".cacl2_kg", label: "Calcium chloride"),
+  (key: prefix + ".epsom_kg", label: "Epsom salt"),
+  (key: prefix + ".nacl_kg", label: "Table salt"),
+  (key: prefix + ".acid_l", label: acid-label),
+  (key: prefix + ".baking_soda_kg", label: "Baking soda"),
+  (key: prefix + ".chalk_kg", label: "Chalk"),
+  (key: prefix + ".pickling_lime_kg", label: "Pickling lime"),
+)
+
+#let dose-table(prefix, acid-label) = {
+  let rows = dose-rows(prefix, acid-label).filter(row => nonzero(row.key))
+  if rows.len() == 0 { return none }
+  table(
+    columns: (1fr, auto),
+    align: (left, right),
+    stroke: none,
+    inset: (x: 3pt, y: 2pt),
+    table.header([Treatment], [Amount]),
+    ..rows
+      .map(row => (row.label, formatted-text("solver.water." + row.key)))
+      .flatten(),
+  )
+}
+
+#let present-dosage() = present-formatted("solver.water.mash_additions.gypsum_kg")
+
 #let source-identification() = {
   let name = first-text((
     "water.source.source_name",
@@ -80,6 +122,66 @@
   if status == none { ph } else { ph + " · " + status }
 }
 
+#let dosage-basis() = {
+  let forms = join-parts((
+    text-or("water.gypsum_form"),
+    text-or("water.cacl2_form"),
+    text-or("water.acid_medium"),
+  ))
+  let distribution = text-or("water.salt_distribution")
+  let parts = (
+    if forms != "" { "Masses assume " + forms } else { none },
+    distribution,
+    "Only nonzero additions shown",
+  )
+  let sentence = join-parts(parts)
+  if sentence == "" { none } else { sentence + "." }
+}
+
+#let render-dosage() = {
+  let acid = text-or("water.acid_medium")
+  let acid-label = if acid == none { "Acid" } else { acid }
+  let mash = dose-table("mash_additions", acid-label)
+  let sparge = dose-table("sparge_additions", acid-label)
+  let strike = text-or("solver.batch.cascade.v_strike")
+  let salted = text-or("batch.sparge_salted_volume")
+  let delivered = text-or("solver.batch.hlt.v_sparge_deliverable")
+  let basis = dosage-basis()
+
+  heading(level: 3)[Treatment Dosage]
+
+  let mash-detail = if strike == none {
+    "dry grist, before underletting"
+  } else {
+    "dry grist, before underletting; sized for " + strike
+  }
+  text(size: 9pt)[*Mash* — #mash-detail]
+  if mash == none {
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[No mash additions.]
+  } else {
+    mash
+  }
+
+  v(4pt)
+  let sparge-detail = join-parts((
+    if salted == none { "HLT after top-up" } else { "HLT after top-up to " + salted },
+    if delivered == none { none } else { delivered + " delivered" },
+  ))
+  text(size: 9pt)[*Sparge* — #sparge-detail]
+  if sparge == none {
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[No sparge additions.]
+  } else {
+    sparge
+  }
+
+  if basis != none {
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[#basis]
+  }
+}
+
 #let water-events() = boundary-telemetry("solver.water")
 
 // Severity is the reading order: problems first, then the decision log.
@@ -108,59 +210,68 @@
   value,
 )
 
-#let render-water-chemistry() = block(breakable: false, {
-  let ph = predicted-ph()
-  let facts = (
-    identity-row("Source", source-identification()),
-    identity-row("Objective", objective-line()),
-  )
-  if ph != none {
-    facts = facts + (identity-row("Predicted mash pH", ph),)
-  }
-  grid(
-    columns: (auto, 1fr),
-    column-gutter: 8pt,
-    row-gutter: 2pt,
-    ..facts.flatten(),
-  )
+#let render-water-chemistry() = {
+  block(breakable: false, {
+    let ph = predicted-ph()
+    let facts = (
+      identity-row("Source", source-identification()),
+      identity-row("Objective", objective-line()),
+    )
+    if ph != none {
+      facts = facts + (identity-row("Predicted mash pH", ph),)
+    }
+    grid(
+      columns: (auto, 1fr),
+      column-gutter: 8pt,
+      row-gutter: 2pt,
+      ..facts.flatten(),
+    )
 
-  v(6pt)
-  table(
-    columns: (auto, auto, auto, auto, auto),
-    align: (left, right, right, right, right),
-    stroke: none,
-    inset: (x: 3pt, y: 2pt),
-    table.header(
-      [Ion],
-      [Source (PPM)],
-      [Objective (PPM)],
-      [Adjustment (PPM)],
-      [Final Water (PPM)],
-    ),
-    ..ion-rows
-      .map(row => (
-        row.label,
-        number-or(row.source),
-        number-or(row.objective),
-        signed-or(row.adjustment),
-        number-or(row.final),
-      ))
-      .flatten(),
-  )
-  v(2pt)
-  text(size: 8pt, fill: rgb("#6b6b6b"))[
-    Source is the batch's water report, Objective the selected target vector,
-    and Final Water the treated mash. Adjustment is the net source-to-final
-    change; concentrations are ppm by mass.
-  ]
+    v(6pt)
+    table(
+      columns: (auto, auto, auto, auto, auto),
+      align: (left, right, right, right, right),
+      stroke: none,
+      inset: (x: 3pt, y: 2pt),
+      table.header(
+        [Ion],
+        [Source (PPM)],
+        [Objective (PPM)],
+        [Adjustment (PPM)],
+        [Final Water (PPM)],
+      ),
+      ..ion-rows
+        .map(row => (
+          row.label,
+          number-or(row.source),
+          number-or(row.objective),
+          signed-or(row.adjustment),
+          number-or(row.final),
+        ))
+        .flatten(),
+    )
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[
+      Source is the batch's water report, Objective the selected target vector,
+      and Final Water the treated mash. Adjustment is the net source-to-final
+      change; concentrations are ppm by mass.
+    ]
+  })
+
+  if present-dosage() {
+    v(4pt)
+    block(breakable: false, { render-dosage() })
+  }
 
   let events = ordered-events()
   if events.len() > 0 {
     v(4pt)
-    heading(level: 3)[Solver Findings]
-    for event in events {
-      event-line(event)
-      linebreak()
-    }
+    block(breakable: false, {
+      heading(level: 3)[Solver Findings]
+      for event in events {
+        event-line(event)
+        linebreak()
+      }
+    })
   }
-})
+}

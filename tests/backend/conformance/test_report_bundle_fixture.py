@@ -162,3 +162,15 @@ def test_the_bundle_ledgers_close():
         adjustment = valuation[f"water.mash_adjustment.{ion}"]
         assert adjustment == pytest.approx(final - source[source_key])
         assert source[source_key] + adjustment == pytest.approx(final)
+
+    # Treatment dosage: the reported salt total is the sum of both destinations,
+    # including any alkaline agent.
+    water = valuation["solver.water"]
+    masses = ("gypsum_kg", "cacl2_kg", "epsom_kg", "nacl_kg")
+    agents = ("baking_soda_kg", "chalk_kg", "pickling_lime_kg")
+    total = sum(
+        water[f"{destination}.{key}"]
+        for destination in ("mash_additions", "sparge_additions")
+        for key in masses + agents
+    )
+    assert water["total_added_salt_mass_g"] == pytest.approx(total)

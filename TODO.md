@@ -82,8 +82,9 @@ Eight sections have landed — Brewhouse, Batch Facts, Hops, Yeast, Volume Ledge
 Liquor Ledger, Water Chemistry and Limits — with the bundle and the render
 service (`GET`/`POST /batches/{id}/report`). Brewhouse prints the two solved mash
 ratios (L/kg and r); Water Chemistry carries the source report, the target
-profile, the source-to-final ion table, predicted mash pH and solver telemetry;
-and Limits carries the feasibility ceiling and binding capacity plus a closing
+profile, the source-to-final ion table, the mash and sparge treatment doses,
+predicted mash pH and solver telemetry; and Limits carries the feasibility
+ceiling and binding capacity plus a closing
 extract ledger: potential, conversion inefficiency, converted, mash tun and
 transfer losses, into the kettle, late additions, post-boil, kettle losses, into
 the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
@@ -94,9 +95,6 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
   Strike temperature already prints in Brewhouse.
 * **Pinned ions section** — `water.pinned_ions` rows; the checked targets and their
   values, so a reader can see what constrained the water solver.
-* **Salt dosing section** — `solver.water` present and `total_added_salt_mass_g > 0`;
-  mash and sparge additions against their dose volumes (`cascade.v_strike`,
-  `batch.sparge_salted_volume`).
 * **Style conformance section** — `conformance` is not `null`; SAI and the
   per-pillar verdicts already captured at freeze.
 
