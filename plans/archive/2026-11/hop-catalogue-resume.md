@@ -1,6 +1,7 @@
 ---
 title: Hop catalogue — resume dossier
-status: active
+status: superseded
+superseded_by: plans/realize-hop-treatment-collapse.md
 program: deterministic-dag-calculator
 depends_on: []
 blocks: []
@@ -8,6 +9,10 @@ gate: make check + make test
 ---
 
 # Hop catalogue — resume dossier (2026-11-01 evening)
+
+Superseded by `plans/realize-hop-treatment-collapse.md`. The dossier's Tier 1
+questions are answered there by deleting the product enumeration rather than by
+completing it; its settled decisions and analyses remain the record.
 
 Status: paused for the evening. The workstream is committed up to `9c853a1`
 (`832105f`…`9c853a1`, ten commits, not pushed); this dossier is the resume point

@@ -5,6 +5,7 @@ program: deterministic-dag-calculator
 supersedes: plans/hop-catalogue-resume.md
 gate: make check + make test
 ---
+<!-- claims: proposed batch.cone_utilization batch.whirlpool_knockout_min batch.whirlpool_start_temp_c -->
 
 # Realize the hop treatment collapse
 

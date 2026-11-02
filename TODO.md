@@ -5,31 +5,18 @@ tracks only what is outstanding.
 
 ## Critical
 
-* **Catalogue alphas disagree with the manufacturer sheets.** Hop mass is the
-  inverse of the allocated IBU through alpha, so a wrong alpha scales every mass
-  in that row.
-  - **Incognito** carries `0.20–0.55` (mid `0.375`) on all ten products; Haas's
-    General Use sheet says **40–55 %** (mid `0.475`) — every mass is 21 % high.
-  - **Cryo Hops** ranges do not match YCH's 2022 overview sheet (Cascade `9–14`
-    vs **13–19**, Talus `15–20` vs **10–14**, Amarillo `15–19` vs **11–17**,
-    Cashmere `12–16` vs **14–17**, Citra `20–25` vs **22–28**), and nine varieties
-    share one `20–25` band. Cryo and Lupomax also share one range per variety, so
-    at most one brand's record can be right.
-
-  Fix it as part of the advanced-product seed pass — curate per product and per
-  brand from the linked sheets (`data/sources/hop-products.json`,
-  `data/sources/hop-products-lupulin.json`, then `make seeds`), and audit every
-  product while there. The sheets are captured in `data/sources/yvh-products.json`
-  and the YCH product pages. Do not fix in isolation.
+* **Catalogue alphas are presets, not assays.** In flight under
+  `plans/realize-hop-treatment-collapse.md`: the 61-row product catalogue becomes
+  seven variants, and the per-variety tables move into `docs/hops/hop-products.md`
+  with their vintage. Until that lands the seeded alphas are wrong — Incognito
+  carries `0.20–0.55` against Haas's `40–55 %`, and Cryo and Lupomax share one
+  range per variety although both are published (YCH 2022, BarthHaas 2025).
+  Hop mass is the inverse of the allocated IBU through alpha, so a wrong alpha
+  scales every mass in the row.
 
 ## Next (in order)
 
-1. **Schedule-derived whirlpool IBU** — the hop math now lives in the sealed
-   backend boundary `solver.hops` (`docs/hops/whirlpool-hopping-model.md`); the
-   remaining work is replacing the manual `batch.whirlpool_ibu_fraction` with a
-   schedule-derived IBU split. The JS `views/whirlpool.js` / `views/hops.js`
-   copies are the offline stub only.
-2. **Footer bar** — the shell landed: save state and conflict recovery, step
+1. **Footer bar** — the shell landed: save state and conflict recovery, step
    position, boundary status, violation count, SAI, and the enumerated findings
    list. What remains is the gravity/ABV/SRM/IBU readouts and the LIFO ordering
    of soft warnings (`plans/warnings.md` W.1–W.5, still proposed).
