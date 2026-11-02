@@ -318,8 +318,10 @@ deploy-backend:
 		--allow-unauthenticated
 
 deploy-frontend:
+	@test -z "$${VITE_API_BASE:-}" || { echo "deploy-frontend: VITE_API_BASE must stay unset; production is same-origin through Hosting rewrites" >&2; exit 1; }
 	@echo "Building frontend..."
 	cd frontend && npm run build
+	@if grep -rq "run\.app" frontend/dist/assets; then echo "deploy-frontend: bundle contains a Cloud Run origin; production must stay same-origin" >&2; exit 1; fi
 	@echo "Deploying frontend to Firebase Hosting..."
 	npx firebase deploy --only hosting --project $(PROJECT_ID)
 

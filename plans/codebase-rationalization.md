@@ -702,10 +702,25 @@ Commit: `Derive the presentation metadata and close the A3 guard holes`.
 - **New guard** `tests/guards/docs-display-precision.test.js` compares
   `docs/display-precision.md` with `units.js`; it found one missing dimension
   row (`temperature_delta_per_time`), now added.
-- **Kept:** `CARD_UNIT_KEYS` (`hop.mass`). It is the hop card's synthetic mass
-  pill, not an artifact path; deleting it would drop a persisted preference.
+- **Kept:** `CARD_UNIT_KEYS` (the hop card's synthetic mass-pill key). It is not
+  an artifact path, and deleting it would drop a persisted preference.
 - Registry entries **199 → 196** (the 3 duplicates); production lines
   **42,905 → 42,892**. `make check` and `make test` green.
+
+### 2026-11-02 — D8 deployment contract landed
+
+Commit: `Proxy the API through Hosting and record the deployment contract`.
+
+- `firebase.json`: six `run` rewrites (`/solve/**`, `/batches/**`,
+  `/brew-sessions/**`, `/catalog/**`, `/report/**`, `/session`) before the SPA
+  catch-all; `/health` stays off Hosting.
+- `make deploy-frontend` refuses a set `VITE_API_BASE` and a bundle containing a
+  Cloud Run origin, so a cross-origin build cannot ship.
+- `scripts/check-firebase-config.mjs` now checks the rewrite set and order and
+  that the service/region match `CLOUD_RUN_SERVICE`/`CLOUD_RUN_REGION` in the
+  `Makefile`; the CSP check still pins `connect-src 'self'`.
+- `README.md` "Production topology" records the one-origin run, the unset base,
+  the absence of CORS, and the Admin-SDK-only data path.
 
 ### Corrections found while executing (the plan was wrong about these)
 

@@ -21,6 +21,48 @@
     ],
     "rewrites": [
       {
+        "source": "/solve/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/batches/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/brew-sessions/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/catalog/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/report/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/session",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

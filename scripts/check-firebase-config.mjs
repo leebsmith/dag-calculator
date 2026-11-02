@@ -20,6 +20,60 @@ function hasRewrite(rewrites) {
   );
 }
 
+// D8: production is same-origin. Every API prefix is a Cloud Run rewrite that
+// must precede the SPA catch-all, and its service/region must match the
+// Makefile's deploy target. `/health` stays off Hosting.
+const API_SOURCES = [
+  "/solve/**",
+  "/batches/**",
+  "/brew-sessions/**",
+  "/catalog/**",
+  "/report/**",
+  "/session",
+];
+
+function deployTargets() {
+  const makefile = read("Makefile");
+  return {
+    service: makefile.match(/^CLOUD_RUN_SERVICE\s*:=\s*(\S+)/m)?.[1],
+    region: makefile.match(/^CLOUD_RUN_REGION\s*:=\s*(\S+)/m)?.[1],
+  };
+}
+
+function checkApiRewrite(source, entry, spaIndex, index, { service, region }) {
+  if (index === -1) {
+    fail(`hosting.rewrites must proxy ${source} to Cloud Run`);
+    return;
+  }
+  if (spaIndex !== -1 && index > spaIndex) {
+    fail(`${source} rewrite must precede the SPA catch-all`);
+  }
+  if (entry?.run?.serviceId !== service) {
+    fail(`${source} rewrite serviceId must match CLOUD_RUN_SERVICE (${service})`);
+  }
+  if (entry?.run?.region !== region) {
+    fail(`${source} rewrite region must match CLOUD_RUN_REGION (${region})`);
+  }
+}
+
+function checkApiRewrites(rewrites) {
+  const list = Array.isArray(rewrites) ? rewrites : [];
+  const spaIndex = list.findIndex(
+    (r) => r?.source === "**" && r?.destination === "/index.html"
+  );
+  const targets = deployTargets();
+  if (!targets.service || !targets.region) {
+    fail("Makefile must declare CLOUD_RUN_SERVICE and CLOUD_RUN_REGION");
+  }
+  for (const source of API_SOURCES) {
+    const index = list.findIndex((r) => r?.source === source);
+    checkApiRewrite(source, list[index], spaIndex, index, targets);
+  }
+  if (list.some((r) => r?.source === "/health")) {
+    fail("/health must not be exposed through Hosting");
+  }
+}
+
 function headersFor(config, source) {
   const entry = (config.hosting?.headers ?? []).find((h) => h.source === source);
   const out = {};
@@ -66,6 +120,7 @@ if (hosting.public !== "frontend/dist") {
 if (!hasRewrite(hosting.rewrites)) {
   fail('firebase.json hosting.rewrites must contain { source: "**", destination: "/index.html" }');
 }
+checkApiRewrites(hosting.rewrites);
 
 const indexHeaders = headersFor(config, "/index.html");
 if (indexHeaders["Cache-Control"] !== "no-cache") {

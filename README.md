@@ -128,6 +128,21 @@ Firebase console setup:
 `make local-dev` passes `ALLOWED_EMAILS=dev@localhost` to the backend; sign in to
 the Auth emulator with that Google account (or change the Makefile value).
 
+Production topology:
+
+- **One origin.** Firebase Hosting serves the frontend and proxies the API to the
+  Cloud Run service through `run` rewrites in `firebase.json`; the Firestore
+  database is reached only from the backend. Project, region and service name
+  live in the `Makefile`; the rewrite list lives in `firebase.json`.
+- **Same-origin only.** `VITE_API_BASE` stays unset, there is no CORS middleware,
+  and the CSP `connect-src` allows only `'self'` plus Google APIs. A separate API
+  origin would need both a CSP edit and CORS — a deliberate decision, not a
+  config tweak. `make deploy-frontend` fails if the base is set or the bundle
+  carries a Cloud Run origin.
+- **Data.** `firestore.rules` is deny-all for clients; the browser is an
+  Auth-only client and every read or write goes through the backend's Admin SDK.
+  The per-uid token bucket smooths bursts; Cloud Armor is the network perimeter.
+
 Deployment notes:
 
 - `make deploy-backend` vendors `data/artifact.json` and `data/catalogs.json`
