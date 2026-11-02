@@ -38,7 +38,7 @@ export const hopsRegistry = {
   "batch.boil_hops.hop_id": { label: "Hop ID" },
   "batch.boil_hops.name": { label: "Hop" },
   "batch.boil_hops.alpha_acid_pct": { label: "Alpha", displayUnit: "pct" },
-  "batch.boil_hops.boil_time_fraction": { label: "Before flameout", displayUnit: "pct" },
+  "batch.boil_hops.boil_time_fraction": { label: "Portion of boil", displayUnit: "pct" },
   "batch.boil_hops.parts": { label: "Parts" },
   "batch.boil_hops.product_form": {
     label: "Form",

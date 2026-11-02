@@ -32,7 +32,7 @@ _126 paths_
 | `batch.attenuation_derate_points` | Batch derate (points) | root | percentage | pct (pts) | 1 | — |
 | `batch.boil_hops` | Boil hops | collection | — | — | — | — |
 | `batch.boil_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
-| `batch.boil_hops.boil_time_fraction` | Before flameout | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.boil_time_fraction` | Portion of boil | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
 | `batch.boil_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.boil_hops.name` | Hop | field | — | — | — | — |

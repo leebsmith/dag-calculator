@@ -203,6 +203,27 @@ truth, and a cool stand simply yields less.
 - `R_absorption = 0` for extract. The model already uses the post-boil hot
   kettle volume and does not subtract hop vegetative absorption.
 
+### Boil timeline
+
+A boil charge authors its **share of the boil**, not a minute count:
+
+```
+t_exposure_i = boil_time_fraction_i × batch.boil_time_min
+```
+
+The share is deliberate, and it is the one place the two hot-side coordinates
+differ. A whirlpool charge authors a *position* (minutes after flameout) because
+position decides the temperature the charge meets; a boil charge authors a
+*share* because there is no temperature history to meet, only duration. The
+consequence is intended and must not be "fixed": changing
+`batch.boil_time_min` re-solves every boil charge, so a longer boil needs less
+hops for the same IBU. The boil length is a recipe input, not just a process
+setting.
+
+A share of 100 % is a full-boil charge and 0 % is flameout; the card prints both
+the share and the solved minutes, and the editor names the field "Portion of
+boil" so a percentage is never mistaken for a position.
+
 ### Whirlpool timeline
 
 Charges cannot be removed without emptying the kettle, so every charge rests to
