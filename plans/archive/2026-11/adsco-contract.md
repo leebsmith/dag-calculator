@@ -1,6 +1,6 @@
 # ADSCO Contract — reconciled design
 
-Status: draft for review. Supersedes the legacy water model; input is the vendored
+Status: executed and archived 2026-11-02. Supersedes the legacy water model; input is the vendored
 `docs/adsco/*` specs (locked for the first pass). Where those specs are ambiguous
 or over-reach the implementation, this document records the **reconciled
 decision** that the code will follow.

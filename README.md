@@ -19,7 +19,7 @@ backend with Firebase auth and Firestore persistence.
 | [`frontend/`](frontend/) | engine, views, adapters, stores (Vite + Alpine) |
 | [`backend/`](backend/) | FastAPI JSON seam, solvers, auth, persistence |
 | [`tests/`](tests/) | frontend engine/conformance/guards + backend pytest |
-| [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate, node reference |
+| [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate |
 | [`docs/engine.md`](docs/engine.md) | **living** — how the reference engine works (data structures + interpreter) |
 | [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
 | [`docs/vision.md`](docs/vision.md) | **living** — why the calculator is a solver, where boundaries belong, what it refuses to do, review checklist |
@@ -31,8 +31,13 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/report-sections.md`](docs/report-sections.md) | **generated** — canonical section order, presence predicates, source files |
 | [`docs/typst-notes.md`](docs/typst-notes.md) | **living** — verified Typst 0.15.1 idioms and the template API |
 | [`docs/hops/`](docs/hops/) | **living** — whirlpool bitterness theory, equations, constants, reference vectors, and the hop background documents |
+| [`docs/attenuation-model.md`](docs/attenuation-model.md) | **living** — composition, attenuation regimes, basis audit, scale pins, assumption register |
 | [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — extract yield vs fermentability, mixed-wort AA, yeast cap |
-| [`docs/belgian-knob.md`](docs/belgian-knob.md) | **living** — advisory sugar dose to shift AA/ABV at fixed AE |
+| [`docs/sugar-database.md`](docs/sugar-database.md) | **living** — sugar source tiers, overlay policy, effective fermentability |
+| [`docs/brew-checklist.md`](docs/brew-checklist.md) | **living** — generated checklist: levels, phases, conditions, providers |
+| [`docs/brew-session.md`](docs/brew-session.md) | **living** — session document, sealing, observations, corrections, Brew Sheet |
+| [`docs/record-library.md`](docs/record-library.md) | **living** — non-DAG record layer: schemas, catalogs, cooling curves, editors |
+| [`docs/calculator-assumed-dosing-practice.md`](docs/calculator-assumed-dosing-practice.md) | **living** — what the dosing model assumes and cannot verify |
 | [`docs/display-precision.md`](docs/display-precision.md) | **living** — decimal precision policy for displayed values |
 | [`docs/style-rulebook.md`](docs/style-rulebook.md) | CSS design-token conventions |
 | [`plans/`](plans/) | execution history — step plans + explorations |
@@ -201,7 +206,9 @@ re-synced into the inventory fails the gate.
 `docs/frontend-ownership.md` is generated from
 `frontend/src/adapters/installers.js` (`node scripts/emit-ownership-index.mjs`)
 and checked by `tests/guards/ownership.test.js` — an installer or card-partial
-change that isn't re-synced fails the gate.
+change that isn't re-synced fails the gate. The committed document is the
+summary (counts, installer table, cross-owner reads); the 700-line member table
+is on demand with `node scripts/emit-ownership-index.mjs --full`.
 
 ## Maintaining the docs
 
@@ -233,7 +240,7 @@ discipline. After any change to `data/artifact.json` (and any change under
    | invariant / model rule | `semantics.md` |
    | `schema_version` bump | `grammar.md` §5 (inventory is auto) |
    | engine behavior | `docs/engine.md` |
-   | what a node id exposes | `node-reference.md` |
+   | what a node id exposes | `docs/engine.md` §"Resolving from a node id" |
    | taxonomy | wherever it's used (`domain-equations.md` / `seed-substrate.md`) |
 
 4. **Commit the prose with the artifact change** — a model change isn't done

@@ -1,6 +1,6 @@
 ---
 title: Brew Log Contract
-status: proposed
+status: executed (Phases 1–2 shipped; Phase 3 tracks in plans/brew-measurement-promotion.md)
 program: deterministic-dag-calculator
 depends_on: []
 blocks: [brew-checklist, brew-session, brew-measurement-promotion]

@@ -187,7 +187,7 @@ tags. `batch.target_abv` inherits the artifact default
 `(style.abv_min + style.abv_max) / 2`; the host only seeds
 `batch.fermentation`. The batch AA is not seeded: it is solved from the grist +
 yeast cap. The Style step then re-centers the ABV target on the fixed-AA ray
-(see `docs/style-card-centroid.md`).
+(see `docs/attenuation-model.md` §6.3).
 
 ### 2.7 `hop`
 

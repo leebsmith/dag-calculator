@@ -44,6 +44,21 @@ Examples:
 These are **not** physical base dimensions, but domain quantities with their own
 unit semantics.
 
+The artifact declares 21 dimensions in all. `docs/dag-artifacts/inventory.md`
+is the authoritative list; this section explains the ones whose conversion is
+not a plain linear factor. The remaining scalars are single-unit linear
+quantities with no conversion table:
+
+| id | base unit | note |
+|---|---|---|
+| `abv` | `pct` | alcohol by volume, displayed `%` |
+| `concentration` | `ppm` | ion and mineral concentrations |
+| `ibu` | `IBU` | bitterness; no alternate unit |
+| `ph` | `pH` | logarithmic scale, stored as the reading (no transform) |
+| `reference` | `id` | identity: a catalog id, never arithmetic |
+| `dimensionless` | `1` | identity: ratios, counts, factors |
+| `volume_per_time` | `L_per_hr` | `gal_per_hr` = 3.785411784 L/hr |
+
 ### 3.1 `gravity` — dimensionless, nonlinear
 
 Base unit **SG**. `Plato` is a nonlinear transform of SG via the ASBC polynomial:

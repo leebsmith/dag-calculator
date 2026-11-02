@@ -47,7 +47,8 @@ boundary. For example, `solver.batch.mash_thickness_l_per_kg` is the
 `equipment` identity schema, read through `batch.identity`.
 
 > For everything resolvable from a node id at runtime (valuation, domain state,
-> topology, provenance, view metadata), see `node-reference.md`.
+> topology, provenance, view metadata), see `docs/engine.md` §"Resolving from
+> a node id".
 
 ---
 

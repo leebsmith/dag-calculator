@@ -67,6 +67,46 @@ against `--root`. The service passes `/report.json` from its temp root; the
 local targets pass `/.local/report/report.json` with the repo as root. One
 mechanism, no staging step in the edit cycle.
 
+### Drafting a new section without touching the templates
+
+To iterate on a section while the real registry stays clean, build a shadow
+directory under `.local/report-dev/`:
+
+```
+.local/report-dev/
+  report.typ                    # copy of the real one + the draft entries
+  theme.typ -> ../../../backend/app/templates/theme.typ
+  lib       -> ../../../backend/app/templates/lib
+  fonts     -> ../../../backend/app/templates/fonts
+  sections/
+    volume-ledger.typ -> ../../../../backend/app/templates/sections/volume-ledger.typ
+    draft-section.typ           # the real draft
+```
+
+`report.typ` in the shadow gets the extra import and one registry line:
+
+```typst
+#import "sections/draft-section.typ": present-draft-section, render-draft-section
+#let sections = (
+  (id: "volume-ledger", …),
+  (id: "draft-section", title: "Draft", present: present-draft-section, render: render-draft-section),
+)
+```
+
+Compile from the repo root with the repo as the Typst root, so the symlinks
+stay inside a documented path:
+
+```bash
+typst watch --root . \
+  --font-path backend/app/templates/fonts --ignore-system-fonts \
+  --input bundle=/.local/report/report.json \
+  --input sections=draft-section \
+  .local/report-dev/report.typ .local/report-dev/dev.pdf
+```
+
+Promotion is the normal path: add the `.typ`, add its registry line, and update
+the generated `docs/report-sections.md` (`node scripts/emit-report-sections.mjs`).
+
 ## Formatting
 
 The generator does no numeric work. Every scalar the bundle exposes arrives in

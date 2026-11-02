@@ -25,8 +25,11 @@ a paper-sourced row with its own timestamp. Missing readings stay absent; they
 are never rendered as zero.
 
 The session stores the raw reading and an optional corrected reading. The method
-is always kept. Automated hydrometer and refractometer corrections are not
-implemented yet; the UI accepts the corrected value and records the method.
+is always kept, and the correction records its kind and version so a later
+change cannot silently reinterpret a stored reading. Automated hydrometer
+temperature and refractometer-alcohol corrections run in
+`frontend/src/store/observationCorrections.js`; a manual correction stays a
+recorded value with its method.
 
 ## Status and sealing
 

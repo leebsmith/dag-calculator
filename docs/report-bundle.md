@@ -51,8 +51,8 @@ Firestore transaction.
 
 ```jsonc
 {
-  "bundle_format": 5,
-  "artifact": { "schema_version": 9, "hash": "sha256:…", "content": { … } },
+  "bundle_format": 7,
+  "artifact": { "schema_version": 10, "hash": "sha256:…", "content": { … } },
   "catalog": {
     "hash": "sha256:…",
     "dimensions": { "<dimension>": { "base_unit", "kind", "units": { … } } },
@@ -216,6 +216,41 @@ Telemetry events (`telemetry.<boundary>.telemetry[]`) carry
 `{ code, category, severity, message, context }`, where `category` is one of
 `ROUTER | GUARDRAIL | OPTIMIZATION | ENZYMATIC | OPERATIONAL | VALIDATION` and
 `severity` is one of `INFO | NOTE | WARNING | ERROR`.
+
+### 6.1 Invariants the schema and `services/bundle_integrity.py` enforce
+
+- `bundle_format` is the current format; `content_hash` equals the canonical
+  hash of everything else (recomputed by `seal_bundle()`).
+- `state.valuation` keys are declared artifact nodes; boundary nodes carry a
+  flattened output map (`cascade.v_strike`, `hlt.v_hlt_debt`).
+- `catalog.dimensions` are declared in the artifact; `batch.identity`
+  namespaces are declared.
+- Every `catalog.nodes[path]` resolves: exact node, longest node prefix plus a
+  boundary output / selection / collection field, or longest identity namespace
+  plus a schema field.
+- A catalog entry with `unit` also carries `symbol`.
+- `formatted` keys name catalog paths, and a unit-bearing path carries the
+  number/unit split.
+- `formatted_tables` keys name collection nodes; cells are display strings.
+- `formatted_summaries` keys name collection nodes or `overall`; `color` and
+  `extract_yield` are display strings.
+- Collection state keys are collection nodes with a known item schema; values
+  are lists of objects.
+- The catalog covers the solved state: every valuation entry and every
+  one-level row/output key has a catalog path.
+- Telemetry keys are boundary nodes with a matching binding, are solved, and
+  are never orphaned.
+
+Path resolution for consumers:
+
+| Path form | Lives in |
+|---|---|
+| `batch.v_ferm` | `state.valuation["batch.v_ferm"]` |
+| `solver.batch.cascade.v_strike` | `state.valuation["solver.batch"]["cascade.v_strike"]` |
+| `mash.rests.0.use_temp_c` | valuation array → row field |
+| `batch.yeast.attenuation_pct` | valuation (or `state.selections["batch.yeast"]`) |
+| `equipment.max_hlt_volume_l` | `batch.identity.equipment.max_hlt_volume_l` |
+| `style.og_min` | `batch.identity.style.og_min` |
 
 ---
 
