@@ -18,7 +18,13 @@ from app.schemas.boundary import (
     HopSolverResponse,
 )
 from app.schemas.boundary import (
+    WhirlpoolChill as WhirlpoolChillModel,
+)
+from app.schemas.boundary import (
     WhirlpoolHopResult as WhirlpoolHopResultModel,
+)
+from app.schemas.boundary import (
+    WhirlpoolTimelineSegment as WhirlpoolTimelineSegmentModel,
 )
 from app.services.errors import SolverServiceError
 from app.services.parity import assert_field_parity
@@ -82,6 +88,18 @@ def _to_response(result: HopSolverResult) -> HopSolverResponse:
                 alpha_mass_kg=row.alpha_mass_kg,
             )
             for row in result.whirlpool_rows
+        ],
+        whirlpool_timeline=[
+            WhirlpoolTimelineSegmentModel(start_min=start, end_min=end, temp_c=temp)
+            for start, end, temp in result.whirlpool_timeline.segments
+        ],
+        whirlpool_chills=[
+            WhirlpoolChillModel(
+                at_min=chill.at_min,
+                from_temp_c=chill.from_temp_c,
+                to_temp_c=chill.to_temp_c,
+            )
+            for chill in result.whirlpool_timeline.chills
         ],
         boil_mass_kg=result.boil_mass_kg,
         whirlpool_mass_kg=result.whirlpool_mass_kg,

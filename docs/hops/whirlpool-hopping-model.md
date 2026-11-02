@@ -3,9 +3,10 @@
 Canonical theory and equations for whirlpool bitterness. The production
 implementation is the sealed backend boundary `solver.hops`
 (`backend/app/core/hop_solver.py`), like the batch and water solvers. The
-artifact owns the hop charges, targets, and the rest/cooling inputs. The
-JavaScript `views/whirlpool.js` / `views/hops.js` copies are retained only as
-the offline boundary stub.
+artifact owns the hop charges, targets, and the rest/cooling inputs; the same
+boundary returns the cooling curve (`whirlpool_timeline`) and its forced chills
+(`whirlpool_chills`), so the client renders solved state and holds no copy of
+these equations.
 
 Status: implemented model for the four hop leaves — whole cone, pellets,
 lupulin concentrate and extract — with target-driven IBU, per-charge rest
@@ -260,6 +261,16 @@ second posted at 76.7 °C, infer a chill at 10 minutes (`99 °C → 92.1 °C`
 passively, then 76.7 °C) and give the first charge 9.81 effective minutes; the
 second gets 2.43.
 
+The boundary returns the curve it solved over, so no client recomputes it:
+`solver.hops.whirlpool_timeline` is the segment list
+(`start_min`, `end_min`, `temp_c` — the temperature at the segment's start) and
+`solver.hops.whirlpool_chills` is the forced-chill list (`at_min`,
+`from_temp_c`, `to_temp_c`). Chills are declared separately rather than inferred
+from a segment boundary because `from_temp_c` is a value on the cooling curve,
+which only the host can evaluate; a client deriving it would be doing the
+integral's arithmetic again. Both are boundary outputs, so they travel in the
+frozen report bundle and are covered by the stub-completeness guard.
+
 ### IBU splits
 
 The report prints two splits. The boil/whirlpool split is the authored pool
@@ -342,5 +353,7 @@ contract.
   hot-side dosing conversation (retrieved 2026-10-29), which supplies the
   product-form bands and the oil-retention context; its appendix carries the
   Yakima Chief Hops early-kettle dosing formula.
-- `frontend/src/views/whirlpool.js`: reference implementation.
-- `tests/frontend/whirlpool.test.js`: executable reference vectors.
+- `backend/app/core/hop_solver.py`: the implementation, and the only one — the
+  browser renders the segments and chills the boundary returns.
+- `tests/backend/test_hop_solver.py` and
+  `tests/conformance/fixtures/hop-parity.json`: executable reference vectors.

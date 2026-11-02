@@ -206,7 +206,9 @@ engine.topoOrder  adjacency  dependents
 ### The boundary seam
 
 The engine is synchronous and pure, but boundary *realizations* may be remote.
-The adapter pre-resolves them: `boundaryRequest(id)` returns `{ binding, inputs,
+A boundary has exactly one host, server-side: the frontend consumes the outputs
+the artifact declares and never recomputes them. The adapter pre-resolves them:
+`boundaryRequest(id)` returns `{ binding, inputs,
 fingerprint }`; the adapter performs the I/O and calls
 `applyBoundaryResult(fingerprint, outputs)` to seed the cache. After that,
 evaluation hits the cache synchronously. `hasBoundaryResult(fingerprint)` checks
@@ -271,8 +273,10 @@ Not every rule belongs in the artifact. Hamilton normalization, style
 conformance, seed-derived copy-in, fermentation geometry, mash ordering and
 validation, and presentation overrides are host-side
 by design. The retired Belgian-knob advisory is no longer part of the card; the
-scale-pin targets and previews are the replacement. Hop bitterness math is a sealed backend boundary (`solver.hops`); its
-JS copies are the offline stub only. `docs/adding-a-node.md` §"Artifact-owned vs host-side rules" lists the
+scale-pin targets and previews are the replacement. Hop bitterness math is a sealed
+backend boundary (`solver.hops`), including the whirlpool cooling timeline it
+returns as `whirlpool_timeline`; the frontend renders the served curve and holds no
+copy of the equations. `docs/adding-a-node.md` §"Artifact-owned vs host-side rules" lists the
 owner and location of each; `tests/guards/presentation-ids.test.js` keeps card
 modules and the producer free of literal node ids.
 

@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:bef07164f1e6bae2f22f069686b7819c75ff8b24278242843265c001ba12a513",
+    "hash": "sha256:f08339f9e01d0f2bf07b007042f35a1cdb22f95bec946ce5a5fe29b60e3fa71d",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -2090,6 +2090,28 @@
           },
           "alpha_mass_kg": {
             "dimension": "mass"
+          }
+        },
+        "whirlpool_timeline_segment": {
+          "start_min": {
+            "dimension": "time"
+          },
+          "end_min": {
+            "dimension": "time"
+          },
+          "temp_c": {
+            "dimension": "temperature"
+          }
+        },
+        "whirlpool_chill": {
+          "at_min": {
+            "dimension": "time"
+          },
+          "from_temp_c": {
+            "dimension": "temperature"
+          },
+          "to_temp_c": {
+            "dimension": "temperature"
           }
         },
         "mash_rest": {
@@ -4333,6 +4355,14 @@
             "whirlpool_rows": {
               "type": "collection",
               "item_schema": "whirlpool_hop_result"
+            },
+            "whirlpool_timeline": {
+              "type": "collection",
+              "item_schema": "whirlpool_timeline_segment"
+            },
+            "whirlpool_chills": {
+              "type": "collection",
+              "item_schema": "whirlpool_chill"
             },
             "boil_mass_kg": {
               "dimension": "mass"
@@ -9964,5 +9994,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:6a73dc5ccb473710f6b6adeb01e45c9202619f0516160f646d7dbd3edb104824"
+  "content_hash": "sha256:0235ee3c692b50c9d54315cb0494e9045ff006e46f112e804bca89bf9a680629"
 }

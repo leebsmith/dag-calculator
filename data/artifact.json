@@ -2108,6 +2108,28 @@
         "dimension": "mass"
       }
     },
+    "whirlpool_timeline_segment": {
+      "start_min": {
+        "dimension": "time"
+      },
+      "end_min": {
+        "dimension": "time"
+      },
+      "temp_c": {
+        "dimension": "temperature"
+      }
+    },
+    "whirlpool_chill": {
+      "at_min": {
+        "dimension": "time"
+      },
+      "from_temp_c": {
+        "dimension": "temperature"
+      },
+      "to_temp_c": {
+        "dimension": "temperature"
+      }
+    },
     "mash_rest": {
       "rest_id": {
         "taxonomy": "mash_rest"
@@ -4189,6 +4211,14 @@
         "whirlpool_rows": {
           "type": "collection",
           "item_schema": "whirlpool_hop_result"
+        },
+        "whirlpool_timeline": {
+          "type": "collection",
+          "item_schema": "whirlpool_timeline_segment"
+        },
+        "whirlpool_chills": {
+          "type": "collection",
+          "item_schema": "whirlpool_chill"
         },
         "boil_mass_kg": {
           "dimension": "mass"

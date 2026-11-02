@@ -400,7 +400,7 @@ _45 paths_
 
 ## Solver — hop bitterness
 
-_10 paths_
+_12 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -410,10 +410,12 @@ _10 paths_
 | `solver.hops.boil_rows` | Boil Rows | output | — | — | — | — |
 | `solver.hops.total_mass_kg` | Total hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_alpha_mass_kg` | Whirlpool Alpha Mass Kg | output | mass | kg | 1 | — |
+| `solver.hops.whirlpool_chills` | Whirlpool Chills | output | — | — | — | — |
 | `solver.hops.whirlpool_cool_ibu` | Whirlpool Cool IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.whirlpool_hot_ibu` | Whirlpool Hot IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.whirlpool_mass_kg` | Whirlpool hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_rows` | Whirlpool Rows | output | — | — | — | — |
+| `solver.hops.whirlpool_timeline` | Whirlpool Timeline | output | — | — | — | — |
 
 ## Identity — equipment
 

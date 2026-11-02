@@ -341,11 +341,29 @@ class WhirlpoolHopResult(BoundaryModel):
     alpha_mass_kg: float | None = None
 
 
+class WhirlpoolTimelineSegment(BoundaryModel):
+    """One constant-start-temperature span of the cooling curve."""
+
+    start_min: Annotated[float, Field(ge=0.0)]
+    end_min: Annotated[float, Field(ge=0.0)]
+    temp_c: float
+
+
+class WhirlpoolChill(BoundaryModel):
+    """A posted temperature below the latent curve, recorded as a forced chill."""
+
+    at_min: Annotated[float, Field(ge=0.0)]
+    from_temp_c: float
+    to_temp_c: float
+
+
 class HopSolverResponse(BoundaryModel):
     """Output contract for hop_bitterness_solver."""
 
     boil_rows: list[BoilHopResult]
     whirlpool_rows: list[WhirlpoolHopResult]
+    whirlpool_timeline: list[WhirlpoolTimelineSegment]
+    whirlpool_chills: list[WhirlpoolChill]
     boil_mass_kg: float
     whirlpool_mass_kg: float
     total_mass_kg: float

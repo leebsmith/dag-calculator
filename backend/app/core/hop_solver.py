@@ -1,9 +1,8 @@
 """Sealed hop-bitterness boundary implementation.
 
 Computes Tinseth boil utilization and the whirlpool Arrhenius integral over a
-Newton cooling curve. The Python solver is the production path; the JavaScript
-``views/hops.js`` / ``views/whirlpool.js`` copies are retained only as the
-offline boundary stub.
+Newton cooling curve, and returns the curve it used (segments and forced chills)
+so the client renders solved state instead of recomputing it.
 
 Reference vectors live in ``docs/hops/whirlpool-hopping-model.md`` and the backend
 tests. All functions are pure and deterministic.
@@ -135,6 +134,7 @@ class WhirlpoolHopResult:
 class HopSolverResult:
     boil_rows: Sequence[BoilHopResult]
     whirlpool_rows: Sequence[WhirlpoolHopResult]
+    whirlpool_timeline: WhirlpoolTimeline
     boil_mass_kg: float
     whirlpool_mass_kg: float
     total_mass_kg: float
@@ -548,6 +548,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
     return HopSolverResult(
         boil_rows=boil_rows,
         whirlpool_rows=whirlpool_rows,
+        whirlpool_timeline=timeline,
         boil_mass_kg=boil_mass,
         whirlpool_mass_kg=whirlpool_mass,
         boil_alpha_mass_kg=sum(
