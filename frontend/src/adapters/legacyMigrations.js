@@ -9,3 +9,22 @@ export function dropLegacyDoughIn(engine) {
   engine.setCollection("mash.rests", filtered);
   return true;
 }
+
+export function migrateWhirlpoolCoordinates(engine) {
+  const rows = engine.get("batch.whirlpool_hops");
+  if (!Array.isArray(rows) || rows.length === 0) return false;
+  if (rows.every((row) => row?.addition_at_min !== undefined)) return false;
+  const durations = rows.map((row) => Number(row?.duration_min) || 0);
+  const knockout = Math.max(...durations);
+  const converted = rows.map((row, index) => {
+    const next = { ...row };
+    delete next.duration_min;
+    next.addition_at_min = Math.max(0, knockout - durations[index]);
+    return next;
+  });
+  engine.setCollection("batch.whirlpool_hops", converted);
+  if (!engine.hasRoot("batch.whirlpool_knockout_min")) {
+    engine.setRoot("batch.whirlpool_knockout_min", knockout);
+  }
+  return true;
+}

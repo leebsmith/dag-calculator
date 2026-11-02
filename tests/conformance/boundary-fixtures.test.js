@@ -129,8 +129,8 @@ const HOP_VALUES = {
   "solver.batch.cascade.v_post_boil": 21.0,
   "batch.whirlpool_ambient_temp_c": 20.0,
   "batch.whirlpool_cooling_time_constant_min": 108.7,
-  // Unset: the builder omits a null cone factor rather than sending it.
-  "batch.cone_utilization": null,
+  "batch.whirlpool_knockout_min": 30.0,
+  "batch.whirlpool_start_temp_c": 99.0,
 };
 
 const HOP_BOIL_ROWS = [
@@ -141,7 +141,7 @@ const HOP_BOIL_ROWS = [
 const HOP_WHIRLPOOL_ROWS = [
   {
     alpha_acid_pct: 0.1,
-    duration_min: 30.0,
+    addition_at_min: 0.0,
     initial_temp_c: 99.0,
     pct: 1.0,
     product_form: "t90_pellet",

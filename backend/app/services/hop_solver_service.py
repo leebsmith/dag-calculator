@@ -41,7 +41,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
         whirlpool_hops=[
             WhirlpoolHopEntry(
                 alpha_acid_pct=row.alpha_acid_pct,
-                duration_min=row.duration_min,
+                addition_at_min=row.addition_at_min,
                 initial_temp_c=row.initial_temp_c,
                 pct=row.pct,
                 product_form=row.product_form.value,
@@ -57,6 +57,8 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
         post_boil_volume_l=req.post_boil_volume_l,
         whirlpool_ambient_temp_c=req.whirlpool_ambient_temp_c,
         whirlpool_cooling_time_constant_min=req.whirlpool_cooling_time_constant_min,
+        whirlpool_knockout_min=req.whirlpool_knockout_min,
+        whirlpool_start_temp_c=req.whirlpool_start_temp_c,
     )
 
 

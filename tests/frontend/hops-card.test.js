@@ -142,7 +142,7 @@ test("whirlpool hops: lupulin defaults and the band selector", withFreshApp((app
 
   assert.equal(app.whirlpoolHopActiveRow.product_form, "lupulin_pellet");
   assert.equal(app.whirlpoolHopActiveRow.initial_temp_c, 76);
-  assert.equal(app.whirlpoolHopActiveRow.duration_min, 25);
+  assert.equal(app.whirlpoolHopActiveRow.addition_at_min, 5);
   assert.equal(app.whirlpoolStartBandValue, "custom");
 
   app.setWhirlpoolStartBand("isomerization_floor");
@@ -172,10 +172,10 @@ test("whirlpool hops: a colder later charge shows the inferred chill and a zero 
   app.setWhirlpoolHopCatalogForm("lupulin_pellet");
   app.addCatalogWhirlpoolHop("cryo-hops");
   app.inspectWhirlpoolHopRow(0);
-  app.patchDraftRow(0, { duration_min: 30, initial_temp_c: 99 });
+  app.patchDraftRow(0, { addition_at_min: 0, initial_temp_c: 99 });
   app.addCatalogWhirlpoolHop("cryo-hops");
   app.inspectWhirlpoolHopRow(1);
-  app.patchDraftRow(1, { duration_min: 20, initial_temp_c: 76.7 });
+  app.patchDraftRow(1, { addition_at_min: 10, initial_temp_c: 76.7 });
   app.saveWhirlpoolHopEditor();
   app.compute();
 
@@ -184,7 +184,7 @@ test("whirlpool hops: a colder later charge shows the inferred chill and a zero 
   assert.equal(app.whirlpoolZeroRestNote, "");
 
   app.openWhirlpoolHopEditor();
-  app.patchDraftRow(1, { duration_min: 0 });
+  app.patchDraftRow(1, { addition_at_min: 30 });
   app.saveWhirlpoolHopEditor();
   app.compute();
 
@@ -199,14 +199,14 @@ test("whirlpool hops: rest duration and initial temperature drive the mass", wit
   app.setWhirlpoolFraction(0.25);
   app.openWhirlpoolHopEditor();
   app.addCatalogWhirlpoolHop("cascade");
-  app.editDraftCell(0, "duration_min", 30);
+  app.editDraftCell(0, "addition_at_min", 0);
   app.editDraftCell(0, "initial_temp_c", 99);
   app.saveWhirlpoolHopEditor();
   app.compute();
   const hotLong = app.whirlpoolHopRows[0].mass_kg;
 
   app.openWhirlpoolHopEditor();
-  app.editDraftCell(0, "duration_min", 15);
+  app.editDraftCell(0, "addition_at_min", 15);
   app.editDraftCell(0, "initial_temp_c", 80);
   app.saveWhirlpoolHopEditor();
   app.compute();

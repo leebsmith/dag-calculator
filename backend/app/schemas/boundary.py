@@ -302,7 +302,7 @@ class WhirlpoolHopRow(BoundaryModel):
     """One whirlpool addition as sent to the hop boundary."""
 
     alpha_acid_pct: Annotated[float, Field(ge=0.0, le=1.0)]
-    duration_min: Annotated[float, Field(ge=0.0)]
+    addition_at_min: Annotated[float, Field(ge=0.0)]
     initial_temp_c: Annotated[float, Field(ge=0.0, le=100.0)]
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
     product_form: HopProductForm = HopProductForm.T90_PELLET
@@ -322,6 +322,8 @@ class HopSolverRequest(BoundaryModel):
     post_boil_volume_l: Annotated[float, Field(gt=0.0)]
     whirlpool_ambient_temp_c: Annotated[float, Field(ge=-20.0, le=50.0)]
     whirlpool_cooling_time_constant_min: Annotated[float, Field(gt=0.0)]
+    whirlpool_knockout_min: Annotated[float, Field(ge=0.0)] = 30.0
+    whirlpool_start_temp_c: Annotated[float, Field(ge=0.0, le=100.0)] = 99.0
 
 
 class BoilHopResult(BoundaryModel):

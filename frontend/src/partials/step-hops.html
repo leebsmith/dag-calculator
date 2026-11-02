@@ -155,6 +155,43 @@
         <p class="text-xs text-muted">Author by IBU share; mass is back-calculated from the cooling integral.</p>
 
         <div class="step-grid-2col">
+          <template x-if="whirlpoolKnockoutField">
+            <div class="form-group">
+              <label
+                class="form-label"
+                :for="whirlpoolKnockoutField.id"
+                x-text="fmt.formatFieldLabel(whirlpoolKnockoutField.label, whirlpoolKnockoutField.unit)"
+              ></label>
+              <input
+                class="form-input"
+                type="number"
+                step="1"
+                min="0"
+                :id="whirlpoolKnockoutField.id"
+                :value="whirlpoolKnockoutField.display"
+                @change="edit(whirlpoolKnockoutField, $event.target.value)"
+              />
+              <span class="form-hint" x-show="whirlpoolKnockoutField.hint" x-text="whirlpoolKnockoutField.hint"></span>
+            </div>
+          </template>
+          <template x-if="whirlpoolStartTempField">
+            <div class="form-group">
+              <label
+                class="form-label"
+                :for="whirlpoolStartTempField.id"
+                x-text="fmt.formatFieldLabel(whirlpoolStartTempField.label, whirlpoolStartTempField.unit)"
+              ></label>
+              <input
+                class="form-input"
+                type="number"
+                step="0.1"
+                :id="whirlpoolStartTempField.id"
+                :value="whirlpoolStartTempField.display"
+                @change="edit(whirlpoolStartTempField, $event.target.value)"
+              />
+              <span class="form-hint" x-show="whirlpoolStartTempField.hint" x-text="whirlpoolStartTempField.hint"></span>
+            </div>
+          </template>
           <template x-if="whirlpoolAmbientField">
             <div class="form-group">
               <label
@@ -277,7 +314,7 @@
               <tr>
                 <th>Hop</th>
                 <th class="text-right">Alpha</th>
-                <th class="text-right">Rest</th>
+                <th class="text-right">After flameout</th>
                 <th class="text-right">Initial</th>
                 <th class="text-right">Parts</th>
                 <th class="text-right">IBU share</th>
@@ -309,7 +346,7 @@
                       x-text="hopAlphaRange(row)"
                     ></span>
                   </td>
-                  <td class="text-right tabular-nums" x-text="hopMinutes(row)"></td>
+                  <td class="text-right tabular-nums" x-text="hopAddition(row)"></td>
                   <td class="text-right tabular-nums" x-text="hopTemp(row)"></td>
                   <td class="text-right tabular-nums" x-text="row.parts"></td>
                   <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
@@ -354,8 +391,8 @@
           <p class="form-hint" x-text="line"></p>
         </template>
         <p class="form-hint" x-show="whirlpoolHopRows.length > 0">
-          Rests run to knockout; a start temperature is the wort temperature when the
-          charge goes in.
+          Additions count from flameout; knockout closes the window. A charge colder than
+          the cooling curve implies an inferred chill.
         </p>
       </div>
     </section>

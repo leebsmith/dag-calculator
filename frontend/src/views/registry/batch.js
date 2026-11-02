@@ -35,6 +35,8 @@ export const batchRegistry = {
     hint: "Target HLT temperature for the second underlet. Display only — heating and cooling are not modelled, so this never changes the solve.",
   },
   "batch.boil_time_min": { label: "Boil time", unit: "min" },
+  "batch.whirlpool_knockout_min": { label: "Knockout", unit: "min" },
+  "batch.whirlpool_start_temp_c": { label: "Start temp", unit: "°C" },
   "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
   "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
   "solver.batch.apparent_attenuation": {

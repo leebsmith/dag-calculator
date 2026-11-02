@@ -123,11 +123,11 @@ const PROVIDERS = {
   "whirlpoolHops": ({ engine, fmt }) => {
     const rows = engine.get(N.whirlpoolHops) ?? [];
     const list = rows.map((row) => {
-      const duration = fmt.field(N.whirlpoolDuration, row.duration_min);
+      const at = fmt.field(N.whirlpoolAddition, row.addition_at_min);
       const temp = fmt.field(N.whirlpoolTemp, row.initial_temp_c);
-      return `${hopName(row)} for ${duration} from ${temp}`;
+      return `${hopName(row)} at ${at} after flameout, ${temp}`;
     });
-    return list.length > 0 ? `Add ${list.join("; ")}; rest to knockout.` : "No whirlpool hops.";
+    return list.length > 0 ? `Add ${list.join("; ")}; knock out at the set time.` : "No whirlpool hops.";
   },
   "dryHopSchedule": ({ engine, fmt }) => {
     const rows = engine.get(N.dryHops) ?? [];

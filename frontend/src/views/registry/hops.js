@@ -1,8 +1,10 @@
 // Presentation metadata for the hops slice (boil + whirlpool additions).
 export const WHIRLPOOL_ROW_DEFAULTS = {
-  durationMin: 30,
+  knockoutMin: 30,
+  startTempC: 99,
+  additionAtMin: 0,
   initialTempC: 95,
-  lupulinDurationMin: 25,
+  lupulinAdditionAtMin: 5,
   lupulinInitialTempC: 76,
 };
 
@@ -21,6 +23,8 @@ export const HOP_NODES = {
   totalIbu: "batch.target_ibu",
   whirlpoolAmbient: "batch.whirlpool_ambient_temp_c",
   whirlpoolCoolingTimeConstant: "batch.whirlpool_cooling_time_constant_min",
+  whirlpoolKnockout: "batch.whirlpool_knockout_min",
+  whirlpoolStartTemp: "batch.whirlpool_start_temp_c",
   coolingCurveId: "batch.cooling_curve_id",
   boilTime: "batch.boil_time_min",
   postBoilVolume: "solver.batch.cascade.v_post_boil",
@@ -57,7 +61,7 @@ export const hopsRegistry = {
     },
   },
   "batch.whirlpool_hops.alpha_acid_pct": { label: "Alpha", displayUnit: "pct" },
-  "batch.whirlpool_hops.duration_min": { label: "After flameout", unit: "min" },
+  "batch.whirlpool_hops.addition_at_min": { label: "After flameout", unit: "min" },
   "batch.whirlpool_hops.initial_temp_c": { label: "Temp", unit: "°C" },
   "batch.whirlpool_hops.parts": { label: "Parts" },
   "batch.whirlpool_hops.pct": { label: "IBU share", displayUnit: "pct" },

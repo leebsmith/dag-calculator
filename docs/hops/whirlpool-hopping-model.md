@@ -206,15 +206,17 @@ truth, and a cool stand simply yields less.
 ### Whirlpool timeline
 
 Charges cannot be removed without emptying the kettle, so every charge rests to
-knockout. That makes a charge's duration its **time to knockout**, and all
-charges share the same end:
+knockout. The window is a batch input, not a property of the longest charge:
 
 ```
-t_end   = max(duration_i)
-t_add_i = t_end - duration_i
+t_0     = 0        at t_start_c
+t_end   = knockout_min
+t_add_i = addition_at_min_i          exposure_i = t_end - t_add_i
 ```
 
-The solver builds one batch curve. Between additions the wort cools passively at
+The curve starts at flameout, so a flameout charge is one at position zero and a
+charge added at knockout has no exposure and no mass. The solver builds one
+batch curve from `(0, start_temp_c)` to `knockout_min`. Between additions the wort cools passively at
 the batch cooling constant; at each addition it compares the posted start
 temperature with the latent value there:
 
@@ -224,16 +226,18 @@ temperature with the latent value there:
 | below | forced chill | instantaneous drop, then passive from the posted value |
 | above | heating | rejected with `WHIRLPOOL_HEATING` |
 
-Two charges within 0.05 min of the same duration are one addition; if they post
-temperatures more than 0.5 °C apart the request fails with
-`WHIRLPOOL_ADDITION_CONFLICT`. A charge below the ambient temperature fails with
+Two charges within 0.05 min of the same addition time are one addition; if they
+post temperatures more than 0.5 °C apart the request fails with
+`WHIRLPOOL_ADDITION_CONFLICT`, and a charge beyond the knockout fails with
+`INVALID_HOP_INPUT`. A charge below the ambient temperature fails with
 `WHIRLPOOL_BELOW_AMBIENT`, because the kettle would have to warm. Each charge's
 `t_eff` integrates its own window over that one curve; its mass then follows its
 own IBU share, alpha and form multiplier.
 
-Example: charges at 30 and 20 minutes from 99 °C, the second posted at 76.7 °C,
-infer a chill at 10 minutes (`99 °C → 92.1 °C` passively, then 76.7 °C) and give
-the first charge 9.81 effective minutes; the second gets 2.43.
+Example: a knockout at 30 min, charges at positions 0 and 10 from 99 °C, the
+second posted at 76.7 °C, infer a chill at 10 minutes (`99 °C → 92.1 °C`
+passively, then 76.7 °C) and give the first charge 9.81 effective minutes; the
+second gets 2.43.
 
 ### IBU splits
 
@@ -295,7 +299,8 @@ contract.
 - Product forms are the four leaves of `docs/hops/hop-products.md`; the yield
   scalar is one number per leaf and does not vary by stage. Pellet vegetative
   absorption, pH/fermentation losses, and dry-hop contribution are not modelled,
-  and every charge is assumed to share one knockout end.
+  and every charge shares one knockout end, set by the batch rather than inferred
+  from the longest charge.
 - Chills are instantaneous: the transient through the dropped range is skipped.
   After a chill the curve keeps decaying with the batch constant, so a held
   temperature is under-modelled. Charges are assumed to share one knockout end,

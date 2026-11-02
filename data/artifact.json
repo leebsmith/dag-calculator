@@ -2047,9 +2047,9 @@
           "lte": 1
         }
       },
-      "duration_min": {
+      "addition_at_min": {
         "dimension": "time",
-        "default": 30,
+        "default": 0,
         "domain": {
           "gte": 0
         }
@@ -2556,6 +2556,23 @@
       "default": 108.7,
       "domain": {
         "gt": 0
+      }
+    },
+    "batch.whirlpool_knockout_min": {
+      "kind": "root",
+      "dimension": "time",
+      "default": 30,
+      "domain": {
+        "gte": 0
+      }
+    },
+    "batch.whirlpool_start_temp_c": {
+      "kind": "root",
+      "dimension": "temperature",
+      "default": 99,
+      "domain": {
+        "gte": 0,
+        "lte": 100
       }
     },
     "batch.cooling_curve_id": {
@@ -4154,7 +4171,9 @@
         "post_boil_gravity": "solver.batch.sg_post_boil",
         "post_boil_volume_l": "solver.batch.cascade.v_post_boil",
         "whirlpool_ambient_temp_c": "batch.whirlpool_ambient_temp_c",
-        "whirlpool_cooling_time_constant_min": "batch.whirlpool_cooling_time_constant_min"
+        "whirlpool_cooling_time_constant_min": "batch.whirlpool_cooling_time_constant_min",
+        "whirlpool_knockout_min": "batch.whirlpool_knockout_min",
+        "whirlpool_start_temp_c": "batch.whirlpool_start_temp_c"
       },
       "outputs": {
         "boil_rows": {

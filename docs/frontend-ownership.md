@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **686** (458 enumerable, 228 hidden)
+- Declared members: **689** (459 enumerable, 230 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **15 of 20**
@@ -24,7 +24,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 143 | 3 | 23 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 146 | 3 | 23 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 22 |
@@ -230,6 +230,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `handoffIntensiveValue` | `fieldActions` | public | 0 |
 | `hopActiveIndex` | `hop` | public | 1 |
 | `hopActiveRow` | `hop` | hidden | 1 |
+| `hopAddition` | `hop` | public | 1 |
 | `hopAlpha` | `hop` | public | 0 |
 | `hopAlphaInput` | `hop` | public | 1 |
 | `hopAlphaOutsideStock` | `hop` | public | 1 |
@@ -703,10 +704,12 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `whirlpoolIbuDisplay` | `styleTargets` | hidden | 1 |
 | `whirlpoolIbuField` | `hop` | hidden | 1 |
 | `whirlpoolInferredChills` | `hop` | hidden | 1 |
+| `whirlpoolKnockoutField` | `hop` | hidden | 1 |
 | `whirlpoolPctDisplay` | `styleTargets` | hidden | 1 |
 | `whirlpoolStartBandHint` | `hop` | hidden | 1 |
 | `whirlpoolStartBandValue` | `hop` | hidden | 1 |
 | `whirlpoolStartBands` | `hop` | hidden | 1 |
+| `whirlpoolStartTempField` | `hop` | hidden | 1 |
 | `whirlpoolTimelineState` | `hop` | hidden | 0 |
 | `whirlpoolZeroRestNote` | `hop` | hidden | 1 |
 | `writeStyleAbv` | `styleNavigator` | public | 0 |

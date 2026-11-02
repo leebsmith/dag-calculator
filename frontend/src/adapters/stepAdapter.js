@@ -12,7 +12,7 @@ import { createReferenceCache } from "../store/referenceCache.js";
 import { identityDerivations } from "../views/seedDerivations.js";
 import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
-import { dropLegacyDoughIn } from "./legacyMigrations.js";
+import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
 import { createLibrary } from "../store/library.js";
 import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
@@ -172,6 +172,7 @@ export function createStepApp(options = {}) {
       const migratedDerate = this.migrateAttenuationDerate(legacyDerate);
       this.onBatchLoad?.();
       const migrated = dropLegacyDoughIn(session.engine);
+      const migratedWhirlpool = migrateWhirlpoolCoordinates(session.engine);
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
@@ -179,7 +180,7 @@ export function createStepApp(options = {}) {
       if (useHttp) await this.solveNow();
       else this.compute();
       const changed = [
-        seeded, materialized, synced, migrated,
+        seeded, materialized, synced, migrated, migratedWhirlpool,
         migratedChecklist.changed, migratedDerate, sugarParts,
       ].some(Boolean);
       if (changed) this.notify();

@@ -1,5 +1,5 @@
 {
-  "fingerprint": "5d2767103e48064e187c8a2b03aaf0451466ad108df53929203fd1a550e947cc",
+  "fingerprint": "ef905277031e5eb70531d00851cf81536d3e3d5281d8a40f79bf95efb1a9971e",
   "request": {
     "boil_hops": [
       {
@@ -26,14 +26,16 @@
     "whirlpool_cooling_time_constant_min": 108.7,
     "whirlpool_hops": [
       {
+        "addition_at_min": 0.0,
         "alpha_acid_pct": 0.1,
         "cone_utilization": null,
-        "duration_min": 30.0,
         "initial_temp_c": 99.0,
         "pct": 1.0,
         "product_form": "t90_pellet"
       }
     ],
+    "whirlpool_knockout_min": 30.0,
+    "whirlpool_start_temp_c": 99.0,
     "whirlpool_target_ibu": 20.0
   }
 }

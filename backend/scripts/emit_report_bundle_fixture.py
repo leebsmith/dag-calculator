@@ -99,7 +99,7 @@ WHIRLPOOL_HOPS = [
         "name": "Citra",
         "product_form": "t90_pellet",
         "alpha_acid_pct": 0.12,
-        "duration_min": 30.0,
+        "addition_at_min": 0.0,
         "initial_temp_c": 95.0,
         "parts": 70,
         "pct": 0.7,
@@ -110,7 +110,7 @@ WHIRLPOOL_HOPS = [
         "name": "Saaz",
         "product_form": "t90_pellet",
         "alpha_acid_pct": 0.035,
-        "duration_min": 10.0,
+        "addition_at_min": 20.0,
         "initial_temp_c": 70.0,
         "parts": 30,
         "pct": 0.3,
@@ -1089,8 +1089,8 @@ PAYLOAD = FreezePayload(
             "batch.whirlpool_hops.alpha_acid_pct": NodePresentation(
                 label="Alpha", dimension="percentage", unit="pct", symbol="%", decimals=1
             ),
-            "batch.whirlpool_hops.duration_min": NodePresentation(
-                label="Rest", dimension="time", unit="min", symbol="min", decimals=0
+            "batch.whirlpool_hops.addition_at_min": NodePresentation(
+                label="After flameout", dimension="time", unit="min", symbol="min", decimals=0
             ),
             "batch.whirlpool_hops.initial_temp_c": NodePresentation(
                 label="Temp", dimension="temperature", unit="degC", symbol="°C", decimals=1
@@ -1514,7 +1514,7 @@ PAYLOAD = FreezePayload(
                 "name": FormattedValue(text="Citra"),
                 "form": FormattedValue(text="T-90 pellet"),
                 "alpha": FormattedValue(text="12.0%", number="12.0", unit="%"),
-                "rest": FormattedValue(text="30 min", number="30", unit="min"),
+                "add": FormattedValue(text="0 min", number="0", unit="min"),
                 "temp": FormattedValue(text="95.0 °C", number="95.0", unit="°C"),
                 "ibu_share": FormattedValue(text="70.0%", number="70.0", unit="%"),
                 "ibu": FormattedValue(text="7.0 IBU", number="7.0", unit="IBU"),
@@ -1524,7 +1524,7 @@ PAYLOAD = FreezePayload(
                 "name": FormattedValue(text="Saaz"),
                 "form": FormattedValue(text="T-90 pellet"),
                 "alpha": FormattedValue(text="3.5%", number="3.5", unit="%"),
-                "rest": FormattedValue(text="10 min", number="10", unit="min"),
+                "add": FormattedValue(text="20 min", number="20", unit="min"),
                 "temp": FormattedValue(text="70.0 °C", number="70.0", unit="°C"),
                 "ibu_share": FormattedValue(text="30.0%", number="30.0", unit="%"),
                 "ibu": FormattedValue(text="3.0 IBU", number="3.0", unit="IBU"),

@@ -30,14 +30,18 @@ function hopOutputs(inputs = {}) {
     inputs.whirlpool_cooling_time_constant_min > 0
       ? 1 / inputs.whirlpool_cooling_time_constant_min
       : 0;
+  const knockoutMin = inputs.whirlpool_knockout_min ?? 30;
   const timeline = whirlpoolTimeline(inputs.whirlpool_hops ?? [], {
     ambientTempC: inputs.whirlpool_ambient_temp_c,
     kPerMin,
+    knockoutMin,
+    startTempC: inputs.whirlpool_start_temp_c ?? 99,
   });
   const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) => {
-    const minutes = row.duration_min ?? 0;
+    const additionAt = row.addition_at_min ?? 0;
+    const minutes = Math.max(0, knockoutMin - additionAt);
     const ibu = (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0);
-    const effectiveMinutes = timeline.effectiveMinutes(timeline.endMinutes - minutes);
+    const effectiveMinutes = timeline.effectiveMinutes(additionAt);
     return {
       minutes,
       ibu,

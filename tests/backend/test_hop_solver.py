@@ -28,7 +28,7 @@ def make_request(**overrides) -> HopSolverRequest:
         "whirlpool_hops": [
             WhirlpoolHopRow(
                 alpha_acid_pct=0.10,
-                duration_min=30.0,
+                addition_at_min=0.0,
                 initial_temp_c=99.0,
                 pct=1.0,
                 product_form=HopProductForm.T90_PELLET,
@@ -176,14 +176,14 @@ def _two_charge_input(first_temp=99.0, second_temp=76.7, first_duration=30.0, se
         whirlpool_hops=[
             WhirlpoolHopEntry(
                 alpha_acid_pct=0.20,
-                duration_min=first_duration,
+                addition_at_min=30.0 - first_duration,
                 initial_temp_c=first_temp,
                 pct=0.5,
                 product_form="lupulin_pellet",
             ),
             WhirlpoolHopEntry(
                 alpha_acid_pct=0.20,
-                duration_min=second_duration,
+                addition_at_min=30.0 - second_duration,
                 initial_temp_c=second_temp,
                 pct=0.5,
                 product_form="lupulin_pellet",
@@ -214,7 +214,7 @@ def _split_of(*charges):
             whirlpool_hops=[
                 WhirlpoolHopEntry(
                     alpha_acid_pct=0.20,
-                    duration_min=duration,
+                    addition_at_min=30.0 - duration,
                     initial_temp_c=temp,
                     pct=pct,
                     product_form="lupulin_pellet",
@@ -257,7 +257,7 @@ def test_a_charge_at_the_floor_counts_as_cool():
             whirlpool_hops=[
                 WhirlpoolHopEntry(
                     alpha_acid_pct=0.20,
-                    duration_min=duration,
+                    addition_at_min=30.0 - duration,
                     initial_temp_c=temp,
                     pct=pct,
                     product_form="lupulin_pellet",
@@ -296,7 +296,7 @@ def test_charges_share_one_timeline_and_a_chill_splits_the_window():
     )
 
     timeline = hop_solver.build_whirlpool_timeline(
-        _two_charge_input().whirlpool_hops, 20.0, 1 / 108.7
+        _two_charge_input().whirlpool_hops, 20.0, 1 / 108.7, 30.0, 99.0
     )
     assert len(timeline.chills) == 1
     assert timeline.chills[0].at_min == pytest.approx(10.0)
@@ -318,6 +318,8 @@ def test_two_temperatures_at_one_addition_are_a_conflict():
             ],
             20.0,
             1 / 108.7,
+            30.0,
+            99.0,
         )
     assert exc.value.code == "WHIRLPOOL_ADDITION_CONFLICT"
 
@@ -332,7 +334,7 @@ def test_zero_rest_charge_has_no_mass():
     inputs = HopSolverInput(
         boil_hops=[],
         whirlpool_hops=[
-            WhirlpoolHopEntry(0.2, 0.0, 76.7, 1.0, "lupulin_pellet"),
+            WhirlpoolHopEntry(0.2, 30.0, 76.7, 1.0, "lupulin_pellet"),
         ],
         boil_target_ibu=0.0,
         whirlpool_target_ibu=20.0,
@@ -407,6 +409,8 @@ def test_shared_hop_parity_fixture_matches_core_solver():
                 whirlpool_cooling_time_constant_min=payload[
                     "whirlpool_cooling_time_constant_min"
                 ],
+                whirlpool_knockout_min=payload["whirlpool_knockout_min"],
+                whirlpool_start_temp_c=payload["whirlpool_start_temp_c"],
             )
         )
         expected = case["expected"]

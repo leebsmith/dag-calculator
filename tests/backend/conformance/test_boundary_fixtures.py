@@ -118,7 +118,7 @@ def canonical_hop() -> HopSolverRequest:
         whirlpool_hops=[
             WhirlpoolHopRow(
                 alpha_acid_pct=0.10,
-                duration_min=30.0,
+                addition_at_min=0.0,
                 initial_temp_c=99.0,
                 pct=1.0,
                 product_form=HopProductForm.T90_PELLET,

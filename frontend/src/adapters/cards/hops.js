@@ -15,6 +15,7 @@ import {
   hopFormLabel,
   hopIbuLabel,
   hopMinutesLabel,
+  hopAdditionLabel,
   hopPctLabel,
   mergeBoilRows,
   mergeWhirlpoolRows,
@@ -193,6 +194,9 @@ export function registerHopCard(app, ctx) {
     hopMinutes(row) {
       return hopMinutesLabel(row);
     },
+    hopAddition(row) {
+      return hopAdditionLabel(row);
+    },
 
     hopTemp(row) {
       return formatTemp(row?.initial_temp_c);
@@ -344,10 +348,18 @@ export function registerHopCard(app, ctx) {
       batchCurve: () => {
         const ambient = resolveOrNull(engine, N.whirlpoolAmbient);
         const timeConstant = resolveOrNull(engine, N.whirlpoolCoolingTimeConstant);
-        if (!isFiniteNumber(ambient) || !isFiniteNumber(timeConstant) || timeConstant <= 0) {
+        const knockout = resolveOrNull(engine, N.whirlpoolKnockout);
+        const startTemp = resolveOrNull(engine, N.whirlpoolStartTemp);
+        if (
+          !isFiniteNumber(ambient) ||
+          !isFiniteNumber(timeConstant) ||
+          timeConstant <= 0 ||
+          !isFiniteNumber(knockout) ||
+          !isFiniteNumber(startTemp)
+        ) {
           return null;
         }
-        return { ambientTempC: ambient, kPerMin: 1 / timeConstant };
+        return { ambientTempC: ambient, kPerMin: 1 / timeConstant, knockoutMin: knockout, startTempC: startTemp };
       },
       reportError,
       timelineFor: whirlpoolTimeline,
@@ -363,6 +375,8 @@ export function registerHopCard(app, ctx) {
     totalIbuField: N.totalIbu,
     whirlpoolAmbientField: N.whirlpoolAmbient,
     whirlpoolCoolingField: N.whirlpoolCoolingTimeConstant,
+    whirlpoolKnockoutField: N.whirlpoolKnockout,
+    whirlpoolStartTempField: N.whirlpoolStartTemp,
   })) {
     Object.defineProperty(app, key, {
       configurable: true,
@@ -426,6 +440,7 @@ export const KEYS = [
   "setHopAlpha",
   "hopBoilPct",
   "hopMinutes",
+  "hopAddition",
   "hopTemp",
   "hopIbu",
   "hopPct",
@@ -434,6 +449,8 @@ export const KEYS = [
   "totalIbuField",
   "whirlpoolAmbientField",
   "whirlpoolCoolingField",
+  "whirlpoolKnockoutField",
+  "whirlpoolStartTempField",
   "hopDraftPartsTotal",
   "hopDraftSummary",
   "whirlpoolHopDraftPartsTotal",

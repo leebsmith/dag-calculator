@@ -30,7 +30,7 @@ export const BREW_DAY_NODES = {
   boilMass: "solver.hops.boil_mass_kg",
   restTemp: "mash.rests.use_temp_c",
   restDuration: "mash.rests.duration_min",
-  whirlpoolDuration: "batch.whirlpool_hops.duration_min",
+  whirlpoolAddition: "batch.whirlpool_hops.addition_at_min",
   whirlpoolTemp: "batch.whirlpool_hops.initial_temp_c",
   dryHopQuantity: "batch.dry_hops.quantity",
   mashAdditions: "solver.water.mash_additions",

@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_124 paths_
+_126 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -118,9 +118,9 @@ _124 paths_
 | `batch.whirlpool_cool_ibu_share` | Whirlpool Cool IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_cooling_time_constant_min` | Cooling time constant | root | time | min | 0 | — |
 | `batch.whirlpool_hops` | Whirlpool hops | collection | — | — | — | — |
+| `batch.whirlpool_hops.addition_at_min` | After flameout | field | time | min | 0 | — |
 | `batch.whirlpool_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
-| `batch.whirlpool_hops.duration_min` | After flameout | field | time | min | 0 | — |
 | `batch.whirlpool_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.whirlpool_hops.initial_temp_c` | Temp | field | temperature | degC (°C) | 1 | — |
 | `batch.whirlpool_hops.name` | Hop | field | — | — | — | — |
@@ -131,6 +131,8 @@ _124 paths_
 | `batch.whirlpool_hot_ibu_share` | Whirlpool Hot IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_fraction` | Whirlpool IBU share | root | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_share` | Whirlpool IBU Share | derived | percentage | pct (%) | 1 | — |
+| `batch.whirlpool_knockout_min` | Knockout | root | time | min | 0 | — |
+| `batch.whirlpool_start_temp_c` | Start temp | root | temperature | degC (°C) | 1 | — |
 | `batch.whirlpool_target_ibu` | Whirlpool IBU | derived | ibu | IBU | 1 | — |
 | `batch.yeast` | Yeast | selection | — | — | — | — |
 | `batch.yeast.alcohol_tolerance` | Alcohol tolerance | field | — | — | — | — |

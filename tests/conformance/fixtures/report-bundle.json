@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:543aef0905362a4260f31dddd0afc2715c16cf57b3e3b0e16c9606975f1e7b2a",
+    "hash": "sha256:59144ad927b1d94d44a65e3a54c3c692429f547c9df5d6453eee94c1f39d4ca4",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -2031,9 +2031,9 @@
               "lte": 1
             }
           },
-          "duration_min": {
+          "addition_at_min": {
             "dimension": "time",
-            "default": 30,
+            "default": 0,
             "domain": {
               "gte": 0
             }
@@ -2582,6 +2582,23 @@
           "default": 108.7,
           "domain": {
             "gt": 0
+          }
+        },
+        "batch.whirlpool_knockout_min": {
+          "kind": "root",
+          "dimension": "time",
+          "default": 30,
+          "domain": {
+            "gte": 0
+          }
+        },
+        "batch.whirlpool_start_temp_c": {
+          "kind": "root",
+          "dimension": "temperature",
+          "default": 99,
+          "domain": {
+            "gte": 0,
+            "lte": 100
           }
         },
         "batch.cooling_curve_id": {
@@ -4298,7 +4315,9 @@
             "post_boil_gravity": "solver.batch.sg_post_boil",
             "post_boil_volume_l": "solver.batch.cascade.v_post_boil",
             "whirlpool_ambient_temp_c": "batch.whirlpool_ambient_temp_c",
-            "whirlpool_cooling_time_constant_min": "batch.whirlpool_cooling_time_constant_min"
+            "whirlpool_cooling_time_constant_min": "batch.whirlpool_cooling_time_constant_min",
+            "whirlpool_knockout_min": "batch.whirlpool_knockout_min",
+            "whirlpool_start_temp_c": "batch.whirlpool_start_temp_c"
           },
           "outputs": {
             "boil_rows": {
@@ -7701,8 +7720,8 @@
         "options": null,
         "option_labels": null
       },
-      "batch.whirlpool_hops.duration_min": {
-        "label": "Rest",
+      "batch.whirlpool_hops.addition_at_min": {
+        "label": "After flameout",
         "dimension": "time",
         "unit": "min",
         "symbol": "min",
@@ -8098,7 +8117,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:e0748cb575f866dc4a2a1ef6ca52076d4b46a710b63e598303f7b648269ff7fb"
+    "hash": "sha256:bd440070a685f51c77b1f2a335efa1d43ec051b811aa6a971103e95fd1c2842e"
   },
   "batch": {
     "id": "frozen-1",
@@ -8242,7 +8261,7 @@
           "name": "Citra",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.12,
-          "duration_min": 30.0,
+          "addition_at_min": 0.0,
           "initial_temp_c": 95.0,
           "parts": 70,
           "pct": 0.7,
@@ -8253,7 +8272,7 @@
           "name": "Saaz",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.035,
-          "duration_min": 10.0,
+          "addition_at_min": 20.0,
           "initial_temp_c": 70.0,
           "parts": 30,
           "pct": 0.3,
@@ -8489,7 +8508,7 @@
           "name": "Citra",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.12,
-          "duration_min": 30.0,
+          "addition_at_min": 0.0,
           "initial_temp_c": 95.0,
           "parts": 70,
           "pct": 0.7,
@@ -8500,7 +8519,7 @@
           "name": "Saaz",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.035,
-          "duration_min": 10.0,
+          "addition_at_min": 20.0,
           "initial_temp_c": 70.0,
           "parts": 30,
           "pct": 0.3,
@@ -9521,9 +9540,9 @@
           "number": "12.0",
           "unit": "%"
         },
-        "rest": {
-          "text": "30 min",
-          "number": "30",
+        "add": {
+          "text": "0 min",
+          "number": "0",
           "unit": "min"
         },
         "temp": {
@@ -9563,9 +9582,9 @@
           "number": "3.5",
           "unit": "%"
         },
-        "rest": {
-          "text": "10 min",
-          "number": "10",
+        "add": {
+          "text": "20 min",
+          "number": "20",
           "unit": "min"
         },
         "temp": {
@@ -9903,5 +9922,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:6124c0790a266b7283515f0ee19f5ed19d06ed507233a69c94b568fcbfe8bc4d"
+  "content_hash": "sha256:08969a3f9202d279120b351c3f48f63555d7b460f3678379b99d098c8e05b0ae"
 }

@@ -105,50 +105,73 @@ function requireAboveAmbient(atMin, tempC, ambientTempC) {
   }
 }
 
-export function whirlpoolAdditions(rows, endMinutes) {
+export function whirlpoolAdditions(rows) {
   const ordered = [...rows].sort(
-    (a, b) => (Number(b.duration_min) || 0) - (Number(a.duration_min) || 0)
+    (a, b) => (Number(a.addition_at_min) || 0) - (Number(b.addition_at_min) || 0)
   );
   const groups = [];
   for (const row of ordered) {
-    const duration = Number(row.duration_min) || 0;
+    const at = Number(row.addition_at_min) || 0;
     const temp = Number(row.initial_temp_c) || 0;
     const last = groups[groups.length - 1];
-    if (last && Math.abs(last.duration - duration) <= WHIRLPOOL_DURATION_TOLERANCE_MIN) {
+    if (last && Math.abs(last.at - at) <= WHIRLPOOL_DURATION_TOLERANCE_MIN) {
       if (Math.abs(last.temp - temp) > WHIRLPOOL_TEMP_TOLERANCE_C) {
         throw timelineError(
           "WHIRLPOOL_ADDITION_CONFLICT",
-          `Two whirlpool charges share a ${duration.toFixed(1)}-minute rest but post ` +
+          `Two whirlpool charges share a ${at.toFixed(1)}-minute addition but post ` +
             `${last.temp.toFixed(1)} °C and ${temp.toFixed(1)} °C; one addition time ` +
             "cannot have two temperatures."
         );
       }
       continue;
     }
-    groups.push({ duration, at: endMinutes - duration, temp });
+    groups.push({ at, temp });
   }
   return groups;
 }
 
+function checkWhirlpoolAddition(addition, endMinutes, currentTemp, ambientTempC) {
+  if (addition.at > endMinutes + WHIRLPOOL_DURATION_TOLERANCE_MIN) {
+    throw timelineError(
+      "INVALID_HOP_INPUT",
+      `Charge at ${addition.at.toFixed(1)} min is added after the ` +
+        `${endMinutes.toFixed(1)}-min knockout; move it inside the window.`
+    );
+  }
+  requireAboveAmbient(addition.at, addition.temp, ambientTempC);
+  if (addition.temp > currentTemp + WHIRLPOOL_TEMP_TOLERANCE_C) {
+    throw timelineError(
+      "WHIRLPOOL_HEATING",
+      `Charge at ${addition.at.toFixed(1)} min posts ${addition.temp.toFixed(1)} °C, ` +
+        `above the ${currentTemp.toFixed(1)} °C the kettle reaches on the cooling curve; ` +
+        "heating is not modelled."
+    );
+  }
+}
+
 export function whirlpoolTimeline(
   rows,
-  { ambientTempC = DEFAULT_AMBIENT_TEMP_C, kPerMin = DEFAULT_K_PER_MIN } = {}
+  {
+    ambientTempC = DEFAULT_AMBIENT_TEMP_C,
+    kPerMin = DEFAULT_K_PER_MIN,
+    knockoutMin = DEFAULT_REST_DURATION_MIN,
+    startTempC = DEFAULT_INITIAL_TEMP_C,
+  } = {}
 ) {
   const list = rows ?? [];
-  if (!list.length) {
+  if (!(knockoutMin > 0)) {
     return { endMinutes: 0, segments: [], chills: [], effectiveMinutes: () => 0 };
   }
-  const endMinutes = Math.max(...list.map((row) => Number(row.duration_min) || 0));
-  const additions = whirlpoolAdditions(list, endMinutes);
-  const first = additions[0];
-  requireAboveAmbient(first.at, first.temp, ambientTempC);
+  const endMinutes = knockoutMin;
+  requireAboveAmbient(0, startTempC, ambientTempC);
+  const additions = whirlpoolAdditions(list);
 
   const segments = [];
   const chills = [];
   let currentTime = 0;
-  let currentTemp = first.temp;
-  for (const addition of additions.slice(1)) {
-    requireAboveAmbient(addition.at, addition.temp, ambientTempC);
+  let currentTemp = startTempC;
+  for (const addition of additions) {
+    checkWhirlpoolAddition(addition, endMinutes, currentTemp, ambientTempC);
     if (addition.at > currentTime + 1e-9) {
       segments.push({ start: currentTime, end: addition.at, temp: currentTemp });
       currentTemp = coolingTemperature(
@@ -158,14 +181,6 @@ export function whirlpoolTimeline(
         kPerMin
       );
       currentTime = addition.at;
-    }
-    if (addition.temp > currentTemp + WHIRLPOOL_TEMP_TOLERANCE_C) {
-      throw timelineError(
-        "WHIRLPOOL_HEATING",
-        `Charge at ${addition.at.toFixed(1)} min posts ${addition.temp.toFixed(1)} °C, ` +
-          `above the ${currentTemp.toFixed(1)} °C the kettle reaches on the cooling curve; ` +
-          "heating is not modelled."
-      );
     }
     if (addition.temp < currentTemp - WHIRLPOOL_TEMP_TOLERANCE_C) {
       chills.push({ atMin: addition.at, fromTempC: currentTemp, toTempC: addition.temp });

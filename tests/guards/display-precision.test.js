@@ -43,7 +43,7 @@ test("collection columns inherit the dimension policy", async () => {
   const app = await sharedTestApp();
   const table = app.fieldsBySlice.hops.find((f) => f.id === "batch.whirlpool_hops");
   const columns = Object.fromEntries(table.columns.map((c) => [c.id, c]));
-  assert.equal(columns.duration_min.decimals, 0);
+  assert.equal(columns.addition_at_min.decimals, 0);
   assert.equal(columns.initial_temp_c.decimals, 1);
   assert.equal(columns.pct.decimals, 1);
   assert.equal(columns.parts.decimals, null);

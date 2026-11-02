@@ -49,7 +49,7 @@
   ([Hop], "name", left),
   ([Form], "form", left),
   ([Alpha], "alpha", right),
-  ([Rest], "rest", right),
+  ([After flameout], "add", right),
   ([Temp], "temp", right),
   ([Share], "ibu_share", right),
   ([IBU], "ibu", right),
@@ -93,10 +93,11 @@
       ]
       v(2pt)
       note[
-        Every charge rests to knockout and the wort cools passively from
-        #text-or("batch.whirlpool_ambient_temp_c") ambient at the batch's
-        #text-or("batch.whirlpool_cooling_time_constant_min") time constant. A charge colder
-        than that curve implies an inferred chill; a warmer one is refused.
+        Additions count from flameout; knockout closes the window from
+        #text-or("batch.whirlpool_start_temp_c") at the batch's
+        #text-or("batch.whirlpool_cooling_time_constant_min") time constant toward
+        #text-or("batch.whirlpool_ambient_temp_c") ambient. A charge colder than that
+        curve implies an inferred chill; a warmer one is refused.
       ]
     })
   }

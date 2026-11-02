@@ -59,7 +59,7 @@ class BoilHopEntry:
 @dataclass(frozen=True)
 class WhirlpoolHopEntry:
     alpha_acid_pct: float
-    duration_min: float
+    addition_at_min: float
     initial_temp_c: float
     pct: float
     product_form: str = "t90_pellet"
@@ -78,6 +78,8 @@ class HopSolverInput:
     post_boil_volume_l: float
     whirlpool_ambient_temp_c: float
     whirlpool_cooling_time_constant_min: float
+    whirlpool_knockout_min: float = 30.0
+    whirlpool_start_temp_c: float = 99.0
 
 
 @dataclass(frozen=True)
@@ -307,45 +309,57 @@ def _require_above_ambient(at_min: float, temp_c: float, ambient_temp_c: float) 
 
 
 def whirlpool_additions(
-    rows: Sequence[WhirlpoolHopEntry], end_min: float
+    rows: Sequence[WhirlpoolHopEntry],
 ) -> list[tuple[float, float]]:
-    """Group charges into (addition time, posted temperature), longest rest first."""
+    """Group charges into (addition time, posted temperature), earliest first."""
     groups: list[list[float]] = []
-    for row in sorted(rows, key=lambda entry: entry.duration_min, reverse=True):
-        if groups and abs(groups[-1][0] - row.duration_min) <= WHIRLPOOL_DURATION_TOLERANCE_MIN:
-            if abs(groups[-1][2] - row.initial_temp_c) > WHIRLPOOL_TEMP_TOLERANCE_C:
+    for row in sorted(rows, key=lambda entry: entry.addition_at_min):
+        if (
+            groups
+            and abs(groups[-1][0] - row.addition_at_min) <= WHIRLPOOL_DURATION_TOLERANCE_MIN
+        ):
+            if abs(groups[-1][1] - row.initial_temp_c) > WHIRLPOOL_TEMP_TOLERANCE_C:
                 raise SolverValidationError(
                     "WHIRLPOOL_ADDITION_CONFLICT",
-                    f"Two whirlpool charges share a {row.duration_min:.1f}-minute rest but "
-                    f"post {groups[-1][2]:.1f} °C and {row.initial_temp_c:.1f} °C; one "
+                    f"Two whirlpool charges share a {row.addition_at_min:.1f}-minute addition "
+                    f"but post {groups[-1][1]:.1f} °C and {row.initial_temp_c:.1f} °C; one "
                     "addition time cannot have two temperatures.",
                 )
             continue
-        groups.append([row.duration_min, end_min - row.duration_min, row.initial_temp_c])
-    return [(group[1], group[2]) for group in groups]
+        groups.append([row.addition_at_min, row.initial_temp_c])
+    return [(group[0], group[1]) for group in groups]
 
 
 def build_whirlpool_timeline(
-    rows: Sequence[WhirlpoolHopEntry], ambient_temp_c: float, k_per_min: float
+    rows: Sequence[WhirlpoolHopEntry],
+    ambient_temp_c: float,
+    k_per_min: float,
+    knockout_min: float,
+    start_temp_c: float,
 ) -> WhirlpoolTimeline:
-    """One batch curve: passive between additions, an inferred chill at each drop.
+    """One batch curve from heat-off to knockout, with a chill at each drop.
 
-    Every charge rests to knockout, so the longest rest starts at flameout and a
-    charge's duration fixes its addition time. A posted temperature below the
-    latent curve is a forced chill; above it means heating, which is rejected.
+    The curve starts at ``(0, start_temp_c)`` and ends at ``knockout_min``, so a
+    charge's addition time is its position in that window and its exposure is
+    ``knockout - addition``. A posted temperature below the latent curve is a
+    forced chill; above it means heating, which is rejected.
     """
-    if not rows:
+    if knockout_min <= 0.0:
         return WhirlpoolTimeline(0.0, (), ())
-    end_min = max(row.duration_min for row in rows)
-    additions = whirlpool_additions(rows, end_min)
-    first_at, first_temp = additions[0]
-    _require_above_ambient(first_at, first_temp, ambient_temp_c)
+    _require_above_ambient(0.0, start_temp_c, ambient_temp_c)
+    additions = whirlpool_additions(rows)
 
     segments: list[tuple[float, float, float]] = []
     chills: list[WhirlpoolChill] = []
     current_time = 0.0
-    current_temp = first_temp
-    for at_min, posted_temp in additions[1:]:
+    current_temp = start_temp_c
+    for at_min, posted_temp in additions:
+        if at_min > knockout_min + WHIRLPOOL_DURATION_TOLERANCE_MIN:
+            raise SolverValidationError(
+                "INVALID_HOP_INPUT",
+                f"Charge at {at_min:.1f} min is added after the {knockout_min:.1f}-min "
+                "knockout; move it inside the window.",
+            )
         _require_above_ambient(at_min, posted_temp, ambient_temp_c)
         if at_min > current_time + 1e-9:
             segments.append((current_time, at_min, current_temp))
@@ -363,9 +377,9 @@ def build_whirlpool_timeline(
         if posted_temp < current_temp - WHIRLPOOL_TEMP_TOLERANCE_C:
             chills.append(WhirlpoolChill(at_min, current_temp, posted_temp))
             current_temp = posted_temp
-    if end_min > current_time + 1e-9:
-        segments.append((current_time, end_min, current_temp))
-    return WhirlpoolTimeline(end_min, tuple(segments), tuple(chills))
+    if knockout_min > current_time + 1e-9:
+        segments.append((current_time, knockout_min, current_temp))
+    return WhirlpoolTimeline(knockout_min, tuple(segments), tuple(chills))
 
 
 def mass_from_whirlpool_utilization(
@@ -435,8 +449,10 @@ def _validate_boil_hops(rows: Sequence[BoilHopEntry]) -> None:
 def _validate_whirlpool_hops(rows: Sequence[WhirlpoolHopEntry]) -> None:
     for row in rows:
         _validate_hop_fractions(row)
-        if not (row.duration_min >= 0.0):
-            raise SolverValidationError("INVALID_HOP_INPUT", "Rest duration must be non-negative.")
+        if not (row.addition_at_min >= 0.0):
+            raise SolverValidationError(
+                "INVALID_HOP_INPUT", "The addition time must be non-negative."
+            )
         _validate_product_form(row)
 
 
@@ -484,14 +500,18 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
 
     ambient_temp_c = inputs.whirlpool_ambient_temp_c
     timeline = build_whirlpool_timeline(
-        inputs.whirlpool_hops, ambient_temp_c, k_per_min
+        inputs.whirlpool_hops,
+        ambient_temp_c,
+        k_per_min,
+        inputs.whirlpool_knockout_min,
+        inputs.whirlpool_start_temp_c,
     )
     whirlpool_rows: list[WhirlpoolHopResult] = []
     for row in inputs.whirlpool_hops:
-        minutes = row.duration_min
+        minutes = max(0.0, inputs.whirlpool_knockout_min - row.addition_at_min)
         ibu = row.pct * inputs.whirlpool_target_ibu
         effective_minutes = timeline.effective_minutes(
-            timeline.end_min - minutes, ambient_temp_c, k_per_min
+            row.addition_at_min, ambient_temp_c, k_per_min
         )
         form = product_form_utilization(row.product_form, row.cone_utilization)
         utilization = (

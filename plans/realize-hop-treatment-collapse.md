@@ -52,57 +52,60 @@ belongs in one document rather than 61 rows.
 
 ### 1. Supersede the dossier
 
-- [ ] Move `plans/hop-catalogue-resume.md` to
+- [x] Move `plans/hop-catalogue-resume.md` to
       `plans/archive/2026-11/hop-catalogue-resume.md`; set `status: superseded`
       and name this plan as its successor.
-- [ ] Widen `plans/archive/README.md` prose from "completed or executed" to
+- [x] Widen `plans/archive/README.md` prose from "completed or executed" to
       "completed, executed, or superseded".
-- [ ] Retire `TODO.md` Next #1 (schedule-derived whirlpool IBU) — it describes the
+- [x] Retire `TODO.md` Next #1 (schedule-derived whirlpool IBU) — it describes the
       forward model the mandate rejects — and renumber what follows.
 
 ### 2. The document and the catalogue collapse
 
-- [ ] Write `docs/hops/hop-products.md`: four leaves and their `c`; per-variety
+- [x] Write `docs/hops/hop-products.md`: four leaves and their `c`; per-variety
       alpha tables with vintage and URL (Cryo YCH 2022, Lupomax 2025 and 2023);
       variant table with alpha basis, dose band, substitution guidance and sheet
       URL; why CO₂ and flowable share a leaf; the recorded disagreements; the cone
       gate; the exclusions; the vintage caveat.
-- [ ] Add it to the `docs/hops/README.md` index.
-- [ ] Rewrite `data/sources/hop-products.json` as seven curated variants: Cryo
+- [x] Add it to the `docs/hops/README.md` index.
+- [x] Rewrite `data/sources/hop-products.json` as seven curated variants: Cryo
       Hops, Lupomax, CO₂ extract (YVH), Hop Shot, Flex, DynaBoost, Incognito.
-- [ ] Delete `data/sources/hop-products-lupulin.json` and
+- [x] Delete `data/sources/hop-products-lupulin.json` and
       `data/sources/yvh-products.json` (after extraction).
-- [ ] Delete `scripts/scrape/yvh/`, the `scrape-yvh` target and its help line.
-- [ ] Delete `tests/guards/yvh-products-source-contract.test.js`.
-- [ ] Rewrite `scripts/build-hop-products-seed.mjs` for the variant source.
-- [ ] Retarget the hop-products case in `tests/guards/seed-rebuild.test.js`.
-- [ ] Rewrite `docs/dag-artifacts/seed-substrate.md` §2.9.
-- [ ] Rebuild seeds and re-emit the manifest.
+- [x] Delete `scripts/scrape/yvh/`, the `scrape-yvh` target and its help line.
+- [x] Delete `tests/guards/yvh-products-source-contract.test.js`.
+- [x] Rewrite `scripts/build-hop-products-seed.mjs` for the variant source.
+- [x] Retarget the hop-products case in `tests/guards/seed-rebuild.test.js`.
+- [x] Rewrite `docs/dag-artifacts/seed-substrate.md` §2.9.
+- [x] Rebuild seeds and re-emit the manifest.
 
 ### 3. Leaves, the cone gate, and the schema shrink
 
-- [ ] `hop_product_form` gains `whole_cone`; display labels carry the honest
+- [x] `hop_product_form` gains `whole_cone`; display labels carry the honest
       names.
-- [ ] Delete the `hop_product_type` taxonomy; `dry_hop_row.product_type` uses
+- [x] Delete the `hop_product_type` taxonomy; `dry_hop_row.product_type` uses
       `hop_product_form`; the dry-hop picker offers three leaves.
-- [ ] `PRODUCT_FORM_UTILIZATION` (JS and Python) gains `whole_cone` as a supplied
+- [x] `PRODUCT_FORM_UTILIZATION` (JS and Python) gains `whole_cone` as a supplied
       value, not a constant.
-- [ ] Add `batch.cone_utilization` (dimensionless, `gt 0`, `lte 1`, no default)
-      and `CONE_UTILIZATION_REQUIRED`, emitted iff a row carries `whole_cone` and
-      the input is null.
-- [ ] Delete `t90_replacement_ratio` from `boil_hop_row`, `whirlpool_hop_row` and
+- [x] Add `cone_utilization` to `boil_hop_row` and `whirlpool_hop_row`
+      (dimensionless, `gt 0`, `lte 1`, no default) and
+      `CONE_UTILIZATION_REQUIRED`, emitted iff a row carries `whole_cone` and the
+      field is null. Per charge, not batch: the engine skips a boundary whose
+      inputs hold a null, so a nullable batch-level input would silently disable
+      the whole hop solve.
+- [x] Delete `t90_replacement_ratio` from `boil_hop_row`, `whirlpool_hop_row` and
       `hop_product`; delete `purpose`, `beta_acid_pct`, `total_oil_pct` and
       `variety_id` from `hop_product`.
-- [ ] Frontend: four-leaf boil and whirlpool pickers, three-leaf dry-hop picker,
+- [x] Frontend: four-leaf boil and whirlpool pickers, three-leaf dry-hop picker,
       variant annotation, and the removal of the ratio read-out and the hardcoded
       product prose.
-- [ ] Fixtures, inventory, glossary and the hops model doc follow the artifact.
+- [x] Fixtures, inventory, glossary and the hops model doc follow the artifact.
 
 ### 4. The timeline
 
 - [ ] Add `batch.whirlpool_knockout_min` and `batch.whirlpool_start_temp_c`
       (default 99).
-- [ ] Replace `whirlpool_hop_row.duration_min` with `addition_at_min` (position
+- [ ] Replace the whirlpool row's `duration_min` with `addition_at_min` (position
       after flameout, `gte 0`, `lte` knockout); derive exposure as
       `knockout − position`.
 - [ ] Timeline origin becomes `(0, start_temp_c)`; `end_min` becomes knockout;

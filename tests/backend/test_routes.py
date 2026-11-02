@@ -111,7 +111,7 @@ def test_hop_solver_accepts_a_lupulin_row_on_the_wire(client):
         whirlpool_hops=[
             {
                 "alpha_acid_pct": 0.20,
-                "duration_min": 20.0,
+                "addition_at_min": 10.0,
                 "initial_temp_c": 76.7,
                 "pct": 1.0,
                 "product_form": "lupulin_pellet",

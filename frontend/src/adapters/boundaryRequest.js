@@ -203,7 +203,7 @@ export const HOP_FIELDS = {
     build: (resolved) =>
       (resolved.whirlpool_hops ?? []).map((row) => ({
         alpha_acid_pct: row.alpha_acid_pct,
-        duration_min: row.duration_min,
+        addition_at_min: row.addition_at_min,
         initial_temp_c: row.initial_temp_c,
         pct: row.pct,
         product_form: row.product_form ?? "t90_pellet",
@@ -218,6 +218,8 @@ export const HOP_FIELDS = {
   post_boil_volume_l: { path: "solver.batch.cascade.v_post_boil" },
   whirlpool_ambient_temp_c: { path: "batch.whirlpool_ambient_temp_c" },
   whirlpool_cooling_time_constant_min: { path: "batch.whirlpool_cooling_time_constant_min" },
+  whirlpool_knockout_min: { path: "batch.whirlpool_knockout_min" },
+  whirlpool_start_temp_c: { path: "batch.whirlpool_start_temp_c" },
 };
 
 export function buildBatchRequest(engine) {

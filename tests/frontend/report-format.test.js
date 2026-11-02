@@ -198,7 +198,7 @@ const WHIRLPOOL_HOT = {
   name: "Citra",
   product_form: "t90_pellet",
   alpha_acid_pct: 0.12,
-  duration_min: 30,
+  addition_at_min: 0,
   initial_temp_c: 95,
   parts: 70,
   pct: 0.7,
@@ -210,7 +210,7 @@ const WHIRLPOOL_COOL = {
   hop_id: "saaz",
   name: "Saaz",
   alpha_acid_pct: 0.035,
-  duration_min: 10,
+  addition_at_min: 20,
   initial_temp_c: 70,
   parts: 30,
   pct: 0.3,
@@ -252,7 +252,7 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   assert.equal(whirlpool.length, 2);
   assert.equal(whirlpool[0].form.text, "T-90 pellet");
   assert.equal(whirlpool[0].alpha.unit, "%");
-  assert.equal(whirlpool[0].rest.unit, "min");
+  assert.equal(whirlpool[0].add.unit, "min");
   assert.equal(whirlpool[0].temp.unit, "°C");
   assert.equal(whirlpool[1].name.text, "Saaz");
 

@@ -18,7 +18,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 30.0,
+        "whirlpool_start_temp_c": 99.0
       },
       "expected": {
         "boil_rows": [
@@ -53,7 +55,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 30.0,
+        "whirlpool_start_temp_c": 99.0
       },
       "expected": {
         "boil_rows": [
@@ -76,10 +80,10 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.1,
-            "duration_min": 30,
             "initial_temp_c": 99,
             "pct": 1.0,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 0
           }
         ],
         "boil_target_ibu": 0.0,
@@ -89,7 +93,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 30,
+        "whirlpool_start_temp_c": 99
       },
       "expected": {
         "boil_rows": [],
@@ -113,10 +119,10 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.45,
-            "duration_min": 30,
             "initial_temp_c": 99,
             "pct": 1.0,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 0
           }
         ],
         "boil_target_ibu": 0.0,
@@ -126,7 +132,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 30,
+        "whirlpool_start_temp_c": 99
       },
       "expected": {
         "boil_rows": [],
@@ -161,10 +169,10 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.1,
-            "duration_min": 20,
             "initial_temp_c": 90,
             "pct": 1.0,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 0
           }
         ],
         "boil_target_ibu": 25.0,
@@ -174,7 +182,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 20,
+        "whirlpool_start_temp_c": 90
       },
       "expected": {
         "boil_rows": [
@@ -209,17 +219,17 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.1,
-            "duration_min": 30,
             "initial_temp_c": 99,
             "pct": 0.6,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 0
           },
           {
             "alpha_acid_pct": 0.12,
-            "duration_min": 20,
             "initial_temp_c": 92.0566,
             "pct": 0.4,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 10
           }
         ],
         "boil_target_ibu": 0.0,
@@ -229,7 +239,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 30,
+        "whirlpool_start_temp_c": 99
       },
       "expected": {
         "boil_rows": [],
@@ -259,17 +271,17 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.2,
-            "duration_min": 30,
             "initial_temp_c": 99,
             "pct": 0.5,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 0
           },
           {
             "alpha_acid_pct": 0.2,
-            "duration_min": 20,
             "initial_temp_c": 76.7,
             "pct": 0.5,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 10
           }
         ],
         "boil_target_ibu": 0.0,
@@ -279,7 +291,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 30,
+        "whirlpool_start_temp_c": 99
       },
       "expected": {
         "boil_rows": [],
@@ -309,24 +323,24 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.1,
-            "duration_min": 45,
             "initial_temp_c": 99.0,
             "pct": 0.5,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 0
           },
           {
             "alpha_acid_pct": 0.4,
-            "duration_min": 25,
             "initial_temp_c": 85.7234,
             "pct": 0.3,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 20
           },
           {
             "alpha_acid_pct": 0.18,
-            "duration_min": 10,
             "initial_temp_c": 73.9469,
             "pct": 0.2,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 35
           }
         ],
         "boil_target_ibu": 0.0,
@@ -336,7 +350,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 45,
+        "whirlpool_start_temp_c": 99.0
       },
       "expected": {
         "boil_rows": [],
@@ -378,17 +394,17 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.107,
-            "duration_min": 40,
             "initial_temp_c": 98.0,
             "pct": 0.6,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 0
           },
           {
             "alpha_acid_pct": 0.1631,
-            "duration_min": 15,
             "initial_temp_c": 76.9742,
             "pct": 0.4,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 25
           }
         ],
         "boil_target_ibu": 30.3,
@@ -398,7 +414,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 40,
+        "whirlpool_start_temp_c": 98.0
       },
       "expected": {
         "boil_rows": [
@@ -434,17 +452,17 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.22,
-            "duration_min": 60,
             "initial_temp_c": 97.0,
             "pct": 0.7,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 0
           },
           {
             "alpha_acid_pct": 0.1072,
-            "duration_min": 30,
             "initial_temp_c": 78.4292,
             "pct": 0.3,
-            "product_form": "t90_pellet"
+            "product_form": "t90_pellet",
+            "addition_at_min": 30
           }
         ],
         "boil_target_ibu": 0.0,
@@ -454,7 +472,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 60,
+        "whirlpool_start_temp_c": 97.0
       },
       "expected": {
         "boil_rows": [],
@@ -490,10 +510,10 @@
         "whirlpool_hops": [
           {
             "alpha_acid_pct": 0.0361,
-            "duration_min": 50,
             "initial_temp_c": 85.0,
             "pct": 1.0,
-            "product_form": "lupulin_pellet"
+            "product_form": "lupulin_pellet",
+            "addition_at_min": 0
           }
         ],
         "boil_target_ibu": 48.9,
@@ -503,7 +523,9 @@
         "post_boil_gravity": 1.055,
         "post_boil_volume_l": 20.0,
         "whirlpool_ambient_temp_c": 20.0,
-        "whirlpool_cooling_time_constant_min": 108.7
+        "whirlpool_cooling_time_constant_min": 108.7,
+        "whirlpool_knockout_min": 50,
+        "whirlpool_start_temp_c": 85.0
       },
       "expected": {
         "boil_rows": [

@@ -69,6 +69,8 @@
     "whirlpool_ambient_temp_c",
     "whirlpool_cooling_time_constant_min",
     "whirlpool_hops",
+    "whirlpool_knockout_min",
+    "whirlpool_start_temp_c",
     "whirlpool_target_ibu"
   ]
 }

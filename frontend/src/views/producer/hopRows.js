@@ -88,6 +88,11 @@ export function hopBoilPctLabel(row) {
     : DASH;
 }
 
+export function hopAdditionLabel(row) {
+  const at = Number(row?.addition_at_min);
+  return Number.isFinite(at) ? `${Math.round(at)} min` : "—";
+}
+
 export function hopMinutesLabel(row) {
   return typeof row?.minutes === "number"
     ? cellLabel(row.minutes, { decimals: 0, symbol: "min" })
@@ -129,7 +134,7 @@ export function mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume) {
     return {
       ...row,
       product_form: row.product_form ?? "t90_pellet",
-      minutes: Number.isFinite(minutes) ? minutes : Number(row.duration_min) || 0,
+      minutes: Number.isFinite(minutes) ? minutes : 0,
       ibu: Number.isFinite(ibu) ? ibu : (Number(row.pct) || 0) * whirlpoolIbu,
       mass_kg: mass,
       effective_minutes:

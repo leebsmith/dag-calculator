@@ -263,7 +263,7 @@ function hopRows(artifact, catalog, engine, kind) {
   // picked, the same decimals, the same symbol.
   const ibuEntry = nodes[boil ? H.boilIbu : H.whirlpoolIbu];
   const massEntry = nodes[boil ? H.boilMass : H.whirlpoolMass];
-  const timeEntry = nodes[boil ? H.boilTime : `${H.whirlpoolCollection}.duration_min`];
+  const timeEntry = nodes[boil ? H.boilTime : `${H.whirlpoolCollection}.addition_at_min`];
   const tempEntry = nodes[H.whirlpoolAmbient];
   return authored.map((row, index) => {
     const result = solved[index] ?? {};
@@ -285,7 +285,7 @@ function hopRows(artifact, catalog, engine, kind) {
     return {
       ...base,
       form: cell(nodes[`${collection}.product_form`], row.product_form),
-      rest: cell(timeEntry, row.duration_min),
+      add: cell(timeEntry, row.addition_at_min),
       temp: cell(tempEntry, row.initial_temp_c),
     };
   });
