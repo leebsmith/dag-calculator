@@ -64,6 +64,51 @@ function chromeConfig(config) {
   };
 }
 
+const STATE_SUFFIXES = [
+  "Drawer",
+  "Search",
+  "SearchNotes",
+  "ActiveIndex",
+  "CategoryFilter",
+  "Family",
+  "Standard",
+];
+
+const GETTER_SUFFIXES = [
+  "EditorOpen",
+  "Catalog",
+  "Categories",
+  "Families",
+  "StandardGroups",
+  "ProductMatches",
+  "StandardName",
+  "FilteredCatalog",
+  "VisibleCatalog",
+  "CatalogTruncated",
+  "DraftCounts",
+  "ActiveRow",
+];
+
+const METHOD_NAMES = {
+  openEditor: (p, C) => `open${C}Editor`,
+  cancelEditor: (p, C) => `cancel${C}Editor`,
+  saveEditor: (p, C) => `save${C}Editor`,
+  addCatalog: (p, C) => `addCatalog${C}`,
+  duplicateCatalog: (p, C) => `duplicateCatalog${C}`,
+  remove: (p, C) => `remove${C}`,
+  inspectRow: (p, C) => `inspect${C}Row`,
+  openSearch: (p, C) => `open${C}Search`,
+  toggleSearchNotes: (p, C) => `toggle${C}SearchNotes`,
+  closeDrawer: (p, C) => `close${C}Drawer`,
+  toggleCategory: (p, C) => `toggle${C}Category`,
+  toggleFamily: (p, C) => `toggle${C}Family`,
+  selectStandard: (p, C) => `select${C}Standard`,
+  clearStandard: (p, C) => `clear${C}Standard`,
+  handleEscape: (p, C) => `handle${C}Escape`,
+  itemMeta: (p) => `${p}ItemMeta`,
+  groupMeta: (p) => `${p}GroupMeta`,
+};
+
 export function installCatalogDraft(app, ctx, config) {
   const {
     prefix,
@@ -105,49 +150,53 @@ export function installCatalogDraft(app, ctx, config) {
   });
   installChrome(app);
 
+  const name = (suffix) => `${prefix}${suffix}`;
+  const m = Object.fromEntries(
+    Object.entries(METHOD_NAMES).map(([key, fn]) => [key, fn(prefix, Cap)])
+  );
   const state = {
-    [`${prefix}Drawer`]: null, // "search" | "inspect" | null
-    [`${prefix}Search`]: "",
-    [`${prefix}SearchNotes`]: false,
-    [`${prefix}ActiveIndex`]: null,
-    [`${prefix}CategoryFilter`]: [],
-    [`${prefix}Family`]: "",
-    [`${prefix}Standard`]: "",
+    [name("Drawer")]: null, // "search" | "inspect" | null
+    [name("Search")]: "",
+    [name("SearchNotes")]: false,
+    [name("ActiveIndex")]: null,
+    [name("CategoryFilter")]: [],
+    [name("Family")]: "",
+    [name("Standard")]: "",
   };
 
   const methods = {
-    [`open${Cap}Editor`]() {
+    [m.openEditor]() {
       this.openDraft(nodeId);
-      this[`${prefix}Drawer`] = null;
-      this[`${prefix}ActiveIndex`] = null;
+      this[name("Drawer")] = null;
+      this[name("ActiveIndex")] = null;
     },
 
-    [`cancel${Cap}Editor`]() {
+    [m.cancelEditor]() {
       // The draft is scratch state: a changed draft asks before it is dropped.
       if (this.draftDirty) {
         this.draftDiscardOpen = true;
         return;
       }
       this.closeDraft();
-      this[`${prefix}Drawer`] = null;
-      this[`${prefix}ActiveIndex`] = null;
+      this[name("Drawer")] = null;
+      this[name("ActiveIndex")] = null;
     },
 
-    [`save${Cap}Editor`]() {
+    [m.saveEditor]() {
       this.saveDraft();
-      this[`${prefix}Drawer`] = null;
-      this[`${prefix}ActiveIndex`] = null;
+      this[name("Drawer")] = null;
+      this[name("ActiveIndex")] = null;
     },
 
-    [`addCatalog${Cap}`](catalogId) {
+    [m.addCatalog](catalogId) {
       const item = findCatalogItem(catalogId);
       if (!item) return;
       if (canAdd && !canAdd(this)) return;
       this.addDraftRow(makeRow(item));
-      this[`close${Cap}Drawer`]();
+      this[m.closeDrawer]();
     },
 
-    [`duplicateCatalog${Cap}`](catalogId) {
+    [m.duplicateCatalog](catalogId) {
       const item = findCatalogItem(catalogId);
       if (!item) return;
       const catalogName = catalogNameOf
@@ -157,74 +206,74 @@ export function installCatalogDraft(app, ctx, config) {
       this.duplicateUserItem(catalogName, item);
     },
 
-    [`remove${Cap}`](ri) {
+    [m.remove](ri) {
       this.removeDraftRow(ri);
-      if (this[`${prefix}ActiveIndex`] === ri) {
-        this[`${prefix}ActiveIndex`] = null;
-        if (this[`${prefix}Drawer`] === "inspect") this[`${prefix}Drawer`] = null;
-      } else if (this[`${prefix}ActiveIndex`] != null && this[`${prefix}ActiveIndex`] > ri) {
-        this[`${prefix}ActiveIndex`] -= 1;
+      if (this[name("ActiveIndex")] === ri) {
+        this[name("ActiveIndex")] = null;
+        if (this[name("Drawer")] === "inspect") this[name("Drawer")] = null;
+      } else if (this[name("ActiveIndex")] != null && this[name("ActiveIndex")] > ri) {
+        this[name("ActiveIndex")] -= 1;
       }
     },
 
-    [`inspect${Cap}Row`](ri) {
-      this[`${prefix}ActiveIndex`] = ri;
-      this[`${prefix}Drawer`] = "inspect";
+    [m.inspectRow](ri) {
+      this[name("ActiveIndex")] = ri;
+      this[name("Drawer")] = "inspect";
     },
 
-    [`open${Cap}Search`]() {
-      this[`${prefix}Drawer`] = "search";
-      this[`${prefix}ActiveIndex`] = null;
-      this[`${prefix}Search`] = "";
-      this[`${prefix}SearchNotes`] = false;
-      this[`${prefix}CategoryFilter`] = [];
-      this[`${prefix}Family`] = "";
-      this[`${prefix}Standard`] = "";
+    [m.openSearch]() {
+      this[name("Drawer")] = "search";
+      this[name("ActiveIndex")] = null;
+      this[name("Search")] = "";
+      this[name("SearchNotes")] = false;
+      this[name("CategoryFilter")] = [];
+      this[name("Family")] = "";
+      this[name("Standard")] = "";
     },
 
-    [`toggle${Cap}SearchNotes`]() {
-      this[`${prefix}SearchNotes`] = !this[`${prefix}SearchNotes`];
+    [m.toggleSearchNotes]() {
+      this[name("SearchNotes")] = !this[name("SearchNotes")];
     },
 
-    [`close${Cap}Drawer`]() {
-      this[`${prefix}Drawer`] = null;
-      this[`${prefix}ActiveIndex`] = null;
+    [m.closeDrawer]() {
+      this[name("Drawer")] = null;
+      this[name("ActiveIndex")] = null;
     },
 
-    [`toggle${Cap}Category`](category) {
-      this[`${prefix}CategoryFilter`] = toggledCategoryFilter(
-        this[`${prefix}CategoryFilter`],
+    [m.toggleCategory](category) {
+      this[name("CategoryFilter")] = toggledCategoryFilter(
+        this[name("CategoryFilter")],
         category
       );
     },
 
-    [`toggle${Cap}Family`](family) {
-      this[`${prefix}Family`] = toggledFamilyFilter(this[`${prefix}Family`], family);
-      this[`${prefix}Standard`] = "";
+    [m.toggleFamily](family) {
+      this[name("Family")] = toggledFamilyFilter(this[name("Family")], family);
+      this[name("Standard")] = "";
     },
 
-    [`select${Cap}Standard`](standardId) {
-      this[`${prefix}Standard`] = standardId;
-      this[`${prefix}ActiveIndex`] = null;
+    [m.selectStandard](standardId) {
+      this[name("Standard")] = standardId;
+      this[name("ActiveIndex")] = null;
     },
 
-    [`clear${Cap}Standard`]() {
-      this[`${prefix}Standard`] = "";
-      this[`${prefix}ActiveIndex`] = null;
+    [m.clearStandard]() {
+      this[name("Standard")] = "";
+      this[name("ActiveIndex")] = null;
     },
 
-    [`handle${Cap}Escape`]() {
-      if (!this[`${prefix}EditorOpen`]) return;
+    [m.handleEscape]() {
+      if (!this[name("EditorOpen")]) return;
       if (this.draftDiscardOpen) this.dismissDraftDiscard();
-      else if (this[`${prefix}Drawer`] !== null) this[`close${Cap}Drawer`]();
-      else this[`cancel${Cap}Editor`]();
+      else if (this[name("Drawer")] !== null) this[m.closeDrawer]();
+      else this[m.cancelEditor]();
     },
 
-    [`${prefix}ItemMeta`](item) {
+    [m.itemMeta](item) {
       return catalogItemMeta(item, itemMeta);
     },
 
-    [`${prefix}GroupMeta`](group) {
+    [m.groupMeta](group) {
       return catalogGroupMeta(group, groupMeta);
     },
   };
@@ -232,23 +281,23 @@ export function installCatalogDraft(app, ctx, config) {
   Object.assign(app, state, methods);
 
   const getters = {
-    [`${prefix}EditorOpen`]() {
+    [name("EditorOpen")]() {
       return this.draftOpen && this.draftNodeId === nodeId;
     },
-    [`${prefix}Catalog`]() {
+    [name("Catalog")]() {
       void this.catalogRevision;
       return catalog();
     },
-    [`${prefix}Categories`]() {
+    [name("Categories")]() {
       void this.catalogRevision;
       return catalogCategoryPills(catalog(), categoryField);
     },
-    [`${prefix}Families`]() {
+    [name("Families")]() {
       if (!standardField) return [];
       void this.catalogRevision;
       return catalogFamilyPills(catalog(), familyField);
     },
-    [`${prefix}StandardGroups`]() {
+    [name("StandardGroups")]() {
       if (!standardField) return [];
       void this.catalogRevision;
       return catalogStandardGroups(catalog(), {
@@ -256,8 +305,8 @@ export function installCatalogDraft(app, ctx, config) {
         standardNameField,
         standardDescriptionField,
         familyField,
-        query: this[`${prefix}Search`],
-        family: this[`${prefix}Family`],
+        query: this[name("Search")],
+        family: this[name("Family")],
         added: addedIds(this.draftRows),
       });
     },
@@ -265,58 +314,58 @@ export function installCatalogDraft(app, ctx, config) {
     // "carafa" or "weyermann" finds the product even though the standard layer
     // never carries a maltster name. Drill-down owns the list once a standard
     // is selected, and a blank query keeps the browser standard-first.
-    [`${prefix}ProductMatches`]() {
-      if (standardField && this[`${prefix}Standard`]) return [];
-      const query = String(this[`${prefix}Search`] ?? "").trim();
+    [name("ProductMatches")]() {
+      if (standardField && this[name("Standard")]) return [];
+      const query = String(this[name("Search")] ?? "").trim();
       if (!query) return [];
       void this.catalogRevision;
       return catalogProductMatches(catalog(), {
         query,
         standardField,
-        family: this[`${prefix}Family`],
+        family: this[name("Family")],
         familyField,
-        categories: this[`${prefix}CategoryFilter`],
+        categories: this[name("CategoryFilter")],
         categoryField,
         searchFields,
         brandField,
-        includeNotes: this[`${prefix}SearchNotes`],
+        includeNotes: this[name("SearchNotes")],
         added: addedIds(this.draftRows),
         limit: productSearchLimit,
       });
     },
-    [`${prefix}StandardName`]() {
+    [name("StandardName")]() {
       return standardSelectionName(catalog(), {
         standardField,
-        standard: this[`${prefix}Standard`],
+        standard: this[name("Standard")],
         standardNameField,
       });
     },
-    [`${prefix}FilteredCatalog`]() {
+    [name("FilteredCatalog")]() {
       void this.catalogRevision;
       return filteredCatalogItems(catalog(), {
         standardField,
-        standard: this[`${prefix}Standard`],
+        standard: this[name("Standard")],
         added: addedIds(this.draftRows),
-        query: this[`${prefix}Search`],
-        categories: this[`${prefix}CategoryFilter`],
+        query: this[name("Search")],
+        categories: this[name("CategoryFilter")],
         categoryField,
         searchFields,
-        includeNotes: this[`${prefix}SearchNotes`],
+        includeNotes: this[name("SearchNotes")],
       });
     },
-    [`${prefix}VisibleCatalog`]() {
-      return visibleCatalogItems(this[`${prefix}FilteredCatalog`], {
-        drilledIn: !!(standardField && this[`${prefix}Standard`]),
+    [name("VisibleCatalog")]() {
+      return visibleCatalogItems(this[name("FilteredCatalog")], {
+        drilledIn: !!(standardField && this[name("Standard")]),
         maxVisible,
       });
     },
-    [`${prefix}CatalogTruncated`]() {
-      return isCatalogTruncated(this[`${prefix}FilteredCatalog`], {
-        drilledIn: !!(standardField && this[`${prefix}Standard`]),
+    [name("CatalogTruncated")]() {
+      return isCatalogTruncated(this[name("FilteredCatalog")], {
+        drilledIn: !!(standardField && this[name("Standard")]),
         maxVisible,
       });
     },
-    [`${prefix}DraftCounts`]() {
+    [name("DraftCounts")]() {
       const counts = {};
       for (const row of this.draftRows ?? []) {
         const id = row?.[idField];
@@ -324,33 +373,25 @@ export function installCatalogDraft(app, ctx, config) {
       }
       return counts;
     },
-    [`${prefix}ActiveRow`]() {
-      return activeDraftRow(this.draftRows, this[`${prefix}ActiveIndex`]);
+    [name("ActiveRow")]() {
+      return activeDraftRow(this.draftRows, this[name("ActiveIndex")]);
     },
   };
 
   const descriptors = {};
-  for (const [name, get] of Object.entries(getters)) {
-    descriptors[name] = { configurable: true, get };
+  for (const [key, get] of Object.entries(getters)) {
+    descriptors[key] = { configurable: true, get };
   }
   Object.defineProperties(app, descriptors);
 }
 
-// The app members installCatalogDraft assigns, expanded for a given prefix.
+// The app members installCatalogDraft assigns, derived from the same name
+// tables the installer uses so the declared surface cannot drift from it.
 export function catalogDraftKeys(prefix, Cap) {
+  const name = (suffix) => `${prefix}${suffix}`;
   return [
-    `${prefix}Drawer`, `${prefix}Search`, `${prefix}SearchNotes`, `${prefix}ActiveIndex`,
-    `${prefix}CategoryFilter`,
-    `${prefix}Family`, `${prefix}Standard`,
-    `open${Cap}Editor`, `cancel${Cap}Editor`, `save${Cap}Editor`, `addCatalog${Cap}`,
-    `duplicateCatalog${Cap}`, `remove${Cap}`, `inspect${Cap}Row`, `open${Cap}Search`,
-    `toggle${Cap}SearchNotes`,
-    `close${Cap}Drawer`, `toggle${Cap}Category`, `toggle${Cap}Family`, `select${Cap}Standard`,
-    `clear${Cap}Standard`, `handle${Cap}Escape`, `${prefix}ItemMeta`, `${prefix}GroupMeta`,
-    `${prefix}EditorOpen`, `${prefix}Catalog`, `${prefix}Categories`, `${prefix}Families`,
-    `${prefix}StandardGroups`, `${prefix}StandardName`, `${prefix}ProductMatches`,
-    `${prefix}FilteredCatalog`,
-    `${prefix}VisibleCatalog`, `${prefix}CatalogTruncated`, `${prefix}DraftCounts`,
-    `${prefix}ActiveRow`,
+    ...STATE_SUFFIXES.map(name),
+    ...Object.values(METHOD_NAMES).map((fn) => fn(prefix, Cap)),
+    ...GETTER_SUFFIXES.map(name),
   ];
 }

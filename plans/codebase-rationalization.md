@@ -767,6 +767,19 @@ Commit: `Share the catalog search pane across the collection editors`.
   404→407 (config additions); `catalogChrome.js` is a new module with no pin.
 - `make check` green; frontend 1,039 and backend 764 tests green.
 
+### 2026-11-02 — key derivation (the `catalogDraftKeys` drift class is closed)
+
+Commit: `Derive the catalog draft keys from the installer's name tables`.
+
+- `catalogDraftKeys` no longer restates the 36 names. `STATE_SUFFIXES`,
+  `METHOD_NAMES` and `GETTER_SUFFIXES` are the single source the installer uses
+  to build its members, and the key list maps the same tables.
+- New test `tests/frontend/catalogDraftKeys.test.js` asserts, for all six
+  collection prefixes, that the declared keys equal the installed own-property
+  surface (plus the generic chrome) and that no list has a duplicate.
+- This takes the drift win without the form/table descriptor. The remaining 2b
+  value is the ≈575-line table and drawer-shell duplication, not the key list.
+
 ### Corrections found while executing (the plan was wrong about these)
 
 - **There is no whirlpool chart.** The timeline's only production consumer was
