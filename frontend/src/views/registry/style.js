@@ -40,24 +40,3 @@ export const STYLE_NODES = {
   slice: "batch",
 };
 
-export const styleRegistry = {
-  "batch.fermentation": {
-    label: "Fermentation",
-    optionLabels: {
-      ale: "Ale",
-      lager: "Lager",
-      wild: "Wild",
-      mixed: "Mixed",
-    },
-  },
-  "style.og_min": { label: "OG min", displayUnit: "SG" },
-  "style.og_max": { label: "OG max", displayUnit: "SG" },
-  "style.fg_min": { label: "FG min", displayUnit: "SG" },
-  "style.fg_max": { label: "FG max", displayUnit: "SG" },
-  "style.ibu_min": { label: "IBU min" },
-  "style.ibu_max": { label: "IBU max" },
-  "style.srm_min": { label: "SRM min", unit: "SRM" },
-  "style.srm_max": { label: "SRM max", unit: "SRM" },
-  "style.abv_min": { label: "ABV min" },
-  "style.abv_max": { label: "ABV max" },
-};

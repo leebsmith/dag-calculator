@@ -19,29 +19,3 @@ export const LATE_ADDITION_NODES = {
   slice: "fermentables",
 };
 
-export const lateAdditionsRegistry = {
-  "batch.late_addition_intent": {
-    label: "Late addition mode",
-    hint: "Dose by mass, or author the sugar share of total post-boil extract.",
-    optionLabels: {
-      dose: "Dose by mass",
-      share: "Share of extract",
-    },
-  },
-  "batch.sugar_extract_share": {
-    label: "Sugar share",
-    hint: "Sugar extract as a share of total post-boil extract; the solver evaluates it per candidate gravity.",
-  },
-  "batch.sugars": { label: "Late additions" },
-  "batch.sugars.sugar_id": { label: "Sugar ID" },
-  "batch.sugars.name": { label: "Sugar" },
-  "batch.sugars.mass_kg": { label: "Mass" },
-  "batch.sugars.parts": { label: "Parts", decimals: 2 },
-  "batch.sugars.resolved_mass_kg": { label: "Resolved mass", decimals: 2 },
-  "batch.sugars.yield_fraction": { label: "Yield" },
-  "batch.sugars.fermentability_fraction": { label: "Fermentable" },
-  "batch.sugars.color_lovibond": { label: "Color" },
-  "batch.s_late_add": { label: "Dose extract" },
-  "grist.sugars_mass": { label: "Total sugar mass" },
-  "grist.sugar_weighted_lovibond": { label: "Weighted sugar color" },
-};

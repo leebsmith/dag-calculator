@@ -16,8 +16,8 @@ import {
   routeSummary,
   strategyForHeld,
   targetWarningFor,
-  waterRegistry,
 } from "../../views/registry/water.js";
+import { registry } from "../../views/registry/index.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import { reportError } from "../../observability.js";
 
@@ -31,7 +31,7 @@ export function ionDelta(value, target) {
 }
 
 function optionLabelFor(fieldId, value) {
-  return waterRegistry[fieldId]?.optionLabels?.[value] ?? value;
+  return registry[fieldId]?.optionLabels?.[value] ?? value;
 }
 
 function resolveValue(engine, path) {

@@ -1,0 +1,716 @@
+{
+  "batch.attenuation_above_cap": {
+    "label": "Above malt cap",
+    "displayUnit": "pct",
+    "symbol": "pts",
+    "hint": "Apparent attenuation above the malt cap: uncapped sugar extract, or dextrin consumption by a diastaticus strain. Absent when the cap is not exceeded."
+  },
+  "batch.attenuation_derate_points": {
+    "label": "Batch derate (points)",
+    "displayUnit": "pct",
+    "symbol": "pts",
+    "hint": "Percentage points subtracted from the strain's published attenuation. 0 = no derate."
+  },
+  "batch.boil_hops": {
+    "label": "Boil hops"
+  },
+  "batch.boil_hops.alpha_acid_pct": {
+    "label": "Alpha"
+  },
+  "batch.boil_hops.boil_time_fraction": {
+    "label": "Portion of boil"
+  },
+  "batch.boil_hops.hop_id": {
+    "label": "Hop ID"
+  },
+  "batch.boil_hops.name": {
+    "label": "Hop"
+  },
+  "batch.boil_hops.parts": {
+    "label": "Parts"
+  },
+  "batch.boil_hops.pct": {
+    "label": "IBU share"
+  },
+  "batch.boil_hops.product_form": {
+    "label": "Form"
+  },
+  "batch.boil_off_rate_l_per_hr": {
+    "label": "Boil-off rate"
+  },
+  "batch.boil_target_ibu": {
+    "label": "Boil IBU"
+  },
+  "batch.boil_time_min": {
+    "label": "Boil time"
+  },
+  "batch.brew_checklist": {
+    "label": "Brew checklist"
+  },
+  "batch.brew_checklist.note": {
+    "label": "Note"
+  },
+  "batch.brew_checklist.skip_reason": {
+    "label": "Skip reason"
+  },
+  "batch.brew_checklist.skipped": {
+    "label": "Skipped"
+  },
+  "batch.brew_checklist.step_id": {
+    "label": "Step"
+  },
+  "batch.checklist_level": {
+    "label": "Checklist level"
+  },
+  "batch.conversion_efficiency": {
+    "label": "Conversion efficiency"
+  },
+  "batch.cooling_curve_id": {
+    "label": "Cooling curve",
+    "hint": "The authored curve that supplied the time constant."
+  },
+  "batch.dry_hops": {
+    "label": "Dry hops"
+  },
+  "batch.dry_hops.application_event": {
+    "label": "Applied at"
+  },
+  "batch.dry_hops.application_stage": {
+    "label": "Stage"
+  },
+  "batch.dry_hops.contact_duration_min": {
+    "label": "Contact",
+    "displayUnit": "hr"
+  },
+  "batch.dry_hops.contact_until": {
+    "label": "Contact until"
+  },
+  "batch.dry_hops.notes": {
+    "label": "Notes"
+  },
+  "batch.dry_hops.product_type": {
+    "label": "Type"
+  },
+  "batch.dry_hops.quantity": {
+    "label": "Quantity"
+  },
+  "batch.dry_hops.time_of_application": {
+    "label": "Detail"
+  },
+  "batch.dry_hops.unit": {
+    "label": "Unit"
+  },
+  "batch.dry_hops.variety": {
+    "label": "Hop"
+  },
+  "batch.extract_loss_conversion": {
+    "label": "Conversion inefficiency",
+    "decimals": 2
+  },
+  "batch.extract_loss_kettle": {
+    "label": "Kettle losses",
+    "decimals": 2
+  },
+  "batch.extract_loss_mash": {
+    "label": "Mash tun and transfer losses",
+    "decimals": 2
+  },
+  "batch.extract_loss_retention": {
+    "label": "Mash tun retention",
+    "decimals": 2
+  },
+  "batch.extract_loss_transfer": {
+    "label": "Mash transfer",
+    "decimals": 2
+  },
+  "batch.fermentation": {
+    "label": "Fermentation",
+    "optionLabels": {
+      "ale": "Ale",
+      "lager": "Lager",
+      "wild": "Wild",
+      "mixed": "Mixed"
+    }
+  },
+  "batch.grain_moisture_fraction": {
+    "label": "Fallback grain moisture (when a malt has none)",
+    "hint": "As-is moisture used for malts that publish none; feeds the solver's mass balance."
+  },
+  "batch.hlt_starting_volume_l": {
+    "label": "HLT starting volume"
+  },
+  "batch.late_addition_intent": {
+    "label": "Late addition mode",
+    "hint": "Dose by mass, or author the sugar share of total post-boil extract.",
+    "optionLabels": {
+      "dose": "Dose by mass",
+      "share": "Share of extract"
+    }
+  },
+  "batch.mash_thickness_l_per_kg": {
+    "label": "Liquor-to-Grist Ratio",
+    "hint": "Strike water per grist mass; follows the Mash Thickness unit preference."
+  },
+  "batch.realized_abv": {
+    "label": "ABV"
+  },
+  "batch.realized_fg": {
+    "label": "Final gravity"
+  },
+  "batch.runnings_ratio": {
+    "label": "Runnings ratio (r)",
+    "decimals": 2,
+    "hint": "Resolved V_run1 / V_run2. Under the runoff-ratio topology it is the held constraint; under liquor-to-grist it is derived from the split."
+  },
+  "batch.runoff_ratio": {
+    "label": "Runoff Ratio r",
+    "decimals": 2,
+    "hint": "V_run1 / V_run2; 1.0 is equal runnings."
+  },
+  "batch.s_late_add": {
+    "label": "Dose extract"
+  },
+  "batch.sparge_salted_volume": {
+    "label": "Sparge salt dosing volume"
+  },
+  "batch.sparge_water_temp_c": {
+    "label": "Sparge water temperature",
+    "hint": "Target HLT temperature for the second underlet. Display only — heating and cooling are not modelled, so this never changes the solve."
+  },
+  "batch.sugar_extract_share": {
+    "label": "Sugar share",
+    "hint": "Sugar extract as a share of total post-boil extract; the solver evaluates it per candidate gravity."
+  },
+  "batch.sugar_extract_total": {
+    "label": "Late-addition extract",
+    "decimals": 2
+  },
+  "batch.sugars": {
+    "label": "Late additions"
+  },
+  "batch.sugars.color_lovibond": {
+    "label": "Color"
+  },
+  "batch.sugars.fermentability_fraction": {
+    "label": "Fermentable"
+  },
+  "batch.sugars.mass_kg": {
+    "label": "Mass"
+  },
+  "batch.sugars.name": {
+    "label": "Sugar"
+  },
+  "batch.sugars.parts": {
+    "label": "Parts",
+    "decimals": 2
+  },
+  "batch.sugars.resolved_mass_kg": {
+    "label": "Resolved mass",
+    "decimals": 2
+  },
+  "batch.sugars.sugar_id": {
+    "label": "Sugar ID"
+  },
+  "batch.sugars.yield_fraction": {
+    "label": "Yield"
+  },
+  "batch.target_abv": {
+    "label": "Target ABV",
+    "hint": "Set on the Style step; read-only here. Consumed by the batch-sparge solver."
+  },
+  "batch.target_ibu": {
+    "label": "Target IBU",
+    "hint": "Recipe bitterness target; split between the boil and the whirlpool."
+  },
+  "batch.target_srm": {
+    "label": "Target SRM",
+    "hint": "Desired finished-beer color (a recorded target; actual color is derived from the grist)."
+  },
+  "batch.topology": {
+    "label": "Constraint Topology",
+    "hint": "Selects which intensive constraint the root-finder consumes.",
+    "optionLabels": {
+      "r_l_to_g": "Liquor-to-grist ratio",
+      "runoff_ratio": "Runnings ratio (r)"
+    }
+  },
+  "batch.v_ferm": {
+    "label": "Fermenter volume",
+    "hint": "Cold packaged volume into the fermenter. The solver reverses kettle losses and boil-off to derive V_pre_boil."
+  },
+  "batch.whirlpool_ambient_temp_c": {
+    "label": "Whirlpool ambient",
+    "hint": "Room/air temperature used by the cooling curve."
+  },
+  "batch.whirlpool_cooling_time_constant_min": {
+    "label": "Cooling time constant",
+    "hint": "1/k. 108.7 min = k 0.0092/min; lower means faster cooling."
+  },
+  "batch.whirlpool_hops": {
+    "label": "Whirlpool hops"
+  },
+  "batch.whirlpool_hops.addition_at_min": {
+    "label": "After flameout"
+  },
+  "batch.whirlpool_hops.alpha_acid_pct": {
+    "label": "Alpha"
+  },
+  "batch.whirlpool_hops.hop_id": {
+    "label": "Hop ID"
+  },
+  "batch.whirlpool_hops.initial_temp_c": {
+    "label": "Temp"
+  },
+  "batch.whirlpool_hops.name": {
+    "label": "Hop"
+  },
+  "batch.whirlpool_hops.parts": {
+    "label": "Parts"
+  },
+  "batch.whirlpool_hops.pct": {
+    "label": "IBU share"
+  },
+  "batch.whirlpool_hops.product_form": {
+    "label": "Form"
+  },
+  "batch.whirlpool_ibu_fraction": {
+    "label": "Whirlpool IBU share"
+  },
+  "batch.whirlpool_knockout_min": {
+    "label": "Knockout"
+  },
+  "batch.whirlpool_start_temp_c": {
+    "label": "Start temp"
+  },
+  "batch.whirlpool_target_ibu": {
+    "label": "Whirlpool IBU"
+  },
+  "batch.yeast.alcohol_tolerance": {
+    "label": "Alcohol tolerance"
+  },
+  "batch.yeast.attenuation_pct": {
+    "label": "Typical attenuation"
+  },
+  "batch.yeast.flocculation": {
+    "label": "Flocculation"
+  },
+  "batch.yeast_cap": {
+    "label": "Malt attenuation cap",
+    "hint": "Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped."
+  },
+  "batch.yeast_id": {
+    "label": "Yeast"
+  },
+  "equipment.mash_heating_rate_c_per_min": {
+    "label": "Mash ramp rate"
+  },
+  "equipment.mash_tun_mass_kg": {
+    "label": "Mash tun mass"
+  },
+  "equipment.mash_tun_specific_heat": {
+    "label": "Mash tun specific heat"
+  },
+  "equipment.max_hlt_volume_l": {
+    "label": "Max HLT volume"
+  },
+  "equipment.min_lgr_l_per_kg": {
+    "label": "Minimum LGR",
+    "displayUnit": "qt_per_lb"
+  },
+  "equipment.nominal_boil_off_rate_l_per_hr": {
+    "label": "Nominal boil-off rate"
+  },
+  "equipment.nominal_conversion_efficiency": {
+    "label": "Nominal conversion efficiency"
+  },
+  "equipment.shrinkage_pct": {
+    "label": "Shrinkage"
+  },
+  "grist.finished_beer_srm": {
+    "label": "Beer color"
+  },
+  "grist.major_malts": {
+    "label": "Grain bill"
+  },
+  "grist.major_malts.category": {
+    "label": "Type"
+  },
+  "grist.major_malts.color_lovibond": {
+    "label": "Color"
+  },
+  "grist.major_malts.extract_kg": {
+    "label": "Extract"
+  },
+  "grist.major_malts.fermentability_fraction": {
+    "label": "Fermentable"
+  },
+  "grist.major_malts.mass_kg": {
+    "label": "Mass"
+  },
+  "grist.major_malts.name": {
+    "label": "Malt"
+  },
+  "grist.major_malts.parts": {
+    "label": "Parts"
+  },
+  "grist.major_malts.pct": {
+    "label": "Pct"
+  },
+  "grist.major_malts.yield_fraction": {
+    "label": "Yield"
+  },
+  "grist.sugar_weighted_lovibond": {
+    "label": "Weighted sugar color"
+  },
+  "grist.sugars_mass": {
+    "label": "Total sugar mass"
+  },
+  "grist.total_mass": {
+    "label": "Total bill mass",
+    "hint": "Grist, trace malts and sugars together."
+  },
+  "grist.trace_malts": {
+    "label": "Trace malts"
+  },
+  "grist.trace_malts.category": {
+    "label": "Type"
+  },
+  "grist.trace_malts.color_lovibond": {
+    "label": "Color"
+  },
+  "grist.trace_malts.fermentability_fraction": {
+    "label": "Fermentable"
+  },
+  "grist.trace_malts.mass_kg": {
+    "label": "Mass",
+    "displayUnit": "oz"
+  },
+  "grist.trace_malts.name": {
+    "label": "Malt"
+  },
+  "grist.trace_malts.yield_fraction": {
+    "label": "Yield"
+  },
+  "grist.trace_malts_mass": {
+    "label": "Trace malt mass",
+    "displayUnit": "oz"
+  },
+  "grist.trace_weighted_lovibond": {
+    "label": "Weighted trace color"
+  },
+  "grist.weighted_lovibond": {
+    "label": "Weighted grist color",
+    "hint": "Mass-weighted malt color (grain, not finished beer)."
+  },
+  "grist.weighted_yield_fraction": {
+    "label": "Weighted extract yield"
+  },
+  "mash.dough_in_target_temp_c": {
+    "label": "Dough-in target"
+  },
+  "mash.grain_temp_c": {
+    "label": "Grain temperature"
+  },
+  "mash.mash_phase_volume_l": {
+    "label": "Mash volume",
+    "hint": "Grist displacement + strike water (tun occupancy; excludes dead space)."
+  },
+  "mash.rests": {
+    "label": "Mash rests"
+  },
+  "mash.rests.duration_min": {
+    "label": "Time"
+  },
+  "mash.rests.enabled": {
+    "label": "Enabled"
+  },
+  "mash.rests.rest_id": {
+    "label": "Step"
+  },
+  "mash.rests.use_temp_c": {
+    "label": "Temp"
+  },
+  "mash.strike_water_temp_base_c": {
+    "label": "Strike base temp"
+  },
+  "mash.strike_water_temp_c": {
+    "label": "Strike water temp"
+  },
+  "mash.strike_water_tun_offset_c": {
+    "label": "Tun thermal offset"
+  },
+  "mash.total_time_min": {
+    "label": "Total mash time"
+  },
+  "mash.tun_initial_temp_c": {
+    "label": "Tun initial temperature"
+  },
+  "solver.batch.apparent_attenuation": {
+    "label": "Apparent attenuation",
+    "hint": "Solver output: the batch's apparent attenuation. Sugar is uncapped, so it can exceed the yeast's malt attenuation cap."
+  },
+  "solver.batch.binding_constraint": {
+    "label": "Binding limit",
+    "hint": "Solver output: the capacity limit that sets the max feasible ABV.",
+    "optionLabels": {
+      "fermentation": "Fermentation",
+      "volume": "Volume",
+      "tun": "Mash tun",
+      "kettle": "Kettle",
+      "hlt": "HLT"
+    }
+  },
+  "solver.batch.brewhouse_efficiency": {
+    "label": "Brewhouse efficiency",
+    "hint": "Solver output: malt extract delivered to the kettle over the grist's potential. Excludes late additions and always sits below conversion efficiency."
+  },
+  "solver.batch.cascade.s_run1": {
+    "label": "First runnings extract"
+  },
+  "solver.batch.cascade.s_run2": {
+    "label": "Second runnings extract"
+  },
+  "solver.batch.extract.s_converted": {
+    "label": "Converted extract",
+    "decimals": 2
+  },
+  "solver.batch.extract.s_fermenter": {
+    "label": "Extract into the fermenter",
+    "decimals": 2
+  },
+  "solver.batch.extract.s_kettle": {
+    "label": "Extract into the kettle",
+    "decimals": 2
+  },
+  "solver.batch.extract.s_potential": {
+    "label": "Potential extract",
+    "decimals": 2
+  },
+  "solver.batch.extract.s_tun": {
+    "label": "Mash tun extract",
+    "decimals": 2
+  },
+  "solver.batch.m_grist": {
+    "label": "Grist mass"
+  },
+  "solver.batch.mash_thickness_l_per_kg": {
+    "label": "Liquor-to-grist ratio",
+    "hint": "Solver output: the resolved L/kg ratio. Under the runoff-ratio topology it is derived from the tun mass balance rather than authored."
+  },
+  "solver.batch.max_achievable_abv": {
+    "label": "Attenuation ceiling",
+    "hint": "Solver output: the fermentation/attenuation-only ABV ceiling, before capacity limits."
+  },
+  "solver.batch.max_feasible_abv": {
+    "label": "Max feasible ABV",
+    "hint": "Solver output: the largest target ABV that both solves and fits the rig."
+  },
+  "solver.batch.real_attenuation": {
+    "label": "Real attenuation",
+    "hint": "Solver output: the share of extract actually fermented (RDF), after the yeast cap and any dextrin consumption."
+  },
+  "solver.batch.s_post_boil_target": {
+    "label": "Post-boil extract",
+    "decimals": 2
+  },
+  "solver.batch.sg_post_boil": {
+    "label": "Post-boil gravity"
+  },
+  "solver.hops.boil_mass_kg": {
+    "label": "Boil hop mass",
+    "displayUnit": "g"
+  },
+  "solver.hops.total_mass_kg": {
+    "label": "Total hop mass",
+    "displayUnit": "g"
+  },
+  "solver.hops.whirlpool_mass_kg": {
+    "label": "Whirlpool hop mass",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.acid_l": {
+    "label": "Mash acid",
+    "displayUnit": "ml"
+  },
+  "solver.water.mash_additions.baking_soda_kg": {
+    "label": "Mash baking soda",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.cacl2_kg": {
+    "label": "Mash calcium chloride",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.chalk_kg": {
+    "label": "Mash chalk",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.epsom_kg": {
+    "label": "Mash Epsom salt",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.gypsum_kg": {
+    "label": "Mash gypsum",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.nacl_kg": {
+    "label": "Mash table salt",
+    "displayUnit": "g"
+  },
+  "solver.water.mash_additions.pickling_lime_kg": {
+    "label": "Mash pickling lime",
+    "displayUnit": "g"
+  },
+  "solver.water.prescription.mash_ph_status": {
+    "label": "Mash pH status",
+    "optionLabels": {
+      "OPTIMAL": "Optimal",
+      "LOW": "Low",
+      "HIGH": "High"
+    }
+  },
+  "solver.water.prescription.predicted_mash_ph": {
+    "label": "Predicted mash pH"
+  },
+  "solver.water.prescription.residual_hlt_water_l": {
+    "label": "Residual HLT water"
+  },
+  "solver.water.sparge_additions.acid_l": {
+    "label": "Sparge acid",
+    "displayUnit": "ml"
+  },
+  "solver.water.sparge_additions.baking_soda_kg": {
+    "label": "Sparge baking soda",
+    "displayUnit": "g"
+  },
+  "solver.water.sparge_additions.cacl2_kg": {
+    "label": "Sparge calcium chloride",
+    "displayUnit": "g"
+  },
+  "solver.water.sparge_additions.chalk_kg": {
+    "label": "Sparge chalk",
+    "displayUnit": "g"
+  },
+  "solver.water.sparge_additions.epsom_kg": {
+    "label": "Sparge Epsom salt",
+    "displayUnit": "g"
+  },
+  "solver.water.sparge_additions.gypsum_kg": {
+    "label": "Sparge gypsum",
+    "displayUnit": "g"
+  },
+  "solver.water.sparge_additions.nacl_kg": {
+    "label": "Sparge table salt",
+    "displayUnit": "g"
+  },
+  "solver.water.sparge_additions.pickling_lime_kg": {
+    "label": "Sparge pickling lime",
+    "displayUnit": "g"
+  },
+  "solver.water.strategy": {
+    "label": "Resolved strategy",
+    "optionLabels": {
+      "FLAVOR": "Flavor",
+      "CALCIUM_FLOOR": "Calcium floor",
+      "OPTIMIZE": "Best fit (all six)",
+      "AUTO": "Auto",
+      "HYBRID": "Ratio + buffer",
+      "BASELINE": "Baseline",
+      "CUSTOM": "Custom sparse"
+    }
+  },
+  "style.abv_max": {
+    "label": "ABV max"
+  },
+  "style.abv_min": {
+    "label": "ABV min"
+  },
+  "style.fg_max": {
+    "label": "FG max",
+    "displayUnit": "SG"
+  },
+  "style.fg_min": {
+    "label": "FG min",
+    "displayUnit": "SG"
+  },
+  "style.ibu_max": {
+    "label": "IBU max"
+  },
+  "style.ibu_min": {
+    "label": "IBU min"
+  },
+  "style.og_max": {
+    "label": "OG max",
+    "displayUnit": "SG"
+  },
+  "style.og_min": {
+    "label": "OG min",
+    "displayUnit": "SG"
+  },
+  "style.srm_max": {
+    "label": "SRM max",
+    "unit": "SRM"
+  },
+  "style.srm_min": {
+    "label": "SRM min",
+    "unit": "SRM"
+  },
+  "water.acid_medium": {
+    "label": "Acid medium",
+    "optionLabels": {
+      "LACTIC_88": "88% lactic acid",
+      "PHOSPHORIC_10": "10% phosphoric acid",
+      "PHOSPHORIC_85": "85% phosphoric acid"
+    }
+  },
+  "water.cacl2_form": {
+    "label": "CaCl2 form",
+    "optionLabels": {
+      "CACL2_DIHYDRATE": "Dihydrate (CaCl₂·2H₂O)",
+      "CACL2_ANHYDROUS": "Anhydrous (CaCl₂)"
+    }
+  },
+  "water.calcium_floor_ppm": {
+    "label": "Calcium floor"
+  },
+  "water.gypsum_form": {
+    "label": "Gypsum form",
+    "optionLabels": {
+      "GYPSUM_DIHYDRATE": "Dihydrate (CaSO₄·2H₂O)",
+      "GYPSUM_ANHYDROUS": "Anhydrous (CaSO₄)"
+    }
+  },
+  "water.preferred_alkaline_agent": {
+    "label": "Alkaline agent",
+    "optionLabels": {
+      "BAKING_SODA": "Baking soda (NaHCO₃)",
+      "CHALK": "Chalk (CaCO₃)",
+      "PICKLING_LIME": "Pickling lime (Ca(OH)₂)"
+    }
+  },
+  "water.salt_distribution": {
+    "label": "Salt distribution",
+    "optionLabels": {
+      "PROPORTIONAL": "Split — grist and HLT",
+      "MASH_ONLY": "Mash only salts"
+    }
+  },
+  "water.target_mash_ph": {
+    "label": "Target mash pH"
+  },
+  "water.target_profile.alkalinity_as_caco3": {
+    "label": "Alkalinity (as CaCO3)"
+  },
+  "water.target_profile.calcium_ca": {},
+  "water.target_profile.calcium_floor_ppm": {
+    "label": "Calcium floor"
+  },
+  "water.target_profile.chloride_cl": {},
+  "water.target_profile.magnesium_mg": {},
+  "water.target_profile.sodium_na": {},
+  "water.target_profile.sulfate_so4": {},
+  "water.target_profile_id": {
+    "label": "Targets",
+    "control": "water-target-selector",
+    "hint": "Pick a constraint set: presets fill their ions, Freeform starts empty."
+  }
+}

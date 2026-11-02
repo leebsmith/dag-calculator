@@ -12,34 +12,3 @@ export const FERMENTABLE_NODES = {
   slice: "fermentables",
 };
 
-export const fermentablesRegistry = {
-  "grist.major_malts": { label: "Grain bill" },
-  "grist.major_malts.name": { label: "Malt" },
-  "grist.major_malts.category": { label: "Type" },
-  "grist.major_malts.pct": { label: "Pct" },
-  "grist.major_malts.parts": { label: "Parts" },
-  "grist.major_malts.mass_kg": { label: "Mass" },
-  "grist.major_malts.extract_kg": { label: "Extract" },
-  "grist.major_malts.yield_fraction": { label: "Yield" },
-  "grist.major_malts.fermentability_fraction": { label: "Fermentable" },
-  "grist.major_malts.color_lovibond": { label: "Color" },
-  "grist.trace_malts": { label: "Trace malts" },
-  "grist.trace_malts.name": { label: "Malt" },
-  "grist.trace_malts.category": { label: "Type" },
-  "grist.trace_malts.mass_kg": { label: "Mass", displayUnit: "oz" },
-  "grist.trace_malts.yield_fraction": { label: "Yield" },
-  "grist.trace_malts.fermentability_fraction": { label: "Fermentable" },
-  "grist.trace_malts.color_lovibond": { label: "Color" },
-  "grist.weighted_lovibond": {
-    label: "Weighted grist color",
-    hint: "Mass-weighted malt color (grain, not finished beer).",
-  },
-  "grist.weighted_yield_fraction": { label: "Weighted extract yield" },
-  "grist.trace_malts_mass": { label: "Trace malt mass", displayUnit: "oz" },
-  "grist.trace_weighted_lovibond": { label: "Weighted trace color" },
-  "solver.batch.m_grist": { label: "Grist mass" },
-  "grist.total_mass": {
-    label: "Total bill mass",
-    hint: "Grist, trace malts and sugars together.",
-  },
-};

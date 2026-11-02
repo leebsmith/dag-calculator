@@ -1,6 +1,10 @@
 # Data
 
 - `artifact.json` — the canonical DAG (source of truth for business logic).
+- `labels.json` — the committed presentation labels and option labels for the
+  registry paths. `scripts/emit-registry.mjs` turns it into
+  `frontend/src/views/registry/generated.js`; labels are presentation only and
+  are never read by the engine or the solvers.
 - `seeds/` — the immutable reference catalogs
   (malt/sugar/yeast/hop-product/equipment/water/styles), the normalized,
   schema-conforming output of the build scripts.

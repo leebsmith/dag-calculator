@@ -7,25 +7,3 @@ export const YEAST_NODES = {
   slice: "yeast",
 };
 
-export const yeastRegistry = {
-  "batch.yeast_id": { label: "Yeast" },
-  "batch.yeast.attenuation_pct": { label: "Typical attenuation" },
-  "batch.attenuation_derate_points": {
-    label: "Batch derate (points)",
-    displayUnit: "pct",
-    symbol: "pts",
-    hint: "Percentage points subtracted from the strain's published attenuation. 0 = no derate.",
-  },
-  "batch.yeast_cap": {
-    label: "Malt attenuation cap",
-    hint: "Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped.",
-  },
-  "batch.attenuation_above_cap": {
-    label: "Above malt cap",
-    displayUnit: "pct",
-    symbol: "pts",
-    hint: "Apparent attenuation above the malt cap: uncapped sugar extract, or dextrin consumption by a diastaticus strain. Absent when the cap is not exceeded.",
-  },
-  "batch.yeast.flocculation": { label: "Flocculation" },
-  "batch.yeast.alcohol_tolerance": { label: "Alcohol tolerance" },
-};

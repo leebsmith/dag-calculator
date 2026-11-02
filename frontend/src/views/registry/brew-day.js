@@ -45,14 +45,3 @@ export const BREW_DAY_NODES = {
   spargeAdditions: "solver.water.sparge_additions",
 };
 
-export const brewDayRegistry = {
-  "batch.brew_checklist": { label: "Brew checklist" },
-  "batch.brew_checklist.step_id": { label: "Step" },
-  "batch.brew_checklist.note": { label: "Note" },
-  "batch.brew_checklist.skipped": { label: "Skipped" },
-  "batch.brew_checklist.skip_reason": { label: "Skip reason" },
-  "batch.checklist_level": {
-    label: "Checklist level",
-    optionLabels: CHECKLIST_LEVEL_LABELS,
-  },
-};

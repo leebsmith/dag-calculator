@@ -35,44 +35,10 @@ export const HOP_NODES = {
   slice: "hops",
 };
 
-const HOP_FORM_LABELS = {
+export const HOP_FORM_LABELS = {
   whole_cone: "Whole cone",
   t90_pellet: "T-90 pellet",
   flowable_extract: "Extract",
   lupulin_pellet: "Lupulin concentrate",
 };
 
-export const hopsRegistry = {
-  "batch.boil_hops": { label: "Boil hops" },
-  "batch.boil_hops.hop_id": { label: "Hop ID" },
-  "batch.boil_hops.name": { label: "Hop" },
-  "batch.boil_hops.alpha_acid_pct": { label: "Alpha" },
-  "batch.boil_hops.boil_time_fraction": { label: "Portion of boil" },
-  "batch.boil_hops.parts": { label: "Parts" },
-  "batch.boil_hops.product_form": { label: "Form", optionLabels: HOP_FORM_LABELS },
-  "batch.boil_hops.pct": { label: "IBU share" },
-  "batch.whirlpool_hops": { label: "Whirlpool hops" },
-  "batch.whirlpool_hops.hop_id": { label: "Hop ID" },
-  "batch.whirlpool_hops.name": { label: "Hop" },
-  "batch.whirlpool_hops.product_form": { label: "Form", optionLabels: HOP_FORM_LABELS },
-  "batch.whirlpool_hops.alpha_acid_pct": { label: "Alpha" },
-  "batch.whirlpool_hops.addition_at_min": { label: "After flameout" },
-  "batch.whirlpool_hops.initial_temp_c": { label: "Temp" },
-  "batch.whirlpool_hops.parts": { label: "Parts" },
-  "batch.whirlpool_hops.pct": { label: "IBU share" },
-  "solver.hops.boil_mass_kg": { label: "Boil hop mass", displayUnit: "g" },
-  "solver.hops.whirlpool_mass_kg": { label: "Whirlpool hop mass", displayUnit: "g" },
-  "solver.hops.total_mass_kg": { label: "Total hop mass", displayUnit: "g" },
-  "batch.whirlpool_ambient_temp_c": {
-    label: "Whirlpool ambient",
-    hint: "Room/air temperature used by the cooling curve.",
-  },
-  "batch.whirlpool_cooling_time_constant_min": {
-    label: "Cooling time constant",
-    hint: "1/k. 108.7 min = k 0.0092/min; lower means faster cooling.",
-  },
-  "batch.cooling_curve_id": {
-    label: "Cooling curve",
-    hint: "The authored curve that supplied the time constant.",
-  },
-};

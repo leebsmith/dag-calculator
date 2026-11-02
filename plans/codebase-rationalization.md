@@ -722,6 +722,31 @@ Commit: `Proxy the API through Hosting and record the deployment contract`.
 - `README.md` "Production topology" records the one-origin run, the unset base,
   the absence of CORS, and the Admin-SDK-only data path.
 
+### 2026-11-02 — W3B landed (D3-D)
+
+Commit: `Generate the presentation registry from one label source`.
+
+- **One source.** `data/labels.json` holds every non-derivable presentation fact
+  (label, hint, symbol, control, deliberate unit/displayUnit/decimals pins and
+  the inline option labels). `scripts/emit-registry.mjs` writes
+  `frontend/src/views/registry/generated.js` through
+  `scripts/registry-source.mjs`.
+- **Derived tables stay derived.** The emitter imports the checklist levels
+  (`data/seeds/brew-checklist.json`), mash rest names
+  (`data/seeds/mash-rests.json`), `WATER_IONS`, `DRY_HOP_VALUE_LABELS` and
+  `HOP_FORM_LABELS`, so the source does not restate them.
+- **One home.** The eleven slice modules lost their `*Registry` maps; `batch.js`
+  and `equipment.js` were deleted (they held nothing else). `index.js` exports
+  the generated map. `adapters/cards/water.js` reads option labels from it.
+- **Guard** `tests/guards/registry-generated.test.js`: byte-compare against the
+  emitter, and no slice module may declare a registry map. Precommit and
+  `make generate` run the emitter.
+- `data/README.md` and `docs/adding-a-node.md` name `data/labels.json` as the
+  label home; the registry file is generated.
+- Numbers: registry modules **1,368 → 1,112** (including the 199-line generated
+  file); production lines **42,892 → 42,807**; 196 label entries. `make check`
+  and `make test` green.
+
 ### Corrections found while executing (the plan was wrong about these)
 
 - **There is no whirlpool chart.** The timeline's only production consumer was

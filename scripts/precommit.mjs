@@ -20,6 +20,12 @@ export const GENERATORS = [
     outputs: ["docs/frontend-ownership.md"],
   },
   {
+    name: "frontend registry",
+    command: process.execPath,
+    args: ["scripts/emit-registry.mjs"],
+    outputs: ["frontend/src/views/registry/generated.js"],
+  },
+  {
     name: "report bundle glossary",
     command: process.execPath,
     args: ["scripts/emit-report-bundle-glossary.mjs"],
