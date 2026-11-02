@@ -1,11 +1,11 @@
 # Codebase rationalization — hop host, collection UI, metadata, docs
 
-Status: W1 and the W4 retirements landed (see §11). Derived from the size/bloat
-assessment of 2026-11-02 (pinned in §1). D1, D2, D3 (A now, D as W3B), D4 (2a now,
-2b gated), D5, D6, D7 and D8 are resolved and the TODO/vision wording is approved.
-The only deferred choice is D4's 2b gate, whose measurements are written down in
-`plans/codebase-rationalization-decisions.md`. D8's follow-through is the deployment
-subset of §3 step 10.
+Status: every committed wave is landed — W1, W3A, W3B, W2a (search pane, keys,
+table) and W4; 2b is gated and unstarted. D1, D2, D3 (A now, D as W3B), D4 (2a
+now, 2b gated), D5, D6, D7 and D8 are resolved and the TODO/vision wording is
+approved. The only deferred choice is D4's 2b gate, whose measurements are in
+`plans/codebase-rationalization-decisions.md`; D8's follow-through is the
+deployment subset of §3 step 10.
 
 Scope: `frontend/src`, `backend/app`, `docs/`, `plans/`, plus the guards that pin them.
 Tests are out of scope as *product*, but guard/test edits are in scope where a guard
