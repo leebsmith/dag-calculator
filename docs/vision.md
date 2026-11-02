@@ -118,6 +118,9 @@ These are boundaries of the product, not gaps:
 6. **Hold a rule in one layer only.** If the artifact declares an error code, something
    must be able to emit it. If a bound is declared in the domain, the wire should not
    invent a different one.
+7. **Author a mass to obtain a target.** A hop charge is solved from the IBU the brewer
+   asked for, never guessed at and then described. The grams are the output of the
+   inversion; a product sheet's substitution ratio is guidance, not an equation.
 
 ---
 

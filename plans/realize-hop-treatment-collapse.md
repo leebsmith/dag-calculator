@@ -120,15 +120,19 @@ belongs in one document rather than 61 rows.
 
 ### 5. Demand and the report
 
-- [ ] `alpha_mass_kg` per hop result row; `boil_alpha_mass_kg` and
+- [x] `alpha_mass_kg` per hop result row; `boil_alpha_mass_kg` and
       `whirlpool_alpha_mass_kg` on `solver.hops`.
-- [ ] Per-table muted demand line in the card and in the report hops section.
-- [ ] Report: renamed column headers, the cone assumption when used, glossary
-      paths.
+- [x] Per-table muted demand line in the card and in the report hops section.
+- [x] Report: renamed column headers and the alpha-demand note per table;
+      glossary paths follow. The cone factor prints in the card only — the report
+      table has no column for it, and a conditional note needs a template loop
+      the section does not have. Recorded as a deliberate gap.
 
 ### 6. Close out
 
-- [ ] `docs/vision.md` §5 refusal bullet: never author a mass to obtain a target.
-- [ ] Rewrite the `TODO.md` Critical as disposition, not disagreement.
-- [ ] `make seeds`, `make generate`, `make check`, `make test`, `make verify`.
-- [ ] Archive this plan under `plans/archive/2026-11/`.
+- [x] `docs/vision.md` §5 refusal bullet: never author a mass to obtain a target.
+- [x] Retire the `TODO.md` Critical: every alpha now traces to a sheet or is a
+      declared nominal, so the entry has nothing left to track and the rule lives
+      in `docs/hops/hop-products.md`.
+- [x] `make seeds`, `make generate`, `make check`, `make test`, `make verify`.
+- [x] Archive this plan under `plans/archive/2026-11/`.

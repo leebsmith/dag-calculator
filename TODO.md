@@ -3,17 +3,6 @@
 Completed work lives in `plans/archive/<YYYY-MM>/` and in git history; this file
 tracks only what is outstanding.
 
-## Critical
-
-* **Catalogue alphas are presets, not assays.** In flight under
-  `plans/realize-hop-treatment-collapse.md`: the 61-row product catalogue becomes
-  seven variants, and the per-variety tables move into `docs/hops/hop-products.md`
-  with their vintage. Until that lands the seeded alphas are wrong — Incognito
-  carries `0.20–0.55` against Haas's `40–55 %`, and Cryo and Lupomax share one
-  range per variety although both are published (YCH 2022, BarthHaas 2025).
-  Hop mass is the inverse of the allocated IBU through alpha, so a wrong alpha
-  scales every mass in the row.
-
 ## Next (in order)
 
 1. **Footer bar** — the shell landed: save state and conflict recovery, step
