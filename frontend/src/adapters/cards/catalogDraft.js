@@ -52,6 +52,17 @@ import {
   visibleCatalogItems,
 } from "../../views/producer/catalogDrawer.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
+import { installChrome, registerCatalogEntry } from "./catalogChrome.js";
+
+function chromeConfig(config) {
+  return {
+    catalogForm: config.catalogForm ?? null,
+    resultLabel: config.resultLabel ?? null,
+    searchPlaceholder: config.searchPlaceholder ?? "Search…",
+    emptyMessage: config.emptyMessage ?? "No matching entries found.",
+    emptyDrilldownMessage: config.emptyDrilldownMessage ?? "No matching entries found.",
+  };
+}
 
 export function installCatalogDraft(app, ctx, config) {
   const {
@@ -77,11 +88,22 @@ export function installCatalogDraft(app, ctx, config) {
     groupMeta = null,
     allowDuplicates,
   } = config;
+  const chrome = chromeConfig(config);
   const seeds = ctx.cache.seeds ?? {};
   const seedCatalog = () => Object.values(seeds[seedKey] ?? {});
   const catalog = catalogFn ? () => catalogFn() : seedCatalog;
   const findCatalogItem = (id) => catalog().find((item) => item.id === id);
   const addedIds = (rows) => addedCatalogIds(rows, idField, allowDuplicates === true);
+
+  registerCatalogEntry(app, {
+    nodeId,
+    prefix,
+    Cap,
+    standardField,
+    canAdd,
+    ...chrome,
+  });
+  installChrome(app);
 
   const state = {
     [`${prefix}Drawer`]: null, // "search" | "inspect" | null

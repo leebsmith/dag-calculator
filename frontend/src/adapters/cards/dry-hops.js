@@ -69,6 +69,9 @@ function installDryHopDraft(app, ctx) {
       item.manufacturer,
       item.origin,
     ],
+    searchPlaceholder: "Search hops and products by name or maker…",
+    emptyMessage: "No matching entries found.",
+    resultLabel: (a) => a.dryHopResultLabel,
   });
 }
 

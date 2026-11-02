@@ -120,86 +120,8 @@
         </div>
 
         <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': dryHopDrawer === 'search' }">
-          <template x-if="dryHopDrawer === 'search'">
-            <div class="catalog-drawer-content">
-              <div class="catalog-drawer-controls">
-                <div class="catalog-search-wrapper">
-                  <input
-                    type="text"
-                    class="form-input text-xs"
-                    placeholder="Search hops and products by name or maker…"
-                    x-model.debounce.50ms="dryHopSearch"
-                  />
-                </div>
-
-                <div class="filter-pills-container">
-                  <button
-                    type="button"
-                    class="filter-pill"
-                    :class="{ 'is-active': dryHopSearchNotes }"
-                    :aria-pressed="(dryHopSearchNotes) ? 'true' : 'false'"
-                    @click="toggleDryHopSearchNotes()"
-                  >Search notes</button>
-                </div>
-
-                <div class="filter-pills-container">
-                  <template x-for="c in dryHopCategories" :key="c">
-                    <button
-                      type="button"
-                      class="filter-pill"
-                      :class="{ 'is-active': dryHopCategoryFilter.includes(c) }"
-                      :aria-pressed="(dryHopCategoryFilter.includes(c)) ? 'true' : 'false'"
-                      @click="toggleDryHopCategory(c)"
-                      x-text="c"
-                    ></button>
-                  </template>
-                </div>
-
-                <div
-                  class="catalog-result-counter text-xs"
-                  aria-live="polite"
-                  x-text="dryHopResultLabel"
-                ></div>
-              </div>
-              <div class="catalog-drawer-list">
-                <template x-for="item in dryHopVisibleCatalog" :key="item.id">
-                  <div class="catalog-item-card">
-                    <div>
-                      <div class="catalog-item-name">
-                        <span x-text="item.name"></span>
-                        <template x-if="isUserItem(item.id)">
-                          <span class="status-badge status-badge-info text-nano">mine</span>
-                        </template>
-                        <span
-                          class="status-badge status-badge-info text-nano"
-                          x-show="dryHopDraftCounts[item.id] > 0"
-                        >
-                          <span x-text="dryHopDraftCounts[item.id]"></span> in draft
-                        </span>
-                      </div>
-                      <div class="catalog-item-meta" x-text="dryHopItemMeta(item)"></div>
-                    </div>
-                    <div class="catalog-item-actions">
-                      <button
-                        type="button"
-                        class="btn-outline text-xs"
-                        x-show="!isUserItem(item.id)"
-                        @click="duplicateCatalogDryHop(item.id)"
-                        title="Copy to my items"
-                      >
-                        Copy
-                      </button>
-                      <button type="button" class="btn-primary text-xs" @click="addCatalogDryHop(item.id)">
-                        ＋ Add
-                      </button>
-                    </div>
-                  </div>
-                </template>
-                <template x-if="dryHopFilteredCatalog.length === 0">
-                  <div class="table-empty-cell">No matching entries found.</div>
-                </template>
-              </div>
-            </div>
+          <template x-if="draftDrawer === 'search'">
+            <load src="src/partials/draft-search-pane.html" />
           </template>
 
           <template x-if="dryHopDrawer === 'inspect'">

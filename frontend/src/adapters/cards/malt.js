@@ -63,6 +63,15 @@ export function registerMaltCard(app, ctx) {
     canAdd: (target) => !target.maltAtLimit,
     itemMeta: maltItemMeta,
     groupMeta: maltGroupMeta,
+    searchPlaceholder: "Search malts by name…",
+    emptyMessage: "No matching standards or malts found.",
+    emptyDrilldownMessage: "No matching malts found.",
+    resultLabel: (state) =>
+      state.maltStandard
+        ? `Showing ${state.maltFilteredCatalog.length} malts`
+        : state.maltSearch.trim()
+          ? `${state.maltStandardGroups.length} standards · ${state.maltProductMatches.length} malts`
+          : `Showing ${state.maltStandardGroups.length} standards`,
   });
 
   Object.assign(app, {

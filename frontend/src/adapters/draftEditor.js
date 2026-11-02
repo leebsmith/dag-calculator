@@ -14,6 +14,7 @@ import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
 import { reportError } from "../observability.js";
 import { formatWithDecimals, preferredUnit, roundTo, unitSymbol } from "../utils.js";
+import { CATALOG_CHROME_KEYS } from "./cards/catalogChrome.js";
 
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
@@ -304,4 +305,4 @@ export function installDraftEditor(app, { artifact, ui, session }) {
   });
 }
 
-export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows"];
+export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows", ...CATALOG_CHROME_KEYS];

@@ -98,6 +98,9 @@ export function registerLateAdditionsCard(app, ctx) {
       `Yield ${formatPercentRounded(item.yield_fraction)}`,
       formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
     ],
+    searchPlaceholder: "Search sugars by name…",
+    emptyMessage: "No matching sugars found.",
+    resultLabel: (a) => a.sugarResultLabel,
   });
 
   Object.assign(app, {

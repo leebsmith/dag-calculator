@@ -124,65 +124,7 @@
         </div>
 
         <div class="modal-drawer-body modal-drawer-body-pinned">
-          <div class="catalog-drawer-content">
-            <div class="catalog-drawer-controls">
-              <div class="catalog-search-wrapper">
-                <input
-                  type="text"
-                  class="form-input text-xs"
-                  placeholder="Search sugars by name…"
-                  x-model.debounce.50ms="sugarSearch"
-                />
-              </div>
-
-              <div class="filter-pills-container">
-                <button
-                  type="button"
-                  class="filter-pill"
-                  :class="{ 'is-active': sugarSearchNotes }" :aria-pressed="(sugarSearchNotes) ? 'true' : 'false'"
-                  @click="toggleSugarSearchNotes()"
-                >Search notes</button>
-              </div>
-              <div
-                class="catalog-result-counter text-xs"
-                aria-live="polite"
-                x-text="sugarResultLabel"
-              ></div>
-            </div>
-            <div class="catalog-drawer-list">
-              <template x-for="item in sugarVisibleCatalog" :key="item.id">
-                <div class="catalog-item-card">
-                  <div>
-                    <div class="catalog-item-name">
-                      <span x-text="item.name"></span>
-                      <template x-if="isUserItem(item.id)">
-                        <span class="status-badge status-badge-info text-nano">mine</span>
-                      </template>
-                    </div>
-                    <div
-                      class="catalog-item-meta"
-                      x-text="sugarItemMeta(item)"
-                    ></div>
-                  </div>
-                  <div class="catalog-item-actions">
-                    <button
-                      type="button"
-                      class="btn-outline text-xs"
-                      x-show="!isUserItem(item.id)"
-                      @click="duplicateCatalogSugar(item.id)"
-                      title="Copy to my items"
-                    >
-                      Copy
-                    </button>
-                    <button type="button" class="btn-primary text-xs" @click="addCatalogSugar(item.id)">＋ Add</button>
-                  </div>
-                </div>
-              </template>
-              <template x-if="sugarFilteredCatalog.length === 0">
-                <div class="table-empty-cell">No matching sugars found.</div>
-              </template>
-            </div>
-          </div>
+          <load src="src/partials/draft-search-pane.html" />
         </div>
       </div>
     </div>

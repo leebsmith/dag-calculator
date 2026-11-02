@@ -31,7 +31,6 @@ import { KEYS as mashKeys } from "./cards/mash.js";
 import { KEYS as brewDayKeys } from "./cards/brew-day.js";
 import { KEYS as dryHopKeys } from "./cards/dry-hops.js";
 import { KEYS as waterKeys } from "./cards/water.js";
-
 const NAVIGATION = ["frontend/src/adapters/navigation.js"];
 const FIELD_ACTIONS = ["frontend/src/adapters/fieldActions.js"];
 const DRAFT_EDITOR = ["frontend/src/adapters/draftEditor.js"];
@@ -152,6 +151,11 @@ export const SHARED = [
     key: "closeDraft",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
+  },
+  {
+    key: "draftDrawer",
+    owners: ["hop", "malt", "traceMalts", "dryHops"],
+    reason: "the shared catalog search pane binds the drawer phase the draft editor owns",
   },
   {
     key: "colorDisplay",

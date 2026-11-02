@@ -72,6 +72,14 @@ export function registerHopCard(app, ctx) {
         : "alpha n/a",
       item.product_form ? item.manufacturer : item.origin,
     ],
+    searchPlaceholder: "Search hops by name…",
+    emptyMessage: "No matching hops found.",
+    resultLabel: (a) => a.hopResultLabel,
+    catalogForm: {
+      options: () => app.hopForms,
+      value: () => app.hopCatalogForm,
+      set: (value) => app.setHopCatalogForm(value),
+    },
   });
 
   installCatalogDraft(app, ctx, {
@@ -103,6 +111,14 @@ export function registerHopCard(app, ctx) {
         : "alpha n/a",
       item.product_form ? item.manufacturer : item.origin,
     ],
+    searchPlaceholder: "Search hops and products by name or maker…",
+    emptyMessage: "No matching entries found.",
+    resultLabel: (a) => a.whirlpoolHopResultLabel,
+    catalogForm: {
+      options: () => app.whirlpoolHopForms,
+      value: () => app.whirlpoolHopCatalogForm,
+      set: (value) => app.setWhirlpoolHopCatalogForm(value),
+    },
   });
 
   const { engine, artifact, ui } = ctx;

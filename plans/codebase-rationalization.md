@@ -747,6 +747,26 @@ Commit: `Generate the presentation registry from one label source`.
   file); production lines **42,892 → 42,807**; 196 label entries. `make check`
   and `make test` green.
 
+### 2026-11-02 — W2a landed (search pane + generic chrome)
+
+Commit: `Share the catalog search pane across the collection editors`.
+
+- **Generic chrome.** `adapters/cards/catalogChrome.js` installs `draftDrawer`,
+  `draftSearch`, `draftActiveIndex`, the generic drawer/handler verbs and the
+  catalogue getters as proxies to the active collection's prefixed surface. The
+  per-prefix names stay declared, so the card tests and any un-migrated binding
+  keep working; 2b deletes both layers together.
+- **One search pane.** `partials/draft-search-pane.html` replaces the six
+  hand-written panes (standard-first for malt/trace, flat with optional catalog
+  form for the rest). Markup **−411 lines**, chrome **+245**, net **−71**.
+- **Deferred, measured:** the draft table (≈425 lines) and drawer shell
+  (≈150). The tables are not identical once the per-collection readout badges,
+  actions and totals are honoured, and the drawer shell cannot wrap a per-modal
+  inspector without a slot. That residual is the input to the 2b gate.
+- Shape pins raised for `cards/hops.js` 476→492 and `cards/late-additions.js`
+  404→407 (config additions); `catalogChrome.js` is a new module with no pin.
+- `make check` green; frontend 1,039 and backend 764 tests green.
+
 ### Corrections found while executing (the plan was wrong about these)
 
 - **There is no whirlpool chart.** The timeline's only production consumer was

@@ -28,6 +28,15 @@ export function registerTraceMaltsCard(app, ctx) {
     makeRow: makeTraceMaltRow,
     itemMeta: maltItemMeta,
     groupMeta: maltGroupMeta,
+    searchPlaceholder: "Search malts by name…",
+    emptyMessage: "No matching standards or malts found.",
+    emptyDrilldownMessage: "No matching malts found.",
+    resultLabel: (state) =>
+      state.traceStandard
+        ? `Showing ${state.traceFilteredCatalog.length} malts`
+        : state.traceSearch.trim()
+          ? `${state.traceStandardGroups.length} standards · ${state.traceProductMatches.length} malts`
+          : `Showing ${state.traceStandardGroups.length} standards`,
   });
 
   Object.assign(app, {
