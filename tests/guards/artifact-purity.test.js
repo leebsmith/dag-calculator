@@ -5,7 +5,7 @@ import { artifact } from "./util.js";
 // A3: the artifact is domain-only. No presentation vocabulary may leak in.
 // NOTE: `unit`/`units`/`factor`/`offset`/`domain`/`kind` are domain and allowed.
 const DENY =
-  /^(label|title|control|controlKind|css|class|className|rounding|decimals|sentinel|layout|order|help|display|displayName|format|render|colSpan)$/i;
+  /^(label|title|control|controlKind|css|class|className|rounding|decimals|sentinel|layout|order|help|display|displayUnit|displayName|format|hint|optionLabels|render|colSpan)$/i;
 
 test("A3: no presentation vocabulary in the artifact", () => {
   const offenders = [];

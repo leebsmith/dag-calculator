@@ -678,6 +678,35 @@ the Belgian-knob README row and the six missing dimensions; indexed the live but
 unlinked docs. `docs/frontend-ownership.md` is now the 88-line summary with
 `--full` on demand (guard narrowed, nine property tests untouched).
 
+### 2026-11-02 — W3A landed
+
+Commit: `Derive the presentation metadata and close the A3 guard holes`.
+
+- **Derivable metadata removed.** `unit` 55 → 2 (the two `style.srm_*` pins),
+  `displayUnit` 52 → 29 (the two `pts` pins kept for the attenuation derate),
+  `decimals` 43 → 19 (the extract ledger's deliberate 2 dp). Four hidden
+  base-symbol dimensions (`abv`, `ibu`, `ph`, `concentration`) were added to
+  `views/registry/units.js` so a base-only unit derives its symbol; they are
+  filtered out of the master menu.
+- **Duplicates removed.** The 3 shadowed keys and the 8 duplicated step labels
+  are gone; `producer/projection.js` fills a missing table label from the
+  registry, keeping the deliberately different step labels.
+- **One label source.** Checklist levels derive from
+  `data/seeds/brew-checklist.json` (registry and `store/brewSessionModel.js`);
+  hop product forms use one table in `registry/hops.js`; the water target ions
+  read their labels from `WATER_IONS`.
+- **A3 closed.** The purity guard now denies `displayUnit`, `hint` and
+  `optionLabels`; `unit` stays allowed because a unit id drives conversion. The
+  false `extra: forbid` sentence in `grammar.md` is corrected, and `vision.md`
+  states that labels are presentation.
+- **New guard** `tests/guards/docs-display-precision.test.js` compares
+  `docs/display-precision.md` with `units.js`; it found one missing dimension
+  row (`temperature_delta_per_time`), now added.
+- **Kept:** `CARD_UNIT_KEYS` (`hop.mass`). It is the hop card's synthetic mass
+  pill, not an artifact path; deleting it would drop a persisted preference.
+- Registry entries **199 → 196** (the 3 duplicates); production lines
+  **42,905 → 42,892**. `make check` and `make test` green.
+
 ### Corrections found while executing (the plan was wrong about these)
 
 - **There is no whirlpool chart.** The timeline's only production consumer was

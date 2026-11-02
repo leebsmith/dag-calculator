@@ -30,16 +30,18 @@ function resolveFieldValue(field, engine) {
 }
 
 function resolveUnit(field, unitMode) {
-  const toggleableDims = new Set(UNIT_DIMENSIONS.map((d) => d.id));
-  const toggleable = Boolean(field.dimension && toggleableDims.has(field.dimension));
-  const dimDef = toggleable ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension) : null;
+  const dimDef = field.dimension
+    ? UNIT_DIMENSIONS.find((d) => d.id === field.dimension)
+    : null;
+  const toggleable = Boolean(dimDef && !dimDef.hidden);
   const baseUnitId = dimDef?.units[0]?.[0] ?? null;
   const inheritedUnitId = toggleable
     ? field.displayUnit ?? unitMode[field.dimension] ?? dimDef?.default ?? null
     : null;
   const unitModeKey = field.valuePath ?? field.id;
   const unitId = toggleable ? unitMode[unitModeKey] ?? inheritedUnitId : null;
-  return { toggleable, baseUnitId, inheritedUnitId, unitId };
+  const baseSymbol = dimDef ? unitSymbol(UNIT_SYMBOLS, field.dimension, baseUnitId) : null;
+  return { toggleable, baseUnitId, inheritedUnitId, unitId, baseSymbol };
 }
 
 // AI AGENT HOOKS: Use this valuator for scalar field resolution and display
@@ -55,12 +57,17 @@ export function valuateScalar(field, engine, ctx, nl) {
   // `displayUnit` is a PIN — the field's preferred unit (e.g. salt in g) that
   // the master menu must not override. Precedence:
   //   per-field override → pin (displayUnit) → master (menu) → base unit.
-  const { toggleable, baseUnitId, inheritedUnitId, unitId } = resolveUnit(field, unitMode);
+  const { toggleable, baseUnitId, inheritedUnitId, unitId, baseSymbol } = resolveUnit(
+    field,
+    unitMode
+  );
   const shown =
     unitId && typeof value === "number" && artifact
       ? fromBase(artifact, field.dimension, unitId, value, nl)
       : value;
-  const symbol = unitId ? field.symbol ?? unitSymbol(UNIT_SYMBOLS, field.dimension, unitId) : null;
+  const symbol =
+    field.symbol ??
+    (unitId ? unitSymbol(UNIT_SYMBOLS, field.dimension, unitId) : baseSymbol);
   // A toggleable field with no unit id and no registry `unit` (e.g. equipment
   // conversion efficiency) still needs a pill label — fall back to the
   // dimension's base-unit symbol (so a fraction reads "×1", not blank).

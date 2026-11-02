@@ -1,3 +1,9 @@
+import checklist from "../../../../data/seeds/brew-checklist.json" with { type: "json" };
+
+export const CHECKLIST_LEVEL_LABELS = Object.fromEntries(
+  checklist.levels.map((level) => [level.id, level.name])
+);
+
 export const BREW_DAY_NODES = {
   steps: "batch.brew_checklist",
   level: "batch.checklist_level",
@@ -47,10 +53,6 @@ export const brewDayRegistry = {
   "batch.brew_checklist.skip_reason": { label: "Skip reason" },
   "batch.checklist_level": {
     label: "Checklist level",
-    optionLabels: {
-      critical: "Critical path",
-      info: "Standard",
-      debug: "Diagnostic",
-    },
+    optionLabels: CHECKLIST_LEVEL_LABELS,
   },
 };

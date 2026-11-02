@@ -3,12 +3,10 @@
 export const batchRegistry = {
   "batch.target_abv": {
     label: "Target ABV",
-    unit: "%",
     hint: "Set on the Style step; read-only here. Consumed by the batch-sparge solver.",
   },
   "batch.v_ferm": {
     label: "Fermenter volume",
-    unit: "L",
     hint: "Cold packaged volume into the fermenter. The solver reverses kettle losses and boil-off to derive V_pre_boil.",
   },
   "batch.topology": {
@@ -21,7 +19,6 @@ export const batchRegistry = {
   },
   "batch.mash_thickness_l_per_kg": {
     label: "Liquor-to-Grist Ratio",
-    decimals: 2,
     hint: "Strike water per grist mass; follows the Mash Thickness unit preference.",
   },
   "batch.runoff_ratio": {
@@ -29,34 +26,30 @@ export const batchRegistry = {
     decimals: 2,
     hint: "V_run1 / V_run2; 1.0 is equal runnings.",
   },
-  "batch.hlt_starting_volume_l": { label: "HLT starting volume", unit: "L" },
+  "batch.hlt_starting_volume_l": { label: "HLT starting volume" },
   "batch.sparge_water_temp_c": {
     label: "Sparge water temperature",
     hint: "Target HLT temperature for the second underlet. Display only — heating and cooling are not modelled, so this never changes the solve.",
   },
-  "batch.boil_time_min": { label: "Boil time", unit: "min" },
-  "batch.whirlpool_knockout_min": { label: "Knockout", unit: "min" },
-  "batch.whirlpool_start_temp_c": { label: "Start temp", unit: "°C" },
-  "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate", unit: "L/hr" },
-  "batch.conversion_efficiency": { label: "Conversion efficiency", displayUnit: "pct" },
+  "batch.boil_time_min": { label: "Boil time" },
+  "batch.whirlpool_knockout_min": { label: "Knockout" },
+  "batch.whirlpool_start_temp_c": { label: "Start temp" },
+  "batch.boil_off_rate_l_per_hr": { label: "Boil-off rate" },
+  "batch.conversion_efficiency": { label: "Conversion efficiency" },
   "solver.batch.apparent_attenuation": {
     label: "Apparent attenuation",
-    displayUnit: "pct",
     hint: "Solver output: the batch's apparent attenuation. Sugar is uncapped, so it can exceed the yeast's malt attenuation cap.",
   },
   "solver.batch.brewhouse_efficiency": {
     label: "Brewhouse efficiency",
-    displayUnit: "pct",
     hint: "Solver output: malt extract delivered to the kettle over the grist's potential. Excludes late additions and always sits below conversion efficiency.",
   },
   "solver.batch.real_attenuation": {
     label: "Real attenuation",
-    displayUnit: "pct",
     hint: "Solver output: the share of extract actually fermented (RDF), after the yeast cap and any dextrin consumption.",
   },
   "solver.batch.mash_thickness_l_per_kg": {
     label: "Liquor-to-grist ratio",
-    decimals: 2,
     hint: "Solver output: the resolved L/kg ratio. Under the runoff-ratio topology it is derived from the tun mass balance rather than authored.",
   },
   "batch.runnings_ratio": {
@@ -66,14 +59,10 @@ export const batchRegistry = {
   },
   "solver.batch.max_feasible_abv": {
     label: "Max feasible ABV",
-    unit: "%",
-    displayUnit: "pct",
     hint: "Solver output: the largest target ABV that both solves and fits the rig.",
   },
   "solver.batch.max_achievable_abv": {
     label: "Attenuation ceiling",
-    unit: "%",
-    displayUnit: "pct",
     hint: "Solver output: the fermentation/attenuation-only ABV ceiling, before capacity limits.",
   },
   "solver.batch.binding_constraint": {
@@ -103,23 +92,21 @@ export const batchRegistry = {
   "batch.extract_loss_kettle": { label: "Kettle losses", decimals: 2 },
   "batch.grain_moisture_fraction": {
     label: "Fallback grain moisture (when a malt has none)",
-    displayUnit: "pct",
     hint: "As-is moisture used for malts that publish none; feeds the solver's mass balance.",
   },
   "batch.target_ibu": {
     label: "Target IBU",
-    unit: "IBU",
     hint: "Recipe bitterness target; split between the boil and the whirlpool.",
   },
   "batch.target_srm": {
     label: "Target SRM",
     hint: "Desired finished-beer color (a recorded target; actual color is derived from the grist).",
   },
-  "batch.whirlpool_ibu_fraction": { label: "Whirlpool IBU share", displayUnit: "pct" },
-  "batch.boil_target_ibu": { label: "Boil IBU", unit: "IBU" },
-  "batch.whirlpool_target_ibu": { label: "Whirlpool IBU", unit: "IBU" },
+  "batch.whirlpool_ibu_fraction": { label: "Whirlpool IBU share" },
+  "batch.boil_target_ibu": { label: "Boil IBU" },
+  "batch.whirlpool_target_ibu": { label: "Whirlpool IBU" },
   "solver.batch.sg_post_boil": { label: "Post-boil gravity" },
   "batch.realized_fg": { label: "Final gravity" },
-  "batch.realized_abv": { label: "ABV", unit: "%" },
+  "batch.realized_abv": { label: "ABV" },
   "grist.finished_beer_srm": { label: "Beer color" },
 };

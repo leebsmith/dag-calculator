@@ -24,6 +24,8 @@ export function constraintStatusFor(mode, pin) {
 
 export const WATER_ION_BY_PIN = Object.fromEntries(WATER_IONS.map((row) => [row.pin, row.ion]));
 
+const ION_LABELS = Object.fromEntries(WATER_IONS.map(({ ion, label }) => [ion, label]));
+
 // Ions a profile targets: the ones it declares a number for (nulls float).
 export function heldFromProfile(profile) {
   return WATER_IONS.filter(({ ion }) => typeof profile?.[ion] === "number").map((row) => row.pin);
@@ -115,15 +117,15 @@ export const waterRegistry = {
     hint: "Pick a constraint set: presets fill their ions, Freeform starts empty.",
   },
 
-  "water.target_profile.calcium_ca": { label: "Calcium", unit: "ppm" },
-  "water.target_profile.magnesium_mg": { label: "Magnesium", unit: "ppm" },
-  "water.target_profile.sodium_na": { label: "Sodium", unit: "ppm" },
-  "water.target_profile.sulfate_so4": { label: "Sulfate", unit: "ppm" },
-  "water.target_profile.chloride_cl": { label: "Chloride", unit: "ppm" },
-  "water.target_profile.alkalinity_as_caco3": { label: "Alkalinity (as CaCO3)", unit: "ppm" },
-  "water.target_profile.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
+  "water.target_profile.calcium_ca": { label: ION_LABELS.calcium_ca },
+  "water.target_profile.magnesium_mg": { label: ION_LABELS.magnesium_mg },
+  "water.target_profile.sodium_na": { label: ION_LABELS.sodium_na },
+  "water.target_profile.sulfate_so4": { label: ION_LABELS.sulfate_so4 },
+  "water.target_profile.chloride_cl": { label: ION_LABELS.chloride_cl },
+  "water.target_profile.alkalinity_as_caco3": { label: "Alkalinity (as CaCO3)" },
+  "water.target_profile.calcium_floor_ppm": { label: "Calcium floor" },
 
-  "water.calcium_floor_ppm": { label: "Calcium floor", unit: "ppm" },
+  "water.calcium_floor_ppm": { label: "Calcium floor" },
 
   "water.salt_distribution": {
     label: "Salt distribution",
@@ -162,8 +164,8 @@ export const waterRegistry = {
       PICKLING_LIME: "Pickling lime (Ca(OH)₂)",
     },
   },
-  "water.target_mash_ph": { label: "Target mash pH", unit: "pH" },
-  "batch.sparge_salted_volume": { label: "Sparge salt dosing volume", unit: "L" },
+  "water.target_mash_ph": { label: "Target mash pH" },
+  "batch.sparge_salted_volume": { label: "Sparge salt dosing volume" },
 
   "solver.water.strategy": {
     label: "Resolved strategy",
@@ -177,7 +179,7 @@ export const waterRegistry = {
       CUSTOM: "Custom sparse",
     },
   },
-  "solver.water.prescription.predicted_mash_ph": { label: "Predicted mash pH", unit: "pH", decimals: 2 },
+  "solver.water.prescription.predicted_mash_ph": { label: "Predicted mash pH" },
   "solver.water.prescription.mash_ph_status": {
     label: "Mash pH status",
     optionLabels: {
@@ -186,23 +188,23 @@ export const waterRegistry = {
       HIGH: "High",
     },
   },
-  "solver.water.prescription.residual_hlt_water_l": { label: "Residual HLT water", unit: "L" },
+  "solver.water.prescription.residual_hlt_water_l": { label: "Residual HLT water" },
 
-  "solver.water.mash_additions.gypsum_kg": { label: "Mash gypsum", displayUnit: "g", decimals: 1 },
-  "solver.water.mash_additions.cacl2_kg": { label: "Mash calcium chloride", displayUnit: "g", decimals: 1 },
-  "solver.water.mash_additions.epsom_kg": { label: "Mash Epsom salt", displayUnit: "g", decimals: 1 },
-  "solver.water.mash_additions.nacl_kg": { label: "Mash table salt", displayUnit: "g", decimals: 1 },
-  "solver.water.mash_additions.acid_l": { label: "Mash acid", displayUnit: "ml", decimals: 1 },
-  "solver.water.mash_additions.baking_soda_kg": { label: "Mash baking soda", displayUnit: "g", decimals: 1 },
-  "solver.water.mash_additions.chalk_kg": { label: "Mash chalk", displayUnit: "g", decimals: 1 },
-  "solver.water.mash_additions.pickling_lime_kg": { label: "Mash pickling lime", displayUnit: "g", decimals: 1 },
+  "solver.water.mash_additions.gypsum_kg": { label: "Mash gypsum", displayUnit: "g" },
+  "solver.water.mash_additions.cacl2_kg": { label: "Mash calcium chloride", displayUnit: "g" },
+  "solver.water.mash_additions.epsom_kg": { label: "Mash Epsom salt", displayUnit: "g" },
+  "solver.water.mash_additions.nacl_kg": { label: "Mash table salt", displayUnit: "g" },
+  "solver.water.mash_additions.acid_l": { label: "Mash acid", displayUnit: "ml" },
+  "solver.water.mash_additions.baking_soda_kg": { label: "Mash baking soda", displayUnit: "g" },
+  "solver.water.mash_additions.chalk_kg": { label: "Mash chalk", displayUnit: "g" },
+  "solver.water.mash_additions.pickling_lime_kg": { label: "Mash pickling lime", displayUnit: "g" },
 
-  "solver.water.sparge_additions.gypsum_kg": { label: "Sparge gypsum", displayUnit: "g", decimals: 1 },
-  "solver.water.sparge_additions.cacl2_kg": { label: "Sparge calcium chloride", displayUnit: "g", decimals: 1 },
-  "solver.water.sparge_additions.epsom_kg": { label: "Sparge Epsom salt", displayUnit: "g", decimals: 1 },
-  "solver.water.sparge_additions.nacl_kg": { label: "Sparge table salt", displayUnit: "g", decimals: 1 },
-  "solver.water.sparge_additions.acid_l": { label: "Sparge acid", displayUnit: "ml", decimals: 1 },
-  "solver.water.sparge_additions.baking_soda_kg": { label: "Sparge baking soda", displayUnit: "g", decimals: 1 },
-  "solver.water.sparge_additions.chalk_kg": { label: "Sparge chalk", displayUnit: "g", decimals: 1 },
-  "solver.water.sparge_additions.pickling_lime_kg": { label: "Sparge pickling lime", displayUnit: "g", decimals: 1 },
+  "solver.water.sparge_additions.gypsum_kg": { label: "Sparge gypsum", displayUnit: "g" },
+  "solver.water.sparge_additions.cacl2_kg": { label: "Sparge calcium chloride", displayUnit: "g" },
+  "solver.water.sparge_additions.epsom_kg": { label: "Sparge Epsom salt", displayUnit: "g" },
+  "solver.water.sparge_additions.nacl_kg": { label: "Sparge table salt", displayUnit: "g" },
+  "solver.water.sparge_additions.acid_l": { label: "Sparge acid", displayUnit: "ml" },
+  "solver.water.sparge_additions.baking_soda_kg": { label: "Sparge baking soda", displayUnit: "g" },
+  "solver.water.sparge_additions.chalk_kg": { label: "Sparge chalk", displayUnit: "g" },
+  "solver.water.sparge_additions.pickling_lime_kg": { label: "Sparge pickling lime", displayUnit: "g" },
 };

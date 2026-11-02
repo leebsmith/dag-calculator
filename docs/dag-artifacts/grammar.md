@@ -331,5 +331,7 @@ tooling, not shipped as a deliverable) is, in essence:
 - Every `dimension`/`taxonomy`/`schema`/`function`/`constant` id referenced
   anywhere must be declared in its section.
 
-The validator enforces "extra fields forbidden" (`extra: forbid`) so unknown or
-renamed fields fail loudly rather than being silently dropped.
+The validator does **not** enforce "extra fields forbidden": unknown keys are
+ignored rather than rejected. It checks node kinds, dimensions, taxonomies,
+schemas, functions, and dangling references; keeping the artifact to the grammar
+is a review responsibility, not a validation error.

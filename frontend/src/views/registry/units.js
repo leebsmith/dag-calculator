@@ -22,6 +22,10 @@ export const UNIT_DIMENSIONS = [
   { id: "grain_color", group: "Base", label: "Grain Color", default: "EBC", decimals: 1, units: [["Lovibond", "°L"], ["EBC", "EBC"]] },
   { id: "beer_color", group: "Base", label: "Beer Color", default: "EBC", decimals: 1, units: [["SRM", "SRM"], ["EBC", "EBC"]] },
   { id: "percentage", group: "Base", label: "Percentage", default: "pct", units: [["fraction", "×1", 3], ["pct", "%", 1]] },
+  { id: "abv", group: "Base", label: "ABV", hidden: true, units: [["pct", "%"]] },
+  { id: "ibu", group: "Base", label: "IBU", hidden: true, units: [["IBU", "IBU"]] },
+  { id: "ph", group: "Base", label: "pH", hidden: true, units: [["pH", "pH"]] },
+  { id: "concentration", group: "Base", label: "Concentration", hidden: true, units: [["ppm", "ppm"]] },
   { id: "volume_per_time", group: "Derived", label: "Boil-off rate", units: [["L_per_hr", "L/hr"], ["gal_per_hr", "gal/hr"]] },
   { id: "temperature_delta_per_time", group: "Derived", label: "Heating Rate", units: [["dC_per_min", "°C/min", 2], ["dF_per_min", "°F/min", 2]] },
   { id: "specific_heat", group: "Derived", label: "Specific Heat", units: [["kcal_per_kg_degC", "kcal/(kg·°C)"], ["btu_per_lb_degF", "BTU/(lb·°F)"]] },
@@ -70,6 +74,7 @@ export function unitDecimals(dimensionId, unitId) {
 export const UNIT_GROUPS = (() => {
   const groups = new Map();
   for (const dim of UNIT_DIMENSIONS) {
+    if (dim.hidden) continue;
     const key = dim.group ?? "Other";
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(dim);

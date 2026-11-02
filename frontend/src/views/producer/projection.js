@@ -145,7 +145,7 @@ function collectionField(artifact, registry, step, entry, unitMode = {}) {
 // (the batch card's "Derived Anchors" / "Stage Cascade" / "Water Plan" tables).
 // Columns are either `text` (static per-row label) or `value` (a ref resolved at
 // valuation time). Cell dimensions are carried by each ref, not the column.
-function tableField(step, entry) {
+function tableField(step, entry, registry) {
   return {
     id: entry.table,
     slice: step.slice,
@@ -160,7 +160,11 @@ function tableField(step, entry) {
       kind: c.kind ?? "value",
       align: (c.kind ?? "value") === "text" ? "left" : "right",
     })),
-    rows: entry.rows,
+    rows: entry.rows.map((row) =>
+      row.label == null && row.value
+        ? { ...row, label: registry[row.value]?.label ?? row.value }
+        : row
+    ),
     editable: false,
   };
 }
@@ -225,7 +229,7 @@ export function projectFields(artifact, steps, registry, ctx = {}) {
         continue;
       }
       if (typeof entry === "object" && entry.table) {
-        fields.push(tableField(step, entry));
+        fields.push(tableField(step, entry, registry));
         continue;
       }
       const id = typeof entry === "string" ? entry : entry.id;

@@ -46,6 +46,12 @@ Two consequences follow, and they are not negotiable:
 - **Absence is not zero.** Unset means unset (`undefined` in the engine, `null` in
   payloads). Rendering absence as zero is a bug, not a convenience.
 
+The Logic layer is also **view-independent**: labels, display units, hints and
+display precision are presentation, not domain. They live in
+`frontend/src/views/registry`, and the A3 purity guard keeps them out of
+`data/artifact.json` — the artifact identifies the model, so a copy edit must not
+change its hash.
+
 ---
 
 ## 3. Why a boundary is where it is

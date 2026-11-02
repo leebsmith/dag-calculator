@@ -1,12 +1,9 @@
 // Pure state and display helpers for the brew-session controller.
 
 import { reportError } from "../observability.js";
+import { CHECKLIST_LEVEL_LABELS } from "../views/registry/brew-day.js";
 
-export const LEVEL_LABELS = {
-  critical: "Critical path",
-  info: "Standard",
-  debug: "Diagnostic",
-};
+export const LEVEL_LABELS = CHECKLIST_LEVEL_LABELS;
 
 export const STATUS_LABELS = {
   planned: "Planned",

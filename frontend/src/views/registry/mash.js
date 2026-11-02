@@ -18,20 +18,20 @@ export const MASH_NODES = {
 };
 
 export const mashRegistry = {
-  "mash.grain_temp_c": { label: "Grain temperature", unit: "°C" },
-  "mash.tun_initial_temp_c": { label: "Tun initial temperature", unit: "°C" },
-  "mash.dough_in_target_temp_c": { label: "Dough-in target", unit: "°C" },
-  "mash.total_time_min": { label: "Total mash time", unit: "min" },
-  "mash.strike_water_temp_base_c": { label: "Strike base temp", unit: "°C" },
+  "mash.grain_temp_c": { label: "Grain temperature" },
+  "mash.tun_initial_temp_c": { label: "Tun initial temperature" },
+  "mash.dough_in_target_temp_c": { label: "Dough-in target" },
+  "mash.total_time_min": { label: "Total mash time" },
+  "mash.strike_water_temp_base_c": { label: "Strike base temp" },
   "mash.strike_water_tun_offset_c": { label: "Tun thermal offset" },
-  "mash.strike_water_temp_c": { label: "Strike water temp", unit: "°C" },
+  "mash.strike_water_temp_c": { label: "Strike water temp" },
   "mash.mash_phase_volume_l": {
     label: "Mash volume",
     hint: "Grist displacement + strike water (tun occupancy; excludes dead space).",
   },
   "mash.rests": { label: "Mash rests" },
   "mash.rests.rest_id": { label: "Step", optionLabels: MASH_REST_LABELS },
-  "mash.rests.use_temp_c": { label: "Temp", unit: "°C" },
-  "mash.rests.duration_min": { label: "Time", unit: "min" },
+  "mash.rests.use_temp_c": { label: "Temp" },
+  "mash.rests.duration_min": { label: "Time" },
   "mash.rests.enabled": { label: "Enabled" },
 };

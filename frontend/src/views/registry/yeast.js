@@ -18,7 +18,6 @@ export const yeastRegistry = {
   },
   "batch.yeast_cap": {
     label: "Malt attenuation cap",
-    displayUnit: "pct",
     hint: "Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped.",
   },
   "batch.attenuation_above_cap": {

@@ -16,6 +16,7 @@ collection columns, and readout tables.
 | `time` | `min` 0, `hr` 1, `day` 1 | |
 | `volume` | 1 | L, gal, qt, mL |
 | `volume_per_time` | 1 | L/hr, gal/hr |
+| `temperature_delta_per_time` | 2 | °C/min and °F/min |
 | `mass` | `kg` 1, `lb` 2, `oz` 2, `g` 1 | |
 | `gravity` | SG 3, Plato 1 | |
 | `grain_color` | 1 | °L, EBC |
