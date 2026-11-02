@@ -32,13 +32,13 @@ _124 paths_
 | `batch.attenuation_derate_points` | Batch derate (points) | root | percentage | pct (pts) | 1 | — |
 | `batch.boil_hops` | Boil hops | collection | — | — | — | — |
 | `batch.boil_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
-| `batch.boil_hops.boil_time_fraction` | Boil remaining | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.boil_time_fraction` | Before flameout | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
 | `batch.boil_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.boil_hops.name` | Hop | field | — | — | — | — |
 | `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
-| `batch.boil_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet |
-| `batch.boil_hops.t90_replacement_ratio` | T-90 ratio | field | dimensionless | — | 2 | — |
+| `batch.boil_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet, whole_cone |
 | `batch.boil_ibu_share` | Boil IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
@@ -59,7 +59,7 @@ _124 paths_
 | `batch.dry_hops.contact_until` | Contact until | field | — | — | — | terminal_gravity, vdk_clearance, hop_creep_plateau, biotransformation_equilibrium, next_charge, cold_crash, packaging |
 | `batch.dry_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.dry_hops.notes` | Notes | field | — | — | — | — |
-| `batch.dry_hops.product_type` | Type | field | — | — | — | t90_pellet, lupulin_pellet, flowable_extract, terpene_isolate |
+| `batch.dry_hops.product_type` | Type | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet, whole_cone |
 | `batch.dry_hops.quantity` | Quantity | field | dimensionless | — | — | — |
 | `batch.dry_hops.time_of_application` | Detail | field | — | — | — | — |
 | `batch.dry_hops.unit` | Unit | field | — | — | — | oz, g, ml |
@@ -119,15 +119,15 @@ _124 paths_
 | `batch.whirlpool_cooling_time_constant_min` | Cooling time constant | root | time | min | 0 | — |
 | `batch.whirlpool_hops` | Whirlpool hops | collection | — | — | — | — |
 | `batch.whirlpool_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
-| `batch.whirlpool_hops.duration_min` | Rest | field | time | min | 0 | — |
+| `batch.whirlpool_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
+| `batch.whirlpool_hops.duration_min` | After flameout | field | time | min | 0 | — |
 | `batch.whirlpool_hops.hop_id` | Hop ID | field | — | — | — | — |
-| `batch.whirlpool_hops.initial_temp_c` | Initial temp | field | temperature | degC (°C) | 1 | — |
+| `batch.whirlpool_hops.initial_temp_c` | Temp | field | temperature | degC (°C) | 1 | — |
 | `batch.whirlpool_hops.name` | Hop | field | — | — | — | — |
 | `batch.whirlpool_hops.notes` | Notes | field | — | — | — | — |
 | `batch.whirlpool_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.whirlpool_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
-| `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet |
-| `batch.whirlpool_hops.t90_replacement_ratio` | T90 Replacement Ratio | field | dimensionless | — | — | — |
+| `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet, whole_cone |
 | `batch.whirlpool_hot_ibu_share` | Whirlpool Hot IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_fraction` | Whirlpool IBU share | root | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_share` | Whirlpool IBU Share | derived | percentage | pct (%) | 1 | — |

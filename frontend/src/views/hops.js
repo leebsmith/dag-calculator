@@ -42,9 +42,11 @@ export function massFromIbu({
   boilGravitySg,
   volumeL,
   productForm = "t90_pellet",
+  coneUtilization = null,
 }) {
-  const utilization =
-    tinsethUtilization(boilGravitySg, timeMin) * productFormUtilization(productForm);
+  const form = productFormUtilization(productForm, coneUtilization);
+  if (form === null) return null;
+  const utilization = tinsethUtilization(boilGravitySg, timeMin) * form;
   if (!(ibu > 0) || utilization <= 0 || !(alphaFraction > 0) || !(volumeL > 0)) return null;
   const volumeGal = volumeL / L_PER_GAL;
   const massOz = (ibu * volumeGal) / (utilization * alphaFraction * TINSETH_FACTOR);

@@ -42,24 +42,13 @@ const META = {
   "hop-products.json": {
     mechanism: "curated",
     upstream:
-      "Yakima Chief Hops DynaBoost product data sheet; BarthHaas INCOGNITO technical data sheet",
-    builder: "scripts/build-hop-products-seed.mjs",
-  },
-  "hop-products-lupulin.json": {
-    mechanism: "curated",
-    upstream:
-      "Yakima Chief Hops Cryo Hops and BarthHaas Lupomax lupulin data (variety list, stock alpha ranges)",
+      "docs/hops/hop-products.md — YCH Cryo 2022, BarthHaas Lupomax 2025, YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",
     builder: "scripts/build-hop-products-seed.mjs",
   },
   "whirlpool-notes.json": {
     mechanism: "curated",
     upstream: "Yakima Chief Hops whirlpool addition data sheet (temperature bands)",
     builder: "scripts/build-whirlpool-notes-seed.mjs",
-  },
-  "yvh-products.json": {
-    mechanism: "scrape",
-    upstream: "https://yakimavalleyhops.com/products.json (advanced hop products)",
-    scraper: "scripts/scrape/yvh/scrape_yvh.py",
   },
   "malt-database-malts.json": {
     mechanism: "scrape",

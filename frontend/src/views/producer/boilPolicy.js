@@ -21,11 +21,12 @@ export function doseWarning(rows, formatNumber, doseOf) {
     : "";
 }
 
-// A boil row is seeded from the catalog entry: the form travels with the pick,
-// and an extract defaults to a late addition rather than a full boil.
-export function makeBoilRow(hop) {
-  const productForm = hop.product_form ?? "t90_pellet";
-  const row = {
+// A boil row is seeded from the catalog entry. The catalog form wins when the
+// brewer picked from a form-filtered list, because a variety carries no form of
+// its own; an extract defaults to a late addition rather than a full boil.
+export function makeBoilRow(hop, catalogForm = null) {
+  const productForm = catalogForm ?? hop.product_form ?? "t90_pellet";
+  return {
     hop_id: hop.id,
     name: hop.name,
     product_form: productForm,
@@ -34,13 +35,9 @@ export function makeBoilRow(hop) {
     parts: 10,
     pct: 0,
   };
-  if (isFiniteNumber(hop.t90_replacement_ratio)) {
-    row.t90_replacement_ratio = hop.t90_replacement_ratio;
-  }
-  return row;
 }
 
-export function boilPolicyDescriptors({ formatMass, formatNumber, postBoilVolume }) {
+export function boilPolicyDescriptors({ formatNumber, postBoilVolume }) {
   const doseOf = (row) => {
     const volume = postBoilVolume();
     if (!isFiniteNumber(row.mass_kg) || !(volume > 0)) return null;
@@ -51,24 +48,6 @@ export function boilPolicyDescriptors({ formatMass, formatNumber, postBoilVolume
       configurable: true,
       get() {
         return doseWarning(this.hopRows, formatNumber, doseOf);
-      },
-    },
-    // Display-only: what this extract charge would be if dosed as T-90 by weight.
-    hopT90Equivalent: {
-      configurable: true,
-      get() {
-        const row = this.hopActiveRow;
-        if (
-          !row ||
-          row.product_form !== "flowable_extract" ||
-          !isFiniteNumber(row.t90_replacement_ratio)
-        ) {
-          return "";
-        }
-        const saved = this.hopRows[this.hopActiveIndex];
-        if (!isFiniteNumber(saved?.mass_kg)) return "";
-        const equivalent = saved.mass_kg * row.t90_replacement_ratio;
-        return `${formatMass(equivalent, "g")} T-90 equivalent (1:${row.t90_replacement_ratio})`;
       },
     },
   };

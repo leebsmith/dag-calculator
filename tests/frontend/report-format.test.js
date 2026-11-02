@@ -198,7 +198,6 @@ const WHIRLPOOL_HOT = {
   name: "Citra",
   product_form: "t90_pellet",
   alpha_acid_pct: 0.12,
-  t90_replacement_ratio: 1,
   duration_min: 30,
   initial_temp_c: 95,
   parts: 70,

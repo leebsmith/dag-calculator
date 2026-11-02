@@ -29,12 +29,10 @@ test("A9: hops seed is a pure rebuild of its source", () => {
   assert.deepEqual(buildHops(json("data/sources/beer-analytics-hops.json")), json("data/seeds/hops.json"));
 });
 
-test("A9: hop products seed is a pure rebuild of its sources", () => {
+test("A9: hop products seed is a pure rebuild of its source", () => {
   const source = json("data/sources/hop-products.json");
-  const lupulin = json("data/sources/hop-products-lupulin.json");
-  const hops = json("data/seeds/hops.json");
   assert.deepEqual(
-    buildHopProducts(source.entries, hops, lupulin),
+    buildHopProducts(source.entries),
     json("data/seeds/hop-products.json")
   );
 });

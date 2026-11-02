@@ -52,7 +52,7 @@ export function registerHopCard(app, ctx) {
     nodeId: N.collection,
     seedKey: "hops",
     catalog: () => {
-      if (app.hopCatalogForm === "t90_pellet") {
+      if (app.hopCatalogForm === "t90_pellet" || app.hopCatalogForm === "whole_cone") {
         return Object.values(ctx.cache.seeds.hops ?? {});
       }
       return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
@@ -63,7 +63,7 @@ export function registerHopCard(app, ctx) {
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
     categoryField: "purpose",
-    makeRow: makeBoilRow,
+    makeRow: (hop) => makeBoilRow(hop, app.hopCatalogForm),
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
       item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
@@ -80,7 +80,10 @@ export function registerHopCard(app, ctx) {
     nodeId: N.whirlpoolCollection,
     seedKey: "hops",
     catalog: () => {
-      if (app.whirlpoolHopCatalogForm === "t90_pellet") {
+      if (
+        app.whirlpoolHopCatalogForm === "t90_pellet" ||
+        app.whirlpoolHopCatalogForm === "whole_cone"
+      ) {
         return Object.values(ctx.cache.seeds.hops ?? {});
       }
       return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
@@ -91,7 +94,7 @@ export function registerHopCard(app, ctx) {
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
     categoryField: "purpose",
-    makeRow: (hop) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS),
+    makeRow: (hop) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS, app.whirlpoolHopCatalogForm),
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
       item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
@@ -332,7 +335,6 @@ export function registerHopCard(app, ctx) {
       formatTemp,
     }),
     ...boilPolicyDescriptors({
-      formatMass,
       formatNumber: formatWithDecimals,
       postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
     }),
@@ -432,7 +434,6 @@ export const KEYS = [
   "totalIbuField",
   "whirlpoolAmbientField",
   "whirlpoolCoolingField",
-  "hopT90Equivalent",
   "hopDraftPartsTotal",
   "hopDraftSummary",
   "whirlpoolHopDraftPartsTotal",

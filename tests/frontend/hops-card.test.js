@@ -137,13 +137,12 @@ test("whirlpool hops: lupulin defaults and the band selector", withFreshApp((app
 
   app.openWhirlpoolHopEditor();
   app.setWhirlpoolHopCatalogForm("lupulin_pellet");
-  app.addCatalogWhirlpoolHop("cryo-cascade");
+  app.addCatalogWhirlpoolHop("cryo-hops");
   app.inspectWhirlpoolHopRow(0);
 
   assert.equal(app.whirlpoolHopActiveRow.product_form, "lupulin_pellet");
   assert.equal(app.whirlpoolHopActiveRow.initial_temp_c, 76);
   assert.equal(app.whirlpoolHopActiveRow.duration_min, 25);
-  assert.equal(app.whirlpoolHopActiveRow.t90_replacement_ratio, 2);
   assert.equal(app.whirlpoolStartBandValue, "custom");
 
   app.setWhirlpoolStartBand("isomerization_floor");
@@ -155,10 +154,10 @@ test("whirlpool hops: lupulin defaults and the band selector", withFreshApp((app
   app.compute();
   assert.equal(app.whirlpoolHopRows[0].product_form, "lupulin_pellet");
 
-  // The whirlpool sells T-90 or lupulin; extracts are boil products.
+  // The leaf never restricts the stage; the picker offers all four.
   assert.deepEqual(
     app.whirlpoolHopForms.map((form) => form.value),
-    ["t90_pellet", "lupulin_pellet"]
+    ["whole_cone", "t90_pellet", "lupulin_pellet", "flowable_extract"]
   );
 
   // The catalog form is card-local state the reset does not clear.
@@ -171,10 +170,10 @@ test("whirlpool hops: a colder later charge shows the inferred chill and a zero 
 
   app.openWhirlpoolHopEditor();
   app.setWhirlpoolHopCatalogForm("lupulin_pellet");
-  app.addCatalogWhirlpoolHop("cryo-cascade");
+  app.addCatalogWhirlpoolHop("cryo-hops");
   app.inspectWhirlpoolHopRow(0);
   app.patchDraftRow(0, { duration_min: 30, initial_temp_c: 99 });
-  app.addCatalogWhirlpoolHop("cryo-citra");
+  app.addCatalogWhirlpoolHop("cryo-hops");
   app.inspectWhirlpoolHopRow(1);
   app.patchDraftRow(1, { duration_min: 20, initial_temp_c: 76.7 });
   app.saveWhirlpoolHopEditor();
@@ -244,7 +243,7 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the hot scalar", wit
 
 // The catalog form this case leaves set is card-local state, which a reset does
 // not clear, so it keeps its own boot.
-test("whirlpool catalog switches to products and copies form, alpha, and ratio", () => {
+test("whirlpool catalog switches to products and copies form and alpha", () => {
   const app = createTestApp();
   app.boot();
   app.setTargetIbu(40);
@@ -254,53 +253,37 @@ test("whirlpool catalog switches to products and copies form, alpha, and ratio",
   app.openWhirlpoolHopEditor();
   app.openWhirlpoolHopSearch();
   app.setWhirlpoolHopCatalogForm("flowable_extract");
-  assert.ok(app.whirlpoolHopCatalog.some((item) => item.id === "dynaboost-citra"));
-  assert.ok(app.whirlpoolHopCatalog.some((item) => item.id === "incognito-citra"));
-  app.addCatalogWhirlpoolHop("dynaboost-citra");
+  assert.ok(app.whirlpoolHopCatalog.some((item) => item.id === "dynaboost"));
+  assert.ok(app.whirlpoolHopCatalog.some((item) => item.id === "incognito"));
+  app.addCatalogWhirlpoolHop("dynaboost");
   app.saveWhirlpoolHopEditor();
   app.compute();
 
   const row = app.whirlpoolHopRows[0];
-  assert.equal(row.name, "DynaBoost Citra");
+  assert.equal(row.name, "DynaBoost");
   assert.equal(row.product_form, "flowable_extract");
   assert.equal(row.alpha_acid_pct, 0.425);
-  assert.equal(row.t90_replacement_ratio, 10);
   assert.match(app.whirlpoolHopMass(row), /g$/);
 });
 
-// The inspector this case leaves open is card-local state, which a reset does not
-// clear, so it keeps its own boot.
-test("the boil inspector shows the T-90 equivalent only when the row carries a ratio", () => {
-  const app = createTestApp();
-  app.boot();
+test("whole cone needs the batch cone utilization before the mass solves", withFreshApp((app) => {
   app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0);
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  app.patchDraftRow(0, { product_form: "whole_cone" });
+  app.saveHopEditor();
   app.compute();
 
-  app.openHopEditor();
-  app.openHopSearch();
-  app.setHopCatalogForm("flowable_extract");
-  app.addCatalogHop("dynaboost-citra");
-  app.saveHopEditor();
-  app.openHopEditor();
-  app.inspectHopRow(0);
-  assert.match(app.hopT90Equivalent, /T-90 equivalent \(1:10\)/);
+  assert.equal(app.hopRows[0].product_form, "whole_cone");
+  assert.equal(app.hopRows[0].mass_kg, null);
 
-  app.openHopSearch();
-  app.setHopCatalogForm("flowable_extract");
-  app.addCatalogHop("flowable-co2-extract-generic");
-  app.saveHopEditor();
   app.openHopEditor();
-  app.inspectHopRow(1);
-  assert.match(app.hopT90Equivalent, /T-90 equivalent \(1:8\)/);
-
-  app.openHopSearch();
-  app.setHopCatalogForm("t90_pellet");
-  app.addCatalogHop("cascade");
+  app.patchDraftRow(0, { cone_utilization: 0.85 });
   app.saveHopEditor();
-  app.openHopEditor();
-  app.inspectHopRow(2);
-  assert.equal(app.hopT90Equivalent, "");
-});
+  app.compute();
+  assert.ok(app.hopRows[0].mass_kg > 0, `mass=${app.hopRows[0].mass_kg}`);
+}));
 
 test("extract doses above the 4 g/gal ceiling warn on the boil", withFreshApp((app) => {
   app.setTargetIbu(200);
@@ -313,21 +296,20 @@ test("extract doses above the 4 g/gal ceiling warn on the boil", withFreshApp((a
   assert.match(app.hopDoseWarning, /4 g\/gal/);
 }));
 
-test("the boil sells T-90 or an extract, and seeds an extract late", withFreshApp((app) => {
+test("the kettle offers four leaves and seeds an extract late", withFreshApp((app) => {
   assert.deepEqual(
     app.hopForms.map((form) => form.value),
-    ["t90_pellet", "flowable_extract"]
+    ["whole_cone", "t90_pellet", "lupulin_pellet", "flowable_extract"]
   );
 
   app.openHopEditor();
   app.setHopCatalogForm("flowable_extract");
-  app.addCatalogHop("dynaboost-citra");
+  app.addCatalogHop("dynaboost");
   app.inspectHopRow(0);
 
   assert.equal(app.hopActiveRow.product_form, "flowable_extract");
   assert.equal(app.hopActiveRow.alpha_acid_pct, 0.425);
   assert.equal(app.hopActiveRow.boil_time_fraction, 0.25);
-  assert.equal(app.hopActiveRow.t90_replacement_ratio, 10);
   app.cancelHopEditor();
   // The catalog form is card-local state the reset does not clear.
   app.setHopCatalogForm("t90_pellet");

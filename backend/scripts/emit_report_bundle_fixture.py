@@ -99,7 +99,6 @@ WHIRLPOOL_HOPS = [
         "name": "Citra",
         "product_form": "t90_pellet",
         "alpha_acid_pct": 0.12,
-        "t90_replacement_ratio": 1.0,
         "duration_min": 30.0,
         "initial_temp_c": 95.0,
         "parts": 70,
@@ -111,7 +110,6 @@ WHIRLPOOL_HOPS = [
         "name": "Saaz",
         "product_form": "t90_pellet",
         "alpha_acid_pct": 0.035,
-        "t90_replacement_ratio": 1.0,
         "duration_min": 10.0,
         "initial_temp_c": 70.0,
         "parts": 30,
@@ -1090,9 +1088,6 @@ PAYLOAD = FreezePayload(
             ),
             "batch.whirlpool_hops.alpha_acid_pct": NodePresentation(
                 label="Alpha", dimension="percentage", unit="pct", symbol="%", decimals=1
-            ),
-            "batch.whirlpool_hops.t90_replacement_ratio": NodePresentation(
-                label="T-90 ratio", dimension="dimensionless", decimals=2
             ),
             "batch.whirlpool_hops.duration_min": NodePresentation(
                 label="Rest", dimension="time", unit="min", symbol="min", decimals=0

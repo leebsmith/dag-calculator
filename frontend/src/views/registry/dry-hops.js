@@ -10,11 +10,10 @@ export const DRY_HOP_NODES = {
 // Display names for the enumerated row values. The values themselves are the
 // artifact's; the labels are presentation only.
 export const DRY_HOP_VALUE_LABELS = {
-  hop_product_type: {
+  hop_product_form: {
+    whole_cone: "Whole cone",
     t90_pellet: "T-90 pellet",
-    lupulin_pellet: "Lupulin pellet",
-    flowable_extract: "Flowable extract",
-    terpene_isolate: "Terpene isolate",
+    lupulin_pellet: "Lupulin concentrate",
   },
   hop_application_event: {
     pitch: "At pitch",
@@ -46,7 +45,7 @@ export const dryHopsRegistry = {
   "batch.dry_hops.variety": { label: "Hop" },
   "batch.dry_hops.product_type": {
     label: "Type",
-    optionLabels: DRY_HOP_VALUE_LABELS.hop_product_type,
+    optionLabels: DRY_HOP_VALUE_LABELS.hop_product_form,
   },
   "batch.dry_hops.quantity": { label: "Quantity" },
   "batch.dry_hops.unit": { label: "Unit" },

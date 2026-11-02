@@ -90,6 +90,7 @@ class HopSolverErrorCode(StrEnum):
     INVALID_VOLUME = "INVALID_VOLUME"
     INVALID_COOLING_CONSTANT = "INVALID_COOLING_CONSTANT"
     UNKNOWN_PRODUCT_FORM = "UNKNOWN_PRODUCT_FORM"
+    CONE_UTILIZATION_REQUIRED = "CONE_UTILIZATION_REQUIRED"
     WHIRLPOOL_HEATING = "WHIRLPOOL_HEATING"
     WHIRLPOOL_ADDITION_CONFLICT = "WHIRLPOOL_ADDITION_CONFLICT"
     WHIRLPOOL_BELOW_AMBIENT = "WHIRLPOOL_BELOW_AMBIENT"
@@ -284,6 +285,7 @@ class HopProductForm(StrEnum):
     T90_PELLET = "t90_pellet"
     FLOWABLE_EXTRACT = "flowable_extract"
     LUPULIN_PELLET = "lupulin_pellet"
+    WHOLE_CONE = "whole_cone"
 
 
 class BoilHopRow(BoundaryModel):
@@ -293,6 +295,7 @@ class BoilHopRow(BoundaryModel):
     boil_time_fraction: Annotated[float, Field(ge=0.0, le=1.0)]
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
     product_form: HopProductForm = HopProductForm.T90_PELLET
+    cone_utilization: Annotated[float, Field(gt=0.0, le=1.0)] | None = None
 
 
 class WhirlpoolHopRow(BoundaryModel):
@@ -303,6 +306,7 @@ class WhirlpoolHopRow(BoundaryModel):
     initial_temp_c: Annotated[float, Field(ge=0.0, le=100.0)]
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
     product_form: HopProductForm = HopProductForm.T90_PELLET
+    cone_utilization: Annotated[float, Field(gt=0.0, le=1.0)] | None = None
 
 
 class HopSolverRequest(BoundaryModel):

@@ -418,3 +418,37 @@ def test_shared_hop_parity_fixture_matches_core_solver():
         )
         for key in ("boil_mass_kg", "whirlpool_mass_kg", "total_mass_kg"):
             assert getattr(result, key) == pytest.approx(expected[key]), f"{case['name']}.{key}"
+
+
+def test_whole_cone_needs_its_utilization_factor():
+    request = make_request(
+        boil_hops=[
+            BoilHopRow(
+                alpha_acid_pct=0.065,
+                boil_time_fraction=1.0,
+                pct=1.0,
+                product_form=HopProductForm.WHOLE_CONE,
+            )
+        ]
+    )
+    with pytest.raises(Exception) as exc:
+        solve_hop_request(request)
+    assert getattr(exc.value, "code", None) == "CONE_UTILIZATION_REQUIRED"
+
+
+def test_whole_cone_uses_the_supplied_factor():
+    def mass(factor):
+        request = make_request(
+            boil_hops=[
+                BoilHopRow(
+                    alpha_acid_pct=0.065,
+                    boil_time_fraction=1.0,
+                    pct=1.0,
+                    product_form=HopProductForm.WHOLE_CONE,
+                    cone_utilization=factor,
+                )
+            ]
+        )
+        return solve_hop_request(request).boil_mass_kg
+
+    assert mass(0.85) == pytest.approx(mass(1.0) / 0.85, rel=1e-9)

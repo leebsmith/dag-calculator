@@ -5,6 +5,7 @@ the hop data and the solvers own the maths; these documents explain and annotate
 
 | Document | Status | Scope |
 | --- | --- | --- |
+| [`hop-products.md`](hop-products.md) | living — the authoritative product record | the four leaves and their yield scalars, the seven variants, per-variety Cryo and Lupomax alpha tables with vintage, dose guidance, exclusions and the recorded disagreements |
 | [`whirlpool-hopping-model.md`](whirlpool-hopping-model.md) | living — the contract | whirlpool bitterness theory, the cooling curve, effective boiling-equivalent time, Tinseth utilisation, product-form multipliers, and the reference vectors |
 | [`reference/chemical-mechanical-and-sensory-impacts-of-whirlpool-hopping.md`](reference/chemical-mechanical-and-sensory-impacts-of-whirlpool-hopping.md) | background | generated conversation on the two whirlpool temperature regimes, oil and alpha-acid chemistry, and sensory impact; source material for the boil/whirlpool critiquer |
 | [`reference/hot-side-hopping-agent-dosing.md`](reference/hot-side-hopping-agent-dosing.md) | background | generated conversation on hot-side product forms, dosing, and oil retention; supplies the bands behind the product-form multipliers |

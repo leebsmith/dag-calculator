@@ -6,6 +6,7 @@ import { toBase } from "../../engine/index.js";
 import { displayValue } from "../../views/producer.js";
 import { rowDefaults } from "../../views/producer/authoring.js";
 import { DRY_HOP_NODES as N, DRY_HOP_VALUE_LABELS } from "../../views/registry/dry-hops.js";
+import { DRY_HOP_FORMS } from "../../views/producer/hopRows.js";
 import {
   countLabel,
   firstNonEmptyString,
@@ -17,6 +18,7 @@ import {
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 
 const MAX_VISIBLE = 25;
+const DRY_HOP_FORM_VALUES = DRY_HOP_FORMS.map((form) => form.value);
 
 const dryHopTitle = (row) => firstNonEmptyString(row?.variety, "New dry hop");
 
@@ -30,8 +32,9 @@ function makeDryHopRow(artifact, item) {
   return row;
 }
 
-function dryHopOptions(artifact, taxonomyId) {
-  return (artifact.taxonomies[taxonomyId] ?? []).map((value) => ({
+function dryHopOptions(artifact, taxonomyId, only = null) {
+  const values = artifact.taxonomies[taxonomyId] ?? [];
+  return (only ? values.filter((value) => only.includes(value)) : values).map((value) => ({
     value,
     label: optionLabel(DRY_HOP_VALUE_LABELS[taxonomyId] ?? {}, value),
   }));
@@ -75,7 +78,7 @@ function installDryHopReadouts(app, ctx) {
   Object.assign(app, {
     dryHopRows: [],
     dryHopSectionOpen: true,
-    dryHopProductOptions: dryHopOptions(artifact, "hop_product_type"),
+    dryHopProductOptions: dryHopOptions(artifact, "hop_product_form", DRY_HOP_FORM_VALUES),
     dryHopEventOptions: dryHopOptions(artifact, "hop_application_event"),
     dryHopContactUntilOptions: dryHopOptions(artifact, "hop_contact_until"),
     dryHopUnitOptions: dryHopOptions(artifact, "hop_unit"),
@@ -87,7 +90,7 @@ function installDryHopReadouts(app, ctx) {
     },
 
     dryHopTypeLabel(row) {
-      return dryHopLabel("hop_product_type", row?.product_type);
+      return dryHopLabel("hop_product_form", row?.product_type);
     },
 
     dryHopEventLabel(row) {

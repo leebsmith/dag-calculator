@@ -7,13 +7,14 @@ artifact owns the hop charges, targets, and the rest/cooling inputs. The
 JavaScript `views/whirlpool.js` / `views/hops.js` copies are retained only as
 the offline boundary stub.
 
-Status: implemented model for T-90 pellets, flowable CO₂ extracts and lupulin
-pellets, target-driven IBU, per-charge rest duration and initial temperature, and
-batch-level ambient temperature and cooling time constant. Product forms are
-placed by process — T-90 or extract in the boil, T-90 or lupulin in the
-whirlpool. Authored cooling-curve records calibrate the time constant; oil
-retention, humulinone bitterness, active chilling and equipment-level thermal
-simulation are deferred.
+Status: implemented model for the four hop leaves — whole cone, pellets,
+lupulin concentrate and extract — with target-driven IBU, per-charge rest
+duration and initial temperature, and batch-level ambient temperature and
+cooling time constant. The leaf never restricts the stage: the same four forms
+are offered in the boil and the whirlpool, because form is a yield property and
+placement is a row property (`docs/hops/hop-products.md`). Authored cooling-curve
+records calibrate the time constant; oil retention, humulinone bitterness,
+active chilling and equipment-level thermal simulation are deferred.
 
 ## 1. Notation
 
@@ -150,16 +151,22 @@ the wort*. T-90 is the baseline (Tinseth already embeds the pellet's empirical
 trub loss); an extract leaves no vegetative matter behind and its resin is
 already ruptured, so less alpha is lost and it disperses more readily.
 
-| Form | `C_trub` | Where it is used |
+| Form | `C_trub` | Basis |
 |---|---|---|
-| T-90 pellets | 1.00 | Boil and whirlpool — the default |
-| Lupulin pellets | 1.10 | Whirlpool |
-| Flowable CO₂ extract | 1.15 | Boil, applied isothermally |
+| Whole cone | supplied per charge | none published; the charge will not solve until it is set |
+| Pellets (T-90, T-45/55) | 1.00 | Tinseth's own pellet fit — the baseline |
+| Lupulin concentrate (Cryo, Lupomax) | 1.10 | gland versus bract |
+| Extract (CO₂, Flex, DynaBoost, Incognito) | 1.15 | the hot-side reference above 90 °C |
 
-A boil has no cooling curve, so the extract's scalar is taken at its base value;
-heat and shear are at their maximum there, which is the end of the range the
-`1.15` was measured at. It is an assumption borrowed from that measurement, not a
-measured boil figure.
+A boil has no cooling curve, so a scalar is applied isothermally; heat and shear
+are at their maximum there, which is the end of the range the `1.15` was measured
+at. It is an assumption borrowed from that measurement, not a measured boil
+figure.
+
+Whole cone has no source at all, so the boundary refuses rather than guessing:
+a cone charge without its factor raises `CONE_UTILIZATION_REQUIRED`, and the
+mass stays unsolved. The factor lives on the charge, bounded to `0 < c ≤ 1`,
+because a cone beating a pellet is the thing the scalar exists to deny.
 
 Forward IBU from a hop charge:
 
@@ -178,29 +185,21 @@ the total IBU target into boil and whirlpool pools; each hop table normalizes
 its `parts` into shares of its own pool and back-calculates mass with the
 inverse model.
 
-### Boil extract practice
+### Extract practice
 
-The boil sells T-90 pellets or a flowable CO₂ extract; lupulin powder is a
-whirlpool product. An extract charge is a late addition — the picker seeds 15
-minutes rather than the full boil — because a rolling boil steam-distils the
-extract.
+An extract charge is a late addition — the picker seeds 15 minutes rather than
+the full boil — because a rolling boil steam-distils the extract. The leaf does
+not forbid a whirlpool charge: a maker's placement is guidance, the row is the
+truth, and a cool stand simply yields less.
 
 - Dose gravimetrically; the card derives grams and prints hop masses in grams.
   No density or volumetric conversion is used.
-- Enter the lot certificate-of-analysis alpha. Published product ranges are
-  DynaBoost `0.35–0.50` and Incognito `0.20–0.55`; the seeded catalog stores the
-  range midpoint (`0.425`, `0.375`) as an editable preset.
+- Enter the lot certificate-of-analysis alpha. The catalog preset is a
+  placeholder; `docs/hops/hop-products.md` carries the published ranges and the
+  supplier guidance.
 - At equal alpha and time, extract mass is `1 / 1.15` of T-90 mass.
-- A flameout charge is not represented: Tinseth's time factor is zero at zero
-  minutes, and a flameout stand is a whirlpool calculation the product does not
-  offer for extracts.
-- Product guidance: DynaBoost `0.15–0.5 g/L`; Incognito `0.5–2.0 g/L`, maximum
-  `2 g/L`. The card keeps a generic `4 g/gal` ceiling warning; the product limits
-  are informational until dose is modeled.
-- T-90 replacement is `1:10` for DynaBoost, `1:6` for Incognito, and `1:8` for the
-  generic preset. These are supplier substitution heuristics, not bitterness
-  equations. The inspector can show a T-90 equivalent (`extract mass × ratio`)
-  when the row carries a ratio; IBU back-solving always uses alpha and utilization.
+- A zero-minute boil charge is not modelled: Tinseth's time factor is zero at
+  zero minutes, so a flameout charge belongs to the whirlpool table.
 - `R_absorption = 0` for extract. The model already uses the post-boil hot
   kettle volume and does not subtract hop vegetative absorption.
 
@@ -278,11 +277,12 @@ contract.
 - The implementation uses `9773 K` and `2.39e11` from the provided whirlpool
   model. The `Ea/R ≈ 9500 K` figure in the hot-side reference is a rounded
   alternate fit and is not used.
-- V1 supports T-90 pellets (`C_trub = 1.0`), lupulin pellets (`C_trub = 1.10`)
-  and flowable CO₂ extracts (`C_trub = 1.15`, in the boil). The hot-side
-  reference's `1.15` above 90 °C is the number the extract uses; its separate
-  "10–15 % penalty" for a 75–85 °C whirlpool describes a product placement the
-  calculator does not offer.
+- The model supports the four leaves: pellets (`C_trub = 1.0`), lupulin
+  concentrate (`1.10`), extract (`1.15`) and whole cone, whose scalar the charge
+  supplies because no source publishes one. The hot-side reference's `1.15`
+  above 90 °C is the number the extract uses; its separate "10–15 % penalty" for
+  a 75–85 °C whirlpool is what the cooling curve already prices, so the scalar is
+  not varied by stage.
 - Oil retention, humulinone bitterness, and perceived-bitterness offsets are
   deferred.
 - Ambient temperature and cooling decay are inputs, not constants in the model
@@ -292,9 +292,10 @@ contract.
 ## 8. Limitations
 
 - Single lumped wort temperature; no stratification or active chilling.
-- Product forms are limited to T-90 pellets, lupulin pellets and flowable CO₂
-  extract. Pellet vegetative absorption, pH/fermentation losses, and dry-hop
-  contribution are not modelled.
+- Product forms are the four leaves of `docs/hops/hop-products.md`; the yield
+  scalar is one number per leaf and does not vary by stage. Pellet vegetative
+  absorption, pH/fermentation losses, and dry-hop contribution are not modelled,
+  and every charge is assumed to share one knockout end.
 - Chills are instantaneous: the transient through the dropped range is skipped.
   After a chill the curve keeps decaying with the batch constant, so a held
   temperature is under-modelled. Charges are assumed to share one knockout end,

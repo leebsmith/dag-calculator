@@ -7,29 +7,54 @@ import { cellLabel } from "./cell.js";
 
 const DASH = "—";
 
-// The product matrix: the boil sells T-90 or a flowable extract, the whirlpool
-// T-90 or lupulin powder. Dry hops carry their own authored quantity.
-export const BOIL_HOP_FORMS = [
-  { value: "t90_pellet", label: "T-90 pellets" },
-  { value: "flowable_extract", label: "Flowable CO₂ extract" },
+// The leaf is the form, and the form is the only thing the yield scalar sees.
+// Stage never restricts the leaf: the same extract leaf holds a kettle product
+// and a whirlpool product, so the picker seeds the likely stage and the row
+// carries the truth.
+export const KETTLE_HOP_FORMS = [
+  { value: "whole_cone", label: "Whole cone" },
+  { value: "t90_pellet", label: "Pellets (T-90, T-45/55)" },
+  { value: "lupulin_pellet", label: "Lupulin concentrate (Cryo, Lupomax)" },
+  {
+    value: "flowable_extract",
+    label: "Extract (CO₂, Hop Shot, Flex, DynaBoost, Incognito)",
+  },
 ];
 
-export const WHIRLPOOL_HOP_FORMS = [
-  { value: "t90_pellet", label: "T-90 pellets" },
-  { value: "lupulin_pellet", label: "Lupulin pellet" },
+export const BOIL_HOP_FORMS = KETTLE_HOP_FORMS;
+
+export const WHIRLPOOL_HOP_FORMS = KETTLE_HOP_FORMS;
+
+// The dry hop prices no IBU, so its leaves carry lupulin load and beer loss.
+export const DRY_HOP_FORMS = [
+  { value: "whole_cone", label: "Whole cone" },
+  { value: "t90_pellet", label: "Pellets (T-90)" },
+  { value: "lupulin_pellet", label: "Lupulin concentrate (Cryo, Lupomax)" },
 ];
 
 // The label vocabulary covers every form, including the ones a table does not
 // offer, so a stored row never prints a raw code.
 const HOP_FORM_LABELS = {
+  whole_cone: "Whole cone",
   t90_pellet: "T-90 pellets",
-  flowable_extract: "Flowable CO₂ extract",
-  lupulin_pellet: "Lupulin pellet",
+  flowable_extract: "Extract",
+  lupulin_pellet: "Lupulin concentrate",
+};
+
+export const HOP_FORM_LABEL_OPTIONS = {
+  whole_cone: "Whole cone",
+  t90_pellet: "T-90 pellet",
+  flowable_extract: "Extract",
+  lupulin_pellet: "Lupulin concentrate",
 };
 
 export function hopFormLabel(row) {
   const value = row?.product_form ?? "t90_pellet";
   return HOP_FORM_LABELS[value] ?? value;
+}
+
+export function hopFormOptionLabel(value) {
+  return HOP_FORM_LABEL_OPTIONS[value] ?? value;
 }
 
 export function hopAlphaLabel(row) {

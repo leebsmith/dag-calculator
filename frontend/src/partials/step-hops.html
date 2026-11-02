@@ -119,8 +119,7 @@
           Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
         </p>
         <p class="form-hint" x-show="hopRows.some((r) => r.product_form === 'flowable_extract')">
-          Flowable extract: weigh the lot CoA alpha (DynaBoost 35–50%, Incognito 20–55%). Add it late;
-          a flameout stand is not modelled for extracts.
+          Extract: weigh the lot CoA alpha; the catalog value is a preset.
         </p>
         <p class="form-hint text-warning" x-show="hopDoseWarning" x-text="hopDoseWarning"></p>
       </div>
@@ -347,7 +346,8 @@
           Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
         </p>
         <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'lupulin_pellet')">
-          Lupulin pellets: weigh the stock alpha; substitute at 1:2 T-90 by weight.
+          Lupulin concentrate: weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or
+          50–70 % (Lupomax) of T-90 by weight.
         </p>
         <p class="form-hint" x-show="whirlpoolZeroRestNote" x-text="whirlpoolZeroRestNote"></p>
         <template x-for="line in whirlpoolInferredChills" :key="line">

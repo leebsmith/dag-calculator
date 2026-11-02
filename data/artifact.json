@@ -505,12 +505,6 @@
       "whirlpool",
       "fermentation"
     ],
-    "hop_product_type": [
-      "t90_pellet",
-      "lupulin_pellet",
-      "flowable_extract",
-      "terpene_isolate"
-    ],
     "hop_application_event": [
       "pitch",
       "high_krausen",
@@ -537,7 +531,8 @@
     "hop_product_form": [
       "t90_pellet",
       "flowable_extract",
-      "lupulin_pellet"
+      "lupulin_pellet",
+      "whole_cone"
     ],
     "late_addition_intent": [
       "dose",
@@ -1583,11 +1578,9 @@
       "name": {},
       "manufacturer": {},
       "brand": {},
-      "variety_id": {},
       "product_form": {
         "taxonomy": "hop_product_form"
       },
-      "purpose": {},
       "alpha_acid_pct": {
         "dimension": "percentage",
         "domain": {
@@ -1607,26 +1600,6 @@
         "domain": {
           "gte": 0,
           "lte": 1
-        }
-      },
-      "beta_acid_pct": {
-        "dimension": "percentage",
-        "domain": {
-          "gte": 0,
-          "lte": 1
-        }
-      },
-      "total_oil_pct": {
-        "dimension": "percentage",
-        "domain": {
-          "gte": 0,
-          "lte": 1
-        }
-      },
-      "t90_replacement_ratio": {
-        "dimension": "dimensionless",
-        "domain": {
-          "gte": 0
         }
       },
       "notes": {},
@@ -2043,10 +2016,12 @@
         "taxonomy": "hop_product_form",
         "default": "t90_pellet"
       },
-      "t90_replacement_ratio": {
+      "cone_utilization": {
         "dimension": "dimensionless",
+        "default": null,
         "domain": {
-          "gte": 0
+          "gt": 0,
+          "lte": 1
         }
       }
     },
@@ -2057,17 +2032,19 @@
         "taxonomy": "hop_product_form",
         "default": "t90_pellet"
       },
+      "cone_utilization": {
+        "dimension": "dimensionless",
+        "default": null,
+        "domain": {
+          "gt": 0,
+          "lte": 1
+        }
+      },
       "alpha_acid_pct": {
         "dimension": "percentage",
         "domain": {
           "gte": 0,
           "lte": 1
-        }
-      },
-      "t90_replacement_ratio": {
-        "dimension": "dimensionless",
-        "domain": {
-          "gte": 0
         }
       },
       "duration_min": {
@@ -2340,7 +2317,7 @@
       "hop_id": {},
       "variety": {},
       "product_type": {
-        "taxonomy": "hop_product_type",
+        "taxonomy": "hop_product_form",
         "default": "t90_pellet"
       },
       "quantity": {
@@ -4211,6 +4188,7 @@
           "INVALID_VOLUME",
           "INVALID_COOLING_CONSTANT",
           "UNKNOWN_PRODUCT_FORM",
+          "CONE_UTILIZATION_REQUIRED",
           "WHIRLPOOL_HEATING",
           "WHIRLPOOL_ADDITION_CONFLICT",
           "WHIRLPOOL_BELOW_AMBIENT"

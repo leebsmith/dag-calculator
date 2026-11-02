@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **687** (458 enumerable, 229 hidden)
+- Declared members: **686** (458 enumerable, 228 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **15 of 20**
@@ -24,7 +24,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 144 | 3 | 23 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 143 | 3 | 23 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 22 |
@@ -268,7 +268,6 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `hopStandard` | `hop` | public | 0 |
 | `hopStandardGroups` | `hop` | hidden | 0 |
 | `hopStandardName` | `hop` | hidden | 0 |
-| `hopT90Equivalent` | `hop` | hidden | 1 |
 | `hopTemp` | `hop` | public | 1 |
 | `hopTotalMassDisplay` | `hop` | hidden | 1 |
 | `hopTotalMassKg` | `hop` | hidden | 0 |

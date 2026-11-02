@@ -129,6 +129,8 @@ const HOP_VALUES = {
   "solver.batch.cascade.v_post_boil": 21.0,
   "batch.whirlpool_ambient_temp_c": 20.0,
   "batch.whirlpool_cooling_time_constant_min": 108.7,
+  // Unset: the builder omits a null cone factor rather than sending it.
+  "batch.cone_utilization": null,
 };
 
 const HOP_BOIL_ROWS = [

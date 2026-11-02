@@ -34,6 +34,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
                 boil_time_fraction=row.boil_time_fraction,
                 pct=row.pct,
                 product_form=row.product_form.value,
+                cone_utilization=row.cone_utilization,
             )
             for row in req.boil_hops
         ],
@@ -44,6 +45,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
                 initial_temp_c=row.initial_temp_c,
                 pct=row.pct,
                 product_form=row.product_form.value,
+                cone_utilization=row.cone_utilization,
             )
             for row in req.whirlpool_hops
         ],

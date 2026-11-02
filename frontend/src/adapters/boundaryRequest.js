@@ -194,6 +194,7 @@ export const HOP_FIELDS = {
         boil_time_fraction: row.boil_time_fraction,
         pct: row.pct,
         product_form: row.product_form ?? "t90_pellet",
+        cone_utilization: row.cone_utilization ?? null,
       })),
   },
   whirlpool_hops: {
@@ -206,6 +207,7 @@ export const HOP_FIELDS = {
         initial_temp_c: row.initial_temp_c,
         pct: row.pct,
         product_form: row.product_form ?? "t90_pellet",
+        cone_utilization: row.cone_utilization ?? null,
       })),
   },
   boil_target_ibu: { path: "batch.boil_target_ibu" },

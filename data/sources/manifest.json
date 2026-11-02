@@ -32,19 +32,12 @@
       "rows": 157,
       "sha256": "d3f794532da832fb7caf88b494af69c92eafe2f06c492860690c00eb81a7abe1"
     },
-    "hop-products-lupulin.json": {
-      "mechanism": "curated",
-      "upstream": "Yakima Chief Hops Cryo Hops and BarthHaas Lupomax lupulin data (variety list, stock alpha ranges)",
-      "builder": "scripts/build-hop-products-seed.mjs",
-      "rows": 27,
-      "sha256": "34f97e8bb0f2432f487afec0a259dc55ed1be0cfd871f484a3525855ceaf7a4f"
-    },
     "hop-products.json": {
       "mechanism": "curated",
-      "upstream": "Yakima Chief Hops DynaBoost product data sheet; BarthHaas INCOGNITO technical data sheet",
+      "upstream": "docs/hops/hop-products.md — YCH Cryo 2022, BarthHaas Lupomax 2025, YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",
       "builder": "scripts/build-hop-products-seed.mjs",
-      "rows": 19,
-      "sha256": "68d138fa86308d4eb59a982b6689ea60b4ca2a2a2a01b5d6c30a94fc14833a69"
+      "rows": 7,
+      "sha256": "6a43d67b8c51c610895d45d0f3d97c81e1befbafc527720ff5e18e4cbc053cb5"
     },
     "malt-database-malts.json": {
       "mechanism": "scrape",
@@ -102,13 +95,6 @@
       "upstream": "scripts/scrape/whitelabs_yeast_scraper.py (pinned)",
       "rows": 9,
       "sha256": "6d9982b7268f5d0668d876b57a7eb8c5068ae60807e0dc0c412e9e9aeb81527f"
-    },
-    "yvh-products.json": {
-      "mechanism": "scrape",
-      "upstream": "https://yakimavalleyhops.com/products.json (advanced hop products)",
-      "scraper": "scripts/scrape/yvh/scrape_yvh.py",
-      "rows": 17,
-      "sha256": "058eeb8b6bfb8fa19b18374967a617c3ecad8bc17591487a910effccc0c83c49"
     }
   }
 }

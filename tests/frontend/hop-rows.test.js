@@ -45,7 +45,8 @@ test("hopRows: a missing row degrades to the dash, never a number", () => {
 });
 
 test("hopRows: the product form falls back to the raw code", () => {
-  assert.equal(hopFormLabel({ product_form: "flowable_extract" }), "Flowable CO₂ extract");
+  assert.equal(hopFormLabel({ product_form: "flowable_extract" }), "Extract");
+  assert.equal(hopFormLabel({ product_form: "whole_cone" }), "Whole cone");
   assert.equal(hopFormLabel({}), "T-90 pellets");
   assert.equal(hopFormLabel({ product_form: "unknown_form" }), "unknown_form");
 });

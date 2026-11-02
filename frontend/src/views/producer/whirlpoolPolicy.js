@@ -2,12 +2,11 @@
 // bands, the band selector state, and the two advisory warnings. Pure over the
 // rows, the notes and the form multiplier; the card supplies the formatters.
 
-import { isFiniteNumber } from "../../utils.js";
 
-export function makeWhirlpoolRow(hop, defaults) {
-  const form = hop.product_form ?? "t90_pellet";
+export function makeWhirlpoolRow(hop, defaults, catalogForm = null) {
+  const form = catalogForm ?? hop.product_form ?? "t90_pellet";
   const lupulin = form === "lupulin_pellet";
-  const row = {
+  return {
     hop_id: hop.id,
     name: hop.name,
     product_form: form,
@@ -17,10 +16,6 @@ export function makeWhirlpoolRow(hop, defaults) {
     parts: 10,
     pct: 0,
   };
-  if (isFiniteNumber(hop.t90_replacement_ratio)) {
-    row.t90_replacement_ratio = hop.t90_replacement_ratio;
-  }
-  return row;
 }
 
 export function startBands(notes, formatTemp) {

@@ -128,6 +128,7 @@ export const SOLVER_ERROR_LABELS = {
   INVALID_VOLUME: "Volume is invalid for the hop model",
   INVALID_COOLING_CONSTANT: "Whirlpool cooling constant is invalid",
   UNKNOWN_PRODUCT_FORM: "Unknown hop product form",
+  CONE_UTILIZATION_REQUIRED: "Whole cone needs a utilization factor",
   WHIRLPOOL_HEATING: "Whirlpool is heating",
   WHIRLPOOL_ADDITION_CONFLICT: "Whirlpool additions overlap",
   WHIRLPOOL_BELOW_AMBIENT: "Whirlpool is below ambient",

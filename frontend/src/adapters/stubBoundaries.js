@@ -22,6 +22,7 @@ function hopOutputs(inputs = {}) {
         boilGravitySg: inputs.pre_boil_gravity,
         volumeL: inputs.post_boil_volume_l,
         productForm: row.product_form ?? "t90_pellet",
+        coneUtilization: row.cone_utilization ?? null,
       }),
     };
   });
@@ -47,6 +48,7 @@ function hopOutputs(inputs = {}) {
         gravity: inputs.post_boil_gravity,
         effectiveMinutes,
         productForm: row.product_form ?? "t90_pellet",
+        coneUtilization: row.cone_utilization ?? null,
       }),
       effective_minutes: effectiveMinutes,
     };

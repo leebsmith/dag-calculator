@@ -24,10 +24,11 @@ TINSETH_FACTOR = 7489.0
 RATE_PREFACTOR = 2.39e11
 RATE_EXPONENT_K = 9773.0
 
-PRODUCT_FORM_UTILIZATION = {
+PRODUCT_FORM_UTILIZATION: dict[str, float | None] = {
     "t90_pellet": 1.0,
     "flowable_extract": 1.15,
     "lupulin_pellet": 1.10,
+    "whole_cone": None,
 }
 
 SIMPSON_TOLERANCE = 1e-10
@@ -52,6 +53,7 @@ class BoilHopEntry:
     boil_time_fraction: float
     pct: float
     product_form: str = "t90_pellet"
+    cone_utilization: float | None = None
 
 
 @dataclass(frozen=True)
@@ -61,6 +63,7 @@ class WhirlpoolHopEntry:
     initial_temp_c: float
     pct: float
     product_form: str = "t90_pellet"
+    cone_utilization: float | None = None
 
 
 @dataclass(frozen=True)
@@ -151,11 +154,13 @@ def mass_from_ibu(
     boil_gravity_sg: float,
     volume_l: float,
     product_form: str = "t90_pellet",
+    cone_utilization: float | None = None,
 ) -> float | None:
     """Tinseth inverse: hop mass (kg) that yields ``ibu`` for a product form."""
-    utilization = tinseth_utilization(boil_gravity_sg, time_min) * product_form_utilization(
-        product_form
-    )
+    form = product_form_utilization(product_form, cone_utilization)
+    if form is None:
+        return None
+    utilization = tinseth_utilization(boil_gravity_sg, time_min) * form
     if (
         not (ibu > 0.0)
         or utilization <= 0.0
@@ -246,15 +251,23 @@ def whirlpool_utilization(gravity: float, effective_minutes: float) -> float:
     return gravity_factor * time_factor
 
 
-def product_form_utilization(product_form: str) -> float:
+def product_form_utilization(
+    product_form: str, cone_utilization: float | None = None
+) -> float | None:
     """Lumped product-form efficiency: adsorption-free and dispersion.
 
     A flowable extract leaves no vegetative matter behind and its resin is
     already ruptured, so at boiling heat it delivers more IBU per unit of alpha
     than a T-90 pellet. The scalar carries both effects at once; the boil applies
     it isothermally, where heat and shear are at their maximum.
+
+    Whole cone has no published figure, so the batch supplies it; a null result
+    means the caller must refuse rather than guess.
     """
-    return PRODUCT_FORM_UTILIZATION.get(product_form, 1.0)
+    value = PRODUCT_FORM_UTILIZATION.get(product_form, 1.0)
+    if value is None:
+        return cone_utilization
+    return value
 
 
 def whirlpool_mass_kg(
@@ -267,14 +280,16 @@ def whirlpool_mass_kg(
     ambient_temp_c: float,
     k_per_min: float,
     product_form: str,
+    cone_utilization: float | None = None,
 ) -> tuple[float | None, float]:
     """Whirlpool inverse: hop mass (kg) and effective minutes."""
     effective_minutes = effective_whirlpool_minutes(
         duration_min, initial_temp_c, ambient_temp_c, k_per_min
     )
-    utilization = whirlpool_utilization(gravity, effective_minutes) * product_form_utilization(
-        product_form
-    )
+    form = product_form_utilization(product_form, cone_utilization)
+    if form is None:
+        return None, effective_minutes
+    utilization = whirlpool_utilization(gravity, effective_minutes) * form
     return (
         mass_from_whirlpool_utilization(ibu, alpha_fraction, volume_l, utilization),
         effective_minutes,
@@ -397,6 +412,16 @@ def _validate_product_form(row: BoilHopEntry | WhirlpoolHopEntry) -> None:
         )
 
 
+def _validate_cone(rows: Sequence[BoilHopEntry | WhirlpoolHopEntry]) -> None:
+    for row in rows:
+        if row.product_form == "whole_cone" and row.cone_utilization is None:
+            raise SolverValidationError(
+                "CONE_UTILIZATION_REQUIRED",
+                "A whole-cone charge needs its utilization factor; supply one "
+                "between 0 and 1 exclusive.",
+            )
+
+
 def _validate_boil_hops(rows: Sequence[BoilHopEntry]) -> None:
     for row in rows:
         _validate_hop_fractions(row)
@@ -420,6 +445,7 @@ def _validate(inputs: HopSolverInput) -> None:
     _validate_gravity(inputs)
     _validate_boil_hops(inputs.boil_hops)
     _validate_whirlpool_hops(inputs.whirlpool_hops)
+    _validate_cone((*inputs.boil_hops, *inputs.whirlpool_hops))
 
 
 def _split_ibu(
@@ -452,6 +478,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
             inputs.pre_boil_gravity,
             inputs.post_boil_volume_l,
             product_form=row.product_form,
+            cone_utilization=row.cone_utilization,
         )
         boil_rows.append(BoilHopResult(minutes=minutes, ibu=ibu, mass_kg=mass))
 
@@ -466,9 +493,12 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
         effective_minutes = timeline.effective_minutes(
             timeline.end_min - minutes, ambient_temp_c, k_per_min
         )
-        utilization = whirlpool_utilization(
-            inputs.post_boil_gravity, effective_minutes
-        ) * product_form_utilization(row.product_form)
+        form = product_form_utilization(row.product_form, row.cone_utilization)
+        utilization = (
+            0.0
+            if form is None
+            else whirlpool_utilization(inputs.post_boil_gravity, effective_minutes) * form
+        )
         mass = mass_from_whirlpool_utilization(
             ibu, row.alpha_acid_pct, inputs.post_boil_volume_l, utilization
         )

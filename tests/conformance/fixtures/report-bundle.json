@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:deeca3ce718bdcf92dd7232bd62b36d290def27b87615e5ba2f4b30b25463adf",
+    "hash": "sha256:543aef0905362a4260f31dddd0afc2715c16cf57b3e3b0e16c9606975f1e7b2a",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -510,12 +510,6 @@
           "whirlpool",
           "fermentation"
         ],
-        "hop_product_type": [
-          "t90_pellet",
-          "lupulin_pellet",
-          "flowable_extract",
-          "terpene_isolate"
-        ],
         "hop_application_event": [
           "pitch",
           "high_krausen",
@@ -542,7 +536,8 @@
         "hop_product_form": [
           "t90_pellet",
           "flowable_extract",
-          "lupulin_pellet"
+          "lupulin_pellet",
+          "whole_cone"
         ],
         "late_addition_intent": [
           "dose",
@@ -1588,11 +1583,9 @@
           "name": {},
           "manufacturer": {},
           "brand": {},
-          "variety_id": {},
           "product_form": {
             "taxonomy": "hop_product_form"
           },
-          "purpose": {},
           "alpha_acid_pct": {
             "dimension": "percentage",
             "domain": {
@@ -1612,26 +1605,6 @@
             "domain": {
               "gte": 0,
               "lte": 1
-            }
-          },
-          "beta_acid_pct": {
-            "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
-          },
-          "total_oil_pct": {
-            "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
-          },
-          "t90_replacement_ratio": {
-            "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
             }
           },
           "notes": {},
@@ -2027,10 +2000,12 @@
             "taxonomy": "hop_product_form",
             "default": "t90_pellet"
           },
-          "t90_replacement_ratio": {
+          "cone_utilization": {
             "dimension": "dimensionless",
+            "default": null,
             "domain": {
-              "gte": 0
+              "gt": 0,
+              "lte": 1
             }
           }
         },
@@ -2041,17 +2016,19 @@
             "taxonomy": "hop_product_form",
             "default": "t90_pellet"
           },
+          "cone_utilization": {
+            "dimension": "dimensionless",
+            "default": null,
+            "domain": {
+              "gt": 0,
+              "lte": 1
+            }
+          },
           "alpha_acid_pct": {
             "dimension": "percentage",
             "domain": {
               "gte": 0,
               "lte": 1
-            }
-          },
-          "t90_replacement_ratio": {
-            "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
             }
           },
           "duration_min": {
@@ -2324,7 +2301,7 @@
           "hop_id": {},
           "variety": {},
           "product_type": {
-            "taxonomy": "hop_product_type",
+            "taxonomy": "hop_product_form",
             "default": "t90_pellet"
           },
           "quantity": {
@@ -4355,6 +4332,7 @@
               "INVALID_VOLUME",
               "INVALID_COOLING_CONSTANT",
               "UNKNOWN_PRODUCT_FORM",
+              "CONE_UTILIZATION_REQUIRED",
               "WHIRLPOOL_HEATING",
               "WHIRLPOOL_ADDITION_CONFLICT",
               "WHIRLPOOL_BELOW_AMBIENT"
@@ -7723,16 +7701,6 @@
         "options": null,
         "option_labels": null
       },
-      "batch.whirlpool_hops.t90_replacement_ratio": {
-        "label": "T-90 ratio",
-        "dimension": "dimensionless",
-        "unit": null,
-        "symbol": null,
-        "decimals": 2,
-        "step": null,
-        "options": null,
-        "option_labels": null
-      },
       "batch.whirlpool_hops.duration_min": {
         "label": "Rest",
         "dimension": "time",
@@ -8130,7 +8098,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:bfdd19e68685f960e291bcb252dc66dc94f24cb49cf40a0fa1102c0c6f37c51d"
+    "hash": "sha256:e0748cb575f866dc4a2a1ef6ca52076d4b46a710b63e598303f7b648269ff7fb"
   },
   "batch": {
     "id": "frozen-1",
@@ -8274,7 +8242,6 @@
           "name": "Citra",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.12,
-          "t90_replacement_ratio": 1.0,
           "duration_min": 30.0,
           "initial_temp_c": 95.0,
           "parts": 70,
@@ -8286,7 +8253,6 @@
           "name": "Saaz",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.035,
-          "t90_replacement_ratio": 1.0,
           "duration_min": 10.0,
           "initial_temp_c": 70.0,
           "parts": 30,
@@ -8523,7 +8489,6 @@
           "name": "Citra",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.12,
-          "t90_replacement_ratio": 1.0,
           "duration_min": 30.0,
           "initial_temp_c": 95.0,
           "parts": 70,
@@ -8535,7 +8500,6 @@
           "name": "Saaz",
           "product_form": "t90_pellet",
           "alpha_acid_pct": 0.035,
-          "t90_replacement_ratio": 1.0,
           "duration_min": 10.0,
           "initial_temp_c": 70.0,
           "parts": 30,
@@ -9939,5 +9903,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:7773a361a13cc6021f098c88d6a2c33c85b40e7f60ae28350da8770706cd3189"
+  "content_hash": "sha256:6124c0790a266b7283515f0ee19f5ed19d06ed507233a69c94b568fcbfe8bc4d"
 }
