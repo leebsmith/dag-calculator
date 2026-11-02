@@ -167,7 +167,7 @@ export function createEngine(artifact, options = {}) {
   // Resolve a boundary's request body. When the host registers a request
   // adapter for the node's binding (`options.boundaryRequests`), it reshapes the
   // resolved values into the backend's contract; otherwise the declared
-  // `inputs` pass through unchanged (offline stubs). The SAME body feeds both
+  // `inputs` pass through unchanged (an injected boundary provider). The SAME body feeds both
   // `boundaryRequest()` and evaluation, so their fingerprints agree. Inputs are
   // always read in authored mode: a request never carries a computed row field.
   function resolveBoundaryInputs(node) {

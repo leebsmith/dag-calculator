@@ -4,7 +4,7 @@ import { createCalculator } from "../../frontend/src/engine/index.js";
 import { produce } from "../../frontend/src/views/producer.js";
 import { registry, steps } from "../../frontend/src/views/steps.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
-import { STUB_BOUNDARIES } from "../../frontend/src/adapters/stubBoundaries.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { artifact } from "./util.js";
 import { identityFixture } from "../frontend/helpers.js";
 
@@ -15,7 +15,7 @@ function engine() {
     identity: identityFixture(),
     references: cache.references,
     collections: cache.collections,
-    boundaries: STUB_BOUNDARIES,
+    boundaries: BOUNDARY_DOUBLE,
     roots: {},
   });
 }

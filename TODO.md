@@ -34,7 +34,8 @@ tracks only what is outstanding.
   to its valid members (e.g. a dry-hop row to `fermentation`). Needs grammar,
   validator, backend parity, and the inventory emitter to agree.
 * Realtime cross-tab / multi-device sync (Firestore `onSnapshot`)
-* Offline resilience (IndexedDB write-ahead overlay)
+* **Brew-day offline** — cache the frozen bundle, queue note writes. Solving is
+  authoring-time; no boundary runs on the brew-day path.
 * Unit scaling (`plans/unit-scaling.md`)
 * Lazy-load seed data (bundle size)
 * **Style-conformance water axis** — nothing scores water against the chosen style today:

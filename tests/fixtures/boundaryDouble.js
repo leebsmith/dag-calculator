@@ -1,105 +1,61 @@
-// Offline boundary stubs (default when no API base is configured). Full flattened
-// output sets matching the artifact's boundary output keys. The hop stub uses the
-// host Tinseth/whirlpool implementations; production reads the backend solver.
+// Test double for the three boundary bindings: one function per binding returning
+// every artifact-declared output key. Values are fixtures, not physics — the
+// solvers live in `backend/app/core/` and their numeric contract is pinned by the
+// Python suites and the conformance fixtures. Tests that need a specific served
+// value inject their own binding instead of changing this one.
 
-import { massFromIbu } from "../views/hops.js";
-import {
-  whirlpoolMassFromEffective,
-  whirlpoolTimeline,
-} from "../views/whirlpool.js";
-
-function boilOutput(row, inputs) {
-  const minutes = (row.boil_time_fraction ?? 0) * (inputs.boil_time_min ?? 0);
-  const ibu = (row.pct ?? 0) * (inputs.boil_target_ibu ?? 0);
-  const mass = massFromIbu({
-    ibu,
-    alphaFraction: row.alpha_acid_pct ?? 0,
-    timeMin: minutes,
-    boilGravitySg: inputs.pre_boil_gravity,
-    volumeL: inputs.post_boil_volume_l,
-    productForm: row.product_form ?? "t90_pellet",
-    coneUtilization: row.cone_utilization ?? null,
-  });
+function boilRow(row, inputs) {
   return {
-    minutes,
-    ibu,
-    mass_kg: mass,
-    alpha_mass_kg: mass === null ? null : mass * (row.alpha_acid_pct ?? 0),
+    minutes: (row.boil_time_fraction ?? 0) * (inputs.boil_time_min ?? 0),
+    ibu: (row.pct ?? 0) * (inputs.boil_target_ibu ?? 0),
+    mass_kg: 0.012,
+    alpha_mass_kg: 0.0012,
   };
 }
 
-function whirlpoolOutput(row, inputs, timeline, knockoutMin) {
-  const additionAt = row.addition_at_min ?? 0;
-  const ibu = (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0);
-  const effectiveMinutes = timeline.effectiveMinutes(additionAt);
-  const mass = whirlpoolMassFromEffective({
-    ibu,
-    alphaFraction: row.alpha_acid_pct ?? 0,
-    volumeL: inputs.post_boil_volume_l,
-    gravity: inputs.post_boil_gravity,
-    effectiveMinutes,
-    productForm: row.product_form ?? "t90_pellet",
-    coneUtilization: row.cone_utilization ?? null,
-  });
+function whirlpoolRow(row, inputs) {
   return {
-    minutes: Math.max(0, knockoutMin - additionAt),
-    ibu,
-    mass_kg: mass,
-    alpha_mass_kg: mass === null ? null : mass * (row.alpha_acid_pct ?? 0),
-    effective_minutes: effectiveMinutes,
+    minutes: Math.max(0, (inputs.whirlpool_knockout_min ?? 30) - (row.addition_at_min ?? 0)),
+    ibu: (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0),
+    mass_kg: 0.012,
+    effective_minutes: 15,
+    alpha_mass_kg: 0.0012,
   };
 }
 
 function sumOf(rows, key) {
-  return rows.reduce((sum, row) => (typeof row[key] === "number" ? sum + row[key] : sum), 0);
+  return rows.reduce((sum, row) => sum + row[key], 0);
 }
 
 function hopOutputs(inputs = {}) {
-  const boilRows = (inputs.boil_hops ?? []).map((row) => boilOutput(row, inputs));
-  const kPerMin =
-    inputs.whirlpool_cooling_time_constant_min > 0
-      ? 1 / inputs.whirlpool_cooling_time_constant_min
-      : 0;
-  const knockoutMin = inputs.whirlpool_knockout_min ?? 30;
-  const timeline = whirlpoolTimeline(inputs.whirlpool_hops ?? [], {
-    ambientTempC: inputs.whirlpool_ambient_temp_c,
-    kPerMin,
-    knockoutMin,
-    startTempC: inputs.whirlpool_start_temp_c ?? 99,
-  });
-  const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) =>
-    whirlpoolOutput(row, inputs, timeline, knockoutMin)
-  );
-  const boilMass = sumOf(boilRows, "mass_kg");
-  const whirlpoolMass = sumOf(whirlpoolRows, "mass_kg");
-  // The report's hot/cool split: the same threshold the sealed solver uses
-  // (WHIRLPOOL_HOT_TEMP_C in backend/app/core/hop_solver.py).
-  const hotLimit = 76.7;
-  const split = whirlpoolRows.reduce(
-    (total, row, index) => {
-      const hot = (inputs.whirlpool_hops?.[index]?.initial_temp_c ?? 0) > hotLimit;
-      total[hot ? "hot" : "cool"] += row.ibu;
-      return total;
-    },
-    { hot: 0, cool: 0 }
-  );
+  const boilRows = (inputs.boil_hops ?? []).map((row) => boilRow(row, inputs));
+  const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) => whirlpoolRow(row, inputs));
+  const boiler = sumOf(boilRows, "mass_kg");
+  const whirlpool = sumOf(whirlpoolRows, "mass_kg");
   return {
     boil_rows: boilRows,
     whirlpool_rows: whirlpoolRows,
-    boil_mass_kg: boilMass,
-    whirlpool_mass_kg: whirlpoolMass,
-    total_mass_kg: boilMass + whirlpoolMass,
+    whirlpool_timeline: [
+      {
+        start_min: 0,
+        end_min: inputs.whirlpool_knockout_min ?? 30,
+        temp_c: inputs.whirlpool_start_temp_c ?? 99,
+      },
+    ],
+    whirlpool_chills: [],
+    boil_mass_kg: boiler,
+    whirlpool_mass_kg: whirlpool,
+    total_mass_kg: boiler + whirlpool,
     boil_alpha_mass_kg: sumOf(boilRows, "alpha_mass_kg"),
     whirlpool_alpha_mass_kg: sumOf(whirlpoolRows, "alpha_mass_kg"),
-    whirlpool_hot_ibu: split.hot,
-    whirlpool_cool_ibu: split.cool,
+    whirlpool_hot_ibu: 0,
+    whirlpool_cool_ibu: 0,
   };
 }
 
-export const STUB_BOUNDARIES = {
-  batch_sparge_solver: (inputs = {}) => {
-    const hasSugar = (inputs.s_late_add ?? 0) > 0 || (inputs.sugar_extract_share ?? 0) > 0;
-    return {
+function batchOutputs(inputs = {}) {
+  const hasSugar = (inputs.s_late_add ?? 0) > 0 || (inputs.sugar_extract_share ?? 0) > 0;
+  return {
     sg_post_boil: 1.055,
     v_pre_boil: 24.0,
     s_post_boil_target: 2.6,
@@ -165,10 +121,11 @@ export const STUB_BOUNDARIES = {
           },
         ]
       : [],
-    };
-  },
-  hop_bitterness_solver: hopOutputs,
-  water_chemistry_solver: () => ({
+  };
+}
+
+function waterOutputs() {
+  return {
     strategy: "CALCIUM_FLOOR",
     "prescription.predicted_mash_ph": 5.4,
     "prescription.mash_ph_status": "OPTIMAL",
@@ -213,5 +170,11 @@ export const STUB_BOUNDARIES = {
     "post_dose_mash_ions.alkalinity_as_caco3": 40.0,
     "total_added_salt_mass_g": 3.0,
     "added_mineral_tds_ppm": 150.0,
-  }),
+  };
+}
+
+export const BOUNDARY_DOUBLE = {
+  batch_sparge_solver: batchOutputs,
+  hop_bitterness_solver: hopOutputs,
+  water_chemistry_solver: waterOutputs,
 };

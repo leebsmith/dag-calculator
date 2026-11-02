@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { buildGraph, createCalculator, loadArtifact } from "../../frontend/src/engine/index.js";
-import { STUB_BOUNDARIES } from "../../frontend/src/adapters/stubBoundaries.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { artifact } from "./util.js";
 import { identityFixture } from "../frontend/helpers.js";
 
@@ -57,7 +57,7 @@ test("the graph is built once per artifact identity", () => {
 
 test("engine builds reuse the validated artifact's graph", () => {
   const doc = artifact();
-  const options = { identity: identityFixture(), boundaries: STUB_BOUNDARIES };
+  const options = { identity: identityFixture(), boundaries: BOUNDARY_DOUBLE };
   const first = createCalculator(doc, options);
   const second = createCalculator(doc, options);
 

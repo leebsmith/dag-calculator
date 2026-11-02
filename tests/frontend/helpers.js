@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 
 import { BOUNDARY_BUILDERS } from "../../frontend/src/adapters/boundaryRequest.js";
-import { STUB_BOUNDARIES } from "../../frontend/src/adapters/stubBoundaries.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 
 export function loadArtifact() {
   const path = new URL("../../frontend/src/engine/artifact.json", import.meta.url);
@@ -186,7 +186,7 @@ export function makeFixtures() {
   const boundaries = {
     batch_sparge_solver: () => batchOutputs(),
     water_chemistry_solver: () => waterOutputs(),
-    hop_bitterness_solver: STUB_BOUNDARIES.hop_bitterness_solver,
+    hop_bitterness_solver: BOUNDARY_DOUBLE.hop_bitterness_solver,
   };
 
   const roots = {

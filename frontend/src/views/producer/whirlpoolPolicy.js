@@ -98,18 +98,17 @@ export function whirlpoolPolicyDescriptors({
 export function whirlpoolTimelineDescriptors({
   formatTemp,
   formatNumber,
-  batchCurve,
+  readTimeline,
   reportError,
-  timelineFor,
 }) {
   return {
     whirlpoolTimelineState: {
       configurable: true,
       get() {
-        const curve = batchCurve();
-        if (!curve) return null;
         try {
-          return timelineFor(this.whirlpoolHopRows, curve);
+          const state = readTimeline();
+          if (!state || !Array.isArray(state.segments)) return null;
+          return state;
         } catch (err) {
           reportError("hops.whirlpoolTimeline", err);
           return null;
@@ -121,10 +120,10 @@ export function whirlpoolTimelineDescriptors({
       get() {
         const state = this.whirlpoolTimelineState;
         if (!state) return [];
-        return state.chills.map(
+        return (state.chills ?? []).map(
           (chill) =>
-            `Chill inferred at ${formatNumber(chill.atMin, 1)} min: ` +
-            `${formatTemp(chill.fromTempC)} → ${formatTemp(chill.toTempC)}.`
+            `Chill inferred at ${formatNumber(chill.at_min, 1)} min: ` +
+            `${formatTemp(chill.from_temp_c)} → ${formatTemp(chill.to_temp_c)}.`
         );
       },
     },

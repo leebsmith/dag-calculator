@@ -219,9 +219,9 @@ onAuthStateChanged((user) => {
 Alpine.data("stepCalculator", () => {
   // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate
   // `this`) trigger re-renders, and so persistence mutates the same proxy.
-  // The product entry opts into HTTP explicitly (base = VITE_API_BASE ?? "",
-  // same-origin via the Vite proxy in dev); tests keep the stub default.
-  const app = Alpine.reactive(createStepApp({ useHttp: true, libraryClient }));
+  // The product entry solves over HTTP (base = VITE_API_BASE ?? "", same-origin
+  // via the Vite proxy in dev); tests inject a boundary double instead.
+  const app = Alpine.reactive(createStepApp({ libraryClient }));
   app.bindReactive(app);
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();

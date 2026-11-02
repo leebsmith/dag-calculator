@@ -19,6 +19,8 @@ export const HOP_NODES = {
   totalMass: "solver.hops.total_mass_kg",
   whirlpoolHotIbu: "solver.hops.whirlpool_hot_ibu",
   whirlpoolCoolIbu: "solver.hops.whirlpool_cool_ibu",
+  whirlpoolTimeline: "solver.hops.whirlpool_timeline",
+  whirlpoolChills: "solver.hops.whirlpool_chills",
   whirlpoolCollection: "batch.whirlpool_hops",
   boilIbu: "batch.boil_target_ibu",
   whirlpoolIbu: "batch.whirlpool_target_ibu",

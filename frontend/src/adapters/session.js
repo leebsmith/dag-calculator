@@ -4,12 +4,11 @@
 
 import { createCalculator } from "../engine/index.js";
 import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
-import { STUB_BOUNDARIES } from "./stubBoundaries.js";
 
 // AI AGENT HOOKS: Use this session factory for constructing, rebuilding, and
 // resetting the live engine. Do not duplicated this logic elsewhere — callers
 // must resolve the engine through the session instead of capturing one.
-export function createSession({ artifact, cache, master, useHttp = false, selections = {}, identity = {} }) {
+export function createSession({ artifact, cache, master, boundaries = {}, selections = {}, identity = {} }) {
   let collections = { ...cache.collections };
   let selectionSnapshots = { ...selections };
   const identitySnapshot = identity;
@@ -21,7 +20,7 @@ export function createSession({ artifact, cache, master, useHttp = false, select
       references: cache.references,
       collections,
       selections: selectionSnapshots,
-      boundaries: useHttp ? {} : STUB_BOUNDARIES,
+      boundaries,
       boundaryRequests: BOUNDARY_BUILDERS,
       roots: master.allRoots(),
     });

@@ -17,6 +17,7 @@
 // not something to discover when a test starts depending on the previous one.
 
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 
 export const TEST_YEAST_ID = "fermentis-safale-american-ale-us-05";
 
@@ -30,9 +31,9 @@ function wrapLoadState(app, options) {
     await loadState(state);
     if (!app.engine.get("batch.yeast_id")) {
       seedYeast(app);
-      if (options.useHttp) await app.solveNow();
+      if (options.remote) await app.solveNow();
       else app.compute();
-    } else if (!(options.useHttp && app.boundaryPending)) {
+    } else if (!(options.remote && app.boundaryPending)) {
       app.compute();
     }
     // Otherwise a background solve is already in flight (`loadState` returns
@@ -42,7 +43,12 @@ function wrapLoadState(app, options) {
 }
 
 export function createTestApp(options = {}) {
-  const app = createStepApp(options);
+  // A test app resolves boundaries synchronously from the fixture double unless
+  // it opts into HTTP with `remote: true` and its own `fetchImpl`.
+  const resolved = options.remote
+    ? options
+    : { boundaries: BOUNDARY_DOUBLE, ...options };
+  const app = createStepApp(resolved);
   seedYeast(app);
   wrapLoadState(app, options);
   return app;
@@ -80,10 +86,11 @@ export async function sharedTestApp() {
 // Test wrapper for a suite that mutates: `test("...", withFreshApp(async (app) => {...}))`.
 // A reset costs a teardown and two re-renders; a fresh boot costs an app build
 // and a boot, so the wrapper is the cheaper way to start each test from the
-// same state.
-export function withFreshApp(fn) {
+// same state. Passing `options` boots a private app instead — the way a test
+// injects its own served boundary values.
+export function withFreshApp(fn, options = null) {
   return async (t) => {
-    const app = await sharedTestApp();
+    const app = options ? createTestApp(options) : await sharedTestApp();
     return fn(app, t);
   };
 }

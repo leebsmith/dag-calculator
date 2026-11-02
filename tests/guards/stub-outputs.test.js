@@ -1,10 +1,10 @@
-// Offline stub completeness: every artifact-declared boundary output must be
-// produced by the offline stub, or the dev/tests path silently blanks a readout.
+// Boundary-double completeness: every artifact-declared boundary output must be
+// produced by the test double, or the harness silently blanks a readout.
 
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { STUB_BOUNDARIES } from "../../frontend/src/adapters/stubBoundaries.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { artifact } from "./util.js";
 
 const HOP_SAMPLE = {
@@ -63,12 +63,12 @@ function checkCollection(spec, value, artifactSpec, label) {
   }
 }
 
-test("offline stubs cover and type every declared boundary output", () => {
+test("the boundary double covers and types every declared output", () => {
   const a = artifact();
   for (const [id, node] of Object.entries(a.nodes)) {
     if (node.kind !== "boundary") continue;
-    const stub = STUB_BOUNDARIES[node.binding];
-    assert.ok(stub, `${id} has no offline stub for binding "${node.binding}"`);
+    const stub = BOUNDARY_DOUBLE[node.binding];
+    assert.ok(stub, `${id} has no double for binding "${node.binding}"`);
     const declared = Object.keys(node.outputs);
     const outputs = stub(SAMPLE_INPUTS[node.binding] ?? {});
     const actual = new Set(Object.keys(outputs));

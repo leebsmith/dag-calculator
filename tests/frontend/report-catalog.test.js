@@ -277,7 +277,7 @@ async function fetchBoundary(url) {
 }
 
 test("an HTTP-solved valuation drops boundary advisories and stays catalog-covered", async () => {
-  const app = createTestApp({ useHttp: true, fetchImpl: fetchBoundary });
+  const app = createTestApp({ remote: true, fetchImpl: fetchBoundary });
   await app.boot();
   assert.equal(app.boundaryStatuses["solver.water"], "ok");
 

@@ -83,7 +83,7 @@ test("a blocked request is never posted", async () => {
       json: async () => (url === "/solve/batch" ? BATCH : {}),
     };
   };
-  const app = createTestApp({ useHttp: true, fetchImpl, debounceMs: 10 });
+  const app = createTestApp({ remote: true, fetchImpl, debounceMs: 10 });
   await app.boot();
 
   await loadWaterSource(app, {

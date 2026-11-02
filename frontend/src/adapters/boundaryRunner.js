@@ -23,7 +23,7 @@ function markUnavailableBoundaries(engine, nodes, statuses) {
 // status, and error transition. Do not duplicated this logic elsewhere.
 export function createBoundaryRunner({
   session,
-  useHttp = false,
+  remote = true,
   fetchImpl,
   debounceMs = 300,
   compute,
@@ -32,7 +32,7 @@ export function createBoundaryRunner({
   preGate = () => null,
 }) {
   const statuses = Object.fromEntries(
-    session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
+    session.boundaryNodes.map((id) => [id, remote ? "pending" : "ok"])
   );
   const extras = Object.fromEntries(
     session.boundaryNodes.map((id) => [id, null])
@@ -77,7 +77,7 @@ export function createBoundaryRunner({
   }
 
   async function solveNow() {
-    if (!useHttp) {
+    if (!remote) {
       syncBlockedOffline();
       compute();
       return;
@@ -200,7 +200,7 @@ export function createBoundaryRunner({
   }
 
   function scheduleSolve() {
-    if (!useHttp) {
+    if (!remote) {
       syncBlockedOffline();
       compute();
       return;
@@ -216,7 +216,7 @@ export function createBoundaryRunner({
     inflight.clear();
     session.getEngine().clearBoundaryUnavailable();
     for (const id of session.boundaryNodes) {
-      statuses[id] = useHttp ? "pending" : "ok";
+      statuses[id] = remote ? "pending" : "ok";
       extras[id] = null;
       blocked[id] = null;
     }

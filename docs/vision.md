@@ -121,6 +121,9 @@ These are boundaries of the product, not gaps:
 7. **Author a mass to obtain a target.** A hop charge is solved from the IBU the brewer
    asked for, never guessed at and then described. The grams are the output of the
    inversion; a product sheet's substitution ratio is guidance, not an equation.
+8. **Solve during a brew.** Freezing is where solving stops. Brew day reads the frozen
+   bundle and records state, so a session never needs a solver — offline is a state
+   (cached bundle, queued writes), not a second solver.
 
 ---
 

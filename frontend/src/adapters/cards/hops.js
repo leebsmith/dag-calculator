@@ -2,7 +2,7 @@
 // cooling integral), both authored by IBU share.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
-import { batchCurveReader, installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
+import { installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
 import { createHopFormatters } from "../../views/producer/hopFormat.js";
 import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
@@ -24,7 +24,6 @@ import {
 } from "../../views/producer/hopRows.js";
 import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
 import { reportError } from "../../observability.js";
-import { whirlpoolTimeline } from "../../views/whirlpool.js";
 import { boilPolicyDescriptors, makeBoilRow } from "../../views/producer/boilPolicy.js";
 import {
   makeWhirlpoolRow,
@@ -353,9 +352,11 @@ export function registerHopCard(app, ctx) {
     ...whirlpoolTimelineDescriptors({
       formatTemp,
       formatNumber: formatWithDecimals,
-      batchCurve: () => batchCurveReader((id) => resolveOrNull(engine, id)),
+      readTimeline: () => ({
+        segments: resolveOrNull(engine, N.whirlpoolTimeline) ?? null,
+        chills: resolveOrNull(engine, N.whirlpoolChills) ?? [],
+      }),
       reportError,
-      timelineFor: whirlpoolTimeline,
     }),
     ...hopSectionMetaDescriptors(),
   });

@@ -8,6 +8,7 @@
 // `Alpine.reactive` and binds that proxy to persistence.
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
+import { resolveBoundarySeam } from "./boundarySeam.js";
 import { createReferenceCache } from "../store/referenceCache.js";
 import { identityDerivations } from "../views/seedDerivations.js";
 import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
@@ -72,15 +73,12 @@ export function createStepApp(options = {}) {
   });
   cache.syncLibraryItems(library.items());
 
-  // Boundary seam: offline stubs by default (tests, no API base); the real
-  // solvers over HTTP when explicitly enabled. HTTP is an explicit boolean
-  // (never the truthiness of the base string); main.js passes `useHttp: true`.
-  const useHttp = options.useHttp ?? false;
+  const { boundaries, remote } = resolveBoundarySeam(options);
   const fetchImpl = options.fetchImpl;
   const debounceMs = options.debounceMs ?? 300;
 
   const identity = options.identity ?? bootstrapIdentity(artifact, cache);
-  const session = createSession({ artifact, cache, master, useHttp, identity });
+  const session = createSession({ artifact, cache, master, boundaries, identity });
 
   const attribution = createFieldAttribution(artifact, steps);
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
@@ -120,7 +118,7 @@ export function createStepApp(options = {}) {
     domains: [],
     onChange: null, // optional browser hook, called after each state mutation
     boundaryStatuses: Object.fromEntries(
-      session.boundaryNodes.map((id) => [id, useHttp ? "pending" : "ok"])
+      session.boundaryNodes.map((id) => [id, remote ? "pending" : "ok"])
     ),
     boundaryError: null,
     boundaryExtras: Object.fromEntries(
@@ -136,7 +134,7 @@ export function createStepApp(options = {}) {
     },
 
     get boundaryPending() {
-      return useHttp && session.boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
+      return remote && session.boundaryNodes.some((id) => this.boundaryStatuses[id] === "pending");
     },
 
     get boundaryBlockedMessage() {
@@ -177,7 +175,7 @@ export function createStepApp(options = {}) {
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       const sugarParts = this.seedSugarShareParts();
-      if (useHttp) await this.solveNow();
+      if (remote) await this.solveNow();
       else this.compute();
       const changed = [
         seeded, materialized, synced, migrated, migratedWhirlpool,
@@ -309,7 +307,7 @@ export function createStepApp(options = {}) {
       syncLibrary();
       this.catalogRevision += 1;
       this.libraryRevision += 1;
-      if (useHttp) await this.solveNow();
+      if (remote) await this.solveNow();
       else this.compute();
     },
 
@@ -359,7 +357,7 @@ export function createStepApp(options = {}) {
       ui.activeIndex = 0;
       ui.highwater = 0;
       this.syncNav();
-      if (!useHttp) this.compute();
+      if (!remote) this.compute();
     },
   };
 
@@ -377,7 +375,7 @@ export function createStepApp(options = {}) {
 
   const runner = createBoundaryRunner({
     session,
-    useHttp,
+    remote,
     gate: bindGate(waterTargetGate),
     preGate: (id, engine) => {
       if (id !== "solver.batch") return null;

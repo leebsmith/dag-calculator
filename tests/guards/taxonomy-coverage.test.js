@@ -5,7 +5,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { PRODUCT_FORM_UTILIZATION } from "../../frontend/src/views/whirlpool.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import { artifact, read } from "./util.js";
 
@@ -57,14 +56,6 @@ test("malt_category covers the fermentability and yield priors", () => {
   ]) {
     assert.equal(typeof a.constants[id]?.value, "number", `missing prior constant ${id}`);
   }
-});
-
-test("hop_product_form covers the product utilization map", () => {
-  const a = artifact();
-  assert.deepEqual(
-    [...taxonomy(a, "hop_product_form")].sort(),
-    Object.keys(PRODUCT_FORM_UTILIZATION).sort()
-  );
 });
 
 test("ion taxonomy covers the UI pin set", () => {

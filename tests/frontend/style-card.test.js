@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { createTestApp, sharedTestApp, TEST_YEAST_ID } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { identityFixture } from "./helpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
@@ -47,7 +48,7 @@ async function httpAppWithStyle(styleId = "21A") {
     status: 200,
     json: async () => (url === "/solve/batch" ? HTTP_BATCH : HTTP_WATER),
   });
-  const app = createTestApp({ useHttp: true, fetchImpl, debounceMs: 60_000 });
+  const app = createTestApp({ remote: true, fetchImpl, debounceMs: 60_000 });
   await app.loadState({
     identity: {
       ...identityFixture(),
@@ -199,7 +200,7 @@ test("the style plot model is built once per input set", async () => {
 });
 
 test("a new batch seeds the style ABV midpoint and leaves it free", async () => {
-  const app = createStepApp();
+  const app = createStepApp({ boundaries: BOUNDARY_DOUBLE });
   await app.loadState({
     identity: {
       ...identityFixture(),

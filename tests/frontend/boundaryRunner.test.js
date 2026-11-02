@@ -49,7 +49,7 @@ test("solves distinct boundary nodes in parallel", async () => {
 
   const runner = createBoundaryRunner({
     session: makeSession(engine, ["batch", "water"]),
-    useHttp: true,
+    remote: true,
     fetchImpl,
     compute: () => {
       computeCalls += 1;
@@ -77,7 +77,7 @@ test("marks only the failing node as error", async () => {
 
   const runner = createBoundaryRunner({
     session: makeSession(engine, ["batch", "water"]),
-    useHttp: true,
+    remote: true,
     fetchImpl,
     compute: () => {},
     onState: () => {},
@@ -103,7 +103,7 @@ test("a later successful solve clears the failed mark", async () => {
 
   const runner = createBoundaryRunner({
     session: makeSession(engine, ["batch", "water"]),
-    useHttp: true,
+    remote: true,
     fetchImpl,
     compute: () => {},
     onState: () => {},
@@ -130,7 +130,7 @@ test("short-circuits nodes with a cached result", async () => {
 
   const runner = createBoundaryRunner({
     session: makeSession(engine, ["batch", "water"]),
-    useHttp: true,
+    remote: true,
     fetchImpl,
     compute: () => {},
     onState: () => {},

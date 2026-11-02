@@ -2,9 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createTestApp, withFreshApp } from "./appHelpers.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { CUSTOM_COOLING_CURVE } from "../../frontend/src/adapters/cards/hopsCoolingCurve.js";
 
-test("boil hops: parts normalize to IBU shares and mass back-calculates", withFreshApp((app) => {
+test("boil hops: parts normalize to IBU shares and the served mass renders", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0);
 
@@ -19,13 +20,8 @@ test("boil hops: parts normalize to IBU shares and mass back-calculates", withFr
     assert.ok(Math.abs(row.pct - 0.5) < 1e-9, `pct=${row.pct}`);
     assert.ok(Math.abs(row.ibu - 20) < 1e-9, `ibu=${row.ibu}`);
     assert.equal(row.minutes, 60); // full-boil additions
-    assert.ok(typeof row.mass_kg === "number" && row.mass_kg > 0, `mass=${row.mass_kg}`);
+    assert.equal(row.mass_kg, 0.012); // served by the double
   }
-
-  // Lower-alpha Cascade needs more mass than high-alpha Citra for the same IBU.
-  const cascade = app.hopRows.find((r) => r.hop_id === "cascade");
-  const citra = app.hopRows.find((r) => r.hop_id === "citra");
-  assert.ok(cascade.mass_kg > citra.mass_kg);
   assert.match(app.hopTotalMassDisplay, /(oz|g|kg|lb)/);
 }));
 
@@ -106,7 +102,7 @@ test("one hop mass pill follows the master until overridden", withFreshApp((app)
   assert.equal(app.hopMassUnit, "oz"); // the override survives a master change
 }));
 
-test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", withFreshApp((app) => {
+test("whirlpool hops: parts normalize to IBU shares and the served mass renders", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
 
@@ -122,12 +118,8 @@ test("whirlpool hops: parts normalize to IBU shares and mass back-calculates", w
     assert.ok(Math.abs(row.ibu - 5) < 1e-9, `ibu=${row.ibu}`);
     assert.equal(row.minutes, 30);
     assert.equal(row.initial_temp_c, 95);
-    assert.ok(typeof row.mass_kg === "number" && row.mass_kg > 0, `mass=${row.mass_kg}`);
+    assert.equal(row.mass_kg, 0.012); // served by the double
   }
-
-  const cascade = app.whirlpoolHopRows.find((r) => r.hop_id === "cascade");
-  const citra = app.whirlpoolHopRows.find((r) => r.hop_id === "citra");
-  assert.ok(cascade.mass_kg > citra.mass_kg);
   assert.match(app.whirlpoolHopTotalMassDisplay, /(oz|g|kg|lb)/);
 }));
 
@@ -164,7 +156,7 @@ test("whirlpool hops: lupulin defaults and the band selector", withFreshApp((app
   app.setWhirlpoolHopCatalogForm("t90_pellet");
 }));
 
-test("whirlpool hops: a colder later charge shows the inferred chill and a zero rest is a note", withFreshApp((app) => {
+test("whirlpool hops: a colder later charge shows the served chill and a zero rest is a note", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
 
@@ -192,30 +184,61 @@ test("whirlpool hops: a colder later charge shows the inferred chill and a zero 
   assert.match(app.whirlpoolZeroRestNote, /0-minute charge/);
 
   app.setWhirlpoolHopCatalogForm("t90_pellet");
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    hop_bitterness_solver: (inputs = {}) => ({
+      ...BOUNDARY_DOUBLE.hop_bitterness_solver(inputs),
+      whirlpool_rows: (inputs.whirlpool_hops ?? []).map((row) => {
+        const minutes = Math.max(0, (inputs.whirlpool_knockout_min ?? 30) - (row.addition_at_min ?? 0));
+        return {
+          minutes,
+          ibu: (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0),
+          mass_kg: minutes === 0 ? null : 0.012,
+          effective_minutes: 15,
+          alpha_mass_kg: minutes === 0 ? null : 0.0012,
+        };
+      }),
+      whirlpool_chills: [{ at_min: 10, from_temp_c: 92.1, to_temp_c: 76.7 }],
+    }),
+  },
 }));
 
-test("whirlpool hops: rest duration and initial temperature drive the mass", withFreshApp((app) => {
-  app.setTargetIbu(40);
-  app.setWhirlpoolFraction(0.25);
-  app.openWhirlpoolHopEditor();
-  app.addCatalogWhirlpoolHop("cascade");
-  app.editDraftCell(0, "addition_at_min", 0);
-  app.editDraftCell(0, "initial_temp_c", 99);
-  app.saveWhirlpoolHopEditor();
-  app.compute();
-  const hotLong = app.whirlpoolHopRows[0].mass_kg;
+test("whirlpool hops: rest duration and initial temperature reach the hop request", (() => {
+  let request = null;
+  return withFreshApp((app) => {
+    app.setTargetIbu(40);
+    app.setWhirlpoolFraction(0.25);
+    app.openWhirlpoolHopEditor();
+    app.addCatalogWhirlpoolHop("cascade");
+    app.editDraftCell(0, "addition_at_min", 0);
+    app.editDraftCell(0, "initial_temp_c", 99);
+    app.saveWhirlpoolHopEditor();
+    app.compute();
 
-  app.openWhirlpoolHopEditor();
-  app.editDraftCell(0, "addition_at_min", 15);
-  app.editDraftCell(0, "initial_temp_c", 80);
-  app.saveWhirlpoolHopEditor();
-  app.compute();
-  const coolShort = app.whirlpoolHopRows[0].mass_kg;
+    assert.equal(request.whirlpool_hops[0].addition_at_min, 0);
+    assert.equal(request.whirlpool_hops[0].initial_temp_c, 99);
 
-  assert.ok(coolShort > hotLong, `${coolShort} should exceed ${hotLong}`);
-}));
+    app.openWhirlpoolHopEditor();
+    app.editDraftCell(0, "addition_at_min", 15);
+    app.editDraftCell(0, "initial_temp_c", 80);
+    app.saveWhirlpoolHopEditor();
+    app.compute();
 
-test("whirlpool flowable extract uses CoA alpha, grams, and the hot scalar", withFreshApp((app) => {
+    assert.equal(request.whirlpool_hops[0].addition_at_min, 15);
+    assert.equal(request.whirlpool_hops[0].initial_temp_c, 80);
+  }, {
+    boundaries: {
+      ...BOUNDARY_DOUBLE,
+      hop_bitterness_solver: (inputs = {}) => {
+        request = inputs;
+        return BOUNDARY_DOUBLE.hop_bitterness_solver(inputs);
+      },
+    },
+  });
+})());
+
+test("whirlpool flowable extract keeps its form, alpha and served mass", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
   app.openWhirlpoolHopEditor();
@@ -230,15 +253,7 @@ test("whirlpool flowable extract uses CoA alpha, grams, and the hot scalar", wit
   assert.equal(app.hopMassUnit, "g");
   assert.match(app.whirlpoolHopMass(extract), /g$/);
   assert.equal(extract.ibu, 10);
-  assert.ok(extract.mass_kg > 0);
-
-  app.openWhirlpoolHopEditor();
-  app.patchDraftRow(0, { product_form: "t90_pellet" });
-  app.saveWhirlpoolHopEditor();
-  app.compute();
-  const pellet = app.whirlpoolHopRows[0];
-  assert.ok(extract.mass_kg < pellet.mass_kg, "extract needs less mass at the same alpha");
-  assert.ok(Math.abs(pellet.mass_kg / extract.mass_kg - 1.15) < 1e-9);
+  assert.equal(extract.mass_kg, 0.012);
 }));
 
 // The catalog form this case leaves set is card-local state, which a reset does
@@ -266,7 +281,7 @@ test("whirlpool catalog switches to products and copies form and alpha", () => {
   assert.match(app.whirlpoolHopMass(row), /g$/);
 });
 
-test("whole cone needs the batch cone utilization before the mass solves", withFreshApp((app) => {
+test("whole cone renders the null mass until the solver returns one", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0);
   app.openHopEditor();
@@ -282,7 +297,21 @@ test("whole cone needs the batch cone utilization before the mass solves", withF
   app.patchDraftRow(0, { cone_utilization: 0.85 });
   app.saveHopEditor();
   app.compute();
-  assert.ok(app.hopRows[0].mass_kg > 0, `mass=${app.hopRows[0].mass_kg}`);
+  assert.equal(app.hopRows[0].mass_kg, 0.012);
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    hop_bitterness_solver: (inputs = {}) => {
+      const outputs = BOUNDARY_DOUBLE.hop_bitterness_solver(inputs);
+      outputs.boil_rows = outputs.boil_rows.map((row, index) => {
+        const source = (inputs.boil_hops ?? [])[index] ?? {};
+        if (source.product_form !== "whole_cone") return row;
+        const solved = source.cone_utilization != null;
+        return { ...row, mass_kg: solved ? 0.012 : null, alpha_mass_kg: solved ? 0.0012 : null };
+      });
+      return outputs;
+    },
+  },
 }));
 
 test("extract doses above the 4 g/gal ceiling warn on the boil", withFreshApp((app) => {
@@ -294,6 +323,21 @@ test("extract doses above the 4 g/gal ceiling warn on the boil", withFreshApp((a
   app.compute();
 
   assert.match(app.hopDoseWarning, /4 g\/gal/);
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    hop_bitterness_solver: (inputs = {}) => {
+      const outputs = BOUNDARY_DOUBLE.hop_bitterness_solver(inputs);
+      outputs.boil_rows = outputs.boil_rows.map((row) => ({
+        ...row,
+        mass_kg: 0.05,
+        alpha_mass_kg: 0.0225,
+      }));
+      outputs.boil_mass_kg = 0.05 * outputs.boil_rows.length;
+      outputs.total_mass_kg = outputs.boil_mass_kg + outputs.whirlpool_mass_kg;
+      return outputs;
+    },
+  },
 }));
 
 test("the kettle offers four leaves and seeds an extract late", withFreshApp((app) => {
@@ -325,21 +369,32 @@ test("whirlpool ambient follows the global temperature unit", withFreshApp((app)
   assert.equal(app.master.getRoot("batch.whirlpool_ambient_temp_c"), 25);
 }));
 
-test("whirlpool cooling time constant changes the required mass", withFreshApp((app) => {
-  app.setTargetIbu(40);
-  app.setWhirlpoolFraction(0.25);
-  app.openWhirlpoolHopEditor();
-  app.addCatalogWhirlpoolHop("cascade");
-  app.saveWhirlpoolHopEditor();
-  app.compute();
-  const slowCoolingMass = app.whirlpoolHopRows[0].mass_kg;
+test("whirlpool cooling time constant reaches the hop request", (() => {
+  let request = null;
+  return withFreshApp((app) => {
+    app.setTargetIbu(40);
+    app.setWhirlpoolFraction(0.25);
+    app.openWhirlpoolHopEditor();
+    app.addCatalogWhirlpoolHop("cascade");
+    app.saveWhirlpoolHopEditor();
+    app.compute();
+    const slowCooling = request.whirlpool_cooling_time_constant_min;
 
-  app.edit(app.whirlpoolCoolingField, "60");
-  app.compute();
-  const fastCoolingMass = app.whirlpoolHopRows[0].mass_kg;
+    app.edit(app.whirlpoolCoolingField, "60");
+    app.compute();
 
-  assert.ok(fastCoolingMass > slowCoolingMass, `${fastCoolingMass} should exceed ${slowCoolingMass}`);
-}));
+    assert.equal(slowCooling, 108.7);
+    assert.equal(request.whirlpool_cooling_time_constant_min, 60);
+  }, {
+    boundaries: {
+      ...BOUNDARY_DOUBLE,
+      hop_bitterness_solver: (inputs = {}) => {
+        request = inputs;
+        return BOUNDARY_DOUBLE.hop_bitterness_solver(inputs);
+      },
+    },
+  });
+})());
 
 test("total hop mass includes boil and whirlpool additions", withFreshApp((app) => {
   app.setTargetIbu(40);
@@ -406,7 +461,7 @@ test("http: the hop boundary rows merge into the card", async () => {
     const body = url === "/solve/batch" ? batch : url === "/solve/water" ? water : hops;
     return { ok: true, status: 200, json: async () => body };
   };
-  const app = createTestApp({ useHttp: true, fetchImpl });
+  const app = createTestApp({ remote: true, fetchImpl });
   await app.loadState({
     roots: { "batch.target_ibu": 40, "batch.whirlpool_ibu_fraction": 0 },
     collections: {

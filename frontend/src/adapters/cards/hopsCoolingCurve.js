@@ -8,30 +8,6 @@ import { formatWithDecimals, isFiniteNumber } from "../../utils.js";
 
 export const CUSTOM_COOLING_CURVE = "__custom__";
 
-// The batch curve the timeline integrates over: the two window ends plus the
-// decay constant. Null until every input resolves.
-export function batchCurveReader(read, nodes = N) {
-  const ambient = read(nodes.whirlpoolAmbient);
-  const timeConstant = read(nodes.whirlpoolCoolingTimeConstant);
-  const knockout = read(nodes.whirlpoolKnockout);
-  const startTemp = read(nodes.whirlpoolStartTemp);
-  if (
-    !isFiniteNumber(ambient) ||
-    !isFiniteNumber(timeConstant) ||
-    timeConstant <= 0 ||
-    !isFiniteNumber(knockout) ||
-    !isFiniteNumber(startTemp)
-  ) {
-    return null;
-  }
-  return {
-    ambientTempC: ambient,
-    kPerMin: 1 / timeConstant,
-    knockoutMin: knockout,
-    startTempC: startTemp,
-  };
-}
-
 function fitOf(record) {
   if (!record) return null;
   return fitCoolingCurve({
