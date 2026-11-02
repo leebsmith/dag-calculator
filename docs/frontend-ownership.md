@@ -3,7 +3,7 @@
 Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 
-- Declared members: **689** (459 enumerable, 230 hidden)
+- Declared members: **693** (461 enumerable, 232 hidden)
 - Installers: **20**
 - Card partials: **17**
 - Installers reading another installer's key: **15 of 20**
@@ -24,7 +24,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 25 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 42 | 1 | 8 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 146 | 3 | 23 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 150 | 3 | 23 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 24 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 24 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 22 |
@@ -67,6 +67,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `attenuationCap` | `styleNavigator` | public | 1 |
 | `attenuationSugarLift` | `styleNavigator` | public | 1 |
 | `beerColorField` | `malt` | hidden | 1 |
+| `boilHopAlphaMassKg` | `hop` | public | 0 |
 | `boilHopMassKg` | `hop` | public | 0 |
 | `boilHopSectionMeta` | `hop` | hidden | 1 |
 | `boilHopTotalMassDisplay` | `hop` | hidden | 1 |
@@ -242,6 +243,7 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `hopCatalogTruncated` | `hop` | hidden | 0 |
 | `hopCategories` | `hop` | hidden | 1 |
 | `hopCategoryFilter` | `hop` | public | 1 |
+| `hopDemandLine` | `hop` | hidden | 1 |
 | `hopDoseWarning` | `hop` | hidden | 1 |
 | `hopDraftCounts` | `hop` | hidden | 1 |
 | `hopDraftPartsTotal` | `hop` | hidden | 1 |
@@ -671,11 +673,13 @@ Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 | `whirlpoolHelpOpen` | `hop` | public | 1 |
 | `whirlpoolHopActiveIndex` | `hop` | public | 1 |
 | `whirlpoolHopActiveRow` | `hop` | hidden | 1 |
+| `whirlpoolHopAlphaMassKg` | `hop` | public | 0 |
 | `whirlpoolHopCatalog` | `hop` | hidden | 0 |
 | `whirlpoolHopCatalogForm` | `hop` | public | 1 |
 | `whirlpoolHopCatalogTruncated` | `hop` | hidden | 0 |
 | `whirlpoolHopCategories` | `hop` | hidden | 1 |
 | `whirlpoolHopCategoryFilter` | `hop` | public | 1 |
+| `whirlpoolHopDemandLine` | `hop` | hidden | 1 |
 | `whirlpoolHopDraftCounts` | `hop` | hidden | 1 |
 | `whirlpoolHopDraftPartsTotal` | `hop` | hidden | 1 |
 | `whirlpoolHopDraftSummary` | `hop` | hidden | 1 |

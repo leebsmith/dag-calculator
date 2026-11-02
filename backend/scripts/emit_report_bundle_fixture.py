@@ -1002,6 +1002,16 @@ PAYLOAD = FreezePayload(
             "solver.hops.boil_mass_kg": NodePresentation(
                 label="Boil hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
+            "solver.hops.boil_alpha_mass_kg": NodePresentation(
+                label="Boil alpha demanded", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.hops.whirlpool_alpha_mass_kg": NodePresentation(
+                label="Whirlpool alpha demanded",
+                dimension="mass",
+                unit="g",
+                symbol="g",
+                decimals=1,
+            ),
             "solver.hops.whirlpool_mass_kg": NodePresentation(
                 label="Whirlpool hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
@@ -1370,6 +1380,10 @@ PAYLOAD = FreezePayload(
         "batch.whirlpool_cool_ibu_share": FormattedValue(text="30.0%", number="30.0", unit="%"),
         "solver.hops.boil_mass_kg": FormattedValue(text="22.9 g", number="22.9", unit="g"),
         "solver.hops.whirlpool_mass_kg": FormattedValue(text="50.0 g", number="50.0", unit="g"),
+        "solver.hops.boil_alpha_mass_kg": FormattedValue(text="4.4 g", number="4.4", unit="g"),
+        "solver.hops.whirlpool_alpha_mass_kg": FormattedValue(
+            text="4.7 g", number="4.7", unit="g"
+        ),
         "solver.hops.total_mass_kg": FormattedValue(text="72.9 g", number="72.9", unit="g"),
         "solver.hops.whirlpool_hot_ibu": FormattedValue(text="7.0 IBU", number="7.0", unit="IBU"),
         "solver.hops.whirlpool_cool_ibu": FormattedValue(text="3.0 IBU", number="3.0", unit="IBU"),

@@ -27,7 +27,8 @@
           {
             "minutes": 60.0,
             "ibu": 40.0,
-            "mass_kg": 0.03406533311798062
+            "mass_kg": 0.03406533311798062,
+            "alpha_mass_kg": 0.0034065333117980624
           }
         ],
         "whirlpool_rows": [],
@@ -64,7 +65,8 @@
           {
             "minutes": 15.0,
             "ibu": 40.0,
-            "mass_kg": 0.014046450572653624
+            "mass_kg": 0.014046450572653624,
+            "alpha_mass_kg": 0.005969741493377791
           }
         ],
         "whirlpool_rows": [],
@@ -104,7 +106,8 @@
             "minutes": 30.0,
             "ibu": 30.0,
             "mass_kg": 0.055384989705012426,
-            "effective_minutes": 14.795319261482318
+            "effective_minutes": 14.795319261482318,
+            "alpha_mass_kg": 0.005538498970501243
           }
         ],
         "boil_mass_kg": 0.0,
@@ -143,7 +146,8 @@
             "minutes": 30.0,
             "ibu": 30.0,
             "mass_kg": 0.011188886809093418,
-            "effective_minutes": 14.795319261482318
+            "effective_minutes": 14.795319261482318,
+            "alpha_mass_kg": 0.005034999064092038
           }
         ],
         "boil_mass_kg": 0.0,
@@ -191,12 +195,14 @@
           {
             "minutes": 60.0,
             "ibu": 12.5,
-            "mass_kg": 0.010645416599368945
+            "mass_kg": 0.010645416599368945,
+            "alpha_mass_kg": 0.0010645416599368944
           },
           {
             "minutes": 30.0,
             "ibu": 12.5,
-            "mass_kg": 0.011543128718744125
+            "mass_kg": 0.011543128718744125,
+            "alpha_mass_kg": 0.0013851754462492949
           }
         ],
         "whirlpool_rows": [
@@ -204,7 +210,8 @@
             "minutes": 20.0,
             "ibu": 15.0,
             "mass_kg": 0.054681531053890675,
-            "effective_minutes": 6.411417646728922
+            "effective_minutes": 6.411417646728922,
+            "alpha_mass_kg": 0.005468153105389068
           }
         ],
         "boil_mass_kg": 0.022188545318113068,
@@ -250,13 +257,15 @@
             "minutes": 30.0,
             "ibu": 15.0,
             "mass_kg": 0.027692494852506213,
-            "effective_minutes": 14.795319261482318
+            "effective_minutes": 14.795319261482318,
+            "alpha_mass_kg": 0.0027692494852506215
           },
           {
             "minutes": 20.0,
             "ibu": 10.0,
             "mass_kg": 0.026799038572501713,
-            "effective_minutes": 7.407206080297871
+            "effective_minutes": 7.407206080297871,
+            "alpha_mass_kg": 0.0032158846287002056
           }
         ],
         "boil_mass_kg": 0.0,
@@ -302,13 +311,15 @@
             "minutes": 30.0,
             "ibu": 10.0,
             "mass_kg": 0.011544038490591857,
-            "effective_minutes": 9.81499375449106
+            "effective_minutes": 9.81499375449106,
+            "alpha_mass_kg": 0.0023088076981183712
           },
           {
             "minutes": 20.0,
             "ibu": 10.0,
             "mass_kg": 0.04051745183792269,
-            "effective_minutes": 2.4268805733066134
+            "effective_minutes": 2.4268805733066134,
+            "alpha_mass_kg": 0.008103490367584539
           }
         ],
         "boil_mass_kg": 0.0,
@@ -361,19 +372,22 @@
             "minutes": 45.0,
             "ibu": 14.0,
             "mass_kg": 0.023409536026128237,
-            "effective_minutes": 16.989640871539756
+            "effective_minutes": 16.989640871539756,
+            "alpha_mass_kg": 0.0023409536026128236
           },
           {
             "minutes": 25.0,
             "ibu": 8.4,
             "mass_kg": 0.008590316801020582,
-            "effective_minutes": 5.061040627921477
+            "effective_minutes": 5.061040627921477,
+            "alpha_mass_kg": 0.003436126720408233
           },
           {
             "minutes": 10.0,
             "ibu": 5.6000000000000005,
             "mass_kg": 0.05110231443130115,
-            "effective_minutes": 1.1678600113980435
+            "effective_minutes": 1.1678600113980435,
+            "alpha_mass_kg": 0.009198416597634207
           }
         ],
         "boil_mass_kg": 0.0,
@@ -423,7 +437,8 @@
           {
             "minutes": 18.36,
             "ibu": 30.3,
-            "mass_kg": 0.07657775223934041
+            "mass_kg": 0.07657775223934041,
+            "alpha_mass_kg": 0.00451042960689715
           }
         ],
         "whirlpool_rows": [
@@ -431,13 +446,15 @@
             "minutes": 40.0,
             "ibu": 5.3999999999999995,
             "mass_kg": 0.009375125904306074,
-            "effective_minutes": 14.670722027605796
+            "effective_minutes": 14.670722027605796,
+            "alpha_mass_kg": 0.00100313847176075
           },
           {
             "minutes": 15.0,
             "ibu": 3.6,
             "mass_kg": 0.021259304752205273,
-            "effective_minutes": 2.025758209866238
+            "effective_minutes": 2.025758209866238,
+            "alpha_mass_kg": 0.00346739260508468
           }
         ],
         "boil_mass_kg": 0.07657775223934041,
@@ -483,13 +500,15 @@
             "minutes": 60.0,
             "ibu": 10.5,
             "mass_kg": 0.007412872155344069,
-            "effective_minutes": 16.476922953111192
+            "effective_minutes": 16.476922953111192,
+            "alpha_mass_kg": 0.0016308318741756953
           },
           {
             "minutes": 30.0,
             "ibu": 4.5,
             "mass_kg": 0.02631149969876581,
-            "effective_minutes": 3.5265272808116133
+            "effective_minutes": 3.5265272808116133,
+            "alpha_mass_kg": 0.002820592767707695
           }
         ],
         "boil_mass_kg": 0.0,
@@ -532,7 +551,8 @@
           {
             "minutes": 47.04,
             "ibu": 48.9,
-            "mass_kg": 0.053181710644390236
+            "mass_kg": 0.053181710644390236,
+            "alpha_mass_kg": 0.0044672636941287805
           }
         ],
         "whirlpool_rows": [
@@ -540,7 +560,8 @@
             "minutes": 50.0,
             "ibu": 13.9,
             "mass_kg": 0.11763172917843498,
-            "effective_minutes": 7.0388118497980585
+            "effective_minutes": 7.0388118497980585,
+            "alpha_mass_kg": 0.004246505423341503
           }
         ],
         "boil_mass_kg": 0.053181710644390236,

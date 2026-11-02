@@ -88,6 +88,26 @@ export function hopBoilPctLabel(row) {
     : DASH;
 }
 
+// The demand chain: the alpha the target requires, the load that produced it,
+// and the yield that connects the two. Empty until the boundary has solved.
+export function hopDemandLine({ ibu, alphaMassKg, volumeL, formatMass, formatNumber }) {
+  const mass = Number(alphaMassKg);
+  const volume = Number(volumeL);
+  const target = Number(ibu);
+  if (!Number.isFinite(mass) || !(mass > 0) || !Number.isFinite(volume) || !(volume > 0)) {
+    return "";
+  }
+  const load = (mass * 1e6) / volume;
+  const yieldText =
+    Number.isFinite(target) && target > 0
+      ? ` · ${formatPercent(target / load, 1)} yield`
+      : "";
+  return (
+    `${formatNumber(target, 1)} IBU ← ${formatNumber(load, 0)} mg/L α` +
+    `${yieldText} → ${formatMass(mass, "g")} α`
+  );
+}
+
 export function hopAdditionLabel(row) {
   const at = Number(row?.addition_at_min);
   return Number.isFinite(at) ? `${Math.round(at)} min` : "—";

@@ -13,6 +13,8 @@ export const HOP_NODES = {
   boilRows: "solver.hops.boil_rows",
   whirlpoolRows: "solver.hops.whirlpool_rows",
   boilMass: "solver.hops.boil_mass_kg",
+  boilAlphaMass: "solver.hops.boil_alpha_mass_kg",
+  whirlpoolAlphaMass: "solver.hops.whirlpool_alpha_mass_kg",
   whirlpoolMass: "solver.hops.whirlpool_mass_kg",
   totalMass: "solver.hops.total_mass_kg",
   whirlpoolHotIbu: "solver.hops.whirlpool_hot_ibu",

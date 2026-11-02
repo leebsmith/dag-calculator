@@ -69,6 +69,7 @@ def _to_response(result: HopSolverResult) -> HopSolverResponse:
                 minutes=row.minutes,
                 ibu=row.ibu,
                 mass_kg=row.mass_kg,
+                alpha_mass_kg=row.alpha_mass_kg,
             )
             for row in result.boil_rows
         ],
@@ -78,12 +79,15 @@ def _to_response(result: HopSolverResult) -> HopSolverResponse:
                 ibu=row.ibu,
                 mass_kg=row.mass_kg,
                 effective_minutes=row.effective_minutes,
+                alpha_mass_kg=row.alpha_mass_kg,
             )
             for row in result.whirlpool_rows
         ],
         boil_mass_kg=result.boil_mass_kg,
         whirlpool_mass_kg=result.whirlpool_mass_kg,
         total_mass_kg=result.total_mass_kg,
+        boil_alpha_mass_kg=result.boil_alpha_mass_kg,
+        whirlpool_alpha_mass_kg=result.whirlpool_alpha_mass_kg,
         whirlpool_hot_ibu=result.whirlpool_hot_ibu,
         whirlpool_cool_ibu=result.whirlpool_cool_ibu,
     )

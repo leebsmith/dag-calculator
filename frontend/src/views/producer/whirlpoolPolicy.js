@@ -1,3 +1,5 @@
+import { hopDemandLine } from "./hopRows.js";
+
 // Whirlpool product-form policy: the row defaults, the seeded start-temperature
 // bands, the band selector state, and the two advisory warnings. Pure over the
 // rows, the notes and the form multiplier; the card supplies the formatters.
@@ -41,7 +43,14 @@ export function startBandHint(value, bands) {
 
 // Descriptor map for Object.defineProperties: the card merges it beside its own
 // getters so the policy stays readable and the card file stays under its pin.
-export function whirlpoolPolicyDescriptors({ notes, formatTemp }) {
+export function whirlpoolPolicyDescriptors({
+  notes,
+  formatTemp,
+  formatMass,
+  formatNumber,
+  postBoilVolume,
+  whirlpoolIbu,
+}) {
   const bands = () => startBands(notes, formatTemp);
   return {
     whirlpoolStartBands: {
@@ -69,6 +78,18 @@ export function whirlpoolPolicyDescriptors({ notes, formatTemp }) {
         const band = this.whirlpoolStartBands.find((candidate) => candidate.value === bandId);
         if (!band || this.whirlpoolHopActiveIndex == null) return;
         this.patchDraftRow(this.whirlpoolHopActiveIndex, { initial_temp_c: band.mid });
+      },
+    },
+    whirlpoolHopDemandLine: {
+      configurable: true,
+      get() {
+        return hopDemandLine({
+          ibu: whirlpoolIbu(),
+          alphaMassKg: this.whirlpoolHopAlphaMassKg,
+          volumeL: postBoilVolume(),
+          formatMass,
+          formatNumber,
+        });
       },
     },
   };

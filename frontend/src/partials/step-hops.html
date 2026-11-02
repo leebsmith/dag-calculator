@@ -115,6 +115,8 @@
           </div>
         </div>
 
+        <p class="form-hint" x-show="hopDemandLine" x-text="hopDemandLine"></p>
+
         <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
           Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
         </p>
@@ -378,6 +380,8 @@
             <span class="text-base font-bold tabular-nums" x-text="whirlpoolHopTotalMassDisplay"></span>
           </div>
         </div>
+
+        <p class="form-hint" x-show="whirlpoolHopDemandLine" x-text="whirlpoolHopDemandLine"></p>
 
         <p class="form-hint" x-show="whirlpoolHopRows.length > 0 && whirlpoolHopRows.some((r) => r.mass_kg == null)">
           Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.

@@ -2,7 +2,7 @@
 // cooling integral), both authored by IBU share.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
-import { installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
+import { batchCurveReader, installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
 import { createHopFormatters } from "../../views/producer/hopFormat.js";
 import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
@@ -121,6 +121,8 @@ export function registerHopCard(app, ctx) {
     whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
     whirlpoolHopCatalogForm: "t90_pellet",
     whirlpoolHelpOpen: false,
+    boilHopAlphaMassKg: null,
+    whirlpoolHopAlphaMassKg: null,
     ...hopSectionState(),
 
     setHopCatalogForm(value) {
@@ -337,30 +339,21 @@ export function registerHopCard(app, ctx) {
     ...whirlpoolPolicyDescriptors({
       notes: ctx.cache?.seeds?.whirlpoolNotes ?? {},
       formatTemp,
-    }),
-    ...boilPolicyDescriptors({
+      formatMass,
       formatNumber: formatWithDecimals,
       postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
+      whirlpoolIbu: () => Number(resolveOrNull(engine, N.whirlpoolIbu)),
+    }),
+    ...boilPolicyDescriptors({
+      formatMass,
+      formatNumber: formatWithDecimals,
+      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
+      boilIbu: () => Number(resolveOrNull(engine, N.boilIbu)),
     }),
     ...whirlpoolTimelineDescriptors({
       formatTemp,
       formatNumber: formatWithDecimals,
-      batchCurve: () => {
-        const ambient = resolveOrNull(engine, N.whirlpoolAmbient);
-        const timeConstant = resolveOrNull(engine, N.whirlpoolCoolingTimeConstant);
-        const knockout = resolveOrNull(engine, N.whirlpoolKnockout);
-        const startTemp = resolveOrNull(engine, N.whirlpoolStartTemp);
-        if (
-          !isFiniteNumber(ambient) ||
-          !isFiniteNumber(timeConstant) ||
-          timeConstant <= 0 ||
-          !isFiniteNumber(knockout) ||
-          !isFiniteNumber(startTemp)
-        ) {
-          return null;
-        }
-        return { ambientTempC: ambient, kPerMin: 1 / timeConstant, knockoutMin: knockout, startTempC: startTemp };
-      },
+      batchCurve: () => batchCurveReader((id) => resolveOrNull(engine, id)),
       reportError,
       timelineFor: whirlpoolTimeline,
     }),
@@ -407,6 +400,8 @@ export function refreshHopCard(app, ctx) {
   );
   app.boilHopMassKg = resolveOrNull(engine, N.boilMass);
   app.whirlpoolHopMassKg = resolveOrNull(engine, N.whirlpoolMass);
+  app.boilHopAlphaMassKg = resolveOrNull(engine, N.boilAlphaMass);
+  app.whirlpoolHopAlphaMassKg = resolveOrNull(engine, N.whirlpoolAlphaMass);
   app.hopBoundaryTotalMassKg = resolveOrNull(engine, N.totalMass);
 }
 
@@ -417,6 +412,8 @@ export const KEYS = [
   "whirlpoolHopRows",
   "boilHopMassKg",
   "whirlpoolHopMassKg",
+  "boilHopAlphaMassKg",
+  "whirlpoolHopAlphaMassKg",
   "hopBoundaryTotalMassKg",
   "hopMassUnit",
   "whirlpoolHopForms",
@@ -441,6 +438,8 @@ export const KEYS = [
   "hopBoilPct",
   "hopMinutes",
   "hopAddition",
+  "hopDemandLine",
+  "whirlpoolHopDemandLine",
   "hopTemp",
   "hopIbu",
   "hopPct",

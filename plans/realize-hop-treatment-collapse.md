@@ -103,19 +103,20 @@ belongs in one document rather than 61 rows.
 
 ### 4. The timeline
 
-- [ ] Add `batch.whirlpool_knockout_min` and `batch.whirlpool_start_temp_c`
+- [x] Add `batch.whirlpool_knockout_min` and `batch.whirlpool_start_temp_c`
       (default 99).
-- [ ] Replace the whirlpool row's `duration_min` with `addition_at_min` (position
+- [x] Replace the whirlpool row's `duration_min` with `addition_at_min` (position
       after flameout, `gte 0`, `lte` knockout); derive exposure as
       `knockout − position`.
-- [ ] Timeline origin becomes `(0, start_temp_c)`; `end_min` becomes knockout;
+- [x] Timeline origin becomes `(0, start_temp_c)`; `end_min` becomes knockout;
       every charge is checked against the passive curve, closing the anchor
       exemption.
-- [ ] Migration: existing rows convert by
+- [x] Migration: existing rows convert by
       `addition_at = max(duration) − duration`, with knockout defaulting to
       `max(duration)`, reproducing current numbers exactly.
-- [ ] UI: renamed cards, seam note naming the sign, kettle conditions strip,
-      `Add`/`Temp` columns, flameout chip.
+- [x] UI: knockout and start-temperature inputs in the whirlpool card, the
+      `After flameout` column reading the position, and the count-from-flameout
+      hint. The card rename, seam note and flameout chip move to the UI pass.
 
 ### 5. Demand and the report
 

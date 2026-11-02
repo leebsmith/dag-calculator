@@ -330,6 +330,7 @@ class BoilHopResult(BoundaryModel):
     minutes: Annotated[float, Field(ge=0.0)]
     ibu: Annotated[float, Field(ge=0.0)]
     mass_kg: float | None = None
+    alpha_mass_kg: float | None = None
 
 
 class WhirlpoolHopResult(BoundaryModel):
@@ -337,6 +338,7 @@ class WhirlpoolHopResult(BoundaryModel):
     ibu: Annotated[float, Field(ge=0.0)]
     mass_kg: float | None = None
     effective_minutes: Annotated[float, Field(ge=0.0)]
+    alpha_mass_kg: float | None = None
 
 
 class HopSolverResponse(BoundaryModel):
@@ -347,6 +349,8 @@ class HopSolverResponse(BoundaryModel):
     boil_mass_kg: float
     whirlpool_mass_kg: float
     total_mass_kg: float
+    boil_alpha_mass_kg: float = 0.0
+    whirlpool_alpha_mass_kg: float = 0.0
     whirlpool_hot_ibu: Annotated[float, Field(ge=0.0)]
     whirlpool_cool_ibu: Annotated[float, Field(ge=0.0)]
 

@@ -119,6 +119,7 @@ class BoilHopResult:
     minutes: float
     ibu: float
     mass_kg: float | None
+    alpha_mass_kg: float | None = None
 
 
 @dataclass(frozen=True)
@@ -127,6 +128,7 @@ class WhirlpoolHopResult:
     ibu: float
     mass_kg: float | None
     effective_minutes: float
+    alpha_mass_kg: float | None = None
 
 
 @dataclass(frozen=True)
@@ -138,6 +140,8 @@ class HopSolverResult:
     total_mass_kg: float
     whirlpool_hot_ibu: float
     whirlpool_cool_ibu: float
+    boil_alpha_mass_kg: float = 0.0
+    whirlpool_alpha_mass_kg: float = 0.0
 
 
 def tinseth_utilization(boil_gravity_sg: float, time_min: float) -> float:
@@ -496,7 +500,14 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
             product_form=row.product_form,
             cone_utilization=row.cone_utilization,
         )
-        boil_rows.append(BoilHopResult(minutes=minutes, ibu=ibu, mass_kg=mass))
+        boil_rows.append(
+            BoilHopResult(
+                minutes=minutes,
+                ibu=ibu,
+                mass_kg=mass,
+                alpha_mass_kg=None if mass is None else mass * row.alpha_acid_pct,
+            )
+        )
 
     ambient_temp_c = inputs.whirlpool_ambient_temp_c
     timeline = build_whirlpool_timeline(
@@ -528,6 +539,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
                 ibu=ibu,
                 mass_kg=mass,
                 effective_minutes=effective_minutes,
+                alpha_mass_kg=None if mass is None else mass * row.alpha_acid_pct,
             )
         )
 
@@ -538,6 +550,12 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
         whirlpool_rows=whirlpool_rows,
         boil_mass_kg=boil_mass,
         whirlpool_mass_kg=whirlpool_mass,
+        boil_alpha_mass_kg=sum(
+            row.alpha_mass_kg for row in boil_rows if row.alpha_mass_kg is not None
+        ),
+        whirlpool_alpha_mass_kg=sum(
+            row.alpha_mass_kg for row in whirlpool_rows if row.alpha_mass_kg is not None
+        ),
         total_mass_kg=boil_mass + whirlpool_mass,
         whirlpool_hot_ibu=_split_ibu(
             inputs.whirlpool_hops, whirlpool_rows, above_hot=True

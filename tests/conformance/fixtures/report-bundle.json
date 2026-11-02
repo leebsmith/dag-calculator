@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:59144ad927b1d94d44a65e3a54c3c692429f547c9df5d6453eee94c1f39d4ca4",
+    "hash": "sha256:bef07164f1e6bae2f22f069686b7819c75ff8b24278242843265c001ba12a513",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -2070,6 +2070,9 @@
           },
           "mass_kg": {
             "dimension": "mass"
+          },
+          "alpha_mass_kg": {
+            "dimension": "mass"
           }
         },
         "whirlpool_hop_result": {
@@ -2084,6 +2087,9 @@
           },
           "effective_minutes": {
             "dimension": "time"
+          },
+          "alpha_mass_kg": {
+            "dimension": "mass"
           }
         },
         "mash_rest": {
@@ -4335,6 +4341,12 @@
               "dimension": "mass"
             },
             "total_mass_kg": {
+              "dimension": "mass"
+            },
+            "boil_alpha_mass_kg": {
+              "dimension": "mass"
+            },
+            "whirlpool_alpha_mass_kg": {
               "dimension": "mass"
             },
             "whirlpool_hot_ibu": {
@@ -7434,6 +7446,26 @@
         "options": null,
         "option_labels": null
       },
+      "solver.hops.boil_alpha_mass_kg": {
+        "label": "Boil alpha demanded",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_alpha_mass_kg": {
+        "label": "Whirlpool alpha demanded",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.hops.whirlpool_mass_kg": {
         "label": "Whirlpool hop mass",
         "dimension": "mass",
@@ -8117,7 +8149,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:bd440070a685f51c77b1f2a335efa1d43ec051b811aa6a971103e95fd1c2842e"
+    "hash": "sha256:b48d07cb4f4f4d8ffa037afddcdd1c1a4d00af243e4dae08ca38c2085a9d4a60"
   },
   "batch": {
     "id": "frozen-1",
@@ -9052,6 +9084,16 @@
       "number": "50.0",
       "unit": "g"
     },
+    "solver.hops.boil_alpha_mass_kg": {
+      "text": "4.4 g",
+      "number": "4.4",
+      "unit": "g"
+    },
+    "solver.hops.whirlpool_alpha_mass_kg": {
+      "text": "4.7 g",
+      "number": "4.7",
+      "unit": "g"
+    },
     "solver.hops.total_mass_kg": {
       "text": "72.9 g",
       "number": "72.9",
@@ -9922,5 +9964,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:08969a3f9202d279120b351c3f48f63555d7b460f3678379b99d098c8e05b0ae"
+  "content_hash": "sha256:6a73dc5ccb473710f6b6adeb01e45c9202619f0516160f646d7dbd3edb104824"
 }

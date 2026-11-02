@@ -8,24 +8,54 @@ import {
   whirlpoolTimeline,
 } from "../views/whirlpool.js";
 
-function hopOutputs(inputs = {}) {
-  const boilRows = (inputs.boil_hops ?? []).map((row) => {
-    const minutes = (row.boil_time_fraction ?? 0) * (inputs.boil_time_min ?? 0);
-    const ibu = (row.pct ?? 0) * (inputs.boil_target_ibu ?? 0);
-    return {
-      minutes,
-      ibu,
-      mass_kg: massFromIbu({
-        ibu,
-        alphaFraction: row.alpha_acid_pct ?? 0,
-        timeMin: minutes,
-        boilGravitySg: inputs.pre_boil_gravity,
-        volumeL: inputs.post_boil_volume_l,
-        productForm: row.product_form ?? "t90_pellet",
-        coneUtilization: row.cone_utilization ?? null,
-      }),
-    };
+function boilOutput(row, inputs) {
+  const minutes = (row.boil_time_fraction ?? 0) * (inputs.boil_time_min ?? 0);
+  const ibu = (row.pct ?? 0) * (inputs.boil_target_ibu ?? 0);
+  const mass = massFromIbu({
+    ibu,
+    alphaFraction: row.alpha_acid_pct ?? 0,
+    timeMin: minutes,
+    boilGravitySg: inputs.pre_boil_gravity,
+    volumeL: inputs.post_boil_volume_l,
+    productForm: row.product_form ?? "t90_pellet",
+    coneUtilization: row.cone_utilization ?? null,
   });
+  return {
+    minutes,
+    ibu,
+    mass_kg: mass,
+    alpha_mass_kg: mass === null ? null : mass * (row.alpha_acid_pct ?? 0),
+  };
+}
+
+function whirlpoolOutput(row, inputs, timeline, knockoutMin) {
+  const additionAt = row.addition_at_min ?? 0;
+  const ibu = (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0);
+  const effectiveMinutes = timeline.effectiveMinutes(additionAt);
+  const mass = whirlpoolMassFromEffective({
+    ibu,
+    alphaFraction: row.alpha_acid_pct ?? 0,
+    volumeL: inputs.post_boil_volume_l,
+    gravity: inputs.post_boil_gravity,
+    effectiveMinutes,
+    productForm: row.product_form ?? "t90_pellet",
+    coneUtilization: row.cone_utilization ?? null,
+  });
+  return {
+    minutes: Math.max(0, knockoutMin - additionAt),
+    ibu,
+    mass_kg: mass,
+    alpha_mass_kg: mass === null ? null : mass * (row.alpha_acid_pct ?? 0),
+    effective_minutes: effectiveMinutes,
+  };
+}
+
+function sumOf(rows, key) {
+  return rows.reduce((sum, row) => (typeof row[key] === "number" ? sum + row[key] : sum), 0);
+}
+
+function hopOutputs(inputs = {}) {
+  const boilRows = (inputs.boil_hops ?? []).map((row) => boilOutput(row, inputs));
   const kPerMin =
     inputs.whirlpool_cooling_time_constant_min > 0
       ? 1 / inputs.whirlpool_cooling_time_constant_min
@@ -37,34 +67,11 @@ function hopOutputs(inputs = {}) {
     knockoutMin,
     startTempC: inputs.whirlpool_start_temp_c ?? 99,
   });
-  const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) => {
-    const additionAt = row.addition_at_min ?? 0;
-    const minutes = Math.max(0, knockoutMin - additionAt);
-    const ibu = (row.pct ?? 0) * (inputs.whirlpool_target_ibu ?? 0);
-    const effectiveMinutes = timeline.effectiveMinutes(additionAt);
-    return {
-      minutes,
-      ibu,
-      mass_kg: whirlpoolMassFromEffective({
-        ibu,
-        alphaFraction: row.alpha_acid_pct ?? 0,
-        volumeL: inputs.post_boil_volume_l,
-        gravity: inputs.post_boil_gravity,
-        effectiveMinutes,
-        productForm: row.product_form ?? "t90_pellet",
-        coneUtilization: row.cone_utilization ?? null,
-      }),
-      effective_minutes: effectiveMinutes,
-    };
-  });
-  const boilMass = boilRows.reduce(
-    (sum, row) => (typeof row.mass_kg === "number" ? sum + row.mass_kg : sum),
-    0
+  const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) =>
+    whirlpoolOutput(row, inputs, timeline, knockoutMin)
   );
-  const whirlpoolMass = whirlpoolRows.reduce(
-    (sum, row) => (typeof row.mass_kg === "number" ? sum + row.mass_kg : sum),
-    0
-  );
+  const boilMass = sumOf(boilRows, "mass_kg");
+  const whirlpoolMass = sumOf(whirlpoolRows, "mass_kg");
   // The report's hot/cool split: the same threshold the sealed solver uses
   // (WHIRLPOOL_HOT_TEMP_C in backend/app/core/hop_solver.py).
   const hotLimit = 76.7;
@@ -82,6 +89,8 @@ function hopOutputs(inputs = {}) {
     boil_mass_kg: boilMass,
     whirlpool_mass_kg: whirlpoolMass,
     total_mass_kg: boilMass + whirlpoolMass,
+    boil_alpha_mass_kg: sumOf(boilRows, "alpha_mass_kg"),
+    whirlpool_alpha_mass_kg: sumOf(whirlpoolRows, "alpha_mass_kg"),
     whirlpool_hot_ibu: split.hot,
     whirlpool_cool_ibu: split.cool,
   };

@@ -72,6 +72,10 @@
       hop-table(BOIL, boil-columns)
       v(2pt)
       note[
+        Alpha demanded: #text-or("solver.hops.boil_alpha_mass_kg") for #text-or("batch.boil_target_ibu")
+      ]
+      v(1pt)
+      note[
         Boil IBU: #text-or("batch.boil_target_ibu") · Boil hop mass: #text-or("solver.hops.boil_mass_kg")
       ]
       v(2pt)
@@ -90,6 +94,9 @@
       v(2pt)
       note[
         Whirlpool IBU: #text-or("batch.whirlpool_target_ibu") · Whirlpool hop mass: #text-or("solver.hops.whirlpool_mass_kg")
+      ]
+      note[
+        Alpha demanded: #text-or("solver.hops.whirlpool_alpha_mass_kg")
       ]
       v(2pt)
       note[

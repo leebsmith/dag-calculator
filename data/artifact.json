@@ -2086,6 +2086,9 @@
       },
       "mass_kg": {
         "dimension": "mass"
+      },
+      "alpha_mass_kg": {
+        "dimension": "mass"
       }
     },
     "whirlpool_hop_result": {
@@ -2100,6 +2103,9 @@
       },
       "effective_minutes": {
         "dimension": "time"
+      },
+      "alpha_mass_kg": {
+        "dimension": "mass"
       }
     },
     "mash_rest": {
@@ -4191,6 +4197,12 @@
           "dimension": "mass"
         },
         "total_mass_kg": {
+          "dimension": "mass"
+        },
+        "boil_alpha_mass_kg": {
+          "dimension": "mass"
+        },
+        "whirlpool_alpha_mass_kg": {
           "dimension": "mass"
         },
         "whirlpool_hot_ibu": {

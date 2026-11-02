@@ -400,14 +400,16 @@ _45 paths_
 
 ## Solver — hop bitterness
 
-_8 paths_
+_10 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `solver.hops` | Hops | boundary | — | — | — | — |
+| `solver.hops.boil_alpha_mass_kg` | Boil Alpha Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.boil_mass_kg` | Boil hop mass | output | mass | g | 1 | — |
 | `solver.hops.boil_rows` | Boil Rows | output | — | — | — | — |
 | `solver.hops.total_mass_kg` | Total hop mass | output | mass | g | 1 | — |
+| `solver.hops.whirlpool_alpha_mass_kg` | Whirlpool Alpha Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.whirlpool_cool_ibu` | Whirlpool Cool IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.whirlpool_hot_ibu` | Whirlpool Hot IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.whirlpool_mass_kg` | Whirlpool hop mass | output | mass | g | 1 | — |
