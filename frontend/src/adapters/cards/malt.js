@@ -72,6 +72,22 @@ export function registerMaltCard(app, ctx) {
         : state.maltSearch.trim()
           ? `${state.maltStandardGroups.length} standards · ${state.maltProductMatches.length} malts`
           : `Showing ${state.maltStandardGroups.length} standards`,
+    drawerId: "malt-drawer",
+    toolbarNote:
+      "Enter relative proportional parts. Hamilton normalizes the bill to exactly 100.0%.",
+    addLabel: "＋ Add Malt from Catalog",
+    textColumns: ["name", "category"],
+    canClone: true,
+    cloneRow: (state, ri) => state.cloneDraftMalt(ri),
+    emptyText: "No malts in the draft. Click “＋ Add Malt from Catalog” to begin.",
+    totals: (state) => ({ label: "", value: state.maltDraftTotals }),
+    rowBadge: (state, row, columnId) =>
+      columnId === "pct"
+        ? {
+            className: state.maltIsTrace(row) ? "is-trace" : "is-valid",
+            text: state.maltIsTrace(row) ? "✗" : "✓",
+          }
+        : null,
   });
 
   Object.assign(app, {

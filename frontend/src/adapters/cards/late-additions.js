@@ -101,6 +101,19 @@ export function registerLateAdditionsCard(app, ctx) {
     searchPlaceholder: "Search sugars by name…",
     emptyMessage: "No matching sugars found.",
     resultLabel: (a) => a.sugarResultLabel,
+    drawerId: "sugar-drawer",
+    toolbarNote: (state) =>
+      state.lateAdditionIntent === "share"
+        ? "Edit parts; the mass is derived from the sugar-extract budget."
+        : "Dose sugars by mass. Yield and color come from the catalog.",
+    addLabel: "＋ Add Sugar from Catalog",
+    inputStep: 0.01,
+    canInspect: false,
+    emptyText: "No sugars in the draft. Click “＋ Add Sugar from Catalog”.",
+    totals: (state) => ({
+      label: state.lateAdditionIntent === "share" ? "Sugar budget:" : "Total extract:",
+      value: ` ${state.sugarDraftExtractDisplay}`,
+    }),
   });
 
   Object.assign(app, {

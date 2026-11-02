@@ -780,6 +780,27 @@ Commit: `Derive the catalog draft keys from the installer's name tables`.
 - This takes the drift win without the form/table descriptor. The remaining 2b
   value is the ≈575-line table and drawer-shell duplication, not the key list.
 
+### 2026-11-02 — table partial (2b-minus-KEYS)
+
+Commit: `Share the draft table across the column-driven editors`.
+
+- `partials/draft-table.html` replaces the toolbar + table in the five
+  `draftColumns` editors (malt, trace, sugar, hop, whirlpool); dry-hop keeps its
+  fixed-column table. The table knobs (drawer id, toolbar note, add label, input
+  step, text columns, action set, badge, totals, empty text) are config on
+  `installCatalogDraft`, exposed as generic getters.
+- Markup **−382 lines**; config and chrome getters add back ~264; net **−118**
+  (production 42,736 → 42,618). Combined with the search pane, W2a is −189.
+- Pins: `cards/hops.js` 492→510 and `cards/late-additions.js` 407→420 (the
+  config lives in the card); `installers.js` was compressed back under its
+  blanket 400 by inlining two owner lists.
+- **Ownership-model limitation:** shared partials are not attributed to an
+  installer, so the `SHARED` entries for the draft-grid verbs they now bind were
+  removed, and the stale `sugarDraftExtractDisplay` mirror-allowlist entry went
+  with them. A future ownership pass should teach the scanner to attribute a
+  shared partial's reads to the installer that owns the member, not to a card.
+- `make check` and `make test` green (frontend 1,041, backend 764).
+
 ### Corrections found while executing (the plan was wrong about these)
 
 - **There is no whirlpool chart.** The timeline's only production consumer was

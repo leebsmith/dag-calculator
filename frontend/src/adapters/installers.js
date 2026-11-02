@@ -168,11 +168,6 @@ export const SHARED = [
     reason: "the malt editors reuse the draft editor's colour and field helpers",
   },
   {
-    key: "commitDraftCellInput",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
-    reason: "shared field verbs: the card partials bind the one editing surface",
-  },
-  {
     key: "commitField",
     owners: ["water"],
     reason: "shared field verbs: the card partials bind the one editing surface",
@@ -194,8 +189,8 @@ export const SHARED = [
   },
   {
     key: "draftColumns",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
-    reason: "the catalog editors bind the shared draft grid",
+    owners: ["lateAdditions"],
+    reason: "the sugar totals read the resolved-mass column the draft grid builds",
   },
   {
     key: "draftDirty",
@@ -206,11 +201,6 @@ export const SHARED = [
     key: "draftDiscardOpen",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
-  },
-  {
-    key: "draftDisplayRows",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
-    reason: "the catalog editors bind the shared draft grid",
   },
   {
     key: "draftMassDisplay",
@@ -243,48 +233,18 @@ export const SHARED = [
     reason: "fieldActions drives a draft cell edit: the inverse of the shared draft grid",
   },
   {
-    key: "editDraftCellInput",
-    owners: ["hop", "lateAdditions", "malt", "traceMalts"],
-    reason: "shared field verbs: the card partials bind the one editing surface",
-  },
-  {
     key: "editNumberInput",
     owners: ["lateAdditions", "mash"],
     reason: "shared field verbs: the card partials bind the one editing surface",
   },
   {
     key: "inputDraft",
-    owners: [
-      "draftEditor",
-      "hop",
-      "lateAdditions",
-      "libraryUi",
-      "malt",
-      "mash",
-      "styleConformance",
-      "styleDeclaration",
-      "styleNavigator",
-      "styleTargets",
-      "traceMalts",
-      "water",
-    ],
+    owners: ["draftEditor", "lateAdditions", "libraryUi", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {
     key: "inputKey",
-    owners: [
-      "hop",
-      "lateAdditions",
-      "libraryUi",
-      "malt",
-      "mash",
-      "styleConformance",
-      "styleDeclaration",
-      "styleNavigator",
-      "styleTargets",
-      "traceMalts",
-      "water",
-    ],
+    owners: ["lateAdditions", "libraryUi", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {

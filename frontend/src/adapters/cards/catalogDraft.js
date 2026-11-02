@@ -52,17 +52,8 @@ import {
   visibleCatalogItems,
 } from "../../views/producer/catalogDrawer.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
-import { installChrome, registerCatalogEntry } from "./catalogChrome.js";
+import { chromeConfig, installChrome, registerCatalogEntry } from "./catalogChrome.js";
 
-function chromeConfig(config) {
-  return {
-    catalogForm: config.catalogForm ?? null,
-    resultLabel: config.resultLabel ?? null,
-    searchPlaceholder: config.searchPlaceholder ?? "Search…",
-    emptyMessage: config.emptyMessage ?? "No matching entries found.",
-    emptyDrilldownMessage: config.emptyDrilldownMessage ?? "No matching entries found.",
-  };
-}
 
 const STATE_SUFFIXES = [
   "Drawer",

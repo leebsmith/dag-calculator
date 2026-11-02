@@ -11,33 +11,44 @@ import {
 } from "../../views/producer/gristRows.js";
 import { makeTraceMaltRow } from "../../views/producer/traceMaltRows.js";
 
+const TRACE_CONFIG = {
+  prefix: "trace",
+  Cap: "Trace",
+  nodeId: N.traceMalts,
+  seedKey: "malts",
+  idField: "catalog_id",
+  categoryField: "category",
+  standardField: "standard_malt",
+  standardNameField: "standard_name",
+  standardDescriptionField: "generic_description",
+  familyField: "family",
+  brandField: "maltster",
+  productSearchLimit: 10,
+  makeRow: makeTraceMaltRow,
+  itemMeta: maltItemMeta,
+  groupMeta: maltGroupMeta,
+  searchPlaceholder: "Search malts by name…",
+  emptyMessage: "No matching standards or malts found.",
+  emptyDrilldownMessage: "No matching malts found.",
+  resultLabel: (state) =>
+    state.traceStandard
+      ? `Showing ${state.traceFilteredCatalog.length} malts`
+      : state.traceSearch.trim()
+        ? `${state.traceStandardGroups.length} standards · ${state.traceProductMatches.length} malts`
+        : `Showing ${state.traceStandardGroups.length} standards`,
+  drawerId: "trace-drawer",
+  toolbarNote:
+    "Dose colorants and strong flavorants by mass. They feed color and mash pH, not extract.",
+  addLabel: "＋ Add Trace Malt by Weight",
+  emptyText: "No trace malts in the draft. Click “＋ Add Trace Malt by Weight”.",
+  totals: (state) => ({
+    label: "Total trace mass:",
+    value: ` ${state.traceDraftMassDisplay}`,
+  }),
+};
+
 export function registerTraceMaltsCard(app, ctx) {
-  installCatalogDraft(app, ctx, {
-    prefix: "trace",
-    Cap: "Trace",
-    nodeId: N.traceMalts,
-    seedKey: "malts",
-    idField: "catalog_id",
-    categoryField: "category",
-    standardField: "standard_malt",
-    standardNameField: "standard_name",
-    standardDescriptionField: "generic_description",
-    familyField: "family",
-    brandField: "maltster",
-    productSearchLimit: 10,
-    makeRow: makeTraceMaltRow,
-    itemMeta: maltItemMeta,
-    groupMeta: maltGroupMeta,
-    searchPlaceholder: "Search malts by name…",
-    emptyMessage: "No matching standards or malts found.",
-    emptyDrilldownMessage: "No matching malts found.",
-    resultLabel: (state) =>
-      state.traceStandard
-        ? `Showing ${state.traceFilteredCatalog.length} malts`
-        : state.traceSearch.trim()
-          ? `${state.traceStandardGroups.length} standards · ${state.traceProductMatches.length} malts`
-          : `Showing ${state.traceStandardGroups.length} standards`,
-  });
+  installCatalogDraft(app, ctx, TRACE_CONFIG);
 
   Object.assign(app, {
     // Rows for the summary card (refreshed by refreshTraceMaltsCard).

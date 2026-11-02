@@ -13,7 +13,6 @@ const IDENT = /[A-Za-z_$][\w$]*/g;
 const ALLOW = {
   lateSugarField: "reads this.fieldsBySlice, which every refresh reassigns",
   sugarDraftMassDisplay: "reads this.draftRows, which the editor reassigns",
-  sugarDraftExtractDisplay: "reads this.draftRows, which the editor reassigns",
 };
 
 function descriptorBlocks(src) {

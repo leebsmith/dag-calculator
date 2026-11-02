@@ -2,6 +2,33 @@
 // … without knowing the collection prefix. Each is a proxy to the active
 // collection's prefixed state/handler, so the per-prefix surface (and the card
 // tests that use it) stays intact until the keys are derived.
+const CHROME_DEFAULTS = {
+  catalogForm: null,
+  resultLabel: null,
+  searchPlaceholder: "Search…",
+  emptyMessage: "No matching entries found.",
+  emptyDrilldownMessage: "No matching entries found.",
+  drawerId: null,
+  toolbarNote: "",
+  addLabel: "＋ Add from Catalog",
+  inputStep: 0.1,
+  textColumns: ["name"],
+  canInspect: true,
+  canClone: false,
+  cloneRow: null,
+  emptyText: "No rows in the draft.",
+  totals: null,
+  rowBadge: null,
+};
+
+export function chromeConfig(config) {
+  const out = {};
+  for (const [key, fallback] of Object.entries(CHROME_DEFAULTS)) {
+    out[key] = config[key] === undefined ? fallback : config[key];
+  }
+  return out;
+}
+
 const APPS = new WeakMap();
 const CHROME = Symbol("catalogDraft.chrome");
 
@@ -53,6 +80,17 @@ export const CATALOG_CHROME_KEYS = [
   "draftCatalogFormOptions",
   "draftCatalogForm",
   "setDraftCatalogForm",
+  "draftDrawerId",
+  "draftToolbarNote",
+  "draftAddLabel",
+  "draftInputStep",
+  "draftTextColumns",
+  "draftTableInspect",
+  "draftTableClone",
+  "draftEmptyText",
+  "draftTotals",
+  "draftRowBadge",
+  "cloneDraftRow",
 ];
 
 function activeEntry(app) {
@@ -113,7 +151,7 @@ function installValueGetters(app) {
   }
 }
 
-function installDerivedGetters(app) {
+function installCatalogueGetters(app) {
   Object.defineProperties(app, {
     draftHasStandard: {
       configurable: true,
@@ -187,6 +225,76 @@ function installDerivedGetters(app) {
   });
 }
 
+function installTableGetters(app) {
+  Object.defineProperties(app, {
+    draftDrawerId: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.drawerId ?? "";
+      },
+    },
+    draftToolbarNote: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        const note = activeEntry(this)?.toolbarNote;
+        return typeof note === "function" ? note(this) : note ?? "";
+      },
+    },
+    draftAddLabel: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.addLabel ?? "";
+      },
+    },
+    draftInputStep: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.inputStep ?? 0.1;
+      },
+    },
+    draftTextColumns: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.textColumns ?? ["name"];
+      },
+    },
+    draftTableInspect: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.canInspect !== false;
+      },
+    },
+    draftTableClone: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.canClone === true;
+      },
+    },
+    draftEmptyText: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return activeEntry(this)?.emptyText ?? "";
+      },
+    },
+    draftTotals: {
+      configurable: true,
+      enumerable: true,
+      get() {
+        const entry = activeEntry(this);
+        return entry?.totals ? entry.totals(this) : { label: "", value: "" };
+      },
+    },
+  });
+}
+
 function installMethods(app) {
   Object.assign(app, {
     openDraftSearch() {
@@ -241,6 +349,14 @@ function installMethods(app) {
       const entry = activeEntry(this);
       return entry ? this[`${entry.prefix}GroupMeta`](group) : "";
     },
+    draftRowBadge(row, columnId) {
+      const entry = activeEntry(this);
+      return entry?.rowBadge ? entry.rowBadge(this, row, columnId) : null;
+    },
+    cloneDraftRow(ri) {
+      const entry = activeEntry(this);
+      if (entry?.cloneRow) entry.cloneRow(this, ri);
+    },
     setDraftCatalogForm(value) {
       activeEntry(this)?.catalogForm?.set?.(value);
     },
@@ -252,6 +368,7 @@ export function installChrome(app) {
   Object.defineProperty(app, CHROME, { value: true });
   installStateProxies(app);
   installValueGetters(app);
-  installDerivedGetters(app);
+  installCatalogueGetters(app);
+  installTableGetters(app);
   installMethods(app);
 }

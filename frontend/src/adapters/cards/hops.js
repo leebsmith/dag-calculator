@@ -80,6 +80,15 @@ export function registerHopCard(app, ctx) {
       value: () => app.hopCatalogForm,
       set: (value) => app.setHopCatalogForm(value),
     },
+    drawerId: "hop-drawer",
+    toolbarNote:
+      "Enter relative IBU parts; Hamilton normalizes them to 100%. Mass is derived from Tinseth.",
+    addLabel: "＋ Add Hop from Catalog",
+    emptyText: "No hops in the draft. Click “＋ Add Hop from Catalog”.",
+    totals: (a) => ({
+      label: "Total parts:",
+      value: a.fmt.formatWithDecimals(a.hopDraftPartsTotal, 1),
+    }),
   });
 
   installCatalogDraft(app, ctx, {
@@ -119,6 +128,15 @@ export function registerHopCard(app, ctx) {
       value: () => app.whirlpoolHopCatalogForm,
       set: (value) => app.setWhirlpoolHopCatalogForm(value),
     },
+    drawerId: "whirlpool-hop-drawer",
+    toolbarNote:
+      "Enter relative IBU parts; Hamilton normalizes them to 100%. Mass is derived from the whirlpool cooling integral.",
+    addLabel: "＋ Add Hop from Catalog",
+    emptyText: "No hops in the draft. Click “＋ Add Hop from Catalog”.",
+    totals: (a) => ({
+      label: "Total parts:",
+      value: a.fmt.formatWithDecimals(a.whirlpoolHopDraftPartsTotal, 1),
+    }),
   });
 
   const { engine, artifact, ui } = ctx;
