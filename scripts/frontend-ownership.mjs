@@ -202,13 +202,23 @@ export function ownershipGaps(installers = INSTALLERS, shared = SHARED) {
   };
 }
 
-export function buildOwnershipIndex(installers = INSTALLERS, shared = SHARED) {
+function memberTable(members, owners, enumerable, usage) {
+  const lines = ["## Members", "", "| member | owner | surface | templates |", "|---|---|---|---|"];
+  for (const key of [...members].sort()) {
+    const surface = enumerable.has(key) ? "public" : "hidden";
+    lines.push(`| \`${key}\` | \`${owners.get(key)}\` | ${surface} | ${usage.get(key) ?? 0} |`);
+  }
+  lines.push("");
+  return lines;
+}
+
+export function buildOwnershipIndex(installers = INSTALLERS, shared = SHARED, { members: withMembers = true } = {}) {
   const app = createStepApp();
   const enumerable = new Set(Object.keys(app));
   const owners = ownerIndex(installers);
   const partials = partialOwners(installers);
   const foreign = foreignReads(installers);
-  const usage = templateUsage();
+  const usage = withMembers ? templateUsage() : new Map();
   const members = installers.flatMap(({ keys }) => keys);
   const hidden = members.filter((key) => !enumerable.has(key));
   const readingInstallers = installers.filter(({ name }) =>
@@ -220,6 +230,7 @@ export function buildOwnershipIndex(installers = INSTALLERS, shared = SHARED) {
   lines.push("");
   lines.push("Generated from `frontend/src/adapters/installers.js` — do not edit by hand.");
   lines.push("Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.");
+  lines.push("The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.");
   lines.push("");
   lines.push(`- Declared members: **${members.length}** (${members.length - hidden.length} enumerable, ${hidden.length} hidden)`);
   lines.push(`- Installers: **${installers.length}**`);
@@ -240,15 +251,7 @@ export function buildOwnershipIndex(installers = INSTALLERS, shared = SHARED) {
   }
   lines.push("");
 
-  lines.push("## Members");
-  lines.push("");
-  lines.push("| member | owner | surface | templates |");
-  lines.push("|---|---|---|---|");
-  for (const key of [...members].sort()) {
-    const surface = enumerable.has(key) ? "public" : "hidden";
-    lines.push(`| \`${key}\` | \`${owners.get(key)}\` | ${surface} | ${usage.get(key) ?? 0} |`);
-  }
-  lines.push("");
+  if (withMembers) lines.push(...memberTable(members, owners, enumerable, usage));
 
   lines.push("## Cross-owner reads");
   lines.push("");

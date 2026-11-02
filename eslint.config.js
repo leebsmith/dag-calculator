@@ -211,7 +211,7 @@ const SCRIPT_COMPLEXITY = {
 
 const SCRIPT_STATEMENTS = {
   "scripts/artifact-inventory.mjs": 75,
-  "scripts/frontend-ownership.mjs": 45,
+  "scripts/frontend-ownership.mjs": 39,
 };
 
 const SCRIPT_FUNCTION_LINES = { "scripts/artifact-inventory.mjs": 107 };

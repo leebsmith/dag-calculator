@@ -32,7 +32,10 @@ test("every cross-owner read is declared and every SHARED entry is used", () => 
 });
 
 test("the ownership index is current", () => {
-  assert.equal(read("docs/frontend-ownership.md"), buildOwnershipIndex());
+  assert.equal(
+    read("docs/frontend-ownership.md"),
+    buildOwnershipIndex(undefined, undefined, { members: false })
+  );
 });
 
 test("every app member has exactly one owner", () => {
