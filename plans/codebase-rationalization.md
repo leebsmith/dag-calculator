@@ -826,18 +826,28 @@ backend gaining the timeline mapping). Docs + open plans **12,418 → 10,577**.
 `frontend-ownership.md` **785 → 88**. Hop-math implementations **2 → 1**. Diff
 across the four commits: 63 files, +946 / −2,765.
 
-### Remainder (not started)
+### W4 trims landed (the D5 remainder)
 
-From D5, three duplication trims are still open — none removes an assertion, all
-are prose surgery:
+Commit: `Merge the brew log and trim the duplicated reference tables`.
 
-1. merge `docs/brew-checklist.md` + `docs/brew-session.md` into one brew-log doc;
-2. delete the duplicated composition block, prior table and late-addition text
-   shared by `docs/attenuation-model.md` and `docs/fermentability-and-yield.md`
-   (preserving the A1–A18 register);
-3. replace the field/dimension tables in `docs/dag-artifacts/seed-substrate.md`
-   §2 and `docs/dag-artifacts/dimensions.md` with prose plus a pointer to the
-   generated `inventory.md`.
+1. `docs/brew-checklist.md` + `docs/brew-session.md` are one `docs/brew-log.md`;
+   the README index has one row and the two old files are gone.
+2. `docs/fermentability-and-yield.md` no longer restates the composition block,
+   the category-prior table or the late-addition register; each points at its
+   canonical section in `docs/attenuation-model.md`, and the A1–A18 register is
+   untouched.
+3. The `malt`, `sugar`, `yeast`, `style`, `hop`, `hop_product` and
+   `mash_rest_definition` field tables in `docs/dag-artifacts/seed-substrate.md`
+   became prose plus a pointer to `inventory.md`; the base-dimension table in
+   `dimensions.md` did the same, while the special/conversion sections stayed.
+   The prose that carries the reasoning (moisture fallback, yield basis, priors,
+   color split) is kept; only the duplicated field specs went.
+
+`make test-guards` green (204), so every backticked claim still resolves and the
+attenuation register is complete.
+
+All plan waves are landed. W2's 2b remains a gated, unstarted option; D4's 2b
+measurements are in `plans/codebase-rationalization-decisions.md`.
 
 W2 needs D4; W3A and W3B implement D3 (§5); the deployment step implements D8 (§3
 step 10).

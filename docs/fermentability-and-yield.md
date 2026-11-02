@@ -58,43 +58,24 @@ Typical **real** values:
 
 Where a scrape has no `fermentability_fraction`:
 
-| Category | Prior (real) | Old apparent observation |
-|---|---|---|
-| `BASE` | 0.643 | 0.810 |
-| `CRYSTAL` | 0.398 | 0.500 |
-| `ROASTED` | 0.121 | 0.150 |
-| `ACID` | 0.635 | 0.800 |
-| `sugar` | 1.000 | 1.000 |
-
-The priors are the old apparent observations converted at 12 °P, so a recipe
-resolved from priors displays the same apparent attenuation as before (A7). A
-scraped per-malt value wins over the prior.
+The category priors (base 0.643 real, crystal 0.398, roasted 0.121, acid 0.635,
+sugar 1.0) are the old apparent observations converted at 12 °P, so a recipe
+resolved from priors displays the same apparent attenuation as before (A7). The
+canonical real/apparent table and the conversion are in
+`docs/attenuation-model.md` §4; a scraped per-malt value wins over the prior.
 
 ## The batch attenuation block
 
-`AA_batch` is not an ingredient value and is not a mash-schedule prediction. The
-solver evaluates extract composition at the candidate `OE`:
-
-```
-cap_real   = apparent_to_real(OE, yeast_cap_apparent)
-F_malt_eff = min(F_malt, cap_real)
-UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)
-RE         = OE · UE / E
-AE         = inverse_cutaia(RE)
-AA_app     = (OE − AE) / OE          # may exceed 1
-```
-
-`F_malt` is the extract-weighted real fermentability of the grain bill. The
-yeast cap applies to **malt only**, in real space; sugar keeps `F_sugar = 1.0`
-and is never clamped, so a sugar addition can lift apparent attenuation past the
-cap. `d` is the diastaticus dextrin-consumption share (D5); it acts on the malt
-residue only.
-
-`AE = OE · (1 − AA)` is no longer a model step: `AE` comes from inverting the
-Cutaia real-extract regression, and may be ≤ 0. `F_i` appears exactly once, in
-the residue term; it is never applied again at the AE step.
-
-The scale pin (`batch.scale_pin`) chooses which of ABV, OG, or FG is fixed; the
+`AA_batch` is not an ingredient value and is not a mash-schedule prediction: the
+solver evaluates the composition at the candidate `OE`. The block itself —
+residue, Cutaia inversion, the diastaticus share `d`, and the scale-pin choice —
+is canonical in `docs/attenuation-model.md` §1. What matters here is that
+`F_malt` is the extract-weighted real fermentability of the grain bill, that the
+yeast cap applies to **malt only** in real space, and that sugar keeps
+`F_sugar = 1.0` and is never clamped, so an addition can lift apparent
+attenuation past the cap. `AE` comes from inverting the Cutaia real-extract
+regression (it may be ≤ 0), and `F_i` appears exactly once, in the residue term.
+The scale pin (`batch.scale_pin`) chooses which of ABV, OG or FG is fixed; the
 other two are solved. See `docs/attenuation-model.md` §6.1.
 
 ## Mixed worts
@@ -107,16 +88,12 @@ candidate OG. An upstream scalar would be circular.
 
 ### Late-addition intent
 
-The same split is authorable from the sugar side. `batch.late_addition_intent`
-is `dose` (mass) or `share` (sugar extract ÷ total post-boil extract). Share
-mode sends `sugar_extract_share` on the wire and `s_late_add = 0`; the solver
-evaluates `E_sugar = share · E(OE)` per candidate, so the sugar mass follows
-gravity without a host iteration. The solver consumes one effective real
-fermentability, `F_eff`, the extract-weighted RDF of the blend; mixed blends
-(lactose + molasses) are therefore representable in share mode. Row `parts`
-allocate the sugar extract by the same Hamilton rule as the grist, and
-`resolved_mass_kg` is the recorded result, never a request input. The full
-register is in `docs/attenuation-model.md` §6; the sugar audit is
+The same split is authorable from the sugar side:
+`batch.late_addition_intent` is `dose` (mass) or `share` (sugar extract ÷ total
+post-boil extract). Share mode lets the solver evaluate `E_sugar = share · E(OE)`
+per candidate, so the sugar mass follows gravity without a host iteration. The
+full register — Hamilton row parts, `resolved_mass_kg`, and the effective blend
+RDF — is in `docs/attenuation-model.md` §6; the sugar audit is
 `docs/sugar-database.md`.
 
 ## Vendor pitfalls

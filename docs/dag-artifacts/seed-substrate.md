@@ -50,19 +50,12 @@ carries a `dimension`, an optional `domain`, and an optional `default`.
 
 ### 2.1 `malt`
 
-| Field | Dimension | Domain | Notes |
-|---|---|---|---|
-| `id`, `name` | — | — | identity/metadata |
-| `maltster` | — | — | producer (provenance) |
-| `standard_malt` | — | — | standard classification id (generic family) |
-| `standard_name` | — | — | standard display name (e.g. "Pale Ale Malt") |
-| `family` | — | — | standard family (base/kilned/crystal/roasted/…) |
-| `generic_description` | — | — | shared one-line description from the standard list |
-| `category` | taxonomy `malt_category` | — | `BASE`/`CRYSTAL`/`ROASTED`/`ACID` |
-| `yield_fraction` | percentage | `[0, 1]` | dry-basis fine-grind extract yield; the solver applies `(1 - moisture)` |
-| `fermentability_fraction` | percentage | `[0, 1]` | Congress-Mash fermentability limit (default by category) |
-| `moisture_fraction` | percentage | `[0, 1]` | as-is moisture, where the datasheet publishes it (`0`/absent ⇒ not published) |
-| `color_lovibond` | grain_color | `gte 0` | dry-malt color |
+`malt` carries identity and metadata (`id`, `name`, `maltster`, `standard_malt`,
+`standard_name`, `family`, `generic_description`), the `malt_category` taxonomy,
+and four quantities: `yield_fraction` and `fermentability_fraction` (percentage,
+`[0, 1]`; dry-basis fine-grind yield and Congress-Mash limit), optional as-is
+`moisture_fraction`, and `color_lovibond` (grain_color, `gte 0`). The full field
+spec — dimension, domain and default — is in `inventory.md`.
 
 **Moisture is a per-malt seed field where published.** `moisture_fraction` comes
 from the datasheet (`moisture %/100`); malts that publish none carry no field.
@@ -77,13 +70,10 @@ source or maintain.
 
 ### 2.2 `sugar`
 
-| Field | Dimension | Domain |
-|---|---|---|
-| `id`, `name` | — | — |
-| `maltster` | — | — |
-| `yield_fraction` | percentage | `[0, 1]` (as-is sugar-point contribution) |
-| `fermentability_fraction` | percentage | `[0, 1]` (`1.0` for sugars/extracts) |
-| `color_lovibond` | grain_color | `gte 0` |
+`sugar` carries identity (`id`, `name`, `maltster`), `yield_fraction` and
+`fermentability_fraction` (percentage, `[0, 1]`; `1.0` for sugars/extracts) and
+`color_lovibond` (grain_color, `gte 0`). The full field spec is in
+`inventory.md`.
 
 The malt and sugar seeds are built by `scripts/build-fermentables-seed.mjs`
 from the vendored `data/sources/malt-database-malts.json` scrape (deduped
@@ -104,15 +94,10 @@ committed `data/sources/malt-standard-crosswalk.json`, supplying `standard_malt`
 
 ### 2.3 `yeast`
 
-| Field | Dimension | Domain |
-|---|---|---|
-| `id`, `name`, `manufacturer` | — | — |
-| `attenuation_pct` | percentage | `[0, 1]` |
-| `flocculation` | taxonomy `flocculation` | `Low`/`Medium`/`High` |
-| `alcohol_tolerance` | — | display string (`12.0%`, `High`, …) |
-| `form` | taxonomy `form` | `Dry`/`Liquid` |
-| `temp_low_c`, `temp_high_c` | temperature | — |
-| `recipes`, `url`, `notes` | — | — |
+`yeast` carries identity (`id`, `name`, `manufacturer`), `attenuation_pct`
+(percentage, `[0, 1]`), the `flocculation` and `form` taxonomies, a display-only
+`alcohol_tolerance` string, `temp_low_c`/`temp_high_c` (temperature), and
+`recipes`/`url`/`notes`. The full field spec is in `inventory.md`.
 
 ### 2.4 `equipment`
 
@@ -156,15 +141,13 @@ and `constants.k_abs_true` is the fallback when no rig value is supplied.
 BJCP (2021) beer styles, keyed by the BJCP style number (`1A`…`34C`), plus the
 six Specialty IPA sub-types keyed `21B <Name>` (e.g. `21B Black IPA`).
 
-| Field | Dimension | Domain |
-|---|---|---|
-| `id`, `name`, `category_id`, `category_name` | — | — |
-| `type` | taxonomy `style_type` | `beer`/`mead`/`cider` |
-| `overall_impression`, `aroma`, `appearance`, `flavor`, `mouthfeel`, `comments`, `history`, `characteristic_ingredients`, `style_comparison`, `entry_instructions`, `commercial_examples`, `tags` | — | optional prose |
-| `og_min`, `og_max`, `fg_min`, `fg_max` | gravity | `gte 0` (optional) |
-| `ibu_min`, `ibu_max` | ibu | `gte 0` (optional) |
-| `srm_min`, `srm_max` | beer_color | `gte 0` (optional) |
-| `abv_min`, `abv_max` | abv | `gte 0` (optional) |
+`style` carries identity (`id`, `name`, `category_id`, `category_name`), the
+`style_type` taxonomy, optional prose (impression, aroma, appearance, flavour,
+mouthfeel, comments, history, ingredients, comparison, entry instructions,
+examples, tags) and the optional numeric ranges: `og_min`/`og_max` and
+`fg_min`/`fg_max` (gravity), `ibu_min`/`ibu_max` (ibu), `srm_min`/`srm_max`
+(beer_color), `abv_min`/`abv_max` (abv), all `gte 0`. The full field spec is in
+`inventory.md`.
 
 Specialty styles that define no numerical ranges omit the stat fields. The seed
 is built by `scripts/build-styles-seed.mjs` from the **2021** aggregate
@@ -193,14 +176,11 @@ yeast cap. The Style step then re-centers the ABV target on the fixed-AA ray
 
 Brewing hops scraped from beer-analytics.com, keyed by a slug of the hop name.
 
-| Field | Dimension | Domain |
-|---|---|---|
-| `id`, `name` | — | identity/metadata |
-| `synonym`, `category`, `purpose`, `origin`, `alpha_rating` | — | optional display metadata |
-| `recipes_count` | — | integer |
-| `alpha_acid_pct`, `alpha_acid_min_pct`, `alpha_acid_max_pct`, `beta_acid_pct` | percentage | `[0, 1]` |
-| `pairings`, `flavor_profiles` | — | comma-delimited strings |
-| `notes`, `url` | — | prose / provenance |
+`hop` carries identity (`id`, `name`), optional display metadata (`synonym`,
+`category`, `purpose`, `origin`, `alpha_rating`), `recipes_count`, four
+percentage quantities (`alpha_acid_pct`, `alpha_acid_min_pct`,
+`alpha_acid_max_pct`, `beta_acid_pct`; `[0, 1]`), comma-delimited `pairings` and
+`flavor_profiles`, and `notes`/`url`. The full field spec is in `inventory.md`.
 
 `alpha_acid_pct` is the **median** of the scrape's alpha-acid range, stored as a
 fraction (6.5% → `0.065`); the boil-hops card back-calculates addition mass from
@@ -254,13 +234,13 @@ rows per variety, and they carry no per-variety alpha. The authoritative product
 record — leaves, scalars, per-variety tables, dose guidance and exclusions — is
 `docs/hops/hop-products.md`.
 
-| Field | Dimension / taxonomy | Domain | Notes |
-|---|---|---|---|
-| `id`, `name`, `manufacturer`, `brand` | — | — | identity and display metadata |
-| `product_form` | taxonomy `hop_product_form` | — | the leaf: `lupulin_pellet` for Cryo Hops and Lupomax, `flowable_extract` for the CO₂ extract, Hop Shot, Flex, DynaBoost and Incognito |
-| `alpha_acid_pct` | percentage | `[0, 1]` | the preset seeded into a row; a lot assay replaces it |
-| `alpha_acid_min_pct`, `alpha_acid_max_pct` | percentage | `[0, 1]` | present only where the product as a whole publishes a range; absence is the "nominal" state the card labels |
-| `notes`, `url` | — | — | dosing and provenance prose, product page |
+`hop_product` carries identity and display metadata (`id`, `name`,
+`manufacturer`, `brand`), the `hop_product_form` taxonomy leaf (`lupulin_pellet`
+for Cryo Hops and Lupomax, `flowable_extract` for the CO₂ extract, Hop Shot,
+Flex, DynaBoost and Incognito), `alpha_acid_pct` and its optional
+`alpha_acid_min_pct`/`alpha_acid_max_pct` range (percentage, `[0, 1]`; the
+preset a lot assay replaces), and `notes`/`url`. The full field spec is in
+`inventory.md`.
 
 `data/sources/hop-products.json` holds the entries; the variable percentages are
 authored as percentages and
@@ -277,12 +257,11 @@ only where one exists.
 `mash-rests.json` is the rest catalog, keyed by `rest_id` and conforming to the
 `mash_rest_definition` schema:
 
-| Field | Dimension | Notes |
-|---|---|---|
-| `rest_id`, `name`, `purpose` | — | identity and display prose |
-| `temp_min_c`, `temp_max_c` | temperature | recommended range |
-| `default_duration_min` | time | seeded when a rest is first enabled |
-| `sequence` | dimensionless | canonical order (mash-out last) |
+`mash_rest_definition` carries identity and display prose (`rest_id`, `name`,
+`purpose`), a recommended `temp_min_c`/`temp_max_c` (temperature),
+`default_duration_min` (time; seeded when a rest is first enabled) and the
+canonical `sequence` (dimensionless; mash-out last). The full field spec is in
+`inventory.md`.
 
 `mash-schedules.json` is the preset matrix, keyed by the `mash_preset` taxonomy:
 each entry has `{ id, name, rests[] }`, where `rests` rows conform to the

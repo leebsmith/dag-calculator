@@ -34,8 +34,7 @@ backend with Firebase auth and Firestore persistence.
 | [`docs/attenuation-model.md`](docs/attenuation-model.md) | **living** — composition, attenuation regimes, basis audit, scale pins, assumption register |
 | [`docs/fermentability-and-yield.md`](docs/fermentability-and-yield.md) | **living** — extract yield vs fermentability, mixed-wort AA, yeast cap |
 | [`docs/sugar-database.md`](docs/sugar-database.md) | **living** — sugar source tiers, overlay policy, effective fermentability |
-| [`docs/brew-checklist.md`](docs/brew-checklist.md) | **living** — generated checklist: levels, phases, conditions, providers |
-| [`docs/brew-session.md`](docs/brew-session.md) | **living** — session document, sealing, observations, corrections, Brew Sheet |
+| [`docs/brew-log.md`](docs/brew-log.md) | **living** — generated checklist and the session log: levels, phases, conditions, providers, sealing, observations, corrections, Brew Sheet |
 | [`docs/record-library.md`](docs/record-library.md) | **living** — non-DAG record layer: schemas, catalogs, cooling curves, editors |
 | [`docs/calculator-assumed-dosing-practice.md`](docs/calculator-assumed-dosing-practice.md) | **living** — what the dosing model assumes and cannot verify |
 | [`docs/display-precision.md`](docs/display-precision.md) | **living** — decimal precision policy for displayed values |
