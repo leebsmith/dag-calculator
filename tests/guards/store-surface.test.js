@@ -10,6 +10,8 @@ import assert from "node:assert/strict";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { createRecipesStore } from "../../frontend/src/store/recipes.js";
 import { createBrewSessionStore } from "../../frontend/src/store/brewSession.js";
+import { createImportsStore } from "../../frontend/src/store/imports.js";
+import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { read, rel, walk } from "./util.js";
 
 // Stores created inline in `main.js` and therefore not covered by a factory.
@@ -25,6 +27,9 @@ const FACTORIES = {
     }),
   brewSession: () =>
     createBrewSessionStore({ client: {}, loadBundle: async () => null }),
+  imports: () =>
+    createImportsStore({ client: { list: async () => [] }, readFile: async () => "" }),
+  importReview: () => createImportReviewStore({ client: {} }),
 };
 
 function surfaces() {
@@ -69,7 +74,14 @@ test("every Alpine store registered in main.js is either a factory or explicitly
     ),
   ];
 
-  assert.deepEqual(registered.sort(), ["auth", "brewSession", "recipes", "setup"]);
+  assert.deepEqual(registered.sort(), [
+    "auth",
+    "brewSession",
+    "importReview",
+    "imports",
+    "recipes",
+    "setup",
+  ]);
 
   const uncovered = registered.filter((name) => !EXTERNAL.has(name) && !(name in FACTORIES));
   assert.deepEqual(uncovered, [], `stores without a surface guard:\n${uncovered.join("\n")}`);

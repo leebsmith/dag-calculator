@@ -522,7 +522,7 @@ the text.
 | Phase | Scope | Gate |
 |---|---|---|
 | J.1 | **Asset iteration + hold (7 of 9 steps landed):** prompt registry (`extract`, `match`, maybe a repair pass), each with version, model setting, derived schema snapshot and fixtures; manifest + sha256 guard; CLI with `--cache` / `--promote` / `--replay` | fixture suite, prompt-hash and schema-snapshot guards, manual smoke, no network in tests → **HOLD H.1** |
-| J.2 | Import records + upload + transcription review with `llm`/`user` provenance, plus the growing acceptance test | backend pytest + frontend suite |
+| J.2 | **shipped:** import records, upload, transcription review with `llm`/`user` provenance, growing acceptance test | backend pytest + frontend suite |
 | J.3 | Ledger: destinations, transforms, L0/L1 matching, parts-only commit path, progress metric | frontend suite + guards |
 | J.4 | Gate + delta table (water advisory) | boundary mocks, snapshot of the delta table |
 | J.5 | Hops: pools, pan routing, fraction policy, printed-IBU capture | hop routing + fraction tests |
@@ -667,8 +667,12 @@ before.
 - [x] Import record schema + repository (`users/{uid}/recipe_imports`)
 - [x] `POST /imports` (extract, base64 body, no multipart), `GET`/`PATCH`/`DELETE` with
       `AllowedUser`, and a dedicated tighter token bucket for the paid call
-- [ ] Import view shell (`view: "import"`), identity from `batch-setup`, rig-fit banner
-- [ ] Transcribe stage: verbatim + page per field, `llm`/`user` provenance, `unmodeled` and `warnings` panels, and the verification result (checked / not found / no text layer)
+- [x] Import view shell (`view: "import"`), identity from `batch-setup` (mode switch:
+      From scratch | From a recipe), displayed as the record header
+- [x] Transcribe stage: verbatim + page per field, editable targets marked `user`,
+      `unmodeled` and `warnings` panels, and the verification result (checked / not
+      found / no text layer). Corrections are saved as the whole extract, and the
+      service refuses a change to the document's provenance
 - [x] **Acceptance test, growing:** `pristine-black-ipa` → record → transcription review
       payload now asserts the printed IBUs sum to the stated total (0.25 whirlpool), that
       every target carries a phrase and a page, and that the text check ran and was clean.

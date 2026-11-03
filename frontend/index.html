@@ -75,6 +75,11 @@
           <load src="./src/partials/batch-setup.html" />
           <load src="./src/partials/report-picker.html" />
 
+          <!-- Import -------------------------------------------------------->
+          <template x-if="$store.recipes.view === 'import'">
+            <load src="./src/partials/import.html" />
+          </template>
+
           <!-- Editor -------------------------------------------------------->
           <template x-if="$store.recipes.view === 'editor'">
             <load src="./src/partials/editor.html" />

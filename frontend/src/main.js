@@ -22,6 +22,9 @@ import {
   signOut,
 } from "./firebase.js";
 import * as persistence from "./store/persistence.js";
+import { createImportClient, readFileAsBase64 } from "./adapters/importClient.js";
+import { createImportsStore } from "./store/imports.js";
+import { createImportReviewStore } from "./store/importReview.js";
 import { createSetupStore } from "./store/setup.js";
 import { createRecipesStore } from "./store/recipes.js";
 import { createBrewSessionStore } from "./store/brewSession.js";
@@ -51,8 +54,41 @@ Alpine.store("auth", {
   signOut: () => signOut(),
 });
 
+const importClient = createImportClient();
+
+// Opening a record means showing it: the import view reads one record at a time.
+const reviewStore = createImportReviewStore({
+  client: importClient,
+  onClose: () => {
+    Alpine.store("recipes").view = "batches";
+  },
+});
+
+Alpine.store("importReview", reviewStore);
+
+Alpine.store(
+  "imports",
+  createImportsStore({
+    client: importClient,
+    readFile: readFileAsBase64,
+    onOpen: (record) => {
+      reviewStore.open(record);
+      Alpine.store("recipes").view = "import";
+    },
+    onError: (err) => {
+      const recipes = Alpine.store("recipes");
+      recipes.actionError = {
+        title: "Import failed",
+        message: err?.message ?? "Could not read the document.",
+      };
+    },
+  })
+);
+
 const setupStore = createSetupStore({
   client: libraryClient,
+  onImportRecipe: ({ filename, file, identity }) =>
+    Alpine.store("imports").start({ filename, file, identity }),
   onCreated: () => {
     const recipes = Alpine.store("recipes");
     recipes.scope = "all";

@@ -60,6 +60,7 @@ class UpdateImportRequest(StrictModel):
     """Editable before commit: the identity, the ledger, the frozen suggestions."""
 
     identity: dict[str, dict[str, Any]] | None = None
+    extract: ExtractedRecipe | None = None
     ledger: list[dict[str, Any]] | None = None
     suggestions: list[dict[str, Any]] | None = None
     status: ImportStatus | None = None

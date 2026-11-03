@@ -22,20 +22,67 @@
         <button
           type="button"
           class="btn-primary text-xs"
+          x-show="$store.setup.state.mode === 'scratch'"
           :disabled="!$store.setup.canCreate() || $store.setup.state.busy"
           @click="$store.setup.create()"
         >Create batch</button>
+        <button
+          type="button"
+          class="btn-primary text-xs"
+          x-show="$store.setup.state.mode === 'recipe'"
+          :disabled="!$store.setup.canStartImport() || $store.setup.state.busy"
+          @click="$store.setup.startImport()"
+        ><span x-show="!$store.setup.state.busy">Read recipe</span><span x-show="$store.setup.state.busy">Reading…</span></button>
       </div>
     </div>
 
     <div class="modal-workspace-body">
       <div class="modal-workspace-main">
+        <div class="setup-mode-switch" role="group" aria-label="How to start">
+          <button
+            type="button"
+            class="btn-outline text-xs"
+            :class="{ 'is-active': $store.setup.state.mode === 'scratch' }"
+            :aria-pressed="$store.setup.state.mode === 'scratch'"
+            @click="$store.setup.setMode('scratch')"
+          >From scratch</button>
+          <button
+            type="button"
+            class="btn-outline text-xs"
+            :class="{ 'is-active': $store.setup.state.mode === 'recipe' }"
+            :aria-pressed="$store.setup.state.mode === 'recipe'"
+            @click="$store.setup.setMode('recipe')"
+          >From a recipe</button>
+        </div>
+
         <p class="form-hint text-warning" role="note">
           Style, rig, and water source are sealed into this batch. To change any of them later,
           start a new batch.
         </p>
 
-        <div class="form-group">
+        <div class="form-group" x-show="$store.setup.state.mode === 'recipe'">
+          <label class="form-label" for="recipe-file"><span>Recipe document (PDF)</span></label>
+          <input
+            id="recipe-file"
+            class="form-input"
+            type="file"
+            accept="application/pdf"
+            @change="$store.setup.chooseFile($event.target.files[0])"
+          />
+          <p class="form-hint" x-show="$store.setup.state.filename" x-text="$store.setup.state.filename"></p>
+          <p class="form-hint">
+            The document is read once and not kept: only the transcription and your mapping persist.
+          </p>
+        </div>
+
+        <p class="form-hint text-warning" x-show="$store.setup.state.mode === 'recipe' && $store.imports.duplicateOf">
+          This document was already imported.
+          <button type="button" class="btn-link" @click="$store.imports.resume($store.imports.duplicateOf); $store.setup.closeModal()">Resume that import</button>
+          or
+          <button type="button" class="btn-link" @click="$store.imports.discardDuplicate()">choose a different file</button>.
+        </p>
+
+        <div class="form-group" x-show="$store.setup.state.mode === 'scratch'">
           <label class="form-label" for="batch-name"><span>Batch name</span></label>
           <input
             id="batch-name"
@@ -74,9 +121,15 @@
           </select>
         </div>
 
-        <p class="form-hint" x-show="!$store.setup.canCreate() && !$store.setup.state.busy">
-          Choose a name, a style, a rig, and a water source. Records are created and sealed in the
-          Library's Sources section.
+        <p class="form-hint" x-show="!$store.setup.state.busy && ($store.setup.state.mode === 'scratch' ? !$store.setup.canCreate() : !$store.setup.canStartImport())">
+          <span x-show="$store.setup.state.mode === 'scratch'">
+            Choose a name, a style, a rig, and a water source. Records are created and sealed in the
+            Library's Sources section.
+          </span>
+          <span x-show="$store.setup.state.mode === 'recipe'">
+            Choose a style, a rig, and a water source, then pick a PDF. The identity is sealed into
+            the batch this import will become.
+          </span>
         </p>
 
         <p class="form-hint text-danger" x-show="$store.setup.state.error" x-text="$store.setup.state.error"></p>

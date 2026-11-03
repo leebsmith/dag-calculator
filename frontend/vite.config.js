@@ -27,6 +27,7 @@ export default defineConfig({
     proxy: {
       "/solve": "http://127.0.0.1:8000",
       "/batches": "http://127.0.0.1:8000",
+      "/imports": "http://127.0.0.1:8000",
       "/brew-sessions": "http://127.0.0.1:8000",
       "/catalog": "http://127.0.0.1:8000",
       "/session": "http://127.0.0.1:8000",

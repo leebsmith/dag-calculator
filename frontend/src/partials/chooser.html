@@ -27,6 +27,33 @@
 
     <div class="landing">
       <div class="landing-page">
+        <section class="landing-imports" x-show="$store.imports.count > 0">
+          <div class="landing-section-bar">
+            <h2 class="landing-heading">
+              Imports <span class="text-xs text-muted" x-text="'(' + $store.imports.count + ')'"></span>
+            </h2>
+          </div>
+          <p class="form-hint">
+            Documents read but not yet a batch. Resume one to finish the transcription, or drop it.
+          </p>
+          <ul class="import-line-list">
+            <template x-for="row in $store.imports.openRows" :key="row.id">
+              <li class="import-queue-row">
+                <div>
+                  <button type="button" class="btn-link" @click="$store.imports.resume(row.id)"
+                    x-text="row.extract?.payload?.title || row.extract?.source?.filename"></button>
+                  <span class="text-xs text-muted" x-text="row.extract?.source?.filename"></span>
+                </div>
+                <div class="import-queue-actions">
+                  <span class="text-xs text-muted" x-text="row.status"></span>
+                  <button type="button" class="btn-outline text-xs" @click="$store.imports.resume(row.id)">Resume</button>
+                  <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete</button>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </section>
+
         <section class="landing-library">
           <div class="landing-section-bar">
             <h2 class="landing-heading">Batches</h2>

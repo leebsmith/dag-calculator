@@ -107,6 +107,9 @@ class ImportService:
         if current.status == ImportStatus.COMMITTED:
             raise ImportConflict("committed")
         changes: dict[str, Any] = {}
+        if request.extract is not None:
+            assert_same_provenance(current.extract.source, request.extract.source)
+            changes["extract"] = request.extract.model_dump(mode="json")
         if request.identity is not None:
             changes["identity"] = validate_identity(request.identity)
         if request.ledger is not None:
@@ -140,6 +143,19 @@ class ImportService:
         if wanted not in allowed.get(current, set()):
             raise ImportConflict(f"{current.value}->{wanted.value}")
         return wanted
+
+
+def assert_same_provenance(current, incoming) -> None:
+    """A correction may change what was read, never which document produced it."""
+    if (
+        incoming.sha256 != current.sha256
+        or incoming.model != current.model
+        or incoming.prompt_id != current.prompt_id
+        or incoming.prompt_version != current.prompt_version
+        or incoming.filename != current.filename
+        or incoming.page_count != current.page_count
+    ):
+        raise ImportPayloadError("a correction may not change the document's provenance")
 
 
 def decode_document(content_base64: str) -> bytes:

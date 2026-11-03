@@ -27,7 +27,7 @@ export function createRecipesStore({
   closeTab,
 } = {}) {
   return {
-    view: "batches", // "batches" | "editor"
+    view: "batches", // "batches" | "editor" | "import"
     scope: "all", // "all" | "drafts" | "frozen" | "trash"
     batches: [],
     activeId: null,

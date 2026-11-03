@@ -13,6 +13,7 @@ const BROWSER_GLOBALS = {
   URL: "readonly",
   URLSearchParams: "readonly",
   Blob: "readonly",
+  FileReader: "readonly",
   TextEncoder: "readonly",
   crypto: "readonly",
   console: "readonly",

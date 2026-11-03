@@ -63,6 +63,13 @@
         }
       },
       {
+        "source": "/imports/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

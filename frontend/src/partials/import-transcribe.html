@@ -1,0 +1,175 @@
+<!-- Transcribe: what the page said, beside the phrase and page it came from.
+     Targets are the one editable thing in this stage; everything else is shown as
+     transcribed, with the unmodelled lines and the warnings kept visible. -->
+<section class="import-transcribe">
+  <header class="import-doc-header">
+    <div>
+      <h2 class="import-doc-title" x-text="$store.importReview.title"></h2>
+      <p class="text-xs text-muted">
+        <span x-text="$store.importReview.summary?.filename"></span>
+        <span x-show="$store.importReview.summary?.pages">
+          · <span x-text="$store.importReview.summary?.pages"></span> page(s)
+        </span>
+        <span x-show="$store.importReview.summary?.style">
+          · <span x-text="$store.importReview.summary?.style"></span>
+        </span>
+        <span x-show="$store.importReview.summary?.model">
+          · <span x-text="$store.importReview.summary?.model"></span>
+          v<span x-text="$store.importReview.summary?.promptVersion"></span>
+        </span>
+      </p>
+    </div>
+    <div
+      class="import-verification"
+      :class="{
+        'is-ok': $store.importReview.verification.tone === 'ok',
+        'is-warn': $store.importReview.verification.tone === 'warn',
+        'is-none': $store.importReview.verification.tone === 'none',
+        'is-unknown': $store.importReview.verification.tone === 'unknown',
+      }"
+    >
+      <span class="font-medium" x-text="$store.importReview.verification.label"></span>
+      <span class="text-xs text-muted" x-text="$store.importReview.verification.detail"></span>
+    </div>
+  </header>
+
+  <div class="alert alert-warning" x-show="$store.importReview.missing.length">
+    <div class="alert-header">
+      <span class="alert-dot"></span>
+      <span>Still needed before this can become a batch:</span>
+    </div>
+    <p x-text="$store.importReview.missing.join(' · ')"></p>
+  </div>
+
+  <h3 class="import-section-title">Targets</h3>
+  <p class="form-hint">
+    Edit a value to correct the transcription. A corrected row reads “you” instead of “page”.
+  </p>
+  <div class="data-table-container-scroll">
+    <table class="data-table is-fixed">
+      <thead>
+        <tr>
+          <th>Target</th>
+          <th>Value</th>
+          <th>The page says</th>
+          <th>Page</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="row in $store.importReview.targets" :key="row.key">
+          <tr :class="row.required && !row.present ? 'is-required-missing' : ''">
+            <td>
+              <span x-text="row.label"></span>
+              <span x-show="row.required" class="text-xs text-muted">· required</span>
+            </td>
+            <td>
+              <input
+                class="form-input"
+                type="number"
+                step="any"
+                :value="row.value ?? ''"
+                @change="$store.importReview.setTarget(row.key, $event.target.value)"
+              />
+              <span class="text-xs text-muted" x-text="row.unit || ''"></span>
+            </td>
+            <td class="text-xs text-muted" x-text="row.verbatim || '—'"></td>
+            <td class="text-xs text-muted" x-text="row.page ?? '—'"></td>
+            <td class="text-xs" x-text="row.source === 'user' ? 'you' : 'page'"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="import-section-title">
+    Fermentables <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.fermentables + ')'"></span>
+  </h3>
+  <ul class="import-line-list">
+    <template x-for="(line, index) in $store.importReview.fermentables" :key="'f' + index">
+      <li class="import-line">
+        <span class="font-medium" x-text="line.name"></span>
+        <span class="text-xs text-muted" x-text="[line.maltster, line.amount, line.kind].filter(Boolean).join(' · ')"></span>
+        <span class="import-line-source" x-text="line.verbatim"></span>
+        <span class="text-xs text-muted" x-text="'p' + line.page"></span>
+      </li>
+    </template>
+  </ul>
+
+  <h3 class="import-section-title">
+    Hops <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.hops + ')'"></span>
+  </h3>
+  <ul class="import-line-list">
+    <template x-for="(line, index) in $store.importReview.hops" :key="'h' + index">
+      <li class="import-line">
+        <span class="font-medium" x-text="line.name"></span>
+        <span class="text-xs text-muted" x-text="[line.amount, line.stage, line.stageVerbatim].filter(Boolean).join(' · ')"></span>
+        <span class="text-xs text-muted" x-show="line.ibu">· <span x-text="line.ibu"></span> IBU printed</span>
+        <span class="import-line-source" x-text="line.verbatim"></span>
+        <span class="text-xs text-muted" x-text="'p' + line.page"></span>
+      </li>
+    </template>
+  </ul>
+
+  <h3 class="import-section-title">
+    Yeast <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.yeasts + ')'"></span>
+  </h3>
+  <ul class="import-line-list">
+    <template x-for="(line, index) in $store.importReview.yeasts" :key="'y' + index">
+      <li class="import-line">
+        <span class="font-medium" x-text="line.name"></span>
+        <span class="text-xs text-muted" x-text="[line.lab, line.code, line.attenuation ? line.attenuation + '%' : ''].filter(Boolean).join(' · ')"></span>
+        <span class="import-line-source" x-text="line.verbatim"></span>
+        <span class="text-xs text-muted" x-text="'p' + line.page"></span>
+      </li>
+    </template>
+  </ul>
+
+  <h3 class="import-section-title">
+    Mash <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.mashes + ')'"></span>
+  </h3>
+  <ul class="import-line-list">
+    <template x-for="(line, index) in $store.importReview.mashes" :key="'m' + index">
+      <li class="import-line">
+        <span class="font-medium" x-text="line.step"></span>
+        <span class="text-xs text-muted" x-text="[line.temperature, line.duration ? line.duration + ' min' : '', line.thickness].filter(Boolean).join(' · ')"></span>
+        <span class="text-xs text-muted" x-text="'p' + line.page"></span>
+      </li>
+    </template>
+  </ul>
+
+  <template x-if="$store.importReview.warnings.length">
+    <div>
+      <h3 class="import-section-title">The model's warnings</h3>
+      <ul class="import-line-list">
+        <template x-for="(line, index) in $store.importReview.warnings" :key="'w' + index">
+          <li class="import-line">
+            <span x-text="line.text"></span>
+            <span class="text-xs text-muted" x-show="line.page" x-text="'p' + line.page"></span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+
+  <details class="import-unmodeled" x-show="$store.importReview.unmodeled.length">
+    <summary>
+      Not modelled on this batch
+      (<span x-text="$store.importReview.unmodeled.length"></span>)
+    </summary>
+    <p class="form-hint">
+      Captured from the page but outside the model: salts, kettle additives, packaging,
+      process notes. They never reach a batch.
+    </p>
+    <ul class="import-line-list">
+      <template x-for="(line, index) in $store.importReview.unmodeled" :key="'u' + index">
+        <li class="import-line">
+          <span class="text-xs text-muted" x-text="line.kind"></span>
+          <span x-text="line.text"></span>
+          <span class="text-xs text-muted" x-text="[line.amount, line.stage].filter(Boolean).join(' · ')"></span>
+          <span class="text-xs text-muted" x-text="'p' + line.page"></span>
+        </li>
+      </template>
+    </ul>
+  </details>
+</section>

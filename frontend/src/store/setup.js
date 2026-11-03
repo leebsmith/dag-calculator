@@ -33,7 +33,7 @@ const UNKNOWN_WATER = {
   total_alkalinity_caco3: 0,
 };
 
-export function createSetupStore({ onCreated, client } = {}) {
+export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
   const cache = createReferenceCache();
   const library = createLibrary({
     client,
@@ -44,12 +44,15 @@ export function createSetupStore({ onCreated, client } = {}) {
   return {
     state: {
       modalOpen: false,
+      mode: "scratch", // "scratch" | "recipe"
       busy: false,
       error: "",
       name: "",
       equipmentId: "",
       waterId: "",
       styleId: "",
+      file: null,
+      filename: "",
     },
     library,
     // Bumped whenever the asset inventory changes; read by the option getters so
@@ -100,9 +103,12 @@ export function createSetupStore({ onCreated, client } = {}) {
 
     openModal() {
       this.state.modalOpen = true;
+      this.state.mode = "scratch";
       this.state.error = "";
       this.state.busy = false;
       this.state.name = "";
+      this.state.file = null;
+      this.state.filename = "";
       this.state.equipmentId = this.equipmentOptions()[0]?.value ?? "";
       this.state.waterId = "unknown";
       this.state.styleId = this.styleOptions()[0]?.value ?? "";
@@ -110,6 +116,43 @@ export function createSetupStore({ onCreated, client } = {}) {
 
     closeModal() {
       this.state.modalOpen = false;
+    },
+
+    setMode(mode) {
+      this.state.mode = mode;
+      this.state.error = "";
+    },
+
+    chooseFile(file) {
+      this.state.file = file ?? null;
+      this.state.filename = file?.name ?? "";
+      this.state.error = "";
+    },
+
+    // An import needs the same sealed identity a batch does, plus one document.
+    canStartImport() {
+      const s = this.state;
+      return Boolean(s.file && s.equipmentId && s.waterId && s.styleId);
+    },
+
+    async startImport() {
+      if (!this.canStartImport() || this.state.busy) return null;
+      this.state.busy = true;
+      this.state.error = "";
+      try {
+        const record = await onImportRecipe?.({
+          filename: this.state.filename,
+          file: this.state.file,
+          identity: this.identity(),
+        });
+        if (record) this.state.modalOpen = false;
+        return record ?? null;
+      } catch (err) {
+        this.state.error = err?.message ?? "Could not read the document.";
+        return null;
+      } finally {
+        this.state.busy = false;
+      }
     },
 
     canCreate() {

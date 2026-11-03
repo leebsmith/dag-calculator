@@ -1,0 +1,60 @@
+<!-- Import view shell: the transcription stage, and the two stages still to come.
+     Identity was chosen in the New batch dialog, so this surface never asks for it
+     again — it shows what was read and lets a person correct it. -->
+<div class="import-view">
+  <header class="menu-bar">
+    <span class="menu-title">Import a recipe</span>
+    <div class="menu-actions">
+      <button type="button" class="btn-outline" @click="$store.recipes.backToBatches()">
+        Batches
+      </button>
+      <span class="auth-user">
+        <span x-text="$store.auth.user.email || ''"></span>
+        <button type="button" class="btn-link" @click="$store.auth.signOut()">Sign out</button>
+      </span>
+    </div>
+  </header>
+
+  <div class="import-body">
+    <div class="alert alert-warning" x-show="$store.importReview.error">
+      <div class="alert-header">
+        <span class="alert-dot"></span>
+        <span x-text="$store.importReview.error"></span>
+      </div>
+    </div>
+
+    <div class="import-empty" x-show="!$store.importReview.record">
+      <p class="form-hint">
+        No document is open. Start one from <strong>New batch → From a recipe</strong>, or resume an
+        import from the landing page.
+      </p>
+      <button type="button" class="btn-outline" @click="$store.recipes.backToBatches()">
+        Back to batches
+      </button>
+    </div>
+
+    <template x-if="$store.importReview.record">
+      <load src="src/partials/import-transcribe.html" />
+    </template>
+  </div>
+
+  <footer class="app-footer" x-show="$store.importReview.record">
+    <span class="footer-step">Transcribe</span>
+    <span class="text-xs text-muted" x-text="$store.importReview.summary?.filename || ''"></span>
+    <span class="text-xs text-muted" x-show="$store.importReview.dirty">Unsaved corrections</span>
+    <span class="text-xs text-muted" x-show="$store.importReview.busy">Saving…</span>
+    <span class="boundary-status" x-show="$store.importReview.savedAt">
+      <span class="status-dot status-dot-ok"></span>
+      <span class="text-xs text-muted">Saved</span>
+    </span>
+    <button
+      type="button"
+      class="btn-primary text-xs"
+      :disabled="$store.importReview.busy || !$store.importReview.dirty"
+      @click="$store.importReview.save()"
+    >Save corrections</button>
+    <button type="button" class="btn-outline text-xs" @click="$store.recipes.backToBatches()">
+      Close
+    </button>
+  </footer>
+</div>
