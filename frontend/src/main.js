@@ -61,6 +61,7 @@ const reviewStore = createImportReviewStore({
   client: importClient,
   onClose: () => {
     Alpine.store("recipes").view = "batches";
+    Alpine.store("imports").refresh();
   },
 });
 

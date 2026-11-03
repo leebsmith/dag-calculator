@@ -115,6 +115,20 @@ function reviewActions({ client, onClose }) {
       onClose?.();
     },
 
+    async discard() {
+      if (!this.record) return;
+      this.busy = true;
+      try {
+        await client.remove(this.record.id);
+        this.close();
+      } catch (err) {
+        this.error = err?.message ?? "Could not delete that import.";
+        reportError("importReview.discard", err);
+      } finally {
+        this.busy = false;
+      }
+    },
+
     setTarget(key, rawValue) {
       if (!this.record) return;
       const payload = editTarget(this.payload, key, rawValue);

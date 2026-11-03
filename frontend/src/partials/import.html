@@ -53,6 +53,12 @@
       :disabled="$store.importReview.busy || !$store.importReview.dirty"
       @click="$store.importReview.save()"
     >Save corrections</button>
+    <button
+      type="button"
+      class="btn-outline text-xs"
+      :disabled="$store.importReview.busy"
+      @click="$store.importReview.discard()"
+    >Delete this import</button>
     <button type="button" class="btn-outline text-xs" @click="$store.recipes.backToBatches()">
       Close
     </button>

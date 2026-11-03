@@ -18,10 +18,12 @@ from __future__ import annotations
 import base64
 import binascii
 import hashlib
+import logging
 import uuid
 from typing import Annotated, Any
 
 from fastapi import Depends
+from pydantic import ValidationError
 
 from app.repositories.import_repo import ImportRepoDep, ImportRepository
 from app.schemas.import_record import (
@@ -31,6 +33,8 @@ from app.schemas.import_record import (
     UpdateImportRequest,
 )
 from app.services import gemini, recipe_import
+
+logger = logging.getLogger("app.import_service")
 
 MAX_DOCUMENT_BYTES = gemini.MAX_INLINE_BYTES
 PDF_MAGIC = b"%PDF"
@@ -68,7 +72,25 @@ class ImportService:
         self._repo = repo
 
     def list(self, uid: str) -> list[ImportRecord]:
-        return [ImportRecord.model_validate(doc) for doc in self._repo.list(uid)]
+        """Every readable record, newest first.
+
+        One unreadable document must not take the whole queue down: a record
+        written by an older schema would otherwise make the landing page 500 and
+        the import surface unreachable. Skipped records are logged with their id
+        so they can be found and removed, never silently forgotten.
+        """
+        records = []
+        for doc in self._repo.list(uid):
+            try:
+                records.append(ImportRecord.model_validate(doc))
+            except ValidationError as exc:
+                logger.warning(
+                    "skipping unreadable import record id=%s uid=%s: %s",
+                    doc.get("id"),
+                    uid,
+                    exc.errors()[0].get("msg"),
+                )
+        return records
 
     def get(self, uid: str, import_id: str) -> ImportRecord:
         doc = self._repo.get(uid, import_id)

@@ -170,3 +170,11 @@ def test_another_users_record_is_not_found(service):
     record = service.create("u1", upload())
     with pytest.raises(ImportNotFound):
         service.get("u2", record.id)
+
+
+def test_an_unreadable_record_does_not_break_the_queue(service, caplog):
+    good = service.create("u1", upload())
+    service._repo.docs["u1"]["broken"] = {"id": "broken", "status": "extracted"}
+    records = service.list("u1")
+    assert [record.id for record in records] == [good.id]
+    assert "skipping unreadable import record id=broken" in caplog.text

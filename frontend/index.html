@@ -68,7 +68,7 @@
           </template>
 
           <!-- Recipe landing ------------------------------------------------>
-          <template x-if="$store.recipes.view !== 'editor' && !$store.brewSession.open">
+          <template x-if="$store.recipes.view === 'batches' && !$store.brewSession.open">
             <load src="./src/partials/chooser.html" />
           </template>
 
