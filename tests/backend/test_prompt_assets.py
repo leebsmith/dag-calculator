@@ -192,3 +192,38 @@ def test_the_match_fixture_bridges_a_trade_name_and_refuses_a_generic_line() -> 
     assert by_text["Carafoam"][0] == "carapils", "the alias the string screen cannot find"
     assert by_text["Belgian specialty malt"] == [], "a generic line gets no forced match"
     assert by_text["Weyermann® Abbey Malt"][0] == "abbey-malt-biscuit-malt"
+
+
+def test_the_pristine_fixture_supplies_an_exact_hop_split() -> None:
+    """Six printed hop lines, eight rows, and a whirlpool fraction from arithmetic."""
+    model = fixture_payload("pristine-black-ipa")
+    hops = model.hops
+    assert len(hops) == 8, "the two 'each Citra and Amarillo' dry hops decompose into four rows"
+    assert [hop.ibu_contribution for hop in hops[:4]] == [25.0, 20.0, 8.0, 7.0]
+    assert all(hop.ibu_contribution is None for hop in hops[4:]), "dry hops carry no IBU"
+    assert [hop.stage_guess for hop in hops] == [
+        "boil", "boil", "whirlpool", "whirlpool", "dry_hop", "dry_hop", "dry_hop", "dry_hop",
+    ]
+    whirlpool = sum(hop.ibu_contribution or 0.0 for hop in hops if hop.stage_guess == "whirlpool")
+    boil = sum(hop.ibu_contribution or 0.0 for hop in hops if hop.stage_guess == "boil")
+    total = model.targets.ibu.value
+    assert whirlpool + boil == total, "the printed per-addition IBUs sum to the stated total"
+    assert whirlpool / total == 0.25, "so the whirlpool fraction needs no estimate"
+    assert any("dry hop" in warning.text for warning in model.warnings), (
+        "a decomposition the page did not make must be explained"
+    )
+
+
+def test_the_pristine_fixture_passes_the_text_check() -> None:
+    body = json.loads((FIXTURES / "pristine-black-ipa" / "response.json").read_text())
+    payload = ExtractionPayload.model_validate(
+        gemini.parse_json(gemini.response_text(body))
+    )
+    pages = json.loads(
+        (FIXTURES / "pristine-black-ipa" / "page-text.json").read_text(encoding="utf-8")
+    )
+    from app.services.extraction_check import check
+
+    verification = check(payload, pages)
+    assert verification.text_layer is True
+    assert verification.unmatched == []

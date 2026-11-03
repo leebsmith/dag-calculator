@@ -628,6 +628,10 @@ before.
     `detected_recipes` plus a warning, refused as `NoRecipeFound`
   - `self-report` — this app's own report; four runs are stable on targets and grist,
     with variance concentrated in `unmodeled`, which is the bucket built to absorb it
+  - `pristine-black-ipa` — the gold case: printed per-addition IBUs that sum to the
+    stated total (25+20 boil, 8+7 whirlpool of 60), so the whirlpool fraction is
+    0.25 by arithmetic; two 'each Citra and Amarillo' dry hops decompose into four
+    rows with a warning, and all 31 reported numbers verify against the page text
 - [x] J.1.9a Decide the gap-fill pass — yes: a third asset, whole document, requested scalars only
 - [x] J.1.9b Capture a match fixture: `match-malts` (trade-name bridge, empty picks)
 - [x] J.1.9c Confirm the pinned model id and thinking budgets — `gemini-3.8-flash`

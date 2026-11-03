@@ -1,0 +1,7 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 5,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T19:53:59Z",
+  "note": "A pristine two-page recipe with no overlay, no editorial pages and printed per-addition IBUs. The gold case for the hop split: six printed hop lines become eight rows because the two '1 oz each Citra and Amarillo' dry hops are decomposed into four, with stage_verbatim keeping 'at first dry hop' / 'at second dry hop' and a warning explaining the split. The printed IBUs (25, 20 in the boil; 8, 7 in the whirlpool) sum to the stated 60, so the whirlpool fraction is exact arithmetic (15/60 = 0.25) rather than an estimate. Verification: 31 of 31 numbers found. Over-capture, deliberate: the directions paragraph lands in unmodeled as process_additive. This fixture keeps page-text.json: the text layer as pypdf reads it, which is the corpus the production check uses, so the verification test needs no PDF."
+}
