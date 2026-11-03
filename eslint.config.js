@@ -143,7 +143,7 @@ const GRAMMAR_COMPLEXITY = {
 
 const LIFECYCLE_COMPLEXITY = {
   "adapters/boundaryRunner.js": 35,
-  "adapters/cards/catalogDraft.js": 18,
+  "adapters/cards/catalogDraft.js": 17,
   "adapters/cards/water.js": 38,
   "adapters/fieldAttribution.js": 18,
   "adapters/stepAdapter.js": 10,
@@ -164,7 +164,7 @@ const STATEMENT_PINS = {
   "adapters/stepAdapter.js": 34,
   "engine/sha256.js": 44,
   "main.js": 47,
-  "views/producer/stylePlot.js": 28,
+  "views/producer/stylePlot.js": 12,
   "views/producer/table.js": 42,
 };
 
@@ -184,14 +184,15 @@ const FUNCTION_LINE_PINS = {
   "engine/dag.js": 301,
   "engine/validate.js": 86,
   "adapters/boundaryRunner.js": 213,
-  "views/producer/stylePlot.js": 116,
+  "views/producer/stylePlot.js": 67,
 };
 
 const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 510,
   "adapters/cards/late-additions.js": 420,
   "adapters/cards/water.js": 639,
-  "adapters/stepAdapter.js": 432,
+  "adapters/stepAdapter.js": 441,
+  "views/producer/stylePlot.js": 422,
   "engine/dag.js": 405,
   "engine/fermentation.js": 506,
   "store/recipes.js": 465,

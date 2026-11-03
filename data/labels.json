@@ -625,12 +625,10 @@
     "label": "ABV min"
   },
   "style.fg_max": {
-    "label": "FG max",
-    "displayUnit": "SG"
+    "label": "FG max"
   },
   "style.fg_min": {
-    "label": "FG min",
-    "displayUnit": "SG"
+    "label": "FG min"
   },
   "style.ibu_max": {
     "label": "IBU max"
@@ -639,20 +637,16 @@
     "label": "IBU min"
   },
   "style.og_max": {
-    "label": "OG max",
-    "displayUnit": "SG"
+    "label": "OG max"
   },
   "style.og_min": {
-    "label": "OG min",
-    "displayUnit": "SG"
+    "label": "OG min"
   },
   "style.srm_max": {
-    "label": "SRM max",
-    "unit": "SRM"
+    "label": "Color max"
   },
   "style.srm_min": {
-    "label": "SRM min",
-    "unit": "SRM"
+    "label": "Color min"
   },
   "water.acid_medium": {
     "label": "Acid medium",

@@ -47,7 +47,26 @@ test("the plane carries axes, contours, a locus, and a pinned locus", async () =
   assert.ok((preview.contours.match(/M/g) ?? []).length >= 3, "several contours");
   assert.ok(preview.locus.length > 0, "composition locus");
   assert.ok(preview.pinPath.length > 0, "pinned locus");
-  assert.match(preview.summary, /OG \d\.\d{3}, FG \d\.\d{3}, ABV \d/);
+  assert.match(preview.summary, /OG [\d.]+ °P, FG [\d.]+ °P, ABV \d/);
+  assert.ok(preview.contourLabels.length > 0, "contours are labelled");
+  assert.ok(preview.bandPath.length > 0, "the style's ABV limits are drawn");
+});
+
+test("the plane is linear in the gravity unit the menu selects", async () => {
+  const app = await styledApp();
+
+  app.setUnit("gravity", "SG");
+  app.compute();
+  const sg = app.stylePreview;
+  assert.equal(sg.axes.x.label, "OE (SG)");
+  assert.equal(sg.axes.y.label, "AE (SG)");
+  assert.match(sg.ticks.x[0].label, /^1\.\d{3}$/);
+  assert.match(sg.summary, /OG 1\.\d{3} SG/);
+
+  app.setUnit("gravity", "Plato");
+  app.compute();
+  assert.equal(app.stylePreview.axes.x.label, "OE (°P)");
+  assert.match(app.stylePreview.ticks.x[0].label, /^\d+\.\d$/);
 });
 
 test("every plotted coordinate stays inside the viewBox", async () => {
@@ -102,16 +121,16 @@ test("the pinned locus follows the pin kind", async () => {
   assert.match(app.stylePreview.pinLabel, /^ABV [\d.]+%$/);
 });
 
-test("the pinned label names the pin's own target", async () => {
+test("the pinned label names the pin's own target in the display unit", async () => {
   const app = await styledApp();
 
   app.setScalePin("og");
-  app.setScaleTarget("1.0675");
+  app.setRoot("batch.target_og", 1.0675);
   app.compute();
-  assert.equal(app.stylePreview.pinLabel, "OG 1.067");
+  assert.equal(app.stylePreview.pinLabel, "OG 16.5 °P");
 
   app.setScalePin("fg");
-  app.setScaleTarget("1.014");
+  app.setRoot("batch.target_fg", 1.014);
   app.compute();
-  assert.equal(app.stylePreview.pinLabel, "FG 1.014");
+  assert.equal(app.stylePreview.pinLabel, "FG 3.6 °P");
 });

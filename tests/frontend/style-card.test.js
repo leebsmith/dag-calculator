@@ -103,12 +103,59 @@ test("the target sliders allow two JNDs beyond the envelope and name the drift b
   app.setTargetSrm(2);
   assert.equal(app.targetSrm, 2);
   assert.equal(app.srmTargetOutside, true);
+  assert.equal(app.srmTargetNote, "7.9 EBC below style — severe");
+
+  app.setUnit("beer_color", "SRM");
   assert.equal(app.srmTargetNote, "4.0 SRM below style — severe");
 
   app.setTargetIbu(76);
   assert.equal(app.targetIbu, 76);
   assert.equal(app.ibuTargetOutside, true);
   assert.equal(app.ibuTargetNote, "6 IBU above style — drift");
+});
+
+test("the style card follows the gravity and colour unit controls", async () => {
+  const app = await appWithStyle("21A");
+
+  assert.equal(app.fieldsById["style.og_min"].unit, "°P");
+  assert.equal(app.fieldsById["style.srm_min"].unit, "EBC");
+  assert.equal(app.fieldsById["style.srm_min"].label, "Color min");
+  assert.match(app.styleVitals(), /°P/);
+  assert.match(app.conformanceSummary.dimensions.find((d) => d.id === "og").value, / °P$/);
+  const srm = app.conformanceSummary.dimensions.find((d) => d.id === "srm");
+  assert.equal(srm.label, "Color");
+  assert.match(srm.value, / EBC$/);
+  assert.equal(app.styleSrmHint, "Style 11.8–27.6 EBC");
+
+  app.setUnit("gravity", "SG");
+  app.setUnit("beer_color", "SRM");
+  assert.equal(app.fieldsById["style.og_min"].unit, "SG");
+  assert.equal(app.fieldsById["style.og_min"].display, "1.056");
+  assert.equal(app.fieldsById["style.srm_min"].unit, "SRM");
+  assert.match(app.styleVitals(), / SG/);
+  assert.match(app.conformanceSummary.dimensions.find((d) => d.id === "og").value, / SG$/);
+  assert.equal(app.styleSrmHint, "Style 6.0–14.0 SRM");
+  assert.equal(app.srmTargetDisplay, "10.0 SRM");
+});
+
+test("per-field unit overrides stay on their row, not on the card figures", async () => {
+  const app = await appWithStyle("21A");
+  const conformance = () =>
+    app.conformanceSummary.dimensions.find((d) => d.id === "og").value;
+
+  assert.equal(app.stylePreview.axes.x.label, "OE (°P)");
+  assert.match(conformance(), / °P$/);
+  assert.match(app.styleVitals(), /°P/);
+
+  app.setFieldUnit("style.og_min", "SG");
+  assert.equal(app.fieldsById["style.og_min"].unit, "SG", "the row follows its override");
+  assert.equal(app.stylePreview.axes.x.label, "OE (°P)", "the plot stays on the master unit");
+
+  app.setScalePin("og");
+  app.compute();
+  assert.equal(app.activeScaleTargetUnit, "°P");
+  assert.match(conformance(), / °P$/);
+  assert.match(app.styleVitals(), /°P/);
 });
 
 test("the style declaration is read-only and has no workspace selector", async () => {
@@ -297,4 +344,35 @@ test("the style card carries no water-flavor intent fields", async () => {
   const ids = app.fieldsBySlice.style.map((f) => f.id);
   assert.equal(ids.some((id) => id.startsWith("batch.sulfate_chloride")), false);
   assert.equal(app.sulfateChlorideSpecified, undefined);
+});
+
+test("styleUnsolved tracks whether solver.batch is ok", async () => {
+  const app = await appWithStyle("21A");
+  assert.equal(app.styleUnsolved, false);
+
+  app.boundaryStatuses["solver.batch"] = "blocked";
+  assert.equal(app.styleUnsolved, true);
+
+  app.boundaryStatuses["solver.batch"] = "pending";
+  assert.equal(app.styleUnsolved, true);
+
+  app.boundaryStatuses["solver.batch"] = "ok";
+  assert.equal(app.styleUnsolved, false);
+});
+
+test("an unsolved batch plots the placeholder instead of an envelope centroid", async () => {
+  const app = await httpAppWithStyle("21A");
+  app.setRoot("batch.yeast_id", "");
+  await app.solveNow();
+
+  assert.equal(app.styleUnsolved, true);
+  assert.equal(app.styleExtract, null);
+  assert.equal(app.styleTargetInfo, null);
+  assert.equal(app.stylePreview.placeholder, "Blocked/Unsolved");
+  assert.equal(app.stylePreview.plot, undefined);
+  assert.equal(app.stylePreview.summary, "Fermentation space: blocked/unsolved.");
+  assert.deepEqual(app.stylePreview.center, { x: "204.0", y: "172.0" });
+  assert.equal(app.violationCount, 0);
+  assert.deepEqual(app.findings, []);
+  app.teardown();
 });

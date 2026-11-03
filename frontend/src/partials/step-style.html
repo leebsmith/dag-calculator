@@ -20,9 +20,12 @@
           </div>
           <div class="form-group">
             <span class="form-label">Vital statistics (OG / FG)</span>
+            <span class="tabular-nums" x-text="styleVitals()"></span>
+          </div>
+          <div class="form-group">
+            <span class="form-label">Fermentation</span>
             <span
-              class="tabular-nums"
-              x-text="styleVitals(selectedStyle)"
+              x-text="fmt.optionLabel(fermentationField.optionLabels, fermentationField.value)"
             ></span>
           </div>
         </div>
@@ -32,7 +35,7 @@
     <!-- Recipe targets: fermentation navigator + color/bitterness sliders -->
     <div class="target-cards">
       <!-- Fermentation target picker (OE/AE region navigator) -->
-      <template x-if="styleExtract && stylePreview">
+      <template x-if="stylePreview">
         <div class="synthesized-card">
           <div class="synthesized-header">
             <h3 class="synthesized-title">Fermentation target</h3>
@@ -74,96 +77,128 @@
             <span class="form-hint text-warning" x-show="scaleTargetMismatch" x-text="scaleTargetMismatch"></span>
           </div>
           <div class="extract-picker">
-            <svg
-              class="extract-preview"
-              viewBox="0 0 376 366"
-              x-effect="$el.setAttribute('viewBox', stylePreview.viewBox)"
-              role="img"
-              :aria-label="stylePreview.summary"
-            >
-              <defs>
-                <clipPath id="ferment-space-plot">
-                  <rect
-                    :x="stylePreview.plot.x"
-                    :y="stylePreview.plot.y"
-                    :width="stylePreview.plot.w"
-                    :height="stylePreview.plot.h"
+            <div class="extract-canvas">
+            <template x-if="stylePreview.placeholder">
+              <svg
+                class="extract-preview"
+                viewBox="0 0 376 366"
+                x-effect="$el.setAttribute('viewBox', stylePreview.viewBox)"
+                role="img"
+                :aria-label="stylePreview.summary"
+              >
+                <text
+                  class="extract-unsolved-msg"
+                  :x="stylePreview.center.x"
+                  :y="stylePreview.center.y"
+                  text-anchor="middle"
+                  dominant-baseline="central"
+                  x-text="stylePreview.placeholder"
+                ></text>
+              </svg>
+            </template>
+            <template x-if="!stylePreview.placeholder">
+              <svg
+                class="extract-preview"
+                viewBox="0 0 376 366"
+                x-effect="$el.setAttribute('viewBox', stylePreview.viewBox)"
+                role="img"
+                :aria-label="stylePreview.summary"
+              >
+                <defs>
+                  <clipPath id="ferment-space-plot">
+                    <rect
+                      :x="stylePreview.plot.x"
+                      :y="stylePreview.plot.y"
+                      :width="stylePreview.plot.w"
+                      :height="stylePreview.plot.h"
+                    />
+                  </clipPath>
+                </defs>
+                <g clip-path="url(#ferment-space-plot)">
+                  <path class="extract-contours" :d="stylePreview.contours" />
+                  <polygon class="extract-region" :points="stylePreview.polygon" />
+                  <path class="extract-band" :d="stylePreview.bandPath" />
+                  <path class="extract-locus" :d="stylePreview.locus" />
+                  <path class="extract-pin" :d="stylePreview.pinPath" />
+                  <circle
+                    class="extract-safest"
+                    :cx="stylePreview.safest.x"
+                    :cy="stylePreview.safest.y"
+                    r="3"
                   />
-                </clipPath>
-              </defs>
-              <g clip-path="url(#ferment-space-plot)">
-                <path class="extract-contours" :d="stylePreview.contours" />
-                <polygon class="extract-region" :points="stylePreview.polygon" />
-                <path class="extract-locus" :d="stylePreview.locus" />
-                <path class="extract-pin" :d="stylePreview.pinPath" />
-                <circle
-                  class="extract-safest"
-                  :cx="stylePreview.safest.x"
-                  :cy="stylePreview.safest.y"
-                  r="3"
+                  <circle
+                    class="extract-marker"
+                    :cx="stylePreview.marker.x"
+                    :cy="stylePreview.marker.y"
+                    r="3.5"
+                  />
+                </g>
+                <rect
+                  class="extract-frame"
+                  :x="stylePreview.plot.x"
+                  :y="stylePreview.plot.y"
+                  :width="stylePreview.plot.w"
+                  :height="stylePreview.plot.h"
                 />
-                <circle
-                  class="extract-marker"
-                  :cx="stylePreview.marker.x"
-                  :cy="stylePreview.marker.y"
-                  r="3.5"
-                />
-              </g>
-              <rect
-                class="extract-frame"
-                :x="stylePreview.plot.x"
-                :y="stylePreview.plot.y"
-                :width="stylePreview.plot.w"
-                :height="stylePreview.plot.h"
-              />
-              <path class="extract-ticks" :d="stylePreview.tickMarks" />
-              <text class="extract-tick" :x="stylePreview.ticks.x[0].x" :y="stylePreview.ticks.x[0].y" text-anchor="middle" x-text="stylePreview.ticks.x[0].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.x[1].x" :y="stylePreview.ticks.x[1].y" text-anchor="middle" x-text="stylePreview.ticks.x[1].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.x[2].x" :y="stylePreview.ticks.x[2].y" text-anchor="middle" x-text="stylePreview.ticks.x[2].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.x[3].x" :y="stylePreview.ticks.x[3].y" text-anchor="middle" x-text="stylePreview.ticks.x[3].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.x[4].x" :y="stylePreview.ticks.x[4].y" text-anchor="middle" x-text="stylePreview.ticks.x[4].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.y[0].x" :y="stylePreview.ticks.y[0].y" text-anchor="end" x-text="stylePreview.ticks.y[0].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.y[1].x" :y="stylePreview.ticks.y[1].y" text-anchor="end" x-text="stylePreview.ticks.y[1].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.y[2].x" :y="stylePreview.ticks.y[2].y" text-anchor="end" x-text="stylePreview.ticks.y[2].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.y[3].x" :y="stylePreview.ticks.y[3].y" text-anchor="end" x-text="stylePreview.ticks.y[3].label"></text>
-              <text class="extract-tick" :x="stylePreview.ticks.y[4].x" :y="stylePreview.ticks.y[4].y" text-anchor="end" x-text="stylePreview.ticks.y[4].label"></text>
-              <text
-                class="extract-axis"
-                :x="stylePreview.axes.y.x"
-                :y="stylePreview.axes.y.y"
-                :text-anchor="stylePreview.axes.y.anchor"
-                :transform="stylePreview.axes.y.transform"
-                x-text="stylePreview.axes.y.label"
-              ></text>
-              <text
-                class="extract-axis"
-                :x="stylePreview.axes.x.x"
-                :y="stylePreview.axes.x.y"
-                :text-anchor="stylePreview.axes.x.anchor"
-                x-text="stylePreview.axes.x.label"
-              ></text>
-              <text
-                class="extract-pin-label"
-                :x="stylePreview.pinLabelX"
-                :y="stylePreview.pinLabelY"
-                :text-anchor="stylePreview.pinLabelAnchor"
-                x-text="stylePreview.pinLabel"
-              ></text>
-            </svg>
+                <path class="extract-ticks" :d="stylePreview.tickMarks" />
+                <text class="extract-tick" :x="stylePreview.ticks.x[0].x" :y="stylePreview.ticks.x[0].y" text-anchor="middle" x-text="stylePreview.ticks.x[0].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.x[1].x" :y="stylePreview.ticks.x[1].y" text-anchor="middle" x-text="stylePreview.ticks.x[1].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.x[2].x" :y="stylePreview.ticks.x[2].y" text-anchor="middle" x-text="stylePreview.ticks.x[2].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.x[3].x" :y="stylePreview.ticks.x[3].y" text-anchor="middle" x-text="stylePreview.ticks.x[3].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.x[4].x" :y="stylePreview.ticks.x[4].y" text-anchor="middle" x-text="stylePreview.ticks.x[4].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.y[0].x" :y="stylePreview.ticks.y[0].y" text-anchor="end" x-text="stylePreview.ticks.y[0].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.y[1].x" :y="stylePreview.ticks.y[1].y" text-anchor="end" x-text="stylePreview.ticks.y[1].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.y[2].x" :y="stylePreview.ticks.y[2].y" text-anchor="end" x-text="stylePreview.ticks.y[2].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.y[3].x" :y="stylePreview.ticks.y[3].y" text-anchor="end" x-text="stylePreview.ticks.y[3].label"></text>
+                <text class="extract-tick" :x="stylePreview.ticks.y[4].x" :y="stylePreview.ticks.y[4].y" text-anchor="end" x-text="stylePreview.ticks.y[4].label"></text>
+                <text
+                  class="extract-axis"
+                  :x="stylePreview.axes.y.x"
+                  :y="stylePreview.axes.y.y"
+                  :text-anchor="stylePreview.axes.y.anchor"
+                  :transform="stylePreview.axes.y.transform"
+                  x-text="stylePreview.axes.y.label"
+                ></text>
+                <text
+                  class="extract-axis"
+                  :x="stylePreview.axes.x.x"
+                  :y="stylePreview.axes.x.y"
+                  :text-anchor="stylePreview.axes.x.anchor"
+                  x-text="stylePreview.axes.x.label"
+                ></text>
+                <text
+                  class="extract-pin-label"
+                  :x="stylePreview.pinLabelX"
+                  :y="stylePreview.pinLabelY"
+                  :text-anchor="stylePreview.pinLabelAnchor"
+                  x-text="stylePreview.pinLabel"
+                ></text>
+              </svg>
+            </template>
+            <div
+              class="extract-overlay"
+              x-show="!stylePreview.placeholder"
+              aria-hidden="true"
+            >
+              <template x-for="label in stylePreview.contourLabels" :key="label.key">
+                <span class="extract-contour-label" :style="label.style" x-text="label.text"></span>
+              </template>
+            </div>
+            </div>
           </div>
-          <span class="form-hint">
+          <span class="form-hint" x-show="!stylePreview.placeholder">
             The dot is this batch. Contours are ABV; the line is this grain bill at every
             size. OG reads off the horizontal axis, FG off the vertical; the axes are not
             to equal scale.
           </span>
           <div class="extract-readouts">
             <div class="extract-readout">
-              <span class="form-label">OG (SG)</span>
-              <span class="tabular-nums" x-text="fmt.formatGravity(styleTargetInfo?.og)"></span>
+              <span class="form-label">OG</span>
+              <span class="tabular-nums" x-text="styleGravityReadouts.og"></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">FG (SG)</span>
-              <span class="tabular-nums" x-text="fmt.formatGravity(styleTargetInfo?.fg)"></span>
+              <span class="form-label">FG</span>
+              <span class="tabular-nums" x-text="styleGravityReadouts.fg"></span>
             </div>
             <div class="extract-readout">
               <span class="form-label">Apparent attenuation</span>
@@ -240,8 +275,8 @@
                 aria-label="Target SRM"
               />
               <div class="target-slider-readout">
-                <span class="tabular-nums" x-text="fmt.formatWithDecimals(targetSrm, 0) + ' SRM'"></span>
-                <span class="text-xs text-muted" x-text="'Style ' + fmt.formatRange(styleSrmBounds[0], styleSrmBounds[1]) + ' SRM'"></span>
+                <span class="tabular-nums" x-text="srmTargetDisplay"></span>
+                <span class="text-xs text-muted" x-text="styleSrmHint"></span>
               </div>
               <span class="form-hint text-warning" x-show="srmTargetOutside" x-text="srmTargetNote"></span>
             </div>
@@ -343,22 +378,18 @@
       <div class="synthesized-header">
         <h3 class="synthesized-title">Style envelope</h3>
       </div>
-      <div class="form-group">
-        <span class="form-label">
-          <span>Fermentation</span>
-        </span>
-        <span
-          class="field-value"
-          x-text="fmt.optionLabel(fermentationField.optionLabels, fermentationField.value)"
-        ></span>
-      </div>
       <div class="step-grid-2col">
         <template x-for="row in styleEnvelopeFields" :key="row.id">
           <div class="form-group">
             <span class="form-label">
               <span x-text="row.field.label"></span>
             </span>
-            <span class="field-value" x-text="row.field.display"></span>
+            <span
+              class="field-value"
+              x-text="row.field.toggleable && row.field.unit
+                ? row.field.display + ' ' + row.field.unit
+                : row.field.display"
+            ></span>
           </div>
         </template>
       </div>

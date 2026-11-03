@@ -10,10 +10,12 @@ import {
   scaleTargetMismatch,
   targetDrift,
 } from "../../../views/producer/styleTarget.js";
+import { displayValue, nonlinearFns } from "../../../views/producer.js";
 import { TAU } from "../../../engine/styleConformance.js";
 import {
   bitternessRatio,
   boundsOf,
+  formatRange,
   formatWithDecimals,
   provenanceFor,
   roundTo,
@@ -21,7 +23,8 @@ import {
 } from "../../../utils.js";
 
 export function registerStyleTargets(app, ctx) {
-  const { engine } = ctx;
+  const { engine, artifact } = ctx;
+  const nl = nonlinearFns(artifact, engine);
 
   Object.assign(app, {
     // Reactive mirrors of the active pin/target. Alpine only re-renders on
@@ -49,7 +52,12 @@ export function registerStyleTargets(app, ctx) {
         pin === "og" ? N.targetOg : pin === "fg" ? N.targetFg : N.targetAbv;
       Object.assign(
         this,
-        scalePinState({ pin, root, value: engine.get(root) })
+        scalePinState({
+          pin,
+          root,
+          value: engine.get(root),
+          gravity: this.styleGravityDisplay,
+        })
       );
     },
 
@@ -67,8 +75,11 @@ export function registerStyleTargets(app, ctx) {
     setScaleTarget(value) {
       const numeric = Number(value);
       if (!Number.isFinite(numeric) || numeric <= 0) return;
+      // The input speaks the display unit; the root is always SG.
       const target =
-        this.scalePin === "abv" ? roundTo(numeric, 1) : numeric;
+        this.scalePin === "abv"
+          ? roundTo(numeric, 1)
+          : this.styleGravityDisplay.toSg(numeric);
       this.setRoot(this.activeScaleTargetRoot, target);
       this.styleAbvTouched = this.scalePin === "abv" ? true : this.styleAbvTouched;
       this.syncScalePinState();
@@ -163,18 +174,64 @@ export function registerStyleTargets(app, ctx) {
         return allowanceBounds(this.styleIbuBounds, TAU.ibu);
       },
     },
+    // The slider's numbers follow the target field's display unit (the same
+    // master/override resolution the input uses); the stored target stays SRM.
+    styleSrmHint: {
+      configurable: true,
+      get() {
+        const field = this.srmTargetField;
+        const bounds = this.styleSrmBounds;
+        if (!field?.unitId || !bounds) return "";
+        const format = (value) =>
+          formatWithDecimals(
+            displayValue(artifact, "beer_color", field.unitId, value, nl),
+            field.decimals
+          );
+        return `Style ${formatRange(bounds[0], bounds[1], format)} ${field.unit}`;
+      },
+    },
+    srmTargetDisplay: {
+      configurable: true,
+      get() {
+        const field = this.srmTargetField;
+        if (!field?.unitId) return "";
+        const shown = displayValue(artifact, "beer_color", field.unitId, this.targetSrm, nl);
+        return `${formatWithDecimals(shown, field.decimals)} ${field.unit}`;
+      },
+    },
     srmTargetOutside: {
       configurable: true,
       get() {
-        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, { unit: "SRM", decimals: 1 })
-          .outside;
+        if (!this.srmTargetField) return false;
+        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, {
+          unit: this.srmTargetField.unit,
+          decimals: this.srmTargetField.decimals,
+          toDisplay: this.srmTargetDelta,
+        }).outside;
       },
     },
     srmTargetNote: {
       configurable: true,
       get() {
-        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, { unit: "SRM", decimals: 1 })
-          .text;
+        const field = this.srmTargetField;
+        if (!field) return "";
+        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, {
+          unit: field.unit,
+          decimals: field.decimals,
+          toDisplay: this.srmTargetDelta,
+        }).text;
+      },
+    },
+    // A colour deviation converts like a value because every colour unit is
+    // linear; the exact factor comes from the artifact, not from a constant.
+    srmTargetDelta: {
+      configurable: true,
+      get() {
+        const field = this.srmTargetField;
+        const value = (base) =>
+          field?.unitId ? displayValue(artifact, "beer_color", field.unitId, base, nl) : base;
+        const scale = value(1) - value(0);
+        return (deviation) => deviation * scale;
       },
     },
     ibuTargetOutside: {
@@ -264,6 +321,7 @@ export function refreshStyleTargets(app) {
     target: app.activeScaleTarget,
     info: app.styleTargetInfo,
     status: app.boundaryStatuses?.[N.solverBatch] ?? "unknown",
+    gravity: app.styleGravityDisplay,
   });
 }
 
@@ -297,8 +355,11 @@ export const KEYS = [
   "styleIbuBounds",
   "styleSrmSliderBounds",
   "styleIbuSliderBounds",
+  "styleSrmHint",
+  "srmTargetDisplay",
   "srmTargetOutside",
   "srmTargetNote",
+  "srmTargetDelta",
   "ibuTargetOutside",
   "ibuTargetNote",
   "srmTargetField",

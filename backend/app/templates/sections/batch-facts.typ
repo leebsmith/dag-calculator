@@ -104,7 +104,7 @@
       *RDF%:* #formatted-text("solver.batch.real_attenuation"),
       *ABV%:* #formatted-text("batch.realized_abv"),
       *IBU:* #formatted-text("batch.target_ibu"),
-      *SRM:* #formatted-text("grist.finished_beer_srm")
+      *Color:* #formatted-text("grist.finished_beer_srm")
     ]
   })
 

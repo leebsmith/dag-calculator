@@ -462,8 +462,8 @@ _29 paths_
 | `style.comments` | Comments | identity | — | — | — | — |
 | `style.commercial_examples` | Commercial Examples | identity | — | — | — | — |
 | `style.entry_instructions` | Entry Instructions | identity | — | — | — | — |
-| `style.fg_max` | FG max | identity | gravity | SG | 3 | — |
-| `style.fg_min` | FG min | identity | gravity | SG | 3 | — |
+| `style.fg_max` | FG max | identity | gravity | Plato (°P) | 1 | — |
+| `style.fg_min` | FG min | identity | gravity | Plato (°P) | 1 | — |
 | `style.flavor` | Flavor | identity | — | — | — | — |
 | `style.forked_from_id` | Forked From ID | identity | — | — | — | — |
 | `style.forked_from_name` | Forked From Name | identity | — | — | — | — |
@@ -473,11 +473,11 @@ _29 paths_
 | `style.id` | ID | identity | — | — | — | — |
 | `style.mouthfeel` | Mouthfeel | identity | — | — | — | — |
 | `style.name` | Name | identity | — | — | — | — |
-| `style.og_max` | OG max | identity | gravity | SG | 3 | — |
-| `style.og_min` | OG min | identity | gravity | SG | 3 | — |
+| `style.og_max` | OG max | identity | gravity | Plato (°P) | 1 | — |
+| `style.og_min` | OG min | identity | gravity | Plato (°P) | 1 | — |
 | `style.overall_impression` | Overall Impression | identity | — | — | — | — |
-| `style.srm_max` | SRM max | identity | beer_color | EBC | 1 | — |
-| `style.srm_min` | SRM min | identity | beer_color | EBC | 1 | — |
+| `style.srm_max` | Color max | identity | beer_color | EBC | 1 | — |
+| `style.srm_min` | Color min | identity | beer_color | EBC | 1 | — |
 | `style.style_comparison` | Style Comparison | identity | — | — | — | — |
 | `style.tags` | Tags | identity | — | — | — | — |
 | `style.type` | Type | identity | — | — | — | beer, mead, cider |

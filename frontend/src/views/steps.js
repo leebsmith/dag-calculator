@@ -24,7 +24,7 @@ export const steps = [
     id: "style",
     slice: "style",
     title: "Style",
-    subtitle: "Sealed at batch creation; edit this batch's target envelope",
+    subtitle: "Sealed at batch creation; tune the fermentation target and color/bitterness here",
     partial: "./src/partials/step-style.html",
     fields: [
       "batch.fermentation",

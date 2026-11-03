@@ -2,8 +2,10 @@
 // batch's style is its identity — a snapshot copied at creation — so this card
 // reads the declaration; it never selects or writes one.
 
+import { gravityDisplay } from "../../../views/producer/gravityDisplay.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
-import { fieldOr, formatGravity, formatGravityRange, provenanceFor } from "../../../utils.js";
+import { masterUnit } from "../../../views/registry/units.js";
+import { fieldOr, formatWithDecimals, isFiniteNumber, provenanceFor } from "../../../utils.js";
 
 // Envelope inputs, in display order, with their authored step size.
 const ENVELOPE_INPUTS = [
@@ -25,15 +27,23 @@ export function registerStyleDeclaration(app, ctx) {
   Object.assign(app, {
     selectedStyleId: "",
 
-    styleGravity(s, field) {
-      return formatGravity(s?.[field]);
-    },
-
-    styleVitals(s) {
-      return `${formatGravityRange(s?.og_min, s?.og_max)} / ${formatGravityRange(
-        s?.fg_min,
-        s?.fg_max
-      )}`;
+    // The declared OG/FG band in the gravity display unit. This is a card-level
+    // figure: it follows the menu's dimension pick, not a per-field override on
+    // an envelope row (the plot and the conformance rows do the same).
+    styleVitals() {
+      const bounds = [
+        N.envelope.ogMin,
+        N.envelope.ogMax,
+        N.envelope.fgMin,
+        N.envelope.fgMax,
+      ].map((id) => fieldOr(this.fieldsById, id).value);
+      if (!bounds.every(isFiniteNumber)) return "— / —";
+      const gravity = gravityDisplay(masterUnit(this.unitMode, "gravity") ?? "Plato");
+      const show = (sg) => formatWithDecimals(gravity.fromSg(sg), gravity.decimals);
+      const unit = gravity.symbol;
+      return `${show(bounds[0])}–${show(bounds[1])} ${unit} / ${show(bounds[2])}–${show(
+        bounds[3]
+      )} ${unit}`;
     },
   });
 
@@ -77,7 +87,6 @@ export function refreshStyleDeclaration(app, ctx) {
 export const KEYS = [
   "selectedStyleId",
   "selectedStyle",
-  "styleGravity",
   "styleVitals",
   "fermentationField",
   "fermentationProvenance",

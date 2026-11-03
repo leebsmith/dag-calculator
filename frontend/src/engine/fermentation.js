@@ -472,12 +472,12 @@ export function limitHeadroom(envelope, oe, ae) {
   const { og, fg, abv } = targetFromExtract(oe, ae);
   const { ogMin, ogMax, fgMin, fgMax, abvMin, abvMax } = envelope;
   const rows = [
-    { label: "OG min", headroom: og - ogMin, range: ogMax - ogMin, unit: "SG" },
-    { label: "OG max", headroom: ogMax - og, range: ogMax - ogMin, unit: "SG" },
-    { label: "FG min", headroom: fg - fgMin, range: fgMax - fgMin, unit: "SG" },
-    { label: "FG max", headroom: fgMax - fg, range: fgMax - fgMin, unit: "SG" },
-    { label: "ABV min", headroom: abv - abvMin, range: abvMax - abvMin, unit: "%" },
-    { label: "ABV max", headroom: abvMax - abv, range: abvMax - abvMin, unit: "%" },
+    { label: "OG min", headroom: og - ogMin, range: ogMax - ogMin, unit: "SG", value: og, boundary: ogMin },
+    { label: "OG max", headroom: ogMax - og, range: ogMax - ogMin, unit: "SG", value: og, boundary: ogMax },
+    { label: "FG min", headroom: fg - fgMin, range: fgMax - fgMin, unit: "SG", value: fg, boundary: fgMin },
+    { label: "FG max", headroom: fgMax - fg, range: fgMax - fgMin, unit: "SG", value: fg, boundary: fgMax },
+    { label: "ABV min", headroom: abv - abvMin, range: abvMax - abvMin, unit: "%", value: abv, boundary: abvMin },
+    { label: "ABV max", headroom: abvMax - abv, range: abvMax - abvMin, unit: "%", value: abv, boundary: abvMax },
   ].filter((row) => row.range > 0);
   if (rows.length === 0) return null;
   rows.sort((a, b) => a.headroom / a.range - b.headroom / b.range);

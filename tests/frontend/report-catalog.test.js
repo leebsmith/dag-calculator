@@ -94,8 +94,11 @@ test("registry labels and display units win over fallbacks", () => {
   assert.equal(catalog.nodes["solver.water.mash_additions.gypsum_kg"].unit, "g");
   assert.equal(catalog.nodes["solver.water.mash_additions.gypsum_kg"].dimension, "mass");
 
-  assert.equal(catalog.nodes["style.og_min"].unit, "SG");
-  assert.equal(catalog.nodes["style.og_min"].decimals, 3);
+  // The style envelope is not pinned to the guide's units: it follows the
+  // gravity mode like every other gravity readout.
+  assert.equal(catalog.nodes["style.og_min"].unit, "Plato");
+  assert.equal(catalog.nodes["style.og_min"].decimals, 1);
+  assert.equal(catalog.nodes["style.srm_min"].label, "Color min");
 
   for (const [path, spec] of Object.entries(registry)) {
     if (typeof spec.label !== "string" || !catalog.nodes[path]) continue;
@@ -135,6 +138,13 @@ test("display units follow the mode: a registry unit is not a pin", () => {
   assert.equal(us.nodes["solver.water.mash_additions.gypsum_kg"].unit, "g");
   assert.equal(us.nodes["grist.trace_malts.mass_kg"].unit, "oz");
   assert.equal(us.nodes["equipment.min_lgr_l_per_kg"].unit, "qt_per_lb");
+
+  // The style envelope follows the gravity and colour modes too.
+  const style = buildReportCatalog(artifact, { gravity: "SG", beer_color: "SRM" });
+  assert.equal(style.nodes["style.og_min"].unit, "SG");
+  assert.equal(style.nodes["style.og_min"].symbol, "SG");
+  assert.equal(style.nodes["style.srm_min"].unit, "SRM");
+  assert.equal(style.nodes["style.srm_min"].symbol, "SRM");
 });
 
 test("identity dimensions carry no display unit", () => {

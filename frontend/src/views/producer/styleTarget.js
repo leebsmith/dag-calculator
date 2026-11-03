@@ -14,17 +14,20 @@ import {
   sgToPlato,
 } from "../../engine/fermentation.js";
 import { statusFor } from "../../engine/styleConformance.js";
-import { formatGravity, formatWithDecimals, isFiniteNumber } from "../../utils.js";
+import { formatWithDecimals, isFiniteNumber } from "../../utils.js";
+import { gravityDisplay } from "./gravityDisplay.js";
 
-// The pin's own unit: ABV is free percent, OG/FG are specific gravity.
+// The pin's own unit: ABV is free percent, OG/FG are the gravity display unit.
 export const SCALE_PINS = [
   { value: "abv", label: "ABV" },
   { value: "og", label: "OG" },
   { value: "fg", label: "FG" },
 ];
 
-export function scaleTargetLabel(pin, value) {
-  return pin === "abv" ? `${formatWithDecimals(value, 1)}%` : formatGravity(value);
+export function scaleTargetLabel(pin, value, gravity = gravityDisplay("SG")) {
+  return pin === "abv"
+    ? `${formatWithDecimals(value, 1)}%`
+    : `${formatWithDecimals(gravity.fromSg(value), gravity.decimals)} ${gravity.symbol}`;
 }
 
 // The style sliders may move two just-noticeable differences beyond the envelope:
@@ -40,19 +43,21 @@ export function allowanceBounds(bounds, tau) {
   return [Math.max(0, low - ALLOWANCE_JND * tau), high + ALLOWANCE_JND * tau];
 }
 
-export function targetDrift(value, bounds, tau, { unit, decimals } = {}) {
+export function targetDrift(value, bounds, tau, { unit, decimals, toDisplay } = {}) {
   if (!Array.isArray(bounds) || !isFiniteNumber(value)) return { outside: false, text: "" };
   const drift = statusFor(value, bounds[0], bounds[1], tau);
   if (drift.status === "within") return { outside: false, text: "" };
   const direction = value < bounds[0] ? "below" : "above";
+  const shown = typeof toDisplay === "function" ? toDisplay(drift.deviation) : drift.deviation;
   return {
     outside: true,
-    text: `${formatWithDecimals(drift.deviation, decimals)} ${unit} ${direction} style — ${drift.status}`,
+    text: `${formatWithDecimals(shown, decimals)} ${unit} ${direction} style — ${drift.status}`,
   };
 }
 
 // Reactive mirrors of the active pin, its target root, and the target itself.
-export function scalePinState({ pin, root, value } = {}) {
+// `gravity` is the display context; the stored target stays SG.
+export function scalePinState({ pin, root, value, gravity = gravityDisplay("SG") } = {}) {
   const label = SCALE_PINS.find((entry) => entry.value === pin)?.label ?? "ABV";
   const known = isFiniteNumber(value);
   return {
@@ -61,12 +66,12 @@ export function scalePinState({ pin, root, value } = {}) {
     activeScaleTargetRoot: root,
     activeScaleTarget: known ? value : null,
     activeScaleTargetLabel: `Target ${label}`,
-    activeScaleTargetUnit: pin === "abv" ? "%" : "SG",
-    activeScaleTargetStep: pin === "abv" ? "0.1" : "0.001",
+    activeScaleTargetUnit: pin === "abv" ? "%" : gravity.symbol,
+    activeScaleTargetStep: pin === "abv" ? "0.1" : gravity.step,
     activeScaleTargetDisplay: known
       ? pin === "abv"
         ? formatWithDecimals(value, 1)
-        : formatGravity(value)
+        : formatWithDecimals(gravity.fromSg(value), gravity.decimals)
       : "",
   };
 }
@@ -114,13 +119,19 @@ export function styleExtractPoint({ region, solvedOg, solvedAa, fallbackAa, targ
 }
 
 // A pinned target the solve missed by more than the pin's display tolerance.
-export function scaleTargetMismatch({ pin, target, info, status = "unknown" } = {}) {
+export function scaleTargetMismatch({
+  pin,
+  target,
+  info,
+  status = "unknown",
+  gravity = gravityDisplay("SG"),
+} = {}) {
   if (target == null || !info) return "";
   const realized = pin === "abv" ? info.abv : pin === "og" ? info.og : info.fg;
   const tolerance = pin === "abv" ? 0.15 : 0.002;
   if (!Number.isFinite(realized) || Math.abs(realized - target) <= tolerance) return "";
   return (
-    `Target ${scaleTargetLabel(pin, target)} vs realized ` +
-    `${scaleTargetLabel(pin, realized)} — solve ${status}.`
+    `Target ${scaleTargetLabel(pin, target, gravity)} vs realized ` +
+    `${scaleTargetLabel(pin, realized, gravity)} — solve ${status}.`
   );
 }

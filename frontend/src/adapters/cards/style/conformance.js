@@ -3,12 +3,39 @@
 // producer runs, so downstream field models read the same verdicts).
 
 import { styleConformance } from "../../../engine/styleConformance.js";
+import { displayValue, nonlinearFns } from "../../../views/producer.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
-import { formatGravity, formatWithDecimals } from "../../../utils.js";
+import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../../views/registry/units.js";
+import { formatWithDecimals, unitSymbol } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
 
+const STATUS_LABELS = { within: "Within", grace: "Grace", drift: "Drift", severe: "Severe" };
+
+// The rows' labels and formatters. Conformance rows are not fields, so they
+// follow the menu's dimension pick; the scored value stays in its native unit and
+// only the printed number and symbol change.
+function conformanceMeta(artifact, unitMode, nl) {
+  const quantity = (dimension, value) => {
+    const unitId = masterUnit(unitMode, dimension);
+    const decimals = unitDecimals(dimension, unitId) ?? 1;
+    const symbol = unitSymbol(UNIT_SYMBOLS, dimension, unitId);
+    const shown = displayValue(artifact, dimension, unitId, value, nl);
+    return `${formatWithDecimals(shown, decimals)} ${symbol}`;
+  };
+  return {
+    og: { label: "Original gravity", format: (v) => quantity("gravity", v) },
+    fg: { label: "Final gravity", format: (v) => quantity("gravity", v) },
+    abv: { label: "ABV", format: (v) => `${formatWithDecimals(v, 1)}%` },
+    ibu: { label: "IBU", format: (v) => `${formatWithDecimals(v, 0)} IBU` },
+    srm: { label: "Color", format: (v) => quantity("beer_color", v) },
+    aa: { label: "Attenuation", format: (v) => `${formatWithDecimals(v, 1)}%` },
+    bugu: { label: "BU:GU", format: (v) => formatWithDecimals(v, 2) },
+  };
+}
+
 export function registerStyleConformance(app, ctx) {
-  const { engine } = ctx;
+  const { engine, artifact } = ctx;
+  const nl = nonlinearFns(artifact, engine);
 
   Object.assign(app, {
     styleConformance: null,
@@ -55,23 +82,14 @@ export function registerStyleConformance(app, ctx) {
       get() {
         const c = this.styleConformance;
         if (!c || !c.hasBaseline) return null;
-        const meta = {
-          og: { label: "Original gravity", fmt: formatGravity, unit: " SG" },
-          fg: { label: "Final gravity", fmt: formatGravity, unit: " SG" },
-          abv: { label: "ABV", fmt: (v) => formatWithDecimals(v, 1), unit: "%" },
-          ibu: { label: "IBU", fmt: (v) => formatWithDecimals(v, 0), unit: " IBU" },
-          srm: { label: "SRM", fmt: (v) => formatWithDecimals(v, 0), unit: " SRM" },
-          aa: { label: "Attenuation", fmt: (v) => formatWithDecimals(v, 1), unit: "%" },
-          bugu: { label: "BU:GU", fmt: (v) => formatWithDecimals(v, 2), unit: "" },
-        };
-        const statusLabel = { within: "Within", grace: "Grace", drift: "Drift", severe: "Severe" };
+        const meta = conformanceMeta(artifact, this.unitMode, nl);
         const dimensions = Object.entries(c.dimensions)
           .filter(([, d]) => d)
           .map(([id, d]) => ({
             id,
             label: meta[id].label,
-            value: meta[id].fmt(d.value) + meta[id].unit,
-            status: statusLabel[d.status],
+            value: meta[id].format(d.value),
+            status: STATUS_LABELS[d.status],
             z: d.z,
           }));
         return { sai: c.sai, dimensions };

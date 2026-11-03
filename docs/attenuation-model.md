@@ -378,11 +378,17 @@ active target:
   the artifact defaults. The user's value is authoritative; a solve never
   rewrites it. “Reset to style” unsets the active target root, so the identity
   default re-evaluates.
-- **Graph.** The marker is the solved batch point for every pin. The fixed-AA
-  ray is drawn only when ABV is the pin; it is a visualization of the current
-  realization, not a constraint. The window is the union of the style region and
-  the batch point, so a batch outside the style still shows its dot; the pin
-  label is clamped inside the frame.
+- **Graph.** The marker is the solved batch point for every pin, and the
+  composition locus is always drawn; the pinned target adds the vertical (OG),
+  horizontal (FG) or iso-ABV contour. None of them is a constraint. The plotted
+  plane follows the gravity unit control: the axes are linear in the display
+  unit (Plato or SG), while the region, contours and locus are still sampled in
+  °P and converted once for drawing — the same geometry, not a second solver.
+  The window is the union of the style region and the batch point, so a batch
+  outside the style still shows its dot. The iso-ABV contours are labelled, the
+  style's `abvMin`/`abvMax` limits are drawn as emphasised paths, and the pin
+  label takes the contour sample farthest from the marker (clamped inside the
+  frame) so the dot never lands inside its text.
 - **Read-only display.** The Batch step shows the active target as a readout;
   the Style step is the editor for the pin and target. The Sugars section of the
   Fermentables card previews the three pins but never edits them.

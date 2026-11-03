@@ -8,6 +8,7 @@ import {
   styleExtractPoint,
   styleRegionState,
 } from "../../frontend/src/views/producer/styleTarget.js";
+import { gravityDisplay } from "../../frontend/src/views/producer/gravityDisplay.js";
 
 const ENVELOPE = {
   ogMin: 1.056,
@@ -36,6 +37,16 @@ test("styleTarget: the pin mirrors follow the pin's unit", () => {
   assert.equal(og.activeScaleTargetUnit, "SG");
   assert.equal(og.activeScaleTargetStep, "0.001");
   assert.equal(og.activeScaleTargetDisplay, "1.062");
+
+  const plato = scalePinState({
+    pin: "og",
+    root: "batch.target_og",
+    value: 1.0616,
+    gravity: gravityDisplay("Plato"),
+  });
+  assert.equal(plato.activeScaleTargetUnit, "°P");
+  assert.equal(plato.activeScaleTargetStep, "0.1");
+  assert.equal(plato.activeScaleTargetDisplay, "15.1");
 });
 
 test("styleTarget: an unset target reads as empty, and the root passes through", () => {
@@ -104,7 +115,17 @@ test("styleTarget: the mismatch line speaks the pin's unit", () => {
   );
   assert.equal(
     scaleTargetMismatch({ pin: "og", target: 1.067, info, status: "stale" }),
-    "Target 1.067 vs realized 1.062 — solve stale."
+    "Target 1.067 SG vs realized 1.062 SG — solve stale."
+  );
+  assert.equal(
+    scaleTargetMismatch({
+      pin: "og",
+      target: 1.067,
+      info,
+      status: "stale",
+      gravity: gravityDisplay("Plato"),
+    }),
+    "Target 16.4 °P vs realized 15.2 °P — solve stale."
   );
   assert.equal(scaleTargetMismatch({ pin: "og", target: 1.0625, info }), "");
   assert.equal(scaleTargetMismatch({ pin: "abv", target: 6.0, info: null }), "");

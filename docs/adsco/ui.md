@@ -186,6 +186,29 @@ instead of printing `+0.0`. The report prints it as **Above malt cap**; the
 node is deliberately neutral about the cause, which can be sugar extract or
 dextrin consumption by a diastaticus strain.
 
+### Yeast strain and attenuation cap
+
+The Yeast card is one row, not a summary panel plus a permanently open chooser.
+The row carries the strain (with its STA1 marker), manufacturer, published
+attenuation point, the solved cap, the editable batch derate, flocculation,
+alcohol tolerance and the published temperature band. The cap is `batch.yeast_cap`
+— the published point less the derate — and is blank without a strain.
+
+`batch.attenuation_derate_points` is the one editable cell: points off the
+strain's published maximum, committed on change, never guessed from the mash or
+the grist. The vendor percentages (attenuation and its published band) and the
+derate stay in percent and points; only the solved cap follows the percentage
+unit menu. The row's "Why derate?" disclosure carries the guidance. A second
+disclosure holds the strain detail that does not earn a column: the published
+band (when the vendor publishes one), form, recipes, source, and notes.
+
+The picker is a modal, opened from the row. It owns the catalog: name search
+(with the notes toggle), manufacturer, attenuation tiers and the tri-state STA1
+tiers. Filters reset when it opens, so a narrowing from the last visit cannot
+hide the catalog; the list shows 50 rows and the counter reports the truncation.
+`Use` writes `batch.yeast_id`, snapshots the selection and closes the modal;
+`Copy` keeps a personal item. Clearing the selection empties the row and the cap.
+
 ### Late-addition intent
 
 Late additions are authored either as a **dose** (mass) or as a **share** of
@@ -215,25 +238,41 @@ not implicit rewrites.
 
 ### Fermentation space (Style card)
 
-The Style card plots the batch in the extract plane: `x = OE` (°P), `y = AE`
-(°P). The plot is square, with independent axis scales — the style window is
-about 8 °P by 2 °P, so the square is a 4× vertical stretch. That distortion is
-accepted because the iso-ABV contours fill the area with the third variable.
+The Style card plots the batch in the extract plane: `x = OE`, `y = AE`. The
+plotted plane follows the gravity unit control: with **Plato** selected the axes
+are the extract plane (linear in °P); with **SG** selected they are the gravity
+plane (linear in SG). The geometry is always computed in °P and projected once,
+so the two views are the same region, contours and locus — a projection, not a
+second solver. The plot is square, with independent axis scales — the style
+window is about 8 °P by 2 °P, so the square is a 4× vertical stretch in Plato
+mode (about 2:1 in SG mode). That distortion is accepted because the iso-ABV
+contours fill the area with the third variable.
 
 | Element | Meaning | Moves when the pin changes? |
 | --- | --- | --- |
 | Style region | OG band ∧ FG band ∧ ABV band (a lens, not a rectangle) | no |
-| Iso-ABV contours, every 1 % | `AE = f(OE, ABV)` | no |
+| Iso-ABV contours, every 1 % | `AE = f(OE, ABV)`, labelled with their ABV | no |
+| ABV band edges | the style's `abvMin`/`abvMax` contours, drawn emphasised | no |
 | Composition locus | this batch's shape: one real extract, swept over OE | no |
 | Pinned locus | vertical (OG), horizontal (FG), contour (ABV) | which one is drawn |
 | Solved dot | the realized batch | **yes — along the locus** |
 | Safest point | Chebyshev centre of the region | no |
 
-Reading grammar: **OG is the vertical projection, FG the horizontal projection,
+Reading grammar: **OG is the horizontal projection, FG the vertical projection,
 ABV is which contour the dot sits on.** ABV is never read by projection, because
 it is a scalar field over the plane rather than an axis. Both axes tick five
-times and label in °P; SG and the exact ABV stay in the readout row below, which
-remains the source of truth.
+times in the gravity display unit; the exact ABV stays in the readout row below,
+which remains the source of truth. The target input, the pin labels, the
+readout row and the conformance gravity rows use the same unit.
+
+The region's two diagonal cuts are the ABV band edges; the emphasised paths and
+their labels say so, and the integer contours are labelled where they cross the
+plane. The ABV pin label takes the contour sample farthest from the batch
+marker, so the dot never sits inside the text.
+
+Card-level figures (the plot, the vitals range, the target input, the
+conformance rows) follow the menu's dimension pick. A per-field unit override
+stays on its envelope row and does not move them.
 
 The plotted batch is the **solved** one, so the dot's projections are realized
 gravity, not the stored targets; the dormant targets are not drawn. Cycling the

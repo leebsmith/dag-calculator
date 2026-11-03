@@ -6,7 +6,8 @@ import {
   cutaiaAbv,
   feasibleVertices,
 } from "../../frontend/src/engine/fermentation.js";
-import { stylePlotModel } from "../../frontend/src/views/producer/stylePlot.js";
+import { gravityDisplay } from "../../frontend/src/views/producer/gravityDisplay.js";
+import { stylePlaceholderModel, stylePlotModel } from "../../frontend/src/views/producer/stylePlot.js";
 
 const ENVELOPE = {
   ogMin: 1.056,
@@ -37,6 +38,7 @@ test("the plot model projects the region, the point, and every tick", () => {
   assert.equal(model.width, 376);
   assert.equal(model.height, 366);
   assert.deepEqual(model.plot, { x: 44, y: 12, w: 320, h: 320 });
+  assert.deepEqual(model.center, { x: "204.0", y: "172.0" });
   assert.equal(model.polygon.split(" ").length, input.region.length);
 
   for (const axis of ["x", "y"]) {
@@ -60,7 +62,7 @@ test("the plot model projects the region, the point, and every tick", () => {
     assert.ok(y >= model.plot.y && y <= model.plot.y + model.plot.h);
   }
 
-  assert.match(model.summary, /^Fermentation space: OG 1\.\d{3}, FG 1\.\d{3}, ABV \d+\.\d%/);
+  assert.match(model.summary, /^Fermentation space: OG [\d.]+ °P, FG [\d.]+ °P, ABV \d+\.\d%/);
   assert.match(model.summary, /Contours are iso-ABV every 1%/);
   assert.ok(model.contours.startsWith("M"));
   assert.ok(model.locus.startsWith("M"));
@@ -102,13 +104,61 @@ test("the ABV pin draws an iso-ABV contour with its own label", () => {
 test("the OG pin draws a vertical line and the FG pin a horizontal one", () => {
   const og = stylePlotModel(fixture({ pin: "og", target: 1.06 }));
   assert.match(og.pinPath, /^M[\d.]+ 12 L[\d.]+ 332$/);
-  assert.equal(og.pinLabel, "OG 1.060");
+  assert.equal(og.pinLabel, "OG 14.7 °P");
   assert.equal(og.pinLabelAnchor, "start");
 
   const fg = stylePlotModel(fixture({ pin: "fg", target: 1.014 }));
   assert.match(fg.pinPath, /^M44 [\d.]+ L364 [\d.]+$/);
-  assert.equal(fg.pinLabel, "FG 1.014");
+  assert.equal(fg.pinLabel, "FG 3.6 °P");
   assert.equal(fg.pinLabelAnchor, "end");
+});
+
+test("contours carry labels and the style's ABV limits get their own paths", () => {
+  const input = { ...fixture(), band: { min: 5.5, max: 7.5 } };
+  const model = stylePlotModel(input);
+
+  assert.ok(model.contourLabels.length >= 3, "one label per integer contour");
+  for (const label of model.contourLabels) {
+    assert.match(label.text, /^\d+(\.\d)?%$/);
+    assert.match(label.style, /^left:[\d.]+%;top:[\d.]+%$/);
+    const x = Number(label.x);
+    const y = Number(label.y);
+    assert.ok(x >= model.plot.x && x <= model.plot.x + model.plot.w, `${label.text} x`);
+    assert.ok(y >= model.plot.y && y <= model.plot.y + model.plot.h, `${label.text} y`);
+  }
+  const texts = model.contourLabels.map((label) => label.text);
+  assert.ok(texts.includes("5.5%"), "a non-integer band edge is labelled");
+  assert.ok(model.bandPath.startsWith("M"), "the band edges are drawn");
+
+  const plain = stylePlotModel(fixture());
+  assert.equal(plain.bandPath, "");
+});
+
+test("the ABV pin label keeps its distance from the marker", () => {
+  const model = stylePlotModel(fixture({ pin: "abv", target: 6.5 }));
+  const distance = Math.hypot(
+    Number(model.pinLabelX) - Number(model.marker.x),
+    Number(model.pinLabelY) - Number(model.marker.y)
+  );
+  assert.ok(distance > 40, `label sits ${distance.toFixed(1)} px from the marker`);
+});
+
+test("the plotted plane follows the gravity unit", () => {
+  const input = fixture({ pin: "og", target: 1.06 });
+  const plato = stylePlotModel(input);
+  const sg = stylePlotModel({ ...input, gravity: gravityDisplay("SG") });
+
+  assert.equal(plato.axes.x.label, "OE (°P)");
+  assert.equal(sg.axes.x.label, "OE (SG)");
+  assert.equal(plato.pinLabel, "OG 14.7 °P");
+  assert.equal(sg.pinLabel, "OG 1.060 SG");
+  assert.match(plato.ticks.x[0].label, /^\d+\.\d$/);
+  assert.match(sg.ticks.x[0].label, /^1\.\d{3}$/);
+  assert.match(sg.summary, /^Fermentation space: OG 1\.\d{3} SG/);
+
+  // Same physical point, different projection.
+  assert.notEqual(plato.marker.x, sg.marker.x);
+  assert.notEqual(plato.marker.y, sg.marker.y);
 });
 
 test("a batch point outside the style region still lands inside the frame", () => {
@@ -173,4 +223,18 @@ test("a degenerate region or a missing point draws nothing", () => {
   assert.equal(stylePlotModel({ ...input, region: null }), null);
   assert.equal(stylePlotModel({ ...input, point: null }), null);
   assert.equal(stylePlotModel({ ...input, safestPoint: null }), null);
+});
+
+test("the placeholder model carries only the centred message", () => {
+  const model = stylePlaceholderModel();
+
+  assert.equal(model.width, 376);
+  assert.equal(model.height, 366);
+  assert.equal(model.viewBox, "0 0 376 366");
+  assert.deepEqual(model.center, { x: "204.0", y: "172.0" });
+  assert.equal(model.placeholder, "Blocked/Unsolved");
+  assert.equal(model.summary, "Fermentation space: blocked/unsolved.");
+  for (const key of ["plot", "axes", "ticks", "polygon", "contours", "locus", "marker"]) {
+    assert.equal(model[key], undefined, `placeholder draws no ${key}`);
+  }
 });

@@ -74,6 +74,7 @@ test("the active target edits and resets to the identity default", async () => {
   const app = await appWithSugar();
   app.setScalePin("og");
   app.compute();
+  app.setUnit("gravity", "SG");
   app.setScaleTarget("1.060");
   app.compute();
   assert.equal(app.engine.get("batch.target_og"), 1.06);
@@ -82,13 +83,25 @@ test("the active target edits and resets to the identity default", async () => {
   assert.equal(app.engine.get("batch.target_og"), 1.05);
 });
 
+test("the target input speaks the gravity display unit", async () => {
+  const app = await appWithSugar();
+  app.setScalePin("og");
+  app.compute();
+
+  assert.equal(app.activeScaleTargetUnit, "°P");
+  app.setScaleTarget("14.7");
+  app.compute();
+  assert.ok(Math.abs(app.engine.get("batch.target_og") - 1.06) < 0.001);
+});
+
 test("switching the pin updates the label and target without waiting for a solve", async () => {
   const app = await appWithSugar();
 
   app.setScalePin("fg");
   assert.equal(app.scalePin, "fg");
   assert.equal(app.activeScaleTargetLabel, "Target FG");
-  assert.equal(app.activeScaleTargetDisplay, "1.012");
+  assert.equal(app.activeScaleTargetUnit, "°P");
+  assert.equal(app.activeScaleTargetDisplay, "3.1");
 
   app.setScalePin("abv");
   assert.equal(app.scalePin, "abv");

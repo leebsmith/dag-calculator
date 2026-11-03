@@ -70,6 +70,16 @@ export function unitDecimals(dimensionId, unitId) {
   return unit?.[2] ?? dim?.decimals ?? DIMENSION_DECIMALS[dimensionId] ?? null;
 }
 
+// The menu's dimension pick, ignoring per-field overrides and registry pins.
+// Readouts that are not fields (the conformance rows, the plot axes) follow the
+// master choice, so one control governs the whole card.
+export function masterUnit(unitMode, dimensionId) {
+  const dim = UNIT_DIMENSIONS.find((d) => d.id === dimensionId);
+  const picked = unitMode?.[dimensionId];
+  if (typeof picked === "string" && dim?.units.some(([id]) => id === picked)) return picked;
+  return dim?.default ?? dim?.units?.[0]?.[0] ?? null;
+}
+
 // UNIT_DIMENSIONS grouped for the master menu's columns, preserving order.
 export const UNIT_GROUPS = (() => {
   const groups = new Map();

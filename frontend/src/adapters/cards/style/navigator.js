@@ -12,9 +12,11 @@ import {
   targetFromExtract,
 } from "../../../engine/fermentation.js";
 import { attenuationCapSummary } from "../../../views/producer/attenuationCap.js";
-import { stylePlotModel } from "../../../views/producer/stylePlot.js";
+import { gravityDisplay } from "../../../views/producer/gravityDisplay.js";
+import { stylePlaceholderModel, stylePlotModel } from "../../../views/producer/stylePlot.js";
 import { styleExtractPoint, styleRegionState } from "../../../views/producer/styleTarget.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
+import { masterUnit } from "../../../views/registry/units.js";
 import { formatWithDecimals, roundTo } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
 
@@ -38,6 +40,9 @@ function stylePreviewFor(app) {
     app.styleSafestPoint,
     app.scalePin,
     app.activeScaleTarget,
+    app.styleUnsolved,
+    app.styleGravityDisplay,
+    app.styleEnvelope,
   ];
   if (
     stylePreviewCache &&
@@ -45,8 +50,11 @@ function stylePreviewFor(app) {
   ) {
     return stylePreviewCache.model;
   }
-  const [region, point, safestPoint, pin, target] = inputs;
-  const model = stylePlotModel({ region, point, safestPoint, pin, target });
+  const [region, point, safestPoint, pin, target, unsolved, gravity, envelope] = inputs;
+  const band = envelope ? { min: envelope.abvMin, max: envelope.abvMax } : null;
+  const model =
+    stylePlotModel({ region, point, safestPoint, pin, target, gravity, band }) ??
+    (unsolved && envelope ? stylePlaceholderModel() : null);
   stylePreviewCache = { inputs, model };
   return model;
 }
@@ -84,8 +92,10 @@ export function registerStyleNavigator(app, ctx) {
         })
       );
       // A short region touches no boundary: the solved reads stay behind it.
+      // Below an unrealized solve there is no batch point to place — the
+      // envelope centroid would be a number no solve produced.
       this.styleExtract =
-        this.styleRegion.length < 3
+        this.styleRegion.length < 3 || this.styleUnsolved
           ? null
           : styleExtractPoint({
               region: this.styleRegion,
@@ -157,6 +167,15 @@ export function registerStyleNavigator(app, ctx) {
     styleTargetNearest() {
       const nearest = this.styleTargetRisk?.nearest;
       if (!nearest) return "—";
+      // The headroom is a delta in the limit's native unit. A gravity delta is
+      // only linear in SG, so convert the two endpoints and difference them in
+      // the display unit rather than scaling the delta itself.
+      if (nearest.unit === "SG") {
+        const gravity = this.styleGravityDisplay;
+        const headroom =
+          gravity.fromSg(nearest.value) - gravity.fromSg(nearest.boundary);
+        return `${nearest.label} (${formatWithDecimals(headroom, gravity.decimals)} ${gravity.symbol})`;
+      }
       const headroom = formatWithDecimals(nearest.headroom, 3);
       return `${nearest.label} (${headroom} ${nearest.unit})`;
     },
@@ -178,6 +197,26 @@ export function registerStyleNavigator(app, ctx) {
         const target = engine.get(N.targetAbv);
         if (Number.isFinite(target)) return target;
         return this.styleTargetInfo?.abv ?? null;
+      },
+    },
+    // The master gravity pick governs the plot and every gravity readout on the
+    // card. Per-field overrides stay per-field; a card-level figure is not a
+    // field, so it follows the menu.
+    styleGravityDisplay: {
+      configurable: true,
+      get() {
+        return gravityDisplay(masterUnit(this.unitMode, "gravity") ?? "Plato");
+      },
+    },
+    styleGravityReadouts: {
+      configurable: true,
+      get() {
+        const info = this.styleTargetInfo;
+        if (!info) return { og: "—", fg: "—" };
+        const gravity = this.styleGravityDisplay;
+        const format = (value) =>
+          `${formatWithDecimals(gravity.fromSg(value), gravity.decimals)} ${gravity.symbol}`;
+        return { og: format(info.og), fg: format(info.fg) };
       },
     },
     styleTargetInfo: {
@@ -202,6 +241,12 @@ export function registerStyleNavigator(app, ctx) {
       configurable: true,
       get() {
         return stylePreviewFor(this);
+      },
+    },
+    styleUnsolved: {
+      configurable: true,
+      get() {
+        return this.boundaryStatuses?.[N.solverBatch] !== "ok";
       },
     },
   });
@@ -254,7 +299,10 @@ export const KEYS = [
   "styleTargetNearest",
   "styleAbvBounds",
   "styleAbvTarget",
+  "styleGravityDisplay",
+  "styleGravityReadouts",
   "styleTargetInfo",
   "styleTargetRisk",
   "stylePreview",
+  "styleUnsolved",
 ];
