@@ -19,3 +19,6 @@ firebase-export-*/
 
 # Local report scratch (downloaded bundles, rendered pages)
 .local/
+
+# Local agent tooling configuration
+.opencode/
