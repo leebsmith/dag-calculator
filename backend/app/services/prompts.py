@@ -23,13 +23,14 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from app.schemas.recipe_import import ExtractionPayload, MatchResponse
+from app.schemas.recipe_import import ExtractionPayload, GapFillPayload, MatchResponse
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 
 RESPONSE_MODELS: dict[str, type[BaseModel]] = {
     "extract": ExtractionPayload,
     "match": MatchResponse,
+    "gapfill": GapFillPayload,
 }
 
 # Keys a Gemini response schema does not accept, or that would bias the model.

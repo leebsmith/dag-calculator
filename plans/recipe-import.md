@@ -411,9 +411,9 @@ converts the model into a flattened Gemini `responseSchema` — no second
 definition of the output shape.
 
 `manifest.json` carries, per prompt id: file, `version`, `model`,
-`temperature`, and the **sha256 of the file text**. It holds **many ids from the
-start** — `extract` and `match` certainly, a page-scoped gap-fill pass perhaps
-(see the hold in §13) — each with its own version, model setting and schema. The
+`temperature`, and the **sha256 of the file text**. Three assets are declared:
+`extract`, `match` and `gapfill`, each with its own version, model setting and
+schema. A fourth is a manifest entry, not a code change. The
 Gemini `responseSchema` is **derived** from pydantic by one adapter and committed
 as a **schema snapshot per prompt**, so a pydantic change that alters the wire
 shape is a reviewable diff at `make test` rather than a surprise at runtime.
@@ -494,8 +494,9 @@ shapes are all downstream of shapes that do not exist yet.
 Exit criteria, all mechanical:
 
 - every prompt id in the manifest has a file, a version, a model and temperature
-  setting, and a committed schema snapshot — `extract` **and** `match`, since the
-  mapping call is settled as an asset here even though its endpoint lands at J.6;
+  setting, and a committed schema snapshot — `extract`, `match` **and** `gapfill`,
+  since the mapping call and the re-read are settled as assets here even though
+  their endpoints land later;
 - `extract` has at least three fixtures — a prose magazine page, a tabular
   brewer's-software style page, and an awkward one (no boil time, no whirlpool
   hops, or a multi-recipe page for the reject path) — each with a written
@@ -508,11 +509,13 @@ Exit criteria, all mechanical:
   because a completeness contract cannot be tested without the document;
 - `make check` and `make test` are green with only the fixture suite added.
 
-Two decisions the hold must settle, since they change the shapes downstream:
-whether a **gap-fill pass** exists — a third prompt, scoped to a page range, that
-re-asks only for the missing required scalars (distinct from the mapping call,
-which never sees the PDF and never invents a value) — and the pinned model id
-with its thinking budget.
+One decision remains for the hold: the pinned model id and its thinking budgets.
+The gap-fill pass is **decided yes** and built as the third asset. It re-reads the
+whole document for the scalars the caller names and may only fill what is absent:
+a second look must not overwrite a stated value, and must not manufacture an
+answer for a gap. Its cost is a full pass, because without a PDF library the page
+range is a hint rather than a payload reduction — so it is a deliberate action,
+never an automatic retry.
 
 A shape change discovered later is not free: it invalidates fixtures, forces a
 version bump, and moves the ledger row shapes. That is the cost the hold exists
@@ -582,7 +585,8 @@ before.
   - captured: `self-report` (this app's own 5-page report, tabular class)
   - still needed: a prose magazine page, a competition or brew-sheet page, and one
     awkward page (no boil time, no whirlpool, or multi-recipe for the reject path)
-- [ ] J.1.9 Decide the gap-fill pass (yes/no) and pin the model id with its thinking budget
+- [x] J.1.9a Decide the gap-fill pass — yes: a third asset, whole document, requested scalars only
+- [ ] J.1.9b Confirm the pinned model id and thinking budgets
 - [ ] **HOLD H.1** — review prompts and schemas before any app work
 
 ### J.2 — records, upload, transcription (after H.1)

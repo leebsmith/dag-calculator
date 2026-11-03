@@ -23,9 +23,13 @@ from pathlib import Path
 from app.schemas.recipe_import import (
     ExtractedRecipe,
     ExtractionPayload,
+    GapFillPayload,
+    GapFillRequest,
     MatchRequest,
     MatchResponse,
     SourceMeta,
+    TargetName,
+    Targets,
 )
 from app.services import gemini
 
@@ -109,6 +113,60 @@ def match_candidates_captured(
     response = MatchResponse.model_validate(gemini.parse_json(gemini.response_text(raw.body)))
     _assert_supplied_ids(request, response)
     return _cap_per_standard(request, response), raw
+
+
+def gap_fill(
+    path: Path,
+    request: GapFillRequest,
+    *,
+    cache: bool = True,
+    refresh: bool = False,
+) -> tuple[Targets, gemini.RawGeneration]:
+    """Re-read one document for the requested scalars, and nothing else.
+
+    The document is sent whole: without a PDF library we cannot slice a page
+    range, so ``page_hint`` narrows the model's attention, not the payload. A
+    gap fill therefore costs another full pass, which is why it is a deliberate
+    action rather than an automatic retry.
+    """
+    body = request.model_dump(mode="json")
+    raw = gemini.generate_raw(
+        "gapfill",
+        [*gemini.text_parts([json.dumps(body, ensure_ascii=False)]), gemini.inline_pdf(path)],
+        cache=cache,
+        refresh=refresh,
+    )
+    payload = GapFillPayload.model_validate(gemini.parse_json(gemini.response_text(raw.body)))
+    return _requested_only(request.missing, payload.targets), raw
+
+
+def _requested_only(missing: list[TargetName], filled: Targets) -> Targets:
+    """Discard anything the re-read offered that the caller did not ask for."""
+    wanted = {name.value for name in missing}
+    keep = {
+        name: getattr(filled, name)
+        for name in Targets.model_fields
+        if name in wanted and getattr(filled, name) is not None
+    }
+    return Targets(**keep)
+
+
+def apply_gap_fill(payload: ExtractionPayload, filled: Targets) -> ExtractionPayload:
+    """Merge a re-read into a transcription, filling only what was absent.
+
+    A gap fill may never overwrite a value the first pass already stated: that
+    would be a silent correction, and the review step is where corrections are
+    made and attributed.
+    """
+    targets = payload.targets
+    updates = {
+        name: getattr(filled, name)
+        for name in Targets.model_fields
+        if getattr(filled, name) is not None and getattr(targets, name) is None
+    }
+    if not updates:
+        return payload
+    return payload.model_copy(update={"targets": targets.model_copy(update=updates)})
 
 
 def _assert_supplied_ids(request: MatchRequest, response: MatchResponse) -> None:

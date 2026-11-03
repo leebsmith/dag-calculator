@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from app.schemas.recipe_import import ExtractionPayload, MatchResponse
+from app.schemas.recipe_import import ExtractionPayload
 from app.services import gemini
 from app.services.prompts import (
     PROMPTS_DIR,
@@ -97,7 +97,7 @@ def test_fixtures_replay_without_a_network(monkeypatch: pytest.MonkeyPatch) -> N
     for case in fixture_cases():
         meta = json.loads((case / "meta.json").read_text(encoding="utf-8"))
         body = json.loads((case / "response.json").read_text(encoding="utf-8"))
-        model = MatchResponse if meta["prompt_id"] == "match" else ExtractionPayload
+        model = response_model(meta["prompt_id"])
         payload = model.model_validate(gemini.parse_json(gemini.response_text(body)))
         assert payload is not None
 

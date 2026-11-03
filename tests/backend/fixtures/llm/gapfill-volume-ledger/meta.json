@@ -1,0 +1,7 @@
+{
+  "prompt_id": "gapfill",
+  "prompt_version": 1,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T19:09:15Z",
+  "note": "Gap fill against the volume-ledger page asking for volume, og and ibu. The page states the fermenter volume and states no gravity or bitterness; the re-read returns one value and null for the other two, which is the rule that matters: a second look must not manufacture a gap's answer."
+}

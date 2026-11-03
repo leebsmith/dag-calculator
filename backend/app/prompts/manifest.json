@@ -16,6 +16,14 @@
       "temperature": 0.0,
       "thinking_budget": 512,
       "sha256": "6cc05999d26be6224921537687a5d1e9568886a2f23bf2bccf77b40934544bef"
+    },
+    "gapfill": {
+      "file": "gapfill.md",
+      "version": 1,
+      "model": "gemini-3.8-flash",
+      "temperature": 0.0,
+      "thinking_budget": 256,
+      "sha256": "67f6d162c7d8dbd03a34fcabe92244ddc2c18d0a5c89efded35b66fed7698af6"
     }
   }
 }

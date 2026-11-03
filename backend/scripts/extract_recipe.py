@@ -23,8 +23,11 @@ from pathlib import Path
 from app.schemas.recipe_import import (
     ExtractedRecipe,
     ExtractionPayload,
+    GapFillPayload,
+    GapFillRequest,
     MatchRequest,
     MatchResponse,
+    TargetName,
 )
 from app.services import gemini, recipe_import
 from app.services.prompts import gemini_schema, prompt_ids
@@ -32,13 +35,19 @@ from app.services.prompts import gemini_schema, prompt_ids
 BACKEND = Path(__file__).resolve().parent.parent
 FIXTURES = BACKEND.parent / "tests" / "backend" / "fixtures" / "llm"
 
-MODELS = {"extract": ExtractionPayload, "match": MatchResponse}
+MODELS = {"extract": ExtractionPayload, "match": MatchResponse, "gapfill": GapFillPayload}
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--pdf", type=Path, help="a PDF to transcribe")
     parser.add_argument("--match", type=Path, help="a MatchRequest JSON file")
+    parser.add_argument(
+        "--missing",
+        metavar="NAMES",
+        help="comma-separated scalars to re-read for, e.g. volume,og,ibu",
+    )
+    parser.add_argument("--page-hint", help="where the caller suspects a value is")
     parser.add_argument("--replay", metavar="CASE", help="replay a captured fixture")
     parser.add_argument("--promote", metavar="CASE", help="write the run to a fixture")
     parser.add_argument("--dump-schemas", action="store_true", help="refresh schema snapshots")
@@ -54,6 +63,8 @@ def main(argv: list[str] | None = None) -> int:
         return dump_schemas()
     if args.replay:
         return replay(args.replay)
+    if args.pdf and args.missing:
+        return run_gap_fill(args)
     if args.pdf:
         return run_extract(args)
     if args.match:
@@ -77,6 +88,34 @@ def run_extract(args: argparse.Namespace) -> int:
     summarise(record)
     if args.promote:
         write_fixture(args.promote, "extract", raw)
+    return 0
+
+
+def run_gap_fill(args: argparse.Namespace) -> int:
+    try:
+        request = GapFillRequest(
+            missing=[TargetName(name.strip()) for name in args.missing.split(",") if name.strip()],
+            page_hint=args.page_hint,
+        )
+    except ValueError as exc:
+        print(f"bad --missing list: {exc}", file=sys.stderr)
+        return 2
+    try:
+        filled, raw = recipe_import.gap_fill(
+            args.pdf, request, cache=not args.no_cache, refresh=args.refresh
+        )
+    except (gemini.GeminiError, gemini.GeminiUnavailable) as exc:
+        print(f"gap fill failed: {exc}", file=sys.stderr)
+        return 1
+    emit(filled.model_dump(mode="json", exclude_none=True), args.out)
+    still = [name.value for name in request.missing if getattr(filled, name.value) is None]
+    print(
+        f"gap fill: {len(request.missing) - len(still)} filled, "
+        f"{len(still)} still absent{(': ' + ', '.join(still)) if still else ''}",
+        file=sys.stderr,
+    )
+    if args.promote:
+        write_fixture(args.promote, "gapfill", raw)
     return 0
 
 

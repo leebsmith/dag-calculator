@@ -1,0 +1,380 @@
+{
+  "description": "The re-read's answer: the same target shapes, absent where still absent.",
+  "properties": {
+    "targets": {
+      "description": "The recipe's stated scalars. Absence is absence, never zero.",
+      "properties": {
+        "volume": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated volume may use.",
+              "enum": [
+                "l",
+                "gal"
+              ],
+              "title": "VolumeUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "VolumeTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "og": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated gravity may use; the scale is part of the value.",
+              "enum": [
+                "sg",
+                "plato"
+              ],
+              "title": "GravityUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "GravityTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "fg": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated gravity may use; the scale is part of the value.",
+              "enum": [
+                "sg",
+                "plato"
+              ],
+              "title": "GravityUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "GravityTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "abv": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "The unit a stated ABV is written in.",
+              "enum": [
+                "pct"
+              ],
+              "title": "PercentUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "PercentTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "ibu": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "The unit a stated bitterness is written in.",
+              "enum": [
+                "ibu"
+              ],
+              "title": "IbuUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "IbuTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "srm": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated colour may use.",
+              "enum": [
+                "srm",
+                "ebc"
+              ],
+              "title": "ColourUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "ColourTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "boil_time_min": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "The unit a stated duration is written in.",
+              "enum": [
+                "min"
+              ],
+              "title": "MinutesUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "MinutesTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        }
+      },
+      "title": "Targets",
+      "type": "object",
+      "propertyOrdering": [
+        "volume",
+        "og",
+        "fg",
+        "abv",
+        "ibu",
+        "srm",
+        "boil_time_min"
+      ]
+    }
+  },
+  "title": "GapFillPayload",
+  "type": "object",
+  "propertyOrdering": [
+    "targets"
+  ]
+}

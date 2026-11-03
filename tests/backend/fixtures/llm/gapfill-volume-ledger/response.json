@@ -1,0 +1,36 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\"targets\":{\"volume\":{\"value\":20.0,\"verbatim\":\"Fermenter (cold) 20.0 L\",\"page\":1,\"source\":\"llm\",\"unit\":\"l\"},\"og\":null,\"fg\":null,\"abv\":null,\"ibu\":null,\"srm\":null,\"boil_time_min\":null}}",
+            "thoughtSignature": "EtkFCtYFAWkUfRN5juOTLSkQDPu9wpwDIyR1OynAWRV0CQ1lurmpBtvoE5rE30o7szeg6Dt9ImSfufQrUTtJfL4Z09xcf0YEDQxBw2oP65/hYQpMx6ey2QD4sDwUaSklhyEOohi0CbaI/XXgoFx96InDpZdp2zUYqYaGcSnmWl4Lgl1mJJSemG0tYNEHpfR/3X5bXQzMY7P1geksW26LgvxEbokBw46Q51SfNqwdWUgaRoexKwmgq3okUlc8MWmjUFmjAy7eNPaKB/pW8pSkE2Nh1JOR7UsXo6YBoiJ8pkultKhecwLtAe/bTxiDUV5qtlZqQ9Q8NKNHfCPO4wJJMs9zh9VAVromA87TXuddm7og/egMeYff8Sun3bnA1QBtxY5gNK9WzlyyhaR5AxAWcWyRGDhfrAMyIFkmmN+TCCmzcOXm16VuJqZi6MnypJyp6LVCrWjHo239xU7UAh6ubTaAQobsw5CUKJ9VHvj9KdmUtLXCU0rbpDaKKqBaw+y7Cl0YsunLfJxf/MjuS6PyFbaZiwpPlDs+sRCfDsestURCW10gRSvZcPOeSoqZW/YPJAweElbg7Qp0nA7Uagegu2SvUSkJATENvbn+tMZ8fgINChNkzMOXYEATS517h2wceEkXiP0MGci4paU0RasVkX7DnKN7/dDXeEdUdxUTvMABJJCk3AB6sXxgHn8HlOB6+g+4vpUYIPLhlIdoJhxNp6pRexdRe9P8LjSl9pfCx6zEI5b0pemxF+c/x7x5L01ipyqJw4KwRPOCmNPbX9glC+nwmOOTU39SAnNn2L+RyifBXaF9DlfosGHbU4afQClCPEWsjAod/0hkCVZqKD7VPIaObk68hbhmepH0pboNXK9VUsiWBijZea7ATjlJXk8NXTes+OraFybPNG4tvy5Gb+QUI3/9HX3Ll4pA0AQ/OEPLdWw+ELfcUnzKR8l1BymJw1uaxXJAC/16xBdj"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 986,
+    "candidatesTokenCount": 72,
+    "totalTokenCount": 1295,
+    "promptTokensDetails": [
+      {
+        "modality": "IMAGE",
+        "tokenCount": 532
+      },
+      {
+        "modality": "TEXT",
+        "tokenCount": 454
+      }
+    ],
+    "thoughtsTokenCount": 237,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-3.8-flash",
+  "responseId": "VzHqapyAAay3xdIPhK_u2Qk"
+}

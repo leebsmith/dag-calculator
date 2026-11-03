@@ -145,6 +145,18 @@ class UnmodeledKind(StrEnum):
     OTHER = "other"
 
 
+class TargetName(StrEnum):
+    """The scalars a gap-fill pass may be asked to recover."""
+
+    VOLUME = "volume"
+    OG = "og"
+    FG = "fg"
+    ABV = "abv"
+    IBU = "ibu"
+    SRM = "srm"
+    BOIL_TIME_MIN = "boil_time_min"
+
+
 class MatchKind(StrEnum):
     """The catalog family a match call is screening."""
 
@@ -347,6 +359,21 @@ class ExtractionPayload(StrictModel):
     def missing_scalars(self) -> list[str]:
         """Required targets the document did not state, in a stable order."""
         return [name for name in REQUIRED_SCALARS if getattr(self.targets, name) is None]
+
+
+class GapFillRequest(StrictModel):
+    """What the caller asks a re-read to recover. Never what it may overwrite."""
+
+    missing: list[TargetName] = Field(min_length=1)
+    title: str | None = None
+    style_name: str | None = None
+    page_hint: str | None = None
+
+
+class GapFillPayload(StrictModel):
+    """The re-read's answer: the same target shapes, absent where still absent."""
+
+    targets: Targets = Targets()
 
 
 class SourceMeta(StrictModel):

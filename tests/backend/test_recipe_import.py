@@ -10,12 +10,15 @@ import pytest
 
 from app.schemas.recipe_import import (
     Candidate,
+    ExtractionPayload,
+    GapFillRequest,
     MatchItem,
     MatchReason,
     MatchReply,
     MatchRequest,
     MatchResponse,
     Pick,
+    TargetName,
 )
 from app.services import gemini, recipe_import
 
@@ -139,3 +142,52 @@ def test_a_match_reply_cannot_repeat_a_candidate():
 def test_page_count_is_best_effort_and_never_guessed():
     assert recipe_import._page_count(b"<</Type /Pages /Count 12>>") == 12
     assert recipe_import._page_count(b"no counts here") is None
+
+
+def test_gap_fill_discards_scalars_it_was_not_asked_for(tmp_path, monkeypatch):
+    body = provider_body({
+        "targets": {
+            "volume": {"value": 20.0, "unit": "l", "verbatim": "20 L", "page": 1},
+            "og": {"value": 1.042, "unit": "sg", "verbatim": "1.042", "page": 1},
+        }
+    })
+    monkeypatch.setattr(gemini, "generate_raw", lambda *_a, **_k: gemini.RawGeneration(
+        body,
+        {"model": "test-flash", "prompt_id": "gapfill", "prompt_version": 1},
+        False,
+        "2026-11-03T00:00:00Z",
+    ))
+    filled, _ = recipe_import.gap_fill(
+        write_pdf(tmp_path, 1), GapFillRequest(missing=[TargetName.VOLUME])
+    )
+    assert filled.volume is not None
+    assert filled.og is None, "an unasked scalar must not be returned"
+
+
+def test_gap_fill_never_overwrites_a_stated_value():
+    payload = ExtractionPayload.model_validate(minimal_payload())
+    filled = recipe_import._requested_only(
+        [TargetName.VOLUME, TargetName.OG],
+        recipe_import.Targets.model_validate({
+            "volume": {"value": 99.0, "unit": "l", "verbatim": "99 L", "page": 9},
+            "og": {"value": 1.001, "unit": "sg", "verbatim": "1.001", "page": 9},
+        }),
+    )
+    merged = recipe_import.apply_gap_fill(payload, filled)
+    assert merged.targets.volume.value == 20.0
+    assert merged.targets.og.value == 1.042
+
+
+def test_gap_fill_fills_only_the_absent_fields():
+    payload = ExtractionPayload.model_validate(minimal_payload(targets={
+        "volume": {"value": 20.0, "unit": "l", "verbatim": "20 L", "page": 1},
+    }))
+    filled = recipe_import.Targets.model_validate({
+        "og": {"value": 1.042, "unit": "sg", "verbatim": "OG 1.042", "page": 2},
+        "ibu": {"value": 32.0, "unit": "ibu", "verbatim": "32 IBU", "page": 2},
+    })
+    merged = recipe_import.apply_gap_fill(payload, filled)
+    assert merged.targets.volume.value == 20.0
+    assert merged.targets.og.value == 1.042
+    assert merged.targets.ibu.value == 32.0
+    assert merged.missing_scalars() == []
