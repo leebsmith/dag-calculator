@@ -227,3 +227,34 @@ def test_the_pristine_fixture_passes_the_text_check() -> None:
     verification = check(payload, pages)
     assert verification.text_layer is True
     assert verification.unmatched == []
+
+
+def test_a_production_spec_sheet_fills_no_typed_rows() -> None:
+    """Per-hectolitre quantities must never become batch quantities."""
+    model = fixture_payload("production-spec-hefeweizen")
+    assert model.fermentables == [], "136 kg of malt for a 20 L batch is the failure this pins"
+    assert model.hops == []
+    assert model.targets.volume is None, "a production sheet states no batch volume"
+    assert model.targets.og is not None and model.targets.og.unit == "plato"
+    assert any("per unit of production volume" in warning.text.lower() for warning in model.warnings)
+    assert any("KG/10HL" in line.text for line in model.unmodeled), (
+        "the basis must stay visible in the captured text"
+    )
+
+
+def test_gravity_in_points_is_a_unit_not_a_normalisation() -> None:
+    model = fixture_payload("brewdog-tripel")
+    og = model.targets.og
+    fg = model.targets.fg
+    assert og is not None and og.unit == "points" and og.value == 1110.0
+    assert fg is not None and fg.unit == "points" and fg.value == 1008.0
+    assert model.targets.volume.value == 20.0
+
+
+def test_a_spice_in_the_hop_table_is_not_a_hop() -> None:
+    model = fixture_payload("brewdog-tripel")
+    names = {hop.name for hop in model.hops}
+    assert names == {"Mandarina Bavaria"}
+    captured = " ".join(line.text for line in model.unmodeled)
+    assert "Ginger Powder" in captured and "Pink Peppercorns" in captured
+    assert any("HOPS table" in warning.text for warning in model.warnings)

@@ -63,12 +63,28 @@ commentary, no markdown fence.
 `volume`, `og`, `fg`, `abv`, `ibu`, `srm`, `boil_time_min`, each a printed scalar
 with its phrase and page.
 
+Gravity has two printed forms. `1.055` is a specific gravity (`sg`); `13.5 °P` is
+Plato. A whole number in the thousands — `1110`, `1008`, as brewing software and
+BrewDog recipe sheets print them — is gravity **points**, and the answer is
+`{"value": 1110, "unit": "points"}`, never `sg`. An SG of 1110 is physically
+impossible and the caller rejects it.
+
 A target stated in prose is still a target. "Go for 30-ish IBUs about halfway
 through the boil" states the recipe's bitterness: record `targets.ibu` with that
 phrase, even though it is approximate and has no unit printed. The same applies
 to a batch size or a gravity written into a sentence rather than a table. Volume is the packaged or fermenter volume as the page
 states it. If the page gives a pre-boil or kettle volume instead, record it and
 say so in `warnings`.
+
+### Production-scale documents
+
+A brewhouse specification sheet states quantities **per unit of production
+volume** — `KG/10HL`, `LB/10BBL`, `per hL`, `per bbl` — not per batch. Those
+numbers are not batch quantities and must never fill `fermentables` or `hops`.
+Put each such line in `unmodeled`, kind `other`, with the printed text and the
+basis visible, leave its `quantity` null, and record a warning naming the basis.
+A production sheet is not a batch recipe; the caller will decide what to do with
+it, and a 20 L batch must never inherit 136 kg of malt.
 
 ### Fermentables
 

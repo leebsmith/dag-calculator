@@ -126,10 +126,11 @@
               "type": "string"
             },
             "unit": {
-              "description": "Units a stated gravity may use; the scale is part of the value.",
+              "description": "Units a stated gravity may use; the scale is part of the value.\n\n``points`` is the brewing-software convention that writes 1.110 as ``1110``.\nIt is a unit, not a normalisation: the ledger converts it, the extract does\nnot.",
               "enum": [
                 "sg",
-                "plato"
+                "plato",
+                "points"
               ],
               "title": "GravityUnit",
               "type": "string",
@@ -177,10 +178,11 @@
               "type": "string"
             },
             "unit": {
-              "description": "Units a stated gravity may use; the scale is part of the value.",
+              "description": "Units a stated gravity may use; the scale is part of the value.\n\n``points`` is the brewing-software convention that writes 1.110 as ``1110``.\nIt is a unit, not a normalisation: the ledger converts it, the extract does\nnot.",
               "enum": [
                 "sg",
-                "plato"
+                "plato",
+                "points"
               ],
               "title": "GravityUnit",
               "type": "string",

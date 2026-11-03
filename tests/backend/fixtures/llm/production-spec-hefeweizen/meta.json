@@ -1,0 +1,7 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 6,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T20:06:32Z",
+  "note": "A one-page brewhouse specification sheet: quantities are per 10 hL / 10 bbl, not per batch. The page is the reason the production-scale rule exists. Correct behaviour, and what this fixture pins: no typed fermentable or hop row at all (v5 filled them with 136 kg of malt for a 20 L batch), every quantity line in unmodeled with its printed basis visible, a warning naming the basis, and no batch volume anywhere - so the import cannot proceed, which is the right end for a production sheet. Scale-free targets still land: OG/FG in Plato, ABV, IBU, SRM. The boil is a range (60-90 min), so it stays null with a warning."
+}

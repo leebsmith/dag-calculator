@@ -70,10 +70,16 @@ class VolumeUnit(StrEnum):
 
 
 class GravityUnit(StrEnum):
-    """Units a stated gravity may use; the scale is part of the value."""
+    """Units a stated gravity may use; the scale is part of the value.
+
+    ``points`` is the brewing-software convention that writes 1.110 as ``1110``.
+    It is a unit, not a normalisation: the ledger converts it, the extract does
+    not.
+    """
 
     SG = "sg"
     PLATO = "plato"
+    POINTS = "points"
 
 
 class ColourUnit(StrEnum):
@@ -220,6 +226,16 @@ class VolumeTarget(StatedTarget):
 
 class GravityTarget(StatedTarget):
     unit: GravityUnit | None = None
+
+    @model_validator(mode="after")
+    def _specific_gravity_is_a_fraction(self) -> GravityTarget:
+        """An SG of 1110 is not a strong beer; it is points wearing the wrong unit."""
+        if self.unit in (None, GravityUnit.SG) and self.value >= 100:
+            raise ValueError(
+                f"a specific gravity cannot be {self.value}; "
+                "points notation (1110 for 1.110) belongs in the points unit"
+            )
+        return self
 
 
 class ColourTarget(StatedTarget):

@@ -1,0 +1,7 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 6,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T20:06:52Z",
+  "note": "BrewDog DIY Dog sheet (5 pages, imperial and metric side by side). Two things make it the hardest useful document in the set. First, gravity in points notation: OG '1110.0' and FG '1008.0' are units, not SG values, and v5 recorded them as sg 1110 - a physically impossible number that the text check happily passed because '1110' is printed on the page. v6 carries them as points, and the schema now rejects an SG of 100 or more outright. Second, the HOPS table contains Ginger Powder and Pink Peppercorns: both are moved to unmodeled with its stage and a warning, rather than becoming hop charges. Grist and hops are metric; the yeast, mash 60 min at 65 C and all printed targets verify."
+}

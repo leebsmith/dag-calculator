@@ -12,6 +12,7 @@ from app.schemas.recipe_import import (
     Candidate,
     ExtractionPayload,
     GapFillRequest,
+    GravityTarget,
     MatchItem,
     MatchReason,
     MatchReply,
@@ -205,3 +206,11 @@ def test_a_document_with_no_recipe_is_refused(tmp_path, monkeypatch):
     ))
     with pytest.raises(recipe_import.NoRecipeFound):
         recipe_import.extract_recipe(write_pdf(tmp_path, 2))
+
+
+def test_a_specific_gravity_of_1110_is_rejected_as_a_unit_error():
+    with pytest.raises(ValueError):
+        GravityTarget(value=1110.0, unit="sg", verbatim="1110.0", page=1)
+    points = GravityTarget(value=1110.0, unit="points", verbatim="1110.0", page=1)
+    assert points.unit == "points"
+    assert GravityTarget(value=1.11, unit="sg", verbatim="1.110", page=1).value == 1.11

@@ -146,7 +146,16 @@ source: llm|user}`:
 
 - `source`: filename, sha256, page_count, model, prompt_version, extracted_at.
 - `detected_recipes[]`: title + pages. More than one → reject.
-- **Targets**: fermenter volume, OG, FG, ABV, IBU, SRM, boil time.
+- **Targets**: fermenter volume, OG, FG, ABV, IBU, SRM, boil time. Gravity has
+  three printed forms: `sg` (`1.055`), `plato` (`13.5 °P`), and `points` (`1110`,
+  the brewing-software and BrewDog convention for 1.110). Points is a **unit**,
+  not a normalisation — the ledger converts it, the extract never does — and an
+  SG of 100 or more is rejected as physically impossible, because a mislabelled
+  1110 would otherwise sail through every downstream check.
+- **Production-scale documents** (`KG/10HL`, `per bbl`) fill no typed rows: their
+  quantities are per unit of production volume, not per batch, so each line goes
+  to `unmodeled` with the basis visible and the import cannot proceed without a
+  batch volume. A 20 L batch must never inherit 136 kg of malt.
 - `fermentables[]`: one undivided list — name verbatim, maltster verbatim,
   quantity (mass or pct), `kind_hint` (nullable, descriptive only).
 - `hops[]`: name, quantity, `alpha_acid_pct`, **`ibu_contribution`** (when the
@@ -186,7 +195,10 @@ how many were checked, and which ones do not appear. A scan reports
 `text_layer: false` — no check, not a pass.
 
 The check is deliberately narrow. It does not re-read the recipe, does not
-correct anything, and does not judge placement. A flagged number is either a
+correct anything, and does not judge **meaning**. A BrewDog sheet that prints
+`1110` for 1.110 passed every number check while carrying a physically
+impossible OG; only the schema's own sanity rule caught it. Number verification
+is a floor, not a verdict. A flagged number is either a
 value the text layer lost (a chart, a caption) or an invention, and either way it
 belongs in front of the user. Its known false-positive class is a **necessary
 conversion**: a page saying "an hour at 152 F" yields `duration_min = 60`, which
@@ -570,6 +582,9 @@ to avoid paying twice.
   and a pinned model id in one place.
 - **Cost and abuse.** One extraction per upload, no retries, a tight per-uid
   bucket, a size cap.
+- **Verification is not correctness.** A number can appear on the page and still
+  be wrong (points read as SG). Sanity rules, the ledger, and the user are the
+  other three layers; none of them is optional.
 - **Necessary conversions look like inventions.** "An hour at 152 F" becomes a
   60-minute rest that no page contains, so the check flags it. Present flagged
   values as converted or unverified, never as errors; never let a flag block.
@@ -628,6 +643,10 @@ before.
     `detected_recipes` plus a warning, refused as `NoRecipeFound`
   - `self-report` — this app's own report; four runs are stable on targets and grist,
     with variance concentrated in `unmodeled`, which is the bucket built to absorb it
+  - `production-spec-hefeweizen` — quantities per 10 hL, not per batch; no typed rows,
+    the basis kept verbatim in `unmodeled`, and no batch volume — so it cannot proceed
+  - `brewdog-tripel` — gravity in **points** (`1110`), metric grist, and spices inside
+    the HOPS table; both got their own rule
   - `pristine-black-ipa` — the gold case: printed per-addition IBUs that sum to the
     stated total (25+20 boil, 8+7 whirlpool of 60), so the whirlpool fraction is
     0.25 by arithmetic; two 'each Citra and Amarillo' dry hops decompose into four
@@ -657,6 +676,7 @@ before.
 ### J.3 — ledger (fermentables, yeast, mash)
 
 - [ ] Ledger row model, destinations, transforms; `unresolved` blocks commit
+- [ ] Gravity **points** convert to SG at the transform (÷1000), never in the extract
 - [ ] L0 prior hits + L1 pure screen (rank, never exclude)
 - [ ] Rows built through the existing catalog→row builders; `parts` only
 - [ ] Trace diversion proposed at 2 % per import, reversible

@@ -86,6 +86,7 @@ def run_extract(args: argparse.Namespace) -> int:
         gemini.GeminiUnavailable,
         recipe_import.AmbiguousDocument,
         recipe_import.NoRecipeFound,
+        recipe_import.ExtractionContractError,
     ) as exc:
         print(f"extraction failed: {exc}", file=sys.stderr)
         if args.promote and isinstance(

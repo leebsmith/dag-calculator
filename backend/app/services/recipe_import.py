@@ -20,6 +20,8 @@ import re
 import time
 from pathlib import Path
 
+from pydantic import ValidationError
+
 from app.schemas.recipe_import import (
     ExtractedRecipe,
     ExtractionPayload,
@@ -53,6 +55,10 @@ class AmbiguousDocument(Exception):
         self.titles = titles
 
 
+class ExtractionContractError(Exception):
+    """The provider answered with a value the contract cannot hold."""
+
+
 class MatchContractError(Exception):
     """The provider proposed something the caller did not offer."""
 
@@ -77,7 +83,14 @@ def extract_recipe_captured(
     """As ``extract_recipe``, also returning the provider body for promotion."""
     data = path.read_bytes()
     raw = gemini.generate_raw("extract", [gemini.inline_pdf(path)], cache=cache, refresh=refresh)
-    payload = ExtractionPayload.model_validate(gemini.parse_json(gemini.response_text(raw.body)))
+    try:
+        payload = ExtractionPayload.model_validate(
+            gemini.parse_json(gemini.response_text(raw.body))
+        )
+    except ValidationError as exc:
+        first = exc.errors()[0]
+        location = ".".join(str(part) for part in first.get("loc", ()))
+        raise ExtractionContractError(f"{location}: {first.get('msg')}") from exc
     if not payload.detected_recipes:
         raise NoRecipeFound()
     if len(payload.detected_recipes) > 1:

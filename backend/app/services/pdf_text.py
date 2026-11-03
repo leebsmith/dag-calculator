@@ -13,7 +13,9 @@ completeness claim.
 from __future__ import annotations
 
 import io
+import logging
 import re
+from contextlib import contextmanager
 
 from pypdf import PdfReader
 
@@ -28,10 +30,23 @@ class PdfTextError(Exception):
 def page_texts(data: bytes) -> list[str]:
     """Per-page text, in document order. Unreadable pages become empty strings."""
     try:
-        reader = PdfReader(io.BytesIO(data))
-        return [(page.extract_text() or "") for page in reader.pages]
+        with _quiet_pypdf():
+            reader = PdfReader(io.BytesIO(data))
+            return [(page.extract_text() or "") for page in reader.pages]
     except Exception as exc:
         raise PdfTextError(f"could not read the PDF's text layer: {type(exc).__name__}") from exc
+
+
+@contextmanager
+def _quiet_pypdf():
+    """pypdf logs font-encoding advice at WARNING; it is not our caller's problem."""
+    logger = logging.getLogger("pypdf")
+    previous = logger.level
+    logger.setLevel(logging.ERROR)
+    try:
+        yield
+    finally:
+        logger.setLevel(previous)
 
 
 def has_text_layer(pages: list[str]) -> bool:
