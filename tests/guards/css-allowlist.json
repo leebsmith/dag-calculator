@@ -161,9 +161,10 @@
       "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-5); min-height: 0",
       "selectors": [
         ".chooser",
-        ".editor"
+        ".editor",
+        ".import-view"
       ],
-      "reason": "Coincidental column layout; chooser and editor are independent shells."
+      "reason": "Top-level view shell contract: each fills the app content, owns one scroll region and pins its footer. The import view joins deliberately."
     },
     {
       "context": "",
@@ -182,6 +183,15 @@
         ".landing-heading"
       ],
       "reason": "Coincidental section-title recipe; the card heading and the page section heading are independent."
+    },
+    {
+      "context": "",
+      "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-4); margin: 0 auto; max-width: var(--container-content-wide); min-height: 0; overflow-y: auto; padding: var(--space-2); width: 100%",
+      "selectors": [
+        ".chooser-body",
+        ".import-body"
+      ],
+      "reason": "The one scroll region of a top-level view: same measure, padding and gap as the chooser body, so the landing page and the import review share a rhythm."
     }
   ],
   "classes": []
