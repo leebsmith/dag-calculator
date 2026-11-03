@@ -13,8 +13,7 @@ function engine(fixtures = makeFixturesWithYeast()) {
 test("relationStates() evaluates every declared relation", () => {
   const states = engine().relationStates();
   assert.equal(states.length, artifact.relations.length);
-  for (const s of states) assert.equal(typeof s.holds, "boolean");
-  assert.deepEqual(
+  for (const s of states) assert.equal(typeof s.holds, "boolean");  assert.deepEqual(
     states.map((s) => s.id).sort(),
     [
       "hlt_above_coil_floor",
@@ -66,4 +65,18 @@ test("the equipment LGR floor is report-only and tolerates a missing field", () 
   const e = createCalculator(artifact, legacy);
   const states = Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds]));
   assert.equal(states.mash_thickness_above_equipment_floor, true);
+});
+
+test("a relation over an unrealized boundary has no verdict", () => {
+  const e = createCalculator(artifact, makeFixturesWithYeast());
+  e.markBoundaryUnavailable("solver.batch");
+
+  const states = Object.fromEntries(e.relationStates().map((s) => [s.id, s.holds]));
+  assert.equal(states.kettle_not_overfilled, null);
+  assert.equal(states.hlt_demand_not_overfilled, null);
+  assert.equal(states.mash_thickness_below_ceiling, null);
+  assert.equal(states.mash_tun_not_overfilled, null);
+  // Authored-only operands still have a verdict while the solve is missing.
+  assert.equal(states.hlt_not_overfilled, true);
+  assert.equal(states.hlt_above_coil_floor, true);
 });

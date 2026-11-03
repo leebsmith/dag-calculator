@@ -80,7 +80,7 @@ export function createStepView({
     const formatOperand = createFindingFormatter(artifact, engine, ui);
     const read = (path) => readOperand(engine, path);
     const findings = (relations ?? [])
-      .filter((relation) => !relation.holds)
+      .filter((relation) => relation.holds === false)
       .map((relation) =>
         findingFor(
           relation,
@@ -190,7 +190,7 @@ export function createStepView({
 
   function indexStatus(app) {
     app.violationCount =
-      app.relations.filter((r) => !r.holds).length +
+      app.relations.filter((r) => r.holds === false).length +
       app.domains.filter((d) => d.holds === false).length +
       app.fieldDomains.filter((d) => d.holds === false).length +
       app.collectionDomains.filter((d) => d.holds === false).length;
@@ -198,7 +198,7 @@ export function createStepView({
     app.stepStatus = {};
     for (const step of steps) app.stepStatus[step.slice] = { relations: [], domains: [] };
     for (const r of app.relations) {
-      if (r.holds) continue;
+      if (r.holds !== false) continue;
       for (const slice of relationSlices(relationDefs[r.id]?.predicate)) {
         app.stepStatus[slice]?.relations.push(r);
       }

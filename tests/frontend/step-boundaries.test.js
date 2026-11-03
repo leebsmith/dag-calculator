@@ -141,6 +141,21 @@ test("http: a missing yeast blocks the batch without a solver error", async () =
   assert.equal(app.engine.get("solver.batch"), undefined);
 });
 
+test("http: an unsolved batch reports no phantom violations", async () => {
+  const { fetchImpl } = mockFetch({
+    "/solve/batch": { status: 200, body: BATCH },
+    "/solve/water": { status: 200, body: WATER },
+  });
+  const app = createStepApp({ remote: true, fetchImpl });
+  await app.boot();
+
+  assert.equal(app.boundaryStatuses["solver.batch"], "blocked");
+  assert.equal(app.violationCount, 0);
+  assert.deepEqual(app.findings, []);
+  const solverRelations = app.relations.filter((relation) => relation.holds === null);
+  assert.ok(solverRelations.length > 0, "solver-dependent relations have no verdict");
+});
+
 test("http: a saved share-mode sugar draft seeds parts before the first solve", async () => {
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },

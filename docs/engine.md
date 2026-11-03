@@ -182,7 +182,7 @@ createCalculator(artifact, { roots, collections, selections, references, … })
 engine.get(id)            // node value (memoized)
 engine.resolve(path)      // dotted-path value
 engine.call(fnId, args)   // invoke a function
-engine.relationStates()   // [{ id, holds, blocking }]
+engine.relationStates()   // [{ id, holds, blocking }]  (holds:null = no verdict)
 engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes; holds:null = unresolved)
 engine.fieldDomainStates()      // [{ selectionNodeId, field, holds, … }]
 engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
@@ -198,7 +198,10 @@ engine.topoOrder  adjacency  dependents
 > its `warning` / `error` severity and composes the message in
 > `views/registry/findings.js`; the engine never owns wording. A violated
 > blocking relation refuses a freeze (client and server); a violated
-> non-blocking relation is a quality/policy warning.
+> non-blocking relation is a quality/policy warning. `holds` is three-state:
+> `null` means an operand was unrealized (a boundary that did not solve), so the
+> predicate has no verdict and the finding is withheld until a solve lands. Only
+> `holds === false` is a violation.
 
 > For a catalog of everything resolvable from a single node id (by accessor),
 > see "Resolving from a node id" below.

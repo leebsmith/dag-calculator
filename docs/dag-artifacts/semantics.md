@@ -188,7 +188,10 @@ and deleting the old one. Existing batches are unaffected.
   presentation concern, not a computation failure. Every relation also declares
   `blocking`: `true` marks a capability limit (no brewable batch exists),
   `false` a quality/policy finding. The engine exposes it beside `holds`; the
-  view chooses the wording and severity. Bounds may reference a
+  view chooses the wording and severity. `holds` is three-state: `null` means
+  the predicate had no verdict because an operand was unrealized (a boundary
+  that did not solve degrades its outputs to `undefined`, and arithmetic through
+  them yields `NaN`). Only `holds === false` is a violation. Bounds may reference a
   selected component's fields; a bound that cannot be resolved (e.g. an unset
   optional selection) is **not applicable** and skipped. Primitive-schema fields
   may also declare `domain`s, evaluated for the fields of a selected component
