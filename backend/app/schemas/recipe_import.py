@@ -101,6 +101,13 @@ class MinutesUnit(StrEnum):
     MIN = "min"
 
 
+class ThicknessUnit(StrEnum):
+    """The unit a stated mash thickness is written in."""
+
+    L_PER_KG = "l_per_kg"
+    QT_PER_LB = "qt_per_lb"
+
+
 class Provenance(StrEnum):
     """Who produced a value: the model's transcription or the reviewing user."""
 
@@ -173,6 +180,13 @@ class Temperature(StrictModel):
 
     value: float
     unit: TempUnit = TempUnit.C
+
+
+class Thickness(StrictModel):
+    """A printed mash thickness with its unit; never converted here."""
+
+    value: float = Field(gt=0)
+    unit: ThicknessUnit
 
 
 class StatedTarget(StrictModel):
@@ -263,8 +277,8 @@ class YeastLine(StrictModel):
     code: str | None = None
     form: str | None = None
     attenuation_pct: float | None = Field(default=None, ge=0, le=100)
-    temp_low_c: float | None = None
-    temp_high_c: float | None = None
+    temp_low: Temperature | None = None
+    temp_high: Temperature | None = None
     verbatim: str
     page: int = Field(ge=1)
 
@@ -275,7 +289,7 @@ class MashLine(StrictModel):
     step_verbatim: str
     temperature: Temperature | None = None
     duration_min: float | None = Field(default=None, ge=0)
-    ratio_l_per_kg: float | None = Field(default=None, gt=0)
+    thickness: Thickness | None = None
     page: int = Field(ge=1)
 
 

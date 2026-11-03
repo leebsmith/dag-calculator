@@ -3,7 +3,7 @@
   "prompts": {
     "extract": {
       "file": "extract.md",
-      "version": 1,
+      "version": 2,
       "model": "gemini-3.8-flash",
       "temperature": 0.0,
       "thinking_budget": 0,

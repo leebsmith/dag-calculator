@@ -572,13 +572,16 @@ before.
 ### J.1 — prompt and schema iteration (ends at HOLD H.1)
 
 - [x] J.1.1 Declare `httpx` in the backend manifest
-- [x] J.1.2 Create `backend/app/prompts/` with `manifest.json`, `extract.md` v1 and `match.md` v1
+- [x] J.1.2 Create `backend/app/prompts/` with `manifest.json`, `extract.md` (now v2) and `match.md` v1
 - [x] J.1.3 Extract models in `backend/app/schemas/recipe_import.py` (`extra="forbid"`, closed enums)
 - [x] J.1.4 Pydantic → Gemini `responseSchema` adapter + committed schema snapshots
 - [x] J.1.5 `backend/app/services/gemini.py`: inline PDF, key header, fail closed, timeout, error mapping, response cache
 - [x] J.1.6 CLI `backend/scripts/extract_recipe.py` with `--cache` / `--no-cache` / `--refresh` / `--promote` / `--replay`
 - [x] J.1.7 Guards: prompt sha256 vs manifest, schema snapshot vs pydantic, fixture `prompt_version` exists, replay needs no network
 - [ ] J.1.8 Capture fixtures from real recipe documents, review `unmodeled` and `warnings` by eye against the page
+  - captured: `self-report` (this app's own 5-page report, tabular class)
+  - still needed: a prose magazine page, a competition or brew-sheet page, and one
+    awkward page (no boil time, no whirlpool, or multi-recipe for the reject path)
 - [ ] J.1.9 Decide the gap-fill pass (yes/no) and pin the model id with its thinking budget
 - [ ] **HOLD H.1** — review prompts and schemas before any app work
 
