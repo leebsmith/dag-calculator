@@ -17,7 +17,6 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -66,9 +65,14 @@ class PromptEntry:
     text: str
 
 
-@lru_cache(maxsize=1)
 def load_manifest() -> dict[str, Any]:
-    """Read and shape-check ``manifest.json`` once per process."""
+    """Read and shape-check ``manifest.json``.
+
+    Deliberately uncached: the manifest is data, not code, so a prompt bump does
+    not reload it (``uvicorn --reload`` watches Python only) and a stale copy
+    makes every extraction fail its hash check. Four kilobytes per call is
+    nothing next to the provider round trip it precedes.
+    """
     path = PROMPTS_DIR / "manifest.json"
     try:
         manifest = json.loads(path.read_text(encoding="utf-8"))

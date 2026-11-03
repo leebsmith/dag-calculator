@@ -258,3 +258,41 @@ def test_a_spice_in_the_hop_table_is_not_a_hop() -> None:
     captured = " ".join(line.text for line in model.unmodeled)
     assert "Ginger Powder" in captured and "Pink Peppercorns" in captured
     assert any("HOPS table" in warning.text for warning in model.warnings)
+
+
+def test_the_manifest_is_not_cached_across_calls(tmp_path, monkeypatch) -> None:
+    """A prompt bump is data, not code: uvloop never reloads it, so we must not hold it."""
+    from app.services import prompts
+
+    (tmp_path / "extract.md").write_text("# Extract\nv1\n", encoding="utf-8")
+    digest = __import__("hashlib").sha256((tmp_path / "extract.md").read_bytes()).hexdigest()
+    manifest = {
+        "schema_version": 1,
+        "prompts": {
+            "extract": {
+                "file": "extract.md",
+                "version": 1,
+                "model": "m",
+                "temperature": 0.0,
+                "thinking_budget": 0,
+                "sha256": digest,
+            },
+            "match": dict(
+                file="extract.md",
+                version=1,
+                model="m",
+                temperature=0.0,
+                thinking_budget=0,
+                sha256=digest,
+            ),
+        },
+    }
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setattr(prompts, "PROMPTS_DIR", tmp_path)
+
+    assert prompts.entry("extract").version == 1
+    manifest["prompts"]["extract"].update(version=2, sha256="0" * 64)
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(prompts.PromptAssetError):
+        prompts.entry("extract")

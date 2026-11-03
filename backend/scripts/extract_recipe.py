@@ -30,7 +30,7 @@ from app.schemas.recipe_import import (
     TargetName,
 )
 from app.services import gemini, recipe_import
-from app.services.prompts import gemini_schema, prompt_ids
+from app.services.prompts import PromptAssetError, gemini_schema, prompt_ids
 
 BACKEND = Path(__file__).resolve().parent.parent
 FIXTURES = BACKEND.parent / "tests" / "backend" / "fixtures" / "llm"
@@ -87,6 +87,7 @@ def run_extract(args: argparse.Namespace) -> int:
         recipe_import.AmbiguousDocument,
         recipe_import.NoRecipeFound,
         recipe_import.ExtractionContractError,
+        PromptAssetError,
     ) as exc:
         print(f"extraction failed: {exc}", file=sys.stderr)
         if args.promote and isinstance(
@@ -114,7 +115,7 @@ def run_gap_fill(args: argparse.Namespace) -> int:
         filled, raw = recipe_import.gap_fill(
             args.pdf, request, cache=not args.no_cache, refresh=args.refresh
         )
-    except (gemini.GeminiError, gemini.GeminiUnavailable) as exc:
+    except (gemini.GeminiError, gemini.GeminiUnavailable, PromptAssetError) as exc:
         print(f"gap fill failed: {exc}", file=sys.stderr)
         return 1
     emit(filled.model_dump(mode="json", exclude_none=True), args.out)
@@ -135,7 +136,12 @@ def run_match(args: argparse.Namespace) -> int:
         response, raw = recipe_import.match_candidates_captured(
             request, cache=not args.no_cache, refresh=args.refresh
         )
-    except (gemini.GeminiError, gemini.GeminiUnavailable, recipe_import.MatchContractError) as exc:
+    except (
+        gemini.GeminiError,
+        gemini.GeminiUnavailable,
+        recipe_import.MatchContractError,
+        PromptAssetError,
+    ) as exc:
         print(f"match failed: {exc}", file=sys.stderr)
         return 1
     emit(response.model_dump(mode="json"), args.out)

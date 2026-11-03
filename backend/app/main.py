@@ -72,6 +72,7 @@ from app.services.import_service import (
     ImportPayloadError,
     ImportServiceDep,
 )
+from app.services.prompts import PromptAssetError
 from app.services.report_render import (
     RenderedReport,
     ReportSpec,
@@ -425,6 +426,8 @@ def create_import(
         return _import_error(422, "IMPORT_CONTRACT", str(exc))
     except gemini.GeminiUnavailable as exc:
         return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
+    except PromptAssetError as exc:
+        return _import_error(503, "IMPORT_ASSET", str(exc))
     except gemini.GeminiError as exc:
         return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
 
