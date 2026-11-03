@@ -386,8 +386,14 @@ records are deletable.
   matching the existing pattern; no settings object, no dotenv, no new
   dependency beyond declaring `httpx`.
 - Model pinned in the manifest: `gemini-3.8-flash` (newest GA Flash at the time of
-  writing; thinking budget 0 for extraction, 512 for matching). No id is
-  hardcoded in code.
+  writing; thinking budget 0 for extraction, 512 for matching, 256 for gap fill).
+  No id is hardcoded in code. Chosen over `gemini-2.5-flash` after a pricing
+  check: 2.5 Flash is deprecated and reroutes to `gemini-3.5-flash-lite` from
+  2026-12-01, which would make a record's `model` field a lie; the price gap is
+  about 0.6 cents per import ($0.75/$3.75 versus $0.30/$2.50 per million tokens),
+  against measured usage of roughly 1.3 cents per import. Per-prompt pinning is
+  supported if cost ever matters — `match` is the one call that could move to a
+  lite tier without touching transcription.
 - `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`,
   key in `x-goog-api-key` (never in a query string), `responseMimeType:
   application/json` plus a hand-flattened `responseSchema` (no `$defs`, no
@@ -592,7 +598,8 @@ before.
     with variance concentrated in `unmodeled`, which is the bucket built to absorb it
 - [x] J.1.9a Decide the gap-fill pass — yes: a third asset, whole document, requested scalars only
 - [x] J.1.9b Capture a match fixture: `match-malts` (trade-name bridge, empty picks)
-- [ ] J.1.9c Confirm the pinned model id and thinking budgets
+- [x] J.1.9c Confirm the pinned model id and thinking budgets — `gemini-3.8-flash`
+      everywhere (0 extract, 512 match, 256 gapfill)
 - [ ] **HOLD H.1** — review prompts and schemas before any app work
 
 ### J.2 — records, upload, transcription (after H.1)
