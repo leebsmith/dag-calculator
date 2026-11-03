@@ -385,6 +385,9 @@ records are deletable.
   (`~/.bashrc` for dev, platform env in prod). One bare environment read,
   matching the existing pattern; no settings object, no dotenv, no new
   dependency beyond declaring `httpx`.
+- Model pinned in the manifest: `gemini-3.8-flash` (newest GA Flash at the time of
+  writing; thinking budget 0 for extraction, 512 for matching). No id is
+  hardcoded in code.
 - `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`,
   key in `x-goog-api-key` (never in a query string), `responseMimeType:
   application/json` plus a hand-flattened `responseSchema` (no `$defs`, no
@@ -470,7 +473,7 @@ the text.
 
 | Phase | Scope | Gate |
 |---|---|---|
-| J.1 | **Asset iteration + hold:** prompt registry (`extract`, `match`, maybe a repair pass), each with version, model setting, derived schema snapshot and fixtures; manifest + sha256 guard; CLI with `--cache` / `--promote` / `--replay` | fixture suite, prompt-hash and schema-snapshot guards, manual smoke, no network in tests → **HOLD H.1** |
+| J.1 | **Asset iteration + hold (7 of 9 steps landed):** prompt registry (`extract`, `match`, maybe a repair pass), each with version, model setting, derived schema snapshot and fixtures; manifest + sha256 guard; CLI with `--cache` / `--promote` / `--replay` | fixture suite, prompt-hash and schema-snapshot guards, manual smoke, no network in tests → **HOLD H.1** |
 | J.2 | Import records + upload + transcription review with `llm`/`user` provenance | backend pytest + frontend suite |
 | J.3 | Ledger: destinations, transforms, L0/L1 matching, parts-only commit path, progress metric | frontend suite + guards |
 | J.4 | Gate + delta table (water advisory) | boundary mocks, snapshot of the delta table |
@@ -568,13 +571,13 @@ before.
 
 ### J.1 — prompt and schema iteration (ends at HOLD H.1)
 
-- [ ] J.1.1 Declare `httpx` in the backend manifest
-- [ ] J.1.2 Create `backend/app/prompts/` with `manifest.json`, `extract.md` v1 and `match.md` v1
-- [ ] J.1.3 Extract models in `backend/app/schemas/recipe_import.py` (`extra="forbid"`, closed enums)
-- [ ] J.1.4 Pydantic → Gemini `responseSchema` adapter + committed schema snapshots
-- [ ] J.1.5 `backend/app/services/gemini.py`: inline PDF, key header, fail closed, timeout, error mapping, response cache
-- [ ] J.1.6 CLI `backend/scripts/extract_recipe.py` with `--cache` / `--no-cache` / `--refresh` / `--promote` / `--replay`
-- [ ] J.1.7 Guards: prompt sha256 vs manifest, schema snapshot vs pydantic, fixture `prompt_version` exists, replay needs no network
+- [x] J.1.1 Declare `httpx` in the backend manifest
+- [x] J.1.2 Create `backend/app/prompts/` with `manifest.json`, `extract.md` v1 and `match.md` v1
+- [x] J.1.3 Extract models in `backend/app/schemas/recipe_import.py` (`extra="forbid"`, closed enums)
+- [x] J.1.4 Pydantic → Gemini `responseSchema` adapter + committed schema snapshots
+- [x] J.1.5 `backend/app/services/gemini.py`: inline PDF, key header, fail closed, timeout, error mapping, response cache
+- [x] J.1.6 CLI `backend/scripts/extract_recipe.py` with `--cache` / `--no-cache` / `--refresh` / `--promote` / `--replay`
+- [x] J.1.7 Guards: prompt sha256 vs manifest, schema snapshot vs pydantic, fixture `prompt_version` exists, replay needs no network
 - [ ] J.1.8 Capture fixtures from real recipe documents, review `unmodeled` and `warnings` by eye against the page
 - [ ] J.1.9 Decide the gap-fill pass (yes/no) and pin the model id with its thinking budget
 - [ ] **HOLD H.1** — review prompts and schemas before any app work

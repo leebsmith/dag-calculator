@@ -1,0 +1,71 @@
+{
+  "description": "The model's proposals for every line it was given.",
+  "properties": {
+    "items": {
+      "items": {
+        "description": "The model's proposals for one source line.",
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "picks": {
+            "items": {
+              "description": "A proposed candidate id. Empty picks is a valid answer.",
+              "properties": {
+                "id": {
+                  "title": "Id",
+                  "type": "string"
+                },
+                "reason": {
+                  "description": "Why a candidate was proposed. A label for the chip, not prose.",
+                  "enum": [
+                    "name_synonym",
+                    "same_standard",
+                    "similar_attenuation",
+                    "similar_temperature",
+                    "unknown"
+                  ],
+                  "title": "MatchReason",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "title": "Pick",
+              "type": "object",
+              "propertyOrdering": [
+                "id",
+                "reason"
+              ]
+            },
+            "maxItems": 5,
+            "title": "Picks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "text",
+          "picks"
+        ],
+        "title": "MatchReply",
+        "type": "object",
+        "propertyOrdering": [
+          "text",
+          "picks"
+        ]
+      },
+      "title": "Items",
+      "type": "array"
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "title": "MatchResponse",
+  "type": "object",
+  "propertyOrdering": [
+    "items"
+  ]
+}

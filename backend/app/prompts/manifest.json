@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "prompts": {
+    "extract": {
+      "file": "extract.md",
+      "version": 1,
+      "model": "gemini-3.8-flash",
+      "temperature": 0.0,
+      "thinking_budget": 0,
+      "sha256": "73e23b3b2b3473205072a39d084ad517e91aa7178a3b238d1d86d4829f862b8c"
+    },
+    "match": {
+      "file": "match.md",
+      "version": 1,
+      "model": "gemini-3.8-flash",
+      "temperature": 0.0,
+      "thinking_budget": 512,
+      "sha256": "6cc05999d26be6224921537687a5d1e9568886a2f23bf2bccf77b40934544bef"
+    }
+  }
+}

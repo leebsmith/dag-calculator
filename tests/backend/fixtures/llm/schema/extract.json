@@ -1,0 +1,976 @@
+{
+  "description": "What the model returns for one document. No registry, no arithmetic.",
+  "properties": {
+    "detected_recipes": {
+      "items": {
+        "description": "A recipe the model found in the document, used to reject ambiguous files.",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "pages": {
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 1,
+            "title": "Pages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "title",
+          "pages"
+        ],
+        "title": "DetectedRecipe",
+        "type": "object",
+        "propertyOrdering": [
+          "title",
+          "pages"
+        ]
+      },
+      "minItems": 1,
+      "title": "Detected Recipes",
+      "type": "array"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title",
+      "nullable": true
+    },
+    "publication": {
+      "type": "string",
+      "title": "Publication",
+      "nullable": true
+    },
+    "style_name": {
+      "type": "string",
+      "title": "Style Name",
+      "nullable": true
+    },
+    "targets": {
+      "description": "The recipe's stated scalars. Absence is absence, never zero.",
+      "properties": {
+        "volume": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated volume may use.",
+              "enum": [
+                "l",
+                "gal"
+              ],
+              "title": "VolumeUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "VolumeTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "og": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated gravity may use; the scale is part of the value.",
+              "enum": [
+                "sg",
+                "plato"
+              ],
+              "title": "GravityUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "GravityTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "fg": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated gravity may use; the scale is part of the value.",
+              "enum": [
+                "sg",
+                "plato"
+              ],
+              "title": "GravityUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "GravityTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "abv": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "The unit a stated ABV is written in.",
+              "enum": [
+                "pct"
+              ],
+              "title": "PercentUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "PercentTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "ibu": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "The unit a stated bitterness is written in.",
+              "enum": [
+                "ibu"
+              ],
+              "title": "IbuUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "IbuTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "srm": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "Units a stated colour may use.",
+              "enum": [
+                "srm",
+                "ebc"
+              ],
+              "title": "ColourUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "ColourTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        },
+        "boil_time_min": {
+          "properties": {
+            "value": {
+              "title": "Value",
+              "type": "number"
+            },
+            "verbatim": {
+              "title": "Verbatim",
+              "type": "string"
+            },
+            "page": {
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "source": {
+              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "enum": [
+                "llm",
+                "user"
+              ],
+              "title": "Provenance",
+              "type": "string"
+            },
+            "unit": {
+              "description": "The unit a stated duration is written in.",
+              "enum": [
+                "min"
+              ],
+              "title": "MinutesUnit",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "value",
+            "verbatim",
+            "page"
+          ],
+          "title": "MinutesTarget",
+          "type": "object",
+          "nullable": true,
+          "propertyOrdering": [
+            "value",
+            "verbatim",
+            "page",
+            "source",
+            "unit"
+          ]
+        }
+      },
+      "title": "Targets",
+      "type": "object",
+      "propertyOrdering": [
+        "volume",
+        "og",
+        "fg",
+        "abv",
+        "ibu",
+        "srm",
+        "boil_time_min"
+      ]
+    },
+    "fermentables": {
+      "items": {
+        "description": "One grist, sugar or extract line, exactly as printed.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "maltster": {
+            "type": "string",
+            "title": "Maltster",
+            "nullable": true
+          },
+          "quantity": {
+            "description": "A printed amount. Deliberately not converted.",
+            "properties": {
+              "value": {
+                "minimum": 0,
+                "title": "Value",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Printed units the extraction may carry. Anything else is a rejection.",
+                "enum": [
+                  "g",
+                  "kg",
+                  "oz",
+                  "lb",
+                  "ml",
+                  "l",
+                  "tsp",
+                  "tbsp",
+                  "cup",
+                  "qt",
+                  "gal",
+                  "pct",
+                  "min",
+                  "h",
+                  "day"
+                ],
+                "title": "Unit",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "unit"
+            ],
+            "title": "Quantity",
+            "type": "object",
+            "nullable": true,
+            "propertyOrdering": [
+              "value",
+              "unit"
+            ]
+          },
+          "kind_hint": {
+            "description": "A descriptive guess at a fermentable line's class; never a catalog kind.",
+            "enum": [
+              "malt",
+              "sugar",
+              "extract",
+              "adjunct",
+              "unknown"
+            ],
+            "title": "FermentableKind",
+            "type": "string"
+          },
+          "verbatim": {
+            "title": "Verbatim",
+            "type": "string"
+          },
+          "page": {
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "verbatim",
+          "page"
+        ],
+        "title": "FermentableLine",
+        "type": "object",
+        "propertyOrdering": [
+          "name",
+          "maltster",
+          "quantity",
+          "kind_hint",
+          "verbatim",
+          "page"
+        ]
+      },
+      "title": "Fermentables",
+      "type": "array"
+    },
+    "hops": {
+      "items": {
+        "description": "One hop line. Percentages are the printed percentages, not fractions.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "description": "A printed amount. Deliberately not converted.",
+            "properties": {
+              "value": {
+                "minimum": 0,
+                "title": "Value",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Printed units the extraction may carry. Anything else is a rejection.",
+                "enum": [
+                  "g",
+                  "kg",
+                  "oz",
+                  "lb",
+                  "ml",
+                  "l",
+                  "tsp",
+                  "tbsp",
+                  "cup",
+                  "qt",
+                  "gal",
+                  "pct",
+                  "min",
+                  "h",
+                  "day"
+                ],
+                "title": "Unit",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "unit"
+            ],
+            "title": "Quantity",
+            "type": "object",
+            "nullable": true,
+            "propertyOrdering": [
+              "value",
+              "unit"
+            ]
+          },
+          "alpha_acid_pct": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "title": "Alpha Acid Pct",
+            "nullable": true
+          },
+          "ibu_contribution": {
+            "minimum": 0,
+            "type": "number",
+            "title": "Ibu Contribution",
+            "nullable": true
+          },
+          "stage_verbatim": {
+            "type": "string",
+            "title": "Stage Verbatim",
+            "nullable": true
+          },
+          "stage_guess": {
+            "description": "The model's reading of a hop line's stage; a hint, never a decision.",
+            "enum": [
+              "boil",
+              "whirlpool",
+              "dry_hop",
+              "unknown"
+            ],
+            "title": "HopStage",
+            "type": "string"
+          },
+          "minutes": {
+            "minimum": 0,
+            "type": "number",
+            "title": "Minutes",
+            "nullable": true
+          },
+          "temperature": {
+            "description": "A printed temperature with its scale.",
+            "properties": {
+              "value": {
+                "title": "Value",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Temperature scale, kept as printed so nothing is silently converted.",
+                "enum": [
+                  "c",
+                  "f"
+                ],
+                "title": "TempUnit",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "title": "Temperature",
+            "type": "object",
+            "nullable": true,
+            "propertyOrdering": [
+              "value",
+              "unit"
+            ]
+          },
+          "product_form": {
+            "type": "string",
+            "title": "Product Form",
+            "nullable": true
+          },
+          "verbatim": {
+            "title": "Verbatim",
+            "type": "string"
+          },
+          "page": {
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "verbatim",
+          "page"
+        ],
+        "title": "HopLine",
+        "type": "object",
+        "propertyOrdering": [
+          "name",
+          "quantity",
+          "alpha_acid_pct",
+          "ibu_contribution",
+          "stage_verbatim",
+          "stage_guess",
+          "minutes",
+          "temperature",
+          "product_form",
+          "verbatim",
+          "page"
+        ]
+      },
+      "title": "Hops",
+      "type": "array"
+    },
+    "yeasts": {
+      "items": {
+        "description": "One yeast line: the page rarely names a lab, and often names no strain.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "lab": {
+            "type": "string",
+            "title": "Lab",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "nullable": true
+          },
+          "form": {
+            "type": "string",
+            "title": "Form",
+            "nullable": true
+          },
+          "attenuation_pct": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "title": "Attenuation Pct",
+            "nullable": true
+          },
+          "temp_low_c": {
+            "type": "number",
+            "title": "Temp Low C",
+            "nullable": true
+          },
+          "temp_high_c": {
+            "type": "number",
+            "title": "Temp High C",
+            "nullable": true
+          },
+          "verbatim": {
+            "title": "Verbatim",
+            "type": "string"
+          },
+          "page": {
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "verbatim",
+          "page"
+        ],
+        "title": "YeastLine",
+        "type": "object",
+        "propertyOrdering": [
+          "name",
+          "lab",
+          "code",
+          "form",
+          "attenuation_pct",
+          "temp_low_c",
+          "temp_high_c",
+          "verbatim",
+          "page"
+        ]
+      },
+      "title": "Yeasts",
+      "type": "array"
+    },
+    "mashes": {
+      "items": {
+        "description": "One mash step as printed.",
+        "properties": {
+          "step_verbatim": {
+            "title": "Step Verbatim",
+            "type": "string"
+          },
+          "temperature": {
+            "description": "A printed temperature with its scale.",
+            "properties": {
+              "value": {
+                "title": "Value",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Temperature scale, kept as printed so nothing is silently converted.",
+                "enum": [
+                  "c",
+                  "f"
+                ],
+                "title": "TempUnit",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "title": "Temperature",
+            "type": "object",
+            "nullable": true,
+            "propertyOrdering": [
+              "value",
+              "unit"
+            ]
+          },
+          "duration_min": {
+            "minimum": 0,
+            "type": "number",
+            "title": "Duration Min",
+            "nullable": true
+          },
+          "ratio_l_per_kg": {
+            "type": "number",
+            "title": "Ratio L Per Kg",
+            "nullable": true
+          },
+          "page": {
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "step_verbatim",
+          "page"
+        ],
+        "title": "MashLine",
+        "type": "object",
+        "propertyOrdering": [
+          "step_verbatim",
+          "temperature",
+          "duration_min",
+          "ratio_l_per_kg",
+          "page"
+        ]
+      },
+      "title": "Mashes",
+      "type": "array"
+    },
+    "pool_ibu": {
+      "description": "Printed IBU subtotals, when the page states them separately.",
+      "properties": {
+        "boil": {
+          "minimum": 0,
+          "type": "number",
+          "title": "Boil",
+          "nullable": true
+        },
+        "whirlpool": {
+          "minimum": 0,
+          "type": "number",
+          "title": "Whirlpool",
+          "nullable": true
+        }
+      },
+      "title": "PoolIbu",
+      "type": "object",
+      "nullable": true,
+      "propertyOrdering": [
+        "boil",
+        "whirlpool"
+      ]
+    },
+    "unmodeled": {
+      "items": {
+        "description": "A captured line with no home in the model. Never silently dropped.",
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "page": {
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          },
+          "kind": {
+            "description": "Where a line the model cannot place belongs, descriptively.",
+            "enum": [
+              "water_salt",
+              "process_additive",
+              "packaging",
+              "equipment_note",
+              "editorial",
+              "other"
+            ],
+            "title": "UnmodeledKind",
+            "type": "string"
+          },
+          "quantity": {
+            "description": "A printed amount. Deliberately not converted.",
+            "properties": {
+              "value": {
+                "minimum": 0,
+                "title": "Value",
+                "type": "number"
+              },
+              "unit": {
+                "description": "Printed units the extraction may carry. Anything else is a rejection.",
+                "enum": [
+                  "g",
+                  "kg",
+                  "oz",
+                  "lb",
+                  "ml",
+                  "l",
+                  "tsp",
+                  "tbsp",
+                  "cup",
+                  "qt",
+                  "gal",
+                  "pct",
+                  "min",
+                  "h",
+                  "day"
+                ],
+                "title": "Unit",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "unit"
+            ],
+            "title": "Quantity",
+            "type": "object",
+            "nullable": true,
+            "propertyOrdering": [
+              "value",
+              "unit"
+            ]
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage",
+            "nullable": true
+          }
+        },
+        "required": [
+          "text",
+          "page"
+        ],
+        "title": "UnmodeledLine",
+        "type": "object",
+        "propertyOrdering": [
+          "text",
+          "page",
+          "kind",
+          "quantity",
+          "stage"
+        ]
+      },
+      "title": "Unmodeled",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "description": "A contradiction or ambiguity the model noticed while transcribing.",
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "nullable": true
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "WarningLine",
+        "type": "object",
+        "propertyOrdering": [
+          "text",
+          "page"
+        ]
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "detected_recipes"
+  ],
+  "title": "ExtractionPayload",
+  "type": "object",
+  "propertyOrdering": [
+    "detected_recipes",
+    "title",
+    "publication",
+    "style_name",
+    "targets",
+    "fermentables",
+    "hops",
+    "yeasts",
+    "mashes",
+    "pool_ibu",
+    "unmodeled",
+    "warnings"
+  ]
+}
