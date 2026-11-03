@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\"items\":[{\"text\":\"Weyermann\u00ae Abbey Malt\",\"picks\":[{\"id\":\"abbey-malt-biscuit-malt\",\"reason\":\"name_synonym\"},{\"id\":\"biscuit-50-md\",\"reason\":\"same_standard\"}]},{\"text\":\"Carafoam\",\"picks\":[{\"id\":\"carapils\",\"reason\":\"name_synonym\"},{\"id\":\"carapils-malt\",\"reason\":\"same_standard\"}]},{\"text\":\"Belgian specialty malt\",\"picks\":[]}]}",
+            "thoughtSignature": "EmkKZwFpFH0TSj00LiWE4q/ZzDJ2a8Mq1lzMfkeBkRqmqyIYJ4USSoytn5Vo85a0Nrf0RAMQbntothl93tn0KdeMRsi4q3B+kPBszOgHrb58fd3f1VpBfZXeK7HuJdx5uNmr7TGHzLCslPU="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 1329,
+    "candidatesTokenCount": 97,
+    "totalTokenCount": 1426,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1329
+      }
+    ],
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-3.8-flash",
+  "responseId": "IDXqaoKMEZ6OwbUPi-nD8QI"
+}

@@ -581,12 +581,18 @@ before.
 - [x] J.1.5 `backend/app/services/gemini.py`: inline PDF, key header, fail closed, timeout, error mapping, response cache
 - [x] J.1.6 CLI `backend/scripts/extract_recipe.py` with `--cache` / `--no-cache` / `--refresh` / `--promote` / `--replay`
 - [x] J.1.7 Guards: prompt sha256 vs manifest, schema snapshot vs pydantic, fixture `prompt_version` exists, replay needs no network
-- [ ] J.1.8 Capture fixtures from real recipe documents, review `unmodeled` and `warnings` by eye against the page
-  - captured: `self-report` (this app's own 5-page report, tabular class)
-  - still needed: a prose magazine page, a competition or brew-sheet page, and one
-    awkward page (no boil time, no whirlpool, or multi-recipe for the reject path)
+- [x] J.1.8 Capture fixtures from real recipe documents, review `unmodeled` and `warnings` by eye against the page
+  - `prose-biere-de-garde` — prose class; names the grist without quantities (the page
+    states none), and a prose-stated target (`30-ish IBUs`) lands in the recipe's ibu target
+  - `detail-biere-de-mars` — tabular class; targets, masses and the printed per-addition
+    IBU all correct, 9 pages of article excluded with a warning
+  - `refusal-no-recipe` — scanned article with no text layer and no recipe; an empty
+    `detected_recipes` plus a warning, refused as `NoRecipeFound`
+  - `self-report` — this app's own report; four runs are stable on targets and grist,
+    with variance concentrated in `unmodeled`, which is the bucket built to absorb it
 - [x] J.1.9a Decide the gap-fill pass — yes: a third asset, whole document, requested scalars only
-- [ ] J.1.9b Confirm the pinned model id and thinking budgets
+- [x] J.1.9b Capture a match fixture: `match-malts` (trade-name bridge, empty picks)
+- [ ] J.1.9c Confirm the pinned model id and thinking budgets
 - [ ] **HOLD H.1** — review prompts and schemas before any app work
 
 ### J.2 — records, upload, transcription (after H.1)

@@ -22,6 +22,8 @@ from app.schemas.recipe_import import (
 )
 from app.services import gemini, recipe_import
 
+FIXTURES = Path(__file__).resolve().parent / "fixtures" / "llm"
+
 
 def provider_body(payload: dict) -> dict:
     return {"candidates": [{"content": {"parts": [{"text": json.dumps(payload)}]}}]}
@@ -191,3 +193,15 @@ def test_gap_fill_fills_only_the_absent_fields():
     assert merged.targets.og.value == 1.042
     assert merged.targets.ibu.value == 32.0
     assert merged.missing_scalars() == []
+
+
+def test_a_document_with_no_recipe_is_refused(tmp_path, monkeypatch):
+    body = json.loads((FIXTURES / "refusal-no-recipe" / "response.json").read_text())
+    monkeypatch.setattr(gemini, "generate_raw", lambda *_a, **_k: gemini.RawGeneration(
+        body,
+        {"model": "test-flash", "prompt_id": "extract", "prompt_version": 4},
+        False,
+        "2026-11-03T00:00:00Z",
+    ))
+    with pytest.raises(recipe_import.NoRecipeFound):
+        recipe_import.extract_recipe(write_pdf(tmp_path, 2))

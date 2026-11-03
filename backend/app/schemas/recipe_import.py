@@ -245,7 +245,10 @@ class Targets(StrictModel):
     og: GravityTarget | None = None
     fg: GravityTarget | None = None
     abv: PercentTarget | None = None
-    ibu: IbuTarget | None = None
+    ibu: IbuTarget | None = Field(
+        default=None,
+        description="Recipe bitterness target, including one stated in prose. Not a per-addition IBU.",
+    )
     srm: ColourTarget | None = None
     boil_time_min: MinutesTarget | None = None
 
@@ -271,7 +274,11 @@ class HopLine(StrictModel):
     name: str
     quantity: Quantity | None = None
     alpha_acid_pct: float | None = Field(default=None, ge=0, le=100)
-    ibu_contribution: float | None = Field(default=None, ge=0)
+    ibu_contribution: float | None = Field(
+        default=None,
+        ge=0,
+        description="Per-addition IBU, only when the page attributes it to this line. Null for a recipe-level target.",
+    )
     stage_verbatim: str | None = None
     stage_guess: HopStage = HopStage.UNKNOWN
     minutes: float | None = Field(default=None, ge=0)
@@ -343,7 +350,7 @@ class DetectedRecipe(StrictModel):
 class ExtractionPayload(StrictModel):
     """What the model returns for one document. No registry, no arithmetic."""
 
-    detected_recipes: list[DetectedRecipe] = Field(min_length=1)
+    detected_recipes: list[DetectedRecipe] = []
     title: str | None = None
     publication: str | None = None
     style_name: str | None = None

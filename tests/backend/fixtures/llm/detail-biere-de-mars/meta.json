@@ -1,0 +1,7 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 4,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T19:23:52Z",
+  "note": "Craft Beer & Brewing recipe detail (9 pages, tabular). Near-perfect: 5 gal, OG 1.065, FG 1.015, ABV 6.8, IBU 26, 60 min; six grist lines with masses; exactly one hop line with its printed per-addition IBU ('1 oz Columbus at 20 min [26 IBUs]'); Wyeast 1007. SRM is not printed anywhere in the document, so it stays null. Pages 4-8 are an accompanying article and are correctly excluded, with a warning saying so."
+}

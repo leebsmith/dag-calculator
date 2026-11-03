@@ -114,3 +114,65 @@ def test_extraction_fixture_keeps_its_known_limits() -> None:
     assert payload.missing_scalars() == []
     assert payload.fermentables
     assert payload.warnings, "the document states IBU with no hop schedule; warn, do not invent"
+
+
+def fixture_payload(case: str) -> ExtractionPayload:
+    body = json.loads((FIXTURES / case / "response.json").read_text(encoding="utf-8"))
+    return ExtractionPayload.model_validate(gemini.parse_json(gemini.response_text(body)))
+
+
+def test_captured_fixtures_cover_the_three_document_classes() -> None:
+    prose = fixture_payload("prose-biere-de-garde")
+    assert prose.detected_recipes, "a prose page still names its recipe"
+    assert prose.fermentables, "the grist is named even when quantities are absent"
+    assert prose.targets.ibu is not None, "a target stated in prose is a target"
+    assert all(hop.ibu_contribution is None for hop in prose.hops), (
+        "a recipe-level IBU must not be duplicated onto a hop line"
+    )
+
+    detail = fixture_payload("detail-biere-de-mars")
+    assert len(detail.detected_recipes) == 1
+    assert detail.hops[0].ibu_contribution == 26.0, "a printed per-addition IBU is captured"
+    assert detail.targets.ibu is not None
+
+    refusal = fixture_payload("refusal-no-recipe")
+    assert refusal.detected_recipes == [], "no recipe means an empty list, not a placeholder"
+    assert refusal.warnings
+
+
+def test_a_captured_match_reply_obeys_the_contract() -> None:
+    """When a fixture keeps its request, the reply must be a subset of it."""
+    from app.schemas.recipe_import import MatchRequest
+
+    for case in fixture_cases():
+        request_path = case / "request.json"
+        if not request_path.exists():
+            continue
+        request = MatchRequest.model_validate(json.loads(request_path.read_text(encoding="utf-8")))
+        body = json.loads((case / "response.json").read_text(encoding="utf-8"))
+        reply = response_model("match").model_validate(
+            gemini.parse_json(gemini.response_text(body))
+        )
+        offered = {item.text: item.candidates for item in request.items}
+        for line in reply.items:
+            candidates = offered[line.text]
+            ids = {candidate.id for candidate in candidates}
+            assert {pick.id for pick in line.picks} <= ids, case.name
+            standards = {candidate.id: candidate.standard for candidate in candidates}
+            counts: dict[str, int] = {}
+            for pick in line.picks:
+                standard = standards.get(pick.id)
+                if standard:
+                    counts[standard] = counts.get(standard, 0) + 1
+            assert all(count <= 2 for count in counts.values()), case.name
+
+
+def test_the_match_fixture_bridges_a_trade_name_and_refuses_a_generic_line() -> None:
+    body = json.loads((FIXTURES / "match-malts" / "response.json").read_text(encoding="utf-8"))
+    reply = response_model("match").model_validate(
+        gemini.parse_json(gemini.response_text(body))
+    )
+    by_text = {line.text: [pick.id for pick in line.picks] for line in reply.items}
+    assert by_text["Carafoam"][0] == "carapils", "the alias the string screen cannot find"
+    assert by_text["Belgian specialty malt"] == [], "a generic line gets no forced match"
+    assert by_text["Weyermann® Abbey Malt"][0] == "abbey-malt-biscuit-malt"

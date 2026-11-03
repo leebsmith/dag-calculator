@@ -1,0 +1,7 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 4,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T19:24:03Z",
+  "note": "A scanned two-page article with no text layer and no recipe. Gemini reads the pages as images and returns an empty detected_recipes list with a warning; the service refuses with NoRecipeFound. This fixture exists to stop the regression where the model invented a placeholder title ('No recipe detected') to satisfy a min_length=1 schema."
+}

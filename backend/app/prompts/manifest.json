@@ -3,11 +3,11 @@
   "prompts": {
     "extract": {
       "file": "extract.md",
-      "version": 2,
+      "version": 4,
       "model": "gemini-3.8-flash",
       "temperature": 0.0,
       "thinking_budget": 0,
-      "sha256": "73e23b3b2b3473205072a39d084ad517e91aa7178a3b238d1d86d4829f862b8c"
+      "sha256": "69139b544c0aa11468d62efcb8ea74932cf813ad0e9263c35e0eb8a9871d2a83"
     },
     "match": {
       "file": "match.md",

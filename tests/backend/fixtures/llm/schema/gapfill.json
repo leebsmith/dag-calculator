@@ -248,6 +248,7 @@
           ],
           "title": "IbuTarget",
           "type": "object",
+          "description": "Recipe bitterness target, including one stated in prose. Not a per-addition IBU.",
           "nullable": true,
           "propertyOrdering": [
             "value",

@@ -37,6 +37,14 @@ MAX_PICKS = 5
 MAX_PER_STANDARD = 2
 
 
+class NoRecipeFound(Exception):
+    """A document with no recipe in it. Refused rather than filled with a placeholder."""
+
+    def __init__(self) -> None:
+        super().__init__("this document contains no recipe")
+        self.titles: list[str] = []
+
+
 class AmbiguousDocument(Exception):
     """A file that reads as more than one recipe; refused, never narrowed."""
 
@@ -70,6 +78,8 @@ def extract_recipe_captured(
     data = path.read_bytes()
     raw = gemini.generate_raw("extract", [gemini.inline_pdf(path)], cache=cache, refresh=refresh)
     payload = ExtractionPayload.model_validate(gemini.parse_json(gemini.response_text(raw.body)))
+    if not payload.detected_recipes:
+        raise NoRecipeFound()
     if len(payload.detected_recipes) > 1:
         raise AmbiguousDocument([recipe.title for recipe in payload.detected_recipes])
     record = ExtractedRecipe(

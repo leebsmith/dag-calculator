@@ -1,0 +1,7 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 4,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T19:23:19Z",
+  "note": "Craft Beer & Brewing prose article (4 pages, text layer). The document gives no quantities for the grist and no volume/OG, which it genuinely does not state; the model returns the six malts by name, two hop lines (boil: no amount, whirlpool: about an ounce), the mash rest from prose, and targets.ibu 30 from 'go for 30-ish IBUs' with ibu_contribution null on every hop line. Run-to-run variance: earlier passes put the Perle/Northern Brewer aside and the bottling line in unmodeled; this one did not. One capture per class is a floor, not a guarantee."
+}

@@ -81,8 +81,17 @@ def run_extract(args: argparse.Namespace) -> int:
         record, raw = recipe_import.extract_recipe_captured(
             args.pdf, cache=not args.no_cache, refresh=args.refresh
         )
-    except (gemini.GeminiError, gemini.GeminiUnavailable, recipe_import.AmbiguousDocument) as exc:
+    except (
+        gemini.GeminiError,
+        gemini.GeminiUnavailable,
+        recipe_import.AmbiguousDocument,
+        recipe_import.NoRecipeFound,
+    ) as exc:
         print(f"extraction failed: {exc}", file=sys.stderr)
+        if args.promote and isinstance(
+            exc, (recipe_import.AmbiguousDocument, recipe_import.NoRecipeFound)
+        ):
+            refusal_fixture(args, exc)
         return 1
     emit(record.payload.model_dump(mode="json"), args.out)
     summarise(record)
@@ -157,7 +166,13 @@ def replay(case: str) -> int:
     return 0
 
 
-def write_fixture(case: str, prompt_id: str, raw: gemini.RawGeneration) -> None:
+def refusal_fixture(args: argparse.Namespace, exc: Exception) -> None:
+    """Capture a refusal (no recipe, or several) from the cached reply."""
+    raw = gemini.generate_raw("extract", [gemini.inline_pdf(args.pdf)], cache=True, refresh=False)
+    write_fixture(args.promote, "extract", raw, note=f"refusal: {type(exc).__name__}")
+
+
+def write_fixture(case: str, prompt_id: str, raw: gemini.RawGeneration, note: str = "capture") -> None:
     """Copy this exact request and reply into the committed fixture set."""
     directory = FIXTURES / case
     directory.mkdir(parents=True, exist_ok=True)
@@ -169,7 +184,7 @@ def write_fixture(case: str, prompt_id: str, raw: gemini.RawGeneration) -> None:
                 "prompt_version": int(raw.request_meta["prompt_version"]),
                 "model": str(raw.request_meta["model"]),
                 "captured_at": raw.captured_at,
-                "note": "capture",
+                "note": note,
             },
             indent=2,
         ),

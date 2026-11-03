@@ -1,7 +1,7 @@
 {
   "prompt_id": "extract",
-  "prompt_version": 2,
+  "prompt_version": 4,
   "model": "gemini-3.8-flash",
-  "captured_at": "2026-11-03T18:54:01Z",
-  "note": "Our own 5-page report (tabular, brewer's-software style). Targets, six fermentables and the yeast come through cleanly, and the document genuinely renders no hop schedule (checked with pdftotext), which the model warns about rather than inventing. Two findings recorded by the v1->v2 comparison: (a) v1's yeast temperature fields were C-only, and the model silently converted 64.4-78.8 F to 18-26 C; v2 carries value+unit and preserves F. (b) Under v1 the same document produced one mash step that is not on the page; v2 produced none. Same prompt text, different output - one capture per document is not enough. Known deviation: the mash thickness line lands in unmodeled with a garbled quantity unit."
+  "captured_at": "2026-11-03T19:24:54Z",
+  "note": "Our own 5-page report (tabular, brewer's-software style), re-captured under v4. Targets, six fermentables with masses and the yeast are stable across four runs; the water section now lands in unmodeled as water_salt and the brew-day ledger as other/equipment_note. Variance across runs is concentrated in unmodeled (12 to 34 lines), which is the bucket built to absorb it. Quirks: the mash thickness line is emitted as a mash entry carrying thickness with no temperature or duration, and the absent hop schedule is warned about rather than invented."
 }

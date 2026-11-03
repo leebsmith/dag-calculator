@@ -1,0 +1,7 @@
+{
+  "prompt_id": "match",
+  "prompt_version": 1,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-03T19:25:22Z",
+  "note": "The mapping call over a synthesized shortlist built from the real seeds. Proves the three behaviours the asset exists for: an exact product first ('Weyermann Abbey Malt' -> abbey-malt-biscuit-malt, name_synonym), a trade-name bridge the string screen cannot make ('Carafoam' -> CARAPILS, name_synonym), and no forced match for a generic line ('Belgian specialty malt' -> empty picks). Every id came from the supplied candidates."
+}

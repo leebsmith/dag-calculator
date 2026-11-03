@@ -23,6 +23,10 @@ commentary, no markdown fence.
 - If it holds more than one, transcribe **none** of them: fill
   `detected_recipes` and leave the rest empty. The caller will ask for a
   single-recipe file rather than guess which one was wanted.
+- If it holds **no** recipe — an article, an advertisement, an empty scan —
+  return an **empty** `detected_recipes` list and say so in `warnings`. Never
+  invent a placeholder title such as "No recipe detected" to satisfy the shape:
+  an empty list is the answer.
 
 ## Fidelity rules
 
@@ -50,7 +54,12 @@ commentary, no markdown fence.
 ### Targets
 
 `volume`, `og`, `fg`, `abv`, `ibu`, `srm`, `boil_time_min`, each a printed scalar
-with its phrase and page. Volume is the packaged or fermenter volume as the page
+with its phrase and page.
+
+A target stated in prose is still a target. "Go for 30-ish IBUs about halfway
+through the boil" states the recipe's bitterness: record `targets.ibu` with that
+phrase, even though it is approximate and has no unit printed. The same applies
+to a batch size or a gravity written into a sentence rather than a table. Volume is the packaged or fermenter volume as the page
 states it. If the page gives a pre-boil or kettle volume instead, record it and
 say so in `warnings`.
 
@@ -74,8 +83,12 @@ One entry per hop line, in the order printed.
   `0 min`.
 - `temperature` is only for whirlpool or hop-stand lines that state one.
 - `alpha_acid_pct` is the printed percentage (`4.5`), only when printed.
-- `ibu_contribution` is the printed per-line IBU, only when printed. Do not
-  compute one.
+- `ibu_contribution` is the printed per-line IBU, **only** when the page
+  attributes that number to that addition (`1 oz Columbus at 20 min [26 IBUs]`).
+  A sentence that gives one bitterness figure for the whole recipe ("go for
+  30-ish IBUs about halfway through the boil") states `targets.ibu` and must
+  leave `ibu_contribution` null on every line: duplicating one number into both
+  places double-counts it. Never compute an IBU.
 - `product_form` is the printed form (`pellet`, `whole leaf`, `cryo`,
   `lupulin`) when stated.
 - `pool_ibu` carries printed boil and whirlpool IBU subtotals, separately, when

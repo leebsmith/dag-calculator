@@ -29,7 +29,6 @@
           "pages"
         ]
       },
-      "minItems": 1,
       "title": "Detected Recipes",
       "type": "array"
     },
@@ -295,6 +294,7 @@
           ],
           "title": "IbuTarget",
           "type": "object",
+          "description": "Recipe bitterness target, including one stated in prose. Not a per-addition IBU.",
           "nullable": true,
           "propertyOrdering": [
             "value",
@@ -576,6 +576,7 @@
           "ibu_contribution": {
             "minimum": 0,
             "type": "number",
+            "description": "Per-addition IBU, only when the page attributes it to this line. Null for a recipe-level target.",
             "title": "Ibu Contribution",
             "nullable": true
           },
@@ -1024,9 +1025,6 @@
       "type": "array"
     }
   },
-  "required": [
-    "detected_recipes"
-  ],
   "title": "ExtractionPayload",
   "type": "object",
   "propertyOrdering": [

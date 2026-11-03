@@ -1,0 +1,35 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\"detected_recipes\":[{\"title\":\"Make Your Best Amber Bi\u00e8re de Garde\",\"pages\":[1,2,3,4]}],\"title\":\"Make Your Best Amber Bi\u00e8re de Garde\",\"publication\":\"Craft Beer & Brewing\",\"style_name\":\"Amber Bi\u00e8re de Garde\",\"targets\":{\"volume\":null,\"og\":null,\"fg\":null,\"abv\":null,\"ibu\":{\"value\":30,\"verbatim\":\"go for 30-ish IBUs about halfway through the boil\",\"page\":3,\"source\":\"llm\",\"unit\":\"ibu\"},\"srm\":null,\"boil_time_min\":null},\"fermentables\":[{\"name\":\"pilsner\",\"maltster\":null,\"quantity\":null,\"kind_hint\":\"malt\",\"verbatim\":\"A base of pilsner\",\"page\":2},{\"name\":\"Maris Otter\",\"maltster\":null,\"quantity\":null,\"kind_hint\":\"malt\",\"verbatim\":\"Maris Otter\",\"page\":2},{\"name\":\"Caramunich\",\"maltster\":null,\"quantity\":null,\"kind_hint\":\"malt\",\"verbatim\":\"Caramunich\",\"page\":2},{\"name\":\"British dark crystal (90\u00b0L)\",\"maltster\":null,\"quantity\":null,\"kind_hint\":\"malt\",\"verbatim\":\"British dark crystal (90\u00b0L)\",\"page\":2},{\"name\":\"Briess Special Roast\",\"maltster\":\"Briess\",\"quantity\":null,\"kind_hint\":\"malt\",\"verbatim\":\"Briess Special Roast\",\"page\":2},{\"name\":\"Belgian amber candi syrup\",\"maltster\":null,\"quantity\":null,\"kind_hint\":\"sugar\",\"verbatim\":\"Belgian amber candi syrup\",\"page\":2}],\"hops\":[{\"name\":\"Noble (or Noble-adjacent) varieties\",\"quantity\":null,\"alpha_acid_pct\":null,\"ibu_contribution\":null,\"stage_verbatim\":\"about halfway through the boil\",\"stage_guess\":\"boil\",\"minutes\":null,\"temperature\":null,\"product_form\":null,\"verbatim\":\"go for 30-ish IBUs about halfway through the boil\",\"page\":3},{\"name\":\"Noble (or Noble-adjacent) varieties\",\"quantity\":{\"value\":1,\"unit\":\"oz\"},\"alpha_acid_pct\":null,\"ibu_contribution\":null,\"stage_verbatim\":\"at flameout or whirlpool\",\"stage_guess\":\"whirlpool\",\"minutes\":null,\"temperature\":null,\"product_form\":null,\"verbatim\":\"about an ounce at flameout or whirlpool\",\"page\":3}],\"yeasts\":[{\"name\":\"German Ale\",\"lab\":\"Wyeast\",\"code\":\"1007\",\"form\":null,\"attenuation_pct\":null,\"temp_low\":{\"value\":65,\"unit\":\"f\"},\"temp_high\":{\"value\":70,\"unit\":\"f\"},\"verbatim\":\"Wyeast 1007 German Ale\",\"page\":3}],\"mashes\":[{\"step_verbatim\":\"an hour at 152\u00b0F (67\u00b0C)\",\"temperature\":{\"value\":152,\"unit\":\"f\"},\"duration_min\":60,\"thickness\":null,\"page\":4}],\"pool_ibu\":null,\"unmodeled\":[{\"text\":\"Finally, while this style can be bottled with high carbonation, I aim for a more midrange 2.5 volumes of CO2, leaving a clearer field for the malt complexity to shine.\",\"page\":4,\"kind\":\"packaging\",\"quantity\":null,\"stage\":null}],\"warnings\":[{\"text\":\"Recipe is presented in narrative prose without explicit batch volume, gravity targets, or specific ingredient quantities for fermentables.\",\"page\":2}]}",
+            "thoughtSignature": "EmkKZwFpFH0TpMC5rpq+/13xXucMkPAfgppRz2zaI+5gQYyWp2ROE0Bt2tzAmRCLm7elpR7NOxNYKcZyBZZxPXjeVD1OejkAf4GdoS6IT5pzNmwnwqiNzyu2MSlvG++HlRP4NkC197Q1h60="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 3777,
+    "candidatesTokenCount": 755,
+    "totalTokenCount": 4532,
+    "promptTokensDetails": [
+      {
+        "modality": "IMAGE",
+        "tokenCount": 2080
+      },
+      {
+        "modality": "TEXT",
+        "tokenCount": 1697
+      }
+    ],
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-3.8-flash",
+  "responseId": "oDTqavT2GIiKytMPpLas4A4"
+}

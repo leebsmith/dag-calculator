@@ -1,0 +1,45 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\"detected_recipes\":[{\"title\":\"Bellevue Bi\u00e8re de Mars\",\"pages\":[1,2,3,4]}],\"title\":\"Bellevue Bi\u00e8re de Mars\",\"publication\":\"Craft Beer & Brewing\",\"style_name\":\"Bi\u00e8re de Mars\",\"targets\":{\"volume\":{\"value\":5,\"verbatim\":\"Batch size: 5 gallons (19 liters)\",\"page\":2,\"source\":\"llm\",\"unit\":\"gal\"},\"og\":{\"value\":1.065,\"verbatim\":\"OG: 1.065\",\"page\":2,\"source\":\"llm\",\"unit\":\"sg\"},\"fg\":{\"value\":1.015,\"verbatim\":\"FG: 1.015\",\"page\":2,\"source\":\"llm\",\"unit\":\"sg\"},\"abv\":{\"value\":6.8,\"verbatim\":\"ABV: 6.8%\",\"page\":2,\"source\":\"llm\",\"unit\":\"pct\"},\"ibu\":{\"value\":26,\"verbatim\":\"IBUs: 26\",\"page\":2,\"source\":\"llm\",\"unit\":\"ibu\"},\"srm\":null,\"boil_time_min\":{\"value\":60,\"verbatim\":\"Boil for 60 minutes\",\"page\":3,\"source\":\"llm\",\"unit\":\"min\"}},\"fermentables\":[{\"name\":\"pilsner\",\"maltster\":null,\"quantity\":{\"value\":10,\"unit\":\"lb\"},\"kind_hint\":\"malt\",\"verbatim\":\"10 lb (4.5 kg) pilsner\",\"page\":2},{\"name\":\"Munich 10\u00b0L\",\"maltster\":null,\"quantity\":{\"value\":1,\"unit\":\"lb\"},\"kind_hint\":\"malt\",\"verbatim\":\"1 lb (454 g) Munich 10\u00b0L\",\"page\":2},{\"name\":\"Caravienne\",\"maltster\":null,\"quantity\":{\"value\":8,\"unit\":\"oz\"},\"kind_hint\":\"malt\",\"verbatim\":\"8 oz (227 g) Caravienne\",\"page\":3},{\"name\":\"wheat malt\",\"maltster\":null,\"quantity\":{\"value\":8,\"unit\":\"oz\"},\"kind_hint\":\"malt\",\"verbatim\":\"8 oz (227 g) wheat malt\",\"page\":3},{\"name\":\"crystal 45\u00b0L\",\"maltster\":null,\"quantity\":{\"value\":8,\"unit\":\"oz\"},\"kind_hint\":\"malt\",\"verbatim\":\"8 oz (227 g) crystal 45\u00b0L\",\"page\":3},{\"name\":\"black patent\",\"maltster\":null,\"quantity\":{\"value\":2,\"unit\":\"oz\"},\"kind_hint\":\"malt\",\"verbatim\":\"2 oz (57 g) black patent\",\"page\":3}],\"hops\":[{\"name\":\"Columbus\",\"quantity\":{\"value\":1,\"unit\":\"oz\"},\"alpha_acid_pct\":null,\"ibu_contribution\":26,\"stage_verbatim\":\"at 20 minutes\",\"stage_guess\":\"boil\",\"minutes\":20,\"temperature\":null,\"product_form\":null,\"verbatim\":\"1 oz (28 g) Columbus at 20 minutes [26 IBUs]\",\"page\":3}],\"yeasts\":[{\"name\":\"German Ale\",\"lab\":\"Wyeast\",\"code\":\"1007\",\"form\":null,\"attenuation_pct\":null,\"temp_low\":{\"value\":59,\"unit\":\"f\"},\"temp_high\":{\"value\":67,\"unit\":\"f\"},\"verbatim\":\"Wyeast 1007 (German Ale) Yeast\",\"page\":3}],\"mashes\":[{\"step_verbatim\":\"Mill the grains and mash at 152\u00b0F (67\u00b0C) for 75 minutes.\",\"temperature\":{\"value\":152,\"unit\":\"f\"},\"duration_min\":75,\"thickness\":null,\"page\":3}],\"pool_ibu\":null,\"unmodeled\":[{\"text\":\"Brewhouse efficiency: 72%\",\"page\":2,\"kind\":\"equipment_note\",\"quantity\":{\"value\":72,\"unit\":\"pct\"},\"stage\":null},{\"text\":\"Sparge and top up as needed to get about 6 gallons (23 liters) of wort, depending on your evaporation rate.\",\"page\":3,\"kind\":\"equipment_note\",\"quantity\":{\"value\":6,\"unit\":\"gal\"},\"stage\":\"sparge\"},{\"text\":\"Ferment at 60\u00b0F (16\u00b0C) for 4\u20135 days, then toss in 2\u20133 oz (57\u201385 g) of wheat malt and allow the temperature to rise to 67\u00b0F (19\u00b0C); hold there until fermentation is complete, gravity has stabilized, and the acidity is where you want it\u2014perhaps 2\u20133 weeks.\",\"page\":3,\"kind\":\"process_additive\",\"quantity\":{\"value\":2,\"unit\":\"oz\"},\"stage\":\"fermentation\"},{\"text\":\"Crash, package, and carbonate.\",\"page\":3,\"kind\":\"packaging\",\"quantity\":null,\"stage\":\"packaging\"}],\"warnings\":[{\"text\":\"The text on page 2 cuts off the amount for Munich 10\u00b0L, but OCR/visual remnants show '1 lb (454 g) Munich 10\u00b0L'.\",\"page\":2}]}",
+            "thoughtSignature": "EmkKZwFpFH0Tm5k/hhsxMYK0ooTfgxpvEjIgytCx9mGoyd5Hd42tTEYgoNBntUt+l8wAN1Xvo4pHZcd++qWI5zpLhVuqa3LbcWAXgcC6K/coMi4vOAOTrpBa520PRYscNWTzFEEM4yvzPZc="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "citationMetadata": {
+        "citationSources": [
+          {
+            "startIndex": 2606,
+            "endIndex": 2857,
+            "uri": "https://www.beerandbrewing.com/recipe-bellevue-biere-de-mars",
+            "license": ""
+          }
+        ]
+      }
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 6377,
+    "candidatesTokenCount": 1094,
+    "totalTokenCount": 7471,
+    "promptTokensDetails": [
+      {
+        "modality": "IMAGE",
+        "tokenCount": 4680
+      },
+      {
+        "modality": "TEXT",
+        "tokenCount": 1697
+      }
+    ],
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-3.8-flash",
+  "responseId": "uTTqat6OHYndytMPurCR0AE"
+}
