@@ -19,6 +19,12 @@ from app.auth.deps import AllowedUser
 CAPACITY = 60  # burst allowance (≈ one minute at the refill rate)
 RATE_PER_SECOND = 10.0
 
+# An extraction is a paid provider call, so it gets its own, much tighter bucket.
+# A burst of a few, then roughly one call every ten seconds: enough for a person
+# correcting a transcription, not enough to burn a budget by holding a key down.
+LLM_CAPACITY = 6
+LLM_RATE_PER_SECOND = 0.1
+
 
 class TokenBucket:
     """A lock-guarded token bucket keyed by uid."""
@@ -46,6 +52,7 @@ class TokenBucket:
 
 
 rate_limiter = TokenBucket()
+llm_limiter = TokenBucket(capacity=LLM_CAPACITY, rate=LLM_RATE_PER_SECOND)
 
 
 class RateLimitedError(HTTPException):
@@ -65,3 +72,13 @@ def require_rate(user: AllowedUser) -> dict:
 
 
 RateLimitedUser = Annotated[dict, Depends(require_rate)]
+
+
+def require_llm_rate(user: AllowedUser) -> dict:
+    """Dependency: the tighter bucket that guards a paid provider call."""
+    if not llm_limiter.allow(user["uid"]):
+        raise RateLimitedError()
+    return user
+
+
+RateLimitedLlmUser = Annotated[dict, Depends(require_llm_rate)]

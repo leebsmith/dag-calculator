@@ -398,9 +398,10 @@ One doc per import at `users/{uid}/recipe_imports/{importId}`:
 One-way link import → batch: a batch-side origin field would bump the draft
 payload schema for provenance the batch can live without.
 
-Routes under `AllowedUser`, with the per-uid LLM bucket shared with the
-critiquers work: create/extract, read, update ledger, delete (non-committed
-only), match. Vite proxy and hosting rewrites gain the import prefix; the
+Routes under `AllowedUser`, with a per-uid LLM bucket shared with the critiquers
+work: create/extract on the tighter bucket, read, patch the ledger or identity,
+and delete (non-committed only). The token bucket lives in `app.auth.throttle`
+beside the general one, so the two allowances cannot be confused. Vite proxy and hosting rewrites gain the import prefix; the
 Makefile's prod-rewrite check is the guard.
 
 Commit widens `persistence.createWithIdentity` to accept `roots`, `collections`
@@ -663,15 +664,17 @@ before.
 
 ### J.2 — records, upload, transcription (after H.1)
 
-- [ ] Import record schema + repository (`users/{uid}/recipe_imports`)
-- [ ] `POST /imports` (extract), `GET`/`PUT`/`DELETE` with `AllowedUser` and the LLM bucket
+- [x] Import record schema + repository (`users/{uid}/recipe_imports`)
+- [x] `POST /imports` (extract, base64 body, no multipart), `GET`/`PATCH`/`DELETE` with
+      `AllowedUser`, and a dedicated tighter token bucket for the paid call
 - [ ] Import view shell (`view: "import"`), identity from `batch-setup`, rig-fit banner
 - [ ] Transcribe stage: verbatim + page per field, `llm`/`user` provenance, `unmodeled` and `warnings` panels, and the verification result (checked / not found / no text layer)
-- [ ] **Acceptance test, growing:** `pristine-black-ipa` → record → transcription review
-      payload, asserting the printed IBUs sum to the stated total and verification is
-      clean. J.3 extends the same test through the ledger (rows and shares), J.4 through
-      the gate, so the fixture that starts as a transcription promise ends as a batch.
-- [ ] Abandon / resume / sha256 dedupe
+- [x] **Acceptance test, growing:** `pristine-black-ipa` → record → transcription review
+      payload now asserts the printed IBUs sum to the stated total (0.25 whirlpool), that
+      every target carries a phrase and a page, and that the text check ran and was clean.
+      J.3 extends it through the ledger, J.4 through the gate.
+- [x] Abandon / resume / sha256 dedupe (409 with a pointer to the existing record;
+      `force` imports a copy anyway)
 
 ### J.3 — ledger (fermentables, yeast, mash)
 

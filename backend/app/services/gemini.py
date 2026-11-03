@@ -84,11 +84,15 @@ def cache_dir() -> Path:
 
 
 def inline_pdf(path: Path) -> dict[str, Any]:
+    """The document part for a file on disk."""
+    return inline_pdf_bytes(path.read_bytes(), path.name)
+
+
+def inline_pdf_bytes(data: bytes, name: str) -> dict[str, Any]:
     """The document part. Size is checked before the upload, not after."""
-    data = path.read_bytes()
     if len(data) > MAX_INLINE_BYTES:
         raise GeminiError(
-            f"{path.name} is {len(data) // 1_000_000} MB; the inline limit is "
+            f"{name} is {len(data) // 1_000_000} MB; the inline limit is "
             f"{MAX_INLINE_BYTES // 1_000_000} MB"
         )
     return {

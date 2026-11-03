@@ -13,6 +13,11 @@ MAIN = Path(__file__).resolve().parents[3] / "backend" / "app" / "main.py"
 
 ROUTE_METHODS = {"get", "post", "put", "patch", "delete"}
 
+# `RateLimitedLlmUser` wraps `AllowedUser` in a tighter token bucket, so it proves
+# identity *and* guards the paid call. It satisfies the allowlist requirement.
+AUTH_DEPS = {"AllowedUser", "CurrentUser", "RateLimitedUser", "RateLimitedLlmUser"}
+ALLOWLISTED = {"AllowedUser", "RateLimitedLlmUser"}
+
 # Deliberately unauthenticated readiness probe.
 PUBLIC = {"/health"}
 # Identity proof only: the payload reports whether the caller is allowlisted.
@@ -45,7 +50,7 @@ def _routes() -> list[tuple[str, str, set[str], int]]:
 
 def _route_problem(method: str, path: str, deps: set[str], lineno: int) -> str | None:
     where = f"{method} {path} (main.py:{lineno})"
-    auth = deps & {"AllowedUser", "CurrentUser", "RateLimitedUser"}
+    auth = deps & AUTH_DEPS
 
     if path in PUBLIC:
         if auth:
@@ -61,7 +66,7 @@ def _route_problem(method: str, path: str, deps: set[str], lineno: int) -> str |
         if "RateLimitedUser" not in auth:
             return f"{where}: solver route must be rate-limited"
         return None
-    if "AllowedUser" not in auth:
+    if not auth & ALLOWLISTED:
         return f"{where}: user-data route must use AllowedUser"
     return None
 

@@ -20,7 +20,7 @@ from app.auth.deps import (
     log_allowlist_status,
     session_payload,
 )
-from app.auth.throttle import RateLimitedError, RateLimitedUser
+from app.auth.throttle import RateLimitedError, RateLimitedLlmUser, RateLimitedUser
 from app.schemas.batch import (
     BatchPatch,
     BatchRecord,
@@ -46,8 +46,15 @@ from app.schemas.brew_session import (
 )
 from app.schemas.catalog import CatalogItem, CatalogItemCreate
 from app.schemas.ids import validate_doc_id
+from app.schemas.import_record import (
+    CreateImportRequest,
+    ImportRecord,
+    UpdateImportRequest,
+)
 from app.services import (
     SolverServiceError,
+    gemini,
+    recipe_import,
     solve_batch_request,
     solve_hop_request,
     solve_water_request,
@@ -57,6 +64,13 @@ from app.services.brew_session_service import BrewSessionServiceDep
 from app.services.catalog_service import (
     CatalogServiceDep,
     CatalogValidationError,
+)
+from app.services.import_service import (
+    DuplicateImport,
+    ImportConflict,
+    ImportNotFound,
+    ImportPayloadError,
+    ImportServiceDep,
 )
 from app.services.report_render import (
     RenderedReport,
@@ -368,6 +382,96 @@ def preview_report(
     return _report_response(
         service.render_preview(user["uid"], batch_id, payload.bundle, spec)
     )
+
+
+# --- Recipe imports ---------------------------------------------------------
+
+
+def _import_error(status: int, code: str, message: str, details: dict | None = None):
+    return JSONResponse(
+        status_code=status,
+        content={"code": code, "message": message, "details": details or {}},
+    )
+
+
+@app.post("/imports", response_model=ImportRecord, status_code=201)
+def create_import(
+    request: CreateImportRequest,
+    user: RateLimitedLlmUser,
+    service: ImportServiceDep,
+):
+    """Transcribe one uploaded document into an import record."""
+    try:
+        return service.create(user["uid"], request)
+    except DuplicateImport as exc:
+        return _import_error(
+            409,
+            "IMPORT_DUPLICATE",
+            "this document has already been imported",
+            {"import_id": exc.import_id},
+        )
+    except ImportPayloadError as exc:
+        return _import_error(422, "IMPORT_PAYLOAD", str(exc))
+    except recipe_import.AmbiguousDocument as exc:
+        return _import_error(
+            422,
+            "IMPORT_AMBIGUOUS",
+            str(exc),
+            {"titles": exc.titles},
+        )
+    except recipe_import.NoRecipeFound as exc:
+        return _import_error(422, "IMPORT_NO_RECIPE", str(exc))
+    except recipe_import.ExtractionContractError as exc:
+        return _import_error(422, "IMPORT_CONTRACT", str(exc))
+    except gemini.GeminiUnavailable as exc:
+        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
+    except gemini.GeminiError as exc:
+        return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+
+
+@app.get("/imports", response_model=list[ImportRecord])
+def list_imports(user: AllowedUser, service: ImportServiceDep):
+    """List the caller's import records, newest first."""
+    return service.list(user["uid"])
+
+
+@app.get("/imports/{import_id}", response_model=ImportRecord)
+def get_import(import_id: str, user: AllowedUser, service: ImportServiceDep):
+    """Open one import record (resume)."""
+    validate_doc_id(import_id)
+    try:
+        return service.get(user["uid"], import_id)
+    except ImportNotFound:
+        raise HTTPException(status_code=404, detail="Import not found") from None
+
+
+@app.patch("/imports/{import_id}", response_model=ImportRecord)
+def patch_import(
+    import_id: str,
+    request: UpdateImportRequest,
+    user: AllowedUser,
+    service: ImportServiceDep,
+):
+    """Update the identity, ledger or status of an uncommitted record."""
+    validate_doc_id(import_id)
+    try:
+        return service.update(user["uid"], import_id, request)
+    except ImportNotFound:
+        raise HTTPException(status_code=404, detail="Import not found") from None
+    except ImportConflict as exc:
+        return _import_error(409, "IMPORT_CONFLICT", str(exc), {"reason": exc.reason})
+
+
+@app.delete("/imports/{import_id}", status_code=204)
+def delete_import(import_id: str, user: AllowedUser, service: ImportServiceDep):
+    """Delete an uncommitted record. A committed one is a batch's audit trail."""
+    validate_doc_id(import_id)
+    try:
+        service.delete(user["uid"], import_id)
+    except ImportNotFound:
+        raise HTTPException(status_code=404, detail="Import not found") from None
+    except ImportConflict as exc:
+        return _import_error(409, "IMPORT_CONFLICT", str(exc), {"reason": exc.reason})
 
 
 @app.get("/brew-sessions", response_model=list[BrewSession])

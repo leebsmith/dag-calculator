@@ -81,8 +81,20 @@ def extract_recipe_captured(
     refresh: bool = False,
 ) -> tuple[ExtractedRecipe, gemini.RawGeneration]:
     """As ``extract_recipe``, also returning the provider body for promotion."""
-    data = path.read_bytes()
-    raw = gemini.generate_raw("extract", [gemini.inline_pdf(path)], cache=cache, refresh=refresh)
+    return extract_recipe_bytes(path.read_bytes(), path.name, cache=cache, refresh=refresh)
+
+
+def extract_recipe_bytes(
+    data: bytes,
+    filename: str,
+    *,
+    cache: bool = True,
+    refresh: bool = False,
+) -> tuple[ExtractedRecipe, gemini.RawGeneration]:
+    """Transcribe a document held in memory, which is how the API receives it."""
+    raw = gemini.generate_raw(
+        "extract", [gemini.inline_pdf_bytes(data, filename)], cache=cache, refresh=refresh
+    )
     try:
         payload = ExtractionPayload.model_validate(
             gemini.parse_json(gemini.response_text(raw.body))
@@ -97,7 +109,7 @@ def extract_recipe_captured(
         raise AmbiguousDocument([recipe.title for recipe in payload.detected_recipes])
     record = ExtractedRecipe(
         source=SourceMeta(
-            filename=path.name,
+            filename=filename,
             sha256=hashlib.sha256(data).hexdigest(),
             page_count=_page_count(data),
             model=str(raw.request_meta["model"]),

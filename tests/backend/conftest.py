@@ -273,3 +273,37 @@ def freeze_payload(valuation=None, **overrides):
         formatted_summaries=overrides.pop("formatted_summaries", {}),
         **overrides,
     )
+
+
+class FakeImportRepo:
+    """A dict-backed import repository: no Firestore, no emulator."""
+
+    def __init__(self) -> None:
+        self.docs: dict[str, dict[str, dict]] = {}
+
+    def list(self, uid):
+        return list(self.docs.get(uid, {}).values())
+
+    def get(self, uid, import_id):
+        return self.docs.get(uid, {}).get(import_id)
+
+    def find_by_sha256(self, uid, sha256):
+        for doc in self.docs.get(uid, {}).values():
+            if doc["extract"]["source"]["sha256"] == sha256:
+                return doc
+        return None
+
+    def create(self, uid, import_id, data):
+        record = {**data, "id": import_id, "created_at": 1.0, "updated_at": 1.0}
+        self.docs.setdefault(uid, {})[import_id] = record
+        return record
+
+    def update(self, uid, import_id, data):
+        doc = self.docs.get(uid, {}).get(import_id)
+        if doc is None:
+            return None
+        doc.update(data)
+        return doc
+
+    def delete(self, uid, import_id):
+        return self.docs.get(uid, {}).pop(import_id, None) is not None
