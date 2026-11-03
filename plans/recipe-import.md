@@ -509,7 +509,7 @@ the text.
 | Phase | Scope | Gate |
 |---|---|---|
 | J.1 | **Asset iteration + hold (7 of 9 steps landed):** prompt registry (`extract`, `match`, maybe a repair pass), each with version, model setting, derived schema snapshot and fixtures; manifest + sha256 guard; CLI with `--cache` / `--promote` / `--replay` | fixture suite, prompt-hash and schema-snapshot guards, manual smoke, no network in tests → **HOLD H.1** |
-| J.2 | Import records + upload + transcription review with `llm`/`user` provenance | backend pytest + frontend suite |
+| J.2 | Import records + upload + transcription review with `llm`/`user` provenance, plus the growing acceptance test | backend pytest + frontend suite |
 | J.3 | Ledger: destinations, transforms, L0/L1 matching, parts-only commit path, progress metric | frontend suite + guards |
 | J.4 | Gate + delta table (water advisory) | boundary mocks, snapshot of the delta table |
 | J.5 | Hops: pools, pan routing, fraction policy, printed-IBU capture | hop routing + fraction tests |
@@ -648,6 +648,10 @@ before.
 - [ ] `POST /imports` (extract), `GET`/`PUT`/`DELETE` with `AllowedUser` and the LLM bucket
 - [ ] Import view shell (`view: "import"`), identity from `batch-setup`, rig-fit banner
 - [ ] Transcribe stage: verbatim + page per field, `llm`/`user` provenance, `unmodeled` and `warnings` panels, and the verification result (checked / not found / no text layer)
+- [ ] **Acceptance test, growing:** `pristine-black-ipa` → record → transcription review
+      payload, asserting the printed IBUs sum to the stated total and verification is
+      clean. J.3 extends the same test through the ledger (rows and shares), J.4 through
+      the gate, so the fixture that starts as a transcription promise ends as a batch.
 - [ ] Abandon / resume / sha256 dedupe
 
 ### J.3 — ledger (fermentables, yeast, mash)
