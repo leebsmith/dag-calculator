@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\"targets\": {\"volume\": {\"value\": 5.0, \"verbatim\": \"Batch size: 5 gallons (19 liters)\", \"page\": 2, \"source\": \"llm\", \"unit\": \"gal\"}, \"og\": null, \"fg\": null, \"abv\": null, \"ibu\": null, \"srm\": null, \"boil_time_min\": null}}",
+            "thoughtSignature": "EmkKZwFpFH0T7FzGLz8kIsKZlJ2x+fpg1UoI7Sx+1WhDR6JcgPRdi8H97UG+bEenAqldNcVTKNOFNWfZXlQbhqnAGddtm3w695Kl9XfX3PQCT9sg/vGNY6m9fkk3CV0s0vUvLVMTWm10eHs="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 888,
+    "candidatesTokenCount": 85,
+    "totalTokenCount": 973,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 888
+      }
+    ],
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-3.8-flash",
+  "responseId": "zjrqauL4H6XmytMP_8qv6Q8"
+}

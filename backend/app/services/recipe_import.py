@@ -31,7 +31,7 @@ from app.schemas.recipe_import import (
     TargetName,
     Targets,
 )
-from app.services import gemini
+from app.services import extraction_check, gemini, pdf_text
 
 MAX_PICKS = 5
 MAX_PER_STANDARD = 2
@@ -94,7 +94,7 @@ def extract_recipe_captured(
         ),
         payload=payload,
     )
-    return record, raw
+    return extraction_check.verify(record, data), raw
 
 
 def match_candidates(
@@ -142,12 +142,32 @@ def gap_fill(
     body = request.model_dump(mode="json")
     raw = gemini.generate_raw(
         "gapfill",
-        [*gemini.text_parts([json.dumps(body, ensure_ascii=False)]), gemini.inline_pdf(path)],
+        _gap_fill_parts(path, body, request.page_hint),
         cache=cache,
         refresh=refresh,
     )
     payload = GapFillPayload.model_validate(gemini.parse_json(gemini.response_text(raw.body)))
     return _requested_only(request.missing, payload.targets), raw
+
+
+def _gap_fill_parts(path: Path, body: dict, page_hint: str | None) -> list[dict]:
+    """Page text when the document has a text layer, the rendered PDF when it does not.
+
+    The text path is roughly ten times cheaper and quotes exact glyphs, which is
+    what a re-read for one number wants. A scan has no text to send, so it keeps
+    the whole-document pass.
+    """
+    parts = [*gemini.text_parts([json.dumps(body, ensure_ascii=False)])]
+    try:
+        pages = pdf_text.page_texts(path.read_bytes())
+    except pdf_text.PdfTextError:
+        pages = []
+    if pdf_text.has_text_layer(pages):
+        wanted = pdf_text.parse_page_range(page_hint, len(pages))
+        parts.append({"text": pdf_text.page_marked_text(pages, wanted)})
+        return parts
+    parts.append(gemini.inline_pdf(path))
+    return parts
 
 
 def _requested_only(missing: list[TargetName], filled: Targets) -> Targets:

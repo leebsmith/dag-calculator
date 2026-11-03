@@ -3,27 +3,53 @@
   "prompts": {
     "extract": {
       "file": "extract.md",
-      "version": 4,
+      "version": 5,
       "model": "gemini-3.8-flash",
       "temperature": 0.0,
       "thinking_budget": 0,
-      "sha256": "69139b544c0aa11468d62efcb8ea74932cf813ad0e9263c35e0eb8a9871d2a83"
+      "sha256": "0d822291d224bfcaba4d41f27fa6c53aa87a962fc0c018dba30283d7bdd62c5c",
+      "history": [
+        {
+          "version": 4,
+          "sha256": "69139b544c0aa11468d62efcb8ea74932cf813ad0e9263c35e0eb8a9871d2a83"
+        },
+        {
+          "version": 1,
+          "sha256": "73e23b3b2b3473205072a39d084ad517e91aa7178a3b238d1d86d4829f862b8c"
+        }
+      ]
     },
     "match": {
       "file": "match.md",
-      "version": 1,
+      "version": 2,
       "model": "gemini-3.8-flash",
       "temperature": 0.0,
       "thinking_budget": 512,
-      "sha256": "6cc05999d26be6224921537687a5d1e9568886a2f23bf2bccf77b40934544bef"
+      "sha256": "e3f0c8445028be5a2eb4d2fe910343464daebc5e6d208f982705c00428e06907",
+      "history": [
+        {
+          "version": 1,
+          "sha256": "6cc05999d26be6224921537687a5d1e9568886a2f23bf2bccf77b40934544bef"
+        }
+      ]
     },
     "gapfill": {
       "file": "gapfill.md",
-      "version": 1,
+      "version": 3,
       "model": "gemini-3.8-flash",
       "temperature": 0.0,
       "thinking_budget": 256,
-      "sha256": "67f6d162c7d8dbd03a34fcabe92244ddc2c18d0a5c89efded35b66fed7698af6"
+      "sha256": "b8920d0aed9696edf03bc34594df0cf5d6051a0991ad25aeae46da9d077a2117",
+      "history": [
+        {
+          "version": 2,
+          "sha256": "9aa31d5cccfabe245941df516769273484d7246927fde165887db724eca52fd1"
+        },
+        {
+          "version": 1,
+          "sha256": "67f6d162c7d8dbd03a34fcabe92244ddc2c18d0a5c89efded35b66fed7698af6"
+        }
+      ]
     }
   }
 }

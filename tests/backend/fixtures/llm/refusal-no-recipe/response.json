@@ -4,8 +4,8 @@
       "content": {
         "parts": [
           {
-            "text": "{\"detected_recipes\":[],\"title\":null,\"publication\":null,\"style_name\":null,\"targets\":{\"volume\":null,\"og\":null,\"fg\":null,\"abv\":null,\"ibu\":null,\"srm\":null,\"boil_time_min\":null},\"fermentables\":[],\"hops\":[],\"yeasts\":[],\"mashes\":[],\"pool_ibu\":null,\"unmodeled\":[],\"warnings\":[{\"text\":\"No recipe detected in the provided pages; the text consists of an article on sansho and a beer review / interview feature ('Pick Six: An Epic Beer Journey Continues').\",\"page\":null}]}",
-            "thoughtSignature": "EmkKZwFpFH0Trv6WglA2VsACQyPkjrS6JcFG0OGtR8toLAGaO6+2p06WUHdjnbqBSsyYknQwqT29CbRsSw3XZjt3Xaqv+iVMZ8npeT4pOZfTnA5RZ5qfMq7uoIB+6am8qnIH4aiGW8FvLbs="
+            "text": "{\n  \"detected_recipes\": [],\n  \"title\": null,\n  \"publication\": \"Craft Beer & Brewing\",\n  \"style_name\": null,\n  \"targets\": {\n    \"volume\": null,\n    \"og\": null,\n    \"fg\": null,\n    \"abv\": null,\n    \"ibu\": null,\n    \"srm\": null,\n    \"boil_time_min\": null\n  },\n  \"fermentables\": [],\n  \"hops\": [],\n  \"yeasts\": [],\n  \"mashes\": [],\n  \"pool_ibu\": null,\n  \"unmodeled\": [],\n  \"warnings\": [\n    {\n      \"text\": \"No brewing recipe detected in the document. The document contains an article about sansho peppers ('The Mash: Special Ingredient') and a feature interview/profile ('Pick Six: An Epic Beer Journey Continues').\",\n      \"page\": null\n    }\n  ]\n}",
+            "thoughtSignature": "EmkKZwFpFH0Tol/s+B3OTaP+631yF1ZpjyeYjSdh/Dwobu10c42fSfgZ0ddfxz8IfSQaVEH/3Vyy6pusC8jWqy+F5DUvR7r75HLCAR7YXZxy4HWhgf5a8uGaINcPzkbOpVUnHTbuSWFPGN8="
           }
         ],
         "role": "model"
@@ -15,21 +15,21 @@
     }
   ],
   "usageMetadata": {
-    "promptTokenCount": 2737,
-    "candidatesTokenCount": 127,
-    "totalTokenCount": 2864,
+    "promptTokenCount": 2796,
+    "candidatesTokenCount": 215,
+    "totalTokenCount": 3011,
     "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1756
+      },
       {
         "modality": "IMAGE",
         "tokenCount": 1040
-      },
-      {
-        "modality": "TEXT",
-        "tokenCount": 1697
       }
     ],
     "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "0DTqatjaBNPr1sgPxcvF-A8"
+  "responseId": "vTrqauzpEOeLytMP4K6ikQU"
 }

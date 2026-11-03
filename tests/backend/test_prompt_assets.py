@@ -78,15 +78,31 @@ def test_wire_schema_is_flattened() -> None:
 
 
 def test_fixtures_name_a_version_the_manifest_knows() -> None:
+    """A capture must point at the current prompt or a declared earlier one."""
     assert fixture_cases(), "no captured fixtures"
     manifest = load_manifest()["prompts"]
     for case in fixture_cases():
         meta = json.loads((case / "meta.json").read_text(encoding="utf-8"))
         assert meta["prompt_id"] in manifest, case.name
-        assert meta["prompt_version"] == manifest[meta["prompt_id"]]["version"], (
-            f"{case.name} was captured under a prompt version that no longer exists"
+        record = manifest[meta["prompt_id"]]
+        known = {record["version"]} | {entry["version"] for entry in record["history"]}
+        assert meta["prompt_version"] in known, (
+            f"{case.name} was captured under prompt version {meta['prompt_version']}, "
+            f"which the manifest neither declares nor remembers"
         )
         assert (case / "response.json").exists(), case.name
+
+
+def test_history_remembers_superseded_versions_in_order() -> None:
+    manifest = load_manifest()["prompts"]
+    for prompt_id, record in manifest.items():
+        history = record.get("history", [])
+        assert history, f"{prompt_id} has been edited before; it should carry history"
+        versions = [entry["version"] for entry in history]
+        assert versions == sorted(versions, reverse=True), prompt_id
+        assert record["version"] not in versions, prompt_id
+        for previous in history:
+            assert len(previous["sha256"]) == 64, prompt_id
 
 
 def test_fixtures_replay_without_a_network(monkeypatch: pytest.MonkeyPatch) -> None:

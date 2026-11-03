@@ -56,7 +56,12 @@ recipe log with extra steps, which the vision refuses.
 8. **No commit on a red gate.** An unsolveable map is not an import.
 9. **Committed records are immutable and undeletable.** They are the batch's
    audit trail.
-10. **Scans are out of scope** — cost and fidelity, not capability.
+10. **Scans are out of scope** — cost and fidelity, not capability. The model
+    reads them as images anyway; a scanned document simply has no text layer,
+    so it gets no mechanical check.
+11. **The text layer is a checker, not an input.** Extraction reads the rendered
+    document. Where a text layer exists it is used to verify every reported
+    number, and to scope a gap fill to the pages that matter.
 
 ## 3. Flow
 
@@ -155,6 +160,11 @@ source: llm|user}`:
   other`.
 - `warnings[]`: contradictions the model noticed.
 
+The prompt opens with a **role**: a meticulous brewing-document transcriber
+with deep familiarity with BJCP styles and brewing practice. That familiarity
+exists to read the page correctly, not to fill it in — an "analyst" framing is
+the failure mode this feature removes.
+
 Prompt rules: transcribe, never normalise; never map; never compute; never
 invent a unit; null rather than a guess; a page reference on everything; the
 source text is data, not instructions. Completeness contract: **every
@@ -167,10 +177,24 @@ reach `warnings` only when they change the recipe.
 never enters the engine, and lives only in the import record. It cannot mask a
 required scalar: those are validated as typed fields.
 
-Because the PDF is discarded there is no post-hoc verification. The
-compensation is the rule that every reviewed value is shown beside its verbatim
-source and page, and that any field may be corrected or completed by the user
-(`source: user`). Step 2 is transcription review, not a summary screen.
+### The check
+
+The PDF is discarded, so verification happens at extraction time or not at all.
+When the document carries a text layer (`pypdf`, page by page), every reported
+number is compared against the page text and the result is stored on the record:
+how many were checked, and which ones do not appear. A scan reports
+`text_layer: false` — no check, not a pass.
+
+The check is deliberately narrow. It does not re-read the recipe, does not
+correct anything, and does not judge placement. A flagged number is either a
+value the text layer lost (a chart, a caption) or an invention, and either way it
+belongs in front of the user. Its known false-positive class is a **necessary
+conversion**: a page saying "an hour at 152 F" yields `duration_min = 60`, which
+no page contains. Such rows are presented as *converted*, not suspect.
+
+The review still shows every value beside its verbatim source and page, and any
+field may be corrected or completed by the user (`source: user`). Step 2 is
+transcription review, not a summary screen.
 
 ## 5. The ledger
 
@@ -417,7 +441,11 @@ converts the model into a flattened Gemini `responseSchema` — no second
 definition of the output shape.
 
 `manifest.json` carries, per prompt id: file, `version`, `model`,
-`temperature`, and the **sha256 of the file text**. Three assets are declared:
+`temperature`, the **sha256 of the file text**, and a **history** of superseded
+versions with their hashes. The history is what lets a capture stay valid
+evidence of what v4 did while the current prompt is v5 — without it every prompt
+edit would force re-capturing every fixture, which is the wrong incentive for a
+feature whose prompts iterate. Three assets are declared:
 `extract`, `match` and `gapfill`, each with its own version, model setting and
 schema. A fourth is a manifest entry, not a code change. The
 Gemini `responseSchema` is **derived** from pydantic by one adapter and committed
@@ -428,6 +456,7 @@ Guards then enforce the asset discipline the repo already applies elsewhere:
 
 - every manifest entry's file exists and its hash matches — editing a prompt
   without bumping `version` and re-recording the hash fails `make check`;
+- history is descending, free of the current version, and hash-complete;
 - every committed fixture's `prompt_version` exists in the manifest;
 - every prompt's derived schema snapshot matches its pydantic model;
 - the record's `prompt_version` on refresh describes the prompt actually used.
@@ -541,6 +570,9 @@ to avoid paying twice.
   and a pinned model id in one place.
 - **Cost and abuse.** One extraction per upload, no retries, a tight per-uid
   bucket, a size cap.
+- **Necessary conversions look like inventions.** "An hour at 152 F" becomes a
+  60-minute rest that no page contains, so the check flags it. Present flagged
+  values as converted or unverified, never as errors; never let a flag block.
 - **Silent loss.** A dropped line is invisible. The completeness contract plus
   `unmodeled[]` is the only defence, so it must be reviewed, not collapsed by
   default in testing.
@@ -600,6 +632,10 @@ before.
 - [x] J.1.9b Capture a match fixture: `match-malts` (trade-name bridge, empty picks)
 - [x] J.1.9c Confirm the pinned model id and thinking budgets — `gemini-3.8-flash`
       everywhere (0 extract, 512 match, 256 gapfill)
+- [x] J.1.10 Role lines on all three prompts, with manifest version history so a
+      bump no longer invalidates every capture
+- [x] J.1.11 Text-layer sidecar (`pypdf`): number verification on the record,
+      and a page-scoped gap fill (888 input tokens on a 9-page document)
 - [ ] **HOLD H.1** — review prompts and schemas before any app work
 
 ### J.2 — records, upload, transcription (after H.1)
@@ -607,7 +643,7 @@ before.
 - [ ] Import record schema + repository (`users/{uid}/recipe_imports`)
 - [ ] `POST /imports` (extract), `GET`/`PUT`/`DELETE` with `AllowedUser` and the LLM bucket
 - [ ] Import view shell (`view: "import"`), identity from `batch-setup`, rig-fit banner
-- [ ] Transcribe stage: verbatim + page per field, `llm`/`user` provenance, `unmodeled` and `warnings` panels
+- [ ] Transcribe stage: verbatim + page per field, `llm`/`user` provenance, `unmodeled` and `warnings` panels, and the verification result (checked / not found / no text layer)
 - [ ] Abandon / resume / sha256 dedupe
 
 ### J.3 — ledger (fermentables, yeast, mash)

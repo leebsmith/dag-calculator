@@ -93,7 +93,7 @@ def run_extract(args: argparse.Namespace) -> int:
         ):
             refusal_fixture(args, exc)
         return 1
-    emit(record.payload.model_dump(mode="json"), args.out)
+    emit(record.model_dump(mode="json", exclude_none=True), args.out)
     summarise(record)
     if args.promote:
         write_fixture(args.promote, "extract", raw)
@@ -229,6 +229,18 @@ def summarise(record: ExtractedRecipe) -> None:
     )
     if missing:
         print(f"missing required: {', '.join(missing)}", file=sys.stderr)
+    verification = record.verification
+    if verification is None or not verification.text_layer:
+        print("verification: no text layer (a scan) — human review only", file=sys.stderr)
+        return
+    unmatched = verification.unmatched
+    print(
+        f"verification: {verification.numbers_checked - len(unmatched)} of "
+        f"{verification.numbers_checked} numbers appear in the page text",
+        file=sys.stderr,
+    )
+    for item in unmatched[:8]:
+        print(f"  not found on the page: {item.field} = {item.value} (p{item.page})", file=sys.stderr)
 
 
 if __name__ == "__main__":

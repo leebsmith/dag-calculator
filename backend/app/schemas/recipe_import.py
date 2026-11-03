@@ -383,6 +383,27 @@ class GapFillPayload(StrictModel):
     targets: Targets = Targets()
 
 
+class UnmatchedNumber(StrictModel):
+    """A reported number that the page text does not contain."""
+
+    field: str
+    value: str
+    page: int | None = None
+
+
+class ExtractionVerification(StrictModel):
+    """The mechanical check, when the document carried a text layer.
+
+    ``text_layer: false`` means no check was possible (a scan), not that the
+    extraction passed.
+    """
+
+    text_layer: bool
+    pages: int | None = None
+    numbers_checked: int = 0
+    unmatched: list[UnmatchedNumber] = []
+
+
 class SourceMeta(StrictModel):
     """Server-side provenance for one extraction. Never produced by the model."""
 
@@ -396,11 +417,12 @@ class SourceMeta(StrictModel):
 
 
 class ExtractedRecipe(StrictModel):
-    """The stored transcription: the model's payload plus our provenance."""
+    """The stored transcription: the model's payload, our provenance, and the check."""
 
     schema_version: int = EXTRACTION_SCHEMA_VERSION
     source: SourceMeta
     payload: ExtractionPayload
+    verification: ExtractionVerification | None = None
 
 
 # -----------------------------------------------------------------------------
