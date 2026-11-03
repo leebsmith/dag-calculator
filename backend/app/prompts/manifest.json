@@ -3,12 +3,16 @@
   "prompts": {
     "extract": {
       "file": "extract.md",
-      "version": 6,
+      "version": 7,
       "model": "gemini-3.8-flash",
       "temperature": 0.0,
       "thinking_budget": 0,
-      "sha256": "d9bf4ab18b272b9cd2ec8aa5ec5089025e63f47c1a2a7abec176a012ac2e2147",
+      "sha256": "7decbfac64f8e873f6ca8306907b0b9c43f802d03962dd9411454f70235898f4",
       "history": [
+        {
+          "version": 6,
+          "sha256": "d9bf4ab18b272b9cd2ec8aa5ec5089025e63f47c1a2a7abec176a012ac2e2147"
+        },
         {
           "version": 5,
           "sha256": "0d822291d224bfcaba4d41f27fa6c53aa87a962fc0c018dba30283d7bdd62c5c"

@@ -112,6 +112,11 @@ One entry per hop line, in the order printed.
   30-ish IBUs about halfway through the boil") states `targets.ibu` and must
   leave `ibu_contribution` null on every line: duplicating one number into both
   places double-counts it. Never compute an IBU.
+- **One product per row.** A line that doses two or more distinct products at
+  once — `1 oz each Citra and Amarillo`, `2 g each of A and B` — is several rows,
+  one per product, each carrying the shared quantity, and the decomposition goes
+  in `warnings`. Never leave `each`, `and`, or a list of products in a row's
+  `name`: a row has to name one thing the caller can look up.
 - `product_form` is the printed form (`pellet`, `whole leaf`, `cryo`,
   `lupulin`) when stated.
 - `pool_ibu` carries printed boil and whirlpool IBU subtotals, separately, when

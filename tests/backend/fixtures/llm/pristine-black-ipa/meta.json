@@ -1,7 +1,7 @@
 {
   "prompt_id": "extract",
-  "prompt_version": 5,
+  "prompt_version": 7,
   "model": "gemini-3.8-flash",
-  "captured_at": "2026-11-03T19:53:59Z",
-  "note": "A pristine two-page recipe with no overlay, no editorial pages and printed per-addition IBUs. The gold case for the hop split: six printed hop lines become eight rows because the two '1 oz each Citra and Amarillo' dry hops are decomposed into four, with stage_verbatim keeping 'at first dry hop' / 'at second dry hop' and a warning explaining the split. The printed IBUs (25, 20 in the boil; 8, 7 in the whirlpool) sum to the stated 60, so the whirlpool fraction is exact arithmetic (15/60 = 0.25) rather than an estimate. Verification: 31 of 31 numbers found. Over-capture, deliberate: the directions paragraph lands in unmodeled as process_additive. This fixture keeps page-text.json: the text layer as pypdf reads it, which is the corpus the production check uses, so the verification test needs no PDF."
+  "captured_at": "2026-11-03T22:37:28Z",
+  "note": "A pristine two-page recipe with no overlay, no editorial pages and printed per-addition IBUs. The gold case for the hop split: the printed IBUs (25, 20 boil; 8, 7 whirlpool) sum to the stated 60, so the whirlpool fraction is exact arithmetic (15/60 = 0.25) rather than an estimate. Two '1 oz each Citra and Amarillo' dry hops decompose into four rows, each with its own warning. Why this fixture keeps being re-captured: under v6 the same page produced only six rows, with 'each Citra and Amarillo' left as a hop *name* - faithful to the line and unmappable in the ledger - because nothing in the prompt forbade it. v7 added the one-product-per-row rule, and the behaviour became reproducible instead of accidental. Reported-number counts move with the payload (31 at v5, 27 at v6, 28 at v7), which is why the tests assert the invariants (clean check, IBUs sum, 0.25) and not the total."
 }
