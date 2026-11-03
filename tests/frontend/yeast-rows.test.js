@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  attenuationBandLabel,
   attenuationLabel,
   attenuationTier,
   diastaticusTier,
   diastaticusTiers,
   isYeastListTruncated,
   percentText,
+  sta1Label,
   temperatureRangeLabel,
   YEAST_ATTENUATION_TIERS,
   YEAST_ROW_LIMIT,
@@ -20,6 +22,23 @@ test("attenuationLabel prints one decimal and blanks a missing strain", () => {
   assert.equal(attenuationLabel(null), "");
   assert.equal(attenuationLabel(undefined), "");
   assert.equal(percentText(0.705), "70.5");
+});
+
+test("attenuationBandLabel prints the vendor band only when both ends exist", () => {
+  assert.equal(
+    attenuationBandLabel({ attenuation_low_pct: 0.82, attenuation_high_pct: 0.86 }),
+    "82–86%"
+  );
+  assert.equal(attenuationBandLabel({ attenuation_low_pct: 0.82 }), "");
+  assert.equal(attenuationBandLabel({ attenuation_pct: 0.8 }), "");
+  assert.equal(attenuationBandLabel(null), "");
+});
+
+test("sta1Label keeps the unpublished result as its own marker", () => {
+  assert.equal(sta1Label({ sta1: true }), "STA1+");
+  assert.equal(sta1Label({ sta1: false }), "STA1−");
+  assert.equal(sta1Label({}), "STA1?");
+  assert.equal(sta1Label(null), "STA1?");
 });
 
 test("attenuationTier follows the published band edges", () => {
@@ -65,6 +84,14 @@ test("temperatureRangeLabel needs both ends of the band", () => {
   assert.equal(temperatureRangeLabel({ temp_low_c: 18, temp_high_c: 22 }), "18–22°C");
   assert.equal(temperatureRangeLabel({ temp_low_c: 18 }), "");
   assert.equal(temperatureRangeLabel(null), "");
+});
+
+test("temperatureRangeLabel converts to the display unit", () => {
+  const fahrenheit = { toDisplay: (c) => (c * 9) / 5 + 32, symbol: "°F", decimals: 1 };
+  assert.equal(
+    temperatureRangeLabel({ temp_low_c: 12, temp_high_c: 25 }, fahrenheit),
+    "53.6–77.0°F"
+  );
 });
 
 test("the result label reports the cap and the truncation hint", () => {

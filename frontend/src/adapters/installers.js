@@ -74,7 +74,12 @@ export const INSTALLERS = [
   { name: "unitActions", modules: UNIT_ACTIONS, keys: unitActionsKeys },
   { name: "snapshot", modules: SNAPSHOT, keys: snapshotKeys },
   { name: "libraryUi", modules: LIBRARY_UI, keys: libraryUiKeys },
-  { name: "yeast", modules: YEAST, keys: yeastKeys, partials: ["step-yeast.html"] },
+  {
+    name: "yeast",
+    modules: YEAST,
+    keys: yeastKeys,
+    partials: ["step-yeast.html", "modal-yeast-picker.html"],
+  },
   {
     name: "styleDeclaration",
     modules: STYLE_DECLARATION,
@@ -138,6 +143,11 @@ export const SHARED = [
     reason: "the style navigator reads the target selection the target card owns",
   },
   {
+    key: "styleGravityDisplay",
+    owners: ["styleTargets"],
+    reason: "the pin input and its readouts print the gravity unit the navigator's plot uses",
+  },
+  {
     key: "addDraftRow",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
@@ -179,7 +189,7 @@ export const SHARED = [
   },
   {
     key: "dialogFocus",
-    owners: ["hop", "lateAdditions", "malt", "mash", "traceMalts", "dryHops"],
+    owners: ["hop", "lateAdditions", "malt", "mash", "traceMalts", "dryHops", "yeast"],
     reason: "every modal shares the one focus trap",
   },
   {

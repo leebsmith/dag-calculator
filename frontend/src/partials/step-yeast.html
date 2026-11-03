@@ -5,250 +5,172 @@
   </div>
 
   <div class="step-card-content">
-    <!-- Selected strain (summary first; the chooser collapses once chosen) -->
-    <template x-if="selectedYeast">
-      <div class="synthesized-card">
-        <div class="synthesized-header">
-          <span class="synthesized-title" x-text="selectedYeast.name"></span>
-          <div class="synthesized-actions">
-            <button type="button" class="btn btn-secondary text-xs" @click="clearYeastSelection()">
-              Clear
-            </button>
-          </div>
-        </div>
-        <div class="step-grid-2col">
-          <div class="form-group">
-            <span class="form-label">Typical attenuation</span>
-            <span class="tabular-nums" x-text="yeastAttenuation(selectedYeast)"></span>
-          </div>
-          <div class="form-group">
-            <div class="form-label">
-              <label for="yeast-derate">Batch derate (points)</label>
-              <button
-                type="button"
-                class="btn-link text-xs"
-                @click="toggleDerateHelp()"
-                :aria-expanded="derateHelpOpen ? 'true' : 'false'"
-                aria-controls="yeast-derate-help"
-              >Why?</button>
-            </div>
-            <input
-              id="yeast-derate"
-              type="number"
-              min="0"
-              max="25"
-              step="0.5"
-              class="form-input"
-              :value="yeastField('batch.attenuation_derate_points').display"
-              @change="commitYeastDerate($event.target)"
-            />
-            <span class="form-hint">Points off the strain's published maximum; 0 = no derate</span>
-            <div
-              id="yeast-derate-help"
-              class="text-xs text-muted"
-              x-show="derateHelpOpen"
-              style="display: none"
-            >
-              <p>
-                Assuming a healthy pitch, adequate oxygenation, and tight temperature
-                control, derate the lab's maximum published apparent attenuation by
-                2–5 points.
-              </p>
-              <p>
-                Labs measure attenuation on a standardized, highly fermentable wort
-                (typically 1.040–1.050 OG, 100% pale base malt, mashed near
-                149°F/65°C). Homebrew recipes rarely match that, so expect the middle
-                or lower half of the published range.
-              </p>
-              <p>
-                <strong>Mash temperature.</strong> 148–150°F (64–66°C): 0 points.
-                152–154°F (67–68°C): 2–3 points. 156–158°F (69–70°C): 4–5 points.
-                Higher rests leave more unfermentable dextrins.
-              </p>
-              <p>
-                <strong>Specialty malts.</strong> At 10–20% crystal, caramel, or roasted
-                malt, add 2–3 points.
-              </p>
-              <p>
-                <strong>High gravity.</strong> Above 1.070 OG, add 2–4 points for the
-                extra osmotic and alcohol stress on the yeast.
-              </p>
-              <p>
-                <strong>Worked example.</strong> An 80% strain, 10% crystal, mashed at
-                153°F: 2–3 points for the mash plus 2–3 for the malt = 4–6 points, so
-                expect 74–76%.
-              </p>
-              <p>
-                The calculator does not infer this from your mash or grain bill; enter
-                your judgment. The published attenuation is <strong>apparent</strong>;
-                the solver converts it to real attenuation and caps the malt's
-                fermentability only. Sugar is never capped, so a late addition can
-                lift the batch's apparent attenuation past this cap.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="step-grid-2col">
-          <div class="form-group">
-            <span class="form-label">Yeast attenuation cap</span>
-            <span class="form-value">
-              <span class="tabular-nums" x-text="yeastField('batch.yeast_cap').display || '—'"></span>
-              <span x-text="yeastField('batch.yeast_cap').unit"></span>
-            </span>
-          </div>
-          <div class="form-group">
-            <span class="form-label">Strain details</span>
-            <div class="text-xs text-muted">
-              <div><strong>Manufacturer:</strong> <span x-text="selectedYeast.manufacturer"></span></div>
-              <div><strong>Flocculation:</strong> <span x-text="selectedYeast.flocculation"></span></div>
-              <div><strong>Alcohol tolerance:</strong> <span x-text="selectedYeast.alcohol_tolerance"></span></div>
-              <div x-show="selectedYeast.form"><strong>Form:</strong> <span x-text="selectedYeast.form"></span></div>
-              <div x-show="selectedYeastTemp"><strong>Temperature:</strong> <span x-text="selectedYeastTemp"></span></div>
-              <div x-show="selectedYeast.recipes !== undefined"><strong>Recipes:</strong> <span x-text="selectedYeast.recipes"></span></div>
-              <div x-show="selectedYeast.url"><strong>Source:</strong> <a :href="fmt.safeHref(selectedYeast.url)" target="_blank" rel="noopener" x-text="selectedYeast.url"></a></div>
-              <div class="card-subtitle" x-text="selectedYeast.notes"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <div>
-        <!-- Filters -->
-      <div class="step-grid-2col">
-        <div class="form-group">
-          <label class="form-label" for="yeast-search">Search by name</label>
-          <input
-            id="yeast-search"
-            type="text"
-            class="form-input"
-            placeholder="e.g. American Ale"
-            x-model="yeastSearchQuery"
-          />
-          <span class="form-hint">Name-first match; ties are alphabetical</span>
-          <div class="filter-pills-container">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': yeastSearchNotes }" :aria-pressed="(yeastSearchNotes) ? 'true' : 'false'"
-              @click="toggleYeastSearchNotes()"
-            >Search notes</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="yeast-manufacturer">Manufacturer</label>
-          <select id="yeast-manufacturer" class="form-select" x-model="yeastManufacturerFilter">
-            <option value="">All manufacturers</option>
-            <template x-for="mfr in yeastManufacturers" :key="mfr">
-              <option :value="mfr" x-text="mfr"></option>
-            </template>
-          </select>
-          <span class="form-hint">Filter by yeast lab</span>
-        </div>
-      </div>
-  
-      <!-- Apparent attenuation tiers -->
-      <div class="filter-pills-container">
-        <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
+    <div class="synthesized-card">
+      <div class="synthesized-header">
+        <h3 class="synthesized-title">Yeast</h3>
+        <div class="synthesized-actions">
+          <button type="button" class="btn btn-secondary text-xs" @click="openYeastPicker()">
+            Choose Yeast…
+          </button>
           <button
             type="button"
-            class="filter-pill"
-            :class="{ 'is-active': yeastAttenuationFilter === t.key }" :aria-pressed="(yeastAttenuationFilter === t.key) ? 'true' : 'false'"
-            @click="toggleYeastAttenuation(t.key)"
-            x-text="t.label"
-          ></button>
-        </template>
+            class="btn-outline text-xs"
+            x-show="selectedYeast"
+            @click="clearYeastSelection()"
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
-      <!-- Diastaticus status (vendor STA1 QC) -->
-      <div class="filter-pills-container">
-        <template x-for="t in yeastDiastaticusTiers" :key="'d-' + t.key">
-          <button
-            type="button"
-            class="filter-pill"
-            :class="{ 'is-active': yeastDiastaticusFilter === t.key }" :aria-pressed="(yeastDiastaticusFilter === t.key) ? 'true' : 'false'"
-            @click="toggleYeastDiastaticus(t.key)"
-            x-text="t.label + ' · ' + t.count"
-          ></button>
-        </template>
-      </div>
-      <p class="form-hint">
-        STA1 is the vendor's diastaticus marker. A strain with no published result
-        is modelled as non-diastaticus (d = 0).
-      </p>
-
-      <!-- Result counter -->
-      <div
-        class="catalog-result-counter"
-        aria-live="polite"
-        x-text="yeastResultLabel"
-      ></div>
-  
-      <!-- Results -->
-      <div class="data-table-container data-table-container-scroll">
+      <div class="data-table-container">
         <table class="data-table is-fixed">
           <colgroup>
-            <col style="width: 26%;" />
-            <col style="width: 16%;" />
-            <col style="width: 14%;" />
-            <col style="width: 16%;" />
-            <col style="width: 14%;" />
-            <col style="width: 14%;" />
+            <col style="width: 22%" />
+            <col style="width: 11%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 12%" />
+            <col style="width: 11%" />
+            <col style="width: 12%" />
+            <col style="width: 12%" />
           </colgroup>
           <thead>
             <tr>
               <th>Strain</th>
               <th>Manufacturer</th>
               <th class="text-right">Attenuation</th>
+              <th class="text-right">Cap</th>
+              <th class="text-right">Batch derate</th>
               <th>Flocculation</th>
-              <th class="text-right">Alcohol tolerance</th>
-              <th class="text-right">Action</th>
+              <th>Alcohol tolerance</th>
+              <th class="text-right">Temperature</th>
             </tr>
           </thead>
           <tbody>
-            <template x-for="y in visibleYeasts" :key="y.id">
-              <tr :class="{ 'is-selected': selectedYeastId === y.id }">
+            <template x-if="selectedYeast">
+              <tr>
                 <td>
-                  <span class="font-medium" x-text="y.name"></span>
-                  <template x-if="isUserItem(y.id)">
+                  <span class="font-medium" x-text="selectedYeast.name"></span>
+                  <span class="status-badge status-badge-info text-nano" x-text="selectedYeastSta1"></span>
+                  <template x-if="isUserItem(selectedYeast.id)">
                     <span class="status-badge status-badge-info text-nano">mine</span>
                   </template>
                 </td>
-                <td x-text="y.manufacturer"></td>
-                <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
-                <td x-text="y.flocculation"></td>
-                <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
-                <td class="table-action-cell">
-                  <button
-                    type="button"
-                    class="btn btn-secondary text-xs"
-                    :class="{ 'is-active': selectedYeastId === y.id }" :aria-pressed="(selectedYeastId === y.id) ? 'true' : 'false'"
-                    @click="selectYeast(y.id)"
-                    x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"
-                  ></button>
-                  <button
-                    type="button"
-                    class="btn btn-outline text-xs"
-                    x-show="!isUserItem(y.id)"
-                    @click="duplicateUserItem('yeast', y)"
-                    title="Copy to my items"
-                  >
-                    Copy
-                  </button>
+                <td x-text="selectedYeast.manufacturer"></td>
+                <td class="text-right tabular-nums" x-text="yeastAttenuation(selectedYeast)"></td>
+                <td
+                  class="text-right tabular-nums"
+                  x-text="fmt.formatQuantity(yeastField('batch.yeast_cap'))"
+                ></td>
+                <td class="text-right">
+                  <div class="table-action-cell">
+                    <input
+                      id="yeast-derate"
+                      type="number"
+                      min="0"
+                      max="25"
+                      step="0.5"
+                      class="form-input table-input-parts"
+                      :value="yeastDerateDisplay"
+                      @change="commitYeastDerate($event.target)"
+                      :disabled="!selectedYeast"
+                      aria-label="Batch derate, points off the strain's published maximum"
+                    />
+                    <span class="text-xs text-muted">pts</span>
+                  </div>
                 </td>
+                <td x-text="selectedYeast.flocculation || '—'"></td>
+                <td x-text="selectedYeast.alcohol_tolerance || '—'"></td>
+                <td class="text-right tabular-nums" x-text="selectedYeastTemp || '—'"></td>
               </tr>
             </template>
-            <template x-if="filteredYeasts.length === 0">
+            <template x-if="!selectedYeast">
               <tr>
-                <td colspan="6" class="table-empty-cell">No yeast strains match the current filters.</td>
+                <td colspan="8" class="table-empty-cell">
+                  No yeast selected. Choose a strain to set the attenuation cap.
+                </td>
               </tr>
             </template>
           </tbody>
         </table>
       </div>
-  
+
+      <p class="form-hint">
+        The batch attenuation is solved from the grist composition and the yeast cap.
+      </p>
+
+      <template x-if="selectedYeast">
+        <details class="yeast-more">
+          <summary class="yeast-more-summary">Strain details</summary>
+          <div class="yeast-more-body">
+            <div>
+              <strong>Published attenuation:</strong>
+              <span x-text="selectedYeastBand || '—'"></span>
+            </div>
+            <div x-show="selectedYeast.form">
+              <strong>Form:</strong> <span x-text="selectedYeast.form"></span>
+            </div>
+            <div x-show="selectedYeast.recipes !== undefined">
+              <strong>Recipes:</strong> <span x-text="selectedYeast.recipes"></span>
+            </div>
+            <div x-show="selectedYeast.url">
+              <strong>Source:</strong>
+              <a
+                :href="fmt.safeHref(selectedYeast.url)"
+                target="_blank"
+                rel="noopener"
+                x-text="selectedYeast.url"
+              ></a>
+            </div>
+            <p class="text-xs text-muted" x-text="selectedYeast.notes"></p>
+          </div>
+        </details>
+      </template>
+
+      <details class="yeast-more">
+        <summary class="yeast-more-summary">Why derate?</summary>
+        <div class="yeast-more-body">
+          <p>
+            Assuming a healthy pitch, adequate oxygenation, and tight temperature
+            control, derate the lab's maximum published apparent attenuation by
+            2–5 points.
+          </p>
+          <p>
+            Labs measure attenuation on a standardized, highly fermentable wort
+            (typically 1.040–1.050 OG, 100% pale base malt, mashed near
+            149°F/65°C). Homebrew recipes rarely match that, so expect the middle
+            or lower half of the published range.
+          </p>
+          <p>
+            <strong>Mash temperature.</strong> 148–150°F (64–66°C): 0 points.
+            152–154°F (67–68°C): 2–3 points. 156–158°F (69–70°C): 4–5 points.
+            Higher rests leave more unfermentable dextrins.
+          </p>
+          <p>
+            <strong>Specialty malts.</strong> At 10–20% crystal, caramel, or roasted
+            malt, add 2–3 points.
+          </p>
+          <p>
+            <strong>High gravity.</strong> Above 1.070 OG, add 2–4 points for the
+            extra osmotic and alcohol stress on the yeast.
+          </p>
+          <p>
+            <strong>Worked example.</strong> An 80% strain, 10% crystal, mashed at
+            153°F: 2–3 points for the mash plus 2–3 for the malt = 4–6 points, so
+            expect 74–76%.
+          </p>
+          <p>
+            The calculator does not infer this from your mash or grain bill; enter
+            your judgment. The published attenuation is <strong>apparent</strong>;
+            the solver converts it to real attenuation and caps the malt's
+            fermentability only. Sugar is never capped, so a late addition can
+            lift the batch's apparent attenuation past this cap.
+          </p>
+        </div>
+      </details>
     </div>
 
-    <p class="form-hint">The batch attenuation is solved from the grist composition and the yeast cap.</p>
+    <load src="src/partials/modal-yeast-picker.html" />
   </div>
 </section>

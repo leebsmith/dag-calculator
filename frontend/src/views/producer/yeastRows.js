@@ -3,10 +3,10 @@
 // counter. Pure `(record|value) => …`; the card owns the catalogue, the filter
 // state, and the engine refresh.
 
-import { resultCounter, toPercentValue } from "../../utils.js";
+import { formatWithDecimals, resultCounter, toPercentValue } from "../../utils.js";
 
-// The chooser's display window; the result counter reports the truncation.
-export const YEAST_ROW_LIMIT = 25;
+// The picker's display window; the result counter reports the truncation.
+export const YEAST_ROW_LIMIT = 50;
 
 export const YEAST_ATTENUATION_TIERS = [
   { key: "low", label: "Low 65–70%" },
@@ -46,17 +46,39 @@ export function attenuationLabel(yeast) {
   return yeast ? `${percentText(yeast.attenuation_pct)}%` : "";
 }
 
+// The vendor's published band, when it published one; the cap basis is the
+// point (`attenuation_pct`), so this is detail rather than the row's figure.
+export function attenuationBandLabel(yeast) {
+  const low = yeast?.attenuation_low_pct;
+  const high = yeast?.attenuation_high_pct;
+  if (typeof low !== "number" || typeof high !== "number") return "";
+  return `${percentText(low)}–${percentText(high)}%`;
+}
+
+// The vendor QC marker is tri-state; the row shows the marker, never silence.
+export function sta1Label(yeast) {
+  if (yeast?.sta1 === true) return "STA1+";
+  if (yeast?.sta1 === false) return "STA1−";
+  return "STA1?";
+}
+
 export function diastaticusTiers(catalog) {
   const counts = { positive: 0, negative: 0, unknown: 0 };
   for (const yeast of catalog ?? []) counts[diastaticusTier(yeast)] += 1;
   return YEAST_DIASTATICUS_TIERS.map((tier) => ({ ...tier, count: counts[tier.key] }));
 }
 
-export function temperatureRangeLabel(yeast) {
+// The vendor band is stored in °C (the artifact's temperature base). `context`
+// converts it to the unit menu's pick; the defaults keep the pure °C reading.
+export function temperatureRangeLabel(
+  yeast,
+  { toDisplay = (value) => value, symbol = "°C", decimals = 0 } = {}
+) {
   if (!yeast || typeof yeast.temp_low_c !== "number" || typeof yeast.temp_high_c !== "number") {
     return "";
   }
-  return `${yeast.temp_low_c}–${yeast.temp_high_c}°C`;
+  const show = (value) => formatWithDecimals(toDisplay(value), decimals);
+  return `${show(yeast.temp_low_c)}–${show(yeast.temp_high_c)}${symbol}`;
 }
 
 export function isYeastListTruncated(shown) {

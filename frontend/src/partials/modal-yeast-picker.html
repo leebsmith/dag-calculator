@@ -1,0 +1,162 @@
+<!-- Yeast picker: one strain for the batch. The page shows the chosen row; this
+     modal is the catalog. -->
+<div
+  class="modal-backdrop"
+  x-show="yeastPickerOpen"
+  @click.self="closeYeastPicker()"
+  @keydown.escape.window="handleYeastEscape()"
+>
+  <div
+    class="modal-dialog modal-dialog-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="yeast-picker-title"
+    tabindex="-1"
+    x-effect="dialogFocus($el, yeastPickerOpen)"
+  >
+    <div class="modal-workspace-header">
+      <div class="modal-workspace-header-title">
+        <h2 class="modal-workspace-title" id="yeast-picker-title">Choose Yeast</h2>
+        <span class="text-xs text-muted" x-text="selectedYeast ? selectedYeast.name : 'No strain selected'"></span>
+      </div>
+      <div class="modal-workspace-header-actions">
+        <button type="button" class="btn-outline text-xs" @click="closeYeastPicker()">Close</button>
+      </div>
+    </div>
+
+    <div class="modal-workspace-body">
+      <div class="modal-workspace-main">
+        <div class="step-grid-2col">
+          <div class="form-group">
+            <label class="form-label" for="yeast-search">Search by name</label>
+            <input
+              id="yeast-search"
+              type="text"
+              class="form-input"
+              placeholder="e.g. American Ale"
+              x-model="yeastSearchQuery"
+            />
+            <span class="form-hint">Name-first match; ties are alphabetical</span>
+            <div class="filter-pills-container">
+              <button
+                type="button"
+                class="filter-pill"
+                :class="{ 'is-active': yeastSearchNotes }"
+                :aria-pressed="yeastSearchNotes ? 'true' : 'false'"
+                @click="toggleYeastSearchNotes()"
+              >
+                Search notes
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="yeast-manufacturer">Manufacturer</label>
+            <select id="yeast-manufacturer" class="form-select" x-model="yeastManufacturerFilter">
+              <option value="">All manufacturers</option>
+              <template x-for="mfr in yeastManufacturers" :key="mfr">
+                <option :value="mfr" x-text="mfr"></option>
+              </template>
+            </select>
+            <span class="form-hint">Filter by yeast lab</span>
+          </div>
+        </div>
+
+        <div class="filter-pills-container">
+          <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': yeastAttenuationFilter === t.key }"
+              :aria-pressed="yeastAttenuationFilter === t.key ? 'true' : 'false'"
+              @click="toggleYeastAttenuation(t.key)"
+              x-text="t.label"
+            ></button>
+          </template>
+        </div>
+
+        <!-- Diastaticus status (vendor STA1 QC) -->
+        <div class="filter-pills-container">
+          <template x-for="t in yeastDiastaticusTiers" :key="'d-' + t.key">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': yeastDiastaticusFilter === t.key }"
+              :aria-pressed="yeastDiastaticusFilter === t.key ? 'true' : 'false'"
+              @click="toggleYeastDiastaticus(t.key)"
+              x-text="t.label + ' · ' + t.count"
+            ></button>
+          </template>
+        </div>
+        <p class="form-hint">
+          STA1 is the vendor's diastaticus marker. A strain with no published result
+          is modelled as non-diastaticus (d = 0).
+        </p>
+
+        <div class="catalog-result-counter" aria-live="polite" x-text="yeastResultLabel"></div>
+
+        <div class="data-table-container data-table-container-scroll">
+          <table class="data-table is-fixed">
+            <colgroup>
+              <col style="width: 26%;" />
+              <col style="width: 16%;" />
+              <col style="width: 14%;" />
+              <col style="width: 16%;" />
+              <col style="width: 14%;" />
+              <col style="width: 14%;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Strain</th>
+                <th>Manufacturer</th>
+                <th class="text-right">Attenuation</th>
+                <th>Flocculation</th>
+                <th class="text-right">Alcohol tolerance</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="y in visibleYeasts" :key="y.id">
+                <tr :class="{ 'is-selected': selectedYeastId === y.id }">
+                  <td>
+                    <span class="font-medium" x-text="y.name"></span>
+                    <template x-if="isUserItem(y.id)">
+                      <span class="status-badge status-badge-info text-nano">mine</span>
+                    </template>
+                  </td>
+                  <td x-text="y.manufacturer"></td>
+                  <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
+                  <td x-text="y.flocculation"></td>
+                  <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
+                  <td class="table-action-cell">
+                    <button
+                      type="button"
+                      class="btn btn-secondary text-xs"
+                      :class="{ 'is-active': selectedYeastId === y.id }"
+                      :aria-pressed="selectedYeastId === y.id ? 'true' : 'false'"
+                      @click="selectYeast(y.id)"
+                      x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"
+                    ></button>
+                    <button
+                      type="button"
+                      class="btn btn-outline text-xs"
+                      x-show="!isUserItem(y.id)"
+                      @click="duplicateUserItem('yeast', y)"
+                      title="Copy to my items"
+                    >
+                      Copy
+                    </button>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="filteredYeasts.length === 0">
+                <tr>
+                  <td colspan="6" class="table-empty-cell">No yeast strains match the current filters.</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

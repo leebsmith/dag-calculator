@@ -2,15 +2,19 @@
 // tier filters. Not a draft editor, so it does not use the catalog/draft helper.
 
 import { filterCatalog } from "../../views/catalog.js";
+import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
-import { toggleFilter } from "../../utils.js";
+import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../views/registry/units.js";
+import { toggleFilter, unitSymbol } from "../../utils.js";
 import {
+  attenuationBandLabel,
   attenuationLabel,
   attenuationTier,
   diastaticusTier,
   diastaticusTiers,
   isYeastListTruncated,
   percentText,
+  sta1Label,
   temperatureRangeLabel,
   YEAST_ATTENUATION_TIERS,
   YEAST_ROW_LIMIT,
@@ -18,7 +22,8 @@ import {
 } from "../../views/producer/yeastRows.js";
 
 export function registerYeastCard(app, ctx) {
-  const { cache } = ctx;
+  const { cache, artifact, engine } = ctx;
+  const nl = nonlinearFns(artifact, engine);
 
   Object.assign(app, {
     selectedYeastId: "",
@@ -27,18 +32,38 @@ export function registerYeastCard(app, ctx) {
     yeastManufacturerFilter: "",
     yeastAttenuationFilter: "",
     yeastDiastaticusFilter: "",
-    derateHelpOpen: false,
+    yeastPickerOpen: false,
 
     yeastAttenuation(y) {
       return attenuationLabel(y);
     },
 
-    // Selecting a strain records the selection and snapshot. The batch AA is
-    // computed by the solver from the grist and the yeast cap.
+    // The picker opens on a clean slate: a narrowing left from the last visit
+    // would hide the catalog the next time it is opened.
+    openYeastPicker() {
+      this.yeastSearchQuery = "";
+      this.yeastSearchNotes = false;
+      this.yeastManufacturerFilter = "";
+      this.yeastAttenuationFilter = "";
+      this.yeastDiastaticusFilter = "";
+      this.yeastPickerOpen = true;
+    },
+
+    closeYeastPicker() {
+      this.yeastPickerOpen = false;
+    },
+
+    handleYeastEscape() {
+      if (this.yeastPickerOpen) this.closeYeastPicker();
+    },
+
+    // Selecting a strain records the selection and snapshot and closes the
+    // picker. The batch AA is computed by the solver from the grist and cap.
     selectYeast(id) {
       this.setRoot(N.selection, id);
       this.pickSelection(N.selection, id);
       this.yeastSearchNotes = false;
+      this.closeYeastPicker();
       this.scheduleSolve();
       this.notify();
     },
@@ -49,10 +74,6 @@ export function registerYeastCard(app, ctx) {
       this.yeastSearchNotes = false;
       this.scheduleSolve();
       this.notify();
-    },
-
-    toggleDerateHelp() {
-      this.derateHelpOpen = !this.derateHelpOpen;
     },
 
     toggleYeastSearchNotes() {
@@ -68,14 +89,13 @@ export function registerYeastCard(app, ctx) {
     },
 
     // Commit the derate on blur/change, not per keystroke. Empty, invalid, or
-    // out-of-range values reset to the previous value.
+    // out-of-range values reset to the previous value. The control is always in
+    // percentage points, independent of the percentage unit menu.
     commitYeastDerate(valueOrElement) {
       const element =
         valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
       const raw = element ? element.value : valueOrElement;
-      const field = this.yeastField(N.derate);
-      const previous = this.master.getRoot(N.derate);
-      const previousDisplay = field.display ?? percentText(previous);
+      const previousDisplay = this.yeastDerateDisplay;
       const value = Number(raw);
       if (raw === "" || !Number.isFinite(value) || value < 0 || value > 25) {
         if (element) element.value = previousDisplay;
@@ -174,7 +194,32 @@ export function registerYeastCard(app, ctx) {
     selectedYeastTemp: {
       configurable: true,
       get() {
-        return temperatureRangeLabel(this.selectedYeast);
+        const unitId = masterUnit(this.unitMode, "temperature") ?? "degC";
+        return temperatureRangeLabel(this.selectedYeast, {
+          toDisplay: (value) => displayValue(artifact, "temperature", unitId, value, nl),
+          symbol: unitSymbol(UNIT_SYMBOLS, "temperature", unitId),
+          decimals: unitDecimals("temperature", unitId) ?? 1,
+        });
+      },
+    },
+    // The derate is percentage points, not a fraction: the input must not follow
+    // the percentage menu (a `fraction` pick would show 0.04 beside step 0.5).
+    yeastDerateDisplay: {
+      configurable: true,
+      get() {
+        return percentText(this.yeastField(N.derate).value ?? 0);
+      },
+    },
+    selectedYeastBand: {
+      configurable: true,
+      get() {
+        return attenuationBandLabel(this.selectedYeast);
+      },
+    },
+    selectedYeastSta1: {
+      configurable: true,
+      get() {
+        return sta1Label(this.selectedYeast);
       },
     },
   });
@@ -184,4 +229,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }
 
-export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "derateHelpOpen", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleDerateHelp", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp"];
+export const KEYS = ["selectedYeastId", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp", "selectedYeastBand", "selectedYeastSta1", "yeastDerateDisplay"];

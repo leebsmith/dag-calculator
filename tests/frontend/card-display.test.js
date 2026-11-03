@@ -10,6 +10,7 @@ import assert from "node:assert/strict";
 import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { sugarEffect } from "../../frontend/src/views/producer/sugarEffect.js";
+import { YEAST_ROW_LIMIT } from "../../frontend/src/views/producer/yeastRows.js";
 
 const cache = createReferenceCache();
 
@@ -87,7 +88,10 @@ test("yeast card: attenuation formatting and the selected-strain readouts", with
   app.selectedYeastId = strain.id;
   assert.equal(app.selectedYeast, strain);
   if (typeof strain.temp_low_c === "number" && typeof strain.temp_high_c === "number") {
-    assert.equal(app.selectedYeastTemp, `${strain.temp_low_c}–${strain.temp_high_c}°C`);
+    assert.equal(
+      app.selectedYeastTemp,
+      `${strain.temp_low_c.toFixed(1)}–${strain.temp_high_c.toFixed(1)}°C`
+    );
   }
 
   app.selectedYeastId = "";
@@ -98,7 +102,7 @@ test("yeast card: attenuation formatting and the selected-strain readouts", with
 test("yeast card: the result label reports truncation past the display cap", withFreshApp(async (app) => {
   assert.match(app.yeastResultLabel, /matching strain/);
   assert.equal(app.isYeastListTruncated, app.yeastResultCount > app.visibleYeasts.length);
-  assert.ok(app.visibleYeasts.length <= 25);
+  assert.ok(app.visibleYeasts.length <= YEAST_ROW_LIMIT);
 }));
 
 test("yeast card: tier filters toggle on and off", withFreshApp(async (app) => {
@@ -133,19 +137,89 @@ test("yeast card: diastaticus pills filter the tri-state STA1 field", withFreshA
   assert.equal(app.filteredYeasts.length, app.yeastCatalog.length);
 }));
 
-test("yeast card: the chooser is always mounted and Clear empties the selection", withFreshApp(async (app) => {
+test("yeast card: the picker is closed until opened and Clear empties the selection", withFreshApp(async (app) => {
   assert.equal(app.selectedYeast?.id, "fermentis-safale-american-ale-us-05");
+  assert.equal(app.yeastPickerOpen, false);
+
+  app.openYeastPicker();
+  assert.equal(app.yeastPickerOpen, true);
+  app.handleYeastEscape();
+  assert.equal(app.yeastPickerOpen, false);
+
+  app.openYeastPicker();
+  app.closeYeastPicker();
+  assert.equal(app.yeastPickerOpen, false);
 
   app.clearYeastSelection();
   assert.equal(app.selectedYeast, null);
 }));
 
-test("yeast card: the derate help toggles", withFreshApp(async (app) => {
-  assert.equal(app.derateHelpOpen, false);
-  app.toggleDerateHelp();
-  assert.equal(app.derateHelpOpen, true);
-  app.toggleDerateHelp();
-  assert.equal(app.derateHelpOpen, false);
+test("yeast card: opening the picker resets the last narrowing", withFreshApp(async (app) => {
+  app.yeastManufacturerFilter = app.yeastManufacturers[0];
+  app.yeastSearchQuery = "zzz-no-strain";
+  app.yeastAttenuationFilter = "super";
+  app.yeastDiastaticusFilter = "positive";
+  app.yeastSearchNotes = true;
+
+  app.openYeastPicker();
+  assert.equal(app.yeastManufacturerFilter, "");
+  assert.equal(app.yeastSearchQuery, "");
+  assert.equal(app.yeastAttenuationFilter, "");
+  assert.equal(app.yeastDiastaticusFilter, "");
+  assert.equal(app.yeastSearchNotes, false);
+  assert.equal(app.filteredYeasts.length, app.yeastCatalog.length);
+}));
+
+test("yeast card: Use selects the strain and closes the picker", withFreshApp(async (app) => {
+  const other = app.yeastCatalog.find((y) => y.id !== app.selectedYeastId);
+
+  app.openYeastPicker();
+  app.selectYeast(other.id);
+
+  assert.equal(app.engine.get("batch.yeast_id"), other.id);
+  assert.equal(app.selectedYeast.id, other.id);
+  assert.equal(app.yeastPickerOpen, false);
+}));
+
+test("yeast card: the row's strain facts", withFreshApp(async (app) => {
+  const strain = app.yeastCatalog.find(
+    (y) =>
+      typeof y.attenuation_low_pct === "number" &&
+      typeof y.attenuation_high_pct === "number" &&
+      typeof y.temp_low_c === "number" &&
+      typeof y.temp_high_c === "number"
+  );
+  app.selectYeast(strain.id);
+
+  const band = `${Math.round(strain.attenuation_low_pct * 1000) / 10}–${Math.round(strain.attenuation_high_pct * 1000) / 10}%`;
+  assert.equal(app.selectedYeastBand, band);
+  assert.equal(
+    app.selectedYeastSta1,
+    strain.sta1 === true ? "STA1+" : strain.sta1 === false ? "STA1−" : "STA1?"
+  );
+  assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_pct * 1000) / 10}%`);
+
+  assert.equal(
+    app.selectedYeastTemp,
+    `${strain.temp_low_c.toFixed(1)}–${strain.temp_high_c.toFixed(1)}°C`
+  );
+  app.setUnit("temperature", "degF");
+  assert.equal(
+    app.selectedYeastTemp,
+    `${(strain.temp_low_c * 1.8 + 32).toFixed(1)}–${(strain.temp_high_c * 1.8 + 32).toFixed(1)}°F`
+  );
+
+  // Vendor percentages and the derate points do not follow the percentage
+  // menu; the solved cap does.
+  app.setUnit("percentage", "fraction");
+  assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_pct * 1000) / 10}%`);
+  assert.equal(app.selectedYeastBand, band);
+  assert.equal(app.yeastDerateDisplay, "0");
+  assert.equal(app.yeastField("batch.yeast_cap").unit, "×1");
+
+  app.commitYeastDerate("4");
+  assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
+  assert.equal(app.yeastDerateDisplay, "4");
 }));
 
 test("yeast card: derate is points off the strain maximum", withFreshApp(async (app) => {
@@ -156,7 +230,7 @@ test("yeast card: derate is points off the strain maximum", withFreshApp(async (
   assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
   assert.ok(Math.abs(app.engine.get("batch.yeast_cap") - (aa - 0.04)) < 1e-9);
 
-  const previous = app.yeastField("batch.attenuation_derate_points").display;
+  const previous = app.yeastDerateDisplay;
   const negative = { value: "-1" };
   app.commitYeastDerate(negative);
   assert.ok(Math.abs(app.master.getRoot("batch.attenuation_derate_points") - 0.04) < 1e-9);
@@ -390,7 +464,6 @@ test("style card: declaration readouts format gravity and vitals", async () => {
   const app = await styledApp("21A");
   const style = app.engine.identity.style;
 
-  assert.equal(app.styleGravity(style), app.styleGravity(style));
   assert.match(app.styleVitals(style), / \/ /);
   assert.deepEqual(app.styleSrmBounds, [6, 14]);
   assert.deepEqual(app.styleIbuBounds, [40, 70]);
