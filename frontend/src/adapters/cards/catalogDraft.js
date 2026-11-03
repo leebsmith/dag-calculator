@@ -10,7 +10,7 @@
 //   Cap            capitalized stem for handler names ("Hop")
 //   nodeId         collection node id ("batch.boil_hops")
 //   seedKey        reference-cache seed key ("hops")
-//   catalog        optional () => catalogItem[] override for a dynamic catalog
+//   catalog        optional (app) => catalogItem[] override for a dynamic catalog
 //   catalogNameOf  optional (catalogItem) => catalog kind for "Copy to my items";
 //                  defaults to SEED_KEY_TO_CATALOG[seedKey]
 //   searchFields   optional catalog fields searched by the drawer (default name, notes)
@@ -22,7 +22,7 @@
 //                  ("standard_malt")
 //   standardNameField / standardDescriptionField / familyField
 //                  (optional) the standard display fields, used with standardField
-//   makeRow        (catalogItem) => draft row
+//   makeRow        (catalogItem, app) => draft row
 //   maxVisible     optional cap (default 25)
 //   productSearchLimit optional cap for brand/name matches (default 10)
 //   itemMeta       optional (catalogItem) => parts[]; joined for the card subtitle
@@ -127,8 +127,11 @@ export function installCatalogDraft(app, ctx, config) {
   const chrome = chromeConfig(config);
   const seeds = ctx.cache.seeds ?? {};
   const seedCatalog = () => Object.values(seeds[seedKey] ?? {});
-  const catalog = catalogFn ? () => catalogFn() : seedCatalog;
-  const findCatalogItem = (id) => catalog().find((item) => item.id === id);
+  // Every callback that reads app state takes the live app: a closure over the
+  // install-time object would read the raw target and lose the reactive
+  // dependency (the browser's app is an Alpine proxy).
+  const catalog = (target) => (catalogFn ? catalogFn(target) : seedCatalog());
+  const findCatalogItem = (target, id) => catalog(target).find((item) => item.id === id);
   const addedIds = (rows) => addedCatalogIds(rows, idField, allowDuplicates === true);
 
   registerCatalogEntry(app, {
@@ -180,15 +183,15 @@ export function installCatalogDraft(app, ctx, config) {
     },
 
     [m.addCatalog](catalogId) {
-      const item = findCatalogItem(catalogId);
+      const item = findCatalogItem(this, catalogId);
       if (!item) return;
       if (canAdd && !canAdd(this)) return;
-      this.addDraftRow(makeRow(item));
+      this.addDraftRow(makeRow(item, this));
       this[m.closeDrawer]();
     },
 
     [m.duplicateCatalog](catalogId) {
-      const item = findCatalogItem(catalogId);
+      const item = findCatalogItem(this, catalogId);
       if (!item) return;
       const catalogName = catalogNameOf
         ? catalogNameOf(item)
@@ -277,21 +280,21 @@ export function installCatalogDraft(app, ctx, config) {
     },
     [name("Catalog")]() {
       void this.catalogRevision;
-      return catalog();
+      return catalog(this);
     },
     [name("Categories")]() {
       void this.catalogRevision;
-      return catalogCategoryPills(catalog(), categoryField);
+      return catalogCategoryPills(catalog(this), categoryField);
     },
     [name("Families")]() {
       if (!standardField) return [];
       void this.catalogRevision;
-      return catalogFamilyPills(catalog(), familyField);
+      return catalogFamilyPills(catalog(this), familyField);
     },
     [name("StandardGroups")]() {
       if (!standardField) return [];
       void this.catalogRevision;
-      return catalogStandardGroups(catalog(), {
+      return catalogStandardGroups(catalog(this), {
         standardField,
         standardNameField,
         standardDescriptionField,
@@ -310,7 +313,7 @@ export function installCatalogDraft(app, ctx, config) {
       const query = String(this[name("Search")] ?? "").trim();
       if (!query) return [];
       void this.catalogRevision;
-      return catalogProductMatches(catalog(), {
+      return catalogProductMatches(catalog(this), {
         query,
         standardField,
         family: this[name("Family")],
@@ -325,7 +328,7 @@ export function installCatalogDraft(app, ctx, config) {
       });
     },
     [name("StandardName")]() {
-      return standardSelectionName(catalog(), {
+      return standardSelectionName(catalog(this), {
         standardField,
         standard: this[name("Standard")],
         standardNameField,
@@ -333,7 +336,7 @@ export function installCatalogDraft(app, ctx, config) {
     },
     [name("FilteredCatalog")]() {
       void this.catalogRevision;
-      return filteredCatalogItems(catalog(), {
+      return filteredCatalogItems(catalog(this), {
         standardField,
         standard: this[name("Standard")],
         added: addedIds(this.draftRows),

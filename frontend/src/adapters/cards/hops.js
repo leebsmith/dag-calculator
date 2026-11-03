@@ -51,19 +51,19 @@ export function registerHopCard(app, ctx) {
     Cap: "Hop",
     nodeId: N.collection,
     seedKey: "hops",
-    catalog: () => {
-      if (app.hopCatalogForm === "t90_pellet" || app.hopCatalogForm === "whole_cone") {
+    catalog: (a) => {
+      if (a.hopCatalogForm === "t90_pellet" || a.hopCatalogForm === "whole_cone") {
         return Object.values(ctx.cache.seeds.hops ?? {});
       }
       return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
-        (item) => item.product_form === app.hopCatalogForm
+        (item) => item.product_form === a.hopCatalogForm
       );
     },
     catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
     categoryField: "purpose",
-    makeRow: (hop) => makeBoilRow(hop, app.hopCatalogForm),
+    makeRow: (hop, a) => makeBoilRow(hop, a.hopCatalogForm),
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
       item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
@@ -76,9 +76,9 @@ export function registerHopCard(app, ctx) {
     emptyMessage: "No matching hops found.",
     resultLabel: (a) => a.hopResultLabel,
     catalogForm: {
-      options: () => app.hopForms,
-      value: () => app.hopCatalogForm,
-      set: (value) => app.setHopCatalogForm(value),
+      options: (a) => a.hopForms,
+      value: (a) => a.hopCatalogForm,
+      set: (value, a) => a.setHopCatalogForm(value),
     },
     drawerId: "hop-drawer",
     toolbarNote:
@@ -96,22 +96,22 @@ export function registerHopCard(app, ctx) {
     Cap: "WhirlpoolHop",
     nodeId: N.whirlpoolCollection,
     seedKey: "hops",
-    catalog: () => {
+    catalog: (a) => {
       if (
-        app.whirlpoolHopCatalogForm === "t90_pellet" ||
-        app.whirlpoolHopCatalogForm === "whole_cone"
+        a.whirlpoolHopCatalogForm === "t90_pellet" ||
+        a.whirlpoolHopCatalogForm === "whole_cone"
       ) {
         return Object.values(ctx.cache.seeds.hops ?? {});
       }
       return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
-        (item) => item.product_form === app.whirlpoolHopCatalogForm
+        (item) => item.product_form === a.whirlpoolHopCatalogForm
       );
     },
     catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
     categoryField: "purpose",
-    makeRow: (hop) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS, app.whirlpoolHopCatalogForm),
+    makeRow: (hop, a) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS, a.whirlpoolHopCatalogForm),
     maxVisible: MAX_VISIBLE,
     itemMeta: (item) => [
       item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
@@ -124,9 +124,9 @@ export function registerHopCard(app, ctx) {
     emptyMessage: "No matching entries found.",
     resultLabel: (a) => a.whirlpoolHopResultLabel,
     catalogForm: {
-      options: () => app.whirlpoolHopForms,
-      value: () => app.whirlpoolHopCatalogForm,
-      set: (value) => app.setWhirlpoolHopCatalogForm(value),
+      options: (a) => a.whirlpoolHopForms,
+      value: (a) => a.whirlpoolHopCatalogForm,
+      set: (value, a) => a.setWhirlpoolHopCatalogForm(value),
     },
     drawerId: "whirlpool-hop-drawer",
     toolbarNote:

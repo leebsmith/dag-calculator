@@ -29,13 +29,23 @@ export function chromeConfig(config) {
   return out;
 }
 
-const APPS = new WeakMap();
+const ENTRIES = Symbol("catalogChrome.entries");
 const CHROME = Symbol("catalogDraft.chrome");
 
 export function registerCatalogEntry(app, entry) {
-  const entries = APPS.get(app) ?? new Map();
-  APPS.set(app, entries);
-  entries.set(entry.nodeId, entry);
+  // Keyed by a symbol on the app, never by the app's object identity: the
+  // browser wraps the app in `Alpine.reactive`, so a WeakMap entry made against
+  // the raw object is invisible to every handler (`this` is the proxy). Symbol
+  // reads forward through the proxy to the same target.
+  //
+  // The property must be a normal (writable, configurable) data property.
+  // @vue/reactivity returns an object value as a reactive proxy, and the JS
+  // proxy invariant refuses that for a locked-down (non-configurable,
+  // non-writable) data property: every read would throw and silently kill each
+  // `draft*` binding. A plain assignment is proxy-safe; symbols stay invisible
+  // to `Object.keys`, `for…in`, and JSON.
+  if (!app[ENTRIES]) app[ENTRIES] = new Map();
+  app[ENTRIES].set(entry.nodeId, entry);
 }
 
 export const CATALOG_CHROME_KEYS = [
@@ -94,7 +104,7 @@ export const CATALOG_CHROME_KEYS = [
 ];
 
 function activeEntry(app) {
-  return APPS.get(app)?.get(app.draftNodeId) ?? null;
+  return app[ENTRIES]?.get(app.draftNodeId) ?? null;
 }
 
 const STATE_DEFAULTS = {
@@ -209,17 +219,17 @@ function installCatalogueGetters(app) {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(this)?.catalogForm?.options?.() ?? [];
+        return activeEntry(this)?.catalogForm?.options?.(this) ?? [];
       },
     },
     draftCatalogForm: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(this)?.catalogForm?.value?.() ?? "";
+        return activeEntry(this)?.catalogForm?.value?.(this) ?? "";
       },
       set(value) {
-        activeEntry(this)?.catalogForm?.set?.(value);
+        activeEntry(this)?.catalogForm?.set?.(value, this);
       },
     },
   });
@@ -358,7 +368,7 @@ function installMethods(app) {
       if (entry?.cloneRow) entry.cloneRow(this, ri);
     },
     setDraftCatalogForm(value) {
-      activeEntry(this)?.catalogForm?.set?.(value);
+      activeEntry(this)?.catalogForm?.set?.(value, this);
     },
   });
 }
