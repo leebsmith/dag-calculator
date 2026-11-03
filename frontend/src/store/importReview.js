@@ -23,11 +23,14 @@ import {
 } from "../views/import/review.js";
 
 export function createImportReviewStore({ client, onClose } = {}) {
-  return Object.assign(
+  // Getters must be installed, not assigned: Object.assign invokes them once and
+  // copies the value, which would freeze every readout against an empty record.
+  const store = Object.assign(
     { record: null, busy: false, error: null, savedAt: null, dirty: false },
-    reviewReadouts(),
     reviewActions({ client, onClose })
   );
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(reviewReadouts()));
+  return store;
 }
 
 function reviewReadouts() {

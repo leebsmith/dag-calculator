@@ -216,7 +216,10 @@ export function recordSummary(record) {
 }
 
 export function editTarget(payload, key, rawValue) {
-  const numeric = Number(rawValue);
+  if (!payload || !payload.targets) return payload;
+  const text = String(rawValue ?? "").trim();
+  if (text === "") return payload;
+  const numeric = Number(text);
   if (!Number.isFinite(numeric)) return payload;
   const current = payload.targets?.[key] ?? null;
   const next = current

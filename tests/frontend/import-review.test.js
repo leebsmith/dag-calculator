@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import {
   describeVerification,
   documentTitle,
@@ -159,6 +160,16 @@ test("a non-numeric correction is ignored rather than stored", () => {
   assert.equal(editTarget(PAYLOAD, "og", "about 1.08"), PAYLOAD);
 });
 
+test("clearing a field is not a zero", () => {
+  assert.equal(editTarget(PAYLOAD, "og", ""), PAYLOAD);
+  assert.equal(editTarget(PAYLOAD, "og", "   "), PAYLOAD);
+});
+
+test("a record without a payload cannot throw on edit", () => {
+  assert.equal(editTarget(null, "og", "1.08"), null);
+  assert.equal(editTarget({}, "og", "1.08").targets, undefined);
+});
+
 test("the header summarises where the record came from", () => {
   const record = {
     extract: { source: { filename: "recipe.pdf", page_count: 2, model: "m", prompt_version: 6, extracted_at: "t" }, payload: PAYLOAD },
@@ -167,4 +178,73 @@ test("the header summarises where the record came from", () => {
   assert.equal(recordSummary(record).pages, 2);
   assert.equal(recordSummary(record).style, "Black IPA");
   assert.equal(documentTitle(null), "Recipe");
+});
+
+
+// --- the store, not just the helpers ---------------------------------------
+// The helpers were green while the store was broken: Object.assign flattened the
+// readout getters to their values at creation, so every row rendered empty and
+// editing crashed. These tests instantiate the store the way main.js does.
+
+const RECORD = {
+  id: "imp-1",
+  status: "extracted",
+  identity: null,
+  extract: {
+    source: { filename: "duel.pdf", page_count: 2, model: "m", prompt_version: 6, extracted_at: "t" },
+    verification: { text_layer: true, numbers_checked: 31, unmatched: [] },
+    payload: PAYLOAD,
+  },
+  ledger: [],
+  suggestions: [],
+  batch_id: null,
+};
+
+function storeWith(record) {
+  const patches = [];
+  const store = createImportReviewStore({
+    client: { patch: async (id, body) => (patches.push({ id, body }), { ...record, ...body }) },
+  });
+  store.open(record);
+  return { store, patches };
+}
+
+test("opening a record exposes it through the readouts", () => {
+  const { store } = storeWith(RECORD);
+  assert.equal(store.title, "Duel Master Black IPA");
+  assert.equal(store.payload.targets.og.value, 1.078);
+  assert.equal(store.targets.length, 7);
+  assert.equal(store.counts.fermentables, 1);
+  assert.equal(store.counts.hops, 1);
+  assert.equal(store.verification.tone, "ok");
+});
+
+test("a correction updates the record and marks it dirty", () => {
+  const { store } = storeWith(RECORD);
+  store.setTarget("og", "1.080");
+  assert.equal(store.payload.targets.og.value, 1.08);
+  assert.equal(store.payload.targets.og.source, "user");
+  assert.equal(store.dirty, true);
+});
+
+test("saving sends the whole extract and reports saved", async () => {
+  const { store, patches } = storeWith(RECORD);
+  store.setTarget("og", "1.080");
+  await store.save();
+  assert.equal(patches.length, 1);
+  assert.equal(patches[0].id, "imp-1");
+  assert.equal(patches[0].body.extract.payload.targets.og.value, 1.08);
+  assert.equal(store.dirty, false);
+  assert.equal(store.savedAt, "saved");
+});
+
+test("a failed save keeps the corrections and says so", async () => {
+  const store = createImportReviewStore({
+    client: { patch: async () => { throw new Error("nope"); } },
+  });
+  store.open(RECORD);
+  store.setTarget("og", "1.080");
+  assert.equal(await store.save(), null);
+  assert.equal(store.error, "nope");
+  assert.equal(store.dirty, true, "a failed save must not look saved");
 });

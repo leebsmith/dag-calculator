@@ -87,8 +87,15 @@ Alpine.store(
 
 const setupStore = createSetupStore({
   client: libraryClient,
-  onImportRecipe: ({ filename, file, identity }) =>
-    Alpine.store("imports").start({ filename, file, identity }),
+  onImportRecipe: async ({ filename, file, identity }) => {
+    const imports = Alpine.store("imports");
+    const record = await imports.start({ filename, file, identity });
+    if (record) return record;
+    // A duplicate has its own panel (resume or pick another file); everything
+    // else is a refusal the dialog must state where the user is looking.
+    if (imports.duplicateOf) return null;
+    throw new Error(imports.error ?? "Could not read the document.");
+  },
   onCreated: () => {
     const recipes = Alpine.store("recipes");
     recipes.scope = "all";
@@ -151,6 +158,13 @@ let stepApp = null;
 let latestUser; // undefined until the first auth callback
 let legacyLibraryImported = false;
 
+// The library and the import queue are independent reads; fetch them together so
+// the landing page paints once, with both strips populated.
+async function refreshSurfaces() {
+  await Alpine.store("setup").refreshAssets();
+  await Alpine.store("imports").refresh();
+}
+
 async function applyAuth(user) {
   const auth = Alpine.store("auth");
   const recipes = Alpine.store("recipes");
@@ -212,7 +226,7 @@ async function applyAuth(user) {
     }
     await stepApp.library.refresh();
     await stepApp.refreshLibraryItems();
-    await Alpine.store("setup").refreshAssets();
+    await refreshSurfaces();
     recipes.view = "batches";
   } finally {
     auth.user = user;
