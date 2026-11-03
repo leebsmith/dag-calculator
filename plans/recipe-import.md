@@ -682,11 +682,12 @@ before.
 
 ### J.3 — ledger (fermentables, yeast, mash)
 
-- [ ] Ledger row model, destinations, transforms; `unresolved` blocks commit
-- [ ] Gravity **points** convert to SG at the transform (÷1000), never in the extract
-- [ ] L0 prior hits + L1 pure screen (rank, never exclude)
-- [ ] Rows built through the existing catalog→row builders; `parts` only
-- [ ] Trace diversion proposed at 2 % per import, reversible
+- [x] Ledger row model, destinations, transforms; `unresolved` tracked and blocking
+- [x] Gravity **points** convert to SG at the transform (÷1000), never in the extract
+- [ ] L0 prior hits + L1 pure screen wired to the seed catalogs (the pure screen exists)
+- [x] Shares computed per collection and normalised within it (the row builders
+      themselves run at commit, J.7, where the editor's builders are reachable)
+- [x] Trace diversion proposed at 2 % per import, reversible
 - [ ] Map stage: sticky sections, counts strip, keyboard traversal
 
 ### J.4 — gate and delta table
