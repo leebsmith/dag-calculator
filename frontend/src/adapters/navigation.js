@@ -1,7 +1,8 @@
 // Step navigation: keeps the app's visible rail in sync with the UI store and
 // mirrors the rail with keyboard/button navigation.
 
-export function installNavigation(app, { ui, steps }) {  Object.assign(app, {
+export function installNavigation(app, { ui, steps, isEditorActive = () => true }) {
+  Object.assign(app, {
     syncNav() {
       this.activeIndex = ui.activeIndex;
       this.highwater = ui.highwater;
@@ -15,6 +16,20 @@ export function installNavigation(app, { ui, steps }) {  Object.assign(app, {
       if (index < 0 || index > ui.highwater) return;
       ui.activeIndex = index;
       this.syncNav();
+    },
+
+    resetToStep(index = 1) {
+      const target = index >= 0 && index < steps.length ? index : 0;
+      ui.activeIndex = target;
+      ui.highwater = Math.max(ui.highwater, target);
+      this.navDir = null;
+      this.syncNav();
+    },
+
+    // Every batch opens on Style: the identity is sealed, the targets are the
+    // first thing the brewer parameterises.
+    resetToStyle() {
+      this.resetToStep(Math.max(0, steps.findIndex((step) => step.id === "style")));
     },
 
     next() {
@@ -37,6 +52,7 @@ export function installNavigation(app, { ui, steps }) {  Object.assign(app, {
     // Keyboard mirror of the up/down rail (arrows + page up/down). Ignored while
     // focus is in a form control so it doesn't hijack arrow keys.
     keyNav(direction, event) {
+      if (!isEditorActive()) return;
       const el = event?.target;
       if (el?.closest?.("input, select, textarea")) return;
       if (direction === "prev") this.prev();
@@ -45,4 +61,4 @@ export function installNavigation(app, { ui, steps }) {  Object.assign(app, {
   });
 }
 
-export const KEYS = ["syncNav", "selectStep", "next", "prev", "keyNav"];
+export const KEYS = ["syncNav", "selectStep", "resetToStep", "resetToStyle", "next", "prev", "keyNav"];

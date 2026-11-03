@@ -182,7 +182,7 @@ export function createStepApp(options = {}) {
         migratedChecklist.changed, migratedDerate, sugarParts,
       ].some(Boolean);
       if (changed) this.notify();
-      this.syncNav();
+      this.resetToStyle();
     },
 
     // A saved batch can author a positive sugar share while every row's parts
@@ -394,9 +394,18 @@ export function createStepApp(options = {}) {
     },
   });
 
-  Object.defineProperty(app, BASE_KEYS, { value: Object.keys(app), enumerable: false });
+  // A normal (configurable) data property: the browser wraps the app in
+  // `Alpine.reactive`, whose get returns an object value as a reactive proxy —
+  // which the JS proxy invariant refuses for a locked-down data property. The
+  // array is only read on the raw app today, but the lock would make any future
+  // `this[BASE_KEYS]` read throw.
+  Object.defineProperty(app, BASE_KEYS, {
+    value: Object.keys(app),
+    enumerable: false,
+    configurable: true,
+  });
 
-  installNavigation(app, { ui, steps });
+  installNavigation(app, { ui, steps, isEditorActive: options.isEditorActive });
   app.dialogFocus = dialogFocus;
   installFieldActions(app, {
     artifact,

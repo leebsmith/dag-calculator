@@ -88,6 +88,34 @@ test("scheduled solves and status writes target the reactive binding", async () 
   assert.equal(proxy.boundaryError, null);
 });
 
+test("loadState opens the editor on the style step", async () => {
+  const app = createTestApp();
+  await app.boot();
+  assert.equal(app.activeIndex, 0);
+
+  await app.loadState({
+    identity: { equipment: {}, "water.source": {}, style: STYLE },
+    roots: ENVELOPE,
+  });
+
+  assert.equal(app.activeStep.id, "style");
+  assert.equal(app.activeIndex, 1);
+  assert.ok(app.highwater >= 1);
+});
+
+test("a second loadState returns to style even from a later step", async () => {
+  const app = createTestApp();
+  await app.boot();
+  const state = { identity: { equipment: {}, "water.source": {}, style: STYLE }, roots: ENVELOPE };
+
+  await app.loadState(state);
+  for (let i = 0; i < app.steps.length; i++) app.next();
+  assert.equal(app.activeStep.id, "brew-day");
+
+  await app.loadState(state);
+  assert.equal(app.activeStep.id, "style");
+});
+
 test("loadState rebinds the mash card to the loaded rest collection", withFreshApp(async (app) => {
   const rests = customMashRests(app);
 

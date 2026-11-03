@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 
 import { installNavigation } from "../../frontend/src/adapters/navigation.js";
 
-function setup({ activeIndex = 0, highwater = 1 } = {}) {
+function setup({ activeIndex = 0, highwater = 1, isEditorActive } = {}) {
   const ui = { activeIndex, highwater };
   const steps = [{ id: "a" }, { id: "b" }, { id: "c" }];
   const app = {};
-  installNavigation(app, { ui, steps });
+  installNavigation(app, { ui, steps, isEditorActive });
   app.syncNav();
   return { app, ui, steps };
 }
@@ -92,4 +92,45 @@ test("keyNav maps directions outside form controls", () => {
 
   app.keyNav(undefined, undefined);
   assert.equal(ui.activeIndex, 1);
+});
+
+test("keyNav ignores keystrokes when editor is inactive", () => {
+  const { app, ui } = setup({ activeIndex: 0, highwater: 2, isEditorActive: () => false });
+  const event = { target: { closest: () => null } };
+
+  app.keyNav("next", event);
+  assert.equal(ui.activeIndex, 0);
+
+  app.keyNav("prev", event);
+  assert.equal(ui.activeIndex, 0);
+});
+
+test("resetToStep sets activeIndex, raises highwater, and syncs nav", () => {
+  const { app, ui } = setup({ activeIndex: 0, highwater: 0 });
+
+  app.resetToStep(1);
+  assert.equal(ui.activeIndex, 1);
+  assert.equal(ui.highwater, 1);
+  assert.equal(app.activeIndex, 1);
+  assert.equal(app.activeStep.id, "b");
+  assert.equal(app.navDir, null);
+
+  app.resetToStep(2);
+  assert.equal(ui.activeIndex, 2);
+  assert.equal(ui.highwater, 2);
+  assert.equal(app.activeIndex, 2);
+  assert.equal(app.activeStep.id, "c");
+});
+
+test("resetToStyle selects the style step and unlocks it", () => {
+  const ui = { activeIndex: 0, highwater: 0 };
+  const steps = [{ id: "equipment" }, { id: "style" }, { id: "yeast" }];
+  const app = {};
+  installNavigation(app, { ui, steps });
+  app.syncNav();
+
+  app.resetToStyle();
+  assert.equal(ui.activeIndex, 1);
+  assert.equal(ui.highwater, 1);
+  assert.equal(app.activeStep.id, "style");
 });

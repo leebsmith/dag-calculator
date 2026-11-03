@@ -59,7 +59,7 @@ const setupStore = createSetupStore({
     recipes.view = "editor";
     recipes.syncActive();
     // A new batch starts at the style parameterisation screen.
-    stepApp?.next();
+    stepApp?.resetToStyle();
   },
 });
 
@@ -221,7 +221,21 @@ Alpine.data("stepCalculator", () => {
   // `this`) trigger re-renders, and so persistence mutates the same proxy.
   // The product entry solves over HTTP (base = VITE_API_BASE ?? "", same-origin
   // via the Vite proxy in dev); tests inject a boundary double instead.
-  const app = Alpine.reactive(createStepApp({ libraryClient }));
+  const app = Alpine.reactive(
+    createStepApp({
+      libraryClient,
+      isEditorActive: () => {
+        if (app.libraryOpen) return false;
+        const recipes = Alpine.store("recipes");
+        if (recipes?.view !== "editor") return false;
+        if (recipes?.reportPickerOpen) return false;
+        const setup = Alpine.store("setup");
+        if (setup?.state?.modalOpen) return false;
+        if (Alpine.store("brewSession")?.open) return false;
+        return true;
+      },
+    })
+  );
   app.bindReactive(app);
   persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
