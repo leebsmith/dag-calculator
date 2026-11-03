@@ -59,6 +59,7 @@ const importClient = createImportClient();
 // Opening a record means showing it: the import view reads one record at a time.
 const reviewStore = createImportReviewStore({
   client: importClient,
+  catalogs: (kind) => Alpine.store("setup").items(kind),
   onClose: () => {
     Alpine.store("recipes").view = "batches";
     Alpine.store("imports").refresh();

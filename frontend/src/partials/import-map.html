@@ -1,0 +1,93 @@
+<!-- Map: every transcribed line, its proposed destination, and the decision it
+     still needs. The proposals come from the page; the user confirms them. -->
+<section class="import-map">
+  <header class="import-doc-header">
+    <div>
+      <h2 class="import-doc-title" x-text="$store.importReview.title"></h2>
+      <p class="text-xs text-muted">
+        <span x-text="$store.importReview.summary?.filename"></span>
+        · <span x-text="$store.importReview.ledgerCounts.total"></span> lines
+      </p>
+    </div>
+    <div class="import-verification" :class="{ 'is-ok': $store.importReview.unresolved.length === 0, 'is-warn': $store.importReview.unresolved.length > 0 }">
+      <span class="font-medium"
+        x-text="$store.importReview.unresolved.length === 0
+          ? 'Every line is decided'
+          : $store.importReview.unresolved.length + ' line(s) still need a decision'"></span>
+      <span class="text-xs text-muted">
+        Destinations are proposed from the page. A trace malt is not scaled by the solve, and
+        a boil hop is not a whirlpool hop — both are physics, so both are yours to confirm.
+      </span>
+    </div>
+  </header>
+
+  <template x-for="section in $store.importReview.sections" :key="section.id">
+    <div class="map-section">
+      <h3 class="import-section-title">
+        <span x-text="section.id"></span>
+        <span class="text-xs text-muted"
+          x-text="'(' + section.rows.filter((r) => r.decision === 'mapped' || r.decision === 'ignored').length + ' of ' + section.rows.length + ')'"></span>
+      </h3>
+
+      <ul class="import-line-list">
+        <template x-for="row in section.rows" :key="row.line_id">
+          <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.unresolved.some((r) => r.line_id === row.line_id) }">
+            <div class="map-row-main">
+              <span class="font-medium" x-text="row.name"></span>
+              <span class="text-xs text-muted" x-text="row.text"></span>
+              <span class="text-xs text-muted" x-show="row.page" x-text="'p' + row.page"></span>
+            </div>
+
+            <div class="map-row-actions">
+              <select
+                class="form-select text-xs"
+                :value="row.destination ?? ''"
+                @change="$store.importReview.changeDestination(row.line_id, $event.target.value)"
+              >
+                <template x-for="option in $store.importReview.destinationsFor(row.section)" :key="option.id">
+                  <option :value="option.id" :selected="option.id === row.destination" x-text="option.label"></option>
+                </template>
+              </select>
+              <span class="text-xs text-muted" x-text="row.transform"></span>
+              <button
+                type="button"
+                class="btn-outline text-xs"
+                x-show="row.decision !== 'ignored'"
+                @click="$store.importReview.ignoreLine(row.line_id)"
+              >Ignore</button>
+              <span class="text-xs text-muted" x-show="row.decision === 'ignored'" x-text="row.reason"></span>
+            </div>
+
+            <div class="map-suggestions" x-show="row.decision !== 'ignored'">
+              <button
+                type="button"
+                class="map-chip"
+                :class="{ 'is-chosen': chip.id === row.ref }"
+                x-show="row.ref"
+                x-text="row.ref"
+                @click="$store.importReview.chooseRef(row.line_id, { id: row.ref })"
+              ></button>
+              <template x-for="chip in $store.importReview.suggestions(row)" :key="chip.id">
+                <button
+                  type="button"
+                  class="map-chip"
+                  :class="{ 'is-chosen': chip.id === row.ref }"
+                  :title="chip.maltster || chip.manufacturer || chip.category || ''"
+                  @click="$store.importReview.chooseRef(row.line_id, chip)"
+                  x-text="chip.name"
+                ></button>
+              </template>
+              <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.suggestions(row).length === 0">
+                no candidate — search the library to add it
+              </span>
+            </div>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+
+  <p class="form-hint" x-show="$store.importReview.sections.length === 0">
+    Nothing to map: this transcription has no lines.
+  </p>
+</section>

@@ -248,3 +248,78 @@ test("a failed save keeps the corrections and says so", async () => {
   assert.equal(store.error, "nope");
   assert.equal(store.dirty, true, "a failed save must not look saved");
 });
+
+
+// --- the ledger, through the store ----------------------------------------
+
+const LEDGER_RECORD = {
+  ...RECORD,
+  ledger: [],
+};
+
+test("opening a record builds its ledger from the transcription", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  assert.equal(store.ledger.length, store.ledgerCounts.total);
+  assert.ok(store.ledger.length > 0, "the payload produced lines");
+  assert.equal(store.sections[0].id, "fermentables");
+  assert.equal(store.unresolved.length, store.ledger.length - 1, "only the unmodelled line starts decided");
+});
+
+test("a choice sets the ref, the destination and the decision", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "fermentables");
+  store.chooseRef(line.line_id, { id: "std:pale-ale-malt" });
+  const updated = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(updated.ref, "std:pale-ale-malt");
+  assert.equal(updated.destination, "grist.major_malts");
+  assert.equal(updated.decision, "mapped");
+  assert.equal(store.dirty, true);
+});
+
+test("a destination swap keeps the ref and asks for one when there is none", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "hops");
+  store.changeDestination(line.line_id, "batch.dry_hops");
+  const updated = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(updated.destination, "batch.dry_hops");
+  assert.equal(updated.decision, "unresolved", "no ref means no decision");
+});
+
+test("ignoring a line records the reason it was dropped", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "hops");
+  store.ignoreLine(line.line_id);
+  const updated = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(updated.decision, "ignored");
+  assert.equal(updated.reason, "not modelled");
+  assert.equal(store.unresolved.some((row) => row.line_id === line.line_id), false);
+});
+
+test("saving sends the ledger and moves the record to mapping", async () => {
+  const { store, patches } = storeWith(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "fermentables");
+  store.chooseRef(line.line_id, { id: "std:pale-ale-malt" });
+  await store.save();
+  assert.equal(patches[0].body.ledger.length, store.ledger.length);
+  assert.equal(patches[0].body.status, "mapping");
+});
+
+test("the stage only moves where the flow allows", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  assert.equal(store.stage, "transcribe");
+  store.goTo("map");
+  assert.equal(store.stage, "map");
+  store.goTo("check");
+  assert.equal(store.stage, "map", "the check stage has not landed");
+});
+
+test("candidate chips come from the injected catalogs", () => {
+  const store = createImportReviewStore({
+    client: { patch: async () => LEDGER_RECORD },
+    catalogs: () => [{ id: "m1", name: "Maris Otter", standard_name: "Pale Ale Malt" }],
+  });
+  store.open(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "fermentables");
+  const chips = store.suggestions(line);
+  assert.equal(chips[0].id, "m1");
+});

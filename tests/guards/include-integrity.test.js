@@ -18,6 +18,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/brew-session.html",
   "./src/partials/import.html",
   "./src/partials/import-transcribe.html",
+  "./src/partials/import-map.html",
 ];
 
 // App-level files that may declare <load src>: index.html plus the allowlisted

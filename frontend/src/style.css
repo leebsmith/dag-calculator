@@ -2413,3 +2413,72 @@ samp {
 .data-table tr.is-required-missing td {
   background: var(--sys-color-warning-surface);
 }
+
+/* --- Import map ------------------------------------------------------------- */
+
+.import-stages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-2);
+}
+
+.import-stages .is-active {
+  border-color: var(--sys-border-selected);
+  background: var(--sys-color-action-subtle);
+}
+
+.map-section {
+  margin-bottom: var(--space-4);
+}
+
+.map-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.map-row.is-undecided {
+  border-color: var(--sys-color-warning-border);
+  background: var(--sys-color-warning-surface);
+}
+
+.map-row-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.map-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.map-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.map-chip {
+  padding: var(--space-0-5) var(--space-2);
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-full);
+  background: var(--sys-surface-default);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.map-chip.is-chosen,
+.map-chip:hover {
+  border-color: var(--sys-border-selected);
+  background: var(--sys-color-action-subtle);
+}

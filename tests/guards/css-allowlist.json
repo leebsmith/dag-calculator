@@ -192,6 +192,34 @@
         ".import-body"
       ],
       "reason": "The one scroll region of a top-level view: same measure, padding and gap as the chooser body, so the landing page and the import review share a rhythm."
+    },
+    {
+      "context": "",
+      "declarations": "background: var(--sys-color-action-subtle); border-color: var(--sys-border-selected)",
+      "selectors": [
+        ".setup-mode-switch .is-active",
+        ".import-stages .is-active",
+        ".map-chip.is-chosen, .map-chip:hover"
+      ],
+      "reason": "One selected-state recipe: a pressed toggle in a group and a chosen candidate chip are the same affordance at two scales."
+    },
+    {
+      "context": "",
+      "declarations": "background: var(--sys-color-warning-surface); border-color: var(--sys-color-warning-border)",
+      "selectors": [
+        ".import-verification.is-warn",
+        ".map-row.is-undecided"
+      ],
+      "reason": "One needs-attention surface, used by the verification card and by an undecided ledger row."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-2)",
+      "selectors": [
+        ".import-queue-actions",
+        ".map-row-actions"
+      ],
+      "reason": "One small-actions row, used under an import in the queue and under a ledger line."
     }
   ],
   "classes": []

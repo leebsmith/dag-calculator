@@ -92,6 +92,19 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
         .sort((a, b) => a.label.localeCompare(b.label));
     },
 
+    // Catalog arrays for the import ledger's screening. Same maps the pickers
+    // read, so user-authored records appear here too.
+    items(kind) {
+      void this.revision;
+      const byKind = {
+        malt: cache.seeds.malts,
+        sugar: cache.seeds.sugars,
+        hop: cache.seeds.hops,
+        yeast: cache.seeds.yeasts,
+      };
+      return Object.values(byKind[kind] ?? {});
+    },
+
     // A batch cannot be created until one of each identity source exists.
     prerequisiteStatus() {
       void this.revision;

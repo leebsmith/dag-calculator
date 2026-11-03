@@ -684,11 +684,14 @@ before.
 
 - [x] Ledger row model, destinations, transforms; `unresolved` tracked and blocking
 - [x] Gravity **points** convert to SG at the transform (÷1000), never in the extract
-- [ ] L0 prior hits + L1 pure screen wired to the seed catalogs (the pure screen exists)
+- [x] L1 pure screen wired to the live seed/library catalogs (candidate chips per line)
+- [ ] L0 prior hits (a prior ledger's accepted refs as a hint)
 - [x] Shares computed per collection and normalised within it (the row builders
       themselves run at commit, J.7, where the editor's builders are reachable)
 - [x] Trace diversion proposed at 2 % per import, reversible
-- [ ] Map stage: sticky sections, counts strip, keyboard traversal
+- [x] Map stage: sections, decided-of-total strip, destination swaps, ignore-with-reason,
+      candidate chips, per-line unresolved highlight
+- [ ] Keyboard traversal and batch actions (same ref across several lines, bulk section moves)
 
 ### J.4 — gate and delta table
 

@@ -8,6 +8,17 @@
 
 import { reportError } from "../observability.js";
 import {
+  applyRef,
+  buildLedger,
+  destinationsFor,
+  ignoreRow,
+  ledgerCounts,
+  screenCandidates,
+  setDestination,
+  shares,
+  unresolvedRows,
+} from "../views/import/ledger.js";
+import {
   describeVerification,
   documentTitle,
   editTarget,
@@ -22,15 +33,60 @@ import {
   yeastRows,
 } from "../views/import/review.js";
 
-export function createImportReviewStore({ client, onClose } = {}) {
+export function createImportReviewStore({ client, catalogs = () => [], onClose } = {}) {
+  const store = Object.assign(
+    { record: null, stage: "transcribe", busy: false, error: null, savedAt: null, dirty: false },
+    reviewActions({ client, onClose }),
+    ledgerActions({ catalogs })
+  );
   // Getters must be installed, not assigned: Object.assign invokes them once and
   // copies the value, which would freeze every readout against an empty record.
-  const store = Object.assign(
-    { record: null, busy: false, error: null, savedAt: null, dirty: false },
-    reviewActions({ client, onClose })
-  );
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(reviewReadouts()));
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(ledgerReadouts()));
   return store;
+}
+
+const CATALOG_KIND = {
+  fermentables: "malt",
+  hops: "hop",
+  yeasts: "yeast",
+  mashes: "mash",
+};
+
+export function catalogKindFor(row) {
+  if (row.section !== "fermentables") return CATALOG_KIND[row.section] ?? null;
+  return row.kind_hint === "sugar" || row.kind_hint === "extract" ? "sugar" : "malt";
+}
+
+function ledgerReadouts() {
+  return {
+    get ledger() {
+      return this.record?.ledger ?? [];
+    },
+
+    get ledgerCounts() {
+      return ledgerCounts(this.ledger);
+    },
+
+    get unresolved() {
+      return unresolvedRows(this.ledger);
+    },
+
+    get sections() {
+      const order = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
+      return order
+        .map((section) => ({
+          id: section,
+          rows: this.ledger.filter((row) => row.section === section),
+        }))
+        .filter((section) => section.rows.length > 0);
+    },
+
+    get shares() {
+      return shares(this.ledger);
+    },
+
+  };
 }
 
 function reviewReadouts() {
@@ -99,15 +155,52 @@ function reviewReadouts() {
   };
 }
 
-function reviewActions({ client, onClose }) {
+function ledgerActions({ catalogs }) {
   return {
-    open(record) {
-      this.record = record ?? null;
-      this.error = null;
-      this.dirty = false;
-      this.savedAt = null;
+    destinationsFor(section) {
+      return destinationsFor(section);
     },
 
+    goTo(stage) {
+      if (stage === "map" || stage === "transcribe") this.stage = stage;
+    },
+
+    // Candidate chips for one line: the pure screen over the live catalogs.
+    suggestions(row, limit = 4) {
+      const kind = catalogKindFor(row);
+      return kind ? screenCandidates(row.name, catalogs(kind), kind, limit) : [];
+    },
+
+    chooseRef(lineId, item) {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row || !item) return;
+      this.replaceRow(applyRef(row, item, catalogKindFor(row)));
+    },
+
+    changeDestination(lineId, destination) {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row) return;
+      this.replaceRow(setDestination(row, destination));
+    },
+
+    ignoreLine(lineId, reason = "not modelled") {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row) return;
+      this.replaceRow(ignoreRow(row, reason));
+    },
+
+    replaceRow(next) {
+      const ledger = this.ledger.map((row) => (row.line_id === next.line_id ? next : row));
+      this.record = { ...this.record, ledger };
+      this.dirty = true;
+      this.error = null;
+    },
+
+  };
+}
+
+function reviewActions({ client, onClose }) {
+  return {
     close() {
       this.record = null;
       this.error = null;
@@ -129,6 +222,17 @@ function reviewActions({ client, onClose }) {
       }
     },
 
+    open(record) {
+      const withLedger = record
+        ? { ...record, ledger: record.ledger?.length ? record.ledger : buildLedger(record.extract?.payload) }
+        : null;
+      this.record = withLedger;
+      this.stage = "transcribe";
+      this.error = null;
+      this.dirty = false;
+      this.savedAt = null;
+    },
+
     setTarget(key, rawValue) {
       if (!this.record) return;
       const payload = editTarget(this.payload, key, rawValue);
@@ -143,7 +247,11 @@ function reviewActions({ client, onClose }) {
       this.busy = true;
       this.error = null;
       try {
-        const updated = await client.patch(this.record.id, { extract: this.record.extract });
+        const updated = await client.patch(this.record.id, {
+          extract: this.record.extract,
+          ledger: this.record.ledger,
+          status: this.record.status === "extracted" && this.record.ledger.length ? "mapping" : undefined,
+        });
         this.record = updated;
         this.dirty = false;
         this.savedAt = "saved";

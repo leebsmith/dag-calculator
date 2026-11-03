@@ -15,6 +15,24 @@
     </div>
   </header>
 
+  <nav class="import-stages" aria-label="Import stages">
+    <button
+      type="button"
+      class="btn-outline text-xs"
+      :class="{ 'is-active': $store.importReview.stage === 'transcribe' }"
+      :aria-pressed="$store.importReview.stage === 'transcribe'"
+      @click="$store.importReview.goTo('transcribe')"
+    >1 · Transcribe</button>
+    <button
+      type="button"
+      class="btn-outline text-xs"
+      :class="{ 'is-active': $store.importReview.stage === 'map' }"
+      :aria-pressed="$store.importReview.stage === 'map'"
+      @click="$store.importReview.goTo('map')"
+    >2 · Map</button>
+    <span class="text-xs text-muted">3 · Check lands with the solve preview</span>
+  </nav>
+
   <div class="import-body">
     <div class="alert alert-warning" x-show="$store.importReview.error">
       <div class="alert-header">
@@ -33,13 +51,17 @@
       </button>
     </div>
 
-    <template x-if="$store.importReview.record">
+    <template x-if="$store.importReview.record && $store.importReview.stage === 'transcribe'">
       <load src="src/partials/import-transcribe.html" />
+    </template>
+
+    <template x-if="$store.importReview.record && $store.importReview.stage === 'map'">
+      <load src="src/partials/import-map.html" />
     </template>
   </div>
 
   <footer class="app-footer" x-show="$store.importReview.record">
-    <span class="footer-step">Transcribe</span>
+    <span class="footer-step" x-text="$store.importReview.stage === 'map' ? 'Map' : 'Transcribe'"></span>
     <span class="text-xs text-muted" x-text="$store.importReview.summary?.filename || ''"></span>
     <span class="text-xs text-muted" x-show="$store.importReview.dirty">Unsaved corrections</span>
     <span class="text-xs text-muted" x-show="$store.importReview.busy">Saving…</span>
@@ -47,12 +69,15 @@
       <span class="status-dot status-dot-ok"></span>
       <span class="text-xs text-muted">Saved</span>
     </span>
+    <span class="text-xs text-muted" x-show="$store.importReview.stage === 'map'"
+      x-text="$store.importReview.ledgerCounts.total - $store.importReview.unresolved.length
+        + ' of ' + $store.importReview.ledgerCounts.total + ' decided'"></span>
     <button
       type="button"
       class="btn-primary text-xs"
       :disabled="$store.importReview.busy || !$store.importReview.dirty"
       @click="$store.importReview.save()"
-    >Save corrections</button>
+    ><span x-show="$store.importReview.stage === 'map'">Save mapping</span><span x-show="$store.importReview.stage !== 'map'">Save corrections</span></button>
     <button
       type="button"
       class="btn-outline text-xs"
