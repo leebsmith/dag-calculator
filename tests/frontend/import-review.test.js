@@ -931,8 +931,9 @@ test("unblending removes the decision and leaves the Library record alone", asyn
   store.setBlendAttenuation("80");
   await store.saveBlend();
 
-  store.unblend();
+  await store.unblend();
   assert.equal(store.yeastOutcome, null);
+  assert.equal(store.dirty, false, "unblending is persisted, not left in memory");
   assert.equal(store.mappedYeasts.length, 2, "both strains are still on the recipe");
   assert.equal(store.sectionIssues.length, 1, "and the section is open again");
   assert.ok(records.has("blend-1"), "the record stays in the Library");
@@ -1088,6 +1089,29 @@ function twoYeasts() {
   return { store, records, created };
 }
 
+
+test("the blend panel and the group carry the words the decision needs", () => {
+  const map = read("frontend/src/partials/import-map.html");
+  assert.match(map, />Blend both</);
+  assert.match(map, /Blend name/);
+  assert.match(map, /Attenuation %/);
+  assert.match(map, /'Save blend'/);
+  assert.match(map, /a record with this name already exists/, "the duplicate-name warning");
+  assert.match(map, /name it so you recognise it later/);
+  assert.match(map, /changeBlend\(\)/);
+  assert.match(map, /unblend\(\)/);
+  assert.match(map, /component of this blend/);
+  assert.match(map, /is-blend-group/);
+  assert.match(map, /Imported recipe names more than one strain/);
+  assert.match(map, /Choosing one leaves the others on the import record/);
+});
+
+test("the editor shows where the batch came from", () => {
+  const editor = read("frontend/src/partials/editor.html");
+  assert.match(editor, /Imported from/);
+  assert.match(editor, /originOf\(\$store\.recipes\.activeId\)/);
+  assert.match(editor, /src\/partials\/import-delta\.html/);
+});
 
 test("the map and the check speak one vocabulary: pick, leave out, add back", () => {
   const map = read("frontend/src/partials/import-map.html");

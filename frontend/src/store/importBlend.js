@@ -70,12 +70,14 @@ export function blendFormActions({ catalogs = () => [] } = {}) {
     },
 
     // Removing the decision, not the record: the Library owns records, and this one
-    // stays there (delete it there if it is not wanted).
-    unblend() {
-      if (this.yeastOutcome?.mode !== "blend") return;
+    // stays there (delete it there if it is not wanted). Persisted at once, so a
+    // reload cannot put the blend back.
+    async unblend() {
+      if (this.yeastOutcome?.mode !== "blend") return null;
       this.setYeastOutcome(null);
       this.blendOpen = false;
       this.blendError = null;
+      return this.save();
     },
   };
 }

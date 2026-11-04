@@ -256,6 +256,9 @@
             <button type="button" class="btn-outline text-xs" @click="$store.importReview.unblend()">
               Unblend
             </button>
+            <span class="text-xs text-muted">
+              Change writes a new Library record; Unblend leaves this one in the Library.
+            </span>
           </div>
 
           <div class="import-queue-actions"
@@ -365,7 +368,8 @@
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.decision === 'ignored'"
+                x-show="row.decision === 'ignored'
+                  && !(row.section === 'yeasts' && $store.importReview.yeastBlend)"
                 @click="$store.importReview.restoreLine(row.line_id)"
               >Add back</button>
               <button
