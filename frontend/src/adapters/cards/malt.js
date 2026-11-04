@@ -24,7 +24,7 @@ import { reportError } from "../../observability.js";
 
 const MAX_VISIBLE = 25;
 
-function makeRow(malt) {
+export function makeRow(malt) {
   return {
     catalog_id: malt.id,
     name: malt.name,

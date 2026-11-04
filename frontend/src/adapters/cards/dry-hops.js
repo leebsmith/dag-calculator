@@ -22,7 +22,7 @@ const DRY_HOP_FORM_VALUES = DRY_HOP_FORMS.map((form) => form.value);
 
 const dryHopTitle = (row) => firstNonEmptyString(row?.variety, "New dry hop");
 
-function makeDryHopRow(artifact, item) {
+export function makeDryHopRow(artifact, item) {
   const node = artifact.nodes[N.collection];
   const schema = artifact.primitive_schemas[node.item_schema] ?? {};
   const row = rowDefaults(schema, artifact.taxonomies);

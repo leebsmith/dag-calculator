@@ -29,7 +29,7 @@ import {
 } from "../../utils.js";
 
 
-function makeRow(sugar) {
+export function makeRow(sugar) {
   return {
     sugar_id: sugar.id,
     name: sugar.name,
