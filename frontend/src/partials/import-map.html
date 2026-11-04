@@ -127,43 +127,6 @@
               x-show="!$store.importReview.blendOpen"
               @click="$store.importReview.openBlend()"
             >Add a blend for both strains</button>
-            <template x-if="$store.importReview.blendOpen">
-              <div class="import-queue-actions">
-                <input
-                  class="form-input text-xs"
-                  type="text"
-                  placeholder="Blend name"
-                  :value="$store.importReview.blendName"
-                  @input="$store.importReview.setBlendName($event.target.value)"
-                />
-                <input
-                  class="form-input text-xs"
-                  type="number"
-                  min="1"
-                  max="100"
-                  step="1"
-                  placeholder="Attenuation %"
-                  :value="$store.importReview.blendAttenuationPct"
-                  @change="$store.importReview.setBlendAttenuation($event.target.value)"
-                />
-                <button
-                  type="button"
-                  class="btn-primary text-xs"
-                  :disabled="$store.importReview.blendBusy"
-                  @click="$store.importReview.saveBlend()"
-                  x-text="$store.importReview.blendBusy ? 'Saving…' : 'Add and use it'"
-                ></button>
-                <button
-                  type="button"
-                  class="btn-outline text-xs"
-                  @click="$store.importReview.closeBlend()"
-                >Cancel</button>
-                <span class="text-xs text-muted" x-text="$store.importReview.blendError"></span>
-                <span class="text-xs text-muted">
-                  one yeast record for the pair: its name is what the batch and the report call it
-                </span>
-              </div>
-            </template>
           </div>
         </template>
       </li>
@@ -358,6 +321,12 @@
                 x-show="row.decision === 'ignored'"
                 @click="$store.importReview.restoreLine(row.line_id)"
               >↩ Put back</button>
+              <button
+                type="button"
+                class="btn-outline text-xs"
+                x-show="row.section === 'yeasts' && !$store.importReview.blendOpen"
+                @click="$store.importReview.openBlend(row.line_id)"
+              >Add a blend for this line</button>
             </div>
 
             <div class="map-suggestions" x-show="row.decision !== 'ignored'">
@@ -407,6 +376,43 @@
                 >Nothing matches. Build the record in the Library, then come back.</span>
               </details>
             </div>
+            <template x-if="$store.importReview.blendOpen && $store.importReview.blendFor === row.line_id">
+              <div class="import-queue-actions">
+                <input
+                  class="form-input text-xs"
+                  type="text"
+                  placeholder="Blend name"
+                  :value="$store.importReview.blendName"
+                  @input="$store.importReview.setBlendName($event.target.value)"
+                />
+                <input
+                  class="form-input text-xs"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  placeholder="Attenuation %"
+                  :value="$store.importReview.blendAttenuationPct"
+                  @change="$store.importReview.setBlendAttenuation($event.target.value)"
+                />
+                <button
+                  type="button"
+                  class="btn-primary text-xs"
+                  :disabled="$store.importReview.blendBusy"
+                  @click="$store.importReview.saveBlend()"
+                  x-text="$store.importReview.blendBusy ? 'Saving…' : 'Add and use it'"
+                ></button>
+                <button
+                  type="button"
+                  class="btn-outline text-xs"
+                  @click="$store.importReview.closeBlend()"
+                >Cancel</button>
+                <span class="text-xs text-muted" x-text="$store.importReview.blendError"></span>
+                <span class="text-xs text-muted">
+                  one yeast record for the pair: its name is what the batch and the report call it
+                </span>
+              </div>
+            </template>
           </li>
         </template>
       </ul>

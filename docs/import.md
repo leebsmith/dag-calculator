@@ -63,6 +63,12 @@ row unresolved until a registry entry is chosen. Where a section offers only one
 destination — yeast, mash rests — the row shows that destination as a label instead
 of a one-option menu.
 
+A record deleted from the Library after it was picked leaves no silent hole. The
+line reads as undecided again, the Map names it, the gate reports it as
+`REF_NOT_FOUND`, and the projection drops it, so a stale id never reaches a
+boundary. The row's own search — or, on a yeast line, its blend form — replaces it
+in place; a correction is a new record, as everywhere else in the Library.
+
 One limit belongs to the model rather than the page: a batch carries a single yeast
 selection (`batch.yeast`). When a source names a blend, the finding names every
 mapped strain and offers the choice — the one you keep is the batch's, and the
@@ -133,7 +139,8 @@ by the same boundary runner the editor uses, so a gate result and a live result
 cannot disagree.
 
 - **Blocking**: a failed batch or hop boundary, a violated blocking relation, any
-  unresolved line, and the hop-routing findings above.
+  unresolved line, a line pointing at a deleted record (`REF_NOT_FOUND`), and the
+  hop-routing findings above.
 - **Advisory**: the water boundary. It runs against the user's own target profile,
   and is skipped (with a finding saying so) when no profile is chosen.
 

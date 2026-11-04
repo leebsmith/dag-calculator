@@ -6,10 +6,10 @@
 import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
-import { matchActions } from "./importMatch.js";
+import { catalogKindFor, matchActions } from "./importMatch.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
-import { blendActions } from "./importBlend.js";
+import { blendFormActions, blendSaveActions } from "./importBlend.js";
 import { yeastActions } from "./importYeast.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
@@ -56,7 +56,7 @@ function compose(...sources) {
 export function createImportReviewStore({
   client,
   catalogs = () => [],
-  catalog = () => null,
+  catalog = null,
   project = null,
   gate = null,
   delta = null,
@@ -67,8 +67,11 @@ export function createImportReviewStore({
   createYeast = null,
   onClose,
 } = {}) {
-  const check = checkActions({ catalog, project, gate, delta, commit });
-  const match = matchActions({ client, catalog });
+  // A catalog is what makes a ref checkable. Without one (a bare store in a test)
+  // a mapped row is taken at its word rather than reported as dangling.
+  const lookup = catalogOrNull(catalog);
+  const check = checkActions({ catalog: lookup, project, gate, delta, commit });
+  const match = matchActions({ client, catalog: lookup });
   const gapfill = gapfillActions({ client, sourceFile, readFile });
   const water = waterActions({ profiles });
   const store = compose(
@@ -94,8 +97,9 @@ export function createImportReviewStore({
     saveAction({ client }),
     ledgerLookupActions({ catalogs }),
     ledgerDecisionActions(),
-    yeastActions({ catalog }),
-    blendActions({ createYeast }),
+    yeastActions({ catalog: lookup }),
+    blendFormActions(),
+    blendSaveActions({ createYeast }),
     check,
     poolActions(),
     match,
@@ -103,13 +107,17 @@ export function createImportReviewStore({
     gapfill,
     water,
     reviewReadouts(),
-    ledgerReadouts(),
+    ledgerReadouts({ catalog: lookup, hasCatalog: Boolean(catalog) }),
     poolReadouts()
   );
   return store;
 }
 
-function ledgerReadouts() {
+function catalogOrNull(catalog) {
+  return catalog || (() => null);
+}
+
+function ledgerReadouts({ catalog, hasCatalog }) {
   return {
     get ledger() {
       return this.record?.ledger ?? [];
@@ -119,14 +127,31 @@ function ledgerReadouts() {
       return ledgerCounts(this.ledger);
     },
 
+    // A mapped line whose registry record has since been deleted is not decided:
+    // the ref still reads on the row, but the projection would resolve nothing.
+    isDangling(row) {
+      if (!hasCatalog || !row?.ref || row.section === "mashes" || row.decision !== "mapped") {
+        return false;
+      }
+      const kind = catalogKindFor(row);
+      return kind ? catalog(kind, row.ref) == null : false;
+    },
+
+    get missingRefs() {
+      return this.ledger.filter((row) => this.isDangling(row));
+    },
+
     get unresolved() {
-      return unresolvedRows(this.ledger);
+      const open = unresolvedRows(this.ledger);
+      const dangling = this.missingRefs;
+      return dangling.length ? [...open, ...dangling] : open;
     },
 
     // One predicate for the badge, the pane highlight and the notice: they must
     // read the same decision, or the count and the marked rows disagree.
     isUndecided(row) {
-      return Boolean(row) && !isResolved(row);
+      if (!row) return false;
+      return !isResolved(row) || this.isDangling(row);
     },
 
     get sections() {

@@ -930,9 +930,11 @@ test("the check screen offers the decision the yeast finding reports", async () 
   const page = read("frontend/src/partials/import-check.html");
   assert.match(page, /finding\.yeasts/);
   assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
-  assert.match(page, /openBlend\(\)/, "the blend route opens a form where the finding is read");
-  assert.match(page, /saveBlend\(\)/);
-  assert.match(read("frontend/src/partials/import-map.html"), /saveBlend\(\)/);
+  assert.match(page, /beginBlend\(\)/, "the check screen sends you to the map row that owns the form");
+  const mapPage = read("frontend/src/partials/import-map.html");
+  assert.match(mapPage, /openBlend\(row\.line_id\)/, "a yeast row can carry a blend of its own");
+  assert.match(mapPage, /blendFor === row\.line_id/, "the form renders on the line it replaces");
+  assert.match(mapPage, /saveBlend\(\)/);
 });
 
 test("a blend record can be carried on either strain, and the other records the co-pitch", () => {
@@ -1037,6 +1039,53 @@ test("the blend form refuses a nameless record or an impossible attenuation", as
   assert.match(store.blendError, /percentage/i);
 
   assert.deepEqual(created, [], "nothing is written until the input makes sense");
+});
+
+test("a record deleted after it was picked makes the line undecided again", async () => {
+  const records = new Map();
+  const catalog = (kind, id) => records.get(id) ?? null;
+  const created = [];
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD },
+    catalog,
+    createYeast: async (component) => {
+      const id = `blend-${records.size + 1}`;
+      records.set(id, { id, ...component });
+      created.push({ id, component });
+      return { id, component };
+    },
+  });
+  store.open({ ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] });
+  const line = store.ledger.find((row) => row.section === "yeasts");
+
+  records.set("old-blend", { id: "old-blend", name: "Blend v1", attenuation_pct: 0.9 });
+  store.chooseRef(line.line_id, { id: "old-blend" });
+  assert.equal(store.isUndecided(store.ledger.find((row) => row.line_id === line.line_id)), false);
+
+  records.delete("old-blend");
+  const orphan = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(store.isDangling(orphan), true, "the ref no longer resolves");
+  assert.equal(store.isUndecided(orphan), true, "so the line is not decided");
+  assert.deepEqual(store.missingRefs.map((row) => row.line_id), [line.line_id]);
+  assert.ok(
+    store.unresolved.some((row) => row.line_id === line.line_id),
+    "the notice counts it"
+  );
+  const finding = store.ledgerFindings.find((item) => item.code === "REF_NOT_FOUND");
+  assert.equal(finding.blocking, true);
+  assert.match(finding.message, /no longer exists/);
+
+  store.openBlend(line.line_id);
+  assert.equal(store.blendFor, line.line_id, "the form targets the line being replaced");
+  store.setBlendName("Blend v2");
+  store.setBlendAttenuation("78");
+  await store.saveBlend();
+
+  assert.equal(store.missingRefs.length, 0, "the new record resolves");
+  assert.deepEqual(store.ledgerFindings, [], "and the finding is gone");
+  const updated = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(updated.ref, "blend-1");
+  assert.equal(created[0].component.attenuation_pct, 0.78);
 });
 
 test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {

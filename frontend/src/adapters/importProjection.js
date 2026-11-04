@@ -22,6 +22,7 @@ import { WHIRLPOOL_ROW_DEFAULTS } from "../views/registry/hops.js";
 import { makeTraceMaltRow } from "../views/producer/traceMaltRows.js";
 import { normalizedRowShares, rowDefaults } from "../views/producer/authoring.js";
 import { gravityPointsToSg, massKg } from "../views/import/ledger.js";
+import { catalogKindFor } from "../store/importMatch.js";
 
 const MASS_UNITS = new Set(["g", "kg", "oz", "lb"]);
 // The extraction's unit ids are lowercase; the artifact's are not. Map at the seam.
@@ -35,7 +36,10 @@ export function projectImport({
   fraction = null,
   targetProfile = null,
 }) {
-  const rows = ledger.filter((row) => row.decision === "mapped" && row.ref);
+  // A line whose registry record was deleted is not projectable: keeping it would
+  // put an id on a root that no collection or selection can satisfy, and the solver
+  // would report a dangling reference instead of the ledger finding that says so.
+  const rows = ledger.filter((row) => row.decision === "mapped" && row.ref && resolvable(row, catalog));
   const roots = targetRoots(payload, rows);
   if (fraction != null) roots["batch.whirlpool_ibu_fraction"] = fraction;
   const collections = {
@@ -104,6 +108,14 @@ function targetRoots(payload, rows) {
 
 function set(roots, key, value) {
   if (typeof value === "number" && Number.isFinite(value) && value > 0) roots[key] = value;
+}
+
+// Mash rests are not catalog records — the rest id is the whole name — and a line
+// whose section has no catalog kind is taken at its word.
+function resolvable(row, catalog) {
+  if (row.section === "mashes") return true;
+  const kind = catalogKindFor(row);
+  return kind ? catalog(kind, row.ref) != null : true;
 }
 
 export function volumeL(target) {

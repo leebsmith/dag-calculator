@@ -39,7 +39,7 @@ export function poolReadouts() {
     },
 
     get ledgerFindings() {
-      return ledgerFindings({ ledger: this.ledger });
+      return ledgerFindings({ ledger: this.ledger, missing: this.missingRefs });
     },
   };
 }

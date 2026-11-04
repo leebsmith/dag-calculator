@@ -118,6 +118,20 @@ test("the mash rest and the yeast become a row and a selection", () => {
   assert.equal(state.selections["batch.yeast"].name, "British Ale");
 });
 
+test("a line whose record was deleted contributes nothing", () => {
+  const ledger = mapped().map((row) =>
+    row.section === "yeasts" ? { ...row, ref: "y-deleted" } : row
+  );
+  const state = projectImport({ payload: payload(), ledger, catalog });
+  assert.equal("batch.yeast" in state.selections, false, "no dangling snapshot");
+  assert.equal("batch.yeast_id" in state.roots, false, "and no dangling id on the root");
+  assert.equal(
+    state.collections["mash.rests"][0].rest_id,
+    "beta_alpha_amylase",
+    "the rest of the projection is untouched"
+  );
+});
+
 test("an unmapped line contributes nothing", () => {
   const ledger = buildLedger(payload()).map((row) => ({ ...row, decision: "unresolved" }));
   const state = projectImport({ payload: payload(), ledger, catalog });
