@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
+import { read } from "../guards/util.js";
 import {
   describeVerification,
   documentTitle,
@@ -321,8 +322,40 @@ test("the stage only moves where the flow allows", () => {
   assert.equal(store.stage, "check", "an unknown stage changes nothing");
 });
 
-test("candidate chips come from the injected catalogs", () => {
-  const store = createImportReviewStore({
+test("the undecided list names every line the notice counts", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  assert.equal(store.unresolved.length, store.ledger.length - 2);
+  for (const row of store.unresolved) {
+    assert.ok(row.name || row.text, "a listed line has something to read");
+    assert.ok(row.section, "a listed line says what kind of line it is");
+    assert.equal(store.isUndecided(row), true);
+  }
+  assert.deepEqual(
+    store.ledger.filter((row) => store.isUndecided(row)),
+    store.unresolved,
+    "the badge, the notice and the count follow one predicate"
+  );
+});
+
+test("deciding a line drops it from the notice", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "fermentables");
+  assert.equal(store.isUndecided(line), true);
+  store.chooseRef(line.line_id, { id: "std:pale-ale-malt" });
+  const updated = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(store.isUndecided(updated), false);
+  assert.equal(store.isUndecided(undefined), false, "a missing row is not a decision to make");
+});
+
+test("the map notice lists the undecided rows, not only their count", () => {
+  const page = read("frontend/src/partials/import-map.html");
+  const notice = page.slice(page.indexOf("alert alert-warning"), page.indexOf("Ask the model for matches"));
+  assert.match(notice, /x-for="row in \$store\.importReview\.unresolved"/);
+  assert.match(notice, /row\.name/);
+  assert.match(notice, /row\.section/);
+});
+
+test("candidate chips come from the injected catalogs", () => {  const store = createImportReviewStore({
     client: { patch: async () => LEDGER_RECORD },
     catalogs: () => [{ id: "m1", name: "Maris Otter", standard_name: "Pale Ale Malt" }],
   });

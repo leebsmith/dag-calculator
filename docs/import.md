@@ -87,6 +87,9 @@ cannot disagree.
 - **Advisory**: the water boundary. It runs against the user's own target profile,
   and is skipped (with a finding saying so) when no profile is chosen.
 
+The Map stage names every undecided line under its count and marks each of those
+rows, so the notice and the lines it refers to cannot drift apart.
+
 The delta table compares what the page stated with what this rig solves, per target
 and per line: solved grist mass, solved hop mass per pool, and the ratio between
 them. Where a mass is authored rather than solved (dry hops), the table says so.

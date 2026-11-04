@@ -4,7 +4,8 @@
 
 import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
-import { catalogKindFor, matchActions } from "./importMatch.js";
+import { ledgerActions } from "./importLedger.js";
+import { matchActions } from "./importMatch.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
 import { hopPanes } from "../views/import/hopRouting.js";
@@ -14,14 +15,9 @@ import {
   noBatchQuantities,
 } from "../views/import/emptySections.js";
 import {
-  applyRef,
   buildLedger,
-  destinationsFor,
-  ignoreRow,
+  isResolved,
   ledgerCounts,
-  restCandidates,
-  screenCandidates,
-  setDestination,
   shares,
   unresolvedRows,
 } from "../views/import/ledger.js";
@@ -120,6 +116,12 @@ function ledgerReadouts() {
       return unresolvedRows(this.ledger);
     },
 
+    // One predicate for the badge, the pane highlight and the notice: they must
+    // read the same decision, or the count and the marked rows disagree.
+    isUndecided(row) {
+      return Boolean(row) && !isResolved(row);
+    },
+
     get sections() {
       return SECTION_ORDER.map((section) => {
         const rows = this.ledger.filter((row) => row.section === section);
@@ -212,86 +214,6 @@ function reviewReadouts() {
         mashes: payload.mashes.length,
         unmodeled: payload.unmodeled.length,
       };
-    },
-  };
-}
-
-function ledgerActions({ catalogs }) {
-  return {
-    destinationsFor(section) {
-      return destinationsFor(section);
-    },
-
-    goTo(stage) {
-      if (["transcribe", "map", "check"].includes(stage)) this.stage = stage;
-    },
-
-    // Candidate chips for one line. Mash steps pick from the model's eight rests
-    // by temperature; everything else screens the live catalogs by name.
-    suggestions(row, limit = 4) {
-      if (row.section === "mashes") {
-        return restCandidates(row.temperature, limit).map((rest) => ({
-          id: rest.rest_id,
-          name: rest.name,
-          detail: rest.detail,
-        }));
-      }
-      const kind = catalogKindFor(row);
-      return kind ? screenCandidates(row.name, catalogs(kind), kind, limit) : [];
-    },
-
-    setQuery(lineId, value) {
-      this.queries = { ...this.queries, [lineId]: value };
-    },
-
-    queryFor(lineId) {
-      return this.queries[lineId] ?? "";
-    },
-
-    search(row) {
-      const query = this.queryFor(row.line_id).trim();
-      if (!query) return [];
-      const kind = catalogKindFor(row);
-      return kind ? screenCandidates(query, catalogs(kind), kind, 8) : [];
-    },
-
-    chooseRef(lineId, item) {
-      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
-      if (!row || !item) return;
-      this.replaceRow(applyRef(row, item, catalogKindFor(row)));
-    },
-
-    changeDestination(lineId, destination) {
-      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
-      if (!row) return;
-      this.replaceRow(setDestination(row, destination));
-    },
-
-    moveHop(lineId, destination) {
-      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
-      if (!row) return;
-      this.replaceRow(setDestination(row, destination));
-    },
-
-    // Back to the candidates pane: the routing decision is withdrawn, and with it
-    // the hop that was chosen for that pool.
-    returnHop(lineId) {
-      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
-      if (!row) return;
-      this.replaceRow({ ...row, destination: null, ref: null, decision: "unresolved" });
-    },
-
-    ignoreLine(lineId, reason = "not modelled") {
-      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
-      if (!row) return;
-      this.replaceRow(ignoreRow(row, reason));
-    },
-
-    replaceRow(next) {
-      const ledger = this.ledger.map((row) => (row.line_id === next.line_id ? next : row));
-      this.record = { ...this.record, ledger };
-      this.dirty = true;
-      this.error = null;
     },
   };
 }

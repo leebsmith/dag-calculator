@@ -14,12 +14,36 @@
         x-text="$store.importReview.unresolved.length === 0
           ? 'Every line is decided'
           : $store.importReview.unresolved.length + ' line(s) still need a decision'"></span>
-      <span class="text-xs text-muted">
-        Destinations are proposed from the page. A trace malt is not scaled by the solve, and
-        a boil hop is not a whirlpool hop — both are physics, so both are yours to confirm.
-      </span>
+      <span class="text-xs text-muted"
+        x-text="$store.importReview.unresolved.length === 0
+          ? 'Every line has a destination and a registry entry, or an ignore reason.'
+          : 'They are listed below, and marked on the line.'"></span>
     </div>
   </header>
+
+  <template x-if="$store.importReview.unresolved.length">
+    <div class="alert alert-warning">
+      <div class="alert-header">
+        <span class="alert-dot"></span>
+        <span>Lines waiting on you</span>
+      </div>
+      <ul class="import-line-list">
+        <template x-for="row in $store.importReview.unresolved" :key="'undecided-' + row.line_id">
+          <li class="import-line">
+            <span class="map-badge">needs a decision</span>
+            <span class="font-medium" x-text="row.name || row.text"></span>
+            <span class="text-xs text-muted"
+              x-text="row.section + ' · p' + (row.page ?? '?') + (row.destination ? ' · to ' + row.destination : ' · no destination')"></span>
+            <span class="text-xs text-muted" x-show="row.text && row.text !== row.name" x-text="row.text"></span>
+          </li>
+        </template>
+      </ul>
+      <p class="form-hint">
+        Destinations are proposed from the page. A trace malt is not scaled by the solve, and
+        a boil hop is not a whirlpool hop — both are physics, so both are yours to confirm.
+      </p>
+    </div>
+  </template>
 
   <div class="import-queue-actions" x-show="$store.importReview.unresolved.length">
     <button
@@ -104,8 +128,9 @@
               </h4>
               <ul class="import-line-list">
                 <template x-for="row in $store.importReview.hopPanes[pane.id]" :key="row.line_id">
-                  <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.unresolved.some((r) => r.line_id === row.line_id) }">
+                  <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.isUndecided(row) }">
                     <div class="map-row-main">
+                      <span class="map-badge" x-show="$store.importReview.isUndecided(row)">needs a decision</span>
                       <span class="text-xs text-muted" x-text="row.tag"></span>
                       <span class="font-medium" x-text="row.name"></span>
                       <span class="text-xs text-muted" x-text="row.stage_verbatim || row.stage_guess"></span>
@@ -179,9 +204,9 @@
 
       <ul class="import-line-list" x-show="section.id !== 'hops'">
         <template x-for="row in section.rows" :key="row.line_id">
-          <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.unresolved.some((r) => r.line_id === row.line_id) }">
+          <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.isUndecided(row) }">
             <div class="map-row-main">
-              <span class="map-badge" x-show="$store.importReview.unresolved.some((r) => r.line_id === row.line_id)">
+              <span class="map-badge" x-show="$store.importReview.isUndecided(row)">
                 needs a decision
               </span>
               <span class="font-medium" x-text="row.name"></span>
