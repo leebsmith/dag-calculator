@@ -164,6 +164,8 @@ class ImportService:
             changes["pool_ibu_fraction"] = request.pool_ibu_fraction
         if request.pool_ibu_source is not None:
             changes["pool_ibu_source"] = request.pool_ibu_source
+        if request.target_profile_id is not None:
+            changes["target_profile_id"] = request.target_profile_id
         if request.batch_id is not None:
             changes["batch_id"] = request.batch_id
         if request.status is not None:

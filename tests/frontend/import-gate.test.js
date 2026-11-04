@@ -169,3 +169,20 @@ test("the acceptance loop closes: fixture → ledger → projection → gate →
   assert.equal(gate.blocking.length, 0, "the pristine recipe solves on the test rig");
   assert.ok(delta.targets.some((target) => target.label === "Original gravity"));
 });
+
+
+test("a boundary that cannot be built says why, instead of 'could not run'", async () => {
+  const base = state();
+  const withTargets = {
+    ...base,
+    roots: { ...base.roots, "water.target_profile_id": "balanced" },
+    // A profile without ion fields: the selection resolves, the request cannot.
+    selections: { ...base.selections, "water.target_profile": { id: "balanced", name: "Half a profile" } },
+  };
+  const { fetchImpl } = fakeFetch();
+  const result = await runGate({ state: withTargets, fetchImpl });
+  const finding = result.advisory.find((item) => item.node === "solver.water");
+  assert.ok(finding, "water is advisory, and it is reported");
+  assert.match(finding.message, /fingerprint|undefined|Unknown/);
+  assert.equal(result.water, null, "nothing was prescribed, so nothing is summarised");
+});

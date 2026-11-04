@@ -64,6 +64,7 @@ const reviewStore = createImportReviewStore({
   client: importClient,
   catalogs: (kind) => Alpine.store("setup").items(kind),
   catalog: (kind, id) => Alpine.store("setup").item(kind, id),
+  profiles: () => Alpine.store("setup").waterTargetOptions(),
   project: projectImport,
   gate: (state) =>
     runGate({ state, references: Alpine.store("setup").references() }),

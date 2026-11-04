@@ -6,8 +6,13 @@ import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { catalogKindFor, matchActions } from "./importMatch.js";
 import { gapfillActions } from "./importGapfill.js";
+import { waterActions } from "./importWater.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
+import {
+  emptySectionNote,
+  noBatchQuantities,
+} from "../views/import/emptySections.js";
 import {
   applyRef,
   buildLedger,
@@ -48,11 +53,13 @@ export function createImportReviewStore({
   commit = null,
   sourceFile = () => null,
   readFile = async () => "",
+  profiles = () => [],
   onClose,
 } = {}) {
   const check = checkActions({ catalog, project, gate, delta, commit });
   const match = matchActions({ client, catalog });
   const gapfill = gapfillActions({ client, sourceFile, readFile });
+  const water = waterActions({ profiles });
   const store = Object.assign(
     {
       record: null,
@@ -63,6 +70,10 @@ export function createImportReviewStore({
       commitBusy: false,
       gapfillBusy: false,
       gapfillResult: null,
+      gapfill,
+    waterBusy: false,
+      gapfill,
+    waterResult: null,
       projectedState: null,
       matchBusy: false,
       matchError: null,
@@ -80,7 +91,8 @@ export function createImportReviewStore({
     poolActions(),
     match,
     commitActions({ commit }),
-    gapfill
+    gapfill,
+    water
   );
 
   // Getters, not values: Object.assign would collapse them at creation.
@@ -90,6 +102,7 @@ export function createImportReviewStore({
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(check));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(match));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(gapfill));
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(water));
   return store;
 }
 
@@ -114,23 +127,12 @@ function ledgerReadouts() {
       });
     },
 
-    // Why a section is empty, in the page's own terms. Silence reads as a bug.
     emptyNote(section) {
-      const payload = this.payload;
-      if (!payload) return "";
-      if (section === "unmodeled") return "nothing outside the model was captured";
-      if (this.noBatchQuantities && (section === "fermentables" || section === "hops")) {
-        return payload.document_type === "spec_sheet"
-          ? "none on this page: the quantities are stated per unit of production volume and sit below"
-          : "none on this page";
-      }
-      return "none on this page";
+      return emptySectionNote(this.payload, section, this.noBatchQuantities);
     },
 
     get noBatchQuantities() {
-      const payload = this.payload;
-      if (!payload) return false;
-      return payload.fermentables.length === 0 && payload.hops.length === 0;
+      return noBatchQuantities(this.payload);
     },
 
     get verdict() {

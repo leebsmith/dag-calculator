@@ -33,6 +33,7 @@ export function projectImport({
   identity = null,
   catalog = () => null,
   fraction = null,
+  targetProfile = null,
 }) {
   const rows = ledger.filter((row) => row.decision === "mapped" && row.ref);
   const roots = targetRoots(payload, rows);
@@ -66,11 +67,14 @@ export function projectImport({
   };
   return {
     identity,
-    roots: { ...roots, ...yeastRoot(rows) },
+    roots: { ...roots, ...yeastRoot(rows), ...waterRoot(targetProfile) },
     collections: Object.fromEntries(
       Object.entries(collections).map(([nodeId, list]) => [nodeId, completeRows(nodeId, list)])
     ),
-    selections: yeastSelection(rows, catalog),
+    selections: {
+      ...yeastSelection(rows, catalog),
+      ...waterSelection(targetProfile),
+    },
   };
 }
 
@@ -186,6 +190,17 @@ function yeastSelection(rows, catalog) {
   const row = rows.find((candidate) => candidate.destination === "batch.yeast");
   const item = row ? catalog("yeast", row.ref) : null;
   return item ? { "batch.yeast": { ...item } } : {};
+}
+
+// The water target profile is a selection too, and it needs its ref root: a
+// selection resolves through it, and without one the boundary has nothing to solve.
+function waterSelection(profile) {
+  if (!profile) return {};
+  return { "water.target_profile": { ...profile } };
+}
+
+function waterRoot(profile) {
+  return profile?.id ? { "water.target_profile_id": profile.id } : {};
 }
 
 function yeastRoot(rows) {

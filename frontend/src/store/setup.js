@@ -86,6 +86,13 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
       }));
     },
 
+    waterTargetOptions() {
+      void this.revision;
+      return Object.entries(cache.references.water_target ?? {})
+        .map(([id, profile]) => ({ value: id, label: profile.name ?? id, record: profile }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+    },
+
     styleOptions() {
       void this.revision;
       return Object.entries(cache.references.style ?? {})

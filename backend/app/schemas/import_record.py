@@ -51,6 +51,7 @@ class ImportRecord(StrictModel):
     # ("printed" | "estimated" | "authored"), so the review can label it.
     pool_ibu_fraction: float | None = None
     pool_ibu_source: str | None = None
+    target_profile_id: str | None = None
     created_at: float
     updated_at: float
 
@@ -77,6 +78,7 @@ class UpdateImportRequest(StrictModel):
     suggestions: list[dict[str, Any]] | None = None
     pool_ibu_fraction: float | None = None
     pool_ibu_source: str | None = None
+    target_profile_id: str | None = None
     batch_id: str | None = None
     status: ImportStatus | None = None
     failure_reason: str | None = None

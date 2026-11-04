@@ -2569,3 +2569,10 @@ samp {
   margin-bottom: var(--space-2);
   font-weight: var(--font-weight-semibold);
 }
+
+.import-water {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+}

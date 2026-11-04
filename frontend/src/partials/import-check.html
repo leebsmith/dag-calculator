@@ -27,6 +27,50 @@
     </div>
   </header>
 
+  <div class="import-water" x-show="$store.importReview.unresolved.length === 0">
+    <h3 class="import-section-title">Water targets</h3>
+    <p class="form-hint">
+      The page's water treatment is not modelled, and a batch carries no target profile until one is
+      chosen. Pick a profile here and the gate will solve water with it; leave it blank and the batch
+      opens with water locked, to set in the editor.
+    </p>
+    <div class="import-queue-actions">
+      <select
+        class="form-select text-xs"
+        @change="$store.importReview.setTargetProfile($event.target.value)"
+      >
+        <option value="" :selected="!$store.importReview.targetProfileId">No target profile</option>
+        <template x-for="option in $store.importReview.targetProfiles" :key="option.value">
+          <option :value="option.value" :selected="option.value === $store.importReview.targetProfileId" x-text="option.label"></option>
+        </template>
+      </select>
+      <span class="text-xs text-muted" x-show="$store.importReview.targetProfileId">
+        chosen: run the check to solve water with it
+      </span>
+    </div>
+
+    <template x-if="$store.importReview.waterSummary">
+      <ul class="import-line-list">
+        <li class="import-line">
+          <span class="text-xs text-muted">Mash pH</span>
+          <span class="font-medium" x-text="$store.importReview.waterSummary.ph.toFixed(2)"></span>
+          <span class="text-xs text-muted" x-text="$store.importReview.waterSummary.status"></span>
+        </li>
+        <li class="import-line">
+          <span class="text-xs text-muted">Strategy</span>
+          <span class="text-xs" x-text="$store.importReview.waterSummary.strategy"></span>
+        </li>
+        <li class="import-line" x-show="$store.importReview.waterSummary.gypsum_g">
+          <span class="text-xs text-muted">Mash additions</span>
+          <span class="text-xs"
+            x-text="'gypsum ' + ($store.importReview.waterSummary.gypsum_g ?? 0) + ' g · CaCl2 '
+              + ($store.importReview.waterSummary.cacl2_g ?? 0) + ' g · acid '
+              + ($store.importReview.waterSummary.acid_ml ?? 0) + ' ml'"></span>
+        </li>
+      </ul>
+    </template>
+  </div>
+
   <div class="alert alert-warning" x-show="$store.importReview.checkError">
     <div class="alert-header">
       <span class="alert-dot"></span>

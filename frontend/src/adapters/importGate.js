@@ -15,6 +15,7 @@ import artifact from "../engine/artifact.json" with { type: "json" };
 import { createEngine } from "../engine/dag.js";
 import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
+import { reportError } from "../observability.js";
 import { unresolvedRows } from "../views/import/ledger.js";
 
 export const GATE_NODES = ["solver.batch", "solver.hops", "solver.water"];
@@ -44,7 +45,8 @@ export async function runGate({ state, references = {}, fetchImpl }) {
   });
   await runner.solveNow();
 
-  const findings = failureFindings(runner.statuses, nodes);
+  const water = hasWaterTargets ? waterSummary(engine) : null;
+  const findings = failureFindings(runner.statuses, nodes, buildErrors(engine, runner.statuses, nodes));
   if (!hasWaterTargets) {
     findings.push({
       node: "solver.water",
@@ -56,6 +58,7 @@ export async function runGate({ state, references = {}, fetchImpl }) {
   findings.push(...blockingFindings(engine));
   return {
     engine,
+    water,
     statuses: { ...runner.statuses },
     findings,
     blocking: findings.filter((finding) => finding.severity === "blocking"),
@@ -63,15 +66,30 @@ export async function runGate({ state, references = {}, fetchImpl }) {
   };
 }
 
-function failureFindings(statuses, nodes) {
+// A boundary that never ran is worth explaining: "could not run" hides whether a
+// solver refused or the request could not even be built. Asking again now that the
+// other boundaries have landed gives the real reason.
+function buildErrors(engine, statuses, nodes) {
+  const out = {};
+  for (const node of nodes) {
+    if (statuses[node] === "ok") continue;
+    try {
+      engine.boundaryRequest(node);
+    } catch (err) {
+      // Captured, not swallowed: the message becomes the finding's explanation.
+      reportError("importGate.buildErrors", err);
+      out[node] = err?.message ?? String(err);
+    }
+  }
+  return out;
+}
+
+function failureFindings(statuses, nodes, reasons = {}) {
   return nodes.filter((node) => statuses[node] !== "ok").map((node) => ({
     node,
     severity: ADVISORY_NODES.has(node) ? "advisory" : "blocking",
     code: statuses[node] === "blocked" ? "BLOCKED" : "SOLVE_FAILED",
-    message:
-      statuses[node] === "blocked"
-        ? "the solver's inputs are not available yet"
-        : "the solver could not reach an answer",
+    message: reasons[node] ?? "the solver could not reach an answer",
   }));
 }
 
@@ -87,6 +105,34 @@ function blockingFindings(engine) {
       code: state.id,
       message: `relationship "${state.id}" does not hold for this batch`,
     }));
+}
+
+// What the water boundary prescribed, when it ran. A skipped boundary is absence,
+// not a zero, so the whole block disappears rather than reading "pH 0".
+export function waterSummary(engine) {
+  const read = (path) => {
+    try {
+      const value = engine.resolve(path);
+      return typeof value === "number" && Number.isFinite(value) ? value : null;
+    } catch (err) {
+      reportError("importGate.waterSummary", err);
+      return null;
+    }
+  };
+  const ph = read("solver.water.prescription.predicted_mash_ph");
+  if (ph == null) return null;
+  return {
+    ph,
+    strategy: read("solver.water.strategy"),
+    status: read("solver.water.prescription.mash_ph_status"),
+    gypsum_g: grams(read("solver.water.mash_additions.gypsum_kg")),
+    cacl2_g: grams(read("solver.water.mash_additions.cacl2_kg")),
+    acid_ml: grams(read("solver.water.mash_additions.acid_l")),
+  };
+}
+
+function grams(value) {
+  return value == null ? null : Math.round(value * 1000);
 }
 
 export function gateSummary({ blocking = [], advisory = [], findings = [] }, ledger = []) {

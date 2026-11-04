@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { buildDelta, grams } from "../../frontend/src/adapters/importDelta.js";
+import { waterSummary } from "../../frontend/src/adapters/importGate.js";
 
 const LEDGER = [
   {
@@ -137,4 +138,21 @@ test("a missing solved value is absence, never a zero delta", () => {
 test("grams converts without rounding a value the review has not shown", () => {
   assert.equal(grams(0.05), 50);
   assert.equal(grams(null), null);
+});
+
+
+test("the water summary reports the prescription, and absence when water did not run", () => {
+  const values = {
+    "solver.water.strategy": "balanced",
+    "solver.water.prescription.predicted_mash_ph": 5.34,
+    "solver.water.prescription.mash_ph_status": "in-range",
+    "solver.water.mash_additions.gypsum_kg": 0.004,
+    "solver.water.mash_additions.cacl2_kg": 0.001,
+    "solver.water.mash_additions.acid_l": 0.002,
+  };
+  const summary = waterSummary({ resolve: (path) => values[path] });
+  assert.equal(summary.ph, 5.34);
+  assert.equal(summary.gypsum_g, 4);
+  assert.equal(summary.acid_ml, 2);
+  assert.equal(waterSummary({ resolve: () => undefined }), null);
 });

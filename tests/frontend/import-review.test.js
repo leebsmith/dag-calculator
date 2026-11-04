@@ -726,3 +726,48 @@ test("two mapped yeasts are a blocking finding: a batch carries one selection", 
   store.ignoreLine(store.ledger.find((row) => row.name === "Brettanomyces culture").line_id);
   assert.deepEqual(store.ledgerFindings, [], "one stored, one ignored is a decision");
 });
+
+// --- water: the profile is the user's constraint -------------------------
+
+const PROFILE = {
+  value: "balanced",
+  label: "Balanced",
+  record: { id: "balanced", name: "Balanced", calcium_ca: 60, sulfate_so4: 80, chloride_cl: 60 },
+};
+
+test("choosing a target profile stores it and invalidates the last check", () => {
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD },
+    profiles: () => [PROFILE],
+  });
+  store.open(RECORD);
+  store.gate = { blocking: [], advisory: [], findings: [], engine: null };
+  store.setTargetProfile("balanced");
+  assert.equal(store.targetProfileId, "balanced");
+  assert.equal(store.targetProfile.id, "balanced");
+  assert.equal(store.targetProfile.sulfate_so4, 80, "the record travels, not just the id");
+  assert.equal(store.gate, null, "a stale check is worse than none");
+  assert.equal(store.dirty, true);
+});
+
+test("the projection seeds the profile as a selection and its ref root", async () => {
+  const { projectImport } = await import("../../frontend/src/adapters/importProjection.js");
+  const state = projectImport({
+    payload: HOP_PAYLOAD,
+    ledger: [{ line_id: "hops[0]", decision: "ignored", reason: "x", section: "hops" }],
+    targetProfile: { id: "balanced", name: "Balanced", sulfate_so4: 80 },
+    catalog: () => null,
+  });
+  assert.equal(state.selections["water.target_profile"].name, "Balanced");
+  assert.equal(state.roots["water.target_profile_id"], "balanced");
+});
+
+test("the water summary is whatever the gate reported, and absent when water was skipped", () => {
+  const store = createImportReviewStore({ client: { patch: async () => RECORD } });
+  store.open(RECORD);
+  assert.equal(store.waterSummary, null, "no check yet, nothing solved");
+  store.gate = { engine: null, water: { ph: 5.32, gypsum_g: 4 } };
+  assert.equal(store.waterSummary.ph, 5.32);
+  store.gate = { engine: null, water: null };
+  assert.equal(store.waterSummary, null, "a skipped boundary is absence, not zero");
+});

@@ -51,6 +51,7 @@ export function checkActions({ catalog, project, gate, delta }) {
           identity: this.record.identity,
           catalog,
           fraction: this.poolFraction ?? this.printedPoolFraction,
+          targetProfile: this.targetProfile,
         });
         const result = mergeFindings(await gate(state), [
           ...this.hopFindings,
