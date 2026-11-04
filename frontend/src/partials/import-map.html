@@ -249,7 +249,8 @@
             <span class="font-medium" x-text="$store.importReview.yeastOutcome?.name"></span>
             <span class="text-xs text-muted"
               x-text="($store.importReview.blendRecordAttenuationPct ?? '—') + ' % attenuation'"></span>
-            <span class="text-xs text-muted">blend of the strains below</span>
+            <span class="text-xs text-muted"
+              x-text="'blend of ' + ($store.importReview.yeastOutcome?.line_ids?.length ?? 0) + ' strains below'"></span>
             <button type="button" class="btn-outline text-xs" @click="$store.importReview.changeBlend()">
               Change
             </button>

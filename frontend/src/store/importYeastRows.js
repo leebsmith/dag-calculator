@@ -59,6 +59,18 @@ export function yeastReadouts() {
           message: `The blend record (${outcome.name ?? "blend"}) was deleted — pick another, or create one.`,
         });
       }
+      // A strain outside the blend would otherwise sit there as documentation while
+      // the batch claims a blend of the others. Say so, and make it a decision.
+      const outside = this.ledger.filter(
+        (row) => row.section === "yeasts" && row.decision === "ignored"
+      );
+      if (outcome?.mode === "blend" && outside.length) {
+        const names = outside.map((row) => row.name).join(", ");
+        issues.push({
+          section: "yeasts",
+          message: `${names} is not in this blend. Unblend to decide which strains it covers.`,
+        });
+      }
       return issues;
     },
   };

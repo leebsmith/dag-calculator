@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { read } from "../guards/util.js";
-import { applyRef, buildLedger } from "../../frontend/src/views/import/ledger.js";
+import { applyRef, buildLedger, ignoreRow } from "../../frontend/src/views/import/ledger.js";
 import {
   describeVerification,
   documentTitle,
@@ -906,6 +906,22 @@ test("a blend keeps both strains mapped and stores how they became one", async (
   assert.equal(store.blendRecordAttenuationPct, 82);
   assert.ok(records.has("blend-1"));
   assert.equal(store.blendOpen, false);
+});
+
+test("a strain outside the blend is a decision, not a silent note", async () => {
+  const { store } = twoYeasts();
+  store.openBlend();
+  store.setBlendAttenuation("80");
+  await store.saveBlend();
+  assert.deepEqual(store.sectionIssues, [], "a blend of both is decided");
+
+  // Simulate a record whose blend covers one strain while the other was left out.
+  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
+  store.replaceRow(ignoreRow({ ...store.ledger.find((row) => row.line_id === brett.line_id) }, "not in this batch"));
+
+  const issue = store.sectionIssues.find((item) => /is not in this blend/.test(item.message));
+  assert.ok(issue, "the section says a strain is outside the blend");
+  assert.equal(store.checkSummary === null || store.sectionIssues.length > 0, true);
 });
 
 test("the blend route survives choosing a strain first", async () => {
