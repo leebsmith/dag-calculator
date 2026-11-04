@@ -2537,6 +2537,12 @@ samp {
   }
 }
 
+.map-chip.is-deleted {
+  border-color: var(--sys-color-danger-border);
+  color: var(--sys-color-danger-text);
+  text-decoration: line-through;
+}
+
 .map-chip.is-proposed {
   border-style: dashed;
   border-color: var(--sys-color-action-primary);

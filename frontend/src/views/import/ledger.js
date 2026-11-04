@@ -222,6 +222,9 @@ export function applyRef(row, item, catalogKind) {
   return {
     ...row,
     ref: item.id ?? null,
+    // The name is stored with the pick: a record can be deleted later, and a
+    // line that remembers what it pointed at stays readable instead of showing an id.
+    ref_name: item.name ?? null,
     destination,
     transform: destination ? DESTINATION_BY_ID[destination].transform : row.transform,
     decision: destination ? "mapped" : "unresolved",

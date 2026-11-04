@@ -5,7 +5,6 @@
 // provenance ("printed", "estimated", "authored") that the review always shows.
 
 import { estimateWhirlpoolFraction, hopFindings } from "../views/import/hopRouting.js";
-import { ledgerFindings } from "../views/import/ledgerFindings.js";
 
 export function poolReadouts() {
   return {
@@ -36,10 +35,6 @@ export function poolReadouts() {
         ledger: this.ledger,
         fraction: this.poolFraction ?? this.printedPoolFraction,
       });
-    },
-
-    get ledgerFindings() {
-      return ledgerFindings({ ledger: this.ledger, missing: this.missingRefs });
     },
   };
 }

@@ -6,7 +6,8 @@
 import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
-import { catalogKindFor, matchActions } from "./importMatch.js";
+import { matchActions } from "./importMatch.js";
+import { rowReadouts } from "./importRows.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
 import { blendFormActions, blendSaveActions } from "./importBlend.js";
@@ -19,7 +20,6 @@ import {
 } from "../views/import/emptySections.js";
 import {
   buildLedger,
-  isResolved,
   ledgerCounts,
   shares,
   unresolvedRows,
@@ -107,7 +107,8 @@ export function createImportReviewStore({
     gapfill,
     water,
     reviewReadouts(),
-    ledgerReadouts({ catalog: lookup, hasCatalog: Boolean(catalog) }),
+    ledgerReadouts(),
+    rowReadouts({ catalog: lookup, hasCatalog: Boolean(catalog) }),
     poolReadouts()
   );
   return store;
@@ -117,7 +118,7 @@ function catalogOrNull(catalog) {
   return catalog || (() => null);
 }
 
-function ledgerReadouts({ catalog, hasCatalog }) {
+function ledgerReadouts() {
   return {
     get ledger() {
       return this.record?.ledger ?? [];
@@ -127,31 +128,12 @@ function ledgerReadouts({ catalog, hasCatalog }) {
       return ledgerCounts(this.ledger);
     },
 
-    // A mapped line whose registry record has since been deleted is not decided:
-    // the ref still reads on the row, but the projection would resolve nothing.
-    isDangling(row) {
-      if (!hasCatalog || !row?.ref || row.section === "mashes" || row.decision !== "mapped") {
-        return false;
-      }
-      const kind = catalogKindFor(row);
-      return kind ? catalog(kind, row.ref) == null : false;
-    },
-
-    get missingRefs() {
-      return this.ledger.filter((row) => this.isDangling(row));
-    },
-
+    // Everything the gate will refuse over: an undecided line, or a line whose
+    // picked record was deleted after the fact.
     get unresolved() {
       const open = unresolvedRows(this.ledger);
       const dangling = this.missingRefs;
       return dangling.length ? [...open, ...dangling] : open;
-    },
-
-    // One predicate for the badge, the pane highlight and the notice: they must
-    // read the same decision, or the count and the marked rows disagree.
-    isUndecided(row) {
-      if (!row) return false;
-      return !isResolved(row) || this.isDangling(row);
     },
 
     get sections() {

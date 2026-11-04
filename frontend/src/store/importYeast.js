@@ -21,7 +21,7 @@ export function yeastActions({ catalog = () => null } = {}) {
         (row) => row.section === "yeasts" && row.decision === "mapped" && row.line_id !== lineId
       );
       for (const row of others) {
-        this.replaceRow(ignoreRow(row, `not used: the batch ferments with ${name}`));
+        this.replaceRow(ignoreRow(row, `not in this batch — the batch ferments with ${name}`));
       }
       this.gate = null;
       this.delta = null;

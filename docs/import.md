@@ -64,21 +64,27 @@ destination — yeast, mash rests — the row shows that destination as a label 
 of a one-option menu.
 
 A record deleted from the Library after it was picked leaves no silent hole. The
-line reads as undecided again, the Map names it, the gate reports it as
-`REF_NOT_FOUND`, and the projection drops it, so a stale id never reaches a
-boundary. The row's own search — or, on a yeast line, its blend form — replaces it
-in place; a correction is a new record, as everywhere else in the Library.
+line reads as undecided again and says so on the row, the projection drops it, and
+a stale id never reaches a boundary. The row's own search — or, on a yeast line, its
+blend form — replaces it in place; a correction is a new record, as everywhere else
+in the Library. Rows carry the name they were picked by, so a deleted record still
+reads as a name rather than an id.
+
+Every row states its own problem; there is no second listing of the same lines
+above the sections. The header counts what is left, the row says what it needs, and
+the Check screen repeats only what a solver found.
 
 One limit belongs to the model rather than the page: a batch carries a single yeast
-selection (`batch.yeast`). When a source names a blend, the finding names every
-mapped strain and offers the choice — the one you keep is the batch's, and the
-others stay on the record, marked `not used: the batch ferments with <strain>`, so the
-blend stays legible in the ledger and the immutable import record instead of being
-silently dropped. The finding states the consequence — only one strain can set FG
-and ABV — and offers the other route in place: a name and the attenuation the pair
-finishes at create the one yeast record and make it the batch's strain in the same
-press. The record is an ordinary Library record; the import writes it through the
-same store rather than keeping a private kind of yeast.
+selection (`batch.yeast`). The yeasts section is therefore a **slot**, not a list of
+decisions: it shows which strain ferments the batch, and every other strain the page
+named sits under it marked `not in this batch — the batch ferments with <strain>`.
+Picking a different one is `Ferment with this`; the note on the dropped strain is
+how the immutable record keeps the blend legible instead of silently dropping it.
+
+A blend that must drive the numbers is one Library yeast record, and the row can
+create it in place: a name and the attenuation the pair finishes at, saved through
+the same store the Library uses, then made the batch's strain in the same press.
+Nothing about a blend is a special kind of yeast.
 
 A blend that must *drive the numbers* is a Library yeast record, not a second
 selection: one record named for the blend, carrying the attenuation the user
@@ -139,8 +145,8 @@ by the same boundary runner the editor uses, so a gate result and a live result
 cannot disagree.
 
 - **Blocking**: a failed batch or hop boundary, a violated blocking relation, any
-  unresolved line, a line pointing at a deleted record (`REF_NOT_FOUND`), and the
-  hop-routing findings above.
+  unresolved line (a line pointing at a deleted record is one), and the hop-routing
+  findings above.
 - **Advisory**: the water boundary. It runs against the user's own target profile,
   and is skipped (with a finding saying so) when no profile is chosen.
 

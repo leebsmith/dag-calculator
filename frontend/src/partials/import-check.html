@@ -96,17 +96,17 @@
       x-text="$store.importReview.commitBusy ? 'Creating…' : 'Create batch'"
     ></button>
     <span class="text-xs text-muted" x-show="$store.importReview.unresolved.length">
-      <span x-text="$store.importReview.unresolved.length"></span> line(s) still undecided — the gate
-      will refuse until they are mapped.
+      <span x-text="$store.importReview.unresolved.length"></span> line(s) still need your call — the
+      gate refuses until they are decided.
     </span>
   </div>
 
   <template x-if="$store.importReview.unresolved.length">
     <div>
-      <h3 class="import-section-title">Still undecided</h3>
+      <h3 class="import-section-title">Lines that need your call</h3>
       <p class="form-hint">
-        A line is undecided until it has a destination and a registry entry, or is ignored with a
-        reason. These are the ones holding the gate shut.
+        Each one is marked on its line, with what it needs. Fix them on the map, then run the check
+        again.
       </p>
       <ul class="import-line-list">
         <template x-for="row in $store.importReview.unresolved" :key="'u' + row.line_id">
@@ -114,13 +114,13 @@
             <span class="map-badge">needs a decision</span>
             <span class="font-medium" x-text="row.name"></span>
             <span class="text-xs text-muted" x-text="row.section + ' · p' + (row.page ?? '?')"></span>
-            <span class="text-xs text-muted" x-text="row.text"></span>
+            <span class="text-xs text-muted" x-text="$store.importReview.rowIssue(row)"></span>
           </li>
         </template>
       </ul>
       <div class="import-queue-actions">
         <button type="button" class="btn-outline text-xs" @click="$store.importReview.goTo('map')">
-          Back to the map
+          Fix on the map
         </button>
       </div>
     </div>
@@ -139,28 +139,6 @@
             <span class="font-medium" x-text="finding.title ?? finding.code"></span>
             <span class="text-xs text-muted" x-text="finding.message"></span>
             <span class="text-xs text-muted" x-show="finding.severity === 'advisory'">advisory only</span>
-            <template x-if="finding.yeasts">
-              <div class="map-row-actions">
-                <template x-for="strain in finding.yeasts" :key="strain.line_id">
-                  <button
-                    type="button"
-                    class="btn-outline text-xs"
-                    @click="$store.importReview.keepOnlyYeast(strain.line_id)"
-                    x-text="'Use ' + strain.name"
-                  ></button>
-                </template>
-                <button
-                  type="button"
-                  class="btn-link text-xs"
-                  @click="$store.importReview.goTo('map')"
-                >Open the map</button>
-                <button
-                  type="button"
-                  class="btn-outline text-xs"
-                  @click="$store.importReview.beginBlend()"
-                >Add a blend for both strains</button>
-              </div>
-            </template>
           </li>
         </template>
       </ul>

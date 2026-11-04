@@ -404,12 +404,15 @@ test("deciding a line drops it from the notice", () => {
   assert.equal(store.isUndecided(undefined), false, "a missing row is not a decision to make");
 });
 
-test("the map notice lists the undecided rows, not only their count", () => {
+test("the map states the problems on the lines, not in a strip", () => {
   const page = read("frontend/src/partials/import-map.html");
-  const notice = page.slice(page.indexOf("alert alert-warning"), page.indexOf("Ask the model for matches"));
-  assert.match(notice, /x-for="row in \$store\.importReview\.unresolved"/);
-  assert.match(notice, /row\.name/);
-  assert.match(notice, /row\.section/);
+  assert.match(page, /\$store\.importReview\.unresolved\.length/, "the header still counts");
+  assert.match(page, /rowIssue\(row\)/, "each row says what it needs");
+  assert.doesNotMatch(
+    page,
+    /x-for="row in \$store\.importReview\.unresolved"/,
+    "no second listing of the same rows at the top"
+  );
 });
 
 test("candidate chips come from the injected catalogs", () => {  const store = createImportReviewStore({
@@ -854,7 +857,7 @@ test("the check screen can name what is holding the gate shut", () => {
   assert.ok(names.includes("Brettanomyces culture"));
 });
 
-test("the single-yeast finding names the strains so the decision has a button", () => {
+test("the yeast section is a slot: one strain ferments, the rest are noted", () => {
   const payload = {
     ...HOP_PAYLOAD,
     yeasts: [
@@ -872,109 +875,67 @@ test("the single-yeast finding names the strains so the decision has a button", 
     store.chooseRef(row.line_id, { id: `y-${row.name}` });
   }
 
-  const finding = store.ledgerFindings.find((item) => item.code === "SINGLE_YEAST");
-  assert.deepEqual(finding.yeasts.map((strain) => strain.name).sort(), [
-    "Brettanomyces culture",
-    "clean saison strain",
-  ]);
-  assert.equal(finding.node, "batch.yeast");
+  assert.equal(store.mappedYeasts.length, 2, "both strains are on the record");
+  const slot = store.fermentingYeastId;
+  assert.ok(slot, "the section shows which one the batch ferments with");
 
-  const kept = finding.yeasts.find((strain) => strain.name === "Brettanomyces culture");
-  store.gate = { findings: [], blocking: [], advisory: [] };
-  store.keepOnlyYeast(kept.line_id);
-
-  assert.deepEqual(store.ledgerFindings, [], "keeping one strain decides the finding");
   const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
+  store.gate = { findings: [], blocking: [], advisory: [] };
+  store.keepOnlyYeast(brett.line_id);
+
+  assert.equal(store.fermentingYeastId, brett.line_id, "choosing moves the slot");
   const saison = store.ledger.find((row) => row.name === "clean saison strain");
-  assert.equal(brett.decision, "mapped", "the strain that was kept is untouched");
-  assert.equal(saison.decision, "ignored");
+  assert.equal(saison.decision, "ignored", "the other strain leaves the batch, not the record");
   assert.equal(
     saison.reason,
-    "not used: the batch ferments with Brettanomyces culture",
-    "the dropped strain says why, in words a reader understands"
+    "not in this batch — the batch ferments with Brettanomyces culture",
+    "and says why, in words a reader understands"
   );
   assert.equal(store.gate, null, "the gate is stale once the ledger changes under it");
 });
 
-test("the check screen offers the decision the yeast finding reports", async () => {
-  const payload = {
-    ...HOP_PAYLOAD,
-    yeasts: [
-      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
-      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
-    ],
-  };
-  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+test("a picked record is shown by name, and a deleted one says so on the row", async () => {
+  const records = new Map([["blend-1", { id: "blend-1", name: "Blend v1", attenuation_pct: 0.9 }]]);
   const store = createImportReviewStore({
-    client: { patch: async () => record },
-    catalog: (kind, id) => ({ id, name: id }),
-    gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
-    project: () => ({ roots: {}, collections: {}, selections: {} }),
-    delta: () => ({ targets: [], lines: [] }),
+    client: { patch: async () => RECORD },
+    catalog: (kind, id) => records.get(id) ?? null,
+    createYeast: async (component) => {
+      const id = `blend-${records.size + 1}`;
+      records.set(id, { id, ...component });
+      return { id, component };
+    },
   });
-  store.open(record);
-  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
-    store.chooseRef(row.line_id, { id: `y-${row.name}` });
-  }
-  await store.runCheck();
+  store.open({ ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] });
+  const line = store.ledger.find((row) => row.section === "yeasts");
+  store.chooseRef(line.line_id, { id: "blend-1", name: "Blend v1" });
 
-  const finding = store.gate.findings.find((item) => item.code === "SINGLE_YEAST");
-  assert.equal(finding.severity, "blocking");
-  assert.equal(finding.node, "batch.yeast", "the finding says which boundary refuses");
-  assert.equal(finding.yeasts.length, 2, "the finding carries the strains, not only a count");
-  assert.equal(store.checkSummary.ok, false);
+  const picked = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(store.refLabel(picked), "Blend v1", "the row reads as a name, never an id");
+  assert.equal(store.rowIssue(picked), "");
 
-  store.keepOnlyYeast(finding.yeasts[0].line_id);
-  assert.equal(store.gate, null, "the screen stops claiming a result it no longer has");
+  records.delete("blend-1");
+  const orphan = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(store.refLabel(orphan), "Blend v1", "the name is remembered with the pick");
+  const legacy = { ...orphan, ref: "gone", ref_name: null };
+  assert.equal(
+    store.refLabel(legacy),
+    legacy.name,
+    "a row picked before names were stored falls back to the page's words, never the id"
+  );
+  assert.match(store.rowIssue(orphan), /was deleted/);
+  assert.equal(store.isUndecided(orphan), true, "the line is not decided");
+  assert.ok(store.unresolved.some((row) => row.line_id === line.line_id));
 
-  const page = read("frontend/src/partials/import-check.html");
-  assert.match(page, /finding\.yeasts/);
-  assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
-  assert.match(page, /beginBlend\(\)/, "the check screen sends you to the map row that owns the form");
-  const mapPage = read("frontend/src/partials/import-map.html");
-  assert.match(mapPage, /openBlend\(row\.line_id\)/, "a yeast row can carry a blend of its own");
-  assert.match(mapPage, /blendFor === row\.line_id/, "the form renders on the line it replaces");
-  assert.match(mapPage, /saveBlend\(\)/);
-});
+  store.openBlend(line.line_id);
+  assert.equal(store.blendFor, line.line_id, "the form targets the line being replaced");
+  store.setBlendName("Blend v2");
+  store.setBlendAttenuation("78");
+  await store.saveBlend();
 
-test("a blend record can be carried on either strain, and the other records the co-pitch", () => {
-  const payload = {
-    ...HOP_PAYLOAD,
-    yeasts: [
-      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
-      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
-    ],
-  };
-  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
-  const store = createImportReviewStore({
-    client: { patch: async () => record },
-    catalog: (kind, id) => ({
-      id,
-      name: id === "blend" ? "Saison blend (3724 + Brett)" : id.replace(/^y-/, ""),
-    }),
-  });
-  store.open(record);
-  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
-    store.chooseRef(row.line_id, { id: `y-${row.name}` });
-  }
-  const saison = store.ledger.find((row) => row.name === "clean saison strain");
-  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
-
-  store.keepOnlyYeast(saison.line_id);
-  assert.equal(store.isUndecided(store.ledger.find((row) => row.line_id === brett.line_id)), false);
-
-  store.restoreLine(brett.line_id);
-  const back = store.ledger.find((row) => row.line_id === brett.line_id);
-  assert.equal(back.decision, "unresolved", "an ignored line is not gone");
-  assert.equal(back.destination, "batch.yeast");
-  assert.equal(back.reason, "");
-
-  store.chooseRef(brett.line_id, { id: "blend", name: "Saison blend (3724 + Brett)" });
-  store.keepOnlyYeast(brett.line_id);
-  const dropped = store.ledger.find((row) => row.line_id === saison.line_id);
-  assert.equal(dropped.decision, "ignored");
-  assert.equal(dropped.reason, "not used: the batch ferments with Saison blend (3724 + Brett)");
-  assert.equal(store.ledgerFindings.length, 0, "one strain carries the batch");
+  const fixed = store.ledger.find((row) => row.line_id === line.line_id);
+  assert.equal(store.rowIssue(fixed), "", "the new record resolves");
+  assert.equal(store.refLabel(fixed), "Blend v2");
+  assert.equal(store.isUndecided(fixed), false);
 });
 
 test("the blend form creates one record and makes it the batch's strain", async () => {
@@ -987,17 +948,24 @@ test("the blend form creates one record and makes it the batch's strain", async 
   };
   const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
   const created = [];
+  const records = new Map();
   const store = createImportReviewStore({
     client: { patch: async () => record },
-    catalog: (kind, id) => ({ id, name: id === "blend-1" ? "Saison blend" : id.replace(/^y-/, "") }),
-    createYeast: async (component) => (created.push(component), { id: "blend-1", component }),
+    catalog: (kind, id) => records.get(id) ?? null,
+    createYeast: async (component) => {
+      const id = "blend-1";
+      records.set(id, { id, ...component });
+      created.push(component);
+      return { id, component };
+    },
   });
   store.open(record);
   for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
-    store.chooseRef(row.line_id, { id: `y-${row.name}` });
+    store.chooseRef(row.line_id, { id: `y-${row.name}`, name: row.name });
   }
 
   store.openBlend();
+  assert.ok(store.blendFor, "the form lands on a yeast line");
   store.setBlendName("Saison blend");
   store.setBlendAttenuation("82");
   const saved = await store.saveBlend();
@@ -1007,13 +975,9 @@ test("the blend form creates one record and makes it the batch's strain", async 
   assert.equal(created[0].attenuation_pct, 0.82, "the form speaks percent; the record stores the fraction");
   assert.equal(created[0].attenuation_basis, "apparent");
   assert.equal(saved.id, "blend-1");
-  assert.ok(
-    store.ledger.find((row) => row.ref === "blend-1"),
-    "the blend is selected on a mapped yeast line"
-  );
-  assert.deepEqual(store.ledgerFindings, [], "the finding is resolved in the same press");
+  assert.equal(store.refLabel(store.ledger.find((row) => row.ref === "blend-1")), "Saison blend");
   const dropped = store.ledger.find((row) => row.section === "yeasts" && row.decision === "ignored");
-  assert.equal(dropped.reason, "not used: the batch ferments with Saison blend");
+  assert.match(dropped.reason, /not in this batch/);
   assert.equal(store.blendOpen, false);
 });
 
@@ -1025,9 +989,9 @@ test("the blend form refuses a nameless record or an impossible attenuation", as
   });
   store.open({ ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] });
   const line = store.ledger.find((row) => row.section === "yeasts");
-  store.chooseRef(line.line_id, { id: "y-1" });
+  store.chooseRef(line.line_id, { id: "y-1", name: "one" });
 
-  store.openBlend();
+  store.openBlend(line.line_id);
   store.setBlendName("   ");
   store.setBlendAttenuation("80");
   assert.equal(await store.saveBlend(), null);
@@ -1041,75 +1005,21 @@ test("the blend form refuses a nameless record or an impossible attenuation", as
   assert.deepEqual(created, [], "nothing is written until the input makes sense");
 });
 
-test("a record deleted after it was picked makes the line undecided again", async () => {
-  const records = new Map();
-  const catalog = (kind, id) => records.get(id) ?? null;
-  const created = [];
-  const store = createImportReviewStore({
-    client: { patch: async () => RECORD },
-    catalog,
-    createYeast: async (component) => {
-      const id = `blend-${records.size + 1}`;
-      records.set(id, { id, ...component });
-      created.push({ id, component });
-      return { id, component };
-    },
-  });
-  store.open({ ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] });
-  const line = store.ledger.find((row) => row.section === "yeasts");
-
-  records.set("old-blend", { id: "old-blend", name: "Blend v1", attenuation_pct: 0.9 });
-  store.chooseRef(line.line_id, { id: "old-blend" });
-  assert.equal(store.isUndecided(store.ledger.find((row) => row.line_id === line.line_id)), false);
-
-  records.delete("old-blend");
-  const orphan = store.ledger.find((row) => row.line_id === line.line_id);
-  assert.equal(store.isDangling(orphan), true, "the ref no longer resolves");
-  assert.equal(store.isUndecided(orphan), true, "so the line is not decided");
-  assert.deepEqual(store.missingRefs.map((row) => row.line_id), [line.line_id]);
-  assert.ok(
-    store.unresolved.some((row) => row.line_id === line.line_id),
-    "the notice counts it"
-  );
-  const finding = store.ledgerFindings.find((item) => item.code === "REF_NOT_FOUND");
-  assert.equal(finding.blocking, true);
-  assert.match(finding.message, /no longer exists/);
-
-  store.openBlend(line.line_id);
-  assert.equal(store.blendFor, line.line_id, "the form targets the line being replaced");
-  store.setBlendName("Blend v2");
-  store.setBlendAttenuation("78");
-  await store.saveBlend();
-
-  assert.equal(store.missingRefs.length, 0, "the new record resolves");
-  assert.deepEqual(store.ledgerFindings, [], "and the finding is gone");
-  const updated = store.ledger.find((row) => row.line_id === line.line_id);
-  assert.equal(updated.ref, "blend-1");
-  assert.equal(created[0].component.attenuation_pct, 0.78);
+test("the map and the check speak one vocabulary: pick, leave out, add back", () => {
+  const map = read("frontend/src/partials/import-map.html");
+  const check = read("frontend/src/partials/import-check.html");
+  assert.match(map, />Leave out</);
+  assert.match(map, />Add back</);
+  assert.doesNotMatch(map, />Ignore</);
+  assert.doesNotMatch(map, />Put back</);
+  assert.match(map, />Ferment with this</);
+  assert.match(map, />Create a blend</);
+  assert.match(map, /refLabel\(row\)/, "a picked record is named, never shown as an id");
+  assert.match(map, /rowIssue\(row\)/, "the row carries what it needs");
+  assert.match(check, /rowIssue\(row\)/);
+  assert.doesNotMatch(map, /ledgerFindings/, "row-level problems are not restated in a strip");
 });
 
-test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {
-  const payload = {
-    ...HOP_PAYLOAD,
-    yeasts: [
-      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
-      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
-    ],
-  };
-  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
-  const store = createImportReviewStore({
-    client: { patch: async () => record },
-    catalog: (kind, id) => ({ id, name: id }),
-  });
-  store.open(record);
-  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
-    store.chooseRef(row.line_id, { id: `y-${row.name}` });
-  }
-  const finding = store.ledgerFindings.find((item) => item.code === "SINGLE_YEAST");
-  assert.equal(finding.blocking, true);
-  store.ignoreLine(store.ledger.find((row) => row.name === "Brettanomyces culture").line_id);
-  assert.deepEqual(store.ledgerFindings, [], "one stored, one ignored is a decision");
-});
 
 // --- water: the profile is the user's constraint -------------------------
 

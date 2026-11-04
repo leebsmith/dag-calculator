@@ -88,7 +88,14 @@ export function ledgerDecisionActions() {
     returnHop(lineId) {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row) return;
-      this.replaceRow({ ...row, destination: null, ref: null, decision: "unresolved", reason: "" });
+      this.replaceRow({
+        ...row,
+        destination: null,
+        ref: null,
+        ref_name: null,
+        decision: "unresolved",
+        reason: "",
+      });
     },
 
     ignoreLine(lineId, reason = "not modelled") {
