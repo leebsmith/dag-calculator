@@ -2546,3 +2546,26 @@ samp {
   opacity: 0.7;
   border-left: 3px solid var(--sys-color-danger-accent);
 }
+
+.hop-panes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.hop-pane {
+  padding: var(--space-2);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.hop-pane-wide {
+  grid-column: 1 / -1;
+}
+
+.hop-pane-title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+}

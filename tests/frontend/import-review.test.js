@@ -509,3 +509,45 @@ test("a flameout left in the boil, and a hop longer than the boil, are flagged",
   assert.ok(codes.includes("FLAMEOUT_IN_BOIL"));
   assert.ok(codes.includes("HOP_LONGER_THAN_BOIL"));
 });
+
+
+// --- the routing panes ----------------------------------------------------
+
+test("hops are grouped by the pool they are going into, tagged by source order", () => {
+  const store = hopStore();
+  const panes = store.hopPanes;
+  assert.deepEqual(panes.boil.map((row) => row.name), ["Citra"]);
+  assert.deepEqual(panes.whirlpool.map((row) => row.name), ["Amarillo"]);
+  assert.equal(panes.candidates.length, 0, "both hops have a stage");
+  assert.deepEqual(panes.boil[0].tag, "#1 of 2", "the tag keeps the page order visible");
+});
+
+test("a hop can be swapped to the other pool without losing its ref", () => {
+  const store = hopStore();
+  const citra = store.hopPanes.boil[0];
+  store.moveHop(citra.line_id, "batch.whirlpool_hops");
+  assert.equal(store.hopPanes.whirlpool.length, 2);
+  assert.equal(store.hopPanes.boil.length, 0);
+  assert.equal(store.ledger.find((row) => row.line_id === citra.line_id).ref, `hop-${citra.name}`);
+});
+
+test("returning a hop to candidates withdraws the routing and the choice", () => {
+  const store = hopStore();
+  const citra = store.hopPanes.boil[0];
+  store.returnHop(citra.line_id);
+  assert.equal(store.hopPanes.candidates.length, 1);
+  const row = store.ledger.find((candidate) => candidate.line_id === citra.line_id);
+  assert.equal(row.destination, null);
+  assert.equal(row.ref, null);
+  assert.equal(row.decision, "unresolved");
+});
+
+test("an unknown stage starts in the candidates pane", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    hops: [{ name: "Mystery", quantity: { value: 1, unit: "oz" }, stage_guess: "unknown", verbatim: "Mystery", page: 1 }],
+  };
+  const store = createImportReviewStore({ client: { patch: async () => HOP_RECORD } });
+  store.open({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload } });
+  assert.deepEqual(store.hopPanes.candidates.map((row) => row.name), ["Mystery"]);
+});

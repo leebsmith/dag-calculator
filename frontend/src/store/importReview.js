@@ -7,6 +7,7 @@
 
 import { reportError } from "../observability.js";
 import { checkActions } from "./importCheck.js";
+import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
 import {
   applyRef,
@@ -139,6 +140,10 @@ function ledgerReadouts() {
     get shares() {
       return shares(this.ledger);
     },
+
+    get hopPanes() {
+      return hopPanes(this.ledger);
+    },
   };
 }
 
@@ -257,6 +262,20 @@ function ledgerActions({ catalogs }) {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row) return;
       this.replaceRow(setDestination(row, destination));
+    },
+
+    moveHop(lineId, destination) {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row) return;
+      this.replaceRow(setDestination(row, destination));
+    },
+
+    // Back to the candidates pane: the routing decision is withdrawn, and with it
+    // the hop that was chosen for that pool.
+    returnHop(lineId) {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row) return;
+      this.replaceRow({ ...row, destination: null, ref: null, decision: "unresolved" });
     },
 
     ignoreLine(lineId, reason = "not modelled") {

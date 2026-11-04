@@ -59,3 +59,35 @@ export function estimateWhirlpoolFraction(ledger = []) {
   if (!(boil + whirlpool > 0)) return null;
   return whirlpool / (boil + whirlpool);
 }
+
+
+// The routing panes: boil | candidates | whirlpool, with dry hops and the
+// not-modelled lines as their own groups. A pane is a destination, not a state, so
+// a row can sit in the boil pane still needing a hop chosen — which is what the
+// badge in the UI says.
+export function hopPanes(ledger = []) {
+  const hops = ledger.filter((row) => row.section === "hops");
+  const byDestination = (id) => hops.filter((row) => row.destination === id);
+  const panes = {
+    boil: byDestination("batch.boil_hops"),
+    whirlpool: byDestination("batch.whirlpool_hops"),
+    candidates: hops.filter((row) => row.destination == null),
+    dry: byDestination("batch.dry_hops"),
+    ignored: hops.filter((row) => row.decision === "ignored"),
+  };
+  const order = new Map(hops.map((row, index) => [row.line_id, index + 1]));
+  const total = hops.length;
+  const tagged = (rows) =>
+    rows.map((row) => ({ ...row, tag: `#${order.get(row.line_id) ?? 0} of ${total}` }));
+  return Object.fromEntries(
+    Object.entries(panes).map(([key, rows]) => [key, tagged(rows)])
+  );
+}
+
+export const HOP_POOLS = ["batch.boil_hops", "batch.whirlpool_hops"];
+
+export function otherPool(destination) {
+  if (destination === "batch.boil_hops") return "batch.whirlpool_hops";
+  if (destination === "batch.whirlpool_hops") return "batch.boil_hops";
+  return null;
+}

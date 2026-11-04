@@ -704,10 +704,13 @@ before.
 
 ### J.5 — hops
 
-- [ ] Three-pane routing with source-index tags; flameout never in the boil
-- [ ] Fraction: printed IBU → estimate → manual, provenance always shown
-- [ ] `ibu_contribution` and pool subtotals captured and applied
-- [ ] Hop delta table; boil-length contradiction check
+- [x] Three-pane routing (boil | candidates | whirlpool) with source-index tags,
+      pool swaps, return-to-candidates and dry hops as their own group
+- [x] Fraction: printed IBU → estimate → manual, provenance stored and shown;
+      a missing split blocks the gate (`POOL_SPLIT_REQUIRED`)
+- [x] `ibu_contribution` applied (the projection derives the exact split from it)
+- [x] Hop delta rows in the check stage; boiler-length and flameout contradictions
+      flagged (`HOP_LONGER_THAN_BOIL`, `FLAMEOUT_IN_BOIL`)
 
 ### J.6 — L2 wiring
 
