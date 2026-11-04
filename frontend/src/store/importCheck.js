@@ -52,7 +52,10 @@ export function checkActions({ catalog, project, gate, delta }) {
           catalog,
           fraction: this.poolFraction ?? this.printedPoolFraction,
         });
-        const result = mergeFindings(await gate(state), this.hopFindings);
+        const result = mergeFindings(await gate(state), [
+          ...this.hopFindings,
+          ...this.ledgerFindings,
+        ]);
         this.gate = result;
         this.projectedState = state;
         this.delta = delta

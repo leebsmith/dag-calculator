@@ -21,11 +21,12 @@ export function buildDelta({ payload, ledger = [], engine }) {
   };
 }
 
-// A boundary that did not solve leaves no value: absence, not a zero to compare
-// against. The read is reported so a wiring mistake is not mistaken for a gap.
+// Boundary outputs are resolved, not got: `get` addresses a node, and a boundary
+// output is a path through one. A boundary that did not solve yields undefined,
+// which is absence rather than a zero to compare against.
 function read(engine, path) {
   try {
-    const value = engine.get(path);
+    const value = engine.resolve(path);
     return typeof value === "number" && Number.isFinite(value) ? value : null;
   } catch (err) {
     reportError("importDelta.read", err);
@@ -46,7 +47,7 @@ function solvedHops(engine) {
 
 function rows(engine, path) {
   try {
-    const value = engine.get(path);
+    const value = engine.resolve(path);
     return Array.isArray(value) ? value : [];
   } catch (err) {
     reportError("importDelta.rows", err);
@@ -56,9 +57,20 @@ function rows(engine, path) {
 
 // The projection drops unmapped lines, so the mapped rows are the solved rows in
 // the same order the collections hold them.
+const MASS_DESTINATIONS = new Set([
+  "grist.major_malts",
+  "grist.trace_malts",
+  "batch.sugars",
+  "batch.boil_hops",
+  "batch.whirlpool_hops",
+  "batch.dry_hops",
+]);
+
 function lineDeltas({ ledger, grist, hops }) {
   const out = [];
-  const mapped = ledger.filter((row) => row.decision === "mapped" && row.ref);
+  const mapped = ledger.filter(
+    (row) => row.decision === "mapped" && row.ref && MASS_DESTINATIONS.has(row.destination)
+  );
   let boilIndex = 0;
   let whirlpoolIndex = 0;
 

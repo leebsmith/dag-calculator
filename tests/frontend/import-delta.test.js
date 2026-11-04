@@ -59,11 +59,15 @@ function engine(solved = {}) {
     "batch.v_ferm": 18.9,
     ...solved,
   };
+  // The real engine resolves boundary output paths and refuses `get` on them; the
+  // double mirrors that, so a delta that used `get` fails here instead of in the UI.
   return {
     get: (path) => {
+      if (path.startsWith("solver.")) throw new Error(`Unknown node "${path}"`);
       if (!(path in values)) throw new Error(`Unknown node "${path}"`);
       return values[path];
     },
+    resolve: (path) => values[path],
   };
 }
 

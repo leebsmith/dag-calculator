@@ -685,3 +685,44 @@ test("without the document in memory the action says so instead of calling", asy
   assert.deepEqual(calls, []);
   assert.match(store.error, /no longer in memory/);
 });
+
+// --- unresolved lines and the single-yeast limit -------------------------
+
+test("the check screen can name what is holding the gate shut", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    yeasts: [
+      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
+      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
+    ],
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const store = createImportReviewStore({ client: { patch: async () => record } });
+  store.open(record);
+  const names = store.unresolved.map((row) => row.name);
+  assert.ok(names.includes("clean saison strain"));
+  assert.ok(names.includes("Brettanomyces culture"));
+});
+
+test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    yeasts: [
+      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
+      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
+    ],
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const store = createImportReviewStore({
+    client: { patch: async () => record },
+    catalog: (kind, id) => ({ id, name: id }),
+  });
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
+    store.chooseRef(row.line_id, { id: `y-${row.name}` });
+  }
+  const finding = store.ledgerFindings.find((item) => item.code === "SINGLE_YEAST");
+  assert.equal(finding.blocking, true);
+  store.ignoreLine(store.ledger.find((row) => row.name === "Brettanomyces culture").line_id);
+  assert.deepEqual(store.ledgerFindings, [], "one stored, one ignored is a decision");
+});
