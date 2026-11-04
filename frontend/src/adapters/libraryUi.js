@@ -182,6 +182,34 @@ export function registerLibraryUi(app, ctx) {
       }
     },
 
+    // Catalogue reads for surfaces outside the editor — the import ledger's chips
+    // and search. They hit the reference cache the engine and the pickers use, so a
+    // record authored a moment ago (a blend yeast, a house malt) is visible there;
+    // the setup store's private cache never receives ingredient records.
+    catalogItems(kind) {
+      const meta = CATALOGS[kind];
+      if (!meta) return [];
+      const map = meta.seedKey ? ctx.cache.seeds[meta.seedKey] : ctx.cache.references[meta.referencesKey];
+      return Object.values(map ?? {});
+    },
+
+    catalogItem(kind, id) {
+      const meta = CATALOGS[kind];
+      if (!meta || !id) return null;
+      return (
+        ctx.cache.seeds[meta.seedKey]?.[id] ??
+        ctx.cache.references[meta.referencesKey]?.[id] ??
+        null
+      );
+    },
+
+    // The reference maps a boundary build reads. The gate solves against the same
+    // set the commit will load, so a user record cannot pass the gate and then fail
+    // to resolve in the batch.
+    referenceSnapshot() {
+      return ctx.cache.references;
+    },
+
     closeLibrary() {
       this.libraryOpen = false;
       dialogRestore();
@@ -354,4 +382,4 @@ export function registerLibraryUi(app, ctx) {
   });
 }
 
-export const KEYS = ["libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...libraryFieldKeys, ...libraryListKeys];
+export const KEYS = ["catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...libraryFieldKeys, ...libraryListKeys];

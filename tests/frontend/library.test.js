@@ -70,6 +70,26 @@ test("refresh loads records by kind and create/remove mutate the local view", as
   assert.ok(changes >= 3);
 });
 
+test("a record authored here is what the import reads and the gate resolves", async () => {
+  const app = createTestApp({ libraryClient: makeClient() });
+  await app.library.refresh();
+  const record = await app.library.create("yeast", {
+    name: "Saison blend",
+    attenuation_pct: 0.82,
+  });
+  await app.refreshLibraryItems();
+
+  assert.ok(
+    app.catalogItems("yeast").some((item) => item.id === record.id),
+    "the import's chips and search read the same cache"
+  );
+  assert.ok(app.catalogItem("yeast", record.id), "the projection can resolve the ref");
+  assert.ok(
+    app.referenceSnapshot().yeast[record.id],
+    "the gate builds against the set the commit will load"
+  );
+});
+
 test("a failed fetch is library-local state and preserves loaded items", async () => {
   const client = makeClient({
     yeast: [{ id: "y1", kind: "yeast", component: { id: "y1", name: "House Yeast" } }],

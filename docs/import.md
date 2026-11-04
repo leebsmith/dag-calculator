@@ -109,7 +109,10 @@ A missing split blocks the check (`POOL_SPLIT_REQUIRED`).
 
 L0 uses the user's own accepted mappings from earlier imports; L1 is a pure string
 screen over the live seeds and library records; L2 is one batched model call per
-catalog kind, choosing from candidates the client supplied. L2 output is frozen on
+catalog kind, choosing from candidates the client supplied. The screening reads the
+app's own reference cache — seeds merged with the user's Library records — so a
+record authored a moment ago (the blend yeast the finding creates, a house malt) is
+a candidate straight away, and the gate resolves the same set the commit will load. L2 output is frozen on
 the record so reopening the mapping neither re-calls nor reshuffles, and the local
 screen is the fallback when the call fails. Nothing preselects.
 

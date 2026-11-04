@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **757** (516 enumerable, 241 hidden)
+- Declared members: **760** (519 enumerable, 241 hidden)
 - Installers: **20**
 - Card partials: **18**
 - Installers reading another installer's key: **16 of 20**
@@ -19,7 +19,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 80 | 0 | 1 |
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 1 |
-| `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js` | 50 | 0 | 4 |
+| `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js` | 53 | 0 | 4 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 32 | 2 | 1 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 3 |
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |

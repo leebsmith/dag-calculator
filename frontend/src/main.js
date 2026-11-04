@@ -62,12 +62,20 @@ const importClient = createImportClient();
 // Opening a record means showing it: the import view reads one record at a time.
 const reviewStore = createImportReviewStore({
   client: importClient,
-  catalogs: (kind) => Alpine.store("setup").items(kind),
-  catalog: (kind, id) => Alpine.store("setup").item(kind, id),
+  // The app's reference cache, not the setup store's: ingredient records authored
+  // in the Library (a blend yeast, a house malt) live there, and the import's
+  // chips, its projection and the gate must all read the same set the commit
+  // loads. `stepApp` exists by the time any of these run.
+  catalogs: (kind) => (stepApp ? stepApp.catalogItems(kind) : Alpine.store("setup").items(kind)),
+  catalog: (kind, id) =>
+    stepApp ? stepApp.catalogItem(kind, id) : Alpine.store("setup").item(kind, id),
   profiles: () => Alpine.store("setup").waterTargetOptions(),
   project: projectImport,
   gate: (state) =>
-    runGate({ state, references: Alpine.store("setup").references() }),
+    runGate({
+      state,
+      references: stepApp ? stepApp.referenceSnapshot() : Alpine.store("setup").references(),
+    }),
   delta: buildDelta,
   createYeast: async (component) => {
     if (!stepApp) throw new Error("The app is not ready yet.");
