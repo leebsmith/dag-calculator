@@ -11,7 +11,7 @@ import { rowReadouts } from "./importRows.js";
 import { yeastReadouts } from "./importYeastRows.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
-import { blendFormActions, blendSaveActions } from "./importBlend.js";
+import { blendDecisionActions, blendFormActions, blendSaveActions } from "./importBlend.js";
 import { yeastActions } from "./importYeast.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
@@ -100,6 +100,7 @@ export function createImportReviewStore({
     ledgerDecisionActions(),
     yeastActions({ catalog: lookup }),
     blendFormActions({ catalogs }),
+    blendDecisionActions(),
     blendSaveActions({ createYeast }),
     check,
     poolActions(),

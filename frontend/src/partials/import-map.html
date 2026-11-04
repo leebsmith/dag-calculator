@@ -262,12 +262,12 @@
           </div>
 
           <div class="import-queue-actions"
-            x-show="!$store.importReview.yeastBlend && $store.importReview.mappedYeasts.length > 1">
+            x-show="!$store.importReview.yeastBlend && $store.importReview.yeastLineCount > 1">
             <button
               type="button"
               class="btn-outline text-xs"
               x-show="!$store.importReview.blendOpen"
-              @click="$store.importReview.openBlend()"
+              @click="$store.importReview.blendAll()"
             >Blend both</button>
             <span class="text-xs text-muted" x-show="!$store.importReview.blendOpen">
               one authored record: a name and the attenuation the blend finishes at
@@ -384,11 +384,10 @@
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.section === 'yeasts' && row.decision === 'mapped'
-                  && !$store.importReview.yeastBlend
-                  && $store.importReview.blendOpen === false
-                  && $store.importReview.mappedYeasts.length > 1"
-                @click="$store.importReview.openBlend()"
+                x-show="row.section === 'yeasts' && !$store.importReview.yeastBlend
+                  && !$store.importReview.blendOpen
+                  && $store.importReview.yeastLineCount > 1"
+                @click="$store.importReview.blendAll()"
               >Blend both</button>
             </div>
 

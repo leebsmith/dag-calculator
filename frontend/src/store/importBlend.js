@@ -8,6 +8,7 @@
 // attenuation writes a new record and leaves the old one in the Library.
 
 import { reportError } from "../observability.js";
+import { restoreRow } from "../views/import/ledger.js";
 
 const BLEND_PREFIX = "Blend:";
 
@@ -68,6 +69,29 @@ export function blendFormActions({ catalogs = () => [] } = {}) {
       if (outcome?.mode === "blend" && outcome.name === name) return false;
       return catalogs("yeast").some((item) => item.name === name);
     },
+  };
+}
+
+// The recipe's own yeast lines, mapped or not: a blend needs all of them back on
+// the recipe before it can be authored, so choosing a strain first must not hide it.
+export function blendDecisionActions() {
+  return {
+    get yeastLineCount() {
+      return this.ledger.filter((row) => row.section === "yeasts").length;
+    },
+
+    blendAll() {
+      const ignored = this.ledger.filter(
+        (line) => line.section === "yeasts" && line.decision === "ignored"
+      );
+      for (const row of ignored) {
+        // A strain that was left out still has its pick: putting it back for a blend
+        // must restore it as a component, not as an undecided line.
+        const back = restoreRow(row);
+        this.replaceRow({ ...back, decision: row.ref ? "mapped" : "unresolved" });
+      }
+      this.openBlend();
+    },
 
     // Removing the decision, not the record: the Library owns records, and this one
     // stays there (delete it there if it is not wanted). Persisted at once, so a
@@ -82,6 +106,8 @@ export function blendFormActions({ catalogs = () => [] } = {}) {
   };
 }
 
+// The form speaks percent because brewers do; the record stores the fraction the
+// artifact works in. One validation step, so the save path has no branches of its own.
 function blendInput({ createYeast, name, attenuation, rows }) {
   if (!createYeast) return { error: "The Library is not available in this build." };
   const trimmed = String(name ?? "").trim();
@@ -91,7 +117,7 @@ function blendInput({ createYeast, name, attenuation, rows }) {
     return { error: "Enter the attenuation the blend finishes at, as a percentage." };
   }
   if (rows.length < 2) {
-    return { error: "A blend needs at least two strains on the imported recipe." };
+    return { error: "A blend needs at least two strains from the imported recipe." };
   }
   return { name: trimmed, pct, rows };
 }

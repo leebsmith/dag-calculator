@@ -908,6 +908,25 @@ test("a blend keeps both strains mapped and stores how they became one", async (
   assert.equal(store.blendOpen, false);
 });
 
+test("the blend route survives choosing a strain first", async () => {
+  const { store, created } = twoYeasts();
+  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
+  const saison = store.ledger.find((row) => row.name === "clean saison strain");
+  store.keepOnlyYeast(brett.line_id);
+  assert.equal(store.mappedYeasts.length, 1, "one strain after the choice");
+
+  assert.equal(store.yeastLineCount, 2, "the recipe still names two");
+  store.blendAll();
+  assert.equal(store.mappedYeasts.length, 2, "the ignored strain comes back");
+  assert.equal(store.blendOpen, true);
+  assert.match(store.blendName, /^Blend: /);
+  store.setBlendAttenuation("80");
+  await store.saveBlend();
+  assert.equal(store.yeastOutcome.mode, "blend");
+  assert.equal(created.length, 1);
+  assert.equal(store.ledger.find((row) => row.line_id === saison.line_id).decision, "mapped");
+});
+
 test("changing a blend writes a new record and leaves the old one", async () => {
   const { store, created } = twoYeasts();
   store.openBlend();
