@@ -873,8 +873,9 @@ test("the check screen offers the decision the yeast finding reports", async () 
   const page = read("frontend/src/partials/import-check.html");
   assert.match(page, /finding\.yeasts/);
   assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
-  assert.match(page, /openLibrary\('yeast'\)/, "the blend route is a button, not advice");
-  assert.match(read("frontend/src/partials/import-map.html"), /openLibrary\('yeast'\)/);
+  assert.match(page, /openBlend\(\)/, "the blend route opens a form where the finding is read");
+  assert.match(page, /saveBlend\(\)/);
+  assert.match(read("frontend/src/partials/import-map.html"), /saveBlend\(\)/);
 });
 
 test("a blend record can be carried on either strain, and the other records the co-pitch", () => {
@@ -915,6 +916,70 @@ test("a blend record can be carried on either strain, and the other records the 
   assert.equal(dropped.decision, "ignored");
   assert.equal(dropped.reason, "not used: the batch ferments with Saison blend (3724 + Brett)");
   assert.equal(store.ledgerFindings.length, 0, "one strain carries the batch");
+});
+
+test("the blend form creates one record and makes it the batch's strain", async () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    yeasts: [
+      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
+      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
+    ],
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const created = [];
+  const store = createImportReviewStore({
+    client: { patch: async () => record },
+    catalog: (kind, id) => ({ id, name: id === "blend-1" ? "Saison blend" : id.replace(/^y-/, "") }),
+    createYeast: async (component) => (created.push(component), { id: "blend-1", component }),
+  });
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
+    store.chooseRef(row.line_id, { id: `y-${row.name}` });
+  }
+
+  store.openBlend();
+  store.setBlendName("Saison blend");
+  store.setBlendAttenuation("82");
+  const saved = await store.saveBlend();
+
+  assert.equal(created.length, 1, "one record, created from here");
+  assert.equal(created[0].name, "Saison blend");
+  assert.equal(created[0].attenuation_pct, 0.82, "the form speaks percent; the record stores the fraction");
+  assert.equal(created[0].attenuation_basis, "apparent");
+  assert.equal(saved.id, "blend-1");
+  assert.ok(
+    store.ledger.find((row) => row.ref === "blend-1"),
+    "the blend is selected on a mapped yeast line"
+  );
+  assert.deepEqual(store.ledgerFindings, [], "the finding is resolved in the same press");
+  const dropped = store.ledger.find((row) => row.section === "yeasts" && row.decision === "ignored");
+  assert.equal(dropped.reason, "not used: the batch ferments with Saison blend");
+  assert.equal(store.blendOpen, false);
+});
+
+test("the blend form refuses a nameless record or an impossible attenuation", async () => {
+  const created = [];
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD },
+    createYeast: async (component) => (created.push(component), { id: "x", component }),
+  });
+  store.open({ ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] });
+  const line = store.ledger.find((row) => row.section === "yeasts");
+  store.chooseRef(line.line_id, { id: "y-1" });
+
+  store.openBlend();
+  store.setBlendName("   ");
+  store.setBlendAttenuation("80");
+  assert.equal(await store.saveBlend(), null);
+  assert.match(store.blendError, /name/i);
+
+  store.setBlendName("Blend");
+  store.setBlendAttenuation("140");
+  assert.equal(await store.saveBlend(), null);
+  assert.match(store.blendError, /percentage/i);
+
+  assert.deepEqual(created, [], "nothing is written until the input makes sense");
 });
 
 test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {

@@ -17,7 +17,7 @@ export function ledgerFindings({ ledger = [] } = {}) {
       title: "Two yeasts, one fermentation",
       blocking: true,
       node: "batch.yeast",
-      message: `Only one strain can set the final gravity and ABV, so the other line will not change any number. Pick the strain that should set them — or add a blend record and use that instead.`,
+      message: `Only one strain can set the final gravity and ABV, so the other line will not change any number. Pick the strain that should set them, or add a blend for both.`,
       yeasts: yeasts.map((row) => ({ line_id: row.line_id, name: row.name })),
     });
   }

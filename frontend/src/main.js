@@ -69,6 +69,12 @@ const reviewStore = createImportReviewStore({
   gate: (state) =>
     runGate({ state, references: Alpine.store("setup").references() }),
   delta: buildDelta,
+  createYeast: async (component) => {
+    if (!stepApp) throw new Error("The app is not ready yet.");
+    const record = await stepApp.library.create("yeast", component);
+    await stepApp.refreshLibraryItems();
+    return record;
+  },
   sourceFile: () => Alpine.store("imports").lastFile,
   readFile: readFileAsBase64,
   commit: async ({ record, state, name }) => {

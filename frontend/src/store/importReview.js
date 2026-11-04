@@ -9,6 +9,7 @@ import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
+import { blendActions } from "./importBlend.js";
 import { yeastActions } from "./importYeast.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
@@ -63,6 +64,7 @@ export function createImportReviewStore({
   sourceFile = () => null,
   readFile = async () => "",
   profiles = () => [],
+  createYeast = null,
   onClose,
 } = {}) {
   const check = checkActions({ catalog, project, gate, delta, commit });
@@ -93,6 +95,7 @@ export function createImportReviewStore({
     ledgerLookupActions({ catalogs }),
     ledgerDecisionActions(),
     yeastActions({ catalog }),
+    blendActions({ createYeast }),
     check,
     poolActions(),
     match,

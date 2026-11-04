@@ -69,8 +69,10 @@ mapped strain and offers the choice — the one you keep is the batch's, and the
 others stay on the record, marked `not used: the batch ferments with <strain>`, so the
 blend stays legible in the ledger and the immutable import record instead of being
 silently dropped. The finding states the consequence — only one strain can set FG
-and ABV — and carries a button that opens the Library on its yeast tab, so the
-blend record is created where the decision is read rather than described in prose.
+and ABV — and offers the other route in place: a name and the attenuation the pair
+finishes at create the one yeast record and make it the batch's strain in the same
+press. The record is an ordinary Library record; the import writes it through the
+same store rather than keeping a private kind of yeast.
 
 A blend that must *drive the numbers* is a Library yeast record, not a second
 selection: one record named for the blend, carrying the attenuation the user
