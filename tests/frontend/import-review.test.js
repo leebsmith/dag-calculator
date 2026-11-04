@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
+import { createSetupStore } from "../../frontend/src/store/setup.js";
 import {
   describeVerification,
   documentTitle,
@@ -354,4 +355,19 @@ test("a line can be found by the user's own search when the screen misses", () =
 
   store.setQuery(line.line_id, "zzzz");
   assert.deepEqual(store.search(line), [], "an unmatched search says so rather than guessing");
+});
+
+
+test("the new-batch button names what it is doing, by step", () => {
+  const setup = createSetupStore({ client: {} });
+  setup.state.mode = "scratch";
+  assert.equal(setup.primaryLabel(), "Create batch");
+  setup.state.busy = true;
+  assert.equal(setup.primaryLabel(), "Creating…");
+
+  setup.state.mode = "recipe";
+  setup.state.busy = false;
+  assert.equal(setup.primaryLabel(), "Read recipe");
+  setup.state.busy = true;
+  assert.equal(setup.primaryLabel(), "Step 1 · Reading recipe…", "reading is the first pass");
 });

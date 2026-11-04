@@ -2096,7 +2096,8 @@ samp {
   }
 
   .step-enter-down,
-  .step-enter-up {
+  .step-enter-up,
+  .spinner {
     animation: none;
   }
 }
@@ -2502,4 +2503,36 @@ samp {
 .map-chip:hover {
   border-color: var(--sys-border-selected);
   background: var(--sys-color-action-subtle);
+}
+
+/* --- Reading the document --------------------------------------------------- */
+
+.modal-busy {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  text-align: center;
+  border-radius: var(--radius-xl);
+  background: var(--sys-surface-elevated);
+}
+
+.spinner {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-circle);
+  border: 3px solid var(--sys-border-default);
+  border-top-color: var(--sys-color-action-primary);
+  animation: recipe-read-spin 0.9s linear infinite;
+}
+
+@keyframes recipe-read-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

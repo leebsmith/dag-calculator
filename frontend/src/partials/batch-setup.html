@@ -18,7 +18,12 @@
         <h2 class="modal-workspace-title" id="new-batch-title">New batch</h2>
       </div>
       <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline text-xs" @click="$store.setup.closeModal()">Cancel</button>
+        <button
+          type="button"
+          class="btn-outline text-xs"
+          :disabled="$store.setup.state.busy"
+          @click="$store.setup.closeModal()"
+        >Cancel</button>
         <button
           type="button"
           class="btn-primary text-xs"
@@ -32,8 +37,18 @@
           x-show="$store.setup.state.mode === 'recipe'"
           :disabled="!$store.setup.canStartImport() || $store.setup.state.busy"
           @click="$store.setup.startImport()"
-        ><span x-show="!$store.setup.state.busy">Read recipe</span><span x-show="$store.setup.state.busy">Reading…</span></button>
+          x-text="$store.setup.primaryLabel()"
+        ></button>
       </div>
+    </div>
+
+    <div class="modal-busy" x-show="$store.setup.state.busy" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <p class="font-medium" x-text="$store.setup.primaryLabel()"></p>
+      <p class="text-xs text-muted">
+        One pass over the document, usually ten to thirty seconds. The PDF is not kept — only the
+        transcription and the mapping persist.
+      </p>
     </div>
 
     <div class="modal-workspace-body">

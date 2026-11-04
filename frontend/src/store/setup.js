@@ -53,6 +53,7 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
       styleId: "",
       file: null,
       filename: "",
+      phase: "", // "" | "reading"
     },
     library,
     // Bumped whenever the asset inventory changes; read by the option getters so
@@ -148,9 +149,18 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
       return Boolean(s.file && s.equipmentId && s.waterId && s.styleId);
     },
 
+    // One button, one label: what it is doing right now, named by the step it
+    // produces. Reading the document is the first pass; mapping is the second.
+    primaryLabel() {
+      const s = this.state;
+      if (s.busy) return s.mode === "recipe" ? "Step 1 · Reading recipe…" : "Creating…";
+      return s.mode === "recipe" ? "Read recipe" : "Create batch";
+    },
+
     async startImport() {
       if (!this.canStartImport() || this.state.busy) return null;
       this.state.busy = true;
+      this.state.phase = "reading";
       this.state.error = "";
       try {
         const record = await onImportRecipe?.({
@@ -165,6 +175,7 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
         return null;
       } finally {
         this.state.busy = false;
+        this.state.phase = "";
       }
     },
 
