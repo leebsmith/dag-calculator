@@ -82,18 +82,23 @@ own fact, and both are kept:
   `not in this batch — the batch ferments with <strain>`; the batch and the report
   show only that strain;
 - **a blend** — `Blend both` authors one `yeast` record (a name and the attenuation
-  the blend finishes at) and stores the outcome on the record. The component lines
-  stay mapped, each with its own registry pick and page, and render inside one group
-  in the map. Nothing is averaged, and the engine still receives one selection.
+  the blend finishes at) and stores the outcome on the record. It covers *every*
+  strain the imported recipe names: the group is the recipe's lines, so a component
+  needs no registry pick of its own. Each component becomes a **component** — a
+  resolved state with its name, page and any pick it already had kept as provenance —
+  and the rows render inside one group in the map. Nothing is averaged, and the
+  engine still receives one selection.
 
 The decision is a field, not an inference: the record carries
 `yeast_outcome` (`single` with the strain's line, or `blend` with the component
 lines and the record ref), written with the choice and reconciled against the rows
-on open. A blend's record is sealed like every other: `Change` writes a new record
-and leaves the old one in the Library, and `Unblend` removes the decision while the
-record stays — the Library owns records, the import owns the decision. A deleted
-blend record reopens the section; a deleted but authored number is never silently
-replaced.
+on open. While the record is being mapped the blend is mutable: `Change` writes a new
+record and leaves the old one in the Library, and `Unblend` removes the decision,
+restores each component from the provenance (its pick, or open) and leaves the record
+in the Library — the Library owns records, the import owns the decision. Once the
+mapping is accepted the record is immutable, so the blend is frozen: no `Change`, no
+`Unblend`, and the batch shows it read-only. A deleted blend record reopens the
+section; a component's record is documentary and its deletion blocks nothing.
 
 A second record with the same name is allowed but warned about in the panel, since
 the name is the blend's identity on the batch and in the report.

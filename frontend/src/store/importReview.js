@@ -8,7 +8,7 @@ import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { rowReadouts } from "./importRows.js";
-import { yeastReadouts } from "./importYeastRows.js";
+import { blendReadouts, yeastReadouts } from "./importYeastRows.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
 import { blendDecisionActions, blendFormActions, blendSaveActions } from "./importBlend.js";
@@ -112,6 +112,7 @@ export function createImportReviewStore({
     ledgerReadouts(),
     rowReadouts({ hasCatalog: Boolean(catalog) }),
     yeastReadouts(),
+    blendReadouts(),
     poolReadouts()
   );
   return store;

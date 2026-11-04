@@ -884,8 +884,12 @@ test("two strains leave the yeast section open until one attenuation is decided"
   assert.equal(store.gate, null, "the gate is stale once the ledger changes under it");
 });
 
-test("a blend keeps both strains mapped and stores how they became one", async () => {
-  const { store, created, records } = twoYeasts();
+test("a blend needs the recipe's strains, not their registry picks", async () => {
+  const { store, created, records } = unpickedTwoYeasts();
+  // Neither strain has a record: that is the state the blend is the answer to.
+  assert.equal(store.mappedYeasts.length, 0);
+  assert.equal(store.yeastLines.length, 2);
+
   store.openBlend();
   assert.match(store.blendName, /^Blend: clean saison strain \+ Brettanomyces culture$/);
   assert.equal(store.blendAttenuationPct, "");
@@ -898,14 +902,32 @@ test("a blend keeps both strains mapped and stores how they became one", async (
   assert.equal(created[0].attenuation_provenance.note, "blend of clean saison strain + Brettanomyces culture");
   assert.equal(saved.id, "blend-1");
 
-  assert.equal(store.ledger.filter((row) => row.section === "yeasts" && row.decision === "mapped").length, 2,
-    "components stay mapped");
+  assert.equal(store.blendComponents.length, 2, "both strains are components");
+  assert.deepEqual(
+    store.blendComponents.map((row) => row.decision),
+    ["blended", "blended"],
+    "a component is decided by being in the group, with no ref of its own"
+  );
   assert.equal(store.yeastOutcome.mode, "blend");
   assert.equal(store.yeastOutcome.ref, "blend-1");
   assert.deepEqual(store.sectionIssues, [], "the section is decided");
   assert.equal(store.blendRecordAttenuationPct, 82);
   assert.ok(records.has("blend-1"));
   assert.equal(store.blendOpen, false);
+  assert.deepEqual(store.blendComponentNames, ["clean saison strain", "Brettanomyces culture"]);
+});
+
+test("a component with no record, or a deleted one, never blocks the blend", () => {
+  const { store, records } = unpickedTwoYeasts();
+  records.set("brett", { id: "brett", name: "Brett blend", attenuation_pct: 0.8 });
+  store.chooseRef(store.yeastLines[1].line_id, { id: "brett", name: "Brett blend" });
+  store.openBlend();
+  store.setBlendAttenuation("80");
+  return store.saveBlend().then(() => {
+    records.delete("brett");
+    assert.deepEqual(store.sectionIssues, [], "the component's record is documentary");
+    assert.equal(store.missingRefs.length, 0, "and it is never a dangling pick");
+  });
 });
 
 test("a strain outside the blend is a decision, not a silent note", async () => {
@@ -930,17 +952,23 @@ test("the blend route survives choosing a strain first", async () => {
   const saison = store.ledger.find((row) => row.name === "clean saison strain");
   store.keepOnlyYeast(brett.line_id);
   assert.equal(store.mappedYeasts.length, 1, "one strain after the choice");
+  assert.equal(store.ledger.find((row) => row.line_id === saison.line_id).decision, "ignored");
 
-  assert.equal(store.yeastLineCount, 2, "the recipe still names two");
+  assert.equal(store.yeastLines.length, 2, "the recipe still names two");
   store.blendAll();
-  assert.equal(store.mappedYeasts.length, 2, "the ignored strain comes back");
   assert.equal(store.blendOpen, true);
   assert.match(store.blendName, /^Blend: /);
   store.setBlendAttenuation("80");
   await store.saveBlend();
+
   assert.equal(store.yeastOutcome.mode, "blend");
   assert.equal(created.length, 1);
-  assert.equal(store.ledger.find((row) => row.line_id === saison.line_id).decision, "mapped");
+  assert.deepEqual(
+    store.yeastLines.map((row) => row.decision),
+    ["blended", "blended"],
+    "Blend both covers every strain the recipe named, including one already left out"
+  );
+  assert.equal(store.yeastLines.find((row) => row.line_id === saison.line_id).reason, "");
 });
 
 test("changing a blend writes a new record and leaves the old one", async () => {
@@ -1095,8 +1123,8 @@ test("the provenance panel states the imported recipe and the yeast outcome", ()
   assert.equal(originTitle(record), "Duel Master Black IPA");
 });
 
-// A store holding the two-strain recipe, both strains mapped to their own records.
-function twoYeasts() {
+// A store holding the two-strain recipe, with neither strain mapped yet.
+function unpickedTwoYeasts() {
   const payload = {
     ...HOP_PAYLOAD,
     yeasts: [
@@ -1119,10 +1147,16 @@ function twoYeasts() {
     },
   });
   store.open(record);
-  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
-    store.chooseRef(row.line_id, { id: `line-${row.name}`, name: row.name });
-  }
   return { store, records, created };
+}
+
+// The same recipe with both strains pointed at their own records.
+function twoYeasts() {
+  const helpers = unpickedTwoYeasts();
+  for (const row of helpers.store.ledger.filter((line) => line.section === "yeasts")) {
+    helpers.store.chooseRef(row.line_id, { id: `line-${row.name}`, name: row.name });
+  }
+  return helpers;
 }
 
 
@@ -1140,10 +1174,10 @@ test("the blend panel and the group carry the words the decision needs", () => {
   assert.match(map, /name it so you recognise it later/);
   assert.match(map, /changeBlend\(\)/);
   assert.match(map, /unblend\(\)/);
-  assert.match(map, /component of this blend/);
+  assert.match(map, /'part of ' \+ \(\$store\.importReview\.yeastOutcome\?\.name/, "a component says which group it belongs to");
   assert.match(map, /is-blend-group/);
   assert.match(map, /Imported recipe names more than one strain/);
-  assert.match(map, /Choosing one leaves the others on the import record/);
+  assert.match(map, /Choosing a single strain\s+leaves the others on the import record/);
 });
 
 test("the editor shows where the batch came from", () => {

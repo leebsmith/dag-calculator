@@ -8,7 +8,7 @@
 // attenuation writes a new record and leaves the old one in the Library.
 
 import { reportError } from "../observability.js";
-import { restoreRow } from "../views/import/ledger.js";
+import { blendComponent, unblendComponent } from "../views/import/ledger.js";
 
 const BLEND_PREFIX = "Blend:";
 
@@ -57,7 +57,7 @@ export function blendFormActions({ catalogs = () => [] } = {}) {
     },
 
     suggestedBlendName() {
-      const names = this.mappedYeasts.map((row) => row.name).filter(Boolean);
+      const names = this.yeastLines.map((row) => row.name).filter(Boolean);
       return names.length ? `${BLEND_PREFIX} ${names.join(" + ")}` : `${BLEND_PREFIX} `;
     },
 
@@ -76,20 +76,9 @@ export function blendFormActions({ catalogs = () => [] } = {}) {
 // the recipe before it can be authored, so choosing a strain first must not hide it.
 export function blendDecisionActions() {
   return {
-    get yeastLineCount() {
-      return this.ledger.filter((row) => row.section === "yeasts").length;
-    },
-
+    // "Blend both" covers every strain the imported recipe names: the group is the
+    // recipe's lines, so no component needs a registry pick first.
     blendAll() {
-      const ignored = this.ledger.filter(
-        (line) => line.section === "yeasts" && line.decision === "ignored"
-      );
-      for (const row of ignored) {
-        // A strain that was left out still has its pick: putting it back for a blend
-        // must restore it as a component, not as an undecided line.
-        const back = restoreRow(row);
-        this.replaceRow({ ...back, decision: row.ref ? "mapped" : "unresolved" });
-      }
       this.openBlend();
     },
 
@@ -97,7 +86,14 @@ export function blendDecisionActions() {
     // stays there (delete it there if it is not wanted). Persisted at once, so a
     // reload cannot put the blend back.
     async unblend() {
-      if (this.yeastOutcome?.mode !== "blend") return null;
+      const outcome = this.yeastOutcome;
+      if (outcome?.mode !== "blend") return null;
+      // Provenance is what makes this possible: each component goes back to the pick
+      // it had (or to open, if it never had one).
+      for (const id of outcome.line_ids ?? []) {
+        const row = this.ledger.find((line) => line.line_id === id);
+        if (row) this.replaceRow(unblendComponent(row));
+      }
       this.setYeastOutcome(null);
       this.blendOpen = false;
       this.blendError = null;
@@ -117,7 +113,7 @@ function blendInput({ createYeast, name, attenuation, rows }) {
     return { error: "Enter the attenuation the blend finishes at, as a percentage." };
   }
   if (rows.length < 2) {
-    return { error: "A blend needs at least two strains from the imported recipe." };
+    return { error: "A blend needs at least two strains in the imported recipe." };
   }
   return { name: trimmed, pct, rows };
 }
@@ -126,7 +122,9 @@ export function blendSaveActions({ createYeast = null } = {}) {
   return {
     async saveBlend() {
       if (this.blendBusy) return null;
-      const rows = this.mappedYeasts;
+      // The group is the recipe's yeast lines, not the strains that happen to have a
+      // registry pick: blending is the alternative to picking each one.
+      const rows = this.yeastLines;
       const input = blendInput({
         createYeast,
         name: this.blendName,
@@ -148,6 +146,9 @@ export function blendSaveActions({ createYeast = null } = {}) {
             note: `blend of ${input.rows.map((row) => row.name).join(" + ")}`,
           },
         });
+        for (const row of input.rows) {
+          this.replaceRow(blendComponent(row));
+        }
         this.setYeastOutcome({
           mode: "blend",
           line_ids: input.rows.map((row) => row.line_id),

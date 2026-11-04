@@ -298,7 +298,20 @@ export function destinationLabel(row) {
 
 export function isResolved(row) {
   if (row.decision === "ignored") return Boolean(row.reason?.trim());
+  // A blend component is decided by being in the group: the batch carries the
+  // blend, so the component has no pick of its own to make.
+  if (row.decision === "blended") return true;
   return row.decision === "mapped" && Boolean(row.ref);
+}
+
+// The two transitions a blend makes. A component keeps whatever it already had
+// (a name, a page, a pick) as provenance; unblending puts that back.
+export function blendComponent(row) {
+  return { ...row, decision: "blended", reason: "" };
+}
+
+export function unblendComponent(row) {
+  return { ...row, decision: row.ref ? "mapped" : "unresolved", reason: "" };
 }
 
 // -----------------------------------------------------------------------------

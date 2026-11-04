@@ -4,12 +4,18 @@
 
 export function yeastReadouts() {
   return {
-    // The strain that ferments the batch, and every strain the page named. The
-    // yeasts section is a slot with one occupant; the rest are documentation.
+    // Every strain the imported recipe names: the group a blend is made of, and the
+    // pool a single choice comes from.
+    get yeastLines() {
+      return this.ledger.filter((row) => row.section === "yeasts");
+    },
+
     get mappedYeasts() {
-      return this.ledger.filter(
-        (row) => row.section === "yeasts" && row.decision === "mapped"
-      );
+      return this.yeastLines.filter((row) => row.decision === "mapped");
+    },
+
+    get blendComponents() {
+      return this.yeastLines.filter((row) => row.decision === "blended");
     },
 
     get fermentingYeastId() {
@@ -28,11 +34,29 @@ export function yeastReadouts() {
       return mapped.length === 1 ? { mode: "single", line_id: mapped[0] } : null;
     },
 
+  };
+}
+
+// The blend's own readouts: its record, its provenance, and what the section still
+// needs. Kept apart from the strain readouts so neither factory becomes two.
+export function blendReadouts() {
+  return {
     // The blend's record, when one is chosen and still exists.
     get yeastBlend() {
       const outcome = this.yeastOutcome;
       if (outcome?.mode !== "blend" || !outcome.ref) return null;
       return this.catalogRecord("yeast", outcome.ref) ? outcome : null;
+    },
+
+    // The group's provenance, by name: what the blend is a blend of.
+    get blendComponentNames() {
+      const outcome = this.yeastOutcome;
+      if (outcome?.mode !== "blend") return [];
+      const ids = outcome.line_ids ?? [];
+      return ids
+        .map((id) => this.yeastLines.find((row) => row.line_id === id))
+        .filter(Boolean)
+        .map((row) => row.ref_name || row.name);
     },
 
     get blendRecordAttenuationPct() {
@@ -45,33 +69,44 @@ export function yeastReadouts() {
     // A decision about a group of rows rather than about one row: the yeasts have
     // two strains on the recipe and no single attenuation yet.
     get sectionIssues() {
-      const issues = [];
-      const outcome = this.yeastOutcome;
-      if (this.mappedYeasts.length > 1 && outcome?.mode !== "blend") {
-        issues.push({
-          section: "yeasts",
-          message: `Imported recipe names ${this.mappedYeasts.length} strains. A batch ferments with one attenuation: one strain, or a blend of both.`,
-        });
-      }
-      if (outcome?.mode === "blend" && !this.yeastBlend) {
-        issues.push({
-          section: "yeasts",
-          message: `The blend record (${outcome.name ?? "blend"}) was deleted — pick another, or create one.`,
-        });
-      }
-      // A strain outside the blend would otherwise sit there as documentation while
-      // the batch claims a blend of the others. Say so, and make it a decision.
-      const outside = this.ledger.filter(
-        (row) => row.section === "yeasts" && row.decision === "ignored"
-      );
-      if (outcome?.mode === "blend" && outside.length) {
-        const names = outside.map((row) => row.name).join(", ");
-        issues.push({
-          section: "yeasts",
-          message: `${names} is not in this blend. Unblend to decide which strains it covers.`,
-        });
-      }
-      return issues;
+      return sectionIssues({
+        lines: this.yeastLines.length,
+        outcome: this.yeastOutcome,
+        blendResolves: Boolean(this.yeastBlend),
+        outside: this.yeastLines
+          .filter((row) => row.decision !== "blended")
+          .map((row) => row.name),
+      });
     },
+  };
+}
+
+// Pure, so the getter stays a read: which sentence the yeasts section still owes.
+export function sectionIssues({ lines, outcome, blendResolves, outside }) {
+  const decided = outcome?.mode === "blend" || outcome?.mode === "single";
+  const undecided = lines > 1 && !decided ? [openIssue(lines)] : [];
+  const missing = outcome?.mode === "blend" && !blendResolves ? [deletedIssue(outcome)] : [];
+  const strays = outcome?.mode === "blend" && outside.length ? [outsideIssue(outside)] : [];
+  return [...undecided, ...missing, ...strays];
+}
+
+function openIssue(lines) {
+  return {
+    section: "yeasts",
+    message: `Imported recipe names ${lines} strains. A batch ferments with one attenuation: one strain, or a blend of both.`,
+  };
+}
+
+function deletedIssue(outcome) {
+  return {
+    section: "yeasts",
+    message: `The blend record (${outcome.name ?? "blend"}) was deleted — pick another, or create one.`,
+  };
+}
+
+function outsideIssue(outside) {
+  return {
+    section: "yeasts",
+    message: `${outside.join(", ")} is not in this blend. Unblend to decide which strains it covers.`,
   };
 }
