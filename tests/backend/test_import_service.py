@@ -213,3 +213,47 @@ def test_the_duplicate_pointer_says_how_it_failed(service):
     assert caught.value.import_id == first.id
     assert caught.value.status == "failed"
     assert caught.value.failure_reason == "stated per 10 hL"
+
+
+BEERXML = (
+    b"<?xml version='1.0'?><RECIPES><RECIPE>"
+    b"<NAME>Test Bitter</NAME><BATCH_SIZE>20</BATCH_SIZE><OG>1.042</OG>"
+    b"<FERMENTABLES><FERMENTABLE><NAME>Pale</NAME><AMOUNT>4</AMOUNT>"
+    b"<AMOUNT_IS_WEIGHT>TRUE</AMOUNT_IS_WEIGHT><TYPE>Grain</TYPE></FERMENTABLE></FERMENTABLES>"
+    b"</RECIPE></RECIPES>"
+)
+
+
+def test_a_beerxml_upload_takes_the_parser_path(service, monkeypatch):
+    """No provider call: the format is read, not interpreted."""
+    calls = []
+    monkeypatch.setattr(
+        recipe_import, "extract_recipe_bytes", lambda *a, **k: calls.append(a) or canned_record(b"")
+    )
+    import base64
+
+    record = service.create(
+        "u1",
+        CreateImportRequest(
+            filename="bitter.xml",
+            content_base64=base64.b64encode(BEERXML).decode(),
+        ),
+    )
+    assert calls == [], "the LLM was never asked"
+    assert record.extract.source.extractor == "beerxml"
+    assert record.extract.source.model is None
+    assert record.extract.payload.fermentables[0].name == "Pale"
+    assert record.extract.payload.targets.og.value == 1.042
+
+
+def test_a_broken_beerxml_file_is_a_payload_error(service):
+    import base64
+
+    with pytest.raises(ImportPayloadError):
+        service.create(
+            "u1",
+            CreateImportRequest(
+                filename="broken.xml",
+                content_base64=base64.b64encode(b"<?xml version='1.0'?><RECIPES>").decode(),
+            ),
+        )

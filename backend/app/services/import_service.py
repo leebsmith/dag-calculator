@@ -19,6 +19,7 @@ import base64
 import binascii
 import hashlib
 import logging
+import time
 import uuid
 from typing import Annotated, Any
 
@@ -32,7 +33,8 @@ from app.schemas.import_record import (
     ImportStatus,
     UpdateImportRequest,
 )
-from app.services import gemini, recipe_import
+from app.schemas.recipe_import import ExtractedRecipe, SourceMeta
+from app.services import beerxml, gemini, recipe_import
 
 logger = logging.getLogger("app.import_service")
 
@@ -110,7 +112,7 @@ class ImportService:
                 raise DuplicateImport(
                     existing["id"], existing.get("status", "extracted"), existing.get("failure_reason")
                 )
-        record, _raw = recipe_import.extract_recipe_bytes(data, request.filename)
+        record = read_document(data, request.filename)
         if record.source.sha256 != digest:
             raise ImportPayloadError("the document changed while it was being read")
         return ImportRecord.model_validate(
@@ -200,9 +202,29 @@ def decode_document(content_base64: str) -> bytes:
             f"the document is {len(data) // 1_000_000} MB; "
             f"the limit is {MAX_DOCUMENT_BYTES // 1_000_000} MB"
         )
-    if not data.lstrip().startswith(PDF_MAGIC):
-        raise ImportPayloadError("the upload is not a PDF")
+    if not data.lstrip().startswith(PDF_MAGIC) and not beerxml.looks_like_beerxml(data):
+        raise ImportPayloadError("the upload is not a PDF or a BeerXML file")
     return data
+
+
+def read_document(data: bytes, filename: str) -> ExtractedRecipe:
+    """Read an uploaded document the way its own format asks to be read."""
+    if beerxml.looks_like_beerxml(data):
+        try:
+            payload = beerxml.parse(data)
+        except beerxml.BeerXmlError as exc:
+            raise ImportPayloadError(str(exc)) from exc
+        return ExtractedRecipe(
+            source=SourceMeta(
+                filename=filename,
+                sha256=hashlib.sha256(data).hexdigest(),
+                extractor="beerxml",
+                extracted_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            ),
+            payload=payload,
+        )
+    record, _raw = recipe_import.extract_recipe_bytes(data, filename)
+    return record
 
 
 def validate_identity(identity: dict[str, dict[str, Any]] | None) -> dict[str, dict[str, Any]] | None:

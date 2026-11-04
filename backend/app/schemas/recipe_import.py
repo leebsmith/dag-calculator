@@ -115,9 +115,10 @@ class ThicknessUnit(StrEnum):
 
 
 class Provenance(StrEnum):
-    """Who produced a value: the model's transcription or the reviewing user."""
+    """Who produced a value: the model, a parser, or the reviewing user."""
 
     LLM = "llm"
+    BEERXML = "beerxml"
     USER = "user"
 
 
@@ -321,6 +322,11 @@ class HopLine(StrictModel):
     stage_verbatim: str | None = None
     stage_guess: HopStage = HopStage.UNKNOWN
     minutes: float | None = Field(default=None, ge=0)
+    duration_min: float | None = Field(
+        default=None,
+        ge=0,
+        description="A printed duration for a whirlpool or dry hop. BeerXML states dry hops in minutes.",
+    )
     temperature: Temperature | None = None
     product_form: str | None = None
     verbatim: str

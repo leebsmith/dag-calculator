@@ -89,9 +89,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -140,9 +141,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -192,9 +194,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -244,9 +247,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -294,9 +298,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -345,9 +350,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -396,9 +402,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -627,6 +634,13 @@
             "title": "Minutes",
             "nullable": true
           },
+          "duration_min": {
+            "minimum": 0,
+            "type": "number",
+            "description": "A printed duration for a whirlpool or dry hop. BeerXML states dry hops in minutes.",
+            "title": "Duration Min",
+            "nullable": true
+          },
           "temperature": {
             "description": "A printed temperature with its scale.",
             "properties": {
@@ -685,6 +699,7 @@
           "stage_verbatim",
           "stage_guess",
           "minutes",
+          "duration_min",
           "temperature",
           "product_form",
           "verbatim",

@@ -20,9 +20,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -71,9 +72,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -123,9 +125,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -175,9 +178,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -225,9 +229,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -276,9 +281,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
@@ -327,9 +333,10 @@
               "type": "integer"
             },
             "source": {
-              "description": "Who produced a value: the model's transcription or the reviewing user.",
+              "description": "Who produced a value: the model, a parser, or the reviewing user.",
               "enum": [
                 "llm",
+                "beerxml",
                 "user"
               ],
               "title": "Provenance",
