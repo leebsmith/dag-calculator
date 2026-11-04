@@ -7,6 +7,7 @@
 // provenance header.
 
 import { reportError } from "../observability.js";
+import { checkActions } from "./importCheck.js";
 import {
   applyRef,
   buildLedger,
@@ -34,19 +35,32 @@ import {
   yeastRows,
 } from "../views/import/review.js";
 
-export function createImportReviewStore({ client, catalogs = () => [], onClose } = {}) {
+export function createImportReviewStore({
+  client,
+  catalogs = () => [],
+  catalog = () => null,
+  project = null,
+  gate = null,
+  delta = null,
+  onClose,
+} = {}) {
   const store = Object.assign(
     {
       record: null,
       stage: "transcribe",
       queries: {},
       busy: false,
+      checkBusy: false,
+      checkError: null,
+      gate: null,
+      delta: null,
       error: null,
       savedAt: null,
       dirty: false,
     },
     reviewActions({ client, onClose }),
-    ledgerActions({ catalogs })
+    ledgerActions({ catalogs }),
+    checkActions({ catalog, project, gate, delta })
   );
   // Getters must be installed, not assigned: Object.assign invokes them once and
   // copies the value, which would freeze every readout against an empty record.
@@ -217,6 +231,7 @@ function ledgerActions({ catalogs }) {
 
     goTo(stage) {
       if (stage === "map" || stage === "transcribe") this.stage = stage;
+      if (stage === "check" && this.stage !== "check") this.stage = "check";
     },
 
     // Candidate chips for one line. Mash steps pick from the model's eight rests

@@ -106,6 +106,22 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
       return Object.values(byKind[kind] ?? {});
     },
 
+    references() {
+      void this.revision;
+      return cache.references;
+    },
+
+    item(kind, id) {
+      void this.revision;
+      const byKind = {
+        malt: cache.seeds.malts,
+        sugar: cache.seeds.sugars,
+        hop: cache.seeds.hops,
+        yeast: cache.seeds.yeasts,
+      };
+      return byKind[kind]?.[id] ?? null;
+    },
+
     // A batch cannot be created until one of each identity source exists.
     prerequisiteStatus() {
       void this.revision;

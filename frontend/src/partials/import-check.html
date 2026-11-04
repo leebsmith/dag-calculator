@@ -1,0 +1,110 @@
+<!-- Check: solve the candidate against the rig and show what changed. -->
+<section class="import-check">
+  <header class="import-doc-header">
+    <div>
+      <h2 class="import-doc-title">Check</h2>
+      <p class="text-xs text-muted">
+        The ledger is solved against your rig. Nothing is created until you commit.
+      </p>
+    </div>
+    <div
+      class="import-verification"
+      :class="{
+        'is-ok': $store.importReview.checkSummary?.ok,
+        'is-warn': $store.importReview.checkSummary && !$store.importReview.checkSummary.ok,
+      }"
+      x-show="$store.importReview.checkSummary"
+    >
+      <span class="font-medium"
+        x-text="$store.importReview.checkSummary?.ok
+          ? 'Solveable — ready to commit'
+          : $store.importReview.checkSummary?.blocking + ' blocking finding(s)'"></span>
+      <span class="text-xs text-muted"
+        x-text="$store.importReview.checkSummary
+          ? $store.importReview.checkSummary.unresolved + ' unresolved line(s), '
+            + $store.importReview.checkSummary.advisory + ' advisory'
+          : ''"></span>
+    </div>
+  </header>
+
+  <div class="alert alert-warning" x-show="$store.importReview.checkError">
+    <div class="alert-header">
+      <span class="alert-dot"></span>
+      <span x-text="$store.importReview.checkError"></span>
+    </div>
+  </div>
+
+  <div class="import-queue-actions">
+    <button
+      type="button"
+      class="btn-primary text-xs"
+      :disabled="$store.importReview.checkBusy"
+      @click="$store.importReview.runCheck()"
+      x-text="$store.importReview.checkBusy ? 'Solving…' : ($store.importReview.gate ? 'Run the check again' : 'Run the check')"
+    ></button>
+    <span class="text-xs text-muted" x-show="$store.importReview.unresolved.length">
+      <span x-text="$store.importReview.unresolved.length"></span> line(s) still undecided — the gate
+      will refuse until they are mapped.
+    </span>
+  </div>
+
+  <template x-if="$store.importReview.gate">
+    <div>
+      <h3 class="import-section-title">Findings</h3>
+      <p class="form-hint" x-show="$store.importReview.gate.findings.length === 0">
+        No findings: the batch solves on this rig as mapped.
+      </p>
+      <ul class="import-line-list">
+        <template x-for="(finding, index) in $store.importReview.gate.findings" :key="index">
+          <li class="import-line map-row" :class="{ 'is-undecided': finding.severity === 'blocking' }">
+            <span class="map-badge" x-show="finding.severity === 'blocking'">blocking</span>
+            <span class="font-medium" x-text="finding.code"></span>
+            <span class="text-xs text-muted" x-text="finding.message"></span>
+            <span class="text-xs text-muted" x-show="finding.severity === 'advisory'">advisory only</span>
+          </li>
+        </template>
+      </ul>
+
+      <h3 class="import-section-title">What changed</h3>
+      <p class="form-hint">
+        Efficiency, malt specs, hop utilization and yeast attenuation are this calculator's, not the
+        page's — so masses move. This is where and why.
+      </p>
+
+      <h4 class="import-section-title">Targets</h4>
+      <table class="data-table">
+        <thead>
+          <tr><th>Target</th><th>The page</th><th>This rig</th><th>Difference</th></tr>
+        </thead>
+        <tbody>
+          <template x-for="(row, index) in $store.importReview.delta?.targets ?? []" :key="'t' + index">
+            <tr>
+              <td x-text="row.label"></td>
+              <td x-text="row.source"></td>
+              <td x-text="row.solved ?? '—'"></td>
+              <td x-text="row.delta == null ? '—' : (row.delta > 0 ? '+' : '') + row.delta.toFixed(3)"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+
+      <h4 class="import-section-title">Lines</h4>
+      <table class="data-table">
+        <thead>
+          <tr><th>Line</th><th>The page</th><th>This rig</th><th>Ratio</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+          <template x-for="(row, index) in $store.importReview.delta?.lines ?? []" :key="'l' + index">
+            <tr>
+              <td x-text="row.label"></td>
+              <td x-text="row.source_kg == null ? '—' : (row.source_kg * 1000).toFixed(0) + ' g'"></td>
+              <td x-text="row.solved_kg == null ? '—' : (row.solved_kg * 1000).toFixed(0) + ' g'"></td>
+              <td x-text="row.ratio == null ? '—' : row.ratio.toFixed(2) + '×'"></td>
+              <td class="text-xs text-muted" x-text="row.note"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </template>
+</section>

@@ -316,7 +316,9 @@ test("the stage only moves where the flow allows", () => {
   store.goTo("map");
   assert.equal(store.stage, "map");
   store.goTo("check");
-  assert.equal(store.stage, "map", "the check stage has not landed");
+  assert.equal(store.stage, "check", "the check stage exists now");
+  store.goTo("nonsense");
+  assert.equal(store.stage, "check", "an unknown stage changes nothing");
 });
 
 test("candidate chips come from the injected catalogs", () => {

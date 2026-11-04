@@ -1,0 +1,51 @@
+// The check stage: project the ledger, solve it, and read the delta.
+//
+// The work is injected — projection, gate and delta are adapter-layer functions —
+// so the store stays node-testable and the composition root owns the wiring.
+
+import { reportError } from "../observability.js";
+
+export function checkActions({ catalog, project, gate, delta }) {
+  return {
+    get checkSummary() {
+      if (!this.gate) return null;
+      return {
+        ok: this.gate.blocking.length === 0 && this.unresolved.length === 0,
+        blocking: this.gate.blocking.length,
+        advisory: this.gate.advisory.length,
+        unresolved: this.unresolved.length,
+      };
+    },
+
+    // An explicit press: the gate costs three solver calls, and reviewing a
+    // mapping is a deliberate act, not a keystroke.
+    async runCheck() {
+      if (!this.record || this.checkBusy) return null;
+      if (!project || !gate) {
+        this.checkError = "The check is not wired in this build.";
+        return null;
+      }
+      this.checkBusy = true;
+      this.checkError = null;
+      try {
+        const state = project({
+          payload: this.payload,
+          ledger: this.ledger,
+          identity: this.record.identity,
+          catalog,
+        });
+        const result = await gate(state);
+        this.gate = result;
+        this.delta = delta ? delta({ payload: this.payload, ledger: this.ledger, engine: result.engine }) : null;
+        this.stage = "check";
+        return result;
+      } catch (err) {
+        this.checkError = err?.message ?? "The check could not run.";
+        reportError("importReview.runCheck", err);
+        return null;
+      } finally {
+        this.checkBusy = false;
+      }
+    },
+  };
+}

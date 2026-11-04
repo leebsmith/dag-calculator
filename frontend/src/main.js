@@ -23,6 +23,9 @@ import {
 } from "./firebase.js";
 import * as persistence from "./store/persistence.js";
 import { createImportClient, readFileAsBase64 } from "./adapters/importClient.js";
+import { runGate } from "./adapters/importGate.js";
+import { projectImport } from "./adapters/importProjection.js";
+import { buildDelta } from "./adapters/importDelta.js";
 import { createImportsStore } from "./store/imports.js";
 import { createImportReviewStore } from "./store/importReview.js";
 import { createSetupStore } from "./store/setup.js";
@@ -60,6 +63,11 @@ const importClient = createImportClient();
 const reviewStore = createImportReviewStore({
   client: importClient,
   catalogs: (kind) => Alpine.store("setup").items(kind),
+  catalog: (kind, id) => Alpine.store("setup").item(kind, id),
+  project: projectImport,
+  gate: (state) =>
+    runGate({ state, references: Alpine.store("setup").references() }),
+  delta: buildDelta,
   onClose: () => {
     Alpine.store("recipes").view = "batches";
     Alpine.store("imports").refresh();

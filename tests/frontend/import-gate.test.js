@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 import { gateSummary, runGate } from "../../frontend/src/adapters/importGate.js";
+import { buildDelta } from "../../frontend/src/adapters/importDelta.js";
 import { projectImport } from "../../frontend/src/adapters/importProjection.js";
 import { applyRef, buildLedger } from "../../frontend/src/views/import/ledger.js";
 
@@ -157,4 +158,14 @@ test("a gate with no findings and no open lines is green", async () => {
   assert.equal(summary.unresolved, 0);
   assert.equal(summary.blocking, result.blocking.length);
   assert.equal(summary.ok, result.blocking.length === 0);
+});
+
+
+test("the acceptance loop closes: fixture → ledger → projection → gate → delta", async () => {
+  const { fetchImpl } = fakeFetch();
+  const projected = state();
+  const gate = await runGate({ state: projected, fetchImpl });
+  const delta = buildDelta({ payload: payload(), ledger: projected ? [] : [], engine: gate.engine });
+  assert.equal(gate.blocking.length, 0, "the pristine recipe solves on the test rig");
+  assert.ok(delta.targets.some((target) => target.label === "Original gravity"));
 });

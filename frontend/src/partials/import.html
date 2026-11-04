@@ -30,7 +30,13 @@
       :aria-pressed="$store.importReview.stage === 'map'"
       @click="$store.importReview.goTo('map')"
     >2 · Map</button>
-    <span class="text-xs text-muted">3 · Check lands with the solve preview</span>
+    <button
+      type="button"
+      class="btn-outline text-xs"
+      :class="{ 'is-active': $store.importReview.stage === 'check' }"
+      :aria-pressed="$store.importReview.stage === 'check'"
+      @click="$store.importReview.goTo('check')"
+    >3 · Check</button>
   </nav>
 
   <div class="import-body">
@@ -75,6 +81,10 @@
 
     <template x-if="$store.importReview.record && $store.importReview.stage === 'map'">
       <load src="src/partials/import-map.html" />
+    </template>
+
+    <template x-if="$store.importReview.record && $store.importReview.stage === 'check'">
+      <load src="src/partials/import-check.html" />
     </template>
   </div>
 

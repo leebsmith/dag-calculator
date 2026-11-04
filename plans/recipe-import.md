@@ -695,9 +695,12 @@ before.
 
 ### J.4 — gate and delta table
 
-- [ ] Headless gate: `createEngine` + the three `build*Request` bodies
-- [ ] Explicit Check; blocking vs advisory split; findings mapped to rows
-- [ ] Delta table: source vs solved per line and per target
+- [x] Headless gate: a private engine driven by the editor's own boundary runner
+      (so a gate result and a live result cannot disagree)
+- [x] Explicit Check; blocking vs advisory split; water skipped (advisory) when no
+      target profile is chosen; blocking relations read from the engine
+- [x] Delta table: solved vs stated per target, and per line with a ratio, plus the
+      reason a line is authored rather than solved (dry hops)
 
 ### J.5 — hops
 
