@@ -16,7 +16,7 @@ export function ledgerFindings({ ledger = [] } = {}) {
       code: "SINGLE_YEAST",
       blocking: true,
       node: "batch.yeast",
-      message: `a batch carries one yeast selection, but ${yeasts.length} strains are mapped — keep one and ignore the others`,
+      message: `the model holds one yeast per batch, and ${yeasts.length} strains are mapped — the one you keep carries the batch, the rest are kept as a co-pitch`,
       yeasts: yeasts.map((row) => ({ line_id: row.line_id, name: row.name })),
     });
   }
