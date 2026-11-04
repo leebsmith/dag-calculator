@@ -90,12 +90,29 @@
           </p>
         </div>
 
-        <p class="form-hint text-warning" x-show="$store.setup.state.mode === 'recipe' && $store.imports.duplicateOf">
-          This document was already imported.
-          <button type="button" class="btn-link" @click="$store.imports.resume($store.imports.duplicateOf); $store.setup.closeModal()">Resume that import</button>
-          or
-          <button type="button" class="btn-link" @click="$store.imports.discardDuplicate()">choose a different file</button>.
-        </p>
+        <div class="form-hint text-warning" x-show="$store.setup.state.mode === 'recipe' && $store.imports.duplicateOf">
+          <template x-if="$store.imports.duplicateStatus === 'failed'">
+            <p>
+              This document was read before and could not be used:
+              <span x-text="$store.imports.duplicateReason || 'not enough to build a batch'"></span>.
+              <button
+                type="button"
+                class="btn-link"
+                @click="$store.imports.reread({ filename: $store.setup.state.filename, file: $store.setup.state.file, identity: $store.setup.identity() })"
+              >Delete it and read again</button>,
+              or
+              <button type="button" class="btn-link" @click="$store.imports.discardDuplicate()">choose a different file</button>.
+            </p>
+          </template>
+          <template x-if="$store.imports.duplicateStatus !== 'failed'">
+            <p>
+              This document was already imported.
+              <button type="button" class="btn-link" @click="$store.imports.resume($store.imports.duplicateOf); $store.setup.closeModal()">Resume that import</button>,
+              or
+              <button type="button" class="btn-link" @click="$store.imports.discardDuplicate()">choose a different file</button>.
+            </p>
+          </template>
+        </div>
 
         <div class="form-group" x-show="$store.setup.state.mode === 'scratch'">
           <label class="form-label" for="batch-name"><span>Batch name</span></label>

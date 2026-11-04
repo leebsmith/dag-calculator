@@ -67,6 +67,8 @@ export function catalogKindFor(row) {
   return row.kind_hint === "sugar" || row.kind_hint === "extract" ? "sugar" : "malt";
 }
 
+const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
+
 function ledgerReadouts() {
   return {
     get ledger() {
@@ -82,13 +84,47 @@ function ledgerReadouts() {
     },
 
     get sections() {
-      const order = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
-      return order
-        .map((section) => ({
-          id: section,
-          rows: this.ledger.filter((row) => row.section === section),
-        }))
-        .filter((section) => section.rows.length > 0);
+      return SECTION_ORDER.map((section) => {
+        const rows = this.ledger.filter((row) => row.section === section);
+        return { id: section, rows, empty: rows.length === 0, note: this.emptyNote(section) };
+      });
+    },
+
+    // Why a section is empty, in the page's own terms. Silence reads as a bug.
+    emptyNote(section) {
+      const payload = this.payload;
+      if (!payload) return "";
+      if (section === "unmodeled") return "nothing outside the model was captured";
+      if (this.noBatchQuantities && (section === "fermentables" || section === "hops")) {
+        return payload.document_type === "spec_sheet"
+          ? "none on this page: the quantities are stated per unit of production volume and sit below"
+          : "none on this page";
+      }
+      return "none on this page";
+    },
+
+    get noBatchQuantities() {
+      const payload = this.payload;
+      if (!payload) return false;
+      return payload.fermentables.length === 0 && payload.hops.length === 0;
+    },
+
+    // The verdict narrates the evidence; it never decides on its own. The label
+    // from the extraction explains *why* there is nothing to map.
+    get verdict() {
+      if (!this.noBatchQuantities) return null;
+      const spec = this.payload?.document_type === "spec_sheet";
+      return {
+        title: spec
+          ? "Read as a production specification: no batch quantities"
+          : "No batch quantities on this page",
+        detail: spec
+          ? "The ingredient quantities are stated per unit of production volume, so there is no batch to build. Keep the reading as a failed marker so the same document is never paid for twice, or delete it."
+          : "The page names ingredients but states no amounts for a batch. Keep the reading as a failed marker, or delete it.",
+        reason: spec
+          ? "spec sheet: quantities stated per unit of production volume"
+          : "no batch quantities on this page",
+      };
     },
 
     get shares() {
@@ -166,6 +202,15 @@ function reviewReadouts() {
 
 function ledgerActions({ catalogs }) {
   return {
+    setTarget(key, rawValue) {
+      if (!this.record) return;
+      const payload = editTarget(this.payload, key, rawValue);
+      if (payload === this.payload) return;
+      this.record = { ...this.record, extract: { ...this.record.extract, payload } };
+      this.dirty = true;
+      this.error = null;
+    },
+
     destinationsFor(section) {
       return destinationsFor(section);
     },
@@ -235,6 +280,27 @@ function ledgerActions({ catalogs }) {
 
 function reviewActions({ client, onClose }) {
   return {
+    async markFailed() {
+      if (!this.record || this.busy) return null;
+      const verdict = this.verdict;
+      this.busy = true;
+      this.error = null;
+      try {
+        await client.patch(this.record.id, {
+          status: "failed",
+          failure_reason: verdict?.reason ?? "no batch quantities on this page",
+        });
+        this.close();
+        return true;
+      } catch (err) {
+        this.error = err?.message ?? "Could not mark the import as failed.";
+        reportError("importReview.markFailed", err);
+        return null;
+      } finally {
+        this.busy = false;
+      }
+    },
+
     close() {
       this.record = null;
       this.error = null;
@@ -265,15 +331,6 @@ function reviewActions({ client, onClose }) {
       this.error = null;
       this.dirty = false;
       this.savedAt = null;
-    },
-
-    setTarget(key, rawValue) {
-      if (!this.record) return;
-      const payload = editTarget(this.payload, key, rawValue);
-      if (payload === this.payload) return;
-      this.record = { ...this.record, extract: { ...this.record.extract, payload } };
-      this.dirty = true;
-      this.error = null;
     },
 
     async save() {

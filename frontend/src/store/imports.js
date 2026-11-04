@@ -2,8 +2,8 @@
 //
 // The list is a strip on the landing page and the resume path into the import
 // view. Everything durable lives on the server; this store holds what the
-// templates bind to, and it keeps the one thing the UI must explain — a
-// duplicate — as a first-class state instead of an error string.
+// templates bind to, and it keeps the two states the UI must explain — a
+// duplicate and a failure — as first-class values instead of error strings.
 
 import { reportError } from "../observability.js";
 import { resumeLabel } from "../views/import/review.js";
@@ -16,9 +16,12 @@ export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
       rows: [],
       loading: false,
       loadError: false,
-      duplicateOf: null, // import id whose document was uploaded again
       starting: false,
       error: null,
+      // The document already on file, and how that record ended.
+      duplicateOf: null,
+      duplicateStatus: null,
+      duplicateReason: null,
 
       get openRows() {
         return this.rows.filter((row) => OPEN_STATUSES.has(row.status));
@@ -26,6 +29,10 @@ export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
 
       get count() {
         return this.openRows.length;
+      },
+
+      get failedRows() {
+        return this.rows.filter((row) => row.status === "failed");
       },
 
       resumeLabel(status) {
@@ -51,26 +58,20 @@ function queueActions(seams) {
       }
     },
 
-    async start({ filename, file, identity }) {
+    async start({ filename, file, identity, force = false }) {
       const seam = seams();
       if (this.starting) return null;
       this.starting = true;
-      this.duplicateOf = null;
+      this.clearDuplicate();
       this.error = null;
       try {
-        const record = await upload(seam, { filename, file, identity });
+        const record = await upload(seam, { filename, file, identity, force });
         await this.refresh();
         seam.onOpen?.(record);
         return record;
       } catch (err) {
-        if (err?.code === "IMPORT_DUPLICATE") {
-          this.duplicateOf = err.details?.import_id ?? null;
-          this.error = "This document has already been imported.";
-          return null;
-        }
         this.error = err?.message ?? "Could not read the document.";
-        seam.onError?.(err);
-        return null;
+        return handleFailure(this, seam, err);
       } finally {
         this.starting = false;
       }
@@ -99,15 +100,41 @@ function queueActions(seams) {
       }
     },
 
-    discardDuplicate() {
+    clearDuplicate() {
       this.duplicateOf = null;
+      this.duplicateStatus = null;
+      this.duplicateReason = null;
+    },
+
+    discardDuplicate() {
+      this.clearDuplicate();
       this.error = null;
+    },
+
+    // Read the same document again, after removing the failed record that blocked it.
+    async reread({ filename, file, identity }) {
+      if (this.duplicateOf) await this.remove(this.duplicateOf);
+      this.clearDuplicate();
+      return this.start({ filename, file, identity, force: true });
     },
   };
 }
 
-async function upload(seam, { filename, file, identity }) {
+function handleFailure(store, seam, err) {
+  if (err?.code === "IMPORT_DUPLICATE") {
+    store.duplicateOf = err.details?.import_id ?? null;
+    store.duplicateStatus = err.details?.status ?? null;
+    store.duplicateReason = err.details?.failure_reason ?? null;
+    store.error = "This document has already been imported.";
+    return null;
+  }
+  store.error = err?.message ?? "Could not read the document.";
+  seam.onError?.(err);
+  return null;
+}
+
+async function upload(seam, { filename, file, identity, force = false }) {
   if (!seam.readFile) throw new Error("imports: no file reader injected");
   const content_base64 = await seam.readFile(file);
-  return seam.client.create({ filename, content_base64, identity });
+  return seam.client.create({ filename, content_base64, identity, force });
 }

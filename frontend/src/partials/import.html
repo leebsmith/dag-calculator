@@ -51,6 +51,24 @@
       </button>
     </div>
 
+    <div class="alert alert-warning import-verdict" x-show="$store.importReview.verdict">
+      <div class="alert-header">
+        <span class="alert-dot"></span>
+        <span x-text="$store.importReview.verdict?.title"></span>
+      </div>
+      <p x-text="$store.importReview.verdict?.detail"></p>
+      <p class="text-xs text-muted">
+        You can still enter batch quantities by hand — a grain bill can be typed straight from
+        printed rates as parts.
+      </p>
+      <div class="import-queue-actions">
+        <button type="button" class="btn-outline text-xs" :disabled="$store.importReview.busy"
+          @click="$store.importReview.markFailed()">Mark as failed</button>
+        <button type="button" class="btn-outline text-xs" :disabled="$store.importReview.busy"
+          @click="$store.importReview.discard()">Delete</button>
+      </div>
+    </div>
+
     <template x-if="$store.importReview.record && $store.importReview.stage === 'transcribe'">
       <load src="src/partials/import-transcribe.html" />
     </template>
@@ -69,7 +87,7 @@
       <span class="status-dot status-dot-ok"></span>
       <span class="text-xs text-muted">Saved</span>
     </span>
-    <span class="text-xs text-muted" x-show="$store.importReview.stage === 'map'"
+    <span class="text-xs text-muted" x-show="$store.importReview.stage === 'map' && !$store.importReview.verdict"
       x-text="$store.importReview.ledgerCounts.total - $store.importReview.unresolved.length
         + ' of ' + $store.importReview.ledgerCounts.total + ' decided'"></span>
     <button

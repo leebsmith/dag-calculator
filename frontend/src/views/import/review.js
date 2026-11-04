@@ -239,5 +239,6 @@ export function editTarget(payload, key, rawValue) {
 export function resumeLabel(status) {
   if (status === "mapping") return "Step 2 · Map";
   if (status === "extracted") return "Step 1 · Transcribe";
+  if (status === "failed") return "Failed";
   return "Open";
 }

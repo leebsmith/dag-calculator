@@ -28,6 +28,7 @@
         <span class="text-xs text-muted"
           x-text="'(' + section.rows.filter((r) => r.decision === 'mapped' || r.decision === 'ignored').length + ' of ' + section.rows.length + ')'"></span>
       </h3>
+      <p class="form-hint" x-show="section.empty" x-text="section.note"></p>
 
       <ul class="import-line-list">
         <template x-for="row in section.rows" :key="row.line_id">

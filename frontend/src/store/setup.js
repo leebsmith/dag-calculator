@@ -157,7 +157,7 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
       return s.mode === "recipe" ? "Read recipe" : "Create batch";
     },
 
-    async startImport() {
+    async startImport(force = false) {
       if (!this.canStartImport() || this.state.busy) return null;
       this.state.busy = true;
       this.state.phase = "reading";
@@ -167,6 +167,7 @@ export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
           filename: this.state.filename,
           file: this.state.file,
           identity: this.identity(),
+          force,
         });
         if (record) this.state.modalOpen = false;
         return record ?? null;

@@ -375,3 +375,63 @@ test("the new-batch button names what it is doing, by step", () => {
   setup.state.busy = true;
   assert.equal(setup.primaryLabel(), "Step 1 · Reading recipe…", "reading is the first pass");
 });
+
+
+// --- verdict, sections, failure -------------------------------------------
+
+const EMPTY_BATCH = {
+  ...RECORD,
+  id: "imp-spec",
+  extract: {
+    ...RECORD.extract,
+    payload: {
+      document_type: "spec_sheet",
+      quantity_form: "mass",
+      detected_recipes: [{ title: "Hefeweizen", pages: [1] }],
+      title: "Hefeweizen",
+      targets: { og: { value: 13.5, unit: "plato", verbatim: "13.5 °P", page: 1 } },
+      fermentables: [],
+      hops: [],
+      yeasts: [],
+      mashes: [{ step_verbatim: "Mash in", temperature: { value: 43, unit: "c" }, duration_min: 10, page: 1 }],
+      unmodeled: [{ text: "Pilsner 136 KG/10HL", kind: "other", page: 1 }],
+      warnings: [],
+    },
+  },
+  ledger: [],
+};
+
+test("a spec sheet gets a verdict, and the verdict names the evidence", () => {
+  const { store } = storeWith(EMPTY_BATCH);
+  assert.equal(store.noBatchQuantities, true);
+  assert.match(store.verdict.title, /production specification/i);
+  assert.match(store.verdict.detail, /per unit of production volume/);
+  assert.equal(store.verdict.reason.includes("spec sheet"), true);
+});
+
+test("a normal recipe has no verdict", () => {
+  const { store } = storeWith(RECORD);
+  assert.equal(store.noBatchQuantities, false);
+  assert.equal(store.verdict, null);
+});
+
+test("an empty section explains itself instead of going silent", () => {
+  const { store } = storeWith(EMPTY_BATCH);
+  const hops = store.sections.find((section) => section.id === "hops");
+  assert.equal(hops.empty, true);
+  assert.match(hops.note, /per unit of production volume/);
+  const mash = store.sections.find((section) => section.id === "mashes");
+  assert.equal(mash.empty, false);
+});
+
+test("marking a record failed keeps the interpretation and closes", async () => {
+  const patches = [];
+  const store = createImportReviewStore({
+    client: { patch: async (id, body) => (patches.push({ id, body }), { ...EMPTY_BATCH, ...body }) },
+  });
+  store.open(EMPTY_BATCH);
+  assert.equal(await store.markFailed(), true);
+  assert.equal(patches[0].body.status, "failed");
+  assert.match(patches[0].body.failure_reason, /production volume/);
+  assert.equal(store.record, null, "the record is closed after marking it");
+});

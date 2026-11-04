@@ -59,6 +59,32 @@
           </ul>
         </section>
 
+        <section class="landing-imports" x-show="$store.imports.failedRows.length > 0">
+          <div class="landing-section-bar">
+            <h2 class="landing-heading">
+              Failed imports
+              <span class="text-xs text-muted" x-text="'(' + $store.imports.failedRows.length + ')'"></span>
+            </h2>
+          </div>
+          <p class="form-hint">
+            Documents we could not turn into a batch. Kept so the same file is never read twice;
+            delete one to allow a fresh read.
+          </p>
+          <ul class="import-line-list">
+            <template x-for="row in $store.imports.failedRows" :key="row.id">
+              <li class="import-queue-row is-failed">
+                <div>
+                  <span class="font-medium" x-text="row.extract?.payload?.title || row.extract?.source?.filename"></span>
+                  <span class="text-xs text-muted" x-text="row.failure_reason || row.status"></span>
+                </div>
+                <div class="import-queue-actions">
+                  <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete</button>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </section>
+
         <section class="landing-library">
           <div class="landing-section-bar">
             <h2 class="landing-heading">Batches</h2>

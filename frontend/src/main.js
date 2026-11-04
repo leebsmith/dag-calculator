@@ -89,9 +89,9 @@ Alpine.store(
 
 const setupStore = createSetupStore({
   client: libraryClient,
-  onImportRecipe: async ({ filename, file, identity }) => {
+  onImportRecipe: async ({ filename, file, identity, force }) => {
     const imports = Alpine.store("imports");
-    const record = await imports.start({ filename, file, identity });
+    const record = await imports.start({ filename, file, identity, force });
     if (record) return record;
     // A duplicate has its own panel (resume or pick another file); everything
     // else is a refusal the dialog must state where the user is looking.
