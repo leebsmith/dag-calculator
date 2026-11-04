@@ -66,6 +66,24 @@
                 </div>
               </header>
 
+              <template x-if="$store.imports.originOf($store.recipes.activeId)">
+                <details class="import-origin" x-data="{ origin: $store.imports.originOf($store.recipes.activeId) }">
+                  <summary class="text-xs">
+                    <span class="font-medium">Imported from</span>
+                    <span x-text="origin.title"></span>
+                    <span class="text-muted" x-text="origin.outcome"></span>
+                  </summary>
+                  <div x-data="{ delta: origin.delta }">
+                    <p class="form-hint" x-show="!delta">
+                      No comparison was captured for this batch.
+                    </p>
+                    <template x-if="delta">
+                      <load src="./src/partials/import-delta.html" />
+                    </template>
+                  </div>
+                </details>
+              </template>
+
               <div class="stage">
                 <div class="alert alert-info" x-show="boundaryBlockedMessage">
                   <div class="alert-header">

@@ -118,6 +118,24 @@ test("the mash rest and the yeast become a row and a selection", () => {
   assert.equal(state.selections["batch.yeast"].name, "British Ale");
 });
 
+test("a blend outcome is the one selection, and the components stay on the ledger", () => {
+  const ledger = mapped();
+  const catalogWithBlend = (kind, id) =>
+    id === "blend-1"
+      ? { id, name: "Blend: saison + brett", attenuation_pct: 0.78 }
+      : catalog(kind, id);
+  const state = projectImport({
+    payload: payload(),
+    ledger,
+    catalog: catalogWithBlend,
+    yeastOutcome: { mode: "blend", line_ids: ["yeasts[0]"], ref: "blend-1", name: "Blend: saison + brett" },
+  });
+  assert.equal(state.roots["batch.yeast_id"], "blend-1");
+  assert.equal(state.selections["batch.yeast"].name, "Blend: saison + brett");
+  assert.equal(state.selections["batch.yeast"].attenuation_pct, 0.78);
+  assert.equal("batch.yeasts" in state.collections, false, "a blend is not a collection");
+});
+
 test("a line whose record was deleted contributes nothing", () => {
   const ledger = mapped().map((row) =>
     row.section === "yeasts" ? { ...row, ref: "y-deleted" } : row

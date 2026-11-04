@@ -52,6 +52,14 @@ class ImportRecord(StrictModel):
     pool_ibu_fraction: float | None = None
     pool_ibu_source: str | None = None
     target_profile_id: str | None = None
+    # How the imported recipe's yeast lines became the batch's one attenuation:
+    # {"mode": "single", "line_id": ...} or
+    # {"mode": "blend", "line_ids": [...], "ref": <library yeast id>, "name": ...}.
+    # The engine still receives one selection; this is the recipe's own fact.
+    yeast_outcome: dict[str, Any] | None = None
+    # The solved comparison captured at commit, so the batch can show what changed
+    # without re-running a boundary.
+    delta: dict[str, Any] | None = None
     created_at: float
     updated_at: float
 
@@ -79,6 +87,8 @@ class UpdateImportRequest(StrictModel):
     pool_ibu_fraction: float | None = None
     pool_ibu_source: str | None = None
     target_profile_id: str | None = None
+    yeast_outcome: dict[str, Any] | None = None
+    delta: dict[str, Any] | None = None
     batch_id: str | None = None
     status: ImportStatus | None = None
     failure_reason: str | None = None

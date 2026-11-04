@@ -28,7 +28,7 @@ reviewed.
 
 - `document_type`: `recipe`, `spec_sheet`, `article` or `unknown`.
 - `quantity_form`: `mass`, `percent`, `prose`, `none` or `unknown`.
-- `targets`: growths the page states, each with its phrase and page.
+- `targets`: growths the imported recipe states, each with its phrase and page.
 - `fermentables`, `hops`, `yeasts`, `mashes`: typed rows, verbatim plus page.
 - `unmodeled`: every quantity-bearing line with no home in the model.
 - `warnings`: contradictions and ambiguities the reader noticed.
@@ -57,9 +57,9 @@ as a row in the flat list. A hop switched off the model stays visible in its own
 "not modelled" group with the reason, and can be undone.
 
 Ignoring is never a deletion. An ignored line stays visible with its reason and a
-way back: putting it back re-derives the destination the page's own evidence
-supports (a print stage routes a hop, a share proposes a trace malt) and returns the
-row unresolved until a registry entry is chosen. Where a section offers only one
+way back: putting it back re-derives the destination the imported recipe's own
+evidence supports (a print stage routes a hop, a share proposes a trace malt) and
+returns the row unresolved until a registry entry is chosen. Where a section offers only one
 destination — yeast, mash rests — the row shows that destination as a label instead
 of a one-option menu.
 
@@ -74,26 +74,34 @@ Every row states its own problem; there is no second listing of the same lines
 above the sections. The header counts what is left, the row says what it needs, and
 the Check screen repeats only what a solver found.
 
-One limit belongs to the model rather than the page: a batch carries a single yeast
-selection (`batch.yeast`). The yeasts section is therefore a **slot**, not a list of
-decisions: it shows which strain ferments the batch, and every other strain the page
-named sits under it marked `not in this batch — the batch ferments with <strain>`.
-Picking a different one is `Ferment with this`; the note on the dropped strain is
-how the immutable record keeps the blend legible instead of silently dropping it.
+One limit belongs to the model rather than the source: a batch carries a single yeast
+selection (`batch.yeast`). The imported recipe's yeast lines are still the recipe's
+own fact, and both are kept:
 
-A blend that must drive the numbers is one Library yeast record, and the row can
-create it in place: a name and the attenuation the pair finishes at, saved through
-the same store the Library uses, then made the batch's strain in the same press.
-Nothing about a blend is a special kind of yeast.
+- **one strain** — `Ferment with <strain> only` ignores the others with
+  `not in this batch — the batch ferments with <strain>`; the batch and the report
+  show only that strain;
+- **a blend** — `Blend both` authors one `yeast` record (a name and the attenuation
+  the blend finishes at) and stores the outcome on the record. The component lines
+  stay mapped, each with its own registry pick and page, and render inside one group
+  in the map. Nothing is averaged, and the engine still receives one selection.
 
-A blend that must *drive the numbers* is a Library yeast record, not a second
-selection: one record named for the blend, carrying the attenuation the user
-states it finishes at. That is the same inversion as efficiency — the tool derives
-what the model can derive and refuses to invent a number it cannot. The record's
-name is the blend's identity in the batch and in the report; no field is added for
-it, and the artifact gains no text dimension it does not have. Either strain's line
-can carry that record: pick it on the kept line, or put the other line back and pick
-it there, and the strain that is dropped records the record's name in its reason.
+The decision is a field, not an inference: the record carries
+`yeast_outcome` (`single` with the strain's line, or `blend` with the component
+lines and the record ref), written with the choice and reconciled against the rows
+on open. A blend's record is sealed like every other: `Change` writes a new record
+and leaves the old one in the Library, and `Unblend` removes the decision while the
+record stays — the Library owns records, the import owns the decision. A deleted
+blend record reopens the section; a deleted but authored number is never silently
+replaced.
+
+A second record with the same name is allowed but warned about in the panel, since
+the name is the blend's identity on the batch and in the report.
+
+The batch shows the blend's name and attenuation, and under **Imported from** it
+shows the imported recipe's name, the outcome sentence and the comparison captured
+at commit — the two-strain fact is visible from the editor without re-running a
+boundary.
 
 The collection form — more than one yeast row, with pitch-share parts and a derived
 blended attenuation — is deferred: a weighted mean is not co-pitch physics, and a
@@ -102,7 +110,7 @@ guess as a derived value. The revisit trigger is written down in `TODO.md`.
 
 `parts` is the authored column; `pct` is normalised once per collection by the
 existing Hamilton rule. A mapped row's catalog fields come from the registry, never
-from the page.
+from the imported recipe.
 
 ## 4. The whirlpool split
 
@@ -153,18 +161,18 @@ cannot disagree.
 The Map stage names every undecided line under its count and marks each of those
 rows, so the notice and the lines it refers to cannot drift apart.
 
-The delta table compares what the page stated with what this rig solves, per target
+The delta table compares what the imported recipe stated with what this rig solves, per target
 and per line: solved grist mass, solved hop mass per pool, and the ratio between
 them. Where a mass is authored rather than solved (dry hops), the table says so.
 
-The projection pins `batch.scale_pin` to `og` and `batch.v_ferm` to the page's
+The projection pins `batch.scale_pin` to `og` and `batch.v_ferm` to the imported recipe's
 volume, so the *grist* is what moves to meet the source: pinned to ABV instead, the
 solver would scale the bill toward a strength the mapped yeast cannot reach and the
 table would compare two different beers. FG and ABV are therefore outcomes, not
 targets — they follow the strain's attenuation, which is the consistency test the
 target row reports.
 
-Every cell is printed at its dimension's precision in the page's own unit (SG to
+Every cell is printed at its dimension's precision in the imported recipe's own unit (SG to
 three places, ABV to one, gallons as gallons), so a gravity difference reads as
 `+0.022 SG` rather than a solver's full float. A unit this rig cannot convert leaves
 the solved value in base units and withholds the difference instead of subtracting

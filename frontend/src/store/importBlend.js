@@ -1,41 +1,50 @@
-// A blend the calculator can actually ferment with: one authored yeast record.
+// The imported recipe's yeast outcome, as a decision on the record.
 //
-// The finding names two mapped strains and the model holds one, so brewing both is
-// represented by a single record whose attenuation the user states. The form lives
-// on the yeast row it replaces, so a deleted record is recoverable from the line
-// that points at it; the Library remains the place that owns records.
+// A batch solves one attenuation. The imported recipe may name one strain or
+// several, and the way several become one is either "ferment with this one" or a
+// blend: one authored Library yeast record whose attenuation the user states. The
+// component rows stay mapped — they are the recipe's own fact — and the engine
+// still receives a single selection. Records are sealed, so changing a blend's
+// attenuation writes a new record and leaves the old one in the Library.
 
 import { reportError } from "../observability.js";
 
-export function blendFormActions() {
+const BLEND_PREFIX = "Blend:";
+
+export function blendFormActions({ catalogs = () => [] } = {}) {
   return {
     blendOpen: false,
-    blendFor: null,
     blendName: "",
     blendAttenuationPct: "",
     blendBusy: false,
     blendError: null,
+    blendNotice: "",
 
-    // The form belongs to a line: the one being replaced when a record was deleted,
-    // or the first mapped yeast when the finding asks for a blend of both.
-    openBlend(lineId = null) {
+    // The panel: one name and one number. Pre-filled with a name that reads as a
+    // blend, because that name is the yeast on the batch and in the report.
+    openBlend() {
+      const outcome = this.yeastOutcome;
+      const replacing = outcome?.mode === "blend" ? outcome : null;
       this.blendOpen = true;
-      this.blendFor = lineId ?? this.firstYeastLine();
-      this.blendName = "";
-      this.blendAttenuationPct = "";
+      this.blendName = replacing?.name ?? this.suggestedBlendName();
+      this.blendAttenuationPct =
+        replacing && this.blendRecordAttenuationPct !== null
+          ? String(this.blendRecordAttenuationPct)
+          : "";
       this.blendError = null;
+      this.blendNotice = replacing
+        ? "Saving creates a new Library record; the old blend stays in the Library."
+        : "";
     },
 
-    // From the check screen: the form lives on the map row, so go there.
-    beginBlend(lineId = null) {
-      this.goTo("map");
-      this.openBlend(lineId);
+    changeBlend() {
+      this.openBlend();
     },
 
     closeBlend() {
       this.blendOpen = false;
-      this.blendFor = null;
       this.blendError = null;
+      this.blendNotice = "";
     },
 
     setBlendName(value) {
@@ -46,19 +55,32 @@ export function blendFormActions() {
       this.blendAttenuationPct = value;
     },
 
-    firstYeastLine() {
-      const mapped = this.ledger.find(
-        (row) => row.section === "yeasts" && row.decision === "mapped"
-      );
-      const any = mapped ?? this.ledger.find((row) => row.section === "yeasts");
-      return any?.line_id ?? null;
+    suggestedBlendName() {
+      const names = this.mappedYeasts.map((row) => row.name).filter(Boolean);
+      return names.length ? `${BLEND_PREFIX} ${names.join(" + ")}` : `${BLEND_PREFIX} `;
+    },
+
+    // A Library record already carries this name: saving makes a second one.
+    get blendNameTaken() {
+      const name = String(this.blendName ?? "").trim();
+      if (!name) return false;
+      const outcome = this.yeastOutcome;
+      if (outcome?.mode === "blend" && outcome.name === name) return false;
+      return catalogs("yeast").some((item) => item.name === name);
+    },
+
+    // Removing the decision, not the record: the Library owns records, and this one
+    // stays there (delete it there if it is not wanted).
+    unblend() {
+      if (this.yeastOutcome?.mode !== "blend") return;
+      this.setYeastOutcome(null);
+      this.blendOpen = false;
+      this.blendError = null;
     },
   };
 }
 
-// The form speaks percent because brewers do; the record stores the fraction the
-// artifact works in. One validation step, so the save path has no branches of its own.
-function blendInput({ createYeast, name, attenuation, line }) {
+function blendInput({ createYeast, name, attenuation, rows }) {
   if (!createYeast) return { error: "The Library is not available in this build." };
   const trimmed = String(name ?? "").trim();
   if (!trimmed) return { error: "Give the blend a name." };
@@ -66,20 +88,22 @@ function blendInput({ createYeast, name, attenuation, line }) {
   if (!Number.isFinite(pct) || pct <= 0 || pct > 100) {
     return { error: "Enter the attenuation the blend finishes at, as a percentage." };
   }
-  if (!line) return { error: "No mapped yeast line to carry the blend." };
-  return { name: trimmed, pct, line };
+  if (rows.length < 2) {
+    return { error: "A blend needs at least two strains on the imported recipe." };
+  }
+  return { name: trimmed, pct, rows };
 }
 
 export function blendSaveActions({ createYeast = null } = {}) {
   return {
     async saveBlend() {
       if (this.blendBusy) return null;
-      const line = this.ledger.find((row) => row.line_id === this.blendFor) ?? null;
+      const rows = this.mappedYeasts;
       const input = blendInput({
         createYeast,
         name: this.blendName,
         attenuation: this.blendAttenuationPct,
-        line,
+        rows,
       });
       if (input.error) {
         this.blendError = input.error;
@@ -93,14 +117,21 @@ export function blendSaveActions({ createYeast = null } = {}) {
           attenuation_basis: "apparent",
           attenuation_provenance: {
             kind: "authored",
-            note: "authored in the import review for a blend",
+            note: `blend of ${input.rows.map((row) => row.name).join(" + ")}`,
           },
         });
-        this.chooseRef(input.line.line_id, { id: record.id, name: input.name });
-        this.keepOnlyYeast(input.line.line_id);
+        this.setYeastOutcome({
+          mode: "blend",
+          line_ids: input.rows.map((row) => row.line_id),
+          ref: record.id,
+          name: input.name,
+        });
         this.blendOpen = false;
-        this.blendFor = null;
         this.blendError = null;
+        this.blendNotice = "";
+        // The record exists on the server; the decision that points at it must not
+        // wait for a footer press, or closing the record would orphan it.
+        await this.save();
         return record;
       } catch (err) {
         this.blendError = err?.message ?? "The blend could not be saved.";

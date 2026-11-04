@@ -1,5 +1,5 @@
 <!-- Map: every transcribed line, its proposed destination, and the decision it
-     still needs. The proposals come from the page; the user confirms them. -->
+     still needs. The proposals come from the imported recipe; the user confirms them. -->
 <section class="import-map">
   <header class="import-doc-header">
     <div>
@@ -43,7 +43,7 @@
     <template x-if="$store.importReview.printedPoolFraction == null">
       <div>
         <p class="form-hint">
-          The page does not print per-addition IBUs, so the split is yours to author. A zero would
+          Imported recipe does not print per-addition IBUs, so the split is yours to author. A zero would
           put every IBU in the boil while the whirlpool charges solve nothing.
         </p>
         <div class="import-queue-actions">
@@ -89,9 +89,15 @@
           x-text="'(' + section.rows.filter((r) => r.decision === 'mapped' || r.decision === 'ignored').length + ' of ' + section.rows.length + ')'"></span>
       </h3>
       <p class="form-hint" x-show="section.empty" x-text="section.note"></p>
-      <p class="form-hint" x-show="section.id === 'yeasts' && $store.importReview.mappedYeasts.length !== 1">
-        This batch ferments with one strain. Pick it here; any other strain on the page stays on the
-        record, marked as not in this batch.
+      <p class="form-hint"
+        x-show="section.id === 'yeasts' && $store.importReview.mappedYeasts.length > 1 && !$store.importReview.yeastBlend">
+        Imported recipe names more than one strain. A batch ferments with one attenuation: one
+        strain, or a blend of both. Choosing one leaves the others on the import record — the batch
+        and the report will show only the strain.
+      </p>
+      <p class="form-hint"
+        x-show="section.id === 'yeasts' && $store.importReview.mappedYeasts.length === 0">
+        Pick the strain this batch ferments with.
       </p>
 
       <template x-if="section.id === 'hops'">
@@ -155,17 +161,22 @@
                         @click="$store.importReview.ignoreLine(row.line_id)"
                       >Leave out</button>
                       <span class="text-xs text-muted" x-show="!row.ref">
-                        a pool is not a hop: pick the one the page named
+                        a pool is not a hop: pick the one the imported recipe named
                       </span>
                     </div>
                     <div class="map-suggestions">
                       <button
                         type="button"
                         class="map-chip is-chosen"
-                        x-show="row.ref"
-                        x-text="row.ref"
-                        @click="$store.importReview.chooseRef(row.line_id, { id: row.ref })"
+                        x-show="row.ref && !$store.importReview.isDangling(row)"
+                        x-text="$store.importReview.refLabel(row)"
+                        @click="$store.importReview.chooseRef(row.line_id, { id: row.ref, name: $store.importReview.refLabel(row) })"
                       ></button>
+                      <span
+                        class="map-chip is-deleted"
+                        x-show="$store.importReview.isDangling(row)"
+                        x-text="$store.importReview.refLabel(row) + ' (deleted)'"
+                      ></span>
                       <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                         <button
                           type="button"
@@ -177,7 +188,7 @@
                         ></button>
                       </template>
                       <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.chipsFor(row).length === 0">
-                        no candidate from the page's name — search below
+                        no candidate from the imported name — search below
                       </span>
                       <details class="map-search">
                         <summary class="text-xs">Search the library</summary>
@@ -231,7 +242,81 @@
         </div>
       </template>
 
-      <ul class="import-line-list" x-show="section.id !== 'hops'">
+      <template x-if="section.id === 'yeasts'">
+        <div>
+          <div class="map-blend" x-show="$store.importReview.yeastBlend">
+            <span class="map-badge">ferments this batch</span>
+            <span class="font-medium" x-text="$store.importReview.yeastOutcome?.name"></span>
+            <span class="text-xs text-muted"
+              x-text="($store.importReview.blendRecordAttenuationPct ?? '—') + ' % attenuation'"></span>
+            <span class="text-xs text-muted">blend of the strains below</span>
+            <button type="button" class="btn-outline text-xs" @click="$store.importReview.changeBlend()">
+              Change
+            </button>
+            <button type="button" class="btn-outline text-xs" @click="$store.importReview.unblend()">
+              Unblend
+            </button>
+          </div>
+
+          <div class="import-queue-actions"
+            x-show="!$store.importReview.yeastBlend && $store.importReview.mappedYeasts.length > 1">
+            <button
+              type="button"
+              class="btn-outline text-xs"
+              x-show="!$store.importReview.blendOpen"
+              @click="$store.importReview.openBlend()"
+            >Blend both</button>
+            <span class="text-xs text-muted" x-show="!$store.importReview.blendOpen">
+              one authored record: a name and the attenuation the blend finishes at
+            </span>
+          </div>
+
+          <div class="import-queue-actions" x-show="$store.importReview.blendOpen">
+            <span class="text-xs text-muted" x-text="$store.importReview.blendNotice"></span>
+            <input
+              class="form-input text-xs"
+              type="text"
+              placeholder="Blend name"
+              :value="$store.importReview.blendName"
+              @input="$store.importReview.setBlendName($event.target.value)"
+            />
+            <input
+              class="form-input text-xs"
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              placeholder="Attenuation %"
+              :value="$store.importReview.blendAttenuationPct"
+              @change="$store.importReview.setBlendAttenuation($event.target.value)"
+            />
+            <button
+              type="button"
+              class="btn-primary text-xs"
+              :disabled="$store.importReview.blendBusy"
+              @click="$store.importReview.saveBlend()"
+              x-text="$store.importReview.blendBusy ? 'Saving…' : 'Save blend'"
+            ></button>
+            <button type="button" class="btn-outline text-xs" @click="$store.importReview.closeBlend()">
+              Cancel
+            </button>
+            <span class="text-xs text-muted">
+              the imported recipe's strains stay on this record; the blend is the yeast the batch carries
+            </span>
+            <span class="text-xs text-muted">
+              name it so you recognise it later — this is the yeast name on the batch and in the report
+            </span>
+            <span class="text-xs text-warning" x-show="$store.importReview.blendNameTaken">
+              a record with this name already exists; saving creates another
+            </span>
+            <span class="text-xs text-muted" x-text="$store.importReview.blendError"></span>
+          </div>
+        </div>
+      </template>
+
+      <ul class="import-line-list"
+        :class="{ 'is-blend-group': section.id === 'yeasts' && $store.importReview.yeastBlend }"
+        x-show="section.id !== 'hops'">
         <template x-for="row in section.rows" :key="row.line_id">
           <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.isUndecided(row) }">
             <div class="map-row-main">
@@ -247,6 +332,10 @@
             </div>
             <p class="text-xs text-muted" x-show="$store.importReview.rowIssue(row)"
               x-text="$store.importReview.rowIssue(row)"></p>
+            <p class="text-xs text-muted"
+              x-show="row.section === 'yeasts' && $store.importReview.yeastBlend && row.decision === 'mapped'">
+              component of this blend
+            </p>
 
             <div class="map-row-actions">
               <select
@@ -268,7 +357,8 @@
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.decision !== 'ignored'"
+                x-show="row.decision !== 'ignored'
+                  && !(row.section === 'yeasts' && $store.importReview.yeastBlend)"
                 @click="$store.importReview.ignoreLine(row.line_id)"
               >Leave out</button>
               <span class="text-xs text-muted" x-show="row.decision === 'ignored'" x-text="row.reason"></span>
@@ -281,15 +371,12 @@
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.section === 'yeasts' && row.decision === 'mapped' && $store.importReview.fermentingYeastId !== row.line_id"
+                x-show="row.section === 'yeasts' && row.decision === 'mapped'
+                  && !$store.importReview.yeastBlend
+                  && $store.importReview.fermentingYeastId !== row.line_id"
                 @click="$store.importReview.keepOnlyYeast(row.line_id)"
-              >Ferment with this</button>
-              <button
-                type="button"
-                class="btn-outline text-xs"
-                x-show="row.section === 'yeasts' && !$store.importReview.blendOpen"
-                @click="$store.importReview.openBlend(row.line_id)"
-              >Create a blend</button>
+                x-text="'Ferment with ' + row.name + ' only'"
+              ></button>
             </div>
 
             <div class="map-suggestions" x-show="row.decision !== 'ignored'">
@@ -316,7 +403,7 @@
                 ></button>
               </template>
               <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.chipsFor(row).length === 0">
-                no candidate from the page's name — search below
+                no candidate from the imported name — search below
               </span>
               <span class="text-xs text-muted" x-show="row.section === 'mashes'">
                 a mash step picks one of the eight rests above, ranked by its temperature
@@ -344,43 +431,6 @@
                 >Nothing matches. Build the record in the Library, then come back.</span>
               </details>
             </div>
-            <template x-if="$store.importReview.blendOpen && $store.importReview.blendFor === row.line_id">
-              <div class="import-queue-actions">
-                <input
-                  class="form-input text-xs"
-                  type="text"
-                  placeholder="Blend name"
-                  :value="$store.importReview.blendName"
-                  @input="$store.importReview.setBlendName($event.target.value)"
-                />
-                <input
-                  class="form-input text-xs"
-                  type="number"
-                  min="1"
-                  max="100"
-                  step="1"
-                  placeholder="Attenuation %"
-                  :value="$store.importReview.blendAttenuationPct"
-                  @change="$store.importReview.setBlendAttenuation($event.target.value)"
-                />
-                <button
-                  type="button"
-                  class="btn-primary text-xs"
-                  :disabled="$store.importReview.blendBusy"
-                  @click="$store.importReview.saveBlend()"
-                  x-text="$store.importReview.blendBusy ? 'Saving…' : 'Add and use it'"
-                ></button>
-                <button
-                  type="button"
-                  class="btn-outline text-xs"
-                  @click="$store.importReview.closeBlend()"
-                >Cancel</button>
-                <span class="text-xs text-muted" x-text="$store.importReview.blendError"></span>
-                <span class="text-xs text-muted">
-                  one yeast record for the pair: its name is what the batch and the report call it
-                </span>
-              </div>
-            </template>
           </li>
         </template>
       </ul>

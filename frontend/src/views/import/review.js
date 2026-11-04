@@ -5,6 +5,8 @@
 // to present it. The map and check stages are declared but not yet reachable —
 // they arrive with the ledger and the gate.
 
+import { countLabel } from "../../utils/format.js";
+
 export const STAGES = [
   { id: "transcribe", title: "Transcribe" },
   { id: "map", title: "Map", enabled: false },
@@ -112,7 +114,7 @@ function scanCheck() {
 function cleanCheck(checked) {
   return {
     tone: "ok",
-    label: `${checked} numbers found on the page`,
+    label: `${checked} numbers found in the imported recipe`,
     detail: "Every transcribed number appears in the document's own text.",
   };
 }
@@ -120,7 +122,7 @@ function cleanCheck(checked) {
 function flaggedCheck(checked, unmatched) {
   return {
     tone: "warn",
-    label: `${unmatched.length} of ${checked} not found on the page`,
+    label: `${unmatched.length} of ${checked} not found in the imported recipe`,
     detail: unmatched
       .map((item) => `${item.field} = ${item.value}${item.page ? ` (p${item.page})` : ""}`)
       .join(" · "),
@@ -128,7 +130,7 @@ function flaggedCheck(checked, unmatched) {
 }
 
 export function sourceLabel(source) {
-  return source === "user" ? "you" : "page";
+  return source === "user" ? "you" : "imported recipe";
 }
 
 export function fermentableRows(payload) {
@@ -282,4 +284,25 @@ export function applyFilledTargets(payload, filled) {
     changed = true;
   }
   return changed ? { ...payload, targets: next } : payload;
+}
+
+// The provenance panel: what an imported recipe named, and how its yeasts became
+// the batch's one attenuation. Reads the record only; no engine, no re-solve.
+export function originTitle(record) {
+  const payload = record?.extract?.payload;
+  return payload?.title || record?.extract?.source?.filename || "imported recipe";
+}
+
+export function originYeastOutcome(record) {
+  const strains = (record?.ledger ?? []).filter((row) => row.section === "yeasts");
+  if (!strains.length) return "";
+  const named = `Imported recipe named ${countLabel(strains.length, "strain")}`;
+  return record?.yeast_outcome?.mode === "blend"
+    ? `${named}; blended into ${record.yeast_outcome.name}.`
+    : `${named}; this batch ferments with ${carriedStrain(strains)}.`;
+}
+
+function carriedStrain(strains) {
+  const single = strains.find((row) => row.decision !== "ignored") ?? strains[0];
+  return single.ref_name || single.name || "one strain";
 }

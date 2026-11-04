@@ -150,6 +150,17 @@ def test_identity_and_ledger_are_editable_before_commit(service):
     assert updated.ledger == ledger
 
 
+def test_the_yeast_outcome_and_delta_are_editable_before_commit(service):
+    record = service.create("u1", upload())
+    outcome = {"mode": "blend", "line_ids": ["yeasts[0]", "yeasts[1]"], "ref": "b1", "name": "Blend: a + b"}
+    delta = {"targets": [{"label": "Original gravity", "source_display": "1.052 SG"}]}
+    updated = service.update(
+        "u1", record.id, UpdateImportRequest(yeast_outcome=outcome, delta=delta)
+    )
+    assert updated.yeast_outcome == outcome
+    assert updated.delta == delta
+
+
 def test_a_committed_record_is_immutable_and_undeletable(service):
     record = service.create("u1", upload())
     repo = service._repo

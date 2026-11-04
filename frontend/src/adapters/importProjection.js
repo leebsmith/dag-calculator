@@ -35,6 +35,7 @@ export function projectImport({
   catalog = () => null,
   fraction = null,
   targetProfile = null,
+  yeastOutcome = null,
 }) {
   // A line whose registry record was deleted is not projectable: keeping it would
   // put an id on a root that no collection or selection can satisfy, and the solver
@@ -71,12 +72,12 @@ export function projectImport({
   };
   return {
     identity,
-    roots: { ...roots, ...yeastRoot(rows), ...waterRoot(targetProfile) },
+    roots: { ...roots, ...yeastRoot(rows, yeastOutcome), ...waterRoot(targetProfile) },
     collections: Object.fromEntries(
       Object.entries(collections).map(([nodeId, list]) => [nodeId, completeRows(nodeId, list)])
     ),
     selections: {
-      ...yeastSelection(rows, catalog),
+      ...yeastSelection(rows, catalog, yeastOutcome),
       ...waterSelection(targetProfile),
     },
   };
@@ -201,10 +202,18 @@ function mashRestRow(row) {
 }
 
 // A selection resolves through its ref root, so both must be set: the id the
-// batch remembers and the snapshot it was chosen from.
-function yeastSelection(rows, catalog) {
+// batch remembers and the snapshot it was chosen from. A blend is one authored
+// record: the recipe's two strains stay on the ledger, and the engine still gets a
+// single attenuation.
+function yeastWanted(rows, outcome) {
+  if (outcome?.mode === "blend" && outcome.ref) return outcome.ref;
   const row = rows.find((candidate) => candidate.destination === "batch.yeast");
-  const item = row ? catalog("yeast", row.ref) : null;
+  return row?.ref ?? null;
+}
+
+function yeastSelection(rows, catalog, outcome) {
+  const ref = yeastWanted(rows, outcome);
+  const item = ref ? catalog("yeast", ref) : null;
   return item ? { "batch.yeast": { ...item } } : {};
 }
 
@@ -219,9 +228,9 @@ function waterRoot(profile) {
   return profile?.id ? { "water.target_profile_id": profile.id } : {};
 }
 
-function yeastRoot(rows) {
-  const row = rows.find((candidate) => candidate.destination === "batch.yeast");
-  return row?.ref ? { "batch.yeast_id": row.ref } : {};
+function yeastRoot(rows, outcome) {
+  const ref = yeastWanted(rows, outcome);
+  return ref ? { "batch.yeast_id": ref } : {};
 }
 
 function celsius(temperature) {

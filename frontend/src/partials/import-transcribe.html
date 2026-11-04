@@ -1,4 +1,4 @@
-<!-- Transcribe: what the page said, beside the phrase and page it came from.
+<!-- Transcribe: what the imported recipe said, beside the phrase and page it came from.
      Targets are the one editable thing in this stage; everything else is shown as
      transcribed, with the unmodelled lines and the warnings kept visible. -->
 <section class="import-transcribe">
@@ -45,13 +45,13 @@
         class="btn-outline text-xs"
         :disabled="$store.importReview.gapfillBusy"
         @click="$store.importReview.askForMissing()"
-        x-text="$store.importReview.gapfillBusy ? 'Reading again…' : 'Ask the page again'"
+        x-text="$store.importReview.gapfillBusy ? 'Reading again…' : 'Ask the imported recipe again'"
       ></button>
       <span class="text-xs text-muted">
         One more pass over the document, for these values only — it may fill them, never overwrite.
       </span>
       <span class="text-xs text-muted" x-show="$store.importReview.gapfillResult != null"
-        x-text="$store.importReview.gapfillResult + ' value(s) recovered from the page'"></span>
+        x-text="$store.importReview.gapfillResult + ' value(s) recovered from the imported recipe'"></span>
     </div>
   </div>
 
@@ -65,7 +65,7 @@
         <tr>
           <th>Target</th>
           <th>Value</th>
-          <th>The page says</th>
+          <th>Imported recipe says</th>
           <th>Page</th>
           <th>Source</th>
         </tr>
@@ -172,7 +172,7 @@
       (<span x-text="$store.importReview.unmodeled.length"></span>)
     </summary>
     <p class="form-hint">
-      Captured from the page but outside the model: salts, kettle additives, packaging,
+      Captured from the imported recipe but outside the model: salts, kettle additives, packaging,
       process notes. They never reach a batch.
     </p>
     <ul class="import-line-list">

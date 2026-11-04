@@ -8,6 +8,7 @@ import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { rowReadouts } from "./importRows.js";
+import { yeastReadouts } from "./importYeastRows.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
 import { blendFormActions, blendSaveActions } from "./importBlend.js";
@@ -95,10 +96,10 @@ export function createImportReviewStore({
     },
     reviewActions({ client, onClose }),
     saveAction({ client }),
-    ledgerLookupActions({ catalogs }),
+    ledgerLookupActions({ catalogs, catalog: lookup }),
     ledgerDecisionActions(),
     yeastActions({ catalog: lookup }),
-    blendFormActions(),
+    blendFormActions({ catalogs }),
     blendSaveActions({ createYeast }),
     check,
     poolActions(),
@@ -108,7 +109,8 @@ export function createImportReviewStore({
     water,
     reviewReadouts(),
     ledgerReadouts(),
-    rowReadouts({ catalog: lookup, hasCatalog: Boolean(catalog) }),
+    rowReadouts({ hasCatalog: Boolean(catalog) }),
+    yeastReadouts(),
     poolReadouts()
   );
   return store;
@@ -256,6 +258,8 @@ function saveAction({ client }) {
           ledger: this.record.ledger,
           pool_ibu_fraction: this.record.pool_ibu_fraction ?? undefined,
           pool_ibu_source: this.record.pool_ibu_source ?? undefined,
+          yeast_outcome: this.record.yeast_outcome ?? undefined,
+          delta: this.record.delta ?? undefined,
           status:
             this.record.status === "extracted" && this.record.ledger.length ? "mapping" : undefined,
         });

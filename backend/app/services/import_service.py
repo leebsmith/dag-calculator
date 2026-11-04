@@ -147,6 +147,19 @@ class ImportService:
         if not self._repo.delete(uid, import_id):
             raise ImportNotFound(import_id)
 
+    # The fields a patch may replace outright; each is validated by its own request
+    # model, so the merge only has to know that the request named it.
+    _NAMED_FIELDS = (
+        "ledger",
+        "suggestions",
+        "pool_ibu_fraction",
+        "pool_ibu_source",
+        "target_profile_id",
+        "yeast_outcome",
+        "delta",
+        "batch_id",
+    )
+
     @staticmethod
     def _changes(current: ImportRecord, request: UpdateImportRequest) -> dict[str, Any]:
         """Only the fields the request actually names, validated as a set."""
@@ -156,23 +169,20 @@ class ImportService:
             changes["extract"] = request.extract.model_dump(mode="json")
         if request.identity is not None:
             changes["identity"] = validate_identity(request.identity)
-        if request.ledger is not None:
-            changes["ledger"] = request.ledger
-        if request.suggestions is not None:
-            changes["suggestions"] = request.suggestions
-        if request.pool_ibu_fraction is not None:
-            changes["pool_ibu_fraction"] = request.pool_ibu_fraction
-        if request.pool_ibu_source is not None:
-            changes["pool_ibu_source"] = request.pool_ibu_source
-        if request.target_profile_id is not None:
-            changes["target_profile_id"] = request.target_profile_id
-        if request.batch_id is not None:
-            changes["batch_id"] = request.batch_id
+        changes.update(ImportService._named_fields(request))
         if request.status is not None:
             changes.update(
                 ImportService._status_change(current, request, changes.get("batch_id"))
             )
         return changes
+
+    @staticmethod
+    def _named_fields(request: UpdateImportRequest) -> dict[str, Any]:
+        return {
+            field: getattr(request, field)
+            for field in ImportService._NAMED_FIELDS
+            if getattr(request, field) is not None
+        }
 
     @staticmethod
     def _status_change(

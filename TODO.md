@@ -24,22 +24,16 @@ tracks only what is outstanding.
 
 ## Later
 
-* **Import: the editor's "Imported from…" panel** — the record keeps the source
-  values and the delta table, but a committed batch has no way to show them yet:
-  the link is one-way (`batch_id` on the record), so the panel needs either a
-  lookup or a deliberate decision to carry import provenance on the batch. See
-  `docs/import.md`.
-
-* **Multi-strain yeast (deferred)** — a batch carries one yeast selection, and a
-  blend is represented today as one Library yeast record whose attenuation the user
-  states (`docs/import.md` §3). The collection form — several yeast rows with
-  pitch-share parts and a blended attenuation — stays deferred because a weighted
-  mean is not co-pitch physics and a sequential pitch is time-dependent; deriving it
-  would dress an authored guess as a derived value. **Revisit when** either (a)
-  blends are common enough that hand-building a Library record per blend is real
-  friction, or (b) a user model exists for pitch share and post-packaging
-  attenuation (the brew-session observations could feed it). The decision record is
-  `docs/import.md` §3.
+* **Multi-strain yeast (deferred, narrowed)** — the import now records the
+  two-strain fact (`yeast_outcome`) and resolves it to one authored Library record,
+  and the batch shows it under Imported from (`docs/import.md` §3). What stays
+  deferred is the *collection* form — several yeast rows with pitch-share parts and
+  a derived blended attenuation — because a weighted mean is not co-pitch physics and
+  a sequential pitch is time-dependent; deriving it would dress an authored guess as
+  a derived value. **Revisit when** either (a) blends are common enough that one
+  Library record per blend is real friction, or (b) a user model exists for pitch
+  share and post-packaging attenuation (the brew-session observations could feed
+  it).
 
 * **Surface and fit the grain thermal factor** — `mash_thermal_factor` (0.41)
   drives `mash.strike_water_temp_base_c` but has no readout. Surface it near

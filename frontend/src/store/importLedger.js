@@ -18,10 +18,15 @@ import { catalogKindFor } from "./importMatch.js";
 
 // Looking a line up: the destinations its section offers and the chips the page
 // supports. Separate from deciding it, so neither factory becomes a second program.
-export function ledgerLookupActions({ catalogs }) {
+export function ledgerLookupActions({ catalogs, catalog = null }) {
   return {
     destinationsFor(section) {
       return destinationsFor(section);
+    },
+
+    // One record by id, for readouts that name a pick (the blend's attenuation).
+    catalogRecord(kind, id) {
+      return catalog ? catalog(kind, id) : null;
     },
 
     destinationLabel(row) {
@@ -120,7 +125,7 @@ export function ledgerDecisionActions() {
         const saved = await this.save();
         if (!saved) return null;
       }
-      if (!this.unresolved.length) this.stage = "check";
+      if (!this.unresolved.length && !this.sectionIssues.length) this.stage = "check";
       return true;
     },
 

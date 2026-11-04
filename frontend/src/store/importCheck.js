@@ -30,10 +30,14 @@ export function checkActions({ catalog, project, gate, delta }) {
     get checkSummary() {
       if (!this.gate) return null;
       return {
-        ok: this.gate.blocking.length === 0 && this.unresolved.length === 0,
+        ok:
+          this.gate.blocking.length === 0 &&
+          this.unresolved.length === 0 &&
+          this.sectionIssues.length === 0,
         blocking: this.gate.blocking.length,
         advisory: this.gate.advisory.length,
         unresolved: this.unresolved.length,
+        sections: this.sectionIssues.length,
       };
     },
 
@@ -55,6 +59,7 @@ export function checkActions({ catalog, project, gate, delta }) {
           catalog,
           fraction: this.poolFraction ?? this.printedPoolFraction,
           targetProfile: this.targetProfile,
+          yeastOutcome: this.yeastOutcome,
         });
         const result = mergeFindings(await gate(state), [...this.hopFindings]);
         this.gate = result;
@@ -95,6 +100,9 @@ export function commitActions({ commit = null }) {
       }
       this.commitBusy = true;
       this.checkError = null;
+      // The record keeps the comparison it was committed with, so the batch's
+      // provenance panel can show it without re-running a boundary.
+      this.record = { ...this.record, delta: this.delta };
       try {
         const active = await commit({
           record: this.record,

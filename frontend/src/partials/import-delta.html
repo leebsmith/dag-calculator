@@ -1,0 +1,39 @@
+<!-- What changed: the imported recipe beside what this rig solved. One partial, two
+     homes — the check screen and the batch's provenance panel — each wrapping it in
+     an `x-data` that names the captured delta. -->
+<div class="import-delta">
+  <h4 class="import-section-title">Targets</h4>
+  <table class="data-table">
+    <thead>
+      <tr><th>Target</th><th>Imported recipe</th><th>This rig</th><th>Difference</th></tr>
+    </thead>
+    <tbody>
+      <template x-for="(row, index) in delta?.targets ?? []" :key="'t' + index">
+        <tr>
+          <td x-text="row.label"></td>
+          <td x-text="row.source_display"></td>
+          <td x-text="row.solved_display"></td>
+          <td x-text="row.delta_display"></td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <h4 class="import-section-title">Lines</h4>
+  <table class="data-table">
+    <thead>
+      <tr><th>Line</th><th>Imported recipe</th><th>This rig</th><th>Ratio</th><th>Note</th></tr>
+    </thead>
+    <tbody>
+      <template x-for="(row, index) in delta?.lines ?? []" :key="'l' + index">
+        <tr>
+          <td x-text="row.label"></td>
+          <td x-text="row.source_kg == null ? '—' : (row.source_kg * 1000).toFixed(0) + ' g'"></td>
+          <td x-text="row.solved_kg == null ? '—' : (row.solved_kg * 1000).toFixed(0) + ' g'"></td>
+          <td x-text="row.ratio == null ? '—' : row.ratio.toFixed(2) + '×'"></td>
+          <td class="text-xs text-muted" x-text="row.note"></td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>

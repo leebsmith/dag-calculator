@@ -22,7 +22,8 @@
           : $store.importReview.checkSummary?.blocking + ' blocking finding(s)'"></span>
       <span class="text-xs text-muted"
         x-text="$store.importReview.checkSummary
-          ? $store.importReview.checkSummary.unresolved + ' unresolved line(s), '
+          ? $store.importReview.checkSummary.unresolved + ' line(s) to decide, '
+            + $store.importReview.checkSummary.sections + ' section(s) to decide, '
             + $store.importReview.checkSummary.advisory + ' advisory'
           : ''"></span>
     </div>
@@ -31,7 +32,7 @@
   <div class="import-water" x-show="$store.importReview.unresolved.length === 0">
     <h3 class="import-section-title">Water targets</h3>
     <p class="form-hint">
-      The page's water treatment is not modelled, and a batch carries no target profile until one is
+      The imported recipe's water treatment is not modelled, and a batch carries no target profile until one is
       chosen. Pick a profile here and the gate will solve water with it; leave it blank and the batch
       opens with water locked, to set in the editor.
     </p>
@@ -101,7 +102,7 @@
     </span>
   </div>
 
-  <template x-if="$store.importReview.unresolved.length">
+  <template x-if="$store.importReview.unresolved.length || $store.importReview.sectionIssues.length">
     <div>
       <h3 class="import-section-title">Lines that need your call</h3>
       <p class="form-hint">
@@ -115,6 +116,13 @@
             <span class="font-medium" x-text="row.name"></span>
             <span class="text-xs text-muted" x-text="row.section + ' · p' + (row.page ?? '?')"></span>
             <span class="text-xs text-muted" x-text="$store.importReview.rowIssue(row)"></span>
+          </li>
+        </template>
+        <template x-for="(issue, index) in $store.importReview.sectionIssues" :key="'s' + index">
+          <li class="import-line map-row is-undecided">
+            <span class="map-badge">needs a decision</span>
+            <span class="font-medium" x-text="issue.section"></span>
+            <span class="text-xs text-muted" x-text="issue.message"></span>
           </li>
         </template>
       </ul>
@@ -143,46 +151,15 @@
         </template>
       </ul>
 
+      <div x-data="{ delta: $store.importReview.delta }">
       <h3 class="import-section-title">What changed</h3>
       <p class="form-hint">
         Efficiency, malt specs, hop utilization and yeast attenuation are this calculator's, not the
-        page's — so masses move. This is where and why.
+        imported recipe's — so masses move. This is where and why.
       </p>
 
-      <h4 class="import-section-title">Targets</h4>
-      <table class="data-table">
-        <thead>
-          <tr><th>Target</th><th>The page</th><th>This rig</th><th>Difference</th></tr>
-        </thead>
-        <tbody>
-          <template x-for="(row, index) in $store.importReview.delta?.targets ?? []" :key="'t' + index">
-            <tr>
-              <td x-text="row.label"></td>
-              <td x-text="row.source_display"></td>
-              <td x-text="row.solved_display"></td>
-              <td x-text="row.delta_display"></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-
-      <h4 class="import-section-title">Lines</h4>
-      <table class="data-table">
-        <thead>
-          <tr><th>Line</th><th>The page</th><th>This rig</th><th>Ratio</th><th>Note</th></tr>
-        </thead>
-        <tbody>
-          <template x-for="(row, index) in $store.importReview.delta?.lines ?? []" :key="'l' + index">
-            <tr>
-              <td x-text="row.label"></td>
-              <td x-text="row.source_kg == null ? '—' : (row.source_kg * 1000).toFixed(0) + ' g'"></td>
-              <td x-text="row.solved_kg == null ? '—' : (row.solved_kg * 1000).toFixed(0) + ' g'"></td>
-              <td x-text="row.ratio == null ? '—' : row.ratio.toFixed(2) + '×'"></td>
-              <td class="text-xs text-muted" x-text="row.note"></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+      <load src="./src/partials/import-delta.html" />
+      </div>
     </div>
   </template>
 </section>

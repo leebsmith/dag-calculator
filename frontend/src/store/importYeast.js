@@ -10,6 +10,17 @@ import { ignoreRow } from "../views/import/ledger.js";
 
 export function yeastActions({ catalog = () => null } = {}) {
   return {
+    // The recipe's own fact, written with the decision. The engine reads one
+    // selection; this is what the record says about how it got there.
+    setYeastOutcome(outcome) {
+      if (!this.record) return;
+      this.record = { ...this.record, yeast_outcome: outcome };
+      this.dirty = true;
+      this.gate = null;
+      this.delta = null;
+      this.checkError = null;
+    },
+
     keepOnlyYeast(lineId) {
       const kept = this.ledger.find((row) => row.line_id === lineId);
       if (!kept) return;
@@ -23,9 +34,7 @@ export function yeastActions({ catalog = () => null } = {}) {
       for (const row of others) {
         this.replaceRow(ignoreRow(row, `not in this batch — the batch ferments with ${name}`));
       }
-      this.gate = null;
-      this.delta = null;
-      this.checkError = null;
+      this.setYeastOutcome({ mode: "single", line_id: lineId });
     },
   };
 }

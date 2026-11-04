@@ -6,7 +6,7 @@
 // duplicate and a failure — as first-class values instead of error strings.
 
 import { reportError } from "../observability.js";
-import { resumeLabel } from "../views/import/review.js";
+import { originTitle, originYeastOutcome, resumeLabel } from "../views/import/review.js";
 
 const OPEN_STATUSES = new Set(["extracted", "mapping"]);
 
@@ -30,6 +30,24 @@ export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
 
       get count() {
         return this.openRows.length;
+      },
+
+      // The record that created a batch, for the editor's provenance panel.
+      forBatch(batchId) {
+        if (!batchId) return null;
+        return this.rows.find((row) => row.batch_id === batchId) ?? null;
+      },
+
+      // What the panel shows: the imported recipe's name, the yeast outcome in one
+      // sentence, and the comparison captured at commit.
+      originOf(batchId) {
+        const record = this.forBatch(batchId);
+        if (!record) return null;
+        return {
+          title: originTitle(record),
+          outcome: originYeastOutcome(record),
+          delta: record.delta ?? null,
+        };
       },
 
       get failedRows() {

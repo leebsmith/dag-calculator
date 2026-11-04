@@ -91,7 +91,12 @@ const reviewStore = createImportReviewStore({
       identity: record.identity,
       state,
     });
-    await importClient.patch(record.id, { status: "committed", batch_id: active.id });
+    await importClient.patch(record.id, {
+      status: "committed",
+      batch_id: active.id,
+      yeast_outcome: record.yeast_outcome ?? undefined,
+      delta: record.delta ?? undefined,
+    });
     const recipes = Alpine.store("recipes");
     recipes.view = "editor";
     recipes.syncActive();
