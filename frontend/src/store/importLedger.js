@@ -105,6 +105,18 @@ export function ledgerDecisionActions() {
       this.replaceRow(restoreRow(row));
     },
 
+    // Saving the map is its forward action: with every line decided there is nothing
+    // left to do here, so the same press opens the check. An incomplete map still
+    // saves, and stays where the work is.
+    async saveAndAdvance() {
+      if (this.dirty) {
+        const saved = await this.save();
+        if (!saved) return null;
+      }
+      if (!this.unresolved.length) this.stage = "check";
+      return true;
+    },
+
     replaceRow(next) {
       const ledger = this.ledger.map((row) => (row.line_id === next.line_id ? next : row));
       this.record = { ...this.record, ledger };

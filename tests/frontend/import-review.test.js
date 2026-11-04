@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { read } from "../guards/util.js";
+import { applyRef, buildLedger } from "../../frontend/src/views/import/ledger.js";
 import {
   describeVerification,
   documentTitle,
@@ -309,6 +310,53 @@ test("saving sends the ledger and moves the record to mapping", async () => {
   await store.save();
   assert.equal(patches[0].body.ledger.length, store.ledger.length);
   assert.equal(patches[0].body.status, "mapping");
+});
+
+function storeLedgerFullyDecided() {
+  return buildLedger(RECORD.extract.payload).map((row) =>
+    row.decision === "ignored"
+      ? row
+      : applyRef(row, { id: `ref-${row.line_id}` }, row.section === "yeasts" ? "yeast" : undefined)
+  );
+}
+
+test("saving the map is the stage's forward action once every line is decided", async () => {
+  const patches = [];
+  const record = { ...LEDGER_RECORD, status: "extracted" };
+  const store = createImportReviewStore({
+    client: { patch: async (id, body) => (patches.push(body), { ...record, ...body }) },
+  });
+  store.open(record);
+  store.goTo("map");
+
+  await store.saveAndAdvance();
+  assert.equal(store.stage, "map", "an incomplete map saves and stays");
+
+  for (const row of store.unresolved) {
+    store.ignoreLine(row.line_id, "not modelled");
+  }
+  assert.equal(store.unresolved.length, 0);
+  await store.saveAndAdvance();
+  assert.equal(store.stage, "check", "a complete map opens the check in the same press");
+  assert.equal(patches.at(-1).status, "mapping", "the record says where the work stands");
+});
+
+test("nothing is saved when there is nothing to save, and the stage still advances", async () => {
+  const patches = [];
+  const mapped = {
+    ...LEDGER_RECORD,
+    status: "mapping",
+    ledger: storeLedgerFullyDecided(),
+  };
+  const store = createImportReviewStore({
+    client: { patch: async (id, body) => (patches.push(body), { ...mapped, ...body }) },
+  });
+  store.open(mapped);
+  assert.equal(store.stage, "map", "a record under way reopens on the map");
+  assert.equal(store.dirty, false);
+  await store.saveAndAdvance();
+  assert.deepEqual(patches, [], "no write when nothing changed");
+  assert.equal(store.stage, "check");
 });
 
 test("the stage only moves where the flow allows", () => {

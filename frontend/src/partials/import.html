@@ -103,9 +103,21 @@
     <button
       type="button"
       class="btn-primary text-xs"
+      x-show="$store.importReview.stage === 'map'"
+      :disabled="$store.importReview.busy
+        || (!$store.importReview.dirty && $store.importReview.unresolved.length > 0)"
+      @click="$store.importReview.saveAndAdvance()"
+      x-text="$store.importReview.unresolved.length === 0
+        ? 'Save mapping and check →'
+        : 'Save mapping'"
+    ></button>
+    <button
+      type="button"
+      class="btn-primary text-xs"
+      x-show="$store.importReview.stage !== 'map'"
       :disabled="$store.importReview.busy || !$store.importReview.dirty"
       @click="$store.importReview.save()"
-    ><span x-show="$store.importReview.stage === 'map'">Save mapping</span><span x-show="$store.importReview.stage !== 'map'">Save corrections</span></button>
+    >Save corrections</button>
     <button
       type="button"
       class="btn-outline text-xs"

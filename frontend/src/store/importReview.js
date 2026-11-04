@@ -265,7 +265,9 @@ function reviewActions({ client, onClose }) {
           }
         : null;
       this.record = withLedger;
-      this.stage = "transcribe";
+      // A record whose mapping is under way reopens where it was left, not at the
+      // transcription it already passed.
+      this.stage = record?.status === "mapping" ? "map" : "transcribe";
       this.error = null;
       this.checkError = null;
       this.gate = null;

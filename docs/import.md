@@ -113,6 +113,12 @@ catalog kind, choosing from candidates the client supplied. L2 output is frozen 
 the record so reopening the mapping neither re-calls nor reshuffles, and the local
 screen is the fallback when the call fails. Nothing preselects.
 
+Saving the map is its forward action: with every line decided the same press opens
+the check, and an incomplete map saves and stays, with the footer counting what is
+left. Reopening a record whose status is mapping lands on the map rather than at the
+transcription it already passed. Landing on the check does not run it — the gate is
+still an explicit press, because it costs solver calls.
+
 ## 6. The gate
 
 An explicit press, because it costs solver calls. The projected candidate is solved
