@@ -334,6 +334,7 @@ Then confirm:
 
 - `tests/guards/alpine-handlers.test.js` (A8): every handler calls a real app method.
 - `tests/guards/show-dereference.test.js` (A10): no nullable dereference behind `x-show`.
+- `tests/guards/template-scope.test.js`: an `x-for` alias is never read outside the loop that declares it.
 - `tests/guards/installer-contract.test.js`: installer key sets are declared and collide-free.
 - `tests/guards/determinism.test.js` (A9) and `tests/guards/no-reactivity.test.js` (A1) pass.
 - `tests/guards/option-labels.test.js`: every choice selector labels its full taxonomy (the set is derived from the step manifest — add the registry `optionLabels`, never edit the guard's list).

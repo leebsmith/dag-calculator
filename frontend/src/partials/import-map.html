@@ -212,8 +212,7 @@
             <div class="map-suggestions" x-show="row.decision !== 'ignored'">
               <button
                 type="button"
-                class="map-chip"
-                :class="{ 'is-chosen': chip.id === row.ref }"
+                class="map-chip is-chosen"
                 x-show="row.ref"
                 x-text="row.ref"
                 @click="$store.importReview.chooseRef(row.line_id, { id: row.ref })"

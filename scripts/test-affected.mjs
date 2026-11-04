@@ -55,7 +55,7 @@ export const RULES = [
       "alpine-handlers", "control-states", "dialogs", "css-classes", "css-duplication",
       "engine-access", "engine-read-mirrors", "include-integrity", "mash-input-contract",
       "number-input-contract", "select-binding", "show-dereference", "store-surface",
-      "svg-length-bindings", "telemetry-classes",
+      "svg-length-bindings", "telemetry-classes", "template-scope",
     ],
     "the guards read templates and stylesheets by path, not by import"
   ),
