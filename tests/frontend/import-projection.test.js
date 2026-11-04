@@ -57,6 +57,11 @@ test("the roots are the targets the source stated, in base units", () => {
   assert.equal(state.roots["batch.boil_time_min"], 60);
 });
 
+test("the page's OG is the pin, so the grist moves and the strength is the page's", () => {
+  const state = projectImport({ payload: payload(), ledger: mapped(), catalog });
+  assert.equal(state.roots["batch.scale_pin"], "og");
+});
+
 test("the whirlpool split is arithmetic when the page prints per-hop IBUs", () => {
   const state = projectImport({ payload: payload(), ledger: mapped(), catalog });
   assert.equal(state.roots["batch.whirlpool_ibu_fraction"], 0.25, "8 + 7 of 60");

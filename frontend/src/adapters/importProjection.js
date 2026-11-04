@@ -95,6 +95,10 @@ function targetRoots(payload, rows) {
   set(roots, "batch.v_ferm", volumeL(payload?.targets?.volume));
   set(roots, "batch.boil_time_min", payload?.targets?.boil_time_min?.value);
   set(roots, "batch.whirlpool_ibu_fraction", whirlpoolFraction(payload, rows));
+  // The page's OG is the pin, so the grist moves and the strength is the page's.
+  // Pinned to ABV instead, the solver would scale the bill to a strength that the
+  // mapped yeast cannot reach, and the delta table would be comparing two beers.
+  roots["batch.scale_pin"] = "og";
   return roots;
 }
 

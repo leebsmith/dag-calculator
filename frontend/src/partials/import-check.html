@@ -178,9 +178,9 @@
           <template x-for="(row, index) in $store.importReview.delta?.targets ?? []" :key="'t' + index">
             <tr>
               <td x-text="row.label"></td>
-              <td x-text="row.source"></td>
-              <td x-text="row.solved ?? '—'"></td>
-              <td x-text="row.delta == null ? '—' : (row.delta > 0 ? '+' : '') + row.delta.toFixed(3)"></td>
+              <td x-text="row.source_display"></td>
+              <td x-text="row.solved_display"></td>
+              <td x-text="row.delta_display"></td>
             </tr>
           </template>
         </tbody>

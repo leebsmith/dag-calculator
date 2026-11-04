@@ -8,9 +8,28 @@
 // Reading is pure: the engine is passed in already solved by the gate.
 
 import { reportError } from "../observability.js";
+import artifact from "../engine/artifact.json" with { type: "json" };
+import { toBase } from "../engine/units.js";
+import { formatWithDecimals } from "../utils/format.js";
+import { unitDecimals } from "../views/registry/units.js";
 import { massKg } from "../views/import/ledger.js";
+import { unitSymbol } from "../views/import/review.js";
 
 const KG_TO_G = 1000;
+
+// The extraction's unit ids are lowercase; the artifact's are not. Only units that
+// are base or linear convert without the nonlinear functions, which this table does
+// not carry — a page in °P falls back to the base unit and says the units differ.
+const TARGET_UNIT = {
+  sg: ["gravity", "SG"],
+  plato: ["gravity", "Plato"],
+  pct: ["abv", "pct"],
+  l: ["volume", "L"],
+  gal: ["volume", "gal"],
+  qt: ["volume", "qt"],
+  ml: ["volume", "ml"],
+  ibu: ["ibu", "IBU"],
+};
 
 export function buildDelta({ payload, ledger = [], engine }) {
   const grist = solvedGrist(engine);
@@ -116,23 +135,95 @@ function withRatio(entry) {
 function targetDeltas(payload, engine) {
   const targets = payload?.targets ?? {};
   return [
-    targetRow("Original gravity", targets.og, read(engine, "solver.batch.sg_post_boil"), "sg"),
-    targetRow("Final gravity", targets.fg, read(engine, "batch.realized_fg"), "sg"),
-    targetRow("ABV", targets.abv, read(engine, "batch.realized_abv"), "pct"),
-    targetRow("Volume", targets.volume, read(engine, "batch.v_ferm"), "l"),
+    targetRow("Original gravity", targets.og, read(engine, "solver.batch.sg_post_boil")),
+    targetRow("Final gravity", targets.fg, read(engine, "batch.realized_fg")),
+    targetRow("ABV", targets.abv, read(engine, "batch.realized_abv")),
+    targetRow("Volume", targets.volume, read(engine, "batch.v_ferm")),
   ].filter(Boolean);
 }
 
-function targetRow(label, stated, solved, dimension) {
+// The page's number is shown as it was written; the comparison itself is in base
+// units, because that is the only place two numbers can be subtracted. Display
+// conversion belongs to the producer's unit mode (A8), so this table never converts
+// a solved value outward — it converts the page's value inward, exactly as the
+// mapping does when it writes a mass.
+function targetRow(label, stated, solved) {
   if (!stated) return null;
+  const view = displayFor(stated);
+  const baseValue = statedInBase(stated.value, view);
   return {
     label,
-    source: stated.value,
+    dimension: view?.dimension ?? null,
     unit: stated.unit,
+    source: stated.value,
     solved,
-    dimension,
     delta: solved == null ? null : solved - stated.value,
+    source_display: statedText(stated, view),
+    solved_display: solvedText(solved, view),
+    delta_display: deltaText(baseValue, solved, view),
   };
+}
+
+function displayFor(stated) {
+  const mapped = TARGET_UNIT[stated.unit];
+  if (!mapped) return null;
+  const [dimension, unit] = mapped;
+  const baseUnit = artifact.dimensions[dimension]?.base_unit ?? unit;
+  return {
+    dimension,
+    unit,
+    baseUnit,
+    baseDecimals: unitDecimals(dimension, baseUnit),
+    baseSymbol: baseSymbol(dimension),
+    symbol: unitSymbol(stated.unit),
+    decimals: unitDecimals(dimension, unit),
+  };
+}
+
+function statedText(stated, view) {
+  if (!view) return String(stated.value);
+  return withSymbol(formatWithDecimals(stated.value, view.decimals), view.symbol);
+}
+
+function solvedText(solved, view) {
+  if (solved == null) return "—";
+  if (!view) return String(solved);
+  return withSymbol(formatWithDecimals(solved, view.baseDecimals), view.baseSymbol);
+}
+
+function deltaText(baseValue, solved, view) {
+  if (baseValue == null || solved == null || !view) return "—";
+  return signed(formatWithDecimals(solved - baseValue, view.baseDecimals), view.baseSymbol);
+}
+
+function statedInBase(value, view) {
+  if (!view) return null;
+  try {
+    return toBase(artifact, view.dimension, view.unit, value);
+  } catch (err) {
+    if (!(err instanceof Error && err.message.includes("Nonlinear"))) {
+      reportError("importDelta.statedInBase", err);
+    }
+    return null;
+  }
+}
+
+function baseSymbol(dimension) {
+  return dimension === "gravity" ? "SG" : dimension === "volume" ? "L" : dimension === "abv" ? "%" : "";
+}
+
+function withSymbol(text, symbol) {
+  if (text === "") return "—";
+  if (!symbol) return text;
+  return symbol === "%" ? `${text}%` : `${text} ${symbol}`;
+}
+
+function signed(text, symbol) {
+  if (text === "") return "—";
+  const numeric = Number(text);
+  if (!Number.isFinite(numeric)) return "—";
+  const body = numeric === 0 ? text.replace(/^-/, "") : text;
+  return withSymbol(numeric > 0 ? `+${body}` : body, symbol);
 }
 
 export function grams(kg) {

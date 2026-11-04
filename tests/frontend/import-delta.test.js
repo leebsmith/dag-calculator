@@ -124,6 +124,62 @@ test("targets compare what the page stated with what the rig solves", () => {
   assert.ok(Math.abs(abv.delta - 0.4) < 1e-9, "8.4 % solved against 8 % stated");
 });
 
+test("targets are printed at the dimension's precision, in the page's unit", () => {
+  const delta = buildDelta({
+    payload: PAYLOAD,
+    ledger: LEDGER,
+    engine: engine({
+      "solver.batch.sg_post_boil": 1.0812345678,
+      "batch.realized_fg": 1.0194321987,
+      "batch.realized_abv": 8.41234,
+    }),
+  });
+  const byLabel = (label) => delta.targets.find((target) => target.label === label);
+  assert.equal(byLabel("Original gravity").source_display, "1.078 SG");
+  assert.equal(byLabel("Original gravity").solved_display, "1.081 SG", "three digits, not sixteen");
+  assert.equal(byLabel("Original gravity").delta_display, "+0.003 SG");
+  assert.equal(byLabel("Final gravity").solved_display, "1.019 SG");
+  assert.equal(byLabel("ABV").source_display, "8.0%");
+  assert.equal(byLabel("ABV").solved_display, "8.4%");
+  assert.equal(byLabel("ABV").delta_display, "+0.4%");
+});
+
+test("a gallons target is compared in base units, and the page keeps its own unit", () => {
+  const delta = buildDelta({ payload: PAYLOAD, ledger: LEDGER, engine: engine() });
+  const volume = delta.targets.find((target) => target.label === "Volume");
+  assert.equal(volume.source_display, "5.0 gal", "the page said gallons, so it reads as gallons");
+  assert.equal(volume.solved_display, "18.9 L", "the rig's number is base, and says so");
+  assert.equal(volume.delta_display, "0.0 L", "the difference is subtracted in base units");
+});
+
+test("the import that reported sixteen decimal places is now readable", () => {
+  const reported = {
+    targets: {
+      og: { value: 1.052, unit: "sg" },
+      fg: { value: 1.006, unit: "sg" },
+      abv: { value: 6, unit: "pct" },
+      volume: { value: 23, unit: "l" },
+    },
+  };
+  const delta = buildDelta({
+    payload: reported,
+    ledger: [],
+    engine: engine({
+      "solver.batch.sg_post_boil": 1.0735221112346507,
+      "batch.realized_fg": 1.0370869104701694,
+      "batch.realized_abv": 4.90017813674165,
+      "batch.v_ferm": 23,
+    }),
+  });
+  const rows = Object.fromEntries(delta.targets.map((row) => [row.label, row]));
+  assert.deepEqual(
+    [rows["Original gravity"].solved_display, rows["Original gravity"].delta_display],
+    ["1.074 SG", "+0.022 SG"]
+  );
+  assert.deepEqual([rows["ABV"].solved_display, rows["ABV"].delta_display], ["4.9%", "-1.1%"]);
+  assert.equal(rows["Volume"].solved_display, "23.0 L");
+});
+
 test("a missing solved value is absence, never a zero delta", () => {
   const delta = buildDelta({
     payload: PAYLOAD,

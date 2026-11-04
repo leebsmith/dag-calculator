@@ -118,6 +118,19 @@ The delta table compares what the page stated with what this rig solves, per tar
 and per line: solved grist mass, solved hop mass per pool, and the ratio between
 them. Where a mass is authored rather than solved (dry hops), the table says so.
 
+The projection pins `batch.scale_pin` to `og` and `batch.v_ferm` to the page's
+volume, so the *grist* is what moves to meet the source: pinned to ABV instead, the
+solver would scale the bill toward a strength the mapped yeast cannot reach and the
+table would compare two different beers. FG and ABV are therefore outcomes, not
+targets — they follow the strain's attenuation, which is the consistency test the
+target row reports.
+
+Every cell is printed at its dimension's precision in the page's own unit (SG to
+three places, ABV to one, gallons as gallons), so a gravity difference reads as
+`+0.022 SG` rather than a solver's full float. A unit this rig cannot convert leaves
+the solved value in base units and withholds the difference instead of subtracting
+across units.
+
 ## 7. Commit and the record
 
 Commit projects the ledger into roots, collections and selections through the
