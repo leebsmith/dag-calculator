@@ -873,8 +873,8 @@ test("the check screen offers the decision the yeast finding reports", async () 
   const page = read("frontend/src/partials/import-check.html");
   assert.match(page, /finding\.yeasts/);
   assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
-  assert.match(page, /Create a single yeast in the Library/, "the screen says how a blend is represented");
-  assert.match(read("frontend/src/partials/import-map.html"), /Create a single yeast in the Library/);
+  assert.match(page, /openLibrary\('yeast'\)/, "the blend route is a button, not advice");
+  assert.match(read("frontend/src/partials/import-map.html"), /openLibrary\('yeast'\)/);
 });
 
 test("a blend record can be carried on either strain, and the other records the co-pitch", () => {

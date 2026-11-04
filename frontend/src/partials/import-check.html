@@ -153,10 +153,14 @@
                   class="btn-link text-xs"
                   @click="$store.importReview.goTo('map')"
                 >Open the map</button>
+                <button
+                  type="button"
+                  class="btn-outline text-xs"
+                  @click="openLibrary('yeast')"
+                >Add a blend to the Library</button>
                 <span class="text-xs text-muted">
-                  Brewing both as one thing? Create a single yeast in the Library named for the
-                  blend, with the attenuation you expect, and use that here. Run the check again
-                  afterwards.
+                  one yeast named for the blend, with the attenuation you expect it to finish at.
+                  Run the check again afterwards.
                 </span>
               </div>
             </template>

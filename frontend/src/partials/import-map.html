@@ -121,9 +121,13 @@
                 x-text="'Use ' + strain.name"
               ></button>
             </template>
+            <button
+              type="button"
+              class="btn-outline text-xs"
+              @click="openLibrary('yeast')"
+            >Add a blend to the Library</button>
             <span class="text-xs text-muted">
-              Brewing both as one thing? Create a single yeast in the Library named for the blend,
-              with the attenuation you expect, and use that here.
+              one yeast named for the blend, with the attenuation you expect it to finish at
             </span>
           </div>
         </template>

@@ -17,7 +17,7 @@ export function ledgerFindings({ ledger = [] } = {}) {
       title: "Two yeasts, one fermentation",
       blocking: true,
       node: "batch.yeast",
-      message: `This page names ${yeasts.length} strains, but the calculator ferments with one. Pick the strain that sets how dry the beer gets — the other line stays on the record, marked not used.`,
+      message: `Only one strain can set the final gravity and ABV, so the other line will not change any number. Pick the strain that should set them — or add a blend record and use that instead.`,
       yeasts: yeasts.map((row) => ({ line_id: row.line_id, name: row.name })),
     });
   }
