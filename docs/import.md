@@ -51,6 +51,11 @@ Proposals are arithmetic, not taste:
 - a mash step takes the rest whose temperature band contains it — narrowest band
   first — proposed and marked as a proposal until touched.
 
+A pool is a destination, not a decision: every hop row still needs its variety
+picked, dry hops included, so each pane carries the same chips and library search
+as a row in the flat list. A hop switched off the model stays visible in its own
+"not modelled" group with the reason, and can be undone.
+
 `parts` is the authored column; `pct` is normalised once per collection by the
 existing Hamilton rule. A mapped row's catalog fields come from the registry, never
 from the page.

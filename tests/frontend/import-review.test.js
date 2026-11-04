@@ -575,8 +575,57 @@ test("returning a hop to candidates withdraws the routing and the choice", () =>
   assert.equal(row.decision, "unresolved");
 });
 
-test("an unknown stage starts in the candidates pane", () => {
+test("a dry hop is decided by its hop, not by its pool", () => {
   const payload = {
+    ...HOP_PAYLOAD,
+    hops: [
+      { name: "Motueka", quantity: { value: 2, unit: "oz" }, stage_guess: "dry_hop", verbatim: "2 oz Motueka", page: 2 },
+      { name: "Nelson Sauvin", quantity: { value: 1, unit: "oz" }, stage_guess: "dry_hop", verbatim: "1 oz Nelson Sauvin", page: 2 },
+    ],
+  };
+  const store = createImportReviewStore({ client: { patch: async () => HOP_RECORD } });
+  store.open({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload } });
+  const dry = store.hopPanes.dry;
+  assert.equal(dry.length, 2, "a dry-hop stage is routed, not decided");
+  assert.ok(dry.every((row) => store.isUndecided(row)), "no hop picked yet");
+
+  store.chooseRef(dry[0].line_id, { id: "hop-motueka" });
+  const updated = store.ledger.find((row) => row.line_id === dry[0].line_id);
+  assert.equal(updated.destination, "batch.dry_hops", "picking a hop must not move it out of the dry pool");
+  assert.equal(store.isUndecided(updated), false);
+});
+
+test("an ignored hop stays on the map, and undo clears its reason", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    hops: [{ name: "Motueka", quantity: { value: 2, unit: "oz" }, stage_guess: "dry_hop", verbatim: "2 oz", page: 2 }],
+  };
+  const store = createImportReviewStore({ client: { patch: async () => HOP_RECORD } });
+  store.open({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload } });
+  const line = store.hopPanes.dry[0];
+
+  store.ignoreLine(line.line_id);
+  assert.equal(store.hopPanes.ignored.length, 1, "an ignored hop is not silently dropped from the map");
+  assert.equal(store.hopPanes.ignored[0].reason, "not modelled");
+  assert.equal(store.hopPanes.dry.length, 0);
+  assert.equal(store.isUndecided(store.hopPanes.ignored[0]), false);
+
+  store.returnHop(line.line_id);
+  assert.equal(store.hopPanes.candidates.length, 1);
+  assert.equal(store.hopPanes.candidates[0].reason, "", "undoing the ignore does not leave the reason behind");
+});
+
+test("every hop pane offers the decision its rows need", () => {
+  const page = read("frontend/src/partials/import-map.html");
+  assert.match(page, /\{ id: 'dry', title: 'Dry hops'/, "dry hops are a pane, so they get the pane's controls");
+  assert.match(page, /\{ id: 'boil'[^]*?\{ id: 'dry'/, "the dry pane is rendered by the same loop");
+  assert.match(page, /hopPanes\.ignored/, "an ignored hop keeps a visible home");
+  const pane = page.slice(page.indexOf("hop-panes"), page.indexOf("section.id !== 'hops'"));
+  assert.match(pane, /chipsFor\(row\)/);
+  assert.match(pane, /queryFor\(row\.line_id\)/, "the library search is reachable from a hop row");
+});
+
+test("an unknown stage starts in the candidates pane", () => {  const payload = {
     ...HOP_PAYLOAD,
     hops: [{ name: "Mystery", quantity: { value: 1, unit: "oz" }, stage_guess: "unknown", verbatim: "Mystery", page: 1 }],
   };

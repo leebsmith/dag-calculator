@@ -117,23 +117,25 @@
       <template x-if="section.id === 'hops'">
         <div class="hop-panes">
           <template x-for="pane in [
-            { id: 'boil', title: 'Boil', pool: 'batch.boil_hops' },
-            { id: 'candidates', title: 'Candidates', pool: null },
-            { id: 'whirlpool', title: 'Whirlpool', pool: 'batch.whirlpool_hops' },
+            { id: 'boil', title: 'Boil', wide: false },
+            { id: 'candidates', title: 'Candidates', wide: false },
+            { id: 'whirlpool', title: 'Whirlpool', wide: false },
+            { id: 'dry', title: 'Dry hops', wide: true },
           ]" :key="pane.id">
-            <div class="hop-pane">
+            <div class="hop-pane" :class="{ 'hop-pane-wide': pane.wide }">
               <h4 class="hop-pane-title">
                 <span x-text="pane.title"></span>
                 <span class="text-xs text-muted" x-text="'(' + $store.importReview.hopPanes[pane.id].length + ')'"></span>
               </h4>
               <ul class="import-line-list">
-                <template x-for="row in $store.importReview.hopPanes[pane.id]" :key="row.line_id">
+                <template x-for="row in $store.importReview.hopPanes[pane.id]" :key="pane.id + row.line_id">
                   <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.isUndecided(row) }">
                     <div class="map-row-main">
                       <span class="map-badge" x-show="$store.importReview.isUndecided(row)">needs a decision</span>
                       <span class="text-xs text-muted" x-text="row.tag"></span>
                       <span class="font-medium" x-text="row.name"></span>
                       <span class="text-xs text-muted" x-text="row.stage_verbatim || row.stage_guess"></span>
+                      <span class="text-xs text-muted" x-show="row.duration_min" x-text="row.duration_min + ' min contact'"></span>
                     </div>
                     <div class="map-row-actions">
                       <button
@@ -151,32 +153,74 @@
                       <button
                         type="button"
                         class="btn-outline text-xs"
-                        x-show="pane.id !== 'candidates'"
-                        @click="$store.importReview.moveHop(row.line_id, pane.id === 'boil' ? 'batch.whirlpool_hops' : 'batch.boil_hops')"
-                        x-text="pane.id === 'boil' ? '→ Whirlpool' : '← Boil'"
-                      ></button>
+                        x-show="pane.id === 'boil'"
+                        @click="$store.importReview.moveHop(row.line_id, 'batch.whirlpool_hops')"
+                      >→ Whirlpool</button>
+                      <button
+                        type="button"
+                        class="btn-outline text-xs"
+                        x-show="pane.id === 'whirlpool'"
+                        @click="$store.importReview.moveHop(row.line_id, 'batch.boil_hops')"
+                      >← Boil</button>
                       <button
                         type="button"
                         class="btn-outline text-xs"
                         x-show="pane.id !== 'candidates'"
                         @click="$store.importReview.returnHop(row.line_id)"
-                      >↩</button>
+                        x-text="pane.id === 'dry' ? '↩ Candidates' : '↩'"
+                      ></button>
                       <button
                         type="button"
                         class="btn-outline text-xs"
                         @click="$store.importReview.ignoreLine(row.line_id)"
                       >Ignore</button>
+                      <span class="text-xs text-muted" x-show="!row.ref">
+                        a pool is not a hop: pick the one the page named
+                      </span>
                     </div>
                     <div class="map-suggestions">
+                      <button
+                        type="button"
+                        class="map-chip is-chosen"
+                        x-show="row.ref"
+                        x-text="row.ref"
+                        @click="$store.importReview.chooseRef(row.line_id, { id: row.ref })"
+                      ></button>
                       <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                         <button
                           type="button"
                           class="map-chip"
                           :class="{ 'is-chosen': chip.id === row.ref }"
+                          :title="chip.manufacturer || chip.category || ''"
                           @click="$store.importReview.chooseRef(row.line_id, chip)"
                           x-text="chip.name"
                         ></button>
                       </template>
+                      <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.chipsFor(row).length === 0">
+                        no candidate from the page's name — search below
+                      </span>
+                      <details class="map-search">
+                        <summary class="text-xs">Search the library</summary>
+                        <input
+                          class="form-input text-xs"
+                          type="search"
+                          placeholder="Type a name…"
+                          :value="$store.importReview.queryFor(row.line_id)"
+                          @input="$store.importReview.setQuery(row.line_id, $event.target.value)"
+                        />
+                        <template x-for="hit in $store.importReview.search(row)" :key="hit.id">
+                          <button
+                            type="button"
+                            class="map-chip"
+                            @click="$store.importReview.chooseRef(row.line_id, hit)"
+                            x-text="hit.name"
+                          ></button>
+                        </template>
+                        <span
+                          class="text-xs text-muted"
+                          x-show="$store.importReview.queryFor(row.line_id).trim() && $store.importReview.search(row).length === 0"
+                        >Nothing matches. Build the record in the Library, then come back.</span>
+                      </details>
                     </div>
                   </li>
                 </template>
@@ -184,17 +228,22 @@
             </div>
           </template>
 
-          <div class="hop-pane hop-pane-wide">
+          <div class="hop-pane hop-pane-wide" x-show="$store.importReview.hopPanes.ignored.length">
             <h4 class="hop-pane-title">
-              Dry hops
-              <span class="text-xs text-muted" x-text="'(' + $store.importReview.hopPanes.dry.length + ')'"></span>
+              Not modelled
+              <span class="text-xs text-muted" x-text="'(' + $store.importReview.hopPanes.ignored.length + ')'"></span>
             </h4>
             <ul class="import-line-list">
-              <template x-for="row in $store.importReview.hopPanes.dry" :key="'dry' + row.line_id">
+              <template x-for="row in $store.importReview.hopPanes.ignored" :key="'ignored' + row.line_id">
                 <li class="import-line">
                   <span class="text-xs text-muted" x-text="row.tag"></span>
                   <span class="font-medium" x-text="row.name"></span>
-                  <span class="text-xs text-muted" x-show="row.duration_min" x-text="row.duration_min + ' min contact'"></span>
+                  <span class="text-xs text-muted" x-text="row.reason"></span>
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    @click="$store.importReview.returnHop(row.line_id)"
+                  >↩ Undo</button>
                 </li>
               </template>
             </ul>

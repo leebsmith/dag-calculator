@@ -72,11 +72,11 @@ export function ledgerActions({ catalogs }) {
     },
 
     // Back to the candidates pane: the routing decision is withdrawn, and with it
-    // the hop that was chosen for that pool.
+    // the hop that was chosen for that pool and any ignore reason it carried.
     returnHop(lineId) {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row) return;
-      this.replaceRow({ ...row, destination: null, ref: null, decision: "unresolved" });
+      this.replaceRow({ ...row, destination: null, ref: null, decision: "unresolved", reason: "" });
     },
 
     ignoreLine(lineId, reason = "not modelled") {
