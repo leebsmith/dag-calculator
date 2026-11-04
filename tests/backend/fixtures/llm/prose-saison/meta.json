@@ -1,0 +1,8 @@
+{
+  "prompt_id": "extract",
+  "prompt_version": 9,
+  "model": "gemini-3.8-flash",
+  "captured_at": "2026-11-04T13:20:05Z",
+  "note": "A hand-written prose recipe (no tables; every quantity in a sentence), captured under v9. Its job is the hop routing: four pool assignments and two deliberate wrinkles. (a) One Saaz charge is described as 'for aroma, at a point we move from batch to batch' - the text explicitly refuses a stage, so the model records stage_guess unknown and the row lands in the routing Candidates pane, which no other capture exercises. (b) 'A couple of generous handfuls' of Saaz gets a whirlpool pool but no quantity, so it needs a mass before it can map. Everything else reads cleanly: 4 prose grist rows, 3 mash steps (63/72/76 C), 23 L, 1.052/1.006, 6.0%, 28 IBU, 75 min boil, and 28 of 28 numbers verify against the page text.",
+  "origin": "/tmp/recipe-assets/stone-fruit-saison.pdf (authored for this fixture)"
+}

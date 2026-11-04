@@ -305,3 +305,16 @@ def test_the_document_type_labels_witness_every_value_that_changes_a_branch() ->
     assert prose.document_type == "recipe", "a recipe is a recipe even when it is unquantified"
     assert prose.quantity_form == "prose"
     assert fixture_payload("pristine-black-ipa").quantity_form == "mass"
+
+
+def test_the_saison_fixture_exercises_the_routing_candidates_pane() -> None:
+    """The only capture with a hop the page refuses to place in a pool."""
+    model = fixture_payload("prose-saison")
+    stages = [hop.stage_guess for hop in model.hops]
+    assert stages.count("boil") == 3
+    assert stages.count("whirlpool") == 3
+    assert stages.count("dry_hop") == 2
+    assert stages.count("unknown") == 1, "the 'aroma, whenever' charge must stay unplaced"
+    unplaced = next(hop for hop in model.hops if hop.stage_guess == "unknown")
+    assert unplaced.quantity is not None, "it still carries the quantity the page gave"
+    assert any(hop.quantity is None for hop in model.hops), "the handfuls row has no mass"
