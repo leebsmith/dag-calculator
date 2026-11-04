@@ -30,6 +30,17 @@ tracks only what is outstanding.
   lookup or a deliberate decision to carry import provenance on the batch. See
   `docs/import.md`.
 
+* **Multi-strain yeast (deferred)** — a batch carries one yeast selection, and a
+  blend is represented today as one Library yeast record whose attenuation the user
+  states (`docs/import.md` §3). The collection form — several yeast rows with
+  pitch-share parts and a blended attenuation — stays deferred because a weighted
+  mean is not co-pitch physics and a sequential pitch is time-dependent; deriving it
+  would dress an authored guess as a derived value. **Revisit when** either (a)
+  blends are common enough that hand-building a Library record per blend is real
+  friction, or (b) a user model exists for pitch share and post-packaging
+  attenuation (the brew-session observations could feed it). The decision record is
+  `docs/import.md` §3.
+
 * **Surface and fit the grain thermal factor** — `mash_thermal_factor` (0.41)
   drives `mash.strike_water_temp_base_c` but has no readout. Surface it near
   Strike Water Temp, then move it toward an equipment-scoped value estimated

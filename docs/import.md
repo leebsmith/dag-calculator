@@ -63,6 +63,18 @@ others are recorded as ignored with `co-pitch with <kept strain>`, so the blend
 stays legible in the ledger and the immutable import record instead of being
 silently dropped.
 
+A blend that must *drive the numbers* is a Library yeast record, not a second
+selection: one record named for the blend, carrying the attenuation the user
+states it finishes at. That is the same inversion as efficiency — the tool derives
+what the model can derive and refuses to invent a number it cannot. The record's
+name is the blend's identity in the batch and in the report; no field is added for
+it, and the artifact gains no text dimension it does not have.
+
+The collection form — more than one yeast row, with pitch-share parts and a derived
+blended attenuation — is deferred: a weighted mean is not co-pitch physics, and a
+sequential pitch makes attenuation time-dependent, so it would present an authored
+guess as a derived value. The revisit trigger is written down in `TODO.md`.
+
 `parts` is the authored column; `pct` is normalised once per collection by the
 existing Hamilton rule. A mapped row's catalog fields come from the registry, never
 from the page.

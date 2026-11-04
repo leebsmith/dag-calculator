@@ -858,6 +858,8 @@ test("the check screen offers the decision the yeast finding reports", async () 
   const page = read("frontend/src/partials/import-check.html");
   assert.match(page, /finding\.yeasts/);
   assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
+  assert.match(page, /Library yeast record/, "the screen says how a blend is represented");
+  assert.match(read("frontend/src/partials/import-map.html"), /Library yeast record/);
 });
 
 test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {
