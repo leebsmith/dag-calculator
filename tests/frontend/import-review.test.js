@@ -1093,7 +1093,11 @@ function twoYeasts() {
 
 test("the blend panel and the group carry the words the decision needs", () => {
   const map = read("frontend/src/partials/import-map.html");
-  assert.match(map, />Blend both</);
+  assert.equal(
+    (map.match(/>Blend both</g) ?? []).length,
+    2,
+    "the blend option sits where the choice is made, not only above the rows"
+  );
   assert.match(map, /Blend name/);
   assert.match(map, /Attenuation %/);
   assert.match(map, /'Save blend'/);
@@ -1122,7 +1126,11 @@ test("the map and the check speak one vocabulary: pick, leave out, add back", ()
   assert.doesNotMatch(map, />Ignore</);
   assert.doesNotMatch(map, />Put back</);
   assert.match(map, /Ferment with ' \+ row\.name \+ ' only/, "the single-strain choice says what it excludes");
-  assert.match(map, />Blend both</);
+  assert.equal(
+    (map.match(/>Blend both</g) ?? []).length,
+    2,
+    "the blend option sits where the choice is made, not only above the rows"
+  );
   assert.match(map, /refLabel\(row\)/, "a picked record is named, never shown as an id");
   assert.match(map, /rowIssue\(row\)/, "the row carries what it needs");
   assert.match(check, /rowIssue\(row\)/);

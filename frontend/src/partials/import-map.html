@@ -381,6 +381,15 @@
                 @click="$store.importReview.keepOnlyYeast(row.line_id)"
                 x-text="'Ferment with ' + row.name + ' only'"
               ></button>
+              <button
+                type="button"
+                class="btn-outline text-xs"
+                x-show="row.section === 'yeasts' && row.decision === 'mapped'
+                  && !$store.importReview.yeastBlend
+                  && $store.importReview.blendOpen === false
+                  && $store.importReview.mappedYeasts.length > 1"
+                @click="$store.importReview.openBlend()"
+              >Blend both</button>
             </div>
 
             <div class="map-suggestions" x-show="row.decision !== 'ignored'">
