@@ -8,16 +8,20 @@
 
 import { ignoreRow } from "../views/import/ledger.js";
 
-export function yeastActions() {
+export function yeastActions({ catalog = () => null } = {}) {
   return {
     keepOnlyYeast(lineId) {
       const kept = this.ledger.find((row) => row.line_id === lineId);
       if (!kept) return;
+      // The batch carries the record, not the page's words: a blend record's name
+      // is what the ledger should point the dropped strain at.
+      const carried = kept.ref ? catalog("yeast", kept.ref) : null;
+      const name = carried?.name ?? kept.name;
       const others = this.ledger.filter(
         (row) => row.section === "yeasts" && row.decision === "mapped" && row.line_id !== lineId
       );
       for (const row of others) {
-        this.replaceRow(ignoreRow(row, `co-pitch with ${kept.name}`));
+        this.replaceRow(ignoreRow(row, `co-pitch with ${name}`));
       }
       this.gate = null;
       this.delta = null;

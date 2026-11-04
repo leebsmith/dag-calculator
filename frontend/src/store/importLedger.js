@@ -6,18 +6,26 @@
 
 import {
   applyRef,
+  destinationLabel,
   destinationsFor,
   ignoreRow,
   restCandidates,
+  restoreRow,
   screenCandidates,
   setDestination,
 } from "../views/import/ledger.js";
 import { catalogKindFor } from "./importMatch.js";
 
-export function ledgerActions({ catalogs }) {
+// Looking a line up: the destinations its section offers and the chips the page
+// supports. Separate from deciding it, so neither factory becomes a second program.
+export function ledgerLookupActions({ catalogs }) {
   return {
     destinationsFor(section) {
       return destinationsFor(section);
+    },
+
+    destinationLabel(row) {
+      return destinationLabel(row);
     },
 
     goTo(stage) {
@@ -52,7 +60,11 @@ export function ledgerActions({ catalogs }) {
       const kind = catalogKindFor(row);
       return kind ? screenCandidates(query, catalogs(kind), kind, 8) : [];
     },
+  };
+}
 
+export function ledgerDecisionActions() {
+  return {
     chooseRef(lineId, item) {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row || !item) return;
@@ -83,6 +95,14 @@ export function ledgerActions({ catalogs }) {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row) return;
       this.replaceRow(ignoreRow(row, reason));
+    },
+
+    // Ignoring is reversible: the line goes back to the destination the page's own
+    // evidence supports, and its ignore reason goes with it.
+    restoreLine(lineId) {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row) return;
+      this.replaceRow(restoreRow(row));
     },
 
     replaceRow(next) {

@@ -13,6 +13,8 @@ import {
   restCandidates,
   screenCandidates,
   setDestination,
+  destinationLabel,
+  restoreRow,
   shares,
   unresolvedRows,
 } from "../../frontend/src/views/import/ledger.js";
@@ -105,6 +107,26 @@ test("an ignored row needs a reason, and gets one by default", () => {
   assert.equal(ignored.reason, "not modelled");
   assert.equal(isResolved(ignored), true);
   assert.equal(isResolved({ ...ignored, reason: "  " }), false, "a blank reason is not a reason");
+});
+
+test("an ignored line can be put back, with the destination the page implies", () => {
+  const ledger = buildLedger(PAYLOAD);
+  const yeast = restoreRow(ignoreRow(ledger.find((row) => row.section === "yeasts")));
+  assert.equal(yeast.destination, "batch.yeast", "a yeast line has one destination, so it returns to it");
+  assert.equal(yeast.decision, "unresolved", "the ref is still the user's to choose");
+  assert.equal(yeast.reason, "");
+
+  const hop = restoreRow(ignoreRow(ledger.find((row) => row.line_id === "hops[1]")));
+  assert.equal(hop.destination, "batch.whirlpool_hops", "the stage it was printed with still routes it");
+
+  const sugar = restoreRow(ignoreRow(ledger.find((row) => row.section === "fermentables" && row.destination === "batch.sugars")));
+  assert.equal(sugar.destination, "batch.sugars", "a sugar returns to the sugar collection");
+});
+
+test("the destination reads as a label when the section offers one choice", () => {
+  const ledger = buildLedger(PAYLOAD);
+  assert.equal(destinationLabel(ledger.find((row) => row.section === "yeasts")), "Yeast");
+  assert.equal(destinationLabel(ignoreRow(ledger.find((row) => row.section === "yeasts"))), "Not modelled");
 });
 
 test("the counts say what is left", () => {

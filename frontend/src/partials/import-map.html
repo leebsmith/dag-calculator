@@ -291,6 +291,7 @@
             <div class="map-row-actions">
               <select
                 class="form-select text-xs"
+                x-show="$store.importReview.destinationsFor(row.section).length > 1"
                 :value="row.destination ?? ''"
                 @change="$store.importReview.changeDestination(row.line_id, $event.target.value)"
               >
@@ -298,6 +299,11 @@
                   <option :value="option.id" :selected="option.id === row.destination" x-text="option.label"></option>
                 </template>
               </select>
+              <span
+                class="text-xs"
+                x-show="$store.importReview.destinationsFor(row.section).length <= 1"
+                x-text="$store.importReview.destinationLabel(row)"
+              ></span>
               <span class="text-xs text-muted" x-text="row.transform"></span>
               <button
                 type="button"
@@ -306,6 +312,12 @@
                 @click="$store.importReview.ignoreLine(row.line_id)"
               >Ignore</button>
               <span class="text-xs text-muted" x-show="row.decision === 'ignored'" x-text="row.reason"></span>
+              <button
+                type="button"
+                class="btn-outline text-xs"
+                x-show="row.decision === 'ignored'"
+                @click="$store.importReview.restoreLine(row.line_id)"
+              >↩ Put back</button>
             </div>
 
             <div class="map-suggestions" x-show="row.decision !== 'ignored'">

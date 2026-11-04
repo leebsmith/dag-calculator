@@ -56,6 +56,13 @@ picked, dry hops included, so each pane carries the same chips and library searc
 as a row in the flat list. A hop switched off the model stays visible in its own
 "not modelled" group with the reason, and can be undone.
 
+Ignoring is never a deletion. An ignored line stays visible with its reason and a
+way back: putting it back re-derives the destination the page's own evidence
+supports (a print stage routes a hop, a share proposes a trace malt) and returns the
+row unresolved until a registry entry is chosen. Where a section offers only one
+destination — yeast, mash rests — the row shows that destination as a label instead
+of a one-option menu.
+
 One limit belongs to the model rather than the page: a batch carries a single yeast
 selection (`batch.yeast`). When a source names a blend, the finding names every
 mapped strain and offers the choice — the one you keep is the batch's, and the
@@ -68,7 +75,9 @@ selection: one record named for the blend, carrying the attenuation the user
 states it finishes at. That is the same inversion as efficiency — the tool derives
 what the model can derive and refuses to invent a number it cannot. The record's
 name is the blend's identity in the batch and in the report; no field is added for
-it, and the artifact gains no text dimension it does not have.
+it, and the artifact gains no text dimension it does not have. Either strain's line
+can carry that record: pick it on the kept line, or put the other line back and pick
+it there, and the strain that is dropped records the record's name in its reason.
 
 The collection form — more than one yeast row, with pitch-share parts and a derived
 blended attenuation — is deferred: a weighted mean is not co-pitch physics, and a

@@ -5,7 +5,7 @@
 
 import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
-import { ledgerActions } from "./importLedger.js";
+import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
@@ -90,8 +90,9 @@ export function createImportReviewStore({
     },
     reviewActions({ client, onClose }),
     saveAction({ client }),
-    ledgerActions({ catalogs }),
-    yeastActions(),
+    ledgerLookupActions({ catalogs }),
+    ledgerDecisionActions(),
+    yeastActions({ catalog }),
     check,
     poolActions(),
     match,

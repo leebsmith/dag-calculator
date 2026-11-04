@@ -625,6 +625,17 @@ test("every hop pane offers the decision its rows need", () => {
   assert.match(pane, /queryFor\(row\.line_id\)/, "the library search is reachable from a hop row");
 });
 
+test("the map offers a way back from an ignore, and no choice where there is none", () => {
+  const page = read("frontend/src/partials/import-map.html");
+  assert.match(page, /restoreLine\(row\.line_id\)/, "an ignored line can be put back");
+  assert.match(
+    page,
+    /x-show="\$store\.importReview\.destinationsFor\(row\.section\)\.length > 1"/,
+    "a select is only rendered when the section offers more than one destination"
+  );
+  assert.match(page, /destinationLabel\(row\)/);
+});
+
 test("an unknown stage starts in the candidates pane", () => {  const payload = {
     ...HOP_PAYLOAD,
     hops: [{ name: "Mystery", quantity: { value: 1, unit: "oz" }, stage_guess: "unknown", verbatim: "Mystery", page: 1 }],
@@ -797,7 +808,7 @@ test("the single-yeast finding names the strains so the decision has a button", 
   const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
   const store = createImportReviewStore({
     client: { patch: async () => record },
-    catalog: (kind, id) => ({ id, name: id }),
+    catalog: (kind, id) => ({ id, name: id.replace(/^y-/, "") }),
   });
   store.open(record);
   for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
@@ -860,6 +871,46 @@ test("the check screen offers the decision the yeast finding reports", async () 
   assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
   assert.match(page, /Library yeast record/, "the screen says how a blend is represented");
   assert.match(read("frontend/src/partials/import-map.html"), /Library yeast record/);
+});
+
+test("a blend record can be carried on either strain, and the other records the co-pitch", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    yeasts: [
+      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
+      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
+    ],
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const store = createImportReviewStore({
+    client: { patch: async () => record },
+    catalog: (kind, id) => ({
+      id,
+      name: id === "blend" ? "Saison blend (3724 + Brett)" : id.replace(/^y-/, ""),
+    }),
+  });
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
+    store.chooseRef(row.line_id, { id: `y-${row.name}` });
+  }
+  const saison = store.ledger.find((row) => row.name === "clean saison strain");
+  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
+
+  store.keepOnlyYeast(saison.line_id);
+  assert.equal(store.isUndecided(store.ledger.find((row) => row.line_id === brett.line_id)), false);
+
+  store.restoreLine(brett.line_id);
+  const back = store.ledger.find((row) => row.line_id === brett.line_id);
+  assert.equal(back.decision, "unresolved", "an ignored line is not gone");
+  assert.equal(back.destination, "batch.yeast");
+  assert.equal(back.reason, "");
+
+  store.chooseRef(brett.line_id, { id: "blend", name: "Saison blend (3724 + Brett)" });
+  store.keepOnlyYeast(brett.line_id);
+  const dropped = store.ledger.find((row) => row.line_id === saison.line_id);
+  assert.equal(dropped.decision, "ignored");
+  assert.equal(dropped.reason, "co-pitch with Saison blend (3724 + Brett)");
+  assert.equal(store.ledgerFindings.length, 0, "one strain carries the batch");
 });
 
 test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {
