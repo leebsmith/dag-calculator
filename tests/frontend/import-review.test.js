@@ -771,3 +771,18 @@ test("the water summary is whatever the gate reported, and absent when water was
   store.gate = { engine: null, water: null };
   assert.equal(store.waterSummary, null, "a skipped boundary is absence, not zero");
 });
+
+test("composing the store does not run its getters", () => {
+  let called = false;
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD },
+    profiles: () => {
+      called = true;
+      throw new Error("profiles read at boot");
+    },
+  });
+  assert.equal(called, false, "a getter must not run during composition");
+  assert.ok(store, "the store exists");
+  // It runs when read, which is the point.
+  assert.throws(() => store.targetProfiles, /profiles read at boot/);
+});

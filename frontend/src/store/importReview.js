@@ -43,6 +43,17 @@ import {
 
 const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
 
+// Composition that installs accessors instead of invoking them: `Object.assign`
+// calls a getter once and copies the value, which both freezes the readout and
+// runs its body at boot (before the stores it reads exist).
+function compose(...sources) {
+  const target = {};
+  for (const source of sources) {
+    Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+  }
+  return target;
+}
+
 export function createImportReviewStore({
   client,
   catalogs = () => [],
@@ -60,7 +71,7 @@ export function createImportReviewStore({
   const match = matchActions({ client, catalog });
   const gapfill = gapfillActions({ client, sourceFile, readFile });
   const water = waterActions({ profiles });
-  const store = Object.assign(
+  const store = compose(
     {
       record: null,
       stage: "transcribe",
@@ -70,11 +81,6 @@ export function createImportReviewStore({
       commitBusy: false,
       gapfillBusy: false,
       gapfillResult: null,
-      gapfill,
-    waterBusy: false,
-      gapfill,
-    waterResult: null,
-      projectedState: null,
       matchBusy: false,
       matchError: null,
       checkError: null,
@@ -92,17 +98,11 @@ export function createImportReviewStore({
     match,
     commitActions({ commit }),
     gapfill,
-    water
+    water,
+    reviewReadouts(),
+    ledgerReadouts(),
+    poolReadouts()
   );
-
-  // Getters, not values: Object.assign would collapse them at creation.
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(reviewReadouts()));
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(ledgerReadouts()));
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(poolReadouts()));
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(check));
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(match));
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(gapfill));
-  Object.defineProperties(store, Object.getOwnPropertyDescriptors(water));
   return store;
 }
 
