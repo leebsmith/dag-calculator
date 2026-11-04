@@ -35,7 +35,15 @@ import {
 
 export function createImportReviewStore({ client, catalogs = () => [], onClose } = {}) {
   const store = Object.assign(
-    { record: null, stage: "transcribe", busy: false, error: null, savedAt: null, dirty: false },
+    {
+      record: null,
+      stage: "transcribe",
+      queries: {},
+      busy: false,
+      error: null,
+      savedAt: null,
+      dirty: false,
+    },
     reviewActions({ client, onClose }),
     ledgerActions({ catalogs })
   );
@@ -169,6 +177,23 @@ function ledgerActions({ catalogs }) {
     suggestions(row, limit = 4) {
       const kind = catalogKindFor(row);
       return kind ? screenCandidates(row.name, catalogs(kind), kind, limit) : [];
+    },
+
+    setQuery(lineId, value) {
+      this.queries = { ...this.queries, [lineId]: value };
+    },
+
+    queryFor(lineId) {
+      return this.queries[lineId] ?? "";
+    },
+
+    // The user's own search: no cap on the shortlist, so a name the screen would
+    // never rank (a misspelling, an obscure maltster) is still reachable.
+    search(row) {
+      const query = this.queryFor(row.line_id).trim();
+      if (!query) return [];
+      const kind = catalogKindFor(row);
+      return kind ? screenCandidates(query, catalogs(kind), kind, 8) : [];
     },
 
     chooseRef(lineId, item) {

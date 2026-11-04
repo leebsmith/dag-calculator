@@ -2442,9 +2442,22 @@ samp {
   border-radius: var(--radius-md);
 }
 
+/* Undecided must read at a glance: a left rule, a tinted row and a badge. */
 .map-row.is-undecided {
+  border-left: 3px solid var(--sys-color-warning-accent);
   border-color: var(--sys-color-warning-border);
   background: var(--sys-color-warning-surface);
+}
+
+.map-badge {
+  padding: 0 var(--space-1-5);
+  border-radius: var(--radius-full);
+  background: var(--sys-color-warning-accent);
+  color: var(--sys-color-warning-surface);
+  font-size: var(--text-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .map-row-main {
@@ -2475,6 +2488,14 @@ samp {
   background: var(--sys-surface-default);
   font-size: var(--text-xs);
   cursor: pointer;
+}
+
+.map-search {
+  flex: 1 0 100%;
+}
+
+.map-search .form-input {
+  margin: var(--space-1) 0;
 }
 
 .map-chip.is-chosen,

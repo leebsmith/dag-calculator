@@ -233,3 +233,11 @@ export function editTarget(payload, key, rawValue) {
       };
   return { ...payload, targets: { ...payload.targets, [key]: next } };
 }
+
+
+// What the queue offers when you open a record: the step its status points at.
+export function resumeLabel(status) {
+  if (status === "mapping") return "Step 2 · Map";
+  if (status === "extracted") return "Step 1 · Transcribe";
+  return "Open";
+}

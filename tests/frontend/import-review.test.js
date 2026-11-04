@@ -13,6 +13,7 @@ import {
   missingRequired,
   quantityLabel,
   recordSummary,
+  resumeLabel,
   sourceLabel,
   targetRows,
   unmodeledRows,
@@ -322,4 +323,35 @@ test("candidate chips come from the injected catalogs", () => {
   const line = store.ledger.find((row) => row.section === "fermentables");
   const chips = store.suggestions(line);
   assert.equal(chips[0].id, "m1");
+});
+
+
+test("the queue says which step it resumes", () => {
+  assert.equal(resumeLabel("extracted"), "Step 1 · Transcribe");
+  assert.equal(resumeLabel("mapping"), "Step 2 · Map");
+  assert.equal(resumeLabel("committed"), "Open");
+});
+
+test("a line can be found by the user's own search when the screen misses", () => {
+  const catalogs = {
+    malt: [
+      { id: "carapils", name: "CARAPILS", standard_name: "Dextrin Malt", maltster: "Weyermann" },
+      { id: "pale", name: "Pale Ale Malt", standard_name: "Pale Ale Malt", maltster: "Crisp" },
+    ],
+  };
+  const store = createImportReviewStore({
+    client: { patch: async () => LEDGER_RECORD },
+    catalogs: (kind) => catalogs[kind] ?? [],
+  });
+  store.open(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "fermentables");
+
+  assert.deepEqual(store.search(line), [], "no query, no results");
+
+  store.setQuery(line.line_id, "carapils");
+  assert.equal(store.queryFor(line.line_id), "carapils");
+  assert.equal(store.search(line)[0].id, "carapils");
+
+  store.setQuery(line.line_id, "zzzz");
+  assert.deepEqual(store.search(line), [], "an unmatched search says so rather than guessing");
 });

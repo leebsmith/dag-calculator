@@ -33,6 +33,9 @@
         <template x-for="row in section.rows" :key="row.line_id">
           <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.unresolved.some((r) => r.line_id === row.line_id) }">
             <div class="map-row-main">
+              <span class="map-badge" x-show="$store.importReview.unresolved.some((r) => r.line_id === row.line_id)">
+                needs a decision
+              </span>
               <span class="font-medium" x-text="row.name"></span>
               <span class="text-xs text-muted" x-text="row.text"></span>
               <span class="text-xs text-muted" x-show="row.page" x-text="'p' + row.page"></span>
@@ -78,8 +81,30 @@
                 ></button>
               </template>
               <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.suggestions(row).length === 0">
-                no candidate — search the library to add it
+                no candidate from the page's name — search below
               </span>
+              <details class="map-search">
+                <summary class="text-xs">Search the library</summary>
+                <input
+                  class="form-input text-xs"
+                  type="search"
+                  placeholder="Type a name…"
+                  :value="$store.importReview.queryFor(row.line_id)"
+                  @input="$store.importReview.setQuery(row.line_id, $event.target.value)"
+                />
+                <template x-for="hit in $store.importReview.search(row)" :key="hit.id">
+                  <button
+                    type="button"
+                    class="map-chip"
+                    @click="$store.importReview.chooseRef(row.line_id, hit)"
+                    x-text="hit.name"
+                  ></button>
+                </template>
+                <span
+                  class="text-xs text-muted"
+                  x-show="$store.importReview.queryFor(row.line_id).trim() && $store.importReview.search(row).length === 0"
+                >Nothing matches. Build the record in the Library, then come back.</span>
+              </details>
             </div>
           </li>
         </template>

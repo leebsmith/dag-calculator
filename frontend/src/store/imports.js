@@ -6,6 +6,7 @@
 // duplicate — as a first-class state instead of an error string.
 
 import { reportError } from "../observability.js";
+import { resumeLabel } from "../views/import/review.js";
 
 const OPEN_STATUSES = new Set(["extracted", "mapping"]);
 
@@ -25,6 +26,10 @@ export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
 
       get count() {
         return this.openRows.length;
+      },
+
+      resumeLabel(status) {
+        return resumeLabel(status);
       },
     },
     queueActions(() => ({ client, readFile, onOpen, onError }))

@@ -46,7 +46,12 @@
                 </div>
                 <div class="import-queue-actions">
                   <span class="text-xs text-muted" x-text="row.status"></span>
-                  <button type="button" class="btn-outline text-xs" @click="$store.imports.resume(row.id)">Resume</button>
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    @click="$store.imports.resume(row.id)"
+                    x-text="$store.imports.resumeLabel(row.status)"
+                  ></button>
                   <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete</button>
                 </div>
               </li>
