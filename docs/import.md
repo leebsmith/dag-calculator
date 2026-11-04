@@ -155,7 +155,9 @@ still an explicit press, because it costs solver calls.
 
 An explicit press, because it costs solver calls. The projected candidate is solved
 by the same boundary runner the editor uses, so a gate result and a live result
-cannot disagree.
+cannot disagree. Any later decision — a line's destination, its pick, the IBU split,
+the water profile, the yeast outcome — clears the result, so a solved screen never
+stands on a mapping that has moved underneath it; the press is simply made again.
 
 - **Blocking**: a failed batch or hop boundary, a violated blocking relation, any
   unresolved line (a line pointing at a deleted record is one), and the hop-routing

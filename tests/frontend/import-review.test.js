@@ -555,6 +555,24 @@ function hopStore(record = HOP_RECORD) {
   return store;
 }
 
+test("authoring the split clears the gate that was solved without it", () => {
+  const store = hopStore({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload: {
+    ...HOP_PAYLOAD,
+    hops: HOP_PAYLOAD.hops.map((hop) => { const copy = { ...hop }; delete copy.ibu_contribution; return copy; }),
+  } } });
+  store.gate = { findings: [{ code: "POOL_SPLIT_REQUIRED", severity: "blocking" }], blocking: [{}], advisory: [] };
+  store.delta = { targets: [], lines: [] };
+
+  store.setPoolFraction(0.2);
+  assert.equal(store.gate, null, "a stale solve cannot stand on a changed decision");
+  assert.equal(store.delta, null);
+  assert.deepEqual(store.hopFindings.map((f) => f.code), [], "a fresh read has no split finding");
+
+  store.gate = { findings: [], blocking: [], advisory: [] };
+  store.changeDestination(store.ledger.find((row) => row.section === "hops").line_id, "batch.boil_hops");
+  assert.equal(store.gate, null, "and the same holds for a ledger decision");
+});
+
 test("printed per-addition IBUs give the split exactly", () => {
   const store = hopStore();
   assert.equal(store.printedPoolFraction, 8 / 60);

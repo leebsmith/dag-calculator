@@ -258,8 +258,9 @@ function saveAction({ client }) {
         const updated = await client.patch(this.record.id, {
           extract: this.record.extract,
           ledger: this.record.ledger,
-          pool_ibu_fraction: this.record.pool_ibu_fraction ?? undefined,
-          pool_ibu_source: this.record.pool_ibu_source ?? undefined,
+          // Named even when null: clearing the split has to reach the record.
+          pool_ibu_fraction: this.record.pool_ibu_fraction ?? null,
+          pool_ibu_source: this.record.pool_ibu_source ?? null,
           // Named even when null: clearing the blend decision has to reach the record.
           yeast_outcome: this.record.yeast_outcome ?? null,
           delta: this.record.delta ?? null,

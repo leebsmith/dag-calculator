@@ -52,6 +52,10 @@ export function poolActions() {
       };
       this.dirty = true;
       this.error = null;
+      // A solved screen must not outlive the decision it was solved with.
+      this.gate = null;
+      this.delta = null;
+      this.checkError = null;
     },
 
     useEstimatedPoolFraction() {
