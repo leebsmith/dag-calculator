@@ -166,6 +166,7 @@ function hopRow(line, index) {
   return baseRow("hops", index, line, {
     stage_guess: line.stage_guess ?? "unknown",
     minutes: line.minutes ?? null,
+    alpha_acid_pct: line.alpha_acid_pct ?? null,
     ibu_contribution: line.ibu_contribution ?? null,
     transform: "minutes→fraction",
   });

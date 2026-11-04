@@ -437,3 +437,75 @@ test("marking a record failed keeps the interpretation and closes", async () => 
   assert.match(patches[0].body.failure_reason, /production volume/);
   assert.equal(store.record, null, "the record is closed after marking it");
 });
+
+
+// --- the whirlpool IBU split ----------------------------------------------
+
+const HOP_PAYLOAD = {
+  ...RECORD.extract.payload,
+  targets: { ibu: { value: 60, unit: "ibu", verbatim: "60 IBU", page: 1 } },
+  hops: [
+    { name: "Citra", quantity: { value: 1.5, unit: "oz" }, alpha_acid_pct: 12, stage_guess: "boil", minutes: 20, ibu_contribution: 25, verbatim: "Citra 20", page: 1 },
+    { name: "Amarillo", quantity: { value: 1, unit: "oz" }, alpha_acid_pct: 9, stage_guess: "whirlpool", ibu_contribution: 8, verbatim: "Amarillo wp", page: 1 },
+  ],
+};
+const HOP_RECORD = { ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] };
+
+function hopStore(record = HOP_RECORD) {
+  const store = createImportReviewStore({ client: { patch: async () => record } });
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "hops")) {
+    store.chooseRef(row.line_id, { id: `hop-${row.name}` });
+  }
+  return store;
+}
+
+test("printed per-addition IBUs give the split exactly", () => {
+  const store = hopStore();
+  assert.equal(store.printedPoolFraction, 8 / 60);
+  assert.deepEqual(store.hopFindings, [], "a printed split needs no decision");
+});
+
+test("without printed IBUs the split is a blocking decision", () => {
+  const unprinted = {
+    ...HOP_PAYLOAD,
+    hops: HOP_PAYLOAD.hops.map((hop) => {
+      const copy = { ...hop };
+      delete copy.ibu_contribution;
+      return copy;
+    }),
+  };
+  const store = hopStore({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload: unprinted } });
+  assert.equal(store.printedPoolFraction, null);
+  const finding = store.hopFindings.find((item) => item.code === "POOL_SPLIT_REQUIRED");
+  assert.equal(finding.blocking, true);
+});
+
+test("the estimate is offered, labelled, and bounded", () => {
+  const store = hopStore();
+  store.setPoolFraction(1.4, "authored");
+  assert.equal(store.poolFraction, 1, "a share cannot exceed one");
+  assert.equal(store.poolSource, "authored");
+  store.useEstimatedPoolFraction();
+  assert.equal(store.poolSource, "estimated");
+  const estimate = store.poolFraction;
+  assert.ok(estimate > 0 && estimate < 1);
+});
+
+test("a flameout left in the boil, and a hop longer than the boil, are flagged", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    targets: { ibu: HOP_PAYLOAD.targets.ibu, boil_time_min: { value: 15, unit: "min", verbatim: "15", page: 1 } },
+    hops: [
+      { name: "Flameout", quantity: { value: 1, unit: "oz" }, stage_guess: "boil", minutes: 0, verbatim: "0 min", page: 1 },
+      { name: "Long", quantity: { value: 1, unit: "oz" }, stage_guess: "boil", minutes: 90, verbatim: "90 min", page: 1 },
+    ],
+  };
+  const store = hopStore({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload } });
+  for (const row of store.ledger.filter((line) => line.section === "hops")) {
+    store.changeDestination(row.line_id, "batch.boil_hops");
+  }
+  const codes = store.hopFindings.map((finding) => finding.code);
+  assert.ok(codes.includes("FLAMEOUT_IN_BOIL"));
+  assert.ok(codes.includes("HOP_LONGER_THAN_BOIL"));
+});

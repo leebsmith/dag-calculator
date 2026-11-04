@@ -21,6 +21,54 @@
     </div>
   </header>
 
+  <div class="import-verdict" x-show="$store.importReview.sections.find((s) => s.id === 'hops')?.rows.length">
+    <h3 class="import-section-title">Whirlpool IBU share</h3>
+    <p class="form-hint" x-show="$store.importReview.printedPoolFraction != null">
+      Printed per-addition IBUs give this exactly:
+      <strong x-text="Math.round($store.importReview.printedPoolFraction * 100) + '%'"></strong>
+      of <span x-text="$store.importReview.payload?.targets?.ibu?.value ?? '—'"></span> IBU.
+    </p>
+    <template x-if="$store.importReview.printedPoolFraction == null">
+      <div>
+        <p class="form-hint">
+          The page does not print per-addition IBUs, so the split is yours to author. A zero would
+          put every IBU in the boil while the whirlpool charges solve nothing.
+        </p>
+        <div class="import-queue-actions">
+          <input
+            class="form-input text-xs"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            placeholder="share %"
+            :value="$store.importReview.poolFraction == null ? '' : Math.round($store.importReview.poolFraction * 100)"
+            @change="$store.importReview.setPoolFraction(Number($event.target.value) / 100)"
+          />
+          <button
+            type="button"
+            class="btn-outline text-xs"
+            x-show="$store.importReview.estimatedPoolFraction != null"
+            @click="$store.importReview.useEstimatedPoolFraction()"
+            x-text="'Use the estimate (' + Math.round(($store.importReview.estimatedPoolFraction ?? 0) * 100) + '%)'"
+          ></button>
+          <span class="text-xs text-muted" x-show="$store.importReview.poolSource"
+            x-text="'source: ' + $store.importReview.poolSource"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <ul class="import-line-list" x-show="$store.importReview.hopFindings.length">
+    <template x-for="(finding, index) in $store.importReview.hopFindings" :key="'hf' + index">
+      <li class="import-line map-row" :class="{ 'is-undecided': finding.blocking }">
+        <span class="map-badge" x-show="finding.blocking">needs a decision</span>
+        <span class="font-medium" x-text="finding.code"></span>
+        <span class="text-xs text-muted" x-text="finding.message"></span>
+      </li>
+    </template>
+  </ul>
+
   <template x-for="section in $store.importReview.sections" :key="section.id">
     <div class="map-section">
       <h3 class="import-section-title">

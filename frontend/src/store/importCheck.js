@@ -5,6 +5,26 @@
 
 import { reportError } from "../observability.js";
 
+// A routing decision the ledger makes (no IBU split, a flameout in the boil) is a
+// gate finding even though no solver was involved: the batch is wrong without it.
+export function mergeFindings(result, extra = []) {
+  const findings = [
+    ...result.findings,
+    ...extra.map((finding) => ({
+      node: "hops",
+      severity: finding.blocking ? "blocking" : "advisory",
+      code: finding.code,
+      message: finding.message,
+    })),
+  ];
+  return {
+    ...result,
+    findings,
+    blocking: findings.filter((finding) => finding.severity === "blocking"),
+    advisory: findings.filter((finding) => finding.severity === "advisory"),
+  };
+}
+
 export function checkActions({ catalog, project, gate, delta }) {
   return {
     get checkSummary() {
@@ -33,8 +53,9 @@ export function checkActions({ catalog, project, gate, delta }) {
           ledger: this.ledger,
           identity: this.record.identity,
           catalog,
+          fraction: this.poolFraction ?? this.printedPoolFraction,
         });
-        const result = await gate(state);
+        const result = mergeFindings(await gate(state), this.hopFindings);
         this.gate = result;
         this.delta = delta ? delta({ payload: this.payload, ledger: this.ledger, engine: result.engine }) : null;
         this.stage = "check";

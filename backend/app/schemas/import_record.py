@@ -47,6 +47,10 @@ class ImportRecord(StrictModel):
     suggestions: list[dict[str, Any]] = []
     batch_id: str | None = None
     failure_reason: str | None = None
+    # The authored IBU split between the pools, and where it came from
+    # ("printed" | "estimated" | "authored"), so the review can label it.
+    pool_ibu_fraction: float | None = None
+    pool_ibu_source: str | None = None
     created_at: float
     updated_at: float
 
@@ -73,3 +77,5 @@ class UpdateImportRequest(StrictModel):
     suggestions: list[dict[str, Any]] | None = None
     status: ImportStatus | None = None
     failure_reason: str | None = None
+    pool_ibu_fraction: float | None = None
+    pool_ibu_source: str | None = None

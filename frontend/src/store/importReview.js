@@ -1,20 +1,20 @@
-// Import review: one record open in the transcription stage.
+// Import review: one record open in the transcription, map and check stages.
 //
 // The screen's job is to let a person check a transcription against the page they
-// are holding, so the store keeps the record exactly as the server sent it and
-// every readout goes through the pure helpers. Corrections mark the field `user`;
-// the save writes the whole extract back, and the server refuses a changed
-// provenance header.
+// are holding, then decide what it means for this calculator. Every readout goes
+// through the pure helpers; the actions are split by concern (ledger, pool split,
+// check) so no single factory becomes a second program.
 
 import { reportError } from "../observability.js";
 import { checkActions } from "./importCheck.js";
+import { poolActions, poolReadouts } from "./importPool.js";
 import {
   applyRef,
   buildLedger,
   destinationsFor,
   ignoreRow,
-  restCandidates,
   ledgerCounts,
+  restCandidates,
   screenCandidates,
   setDestination,
   shares,
@@ -34,6 +34,9 @@ import {
   warningRows,
   yeastRows,
 } from "../views/import/review.js";
+
+const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
+const CATALOG_KIND = { fermentables: "malt", hops: "hop", yeasts: "yeast", mashes: "mash" };
 
 export function createImportReviewStore({
   client,
@@ -59,29 +62,22 @@ export function createImportReviewStore({
       dirty: false,
     },
     reviewActions({ client, onClose }),
+    saveAction({ client }),
     ledgerActions({ catalogs }),
-    checkActions({ catalog, project, gate, delta })
+    checkActions({ catalog, project, gate, delta }),
+    poolActions()
   );
-  // Getters must be installed, not assigned: Object.assign invokes them once and
-  // copies the value, which would freeze every readout against an empty record.
+  // Getters, not values: Object.assign would collapse them at creation.
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(reviewReadouts()));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(ledgerReadouts()));
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(poolReadouts()));
   return store;
 }
-
-const CATALOG_KIND = {
-  fermentables: "malt",
-  hops: "hop",
-  yeasts: "yeast",
-  mashes: "mash",
-};
 
 export function catalogKindFor(row) {
   if (row.section !== "fermentables") return CATALOG_KIND[row.section] ?? null;
   return row.kind_hint === "sugar" || row.kind_hint === "extract" ? "sugar" : "malt";
 }
-
-const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
 
 function ledgerReadouts() {
   return {
@@ -123,8 +119,7 @@ function ledgerReadouts() {
       return payload.fermentables.length === 0 && payload.hops.length === 0;
     },
 
-    // The verdict narrates the evidence; it never decides on its own. The label
-    // from the extraction explains *why* there is nothing to map.
+    // The verdict narrates the evidence; it never decides on its own.
     get verdict() {
       if (!this.noBatchQuantities) return null;
       const spec = this.payload?.document_type === "spec_sheet";
@@ -144,7 +139,6 @@ function ledgerReadouts() {
     get shares() {
       return shares(this.ledger);
     },
-
   };
 }
 
@@ -216,22 +210,12 @@ function reviewReadouts() {
 
 function ledgerActions({ catalogs }) {
   return {
-    setTarget(key, rawValue) {
-      if (!this.record) return;
-      const payload = editTarget(this.payload, key, rawValue);
-      if (payload === this.payload) return;
-      this.record = { ...this.record, extract: { ...this.record.extract, payload } };
-      this.dirty = true;
-      this.error = null;
-    },
-
     destinationsFor(section) {
       return destinationsFor(section);
     },
 
     goTo(stage) {
-      if (stage === "map" || stage === "transcribe") this.stage = stage;
-      if (stage === "check" && this.stage !== "check") this.stage = "check";
+      if (["transcribe", "map", "check"].includes(stage)) this.stage = stage;
     },
 
     // Candidate chips for one line. Mash steps pick from the model's eight rests
@@ -256,8 +240,6 @@ function ledgerActions({ catalogs }) {
       return this.queries[lineId] ?? "";
     },
 
-    // The user's own search: no cap on the shortlist, so a name the screen would
-    // never rank (a misspelling, an obscure maltster) is still reachable.
     search(row) {
       const query = this.queryFor(row.line_id).trim();
       if (!query) return [];
@@ -289,12 +271,74 @@ function ledgerActions({ catalogs }) {
       this.dirty = true;
       this.error = null;
     },
+  };
+}
 
+function saveAction({ client }) {
+  return {
+    async save() {
+      if (!this.record || this.busy) return null;
+      this.busy = true;
+      this.error = null;
+      try {
+        const updated = await client.patch(this.record.id, {
+          extract: this.record.extract,
+          ledger: this.record.ledger,
+          pool_ibu_fraction: this.record.pool_ibu_fraction ?? undefined,
+          pool_ibu_source: this.record.pool_ibu_source ?? undefined,
+          status:
+            this.record.status === "extracted" && this.record.ledger.length ? "mapping" : undefined,
+        });
+        this.record = updated;
+        this.dirty = false;
+        this.savedAt = "saved";
+        return updated;
+      } catch (err) {
+        this.error = err?.message ?? "Could not save the transcription.";
+        reportError("importReview.save", err);
+        return null;
+      } finally {
+        this.busy = false;
+      }
+    },
   };
 }
 
 function reviewActions({ client, onClose }) {
   return {
+    open(record) {
+      const withLedger = record
+        ? {
+            ...record,
+            ledger: record.ledger?.length ? record.ledger : buildLedger(record.extract?.payload),
+          }
+        : null;
+      this.record = withLedger;
+      this.stage = "transcribe";
+      this.error = null;
+      this.checkError = null;
+      this.gate = null;
+      this.delta = null;
+      this.dirty = false;
+      this.savedAt = null;
+    },
+
+    close() {
+      this.record = null;
+      this.error = null;
+      this.dirty = false;
+      onClose?.();
+    },
+
+    setTarget(key, rawValue) {
+      if (!this.record) return;
+      const payload = editTarget(this.payload, key, rawValue);
+      if (payload === this.payload) return;
+      this.record = { ...this.record, extract: { ...this.record.extract, payload } };
+      this.dirty = true;
+      this.error = null;
+    },
+
     async markFailed() {
       if (!this.record || this.busy) return null;
       const verdict = this.verdict;
@@ -316,13 +360,6 @@ function reviewActions({ client, onClose }) {
       }
     },
 
-    close() {
-      this.record = null;
-      this.error = null;
-      this.dirty = false;
-      onClose?.();
-    },
-
     async discard() {
       if (!this.record) return;
       this.busy = true;
@@ -337,38 +374,5 @@ function reviewActions({ client, onClose }) {
       }
     },
 
-    open(record) {
-      const withLedger = record
-        ? { ...record, ledger: record.ledger?.length ? record.ledger : buildLedger(record.extract?.payload) }
-        : null;
-      this.record = withLedger;
-      this.stage = "transcribe";
-      this.error = null;
-      this.dirty = false;
-      this.savedAt = null;
-    },
-
-    async save() {
-      if (!this.record || this.busy) return null;
-      this.busy = true;
-      this.error = null;
-      try {
-        const updated = await client.patch(this.record.id, {
-          extract: this.record.extract,
-          ledger: this.record.ledger,
-          status: this.record.status === "extracted" && this.record.ledger.length ? "mapping" : undefined,
-        });
-        this.record = updated;
-        this.dirty = false;
-        this.savedAt = "saved";
-        return updated;
-      } catch (err) {
-        this.error = err?.message ?? "Could not save the transcription.";
-        reportError("importReview.save", err);
-        return null;
-      } finally {
-        this.busy = false;
-      }
-    },
   };
 }

@@ -134,21 +134,7 @@ class ImportService:
         current = self.get(uid, import_id)
         if current.status in (ImportStatus.COMMITTED, ImportStatus.FAILED):
             raise ImportConflict(current.status.value)
-        changes: dict[str, Any] = {}
-        if request.extract is not None:
-            assert_same_provenance(current.extract.source, request.extract.source)
-            changes["extract"] = request.extract.model_dump(mode="json")
-        if request.identity is not None:
-            changes["identity"] = validate_identity(request.identity)
-        if request.ledger is not None:
-            changes["ledger"] = request.ledger
-        if request.suggestions is not None:
-            changes["suggestions"] = request.suggestions
-        if request.status is not None:
-            status = self._next_status(current.status, request.status)
-            changes["status"] = status.value
-            if status == ImportStatus.FAILED:
-                changes["failure_reason"] = request.failure_reason or "no batch quantities"
+        changes = self._changes(current, request)
         doc = self._repo.update(uid, import_id, changes)
         if doc is None:
             raise ImportNotFound(import_id)
@@ -160,6 +146,30 @@ class ImportService:
             raise ImportConflict("committed")
         if not self._repo.delete(uid, import_id):
             raise ImportNotFound(import_id)
+
+    @staticmethod
+    def _changes(current: ImportRecord, request: UpdateImportRequest) -> dict[str, Any]:
+        """Only the fields the request actually names, validated as a set."""
+        changes: dict[str, Any] = {}
+        if request.extract is not None:
+            assert_same_provenance(current.extract.source, request.extract.source)
+            changes["extract"] = request.extract.model_dump(mode="json")
+        if request.identity is not None:
+            changes["identity"] = validate_identity(request.identity)
+        if request.ledger is not None:
+            changes["ledger"] = request.ledger
+        if request.suggestions is not None:
+            changes["suggestions"] = request.suggestions
+        if request.pool_ibu_fraction is not None:
+            changes["pool_ibu_fraction"] = request.pool_ibu_fraction
+        if request.pool_ibu_source is not None:
+            changes["pool_ibu_source"] = request.pool_ibu_source
+        if request.status is not None:
+            status = ImportService._next_status(current.status, request.status)
+            changes["status"] = status.value
+            if status == ImportStatus.FAILED:
+                changes["failure_reason"] = request.failure_reason or "no batch quantities"
+        return changes
 
     @staticmethod
     def _next_status(current: ImportStatus, wanted: ImportStatus) -> ImportStatus:

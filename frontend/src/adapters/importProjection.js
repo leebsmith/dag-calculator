@@ -27,9 +27,16 @@ const MASS_UNITS = new Set(["g", "kg", "oz", "lb"]);
 // The extraction's unit ids are lowercase; the artifact's are not. Map at the seam.
 const VOLUME_UNIT = { l: "L", gal: "gal" };
 
-export function projectImport({ payload, ledger = [], identity = null, catalog = () => null }) {
+export function projectImport({
+  payload,
+  ledger = [],
+  identity = null,
+  catalog = () => null,
+  fraction = null,
+}) {
   const rows = ledger.filter((row) => row.decision === "mapped" && row.ref);
   const roots = targetRoots(payload, rows);
+  if (fraction != null) roots["batch.whirlpool_ibu_fraction"] = fraction;
   const collections = {
     "grist.major_malts": sharesOf(
       rows.filter((row) => row.destination === "grist.major_malts").map((row) => maltRow(row, catalog))
