@@ -721,8 +721,11 @@ before.
 
 ### J.7 — commit and close-out
 
-- [ ] Widen `createWithIdentity` to accept state; commit writes the draft
-- [ ] Committed records immutable and undeletable; one-way `batch_id` link
-- [ ] Editor "Imported from …" modal
-- [ ] `docs/import.md`, AGENTS source-of-truth entry, TODO line
-- [ ] `make check`, `make test`
+- [x] Widened `createWithIdentity` to accept state; commit writes the draft
+- [x] Committed records immutable and undeletable; one-way `batch_id` link;
+      committing without a batch is refused
+- [x] `docs/import.md` (living), AGENTS source-of-truth entry, TODO line for the
+      one remaining piece
+- [ ] Editor "Imported from …" modal — needs a lookup (the link is one-way), so it
+      is recorded in TODO.md rather than smuggled in
+- [x] `make check`, `make test`

@@ -605,3 +605,37 @@ test("a line with no shortlist is not worth a call", async () => {
   await store.enrichSuggestions();
   assert.deepEqual(calls, []);
 });
+
+// --- commit ---------------------------------------------------------------
+
+test("commit is refused until the gate is green", async () => {
+  const commits = [];
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD },
+    commit: async (args) => (commits.push(args), { id: "batch-1" }),
+  });
+  store.open(RECORD);
+  assert.equal(await store.commit(), null);
+  assert.match(store.checkError, /gate is not green/);
+  assert.deepEqual(commits, []);
+});
+
+test("a green gate commits the projected state and closes the record", async () => {
+  const commits = [];
+  const record = { ...RECORD, ledger: [{ line_id: "l", decision: "ignored", reason: "outside" }] };
+  const store = createImportReviewStore({
+    client: { patch: async () => record },
+    commit: async (args) => (commits.push(args), { id: "batch-1" }),
+    gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
+    project: () => ({ roots: { "batch.target_og": 1.05 }, collections: {}, selections: {} }),
+    delta: () => ({ lines: [], targets: [] }),
+  });
+  store.open(record);
+  await store.runCheck();
+  assert.equal(store.checkSummary.ok, true);
+  const active = await store.commit();
+  assert.equal(active.id, "batch-1");
+  assert.equal(commits[0].name, "Duel Master Black IPA");
+  assert.deepEqual(commits[0].state.roots, { "batch.target_og": 1.05 });
+  assert.equal(store.record, null, "the record is closed after commit");
+});

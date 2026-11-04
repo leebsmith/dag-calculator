@@ -24,6 +24,12 @@ tracks only what is outstanding.
 
 ## Later
 
+* **Import: the editor's "Imported from…" panel** — the record keeps the source
+  values and the delta table, but a committed batch has no way to show them yet:
+  the link is one-way (`batch_id` on the record), so the panel needs either a
+  lookup or a deliberate decision to carry import provenance on the batch. See
+  `docs/import.md`.
+
 * **Surface and fit the grain thermal factor** — `mash_thermal_factor` (0.41)
   drives `mash.strike_water_temp_base_c` but has no readout. Surface it near
   Strike Water Temp, then move it toward an equipment-scoped value estimated

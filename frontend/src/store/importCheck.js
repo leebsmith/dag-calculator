@@ -1,7 +1,4 @@
-// The check stage: project the ledger, solve it, and read the delta.
-//
-// The work is injected — projection, gate and delta are adapter-layer functions —
-// so the store stays node-testable and the composition root owns the wiring.
+// The check stage and the commit: solve the projection, then make a batch.
 
 import { reportError } from "../observability.js";
 
@@ -57,7 +54,10 @@ export function checkActions({ catalog, project, gate, delta }) {
         });
         const result = mergeFindings(await gate(state), this.hopFindings);
         this.gate = result;
-        this.delta = delta ? delta({ payload: this.payload, ledger: this.ledger, engine: result.engine }) : null;
+        this.projectedState = state;
+        this.delta = delta
+          ? delta({ payload: this.payload, ledger: this.ledger, engine: result.engine })
+          : null;
         this.stage = "check";
         return result;
       } catch (err) {
@@ -66,6 +66,45 @@ export function checkActions({ catalog, project, gate, delta }) {
         return null;
       } finally {
         this.checkBusy = false;
+      }
+    },
+  };
+}
+
+export function commitActions({ commit = null }) {
+  return {
+    // Everything that must be true before a batch exists, in one place.
+    commitBlocker() {
+      if (!this.record) return "No import is open.";
+      if (this.commitBusy) return null;
+      if (!commit) return "Committing is not wired in this build.";
+      if (!this.checkSummary?.ok) return "Run the check first: the gate is not green.";
+      return null;
+    },
+
+    // The only action that creates a batch: the gate's own criterion, enforced.
+    async commit() {
+      const blocked = this.commitBlocker();
+      if (blocked) {
+        this.checkError = blocked;
+        return null;
+      }
+      this.commitBusy = true;
+      this.checkError = null;
+      try {
+        const active = await commit({
+          record: this.record,
+          state: this.projectedState,
+          name: this.payload?.title || this.summary?.filename || "Imported batch",
+        });
+        this.close();
+        return active;
+      } catch (err) {
+        this.checkError = err?.message ?? "The batch could not be created.";
+        reportError("importReview.commit", err);
+        return null;
+      } finally {
+        this.commitBusy = false;
       }
     },
   };

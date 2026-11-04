@@ -242,3 +242,23 @@ export function resumeLabel(status) {
   if (status === "failed") return "Failed";
   return "Open";
 }
+
+
+// The verdict narrates the evidence; it never decides on its own. A page with no
+// batch quantities cannot become a batch, and the label explains why.
+export function verdictFor(payload) {
+  if (!payload) return null;
+  if (payload.fermentables.length > 0 || payload.hops.length > 0) return null;
+  const spec = payload.document_type === "spec_sheet";
+  return {
+    title: spec
+      ? "Read as a production specification: no batch quantities"
+      : "No batch quantities on this page",
+    detail: spec
+      ? "The ingredient quantities are stated per unit of production volume, so there is no batch to build. Keep it as a failed marker, or delete it."
+      : "The page names ingredients but states no batch amounts. Keep it as a failed marker, or delete it.",
+    reason: spec
+      ? "spec sheet: quantities stated per unit of production volume"
+      : "no batch quantities on this page",
+  };
+}

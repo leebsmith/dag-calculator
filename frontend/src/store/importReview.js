@@ -6,7 +6,7 @@
 // check) so no single factory becomes a second program.
 
 import { reportError } from "../observability.js";
-import { checkActions } from "./importCheck.js";
+import { checkActions, commitActions } from "./importCheck.js";
 import { catalogKindFor, matchActions } from "./importMatch.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
@@ -33,6 +33,7 @@ import {
   recordSummary,
   targetRows,
   unmodeledRows,
+  verdictFor,
   warningRows,
   yeastRows,
 } from "../views/import/review.js";
@@ -46,9 +47,10 @@ export function createImportReviewStore({
   project = null,
   gate = null,
   delta = null,
+  commit = null,
   onClose,
 } = {}) {
-  const check = checkActions({ catalog, project, gate, delta });
+  const check = checkActions({ catalog, project, gate, delta, commit });
   const match = matchActions({ client, catalog });
   const store = Object.assign(
     {
@@ -57,6 +59,8 @@ export function createImportReviewStore({
       queries: {},
       busy: false,
       checkBusy: false,
+      commitBusy: false,
+      projectedState: null,
       matchBusy: false,
       matchError: null,
       checkError: null,
@@ -71,8 +75,10 @@ export function createImportReviewStore({
     ledgerActions({ catalogs }),
     check,
     poolActions(),
-    match
+    match,
+    commitActions({ commit })
   );
+
   // Getters, not values: Object.assign would collapse them at creation.
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(reviewReadouts()));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(ledgerReadouts()));
@@ -122,21 +128,8 @@ function ledgerReadouts() {
       return payload.fermentables.length === 0 && payload.hops.length === 0;
     },
 
-    // The verdict narrates the evidence; it never decides on its own.
     get verdict() {
-      if (!this.noBatchQuantities) return null;
-      const spec = this.payload?.document_type === "spec_sheet";
-      return {
-        title: spec
-          ? "Read as a production specification: no batch quantities"
-          : "No batch quantities on this page",
-        detail: spec
-          ? "The ingredient quantities are stated per unit of production volume, so there is no batch to build. Keep the reading as a failed marker so the same document is never paid for twice, or delete it."
-          : "The page names ingredients but states no amounts for a batch. Keep the reading as a failed marker, or delete it.",
-        reason: spec
-          ? "spec sheet: quantities stated per unit of production volume"
-          : "no batch quantities on this page",
-      };
+      return verdictFor(this.payload);
     },
 
     get shares() {
@@ -146,6 +139,7 @@ function ledgerReadouts() {
     get hopPanes() {
       return hopPanes(this.ledger);
     },
+
   };
 }
 

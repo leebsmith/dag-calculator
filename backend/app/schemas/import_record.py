@@ -75,6 +75,9 @@ class UpdateImportRequest(StrictModel):
     extract: ExtractedRecipe | None = None
     ledger: list[dict[str, Any]] | None = None
     suggestions: list[dict[str, Any]] | None = None
+    pool_ibu_fraction: float | None = None
+    pool_ibu_source: str | None = None
+    batch_id: str | None = None
     status: ImportStatus | None = None
     failure_reason: str | None = None
     pool_ibu_fraction: float | None = None

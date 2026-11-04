@@ -164,12 +164,26 @@ class ImportService:
             changes["pool_ibu_fraction"] = request.pool_ibu_fraction
         if request.pool_ibu_source is not None:
             changes["pool_ibu_source"] = request.pool_ibu_source
+        if request.batch_id is not None:
+            changes["batch_id"] = request.batch_id
         if request.status is not None:
-            status = ImportService._next_status(current.status, request.status)
-            changes["status"] = status.value
-            if status == ImportStatus.FAILED:
-                changes["failure_reason"] = request.failure_reason or "no batch quantities"
+            changes.update(
+                ImportService._status_change(current, request, changes.get("batch_id"))
+            )
         return changes
+
+    @staticmethod
+    def _status_change(
+        current: ImportRecord, request: UpdateImportRequest, batch_id: str | None
+    ) -> dict[str, Any]:
+        """The status a request may move to, plus whatever that transition carries."""
+        status = ImportService._next_status(current.status, request.status)
+        out: dict[str, Any] = {"status": status.value}
+        if status == ImportStatus.COMMITTED and not (batch_id or current.batch_id):
+            raise ImportConflict("missing batch")
+        if status == ImportStatus.FAILED:
+            out["failure_reason"] = request.failure_reason or "no batch quantities"
+        return out
 
     @staticmethod
     def _next_status(current: ImportStatus, wanted: ImportStatus) -> ImportStatus:
@@ -177,8 +191,18 @@ class ImportService:
         if wanted == current:
             return current
         allowed = {
-            ImportStatus.EXTRACTED: {ImportStatus.MAPPING, ImportStatus.ABANDONED, ImportStatus.FAILED},
-            ImportStatus.MAPPING: {ImportStatus.EXTRACTED, ImportStatus.ABANDONED, ImportStatus.FAILED},
+            ImportStatus.EXTRACTED: {
+                ImportStatus.MAPPING,
+                ImportStatus.ABANDONED,
+                ImportStatus.FAILED,
+                ImportStatus.COMMITTED,
+            },
+            ImportStatus.MAPPING: {
+                ImportStatus.EXTRACTED,
+                ImportStatus.ABANDONED,
+                ImportStatus.FAILED,
+                ImportStatus.COMMITTED,
+            },
             ImportStatus.ABANDONED: {ImportStatus.MAPPING, ImportStatus.FAILED},
         }
         if wanted not in allowed.get(current, set()):

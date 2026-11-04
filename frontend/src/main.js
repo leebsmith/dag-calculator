@@ -68,6 +68,19 @@ const reviewStore = createImportReviewStore({
   gate: (state) =>
     runGate({ state, references: Alpine.store("setup").references() }),
   delta: buildDelta,
+  commit: async ({ record, state, name }) => {
+    const active = await persistence.createWithIdentity({
+      name,
+      identity: record.identity,
+      state,
+    });
+    await importClient.patch(record.id, { status: "committed", batch_id: active.id });
+    const recipes = Alpine.store("recipes");
+    recipes.view = "editor";
+    recipes.syncActive();
+    Alpine.store("imports").refresh();
+    return active;
+  },
   onClose: () => {
     Alpine.store("recipes").view = "batches";
     Alpine.store("imports").refresh();

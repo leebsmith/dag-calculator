@@ -99,7 +99,8 @@ function assertSupported(record) {
   }
 }
 
-export async function createWithIdentity({ name, identity }) {
+// `state` lets an import commit authored state; omitted, the empty draft as before.
+export async function createWithIdentity({ name, identity, state = null }) {
   active = {
     id: crypto.randomUUID(),
     name: name || "Untitled batch",
@@ -111,7 +112,12 @@ export async function createWithIdentity({ name, identity }) {
   dirty = false;
   conflictRemote = null;
   setSaveState("idle");
-  await app?.loadState({ identity, roots: {}, collections: {}, selections: {} });
+  await app?.loadState({
+    identity,
+    roots: state?.roots ?? {},
+    collections: state?.collections ?? {},
+    selections: state?.selections ?? {},
+  });
   dirty = true;
   await saveNow();
   return active;

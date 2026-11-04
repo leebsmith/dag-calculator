@@ -12,6 +12,9 @@ seam, solvers, Firebase auth, and Firestore persistence.
 
 - **`data/artifact.json` is canonical.** The engine interprets it; tests enforce
   it; `docs/` explains it but never overrides it.
+- `docs/import.md` is the living contract for the document-import path (PDF and
+  BeerXML readers, the ledger, the gate, the commit); `plans/recipe-import.md` is
+  its decision record.
 - Docs in `docs/dag-artifacts/` + `docs/engine.md` + `docs/adding-a-node.md` are
   **living** and must stay in sync with the artifact. `docs/adsco/ui.md` (the
   reconciled UI model) and `plans/adsco-contract.md` (reconciled solver decisions)

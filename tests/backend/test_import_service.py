@@ -257,3 +257,20 @@ def test_a_broken_beerxml_file_is_a_payload_error(service):
                 content_base64=base64.b64encode(b"<?xml version='1.0'?><RECIPES>").decode(),
             ),
         )
+
+
+def test_committing_needs_a_batch_and_then_freezes(service):
+    record = service.create("u1", upload())
+    with pytest.raises(ImportConflict):
+        service.update("u1", record.id, UpdateImportRequest(status=ImportStatus.COMMITTED))
+    committed = service.update(
+        "u1",
+        record.id,
+        UpdateImportRequest(status=ImportStatus.COMMITTED, batch_id="batch-1"),
+    )
+    assert committed.status == ImportStatus.COMMITTED
+    assert committed.batch_id == "batch-1"
+    with pytest.raises(ImportConflict):
+        service.update("u1", record.id, UpdateImportRequest(ledger=[]))
+    with pytest.raises(ImportConflict):
+        service.delete("u1", record.id)

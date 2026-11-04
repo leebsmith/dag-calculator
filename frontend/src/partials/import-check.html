@@ -42,6 +42,14 @@
       @click="$store.importReview.runCheck()"
       x-text="$store.importReview.checkBusy ? 'Solving…' : ($store.importReview.gate ? 'Run the check again' : 'Run the check')"
     ></button>
+    <button
+      type="button"
+      class="btn-primary text-xs"
+      x-show="$store.importReview.checkSummary?.ok"
+      :disabled="$store.importReview.commitBusy"
+      @click="$store.importReview.commit()"
+      x-text="$store.importReview.commitBusy ? 'Creating…' : 'Create batch'"
+    ></button>
     <span class="text-xs text-muted" x-show="$store.importReview.unresolved.length">
       <span x-text="$store.importReview.unresolved.length"></span> line(s) still undecided — the gate
       will refuse until they are mapped.
