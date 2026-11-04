@@ -56,6 +56,13 @@ picked, dry hops included, so each pane carries the same chips and library searc
 as a row in the flat list. A hop switched off the model stays visible in its own
 "not modelled" group with the reason, and can be undone.
 
+One limit belongs to the model rather than the page: a batch carries a single yeast
+selection (`batch.yeast`). When a source names a blend, the finding names every
+mapped strain and offers the choice — the one you keep is the batch's, and the
+others are recorded as ignored with `co-pitch with <kept strain>`, so the blend
+stays legible in the ledger and the immutable import record instead of being
+silently dropped.
+
 `parts` is the authored column; `pct` is normalised once per collection by the
 existing Hamilton rule. A mapped row's catalog fields come from the registry, never
 from the page.

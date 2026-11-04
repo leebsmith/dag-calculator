@@ -138,6 +138,26 @@
             <span class="font-medium" x-text="finding.code"></span>
             <span class="text-xs text-muted" x-text="finding.message"></span>
             <span class="text-xs text-muted" x-show="finding.severity === 'advisory'">advisory only</span>
+            <template x-if="finding.yeasts">
+              <div class="map-row-actions">
+                <template x-for="strain in finding.yeasts" :key="strain.line_id">
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    @click="$store.importReview.keepOnlyYeast(strain.line_id)"
+                    x-text="'Keep ' + strain.name"
+                  ></button>
+                </template>
+                <button
+                  type="button"
+                  class="btn-link text-xs"
+                  @click="$store.importReview.goTo('map')"
+                >Open the map</button>
+                <span class="text-xs text-muted">
+                  the other strains are kept as the co-pitch they were, then run the check again
+                </span>
+              </div>
+            </template>
           </li>
         </template>
       </ul>

@@ -105,6 +105,28 @@
     </template>
   </ul>
 
+  <ul class="import-line-list" x-show="$store.importReview.ledgerFindings.length">
+    <template x-for="(finding, index) in $store.importReview.ledgerFindings" :key="'lf' + index">
+      <li class="import-line map-row" :class="{ 'is-undecided': finding.blocking }">
+        <span class="map-badge" x-show="finding.blocking">needs a decision</span>
+        <span class="font-medium" x-text="finding.code"></span>
+        <span class="text-xs text-muted" x-text="finding.message"></span>
+        <template x-if="finding.yeasts">
+          <div class="map-row-actions">
+            <template x-for="strain in finding.yeasts" :key="strain.line_id">
+              <button
+                type="button"
+                class="btn-outline text-xs"
+                @click="$store.importReview.keepOnlyYeast(strain.line_id)"
+                x-text="'Keep ' + strain.name"
+              ></button>
+            </template>
+          </div>
+        </template>
+      </li>
+    </template>
+  </ul>
+
   <template x-for="section in $store.importReview.sections" :key="section.id">
     <div class="map-section">
       <h3 class="import-section-title">

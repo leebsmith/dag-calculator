@@ -2,16 +2,19 @@
 
 import { reportError } from "../observability.js";
 
-// A routing decision the ledger makes (no IBU split, a flameout in the boil) is a
-// gate finding even though no solver was involved: the batch is wrong without it.
+// A routing decision the ledger makes (no IBU split, a flameout in the boil, a
+// second mapped yeast) is a gate finding even though no solver was involved: the
+// batch is wrong without it. The finding keeps whatever the ledger attached to it
+// (`yeasts` names the strains), so the Check screen can offer the decision itself.
 export function mergeFindings(result, extra = []) {
   const findings = [
     ...result.findings,
-    ...extra.map((finding) => ({
-      node: "hops",
-      severity: finding.blocking ? "blocking" : "advisory",
-      code: finding.code,
-      message: finding.message,
+    ...extra.map(({ blocking, code, message, node, ...rest }) => ({
+      node: node ?? "ledger",
+      severity: blocking ? "blocking" : "advisory",
+      code,
+      message,
+      ...rest,
     })),
   ];
   return {

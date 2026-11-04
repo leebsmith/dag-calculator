@@ -786,6 +786,80 @@ test("the check screen can name what is holding the gate shut", () => {
   assert.ok(names.includes("Brettanomyces culture"));
 });
 
+test("the single-yeast finding names the strains so the decision has a button", () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    yeasts: [
+      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
+      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
+    ],
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const store = createImportReviewStore({
+    client: { patch: async () => record },
+    catalog: (kind, id) => ({ id, name: id }),
+  });
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
+    store.chooseRef(row.line_id, { id: `y-${row.name}` });
+  }
+
+  const finding = store.ledgerFindings.find((item) => item.code === "SINGLE_YEAST");
+  assert.deepEqual(finding.yeasts.map((strain) => strain.name).sort(), [
+    "Brettanomyces culture",
+    "clean saison strain",
+  ]);
+  assert.equal(finding.node, "batch.yeast");
+
+  const kept = finding.yeasts.find((strain) => strain.name === "Brettanomyces culture");
+  store.gate = { findings: [], blocking: [], advisory: [] };
+  store.keepOnlyYeast(kept.line_id);
+
+  assert.deepEqual(store.ledgerFindings, [], "keeping one strain decides the finding");
+  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
+  const saison = store.ledger.find((row) => row.name === "clean saison strain");
+  assert.equal(brett.decision, "mapped", "the strain that was kept is untouched");
+  assert.equal(saison.decision, "ignored");
+  assert.equal(saison.reason, "co-pitch with Brettanomyces culture", "the blend is recorded, not erased");
+  assert.equal(store.gate, null, "the gate is stale once the ledger changes under it");
+});
+
+test("the check screen offers the decision the yeast finding reports", async () => {
+  const payload = {
+    ...HOP_PAYLOAD,
+    yeasts: [
+      { name: "clean saison strain", verbatim: "clean saison strain", page: 4 },
+      { name: "Brettanomyces culture", verbatim: "Brett", page: 4 },
+    ],
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const store = createImportReviewStore({
+    client: { patch: async () => record },
+    catalog: (kind, id) => ({ id, name: id }),
+    gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
+    project: () => ({ roots: {}, collections: {}, selections: {} }),
+    delta: () => ({ targets: [], lines: [] }),
+  });
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "yeasts")) {
+    store.chooseRef(row.line_id, { id: `y-${row.name}` });
+  }
+  await store.runCheck();
+
+  const finding = store.gate.findings.find((item) => item.code === "SINGLE_YEAST");
+  assert.equal(finding.severity, "blocking");
+  assert.equal(finding.node, "batch.yeast", "the finding says which boundary refuses");
+  assert.equal(finding.yeasts.length, 2, "the finding carries the strains, not only a count");
+  assert.equal(store.checkSummary.ok, false);
+
+  store.keepOnlyYeast(finding.yeasts[0].line_id);
+  assert.equal(store.gate, null, "the screen stops claiming a result it no longer has");
+
+  const page = read("frontend/src/partials/import-check.html");
+  assert.match(page, /finding\.yeasts/);
+  assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
+});
+
 test("two mapped yeasts are a blocking finding: a batch carries one selection", () => {
   const payload = {
     ...HOP_PAYLOAD,

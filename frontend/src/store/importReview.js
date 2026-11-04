@@ -1,6 +1,7 @@
 // Import review: one record open in the transcription, map and check stages.
-// Actions are split by concern (ledger, pool split, check, match, gap fill) so no
-// factory becomes a second program; readouts go through the pure views.
+// Actions are split by concern (ledger, the single yeast, pool split, check, match,
+// gap fill) so no factory becomes a second program; readouts go through the pure
+// views.
 
 import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
@@ -8,6 +9,7 @@ import { ledgerActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
+import { yeastActions } from "./importYeast.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
 import {
@@ -89,6 +91,7 @@ export function createImportReviewStore({
     reviewActions({ client, onClose }),
     saveAction({ client }),
     ledgerActions({ catalogs }),
+    yeastActions(),
     check,
     poolActions(),
     match,
