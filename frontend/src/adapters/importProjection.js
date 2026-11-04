@@ -20,7 +20,7 @@ import { makeDryHopRow } from "./cards/dry-hops.js";
 import { makeWhirlpoolRow } from "../views/producer/whirlpoolPolicy.js";
 import { WHIRLPOOL_ROW_DEFAULTS } from "../views/registry/hops.js";
 import { makeTraceMaltRow } from "../views/producer/traceMaltRows.js";
-import { normalizedRowShares } from "../views/producer/authoring.js";
+import { normalizedRowShares, rowDefaults } from "../views/producer/authoring.js";
 import { gravityPointsToSg, massKg } from "../views/import/ledger.js";
 
 const MASS_UNITS = new Set(["g", "kg", "oz", "lb"]);
@@ -59,10 +59,22 @@ export function projectImport({ payload, ledger = [], identity = null, catalog =
   };
   return {
     identity,
-    roots,
-    collections,
+    roots: { ...roots, ...yeastRoot(rows) },
+    collections: Object.fromEntries(
+      Object.entries(collections).map(([nodeId, list]) => [nodeId, completeRows(nodeId, list)])
+    ),
     selections: yeastSelection(rows, catalog),
   };
+}
+
+// A row built by a card carries the fields the builder names; the schema also
+// declares defaults (a null cone utilization, an empty note). A partial row would
+// make a boundary request non-canonicalisable, so every row gets the same
+// defaults a blank editor row would.
+function completeRows(nodeId, rows) {
+  const schema = artifact.primitive_schemas[artifact.nodes[nodeId]?.item_schema] ?? null;
+  if (!schema || !rows.length) return rows;
+  return rows.map((row) => ({ ...rowDefaults(schema, artifact.taxonomies), ...row }));
 }
 
 function targetRoots(payload, rows) {
@@ -161,10 +173,17 @@ function mashRestRow(row) {
   };
 }
 
+// A selection resolves through its ref root, so both must be set: the id the
+// batch remembers and the snapshot it was chosen from.
 function yeastSelection(rows, catalog) {
   const row = rows.find((candidate) => candidate.destination === "batch.yeast");
   const item = row ? catalog("yeast", row.ref) : null;
   return item ? { "batch.yeast": { ...item } } : {};
+}
+
+function yeastRoot(rows) {
+  const row = rows.find((candidate) => candidate.destination === "batch.yeast");
+  return row?.ref ? { "batch.yeast_id": row.ref } : {};
 }
 
 function celsius(temperature) {
