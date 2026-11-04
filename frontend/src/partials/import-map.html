@@ -21,6 +21,18 @@
     </div>
   </header>
 
+  <div class="import-queue-actions" x-show="$store.importReview.unresolved.length">
+    <button
+      type="button"
+      class="btn-outline text-xs"
+      :disabled="$store.importReview.matchBusy"
+      @click="$store.importReview.enrichSuggestions()"
+      x-text="$store.importReview.matchBusy ? 'Asking the model…' : 'Ask the model for matches'"
+    ></button>
+    <span class="text-xs text-muted">One batched call per catalog kind; the chips it returns are kept with the record.</span>
+    <span class="text-xs text-muted" x-show="$store.importReview.matchError" x-text="$store.importReview.matchError"></span>
+  </div>
+
   <div class="import-verdict" x-show="$store.importReview.sections.find((s) => s.id === 'hops')?.rows.length">
     <h3 class="import-section-title">Whirlpool IBU share</h3>
     <p class="form-hint" x-show="$store.importReview.printedPoolFraction != null">
@@ -131,7 +143,7 @@
                       >Ignore</button>
                     </div>
                     <div class="map-suggestions">
-                      <template x-for="chip in $store.importReview.suggestions(row)" :key="chip.id">
+                      <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                         <button
                           type="button"
                           class="map-chip"
@@ -206,7 +218,7 @@
                 x-text="row.ref"
                 @click="$store.importReview.chooseRef(row.line_id, { id: row.ref })"
               ></button>
-              <template x-for="chip in $store.importReview.suggestions(row)" :key="chip.id">
+              <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                 <button
                   type="button"
                   class="map-chip"
@@ -216,7 +228,7 @@
                   x-text="chip.name"
                 ></button>
               </template>
-              <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.suggestions(row).length === 0">
+              <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.chipsFor(row).length === 0">
                 no candidate from the page's name — search below
               </span>
               <span class="text-xs text-muted" x-show="row.section === 'mashes'">

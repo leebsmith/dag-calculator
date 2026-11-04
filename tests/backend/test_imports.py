@@ -17,7 +17,14 @@ from fastapi.testclient import TestClient
 from app.auth.deps import get_current_user, require_allowed_user
 from app.auth.throttle import llm_limiter, rate_limiter
 from app.main import app
-from app.schemas.recipe_import import ExtractedRecipe, ExtractionPayload, SourceMeta
+from app.schemas.recipe_import import (
+    ExtractedRecipe,
+    ExtractionPayload,
+    MatchReply,
+    MatchResponse,
+    Pick,
+    SourceMeta,
+)
 from app.services import gemini, recipe_import
 from app.services.import_service import ImportService, get_import_service
 
@@ -181,3 +188,41 @@ def test_the_llm_bucket_guards_uploads(client):
         assert client.post("/imports", json=body(force=True)).status_code == 201
     refused = client.post("/imports", json=body(force=True))
     assert refused.status_code == 429
+
+
+def test_the_match_endpoint_is_stateless_and_charges_the_llm_bucket(client, monkeypatch):
+    seen = []
+
+    def fake_match(request):
+        seen.append(request)
+        return MatchResponse(items=[MatchReply(text="Carafoam", picks=[Pick(id="carapils")])])
+
+    monkeypatch.setattr(recipe_import, "match_candidates", fake_match)
+    response = client.post(
+        "/imports/match",
+        json={
+            "kind": "malt",
+            "items": [
+                {
+                    "text": "Carafoam",
+                    "candidates": [{"id": "carapils", "name": "CARAPILS", "standard": "dextrin-malt"}],
+                }
+            ],
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["items"][0]["picks"][0]["id"] == "carapils"
+    assert len(seen) == 1, "one batched call, no record touched"
+
+
+def test_a_match_without_a_key_is_503(client, monkeypatch):
+    def unavailable(_request):
+        raise gemini.GeminiUnavailable("GEMINI_API_KEY is not set")
+
+    monkeypatch.setattr(recipe_import, "match_candidates", unavailable)
+    response = client.post(
+        "/imports/match",
+        json={"kind": "hop", "items": [{"text": "Citra", "candidates": [{"id": "citra", "name": "Citra"}]}]},
+    )
+    assert response.status_code == 503
+    assert response.json()["code"] == "IMPORT_NOT_CONFIGURED"

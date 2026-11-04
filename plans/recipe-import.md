@@ -714,8 +714,10 @@ before.
 
 ### J.6 — L2 wiring
 
-- [ ] Batched stateless match endpoint around the settled asset; ids ⊆ candidates
-- [ ] Suggestions frozen on the record; degrade to L1 when unavailable
+- [x] Batched stateless match endpoint (`POST /imports/match`) around the settled
+      asset; ids ⊆ candidates, ≤5 per line, ≤2 per standard, empty picks valid
+- [x] Suggestions frozen on the record (`suggestions[].ids` + `source: model`), shown
+      before the local screen, and degrading to L1 when the call fails
 
 ### J.7 — commit and close-out
 

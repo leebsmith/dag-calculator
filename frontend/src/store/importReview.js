@@ -7,6 +7,7 @@
 
 import { reportError } from "../observability.js";
 import { checkActions } from "./importCheck.js";
+import { catalogKindFor, matchActions } from "./importMatch.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
 import {
@@ -37,7 +38,6 @@ import {
 } from "../views/import/review.js";
 
 const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
-const CATALOG_KIND = { fermentables: "malt", hops: "hop", yeasts: "yeast", mashes: "mash" };
 
 export function createImportReviewStore({
   client,
@@ -48,6 +48,8 @@ export function createImportReviewStore({
   delta = null,
   onClose,
 } = {}) {
+  const check = checkActions({ catalog, project, gate, delta });
+  const match = matchActions({ client, catalog });
   const store = Object.assign(
     {
       record: null,
@@ -55,6 +57,8 @@ export function createImportReviewStore({
       queries: {},
       busy: false,
       checkBusy: false,
+      matchBusy: false,
+      matchError: null,
       checkError: null,
       gate: null,
       delta: null,
@@ -65,19 +69,17 @@ export function createImportReviewStore({
     reviewActions({ client, onClose }),
     saveAction({ client }),
     ledgerActions({ catalogs }),
-    checkActions({ catalog, project, gate, delta }),
-    poolActions()
+    check,
+    poolActions(),
+    match
   );
   // Getters, not values: Object.assign would collapse them at creation.
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(reviewReadouts()));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(ledgerReadouts()));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(poolReadouts()));
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(check));
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(match));
   return store;
-}
-
-export function catalogKindFor(row) {
-  if (row.section !== "fermentables") return CATALOG_KIND[row.section] ?? null;
-  return row.kind_hint === "sugar" || row.kind_hint === "extract" ? "sugar" : "malt";
 }
 
 function ledgerReadouts() {

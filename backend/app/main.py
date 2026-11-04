@@ -51,6 +51,7 @@ from app.schemas.import_record import (
     ImportRecord,
     UpdateImportRequest,
 )
+from app.schemas.recipe_import import MatchRequest, MatchResponse
 from app.services import (
     SolverServiceError,
     gemini,
@@ -434,6 +435,21 @@ def create_import(
         return _import_error(503, "IMPORT_ASSET", str(exc))
     except gemini.GeminiError as exc:
         return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+
+
+@app.post("/imports/match", response_model=MatchResponse)
+def match_import(request: MatchRequest, user: RateLimitedLlmUser):
+    """Tie-break screened shortlists. Stateless: the client owns the catalogs."""
+    try:
+        return recipe_import.match_candidates(request)
+    except gemini.GeminiUnavailable as exc:
+        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
+    except gemini.GeminiError as exc:
+        return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+    except recipe_import.MatchContractError as exc:
+        return _import_error(502, "IMPORT_MATCH_CONTRACT", str(exc))
+    except PromptAssetError as exc:
+        return _import_error(503, "IMPORT_ASSET", str(exc))
 
 
 @app.get("/imports", response_model=list[ImportRecord])

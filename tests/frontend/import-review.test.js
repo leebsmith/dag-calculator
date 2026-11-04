@@ -551,3 +551,57 @@ test("an unknown stage starts in the candidates pane", () => {
   store.open({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload } });
   assert.deepEqual(store.hopPanes.candidates.map((row) => row.name), ["Mystery"]);
 });
+
+
+// --- L2: the model's second opinion ---------------------------------------
+
+test("the model's chips come first, and the local screen is the fallback", async () => {
+  const calls = [];
+  const store = createImportReviewStore({
+    client: {
+      patch: async () => HOP_RECORD,
+      match: async (body) => {
+        calls.push(body);
+        return { items: [{ text: "Amarillo", picks: [{ id: "hop-Amarillo" }] }] };
+      },
+    },
+    catalogs: () => [{ id: "hop-Amarillo", name: "Amarillo" }],
+    catalog: (kind, id) => (id === "hop-Amarillo" ? { id, name: "Amarillo" } : null),
+  });
+  store.open(HOP_RECORD);
+  await store.enrichSuggestions();
+  const amarillo = store.ledger.find((row) => row.name === "Amarillo");
+  assert.equal(store.chipsFor(amarillo)[0].source, "model");
+  assert.equal(calls.length, 1, "one batched call per kind");
+  assert.equal(calls[0].kind, "hop");
+});
+
+test("a failed match call leaves the local screen in charge and says so", async () => {
+  const store = createImportReviewStore({
+    client: {
+      patch: async () => HOP_RECORD,
+      match: async () => {
+        throw new Error("provider down");
+      },
+    },
+    catalogs: () => [{ id: "h", name: "Amarillo" }],
+  });
+  store.open(HOP_RECORD);
+  assert.equal(await store.enrichSuggestions(), null);
+  assert.equal(store.matchError, "provider down");
+  assert.equal(store.chipsFor(store.ledger.find((row) => row.name === "Amarillo")).length, 1);
+});
+
+test("a line with no shortlist is not worth a call", async () => {
+  const calls = [];
+  const store = createImportReviewStore({
+    client: {
+      patch: async () => HOP_RECORD,
+      match: async (body) => (calls.push(body), { items: [] }),
+    },
+    catalogs: () => [],
+  });
+  store.open(HOP_RECORD);
+  await store.enrichSuggestions();
+  assert.deepEqual(calls, []);
+});
