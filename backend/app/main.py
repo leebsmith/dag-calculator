@@ -51,9 +51,15 @@ from app.schemas.import_record import (
     ImportRecord,
     UpdateImportRequest,
 )
-from app.schemas.recipe_import import MatchRequest, MatchResponse
+from app.schemas.recipe_import import (
+    GapFillUpload,
+    MatchRequest,
+    MatchResponse,
+    Targets,
+)
 from app.services import (
     SolverServiceError,
+    beerxml,
     gemini,
     recipe_import,
     solve_batch_request,
@@ -72,6 +78,7 @@ from app.services.import_service import (
     ImportNotFound,
     ImportPayloadError,
     ImportServiceDep,
+    decode_document,
 )
 from app.services.prompts import PromptAssetError
 from app.services.report_render import (
@@ -435,6 +442,27 @@ def create_import(
         return _import_error(503, "IMPORT_ASSET", str(exc))
     except gemini.GeminiError as exc:
         return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+
+
+@app.post("/imports/gapfill", response_model=Targets)
+def gap_fill_import(payload: GapFillUpload, user: RateLimitedLlmUser):
+    """Re-read the document for the scalars the transcription could not find."""
+    try:
+        data = decode_document(payload.content_base64)
+        if beerxml.looks_like_beerxml(data):
+            return _import_error(
+                422, "IMPORT_PAYLOAD", "a BeerXML file needs no re-read: the parser is exact"
+            )
+        filled, _raw = recipe_import.gap_fill_bytes(data, payload.filename, payload.request)
+        return filled
+    except ImportPayloadError as exc:
+        return _import_error(422, "IMPORT_PAYLOAD", str(exc))
+    except gemini.GeminiUnavailable as exc:
+        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
+    except gemini.GeminiError as exc:
+        return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+    except PromptAssetError as exc:
+        return _import_error(503, "IMPORT_ASSET", str(exc))
 
 
 @app.post("/imports/match", response_model=MatchResponse)

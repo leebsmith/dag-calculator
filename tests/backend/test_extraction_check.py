@@ -122,16 +122,14 @@ def test_page_marked_text_keeps_attribution() -> None:
 
 def test_gap_fill_uses_page_text_when_the_document_has_one(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(pdf_text, "page_texts", lambda _data: ["targets: 5 gal " * 8, "page two " * 8])
-    path = tmp_path / "page.pdf"
-    path.write_bytes(b"%PDF-1.4")
-    parts = recipe_import._gap_fill_parts(path, {"missing": ["volume"]}, "pages 1-2")
+    data = b"%PDF-1.4"
+    parts = recipe_import._gap_fill_parts(data, "page.pdf", {"missing": ["volume"]}, "pages 1-2")
     assert any("--- page 1 ---" in str(part.get("text", "")) for part in parts)
     assert all("inline_data" not in part for part in parts), "a text layer must not re-send the PDF"
 
 
 def test_gap_fill_falls_back_to_the_pdf_for_a_scan(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(pdf_text, "page_texts", lambda _data: ["", ""])
-    path = tmp_path / "scan.pdf"
-    path.write_bytes(b"%PDF-1.4")
-    parts = recipe_import._gap_fill_parts(path, {"missing": ["volume"]}, None)
+    data = b"%PDF-1.4"
+    parts = recipe_import._gap_fill_parts(data, "scan.pdf", {"missing": ["volume"]}, None)
     assert any("inline_data" in part for part in parts)

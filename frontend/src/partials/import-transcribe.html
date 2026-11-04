@@ -39,6 +39,20 @@
       <span>Still needed before this can become a batch:</span>
     </div>
     <p x-text="$store.importReview.missing.join(' · ')"></p>
+    <div class="import-queue-actions">
+      <button
+        type="button"
+        class="btn-outline text-xs"
+        :disabled="$store.importReview.gapfillBusy"
+        @click="$store.importReview.askForMissing()"
+        x-text="$store.importReview.gapfillBusy ? 'Reading again…' : 'Ask the page again'"
+      ></button>
+      <span class="text-xs text-muted">
+        One more pass over the document, for these values only — it may fill them, never overwrite.
+      </span>
+      <span class="text-xs text-muted" x-show="$store.importReview.gapfillResult != null"
+        x-text="$store.importReview.gapfillResult + ' value(s) recovered from the page'"></span>
+    </div>
   </div>
 
   <h3 class="import-section-title">Targets</h3>

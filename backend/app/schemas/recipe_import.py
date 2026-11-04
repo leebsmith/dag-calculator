@@ -424,6 +424,18 @@ class GapFillRequest(StrictModel):
     page_hint: str | None = None
 
 
+class GapFillUpload(StrictModel):
+    """A re-read request: the document again, base64 encoded, plus what is missing.
+
+    The document is not stored, so a gap fill re-sends it. That is the honest cost
+    of keeping no PDFs, and it is why the action is explicit.
+    """
+
+    content_base64: str = Field(min_length=1)
+    filename: str = "document.pdf"
+    request: GapFillRequest
+
+
 class GapFillPayload(StrictModel):
     """The re-read's answer: the same target shapes, absent where still absent."""
 

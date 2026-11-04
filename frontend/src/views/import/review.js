@@ -262,3 +262,24 @@ export function verdictFor(payload) {
       : "no batch quantities on this page",
   };
 }
+
+
+// Required scalars still absent, as the names the gap-fill request asks for.
+export function missingTargetNames(payload) {
+  const targets = payload?.targets ?? {};
+  return REQUIRED_TARGETS.filter((key) => !targets[key]);
+}
+
+// A re-read may only fill what is absent. Anything it offers for a stated value is
+// discarded: a correction belongs to the review, where it is attributed.
+export function applyFilledTargets(payload, filled) {
+  if (!payload || !filled) return payload;
+  const next = { ...payload.targets };
+  let changed = false;
+  for (const [key, value] of Object.entries(filled)) {
+    if (!value || next[key]) continue;
+    next[key] = { ...value, source: "llm" };
+    changed = true;
+  }
+  return changed ? { ...payload, targets: next } : payload;
+}

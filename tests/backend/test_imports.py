@@ -226,3 +226,29 @@ def test_a_match_without_a_key_is_503(client, monkeypatch):
     )
     assert response.status_code == 503
     assert response.json()["code"] == "IMPORT_NOT_CONFIGURED"
+
+
+def test_the_gap_fill_endpoint_re_reads_and_returns_only_what_was_asked(client, monkeypatch):
+    from app.schemas.recipe_import import Targets
+
+    calls = []
+
+    def fake_gap_fill(data, filename, request, **_kwargs):
+        calls.append((len(data), filename, [name.value for name in request.missing]))
+        return Targets.model_validate(
+            {"volume": {"value": 20, "unit": "l", "verbatim": "20 L", "page": 2}}
+        ), None
+
+    monkeypatch.setattr(recipe_import, "gap_fill_bytes", fake_gap_fill)
+    response = client.post(
+        "/imports/gapfill",
+        json={
+            "content_base64": base64.b64encode(PDF).decode("ascii"),
+            "filename": "page.pdf",
+            "request": {"missing": ["volume"]},
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["volume"]["value"] == 20
+    assert response.json()["og"] is None, "an unasked scalar stays absent"
+    assert calls == [(len(PDF), "page.pdf", ["volume"])]

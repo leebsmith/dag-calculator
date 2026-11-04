@@ -19,6 +19,7 @@ export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
       starting: false,
       error: null,
       // The document already on file, and how that record ended.
+      lastFile: null, // the document of this session, for an explicit re-read
       duplicateOf: null,
       duplicateStatus: null,
       duplicateReason: null,
@@ -66,6 +67,7 @@ function queueActions(seams) {
       this.error = null;
       try {
         const record = await upload(seam, { filename, file, identity, force });
+        this.lastFile = file;
         await this.refresh();
         seam.onOpen?.(record);
         return record;

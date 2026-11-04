@@ -157,6 +157,18 @@ def gap_fill(
     cache: bool = True,
     refresh: bool = False,
 ) -> tuple[Targets, gemini.RawGeneration]:
+    """As ``gap_fill_bytes``, for a document on disk."""
+    return gap_fill_bytes(path.read_bytes(), Path(path).name, request, cache=cache, refresh=refresh)
+
+
+def gap_fill_bytes(
+    data: bytes,
+    filename: str,
+    request: GapFillRequest,
+    *,
+    cache: bool = True,
+    refresh: bool = False,
+) -> tuple[Targets, gemini.RawGeneration]:
     """Re-read one document for the requested scalars, and nothing else.
 
     The document is sent whole: without a PDF library we cannot slice a page
@@ -167,7 +179,7 @@ def gap_fill(
     body = request.model_dump(mode="json")
     raw = gemini.generate_raw(
         "gapfill",
-        _gap_fill_parts(path, body, request.page_hint),
+        _gap_fill_parts(data, filename, body, request.page_hint),
         cache=cache,
         refresh=refresh,
     )
@@ -175,7 +187,9 @@ def gap_fill(
     return _requested_only(request.missing, payload.targets), raw
 
 
-def _gap_fill_parts(path: Path, body: dict, page_hint: str | None) -> list[dict]:
+def _gap_fill_parts(
+    data: bytes, filename: str, body: dict, page_hint: str | None
+) -> list[dict]:
     """Page text when the document has a text layer, the rendered PDF when it does not.
 
     The text path is roughly ten times cheaper and quotes exact glyphs, which is
@@ -184,14 +198,14 @@ def _gap_fill_parts(path: Path, body: dict, page_hint: str | None) -> list[dict]
     """
     parts = [*gemini.text_parts([json.dumps(body, ensure_ascii=False)])]
     try:
-        pages = pdf_text.page_texts(path.read_bytes())
+        pages = pdf_text.page_texts(data)
     except pdf_text.PdfTextError:
         pages = []
     if pdf_text.has_text_layer(pages):
         wanted = pdf_text.parse_page_range(page_hint, len(pages))
         parts.append({"text": pdf_text.page_marked_text(pages, wanted)})
         return parts
-    parts.append(gemini.inline_pdf(path))
+    parts.append(gemini.inline_pdf_bytes(data, filename))
     return parts
 
 

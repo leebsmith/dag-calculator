@@ -639,3 +639,49 @@ test("a green gate commits the projected state and closes the record", async () 
   assert.deepEqual(commits[0].state.roots, { "batch.target_og": 1.05 });
   assert.equal(store.record, null, "the record is closed after commit");
 });
+
+// --- gap fill: one more pass, absent-only --------------------------------
+
+test("a re-read may only fill what is absent", async () => {
+  const calls = [];
+  const payload = {
+    ...HOP_PAYLOAD,
+    targets: { og: { value: 1.078, unit: "sg", verbatim: "OG", page: 1 } },
+  };
+  const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
+  const store = createImportReviewStore({
+    client: {
+      patch: async () => record,
+      gapfill: async (body) => {
+        calls.push(body.request.missing);
+        return {
+          volume: { value: 20, unit: "l", verbatim: "20 L", page: 2 },
+          og: { value: 1.2, unit: "sg", verbatim: "OG", page: 2 },
+        };
+      },
+    },
+    sourceFile: () => ({ name: "page.pdf" }),
+    readFile: async () => "base64",
+  });
+  store.open(record);
+  assert.deepEqual(store.missingNames, ["volume", "ibu"], "OG is already stated");
+
+  await store.askForMissing();
+  assert.deepEqual(calls, [["volume", "ibu"]], "only what is missing is asked for");
+  assert.equal(store.payload.targets.volume.value, 20);
+  assert.equal(store.payload.targets.og.value, 1.078, "a stated value is never overwritten");
+  assert.equal(store.payload.targets.volume.source, "llm");
+  assert.equal(store.dirty, true);
+});
+
+test("without the document in memory the action says so instead of calling", async () => {
+  const calls = [];
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD, gapfill: async (body) => (calls.push(body), {}) },
+    sourceFile: () => null,
+  });
+  store.open({ ...RECORD, extract: { ...RECORD.extract, payload: { ...HOP_PAYLOAD, targets: {} } } });
+  await store.askForMissing();
+  assert.deepEqual(calls, []);
+  assert.match(store.error, /no longer in memory/);
+});

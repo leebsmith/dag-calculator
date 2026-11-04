@@ -1,13 +1,11 @@
 // Import review: one record open in the transcription, map and check stages.
-//
-// The screen's job is to let a person check a transcription against the page they
-// are holding, then decide what it means for this calculator. Every readout goes
-// through the pure helpers; the actions are split by concern (ledger, pool split,
-// check) so no single factory becomes a second program.
+// Actions are split by concern (ledger, pool split, check, match, gap fill) so no
+// factory becomes a second program; readouts go through the pure views.
 
 import { reportError } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { catalogKindFor, matchActions } from "./importMatch.js";
+import { gapfillActions } from "./importGapfill.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
 import {
@@ -48,10 +46,13 @@ export function createImportReviewStore({
   gate = null,
   delta = null,
   commit = null,
+  sourceFile = () => null,
+  readFile = async () => "",
   onClose,
 } = {}) {
   const check = checkActions({ catalog, project, gate, delta, commit });
   const match = matchActions({ client, catalog });
+  const gapfill = gapfillActions({ client, sourceFile, readFile });
   const store = Object.assign(
     {
       record: null,
@@ -60,6 +61,8 @@ export function createImportReviewStore({
       busy: false,
       checkBusy: false,
       commitBusy: false,
+      gapfillBusy: false,
+      gapfillResult: null,
       projectedState: null,
       matchBusy: false,
       matchError: null,
@@ -76,7 +79,8 @@ export function createImportReviewStore({
     check,
     poolActions(),
     match,
-    commitActions({ commit })
+    commitActions({ commit }),
+    gapfill
   );
 
   // Getters, not values: Object.assign would collapse them at creation.
@@ -85,6 +89,7 @@ export function createImportReviewStore({
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(poolReadouts()));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(check));
   Object.defineProperties(store, Object.getOwnPropertyDescriptors(match));
+  Object.defineProperties(store, Object.getOwnPropertyDescriptors(gapfill));
   return store;
 }
 

@@ -12,6 +12,7 @@ export function createImportClient({ base } = {}) {
       requestJSON(`/imports/${importId}`, { method: "PATCH", body, base }),
     remove: (importId) => requestJSON(`/imports/${importId}`, { method: "DELETE", base }),
     match: (body) => requestJSON("/imports/match", { method: "POST", body, base }),
+    gapfill: (body) => requestJSON("/imports/gapfill", { method: "POST", body, base }),
   };
 }
 

@@ -68,6 +68,8 @@ const reviewStore = createImportReviewStore({
   gate: (state) =>
     runGate({ state, references: Alpine.store("setup").references() }),
   delta: buildDelta,
+  sourceFile: () => Alpine.store("imports").lastFile,
+  readFile: readFileAsBase64,
   commit: async ({ record, state, name }) => {
     const active = await persistence.createWithIdentity({
       name,
