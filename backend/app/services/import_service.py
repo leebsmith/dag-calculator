@@ -178,10 +178,12 @@ class ImportService:
 
     @staticmethod
     def _named_fields(request: UpdateImportRequest) -> dict[str, Any]:
+        """Fields the body actually named, null included: clearing a decision has to
+        be as expressible as setting one."""
         return {
             field: getattr(request, field)
             for field in ImportService._NAMED_FIELDS
-            if getattr(request, field) is not None
+            if field in request.model_fields_set
         }
 
     @staticmethod

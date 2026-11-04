@@ -258,8 +258,9 @@ function saveAction({ client }) {
           ledger: this.record.ledger,
           pool_ibu_fraction: this.record.pool_ibu_fraction ?? undefined,
           pool_ibu_source: this.record.pool_ibu_source ?? undefined,
-          yeast_outcome: this.record.yeast_outcome ?? undefined,
-          delta: this.record.delta ?? undefined,
+          // Named even when null: clearing the blend decision has to reach the record.
+          yeast_outcome: this.record.yeast_outcome ?? null,
+          delta: this.record.delta ?? null,
           status:
             this.record.status === "extracted" && this.record.ledger.length ? "mapping" : undefined,
         });

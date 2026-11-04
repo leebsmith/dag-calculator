@@ -934,6 +934,7 @@ test("unblending removes the decision and leaves the Library record alone", asyn
   await store.unblend();
   assert.equal(store.yeastOutcome, null);
   assert.equal(store.dirty, false, "unblending is persisted, not left in memory");
+  assert.equal(store.record.yeast_outcome, null, "and the cleared decision reaches the record");
   assert.equal(store.mappedYeasts.length, 2, "both strains are still on the recipe");
   assert.equal(store.sectionIssues.length, 1, "and the section is open again");
   assert.ok(records.has("blend-1"), "the record stays in the Library");

@@ -150,6 +150,22 @@ def test_identity_and_ledger_are_editable_before_commit(service):
     assert updated.ledger == ledger
 
 
+def test_a_cleared_decision_reaches_the_record(service):
+    record = service.create("u1", upload())
+    outcome = {"mode": "blend", "line_ids": ["a", "b"], "ref": "b1", "name": "Blend: a + b"}
+    service.update("u1", record.id, UpdateImportRequest(yeast_outcome=outcome))
+    cleared = service.update("u1", record.id, UpdateImportRequest(yeast_outcome=None))
+    assert cleared.yeast_outcome is None
+
+
+def test_a_patch_that_does_not_name_a_decision_leaves_it_alone(service):
+    record = service.create("u1", upload())
+    outcome = {"mode": "single", "line_id": "yeasts[0]"}
+    service.update("u1", record.id, UpdateImportRequest(yeast_outcome=outcome))
+    kept = service.update("u1", record.id, UpdateImportRequest(ledger=[]))
+    assert kept.yeast_outcome == outcome, "an unnamed field is not a clear"
+
+
 def test_the_yeast_outcome_and_delta_are_editable_before_commit(service):
     record = service.create("u1", upload())
     outcome = {"mode": "blend", "line_ids": ["yeasts[0]", "yeasts[1]"], "ref": "b1", "name": "Blend: a + b"}
