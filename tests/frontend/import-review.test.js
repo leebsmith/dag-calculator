@@ -359,6 +359,15 @@ test("nothing is saved when there is nothing to save, and the stage still advanc
   assert.equal(store.stage, "check");
 });
 
+test("the stages name themselves as a sequence, so check reads as the last one", () => {
+  const { store } = storeWith(LEDGER_RECORD);
+  assert.equal(store.stageLabel, "Step 1 of 3 · Transcribe");
+  store.goTo("map");
+  assert.equal(store.stageLabel, "Step 2 of 3 · Map");
+  store.goTo("check");
+  assert.equal(store.stageLabel, "Step 3 of 3 · Check and create");
+});
+
 test("the stage only moves where the flow allows", () => {
   const { store } = storeWith(LEDGER_RECORD);
   assert.equal(store.stage, "transcribe");

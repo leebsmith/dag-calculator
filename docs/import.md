@@ -116,6 +116,10 @@ a candidate straight away, and the gate resolves the same set the commit will lo
 the record so reopening the mapping neither re-calls nor reshuffles, and the local
 screen is the fallback when the call fails. Nothing preselects.
 
+The three stages are a sequence and say so — step 1 transcribe, step 2 map, step 3
+check and create — because "check" is otherwise read as a verb that might repeat
+rather than the last step before a batch exists.
+
 Saving the map is its forward action: with every line decided the same press opens
 the check, and an incomplete map saves and stays, with the footer counting what is
 left. Reopening a record whose status is mapping lands on the map rather than at the

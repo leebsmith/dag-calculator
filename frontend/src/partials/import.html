@@ -36,7 +36,7 @@
       :class="{ 'is-active': $store.importReview.stage === 'check' }"
       :aria-pressed="$store.importReview.stage === 'check'"
       @click="$store.importReview.goTo('check')"
-    >3 · Check</button>
+    >3 · Check and create</button>
   </nav>
 
   <div class="import-body">
@@ -89,7 +89,7 @@
   </div>
 
   <footer class="app-footer" x-show="$store.importReview.record">
-    <span class="footer-step" x-text="$store.importReview.stage === 'map' ? 'Map' : 'Transcribe'"></span>
+    <span class="footer-step" x-text="$store.importReview.stageLabel"></span>
     <span class="text-xs text-muted" x-text="$store.importReview.summary?.filename || ''"></span>
     <span class="text-xs text-muted" x-show="$store.importReview.dirty">Unsaved corrections</span>
     <span class="text-xs text-muted" x-show="$store.importReview.busy">Saving…</span>

@@ -148,6 +148,18 @@ function ledgerReadouts() {
       return verdictFor(this.payload);
     },
 
+    // The stages are a sequence, not three views: saying which step this is makes
+    // "check" read as the last one rather than as a verb that might repeat.
+    get stageLabel() {
+      return (
+        {
+          transcribe: "Step 1 of 3 · Transcribe",
+          map: "Step 2 of 3 · Map",
+          check: "Step 3 of 3 · Check and create",
+        }[this.stage] ?? ""
+      );
+    },
+
     get shares() {
       return shares(this.ledger);
     },
