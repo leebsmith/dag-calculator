@@ -2,9 +2,9 @@
 //
 // One of them is a real limit of the model rather than of the document: a batch has
 // exactly one yeast selection, so a page naming a blend (a saison strain plus a
-// Brett culture) can map one and must ignore the rest. Saying that plainly is
-// better than letting a second row sit unresolved with no explanation — and the
-// finding carries the strains so the decision can be made where it is read.
+// Brett culture) can map one and must ignore the rest. The finding carries the
+// strains, so the decision can be made where it is read, and it says the limit in
+// plain words rather than in the model's vocabulary.
 
 export function ledgerFindings({ ledger = [] } = {}) {
   const findings = [];
@@ -14,9 +14,10 @@ export function ledgerFindings({ ledger = [] } = {}) {
   if (yeasts.length > 1) {
     findings.push({
       code: "SINGLE_YEAST",
+      title: "Two yeasts, one fermentation",
       blocking: true,
       node: "batch.yeast",
-      message: `the model holds one yeast per batch, and ${yeasts.length} strains are mapped — the one you keep carries the batch, the rest are kept as a co-pitch`,
+      message: `This page names ${yeasts.length} strains, but the calculator ferments with one. Pick the strain that sets how dry the beer gets — the other line stays on the record, marked not used.`,
       yeasts: yeasts.map((row) => ({ line_id: row.line_id, name: row.name })),
     });
   }

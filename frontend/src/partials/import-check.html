@@ -135,7 +135,7 @@
         <template x-for="(finding, index) in $store.importReview.gate.findings" :key="index">
           <li class="import-line map-row" :class="{ 'is-undecided': finding.severity === 'blocking' }">
             <span class="map-badge" x-show="finding.severity === 'blocking'">blocking</span>
-            <span class="font-medium" x-text="finding.code"></span>
+            <span class="font-medium" x-text="finding.title ?? finding.code"></span>
             <span class="text-xs text-muted" x-text="finding.message"></span>
             <span class="text-xs text-muted" x-show="finding.severity === 'advisory'">advisory only</span>
             <template x-if="finding.yeasts">
@@ -145,7 +145,7 @@
                     type="button"
                     class="btn-outline text-xs"
                     @click="$store.importReview.keepOnlyYeast(strain.line_id)"
-                    x-text="'Keep ' + strain.name"
+                    x-text="'Use ' + strain.name"
                   ></button>
                 </template>
                 <button
@@ -154,9 +154,9 @@
                   @click="$store.importReview.goTo('map')"
                 >Open the map</button>
                 <span class="text-xs text-muted">
-                  the other strains are kept as the co-pitch they were. A blend that drives the
-                  numbers is one Library yeast record: name it and state the attenuation it
-                  finishes at. Run the check again afterwards.
+                  Brewing both as one thing? Create a single yeast in the Library named for the
+                  blend, with the attenuation you expect, and use that here. Run the check again
+                  afterwards.
                 </span>
               </div>
             </template>

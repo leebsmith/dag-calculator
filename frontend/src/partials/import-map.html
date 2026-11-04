@@ -109,7 +109,7 @@
     <template x-for="(finding, index) in $store.importReview.ledgerFindings" :key="'lf' + index">
       <li class="import-line map-row" :class="{ 'is-undecided': finding.blocking }">
         <span class="map-badge" x-show="finding.blocking">needs a decision</span>
-        <span class="font-medium" x-text="finding.code"></span>
+        <span class="font-medium" x-text="finding.title ?? finding.code"></span>
         <span class="text-xs text-muted" x-text="finding.message"></span>
         <template x-if="finding.yeasts">
           <div class="map-row-actions">
@@ -118,12 +118,12 @@
                 type="button"
                 class="btn-outline text-xs"
                 @click="$store.importReview.keepOnlyYeast(strain.line_id)"
-                x-text="'Keep ' + strain.name"
+                x-text="'Use ' + strain.name"
               ></button>
             </template>
             <span class="text-xs text-muted">
-              the rest are kept as the co-pitch they were. A blend that drives the numbers is one
-              Library yeast record: name it and state the attenuation it finishes at.
+              Brewing both as one thing? Create a single yeast in the Library named for the blend,
+              with the attenuation you expect, and use that here.
             </span>
           </div>
         </template>

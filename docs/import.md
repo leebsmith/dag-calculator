@@ -66,8 +66,8 @@ of a one-option menu.
 One limit belongs to the model rather than the page: a batch carries a single yeast
 selection (`batch.yeast`). When a source names a blend, the finding names every
 mapped strain and offers the choice — the one you keep is the batch's, and the
-others are recorded as ignored with `co-pitch with <kept strain>`, so the blend
-stays legible in the ledger and the immutable import record instead of being
+others stay on the record, marked `not used: the batch ferments with <strain>`, so the
+blend stays legible in the ledger and the immutable import record instead of being
 silently dropped.
 
 A blend that must *drive the numbers* is a Library yeast record, not a second

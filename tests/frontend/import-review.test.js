@@ -831,7 +831,11 @@ test("the single-yeast finding names the strains so the decision has a button", 
   const saison = store.ledger.find((row) => row.name === "clean saison strain");
   assert.equal(brett.decision, "mapped", "the strain that was kept is untouched");
   assert.equal(saison.decision, "ignored");
-  assert.equal(saison.reason, "co-pitch with Brettanomyces culture", "the blend is recorded, not erased");
+  assert.equal(
+    saison.reason,
+    "not used: the batch ferments with Brettanomyces culture",
+    "the dropped strain says why, in words a reader understands"
+  );
   assert.equal(store.gate, null, "the gate is stale once the ledger changes under it");
 });
 
@@ -869,8 +873,8 @@ test("the check screen offers the decision the yeast finding reports", async () 
   const page = read("frontend/src/partials/import-check.html");
   assert.match(page, /finding\.yeasts/);
   assert.match(page, /keepOnlyYeast\(strain\.line_id\)/);
-  assert.match(page, /Library yeast record/, "the screen says how a blend is represented");
-  assert.match(read("frontend/src/partials/import-map.html"), /Library yeast record/);
+  assert.match(page, /Create a single yeast in the Library/, "the screen says how a blend is represented");
+  assert.match(read("frontend/src/partials/import-map.html"), /Create a single yeast in the Library/);
 });
 
 test("a blend record can be carried on either strain, and the other records the co-pitch", () => {
@@ -909,7 +913,7 @@ test("a blend record can be carried on either strain, and the other records the 
   store.keepOnlyYeast(brett.line_id);
   const dropped = store.ledger.find((row) => row.line_id === saison.line_id);
   assert.equal(dropped.decision, "ignored");
-  assert.equal(dropped.reason, "co-pitch with Saison blend (3724 + Brett)");
+  assert.equal(dropped.reason, "not used: the batch ferments with Saison blend (3724 + Brett)");
   assert.equal(store.ledgerFindings.length, 0, "one strain carries the batch");
 });
 

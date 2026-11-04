@@ -2,7 +2,7 @@
 //
 // A page may name a blend; the model has a single `batch.yeast` selection. The
 // ledger finding names every mapped strain, and this is the decision it offers:
-// keep one, and record the others as the co-pitch they were rather than erasing
+// pick the one that ferments, and mark the others not used rather than erasing
 // them. The gate is dropped because a solved screen would otherwise stand on a
 // ledger that changed underneath it.
 
@@ -21,7 +21,7 @@ export function yeastActions({ catalog = () => null } = {}) {
         (row) => row.section === "yeasts" && row.decision === "mapped" && row.line_id !== lineId
       );
       for (const row of others) {
-        this.replaceRow(ignoreRow(row, `co-pitch with ${name}`));
+        this.replaceRow(ignoreRow(row, `not used: the batch ferments with ${name}`));
       }
       this.gate = null;
       this.delta = null;
