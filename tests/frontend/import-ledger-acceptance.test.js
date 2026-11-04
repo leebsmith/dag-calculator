@@ -38,7 +38,11 @@ test("the pristine recipe becomes a decidable ledger", () => {
   const ledger = buildLedger(payload());
   const counts = ledgerCounts(ledger);
   assert.equal(counts.total, 6 + 8 + 1 + 1 + 5, "six malts, eight hops, yeast, mash, five remarks");
-  assert.equal(counts.unresolved, counts.total - 5, "only the unmodelled lines start decided");
+  assert.equal(
+    counts.unresolved,
+    counts.total - 6,
+    "the five unmodelled lines and the temperature-proposed mash step start decided"
+  );
 });
 
 test("hops land in the three places the model actually has", () => {

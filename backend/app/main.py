@@ -409,7 +409,11 @@ def create_import(
             409,
             "IMPORT_DUPLICATE",
             "this document has already been imported",
-            {"import_id": exc.import_id},
+            {
+                "import_id": exc.import_id,
+                "status": exc.status,
+                "failure_reason": exc.failure_reason,
+            },
         )
     except ImportPayloadError as exc:
         return _import_error(422, "IMPORT_PAYLOAD", str(exc))

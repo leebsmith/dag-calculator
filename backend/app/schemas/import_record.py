@@ -20,12 +20,19 @@ IMPORT_SCHEMA_VERSION = 1
 
 
 class ImportStatus(StrEnum):
-    """Where a record sits. ``committed`` is terminal and immutable."""
+    """Where a record sits.
+
+    ``committed`` and ``failed`` are terminal: a commit is a batch's audit trail,
+    and a failure is a marker that keeps the interpretation (so nobody pays for
+    the same document twice) plus the reason it could not be used. Both are
+    deletable; neither is editable.
+    """
 
     EXTRACTED = "extracted"
     MAPPING = "mapping"
     COMMITTED = "committed"
     ABANDONED = "abandoned"
+    FAILED = "failed"
 
 
 class ImportRecord(StrictModel):
@@ -39,6 +46,7 @@ class ImportRecord(StrictModel):
     ledger: list[dict[str, Any]] = []
     suggestions: list[dict[str, Any]] = []
     batch_id: str | None = None
+    failure_reason: str | None = None
     created_at: float
     updated_at: float
 
@@ -64,3 +72,4 @@ class UpdateImportRequest(StrictModel):
     ledger: list[dict[str, Any]] | None = None
     suggestions: list[dict[str, Any]] | None = None
     status: ImportStatus | None = None
+    failure_reason: str | None = None

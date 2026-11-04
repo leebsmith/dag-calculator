@@ -1,7 +1,7 @@
 {
   "prompt_id": "extract",
-  "prompt_version": 5,
+  "prompt_version": 8,
   "model": "gemini-3.8-flash",
-  "captured_at": "2026-11-03T19:48:48Z",
-  "note": "Craft Beer & Brewing prose article (4 pages, text layer), captured under v5 (role line). Grist named with no quantities (the page states none), two hop lines, mash rest from prose, targets.ibu 30 from 'go for 30-ish IBUs' with ibu_contribution null on every hop line. The text-layer check flags one number: mashes[0].duration_min = 60, because the page says 'an hour at 152F'. That is a necessary conversion, not an invention, and it is the checker's known false-positive class: the review should present such a row as converted, not suspect."
+  "captured_at": "2026-11-04T11:38:22Z",
+  "note": "capture Classification (v8): document_type: recipe, quantity_form: prose - the label that warns 'no quantities on this page' before mapping."
 }

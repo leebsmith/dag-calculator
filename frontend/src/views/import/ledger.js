@@ -8,6 +8,7 @@
 // the record stores and the commit later plays back through the real builders.
 
 import artifact from "../../engine/artifact.json" with { type: "json" };
+import mashRests from "../../../../data/seeds/mash-rests.json" with { type: "json" };
 import { toBase } from "../../engine/units.js";
 import { filterCatalog } from "../catalog.js";
 import { normalizedRowShares } from "../producer/authoring.js";
@@ -64,6 +65,10 @@ export const DESTINATIONS = [
   { id: "none", section: "unmodeled", label: "Not modelled", catalog: null, transform: "none" },
 ];
 
+// The model's own vocabulary for a mash step. Not a catalog: there are eight
+// rests, each with a temperature range, so the proposal is arithmetic.
+export const RESTS = Object.values(mashRests).sort((a, b) => a.sequence - b.sequence);
+
 export const DESTINATION_BY_ID = Object.fromEntries(DESTINATIONS.map((entry) => [entry.id, entry]));
 
 const SEARCH_FIELDS = {
@@ -72,6 +77,40 @@ const SEARCH_FIELDS = {
   hop: ["name", "synonym", "notes"],
   yeast: ["name", "manufacturer", "notes"],
 };
+
+export function restCandidates(temperature, limit = 4) {
+  const celsius = asCelsius(temperature);
+  const ranked = RESTS.map((rest) => ({
+    ...rest,
+    distance: Number.isFinite(celsius) ? distanceTo(rest, celsius) : 99,
+    width: rest.temp_max_c - rest.temp_min_c,
+  })).sort(
+    (a, b) => a.distance - b.distance || a.width - b.width || a.sequence - b.sequence
+  );
+  return ranked.slice(0, limit).map((rest) => ({
+    rest_id: rest.rest_id,
+    name: rest.name,
+    detail: `${rest.temp_min_c}–${rest.temp_max_c} °C · ${rest.default_duration_min} min · ${rest.purpose}`,
+  }));
+}
+
+function asCelsius(temperature) {
+  if (temperature == null) return NaN;
+  return temperature.unit === "f" ? ((temperature.value - 32) * 5) / 9 : temperature.value;
+}
+
+function distanceTo(rest, celsius) {
+  if (celsius >= rest.temp_min_c && celsius <= rest.temp_max_c) return 0;
+  return Math.min(
+    Math.abs(celsius - rest.temp_min_c),
+    Math.abs(celsius - rest.temp_max_c)
+  );
+}
+
+export function proposeRest(row) {
+  if (!Number.isFinite(asCelsius(row.temperature))) return null;
+  return restCandidates(row.temperature, 1)[0] ?? null;
+}
 
 export function destinationOf(id) {
   return DESTINATION_BY_ID[id] ?? null;
@@ -173,7 +212,7 @@ function assignShareProposals(rows, traceThresholdPct) {
     if (row.destination) continue;
     row.destination = fermentableDestination(row, row.share, threshold);
   }
-  return rows.map((row) => (row.section === "hops" ? withHopDestination(row) : row));
+  return rows.map((row) => proposeDestination(row));
 }
 
 function shareOf(row, kg, total) {
@@ -187,6 +226,23 @@ function fermentableDestination(row, share, threshold) {
   if (share !== null && share < threshold) return "grist.trace_malts";
   if (MALT_KINDS.has(row.kind_hint)) return "grist.major_malts";
   return null;
+}
+
+// A mash step is proposed from its own temperature, and marked proposed so the
+// row reads as a default rather than a decision.
+function proposeDestination(row) {
+  if (row.section === "hops") return withHopDestination(row);
+  if (row.section !== "mashes") return row;
+  const rest = proposeRest(row);
+  if (!rest) return row;
+  return {
+    ...row,
+    destination: "mash.rests",
+    ref: rest.rest_id,
+    transform: DESTINATION_BY_ID["mash.rests"].transform,
+    decision: "mapped",
+    proposed: true,
+  };
 }
 
 function withHopDestination(row) {
@@ -213,6 +269,7 @@ export function applyRef(row, item, catalogKind) {
     transform: destination ? DESTINATION_BY_ID[destination].transform : row.transform,
     decision: destination ? "mapped" : "unresolved",
     reason: "",
+    proposed: false,
   };
 }
 

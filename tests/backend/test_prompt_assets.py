@@ -296,3 +296,12 @@ def test_the_manifest_is_not_cached_across_calls(tmp_path, monkeypatch) -> None:
     path.write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(prompts.PromptAssetError):
         prompts.entry("extract")
+
+
+def test_the_document_type_labels_witness_every_value_that_changes_a_branch() -> None:
+    assert fixture_payload("production-spec-hefeweizen").document_type == "spec_sheet"
+    assert fixture_payload("pristine-black-ipa").document_type == "recipe"
+    prose = fixture_payload("prose-biere-de-garde")
+    assert prose.document_type == "recipe", "a recipe is a recipe even when it is unquantified"
+    assert prose.quantity_form == "prose"
+    assert fixture_payload("pristine-black-ipa").quantity_form == "mass"

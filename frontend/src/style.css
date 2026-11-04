@@ -2536,3 +2536,8 @@ samp {
     transform: rotate(360deg);
   }
 }
+
+.map-chip.is-proposed {
+  border-style: dashed;
+  border-color: var(--sys-color-action-primary);
+}

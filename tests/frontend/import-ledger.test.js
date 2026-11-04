@@ -9,6 +9,8 @@ import {
   isResolved,
   ledgerCounts,
   massKg,
+  proposeRest,
+  restCandidates,
   screenCandidates,
   setDestination,
   shares,
@@ -109,7 +111,11 @@ test("the counts say what is left", () => {
   const ledger = buildLedger(PAYLOAD);
   const counts = ledgerCounts(ledger);
   assert.equal(counts.total, ledger.length);
-  assert.equal(counts.unresolved, ledger.length - 1, "only the unmodelled line is decided");
+  assert.equal(
+    counts.unresolved,
+    ledger.length - 2,
+    "the unmodelled line and the temperature-proposed mash step are decided"
+  );
   assert.equal(counts.bySection.unmodeled.resolved, 1);
   assert.equal(unresolvedRows(ledger).length, counts.unresolved);
 });
@@ -153,4 +159,35 @@ test("the screen ranks candidates and never invents one", () => {
   assert.equal(ranked[0].id, "abbey");
   assert.ok(ranked.length <= 5);
   assert.deepEqual(screenCandidates("no such malt", [], "malt"), []);
+});
+
+
+test("a mash step is proposed from its own temperature", () => {
+  const step = (c) => ({ temperature: { value: c, unit: "c" }, section: "mashes", line_id: "mashes[0]", name: "" });
+  assert.equal(proposeRest(step(43)).rest_id, "ferulic", "43 C is the Hefeweizen clove rest");
+  assert.equal(proposeRest(step(52)).rest_id, "protein");
+  assert.equal(proposeRest(step(66)).rest_id, "beta_alpha_amylase", "66 C is the combined rest");
+  assert.equal(proposeRest(step(78)).rest_id, "mash_out", "nearest bound, not containment");
+  assert.equal(proposeRest({ temperature: null }), null, "no temperature, no proposal");
+});
+
+test("the ranking prefers the narrowest rest that contains the step", () => {
+  const ids = restCandidates({ value: 43, unit: "c" }).map((rest) => rest.rest_id);
+  assert.equal(ids[0], "ferulic", "2 C wide beats the 17 C phytase band");
+  assert.ok(ids.includes("phytase"));
+});
+
+test("Fahrenheit steps are converted before ranking", () => {
+  const rest = proposeRest({ temperature: { value: 149, unit: "f" } });
+  assert.equal(rest.rest_id, "beta_amylase", "149 F is 65 C, the top of the beta-amylase band");
+});
+
+test("a proposed rest is decided but marked as a proposal", () => {
+  const ledger = buildLedger({
+    mashes: [{ step_verbatim: "60 min at 152F", temperature: { value: 152, unit: "f" }, duration_min: 60, page: 1 }],
+  });
+  const row = ledger[0];
+  assert.equal(row.decision, "mapped");
+  assert.equal(row.proposed, true);
+  assert.equal(isResolved(row), true, "a proposal counts as decided");
 });

@@ -178,3 +178,38 @@ def test_an_unreadable_record_does_not_break_the_queue(service, caplog):
     records = service.list("u1")
     assert [record.id for record in records] == [good.id]
     assert "skipping unreadable import record id=broken" in caplog.text
+
+
+def test_failing_a_record_keeps_why_and_freezes_it(service):
+    record = service.create("u1", upload())
+    failed = service.update(
+        "u1",
+        record.id,
+        UpdateImportRequest(
+            status=ImportStatus.FAILED,
+            failure_reason="no batch quantities: stated per 10 hL",
+        ),
+    )
+    assert failed.status == ImportStatus.FAILED
+    assert failed.failure_reason.startswith("no batch quantities")
+    assert failed.extract.payload.detected_recipes, "the interpretation is kept"
+    with pytest.raises(ImportConflict):
+        service.update("u1", record.id, UpdateImportRequest(ledger=[]))
+
+
+def test_a_failed_record_still_deletes(service):
+    record = service.create("u1", upload())
+    service.update("u1", record.id, UpdateImportRequest(status=ImportStatus.FAILED))
+    service.delete("u1", record.id)
+    assert service.list("u1") == []
+
+
+def test_the_duplicate_pointer_says_how_it_failed(service):
+    first = service.create("u1", upload())
+    service.update("u1", first.id, UpdateImportRequest(
+        status=ImportStatus.FAILED, failure_reason="stated per 10 hL"))
+    with pytest.raises(DuplicateImport) as caught:
+        service.create("u1", upload())
+    assert caught.value.import_id == first.id
+    assert caught.value.status == "failed"
+    assert caught.value.failure_reason == "stated per 10 hL"

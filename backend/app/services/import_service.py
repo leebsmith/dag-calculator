@@ -56,11 +56,13 @@ class ImportConflict(Exception):
 
 
 class DuplicateImport(Exception):
-    """This document is already on file; the caller may resume it or force a copy."""
+    """This document is already on file, so the caller can explain, not just refuse."""
 
-    def __init__(self, import_id: str) -> None:
+    def __init__(self, import_id: str, status: str = "extracted", reason: str | None = None) -> None:
         super().__init__("this document has already been imported")
         self.import_id = import_id
+        self.status = status
+        self.failure_reason = reason
 
 
 class ImportPayloadError(Exception):
@@ -105,7 +107,9 @@ class ImportService:
         if not request.force:
             existing = self._repo.find_by_sha256(uid, digest)
             if existing is not None:
-                raise DuplicateImport(existing["id"])
+                raise DuplicateImport(
+                    existing["id"], existing.get("status", "extracted"), existing.get("failure_reason")
+                )
         record, _raw = recipe_import.extract_recipe_bytes(data, request.filename)
         if record.source.sha256 != digest:
             raise ImportPayloadError("the document changed while it was being read")
@@ -126,8 +130,8 @@ class ImportService:
 
     def update(self, uid: str, import_id: str, request: UpdateImportRequest) -> ImportRecord:
         current = self.get(uid, import_id)
-        if current.status == ImportStatus.COMMITTED:
-            raise ImportConflict("committed")
+        if current.status in (ImportStatus.COMMITTED, ImportStatus.FAILED):
+            raise ImportConflict(current.status.value)
         changes: dict[str, Any] = {}
         if request.extract is not None:
             assert_same_provenance(current.extract.source, request.extract.source)
@@ -139,7 +143,10 @@ class ImportService:
         if request.suggestions is not None:
             changes["suggestions"] = request.suggestions
         if request.status is not None:
-            changes["status"] = self._next_status(current.status, request.status).value
+            status = self._next_status(current.status, request.status)
+            changes["status"] = status.value
+            if status == ImportStatus.FAILED:
+                changes["failure_reason"] = request.failure_reason or "no batch quantities"
         doc = self._repo.update(uid, import_id, changes)
         if doc is None:
             raise ImportNotFound(import_id)
@@ -158,9 +165,9 @@ class ImportService:
         if wanted == current:
             return current
         allowed = {
-            ImportStatus.EXTRACTED: {ImportStatus.MAPPING, ImportStatus.ABANDONED},
-            ImportStatus.MAPPING: {ImportStatus.EXTRACTED, ImportStatus.ABANDONED},
-            ImportStatus.ABANDONED: {ImportStatus.MAPPING},
+            ImportStatus.EXTRACTED: {ImportStatus.MAPPING, ImportStatus.ABANDONED, ImportStatus.FAILED},
+            ImportStatus.MAPPING: {ImportStatus.EXTRACTED, ImportStatus.ABANDONED, ImportStatus.FAILED},
+            ImportStatus.ABANDONED: {ImportStatus.MAPPING, ImportStatus.FAILED},
         }
         if wanted not in allowed.get(current, set()):
             raise ImportConflict(f"{current.value}->{wanted.value}")

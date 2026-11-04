@@ -74,7 +74,7 @@
                 <button
                   type="button"
                   class="map-chip"
-                  :class="{ 'is-chosen': chip.id === row.ref }"
+                  :class="{ 'is-chosen': chip.id === row.ref, 'is-proposed': row.proposed && chip.id === row.ref }"
                   :title="chip.maltster || chip.manufacturer || chip.category || ''"
                   @click="$store.importReview.chooseRef(row.line_id, chip)"
                   x-text="chip.name"
@@ -83,7 +83,10 @@
               <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.suggestions(row).length === 0">
                 no candidate from the page's name — search below
               </span>
-              <details class="map-search">
+              <span class="text-xs text-muted" x-show="row.section === 'mashes'">
+                a mash step picks one of the eight rests above, ranked by its temperature
+              </span>
+              <details class="map-search" x-show="row.section !== 'mashes'">
                 <summary class="text-xs">Search the library</summary>
                 <input
                   class="form-input text-xs"

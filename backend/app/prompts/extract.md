@@ -22,6 +22,35 @@ in a sidebar.
 JSON matching the provided response schema, and nothing else — no preface, no
 commentary, no markdown fence.
 
+## What this document is
+
+Say what the document **is**, before transcribing it, in `document_type`:
+
+- `recipe` — a batch recipe: quantities are for a batch of beer someone will brew.
+- `spec_sheet` — a production or brewhouse specification: quantities are stated per
+  unit of production volume (per hL, per 10 hL, per bbl), or the page is a product or
+  process sheet rather than a batch.
+- `article` — writing about beer with no recipe in it.
+- `unknown` — too partial or too mixed to say.
+
+Classify the document, never its completeness: a recipe missing its batch volume is
+still a recipe, and one recipe printed beside an advertisement is still a recipe.
+
+## How the quantities are given
+
+`quantity_form` describes the recipe's quantities, so the caller knows what to
+expect before mapping:
+
+- `mass` — weights (g, kg, oz, lb).
+- `percent` — the grist is given as percentages.
+- `prose` — quantities described in words ("about an ounce", "70% pilsner"), or the
+  page names the ingredients but gives no amounts.
+- `none` — the document states no quantities of any kind.
+- `unknown` — you cannot tell.
+
+This is a description of the page, never a judgement of its quality. Never let it
+change what you transcribe.
+
 ## Recipe count
 
 - List every recipe you can identify in `detected_recipes`, with its title and

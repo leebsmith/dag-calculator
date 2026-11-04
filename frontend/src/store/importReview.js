@@ -12,6 +12,7 @@ import {
   buildLedger,
   destinationsFor,
   ignoreRow,
+  restCandidates,
   ledgerCounts,
   screenCandidates,
   setDestination,
@@ -173,8 +174,16 @@ function ledgerActions({ catalogs }) {
       if (stage === "map" || stage === "transcribe") this.stage = stage;
     },
 
-    // Candidate chips for one line: the pure screen over the live catalogs.
+    // Candidate chips for one line. Mash steps pick from the model's eight rests
+    // by temperature; everything else screens the live catalogs by name.
     suggestions(row, limit = 4) {
+      if (row.section === "mashes") {
+        return restCandidates(row.temperature, limit).map((rest) => ({
+          id: rest.rest_id,
+          name: rest.name,
+          detail: rest.detail,
+        }));
+      }
       const kind = catalogKindFor(row);
       return kind ? screenCandidates(row.name, catalogs(kind), kind, limit) : [];
     },

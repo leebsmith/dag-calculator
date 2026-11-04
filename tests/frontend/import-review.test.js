@@ -264,7 +264,11 @@ test("opening a record builds its ledger from the transcription", () => {
   assert.equal(store.ledger.length, store.ledgerCounts.total);
   assert.ok(store.ledger.length > 0, "the payload produced lines");
   assert.equal(store.sections[0].id, "fermentables");
-  assert.equal(store.unresolved.length, store.ledger.length - 1, "only the unmodelled line starts decided");
+  assert.equal(
+    store.unresolved.length,
+    store.ledger.length - 2,
+    "the unmodelled line and the proposed mash step start decided"
+  );
 });
 
 test("a choice sets the ref, the destination and the decision", () => {

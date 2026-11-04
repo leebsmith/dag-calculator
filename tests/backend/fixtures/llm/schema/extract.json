@@ -1,6 +1,29 @@
 {
   "description": "What the model returns for one document. No registry, no arithmetic.",
   "properties": {
+    "document_type": {
+      "description": "What the document *is*, before any transcription of it.\n\nThe label narrates; the evidence decides. A wrong ``spec_sheet`` must never\nbe able to stop an importable recipe, so nothing branches on this alone.",
+      "enum": [
+        "recipe",
+        "spec_sheet",
+        "article",
+        "unknown"
+      ],
+      "title": "DocumentType",
+      "type": "string"
+    },
+    "quantity_form": {
+      "description": "The form the recipe's quantities take, so the map knows what to expect.",
+      "enum": [
+        "mass",
+        "percent",
+        "prose",
+        "none",
+        "unknown"
+      ],
+      "title": "QuantityForm",
+      "type": "string"
+    },
     "detected_recipes": {
       "items": {
         "description": "A recipe the model found in the document, used to reject ambiguous files.",
@@ -1030,6 +1053,8 @@
   "title": "ExtractionPayload",
   "type": "object",
   "propertyOrdering": [
+    "document_type",
+    "quantity_form",
     "detected_recipes",
     "title",
     "publication",

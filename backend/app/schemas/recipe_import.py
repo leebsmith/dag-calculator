@@ -121,6 +121,29 @@ class Provenance(StrEnum):
     USER = "user"
 
 
+class DocumentType(StrEnum):
+    """What the document *is*, before any transcription of it.
+
+    The label narrates; the evidence decides. A wrong ``spec_sheet`` must never
+    be able to stop an importable recipe, so nothing branches on this alone.
+    """
+
+    RECIPE = "recipe"
+    SPEC_SHEET = "spec_sheet"
+    ARTICLE = "article"
+    UNKNOWN = "unknown"
+
+
+class QuantityForm(StrEnum):
+    """The form the recipe's quantities take, so the map knows what to expect."""
+
+    MASS = "mass"
+    PERCENT = "percent"
+    PROSE = "prose"
+    NONE = "none"
+    UNKNOWN = "unknown"
+
+
 class HopStage(StrEnum):
     """The model's reading of a hop line's stage; a hint, never a decision."""
 
@@ -366,6 +389,8 @@ class DetectedRecipe(StrictModel):
 class ExtractionPayload(StrictModel):
     """What the model returns for one document. No registry, no arithmetic."""
 
+    document_type: DocumentType = DocumentType.UNKNOWN
+    quantity_form: QuantityForm = QuantityForm.UNKNOWN
     detected_recipes: list[DetectedRecipe] = []
     title: str | None = None
     publication: str | None = None
@@ -426,9 +451,10 @@ class SourceMeta(StrictModel):
     filename: str
     sha256: str = Field(min_length=64, max_length=64)
     page_count: int | None = Field(default=None, ge=1)
-    model: str
-    prompt_id: str
-    prompt_version: int = Field(ge=1)
+    model: str | None = None
+    prompt_id: str | None = None
+    prompt_version: int | None = Field(default=None, ge=1)
+    extractor: str = "llm"
     extracted_at: str
 
 
