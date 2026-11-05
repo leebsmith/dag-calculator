@@ -118,22 +118,25 @@ test("the mash rest and the yeast become a row and a selection", () => {
   assert.equal(state.selections["batch.yeast"].name, "British Ale");
 });
 
-test("a blend outcome is the one selection, and the components stay on the ledger", () => {
+test("the carrier line is the one selection, whether it is a strain or a blend", () => {
   const ledger = mapped();
   const catalogWithBlend = (kind, id) =>
     id === "blend-1"
       ? { id, name: "Blend: saison + brett", attenuation_pct: 0.78 }
       : catalog(kind, id);
+  const blendRow = { ...ledger.find((row) => row.section === "yeasts") };
+  blendRow.ref = "blend-1";
+  blendRow.ref_name = "Blend: saison + brett";
   const state = projectImport({
     payload: payload(),
-    ledger,
+    ledger: ledger.map((row) => (row.line_id === blendRow.line_id ? blendRow : row)),
     catalog: catalogWithBlend,
-    yeastOutcome: { mode: "blend", line_ids: ["yeasts[0]"], ref: "blend-1", name: "Blend: saison + brett" },
+    yeastOutcome: { mode: "single", line_id: blendRow.line_id },
   });
   assert.equal(state.roots["batch.yeast_id"], "blend-1");
   assert.equal(state.selections["batch.yeast"].name, "Blend: saison + brett");
   assert.equal(state.selections["batch.yeast"].attenuation_pct, 0.78);
-  assert.equal("batch.yeasts" in state.collections, false, "a blend is not a collection");
+  assert.equal("batch.yeasts" in state.collections, false, "a blend is a record, not a collection");
 });
 
 test("a line whose record was deleted contributes nothing", () => {

@@ -1,14 +1,9 @@
-// The one strain a batch carries.
+// The imported recipe's yeasts: which strain the batch ferments with.
 //
-// A page may name a blend; the model has a single `batch.yeast` selection. The
-// ledger finding names every mapped strain, and this is the decision it offers:
-// pick the one that ferments, and mark the others not used rather than erasing
-// them. The gate is dropped because a solved screen would otherwise stand on a
-// ledger that changed underneath it.
+// A blend is a Library record, not something created here. This module owns the one
+// decision mapping has to make — the carrier — and nothing writes to the Library.
 
-import { ignoreRow } from "../views/import/ledger.js";
-
-export function yeastActions({ catalog = () => null } = {}) {
+export function yeastActions() {
   return {
     // The recipe's own fact, written with the decision. The engine reads one
     // selection; this is what the record says about how it got there.
@@ -21,19 +16,11 @@ export function yeastActions({ catalog = () => null } = {}) {
       this.checkError = null;
     },
 
-    keepOnlyYeast(lineId) {
-      const kept = this.ledger.find((row) => row.line_id === lineId);
-      if (!kept) return;
-      // The batch carries the record, not the page's words: a blend record's name
-      // is what the ledger should point the dropped strain at.
-      const carried = kept.ref ? catalog("yeast", kept.ref) : null;
-      const name = carried?.name ?? kept.name;
-      const others = this.ledger.filter(
-        (row) => row.section === "yeasts" && row.decision === "mapped" && row.line_id !== lineId
-      );
-      for (const row of others) {
-        this.replaceRow(ignoreRow(row, `not in this batch — the batch ferments with ${name}`));
-      }
+    // Choosing the carrier is a section decision, not a row demotion: the other
+    // picked strains stay picked and are simply not the batch's yeast.
+    setCarrier(lineId) {
+      const row = this.ledger.find((candidate) => candidate.line_id === lineId);
+      if (!row || row.decision !== "mapped") return;
       this.setYeastOutcome({ mode: "single", line_id: lineId });
     },
   };

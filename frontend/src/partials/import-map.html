@@ -90,12 +90,6 @@
       </h3>
       <p class="form-hint" x-show="section.empty" x-text="section.note"></p>
       <p class="form-hint"
-        x-show="section.id === 'yeasts' && $store.importReview.mappedYeasts.length > 1 && !$store.importReview.yeastBlend">
-        Imported recipe names more than one strain. A batch ferments with one attenuation: pick one
-        strain's record, or blend them all into one authored attenuation. Choosing a single strain
-        leaves the others on the import record — the batch and the report will show only that strain.
-      </p>
-      <p class="form-hint"
         x-show="section.id === 'yeasts' && $store.importReview.mappedYeasts.length === 0">
         Pick the strain this batch ferments with.
       </p>
@@ -244,83 +238,32 @@
 
       <template x-if="section.id === 'yeasts'">
         <div>
-          <div class="map-blend" x-show="$store.importReview.yeastBlend">
-            <span class="map-badge">ferments this batch</span>
-            <span class="font-medium" x-text="$store.importReview.yeastOutcome?.name"></span>
-            <span class="text-xs text-muted"
-              x-text="($store.importReview.blendRecordAttenuationPct ?? '—') + ' % attenuation'"></span>
-            <span class="text-xs text-muted"
-              x-text="'of ' + $store.importReview.blendComponentNames.join(' + ')"></span>
-            <button type="button" class="btn-outline text-xs" @click="$store.importReview.changeBlend()">
-              Change
-            </button>
-            <button type="button" class="btn-outline text-xs" @click="$store.importReview.unblend()">
-              Unblend
-            </button>
-            <span class="text-xs text-muted">
-              Change writes a new Library record; Unblend leaves this one in the Library.
-            </span>
-          </div>
-
-          <div class="import-queue-actions"
-            x-show="!$store.importReview.yeastBlend && $store.importReview.yeastLines.length > 1">
-            <button
-              type="button"
-              class="btn-outline text-xs"
-              x-show="!$store.importReview.blendOpen"
-              @click="$store.importReview.blendAll()"
-            >Blend both</button>
-            <span class="text-xs text-muted" x-show="!$store.importReview.blendOpen">
-              one authored record: a name and the attenuation the blend finishes at
-            </span>
-          </div>
-
-          <div class="import-queue-actions" x-show="$store.importReview.blendOpen">
-            <span class="text-xs text-muted" x-text="$store.importReview.blendNotice"></span>
-            <input
-              class="form-input text-xs"
-              type="text"
-              placeholder="Blend name"
-              :value="$store.importReview.blendName"
-              @input="$store.importReview.setBlendName($event.target.value)"
-            />
-            <input
-              class="form-input text-xs"
-              type="number"
-              min="1"
-              max="100"
-              step="1"
-              placeholder="Attenuation %"
-              :value="$store.importReview.blendAttenuationPct"
-              @change="$store.importReview.setBlendAttenuation($event.target.value)"
-            />
-            <button
-              type="button"
-              class="btn-primary text-xs"
-              :disabled="$store.importReview.blendBusy"
-              @click="$store.importReview.saveBlend()"
-              x-text="$store.importReview.blendBusy ? 'Saving…' : 'Save blend'"
-            ></button>
-            <button type="button" class="btn-outline text-xs" @click="$store.importReview.closeBlend()">
-              Cancel
-            </button>
-            <span class="text-xs text-muted">
-              the imported recipe's strains stay on this record; the blend is the yeast the batch carries
-            </span>
-            <span class="text-xs text-muted">
-              name it so you recognise it later — this is the yeast name on the batch and in the report
-            </span>
-            <span class="text-xs text-warning" x-show="$store.importReview.blendNameTaken">
-              a record with this name already exists; saving creates another
-            </span>
-            <span class="text-xs text-muted" x-text="$store.importReview.blendError"></span>
+          <p class="form-hint" x-show="$store.importReview.yeastSectionOpen">
+            Imported recipe names more than one strain. A batch ferments with one: pick each
+            strain's record, then choose the strain this batch takes. A blend is a Library record
+            like any other yeast.
+          </p>
+          <div class="import-queue-actions" x-show="$store.importReview.mappedYeasts.length > 1">
+            <label class="text-xs text-muted" for="import-carrier">This batch ferments with</label>
+            <select
+              class="form-select text-xs"
+              id="import-carrier"
+              @change="$store.importReview.setCarrier($event.target.value)"
+            >
+              <option value="" :selected="!$store.importReview.carrierLineId">— choose —</option>
+              <template x-for="row in $store.importReview.mappedYeasts" :key="row.line_id">
+                <option
+                  :value="row.line_id"
+                  :selected="row.line_id === $store.importReview.carrierLineId"
+                  x-text="$store.importReview.refLabel(row) || row.name"
+                ></option>
+              </template>
+            </select>
           </div>
         </div>
       </template>
 
-      <ul class="import-line-list"
-        :class="{ 'is-blend-group': section.id === 'yeasts' && $store.importReview.yeastBlend }"
-        x-show="section.id !== 'hops'">
+      <ul class="import-line-list" x-show="section.id !== 'hops'">
         <template x-for="row in section.rows" :key="row.line_id">
           <li class="import-line map-row" :class="{ 'is-undecided': $store.importReview.isUndecided(row) }">
             <div class="map-row-main">
@@ -336,10 +279,14 @@
             </div>
             <p class="text-xs text-muted" x-show="$store.importReview.rowIssue(row)"
               x-text="$store.importReview.rowIssue(row)"></p>
-            <p class="text-xs text-muted" x-show="row.decision === 'blended'"
-              x-text="'part of ' + ($store.importReview.yeastOutcome?.name ?? 'the blend')"></p>
+            <p class="text-xs text-muted"
+              x-show="row.section === 'yeasts' && row.decision === 'mapped'
+                && $store.importReview.carrierLineId
+                && $store.importReview.carrierLineId !== row.line_id">
+              not the batch's yeast
+            </p>
 
-            <div class="map-row-actions" x-show="row.decision !== 'blended'">
+            <div class="map-row-actions">
               <select
                 class="form-select text-xs"
                 x-show="$store.importReview.destinationsFor(row.section).length > 1"
@@ -359,38 +306,19 @@
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.decision !== 'ignored'
-                  && !(row.section === 'yeasts' && $store.importReview.yeastBlend)"
+                x-show="row.decision !== 'ignored'"
                 @click="$store.importReview.ignoreLine(row.line_id)"
               >Leave out</button>
               <span class="text-xs text-muted" x-show="row.decision === 'ignored'" x-text="row.reason"></span>
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.decision === 'ignored'
-                  && !(row.section === 'yeasts' && $store.importReview.yeastBlend)"
+                x-show="row.decision === 'ignored'"
                 @click="$store.importReview.restoreLine(row.line_id)"
               >Add back</button>
-              <button
-                type="button"
-                class="btn-outline text-xs"
-                x-show="row.section === 'yeasts' && row.decision === 'mapped'
-                  && !$store.importReview.yeastBlend
-                  && $store.importReview.fermentingYeastId !== row.line_id"
-                @click="$store.importReview.keepOnlyYeast(row.line_id)"
-                x-text="'Ferment with ' + row.name + ' only'"
-              ></button>
-              <button
-                type="button"
-                class="btn-outline text-xs"
-                x-show="row.section === 'yeasts' && !$store.importReview.yeastBlend
-                  && !$store.importReview.blendOpen
-                  && $store.importReview.yeastLines.length > 1"
-                @click="$store.importReview.blendAll()"
-              >Blend both</button>
             </div>
 
-            <div class="map-suggestions" x-show="row.decision !== 'ignored' && row.decision !== 'blended'">
+            <div class="map-suggestions" x-show="row.decision !== 'ignored'">
               <button
                 type="button"
                 class="map-chip is-chosen"

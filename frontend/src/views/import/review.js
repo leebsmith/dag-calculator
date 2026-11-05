@@ -297,9 +297,7 @@ export function originYeastOutcome(record) {
   const strains = (record?.ledger ?? []).filter((row) => row.section === "yeasts");
   if (!strains.length) return "";
   const named = `Imported recipe named ${countLabel(strains.length, "strain")}`;
-  return record?.yeast_outcome?.mode === "blend"
-    ? `${named}; blended into ${record.yeast_outcome.name}.`
-    : `${named}; this batch ferments with ${carriedStrain(strains)}.`;
+  return `${named}; this batch ferments with ${carriedStrain(strains)}.`;
 }
 
 function carriedStrain(strains) {

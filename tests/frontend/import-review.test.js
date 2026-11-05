@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { read } from "../guards/util.js";
-import { applyRef, buildLedger, ignoreRow } from "../../frontend/src/views/import/ledger.js";
+import { applyRef, buildLedger } from "../../frontend/src/views/import/ledger.js";
 import {
   describeVerification,
   documentTitle,
@@ -877,187 +877,58 @@ test("the check screen can name what is holding the gate shut", () => {
   assert.ok(names.includes("Brettanomyces culture"));
 });
 
-test("two strains leave the yeast section open until one attenuation is decided", () => {
+test("two picked strains ask the section for a carrier, and picking one closes it", () => {
   const { store } = twoYeasts();
-  assert.equal(store.mappedYeasts.length, 2, "both strains are mapped");
-  assert.equal(store.yeastOutcome, null, "nothing is decided yet");
-  assert.equal(store.fermentingYeastId, null, "and no strain claims the batch");
-  assert.equal(store.sectionIssues.length, 1, "the section itself is open");
-  assert.match(store.sectionIssues[0].message, /one attenuation/);
+  assert.equal(store.mappedYeasts.length, 2, "both strains are picked");
+  assert.equal(store.yeastOutcome, null, "nothing chooses the batch's yeast yet");
+  assert.equal(store.carrierLineId, null);
+  assert.equal(store.yeastSectionOpen, true);
+  assert.equal(store.sectionIssues.length, 1);
+  assert.match(store.sectionIssues[0].message, /choose the strain it takes/);
 
   const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
   store.gate = { findings: [], blocking: [], advisory: [] };
-  store.keepOnlyYeast(brett.line_id);
+  store.setCarrier(brett.line_id);
 
   assert.deepEqual(store.yeastOutcome, { mode: "single", line_id: brett.line_id });
-  assert.equal(store.fermentingYeastId, brett.line_id);
-  assert.deepEqual(store.sectionIssues, [], "choosing one strain closes the section");
+  assert.equal(store.carrierLineId, brett.line_id);
+  assert.equal(store.yeastSectionOpen, false);
+  assert.deepEqual(store.sectionIssues, [], "choosing a carrier closes the section");
+  assert.equal(store.gate, null, "the gate is stale once the decision moves");
+
   const saison = store.ledger.find((row) => row.name === "clean saison strain");
-  assert.equal(saison.decision, "ignored", "the other strain leaves the batch, not the record");
-  assert.equal(
-    saison.reason,
-    "not in this batch — the batch ferments with Brettanomyces culture",
-    "and says why, in words a reader understands"
-  );
-  assert.equal(store.gate, null, "the gate is stale once the ledger changes under it");
+  assert.equal(saison.decision, "mapped", "the other strain stays picked, not ignored");
+  assert.equal(store.isUndecided(saison), false);
 });
 
-test("a blend needs the recipe's strains, not their registry picks", async () => {
-  const { store, created, records } = unpickedTwoYeasts();
-  // Neither strain has a record: that is the state the blend is the answer to.
-  assert.equal(store.mappedYeasts.length, 0);
-  assert.equal(store.yeastLines.length, 2);
-
-  store.openBlend();
-  assert.match(store.blendName, /^Blend: clean saison strain \+ Brettanomyces culture$/);
-  assert.equal(store.blendAttenuationPct, "");
-  store.setBlendAttenuation("82");
-  const saved = await store.saveBlend();
-
-  assert.equal(created.length, 1, "one record");
-  assert.equal(created[0].attenuation_pct, 0.82, "the form speaks percent; the record stores the fraction");
-  assert.equal(created[0].attenuation_basis, "apparent");
-  assert.equal(created[0].attenuation_provenance.note, "blend of clean saison strain + Brettanomyces culture");
-  assert.equal(saved.id, "blend-1");
-
-  assert.equal(store.blendComponents.length, 2, "both strains are components");
-  assert.deepEqual(
-    store.blendComponents.map((row) => row.decision),
-    ["blended", "blended"],
-    "a component is decided by being in the group, with no ref of its own"
-  );
-  assert.equal(store.yeastOutcome.mode, "blend");
-  assert.equal(store.yeastOutcome.ref, "blend-1");
-  assert.deepEqual(store.sectionIssues, [], "the section is decided");
-  assert.equal(store.blendRecordAttenuationPct, 82);
-  assert.ok(records.has("blend-1"));
-  assert.equal(store.blendOpen, false);
-  assert.deepEqual(store.blendComponentNames, ["clean saison strain", "Brettanomyces culture"]);
+test("one picked strain is the carrier without asking", () => {
+  const { store } = unpickedTwoYeasts();
+  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
+  store.chooseRef(brett.line_id, { id: "brett", name: "Brett Brux" });
+  assert.deepEqual(store.yeastOutcome, { mode: "single", line_id: brett.line_id });
+  assert.equal(store.yeastSectionOpen, false);
 });
 
-test("a component with no record, or a deleted one, never blocks the blend", () => {
-  const { store, records } = unpickedTwoYeasts();
-  records.set("brett", { id: "brett", name: "Brett blend", attenuation_pct: 0.8 });
-  store.chooseRef(store.yeastLines[1].line_id, { id: "brett", name: "Brett blend" });
-  store.openBlend();
-  store.setBlendAttenuation("80");
-  return store.saveBlend().then(() => {
-    records.delete("brett");
-    assert.deepEqual(store.sectionIssues, [], "the component's record is documentary");
-    assert.equal(store.missingRefs.length, 0, "and it is never a dangling pick");
-  });
-});
-
-test("a strain outside the blend is a decision, not a silent note", async () => {
+test("a left-out carrier does not linger", () => {
   const { store } = twoYeasts();
-  store.openBlend();
-  store.setBlendAttenuation("80");
-  await store.saveBlend();
-  assert.deepEqual(store.sectionIssues, [], "a blend of both is decided");
-
-  // Simulate a record whose blend covers one strain while the other was left out.
   const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
-  store.replaceRow(ignoreRow({ ...store.ledger.find((row) => row.line_id === brett.line_id) }, "not in this batch"));
+  store.setCarrier(brett.line_id);
+  store.ignoreLine(brett.line_id, "not this beer");
 
-  const issue = store.sectionIssues.find((item) => /is not in this blend/.test(item.message));
-  assert.ok(issue, "the section says a strain is outside the blend");
-  assert.equal(store.checkSummary === null || store.sectionIssues.length > 0, true);
+  assert.notEqual(store.carrierLineId, brett.line_id, "the left-out strain cannot carry the batch");
+  assert.equal(store.yeastSectionOpen, false, "one picked strain remains, so it is the carrier");
 });
 
-test("the blend route survives choosing a strain first", async () => {
-  const { store, created } = twoYeasts();
-  const brett = store.ledger.find((row) => row.name === "Brettanomyces culture");
-  const saison = store.ledger.find((row) => row.name === "clean saison strain");
-  store.keepOnlyYeast(brett.line_id);
-  assert.equal(store.mappedYeasts.length, 1, "one strain after the choice");
-  assert.equal(store.ledger.find((row) => row.line_id === saison.line_id).decision, "ignored");
+test("a blend record is picked like any other yeast", () => {
+  const { store } = unpickedTwoYeasts();
+  const line = store.ledger.find((row) => row.name === "clean saison strain");
+  store.chooseRef(line.line_id, { id: "blend-1", name: "Blend: Saison + Brett" });
 
-  assert.equal(store.yeastLines.length, 2, "the recipe still names two");
-  store.blendAll();
-  assert.equal(store.blendOpen, true);
-  assert.match(store.blendName, /^Blend: /);
-  store.setBlendAttenuation("80");
-  await store.saveBlend();
-
-  assert.equal(store.yeastOutcome.mode, "blend");
-  assert.equal(created.length, 1);
-  assert.deepEqual(
-    store.yeastLines.map((row) => row.decision),
-    ["blended", "blended"],
-    "Blend both covers every strain the recipe named, including one already left out"
-  );
-  assert.equal(store.yeastLines.find((row) => row.line_id === saison.line_id).reason, "");
+  assert.equal(store.refLabel(store.ledger.find((row) => row.line_id === line.line_id)), "Blend: Saison + Brett");
+  assert.deepEqual(store.yeastOutcome, { mode: "single", line_id: line.line_id });
+  assert.equal(store.yeastSectionOpen, false);
 });
 
-test("changing a blend writes a new record and leaves the old one", async () => {
-  const { store, created } = twoYeasts();
-  store.openBlend();
-  store.setBlendAttenuation("82");
-  await store.saveBlend();
-
-  store.changeBlend();
-  assert.match(store.blendNotice, /new Library record/, "the panel says what a change costs");
-  assert.equal(store.blendName, "Blend: clean saison strain + Brettanomyces culture");
-  store.setBlendAttenuation("74");
-  await store.saveBlend();
-
-  assert.equal(created.length, 2, "a change authors a second record");
-  assert.equal(store.yeastOutcome.ref, "blend-2");
-  assert.equal(store.blendRecordAttenuationPct, 74);
-});
-
-test("unblending removes the decision and leaves the Library record alone", async () => {
-  const { store, records } = twoYeasts();
-  store.openBlend();
-  store.setBlendAttenuation("80");
-  await store.saveBlend();
-
-  await store.unblend();
-  assert.equal(store.yeastOutcome, null);
-  assert.equal(store.dirty, false, "unblending is persisted, not left in memory");
-  assert.equal(store.record.yeast_outcome, null, "and the cleared decision reaches the record");
-  assert.equal(store.mappedYeasts.length, 2, "both strains are still on the recipe");
-  assert.equal(store.sectionIssues.length, 1, "and the section is open again");
-  assert.ok(records.has("blend-1"), "the record stays in the Library");
-});
-
-test("a deleted blend reopens the section and the panel can replace it", async () => {
-  const { store, records } = twoYeasts();
-  store.openBlend();
-  store.setBlendName("Blend: house");
-  store.setBlendAttenuation("80");
-  await store.saveBlend();
-  assert.deepEqual(store.sectionIssues, []);
-
-  records.delete("blend-1");
-  assert.equal(store.sectionIssues.length, 1, "the decision no longer resolves");
-  assert.match(store.sectionIssues[0].message, /was deleted/);
-
-  store.openBlend();
-  assert.equal(store.blendName, "Blend: house", "the panel remembers what it was called");
-  assert.equal(store.blendAttenuationPct, "", "and asks for the number again");
-  store.setBlendAttenuation("77");
-  await store.saveBlend();
-  assert.deepEqual(store.sectionIssues, [], "a new record closes it");
-  assert.equal(store.yeastOutcome.ref, "blend-2");
-});
-
-test("the panel warns before it creates a second record with the same name", async () => {
-  const { store, records } = twoYeasts();
-  store.openBlend();
-  store.setBlendName("Blend: house");
-  store.setBlendAttenuation("80");
-  await store.saveBlend();
-
-  store.changeBlend();
-  assert.equal(store.blendNameTaken, false, "the current blend's own name is not a clash");
-  store.setBlendName("Blend: house");
-  assert.equal(store.blendNameTaken, false, "still the same record");
-  store.setBlendName("Blend: other");
-  assert.equal(store.blendNameTaken, false);
-  records.set("seed-blend", { id: "seed-blend", name: "Blend: other" });
-  assert.equal(store.blendNameTaken, true, "an existing record with that name is flagged");
-});
 
 test("a picked record is shown by name, and a deleted one says so on the row", () => {
   const records = new Map([["y-1", { id: "y-1", name: "House strain" }]]);
@@ -1080,22 +951,6 @@ test("a picked record is shown by name, and a deleted one says so on the row", (
   assert.equal(store.refLabel(legacy), legacy.name, "a name-less pick falls back to the recipe's words");
   assert.match(store.rowIssue(orphan), /was deleted/);
   assert.equal(store.isUndecided(orphan), true);
-});
-
-test("the blend panel refuses a nameless record or an impossible attenuation", async () => {
-  const { store, created } = twoYeasts();
-  store.openBlend();
-  store.setBlendName("   ");
-  store.setBlendAttenuation("80");
-  assert.equal(await store.saveBlend(), null);
-  assert.match(store.blendError, /name/i);
-
-  store.setBlendName("Blend: x");
-  store.setBlendAttenuation("140");
-  assert.equal(await store.saveBlend(), null);
-  assert.match(store.blendError, /percentage/i);
-
-  assert.deepEqual(created, [], "nothing is written until the input makes sense");
 });
 
 test("an undecided section blocks the gate and the forward press", async () => {
@@ -1133,10 +988,6 @@ test("the provenance panel states the imported recipe and the yeast outcome", ()
     originYeastOutcome(record),
     "Imported recipe named 2 strains; this batch ferments with Saison I."
   );
-  assert.equal(
-    originYeastOutcome({ ...record, yeast_outcome: { mode: "blend", ref: "b", name: "Blend: Saison + Brett" } }),
-    "Imported recipe named 2 strains; blended into Blend: Saison + Brett."
-  );
   assert.equal(originYeastOutcome({ ...RECORD, ledger: [] }), "");
   assert.equal(originTitle(record), "Duel Master Black IPA");
 });
@@ -1152,50 +1003,35 @@ function unpickedTwoYeasts() {
   };
   const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
   const records = new Map();
-  const created = [];
   const store = createImportReviewStore({
     client: { patch: async (id, body) => ({ ...record, ...body }) },
     catalog: (kind, id) => records.get(id) ?? null,
-    catalogs: () => [...records.values()],
-    createYeast: async (component) => {
-      const id = `blend-${created.length + 1}`;
-      records.set(id, { id, ...component });
-      created.push(component);
-      return { id, component };
-    },
   });
   store.open(record);
-  return { store, records, created };
+  return { store, records };
 }
 
 // The same recipe with both strains pointed at their own records.
 function twoYeasts() {
   const helpers = unpickedTwoYeasts();
   for (const row of helpers.store.ledger.filter((line) => line.section === "yeasts")) {
-    helpers.store.chooseRef(row.line_id, { id: `line-${row.name}`, name: row.name });
+    const id = `line-${row.name}`;
+    helpers.records.set(id, { id, name: row.name });
+    helpers.store.chooseRef(row.line_id, { id, name: row.name });
   }
   return helpers;
 }
 
 
-test("the blend panel and the group carry the words the decision needs", () => {
+test("the yeasts section asks for the carrier and offers no blend control", () => {
   const map = read("frontend/src/partials/import-map.html");
-  assert.equal(
-    (map.match(/>Blend both</g) ?? []).length,
-    2,
-    "the blend option sits where the choice is made, not only above the rows"
-  );
-  assert.match(map, /Blend name/);
-  assert.match(map, /Attenuation %/);
-  assert.match(map, /'Save blend'/);
-  assert.match(map, /a record with this name already exists/, "the duplicate-name warning");
-  assert.match(map, /name it so you recognise it later/);
-  assert.match(map, /changeBlend\(\)/);
-  assert.match(map, /unblend\(\)/);
-  assert.match(map, /'part of ' \+ \(\$store\.importReview\.yeastOutcome\?\.name/, "a component says which group it belongs to");
-  assert.match(map, /is-blend-group/);
-  assert.match(map, /Imported recipe names more than one strain/);
-  assert.match(map, /Choosing a single strain\s+leaves the others on the import record/);
+  assert.match(map, /This batch ferments with/);
+  assert.match(map, /setCarrier\(\$event\.target\.value\)/);
+  assert.match(map, /carrierLineId/);
+  assert.match(map, /not the batch's yeast/);
+  assert.doesNotMatch(map, /Blend both/);
+  assert.doesNotMatch(map, /saveBlend/);
+  assert.doesNotMatch(map, /openBlend/);
 });
 
 test("the editor shows where the batch came from", () => {
@@ -1212,12 +1048,7 @@ test("the map and the check speak one vocabulary: pick, leave out, add back", ()
   assert.match(map, />Add back</);
   assert.doesNotMatch(map, />Ignore</);
   assert.doesNotMatch(map, />Put back</);
-  assert.match(map, /Ferment with ' \+ row\.name \+ ' only/, "the single-strain choice says what it excludes");
-  assert.equal(
-    (map.match(/>Blend both</g) ?? []).length,
-    2,
-    "the blend option sits where the choice is made, not only above the rows"
-  );
+  assert.match(map, /This batch ferments with/, "the carrier is one labelled choice");
   assert.match(map, /refLabel\(row\)/, "a picked record is named, never shown as an id");
   assert.match(map, /rowIssue\(row\)/, "the row carries what it needs");
   assert.match(check, /rowIssue\(row\)/);

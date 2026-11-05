@@ -202,11 +202,12 @@ function mashRestRow(row) {
 }
 
 // A selection resolves through its ref root, so both must be set: the id the
-// batch remembers and the snapshot it was chosen from. A blend is one authored
-// record: the recipe's two strains stay on the ledger, and the engine still gets a
-// single attenuation.
+// batch remembers and the snapshot it was chosen from. The carrier line names the
+// one selection the engine reads.
 function yeastWanted(rows, outcome) {
-  if (outcome?.mode === "blend" && outcome.ref) return outcome.ref;
+  if (outcome?.line_id) {
+    return rows.find((row) => row.line_id === outcome.line_id)?.ref ?? null;
+  }
   const row = rows.find((candidate) => candidate.destination === "batch.yeast");
   return row?.ref ?? null;
 }

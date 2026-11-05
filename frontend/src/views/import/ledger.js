@@ -304,14 +304,14 @@ export function isResolved(row) {
   return row.decision === "mapped" && Boolean(row.ref);
 }
 
-// The two transitions a blend makes. A component keeps whatever it already had
-// (a name, a page, a pick) as provenance; unblending puts that back.
-export function blendComponent(row) {
-  return { ...row, decision: "blended", reason: "" };
-}
-
-export function unblendComponent(row) {
-  return { ...row, decision: row.ref ? "mapped" : "unresolved", reason: "" };
+// A record written while blends lived in the mapping phase: a component has no
+// meaning now, so it reads as the pick it already carried.
+export function withoutBlendComponents(ledger = []) {
+  return ledger.map((row) =>
+    row.decision === "blended"
+      ? { ...row, decision: row.ref ? "mapped" : "unresolved" }
+      : row
+  );
 }
 
 // -----------------------------------------------------------------------------

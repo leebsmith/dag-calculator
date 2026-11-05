@@ -65,48 +65,36 @@ of a one-option menu.
 
 A record deleted from the Library after it was picked leaves no silent hole. The
 line reads as undecided again and says so on the row, the projection drops it, and
-a stale id never reaches a boundary. The row's own search — or, on a yeast line, its
-blend form — replaces it in place; a correction is a new record, as everywhere else
-in the Library. Rows carry the name they were picked by, so a deleted record still
-reads as a name rather than an id.
+a stale id never reaches a boundary. The row's own search replaces it in place; a
+correction is a new record, as everywhere else in the Library. Rows carry the name
+they were picked by, so a deleted record still reads as a name rather than an id.
 
 Every row states its own problem; there is no second listing of the same lines
 above the sections. The header counts what is left, the row says what it needs, and
 the Check screen repeats only what a solver found.
 
 One limit belongs to the model rather than the source: a batch carries a single yeast
-selection (`batch.yeast`). The imported recipe's yeast lines are still the recipe's
-own fact, and both are kept:
+selection (`batch.yeast`). The imported recipe's yeast lines stay the recipe's own
+fact, and the mapping phase has exactly one decision to make — **the carrier**, the
+strain the batch ferments with:
 
-- **one strain** — `Ferment with <strain> only` ignores the others with
-  `not in this batch — the batch ferments with <strain>`; the batch and the report
-  show only that strain;
-- **a blend** — `Blend both` authors one `yeast` record (a name and the attenuation
-  the blend finishes at) and stores the outcome on the record. It covers *every*
-  strain the imported recipe names: the group is the recipe's lines, so a component
-  needs no registry pick of its own. Each component becomes a **component** — a
-  resolved state with its name, page and any pick it already had kept as provenance —
-  and the rows render inside one group in the map. Nothing is averaged, and the
-  engine still receives one selection.
+- every yeast line is picked like any other line: search the Library, or choose a
+  candidate;
+- when more than one is picked, the section asks once — *“This batch ferments with”* —
+  and the other picked strains stay picked, noted as not the batch's yeast. No row is
+  auto-ignored and no row is demoted;
+- a blend is **not** created here. It is an ordinary Library record — a `yeast` record
+  carrying a `blend_of` composition and the attenuation the blend finishes at — so the
+  mapping phase never writes the Library and picks a blend exactly like a strain;
+- the decision is a field, not an inference: the record carries `yeast_outcome` in its
+  single form (the carrier's line), written with the choice and reconciled against the
+  rows on open.
 
-The decision is a field, not an inference: the record carries
-`yeast_outcome` (`single` with the strain's line, or `blend` with the component
-lines and the record ref), written with the choice and reconciled against the rows
-on open. While the record is being mapped the blend is mutable: `Change` writes a new
-record and leaves the old one in the Library, and `Unblend` removes the decision,
-restores each component from the provenance (its pick, or open) and leaves the record
-in the Library — the Library owns records, the import owns the decision. Once the
-mapping is accepted the record is immutable, so the blend is frozen: no `Change`, no
-`Unblend`, and the batch shows it read-only. A deleted blend record reopens the
-section; a component's record is documentary and its deletion blocks nothing.
-
-A second record with the same name is allowed but warned about in the panel, since
-the name is the blend's identity on the batch and in the report.
-
-The batch shows the blend's name and attenuation, and under **Imported from** it
-shows the imported recipe's name, the outcome sentence and the comparison captured
-at commit — the two-strain fact is visible from the editor without re-running a
-boundary.
+A blend therefore has to exist before it can be used, the same way a malt does. Its
+composition is authored in the Library, where records are sealed: a correction is a
+new record, and the import's record keeps whichever id it carried. The batch and the
+report show the blend's name; the imported recipe's own lines stay on the import
+record, and **Imported from** states the outcome sentence.
 
 The collection form — more than one yeast row, with pitch-share parts and a derived
 blended attenuation — is deferred: a weighted mean is not co-pitch physics, and a

@@ -8,10 +8,9 @@ import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { rowReadouts } from "./importRows.js";
-import { blendReadouts, yeastReadouts } from "./importYeastRows.js";
+import { yeastReadouts } from "./importYeastRows.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
-import { blendDecisionActions, blendFormActions, blendSaveActions } from "./importBlend.js";
 import { yeastActions } from "./importYeast.js";
 import { hopPanes } from "../views/import/hopRouting.js";
 import { poolActions, poolReadouts } from "./importPool.js";
@@ -24,6 +23,7 @@ import {
   ledgerCounts,
   shares,
   unresolvedRows,
+  withoutBlendComponents,
 } from "../views/import/ledger.js";
 import {
   describeVerification,
@@ -65,7 +65,6 @@ export function createImportReviewStore({
   sourceFile = () => null,
   readFile = async () => "",
   profiles = () => [],
-  createYeast = null,
   onClose,
 } = {}) {
   // A catalog is what makes a ref checkable. Without one (a bare store in a test)
@@ -98,10 +97,7 @@ export function createImportReviewStore({
     saveAction({ client }),
     ledgerLookupActions({ catalogs, catalog: lookup }),
     ledgerDecisionActions(),
-    yeastActions({ catalog: lookup }),
-    blendFormActions({ catalogs }),
-    blendDecisionActions(),
-    blendSaveActions({ createYeast }),
+    yeastActions(),
     check,
     poolActions(),
     match,
@@ -112,7 +108,6 @@ export function createImportReviewStore({
     ledgerReadouts(),
     rowReadouts({ hasCatalog: Boolean(catalog) }),
     yeastReadouts(),
-    blendReadouts(),
     poolReadouts()
   );
   return store;
@@ -261,7 +256,7 @@ function saveAction({ client }) {
           // Named even when null: clearing the split has to reach the record.
           pool_ibu_fraction: this.record.pool_ibu_fraction ?? null,
           pool_ibu_source: this.record.pool_ibu_source ?? null,
-          // Named even when null: clearing the blend decision has to reach the record.
+          // Named even when null: clearing the carrier decision has to reach the record.
           yeast_outcome: this.record.yeast_outcome ?? null,
           delta: this.record.delta ?? null,
           status:
@@ -288,7 +283,12 @@ function reviewActions({ client, onClose }) {
       const withLedger = record
         ? {
             ...record,
-            ledger: record.ledger?.length ? record.ledger : buildLedger(record.extract?.payload),
+            // A record written while blends lived in the mapping phase is read as the
+            // picks it already carried; the carrier decision is what survives.
+            yeast_outcome: record.yeast_outcome?.mode === "blend" ? null : record.yeast_outcome,
+            ledger: withoutBlendComponents(
+              record.ledger?.length ? record.ledger : buildLedger(record.extract?.payload)
+            ),
           }
         : null;
       this.record = withLedger;
