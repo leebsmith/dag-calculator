@@ -965,15 +965,22 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
   records.set("strain-x", { id: "strain-x", name: "clean saison strain" });
 
   const [saison, brett] = store.yeastLines;
-  const chips = store.chipsFor(saison);
-  assert.deepEqual(chips.map((chip) => chip.id), ["blend-1"], "blends, not the components");
-  assert.equal(chips[0].composition, "clean saison strain, Brettanomyces culture");
+  assert.equal(store.blendMode, true);
+  assert.deepEqual(store.chipsFor(saison), [], "the rows propose nothing of their own");
+  assert.deepEqual(
+    store.blendCandidates().map((chip) => chip.id),
+    ["blend-1"],
+    "blends, not the components, are the group's choices"
+  );
+  assert.equal(store.blendCandidates()[0].composition, "clean saison strain, Brettanomyces culture");
+  assert.equal(store.isUndecided(saison), false, "a component does not block");
+  assert.match(store.rowIssue(saison), /choose the blend below/);
 
-  store.chooseRef(saison.line_id, chips[0]);
+  store.chooseBlend(store.blendCandidates()[0]);
   const documented = store.ledger.find((row) => row.line_id === brett.line_id);
   assert.equal(documented.decision, "ignored");
   assert.equal(documented.reason, "represented by Blend: Saison + Brett");
-  assert.equal(store.carrierLineId, saison.line_id);
+  assert.ok(store.carrierLineId, "the blend lands on a yeast line");
   assert.deepEqual(store.sectionIssues, [], "one blend pick decides the section");
 });
 
@@ -1086,6 +1093,8 @@ test("the yeasts section asks for the carrier and offers no blend control", () =
   const map = read("frontend/src/partials/import-map.html");
   assert.match(map, /This batch ferments with/);
   assert.match(map, /A blend record covers them together/);
+  assert.match(map, /blendCandidates\(\)/, "the section owns the blend picker");
+  assert.match(map, /chooseBlend\(chip\)/);
   assert.match(map, /no blend record exists yet/);
   assert.match(map, /chip\.composition/);
   assert.match(map, /setCarrier\(\$event\.target\.value\)/);

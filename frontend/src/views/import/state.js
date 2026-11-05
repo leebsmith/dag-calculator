@@ -6,6 +6,7 @@
 
 export const ROW = {
   OPEN: "open",
+  COMPONENT: "component",
   PICKED: "picked",
   LEFT_OUT: "left-out",
   PROPOSED: "proposed",
@@ -22,7 +23,7 @@ export const GATE = {
 
 // `resolves(row)` answers "does the registry still have this pick?"; `label(row)`
 // is the name to show when it does not.
-export function rowState(row, { resolves = () => true, label = () => "" } = {}) {
+export function rowState(row, { resolves = () => true, label = () => "", blendMode = false } = {}) {
   const view = (state, blocks, message) => ({
     state,
     blocks,
@@ -34,9 +35,18 @@ export function rowState(row, { resolves = () => true, label = () => "" } = {}) 
   });
   if (!row) return { state: null, blocks: false, message: "", ref: null };
   if (row.decision === "ignored") return view(ROW.LEFT_OUT, false, "");
-  if (row.decision !== "mapped" && row.decision !== "blended") {
-    return view(ROW.OPEN, true, openMessage(row));
-  }
+  if (decided(row)) return pickedView(row, view, resolves, label);
+  // In a multi-strain recipe the strains are the blend's components, not options:
+  // the section owns the decision, so the row must not ask for one or block.
+  if (row.section === "yeasts" && blendMode) return view(ROW.COMPONENT, false, componentMessage());
+  return view(ROW.OPEN, true, openMessage(row));
+}
+
+function decided(row) {
+  return row.decision === "mapped" || row.decision === "blended";
+}
+
+function pickedView(row, view, resolves, label) {
   if (!row.ref || !resolves(row)) return view(ROW.BROKEN, true, brokenMessage(row, label(row)));
   return view(row.proposed ? ROW.PROPOSED : ROW.PICKED, false, "");
 }
@@ -45,6 +55,10 @@ function openMessage(row) {
   return row.section === "yeasts"
     ? "Pick this strain's record."
     : "Pick the record the imported recipe printed.";
+}
+
+function componentMessage() {
+  return "Part of the recipe's blend — choose the blend below.";
 }
 
 function brokenMessage(row, name) {
@@ -63,12 +77,14 @@ export function sectionIssues(sectionId, facts = {}) {
   return [];
 }
 
-function yeastIssues({ yeastPicked = 0, hasCarrier = false } = {}) {
-  if (yeastPicked <= 1 || hasCarrier) return [];
+function yeastIssues({ lines = 0, hasCarrier = false, blendMode = false } = {}) {
+  if (lines <= 1 || hasCarrier) return [];
   return [
     {
       section: "yeasts",
-      message: `Imported recipe names ${yeastPicked} strains. A batch ferments with one — choose the strain it takes.`,
+      message: blendMode
+        ? `Imported recipe names ${lines} strains. Choose the blend that covers them, or one strain to carry the batch.`
+        : `Imported recipe names ${lines} strains. A batch ferments with one — choose the strain it takes.`,
     },
   ];
 }

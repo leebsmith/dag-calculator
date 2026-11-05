@@ -50,13 +50,33 @@ test("a picked record that no longer resolves is broken, not picked", () => {
   assert.match(broken.message, /pick another, or create one/);
 });
 
-test("the yeasts section opens only when several strains are picked and none carries", () => {
-  assert.equal(sectionState("yeasts", { yeastPicked: 1 }).state, "decided");
-  assert.equal(sectionState("yeasts", { yeastPicked: 2, hasCarrier: true }).state, "decided");
+test("the yeasts section opens while several strains have no carrier", () => {
+  assert.equal(sectionState("yeasts", { lines: 1 }).state, "decided");
+  assert.equal(sectionState("yeasts", { lines: 2, hasCarrier: true }).state, "decided");
 
-  const open = sectionState("yeasts", { yeastPicked: 2, hasCarrier: false });
+  const open = sectionState("yeasts", { lines: 2, hasCarrier: false });
   assert.equal(open.state, "open");
   assert.match(open.issues[0].message, /choose the strain it takes/);
+
+  const blend = sectionState("yeasts", { lines: 2, hasCarrier: false, blendMode: true });
+  assert.equal(blend.state, "open");
+  assert.match(blend.issues[0].message, /Choose the blend that covers them/);
+});
+
+test("in blend mode a strain is a component, not a decision", () => {
+  const strain = row({ section: "yeasts" });
+  const component = rowState(strain, { blendMode: true });
+  assert.equal(component.state, "component");
+  assert.equal(component.blocks, false, "the section owns the decision, not the row");
+  assert.match(component.message, /choose the blend below/);
+
+  assert.equal(rowState(strain).state, "open", "without a blend to offer it is the user's pick");
+  assert.equal(rowState(strain).blocks, true);
+
+  const picked = rowState(row({ section: "yeasts", decision: "mapped", ref: "y1" }), {
+    blendMode: true,
+  });
+  assert.equal(picked.state, "picked", "a strain chosen by search is still a pick");
 });
 
 test("the hops section opens when a whirlpool charge has no split", () => {

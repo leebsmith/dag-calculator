@@ -151,10 +151,14 @@ test("3b. a multi-strain recipe picks one blend and documents the components", a
   const { store } = flow({ yeasts: ["Strain A", "Strain B"] });
   const [first, second] = store.yeastLines;
 
-  const chips = store.chipsFor(first);
+  assert.equal(store.blendMode, true);
+  assert.deepEqual(store.chipsFor(first), [], "the rows do not offer their own choices");
+  const chips = store.blendCandidates();
   assert.deepEqual(chips.map((chip) => chip.id), ["blend-1"], "blends are the candidates");
+  assert.equal(store.unresolved.length, 0, "components do not block; the section does");
+  assert.equal(store.sectionIssues.length, 1);
 
-  store.chooseRef(first.line_id, chips[0]);
+  store.chooseBlend(chips[0]);
   assert.equal(
     store.ledger.find((row) => row.line_id === second.line_id).reason,
     "represented by Blend: A + B",
