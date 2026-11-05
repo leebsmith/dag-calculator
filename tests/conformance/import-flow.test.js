@@ -84,6 +84,7 @@ function recordFor(body) {
 function flow(options = {}) {
   const record = recordFor(payload(options));
   const patches = [];
+  const closes = [];
   const store = createImportReviewStore({
     client: { patch: async (id, body) => (patches.push(body), { ...record, ...body }) },
     catalog,
@@ -91,6 +92,7 @@ function flow(options = {}) {
     gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
     delta: () => ({ targets: [], lines: [] }),
     commit: async () => ({ id: "batch-1" }),
+    onClose: () => closes.push("closed"),
   });
   store.open(record);
   for (const row of store.ledger.filter((line) => line.section === "fermentables")) {
@@ -99,7 +101,7 @@ function flow(options = {}) {
   for (const row of store.ledger.filter((line) => line.section === "hops")) {
     store.chooseRef(row.line_id, { id: "saaz", name: "Saaz" });
   }
-  return { store, patches };
+  return { store, patches, closes };
 }
 
 const yeastRow = (store, name) => store.ledger.find((row) => row.name === name);
@@ -181,11 +183,12 @@ test("6. a decision after a check makes the result stale, not absent", async () 
   assert.equal(store.checkSummary, null, "and is not presented as current");
 });
 
-test("7. commit closes the record and leaves nothing to edit", async () => {
-  const { store } = flow({ yeasts: ["Strain A"] });
+test("7. commit clears the record but leaves navigation to the commit command", async () => {
+  const { store, closes } = flow({ yeasts: ["Strain A"] });
   store.chooseRef(yeastRow(store, "Strain A").line_id, { id: "strain-a", name: "Strain A" });
   await store.runCheck();
   const active = await store.commit();
   assert.equal(active.id, "batch-1");
   assert.equal(store.record, null, "the import view closes on its own record");
+  assert.deepEqual(closes, [], "no return to the list: the new batch is where the user lands");
 });

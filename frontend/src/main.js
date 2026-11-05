@@ -98,7 +98,11 @@ const reviewStore = createImportReviewStore({
     return active;
   },
   onClose: () => {
-    Alpine.store("recipes").view = "batches";
+    // backToBatches flushes and refreshes the list; assigning the view directly left
+    // a batch created by the import invisible until a hard reload.
+    Alpine.store("recipes")
+      .backToBatches()
+      .catch((err) => reportError("main.importClose", err));
     Alpine.store("imports").refresh();
   },
 });

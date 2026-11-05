@@ -110,7 +110,9 @@ export function commitActions({ commit = null }) {
           state: this.projectedState,
           name: this.payload?.title || this.summary?.filename || "Imported batch",
         });
-        this.close();
+        // The commit command has already put the user in the new batch; clearing the
+        // record must not send them back to the list.
+        this.reset();
         return active;
       } catch (err) {
         this.checkError = err?.message ?? "The batch could not be created.";

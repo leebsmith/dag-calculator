@@ -94,7 +94,8 @@ export function createImportReviewStore({
       dirty: false,
       revision: 0,
     },
-    reviewActions({ client, onClose }),
+    reviewActions({ onClose }),
+    recordActions({ client }),
     saveAction({ client }),
     ledgerLookupActions({ catalogs, catalog: lookup }),
     ledgerDecisionActions(),
@@ -113,6 +114,46 @@ export function createImportReviewStore({
     poolReadouts()
   );
   return store;
+}
+
+function recordActions({ client }) {
+  return {
+    async markFailed() {
+      if (!this.record || this.busy) return null;
+      const verdict = this.verdict;
+      this.busy = true;
+      this.error = null;
+      try {
+        await client.patch(this.record.id, {
+          status: "failed",
+          failure_reason: verdict?.reason ?? "no batch quantities on this page",
+        });
+        this.close();
+        return true;
+      } catch (err) {
+        this.error = err?.message ?? "Could not mark the import as failed.";
+        reportError("importReview.markFailed", err);
+        return null;
+      } finally {
+        this.busy = false;
+      }
+    },
+
+    async discard() {
+      if (!this.record) return;
+      this.busy = true;
+      try {
+        await client.remove(this.record.id);
+        this.close();
+      } catch (err) {
+        this.error = err?.message ?? "Could not delete that import.";
+        reportError("importReview.discard", err);
+      } finally {
+        this.busy = false;
+      }
+    },
+
+  };
 }
 
 function catalogOrNull(catalog) {
@@ -174,7 +215,6 @@ function ledgerReadouts() {
     get hopPanes() {
       return hopPanes(this.ledger);
     },
-
   };
 }
 
@@ -278,7 +318,7 @@ function saveAction({ client }) {
   };
 }
 
-function reviewActions({ client, onClose }) {
+function reviewActions({ onClose }) {
   return {
     open(record) {
       const withLedger = record
@@ -303,10 +343,17 @@ function reviewActions({ client, onClose }) {
       Object.assign(this, { dirty: false, savedAt: null, revision: 0 });
     },
 
-    close() {
+    // Clearing the open record is not the same as leaving the view: a commit hands
+    // navigation to its own command (which opens the new batch), while closing the
+    // import returns to the seam.
+    reset() {
       this.record = null;
       this.error = null;
       this.dirty = false;
+    },
+
+    close() {
+      this.reset();
       onClose?.();
     },
 
@@ -318,41 +365,6 @@ function reviewActions({ client, onClose }) {
       this.dirty = true;
       this.error = null;
       this.revision += 1;
-    },
-
-    async markFailed() {
-      if (!this.record || this.busy) return null;
-      const verdict = this.verdict;
-      this.busy = true;
-      this.error = null;
-      try {
-        await client.patch(this.record.id, {
-          status: "failed",
-          failure_reason: verdict?.reason ?? "no batch quantities on this page",
-        });
-        this.close();
-        return true;
-      } catch (err) {
-        this.error = err?.message ?? "Could not mark the import as failed.";
-        reportError("importReview.markFailed", err);
-        return null;
-      } finally {
-        this.busy = false;
-      }
-    },
-
-    async discard() {
-      if (!this.record) return;
-      this.busy = true;
-      try {
-        await client.remove(this.record.id);
-        this.close();
-      } catch (err) {
-        this.error = err?.message ?? "Could not delete that import.";
-        reportError("importReview.discard", err);
-      } finally {
-        this.busy = false;
-      }
     },
 
   };

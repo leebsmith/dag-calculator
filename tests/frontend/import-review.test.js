@@ -795,6 +795,28 @@ test("commit is refused until the gate is green", async () => {
   assert.deepEqual(commits, []);
 });
 
+test("commit hands navigation to its command; close hands it to the seam", async () => {
+  let closed = 0;
+  const store = createImportReviewStore({
+    client: { patch: async () => RECORD },
+    commit: async () => ({ id: "batch-1" }),
+    gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
+    project: () => ({ roots: {}, collections: {}, selections: {} }),
+    delta: () => ({ targets: [], lines: [] }),
+    onClose: () => (closed += 1),
+  });
+  store.open({ ...RECORD, ledger: [{ line_id: "l", decision: "ignored", reason: "outside" }] });
+  await store.runCheck();
+  await store.commit();
+
+  assert.equal(closed, 0, "a commit opens the batch it created, it does not return to the list");
+  assert.equal(store.record, null, "the record is still cleared");
+
+  store.open({ ...RECORD, ledger: [] });
+  store.close();
+  assert.equal(closed, 1, "closing the import returns to the seam");
+});
+
 test("a green gate commits the projected state and closes the record", async () => {
   const commits = [];
   const record = { ...RECORD, ledger: [{ line_id: "l", decision: "ignored", reason: "outside" }] };
