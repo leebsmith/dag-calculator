@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_126 paths_
+_127 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -141,6 +141,7 @@ _126 paths_
 | `batch.yeast.attenuation_low_pct` | Attenuation Low Pct | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_pct` | Typical attenuation | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_provenance` | Attenuation Provenance | field | — | — | — | — |
+| `batch.yeast.blend_of` | Blend Of | field | — | — | — | — |
 | `batch.yeast.flocculation` | Flocculation | field | — | — | — | Low, Medium, High |
 | `batch.yeast.form` | Form | field | — | — | — | Dry, Liquid |
 | `batch.yeast.id` | ID | field | — | — | — | — |

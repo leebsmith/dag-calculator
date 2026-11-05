@@ -1511,6 +1511,7 @@
         }
       },
       "attenuation_basis": {},
+      "blend_of": {},
       "sta1": {
         "type": "boolean"
       },

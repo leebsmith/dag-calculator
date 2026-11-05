@@ -10,6 +10,7 @@
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
 import { installLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
 import { installLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
+import { KEYS as compositionKeys, installLibraryComposition } from "./libraryComposition.js";
 import { filterCatalog } from "../views/catalog.js";
 import { dialogRestore } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
@@ -154,6 +155,7 @@ export function registerLibraryUi(app, ctx) {
 
   installLibraryFields(app, ctx);
   installLibraryListEditor(app, ctx);
+  installLibraryComposition(app);
 
   async function afterRecordsChanged(store) {
     store.libraryDraft = null;
@@ -382,4 +384,6 @@ export function registerLibraryUi(app, ctx) {
   });
 }
 
-export const KEYS = ["catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...libraryFieldKeys, ...libraryListKeys];
+export const KEYS = [
+  ...compositionKeys,
+  "catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...libraryFieldKeys, ...libraryListKeys];

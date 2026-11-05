@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:f08339f9e01d0f2bf07b007042f35a1cdb22f95bec946ce5a5fe29b60e3fa71d",
+    "hash": "sha256:b0f881ba3f83c6ee3afaf8f0133a991407b1d4458a225acb68d3ca591f499ded",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -1516,6 +1516,7 @@
             }
           },
           "attenuation_basis": {},
+          "blend_of": {},
           "sta1": {
             "type": "boolean"
           },
@@ -9994,5 +9995,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:0235ee3c692b50c9d54315cb0494e9045ff006e46f112e804bca89bf9a680629"
+  "content_hash": "sha256:c6497de765ed7e2d5563fb278852109de29e2c30d537892fc2b355e4a67567dd"
 }

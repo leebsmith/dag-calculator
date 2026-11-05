@@ -133,6 +133,50 @@ test("display converts base values to the active unit and input converts back", 
   assert.equal(app.libraryDraft.name, "Pilsner");
 });
 
+test("the yeast kind has two faces: strains and blends, split by composition", () => {
+  const { app } = setup({
+    records: {
+      yeast: [
+        { id: "y1", name: "House Saison" },
+        { id: "b1", name: "Blend: Saison + Brett", blend_of: "House Saison, Brett Brux" },
+      ],
+    },
+  });
+  app.selectLibraryTab("yeast");
+
+  assert.equal(field(app, "blend_of").kind, "text", "the composition is an authored field");
+  assert.deepEqual(
+    app.libraryGroups.map((group) => [group.title, group.items.map((item) => item.id)]),
+    [
+      ["Strains", ["y1"]],
+      ["Blends", ["b1"]],
+    ]
+  );
+  assert.equal(app.libraryItemComposition({ blend_of: "A, B" }), "Blend of A, B");
+  assert.equal(app.libraryItemComposition({ name: "strain" }), "");
+
+  app.selectLibraryTab("malt");
+  assert.equal(app.libraryGroups.length, 1, "other kinds are one list");
+});
+
+test("a blend is saved with its composition", async () => {
+  const { app, events } = setup({
+    records: { yeast: [] },
+    onCreate: (kind, component) => ({ id: "b1", component }),
+  });
+  app.selectLibraryTab("yeast");
+  app.newLibraryItem();
+  app.librarySetField("name", "Blend: Saison + Brett");
+  app.librarySetField("attenuation_pct", "78");
+  app.librarySetField("blend_of", "House Saison, Brett Brux");
+  await app.saveLibraryItem();
+
+  const created = events.find((event) => event.op === "create");
+  assert.equal(created.tab, "yeast");
+  assert.equal(created.component.blend_of, "House Saison, Brett Brux");
+  assert.equal(created.component.attenuation_pct, 0.78);
+});
+
 test("styles are forked, never authored from scratch", () => {
   const { app, events } = setup();
   app.selectSourceKind("style");

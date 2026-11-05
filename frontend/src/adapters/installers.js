@@ -40,6 +40,7 @@ const LIBRARY_UI = [
   "frontend/src/adapters/libraryUi.js",
   "frontend/src/adapters/libraryFields.js",
   "frontend/src/adapters/libraryListEditor.js",
+  "frontend/src/adapters/libraryComposition.js",
 ];
 const YEAST = ["frontend/src/adapters/cards/yeast.js"];
 const STYLE_DECLARATION = ["frontend/src/adapters/cards/style/declaration.js"];

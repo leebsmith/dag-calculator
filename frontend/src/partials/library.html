@@ -177,26 +177,33 @@
 
         <section class="library-section">
           <h3 class="library-heading">Your records</h3>
-          <div class="library-records">
-            <template x-for="item in libraryRecords" :key="libraryItemId(item)">
-              <div class="catalog-item-card">
-                <div>
-                  <div class="catalog-item-name" x-text="libraryItemTitle(item)"></div>
-                  <div class="text-xs text-muted" x-text="libraryItemId(item)"></div>
-                </div>
-                <button
-                  type="button"
-                  class="btn-outline text-xs"
-                  @click="deleteLibraryItem(libraryItemId(item))"
-                >Delete</button>
+          <template x-for="group in libraryGroups" :key="group.title || 'all'">
+            <div x-show="group.items.length">
+              <h4 class="library-heading" x-show="group.title" x-text="group.title"></h4>
+              <div class="library-records">
+                <template x-for="item in group.items" :key="libraryItemId(item)">
+                  <div class="catalog-item-card">
+                    <div>
+                      <div class="catalog-item-name" x-text="libraryItemTitle(item)"></div>
+                      <div class="text-xs text-muted" x-text="libraryItemId(item)"></div>
+                      <div class="text-xs text-muted" x-show="libraryItemComposition(item)"
+                        x-text="libraryItemComposition(item)"></div>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn-outline text-xs"
+                      @click="deleteLibraryItem(libraryItemId(item))"
+                    >Delete</button>
+                  </div>
+                </template>
               </div>
-            </template>
-            <p
-              class="landing-empty"
-              x-show="!libraryRecords.length"
-              x-text="librarySearch ? 'No matching records.' : 'No records yet. Create one below, or select a bundled seed.'"
-            ></p>
-          </div>
+            </div>
+          </template>
+          <p
+            class="landing-empty"
+            x-show="!libraryRecords.length"
+            x-text="librarySearch ? 'No matching records.' : 'No records yet. Create one below, or select a bundled seed.'"
+          ></p>
         </section>
 
         <div class="recipes-actions">
@@ -230,6 +237,10 @@
     <template x-if="libraryDraft">
       <div class="library-editor">
         <h3 class="library-heading" x-text="libraryDraft.forked_from_name ? 'Forked ' + activeKindLabel.toLowerCase() : 'New ' + activeKindLabel.toLowerCase()"></h3>
+        <p class="form-hint" x-show="activeKind === 'yeast'">
+          A strain leaves <em>Blend of</em> empty. A blend lists the strains it is composed of,
+          comma-separated, and carries the attenuation the blend finishes at.
+        </p>
         <template x-for="f in libraryFields" :key="f.field">
           <div class="form-group">
             <label
