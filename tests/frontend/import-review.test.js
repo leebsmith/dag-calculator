@@ -1133,6 +1133,7 @@ function twoYeasts() {
 test("the yeasts section asks for the carrier and offers no blend control", () => {
   const map = read("frontend/src/partials/import-map.html");
   assert.match(map, /This batch ferments with/);
+  assert.match(map, /Pick the strain or blend this batch ferments with/);
   assert.match(map, /A blend record covers them together/);
   assert.match(map, /blendCandidates\(\)/, "the section owns the blend picker");
   assert.match(map, /chooseBlend\(chip\)/);
