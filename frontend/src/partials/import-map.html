@@ -154,7 +154,7 @@
                         class="btn-outline text-xs"
                         @click="$store.importReview.ignoreLine(row.line_id)"
                       >Leave out</button>
-                      <span class="text-xs text-muted" x-show="!row.ref">
+                      <span class="text-xs text-muted" x-show="!$store.importReview.rowState(row).ref">
                         a pool is not a hop: pick the one the imported recipe named
                       </span>
                     </div>
@@ -162,26 +162,26 @@
                       <button
                         type="button"
                         class="map-chip is-chosen"
-                        x-show="row.ref && !$store.importReview.isDangling(row)"
+                        x-show="$store.importReview.rowState(row).picked"
                         x-text="$store.importReview.refLabel(row)"
-                        @click="$store.importReview.chooseRef(row.line_id, { id: row.ref, name: $store.importReview.refLabel(row) })"
+                        @click="$store.importReview.chooseRef(row.line_id, { id: $store.importReview.rowState(row).ref, name: $store.importReview.refLabel(row) })"
                       ></button>
                       <span
                         class="map-chip is-deleted"
-                        x-show="$store.importReview.isDangling(row)"
+                        x-show="$store.importReview.rowState(row).state === 'broken'"
                         x-text="$store.importReview.refLabel(row) + ' (deleted)'"
                       ></span>
                       <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                         <button
                           type="button"
                           class="map-chip"
-                          :class="{ 'is-chosen': chip.id === row.ref }"
+                          :class="{ 'is-chosen': chip.id === $store.importReview.rowState(row).ref }"
                           :title="chip.manufacturer || chip.category || ''"
                           @click="$store.importReview.chooseRef(row.line_id, chip)"
                           x-text="chip.name"
                         ></button>
                       </template>
-                      <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.chipsFor(row).length === 0">
+                      <span class="text-xs text-muted" x-show="!$store.importReview.rowState(row).ref && $store.importReview.chipsFor(row).length === 0">
                         no candidate from the imported name — search below
                       </span>
                       <details class="map-search">
@@ -280,7 +280,7 @@
             <p class="text-xs text-muted" x-show="$store.importReview.rowIssue(row)"
               x-text="$store.importReview.rowIssue(row)"></p>
             <p class="text-xs text-muted"
-              x-show="row.section === 'yeasts' && row.decision === 'mapped'
+              x-show="row.section === 'yeasts' && $store.importReview.rowState(row).picked
                 && $store.importReview.carrierLineId
                 && $store.importReview.carrierLineId !== row.line_id">
               not the batch's yeast
@@ -306,42 +306,42 @@
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.decision !== 'ignored'"
+                x-show="!$store.importReview.rowState(row).leftOut"
                 @click="$store.importReview.ignoreLine(row.line_id)"
               >Leave out</button>
-              <span class="text-xs text-muted" x-show="row.decision === 'ignored'" x-text="row.reason"></span>
+              <span class="text-xs text-muted" x-show="$store.importReview.rowState(row).leftOut" x-text="row.reason"></span>
               <button
                 type="button"
                 class="btn-outline text-xs"
-                x-show="row.decision === 'ignored'"
+                x-show="$store.importReview.rowState(row).leftOut"
                 @click="$store.importReview.restoreLine(row.line_id)"
               >Add back</button>
             </div>
 
-            <div class="map-suggestions" x-show="row.decision !== 'ignored'">
+            <div class="map-suggestions" x-show="!$store.importReview.rowState(row).leftOut">
               <button
                 type="button"
                 class="map-chip is-chosen"
-                x-show="row.ref && !$store.importReview.isDangling(row)"
+                x-show="$store.importReview.rowState(row).picked"
                 x-text="$store.importReview.refLabel(row)"
-                @click="$store.importReview.chooseRef(row.line_id, { id: row.ref, name: $store.importReview.refLabel(row) })"
+                @click="$store.importReview.chooseRef(row.line_id, { id: $store.importReview.rowState(row).ref, name: $store.importReview.refLabel(row) })"
               ></button>
               <span
                 class="map-chip is-deleted"
-                x-show="$store.importReview.isDangling(row)"
+                x-show="$store.importReview.rowState(row).state === 'broken'"
                 x-text="$store.importReview.refLabel(row) + ' (deleted)'"
               ></span>
               <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                 <button
                   type="button"
                   class="map-chip"
-                  :class="{ 'is-chosen': chip.id === row.ref, 'is-proposed': row.proposed && chip.id === row.ref }"
+                  :class="{ 'is-chosen': chip.id === $store.importReview.rowState(row).ref, 'is-proposed': $store.importReview.rowState(row).proposed }"
                   :title="chip.maltster || chip.manufacturer || chip.category || ''"
                   @click="$store.importReview.chooseRef(row.line_id, chip)"
                   x-text="chip.name"
                 ></button>
               </template>
-              <span class="text-xs text-muted" x-show="!row.ref && $store.importReview.chipsFor(row).length === 0">
+              <span class="text-xs text-muted" x-show="!$store.importReview.rowState(row).ref && $store.importReview.chipsFor(row).length === 0">
                 no candidate from the imported name — search below
               </span>
               <span class="text-xs text-muted" x-show="row.section === 'mashes'">

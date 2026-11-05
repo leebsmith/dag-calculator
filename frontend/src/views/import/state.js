@@ -23,17 +23,22 @@ export const GATE = {
 // `resolves(row)` answers "does the registry still have this pick?"; `label(row)`
 // is the name to show when it does not.
 export function rowState(row, { resolves = () => true, label = () => "" } = {}) {
-  if (!row) return { state: null, blocks: false, message: "" };
-  if (row.decision === "ignored") {
-    return { state: ROW.LEFT_OUT, blocks: false, message: "" };
-  }
+  const view = (state, blocks, message) => ({
+    state,
+    blocks,
+    message,
+    ref: row?.ref ?? null,
+    picked: state === ROW.PICKED || state === ROW.PROPOSED,
+    proposed: state === ROW.PROPOSED,
+    leftOut: state === ROW.LEFT_OUT,
+  });
+  if (!row) return { state: null, blocks: false, message: "", ref: null };
+  if (row.decision === "ignored") return view(ROW.LEFT_OUT, false, "");
   if (row.decision !== "mapped" && row.decision !== "blended") {
-    return { state: ROW.OPEN, blocks: true, message: openMessage(row) };
+    return view(ROW.OPEN, true, openMessage(row));
   }
-  if (!row.ref || !resolves(row)) {
-    return { state: ROW.BROKEN, blocks: true, message: brokenMessage(row, label(row)) };
-  }
-  return { state: row.proposed ? ROW.PROPOSED : ROW.PICKED, blocks: false, message: "" };
+  if (!row.ref || !resolves(row)) return view(ROW.BROKEN, true, brokenMessage(row, label(row)));
+  return view(row.proposed ? ROW.PROPOSED : ROW.PICKED, false, "");
 }
 
 function openMessage(row) {

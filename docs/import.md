@@ -143,9 +143,15 @@ still an explicit press, because it costs solver calls.
 
 An explicit press, because it costs solver calls. The projected candidate is solved
 by the same boundary runner the editor uses, so a gate result and a live result
-cannot disagree. Any later decision — a line's destination, its pick, the IBU split,
-the water profile, the yeast outcome — clears the result, so a solved screen never
-stands on a mapping that has moved underneath it; the press is simply made again.
+cannot disagree.
+
+The gate states are `unchecked`, `checking`, `fresh-ok`, `fresh-blocked` and `stale`.
+Every decision — a line's destination or pick, the IBU split, the water profile, the
+carrier — increments an in-memory revision, and the gate stores the revision it
+solved. A later decision therefore marks the result **stale**: the last solve is
+kept, the screen says the mapping changed, and its findings are not presented as
+current until the press is made again. The result is per session; reopening a record
+starts `unchecked`.
 
 - **Blocking**: a failed batch or hop boundary, a violated blocking relation, any
   unresolved line (a line pointing at a deleted record is one), and the hop-routing
