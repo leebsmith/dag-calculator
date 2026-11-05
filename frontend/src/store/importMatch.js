@@ -25,6 +25,12 @@ export function matchActions({ client, catalog }) {
     // through to the library search the row already offers.
     chipsFor(row) {
       if (row.section === "mashes") return this.suggestions(row);
+      // Several strains on the recipe is a blend question, not a strain question: the
+      // components are not selections, so propose the blends that cover them.
+      if (row.section === "yeasts" && this.yeastLines.length > 1) {
+        const blends = this.blendCandidates(4);
+        if (blends.length) return blends;
+      }
       const frozen = this.frozenSuggestions[row.line_id];
       const kind = this.catalogKind(row);
       const modelChips = (frozen?.ids ?? [])

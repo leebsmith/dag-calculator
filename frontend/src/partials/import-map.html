@@ -176,7 +176,7 @@
                           type="button"
                           class="map-chip"
                           :class="{ 'is-chosen': chip.id === $store.importReview.rowState(row).ref }"
-                          :title="chip.manufacturer || chip.category || ''"
+                          :title="chip.manufacturer || chip.category || chip.composition || ''"
                           @click="$store.importReview.chooseRef(row.line_id, chip)"
                           x-text="chip.name"
                         ></button>
@@ -238,10 +238,17 @@
 
       <template x-if="section.id === 'yeasts'">
         <div>
-          <p class="form-hint" x-show="$store.importReview.yeastSectionOpen">
-            Imported recipe names more than one strain. A batch ferments with one: pick each
-            strain's record, then choose the strain this batch takes. A blend is a Library record
-            like any other yeast.
+          <p class="form-hint"
+            x-show="$store.importReview.yeastLines.length > 1 && !$store.importReview.carrierLineId
+              && $store.importReview.blendRecords.length">
+            Imported recipe names more than one strain. A blend record covers them together — pick
+            one below. To use a single strain instead, search for it.
+          </p>
+          <p class="form-hint"
+            x-show="$store.importReview.yeastLines.length > 1 && !$store.importReview.carrierLineId
+              && !$store.importReview.blendRecords.length">
+            Imported recipe names more than one strain, and no blend record exists yet. Create one
+            in the Library with these components, or pick one strain and search for it.
           </p>
           <div class="import-queue-actions" x-show="$store.importReview.mappedYeasts.length > 1">
             <label class="text-xs text-muted" for="import-carrier">This batch ferments with</label>
@@ -336,7 +343,7 @@
                   type="button"
                   class="map-chip"
                   :class="{ 'is-chosen': chip.id === $store.importReview.rowState(row).ref, 'is-proposed': $store.importReview.rowState(row).proposed }"
-                  :title="chip.maltster || chip.manufacturer || chip.category || ''"
+                  :title="chip.maltster || chip.manufacturer || chip.category || chip.composition || ''"
                   @click="$store.importReview.chooseRef(row.line_id, chip)"
                   x-text="chip.name"
                 ></button>

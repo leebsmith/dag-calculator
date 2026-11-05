@@ -15,6 +15,7 @@ import {
   setDestination,
 } from "../views/import/ledger.js";
 import { catalogKindFor } from "./importMatch.js";
+import { rankBlends } from "../views/import/blendMatch.js";
 
 // Looking a line up: the destinations its section offers and the chips the page
 // supports. Separate from deciding it, so neither factory becomes a second program.
@@ -35,6 +36,23 @@ export function ledgerLookupActions({ catalogs, catalog = null }) {
 
     goTo(stage) {
       if (["transcribe", "map", "check"].includes(stage)) this.stage = stage;
+    },
+
+    // Every Library yeast that carries a composition. A multi-strain recipe proposes
+    // these instead of the components: the blend is the record the batch can carry.
+    get blendRecords() {
+      return catalogs("yeast").filter((item) => item.blend_of);
+    },
+
+    blendCandidates(limit = 4) {
+      const names = this.yeastLines.map((row) => row.name).filter(Boolean);
+      return rankBlends(this.blendRecords, names, limit).map((item) => ({
+        id: item.id,
+        name: item.name,
+        blend_of: item.blend_of,
+        composition: item.blend_of,
+        blend: true,
+      }));
     },
 
     // Candidate chips for one line. Mash steps pick from the model's eight rests
@@ -74,6 +92,9 @@ export function ledgerDecisionActions() {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row || !item) return;
       this.replaceRow(applyRef(row, item, catalogKindFor(row)));
+      if (row.section === "yeasts" && item.blend_of) {
+        this.representYeastComponents(lineId, item);
+      }
     },
 
     changeDestination(lineId, destination) {

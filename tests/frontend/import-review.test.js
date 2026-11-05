@@ -954,6 +954,40 @@ test("a blend record is picked like any other yeast", () => {
 });
 
 
+test("a multi-strain recipe proposes blends, and one pick documents the components", () => {
+  const { store, records } = unpickedTwoYeasts();
+  records.set("blend-1", {
+    id: "blend-1",
+    name: "Blend: Saison + Brett",
+    blend_of: "clean saison strain, Brettanomyces culture",
+    attenuation_pct: 0.78,
+  });
+  records.set("strain-x", { id: "strain-x", name: "clean saison strain" });
+
+  const [saison, brett] = store.yeastLines;
+  const chips = store.chipsFor(saison);
+  assert.deepEqual(chips.map((chip) => chip.id), ["blend-1"], "blends, not the components");
+  assert.equal(chips[0].composition, "clean saison strain, Brettanomyces culture");
+
+  store.chooseRef(saison.line_id, chips[0]);
+  const documented = store.ledger.find((row) => row.line_id === brett.line_id);
+  assert.equal(documented.decision, "ignored");
+  assert.equal(documented.reason, "represented by Blend: Saison + Brett");
+  assert.equal(store.carrierLineId, saison.line_id);
+  assert.deepEqual(store.sectionIssues, [], "one blend pick decides the section");
+});
+
+test("without a blend record the strain chips remain the fallback", () => {
+  const { store, records } = unpickedTwoYeasts();
+  records.set("strain-x", { id: "strain-x", name: "clean saison strain" });
+  records.set("strain-y", { id: "strain-y", name: "Brettanomyces culture" });
+
+  assert.equal(store.blendRecords.length, 0);
+  const chips = store.chipsFor(store.yeastLines[0]);
+  assert.ok(chips.length > 0, "the user is not blocked by a missing blend");
+  assert.ok(chips.every((chip) => !chip.blend), "and the chips are strains, not blends");
+});
+
 test("a picked record is shown by name, and a deleted one says so on the row", () => {
   const records = new Map([["y-1", { id: "y-1", name: "House strain" }]]);
   const store = createImportReviewStore({
@@ -1030,6 +1064,7 @@ function unpickedTwoYeasts() {
   const store = createImportReviewStore({
     client: { patch: async (id, body) => ({ ...record, ...body }) },
     catalog: (kind, id) => records.get(id) ?? null,
+    catalogs: () => [...records.values()],
   });
   store.open(record);
   return { store, records };
@@ -1050,6 +1085,9 @@ function twoYeasts() {
 test("the yeasts section asks for the carrier and offers no blend control", () => {
   const map = read("frontend/src/partials/import-map.html");
   assert.match(map, /This batch ferments with/);
+  assert.match(map, /A blend record covers them together/);
+  assert.match(map, /no blend record exists yet/);
+  assert.match(map, /chip\.composition/);
   assert.match(map, /setCarrier\(\$event\.target\.value\)/);
   assert.match(map, /carrierLineId/);
   assert.match(map, /not the batch's yeast/);

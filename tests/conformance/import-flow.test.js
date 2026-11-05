@@ -88,6 +88,7 @@ function flow(options = {}) {
   const store = createImportReviewStore({
     client: { patch: async (id, body) => (patches.push(body), { ...record, ...body }) },
     catalog,
+    catalogs: () => Object.values(CATALOG.yeast),
     project: projectImport,
     gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
     delta: () => ({ targets: [], lines: [] }),
@@ -144,6 +145,26 @@ test("3. a blend record is picked and carried like any yeast", async () => {
   assert.equal(store.projectedState.roots["batch.yeast_id"], "blend-1");
   assert.equal(store.projectedState.selections["batch.yeast"].attenuation_pct, 0.78);
   assert.equal(store.checkSummary?.ok, true);
+});
+
+test("3b. a multi-strain recipe picks one blend and documents the components", async () => {
+  const { store } = flow({ yeasts: ["Strain A", "Strain B"] });
+  const [first, second] = store.yeastLines;
+
+  const chips = store.chipsFor(first);
+  assert.deepEqual(chips.map((chip) => chip.id), ["blend-1"], "blends are the candidates");
+
+  store.chooseRef(first.line_id, chips[0]);
+  assert.equal(
+    store.ledger.find((row) => row.line_id === second.line_id).reason,
+    "represented by Blend: A + B",
+    "the other strain is documented, not blocking"
+  );
+  assert.equal(store.yeastSectionOpen, false);
+
+  await store.runCheck();
+  assert.equal(store.projectedState.roots["batch.yeast_id"], "blend-1");
+  assert.equal(store.projectedState.selections["batch.yeast"].name, "Blend: A + B");
 });
 
 test("4. a deleted pick is broken and holds the gate shut", async () => {
