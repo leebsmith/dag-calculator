@@ -990,6 +990,35 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
   assert.equal(store.openCount, store.unresolved.length, "only the unmapped rows remain");
 });
 
+test("changing the blend is one click, and a component carries no controls", () => {
+  const { store, records } = unpickedTwoYeasts();
+  records.set("blend-1", {
+    id: "blend-1",
+    name: "Blend: Saison + Brett",
+    blend_of: "clean saison strain, Brettanomyces culture",
+    attenuation_pct: 0.78,
+  });
+  records.set("blend-2", {
+    id: "blend-2",
+    name: "Blend: Brett forward",
+    blend_of: "clean saison strain, Brettanomyces culture",
+    attenuation_pct: 0.82,
+  });
+
+  const first = store.blendCandidates().find((chip) => chip.id === "blend-1");
+  store.chooseBlend(first);
+  const carrier = store.ledger.find((row) => row.line_id === store.carrierLineId);
+  assert.equal(carrier.ref, "blend-1");
+
+  const second = store.blendCandidates().find((chip) => chip.id === "blend-2");
+  store.chooseBlend(second);
+  assert.equal(
+    store.ledger.find((row) => row.line_id === store.carrierLineId).ref,
+    "blend-2",
+    "the section's chips stay live"
+  );
+});
+
 test("without a blend record the strain chips remain the fallback", () => {
   const { store, records } = unpickedTwoYeasts();
   records.set("strain-x", { id: "strain-x", name: "clean saison strain" });
@@ -1101,6 +1130,8 @@ test("the yeasts section asks for the carrier and offers no blend control", () =
   assert.match(map, /A blend record covers them together/);
   assert.match(map, /blendCandidates\(\)/, "the section owns the blend picker");
   assert.match(map, /chooseBlend\(chip\)/);
+  assert.match(map, /rowState\(row\)\.state !== 'component'/, "a component carries no controls");
+  assert.match(map, /carrier\?\.ref/, "the current blend is marked in the chips");
   assert.match(map, /no blend record exists yet/);
   assert.match(map, /chip\.composition/);
   assert.match(map, /setCarrier\(\$event\.target\.value\)/);

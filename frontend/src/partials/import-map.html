@@ -250,13 +250,13 @@
             Imported recipe names more than one strain, and no blend record exists yet. Create one
             in the Library with these components, or pick one strain and search for it.
           </p>
-          <div class="import-queue-actions"
-            x-show="$store.importReview.blendMode && !$store.importReview.carrierLineId">
+          <div class="import-queue-actions" x-show="$store.importReview.blendMode">
             <span class="text-xs text-muted">Blend record:</span>
             <template x-for="chip in $store.importReview.blendCandidates()" :key="chip.id">
               <button
                 type="button"
                 class="map-chip"
+                :class="{ 'is-chosen': chip.id === $store.importReview.carrier?.ref }"
                 :title="chip.composition"
                 @click="$store.importReview.chooseBlend(chip)"
                 x-text="chip.name"
@@ -306,7 +306,7 @@
               not the batch's yeast
             </p>
 
-            <div class="map-row-actions">
+            <div class="map-row-actions" x-show="$store.importReview.rowState(row).state !== 'component'">
               <select
                 class="form-select text-xs"
                 x-show="$store.importReview.destinationsFor(row.section).length > 1"
@@ -338,7 +338,9 @@
               >Add back</button>
             </div>
 
-            <div class="map-suggestions" x-show="!$store.importReview.rowState(row).leftOut">
+            <div class="map-suggestions"
+              x-show="!$store.importReview.rowState(row).leftOut
+                && $store.importReview.rowState(row).state !== 'component'">
               <button
                 type="button"
                 class="map-chip is-chosen"
