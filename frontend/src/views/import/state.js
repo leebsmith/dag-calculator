@@ -23,7 +23,10 @@ export const GATE = {
 
 // `resolves(row)` answers "does the registry still have this pick?"; `label(row)`
 // is the name to show when it does not.
-export function rowState(row, { resolves = () => true, label = () => "", blendMode = false } = {}) {
+export function rowState(
+  row,
+  { resolves = () => true, label = () => "", blendMode = false, hasCarrier = false } = {}
+) {
   const view = (state, blocks, message) => ({
     state,
     blocks,
@@ -38,7 +41,9 @@ export function rowState(row, { resolves = () => true, label = () => "", blendMo
   if (decided(row)) return pickedView(row, view, resolves, label);
   // In a multi-strain recipe the strains are the blend's components, not options:
   // the section owns the decision, so the row must not ask for one or block.
-  if (row.section === "yeasts" && blendMode) return view(ROW.COMPONENT, false, componentMessage());
+  if (row.section === "yeasts" && blendMode) {
+    return view(ROW.COMPONENT, false, hasCarrier ? notCarrierMessage() : componentMessage());
+  }
   return view(ROW.OPEN, true, openMessage(row));
 }
 
@@ -59,6 +64,10 @@ function openMessage(row) {
 
 function componentMessage() {
   return "Part of the recipe's blend — choose the blend below.";
+}
+
+function notCarrierMessage() {
+  return "Not the batch's yeast — it carries the strain you chose.";
 }
 
 function brokenMessage(row, name) {

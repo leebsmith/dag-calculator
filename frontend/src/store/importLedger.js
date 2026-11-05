@@ -91,10 +91,11 @@ export function ledgerDecisionActions() {
     chooseRef(lineId, item) {
       const row = this.ledger.find((candidate) => candidate.line_id === lineId);
       if (!row || !item) return;
-      this.replaceRow(applyRef(row, item, catalogKindFor(row)));
       if (row.section === "yeasts" && item.blend_of) {
-        this.representYeastComponents(lineId, item);
+        this.chooseBlend({ id: item.id, name: item.name });
+        return;
       }
+      this.replaceRow(applyRef(row, item, catalogKindFor(row)));
     },
 
     changeDestination(lineId, destination) {

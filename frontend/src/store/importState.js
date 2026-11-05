@@ -10,6 +10,7 @@ export function stateReadouts() {
         resolves: (candidate) => !this.isDangling(candidate),
         label: (candidate) => this.refLabel(candidate),
         blendMode: this.blendMode,
+        hasCarrier: Boolean(this.carrierLineId),
       });
     },
 
@@ -48,18 +49,6 @@ export function stateReadouts() {
     // and the blend is the decision.
     get blendMode() {
       return this.yeastLines.length > 1 && this.blendRecords.length > 0;
-    },
-
-    // One pick for the group: the blend lands on a yeast line, and the recipe's other
-    // strains become its documented components.
-    chooseBlend(chip) {
-      if (!chip) return;
-      const line =
-        this.yeastLines.find((row) => row.decision === "unresolved") ??
-        this.yeastLines.find((row) => row.decision !== "ignored") ??
-        this.yeastLines[0];
-      if (!line) return;
-      this.chooseRef(line.line_id, chip);
     },
 
     get sectionIssues() {

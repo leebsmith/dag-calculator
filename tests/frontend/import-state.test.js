@@ -77,6 +77,10 @@ test("in blend mode a strain is a component, not a decision", () => {
     blendMode: true,
   });
   assert.equal(picked.state, "picked", "a strain chosen by search is still a pick");
+
+  const notCarrier = rowState(strain, { blendMode: true, hasCarrier: true });
+  assert.equal(notCarrier.state, "component");
+  assert.match(notCarrier.message, /Not the batch's yeast/);
 });
 
 test("the hops section opens when a whirlpool charge has no split", () => {

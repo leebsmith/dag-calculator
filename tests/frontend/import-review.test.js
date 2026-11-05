@@ -982,10 +982,14 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
   );
 
   store.chooseBlend(store.blendCandidates()[0]);
-  const documented = store.ledger.find((row) => row.line_id === brett.line_id);
-  assert.equal(documented.decision, "ignored");
-  assert.equal(documented.reason, "represented by Blend: Saison + Brett");
-  assert.ok(store.carrierLineId, "the blend lands on a yeast line");
+  assert.equal(store.blendOutcome.ref, "blend-1", "the blend is the batch's yeast");
+  assert.equal(store.carrierLineId, null, "no strain line is the carrier");
+  assert.equal(store.mappedYeasts.length, 0, "a blend is not one of the recipe's lines");
+  for (const row of [saison, brett]) {
+    const documented = store.ledger.find((item) => item.line_id === row.line_id);
+    assert.equal(documented.decision, "ignored");
+    assert.equal(documented.reason, "represented by Blend: Saison + Brett");
+  }
   assert.deepEqual(store.sectionIssues, [], "one blend pick decides the section");
   assert.equal(store.openCount, store.unresolved.length, "only the unmapped rows remain");
 });
@@ -1007,15 +1011,17 @@ test("changing the blend is one click, and a component carries no controls", () 
 
   const first = store.blendCandidates().find((chip) => chip.id === "blend-1");
   store.chooseBlend(first);
-  const carrier = store.ledger.find((row) => row.line_id === store.carrierLineId);
-  assert.equal(carrier.ref, "blend-1");
+  assert.equal(store.blendOutcome.ref, "blend-1");
+  assert.ok(
+    store.yeastLines.every((row) => row.reason === "represented by Blend: Saison + Brett")
+  );
 
   const second = store.blendCandidates().find((chip) => chip.id === "blend-2");
   store.chooseBlend(second);
-  assert.equal(
-    store.ledger.find((row) => row.line_id === store.carrierLineId).ref,
-    "blend-2",
-    "the section's chips stay live"
+  assert.equal(store.blendOutcome.ref, "blend-2", "the section's chips stay live");
+  assert.ok(
+    store.yeastLines.every((row) => row.reason === "represented by Blend: Brett forward"),
+    "and the documentation follows the new blend"
   );
 });
 
@@ -1131,7 +1137,8 @@ test("the yeasts section asks for the carrier and offers no blend control", () =
   assert.match(map, /blendCandidates\(\)/, "the section owns the blend picker");
   assert.match(map, /chooseBlend\(chip\)/);
   assert.match(map, /rowState\(row\)\.state !== 'component'/, "a component carries no controls");
-  assert.match(map, /carrier\?\.ref/, "the current blend is marked in the chips");
+  assert.match(map, /blendOutcome\?\.ref/, "the current blend is marked in the chips");
+  assert.match(map, /blendOutcome\?\.name/, "the section states what ferments the batch");
   assert.match(map, /no blend record exists yet/);
   assert.match(map, /chip\.composition/);
   assert.match(map, /setCarrier\(\$event\.target\.value\)/);

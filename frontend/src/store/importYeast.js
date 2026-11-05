@@ -17,13 +17,19 @@ export function yeastActions() {
       this.revision += 1;
     },
 
-    // A blend record names its components, so the recipe's other yeast lines are
-    // represented by it. They are left out with that reason — visible, reversible, and
-    // not blocking a gate whose decision is already made.
-    representYeastComponents(lineId, blend) {
+    // A blend is the batch's yeast, chosen for the group: it becomes the outcome and
+    // the recipe's strain lines are its documented components. No line is mapped — a
+    // blend is not one of the strains, and no row should claim to be it.
+    chooseBlend(blend) {
+      if (!blend?.id) return;
+      this.setYeastOutcome({ mode: "blend", ref: blend.id, name: blend.name });
+      this.representYeastComponents(blend);
+    },
+
+    representYeastComponents(blend) {
       for (const row of this.yeastLines) {
-        if (row.line_id === lineId) continue;
-        if (row.decision === "mapped" || row.decision === "ignored") continue;
+        const represented = /^represented by /.test(row.reason ?? "");
+        if (row.decision === "ignored" && !represented) continue;
         this.replaceRow(ignoreRow(row, `represented by ${blend.name}`));
       }
     },

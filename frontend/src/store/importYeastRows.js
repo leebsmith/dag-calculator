@@ -18,14 +18,31 @@ export function yeastReadouts() {
     // The carrier: the one line the batch ferments with. Stored on the record and
     // reconciled against the rows, so a left-out carrier cannot linger.
     get yeastOutcome() {
-      const mapped = this.mappedYeasts.map((row) => row.line_id);
       const stated = this.record?.yeast_outcome ?? null;
-      if (stated?.line_id && mapped.includes(stated.line_id)) return stated;
+      // A blend is a Library record the batch carries; it is never one of the recipe's
+      // lines, so it has no line to point at.
+      if (stated?.mode === "blend" && stated.ref && this.catalogRecord("yeast", stated.ref)) {
+        return stated;
+      }
+      const mapped = this.mappedYeasts.map((row) => row.line_id);
+      if (stated?.mode === "single" && mapped.includes(stated.line_id)) return stated;
       return mapped.length === 1 ? { mode: "single", line_id: mapped[0] } : null;
     },
 
+    get blendOutcome() {
+      const outcome = this.yeastOutcome;
+      return outcome?.mode === "blend" ? outcome : null;
+    },
+
+    get blendRecordAttenuationPct() {
+      const blend = this.blendOutcome;
+      const record = blend ? this.catalogRecord("yeast", blend.ref) : null;
+      const value = record?.attenuation_pct;
+      return typeof value === "number" ? Math.round(value * 1000) / 10 : null;
+    },
+
     get carrierLineId() {
-      return this.yeastOutcome?.line_id ?? null;
+      return this.yeastOutcome?.mode === "single" ? this.yeastOutcome.line_id : null;
     },
 
     get carrier() {

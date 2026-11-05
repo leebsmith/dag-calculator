@@ -239,24 +239,30 @@
       <template x-if="section.id === 'yeasts'">
         <div>
           <p class="form-hint"
-            x-show="$store.importReview.yeastLines.length > 1 && !$store.importReview.carrierLineId
+            x-show="$store.importReview.yeastLines.length > 1 && !$store.importReview.yeastOutcome
               && $store.importReview.blendRecords.length">
             Imported recipe names more than one strain. A blend record covers them together — pick it
             here. To use a single strain instead, search for it.
           </p>
           <p class="form-hint"
-            x-show="$store.importReview.yeastLines.length > 1 && !$store.importReview.carrierLineId
+            x-show="$store.importReview.yeastLines.length > 1 && !$store.importReview.yeastOutcome
               && !$store.importReview.blendRecords.length">
             Imported recipe names more than one strain, and no blend record exists yet. Create one
             in the Library with these components, or pick one strain and search for it.
           </p>
+          <div class="import-queue-actions" x-show="$store.importReview.blendOutcome">
+            <span class="map-badge">ferments this batch</span>
+            <span class="font-medium" x-text="$store.importReview.blendOutcome?.name"></span>
+            <span class="text-xs text-muted"
+              x-text="($store.importReview.blendRecordAttenuationPct ?? '—') + ' % attenuation'"></span>
+          </div>
           <div class="import-queue-actions" x-show="$store.importReview.blendMode">
             <span class="text-xs text-muted">Blend record:</span>
             <template x-for="chip in $store.importReview.blendCandidates()" :key="chip.id">
               <button
                 type="button"
                 class="map-chip"
-                :class="{ 'is-chosen': chip.id === $store.importReview.carrier?.ref }"
+                :class="{ 'is-chosen': chip.id === $store.importReview.blendOutcome?.ref }"
                 :title="chip.composition"
                 @click="$store.importReview.chooseBlend(chip)"
                 x-text="chip.name"
