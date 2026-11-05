@@ -24,13 +24,19 @@ tracks only what is outstanding.
 
 ## Later
 
-* **Multi-strain yeast (deferred, narrowed)** — the import now records the
-  two-strain fact (`yeast_outcome`) and resolves it to one authored Library record,
-  and the batch shows it under Imported from (`docs/import.md` §3). What stays
-  deferred is the *collection* form — several yeast rows with pitch-share parts and
-  a derived blended attenuation — because a weighted mean is not co-pitch physics and
-  a sequential pitch is time-dependent; deriving it would dress an authored guess as
-  a derived value. **Revisit when** either (a) blends are common enough that one
+* **Recipe language (TOML, hand-authored)** — a source a person writes and the app
+  reads deterministically: ratios where the app authors parts, mass where it authors
+  mass, targets plus a required scale pin, registry names resolved with a hard fail.
+  It lands as a *batch source* (a draft batch straight into the editor), not as an
+  import document, so it never enters the ledger. See `plans/recipe-language.md`.
+
+* **Multi-strain yeast (deferred, narrowed)** — blends are now ordinary Library
+  records: a yeast record with a `blend_of` composition, authored and deleted there
+  only, picked by an import like any other yeast (`plans/mapping-plans.md`). What
+  stays deferred is the *collection* form — several yeast rows with pitch-share parts
+  and a derived blended attenuation — because a weighted mean is not co-pitch physics
+  and a sequential pitch is time-dependent; deriving it would dress an authored guess
+  as a derived value. **Revisit when** either (a) blends are common enough that one
   Library record per blend is real friction, or (b) a user model exists for pitch
   share and post-packaging attenuation (the brew-session observations could feed
   it).
