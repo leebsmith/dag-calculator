@@ -95,8 +95,9 @@ later decision makes the result `stale`, not absent**: the check screen says the
 mapping changed since it was solved and offers the press again. Discarding the result,
 as the current code does, loses the evidence of *what* changed.
 
-The only record-level yeast decision is `yeast_outcome` in its single form — *this
-batch ferments with line X* — written by the carrier picker and reconciled against the
+The only record-level yeast decision is `yeast_outcome` — *this batch ferments with
+line X* (`single`) or *with this Library blend* (`blend`, a record, since a blend is
+not one of the recipe's lines) — written with the choice and reconciled against the
 rows on open.
 
 ## One kind, two faces

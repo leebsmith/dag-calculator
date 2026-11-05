@@ -83,12 +83,15 @@ strain the batch ferments with:
 - when more than one is picked, the section asks once — *“This batch ferments with”* —
   and the other picked strains stay picked, noted as not the batch's yeast. No row is
   auto-ignored and no row is demoted;
-- a blend is **not** created here. It is an ordinary Library record — a `yeast` record
-  carrying a `blend_of` composition and the attenuation the blend finishes at — so the
-  mapping phase never writes the Library and picks a blend exactly like a strain;
-- the decision is a field, not an inference: the record carries `yeast_outcome` in its
-  single form (the carrier's line), written with the choice and reconciled against the
-  rows on open.
+- a blend is **not** created here and is **not one of the recipe's lines**. It is an
+  ordinary Library record — a `yeast` record carrying a `blend_of` composition and the
+  attenuation it finishes at. Choosing it is a decision about the whole section: the
+  blend becomes the record the batch carries, and the recipe's strain lines are
+  documented as its components (`represented by <blend>`). No line is mapped to it,
+  so nothing claims a strain is the blend;
+- the decision is a field, not an inference: the record carries `yeast_outcome` as
+  either the carrier's line (`single`) or a Library blend (`blend` with its ref),
+  written with the choice and reconciled against the rows on open.
 
 A blend therefore has to exist before it can be used, the same way a malt does. Its
 composition is authored in the Library, where records are sealed: a correction is a
