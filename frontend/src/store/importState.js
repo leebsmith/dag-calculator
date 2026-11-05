@@ -66,6 +66,11 @@ export function stateReadouts() {
       return [...this.sectionState("yeasts").issues, ...this.sectionState("hops").issues];
     },
 
+    // What the header counts: rows that block, plus section decisions still owed.
+    get openCount() {
+      return this.unresolved.length + this.sectionIssues.length;
+    },
+
     get gateState() {
       return gateState({
         gate: this.gate,

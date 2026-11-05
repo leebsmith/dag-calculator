@@ -975,6 +975,11 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
   assert.equal(store.blendCandidates()[0].composition, "clean saison strain, Brettanomyces culture");
   assert.equal(store.isUndecided(saison), false, "a component does not block");
   assert.match(store.rowIssue(saison), /choose the blend below/);
+  assert.equal(
+    store.openCount,
+    store.unresolved.length + 1,
+    "the section's decision is counted beside the rows"
+  );
 
   store.chooseBlend(store.blendCandidates()[0]);
   const documented = store.ledger.find((row) => row.line_id === brett.line_id);
@@ -982,6 +987,7 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
   assert.equal(documented.reason, "represented by Blend: Saison + Brett");
   assert.ok(store.carrierLineId, "the blend lands on a yeast line");
   assert.deepEqual(store.sectionIssues, [], "one blend pick decides the section");
+  assert.equal(store.openCount, store.unresolved.length, "only the unmapped rows remain");
 });
 
 test("without a blend record the strain chips remain the fallback", () => {

@@ -11,13 +11,13 @@
     </div>
     <div class="import-verification" :class="{ 'is-ok': $store.importReview.unresolved.length === 0, 'is-warn': $store.importReview.unresolved.length > 0 }">
       <span class="font-medium"
-        x-text="$store.importReview.unresolved.length === 0
-          ? 'Every line is decided'
-          : $store.importReview.unresolved.length + ' line(s) still need a decision'"></span>
+        x-text="$store.importReview.openCount === 0
+          ? 'Every line and section is decided'
+          : $store.importReview.openCount + ' decision(s) still open'"></span>
       <span class="text-xs text-muted"
-        x-text="$store.importReview.unresolved.length === 0
-          ? 'Every line is decided.'
-          : 'Each one is marked on its line, with what it needs.'"></span>
+        x-text="$store.importReview.openCount === 0
+          ? 'Nothing is waiting on you.'
+          : 'Each one is marked where it lives — on its line, or in the section that owns it'"></span>
     </div>
   </header>
 
