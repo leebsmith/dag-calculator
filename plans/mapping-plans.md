@@ -3,12 +3,19 @@ title: Mapping — the import flow, rebuilt from its states
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [recipe-import]
-status: proposed
+status: shipped (A–B)
 ---
 
 # Mapping — the import flow, rebuilt from its states
 
-> **Status.** Supersedes the *interaction* half of
+> **Status (2026-11-05).** Phases A and B are implemented: the vendored fixture and
+> dev-loop reload (`8352796`), the Library blend face (`f46ff6a`), the carrier as
+> the only yeast decision (`cf4e524`), the state model and readouts (`237d9a3`), and
+> the template guard plus the seven acceptance flows (`c156d1f`). What remains is
+> manual verification against the vendored PDF and a real blend record; C1–C2 are
+> separate plans and out of scope.
+>
+> **Supersedes the *interaction* half of
 > [`recipe-import.md`](recipe-import.md). Everything below the UI — the extraction
 > payload, the ledger's row fields, the projection, the gate, the commit, the
 > immutable import record, the Library's sealed records — shipped and is not
