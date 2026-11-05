@@ -560,17 +560,18 @@ test("authoring the split clears the gate that was solved without it", () => {
     ...HOP_PAYLOAD,
     hops: HOP_PAYLOAD.hops.map((hop) => { const copy = { ...hop }; delete copy.ibu_contribution; return copy; }),
   } } });
-  store.gate = { findings: [{ code: "POOL_SPLIT_REQUIRED", severity: "blocking" }], blocking: [{}], advisory: [] };
+  store.gate = { findings: [{ code: "POOL_SPLIT_REQUIRED" }], blocking: [{}], advisory: [], revision: 0 };
   store.delta = { targets: [], lines: [] };
 
   store.setPoolFraction(0.2);
-  assert.equal(store.gate, null, "a stale solve cannot stand on a changed decision");
-  assert.equal(store.delta, null);
-  assert.deepEqual(store.hopFindings.map((f) => f.code), [], "a fresh read has no split finding");
+  assert.equal(store.gateState, "stale", "a changed decision makes the last solve stale");
+  assert.ok(store.gate, "the last result is kept to say what changed");
+  assert.equal(store.sectionState("hops").issues.length, 0, "the split closes the section");
 
-  store.gate = { findings: [], blocking: [], advisory: [] };
+  store.gate = { findings: [], blocking: [], advisory: [], revision: store.revision };
+  assert.notEqual(store.gateState, "stale", "a re-run at the current revision is fresh again");
   store.changeDestination(store.ledger.find((row) => row.section === "hops").line_id, "batch.boil_hops");
-  assert.equal(store.gate, null, "and the same holds for a ledger decision");
+  assert.equal(store.gateState, "stale", "and the same holds for a ledger decision");
 });
 
 test("printed per-addition IBUs give the split exactly", () => {
@@ -579,7 +580,7 @@ test("printed per-addition IBUs give the split exactly", () => {
   assert.deepEqual(store.hopFindings, [], "a printed split needs no decision");
 });
 
-test("without printed IBUs the split is a blocking decision", () => {
+test("without printed IBUs the split is a section decision", () => {
   const unprinted = {
     ...HOP_PAYLOAD,
     hops: HOP_PAYLOAD.hops.map((hop) => {
@@ -590,8 +591,9 @@ test("without printed IBUs the split is a blocking decision", () => {
   };
   const store = hopStore({ ...HOP_RECORD, extract: { ...HOP_RECORD.extract, payload: unprinted } });
   assert.equal(store.printedPoolFraction, null);
-  const finding = store.hopFindings.find((item) => item.code === "POOL_SPLIT_REQUIRED");
-  assert.equal(finding.blocking, true);
+  assert.equal(store.sectionState("hops").state, "open");
+  assert.match(store.sectionState("hops").issues[0].message, /no IBU split/);
+  assert.deepEqual(store.hopFindings.map((finding) => finding.code), [], "the section owns it now");
 });
 
 test("the estimate is offered, labelled, and bounded", () => {
@@ -894,7 +896,7 @@ test("two picked strains ask the section for a carrier, and picking one closes i
   assert.equal(store.carrierLineId, brett.line_id);
   assert.equal(store.yeastSectionOpen, false);
   assert.deepEqual(store.sectionIssues, [], "choosing a carrier closes the section");
-  assert.equal(store.gate, null, "the gate is stale once the decision moves");
+  assert.equal(store.gateState, "stale", "the gate is stale once the decision moves");
 
   const saison = store.ledger.find((row) => row.name === "clean saison strain");
   assert.equal(saison.decision, "mapped", "the other strain stays picked, not ignored");
@@ -966,7 +968,7 @@ test("an undecided section blocks the gate and the forward press", async () => {
     statuses: {},
     engine: {},
   };
-  store.gate = gate;
+  store.gate = { ...gate, revision: store.revision };
   assert.equal(store.checkSummary.ok, false);
   assert.equal(store.checkSummary.sections, 1);
 
@@ -1075,7 +1077,7 @@ test("choosing a target profile stores it and invalidates the last check", () =>
   assert.equal(store.targetProfileId, "balanced");
   assert.equal(store.targetProfile.id, "balanced");
   assert.equal(store.targetProfile.sulfate_so4, 80, "the record travels, not just the id");
-  assert.equal(store.gate, null, "a stale check is worse than none");
+  assert.equal(store.gateState, "stale", "a stale check says so instead of vanishing");
   assert.equal(store.dirty, true);
 });
 

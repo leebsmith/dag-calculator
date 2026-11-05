@@ -26,9 +26,8 @@ export function waterActions({ profiles = () => [] } = {}) {
       if (!this.record) return;
       this.record = { ...this.record, target_profile_id: profileId || null };
       this.dirty = true;
-      this.gate = null;
-      this.delta = null;
       this.checkError = null;
+      this.revision += 1;
     },
 
     // What the water boundary prescribed, as the gate reported it.

@@ -9,6 +9,7 @@ import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
 import { rowReadouts } from "./importRows.js";
 import { yeastReadouts } from "./importYeastRows.js";
+import { stateReadouts } from "./importState.js";
 import { gapfillActions } from "./importGapfill.js";
 import { waterActions } from "./importWater.js";
 import { yeastActions } from "./importYeast.js";
@@ -22,7 +23,6 @@ import {
   buildLedger,
   ledgerCounts,
   shares,
-  unresolvedRows,
   withoutBlendComponents,
 } from "../views/import/ledger.js";
 import {
@@ -92,6 +92,7 @@ export function createImportReviewStore({
       error: null,
       savedAt: null,
       dirty: false,
+      revision: 0,
     },
     reviewActions({ client, onClose }),
     saveAction({ client }),
@@ -108,6 +109,7 @@ export function createImportReviewStore({
     ledgerReadouts(),
     rowReadouts({ hasCatalog: Boolean(catalog) }),
     yeastReadouts(),
+    stateReadouts(),
     poolReadouts()
   );
   return store;
@@ -129,10 +131,9 @@ function ledgerReadouts() {
 
     // Everything the gate will refuse over: an undecided line, or a line whose
     // picked record was deleted after the fact.
+    // One derivation, not two: a row is unresolved when its state says it blocks.
     get unresolved() {
-      const open = unresolvedRows(this.ledger);
-      const dangling = this.missingRefs;
-      return dangling.length ? [...open, ...dangling] : open;
+      return this.ledger.filter((row) => this.rowState(row).blocks);
     },
 
     get sections() {
@@ -299,8 +300,7 @@ function reviewActions({ client, onClose }) {
       this.checkError = null;
       this.gate = null;
       this.delta = null;
-      this.dirty = false;
-      this.savedAt = null;
+      Object.assign(this, { dirty: false, savedAt: null, revision: 0 });
     },
 
     close() {
@@ -317,6 +317,7 @@ function reviewActions({ client, onClose }) {
       this.record = { ...this.record, extract: { ...this.record.extract, payload } };
       this.dirty = true;
       this.error = null;
+      this.revision += 1;
     },
 
     async markFailed() {

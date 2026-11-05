@@ -134,10 +134,8 @@ export function ledgerDecisionActions() {
       this.record = { ...this.record, ledger };
       this.dirty = true;
       this.error = null;
-      // Any decision can change the projection, so the last solve no longer stands.
-      this.gate = null;
-      this.delta = null;
-      this.checkError = null;
+      // Any decision can change the projection: the last solve stays, marked stale.
+      this.revision += 1;
     },
   };
 }

@@ -42,15 +42,5 @@ export function yeastReadouts() {
     get yeastSectionOpen() {
       return this.mappedYeasts.length > 1 && !this.yeastOutcome;
     },
-
-    get sectionIssues() {
-      if (!this.yeastSectionOpen) return [];
-      return [{ section: "yeasts", message: openIssue(this.mappedYeasts.length) }];
-    },
   };
-}
-
-// Pure, so the getter stays a read: which sentence the yeasts section still owes.
-function openIssue(lines) {
-  return `Imported recipe names ${lines} strains. A batch ferments with one — choose the strain it takes.`;
 }

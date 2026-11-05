@@ -28,7 +28,8 @@ export function mergeFindings(result, extra = []) {
 export function checkActions({ catalog, project, gate, delta }) {
   return {
     get checkSummary() {
-      if (!this.gate) return null;
+      const fresh = this.gateState === "fresh-ok" || this.gateState === "fresh-blocked";
+      if (!this.gate || !fresh) return null;
       return {
         ok:
           this.gate.blocking.length === 0 &&
@@ -62,7 +63,7 @@ export function checkActions({ catalog, project, gate, delta }) {
           yeastOutcome: this.yeastOutcome,
         });
         const result = mergeFindings(await gate(state), [...this.hopFindings]);
-        this.gate = result;
+        this.gate = { ...result, revision: this.revision };
         this.projectedState = state;
         this.delta = delta
           ? delta({ payload: this.payload, ledger: this.ledger, engine: result.engine })

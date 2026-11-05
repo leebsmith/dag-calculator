@@ -11,9 +11,8 @@ export function yeastActions() {
       if (!this.record) return;
       this.record = { ...this.record, yeast_outcome: outcome };
       this.dirty = true;
-      this.gate = null;
-      this.delta = null;
       this.checkError = null;
+      this.revision += 1;
     },
 
     // Choosing the carrier is a section decision, not a row demotion: the other

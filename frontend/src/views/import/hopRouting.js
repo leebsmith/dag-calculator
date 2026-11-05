@@ -6,19 +6,8 @@ import { massKg } from "./ledger.js";
 // zero is not a neutral default: it would put the whole IBU budget in the boil
 // while whirlpool charges solve a zero mass. So it is a decision, and these are
 // the things that make it undecidable.
-export function hopFindings({ payload, ledger = [], fraction = null }) {
+export function hopFindings({ payload, ledger = [] }) {
   const findings = [];
-  const whirlpool = ledger.filter(
-    (row) => row.destination === "batch.whirlpool_hops" && row.decision === "mapped"
-  );
-  if (whirlpool.length > 0 && fraction == null) {
-    findings.push({
-      code: "POOL_SPLIT_REQUIRED",
-      blocking: true,
-      message:
-        "whirlpool hops are mapped but no IBU split is authored, so their pool has no bitterness",
-    });
-  }
   const boilHours = payload?.targets?.boil_time_min?.value;
   const tooLong = ledger.find(
     (row) =>

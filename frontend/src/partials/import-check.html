@@ -134,7 +134,15 @@
     </div>
   </template>
 
-  <template x-if="$store.importReview.gate">
+  <div class="alert alert-warning" x-show="$store.importReview.gateState === 'stale'">
+    <div class="alert-header">
+      <span class="alert-dot"></span>
+      <span>The mapping changed since this was solved</span>
+    </div>
+    <p>Run the check again to see the current result; the previous one is kept, not shown as true.</p>
+  </div>
+
+  <template x-if="$store.importReview.gate && $store.importReview.gateState !== 'stale'">
     <div>
       <h3 class="import-section-title">Findings</h3>
       <p class="form-hint" x-show="$store.importReview.gate.findings.length === 0">
