@@ -110,9 +110,10 @@ A blend is a **yeast record** — same kind, same schema — with a second face:
   no second catalog kind and no second references map.
 
 `blend_of` is the plan's only artifact change: additive, optional, and it needs the
-usual re-emit (inventory, glossary if touched, docs) in the same commit.
+usual re-emit (inventory, glossary if touched, docs) in the same commit. It lands in
+**A2**, before any import surface is touched.
 
-### What this deletes from the mapping phase
+### What A3 deletes from the mapping phase
 
 The blend panel and its fields, the duplicate-name warning, `Change`/`Unblend`, the
 `createYeast` write path and its main.js wiring, the `blend` outcome mode, the
@@ -175,48 +176,66 @@ deterministic twin; and BeerXML cannot carry a whirlpool stage, so it would not
 reproduce this recipe's split. Never place the fixture in `data/seeds/` (generated
 reference data) or `frontend/public/` (it would ship).
 
-## Out of scope — next
+## Not in this plan
 
-**A text-file reader for prose recipes.** File only (no paste); the LLM reads it, the
-same way it reads a rendered page. It is a reader, not a new path: same payload,
-ledger, gate, commit and record. What it needs: a versioned text prompt asset plus its
-schema snapshot, a content-sniffed branch in the create-import seam (PDF magic, XML
-root, else UTF-8 text with a size cap), provenance without page numbers (the `page`
-field is already nullable), the UI accepting `.txt` / `.md` / `.typ`, a third row in
-the reader table in `docs/import.md`, and a captured fixture so tests stay offline. No
-engine, artifact or solver work.
+- **The text-file reader for prose recipes** (file only, LLM) is a separate future
+  plan; it is a reader on the import seam, not a change to mapping.
+- **The TOML recipe language** is its own plan: [`recipe-language.md`](recipe-language.md).
+  It is a batch source, never an import document.
 
-Once it exists, `source.typ` above becomes importable directly and the PDF is only for
-the rendered-page reader.
+Neither is a dependency of anything below.
 
 ## Sequence
 
-**Step 0 — freeze.** No feature work, no wording patches, no new controls until steps
-1–3 exist. Fix the loop first: make partial edits reload in dev (watch the partials
-directory, or a `make restart` verified by a build marker), so a stale page cannot
-masquerade as a bug again.
+Two phases. Phase A restores a correct blend path and removes the broken one; Phase B
+is the systemic fix. The order matters more than the size of any step.
 
-**Step 1 — the model.** Write `rowState`, `sectionState`, `gateState` and the revision
-counter as pure functions, with the tables above as their specification.
-*Exit:* unit tests for each state and the stale transition.
+**A1 — the dev loop, then freeze.** No feature work, no wording patches, no new
+controls while A2–B3 are in flight. Fix the loop first: make partial edits reload in
+dev (watch the partials directory, or a `make restart` verified by a build marker), so
+a stale page cannot masquerade as a bug again. Commit the vendored
+`blend-saison.pdf` + `source.typ` as the eyeballing fixture. *Exit:* a partial edit is
+visible on reload without a restart, and the fixture imports.
 
-**Step 2 — the scenarios.** The seven flows above, failing where the current code is
-wrong. *Exit:* a run that lists exactly the known failures.
+**A2 — the Library blend face.** Add `blend_of` to the yeast schema, surface it in the
+generated Library form, group the yeast tab into *Strains* and *Blends*, re-emit the
+inventory. *Exit:* a blend created in the Library can be picked on an import yeast line,
+carried, and committed. **This is the prerequisite for A3**: without it, deleting the
+import's blend creation would leave no way to make a blend.
 
-**Step 3 — the surfaces.** Rewrite the map, check and editor surfaces to read the three
-readouts only; replace the per-row carrier button with the section picker. *Exit:*
-scenarios 1–7 green, plus the template guard.
+**A3 — the yeast section rework (deletion + one picker).** Delete the import blend
+machinery — `saveBlend`, `createYeast` and its main.js wiring, the panel, the component
+state, the blend outcome mode — and replace the per-row carrier button with the
+section's carrier picker; `yeast_outcome` becomes single-only. *Exit:* two strains
+picked → the section asks which one ferments; a blend record can be the carrier;
+nothing in the mapping phase says “blend”.
 
-**Step 4 — retire the scaffolding.** Delete what the readouts replaced
-(`isDangling`, the blend readouts, the blend panel and its actions, the `createYeast`
-wiring, the component state, the findings-strip remnants).
+**B1 — the state model.** Write `rowState`, `sectionState`, `gateState` and the
+revision counter as pure functions, with the tables above as their specification.
+The state space is final now, because A3 removed the blend states. *Exit:* unit tests
+for each state and the stale transition.
 
-**Step 5 — the record.** Fold the carrier outcome and the gate revision into the import
-record's documented contract (`docs/import.md` §3 and §6), re-emit the docs.
+**B2 — the scenarios.** The seven flows above, written beside the readouts, failing
+wherever the old surfaces still disagree. *Exit:* a run that lists exactly the known
+failures.
 
-**Step 6 — the Library face.** Add `blend_of` to the yeast schema, surface it in the
-generated Library form, group the yeast tab into strains and blends, and re-emit the
-inventory. Independent of steps 1–5; may ship before or after.
+**B3 — the surfaces.** Rewrite the map, check and editor surfaces to read the three
+readouts only; add the template guard that forbids composing those conditions in
+markup. *Exit:* scenarios 1–7 green, guard green.
+
+**B4 — retire the scaffolding, then the record.** Delete what the readouts replaced
+(`isDangling`, the blend readouts, the findings-strip remnants), then fold the carrier
+outcome and the gate revision into the import record's documented contract
+(`docs/import.md` §3 and §6) and re-emit the docs.
+
+Why this order:
+
+- the model must describe the target system, so the feature that will not survive is
+  deleted **before** the model is written (`component` is exactly the state that
+  generated the confusion);
+- the Library blend face unblocks that deletion, and is also the fastest route back to
+  a working blend for the person importing;
+- the dev-loop fix comes first, or verification of everything after it is unreliable.
 
 ## Decisions
 
@@ -227,10 +246,13 @@ Settled 2026-11-05:
 - the carrier is a **section** decision (one picker), not a row action;
 - `yeast_outcome` is **single** only;
 - staleness keeps the last result and marks it `stale` (it is not discarded);
-- a blend must pre-exist an import; the record is deletable, the fixture is not.
+- a blend must pre-exist an import; the record is deletable, the fixture is not;
+- sequence: A1 → A2 → A3 → B1 → B2 → B3 → B4, because the Library blend face is the
+  prerequisite for removing the import's blend path, and the state model describes the
+  target system rather than the transitional one.
 
-Open: whether the row states are exactly the five above (nothing missing, nothing
-misnamed) — review before Step 1.
+The five row states are the model; a review of them is B1's first task, not an open
+question about whether to have one.
 
 ## Non-goals
 
@@ -239,12 +261,16 @@ misnamed) — review before Step 1.
 - No new Library kind; blends are yeast records.
 - No solver work: the gate and solver contracts are untouched.
 - No blend UI in the mapping phase, and no per-screen vocabulary.
-- No text reader in this plan (it is the next one).
+- No text reader and no TOML language here: both are separate plans and neither
+  is a dependency of this work.
 
 ## Appendix — current code this replaces
 
+Deletion order follows the sequence: A3 removes the blend write path and the component
+state; B4 removes what the readouts supersede.
+
 - `frontend/src/store/importBlend.js` — the blend form, save, unblend, `blendAll`:
-  deleted; the carrier picker takes its place.
+  deleted in A3; the carrier picker takes its place.
 - `frontend/src/store/importYeastRows.js` — blend readouts and the blend branches of
   `sectionIssues`: reduced to the carrier outcome; the rest moves into `rowState` /
   `sectionState`.
