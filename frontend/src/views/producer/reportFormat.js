@@ -10,6 +10,7 @@ import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { HOP_NODES as H } from "../registry/hops.js";
 import { sortWhirlpoolRows } from "./hopRows.js";
+import { hopPurchaseRows } from "./hopPurchaseRows.js";
 import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
@@ -153,13 +154,23 @@ function mashRestRows(artifact, catalog, engine) {
     }));
 }
 
+function hopStrategyRows(strategy) {
+  const text = String(strategy ?? "").trim();
+  if (!text) return [];
+  return text
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
+    .filter(Boolean)
+    .map((paragraph) => ({ text: { text: paragraph } }));
+}
+
 // Per-row display strings for the fermentable tables. Grist is the malt charge
 // (major + trace); sugars are measured against it, so the three tables' shares
 // do not partition to 100. `own_pct` is the row's share of its own table (the
 // authored grain bill for major malts, the mass share for trace malts), and
 // `grist_pct` is its share of the whole grist. Both are largest-remainder
 // normalised so each column sums to exactly 100.0.
-export function buildReportTables(artifact, catalog, engine) {
+export function buildReportTables(artifact, catalog, engine, strategy = "") {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const majorId = N.majorMalts;
@@ -173,7 +184,6 @@ export function buildReportTables(artifact, catalog, engine) {
   const traceColor = `${traceId}.color_lovibond`;
   const sugarMass = `${sugarId}.resolved_mass_kg`;
   const sugarColor = `${sugarId}.color_lovibond`;
-
   const { major, trace, sugar } = readFermentables(engine);
   const gristRows = [...major, ...trace];
   const gristTotal = gristRows.reduce((sum, row) => sum + row.mass, 0);
@@ -181,7 +191,7 @@ export function buildReportTables(artifact, catalog, engine) {
   const traceShares = hamiltonPct(trace.map((row) => row.mass));
   const extractRows = [...major, ...sugar];
   const extractShares = hamiltonPct(extractRows.map((row) => row.extract));
-
+  const purchaseRows = hopPurchaseRows({ artifact, catalog, engine, resolvedList, formatEntry });
   const pctCell = (fraction) =>
     fraction == null
       ? { text: "—" }
@@ -236,6 +246,8 @@ export function buildReportTables(artifact, catalog, engine) {
     [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool"),
     [D.collection]: dryHopRows(artifact, catalog, engine),
     [B.steps]: checklistTable(artifact, catalog, engine),
+    "report.hop_purchases": purchaseRows,
+    "report.hop_strategy": hopStrategyRows(strategy),
   };
 }
 

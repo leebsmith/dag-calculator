@@ -315,6 +315,7 @@ test("open hydrates the active batch and loads its state", async () => {
   });
   assert.deepEqual(app.loaded, {
     identity: DEFAULT_IDENTITY,
+    hop_strategy: "",
     roots: { "mash.grain_temp_c": 18 },
     collections: { "grist.major_malts": [] },
     selections: {},
@@ -346,6 +347,7 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
   assert.equal(persistence.getActive().id, created.id);
   assert.deepEqual(app.loaded, {
     identity: DEFAULT_IDENTITY,
+    hop_strategy: "",
     roots: { "mash.grain_temp_c": 20 },
     collections: {},
     selections: { "batch.yeast": { id: "y1", name: "Yeast" } },

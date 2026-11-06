@@ -220,6 +220,7 @@ class FakeBatchRepo:
             "id": f"{batch_id}-frozen",
             "uid": uid,
             "name": source.get("name", "Untitled"),
+            "hop_strategy": source.get("hop_strategy", ""),
             "status": "frozen",
             "trashed": False,
             "schema_version": data.get("schema_version", source.get("schema_version", 3)),

@@ -236,6 +236,7 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   app.engine.setCollection("batch.whirlpool_hops", [WHIRLPOOL_COOL, WHIRLPOOL_HOT]);
   app.engine.setCollection("batch.dry_hops", [DRY_HOP]);
   app.compute();
+  app.hopStrategy = "IBU split between the boil and the whirlpool.\n\nSensory: pine backbone.";
   const tables = app.reportFormattedTables();
 
   const boil = tables["batch.boil_hops"];
@@ -271,6 +272,55 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   assert.equal(dry[0].applied.text, "High krausen");
   assert.equal(dry[0].contact.text, "Terminal gravity");
   assert.equal(dry[0].detail.text, "—");
+
+  const purchases = tables["report.hop_purchases"];
+  assert.deepEqual(
+    purchases.map((row) => row.name.text),
+    ["Citra", "Magnum", "Mosaic", "Saaz"]
+  );
+  assert.equal(purchases[0].form.text, "T-90 pellet");
+  assert.match(purchases[0].purchase.text, /1 oz/);
+
+  const strategy = tables["report.hop_strategy"];
+  assert.equal(strategy.length, 2);
+  assert.equal(strategy[0].text.text, "IBU split between the boil and the whirlpool.");
+  assert.equal(strategy[1].text.text, "Sensory: pine backbone.");
+});
+
+test("a blank hopping strategy emits no report rows", async () => {
+  const app = await booted();
+  app.hopStrategy = " \n \n ";
+  assert.deepEqual(app.reportFormattedTables()["report.hop_strategy"], []);
+});
+
+test("single newlines collapse inside a strategy paragraph", async () => {
+  const app = await booted();
+  app.hopStrategy = "Line one\nline two\n\nNext paragraph.";
+  const strategy = app.reportFormattedTables()["report.hop_strategy"];
+  assert.equal(strategy.length, 2);
+  assert.equal(strategy[0].text.text, "Line one line two");
+  assert.equal(strategy[1].text.text, "Next paragraph.");
+});
+
+test("a volume dry hop prints millilitres in the purchase table", async () => {
+  const app = await booted();
+  app.engine.setCollection("batch.boil_hops", []);
+  app.engine.setCollection("batch.whirlpool_hops", []);
+  app.engine.setCollection("batch.dry_hops", [
+    {
+      ...DRY_HOP,
+      hop_id: "extract",
+      variety: "Extract",
+      product_type: "flowable_extract",
+      quantity: 30,
+      unit: "ml",
+    },
+  ]);
+  app.compute();
+  const purchases = app.reportFormattedTables()["report.hop_purchases"];
+  assert.equal(purchases.length, 1);
+  assert.equal(purchases[0].name.text, "Extract");
+  assert.equal(purchases[0].purchase.text, "30 ml");
 });
 
 test("a dry hop duration and detail reach the report", async () => {

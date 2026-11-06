@@ -38,6 +38,16 @@ def test_upsert_creates_then_updates():
     assert updated.roots == {"mash.grain_temp_c": 21}
 
 
+def test_hop_strategy_is_stored_and_frozen():
+    svc = BatchService(FakeRepo())
+    strategy = "Cool side: 60/40 Chinook/Simcoe by weight.\n\nPine backbone."
+    rec = svc.upsert_draft("u1", "batch-a", DraftPayload(hop_strategy=strategy))
+    assert rec.hop_strategy == strategy
+
+    frozen = svc.freeze_batch("u1", rec.id, freeze_payload())
+    assert frozen.hop_strategy == strategy
+
+
 def test_list_is_uid_scoped():
     svc = BatchService(FakeRepo())
     svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))

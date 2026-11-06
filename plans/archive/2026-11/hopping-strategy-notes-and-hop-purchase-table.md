@@ -49,35 +49,35 @@ map, so no report-bundle field or canonical-hash migration is needed.
 
 ## Execution checklist
 
-- [ ] Add named-report-table support to `backend/app/services/bundle_integrity.py`
+- [x] Add named-report-table support to `backend/app/services/bundle_integrity.py`
       for `report.hop_strategy` and `report.hop_purchases`; add positive and
       negative tests in `tests/backend/test_report_bundle.py`.
-- [ ] Add the pure purchase aggregation helper
+- [x] Add the pure purchase aggregation helper
       `frontend/src/views/producer/hopPurchases.js`: grouping, resolved-mass
       summing, dry-hop unit conversion, volume rows, unresolved rows, and
       whole-ounce round-up. Add `tests/frontend/hop-purchases.test.js`.
-- [ ] Emit `report.hop_purchases` from
+- [x] Emit `report.hop_purchases` from
       `frontend/src/views/producer/reportFormat.js` with `name`, `form` and
       `purchase` `FormattedValue` cells; cover it in
       `tests/frontend/report-format.test.js`.
-- [ ] Render the **Hop Purchases** table at the end of
+- [x] Render the **Hop Purchases** table at the end of
       `backend/app/templates/sections/hops.typ`, after Overall Hops; add a
       presence probe/render test in `tests/backend/test_report_sections.py`.
-- [ ] Add `hop_strategy` to `DraftPayload` and `BatchRecord`, copy it in the
+- [x] Add `hop_strategy` to `DraftPayload` and `BatchRecord`, copy it in the
       frozen-record snapshot, and carry it through `persistence` save/open/fork,
       `draftState()` and `loadState()`.
-- [ ] Add the strategy state and setter in a small
+- [x] Add the strategy state and setter in a small
       `frontend/src/adapters/cards/hopsStrategy.js` installer, wire it through
       `hops.js`/`installers.js`, regenerate `docs/frontend-ownership.md`, and
       add the textarea block at the top of `step-hops.html`.
-- [ ] Emit `report.hop_strategy` from `reportFormat.js` as one paragraph per
+- [x] Emit `report.hop_strategy` from `reportFormat.js` as one paragraph per
       blank-line-separated block; render the **Hopping Strategy** block at the
       top of `hops.typ` and include it in the section-presence check.
-- [ ] Add a sample strategy and purchase table to
+- [x] Add a sample strategy and purchase table to
       `backend/scripts/emit_report_bundle_fixture.py`; regenerate the fixture.
-- [ ] Update `docs/report-bundle.md`, `docs/report-sections.md`, and any
+- [x] Update `docs/report-bundle.md`, `docs/report-renderer.md`, and the
       generated ownership docs.
-- [ ] Run `make check`, `make test`, and `make verify`.
+- [x] Run `make check`, `make test`, and `make verify`.
 
 ## Purchase aggregation details
 

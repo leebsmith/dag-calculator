@@ -10,9 +10,16 @@
 
 // Boil and whirlpool are solved; dry hops are descriptive and add no IBU, so the
 // section exists when the batch has any charge at all.
-#let present-hops() = present-formatted-table(BOIL)
+#let present-strategy() = present-formatted-table("report.hop_strategy")
+
+#let present-hops() = (
+  present-formatted-table(BOIL)
   or present-formatted-table(WHIRLPOOL)
   or present-formatted-table(DRY)
+  or present-strategy()
+)
+
+#let present-purchases() = present-formatted-table("report.hop_purchases")
 
 #let text-or(path) = if present-formatted(path) { formatted-text(path) } else { "—" }
 
@@ -66,7 +73,22 @@
   ([Detail], "detail", left),
 )
 
+#let purchase-columns = (
+  ([Hop], "name", left),
+  ([Form], "form", left),
+  ([Buy], "purchase", right),
+)
+
 #let render-hops() = {
+  if present-strategy() {
+    block(breakable: false, {
+      heading(level: 2)[Hopping Strategy]
+      for row in formatted-table("report.hop_strategy") {
+        par(row.at("text").at("text"))
+      }
+    })
+  }
+
   if present-formatted-table(BOIL) {
     block(breakable: false, {
       heading(level: 2)[Boil Hops]
@@ -154,4 +176,16 @@
     v(2pt)
     note[The totals cover the boil and the whirlpool; dry hops are excluded.]
   })
+
+  if present-formatted-table("report.hop_purchases") {
+    v(4pt)
+    block(breakable: false, {
+      heading(level: 2)[Hop Purchases]
+      hop-table("report.hop_purchases", purchase-columns)
+      v(2pt)
+      note[
+        Quantities include dry hops and are rounded up to the next whole ounce.
+      ]
+    })
+  }
 }

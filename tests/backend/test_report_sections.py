@@ -228,6 +228,16 @@ HOPS_PRESENCE_PROBE = (
     "#metadata(present-hops()) <probe>\n"
 )
 
+HOPS_PURCHASE_PROBE = (
+    '#import "sections/hops.typ": present-purchases\n'
+    "#metadata(present-purchases()) <probe>\n"
+)
+
+HOPS_STRATEGY_PROBE = (
+    '#import "sections/hops.typ": present-strategy\n'
+    "#metadata(present-strategy()) <probe>\n"
+)
+
 YEAST_PRESENCE_PROBE = (
     '#import "sections/yeast.typ": present-yeast\n'
     "#metadata(present-yeast()) <probe>\n"
@@ -279,12 +289,51 @@ def test_hops_is_present_with_the_charges(shared_root: Path) -> None:
 
 def test_hops_is_absent_without_any_charge() -> None:
     bundle = fixture()
-    for table in ("batch.boil_hops", "batch.whirlpool_hops", "batch.dry_hops"):
+    for table in ("batch.boil_hops", "batch.whirlpool_hops", "batch.dry_hops", "report.hop_strategy"):
         del bundle["formatted_tables"][table]
 
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, HOPS_PRESENCE_PROBE) is False
+        render(root, "hops")
+
+
+def test_the_hop_strategy_survives_without_hop_rows() -> None:
+    bundle = fixture()
+    for table in ("batch.boil_hops", "batch.whirlpool_hops", "batch.dry_hops"):
+        del bundle["formatted_tables"][table]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, HOPS_PRESENCE_PROBE) is True
+        render(root, "hops")
+
+
+def test_the_hop_purchase_table_is_present_with_its_rows(shared_root: Path) -> None:
+    assert probe(shared_root, HOPS_PURCHASE_PROBE) is True
+
+
+def test_the_hop_strategy_is_present_with_its_paragraphs(shared_root: Path) -> None:
+    assert probe(shared_root, HOPS_STRATEGY_PROBE) is True
+
+
+def test_the_hop_strategy_is_absent_without_rows() -> None:
+    bundle = fixture()
+    del bundle["formatted_tables"]["report.hop_strategy"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, HOPS_STRATEGY_PROBE) is False
+        render(root, "hops")
+
+
+def test_the_hop_purchase_table_is_absent_without_rows() -> None:
+    bundle = fixture()
+    del bundle["formatted_tables"]["report.hop_purchases"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, HOPS_PURCHASE_PROBE) is False
         render(root, "hops")
 
 

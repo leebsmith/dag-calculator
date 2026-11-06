@@ -99,6 +99,16 @@ function assertSupported(record) {
   }
 }
 
+function loadStatePayload(record) {
+  return {
+    ...(record.identity ? { identity: record.identity } : {}),
+    hop_strategy: record.hop_strategy ?? "",
+    roots: record.roots,
+    collections: record.collections,
+    selections: record.selections,
+  };
+}
+
 // `state` lets an import commit authored state; omitted, the empty draft as before.
 export async function createWithIdentity({ name, identity, state = null }) {
   active = {
@@ -157,12 +167,7 @@ export async function open(batchId) {
   dirty = false;
   conflictRemote = null;
   setSaveState("idle");
-  await app?.loadState({
-    ...(b.identity ? { identity: b.identity } : {}),
-    roots: b.roots,
-    collections: b.collections,
-    selections: b.selections,
-  });
+  await app?.loadState(loadStatePayload(b));
   return b;
 }
 
@@ -179,6 +184,7 @@ export async function fork(frozenId) {
   assertSupported(frozen);
   const created = await batchSeam().upsertBatch(crypto.randomUUID(), {
     name: `${frozen.name} (copy)`,
+    hop_strategy: frozen.hop_strategy ?? "",
     parent_batch_id: frozen.id,
     parent_name: frozen.name,
     identity: frozen.identity,
@@ -198,12 +204,7 @@ export async function fork(frozenId) {
   dirty = false;
   conflictRemote = null;
   setSaveState("idle");
-  await app?.loadState({
-    ...(created.identity ? { identity: created.identity } : {}),
-    roots: created.roots,
-    collections: created.collections,
-    selections: created.selections,
-  });
+  await app?.loadState(loadStatePayload(created));
   return created;
 }
 
@@ -391,10 +392,5 @@ export async function resolveConflictByReload() {
   dirty = false;
   conflictRemote = null;
   setSaveState("idle");
-  await app?.loadState({
-    ...(remote.identity ? { identity: remote.identity } : {}),
-    roots: remote.roots,
-    collections: remote.collections,
-    selections: remote.selections,
-  });
+  await app?.loadState(loadStatePayload(remote));
 }

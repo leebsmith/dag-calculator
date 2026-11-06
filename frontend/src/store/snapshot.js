@@ -43,6 +43,7 @@ export function installSnapshot(app, { artifact, master, session }) {
     draftState() {
       return {
         identity: { ...session.identity() },
+        hop_strategy: this.hopStrategy ?? "",
         roots: master.allRoots(),
         collections: { ...session.collections() },
         selections: { ...session.selections() },
@@ -115,7 +116,12 @@ export function installSnapshot(app, { artifact, master, session }) {
     },
 
     reportFormattedTables() {
-      return buildReportTables(artifact, this.reportCatalog(), session.getEngine());
+      return buildReportTables(
+        artifact,
+        this.reportCatalog(),
+        session.getEngine(),
+        this.hopStrategy ?? ""
+      );
     },
 
     reportFormattedSummaries() {

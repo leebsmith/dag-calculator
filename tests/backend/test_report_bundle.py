@@ -302,6 +302,23 @@ def test_formatted_tables_must_name_collection_nodes() -> None:
         seal_bundle(content(formatted_tables={"mash.rests": [{"name": {"text": ""}}]}))
 
 
+def test_named_report_tables_are_allowed() -> None:
+    parse_bundle(
+        bundle(
+            formatted_tables={
+                "report.hop_strategy": [{"text": {"text": "Pine backbone."}}],
+                "report.hop_purchases": [
+                    {
+                        "name": {"text": "Citra"},
+                        "form": {"text": "T-90 pellet"},
+                        "purchase": {"text": "3 oz"},
+                    }
+                ],
+            }
+        )
+    )
+
+
 def test_formatted_summaries_name_a_collection_or_the_overall_aggregate() -> None:
     summary = {"color": {"text": "7.5 °L"}, "extract_yield": {"text": "77.4%"}}
     parse_bundle(bundle(formatted_summaries={"mash.rests": summary}))

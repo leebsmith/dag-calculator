@@ -1556,6 +1556,47 @@ PAYLOAD = FreezePayload(
                 "detail": FormattedValue(text="—"),
             },
         ],
+        "report.hop_strategy": [
+            {
+                "text": FormattedValue(
+                    text="IBU split between the boil and the hot whirlpool; "
+                    "flavour and aroma additions use Cryo in the cool whirlpool."
+                )
+            },
+            {
+                "text": FormattedValue(
+                    text="Sensory: 60/40 Chinook/Simcoe on the cool side by weight, "
+                    "pine backbone with a grapefruit and citrus surround."
+                )
+            },
+        ],
+        "report.hop_purchases": [
+            {
+                "name": FormattedValue(text="Citra"),
+                "form": FormattedValue(text="T-90 pellet"),
+                "purchase": FormattedValue(text="2 oz", number="2", unit="oz"),
+            },
+            {
+                "name": FormattedValue(text="DynaBoost Citra"),
+                "form": FormattedValue(text="Extract"),
+                "purchase": FormattedValue(text="1 oz", number="1", unit="oz"),
+            },
+            {
+                "name": FormattedValue(text="Magnum"),
+                "form": FormattedValue(text="T-90 pellet"),
+                "purchase": FormattedValue(text="1 oz", number="1", unit="oz"),
+            },
+            {
+                "name": FormattedValue(text="Mosaic"),
+                "form": FormattedValue(text="T-90 pellet"),
+                "purchase": FormattedValue(text="1 oz", number="1", unit="oz"),
+            },
+            {
+                "name": FormattedValue(text="Saaz"),
+                "form": FormattedValue(text="T-90 pellet"),
+                "purchase": FormattedValue(text="1 oz", number="1", unit="oz"),
+            },
+        ],
         "batch.brew_checklist": [
             {
                 "kind": FormattedValue(text="step"),

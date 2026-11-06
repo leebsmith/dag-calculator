@@ -7,6 +7,27 @@
   <div class="step-card-content">
     <section class="synthesized-card card-section">
       <div class="section-header">
+        <span class="section-title">Hopping Strategy</span>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label text-xs" for="hop-strategy">Strategy</label>
+          <textarea
+            id="hop-strategy"
+            class="form-input"
+            rows="4"
+            maxlength="4000"
+            placeholder="What the hops are for: the split, the product choices, the weight ratio, the sensory objective."
+            :value="hopStrategy"
+            @change="setHopStrategy($event.target.value)"
+          ></textarea>
+          <span class="form-hint">Blank lines separate paragraphs; single line breaks are ignored.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="synthesized-card card-section">
+      <div class="section-header">
         <button
           type="button"
           class="section-toggle"

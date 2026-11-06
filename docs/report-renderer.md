@@ -263,8 +263,10 @@ compositor, the FastAPI routes and `report_render.py`, and the sections —
 **Hops**, **Yeast**, the **Volume Ledger**, the **Liquor Ledger**, **Water
 Chemistry**, **Limits** and the **Brew Checklist**. Mash Rests prints only the
 enabled schedule and its total mash time; disabled canonical rests stay out of
-the report. Not yet landed: pinned ions, style conformance, and the image that
-ships the binary (authored one at a time — see
+the report. Hops prints the batch's hopping strategy first, then the boil,
+whirlpool, dry-hop and IBU tables, and the hop purchase list last. Not yet
+landed: pinned ions, style conformance, and the image that ships the binary
+(authored one at a time — see
 [`adding-a-section.md`](adding-a-section.md)).
 
 The mash constraint is reported as two solved values, never as the authored

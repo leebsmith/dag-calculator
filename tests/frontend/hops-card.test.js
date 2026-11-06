@@ -123,6 +123,12 @@ test("whirlpool hops: parts normalize to IBU shares and the served mass renders"
   assert.match(app.whirlpoolHopTotalMassDisplay, /(oz|g|kg|lb)/);
 }));
 
+test("the hopping strategy lives in the draft state", withFreshApp((app) => {
+  app.setHopStrategy("60/40 Chinook/Simcoe by weight.");
+  assert.equal(app.hopStrategy, "60/40 Chinook/Simcoe by weight.");
+  assert.equal(app.draftState().hop_strategy, "60/40 Chinook/Simcoe by weight.");
+}));
+
 test("whirlpool hops: the summary sorts by initial temperature", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);

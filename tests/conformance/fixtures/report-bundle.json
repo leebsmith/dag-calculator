@@ -9721,6 +9721,109 @@
         }
       }
     ],
+    "report.hop_strategy": [
+      {
+        "text": {
+          "text": "IBU split between the boil and the hot whirlpool; flavour and aroma additions use Cryo in the cool whirlpool.",
+          "number": null,
+          "unit": null
+        }
+      },
+      {
+        "text": {
+          "text": "Sensory: 60/40 Chinook/Simcoe on the cool side by weight, pine backbone with a grapefruit and citrus surround.",
+          "number": null,
+          "unit": null
+        }
+      }
+    ],
+    "report.hop_purchases": [
+      {
+        "name": {
+          "text": "Citra",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "purchase": {
+          "text": "2 oz",
+          "number": "2",
+          "unit": "oz"
+        }
+      },
+      {
+        "name": {
+          "text": "DynaBoost Citra",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "Extract",
+          "number": null,
+          "unit": null
+        },
+        "purchase": {
+          "text": "1 oz",
+          "number": "1",
+          "unit": "oz"
+        }
+      },
+      {
+        "name": {
+          "text": "Magnum",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "purchase": {
+          "text": "1 oz",
+          "number": "1",
+          "unit": "oz"
+        }
+      },
+      {
+        "name": {
+          "text": "Mosaic",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "purchase": {
+          "text": "1 oz",
+          "number": "1",
+          "unit": "oz"
+        }
+      },
+      {
+        "name": {
+          "text": "Saaz",
+          "number": null,
+          "unit": null
+        },
+        "form": {
+          "text": "T-90 pellet",
+          "number": null,
+          "unit": null
+        },
+        "purchase": {
+          "text": "1 oz",
+          "number": "1",
+          "unit": "oz"
+        }
+      }
+    ],
     "batch.brew_checklist": [
       {
         "kind": {
@@ -10000,5 +10103,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:b4a16978c32d8316ac77bdc051657012757aa62686177422912ec0a16c6041da"
+  "content_hash": "sha256:3310ada6c682bc28bade26e020bcad2637a61edd6aa26e809c78b54969f7b13c"
 }

@@ -22,6 +22,7 @@ import { installSnapshot } from "../store/snapshot.js";
 import { registerYeastCard } from "./cards/yeast.js";
 import { registerStyleCard } from "./cards/style.js";
 import { registerHopCard } from "./cards/hops.js";
+import { installHopStrategy } from "./cards/hopsStrategy.js";
 import { registerLateAdditionsCard } from "./cards/late-additions.js";
 import { registerTraceMaltsCard } from "./cards/trace-malts.js";
 import { registerMaltCard } from "./cards/malt.js";
@@ -56,11 +57,10 @@ function bootstrapIdentity(artifactSpec, cache) {
     style: {},
   };
 }
-
 const CARD_INSTALLERS = [
   registerYeastCard, registerStyleCard, registerHopCard, registerLateAdditionsCard,
   registerTraceMaltsCard, registerMaltCard, registerMashCard, registerBrewDayCard,
-  registerDryHopCard, registerWaterCard, registerLibraryUi,
+  registerDryHopCard, registerWaterCard, registerLibraryUi, installHopStrategy,
 ];
 
 export function createStepApp(options = {}) {
@@ -164,6 +164,7 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       this.inputDrafts = {};
+      this.hopStrategy = state?.hop_strategy;
       const legacyDerate = state?.roots?.["batch.attenuation_derate"];
       const migratedChecklist = migrateChecklistCollections(state?.collections);
       session.rebuild({ ...state, collections: migratedChecklist.collections });
@@ -415,7 +416,6 @@ export function createStepApp(options = {}) {
   installDraftEditor(app, { artifact, ui, session });
   installUnitActions(app, { artifact, ui });
   installSnapshot(app, { artifact, cache, master, session });
-
   for (const register of CARD_INSTALLERS) {
     register(app, cardCtx);
   }

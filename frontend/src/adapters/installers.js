@@ -24,6 +24,7 @@ import { KEYS as styleNavigatorKeys } from "./cards/style/navigator.js";
 import { KEYS as styleTargetsKeys } from "./cards/style/targets.js";
 import { KEYS as styleConformanceKeys } from "./cards/style/conformance.js";
 import { KEYS as hopKeys } from "./cards/hops.js";
+import { KEYS as hopStrategyKeys } from "./cards/hopsStrategy.js";
 import { KEYS as lateAdditionsKeys } from "./cards/late-additions.js";
 import { KEYS as traceMaltsKeys } from "./cards/trace-malts.js";
 import { KEYS as maltKeys } from "./cards/malt.js";
@@ -50,6 +51,7 @@ const STYLE_CONFORMANCE = ["frontend/src/adapters/cards/style/conformance.js"];
 const HOP = [
   "frontend/src/adapters/cards/hops.js",
   "frontend/src/adapters/cards/hopsCoolingCurve.js",
+  "frontend/src/adapters/cards/hopsStrategy.js",
 ];
 const CATALOG_DRAFT = "frontend/src/adapters/cards/catalogDraft.js";
 const HOP_AND_CATALOG = [...HOP, CATALOG_DRAFT];
@@ -103,7 +105,7 @@ export const INSTALLERS = [
   {
     name: "hop",
     modules: HOP_AND_CATALOG,
-    keys: hopKeys,
+    keys: [...hopKeys, ...hopStrategyKeys],
     partials: [
       "step-hops.html",
       "modal-hop-editor.html",
@@ -143,6 +145,11 @@ export const INSTALLERS = [
 // guard when no read is left, so this list is the work queue for the phases
 // that move the logic into `views/`: an entry disappears with its last reader.
 export const SHARED = [
+  {
+    key: "hopStrategy",
+    owners: ["snapshot"],
+    reason: "the draft snapshot persists the batch-level hop strategy",
+  },
   {
     key: "activeScaleTarget",
     owners: ["styleNavigator"],

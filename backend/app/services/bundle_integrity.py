@@ -23,6 +23,11 @@ class BundleIntegrityError(ValueError):
 
 Check = Callable[[ReportBundle], None]
 
+# Report-only tables that are not artifact collections. They are presentation
+# tables derived at freeze time; every other formatted-table key must still be
+# a declared collection node.
+NAMED_REPORT_TABLES = frozenset({"report.hop_strategy", "report.hop_purchases"})
+
 
 def check_valuation_nodes(bundle: ReportBundle) -> None:
     """Every solved value belongs to a declared node."""
@@ -114,14 +119,15 @@ def check_formatted_values(bundle: ReportBundle) -> None:
 
 
 def check_formatted_tables(bundle: ReportBundle) -> None:
-    """Per-row display strings for collection tables (grist, hops, …)."""
+    """Per-row display strings for collection tables and named report tables."""
     nodes = _nodes(bundle)
     for collection, rows in bundle.formatted_tables.items():
-        node = nodes.get(collection)
-        if not node or node.get("kind") != "collection":
-            raise BundleIntegrityError(
-                f'formatted table "{collection}" is not a collection node'
-            )
+        if collection not in NAMED_REPORT_TABLES:
+            node = nodes.get(collection)
+            if not node or node.get("kind") != "collection":
+                raise BundleIntegrityError(
+                    f'formatted table "{collection}" is not a collection node'
+                )
         for row in rows:
             for column, cell in row.items():
                 if not cell.text:

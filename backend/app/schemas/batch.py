@@ -30,6 +30,7 @@ class DraftPayload(BaseModel):
     """
 
     name: Annotated[str, StringConstraints(max_length=200)] = "Untitled"
+    hop_strategy: Annotated[str, StringConstraints(max_length=4000)] = ""
     identity: dict[str, dict[str, Any]] = Field(default_factory=dict)
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
@@ -108,6 +109,7 @@ class BatchRecord(BaseModel):
     id: str
     uid: str
     name: str
+    hop_strategy: str = ""
     status: str
     schema_version: int
     created_at: float
