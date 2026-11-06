@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   styleExtractPoint,
   styleRegionState,
-} from "../../frontend/src/views/producer/styleTarget.js";
+} from "../../frontend/src/views/styleNavigatorLogic.js";
 import {
   SCALE_PINS,
   scalePinState,

@@ -195,7 +195,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 | Residual seed-derived copy-in (only values the AST cannot express) | host | `frontend/src/views/seedDerivations.js` |
 | Fermentation geometry (styles' OE/AE feasible regions) | host geometry; ASBC/Cutaia primitives call artifact functions | `frontend/src/engine/fermentation.js`, `engine/artifactFunctions.js` |
 | Mash ordering, schedule validation, and preset application | host | `frontend/src/views/mash.js`, `adapters/cards/mash.js` |
-| Scale-pin targets/previews (ABV/OG/FG) | host | `frontend/src/views/styleTargetsLogic.js`, `adapters/cards/{style,late-additions}.js`, `docs/attenuation-model.md` §6.1 |
+| Scale-pin targets/previews (ABV/OG/FG) | host | `frontend/src/views/styleTargetsLogic.js`, `views/styleNavigatorLogic.js`, `adapters/cards/{style,late-additions}.js`, `docs/attenuation-model.md` §6.1 |
 | Water readout deltas and ratio formatting | host (UI); the report's source-to-final adjustment is artifact-owned | `frontend/src/views/waterLogic.js`, `views/waterRatio.js`, `adapters/cards/water.js`; `water.mash_adjustment.calcium_ca` in `data/artifact.json` |
 | Presentation overrides (polymorphic labels, hints, clamp envelopes) | host | `frontend/src/views/registry/presentation.js` |
 | Labels, option labels, hints and unit pins | host | `data/labels.json` (generated into `frontend/src/views/registry/generated.js`) |

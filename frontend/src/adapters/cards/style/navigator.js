@@ -3,29 +3,24 @@
 // the solved numbers. Region math lives in engine/fermentation.js and the SVG
 // projection in views/producer/stylePlot.js; this module owns the card state.
 
-import {
-  cutaiaAbv,
-  edgeMargin,
-  extractFromTarget,
-  limitHeadroom,
-  raySegment,
-  targetFromExtract,
-} from "../../../engine/fermentation.js";
+import { extractFromTarget } from "../../../engine/fermentation.js";
 import { attenuationCapSummary } from "../../../views/producer/attenuationCap.js";
 import { gravityDisplay } from "../../../views/producer/gravityDisplay.js";
-import { stylePlaceholderModel, stylePlotModel } from "../../../views/producer/stylePlot.js";
-import { styleExtractPoint, styleRegionState } from "../../../views/producer/styleTarget.js";
+import {
+  abvBoundsFor,
+  abvTargetFor,
+  gravityReadoutsFor,
+  styleExtractPoint,
+  stylePreviewModel,
+  styleRegionState,
+  targetInfoFor,
+  targetNearestText,
+  targetRiskFor,
+} from "../../../views/styleNavigatorLogic.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import { masterUnit } from "../../../views/registry/units.js";
 import { formatWithDecimals, roundTo } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
-
-function abvInterval(ray) {
-  if (!ray) return null;
-  const a = cutaiaAbv(ray.oeMin, ray.aeMin);
-  const b = cutaiaAbv(ray.oeMax, ray.aeMax);
-  return Number.isFinite(a) && Number.isFinite(b) ? [Math.min(a, b), Math.max(a, b)] : null;
-}
 
 // The plot model is a pure function of five inputs and the template reads it
 // ~53 times per render. Cache the model against their identities: a compute
@@ -51,10 +46,16 @@ function stylePreviewFor(app) {
     return stylePreviewCache.model;
   }
   const [region, point, safestPoint, pin, target, unsolved, gravity, envelope] = inputs;
-  const band = envelope ? { min: envelope.abvMin, max: envelope.abvMax } : null;
-  const model =
-    stylePlotModel({ region, point, safestPoint, pin, target, gravity, band }) ??
-    (unsolved && envelope ? stylePlaceholderModel() : null);
+  const model = stylePreviewModel({
+    region,
+    point,
+    safestPoint,
+    pin,
+    target,
+    unsolved,
+    gravity,
+    envelope,
+  });
   stylePreviewCache = { inputs, model };
   return model;
 }
@@ -165,19 +166,10 @@ export function registerStyleNavigator(app, ctx) {
     },
 
     styleTargetNearest() {
-      const nearest = this.styleTargetRisk?.nearest;
-      if (!nearest) return "—";
-      // The headroom is a delta in the limit's native unit. A gravity delta is
-      // only linear in SG, so convert the two endpoints and difference them in
-      // the display unit rather than scaling the delta itself.
-      if (nearest.unit === "SG") {
-        const gravity = this.styleGravityDisplay;
-        const headroom =
-          gravity.fromSg(nearest.value) - gravity.fromSg(nearest.boundary);
-        return `${nearest.label} (${formatWithDecimals(headroom, gravity.decimals)} ${gravity.symbol})`;
-      }
-      const headroom = formatWithDecimals(nearest.headroom, 3);
-      return `${nearest.label} (${headroom} ${nearest.unit})`;
+      return targetNearestText({
+        nearest: this.styleTargetRisk?.nearest,
+        gravity: this.styleGravityDisplay,
+      });
     },
   });
 
@@ -185,18 +177,17 @@ export function registerStyleNavigator(app, ctx) {
     styleAbvBounds: {
       configurable: true,
       get() {
-        if (!this.styleExtract) return null;
-        const aa = this.styleSolvedAa;
-        if (!Number.isFinite(aa) || aa >= 1) return null;
-        return abvInterval(raySegment(this.styleRegion, aa));
+        return abvBoundsFor({
+          extract: this.styleExtract,
+          aa: this.styleSolvedAa,
+          region: this.styleRegion,
+        });
       },
     },
     styleAbvTarget: {
       configurable: true,
       get() {
-        const target = engine.get(N.targetAbv);
-        if (Number.isFinite(target)) return target;
-        return this.styleTargetInfo?.abv ?? null;
+        return abvTargetFor(engine.get(N.targetAbv), this.styleTargetInfo);
       },
     },
     // The master gravity pick governs the plot and every gravity readout on the
@@ -211,30 +202,27 @@ export function registerStyleNavigator(app, ctx) {
     styleGravityReadouts: {
       configurable: true,
       get() {
-        const info = this.styleTargetInfo;
-        if (!info) return { og: "—", fg: "—" };
-        const gravity = this.styleGravityDisplay;
-        const format = (value) =>
-          `${formatWithDecimals(gravity.fromSg(value), gravity.decimals)} ${gravity.symbol}`;
-        return { og: format(info.og), fg: format(info.fg) };
+        return gravityReadoutsFor({
+          info: this.styleTargetInfo,
+          gravity: this.styleGravityDisplay,
+        });
       },
     },
     styleTargetInfo: {
       configurable: true,
       get() {
-        if (!this.styleExtract) return null;
-        return targetFromExtract(this.styleExtract.oe, this.styleExtract.ae);
+        return targetInfoFor({ extract: this.styleExtract });
       },
     },
     styleTargetRisk: {
       configurable: true,
       get() {
-        if (!this.styleExtract || !this.styleSafestPoint) return null;
-        const margin = edgeMargin(this.styleRegion, this.styleExtract.oe, this.styleExtract.ae);
-        const radius = this.styleSafestPoint.radius;
-        const safety = radius > 0 ? Math.max(0, Math.min(1, margin / radius)) : null;
-        const nearest = limitHeadroom(this.styleEnvelope, this.styleExtract.oe, this.styleExtract.ae);
-        return { safety, nearest };
+        return targetRiskFor({
+          extract: this.styleExtract,
+          safestPoint: this.styleSafestPoint,
+          region: this.styleRegion,
+          envelope: this.styleEnvelope,
+        });
       },
     },
     stylePreview: {
