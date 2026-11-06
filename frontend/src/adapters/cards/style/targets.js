@@ -60,6 +60,7 @@ export function registerStyleTargets(app, ctx) {
           gravity: this.styleGravityDisplay,
         })
       );
+      this.updateStylePreview();
     },
 
     setScalePin(value) {

@@ -361,6 +361,11 @@ export const SHARED = [
     reason: "the style target card mirrors the navigator's target readout",
   },
   {
+    key: "updateStylePreview",
+    owners: ["styleTargets"],
+    reason: "a pin or target edit refreshes the navigator's cached plot model",
+  },
+  {
     key: "syncScalePreviewState",
     owners: ["styleTargets"],
     reason: "the style card drives the late-addition scale preview; Phase 3 extracts it",

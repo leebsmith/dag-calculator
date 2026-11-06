@@ -22,44 +22,6 @@ import { masterUnit } from "../../../views/registry/units.js";
 import { formatWithDecimals, roundTo } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
 
-// The plot model is a pure function of five inputs and the template reads it
-// ~53 times per render. Cache the model against their identities: a compute
-// replaces the region/extract objects, so the model is rebuilt once per solve
-// instead of once per binding.
-let stylePreviewCache = null;
-
-function stylePreviewFor(app) {
-  const inputs = [
-    app.styleRegion,
-    app.styleExtract,
-    app.styleSafestPoint,
-    app.scalePin,
-    app.activeScaleTarget,
-    app.styleUnsolved,
-    app.styleGravityDisplay,
-    app.styleEnvelope,
-  ];
-  if (
-    stylePreviewCache &&
-    inputs.every((value, index) => value === stylePreviewCache.inputs[index])
-  ) {
-    return stylePreviewCache.model;
-  }
-  const [region, point, safestPoint, pin, target, unsolved, gravity, envelope] = inputs;
-  const model = stylePreviewModel({
-    region,
-    point,
-    safestPoint,
-    pin,
-    target,
-    unsolved,
-    gravity,
-    envelope,
-  });
-  stylePreviewCache = { inputs, model };
-  return model;
-}
-
 export function registerStyleNavigator(app, ctx) {
   const { engine } = ctx;
 
@@ -76,6 +38,7 @@ export function registerStyleNavigator(app, ctx) {
     attenuationBlend: null,
     attenuationCap: null,
     attenuationSugarLift: null,
+    stylePreviewState: null,
 
     // ABV is the control; the OE/AE point is its inverse on the fixed-AA ray.
     // The region comes from the envelope (batch.style_* roots) so it tracks
@@ -107,6 +70,21 @@ export function registerStyleNavigator(app, ctx) {
             });
     },
 
+    // Explicit state update: the getter only reads this snapshot. The pure
+    // projection lives in views/styleNavigatorLogic.js.
+    updateStylePreview() {
+      this.stylePreviewState = stylePreviewModel({
+        region: this.styleRegion,
+        point: this.styleExtract,
+        safestPoint: this.styleSafestPoint,
+        pin: this.scalePin,
+        target: this.activeScaleTarget,
+        unsolved: this.styleUnsolved,
+        gravity: this.styleGravityDisplay,
+        envelope: this.styleEnvelope,
+      });
+    },
+
     // Persist a free ABV target. The fixed-AA ray is a visualization, not a
     // constraint; the solver realizes OG/FG from the composition.
     writeStyleAbv(value) {
@@ -118,6 +96,7 @@ export function registerStyleNavigator(app, ctx) {
       }
       this.setRoot(N.targetAbv, value);
       this.styleAbvCentered = true;
+      this.updateStylePreview();
       return true;
     },
 
@@ -228,7 +207,7 @@ export function registerStyleNavigator(app, ctx) {
     stylePreview: {
       configurable: true,
       get() {
-        return stylePreviewFor(this);
+        return this.stylePreviewState;
       },
     },
     styleUnsolved: {
@@ -262,6 +241,7 @@ export function refreshStyleNavigator(app, ctx) {
     ? postBoilVolume
     : ctx.engine.get(N.fermVolume);
   app.computeStyleTarget();
+  app.updateStylePreview();
 }
 
 export const KEYS = [
@@ -277,7 +257,9 @@ export const KEYS = [
   "attenuationBlend",
   "attenuationCap",
   "attenuationSugarLift",
+  "stylePreviewState",
   "computeStyleTarget",
+  "updateStylePreview",
   "writeStyleAbv",
   "setStyleTargetAbv",
   "centerOrClampStyleAbv",

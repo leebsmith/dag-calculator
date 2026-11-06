@@ -4,11 +4,11 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **768** (523 enumerable, 245 hidden)
+- Declared members: **770** (525 enumerable, 245 hidden)
 - Installers: **20**
 - Card partials: **19**
 - Installers reading another installer's key: **16 of 20**
-- Cross-owner keys declared in `SHARED`: **47**
+- Cross-owner keys declared in `SHARED`: **48**
 
 ## Installers
 
@@ -22,8 +22,8 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 55 | 0 | 4 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 32 | 2 | 1 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 3 |
-| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
-| `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 45 | 1 | 9 |
+| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 30 | 1 | 6 |
+| `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 45 | 1 | 10 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js` | 155 | 4 | 18 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 21 |
@@ -84,5 +84,6 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleTargetInfo` | `styleNavigator` | `styleTargets` | the style target card mirrors the navigator's target readout |
 | `syncScalePreviewState` | `lateAdditions` | `styleTargets` | the style card drives the late-addition scale preview; Phase 3 extracts it |
 | `toggleFieldUnit` | `unitActions` | `fieldActions` | unit toggling is shared between the hop card and the generic card shell |
+| `updateStylePreview` | `styleNavigator` | `styleTargets` | a pin or target edit refreshes the navigator's cached plot model |
 | `waterTargetOptions` | `water` | `fieldActions` | the generic card shell renders the water target selector |
 | `waterTargetSelection` | `water` | `fieldActions` | the generic card shell renders the water target selector |
