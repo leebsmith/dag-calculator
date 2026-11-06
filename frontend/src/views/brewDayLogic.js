@@ -25,25 +25,77 @@ export const INITIAL_OPEN_SECTIONS = {
   post: false,
 };
 
+/**
+ * Build the empty checklist rows.
+ *
+ * @pure
+ * @returns {ReadonlyArray<{ readonly step_id: string, readonly note: string, readonly skipped: boolean, readonly skip_reason: string }>}
+ */
 export const defaultBrewDayRows = defaultChecklistRows;
+
+/**
+ * Materialize persisted checklist rows in canonical order.
+ *
+ * @pure
+ * @param {ReadonlyArray<Readonly<{ readonly step_id: string, readonly note?: string, readonly instructions?: string, readonly skipped?: boolean, readonly skip_reason?: string }>>} [rows]
+ * @returns {ReadonlyArray<{ readonly step_id: string, readonly note: string, readonly skipped: boolean, readonly skip_reason: string }>}
+ */
 export const materializeBrewDayRows = materializeChecklistRows;
 
+/**
+ * Assemble the brew-day payload from the selected phases.
+ *
+ * @pure
+ * @param {ReadonlyArray<object>} [phases]
+ * @returns {{ readonly process: object, readonly phases: ReadonlyArray<object> }}
+ */
 export function buildBrewDayPayload(phases = []) {
   return { process: CHECKLIST_PROCESS, phases };
 }
 
+/**
+ * Select one checklist row by step id.
+ *
+ * @pure
+ * @param {ReadonlyArray<Readonly<{ readonly step_id: string }>>|null} rows
+ * @param {string} stepId
+ * @returns {Readonly<object>|null}
+ */
 export function selectBrewDayRow(rows, stepId) {
   return (rows ?? []).find((row) => row.step_id === stepId) ?? null;
 }
 
+/**
+ * Return a new row array with one step patched.
+ *
+ * @pure
+ * @param {ReadonlyArray<Readonly<{ readonly step_id: string }>>|null} rows
+ * @param {string} stepId
+ * @param {Readonly<Record<string, unknown>>} patch
+ * @returns {ReadonlyArray<object>}
+ */
 export function updateBrewDayRow(rows, stepId, patch) {
   return (rows ?? []).map((row) => (row.step_id === stepId ? { ...row, ...patch } : row));
 }
 
+/**
+ * Resolve the checklist level from explicit state.
+ *
+ * @pure
+ * @param {{ readonly level?: string }} [state]
+ * @returns {string}
+ */
 export function selectBrewDayLevel({ level } = {}) {
   return level ?? DEFAULT_LEVEL;
 }
 
+/**
+ * Select and group the checklist rows for the current state.
+ *
+ * @pure
+ * @param {{ readonly artifact: object, readonly engine: object, readonly unitMode?: Readonly<Record<string, string>>, readonly level?: string, readonly stateRows?: ReadonlyArray<object>, readonly catalog?: object|null }} args
+ * @returns {ReadonlyArray<object>}
+ */
 export function selectBrewDaySections({
   artifact,
   engine,

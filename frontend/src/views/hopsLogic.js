@@ -31,6 +31,11 @@ export const MAX_VISIBLE = 30;
 
 const L_PER_GAL = 3.785411784;
 
+/**
+ * Create the hop card's mass and temperature formatters.
+ * @pure
+ * @param {{ readonly artifact: object, readonly engine: object, readonly ui: Readonly<{ readonly unitMode: Readonly<Record<string, string>> }> }} args
+ */
 export function createHopFormatters({ artifact, engine, ui }) {
   const formatMass = (kg, unit) => {
     if (typeof kg !== "number" || !Number.isFinite(kg)) return "—";
@@ -62,34 +67,79 @@ export function createHopFormatters({ artifact, engine, ui }) {
   return { formatMass, formatTemp };
 }
 
+/**
+ * Format a hop row's mass in the selected unit.
+ * @pure
+ * @param {Readonly<{ readonly mass_kg?: number|null }>|null} row
+ * @param {string} unit
+ * @param {(kg: number|null, unit: string) => string} formatMass
+ */
 export function hopMassText(row, unit, formatMass) {
   return formatMass(row?.mass_kg, unit);
 }
 
+/**
+ * Format a hop row's initial temperature.
+ * @pure
+ * @param {Readonly<{ readonly initial_temp_c?: number|null }>|null} row
+ * @param {(tempC: number|null) => string} formatTemp
+ */
 export function hopTempText(row, formatTemp) {
   return formatTemp(row?.initial_temp_c);
 }
 
+/**
+ * Format a row's catalogue alpha band.
+ * @pure
+ * @param {object} cache
+ * @param {Readonly<{ readonly hop_id?: string }>|null} row
+ */
 export function hopAlphaRangeText(cache, row) {
   return hopAlphaStockLabel(hopStockRecord(cache, row?.hop_id));
 }
 
+/**
+ * Test whether a row's alpha sits outside its catalogue band.
+ * @pure
+ * @param {object} cache
+ * @param {Readonly<{ readonly hop_id?: string, readonly alpha_acid_pct?: number }>|null} row
+ */
 export function hopAlphaOutsideStockFor(cache, row) {
   return hopAlphaIsOutsideStock(row, hopStockRecord(cache, row?.hop_id));
 }
 
+/**
+ * Merge the boil boundary results into the authored rows.
+ * @pure
+ * @param {{ readonly rows: ReadonlyArray<object>|null, readonly results: ReadonlyArray<object>|null, readonly boilIbu: number, readonly boilTimeMin: number }} args
+ */
 export function boilRowsFor({ rows, results, boilIbu, boilTimeMin }) {
   return mergeBoilRows(rows, results, boilIbu, boilTimeMin);
 }
 
+/**
+ * Merge the whirlpool boundary results into the authored rows.
+ * @pure
+ * @param {{ readonly rows: ReadonlyArray<object>|null, readonly results: ReadonlyArray<object>|null, readonly whirlpoolIbu: number, readonly volume: number|null }} args
+ */
 export function whirlpoolRowsFor({ rows, results, whirlpoolIbu, volume }) {
   return mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume);
 }
 
+/**
+ * Sum the draft rows' parts.
+ * @pure
+ * @param {ReadonlyArray<Readonly<{ readonly parts?: number|string }>>|null} rows
+ */
 export function draftPartsTotal(rows) {
   return (rows ?? []).reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
 }
 
+/**
+ * Summarize a draft's addition count and parts.
+ * @pure
+ * @param {ReadonlyArray<Readonly<{ readonly parts?: number|string }>>|null} rows
+ */
 export function draftSummary(rows) {
   const list = rows ?? [];
   return `${countLabel(list.length, "addition")} · ${formatWithDecimals(
@@ -98,6 +148,11 @@ export function draftSummary(rows) {
   )} parts`;
 }
 
+/**
+ * Build the catalogue result counter sentence.
+ * @pure
+ * @param {{ readonly visible: number, readonly filtered: number, readonly truncated: boolean }} args
+ */
 export function catalogResultLabel({ visible, filtered, truncated }) {
   return resultCounter({
     shown: visible,
@@ -108,6 +163,12 @@ export function catalogResultLabel({ visible, filtered, truncated }) {
   });
 }
 
+/**
+ * Sum the hop mass, preferring the boundary's total.
+ * @pure
+ * @param {ReadonlyArray<Readonly<{ readonly mass_kg?: number|null }>>|null} rows
+ * @param {number|null} boundaryMassKg
+ */
 export function massTotalKg(rows, boundaryMassKg) {
   if (isFiniteNumber(boundaryMassKg)) return boundaryMassKg;
   return (rows ?? []).reduce(
@@ -116,6 +177,11 @@ export function massTotalKg(rows, boundaryMassKg) {
   );
 }
 
+/**
+ * Format a hop mass total, preferring the boundary's value.
+ * @pure
+ * @param {{ readonly rows: ReadonlyArray<Readonly<{ readonly mass_kg?: number|null }>>|null, readonly boundaryMassKg: number|null, readonly unit: string, readonly formatMass: (kg: number|null, unit: string) => string }} args
+ */
 export function massTotalDisplay({ rows, boundaryMassKg, unit, formatMass }) {
   if (isFiniteNumber(boundaryMassKg)) return formatMass(boundaryMassKg, unit);
   const masses = (rows ?? [])
@@ -128,12 +194,23 @@ export function massTotalDisplay({ rows, boundaryMassKg, unit, formatMass }) {
   );
 }
 
+/**
+ * Format the combined boil and whirlpool mass.
+ * @pure
+ * @param {{ readonly boilRows: ReadonlyArray<object>|null, readonly whirlpoolRows: ReadonlyArray<object>|null, readonly boundaryMassKg: number|null, readonly unit: string, readonly formatMass: (kg: number|null, unit: string) => string }} args
+ */
 export function combinedMassDisplay({ boilRows, whirlpoolRows, boundaryMassKg, unit, formatMass }) {
   const rows = [...(boilRows ?? []), ...(whirlpoolRows ?? [])];
   if (!rows.length) return "—";
   return massTotalDisplay({ rows, boundaryMassKg, unit, formatMass });
 }
 
+/**
+ * Select the catalogue entries for a hop form.
+ * @pure
+ * @param {object} cache
+ * @param {string} form
+ */
 export function hopCatalogEntries(cache, form) {
   if (form === "t90_pellet" || form === "whole_cone") {
     return Object.values(cache?.seeds?.hops ?? {});
@@ -143,6 +220,11 @@ export function hopCatalogEntries(cache, form) {
   );
 }
 
+/**
+ * Build the catalogue row's secondary metadata.
+ * @pure
+ * @param {Readonly<{ readonly product_form?: string, readonly brand?: string, readonly purpose?: string, readonly alpha_acid_pct?: number, readonly manufacturer?: string, readonly origin?: string }>} item
+ */
 export function hopCatalogItemMeta(item) {
   return [
     item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
@@ -153,6 +235,11 @@ export function hopCatalogItemMeta(item) {
   ];
 }
 
+/**
+ * Build the boil policy descriptor map.
+ * @pure
+ * @param {{ readonly formatMass: (kg: number|null, unit: string) => string, readonly formatNumber: (value: number|null, decimals: number) => string, readonly postBoilVolume: () => number|null, readonly boilIbu: () => number, readonly rows: () => ReadonlyArray<object>, readonly alphaMassKg: () => number|null }} args
+ */
 export function boilPolicyDescriptors({
   formatMass,
   formatNumber,
@@ -188,6 +275,11 @@ export function boilPolicyDescriptors({
   };
 }
 
+/**
+ * Build the whirlpool policy descriptor map.
+ * @pure
+ * @param {{ readonly notes: Readonly<Record<string, object>>, readonly formatTemp: (tempC: number|null) => string, readonly formatMass: (kg: number|null, unit: string) => string, readonly formatNumber: (value: number|null, decimals: number) => string, readonly postBoilVolume: () => number|null, readonly whirlpoolIbu: () => number, readonly activeRow: () => Readonly<{ readonly initial_temp_c?: number }>|null, readonly alphaMassKg: () => number|null }} args
+ */
 export function whirlpoolPolicyDescriptors({
   notes,
   formatTemp,
@@ -248,6 +340,11 @@ export function whirlpoolPolicyDescriptors({
   };
 }
 
+/**
+ * Build the whirlpool timeline descriptor map.
+ * @pure
+ * @param {{ readonly formatTemp: (tempC: number|null) => string, readonly formatNumber: (value: number|null, decimals: number) => string, readonly readTimeline: () => Readonly<{ readonly segments?: ReadonlyArray<object>, readonly chills?: ReadonlyArray<object> }>|null, readonly reportError: (scope: string, error: unknown) => void, readonly timelineState: () => Readonly<{ readonly chills?: ReadonlyArray<Readonly<{ readonly at_min: number, readonly from_temp_c: number, readonly to_temp_c: number }>> }>|null, readonly rows: () => ReadonlyArray<object> }} args
+ */
 export function whirlpoolTimelineDescriptors({
   formatTemp,
   formatNumber,

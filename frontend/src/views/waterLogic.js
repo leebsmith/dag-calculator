@@ -17,15 +17,40 @@ const ADDITIONS = [
   "pickling_lime_kg",
 ];
 
+/**
+ * Difference between a post-dose value and its target.
+ *
+ * @pure
+ * @param {number|null} value
+ * @param {number|null} target
+ * @returns {number|null}
+ */
 export function ionDelta(value, target) {
   if (typeof value !== "number" || typeof target !== "number") return null;
   return value - target;
 }
 
+/**
+ * Resolve a choice value's presentation label.
+ *
+ * @pure
+ * @param {string} fieldId
+ * @param {string} value
+ * @returns {string}
+ */
 export function optionLabelFor(fieldId, value) {
   return registry[fieldId]?.optionLabels?.[value] ?? value;
 }
 
+/**
+ * Build the treatment dose rows for one addition prefix.
+ *
+ * @pure
+ * @param {Readonly<Record<string, { readonly value?: number, readonly display?: string }>>} fieldsById
+ * @param {string} prefix
+ * @param {{ readonly gypsum: string, readonly cacl2: string, readonly acid: string }} forms
+ * @returns {{ readonly rows: ReadonlyArray<{ readonly key: string, readonly label: string, readonly text: string }>, readonly suppressed: boolean }}
+ */
 export function doseRows(fieldsById, prefix, forms) {
   const names = {
     gypsum_kg: `gypsum (${forms.gypsum})`,
@@ -56,24 +81,59 @@ export function doseRows(fieldsById, prefix, forms) {
   return { rows, suppressed: zero > 0 && rows.length > 0 };
 }
 
+/**
+ * Format a volume in litres.
+ *
+ * @pure
+ * @param {number|null} value
+ * @returns {string}
+ */
 export function fmtL(value) {
   return value == null ? "—" : `${formatValue(value)} L`;
 }
 
+/**
+ * Format an ion concentration in parts per million.
+ *
+ * @pure
+ * @param {number|null} value
+ * @returns {string}
+ */
 export function fmtPpm(value) {
   return value == null ? "—" : formatWithDecimals(value, 1, { dash: "—" });
 }
 
+/**
+ * Format a signed ion delta.
+ *
+ * @pure
+ * @param {number|null} value
+ * @returns {string}
+ */
 export function fmtDelta(value) {
   if (value == null) return "—";
   const text = formatWithDecimals(value, 1, { dash: "—" });
   return value > 0 ? `+${text}` : text;
 }
 
+/**
+ * Rank telemetry severities for display ordering.
+ *
+ * @pure
+ * @param {string} severity
+ * @returns {number}
+ */
 export function severityRank(severity) {
   return { ERROR: 3, WARNING: 2, NOTE: 1, INFO: 0 }[severity] ?? 0;
 }
 
+/**
+ * Build the water-target selector options from the reference cache.
+ *
+ * @pure
+ * @param {{ readonly references: { readonly water_target?: Readonly<Record<string, { readonly name?: string }>> } }} cache
+ * @returns {ReadonlyArray<{ readonly value: string, readonly label: string }>}
+ */
 export function waterTargetOptionsOf(cache) {
   const records = cache.references.water_target ?? {};
   const presets = Object.entries(records)
