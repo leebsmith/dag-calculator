@@ -338,6 +338,7 @@ function saveAction({ client, observability }) {
 function reviewActions({ onClose }) {
   return {
     open(record) {
+      this.forgetProjection?.();
       const withLedger = record
         ? {
             ...record,
@@ -364,6 +365,7 @@ function reviewActions({ onClose }) {
     // navigation to its own command (which opens the new batch), while closing the
     // import returns to the seam.
     reset() {
+      this.forgetProjection?.();
       this.record = null;
       this.error = null;
       this.dirty = false;

@@ -85,6 +85,39 @@
           </ul>
         </section>
 
+        <section class="landing-imports" x-show="$store.imports.committedRows.length > 0">
+          <div class="landing-section-bar">
+            <h2 class="landing-heading">
+              Imported recipes
+              <span class="text-xs text-muted" x-text="'(' + $store.imports.committedRows.length + ')'"></span>
+            </h2>
+          </div>
+          <p class="form-hint">
+            Documents already turned into batches. The receipt keeps the same file from being
+            read twice; delete it to import that document again. The batch itself is unchanged.
+          </p>
+          <ul class="import-line-list">
+            <template x-for="row in $store.imports.committedRows" :key="row.id">
+              <li class="import-queue-row">
+                <div>
+                  <span class="font-medium" x-text="row.extract?.payload?.title || row.extract?.source?.filename"></span>
+                  <span class="text-xs text-muted" x-text="row.extract?.source?.filename"></span>
+                </div>
+                <div class="import-queue-actions">
+                  <span class="text-xs text-muted" x-text="$store.recipes.batchLabel(row.batch_id)"></span>
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    x-show="$store.recipes.hasBatch(row.batch_id)"
+                    @click="$store.recipes.openBatchById(row.batch_id)"
+                  >Open batch</button>
+                  <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete receipt</button>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </section>
+
         <section class="landing-library">
           <div class="landing-section-bar">
             <h2 class="landing-heading">Batches</h2>

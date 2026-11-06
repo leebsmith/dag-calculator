@@ -154,7 +154,10 @@ Alpine.store(
     observability,
     readFile: readFileAsBase64,
     onOpen: (record) => {
-      reviewStore.open(record);
+      // Through the store proxy: `reviewStore` is the raw target, so mutating it
+      // would set `record`/`stage` without notifying Alpine and leave the visible
+      // stage stale.
+      Alpine.store("importReview").open(record);
       Alpine.store("recipes").view = "import";
     },
     onError: (err) => {
@@ -225,6 +228,7 @@ Alpine.store(
     openTab: openReportTab,
     showTab: showReport,
     closeTab: closeReportTab,
+    refreshImports: () => Alpine.store("imports").refresh(),
   })
 );
 

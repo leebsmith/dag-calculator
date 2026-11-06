@@ -32,7 +32,25 @@ export function checkActions({
   delta,
   observability = requireObservability(null, "checkActions"),
 }) {
+  // The candidate is retained outside the reactive store. `importReview` is an
+  // Alpine store, whose get wraps object values in a proxy; the commit's snapshot
+  // seam structured-clones the collections it is handed and cannot clone one.
+  let projected = null;
+
   return {
+    get projectedState() {
+      return projected;
+    },
+
+    // Plain access for the commit seam: a method return is not wrapped.
+    projection() {
+      return projected;
+    },
+
+    forgetProjection() {
+      projected = null;
+    },
+
     get checkSummary() {
       const fresh = this.gateState === "fresh-ok" || this.gateState === "fresh-blocked";
       if (!this.gate || !fresh) return null;
@@ -70,7 +88,7 @@ export function checkActions({
         });
         const result = mergeFindings(await gate(state), [...this.hopFindings]);
         this.gate = { ...result, revision: this.revision };
-        this.projectedState = state;
+        projected = state;
         this.delta = delta
           ? delta({ payload: this.payload, ledger: this.ledger, engine: result.engine })
           : null;
@@ -113,7 +131,7 @@ export function commitActions({ commit = null, observability = requireObservabil
       try {
         const active = await commit({
           record: this.record,
-          state: this.projectedState,
+          state: this.projection(),
           name: this.payload?.title || this.summary?.filename || "Imported batch",
         });
         // The commit command has already put the user in the new batch; clearing the

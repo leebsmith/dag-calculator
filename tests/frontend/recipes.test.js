@@ -65,7 +65,8 @@ function makeStore(
   anchor = () => "right:0px; top:8px",
   download = () => {},
   downloadFile = download,
-  tab = { open: () => null, show: () => {}, close: () => {} }
+  tab = { open: () => null, show: () => {}, close: () => {} },
+  refreshImports = null
 ) {
   const setup = setupStub();
   const observability = createObservabilityManager();
@@ -79,6 +80,7 @@ function makeStore(
     openTab: tab.open,
     showTab: tab.show,
     closeTab: tab.close,
+    refreshImports,
   });
   return { store, persistence, setup, observability };
 }
@@ -298,6 +300,34 @@ test("row trash, restore, and permanent delete refresh the list", async () => {
     ["deletePermanent", "row-1"],
     ["list"],
   ]);
+});
+
+test("permanent delete refreshes the import receipts", async () => {
+  let refreshed = 0;
+  const { store } = makeStore(
+    fakePersistence(),
+    () => "",
+    () => {},
+    () => {},
+    { open: () => null, show: () => {}, close: () => {} },
+    async () => {
+      refreshed += 1;
+    }
+  );
+
+  await store.deleteRow(batch("row-1"));
+
+  assert.equal(refreshed, 1);
+});
+
+test("a receipt names its batch, or says the batch is missing", async () => {
+  const { store } = makeStore();
+  await store.refresh();
+
+  assert.equal(store.batchLabel("draft-new"), "draft-new · draft");
+  assert.equal(store.batchLabel("gone"), "Batch missing");
+  assert.equal(store.hasBatch("draft-new"), true);
+  assert.equal(store.hasBatch("gone"), false);
 });
 
 test("trashRow without a menu does nothing", async () => {

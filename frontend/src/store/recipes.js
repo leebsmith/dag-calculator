@@ -15,6 +15,7 @@ import {
   identityLabel,
   parentLabel,
 } from "./recipeList.js";
+import { receiptActions } from "./recipesReceipts.js";
 
 export function createRecipesStore({
   persistence,
@@ -25,9 +26,11 @@ export function createRecipesStore({
   openTab,
   showTab,
   closeTab,
+  refreshImports = null,
   observability = requireObservability(null, "createRecipesStore"),
 } = {}) {
   return {
+    ...receiptActions({ persistence, refreshImports, observability }),
     view: "batches", // "batches" | "editor" | "import"
     scope: "all", // "all" | "drafts" | "frozen" | "trash"
     batches: [],
@@ -219,16 +222,6 @@ export function createRecipesStore({
       }
     },
 
-    async deleteRow(batch) {
-      this.closeRowMenu();
-      try {
-        await persistence.deletePermanent(batch.id);
-        await this.refresh();
-      } catch (err) {
-        observability.reportError("recipes.delete", err);
-      }
-    },
-
     keepMine() {
       return persistence.saveNow({ force: true });
     },
@@ -296,11 +289,6 @@ export function createRecipesStore({
 
     async restore(id) {
       await persistence.restore(id);
-      await this.refresh();
-    },
-
-    async deletePermanent(id) {
-      await persistence.deletePermanent(id);
       await this.refresh();
     },
 

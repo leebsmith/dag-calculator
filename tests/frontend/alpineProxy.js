@@ -72,8 +72,14 @@ async function loadAlpine() {
 // is the reactive proxy the browser uses — including the bind step, which points
 // the injected `getView` seam at the same proxy.
 export async function alpineReactive(app) {
-  const alpine = await loadAlpine();
-  const proxy = alpine.reactive(app);
+  const proxy = await alpineReactiveValue(app);
   proxy.bindReactive(proxy);
   return proxy;
+}
+
+// Wrap any value as `Alpine.reactive` does. Stores have no bind step, but their
+// getters still hand back reactive proxies for object values.
+export async function alpineReactiveValue(value) {
+  const alpine = await loadAlpine();
+  return alpine.reactive(value);
 }

@@ -294,6 +294,13 @@ class FakeImportRepo:
                 return doc
         return None
 
+    def delete_by_batch_id(self, uid, batch_id):
+        docs = self.docs.get(uid, {})
+        ids = [import_id for import_id, doc in docs.items() if doc.get("batch_id") == batch_id]
+        for import_id in ids:
+            del docs[import_id]
+        return len(ids)
+
     def create(self, uid, import_id, data):
         record = {**data, "id": import_id, "created_at": 1.0, "updated_at": 1.0}
         self.docs.setdefault(uid, {})[import_id] = record

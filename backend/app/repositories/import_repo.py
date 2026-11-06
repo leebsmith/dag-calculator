@@ -2,8 +2,8 @@
 
 Records live under ``users/{uid}/recipe_imports``; ownership is the path itself.
 The collection is small by nature — a record exists only between an upload and a
-commit, or forever as a committed receipt — so the list is capped generously and
-warns like the batch list does.
+commit, or as a committed receipt until its batch is permanently deleted — so the
+list is capped generously and warns like the batch list does.
 """
 
 from __future__ import annotations
@@ -68,6 +68,17 @@ class ImportRepository:
         for doc in query.stream():
             return self._record(doc.id, doc.to_dict())
         return None
+
+    def delete_by_batch_id(self, uid: str, batch_id: str) -> int:
+        """Delete the committed receipts for a batch, returning how many went."""
+        docs = list(self._collection(uid).where("batch_id", "==", batch_id).stream())
+        if not docs:
+            return 0
+        batch = self._db.batch()
+        for doc in docs:
+            batch.delete(doc.reference)
+        batch.commit()
+        return len(docs)
 
     def create(self, uid: str, import_id: str, data: dict[str, Any]) -> dict[str, Any]:
         now = time.time()

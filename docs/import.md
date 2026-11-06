@@ -189,10 +189,14 @@ editor's own row builders, creates the draft, and marks the record `committed` w
 its `batch_id`. Identity-derived roots are seeded by the session, not by the
 projection, so that rule has one implementation.
 
-A committed record is immutable and undeletable: it is the batch's audit trail. A
-document that cannot become a batch is retained as `failed` with its reason, so the
-same file is never paid for twice; the duplicate check reports that state instead of
-offering a dead-end resume.
+A committed record is a receipt: immutable, but deletable at any time. Deleting it
+drops the provenance and lets the same file be imported again; the batch is
+untouched. Permanently deleting the batch removes its receipt too, while trashing
+the batch leaves it in place. The landing page lists committed receipts under
+Imported recipes. Commit names a draft batch the caller owns; a missing or frozen
+batch is refused. A document that cannot become a batch is retained as `failed`
+with its reason, so the same file is never paid for twice; the duplicate check
+reports that state instead of offering a dead-end resume.
 
 Records live at `users/{uid}/recipe_imports` and hold the extraction, the ledger,
 the frozen suggestions, the split decision and the failure reason — never the

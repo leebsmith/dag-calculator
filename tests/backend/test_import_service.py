@@ -26,6 +26,7 @@ from app.services.import_service import (
     ImportNotFound,
     ImportPayloadError,
     ImportService,
+    orphaned_receipts,
 )
 
 PDF = b"%PDF-1.4\n1 0 obj << /Type /Pages /Count 1 >>\n%%EOF\n"
@@ -177,20 +178,54 @@ def test_the_yeast_outcome_and_delta_are_editable_before_commit(service):
     assert updated.delta == delta
 
 
-def test_a_committed_record_is_immutable_and_undeletable(service):
+def test_a_committed_record_is_immutable_but_deletable(service):
     record = service.create("u1", upload())
     repo = service._repo
     repo.docs["u1"][record.id]["status"] = ImportStatus.COMMITTED.value
     with pytest.raises(ImportConflict):
         service.update("u1", record.id, UpdateImportRequest(ledger=[]))
-    with pytest.raises(ImportConflict):
-        service.delete("u1", record.id)
+    service.delete("u1", record.id)
+    assert service.list("u1") == []
 
 
 def test_delete_removes_an_open_record(service):
     record = service.create("u1", upload())
     service.delete("u1", record.id)
     assert service.list("u1") == []
+
+
+def test_deleting_a_batch_removes_only_that_batchs_receipts(service):
+    first = service.create("u1", upload())
+    service.update(
+        "u1",
+        first.id,
+        UpdateImportRequest(status=ImportStatus.COMMITTED, batch_id="batch-1"),
+    )
+    second = service.create("u1", upload(force=True))
+    service.update(
+        "u1",
+        second.id,
+        UpdateImportRequest(status=ImportStatus.COMMITTED, batch_id="batch-2"),
+    )
+
+    assert service.delete_receipts_for_batch("u1", "batch-1") == 1
+    assert [record.id for record in service.list("u1")] == [second.id]
+    assert service.delete_receipts_for_batch("u1", "batch-1") == 0
+
+
+def test_orphaned_receipts_are_committed_without_a_live_batch():
+    records = [
+        {"id": "live", "status": "committed", "batch_id": "batch-1"},
+        {"id": "gone", "status": "committed", "batch_id": "deleted"},
+        {"id": "unlinked", "status": "committed"},
+        {"id": "mapping", "status": "mapping", "batch_id": "deleted"},
+        {"id": "failed", "status": "failed"},
+    ]
+
+    assert [record["id"] for record in orphaned_receipts(records, {"batch-1"})] == [
+        "gone",
+        "unlinked",
+    ]
 
 
 def test_another_users_record_is_not_found(service):
@@ -299,5 +334,5 @@ def test_committing_needs_a_batch_and_then_freezes(service):
     assert committed.batch_id == "batch-1"
     with pytest.raises(ImportConflict):
         service.update("u1", record.id, UpdateImportRequest(ledger=[]))
-    with pytest.raises(ImportConflict):
-        service.delete("u1", record.id)
+    service.delete("u1", record.id)
+    assert service.list("u1") == []

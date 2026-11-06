@@ -11,12 +11,13 @@ import base64
 import hashlib
 
 import pytest
-from conftest import FakeImportRepo
+from conftest import FakeBatchRepo, FakeImportRepo
 from fastapi.testclient import TestClient
 
 from app.auth.deps import get_current_user, require_allowed_user
 from app.auth.throttle import llm_limiter, rate_limiter
 from app.main import app
+from app.schemas.batch import DraftPayload
 from app.schemas.recipe_import import (
     ExtractedRecipe,
     ExtractionPayload,
@@ -26,6 +27,7 @@ from app.schemas.recipe_import import (
     SourceMeta,
 )
 from app.services import gemini, recipe_import
+from app.services.batch_service import BatchService, get_batch_service
 from app.services.import_service import ImportService, get_import_service
 
 UID = "user-1"
@@ -54,7 +56,9 @@ def canned(data: bytes, name: str) -> tuple[ExtractedRecipe, object]:
 def client(monkeypatch):
     monkeypatch.setattr(recipe_import, "extract_recipe_bytes", canned)
     service = ImportService(FakeImportRepo())
+    batches = BatchService(FakeBatchRepo())
     app.dependency_overrides[get_import_service] = lambda: service
+    app.dependency_overrides[get_batch_service] = lambda: batches
     app.dependency_overrides[get_current_user] = lambda: {"uid": UID, "token": "t"}
     app.dependency_overrides[require_allowed_user] = lambda: {"uid": UID, "token": "t"}
     rate_limiter.clear()
@@ -169,7 +173,7 @@ def test_patch_edits_the_ledger(client):
     assert patched.json()["ledger"] == [{"line_id": "l1", "decision": "unresolved"}]
 
 
-def test_a_committed_record_refuses_edits_and_deletion(client):
+def test_a_committed_record_refuses_edits_but_can_be_deleted(client):
     created = client.post("/imports", json=body()).json()
     service = app.dependency_overrides[get_import_service]()
     service._repo.docs[UID][created["id"]]["status"] = "committed"
@@ -179,7 +183,28 @@ def test_a_committed_record_refuses_edits_and_deletion(client):
     assert patched.json()["details"]["reason"] == "committed"
 
     deleted = client.delete(f"/imports/{created['id']}")
-    assert deleted.status_code == 409
+    assert deleted.status_code == 204
+    assert client.get("/imports").json() == []
+
+
+def test_commit_requires_an_existing_draft_batch(client):
+    created = client.post("/imports", json=body()).json()
+    batches = app.dependency_overrides[get_batch_service]()
+
+    missing = client.patch(
+        f"/imports/{created['id']}",
+        json={"status": "committed", "batch_id": "missing"},
+    )
+    assert missing.status_code == 409
+    assert missing.json()["details"]["reason"] == "missing batch"
+
+    batches.upsert_draft(UID, "batch-1", DraftPayload(name="A"))
+    committed = client.patch(
+        f"/imports/{created['id']}",
+        json={"status": "committed", "batch_id": "batch-1"},
+    )
+    assert committed.status_code == 200
+    assert committed.json()["batch_id"] == "batch-1"
 
 
 def test_the_llm_bucket_guards_uploads(client):

@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 from conftest import (
     FakeBatchRepo,
+    FakeImportRepo,
     freeze_payload,
     make_batch_request,
     make_hop_request,
@@ -19,6 +20,7 @@ from app.services.batch_service import BatchService, get_batch_service
 from app.services.batch_solver_service import solve_batch_request
 from app.services.errors import SolverServiceError
 from app.services.hop_solver_service import solve_hop_request
+from app.services.import_service import ImportService, get_import_service
 from app.services.water_solver_service import solve_water_request
 
 UID = "user-1"
@@ -27,7 +29,9 @@ UID = "user-1"
 @pytest.fixture
 def service():
     svc = BatchService(FakeBatchRepo())
+    imports = ImportService(FakeImportRepo())
     app.dependency_overrides[get_batch_service] = lambda: svc
+    app.dependency_overrides[get_import_service] = lambda: imports
     app.dependency_overrides[get_current_user] = lambda: {"uid": UID, "token": "test"}
     app.dependency_overrides[require_allowed_user] = lambda: {"uid": UID, "token": "test"}
     yield svc
@@ -334,6 +338,34 @@ def test_delete_returns_204_without_a_body(client):
     assert response.status_code == 204
     assert response.content == b""
     assert client.get("/batches/b1").status_code == 404
+
+
+def test_delete_removes_the_committed_import_receipt(client):
+    client.put("/batches/b1", json=draft_body())
+    client.put("/batches/b2", json=draft_body())
+    imports = app.dependency_overrides[get_import_service]()
+    imports._repo.docs.setdefault(UID, {}).update({
+        "imp-1": {"id": "imp-1", "status": "committed", "batch_id": "b1"},
+        "imp-2": {"id": "imp-2", "status": "committed", "batch_id": "b2"},
+    })
+
+    assert client.delete("/batches/b1").status_code == 204
+
+    receipts = imports._repo.docs[UID]
+    assert "imp-1" not in receipts
+    assert "imp-2" in receipts, "another batch's receipt is untouched"
+
+
+def test_deleting_a_missing_batch_still_clears_its_receipt(client):
+    imports = app.dependency_overrides[get_import_service]()
+    imports._repo.docs.setdefault(UID, {})["imp-1"] = {
+        "id": "imp-1",
+        "status": "committed",
+        "batch_id": "b1",
+    }
+
+    assert client.delete("/batches/b1").status_code == 404
+    assert "imp-1" not in imports._repo.docs[UID]
 
 
 def test_list_is_scoped_to_the_authenticated_user(client, service):

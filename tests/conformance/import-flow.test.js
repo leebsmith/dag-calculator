@@ -9,6 +9,8 @@ import assert from "node:assert/strict";
 import { projectImport } from "../../frontend/src/adapters/importProjection.js";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
+import { shapeDraftState } from "../../frontend/src/views/snapshotFormatters.js";
+import { alpineReactiveValue } from "../frontend/alpineProxy.js";
 
 const CATALOG = {
   malt: {
@@ -217,4 +219,50 @@ test("7. commit clears the record but leaves navigation to the commit command", 
   assert.equal(active.id, "batch-1");
   assert.equal(store.record, null, "the import view closes on its own record");
   assert.deepEqual(closes, [], "no return to the list: the new batch is where the user lands");
+});
+
+test("8. a reactive store commits plain state to the persistence seam", async () => {
+  const record = recordFor(payload({ yeasts: ["Strain A"] }));
+  const cache = createReferenceCache();
+  cache.syncLibraryItems(CATALOG);
+  let committed = null;
+  const store = await alpineReactiveValue(
+    createImportReviewStore({
+      client: { patch: async (id, body) => ({ ...record, ...body }) },
+      referenceCache: cache,
+      project: projectImport,
+      gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
+      delta: () => ({ targets: [], lines: [] }),
+      commit: async ({ state }) => {
+        committed = state;
+        // The first thing persistence.createWithIdentity does: clone the draft
+        // snapshot. A reactive proxy here is the reported DataCloneError.
+        shapeDraftState({
+          identity: {},
+          hopStrategy: "",
+          roots: state.roots,
+          collections: state.collections,
+          selections: state.selections,
+          schemaVersion: 4,
+        });
+        return { id: "batch-1" };
+      },
+    })
+  );
+  store.open(record);
+  for (const row of store.ledger.filter((line) => line.section === "fermentables")) {
+    store.chooseRef(row.line_id, { id: "pale", name: "Pale Malt" });
+  }
+  for (const row of store.ledger.filter((line) => line.section === "hops")) {
+    store.chooseRef(row.line_id, { id: "saaz", name: "Saaz" });
+  }
+  store.chooseRef(yeastRow(store, "Strain A").line_id, { id: "strain-a", name: "Strain A" });
+
+  await store.runCheck();
+  assert.equal(store.checkSummary?.ok, true);
+  const active = await store.commit();
+
+  assert.equal(active?.id, "batch-1");
+  assert.equal(store.checkError, null, "the draft snapshot cloned a proxy");
+  assert.ok(committed, "the persistence seam received the projection");
 });

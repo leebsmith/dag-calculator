@@ -60,6 +60,12 @@ export function createImportsStore({
         return this.rows.filter((row) => row.status === "failed");
       },
 
+      // A committed record is a receipt: the batch exists, and this row is what
+      // lets the same document be recognised instead of read again.
+      get committedRows() {
+        return this.rows.filter((row) => row.status === "committed");
+      },
+
       resumeLabel(status) {
         return resumeLabel(status);
       },

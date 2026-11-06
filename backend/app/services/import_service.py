@@ -8,9 +8,10 @@ it.
 
 Two rules are enforced here rather than in the repository, because they are
 policy and they are testable without Firestore: a **committed** record is
-immutable and undeletable (it is a batch's audit trail), and re-uploading a
+immutable (its receipt can still be deleted deliberately), and re-uploading a
 document the user already imported is a conflict with a pointer, not a silent
-duplicate.
+duplicate. Permanently deleting the batch removes its committed receipt too, so
+the file can be read again.
 """
 
 from __future__ import annotations
@@ -69,6 +70,18 @@ class DuplicateImport(Exception):
 
 class ImportPayloadError(Exception):
     """The upload is not a PDF we can read."""
+
+
+def orphaned_receipts(
+    imports: list[dict[str, Any]], batch_ids: set[str]
+) -> list[dict[str, Any]]:
+    """Committed receipts whose batch is absent, or which never named one."""
+    return [
+        record
+        for record in imports
+        if record.get("status") == ImportStatus.COMMITTED.value
+        and (not record.get("batch_id") or record["batch_id"] not in batch_ids)
+    ]
 
 
 class ImportService:
@@ -141,11 +154,12 @@ class ImportService:
         return ImportRecord.model_validate(doc)
 
     def delete(self, uid: str, import_id: str) -> None:
-        current = self.get(uid, import_id)
-        if current.status == ImportStatus.COMMITTED:
-            raise ImportConflict("committed")
         if not self._repo.delete(uid, import_id):
             raise ImportNotFound(import_id)
+
+    def delete_receipts_for_batch(self, uid: str, batch_id: str) -> int:
+        """The batch is gone: its committed receipts are no longer an audit trail."""
+        return self._repo.delete_by_batch_id(uid, batch_id)
 
     # The fields a patch may replace outright; each is validated by its own request
     # model, so the merge only has to know that the request named it.

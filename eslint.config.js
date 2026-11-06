@@ -196,7 +196,7 @@ const FILE_LINE_PINS = {
   "views/producer/stylePlot.js": 422,
   "engine/dag.js": 399,
   "engine/fermentation.js": 506,
-  "store/recipes.js": 466,
+  "store/recipes.js": 454,
 };
 
 const SCRIPT_COMPLEXITY = {

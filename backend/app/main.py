@@ -49,6 +49,7 @@ from app.schemas.ids import validate_doc_id
 from app.schemas.import_record import (
     CreateImportRequest,
     ImportRecord,
+    ImportStatus,
     UpdateImportRequest,
 )
 from app.schemas.recipe_import import (
@@ -247,10 +248,21 @@ def delete_batch(
     batch_id: str,
     user: AllowedUser,
     service: BatchServiceDep,
+    imports: ImportServiceDep,
 ):
-    """Permanently delete a batch owned by the caller."""
+    """Permanently delete a batch owned by the caller and its import receipt."""
     validate_doc_id(batch_id)
-    service.delete_batch(user["uid"], batch_id)
+    try:
+        service.delete_batch(user["uid"], batch_id)
+    except HTTPException as exc:
+        if exc.status_code != 404:
+            raise
+        # A previous attempt may have deleted the batch and then failed to remove
+        # its receipt; the retry's 404 still heals that partial delete.
+        imports.delete_receipts_for_batch(user["uid"], batch_id)
+        raise
+    else:
+        imports.delete_receipts_for_batch(user["uid"], batch_id)
 
 
 @app.post("/batches/{batch_id}/freeze", response_model=BatchRecord, status_code=201)
@@ -502,10 +514,31 @@ def patch_import(
     request: UpdateImportRequest,
     user: AllowedUser,
     service: ImportServiceDep,
+    batches: BatchServiceDep,
 ):
     """Update the identity, ledger or status of an uncommitted record."""
     validate_doc_id(import_id)
     try:
+        if request.status == ImportStatus.COMMITTED:
+            current = service.get(user["uid"], import_id)
+            batch_id = request.batch_id or current.batch_id
+            if batch_id:
+                try:
+                    batch = batches.get_batch(user["uid"], batch_id)
+                except HTTPException:
+                    return _import_error(
+                        409,
+                        "IMPORT_CONFLICT",
+                        "the batch no longer exists",
+                        {"reason": "missing batch"},
+                    )
+                if batch.status != "draft":
+                    return _import_error(
+                        409,
+                        "IMPORT_CONFLICT",
+                        "the batch is not an editable draft",
+                        {"reason": "batch not draft"},
+                    )
         return service.update(user["uid"], import_id, request)
     except ImportNotFound:
         raise HTTPException(status_code=404, detail="Import not found") from None

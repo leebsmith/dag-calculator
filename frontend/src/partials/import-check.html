@@ -8,26 +8,53 @@
         Create batch.
       </p>
     </div>
-    <div
-      class="import-verification"
-      :class="{
-        'is-ok': $store.importReview.checkSummary?.ok,
-        'is-warn': $store.importReview.checkSummary && !$store.importReview.checkSummary.ok,
-      }"
-      x-show="$store.importReview.checkSummary"
-    >
-      <span class="font-medium"
-        x-text="$store.importReview.checkSummary?.ok
-          ? 'Solveable — ready to commit'
-          : $store.importReview.checkSummary?.blocking + ' blocking finding(s)'"></span>
-      <span class="text-xs text-muted"
-        x-text="$store.importReview.checkSummary
-          ? $store.importReview.checkSummary.unresolved + ' line(s) to decide, '
-            + $store.importReview.checkSummary.sections + ' section(s) to decide, '
-            + $store.importReview.checkSummary.advisory + ' advisory'
-          : ''"></span>
+    <div class="import-check-header-side">
+      <div
+        class="import-verification"
+        :class="{
+          'is-ok': $store.importReview.checkSummary?.ok,
+          'is-warn': $store.importReview.checkSummary && !$store.importReview.checkSummary.ok,
+        }"
+        x-show="$store.importReview.checkSummary"
+      >
+        <span class="font-medium"
+          x-text="$store.importReview.checkSummary?.ok
+            ? 'Solveable — ready to commit'
+            : $store.importReview.checkSummary?.blocking + ' blocking finding(s)'"></span>
+        <span class="text-xs text-muted"
+          x-text="$store.importReview.checkSummary
+            ? $store.importReview.checkSummary.unresolved + ' line(s) to decide, '
+              + $store.importReview.checkSummary.sections + ' section(s) to decide, '
+              + $store.importReview.checkSummary.advisory + ' advisory'
+            : ''"></span>
+      </div>
+      <div class="import-queue-actions">
+        <button
+          type="button"
+          class="text-xs"
+          :class="$store.importReview.checkSummary?.ok ? 'btn-outline' : 'btn-primary'"
+          :disabled="$store.importReview.checkBusy"
+          @click="$store.importReview.runCheck()"
+          x-text="$store.importReview.checkBusy ? 'Solving…' : ($store.importReview.gate ? 'Run the check again' : 'Run the check')"
+        ></button>
+        <button
+          type="button"
+          class="btn-primary text-xs"
+          x-show="$store.importReview.checkSummary?.ok"
+          :disabled="$store.importReview.commitBusy"
+          @click="$store.importReview.commit()"
+          x-text="$store.importReview.commitBusy ? 'Creating…' : 'Create batch'"
+        ></button>
+      </div>
     </div>
   </header>
+
+  <div class="alert alert-warning" x-show="$store.importReview.checkError">
+    <div class="alert-header">
+      <span class="alert-dot"></span>
+      <span x-text="$store.importReview.checkError"></span>
+    </div>
+  </div>
 
   <div class="import-water" x-show="$store.importReview.unresolved.length === 0">
     <h3 class="import-section-title">Water targets</h3>
@@ -71,35 +98,6 @@
         </li>
       </ul>
     </template>
-  </div>
-
-  <div class="alert alert-warning" x-show="$store.importReview.checkError">
-    <div class="alert-header">
-      <span class="alert-dot"></span>
-      <span x-text="$store.importReview.checkError"></span>
-    </div>
-  </div>
-
-  <div class="import-queue-actions">
-    <button
-      type="button"
-      class="btn-primary text-xs"
-      :disabled="$store.importReview.checkBusy"
-      @click="$store.importReview.runCheck()"
-      x-text="$store.importReview.checkBusy ? 'Solving…' : ($store.importReview.gate ? 'Run the check again' : 'Run the check')"
-    ></button>
-    <button
-      type="button"
-      class="btn-primary text-xs"
-      x-show="$store.importReview.checkSummary?.ok"
-      :disabled="$store.importReview.commitBusy"
-      @click="$store.importReview.commit()"
-      x-text="$store.importReview.commitBusy ? 'Creating…' : 'Create batch'"
-    ></button>
-    <span class="text-xs text-muted" x-show="$store.importReview.unresolved.length">
-      <span x-text="$store.importReview.unresolved.length"></span> line(s) still need your call — the
-      gate refuses until they are decided.
-    </span>
   </div>
 
   <template x-if="$store.importReview.unresolved.length || $store.importReview.sectionIssues.length">
