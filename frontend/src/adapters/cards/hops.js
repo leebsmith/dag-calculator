@@ -4,26 +4,26 @@
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
-import { createHopFormatters } from "../../views/producer/hopFormat.js";
 import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
 import {
-  hopAlphaInputValue, hopAlphaIsOutsideStock, hopAlphaLabel, hopAlphaStockLabel,
-  hopBoilPctLabel, hopFormLabel, hopIbuLabel, hopMinutesLabel, hopAdditionLabel,
-  hopPctLabel, hopStockRecord, mergeBoilRows, mergeWhirlpoolRows,
+  hopAlphaInputValue, hopAlphaLabel, hopBoilPctLabel, hopFormLabel, hopIbuLabel,
+  hopMinutesLabel, hopAdditionLabel, hopPctLabel,
   BOIL_HOP_FORMS, WHIRLPOOL_HOP_FORMS,
 } from "../../views/producer/hopRows.js";
-import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
+import {
+  HOP_MASS_KEY, HOP_MASS_UNITS, MAX_VISIBLE,
+  boilPolicyDescriptors, boilRowsFor, catalogResultLabel, combinedMassDisplay,
+  createHopFormatters, draftPartsTotal, draftSummary, hopAlphaOutsideStockFor,
+  hopAlphaRangeText, hopCatalogEntries, hopCatalogItemMeta, hopMassText,
+  hopTempText, massTotalDisplay, massTotalKg, whirlpoolPolicyDescriptors,
+  whirlpoolRowsFor, whirlpoolTimelineDescriptors,
+} from "../../views/hopsLogic.js";
+import { cycleUnit, formatWithDecimals } from "../../utils.js";
 import { reportError } from "../../observability.js";
-import { boilPolicyDescriptors, makeBoilRow } from "../../views/producer/boilPolicy.js";
+import { makeBoilRow } from "../../views/producer/boilPolicy.js";
 import {
   makeWhirlpoolRow, readWhirlpoolCeiling, whirlpoolCeilingBadge,
-  whirlpoolPolicyDescriptors, whirlpoolTimelineDescriptors,
 } from "../../views/producer/whirlpoolPolicy.js";
-
-const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
-const HOP_MASS_KEY = "hop.mass";
-
-const MAX_VISIBLE = 30;
 
 function resolveOrNull(engine, path) {
   try {
@@ -40,27 +40,14 @@ export function registerHopCard(app, ctx) {
     Cap: "Hop",
     nodeId: N.collection,
     seedKey: "hops",
-    catalog: (a) => {
-      if (a.hopCatalogForm === "t90_pellet" || a.hopCatalogForm === "whole_cone") {
-        return Object.values(ctx.cache.seeds.hops ?? {});
-      }
-      return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
-        (item) => item.product_form === a.hopCatalogForm
-      );
-    },
+    catalog: (a) => hopCatalogEntries(ctx.cache, a.hopCatalogForm),
     catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
     categoryField: "purpose",
     makeRow: (hop, a) => makeBoilRow(hop, a.hopCatalogForm),
     maxVisible: MAX_VISIBLE,
-    itemMeta: (item) => [
-      item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
-      isFiniteNumber(item.alpha_acid_pct)
-        ? `${formatPercent(item.alpha_acid_pct)} alpha`
-        : "alpha n/a",
-      item.product_form ? item.manufacturer : item.origin,
-    ],
+    itemMeta: hopCatalogItemMeta,
     searchPlaceholder: "Search hops by name…",
     emptyMessage: "No matching hops found.",
     resultLabel: (a) => a.hopResultLabel,
@@ -85,17 +72,7 @@ export function registerHopCard(app, ctx) {
     Cap: "WhirlpoolHop",
     nodeId: N.whirlpoolCollection,
     seedKey: "hops",
-    catalog: (a) => {
-      if (
-        a.whirlpoolHopCatalogForm === "t90_pellet" ||
-        a.whirlpoolHopCatalogForm === "whole_cone"
-      ) {
-        return Object.values(ctx.cache.seeds.hops ?? {});
-      }
-      return Object.values(ctx.cache.seeds.hopProducts ?? {}).filter(
-        (item) => item.product_form === a.whirlpoolHopCatalogForm
-      );
-    },
+    catalog: (a) => hopCatalogEntries(ctx.cache, a.whirlpoolHopCatalogForm),
     catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id", allowDuplicates: true,
@@ -103,13 +80,7 @@ export function registerHopCard(app, ctx) {
     makeRow: (hop, a) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS, a.whirlpoolHopCatalogForm),
     maxVisible: MAX_VISIBLE,
     rowBadge: whirlpoolCeilingBadge,
-    itemMeta: (item) => [
-      item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
-      isFiniteNumber(item.alpha_acid_pct)
-        ? `${formatPercent(item.alpha_acid_pct)} alpha`
-        : "alpha n/a",
-      item.product_form ? item.manufacturer : item.origin,
-    ],
+    itemMeta: hopCatalogItemMeta,
     searchPlaceholder: "Search hops and products by name or maker…",
     emptyMessage: "No matching entries found.",
     resultLabel: (a) => a.whirlpoolHopResultLabel,
@@ -172,11 +143,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopMass(row) {
-      return formatMass(row?.mass_kg, this.hopMassUnit);
+      return hopMassText(row, this.hopMassUnit, formatMass);
     },
 
     whirlpoolHopMass(row) {
-      return formatMass(row?.mass_kg, this.hopMassUnit);
+      return hopMassText(row, this.hopMassUnit, formatMass);
     },
 
     hopForm(row) {
@@ -192,11 +163,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopAlphaRange(row) {
-      return hopAlphaStockLabel(hopStockRecord(ctx.cache, row?.hop_id));
+      return hopAlphaRangeText(ctx.cache, row);
     },
 
     hopAlphaOutsideStock(row) {
-      return hopAlphaIsOutsideStock(row, hopStockRecord(ctx.cache, row?.hop_id));
+      return hopAlphaOutsideStockFor(ctx.cache, row);
     },
 
     // Batch-scoped measurement edit: the row is batch data, not a record. The
@@ -225,7 +196,7 @@ export function registerHopCard(app, ctx) {
     },
 
     hopTemp(row) {
-      return formatTemp(row?.initial_temp_c);
+      return hopTempText(row, formatTemp);
     },
 
     hopIbu(row) {
@@ -247,117 +218,97 @@ export function registerHopCard(app, ctx) {
     hopDraftPartsTotal: {
       configurable: true,
       get() {
-        return (this.draftRows ?? []).reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+        return draftPartsTotal(this.draftRows);
       },
     },
     hopDraftSummary: {
       configurable: true,
       get() {
-        const additions = countLabel(this.draftRows.length, "addition");
-        return `${additions} · ${formatWithDecimals(this.hopDraftPartsTotal, 1)} parts`;
+        return draftSummary(this.draftRows);
       },
     },
     whirlpoolHopDraftPartsTotal: {
       configurable: true,
       get() {
-        return (this.draftRows ?? []).reduce((sum, r) => sum + (Number(r.parts) || 0), 0);
+        return draftPartsTotal(this.draftRows);
       },
     },
     whirlpoolHopDraftSummary: {
       configurable: true,
       get() {
-        const additions = countLabel(this.draftRows.length, "addition");
-        return `${additions} · ${formatWithDecimals(this.whirlpoolHopDraftPartsTotal, 1)} parts`;
+        return draftSummary(this.draftRows);
       },
     },
     hopResultLabel: {
       configurable: true,
       get() {
-        return resultCounter({
-          shown: this.hopVisibleCatalog.length,
-          total: this.hopFilteredCatalog.length,
-          noun: "hop",
+        return catalogResultLabel({
+          visible: this.hopVisibleCatalog.length,
+          filtered: this.hopFilteredCatalog.length,
           truncated: this.hopCatalogTruncated,
-          truncatedHint: "refine search or purpose filters",
         });
       },
     },
     whirlpoolHopResultLabel: {
       configurable: true,
       get() {
-        return resultCounter({
-          shown: this.whirlpoolHopVisibleCatalog.length,
-          total: this.whirlpoolHopFilteredCatalog.length,
-          noun: "hop",
+        return catalogResultLabel({
+          visible: this.whirlpoolHopVisibleCatalog.length,
+          filtered: this.whirlpoolHopFilteredCatalog.length,
           truncated: this.whirlpoolHopCatalogTruncated,
-          truncatedHint: "refine search or purpose filters",
         });
       },
     },
     boilHopTotalMassDisplay: {
       configurable: true,
       get() {
-        if (typeof this.boilHopMassKg === "number" && Number.isFinite(this.boilHopMassKg)) {
-          return formatMass(this.boilHopMassKg, this.hopMassUnit);
-        }
-        const rows = this.hopRows ?? [];
-        const masses = rows
-          .map((r) => r.mass_kg)
-          .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return "—";
-        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
+        return massTotalDisplay({
+          rows: this.hopRows,
+          boundaryMassKg: this.boilHopMassKg,
+          unit: this.hopMassUnit,
+          formatMass,
+        });
       },
     },
     hopTotalMassKg: {
       configurable: true,
       get() {
-        if (
-          typeof this.hopBoundaryTotalMassKg === "number" &&
-          Number.isFinite(this.hopBoundaryTotalMassKg)
-        ) {
-          return this.hopBoundaryTotalMassKg;
-        }
-        const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
-        return rows.reduce(
-          (sum, r) =>
-            typeof r.mass_kg === "number" && Number.isFinite(r.mass_kg) ? sum + r.mass_kg : sum,
-          0
+        return massTotalKg(
+          [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])],
+          this.hopBoundaryTotalMassKg
         );
       },
     },
     hopTotalMassDisplay: {
       configurable: true,
       get() {
-        const rows = [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])];
-        if (!rows.length) return "—";
-        if (
-          typeof this.hopBoundaryTotalMassKg === "number" &&
-          Number.isFinite(this.hopBoundaryTotalMassKg)
-        ) {
-          return formatMass(this.hopBoundaryTotalMassKg, this.hopMassUnit);
-        }
-        const masses = rows
-          .map((r) => r.mass_kg)
-          .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return "—";
-        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
+        return combinedMassDisplay({
+          boilRows: this.hopRows,
+          whirlpoolRows: this.whirlpoolHopRows,
+          boundaryMassKg: this.hopBoundaryTotalMassKg,
+          unit: this.hopMassUnit,
+          formatMass,
+        });
       },
     },
     whirlpoolHopTotalMassDisplay: {
       configurable: true,
       get() {
-        if (
-          typeof this.whirlpoolHopMassKg === "number" &&
-          Number.isFinite(this.whirlpoolHopMassKg)
-        ) {
-          return formatMass(this.whirlpoolHopMassKg, this.hopMassUnit);
-        }
-        const rows = this.whirlpoolHopRows ?? [];
-        const masses = rows
-          .map((r) => r.mass_kg)
-          .filter((m) => typeof m === "number" && Number.isFinite(m));
-        if (!masses.length) return "—";
-        return formatMass(masses.reduce((sum, m) => sum + m, 0), this.hopMassUnit);
+        return massTotalDisplay({
+          rows: this.whirlpoolHopRows,
+          boundaryMassKg: this.whirlpoolHopMassKg,
+          unit: this.hopMassUnit,
+          formatMass,
+        });
+      },
+    },
+    setWhirlpoolStartBand: {
+      configurable: true,
+      writable: true,
+      value(bandId) {
+        const band = this.whirlpoolStartBands.find((candidate) => candidate.value === bandId);
+        if (!band || this.whirlpoolHopActiveIndex == null) return;
+        this.patchDraftRow(this.whirlpoolHopActiveIndex, { initial_temp_c: band.mid });
       },
     },
     ...whirlpoolPolicyDescriptors({
@@ -367,12 +318,16 @@ export function registerHopCard(app, ctx) {
       formatNumber: formatWithDecimals,
       postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
       whirlpoolIbu: () => Number(resolveOrNull(engine, N.whirlpoolIbu)),
+      activeRow: () => app.whirlpoolHopActiveRow,
+      alphaMassKg: () => app.whirlpoolHopAlphaMassKg,
     }),
     ...boilPolicyDescriptors({
       formatMass,
       formatNumber: formatWithDecimals,
       postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
       boilIbu: () => Number(resolveOrNull(engine, N.boilIbu)),
+      rows: () => app.hopRows,
+      alphaMassKg: () => app.boilHopAlphaMassKg,
     }),
     ...whirlpoolTimelineDescriptors({
       formatTemp,
@@ -382,6 +337,8 @@ export function registerHopCard(app, ctx) {
         chills: resolveOrNull(engine, N.whirlpoolChills) ?? [],
       }),
       reportError,
+      timelineState: () => app.whirlpoolTimelineState,
+      rows: () => app.whirlpoolHopRows,
     }),
     ...hopSectionMetaDescriptors(),
   });
@@ -412,18 +369,18 @@ export function refreshHopCard(app, ctx) {
   const boilTimeMin = Number(engine.get(N.boilTime)) || 0;
   const whirlpoolIbu = Number(engine.get(N.whirlpoolIbu)) || 0;
   const volume = resolveOrNull(engine, N.postBoilVolume);
-  app.hopRows = mergeBoilRows(
-    engine.get(N.collection),
-    resolveOrNull(engine, N.boilRows),
+  app.hopRows = boilRowsFor({
+    rows: engine.get(N.collection),
+    results: resolveOrNull(engine, N.boilRows),
     boilIbu,
-    boilTimeMin
-  );
-  app.whirlpoolHopRows = mergeWhirlpoolRows(
-    engine.get(N.whirlpoolCollection),
-    resolveOrNull(engine, N.whirlpoolRows),
+    boilTimeMin,
+  });
+  app.whirlpoolHopRows = whirlpoolRowsFor({
+    rows: engine.get(N.whirlpoolCollection),
+    results: resolveOrNull(engine, N.whirlpoolRows),
     whirlpoolIbu,
-    volume
-  );
+    volume,
+  });
   app.whirlpoolCoolingCeiling = readWhirlpoolCeiling(
     engine,
     (path) => resolveOrNull(engine, path),

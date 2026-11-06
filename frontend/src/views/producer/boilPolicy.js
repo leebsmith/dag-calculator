@@ -2,11 +2,6 @@
 // dose ceiling. The boil is the only place an extract can be added, so both live
 // here rather than on the whirlpool card.
 
-import { isFiniteNumber } from "../../utils.js";
-import { hopDemandLine } from "./hopRows.js";
-
-const L_PER_GAL = 3.785411784;
-
 // Flowable extracts saturate the wort: above roughly 4 g/gal the product stops
 // dispersing and degrades foam. The supplier ceilings are informational until
 // dose is modelled, so the card keeps this generic bound.
@@ -38,30 +33,3 @@ export function makeBoilRow(hop, catalogForm = null) {
   };
 }
 
-export function boilPolicyDescriptors({ formatMass, formatNumber, postBoilVolume, boilIbu }) {
-  const doseOf = (row) => {
-    const volume = postBoilVolume();
-    if (!isFiniteNumber(row.mass_kg) || !(volume > 0)) return null;
-    return (row.mass_kg * 1000) / (volume / L_PER_GAL);
-  };
-  return {
-    hopDoseWarning: {
-      configurable: true,
-      get() {
-        return doseWarning(this.hopRows, formatNumber, doseOf);
-      },
-    },
-    hopDemandLine: {
-      configurable: true,
-      get() {
-        return hopDemandLine({
-          ibu: boilIbu(),
-          alphaMassKg: this.boilHopAlphaMassKg,
-          volumeL: postBoilVolume(),
-          formatMass,
-          formatNumber,
-        });
-      },
-    },
-  };
-}
