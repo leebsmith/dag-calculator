@@ -26,49 +26,51 @@ function curveAt(cache, id) {
   return id ? cache.seeds.coolingCurves?.[id] ?? null : null;
 }
 
-function pickerActions({ artifact, cache }) {
+function pickerActions({ artifact, cache, getView }) {
   return {
     selectCoolingCurve(id) {
-      this.coolingCurveNotice = "";
+      const view = getView();
+      view.coolingCurveNotice = "";
       if (id === CUSTOM_COOLING_CURVE) return;
       if (!id) {
-        this.setRoot(N.whirlpoolCoolingTimeConstant, defaultTimeConstant(artifact));
-        this.setRoot(N.coolingCurveId, "");
-        this.scheduleSolve();
-        this.notify();
+        view.setRoot(N.whirlpoolCoolingTimeConstant, defaultTimeConstant(artifact));
+        view.setRoot(N.coolingCurveId, "");
+        view.scheduleSolve();
+        view.notify();
         return;
       }
       const record = curveAt(cache, id);
       if (!record) {
-        this.coolingCurveNotice = "That curve is no longer in the library.";
-        this.notify();
+        view.coolingCurveNotice = "That curve is no longer in the library.";
+        view.notify();
         return;
       }
       const fit = fitOf(record);
       if (!fit?.valid) {
-        this.coolingCurveNotice = fit?.reason ?? "The curve could not be fitted.";
-        this.notify();
+        view.coolingCurveNotice = fit?.reason ?? "The curve could not be fitted.";
+        view.notify();
         return;
       }
-      this.setRoot(N.whirlpoolCoolingTimeConstant, fit.tauMin);
-      this.setRoot(N.coolingCurveId, id);
-      this.scheduleSolve();
-      this.notify();
+      view.setRoot(N.whirlpoolCoolingTimeConstant, fit.tauMin);
+      view.setRoot(N.coolingCurveId, id);
+      view.scheduleSolve();
+      view.notify();
     },
 
     editWhirlpoolCooling(value) {
-      this.setRoot(N.coolingCurveId, "");
-      this.coolingCurveNotice = "";
-      this.edit(this.whirlpoolCoolingField, value);
+      const view = getView();
+      view.setRoot(N.coolingCurveId, "");
+      view.coolingCurveNotice = "";
+      view.edit(view.whirlpoolCoolingField, value);
     },
 
     openCoolingCurveLibrary() {
-      this.openLibrary("cooling_curve");
+      getView().openLibrary("cooling_curve");
     },
   };
 }
 
-function stateDescriptors({ engine, artifact, cache }) {
+function stateDescriptors({ engine, artifact, cache, getView }) {
   const batchTimeConstant = () => {
     const value = engine.get(N.whirlpoolCoolingTimeConstant);
     return isFiniteNumber(value) ? value : null;
@@ -77,14 +79,15 @@ function stateDescriptors({ engine, artifact, cache }) {
     coolingCurveId: {
       configurable: true,
       get() {
-        void this.libraryRevision;
+        const view = getView();
+        void view.libraryRevision;
         return engine.get(N.coolingCurveId) || "";
       },
     },
     coolingCurveOptions: {
       configurable: true,
       get() {
-        void this.libraryRevision;
+        void getView().libraryRevision;
         return Object.values(cache.seeds.coolingCurves ?? {}).sort((left, right) =>
           String(left.name ?? left.id).localeCompare(String(right.name ?? right.id))
         );
@@ -93,50 +96,52 @@ function stateDescriptors({ engine, artifact, cache }) {
     coolingCurveRecord: {
       configurable: true,
       get() {
-        return curveAt(cache, this.coolingCurveId);
+        return curveAt(cache, getView().coolingCurveId);
       },
     },
     coolingCurveMissing: {
       configurable: true,
       get() {
-        return Boolean(this.coolingCurveId) && !this.coolingCurveRecord;
+        const view = getView();
+        return Boolean(view.coolingCurveId) && !view.coolingCurveRecord;
       },
     },
     coolingCurveFit: {
       configurable: true,
       get() {
-        return fitOf(this.coolingCurveRecord);
+        return fitOf(getView().coolingCurveRecord);
       },
     },
     coolingCurveIsCustom: {
       configurable: true,
       get() {
         const tau = batchTimeConstant();
-        return (
-          !this.coolingCurveId && tau !== null && Math.abs(tau - defaultTimeConstant(artifact)) > 1e-9
-        );
+        const id = getView().coolingCurveId;
+        return !id && tau !== null && Math.abs(tau - defaultTimeConstant(artifact)) > 1e-9;
       },
     },
     coolingCurveValue: {
       configurable: true,
       get() {
-        if (this.coolingCurveId) return this.coolingCurveId;
-        return this.coolingCurveIsCustom ? CUSTOM_COOLING_CURVE : "";
+        const view = getView();
+        if (view.coolingCurveId) return view.coolingCurveId;
+        return view.coolingCurveIsCustom ? CUSTOM_COOLING_CURVE : "";
       },
     },
     coolingCurveStatus: {
       configurable: true,
       get() {
-        if (this.coolingCurveMissing) return "Missing curve";
-        if (this.coolingCurveIsCustom) return "Custom";
-        if (!this.coolingCurveId) return "Default cooling";
-        return this.coolingCurveRecord?.name ?? "Default cooling";
+        const view = getView();
+        if (view.coolingCurveMissing) return "Missing curve";
+        if (view.coolingCurveIsCustom) return "Custom";
+        if (!view.coolingCurveId) return "Default cooling";
+        return view.coolingCurveRecord?.name ?? "Default cooling";
       },
     },
   };
 }
 
-function fitDescriptors({ engine, cache, formatTemp }) {
+function fitDescriptors({ engine, cache, formatTemp, getView }) {
   const batchAmbient = () => {
     const value = engine.get(N.whirlpoolAmbient);
     return isFiniteNumber(value) ? value : null;
@@ -145,7 +150,7 @@ function fitDescriptors({ engine, cache, formatTemp }) {
     coolingCurveSummary: {
       configurable: true,
       get() {
-        const fit = this.coolingCurveFit;
+        const fit = getView().coolingCurveFit;
         if (!fit?.valid) return "";
         return [
           `k ${formatWithDecimals(fit.kPerMin, 4)}/min`,
@@ -157,20 +162,20 @@ function fitDescriptors({ engine, cache, formatTemp }) {
     coolingCurveWarnings: {
       configurable: true,
       get() {
+        const view = getView();
         const warnings = [];
-        if (this.coolingCurveNotice) warnings.push(this.coolingCurveNotice);
-        if (!this.coolingCurveId) return warnings;
-        const record = curveAt(cache, this.coolingCurveId);
+        if (view.coolingCurveNotice) warnings.push(view.coolingCurveNotice);
+        if (!view.coolingCurveId) return warnings;
+        const record = curveAt(cache, view.coolingCurveId);
         if (!record) {
           warnings.push(
-            `Missing curve "${this.coolingCurveId}". ` +
-              "The batch keeps the copied time constant."
+            `Missing curve "${view.coolingCurveId}". ` + "The batch keeps the copied time constant."
           );
           return warnings;
         }
         warnings.push(
           ...coolingCurveWarnings({
-            fit: this.coolingCurveFit,
+            fit: view.coolingCurveFit,
             curveAmbientC: record.ambient_temp_c,
             batchAmbientC: batchAmbient(),
             formatTemp,
@@ -182,17 +187,27 @@ function fitDescriptors({ engine, cache, formatTemp }) {
   };
 }
 
-export function installCoolingCurvePicker(app, ctx, { formatTemp }) {
-  const { engine, artifact, cache } = ctx;
-  Object.assign(app, {
+export function createCoolingCurvePicker(ctx, { formatTemp }) {
+  const { engine, artifact, cache, getView } = ctx;
+  const actions = {
     coolingCurveNotice: "",
     customCoolingCurveValue: CUSTOM_COOLING_CURVE,
     ...pickerActions(ctx),
+  };
+  Object.defineProperties(actions, {
+    ...stateDescriptors({ engine, artifact, cache, getView }),
+    ...fitDescriptors({ engine, cache, formatTemp, getView }),
   });
-  Object.defineProperties(app, {
-    ...stateDescriptors({ engine, artifact, cache }),
-    ...fitDescriptors({ engine, cache, formatTemp }),
-  });
+  return actions;
+}
+
+export function installCoolingCurvePicker(app, ctx, { formatTemp }) {
+  const actions = createCoolingCurvePicker(
+    { ...ctx, getView: ctx.getView ?? (() => app) },
+    { formatTemp }
+  );
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export const KEYS = [
