@@ -307,6 +307,7 @@ export function createCatalogDraft(ctx, config) {
 
 export function installCatalogDraft(app, ctx, config) {
   const { nodeId, prefix, Cap, standardField, canAdd } = config;
+  const getView = ctx.getView ?? (() => app);
   registerCatalogEntry(app, {
     nodeId,
     prefix,
@@ -315,11 +316,8 @@ export function installCatalogDraft(app, ctx, config) {
     canAdd,
     ...chromeConfig(config),
   });
-  installChrome(app);
-  const { state, methods, descriptors } = createCatalogDraft(
-    { ...ctx, getView: ctx.getView ?? (() => app) },
-    config
-  );
+  installChrome(app, getView);
+  const { state, methods, descriptors } = createCatalogDraft({ ...ctx, getView }, config);
   Object.assign(app, state, methods);
   Object.defineProperties(app, descriptors);
 }
