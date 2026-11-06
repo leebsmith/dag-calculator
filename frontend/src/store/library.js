@@ -6,7 +6,7 @@
 // current batch untouched.
 
 import { CATALOGS, CATALOG_KINDS } from "./userCatalog.js";
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 
 export const LEGACY_STORAGE_KEY = "brew_user_catalog";
 
@@ -22,7 +22,12 @@ function emptyItems(kinds) {
   return Object.fromEntries(kinds.map((kind) => [kind, {}]));
 }
 
-export function createLibrary({ client = EMPTY_CLIENT, kinds = CATALOG_KINDS, onChange } = {}) {
+export function createLibrary({
+  client = EMPTY_CLIENT,
+  kinds = CATALOG_KINDS,
+  onChange,
+  observability = createObservabilityManager(),
+} = {}) {
   let items = emptyItems(kinds);
   const state = { loading: false, error: null, loaded: false };
 
@@ -129,7 +134,7 @@ export function createLibrary({ client = EMPTY_CLIENT, kinds = CATALOG_KINDS, on
             await store.create(kind, copy);
             imported += 1;
           } catch (err) {
-            reportError(`library.import ${kind}:${legacyId}`, err);
+            observability.reportError(`library.import ${kind}:${legacyId}`, err);
           }
         }
       }

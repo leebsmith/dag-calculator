@@ -8,9 +8,15 @@ import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { clampBoundsFor } from "../views/registry/presentation.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 
-export function createFieldActions({ artifact, session, refToSelectionMap, getView }) {
+export function createFieldActions({
+  artifact,
+  session,
+  refToSelectionMap,
+  getView,
+  observability = createObservabilityManager(),
+}) {
   const actions = {
     inputDrafts: {},
 
@@ -153,7 +159,7 @@ export function createFieldActions({ artifact, session, refToSelectionMap, getVi
       try {
         solved = engine.resolve(sourcePath);
       } catch (err) {
-        reportError("fieldActions.handoffIntensiveValue", err);
+        observability.reportError("fieldActions.handoffIntensiveValue", err);
       }
       const value =
         typeof solved === "number" && Number.isFinite(solved) && solved > 0

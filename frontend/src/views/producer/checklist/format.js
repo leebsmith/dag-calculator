@@ -4,9 +4,15 @@
 import { buildReportCatalog } from "../../registry/catalog.js";
 import { displayValue, nonlinearFns } from "../../producer.js";
 import { cellLabel, formatCell } from "../cell.js";
-import { reportError } from "../../../observability.js";
+import { ignoreError } from "../../../observability.js";
 
-export function createChecklistFormatter(artifact, engine, unitMode = {}, catalog = null) {
+export function createChecklistFormatter(
+  artifact,
+  engine,
+  unitMode = {},
+  catalog = null,
+  reportError = ignoreError
+) {
   const nodes = (catalog ?? buildReportCatalog(artifact, unitMode)).nodes ?? {};
   const nl = nonlinearFns(artifact, engine);
 

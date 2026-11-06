@@ -11,12 +11,11 @@ import {
   updateBrewDayRow,
 } from "../../views/brewDayLogic.js";
 
-export function createBrewDayCard({ engine, artifact, getView }) {
+export function createBrewDayCard({ engine, artifact, getView, observability }) {
   const actions = {
     brewDayRows: defaultBrewDayRows(),
     brewDayOpenSections: { ...INITIAL_OPEN_SECTIONS },
     brewDayLevels: BREW_DAY_LEVELS,
-
     brewDayRow(stepId) {
       return selectBrewDayRow(getView().brewDayRows, stepId);
     },
@@ -79,6 +78,7 @@ export function createBrewDayCard({ engine, artifact, getView }) {
           unitMode: view.unitMode,
           level: view.brewDayLevel,
           stateRows: view.brewDayRows,
+          reportError: observability?.reportError,
         });
       },
     },

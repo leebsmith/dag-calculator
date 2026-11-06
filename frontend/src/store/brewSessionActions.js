@@ -1,13 +1,12 @@
 // Brew-session actions. Three small factories keep each command surface under
 // the shape ceilings; the store composes them.
 
-import { reportError } from "../observability.js";
 import { cell, nowLocal, secondsFromLocal } from "./brewSessionModel.js";
 import { correctObservation } from "./observationCorrections.js";
 
 function setError(store, scope, err) {
   store.error = err?.message ?? String(err);
-  reportError(scope, err);
+  store.reportError(scope, err);
 }
 
 function checklistTable(bundle) {

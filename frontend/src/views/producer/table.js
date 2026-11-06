@@ -6,7 +6,7 @@ import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.j
 import { unitSymbol } from "../../utils.js";
 import { describeField } from "./projection.js";
 import { formatCell } from "./cell.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 
 // Display markers for an ingredient figure. The number itself never changes:
 //   ~  assumed prior (no published figure)
@@ -48,7 +48,8 @@ function cellDisplay(artifact, dimension, value, unitMode, nl, meta = {}) {
 
 // AI AGENT HOOKS: Use this valuator for readout-table cells and notes.
 // Do not duplicated this logic elsewhere.
-export function valuateTable(field, artifact, engine, unitMode, nl, registry = {}) {
+export function valuateTable(field, artifact, engine, unitMode, nl, options = {}) {
+  const { registry = {}, reportError = ignoreError } = options;
   const rows = field.rows.map((row) => {
     const cells = {};
     for (const col of field.columns) {

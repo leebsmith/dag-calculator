@@ -21,8 +21,8 @@ import {
   thicknessDescriptors,
   timeDescriptors,
 } from "./mashGetters.js";
-import { reportError } from "../../observability.js";
 import { MASH_NODES as N } from "../../views/registry/mash.js";
+import { ignoreError } from "../../observability.js";
 
 function conversionActions({ artifact, engine, getView }) {
   return {
@@ -221,6 +221,7 @@ export function registerMashCard(app, ctx = {}) {
 }
 
 export function refreshMashCard(app, ctx) {
+  const reportError = ctx.observability?.reportError ?? ignoreError;
   app.mashPresetIdState = ctx.engine.get(N.presetId) ?? "custom";
   app.mashRests = (ctx.engine.get(N.rests) ?? []).filter((r) => r.rest_id !== "dough_in");
   app.mashDoughInTempC = ctx.engine.get(N.doughInTarget);

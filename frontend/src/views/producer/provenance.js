@@ -5,7 +5,6 @@
 
 import { seedDerivations, approxEqual, sourceLabel } from "../seedDerivations.js";
 import { resolveReference } from "../../engine/paths.js";
-import { reportError } from "../../observability.js";
 
 function collectRefs(expr, out = []) {
   if (expr === null || typeof expr !== "object") return out;
@@ -36,7 +35,7 @@ export function inheritedSource(artifact, nodeId) {
   return null;
 }
 
-function componentLabel(engine, source) {
+function componentLabel(engine, source, reportError) {
   try {
     const component =
       source.kind === "identity" ? engine.identity?.[source.id] : engine.get(source.id);
@@ -49,13 +48,13 @@ function componentLabel(engine, source) {
 
 // AI AGENT HOOKS: Use this decorator for seed-derived provenance and reset
 // affordances. Do not duplicated this logic elsewhere.
-export function decorateProvenance(out, field, engine, artifact) {
+export function decorateProvenance(out, field, engine, artifact, reportError) {
   const inheritedFrom = inheritedSource(artifact, field.id);
   if (inheritedFrom) {
     const seeded = !engine.hasRoot(field.id) && out.value !== undefined;
     out.seeded = seeded;
     out.seededValue = out.value;
-    out.seededSource = componentLabel(engine, inheritedFrom);
+    out.seededSource = componentLabel(engine, inheritedFrom, reportError);
     out.seededReset = "unset";
     return out;
   }

@@ -25,7 +25,6 @@ import {
   waterTargetOptionsOf,
 } from "../../views/waterLogic.js";
 import { ratioReadout } from "../../views/waterRatio.js";
-import { reportError } from "../../observability.js";
 import {
   checkedPins,
   num,
@@ -51,13 +50,14 @@ export function registerWaterCard(app, ctx = {}) {
 
 export function refreshWaterCard(app, ctx) {
   const engine = ctx.engine;
+  const read = (path) => num(engine, path, ctx.observability?.reportError);
   app.waterTargetProfileId = engine.get(N.targetProfileId) ?? "";
   app.waterTargetOptionsState = waterTargetOptionsOf(ctx.cache);
   try {
     const proportional = engine.get(N.saltDistribution) === "PROPORTIONAL";
-    const strike = num(engine, N.vMashTreat);
-    const doseVolume = num(engine, N.spargeSaltedVolume);
-    const deliveredSparge = num(engine, N.vSpargeDeliverable);
+    const strike = read(N.vMashTreat);
+    const doseVolume = read(N.spargeSaltedVolume);
+    const deliveredSparge = read(N.vSpargeDeliverable);
 
     const gypsum = optionLabelFor(N.gypsumForm, engine.get(N.gypsumForm));
     const cacl2 = optionLabelFor(N.cacl2Form, engine.get(N.cacl2Form));
@@ -84,8 +84,8 @@ export function refreshWaterCard(app, ctx) {
     // constrained; otherwise the readout stays as-solved only.
     const flavorConstrained = valuedSet.has("so4") && valuedSet.has("cl");
     const ratio = ratioReadout(
-      num(engine, N.kettleRatio),
-      flavorConstrained ? num(engine, N.targetRatio) : null
+      read(N.kettleRatio),
+      flavorConstrained ? read(N.targetRatio) : null
     );
     const ratioBasis = proportional
       ? "Kettle ratio — split mode: same concentration in both vessels."
@@ -95,10 +95,10 @@ export function refreshWaterCard(app, ctx) {
         ? `${ratio.targetText} target → ${ratio.asSolvedText} kettle, ${ratio.deltaFactorText}`
         : ratio.asSolvedText;
     const ions = WATER_IONS.map(({ ion, pin, label, source }) => {
-      const sourceVal = num(engine, `${N.sourceReport}.${source}`);
-      const targetVal = num(engine, `${N.target}.${ion}`);
-      const postDoseVal = num(engine, `${N.postDoseIons}.${ion}`);
-      const kettleVal = num(engine, `${N.kettleBlend}.${ion}`);
+      const sourceVal = read(`${N.sourceReport}.${source}`);
+      const targetVal = read(`${N.target}.${ion}`);
+      const postDoseVal = read(`${N.postDoseIons}.${ion}`);
+      const kettleVal = read(`${N.kettleBlend}.${ion}`);
       const isChecked = checkedSet.has(pin);
       const isValued = valuedSet.has(pin) && typeof targetVal === "number";
       const below = isValued && typeof sourceVal === "number" && targetVal < sourceVal;
@@ -125,17 +125,17 @@ export function refreshWaterCard(app, ctx) {
     });
 
     const notes = [];
-    const surplus = num(engine, N.surplusSpargeCapacity);
+    const surplus = read(N.surplusSpargeCapacity);
     if (surplus != null && surplus > 0) {
       notes.push(`HLT holds ${fmtL(surplus)} more than the sparge delivers.`);
     }
-    const residualHlt = num(engine, N.residualHlt);
+    const residualHlt = read(N.residualHlt);
 
     const mashDoses = doseRows(ctx.fieldsById, N.mashAdditions, forms);
     const spargeDoses = doseRows(ctx.fieldsById, N.spargeAdditions, forms);
     const mashDoseText = mashDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
     const spargeDoseText = spargeDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
-    const hltStart = num(engine, N.hltStart);
+    const hltStart = read(N.hltStart);
     const basis = `Masses assume ${gypsum} · ${cacl2} · ${acid}`;
     const notModelled =
       "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).";
@@ -259,7 +259,7 @@ export function refreshWaterCard(app, ctx) {
       instructionSparge,
     };
   } catch (err) {
-    reportError("waterCard.refresh", err);
+    ctx.observability.reportError("waterCard.refresh", err);
     app.waterSummary = { ...app.waterSummary, notes: [], telemetry: [] };
   }
 }

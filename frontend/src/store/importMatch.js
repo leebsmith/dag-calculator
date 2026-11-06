@@ -4,7 +4,7 @@
 // record (`suggestions`) so reopening the mapping neither re-calls nor reshuffles
 // the chips, and the local screen stays the fallback when the call fails.
 
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 
 const CATALOG_KIND = { fermentables: "malt", hops: "hop", yeasts: "yeast", mashes: "mash" };
 
@@ -13,7 +13,11 @@ export function catalogKindFor(row) {
   return row.kind_hint === "sugar" || row.kind_hint === "extract" ? "sugar" : "malt";
 }
 
-export function matchActions({ client, catalog }) {
+export function matchActions({
+  client,
+  catalog,
+  observability = createObservabilityManager(),
+}) {
   return {
     get frozenSuggestions() {
       const out = {};
@@ -44,7 +48,7 @@ export function matchActions({ client, catalog }) {
     },
 
     enrichSuggestions() {
-      return enrich(this, client);
+      return enrich(this, client, observability);
     },
 
     // Only lines that still need a hop/malt/sugar/yeast, and only those the local
@@ -84,7 +88,7 @@ export function matchActions({ client, catalog }) {
 }
 
 // The call itself, outside the factory so the composed store stays one screen.
-async function enrich(store, client) {
+async function enrich(store, client, observability) {
   if (!store.record || store.matchBusy) return null;
   store.matchBusy = true;
   store.matchError = null;
@@ -104,7 +108,7 @@ async function enrich(store, client) {
     return merged;
   } catch (err) {
     store.matchError = err?.message ?? "The model could not offer matches.";
-    reportError("importReview.enrichSuggestions", err);
+    observability.reportError("importReview.enrichSuggestions", err);
     return null;
   } finally {
     store.matchBusy = false;

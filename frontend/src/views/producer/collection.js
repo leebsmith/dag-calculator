@@ -4,11 +4,16 @@
 import { fromBase } from "../../engine/units.js";
 import { figureMarkFor } from "./table.js";
 import { formatCell } from "./cell.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 
 // AI AGENT HOOKS: Use this valuator for collection-table display conversion.
 // Do not duplicated this logic elsewhere.
-export function valuateCollection(field, engine, artifact, collectionDomains, nl) {
+export function valuateCollection(
+  field,
+  engine,
+  artifact,
+  { collectionDomains = {}, nl, reportError = ignoreError } = {}
+) {
   // A computed row field can depend on a boundary that has not been pre-resolved
   // or failed; the authored rows must still render, so fall back to them.
   let rows;

@@ -45,7 +45,7 @@ import { createStepView } from "./stepView.js";
 import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } from "./contract.js";
 import { INSTALLERS } from "./installers.js";
 import * as fmt from "../utils.js";
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 
 // Pre-landing-page bootstrap: the seed default equipment, no water source, no
 // style. The landing page replaces this with the batch's identity snapshot.
@@ -57,6 +57,15 @@ function bootstrapIdentity(artifactSpec, cache) {
     style: {},
   };
 }
+// Runtime seams the browser owns: one focus manager and one observability
+// manager per app instance. Tests may inject either.
+function runtimeSeams(options) {
+  return {
+    modalFocus: options.modalFocus ?? createModalFocusManager(),
+    observability: options.observability ?? createObservabilityManager(),
+  };
+}
+
 const CARD_INSTALLERS = [
   registerYeastCard, registerStyleCard, registerHopCard, registerLateAdditionsCard,
   registerTraceMaltsCard, registerMaltCard, registerMashCard, registerBrewDayCard,
@@ -66,10 +75,12 @@ const CARD_INSTALLERS = [
 export function createStepApp(options = {}) {
   const { master, ui, initialRoots } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
+  const { modalFocus, observability } = runtimeSeams(options);
   const cache = createReferenceCache();
   const library = createLibrary({
     client: options.libraryClient,
     onChange: () => syncLibrary(),
+    observability,
   });
   cache.syncLibraryItems(library.items());
 
@@ -90,16 +101,24 @@ export function createStepApp(options = {}) {
   // handlers read it, so their writes land on the proxy Alpine observes.
   const liveView = { current: null };
   const getView = () => liveView.current;
-  const modalFocus = options.modalFocus ?? createModalFocusManager();
 
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
   // reactive state/handlers before main.js wraps the app in Alpine.reactive.
-  const cardCtx = { engine: session.engine, cache, ui, artifact, getView, modalFocus };
+  const cardCtx = {
+    engine: session.engine,
+    cache,
+    ui,
+    artifact,
+    getView,
+    modalFocus,
+    observability,
+  };
 
   const baseApp = {
     master,
     engine: session.engine,
     library,
+    observability,
     steps,
     fmt,
     activeIndex: ui.activeIndex,
@@ -255,7 +274,7 @@ export function createStepApp(options = {}) {
         try {
           refValue = engine.get(node.ref);
         } catch (err) {
-          reportError("stepAdapter.materializeSelections", err);
+          observability.reportError("stepAdapter.materializeSelections", err);
           continue;
         }
         if (!refValue) continue;
@@ -330,7 +349,7 @@ export function createStepApp(options = {}) {
         await this.library.create(catalog, copy);
         await this.refreshLibraryItems();
       } catch (err) {
-        reportError(`stepAdapter.duplicate ${catalog}`, err);
+        observability.reportError(`stepAdapter.duplicate ${catalog}`, err);
       }
     },
 
@@ -344,7 +363,7 @@ export function createStepApp(options = {}) {
       this.library
         .refresh()
         .then(() => this.refreshLibraryItems())
-        .catch((err) => reportError("stepAdapter.libraryRefresh", err));
+        .catch((err) => observability.reportError("stepAdapter.libraryRefresh", err));
       this.syncNav();
     },
 
@@ -371,10 +390,10 @@ export function createStepApp(options = {}) {
     baseApp,
     { dialogFocus: modalFocus.dialogFocus },
     createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
-    createFieldActions({ ...core, refToSelectionMap: attribution.refToSelectionMap }),
-    createDraftEditor({ ...core, ui }),
-    createUnitActions({ ...core, ui }),
-    createSnapshotActions({ ...core, master })
+    createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),
+    createDraftEditor({ ...core, ui, observability }),
+    createUnitActions({ ...core, ui, observability }),
+    createSnapshotActions({ ...core, master, observability })
   );
   liveView.current = app;
 
@@ -385,6 +404,7 @@ export function createStepApp(options = {}) {
     cache,
     ui,
     session,
+    observability,
     relationDefs,
     attribution,
   });

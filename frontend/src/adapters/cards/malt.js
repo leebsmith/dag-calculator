@@ -20,7 +20,7 @@ import {
 } from "../../views/producer/gristRows.js";
 import { displayValue, nonlinearFns, resolveCollectionColumns } from "../../views/producer.js";
 import { registry } from "../../views/steps.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 
 const MAX_VISIBLE = 25;
 
@@ -198,6 +198,7 @@ export function registerMaltCard(app, ctx = {}) {
 }
 
 export function refreshMaltCard(app, ctx) {
+  const reportError = ctx.observability?.reportError ?? ignoreError;
   const columns = resolveCollectionColumns(
     ctx.artifact,
     registry,

@@ -1,6 +1,6 @@
 // The check stage and the commit: solve the projection, then make a batch.
 
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 
 // A routing decision the ledger makes (no IBU split, a flameout in the boil, a
 // second mapped yeast) is a gate finding even though no solver was involved: the
@@ -25,7 +25,13 @@ export function mergeFindings(result, extra = []) {
   };
 }
 
-export function checkActions({ catalog, project, gate, delta }) {
+export function checkActions({
+  catalog,
+  project,
+  gate,
+  delta,
+  observability = createObservabilityManager(),
+}) {
   return {
     get checkSummary() {
       const fresh = this.gateState === "fresh-ok" || this.gateState === "fresh-blocked";
@@ -72,7 +78,7 @@ export function checkActions({ catalog, project, gate, delta }) {
         return result;
       } catch (err) {
         this.checkError = err?.message ?? "The check could not run.";
-        reportError("importReview.runCheck", err);
+        observability.reportError("importReview.runCheck", err);
         return null;
       } finally {
         this.checkBusy = false;
@@ -81,7 +87,7 @@ export function checkActions({ catalog, project, gate, delta }) {
   };
 }
 
-export function commitActions({ commit = null }) {
+export function commitActions({ commit = null, observability = createObservabilityManager() }) {
   return {
     // Everything that must be true before a batch exists, in one place.
     commitBlocker() {
@@ -116,7 +122,7 @@ export function commitActions({ commit = null }) {
         return active;
       } catch (err) {
         this.checkError = err?.message ?? "The batch could not be created.";
-        reportError("importReview.commit", err);
+        observability.reportError("importReview.commit", err);
         return null;
       } finally {
         this.commitBusy = false;

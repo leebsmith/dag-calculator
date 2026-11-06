@@ -4,7 +4,6 @@ import assert from "node:assert/strict";
 import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
-import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
 const BATCH = {
   sg_post_boil: 1.055,
@@ -220,7 +219,6 @@ test("http: pre-resolves both boundaries in topo order and computes", async () =
 });
 
 test("http: a solver error surfaces as boundaryError and marks the boundary failed", async () => {
-  resetErrorObservability();
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
@@ -230,11 +228,10 @@ test("http: a solver error surfaces as boundaryError and marks the boundary fail
   assert.equal(app.boundaryError.label, "Mash is too thin for the grain bed");
   assert.equal(app.boundaryStatuses["solver.batch"], "error");
   assert.equal(app.engine.get("solver.batch"), undefined, "a failed boundary degrades to absent");
-  assert.deepEqual(boundaryBindingErrors(), [], "the failure is boundary state, not a render error");
+  assert.deepEqual(boundaryBindingErrors(app), [], "the failure is boundary state, not a render error");
 });
 
 test("http: a failed water solve still renders the target grid", async () => {
-  resetErrorObservability();
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": {
@@ -254,7 +251,7 @@ test("http: a failed water solve still renders the target grid", async () => {
     assert.equal(row.deltaText, "—");
     assert.notEqual(row.sourceText, undefined);
   }
-  assert.deepEqual(boundaryBindingErrors(), []);
+  assert.deepEqual(boundaryBindingErrors(app), []);
 });
 
 test("http: a debounced burst collapses into one batch + one water request", async () => {
@@ -346,7 +343,6 @@ test("http: a completed solve leaves an open draft editor intact", async () => {
 });
 
 test("http: a failed solve leaves an open draft editor intact", async () => {
-  resetErrorObservability();
   const { fetchImpl } = mockFetch({
     "/solve/batch": { status: 422, body: { code: "MASH_TOO_THIN", message: "too thin", details: {} } },
   });
@@ -362,7 +358,7 @@ test("http: a failed solve leaves an open draft editor intact", async () => {
   assert.equal(app.draftOpen, true);
   assert.equal(app.draftNodeId, "batch.sugars");
   assert.equal(app.draftRows.length, 1);
-  assert.deepEqual(boundaryBindingErrors(), []);
+  assert.deepEqual(boundaryBindingErrors(app), []);
 });
 
 test("saveDraft and closeDraft still close the editor", withFreshApp(async (app) => {
@@ -442,12 +438,13 @@ test("http: loadState seeds missing derived roots from the selected profile", as
   assert.deepEqual(water.custom_pinned_ions, ["so4", "cl"], "checked set seeded from positive targets");
 });
 
-function boundaryBindingErrors() {
-  return Object.keys(errorCounters()).filter((s) => s.includes("No boundary binding registered"));
+function boundaryBindingErrors(app) {
+  return Object.keys(app.observability.errorCounters()).filter((s) =>
+    s.includes("No boundary binding registered")
+  );
 }
 
 test("http: teardown does not compute before the boundary resolves", () => {
-  resetErrorObservability();
   let calls = 0;
   const fetchImpl = async () => {
     calls += 1;
@@ -459,11 +456,10 @@ test("http: teardown does not compute before the boundary resolves", () => {
 
   assert.equal(calls, 0, "sign-out must not issue a solve");
   assert.equal(app.boundaryError, null);
-  assert.deepEqual(boundaryBindingErrors(), []);
+  assert.deepEqual(boundaryBindingErrors(app), []);
 });
 
 test("http: refreshLibraryItems resolves the boundary before computing", async () => {
-  resetErrorObservability();
   const { fetchImpl, calls } = mockFetch({
     "/solve/batch": { status: 200, body: BATCH },
     "/solve/water": { status: 200, body: WATER },
@@ -479,7 +475,7 @@ test("http: refreshLibraryItems resolves the boundary before computing", async (
   assert.equal(app.boundaryError, null);
   assert.equal(app.boundaryStatuses["solver.batch"], "ok");
   assert.equal(app.boundaryStatuses["solver.water"], "ok");
-  assert.deepEqual(boundaryBindingErrors(), []);
+  assert.deepEqual(boundaryBindingErrors(app), []);
   const waterPlan = app.fieldsBySlice.batch.find((f) => f.id === "water-plan");
   const totalRow = waterPlan.rows.find((r) => r.cells.label.text === "Total Water Used");
   assert.equal(totalRow.cells.value.display, "28.0");

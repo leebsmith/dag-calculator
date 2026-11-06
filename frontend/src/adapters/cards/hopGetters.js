@@ -16,9 +16,9 @@ import {
   whirlpoolTimelineDescriptors,
 } from "../../views/hopsLogic.js";
 import { formatWithDecimals } from "../../utils.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 
-export function resolveOrNull(engine, path) {
+export function resolveOrNull(engine, path, reportError = ignoreError) {
   try {
     return engine.resolve(path);
   } catch (err) {
@@ -152,23 +152,23 @@ export function whirlpoolStartDescriptors({ getView }) {
   };
 }
 
-export function policyDescriptors({ cache, engine, formatTemp, formatMass, getView }) {
+export function policyDescriptors({ cache, engine, formatTemp, formatMass, getView, reportError }) {
   return {
     ...whirlpoolPolicyDescriptors({
       notes: cache?.seeds?.whirlpoolNotes ?? {},
       formatTemp,
       formatMass,
       formatNumber: formatWithDecimals,
-      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
-      whirlpoolIbu: () => Number(resolveOrNull(engine, N.whirlpoolIbu)),
+      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume, reportError),
+      whirlpoolIbu: () => Number(resolveOrNull(engine, N.whirlpoolIbu, reportError)),
       activeRow: () => getView().whirlpoolHopActiveRow,
       alphaMassKg: () => getView().whirlpoolHopAlphaMassKg,
     }),
     ...boilPolicyDescriptors({
       formatMass,
       formatNumber: formatWithDecimals,
-      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
-      boilIbu: () => Number(resolveOrNull(engine, N.boilIbu)),
+      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume, reportError),
+      boilIbu: () => Number(resolveOrNull(engine, N.boilIbu, reportError)),
       rows: () => getView().hopRows,
       alphaMassKg: () => getView().boilHopAlphaMassKg,
     }),
@@ -176,8 +176,8 @@ export function policyDescriptors({ cache, engine, formatTemp, formatMass, getVi
       formatTemp,
       formatNumber: formatWithDecimals,
       readTimeline: () => ({
-        segments: resolveOrNull(engine, N.whirlpoolTimeline) ?? null,
-        chills: resolveOrNull(engine, N.whirlpoolChills) ?? [],
+        segments: resolveOrNull(engine, N.whirlpoolTimeline, reportError) ?? null,
+        chills: resolveOrNull(engine, N.whirlpoolChills, reportError) ?? [],
       }),
       reportError,
       timelineState: () => getView().whirlpoolTimelineState,

@@ -6,7 +6,7 @@
 // anchor, the download trigger, and the report tab are injected by `main.js`,
 // which keeps the store testable in node.
 
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 import { safeFilename } from "../utils.js";
 import {
   SCOPE_LABELS,
@@ -25,6 +25,7 @@ export function createRecipesStore({
   openTab,
   showTab,
   closeTab,
+  observability = createObservabilityManager(),
 } = {}) {
   return {
     view: "batches", // "batches" | "editor" | "import"
@@ -192,7 +193,7 @@ export function createRecipesStore({
         await persistence.renameBatch(batch.id, name);
         await this.refresh();
       } catch (err) {
-        reportError("recipes.rename", err);
+        observability.reportError("recipes.rename", err);
       }
     },
 
@@ -204,7 +205,7 @@ export function createRecipesStore({
         await persistence.trashBatch(batch.id);
         await this.refresh();
       } catch (err) {
-        reportError("recipes.trash", err);
+        observability.reportError("recipes.trash", err);
       }
     },
 
@@ -214,7 +215,7 @@ export function createRecipesStore({
         await persistence.restore(batch.id);
         await this.refresh();
       } catch (err) {
-        reportError("recipes.restore", err);
+        observability.reportError("recipes.restore", err);
       }
     },
 
@@ -224,7 +225,7 @@ export function createRecipesStore({
         await persistence.deletePermanent(batch.id);
         await this.refresh();
       } catch (err) {
-        reportError("recipes.delete", err);
+        observability.reportError("recipes.delete", err);
       }
     },
 
@@ -246,7 +247,7 @@ export function createRecipesStore({
 
     recordActionFailure(title, scope, err) {
       this.actionError = { title, message: err?.message ?? String(err) };
-      reportError(scope, err);
+      observability.reportError(scope, err);
     },
 
     async newBatch() {

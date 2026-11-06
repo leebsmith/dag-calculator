@@ -1,6 +1,7 @@
 // Brew-session controller: state, getters and actions composed into the Alpine
 // store. DOM-free; main.js injects the clients.
 
+import { createObservabilityManager } from "../observability.js";
 import { createBrewSessionState } from "./brewSessionModel.js";
 import { brewSessionGetters } from "./brewSessionGetters.js";
 import {
@@ -10,9 +11,14 @@ import {
   createStepActions,
 } from "./brewSessionActions.js";
 
-export function createBrewSessionStore({ client, loadBundle, openReport = async () => {} }) {
+export function createBrewSessionStore({
+  client,
+  loadBundle,
+  openReport = async () => {},
+  observability = createObservabilityManager(),
+}) {
   const store = {
-    ...createBrewSessionState(),
+    ...createBrewSessionState({ reportError: observability.reportError }),
     ...createSessionLifecycleActions({ client, loadBundle }),
     ...createReportActions({ client, openReport }),
     ...createStepActions({ client }),

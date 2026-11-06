@@ -14,7 +14,7 @@ import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { HOP_NODES as H } from "../views/registry/hops.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
 import { whirlpoolDraftCeilings } from "../views/producer/whirlpoolPolicy.js";
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 import { formatWithDecimals, preferredUnit, roundTo, unitSymbol } from "../utils.js";
 import { CATALOG_CHROME_KEYS } from "./cards/catalogChrome.js";
 
@@ -35,7 +35,13 @@ function draftCellDisplay(artifact, col, value, nl) {
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
 // duplicated this logic elsewhere.
-export function createDraftEditor({ artifact, ui, session, getView }) {
+export function createDraftEditor({
+  artifact,
+  ui,
+  session,
+  getView,
+  observability = createObservabilityManager(),
+}) {
   const actions = {
     draftOpen: false,
     draftNodeId: "",
@@ -143,7 +149,7 @@ export function createDraftEditor({ artifact, ui, session, getView }) {
         intent = engine.get(N.lateAdditionIntent);
         budget = engine.resolve("batch.sugar_extract_total");
       } catch (err) {
-        reportError("draftEditor.draftResolvedRows", err);
+        observability.reportError("draftEditor.draftResolvedRows", err);
         return [];
       }
       if (intent !== "share") return [];
@@ -166,7 +172,7 @@ export function createDraftEditor({ artifact, ui, session, getView }) {
         intent = engine.get(N.lateAdditionIntent);
         share = Number(engine.get("batch.sugar_extract_share")) || 0;
       } catch (err) {
-        reportError("draftEditor.seedSugarShareWeights", err);
+        observability.reportError("draftEditor.seedSugarShareWeights", err);
         return false;
       }
       if (intent !== "share" || !(share > 0)) return false;

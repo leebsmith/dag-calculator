@@ -13,6 +13,7 @@
 
 import { createLibrary } from "./library.js";
 import { createReferenceCache } from "./referenceCache.js";
+import { createObservabilityManager } from "../observability.js";
 
 const PREREQUISITES = [
   { kind: "style", label: "styles" },
@@ -32,12 +33,19 @@ const UNKNOWN_WATER = {
   total_alkalinity_caco3: 0,
 };
 
-export function createSetupStore({ onCreated, onImportRecipe, client, persistence } = {}) {
+export function createSetupStore({
+  onCreated,
+  onImportRecipe,
+  client,
+  persistence,
+  observability = createObservabilityManager(),
+} = {}) {
   const cache = createReferenceCache();
   const library = createLibrary({
     client,
     kinds: ["style", "equipment", "water_report"],
     onChange: () => cache.syncLibraryItems(library.items()),
+    observability,
   });
 
   return {

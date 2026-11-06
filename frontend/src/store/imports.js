@@ -5,12 +5,18 @@
 // templates bind to, and it keeps the two states the UI must explain — a
 // duplicate and a failure — as first-class values instead of error strings.
 
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 import { originTitle, originYeastOutcome, resumeLabel } from "../views/import/review.js";
 
 const OPEN_STATUSES = new Set(["extracted", "mapping"]);
 
-export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
+export function createImportsStore({
+  client,
+  readFile,
+  onOpen,
+  onError,
+  observability = createObservabilityManager(),
+} = {}) {
   return Object.assign(
     {
       rows: [],
@@ -58,7 +64,7 @@ export function createImportsStore({ client, readFile, onOpen, onError } = {}) {
         return resumeLabel(status);
       },
     },
-    queueActions(() => ({ client, readFile, onOpen, onError }))
+    queueActions(() => ({ client, readFile, onOpen, onError, observability }))
   );
 }
 
@@ -71,7 +77,7 @@ function queueActions(seams) {
         this.rows = await seams().client.list();
       } catch (err) {
         this.loadError = true;
-        reportError("imports.refresh", err);
+        seams().observability.reportError("imports.refresh", err);
       } finally {
         this.loading = false;
       }
@@ -116,7 +122,7 @@ function queueActions(seams) {
         await this.refresh();
       } catch (err) {
         this.error = err?.message ?? "Could not delete that import.";
-        reportError("imports.remove", err);
+        seams().observability.reportError("imports.remove", err);
       }
     },
 

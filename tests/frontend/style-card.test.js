@@ -6,7 +6,6 @@ import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
 import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { identityFixture } from "./helpers.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
-import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
 
 const cache = createReferenceCache();
 
@@ -217,13 +216,13 @@ test("the ABV cache keeps the style card off the boundary during an edit", async
   const before = app.styleAbvBounds;
   assert.ok(before);
 
-  resetErrorObservability();
+  app.observability.reset();
   app.setRoot("batch.target_abv", (before[0] + before[1]) / 2);
 
   assert.deepEqual(app.styleAbvBounds, before);
   assert.ok(app.stylePreview);
   assert.deepEqual(
-    Object.keys(errorCounters()).filter((key) => key.includes("No boundary binding registered")),
+    Object.keys(app.observability.errorCounters()).filter((key) => key.includes("No boundary binding registered")),
     []
   );
   app.teardown();

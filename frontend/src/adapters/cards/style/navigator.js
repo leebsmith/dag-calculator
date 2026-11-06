@@ -20,7 +20,7 @@ import {
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import { masterUnit } from "../../../views/registry/units.js";
 import { formatWithDecimals, roundTo } from "../../../utils.js";
-import { reportError } from "../../../observability.js";
+import { ignoreError } from "../../../observability.js";
 
 function navigatorActions({ engine, getView }) {
   return {
@@ -242,6 +242,7 @@ export function registerStyleNavigator(app, ctx = {}) {
 }
 
 export function refreshStyleNavigator(app, ctx) {
+  const reportError = ctx.observability?.reportError ?? ignoreError;
   const read = (path) => {
     try {
       return ctx.engine.resolve(path);

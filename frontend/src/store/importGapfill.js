@@ -4,10 +4,15 @@
 // PDFs, and the reason the action is explicit rather than automatic. The reply may
 // only fill what is absent; the merge enforces that.
 
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 import { applyFilledTargets, missingTargetNames } from "../views/import/review.js";
 
-export function gapfillActions({ client, readFile, sourceFile }) {
+export function gapfillActions({
+  client,
+  readFile,
+  sourceFile,
+  observability = createObservabilityManager(),
+}) {
   const seams = () => ({ client, readFile, sourceFile });
   return {
     get missingNames() {
@@ -27,7 +32,7 @@ export function gapfillActions({ client, readFile, sourceFile }) {
         return await this.readAgain(missing, seams());
       } catch (err) {
         this.error = err?.message ?? "The page could not be read again.";
-        reportError("importReview.askForMissing", err);
+        observability.reportError("importReview.askForMissing", err);
         return null;
       } finally {
         this.gapfillBusy = false;

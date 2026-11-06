@@ -5,7 +5,6 @@
 
 import { resolveReference } from "../../engine/paths.js";
 import { displayValue, nonlinearFns } from "../producer.js";
-import { reportError } from "../../observability.js";
 import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { HOP_NODES as H } from "../registry/hops.js";
@@ -64,7 +63,7 @@ function finiteNumber(value) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export function buildReportFormatted(artifact, catalog, engine) {
+export function buildReportFormatted(artifact, catalog, engine, reportError) {
   const nl = nonlinearFns(artifact, engine);
   const formatted = {};
   for (const [path, entry] of Object.entries(catalog.nodes ?? {})) {
@@ -170,7 +169,7 @@ function hopStrategyRows(strategy) {
 // authored grain bill for major malts, the mass share for trace malts), and
 // `grist_pct` is its share of the whole grist. Both are largest-remainder
 // normalised so each column sums to exactly 100.0.
-export function buildReportTables(artifact, catalog, engine, strategy = "") {
+export function buildReportTables(artifact, catalog, engine, strategy, reportError) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const majorId = N.majorMalts;
@@ -242,8 +241,8 @@ export function buildReportTables(artifact, catalog, engine, strategy = "") {
     [traceId]: traceRows,
     [sugarId]: sugarRows,
     [M.rests]: mashRestRows(artifact, catalog, engine),
-    [H.collection]: hopRows(artifact, catalog, engine, "boil"),
-    [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool"),
+    [H.collection]: hopRows(artifact, catalog, engine, "boil", reportError),
+    [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool", reportError),
     [D.collection]: dryHopRows(artifact, catalog, engine),
     [B.steps]: checklistTable(artifact, catalog, engine),
     "report.hop_purchases": purchaseRows,
@@ -254,7 +253,7 @@ export function buildReportTables(artifact, catalog, engine, strategy = "") {
 // Hop rows join the authored charge to the row the boundary solved for it, in
 // the order both sides preserve (the card's mergeBoilRows does the same). A
 // row's mass and IBU are solved values; its share, alpha and time are authored.
-function resolvedList(engine, path) {
+function resolvedList(engine, path, reportError) {
   try {
     const value = engine.resolve(path);
     return Array.isArray(value) ? value : [];
@@ -264,13 +263,13 @@ function resolvedList(engine, path) {
   }
 }
 
-function hopRows(artifact, catalog, engine, kind) {
+function hopRows(artifact, catalog, engine, kind, reportError) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const boil = kind === "boil";
   const collection = boil ? H.collection : H.whirlpoolCollection;
   const authored = engine.get(collection) ?? [];
-  const solved = resolvedList(engine, boil ? H.boilRows : H.whirlpoolRows);
+  const solved = resolvedList(engine, boil ? H.boilRows : H.whirlpoolRows, reportError);
   // The solved row values have no catalog path of their own, so each borrows the
   // display facts of a node with the same dimension: the same unit the user
   // picked, the same decimals, the same symbol.

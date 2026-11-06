@@ -12,9 +12,9 @@ import { resolvedSugarMasses } from "../../views/producer/sugarAllocation.js";
 import { sugarEffect } from "../../views/producer/sugarEffect.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 
-function numberAt(engine, path, fallback = 0) {
+function numberAt(engine, path, fallback = 0, reportError = ignoreError) {
   try {
     const value = engine.resolve(path);
     return typeof value === "number" && Number.isFinite(value) ? value : fallback;
@@ -121,7 +121,7 @@ export function displayDescriptors({ getView }) {
   };
 }
 
-export function allocationDescriptors({ engine, artifact, getView }) {
+export function allocationDescriptors({ engine, artifact, getView, reportError = ignoreError }) {
   return {
     sugarDraftMassDisplay: {
       configurable: true,
@@ -131,7 +131,7 @@ export function allocationDescriptors({ engine, artifact, getView }) {
           return view.draftMassDisplay((r) => Number(r.mass_kg) || 0);
         }
         const share = Number(engine.get(N.share)) || 0;
-        const total = numberAt(engine, N.effect.extractTotal);
+        const total = numberAt(engine, N.effect.extractTotal, 0, reportError);
         const rows = view.draftRows ?? [];
         const resolved = resolvedSugarMasses({
           rows,
@@ -161,7 +161,7 @@ export function allocationDescriptors({ engine, artifact, getView }) {
           );
         }
         const column = view.draftColumns.find((c) => c.id === "mass_kg");
-        const budget = (Number(engine.get(N.share)) || 0) * numberAt(engine, N.effect.extractTotal);
+        const budget = (Number(engine.get(N.share)) || 0) * numberAt(engine, N.effect.extractTotal, 0, reportError);
         const shown = displayValue(
           artifact,
           "mass",

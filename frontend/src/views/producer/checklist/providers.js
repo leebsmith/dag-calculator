@@ -5,7 +5,7 @@
 import { BREW_DAY_NODES as N } from "../../registry/brew-day.js";
 import { getCanonicalRest } from "../../mash.js";
 import { DRY_HOP_VALUE_LABELS } from "../../registry/dry-hops.js";
-import { reportError } from "../../../observability.js";
+import { ignoreError } from "../../../observability.js";
 
 const ADDITIONS = [
   ["gypsum", "gypsum_kg"],
@@ -18,7 +18,7 @@ const ADDITIONS = [
   ["pickling lime", "pickling_lime_kg"],
 ];
 
-function boundaryReady(engine, id) {
+function boundaryReady(engine, id, reportError = ignoreError) {
   try {
     return engine.get(id) != null;
   } catch (err) {
@@ -29,7 +29,7 @@ function boundaryReady(engine, id) {
   }
 }
 
-function resolveValue(engine, path) {
+function resolveValue(engine, path, reportError = ignoreError) {
   try {
     return engine.resolve(path);
   } catch (err) {
@@ -38,15 +38,15 @@ function resolveValue(engine, path) {
   }
 }
 
-function positive(engine, base, leaf) {
+function positive(engine, base, leaf, reportError = ignoreError) {
   const path = `${base}.${leaf}`;
-  const value = resolveValue(engine, path);
+  const value = resolveValue(engine, path, reportError);
   return typeof value === "number" && value > 0 ? path : null;
 }
 
-function additionList(engine, fmt, base) {
+function additionList(engine, fmt, base, reportError = ignoreError) {
   return ADDITIONS.map(([label, leaf]) => {
-    const path = positive(engine, base, leaf);
+    const path = positive(engine, base, leaf, reportError);
     return path ? `${label} ${fmt.path(path)}` : null;
   }).filter(Boolean);
 }
@@ -64,8 +64,8 @@ function dryHopLabel(group, value) {
 }
 
 const PROVIDERS = {
-  "waterSetup": ({ engine, fmt }) => {
-    const fill = resolveValue(engine, N.hltStart);
+  "waterSetup": ({ engine, fmt, reportError }) => {
+    const fill = resolveValue(engine, N.hltStart, reportError);
     const tablets = Math.max(1, Math.ceil((Number(fill) || 0) / 56.781));
     const tabletWord = tablets === 1 ? "tablet" : "tablets";
     return (
@@ -74,20 +74,20 @@ const PROVIDERS = {
       `yet. Heat to ${fmt.path(N.strikeTemp)}.`
     );
   },
-  "waterDoughIn": ({ engine, fmt }) => {
-    const list = boundaryReady(engine, N.waterBoundary)
-      ? additionList(engine, fmt, N.mashAdditions)
+  "waterDoughIn": ({ engine, fmt, reportError }) => {
+    const list = boundaryReady(engine, N.waterBoundary, reportError)
+      ? additionList(engine, fmt, N.mashAdditions, reportError)
       : [];
     const additions = list.length > 0 ? list.join(", ") : "the planned mash additions";
     return `Dose the dry grist before underletting: ${additions}. Sized for the ${fmt.path(
       N.strikeVolume
     )} strike.`;
   },
-  "waterSparge": ({ engine, fmt }) => {
-    if (!boundaryReady(engine, N.waterBoundary)) {
+  "waterSparge": ({ engine, fmt, reportError }) => {
+    if (!boundaryReady(engine, N.waterBoundary, reportError)) {
       return "After the strike is drawn and the HLT is topped up: add the planned sparge dose to the HLT. Stir to dissolve, then underlet.";
     }
-    const list = additionList(engine, fmt, N.spargeAdditions);
+    const list = additionList(engine, fmt, N.spargeAdditions, reportError);
     const additions = list.length > 0 ? list.join(", ") : "no additions";
     return (
       `After the strike is drawn and the HLT is topped up to ${fmt.path(N.hltTarget)}: ` +
@@ -106,13 +106,13 @@ const PROVIDERS = {
       });
     return rests.length > 0 ? rests.join("; ") : "No rests enabled.";
   },
-  "boilHops": ({ engine, fmt }) => {
+  "boilHops": ({ engine, fmt, reportError }) => {
     const authored = engine.get(N.boilHops) ?? [];
-    const solvedRows = boundaryReady(engine, N.hopBoundary)
-      ? resolveValue(engine, N.boilRows)
+    const solvedRows = boundaryReady(engine, N.hopBoundary, reportError)
+      ? resolveValue(engine, N.boilRows, reportError)
       : [];
     const solved = Array.isArray(solvedRows) ? solvedRows : [];
-    const boilMinutes = Number(resolveValue(engine, N.boilTime)) || 0;
+    const boilMinutes = Number(resolveValue(engine, N.boilTime, reportError)) || 0;
     const list = authored.map((row, index) => {
       const minutes = solved[index]?.minutes ?? (Number(row.boil_time_fraction) || 0) * boilMinutes;
       const mass = fmt.field(N.boilMass, solved[index]?.mass_kg);

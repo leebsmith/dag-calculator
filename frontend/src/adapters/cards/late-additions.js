@@ -16,7 +16,7 @@ import {
 } from "../../views/producer/sugarAllocation.js";
 import { sugarSectionMetaDescriptors, sugarSectionState } from "../../views/producer/sugarSection.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 import { formatPercentRounded, formatValueWithUnit, roundTo } from "../../utils.js";
 
 export function makeRow(sugar) {
@@ -69,7 +69,7 @@ const SUGAR_CONFIG = {
   }),
 };
 
-function numberAt(engine, path, fallback = 0) {
+function numberAt(engine, path, fallback = 0, reportError = ignoreError) {
   try {
     const value = engine.resolve(path);
     return typeof value === "number" && Number.isFinite(value) ? value : fallback;
@@ -85,7 +85,7 @@ function rounded(value) {
 
 // The current dose's effect at the solved pin. Every operand comes from the
 // batch solve; the panel never sets a root.
-function currentSugarEffect(engine) {
+function currentSugarEffect(engine, reportError = ignoreError) {
   const read = (path, fallback) => {
     try {
       const value = engine.resolve(path);
@@ -105,7 +105,7 @@ function currentSugarEffect(engine) {
   });
 }
 
-function previewActions({ engine, artifact, getView }) {
+function previewActions({ engine, artifact, getView, observability }) {
   return {
     syncScalePreviewState() {
       const view = getView();
@@ -114,7 +114,7 @@ function previewActions({ engine, artifact, getView }) {
         const raw = engine.resolve(N.preview);
         rows = Array.isArray(raw) ? raw : [];
       } catch (err) {
-        reportError("lateAdditions.scalePreviews", err);
+        observability.reportError("lateAdditions.scalePreviews", err);
       }
       const intent = engine.get(N.intent) ?? "dose";
       const share = Number(engine.get(N.share)) || 0;
@@ -151,7 +151,7 @@ function previewActions({ engine, artifact, getView }) {
   };
 }
 
-function doseActions({ engine, getView }) {
+function doseActions({ engine, getView, observability }) {
   return {
     sugarField(id) {
       return (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
@@ -166,7 +166,7 @@ function doseActions({ engine, getView }) {
       const currentShare = Number(engine.get(N.share)) || 0;
       const currentParts = rows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
       if (!force && (currentShare > 0 || currentParts > 0)) return false;
-      const total = numberAt(engine, N.effect.extractTotal);
+      const total = numberAt(engine, N.effect.extractTotal, 0, observability.reportError);
       const share = sugarShareFromDose(rows, total);
       view.setRoot(N.share, Math.min(MAX_SUGAR_SHARE, share));
       const extract = sugarPartsFromDose(rows);
@@ -207,7 +207,7 @@ function doseActions({ engine, getView }) {
       const intent = engine.get(N.intent) ?? "dose";
       const resolved = resolvedSugarMasses({
         rows,
-        budgetKg: share * numberAt(engine, N.effect.extractTotal),
+        budgetKg: share * numberAt(engine, N.effect.extractTotal, 0, observability.reportError),
         share,
         mode: intent,
       });
@@ -238,8 +238,8 @@ export function createLateAdditionsCard(ctx) {
   Object.defineProperties(actions, {
     ...sugarSectionMetaDescriptors(),
     ...stateDescriptors(ctx),
-    ...displayDescriptors(ctx),
-    ...allocationDescriptors(ctx),
+    ...displayDescriptors({ ...ctx, reportError: ctx.observability?.reportError }),
+    ...allocationDescriptors({ ...ctx, reportError: ctx.observability?.reportError }),
   });
   return actions;
 }
@@ -253,7 +253,7 @@ export function registerLateAdditionsCard(app, ctx = {}) {
 
 export function refreshLateAdditionsCard(app, ctx) {
   const rows = ctx.engine.get(N.collection) ?? [];
-  const effect = currentSugarEffect(ctx.engine);
+  const effect = currentSugarEffect(ctx.engine, ctx.observability?.reportError);
   app.lateAdditionIntentState = ctx.engine.get(N.intent) ?? "dose";
   app.sugarEffectState = effect;
   app.sugarEffectDisplayState = sugarEffectLabels(effect);

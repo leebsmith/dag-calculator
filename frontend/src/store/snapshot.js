@@ -4,6 +4,7 @@
 // so its methods never depend on Alpine's `this`.
 
 import { buildReportCatalog } from "../views/registry/catalog.js";
+import { createObservabilityManager } from "../observability.js";
 import {
   buildReportFormatted,
   buildReportSummaries,
@@ -24,7 +25,13 @@ export const VALUATION_FORMAT = "outputs";
 
 // AI AGENT HOOKS: Use this snapshot factory for draft autosave state and frozen
 // valuation payloads. Do not duplicate this logic elsewhere.
-export function createSnapshotActions({ artifact, master, session, getView }) {
+export function createSnapshotActions({
+  artifact,
+  master,
+  session,
+  getView,
+  observability = createObservabilityManager(),
+}) {
   function draftState() {
     return shapeDraftState({
       identity: session.identity(),
@@ -86,7 +93,12 @@ export function createSnapshotActions({ artifact, master, session, getView }) {
   }
 
   function reportFormatted() {
-    return buildReportFormatted(artifact, reportCatalog(), session.getEngine());
+    return buildReportFormatted(
+      artifact,
+      reportCatalog(),
+      session.getEngine(),
+      observability.reportError
+    );
   }
 
   function reportFormattedTables() {
@@ -94,7 +106,8 @@ export function createSnapshotActions({ artifact, master, session, getView }) {
       artifact,
       reportCatalog(),
       session.getEngine(),
-      getView().hopStrategy ?? ""
+      getView().hopStrategy ?? "",
+      observability.reportError
     );
   }
 

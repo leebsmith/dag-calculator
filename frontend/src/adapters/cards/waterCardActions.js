@@ -9,9 +9,9 @@ import {
   heldFromProfile,
   strategyForHeld,
 } from "../../views/registry/water.js";
-import { reportError } from "../../observability.js";
+import { ignoreError } from "../../observability.js";
 
-export function resolveValue(engine, path) {
+export function resolveValue(engine, path, reportError = ignoreError) {
   try {
     return engine.resolve(path);
   } catch (err) {
@@ -20,8 +20,8 @@ export function resolveValue(engine, path) {
   }
 }
 
-export function num(engine, path) {
-  const v = resolveValue(engine, path);
+export function num(engine, path, reportError = ignoreError) {
+  const v = resolveValue(engine, path, reportError);
   return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
@@ -29,10 +29,10 @@ export function checkedPins(engine) {
   return (engine.get(N.pinnedIons) ?? []).map((row) => row.ion);
 }
 
-export function targetValue(engine, pin) {
+export function targetValue(engine, pin, reportError = ignoreError) {
   const ion = WATER_ION_BY_PIN[pin];
   if (!ion) return 0;
-  const value = resolveValue(engine, `${N.target}.${ion}`);
+  const value = resolveValue(engine, `${N.target}.${ion}`, reportError);
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
@@ -234,7 +234,7 @@ function inputActions({ engine, getView }) {
   };
 }
 
-function syncActions({ engine, getView }) {
+function syncActions({ engine, getView, observability }) {
   return {
     // Load-time normalisation: legacy drafts carry values but no checked set,
     // and possibly a stale AUTO strategy. Seed the set from positive targets
@@ -244,7 +244,9 @@ function syncActions({ engine, getView }) {
       let changed = false;
       let pins = checkedPins(engine);
       if (pins.length === 0) {
-        const positives = WATER_IONS.filter(({ pin }) => targetValue(engine, pin) > 0).map(
+        const positives = WATER_IONS.filter(
+          ({ pin }) => targetValue(engine, pin, observability.reportError) > 0
+        ).map(
           ({ pin }) => pin
         );
         if (positives.length > 0) {

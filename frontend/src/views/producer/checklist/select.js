@@ -12,7 +12,7 @@ import {
 import { conditionHolds } from "./conditions.js";
 import { createChecklistFormatter } from "./format.js";
 import { providerText } from "./providers.js";
-import { reportError } from "../../../observability.js";
+import { ignoreError } from "../../../observability.js";
 
 function stateFor(stateRows) {
   return new Map((stateRows ?? []).map((row) => [row.step_id, row]));
@@ -45,7 +45,7 @@ function stepRow(step, state, ctx) {
   try {
     text = providerText(step.provider, ctx) ?? fmt.text(step.text);
   } catch (err) {
-    reportError("checklist.provider", err);
+    ctx.reportError("checklist.provider", err);
     text = fmt.text(step.text);
   }
   return {
@@ -68,7 +68,7 @@ function stepRow(step, state, ctx) {
   };
 }
 
-function observationRow(metric, fmt, engine) {
+function observationRow(metric, fmt, engine, reportError) {
   let expectedNumber = "—";
   if (metric.expected) {
     try {
@@ -115,11 +115,11 @@ function collectStepRows({ engine, level, state, ctx }) {
   return rows;
 }
 
-function collectObservationRows(fmt, level, engine) {
+function collectObservationRows(fmt, level, engine, reportError) {
   const rank = LEVEL_RANK[level] ?? LEVEL_RANK.info;
   return OBSERVATION_METRICS
     .filter((metric) => (LEVEL_RANK[metric.level] ?? LEVEL_RANK.info) <= rank)
-    .map((metric) => observationRow(metric, fmt, engine));
+    .map((metric) => observationRow(metric, fmt, engine, reportError));
 }
 
 function groupRows(rows) {
@@ -149,12 +149,13 @@ export function selectChecklistRows({
   level = "info",
   stateRows = [],
   catalog = null,
+  reportError = ignoreError,
 }) {
-  const fmt = createChecklistFormatter(artifact, engine, unitMode, catalog);
-  const ctx = { artifact, engine, fmt, level };
+  const fmt = createChecklistFormatter(artifact, engine, unitMode, catalog, reportError);
+  const ctx = { artifact, engine, fmt, level, reportError };
   const state = stateFor(stateRows);
   const phases = groupRows(collectStepRows({ engine, level, state, ctx }));
-  const observations = collectObservationRows(fmt, level, engine);
+  const observations = collectObservationRows(fmt, level, engine, reportError);
   if (observations.length > 0) {
     phases.push({
       id: "observations",

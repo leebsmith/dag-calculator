@@ -1,7 +1,6 @@
 // Presentation-only field overrides. Node ids here describe how the host shows
 // artifact values; they never feed back into the artifact, engine, or solvers.
 
-import { reportError } from "../../observability.js";
 import { formatPercentValue, formatWithDecimals, roundTo } from "../../utils.js";
 
 export const CONFORMANCE_FIELD_MAP = {
@@ -73,7 +72,7 @@ export function applyPresentation(out, rule, readers) {
       detail = rule.hint.detail ? readers.resolve(rule.hint.detail) : undefined;
       extra = rule.hint.extra ? readers.resolve(rule.hint.extra) : undefined;
     } catch (err) {
-      reportError("presentation.hint", err);
+      readers.reportError("presentation.hint", err);
       value = null;
     }
     if (typeof value === "number" && Number.isFinite(value)) {

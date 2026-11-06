@@ -10,7 +10,7 @@
 
 import { createFindingFormatter, produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 import { dimensionOf } from "../views/registry/catalog.js";
 import {
   findingFor,
@@ -51,6 +51,7 @@ export function createStepView({
   cache,
   ui,
   session,
+  observability = createObservabilityManager(),
   relationDefs,
   attribution,
 }) {
@@ -60,7 +61,7 @@ export function createStepView({
     try {
       return fn();
     } catch (err) {
-      reportError("stepView.safe", err);
+      observability.reportError("stepView.safe", err);
       return [];
     }
   }
@@ -70,7 +71,7 @@ export function createStepView({
     try {
       value = engine.resolve(path);
     } catch (err) {
-      reportError("stepView.findingOperand", err);
+      observability.reportError("stepView.findingOperand", err);
       value = undefined;
     }
     return { value, dimension: dimensionOf(artifact, path) };
@@ -103,7 +104,7 @@ export function createStepView({
       yeastId = engine.get("batch.yeast_id");
       sta1 = engine.resolve("batch.yeast.sta1");
     } catch (err) {
-      reportError("stepView.sta1Advisory", err);
+      observability.reportError("stepView.sta1Advisory", err);
       yeastId = "";
       sta1 = null;
     }
@@ -123,7 +124,7 @@ export function createStepView({
       sugarShare = engine.get("batch.sugar_extract_share");
       sugars = engine.get("batch.sugars");
     } catch (err) {
-      reportError("stepView.sugarShareAdvisory", err);
+      observability.reportError("stepView.sugarShareAdvisory", err);
       intent = "dose";
       sugarShare = 0;
       sugars = [];
@@ -165,7 +166,7 @@ export function createStepView({
     try {
       topology = engine.get("batch.topology");
     } catch (err) {
-      reportError("stepView.topology", err);
+      observability.reportError("stepView.topology", err);
       topology = undefined;
     }
 
@@ -232,6 +233,7 @@ export function createStepView({
       cache,
       ui,
       artifact,
+      observability,
       fieldsById: app.fieldsById,
       boundaryStatuses: app.boundaryStatuses ?? {},
       boundaryExtras: app.boundaryExtras ?? {},

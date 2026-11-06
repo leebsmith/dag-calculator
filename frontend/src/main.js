@@ -3,7 +3,7 @@ import Alpine from "alpinejs";
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { createApiClient } from "./adapters/apiClient.js";
 import { createModalFocusManager } from "./adapters/modalFocus.js";
-import { reportError } from "./observability.js";
+import { createObservabilityManager } from "./observability.js";
 import { createAuthClient } from "./adapters/authClient.js";
 import { createBatchClient } from "./adapters/batchClient.js";
 import { createLibraryClient } from "./adapters/libraryClient.js";
@@ -36,6 +36,8 @@ import { createBrewSessionStore } from "./store/brewSession.js";
 // The JSON seam and its clients are instantiated at boot and injected down; no
 // module owns a shared token provider. Firebase's `getIdToken` is the one
 // provider this app hands to the seam.
+const observability = createObservabilityManager();
+const { reportError } = observability;
 const api = createApiClient({ tokenProvider: getIdToken });
 const authClient = createAuthClient({ api });
 const batchClient = createBatchClient({ api });
@@ -78,6 +80,7 @@ const importClient = createImportClient({ api });
 // Opening a record means showing it: the import view reads one record at a time.
 const reviewStore = createImportReviewStore({
   client: importClient,
+  observability,
   // The app's reference cache, not the setup store's: ingredient records authored
   // in the Library (a blend yeast, a house malt) live there, and the import's
   // chips, its projection and the gate must all read the same set the commit
@@ -92,8 +95,9 @@ const reviewStore = createImportReviewStore({
       state,
       api,
       references: stepApp ? stepApp.referenceSnapshot() : Alpine.store("setup").references(),
+      reportError: observability.reportError,
     }),
-  delta: buildDelta,
+  delta: (args) => buildDelta({ ...args, reportError: observability.reportError }),
   sourceFile: () => Alpine.store("imports").lastFile,
   readFile: readFileAsBase64,
   commit: async ({ record, state, name }) => {
@@ -130,6 +134,7 @@ Alpine.store(
   "imports",
   createImportsStore({
     client: importClient,
+    observability,
     readFile: readFileAsBase64,
     onOpen: (record) => {
       reviewStore.open(record);
@@ -148,6 +153,7 @@ Alpine.store(
 const setupStore = createSetupStore({
   client: libraryClient,
   persistence,
+  observability,
   onImportRecipe: async ({ filename, file, identity, force }) => {
     const imports = Alpine.store("imports");
     const record = await imports.start({ filename, file, identity, force });
@@ -174,6 +180,7 @@ Alpine.store("setup", setupStore);
 // viewport-aware popover anchoring, and the download/report-tab clients.
 Alpine.store("brewSession", createBrewSessionStore({
   client: sessionClient,
+  observability,
   loadBundle: (id, name) => persistence.reportBundleFor(id, name),
   openReport: async (id) => {
     const tab = openReportTab();
@@ -191,6 +198,7 @@ Alpine.store(
   "recipes",
   createRecipesStore({
     persistence,
+    observability,
     getSetup: () => Alpine.store("setup"),
     anchor: anchorStyle,
     download: downloadJSON,
@@ -336,6 +344,7 @@ Alpine.data("stepCalculator", () => {
       api,
       libraryClient,
       modalFocus,
+      observability,
       isEditorActive: () => {
         if (app.libraryOpen) return false;
         const recipes = Alpine.store("recipes");

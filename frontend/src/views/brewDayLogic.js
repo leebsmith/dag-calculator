@@ -3,6 +3,7 @@
 // payload builder. The card adapter owns engine reads and state writes; the
 // selectors here take the engine or rows as explicit, read-only arguments.
 
+import { ignoreError } from "../observability.js";
 import {
   CHECKLIST_LEVELS,
   CHECKLIST_PROCESS,
@@ -103,6 +104,7 @@ export function selectBrewDaySections({
   level = DEFAULT_LEVEL,
   stateRows = [],
   catalog = null,
+  reportError = ignoreError,
 }) {
   return selectChecklistRows({
     artifact,
@@ -111,5 +113,6 @@ export function selectBrewDaySections({
     level,
     stateRows,
     catalog,
+    reportError,
   });
 }

@@ -2,16 +2,16 @@
 // validation, and presentation overrides.
 
 import { refKey, resolveReference } from "../../engine/paths.js";
+import { ignoreError } from "../../observability.js";
 import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
 import { unitSymbol } from "../../utils.js";
 import { applyPresentation, presentationFor } from "../registry/presentation.js";
 import { formatCell } from "./cell.js";
-import { reportError } from "../../observability.js";
 
 // Resolve a field's value, falling back to its authored root when a mirrored
 // solved path is not available yet. A failure is reported, never swallowed.
-function resolveFieldValue(field, engine) {
+function resolveFieldValue(field, engine, reportError = ignoreError) {
   const sourcePath = field.valuePath ?? field.id;
   try {
     return { ok: true, value: engine.resolve(sourcePath) };
@@ -50,7 +50,7 @@ export function valuateScalar(field, engine, ctx, nl) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
   const fieldDomains = ctx.fieldDomains ?? {};
-  const resolved = resolveFieldValue(field, engine);
+  const resolved = resolveFieldValue(field, engine, ctx.reportError);
   if (!resolved.ok) return null;
   const value = resolved.value;
   // Display-only unit resolution (the base value stays canonical). A registry
@@ -107,6 +107,7 @@ export function valuateScalar(field, engine, ctx, nl) {
       resolve: (path) => engine.resolve(path),
       displayFloor: (base) =>
         unitId && artifact ? fromBase(artifact, field.dimension, unitId, base, nl) : base,
+      reportError: ctx.reportError,
     });
   }
   return out;

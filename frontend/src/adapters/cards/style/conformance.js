@@ -7,7 +7,6 @@ import { displayValue, nonlinearFns } from "../../../views/producer.js";
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../../views/registry/units.js";
 import { formatWithDecimals, unitSymbol } from "../../../utils.js";
-import { reportError } from "../../../observability.js";
 
 const STATUS_LABELS = { within: "Within", grace: "Grace", drift: "Drift", severe: "Severe" };
 
@@ -30,7 +29,7 @@ function conformanceMeta(artifact, unitMode, nl) {
   };
 }
 
-export function createStyleConformance({ engine, artifact, getView }) {
+export function createStyleConformance({ engine, artifact, getView, observability }) {
   const nl = nonlinearFns(artifact, engine);
   const actions = {
     styleConformance: null,
@@ -41,7 +40,7 @@ export function createStyleConformance({ engine, artifact, getView }) {
         try {
           return engine.resolve(path);
         } catch (err) {
-          reportError("style.conformance.resolve", err);
+          observability.reportError("style.conformance.resolve", err);
           return undefined;
         }
       };

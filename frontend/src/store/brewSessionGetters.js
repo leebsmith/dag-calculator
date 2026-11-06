@@ -31,7 +31,7 @@ function varianceRow(store, row) {
     expected: cell(row, "expected"),
     actual: String(effective),
     delta: delta.toFixed(3),
-    verdict: verdictOf(effective, expected, toleranceOf(cell(row, "tolerance"))),
+    verdict: verdictOf(effective, expected, toleranceOf(cell(row, "tolerance"), store.reportError)),
   };
 }
 

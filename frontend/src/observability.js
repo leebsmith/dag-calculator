@@ -5,38 +5,46 @@
 // degradation semantics: each `scope:message` signature logs exactly once and
 // is otherwise counted, so a recurring failure stays quiet on the console but
 // remains visible via `errorCounters()`.
+//
+// The manager is a factory: the seen set and counters belong to the instance the
+// app creates at boot, so two apps (or a test) never share failure state.
 
-const seen = new Set();
-const counters = new Map();
+// The default reporter for pure helpers called outside an app (direct unit
+// tests): it drops the signal rather than inventing shared state.
+export function ignoreError() {}
 
 /**
- * Record a swallowed error under a scope, logging each signature exactly once.
+ * Create an isolated observability manager.
  *
- * @param {string} scope
- * @param {unknown} err
- * @returns {void}
+ * @param {{ console?: Pick<Console, "error"> }} [options]
+ * @returns {{
+ *   reportError: (scope: string, err: unknown) => void,
+ *   errorCounters: () => Record<string, number>,
+ *   reset: () => void,
+ * }}
  */
-export function reportError(scope, err) {
-  const message = err instanceof Error ? err.message : String(err);
-  const signature = `${scope}: ${message}`;
-  counters.set(signature, (counters.get(signature) ?? 0) + 1);
-  if (!seen.has(signature)) {
-    seen.add(signature);
-    console.error(`[${scope}]`, err);
+export function createObservabilityManager({ console: consoleImpl = console } = {}) {
+  const seen = new Set();
+  const counters = new Map();
+
+  function reportError(scope, err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const signature = `${scope}: ${message}`;
+    counters.set(signature, (counters.get(signature) ?? 0) + 1);
+    if (!seen.has(signature)) {
+      seen.add(signature);
+      consoleImpl.error(`[${scope}]`, err);
+    }
   }
-}
 
-/**
- * A snapshot of the per-signature failure counts (dev-facing).
- *
- * @returns {Record<string, number>}
- */
-export function errorCounters() {
-  return Object.fromEntries(counters);
-}
+  function errorCounters() {
+    return Object.fromEntries(counters);
+  }
 
-/** Reset all state (test isolation). */
-export function resetErrorObservability() {
-  seen.clear();
-  counters.clear();
+  function reset() {
+    seen.clear();
+    counters.clear();
+  }
+
+  return { reportError, errorCounters, reset };
 }

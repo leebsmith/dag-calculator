@@ -3,7 +3,7 @@
 // gap fill) so no factory becomes a second program; readouts go through the pure
 // views.
 
-import { reportError } from "../observability.js";
+import { createObservabilityManager } from "../observability.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
@@ -66,13 +66,14 @@ export function createImportReviewStore({
   readFile = async () => "",
   profiles = () => [],
   onClose,
+  observability = createObservabilityManager(),
 } = {}) {
   // A catalog is what makes a ref checkable. Without one (a bare store in a test)
   // a mapped row is taken at its word rather than reported as dangling.
   const lookup = catalogOrNull(catalog);
-  const check = checkActions({ catalog: lookup, project, gate, delta, commit });
-  const match = matchActions({ client, catalog: lookup });
-  const gapfill = gapfillActions({ client, sourceFile, readFile });
+  const check = checkActions({ catalog: lookup, project, gate, delta, commit, observability });
+  const match = matchActions({ client, catalog: lookup, observability });
+  const gapfill = gapfillActions({ client, sourceFile, readFile, observability });
   const water = waterActions({ profiles });
   const store = compose(
     {
@@ -95,15 +96,15 @@ export function createImportReviewStore({
       revision: 0,
     },
     reviewActions({ onClose }),
-    recordActions({ client }),
-    saveAction({ client }),
+    recordActions({ client, observability }),
+    saveAction({ client, observability }),
     ledgerLookupActions({ catalogs, catalog: lookup }),
     ledgerDecisionActions(),
     yeastActions(),
     check,
     poolActions(),
     match,
-    commitActions({ commit }),
+    commitActions({ commit, observability }),
     gapfill,
     water,
     reviewReadouts(),
@@ -116,7 +117,7 @@ export function createImportReviewStore({
   return store;
 }
 
-function recordActions({ client }) {
+function recordActions({ client, observability }) {
   return {
     async markFailed() {
       if (!this.record || this.busy) return null;
@@ -132,7 +133,7 @@ function recordActions({ client }) {
         return true;
       } catch (err) {
         this.error = err?.message ?? "Could not mark the import as failed.";
-        reportError("importReview.markFailed", err);
+        observability.reportError("importReview.markFailed", err);
         return null;
       } finally {
         this.busy = false;
@@ -147,7 +148,7 @@ function recordActions({ client }) {
         this.close();
       } catch (err) {
         this.error = err?.message ?? "Could not delete that import.";
-        reportError("importReview.discard", err);
+        observability.reportError("importReview.discard", err);
       } finally {
         this.busy = false;
       }
@@ -284,7 +285,7 @@ function reviewReadouts() {
   };
 }
 
-function saveAction({ client }) {
+function saveAction({ client, observability }) {
   return {
     async save() {
       if (!this.record || this.busy) return null;
@@ -309,7 +310,7 @@ function saveAction({ client }) {
         return updated;
       } catch (err) {
         this.error = err?.message ?? "Could not save the transcription.";
-        reportError("importReview.save", err);
+        observability.reportError("importReview.save", err);
         return null;
       } finally {
         this.busy = false;

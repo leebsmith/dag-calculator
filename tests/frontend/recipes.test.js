@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createRecipesStore } from "../../frontend/src/store/recipes.js";
-import { errorCounters, resetErrorObservability } from "../../frontend/src/observability.js";
+import { createObservabilityManager } from "../../frontend/src/observability.js";
 
 const NOW = Date.UTC(2026, 9, 21, 12) / 1000;
 
@@ -68,8 +68,10 @@ function makeStore(
   tab = { open: () => null, show: () => {}, close: () => {} }
 ) {
   const setup = setupStub();
+  const observability = createObservabilityManager();
   const store = createRecipesStore({
     persistence,
+    observability,
     getSetup: () => setup,
     anchor,
     download,
@@ -78,7 +80,7 @@ function makeStore(
     showTab: tab.show,
     closeTab: tab.close,
   });
-  return { store, persistence, setup };
+  return { store, persistence, setup, observability };
 }
 
 function tabStub() {
@@ -569,7 +571,6 @@ test("downloadSelectedReport saves the selection and closes the picker", async (
 });
 
 test("a failed selected report closes the tab and surfaces the message", async () => {
-  resetErrorObservability();
   const tab = tabStub();
   const { store } = makeStore(
     fakePersistence({
@@ -596,7 +597,6 @@ test("a failed selected report closes the tab and surfaces the message", async (
 });
 
 test("a failed section load closes the picker and reports", async () => {
-  resetErrorObservability();
   const { store } = makeStore(
     fakePersistence({
       reportSections: async () => {
@@ -613,14 +613,13 @@ test("a failed section load closes the picker and reports", async () => {
 });
 
 test("a failed bundle download surfaces the server message instead of the console", async () => {
-  resetErrorObservability();
   const files = [];
   const persistence = fakePersistence({
     reportBundleForActive: async () => {
       throw new Error("Report bundle rejected: catalog does not cover the solved state");
     },
   });
-  const { store } = makeStore(persistence, () => "", (bundle, filename) =>
+  const { store, observability } = makeStore(persistence, () => "", (bundle, filename) =>
     files.push({ bundle, filename })
   );
 
@@ -632,13 +631,12 @@ test("a failed bundle download surfaces the server message instead of the consol
     message: "Report bundle rejected: catalog does not cover the solved state",
   });
   assert.equal(logged.length, 1, "the failure is reported once");
-  assert.deepEqual(Object.keys(errorCounters()), [
+  assert.deepEqual(Object.keys(observability.errorCounters()), [
     "recipes.downloadActiveBundle: Report bundle rejected: catalog does not cover the solved state",
   ]);
 });
 
 test("a failed row bundle download surfaces the server message", async () => {
-  resetErrorObservability();
   const { store } = makeStore(
     fakePersistence({
       reportBundleFor: async () => {
@@ -659,7 +657,6 @@ test("a failed row bundle download surfaces the server message", async () => {
 });
 
 test("a failed freeze surfaces its message and skips the list refresh", async () => {
-  resetErrorObservability();
   const persistence = fakePersistence({
     freezeActive: async () => {
       throw new Error("Cannot freeze: the boundary solve failed (HTTP 422)");

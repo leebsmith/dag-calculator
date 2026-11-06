@@ -1,6 +1,6 @@
 // Pure state and display helpers for the brew-session controller.
 
-import { reportError } from "../observability.js";
+import { ignoreError } from "../observability.js";
 import { CHECKLIST_LEVEL_LABELS } from "../views/registry/brew-day.js";
 
 export const LEVEL_LABELS = CHECKLIST_LEVEL_LABELS;
@@ -34,7 +34,7 @@ export function secondsFromLocal(value) {
   return Number.isFinite(parsed) ? parsed / 1000 : Date.now() / 1000;
 }
 
-export function toleranceOf(text) {
+export function toleranceOf(text, reportError = ignoreError) {
   try {
     return JSON.parse(text || "{}");
   } catch (err) {
@@ -61,8 +61,9 @@ export function verdictOf(actual, expected, tolerance) {
   return deltaVerdict(actual, expected, tolerance.plus_minus);
 }
 
-export function createBrewSessionState() {
+export function createBrewSessionState({ reportError = ignoreError } = {}) {
   return {
+    reportError,
     open: false,
     loading: false,
     error: null,

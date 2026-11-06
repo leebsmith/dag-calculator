@@ -15,13 +15,13 @@ import artifact from "../engine/artifact.json" with { type: "json" };
 import { createEngine } from "../engine/dag.js";
 import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
-import { reportError } from "../observability.js";
+import { ignoreError } from "../observability.js";
 import { unresolvedRows } from "../views/import/ledger.js";
 
 export const GATE_NODES = ["solver.batch", "solver.hops", "solver.water"];
 export const ADVISORY_NODES = new Set(["solver.water"]);
 
-export async function runGate({ state, references = {}, api, fetchImpl }) {
+export async function runGate({ state, references = {}, api, fetchImpl, reportError = ignoreError }) {
   const engine = createEngine(artifact, {
     identity: state.identity ?? {},
     roots: state.roots ?? {},
@@ -46,8 +46,8 @@ export async function runGate({ state, references = {}, api, fetchImpl }) {
   });
   await runner.solveNow();
 
-  const water = hasWaterTargets ? waterSummary(engine) : null;
-  const findings = failureFindings(runner.statuses, nodes, buildErrors(engine, runner.statuses, nodes));
+  const water = hasWaterTargets ? waterSummary(engine, reportError) : null;
+  const findings = failureFindings(runner.statuses, nodes, buildErrors(engine, runner.statuses, nodes, reportError));
   if (!hasWaterTargets) {
     findings.push({
       node: "solver.water",
@@ -70,7 +70,7 @@ export async function runGate({ state, references = {}, api, fetchImpl }) {
 // A boundary that never ran is worth explaining: "could not run" hides whether a
 // solver refused or the request could not even be built. Asking again now that the
 // other boundaries have landed gives the real reason.
-function buildErrors(engine, statuses, nodes) {
+function buildErrors(engine, statuses, nodes, reportError) {
   const out = {};
   for (const node of nodes) {
     if (statuses[node] === "ok") continue;
@@ -110,7 +110,7 @@ function blockingFindings(engine) {
 
 // What the water boundary prescribed, when it ran. A skipped boundary is absence,
 // not a zero, so the whole block disappears rather than reading "pH 0".
-export function waterSummary(engine) {
+export function waterSummary(engine, reportError = ignoreError) {
   const read = (path) => {
     try {
       const value = engine.resolve(path);

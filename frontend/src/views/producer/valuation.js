@@ -2,6 +2,7 @@
 // scalar/collection/table valuator and decorates scalars with conformance and
 // seed provenance.
 
+import { ignoreError } from "../../observability.js";
 import { valuateCollection } from "./collection.js";
 import { decorateConformance } from "./conformance.js";
 import { decorateProvenance } from "./provenance.js";
@@ -27,6 +28,7 @@ export function valuate(fields, engine, ctx = {}) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
   const collectionDomains = ctx.collectionDomains ?? {};
+  const reportError = ctx.reportError ?? ignoreError;
   const nl = nonlinearFns(artifact, engine);
 
   return fields
@@ -35,15 +37,18 @@ export function valuate(fields, engine, ctx = {}) {
       // reference root names a real component (default "" is "none chosen").
       if (field.selectionRef && engine.get(field.selectionRef) === "") return null;
       if (field.control === "collection-table") {
-        return valuateCollection(field, engine, artifact, collectionDomains, nl);
+        return valuateCollection(field, engine, artifact, { collectionDomains, nl, reportError });
       }
       if (field.control === "readout-table") {
-        return valuateTable(field, artifact, engine, unitMode, nl, ctx.registry ?? {});
+        return valuateTable(field, artifact, engine, unitMode, nl, {
+          registry: ctx.registry ?? {},
+          reportError,
+        });
       }
-      const out = valuateScalar(field, engine, ctx, nl);
+      const out = valuateScalar(field, engine, { ...ctx, reportError }, nl);
       if (!out) return null;
       decorateConformance(out, field, ctx);
-      return decorateProvenance(out, field, engine, artifact);
+      return decorateProvenance(out, field, engine, artifact, reportError);
     })
     .filter(Boolean);
 }

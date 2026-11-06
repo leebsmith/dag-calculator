@@ -7,7 +7,7 @@
 //
 // Reading is pure: the engine is passed in already solved by the gate.
 
-import { reportError } from "../observability.js";
+import { ignoreError } from "../observability.js";
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { toBase } from "../engine/units.js";
 import { formatWithDecimals } from "../utils/format.js";
@@ -31,19 +31,19 @@ const TARGET_UNIT = {
   ibu: ["ibu", "IBU"],
 };
 
-export function buildDelta({ payload, ledger = [], engine }) {
-  const grist = solvedGrist(engine);
-  const hops = solvedHops(engine);
+export function buildDelta({ payload, ledger = [], engine, reportError = ignoreError }) {
+  const grist = solvedGrist(engine, reportError);
+  const hops = solvedHops(engine, reportError);
   return {
     lines: lineDeltas({ ledger, grist, hops }),
-    targets: targetDeltas(payload, engine),
+    targets: targetDeltas(payload, engine, reportError),
   };
 }
 
 // Boundary outputs are resolved, not got: `get` addresses a node, and a boundary
 // output is a path through one. A boundary that did not solve yields undefined,
 // which is absence rather than a zero to compare against.
-function read(engine, path) {
+function read(engine, path, reportError = ignoreError) {
   try {
     const value = engine.resolve(path);
     return typeof value === "number" && Number.isFinite(value) ? value : null;
@@ -53,18 +53,18 @@ function read(engine, path) {
   }
 }
 
-function solvedGrist(engine) {
-  return read(engine, "solver.batch.m_grist");
+function solvedGrist(engine, reportError = ignoreError) {
+  return read(engine, "solver.batch.m_grist", reportError);
 }
 
-function solvedHops(engine) {
+function solvedHops(engine, reportError = ignoreError) {
   return {
-    boil: rows(engine, "solver.hops.boil_rows"),
-    whirlpool: rows(engine, "solver.hops.whirlpool_rows"),
+    boil: rows(engine, "solver.hops.boil_rows", reportError),
+    whirlpool: rows(engine, "solver.hops.whirlpool_rows", reportError),
   };
 }
 
-function rows(engine, path) {
+function rows(engine, path, reportError = ignoreError) {
   try {
     const value = engine.resolve(path);
     return Array.isArray(value) ? value : [];
@@ -132,13 +132,13 @@ function withRatio(entry) {
   return { ...entry, ratio: entry.solved_kg / entry.source_kg };
 }
 
-function targetDeltas(payload, engine) {
+function targetDeltas(payload, engine, reportError = ignoreError) {
   const targets = payload?.targets ?? {};
   return [
-    targetRow("Original gravity", targets.og, read(engine, "solver.batch.sg_post_boil")),
-    targetRow("Final gravity", targets.fg, read(engine, "batch.realized_fg")),
-    targetRow("ABV", targets.abv, read(engine, "batch.realized_abv")),
-    targetRow("Volume", targets.volume, read(engine, "batch.v_ferm")),
+    targetRow("Original gravity", targets.og, read(engine, "solver.batch.sg_post_boil", reportError), reportError),
+    targetRow("Final gravity", targets.fg, read(engine, "batch.realized_fg", reportError), reportError),
+    targetRow("ABV", targets.abv, read(engine, "batch.realized_abv", reportError), reportError),
+    targetRow("Volume", targets.volume, read(engine, "batch.v_ferm", reportError), reportError),
   ].filter(Boolean);
 }
 
@@ -147,10 +147,10 @@ function targetDeltas(payload, engine) {
 // conversion belongs to the producer's unit mode (A8), so this table never converts
 // a solved value outward — it converts the page's value inward, exactly as the
 // mapping does when it writes a mass.
-function targetRow(label, stated, solved) {
+function targetRow(label, stated, solved, reportError = ignoreError) {
   if (!stated) return null;
   const view = displayFor(stated);
-  const baseValue = statedInBase(stated.value, view);
+  const baseValue = statedInBase(stated.value, view, reportError);
   return {
     label,
     dimension: view?.dimension ?? null,
@@ -196,7 +196,7 @@ function deltaText(baseValue, solved, view) {
   return signed(formatWithDecimals(solved - baseValue, view.baseDecimals), view.baseSymbol);
 }
 
-function statedInBase(value, view) {
+function statedInBase(value, view, reportError = ignoreError) {
   if (!view) return null;
   try {
     return toBase(artifact, view.dimension, view.unit, value);

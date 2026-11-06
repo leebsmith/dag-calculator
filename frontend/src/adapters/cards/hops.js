@@ -208,7 +208,7 @@ export function createHopCard(
   ctx,
   formatters = createHopFormatters({ artifact: ctx.artifact, engine: ctx.engine, ui: ctx.ui })
 ) {
-  const { engine, cache, getView } = ctx;
+  const { engine, cache, getView, observability } = ctx;
   const { formatMass, formatTemp } = formatters;
   const actions = {
     hopRows: [],
@@ -233,7 +233,10 @@ export function createHopCard(
     ...massDescriptors({ formatMass, getView }),
     ...draftDescriptors({ getView }),
     ...whirlpoolStartDescriptors({ getView }),
-    ...policyDescriptors({ cache, engine, formatTemp, formatMass, getView }),
+    ...policyDescriptors({
+      cache, engine, formatTemp, formatMass, getView,
+      reportError: observability.reportError,
+    }),
     ...fieldDescriptors(getView),
   });
   return actions;
