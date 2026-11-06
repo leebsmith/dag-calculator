@@ -37,7 +37,7 @@ export const CARD_REFRESHES = [
   { card: "malt", refresh: refreshMaltCard },
   { card: "traceMalts", refresh: refreshTraceMaltsCard },
   { card: "hop", refresh: refreshHopCard },
-  { card: "lateAdditions", refresh: refreshLateAdditionsCard },
+  { card: "lateAdditions", refresh: refreshLateAdditionsCard, after: ["style"] },
   { card: "mash", refresh: refreshMashCard },
   { card: "brewDay", refresh: refreshBrewDayCard },
   { card: "dryHops", refresh: refreshDryHopCard },
@@ -143,7 +143,7 @@ export function createStepView({
     return findings;
   }
 
-  function produceFields(app, engine) {
+  function produceFields(app, engine, conformance) {
     const fieldDomains = safe(() => engine.fieldDomainStates());
     const fieldDomainIndex = {};
     for (const d of fieldDomains) {
@@ -159,8 +159,8 @@ export function createStepView({
       collectionIndex[d.nodeId][d.index][d.field] = d;
     }
 
-    app.styleConformance = app.styleConformanceReport?.() ?? null;
-    app.styleSai = app.styleConformance?.sai ?? null;
+    app.styleConformance = conformance;
+    app.styleSai = conformance?.sai ?? null;
 
     let topology;
     try {
@@ -176,7 +176,7 @@ export function createStepView({
       topology,
       fieldDomains: fieldDomainIndex,
       collectionDomains: collectionIndex,
-      conformance: app.styleConformance,
+      conformance,
       reportError: observability.reportError,
     });
     app.fieldsBySlice = Object.fromEntries(
@@ -245,12 +245,26 @@ export function createStepView({
   }
 
   function refreshCards(app, state) {
-    for (const { refresh } of CARD_REFRESHES) refresh(app, state);
+    const produced = {};
+    for (const { card, refresh, after = [] } of CARD_REFRESHES) {
+      for (const dependency of after) {
+        if (!(dependency in produced)) {
+          throw new Error(
+            `card refresh order: "${card}" requires "${dependency}" to refresh first`
+          );
+        }
+      }
+      const value = refresh(app, { ...state, produced });
+      if (value) produced[card] = value;
+    }
   }
 
   function compute(app) {
     const engine = session.getEngine();
-    produceFields(app, engine);
+    // The conformance verdict is an explicit pre-produce step: the producer and
+    // the conformance card read the same local, never the card method mid-pass.
+    const conformance = app.styleConformanceReport?.() ?? null;
+    produceFields(app, engine, conformance);
     indexStatus(app);
     refreshCards(app, refreshState(engine, app));
   }

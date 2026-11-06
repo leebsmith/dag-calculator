@@ -86,6 +86,23 @@ test("producer failures are counted on the app's observability manager", withFre
   );
 }, { observability: createObservabilityManager({ console: { error() {} } }) }));
 
+test("cross-card refresh dependencies are declared and ordered", () => {
+  const order = CARD_REFRESHES.map((entry) => entry.card);
+
+  for (const entry of CARD_REFRESHES) {
+    for (const dependency of entry.after ?? []) {
+      assert.ok(order.includes(dependency), `${entry.card}: unknown dependency ${dependency}`);
+      assert.ok(
+        order.indexOf(dependency) < order.indexOf(entry.card),
+        `${entry.card} must refresh after ${dependency}`
+      );
+    }
+  }
+
+  const late = CARD_REFRESHES.find((entry) => entry.card === "lateAdditions");
+  assert.deepEqual(late.after, ["style"], "the preview pin comes from the style refresh");
+});
+
 test("compute produces fields, indexes status, then refreshes every card", withFreshApp(async (app) => {
   app.compute();
 

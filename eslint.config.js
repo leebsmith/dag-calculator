@@ -190,7 +190,7 @@ const FUNCTION_LINE_PINS = {
 
 const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 365,
-  "adapters/cards/late-additions.js": 304,
+  "adapters/cards/late-additions.js": 305,
   "adapters/cards/water.js": 296,
   "adapters/stepAdapter.js": 492,
   "views/producer/stylePlot.js": 422,

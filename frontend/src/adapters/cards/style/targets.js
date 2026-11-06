@@ -271,6 +271,10 @@ export function createStyleTargets(ctx) {
 }
 
 export function refreshStyleTargets(app, ctx = {}) {
+  // `syncScalePinState` writes this card's own pin mirrors first; the reads below
+  // are intra-card. `styleGravityDisplay` and `styleTargetInfo` were captured by
+  // refreshStyleCard after the navigator refreshed, so this is the declared
+  // style-internal order, not a mid-pass cross-card read.
   app.syncScalePinState();
   app.refreshTargets();
   app.scaleTargetMismatch = scaleTargetMismatch({

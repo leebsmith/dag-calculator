@@ -157,6 +157,21 @@ test("per-field unit overrides stay on their row, not on the card figures", asyn
   assert.match(app.styleVitals(), /°P/);
 });
 
+test("a target change reaches the preview in one compute", async () => {
+  const app = await appWithStyle("21A");
+
+  app.setScalePin("og");
+  app.compute();
+  assert.match(app.stylePreview.pinLabel, /^OG /);
+  const before = app.stylePreview.pinLabel;
+
+  app.setRoot(app.activeScaleTargetRoot, 1.09);
+  app.compute();
+
+  assert.match(app.stylePreview.pinLabel, /^OG /);
+  assert.notEqual(app.stylePreview.pinLabel, before, "the target refresh updates the preview");
+});
+
 test("the style declaration is read-only and has no workspace selector", async () => {
   const app = await appWithStyle("21A");
 

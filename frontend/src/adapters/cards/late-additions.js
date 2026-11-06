@@ -111,7 +111,7 @@ function currentSugarEffect(engine, reportError = ignoreError) { // test-only de
 
 function previewActions({ engine, artifact, getView, observability }) {
   return {
-    syncScalePreviewState() {
+    syncScalePreviewState(pin = getView().scalePin) {
       const view = getView();
       let rows = [];
       try {
@@ -126,7 +126,7 @@ function previewActions({ engine, artifact, getView, observability }) {
       const state = scalePreviewState({
         rows,
         style: engine.identity?.style ?? {},
-        pin: view.scalePin,
+        pin,
         intent,
         share,
         doseLabel: intent === "share" ? "" : view.previewDoseDisplay(dose),
@@ -264,7 +264,8 @@ export function refreshLateAdditionsCard(app, ctx) {
   app.sugarList = rows;
   app.latePinPanelVisible = app.sugarIsActive;
   if (!app.latePinPanelVisible) app.latePinPanelOpen = false;
-  app.syncScalePreviewState();
+  // The pin is the style refresh's declared result, not a mid-pass app mirror.
+  app.syncScalePreviewState(ctx.produced.style.scalePin);
 }
 
 export const KEYS = [

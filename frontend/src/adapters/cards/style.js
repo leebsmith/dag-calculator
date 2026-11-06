@@ -26,4 +26,11 @@ export function refreshStyleCard(app, ctx) {
     styleTargetInfo: app.styleTargetInfo,
     styleGravityDisplay: app.styleGravityDisplay,
   });
+  // Downstream cards consume these values through the refresh state; they never
+  // read the style card's mirrors mid-pass.
+  return {
+    scalePin: app.scalePin,
+    activeScaleTarget: app.activeScaleTarget,
+    styleGravityDisplay: app.styleGravityDisplay,
+  };
 }
