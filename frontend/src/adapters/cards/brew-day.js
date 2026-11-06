@@ -33,12 +33,14 @@ export function registerBrewDayCard(app, ctx) {
 
     setBrewDayLevel(level) {
       engine.setRoot(N.level, level);
+      this.compute();
       this.notify();
     },
 
     _writeBrewDayRows(rows) {
       this.brewDayRows = rows;
       engine.setCollection(N.steps, rows);
+      this.compute();
       this.notify();
     },
 
