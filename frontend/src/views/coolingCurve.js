@@ -106,6 +106,51 @@ export function fitCoolingCurve({ startTempC, ambientTempC, points } = {}) {
 export const COOLING_R2_WARNING = 0.98;
 export const COOLING_AMBIENT_WARNING_C = 5;
 
+function segmentAt(segments, minute) {
+  let found = null;
+  for (const segment of segments) {
+    const start = Number(segment?.start_min);
+    const end = Number(segment?.end_min);
+    const temp = Number(segment?.temp_c);
+    if (!finite(start) || !finite(end) || !finite(temp)) continue;
+    if (minute < start - 1e-9 || minute > end + 1e-9) continue;
+    found = { start_min: start, temp_c: temp };
+  }
+  return found;
+}
+
+function ceilingEnd(segments, ambientC, kPerMin, knockoutMin) {
+  if (!Array.isArray(segments) || segments.length === 0) return null;
+  if (!finite(ambientC) || !finite(kPerMin) || kPerMin <= 0) return null;
+  if (!finite(knockoutMin) || knockoutMin <= 0) return null;
+  const last = segments[segments.length - 1];
+  const end = Math.min(knockoutMin, Number(last?.end_min));
+  return finite(end) && end >= 0 ? end : null;
+}
+
+export function coolingCeilingTable({
+  segments,
+  ambientC,
+  kPerMin,
+  knockoutMin,
+  stepMin = 1,
+} = {}) {
+  const end = ceilingEnd(segments, ambientC, kPerMin, knockoutMin);
+  if (end === null) return [];
+  const step = finite(stepMin) && stepMin > 0 ? stepMin : 1;
+  const rows = [];
+  const count = Math.floor(end / step + 1e-9);
+  for (let index = 0; index <= count; index += 1) {
+    const minute = index * step;
+    const segment = segmentAt(segments, minute);
+    if (!segment) continue;
+    const offset = Math.max(0, minute - segment.start_min);
+    const tempC = ambientC + (segment.temp_c - ambientC) * Math.exp(-kPerMin * offset);
+    rows.push({ minute, tempC });
+  }
+  return rows;
+}
+
 export function coolingCurveWarnings({ fit, curveAmbientC, batchAmbientC, formatTemp }) {
   const warnings = [];
   if (fit && !fit.valid) warnings.push(fit.reason);

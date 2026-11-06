@@ -229,10 +229,9 @@ file diverges from the derived medians, so drift is an explicit, reviewable diff
 
 ### 2.9 `hop_product`
 
-Seven branded presets, one per product line. They annotate a leaf; they are not
-rows per variety, and they carry no per-variety alpha. The authoritative product
-record — leaves, scalars, per-variety tables, dose guidance and exclusions — is
-`docs/hops/hop-products.md`.
+Five single-product presets plus one row per lupulin variety. Every row annotates
+a leaf; the authoritative product record — leaves, scalars, per-variety tables,
+dose guidance and exclusions — is `docs/hops/hop-products.md`.
 
 `hop_product` carries identity and display metadata (`id`, `name`,
 `manufacturer`, `brand`), the `hop_product_form` taxonomy leaf (`lupulin_pellet`
@@ -243,15 +242,16 @@ preset a lot assay replaces), and `notes`/`url`. The full field spec is in
 `inventory.md`.
 
 `data/sources/hop-products.json` holds the entries; the variable percentages are
-authored as percentages and
-`scripts/build-hop-products-seed.mjs` stores fractions in
-`data/seeds/hop-products.json`. Where a variety is named in a row it is chosen at
-pick time and checked against `data/seeds/hops.json`; the product line itself is
-variety-agnostic.
+authored as percentages and `scripts/build-hop-products-seed.mjs` stores fractions
+in `data/seeds/hop-products.json`. Cryo and Lupomax are seeded from the
+per-variety tables in `docs/hops/hop-products.md`; the other five lines are one
+row each. A row may name a variety the T-90 catalogue lacks (the organic and HBC
+releases), so `data/seeds/hops.json` is not a prerequisite.
 
 Alpha is a preset, not a constant: the harvest differs and the certificate is
 authoritative, so the card asks for the lot assay and prints the published range
-only where one exists.
+where the row carries one.
+
 ### 2.10 `mash_rest` / `mash-schedules`
 
 `mash-rests.json` is the rest catalog, keyed by `rest_id` and conforming to the

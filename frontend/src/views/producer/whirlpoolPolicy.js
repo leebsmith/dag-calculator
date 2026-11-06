@@ -1,4 +1,6 @@
 import { hopDemandLine } from "./hopRows.js";
+import { coolingCeilingTable } from "../coolingCurve.js";
+import { isFiniteNumber, toFiniteOrNull } from "../../utils.js";
 
 // Whirlpool product-form policy: the row defaults, the seeded start-temperature
 // bands, the band selector state, and the two advisory warnings. Pure over the
@@ -41,6 +43,73 @@ export function startBandHint(value, bands) {
   return bands.find((candidate) => candidate.value === value)?.hint ?? "";
 }
 
+export function readWhirlpoolCeiling(engine, resolve, nodes) {
+  return coolingCeilingTable({
+    segments: resolve(nodes.whirlpoolTimeline) ?? [],
+    ambientC: Number(engine.get(nodes.whirlpoolAmbient)),
+    kPerMin: 1 / Number(engine.get(nodes.whirlpoolCoolingTimeConstant)),
+    knockoutMin: Number(engine.get(nodes.whirlpoolKnockout)),
+  });
+}
+
+function ceilingInputsUsable(startTempC, ambientC, kPerMin, knockoutMin) {
+  return [
+    isFiniteNumber(startTempC),
+    isFiniteNumber(ambientC),
+    isFiniteNumber(kPerMin),
+    kPerMin > 0,
+    isFiniteNumber(knockoutMin),
+    knockoutMin > 0,
+  ].every(Boolean);
+}
+
+function inWhirlpoolWindow(at, knockoutMin) {
+  return Number.isFinite(at) && at >= 0 && at <= knockoutMin + 1e-9;
+}
+
+export function whirlpoolDraftCeilings({
+  rows,
+  startTempC,
+  ambientC,
+  kPerMin,
+  knockoutMin,
+  toleranceC = 0.5,
+} = {}) {
+  const list = Array.isArray(rows) ? rows : [];
+  if (list.length === 0) return [];
+  if (!ceilingInputsUsable(startTempC, ambientC, kPerMin, knockoutMin)) {
+    return list.map(() => null);
+  }
+  const order = list
+    .map((row, index) => ({ row, index }))
+    .sort(
+      (left, right) =>
+        (Number(left.row.addition_at_min) || 0) - (Number(right.row.addition_at_min) || 0) ||
+        left.index - right.index
+    );
+  const out = new Array(list.length).fill(null);
+  let time = 0;
+  let temp = startTempC;
+  for (const { row, index } of order) {
+    const at = toFiniteOrNull(row.addition_at_min);
+    if (!inWhirlpoolWindow(at, knockoutMin)) continue;
+    if (at > time) {
+      temp = ambientC + (temp - ambientC) * Math.exp(-kPerMin * (at - time));
+      time = at;
+    }
+    const posted = toFiniteOrNull(row.initial_temp_c);
+    const above = isFiniteNumber(posted) && posted > temp + toleranceC;
+    out[index] = { maxC: temp, above };
+    if (isFiniteNumber(posted) && posted < temp - toleranceC) temp = posted;
+  }
+  return out;
+}
+
+export function whirlpoolCeilingBadge(app, row, columnId) {
+  if (columnId !== "ceiling_c" || !row?.ceiling_above) return null;
+  return { className: "text-warning", text: "above" };
+}
+
 // Descriptor map for Object.defineProperties: the card merges it beside its own
 // getters so the policy stays readable and the card file stays under its pin.
 export function whirlpoolPolicyDescriptors({
@@ -78,6 +147,20 @@ export function whirlpoolPolicyDescriptors({
         const band = this.whirlpoolStartBands.find((candidate) => candidate.value === bandId);
         if (!band || this.whirlpoolHopActiveIndex == null) return;
         this.patchDraftRow(this.whirlpoolHopActiveIndex, { initial_temp_c: band.mid });
+      },
+    },
+    whirlpoolCeilingMinute: {
+      configurable: true,
+      writable: true,
+      value(row) {
+        return formatNumber(row?.minute, 0);
+      },
+    },
+    whirlpoolCeilingTemp: {
+      configurable: true,
+      writable: true,
+      value(row) {
+        return formatTemp(row?.tempC);
       },
     },
     whirlpoolHopDemandLine: {

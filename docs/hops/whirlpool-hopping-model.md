@@ -261,8 +261,8 @@ second posted at 76.7 °C, infer a chill at 10 minutes (`99 °C → 92.1 °C`
 passively, then 76.7 °C) and give the first charge 9.81 effective minutes; the
 second gets 2.43.
 
-The boundary returns the curve it solved over, so no client recomputes it:
-`solver.hops.whirlpool_timeline` is the segment list
+The boundary returns the curve it solved over, so no client recomputes the
+integral: `solver.hops.whirlpool_timeline` is the segment list
 (`start_min`, `end_min`, `temp_c` — the temperature at the segment's start) and
 `solver.hops.whirlpool_chills` is the forced-chill list (`at_min`,
 `from_temp_c`, `to_temp_c`). Chills are declared separately rather than inferred
@@ -270,6 +270,14 @@ from a segment boundary because `from_temp_c` is a value on the cooling curve,
 which only the host can evaluate; a client deriving it would be doing the
 integral's arithmetic again. Both are boundary outputs, so they travel in the
 frozen report bundle and are covered by the stub-completeness guard.
+
+The card samples that returned curve at one-minute steps for its cooling-ceiling
+table, using the same Newton decay between each segment's start and the next
+chill or knockout. The table is a display aid from the last solve: it names the
+maximum posted temperature at each minute, and the boundary still enforces the
+0.5 °C tolerance. The draft editor previews the same ceiling per row from its
+unsaved rows, so an edited time or temperature is marked above the curve before
+the charge is saved; the boundary remains the authority.
 
 ### IBU splits
 

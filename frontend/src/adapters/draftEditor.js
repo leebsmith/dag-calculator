@@ -11,10 +11,26 @@ import {
 } from "../views/producer/sugarAllocation.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_SYMBOLS } from "../views/registry/units.js";
+import { HOP_NODES as H } from "../views/registry/hops.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
+import { whirlpoolDraftCeilings } from "../views/producer/whirlpoolPolicy.js";
 import { reportError } from "../observability.js";
 import { formatWithDecimals, preferredUnit, roundTo, unitSymbol } from "../utils.js";
 import { CATALOG_CHROME_KEYS } from "./cards/catalogChrome.js";
+
+function draftCellValue(col, row, ri, resolved, ceilings) {
+  if (col.id === "resolved_mass_kg") return resolved[ri]?.massKg ?? row[col.id] ?? 0;
+  if (col.id === "ceiling_c") return ceilings[ri]?.maxC ?? null;
+  return row[col.id];
+}
+
+function draftCellDisplay(artifact, col, value, nl) {
+  if (!(col.displayUnit && col.dimension && typeof value === "number")) {
+    return typeof value === "number" ? formatWithDecimals(value, col.decimals) : value;
+  }
+  const displayed = displayValue(artifact, col.dimension, col.displayUnit, value, nl);
+  return formatWithDecimals(displayed, col.decimals);
+}
 
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
@@ -267,7 +283,33 @@ export function installDraftEditor(app, { artifact, ui, session }) {
           }
           return visible;
         }
+        if (this.draftNodeId === H.whirlpoolCollection) {
+          const at = columns.findIndex((column) => column.id === "initial_temp_c");
+          const tempColumn = columns[at];
+          if (tempColumn) {
+            columns.splice(at + 1, 0, {
+              ...tempColumn,
+              id: "ceiling_c",
+              label: "Max",
+              editable: false,
+            });
+          }
+        }
         return columns;
+      },
+    },
+    draftCeilings: {
+      configurable: true,
+      get() {
+        if (this.draftNodeId !== H.whirlpoolCollection) return [];
+        const engine = session.getEngine();
+        return whirlpoolDraftCeilings({
+          rows: this.draftRows,
+          startTempC: engine.get(H.whirlpoolStartTemp),
+          ambientC: engine.get(H.whirlpoolAmbient),
+          kPerMin: 1 / engine.get(H.whirlpoolCoolingTimeConstant),
+          knockoutMin: engine.get(H.whirlpoolKnockout),
+        });
       },
     },
     draftDisplayRows: {
@@ -276,28 +318,24 @@ export function installDraftEditor(app, { artifact, ui, session }) {
         const columns = this.draftColumns;
         const nl = nonlinearFns(artifact, session.getEngine());
         const resolved = this.draftResolvedRows();
+        const ceilings = this.draftCeilings;
         return this.draftRows.map((row, ri) => {
           const out = { ...row };
           for (const col of columns) {
-            let v = row[col.id];
-            // A computed field has no draft value: preview it from the same
-            // allocation the engine applies on read.
-            if (col.id === "resolved_mass_kg") {
-              v = resolved[ri]?.massKg ?? row[col.id] ?? 0;
+            const value = draftCellDisplay(
+              artifact,
+              col,
+              draftCellValue(col, row, ri, resolved, ceilings),
+              nl
+            );
+            if (!(col.editable && typeof this.inputDraft === "function")) {
+              out[col.id] = value;
+              continue;
             }
-            if (col.displayUnit && col.dimension && typeof v === "number") {
-              v = displayValue(artifact, col.dimension, col.displayUnit, v, nl);
-            }
-            if (typeof v === "number") {
-              v = formatWithDecimals(v, col.decimals);
-            }
-            if (col.editable && typeof this.inputDraft === "function") {
-              const key = `draft:${this.draftNodeId}:${ri}:${col.id}`;
-              out[col.id] = this.inputDraft(key, v);
-            } else {
-              out[col.id] = v;
-            }
+            const key = `draft:${this.draftNodeId}:${ri}:${col.id}`;
+            out[col.id] = this.inputDraft(key, value);
           }
+          out.ceiling_above = ceilings[ri]?.above === true;
           return out;
         });
       },
@@ -305,4 +343,4 @@ export function installDraftEditor(app, { artifact, ui, session }) {
   });
 }
 
-export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftDisplayRows", ...CATALOG_CHROME_KEYS];
+export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftCeilings", "draftDisplayRows", ...CATALOG_CHROME_KEYS];

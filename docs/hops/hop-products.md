@@ -2,8 +2,8 @@
 
 Status: living — **the authoritative product record**. `data/artifact.json` owns
 the leaves, the scalars and the schemas; `data/sources/hop-products.json` carries
-the seven variant presets; this document owns every number a product sheet
-supplies.
+the per-variety and product-line presets; this document owns every number a
+product sheet supplies.
 
 A number lives in exactly one place. If it appears here and in the seed, the seed
 is a preset and this page is the source.
@@ -64,23 +64,27 @@ is why stage is seeded per variant and never enforced by the leaf.
 
 ## 3. Variants
 
-Seven presets. Alpha is a **preset**, not a lot value; the published range is
-present only where the product as a whole has one.
+Five product lines are seeded once each; the two lupulin concentrates are seeded
+per variety from the tables in §4. Alpha is a **preset**, not a lot value; the
+published range is present only where the maker publishes one.
 
 | Variant | Leaf | Maker | Alpha preset | Published range | Dose guidance | Substitution |
 |---|---|---|---|---|---|---|
-| Cryo Hops | lupulin concentrate | Yakima Chief | 22 % | variety-dependent — §4.1 | — | 40–50 % of T-90 by weight |
-| Lupomax | lupulin concentrate | BarthHaas | 18 % | variety-dependent — §4.2 | — | 50–70 % of T-90 by weight |
 | CO₂ extract | extract | Yakima Valley | 57.5 % | 50–65 % | 1 mL ≈ 10 IBU at 5 gal, 1.050, 60 min | — |
 | Hop Shot | extract | Artisan | 65 % | — | 1 mL ≈ 10 IBU at 5 gal, 1.050, 60 min | — |
 | Flex | extract | John I. Haas | 65 % | — | dose by IBU | — |
 | DynaBoost | extract | Yakima Chief | 42.5 % | 35–50 % | 0.2–0.5 g/L | 1:10 |
 | Incognito | extract | John I. Haas | 47.5 % | 40–55 % | 0.5–2.0 g/L, 2.0 max | 1:6 |
 
-Cryo's and Lupomax's presets are the **medians of their per-variety tables** in
-§4, rounded, so that a brewer without a certificate starts near the middle of the
-range rather than at one end. They are not product specifications and the card
-says so.
+Cryo Hops and Lupomax have one row per variety: 26 Cryo rows from §4.1 and 16
+Lupomax rows from §4.2 and §4.3. The Cryo preset is the midpoint of its published
+range and the row carries that range; the Lupomax preset is the published figure.
+Dolcita, HBC 1019 and Krush are sold as Lupomax but publish no alpha, so they are
+not seeded.
+
+The former single-row presets (22 % Cryo, 18 % Lupomax) are gone. They were the
+medians of these same tables; a variety row is the more useful starting point,
+and the lot certificate still overrides it.
 
 Flex and Hop Shot are boil-only by maker guidance. Hop Shot's two blend SKUs
 (Cluster/Magnum) carry no variety.
@@ -110,8 +114,14 @@ Flex and Hop Shot are boil-only by maker guidance. Hop Shot's two blend SKUs
 
 ## 4. Per-variety alpha
 
-These tables are why the per-variety products are not seeded. They are crop-year
-figures, they change at every harvest, and a seed row would go stale silently.
+These tables are the seed's source: `data/sources/hop-products.json` carries one
+row per variety, and `tests/guards/hop-product-tables.test.js` fails if the seed
+and these tables disagree. They are still crop-year figures, so a new harvest
+needs a deliberate refresh rather than a silent drift.
+
+Lupomax uses the 2025 sell sheet where it publishes a figure and the 2023 crop
+where it does not (Cashmere, Columbus, Ekuanot, Idaho 7). Where the two years
+disagree, 2025 wins.
 
 ### 4.1 Cryo Hops — YCH 2022
 
@@ -227,5 +237,5 @@ intentions; the card prices the former.
 The card's alpha field is the **lot assay**, and the catalogue preset is a
 placeholder. Replace it: the harvest differs, the certificate is authoritative,
 and the mass is solved from whatever alpha is in the field. Where a published
-range exists the card prints it beside the input; where it does not, it prints
-"nominal" and names this document.
+range exists the card prints it beside the input; where it does not, the preset
+is the only guide, and the row's notes name the vintage.

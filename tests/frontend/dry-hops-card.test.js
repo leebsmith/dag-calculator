@@ -38,7 +38,7 @@ test("the same hop can be added twice", withFreshApp((app) => {
 
 test("a caterpillar product keeps its own form", withFreshApp((app) => {
   app.openDryHopEditor();
-  app.addCatalogDryHop("cryo-hops");
+  app.addCatalogDryHop("cryo-citra");
   app.saveDryHopEditor();
   app.compute();
 

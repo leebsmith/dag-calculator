@@ -1,0 +1,25 @@
+<details class="whirlpool-ceiling" x-show="whirlpoolCoolingCeiling.length > 0">
+  <summary class="text-xs">Cooling ceiling — maximum start temperature by minute</summary>
+  <p class="form-hint">
+    From the batch cooling curve at the last solve. A start temperature above the
+    row would need heating, which the calculator refuses; 0.5 °C is tolerated.
+  </p>
+  <div class="data-table-container">
+    <table class="data-table is-fixed">
+      <thead>
+        <tr>
+          <th>Minute</th>
+          <th class="text-right">Max start</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="row in whirlpoolCoolingCeiling" :key="row.minute">
+          <tr>
+            <td x-text="whirlpoolCeilingMinute(row)"></td>
+            <td class="text-right tabular-nums" x-text="whirlpoolCeilingTemp(row)"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+</details>

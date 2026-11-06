@@ -34,10 +34,10 @@
     },
     "hop-products.json": {
       "mechanism": "curated",
-      "upstream": "docs/hops/hop-products.md — YCH Cryo 2022, BarthHaas Lupomax 2025, YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",
+      "upstream": "docs/hops/hop-products.md — YCH Cryo 2022 (per variety), BarthHaas Lupomax 2025 and 2023 (per variety), YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",
       "builder": "scripts/build-hop-products-seed.mjs",
-      "rows": 7,
-      "sha256": "6a43d67b8c51c610895d45d0f3d97c81e1befbafc527720ff5e18e4cbc053cb5"
+      "rows": 47,
+      "sha256": "d9c65a3ec6bc85b83b8a4a6ff87c208ebf597df6a3191937d21e8ace8dd7b6fd"
     },
     "malt-database-malts.json": {
       "mechanism": "scrape",

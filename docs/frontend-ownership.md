@@ -4,9 +4,9 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **762** (520 enumerable, 242 hidden)
+- Declared members: **766** (521 enumerable, 245 hidden)
 - Installers: **20**
-- Card partials: **18**
+- Card partials: **19**
 - Installers reading another installer's key: **16 of 20**
 - Cross-owner keys declared in `SHARED`: **46**
 
@@ -16,7 +16,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
 | `fieldActions` | `frontend/src/adapters/fieldActions.js` | 27 | 1 | 5 |
-| `draftEditor` | `frontend/src/adapters/draftEditor.js` | 80 | 0 | 1 |
+| `draftEditor` | `frontend/src/adapters/draftEditor.js` | 81 | 0 | 1 |
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 1 |
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 55 | 0 | 4 |
@@ -25,7 +25,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 45 | 1 | 9 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 150 | 3 | 18 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/catalogDraft.js` | 153 | 4 | 18 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 21 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 19 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 17 |

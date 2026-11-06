@@ -42,7 +42,7 @@ const META = {
   "hop-products.json": {
     mechanism: "curated",
     upstream:
-      "docs/hops/hop-products.md — YCH Cryo 2022, BarthHaas Lupomax 2025, YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",
+      "docs/hops/hop-products.md — YCH Cryo 2022 (per variety), BarthHaas Lupomax 2025 and 2023 (per variety), YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",
     builder: "scripts/build-hop-products-seed.mjs",
   },
   "whirlpool-notes.json": {

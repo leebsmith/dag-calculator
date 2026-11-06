@@ -65,6 +65,11 @@ export function hopAlphaInputValue(row) {
   return typeof row?.alpha_acid_pct === "number" ? toPercentValue(row.alpha_acid_pct, 2) : "";
 }
 
+export function hopStockRecord(cache, id) {
+  if (!id) return null;
+  return cache?.seeds?.hopProducts?.[id] ?? cache?.references?.hop?.[id] ?? null;
+}
+
 // The batch row owns the measured value; the catalogue's alpha band is
 // context (a descriptive range, never a gate).
 export function hopAlphaStockLabel(record) {
@@ -143,8 +148,17 @@ export function mergeBoilRows(rows, results, boilIbu, boilTimeMin) {
   });
 }
 
+export function sortWhirlpoolRows(rows) {
+  const temp = (row) =>
+    isFiniteNumber(row?.initial_temp_c) ? row.initial_temp_c : Number.NEGATIVE_INFINITY;
+  return (rows ?? [])
+    .map((row, index) => ({ row, index }))
+    .sort((left, right) => temp(right.row) - temp(left.row) || left.index - right.index)
+    .map((entry) => entry.row);
+}
+
 export function mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume) {
-  return (rows ?? []).map((row, index) => {
+  const merged = (rows ?? []).map((row, index) => {
     const result = results?.[index] ?? {};
     const minutes = Number(result.minutes);
     const ibu = Number(result.ibu);
@@ -153,6 +167,7 @@ export function mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume) {
       typeof mass === "number" && volume > 0 ? (mass * 1000) / (volume / 3.785411784) : null;
     return {
       ...row,
+      source_index: index,
       product_form: row.product_form ?? "t90_pellet",
       minutes: Number.isFinite(minutes) ? minutes : 0,
       ibu: Number.isFinite(ibu) ? ibu : (Number(row.pct) || 0) * whirlpoolIbu,
@@ -162,4 +177,5 @@ export function mergeWhirlpoolRows(rows, results, whirlpoolIbu, volume) {
       dose_g_per_gal: doseGPerGal,
     };
   });
+  return sortWhirlpoolRows(merged);
 }

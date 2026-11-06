@@ -123,13 +123,65 @@ test("whirlpool hops: parts normalize to IBU shares and the served mass renders"
   assert.match(app.whirlpoolHopTotalMassDisplay, /(oz|g|kg|lb)/);
 }));
 
+test("whirlpool hops: the summary sorts by initial temperature", withFreshApp((app) => {
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+
+  app.openWhirlpoolHopEditor();
+  app.addCatalogWhirlpoolHop("cascade");
+  app.addCatalogWhirlpoolHop("citra");
+  app.patchDraftRow(0, { initial_temp_c: 70 });
+  app.patchDraftRow(1, { initial_temp_c: 90 });
+  app.saveWhirlpoolHopEditor();
+  app.compute();
+
+  assert.deepEqual(
+    app.whirlpoolHopRows.map((row) => row.initial_temp_c),
+    [90, 70]
+  );
+  assert.deepEqual(
+    app.whirlpoolHopRows.map((row) => row.source_index),
+    [1, 0]
+  );
+
+  app.setHopAlpha("whirlpool", app.whirlpoolHopRows[0].source_index, "11");
+  assert.equal(app.engine.get("batch.whirlpool_hops")[1].alpha_acid_pct, 0.11);
+
+  assert.equal(app.whirlpoolCoolingCeiling.length, 31);
+  assert.equal(app.whirlpoolCoolingCeiling[0].tempC, 99);
+  assert.equal(app.whirlpoolCeilingMinute(app.whirlpoolCoolingCeiling[10]), "10");
+  assert.match(app.whirlpoolCeilingTemp(app.whirlpoolCoolingCeiling[0]), /99/);
+}));
+
+test("whirlpool hops: the draft table previews a live cooling ceiling", withFreshApp((app) => {
+  app.openWhirlpoolHopEditor();
+  app.addCatalogWhirlpoolHop("cascade");
+  app.patchDraftRow(0, { addition_at_min: 0, initial_temp_c: 99 });
+  app.addCatalogWhirlpoolHop("citra");
+  app.patchDraftRow(1, { addition_at_min: 10, initial_temp_c: 76.7 });
+  app.addCatalogWhirlpoolHop("saaz");
+  app.patchDraftRow(2, { addition_at_min: 10, initial_temp_c: 95 });
+
+  const columns = app.draftColumns.map((column) => column.id);
+  assert.ok(columns.includes("ceiling_c"));
+
+  const rows = app.draftDisplayRows;
+  assert.equal(rows[0].ceiling_c, "99.0");
+  assert.equal(rows[1].ceiling_c, "92.1");
+  assert.equal(rows[2].ceiling_c, "76.7");
+  assert.equal(rows[0].ceiling_above, false);
+  assert.equal(rows[1].ceiling_above, false);
+  assert.equal(rows[2].ceiling_above, true);
+  assert.equal(app.draftRowBadge(rows[2], "ceiling_c")?.text, "above");
+}));
+
 test("whirlpool hops: lupulin defaults and the band selector", withFreshApp((app) => {
   app.setTargetIbu(40);
   app.setWhirlpoolFraction(0.25);
 
   app.openWhirlpoolHopEditor();
   app.setWhirlpoolHopCatalogForm("lupulin_pellet");
-  app.addCatalogWhirlpoolHop("cryo-hops");
+  app.addCatalogWhirlpoolHop("cryo-citra");
   app.inspectWhirlpoolHopRow(0);
 
   assert.equal(app.whirlpoolHopActiveRow.product_form, "lupulin_pellet");
@@ -162,10 +214,10 @@ test("whirlpool hops: a colder later charge shows the served chill and a zero re
 
   app.openWhirlpoolHopEditor();
   app.setWhirlpoolHopCatalogForm("lupulin_pellet");
-  app.addCatalogWhirlpoolHop("cryo-hops");
+  app.addCatalogWhirlpoolHop("cryo-citra");
   app.inspectWhirlpoolHopRow(0);
   app.patchDraftRow(0, { addition_at_min: 0, initial_temp_c: 99 });
-  app.addCatalogWhirlpoolHop("cryo-hops");
+  app.addCatalogWhirlpoolHop("cryo-citra");
   app.inspectWhirlpoolHopRow(1);
   app.patchDraftRow(1, { addition_at_min: 10, initial_temp_c: 76.7 });
   app.saveWhirlpoolHopEditor();

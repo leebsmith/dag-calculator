@@ -24,12 +24,13 @@
     <div class="data-table-container">
       <table class="data-table">
         <colgroup>
-          <col style="width: 30%" />
-          <col style="width: 17%" />
-          <col style="width: 10%" />
+          <col style="width: 26%" />
+          <col style="width: 15%" />
+          <col style="width: 9%" />
           <col style="width: 8%" />
-          <col style="width: 17%" />
-          <col style="width: 18%" />
+          <col style="width: 14%" />
+          <col style="width: 14%" />
+          <col style="width: 14%" />
         </colgroup>
         <thead>
           <tr>
@@ -39,6 +40,7 @@
             <th class="text-right">Unit</th>
             <th>Applied at</th>
             <th>Contact</th>
+            <th>Detail</th>
           </tr>
         </thead>
         <tbody>
@@ -50,11 +52,12 @@
               <td class="text-right" x-text="row.unit"></td>
               <td x-text="dryHopEventLabel(row)"></td>
               <td x-text="dryHopContactLabel(row)"></td>
+              <td x-text="row.time_of_application"></td>
             </tr>
           </template>
           <template x-if="dryHopRows.length === 0">
             <tr>
-              <td colspan="6" class="table-empty-cell">
+              <td colspan="7" class="table-empty-cell">
                 No dry hops yet. Click “Configure Dry Hops” to add additions.
               </td>
             </tr>

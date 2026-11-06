@@ -7990,7 +7990,7 @@
         }
       },
       "batch.dry_hops.time_of_application": {
-        "label": "Time",
+        "label": "Detail",
         "dimension": null,
         "unit": null,
         "symbol": null,
@@ -8180,7 +8180,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:b48d07cb4f4f4d8ffa037afddcdd1c1a4d00af243e4dae08ca38c2085a9d4a60"
+    "hash": "sha256:02acc978992241c691d49506ed92424778936748f8e2b59c39d4cf0e5b0fa0a2"
   },
   "batch": {
     "id": "frozen-1",
@@ -9713,6 +9713,11 @@
           "text": "Terminal gravity",
           "number": null,
           "unit": null
+        },
+        "detail": {
+          "text": "\u2014",
+          "number": null,
+          "unit": null
         }
       }
     ],
@@ -9995,5 +10000,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:c6497de765ed7e2d5563fb278852109de29e2c30d537892fc2b355e4a67567dd"
+  "content_hash": "sha256:b4a16978c32d8316ac77bdc051657012757aa62686177422912ec0a16c6041da"
 }

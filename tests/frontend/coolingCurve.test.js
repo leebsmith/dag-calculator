@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   COOLING_AMBIENT_WARNING_C,
+  coolingCeilingTable,
   coolingCurveWarnings,
   fitCoolingCurve,
 } from "../../frontend/src/views/coolingCurve.js";
@@ -122,6 +123,54 @@ test("start and ambient must be finite and start above ambient", () => {
   assert.equal(
     fitCoolingCurve({ startTempC: Number.NaN, ambientTempC: AMBIENT, points: [] }).valid,
     false
+  );
+});
+
+test("the cooling ceiling samples the returned segments", () => {
+  const segments = [
+    { start_min: 0, end_min: 10, temp_c: 99 },
+    { start_min: 10, end_min: 30, temp_c: 76.7 },
+  ];
+  const rows = coolingCeilingTable({
+    segments,
+    ambientC: AMBIENT,
+    kPerMin: 1 / 108.7,
+    knockoutMin: 30,
+  });
+
+  assert.equal(rows.length, 31);
+  assert.equal(rows[0].minute, 0);
+  assert.equal(rows[0].tempC, 99);
+  assert.equal(rows[10].tempC, 76.7);
+  assert.ok(
+    Math.abs(rows[5].tempC - (AMBIENT + 79 * Math.exp(-5 / 108.7))) < 1e-9,
+    `temp=${rows[5].tempC}`
+  );
+  assert.equal(rows.at(-1).minute, 30);
+});
+
+test("the cooling ceiling needs usable segments and cooling inputs", () => {
+  assert.deepEqual(
+    coolingCeilingTable({ segments: [], ambientC: AMBIENT, kPerMin: 0.01, knockoutMin: 30 }),
+    []
+  );
+  assert.deepEqual(
+    coolingCeilingTable({
+      segments: [{ start_min: 0, end_min: 30, temp_c: 99 }],
+      ambientC: AMBIENT,
+      kPerMin: 0,
+      knockoutMin: 30,
+    }),
+    []
+  );
+  assert.deepEqual(
+    coolingCeilingTable({
+      segments: [{ start_min: 0, end_min: 30, temp_c: 99 }],
+      ambientC: AMBIENT,
+      kPerMin: 0.01,
+      knockoutMin: 0,
+    }),
+    []
   );
 });
 

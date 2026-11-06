@@ -63,6 +63,7 @@
   ([Unit], "unit", right),
   ([Applied at], "applied", left),
   ([Contact], "contact", left),
+  ([Detail], "detail", left),
 )
 
 #let render-hops() = {

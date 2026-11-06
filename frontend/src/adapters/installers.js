@@ -104,7 +104,12 @@ export const INSTALLERS = [
     name: "hop",
     modules: HOP_AND_CATALOG,
     keys: hopKeys,
-    partials: ["step-hops.html", "modal-hop-editor.html", "modal-whirlpool-hop-editor.html"],
+    partials: [
+      "step-hops.html",
+      "modal-hop-editor.html",
+      "modal-whirlpool-hop-editor.html",
+      "modal-whirlpool-cooling-ceiling.html",
+    ],
   },
   {
     name: "lateAdditions",

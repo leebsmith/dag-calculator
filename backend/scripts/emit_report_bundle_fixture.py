@@ -1182,7 +1182,7 @@ PAYLOAD = FreezePayload(
                     "packaging": "Packaging",
                 },
             ),
-            "batch.dry_hops.time_of_application": NodePresentation(label="Time"),
+            "batch.dry_hops.time_of_application": NodePresentation(label="Detail"),
             "batch.dry_hops.notes": NodePresentation(label="Notes"),
             "batch.yeast.name": NodePresentation(label="Yeast"),
             "batch.yeast": NodePresentation(label="Yeast"),
@@ -1553,6 +1553,7 @@ PAYLOAD = FreezePayload(
                 "unit": FormattedValue(text="oz"),
                 "applied": FormattedValue(text="High krausen"),
                 "contact": FormattedValue(text="Terminal gravity"),
+                "detail": FormattedValue(text="—"),
             },
         ],
         "batch.brew_checklist": [

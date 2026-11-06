@@ -11,6 +11,7 @@ import {
   hopIbuLabel,
   hopMinutesLabel,
   hopPctLabel,
+  sortWhirlpoolRows,
 } from "../../frontend/src/views/producer/hopRows.js";
 
 const ROW = {
@@ -49,6 +50,22 @@ test("hopRows: the product form falls back to the raw code", () => {
   assert.equal(hopFormLabel({ product_form: "whole_cone" }), "Whole cone");
   assert.equal(hopFormLabel({}), "T-90 pellets");
   assert.equal(hopFormLabel({ product_form: "unknown_form" }), "unknown_form");
+});
+
+test("hopRows: whirlpool rows sort hottest first, keeping authored ties", () => {
+  const rows = [
+    { hop_id: "cool", initial_temp_c: 70 },
+    { hop_id: "hot-a", initial_temp_c: 95 },
+    { hop_id: "hot-b", initial_temp_c: 95 },
+  ];
+  assert.deepEqual(
+    sortWhirlpoolRows(rows).map((row) => row.hop_id),
+    ["hot-a", "hot-b", "cool"]
+  );
+  assert.deepEqual(
+    sortWhirlpoolRows([{ hop_id: "missing" }, ...rows]).map((row) => row.hop_id),
+    ["hot-a", "hot-b", "cool", "missing"]
+  );
 });
 
 test("hopRows: the alpha band is context, never a gate", () => {

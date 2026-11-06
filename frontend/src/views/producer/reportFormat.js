@@ -9,6 +9,7 @@ import { reportError } from "../../observability.js";
 import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { HOP_NODES as H } from "../registry/hops.js";
+import { sortWhirlpoolRows } from "./hopRows.js";
 import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
@@ -265,8 +266,9 @@ function hopRows(artifact, catalog, engine, kind) {
   const massEntry = nodes[boil ? H.boilMass : H.whirlpoolMass];
   const timeEntry = nodes[boil ? H.boilTime : `${H.whirlpoolCollection}.addition_at_min`];
   const tempEntry = nodes[H.whirlpoolAmbient];
-  return authored.map((row, index) => {
-    const result = solved[index] ?? {};
+  const entries = authored.map((row, index) => ({ ...row, result: solved[index] ?? {} }));
+  const ordered = boil ? entries : sortWhirlpoolRows(entries);
+  return ordered.map(({ result, ...row }) => {
     const cell = (entry, value) => formatEntry(artifact, entry, value, nl);
     const base = {
       name: rowName(row),
@@ -304,7 +306,12 @@ function dryHopRows(artifact, catalog, engine) {
     quantity: cell("quantity", row.quantity),
     unit: cell("unit", row.unit),
     applied: cell("application_event", row.application_event),
-    contact: cell("contact_until", row.contact_until),
+    contact: row.contact_until
+      ? cell("contact_until", row.contact_until)
+      : cell("contact_duration_min", row.contact_duration_min),
+    detail: row.time_of_application
+      ? cell("time_of_application", row.time_of_application)
+      : { text: "—" },
   }));
 }
 

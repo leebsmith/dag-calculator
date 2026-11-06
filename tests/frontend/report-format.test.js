@@ -233,7 +233,7 @@ const DRY_HOP = {
 test("hop tables carry the charges, the solved cells and the choice labels", async () => {
   const app = await booted();
   app.engine.setCollection("batch.boil_hops", [BOIL_HOP]);
-  app.engine.setCollection("batch.whirlpool_hops", [WHIRLPOOL_HOT, WHIRLPOOL_COOL]);
+  app.engine.setCollection("batch.whirlpool_hops", [WHIRLPOOL_COOL, WHIRLPOOL_HOT]);
   app.engine.setCollection("batch.dry_hops", [DRY_HOP]);
   app.compute();
   const tables = app.reportFormattedTables();
@@ -250,11 +250,18 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
 
   const whirlpool = tables["batch.whirlpool_hops"];
   assert.equal(whirlpool.length, 2);
+  assert.equal(whirlpool[0].name.text, "Citra");
   assert.equal(whirlpool[0].form.text, "T-90 pellet");
   assert.equal(whirlpool[0].alpha.unit, "%");
   assert.equal(whirlpool[0].add.unit, "min");
   assert.equal(whirlpool[0].temp.unit, "°C");
   assert.equal(whirlpool[1].name.text, "Saaz");
+  for (const row of Object.values(tables).flat()) {
+    for (const cell of Object.values(row)) {
+      assert.equal(typeof cell, "object");
+      assert.ok("text" in cell);
+    }
+  }
 
   const dry = tables["batch.dry_hops"];
   assert.equal(dry.length, 1);
@@ -263,6 +270,26 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   assert.equal(dry[0].unit.text, "oz");
   assert.equal(dry[0].applied.text, "High krausen");
   assert.equal(dry[0].contact.text, "Terminal gravity");
+  assert.equal(dry[0].detail.text, "—");
+});
+
+test("a dry hop duration and detail reach the report", async () => {
+  const app = await booted();
+  app.engine.setCollection("batch.dry_hops", [
+    {
+      ...DRY_HOP,
+      contact_duration_min: 4320,
+      contact_until: null,
+      time_of_application: "day 3",
+    },
+  ]);
+  app.compute();
+  const dry = app.reportFormattedTables()["batch.dry_hops"];
+
+  assert.equal(dry.length, 1);
+  assert.equal(dry[0].contact.unit, "hr");
+  assert.match(dry[0].contact.text, /72/);
+  assert.equal(dry[0].detail.text, "day 3");
 });
 
 test("the IBU split shares are formatted from their artifact nodes", async () => {

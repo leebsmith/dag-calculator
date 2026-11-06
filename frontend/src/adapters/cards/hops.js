@@ -7,34 +7,23 @@ import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hop
 import { createHopFormatters } from "../../views/producer/hopFormat.js";
 import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
 import {
-  hopAlphaInputValue,
-  hopAlphaIsOutsideStock,
-  hopAlphaLabel,
-  hopAlphaStockLabel,
-  hopBoilPctLabel,
-  hopFormLabel,
-  hopIbuLabel,
-  hopMinutesLabel,
-  hopAdditionLabel,
-  hopPctLabel,
-  mergeBoilRows,
-  mergeWhirlpoolRows,
-  BOIL_HOP_FORMS,
-  WHIRLPOOL_HOP_FORMS,
+  hopAlphaInputValue, hopAlphaIsOutsideStock, hopAlphaLabel, hopAlphaStockLabel,
+  hopBoilPctLabel, hopFormLabel, hopIbuLabel, hopMinutesLabel, hopAdditionLabel,
+  hopPctLabel, hopStockRecord, mergeBoilRows, mergeWhirlpoolRows,
+  BOIL_HOP_FORMS, WHIRLPOOL_HOP_FORMS,
 } from "../../views/producer/hopRows.js";
 import { countLabel, cycleUnit, formatPercent, formatWithDecimals, isFiniteNumber, resultCounter } from "../../utils.js";
 import { reportError } from "../../observability.js";
 import { boilPolicyDescriptors, makeBoilRow } from "../../views/producer/boilPolicy.js";
 import {
-  makeWhirlpoolRow,
-  whirlpoolPolicyDescriptors,
-  whirlpoolTimelineDescriptors,
+  makeWhirlpoolRow, readWhirlpoolCeiling, whirlpoolCeilingBadge,
+  whirlpoolPolicyDescriptors, whirlpoolTimelineDescriptors,
 } from "../../views/producer/whirlpoolPolicy.js";
 
 const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
 const HOP_MASS_KEY = "hop.mass";
 
-const MAX_VISIBLE = 25;
+const MAX_VISIBLE = 30;
 
 function resolveOrNull(engine, path) {
   try {
@@ -113,6 +102,7 @@ export function registerHopCard(app, ctx) {
     categoryField: "purpose",
     makeRow: (hop, a) => makeWhirlpoolRow(hop, WHIRLPOOL_ROW_DEFAULTS, a.whirlpoolHopCatalogForm),
     maxVisible: MAX_VISIBLE,
+    rowBadge: whirlpoolCeilingBadge,
     itemMeta: (item) => [
       item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
       isFiniteNumber(item.alpha_acid_pct)
@@ -146,6 +136,7 @@ export function registerHopCard(app, ctx) {
   Object.assign(app, {
     hopRows: [],
     whirlpoolHopRows: [],
+    whirlpoolCoolingCeiling: [],
     boilHopMassKg: null,
     whirlpoolHopMassKg: null,
     hopBoundaryTotalMassKg: null,
@@ -201,11 +192,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopAlphaRange(row) {
-      return hopAlphaStockLabel(ctx.cache.references.hop?.[row?.hop_id]);
+      return hopAlphaStockLabel(hopStockRecord(ctx.cache, row?.hop_id));
     },
 
     hopAlphaOutsideStock(row) {
-      return hopAlphaIsOutsideStock(row, ctx.cache.references.hop?.[row?.hop_id]);
+      return hopAlphaIsOutsideStock(row, hopStockRecord(ctx.cache, row?.hop_id));
     },
 
     // Batch-scoped measurement edit: the row is batch data, not a record. The
@@ -433,6 +424,11 @@ export function refreshHopCard(app, ctx) {
     whirlpoolIbu,
     volume
   );
+  app.whirlpoolCoolingCeiling = readWhirlpoolCeiling(
+    engine,
+    (path) => resolveOrNull(engine, path),
+    N
+  );
   app.boilHopMassKg = resolveOrNull(engine, N.boilMass);
   app.whirlpoolHopMassKg = resolveOrNull(engine, N.whirlpoolMass);
   app.boilHopAlphaMassKg = resolveOrNull(engine, N.boilAlphaMass);
@@ -445,6 +441,7 @@ export const KEYS = [
   ...catalogDraftKeys("whirlpoolHop", "WhirlpoolHop"),
   "hopRows",
   "whirlpoolHopRows",
+  "whirlpoolCoolingCeiling",
   "boilHopMassKg",
   "whirlpoolHopMassKg",
   "boilHopAlphaMassKg",
@@ -503,6 +500,8 @@ export const KEYS = [
   "whirlpoolStartBandValue",
   "whirlpoolStartBandHint",
   "setWhirlpoolStartBand",
+  "whirlpoolCeilingMinute",
+  "whirlpoolCeilingTemp",
   "whirlpoolTimelineState",
   "whirlpoolInferredChills",
   "whirlpoolZeroRestNote",
