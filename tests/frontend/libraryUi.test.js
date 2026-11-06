@@ -1,14 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { registerLibraryUi } from "../../frontend/src/adapters/libraryUi.js";
+import {
+  createLibraryLayers,
+  KEYS as LIBRARY_KEYS,
+  registerLibraryUi,
+} from "../../frontend/src/adapters/libraryUi.js";
 import { createModalFocusManager } from "../../frontend/src/adapters/modalFocus.js";
 import {
   CATALOGS,
   IDENTITY_KINDS,
   INGREDIENT_KINDS,
 } from "../../frontend/src/store/userCatalog.js";
-import { artifact } from "../guards/util.js";
+import { artifact, read } from "../guards/util.js";
 
 const ENGINE = {
   call: () => {
@@ -65,6 +69,32 @@ function setup({
 function field(app, name) {
   return app.libraryFields.find((spec) => spec.field === name);
 }
+
+const THIS_FREE_MODULES = [
+  "frontend/src/adapters/libraryFields.js",
+  "frontend/src/adapters/libraryListEditor.js",
+  "frontend/src/adapters/libraryComposition.js",
+];
+
+test("the library layers cover the declared surface without an app", () => {
+  const layers = createLibraryLayers({
+    artifact: artifact(),
+    engine: ENGINE,
+    cache: { seeds: {} },
+    modalFocus: createModalFocusManager(),
+    getView: () => ({ activeKind: "malt", libraryRecords: [], unitMode: {} }),
+  });
+  const keys = layers.flatMap((layer) => Object.getOwnPropertyNames(layer));
+
+  assert.equal(layers.length, 4);
+  assert.deepEqual([...new Set(keys)].sort(), [...LIBRARY_KEYS].sort());
+});
+
+test("the library layer modules address the app through getView, not this", () => {
+  for (const file of THIS_FREE_MODULES) {
+    assert.doesNotMatch(read(file), /\bthis\./, `${file}: no this access`);
+  }
+});
 
 test("the surface has two sections: identity sources and formulation ingredients", () => {
   const { app } = setup();

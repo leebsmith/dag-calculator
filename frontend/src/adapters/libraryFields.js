@@ -40,17 +40,16 @@ function numberField(field, spec, unitMode) {
   };
 }
 
-export function installLibraryFields(app, ctx) {
-  const { artifact, cache } = ctx;
-
-  Object.defineProperties(app, {
+export function createLibraryFields({ artifact, cache, getView }) {
+  return Object.defineProperties({}, {
     activeSchema: {
       configurable: true,
       get() {
-        const meta = CATALOGS[this.activeKind];
+        const view = getView();
+        const meta = CATALOGS[view.activeKind];
         if (!meta) return {};
         if (meta.schemaSource === "records") {
-          return schemaFor(this.activeKind)?.fields ?? {};
+          return schemaFor(view.activeKind)?.fields ?? {};
         }
         return artifact.primitive_schemas?.[meta.schema] ?? {};
       },
@@ -58,9 +57,10 @@ export function installLibraryFields(app, ctx) {
     libraryFields: {
       configurable: true,
       get() {
-        const meta = CATALOGS[this.activeKind];
+        const view = getView();
+        const meta = CATALOGS[view.activeKind];
         if (!meta) return [];
-        const schema = this.activeSchema ?? {};
+        const schema = view.activeSchema ?? {};
         return Object.entries(schema)
           .filter(([field]) => field !== meta.idField && !isCapturedField(field))
           .map(([field, spec]) => {
@@ -71,7 +71,7 @@ export function installLibraryFields(app, ctx) {
                 kind: "list",
                 fields: Object.entries(spec.item ?? {}).map(([itemField, itemSpec]) =>
                   itemSpec.dimension
-                    ? numberField(itemField, itemSpec, this.unitMode)
+                    ? numberField(itemField, itemSpec, view.unitMode)
                     : { field: itemField, label: itemField, kind: "text" }
                 ),
               };
@@ -98,7 +98,7 @@ export function installLibraryFields(app, ctx) {
               };
             }
             if (!spec.dimension) return { field, label: field, kind: "text" };
-            return numberField(field, spec, this.unitMode);
+            return numberField(field, spec, view.unitMode);
           });
       },
     },

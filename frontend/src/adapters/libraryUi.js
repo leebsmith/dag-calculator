@@ -8,9 +8,9 @@
 // never references a batch.
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
-import { installLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
-import { installLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
-import { KEYS as compositionKeys, installLibraryComposition } from "./libraryComposition.js";
+import { createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
+import { createLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
+import { createLibraryComposition, KEYS as compositionKeys } from "./libraryComposition.js";
 import { filterCatalog } from "../views/catalog.js";
 import { createModalFocusManager } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
@@ -380,17 +380,19 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
   return actions;
 }
 
+export function createLibraryLayers(ctx) {
+  return [
+    createLibraryFields(ctx), createLibraryListEditor(ctx),
+    createLibraryComposition(ctx), createLibraryUi(ctx),
+  ];
+}
+
 export function registerLibraryUi(app, ctx) {
-  const actions = createLibraryUi({
-    ...ctx,
-    modalFocus: ctx.modalFocus ?? createModalFocusManager(),
-    getView: ctx.getView ?? (() => app),
-  });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  installLibraryFields(app, ctx);
-  installLibraryListEditor(app, ctx);
-  installLibraryComposition(app);
-  return actions;
+  const modalFocus = ctx.modalFocus ?? createModalFocusManager();
+  const getView = ctx.getView ?? (() => app);
+  const layers = createLibraryLayers({ ...ctx, modalFocus, getView });
+  for (const layer of layers) Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
+  return layers.at(-1);
 }
 
 export const KEYS = [
