@@ -75,7 +75,10 @@ const MASH = [
 const BREW_DAY = ["frontend/src/adapters/cards/brew-day.js"];
 const DRY_HOPS = ["frontend/src/adapters/cards/dry-hops.js"];
 const DRY_HOPS_AND_CATALOG = [...DRY_HOPS, ...CATALOG_DRAFT];
-const WATER = ["frontend/src/adapters/cards/water.js"];
+const WATER = [
+  "frontend/src/adapters/cards/water.js",
+  "frontend/src/adapters/cards/waterCardActions.js",
+];
 const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
 
 const STYLE_PARTIALS = ["step-style.html"];
