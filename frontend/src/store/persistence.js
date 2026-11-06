@@ -3,6 +3,10 @@
 // the step app, and the timer functions are injected by the composition root.
 
 import { DRAFT_SCHEMA_VERSION } from "./snapshot.js";
+import {
+  initialPersistenceState,
+  reducePersistenceState,
+} from "./persistenceStateMachine.js";
 
 export class UnsupportedBatchError extends Error {
   constructor(message) {
@@ -42,17 +46,17 @@ export function createPersistenceManager({
   retryDelays = [1000, 2000, 4000],
 } = {}) {
   let active = null; // { id, name, status, trashed, persisted, updated_at }
-  let dirty = false;
   let saveTimer = null;
-  let saveState = "idle";
-  let conflictRemote = null;
   let onStateChange = null;
+  let state = initialPersistenceState(retryDelays);
 
   const currentApp = () => (typeof app === "function" ? app() : app);
 
-  function setSaveState(state) {
-    saveState = state;
-    onStateChange?.({ state, conflictRemote });
+  function dispatch(action) {
+    const next = reducePersistenceState(state, action);
+    state = next.state;
+    onStateChange?.({ state: state.saveState, conflictRemote: state.conflictRemote });
+    return next.effects;
   }
 
   function batchSeam() {
@@ -69,11 +73,11 @@ export function createPersistenceManager({
   }
 
   function getSaveState() {
-    return saveState;
+    return state.saveState;
   }
 
   function getConflictRemote() {
-    return conflictRemote;
+    return state.conflictRemote;
   }
 
   function getActive() {
@@ -86,16 +90,14 @@ export function createPersistenceManager({
       saveTimer = null;
     }
     active = null;
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
+    dispatch({ type: "RESET" });
   }
 
   function list() {
     return batchSeam().listBatches();
   }
 
-  async function createWithIdentity({ name, identity, state = null }) {
+  async function createWithIdentity({ name, identity, state: draftState = null }) {
     active = {
       id: crypto.randomUUID(),
       name: name || "Untitled batch",
@@ -104,16 +106,14 @@ export function createPersistenceManager({
       persisted: false,
       updated_at: null,
     };
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
+    dispatch({ type: "RESET" });
     await currentApp()?.loadState({
       identity,
-      roots: state?.roots ?? {},
-      collections: state?.collections ?? {},
-      selections: state?.selections ?? {},
+      roots: draftState?.roots ?? {},
+      collections: draftState?.collections ?? {},
+      selections: draftState?.selections ?? {},
     });
-    dirty = true;
+    dispatch({ type: "EDIT" });
     await saveNow();
     return active;
   }
@@ -127,9 +127,7 @@ export function createPersistenceManager({
       persisted: false,
       updated_at: null,
     };
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
+    dispatch({ type: "RESET" });
     await currentApp()?.loadState({ roots: {}, collections: {}, selections: {} });
     return active;
   }
@@ -145,9 +143,7 @@ export function createPersistenceManager({
       persisted: true,
       updated_at: b.updated_at,
     };
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
+    dispatch({ type: "RESET" });
     await currentApp()?.loadState(loadStatePayload(b));
     return b;
   }
@@ -180,9 +176,7 @@ export function createPersistenceManager({
       persisted: true,
       updated_at: created.updated_at,
     };
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
+    dispatch({ type: "RESET" });
     await currentApp()?.loadState(loadStatePayload(created));
     return created;
   }
@@ -254,8 +248,7 @@ export function createPersistenceManager({
 
   function queueSave({ delay = 400 } = {}) {
     if (!active || active.status !== "draft") return;
-    dirty = true;
-    setSaveState("dirty");
+    dispatch({ type: "EDIT" });
     if (saveTimer) cancel(saveTimer);
     saveTimer = schedule(async () => {
       try {
@@ -271,12 +264,12 @@ export function createPersistenceManager({
       cancel(saveTimer);
       saveTimer = null;
     }
-    if (dirty) await saveNow();
+    if (state.dirty) await saveNow();
   }
 
   async function trashActive() {
     if (!active) return;
-    if (!active.persisted && !dirty) {
+    if (!active.persisted && !state.dirty) {
       clearActive();
       return;
     }
@@ -308,8 +301,8 @@ export function createPersistenceManager({
   async function saveNow({ force = false } = {}) {
     if (!active || active.status !== "draft") return;
     let lastError;
-    for (let attempt = 0; attempt <= retryDelays.length; attempt++) {
-      setSaveState("saving");
+    dispatch({ type: "SAVE_START" });
+    for (;;) {
       const payload = { name: active.name, ...currentApp().draftState() };
       try {
         const updated = await batchSeam().upsertBatch(
@@ -319,32 +312,24 @@ export function createPersistenceManager({
           force
         );
         active = { ...active, persisted: true, updated_at: updated.updated_at };
-        dirty = false;
-        conflictRemote = null;
-        setSaveState("idle");
+        dispatch({ type: "SAVE_SUCCESS" });
         return;
       } catch (err) {
         if (err?.code === "CONFLICT") {
-          markConflict(err.details?.current ?? null);
+          dispatch({ type: "CONFLICT", remote: err.details?.current ?? null });
           return;
         }
         lastError = err;
-        if (attempt < retryDelays.length) {
-          await new Promise((resolve) => schedule(resolve, retryDelays[attempt]));
-        }
+        const effects = dispatch({ type: "SAVE_FAILURE" });
+        const retry = effects.find((effect) => effect.type === "RETRY");
+        if (!retry) throw lastError;
+        await new Promise((resolve) => schedule(resolve, retry.delay));
       }
     }
-    setSaveState("error");
-    throw lastError;
-  }
-
-  function markConflict(remote) {
-    conflictRemote = remote;
-    setSaveState("conflict");
   }
 
   async function resolveConflictByReload() {
-    const remote = conflictRemote;
+    const remote = state.conflictRemote;
     if (!remote) return;
     active = {
       id: remote.id,
@@ -354,16 +339,14 @@ export function createPersistenceManager({
       persisted: true,
       updated_at: remote.updated_at,
     };
-    dirty = false;
-    conflictRemote = null;
-    setSaveState("idle");
+    dispatch({ type: "RESET" });
     await currentApp()?.loadState(loadStatePayload(remote));
   }
 
   return {
     setStateObserver,
     setRetryDelays(delays) {
-      retryDelays = delays;
+      state = reducePersistenceState(state, { type: "SET_RETRY_DELAYS", delays }).state;
     },
     getSaveState,
     getConflictRemote,
