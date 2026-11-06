@@ -43,6 +43,7 @@ SECTIONS = (
     "batch-facts",
     "mash-rests",
     "hops",
+    "process",
     "yeast",
     "volume-ledger",
     "liquor-ledger",
@@ -144,6 +145,14 @@ def test_the_checklist_section_renders(render_once) -> None:
 
     assert rendered.data.startswith(b"%PDF")
     assert rendered.sections == ("checklist",)
+    assert rendered.pages >= 1
+
+
+def test_the_process_notes_section_renders(render_once) -> None:
+    rendered = render_once(bundle(), parse_spec(sections="process"))
+
+    assert rendered.data.startswith(b"%PDF")
+    assert rendered.sections == ("process",)
     assert rendered.pages >= 1
 
 

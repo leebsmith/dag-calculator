@@ -569,6 +569,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
         "batch-facts",
         "mash-rests",
         "hops",
+        "process",
         "yeast",
         "volume-ledger",
         "liquor-ledger",

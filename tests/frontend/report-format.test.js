@@ -478,6 +478,23 @@ test("the checklist table carries generated steps and blank observations", async
   }
 });
 
+test("process notes print in order and skip blank rows", async () => {
+  const app = await booted();
+  app.engine.setCollection("batch.process_notes", [
+    { text: "0.5 oz (14 g) lemon peel at flame-out" },
+    { text: "   " },
+    { text: "0.05 oz (1.5 g) fresh-grated ginger at flame-out" },
+  ]);
+  app.compute();
+
+  const rows = app.reportFormattedTables()["batch.process_notes"];
+
+  assert.deepEqual(
+    rows.map((row) => row.note.text),
+    ["0.5 oz (14 g) lemon peel at flame-out", "0.05 oz (1.5 g) fresh-grated ginger at flame-out"]
+  );
+});
+
 test("the checklist level filters the frozen table and names N/A steps", async () => {
   const app = await booted();
 

@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_127 paths_
+_129 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -75,6 +75,8 @@ _127 paths_
 | `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
 | `batch.late_addition_volume_l` | Late-addition volume | derived | volume | L | 1 | — |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
+| `batch.process_notes` | Process notes | collection | — | — | — | — |
+| `batch.process_notes.text` | Note | field | — | — | — | — |
 | `batch.realized_abv` | ABV | derived | abv | pct (%) | 1 | — |
 | `batch.realized_fg` | Final gravity | derived | gravity | Plato (°P) | 1 | — |
 | `batch.runnings_ratio` | Runnings ratio (r) | derived | dimensionless | — | 2 | — |

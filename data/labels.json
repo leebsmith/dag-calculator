@@ -151,6 +151,12 @@
     "label": "Liquor-to-Grist Ratio",
     "hint": "Strike water per grist mass; follows the Mash Thickness unit preference."
   },
+  "batch.process_notes": {
+    "label": "Process notes"
+  },
+  "batch.process_notes.text": {
+    "label": "Note"
+  },
   "batch.realized_abv": {
     "label": "ABV"
   },

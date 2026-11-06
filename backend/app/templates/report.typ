@@ -8,6 +8,7 @@
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/mash-rests.typ": present-mash-rests, render-mash-rests
 #import "sections/hops.typ": present-hops, render-hops
+#import "sections/process.typ": present-process, render-process
 #import "sections/yeast.typ": present-yeast, render-yeast
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 #import "sections/liquor-ledger.typ": present-liquor-ledger, render-liquor-ledger
@@ -25,6 +26,7 @@
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
   (id: "mash-rests", title: "Mash Rests", present: present-mash-rests, render: render-mash-rests),
   (id: "hops", title: "Hops", present: present-hops, render: render-hops),
+  (id: "process", title: "Process notes", present: present-process, render: render-process),
   (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
   (id: "liquor-ledger", title: "Liquor Ledger", present: present-liquor-ledger, render: render-liquor-ledger),

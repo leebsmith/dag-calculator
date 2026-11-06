@@ -134,6 +134,11 @@ DRY_HOPS = [
     },
 ]
 
+PROCESS_NOTES = [
+    {"text": "0.5 oz (14 g) lemon peel at flame-out"},
+    {"text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out"},
+]
+
 RECORD = {
     "name": "House Pale",
     "status": "frozen",
@@ -190,6 +195,7 @@ RECORD = {
         "batch.boil_hops": BOIL_HOPS,
         "batch.whirlpool_hops": WHIRLPOOL_HOPS,
         "batch.dry_hops": DRY_HOPS,
+        "batch.process_notes": PROCESS_NOTES,
     },
     "selections": {
         "batch.yeast": {
@@ -1111,6 +1117,8 @@ PAYLOAD = FreezePayload(
             ),
             "batch.whirlpool_hops.notes": NodePresentation(label="Notes"),
             "batch.dry_hops": NodePresentation(label="Dry hops"),
+            "batch.process_notes": NodePresentation(label="Process notes"),
+            "batch.process_notes.text": NodePresentation(label="Note"),
             "batch.dry_hops.hop_id": NodePresentation(label="Hop ID"),
             "batch.dry_hops.variety": NodePresentation(label="Hop"),
             "batch.dry_hops.product_type": NodePresentation(
@@ -1555,6 +1563,9 @@ PAYLOAD = FreezePayload(
                 "contact": FormattedValue(text="Terminal gravity"),
                 "detail": FormattedValue(text="—"),
             },
+        ],
+        "batch.process_notes": [
+            {"note": FormattedValue(text=row["text"])} for row in PROCESS_NOTES
         ],
         "report.hop_strategy": [
             {

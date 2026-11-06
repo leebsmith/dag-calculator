@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:b0f881ba3f83c6ee3afaf8f0133a991407b1d4458a225acb68d3ca591f499ded",
+    "hash": "sha256:14e757d1a08c5c1be941198546126e90c11e7f1bfe20e40335bc573db1830d98",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -2366,6 +2366,9 @@
             "type": "boolean"
           },
           "skip_reason": {}
+        },
+        "process_note_row": {
+          "text": {}
         }
       },
       "nodes": {
@@ -5509,6 +5512,10 @@
           "kind": "collection",
           "item_schema": "brew_checklist_step"
         },
+        "batch.process_notes": {
+          "kind": "collection",
+          "item_schema": "process_note_row"
+        },
         "batch.checklist_level": {
           "kind": "choice",
           "taxonomy": "checklist_level",
@@ -7843,6 +7850,26 @@
         "options": null,
         "option_labels": null
       },
+      "batch.process_notes": {
+        "label": "Process notes",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.process_notes.text": {
+        "label": "Note",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "batch.dry_hops.hop_id": {
         "label": "Hop ID",
         "dimension": null,
@@ -8180,7 +8207,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:02acc978992241c691d49506ed92424778936748f8e2b59c39d4cf0e5b0fa0a2"
+    "hash": "sha256:86ad09a91328e6901ad0bee0d07deef5dcca20849fd5c8777e8443e9c298ac60"
   },
   "batch": {
     "id": "frozen-1",
@@ -8602,6 +8629,14 @@
           "contact_until": "terminal_gravity",
           "time_of_application": "",
           "notes": ""
+        }
+      ],
+      "batch.process_notes": [
+        {
+          "text": "0.5 oz (14 g) lemon peel at flame-out"
+        },
+        {
+          "text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out"
         }
       ]
     },
@@ -9721,6 +9756,22 @@
         }
       }
     ],
+    "batch.process_notes": [
+      {
+        "note": {
+          "text": "0.5 oz (14 g) lemon peel at flame-out",
+          "number": null,
+          "unit": null
+        }
+      },
+      {
+        "note": {
+          "text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out",
+          "number": null,
+          "unit": null
+        }
+      }
+    ],
     "report.hop_strategy": [
       {
         "text": {
@@ -10103,5 +10154,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:3310ada6c682bc28bade26e020bcad2637a61edd6aa26e809c78b54969f7b13c"
+  "content_hash": "sha256:5853ec28940856643dde34eac3948c48d4e003a95a03d955838227396bf57714"
 }

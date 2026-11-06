@@ -2382,6 +2382,9 @@
         "type": "boolean"
       },
       "skip_reason": {}
+    },
+    "process_note_row": {
+      "text": {}
     }
   },
   "nodes": {
@@ -5364,6 +5367,10 @@
     "batch.brew_checklist": {
       "kind": "collection",
       "item_schema": "brew_checklist_step"
+    },
+    "batch.process_notes": {
+      "kind": "collection",
+      "item_schema": "process_note_row"
     },
     "batch.checklist_level": {
       "kind": "choice",

@@ -42,6 +42,8 @@ export const generatedRegistry = {
   "batch.hlt_starting_volume_l": {"label":"HLT starting volume"},
   "batch.late_addition_intent": {"label":"Late addition mode","hint":"Dose by mass, or author the sugar share of total post-boil extract.","optionLabels":{"dose":"Dose by mass","share":"Share of extract"}},
   "batch.mash_thickness_l_per_kg": {"label":"Liquor-to-Grist Ratio","hint":"Strike water per grist mass; follows the Mash Thickness unit preference."},
+  "batch.process_notes": {"label":"Process notes"},
+  "batch.process_notes.text": {"label":"Note"},
   "batch.realized_abv": {"label":"ABV"},
   "batch.realized_fg": {"label":"Final gravity"},
   "batch.runnings_ratio": {"label":"Runnings ratio (r)","decimals":2,"hint":"Resolved V_run1 / V_run2. Under the runoff-ratio topology it is the held constraint; under liquor-to-grist it is derived from the split."},
