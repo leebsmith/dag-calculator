@@ -78,18 +78,18 @@
 
 ## Phase 4 — Rules and documentation
 
-- [ ] **4.1 Draft `DESIGN.md`**
-  - [ ] Add root `DESIGN.md` with rules R1–R6 from the audit, each with its enforcing guard.
-  - [ ] Add `DESIGN.md` to the README source-of-truth table.
-  - [ ] Gate: `make check`, `make test`.
-  - [ ] Commit: `Codify the frontend architecture rules`
+- [x] **4.1 Draft `DESIGN.md`**
+  - [x] Add root `DESIGN.md` with rules R1–R6 from the audit, each with its enforcing guard.
+  - [x] Add `DESIGN.md` to the README source-of-truth table.
+  - [x] Gate: `make check`, `make test`.
+  - [x] Commit: `Codify the frontend architecture rules`
 
-- [ ] **4.2 Implement the import-direction guard (R3)**
-  - [ ] Add `tests/guards/import-boundaries.test.js`:
+- [x] **4.2 Implement the import-direction guard (R3)**
+  - [x] Add `tests/guards/import-boundaries.test.js`:
         `engine/` imports nothing above it; `views/` never imports `store/` or `adapters/`;
         `store/` never imports `adapters/`.
-  - [ ] Gate: the new guard plus `make check`, `make test`.
-  - [ ] Commit: `Guard the frontend import direction`
+  - [x] Gate: the new guard plus `make check`, `make test`.
+  - [x] Commit: `Guard the frontend import direction`
 
 ## Final
 

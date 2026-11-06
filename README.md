@@ -10,6 +10,9 @@ backend with Firebase auth and Firestore persistence.
 - **Business logic** lives in [`data/artifact.json`](data/artifact.json) — the
   canonical DAG. The engine (`frontend/src/engine/`) interprets it; tests enforce it.
 - **Documents** explain the model and its history, but never override the artifact.
+- **[`DESIGN.md`](DESIGN.md)** — the frontend architecture contract: composition
+  point, live-view reactivity, dependency direction, refresh contract, and the
+  guard that enforces each rule.
 
 ## Layout
 
