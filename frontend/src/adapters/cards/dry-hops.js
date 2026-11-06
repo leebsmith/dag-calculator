@@ -15,7 +15,12 @@ import {
   optionLabel,
   resultCounter,
 } from "../../utils.js";
-import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
+import {
+  catalogDraftKeys,
+  catalogDraftLayer,
+  createCatalogDraft,
+  installCatalogDraft,
+} from "./catalogDraft.js";
 
 const MAX_VISIBLE = 25;
 const DRY_HOP_FORM_VALUES = DRY_HOP_FORMS.map((form) => form.value);
@@ -185,6 +190,13 @@ export function createDryHopCard({ artifact, getView }) {
   const actions = dryHopActions({ artifact, getView });
   Object.defineProperties(actions, dryHopDescriptors(getView));
   return actions;
+}
+
+export function createDryHopLayers(ctx) {
+  return [
+    catalogDraftLayer(createCatalogDraft(ctx, dryHopDraftConfig(ctx), ctx.registry)),
+    createDryHopCard(ctx),
+  ];
 }
 
 export function registerDryHopCard(app, ctx = {}) {

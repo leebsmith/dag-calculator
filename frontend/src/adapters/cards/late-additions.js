@@ -1,7 +1,12 @@
 // Late sugar additions card: definite-mass rows dosed from the sugar catalog.
 // Uses the shared catalog/draft helper; bespoke bits are the summary readouts.
 
-import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
+import {
+  catalogDraftKeys,
+  catalogDraftLayer,
+  createCatalogDraft,
+  installCatalogDraft,
+} from "./catalogDraft.js";
 import { allocationDescriptors, displayDescriptors, stateDescriptors } from "./lateAdditionGetters.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import { columnValueLabel, sugarEffectLabels } from "../../views/producer/lateAdditionRows.js";
@@ -242,6 +247,13 @@ export function createLateAdditionsCard(ctx) {
     ...allocationDescriptors({ ...ctx, reportError: ctx.observability?.reportError }),
   });
   return actions;
+}
+
+export function createLateAdditionsLayers(ctx) {
+  return [
+    catalogDraftLayer(createCatalogDraft(ctx, SUGAR_CONFIG, ctx.registry)),
+    createLateAdditionsCard(ctx),
+  ];
 }
 
 export function registerLateAdditionsCard(app, ctx = {}) {

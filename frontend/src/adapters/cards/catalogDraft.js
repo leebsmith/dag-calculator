@@ -317,6 +317,15 @@ export function createCatalogDraft(ctx, config, registry) {
   };
 }
 
+// One layer object for `composeLayers`: accessors stay accessors, state and
+// methods stay plain members. The layer factories below never receive an app.
+export function catalogDraftLayer({ state, methods, descriptors }) {
+  const layer = {};
+  Object.defineProperties(layer, descriptors);
+  Object.assign(layer, state, methods);
+  return layer;
+}
+
 export function installCatalogDraft(app, ctx, config) {
   const getView = ctx.getView ?? (() => app);
   const registry = ctx.registry ?? createCatalogRegistry();
@@ -324,13 +333,10 @@ export function installCatalogDraft(app, ctx, config) {
   Object.defineProperties(app, chrome.state);
   Object.defineProperties(app, chrome.getters);
   Object.assign(app, chrome.methods);
-  const { state, methods, descriptors } = createCatalogDraft(
-    { ...ctx, getView },
-    config,
-    registry
+  const layer = catalogDraftLayer(
+    createCatalogDraft({ ...ctx, getView }, config, registry)
   );
-  Object.assign(app, state, methods);
-  Object.defineProperties(app, descriptors);
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
 }
 
 // The app members installCatalogDraft assigns, derived from the same name

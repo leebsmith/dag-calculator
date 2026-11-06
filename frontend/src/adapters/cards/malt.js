@@ -2,7 +2,12 @@
 // Uses the shared catalog/draft helper; bespoke bits are the parts/validation
 // readouts, trace flag, and clone action.
 
-import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
+import {
+  catalogDraftKeys,
+  catalogDraftLayer,
+  createCatalogDraft,
+  installCatalogDraft,
+} from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel, formatWithDecimals } from "../../utils.js";
 import {
@@ -188,6 +193,13 @@ export function createMaltCard({ getView }) {
     },
   });
   return actions;
+}
+
+export function createMaltLayers(ctx) {
+  return [
+    catalogDraftLayer(createCatalogDraft(ctx, MALT_CONFIG, ctx.registry)),
+    createMaltCard(ctx),
+  ];
 }
 
 export function registerMaltCard(app, ctx = {}) {

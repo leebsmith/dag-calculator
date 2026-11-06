@@ -1,8 +1,17 @@
 // Hops card: boil additions (Tinseth) and whirlpool additions (Arrhenius
 // cooling integral), both authored by IBU share.
 
-import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
-import { installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
+import {
+  catalogDraftKeys,
+  catalogDraftLayer,
+  createCatalogDraft,
+  installCatalogDraft,
+} from "./catalogDraft.js";
+import {
+  createCoolingCurvePicker,
+  installCoolingCurvePicker,
+  KEYS as coolingCurveKeys,
+} from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
 import { hopSectionState } from "../../views/producer/hopSections.js";
 import {
@@ -240,6 +249,18 @@ export function createHopCard(
     ...fieldDescriptors(getView),
   });
   return actions;
+}
+
+export function createHopLayers(ctx, deps = {}) {
+  const formatters =
+    deps.formatters ??
+    createHopFormatters({ artifact: ctx.artifact, engine: ctx.engine, ui: ctx.ui });
+  return [
+    catalogDraftLayer(createCatalogDraft(ctx, hopDraftConfig(ctx), ctx.registry)),
+    catalogDraftLayer(createCatalogDraft(ctx, whirlpoolDraftConfig(ctx), ctx.registry)),
+    createHopCard(ctx, formatters),
+    createCoolingCurvePicker(ctx, { formatTemp: formatters.formatTemp }),
+  ];
 }
 
 export function registerHopCard(app, ctx = {}) {
