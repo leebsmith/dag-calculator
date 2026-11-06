@@ -7,19 +7,19 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 - Declared members: **770** (525 enumerable, 245 hidden)
 - Installers: **20**
 - Card partials: **19**
-- Installers reading another installer's key: **16 of 20**
-- Cross-owner keys declared in `SHARED`: **48**
+- Installers reading another installer's key: **13 of 20**
+- Cross-owner keys declared in `SHARED`: **45**
 
 ## Installers
 
 | installer | modules | members | card partials | foreign reads |
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
-| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 27 | 1 | 5 |
-| `draftEditor` | `frontend/src/adapters/draftEditor.js` | 81 | 0 | 1 |
+| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 27 | 1 | 4 |
+| `draftEditor` | `frontend/src/adapters/draftEditor.js` | 81 | 0 | 0 |
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
-| `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 2 |
-| `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 55 | 0 | 4 |
+| `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
+| `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 55 | 0 | 0 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 32 | 2 | 1 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 3 |
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 30 | 1 | 6 |
@@ -41,7 +41,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|
 | `activeScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |
 | `addDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `clearInputDraft` | `fieldActions` | `libraryUi`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
+| `clearInputDraft` | `fieldActions` | `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `closeDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `colorDisplay` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `colorUnit` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
@@ -58,11 +58,9 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `draftOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `edit` | `fieldActions` | `hop`, `lateAdditions`, `water` | shared field verbs: the card partials bind the one editing surface |
-| `editDraftCell` | `draftEditor` | `fieldActions` | fieldActions drives a draft cell edit: the inverse of the shared draft grid |
 | `editNumberInput` | `fieldActions` | `lateAdditions`, `mash` | shared field verbs: the card partials bind the one editing surface |
-| `hopStrategy` | `hop` | `snapshot` | the draft snapshot persists the batch-level hop strategy |
-| `inputDraft` | `fieldActions` | `draftEditor`, `lateAdditions`, `libraryUi`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
-| `inputKey` | `fieldActions` | `lateAdditions`, `libraryUi`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
+| `inputDraft` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
+| `inputKey` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `openLibrary` | `libraryUi` | `hop` | the whirlpool picker links to the cooling-curve library tab |
@@ -76,10 +74,9 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `selectWaterTarget` | `water` | `fieldActions` | the generic card shell renders the water target selector |
 | `setColorField` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `setFieldUnit` | `unitActions` | `hop` | unit toggling is shared between the hop card and the generic card shell |
-| `setInputDraft` | `fieldActions` | `libraryUi`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
+| `setInputDraft` | `fieldActions` | `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `setMaltField` | `draftEditor` | `hop`, `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `styleAbvTouched` | `styleNavigator` | `styleTargets` | the style target card mirrors the navigator's touched flag |
-| `styleConformanceReport` | `styleConformance` | `snapshot` | the snapshot exports the conformance verdict captured at freeze |
 | `styleGravityDisplay` | `styleNavigator` | `styleTargets` | the pin input and its readouts print the gravity unit the navigator's plot uses |
 | `styleTargetInfo` | `styleNavigator` | `styleTargets` | the style target card mirrors the navigator's target readout |
 | `syncScalePreviewState` | `lateAdditions` | `styleTargets` | the style card drives the late-addition scale preview; Phase 3 extracts it |

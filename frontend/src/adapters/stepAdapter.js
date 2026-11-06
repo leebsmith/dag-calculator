@@ -88,7 +88,7 @@ export function createStepApp(options = {}) {
 
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
   // reactive state/handlers onto `app` before main.js wraps it in Alpine.reactive.
-  const cardCtx = { engine: session.engine, cache, ui, artifact };
+  const cardCtx = { engine: session.engine, cache, ui, artifact, getView: () => reactiveApp ?? app };
 
   const app = {
     master,
@@ -404,16 +404,12 @@ export function createStepApp(options = {}) {
     configurable: true,
   });
 
-  installNavigation(app, { ui, steps, isEditorActive: options.isEditorActive });
+  installNavigation(app, { ui, steps, isEditorActive: options.isEditorActive, getView: () => reactiveApp ?? app });
   app.dialogFocus = dialogFocus;
-  installFieldActions(app, {
-    artifact,
-    session,
-    refToSelectionMap: attribution.refToSelectionMap,
-  });
-  installDraftEditor(app, { artifact, ui, session });
-  installUnitActions(app, { artifact, ui });
-  installSnapshot(app, { artifact, cache, master, session });
+  installFieldActions(app, { artifact, session, refToSelectionMap: attribution.refToSelectionMap, getView: () => reactiveApp ?? app });
+  installDraftEditor(app, { artifact, ui, session, getView: () => reactiveApp ?? app });
+  installUnitActions(app, { artifact, ui, getView: () => reactiveApp ?? app });
+  installSnapshot(app, { artifact, master, session, getView: () => reactiveApp ?? app });
   for (const register of CARD_INSTALLERS) {
     register(app, cardCtx);
   }

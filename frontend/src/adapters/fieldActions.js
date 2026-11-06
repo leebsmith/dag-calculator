@@ -10,8 +10,8 @@ import { clampBoundsFor } from "../views/registry/presentation.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
 import { reportError } from "../observability.js";
 
-export function installFieldActions(app, { artifact, session, refToSelectionMap }) {
-  Object.assign(app, {
+export function createFieldActions({ artifact, session, refToSelectionMap, getView }) {
+  const actions = {
     inputDrafts: {},
 
     // Number inputs keep the user's raw text while focused; the engine still
@@ -22,48 +22,48 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     },
 
     inputDraft(key, fallback) {
-      return Object.prototype.hasOwnProperty.call(this.inputDrafts, key)
-        ? this.inputDrafts[key]
+      return Object.prototype.hasOwnProperty.call(actions.inputDrafts, key)
+        ? actions.inputDrafts[key]
         : fallback;
     },
 
     setInputDraft(key, raw) {
-      this.inputDrafts[key] = raw;
+      actions.inputDrafts[key] = raw;
     },
 
     clearInputDraft(key) {
-      delete this.inputDrafts[key];
+      delete actions.inputDrafts[key];
     },
 
     editNumberInput(key, field, raw) {
-      this.setInputDraft(key, raw);
-      this.edit(field, raw);
+      actions.setInputDraft(key, raw);
+      actions.edit(field, raw);
     },
 
     commitNumberInput(key, field) {
-      this.clearInputDraft(key);
-      this.commitField(field);
-      this.notify();
+      actions.clearInputDraft(key);
+      actions.commitField(field);
+      getView().notify();
     },
 
     editCellInput(key, field, rowIndex, columnId, raw) {
-      this.setInputDraft(key, raw);
-      this.editCell(field, rowIndex, columnId, raw);
+      actions.setInputDraft(key, raw);
+      actions.editCell(field, rowIndex, columnId, raw);
     },
 
     commitCellInput(key) {
-      this.clearInputDraft(key);
-      this.notify();
+      actions.clearInputDraft(key);
+      getView().notify();
     },
 
     editDraftCellInput(key, rowIndex, columnId, raw) {
-      this.setInputDraft(key, raw);
-      this.editDraftCell(rowIndex, columnId, raw);
+      actions.setInputDraft(key, raw);
+      getView().editDraftCell(rowIndex, columnId, raw);
     },
 
     commitDraftCellInput(key) {
-      this.clearInputDraft(key);
-      this.notify();
+      actions.clearInputDraft(key);
+      getView().notify();
     },
 
     // Clamp an editable value to the envelope of its selected component, when
@@ -88,17 +88,17 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
         raw = toBase(artifact, field.dimension, field.unitId, Number(value), nonlinearFns(artifact, engine));
       }
       // The handoff must read the old solve before the topology root changes.
-      if (field.target.nodeId === N.topology) this.handoffIntensiveValue(raw);
+      if (field.target.nodeId === N.topology) actions.handoffIntensiveValue(raw);
       // Store the raw value live (no envelope clamp here): clamping on every
       // keystroke fights the user mid-typing, so it is deferred to commitField
       // on blur. The report-only relations still flag out-of-range values.
-      this.setRoot(field.target.nodeId, raw);
+      getView().setRoot(field.target.nodeId, raw);
       if (field.control === "selection-picker") {
-        this.pickSelection(field.target.nodeId, raw);
+        getView().pickSelection(field.target.nodeId, raw);
       }
-      if (field.target.scope === "root" && raw) this.copyInCascade(field.target.nodeId);
-      this.scheduleSolve();
-      this.notify();
+      if (field.target.scope === "root" && raw) actions.copyInCascade(field.target.nodeId);
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     // Clamp an envelope-bounded number field to its selected component's range
@@ -106,13 +106,13 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     // isn't fought; this enforces the envelope only when the value is final.
     commitField(field) {
       if (!field.editable || !field.target || field.control !== "number") return;
-      const current = this.master.getRoot(field.target.nodeId);
+      const current = getView().master.getRoot(field.target.nodeId);
       if (typeof current !== "number") return;
-      const clamped = this.clampToSelection(field.target.nodeId, current);
+      const clamped = actions.clampToSelection(field.target.nodeId, current);
       if (clamped !== current) {
-        this.setRoot(field.target.nodeId, clamped);
-        this.scheduleSolve();
-        this.notify();
+        getView().setRoot(field.target.nodeId, clamped);
+        getView().scheduleSolve();
+        getView().notify();
       }
     },
 
@@ -124,15 +124,15 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const nodeId = field?.target?.nodeId;
       if (!nodeId) return;
       if (field.seededReset === "unset") {
-        this.unsetRoot(nodeId);
-        this.scheduleSolve();
-        this.notify();
+        getView().unsetRoot(nodeId);
+        getView().scheduleSolve();
+        getView().notify();
         return;
       }
       if (field.seededValue === undefined) return;
-      this.setRoot(nodeId, field.seededValue);
-      this.scheduleSolve();
-      this.notify();
+      getView().setRoot(nodeId, field.seededValue);
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     // Switching topology reinterprets which intensive root is live. The new
@@ -159,7 +159,7 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
         typeof solved === "number" && Number.isFinite(solved) && solved > 0
           ? solved
           : artifact.constants[constant]?.value;
-      if (typeof value === "number") this.setRoot(nodeId, value);
+      if (typeof value === "number") getView().setRoot(nodeId, value);
     },
 
     // One-shot pin for the thickness-ceiling warning: only offered while the
@@ -175,39 +175,39 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
         typeof floor === "number" ? floor : 0
       );
       if (target <= 0) return;
-      this.setRoot(N.mashThickness, target);
-      this.scheduleSolve();
-      this.notify();
+      getView().setRoot(N.mashThickness, target);
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     runFindingAction(finding) {
       if (!finding?.action) return;
-      this.runAction(finding.action);
+      actions.runAction(finding.action);
     },
 
     // Push the residual (non-declarable) roots that a selection still has to
     // supply. Everything the artifact can express as a `default` is pulled, not
     // pushed, so this list is deliberately tiny (see views/seedDerivations.js).
     resetSeededRoots(selectionNodeId) {
-      for (const { rootId } of derivationsFor(selectionNodeId)) this.unsetRoot(rootId);
+      for (const { rootId } of derivationsFor(selectionNodeId)) getView().unsetRoot(rootId);
     },
 
     copyInCascade(refRootId) {
       const selectionNode = refToSelectionMap.get(refRootId);
       if (!selectionNode) return;
-      this.resetSeededRoots(selectionNode);
+      actions.resetSeededRoots(selectionNode);
       const component = session.getEngine().get(selectionNode);
       if (!component) return;
       for (const { rootId, derive } of derivationsFor(selectionNode)) {
         const value = derive(component);
         if (typeof value === "number" || (typeof value === "string" && value !== "")) {
-          this.setRoot(rootId, value);
+          getView().setRoot(rootId, value);
         }
       }
     },
 
     runAction(action) {
-      this[action.handler]?.();
+      actions[action.handler]?.();
     },
 
     editCell(field, rowIndex, columnId, value) {
@@ -230,17 +230,17 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       // over their IBU pool.
       let next = rows;
       if (columnId === "parts") {
-        if (field.target.nodeId === N.majorMalts) next = this.normalizeGrist(rows);
+        if (field.target.nodeId === N.majorMalts) next = actions.normalizeGrist(rows);
         else if (
           field.target.nodeId === N.boilHops ||
           field.target.nodeId === N.whirlpoolHops
         ) {
-          next = this.normalizeHopRows(rows);
+          next = actions.normalizeHopRows(rows);
         }
       }
       engine.setCollection(field.target.nodeId, next);
-      this.scheduleSolve();
-      this.notify();
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     addRow(field) {
@@ -249,24 +249,24 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
       const schema = artifact.primitive_schemas[node.item_schema] ?? {};
       const defaults = rowDefaults(schema, artifact.taxonomies);
       engine.setCollection(field.target.nodeId, [...(engine.get(field.target.nodeId) ?? []), defaults]);
-      this.scheduleSolve();
-      this.notify();
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     removeRow(field, rowIndex) {
       const engine = session.getEngine();
       const rows = (engine.get(field.target.nodeId) ?? []).filter((_, i) => i !== rowIndex);
       let next = rows;
-      if (field.target.nodeId === N.majorMalts) next = this.normalizeGrist(rows);
+      if (field.target.nodeId === N.majorMalts) next = actions.normalizeGrist(rows);
       else if (
         field.target.nodeId === N.boilHops ||
         field.target.nodeId === N.whirlpoolHops
       ) {
-        next = this.normalizeHopRows(rows);
+        next = actions.normalizeHopRows(rows);
       }
       engine.setCollection(field.target.nodeId, next);
-      this.scheduleSolve();
-      this.notify();
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     // Hamilton-normalize the grain bill's `pct` (fractions summing to 1) from its
@@ -283,11 +283,19 @@ export function installFieldActions(app, { artifact, session, refToSelectionMap 
     // Dispatch a collection-table's add-row action: a bespoke handler named by
     // the manifest, else the generic blank-row add.
     runCollectionAdd(field) {
-      const handler = field.addAction && this[field.addAction];
-      if (typeof handler === "function") handler.call(this);
-      else this.addRow(field);
+      const handler = field.addAction && actions[field.addAction];
+      if (typeof handler === "function") handler();
+      else actions.addRow(field);
     },
-  });
+  };
+  return actions;
+}
+
+export function installFieldActions(app, dependencies = {}) {
+  Object.assign(
+    app,
+    createFieldActions({ ...dependencies, getView: dependencies.getView ?? (() => app) })
+  );
 }
 
 export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

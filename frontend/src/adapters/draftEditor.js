@@ -35,8 +35,8 @@ function draftCellDisplay(artifact, col, value, nl) {
 // AI AGENT HOOKS: Use this installer for every draft-editor state transition,
 // draft-row normalization, and unit-aware draft cell read/write. Do not
 // duplicated this logic elsewhere.
-export function installDraftEditor(app, { artifact, ui, session }) {
-  Object.assign(app, {
+export function createDraftEditor({ artifact, ui, session, getView }) {
+  const actions = {
     draftOpen: false,
     draftNodeId: "",
     draftRows: [],
@@ -46,7 +46,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     draftEntry() {
       for (const step of steps) {
         for (const entry of step.fields) {
-          if (entry && typeof entry === "object" && entry.collection === this.draftNodeId) return entry;
+          if (entry && typeof entry === "object" && entry.collection === getView().draftNodeId) return entry;
         }
       }
       return {};
@@ -56,8 +56,8 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     // `pick(row)` over the draft and formats it in the mass column's display
     // unit (used by the late-additions and trace-malt editors).
     draftMassDisplay(pick) {
-      const col = this.draftColumns.find((c) => c.id === "mass_kg");
-      const total = (this.draftRows ?? []).reduce((sum, r) => sum + (pick(r) || 0), 0);
+      const col = actions.draftColumns.find((c) => c.id === "mass_kg");
+      const total = (getView().draftRows ?? []).reduce((sum, r) => sum + (pick(r) || 0), 0);
       if (!col) return String(total);
       const v = displayValue(
         artifact,
@@ -71,71 +71,71 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     },
 
     openDraft(nodeId) {
-      this.draftNodeId = nodeId;
-      this.draftRows = JSON.parse(JSON.stringify(session.getEngine().get(nodeId) ?? []));
-      this.normalizeDraft();
-      this.draftBaseline = this.draftSnapshot();
-      this.draftDiscardOpen = false;
-      this.draftOpen = true;
+      getView().draftNodeId = nodeId;
+      getView().draftRows = JSON.parse(JSON.stringify(session.getEngine().get(nodeId) ?? []));
+      actions.normalizeDraft();
+      getView().draftBaseline = actions.draftSnapshot();
+      getView().draftDiscardOpen = false;
+      getView().draftOpen = true;
     },
 
     closeDraft() {
-      this.draftOpen = false;
-      this.draftRows = [];
-      this.draftNodeId = "";
-      this.draftBaseline = "";
-      this.draftDiscardOpen = false;
+      getView().draftOpen = false;
+      getView().draftRows = [];
+      getView().draftNodeId = "";
+      getView().draftBaseline = "";
+      getView().draftDiscardOpen = false;
     },
 
     // Cancel is destructive: the draft is scratch state, so a changed draft
     // asks before it is thrown away. Save calls closeDraft directly and never
     // prompts.
     dismissDraftDiscard() {
-      this.draftDiscardOpen = false;
+      getView().draftDiscardOpen = false;
     },
 
     confirmDraftDiscard() {
-      this.draftDiscardOpen = false;
-      this.closeDraft();
+      getView().draftDiscardOpen = false;
+      actions.closeDraft();
     },
 
     draftSnapshot() {
-      return JSON.stringify(this.draftRows ?? []);
+      return JSON.stringify(getView().draftRows ?? []);
     },
 
     saveDraft() {
-      this.seedSugarShareWeights();
+      actions.seedSugarShareWeights();
       session.engine.setCollection(
-        this.draftNodeId,
-        JSON.parse(JSON.stringify(this.normalizeDraft()))
+        getView().draftNodeId,
+        JSON.parse(JSON.stringify(actions.normalizeDraft()))
       );
-      this.closeDraft();
-      this.scheduleSolve();
-      this.notify();
+      actions.closeDraft();
+      getView().scheduleSolve();
+      getView().notify();
     },
 
     // AI AGENT HOOKS: Use this normalizer for every draft row collection that
     // derives its shares from `parts`. Do not duplicated this logic elsewhere.
     normalizeDraft() {
       if (
-        (this.draftNodeId === N.majorMalts ||
-          this.draftNodeId === N.boilHops ||
-          this.draftNodeId === N.whirlpoolHops) &&
-        this.draftRows.length
+        (getView().draftNodeId === N.majorMalts ||
+          getView().draftNodeId === N.boilHops ||
+          getView().draftNodeId === N.whirlpoolHops) &&
+        getView().draftRows.length
       ) {
-        const pcts = hamiltonPct(this.draftRows.map((r) => r.parts));
-        this.draftRows.forEach((r, i) => {
+        const pcts = hamiltonPct(getView().draftRows.map((r) => r.parts));
+        getView().draftRows.forEach((r, i) => {
           r.pct = pcts[i];
         });
       }
-      return this.draftRows;
+      return getView().draftRows;
     },
 
     // Share mode's per-row mass is computed by the artifact on read; a draft is
     // scratch state that is not in the collection, so its preview runs the same
     // allocation without writing the result into the rows.
     draftResolvedRows() {
-      if (this.draftNodeId !== N.sugars || !this.draftRows.length) return [];
+      if (getView().draftNodeId !== N.sugars || !getView().draftRows.length) return [];
       const engine = session.getEngine();
       let intent;
       let budget;
@@ -148,7 +148,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       }
       if (intent !== "share") return [];
       return resolvedSugarMasses({
-        rows: this.draftRows,
+        rows: getView().draftRows,
         budgetKg: typeof budget === "number" && Number.isFinite(budget) ? budget : 0,
         mode: "share",
       });
@@ -158,7 +158,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     // zero mass beside a live extract. Complete the draft with equal weights;
     // the load repair applies the same rule to already-saved batches.
     seedSugarShareWeights() {
-      if (this.draftNodeId !== N.sugars || !this.draftRows.length) return false;
+      if (getView().draftNodeId !== N.sugars || !getView().draftRows.length) return false;
       const engine = session.getEngine();
       let intent;
       let share;
@@ -170,9 +170,9 @@ export function installDraftEditor(app, { artifact, ui, session }) {
         return false;
       }
       if (intent !== "share" || !(share > 0)) return false;
-      const total = this.draftRows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
+      const total = getView().draftRows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
       if (total > 0) return false;
-      this.draftRows.forEach((row) => {
+      getView().draftRows.forEach((row) => {
         row.parts = EQUAL_SUGAR_PARTS;
       });
       return true;
@@ -180,7 +180,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
 
     // Edit a draft cell: the input carries a display value; store its base.
     editDraftCell(ri, colId, value) {
-      const col = this.draftColumns.find((c) => c.id === colId);
+      const col = actions.draftColumns.find((c) => c.id === colId);
       if (!col) return;
       let base = value;
       if (value !== "" && col.dimension) {
@@ -189,85 +189,85 @@ export function installDraftEditor(app, { artifact, ui, session }) {
           ? toBase(artifact, col.dimension, col.displayUnit, n, nonlinearFns(artifact, session.getEngine()))
           : n;
       }
-      this.draftRows[ri][colId] = base;
-      this.normalizeDraft();
+      getView().draftRows[ri][colId] = base;
+      actions.normalizeDraft();
     },
 
     addDraftRow(row) {
-      this.draftRows.push(row);
-      this.normalizeDraft();
+      getView().draftRows.push(row);
+      actions.normalizeDraft();
     },
 
     removeDraftRow(ri) {
-      this.draftRows.splice(ri, 1);
-      this.normalizeDraft();
+      getView().draftRows.splice(ri, 1);
+      actions.normalizeDraft();
     },
 
     patchDraftRow(ri, patch) {
-      Object.assign(this.draftRows[ri], patch);
+      Object.assign(getView().draftRows[ri], patch);
     },
 
     // Inspector field edits (shared by the draft cards). `scale` converts a
     // display input to base (percent inputs use 0.01). Empty clears the field.
     setMaltField(ri, field, value, scale = 1) {
       if (value === "") {
-        this.patchDraftRow(ri, { [field]: undefined });
+        actions.patchDraftRow(ri, { [field]: undefined });
         return;
       }
       const n = Number(value);
-      this.patchDraftRow(ri, { [field]: Number.isFinite(n) ? n * scale : 0 });
+      actions.patchDraftRow(ri, { [field]: Number.isFinite(n) ? n * scale : 0 });
     },
 
     // Color (grain_color) edits in the master unit (Lovibond/EBC) and stores base
     // (Lovibond). The malt/trace inspectors bind to these instead of the raw
     // color_lovibond value, mirroring the collection grids' unit handling.
     colorUnit() {
-      const unitId = this.grainColorUnit();
+      const unitId = actions.grainColorUnit();
       return unitSymbol(UNIT_SYMBOLS, "grain_color", unitId);
     },
 
     grainColorUnit() {
-      return preferredUnit(this.unitMode, "grain_color", "EBC");
+      return preferredUnit(getView().unitMode, "grain_color", "EBC");
     },
 
     colorDisplay(value) {
       if (typeof value !== "number" || !Number.isFinite(value)) return "";
-      return roundTo(displayValue(artifact, "grain_color", this.grainColorUnit(), value), 1);
+      return roundTo(displayValue(artifact, "grain_color", actions.grainColorUnit(), value), 1);
     },
 
     setColorField(ri, value) {
       if (value === "") {
-        this.patchDraftRow(ri, { color_lovibond: undefined });
+        actions.patchDraftRow(ri, { color_lovibond: undefined });
         return;
       }
       const n = Number(value);
-      this.patchDraftRow(ri, {
+      actions.patchDraftRow(ri, {
         color_lovibond: Number.isFinite(n)
-          ? toBase(artifact, "grain_color", this.grainColorUnit(), n)
+          ? toBase(artifact, "grain_color", actions.grainColorUnit(), n)
           : 0,
       });
     },
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     draftDirty: {
       configurable: true,
       get() {
-        return this.draftOpen && this.draftBaseline !== this.draftSnapshot();
+        return getView().draftOpen && getView().draftBaseline !== actions.draftSnapshot();
       },
     },
     draftColumns: {
       configurable: true,
       get() {
-        if (!this.draftNodeId) return [];
+        if (!getView().draftNodeId) return [];
         const columns = resolveCollectionColumns(
           artifact,
           registry,
-          this.draftNodeId,
-          this.draftEntry(),
+          getView().draftNodeId,
+          actions.draftEntry(),
           ui.unitMode
         );
-        if (this.draftNodeId === N.sugars) {
+        if (getView().draftNodeId === N.sugars) {
           const shareMode =
             session.getEngine().get(N.lateAdditionIntent) === "share";
           const visible = columns
@@ -283,7 +283,7 @@ export function installDraftEditor(app, { artifact, ui, session }) {
           }
           return visible;
         }
-        if (this.draftNodeId === H.whirlpoolCollection) {
+        if (getView().draftNodeId === H.whirlpoolCollection) {
           const at = columns.findIndex((column) => column.id === "initial_temp_c");
           const tempColumn = columns[at];
           if (tempColumn) {
@@ -301,10 +301,10 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     draftCeilings: {
       configurable: true,
       get() {
-        if (this.draftNodeId !== H.whirlpoolCollection) return [];
+        if (getView().draftNodeId !== H.whirlpoolCollection) return [];
         const engine = session.getEngine();
         return whirlpoolDraftCeilings({
-          rows: this.draftRows,
+          rows: getView().draftRows,
           startTempC: engine.get(H.whirlpoolStartTemp),
           ambientC: engine.get(H.whirlpoolAmbient),
           kPerMin: 1 / engine.get(H.whirlpoolCoolingTimeConstant),
@@ -315,11 +315,11 @@ export function installDraftEditor(app, { artifact, ui, session }) {
     draftDisplayRows: {
       configurable: true,
       get() {
-        const columns = this.draftColumns;
+        const columns = actions.draftColumns;
         const nl = nonlinearFns(artifact, session.getEngine());
-        const resolved = this.draftResolvedRows();
-        const ceilings = this.draftCeilings;
-        return this.draftRows.map((row, ri) => {
+        const resolved = actions.draftResolvedRows();
+        const ceilings = actions.draftCeilings;
+        return getView().draftRows.map((row, ri) => {
           const out = { ...row };
           for (const col of columns) {
             const value = draftCellDisplay(
@@ -328,12 +328,12 @@ export function installDraftEditor(app, { artifact, ui, session }) {
               draftCellValue(col, row, ri, resolved, ceilings),
               nl
             );
-            if (!(col.editable && typeof this.inputDraft === "function")) {
+            if (!(col.editable && typeof getView().inputDraft === "function")) {
               out[col.id] = value;
               continue;
             }
-            const key = `draft:${this.draftNodeId}:${ri}:${col.id}`;
-            out[col.id] = this.inputDraft(key, value);
+            const key = `draft:${getView().draftNodeId}:${ri}:${col.id}`;
+            out[col.id] = getView().inputDraft(key, value);
           }
           out.ceiling_above = ceilings[ri]?.above === true;
           return out;
@@ -341,6 +341,16 @@ export function installDraftEditor(app, { artifact, ui, session }) {
       },
     },
   });
+  return actions;
+}
+
+export function installDraftEditor(app, dependencies = {}) {
+  const actions = createDraftEditor({
+    ...dependencies,
+    getView: dependencies.getView ?? (() => app),
+  });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftCeilings", "draftDisplayRows", ...CATALOG_CHROME_KEYS];

@@ -29,11 +29,10 @@ function titleOf(meta, item) {
   return item?.[meta?.titleField ?? "name"] ?? identityOf(meta, item);
 }
 
-export function registerLibraryUi(app, ctx) {
-  const { artifact, engine, cache } = ctx;
+export function createLibraryUi({ artifact, engine, cache, getView }) {
   const nl = () => nonlinearFns(artifact, engine);
 
-  Object.assign(app, {
+  const actions = {
     libraryOpen: false,
     librarySection: "sources", // "sources" | "ingredients"
     sourceKind: "style",
@@ -43,9 +42,9 @@ export function registerLibraryUi(app, ctx) {
     libraryDraft: null,
     libraryErrors: [],
     libraryNotice: "",
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     libraryTabs: {
       configurable: true,
       get() {
@@ -61,74 +60,74 @@ export function registerLibraryUi(app, ctx) {
     activeKind: {
       configurable: true,
       get() {
-        return this.librarySection === "sources" ? this.sourceKind : this.libraryTab;
+        return getView().librarySection === "sources" ? getView().sourceKind : getView().libraryTab;
       },
     },
     activeKindHasNotes: {
       configurable: true,
       get() {
-        return Boolean(this.activeSchema?.notes);
+        return Boolean(getView().activeSchema?.notes);
       },
     },
     librarySearchFields: {
       configurable: true,
       get() {
-        const meta = CATALOGS[this.activeKind];
+        const meta = CATALOGS[getView().activeKind];
         const fields = [meta?.titleField ?? "name"];
-        if (this.activeKind === "water_report") fields.push("source_name", "report_id");
-        if (this.activeKindHasNotes) fields.push("notes");
+        if (getView().activeKind === "water_report") fields.push("source_name", "report_id");
+        if (getView().activeKindHasNotes) fields.push("notes");
         return fields;
       },
     },
     libraryRecords: {
       configurable: true,
       get() {
-        void this.libraryRevision;
-        return filterCatalog(this.library.list(this.activeKind), {
-          query: this.librarySearch,
-          searchFields: this.librarySearchFields,
-          includeNotes: this.librarySearchNotes,
+        void getView().libraryRevision;
+        return filterCatalog(getView().library.list(getView().activeKind), {
+          query: getView().librarySearch,
+          searchFields: getView().librarySearchFields,
+          includeNotes: getView().librarySearchNotes,
         });
       },
     },
     librarySeedItems: {
       configurable: true,
       get() {
-        void this.libraryRevision;
-        const meta = CATALOGS[this.activeKind];
+        void getView().libraryRevision;
+        const meta = CATALOGS[getView().activeKind];
         const seeds = cache.seeds[meta?.seedKey] ?? {};
         return filterCatalog(Object.values(seeds), {
-          query: this.librarySearch,
-          searchFields: this.librarySearchFields,
-          includeNotes: this.librarySearchNotes,
+          query: getView().librarySearch,
+          searchFields: getView().librarySearchFields,
+          includeNotes: getView().librarySearchNotes,
         }).slice(0, 50);
       },
     },
     librarySeedCount: {
       configurable: true,
       get() {
-        void this.libraryRevision;
-        const meta = CATALOGS[this.activeKind];
+        void getView().libraryRevision;
+        const meta = CATALOGS[getView().activeKind];
         const seeds = cache.seeds[meta?.seedKey] ?? {};
         return filterCatalog(Object.values(seeds), {
-          query: this.librarySearch,
-          searchFields: this.librarySearchFields,
-          includeNotes: this.librarySearchNotes,
+          query: getView().librarySearch,
+          searchFields: getView().librarySearchFields,
+          includeNotes: getView().librarySearchNotes,
         }).length;
       },
     },
     libraryLoading: {
       configurable: true,
       get() {
-        void this.libraryRevision;
-        return this.library.loading();
+        void getView().libraryRevision;
+        return getView().library.loading();
       },
     },
     libraryError: {
       configurable: true,
       get() {
-        void this.libraryRevision;
-        return this.library.error();
+        void getView().libraryRevision;
+        return getView().library.error();
       },
     },
     // Styles are forked, never authored from scratch: a custom style starts as a
@@ -136,26 +135,22 @@ export function registerLibraryUi(app, ctx) {
     canAuthorRecord: {
       configurable: true,
       get() {
-        return this.activeKind !== "style";
+        return getView().activeKind !== "style";
       },
     },
     canForkRecord: {
       configurable: true,
       get() {
-        return this.activeKind === "style";
+        return getView().activeKind === "style";
       },
     },
     activeKindLabel: {
       configurable: true,
       get() {
-        return CATALOGS[this.activeKind]?.label ?? this.activeKind;
+        return CATALOGS[getView().activeKind]?.label ?? getView().activeKind;
       },
     },
   });
-
-  installLibraryFields(app, ctx);
-  installLibraryListEditor(app, ctx);
-  installLibraryComposition(app);
 
   async function afterRecordsChanged(store) {
     store.libraryDraft = null;
@@ -164,23 +159,23 @@ export function registerLibraryUi(app, ctx) {
     await store.onRecordsChanged?.();
   }
 
-  Object.assign(app, {
+  Object.assign(actions, {
     openLibrary(kind) {
       if (kind && IDENTITY_KINDS.includes(kind)) {
-        this.librarySection = "sources";
-        this.sourceKind = kind;
+        getView().librarySection = "sources";
+        getView().sourceKind = kind;
       } else if (kind && CATALOGS[kind]) {
-        this.librarySection = "ingredients";
-        this.libraryTab = kind;
+        getView().librarySection = "ingredients";
+        getView().libraryTab = kind;
       }
-      this.libraryOpen = true;
-      this.libraryDraft = null;
-      this.libraryErrors = [];
-      this.libraryNotice = "";
-      this.librarySearch = "";
-      this.librarySearchNotes = false;
-      if (!this.library.loaded() && !this.library.loading()) {
-        this.library.refresh().then(() => this.refreshLibraryItems());
+      getView().libraryOpen = true;
+      getView().libraryDraft = null;
+      getView().libraryErrors = [];
+      getView().libraryNotice = "";
+      getView().librarySearch = "";
+      getView().librarySearchNotes = false;
+      if (!getView().library.loaded() && !getView().library.loading()) {
+        getView().library.refresh().then(() => getView().refreshLibraryItems());
       }
     },
 
@@ -191,7 +186,7 @@ export function registerLibraryUi(app, ctx) {
     catalogItems(kind) {
       const meta = CATALOGS[kind];
       if (!meta) return [];
-      const map = meta.seedKey ? ctx.cache.seeds[meta.seedKey] : ctx.cache.references[meta.referencesKey];
+      const map = meta.seedKey ? cache.seeds[meta.seedKey] : cache.references[meta.referencesKey];
       return Object.values(map ?? {});
     },
 
@@ -199,8 +194,8 @@ export function registerLibraryUi(app, ctx) {
       const meta = CATALOGS[kind];
       if (!meta || !id) return null;
       return (
-        ctx.cache.seeds[meta.seedKey]?.[id] ??
-        ctx.cache.references[meta.referencesKey]?.[id] ??
+        cache.seeds[meta.seedKey]?.[id] ??
+        cache.references[meta.referencesKey]?.[id] ??
         null
       );
     },
@@ -209,77 +204,77 @@ export function registerLibraryUi(app, ctx) {
     // set the commit will load, so a user record cannot pass the gate and then fail
     // to resolve in the batch.
     referenceSnapshot() {
-      return ctx.cache.references;
+      return cache.references;
     },
 
     closeLibrary() {
-      this.libraryOpen = false;
+      getView().libraryOpen = false;
       dialogRestore();
-      this.libraryDraft = null;
-      this.libraryErrors = [];
-      this.libraryNotice = "";
+      getView().libraryDraft = null;
+      getView().libraryErrors = [];
+      getView().libraryNotice = "";
     },
 
     selectLibrarySection(section) {
       if (section !== "sources" && section !== "ingredients") return;
-      this.librarySection = section;
-      this.librarySearch = "";
-      this.librarySearchNotes = false;
-      this.libraryDraft = null;
-      this.libraryErrors = [];
-      this.libraryNotice = "";
+      getView().librarySection = section;
+      getView().librarySearch = "";
+      getView().librarySearchNotes = false;
+      getView().libraryDraft = null;
+      getView().libraryErrors = [];
+      getView().libraryNotice = "";
     },
 
     selectSourceKind(kind) {
       if (!IDENTITY_KINDS.includes(kind)) return;
-      this.librarySection = "sources";
-      this.sourceKind = kind;
-      this.librarySearch = "";
-      this.librarySearchNotes = false;
-      this.libraryDraft = null;
-      this.libraryErrors = [];
-      this.libraryNotice = "";
+      getView().librarySection = "sources";
+      getView().sourceKind = kind;
+      getView().librarySearch = "";
+      getView().librarySearchNotes = false;
+      getView().libraryDraft = null;
+      getView().libraryErrors = [];
+      getView().libraryNotice = "";
     },
 
     selectLibraryTab(id) {
       if (!CATALOGS[id] || IDENTITY_KINDS.includes(id)) return;
-      this.librarySection = "ingredients";
-      this.libraryTab = id;
-      this.librarySearch = "";
-      this.librarySearchNotes = false;
-      this.libraryDraft = null;
-      this.libraryErrors = [];
-      this.libraryNotice = "";
+      getView().librarySection = "ingredients";
+      getView().libraryTab = id;
+      getView().librarySearch = "";
+      getView().librarySearchNotes = false;
+      getView().libraryDraft = null;
+      getView().libraryErrors = [];
+      getView().libraryNotice = "";
     },
 
     librarySetSearch(value) {
-      this.librarySearch = value;
+      getView().librarySearch = value;
     },
 
     toggleLibrarySearchNotes() {
-      this.librarySearchNotes = !this.librarySearchNotes;
+      getView().librarySearchNotes = !getView().librarySearchNotes;
     },
 
     libraryItemId(item) {
-      return identityOf(CATALOGS[this.activeKind], item);
+      return identityOf(CATALOGS[getView().activeKind], item);
     },
 
     libraryItemTitle(item) {
-      return titleOf(CATALOGS[this.activeKind], item);
+      return titleOf(CATALOGS[getView().activeKind], item);
     },
 
     librarySeedItemTitle(item) {
-      const meta = CATALOGS[this.activeKind];
+      const meta = CATALOGS[getView().activeKind];
       return titleOf(meta, item);
     },
 
     libraryFieldDisplay(field) {
-      const value = this.libraryDraft?.[field];
+      const value = getView().libraryDraft?.[field];
       if (value === undefined || value === null) return "";
-      const spec = this.libraryFields.find((f) => f.field === field);
+      const spec = getView().libraryFields.find((f) => f.field === field);
       if (!spec || spec.kind !== "number") return value;
-      if (typeof this.inputDraft === "function") {
-        const draft = this.inputDraft(this.inputKey("library", field), undefined);
+      if (typeof getView().inputDraft === "function") {
+        const draft = getView().inputDraft(getView().inputKey("library", field), undefined);
         if (draft !== undefined) return draft;
       }
       if (!spec.unitId || spec.dimension == null) return value;
@@ -288,20 +283,20 @@ export function registerLibraryUi(app, ctx) {
     },
 
     libraryCommitField(field) {
-      if (typeof this.clearInputDraft === "function") {
-        this.clearInputDraft(this.inputKey("library", field));
+      if (typeof getView().clearInputDraft === "function") {
+        getView().clearInputDraft(getView().inputKey("library", field));
       }
-      this.libraryDraft = { ...this.libraryDraft };
+      getView().libraryDraft = { ...getView().libraryDraft };
     },
 
     librarySetField(field, value) {
-      const spec = this.libraryFields.find((f) => f.field === field);
-      const next = { ...this.libraryDraft };
+      const spec = getView().libraryFields.find((f) => f.field === field);
+      const next = { ...getView().libraryDraft };
       if (value === "") {
         delete next[field];
       } else if (spec?.kind === "number") {
-        if (typeof this.setInputDraft === "function") {
-          this.setInputDraft(this.inputKey("library", field), value);
+        if (typeof getView().setInputDraft === "function") {
+          getView().setInputDraft(getView().inputKey("library", field), value);
         }
         let n = Number(value);
         if (Number.isFinite(n) && spec.unitId && spec.dimension != null) {
@@ -311,22 +306,22 @@ export function registerLibraryUi(app, ctx) {
       } else {
         next[field] = value;
       }
-      this.libraryDraft = next;
+      getView().libraryDraft = next;
     },
 
     newLibraryItem() {
-      if (!this.canAuthorRecord) return;
-      this.libraryDraft = {};
-      this.libraryErrors = [];
-      this.libraryNotice = "";
+      if (!getView().canAuthorRecord) return;
+      getView().libraryDraft = {};
+      getView().libraryErrors = [];
+      getView().libraryNotice = "";
     },
 
     // Fork a sealed style: copy its declaration, drop the identity field, record
     // display lineage. The server assigns the new id, so the record is immutable
     // from the moment it is saved.
     forkLibraryItem(item) {
-      if (!this.canForkRecord || !item) return;
-      const meta = CATALOGS[this.activeKind];
+      if (!getView().canForkRecord || !item) return;
+      const meta = CATALOGS[getView().activeKind];
       const id = identityOf(meta, item);
       const draft = { ...item };
       delete draft[meta.idField];
@@ -334,34 +329,34 @@ export function registerLibraryUi(app, ctx) {
       draft.name = `${titleOf(meta, item)} (copy)`;
       draft.forked_from_id = id;
       draft.forked_from_name = titleOf(meta, item);
-      this.libraryDraft = draft;
-      this.libraryErrors = [];
-      this.libraryNotice = `Forked from ${titleOf(meta, item)}. Edit the declaration, then save.`;
+      getView().libraryDraft = draft;
+      getView().libraryErrors = [];
+      getView().libraryNotice = `Forked from ${titleOf(meta, item)}. Edit the declaration, then save.`;
     },
 
     cancelLibraryItem() {
-      this.libraryDraft = null;
-      this.libraryErrors = [];
+      getView().libraryDraft = null;
+      getView().libraryErrors = [];
     },
 
     async saveLibraryItem() {
-      if (!this.libraryDraft) return;
-      const kind = this.activeKind;
+      if (!getView().libraryDraft) return;
+      const kind = getView().activeKind;
       const meta = CATALOGS[kind];
-      this.librarySortPoints();
-      const draft = { ...this.libraryDraft };
+      getView().librarySortPoints();
+      const draft = { ...getView().libraryDraft };
       delete draft[meta.idField];
       const errors = validateComponent(artifact, kind, draft);
       if (errors.length) {
-        this.libraryErrors = errors;
+        getView().libraryErrors = errors;
         return;
       }
       try {
-        await this.library.create(kind, draft);
-        this.libraryNotice = "Saved and sealed. Records are immutable; corrections create a new record.";
-        await afterRecordsChanged(this);
+        await getView().library.create(kind, draft);
+        getView().libraryNotice = "Saved and sealed. Records are immutable; corrections create a new record.";
+        await afterRecordsChanged(getView());
       } catch (err) {
-        this.libraryErrors =
+        getView().libraryErrors =
           err?.details?.errors?.map((message) => ({ field: "*", message })) ??
           err?.errors ??
           [{ field: "*", message: String(err?.message ?? err) }];
@@ -374,14 +369,24 @@ export function registerLibraryUi(app, ctx) {
         return;
       }
       try {
-        await this.library.remove(this.activeKind, itemId);
-        this.libraryNotice = "";
-        await afterRecordsChanged(this);
+        await getView().library.remove(getView().activeKind, itemId);
+        getView().libraryNotice = "";
+        await afterRecordsChanged(getView());
       } catch (err) {
-        this.libraryErrors = [{ field: "*", message: String(err?.message ?? err) }];
+        getView().libraryErrors = [{ field: "*", message: String(err?.message ?? err) }];
       }
     },
   });
+  return actions;
+}
+
+export function registerLibraryUi(app, ctx) {
+  const actions = createLibraryUi({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  installLibraryFields(app, ctx);
+  installLibraryListEditor(app, ctx);
+  installLibraryComposition(app);
+  return actions;
 }
 
 export const KEYS = [

@@ -192,7 +192,7 @@ const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 466,
   "adapters/cards/late-additions.js": 420,
   "adapters/cards/water.js": 566,
-  "adapters/stepAdapter.js": 439,
+  "adapters/stepAdapter.js": 435,
   "views/producer/stylePlot.js": 422,
   "engine/dag.js": 405,
   "engine/fermentation.js": 506,

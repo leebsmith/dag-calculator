@@ -146,11 +146,6 @@ export const INSTALLERS = [
 // that move the logic into `views/`: an entry disappears with its last reader.
 export const SHARED = [
   {
-    key: "hopStrategy",
-    owners: ["snapshot"],
-    reason: "the draft snapshot persists the batch-level hop strategy",
-  },
-  {
     key: "activeScaleTarget",
     owners: ["styleNavigator"],
     reason: "the style navigator reads the target selection the target card owns",
@@ -167,7 +162,7 @@ export const SHARED = [
   },
   {
     key: "clearInputDraft",
-    owners: ["libraryUi", "styleTargets", "water"],
+    owners: ["styleTargets", "water"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {
@@ -251,23 +246,18 @@ export const SHARED = [
     reason: "shared field verbs: the card partials bind the one editing surface",
   },
   {
-    key: "editDraftCell",
-    owners: ["fieldActions"],
-    reason: "fieldActions drives a draft cell edit: the inverse of the shared draft grid",
-  },
-  {
     key: "editNumberInput",
     owners: ["lateAdditions", "mash"],
     reason: "shared field verbs: the card partials bind the one editing surface",
   },
   {
     key: "inputDraft",
-    owners: ["draftEditor", "lateAdditions", "libraryUi", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
+    owners: ["lateAdditions", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {
     key: "inputKey",
-    owners: ["lateAdditions", "libraryUi", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
+    owners: ["lateAdditions", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {
@@ -337,7 +327,7 @@ export const SHARED = [
   },
   {
     key: "setInputDraft",
-    owners: ["libraryUi", "styleTargets", "water"],
+    owners: ["styleTargets", "water"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {
@@ -349,11 +339,6 @@ export const SHARED = [
     key: "styleAbvTouched",
     owners: ["styleTargets"],
     reason: "the style target card mirrors the navigator's touched flag",
-  },
-  {
-    key: "styleConformanceReport",
-    owners: ["snapshot"],
-    reason: "the snapshot exports the conformance verdict captured at freeze",
   },
   {
     key: "styleTargetInfo",
