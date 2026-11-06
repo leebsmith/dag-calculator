@@ -22,6 +22,15 @@ export function assertNoCollisions(installers) {
   }
 }
 
+// Compose factory results without flattening accessors: `Object.assign` would
+// evaluate every getter once, so copy the descriptors and define them together.
+// Layer order is install order; a later layer wins a shared name.
+export function composeLayers(...layers) {
+  const descriptors = {};
+  for (const layer of layers) Object.assign(descriptors, Object.getOwnPropertyDescriptors(layer));
+  return Object.defineProperties({}, descriptors);
+}
+
 // The app members present before the first installer runs. Non-enumerable, so
 // the symbol never reaches Alpine's reactive walk or the template surface.
 export const BASE_KEYS = Symbol.for("dag.installerBaseKeys");

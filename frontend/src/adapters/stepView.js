@@ -2,6 +2,11 @@
 // violations onto their owning slices, and refreshes the card readouts. The
 // refresh order is the `CARD_REFRESHES` list below, not the call order in
 // `compute`: adding a card is one entry plus its export.
+//
+// Every refresh receives one frozen per-pass state built in `compute` (live
+// engine, catalogue, unit store, artifact, the produced field index, and the
+// boundary mirrors) instead of the install-time context. A card that needs a
+// mirror another card produced passes it explicitly at its own call site.
 
 import { createFindingFormatter, produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
@@ -23,8 +28,9 @@ import { refreshBrewDayCard } from "./cards/brew-day.js";
 import { refreshDryHopCard } from "./cards/dry-hops.js";
 import { refreshWaterCard } from "./cards/water.js";
 
-// Order matters: the yeast card owns the attenuation readouts the style card
-// quotes, and both run before the cards that read their solved snapshots.
+// The order is the contract: the yeast card owns the attenuation readouts the
+// style card quotes, and both run before the cards that read their solved
+// snapshots. Each entry is a pure refresh over the state `compute` hands down.
 export const CARD_REFRESHES = [
   { card: "yeast", refresh: refreshYeastCard },
   { card: "style", refresh: refreshStyleCard },
@@ -45,7 +51,6 @@ export function createStepView({
   cache,
   ui,
   session,
-  cardCtx,
   relationDefs,
   attribution,
 }) {
@@ -219,15 +224,32 @@ export function createStepView({
     }
   }
 
-  function refreshCards(app) {
-    for (const { refresh } of CARD_REFRESHES) refresh(app, cardCtx);
+  // The explicit state one refresh pass hands to every card. Frozen so a
+  // refresher cannot rewrite the pipeline inputs mid-order.
+  function refreshState(engine, app) {
+    return Object.freeze({
+      engine,
+      cache,
+      ui,
+      artifact,
+      fieldsById: app.fieldsById,
+      boundaryStatuses: app.boundaryStatuses ?? {},
+      boundaryExtras: app.boundaryExtras ?? {},
+      waterTelemetry: app.boundaryExtras?.["solver.water"] ?? null,
+      boundaryPending: app.boundaryPending === true,
+      boundaryError: app.boundaryError ?? null,
+    });
+  }
+
+  function refreshCards(app, state) {
+    for (const { refresh } of CARD_REFRESHES) refresh(app, state);
   }
 
   function compute(app) {
     const engine = session.getEngine();
     produceFields(app, engine);
     indexStatus(app);
-    refreshCards(app);
+    refreshCards(app, refreshState(engine, app));
   }
 
 

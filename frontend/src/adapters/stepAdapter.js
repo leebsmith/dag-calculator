@@ -18,7 +18,7 @@ import { createLibrary } from "../store/library.js";
 import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode } from "../store/unitPrefs.js";
-import { installSnapshot } from "../store/snapshot.js";
+import { createSnapshotActions } from "../store/snapshot.js";
 import { registerYeastCard } from "./cards/yeast.js";
 import { registerStyleCard } from "./cards/style.js";
 import { registerHopCard } from "./cards/hops.js";
@@ -36,13 +36,13 @@ import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
 import { bindGate, waterTargetGate } from "./waterGate.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
-import { installFieldActions } from "./fieldActions.js";
-import { installDraftEditor } from "./draftEditor.js";
-import { installUnitActions } from "./unitActions.js";
-import { installNavigation } from "./navigation.js";
+import { createFieldActions } from "./fieldActions.js";
+import { createDraftEditor } from "./draftEditor.js";
+import { createUnitActions } from "./unitActions.js";
+import { createNavigationActions } from "./navigation.js";
 import { dialogFocus } from "./modalFocus.js";
 import { createStepView } from "./stepView.js";
-import { assertNoCollisions, BASE_KEYS, installerSurfaceGaps } from "./contract.js";
+import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } from "./contract.js";
 import { INSTALLERS } from "./installers.js";
 import * as fmt from "../utils.js";
 import { reportError } from "../observability.js";
@@ -84,13 +84,18 @@ export function createStepApp(options = {}) {
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
   // The pristine auth-scoped baseline to restore on sign-out.
   const baselineRoots = master.allRoots();
-  let reactiveApp;
+
+  // The live view is the composed app, rebound to Alpine's reactive wrapper once
+  // main.js wraps it. Composition and installation never write through it; only
+  // handlers read it, so their writes land on the proxy Alpine observes.
+  const liveView = { current: null };
+  const getView = () => liveView.current;
 
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
-  // reactive state/handlers onto `app` before main.js wraps it in Alpine.reactive.
-  const cardCtx = { engine: session.engine, cache, ui, artifact, getView: () => reactiveApp ?? app };
+  // reactive state/handlers before main.js wraps the app in Alpine.reactive.
+  const cardCtx = { engine: session.engine, cache, ui, artifact, getView };
 
-  const app = {
+  const baseApp = {
     master,
     engine: session.engine,
     library,
@@ -126,11 +131,11 @@ export function createStepApp(options = {}) {
     ),
     boundaryBlocked: {},
 
-    // The browser wraps this object in Alpine.reactive. The runner and its
-    // status callback are created below, outside that proxy, so point them at
-    // the reactive instance explicitly (see `bindReactive`).
+    // The browser wraps this object in Alpine.reactive. The runner, its status
+    // callback, and every factory handler resolve the reactive instance through
+    // `liveView` (see `bindReactive`).
     bindReactive(proxy) {
-      reactiveApp = proxy;
+      liveView.current = proxy;
     },
 
     get boundaryPending() {
@@ -360,6 +365,20 @@ export function createStepApp(options = {}) {
     },
   };
 
+  // Explicit composition: each factory receives the dependencies it needs, and
+  // the merged layers are the app's installer surface.
+  const core = { artifact, session, getView };
+  const app = composeLayers(
+    baseApp,
+    { dialogFocus },
+    createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
+    createFieldActions({ ...core, refToSelectionMap: attribution.refToSelectionMap }),
+    createDraftEditor({ ...core, ui }),
+    createUnitActions({ ...core, ui }),
+    createSnapshotActions({ ...core, master })
+  );
+  liveView.current = app;
+
   const view = createStepView({
     artifact,
     steps,
@@ -367,7 +386,6 @@ export function createStepApp(options = {}) {
     cache,
     ui,
     session,
-    cardCtx,
     relationDefs,
     attribution,
   });
@@ -383,9 +401,9 @@ export function createStepApp(options = {}) {
     },
     fetchImpl,
     debounceMs,
-    compute: () => (reactiveApp ?? app).compute(),
+    compute: () => liveView.current.compute(),
     onState: ({ statuses, error, extras, blocked }) => {
-      const target = reactiveApp ?? app;
+      const target = liveView.current;
       target.boundaryStatuses = statuses;
       target.boundaryError = fmt.boundaryErrorView(error);
       target.boundaryExtras = extras;
@@ -399,17 +417,11 @@ export function createStepApp(options = {}) {
   // array is only read on the raw app today, but the lock would make any future
   // `this[BASE_KEYS]` read throw.
   Object.defineProperty(app, BASE_KEYS, {
-    value: Object.keys(app),
+    value: Object.keys(baseApp),
     enumerable: false,
     configurable: true,
   });
 
-  installNavigation(app, { ui, steps, isEditorActive: options.isEditorActive, getView: () => reactiveApp ?? app });
-  app.dialogFocus = dialogFocus;
-  installFieldActions(app, { artifact, session, refToSelectionMap: attribution.refToSelectionMap, getView: () => reactiveApp ?? app });
-  installDraftEditor(app, { artifact, ui, session, getView: () => reactiveApp ?? app });
-  installUnitActions(app, { artifact, ui, getView: () => reactiveApp ?? app });
-  installSnapshot(app, { artifact, master, session, getView: () => reactiveApp ?? app });
   for (const register of CARD_INSTALLERS) {
     register(app, cardCtx);
   }

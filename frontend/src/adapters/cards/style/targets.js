@@ -276,15 +276,15 @@ export function registerStyleTargets(app, ctx = {}) {
   return actions;
 }
 
-export function refreshStyleTargets(app) {
+export function refreshStyleTargets(app, ctx = {}) {
   app.syncScalePinState();
   app.refreshTargets();
   app.scaleTargetMismatch = scaleTargetMismatch({
     pin: app.scalePin,
     target: app.activeScaleTarget,
-    info: app.styleTargetInfo,
-    status: app.boundaryStatuses?.[N.solverBatch] ?? "unknown",
-    gravity: app.styleGravityDisplay,
+    info: ctx.styleTargetInfo,
+    status: ctx.boundaryStatuses?.[N.solverBatch] ?? "unknown",
+    gravity: ctx.styleGravityDisplay,
   });
 }
 

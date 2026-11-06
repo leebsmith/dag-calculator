@@ -19,5 +19,9 @@ export function registerStyleCard(app, ctx) {
 export function refreshStyleCard(app, ctx) {
   refreshStyleDeclaration(app, ctx);
   refreshStyleNavigator(app, ctx);
-  refreshStyleTargets(app, ctx);
+  refreshStyleTargets(app, {
+    ...ctx,
+    styleTargetInfo: app.styleTargetInfo,
+    styleGravityDisplay: app.styleGravityDisplay,
+  });
 }

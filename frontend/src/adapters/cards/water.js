@@ -131,8 +131,8 @@ export function refreshWaterCard(app, ctx) {
     }
     const residualHlt = num(engine, N.residualHlt);
 
-    const mashDoses = doseRows(app.fieldsById, N.mashAdditions, forms);
-    const spargeDoses = doseRows(app.fieldsById, N.spargeAdditions, forms);
+    const mashDoses = doseRows(ctx.fieldsById, N.mashAdditions, forms);
+    const spargeDoses = doseRows(ctx.fieldsById, N.spargeAdditions, forms);
     const mashDoseText = mashDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
     const spargeDoseText = spargeDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
     const hltStart = num(engine, N.hltStart);
@@ -155,16 +155,16 @@ export function refreshWaterCard(app, ctx) {
       : `After the strike is drawn and the HLT is topped up to ${fmtL(doseVolume)}: no salts in the HLT. ` +
         `${spargeDoseText ? `Add ${spargeDoseText} only.` : "No additions — underlet with untreated water."} ${fmtL(deliveredSparge)} ships.`;
 
-    const telemetry = (app.waterTelemetry?.telemetry ?? []).slice();
+    const telemetry = (ctx.waterTelemetry?.telemetry ?? []).slice();
     telemetry.sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
     const warningCount = telemetry.filter(
       (t) => t?.severity === "WARNING" || t?.severity === "ERROR"
     ).length;
 
-    const predictedField = fieldOr(app.fieldsById, N.predictedPh);
-    const statusField = fieldOr(app.fieldsById, N.phStatus);
-    const doseVolumeField = fieldOr(app.fieldsById, N.vHltTreat);
-    const residualField = fieldOr(app.fieldsById, N.residualHlt);
+    const predictedField = fieldOr(ctx.fieldsById, N.predictedPh);
+    const statusField = fieldOr(ctx.fieldsById, N.phStatus);
+    const doseVolumeField = fieldOr(ctx.fieldsById, N.vHltTreat);
+    const residualField = fieldOr(ctx.fieldsById, N.residualHlt);
 
     const sourceComponent = engine.identity?.[N.sourceReport] ?? {};
     const sourceTitle =
@@ -186,9 +186,9 @@ export function refreshWaterCard(app, ctx) {
         detail: sourceDetail,
         hint: "Fixed by the batch identity",
       },
-      target: fieldOr(app.fieldsById, N.targetProfileId),
-      floor: fieldOr(app.fieldsById, N.calciumFloor),
-      mashPh: fieldOr(app.fieldsById, N.targetMashPh),
+      target: fieldOr(ctx.fieldsById, N.targetProfileId),
+      floor: fieldOr(ctx.fieldsById, N.calciumFloor),
+      mashPh: fieldOr(ctx.fieldsById, N.targetMashPh),
     };
     app.waterTreatmentFields = [
       N.saltDistribution,
@@ -197,7 +197,7 @@ export function refreshWaterCard(app, ctx) {
       N.cacl2Form,
       N.alkalineAgent,
     ]
-      .map((id) => fieldOr(app.fieldsById, id))
+      .map((id) => fieldOr(ctx.fieldsById, id))
       .filter((field) => field.id);
 
     app.waterVerdict = {
@@ -216,7 +216,7 @@ export function refreshWaterCard(app, ctx) {
       sparge: spargeDoses.rows,
       suppressed: mashDoses.suppressed || spargeDoses.suppressed,
       spargeAcidPrescribed: Boolean(spargeAcid),
-      pending: Boolean(app.boundaryPending),
+      pending: ctx.boundaryPending,
       basis,
       destinations: "Mash → dry grist, before underletting · Sparge → HLT after top-up",
     };
@@ -225,8 +225,8 @@ export function refreshWaterCard(app, ctx) {
       telemetry,
       ratioBasis,
       notModelled,
-      boundaryStatus: app.boundaryStatuses?.[N.waterBoundary] ?? "ok",
-      error: app.boundaryError ?? null,
+      boundaryStatus: ctx.boundaryStatuses?.[N.waterBoundary] ?? "ok",
+      error: ctx.boundaryError ?? null,
     };
 
     app.waterWarningCount = warningCount;
