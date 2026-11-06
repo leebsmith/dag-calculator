@@ -8,13 +8,23 @@ import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 // AI AGENT HOOKS: Use this session factory for constructing, rebuilding, and
 // resetting the live engine. Do not duplicated this logic elsewhere — callers
 // must resolve the engine through the session instead of capturing one.
-export function createSession({ artifact, cache, master, boundaries = {}, selections = {}, identity = {} }) {
+export function createSession({
+  artifact,
+  cache,
+  master,
+  initialRoots = null,
+  boundaries = {},
+  selections = {},
+  identity = {},
+}) {
   let collections = { ...cache.collections };
   let selectionSnapshots = { ...selections };
   const identitySnapshot = identity;
-  let engine = build();
+  const startingRoots = initialRoots ?? master?.allRoots?.() ?? {};
+  let engine = build(startingRoots);
+  attachMaster();
 
-  function build() {
+  function build(rootState = {}) {
     return createCalculator(artifact, {
       identity: identitySnapshot,
       references: cache.references,
@@ -22,8 +32,13 @@ export function createSession({ artifact, cache, master, boundaries = {}, select
       selections: selectionSnapshots,
       boundaries,
       boundaryRequests: BOUNDARY_BUILDERS,
-      roots: master.allRoots(),
+      roots: rootState,
+      onRootChange: (nodeId, value) => master?.publish?.(nodeId, value),
     });
+  }
+
+  function attachMaster() {
+    if (typeof master?.attach === "function") master.attach(engine);
   }
 
   const boundaryNodes = engine.topoOrder.filter((id) => artifact.nodes[id].kind === "boundary");
@@ -81,8 +96,10 @@ export function createSession({ artifact, cache, master, boundaries = {}, select
       return identitySnapshot;
     },
     setIdentity(namespace, component) {
+      const currentRoots = engine.allRoots();
       identitySnapshot[namespace] = component ? { ...component } : {};
-      engine = build();
+      engine = build(currentRoots);
+      attachMaster();
       return engine;
     },
     setSelection(nodeId, component) {
@@ -98,17 +115,17 @@ export function createSession({ artifact, cache, master, boundaries = {}, select
         for (const key of Object.keys(identitySnapshot)) delete identitySnapshot[key];
         Object.assign(identitySnapshot, state.identity);
       }
-      master.replaceRoots(sanitizeRoots(state.roots));
       collections = { ...cache.collections, ...(state.collections ?? {}) };
       selectionSnapshots = { ...(state.selections ?? {}) };
-      engine = build();
+      engine = build(sanitizeRoots(state.roots));
+      attachMaster();
       return engine;
     },
     reset(roots = {}) {
-      master.replaceRoots(sanitizeRoots(roots));
       collections = { ...cache.collections };
       selectionSnapshots = {};
-      engine = build();
+      engine = build(sanitizeRoots(roots));
+      attachMaster();
       return engine;
     },
   };

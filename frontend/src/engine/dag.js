@@ -119,14 +119,12 @@ export function createEngine(artifact, options = {}) {
   const boundaryRequests = options.boundaryRequests ?? {};
   const boundaryCache = options.boundaryCache ?? new BoundaryCache();
   const boundaryUnavailable = createBoundaryUnavailable(artifact, invalidate);
-
   const { adjacency, dependents, topoOrder } = buildGraph(artifact);
   // Two valuations: the default reads every node in full (collections carry
   // their computed row fields); `authored` mode strips those overlays, which is
   // what a boundary request and a computed field's own inputs must see.
   const memo = new Map();
   const authoredMemo = new Map();
-
   function invalidate(nodeId, seen = new Set()) {
     if (seen.has(nodeId)) return;
     seen.add(nodeId);
@@ -134,7 +132,6 @@ export function createEngine(artifact, options = {}) {
     authoredMemo.delete(nodeId);
     for (const dependent of dependents[nodeId] ?? []) invalidate(dependent, seen);
   }
-
   function get(nodeId, authored = false) {
     if (!Object.prototype.hasOwnProperty.call(artifact.nodes, nodeId)) {
       throw new Error(`Unknown node "${nodeId}"`);
@@ -355,6 +352,7 @@ export function createEngine(artifact, options = {}) {
       }
       roots.set(nodeId, value);
       invalidate(nodeId);
+      options.onRootChange?.(nodeId, value);
     },
     // Remove an explicit value so the node falls back to its `default` (or has
     // no value at all when the default cannot resolve).
@@ -365,6 +363,7 @@ export function createEngine(artifact, options = {}) {
       }
       if (!roots.delete(nodeId)) return;
       invalidate(nodeId);
+      options.onRootChange?.(nodeId, undefined);
     },
     getRoot(nodeId) {
       return roots.get(nodeId);
@@ -372,6 +371,7 @@ export function createEngine(artifact, options = {}) {
     hasRoot(nodeId) {
       return roots.has(nodeId);
     },
+    allRoots: () => Object.fromEntries(roots),
     setCollection(nodeId, rows) {
       if (artifact.nodes[nodeId]?.kind !== "collection") {
         throw new Error(`"${nodeId}" is not a collection node`);

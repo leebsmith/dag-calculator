@@ -1,32 +1,31 @@
-// Master store: holds roots ONLY (user inputs, selection ids).
-// Derived values are computed by the engine and never stored here.
+// Master store: a reactive subscriber/mirror over the engine's root set. The
+// engine is the single writer and source of truth; this store never owns a
+// second root map and only forwards engine root events to UI listeners.
 
-export function createMasterStore(initialRoots = {}) {
-  const roots = new Map(Object.entries(initialRoots));
+export function createMasterStore() {
+  let engine = null;
   const listeners = new Set();
 
+  function notify(nodeId, value) {
+    for (const listener of listeners) listener(nodeId, value);
+  }
+
   return {
-    setRoot(nodeId, value) {
-      roots.set(nodeId, value);
-      for (const listener of listeners) listener(nodeId, value);
+    attach(nextEngine) {
+      engine = nextEngine;
+      notify("*", null);
     },
-    unsetRoot(nodeId) {
-      if (!roots.delete(nodeId)) return;
-      for (const listener of listeners) listener(nodeId, undefined);
-    },
-    replaceRoots(rootsObj) {
-      roots.clear();
-      for (const [nodeId, value] of Object.entries(rootsObj ?? {})) roots.set(nodeId, value);
-      for (const listener of listeners) listener("*", null);
+    publish(nodeId, value) {
+      notify(nodeId, value);
     },
     getRoot(nodeId) {
-      return roots.get(nodeId);
+      return engine?.getRoot(nodeId);
     },
     hasRoot(nodeId) {
-      return roots.has(nodeId);
+      return engine?.hasRoot(nodeId) ?? false;
     },
     allRoots() {
-      return Object.fromEntries(roots);
+      return engine?.allRoots() ?? {};
     },
     subscribe(listener) {
       listeners.add(listener);

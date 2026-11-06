@@ -9,7 +9,8 @@ const SLICES = [mashSlice];
 export function createAppStore() {
   const initialRoots = Object.assign({}, ...SLICES.map((s) => s.roots));
   return {
-    master: createMasterStore(initialRoots),
+    master: createMasterStore(),
+    initialRoots,
     ui: createUiStore(),
   };
 }

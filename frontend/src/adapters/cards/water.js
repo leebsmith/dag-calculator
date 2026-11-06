@@ -237,7 +237,6 @@ export function registerWaterCard(app, ctx) {
       this.waterTargetLocked = !engine.get(N.targetProfileId) && pins.length === 0;
       const strategy = strategyForHeld(valuedPins(engine));
       if (engine.get(N.strategy) !== strategy) {
-        this.master.setRoot(N.strategy, strategy);
         engine.setRoot(N.strategy, strategy);
         changed = true;
       }
@@ -269,7 +268,6 @@ export function registerWaterCard(app, ctx) {
     // the derived strategy so exactly one solve is scheduled.
     writeWaterState(entries) {
       for (const [nodeId, value] of Object.entries(entries)) {
-        this.master.setRoot(nodeId, value);
         engine.setRoot(nodeId, value);
       }
     },

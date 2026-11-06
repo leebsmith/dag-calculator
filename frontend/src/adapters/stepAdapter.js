@@ -64,7 +64,7 @@ const CARD_INSTALLERS = [
 ];
 
 export function createStepApp(options = {}) {
-  const { master, ui } = createAppStore();
+  const { master, ui, initialRoots } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
   const cache = createReferenceCache();
   const library = createLibrary({
@@ -78,7 +78,7 @@ export function createStepApp(options = {}) {
   const debounceMs = options.debounceMs ?? 300;
 
   const identity = options.identity ?? bootstrapIdentity(artifact, cache);
-  const session = createSession({ artifact, cache, master, boundaries, identity });
+  const session = createSession({ artifact, cache, master, initialRoots, boundaries, identity });
 
   const attribution = createFieldAttribution(artifact, steps);
   const relationDefs = Object.fromEntries((artifact.relations ?? []).map((r) => [r.id, r]));
@@ -274,12 +274,10 @@ export function createStepApp(options = {}) {
     },
 
     setRoot(nodeId, value) {
-      master.setRoot(nodeId, value);
       session.engine.setRoot(nodeId, value);
     },
 
     unsetRoot(nodeId) {
-      master.unsetRoot(nodeId);
       session.engine.unsetRoot(nodeId);
     },
 

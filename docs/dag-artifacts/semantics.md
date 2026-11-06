@@ -38,7 +38,7 @@ concern, not a value concern.
 ### 1.2 Three layers
 
 - **Logic** — the artifact. Static, authoritative, view-independent.
-- **State** — the master store of **roots** (mutable).
+- **State** — the engine's **root** set (mutable); the master store mirrors it read-only for the UI.
 - **Derived** — the engine's computed values (never stored).
 
 ---
