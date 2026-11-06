@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createTestApp, withFreshApp } from "./appHelpers.js";
-import { ionDelta } from "../../frontend/src/adapters/cards/water.js";
+import { ionDelta } from "../../frontend/src/views/waterLogic.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 import waterTargetProfiles from "../../data/seeds/water_target_profiles.json" with { type: "json" };
 

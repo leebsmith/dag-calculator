@@ -5,34 +5,31 @@
 // and roots — no engine path resolution leaks into the template. Node ids live
 // in the registry (WATER_NODES).
 
-import { fieldOr, formatQuantity, formatValue, formatWithDecimals, joinNonEmpty } from "../../utils.js";
+import { fieldOr, formatQuantity, joinNonEmpty } from "../../utils.js";
 import {
   WATER_ION_BY_PIN,
   WATER_IONS,
   WATER_NODES as N,
-  constraintLabel,
   constraintStatusFor,
   heldFromProfile,
   routeSummary,
   strategyForHeld,
   targetWarningFor,
 } from "../../views/registry/water.js";
-import { registry } from "../../views/registry/index.js";
+import {
+  doseRows,
+  fmtDelta,
+  fmtL,
+  fmtPpm,
+  ionDelta,
+  optionLabelFor,
+  severityRank,
+  waterTargetOptionsOf,
+} from "../../views/waterLogic.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import { reportError } from "../../observability.js";
 
-const ADDITIONS = ["gypsum_kg", "cacl2_kg", "epsom_kg", "nacl_kg", "acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"];
-
 const AUTO_TARGET = "(Auto)";
-
-export function ionDelta(value, target) {
-  if (typeof value !== "number" || typeof target !== "number") return null;
-  return value - target;
-}
-
-function optionLabelFor(fieldId, value) {
-  return registry[fieldId]?.optionLabels?.[value] ?? value;
-}
 
 function resolveValue(engine, path) {
   try {
@@ -63,54 +60,6 @@ function targetValue(engine, pin) {
 // so the constrained set and the checked set are the same set.
 function valuedPins(engine) {
   return checkedPins(engine);
-}
-
-function doseRows(fieldsById, prefix, forms) {
-  const names = {
-    gypsum_kg: `gypsum (${forms.gypsum})`,
-    cacl2_kg: `calcium chloride (${forms.cacl2})`,
-    epsom_kg: "Epsom salt",
-    nacl_kg: "table salt",
-    acid_l: forms.acid,
-    baking_soda_kg: "baking soda",
-    chalk_kg: "chalk",
-    pickling_lime_kg: "pickling lime",
-  };
-  const rows = [];
-  let zero = 0;
-  for (const key of ADDITIONS) {
-    const field = fieldOr(fieldsById, `${prefix}.${key}`);
-    if (typeof field.value !== "number") continue;
-    if (field.value <= 0) {
-      zero += 1;
-      continue;
-    }
-    const shown = Number(field.display);
-    if (Number.isFinite(shown) && shown === 0) {
-      zero += 1;
-      continue;
-    }
-    rows.push({ key, label: names[key], text: formatQuantity(field) });
-  }
-  return { rows, suppressed: zero > 0 && rows.length > 0 };
-}
-
-function fmtL(value) {
-  return value == null ? "—" : `${formatValue(value)} L`;
-}
-
-function fmtPpm(value) {
-  return value == null ? "—" : formatWithDecimals(value, 1, { dash: "—" });
-}
-
-function fmtDelta(value) {
-  if (value == null) return "—";
-  const text = formatWithDecimals(value, 1, { dash: "—" });
-  return value > 0 ? `+${text}` : text;
-}
-
-function severityRank(severity) {
-  return { ERROR: 3, WARNING: 2, NOTE: 1, INFO: 0 }[severity] ?? 0;
 }
 
 export function registerWaterCard(app, ctx) {
@@ -369,26 +318,6 @@ export function registerWaterCard(app, ctx) {
       },
     },
   });
-}
-
-function waterTargetOptionsOf(cache) {
-  const records = cache.references.water_target ?? {};
-  const presets = Object.entries(records)
-    .map(([id, profile]) => {
-      const held = heldFromProfile(profile);
-      return {
-        value: id,
-        label: `${constraintLabel(held)} — ${profile?.name ?? id}`,
-        size: held.length,
-      };
-    })
-    .filter((option) => option.size > 0)
-    .sort((a, b) => a.size - b.size || a.label.localeCompare(b.label));
-  return [
-    { value: "none", label: "No targets — no ion targets" },
-    ...presets.map(({ value, label }) => ({ value, label })),
-    { value: "freeform", label: "Freeform entry — compose your own set" },
-  ];
 }
 
 export function refreshWaterCard(app, ctx) {
