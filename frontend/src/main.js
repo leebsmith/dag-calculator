@@ -2,6 +2,7 @@ import Alpine from "alpinejs";
 
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { createApiClient } from "./adapters/apiClient.js";
+import { createModalFocusManager } from "./adapters/modalFocus.js";
 import { reportError } from "./observability.js";
 import { createAuthClient } from "./adapters/authClient.js";
 import { createBatchClient } from "./adapters/batchClient.js";
@@ -40,6 +41,7 @@ const authClient = createAuthClient({ api });
 const batchClient = createBatchClient({ api });
 const libraryClient = createLibraryClient({ api });
 const sessionClient = createSessionClient({ api });
+const modalFocus = createModalFocusManager();
 
 let stepApp = null;
 const persistence = createPersistenceManager({
@@ -333,6 +335,7 @@ Alpine.data("stepCalculator", () => {
     createStepApp({
       api,
       libraryClient,
+      modalFocus,
       isEditorActive: () => {
         if (app.libraryOpen) return false;
         const recipes = Alpine.store("recipes");

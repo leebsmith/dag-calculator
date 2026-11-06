@@ -40,7 +40,7 @@ import { createFieldActions } from "./fieldActions.js";
 import { createDraftEditor } from "./draftEditor.js";
 import { createUnitActions } from "./unitActions.js";
 import { createNavigationActions } from "./navigation.js";
-import { dialogFocus } from "./modalFocus.js";
+import { createModalFocusManager } from "./modalFocus.js";
 import { createStepView } from "./stepView.js";
 import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } from "./contract.js";
 import { INSTALLERS } from "./installers.js";
@@ -90,10 +90,11 @@ export function createStepApp(options = {}) {
   // handlers read it, so their writes land on the proxy Alpine observes.
   const liveView = { current: null };
   const getView = () => liveView.current;
+  const modalFocus = options.modalFocus ?? createModalFocusManager();
 
   // Shared context for the per-card modules (cards/<name>.js). Cards attach
   // reactive state/handlers before main.js wraps the app in Alpine.reactive.
-  const cardCtx = { engine: session.engine, cache, ui, artifact, getView };
+  const cardCtx = { engine: session.engine, cache, ui, artifact, getView, modalFocus };
 
   const baseApp = {
     master,
@@ -126,9 +127,7 @@ export function createStepApp(options = {}) {
       session.boundaryNodes.map((id) => [id, remote ? "pending" : "ok"])
     ),
     boundaryError: null,
-    boundaryExtras: Object.fromEntries(
-      session.boundaryNodes.map((id) => [id, null])
-    ),
+    boundaryExtras: Object.fromEntries(session.boundaryNodes.map((id) => [id, null])),
     boundaryBlocked: {},
 
     // The browser wraps this object in Alpine.reactive. The runner, its status
@@ -370,7 +369,7 @@ export function createStepApp(options = {}) {
   const core = { artifact, session, getView };
   const app = composeLayers(
     baseApp,
-    { dialogFocus },
+    { dialogFocus: modalFocus.dialogFocus },
     createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
     createFieldActions({ ...core, refToSelectionMap: attribution.refToSelectionMap }),
     createDraftEditor({ ...core, ui }),

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { registerLibraryUi } from "../../frontend/src/adapters/libraryUi.js";
-import { dialogFocus, dialogRestore } from "../../frontend/src/adapters/modalFocus.js";
+import { createModalFocusManager } from "../../frontend/src/adapters/modalFocus.js";
 import {
   CATALOGS,
   IDENTITY_KINDS,
@@ -25,6 +25,7 @@ function setup({
   onRecordsChanged,
   loaded = () => true,
   loading = () => false,
+  modalFocus,
 } = {}) {
   const events = [];
   const app = {
@@ -57,7 +58,7 @@ function setup({
     },
   };
 
-  registerLibraryUi(app, { artifact: artifact(), engine: ENGINE, cache: { seeds } });
+  registerLibraryUi(app, { artifact: artifact(), engine: ENGINE, cache: { seeds }, modalFocus });
   return { app, events };
 }
 
@@ -325,8 +326,12 @@ test("seed listings are read-only and capped for display", () => {
 });
 
 test("closing the Library returns focus to the element that opened it", () => {
-  const { app } = setup();
   const doc = { activeElement: null };
+  const focus = createModalFocusManager({
+    document: doc,
+    requestAnimationFrame: (fn) => fn(),
+  });
+  const { app } = setup({ modalFocus: focus });
   const trigger = {
     focused: 0,
     focus() {
@@ -342,13 +347,12 @@ test("closing the Library returns focus to the element that opened it", () => {
   };
 
   trigger.focus();
-  dialogFocus(panel, true, { document: doc, requestAnimationFrame: (fn) => fn() });
+  focus.dialogFocus(panel, true);
   app.openLibrary("equipment");
   app.closeLibrary();
 
   assert.equal(app.libraryOpen, false);
   assert.equal(trigger.focused, 2);
-  dialogRestore();
 });
 
 test("opening the Library fetches records only when the cache is cold", async () => {
@@ -358,7 +362,6 @@ test("opening the Library fetches records only when the cache is cold", async ()
   assert.ok(cold.events.some((event) => event.op === "refreshLibrary"));
   assert.ok(cold.events.some((event) => event.op === "refresh"));
 
-  dialogRestore();
   const warm = setup();
   warm.app.openLibrary("malt");
   await Promise.resolve();

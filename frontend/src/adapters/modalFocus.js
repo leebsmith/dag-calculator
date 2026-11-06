@@ -5,9 +5,9 @@
 // subtree is destroyed on close, so the Library calls `dialogRestore()` from its
 // close handler). Only one dialog is open at a time.
 //
-// The environment is injectable so the containment rules can be tested without
-// a browser: pass `{ document, requestAnimationFrame }` as the third argument.
-// Templates call the two-argument form and get the ambient globals.
+// The manager owns the active container/handler/return-focus state, so each app
+// instance gets its own. The environment is injectable for tests: pass
+// `{ document, requestAnimationFrame }` to the factory.
 
 const FOCUSABLE = [
   "a[href]",
@@ -17,19 +17,6 @@ const FOCUSABLE = [
   "textarea:not([disabled])",
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
-
-let activeContainer = null;
-let activeHandler = null;
-let previousFocus = null;
-
-function resolveEnv(env) {
-  if (env) return env;
-  return {
-    document: typeof document === "undefined" ? null : document,
-    requestAnimationFrame:
-      typeof requestAnimationFrame === "function" ? requestAnimationFrame : null,
-  };
-}
 
 function focusable(doc, container) {
   return [...container.querySelectorAll(FOCUSABLE)].filter(
@@ -56,36 +43,46 @@ function trapTab(doc, container, event) {
   }
 }
 
-export function dialogRestore() {
-  if (activeContainer && activeHandler) {
-    activeContainer.removeEventListener("keydown", activeHandler);
-  }
-  activeContainer = null;
-  activeHandler = null;
-  const target = previousFocus;
-  previousFocus = null;
-  target?.focus?.();
-}
+export function createModalFocusManager({ document: envDocument, requestAnimationFrame: envRaf } = {}) {
+  const doc = envDocument ?? (typeof document === "undefined" ? null : document);
+  const raf =
+    envRaf ?? (typeof requestAnimationFrame === "function" ? requestAnimationFrame : null);
+  let activeContainer = null;
+  let activeHandler = null;
+  let previousFocus = null;
 
-export function dialogFocus(container, open, env) {
-  const { document: doc, requestAnimationFrame: raf } = resolveEnv(env);
-  if (!doc || !container) return;
-  if (open) {
-    if (activeContainer === container) return;
-    if (activeContainer) dialogRestore();
-    previousFocus = doc.activeElement;
-    activeContainer = container;
-    activeHandler = (event) => trapTab(doc, container, event);
-    container.addEventListener("keydown", activeHandler);
-    const focus = () => {
-      // The dialog may have been closed before the frame ran.
-      if (activeContainer === container) container.focus();
-    };
-    if (raf) raf(focus);
-    else focus();
-  } else if (activeContainer === container) {
-    dialogRestore();
+  function dialogRestore() {
+    if (activeContainer && activeHandler) {
+      activeContainer.removeEventListener("keydown", activeHandler);
+    }
+    activeContainer = null;
+    activeHandler = null;
+    const target = previousFocus;
+    previousFocus = null;
+    target?.focus?.();
   }
+
+  function dialogFocus(container, open) {
+    if (!doc || !container) return;
+    if (open) {
+      if (activeContainer === container) return;
+      if (activeContainer) dialogRestore();
+      previousFocus = doc.activeElement;
+      activeContainer = container;
+      activeHandler = (event) => trapTab(doc, container, event);
+      container.addEventListener("keydown", activeHandler);
+      const focus = () => {
+        // The dialog may have been closed before the frame ran.
+        if (activeContainer === container) container.focus();
+      };
+      if (raf) raf(focus);
+      else focus();
+    } else if (activeContainer === container) {
+      dialogRestore();
+    }
+  }
+
+  return { dialogFocus, dialogRestore };
 }
 
 export const KEYS = ["dialogFocus"];

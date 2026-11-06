@@ -1,7 +1,7 @@
-import test, { beforeEach } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 
-import { dialogFocus, dialogRestore } from "../../frontend/src/adapters/modalFocus.js";
+import { createModalFocusManager } from "../../frontend/src/adapters/modalFocus.js";
 
 function makeDoc() {
   return { activeElement: null };
@@ -56,19 +56,16 @@ function keyEvent(key, shiftKey = false) {
 // Synchronous frame so focus lands inside the assertion window.
 const raf = (fn) => fn();
 
-function env(doc, requestAnimationFrame = raf) {
-  return { document: doc, requestAnimationFrame };
+function manager(doc, requestAnimationFrame = raf) {
+  return createModalFocusManager({ document: doc, requestAnimationFrame });
 }
-
-beforeEach(() => {
-  dialogRestore();
-});
 
 test("opening a dialog focuses its container", () => {
   const doc = makeDoc();
   const container = makeContainer(doc);
+  const focus = manager(doc);
 
-  dialogFocus(container, true, env(doc));
+  focus.dialogFocus(container, true);
 
   assert.equal(container.focused, 1);
   assert.equal(doc.activeElement, container);
@@ -79,7 +76,8 @@ test("Tab on the last control wraps to the first", () => {
   const doc = makeDoc();
   const items = [makeItem(doc), makeItem(doc), makeItem(doc)];
   const container = makeContainer(doc, items);
-  dialogFocus(container, true, env(doc));
+  const focus = manager(doc);
+  focus.dialogFocus(container, true);
 
   doc.activeElement = items[2];
   const event = keyEvent("Tab");
@@ -93,7 +91,8 @@ test("Shift+Tab on the first control wraps to the last", () => {
   const doc = makeDoc();
   const items = [makeItem(doc), makeItem(doc), makeItem(doc)];
   const container = makeContainer(doc, items);
-  dialogFocus(container, true, env(doc));
+  const focus = manager(doc);
+  focus.dialogFocus(container, true);
 
   doc.activeElement = items[0];
   const event = keyEvent("Tab", true);
@@ -107,7 +106,8 @@ test("Tab in the middle of the list is left to the browser", () => {
   const doc = makeDoc();
   const items = [makeItem(doc), makeItem(doc), makeItem(doc)];
   const container = makeContainer(doc, items);
-  dialogFocus(container, true, env(doc));
+  const focus = manager(doc);
+  focus.dialogFocus(container, true);
 
   doc.activeElement = items[1];
   const event = keyEvent("Tab");
@@ -122,7 +122,8 @@ test("keys other than Tab are ignored", () => {
   const doc = makeDoc();
   const items = [makeItem(doc)];
   const container = makeContainer(doc, items);
-  dialogFocus(container, true, env(doc));
+  const focus = manager(doc);
+  focus.dialogFocus(container, true);
 
   doc.activeElement = items[0];
   const event = keyEvent("Escape");
@@ -135,7 +136,8 @@ test("keys other than Tab are ignored", () => {
 test("an empty dialog keeps focus on the container", () => {
   const doc = makeDoc();
   const container = makeContainer(doc, []);
-  dialogFocus(container, true, env(doc));
+  const focus = manager(doc);
+  focus.dialogFocus(container, true);
   const before = container.focused;
 
   const event = keyEvent("Tab");
@@ -151,7 +153,8 @@ test("hidden controls are skipped by the Tab order", () => {
   const first = makeItem(doc);
   const last = makeItem(doc);
   const container = makeContainer(doc, [hidden, first, last]);
-  dialogFocus(container, true, env(doc));
+  const focus = manager(doc);
+  focus.dialogFocus(container, true);
 
   doc.activeElement = last;
   container.dispatch(keyEvent("Tab"));
@@ -165,11 +168,12 @@ test("closing restores focus to the element that opened the dialog", () => {
   const trigger = makeItem(doc);
   trigger.focus();
   const container = makeContainer(doc, [makeItem(doc)]);
+  const focus = manager(doc);
 
-  dialogFocus(container, true, env(doc));
+  focus.dialogFocus(container, true);
   assert.equal(container.listeners.size, 1);
 
-  dialogRestore();
+  focus.dialogRestore();
 
   assert.equal(trigger.focused, 2);
   assert.equal(container.listeners.size, 0);
@@ -180,12 +184,13 @@ test("closing a dialog that is not the active one leaves the trap intact", () =>
   const doc = makeDoc();
   const container = makeContainer(doc, [makeItem(doc)]);
   const other = makeContainer(doc, []);
+  const focus = manager(doc);
 
-  dialogFocus(container, true, env(doc));
-  dialogFocus(other, false, env(doc));
+  focus.dialogFocus(container, true);
+  focus.dialogFocus(other, false);
   assert.equal(container.listeners.size, 1);
 
-  dialogFocus(container, false, env(doc));
+  focus.dialogFocus(container, false);
   assert.equal(container.listeners.size, 0);
 });
 
@@ -195,16 +200,17 @@ test("opening a second dialog moves the trap and remembers the original trigger"
   trigger.focus();
   const a = makeContainer(doc, [makeItem(doc)]);
   const b = makeContainer(doc, [makeItem(doc)]);
+  const focus = manager(doc);
 
-  dialogFocus(a, true, env(doc));
-  dialogFocus(b, true, env(doc));
+  focus.dialogFocus(a, true);
+  focus.dialogFocus(b, true);
 
   assert.equal(a.listeners.size, 0);
   assert.equal(b.listeners.size, 1);
   assert.equal(trigger.focused, 2);
   assert.equal(doc.activeElement, b);
 
-  dialogRestore();
+  focus.dialogRestore();
   assert.equal(trigger.focused, 3);
 });
 
@@ -213,10 +219,11 @@ test("re-opening the same container does not stack handlers or re-anchor focus",
   const trigger = makeItem(doc);
   trigger.focus();
   const container = makeContainer(doc, [makeItem(doc)]);
+  const focus = manager(doc);
 
-  dialogFocus(container, true, env(doc));
+  focus.dialogFocus(container, true);
   const focused = container.focused;
-  dialogFocus(container, true, env(doc));
+  focus.dialogFocus(container, true);
 
   assert.equal(container.listeners.size, 1);
   assert.equal(container.focused, focused);
@@ -226,30 +233,49 @@ test("a deferred focus frame does not touch a dialog closed in the same tick", (
   const doc = makeDoc();
   let pending = null;
   const container = makeContainer(doc, []);
+  const focus = manager(doc, (fn) => (pending = fn));
 
-  dialogFocus(container, true, env(doc, (fn) => (pending = fn)));
+  focus.dialogFocus(container, true);
   assert.equal(container.focused, 0);
 
-  dialogFocus(container, false, env(doc, (fn) => (pending = fn)));
+  focus.dialogFocus(container, false);
   pending();
   assert.equal(container.focused, 0);
 });
 
 test("no document means no DOM work", () => {
   const container = makeContainer(makeDoc(), []);
+  const focus = createModalFocusManager({ document: null });
 
-  dialogFocus(container, true, { document: null });
-  dialogFocus(null, true, { document: null });
+  focus.dialogFocus(container, true);
+  focus.dialogFocus(null, true);
 
   assert.equal(container.focused, 0);
   assert.equal(container.listeners.size, 0);
 });
 
+test("two managers keep their active dialogs isolated", () => {
+  const firstDoc = makeDoc();
+  const secondDoc = makeDoc();
+  const first = manager(firstDoc);
+  const second = manager(secondDoc);
+  const firstContainer = makeContainer(firstDoc);
+  const secondContainer = makeContainer(secondDoc);
+
+  first.dialogFocus(firstContainer, true);
+  second.dialogFocus(secondContainer, true);
+  first.dialogRestore();
+
+  assert.equal(firstContainer.listeners.size, 0);
+  assert.equal(secondContainer.listeners.size, 1);
+});
+
 test("a missing frame scheduler focuses synchronously", () => {
   const doc = makeDoc();
   const container = makeContainer(doc, []);
+  const focus = createModalFocusManager({ document: doc, requestAnimationFrame: null });
 
-  dialogFocus(container, true, { document: doc, requestAnimationFrame: null });
+  focus.dialogFocus(container, true);
 
   assert.equal(container.focused, 1);
 });

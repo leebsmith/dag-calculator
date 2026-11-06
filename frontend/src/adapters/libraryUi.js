@@ -12,7 +12,7 @@ import { installLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.
 import { installLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
 import { KEYS as compositionKeys, installLibraryComposition } from "./libraryComposition.js";
 import { filterCatalog } from "../views/catalog.js";
-import { dialogRestore } from "./modalFocus.js";
+import { createModalFocusManager } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { formatWithDecimals } from "../utils.js";
@@ -29,7 +29,7 @@ function titleOf(meta, item) {
   return item?.[meta?.titleField ?? "name"] ?? identityOf(meta, item);
 }
 
-export function createLibraryUi({ artifact, engine, cache, getView }) {
+export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }) {
   const nl = () => nonlinearFns(artifact, engine);
 
   const actions = {
@@ -209,7 +209,7 @@ export function createLibraryUi({ artifact, engine, cache, getView }) {
 
     closeLibrary() {
       getView().libraryOpen = false;
-      dialogRestore();
+      modalFocus.dialogRestore();
       getView().libraryDraft = null;
       getView().libraryErrors = [];
       getView().libraryNotice = "";
@@ -381,7 +381,11 @@ export function createLibraryUi({ artifact, engine, cache, getView }) {
 }
 
 export function registerLibraryUi(app, ctx) {
-  const actions = createLibraryUi({ ...ctx, getView: ctx.getView ?? (() => app) });
+  const actions = createLibraryUi({
+    ...ctx,
+    modalFocus: ctx.modalFocus ?? createModalFocusManager(),
+    getView: ctx.getView ?? (() => app),
+  });
   Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
   installLibraryFields(app, ctx);
   installLibraryListEditor(app, ctx);
