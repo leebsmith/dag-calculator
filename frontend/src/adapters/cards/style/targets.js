@@ -5,22 +5,23 @@
 import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import {
   SCALE_PINS,
-  allowanceBounds,
+  formatIbu,
+  formatIbuGu,
+  ibuDrift,
+  ibuSliderBounds,
+  plannedIbuGu,
   scalePinState,
   scaleTargetMismatch,
-  targetDrift,
-} from "../../../views/producer/styleTarget.js";
-import { displayValue, nonlinearFns } from "../../../views/producer.js";
-import { TAU } from "../../../engine/styleConformance.js";
-import {
-  bitternessRatio,
-  boundsOf,
-  formatRange,
-  formatWithDecimals,
-  provenanceFor,
-  roundTo,
-  toPercentValue,
-} from "../../../utils.js";
+  srmDeltaScale,
+  srmDisplay,
+  srmDrift,
+  srmHint,
+  srmSliderBounds,
+  styleBounds,
+  whirlpoolPercent,
+} from "../../../views/styleTargetsLogic.js";
+import { nonlinearFns } from "../../../views/producer.js";
+import { provenanceFor, roundTo } from "../../../utils.js";
 
 export function registerStyleTargets(app, ctx) {
   const { engine, artifact } = ctx;
@@ -151,13 +152,13 @@ export function registerStyleTargets(app, ctx) {
     styleSrmBounds: {
       configurable: true,
       get() {
-        return boundsOf(this.fieldsById, N.envelope.srmMin, N.envelope.srmMax);
+        return styleBounds(this.fieldsById, N.envelope.srmMin, N.envelope.srmMax);
       },
     },
     styleIbuBounds: {
       configurable: true,
       get() {
-        return boundsOf(this.fieldsById, N.envelope.ibuMin, N.envelope.ibuMax);
+        return styleBounds(this.fieldsById, N.envelope.ibuMin, N.envelope.ibuMax);
       },
     },
     // The sliders reach two just-noticeable differences past the envelope; the
@@ -165,13 +166,13 @@ export function registerStyleTargets(app, ctx) {
     styleSrmSliderBounds: {
       configurable: true,
       get() {
-        return allowanceBounds(this.styleSrmBounds, TAU.srm);
+        return srmSliderBounds(this.styleSrmBounds);
       },
     },
     styleIbuSliderBounds: {
       configurable: true,
       get() {
-        return allowanceBounds(this.styleIbuBounds, TAU.ibu);
+        return ibuSliderBounds(this.styleIbuBounds);
       },
     },
     // The slider's numbers follow the target field's display unit (the same
@@ -179,33 +180,33 @@ export function registerStyleTargets(app, ctx) {
     styleSrmHint: {
       configurable: true,
       get() {
-        const field = this.srmTargetField;
-        const bounds = this.styleSrmBounds;
-        if (!field?.unitId || !bounds) return "";
-        const format = (value) =>
-          formatWithDecimals(
-            displayValue(artifact, "beer_color", field.unitId, value, nl),
-            field.decimals
-          );
-        return `Style ${formatRange(bounds[0], bounds[1], format)} ${field.unit}`;
+        return srmHint({
+          field: this.srmTargetField,
+          bounds: this.styleSrmBounds,
+          artifact,
+          nl,
+        });
       },
     },
     srmTargetDisplay: {
       configurable: true,
       get() {
-        const field = this.srmTargetField;
-        if (!field?.unitId) return "";
-        const shown = displayValue(artifact, "beer_color", field.unitId, this.targetSrm, nl);
-        return `${formatWithDecimals(shown, field.decimals)} ${field.unit}`;
+        return srmDisplay({
+          field: this.srmTargetField,
+          target: this.targetSrm,
+          artifact,
+          nl,
+        });
       },
     },
     srmTargetOutside: {
       configurable: true,
       get() {
         if (!this.srmTargetField) return false;
-        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, {
-          unit: this.srmTargetField.unit,
-          decimals: this.srmTargetField.decimals,
+        return srmDrift({
+          target: this.targetSrm,
+          bounds: this.styleSrmBounds,
+          field: this.srmTargetField,
           toDisplay: this.srmTargetDelta,
         }).outside;
       },
@@ -215,9 +216,10 @@ export function registerStyleTargets(app, ctx) {
       get() {
         const field = this.srmTargetField;
         if (!field) return "";
-        return targetDrift(this.targetSrm, this.styleSrmBounds, TAU.srm, {
-          unit: field.unit,
-          decimals: field.decimals,
+        return srmDrift({
+          target: this.targetSrm,
+          bounds: this.styleSrmBounds,
+          field,
           toDisplay: this.srmTargetDelta,
         }).text;
       },
@@ -227,25 +229,19 @@ export function registerStyleTargets(app, ctx) {
     srmTargetDelta: {
       configurable: true,
       get() {
-        const field = this.srmTargetField;
-        const value = (base) =>
-          field?.unitId ? displayValue(artifact, "beer_color", field.unitId, base, nl) : base;
-        const scale = value(1) - value(0);
-        return (deviation) => deviation * scale;
+        return srmDeltaScale({ field: this.srmTargetField, artifact, nl });
       },
     },
     ibuTargetOutside: {
       configurable: true,
       get() {
-        return targetDrift(this.targetIbu, this.styleIbuBounds, TAU.ibu, { unit: "IBU", decimals: 0 })
-          .outside;
+        return ibuDrift({ target: this.targetIbu, bounds: this.styleIbuBounds }).outside;
       },
     },
     ibuTargetNote: {
       configurable: true,
       get() {
-        return targetDrift(this.targetIbu, this.styleIbuBounds, TAU.ibu, { unit: "IBU", decimals: 0 })
-          .text;
+        return ibuDrift({ target: this.targetIbu, bounds: this.styleIbuBounds }).text;
       },
     },
     // The SRM/IBU target roots live on the batch slice, but the style card shows
@@ -280,34 +276,31 @@ export function registerStyleTargets(app, ctx) {
     ibuGu: {
       configurable: true,
       get() {
-        return bitternessRatio(this.targetIbu, this.styleTargetInfo?.og);
+        return plannedIbuGu(this.targetIbu, this.styleTargetInfo?.og);
       },
     },
     ibuGuDisplay: {
       configurable: true,
       get() {
-        return formatWithDecimals(this.ibuGu, 2, { dash: "—" });
+        return formatIbuGu(this.ibuGu);
       },
     },
     whirlpoolPctDisplay: {
       configurable: true,
       get() {
-        const fraction = this.whirlpoolFraction;
-        return typeof fraction === "number" ? toPercentValue(fraction, 0) : 0;
+        return whirlpoolPercent(this.whirlpoolFraction);
       },
     },
     boilIbuDisplay: {
       configurable: true,
       get() {
-        const ibu = this.boilIbu;
-        return typeof ibu === "number" ? formatWithDecimals(ibu, 1) : "—";
+        return formatIbu(this.boilIbu);
       },
     },
     whirlpoolIbuDisplay: {
       configurable: true,
       get() {
-        const ibu = this.whirlpoolIbu;
-        return typeof ibu === "number" ? formatWithDecimals(ibu, 1) : "—";
+        return formatIbu(this.whirlpoolIbu);
       },
     },
   });

@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  SCALE_PINS,
-  scalePinState,
-  scaleTargetMismatch,
   styleExtractPoint,
   styleRegionState,
 } from "../../frontend/src/views/producer/styleTarget.js";
+import {
+  SCALE_PINS,
+  scalePinState,
+  scaleTargetMismatch,
+} from "../../frontend/src/views/styleTargetsLogic.js";
 import { gravityDisplay } from "../../frontend/src/views/producer/gravityDisplay.js";
 
 const ENVELOPE = {
