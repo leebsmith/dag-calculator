@@ -6,7 +6,7 @@
 // anchor, the download trigger, and the report tab are injected by `main.js`,
 // which keeps the store testable in node.
 
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import { safeFilename } from "../utils.js";
 import {
   SCOPE_LABELS,
@@ -25,7 +25,7 @@ export function createRecipesStore({
   openTab,
   showTab,
   closeTab,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createRecipesStore"),
 } = {}) {
   return {
     view: "batches", // "batches" | "editor" | "import"

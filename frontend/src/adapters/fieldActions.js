@@ -8,14 +8,14 @@ import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { clampBoundsFor } from "../views/registry/presentation.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 
 export function createFieldActions({
   artifact,
   session,
   refToSelectionMap,
   getView,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createFieldActions"),
 }) {
   const actions = {
     inputDrafts: {},

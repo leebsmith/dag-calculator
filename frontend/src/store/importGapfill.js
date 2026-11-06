@@ -4,14 +4,14 @@
 // PDFs, and the reason the action is explicit rather than automatic. The reply may
 // only fill what is absent; the merge enforces that.
 
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import { applyFilledTargets, missingTargetNames } from "../views/import/review.js";
 
 export function gapfillActions({
   client,
   readFile,
   sourceFile,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "gapfillActions"),
 }) {
   const seams = () => ({ client, readFile, sourceFile });
   return {

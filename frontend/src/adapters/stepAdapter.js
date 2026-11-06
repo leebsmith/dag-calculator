@@ -51,7 +51,7 @@ import { createStepView } from "./stepView.js";
 import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } from "./contract.js";
 import { INSTALLERS } from "./installers.js";
 import * as fmt from "../utils.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 
 // Pre-landing-page bootstrap: the seed default equipment, no water source, no
 // style. The landing page replaces this with the batch's identity snapshot.
@@ -81,7 +81,7 @@ function referenceAssets(options, observability, onChange) {
 function runtimeSeams(options) {
   return {
     modalFocus: options.modalFocus ?? createModalFocusManager(),
-    observability: options.observability ?? createObservabilityManager(),
+    observability: requireObservability(options.observability, "createStepApp"),
   };
 }
 

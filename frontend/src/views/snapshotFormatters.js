@@ -40,8 +40,10 @@ export function shapeDraftState({
     identity: { ...identity },
     hop_strategy: hopStrategy ?? "",
     roots,
-    collections: { ...collections },
-    selections: { ...selections },
+    // Detach the editable maps from live session state: a later row edit must
+    // not rewrite a queued save payload. Roots are scalar and read synchronously.
+    collections: globalThis.structuredClone(collections),
+    selections: globalThis.structuredClone(selections),
     schema_version: schemaVersion,
   };
 }

@@ -5,7 +5,7 @@
 // templates bind to, and it keeps the two states the UI must explain — a
 // duplicate and a failure — as first-class values instead of error strings.
 
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import { originTitle, originYeastOutcome, resumeLabel } from "../views/import/review.js";
 
 const OPEN_STATUSES = new Set(["extracted", "mapping"]);
@@ -15,7 +15,7 @@ export function createImportsStore({
   readFile,
   onOpen,
   onError,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createImportsStore"),
 } = {}) {
   return Object.assign(
     {

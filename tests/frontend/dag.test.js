@@ -100,6 +100,30 @@ test("a failed boundary degrades to undefined until it is cleared", () => {
   assert.throws(() => engine.get("solver"), /No boundary binding registered/);
 });
 
+test("setReferences clears boundary-unavailable marks", () => {
+  const artifact = syntheticArtifact({
+    base: { kind: "root", dimension: "dimensionless", default: 1 },
+    solver: {
+      kind: "boundary",
+      binding: "b",
+      inputs: { x: "base" },
+      outputs: { y: { dimension: "dimensionless" } },
+    },
+    derived: {
+      kind: "derived",
+      inputs: { y: "solver.y" },
+      expr: { ref: "y" },
+      output: { dimension: "dimensionless" },
+    },
+  });
+  const engine = createCalculator(artifact);
+  engine.markBoundaryUnavailable("solver");
+  assert.equal(engine.get("solver"), undefined);
+
+  engine.setReferences({});
+  assert.throws(() => engine.get("solver"), /No boundary binding registered/);
+});
+
 test("markBoundaryUnavailable refuses a non-boundary node", () => {
   const engine = createCalculator(loadArtifact(), makeFixturesWithYeast());
   assert.throws(() => engine.markBoundaryUnavailable("batch.target_abv"), /not a boundary node/);

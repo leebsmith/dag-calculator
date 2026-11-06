@@ -48,3 +48,20 @@ export function createObservabilityManager({ console: consoleImpl = console } = 
 
   return { reportError, errorCounters, reset };
 }
+
+/**
+ * App-level factories must receive the app's manager. The self-created default
+ * remains for standalone unit tests; a DEV app that forgets the injection throws
+ * instead of hiding its counters.
+ *
+ * @param {object|undefined|null} observability
+ * @param {string} scope
+ * @returns {object}
+ */
+export function requireObservability(observability, scope) {
+  if (observability) return observability;
+  if (import.meta.env?.DEV) {
+    throw new Error(`${scope}: observability manager was not injected`);
+  }
+  return createObservabilityManager();
+}

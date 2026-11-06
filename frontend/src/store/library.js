@@ -6,7 +6,7 @@
 // current batch untouched.
 
 import { CATALOGS, CATALOG_KINDS } from "./userCatalog.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 
 export const LEGACY_STORAGE_KEY = "brew_user_catalog";
 
@@ -26,7 +26,7 @@ export function createLibrary({
   client = EMPTY_CLIENT,
   kinds = CATALOG_KINDS,
   onChange,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createLibrary"),
 } = {}) {
   let items = emptyItems(kinds);
   const state = { loading: false, error: null, loaded: false };

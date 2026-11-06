@@ -14,7 +14,7 @@ import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { HOP_NODES as H } from "../views/registry/hops.js";
 import { SYSTEM_NODES as N } from "../views/registry/system.js";
 import { whirlpoolDraftCeilings } from "../views/producer/whirlpoolPolicy.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import { formatWithDecimals, preferredUnit, roundTo, unitSymbol } from "../utils.js";
 import { CATALOG_CHROME_KEYS } from "./cards/catalogChrome.js";
 
@@ -40,7 +40,7 @@ export function createDraftEditor({
   ui,
   session,
   getView,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createDraftEditor"),
 }) {
   const actions = {
     draftOpen: false,

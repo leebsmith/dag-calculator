@@ -3,7 +3,7 @@
 // gap fill) so no factory becomes a second program; readouts go through the pure
 // views.
 
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import { catalogRecord, catalogRecords } from "./userCatalog.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
@@ -67,6 +67,11 @@ function compose(...sources) {
   return target;
 }
 
+/**
+ * `referenceCache` is the production catalogue seam. `catalogs`/`catalog` are a
+ * legacy test-only seam kept for suites that predate the unified cache; new
+ * callers pass `referenceCache` instead.
+ */
 export function createImportReviewStore({
   client,
   referenceCache,
@@ -80,7 +85,7 @@ export function createImportReviewStore({
   readFile = async () => "",
   profiles = () => [],
   onClose,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createImportReviewStore"),
 } = {}) {
   // A catalog is what makes a ref checkable. Without one (a bare store in a test)
   // a mapped row is taken at its word rather than reported as dangling.

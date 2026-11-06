@@ -42,6 +42,25 @@ test("shapeDraftState copies the mutable maps and defaults the strategy", () => 
   assert.notEqual(state.selections, selections);
 });
 
+test("shapeDraftState detaches collections and selections from later edits", () => {
+  const collections = { "batch.sugars": [{ mass_kg: 1 }] };
+  const selections = { "batch.yeast": { id: "y1" } };
+  const state = shapeDraftState({
+    identity: {},
+    hopStrategy: "",
+    roots: {},
+    collections,
+    selections,
+    schemaVersion: 4,
+  });
+
+  collections["batch.sugars"][0].mass_kg = 2;
+  selections["batch.yeast"].id = "y2";
+
+  assert.equal(state.collections["batch.sugars"][0].mass_kg, 1);
+  assert.equal(state.selections["batch.yeast"].id, "y1");
+});
+
 test("shapeFreezePayload carries the format and a null conformance default", () => {
   assert.deepEqual(
     shapeFreezePayload({

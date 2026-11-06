@@ -4,7 +4,7 @@
 // so its methods never depend on Alpine's `this`.
 
 import { buildReportCatalog } from "../views/registry/catalog.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import {
   buildReportFormatted,
   buildReportSummaries,
@@ -30,7 +30,7 @@ export function createSnapshotActions({
   master,
   session,
   getView,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createSnapshotActions"),
 }) {
   function draftState() {
     return shapeDraftState({

@@ -4,7 +4,7 @@
 // record (`suggestions`) so reopening the mapping neither re-calls nor reshuffles
 // the chips, and the local screen stays the fallback when the call fails.
 
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 
 const CATALOG_KIND = { fermentables: "malt", hops: "hop", yeasts: "yeast", mashes: "mash" };
 
@@ -16,7 +16,7 @@ export function catalogKindFor(row) {
 export function matchActions({
   client,
   catalog,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "matchActions"),
 }) {
   return {
     get frozenSuggestions() {

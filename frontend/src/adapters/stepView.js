@@ -10,7 +10,7 @@
 
 import { createFindingFormatter, produce } from "../views/producer.js";
 import { indexFields } from "../utils.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 import { dimensionOf } from "../views/registry/catalog.js";
 import {
   findingFor,
@@ -51,7 +51,7 @@ export function createStepView({
   cache,
   ui,
   session,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createStepView"),
   relationDefs,
   attribution,
 }) {

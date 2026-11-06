@@ -368,6 +368,8 @@ export function createEngine(artifact, options = {}) {
     setReferences(nextReferences = {}) {
       references = { ...nextReferences };
       resolveIngredientCollections(artifact, collections);
+      // The unavailable marks belong to the old catalogue's fingerprints.
+      boundaryUnavailable.clear();
       memo.clear();
       authoredMemo.clear();
     },

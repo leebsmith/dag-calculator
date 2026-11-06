@@ -1,6 +1,6 @@
 // The check stage and the commit: solve the projection, then make a batch.
 
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 
 // A routing decision the ledger makes (no IBU split, a flameout in the boil, a
 // second mapped yeast) is a gate finding even though no solver was involved: the
@@ -30,7 +30,7 @@ export function checkActions({
   project,
   gate,
   delta,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "checkActions"),
 }) {
   return {
     get checkSummary() {
@@ -87,7 +87,7 @@ export function checkActions({
   };
 }
 
-export function commitActions({ commit = null, observability = createObservabilityManager() }) {
+export function commitActions({ commit = null, observability = requireObservability(null, "commitActions") }) {
   return {
     // Everything that must be true before a batch exists, in one place.
     commitBlocker() {

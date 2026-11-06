@@ -14,7 +14,7 @@
 import { createLibrary } from "./library.js";
 import { assertReferencePair, createReferenceCache } from "./referenceCache.js";
 import { catalogRecord, catalogRecords } from "./userCatalog.js";
-import { createObservabilityManager } from "../observability.js";
+import { requireObservability } from "../observability.js";
 
 const PREREQUISITES = [
   { kind: "style", label: "styles" },
@@ -39,7 +39,7 @@ export function createSetupStore({
   onImportRecipe,
   client,
   persistence,
-  observability = createObservabilityManager(),
+  observability = requireObservability(null, "createSetupStore"),
   cache,
   library,
 } = {}) {

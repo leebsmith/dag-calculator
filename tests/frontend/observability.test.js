@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createObservabilityManager } from "../../frontend/src/observability.js";
+import {
+  createObservabilityManager,
+  requireObservability,
+} from "../../frontend/src/observability.js";
 
 test("reportError logs each signature once and counts repeats", (t) => {
   const observability = createObservabilityManager();
@@ -19,6 +22,13 @@ test("reportError logs each signature once and counts repeats", (t) => {
 
   observability.reset();
   assert.deepEqual(observability.errorCounters(), {});
+});
+
+test("requireObservability keeps an injected manager and falls back for a bare call", () => {
+  const injected = createObservabilityManager({ console: { error() {} } });
+
+  assert.equal(requireObservability(injected, "test"), injected);
+  assert.equal(typeof requireObservability(null, "test").reportError, "function");
 });
 
 test("two managers keep their failure state isolated", () => {
