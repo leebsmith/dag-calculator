@@ -1,58 +1,5 @@
 // Batch (draft/frozen) persistence client over the JSON seam. Browser-only —
-// not imported by node tests.
-
-import { requestBlob, requestJSON } from "./apiClient.js";
-
-export function listBatches() {
-  return requestJSON("/batches");
-}
-
-export function upsertBatch(batchId, payload, baseUpdatedAt, force = false) {
-  const body = { ...payload };
-  if (baseUpdatedAt !== undefined) body.base_updated_at = baseUpdatedAt;
-  if (force) body.force = true;
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, { method: "PUT", body });
-}
-
-export function setTrashed(batchId, trashed) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
-    method: "PATCH",
-    body: { trashed },
-  });
-}
-
-export function renameBatch(batchId, name) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
-    method: "PATCH",
-    body: { name },
-  });
-}
-
-export function deleteBatch(batchId) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}`, { method: "DELETE" });
-}
-
-export function freezeBatch(batchId, payload) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}/freeze`, {
-    method: "POST",
-    body: payload,
-  });
-}
-
-export function getBatch(batchId) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}`);
-}
-
-export function getReportBundle(batchId) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`);
-}
-
-export function previewReportBundle(batchId, payload) {
-  return requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`, {
-    method: "POST",
-    body: payload,
-  });
-}
+// the app hands it the shared JSON seam at construction.
 
 const REPORT_PARAMS = ["doc_kind", "sections", "paper", "format", "page"];
 
@@ -68,17 +15,75 @@ function reportPath(batchId, params = {}) {
   return `/batches/${encodeURIComponent(batchId)}/report${query ? `?${query}` : ""}`;
 }
 
-export function getReportSections() {
-  return requestJSON("/report/sections");
-}
+export function createBatchClient({ api }) {
+  return {
+    listBatches() {
+      return api.requestJSON("/batches");
+    },
 
-export function getReport(batchId, params) {
-  return requestBlob(reportPath(batchId, params));
-}
+    upsertBatch(batchId, payload, baseUpdatedAt, force = false) {
+      const body = { ...payload };
+      if (baseUpdatedAt !== undefined) body.base_updated_at = baseUpdatedAt;
+      if (force) body.force = true;
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
+        method: "PUT",
+        body,
+      });
+    },
 
-export function postReport(batchId, bundle, params) {
-  return requestBlob(reportPath(batchId, params), {
-    method: "POST",
-    body: { bundle },
-  });
+    setTrashed(batchId, trashed) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
+        method: "PATCH",
+        body: { trashed },
+      });
+    },
+
+    renameBatch(batchId, name) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}`, {
+        method: "PATCH",
+        body: { name },
+      });
+    },
+
+    deleteBatch(batchId) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}`, { method: "DELETE" });
+    },
+
+    freezeBatch(batchId, payload) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}/freeze`, {
+        method: "POST",
+        body: payload,
+      });
+    },
+
+    getBatch(batchId) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}`);
+    },
+
+    getReportBundle(batchId) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`);
+    },
+
+    previewReportBundle(batchId, payload) {
+      return api.requestJSON(`/batches/${encodeURIComponent(batchId)}/report-bundle`, {
+        method: "POST",
+        body: payload,
+      });
+    },
+
+    getReportSections() {
+      return api.requestJSON("/report/sections");
+    },
+
+    getReport(batchId, params) {
+      return api.requestBlob(reportPath(batchId, params));
+    },
+
+    postReport(batchId, bundle, params) {
+      return api.requestBlob(reportPath(batchId, params), {
+        method: "POST",
+        body: { bundle },
+      });
+    },
+  };
 }

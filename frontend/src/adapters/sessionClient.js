@@ -1,50 +1,53 @@
-// Brew-session persistence client over the JSON seam.
+// Brew-session persistence client over the JSON seam. The app hands it the
+// shared seam at construction.
 
-import { requestBlob, requestJSON } from "./apiClient.js";
+export function createSessionClient({ api }) {
+  return {
+    listSessions(batchId) {
+      const query = batchId ? `?batch_id=${encodeURIComponent(batchId)}` : "";
+      return api.requestJSON(`/brew-sessions${query}`);
+    },
 
-export function listSessions(batchId) {
-  const query = batchId ? `?batch_id=${encodeURIComponent(batchId)}` : "";
-  return requestJSON(`/brew-sessions${query}`);
-}
+    getSession(sessionId) {
+      return api.requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}`);
+    },
 
-export function getSession(sessionId) {
-  return requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}`);
-}
+    createSession(payload) {
+      return api.requestJSON("/brew-sessions", { method: "POST", body: payload });
+    },
 
-export function createSession(payload) {
-  return requestJSON("/brew-sessions", { method: "POST", body: payload });
-}
+    patchSession(sessionId, payload) {
+      return api.requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}`, {
+        method: "PATCH",
+        body: payload,
+      });
+    },
 
-export function patchSession(sessionId, payload) {
-  return requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}`, {
-    method: "PATCH",
-    body: payload,
-  });
-}
+    addObservation(sessionId, observation) {
+      return api.requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}/observations`, {
+        method: "POST",
+        body: observation,
+      });
+    },
 
-export function addObservation(sessionId, observation) {
-  return requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}/observations`, {
-    method: "POST",
-    body: observation,
-  });
-}
+    patchObservation(sessionId, observationId, payload) {
+      return api.requestJSON(
+        `/brew-sessions/${encodeURIComponent(sessionId)}/observations/${encodeURIComponent(
+          observationId
+        )}`,
+        { method: "PATCH", body: payload }
+      );
+    },
 
-export function patchObservation(sessionId, observationId, payload) {
-  return requestJSON(
-    `/brew-sessions/${encodeURIComponent(sessionId)}/observations/${encodeURIComponent(
-      observationId
-    )}`,
-    { method: "PATCH", body: payload }
-  );
-}
+    finalizeSession(sessionId) {
+      return api.requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}/finalize`, {
+        method: "POST",
+      });
+    },
 
-export function finalizeSession(sessionId) {
-  return requestJSON(`/brew-sessions/${encodeURIComponent(sessionId)}/finalize`, {
-    method: "POST",
-  });
-}
-
-export function getSessionReport(sessionId, paper = "a4") {
-  const query = paper ? `?paper=${encodeURIComponent(paper)}` : "";
-  return requestBlob(`/brew-sessions/${encodeURIComponent(sessionId)}/report${query}`);
+    getSessionReport(sessionId, paper = "a4") {
+      const query = paper ? `?paper=${encodeURIComponent(paper)}` : "";
+      return api.requestBlob(`/brew-sessions/${encodeURIComponent(sessionId)}/report${query}`);
+    },
+  };
 }

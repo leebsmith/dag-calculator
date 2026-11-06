@@ -21,7 +21,7 @@ import { unresolvedRows } from "../views/import/ledger.js";
 export const GATE_NODES = ["solver.batch", "solver.hops", "solver.water"];
 export const ADVISORY_NODES = new Set(["solver.water"]);
 
-export async function runGate({ state, references = {}, fetchImpl }) {
+export async function runGate({ state, references = {}, api, fetchImpl }) {
   const engine = createEngine(artifact, {
     identity: state.identity ?? {},
     roots: state.roots ?? {},
@@ -40,6 +40,7 @@ export async function runGate({ state, references = {}, fetchImpl }) {
   const runner = createBoundaryRunner({
     session: { boundaryNodes: nodes, getEngine: () => engine },
     remote: true,
+    api,
     fetchImpl,
     compute: () => {},
   });

@@ -399,6 +399,7 @@ export function createStepApp(options = {}) {
       const cap = engine.resolve("batch.yeast_cap");
       return Number.isFinite(cap) && cap > 0 ? null : "Select a yeast to solve the batch.";
     },
+    api: options.api,
     fetchImpl,
     debounceMs,
     compute: () => liveView.current.compute(),

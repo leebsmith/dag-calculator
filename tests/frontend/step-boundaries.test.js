@@ -425,6 +425,9 @@ test("http: loadState seeds missing derived roots from the selected profile", as
   });
   const app = makeApp({ remote: true, fetchImpl });
   await app.boot();
+  // boot's library refresh starts a background solve; let it land before
+  // clearing the call log, or it supersedes the loadState solve.
+  await new Promise((resolve) => setTimeout(resolve, 0));
   calls.length = 0;
 
   await app.loadState({

@@ -1,12 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import {
-  flattenResponse,
-  requestBlob,
-  requestJSON,
-  setTokenProvider,
-} from "../../frontend/src/adapters/apiClient.js";
+import { createApiClient, flattenResponse } from "../../frontend/src/adapters/apiClient.js";
 
 const BATCH = {
   sg_post_boil: 1.055,
@@ -38,9 +33,8 @@ test("flattenResponse maps nested responses to dotted output keys", () => {
   assert.equal(flat.sg_post_boil, 1.055);
 });
 
-function stubFetch(t, response) {
+function stubFetch(response) {
   const calls = [];
-  t.after(() => setTokenProvider(async () => null));
   return {
     calls,
     impl: async (url, init) => {
@@ -50,9 +44,8 @@ function stubFetch(t, response) {
   };
 }
 
-function stubBlobFetch(t, response) {
+function stubBlobFetch(response) {
   const calls = [];
-  t.after(() => setTokenProvider(async () => null));
   return {
     calls,
     impl: async (url, init) => {
@@ -62,22 +55,22 @@ function stubBlobFetch(t, response) {
   };
 }
 
-test("requestBlob returns the artifact and the selection headers", async (t) => {
+test("requestBlob returns the artifact and the selection headers", async () => {
   const headers = {
     "Content-Type": "application/pdf",
     "X-Report-Sections": "brewhouse,batch-facts",
     "X-Report-Pages": "3",
     ETag: '"abc"',
   };
-  const { calls, impl } = stubBlobFetch(t, {
+  const { calls, impl } = stubBlobFetch({
     ok: true,
     status: 200,
     blob: async () => ({ type: "application/pdf" }),
     headers: { get: (name) => headers[name] ?? null },
   });
-  setTokenProvider(async () => "token-123");
+  const api = createApiClient({ tokenProvider: async () => "token-123" });
 
-  const report = await requestBlob("/batches/b1/report", { fetchImpl: impl });
+  const report = await api.requestBlob("/batches/b1/report", { fetchImpl: impl });
 
   assert.equal(calls[0].init.headers.Authorization, "Bearer token-123");
   assert.equal(report.type, "application/pdf");
@@ -86,57 +79,74 @@ test("requestBlob returns the artifact and the selection headers", async (t) => 
   assert.equal(report.etag, '"abc"');
 });
 
-test("requestBlob surfaces the server's refusal message", async (t) => {
-  const { impl } = stubBlobFetch(t, {
+test("requestBlob surfaces the server's refusal message", async () => {
+  const { impl } = stubBlobFetch({
     ok: false,
     status: 422,
     json: async () => ({ detail: "nothing to report: no section is present" }),
   });
+  const api = createApiClient();
 
   await assert.rejects(
-    () => requestBlob("/batches/b1/report", { fetchImpl: impl }),
+    () => api.requestBlob("/batches/b1/report", { fetchImpl: impl }),
     /nothing to report/
   );
   await assert.rejects(
-    () => requestBlob("/batches/b1/report", { fetchImpl: impl }),
+    () => api.requestBlob("/batches/b1/report", { fetchImpl: impl }),
     (err) => err.code === "VALIDATION"
   );
 });
 
-test("requestJSON attaches the injected bearer token", async (t) => {
-  const { calls, impl } = stubFetch(t, { ok: true, status: 200, json: async () => ({ ok: true }) });
-  setTokenProvider(async () => "token-123");
+test("an instance token provider attaches its bearer token", async () => {
+  const { calls, impl } = stubFetch({ ok: true, status: 200, json: async () => ({ ok: true }) });
+  const api = createApiClient({ tokenProvider: async () => "token-123" });
 
-  await requestJSON("/batches", { fetchImpl: impl });
+  await api.requestJSON("/batches", { fetchImpl: impl });
 
   assert.equal(calls[0].init.headers.Authorization, "Bearer token-123");
 });
 
-test("requestJSON omits the header when no token is available", async (t) => {
-  const { calls, impl } = stubFetch(t, { ok: true, status: 200, json: async () => ({}) });
+test("two clients keep their token providers isolated", async () => {
+  const first = createApiClient({ tokenProvider: async () => "first-token" });
+  const second = createApiClient();
+  const a = stubFetch({ ok: true, status: 200, json: async () => ({}) });
+  const b = stubFetch({ ok: true, status: 200, json: async () => ({}) });
 
-  await requestJSON("/batches", { fetchImpl: impl });
+  await first.requestJSON("/batches", { fetchImpl: a.impl });
+  await second.requestJSON("/batches", { fetchImpl: b.impl });
+
+  assert.equal(a.calls[0].init.headers.Authorization, "Bearer first-token");
+  assert.equal("Authorization" in b.calls[0].init.headers, false);
+});
+
+test("requestJSON omits the header when no token is available", async () => {
+  const { calls, impl } = stubFetch({ ok: true, status: 200, json: async () => ({}) });
+  const api = createApiClient();
+
+  await api.requestJSON("/batches", { fetchImpl: impl });
 
   assert.equal("Authorization" in calls[0].init.headers, false);
 });
 
-test("requestJSON returns null on 204", async (t) => {
-  const { impl } = stubFetch(t, { ok: true, status: 204, json: async () => null });
+test("requestJSON returns null on 204", async () => {
+  const { impl } = stubFetch({ ok: true, status: 204, json: async () => null });
+  const api = createApiClient();
 
-  assert.equal(await requestJSON("/batches/b1", { method: "DELETE", fetchImpl: impl }), null);
+  assert.equal(await api.requestJSON("/batches/b1", { method: "DELETE", fetchImpl: impl }), null);
 });
 
-test("requestJSON survives a non-JSON error body", async (t) => {
-  const { impl } = stubFetch(t, {
+test("requestJSON survives a non-JSON error body", async () => {
+  const { impl } = stubFetch({
     ok: false,
     status: 502,
     json: async () => {
       throw new Error("not json");
     },
   });
+  const api = createApiClient();
 
   await assert.rejects(
-    () => requestJSON("/solve/batch", { method: "POST", body: {}, fetchImpl: impl }),
+    () => api.requestJSON("/solve/batch", { method: "POST", body: {}, fetchImpl: impl }),
     (err) => {
       assert.equal(err.code, "HTTP_ERROR");
       assert.equal(err.message, "HTTP 502");
@@ -146,8 +156,8 @@ test("requestJSON survives a non-JSON error body", async (t) => {
   );
 });
 
-test("requestJSON turns a FastAPI validation array into a readable VALIDATION error", async (t) => {
-  const { impl } = stubFetch(t, {
+test("requestJSON turns a FastAPI validation array into a readable VALIDATION error", async () => {
+  const { impl } = stubFetch({
     ok: false,
     status: 422,
     json: async () => ({
@@ -157,9 +167,10 @@ test("requestJSON turns a FastAPI validation array into a readable VALIDATION er
       ],
     }),
   });
+  const api = createApiClient();
 
   await assert.rejects(
-    () => requestJSON("/solve/batch", { method: "POST", body: {}, fetchImpl: impl }),
+    () => api.requestJSON("/solve/batch", { method: "POST", body: {}, fetchImpl: impl }),
     (err) => {
       assert.equal(err.code, "VALIDATION");
       assert.equal(
@@ -171,16 +182,17 @@ test("requestJSON turns a FastAPI validation array into a readable VALIDATION er
   );
 });
 
-test("requestJSON surfaces a string detail from a raised HTTPException", async (t) => {
-  const { impl } = stubFetch(t, {
+test("requestJSON surfaces a string detail from a raised HTTPException", async () => {
+  const { impl } = stubFetch({
     ok: false,
     status: 422,
     json: async () => ({ detail: "Report bundle rejected: catalog does not cover the state" }),
   });
+  const api = createApiClient();
 
   await assert.rejects(
     () =>
-      requestJSON("/batches/b1/report-bundle", {
+      api.requestJSON("/batches/b1/report-bundle", {
         method: "POST",
         body: {},
         fetchImpl: impl,
@@ -196,15 +208,16 @@ test("requestJSON surfaces a string detail from a raised HTTPException", async (
   );
 });
 
-test("requestJSON keeps HTTP_ERROR for a non-422 string detail", async (t) => {
-  const { impl } = stubFetch(t, {
+test("requestJSON keeps HTTP_ERROR for a non-422 string detail", async () => {
+  const { impl } = stubFetch({
     ok: false,
     status: 409,
     json: async () => ({ detail: "Drafts have no report bundle; request a preview instead" }),
   });
+  const api = createApiClient();
 
   await assert.rejects(
-    () => requestJSON("/batches/b1/report-bundle", { fetchImpl: impl }),
+    () => api.requestJSON("/batches/b1/report-bundle", { fetchImpl: impl }),
     (err) => {
       assert.equal(err.code, "HTTP_ERROR");
       assert.equal(err.message, "Drafts have no report bundle; request a preview instead");

@@ -1,18 +1,16 @@
 // Import seam: the browser's view of `/imports`. Thin by design — the server
 // owns every rule (dedupe, transitions, the committed guard), so this module
 // only names the calls and forwards the envelopes.
-import { requestJSON } from "./apiClient.js";
-
-export function createImportClient({ base } = {}) {
+export function createImportClient({ api }) {
   return {
-    list: () => requestJSON("/imports", { base }),
-    get: (importId) => requestJSON(`/imports/${importId}`, { base }),
-    create: (body) => requestJSON("/imports", { method: "POST", body, base }),
+    list: () => api.requestJSON("/imports"),
+    get: (importId) => api.requestJSON(`/imports/${importId}`),
+    create: (body) => api.requestJSON("/imports", { method: "POST", body }),
     patch: (importId, body) =>
-      requestJSON(`/imports/${importId}`, { method: "PATCH", body, base }),
-    remove: (importId) => requestJSON(`/imports/${importId}`, { method: "DELETE", base }),
-    match: (body) => requestJSON("/imports/match", { method: "POST", body, base }),
-    gapfill: (body) => requestJSON("/imports/gapfill", { method: "POST", body, base }),
+      api.requestJSON(`/imports/${importId}`, { method: "PATCH", body }),
+    remove: (importId) => api.requestJSON(`/imports/${importId}`, { method: "DELETE" }),
+    match: (body) => api.requestJSON("/imports/match", { method: "POST", body }),
+    gapfill: (body) => api.requestJSON("/imports/gapfill", { method: "POST", body }),
   };
 }
 

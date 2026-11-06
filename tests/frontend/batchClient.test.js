@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import * as batchClient from "../../frontend/src/adapters/batchClient.js";
+import { createApiClient } from "../../frontend/src/adapters/apiClient.js";
+import { createBatchClient } from "../../frontend/src/adapters/batchClient.js";
+
+const batchClient = createBatchClient({ api: createApiClient() });
 
 function jsonResponse(body, status = 200) {
   return { ok: status >= 200 && status < 300, status, json: async () => body };

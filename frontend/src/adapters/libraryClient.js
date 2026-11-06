@@ -1,15 +1,17 @@
 // Catalog-record client over the JSON seam. Browser-only.
 
-import { requestJSON } from "./apiClient.js";
+export function createLibraryClient({ api }) {
+  return {
+    listCatalog(kind) {
+      return api.requestJSON(`/catalog/${kind}`);
+    },
 
-export function listCatalog(kind) {
-  return requestJSON(`/catalog/${kind}`);
-}
+    createCatalog(kind, component) {
+      return api.requestJSON(`/catalog/${kind}`, { method: "POST", body: { component } });
+    },
 
-export function createCatalog(kind, component) {
-  return requestJSON(`/catalog/${kind}`, { method: "POST", body: { component } });
-}
-
-export function deleteCatalog(kind, itemId) {
-  return requestJSON(`/catalog/${kind}/${encodeURIComponent(itemId)}`, { method: "DELETE" });
+    deleteCatalog(kind, itemId) {
+      return api.requestJSON(`/catalog/${kind}/${encodeURIComponent(itemId)}`, { method: "DELETE" });
+    },
+  };
 }

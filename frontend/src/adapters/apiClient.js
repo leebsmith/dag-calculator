@@ -1,4 +1,9 @@
 // JSON seam client: browser → FastAPI. Pure helpers, no engine deps.
+//
+// The client is a factory: its base URL, fetch implementation, and bearer-token
+// provider are instance state, so an app (or a test) owns its own seam instead
+// of sharing a module-scoped token provider. `flattenResponse` stays a pure
+// helper because it holds no state.
 
 export class SolverError extends Error {
   constructor(code, message, details = {}) {
@@ -11,14 +16,6 @@ export class SolverError extends Error {
 
 const ENV = import.meta.env || {};
 export const DEFAULT_BASE = ENV.VITE_API_BASE || "";
-
-// Bearer token provider, injected by the browser entry (see main.js). Defaults
-// to null so the client is node-testable without a Firebase context.
-let tokenProvider = () => Promise.resolve(null);
-
-export function setTokenProvider(provider) {
-  tokenProvider = provider;
-}
 
 // FastAPI request-validation errors arrive as a `detail` array; turn them into a
 // readable message instead of an opaque "HTTP 422". Raised HTTPExceptions arrive
@@ -47,52 +44,69 @@ async function responseError(res) {
   );
 }
 
-export async function requestJSON(
-  path,
-  { method = "GET", body, base = DEFAULT_BASE, fetchImpl } = {}
-) {
-  const doFetch = fetchImpl || fetch;
-  const headers = { "Content-Type": "application/json" };
+async function authHeaders(tokenProvider, withJson) {
+  const headers = withJson ? { "Content-Type": "application/json" } : {};
   const token = await tokenProvider();
   if (token) headers.Authorization = `Bearer ${token}`;
-  const init = { method, headers };
-  if (body !== undefined) init.body = JSON.stringify(body);
-  const res = await doFetch(`${base}${path}`, init);
-  if (res.status === 204) return null;
-  if (!res.ok) throw await responseError(res);
-  return res.json();
+  return headers;
 }
 
-// Binary download seam (the rendered report): the error mapping is the same, and
-// the resolved-selection headers ride along so a caller can report them.
-export async function requestBlob(
-  path,
-  { method = "GET", body, base = DEFAULT_BASE, fetchImpl } = {}
-) {
-  const doFetch = fetchImpl || fetch;
-  const headers = {};
-  const token = await tokenProvider();
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const init = { method, headers };
-  if (body !== undefined) {
-    headers["Content-Type"] = "application/json";
-    init.body = JSON.stringify(body);
+export function createApiClient({
+  base = DEFAULT_BASE,
+  fetchImpl = null,
+  tokenProvider = async () => null,
+} = {}) {
+  async function requestJSON(path, options = {}) {
+    const {
+      method = "GET",
+      body,
+      base: requestBase = base,
+      fetchImpl: requestFetch = fetchImpl,
+    } = options;
+    const doFetch = requestFetch || fetch;
+    const headers = await authHeaders(tokenProvider, true);
+    const init = { method, headers };
+    if (body !== undefined) init.body = JSON.stringify(body);
+    const res = await doFetch(`${requestBase}${path}`, init);
+    if (res.status === 204) return null;
+    if (!res.ok) throw await responseError(res);
+    return res.json();
   }
-  const res = await doFetch(`${base}${path}`, init);
-  if (!res.ok) throw await responseError(res);
-  const blob = await res.blob();
-  const header = (name) => res.headers?.get?.(name) ?? null;
-  return {
-    blob,
-    type: header("Content-Type") ?? blob.type ?? "",
-    sections: header("X-Report-Sections") ?? "",
-    pages: Number(header("X-Report-Pages") ?? 0),
-    etag: header("ETag"),
-  };
-}
 
-export function postJSON(path, body, options = {}) {
-  return requestJSON(path, { ...options, method: "POST", body });
+  // Binary download seam (the rendered report): the error mapping is the same,
+  // and the resolved-selection headers ride along so a caller can report them.
+  async function requestBlob(path, options = {}) {
+    const {
+      method = "GET",
+      body,
+      base: requestBase = base,
+      fetchImpl: requestFetch = fetchImpl,
+    } = options;
+    const doFetch = requestFetch || fetch;
+    const headers = await authHeaders(tokenProvider, false);
+    const init = { method, headers };
+    if (body !== undefined) {
+      headers["Content-Type"] = "application/json";
+      init.body = JSON.stringify(body);
+    }
+    const res = await doFetch(`${requestBase}${path}`, init);
+    if (!res.ok) throw await responseError(res);
+    const blob = await res.blob();
+    const header = (name) => res.headers?.get?.(name) ?? null;
+    return {
+      blob,
+      type: header("Content-Type") ?? blob.type ?? "",
+      sections: header("X-Report-Sections") ?? "",
+      pages: Number(header("X-Report-Pages") ?? 0),
+      etag: header("ETag"),
+    };
+  }
+
+  function postJSON(path, body, options = {}) {
+    return requestJSON(path, { ...options, method: "POST", body });
+  }
+
+  return { requestJSON, requestBlob, postJSON };
 }
 
 // Deep-flatten a nested response object into the artifact's dotted output keys:

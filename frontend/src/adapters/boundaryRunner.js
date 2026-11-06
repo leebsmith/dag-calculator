@@ -2,7 +2,7 @@
 // in-flight requests by fingerprint, and owns status/error state. The engine and
 // session stay synchronous; this is the only I/O seam.
 
-import { flattenResponse, postJSON } from "./apiClient.js";
+import { createApiClient, flattenResponse } from "./apiClient.js";
 
 export const BOUNDARY_URLS = {
   batch_sparge_solver: "/solve/batch",
@@ -24,6 +24,7 @@ function markUnavailableBoundaries(engine, nodes, statuses) {
 export function createBoundaryRunner({
   session,
   remote = true,
+  api,
   fetchImpl,
   debounceMs = 300,
   compute,
@@ -31,15 +32,12 @@ export function createBoundaryRunner({
   gate = () => null,
   preGate = () => null,
 }) {
+  const client = api ?? createApiClient({ fetchImpl });
   const statuses = Object.fromEntries(
     session.boundaryNodes.map((id) => [id, remote ? "pending" : "ok"])
   );
-  const extras = Object.fromEntries(
-    session.boundaryNodes.map((id) => [id, null])
-  );
-  const blocked = Object.fromEntries(
-    session.boundaryNodes.map((id) => [id, null])
-  );
+  const extras = Object.fromEntries(session.boundaryNodes.map((id) => [id, null]));
+  const blocked = Object.fromEntries(session.boundaryNodes.map((id) => [id, null]));
   const inflight = new Map(); // fingerprint -> Promise
   let error = null;
   let solveTimer = null;
@@ -141,7 +139,7 @@ export function createBoundaryRunner({
         const { binding, inputs, fingerprint } = job;
         let promise = inflight.get(fingerprint);
         if (!promise) {
-          promise = postJSON(BOUNDARY_URLS[binding], inputs, { fetchImpl })
+          promise = client.postJSON(BOUNDARY_URLS[binding], inputs)
             .then((response) => {
               engine.applyBoundaryResult(fingerprint, flattenResponse(response));
               return response;

@@ -1,12 +1,12 @@
 import Alpine from "alpinejs";
 
 import { createStepApp } from "./adapters/stepAdapter.js";
-import { setTokenProvider } from "./adapters/apiClient.js";
+import { createApiClient } from "./adapters/apiClient.js";
 import { reportError } from "./observability.js";
-import { getSession } from "./adapters/authClient.js";
-import * as batchClient from "./adapters/batchClient.js";
-import * as libraryClient from "./adapters/libraryClient.js";
-import * as sessionClient from "./adapters/sessionClient.js";
+import { createAuthClient } from "./adapters/authClient.js";
+import { createBatchClient } from "./adapters/batchClient.js";
+import { createLibraryClient } from "./adapters/libraryClient.js";
+import { createSessionClient } from "./adapters/sessionClient.js";
 import {
   closeReportTab,
   downloadBlob,
@@ -32,7 +32,14 @@ import { createSetupStore } from "./store/setup.js";
 import { createRecipesStore } from "./store/recipes.js";
 import { createBrewSessionStore } from "./store/brewSession.js";
 
-setTokenProvider(getIdToken);
+// The JSON seam and its clients are instantiated at boot and injected down; no
+// module owns a shared token provider. Firebase's `getIdToken` is the one
+// provider this app hands to the seam.
+const api = createApiClient({ tokenProvider: getIdToken });
+const authClient = createAuthClient({ api });
+const batchClient = createBatchClient({ api });
+const libraryClient = createLibraryClient({ api });
+const sessionClient = createSessionClient({ api });
 
 let stepApp = null;
 const persistence = createPersistenceManager({
@@ -64,7 +71,7 @@ Alpine.store("auth", {
   signOut: () => signOut(),
 });
 
-const importClient = createImportClient();
+const importClient = createImportClient({ api });
 
 // Opening a record means showing it: the import view reads one record at a time.
 const reviewStore = createImportReviewStore({
@@ -81,6 +88,7 @@ const reviewStore = createImportReviewStore({
   gate: (state) =>
     runGate({
       state,
+      api,
       references: stepApp ? stepApp.referenceSnapshot() : Alpine.store("setup").references(),
     }),
   delta: buildDelta,
@@ -243,7 +251,7 @@ async function applyAuth(user) {
   auth.loading = true;
   let session;
   try {
-    session = await getSession();
+    session = await authClient.getSession();
   } catch (err) {
     reportError("main.session", err);
     auth.sessionError = true;
@@ -323,6 +331,7 @@ Alpine.data("stepCalculator", () => {
   // via the Vite proxy in dev); tests inject a boundary double instead.
   const app = Alpine.reactive(
     createStepApp({
+      api,
       libraryClient,
       isEditorActive: () => {
         if (app.libraryOpen) return false;
