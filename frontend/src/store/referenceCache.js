@@ -2,6 +2,13 @@
 // Every catalog seed is a flat id-keyed map of schema-conforming components
 // (normalized in Step G), so no per-file adapters are needed here.
 //
+// One cache and one library per app: the browser entry owns the pair and injects
+// the same instances into the setup store and the step app, so identity sources
+// and ingredient records are never split across two overlays. The fallback
+// factories inside those entry points exist only for standalone tests; a
+// production entry point that supplies exactly one of the pair would silently
+// create a second overlay, so `assertReferencePair` is the DEV guard.
+//
 // Server-persisted library records are layered on as a live overlay:
 // `syncLibraryItems` rebuilds the per-schema/per-seed maps (record > seed) and
 // swaps in a brand-new `references`/`seeds` pair, so no holder of the previous
@@ -96,6 +103,21 @@ function overlayLibraryItems(items) {
     }
   }
   return { references, seeds, libraryIds };
+}
+
+// The DEV pairing guard: exactly one of `cache`/`library` means an entry point
+// forgot the other and would build a second overlay. `dev` defaults to the Vite
+// flag, so the factories call this unconditionally and node tests can still
+// exercise the throw with an explicit `true`.
+export function assertReferencePair({ cache, library }, dev = import.meta.env?.DEV) {
+  if (!dev) return;
+  const hasCache = cache != null;
+  const hasLibrary = library != null;
+  if (hasCache !== hasLibrary) {
+    throw new Error(
+      "reference assets must arrive together: pass both cache and library, or neither"
+    );
+  }
 }
 
 export function createReferenceCache() {

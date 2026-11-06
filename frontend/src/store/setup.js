@@ -12,7 +12,7 @@
 // only selects from what is already there.
 
 import { createLibrary } from "./library.js";
-import { createReferenceCache } from "./referenceCache.js";
+import { assertReferencePair, createReferenceCache } from "./referenceCache.js";
 import { catalogRecord, catalogRecords } from "./userCatalog.js";
 import { createObservabilityManager } from "../observability.js";
 
@@ -43,6 +43,7 @@ export function createSetupStore({
   cache,
   library,
 } = {}) {
+  assertReferencePair({ cache, library });
   // One reference cache per app. The caller that owns both surfaces injects the
   // same instance (and its library) here, so identity sources and ingredient
   // records are never split across two overlays.

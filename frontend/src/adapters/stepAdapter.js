@@ -9,7 +9,7 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
 import { resolveBoundarySeam } from "./boundarySeam.js";
-import { createReferenceCache } from "../store/referenceCache.js";
+import { assertReferencePair, createReferenceCache } from "../store/referenceCache.js";
 import { identityDerivations } from "../views/seedDerivations.js";
 import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
@@ -86,6 +86,7 @@ const CARD_INSTALLERS = [
 ];
 
 export function createStepApp(options = {}) {
+  assertReferencePair(options);
   const { master, ui, initialRoots } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
   const { modalFocus, observability } = runtimeSeams(options);
