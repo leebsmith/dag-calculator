@@ -1,28 +1,25 @@
-// Legacy draft migrations that need the live engine. Pure read/filter/write;
-// no DOM and no UI state.
+// Legacy draft migrations that need the live engine. The pure row filtering and
+// conversion live in utils/migrationTransformers.js; this module performs the
+// engine reads and writes.
+
+import {
+  convertWhirlpoolHopRows,
+  filterDoughInRests,
+} from "../utils/migrationTransformers.js";
 
 export function dropLegacyDoughIn(engine) {
-  const rests = engine.get("mash.rests");
-  if (!Array.isArray(rests)) return false;
-  const filtered = rests.filter((rest) => rest?.rest_id !== "dough_in");
-  if (filtered.length === rests.length) return false;
-  engine.setCollection("mash.rests", filtered);
+  const { rows, changed } = filterDoughInRests(engine.get("mash.rests"));
+  if (!changed) return false;
+  engine.setCollection("mash.rests", rows);
   return true;
 }
 
 export function migrateWhirlpoolCoordinates(engine) {
-  const rows = engine.get("batch.whirlpool_hops");
-  if (!Array.isArray(rows) || rows.length === 0) return false;
-  if (rows.every((row) => row?.addition_at_min !== undefined)) return false;
-  const durations = rows.map((row) => Number(row?.duration_min) || 0);
-  const knockout = Math.max(...durations);
-  const converted = rows.map((row, index) => {
-    const next = { ...row };
-    delete next.duration_min;
-    next.addition_at_min = Math.max(0, knockout - durations[index]);
-    return next;
-  });
-  engine.setCollection("batch.whirlpool_hops", converted);
+  const { rows, changed, knockout } = convertWhirlpoolHopRows(
+    engine.get("batch.whirlpool_hops")
+  );
+  if (!changed) return false;
+  engine.setCollection("batch.whirlpool_hops", rows);
   if (!engine.hasRoot("batch.whirlpool_knockout_min")) {
     engine.setRoot("batch.whirlpool_knockout_min", knockout);
   }
