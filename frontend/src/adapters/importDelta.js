@@ -31,6 +31,8 @@ const TARGET_UNIT = {
   ibu: ["ibu", "IBU"],
 };
 
+// The silent `reportError` default is for direct unit tests; main.js injects the
+// app's observability reporter, and the helpers below inherit it.
 export function buildDelta({ payload, ledger = [], engine, reportError = ignoreError }) {
   const grist = solvedGrist(engine, reportError);
   const hops = solvedHops(engine, reportError);

@@ -11,6 +11,7 @@ import { formatCell } from "./cell.js";
 
 // Resolve a field's value, falling back to its authored root when a mirrored
 // solved path is not available yet. A failure is reported, never swallowed.
+// The silent default is for direct unit tests; `valuate` passes the app reporter.
 function resolveFieldValue(field, engine, reportError = ignoreError) {
   const sourcePath = field.valuePath ?? field.id;
   try {

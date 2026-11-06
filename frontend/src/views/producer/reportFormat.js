@@ -125,13 +125,14 @@ function readFermentables(engine) {
   return { major, trace, sugar };
 }
 
-function checklistTable(artifact, catalog, engine) {
+function checklistTable(artifact, catalog, engine, reportError) {
   return buildChecklistTable({
     artifact,
     catalog,
     engine,
     level: engine.get(B.level) ?? "info",
     stateRows: engine.get(B.steps) ?? [],
+    reportError,
   });
 }
 
@@ -244,7 +245,7 @@ export function buildReportTables(artifact, catalog, engine, strategy, reportErr
     [H.collection]: hopRows(artifact, catalog, engine, "boil", reportError),
     [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool", reportError),
     [D.collection]: dryHopRows(artifact, catalog, engine),
-    [B.steps]: checklistTable(artifact, catalog, engine),
+    [B.steps]: checklistTable(artifact, catalog, engine, reportError),
     "report.hop_purchases": purchaseRows,
     "report.hop_strategy": hopStrategyRows(strategy),
   };

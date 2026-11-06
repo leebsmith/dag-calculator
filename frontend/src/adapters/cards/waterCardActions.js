@@ -11,6 +11,8 @@ import {
 } from "../../views/registry/water.js";
 import { ignoreError } from "../../observability.js";
 
+// These read helpers keep a silent default for direct unit tests; the water
+// card passes the app reporter.
 export function resolveValue(engine, path, reportError = ignoreError) {
   try {
     return engine.resolve(path);

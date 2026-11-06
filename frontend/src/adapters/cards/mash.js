@@ -221,6 +221,8 @@ export function registerMashCard(app, ctx = {}) {
 }
 
 export function refreshMashCard(app, ctx) {
+  // The silent fallback is for direct unit tests; the app state always carries
+  // the observability manager.
   const reportError = ctx.observability?.reportError ?? ignoreError;
   app.mashPresetIdState = ctx.engine.get(N.presetId) ?? "custom";
   app.mashRests = (ctx.engine.get(N.rests) ?? []).filter((r) => r.rest_id !== "dough_in");

@@ -177,6 +177,7 @@ export function createStepView({
       fieldDomains: fieldDomainIndex,
       collectionDomains: collectionIndex,
       conformance: app.styleConformance,
+      reportError: observability.reportError,
     });
     app.fieldsBySlice = Object.fromEntries(
       steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])

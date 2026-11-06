@@ -198,6 +198,8 @@ export function registerMaltCard(app, ctx = {}) {
 }
 
 export function refreshMaltCard(app, ctx) {
+  // The silent fallback is for direct unit tests; the app state always carries
+  // the observability manager.
   const reportError = ctx.observability?.reportError ?? ignoreError;
   const columns = resolveCollectionColumns(
     ctx.artifact,

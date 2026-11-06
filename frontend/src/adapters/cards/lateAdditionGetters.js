@@ -14,7 +14,7 @@ import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import { ignoreError } from "../../observability.js";
 
-function numberAt(engine, path, fallback = 0, reportError = ignoreError) {
+function numberAt(engine, path, fallback = 0, reportError = ignoreError) { // test-only default
   try {
     const value = engine.resolve(path);
     return typeof value === "number" && Number.isFinite(value) ? value : fallback;
@@ -121,6 +121,8 @@ export function displayDescriptors({ getView }) {
   };
 }
 
+// The silent `reportError` default is for direct unit tests; the late-additions
+// card passes the app reporter.
 export function allocationDescriptors({ engine, artifact, getView, reportError = ignoreError }) {
   return {
     sugarDraftMassDisplay: {

@@ -6,6 +6,8 @@ import { displayValue, nonlinearFns } from "../../producer.js";
 import { cellLabel, formatCell } from "../cell.js";
 import { ignoreError } from "../../../observability.js";
 
+// The silent `reportError` default is for direct unit tests; the checklist
+// selector passes the app reporter through.
 export function createChecklistFormatter(
   artifact,
   engine,

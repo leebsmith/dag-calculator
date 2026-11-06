@@ -90,6 +90,8 @@ export function selectBrewDayLevel({ level } = {}) {
   return level ?? DEFAULT_LEVEL;
 }
 
+// The silent `reportError` default is for direct unit tests; the brew-day card
+// passes the app reporter.
 /**
  * Select and group the checklist rows for the current state.
  *

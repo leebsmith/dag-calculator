@@ -21,6 +21,8 @@ import { unresolvedRows } from "../views/import/ledger.js";
 export const GATE_NODES = ["solver.batch", "solver.hops", "solver.water"];
 export const ADVISORY_NODES = new Set(["solver.water"]);
 
+// The silent `reportError` default is for direct unit tests; main.js injects the
+// app's observability reporter.
 export async function runGate({ state, references = {}, api, fetchImpl, reportError = ignoreError }) {
   const engine = createEngine(artifact, {
     identity: state.identity ?? {},
@@ -110,6 +112,8 @@ function blockingFindings(engine) {
 
 // What the water boundary prescribed, when it ran. A skipped boundary is absence,
 // not a zero, so the whole block disappears rather than reading "pH 0".
+// The silent `reportError` default is for direct unit tests; `runGate` passes
+// the app reporter through.
 export function waterSummary(engine, reportError = ignoreError) {
   const read = (path) => {
     try {

@@ -142,6 +142,8 @@ function groupRows(rows) {
   })).filter((phase) => phase.sections.length > 0);
 }
 
+// The silent `reportError` default is for direct unit tests; the brew-day card
+// and the freeze table pass the app reporter.
 export function selectChecklistRows({
   artifact,
   engine,

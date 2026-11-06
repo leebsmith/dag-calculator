@@ -48,6 +48,8 @@ function cellDisplay(artifact, dimension, value, unitMode, nl, meta = {}) {
 
 // AI AGENT HOOKS: Use this valuator for readout-table cells and notes.
 // Do not duplicated this logic elsewhere.
+// The silent `reportError` default is for direct unit tests; `valuate` passes
+// the app reporter.
 export function valuateTable(field, artifact, engine, unitMode, nl, options = {}) {
   const { registry = {}, reportError = ignoreError } = options;
   const rows = field.rows.map((row) => {

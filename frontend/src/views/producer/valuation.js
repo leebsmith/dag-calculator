@@ -28,6 +28,7 @@ export function valuate(fields, engine, ctx = {}) {
   const { ui, artifact } = ctx;
   const unitMode = ui?.unitMode ?? {};
   const collectionDomains = ctx.collectionDomains ?? {};
+  // Test-only default: `produce` passes the app's observability reporter.
   const reportError = ctx.reportError ?? ignoreError;
   const nl = nonlinearFns(artifact, engine);
 

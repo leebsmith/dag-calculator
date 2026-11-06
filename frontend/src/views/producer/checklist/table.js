@@ -1,6 +1,7 @@
 // Freeze-time checklist table. Every cell is a display string; the report
 // generator never formats or converts.
 
+import { ignoreError } from "../../../observability.js";
 import { selectChecklistRows } from "./select.js";
 
 function cell(text) {
@@ -56,12 +57,15 @@ function observationCells(row, phaseName, sectionName) {
   };
 }
 
+// `reportError` defaults to the silent reporter only for direct unit tests; the
+// freeze path threads the app's observability reporter through buildReportTables.
 export function buildChecklistTable({
   artifact,
   catalog,
   engine,
   level = "info",
   stateRows = [],
+  reportError = ignoreError,
 }) {
   const phases = selectChecklistRows({
     artifact,
@@ -69,6 +73,7 @@ export function buildChecklistTable({
     level,
     stateRows,
     catalog,
+    reportError,
   });
   return phases.flatMap((phase) =>
     phase.sections.flatMap((section) =>

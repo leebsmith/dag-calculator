@@ -78,7 +78,8 @@ export function refreshWaterCard(app, ctx) {
     const valuedSet = new Set(valued);
     const stored = engine.get(N.strategy) ?? "";
     const effectiveMode = !stored || stored === "AUTO" ? strategyForHeld(valued) : stored;
-    const resolvedMode = resolveValue(engine, N.resolvedStrategy) ?? effectiveMode;
+    const resolvedMode =
+      resolveValue(engine, N.resolvedStrategy, ctx.observability.reportError) ?? effectiveMode;
 
     // The target ratio is only a comparison basis when both flavor ions are
     // constrained; otherwise the readout stays as-solved only.

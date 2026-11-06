@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { CARD_REFRESHES } from "../../frontend/src/adapters/stepView.js";
+import { createObservabilityManager } from "../../frontend/src/observability.js";
 import { withFreshApp } from "./appHelpers.js";
 
 const CARDS = fileURLToPath(new URL("../../frontend/src/adapters/cards/", import.meta.url));
@@ -68,6 +69,22 @@ test("the pipeline order is the declared order", () => {
     "refreshWaterCard",
   ]);
 });
+
+test("producer failures are counted on the app's observability manager", withFreshApp(async (app) => {
+  app.observability.reset();
+  app.setRoot("batch.v_ferm", Symbol("unrenderable"));
+  app.compute();
+
+  const signatures = Object.keys(app.observability.errorCounters());
+  assert.ok(
+    signatures.some((signature) => signature.startsWith("producer.scalar.value:")),
+    `producer.scalar.value is counted: ${signatures.join(", ")}`
+  );
+  assert.ok(
+    signatures.some((signature) => signature.startsWith("presentation.hint:")),
+    `presentation.hint is counted: ${signatures.join(", ")}`
+  );
+}, { observability: createObservabilityManager({ console: { error() {} } }) }));
 
 test("compute produces fields, indexes status, then refreshes every card", withFreshApp(async (app) => {
   app.compute();

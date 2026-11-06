@@ -18,6 +18,8 @@ const ADDITIONS = [
   ["pickling lime", "pickling_lime_kg"],
 ];
 
+// These providers are pure; the silent default is for direct unit tests, and
+// `selectChecklistRows` passes the app reporter through.
 function boundaryReady(engine, id, reportError = ignoreError) {
   try {
     return engine.get(id) != null;

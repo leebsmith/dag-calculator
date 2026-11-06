@@ -69,7 +69,7 @@ const SUGAR_CONFIG = {
   }),
 };
 
-function numberAt(engine, path, fallback = 0, reportError = ignoreError) {
+function numberAt(engine, path, fallback = 0, reportError = ignoreError) { // test-only default
   try {
     const value = engine.resolve(path);
     return typeof value === "number" && Number.isFinite(value) ? value : fallback;
@@ -85,7 +85,7 @@ function rounded(value) {
 
 // The current dose's effect at the solved pin. Every operand comes from the
 // batch solve; the panel never sets a root.
-function currentSugarEffect(engine, reportError = ignoreError) {
+function currentSugarEffect(engine, reportError = ignoreError) { // test-only default
   const read = (path, fallback) => {
     try {
       const value = engine.resolve(path);

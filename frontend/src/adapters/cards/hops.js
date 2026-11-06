@@ -258,32 +258,33 @@ export function registerHopCard(app, ctx = {}) {
 
 export function refreshHopCard(app, ctx) {
   const engine = ctx.engine;
+  const reportError = ctx.observability?.reportError;
   const boilIbu = Number(engine.get(N.boilIbu)) || 0;
   const boilTimeMin = Number(engine.get(N.boilTime)) || 0;
   const whirlpoolIbu = Number(engine.get(N.whirlpoolIbu)) || 0;
-  const volume = resolveOrNull(engine, N.postBoilVolume);
+  const volume = resolveOrNull(engine, N.postBoilVolume, reportError);
   app.hopRows = boilRowsFor({
     rows: engine.get(N.collection),
-    results: resolveOrNull(engine, N.boilRows),
+    results: resolveOrNull(engine, N.boilRows, reportError),
     boilIbu,
     boilTimeMin,
   });
   app.whirlpoolHopRows = whirlpoolRowsFor({
     rows: engine.get(N.whirlpoolCollection),
-    results: resolveOrNull(engine, N.whirlpoolRows),
+    results: resolveOrNull(engine, N.whirlpoolRows, reportError),
     whirlpoolIbu,
     volume,
   });
   app.whirlpoolCoolingCeiling = readWhirlpoolCeiling(
     engine,
-    (path) => resolveOrNull(engine, path),
+    (path) => resolveOrNull(engine, path, reportError),
     N
   );
-  app.boilHopMassKg = resolveOrNull(engine, N.boilMass);
-  app.whirlpoolHopMassKg = resolveOrNull(engine, N.whirlpoolMass);
-  app.boilHopAlphaMassKg = resolveOrNull(engine, N.boilAlphaMass);
-  app.whirlpoolHopAlphaMassKg = resolveOrNull(engine, N.whirlpoolAlphaMass);
-  app.hopBoundaryTotalMassKg = resolveOrNull(engine, N.totalMass);
+  app.boilHopMassKg = resolveOrNull(engine, N.boilMass, reportError);
+  app.whirlpoolHopMassKg = resolveOrNull(engine, N.whirlpoolMass, reportError);
+  app.boilHopAlphaMassKg = resolveOrNull(engine, N.boilAlphaMass, reportError);
+  app.whirlpoolHopAlphaMassKg = resolveOrNull(engine, N.whirlpoolAlphaMass, reportError);
+  app.hopBoundaryTotalMassKg = resolveOrNull(engine, N.totalMass, reportError);
 }
 
 export const KEYS = [

@@ -34,6 +34,8 @@ export function secondsFromLocal(value) {
   return Number.isFinite(parsed) ? parsed / 1000 : Date.now() / 1000;
 }
 
+// The silent `reportError` default is for direct unit tests; the brew-session
+// store passes the app reporter.
 export function toleranceOf(text, reportError = ignoreError) {
   try {
     return JSON.parse(text || "{}");
@@ -61,6 +63,8 @@ export function verdictOf(actual, expected, tolerance) {
   return deltaVerdict(actual, expected, tolerance.plus_minus);
 }
 
+// The silent `reportError` default is for direct unit tests; `createBrewSession`
+// passes the app reporter.
 export function createBrewSessionState({ reportError = ignoreError } = {}) {
   return {
     reportError,

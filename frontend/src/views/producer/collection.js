@@ -8,6 +8,8 @@ import { ignoreError } from "../../observability.js";
 
 // AI AGENT HOOKS: Use this valuator for collection-table display conversion.
 // Do not duplicated this logic elsewhere.
+// The silent `reportError` default is for direct unit tests; `valuate` passes
+// the app reporter.
 export function valuateCollection(
   field,
   engine,

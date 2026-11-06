@@ -242,6 +242,8 @@ export function registerStyleNavigator(app, ctx = {}) {
 }
 
 export function refreshStyleNavigator(app, ctx) {
+  // The silent fallback is for direct unit tests; the app state always carries
+  // the observability manager.
   const reportError = ctx.observability?.reportError ?? ignoreError;
   const read = (path) => {
     try {

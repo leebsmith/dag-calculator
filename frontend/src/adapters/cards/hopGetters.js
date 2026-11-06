@@ -18,6 +18,8 @@ import {
 import { formatWithDecimals } from "../../utils.js";
 import { ignoreError } from "../../observability.js";
 
+// The silent `reportError` default is for direct unit tests; the hop card's
+// refresh and descriptors pass the app reporter.
 export function resolveOrNull(engine, path, reportError = ignoreError) {
   try {
     return engine.resolve(path);
