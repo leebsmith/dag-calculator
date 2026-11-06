@@ -5,6 +5,7 @@ import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { createPersistenceManager } from "../../frontend/src/store/persistence.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { createLibrary } from "../../frontend/src/store/library.js";
+import { CATALOG_KINDS } from "../../frontend/src/store/userCatalog.js";
 import { createTestApp } from "./appHelpers.js";
 
 function fakeClient() {
@@ -246,6 +247,35 @@ test("refreshAssets re-reads the records and bumps the revision", async () => {
 
   const options = store.equipmentOptions();
   assert.ok(options.some((option) => option.value === "custom-rig" && option.label === "Custom rig"));
+});
+
+test("the sign-in sequence fetches each catalogue kind once", async () => {
+  const lists = [];
+  const client = {
+    async listCatalog(kind) {
+      lists.push(kind);
+      return [];
+    },
+    async createCatalog() {
+      throw new Error("not used");
+    },
+    async deleteCatalog() {
+      return null;
+    },
+  };
+  const cache = createReferenceCache();
+  const library = createLibrary({
+    client,
+    onChange: () => cache.syncLibraryItems(library.items()),
+  });
+  const app = createTestApp({ cache, library });
+  const setup = createSetupStore({ client, cache, library });
+
+  await setup.refreshAssets();
+  await app.refreshLibraryItems();
+
+  assert.deepEqual([...lists].sort(), [...CATALOG_KINDS].sort());
+  assert.equal(lists.length, CATALOG_KINDS.length);
 });
 
 test("the setup store and the step app share one reference cache", async () => {

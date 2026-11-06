@@ -242,9 +242,12 @@ let latestUser; // undefined until the first auth callback
 let legacyLibraryImported = false;
 
 // The library and the import queue are independent reads; fetch them together so
-// the landing page paints once, with both strips populated.
+// the landing page paints once, with both strips populated. The shared library
+// refresh happens exactly once here; `refreshLibraryItems` then points the engine
+// at the fresh catalogue instead of forcing a second fetch.
 async function refreshSurfaces() {
   await Alpine.store("setup").refreshAssets();
+  await stepApp.refreshLibraryItems();
   await Alpine.store("imports").refresh();
 }
 
@@ -307,8 +310,6 @@ async function applyAuth(user) {
       reportError("main.recipeList", err);
       recipes.loadError = true;
     }
-    await stepApp.library.refresh();
-    await stepApp.refreshLibraryItems();
     await refreshSurfaces();
     recipes.view = "batches";
   } finally {
@@ -376,11 +377,10 @@ Alpine.data("stepCalculator", () => {
   );
   app.bindReactive(app);
   app.onChange = () => persistence.queueSave();
-  app.onRecordsChanged = () => {
-    Alpine.store("setup")
-      .refreshAssets()
-      .catch((err) => reportError("main.setupRefresh", err));
-  };
+  // No `onRecordsChanged` refresh: the library mutation already swaps the
+  // shared cache through `onChange`, and the Library surface calls
+  // `refreshLibraryItems` itself. Re-fetching the catalogue here would duplicate
+  // the save's network traffic for records the mutation just produced.
   stepApp = app;
   // Auth may have resolved before this factory ran — land on Batches now.
   if (latestUser !== undefined) applyAuth(latestUser).catch((err) => reportError("main.auth", err));

@@ -108,6 +108,30 @@ test("a failed fetch is library-local state and preserves loaded items", async (
   assert.doesNotThrow(() => library.list("malt"));
 });
 
+test("a library save does not re-fetch the catalogue", async () => {
+  const client = makeClient();
+  const cache = createReferenceCache();
+  const library = createLibrary({
+    client,
+    onChange: () => cache.syncLibraryItems(library.items()),
+  });
+  const app = createTestApp({ cache, library });
+
+  await library.refresh();
+  await app.refreshLibraryItems();
+  client.calls.length = 0;
+
+  await library.create("malt", { name: "House Malt", category: "BASE" });
+  await app.refreshLibraryItems();
+
+  assert.deepEqual(
+    client.calls.filter((call) => call.op === "list"),
+    [],
+    "the mutation already produced the record; no refresh is needed"
+  );
+  assert.equal(client.calls.filter((call) => call.op === "create").length, 1);
+});
+
 test("a failed library fetch does not break a loaded batch", async () => {
   const cache = createReferenceCache();
   const [yeastId, yeast] = Object.entries(cache.references.yeast)[0];
