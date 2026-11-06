@@ -154,9 +154,9 @@ const LIFECYCLE_COMPLEXITY = {
   "store/persistence.js": 13,
   "store/unitPrefs.js": 27,
   "store/userCatalog.js": 32,
-  "utils/format.js": 14,
   "views/producer/catalogDrawer.js": 15,
   "views/producer/reportFormat.js": 13,
+  "utils/format/count.js": 13,
 };
 
 const STATEMENT_PINS = {
@@ -197,7 +197,6 @@ const FILE_LINE_PINS = {
   "engine/dag.js": 399,
   "engine/fermentation.js": 506,
   "store/recipes.js": 466,
-  "utils/format.js": 514,
 };
 
 const SCRIPT_COMPLEXITY = {

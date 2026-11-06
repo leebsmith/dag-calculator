@@ -17,19 +17,19 @@ import {
 import {
   doseRows,
   fmtDelta,
+  checkedPins,
   fmtL,
   fmtPpm,
   ionDelta,
   optionLabelFor,
   severityRank,
+  valuedPins,
   waterTargetOptionsOf,
 } from "../../views/waterLogic.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import {
-  checkedPins,
   num,
   resolveValue,
-  valuedPins,
   waterActions,
   waterDescriptors,
 } from "./waterCardActions.js";
@@ -70,9 +70,9 @@ export function refreshWaterCard(app, ctx) {
 
     // The checked set is the declaration and every checked ion carries a value.
     // The strategy is derived from that set.
-    const checked = checkedPins(engine);
+    const checked = checkedPins(engine.get(N.pinnedIons));
     const checkedSet = new Set(checked);
-    const valued = valuedPins(engine);
+    const valued = valuedPins(engine.get(N.pinnedIons));
     const valuedSet = new Set(valued);
     const stored = engine.get(N.strategy) ?? "";
     const effectiveMode = !stored || stored === "AUTO" ? strategyForHeld(valued) : stored;

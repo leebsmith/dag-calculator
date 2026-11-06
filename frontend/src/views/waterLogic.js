@@ -3,7 +3,12 @@
 // handlers and the engine reads stay in adapters/cards/water.js.
 
 import { fieldOr, formatQuantity, formatValue, formatWithDecimals } from "../utils.js";
-import { constraintLabel, heldFromProfile } from "./registry/water.js";
+import {
+  WATER_ION_BY_PIN,
+  WATER_IONS,
+  constraintLabel,
+  heldFromProfile,
+} from "./registry/water.js";
 import { registry } from "./registry/index.js";
 
 const ADDITIONS = [
@@ -153,3 +158,94 @@ export function waterTargetOptionsOf(cache) {
     { value: "freeform", label: "Freeform entry — compose your own set" },
   ];
 }
+
+// --- the constraint model ---------------------------------------------------
+// The checked-ion set is the authored declaration the solver reads. Checking an
+// ion always values it (checking seeds a number; clearing unchecks), so the
+// constrained set and the checked set are the same set. These are pure data
+// transforms; the adapter owns the engine reads/writes.
+
+/**
+ * Read the checked ion pins out of the pinned-ion rows.
+ *
+ * @pure
+ * @param {ReadonlyArray<{ readonly ion: string }>|null|undefined} rows
+ * @returns {string[]}
+ */
+export function checkedPins(rows) {
+  return (rows ?? []).map((row) => row.ion);
+}
+
+/**
+ * The constrained set. Same as the checked set by contract.
+ *
+ * @pure
+ * @param {ReadonlyArray<{ readonly ion: string }>|null|undefined} rows
+ * @returns {string[]}
+ */
+export function valuedPins(rows) {
+  return checkedPins(rows);
+}
+
+/**
+ * Turn a pin list into the pinned-ion collection rows the engine stores.
+ *
+ * @pure
+ * @param {ReadonlyArray<string>} pins
+ * @returns {Array<{ ion: string }>}
+ */
+export function pinnedRows(pins) {
+  return pins.map((ion) => ({ ion }));
+}
+
+/**
+ * The ions a target profile holds: its declared constraints.
+ *
+ * @pure
+ * @param {Readonly<Record<string, unknown>>|null|undefined} profile
+ * @returns {string[]}
+ */
+export function presetPins(profile) {
+  return profile ? heldFromProfile(profile) : [];
+}
+
+/**
+ * Toggle one pin in the pinned-ion rows, keeping the rows immutable.
+ *
+ * @pure
+ * @param {ReadonlyArray<{ readonly ion: string }>|null|undefined} rows
+ * @param {string} pin
+ * @returns {Array<{ ion: string }>}
+ */
+export function nextPinned(rows, pin) {
+  const list = rows ?? [];
+  return list.some((row) => row.ion === pin)
+    ? list.filter((row) => row.ion !== pin)
+    : [...list, { ion: pin }];
+}
+
+/**
+ * The initial target for a newly checked ion: the batch's source concentration,
+ * which is the only non-infeasible starting point (salts only add).
+ *
+ * @pure
+ * @param {Readonly<Record<string, unknown>>|null|undefined} source
+ * @param {string} pin
+ * @returns {number}
+ */
+export function seedTargetValue(source, pin) {
+  const seed = Number(source?.[WATER_ION_BY_PIN[pin]]);
+  return Number.isFinite(seed) ? seed : 0;
+}
+
+/**
+ * The pins with a positive target value, in the registry's ion order.
+ *
+ * @pure
+ * @param {(pin: string) => number} targetOf
+ * @returns {string[]}
+ */
+export function positivePins(targetOf) {
+  return WATER_IONS.filter(({ pin }) => targetOf(pin) > 0).map(({ pin }) => pin);
+}
+

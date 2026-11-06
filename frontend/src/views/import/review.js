@@ -5,7 +5,7 @@
 // to present it. The map and check stages are declared but not yet reachable —
 // they arrive with the ledger and the gate.
 
-import { countLabel } from "../../utils/format.js";
+import { countLabel } from "../../utils/format/count.js";
 
 export const STAGES = [
   { id: "transcribe", title: "Transcribe" },

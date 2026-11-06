@@ -56,21 +56,25 @@
 
 ## Phase 3 — Module splits and complexity reduction
 
-- [ ] **3.1 Split `utils/format.js` (hotspot 2 / G9)**
-  - [ ] Create `frontend/src/utils/format/{gravity,volume,mass,color,time,text}.js`.
-  - [ ] Re-export every function from `frontend/src/utils.js`; no call site changes.
-  - [ ] Move `tests/frontend/utils.test.js` coverage to per-group test files; keep a barrel smoke test.
-  - [ ] Update/remove `utils/format.js` pins in `eslint.config.js`.
-  - [ ] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
-  - [ ] Commit: `Split the display formatters by dimension`
+- [x] **3.1 Split `utils/format.js` (hotspot 2 / G9)**
+  - [x] Split into the cohesive groups that exist: `format/{internal,number,percent,gravity,range,units,count,text,time}.js`.
+        (There is no volume/mass/color formatter: unit conversion lives in `views/producer`; the
+        requested dimension files would have been empty.)
+  - [x] Re-export every public function from `frontend/src/utils.js`; the `fmt` barrel API is unchanged.
+        Direct importers of the old module path moved to the new group module.
+  - [x] Move `tests/frontend/utils.test.js` formatting coverage to `tests/frontend/format.test.js`;
+        `utils.test.js` keeps the model/strings tests and adds a barrel API check.
+  - [x] Replace the `utils/format.js` pins with a `utils/format/count.js` complexity pin.
+  - [x] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
 
-- [ ] **3.2 Realign water constraint semantics (S3 / hotspot 3)**
-  - [ ] Move `checkedPins`, `valuedPins`, preset seeding and the checked/valued invariant to
-        `views/waterLogic.js` as pure functions.
-  - [ ] Leave `waterCardActions.js` with mutation/UI seams only.
-  - [ ] Lower the water complexity pins in `eslint.config.js` in the same commit.
-  - [ ] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
-  - [ ] Commit: `Move the water constraint model into the view layer`
+- [x] **3.2 Realign water constraint semantics (S3 / hotspot 3)**
+  - [x] Move `checkedPins`, `valuedPins`, preset seeding, toggle/seed derivation and the
+        checked/valued invariant to `views/waterLogic.js` as pure row/value transforms.
+  - [x] Leave `waterCardActions.js` with engine reads/writes and UI seams only.
+  - [x] Shape pins verified unchanged (water complexity did not drop; the model moved out
+        without changing the card's own branch count).
+  - [x] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
+  - [x] Commit: `Split the formatters and move the water constraint model`
 
 ## Phase 4 — Rules and documentation
 

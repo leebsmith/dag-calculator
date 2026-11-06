@@ -4,7 +4,7 @@
  * the DOM, engine, or artifact.
  */
 
-import { toFiniteOrNull } from "./format.js";
+import { toFiniteOrNull } from "./format/number.js";
 import { firstNonEmptyString } from "./strings.js";
 
 /** Shared read-only fallback for missing field models. */

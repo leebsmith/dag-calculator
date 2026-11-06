@@ -10,7 +10,7 @@
 import { ignoreError } from "../observability.js";
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { toBase } from "../engine/units.js";
-import { formatWithDecimals } from "../utils/format.js";
+import { formatWithDecimals } from "../utils/format/number.js";
 import { unitDecimals } from "../views/registry/units.js";
 import { massKg } from "../views/import/ledger.js";
 import { unitSymbol } from "../views/import/review.js";

@@ -6,10 +6,18 @@ import {
   WATER_ION_BY_PIN,
   WATER_IONS,
   WATER_NODES as N,
-  heldFromProfile,
   strategyForHeld,
 } from "../../views/registry/water.js";
 import { ignoreError } from "../../observability.js";
+import {
+  checkedPins,
+  nextPinned,
+  pinnedRows,
+  positivePins,
+  presetPins,
+  seedTargetValue,
+  valuedPins,
+} from "../../views/waterLogic.js";
 
 // These read helpers keep a silent default for direct unit tests; the water
 // card passes the app reporter.
@@ -27,21 +35,11 @@ export function num(engine, path, reportError = ignoreError) {
   return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
-export function checkedPins(engine) {
-  return (engine.get(N.pinnedIons) ?? []).map((row) => row.ion);
-}
-
 export function targetValue(engine, pin, reportError = ignoreError) {
   const ion = WATER_ION_BY_PIN[pin];
   if (!ion) return 0;
   const value = resolveValue(engine, `${N.target}.${ion}`, reportError);
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
-}
-
-// Checked ions are always valued (checking seeds a number; clearing unchecks),
-// so the constrained set and the checked set are the same set.
-export function valuedPins(engine) {
-  return checkedPins(engine);
 }
 
 function initialState() {
@@ -146,17 +144,17 @@ function targetActions({ cache, engine, getView }) {
         value !== "none" && value !== "freeform"
           ? cache.references.water_target?.[value]
           : null;
-      const held = preset ? heldFromProfile(preset) : [];
+      const held = presetPins(preset);
       // A preset supplies the ion targets, the calcium floor, and the strategy
       // through artifact defaults: unset them so nothing from a previous profile
       // survives. Freeform/none have no component, so the host derives a
       // strategy from the checked set.
       view.resetWaterTargets();
       view.setRoot(N.targetProfileId, preset ? value : "");
-      engine.setCollection(N.pinnedIons, held.map((ion) => ({ ion })));
+      engine.setCollection(N.pinnedIons, pinnedRows(held));
       view.pickSelection(N.targetProfileId, preset ? value : "");
       view.waterTargetLocked = value === "none";
-      if (!preset) view.setRoot(N.strategy, strategyForHeld(valuedPins(engine)));
+      if (!preset) view.setRoot(N.strategy, strategyForHeld(valuedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
     },
@@ -166,8 +164,7 @@ function targetActions({ cache, engine, getView }) {
       if (view.waterTargetLocked) return;
       const rows = engine.get(N.pinnedIons) ?? [];
       const checked = rows.some((row) => row.ion === pin);
-      const next = checked ? rows.filter((row) => row.ion !== pin) : [...rows, { ion: pin }];
-      engine.setCollection(N.pinnedIons, next);
+      engine.setCollection(N.pinnedIons, nextPinned(rows, pin));
       const nodeId = `${N.target}.${WATER_ION_BY_PIN[pin]}`;
       if (checked) {
         // Detaching keeps the profile's values as explicit overrides; the
@@ -178,13 +175,11 @@ function targetActions({ cache, engine, getView }) {
       } else {
         // Checked ions are always valued: seed from the batch's water source,
         // which is the only non-infeasible starting point (salts only add).
-        const source = engine.identity?.[N.sourceReport] ?? {};
-        const seed = Number(source[WATER_ION_BY_PIN[pin]]);
-        view.setRoot(nodeId, Number.isFinite(seed) ? seed : 0);
+        view.setRoot(nodeId, seedTargetValue(engine.identity?.[N.sourceReport], pin));
         view.clearWaterPreset();
       }
       view.waterTargetLocked = false;
-      view.setRoot(N.strategy, strategyForHeld(checkedPins(engine)));
+      view.setRoot(N.strategy, strategyForHeld(checkedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
     },
@@ -220,7 +215,7 @@ function inputActions({ engine, getView }) {
 
     editWaterTarget(pin, raw) {
       const view = getView();
-      if (!checkedPins(engine).includes(pin)) return;
+      if (!checkedPins(engine.get(N.pinnedIons)).includes(pin)) return;
       if (String(raw).trim() === "") {
         // A checked ion must carry a value; clearing the field unchecks it.
         view.toggleWaterTarget(pin);
@@ -229,7 +224,7 @@ function inputActions({ engine, getView }) {
       const parsed = Number(raw);
       if (!Number.isFinite(parsed) || parsed < 0) return;
       view.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: parsed });
-      view.setRoot(N.strategy, strategyForHeld(checkedPins(engine)));
+      view.setRoot(N.strategy, strategyForHeld(checkedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
     },
@@ -244,21 +239,19 @@ function syncActions({ engine, getView, observability }) {
     syncWaterTargets() {
       const view = getView();
       let changed = false;
-      let pins = checkedPins(engine);
+      let pins = checkedPins(engine.get(N.pinnedIons));
       if (pins.length === 0) {
-        const positives = WATER_IONS.filter(
-          ({ pin }) => targetValue(engine, pin, observability.reportError) > 0
-        ).map(
-          ({ pin }) => pin
+        const positives = positivePins(
+          (pin) => targetValue(engine, pin, observability.reportError)
         );
         if (positives.length > 0) {
-          engine.setCollection(N.pinnedIons, positives.map((ion) => ({ ion })));
+          engine.setCollection(N.pinnedIons, pinnedRows(positives));
           pins = positives;
           changed = true;
         }
       }
       view.waterTargetLocked = !engine.get(N.targetProfileId) && pins.length === 0;
-      const strategy = strategyForHeld(valuedPins(engine));
+      const strategy = strategyForHeld(valuedPins(engine.get(N.pinnedIons)));
       if (engine.get(N.strategy) !== strategy) {
         engine.setRoot(N.strategy, strategy);
         changed = true;
