@@ -277,7 +277,7 @@ export const SHARED = [
   },
   {
     key: "patchDraftRow",
-    owners: ["hop", "dryHops"],
+    owners: ["hop"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {

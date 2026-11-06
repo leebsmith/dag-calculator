@@ -44,11 +44,10 @@ function dryHopLabel(taxonomyId, value) {
   return optionLabel(DRY_HOP_VALUE_LABELS[taxonomyId] ?? {}, value);
 }
 
-function installDryHopDraft(app, ctx) {
+function dryHopDraftConfig(ctx) {
   const { artifact } = ctx;
   const seeds = ctx.cache.seeds ?? {};
-
-  installCatalogDraft(app, ctx, {
+  return {
     prefix: "dryHop",
     Cap: "DryHop",
     nodeId: N.collection,
@@ -71,14 +70,12 @@ function installDryHopDraft(app, ctx) {
     ],
     searchPlaceholder: "Search hops and products by name or maker…",
     emptyMessage: "No matching entries found.",
-    resultLabel: (a) => a.dryHopResultLabel,
-  });
+    resultLabel: (view) => view.dryHopResultLabel,
+  };
 }
 
-function installDryHopReadouts(app, ctx) {
-  const { artifact } = ctx;
-
-  Object.assign(app, {
+function dryHopActions({ artifact, getView }) {
+  const actions = {
     dryHopRows: [],
     dryHopSectionOpen: true,
     dryHopProductOptions: dryHopOptions(artifact, "hop_product_form", DRY_HOP_FORM_VALUES),
@@ -89,7 +86,8 @@ function installDryHopReadouts(app, ctx) {
     dryHopTitle,
 
     toggleDryHopSection() {
-      this.dryHopSectionOpen = !this.dryHopSectionOpen;
+      const view = getView();
+      view.dryHopSectionOpen = !view.dryHopSectionOpen;
     },
 
     dryHopTypeLabel(row) {
@@ -104,7 +102,6 @@ function installDryHopReadouts(app, ctx) {
       return dryHopLabel("hop_contact_until", row?.contact_until);
     },
 
-    // The `time` dimension stores minutes; the card authors hours.
     dryHopContactHours(row) {
       const minutes = row?.contact_duration_min;
       if (!isFiniteNumber(minutes)) return "";
@@ -112,78 +109,89 @@ function installDryHopReadouts(app, ctx) {
     },
 
     dryHopContactLabel(row) {
-      const hours = this.dryHopContactHours(row);
+      const hours = actions.dryHopContactHours(row);
       if (hours) return `${hours} h`;
-      const until = this.dryHopUntilLabel(row);
+      const until = actions.dryHopUntilLabel(row);
       return until ? `until ${until}` : "—";
     },
 
     setDryHopDraftField(index, field, value) {
-      this.patchDraftRow(index, { [field]: value });
+      getView().patchDraftRow(index, { [field]: value });
     },
 
     setDryHopDraftNumber(index, field, value) {
       const text = String(value ?? "").trim();
       const number = Number(text);
-      this.patchDraftRow(index, { [field]: text && Number.isFinite(number) ? number : null });
+      getView().patchDraftRow(index, {
+        [field]: text && Number.isFinite(number) ? number : null,
+      });
     },
 
-    // Exactly one of duration / termination event: each setter clears the other.
     setDryHopDraftContactHours(index, value) {
+      const view = getView();
       const text = String(value ?? "").trim();
       if (!text) {
-        this.patchDraftRow(index, { contact_duration_min: null });
+        view.patchDraftRow(index, { contact_duration_min: null });
         return;
       }
       const minutes = toBase(artifact, "time", "hr", Number(text));
-      this.patchDraftRow(index, {
+      view.patchDraftRow(index, {
         contact_duration_min: Number.isFinite(minutes) ? Math.max(0, minutes) : null,
         contact_until: null,
       });
     },
 
     setDryHopDraftContactUntil(index, value) {
-      this.patchDraftRow(index, {
+      getView().patchDraftRow(index, {
         contact_until: value || null,
         contact_duration_min: null,
       });
     },
-  });
+  };
+  return actions;
 }
 
-function installDryHopSummaries(app) {
-  Object.defineProperties(app, {
+function dryHopDescriptors(getView) {
+  return {
     dryHopSectionMeta: {
       configurable: true,
       get() {
-        return countLabel(this.dryHopRows?.length ?? 0, "addition");
+        return countLabel(getView().dryHopRows?.length ?? 0, "addition");
       },
     },
     dryHopDraftSummary: {
       configurable: true,
       get() {
-        return countLabel(this.draftRows?.length ?? 0, "addition");
+        return countLabel(getView().draftRows?.length ?? 0, "addition");
       },
     },
     dryHopResultLabel: {
       configurable: true,
       get() {
+        const view = getView();
         return resultCounter({
-          shown: this.dryHopVisibleCatalog.length,
-          total: this.dryHopFilteredCatalog.length,
+          shown: view.dryHopVisibleCatalog.length,
+          total: view.dryHopFilteredCatalog.length,
           noun: "hop",
-          truncated: this.dryHopCatalogTruncated,
+          truncated: view.dryHopCatalogTruncated,
           truncatedHint: "refine search or purpose filters",
         });
       },
     },
-  });
+  };
 }
 
-export function registerDryHopCard(app, ctx) {
-  installDryHopDraft(app, ctx);
-  installDryHopReadouts(app, ctx);
-  installDryHopSummaries(app);
+export function createDryHopCard({ artifact, getView }) {
+  const actions = dryHopActions({ artifact, getView });
+  Object.defineProperties(actions, dryHopDescriptors(getView));
+  return actions;
+}
+
+export function registerDryHopCard(app, ctx = {}) {
+  installCatalogDraft(app, ctx, dryHopDraftConfig(ctx));
+  const actions = createDryHopCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshDryHopCard(app, ctx) {
