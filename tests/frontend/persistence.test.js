@@ -694,6 +694,28 @@ test("two managers keep their active batch and save state isolated", async () =>
   assert.equal(second.getSaveState(), "idle");
 });
 
+test("persistence reads the current app after the handle is replaced", async () => {
+  const client = fakeClient();
+  const first = fakeApp();
+  const second = fakeApp();
+  const handle = { current: first };
+  const manager = createPersistenceManager({
+    client,
+    app: () => handle.current,
+    retryDelays: [0, 0, 0],
+  });
+
+  await manager.createUnsavedDraft({ name: "Before" });
+  const firstLoaded = first.loaded;
+  assert.deepEqual(firstLoaded, { roots: {}, collections: {}, selections: {} });
+
+  handle.current = second;
+  await manager.createUnsavedDraft({ name: "After" });
+
+  assert.deepEqual(second.loaded, { roots: {}, collections: {}, selections: {} });
+  assert.equal(first.loaded, firstLoaded, "the replaced app receives no further writes");
+});
+
 test("the network save uses the injected client put seam", async () => {
   const calls = [];
   const manager = createPersistenceManager({

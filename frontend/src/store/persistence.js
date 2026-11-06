@@ -1,6 +1,6 @@
 // Batch manager: the browser-side persistence seam. Each manager owns its own
-// active batch, autosave timer, conflict state, and observer. The batch client,
-// the step app, and the timer functions are injected by the composition root.
+// active batch, autosave timer, conflict state, and observer. The client and
+// timers are injected; `app` may be an instance or a handle getter.
 
 import { DRAFT_SCHEMA_VERSION } from "./snapshot.js";
 import {

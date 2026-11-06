@@ -56,16 +56,19 @@ const library = createLibrary({
   onChange: () => syncReferenceCache(),
 });
 
-let stepApp = null;
+// Late-bound step app: Alpine creates the component after auth can resolve, so
+// the shell keeps one handle. Re-creation replaces `current`; persistence reads
+// the handle on every call, never a captured instance.
+const appHandle = { current: null };
 
 function syncReferenceCache() {
   referenceCache.syncLibraryItems(library.items());
-  stepApp?.refreshReferences();
+  appHandle.current?.refreshReferences();
 }
 
 const persistence = createPersistenceManager({
   client: batchClient,
-  app: () => stepApp,
+  app: () => appHandle.current,
   setTimeout,
   clearTimeout,
 });
@@ -184,7 +187,7 @@ const setupStore = createSetupStore({
     recipes.view = "editor";
     recipes.syncActive();
     // A new batch starts at the style parameterisation screen.
-    stepApp?.resetToStyle();
+    appHandle.current?.resetToStyle();
   },
 });
 
@@ -247,7 +250,7 @@ let legacyLibraryImported = false;
 // at the fresh catalogue instead of forcing a second fetch.
 async function refreshSurfaces() {
   await Alpine.store("setup").refreshAssets();
-  await stepApp.refreshLibraryItems();
+  await appHandle.current.refreshLibraryItems();
   await Alpine.store("imports").refresh();
 }
 
@@ -256,7 +259,7 @@ async function applyAuth(user) {
   const recipes = Alpine.store("recipes");
 
   if (!user) {
-    stepApp?.teardown();
+    appHandle.current?.teardown();
     persistence.clearActive();
     Object.assign(recipes, {
       batches: [],
@@ -274,7 +277,7 @@ async function applyAuth(user) {
     return;
   }
 
-  if (!stepApp) return;
+  if (!appHandle.current) return;
 
   auth.loading = true;
   let session;
@@ -319,11 +322,13 @@ async function applyAuth(user) {
 
   if (!legacyLibraryImported) {
     legacyLibraryImported = true;
-    stepApp.library
+    appHandle.current.library
       .importLegacy()
       .then(({ imported }) => {
         if (!imported) return null;
-        return stepApp.library.refresh().then(() => stepApp.refreshLibraryItems());
+        return appHandle.current.library
+          .refresh()
+          .then(() => appHandle.current.refreshLibraryItems());
       })
       .catch((err) => reportError("main.legacyImport", err));
   }
@@ -381,7 +386,7 @@ Alpine.data("stepCalculator", () => {
   // shared cache through `onChange`, and the Library surface calls
   // `refreshLibraryItems` itself. Re-fetching the catalogue here would duplicate
   // the save's network traffic for records the mutation just produced.
-  stepApp = app;
+  appHandle.current = app;
   // Auth may have resolved before this factory ran — land on Batches now.
   if (latestUser !== undefined) applyAuth(latestUser).catch((err) => reportError("main.auth", err));
   return app;
