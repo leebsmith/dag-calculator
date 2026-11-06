@@ -21,11 +21,8 @@ import {
   yeastResultLabel,
 } from "../../views/producer/yeastRows.js";
 
-export function registerYeastCard(app, ctx) {
-  const { cache, artifact, engine } = ctx;
-  const nl = nonlinearFns(artifact, engine);
-
-  Object.assign(app, {
+function yeastActions({ getView }) {
+  return {
     selectedYeastId: "",
     yeastSearchQuery: "",
     yeastSearchNotes: false,
@@ -41,89 +38,99 @@ export function registerYeastCard(app, ctx) {
     // The picker opens on a clean slate: a narrowing left from the last visit
     // would hide the catalog the next time it is opened.
     openYeastPicker() {
-      this.yeastSearchQuery = "";
-      this.yeastSearchNotes = false;
-      this.yeastManufacturerFilter = "";
-      this.yeastAttenuationFilter = "";
-      this.yeastDiastaticusFilter = "";
-      this.yeastPickerOpen = true;
+      const view = getView();
+      view.yeastSearchQuery = "";
+      view.yeastSearchNotes = false;
+      view.yeastManufacturerFilter = "";
+      view.yeastAttenuationFilter = "";
+      view.yeastDiastaticusFilter = "";
+      view.yeastPickerOpen = true;
     },
 
     closeYeastPicker() {
-      this.yeastPickerOpen = false;
+      getView().yeastPickerOpen = false;
     },
 
     handleYeastEscape() {
-      if (this.yeastPickerOpen) this.closeYeastPicker();
+      const view = getView();
+      if (view.yeastPickerOpen) view.closeYeastPicker();
     },
 
     // Selecting a strain records the selection and snapshot and closes the
     // picker. The batch AA is computed by the solver from the grist and cap.
     selectYeast(id) {
-      this.setRoot(N.selection, id);
-      this.pickSelection(N.selection, id);
-      this.yeastSearchNotes = false;
-      this.closeYeastPicker();
-      this.scheduleSolve();
-      this.notify();
+      const view = getView();
+      view.setRoot(N.selection, id);
+      view.pickSelection(N.selection, id);
+      view.yeastSearchNotes = false;
+      view.closeYeastPicker();
+      view.scheduleSolve();
+      view.notify();
     },
 
     clearYeastSelection() {
-      this.setRoot(N.selection, "");
-      this.pickSelection(N.selection, "");
-      this.yeastSearchNotes = false;
-      this.scheduleSolve();
-      this.notify();
+      const view = getView();
+      view.setRoot(N.selection, "");
+      view.pickSelection(N.selection, "");
+      view.yeastSearchNotes = false;
+      view.scheduleSolve();
+      view.notify();
     },
 
     toggleYeastSearchNotes() {
-      this.yeastSearchNotes = !this.yeastSearchNotes;
+      const view = getView();
+      view.yeastSearchNotes = !view.yeastSearchNotes;
     },
 
     toggleYeastAttenuation(value) {
-      this.yeastAttenuationFilter = toggleFilter(this.yeastAttenuationFilter, value);
+      const view = getView();
+      view.yeastAttenuationFilter = toggleFilter(view.yeastAttenuationFilter, value);
     },
 
     toggleYeastDiastaticus(value) {
-      this.yeastDiastaticusFilter = toggleFilter(this.yeastDiastaticusFilter, value);
+      const view = getView();
+      view.yeastDiastaticusFilter = toggleFilter(view.yeastDiastaticusFilter, value);
     },
 
     // Commit the derate on blur/change, not per keystroke. Empty, invalid, or
     // out-of-range values reset to the previous value. The control is always in
     // percentage points, independent of the percentage unit menu.
     commitYeastDerate(valueOrElement) {
+      const view = getView();
       const element =
         valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
       const raw = element ? element.value : valueOrElement;
-      const previousDisplay = this.yeastDerateDisplay;
+      const previousDisplay = view.yeastDerateDisplay;
       const value = Number(raw);
       if (raw === "" || !Number.isFinite(value) || value < 0 || value > 25) {
         if (element) element.value = previousDisplay;
         return;
       }
-      this.setRoot(N.derate, value / 100);
+      view.setRoot(N.derate, value / 100);
       if (element) element.value = percentText(value / 100);
-      this.scheduleSolve();
-      this.notify();
+      view.scheduleSolve();
+      view.notify();
     },
 
     yeastField(id) {
-      return (this.fieldsBySlice.yeast ?? []).find((f) => f.id === id) ?? {};
+      return (getView().fieldsBySlice.yeast ?? []).find((f) => f.id === id) ?? {};
     },
-  });
+  };
+}
 
-  Object.defineProperties(app, {
+function catalogDescriptors({ cache, getView }) {
+  return {
     yeastCatalog: {
       configurable: true,
       get() {
-        void this.catalogRevision;
+        void getView().catalogRevision;
         return Object.values(cache.references.yeast ?? {});
       },
     },
     yeastManufacturers: {
       configurable: true,
       get() {
-        return [...new Set(this.yeastCatalog.map((y) => y.manufacturer).filter(Boolean))].sort();
+        return [...new Set(getView().yeastCatalog.map((y) => y.manufacturer).filter(Boolean))].sort();
       },
     },
     yeastAttenuationTiers: {
@@ -135,67 +142,76 @@ export function registerYeastCard(app, ctx) {
     yeastDiastaticusTiers: {
       configurable: true,
       get() {
-        return diastaticusTiers(this.yeastCatalog);
+        return diastaticusTiers(getView().yeastCatalog);
       },
     },
     filteredYeasts: {
       configurable: true,
       get() {
-        const m = this.yeastManufacturerFilter;
-        const t = this.yeastAttenuationFilter;
-        const d = this.yeastDiastaticusFilter;
-        const items = this.yeastCatalog.filter(
+        const view = getView();
+        const m = view.yeastManufacturerFilter;
+        const t = view.yeastAttenuationFilter;
+        const d = view.yeastDiastaticusFilter;
+        const items = view.yeastCatalog.filter(
           (y) =>
             (!m || y.manufacturer === m) &&
             (!t || attenuationTier(y.attenuation_pct) === t) &&
             (!d || diastaticusTier(y) === d)
         );
         return filterCatalog(items, {
-          query: this.yeastSearchQuery,
+          query: view.yeastSearchQuery,
           searchFields: ["name", "notes"],
-          includeNotes: this.yeastSearchNotes,
+          includeNotes: view.yeastSearchNotes,
         });
       },
     },
     visibleYeasts: {
       configurable: true,
       get() {
-        return this.filteredYeasts.slice(0, YEAST_ROW_LIMIT);
+        return getView().filteredYeasts.slice(0, YEAST_ROW_LIMIT);
       },
     },
     yeastResultCount: {
       configurable: true,
       get() {
-        return this.filteredYeasts.length;
+        return getView().filteredYeasts.length;
       },
     },
     isYeastListTruncated: {
       configurable: true,
       get() {
-        return isYeastListTruncated(this.yeastResultCount);
+        return isYeastListTruncated(getView().yeastResultCount);
       },
     },
     yeastResultLabel: {
       configurable: true,
       get() {
+        const view = getView();
         return yeastResultLabel(
-          this.visibleYeasts.length,
-          this.yeastResultCount,
-          this.isYeastListTruncated
+          view.visibleYeasts.length,
+          view.yeastResultCount,
+          view.isYeastListTruncated
         );
       },
     },
+  };
+}
+
+function selectionDescriptors({ cache, artifact, nl, getView }) {
+  return {
     selectedYeast: {
       configurable: true,
       get() {
-        return this.selectedYeastId ? cache.references.yeast[this.selectedYeastId] ?? null : null;
+        const id = getView().selectedYeastId;
+        return id ? cache.references.yeast[id] ?? null : null;
       },
     },
     selectedYeastTemp: {
       configurable: true,
       get() {
-        const unitId = masterUnit(this.unitMode, "temperature") ?? "degC";
-        return temperatureRangeLabel(this.selectedYeast, {
+        const view = getView();
+        const unitId = masterUnit(view.unitMode, "temperature") ?? "degC";
+        return temperatureRangeLabel(view.selectedYeast, {
           toDisplay: (value) => displayValue(artifact, "temperature", unitId, value, nl),
           symbol: unitSymbol(UNIT_SYMBOLS, "temperature", unitId),
           decimals: unitDecimals("temperature", unitId) ?? 1,
@@ -207,22 +223,39 @@ export function registerYeastCard(app, ctx) {
     yeastDerateDisplay: {
       configurable: true,
       get() {
-        return percentText(this.yeastField(N.derate).value ?? 0);
+        return percentText(getView().yeastField(N.derate).value ?? 0);
       },
     },
     selectedYeastBand: {
       configurable: true,
       get() {
-        return attenuationBandLabel(this.selectedYeast);
+        return attenuationBandLabel(getView().selectedYeast);
       },
     },
     selectedYeastSta1: {
       configurable: true,
       get() {
-        return sta1Label(this.selectedYeast);
+        return sta1Label(getView().selectedYeast);
       },
     },
+  };
+}
+
+export function createYeastCard(ctx) {
+  const { cache, artifact, engine, getView } = ctx;
+  const nl = nonlinearFns(artifact, engine);
+  const actions = yeastActions(ctx);
+  Object.defineProperties(actions, {
+    ...catalogDescriptors({ cache, getView }),
+    ...selectionDescriptors({ cache, artifact, nl, getView }),
   });
+  return actions;
+}
+
+export function registerYeastCard(app, ctx = {}) {
+  const actions = createYeastCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshYeastCard(app, ctx) {
