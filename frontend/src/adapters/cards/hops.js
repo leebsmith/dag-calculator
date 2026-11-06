@@ -5,11 +5,9 @@ import {
   catalogDraftKeys,
   catalogDraftLayer,
   createCatalogDraft,
-  installCatalogDraft,
 } from "./catalogDraft.js";
 import {
   createCoolingCurvePicker,
-  installCoolingCurvePicker,
   KEYS as coolingCurveKeys,
 } from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
@@ -261,20 +259,6 @@ export function createHopLayers(ctx, deps = {}) {
     createHopCard(ctx, formatters),
     createCoolingCurvePicker(ctx, { formatTemp: formatters.formatTemp }),
   ];
-}
-
-export function registerHopCard(app, ctx = {}) {
-  installCatalogDraft(app, ctx, hopDraftConfig(ctx));
-  installCatalogDraft(app, ctx, whirlpoolDraftConfig(ctx));
-  const formatters = createHopFormatters({
-    artifact: ctx.artifact,
-    engine: ctx.engine,
-    ui: ctx.ui,
-  });
-  const actions = createHopCard({ ...ctx, getView: ctx.getView ?? (() => app) }, formatters);
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  installCoolingCurvePicker(app, ctx, { formatTemp: formatters.formatTemp });
-  return actions;
 }
 
 export function refreshHopCard(app, ctx) {

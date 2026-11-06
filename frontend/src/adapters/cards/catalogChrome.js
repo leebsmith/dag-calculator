@@ -130,3 +130,11 @@ export function createCatalogChrome({ registry, getView }) {
     methods: { ...drawerMethods(getView, registry), ...contentMethods(getView, registry) },
   };
 }
+
+export function catalogChromeLayer(chrome) {
+  const layer = {};
+  Object.defineProperties(layer, chrome.state);
+  Object.defineProperties(layer, chrome.getters);
+  Object.assign(layer, chrome.methods);
+  return layer;
+}

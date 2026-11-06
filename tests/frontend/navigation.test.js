@@ -1,13 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { installNavigation } from "../../frontend/src/adapters/navigation.js";
+import { createNavigationActions } from "../../frontend/src/adapters/navigation.js";
+
+function install(app, dependencies) {
+  Object.assign(
+    app,
+    createNavigationActions({ ...dependencies, getView: dependencies.getView ?? (() => app) })
+  );
+}
 
 function setup({ activeIndex = 0, highwater = 1, isEditorActive } = {}) {
   const ui = { activeIndex, highwater };
   const steps = [{ id: "a" }, { id: "b" }, { id: "c" }];
   const app = {};
-  installNavigation(app, { ui, steps, isEditorActive });
+  install(app, { ui, steps, isEditorActive });
   app.syncNav();
   return { app, ui, steps };
 }
@@ -126,7 +133,7 @@ test("resetToStyle selects the style step and unlocks it", () => {
   const ui = { activeIndex: 0, highwater: 0 };
   const steps = [{ id: "equipment" }, { id: "style" }, { id: "yeast" }];
   const app = {};
-  installNavigation(app, { ui, steps });
+  install(app, { ui, steps });
   app.syncNav();
 
   app.resetToStyle();

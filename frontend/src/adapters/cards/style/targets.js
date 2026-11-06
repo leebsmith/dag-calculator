@@ -270,12 +270,6 @@ export function createStyleTargets(ctx) {
   return actions;
 }
 
-export function registerStyleTargets(app, ctx = {}) {
-  const actions = createStyleTargets({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export function refreshStyleTargets(app, ctx = {}) {
   app.syncScalePinState();
   app.refreshTargets();

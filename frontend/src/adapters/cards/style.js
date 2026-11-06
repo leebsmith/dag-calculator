@@ -4,22 +4,10 @@
 // are read-only (the batch's style is its identity); the region math lives in
 // engine/fermentation.js and the plot projection in views/producer/stylePlot.js.
 
-import {
-  createStyleDeclaration,
-  registerStyleDeclaration,
-  refreshStyleDeclaration,
-} from "./style/declaration.js";
-import {
-  createStyleNavigator,
-  registerStyleNavigator,
-  refreshStyleNavigator,
-} from "./style/navigator.js";
-import {
-  createStyleTargets,
-  registerStyleTargets,
-  refreshStyleTargets,
-} from "./style/targets.js";
-import { createStyleConformance, registerStyleConformance } from "./style/conformance.js";
+import { createStyleDeclaration, refreshStyleDeclaration } from "./style/declaration.js";
+import { createStyleNavigator, refreshStyleNavigator } from "./style/navigator.js";
+import { createStyleTargets, refreshStyleTargets } from "./style/targets.js";
+import { createStyleConformance } from "./style/conformance.js";
 
 export function createStyleLayers(ctx) {
   return [
@@ -28,13 +16,6 @@ export function createStyleLayers(ctx) {
     createStyleTargets(ctx),
     createStyleConformance(ctx),
   ];
-}
-
-export function registerStyleCard(app, ctx) {
-  registerStyleDeclaration(app, ctx);
-  registerStyleNavigator(app, ctx);
-  registerStyleTargets(app, ctx);
-  registerStyleConformance(app, ctx);
 }
 
 export function refreshStyleCard(app, ctx) {

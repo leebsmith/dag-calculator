@@ -19,7 +19,6 @@ import {
   catalogDraftKeys,
   catalogDraftLayer,
   createCatalogDraft,
-  installCatalogDraft,
 } from "./catalogDraft.js";
 
 const MAX_VISIBLE = 25;
@@ -197,13 +196,6 @@ export function createDryHopLayers(ctx) {
     catalogDraftLayer(createCatalogDraft(ctx, dryHopDraftConfig(ctx), ctx.registry)),
     createDryHopCard(ctx),
   ];
-}
-
-export function registerDryHopCard(app, ctx = {}) {
-  installCatalogDraft(app, ctx, dryHopDraftConfig(ctx));
-  const actions = createDryHopCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
 }
 
 export function refreshDryHopCard(app, ctx) {

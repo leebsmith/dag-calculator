@@ -96,12 +96,6 @@ export function createBrewDayLayers(ctx) {
   return [createBrewDayCard(ctx)];
 }
 
-export function registerBrewDayCard(app, ctx = {}) {
-  const actions = createBrewDayCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export function refreshBrewDayCard(app, ctx) {
   app.brewDayRows = materializeBrewDayRows(ctx.engine.get(N.steps));
 }

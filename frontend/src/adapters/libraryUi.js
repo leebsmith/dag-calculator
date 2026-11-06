@@ -12,7 +12,6 @@ import { createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.j
 import { createLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
 import { createLibraryComposition, KEYS as compositionKeys } from "./libraryComposition.js";
 import { filterCatalog } from "../views/catalog.js";
-import { createModalFocusManager } from "./modalFocus.js";
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { formatWithDecimals } from "../utils.js";
@@ -387,13 +386,7 @@ export function createLibraryLayers(ctx) {
   ];
 }
 
-export function registerLibraryUi(app, ctx) {
-  const modalFocus = ctx.modalFocus ?? createModalFocusManager();
-  const getView = ctx.getView ?? (() => app);
-  const layers = createLibraryLayers({ ...ctx, modalFocus, getView });
-  for (const layer of layers) Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
-  return layers.at(-1);
-}
+
 
 export const KEYS = [
   ...compositionKeys,

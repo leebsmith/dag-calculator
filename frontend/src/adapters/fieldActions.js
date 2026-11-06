@@ -297,11 +297,4 @@ export function createFieldActions({
   return actions;
 }
 
-export function installFieldActions(app, dependencies = {}) {
-  Object.assign(
-    app,
-    createFieldActions({ ...dependencies, getView: dependencies.getView ?? (() => app) })
-  );
-}
-
 export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

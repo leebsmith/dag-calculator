@@ -256,12 +256,6 @@ export function createYeastLayers(ctx) {
   return [createYeastCard(ctx)];
 }
 
-export function registerYeastCard(app, ctx = {}) {
-  const actions = createYeastCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export function refreshYeastCard(app, ctx) {
   app.selectedYeastId = ctx.engine.get(N.selection) || "";
 }

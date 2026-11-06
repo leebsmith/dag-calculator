@@ -64,11 +64,4 @@ export function createNavigationActions({
   return { syncNav, selectStep, resetToStep, resetToStyle, next, prev, keyNav };
 }
 
-export function installNavigation(app, dependencies = {}) {
-  Object.assign(
-    app,
-    createNavigationActions({ ...dependencies, getView: dependencies.getView ?? (() => app) })
-  );
-}
-
 export const KEYS = ["syncNav", "selectStep", "resetToStep", "resetToStyle", "next", "prev", "keyNav"];

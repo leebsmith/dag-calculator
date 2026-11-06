@@ -126,13 +126,6 @@ export function createSnapshotActions({
   };
 }
 
-export function installSnapshot(app, dependencies = {}) {
-  Object.assign(
-    app,
-    createSnapshotActions({ ...dependencies, getView: dependencies.getView ?? (() => app) })
-  );
-}
-
 export const KEYS = [
   "draftState",
   "freezePayload",

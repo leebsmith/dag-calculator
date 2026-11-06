@@ -235,12 +235,6 @@ export function createStyleNavigator(ctx) {
   return actions;
 }
 
-export function registerStyleNavigator(app, ctx = {}) {
-  const actions = createStyleNavigator({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export function refreshStyleNavigator(app, ctx) {
   // The silent fallback is for direct unit tests; the app state always carries
   // the observability manager.

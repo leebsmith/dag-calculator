@@ -5,7 +5,6 @@ import {
   catalogDraftKeys,
   catalogDraftLayer,
   createCatalogDraft,
-  installCatalogDraft,
 } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel } from "../../utils.js";
@@ -106,13 +105,6 @@ export function createTraceMaltsLayers(ctx) {
     catalogDraftLayer(createCatalogDraft(ctx, TRACE_CONFIG, ctx.registry)),
     createTraceMaltsCard(ctx),
   ];
-}
-
-export function registerTraceMaltsCard(app, ctx = {}) {
-  installCatalogDraft(app, ctx, TRACE_CONFIG);
-  const actions = createTraceMaltsCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
 }
 
 export function refreshTraceMaltsCard(app, ctx) {

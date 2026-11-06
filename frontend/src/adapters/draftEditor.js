@@ -350,13 +350,4 @@ export function createDraftEditor({
   return actions;
 }
 
-export function installDraftEditor(app, dependencies = {}) {
-  const actions = createDraftEditor({
-    ...dependencies,
-    getView: dependencies.getView ?? (() => app),
-  });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export const KEYS = ["draftOpen", "draftNodeId", "draftRows", "draftBaseline", "draftDiscardOpen", "draftDirty", "draftEntry", "draftSnapshot", "draftMassDisplay", "openDraft", "closeDraft", "dismissDraftDiscard", "confirmDraftDiscard", "saveDraft", "normalizeDraft", "draftResolvedRows", "seedSugarShareWeights", "editDraftCell", "addDraftRow", "removeDraftRow", "patchDraftRow", "setMaltField", "colorUnit", "grainColorUnit", "colorDisplay", "setColorField", "draftColumns", "draftCeilings", "draftDisplayRows", ...CATALOG_CHROME_KEYS];

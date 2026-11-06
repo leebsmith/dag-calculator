@@ -1,11 +1,11 @@
-// Declared installer contract: each `install*`/`register*` module exports the
-// app members it assigns. The single reactive root is a deliberate Alpine
+// Declared composition contract: each layer-factory module exports the app
+// members it contributes. The single reactive root is a deliberate Alpine
 // requirement; this list makes name collisions loud in development instead of
 // silently clobbering shared state.
 //
 // This is the one authoritative list. The composition root, the contract guard,
 // the ownership guard and the generated `docs/frontend-ownership.md` all read
-// it, so adding an installer cannot leave a guard behind.
+// it, so adding a layer cannot leave a guard behind.
 //
 // `modules` is the source a scanner attributes `this.<member>` reads to, and
 // `partials` is the card partials the installer owns: the ownership guard lets

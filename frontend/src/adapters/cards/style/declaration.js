@@ -75,12 +75,6 @@ export function createStyleDeclaration({ cache, getView }) {
   return actions;
 }
 
-export function registerStyleDeclaration(app, ctx = {}) {
-  const actions = createStyleDeclaration({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export function refreshStyleDeclaration(app, ctx) {
   app.selectedStyleId = ctx.engine.identity?.style?.id ?? "";
 }

@@ -4,7 +4,6 @@ import assert from "node:assert/strict";
 import {
   createLibraryLayers,
   KEYS as LIBRARY_KEYS,
-  registerLibraryUi,
 } from "../../frontend/src/adapters/libraryUi.js";
 import { createModalFocusManager } from "../../frontend/src/adapters/modalFocus.js";
 import {
@@ -29,7 +28,7 @@ function setup({
   onRecordsChanged,
   loaded = () => true,
   loading = () => false,
-  modalFocus,
+  modalFocus = createModalFocusManager(),
 } = {}) {
   const events = [];
   const app = {
@@ -62,7 +61,16 @@ function setup({
     },
   };
 
-  registerLibraryUi(app, { artifact: artifact(), engine: ENGINE, cache: { seeds }, modalFocus });
+  const layers = createLibraryLayers({
+    artifact: artifact(),
+    engine: ENGINE,
+    cache: { seeds },
+    modalFocus,
+    getView: () => app,
+  });
+  for (const layer of layers) {
+    Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
+  }
   return { app, events };
 }
 

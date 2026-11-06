@@ -6,7 +6,6 @@ import {
   catalogDraftKeys,
   catalogDraftLayer,
   createCatalogDraft,
-  installCatalogDraft,
 } from "./catalogDraft.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel, formatWithDecimals } from "../../utils.js";
@@ -200,13 +199,6 @@ export function createMaltLayers(ctx) {
     catalogDraftLayer(createCatalogDraft(ctx, MALT_CONFIG, ctx.registry)),
     createMaltCard(ctx),
   ];
-}
-
-export function registerMaltCard(app, ctx = {}) {
-  installCatalogDraft(app, ctx, MALT_CONFIG);
-  const actions = createMaltCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
 }
 
 export function refreshMaltCard(app, ctx) {

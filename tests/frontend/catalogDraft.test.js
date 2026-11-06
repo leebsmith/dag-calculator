@@ -1,8 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { installCatalogDraft } from "../../frontend/src/adapters/cards/catalogDraft.js";
-import { createCatalogRegistry } from "../../frontend/src/adapters/cards/catalogChrome.js";
+import {
+  catalogDraftLayer,
+  createCatalogDraft,
+} from "../../frontend/src/adapters/cards/catalogDraft.js";
+import {
+  catalogChromeLayer,
+  createCatalogChrome,
+  createCatalogRegistry,
+} from "../../frontend/src/adapters/cards/catalogChrome.js";
 
 const SEEDS = {
   malts: {
@@ -94,25 +101,35 @@ function setup({ canAdd = null, seeds = SEEDS, registry = null, ...extra } = {})
     },
   };
 
-  installCatalogDraft(
+  const sharedRegistry = registry ?? createCatalogRegistry();
+  const layer = catalogDraftLayer(
+    createCatalogDraft(
+      { cache: { seeds }, getView: () => app, registry: sharedRegistry },
+      {
+        prefix: "malt",
+        Cap: "Malt",
+        nodeId: "grist.major_malts",
+        seedKey: "malts",
+        idField: "catalog_id",
+        categoryField: "category",
+        standardField: "standard_malt",
+        standardNameField: "standard_name",
+        standardDescriptionField: "generic_description",
+        familyField: "family",
+        makeRow: (malt) => ({ catalog_id: malt.id, name: malt.name, parts: 10, pct: 0 }),
+        maxVisible: 2,
+        canAdd,
+        ...extra,
+      },
+      sharedRegistry
+    )
+  );
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
+  Object.defineProperties(
     app,
-    { cache: { seeds }, registry },
-    {
-      prefix: "malt",
-      Cap: "Malt",
-      nodeId: "grist.major_malts",
-      seedKey: "malts",
-      idField: "catalog_id",
-      categoryField: "category",
-      standardField: "standard_malt",
-      standardNameField: "standard_name",
-      standardDescriptionField: "generic_description",
-      familyField: "family",
-      makeRow: (malt) => ({ catalog_id: malt.id, name: malt.name, parts: 10, pct: 0 }),
-      maxVisible: 2,
-      canAdd,
-      ...extra,
-    }
+    Object.getOwnPropertyDescriptors(
+      catalogChromeLayer(createCatalogChrome({ registry: sharedRegistry, getView: () => app }))
+    )
   );
 
   return { app, calls };

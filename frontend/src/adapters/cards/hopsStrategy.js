@@ -12,11 +12,4 @@ export function createHopStrategyLayers(ctx) {
   return [createHopStrategy(ctx)];
 }
 
-export function installHopStrategy(app, dependencies = {}) {
-  Object.assign(
-    app,
-    createHopStrategy({ ...dependencies, getView: dependencies.getView ?? (() => app) })
-  );
-}
-
 export const KEYS = ["hopStrategy", "setHopStrategy"];

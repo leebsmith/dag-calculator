@@ -43,11 +43,7 @@ import {
 } from "../../views/producer/catalogDrawer.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
 import { draftGetters } from "./catalogDraftGetters.js";
-import {
-  chromeConfig,
-  createCatalogChrome,
-  createCatalogRegistry,
-} from "./catalogChrome.js";
+import { chromeConfig } from "./catalogChrome.js";
 
 const STATE_SUFFIXES = [
   "Drawer",
@@ -326,21 +322,10 @@ export function catalogDraftLayer({ state, methods, descriptors }) {
   return layer;
 }
 
-export function installCatalogDraft(app, ctx, config) {
-  const getView = ctx.getView ?? (() => app);
-  const registry = ctx.registry ?? createCatalogRegistry();
-  const chrome = createCatalogChrome({ registry, getView });
-  Object.defineProperties(app, chrome.state);
-  Object.defineProperties(app, chrome.getters);
-  Object.assign(app, chrome.methods);
-  const layer = catalogDraftLayer(
-    createCatalogDraft({ ...ctx, getView }, config, registry)
-  );
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
-}
 
-// The app members installCatalogDraft assigns, derived from the same name
-// tables the installer uses so the declared surface cannot drift from it.
+
+// The app members a catalog draft contributes, derived from the same name
+// tables the factory uses so the declared surface cannot drift from it.
 export function catalogDraftKeys(prefix, Cap) {
   const name = (suffix) => `${prefix}${suffix}`;
   return [

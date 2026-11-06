@@ -19,19 +19,24 @@ import { CATALOGS, isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode } from "../store/unitPrefs.js";
 import { createSnapshotActions } from "../store/snapshot.js";
-import { registerYeastCard } from "./cards/yeast.js";
-import { registerStyleCard } from "./cards/style.js";
-import { registerHopCard } from "./cards/hops.js";
-import { installHopStrategy } from "./cards/hopsStrategy.js";
-import { registerLateAdditionsCard } from "./cards/late-additions.js";
-import { registerTraceMaltsCard } from "./cards/trace-malts.js";
-import { registerMaltCard } from "./cards/malt.js";
-import { registerMashCard } from "./cards/mash.js";
-import { registerBrewDayCard } from "./cards/brew-day.js";
-import { registerDryHopCard } from "./cards/dry-hops.js";
-import { registerWaterCard } from "./cards/water.js";
-import { createCatalogRegistry } from "./cards/catalogChrome.js";
-import { registerLibraryUi } from "./libraryUi.js";
+import { createYeastLayers } from "./cards/yeast.js";
+import { createStyleLayers } from "./cards/style.js";
+import { createHopLayers } from "./cards/hops.js";
+import { createHopStrategyLayers } from "./cards/hopsStrategy.js";
+import { createLateAdditionsLayers } from "./cards/late-additions.js";
+import { createTraceMaltsLayers } from "./cards/trace-malts.js";
+import { createMaltLayers } from "./cards/malt.js";
+import { createMashLayers } from "./cards/mash.js";
+import { createBrewDayLayers } from "./cards/brew-day.js";
+import { createDryHopLayers } from "./cards/dry-hops.js";
+import { createWaterLayers } from "./cards/water.js";
+import {
+  catalogChromeLayer,
+  createCatalogChrome,
+  createCatalogRegistry,
+} from "./cards/catalogChrome.js";
+import { createLibraryLayers } from "./libraryUi.js";
+import { createHopFormatters } from "../views/hopsLogic.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
@@ -79,12 +84,6 @@ function runtimeSeams(options) {
     observability: options.observability ?? createObservabilityManager(),
   };
 }
-
-const CARD_INSTALLERS = [
-  registerYeastCard, registerStyleCard, registerHopCard, registerLateAdditionsCard,
-  registerTraceMaltsCard, registerMaltCard, registerMashCard, registerBrewDayCard,
-  registerDryHopCard, registerWaterCard, registerLibraryUi, installHopStrategy,
-];
 
 export function createStepApp(options = {}) {
   assertReferencePair(options);
@@ -400,9 +399,11 @@ export function createStepApp(options = {}) {
     },
   };
 
-  // Explicit composition: each factory receives the dependencies it needs, and
-  // the merged layers are the app's installer surface.
+  // The single composition point: every layer is built first, then merged once.
+  // No installer writes the app afterwards; handlers resolve the live view
+  // through `getView`.
   const core = { artifact, session, getView };
+  const hopFormatters = createHopFormatters({ artifact, engine: session.engine, ui });
   const app = composeLayers(
     baseApp,
     { dialogFocus: modalFocus.dialogFocus },
@@ -410,7 +411,20 @@ export function createStepApp(options = {}) {
     createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),
     createDraftEditor({ ...core, ui, observability }),
     createUnitActions({ ...core, ui, observability }),
-    createSnapshotActions({ ...core, master, observability })
+    createSnapshotActions({ ...core, master, observability }),
+    catalogChromeLayer(createCatalogChrome({ registry: cardCtx.registry, getView })),
+    ...createYeastLayers(cardCtx),
+    ...createStyleLayers(cardCtx),
+    ...createHopLayers(cardCtx, { formatters: hopFormatters }),
+    ...createLateAdditionsLayers(cardCtx),
+    ...createTraceMaltsLayers(cardCtx),
+    ...createMaltLayers(cardCtx),
+    ...createMashLayers(cardCtx),
+    ...createBrewDayLayers(cardCtx),
+    ...createDryHopLayers(cardCtx),
+    ...createWaterLayers(cardCtx),
+    ...createLibraryLayers(cardCtx),
+    ...createHopStrategyLayers(cardCtx)
   );
   liveView.current = app;
 
@@ -458,10 +472,6 @@ export function createStepApp(options = {}) {
     enumerable: false,
     configurable: true,
   });
-
-  for (const register of CARD_INSTALLERS) {
-    register(app, cardCtx);
-  }
 
   function syncLibrary() {
     const { references } = cache.syncLibraryItems(library.items());

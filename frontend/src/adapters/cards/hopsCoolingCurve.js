@@ -201,15 +201,6 @@ export function createCoolingCurvePicker(ctx, { formatTemp }) {
   return actions;
 }
 
-export function installCoolingCurvePicker(app, ctx, { formatTemp }) {
-  const actions = createCoolingCurvePicker(
-    { ...ctx, getView: ctx.getView ?? (() => app) },
-    { formatTemp }
-  );
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export const KEYS = [
   "coolingCurveNotice",
   "customCoolingCurveValue",

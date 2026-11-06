@@ -5,7 +5,6 @@ import {
   catalogDraftKeys,
   catalogDraftLayer,
   createCatalogDraft,
-  installCatalogDraft,
 } from "./catalogDraft.js";
 import { allocationDescriptors, displayDescriptors, stateDescriptors } from "./lateAdditionGetters.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
@@ -254,13 +253,6 @@ export function createLateAdditionsLayers(ctx) {
     catalogDraftLayer(createCatalogDraft(ctx, SUGAR_CONFIG, ctx.registry)),
     createLateAdditionsCard(ctx),
   ];
-}
-
-export function registerLateAdditionsCard(app, ctx = {}) {
-  installCatalogDraft(app, ctx, SUGAR_CONFIG);
-  const actions = createLateAdditionsCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
 }
 
 export function refreshLateAdditionsCard(app, ctx) {

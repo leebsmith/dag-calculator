@@ -58,11 +58,4 @@ export function createUnitActions({ artifact, ui, getView }) {
   return { setUnit, resetUnits, setFieldUnit, toggleFieldUnit, toggleUnits, closeUnits };
 }
 
-export function installUnitActions(app, dependencies = {}) {
-  Object.assign(
-    app,
-    createUnitActions({ ...dependencies, getView: dependencies.getView ?? (() => app) })
-  );
-}
-
 export const KEYS = ["setUnit", "setFieldUnit", "resetUnits", "toggleFieldUnit", "toggleUnits", "closeUnits"];

@@ -46,12 +46,6 @@ export function createWaterLayers(ctx) {
   return [createWaterCard(ctx)];
 }
 
-export function registerWaterCard(app, ctx = {}) {
-  const actions = createWaterCard({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export function refreshWaterCard(app, ctx) {
   const engine = ctx.engine;
   const read = (path) => num(engine, path, ctx.observability?.reportError);

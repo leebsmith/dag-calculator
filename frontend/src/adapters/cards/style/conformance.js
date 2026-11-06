@@ -94,10 +94,4 @@ export function createStyleConformance({ engine, artifact, getView, observabilit
   return actions;
 }
 
-export function registerStyleConformance(app, ctx = {}) {
-  const actions = createStyleConformance({ ...ctx, getView: ctx.getView ?? (() => app) });
-  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
-  return actions;
-}
-
 export const KEYS = ["styleConformance", "styleSai", "styleConformanceReport", "conformanceSummary"];

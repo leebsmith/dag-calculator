@@ -3,9 +3,15 @@ import assert from "node:assert/strict";
 
 import {
   catalogDraftKeys,
-  installCatalogDraft,
+  catalogDraftLayer,
+  createCatalogDraft,
 } from "../../frontend/src/adapters/cards/catalogDraft.js";
-import { CATALOG_CHROME_KEYS } from "../../frontend/src/adapters/cards/catalogChrome.js";
+import {
+  CATALOG_CHROME_KEYS,
+  catalogChromeLayer,
+  createCatalogChrome,
+  createCatalogRegistry,
+} from "../../frontend/src/adapters/cards/catalogChrome.js";
 
 const COLLECTIONS = [
   ["malt", "Malt"],
@@ -18,9 +24,11 @@ const COLLECTIONS = [
 
 function install(prefix, Cap) {
   const app = {};
-  installCatalogDraft(
-    app,
-    { cache: { seeds: {} } },
+  const registry = createCatalogRegistry();
+  const getView = () => app;
+  const ctx = { cache: { seeds: {} }, getView, registry };
+  const draft = createCatalogDraft(
+    ctx,
     {
       prefix,
       Cap,
@@ -28,7 +36,16 @@ function install(prefix, Cap) {
       seedKey: "unused",
       idField: "id",
       makeRow: () => ({ id: "row" }),
-    }
+    },
+    registry
+  );
+  Object.defineProperties(
+    app,
+    Object.getOwnPropertyDescriptors(catalogDraftLayer(draft))
+  );
+  Object.defineProperties(
+    app,
+    Object.getOwnPropertyDescriptors(catalogChromeLayer(createCatalogChrome({ registry, getView })))
   );
   return app;
 }

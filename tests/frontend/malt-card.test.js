@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { refreshMaltCard, registerMaltCard } from "../../frontend/src/adapters/cards/malt.js";
+import { createMaltLayers, refreshMaltCard } from "../../frontend/src/adapters/cards/malt.js";
+import { createCatalogRegistry } from "../../frontend/src/adapters/cards/catalogChrome.js";
 import { FERMENTABLE_NODES as N } from "../../frontend/src/views/registry/fermentables.js";
 import { artifact as artifactFixture } from "../guards/util.js";
 
@@ -25,7 +26,12 @@ function setup() {
       this.maltDrawer = "inspect";
     },
   };
-  registerMaltCard(app, { cache: { seeds: { malts: {} } } });
+  const layers = createMaltLayers({
+    cache: { seeds: { malts: {} } },
+    getView: () => app,
+    registry: createCatalogRegistry(),
+  });
+  for (const layer of layers) Object.defineProperties(app, Object.getOwnPropertyDescriptors(layer));
   return app;
 }
 
