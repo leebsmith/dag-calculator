@@ -63,14 +63,23 @@ test("shapeFreezePayload carries the format and a null conformance default", () 
 });
 
 test("report inputs keep the wire keys and default missing advisories", () => {
+  const relations = [{ id: "r" }];
+  const domains = [{ id: "d" }];
+  const fieldDomains = [{ id: "f" }];
+  const collectionDomains = [{ id: "c" }];
   assert.deepEqual(
     shapeReportValidation({
-      relations: [],
-      domains: [],
-      fieldDomains: [],
-      collectionDomains: [],
+      relations,
+      domains,
+      fieldDomains,
+      collectionDomains,
     }),
-    { relations: [], domains: [], field_domains: [], collection_domains: [] }
+    {
+      relations,
+      domains,
+      field_domains: fieldDomains,
+      collection_domains: collectionDomains,
+    }
   );
   assert.deepEqual(shapeTelemetryEntry({ binding: "b", fingerprint: "f" }), {
     binding: "b",
@@ -83,4 +92,75 @@ test("report inputs keep the wire keys and default missing advisories", () => {
     validation: { a: 1 },
     telemetry: {},
   });
+});
+
+test("shapeFrozenValue keeps non-boundary scalars and drops undeclared outputs", () => {
+  assert.deepEqual(shapeFrozenValue({ outputs: { a: 1 } }, { kind: "boundary" }), {});
+  assert.deepEqual(shapeFrozenValue({ outputs: { a: 1 } }, { kind: "boundary", outputs: {} }), {});
+  assert.equal(shapeFrozenValue("text", { kind: "constant" }), "text");
+  assert.equal(shapeFrozenValue(0, { kind: "root" }), 0);
+});
+
+test("shapeDraftState copies identity, collections, and selections but keeps roots", () => {
+  const identity = { id: "b1" };
+  const roots = { "batch.target_abv": 6.2 };
+  const collections = { "batch.sugars": [{ id: "s1" }] };
+  const selections = { "batch.yeast": { id: "y1" } };
+  const state = shapeDraftState({
+    identity,
+    hopStrategy: "60/40",
+    roots,
+    collections,
+    selections,
+    schemaVersion: 4,
+  });
+  assert.equal(state.roots, roots);
+  assert.deepEqual(state.identity, identity);
+  assert.deepEqual(state.collections, collections);
+  assert.deepEqual(state.selections, selections);
+  assert.notEqual(state.identity, identity);
+  assert.notEqual(state.collections, collections);
+  assert.notEqual(state.selections, selections);
+  assert.equal(state.hop_strategy, "60/40");
+});
+
+test("shapeFreezePayload preserves conformance and provenance values", () => {
+  const conformance = { sai: 100 };
+  const provenance = { "batch.yeast": { source_template_id: "std:y" } };
+  assert.deepEqual(
+    shapeFreezePayload({
+      valuation: { a: 1 },
+      provenance,
+      schemaVersion: 4,
+      valuationFormat: "outputs",
+      conformance,
+    }),
+    {
+      valuation: { a: 1 },
+      valuation_format: "outputs",
+      provenance,
+      schema_version: 4,
+      conformance,
+    }
+  );
+});
+
+test("shapeTelemetryEntry preserves declared advisory arrays", () => {
+  const telemetry = [{ severity: "WARNING" }];
+  const warnings = [{ code: "w" }];
+  const notes = [{ code: "n" }];
+  assert.deepEqual(
+    shapeTelemetryEntry({
+      binding: "b",
+      fingerprint: "f",
+      extra: { telemetry, warnings, notes },
+    }),
+    {
+      binding: "b",
+      fingerprint: "f",
+      telemetry,
+      warnings,
+      notes,
+    }
+  );
 });
