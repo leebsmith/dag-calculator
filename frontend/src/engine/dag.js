@@ -10,6 +10,12 @@ import { relationStates } from "./relations.js";
 
 const graphs = new WeakMap();
 
+// One expression context shape: the three builders below differ only in how a
+// reference resolves and which callable recurses.
+function expressionCtx(artifact, resolveRef, call) {
+  return { resolveRef, resolveConst: (id) => artifact.constants[id].value, call };
+}
+
 export function buildGraph(artifact) {
   const cached = graphs.get(artifact);
   if (cached) return cached;
@@ -110,7 +116,7 @@ export function createEngine(artifact, options = {}) {
     );
   }
   const roots = new Map(Object.entries(options.roots ?? {}));
-  const references = options.references ?? {};
+  let references = options.references ?? {};
   // Resolved in place so the session's draft state (the same object) sees the
   // prior-resolved rows that the engine evaluates.
   const collections = resolveIngredientCollections(artifact, options.collections ?? {});
@@ -183,53 +189,28 @@ export function createEngine(artifact, options = {}) {
   function callFunction(fnId, args) {
     const fn = artifact.functions[fnId];
     if (!fn) throw new Error(`Unknown function "${fnId}"`);
-    const ctx = {
-      resolveRef(name) {
-        const idx = fn.params.indexOf(name);
-        if (idx === -1) throw new Error(`Unknown parameter "${name}" in function "${fnId}"`);
-        return args[idx];
-      },
-      resolveConst(id) {
-        return artifact.constants[id].value;
-      },
-      call(subId, subArgs) {
-        return callFunction(subId, subArgs);
-      },
+    const resolveRef = (name) => {
+      const idx = fn.params.indexOf(name);
+      if (idx === -1) throw new Error(`Unknown parameter "${name}" in function "${fnId}"`);
+      return args[idx];
     };
-    return evaluate(fn.body, ctx);
+    return evaluate(fn.body, expressionCtx(artifact, resolveRef, callFunction));
   }
 
   function topLevelCtxFor(authored) {
-    return {
-      resolveRef(name) {
-        return resolveValue(name, authored);
-      },
-      resolveConst(id) {
-        return artifact.constants[id].value;
-      },
-      call(fnId, args) {
-        return callFunction(fnId, args);
-      },
-    };
+    return expressionCtx(artifact, (name) => resolveValue(name, authored), callFunction);
   }
 
   function derivedCtx(inputValues, row = null, authored = false) {
-    return {
-      resolveRef(name) {
-        if (row) {
-          if (name === "row") return row;
-          if (name.startsWith("row.")) return getField(row, name.slice("row.".length));
-        }
-        if (Object.prototype.hasOwnProperty.call(inputValues, name)) return inputValues[name];
-        return resolveValue(name, authored);
-      },
-      resolveConst(id) {
-        return artifact.constants[id].value;
-      },
-      call(fnId, args) {
-        return callFunction(fnId, args);
-      },
+    const resolveRef = (name) => {
+      if (row) {
+        if (name === "row") return row;
+        if (name.startsWith("row.")) return getField(row, name.slice("row.".length));
+      }
+      if (Object.prototype.hasOwnProperty.call(inputValues, name)) return inputValues[name];
+      return resolveValue(name, authored);
     };
+    return expressionCtx(artifact, resolveRef, callFunction);
   }
 
   // Row-scoped computed fields, evaluated per row on read. They are derived
@@ -378,6 +359,17 @@ export function createEngine(artifact, options = {}) {
       }
       collections[nodeId] = resolveIngredientRows(artifact, nodeId, rows);
       invalidate(nodeId);
+    },
+    // Replace the whole catalogue. The library overlay hands over a new map, so
+    // the memoized selections (and any ingredient prior derived while resolving
+    // a row) were read against a stale one: re-resolve every collection and drop
+    // both valuations. Rows keep their captured figures — only the legacy
+    // selection fallback reads `references`.
+    setReferences(nextReferences = {}) {
+      references = { ...nextReferences };
+      resolveIngredientCollections(artifact, collections);
+      memo.clear();
+      authoredMemo.clear();
     },
     // Boundary seam (async host I/O lives in the adapter). Resolve a boundary's
     // declared inputs + canonical fingerprint without invoking it; seed its

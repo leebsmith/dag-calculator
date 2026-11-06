@@ -148,6 +148,43 @@ test("library records overlay seeds and removing them reveals the seed again", (
   assert.equal(cache.isLibraryItem(seedId), false);
 });
 
+test("syncLibraryItems swaps in a fresh catalogue instead of editing the old one", () => {
+  const cache = createReferenceCache();
+  const [seedId, seed] = Object.entries(cache.references.yeast)[0];
+  const previous = {
+    references: cache.references,
+    seeds: cache.seeds,
+    yeast: cache.references.yeast,
+  };
+
+  const snapshot = cache.syncLibraryItems({
+    yeast: { [seedId]: { ...seed, name: "My House Version" } },
+  });
+
+  assert.notEqual(cache.references, previous.references, "references is a new object");
+  assert.notEqual(cache.seeds, previous.seeds, "seeds is a new object");
+  assert.equal(snapshot.references, cache.references);
+  assert.equal(snapshot.seeds, cache.seeds);
+  assert.equal(previous.yeast[seedId].name, seed.name, "the previous catalogue is untouched");
+  assert.equal(cache.references.yeast[seedId].name, "My House Version");
+  assert.equal(cache.seeds.yeasts[seedId].name, "My House Version");
+});
+
+test("a library mutation replaces the catalogue the live engine resolves against", async () => {
+  const app = createTestApp({ libraryClient: makeClient() });
+  const record = await app.library.create("yeast", {
+    name: "Saison blend",
+    attenuation_pct: 0.82,
+  });
+  app.clearYeastSelection();
+  app.engine.setRoot("batch.yeast_id", record.id);
+
+  assert.equal(app.engine.get("batch.yeast").name, "Saison blend");
+
+  await app.library.remove("yeast", record.id);
+  assert.throws(() => app.engine.get("batch.yeast"), /Unknown reference/);
+});
+
 test("legacy localStorage items are posted once and the key is removed", async () => {
   const client = makeClient();
   const library = createLibrary({ client });

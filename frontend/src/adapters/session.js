@@ -56,6 +56,7 @@ export function createSession({
     getRoot: (id) => engine.getRoot(id),
     hasRoot: (id) => engine.hasRoot(id),
     setCollection: (id, rows) => engine.setCollection(id, rows),
+    setReferences: (references) => engine.setReferences(references),
     invalidate: (id) => engine.invalidate(id),
     boundaryRequest: (id) => engine.boundaryRequest(id),
     hasBoundaryResult: (fingerprint) => engine.hasBoundaryResult(fingerprint),

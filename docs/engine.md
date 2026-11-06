@@ -83,7 +83,9 @@ These are what make the DAG **explicit**: no edge exists unless declared.
 - **`references`** — the immutable seed catalogs keyed by schema then id
   (`equipment`/`yeast`/`water_report`/`water_target`), with the user's server
   library records merged over the seeds for the pickers. The engine consults it
-  only for legacy drafts whose selection snapshot is missing.
+  only for legacy drafts whose selection snapshot is missing. A library sync
+  replaces the whole map (`setReferences`) rather than editing it in place; see
+  *Invalidation*.
 
 Only roots/choices/collections are mutable; derived values and boundary
 outputs are **never stored** (single-writer invariant, `semantics.md` §2.1).
@@ -169,6 +171,13 @@ declares identity namespaces; the engine throws without it.
 the node from `memo` and recurses through `dependents`. The memo is the only
 place values are cached, so there is nothing else to keep consistent.
 
+`setReferences(map)` is the catalogue counterpart: the caller hands over a
+brand-new `references` object (the store never mutates the old one), and the
+engine re-resolves the ingredient priors on every collection and clears both
+valuations. Batch rows keep their captured figures; only the legacy selection
+fallback reads the new map, so no selection can serve a component from the
+previous catalogue.
+
 `unsetRoot(id)` drops an explicit value: the node falls back to its `default`
 (or becomes valueless when the default cannot resolve). A root whose default
 reads a selection field therefore *inherits* from that component until the user
@@ -189,7 +198,7 @@ engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
 
 engine.identity          // { equipment, "water.source", style } snapshots
 engine.setRoot(id, v)  unsetRoot(id)  getRoot(id)  hasRoot(id)
-engine.setCollection(id, rows)
+engine.setCollection(id, rows)  setReferences(map)
 
 engine.topoOrder  adjacency  dependents
 ```
@@ -402,6 +411,7 @@ Accessor: none — read `artifact.nodes[id]` directly.
 | `engine.getRoot(id)` / `engine.hasRoot(id)` | the **explicitly-set** store value for a root/choice (distinct from the evaluated value, which folds in `default`); identity values are never roots |
 | `engine.setRoot(id, v)` / `engine.unsetRoot(id)` | write / drop an explicit root or choice value; unsetting restores the `default` (or leaves the node valueless) |
 | `engine.setCollection(id, rows)` | write a collection |
+| `engine.setReferences(map)` | replace the whole catalogue; re-resolves ingredient priors and clears the memo |
 | `engine.boundaryRequest(id)` | `{ binding, inputs, fingerprint }` — the boundary node's adapted request body |
 | `engine.hasBoundaryResult(fp)` / `engine.applyBoundaryResult(fp, outputs)` | boundary-cache seam |
 

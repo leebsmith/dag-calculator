@@ -3,9 +3,13 @@
 // (normalized in Step G), so no per-file adapters are needed here.
 //
 // Server-persisted library records are layered on as a live overlay:
-// `syncLibraryItems` merges them (record > seed) into the per-schema/per-seed
-// maps in place, so pickers see them immediately. A loaded batch never re-reads
-// them for selection values — its snapshots own those.
+// `syncLibraryItems` rebuilds the per-schema/per-seed maps (record > seed) and
+// swaps in a brand-new `references`/`seeds` pair, so no holder of the previous
+// catalogue can observe a half-updated map. The engine captures `references` at
+// construction, so the caller that owns both must hand the new map to the
+// engine (`setReferences`), which re-resolves the ingredient priors and drops
+// its memo. A loaded batch still never re-reads the overlay for its selections
+// — its snapshots own those.
 
 import artifact from "../engine/artifact.json" with { type: "json" };
 import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json" };
@@ -74,6 +78,26 @@ function buildGristRow(entry) {
   };
 }
 
+// Build a whole new catalogue for this overlay. Record > seed at both layers:
+// `references` backs the engine's legacy selection fallback, `seeds` backs the
+// pickers and the import ledger.
+function overlayLibraryItems(items) {
+  const references = { ...BASE_REFERENCES };
+  const seeds = { ...BASE_SEEDS };
+  const libraryIds = new Set();
+  for (const [catalog, meta] of Object.entries(CATALOGS)) {
+    const records = items?.[catalog] ?? {};
+    for (const id of Object.keys(records)) libraryIds.add(id);
+    if (meta.referencesKey) {
+      references[meta.referencesKey] = { ...BASE_REFERENCES[meta.referencesKey], ...records };
+    }
+    if (meta.seedKey) {
+      seeds[meta.seedKey] = { ...BASE_SEEDS[meta.seedKey], ...records };
+    }
+  }
+  return { references, seeds, libraryIds };
+}
+
 export function createReferenceCache() {
   const cache = {
     references: { ...BASE_REFERENCES },
@@ -90,30 +114,20 @@ export function createReferenceCache() {
     seeds: { ...BASE_SEEDS },
     libraryIds: new Set(),
 
-    // Merge server library records into the live reference/seed maps in place.
-    // The base maps are never mutated, so removing a record reveals the seed
-    // again. The outer `references`/`seeds` objects keep their identity, so the
-    // engine (which holds `references` by reference) sees the reassigned maps.
+    // Replace both catalogue layers with a fresh snapshot. The previous maps are
+    // never touched, so a reader holding one keeps the view it started with, and
+    // removing a record reveals the seed again. Returns the snapshot the caller
+    // can hand to the engine.
     syncLibraryItems(items) {
-      const libraryIds = new Set();
-      for (const [catalog, meta] of Object.entries(CATALOGS)) {
-        const records = items?.[catalog] ?? {};
-        for (const id of Object.keys(records)) libraryIds.add(id);
-        if (meta.referencesKey) {
-          this.references[meta.referencesKey] = {
-            ...BASE_REFERENCES[meta.referencesKey],
-            ...records,
-          };
-        }
-        if (meta.seedKey) {
-          this.seeds[meta.seedKey] = { ...BASE_SEEDS[meta.seedKey], ...records };
-        }
-      }
-      this.libraryIds = libraryIds;
+      const snapshot = overlayLibraryItems(items);
+      cache.references = snapshot.references;
+      cache.seeds = snapshot.seeds;
+      cache.libraryIds = snapshot.libraryIds;
+      return snapshot;
     },
 
     isLibraryItem(id) {
-      return this.libraryIds.has(id);
+      return cache.libraryIds.has(id);
     },
   };
   return cache;

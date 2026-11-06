@@ -296,12 +296,12 @@ export function createStepApp(options = {}) {
     },
 
     // Re-merge library records into the cache/engine and re-render. Called by
-    // the library surface after a mutation. Every selection is invalidated (a
-    // record may be referenced by any of them) so the memoized valuation
-    // re-resolves against the updated overlay; the revision counters are the
-    // reactive signals the picker and library getters depend on. In HTTP mode
-    // the boundary result must be (re)resolved before compute, exactly like
-    // `loadState`/`boot`; `solveNow` computes internally.
+    // the library surface after a mutation. The cache swaps in a new catalogue
+    // snapshot and hands it to the engine, which re-resolves ingredient priors
+    // and drops its memo (a record may be referenced by any selection); the
+    // revision counters are the reactive signals the picker and library getters
+    // depend on. In HTTP mode the boundary result must be (re)resolved before
+    // compute, exactly like `loadState`/`boot`; `solveNow` computes internally.
     async refreshLibraryItems() {
       syncLibrary();
       this.catalogRevision += 1;
@@ -415,10 +415,8 @@ export function createStepApp(options = {}) {
   }
 
   function syncLibrary() {
-    cache.syncLibraryItems(library.items());
-    for (const [id, node] of Object.entries(artifact.nodes)) {
-      if (node.kind === "selection") session.engine.invalidate(id);
-    }
+    const { references } = cache.syncLibraryItems(library.items());
+    session.engine.setReferences(references);
   }
 
   if (import.meta.env?.DEV) {

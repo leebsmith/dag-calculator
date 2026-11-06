@@ -47,10 +47,24 @@ test("library edits do not perturb a batch that carries a snapshot", () => {
   });
   session.setSelection("batch.yeast", YEAST);
 
-  localCache.references.yeast[YEAST_ID] = { ...YEAST, name: "Edited In The Library" };
-  session.engine.invalidate("batch.yeast");
+  localCache.references = {
+    yeast: { [YEAST_ID]: { ...YEAST, name: "Edited In The Library" } },
+  };
+  session.engine.setReferences(localCache.references);
 
   assert.equal(session.getEngine().get("batch.yeast").name, YEAST.name);
+});
+
+test("replacing the catalogue drops a memoized selection", () => {
+  const calc = createCalculator(artifact, {
+    identity: identityFixture(),
+    references: { yeast: { [YEAST_ID]: { ...YEAST, name: "Old catalogue" } } },
+    roots: { "batch.yeast_id": YEAST_ID },
+  });
+
+  assert.equal(calc.get("batch.yeast").name, "Old catalogue");
+  calc.setReferences({ yeast: { [YEAST_ID]: { ...YEAST, name: "New catalogue" } } });
+  assert.equal(calc.get("batch.yeast").name, "New catalogue");
 });
 
 test("picking a component copies it forward; clearing removes the copy", async () => {
