@@ -148,7 +148,7 @@
             Record raw values. The corrected column is optional; the method is always kept.
           </p>
           <template x-for="row in $store.brewSession.observationRows" :key="row.metric_id.text">
-            <div class="brew-day-step">
+            <div class="brew-day-step" x-init="$store.brewSession.createDraft(row)">
               <div class="brew-day-step-toggle">
                 <span class="font-medium" x-text="row.title.text"></span>
                 <span class="text-xs text-muted" x-text="'Expected ' + row.expected.text + ' · ' + row.unit.text + ' · ' + row.method.text"></span>

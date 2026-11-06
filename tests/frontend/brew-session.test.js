@@ -128,6 +128,37 @@ test("observations become variance and a seal blocks new writes", async () => {
   assert.equal(store.sealed, true);
 });
 
+test("draftFor is read-only and createDraft performs the initialization", async () => {
+  const store = createBrewSessionStore({ client: fakeClient(), loadBundle: async () => bundle() });
+  await store.openFor({ id: "b1", name: "House Pale" });
+  await store.startSession();
+
+  const row = store.observationRows[0];
+  const empty = store.draftFor(row);
+  assert.deepEqual(empty, {
+    raw: "",
+    corrected: "",
+    method: "",
+    rawUnit: "",
+    sampleTempC: "",
+    brix: "",
+    originalBrix: "",
+    at: "",
+    source: "live",
+    note: "",
+  });
+  assert.deepEqual(store.observationDrafts, {}, "reading a draft never creates one");
+
+  const draft = store.createDraft(row);
+  assert.equal(store.observationDrafts["mash.ph"], draft);
+  assert.equal(draft.method, "pH meter, test strips");
+  assert.equal(draft.rawUnit, "pH");
+  assert.match(draft.at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+  assert.equal(draft.source, "live");
+  assert.equal(store.draftFor(row), draft);
+  assert.equal(store.createDraft(row), draft, "initialization is idempotent");
+});
+
 test("opening a batch reuses its most recent session", async () => {
   const client = fakeClient();
   const store = createBrewSessionStore({ client, loadBundle: async () => bundle() });

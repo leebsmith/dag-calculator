@@ -217,6 +217,34 @@ function observationPayload(row, draft) {
   };
 }
 
+const EMPTY_DRAFT = Object.freeze({
+  raw: "",
+  corrected: "",
+  method: "",
+  rawUnit: "",
+  sampleTempC: "",
+  brix: "",
+  originalBrix: "",
+  at: "",
+  source: "live",
+  note: "",
+});
+
+function initialDraft(row) {
+  return {
+    raw: "",
+    corrected: "",
+    method: cell(row, "method") || "manual",
+    rawUnit: cell(row, "unit") || "—",
+    sampleTempC: "",
+    brix: "",
+    originalBrix: "",
+    at: nowLocal(),
+    source: "live",
+    note: "",
+  };
+}
+
 export function createObservationActions({ client }) {
   return {
     observationsFor(metricId) {
@@ -231,20 +259,15 @@ export function createObservationActions({ client }) {
 
     draftFor(row) {
       const metricId = cell(row, "metric_id");
-      if (!metricId) return {};
+      if (!metricId) return EMPTY_DRAFT;
+      return this.observationDrafts[metricId] ?? EMPTY_DRAFT;
+    },
+
+    createDraft(row) {
+      const metricId = cell(row, "metric_id");
+      if (!metricId) return EMPTY_DRAFT;
       if (!this.observationDrafts[metricId]) {
-        this.observationDrafts[metricId] = {
-          raw: "",
-          corrected: "",
-          method: cell(row, "method") || "manual",
-          rawUnit: cell(row, "unit") || "—",
-          sampleTempC: "",
-          brix: "",
-          originalBrix: "",
-          at: nowLocal(),
-          source: "live",
-          note: "",
-        };
+        this.observationDrafts[metricId] = initialDraft(row);
       }
       return this.observationDrafts[metricId];
     },
@@ -256,7 +279,7 @@ export function createObservationActions({ client }) {
 
     async addReading(row) {
       if (!this.session || this.sealed) return;
-      const draft = this.draftFor(row);
+      const draft = this.createDraft(row);
       const payload = observationPayload(row, draft);
       if (!payload) {
         this.error = "Enter a numeric reading first.";
