@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import * as persistence from "../../frontend/src/store/persistence.js";
+import { createPersistenceManager } from "../../frontend/src/store/persistence.js";
 
 const DEFAULT_IDENTITY = {
   equipment: { id: "rig-1", name: "Test rig", max_hlt_volume_l: 30 },
@@ -128,25 +128,24 @@ function fakeApp() {
   };
 }
 
+let persistence = null;
+
 function setup() {
   const client = fakeClient();
   const app = fakeApp();
-  persistence.setClient(client);
-  persistence.bindApp(app);
+  persistence = createPersistenceManager({
+    client,
+    app,
+    retryDelays: [0, 0, 0],
+  });
   persistence.setStateObserver(null);
-  persistence.setRetryDelays([0, 0, 0]);
   persistence.clearActive();
   return { client, app };
 }
 
 test("the batch seam fails loudly when no client was injected", async () => {
-  persistence.setClient(null);
-  assert.throws(
-    () => persistence.list(),
-    /no batch client injected; main\.js must call setClient\(\)/
-  );
-  // Restore the seam for the suites that follow.
-  persistence.setClient(fakeClient());
+  const manager = createPersistenceManager();
+  assert.throws(() => manager.list(), /no batch client injected/);
 });
 
 test("opening a pre-identity record fails loudly", async () => {
@@ -682,5 +681,40 @@ test("a transient failure recovers within the retry budget", async () => {
   assert.equal(attempts, 3);
   assert.equal(persistence.getSaveState(), "idle");
   assert.ok(persistence.getActive().persisted);
+});
+
+test("two managers keep their active batch and save state isolated", async () => {
+  const first = createPersistenceManager({ client: fakeClient(), app: fakeApp() });
+  const second = createPersistenceManager({ client: fakeClient(), app: fakeApp() });
+
+  await first.createUnsavedDraft({ name: "First" });
+
+  assert.equal(first.getActive().name, "First");
+  assert.equal(second.getActive(), null);
+  assert.equal(second.getSaveState(), "idle");
+});
+
+test("the manager uses the injected timer functions", async () => {
+  const scheduled = [];
+  const cancelled = [];
+  const client = fakeClient();
+  const manager = createPersistenceManager({
+    client,
+    app: fakeApp(),
+    setTimeout: (fn, delay) => {
+      scheduled.push({ fn, delay });
+      return "timer-1";
+    },
+    clearTimeout: (timer) => cancelled.push(timer),
+  });
+  await manager.createUnsavedDraft();
+
+  manager.queueSave({ delay: 123 });
+  assert.equal(scheduled.length, 1);
+  assert.equal(scheduled[0].delay, 123);
+
+  manager.clearActive();
+  assert.deepEqual(cancelled, ["timer-1"]);
+  assert.equal(manager.getActive(), null);
 });
 

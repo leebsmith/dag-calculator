@@ -284,6 +284,11 @@ export default [
     SURFACE_DECLARERS,
     { "max-lines-per-function": ["error", 450] },
   ),
+  shapeException(
+    "persistence manager: the browser-side command surface is one instance-scoped object; splitting it would reintroduce shared module state",
+    ["store/persistence.js"],
+    { "max-lines-per-function": ["error", 450] },
+  ),
   ...shapePins(
     "one function per file: the graph build, the dimension table, the validator, the solver schedule and the plot model are single passes",
     "max-lines-per-function",

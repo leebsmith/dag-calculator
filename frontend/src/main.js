@@ -21,7 +21,7 @@ import {
   signInWithGoogle,
   signOut,
 } from "./firebase.js";
-import * as persistence from "./store/persistence.js";
+import { createPersistenceManager } from "./store/persistence.js";
 import { createImportClient, readFileAsBase64 } from "./adapters/importClient.js";
 import { runGate } from "./adapters/importGate.js";
 import { projectImport } from "./adapters/importProjection.js";
@@ -33,7 +33,14 @@ import { createRecipesStore } from "./store/recipes.js";
 import { createBrewSessionStore } from "./store/brewSession.js";
 
 setTokenProvider(getIdToken);
-persistence.setClient(batchClient);
+
+let stepApp = null;
+const persistence = createPersistenceManager({
+  client: batchClient,
+  app: () => stepApp,
+  setTimeout,
+  clearTimeout,
+});
 
 // Anchor a fixed-position popover under (or above) its trigger. Fixed
 // positioning keeps menus out of the batches body's scroll clipping.
@@ -130,6 +137,7 @@ Alpine.store(
 
 const setupStore = createSetupStore({
   client: libraryClient,
+  persistence,
   onImportRecipe: async ({ filename, file, identity, force }) => {
     const imports = Alpine.store("imports");
     const record = await imports.start({ filename, file, identity, force });
@@ -197,7 +205,6 @@ persistence.setStateObserver(({ state, conflictRemote }) => {
 // the Batches view; the editor is entered only via New/Open/Fork (each loads
 // state). The user is published only AFTER the list is fetched, so the list
 // never paints with stale/empty state.
-let stepApp = null;
 let latestUser; // undefined until the first auth callback
 let legacyLibraryImported = false;
 
@@ -330,7 +337,6 @@ Alpine.data("stepCalculator", () => {
     })
   );
   app.bindReactive(app);
-  persistence.bindApp(app);
   app.onChange = () => persistence.queueSave();
   app.onRecordsChanged = () => {
     Alpine.store("setup")

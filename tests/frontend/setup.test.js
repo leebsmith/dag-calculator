@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createSetupStore } from "../../frontend/src/store/setup.js";
-import * as persistence from "../../frontend/src/store/persistence.js";
+import { createPersistenceManager } from "../../frontend/src/store/persistence.js";
 
 function fakeClient() {
   const docs = new Map();
@@ -102,13 +102,14 @@ test("prerequisiteStatus names every missing identity source", () => {
 });
 
 test("create() persists a batch carrying the identity snapshot", async () => {
-  persistence.setClient(fakeClient());
   const app = fakeApp();
-  persistence.bindApp(app);
-  persistence.clearActive();
+  const persistence = createPersistenceManager({ client: fakeClient(), app });
 
   let created = null;
-  const store = createSetupStore({ onCreated: (active) => (created = active) });
+  const store = createSetupStore({
+    persistence,
+    onCreated: (active) => (created = active),
+  });
   store.openModal();
   store.state.name = "House Pale";
 
@@ -160,11 +161,8 @@ test("the water picker includes the unknown source with a label for every record
 });
 
 test("create() refuses an incomplete dialog without touching persistence", async () => {
-  persistence.setClient(fakeClient());
-  persistence.bindApp(fakeApp());
-  persistence.clearActive();
-
-  const store = createSetupStore({});
+  const persistence = createPersistenceManager({ client: fakeClient(), app: fakeApp() });
+  const store = createSetupStore({ persistence });
   store.openModal();
   store.state.name = "   ";
 
@@ -173,11 +171,8 @@ test("create() refuses an incomplete dialog without touching persistence", async
 });
 
 test("create() re-entrancy is blocked while a create is in flight", async () => {
-  persistence.setClient(fakeClient());
-  persistence.bindApp(fakeApp());
-  persistence.clearActive();
-
-  const store = createSetupStore({});
+  const persistence = createPersistenceManager({ client: fakeClient(), app: fakeApp() });
+  const store = createSetupStore({ persistence });
   store.openModal();
   store.state.name = "House Pale";
   store.state.busy = true;
@@ -186,16 +181,17 @@ test("create() re-entrancy is blocked while a create is in flight", async () => 
 });
 
 test("a failed create surfaces the error and keeps the dialog open", async () => {
-  persistence.setClient({
-    async upsertBatch() {
-      throw new Error("backend is down");
+  const persistence = createPersistenceManager({
+    client: {
+      async upsertBatch() {
+        throw new Error("backend is down");
+      },
     },
+    app: fakeApp(),
+    retryDelays: [],
   });
-  persistence.bindApp(fakeApp());
-  persistence.clearActive();
-  persistence.setRetryDelays([]);
 
-  const store = createSetupStore({});
+  const store = createSetupStore({ persistence });
   store.openModal();
   store.state.name = "House Pale";
 
@@ -205,26 +201,25 @@ test("a failed create surfaces the error and keeps the dialog open", async () =>
   assert.equal(store.state.error, "backend is down");
   assert.equal(store.state.modalOpen, true);
   assert.equal(store.state.busy, false);
-  persistence.setRetryDelays([1000, 2000, 4000]);
 });
 
 test("a non-Error rejection falls back to the generic message", async () => {
-  persistence.setClient({
-    async upsertBatch() {
-      throw undefined;
+  const persistence = createPersistenceManager({
+    client: {
+      async upsertBatch() {
+        throw undefined;
+      },
     },
+    app: fakeApp(),
+    retryDelays: [],
   });
-  persistence.bindApp(fakeApp());
-  persistence.clearActive();
-  persistence.setRetryDelays([]);
 
-  const store = createSetupStore({});
+  const store = createSetupStore({ persistence });
   store.openModal();
   store.state.name = "House Pale";
 
   await store.create();
   assert.equal(store.state.error, "Could not create the batch.");
-  persistence.setRetryDelays([1000, 2000, 4000]);
 });
 
 test("refreshAssets re-reads the records and bumps the revision", async () => {

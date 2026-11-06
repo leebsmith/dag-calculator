@@ -13,7 +13,6 @@
 
 import { createLibrary } from "./library.js";
 import { createReferenceCache } from "./referenceCache.js";
-import * as persistence from "./persistence.js";
 
 const PREREQUISITES = [
   { kind: "style", label: "styles" },
@@ -33,7 +32,7 @@ const UNKNOWN_WATER = {
   total_alkalinity_caco3: 0,
 };
 
-export function createSetupStore({ onCreated, onImportRecipe, client } = {}) {
+export function createSetupStore({ onCreated, onImportRecipe, client, persistence } = {}) {
   const cache = createReferenceCache();
   const library = createLibrary({
     client,
