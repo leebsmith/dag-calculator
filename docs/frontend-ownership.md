@@ -27,7 +27,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js` | 155 | 4 | 18 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 21 |
-| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 19 |
+| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 18 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 17 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 14 | 1 | 0 |
@@ -53,7 +53,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `draftDirty` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `draftDiscardOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `draftDrawer` | `draftEditor` | `hop`, `malt`, `traceMalts`, `dryHops` | the shared catalog search pane binds the drawer phase the draft editor owns |
-| `draftMassDisplay` | `draftEditor` | `lateAdditions`, `traceMalts` | the catalog editors bind the shared draft grid |
+| `draftMassDisplay` | `draftEditor` | `lateAdditions` | the catalog editors bind the shared draft grid |
 | `draftNodeId` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |

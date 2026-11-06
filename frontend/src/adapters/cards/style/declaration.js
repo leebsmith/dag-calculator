@@ -7,7 +7,6 @@ import { STYLE_NODES as N } from "../../../views/registry/style.js";
 import { masterUnit } from "../../../views/registry/units.js";
 import { fieldOr, formatWithDecimals, isFiniteNumber, provenanceFor } from "../../../utils.js";
 
-// Envelope inputs, in display order, with their authored step size.
 const ENVELOPE_INPUTS = [
   { id: N.envelope.ogMin, step: "0.001" },
   { id: N.envelope.ogMax, step: "0.001" },
@@ -21,63 +20,65 @@ const ENVELOPE_INPUTS = [
   { id: N.envelope.abvMax, step: "0.1" },
 ];
 
-export function registerStyleDeclaration(app, ctx) {
-  const { cache } = ctx;
-
-  Object.assign(app, {
+export function createStyleDeclaration({ cache, getView }) {
+  const actions = {
     selectedStyleId: "",
 
-    // The declared OG/FG band in the gravity display unit. This is a card-level
-    // figure: it follows the menu's dimension pick, not a per-field override on
-    // an envelope row (the plot and the conformance rows do the same).
     styleVitals() {
+      const view = getView();
       const bounds = [
         N.envelope.ogMin,
         N.envelope.ogMax,
         N.envelope.fgMin,
         N.envelope.fgMax,
-      ].map((id) => fieldOr(this.fieldsById, id).value);
+      ].map((id) => fieldOr(view.fieldsById, id).value);
       if (!bounds.every(isFiniteNumber)) return "— / —";
-      const gravity = gravityDisplay(masterUnit(this.unitMode, "gravity") ?? "Plato");
+      const gravity = gravityDisplay(masterUnit(view.unitMode, "gravity") ?? "Plato");
       const show = (sg) => formatWithDecimals(gravity.fromSg(sg), gravity.decimals);
       const unit = gravity.symbol;
       return `${show(bounds[0])}–${show(bounds[1])} ${unit} / ${show(bounds[2])}–${show(
         bounds[3]
       )} ${unit}`;
     },
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     selectedStyle: {
       configurable: true,
       get() {
-        return this.selectedStyleId ? cache.references.style[this.selectedStyleId] ?? null : null;
+        const view = getView();
+        return view.selectedStyleId ? cache.references.style[view.selectedStyleId] ?? null : null;
       },
     },
     fermentationField: {
       configurable: true,
       get() {
-        return fieldOr(this.fieldsById, N.fermentation);
+        return fieldOr(getView().fieldsById, N.fermentation);
       },
     },
     fermentationProvenance: {
       configurable: true,
       get() {
-        return provenanceFor(this.fermentationField);
+        return provenanceFor(getView().fermentationField);
       },
     },
-    // Envelope editors, in display order, with resolved field models and seed
-    // provenance so the template stays a dumb x-for.
     styleEnvelopeFields: {
       configurable: true,
       get() {
         return ENVELOPE_INPUTS.map(({ id, step }) => {
-          const field = fieldOr(this.fieldsById, id);
+          const field = fieldOr(getView().fieldsById, id);
           return { id, step, field, provenance: provenanceFor(field) };
         });
       },
     },
   });
+  return actions;
+}
+
+export function registerStyleDeclaration(app, ctx = {}) {
+  const actions = createStyleDeclaration({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshStyleDeclaration(app, ctx) {

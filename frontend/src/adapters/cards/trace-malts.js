@@ -47,56 +47,74 @@ const TRACE_CONFIG = {
   }),
 };
 
-export function registerTraceMaltsCard(app, ctx) {
-  installCatalogDraft(app, ctx, TRACE_CONFIG);
-
-  Object.assign(app, {
-    // Rows for the summary card (refreshed by refreshTraceMaltsCard).
+export function createTraceMaltsCard({ getView }) {
+  const actions = {
     traceMaltRows: [],
     traceSectionOpen: true,
 
     toggleTraceSection() {
-      this.traceSectionOpen = !this.traceSectionOpen;
+      const view = getView();
+      view.traceSectionOpen = !view.traceSectionOpen;
     },
 
     traceField(id) {
-      return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
+      return (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
     },
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     traceMaltField: {
       configurable: true,
       get() {
-        return this.traceField(N.traceMalts);
+        return actions.traceField(N.traceMalts);
       },
     },
     traceSectionMeta: {
       configurable: true,
       get() {
+        const view = getView();
         return gristSectionMeta(
-          this.traceMaltRows,
-          countLabel(this.traceMaltRows.length, "trace malt"),
-          this.traceMassField
+          view.traceMaltRows,
+          countLabel(view.traceMaltRows.length, "trace malt"),
+          view.traceMassField
         );
       },
     },
     traceMassField: {
       configurable: true,
       get() {
-        return this.traceField(N.traceMass);
+        return actions.traceField(N.traceMass);
       },
     },
     traceDraftMassDisplay: {
       configurable: true,
       get() {
-        return this.draftMassDisplay((r) => Number(r.mass_kg) || 0);
+        return getView().draftMassDisplay((r) => Number(r.mass_kg) || 0);
       },
     },
   });
+  return actions;
+}
+
+export function registerTraceMaltsCard(app, ctx = {}) {
+  installCatalogDraft(app, ctx, TRACE_CONFIG);
+  const actions = createTraceMaltsCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshTraceMaltsCard(app, ctx) {
   app.traceMaltRows = ctx.engine.get(N.traceMalts) ?? [];
 }
-export const KEYS = [...catalogDraftKeys("trace", "Trace"), "traceMaltRows", "traceSectionOpen", "toggleTraceSection", "traceSectionMeta", "traceField", "traceMaltField", "traceMassField", "traceDraftMassDisplay"];
+
+export const KEYS = [
+  ...catalogDraftKeys("trace", "Trace"),
+  "traceMaltRows",
+  "traceSectionOpen",
+  "toggleTraceSection",
+  "traceSectionMeta",
+  "traceField",
+  "traceMaltField",
+  "traceMassField",
+  "traceDraftMassDisplay",
+];

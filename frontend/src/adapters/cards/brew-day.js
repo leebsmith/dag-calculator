@@ -11,59 +11,58 @@ import {
   updateBrewDayRow,
 } from "../../views/brewDayLogic.js";
 
-export function registerBrewDayCard(app, ctx) {
-  const { engine } = ctx;
-
-  Object.assign(app, {
+export function createBrewDayCard({ engine, artifact, getView }) {
+  const actions = {
     brewDayRows: defaultBrewDayRows(),
     brewDayOpenSections: { ...INITIAL_OPEN_SECTIONS },
     brewDayLevels: BREW_DAY_LEVELS,
 
     brewDayRow(stepId) {
-      return selectBrewDayRow(this.brewDayRows, stepId);
+      return selectBrewDayRow(getView().brewDayRows, stepId);
     },
 
     toggleBrewDaySection(sectionId) {
-      this.brewDayOpenSections[sectionId] = !this.brewDayOpenSections[sectionId];
+      const view = getView();
+      view.brewDayOpenSections[sectionId] = !view.brewDayOpenSections[sectionId];
     },
 
     isBrewDaySectionOpen(sectionId) {
-      return !!this.brewDayOpenSections[sectionId];
+      return !!getView().brewDayOpenSections[sectionId];
     },
 
     setBrewDayLevel(level) {
       engine.setRoot(N.level, level);
-      this.compute();
-      this.notify();
+      getView().compute();
+      getView().notify();
     },
 
     _writeBrewDayRows(rows) {
-      this.brewDayRows = rows;
+      getView().brewDayRows = rows;
       engine.setCollection(N.steps, rows);
-      this.compute();
-      this.notify();
+      getView().compute();
+      getView().notify();
     },
 
     setBrewDayNote(stepId, text) {
-      this._writeBrewDayRows(
-        updateBrewDayRow(this.brewDayRows, stepId, { note: String(text ?? "") })
+      actions._writeBrewDayRows(
+        updateBrewDayRow(getView().brewDayRows, stepId, { note: String(text ?? "") })
       );
     },
 
     setBrewDaySkipped(stepId, skipped) {
-      this._writeBrewDayRows(
-        updateBrewDayRow(this.brewDayRows, stepId, { skipped: !!skipped })
+      actions._writeBrewDayRows(
+        updateBrewDayRow(getView().brewDayRows, stepId, { skipped: !!skipped })
       );
     },
 
     setBrewDaySkipReason(stepId, reason) {
-      this._writeBrewDayRows(
-        updateBrewDayRow(this.brewDayRows, stepId, { skip_reason: String(reason ?? "") })
+      actions._writeBrewDayRows(
+        updateBrewDayRow(getView().brewDayRows, stepId, { skip_reason: String(reason ?? "") })
       );
     },
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     brewDayLevel: {
       configurable: true,
       get() {
@@ -73,22 +72,30 @@ export function registerBrewDayCard(app, ctx) {
     brewDaySections: {
       configurable: true,
       get() {
+        const view = getView();
         return selectBrewDaySections({
-          artifact: ctx.artifact,
+          artifact,
           engine,
-          unitMode: this.unitMode,
-          level: this.brewDayLevel,
-          stateRows: this.brewDayRows,
+          unitMode: view.unitMode,
+          level: view.brewDayLevel,
+          stateRows: view.brewDayRows,
         });
       },
     },
     brewDayPayload: {
       configurable: true,
       get() {
-        return buildBrewDayPayload(this.brewDaySections);
+        return buildBrewDayPayload(getView().brewDaySections);
       },
     },
   });
+  return actions;
+}
+
+export function registerBrewDayCard(app, ctx = {}) {
+  const actions = createBrewDayCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshBrewDayCard(app, ctx) {

@@ -11,9 +11,6 @@ import { reportError } from "../../../observability.js";
 
 const STATUS_LABELS = { within: "Within", grace: "Grace", drift: "Drift", severe: "Severe" };
 
-// The rows' labels and formatters. Conformance rows are not fields, so they
-// follow the menu's dimension pick; the scored value stays in its native unit and
-// only the printed number and symbol change.
 function conformanceMeta(artifact, unitMode, nl) {
   const quantity = (dimension, value) => {
     const unitId = masterUnit(unitMode, dimension);
@@ -33,11 +30,9 @@ function conformanceMeta(artifact, unitMode, nl) {
   };
 }
 
-export function registerStyleConformance(app, ctx) {
-  const { engine, artifact } = ctx;
+export function createStyleConformance({ engine, artifact, getView }) {
   const nl = nonlinearFns(artifact, engine);
-
-  Object.assign(app, {
+  const actions = {
     styleConformance: null,
     styleSai: null,
 
@@ -74,15 +69,16 @@ export function registerStyleConformance(app, ctx) {
       report.styleId = engine.identity?.style?.id ?? null;
       return report;
     },
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     conformanceSummary: {
       configurable: true,
       get() {
-        const c = this.styleConformance;
+        const view = getView();
+        const c = view.styleConformance;
         if (!c || !c.hasBaseline) return null;
-        const meta = conformanceMeta(artifact, this.unitMode, nl);
+        const meta = conformanceMeta(artifact, view.unitMode, nl);
         const dimensions = Object.entries(c.dimensions)
           .filter(([, d]) => d)
           .map(([id, d]) => ({
@@ -96,6 +92,13 @@ export function registerStyleConformance(app, ctx) {
       },
     },
   });
+  return actions;
+}
+
+export function registerStyleConformance(app, ctx = {}) {
+  const actions = createStyleConformance({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export const KEYS = ["styleConformance", "styleSai", "styleConformanceReport", "conformanceSummary"];

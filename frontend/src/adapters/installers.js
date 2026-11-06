@@ -222,7 +222,7 @@ export const SHARED = [
   },
   {
     key: "draftMassDisplay",
-    owners: ["lateAdditions", "traceMalts"],
+    owners: ["lateAdditions"],
     reason: "the catalog editors bind the shared draft grid",
   },
   {
