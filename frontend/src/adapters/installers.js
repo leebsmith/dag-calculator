@@ -58,7 +58,10 @@ const CATALOG_DRAFT = [
   "frontend/src/adapters/cards/catalogDraftGetters.js",
 ];
 const HOP_AND_CATALOG = [...HOP, ...CATALOG_DRAFT];
-const LATE_ADDITIONS = ["frontend/src/adapters/cards/late-additions.js"];
+const LATE_ADDITIONS = [
+  "frontend/src/adapters/cards/late-additions.js",
+  "frontend/src/adapters/cards/lateAdditionGetters.js",
+];
 const LATE_ADDITIONS_AND_CATALOG = [...LATE_ADDITIONS, ...CATALOG_DRAFT];
 const TRACE_MALTS = ["frontend/src/adapters/cards/trace-malts.js"];
 const TRACE_MALTS_AND_CATALOG = [...TRACE_MALTS, ...CATALOG_DRAFT];

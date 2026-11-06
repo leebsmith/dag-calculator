@@ -2,14 +2,9 @@
 // Uses the shared catalog/draft helper; bespoke bits are the summary readouts.
 
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
+import { allocationDescriptors, displayDescriptors, stateDescriptors } from "./lateAdditionGetters.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
-import {
-  columnValueLabel,
-  sugarActive,
-  sugarCatalogCountLabel,
-  sugarEffectLabels,
-  sugarTableCountLabel,
-} from "../../views/producer/lateAdditionRows.js";
+import { columnValueLabel, sugarEffectLabels } from "../../views/producer/lateAdditionRows.js";
 import { scalePreviewState } from "../../views/producer/scalePreview.js";
 import { sugarEffect } from "../../views/producer/sugarEffect.js";
 import {
@@ -22,12 +17,7 @@ import {
 import { sugarSectionMetaDescriptors, sugarSectionState } from "../../views/producer/sugarSection.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import { reportError } from "../../observability.js";
-import {
-  formatPercentRounded,
-  formatValueWithUnit,
-  roundTo,
-} from "../../utils.js";
-
+import { formatPercentRounded, formatValueWithUnit, roundTo } from "../../utils.js";
 
 export function makeRow(sugar) {
   return {
@@ -48,6 +38,36 @@ export function makeRow(sugar) {
     notes: sugar.notes,
   };
 }
+
+const SUGAR_CONFIG = {
+  prefix: "sugar",
+  Cap: "Sugar",
+  nodeId: N.collection,
+  seedKey: "sugars",
+  idField: "sugar_id",
+  categoryField: null,
+  makeRow,
+  itemMeta: (item) => [
+    `Yield ${formatPercentRounded(item.yield_fraction)}`,
+    formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
+  ],
+  searchPlaceholder: "Search sugars by name…",
+  emptyMessage: "No matching sugars found.",
+  resultLabel: (a) => a.sugarResultLabel,
+  drawerId: "sugar-drawer",
+  toolbarNote: (state) =>
+    state.lateAdditionIntent === "share"
+      ? "Edit parts; the mass is derived from the sugar-extract budget."
+      : "Dose sugars by mass. Yield and color come from the catalog.",
+  addLabel: "＋ Add Sugar from Catalog",
+  inputStep: 0.01,
+  canInspect: false,
+  emptyText: "No sugars in the draft. Click “＋ Add Sugar from Catalog”.",
+  totals: (state) => ({
+    label: state.lateAdditionIntent === "share" ? "Sugar budget:" : "Total extract:",
+    value: ` ${state.sugarDraftExtractDisplay}`,
+  }),
+};
 
 function numberAt(engine, path, fallback = 0) {
   try {
@@ -85,104 +105,73 @@ function currentSugarEffect(engine) {
   });
 }
 
-export function registerLateAdditionsCard(app, ctx) {
-  installCatalogDraft(app, ctx, {
-    prefix: "sugar",
-    Cap: "Sugar",
-    nodeId: N.collection,
-    seedKey: "sugars",
-    idField: "sugar_id",
-    categoryField: null,
-    makeRow,
-    itemMeta: (item) => [
-      `Yield ${formatPercentRounded(item.yield_fraction)}`,
-      formatValueWithUnit(item.color_lovibond, "°L", { dash: "" }),
-    ],
-    searchPlaceholder: "Search sugars by name…",
-    emptyMessage: "No matching sugars found.",
-    resultLabel: (a) => a.sugarResultLabel,
-    drawerId: "sugar-drawer",
-    toolbarNote: (state) =>
-      state.lateAdditionIntent === "share"
-        ? "Edit parts; the mass is derived from the sugar-extract budget."
-        : "Dose sugars by mass. Yield and color come from the catalog.",
-    addLabel: "＋ Add Sugar from Catalog",
-    inputStep: 0.01,
-    canInspect: false,
-    emptyText: "No sugars in the draft. Click “＋ Add Sugar from Catalog”.",
-    totals: (state) => ({
-      label: state.lateAdditionIntent === "share" ? "Sugar budget:" : "Total extract:",
-      value: ` ${state.sugarDraftExtractDisplay}`,
-    }),
-  });
-
-  Object.assign(app, {
-    // Rows for the read-only summary card (refreshed by refreshLateAdditionsCard).
-    sugarList: [],
-    latePinPanelVisible: false,
-    scalePreviewRows: [],
-    previewCompositionCaption: "",
-    ...sugarSectionState(),
-
-    sugarField(id) {
-      return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
-    },
-
+function previewActions({ engine, artifact, getView }) {
+  return {
     syncScalePreviewState() {
+      const view = getView();
       let rows = [];
       try {
-        const raw = ctx.engine.resolve(N.preview);
+        const raw = engine.resolve(N.preview);
         rows = Array.isArray(raw) ? raw : [];
       } catch (err) {
         reportError("lateAdditions.scalePreviews", err);
       }
-      const intent = ctx.engine.get(N.intent) ?? "dose";
-      const share = Number(ctx.engine.get(N.share)) || 0;
-      const dose = Number(ctx.engine.get(N.dose)) || 0;
+      const intent = engine.get(N.intent) ?? "dose";
+      const share = Number(engine.get(N.share)) || 0;
+      const dose = Number(engine.get(N.dose)) || 0;
       const state = scalePreviewState({
         rows,
-        style: ctx.engine.identity?.style ?? {},
-        pin: this.scalePin,
+        style: engine.identity?.style ?? {},
+        pin: view.scalePin,
         intent,
         share,
-        doseLabel: intent === "share" ? "" : this.previewDoseDisplay(dose),
+        doseLabel: intent === "share" ? "" : view.previewDoseDisplay(dose),
       });
-      this.scalePreviewRows = state.rows;
-      this.previewCompositionCaption = state.caption;
+      view.scalePreviewRows = state.rows;
+      view.previewCompositionCaption = state.caption;
     },
 
     // The caption quotes the dose in the sugar table's display unit, not the
     // canonical kg, so the line and the table agree.
     previewDoseDisplay(kg) {
-      const field = (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.collection);
+      const field = (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.collection);
       const column =
         field?.columns?.find((c) => c.id === "resolved_mass_kg") ??
         field?.columns?.find((c) => c.id === "mass_kg") ??
         null;
       const shown = displayValue(
-        ctx.artifact,
+        artifact,
         "mass",
         column?.displayUnit,
         kg,
-        nonlinearFns(ctx.artifact, ctx.engine)
+        nonlinearFns(artifact, engine)
       );
       return columnValueLabel(shown, column, 2);
+    },
+  };
+}
+
+function doseActions({ engine, getView }) {
+  return {
+    sugarField(id) {
+      return (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === id) ?? null;
     },
 
     // Dose → share: seed the authored share and the row weights from the
     // current dose, but only on the first switch (an authored share or parts
     // round-trips untouched). The explicit adopt action forces a re-sync.
     seedShareFromDose(force = false) {
-      const rows = ctx.engine.get(N.collection) ?? [];
-      const currentShare = Number(ctx.engine.get(N.share)) || 0;
+      const view = getView();
+      const rows = engine.get(N.collection) ?? [];
+      const currentShare = Number(engine.get(N.share)) || 0;
       const currentParts = rows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
       if (!force && (currentShare > 0 || currentParts > 0)) return false;
-      const total = numberAt(ctx.engine, N.effect.extractTotal);
+      const total = numberAt(engine, N.effect.extractTotal);
       const share = sugarShareFromDose(rows, total);
-      this.setRoot(N.share, Math.min(MAX_SUGAR_SHARE, share));
+      view.setRoot(N.share, Math.min(MAX_SUGAR_SHARE, share));
       const extract = sugarPartsFromDose(rows);
       const weighted = extract.some((value) => value > 0);
-      ctx.engine.setCollection(
+      engine.setCollection(
         N.collection,
         rows.map((row, index) => ({
           ...row,
@@ -193,183 +182,73 @@ export function registerLateAdditionsCard(app, ctx) {
     },
 
     setLateAdditionIntent(value) {
-      const field = this.lateIntentField;
-      if (!field || value === this.lateAdditionIntent) return;
-      if (value === "share") this.seedShareFromDose(false);
-      this.edit(field, value);
-      this.lateAdditionIntentState = value;
+      const view = getView();
+      const field = view.lateIntentField;
+      if (!field || value === view.lateAdditionIntent) return;
+      if (value === "share") view.seedShareFromDose(false);
+      view.edit(field, value);
+      view.lateAdditionIntentState = value;
     },
 
     // Explicit re-sync so an authored dose can overwrite the share/parts pair.
     adoptLateAdditionDose() {
-      if (!this.seedShareFromDose(true)) return;
-      this.scheduleSolve();
-      this.notify();
+      const view = getView();
+      if (!view.seedShareFromDose(true)) return;
+      view.scheduleSolve();
+      view.notify();
     },
 
     // Explicit re-sync so the resolved share allocation can overwrite the dose.
     adoptLateAdditionShare() {
-      const rows = ctx.engine.get(N.collection) ?? [];
+      const view = getView();
+      const rows = engine.get(N.collection) ?? [];
       if (!rows.length) return;
-      const share = Number(ctx.engine.get(N.share)) || 0;
-      const intent = ctx.engine.get(N.intent) ?? "dose";
+      const share = Number(engine.get(N.share)) || 0;
+      const intent = engine.get(N.intent) ?? "dose";
       const resolved = resolvedSugarMasses({
         rows,
-        budgetKg: share * numberAt(ctx.engine, N.effect.extractTotal),
+        budgetKg: share * numberAt(engine, N.effect.extractTotal),
         share,
         mode: intent,
       });
-      ctx.engine.setCollection(
+      engine.setCollection(
         N.collection,
         rows.map((row, index) => {
           const mass = rounded(resolved[index]?.massKg);
           return { ...row, mass_kg: mass };
         })
       );
-      this.scheduleSolve();
-      this.notify();
+      view.scheduleSolve();
+      view.notify();
     },
-  });
+  };
+}
 
-  Object.defineProperties(app, {
+export function createLateAdditionsCard(ctx) {
+  const actions = {
+    // Rows for the read-only summary card (refreshed by refreshLateAdditionsCard).
+    sugarList: [],
+    latePinPanelVisible: false,
+    scalePreviewRows: [],
+    previewCompositionCaption: "",
+    ...sugarSectionState(),
+    ...previewActions(ctx),
+    ...doseActions(ctx),
+  };
+  Object.defineProperties(actions, {
     ...sugarSectionMetaDescriptors(),
-    lateAdditionIntentState: { configurable: true, writable: true, value: null },
-    sugarEffectState: { configurable: true, writable: true, value: null },
-    sugarEffectDisplayState: { configurable: true, writable: true, value: null },
-    lateAdditionIntent: {
-      configurable: true,
-      get() {
-        return this.lateAdditionIntentState ?? "dose";
-      },
-    },
-    lateIntentField: {
-      configurable: true,
-      get() {
-        return this.fieldsById[N.intent] ?? null;
-      },
-    },
-    sugarShareField: {
-      configurable: true,
-      get() {
-        return this.fieldsById[N.share] ?? null;
-      },
-    },
-    sugarIsActive: {
-      configurable: true,
-      get() {
-        return sugarActive({
-          rows: ctx.engine.get(N.collection) ?? [],
-          intent: ctx.engine.get(N.intent) ?? "dose",
-          share: Number(ctx.engine.get(N.share)) || 0,
-        });
-      },
-    },
-    lateSugarField: {
-      configurable: true,
-      get() {
-        // The live row allocation at the current solve: `resolved_mass_kg` is a
-        // computed field, never a request input.
-        const field = (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.collection) ?? null;
-        if (!field) return null;
-        const shareMode = (ctx.engine.get(N.intent) ?? "dose") === "share";
-        const columns = (field.columns ?? [])
-          .filter((c) => (shareMode ? c.id !== "mass_kg" : c.id !== "resolved_mass_kg"))
-          .map((c) =>
-            c.id === "resolved_mass_kg" ? { ...c, label: "Mass" } : c
-          );
-        return { ...field, columns };
-      },
-    },
-    sugarMassField: {
-      configurable: true,
-      get() {
-        return this.sugarField(N.mass);
-      },
-    },
-    lateExtractField: {
-      configurable: true,
-      get() {
-        return this.sugarField(N.extract);
-      },
-    },
-    sugarEffect: {
-      configurable: true,
-      get() {
-        return this.sugarEffectState ?? sugarEffect({});
-      },
-    },
-    sugarEffectDisplay: {
-      configurable: true,
-      get() {
-        return this.sugarEffectDisplayState ?? null;
-      },
-    },
-    sugarDraftMassDisplay: {
-      configurable: true,
-      get() {
-        if (this.lateAdditionIntent !== "share") {
-          return this.draftMassDisplay((r) => Number(r.mass_kg) || 0);
-        }
-        const share = Number(ctx.engine.get(N.share)) || 0;
-        const total = numberAt(ctx.engine, N.effect.extractTotal);
-        const rows = this.draftRows ?? [];
-        const resolved = resolvedSugarMasses({
-          rows,
-          budgetKg: share * total,
-          share,
-          mode: "share",
-        });
-        const mass = resolved.reduce((sum, row) => sum + row.massKg, 0);
-        const column = this.draftColumns.find((c) => c.id === "resolved_mass_kg");
-        const shown = displayValue(
-          ctx.artifact,
-          "mass",
-          column?.displayUnit,
-          mass,
-          nonlinearFns(ctx.artifact, ctx.engine)
-        );
-        return columnValueLabel(shown, column);
-      },
-    },
-    sugarDraftExtractDisplay: {
-      configurable: true,
-      get() {
-        if (this.lateAdditionIntent !== "share") {
-          return this.draftMassDisplay(
-            (r) => (Number(r.mass_kg) || 0) * (Number(r.yield_fraction) || 0)
-          );
-        }
-        const column = this.draftColumns.find((c) => c.id === "mass_kg");
-        const budget =
-          (Number(ctx.engine.get(N.share)) || 0) *
-          numberAt(ctx.engine, N.effect.extractTotal);
-        const shown = displayValue(
-          ctx.artifact,
-          "mass",
-          column?.displayUnit,
-          budget,
-          nonlinearFns(ctx.artifact, ctx.engine)
-        );
-        return columnValueLabel(shown, column);
-      },
-    },
-    sugarResultLabel: {
-      configurable: true,
-      get() {
-        return sugarCatalogCountLabel({
-          shown: this.sugarVisibleCatalog.length,
-          total: this.sugarFilteredCatalog.length,
-          truncated: this.sugarCatalogTruncated,
-        });
-      },
-    },
-    sugarCountLabel: {
-      configurable: true,
-      get() {
-        return sugarTableCountLabel(this.sugarList.length);
-      },
-    },
+    ...stateDescriptors(ctx),
+    ...displayDescriptors(ctx),
+    ...allocationDescriptors(ctx),
   });
+  return actions;
+}
+
+export function registerLateAdditionsCard(app, ctx = {}) {
+  installCatalogDraft(app, ctx, SUGAR_CONFIG);
+  const actions = createLateAdditionsCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshLateAdditionsCard(app, ctx) {
@@ -383,6 +262,7 @@ export function refreshLateAdditionsCard(app, ctx) {
   if (!app.latePinPanelVisible) app.latePinPanelOpen = false;
   app.syncScalePreviewState();
 }
+
 export const KEYS = [
   ...catalogDraftKeys("sugar", "Sugar"),
   "sugarList",

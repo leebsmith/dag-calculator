@@ -28,9 +28,10 @@ getter that reads the engine registers nothing, so a template bound to it
 freezes at its first render. Every card readout derived from the engine is
 therefore a **mirror**: the card's `refresh*` function assigns a plain property,
 and the getter returns that property. Never bind a partial to a live engine
-read. `tests/guards/engine-read-mirrors.test.js` enforces this; the three
-allowlisted getters read the engine behind `fieldsBySlice`/`draftRows`, which
-every refresh reassigns.
+read. `tests/guards/engine-read-mirrors.test.js` enforces this; the allowlisted
+getters read the engine behind a value every refresh reassigns — the sugar
+readouts behind `fieldsBySlice`/`draftRows`, the cooling-curve picker's value
+behind `libraryRevision`.
 
 ## Card layout
 

@@ -66,18 +66,20 @@ test("loadState rebinds the style card to the new engine", async () => {
 
 test("scheduled solves and status writes target the reactive binding", async () => {
   const app = createTestApp();
-  const proxy = {
-    compute() {
-      this.computes += 1;
+  const counts = { computes: 0 };
+  // The browser's binding is a proxy over the whole app. forward every member
+  // and count only the runner's compute, so card refreshes still resolve.
+  const proxy = new Proxy(app, {
+    get(target, key, receiver) {
+      if (key === "computes") return counts.computes;
+      if (key === "compute") return () => (counts.computes += 1);
+      return Reflect.get(target, key, receiver);
     },
-    computes: 0,
-    boundaryStatuses: {},
-    boundaryError: null,
-  };
+  });
   app.bindReactive(proxy);
 
   await app.solveNow();
-  assert.equal(proxy.computes, 1);
+  assert.equal(counts.computes, 1);
 
   app.teardown();
   assert.deepEqual(Object.keys(proxy.boundaryStatuses).sort(), [

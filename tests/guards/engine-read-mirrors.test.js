@@ -11,16 +11,24 @@ const ATTR = /\b(?:x-text|x-html|x-if|x-show|x-for|x-model|x-effect|:[\w-]+|x-bi
 const IDENT = /[A-Za-z_$][\w$]*/g;
 
 const ALLOW = {
-  lateSugarField: "reads this.fieldsBySlice, which every refresh reassigns",
-  sugarDraftMassDisplay: "reads this.draftRows, which the editor reassigns",
+  coolingCurveId: "reads the engine root for the picker's value binding",
+  lateSugarField: "reads view.fieldsBySlice, which every refresh reassigns",
+  sugarDraftMassDisplay: "reads view.draftRows, which the editor reassigns",
 };
 
-function descriptorBlocks(src) {
+// A descriptor getter, wherever it lives: inline in an `Object.defineProperties`
+// literal or returned by a card's descriptor factory. Anchoring on the getter body
+// keeps both shapes in view, so splitting a card into helper modules cannot hide a
+// bound readout from the guard.
+function descriptorGetters(src) {
   const out = [];
-  for (const match of src.matchAll(/Object\.defineProperties\(app,\s*\{/g)) {
-    const start = match.index + match[0].length - 1;
+  for (const match of src.matchAll(/configurable:\s*true,\s*\n\s*get\(\)\s*\{/g)) {
+    const open = src.lastIndexOf("{", match.index);
+    if (open < 0) continue;
+    const name = src.slice(0, open).match(/([A-Za-z_$][\w$]*)\s*:\s*$/)?.[1];
+    if (!name) continue;
     let depth = 0;
-    let end = start;
+    let end = open;
     for (; end < src.length; end += 1) {
       if (src[end] === "{") depth += 1;
       else if (src[end] === "}") {
@@ -29,42 +37,21 @@ function descriptorBlocks(src) {
       }
     }
     out.push({
-      line: src.slice(0, match.index).split("\n").length,
-      body: src.slice(start + 1, end),
+      name,
+      line: src.slice(0, open).split("\n").length,
+      body: src.slice(open + 1, end),
     });
   }
   return out;
-}
-
-function topLevelEntries(body) {
-  const entries = [];
-  let depth = 0;
-  let current = "";
-  for (const char of body) {
-    if (char === "{" || char === "[" || char === "(") depth += 1;
-    else if (char === "}" || char === "]" || char === ")") depth -= 1;
-    if (depth === 0 && char === ",") {
-      entries.push(current);
-      current = "";
-    } else {
-      current += char;
-    }
-  }
-  entries.push(current);
-  return entries.map((entry) => entry.trim()).filter(Boolean);
 }
 
 function engineGetters() {
   const found = [];
   for (const abs of walk("frontend/src/adapters", [".js"])) {
     const src = read(rel(abs));
-    for (const block of descriptorBlocks(src)) {
-      for (const entry of topLevelEntries(block.body)) {
-        const name = entry.match(/^([A-Za-z_$][\w$]*)\s*:/)?.[1];
-        if (!name) continue;
-        if (!/ctx\.engine|\bengine\./.test(entry)) continue;
-        found.push({ name, file: rel(abs), line: block.line });
-      }
+    for (const getter of descriptorGetters(src)) {
+      if (!/ctx\.engine|\bengine\./.test(getter.body)) continue;
+      found.push({ name: getter.name, file: rel(abs), line: getter.line });
     }
   }
   return found;
