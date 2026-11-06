@@ -4,6 +4,7 @@
 // views.
 
 import { createObservabilityManager } from "../observability.js";
+import { catalogRecord, catalogRecords } from "./userCatalog.js";
 import { checkActions, commitActions } from "./importCheck.js";
 import { ledgerDecisionActions, ledgerLookupActions } from "./importLedger.js";
 import { matchActions } from "./importMatch.js";
@@ -43,6 +44,18 @@ import {
 
 const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
 
+// One cache, one answer: the app passes its unified reference cache, and the
+// ledger/projectors read exactly the maps the pickers and engine read.
+function catalogAccessors({ referenceCache, catalogs, catalog }) {
+  if (referenceCache) {
+    return {
+      list: (kind) => catalogRecords(referenceCache, kind),
+      lookup: (kind, id) => catalogRecord(referenceCache, kind, id),
+    };
+  }
+  return { list: catalogs ?? (() => []), lookup: catalog };
+}
+
 // Composition that installs accessors instead of invoking them: `Object.assign`
 // calls a getter once and copies the value, which both freezes the readout and
 // runs its body at boot (before the stores it reads exist).
@@ -56,7 +69,8 @@ function compose(...sources) {
 
 export function createImportReviewStore({
   client,
-  catalogs = () => [],
+  referenceCache,
+  catalogs = null,
   catalog = null,
   project = null,
   gate = null,
@@ -70,7 +84,12 @@ export function createImportReviewStore({
 } = {}) {
   // A catalog is what makes a ref checkable. Without one (a bare store in a test)
   // a mapped row is taken at its word rather than reported as dangling.
-  const lookup = catalogOrNull(catalog);
+  const { list: catalogList, lookup: catalogLookup } = catalogAccessors({
+    referenceCache,
+    catalogs,
+    catalog,
+  });
+  const lookup = catalogOrNull(catalogLookup);
   const check = checkActions({ catalog: lookup, project, gate, delta, commit, observability });
   const match = matchActions({ client, catalog: lookup, observability });
   const gapfill = gapfillActions({ client, sourceFile, readFile, observability });
@@ -98,7 +117,7 @@ export function createImportReviewStore({
     reviewActions({ onClose }),
     recordActions({ client, observability }),
     saveAction({ client, observability }),
-    ledgerLookupActions({ catalogs, catalog: lookup }),
+    ledgerLookupActions({ catalogs: catalogList, catalog: lookup }),
     ledgerDecisionActions(),
     yeastActions(),
     check,
@@ -109,7 +128,7 @@ export function createImportReviewStore({
     water,
     reviewReadouts(),
     ledgerReadouts(),
-    rowReadouts({ hasCatalog: Boolean(catalog) }),
+    rowReadouts({ hasCatalog: Boolean(catalogLookup) }),
     yeastReadouts(),
     stateReadouts(),
     poolReadouts()

@@ -61,6 +61,25 @@ export function isUserItem(id) {
   return typeof id === "string" && id.startsWith("u:");
 }
 
+// The catalogue rows the unified reference cache exposes for a kind. Seed and
+// library records share one map, so the pickers, the import ledger and the gate
+// all read the same set.
+export function catalogRecords(cache, kind) {
+  const meta = CATALOGS[kind];
+  if (!meta) return [];
+  const map = meta.seedKey
+    ? cache.seeds?.[meta.seedKey]
+    : cache.references?.[meta.referencesKey];
+  return Object.values(map ?? {});
+}
+
+export function catalogRecord(cache, kind, id) {
+  const meta = CATALOGS[kind];
+  if (!meta || !id) return null;
+  const seeded = meta.seedKey ? cache.seeds?.[meta.seedKey]?.[id] : null;
+  return seeded ?? cache.references?.[meta.referencesKey]?.[id] ?? null;
+}
+
 export function schemaFor(catalog) {
   const meta = CATALOGS[catalog];
   if (!meta) return null;

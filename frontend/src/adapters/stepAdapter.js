@@ -57,6 +57,19 @@ function bootstrapIdentity(artifactSpec, cache) {
     style: {},
   };
 }
+
+// Reference assets: the browser entry owns the cache and the library that fills
+// it, and injects both. A bare test app falls back to a fresh pair.
+function referenceAssets(options, observability, onChange) {
+  const cache = options.cache ?? createReferenceCache();
+  const library = options.library ?? createLibrary({
+    client: options.libraryClient,
+    onChange,
+    observability,
+  });
+  return { cache, library };
+}
+
 // Runtime seams the browser owns: one focus manager and one observability
 // manager per app instance. Tests may inject either.
 function runtimeSeams(options) {
@@ -76,12 +89,7 @@ export function createStepApp(options = {}) {
   const { master, ui, initialRoots } = createAppStore();
   ui.unitMode = loadUnitMode(artifact);
   const { modalFocus, observability } = runtimeSeams(options);
-  const cache = createReferenceCache();
-  const library = createLibrary({
-    client: options.libraryClient,
-    onChange: () => syncLibrary(),
-    observability,
-  });
+  const { cache, library } = referenceAssets(options, observability, () => syncLibrary());
   cache.syncLibraryItems(library.items());
 
   const { boundaries, remote } = resolveBoundarySeam(options);
@@ -316,6 +324,12 @@ export function createStepApp(options = {}) {
     compute() {
       view.compute(this);
       this.afterCompute?.();
+    },
+
+    // The shared reference cache was replaced by the library overlay; point the
+    // live engine at the new maps.
+    refreshReferences() {
+      session.engine.setReferences(cache.references);
     },
 
     // Re-merge library records into the cache/engine and re-render. Called by

@@ -13,6 +13,7 @@
 
 import { createLibrary } from "./library.js";
 import { createReferenceCache } from "./referenceCache.js";
+import { catalogRecord, catalogRecords } from "./userCatalog.js";
 import { createObservabilityManager } from "../observability.js";
 
 const PREREQUISITES = [
@@ -39,13 +40,17 @@ export function createSetupStore({
   client,
   persistence,
   observability = createObservabilityManager(),
+  cache,
+  library,
 } = {}) {
-  const cache = createReferenceCache();
-  const library = createLibrary({
+  // One reference cache per app. The caller that owns both surfaces injects the
+  // same instance (and its library) here, so identity sources and ingredient
+  // records are never split across two overlays.
+  const assets = cache ?? createReferenceCache();
+  const catalog = library ?? createLibrary({
     client,
-    kinds: ["style", "equipment", "water_report"],
-    onChange: () => cache.syncLibraryItems(library.items()),
     observability,
+    onChange: () => assets.syncLibraryItems(catalog.items()),
   });
 
   return {
@@ -62,20 +67,20 @@ export function createSetupStore({
       filename: "",
       phase: "", // "" | "reading"
     },
-    library,
+    library: catalog,
     // Bumped whenever the asset inventory changes; read by the option getters so
     // Alpine re-evaluates them (the reference cache is a plain object).
     revision: 0,
 
     async refreshAssets() {
-      await library.refresh();
+      await catalog.refresh();
       this.revision += 1;
-      return library.items();
+      return catalog.items();
     },
 
     equipmentOptions() {
       void this.revision;
-      const records = cache.references.equipment ?? {};
+      const records = assets.references.equipment ?? {};
       return Object.entries(records)
         .map(([id, record]) => ({ value: id, label: record.name ?? id }))
         .sort((a, b) => a.label.localeCompare(b.label));
@@ -85,7 +90,7 @@ export function createSetupStore({
       void this.revision;
       const records = {
         unknown: UNKNOWN_WATER,
-        ...(cache.references.water_report ?? {}),
+        ...(assets.references.water_report ?? {}),
       };
       return Object.entries(records).map(([id, record]) => ({
         value: id,
@@ -95,14 +100,14 @@ export function createSetupStore({
 
     waterTargetOptions() {
       void this.revision;
-      return Object.entries(cache.references.water_target ?? {})
+      return Object.entries(assets.references.water_target ?? {})
         .map(([id, profile]) => ({ value: id, label: profile.name ?? id, record: profile }))
         .sort((a, b) => a.label.localeCompare(b.label));
     },
 
     styleOptions() {
       void this.revision;
-      return Object.entries(cache.references.style ?? {})
+      return Object.entries(assets.references.style ?? {})
         .map(([id, style]) => ({ value: id, label: style.name ?? id }))
         .sort((a, b) => a.label.localeCompare(b.label));
     },
@@ -111,36 +116,24 @@ export function createSetupStore({
     // read, so user-authored records appear here too.
     items(kind) {
       void this.revision;
-      const byKind = {
-        malt: cache.seeds.malts,
-        sugar: cache.seeds.sugars,
-        hop: cache.seeds.hops,
-        yeast: cache.seeds.yeasts,
-      };
-      return Object.values(byKind[kind] ?? {});
+      return catalogRecords(assets, kind);
     },
 
     references() {
       void this.revision;
-      return cache.references;
+      return assets.references;
     },
 
     item(kind, id) {
       void this.revision;
-      const byKind = {
-        malt: cache.seeds.malts,
-        sugar: cache.seeds.sugars,
-        hop: cache.seeds.hops,
-        yeast: cache.seeds.yeasts,
-      };
-      return byKind[kind]?.[id] ?? null;
+      return catalogRecord(assets, kind, id);
     },
 
     // A batch cannot be created until one of each identity source exists.
     prerequisiteStatus() {
       void this.revision;
       const missing = PREREQUISITES.filter(
-        ({ kind }) => Object.keys(cache.references[kind] ?? {}).length === 0
+        ({ kind }) => Object.keys(assets.references[kind] ?? {}).length === 0
       ).map(({ label }) => label);
       return { ready: missing.length === 0, missing };
     },
@@ -229,7 +222,7 @@ export function createSetupStore({
     },
 
     component(kind, itemId) {
-      return cache.references[kind]?.[itemId] ?? null;
+      return assets.references[kind]?.[itemId] ?? null;
     },
 
     async create() {

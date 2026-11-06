@@ -162,7 +162,7 @@ const LIFECYCLE_COMPLEXITY = {
 const STATEMENT_PINS = {
   "adapters/boundaryRunner.js": 67,
   "adapters/cards/water.js": 64,
-  "adapters/stepAdapter.js": 33,
+  "adapters/stepAdapter.js": 32,
   "engine/sha256.js": 44,
   "main.js": 47,
   "views/producer/stylePlot.js": 12,
@@ -192,7 +192,7 @@ const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 359,
   "adapters/cards/late-additions.js": 300,
   "adapters/cards/water.js": 297,
-  "adapters/stepAdapter.js": 465,
+  "adapters/stepAdapter.js": 479,
   "views/producer/stylePlot.js": 422,
   "engine/dag.js": 397,
   "engine/fermentation.js": 506,

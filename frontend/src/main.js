@@ -24,6 +24,8 @@ import {
 } from "./firebase.js";
 import { createPersistenceManager } from "./store/persistence.js";
 import { createImportClient, readFileAsBase64 } from "./adapters/importClient.js";
+import { createLibrary } from "./store/library.js";
+import { createReferenceCache } from "./store/referenceCache.js";
 import { runGate } from "./adapters/importGate.js";
 import { projectImport } from "./adapters/importProjection.js";
 import { buildDelta } from "./adapters/importDelta.js";
@@ -45,7 +47,22 @@ const libraryClient = createLibraryClient({ api });
 const sessionClient = createSessionClient({ api });
 const modalFocus = createModalFocusManager();
 
+// One reference cache for the whole app: the setup store, the step app's engine
+// and the import ledger all read this instance and the library that fills it.
+const referenceCache = createReferenceCache();
+const library = createLibrary({
+  client: libraryClient,
+  observability,
+  onChange: () => syncReferenceCache(),
+});
+
 let stepApp = null;
+
+function syncReferenceCache() {
+  referenceCache.syncLibraryItems(library.items());
+  stepApp?.refreshReferences();
+}
+
 const persistence = createPersistenceManager({
   client: batchClient,
   app: () => stepApp,
@@ -81,20 +98,16 @@ const importClient = createImportClient({ api });
 const reviewStore = createImportReviewStore({
   client: importClient,
   observability,
-  // The app's reference cache, not the setup store's: ingredient records authored
-  // in the Library (a blend yeast, a house malt) live there, and the import's
-  // chips, its projection and the gate must all read the same set the commit
-  // loads. `stepApp` exists by the time any of these run.
-  catalogs: (kind) => (stepApp ? stepApp.catalogItems(kind) : Alpine.store("setup").items(kind)),
-  catalog: (kind, id) =>
-    stepApp ? stepApp.catalogItem(kind, id) : Alpine.store("setup").item(kind, id),
+  // The one unified reference cache: the import's chips, its projection and the
+  // gate read exactly the maps the pickers and engine read.
+  referenceCache,
   profiles: () => Alpine.store("setup").waterTargetOptions(),
   project: projectImport,
   gate: (state) =>
     runGate({
       state,
       api,
-      references: stepApp ? stepApp.referenceSnapshot() : Alpine.store("setup").references(),
+      references: referenceCache.references,
       reportError: observability.reportError,
     }),
   delta: (args) => buildDelta({ ...args, reportError: observability.reportError }),
@@ -154,6 +167,8 @@ const setupStore = createSetupStore({
   client: libraryClient,
   persistence,
   observability,
+  cache: referenceCache,
+  library,
   onImportRecipe: async ({ filename, file, identity, force }) => {
     const imports = Alpine.store("imports");
     const record = await imports.start({ filename, file, identity, force });
@@ -343,6 +358,8 @@ Alpine.data("stepCalculator", () => {
     createStepApp({
       api,
       libraryClient,
+      cache: referenceCache,
+      library,
       modalFocus,
       observability,
       isEditorActive: () => {

@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { createPersistenceManager } from "../../frontend/src/store/persistence.js";
+import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
+import { createLibrary } from "../../frontend/src/store/library.js";
+import { createTestApp } from "./appHelpers.js";
 
 function fakeClient() {
   const docs = new Map();
@@ -243,4 +246,41 @@ test("refreshAssets re-reads the records and bumps the revision", async () => {
 
   const options = store.equipmentOptions();
   assert.ok(options.some((option) => option.value === "custom-rig" && option.label === "Custom rig"));
+});
+
+test("the setup store and the step app share one reference cache", async () => {
+  const records = {};
+  let auto = 0;
+  const client = {
+    async listCatalog(kind) {
+      return records[kind] ?? [];
+    },
+    async createCatalog(kind, component) {
+      const id = `rec-${++auto}`;
+      const record = { id, kind, component: { ...component, id } };
+      (records[kind] ??= []).push(record);
+      return record;
+    },
+    async deleteCatalog() {
+      return null;
+    },
+  };
+  const cache = createReferenceCache();
+  const library = createLibrary({
+    client,
+    onChange: () => cache.syncLibraryItems(library.items()),
+  });
+  const app = createTestApp({ cache, library });
+  const setup = createSetupStore({ client, cache, library });
+
+  const malt = await library.create("malt", { name: "Unified Malt", yield_fraction: 0.8 });
+  const rig = await library.create("equipment", { name: "Unified Rig", max_kettle_volume_l: 30 });
+
+  assert.equal(app.library, library, "the step app uses the injected library");
+  assert.equal(setup.library, library, "the setup store uses the same library");
+  assert.equal(app.catalogItem("malt", malt.id)?.name, "Unified Malt");
+  assert.equal(setup.item("malt", malt.id)?.name, "Unified Malt");
+  assert.ok(setup.items("malt").some((item) => item.id === malt.id));
+  assert.ok(setup.equipmentOptions().some((option) => option.value === rig.id));
+  assert.equal(app.catalogItem("equipment", rig.id)?.name, "Unified Rig");
 });

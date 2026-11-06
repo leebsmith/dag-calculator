@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
+import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { read } from "../guards/util.js";
 import { applyRef, buildLedger } from "../../frontend/src/views/import/ledger.js";
 import {
@@ -427,6 +428,23 @@ test("candidate chips come from the injected catalogs", () => {  const store = c
   assert.equal(chips[0].id, "m1");
 });
 
+
+test("a unified reference cache feeds the same chips as the callback form", () => {
+  const cache = createReferenceCache();
+  cache.syncLibraryItems({
+    malt: {
+      "lib:maris": { id: "lib:maris", name: "Maris Otter", standard_name: "Pale Ale Malt" },
+    },
+  });
+  const store = createImportReviewStore({
+    client: { patch: async () => LEDGER_RECORD },
+    referenceCache: cache,
+  });
+  store.open(LEDGER_RECORD);
+  const line = store.ledger.find((row) => row.section === "fermentables");
+
+  assert.ok(store.suggestions(line).some((chip) => chip.id === "lib:maris"));
+});
 
 test("the queue says which step it resumes", () => {
   assert.equal(resumeLabel("extracted"), "Step 1 · Transcribe");
