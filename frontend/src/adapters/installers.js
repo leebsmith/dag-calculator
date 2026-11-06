@@ -46,7 +46,10 @@ const LIBRARY_UI = [
 const YEAST = ["frontend/src/adapters/cards/yeast.js"];
 const STYLE_DECLARATION = ["frontend/src/adapters/cards/style/declaration.js"];
 const STYLE_NAVIGATOR = ["frontend/src/adapters/cards/style/navigator.js"];
-const STYLE_TARGETS = ["frontend/src/adapters/cards/style/targets.js"];
+const STYLE_TARGETS = [
+  "frontend/src/adapters/cards/style/targets.js",
+  "frontend/src/adapters/cards/style/styleTargetGetters.js",
+];
 const STYLE_CONFORMANCE = ["frontend/src/adapters/cards/style/conformance.js"];
 const HOP = [
   "frontend/src/adapters/cards/hops.js",
