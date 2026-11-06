@@ -16,6 +16,9 @@ const ROOT_TEMPLATE = "frontend/index.html";
 const BINDING_ATTR = /\s(?:x-[\w:.-]+|@[\w.:-]+|:[\w.-]+)=(?:"([^"]*)"|'([^']*)')/g;
 const IDENTIFIER = /(?<![\w$.'])([A-Za-z_$][\w$]*)/g;
 const MEMBER_READ = /\b(?:this|app)\.([A-Za-z_$][\w$]*)/g;
+// Card factories reach the live app through the injected `getView`; the local
+// `view` name is only trusted inside `cards/`, where every module is a card.
+const CARD_VIEW_READ = /\b(?:view|getView\(\))\.([A-Za-z_$][\w$]*)/g;
 const CARD_PARTIAL = /^(?:step-.*|modal-.*|.*-section|mash-rests-modal)\.html$/;
 
 function read(path) {
@@ -74,14 +77,23 @@ function bindingIdentifiers(file) {
   return names;
 }
 
+function memberKeys(text, module) {
+  const patterns = [MEMBER_READ];
+  if (module.includes("/cards/")) patterns.push(CARD_VIEW_READ);
+  const keys = new Set();
+  for (const pattern of patterns) {
+    for (const match of text.matchAll(pattern)) keys.add(match[1]);
+  }
+  return keys;
+}
+
 /** @returns {Map<string, Map<string, Set<string>>>} installer → key → sources */
 export function moduleReads(installers = INSTALLERS) {
   const owners = ownerIndex(installers);
   const reads = new Map();
   for (const { name, modules = [] } of installers) {
     for (const module of modules) {
-      for (const match of read(module).matchAll(MEMBER_READ)) {
-        const key = match[1];
+      for (const key of memberKeys(read(module), module)) {
         if (!owners.has(key) || owners.get(key) === name) continue;
         add(reads, name, key, module);
       }

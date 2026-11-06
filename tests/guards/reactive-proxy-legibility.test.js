@@ -48,6 +48,9 @@ function instrumented(app) {
       return Reflect.set(target, key, value, receiver);
     },
   });
+  // `main.js` registers the wrapper as the live view; the injected `getView`
+  // seam reads it back, so the harness must bind the proxy it made.
+  app.bindReactive(proxy);
   return { proxy, reads, writes };
 }
 

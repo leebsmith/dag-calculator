@@ -53,18 +53,21 @@ const HOP = [
   "frontend/src/adapters/cards/hopsCoolingCurve.js",
   "frontend/src/adapters/cards/hopsStrategy.js",
 ];
-const CATALOG_DRAFT = "frontend/src/adapters/cards/catalogDraft.js";
-const HOP_AND_CATALOG = [...HOP, CATALOG_DRAFT];
+const CATALOG_DRAFT = [
+  "frontend/src/adapters/cards/catalogDraft.js",
+  "frontend/src/adapters/cards/catalogDraftGetters.js",
+];
+const HOP_AND_CATALOG = [...HOP, ...CATALOG_DRAFT];
 const LATE_ADDITIONS = ["frontend/src/adapters/cards/late-additions.js"];
-const LATE_ADDITIONS_AND_CATALOG = [...LATE_ADDITIONS, CATALOG_DRAFT];
+const LATE_ADDITIONS_AND_CATALOG = [...LATE_ADDITIONS, ...CATALOG_DRAFT];
 const TRACE_MALTS = ["frontend/src/adapters/cards/trace-malts.js"];
-const TRACE_MALTS_AND_CATALOG = [...TRACE_MALTS, CATALOG_DRAFT];
+const TRACE_MALTS_AND_CATALOG = [...TRACE_MALTS, ...CATALOG_DRAFT];
 const MALT = ["frontend/src/adapters/cards/malt.js"];
-const MALT_AND_CATALOG = [...MALT, CATALOG_DRAFT];
+const MALT_AND_CATALOG = [...MALT, ...CATALOG_DRAFT];
 const MASH = ["frontend/src/adapters/cards/mash.js"];
 const BREW_DAY = ["frontend/src/adapters/cards/brew-day.js"];
 const DRY_HOPS = ["frontend/src/adapters/cards/dry-hops.js"];
-const DRY_HOPS_AND_CATALOG = [...DRY_HOPS, CATALOG_DRAFT];
+const DRY_HOPS_AND_CATALOG = [...DRY_HOPS, ...CATALOG_DRAFT];
 const WATER = ["frontend/src/adapters/cards/water.js"];
 const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
 
@@ -222,7 +225,7 @@ export const SHARED = [
   },
   {
     key: "draftMassDisplay",
-    owners: ["lateAdditions"],
+    owners: ["lateAdditions", "traceMalts"],
     reason: "the catalog editors bind the shared draft grid",
   },
   {
@@ -277,7 +280,7 @@ export const SHARED = [
   },
   {
     key: "patchDraftRow",
-    owners: ["hop"],
+    owners: ["hop", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
   {

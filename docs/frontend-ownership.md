@@ -25,13 +25,13 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 30 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js` | 45 | 1 | 10 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js` | 155 | 4 | 18 |
-| `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js` | 68 | 2 | 21 |
-| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js` | 44 | 2 | 18 |
-| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js` | 52 | 2 | 17 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 155 | 4 | 18 |
+| `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 21 |
+| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 44 | 2 | 19 |
+| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 52 | 2 | 17 |
 | `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 14 | 1 | 0 |
-| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js` | 56 | 2 | 13 |
+| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 14 |
 | `water` | `frontend/src/adapters/cards/water.js` | 29 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |
 
@@ -53,7 +53,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `draftDirty` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `draftDiscardOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `draftDrawer` | `draftEditor` | `hop`, `malt`, `traceMalts`, `dryHops` | the shared catalog search pane binds the drawer phase the draft editor owns |
-| `draftMassDisplay` | `draftEditor` | `lateAdditions` | the catalog editors bind the shared draft grid |
+| `draftMassDisplay` | `draftEditor` | `lateAdditions`, `traceMalts` | the catalog editors bind the shared draft grid |
 | `draftNodeId` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
@@ -64,7 +64,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `openLibrary` | `libraryUi` | `hop` | the whirlpool picker links to the cooling-curve library tab |
-| `patchDraftRow` | `draftEditor` | `hop` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `resetField` | `fieldActions` | `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets` | shared field verbs: the card partials bind the one editing surface |
 | `resetScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |

@@ -69,8 +69,11 @@ async function loadAlpine() {
 }
 
 // Wrap an app exactly as `main.js` does, so `this` in every handler and getter
-// is the reactive proxy the browser uses.
+// is the reactive proxy the browser uses — including the bind step, which points
+// the injected `getView` seam at the same proxy.
 export async function alpineReactive(app) {
   const alpine = await loadAlpine();
-  return alpine.reactive(app);
+  const proxy = alpine.reactive(app);
+  proxy.bindReactive(proxy);
+  return proxy;
 }
