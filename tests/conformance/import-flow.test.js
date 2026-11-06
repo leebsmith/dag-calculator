@@ -8,6 +8,7 @@ import assert from "node:assert/strict";
 
 import { projectImport } from "../../frontend/src/adapters/importProjection.js";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
+import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 
 const CATALOG = {
   malt: {
@@ -35,8 +36,6 @@ const CATALOG = {
     },
   },
 };
-
-const catalog = (kind, id) => CATALOG[kind]?.[id] ?? null;
 
 function payload({ yeasts = ["Strain A"], hops = [{ stage: "boil", minutes: 60 }] } = {}) {
   return {
@@ -85,10 +84,11 @@ function flow(options = {}) {
   const record = recordFor(payload(options));
   const patches = [];
   const closes = [];
+  const cache = createReferenceCache();
+  cache.syncLibraryItems(CATALOG);
   const store = createImportReviewStore({
     client: { patch: async (id, body) => (patches.push(body), { ...record, ...body }) },
-    catalog,
-    catalogs: () => Object.values(CATALOG.yeast),
+    referenceCache: cache,
     project: projectImport,
     gate: async () => ({ findings: [], blocking: [], advisory: [], statuses: {}, engine: {} }),
     delta: () => ({ targets: [], lines: [] }),
@@ -102,7 +102,7 @@ function flow(options = {}) {
   for (const row of store.ledger.filter((line) => line.section === "hops")) {
     store.chooseRef(row.line_id, { id: "saaz", name: "Saaz" });
   }
-  return { store, patches, closes };
+  return { store, patches, closes, cache };
 }
 
 const yeastRow = (store, name) => store.ledger.find((row) => row.name === name);
@@ -172,11 +172,12 @@ test("3b. a multi-strain recipe picks one blend and documents the components", a
 });
 
 test("4. a deleted pick is broken and holds the gate shut", async () => {
-  const { store } = flow({ yeasts: ["Strain A"] });
+  const { store, cache } = flow({ yeasts: ["Strain A"] });
   const line = yeastRow(store, "Strain A");
   store.chooseRef(line.line_id, { id: "strain-a", name: "Strain A" });
 
   delete CATALOG.yeast["strain-a"];
+  cache.syncLibraryItems(CATALOG);
   const broken = store.ledger.find((row) => row.line_id === line.line_id);
   assert.equal(store.rowState(broken).state, "broken");
   assert.match(store.rowState(broken).message, /was deleted/);

@@ -155,7 +155,6 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
     store.libraryDraft = null;
     store.libraryErrors = [];
     await store.refreshLibraryItems();
-    await store.onRecordsChanged?.();
   }
 
   Object.assign(actions, {

@@ -45,15 +45,14 @@ import {
 const SECTION_ORDER = ["fermentables", "hops", "yeasts", "mashes", "unmodeled"];
 
 // One cache, one answer: the app passes its unified reference cache, and the
-// ledger/projectors read exactly the maps the pickers and engine read.
-function catalogAccessors({ referenceCache, catalogs, catalog }) {
-  if (referenceCache) {
-    return {
-      list: (kind) => catalogRecords(referenceCache, kind),
-      lookup: (kind, id) => catalogRecord(referenceCache, kind, id),
-    };
-  }
-  return { list: catalogs ?? (() => []), lookup: catalog };
+// ledger/projectors read exactly the maps the pickers and engine read. A bare
+// store has no catalogue, so a mapped row is taken at its word.
+function catalogAccessors(referenceCache) {
+  if (!referenceCache) return { list: () => [], lookup: null };
+  return {
+    list: (kind) => catalogRecords(referenceCache, kind),
+    lookup: (kind, id) => catalogRecord(referenceCache, kind, id),
+  };
 }
 
 // Composition that installs accessors instead of invoking them: `Object.assign`
@@ -68,15 +67,12 @@ function compose(...sources) {
 }
 
 /**
- * `referenceCache` is the production catalogue seam. `catalogs`/`catalog` are a
- * legacy test-only seam kept for suites that predate the unified cache; new
- * callers pass `referenceCache` instead.
+ * `referenceCache` is the one catalogue seam: production and tests pass the same
+ * unified cache the pickers and engine read. A bare store has no catalogue.
  */
 export function createImportReviewStore({
   client,
   referenceCache,
-  catalogs = null,
-  catalog = null,
   project = null,
   gate = null,
   delta = null,
@@ -89,11 +85,7 @@ export function createImportReviewStore({
 } = {}) {
   // A catalog is what makes a ref checkable. Without one (a bare store in a test)
   // a mapped row is taken at its word rather than reported as dangling.
-  const { list: catalogList, lookup: catalogLookup } = catalogAccessors({
-    referenceCache,
-    catalogs,
-    catalog,
-  });
+  const { list: catalogList, lookup: catalogLookup } = catalogAccessors(referenceCache);
   const lookup = catalogOrNull(catalogLookup);
   const check = checkActions({ catalog: lookup, project, gate, delta, commit, observability });
   const match = matchActions({ client, catalog: lookup, observability });

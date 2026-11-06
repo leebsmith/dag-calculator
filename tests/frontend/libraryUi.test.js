@@ -25,7 +25,6 @@ function setup({
   seeds = {},
   onCreate,
   onRemove,
-  onRecordsChanged,
   loaded = () => true,
   loading = () => false,
   modalFocus = createModalFocusManager(),
@@ -34,7 +33,6 @@ function setup({
   const app = {
     libraryRevision: 0,
     unitMode,
-    onRecordsChanged,
     library: {
       loaded,
       loading,
@@ -309,17 +307,6 @@ test("deleting a record calls the library and refreshes", async () => {
     [{ op: "remove", tab: "malt", itemId: "r1" }]
   );
   assert.equal(events.at(-1).op, "refresh");
-});
-
-test("record mutations notify the host so the batch setup cache stays fresh", async () => {
-  let notified = 0;
-  const { app } = setup({ onRecordsChanged: () => (notified += 1) });
-  app.selectLibraryTab("malt");
-  app.libraryDraft = { name: "House Pale", category: "BASE", yield_fraction: 0.8 };
-
-  await app.saveLibraryItem();
-
-  assert.equal(notified, 1);
 });
 
 test("search ranks name matches and gates notes behind the toggle", () => {

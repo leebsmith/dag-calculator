@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
+import { CATALOGS } from "../../frontend/src/store/userCatalog.js";
 import { read } from "../guards/util.js";
 import { applyRef, buildLedger } from "../../frontend/src/views/import/ledger.js";
 import {
@@ -26,6 +27,41 @@ import {
   unitSymbol,
   warningRows,
 } from "../../frontend/src/views/import/review.js";
+
+// An isolated reference cache: only the records a test supplies, no seed
+// catalogue. `set`/`remove` keep the unified cache current as the test mutates.
+function cacheWithItems(initial = {}) {
+  const items = {};
+  const cache = { references: {}, seeds: {} };
+
+  function sync() {
+    for (const key of Object.keys(cache.seeds)) delete cache.seeds[key];
+    for (const key of Object.keys(cache.references)) delete cache.references[key];
+    for (const [kind, rows] of Object.entries(items)) {
+      const meta = CATALOGS[kind];
+      if (!meta) continue;
+      if (meta.seedKey) cache.seeds[meta.seedKey] = { ...rows };
+      else cache.references[meta.referencesKey] = { ...rows };
+    }
+  }
+
+  for (const [kind, records] of Object.entries(initial)) {
+    items[kind] = Object.fromEntries(records.map((record) => [record.id, record]));
+  }
+  sync();
+
+  return {
+    cache,
+    set(kind, record) {
+      (items[kind] ??= {})[record.id] = record;
+      sync();
+    },
+    remove(kind, id) {
+      delete items[kind]?.[id];
+      sync();
+    },
+  };
+}
 
 const PAYLOAD = {
   detected_recipes: [{ title: "Duel Master Black IPA", pages: [1, 2] }],
@@ -418,9 +454,13 @@ test("the map states the problems on the lines, not in a strip", () => {
   );
 });
 
-test("candidate chips come from the injected catalogs", () => {  const store = createImportReviewStore({
+test("candidate chips come from the injected catalogue", () => {
+  const catalog = cacheWithItems({
+    malt: [{ id: "m1", name: "Maris Otter", standard_name: "Pale Ale Malt" }],
+  });
+  const store = createImportReviewStore({
     client: { patch: async () => LEDGER_RECORD },
-    catalogs: () => [{ id: "m1", name: "Maris Otter", standard_name: "Pale Ale Malt" }],
+    referenceCache: catalog.cache,
   });
   store.open(LEDGER_RECORD);
   const line = store.ledger.find((row) => row.section === "fermentables");
@@ -453,15 +493,15 @@ test("the queue says which step it resumes", () => {
 });
 
 test("a line can be found by the user's own search when the screen misses", () => {
-  const catalogs = {
+  const catalog = cacheWithItems({
     malt: [
       { id: "carapils", name: "CARAPILS", standard_name: "Dextrin Malt", maltster: "Weyermann" },
       { id: "pale", name: "Pale Ale Malt", standard_name: "Pale Ale Malt", maltster: "Crisp" },
     ],
-  };
+  });
   const store = createImportReviewStore({
     client: { patch: async () => LEDGER_RECORD },
-    catalogs: (kind) => catalogs[kind] ?? [],
+    referenceCache: catalog.cache,
   });
   store.open(LEDGER_RECORD);
   const line = store.ledger.find((row) => row.section === "fermentables");
@@ -750,6 +790,7 @@ test("an unknown stage starts in the candidates pane", () => {  const payload = 
 
 test("the model's chips come first, and the local screen is the fallback", async () => {
   const calls = [];
+  const catalog = cacheWithItems({ hop: [{ id: "hop-Amarillo", name: "Amarillo" }] });
   const store = createImportReviewStore({
     client: {
       patch: async () => HOP_RECORD,
@@ -758,8 +799,7 @@ test("the model's chips come first, and the local screen is the fallback", async
         return { items: [{ text: "Amarillo", picks: [{ id: "hop-Amarillo" }] }] };
       },
     },
-    catalogs: () => [{ id: "hop-Amarillo", name: "Amarillo" }],
-    catalog: (kind, id) => (id === "hop-Amarillo" ? { id, name: "Amarillo" } : null),
+    referenceCache: catalog.cache,
   });
   store.open(HOP_RECORD);
   await store.enrichSuggestions();
@@ -770,6 +810,7 @@ test("the model's chips come first, and the local screen is the fallback", async
 });
 
 test("a failed match call leaves the local screen in charge and says so", async () => {
+  const catalog = cacheWithItems({ hop: [{ id: "h", name: "Amarillo" }] });
   const store = createImportReviewStore({
     client: {
       patch: async () => HOP_RECORD,
@@ -777,7 +818,7 @@ test("a failed match call leaves the local screen in charge and says so", async 
         throw new Error("provider down");
       },
     },
-    catalogs: () => [{ id: "h", name: "Amarillo" }],
+    referenceCache: catalog.cache,
   });
   store.open(HOP_RECORD);
   assert.equal(await store.enrichSuggestions(), null);
@@ -787,12 +828,13 @@ test("a failed match call leaves the local screen in charge and says so", async 
 
 test("a line with no shortlist is not worth a call", async () => {
   const calls = [];
+  const catalog = cacheWithItems({});
   const store = createImportReviewStore({
     client: {
       patch: async () => HOP_RECORD,
       match: async (body) => (calls.push(body), { items: [] }),
     },
-    catalogs: () => [],
+    referenceCache: catalog.cache,
   });
   store.open(HOP_RECORD);
   await store.enrichSuggestions();
@@ -973,14 +1015,14 @@ test("a blend record is picked like any other yeast", () => {
 
 
 test("a multi-strain recipe proposes blends, and one pick documents the components", () => {
-  const { store, records } = unpickedTwoYeasts();
-  records.set("blend-1", {
+  const { store, catalog } = unpickedTwoYeasts();
+  catalog.set("yeast", {
     id: "blend-1",
     name: "Blend: Saison + Brett",
     blend_of: "clean saison strain, Brettanomyces culture",
     attenuation_pct: 0.78,
   });
-  records.set("strain-x", { id: "strain-x", name: "clean saison strain" });
+  catalog.set("yeast", { id: "strain-x", name: "clean saison strain" });
 
   const [saison, brett] = store.yeastLines;
   assert.equal(store.blendMode, true);
@@ -1013,14 +1055,14 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
 });
 
 test("changing the blend is one click, and a component carries no controls", () => {
-  const { store, records } = unpickedTwoYeasts();
-  records.set("blend-1", {
+  const { store, catalog } = unpickedTwoYeasts();
+  catalog.set("yeast", {
     id: "blend-1",
     name: "Blend: Saison + Brett",
     blend_of: "clean saison strain, Brettanomyces culture",
     attenuation_pct: 0.78,
   });
-  records.set("blend-2", {
+  catalog.set("yeast", {
     id: "blend-2",
     name: "Blend: Brett forward",
     blend_of: "clean saison strain, Brettanomyces culture",
@@ -1044,9 +1086,9 @@ test("changing the blend is one click, and a component carries no controls", () 
 });
 
 test("without a blend record the strain chips remain the fallback", () => {
-  const { store, records } = unpickedTwoYeasts();
-  records.set("strain-x", { id: "strain-x", name: "clean saison strain" });
-  records.set("strain-y", { id: "strain-y", name: "Brettanomyces culture" });
+  const { store, catalog } = unpickedTwoYeasts();
+  catalog.set("yeast", { id: "strain-x", name: "clean saison strain" });
+  catalog.set("yeast", { id: "strain-y", name: "Brettanomyces culture" });
 
   assert.equal(store.blendRecords.length, 0);
   const chips = store.chipsFor(store.yeastLines[0]);
@@ -1055,10 +1097,10 @@ test("without a blend record the strain chips remain the fallback", () => {
 });
 
 test("a picked record is shown by name, and a deleted one says so on the row", () => {
-  const records = new Map([["y-1", { id: "y-1", name: "House strain" }]]);
+  const catalog = cacheWithItems({ yeast: [{ id: "y-1", name: "House strain" }] });
   const store = createImportReviewStore({
     client: { patch: async () => RECORD },
-    catalog: (kind, id) => records.get(id) ?? null,
+    referenceCache: catalog.cache,
   });
   store.open({ ...RECORD, extract: { ...RECORD.extract, payload: HOP_PAYLOAD }, ledger: [] });
   const line = store.ledger.find((row) => row.section === "yeasts");
@@ -1068,7 +1110,7 @@ test("a picked record is shown by name, and a deleted one says so on the row", (
   assert.equal(store.refLabel(picked), "House strain", "the row reads as a name, never an id");
   assert.equal(store.rowIssue(picked), "");
 
-  records.delete("y-1");
+  catalog.remove("yeast", "y-1");
   const orphan = store.ledger.find((row) => row.line_id === line.line_id);
   assert.equal(store.refLabel(orphan), "House strain", "the name is remembered with the pick");
   const legacy = { ...orphan, ref_name: null };
@@ -1126,14 +1168,13 @@ function unpickedTwoYeasts() {
     ],
   };
   const record = { ...RECORD, extract: { ...RECORD.extract, payload }, ledger: [] };
-  const records = new Map();
+  const catalog = cacheWithItems({ yeast: [] });
   const store = createImportReviewStore({
     client: { patch: async (id, body) => ({ ...record, ...body }) },
-    catalog: (kind, id) => records.get(id) ?? null,
-    catalogs: () => [...records.values()],
+    referenceCache: catalog.cache,
   });
   store.open(record);
-  return { store, records };
+  return { store, catalog };
 }
 
 // The same recipe with both strains pointed at their own records.
@@ -1141,7 +1182,7 @@ function twoYeasts() {
   const helpers = unpickedTwoYeasts();
   for (const row of helpers.store.ledger.filter((line) => line.section === "yeasts")) {
     const id = `line-${row.name}`;
-    helpers.records.set(id, { id, name: row.name });
+    helpers.catalog.set("yeast", { id, name: row.name });
     helpers.store.chooseRef(row.line_id, { id, name: row.name });
   }
   return helpers;
