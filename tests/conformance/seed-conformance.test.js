@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 
 import { loadArtifact } from "../frontend/helpers.js";
 import { ingestEquipment } from "../../frontend/src/store/equipmentIngest.js";
+import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 
 const artifact = loadArtifact();
 
@@ -117,5 +118,28 @@ test("mash-schedules.json conforms to mash_rest", () => {
     for (const rest of schedule.rests) {
       checkComponent(schema, rest, `mash_rest "${sid}"`);
     }
+  }
+});
+
+test("every shipped water profile declares a non-empty target set", () => {
+  const modes = {
+    "soft-pilsner": ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
+    "balanced-pale": ["sulfate_so4", "chloride_cl"],
+    "hoppy-ipa": ["sulfate_so4", "chloride_cl"],
+    "burton-ipa": ["sulfate_so4", "chloride_cl"],
+    "west-coast-ipa": ["sulfate_so4", "chloride_cl"],
+    "hazy-ipa": ["sulfate_so4", "chloride_cl"],
+    "malty-amber": ["sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
+    "dark-stout": ["sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
+    "belgian-golden-tripel": ["sulfate_so4", "chloride_cl"],
+    "belgian-saison": ["sulfate_so4", "chloride_cl"],
+  };
+  const profiles = readSeed("water_target_profiles.json");
+
+  for (const [id, expected] of Object.entries(modes)) {
+    const declared = WATER_IONS.map((row) => row.ion).filter(
+      (ion) => typeof profiles[id][ion] === "number" && profiles[id][ion] > 0
+    );
+    assert.deepEqual(declared, expected, `${id} declares unexpected ions`);
   }
 });

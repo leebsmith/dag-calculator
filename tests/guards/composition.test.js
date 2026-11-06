@@ -70,3 +70,15 @@ test("every card module exports a factory", () => {
   assert.ok(count > 0, "expected card modules");
   assert.deepEqual(offenders, [], `card modules without a create factory:\n${offenders.join("\n")}`);
 });
+
+const GETVIEW_MODULES = [
+  "frontend/src/adapters/libraryFields.js",
+  "frontend/src/adapters/libraryListEditor.js",
+  "frontend/src/adapters/libraryComposition.js",
+];
+
+test("layer modules address the app through getView, not this", () => {
+  for (const file of GETVIEW_MODULES) {
+    assert.doesNotMatch(read(file), /\bthis\./, `${file}: no this access`);
+  }
+});

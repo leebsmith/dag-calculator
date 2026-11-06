@@ -12,25 +12,25 @@
 
 ## Phase 1 — Test relocations and pure unit gaps
 
-- [ ] **1.1 Relocate misplaced assertions**
-  - [ ] Merge the factory-surface checks from `tests/frontend/card-layers.test.js` into
+- [x] **1.1 Relocate misplaced assertions**
+  - [x] Merge the factory-surface checks from `tests/frontend/card-layers.test.js` into
         `tests/frontend/catalogDraftKeys.test.js` (catalog/chrome factories) and
         `tests/guards/installer-contract.test.js` (remaining card factories + cooling picker).
-  - [ ] Delete `tests/frontend/card-layers.test.js`.
-  - [ ] Move the `this.` source-text scan from `tests/frontend/libraryUi.test.js` into
+  - [x] Delete `tests/frontend/card-layers.test.js`.
+  - [x] Move the `this.` source-text scan from `tests/frontend/libraryUi.test.js` into
         `tests/guards/composition.test.js`.
-  - [ ] Move the "every shipped water profile declares a non-empty target set" invariant from
+  - [x] Move the "every shipped water profile declares a non-empty target set" invariant from
         `tests/frontend/water-card.test.js` into `tests/conformance/seed-conformance.test.js`.
-  - [ ] Gate: `make check`, `make test` (total count stable at ~1,343), `node scripts/shape-pins.mjs`.
+  - [x] Gate: `make check`, `make test` (total count stable at ~1,343), `node scripts/shape-pins.mjs`.
 
-- [ ] **1.2 Add missing hermetic tests (audit G4, G5, G6)**
-  - [ ] Hermetic tests for `views/import/emptySections.js` and `views/import/hopRouting.js`.
-  - [ ] Hermetic tests for `buildReportFormatted`, `buildReportTables`, `buildReportSummaries`
+- [x] **1.2 Add missing hermetic tests (audit G4, G5, G6)**
+  - [x] Hermetic tests for `views/import/emptySections.js` and `views/import/hopRouting.js`.
+  - [x] Hermetic tests for `buildReportFormatted`, `buildReportTables`, `buildReportSummaries`
         in `views/producer/reportFormat.js`, with a stub engine/catalog.
-  - [ ] Guard that every `SYSTEM_NODES` value in `views/registry/system.js` resolves to a node
+  - [x] Guard that every `SYSTEM_NODES` value in `views/registry/system.js` resolves to a node
         in `data/artifact.json`.
-  - [ ] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
-  - [ ] Commit: `Relocate misplaced assertions and cover pure gaps`
+  - [x] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
+  - [x] Commit: `Relocate misplaced assertions and cover pure gaps`
 
 ## Phase 2 — Core architectural extractions
 

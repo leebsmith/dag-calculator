@@ -4,7 +4,6 @@ import assert from "node:assert/strict";
 import { createTestApp, withFreshApp } from "./appHelpers.js";
 import { ionDelta } from "../../frontend/src/views/waterLogic.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
-import waterTargetProfiles from "../../data/seeds/water_target_profiles.json" with { type: "json" };
 
 async function loadWaterSource(app, source) {
   const identity = { ...app.engine.identity, "water.source": source };
@@ -336,29 +335,6 @@ test("the selector lists constraints first and keeps the pseudo-options at the e
 
   assert.equal(app.waterTargetSelection, "none");
 }));
-
-test("every shipped profile declares a non-empty target set", () => {
-  const modes = {
-    "soft-pilsner": ["calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
-    "balanced-pale": ["sulfate_so4", "chloride_cl"],
-    "hoppy-ipa": ["sulfate_so4", "chloride_cl"],
-    "burton-ipa": ["sulfate_so4", "chloride_cl"],
-    "west-coast-ipa": ["sulfate_so4", "chloride_cl"],
-    "hazy-ipa": ["sulfate_so4", "chloride_cl"],
-    "malty-amber": ["sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
-    "dark-stout": ["sulfate_so4", "chloride_cl", "alkalinity_as_caco3"],
-    "belgian-golden-tripel": ["sulfate_so4", "chloride_cl"],
-    "belgian-saison": ["sulfate_so4", "chloride_cl"],
-  };
-
-  for (const [id, expected] of Object.entries(modes)) {
-    const profile = waterTargetProfiles[id];
-    const declared = WATER_IONS.map((row) => row.ion).filter(
-      (ion) => typeof profile[ion] === "number" && profile[ion] > 0
-    );
-    assert.deepEqual(declared, expected, `${id} declares unexpected ions`);
-  }
-});
 
 test("the checklist payload carries the derived water dose", withFreshApp((app) => {
   const rows = app.brewDayPayload.phases.flatMap((phase) =>

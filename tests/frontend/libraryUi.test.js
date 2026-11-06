@@ -11,7 +11,7 @@ import {
   IDENTITY_KINDS,
   INGREDIENT_KINDS,
 } from "../../frontend/src/store/userCatalog.js";
-import { artifact, read } from "../guards/util.js";
+import { artifact } from "../guards/util.js";
 
 const ENGINE = {
   call: () => {
@@ -76,12 +76,6 @@ function field(app, name) {
   return app.libraryFields.find((spec) => spec.field === name);
 }
 
-const THIS_FREE_MODULES = [
-  "frontend/src/adapters/libraryFields.js",
-  "frontend/src/adapters/libraryListEditor.js",
-  "frontend/src/adapters/libraryComposition.js",
-];
-
 test("the library layers cover the declared surface without an app", () => {
   const layers = createLibraryLayers({
     artifact: artifact(),
@@ -94,12 +88,6 @@ test("the library layers cover the declared surface without an app", () => {
 
   assert.equal(layers.length, 4);
   assert.deepEqual([...new Set(keys)].sort(), [...LIBRARY_KEYS].sort());
-});
-
-test("the library layer modules address the app through getView, not this", () => {
-  for (const file of THIS_FREE_MODULES) {
-    assert.doesNotMatch(read(file), /\bthis\./, `${file}: no this access`);
-  }
 });
 
 test("the surface has two sections: identity sources and formulation ingredients", () => {
