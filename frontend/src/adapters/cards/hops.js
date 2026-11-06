@@ -4,7 +4,7 @@
 import { catalogDraftKeys, installCatalogDraft } from "./catalogDraft.js";
 import { installCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
-import { hopSectionMetaDescriptors, hopSectionState } from "../../views/producer/hopSections.js";
+import { hopSectionState } from "../../views/producer/hopSections.js";
 import {
   hopAlphaInputValue, hopAlphaLabel, hopBoilPctLabel, hopFormLabel, hopIbuLabel,
   hopMinutesLabel, hopAdditionLabel, hopPctLabel,
@@ -12,30 +12,26 @@ import {
 } from "../../views/producer/hopRows.js";
 import {
   HOP_MASS_KEY, HOP_MASS_UNITS, MAX_VISIBLE,
-  boilPolicyDescriptors, boilRowsFor, catalogResultLabel, combinedMassDisplay,
-  createHopFormatters, draftPartsTotal, draftSummary, hopAlphaOutsideStockFor,
+  boilRowsFor, createHopFormatters, hopAlphaOutsideStockFor,
   hopAlphaRangeText, hopCatalogEntries, hopCatalogItemMeta, hopMassText,
-  hopTempText, massTotalDisplay, massTotalKg, whirlpoolPolicyDescriptors,
-  whirlpoolRowsFor, whirlpoolTimelineDescriptors,
+  hopTempText, whirlpoolRowsFor,
 } from "../../views/hopsLogic.js";
-import { cycleUnit, formatWithDecimals } from "../../utils.js";
-import { reportError } from "../../observability.js";
+import {
+  draftDescriptors,
+  fieldDescriptors,
+  massDescriptors,
+  policyDescriptors,
+  resolveOrNull,
+  whirlpoolStartDescriptors,
+} from "./hopGetters.js";
+import { cycleUnit } from "../../utils.js";
 import { makeBoilRow } from "../../views/producer/boilPolicy.js";
 import {
   makeWhirlpoolRow, readWhirlpoolCeiling, whirlpoolCeilingBadge,
 } from "../../views/producer/whirlpoolPolicy.js";
 
-function resolveOrNull(engine, path) {
-  try {
-    return engine.resolve(path);
-  } catch (err) {
-    reportError("hops.resolve", err);
-    return null;
-  }
-}
-
-export function registerHopCard(app, ctx) {
-  installCatalogDraft(app, ctx, {
+function hopDraftConfig(ctx) {
+  return {
     prefix: "hop",
     Cap: "Hop",
     nodeId: N.collection,
@@ -65,9 +61,11 @@ export function registerHopCard(app, ctx) {
       label: "Total parts:",
       value: a.fmt.formatWithDecimals(a.hopDraftPartsTotal, 1),
     }),
-  });
+  };
+}
 
-  installCatalogDraft(app, ctx, {
+function whirlpoolDraftConfig(ctx) {
+  return {
     prefix: "whirlpoolHop",
     Cap: "WhirlpoolHop",
     nodeId: N.whirlpoolCollection,
@@ -98,56 +96,47 @@ export function registerHopCard(app, ctx) {
       label: "Total parts:",
       value: a.fmt.formatWithDecimals(a.whirlpoolHopDraftPartsTotal, 1),
     }),
-  });
+  };
+}
 
-  const { engine, artifact, ui } = ctx;
-
-  const { formatMass, formatTemp } = createHopFormatters({ artifact, engine, ui });
-
-  Object.assign(app, {
-    hopRows: [],
-    whirlpoolHopRows: [],
-    whirlpoolCoolingCeiling: [],
-    boilHopMassKg: null,
-    whirlpoolHopMassKg: null,
-    hopBoundaryTotalMassKg: null,
-    hopForms: BOIL_HOP_FORMS,
-    hopCatalogForm: "t90_pellet",
-    whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
-    whirlpoolHopCatalogForm: "t90_pellet",
-    whirlpoolHelpOpen: false,
-    boilHopAlphaMassKg: null,
-    whirlpoolHopAlphaMassKg: null,
-    ...hopSectionState(),
-
+function catalogFormActions({ getView }) {
+  return {
     setHopCatalogForm(value) {
-      this.hopCatalogForm = value;
-      this.hopSearch = "";
-      this.hopCategoryFilter = [];
+      const view = getView();
+      view.hopCatalogForm = value;
+      view.hopSearch = "";
+      view.hopCategoryFilter = [];
     },
 
     setWhirlpoolHopCatalogForm(value) {
-      this.whirlpoolHopCatalogForm = value;
-      this.whirlpoolHopSearch = "";
-      this.whirlpoolHopCategoryFilter = [];
+      const view = getView();
+      view.whirlpoolHopCatalogForm = value;
+      view.whirlpoolHopSearch = "";
+      view.whirlpoolHopCategoryFilter = [];
     },
 
     toggleWhirlpoolHelp() {
-      this.whirlpoolHelpOpen = !this.whirlpoolHelpOpen;
+      const view = getView();
+      view.whirlpoolHelpOpen = !view.whirlpoolHelpOpen;
     },
 
     toggleHopMassUnit() {
-      const inherited = this.unitMode?.mass ?? "g";
-      const next = cycleUnit(HOP_MASS_UNITS, this.hopMassUnit);
-      this.setFieldUnit(HOP_MASS_KEY, next === inherited ? null : next);
+      const view = getView();
+      const inherited = view.unitMode?.mass ?? "g";
+      const next = cycleUnit(HOP_MASS_UNITS, view.hopMassUnit);
+      view.setFieldUnit(HOP_MASS_KEY, next === inherited ? null : next);
     },
+  };
+}
 
+function labelActions({ cache, getView, formatMass, formatTemp }) {
+  return {
     hopMass(row) {
-      return hopMassText(row, this.hopMassUnit, formatMass);
+      return hopMassText(row, getView().hopMassUnit, formatMass);
     },
 
     whirlpoolHopMass(row) {
-      return hopMassText(row, this.hopMassUnit, formatMass);
+      return hopMassText(row, getView().hopMassUnit, formatMass);
     },
 
     hopForm(row) {
@@ -163,25 +152,11 @@ export function registerHopCard(app, ctx) {
     },
 
     hopAlphaRange(row) {
-      return hopAlphaRangeText(ctx.cache, row);
+      return hopAlphaRangeText(cache, row);
     },
 
     hopAlphaOutsideStock(row) {
-      return hopAlphaOutsideStockFor(ctx.cache, row);
-    },
-
-    // Batch-scoped measurement edit: the row is batch data, not a record. The
-    // IBU -> mass solve reads this value, so the mass re-solves immediately.
-    setHopAlpha(kind, index, value) {
-      const nodeId = kind === "whirlpool" ? N.whirlpoolCollection : N.collection;
-      const rows = (engine.get(nodeId) ?? []).map((row) => ({ ...row }));
-      const row = rows[index];
-      if (!row) return;
-      const pct = Number(value);
-      row.alpha_acid_pct = Number.isFinite(pct) ? Math.max(0, Math.min(1, pct / 100)) : 0;
-      engine.setCollection(nodeId, rows);
-      this.scheduleSolve();
-      this.notify();
+      return hopAlphaOutsideStockFor(cache, row);
     },
 
     hopBoilPct(row) {
@@ -191,6 +166,7 @@ export function registerHopCard(app, ctx) {
     hopMinutes(row) {
       return hopMinutesLabel(row);
     },
+
     hopAddition(row) {
       return hopAdditionLabel(row);
     },
@@ -206,161 +182,75 @@ export function registerHopCard(app, ctx) {
     hopPct(row) {
       return hopPctLabel(row);
     },
+  };
+}
+
+function alphaActions({ engine, getView }) {
+  return {
+    // Batch-scoped measurement edit: the row is batch data, not a record. The
+    // IBU -> mass solve reads this value, so the mass re-solves immediately.
+    setHopAlpha(kind, index, value) {
+      const view = getView();
+      const nodeId = kind === "whirlpool" ? N.whirlpoolCollection : N.collection;
+      const rows = (engine.get(nodeId) ?? []).map((row) => ({ ...row }));
+      const row = rows[index];
+      if (!row) return;
+      const pct = Number(value);
+      row.alpha_acid_pct = Number.isFinite(pct) ? Math.max(0, Math.min(1, pct / 100)) : 0;
+      engine.setCollection(nodeId, rows);
+      view.scheduleSolve();
+      view.notify();
+    },
+  };
+}
+
+export function createHopCard(
+  ctx,
+  formatters = createHopFormatters({ artifact: ctx.artifact, engine: ctx.engine, ui: ctx.ui })
+) {
+  const { engine, cache, getView } = ctx;
+  const { formatMass, formatTemp } = formatters;
+  const actions = {
+    hopRows: [],
+    whirlpoolHopRows: [],
+    whirlpoolCoolingCeiling: [],
+    boilHopMassKg: null,
+    whirlpoolHopMassKg: null,
+    hopBoundaryTotalMassKg: null,
+    hopForms: BOIL_HOP_FORMS,
+    hopCatalogForm: "t90_pellet",
+    whirlpoolHopForms: WHIRLPOOL_HOP_FORMS,
+    whirlpoolHopCatalogForm: "t90_pellet",
+    whirlpoolHelpOpen: false,
+    boilHopAlphaMassKg: null,
+    whirlpoolHopAlphaMassKg: null,
+    ...hopSectionState(getView),
+    ...catalogFormActions({ getView }),
+    ...labelActions({ cache, getView, formatMass, formatTemp }),
+    ...alphaActions({ engine, getView }),
+  };
+  Object.defineProperties(actions, {
+    ...massDescriptors({ formatMass, getView }),
+    ...draftDescriptors({ getView }),
+    ...whirlpoolStartDescriptors({ getView }),
+    ...policyDescriptors({ cache, engine, formatTemp, formatMass, getView }),
+    ...fieldDescriptors(getView),
   });
+  return actions;
+}
 
-  Object.defineProperties(app, {
-    hopMassUnit: {
-      configurable: true,
-      get() {
-        return this.unitMode?.[HOP_MASS_KEY] ?? this.unitMode?.mass ?? "g";
-      },
-    },
-    hopDraftPartsTotal: {
-      configurable: true,
-      get() {
-        return draftPartsTotal(this.draftRows);
-      },
-    },
-    hopDraftSummary: {
-      configurable: true,
-      get() {
-        return draftSummary(this.draftRows);
-      },
-    },
-    whirlpoolHopDraftPartsTotal: {
-      configurable: true,
-      get() {
-        return draftPartsTotal(this.draftRows);
-      },
-    },
-    whirlpoolHopDraftSummary: {
-      configurable: true,
-      get() {
-        return draftSummary(this.draftRows);
-      },
-    },
-    hopResultLabel: {
-      configurable: true,
-      get() {
-        return catalogResultLabel({
-          visible: this.hopVisibleCatalog.length,
-          filtered: this.hopFilteredCatalog.length,
-          truncated: this.hopCatalogTruncated,
-        });
-      },
-    },
-    whirlpoolHopResultLabel: {
-      configurable: true,
-      get() {
-        return catalogResultLabel({
-          visible: this.whirlpoolHopVisibleCatalog.length,
-          filtered: this.whirlpoolHopFilteredCatalog.length,
-          truncated: this.whirlpoolHopCatalogTruncated,
-        });
-      },
-    },
-    boilHopTotalMassDisplay: {
-      configurable: true,
-      get() {
-        return massTotalDisplay({
-          rows: this.hopRows,
-          boundaryMassKg: this.boilHopMassKg,
-          unit: this.hopMassUnit,
-          formatMass,
-        });
-      },
-    },
-    hopTotalMassKg: {
-      configurable: true,
-      get() {
-        return massTotalKg(
-          [...(this.hopRows ?? []), ...(this.whirlpoolHopRows ?? [])],
-          this.hopBoundaryTotalMassKg
-        );
-      },
-    },
-    hopTotalMassDisplay: {
-      configurable: true,
-      get() {
-        return combinedMassDisplay({
-          boilRows: this.hopRows,
-          whirlpoolRows: this.whirlpoolHopRows,
-          boundaryMassKg: this.hopBoundaryTotalMassKg,
-          unit: this.hopMassUnit,
-          formatMass,
-        });
-      },
-    },
-    whirlpoolHopTotalMassDisplay: {
-      configurable: true,
-      get() {
-        return massTotalDisplay({
-          rows: this.whirlpoolHopRows,
-          boundaryMassKg: this.whirlpoolHopMassKg,
-          unit: this.hopMassUnit,
-          formatMass,
-        });
-      },
-    },
-    setWhirlpoolStartBand: {
-      configurable: true,
-      writable: true,
-      value(bandId) {
-        const band = this.whirlpoolStartBands.find((candidate) => candidate.value === bandId);
-        if (!band || this.whirlpoolHopActiveIndex == null) return;
-        this.patchDraftRow(this.whirlpoolHopActiveIndex, { initial_temp_c: band.mid });
-      },
-    },
-    ...whirlpoolPolicyDescriptors({
-      notes: ctx.cache?.seeds?.whirlpoolNotes ?? {},
-      formatTemp,
-      formatMass,
-      formatNumber: formatWithDecimals,
-      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
-      whirlpoolIbu: () => Number(resolveOrNull(engine, N.whirlpoolIbu)),
-      activeRow: () => app.whirlpoolHopActiveRow,
-      alphaMassKg: () => app.whirlpoolHopAlphaMassKg,
-    }),
-    ...boilPolicyDescriptors({
-      formatMass,
-      formatNumber: formatWithDecimals,
-      postBoilVolume: () => resolveOrNull(engine, N.postBoilVolume),
-      boilIbu: () => Number(resolveOrNull(engine, N.boilIbu)),
-      rows: () => app.hopRows,
-      alphaMassKg: () => app.boilHopAlphaMassKg,
-    }),
-    ...whirlpoolTimelineDescriptors({
-      formatTemp,
-      formatNumber: formatWithDecimals,
-      readTimeline: () => ({
-        segments: resolveOrNull(engine, N.whirlpoolTimeline) ?? null,
-        chills: resolveOrNull(engine, N.whirlpoolChills) ?? [],
-      }),
-      reportError,
-      timelineState: () => app.whirlpoolTimelineState,
-      rows: () => app.whirlpoolHopRows,
-    }),
-    ...hopSectionMetaDescriptors(),
+export function registerHopCard(app, ctx = {}) {
+  installCatalogDraft(app, ctx, hopDraftConfig(ctx));
+  installCatalogDraft(app, ctx, whirlpoolDraftConfig(ctx));
+  const formatters = createHopFormatters({
+    artifact: ctx.artifact,
+    engine: ctx.engine,
+    ui: ctx.ui,
   });
-
-  installCoolingCurvePicker(app, ctx, { formatTemp });
-
-  for (const [key, id] of Object.entries({
-    boilIbuField: N.boilIbu,
-    whirlpoolIbuField: N.whirlpoolIbu,
-    totalIbuField: N.totalIbu,
-    whirlpoolAmbientField: N.whirlpoolAmbient,
-    whirlpoolCoolingField: N.whirlpoolCoolingTimeConstant,
-    whirlpoolKnockoutField: N.whirlpoolKnockout,
-    whirlpoolStartTempField: N.whirlpoolStartTemp,
-  })) {
-    Object.defineProperty(app, key, {
-      configurable: true,
-      get() {
-        return (this.fieldsBySlice[N.slice] ?? []).find((field) => field.id === id) ?? null;
-      },
-    });
-  }
+  const actions = createHopCard({ ...ctx, getView: ctx.getView ?? (() => app) }, formatters);
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  installCoolingCurvePicker(app, ctx, { formatTemp: formatters.formatTemp });
+  return actions;
 }
 
 export function refreshHopCard(app, ctx) {

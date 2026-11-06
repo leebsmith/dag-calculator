@@ -50,6 +50,7 @@ const STYLE_TARGETS = ["frontend/src/adapters/cards/style/targets.js"];
 const STYLE_CONFORMANCE = ["frontend/src/adapters/cards/style/conformance.js"];
 const HOP = [
   "frontend/src/adapters/cards/hops.js",
+  "frontend/src/adapters/cards/hopGetters.js",
   "frontend/src/adapters/cards/hopsCoolingCurve.js",
   "frontend/src/adapters/cards/hopsStrategy.js",
 ];

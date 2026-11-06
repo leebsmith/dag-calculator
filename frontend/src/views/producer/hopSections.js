@@ -9,32 +9,35 @@ function sectionMeta(rows, ibuField) {
   return `${additions} · ${formatQuantity(ibuField, { fallbackUnit: "IBU" })}`;
 }
 
-export function hopSectionState() {
+export function hopSectionState(getView) {
   return {
     hopSections: { boil: true, whirlpool: true },
 
     toggleHopSection(sectionId) {
-      this.hopSections[sectionId] = !this.hopSections[sectionId];
+      const view = getView();
+      view.hopSections[sectionId] = !view.hopSections[sectionId];
     },
 
     isHopSectionOpen(sectionId) {
-      return !!this.hopSections[sectionId];
+      return !!getView().hopSections[sectionId];
     },
   };
 }
 
-export function hopSectionMetaDescriptors() {
+export function hopSectionMetaDescriptors(getView) {
   return {
     boilHopSectionMeta: {
       configurable: true,
       get() {
-        return sectionMeta(this.hopRows, this.boilIbuField);
+        const view = getView();
+        return sectionMeta(view.hopRows, view.boilIbuField);
       },
     },
     whirlpoolHopSectionMeta: {
       configurable: true,
       get() {
-        return sectionMeta(this.whirlpoolHopRows, this.whirlpoolIbuField);
+        const view = getView();
+        return sectionMeta(view.whirlpoolHopRows, view.whirlpoolIbuField);
       },
     },
   };
