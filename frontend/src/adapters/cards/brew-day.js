@@ -1,21 +1,15 @@
 import { BREW_DAY_NODES as N } from "../../views/registry/brew-day.js";
 import {
+  BREW_DAY_LEVELS,
+  INITIAL_OPEN_SECTIONS,
   buildBrewDayPayload,
   defaultBrewDayRows,
   materializeBrewDayRows,
-} from "../../views/brewDay.js";
-import { CHECKLIST_LEVELS, DEFAULT_LEVEL } from "../../views/checklist/catalog.js";
-import { selectChecklistRows } from "../../views/producer/checklist/select.js";
-
-const INITIAL_OPEN_SECTIONS = {
-  pre: true,
-  brew: false,
-  post: false,
-};
-
-function updateRow(rows, stepId, patch) {
-  return rows.map((row) => (row.step_id === stepId ? { ...row, ...patch } : row));
-}
+  selectBrewDayLevel,
+  selectBrewDayRow,
+  selectBrewDaySections,
+  updateBrewDayRow,
+} from "../../views/brewDayLogic.js";
 
 export function registerBrewDayCard(app, ctx) {
   const { engine } = ctx;
@@ -23,10 +17,10 @@ export function registerBrewDayCard(app, ctx) {
   Object.assign(app, {
     brewDayRows: defaultBrewDayRows(),
     brewDayOpenSections: { ...INITIAL_OPEN_SECTIONS },
-    brewDayLevels: CHECKLIST_LEVELS,
+    brewDayLevels: BREW_DAY_LEVELS,
 
     brewDayRow(stepId) {
-      return this.brewDayRows.find((row) => row.step_id === stepId) ?? null;
+      return selectBrewDayRow(this.brewDayRows, stepId);
     },
 
     toggleBrewDaySection(sectionId) {
@@ -49,16 +43,20 @@ export function registerBrewDayCard(app, ctx) {
     },
 
     setBrewDayNote(stepId, text) {
-      this._writeBrewDayRows(updateRow(this.brewDayRows, stepId, { note: String(text ?? "") }));
+      this._writeBrewDayRows(
+        updateBrewDayRow(this.brewDayRows, stepId, { note: String(text ?? "") })
+      );
     },
 
     setBrewDaySkipped(stepId, skipped) {
-      this._writeBrewDayRows(updateRow(this.brewDayRows, stepId, { skipped: !!skipped }));
+      this._writeBrewDayRows(
+        updateBrewDayRow(this.brewDayRows, stepId, { skipped: !!skipped })
+      );
     },
 
     setBrewDaySkipReason(stepId, reason) {
       this._writeBrewDayRows(
-        updateRow(this.brewDayRows, stepId, { skip_reason: String(reason ?? "") })
+        updateBrewDayRow(this.brewDayRows, stepId, { skip_reason: String(reason ?? "") })
       );
     },
   });
@@ -67,13 +65,13 @@ export function registerBrewDayCard(app, ctx) {
     brewDayLevel: {
       configurable: true,
       get() {
-        return engine.get(N.level) ?? DEFAULT_LEVEL;
+        return selectBrewDayLevel({ level: engine.get(N.level) });
       },
     },
     brewDaySections: {
       configurable: true,
       get() {
-        return selectChecklistRows({
+        return selectBrewDaySections({
           artifact: ctx.artifact,
           engine,
           unitMode: this.unitMode,

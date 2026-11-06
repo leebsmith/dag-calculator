@@ -15,7 +15,7 @@ const BREW_DAY_MODULES = [
   "frontend/src/store/brewSessionGetters.js",
   "frontend/src/store/brewSessionModel.js",
   "frontend/src/store/observationCorrections.js",
-  "frontend/src/views/brewDay.js",
+  "frontend/src/views/brewDayLogic.js",
   "frontend/src/views/checklist/catalog.js",
   "frontend/src/views/producer/checklist/providers.js",
   "frontend/src/views/producer/checklist/table.js",

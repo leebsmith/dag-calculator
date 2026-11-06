@@ -23,7 +23,7 @@ import whirlpoolNotes from "../../../data/seeds/whirlpool-notes.json" with { typ
 import coolingCurves from "../../../data/seeds/cooling_curves.json" with { type: "json" };
 import { ingestEquipment } from "./equipmentIngest.js";
 import { CATALOGS } from "./userCatalog.js";
-import { defaultBrewDayRows } from "../views/brewDay.js";
+import { defaultBrewDayRows } from "../views/brewDayLogic.js";
 
 const equipment = ingestEquipment(equipmentRaw, artifact);
 
