@@ -8,6 +8,10 @@ export function createHopStrategy({ getView }) {
   };
 }
 
+export function createHopStrategyLayers(ctx) {
+  return [createHopStrategy(ctx)];
+}
+
 export function installHopStrategy(app, dependencies = {}) {
   Object.assign(
     app,

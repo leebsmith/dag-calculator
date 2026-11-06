@@ -92,6 +92,10 @@ export function createBrewDayCard({ engine, artifact, getView, observability }) 
   return actions;
 }
 
+export function createBrewDayLayers(ctx) {
+  return [createBrewDayCard(ctx)];
+}
+
 export function registerBrewDayCard(app, ctx = {}) {
   const actions = createBrewDayCard({ ...ctx, getView: ctx.getView ?? (() => app) });
   Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));

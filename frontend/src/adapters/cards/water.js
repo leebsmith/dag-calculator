@@ -42,6 +42,10 @@ export function createWaterCard(ctx) {
   return actions;
 }
 
+export function createWaterLayers(ctx) {
+  return [createWaterCard(ctx)];
+}
+
 export function registerWaterCard(app, ctx = {}) {
   const actions = createWaterCard({ ...ctx, getView: ctx.getView ?? (() => app) });
   Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));

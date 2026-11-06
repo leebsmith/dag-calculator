@@ -214,6 +214,10 @@ export function createMashCard(ctx) {
   return actions;
 }
 
+export function createMashLayers(ctx) {
+  return [createMashCard(ctx)];
+}
+
 export function registerMashCard(app, ctx = {}) {
   const actions = createMashCard({ ...ctx, getView: ctx.getView ?? (() => app) });
   Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
