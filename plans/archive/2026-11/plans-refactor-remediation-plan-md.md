@@ -93,5 +93,5 @@
 
 ## Final
 
-- [ ] `make verify` (check + test + production build).
-- [ ] Archive this plan to `plans/archive/2026-11/` and commit.
+- [x] `make verify` (check + test + production build).
+- [x] Archive this plan to `plans/archive/2026-11/` and commit.
