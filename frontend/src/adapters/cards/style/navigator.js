@@ -22,10 +22,200 @@ import { masterUnit } from "../../../views/registry/units.js";
 import { formatWithDecimals, roundTo } from "../../../utils.js";
 import { reportError } from "../../../observability.js";
 
-export function registerStyleNavigator(app, ctx) {
-  const { engine } = ctx;
+function navigatorActions({ engine, getView }) {
+  return {
+    // ABV is the control; the OE/AE point is its inverse on the fixed-AA ray.
+    // The region comes from the envelope (batch.style_* roots) so it tracks
+    // envelope edits (WYSIWYG).
+    computeStyleTarget() {
+      const view = getView();
+      Object.assign(
+        view,
+        styleRegionState({
+          ogMin: engine.resolve(N.envelope.ogMin),
+          ogMax: engine.resolve(N.envelope.ogMax),
+          fgMin: engine.resolve(N.envelope.fgMin),
+          fgMax: engine.resolve(N.envelope.fgMax),
+          abvMin: engine.resolve(N.envelope.abvMin),
+          abvMax: engine.resolve(N.envelope.abvMax),
+        })
+      );
+      // A short region touches no boundary: the solved reads stay behind it.
+      // Below an unrealized solve there is no batch point to place — the
+      // envelope centroid would be a number no solve produced.
+      view.styleExtract =
+        view.styleRegion.length < 3 || view.styleUnsolved
+          ? null
+          : styleExtractPoint({
+              region: view.styleRegion,
+              solvedOg: engine.resolve(N.realized.og),
+              solvedAa: engine.resolve(N.apparentAttenuation),
+              fallbackAa: view.styleSolvedAa,
+              targetAbv: engine.get(N.targetAbv),
+            });
+    },
 
-  Object.assign(app, {
+    // Explicit state update: the getter only reads this snapshot. The pure
+    // projection lives in views/styleNavigatorLogic.js.
+    updateStylePreview() {
+      const view = getView();
+      view.stylePreviewState = stylePreviewModel({
+        region: view.styleRegion,
+        point: view.styleExtract,
+        safestPoint: view.styleSafestPoint,
+        pin: view.scalePin,
+        target: view.activeScaleTarget,
+        unsolved: view.styleUnsolved,
+        gravity: view.styleGravityDisplay,
+        envelope: view.styleEnvelope,
+      });
+    },
+
+    // Persist a free ABV target. The fixed-AA ray is a visualization, not a
+    // constraint; the solver realizes OG/FG from the composition.
+    writeStyleAbv(value) {
+      const view = getView();
+      if (!Number.isFinite(value) || value <= 0) return false;
+      const aa = view.styleSolvedAa;
+      if (Number.isFinite(aa) && aa < 1) {
+        const inverse = extractFromTarget(aa, value);
+        if (inverse) view.styleExtract = inverse;
+      }
+      view.setRoot(N.targetAbv, value);
+      view.styleAbvCentered = true;
+      view.updateStylePreview();
+      return true;
+    },
+
+    setStyleTargetAbv(valueOrElement) {
+      const view = getView();
+      const element =
+        valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
+      const raw = element ? element.value : valueOrElement;
+      const previous = view.styleAbvTarget;
+      const numeric = Number(raw);
+      if (raw === "" || raw === null || !Number.isFinite(numeric) || numeric <= 0) {
+        if (element) element.value = formatWithDecimals(previous, 1);
+        return;
+      }
+      const target = roundTo(numeric, 1);
+      if (!view.writeStyleAbv(target)) {
+        if (element) element.value = formatWithDecimals(previous, 1);
+        return;
+      }
+      view.styleAbvTouched = true;
+      view.styleAbvCentered = true;
+      if (element) element.value = formatWithDecimals(target, 1);
+      view.scheduleSolve();
+      view.notify();
+    },
+
+    centerOrClampStyleAbv() {
+      return false;
+    },
+
+    afterCompute() {
+      return;
+    },
+
+    onBatchLoad() {
+      const view = getView();
+      const hasTarget = view.master.getRoot(N.targetAbv) !== undefined;
+      view.styleAbvTouched = hasTarget;
+      view.styleAbvCentered = hasTarget;
+      view.styleExtract = null;
+      view.styleSolvedAa = null;
+      view.styleSolvedCap = null;
+      view.styleSolvedVolume = null;
+    },
+
+    resetStyleTarget() {
+      getView().resetScaleTarget();
+    },
+
+    styleTargetNearest() {
+      const view = getView();
+      return targetNearestText({
+        nearest: view.styleTargetRisk?.nearest,
+        gravity: view.styleGravityDisplay,
+      });
+    },
+  };
+}
+
+function navigatorDescriptors({ engine, getView }) {
+  return {
+    styleAbvBounds: {
+      configurable: true,
+      get() {
+        const view = getView();
+        return abvBoundsFor({
+          extract: view.styleExtract,
+          aa: view.styleSolvedAa,
+          region: view.styleRegion,
+        });
+      },
+    },
+    styleAbvTarget: {
+      configurable: true,
+      get() {
+        return abvTargetFor(engine.get(N.targetAbv), getView().styleTargetInfo);
+      },
+    },
+    // The master gravity pick governs the plot and every gravity readout on the
+    // card. Per-field overrides stay per-field; a card-level figure is not a
+    // field, so it follows the menu.
+    styleGravityDisplay: {
+      configurable: true,
+      get() {
+        return gravityDisplay(masterUnit(getView().unitMode, "gravity") ?? "Plato");
+      },
+    },
+    styleGravityReadouts: {
+      configurable: true,
+      get() {
+        const view = getView();
+        return gravityReadoutsFor({
+          info: view.styleTargetInfo,
+          gravity: view.styleGravityDisplay,
+        });
+      },
+    },
+    styleTargetInfo: {
+      configurable: true,
+      get() {
+        return targetInfoFor({ extract: getView().styleExtract });
+      },
+    },
+    styleTargetRisk: {
+      configurable: true,
+      get() {
+        const view = getView();
+        return targetRiskFor({
+          extract: view.styleExtract,
+          safestPoint: view.styleSafestPoint,
+          region: view.styleRegion,
+          envelope: view.styleEnvelope,
+        });
+      },
+    },
+    stylePreview: {
+      configurable: true,
+      get() {
+        return getView().stylePreviewState;
+      },
+    },
+    styleUnsolved: {
+      configurable: true,
+      get() {
+        return getView().boundaryStatuses?.[N.solverBatch] !== "ok";
+      },
+    },
+  };
+}
+
+export function createStyleNavigator(ctx) {
+  const actions = {
     styleRegion: [],
     styleEnvelope: null,
     styleSafestPoint: null,
@@ -39,184 +229,16 @@ export function registerStyleNavigator(app, ctx) {
     attenuationCap: null,
     attenuationSugarLift: null,
     stylePreviewState: null,
+    ...navigatorActions(ctx),
+  };
+  Object.defineProperties(actions, navigatorDescriptors(ctx));
+  return actions;
+}
 
-    // ABV is the control; the OE/AE point is its inverse on the fixed-AA ray.
-    // The region comes from the envelope (batch.style_* roots) so it tracks
-    // envelope edits (WYSIWYG).
-    computeStyleTarget() {
-      Object.assign(
-        this,
-        styleRegionState({
-          ogMin: engine.resolve(N.envelope.ogMin),
-          ogMax: engine.resolve(N.envelope.ogMax),
-          fgMin: engine.resolve(N.envelope.fgMin),
-          fgMax: engine.resolve(N.envelope.fgMax),
-          abvMin: engine.resolve(N.envelope.abvMin),
-          abvMax: engine.resolve(N.envelope.abvMax),
-        })
-      );
-      // A short region touches no boundary: the solved reads stay behind it.
-      // Below an unrealized solve there is no batch point to place — the
-      // envelope centroid would be a number no solve produced.
-      this.styleExtract =
-        this.styleRegion.length < 3 || this.styleUnsolved
-          ? null
-          : styleExtractPoint({
-              region: this.styleRegion,
-              solvedOg: engine.resolve(N.realized.og),
-              solvedAa: engine.resolve(N.apparentAttenuation),
-              fallbackAa: this.styleSolvedAa,
-              targetAbv: engine.get(N.targetAbv),
-            });
-    },
-
-    // Explicit state update: the getter only reads this snapshot. The pure
-    // projection lives in views/styleNavigatorLogic.js.
-    updateStylePreview() {
-      this.stylePreviewState = stylePreviewModel({
-        region: this.styleRegion,
-        point: this.styleExtract,
-        safestPoint: this.styleSafestPoint,
-        pin: this.scalePin,
-        target: this.activeScaleTarget,
-        unsolved: this.styleUnsolved,
-        gravity: this.styleGravityDisplay,
-        envelope: this.styleEnvelope,
-      });
-    },
-
-    // Persist a free ABV target. The fixed-AA ray is a visualization, not a
-    // constraint; the solver realizes OG/FG from the composition.
-    writeStyleAbv(value) {
-      if (!Number.isFinite(value) || value <= 0) return false;
-      const aa = this.styleSolvedAa;
-      if (Number.isFinite(aa) && aa < 1) {
-        const inverse = extractFromTarget(aa, value);
-        if (inverse) this.styleExtract = inverse;
-      }
-      this.setRoot(N.targetAbv, value);
-      this.styleAbvCentered = true;
-      this.updateStylePreview();
-      return true;
-    },
-
-    setStyleTargetAbv(valueOrElement) {
-      const element =
-        valueOrElement && typeof valueOrElement === "object" ? valueOrElement : null;
-      const raw = element ? element.value : valueOrElement;
-      const previous = this.styleAbvTarget;
-      const numeric = Number(raw);
-      if (raw === "" || raw === null || !Number.isFinite(numeric) || numeric <= 0) {
-        if (element) element.value = formatWithDecimals(previous, 1);
-        return;
-      }
-      const target = roundTo(numeric, 1);
-      if (!this.writeStyleAbv(target)) {
-        if (element) element.value = formatWithDecimals(previous, 1);
-        return;
-      }
-      this.styleAbvTouched = true;
-      this.styleAbvCentered = true;
-      if (element) element.value = formatWithDecimals(target, 1);
-      this.scheduleSolve();
-      this.notify();
-    },
-
-    centerOrClampStyleAbv() {
-      return false;
-    },
-
-    afterCompute() {
-      return;
-    },
-
-    onBatchLoad() {
-      const hasTarget = this.master.getRoot(N.targetAbv) !== undefined;
-      this.styleAbvTouched = hasTarget;
-      this.styleAbvCentered = hasTarget;
-      this.styleExtract = null;
-      this.styleSolvedAa = null;
-      this.styleSolvedCap = null;
-      this.styleSolvedVolume = null;
-    },
-
-    resetStyleTarget() {
-      this.resetScaleTarget();
-    },
-
-    styleTargetNearest() {
-      return targetNearestText({
-        nearest: this.styleTargetRisk?.nearest,
-        gravity: this.styleGravityDisplay,
-      });
-    },
-  });
-
-  Object.defineProperties(app, {
-    styleAbvBounds: {
-      configurable: true,
-      get() {
-        return abvBoundsFor({
-          extract: this.styleExtract,
-          aa: this.styleSolvedAa,
-          region: this.styleRegion,
-        });
-      },
-    },
-    styleAbvTarget: {
-      configurable: true,
-      get() {
-        return abvTargetFor(engine.get(N.targetAbv), this.styleTargetInfo);
-      },
-    },
-    // The master gravity pick governs the plot and every gravity readout on the
-    // card. Per-field overrides stay per-field; a card-level figure is not a
-    // field, so it follows the menu.
-    styleGravityDisplay: {
-      configurable: true,
-      get() {
-        return gravityDisplay(masterUnit(this.unitMode, "gravity") ?? "Plato");
-      },
-    },
-    styleGravityReadouts: {
-      configurable: true,
-      get() {
-        return gravityReadoutsFor({
-          info: this.styleTargetInfo,
-          gravity: this.styleGravityDisplay,
-        });
-      },
-    },
-    styleTargetInfo: {
-      configurable: true,
-      get() {
-        return targetInfoFor({ extract: this.styleExtract });
-      },
-    },
-    styleTargetRisk: {
-      configurable: true,
-      get() {
-        return targetRiskFor({
-          extract: this.styleExtract,
-          safestPoint: this.styleSafestPoint,
-          region: this.styleRegion,
-          envelope: this.styleEnvelope,
-        });
-      },
-    },
-    stylePreview: {
-      configurable: true,
-      get() {
-        return this.stylePreviewState;
-      },
-    },
-    styleUnsolved: {
-      configurable: true,
-      get() {
-        return this.boundaryStatuses?.[N.solverBatch] !== "ok";
-      },
-    },
-  });
+export function registerStyleNavigator(app, ctx = {}) {
+  const actions = createStyleNavigator({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshStyleNavigator(app, ctx) {
