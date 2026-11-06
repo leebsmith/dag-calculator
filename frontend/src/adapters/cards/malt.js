@@ -44,59 +44,59 @@ export function makeRow(malt) {
   };
 }
 
-export function registerMaltCard(app, ctx) {
-  installCatalogDraft(app, ctx, {
-    prefix: "malt",
-    Cap: "Malt",
-    nodeId: N.majorMalts,
-    seedKey: "malts",
-    idField: "catalog_id",
-    categoryField: "category",
-    standardField: "standard_malt",
-    standardNameField: "standard_name",
-    standardDescriptionField: "generic_description",
-    familyField: "family",
-    brandField: "maltster",
-    productSearchLimit: 10,
-    makeRow,
-    maxVisible: MAX_VISIBLE,
-    canAdd: (target) => !target.maltAtLimit,
-    itemMeta: maltItemMeta,
-    groupMeta: maltGroupMeta,
-    searchPlaceholder: "Search malts by name…",
-    emptyMessage: "No matching standards or malts found.",
-    emptyDrilldownMessage: "No matching malts found.",
-    resultLabel: (state) =>
-      state.maltStandard
-        ? `Showing ${state.maltFilteredCatalog.length} malts`
-        : state.maltSearch.trim()
-          ? `${state.maltStandardGroups.length} standards · ${state.maltProductMatches.length} malts`
-          : `Showing ${state.maltStandardGroups.length} standards`,
-    drawerId: "malt-drawer",
-    toolbarNote:
-      "Enter relative proportional parts. Hamilton normalizes the bill to exactly 100.0%.",
-    addLabel: "＋ Add Malt from Catalog",
-    textColumns: ["name", "category"],
-    canClone: true,
-    cloneRow: (state, ri) => state.cloneDraftMalt(ri),
-    emptyText: "No malts in the draft. Click “＋ Add Malt from Catalog” to begin.",
-    totals: (state) => ({ label: "", value: state.maltDraftTotals }),
-    rowBadge: (state, row, columnId) =>
-      columnId === "pct"
-        ? {
-            className: state.maltIsTrace(row) ? "is-trace" : "is-valid",
-            text: state.maltIsTrace(row) ? "✗" : "✓",
-          }
-        : null,
-  });
+const MALT_CONFIG = {
+  prefix: "malt",
+  Cap: "Malt",
+  nodeId: N.majorMalts,
+  seedKey: "malts",
+  idField: "catalog_id",
+  categoryField: "category",
+  standardField: "standard_malt",
+  standardNameField: "standard_name",
+  standardDescriptionField: "generic_description",
+  familyField: "family",
+  brandField: "maltster",
+  productSearchLimit: 10,
+  makeRow,
+  maxVisible: MAX_VISIBLE,
+  canAdd: (target) => !target.maltAtLimit,
+  itemMeta: maltItemMeta,
+  groupMeta: maltGroupMeta,
+  searchPlaceholder: "Search malts by name…",
+  emptyMessage: "No matching standards or malts found.",
+  emptyDrilldownMessage: "No matching malts found.",
+  resultLabel: (state) =>
+    state.maltStandard
+      ? `Showing ${state.maltFilteredCatalog.length} malts`
+      : state.maltSearch.trim()
+        ? `${state.maltStandardGroups.length} standards · ${state.maltProductMatches.length} malts`
+        : `Showing ${state.maltStandardGroups.length} standards`,
+  drawerId: "malt-drawer",
+  toolbarNote:
+    "Enter relative proportional parts. Hamilton normalizes the bill to exactly 100.0%.",
+  addLabel: "＋ Add Malt from Catalog",
+  textColumns: ["name", "category"],
+  canClone: true,
+  cloneRow: (state, ri) => state.cloneDraftMalt(ri),
+  emptyText: "No malts in the draft. Click “＋ Add Malt from Catalog” to begin.",
+  totals: (state) => ({ label: "", value: state.maltDraftTotals }),
+  rowBadge: (state, row, columnId) =>
+    columnId === "pct"
+      ? {
+          className: state.maltIsTrace(row) ? "is-trace" : "is-valid",
+          text: state.maltIsTrace(row) ? "✗" : "✓",
+        }
+      : null,
+};
 
-  Object.assign(app, {
-    // Grain-bill rows for the summary card (refreshed by refreshMaltCard).
+export function createMaltCard({ getView }) {
+  const actions = {
     gristRows: [],
     maltSectionOpen: true,
 
     toggleMaltSection() {
-      this.maltSectionOpen = !this.maltSectionOpen;
+      const view = getView();
+      view.maltSectionOpen = !view.maltSectionOpen;
     },
 
     maltIsTrace(row) {
@@ -108,92 +108,96 @@ export function registerMaltCard(app, ctx) {
     },
 
     cloneDraftMalt(ri) {
-      if (this.maltAtLimit) return;
-      const row = this.draftRows[ri];
+      const view = getView();
+      if (view.maltAtLimit) return;
+      const row = view.draftRows[ri];
       if (!row) return;
-      this.addDraftRow({ ...row, catalog_id: null, name: `${row.name} (Custom)` });
-      this.inspectMaltRow(this.draftRows.length - 1);
+      view.addDraftRow({ ...row, catalog_id: null, name: `${row.name} (Custom)` });
+      view.inspectMaltRow(view.draftRows.length - 1);
     },
-  });
+  };
 
-  Object.defineProperties(app, {
+  Object.defineProperties(actions, {
     maltMassField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.gristMass) ?? null;
+        return (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.gristMass) ?? null;
       },
     },
     maltSectionMeta: {
       configurable: true,
       get() {
+        const view = getView();
         return gristSectionMeta(
-          this.gristRows,
-          countLabel(this.gristRows.length, "malt"),
-          this.maltMassField
+          view.gristRows,
+          countLabel(view.gristRows.length, "malt"),
+          view.maltMassField
         );
       },
     },
-    // The card roll-up: the whole bill's mass and the colour the model derives
-    // from all three sections. The colour stays the Batch step's field, so this
-    // card reads it without claiming it.
     gristTotalMassField: {
       configurable: true,
       get() {
-        return (this.fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.totalMass) ?? null;
+        return (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.totalMass) ?? null;
       },
     },
     beerColorField: {
       configurable: true,
       get() {
-        return this.fieldsById[N.beerColor] ?? null;
+        return getView().fieldsById[N.beerColor] ?? null;
       },
     },
     maltWeightedYield: {
       configurable: true,
       get() {
         return (
-          (this.fieldsBySlice[N.slice] ?? []).find(
-            (f) => f.id === N.weightedYield
-          ) ?? null
+          (getView().fieldsBySlice[N.slice] ?? []).find((f) => f.id === N.weightedYield) ?? null
         );
       },
     },
     maltTotalParts: {
       configurable: true,
       get() {
-        return gristTotalParts(this.draftRows);
+        return gristTotalParts(getView().draftRows);
       },
     },
     maltTotalPct: {
       configurable: true,
       get() {
-        return gristTotalPct(this.draftRows);
+        return gristTotalPct(getView().draftRows);
       },
     },
     maltDraftTotals: {
       configurable: true,
       get() {
-        return gristDraftTotalsLabel(this.maltTotalParts, this.maltTotalPct);
+        const view = getView();
+        return gristDraftTotalsLabel(view.maltTotalParts, view.maltTotalPct);
       },
     },
     maltValidation: {
       configurable: true,
       get() {
-        return gristValidationState(this.maltTotalPct);
+        return gristValidationState(getView().maltTotalPct);
       },
     },
     maltAtLimit: {
       configurable: true,
       get() {
-        return isMaltAtLimit(this.draftRows.length);
+        return isMaltAtLimit(getView().draftRows.length);
       },
     },
   });
+  return actions;
+}
+
+export function registerMaltCard(app, ctx = {}) {
+  installCatalogDraft(app, ctx, MALT_CONFIG);
+  const actions = createMaltCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshMaltCard(app, ctx) {
-  // Mass and extract are artifact-computed row fields; the summary table shows
-  // them in the mass column's display unit, formatted at refresh time.
   const columns = resolveCollectionColumns(
     ctx.artifact,
     registry,
@@ -209,8 +213,6 @@ export function refreshMaltCard(app, ctx) {
   };
   const massCell = cellFor(columns[0]);
   const extractCell = cellFor(columns[1]);
-  // The computed fields read the batch boundary, which may be unresolved or
-  // failed; the authored rows still render.
   let rows;
   try {
     rows = ctx.engine.get(N.majorMalts) ?? [];
@@ -224,4 +226,23 @@ export function refreshMaltCard(app, ctx) {
     extractDisplay: extractCell(row.extract_kg),
   }));
 }
-export const KEYS = [...catalogDraftKeys("malt", "Malt"), "gristRows", "maltSectionOpen", "toggleMaltSection", "maltSectionMeta", "maltMassField", "gristTotalMassField", "beerColorField", "maltIsTrace", "maltFermentable", "cloneDraftMalt", "maltWeightedYield", "maltTotalParts", "maltTotalPct", "maltDraftTotals", "maltValidation", "maltAtLimit"];
+
+export const KEYS = [
+  ...catalogDraftKeys("malt", "Malt"),
+  "gristRows",
+  "maltSectionOpen",
+  "toggleMaltSection",
+  "maltSectionMeta",
+  "maltMassField",
+  "gristTotalMassField",
+  "beerColorField",
+  "maltIsTrace",
+  "maltFermentable",
+  "cloneDraftMalt",
+  "maltWeightedYield",
+  "maltTotalParts",
+  "maltTotalPct",
+  "maltDraftTotals",
+  "maltValidation",
+  "maltAtLimit",
+];
