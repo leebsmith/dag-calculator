@@ -30,6 +30,7 @@ import { registerMashCard } from "./cards/mash.js";
 import { registerBrewDayCard } from "./cards/brew-day.js";
 import { registerDryHopCard } from "./cards/dry-hops.js";
 import { registerWaterCard } from "./cards/water.js";
+import { createCatalogRegistry } from "./cards/catalogChrome.js";
 import { registerLibraryUi } from "./libraryUi.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
@@ -121,6 +122,7 @@ export function createStepApp(options = {}) {
     getView,
     modalFocus,
     observability,
+    registry: createCatalogRegistry(),
   };
 
   const baseApp = {

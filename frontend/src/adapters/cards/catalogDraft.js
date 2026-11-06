@@ -43,7 +43,11 @@ import {
 } from "../../views/producer/catalogDrawer.js";
 import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
 import { draftGetters } from "./catalogDraftGetters.js";
-import { chromeConfig, installChrome, registerCatalogEntry } from "./catalogChrome.js";
+import {
+  chromeConfig,
+  createCatalogChrome,
+  createCatalogRegistry,
+} from "./catalogChrome.js";
 
 const STATE_SUFFIXES = [
   "Drawer",
@@ -294,8 +298,16 @@ function draftMetaMethods(d) {
   };
 }
 
-export function createCatalogDraft(ctx, config) {
+export function createCatalogDraft(ctx, config, registry) {
   const d = draftContext(ctx, config, ctx.getView);
+  registry.register({
+    nodeId: d.nodeId,
+    prefix: d.prefix,
+    Cap: d.Cap,
+    standardField: d.standardField,
+    canAdd: d.canAdd,
+    ...chromeConfig(config),
+  });
   return {
     state: draftState(d),
     methods: { ...draftMethods(d), ...draftMetaMethods(d) },
@@ -306,18 +318,17 @@ export function createCatalogDraft(ctx, config) {
 }
 
 export function installCatalogDraft(app, ctx, config) {
-  const { nodeId, prefix, Cap, standardField, canAdd } = config;
   const getView = ctx.getView ?? (() => app);
-  registerCatalogEntry(app, {
-    nodeId,
-    prefix,
-    Cap,
-    standardField,
-    canAdd,
-    ...chromeConfig(config),
-  });
-  installChrome(app, getView);
-  const { state, methods, descriptors } = createCatalogDraft({ ...ctx, getView }, config);
+  const registry = ctx.registry ?? createCatalogRegistry();
+  const chrome = createCatalogChrome({ registry, getView });
+  Object.defineProperties(app, chrome.state);
+  Object.defineProperties(app, chrome.getters);
+  Object.assign(app, chrome.methods);
+  const { state, methods, descriptors } = createCatalogDraft(
+    { ...ctx, getView },
+    config,
+    registry
+  );
   Object.assign(app, state, methods);
   Object.defineProperties(app, descriptors);
 }

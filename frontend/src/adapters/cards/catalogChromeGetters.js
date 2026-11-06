@@ -1,22 +1,24 @@
 // Catalog chrome getters and state proxies: the shared draft* surface resolves
 // the active collection's prefixed member through the injected getView.
 
-export const ENTRIES = Symbol("catalogChrome.entries");
+// The entry registry is a plain closure map, created once per app by the card
+// composition root. It never becomes an app member: the browser's reactive proxy
+// cannot then trap a symbol store, and the chrome reads the current entry through
+// `draftNodeId` at call time.
+export function createCatalogRegistry() {
+  const entries = new Map();
+  return {
+    register(entry) {
+      entries.set(entry.nodeId, entry);
+    },
+    get(nodeId) {
+      return entries.get(nodeId) ?? null;
+    },
+  };
+}
 
-export function registerCatalogEntry(app, entry) {
-  // Keyed by a symbol on the app, never by the app's object identity: the
-  // browser wraps the app in `Alpine.reactive`, so a WeakMap entry made against
-  // the raw object is invisible to every handler (`this` is the proxy). Symbol
-  // reads forward through the proxy to the same target.
-  //
-  // The property must be a normal (writable, configurable) data property.
-  // @vue/reactivity returns an object value as a reactive proxy, and the JS
-  // proxy invariant refuses that for a locked-down (non-configurable,
-  // non-writable) data property: every read would throw and silently kill each
-  // `draft*` binding. A plain assignment is proxy-safe; symbols stay invisible
-  // to `Object.keys`, `for…in`, and JSON.
-  if (!app[ENTRIES]) app[ENTRIES] = new Map();
-  app[ENTRIES].set(entry.nodeId, entry);
+export function activeEntry(registry, view) {
+  return view.draftNodeId ? registry.get(view.draftNodeId) : null;
 }
 
 export const CATALOG_CHROME_KEYS = [
@@ -74,10 +76,6 @@ export const CATALOG_CHROME_KEYS = [
   "cloneDraftRow",
 ];
 
-export function activeEntry(view) {
-  return view[ENTRIES]?.get(view.draftNodeId) ?? null;
-}
-
 const STATE_DEFAULTS = {
   Drawer: () => null,
   Search: () => "",
@@ -102,7 +100,7 @@ const GETTER_DEFAULTS = {
   ActiveRow: () => null,
 };
 
-function stateProxies(getView) {
+function stateProxies(getView, registry) {
   const out = {};
   for (const [suffix, fallback] of Object.entries(STATE_DEFAULTS)) {
     out[`draft${suffix}`] = {
@@ -110,12 +108,12 @@ function stateProxies(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         return entry ? view[`${entry.prefix}${suffix}`] : fallback();
       },
       set(value) {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         if (entry) view[`${entry.prefix}${suffix}`] = value;
       },
     };
@@ -123,7 +121,7 @@ function stateProxies(getView) {
   return out;
 }
 
-function valueGetters(getView) {
+function valueGetters(getView, registry) {
   const out = {};
   for (const [suffix, fallback] of Object.entries(GETTER_DEFAULTS)) {
     out[`draft${suffix}`] = {
@@ -131,7 +129,7 @@ function valueGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         return entry ? view[`${entry.prefix}${suffix}`] : fallback();
       },
     };
@@ -139,13 +137,13 @@ function valueGetters(getView) {
   return out;
 }
 
-function catalogueGetters(getView) {
+function catalogueGetters(getView, registry) {
   return {
     draftHasStandard: {
       configurable: true,
       enumerable: true,
       get() {
-        return Boolean(activeEntry(getView())?.standardField);
+        return Boolean(activeEntry(registry, getView())?.standardField);
       },
     },
     draftAtLimit: {
@@ -153,7 +151,7 @@ function catalogueGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         return entry?.canAdd ? !entry.canAdd(view) : false;
       },
     },
@@ -162,7 +160,7 @@ function catalogueGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         return entry ? view[`${entry.prefix}EditorOpen`] : false;
       },
     },
@@ -171,7 +169,7 @@ function catalogueGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         return entry?.resultLabel ? entry.resultLabel(view) : "";
       },
     },
@@ -179,21 +177,21 @@ function catalogueGetters(getView) {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.searchPlaceholder ?? "Search…";
+        return activeEntry(registry, getView())?.searchPlaceholder ?? "Search…";
       },
     },
     draftEmptyMessage: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.emptyMessage ?? "No matching entries found.";
+        return activeEntry(registry, getView())?.emptyMessage ?? "No matching entries found.";
       },
     },
     draftEmptyDrilldownMessage: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.emptyDrilldownMessage ?? "No matching entries found.";
+        return activeEntry(registry, getView())?.emptyDrilldownMessage ?? "No matching entries found.";
       },
     },
     draftCatalogFormOptions: {
@@ -201,7 +199,7 @@ function catalogueGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        return activeEntry(view)?.catalogForm?.options?.(view) ?? [];
+        return activeEntry(registry, view)?.catalogForm?.options?.(view) ?? [];
       },
     },
     draftCatalogForm: {
@@ -209,23 +207,23 @@ function catalogueGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        return activeEntry(view)?.catalogForm?.value?.(view) ?? "";
+        return activeEntry(registry, view)?.catalogForm?.value?.(view) ?? "";
       },
       set(value) {
         const view = getView();
-        activeEntry(view)?.catalogForm?.set?.(value, view);
+        activeEntry(registry, view)?.catalogForm?.set?.(value, view);
       },
     },
   };
 }
 
-function tableGetters(getView) {
+function tableGetters(getView, registry) {
   return {
     draftDrawerId: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.drawerId ?? "";
+        return activeEntry(registry, getView())?.drawerId ?? "";
       },
     },
     draftToolbarNote: {
@@ -233,7 +231,7 @@ function tableGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const note = activeEntry(view)?.toolbarNote;
+        const note = activeEntry(registry, view)?.toolbarNote;
         return typeof note === "function" ? note(view) : note ?? "";
       },
     },
@@ -241,42 +239,42 @@ function tableGetters(getView) {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.addLabel ?? "";
+        return activeEntry(registry, getView())?.addLabel ?? "";
       },
     },
     draftInputStep: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.inputStep ?? 0.1;
+        return activeEntry(registry, getView())?.inputStep ?? 0.1;
       },
     },
     draftTextColumns: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.textColumns ?? ["name"];
+        return activeEntry(registry, getView())?.textColumns ?? ["name"];
       },
     },
     draftTableInspect: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.canInspect !== false;
+        return activeEntry(registry, getView())?.canInspect !== false;
       },
     },
     draftTableClone: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.canClone === true;
+        return activeEntry(registry, getView())?.canClone === true;
       },
     },
     draftEmptyText: {
       configurable: true,
       enumerable: true,
       get() {
-        return activeEntry(getView())?.emptyText ?? "";
+        return activeEntry(registry, getView())?.emptyText ?? "";
       },
     },
     draftTotals: {
@@ -284,7 +282,7 @@ function tableGetters(getView) {
       enumerable: true,
       get() {
         const view = getView();
-        const entry = activeEntry(view);
+        const entry = activeEntry(registry, view);
         return entry?.totals ? entry.totals(view) : { label: "", value: "" };
       },
     },
@@ -292,14 +290,14 @@ function tableGetters(getView) {
 }
 
 
-export function chromeState(getView) {
-  return stateProxies(getView);
+export function chromeState(getView, registry) {
+  return stateProxies(getView, registry);
 }
 
-export function chromeGetters(getView) {
+export function chromeGetters(getView, registry) {
   return {
-    ...valueGetters(getView),
-    ...catalogueGetters(getView),
-    ...tableGetters(getView),
+    ...valueGetters(getView, registry),
+    ...catalogueGetters(getView, registry),
+    ...tableGetters(getView, registry),
   };
 }

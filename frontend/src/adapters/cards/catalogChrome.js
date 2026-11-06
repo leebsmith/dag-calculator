@@ -5,9 +5,7 @@
 
 import { activeEntry, chromeGetters, chromeState } from "./catalogChromeGetters.js";
 
-export { CATALOG_CHROME_KEYS, registerCatalogEntry } from "./catalogChromeGetters.js";
-
-const CHROME = Symbol("catalogDraft.chrome");
+export { CATALOG_CHROME_KEYS, createCatalogRegistry } from "./catalogChromeGetters.js";
 
 const CHROME_DEFAULTS = {
   catalogForm: null,
@@ -36,108 +34,99 @@ export function chromeConfig(config) {
   return out;
 }
 
-function drawerMethods(getView) {
+function drawerMethods(getView, registry) {
   return {
     openDraftSearch() {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`open${entry.Cap}Search`]();
     },
     toggleDraftSearchNotes() {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`toggle${entry.Cap}SearchNotes`]();
     },
     closeDraftDrawer() {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`close${entry.Cap}Drawer`]();
     },
     inspectDraftRow(ri) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`inspect${entry.Cap}Row`](ri);
     },
     toggleDraftCategory(category) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`toggle${entry.Cap}Category`](category);
     },
     toggleDraftFamily(family) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`toggle${entry.Cap}Family`](family);
     },
     selectDraftStandard(standardId) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`select${entry.Cap}Standard`](standardId);
     },
     clearDraftStandard() {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`clear${entry.Cap}Standard`]();
     },
     handleDraftEscape() {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`handle${entry.Cap}Escape`]();
     },
   };
 }
 
-function contentMethods(getView) {
+function contentMethods(getView, registry) {
   return {
     addCatalogItem(catalogId) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`addCatalog${entry.Cap}`](catalogId);
     },
     duplicateCatalogItem(catalogId) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry) view[`duplicateCatalog${entry.Cap}`](catalogId);
     },
     draftItemMeta(item) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       return entry ? view[`${entry.prefix}ItemMeta`](item) : "";
     },
     draftGroupMeta(group) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       return entry ? view[`${entry.prefix}GroupMeta`](group) : "";
     },
     draftRowBadge(row, columnId) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       return entry?.rowBadge ? entry.rowBadge(view, row, columnId) : null;
     },
     cloneDraftRow(ri) {
       const view = getView();
-      const entry = activeEntry(view);
+      const entry = activeEntry(registry, view);
       if (entry?.cloneRow) entry.cloneRow(view, ri);
     },
     setDraftCatalogForm(value) {
       const view = getView();
-      activeEntry(view)?.catalogForm?.set?.(value, view);
+      activeEntry(registry, view)?.catalogForm?.set?.(value, view);
     },
   };
 }
 
-export function createCatalogChrome(getView) {
+export function createCatalogChrome({ registry, getView }) {
   return {
-    state: chromeState(getView),
-    getters: chromeGetters(getView),
-    methods: { ...drawerMethods(getView), ...contentMethods(getView) },
+    state: chromeState(getView, registry),
+    getters: chromeGetters(getView, registry),
+    methods: { ...drawerMethods(getView, registry), ...contentMethods(getView, registry) },
   };
-}
-
-export function installChrome(app, getView = () => app) {
-  if (app[CHROME]) return;
-  Object.defineProperty(app, CHROME, { value: true });
-  const { state, getters, methods } = createCatalogChrome(getView);
-  Object.defineProperties(app, state);
-  Object.defineProperties(app, getters);
-  Object.assign(app, methods);
 }

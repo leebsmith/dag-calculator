@@ -14,6 +14,7 @@ import { createTestApp } from "./appHelpers.js";
 import { alpineReactive } from "./alpineProxy.js";
 import { createReferenceCache } from "../../frontend/src/store/referenceCache.js";
 import { CATALOG_CHROME_KEYS } from "../../frontend/src/adapters/cards/catalogChrome.js";
+import { BASE_KEYS } from "../../frontend/src/adapters/contract.js";
 
 const cache = createReferenceCache();
 
@@ -47,16 +48,21 @@ async function proxyApp(styleId = "22A") {
   return app;
 }
 
+function assertChromeReads(app, label) {
+  for (const key of CATALOG_CHROME_KEYS) {
+    assert.doesNotThrow(() => app[key], `${label}: app.${key} must read through the proxy`);
+  }
+}
+
 test("every declared chrome binding reads through the browser proxy", async () => {
   const app = await proxyApp();
-  app.openMaltEditor();
 
-  for (const key of CATALOG_CHROME_KEYS) {
-    assert.doesNotThrow(() => app[key], `app.${key} must read through the proxy`);
-  }
+  assertChromeReads(app, "boot");
+  app.openMaltEditor();
+  assertChromeReads(app, "malt editor");
 });
 
-test("object-valued symbol stores survive the browser proxy", async () => {
+test("the catalog registry lives outside the app", async () => {
   const app = await proxyApp();
   const stores = Object.getOwnPropertySymbols(app).filter((symbol) => {
     const descriptor = Object.getOwnPropertyDescriptor(app, symbol);
@@ -65,10 +71,8 @@ test("object-valued symbol stores survive the browser proxy", async () => {
     );
   });
 
-  assert.ok(stores.length > 0, "the app carries at least the catalog entry store");
-  for (const symbol of stores) {
-    assert.doesNotThrow(() => app[symbol], `${String(symbol)} must read through the proxy`);
-  }
+  assert.deepEqual(stores, [BASE_KEYS], "only the base-key marker remains");
+  assert.equal(typeof app.registry, "undefined", "the registry is a composition-root value");
 });
 
 test("the malt editor toolbar renders through the browser proxy", async () => {
@@ -111,6 +115,7 @@ test("every collection editor opens its drawer and adds through the browser prox
   for (const editor of EDITORS) {
     app[editor.open]();
     assert.equal(app.draftNodeId, editor.nodeId, editor.open);
+    assertChromeReads(app, editor.nodeId);
     assert.notEqual(app.draftAddLabel, "", `${editor.nodeId}: the add label renders`);
     assert.equal(app.draftAtLimit, false, `${editor.nodeId}: the add button is enabled`);
 

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { installCatalogDraft } from "../../frontend/src/adapters/cards/catalogDraft.js";
+import { createCatalogRegistry } from "../../frontend/src/adapters/cards/catalogChrome.js";
 
 const SEEDS = {
   malts: {
@@ -61,7 +62,7 @@ const BRAND_SEEDS = {
   },
 };
 
-function setup({ canAdd = null, seeds = SEEDS, ...extra } = {}) {
+function setup({ canAdd = null, seeds = SEEDS, registry = null, ...extra } = {}) {
   const calls = [];
   const app = {
     draftRows: [],
@@ -95,7 +96,7 @@ function setup({ canAdd = null, seeds = SEEDS, ...extra } = {}) {
 
   installCatalogDraft(
     app,
-    { cache: { seeds } },
+    { cache: { seeds }, registry },
     {
       prefix: "malt",
       Cap: "Malt",
@@ -127,6 +128,23 @@ test("installs drawer state, handlers, and getters", () => {
   assert.equal(typeof app.openMaltEditor, "function");
   assert.equal(app.maltEditorOpen, false);
   assert.deepEqual(app.maltCatalog.map((item) => item.id).sort(), ["maris", "pils", "std:pilsner", "crystal"].sort());
+});
+
+test("the draft registers its chrome entry in the shared registry", () => {
+  const registry = createCatalogRegistry();
+  const { app } = setup({ registry });
+
+  const entry = registry.get("grist.major_malts");
+  assert.equal(entry.prefix, "malt");
+  assert.equal(entry.Cap, "Malt");
+  assert.equal(entry.nodeId, "grist.major_malts");
+  assert.equal(entry.standardField, "standard_malt");
+
+  app.openMaltEditor();
+  app.openDraftSearch();
+  assert.equal(app.draftDrawer, "search", "the chrome reads the registry at call time");
+  assert.equal(app.draftHasStandard, true);
+  assert.equal(typeof app.registry, "undefined", "the registry is not an app member");
 });
 
 test("editor handlers delegate to the draft lifecycle and close the drawer", () => {
