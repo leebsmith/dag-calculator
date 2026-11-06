@@ -6,62 +6,46 @@ import * as mash from "../../views/mash.js";
 import { toBase } from "../../engine/index.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
 import {
-  canonicalRestRows,
-  isLgrBelowFloor,
   isRestOutsideBand,
-  lgrSummary,
-  mashTimeLabel,
-  mashTimeSummaryLabel,
   materializeMashRests,
   restDefinition,
   restLabel,
-  restMinutes,
   restPurposeLabel,
   restTempRangeLabel,
   temperatureLabel,
-  thicknessLabel,
   wholeTemperature,
 } from "../../views/producer/mashRows.js";
-import { UNIT_SYMBOLS } from "../../views/registry/units.js";
-import { unitSymbol } from "../../utils.js";
+import {
+  draftDescriptors,
+  presetDescriptors,
+  thicknessDescriptors,
+  timeDescriptors,
+} from "./mashGetters.js";
 import { reportError } from "../../observability.js";
 import { MASH_NODES as N } from "../../views/registry/mash.js";
 
-export function registerMashCard(app, ctx) {
-  const { engine, artifact } = ctx;
-
-  Object.assign(app, {
-    // Rests collection rows in base units, refreshed in compute(); the partial
-    // and modal bind to these plus the scalar field models in fieldsBySlice.mash.
-    mashRests: [],
-    mashDoughInTempC: null,
-    mashTotalTimeMin: null,
-    mashRampTimeMin: null,
-    mashThicknessLPerKg: null,
-    minLgrLPerKg: null,
-    mashModalOpen: false,
-    mashDraft: [],
-    mashDraftDirty: false,
-
+function conversionActions({ artifact, engine, getView }) {
+  return {
     // Display conversion (base -> display) routed through the producer's
     // `displayValue` so unit conversion stays single-sourced (guard A8a).
     _convert(dimension, value, fallbackUnit) {
       if (value == null) return null;
-      const unitId = this.unitMode?.[dimension] ?? fallbackUnit ?? null;
+      const unitId = getView().unitMode?.[dimension] ?? fallbackUnit ?? null;
       return displayValue(artifact, dimension, unitId, value, nonlinearFns(artifact, engine));
     },
 
     restUseTempDisplay(rest) {
       if (!rest || rest.use_temp_c == null) return "";
-      return temperatureLabel(this._convert("temperature", rest.use_temp_c, "degC"));
+      return temperatureLabel(getView()._convert("temperature", rest.use_temp_c, "degC"));
     },
 
     restTempRangeDisplay(restId) {
       const def = restDefinition(restId);
       if (!def || def.temp_min_c == null || def.temp_max_c == null) return "";
+      const view = getView();
       return restTempRangeLabel(
-        this._convert("temperature", def.temp_min_c, "degC"),
-        this._convert("temperature", def.temp_max_c, "degC")
+        view._convert("temperature", def.temp_min_c, "degC"),
+        view._convert("temperature", def.temp_max_c, "degC")
       );
     },
 
@@ -70,7 +54,7 @@ export function registerMashCard(app, ctx) {
       if (!def) return "";
       const base = bound === "min" ? def.temp_min_c : def.temp_max_c;
       if (base == null) return "";
-      return wholeTemperature(this._convert("temperature", base, "degC"));
+      return wholeTemperature(getView()._convert("temperature", base, "degC"));
     },
 
     getRestDefinition(restId) {
@@ -91,40 +75,45 @@ export function registerMashCard(app, ctx) {
 
     // Field-model accessor for the metric strip (reuses producer display/write).
     mashField(id) {
-      return (this.fieldsBySlice.mash ?? []).find((f) => f.id === id) ?? {};
+      return (getView().fieldsBySlice.mash ?? []).find((f) => f.id === id) ?? {};
     },
 
     strikeWaterTempDisplay() {
-      const f = this.mashField(N.strikeTemp);
+      const f = getView().mashField(N.strikeTemp);
       if (!f || typeof f.value !== "number" || !Number.isFinite(f.value)) return "";
       return f.display;
     },
+  };
+}
 
+function scheduleActions({ engine, getView }) {
+  return {
     _materializeRests(rows) {
       return materializeMashRests(rows);
     },
 
     _writeMashRests(rows) {
+      const view = getView();
       engine.setCollection(N.rests, rows);
-      this.scheduleSolve();
-      this.notify();
+      view.scheduleSolve();
+      view.notify();
     },
 
     onMashPresetChange(presetId) {
-      this.setRoot(N.presetId, presetId);
-      this._writeMashRests(mash.applyMashPreset(this._materializeRests(this.mashRests), presetId));
+      const view = getView();
+      view.setRoot(N.presetId, presetId);
+      view._writeMashRests(mash.applyMashPreset(view._materializeRests(view.mashRests), presetId));
     },
 
     toggleMashRest(restId, enabled) {
-      this.setRoot(N.presetId, "custom");
+      const view = getView();
+      view.setRoot(N.presetId, "custom");
       const def = mash.getCanonicalRest(restId);
       const shouldEnable = !!enabled;
       // The combined amylase rest replaces the pair (and vice versa); the rows'
       // temperatures and durations are kept so toggling back restores them.
-      const conflicting = new Set(
-        shouldEnable ? mash.conflictingRests(restId) : []
-      );
-      const rows = this._materializeRests(this.mashRests).map((r) => {
+      const conflicting = new Set(shouldEnable ? mash.conflictingRests(restId) : []);
+      const rows = view._materializeRests(view.mashRests).map((r) => {
         if (conflicting.has(r.rest_id)) return { ...r, enabled: false };
         if (r.rest_id !== restId) return r;
         return {
@@ -138,46 +127,55 @@ export function registerMashCard(app, ctx) {
             shouldEnable && r.duration_min == null && def ? def.default_duration_min : r.duration_min,
         };
       });
-      this._writeMashRests(rows);
+      view._writeMashRests(rows);
     },
+  };
+}
 
+function modalActions({ artifact, getView }) {
+  return {
     // Configure Rests modal (draft/cancel): edits land in a scratch copy and
     // are committed on OK; Cancel discards.
     openMashModal() {
-      this.mashDraft = JSON.parse(JSON.stringify(this._materializeRests(this.mashRests)));
-      this.mashDraftDirty = false;
-      this.mashModalOpen = true;
+      const view = getView();
+      view.mashDraft = JSON.parse(JSON.stringify(view._materializeRests(view.mashRests)));
+      view.mashDraftDirty = false;
+      view.mashModalOpen = true;
     },
 
     closeMashModal() {
-      this.mashModalOpen = false;
-      this.mashDraft = [];
-      this.mashDraftDirty = false;
+      const view = getView();
+      view.mashModalOpen = false;
+      view.mashDraft = [];
+      view.mashDraftDirty = false;
     },
 
     commitMashSchedule() {
-      if (this.mashDraftDirty) this.setRoot(N.presetId, "custom");
-      this._writeMashRests(JSON.parse(JSON.stringify(this.mashDraft)));
-      this.closeMashModal();
+      const view = getView();
+      if (view.mashDraftDirty) view.setRoot(N.presetId, "custom");
+      view._writeMashRests(JSON.parse(JSON.stringify(view.mashDraft)));
+      view.closeMashModal();
     },
 
     mashDraftRow(restId) {
-      return this.mashDraft.find((r) => r.rest_id === restId) ?? null;
+      return getView().mashDraft.find((r) => r.rest_id === restId) ?? null;
     },
 
     setMashDraftTemp(restId, displayVal) {
-      const row = this.mashDraftRow(restId);
+      const view = getView();
+      const row = view.mashDraftRow(restId);
       if (!row) return;
       row.use_temp_c =
         displayVal === ""
           ? null
-          : toBase(artifact, "temperature", this.unitMode?.temperature ?? "degC", Number(displayVal));
+          : toBase(artifact, "temperature", view.unitMode?.temperature ?? "degC", Number(displayVal));
       if (row.use_temp_c != null && Number.isNaN(row.use_temp_c)) row.use_temp_c = null;
-      this.mashDraftDirty = true;
+      view.mashDraftDirty = true;
     },
 
     setMashDraftDuration(restId, displayVal) {
-      const row = this.mashDraftRow(restId);
+      const view = getView();
+      const row = view.mashDraftRow(restId);
       if (!row) return;
       if (displayVal === "") {
         row.duration_min = null;
@@ -185,150 +183,41 @@ export function registerMashCard(app, ctx) {
         const n = Number(displayVal);
         row.duration_min = Number.isNaN(n) ? null : n;
       }
-      this.mashDraftDirty = true;
+      view.mashDraftDirty = true;
     },
-  });
+  };
+}
 
-  Object.defineProperties(app, {
-    mashPresetIdState: { configurable: true, writable: true, value: null },
-    mashPresetLabels: {
-      configurable: true,
-      get() {
-        return mash.MASH_PRESET_LABELS;
-      },
-    },
-    mashPresetId: {
-      configurable: true,
-      get() {
-        return this.mashPresetIdState ?? "custom";
-      },
-    },
-    canonicalMashRests: {
-      configurable: true,
-      get() {
-        return canonicalRestRows(this.mashRests);
-      },
-    },
-    sortedMashRests: {
-      configurable: true,
-      get() {
-        return mash.sortRestsByTemperature(this.mashRests);
-      },
-    },
-    enabledMashRests: {
-      configurable: true,
-      get() {
-        return this.sortedMashRests.filter((r) => r.enabled);
-      },
-    },
-    doughInInheritedTempC: {
-      configurable: true,
-      get() {
-        return this.mashDoughInTempC;
-      },
-    },
-    temperatureUnit: {
-      configurable: true,
-      get() {
-        const unitId = this.unitMode?.temperature ?? "degC";
-        return unitSymbol(UNIT_SYMBOLS, "temperature", unitId);
-      },
-    },
-    doughInDisplay: {
-      configurable: true,
-      get() {
-        const v = this.doughInInheritedTempC;
-        if (v == null) return "";
-        return temperatureLabel(this._convert("temperature", v, "degC"));
-      },
-    },
-    totalMashTimeMin: {
-      configurable: true,
-      get() {
-        return this.mashTotalTimeMin;
-      },
-    },
-    totalMashTimeDisplay: {
-      configurable: true,
-      get() {
-        return mashTimeLabel(this.totalMashTimeMin);
-      },
-    },
-    rampTimeMin: {
-      configurable: true,
-      get() {
-        return this.mashRampTimeMin;
-      },
-    },
-    restTimeMin: {
-      configurable: true,
-      get() {
-        return restMinutes(this.mashTotalTimeMin, this.mashRampTimeMin);
-      },
-    },
-    mashThicknessUnitId: {
-      configurable: true,
-      get() {
-        return this.unitMode?.mash_thickness ?? "L_per_kg";
-      },
-    },
-    mashThicknessUnit: {
-      configurable: true,
-      get() {
-        return unitSymbol(UNIT_SYMBOLS, "mash_thickness", this.mashThicknessUnitId);
-      },
-    },
-    mashThicknessDisplay: {
-      configurable: true,
-      get() {
-        const v = this.mashThicknessLPerKg;
-        if (!Number.isFinite(v)) return "";
-        return thicknessLabel(
-          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine))
-        );
-      },
-    },
-    minLgrDisplay: {
-      configurable: true,
-      get() {
-        const v = this.minLgrLPerKg;
-        if (!Number.isFinite(v)) return "";
-        return thicknessLabel(
-          displayValue(artifact, "mash_thickness", this.mashThicknessUnitId, v, nonlinearFns(artifact, engine))
-        );
-      },
-    },
-    mashLgrBelowFloor: {
-      configurable: true,
-      get() {
-        return isLgrBelowFloor(this.mashThicknessLPerKg, this.minLgrLPerKg);
-      },
-    },
-    mashLgrSummary: {
-      configurable: true,
-      get() {
-        return lgrSummary(this.mashThicknessDisplay, this.mashThicknessUnit, this.minLgrDisplay);
-      },
-    },
-    mashTimeSummary: {
-      configurable: true,
-      get() {
-        return mashTimeSummaryLabel(this.rampTimeMin, this.restTimeMin);
-      },
-    },
-    sortedMashDraftRests: {
-      configurable: true,
-      get() {
-        return mash.sortRestsByTemperature(this.mashDraft).filter((r) => r.enabled);
-      },
-    },
-    isMashDraftValid: {
-      configurable: true,
-      get() {
-        return mash.isMashScheduleValid(this.sortedMashDraftRests);
-      },
-    },
+export function createMashCard(ctx) {
+  const actions = {
+    // Rests collection rows in base units, refreshed in compute(); the partial
+    // and modal bind to these plus the scalar field models in fieldsBySlice.mash.
+    mashRests: [],
+    mashDoughInTempC: null,
+    mashTotalTimeMin: null,
+    mashRampTimeMin: null,
+    mashThicknessLPerKg: null,
+    minLgrLPerKg: null,
+    mashModalOpen: false,
+    mashDraft: [],
+    mashDraftDirty: false,
+    ...conversionActions(ctx),
+    ...scheduleActions(ctx),
+    ...modalActions(ctx),
+  };
+  Object.defineProperties(actions, {
+    ...presetDescriptors(ctx),
+    ...timeDescriptors(ctx),
+    ...thicknessDescriptors(ctx),
+    ...draftDescriptors(ctx),
   });
+  return actions;
+}
+
+export function registerMashCard(app, ctx = {}) {
+  const actions = createMashCard({ ...ctx, getView: ctx.getView ?? (() => app) });
+  Object.defineProperties(app, Object.getOwnPropertyDescriptors(actions));
+  return actions;
 }
 
 export function refreshMashCard(app, ctx) {

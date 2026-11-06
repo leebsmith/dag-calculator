@@ -29,7 +29,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 21 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 44 | 2 | 19 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 52 | 2 | 17 |
-| `mash` | `frontend/src/adapters/cards/mash.js` | 51 | 2 | 5 |
+| `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 14 | 1 | 0 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 14 |
 | `water` | `frontend/src/adapters/cards/water.js` | 29 | 1 | 6 |

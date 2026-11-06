@@ -67,7 +67,10 @@ const TRACE_MALTS = ["frontend/src/adapters/cards/trace-malts.js"];
 const TRACE_MALTS_AND_CATALOG = [...TRACE_MALTS, ...CATALOG_DRAFT];
 const MALT = ["frontend/src/adapters/cards/malt.js"];
 const MALT_AND_CATALOG = [...MALT, ...CATALOG_DRAFT];
-const MASH = ["frontend/src/adapters/cards/mash.js"];
+const MASH = [
+  "frontend/src/adapters/cards/mash.js",
+  "frontend/src/adapters/cards/mashGetters.js",
+];
 const BREW_DAY = ["frontend/src/adapters/cards/brew-day.js"];
 const DRY_HOPS = ["frontend/src/adapters/cards/dry-hops.js"];
 const DRY_HOPS_AND_CATALOG = [...DRY_HOPS, ...CATALOG_DRAFT];
