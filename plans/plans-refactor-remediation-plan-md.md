@@ -34,25 +34,25 @@
 
 ## Phase 2 — Core architectural extractions
 
-- [ ] **2.1 Extract batch migrations (S1 / G1)**
-  - [ ] Create `frontend/src/store/batchMigrations.js` with pure functions:
+- [x] **2.1 Extract batch migrations (S1 / G1)**
+  - [x] Create `frontend/src/store/batchMigrations.js` with pure functions:
         `seedSugarShareParts`, `migrateAttenuationDerate`, `seedIdentityResiduals`,
         `materializeSelections`, each receiving `{ engine, master, cache, artifact, setRoot, ... }`
         and returning a changed flag.
-  - [ ] Delegate from `adapters/stepAdapter.js`; keep `loadState` ordering and behaviour identical.
-  - [ ] Add `tests/frontend/batch-migrations.test.js`.
-  - [ ] Lower/remove shape pins in `eslint.config.js` in the same commit.
-  - [ ] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
-  - [ ] Commit: `Extract batch migration rules from the composition root`
+  - [x] Delegate from `adapters/stepAdapter.js`; keep `loadState` ordering and behaviour identical.
+  - [x] Add `tests/frontend/batch-migrations.test.js`.
+  - [x] Lower/remove shape pins in `eslint.config.js` in the same commit.
+  - [x] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
+  - [x] Commit: `Extract batch migration rules from the composition root`
 
-- [ ] **2.2 Extract auth boot (S2 / G2)**
-  - [ ] Create `frontend/src/adapters/authBoot.js` exporting `createAuthBoot({ authClient, stores,
+- [x] **2.2 Extract auth boot (S2 / G2)**
+  - [x] Create `frontend/src/adapters/authBoot.js` exporting `createAuthBoot({ authClient, stores,
         appHandle, persistence, reportError })` with `applyAuth`, `refreshSurfaces`,
         `refreshWithRetry`.
-  - [ ] Rewire `main.js` through the factory; preserve publish-user-last and one-time legacy import.
-  - [ ] Add `tests/frontend/auth-boot.test.js` with fake stores/clients.
-  - [ ] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
-  - [ ] Commit: `Extract the auth boot workflow from the shell`
+  - [x] Rewire `main.js` through the factory; preserve publish-user-last and one-time legacy import.
+  - [x] Add `tests/frontend/auth-boot.test.js` with fake stores/clients.
+  - [x] Gate: `make check`, `make test`, `node scripts/shape-pins.mjs`.
+  - [x] Commit: `Extract the auth boot workflow from the shell`
 
 ## Phase 3 — Module splits and complexity reduction
 

@@ -8,6 +8,7 @@ const ALLOW = [
   "frontend/src/engine/",
   "frontend/src/adapters/",
   "frontend/src/store/snapshot.js",
+  "frontend/src/store/batchMigrations.js",
   "frontend/src/views/producer.js",
   "frontend/src/views/producer/",
 ];

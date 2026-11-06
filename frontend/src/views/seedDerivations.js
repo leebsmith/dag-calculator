@@ -7,7 +7,7 @@
 //   - batch.fermentation         — style tag set-membership (no `in` operator)
 //
 // Consumers:
-//   - stepAdapter.seedIdentityResiduals (identity namespaces at creation/load);
+//   - batchMigrations.seedIdentityResiduals (identity namespaces at creation/load);
 //   - the producer's "seeded" provenance flag for those residuals;
 //   - "reset to source" (fieldActions.resetField).
 // Adding an entry here is a last resort: prefer an artifact `default`.

@@ -10,8 +10,12 @@ import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
 import { resolveBoundarySeam } from "./boundarySeam.js";
 import { assertReferencePair, createReferenceCache } from "../store/referenceCache.js";
-import { identityDerivations } from "../views/seedDerivations.js";
-import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
+import {
+  materializeSelections,
+  migrateAttenuationDerate,
+  seedIdentityResiduals,
+  seedSugarShareParts,
+} from "../store/batchMigrations.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
 import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
 import { createLibrary } from "../store/library.js";
@@ -226,74 +230,44 @@ export function createStepApp(options = {}) {
     // This runs before the first solve, so the rows are read authored: a
     // computed row field may read the batch boundary, which has no result yet.
     seedSugarShareParts() {
-      if (session.engine.get("batch.late_addition_intent") !== "share") return false;
-      const share = Number(session.engine.get("batch.sugar_extract_share")) || 0;
-      if (!(share > 0)) return false;
-      const rows = session.engine.getAuthored("batch.sugars");
-      if (!Array.isArray(rows) || rows.length === 0) return false;
-      const total = rows.reduce((sum, row) => sum + (Number(row.parts) || 0), 0);
-      if (total > 0) return false;
-      session.engine.setCollection(
-        "batch.sugars",
-        rows.map((row) => ({ ...row, parts: EQUAL_SUGAR_PARTS }))
-      );
-      return true;
+      return seedSugarShareParts({ engine: session.engine });
     },
 
     // Drafts saved before the derate became points stored a multiplier of the
     // strain maximum. Convert it once, using the selected strain's published
     // attenuation; the old root is dropped by the rebuild.
     migrateAttenuationDerate(legacy) {
-      if (typeof legacy !== "number" || !Number.isFinite(legacy)) return false;
-      if (this.master.getRoot("batch.attenuation_derate_points") !== undefined) return false;
-      const aa = session.engine.resolve("batch.yeast.attenuation_pct");
-      if (typeof aa !== "number" || !Number.isFinite(aa)) return false;
-      const points = Math.min(0.25, Math.max(0, (1 - legacy) * aa));
-      this.setRoot("batch.attenuation_derate_points", points);
-      return true;
+      return migrateAttenuationDerate(
+        {
+          engine: session.engine,
+          getRoot: (rootId) => master.getRoot(rootId),
+          setRoot: (rootId, value) => this.setRoot(rootId, value),
+        },
+        legacy
+      );
     },
 
     // Seed the creation-time residuals from the batch's identity snapshot when
     // the draft does not already carry them. Identity is read-only in the
     // workspace, so this is the only place the residual roots are derived.
     seedIdentityResiduals() {
-      let changed = false;
-      for (const [namespace, component] of Object.entries(session.identity() ?? {})) {
-        if (!component || Object.keys(component).length === 0) continue;
-        for (const { rootId, derive } of identityDerivations(namespace)) {
-          if (master.getRoot(rootId) !== undefined) continue;
-          const value = derive(component);
-          if (typeof value === "number" || (typeof value === "string" && value !== "")) {
-            this.setRoot(rootId, value);
-            changed = true;
-          }
-        }
-      }
-      return changed;
+      return seedIdentityResiduals({
+        identity: session.identity(),
+        getRoot: (rootId) => master.getRoot(rootId),
+        setRoot: (rootId, value) => this.setRoot(rootId, value),
+      });
     },
 
     // Copy every referenced component into the batch when it lacks a snapshot.
     // Returns true when anything was materialised.
     materializeSelections() {
-      const engine = session.getEngine();
-      const snapshots = session.selections();
-      let changed = false;
-      for (const [id, node] of Object.entries(artifact.nodes)) {
-        if (node.kind !== "selection" || snapshots[id]) continue;
-        let refValue;
-        try {
-          refValue = engine.get(node.ref);
-        } catch (err) {
-          observability.reportError("stepAdapter.materializeSelections", err);
-          continue;
-        }
-        if (!refValue) continue;
-        const component = cache.references[node.output?.schema]?.[refValue];
-        if (!component) continue;
-        session.setSelection(id, component);
-        changed = true;
-      }
-      return changed;
+      return materializeSelections({
+        engine: session.getEngine(),
+        artifact,
+        cache,
+        session,
+        reportError: observability.reportError,
+      });
     },
 
     // Copy the chosen component into the batch's selection snapshot and clear

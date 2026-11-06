@@ -164,7 +164,7 @@ const STATEMENT_PINS = {
   "adapters/cards/water.js": 64,
   "adapters/stepAdapter.js": 32,
   "engine/sha256.js": 44,
-  "main.js": 45,
+  "main.js": 8,
   "views/producer/stylePlot.js": 12,
   "views/producer/table.js": 42,
 };
@@ -192,7 +192,7 @@ const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 365,
   "adapters/cards/late-additions.js": 305,
   "adapters/cards/water.js": 296,
-  "adapters/stepAdapter.js": 492,
+  "adapters/stepAdapter.js": 466,
   "views/producer/stylePlot.js": 422,
   "engine/dag.js": 399,
   "engine/fermentation.js": 506,

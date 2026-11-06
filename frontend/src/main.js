@@ -1,6 +1,7 @@
 import Alpine from "alpinejs";
 
 import { createStepApp } from "./adapters/stepAdapter.js";
+import { createAuthBoot } from "./adapters/authBoot.js";
 import { createApiClient } from "./adapters/apiClient.js";
 import { createModalFocusManager } from "./adapters/modalFocus.js";
 import { createObservabilityManager } from "./observability.js";
@@ -242,111 +243,16 @@ persistence.setStateObserver(({ state, conflictRemote }) => {
 // state). The user is published only AFTER the list is fetched, so the list
 // never paints with stale/empty state.
 let latestUser; // undefined until the first auth callback
-let legacyLibraryImported = false;
+const authBoot = createAuthBoot({
+  authClient,
+  appHandle,
+  persistence,
+  store: (name) => Alpine.store(name),
+  reportError,
+  signOut,
+});
 
-// The library and the import queue are independent reads; fetch them together so
-// the landing page paints once, with both strips populated. The shared library
-// refresh happens exactly once here; `refreshLibraryItems` then points the engine
-// at the fresh catalogue instead of forcing a second fetch.
-async function refreshSurfaces() {
-  await Alpine.store("setup").refreshAssets();
-  await appHandle.current.refreshLibraryItems();
-  await Alpine.store("imports").refresh();
-}
-
-async function applyAuth(user) {
-  const auth = Alpine.store("auth");
-  const recipes = Alpine.store("recipes");
-
-  if (!user) {
-    appHandle.current?.teardown();
-    persistence.clearActive();
-    Object.assign(recipes, {
-      batches: [],
-      activeId: null,
-      activeName: "",
-      view: "batches",
-      scope: "all",
-      sortOpen: false,
-      rowMenu: null,
-      renamingId: null,
-    });
-    Alpine.store("brewSession").close();
-    auth.user = null;
-    auth.loading = false;
-    return;
-  }
-
-  if (!appHandle.current) return;
-
-  auth.loading = true;
-  let session;
-  try {
-    session = await authClient.getSession();
-  } catch (err) {
-    reportError("main.session", err);
-    auth.sessionError = true;
-    auth.blocked = false;
-    auth.user = null;
-    auth.loading = false;
-    await signOut();
-    return;
-  }
-
-  if (!session.allowed) {
-    auth.blocked = true;
-    auth.blockedEmail = session.email || user.email || "";
-    auth.sessionError = false;
-    auth.user = null;
-    auth.loading = false;
-    await signOut();
-    return;
-  }
-
-  auth.blocked = false;
-  auth.blockedEmail = "";
-  auth.sessionError = false;
-  try {
-    try {
-      await refreshWithRetry(recipes);
-    } catch (err) {
-      reportError("main.recipeList", err);
-      recipes.loadError = true;
-    }
-    await refreshSurfaces();
-    recipes.view = "batches";
-  } finally {
-    auth.user = user;
-    auth.loading = false;
-  }
-
-  if (!legacyLibraryImported) {
-    legacyLibraryImported = true;
-    appHandle.current.library
-      .importLegacy()
-      .then(({ imported }) => {
-        if (!imported) return null;
-        return appHandle.current.library
-          .refresh()
-          .then(() => appHandle.current.refreshLibraryItems());
-      })
-      .catch((err) => reportError("main.legacyImport", err));
-  }
-}
-
-// The backend binds its port a beat after Vite under `make local-dev`; retry the
-// initial list fetch briefly so the view doesn't land empty on the race.
-async function refreshWithRetry(recipes, attempts = 6) {
-  for (let i = 0; i < attempts; i++) {
-    try {
-      await recipes.refresh();
-      return;
-    } catch (err) {
-      if (i === attempts - 1) throw err;
-      await new Promise((r) => setTimeout(r, 300 * (i + 1)));
-    }
-  }
-}
+const applyAuth = authBoot.applyAuth;
 
 getRedirectResult().catch((err) => reportError("main.redirectSignIn", err));
 
