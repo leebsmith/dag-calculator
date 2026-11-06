@@ -18,7 +18,7 @@ test("initial state is idle, clean, and has the default backoff", () => {
   });
 });
 
-test("EDIT marks the state dirty and SAVE_START moves it to saving", () => {
+test("EDIT schedules the debounce and SAVE_REQUESTED asks for a save", () => {
   const edited = reducePersistenceState(initialPersistenceState(), { type: "EDIT" });
   assert.deepEqual(edited.state, {
     dirty: true,
@@ -27,11 +27,24 @@ test("EDIT marks the state dirty and SAVE_START moves it to saving", () => {
     retryAttempt: 0,
     retryDelays: DEFAULT_RETRY_DELAYS,
   });
-  assert.deepEqual(edited.effects, []);
+  assert.deepEqual(edited.effects, [{ type: "SCHEDULE_SAVE", delay: 400 }]);
 
-  const saving = reducePersistenceState(edited.state, { type: "SAVE_START" });
+  const saving = reducePersistenceState(edited.state, { type: "SAVE_REQUESTED" });
   assert.equal(saving.state.saveState, "saving");
   assert.equal(saving.state.dirty, true);
+  assert.deepEqual(saving.effects, [{ type: "SAVE" }]);
+});
+
+test("TIMER_FIRED turns the pending debounce into a save effect", () => {
+  const edited = reducePersistenceState(initialPersistenceState(), {
+    type: "EDIT",
+    delay: 250,
+  });
+  assert.deepEqual(edited.effects, [{ type: "SCHEDULE_SAVE", delay: 250 }]);
+
+  const fired = reducePersistenceState(edited.state, { type: "TIMER_FIRED" });
+  assert.equal(fired.state.saveState, "saving");
+  assert.deepEqual(fired.effects, [{ type: "SAVE" }]);
 });
 
 test("SAVE_SUCCESS clears dirty, conflict, and the retry counter", () => {

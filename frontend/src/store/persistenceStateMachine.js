@@ -18,6 +18,24 @@ export function nextRetryDelay(state) {
   return state.retryDelays[state.retryAttempt];
 }
 
+function saveFailure(state) {
+  const delay = nextRetryDelay(state);
+  if (delay == null) {
+    return {
+      state: { ...state, saveState: "error" },
+      effects: [],
+    };
+  }
+  return {
+    state: {
+      ...state,
+      saveState: "saving",
+      retryAttempt: state.retryAttempt + 1,
+    },
+    effects: [{ type: "RETRY", delay }],
+  };
+}
+
 export function reducePersistenceState(state, action) {
   switch (action.type) {
     case "RESET":
@@ -28,12 +46,17 @@ export function reducePersistenceState(state, action) {
     case "EDIT":
       return {
         state: { ...state, dirty: true, saveState: "dirty" },
-        effects: [],
+        effects: [{ type: "SCHEDULE_SAVE", delay: action.delay ?? 400 }],
       };
-    case "SAVE_START":
+    case "TIMER_FIRED":
       return {
         state: { ...state, saveState: "saving" },
-        effects: [],
+        effects: [{ type: "SAVE" }],
+      };
+    case "SAVE_REQUESTED":
+      return {
+        state: { ...state, saveState: "saving" },
+        effects: [{ type: "SAVE" }],
       };
     case "SAVE_SUCCESS":
       return {
@@ -56,23 +79,8 @@ export function reducePersistenceState(state, action) {
         },
         effects: [],
       };
-    case "SAVE_FAILURE": {
-      const delay = nextRetryDelay(state);
-      if (delay == null) {
-        return {
-          state: { ...state, saveState: "error" },
-          effects: [],
-        };
-      }
-      return {
-        state: {
-          ...state,
-          saveState: "saving",
-          retryAttempt: state.retryAttempt + 1,
-        },
-        effects: [{ type: "RETRY", delay }],
-      };
-    }
+    case "SAVE_FAILURE":
+      return saveFailure(state);
     case "SET_RETRY_DELAYS":
       return {
         state: { ...state, retryDelays: action.delays ?? DEFAULT_RETRY_DELAYS },

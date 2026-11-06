@@ -53,9 +53,15 @@ export function createPersistenceManager({
   const currentApp = () => (typeof app === "function" ? app() : app);
 
   function dispatch(action) {
+    const previous = state;
     const next = reducePersistenceState(state, action);
     state = next.state;
-    onStateChange?.({ state: state.saveState, conflictRemote: state.conflictRemote });
+    if (
+      previous.saveState !== state.saveState ||
+      previous.conflictRemote !== state.conflictRemote
+    ) {
+      onStateChange?.({ state: state.saveState, conflictRemote: state.conflictRemote });
+    }
     return next.effects;
   }
 
@@ -67,11 +73,9 @@ export function createPersistenceManager({
     }
     return client;
   }
-
   function setStateObserver(fn) {
     onStateChange = fn;
   }
-
   function getSaveState() {
     return state.saveState;
   }
@@ -246,17 +250,30 @@ export function createPersistenceManager({
     });
   }
 
-  function queueSave({ delay = 400 } = {}) {
-    if (!active || active.status !== "draft") return;
-    dispatch({ type: "EDIT" });
+  function scheduleTimer(delay) {
     if (saveTimer) cancel(saveTimer);
     saveTimer = schedule(async () => {
+      saveTimer = null;
       try {
-        await saveNow();
+        await runEffects(dispatch({ type: "TIMER_FIRED" }));
       } catch (err) {
         console.error("autosave failed", err);
       }
     }, delay);
+  }
+
+  async function runEffects(effects, force = false) {
+    for (const effect of effects) {
+      if (effect.type === "SCHEDULE_SAVE") scheduleTimer(effect.delay);
+      else if (effect.type === "SAVE") await performSave(force);
+    }
+  }
+
+  function queueSave({ delay = 400 } = {}) {
+    if (!active || active.status !== "draft") return;
+    runEffects(dispatch({ type: "EDIT", delay })).catch((err) =>
+      console.error("autosave failed", err)
+    );
   }
 
   async function flushSave() {
@@ -298,14 +315,15 @@ export function createPersistenceManager({
     return batchSeam().deleteBatch(batchId);
   }
 
-  async function saveNow({ force = false } = {}) {
+  async function performSave(force = false) {
     if (!active || active.status !== "draft") return;
     let lastError;
-    dispatch({ type: "SAVE_START" });
     for (;;) {
       const payload = { name: active.name, ...currentApp().draftState() };
       try {
-        const updated = await batchSeam().upsertBatch(
+        const seam = batchSeam();
+        const put = typeof seam.put === "function" ? seam.put : seam.upsertBatch;
+        const updated = await put(
           active.id,
           payload,
           active.updated_at ?? undefined,
@@ -326,6 +344,11 @@ export function createPersistenceManager({
         await new Promise((resolve) => schedule(resolve, retry.delay));
       }
     }
+  }
+
+  async function saveNow({ force = false } = {}) {
+    if (!active || active.status !== "draft") return;
+    await runEffects(dispatch({ type: "SAVE_REQUESTED" }), force);
   }
 
   async function resolveConflictByReload() {

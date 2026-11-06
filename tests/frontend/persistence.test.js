@@ -660,7 +660,7 @@ test("saveState reaches error after exhausting retries", async () => {
 
   assert.equal(attempts, 4);
   assert.equal(persistence.getSaveState(), "error");
-  assert.deepEqual(states, ["dirty", "saving", "saving", "saving", "saving", "error"]);
+  assert.deepEqual(states, ["dirty", "saving", "error"]);
 });
 
 test("a transient failure recovers within the retry budget", async () => {
@@ -692,6 +692,28 @@ test("two managers keep their active batch and save state isolated", async () =>
   assert.equal(first.getActive().name, "First");
   assert.equal(second.getActive(), null);
   assert.equal(second.getSaveState(), "idle");
+});
+
+test("the network save uses the injected client put seam", async () => {
+  const calls = [];
+  const manager = createPersistenceManager({
+    client: {
+      async put(id, payload, base, force) {
+        calls.push({ id, payload, base, force });
+        return { id, updated_at: 9 };
+      },
+    },
+    app: fakeApp(),
+  });
+  await manager.createUnsavedDraft({ name: "Put draft" });
+  await manager.saveNow();
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].id, manager.getActive().id);
+  assert.equal(calls[0].payload.name, "Put draft");
+  assert.equal(calls[0].base, undefined);
+  assert.equal(calls[0].force, false);
+  assert.equal(manager.getActive().updated_at, 9);
 });
 
 test("the manager uses the injected timer functions", async () => {
