@@ -31,6 +31,7 @@
         "temp_high_c",
         "sta1_text",
         "sta1",
+        "pof",
         "retrieved_at",
         "sha256"
       ],
@@ -48,6 +49,7 @@
         "temp_high_c": { "type": ["number", "null"] },
         "sta1_text": { "type": "string" },
         "sta1": { "type": ["boolean", "null"] },
+        "pof": { "enum": ["unknown", "positive", "negative"] },
         "retrieved_at": { "type": "string", "minLength": 1 },
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
       }

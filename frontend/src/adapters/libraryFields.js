@@ -6,6 +6,13 @@ import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/u
 import { unitSymbol } from "../utils.js";
 
 const CAPTURE_FIELDS = new Set(["yield_basis"]);
+const FIELD_LABELS = {
+  sta1: "STA1 / diastaticus",
+  pof: "POF",
+};
+const TAXONOMY_LABELS = {
+  pof_status: { unknown: "Unknown", positive: "Positive", negative: "Negative" },
+};
 
 function isCapturedField(field) {
   return (
@@ -40,6 +47,53 @@ function numberField(field, spec, unitMode) {
   };
 }
 
+function listField(field, label, spec, view) {
+  return {
+    field,
+    label,
+    kind: "list",
+    fields: Object.entries(spec.item ?? {}).map(([itemField, itemSpec]) =>
+      itemSpec.dimension
+        ? numberField(itemField, itemSpec, view.unitMode)
+        : { field: itemField, label: itemField, kind: "text" }
+    ),
+  };
+}
+
+function referenceField(field, label, spec, cache) {
+  const refs = cache.references?.[spec.reference] ?? {};
+  return {
+    field,
+    label,
+    kind: "select",
+    options: Object.keys(refs),
+    optionLabels: Object.fromEntries(
+      Object.entries(refs).map(([id, record]) => [id, record.name ?? id])
+    ),
+  };
+}
+
+function taxonomyField(field, label, spec, artifact) {
+  return {
+    field,
+    label,
+    kind: "select",
+    options: artifact.taxonomies?.[spec.taxonomy] ?? [],
+    optionLabels: TAXONOMY_LABELS[spec.taxonomy] ?? null,
+  };
+}
+
+function fieldModel(field, spec, { artifact, cache, view }) {
+  const label = FIELD_LABELS[field] ?? field;
+  if (spec.type === "list") return listField(field, label, spec, view);
+  if (spec.format === "date") return { field, label, kind: "date" };
+  if (spec.reference) return referenceField(field, label, spec, cache);
+  if (spec.taxonomy) return taxonomyField(field, label, spec, artifact);
+  if (spec.type === "boolean") return { field, label, kind: "boolean" };
+  if (!spec.dimension) return { field, label, kind: "text" };
+  return numberField(field, spec, view.unitMode);
+}
+
 export function createLibraryFields({ artifact, cache, getView }) {
   return Object.defineProperties({}, {
     activeSchema: {
@@ -63,43 +117,7 @@ export function createLibraryFields({ artifact, cache, getView }) {
         const schema = view.activeSchema ?? {};
         return Object.entries(schema)
           .filter(([field]) => field !== meta.idField && !isCapturedField(field))
-          .map(([field, spec]) => {
-            if (spec.type === "list") {
-              return {
-                field,
-                label: field,
-                kind: "list",
-                fields: Object.entries(spec.item ?? {}).map(([itemField, itemSpec]) =>
-                  itemSpec.dimension
-                    ? numberField(itemField, itemSpec, view.unitMode)
-                    : { field: itemField, label: itemField, kind: "text" }
-                ),
-              };
-            }
-            if (spec.format === "date") return { field, label: field, kind: "date" };
-            if (spec.reference) {
-              const refs = cache.references?.[spec.reference] ?? {};
-              return {
-                field,
-                label: field,
-                kind: "select",
-                options: Object.keys(refs),
-                optionLabels: Object.fromEntries(
-                  Object.entries(refs).map(([id, record]) => [id, record.name ?? id])
-                ),
-              };
-            }
-            if (spec.taxonomy) {
-              return {
-                field,
-                label: field,
-                kind: "select",
-                options: artifact.taxonomies?.[spec.taxonomy] ?? [],
-              };
-            }
-            if (!spec.dimension) return { field, label: field, kind: "text" };
-            return numberField(field, spec, view.unitMode);
-          });
+          .map(([field, spec]) => fieldModel(field, spec, { artifact, cache, view }));
       },
     },
   });

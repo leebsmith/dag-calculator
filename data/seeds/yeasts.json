@@ -12,6 +12,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/aeb-fermoale/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -32,6 +33,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/aeb-fermoale-ay4/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 17,
@@ -52,6 +54,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/lager/aeb-fermolager-berlin/"
     },
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 10,
     "temp_high_c": 15,
@@ -72,6 +75,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/aeb-fermolager-w/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 9,
@@ -93,6 +97,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/aeb-weiss-arome/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -114,6 +119,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bio4-american-ale-sy025/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 15,
@@ -135,6 +141,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/bio4-heffeweizen-ale-sy055/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -156,6 +163,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bio4-london-esb-sy030/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -177,6 +185,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bio4-norwegian-kveik-2-sy084/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -198,6 +207,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bio4-norwegian-kveik-sy081/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -219,6 +229,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bio4-superyeast-high-gravity-ale-sy042/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -240,6 +251,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-aurora-bbaur/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -261,6 +273,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-belgian-blend-bbxbelg/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -282,6 +295,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/bootleg-biology-berliner-blend-bbxbrln/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -303,6 +317,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-brulosophy-blend-bbxbru1/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -324,6 +339,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/bootleg-biology-chardonnay-bb99301a/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -345,6 +361,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/bootleg-biology-funk-weapon-1-bb0034a/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -366,6 +383,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/bootleg-biology-funk-weapon-2-bb0035c/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -387,6 +405,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/bootleg-biology-funk-weapon-3-bb0022/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -408,6 +427,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-neepah-blend-bbxnpa/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -429,6 +449,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-oslo-oslo/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -450,6 +471,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-s-arlingtonesis-bb22204/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -471,6 +493,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bootleg-biology-saison-parfait-bbx0104/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -492,6 +515,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/bootleg-biology-sour-solera-blend-bbxss/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -513,6 +537,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/bootleg-biology-the-mad-fermentationist-saison-blend-bbxmad1/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -534,6 +559,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/brewferm-blanche-y015/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 23,
@@ -554,6 +580,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/brewferm-lager-y016/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 10,
     "temp_high_c": 15,
@@ -574,6 +601,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/brewferm-top/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -595,6 +623,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-american-microbrewery-ale-a-72/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -616,6 +645,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-american-white-ale-a-10/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -637,6 +667,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/bsi-andechs-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -658,6 +689,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-andechs-weizen/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -679,6 +711,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/bsi-augustiner-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 11,
@@ -700,6 +733,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-belgian-ale-abs3/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -721,6 +755,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-british-ale-a-98/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -742,6 +777,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-british-ale-ii-a-35/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -763,6 +799,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-british-ale-iii-a-32/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -784,6 +821,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-chico-ale-a-56/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -805,6 +843,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-german-ale-a-07/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -826,6 +865,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/bsi-german-lager-3470/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -847,6 +887,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-henley-on-thames-ale-a-75/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -868,6 +909,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-irish-ale-a-84/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -889,6 +931,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-kolsch-a-65/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 12,
@@ -910,6 +953,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-london-ale-i-a-28/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -931,6 +975,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-london-ale-ii-a-68/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -952,6 +997,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-london-ale-iii-a-18/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -973,6 +1019,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-old-german-ale-a-38/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -994,6 +1041,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/bsi-pasteur-champagne-1868/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 4,
@@ -1015,6 +1063,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-ringwood-ale-1187/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1036,6 +1085,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-scotch-ale-a-78/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -1057,6 +1107,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-timothy-taylor-ale-a-69/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1078,6 +1129,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bsi-whitbread-ale-a-99/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1099,6 +1151,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/bulldog-amber-lager-b38/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 9,
@@ -1120,6 +1173,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bulldog-american-west-b5/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 16,
@@ -1141,6 +1195,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/bulldog-bavarian-wheat-b49/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1162,6 +1217,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bulldog-belgian-saison-b16/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1183,6 +1239,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bulldog-belgian-trappix-b19/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1204,6 +1261,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bulldog-english-ale-b4/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 16,
@@ -1225,6 +1283,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bulldog-european-ale-b44/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -1246,6 +1305,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/bulldog-german-lager-b34/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 9,
@@ -1267,6 +1327,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/bulldog-steam-lager-b23/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 13,
@@ -1288,6 +1349,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/bulldog-universal-ale-b01/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1309,6 +1371,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/coopers-coopers-ale/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 20,
@@ -1330,6 +1393,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-abbeys-sellection-cl007/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -1351,6 +1415,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-american-cream-cl014/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -1372,6 +1437,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-bagpipes-chanter-cl003/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1393,6 +1459,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/crescat-labs-bayernfest-cl011/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -1414,6 +1481,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-belgian-meander-cl008/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1435,6 +1503,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-black-clover-cl004/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -1456,6 +1525,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-cologne-definition-cl013/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -1477,6 +1547,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-flemish-rhapsody-cl005/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -1498,6 +1569,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-friars-strong-cl017/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "15.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1519,6 +1591,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-kveik-fox-cl018/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -1540,6 +1613,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-londons-calling-cl001/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1561,6 +1635,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/crescat-labs-moravian-vale-cl010/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -1582,6 +1657,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-piwo-cells-cl015/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1603,6 +1679,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-saisons-season-cl006/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1624,6 +1701,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-trapeze-trappist-cl009/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -1645,6 +1723,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-usa1933-cl016/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -1666,6 +1745,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crescat-labs-witty-pretty-cl012/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -1687,6 +1767,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-belgian/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1708,6 +1789,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-beoir/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -1729,6 +1811,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/crossmyloof-brew-californian/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -1750,6 +1833,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-five/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 17,
@@ -1771,6 +1855,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-four/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -1792,6 +1877,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-hog-norsk/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1813,6 +1899,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-haze/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -1834,6 +1921,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/crossmyloof-brew-hell/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 12,
@@ -1855,6 +1943,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-kentucky/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 13,
@@ -1876,6 +1965,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-koelsch/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 15,
@@ -1897,6 +1987,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/crossmyloof-brew-kristallweizen/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 18,
@@ -1918,6 +2009,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-lille-saison/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 17,
@@ -1939,6 +2031,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-midland/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 13,
@@ -1960,6 +2053,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-monk/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -1981,6 +2075,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-pia/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -2002,6 +2097,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-real-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 17,
@@ -2023,6 +2119,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/crossmyloof-brew-us-pale-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Dry",
     "temp_low_c": 17,
@@ -2044,6 +2141,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/east-coast-yeast-baltic-lager-ecy22/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 8,
     "temp_high_c": 12,
@@ -2064,6 +2162,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-belgian-abbaye-ecy09/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 19,
     "temp_high_c": 22,
@@ -2084,6 +2183,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-belgian-white-ecy11/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 24,
@@ -2103,6 +2203,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-berliner-blend-ecy06/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 23,
@@ -2122,6 +2223,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-brett-blend-1-anomala-ecy04/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 21,
@@ -2141,6 +2243,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-brett-blend-9-ecy05/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 21,
@@ -2160,6 +2263,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-brett-custersianus-ecy19/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 23,
@@ -2179,6 +2283,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-brett-nanus-ecy24/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 21,
@@ -2199,6 +2304,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-british-mild-ecy18/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 20,
@@ -2218,6 +2324,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-bugcounty-ecy20/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 23,
@@ -2238,6 +2345,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-bugfarm-2-ecy45/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -2259,6 +2367,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-bugfarm-ecy01/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -2280,6 +2389,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-burton-union-ecy17/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 21,
@@ -2299,6 +2409,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/east-coast-yeast-farmhouse-brett-ecy03/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 21,
@@ -2318,6 +2429,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-flemish-ale-ecy02/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 23,
@@ -2338,6 +2450,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/east-coast-yeast-kellerbier-ecy28/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -2359,6 +2472,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-koelschbier-ecy21/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 14,
     "temp_high_c": 19,
@@ -2379,6 +2493,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/east-coast-yeast-munich-festbier-ecy15/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 8,
     "temp_high_c": 12,
@@ -2399,6 +2514,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-northeast-ale-ecy29/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 21,
@@ -2419,6 +2535,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-old-newark-ale-ecy10/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 20,
@@ -2439,6 +2556,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-old-newark-beer-ecy12/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 14,
     "temp_high_c": 20,
@@ -2458,6 +2576,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-oud-brune-ecy23/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 23,
@@ -2478,6 +2597,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-saison-brasserie-ecy08/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 24,
     "temp_high_c": 29,
@@ -2498,6 +2618,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-saison-single-ecy14/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 24,
     "temp_high_c": 28,
@@ -2518,6 +2639,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-scottish-heavy-ecy07/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 20,
@@ -2538,6 +2660,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-senne-valley-ecy31/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2559,6 +2682,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/east-coast-yeast-trappist-ale-ecy13/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 19,
     "temp_high_c": 22,
@@ -2579,6 +2703,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-american-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -2600,6 +2725,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-anchorman-ale/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2621,6 +2747,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-ardennes-belgian-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2642,6 +2769,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-aarset-kveik-blend/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -2663,6 +2791,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-biergarten-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -2684,6 +2813,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/escarpment-labs-brett-b/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 27,
@@ -2705,6 +2835,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/escarpment-labs-brett-d/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -2726,6 +2857,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/escarpment-labs-brett-q/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -2747,6 +2879,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/escarpment-labs-brussels-brett/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -2768,6 +2901,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-cali-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2789,6 +2923,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-cali-common-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -2810,6 +2945,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-cerberus/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -2831,6 +2967,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-classic-witbier/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -2852,6 +2989,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-copenhagen-lager/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -2873,6 +3011,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-czech-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -2894,6 +3033,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-dry-belgian-ale/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -2915,6 +3055,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-ebbegarden-kveik-blend/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -2936,6 +3077,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-english-ale-i/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2957,6 +3099,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-english-ale-ii/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2978,6 +3121,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-foggy-london-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -2999,6 +3143,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-fruit-bomb-saison/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -3020,6 +3165,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-fruity-witbier/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -3041,6 +3187,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-goldrush-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -3062,6 +3209,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-hornindal-kveik-blend/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -3083,6 +3231,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-irish-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3104,6 +3253,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-isar-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -3125,6 +3275,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-koelsch-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3146,6 +3297,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-krispy/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3167,6 +3319,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-laerdal-kveik/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -3188,6 +3341,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-marina-russian-farmhouse/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -3209,6 +3363,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-mexican-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -3230,6 +3385,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/escarpment-labs-munich-lager/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 12,
@@ -3251,6 +3407,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-new-world-saison/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -3272,6 +3429,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-old-world-saison-blend/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -3293,6 +3451,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-ontario-farmhouse-ale-blend/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -3314,6 +3473,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-scotia-sauvage/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3335,6 +3495,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-scottish-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -3356,6 +3517,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-skare-kveik/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3377,6 +3539,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-spooky-saison/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -3398,6 +3561,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-st-lucifer-belgian-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -3419,6 +3583,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-st-remy-abbey-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3440,6 +3605,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-sterling-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -3461,6 +3627,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-uberweizen/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3482,6 +3649,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-vermont-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -3503,6 +3671,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-voss-kveik/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -3524,6 +3693,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-weizen-i/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3545,6 +3715,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-weizen-ii/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -3566,6 +3737,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/escarpment-labs-wild-thing/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -3587,6 +3759,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-abbaye-be-256/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3608,6 +3781,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-american-ale-us-05/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3629,6 +3803,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-american-ale-us-56/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -3650,6 +3825,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-belgian-saison-ale-be-134/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 28,
@@ -3670,6 +3846,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-english-ale-s-04/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.8%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3691,6 +3868,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-general-belgian-s-33/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "11.5%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3712,6 +3890,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-german-ale-k-97/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.4%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3733,6 +3912,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-safbrew-ha-18/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 25,
@@ -3754,6 +3934,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safale-specialty-ale-t-58/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "11.5%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3775,6 +3956,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/fermentis-safale-wheat-beer-wb-06/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.5%",
     "form": "Dry",
     "temp_low_c": 12,
@@ -3796,6 +3978,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/fermentis-safcider/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 10,
@@ -3817,6 +4000,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/fermentis-saflager-german-lager-s-23/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.5%",
     "form": "Dry",
     "temp_low_c": 9,
@@ -3838,6 +4022,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/fermentis-saflager-german-lager-w-34-70/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.5%",
     "form": "Dry",
     "temp_low_c": 9,
@@ -3859,6 +4044,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/fermentis-saflager-swiss-lager-s-189/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.5%",
     "form": "Dry",
     "temp_low_c": 9,
@@ -3880,6 +4066,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safspirit-hg-1/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 25,
@@ -3901,6 +4088,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/fermentis-safspirit-usw-6/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -3922,6 +4110,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-achouffe-belgian-ale-gy003/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 25,
@@ -3942,6 +4131,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-altstadt-ale-gy016/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 13,
     "temp_high_c": 20,
@@ -3962,6 +4152,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/gigayeast-american-lager-gy030/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 9,
     "temp_high_c": 16,
@@ -3982,6 +4173,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-bavarian-hefe-gy017/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4002,6 +4194,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-belgian-mix-gy007/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 19,
     "temp_high_c": 25,
@@ -4022,6 +4215,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-belgian-wit-gy028/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4041,6 +4235,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-berliner-blend-gb122/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 21,
     "temp_high_c": 27,
@@ -4061,6 +4256,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-british-ale-1-gy011/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -4081,6 +4277,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-british-ale-2-gy031/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 24,
@@ -4101,6 +4298,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-british-ale-3-gy041/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -4121,6 +4319,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/gigayeast-czech-pilsner-gy002/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 9,
     "temp_high_c": 13,
@@ -4140,6 +4339,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-farmhouse-sour-gb121/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 27,
@@ -4159,6 +4359,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-fast-souring-lacto-gb110/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 37,
@@ -4179,6 +4380,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/gigayeast-german-lager-gy045/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 10,
     "temp_high_c": 16,
@@ -4199,6 +4401,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/gigayeast-golden-gate-lager-gy005/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 13,
     "temp_high_c": 21,
@@ -4219,6 +4422,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-golden-pear-belgian-ale-gy048/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4239,6 +4443,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-hornindal-kveik-5-gy135/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -4260,6 +4465,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-koelsch-bier-gy021/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 22,
@@ -4280,6 +4486,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-norcal-ale-1-gy001/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -4300,6 +4507,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-norcal-ale-5-gy029/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 19,
     "temp_high_c": 24,
@@ -4320,6 +4528,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-portland-hefe-gy020/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 23,
@@ -4340,6 +4549,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-saison-1-gy018/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4360,6 +4570,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-saison-2-gy027/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4380,6 +4591,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-saison-blend-gy047/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4399,6 +4611,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-saison-sour-gb124/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 27,
@@ -4419,6 +4632,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-scotch-ale-1-gy044/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 24,
@@ -4439,6 +4653,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-scourmont-abbey-ale-gy014/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 27,
@@ -4459,6 +4674,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-sour-cherry-funk-gb150/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -4479,6 +4695,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-sour-plum-belgian-gb123/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 27,
@@ -4498,6 +4715,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/gigayeast-sweet-flemish-brett-gb144/"
     },
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 24,
@@ -4518,6 +4736,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-trappist-tripel-gy015/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 19,
     "temp_high_c": 23,
@@ -4538,6 +4757,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/gigayeast-vermont-ipa-gy054/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 24,
@@ -4558,6 +4778,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-barbarian-a04/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 21,
@@ -4578,6 +4799,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-bell-a62/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -4599,6 +4821,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/imperial-yeast-bubbles-a40/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -4620,6 +4843,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-cablecar-l05/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 13,
     "temp_high_c": 18,
@@ -4640,6 +4864,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-citrus-a20/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 19,
     "temp_high_c": 27,
@@ -4660,6 +4885,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-darkness-a10/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 22,
@@ -4680,6 +4906,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-dieter-g03/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 21,
@@ -4700,6 +4927,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-dry-hop-a24/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 23,
@@ -4720,6 +4948,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-fest-l02/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 8,
     "temp_high_c": 13,
@@ -4740,6 +4969,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-fish-finder-b53/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 23,
@@ -4760,6 +4990,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-flagship-a07/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 22,
@@ -4780,6 +5011,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-gateway-l11/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 8,
     "temp_high_c": 13,
@@ -4800,6 +5032,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-global-l13/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 8,
     "temp_high_c": 13,
@@ -4820,6 +5053,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-gnome-b45/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 24,
@@ -4840,6 +5074,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-harvest-l17/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 10,
     "temp_high_c": 16,
@@ -4860,6 +5095,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-house-a01/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 21,
@@ -4880,6 +5116,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-independence-a15/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 22,
@@ -4900,6 +5137,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-joystick-a18/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 21,
@@ -4920,6 +5158,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-juice-a38/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -4941,6 +5180,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-julius-a34/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -4962,6 +5202,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-kaiser-g02/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 13,
     "temp_high_c": 18,
@@ -4982,6 +5223,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-kveiking-a44/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -5003,6 +5245,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-loki-a43/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 38,
@@ -5023,6 +5266,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-monastic-b63/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 26,
@@ -5043,6 +5287,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-napoleon-b64/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 26,
@@ -5063,6 +5308,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-pilgrimage-l26/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 7,
@@ -5084,6 +5330,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-pog-a37/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 29,
@@ -5105,6 +5352,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-pub-a09/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 21,
@@ -5125,6 +5373,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-que-bueno-l09/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 8,
     "temp_high_c": 13,
@@ -5145,6 +5394,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-rustic-b56/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 32,
@@ -5165,6 +5415,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/imperial-yeast-sour-batch-kidz-f08/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 24,
@@ -5185,6 +5436,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-sovereign-a13/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 16,
     "temp_high_c": 21,
@@ -5205,6 +5457,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-stefon-g01/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 23,
@@ -5225,6 +5478,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/imperial-yeast-suburban-brett-w15/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 23,
@@ -5245,6 +5499,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-tartan-a31/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 21,
@@ -5265,6 +5520,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-triple-double-b48/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -5285,6 +5541,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/imperial-yeast-urkel-l28/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 11,
     "temp_high_c": 14,
@@ -5305,6 +5562,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-voyager-a05/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5326,6 +5584,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-whiteout-b44/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 17,
     "temp_high_c": 22,
@@ -5346,6 +5605,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/imperial-yeast-workhorse-b51/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 24,
@@ -5366,6 +5626,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-american-ale-inis-007/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -5387,6 +5648,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-american-weizen-inis-055/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5408,6 +5670,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-belgian-gnome-ale-inis-222/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5429,6 +5692,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-belgian-wit-ale-inis-241/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5450,6 +5714,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/inland-island-yeast-brett-barrel-iii-inis-913/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -5471,6 +5736,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-colorado-ipa-inis-003/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -5492,6 +5758,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-east-coast-ipa-inis-008/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5513,6 +5780,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-eccentric-ale-inis-006/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -5534,6 +5802,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-english-ale-v-inis-315/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5555,6 +5824,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-english-dry-ale-inis-318/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5576,6 +5846,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-fog-machine-inis-009/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -5597,6 +5868,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-french-ale-inis-451/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -5618,6 +5890,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-german-hybrid-ale-inis-573/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -5639,6 +5912,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/inland-island-yeast-german-monk-lager-inis-711/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -5660,6 +5934,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-golden-kolsch-style-ale-inis-572/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -5681,6 +5956,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-northern-california-ale-inis-001/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -5702,6 +5978,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-norwegian-farmhouse-inis-441/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -5723,6 +6000,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/inland-island-yeast-saison-farmhouse-inis-291/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -5744,6 +6022,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/inland-island-yeast-session-lager-inis-701/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -5765,6 +6044,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-abbaye-belgian-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 17,
@@ -5786,6 +6066,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-belle-saison/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 15,
@@ -5807,6 +6088,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-cask-and-bottle-conditioning-cbc-1/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 15,
@@ -5828,6 +6110,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/lallemand-lalbrew-diamond-lager/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Dry",
     "temp_low_c": 10,
@@ -5849,6 +6132,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-koeln-koelsch-style-ale/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -5870,6 +6154,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-london-english-style-ale/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 18,
@@ -5891,6 +6176,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-munich-classic-wheat-beer/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 18,
@@ -5912,6 +6198,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-new-england/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -5933,6 +6220,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-nottingham-ale/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 10,
@@ -5954,6 +6242,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-verdant-ipa/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 18,
@@ -5975,6 +6264,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-voss-kveik-ale/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 25,
@@ -5996,6 +6286,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-west-coast-bry-97/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 15,
@@ -6017,6 +6308,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-lalbrew-windsor-ale/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 15,
@@ -6038,6 +6330,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/lallemand-lalvin-71b/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 15,
@@ -6059,6 +6352,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/lallemand-lalvin-ec-1118/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 15,
@@ -6080,6 +6374,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/lallemand-lalvin-icv-d47/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 15,
@@ -6101,6 +6396,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/lallemand-lalvin-v1116/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 10,
@@ -6122,6 +6418,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-sourvisiae/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 10,
@@ -6143,6 +6440,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/lallemand-wildbrew-philly-sour/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Dry",
     "temp_low_c": 20,
@@ -6164,6 +6462,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-arset/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -6185,6 +6484,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-ebbegarden-kveik/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 27,
@@ -6206,6 +6506,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-espe/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -6227,6 +6528,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-framgarden/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -6248,6 +6550,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-granvin/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -6269,6 +6572,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-juggernaut/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -6290,6 +6594,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mainiacal-yeast-labs-midtbust/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -6311,6 +6616,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/mainiacal-yeast-labs-mtf-blend/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -6332,6 +6638,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/mainiacal-yeast-labs-mybrett86/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -6353,6 +6660,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/mangrove-jacks-bavarian-lager-m76/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 7,
     "temp_high_c": 14,
@@ -6373,6 +6681,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-bavarian-wheat-m20/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 15,
     "temp_high_c": 30,
@@ -6393,6 +6702,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-belgian-abbey-m47/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -6413,6 +6723,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-belgian-ale-m41/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 28,
@@ -6433,6 +6744,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-belgian-tripel-m31/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 28,
@@ -6453,6 +6765,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-belgian-wit-m21/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 25,
@@ -6473,6 +6786,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-belgian-wit-m27/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 26,
@@ -6494,6 +6808,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/mangrove-jacks-bohemian-lager-m84/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 10,
     "temp_high_c": 15,
@@ -6514,6 +6829,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-british-ale-m07/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 14,
     "temp_high_c": 22,
@@ -6534,6 +6850,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-burton-union-m79/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 17,
     "temp_high_c": 23,
@@ -6554,6 +6871,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/mangrove-jacks-californian-lager-m54/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 20,
@@ -6574,6 +6892,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/mangrove-jacks-cider-m02/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 24,
@@ -6594,6 +6913,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-empire-ale-m15/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 21,
     "temp_high_c": 24,
@@ -6614,6 +6934,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-french-saison-ale-m29/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 26,
     "temp_high_c": 32,
@@ -6634,6 +6955,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-hophead-ale-m66/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Dry",
     "temp_low_c": 18,
@@ -6655,6 +6977,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-kveik-m12/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 20,
@@ -6676,6 +6999,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-liberty-bell-ale-m36/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 17,
     "temp_high_c": 23,
@@ -6696,6 +7020,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/mangrove-jacks-mead-m05/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 15,
     "temp_high_c": 30,
@@ -6716,6 +7041,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-new-world-strong-ale-m42/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 16,
     "temp_high_c": 22,
@@ -6736,6 +7062,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-uk-dark-ale-m03/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 18,
     "temp_high_c": 22,
@@ -6756,6 +7083,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-us-west-coast-m44/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 15,
     "temp_high_c": 23,
@@ -6776,6 +7104,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/mangrove-jacks-workhorse-beer-m10/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 15,
     "temp_high_c": 20,
@@ -6796,6 +7125,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/muntons-gervin-ale-gv-12/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Dry",
     "temp_low_c": 16,
@@ -6817,6 +7147,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/muntons-premium-gold/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Dry",
     "temp_low_c": 14,
     "temp_high_c": 25,
@@ -6837,6 +7168,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-abbey-ale-c-oyl-018/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -6858,6 +7190,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-all-the-bretts-oyl-218/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -6879,6 +7212,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-alt-oyl-001/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -6900,6 +7234,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-american-lager-oyl-103/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -6921,6 +7256,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-american-pilsner-oyl-102/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -6942,6 +7278,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-american-wheat-oyl-002/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -6963,6 +7300,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-bavarian-wheat-oyl-025/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -6984,6 +7322,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-bayern-lager-oyl-114/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 11,
@@ -7005,6 +7344,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-ale-a-oyl-024/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7026,6 +7366,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-ale-d-oyl-019/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7047,6 +7388,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-ale-dk-oyl-049/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -7068,6 +7410,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-ale-o-oyl-046/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -7089,6 +7432,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-ale-r-oyl-020/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7110,6 +7454,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-ale-w-oyl-028/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7131,6 +7476,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-dark-ale-a-oyl-040/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7152,6 +7498,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-saison-i-oyl-027/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -7173,6 +7520,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-saison-ii-oyl-042/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -7194,6 +7542,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-belgian-wheat-oyl-029/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7215,6 +7564,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-biere-de-garde-oyl-039/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -7236,6 +7586,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-brett-blend-1-where-da-funk-oyl-210/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7257,6 +7608,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-brett-blend-2-bit-o-funk-oyl-211/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7278,6 +7630,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-brett-blend-3-bring-on-da-funk-oyl-212/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7299,6 +7652,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-brettanomyces-bruxellensis-oyl-202/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7320,6 +7674,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-brettanomyces-claussenii-oyl-201/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7341,6 +7696,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-brettanomyces-lambicus-oyl-203/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7362,6 +7718,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-i-oyl-006/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7383,6 +7740,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-ii-oyl-007/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7404,6 +7762,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-iii-oyl-008/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7425,6 +7784,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-iv-oyl-010/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7446,6 +7806,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-v-oyl-011/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7467,6 +7828,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-vi-oyl-013/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7488,6 +7850,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-vii-oyl-014/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7509,6 +7872,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-viii-oyl-016/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7530,6 +7894,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-ale-xi-oyl-048/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -7551,6 +7916,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-british-cask-oyl-038/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7572,6 +7938,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/omega-yeast-labs-c2c-american-farmhouse-oyl-217/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7593,6 +7960,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-cl-50-ale-oyl-041/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -7614,6 +7982,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-danish-lager-oyl-104/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -7635,6 +8004,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-dipa-ale-oyl-052/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7656,6 +8026,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-east-coast-ale-oyl-032/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7677,6 +8048,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-espe-kveik-oyl090/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7698,6 +8070,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-french-saison-oyl-026/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7719,6 +8092,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-german-bock-oyl-111/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -7740,6 +8114,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-german-lager-i-oyl-106/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 7,
@@ -7761,6 +8136,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-german-lager-ii-oyl-109/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -7782,6 +8158,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-grand-cru-oyl-023/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7803,6 +8180,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-gulo-ale-oyl-501/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -7824,6 +8202,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-hefeweizen-ale-i-oyl-021/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7845,6 +8224,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-hefeweizen-ale-ii-oyl-022/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7866,6 +8246,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-hornindal-kveik-oyl-091/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -7887,6 +8268,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-hothead-ale-oyl-057/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7908,6 +8290,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-irish-ale-oyl-005/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -7929,6 +8312,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-jovaru-lithuanian-farmhouse-oyl-033/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -7950,6 +8334,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-kolsch-i-oyl-017/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -7971,6 +8356,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-kolsch-ii-oyl-044/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -7992,6 +8378,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-lager-i-oyl-100/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 9,
     "temp_high_c": 13,
@@ -8012,6 +8399,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-london-ale-oyl-003/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -8033,6 +8421,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-lutra-kveik-oyl-071/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -8054,6 +8443,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-mexican-lager-oyl-113/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -8075,6 +8465,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-new-jersey-ale-oyl-045/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -8096,6 +8487,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-oktoberfest-oyl-107/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -8117,6 +8509,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-pacific-nw-ale-oyl-012/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8138,6 +8531,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-pilsner-i-oyl-101/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -8159,6 +8553,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-pilsner-ii-oyl-108/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -8180,6 +8575,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-saisonsteins-monster-oyl-500/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8201,6 +8597,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-scottish-ale-oyl-015/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8222,6 +8619,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-sundew-ale-oyl-401/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8243,6 +8641,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-tropical-ipa-oyl-200/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -8264,6 +8663,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-voss-kveik-oyl-061/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -8285,6 +8685,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-west-coast-ale-i-oyl-004/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -8306,6 +8707,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-west-coast-ale-ii-oyl-009/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -8327,6 +8729,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-west-coast-ale-iii-oyl-043/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8348,6 +8751,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-west-coast-ale-iv-oyl-050/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -8369,6 +8773,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/omega-yeast-labs-west-coast-lager-oyl-105/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -8390,6 +8795,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/omega-yeast-labs-wit-oyl-030/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -8411,6 +8817,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/real-brewers-lucky-no-7/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -8432,6 +8839,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/real-brewers-the-monk/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "15.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -8453,6 +8861,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/real-brewers-the-one/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 24,
@@ -8473,6 +8882,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/real-brewers-ye-olde-english/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 21,
@@ -8493,6 +8903,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/red-star-dady/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 18,
@@ -8514,6 +8925,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/rva-yeast-labs-american-lager-rva-301/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -8535,6 +8947,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-belgian-1833-ale-rva-221/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -8556,6 +8969,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-boston-ale-rva-102/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8577,6 +8991,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-chico-ale-rva-101/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -8598,6 +9013,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-chiswick-ale-rva-131/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8619,6 +9035,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/rva-yeast-labs-czech-lager-rva-304/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -8640,6 +9057,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-dublin-ale-rva-151/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8661,6 +9079,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-german-ale-i-rva-161/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -8682,6 +9101,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-ghost-ale-rva-263/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8703,6 +9123,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-golden-strong-ale-rva-251/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -8724,6 +9145,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-hoptopper-ale-rva-104/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8745,6 +9167,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-manchester-ale-rva-132/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8766,6 +9189,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/rva-yeast-labs-muenchen-lager-rva-302/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -8787,6 +9211,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/rva-yeast-labs-oktoberfest-lager-rva-303/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 11,
@@ -8808,6 +9233,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-pacman-ale-rva-103/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -8829,6 +9255,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-saison-i-rva-261/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -8850,6 +9277,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-saison-ii-rva-262/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -8871,6 +9299,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-scotch-ale-rva-141/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8892,6 +9321,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-trappist-ale-i-rva-201/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8913,6 +9343,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-trappist-ale-ii-rva-202/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8934,6 +9365,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-trappist-ale-iii-rva-203/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8955,6 +9387,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-trappist-ale-iv-rva-204/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8976,6 +9409,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/rva-yeast-labs-verboten-ale-rva-241/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -8997,6 +9431,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/siebel-institute-alt-ale-bry-144/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 15,
     "temp_high_c": 20,
@@ -9017,6 +9452,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/siebel-institute-american-ale-bry-96/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 22,
@@ -9037,6 +9473,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/siebel-institute-american-lager-bry-118/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 22,
@@ -9057,6 +9494,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/siebel-institute-bavarian-weizen-ale-bry-235/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 10,
     "temp_high_c": 14,
@@ -9077,6 +9515,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/siebel-institute-english-ale-bry-264/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 15,
     "temp_high_c": 20,
@@ -9097,6 +9536,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/siebel-institute-german-koelsch-bry-401/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 13,
     "temp_high_c": 15,
@@ -9117,6 +9557,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/siebel-institute-north-european-lager-bry-203/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 20,
     "temp_high_c": 22,
@@ -9137,6 +9578,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/siebel-institute-trappist-ale-bry-204/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "form": "Liquid",
     "temp_low_c": 18,
     "temp_high_c": 22,
@@ -9163,6 +9605,7 @@
       "note": "apparent 82% - 86% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9190,6 +9633,7 @@
       "note": "apparent 85% - 95% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9211,6 +9655,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-beersel-brettanomyces-blend-wlp4603/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9232,6 +9677,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-brettanomyces-bruxellensis-strain-tyb184/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -9253,6 +9699,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-brettanomyces-bruxellensis-strain-tyb207/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -9274,6 +9721,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-brettanomyces-bruxellensis-strain-tyb261/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -9295,6 +9743,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-brettanomyces-bruxellensis-strain-tyb307/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9316,6 +9765,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-brettanomyces-bruxellensis-strain-tyb415/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9337,6 +9787,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-brussels-brettanomyces-blend-wlp4613/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9364,6 +9815,7 @@
       "note": "apparent 80% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -9391,6 +9843,7 @@
       "note": "apparent 85% - 100% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -9418,6 +9871,7 @@
       "note": "apparent 80% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9445,6 +9899,7 @@
       "note": "apparent 78% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -9472,6 +9927,7 @@
       "note": "apparent 78% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 27,
@@ -9499,6 +9955,7 @@
       "note": "apparent 74% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -9520,6 +9977,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/the-yeast-bay-funktown-pale-ale-wlp4627/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -9547,6 +10005,7 @@
       "note": "apparent 81% - 85% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -9574,6 +10033,7 @@
       "note": "apparent 79% - 83% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -9601,6 +10061,7 @@
       "note": "apparent 73% - 76% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 7,
@@ -9628,6 +10089,7 @@
       "note": "apparent 77% - 81% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 27,
@@ -9655,6 +10117,7 @@
       "note": "apparent -- - 5% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9682,6 +10145,7 @@
       "note": "apparent -- - 5% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9709,6 +10173,7 @@
       "note": "apparent 75% - 82% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 27,
@@ -9730,6 +10195,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-lochristi-brettanomyces-blend-wlp4623/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -9757,6 +10223,7 @@
       "note": "apparent 20% - 25% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -9784,6 +10251,7 @@
       "note": "apparent 76% - 80% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -9811,6 +10279,7 @@
       "note": "apparent 76% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -9838,6 +10307,7 @@
       "note": "apparent 77% - 81% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -9865,6 +10335,7 @@
       "note": "apparent 90% - 100% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -9892,6 +10363,7 @@
       "note": "apparent 85% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -9919,6 +10391,7 @@
       "note": "apparent 78% - 84% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -9946,6 +10419,7 @@
       "note": "apparent 85% - 90% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -9973,6 +10447,7 @@
       "note": "apparent 80% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -10000,6 +10475,7 @@
       "note": "apparent 78% - 83% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -10027,6 +10503,7 @@
       "note": "apparent 76% - 82% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -10054,6 +10531,7 @@
       "note": "apparent 85% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10081,6 +10559,7 @@
       "note": "apparent 85% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10102,6 +10581,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/the-yeast-bay-tyb-house-sour-blend/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10129,6 +10609,7 @@
       "note": "apparent 78% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -10156,6 +10637,7 @@
       "note": "apparent 80% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10183,6 +10665,7 @@
       "note": "apparent 81% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10210,6 +10693,7 @@
       "note": "apparent 86% - 94% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10231,6 +10715,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/whc-lab-funky-pineapple/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -10252,6 +10737,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/whc-lab-kveik/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 30,
@@ -10273,6 +10759,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/whc-lab-odin/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -10294,6 +10781,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/whc-lab-sanders/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -10315,6 +10803,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/whc-lab-saturated/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10336,6 +10825,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/whc-lab-the-wall/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -10363,6 +10853,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10390,6 +10881,7 @@
       "note": "apparent 74% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10417,6 +10909,7 @@
       "note": "apparent 72% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10444,6 +10937,7 @@
       "note": "apparent 75% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10471,6 +10965,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -10498,6 +10993,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -10525,6 +11021,7 @@
       "note": "apparent 76% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -10552,6 +11049,7 @@
       "note": "apparent 73% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10579,6 +11077,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -10606,6 +11105,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -10633,6 +11133,7 @@
       "note": "apparent 75% - 82% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10660,6 +11161,7 @@
       "note": "apparent 72% - 80% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -10687,6 +11189,7 @@
       "note": "apparent 78% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10714,6 +11217,7 @@
       "note": "apparent 74% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10741,6 +11245,7 @@
       "note": "apparent 78% - 85% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10768,6 +11273,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -10795,6 +11301,7 @@
       "note": "apparent 65% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10822,6 +11329,7 @@
       "note": "apparent 78% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10849,6 +11357,7 @@
       "note": "apparent 78% - 85% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10876,6 +11385,7 @@
       "note": "apparent 70% - 80% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 27,
@@ -10903,6 +11413,7 @@
       "note": "apparent 78% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -10930,6 +11441,7 @@
       "note": "apparent 74% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -10957,6 +11469,7 @@
       "note": "apparent 70% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -10984,6 +11497,7 @@
       "note": "apparent 74% - 78% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -11011,6 +11525,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -11038,6 +11553,7 @@
       "note": "apparent 73% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11059,6 +11575,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/white-labs-best-of-both-worlds-wlp200/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11086,6 +11603,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -11107,6 +11625,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/white-labs-brettanomyces-anomalus-wlp640/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -11128,6 +11647,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/white-labs-brettanomyces-bruxellensis-trois-vrai-wlp648/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -11149,6 +11669,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/white-labs-brettanomyces-bruxellensis-wlp650/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 29,
@@ -11170,6 +11691,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/white-labs-brettanomyces-claussenii-wlp645/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 29,
@@ -11191,6 +11713,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/white-labs-brettanomyces-lambicus-wlp653/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 29,
@@ -11218,6 +11741,7 @@
       "note": "apparent 67% - 74% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11245,6 +11769,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -11272,6 +11797,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11299,6 +11825,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -11326,6 +11853,7 @@
       "note": "apparent 73% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11353,6 +11881,7 @@
       "note": "apparent 70% - 90% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "17.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -11380,6 +11909,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11407,6 +11937,7 @@
       "note": "apparent 75% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11434,6 +11965,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -11461,6 +11993,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11482,6 +12015,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/white-labs-cry-havoc-wlp862/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11509,6 +12043,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -11536,6 +12071,7 @@
       "note": "apparent 70% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11563,6 +12099,7 @@
       "note": "apparent 65% - 72% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11590,6 +12127,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11617,6 +12155,7 @@
       "note": "apparent 73% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -11644,6 +12183,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11671,6 +12211,7 @@
       "note": "apparent 69% - 76% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11698,6 +12239,7 @@
       "note": "apparent 63% - 70% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11719,6 +12261,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/white-labs-english-cider-wlp775/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11746,6 +12289,7 @@
       "note": "apparent 71% - 76% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -11773,6 +12317,7 @@
       "note": "apparent 65% - 70% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11800,6 +12345,7 @@
       "note": "apparent 80% - 85% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -11827,6 +12373,7 @@
       "note": "apparent 68% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -11854,6 +12401,7 @@
       "note": "apparent 78% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -11881,6 +12429,7 @@
       "note": "apparent 73% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11908,6 +12457,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -11935,6 +12485,7 @@
       "note": "apparent 70% - 76% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -11962,6 +12513,7 @@
       "note": "apparent 74% - 79% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -11989,6 +12541,7 @@
       "note": "apparent 70% - 76% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -12016,6 +12569,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12043,6 +12597,7 @@
       "note": "apparent 81% - 85% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12070,6 +12625,7 @@
       "note": "apparent 72% - 76% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -12097,6 +12653,7 @@
       "note": "apparent 73% - 80% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12124,6 +12681,7 @@
       "note": "apparent 75% - 82% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -12151,6 +12709,7 @@
       "note": "apparent 73% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -12178,6 +12737,7 @@
       "note": "apparent 69% - 74% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12205,6 +12765,7 @@
       "note": "apparent 66% - 74% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12226,6 +12787,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/white-labs-lactobacillus-brevis-wlp672/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -12253,6 +12815,7 @@
       "note": "apparent 76% - 82% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12280,6 +12843,7 @@
       "note": "apparent 67% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12307,6 +12871,7 @@
       "note": "apparent 75% - 82% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12328,6 +12893,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/white-labs-manchester-ale-wlp038/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12355,6 +12921,7 @@
       "note": "apparent 65% - 70% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12382,6 +12949,7 @@
       "note": "apparent 70% - 78% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -12409,6 +12977,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12436,6 +13005,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -12463,6 +13033,7 @@
       "note": "apparent 77% - 84% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -12490,6 +13061,7 @@
       "note": "apparent 65% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -12517,6 +13089,7 @@
       "note": "apparent 65% - 73% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 11,
@@ -12544,6 +13117,7 @@
       "note": "apparent 66% - 73% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -12571,6 +13145,7 @@
       "note": "apparent 70% - 74% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12598,6 +13173,7 @@
       "note": "apparent 69% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 25,
@@ -12625,6 +13201,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12652,6 +13229,7 @@
       "note": "apparent 72% - 77% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -12679,6 +13257,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12700,6 +13279,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/white-labs-ringwood-ale-strain-1187/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -12727,6 +13307,7 @@
       "note": "apparent 70% - 85% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -12754,6 +13335,7 @@
       "note": "apparent 70% - 90% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -12781,6 +13363,7 @@
       "note": "apparent 72% - 78% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -12808,6 +13391,7 @@
       "note": "apparent 76% - 83% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -12835,6 +13419,7 @@
       "note": "apparent 70% - 75% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -12862,6 +13447,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -12889,6 +13475,7 @@
       "note": "apparent 75% - 83% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -12916,6 +13503,7 @@
       "note": "apparent 68% - 76% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -12943,6 +13531,7 @@
       "note": "apparent 68% - 75% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -12970,6 +13559,7 @@
       "note": "apparent 75% - 85% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 22,
@@ -12997,6 +13587,7 @@
       "note": "apparent 80% - 100% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13024,6 +13615,7 @@
       "note": "apparent 70% - 90% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "15.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -13051,6 +13643,7 @@
       "note": "apparent 75% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Liquid",
     "temp_low_c": 24,
@@ -13078,6 +13671,7 @@
       "note": "apparent 20% - 20% range; high end used as the cap"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "Low",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13105,6 +13699,7 @@
       "note": "apparent 67% - 73% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -13132,6 +13727,7 @@
       "note": "apparent 68% - 72% range; high end used as the cap"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13159,6 +13755,7 @@
       "note": "apparent 70% - 80% range; high end used as the cap"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -13180,6 +13777,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-american-ale-1056/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -13201,6 +13799,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-american-ale-ii-1272/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -13222,6 +13821,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-american-lager-2035/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -13243,6 +13843,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/wyeast-american-wheat-1010/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -13264,6 +13865,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-bavarian-lager-2206/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -13285,6 +13887,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/wyeast-bavarian-wheat-3056/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13306,6 +13909,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/wyeast-bavarian-wheat-3638/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13327,6 +13931,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-abby-ale-ii-1762/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13348,6 +13953,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-ale-1214/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -13369,6 +13975,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-ardennes-3522/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13390,6 +13997,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-dark-ale-3822/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13411,6 +14019,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-lambic-blend-3278/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -13432,6 +14041,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-saison-3724/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -13453,6 +14063,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-schelde-3655/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -13474,6 +14085,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-stout-1581/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13495,6 +14107,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-strong-ale-1388/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13516,6 +14129,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/wyeast-belgian-wheat-3942/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13537,6 +14151,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-belgian-witbier-3944/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -13558,6 +14173,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/wyeast-berliner-weisse-blend-3191/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "6.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -13579,6 +14195,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-bier-de-garde-3725/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -13600,6 +14217,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-bohemian-lager-2124/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -13621,6 +14239,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/wyeast-brettanomyces-bruxellensis-5112/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -13642,6 +14261,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/wyeast-brettanomyces-claussenii-5151-pc/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 16,
@@ -13663,6 +14283,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/wyeast-brettanomyces-lambicus-5526/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -13684,6 +14305,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-british-ale-1098/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13705,6 +14327,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-british-ale-1335/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -13726,6 +14349,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-british-cask-ale-1026/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -13747,6 +14371,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-budvar-lager-2000/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -13768,6 +14393,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-california-lager-2112/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 14,
@@ -13789,6 +14415,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-canadian-belgian-ale-3864/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13810,6 +14437,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/wyeast-cider-4766/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13831,6 +14459,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-czech-pils-2278/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -13852,6 +14481,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-danish-lager-2042/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -13873,6 +14503,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-dennys-favorite-50-1450/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -13894,6 +14525,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/wyeast-dry-mead-4632/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "18.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -13915,6 +14547,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-english-special-bitter-1768/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -13936,6 +14569,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-european-ale-1338/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -13957,6 +14591,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-european-lager-2247/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -13977,6 +14612,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-farmhouse-ale-3726/"
     },
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 21,
@@ -13998,6 +14634,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-flanders-golden-ale-3739/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14019,6 +14656,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-forbidden-fruit-3463/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -14040,6 +14678,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-french-saison-3711/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14061,6 +14700,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-gambrinus-style-lager-2002-pc/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 8,
@@ -14082,6 +14722,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-german-ale-1007/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -14103,6 +14744,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/wyeast-german-wheat-3333/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -14124,6 +14766,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-hella-bock-2487/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14145,6 +14788,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-irish-ale-1084/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -14166,6 +14810,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-koelsch-2565/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -14187,6 +14832,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-koelsch-ii-2575/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -14207,6 +14853,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/wyeast-lactobacillus-5335/"
     },
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -14228,6 +14875,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-leuven-pale-ale-3538/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14249,6 +14897,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-london-ale-1028/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -14270,6 +14919,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-london-ale-iii-1318/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14291,6 +14941,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-london-esb-ale-1968/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14312,6 +14963,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-munich-lager-2308/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14333,6 +14985,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-munich-lager-ii-2352/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 11,
@@ -14354,6 +15007,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-nb-neobritannia-1945/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 19,
@@ -14375,6 +15029,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-north-american-lager-2272/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 11,
@@ -14396,6 +15051,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-northwest-ale-1332/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14417,6 +15073,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-octoberfest-lager-blend-2633/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14437,6 +15094,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-pediococcus-5733/"
     },
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -14458,6 +15116,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-pilsen-lager-2007/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14479,6 +15138,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-pilsner-urquell-h-strain-2001-pc/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "Medium",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14500,6 +15160,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-private-collection-west-coast-ipa-1217/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -14521,6 +15182,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-rasenmaeher-lager-2252/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14542,6 +15204,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-ringwood-ale-1187/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14563,6 +15226,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-rocky-mountain-lager-2105/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14583,6 +15247,7 @@
       "note": "aggregator scrape; no per-page hash in Pass 1",
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-roeselare-ale-blend-3763/"
     },
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14604,6 +15269,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-rogue-pacman-1764/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -14625,6 +15291,7 @@
       "url": "https://www.beer-analytics.com/yeasts/brett-bacteria/wyeast-saison-brett-blend-3031-pc/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14646,6 +15313,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/wyeast-sake-wy4134/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "High",
     "form": "Dry",
     "temp_low_c": 16,
@@ -14667,6 +15335,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-scottish-ale-1728/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 13,
@@ -14688,6 +15357,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-staro-prague-lager-2782/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 10,
@@ -14709,6 +15379,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wine-cider/wyeast-sweet-mead-4184/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "11.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14730,6 +15401,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-thames-valley-ale-1275/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 17,
@@ -14751,6 +15423,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-thames-valley-ii-1882/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 16,
@@ -14772,6 +15445,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-trappist-blend-3789/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 20,
@@ -14793,6 +15467,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-trappist-high-gravity-3787/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "12.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14814,6 +15489,7 @@
       "url": "https://www.beer-analytics.com/yeasts/lager/wyeast-urquell-lager-2001/"
     },
     "flocculation": "Medium",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 9,
@@ -14835,6 +15511,7 @@
       "url": "https://www.beer-analytics.com/yeasts/wheat/wyeast-weihenstephan-weizen-3068/"
     },
     "flocculation": "Low",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14856,6 +15533,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-west-yorkshire-1469/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "9.0%",
     "form": "Liquid",
     "temp_low_c": 18,
@@ -14877,6 +15555,7 @@
       "url": "https://www.beer-analytics.com/yeasts/ale/wyeast-whitbread-ale-1099/"
     },
     "flocculation": "High",
+    "pof": "unknown",
     "alcohol_tolerance": "10.0%",
     "form": "Liquid",
     "temp_low_c": 18,

@@ -50,6 +50,15 @@ def _clean(value: str) -> str:
     return " ".join(value.replace("\u00ae", "").replace("\u2122", "").split())
 
 
+def _pof(value: str) -> str:
+    text = value.strip().lower()
+    if "negative" in text or text in {"non-pof", "pof-"}:
+        return "negative"
+    if "positive" in text or text in {"pof", "pof+"}:
+        return "positive"
+    return "unknown"
+
+
 def _now() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat().replace(
         "+00:00", "Z"
@@ -136,6 +145,7 @@ def parse_page(url: str, raw: bytes, retrieved_at: str) -> dict:
         "temp_high_c": temp_high_c,
         "sta1_text": sta1_text,
         "sta1": sta1,
+        "pof": _pof(specs.get("POF", "")),
         "retrieved_at": retrieved_at,
         "sha256": hashlib.sha256(raw).hexdigest(),
     }

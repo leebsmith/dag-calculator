@@ -21,6 +21,12 @@ export const YEAST_DIASTATICUS_TIERS = [
   { key: "unknown", label: "Unknown" },
 ];
 
+export const YEAST_POF_TIERS = [
+  { key: "positive", label: "POF positive" },
+  { key: "negative", label: "POF negative" },
+  { key: "unknown", label: "POF unknown" },
+];
+
 // A fraction as a percentage number without the "%" suffix, e.g. "75" / "75.5".
 export function percentText(fraction) {
   return String(toPercentValue(fraction, 1));
@@ -66,6 +72,25 @@ export function diastaticusTiers(catalog) {
   const counts = { positive: 0, negative: 0, unknown: 0 };
   for (const yeast of catalog ?? []) counts[diastaticusTier(yeast)] += 1;
   return YEAST_DIASTATICUS_TIERS.map((tier) => ({ ...tier, count: counts[tier.key] }));
+}
+
+export function pofTier(yeast) {
+  const value = yeast?.pof;
+  return value === "positive" || value === "negative" ? value : "unknown";
+}
+
+// The report/row suffix is only printed when the status is known: an unasserted
+// POF is the normal seed state, not a warning.
+export function pofLabel(yeast) {
+  if (yeast?.pof === "positive") return "POF+";
+  if (yeast?.pof === "negative") return "POF−";
+  return "";
+}
+
+export function pofTiers(catalog) {
+  const counts = { positive: 0, negative: 0, unknown: 0 };
+  for (const yeast of catalog ?? []) counts[pofTier(yeast)] += 1;
+  return YEAST_POF_TIERS.map((tier) => ({ ...tier, count: counts[tier.key] }));
 }
 
 // The vendor band is stored in °C (the artifact's temperature base). `context`

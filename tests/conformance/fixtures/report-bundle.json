@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:14e757d1a08c5c1be941198546126e90c11e7f1bfe20e40335bc573db1830d98",
+    "hash": "sha256:aa7d7e57fa8098b38f1af0f0e5699a5f734ccea89ce320cdaaf2c8efdbfc252c",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -463,6 +463,11 @@
           "Low",
           "Medium",
           "High"
+        ],
+        "pof_status": [
+          "unknown",
+          "positive",
+          "negative"
         ],
         "form": [
           "Dry",
@@ -1519,6 +1524,10 @@
           "blend_of": {},
           "sta1": {
             "type": "boolean"
+          },
+          "pof": {
+            "taxonomy": "pof_status",
+            "default": "unknown"
           },
           "flocculation": {
             "taxonomy": "flocculation"
@@ -8176,6 +8185,24 @@
         "options": null,
         "option_labels": null
       },
+      "batch.yeast.pof": {
+        "label": "POF",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "unknown",
+          "positive",
+          "negative"
+        ],
+        "option_labels": {
+          "unknown": "Unknown",
+          "positive": "Positive",
+          "negative": "Negative"
+        }
+      },
       "batch.yeast_id": {
         "label": "Yeast",
         "dimension": "reference",
@@ -8207,7 +8234,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:86ad09a91328e6901ad0bee0d07deef5dcca20849fd5c8777e8443e9c298ac60"
+    "hash": "sha256:e9104b34d9ef82ce3fcfa64f6cc77e9b866123ca5edd5f2b704a10a1729c64b6"
   },
   "batch": {
     "id": "frozen-1",
@@ -8742,6 +8769,11 @@
     },
     "batch.yeast.sta1": {
       "text": "true",
+      "number": null,
+      "unit": null
+    },
+    "batch.yeast.pof": {
+      "text": "Unknown",
       "number": null,
       "unit": null
     },
@@ -10154,5 +10186,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:5853ec28940856643dde34eac3948c48d4e003a95a03d955838227396bf57714"
+  "content_hash": "sha256:282787613cc935b43b125049853cda1280c0a43c837a3c75c4c23acfaa304a05"
 }

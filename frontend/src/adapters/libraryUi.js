@@ -9,12 +9,11 @@
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
 import { createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
+import { createLibraryFieldEditor, KEYS as fieldEditorKeys } from "./libraryFieldEditor.js";
+import { createLibrarySeedActions, KEYS as seedActionKeys } from "./librarySeedActions.js";
 import { createLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
 import { createLibraryComposition, KEYS as compositionKeys } from "./libraryComposition.js";
 import { filterCatalog } from "../views/catalog.js";
-import { toBase } from "../engine/units.js";
-import { displayValue, nonlinearFns } from "../views/producer.js";
-import { formatWithDecimals } from "../utils.js";
 
 function tabList(kinds) {
   return kinds.map((id) => ({ id, label: CATALOGS[id].label }));
@@ -28,8 +27,7 @@ function titleOf(meta, item) {
   return item?.[meta?.titleField ?? "name"] ?? identityOf(meta, item);
 }
 
-export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }) {
-  const nl = () => nonlinearFns(artifact, engine);
+export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
 
   const actions = {
     libraryOpen: false,
@@ -37,8 +35,10 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
     sourceKind: "style",
     librarySearch: "",
     librarySearchNotes: false,
+    librarySeedLimit: 50,
     libraryTab: "malt",
     libraryDraft: null,
+    libraryCloneOf: "",
     libraryErrors: [],
     libraryNotice: "",
   };
@@ -99,7 +99,7 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
           query: getView().librarySearch,
           searchFields: getView().librarySearchFields,
           includeNotes: getView().librarySearchNotes,
-        }).slice(0, 50);
+        }).slice(0, getView().librarySeedLimit ?? 50);
       },
     },
     librarySeedCount: {
@@ -141,6 +141,30 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
       configurable: true,
       get() {
         return getView().activeKind === "style";
+      },
+    },
+    canCloneRecord: {
+      configurable: true,
+      get() {
+        return getView().activeKind !== "style";
+      },
+    },
+    librarySearchLabel: {
+      configurable: true,
+      get() {
+        const label = CATALOGS[getView().activeKind]?.label ?? getView().activeKind;
+        return `Filter ${String(label).toLowerCase()} records and bundled seeds`;
+      },
+    },
+    libraryEditorTitle: {
+      configurable: true,
+      get() {
+        if (!getView().libraryDraft) return "";
+        if (getView().libraryDraft.forked_from_name) {
+          return `Forked ${getView().activeKindLabel.toLowerCase()}`;
+        }
+        if (getView().libraryCloneOf) return `Clone of ${getView().libraryCloneOf}`;
+        return `New ${getView().activeKindLabel.toLowerCase()}`;
       },
     },
     activeKindLabel: {
@@ -218,7 +242,9 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
       getView().librarySection = section;
       getView().librarySearch = "";
       getView().librarySearchNotes = false;
+      getView().librarySeedLimit = 50;
       getView().libraryDraft = null;
+      getView().libraryCloneOf = "";
       getView().libraryErrors = [];
       getView().libraryNotice = "";
     },
@@ -229,7 +255,9 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
       getView().sourceKind = kind;
       getView().librarySearch = "";
       getView().librarySearchNotes = false;
+      getView().librarySeedLimit = 50;
       getView().libraryDraft = null;
+      getView().libraryCloneOf = "";
       getView().libraryErrors = [];
       getView().libraryNotice = "";
     },
@@ -240,13 +268,20 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
       getView().libraryTab = id;
       getView().librarySearch = "";
       getView().librarySearchNotes = false;
+      getView().librarySeedLimit = 50;
       getView().libraryDraft = null;
+      getView().libraryCloneOf = "";
       getView().libraryErrors = [];
       getView().libraryNotice = "";
     },
 
     librarySetSearch(value) {
       getView().librarySearch = value;
+      getView().librarySeedLimit = 50;
+    },
+
+    showMoreSeeds() {
+      getView().librarySeedLimit = (getView().librarySeedLimit ?? 50) + 50;
     },
 
     toggleLibrarySearchNotes() {
@@ -266,74 +301,17 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
       return titleOf(meta, item);
     },
 
-    libraryFieldDisplay(field) {
-      const value = getView().libraryDraft?.[field];
-      if (value === undefined || value === null) return "";
-      const spec = getView().libraryFields.find((f) => f.field === field);
-      if (!spec || spec.kind !== "number") return value;
-      if (typeof getView().inputDraft === "function") {
-        const draft = getView().inputDraft(getView().inputKey("library", field), undefined);
-        if (draft !== undefined) return draft;
-      }
-      if (!spec.unitId || spec.dimension == null) return value;
-      const shown = displayValue(artifact, spec.dimension, spec.unitId, value, nl());
-      return formatWithDecimals(shown, spec.decimals);
-    },
-
-    libraryCommitField(field) {
-      if (typeof getView().clearInputDraft === "function") {
-        getView().clearInputDraft(getView().inputKey("library", field));
-      }
-      getView().libraryDraft = { ...getView().libraryDraft };
-    },
-
-    librarySetField(field, value) {
-      const spec = getView().libraryFields.find((f) => f.field === field);
-      const next = { ...getView().libraryDraft };
-      if (value === "") {
-        delete next[field];
-      } else if (spec?.kind === "number") {
-        if (typeof getView().setInputDraft === "function") {
-          getView().setInputDraft(getView().inputKey("library", field), value);
-        }
-        let n = Number(value);
-        if (Number.isFinite(n) && spec.unitId && spec.dimension != null) {
-          n = toBase(artifact, spec.dimension, spec.unitId, n, nl());
-        }
-        next[field] = Number.isFinite(n) ? n : 0;
-      } else {
-        next[field] = value;
-      }
-      getView().libraryDraft = next;
-    },
-
     newLibraryItem() {
       if (!getView().canAuthorRecord) return;
       getView().libraryDraft = {};
+      getView().libraryCloneOf = "";
       getView().libraryErrors = [];
       getView().libraryNotice = "";
     },
 
-    // Fork a sealed style: copy its declaration, drop the identity field, record
-    // display lineage. The server assigns the new id, so the record is immutable
-    // from the moment it is saved.
-    forkLibraryItem(item) {
-      if (!getView().canForkRecord || !item) return;
-      const meta = CATALOGS[getView().activeKind];
-      const id = identityOf(meta, item);
-      const draft = { ...item };
-      delete draft[meta.idField];
-      delete draft.id;
-      draft.name = `${titleOf(meta, item)} (copy)`;
-      draft.forked_from_id = id;
-      draft.forked_from_name = titleOf(meta, item);
-      getView().libraryDraft = draft;
-      getView().libraryErrors = [];
-      getView().libraryNotice = `Forked from ${titleOf(meta, item)}. Edit the declaration, then save.`;
-    },
-
     cancelLibraryItem() {
       getView().libraryDraft = null;
+      getView().libraryCloneOf = "";
       getView().libraryErrors = [];
     },
 
@@ -351,6 +329,8 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
       }
       try {
         await getView().library.create(kind, draft);
+        getView().libraryDraft = null;
+        getView().libraryCloneOf = "";
         getView().libraryNotice = "Saved and sealed. Records are immutable; corrections create a new record.";
         await afterRecordsChanged(getView());
       } catch (err) {
@@ -363,7 +343,9 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
 
     async deleteLibraryItem(itemId) {
       if (!itemId) return;
-      if (typeof window !== "undefined" && !window.confirm("Delete this record permanently?")) {
+      if (typeof window !== "undefined" && !window.confirm(
+        "Delete this record permanently? Existing batches keep their copies; new batches cannot select it."
+      )) {
         return;
       }
       try {
@@ -380,8 +362,16 @@ export function createLibraryUi({ artifact, engine, cache, getView, modalFocus }
 
 export function createLibraryLayers(ctx) {
   return [
-    createLibraryFields(ctx), createLibraryListEditor(ctx),
-    createLibraryComposition(ctx), createLibraryUi(ctx),
+    createLibraryFields(ctx), createLibraryFieldEditor(ctx),
+    createLibraryListEditor(ctx),
+    createLibraryComposition(ctx),
+    createLibrarySeedActions({
+      getView: ctx.getView,
+      titleOf,
+      identityOf,
+      Catalog: CATALOGS,
+    }),
+    createLibraryUi(ctx),
   ];
 }
 
@@ -389,4 +379,4 @@ export function createLibraryLayers(ctx) {
 
 export const KEYS = [
   ...compositionKeys,
-  "catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySetSearch", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "libraryTab", "libraryDraft", "libraryErrors", "libraryNotice", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "libraryFieldDisplay", "libraryCommitField", "librarySetField", "newLibraryItem", "forkLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...libraryFieldKeys, ...libraryListKeys];
+  "catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySeedLimit", "librarySetSearch", "showMoreSeeds", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "librarySearchLabel", "libraryTab", "libraryDraft", "libraryCloneOf", "libraryErrors", "libraryNotice", "libraryEditorTitle", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "canCloneRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "newLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...seedActionKeys, ...fieldEditorKeys, ...libraryFieldKeys, ...libraryListKeys];

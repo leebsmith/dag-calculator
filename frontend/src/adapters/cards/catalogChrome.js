@@ -91,11 +91,6 @@ function contentMethods(getView, registry) {
       const entry = activeEntry(registry, view);
       if (entry) view[`addCatalog${entry.Cap}`](catalogId);
     },
-    duplicateCatalogItem(catalogId) {
-      const view = getView();
-      const entry = activeEntry(registry, view);
-      if (entry) view[`duplicateCatalog${entry.Cap}`](catalogId);
-    },
     draftItemMeta(item) {
       const view = getView();
       const entry = activeEntry(registry, view);

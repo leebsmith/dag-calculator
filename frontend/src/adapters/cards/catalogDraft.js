@@ -11,8 +11,6 @@
 //   nodeId         collection node id ("batch.boil_hops")
 //   seedKey        reference-cache seed key ("hops")
 //   catalog        optional (view) => catalogItem[] override for a dynamic catalog
-//   catalogNameOf  optional (catalogItem) => catalog kind for "Copy to my items";
-//                  defaults to SEED_KEY_TO_CATALOG[seedKey]
 //   searchFields   optional catalog fields searched by the drawer (default name, notes)
 //   brandField     optional brand/maltster field, searched by the product matches
 //   idField        row field holding the catalog id ("hop_id")
@@ -41,7 +39,6 @@ import {
   toggledCategoryFilter,
   toggledFamilyFilter,
 } from "../../views/producer/catalogDrawer.js";
-import { SEED_KEY_TO_CATALOG } from "../../store/userCatalog.js";
 import { draftGetters } from "./catalogDraftGetters.js";
 import { chromeConfig } from "./catalogChrome.js";
 
@@ -75,7 +72,6 @@ const METHOD_NAMES = {
   cancelEditor: (p, C) => `cancel${C}Editor`,
   saveEditor: (p, C) => `save${C}Editor`,
   addCatalog: (p, C) => `addCatalog${C}`,
-  duplicateCatalog: (p, C) => `duplicateCatalog${C}`,
   remove: (p, C) => `remove${C}`,
   inspectRow: (p, C) => `inspect${C}Row`,
   openSearch: (p, C) => `open${C}Search`,
@@ -97,7 +93,6 @@ function draftContext(ctx, config, getView) {
     nodeId,
     seedKey,
     catalog: catalogFn = null,
-    catalogNameOf = null,
     searchFields = ["name", "notes"],
     brandField = null,
     idField,
@@ -125,7 +120,6 @@ function draftContext(ctx, config, getView) {
     Cap,
     nodeId,
     seedKey,
-    catalogNameOf,
     searchFields,
     brandField,
     idField,
@@ -162,7 +156,7 @@ function draftState(d) {
 }
 
 function draftMethods(d) {
-  const { m, name, nodeId, getView, canAdd, makeRow, catalogNameOf, seedKey, findCatalogItem } = d;
+  const { m, name, nodeId, getView, canAdd, makeRow, findCatalogItem } = d;
   const actions = {
     [m.openEditor]() {
       const view = getView();
@@ -197,15 +191,6 @@ function draftMethods(d) {
       if (canAdd && !canAdd(view)) return;
       view.addDraftRow(makeRow(item, view));
       actions[m.closeDrawer]();
-    },
-
-    [m.duplicateCatalog](catalogId) {
-      const view = getView();
-      const item = findCatalogItem(view, catalogId);
-      if (!item) return;
-      const catalogName = catalogNameOf ? catalogNameOf(item) : SEED_KEY_TO_CATALOG[seedKey];
-      if (!catalogName) return;
-      view.duplicateUserItem(catalogName, item);
     },
 
     [m.remove](ri) {

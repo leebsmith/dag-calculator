@@ -60,7 +60,6 @@ function dryHopDraftConfig(ctx) {
       ...Object.values(seeds.hops ?? {}),
       ...Object.values(seeds.hopProducts ?? {}),
     ],
-    catalogNameOf: (item) => (item.product_form ? "hop_product" : "hop"),
     searchFields: ["name", "notes", "manufacturer", "brand"],
     idField: "hop_id",
     allowDuplicates: true,

@@ -110,15 +110,6 @@
               <div class="catalog-item-actions">
                 <button
                   type="button"
-                  class="btn-outline text-xs"
-                  x-show="!isUserItem(item.id)"
-                  @click="duplicateCatalogItem(item.id)"
-                  title="Copy to my items"
-                >
-                  Copy
-                </button>
-                <button
-                  type="button"
                   class="btn-primary text-xs"
                   @click="addCatalogItem(item.id)"
                   :disabled="draftAtLimit"
@@ -155,15 +146,6 @@
                 <div class="catalog-item-meta" x-text="draftItemMeta(item)"></div>
               </div>
               <div class="catalog-item-actions">
-                <button
-                  type="button"
-                  class="btn-outline text-xs"
-                  x-show="!isUserItem(item.id) && !item.id.startsWith('std:')"
-                  @click="duplicateCatalogItem(item.id)"
-                  title="Copy to my items"
-                >
-                  Copy
-                </button>
                 <button
                   type="button"
                   class="btn-primary text-xs"
@@ -203,15 +185,6 @@
             <div class="catalog-item-meta" x-text="draftItemMeta(item)"></div>
           </div>
           <div class="catalog-item-actions">
-            <button
-              type="button"
-              class="btn-outline text-xs"
-              x-show="!isUserItem(item.id)"
-              @click="duplicateCatalogItem(item.id)"
-              title="Copy to my items"
-            >
-              Copy
-            </button>
             <button
               type="button"
               class="btn-primary text-xs"

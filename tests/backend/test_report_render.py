@@ -148,6 +148,16 @@ def test_the_checklist_section_renders(render_once) -> None:
     assert rendered.pages >= 1
 
 
+def test_the_yeast_section_renders_a_known_pof(render_once) -> None:
+    data = bundle_dict()
+    data["state"]["valuation"]["batch.yeast"]["pof"] = "positive"
+    rendered = render_once(seal_bundle(data), parse_spec(sections="yeast"))
+
+    assert rendered.data.startswith(b"%PDF")
+    assert rendered.sections == ("yeast",)
+    assert rendered.pages >= 1
+
+
 def test_the_process_notes_section_renders(render_once) -> None:
     rendered = render_once(bundle(), parse_spec(sections="process"))
 

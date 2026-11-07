@@ -47,6 +47,16 @@ def _collect_links(soup, limit=None):
   return collected
 
 
+def _pof(value):
+  """Normalize a vendor POF field; absent/unrecognised is an explicit unknown."""
+  text = str(value or "").strip().lower()
+  if "negative" in text or text in {"non-pof", "pof-"}:
+    return "negative"
+  if "positive" in text or text in {"pof", "pof+"}:
+    return "positive"
+  return "unknown"
+
+
 def _parse_detail(detail_soup, full_url):
   yeast_data = {"url": full_url}
 
@@ -68,6 +78,7 @@ def _parse_detail(detail_soup, full_url):
   if p_tag:
     yeast_data["description"] = p_tag.text.strip()
 
+  yeast_data["pof"] = _pof(yeast_data.get("pof"))
   return yeast_data
 
 

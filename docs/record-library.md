@@ -69,8 +69,13 @@ not introduce a second dimension system.
 The library tab shows the record kinds from both registries. A record form is
 built from its schema: scalar dimensions become unit-aware number inputs,
 taxonomies and references become selectors, `format: "date"` becomes a date
-input, and `type: "list"` becomes a point-row editor with add/remove. The row list
-is sorted by its declared `ordered_by` before validation.
+input, `type: "boolean"` becomes a tri-state selector (Unknown / Yes / No), and
+`type: "list"` becomes a point-row editor with add/remove. The row list is
+sorted by its declared `ordered_by` before validation.
+
+A bundled seed can be cloned into an editable draft; nothing is saved until
+**Save and seal**. Styles are forked instead, because their lineage is part of
+the declaration. Pickers only select; cloning happens here.
 
 ## Deployment
 

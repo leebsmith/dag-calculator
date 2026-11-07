@@ -96,9 +96,6 @@ function setup({ canAdd = null, seeds = SEEDS, registry = null, ...extra } = {})
       calls.push({ op: "remove", index });
       this.draftRows.splice(index, 1);
     },
-    duplicateUserItem(catalog, item) {
-      calls.push({ op: "duplicate", catalog, item });
-    },
   };
 
   const sharedRegistry = registry ?? createCatalogRegistry();
@@ -201,21 +198,10 @@ test("canAdd can veto a catalog row", () => {
   assert.equal(calls.some((c) => c.op === "add"), false);
 });
 
-test("duplicateCatalogMalt routes the seed into the user catalog", () => {
-  const { app, calls } = setup();
-
-  app.duplicateCatalogMalt("crystal");
-  assert.deepEqual(calls.at(-1), { op: "duplicate", catalog: "malt", item: SEEDS.malts.crystal });
-
-  app.duplicateCatalogMalt("nope");
-  assert.equal(calls.filter((c) => c.op === "duplicate").length, 1);
-});
-
-test("a custom catalog and catalogNameOf override add and duplicate", () => {
+test("a custom catalog adds its entries", () => {
   const product = { id: "product", name: "Product" };
   const { app, calls } = setup({
     catalog: () => [product],
-    catalogNameOf: () => "hop_product",
   });
 
   assert.deepEqual(app.maltCatalog, [product]);
@@ -223,13 +209,6 @@ test("a custom catalog and catalogNameOf override add and duplicate", () => {
   assert.deepEqual(calls.at(-1), {
     op: "add",
     row: { catalog_id: "product", name: "Product", parts: 10, pct: 0 },
-  });
-
-  app.duplicateCatalogMalt("product");
-  assert.deepEqual(calls.at(-1), {
-    op: "duplicate",
-    catalog: "hop_product",
-    item: product,
   });
 });
 

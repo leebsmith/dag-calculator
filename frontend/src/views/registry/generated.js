@@ -85,6 +85,7 @@ export const generatedRegistry = {
   "batch.yeast.alcohol_tolerance": {"label":"Alcohol tolerance"},
   "batch.yeast.attenuation_pct": {"label":"Typical attenuation"},
   "batch.yeast.flocculation": {"label":"Flocculation"},
+  "batch.yeast.pof": {"label":"POF","hint":"Phenolic off-flavour status. Unknown when no vendor result is recorded.","optionLabels":{"unknown":"Unknown","positive":"Positive","negative":"Negative"}},
   "batch.yeast_cap": {"label":"Malt attenuation cap","hint":"Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped."},
   "batch.yeast_id": {"label":"Yeast"},
   "equipment.mash_heating_rate_c_per_min": {"label":"Mash ramp rate"},

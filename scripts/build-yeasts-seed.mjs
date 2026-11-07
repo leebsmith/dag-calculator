@@ -59,6 +59,10 @@ function parseCount(value) {
   return digits ? Number(digits) : undefined;
 }
 
+function pofValue(row) {
+  return row.pof ?? "unknown";
+}
+
 // The aggregator names carry the vendor's strain code as a trailing token
 // ("European Ale WLP011"), which is the join key to the vendor source.
 const STRAIN = /\b(WLP[0-9]+)\b/;
@@ -124,6 +128,7 @@ function convert(row, usedSlugs, vendorByStrain) {
     if (row.url) component.attenuation_provenance.url = row.url;
   }
   if (flocculation) component.flocculation = flocculation;
+  component.pof = pofValue(row);
   if (row.tolerance) component.alcohol_tolerance = row.tolerance;
   if (row.form) component.form = row.form;
   Object.assign(component, temperature);

@@ -39,7 +39,6 @@ export const CATALOG_CHROME_KEYS = [
   "clearDraftStandard",
   "handleDraftEscape",
   "addCatalogItem",
-  "duplicateCatalogItem",
   "draftCatalog",
   "draftCategories",
   "draftFamilies",

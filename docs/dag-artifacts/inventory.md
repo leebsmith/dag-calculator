@@ -55,6 +55,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `mash_preset` | `single_infusion`, `custom`, `belgian_saison`, `belgian_tripel`, `german_pils`, `berliner_weisse`, `english_brown`, `american_pale` |
 | `mash_rest` | `phytase`, `ferulic`, `beta_glucan`, `protein`, `beta_amylase`, `alpha_amylase`, `beta_alpha_amylase`, `mash_out` |
 | `ph_status` | `OPTIMAL`, `LOW`, `HIGH` |
+| `pof_status` | `unknown`, `positive`, `negative` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
 | `scale_pin` | `abv`, `og`, `fg` |
 | `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE`, `AUTO`, `HYBRID`, `BASELINE`, `CUSTOM` |
@@ -90,7 +91,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `whirlpool_hop_result` | `alpha_mass_kg` (dimension mass), `effective_minutes` (dimension time), `ibu` (dimension ibu), `mass_kg` (dimension mass), `minutes` (dimension time) |
 | `whirlpool_hop_row` | `addition_at_min` (dimension time, domain {"gte":0}, default 0), `alpha_acid_pct` (dimension percentage, domain {"gte":0,"lte":1}), `cone_utilization` (dimension dimensionless, domain {"gt":0,"lte":1}, default null), `hop_id` (—), `initial_temp_c` (dimension temperature, domain {"gte":0,"lte":100}, default 99), `name` (—), `notes` (—), `parts` (dimension dimensionless, domain {"gte":0}), `pct` (dimension percentage, domain {"gte":0,"lte":1}), `product_form` (taxonomy hop_product_form, default "t90_pellet") |
 | `whirlpool_timeline_segment` | `end_min` (dimension time), `start_min` (dimension time), `temp_c` (dimension temperature) |
-| `yeast` | `alcohol_tolerance` (—), `attenuation_basis` (—), `attenuation_high_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_low_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_provenance` (—), `blend_of` (—), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `recipes` (—), `sta1` (type boolean), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
+| `yeast` | `alcohol_tolerance` (—), `attenuation_basis` (—), `attenuation_high_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_low_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_pct` (dimension percentage, domain {"gte":0,"lte":1}), `attenuation_provenance` (—), `blend_of` (—), `flocculation` (taxonomy flocculation), `form` (taxonomy form), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `pof` (taxonomy pof_status, default "unknown"), `recipes` (—), `sta1` (type boolean), `temp_high_c` (dimension temperature), `temp_low_c` (dimension temperature), `url` (—) |
 
 ## Functions
 

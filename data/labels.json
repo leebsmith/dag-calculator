@@ -300,6 +300,15 @@
   "batch.yeast.flocculation": {
     "label": "Flocculation"
   },
+  "batch.yeast.pof": {
+    "label": "POF",
+    "hint": "Phenolic off-flavour status. Unknown when no vendor result is recorded.",
+    "optionLabels": {
+      "unknown": "Unknown",
+      "positive": "Positive",
+      "negative": "Negative"
+    }
+  },
   "batch.yeast_cap": {
     "label": "Malt attenuation cap",
     "hint": "Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped."

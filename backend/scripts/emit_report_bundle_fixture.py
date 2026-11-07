@@ -1237,6 +1237,15 @@ PAYLOAD = FreezePayload(
             ),
             "batch.yeast.flocculation": NodePresentation(label="Flocculation"),
             "batch.yeast.sta1": NodePresentation(label="STA1"),
+            "batch.yeast.pof": NodePresentation(
+                label="POF",
+                options=["unknown", "positive", "negative"],
+                option_labels={
+                    "unknown": "Unknown",
+                    "positive": "Positive",
+                    "negative": "Negative",
+                },
+            ),
             "batch.yeast_id": NodePresentation(label="Yeast", dimension="reference"),
             "equipment.max_hlt_volume_l": NodePresentation(
                 label="Max HLT", dimension="volume", unit="L", symbol="L", decimals=1
@@ -1263,6 +1272,7 @@ PAYLOAD = FreezePayload(
         "batch.yeast.temp_high_c": FormattedValue(text="22.0 °C", number="22.0", unit="°C"),
         "batch.yeast.flocculation": FormattedValue(text="Medium"),
         "batch.yeast.sta1": FormattedValue(text="true"),
+        "batch.yeast.pof": FormattedValue(text="Unknown"),
         "style.name": FormattedValue(text="American Pale Ale"),
         "water.source.source_name": FormattedValue(text="City tap"),
         "water.source.laboratory": FormattedValue(text="Ward Labs"),

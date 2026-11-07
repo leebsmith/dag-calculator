@@ -9,6 +9,9 @@ import {
   diastaticusTiers,
   isYeastListTruncated,
   percentText,
+  pofLabel,
+  pofTier,
+  pofTiers,
   sta1Label,
   temperatureRangeLabel,
   YEAST_ATTENUATION_TIERS,
@@ -78,6 +81,24 @@ test("diastaticusTiers labels every bucket and counts the catalogue", () => {
     { key: "unknown", label: "Unknown", count: 0 },
   ]);
   assert.deepEqual(diastaticusTiers(undefined)[0].count, 0);
+});
+
+test("pofLabel omits unknown and marks asserted values", () => {
+  assert.equal(pofLabel({ pof: "positive" }), "POF+");
+  assert.equal(pofLabel({ pof: "negative" }), "POF−");
+  assert.equal(pofLabel({ pof: "unknown" }), "");
+  assert.equal(pofLabel({}), "");
+  assert.equal(pofLabel(null), "");
+});
+
+test("pofTier and pofTiers keep unknown first-class", () => {
+  assert.equal(pofTier({ pof: "positive" }), "positive");
+  assert.equal(pofTier({}), "unknown");
+  assert.deepEqual(pofTiers([{ pof: "positive" }, { pof: "negative" }, {}]), [
+    { key: "positive", label: "POF positive", count: 1 },
+    { key: "negative", label: "POF negative", count: 1 },
+    { key: "unknown", label: "POF unknown", count: 1 },
+  ]);
 });
 
 test("temperatureRangeLabel needs both ends of the band", () => {

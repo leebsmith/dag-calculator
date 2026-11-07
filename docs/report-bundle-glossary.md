@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_129 paths_
+_130 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -150,6 +150,7 @@ _129 paths_
 | `batch.yeast.manufacturer` | Manufacturer | field | — | — | — | — |
 | `batch.yeast.name` | Name | field | — | — | — | — |
 | `batch.yeast.notes` | Notes | field | — | — | — | — |
+| `batch.yeast.pof` | POF | field | — | — | — | unknown, positive, negative |
 | `batch.yeast.recipes` | Recipes | field | — | — | — | — |
 | `batch.yeast.sta1` | Sta1 | field | — | — | — | — |
 | `batch.yeast.temp_high_c` | Temp High C | field | temperature | degC (°C) | 1 | — |

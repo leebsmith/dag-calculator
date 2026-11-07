@@ -459,6 +459,11 @@
       "Medium",
       "High"
     ],
+    "pof_status": [
+      "unknown",
+      "positive",
+      "negative"
+    ],
     "form": [
       "Dry",
       "Liquid"
@@ -1514,6 +1519,10 @@
       "blend_of": {},
       "sta1": {
         "type": "boolean"
+      },
+      "pof": {
+        "taxonomy": "pof_status",
+        "default": "unknown"
       },
       "flocculation": {
         "taxonomy": "flocculation"

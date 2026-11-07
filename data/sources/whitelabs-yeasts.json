@@ -18,6 +18,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:16Z",
       "sha256": "c876822803decc461321accefa9eae5e9fa8de6f2c1dd917ea16c8cf788c4796"
     },
@@ -35,6 +36,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:18Z",
       "sha256": "59e08094449104eafed1c851eb9c1e1e3fc11e18eb0d07a354c898b2b3587af6"
     },
@@ -52,6 +54,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:19Z",
       "sha256": "3107659ee0cb8650e013e8c6198195fc77bc66ad6d962ede13514d23bac4595a"
     },
@@ -69,6 +72,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:20Z",
       "sha256": "5739268779d69e3199ace7c48e12e30ce9498947f419706787a976bebe16764a"
     },
@@ -86,6 +90,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:22Z",
       "sha256": "6813a3ef388dc9f25279259664bfe3dbe3bbf9931bc224c2dbeba78301dac206"
     },
@@ -103,6 +108,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:23Z",
       "sha256": "c81a23973d4e59c36248ac0f01ac045e94934c137a839321a9790fa4b23bf794"
     },
@@ -120,6 +126,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:25Z",
       "sha256": "555f20953903ff1af71a0ac30b63ef42d77211af71882e90c2be1d7253b4e5d5"
     },
@@ -137,6 +144,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:26Z",
       "sha256": "6f92180b380085cde1baf551ec942132e328e7fe9175b9ecc5b8bd9783fbb67e"
     },
@@ -154,6 +162,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:27Z",
       "sha256": "862c26381d0a1c48a336ff42167c18a40f26a1346ba801a644a92763af0920f2"
     },
@@ -171,6 +180,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:29Z",
       "sha256": "b1eb2e41798a41e77fb96d52439b02b5b9f91a5207935476382159cbb5fb9480"
     },
@@ -188,6 +198,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:30Z",
       "sha256": "bf83f747118d8d720ee2f9d0e9a9c71b04997c8df06b1f94973ef289bb61e2fc"
     },
@@ -205,6 +216,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:32Z",
       "sha256": "7b8325bdb6a858686f0d6d43eb7867f6ee9dd15e869dee01c3f0fa44e441efcf"
     },
@@ -222,6 +234,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:34Z",
       "sha256": "6f78c5393c503b14ece60d8b27f54ae2762c606cdbe9973dc439cc64d1020cb4"
     },
@@ -239,6 +252,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:36Z",
       "sha256": "932d35edf2e912f568f32c3246acf2e1eee69424e695bc0216cd8ca12ad387e5"
     },
@@ -256,6 +270,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:37Z",
       "sha256": "8d2f032b9c589858090582737a728d82105871311f2972ae3f4f843532cb5ab5"
     },
@@ -273,6 +288,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:39Z",
       "sha256": "6d4c4388a8471fd6d524cdac6a57ff73386afa90c724fb36157d7aabd8c7308d"
     },
@@ -290,6 +306,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:40Z",
       "sha256": "c8e5060a4d2eee0c1ca8d78b2325cde9f2de94e9d7271f425759bcfd23acbce3"
     },
@@ -307,6 +324,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:41Z",
       "sha256": "d8fab9b23e6a6e185d555bf4d4f2d6837013dcfefb2073b6c9a453f9a79c8ac3"
     },
@@ -324,6 +342,7 @@
       "temp_high_c": null,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:43Z",
       "sha256": "1c040527b831bb604a137af9fc40b8882e1e5db047dbbd27440c4a9cf1ec8a70"
     },
@@ -341,6 +360,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:44Z",
       "sha256": "36e4652844868e78989d9461b584b3458a1643616cd9fc5b5b4b7e70c0410d29"
     },
@@ -358,6 +378,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:46Z",
       "sha256": "2b25796cf0dc682113313f2a913ad9dfe574f37216cc75bdc94c5b2629cbcab7"
     },
@@ -375,6 +396,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:47Z",
       "sha256": "05e8f6966d211e1108402ff158f1e32ee21291578538c4cda149a77b2472209f"
     },
@@ -392,6 +414,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:49Z",
       "sha256": "57692720b3ea7c4f77740e69c631ceeaf5b9973d01abba9cfa11f95100b29872"
     },
@@ -409,6 +432,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:50Z",
       "sha256": "4c9e3bbdccba1d02c6198a114b7b0e61f79dd3e9891f8a3c96f0462c1924b370"
     },
@@ -426,6 +450,7 @@
       "temp_high_c": 25.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:51Z",
       "sha256": "2493778af868bbf716b32893d88b3729e4510d16ed8381c35aa27197c6630480"
     },
@@ -443,6 +468,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:53Z",
       "sha256": "9cc6d035217ea77adb299dce0d82c6efce7a973905c9c53a15a3123e8ac1d62c"
     },
@@ -460,6 +486,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:54Z",
       "sha256": "52266576e9b4886fe31449b699814b8c36962d53beacd86f08591d24640f1583"
     },
@@ -477,6 +504,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:55Z",
       "sha256": "b28a7bd152555c657d96ac716b5cc1f5c9d33ecbc66347f2f63a6ace83685697"
     },
@@ -494,6 +522,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:57Z",
       "sha256": "1727d5d82ce24abd76419a5eb6c02d6414ff836d8ea1f5d35183ae4618d5915e"
     },
@@ -511,6 +540,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:58Z",
       "sha256": "d27a9c7f9b4400b190fdec3fc342d546b7d4952aba3d05ee241d1036f59253ee"
     },
@@ -528,6 +558,7 @@
       "temp_high_c": 28.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:08:59Z",
       "sha256": "60536b7b0b29c43b620a0c811aeed2f7100b499f0b85a698ea4dacdaecdd513e"
     },
@@ -545,6 +576,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:01Z",
       "sha256": "b73ffb2f5bef26b16f74bd4f0322850c5f22383d895534b8c2f44a703bbca2bc"
     },
@@ -562,6 +594,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:02Z",
       "sha256": "e5f608b29ff6099213f30f974ad4f2fcf5ab87d23c3bc22bae4e4745901837a8"
     },
@@ -579,6 +612,7 @@
       "temp_high_c": 25.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:04Z",
       "sha256": "69bf13b45fccaa559efac204e4655b3da08e839f9a5346d8fa7bd985a1c77c2e"
     },
@@ -596,6 +630,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:05Z",
       "sha256": "8cce6fa82d5c1f35a2279c8f4cc03536eb2dbe057f851da4708285506347adba"
     },
@@ -613,6 +648,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:07Z",
       "sha256": "62074e5c8b9f0303495ea0804eded90187c8376b66ee08bf24e7b5642adfa53c"
     },
@@ -630,6 +666,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:08Z",
       "sha256": "a8f3c65b7bf60972cd443ecc09618593e42776726551a7c7f7934b2187ed0178"
     },
@@ -647,6 +684,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:09Z",
       "sha256": "7d04f0fec0aa3c899c5d3a97764bcd527a9f62151c01be2be9b20ddf10d2cb25"
     },
@@ -664,6 +702,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:11Z",
       "sha256": "ef48aa088982479f11309a25f1e80fec1389955a2c845658c71bdb119c183110"
     },
@@ -681,6 +720,7 @@
       "temp_high_c": 29.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:12Z",
       "sha256": "09102355d89fcf832ac06e14962de3f58ae548d266d26a1ab801b7a58a19aaae"
     },
@@ -698,6 +738,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:13Z",
       "sha256": "247c7163e5a601c748b73f3f794c2241d731fe87165d702039a4d63c7ea00314"
     },
@@ -715,6 +756,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:15Z",
       "sha256": "6ee34353a49760835b34fac6f1d6f0c8dae5f7128090d57a7f239ef5e8c4f1d5"
     },
@@ -732,6 +774,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:16Z",
       "sha256": "1e8a4d58ca04707c66b7bffb14976332367f4e8671e7d5234ec40aac2b1040f8"
     },
@@ -749,6 +792,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:17Z",
       "sha256": "48ce3d55c70aa199c3b41c3d2961db11c8d7451215abb268c37d557344914dfa"
     },
@@ -766,6 +810,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:18Z",
       "sha256": "4cc4454a2da2171966791e738379909c171d17b2543cd1e18a19450eab702a15"
     },
@@ -783,6 +828,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:20Z",
       "sha256": "e446841e6f358c6e09d27d7459521ae228ff952f0986e7d2e4db0acf6dc3573f"
     },
@@ -800,6 +846,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:21Z",
       "sha256": "4643969400946f899874466e7db1b15fdc3510adae98892f2fe539c4bd615697"
     },
@@ -817,6 +864,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:22Z",
       "sha256": "6344dddb1b4d1310a40800dd1cd3880f8b8d2298f764de3c66a484abe41a2311"
     },
@@ -834,6 +882,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:24Z",
       "sha256": "852d439a7a571c54175ecc9fa422a91bf5678aef88ea317a4b6b53005083a017"
     },
@@ -851,6 +900,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:25Z",
       "sha256": "022f3e8e615c6caec9f035c0ffd44d661174ba2c04b3ce635caf1e3443419ddb"
     },
@@ -868,6 +918,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:26Z",
       "sha256": "1a24fac7c4ea3e34b63f3cf2d5b5ea85b9ece7457315be40b75e8ed97fc4bd9c"
     },
@@ -885,6 +936,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:28Z",
       "sha256": "7a774f4d90d566cb33ad348438ef979247f8baabef69306584b0828c8267f58c"
     },
@@ -902,6 +954,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:29Z",
       "sha256": "9c8da1a84ce050f719ab5b34cb013cc09c166083f59ecb6a7e6fc4ab345ed46e"
     },
@@ -919,6 +972,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:30Z",
       "sha256": "50622a8d3cba944800d2227e25ca2aa9c56e0d467c4525f2f8657687b9dc8b21"
     },
@@ -936,6 +990,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:32Z",
       "sha256": "7d96bcc4b3ea04e0f8cd429e3d3c16626133348f22caacdf2c4d17b47d12847d"
     },
@@ -953,6 +1008,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:33Z",
       "sha256": "54eb30a9a067e1f1f479afb6711161d21528dd3934338697d6ccef989f82fec2"
     },
@@ -970,6 +1026,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:34Z",
       "sha256": "d3d5692d7c3a975c82835b2b6d7f31101871d3f8e4ad02f7f78a4fc7e97d510f"
     },
@@ -987,6 +1044,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:35Z",
       "sha256": "45986dcbcd8742f275ab9adde02054b7dde1ce8f7ae6c3c47214f4ecac36aaca"
     },
@@ -1004,6 +1062,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:36Z",
       "sha256": "9b2c329a1a03e5d291770a40c7db231daa4d4a89108fbcc837fb452549b8b256"
     },
@@ -1021,6 +1080,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:38Z",
       "sha256": "38de9e8e14d1da4dbcea1c6689d11de06b720fd2509b39c879c8b73a3c971880"
     },
@@ -1038,6 +1098,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:39Z",
       "sha256": "d7741d669db8876cc1e535c8d8eab8a0b64883d23c7e24320d25e43f7200c2c4"
     },
@@ -1055,6 +1116,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:40Z",
       "sha256": "2389cfe6a4b093bd69ce4f51674329fdc43f58a2ad96b28373faab8816eaf708"
     },
@@ -1072,6 +1134,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:42Z",
       "sha256": "719d92dd5e3c8ceab48083165b94727a185497214d8a1bd3bed245bc6f728fd2"
     },
@@ -1089,6 +1152,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:43Z",
       "sha256": "e8d1a17518c685f2e602d063c48bc382288170e456f56be00e527b18d76041ba"
     },
@@ -1106,6 +1170,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:45Z",
       "sha256": "9ea2a727628f71c86be07b6e91b132e96ca917ef12966ff05700f76b7cd7ac40"
     },
@@ -1123,6 +1188,7 @@
       "temp_high_c": 12.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:46Z",
       "sha256": "dc5d3a2d8af8fea0745a2f60eb8de0c276bc6c4e8a151084787d8be0b2927425"
     },
@@ -1140,6 +1206,7 @@
       "temp_high_c": 12.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:47Z",
       "sha256": "68a495a7474e3fe593a17151c83628a86c80e6e7ce5143fd1fd5b97b82352083"
     },
@@ -1157,6 +1224,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:49Z",
       "sha256": "102be16e82742939f8dcf3800b358a7aa00b89bf89cf65067e8951f5a1f73426"
     },
@@ -1174,6 +1242,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:50Z",
       "sha256": "e71c676c954faf27b1d987f1bd704ebf50a3cd9128c286398bdaff0bb29f4b9f"
     },
@@ -1191,6 +1260,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:51Z",
       "sha256": "64c0da6124244d40781636cb451a2121bb6bc4ec717c5b88ed67df8d19d88821"
     },
@@ -1208,6 +1278,7 @@
       "temp_high_c": 38.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:53Z",
       "sha256": "8e865c6aaad75cdd6dd838ccd222e2eaa38dd3b3d93aaac29cff46608238108f"
     },
@@ -1225,6 +1296,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:54Z",
       "sha256": "a4bff7f3d5b0c48fd59f3932ca96c14a1f495df1941a1240c435254c749a1f85"
     },
@@ -1242,6 +1314,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:56Z",
       "sha256": "f6021cc45d93995e843736734dbad1d5cfcd1ed04eec966237f1991f737a64d0"
     },
@@ -1259,6 +1332,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:57Z",
       "sha256": "77c262162abf14f7b6bc6508ee53c7e696f07d55bae2fbcd7c4131508309e2ac"
     },
@@ -1276,6 +1350,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:09:58Z",
       "sha256": "a405b71ed79ec68c6dc1b54bd38f2314f6a436ba47f6c00b744d4e2e635d94d0"
     },
@@ -1293,6 +1368,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:00Z",
       "sha256": "d0f41b8e83d8e584a1e8e0cc6a81457daddeb10a23af31005e682b1bf6800e9d"
     },
@@ -1310,6 +1386,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:02Z",
       "sha256": "b551ebcf67aa42fde86c9b91549cbff60176ad329c7f1d601cee4c4f1d7780d5"
     },
@@ -1327,6 +1404,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:04Z",
       "sha256": "3fae27a750300f47e957c7031b5fa2773ecfff215bbb0577d58c9a1c99771518"
     },
@@ -1344,6 +1422,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:06Z",
       "sha256": "6d7b8a9459c7e3c362086de2ec9273c301bf626e9eb5f1d2395b05b1b24ca6a8"
     },
@@ -1361,6 +1440,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:07Z",
       "sha256": "f1d5eaaab178158177acf5ee3ede159cb0320811eef799ab0d85b13405602c5c"
     },
@@ -1378,6 +1458,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:09Z",
       "sha256": "f243e190726961a2e5c2a063dd5bd2da4411c04bdbc2ba741c63c074eef62fba"
     },
@@ -1395,6 +1476,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:10Z",
       "sha256": "4b7f9d76543eef41c7eb96b385772ba103d0c324aee087a0e61b32175147935d"
     },
@@ -1412,6 +1494,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:12Z",
       "sha256": "ad079981cd6e90fd75ff7581a9c079ec397695af7b22e85d217b47867abf9926"
     },
@@ -1429,6 +1512,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:13Z",
       "sha256": "4b9a1b91d90929c9bd6997f6a8d986e81021ad1885c61499125bb95fb6e02e58"
     },
@@ -1446,6 +1530,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:14Z",
       "sha256": "269429adf25df0da794b9f8e32858b32a065117c4812a5a4e2ef26528be1ecb9"
     },
@@ -1463,6 +1548,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:16Z",
       "sha256": "143ed125ea1cdf414ff55ad2ec7182e94e529f3fd4a197b7b2895a90dfadaa41"
     },
@@ -1480,6 +1566,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:17Z",
       "sha256": "f0a3a6256a52defb753f1776840a49d3090093ad5d24839dba60956906fe21a7"
     },
@@ -1497,6 +1584,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:19Z",
       "sha256": "3e9ef0e790b27e2accaf794a4d0709fd85d926b017dfd9e20e7ccf3cc79b03dc"
     },
@@ -1514,6 +1602,7 @@
       "temp_high_c": 28.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:20Z",
       "sha256": "ccda02bac821ffa70691cc024661b997290b8c4bfd388bc54d94b93d63c34dab"
     },
@@ -1531,6 +1620,7 @@
       "temp_high_c": 28.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:22Z",
       "sha256": "b7b67012c97365cd45ccb440888b71e6b83824ad1c0520b1c51aaaa56812af03"
     },
@@ -1548,6 +1638,7 @@
       "temp_high_c": 28.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:23Z",
       "sha256": "b156dfaea5d4d5c4dec066436347d3e60fc20cb8669140ca6ca4efc5e28430ed"
     },
@@ -1565,6 +1656,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:24Z",
       "sha256": "00f1274f73c1aec3069c7d546796bbd7367a0f2b51cafc977cd029b5d87b7703"
     },
@@ -1582,6 +1674,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:25Z",
       "sha256": "943c9f8641bc49cc221969600198cb0a073837700cf988e0a0b27cd7d600a02e"
     },
@@ -1599,6 +1692,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:27Z",
       "sha256": "67b8ae8b76e5506a8670c624d4b3fa5a14ec87ccb3e8f424a19278bda36fe095"
     },
@@ -1616,6 +1710,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:28Z",
       "sha256": "450c01ce2d5650ba4a11dc83fa0a77b0074508c6c833e8aa6e6deea357751c48"
     },
@@ -1633,6 +1728,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:29Z",
       "sha256": "f49270f4ef2c069648e418e1566a9276c1958e488b6967286e0083d26bc9e0b2"
     },
@@ -1650,6 +1746,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:31Z",
       "sha256": "c8be9a18bdbd2d06a03dc60cd93bcebe77c44cd9737efd0efd01186e3386a078"
     },
@@ -1667,6 +1764,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:32Z",
       "sha256": "1bc6420a5c6693081cfb45e37a2cd6617c83df48b7a626947bf83c676d0ec828"
     },
@@ -1684,6 +1782,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:33Z",
       "sha256": "2a61924db301b6b8a5bd6b2eb08068f8c26fa0f8df908fd76e52d0b0ca2bdc60"
     },
@@ -1701,6 +1800,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:35Z",
       "sha256": "495be7c4a12cace1d11da4a625c6865b84dd19d37383b7df79a7ae55414ac3a0"
     },
@@ -1718,6 +1818,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:36Z",
       "sha256": "37bb79d6e496672b726d0f58cea518a59b25a1547a0e45f496e9b04af11c23ea"
     },
@@ -1735,6 +1836,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:37Z",
       "sha256": "1cc397499cfda0ea9784f2b57a484d9de6d7acc4d9b8f9a1b5749fcff9e39e43"
     },
@@ -1752,6 +1854,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:39Z",
       "sha256": "a0dc0a1f2eab94733ea07828ec5951d773c057ba6181d6ab178ed7ec3788bf96"
     },
@@ -1769,6 +1872,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:40Z",
       "sha256": "0d76aefe83b41333e94a4235b1358dcc05efd26f3e2b1a8f86ad7a17b6f30b0d"
     },
@@ -1786,6 +1890,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:41Z",
       "sha256": "bd1c8b6f780766342b46d883962efeea8cd70b6e6d26c35d5b96d140acff1c69"
     },
@@ -1803,6 +1908,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:43Z",
       "sha256": "3f0a9ecc0a011399d248e22688e8b742d4f976e6caa6aaadd09b3c36126ec30d"
     },
@@ -1820,6 +1926,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:44Z",
       "sha256": "4756346e12b10f113543597ab20df880f58929887bdb4432adba12b64272c468"
     },
@@ -1837,6 +1944,7 @@
       "temp_high_c": 21.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:45Z",
       "sha256": "e433e011325323df96bd8cb8731e8ffbb779f6859a52fdff8192358a06597690"
     },
@@ -1854,6 +1962,7 @@
       "temp_high_c": 35.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:46Z",
       "sha256": "d0934d5a43b63b08d66fb5d9dc1a219c07625d52f2c48866f41a80499fc9d7b0"
     },
@@ -1871,6 +1980,7 @@
       "temp_high_c": 37.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:48Z",
       "sha256": "8a71a40c0fea1a2438f47ae4d10c6505af536bc4fbd23e6be462911a5a5429ee"
     },
@@ -1888,6 +1998,7 @@
       "temp_high_c": 37.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:49Z",
       "sha256": "6844eeb5548cf40b31c3497c864833ae26b1d0bf5f275739fb52bce99a057ee5"
     },
@@ -1905,6 +2016,7 @@
       "temp_high_c": 37.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:51Z",
       "sha256": "68d11d3fc7ec5a60bde3735cf2ba97968f6b08ea7bcd36d25051d399eaa22524"
     },
@@ -1922,6 +2034,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:52Z",
       "sha256": "2340a12799cd8b7a1b779c12d5fa64df67e634f00709ca46ffb8ff56badaf9c5"
     },
@@ -1939,6 +2052,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:53Z",
       "sha256": "e8a2c32f347577787eb8dac5e55dcce30174e6171a9ef460fd22f17390cbd465"
     },
@@ -1956,6 +2070,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:55Z",
       "sha256": "44c26ede4f11f0a33b2de2ccaf8253b927786e0de35cf78945397a031068962e"
     },
@@ -1973,6 +2088,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:56Z",
       "sha256": "c640eaf3676678bb769a0d302186b14ec9f3f2562339b47e7c1c535359f7443d"
     },
@@ -1990,6 +2106,7 @@
       "temp_high_c": 25.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:57Z",
       "sha256": "60c1734db1a6022824d66326fa224a6a77eb9d4ca98dd2228b502bbce59d02e8"
     },
@@ -2007,6 +2124,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:10:59Z",
       "sha256": "70e951cb5e6ed8a55c69d2e0a7337149747df9e5fab10f5fd3c2aa50b78ac9dd"
     },
@@ -2024,6 +2142,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:02Z",
       "sha256": "f5a84ff1d3990ef34077c825801bf692c3ce4d66f51b599c8e5bc64782518c8b"
     },
@@ -2041,6 +2160,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:03Z",
       "sha256": "b92ec105ae26990c0cf6c322a36abb8071c93d7c5fa0d2159c6a617be598bc76"
     },
@@ -2058,6 +2178,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:04Z",
       "sha256": "ae2f28623cdd1781c7ebf6e6280b07c2082c87b93dae797a3e911574785e2758"
     },
@@ -2075,6 +2196,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:06Z",
       "sha256": "b105c7b43fc8f5ce6c77f48ab08ea02fa77fe3047f65780cac7f0c821d832ba1"
     },
@@ -2092,6 +2214,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:07Z",
       "sha256": "f2c6342c08a119e671454230f26e7e3eeae66aed32e9e3bed89ef7e8acf49146"
     },
@@ -2109,6 +2232,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:09Z",
       "sha256": "1efc431594dcdd519611f55f9a3c3621357756c84b8114afa432fecba410ad32"
     },
@@ -2126,6 +2250,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:10Z",
       "sha256": "efd80066d96deaf9ee072cf7a9d6ec394d3fcf3b71c8893d31df34909c74223a"
     },
@@ -2143,6 +2268,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:11Z",
       "sha256": "d60f1e2a8b8ebda8a202a45253d975741914bd37e5b00539cb9308d9ce7698d9"
     },
@@ -2160,6 +2286,7 @@
       "temp_high_c": 23.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:14Z",
       "sha256": "adb462dc6b710e85f21866ecc0aeb65c0f9f5820aa8c79ef2592856fd60883af"
     },
@@ -2177,6 +2304,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:15Z",
       "sha256": "ca2a80202f67b85b43e953b1fa254cfafa5fa2bcad36beeae0748990cba57c2d"
     },
@@ -2194,6 +2322,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:18Z",
       "sha256": "d1a86d0e4358ccfce57a9864a2632dbf63dec06af7de24de6e15586543cc6cf2"
     },
@@ -2211,6 +2340,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:19Z",
       "sha256": "88e188bce422b3b9320bc634542afcfee30d75eed74cb537016832ccd2eed61d"
     },
@@ -2228,6 +2358,7 @@
       "temp_high_c": 37.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:20Z",
       "sha256": "470d440968f0848ef7cacc43fd5ff66ad6869c4e206de39e1e977e3785b4a3c0"
     },
@@ -2245,6 +2376,7 @@
       "temp_high_c": 30.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:23Z",
       "sha256": "2efddffa313312551486e82bdb316133e78f39419a838223362b4827b42e10b9"
     },
@@ -2262,6 +2394,7 @@
       "temp_high_c": 29.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:30Z",
       "sha256": "ce7679ed484e1ba925817e6992f49f254cebdd7d137a34bed1fd605a5b3a9fec"
     },
@@ -2279,6 +2412,7 @@
       "temp_high_c": 27.0,
       "sta1_text": "",
       "sta1": null,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:33Z",
       "sha256": "4fcdc65256b8344db601ccde853e8a9eb81f1721d25edbb4c3d4570bcd6800ec"
     },
@@ -2296,6 +2430,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:35Z",
       "sha256": "b160c5d0c8bcfd5109fe7c8748d011d7860aae21d3b403eb5f6c1b975f6fe495"
     },
@@ -2313,6 +2448,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:44Z",
       "sha256": "55694ca59af09315514980b71cb9e64c266f086466b50cd7379b59fb22deaa9b"
     },
@@ -2330,6 +2466,7 @@
       "temp_high_c": null,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:50Z",
       "sha256": "9c8cee0801fd27de37abadf49bfc6b6246bc019eb686722ff45a8fcdadec8e3c"
     },
@@ -2347,6 +2484,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:51Z",
       "sha256": "c4f9a6ff306d570eee299f35f25d5bf3021f289ac40a55060e0e61076734b86a"
     },
@@ -2364,6 +2502,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:53Z",
       "sha256": "ec8fddefacec99a2d5ef46c1f31bc6be02b79b9b7bdb0faf23d66cc1f0ba05e3"
     },
@@ -2381,6 +2520,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:54Z",
       "sha256": "2296fb4ba90d84c390353f7a035514bedd63ca6c6e0b424813afbe0e168a2b87"
     },
@@ -2398,6 +2538,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:55Z",
       "sha256": "49c752f37e554a111b7131dabb1d9c689dfe684cb328bdcddf20f219a7908a70"
     },
@@ -2415,6 +2556,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:57Z",
       "sha256": "6cf25d3c875400b40f6b6125a8c8a72caa5f81a2992b3d83ec172795cdc609ca"
     },
@@ -2432,6 +2574,7 @@
       "temp_high_c": 24.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:11:58Z",
       "sha256": "2941463f933641c45241df418df3dcac29f626e32fe0675ad659030b7603b00f"
     },
@@ -2449,6 +2592,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:00Z",
       "sha256": "040637f2e5fc7c7c1a9b274ce7674340465de0148eb788a4557b97dab703df47"
     },
@@ -2466,6 +2610,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:02Z",
       "sha256": "b12d1be58bbac06035aefea8fc5ee5a954800a632867b91fb73d42bc93e94c87"
     },
@@ -2483,6 +2628,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:04Z",
       "sha256": "a9f87a5464b6206601b4f44733e6db4e16079e2fc6186c4e85baa38daa335cee"
     },
@@ -2500,6 +2646,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:05Z",
       "sha256": "01017ad77a522d98064ced758f97dd82bd3d4a32ab2db79b85f6ce086c00a17f"
     },
@@ -2517,6 +2664,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:07Z",
       "sha256": "3fbdab97b52816bac9d6a47f054fabf45678a97db07adb3b07f4373300f4ad26"
     },
@@ -2534,6 +2682,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:08Z",
       "sha256": "73cfc0cfb39dc06157caca700788622f109a078ac1d7e9c00ef5e08c53c481bf"
     },
@@ -2551,6 +2700,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:09Z",
       "sha256": "c34a3b57653645a8ed3fda2f7f135b77e2bc2d2e47736639af9f19186b98f909"
     },
@@ -2568,6 +2718,7 @@
       "temp_high_c": 32.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:11Z",
       "sha256": "0fb2e4973cfb821fda9d2293a8ccbec9e862ef865bdba8ebbfd6c582f909d996"
     },
@@ -2585,6 +2736,7 @@
       "temp_high_c": 22.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:12Z",
       "sha256": "01300fcbb826ccf62f29ae17557952cc062165f8acaa9dcd43f71d6af5f38efb"
     },
@@ -2602,6 +2754,7 @@
       "temp_high_c": 26.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:16Z",
       "sha256": "34b341ffd031ccffeefb58f8761d5dc7c9a52761926cd6333f85714c934f0ca3"
     },
@@ -2619,6 +2772,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:17Z",
       "sha256": "9cd5141f842005bd7ccd7df53a7008f97f0ed5cc2033fee85b2c370730376fbb"
     },
@@ -2636,6 +2790,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:18Z",
       "sha256": "1736d49bdaf895f9c02a833812a988b342df477900ade507aa54048264aab4cc"
     },
@@ -2653,6 +2808,7 @@
       "temp_high_c": 18.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:20Z",
       "sha256": "2d95da53e56264597a637978b427ecaab67fbaac5edca4bca6d8cf896b2d3e81"
     },
@@ -2670,6 +2826,7 @@
       "temp_high_c": 18.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:21Z",
       "sha256": "31ea0bf5a92d31d53e68ebbfaa281132587ee5ed07d1ff984d848c0ed1128efc"
     },
@@ -2687,6 +2844,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:23Z",
       "sha256": "8bb00686f718cfad4acd19a63a4da729c52679612ddf5d75dff46139bf9b970e"
     },
@@ -2704,6 +2862,7 @@
       "temp_high_c": 14.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:24Z",
       "sha256": "4a896824cad90ab5a0bf4767a8a7529360f1b7ebee8dff9143ca86082c4366d7"
     },
@@ -2721,6 +2880,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:26Z",
       "sha256": "a49003cf95fb61ac1a4bb4361b4fe005602b972cf242701cab910a2b117d7b75"
     },
@@ -2738,6 +2898,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:27Z",
       "sha256": "33d2a6876d770c049c2c4749bf804e5177a1b901638dd94c109d6b90e39591ab"
     },
@@ -2755,6 +2916,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:28Z",
       "sha256": "b1a67d45d1dbe78ca145780be7b4a812f3037041ed4e71e0ae086db87d292075"
     },
@@ -2772,6 +2934,7 @@
       "temp_high_c": 12.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:30Z",
       "sha256": "a3d3f862edec90f735149d5f82655784e95b73611debdcaaae6b3b9664d862e3"
     },
@@ -2789,6 +2952,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:31Z",
       "sha256": "9c2f25a8206c5f7e0b479cf46ca9a31c12defac71b682ab32c379d69c085135c"
     },
@@ -2806,6 +2970,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:33Z",
       "sha256": "df9c6264073fa0b39516eb8a73af49e2c61000c2fcead0ce684c16f05fe0ab08"
     },
@@ -2823,6 +2988,7 @@
       "temp_high_c": 14.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:34Z",
       "sha256": "b67c1da7f1b0f1431ba7b32e0cc576bad556fe0e89afb161baaaec101d8c225d"
     },
@@ -2840,6 +3006,7 @@
       "temp_high_c": 14.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:36Z",
       "sha256": "de50825c6529021940d293e03846c7a1d76953c25e592df5a472aa39a27e77e1"
     },
@@ -2857,6 +3024,7 @@
       "temp_high_c": 11.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:37Z",
       "sha256": "c77d5bcc7aca32313fafcb76a535ad404bb955b7a9ca434af7f0e0bd77cc6202"
     },
@@ -2874,6 +3042,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Positive",
       "sta1": true,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:39Z",
       "sha256": "1694fb572071dff5254a014460ac96e0bdd31b82600507fd95e3eb0d89962744"
     },
@@ -2891,6 +3060,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:40Z",
       "sha256": "07044036f560ada25bf507d066873bee2021e861b11ad1ca0b96e9b53722f91e"
     },
@@ -2908,6 +3078,7 @@
       "temp_high_c": 20.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:42Z",
       "sha256": "bdd1ed5f31e59d17eab8400e5860beceb2c1e22ac034bd34e1f10a0601a75f6e"
     },
@@ -2925,6 +3096,7 @@
       "temp_high_c": 13.0,
       "sta1_text": "Negative",
       "sta1": false,
+      "pof": "unknown",
       "retrieved_at": "2026-10-26T15:12:43Z",
       "sha256": "a81246a49d939f14a872ce2bebbbc760e5cad95e1b8bf672bbc16ef0b15e3df4"
     }

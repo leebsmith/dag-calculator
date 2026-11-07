@@ -2,7 +2,7 @@
 
 <!-- claims: proposed batch.yeast.pof pof_status -->
 
-**Status:** proposed
+**Status:** done
 **Scope:** `frontend/src` and its guards/tests; `docs/` where the library UI is described.
 **Gate:** `make check`, then `make test`.
 
@@ -240,24 +240,24 @@ Match the STA1 surfaces exactly, content aside:
 
 ### Phase 1 — clone workflow
 
-- [ ] Move the Library search below the kind tabs, label it for its scope, and make the filter bar sticky.
-- [ ] Add seed paging state and **Show 50 more**, resetting the limit on search/kind/section changes.
-- [ ] Add `cloneLibraryItem`, a Clone action on non-style seed rows, and an editable prefilled draft.
-- [ ] Add tri-state boolean Library fields and make `sta1` editable as Unknown / Yes / No.
-- [ ] Remove every picker Copy action and its handlers, tests, and living-doc references.
-- [ ] Fall back to the batch selection snapshot for `selectedYeast` after its record is deleted.
-- [ ] Update the Library delete confirmation to explain snapshot survival.
-- [ ] Add and update the phase-1 tests and run `make check` + `make test`.
+- [x] Move the Library search below the kind tabs, label it for its scope, and make the filter bar sticky.
+- [x] Add seed paging state and **Show 50 more**, resetting the limit on search/kind/section changes.
+- [x] Add `cloneLibraryItem`, a Clone action on non-style seed rows, and an editable prefilled draft.
+- [x] Add tri-state boolean Library fields and make `sta1` editable as Unknown / Yes / No.
+- [x] Remove every picker Copy action and its handlers, tests, and living-doc references.
+- [x] Fall back to the batch selection snapshot for `selectedYeast` after its record is deleted.
+- [x] Update the Library delete confirmation to explain snapshot survival.
+- [x] Add and update the phase-1 tests and run `make check` + `make test`.
 
 ### Phase 2 — POF status
 
-- [ ] Add `pof_status` and `batch.yeast.pof` to the artifact; add the label.
-- [ ] Emit `pof` from both yeast scrapers and add it to the White Labs source schema.
-- [ ] Re-emit both source JSON files with `pof: unknown` on every record.
-- [ ] Carry `pof` through the seed builder; regenerate `data/seeds/yeasts.json` with every seed unknown.
-- [ ] Surface POF on the selected yeast row, picker filters, Library select, and report line.
-- [ ] Add POF tests and run `make generate` + `make check` + `make test`.
-- [ ] Verify the M31 clone path: seed unknown, clone positive, batch/report positive.
+- [x] Add `pof_status` and `batch.yeast.pof` to the artifact; add the label.
+- [x] Emit `pof` from both yeast scrapers and add it to the White Labs source schema.
+- [x] Re-emit both source JSON files with `pof: unknown` on every record.
+- [x] Carry `pof` through the seed builder; regenerate `data/seeds/yeasts.json` with every seed unknown.
+- [x] Surface POF on the selected yeast row, picker filters, Library select, and report line.
+- [x] Add POF tests and run `make generate` + `make check` + `make test`.
+- [x] Verify the M31 clone path: seed unknown, clone positive, batch/report positive.
 
 ## Verification
 
@@ -269,10 +269,10 @@ Match the STA1 surfaces exactly, content aside:
 
 ## Acceptance checklist
 
-- [ ] No **Copy** action remains outside the Library.
-- [ ] Seed list pages beyond 50 and resets its limit on filter changes.
-- [ ] Search is visibly attached to the active kind and sticky while scrolling.
-- [ ] Clone opens an editable draft and seals only on Save.
-- [ ] `sta1` is editable as Unknown/Yes/No and validates.
-- [ ] Deleting a selected clone leaves the batch and its display intact.
-- [ ] `make check` and `make test` are green.
+- [x] No **Copy** action remains outside the Library.
+- [x] Seed list pages beyond 50 and resets its limit on filter changes.
+- [x] Search is visibly attached to the active kind and sticky while scrolling.
+- [x] Clone opens an editable draft and seals only on Save.
+- [x] `sta1` is editable as Unknown/Yes/No and validates.
+- [x] Deleting a selected clone leaves the batch and its display intact.
+- [x] `make check` and `make test` are green.

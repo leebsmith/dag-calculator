@@ -32,8 +32,17 @@
   if sta1 == true { "STA1+" } else if sta1 == false { "STA1−" } else { "STA1?" }
 }
 
-// "15.0–22.0 °C · Medium flocculation · STA1+". The bundle has no range entry:
-// the dash and the shared unit are the one join this section performs.
+// POF is descriptive and defaults to unknown: an unasserted value prints no
+// suffix, while an asserted one uses the same compact badge as STA1.
+#let pof-status() = {
+  let yeast = state.valuation.at("batch.yeast", default: none)
+  if type(yeast) != dictionary { return none }
+  let pof = yeast.at("pof", default: none)
+  if pof == "positive" { "POF+" } else if pof == "negative" { "POF−" } else { none }
+}
+
+// "15.0–22.0 °C · Medium flocculation · STA1+ · POF+". The bundle has no range
+// entry: the dash and the shared unit are the one join this section performs.
 #let temperature-line() = {
   let low = "batch.yeast.temp_low_c"
   let high = "batch.yeast.temp_high_c"
@@ -49,7 +58,7 @@
   } else {
     none
   }
-  (range, flocculation, sta1-status()).filter(entry => entry != none).join(" · ")
+  (range, flocculation, sta1-status(), pof-status()).filter(entry => entry != none).join(" · ")
 }
 
 #let derate-points() = state.valuation.at("batch.attenuation_derate_points", default: 0)

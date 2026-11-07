@@ -86,7 +86,7 @@ test("the library layers cover the declared surface without an app", () => {
   });
   const keys = layers.flatMap((layer) => Object.getOwnPropertyNames(layer));
 
-  assert.equal(layers.length, 4);
+  assert.equal(layers.length, 6);
   assert.deepEqual([...new Set(keys)].sort(), [...LIBRARY_KEYS].sort());
 });
 
@@ -234,6 +234,91 @@ test("saving a forked style posts it under the style kind and refreshes", async 
   assert.equal(create.component.forked_from_name, "American IPA");
   assert.equal(app.libraryDraft, null);
   assert.equal(events.at(-1).op, "refresh");
+});
+
+test("seed cloning opens a draft and seals only when saved", async () => {
+  const { app, events } = setup();
+  app.selectLibraryTab("yeast");
+  const seed = {
+    id: "m31",
+    name: "Belgian Tripel M31",
+    attenuation_pct: 0.85,
+    sta1: null,
+    pof: "unknown",
+  };
+
+  app.cloneLibraryItem(seed);
+
+  assert.equal(app.canCloneRecord, true);
+  assert.equal(app.libraryDraft.name, "Belgian Tripel M31 (copy)");
+  assert.equal(app.libraryDraft.id, undefined);
+  assert.equal(app.libraryCloneOf, "Belgian Tripel M31");
+  assert.equal(app.libraryEditorTitle, "Clone of Belgian Tripel M31");
+  assert.equal(events.some((event) => event.op === "create"), false);
+
+  app.librarySetField("pof", "positive");
+  await app.saveLibraryItem();
+  const create = events.find((event) => event.op === "create");
+  assert.equal(create.tab, "yeast");
+  assert.equal(create.component.pof, "positive");
+  assert.equal(seed.pof, "unknown", "the seed is not mutated");
+  assert.equal(app.libraryDraft, null);
+  assert.equal(app.libraryCloneOf, "");
+});
+
+test("styles fork but do not clone", () => {
+  const { app } = setup();
+  app.selectSourceKind("style");
+
+  assert.equal(app.canForkRecord, true);
+  assert.equal(app.canCloneRecord, false);
+  app.cloneLibraryItem({ id: "21A", name: "American IPA" });
+  assert.equal(app.libraryDraft, null);
+});
+
+test("seed paging shows 50 at a time and resets with the filter", () => {
+  const yeasts = Object.fromEntries(
+    Array.from({ length: 60 }, (_, index) => [
+      `yeast-${index}`,
+      { id: `yeast-${index}`, name: `Yeast ${index}`, attenuation_pct: 0.8 },
+    ])
+  );
+  const { app } = setup({ seeds: { yeasts } });
+  app.selectLibraryTab("yeast");
+
+  assert.equal(app.librarySeedCount, 60);
+  assert.equal(app.librarySeedItems.length, 50);
+  app.showMoreSeeds();
+  assert.equal(app.librarySeedItems.length, 60);
+  app.librarySetSearch("Yeast 5");
+  assert.equal(app.librarySeedLimit, 50);
+});
+
+test("boolean fields are tri-state and store real booleans", () => {
+  const { app } = setup();
+  app.selectLibraryTab("yeast");
+  app.libraryDraft = { name: "House strain" };
+
+  assert.equal(field(app, "sta1").kind, "boolean");
+  app.librarySetField("sta1", "true");
+  assert.equal(app.libraryDraft.sta1, true);
+  assert.equal(app.libraryFieldDisplay("sta1"), "true");
+  app.librarySetField("sta1", "false");
+  assert.equal(app.libraryDraft.sta1, false);
+  app.librarySetField("sta1", "");
+  assert.equal("sta1" in app.libraryDraft, false);
+  assert.equal(app.libraryFieldDisplay("sta1"), "");
+});
+
+test("POF is a taxonomy select with an explicit unknown", () => {
+  const { app } = setup();
+  app.selectLibraryTab("yeast");
+
+  assert.equal(field(app, "pof").kind, "select");
+  assert.deepEqual(field(app, "pof").options, ["unknown", "positive", "negative"]);
+  app.libraryDraft = { name: "House strain" };
+  app.librarySetField("pof", "positive");
+  assert.equal(app.libraryDraft.pof, "positive");
 });
 
 test("saving a valid new ingredient record creates it and refreshes", async () => {

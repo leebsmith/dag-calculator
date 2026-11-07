@@ -19,7 +19,7 @@ import {
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
 import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
 import { createLibrary } from "../store/library.js";
-import { CATALOGS, isUserItem } from "../store/userCatalog.js";
+import { isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
 import { loadUnitMode } from "../store/unitPrefs.js";
 import { createSnapshotActions } from "../store/snapshot.js";
@@ -327,20 +327,6 @@ export function createStepApp(options = {}) {
     // library record) — drives the picker "mine" badge.
     isUserItem(id) {
       return isUserItem(id) || cache.isLibraryItem(id);
-    },
-
-    // Copy a seed component into a new server record.
-    async duplicateUserItem(catalog, component) {
-      const meta = CATALOGS[catalog];
-      if (!meta) return;
-      const copy = { ...component };
-      delete copy[meta.idField];
-      try {
-        await this.library.create(catalog, copy);
-        await this.refreshLibraryItems();
-      } catch (err) {
-        observability.reportError(`stepAdapter.duplicate ${catalog}`, err);
-      }
     },
 
     // Test/conformance entry point. Production boot is auth-driven via

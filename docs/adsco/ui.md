@@ -208,7 +208,8 @@ The picker is a modal, opened from the row. It owns the catalog: name search
 tiers. Filters reset when it opens, so a narrowing from the last visit cannot
 hide the catalog; the list shows 50 rows and the counter reports the truncation.
 `Use` writes `batch.yeast_id`, snapshots the selection and closes the modal;
-`Copy` keeps a personal item. Clearing the selection empties the row and the cap.
+cloning starts in the Library, not the picker. Clearing the selection empties
+the row and the cap.
 
 ### Late-addition intent
 

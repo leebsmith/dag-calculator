@@ -47,24 +47,6 @@
       <p class="form-hint" x-text="libraryNotice"></p>
     </template>
 
-    <div class="catalog-search-wrapper">
-      <input
-        type="text"
-        class="form-input text-xs"
-        :placeholder="'Search ' + activeKindLabel.toLowerCase() + '…'"
-        :value="librarySearch"
-        @input="librarySetSearch($event.target.value)"
-      />
-    </div>
-    <div class="filter-pills-container" x-show="activeKindHasNotes">
-      <button
-        type="button"
-        class="filter-pill"
-        :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
-        @click="toggleLibrarySearchNotes()"
-      >Search notes</button>
-    </div>
-
     <template x-if="librarySection === 'sources'">
       <div>
         <div class="filter-pills-container">
@@ -77,6 +59,30 @@
               x-text="k.label"
             ></button>
           </template>
+        </div>
+
+        <div class="library-filter-bar">
+          <label class="form-label text-xs" :for="'library-search-' + librarySection">
+            <span x-text="librarySearchLabel"></span>
+          </label>
+          <div class="catalog-search-wrapper">
+            <input
+              type="text"
+              class="form-input text-xs"
+              :id="'library-search-' + librarySection"
+              :placeholder="'Search ' + activeKindLabel.toLowerCase() + '…'"
+              :value="librarySearch"
+              @input="librarySetSearch($event.target.value)"
+            />
+          </div>
+          <div class="filter-pills-container" x-show="activeKindHasNotes">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
+              @click="toggleLibrarySearchNotes()"
+            >Search notes</button>
+          </div>
         </div>
 
         <p class="form-hint">
@@ -139,6 +145,12 @@
                     x-show="canForkRecord"
                     @click="forkLibraryItem(item)"
                   >Fork</button>
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    x-show="canCloneRecord"
+                    @click="cloneLibraryItem(item)"
+                  >Clone</button>
                   <span class="status-badge status-badge-info text-nano">seed</span>
                 </span>
               </div>
@@ -152,6 +164,12 @@
             <span x-text="librarySeedCount"></span>
             <span x-text="librarySearch ? 'matching seeds' : 'bundled seeds'"></span>.
           </p>
+          <button
+            type="button"
+            class="btn-outline text-xs"
+            x-show="librarySeedItems.length < librarySeedCount"
+            @click="showMoreSeeds()"
+          >Show 50 more</button>
         </section>
       </div>
     </template>
@@ -168,6 +186,30 @@
               x-text="t.label"
             ></button>
           </template>
+        </div>
+
+        <div class="library-filter-bar">
+          <label class="form-label text-xs" :for="'library-search-' + librarySection">
+            <span x-text="librarySearchLabel"></span>
+          </label>
+          <div class="catalog-search-wrapper">
+            <input
+              type="text"
+              class="form-input text-xs"
+              :id="'library-search-' + librarySection"
+              :placeholder="'Search ' + activeKindLabel.toLowerCase() + '…'"
+              :value="librarySearch"
+              @input="librarySetSearch($event.target.value)"
+            />
+          </div>
+          <div class="filter-pills-container" x-show="activeKindHasNotes">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
+              @click="toggleLibrarySearchNotes()"
+            >Search notes</button>
+          </div>
         </div>
 
         <p class="form-hint">
@@ -218,7 +260,14 @@
             <template x-for="item in librarySeedItems" :key="libraryItemId(item)">
               <div class="catalog-item-card is-readonly">
                 <span class="catalog-item-name" x-text="librarySeedItemTitle(item)"></span>
-                <span class="status-badge status-badge-info text-nano">seed</span>
+                <span class="catalog-item-actions">
+                  <button
+                    type="button"
+                    class="btn-outline text-xs"
+                    @click="cloneLibraryItem(item)"
+                  >Clone</button>
+                  <span class="status-badge status-badge-info text-nano">seed</span>
+                </span>
               </div>
             </template>
           </div>
@@ -230,13 +279,19 @@
             <span x-text="librarySeedCount"></span>
             <span x-text="librarySearch ? 'matching seeds' : 'bundled seeds'"></span>.
           </p>
+          <button
+            type="button"
+            class="btn-outline text-xs"
+            x-show="librarySeedItems.length < librarySeedCount"
+            @click="showMoreSeeds()"
+          >Show 50 more</button>
         </section>
       </div>
     </template>
 
     <template x-if="libraryDraft">
       <div class="library-editor">
-        <h3 class="library-heading" x-text="libraryDraft.forked_from_name ? 'Forked ' + activeKindLabel.toLowerCase() : 'New ' + activeKindLabel.toLowerCase()"></h3>
+        <h3 class="library-heading" x-text="libraryEditorTitle"></h3>
         <p class="form-hint" x-show="activeKind === 'yeast'">
           A strain leaves <em>Blend of</em> empty. A blend lists the strains it is composed of,
           comma-separated, and carries the attenuation the blend finishes at.
@@ -275,6 +330,18 @@
                 @input="librarySetField(f.field, $event.target.value)"
                 @change="libraryCommitField(f.field)"
               />
+            </template>
+            <template x-if="f.kind === 'boolean'">
+              <select
+                class="form-select text-xs"
+                :id="'library-field-' + f.field"
+                :value="libraryFieldDisplay(f.field)"
+                @change="librarySetField(f.field, $event.target.value)"
+              >
+                <option value="" :selected="libraryFieldDisplay(f.field) === ''">Unknown</option>
+                <option value="true" :selected="libraryFieldDisplay(f.field) === 'true'">Yes</option>
+                <option value="false" :selected="libraryFieldDisplay(f.field) === 'false'">No</option>
+              </select>
             </template>
             <template x-if="f.kind === 'text'">
               <input

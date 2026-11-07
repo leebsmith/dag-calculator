@@ -199,5 +199,33 @@ test("an unmatched strain keeps the aggregator citation", () => {
 
   assert.equal(strain.attenuation_provenance.kind, "aggregator");
   assert.equal(strain.sta1, undefined);
+  assert.equal(strain.pof, "unknown");
   assert.equal(strain.attenuation_pct, 0.7);
+});
+
+test("every yeast seed carries an explicit POF status", () => {
+  const seeds = json("data/seeds/yeasts.json");
+  for (const [id, strain] of Object.entries(seeds)) {
+    assert.ok(
+      ["unknown", "positive", "negative"].includes(strain.pof),
+      `${id} has no valid POF status`
+    );
+  }
+});
+
+test("every scraped yeast record carries a POF status", () => {
+  const beer = json("data/sources/beer-analytics-yeasts.json");
+  const white = json("data/sources/whitelabs-yeasts.json").entries;
+  for (const row of [...beer, ...white]) {
+    assert.ok(
+      ["unknown", "positive", "negative"].includes(row.pof),
+      `${row.title ?? row.name} has no valid POF status`
+    );
+  }
+});
+
+test("M31 stays POF-unknown in the seed", () => {
+  const m31 = json("data/seeds/yeasts.json")["mangrove-jack-s-belgian-tripel-m31"];
+  assert.ok(m31, "the M31 seed exists");
+  assert.equal(m31.pof, "unknown");
 });

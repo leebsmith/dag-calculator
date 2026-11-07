@@ -53,6 +53,7 @@
                 <td>
                   <span class="font-medium" x-text="selectedYeast.name"></span>
                   <span class="status-badge status-badge-info text-nano" x-text="selectedYeastSta1"></span>
+                  <span class="status-badge status-badge-info text-nano" x-show="selectedYeastPof" x-text="selectedYeastPof"></span>
                   <template x-if="isUserItem(selectedYeast.id)">
                     <span class="status-badge status-badge-info text-nano">mine</span>
                   </template>

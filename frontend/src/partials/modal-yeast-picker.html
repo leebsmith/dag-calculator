@@ -92,6 +92,23 @@
           is modelled as non-diastaticus (d = 0).
         </p>
 
+        <div class="filter-pills-container">
+          <template x-for="t in yeastPofTiers" :key="'p-' + t.key">
+            <button
+              type="button"
+              class="filter-pill"
+              :class="{ 'is-active': yeastPofFilter === t.key }"
+              :aria-pressed="yeastPofFilter === t.key ? 'true' : 'false'"
+              @click="toggleYeastPof(t.key)"
+              x-text="t.label + ' · ' + t.count"
+            ></button>
+          </template>
+        </div>
+        <p class="form-hint">
+          POF is the phenolic off-flavour phenotype. Unknown means no vendor result
+          is recorded; it is not an assertion either way.
+        </p>
+
         <div class="catalog-result-counter" aria-live="polite" x-text="yeastResultLabel"></div>
 
         <div class="data-table-container data-table-container-scroll">
@@ -136,15 +153,6 @@
                       @click="selectYeast(y.id)"
                       x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"
                     ></button>
-                    <button
-                      type="button"
-                      class="btn btn-outline text-xs"
-                      x-show="!isUserItem(y.id)"
-                      @click="duplicateUserItem('yeast', y)"
-                      title="Copy to my items"
-                    >
-                      Copy
-                    </button>
                   </td>
                 </tr>
               </template>
