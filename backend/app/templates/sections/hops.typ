@@ -146,7 +146,7 @@
     })
   }
 
-  if present-formatted("batch.boil_ibu_share") {
+  if present-formatted("batch.boil_ibu_share") and present-formatted-table(WHIRLPOOL) {
     v(4pt)
     block(breakable: false, {
       heading(level: 2)[IBU Splits]

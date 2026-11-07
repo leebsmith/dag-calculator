@@ -42,6 +42,22 @@ test("shapeDraftState copies the mutable maps and defaults the strategy", () => 
   assert.notEqual(state.selections, selections);
 });
 
+test("shapeDraftState detaches Alpine-proxied maps", () => {
+  const collections = new Proxy({ "batch.sugars": [{ mass_kg: 1 }] }, {});
+  const selections = new Proxy({ "batch.yeast": { id: "y1" } }, {});
+  const state = shapeDraftState({
+    identity: {},
+    hopStrategy: "",
+    roots: {},
+    collections,
+    selections,
+    schemaVersion: 4,
+  });
+
+  assert.deepEqual(state.collections, { "batch.sugars": [{ mass_kg: 1 }] });
+  assert.deepEqual(state.selections, { "batch.yeast": { id: "y1" } });
+});
+
 test("shapeDraftState detaches collections and selections from later edits", () => {
   const collections = { "batch.sugars": [{ mass_kg: 1 }] };
   const selections = { "batch.yeast": { id: "y1" } };

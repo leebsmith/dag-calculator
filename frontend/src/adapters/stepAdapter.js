@@ -138,6 +138,7 @@ export function createStepApp(options = {}) {
     highwater: ui.highwater,
     activeStep: steps[ui.activeIndex],
     stepperSteps: [],
+    readOnly: false,
     navDir: null, // "next" | "prev" — drives the step-card entry animation
     stepStatus: attribution.initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
@@ -280,6 +281,11 @@ export function createStepApp(options = {}) {
       session.setSelection(selectionNode, component ?? null);
     },
 
+    setReadOnly(value) {
+      this.readOnly = !!value;
+      session.setReadOnly(this.readOnly);
+    },
+
     setRoot(nodeId, value) {
       session.engine.setRoot(nodeId, value);
     },
@@ -350,6 +356,7 @@ export function createStepApp(options = {}) {
     // unmounted while signed out and re-solves on the next loadState/boot).
     teardown() {
       this.inputDrafts = {};
+      this.setReadOnly(false);
       runner.reset();
       session.reset(baselineRoots);
       ui.activeIndex = 0;

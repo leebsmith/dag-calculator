@@ -5,11 +5,13 @@ from __future__ import annotations
 import json
 import os
 import shutil
+from io import BytesIO
 from pathlib import Path
 
 import pytest
 from conftest import FakeBatchRepo
 from fastapi.testclient import TestClient
+from pypdf import PdfReader
 
 from app.auth.deps import get_current_user, require_allowed_user
 from app.main import app
@@ -66,6 +68,11 @@ def draft_bundle_dict() -> dict:
     data = bundle_dict()
     data["batch"].update({"status": "draft", "frozen_at": None, "parent_batch_id": None})
     return seal_bundle(data).model_dump(mode="json")
+
+
+def _pdf_text(data: bytes) -> str:
+    reader = PdfReader(BytesIO(data))
+    return "\n".join(page.extract_text() or "" for page in reader.pages)
 
 
 @pytest.fixture(scope="session")
@@ -146,6 +153,48 @@ def test_the_checklist_section_renders(render_once) -> None:
     assert rendered.data.startswith(b"%PDF")
     assert rendered.sections == ("checklist",)
     assert rendered.pages >= 1
+
+
+def _cell(text: str) -> dict:
+    return {"text": text, "number": None, "unit": None}
+
+
+def test_the_checklist_omits_skipped_steps() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["batch.brew_checklist"].append(
+        {
+            "kind": _cell("step"),
+            "phase": _cell("Brew day"),
+            "section": _cell("Setup"),
+            "title": _cell("SKIPPEDSENTINELTITLE"),
+            "text": _cell("SKIPPEDSENTINELTEXT"),
+            "level": _cell("info"),
+            "skipped": _cell("Skipped: test"),
+        }
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="checklist"))
+    text = _pdf_text(rendered.data)
+
+    assert "SKIPPEDSENTINELTITLE" not in text
+    assert "SKIPPEDSENTINELTEXT" not in text
+    assert "Brew Day Setup" in text
+
+
+def test_the_ibu_splits_hide_without_whirlpool_hops() -> None:
+    data = bundle_dict()
+    del data["formatted_tables"]["batch.whirlpool_hops"]
+
+    rendered = render(seal_bundle(data), parse_spec(sections="hops"))
+    text = _pdf_text(rendered.data)
+
+    assert "IBU Splits" not in text
+    assert "Overall Hops" in text
+
+
+def test_the_ibu_splits_render_with_whirlpool_hops(render_once) -> None:
+    rendered = render_once(bundle(), parse_spec(sections="hops"))
+    assert "IBU Splits" in _pdf_text(rendered.data)
 
 
 def test_the_yeast_section_renders_a_known_pof(render_once) -> None:

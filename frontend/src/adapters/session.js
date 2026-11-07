@@ -23,6 +23,7 @@ export function createSession({
   const identitySnapshot = identity;
   const startingRoots = initialRoots ?? master?.allRoots?.() ?? {};
   let engine = build(startingRoots);
+  let readOnly = false;
   attachMaster();
 
   function build(rootState = {}) {
@@ -52,12 +53,20 @@ export function createSession({
     getAuthored: (id) => engine.getAuthored(id),
     resolve: (path) => engine.resolve(path),
     call: (fnId, args) => engine.call(fnId, args),
-    setRoot: (id, value) => engine.setRoot(id, value),
-    unsetRoot: (id) => engine.unsetRoot(id),
+    setRoot: (id, value) => {
+      if (!readOnly) engine.setRoot(id, value);
+    },
+    unsetRoot: (id) => {
+      if (!readOnly) engine.unsetRoot(id);
+    },
     getRoot: (id) => engine.getRoot(id),
     hasRoot: (id) => engine.hasRoot(id),
-    setCollection: (id, rows) => engine.setCollection(id, rows),
-    setReferences: (references) => engine.setReferences(references),
+    setCollection: (id, rows) => {
+      if (!readOnly) engine.setCollection(id, rows);
+    },
+    setReferences: (references) => {
+      if (!readOnly) engine.setReferences(references);
+    },
     invalidate: (id) => engine.invalidate(id),
     boundaryRequest: (id) => engine.boundaryRequest(id),
     hasBoundaryResult: (fingerprint) => engine.hasBoundaryResult(fingerprint),
@@ -88,6 +97,12 @@ export function createSession({
     },
     engine: engineRef,
     boundaryNodes,
+    setReadOnly(value) {
+      readOnly = !!value;
+    },
+    isReadOnly() {
+      return readOnly;
+    },
     collections() {
       return collections;
     },
@@ -98,6 +113,7 @@ export function createSession({
       return identitySnapshot;
     },
     setIdentity(namespace, component) {
+      if (readOnly) return engine;
       const currentRoots = engine.allRoots();
       identitySnapshot[namespace] = component ? { ...component } : {};
       engine = build(currentRoots);
@@ -105,6 +121,7 @@ export function createSession({
       return engine;
     },
     setSelection(nodeId, component) {
+      if (readOnly) return;
       if (component === null || component === undefined) {
         delete selectionSnapshots[nodeId];
       } else {

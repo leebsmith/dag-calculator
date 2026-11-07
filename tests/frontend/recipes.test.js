@@ -383,11 +383,30 @@ test("openDraft enters the editor and resets the scope", async () => {
 
   await store.openDraft("draft-new");
 
-  assert.deepEqual(persistence.calls, [["open", "draft-new"]]);
+  assert.deepEqual(persistence.calls, [["open", "draft-new", { readOnly: false }]]);
   assert.equal(store.view, "editor");
   assert.equal(store.scope, "all");
   assert.equal(store.activeId, "a1");
   assert.equal(store.activeName, "Active batch");
+});
+
+test("openDraftReadOnly enters the editor without write actions", async () => {
+  const persistence = fakePersistence({
+    getActive: () => ({ id: "draft-new", name: "Draft", readOnly: true }),
+  });
+  const { store } = makeStore(persistence);
+
+  await store.openDraftReadOnly("draft-new");
+
+  assert.deepEqual(persistence.calls, [["open", "draft-new", { readOnly: true }]]);
+  assert.equal(store.view, "editor");
+  assert.equal(store.readOnly, true);
+
+  await store.freeze();
+  await store.trash();
+  await store.rename("Nope");
+
+  assert.deepEqual(persistence.calls, [["open", "draft-new", { readOnly: true }]]);
 });
 
 test("rename and backToBatches mirror the active record", async () => {

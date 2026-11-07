@@ -5,16 +5,6 @@
 
 #let COLLECTION = "batch.brew_checklist"
 
-#let rows = display-tables.at(COLLECTION, default: ())
-
-#let present-checklist() = rows.len() > 0
-
-#let level = if "batch.checklist_level" in display-values {
-  display-values.at("batch.checklist_level").text
-} else {
-  "Standard"
-}
-
 #let cell(row, key) = {
   let value = row.at(key, default: none)
   if value == none or type(value) != dictionary {
@@ -22,6 +12,17 @@
   } else {
     value.at("text", default: "—")
   }
+}
+
+#let all-rows = display-tables.at(COLLECTION, default: ())
+#let rows = all-rows.filter(row => cell(row, "skipped") == "—")
+
+#let present-checklist() = rows.len() > 0
+
+#let level = if "batch.checklist_level" in display-values {
+  display-values.at("batch.checklist_level").text
+} else {
+  "Standard"
 }
 
 #let step-row(row) = block(breakable: false, {

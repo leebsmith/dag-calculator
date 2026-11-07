@@ -295,6 +295,14 @@
       <button
         type="button"
         class="landing-menu-item"
+        x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'draft'"
+        @click="$store.recipes.openDraftReadOnly($store.recipes.rowMenu.id); $store.recipes.closeRowMenu()"
+      >
+        Open read-only
+      </button>
+      <button
+        type="button"
+        class="landing-menu-item"
         x-show="!$store.recipes.rowMenu.trashed"
         @click="$store.recipes.startRename()"
       >

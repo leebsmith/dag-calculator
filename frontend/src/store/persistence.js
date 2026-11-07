@@ -95,6 +95,11 @@ export function createPersistenceManager({
     }
     active = null;
     dispatch({ type: "RESET" });
+    currentApp()?.setReadOnly?.(false);
+  }
+
+  function canSave() {
+    return Boolean(active) && active.status === "draft" && !active.readOnly;
   }
 
   function list() {
@@ -109,8 +114,10 @@ export function createPersistenceManager({
       trashed: false,
       persisted: false,
       updated_at: null,
+      readOnly: false,
     };
     dispatch({ type: "RESET" });
+    currentApp()?.setReadOnly?.(false);
     await currentApp()?.loadState({
       identity,
       roots: draftState?.roots ?? {},
@@ -130,13 +137,15 @@ export function createPersistenceManager({
       trashed: false,
       persisted: false,
       updated_at: null,
+      readOnly: false,
     };
     dispatch({ type: "RESET" });
+    currentApp()?.setReadOnly?.(false);
     await currentApp()?.loadState({ roots: {}, collections: {}, selections: {} });
     return active;
   }
 
-  async function open(batchId) {
+  async function open(batchId, { readOnly = false } = {}) {
     const b = await batchSeam().getBatch(batchId);
     assertSupported(b);
     active = {
@@ -146,14 +155,17 @@ export function createPersistenceManager({
       trashed: b.trashed ?? false,
       persisted: true,
       updated_at: b.updated_at,
+      readOnly: !!readOnly,
     };
     dispatch({ type: "RESET" });
+    currentApp()?.setReadOnly?.(false);
     await currentApp()?.loadState(loadStatePayload(b));
+    currentApp()?.setReadOnly?.(active.readOnly);
     return b;
   }
 
   async function renameActive(name) {
-    if (!active || active.status !== "draft") return;
+    if (!canSave()) return;
     active = { ...active, name };
     await saveNow();
   }
@@ -179,8 +191,10 @@ export function createPersistenceManager({
       trashed: false,
       persisted: true,
       updated_at: created.updated_at,
+      readOnly: false,
     };
     dispatch({ type: "RESET" });
+    currentApp()?.setReadOnly?.(false);
     await currentApp()?.loadState(loadStatePayload(created));
     return created;
   }
@@ -226,7 +240,7 @@ export function createPersistenceManager({
   }
 
   async function freezeActive() {
-    if (!active || active.status !== "draft") return;
+    if (!canSave()) return;
     const stepApp = currentApp();
     if (stepApp.boundaryPending) {
       throw new Error("Cannot freeze while a boundary solve is pending");
@@ -270,7 +284,7 @@ export function createPersistenceManager({
   }
 
   function queueSave({ delay = 400 } = {}) {
-    if (!active || active.status !== "draft") return;
+    if (!canSave()) return;
     runEffects(dispatch({ type: "EDIT", delay })).catch((err) =>
       console.error("autosave failed", err)
     );
@@ -285,7 +299,7 @@ export function createPersistenceManager({
   }
 
   async function trashActive() {
-    if (!active) return;
+    if (!active || active.readOnly) return;
     if (!active.persisted && !state.dirty) {
       clearActive();
       return;
@@ -316,7 +330,7 @@ export function createPersistenceManager({
   }
 
   async function performSave(force = false) {
-    if (!active || active.status !== "draft") return;
+    if (!canSave()) return;
     let lastError;
     for (;;) {
       const payload = { name: active.name, ...currentApp().draftState() };
@@ -347,7 +361,7 @@ export function createPersistenceManager({
   }
 
   async function saveNow({ force = false } = {}) {
-    if (!active || active.status !== "draft") return;
+    if (!canSave()) return;
     await runEffects(dispatch({ type: "SAVE_REQUESTED" }), force);
   }
 

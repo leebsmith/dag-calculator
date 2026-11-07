@@ -36,6 +36,7 @@ export function createRecipesStore({
     batches: [],
     activeId: null,
     activeName: "",
+    readOnly: false,
     loadError: false,
     saveState: "idle", // "idle" | "dirty" | "saving" | "error" | "conflict"
     conflictRemote: null,
@@ -104,6 +105,7 @@ export function createRecipesStore({
       const active = persistence.getActive();
       this.activeId = active?.id ?? null;
       this.activeName = active?.name ?? "";
+      this.readOnly = active?.readOnly ?? false;
     },
 
     async refresh() {
@@ -247,12 +249,16 @@ export function createRecipesStore({
       getSetup().openModal();
     },
 
-    async openDraft(id) {
-      await persistence.open(id);
+    async openDraft(id, { readOnly = false } = {}) {
+      await persistence.open(id, { readOnly });
       this.actionError = null;
       this.scope = "all";
       this.view = "editor";
       this.syncActive();
+    },
+
+    async openDraftReadOnly(id) {
+      await this.openDraft(id, { readOnly: true });
     },
 
     async forkFrozen(id) {
@@ -265,6 +271,7 @@ export function createRecipesStore({
     },
 
     async rename(name) {
+      if (this.readOnly) return;
       await persistence.renameActive(name);
       this.syncActive();
     },
@@ -280,6 +287,7 @@ export function createRecipesStore({
     },
 
     async trash() {
+      if (this.readOnly) return;
       await persistence.trashActive();
       await this.refresh();
       this.view = "batches";
@@ -293,6 +301,7 @@ export function createRecipesStore({
     },
 
     async freeze() {
+      if (this.readOnly) return;
       this.actionError = null;
       try {
         await persistence.freezeActive();

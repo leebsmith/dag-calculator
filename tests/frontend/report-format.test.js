@@ -1,3 +1,15 @@
+test("the checklist table carries the skipped state and reason", async () => {
+  const app = await booted();
+  app.setBrewDaySkipped("advance-prep", true);
+  app.setBrewDaySkipReason("advance-prep", "Bought pre-milled");
+  app.compute();
+
+  const rows = app.reportFormattedTables()["batch.brew_checklist"];
+  const row = rows.find((entry) => entry.step_id.text === "advance-prep");
+
+  assert.equal(row.skipped.text, "Skipped: Bought pre-milled");
+});
+
 // Freeze-time display strings: the report's only formatting source. The
 // catalog is unit-aware and the formatted block uses the same producer rules
 // as the UI, including nonlinear gravity.

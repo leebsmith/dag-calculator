@@ -28,6 +28,10 @@ export function shapeFrozenValue(value, node) {
  * @param {{ readonly identity: Readonly<Record<string, unknown>>, readonly hopStrategy?: string, readonly roots: Readonly<Record<string, unknown>>, readonly collections: Readonly<Record<string, unknown>>, readonly selections: Readonly<Record<string, unknown>>, readonly schemaVersion: number }} args
  * @returns {{ readonly identity: object, readonly hop_strategy: string, readonly roots: object, readonly collections: object, readonly selections: object, readonly schema_version: number }}
  */
+function detach(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 export function shapeDraftState({
   identity,
   hopStrategy,
@@ -41,9 +45,10 @@ export function shapeDraftState({
     hop_strategy: hopStrategy ?? "",
     roots,
     // Detach the editable maps from live session state: a later row edit must
-    // not rewrite a queued save payload. Roots are scalar and read synchronously.
-    collections: globalThis.structuredClone(collections),
-    selections: globalThis.structuredClone(selections),
+    // not rewrite a queued save payload. JSON cloning is deliberate: Alpine
+    // wraps rows in proxies, and structuredClone refuses to clone one.
+    collections: detach(collections),
+    selections: detach(selections),
     schema_version: schemaVersion,
   };
 }

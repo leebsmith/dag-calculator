@@ -103,6 +103,10 @@ function fakeClient() {
 function fakeApp() {
   return {
     loaded: null,
+    readOnly: false,
+    setReadOnly(value) {
+      this.readOnly = value;
+    },
     boundaryPending: false,
     boundaryError: null,
     findings: [],
@@ -311,6 +315,7 @@ test("open hydrates the active batch and loads its state", async () => {
     trashed: false,
     persisted: true,
     updated_at: stored.updated_at,
+    readOnly: false,
   });
   assert.deepEqual(app.loaded, {
     identity: DEFAULT_IDENTITY,
@@ -319,6 +324,25 @@ test("open hydrates the active batch and loads its state", async () => {
     collections: { "grist.major_malts": [] },
     selections: {},
   });
+});
+
+test("open read-only records the mode and blocks writes", async () => {
+  const { client, app } = setup();
+  await client.upsertBatch("b1", { name: "Stored", roots: {}, collections: {} });
+
+  await persistence.open("b1", { readOnly: true });
+  const before = client.calls.length;
+
+  assert.equal(persistence.getActive().readOnly, true);
+  assert.equal(app.readOnly, true);
+
+  persistence.queueSave({ delay: 0 });
+  await persistence.flushSave();
+  await persistence.freezeActive();
+  await persistence.renameActive("Nope");
+  await persistence.trashActive();
+
+  assert.equal(client.calls.length, before);
 });
 
 test("open propagates a missing batch instead of inventing one", async () => {
