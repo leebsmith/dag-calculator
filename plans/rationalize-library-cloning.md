@@ -236,6 +236,29 @@ Match the STA1 surfaces exactly, content aside:
 - Changing STA1’s boolean shape or its existing presentation.
 - A `POF?` badge or report suffix.
 
+## Execution checklist
+
+### Phase 1 — clone workflow
+
+- [ ] Move the Library search below the kind tabs, label it for its scope, and make the filter bar sticky.
+- [ ] Add seed paging state and **Show 50 more**, resetting the limit on search/kind/section changes.
+- [ ] Add `cloneLibraryItem`, a Clone action on non-style seed rows, and an editable prefilled draft.
+- [ ] Add tri-state boolean Library fields and make `sta1` editable as Unknown / Yes / No.
+- [ ] Remove every picker Copy action and its handlers, tests, and living-doc references.
+- [ ] Fall back to the batch selection snapshot for `selectedYeast` after its record is deleted.
+- [ ] Update the Library delete confirmation to explain snapshot survival.
+- [ ] Add and update the phase-1 tests and run `make check` + `make test`.
+
+### Phase 2 — POF status
+
+- [ ] Add `pof_status` and `batch.yeast.pof` to the artifact; add the label.
+- [ ] Emit `pof` from both yeast scrapers and add it to the White Labs source schema.
+- [ ] Re-emit both source JSON files with `pof: unknown` on every record.
+- [ ] Carry `pof` through the seed builder; regenerate `data/seeds/yeasts.json` with every seed unknown.
+- [ ] Surface POF on the selected yeast row, picker filters, Library select, and report line.
+- [ ] Add POF tests and run `make generate` + `make check` + `make test`.
+- [ ] Verify the M31 clone path: seed unknown, clone positive, batch/report positive.
+
 ## Verification
 
 1. `make check`.
