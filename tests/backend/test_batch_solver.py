@@ -368,7 +368,6 @@ def test_error_surface_complete():
         "INVALID_GRAIN_BILL_NORMALIZATION", "INVALID_SUGAR_SHARE",
         "INVALID_SUGAR_FERMENTABILITY", "INVALID_SCALE_PIN",
         "INVALID_TARGET_OG", "INVALID_TARGET_FG", "FG_UNREACHABLE",
-        "FG_BELOW_ZERO_WITHOUT_STA1",
     }
     assert declared == expected
 

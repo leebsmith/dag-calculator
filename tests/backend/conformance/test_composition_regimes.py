@@ -1,12 +1,12 @@
-"""Extract-composition regimes (A4, A6, A11): the four cases the model must hold.
+"""Extract-composition regimes (A4, A6, A11).
 
 * pure grist — real-basis rows round-trip to their old display
 * + sugar — the residue mass is flat, OE and attenuation rise, the cap cannot
   clamp sugar
-* + STA1 — the malt residue is consumed, apparent extract may go negative and
-  apparent attenuation may exceed 1
-* + both — sugar adds fermentable extract only; ``d`` touches the malt residue
-  only
+* + STA1 — the vendor cap is the observation; there is no dextrin term
+* + both — sugar adds fermentable extract only; the cap still clamps the malt
+  fraction
+* near-1.0 cap + sugar — apparent extract may go below 0 and AA may exceed 1
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from app.core.batch.orchestration import solve_batch
 from app.core.batch.volumetric import kettle_cold_volume, post_boil_extract_target
 from app.core.errors import SolverValidationError
 from app.core.utils import sg_to_plato
-from app.schemas.boundary import GristBillRow
+from app.schemas.boundary import BatchSolverRequest, GristBillRow
 from app.services import solve_batch_request
 
 MALT_F = 0.643
@@ -38,7 +38,6 @@ def composition(
     *,
     sugar_kg: float = 0.0,
     malt_f: float = MALT_F,
-    dextrin: float = 0.0,
     cap: float = 1.0,
     sugar_fermentability: float = 1.0,
 ):
@@ -49,7 +48,6 @@ def composition(
         s_late_add=sugar_kg,
         malt_fermentability=malt_f,
         yeast_cap_apparent=cap,
-        dextrin_consumption=dextrin,
         sugar_fermentability=sugar_fermentability,
     )
 
@@ -95,41 +93,51 @@ def test_yeast_cap_cannot_suppress_sugar():
     assert sweet.apparent_attenuation > 0.70
 
 
-# --- regime 3: diastaticus --------------------------------------------------
+# --- regime 3: the cap is the only yeast lever -------------------------------
 
 
-def test_dextrin_consumption_empties_the_residue_and_crosses_one():
-    result = composition(malt_f=0.87, dextrin=1.0)
+def test_the_cap_is_the_only_yeast_lever():
+    firm = composition(malt_f=0.9, cap=0.70)
+    ordinary = composition(malt_f=0.9, cap=1.0)
 
-    assert result.real_extract_kg == pytest.approx(0.0, abs=1e-12)
-    assert result.real_attenuation == pytest.approx(1.0)
-    assert result.apparent_extract_plato < 0.0
-    assert result.apparent_attenuation > 1.0
-    assert result.apparent_attenuation > 1.05, "a 0.87 real malt displays >1.05"
-
-
-# --- regime 4: sugar and diastaticus ----------------------------------------
+    assert firm.real_attenuation < ordinary.real_attenuation
+    assert firm.apparent_attenuation < ordinary.apparent_attenuation
+    assert firm.real_extract_kg > ordinary.real_extract_kg
 
 
-def test_sugar_and_dextrin_only_interact_through_the_extract_share():
-    plain = composition(dextrin=1.0)
-    sweet = composition(sugar_kg=0.8, dextrin=1.0)
+# --- regime 4: sugar and the cap --------------------------------------------
 
-    # d acts on the malt residue only; the sugar contributes no residue at all.
-    assert plain.real_extract_kg == pytest.approx(0.0, abs=1e-12)
-    assert sweet.real_extract_kg == pytest.approx(0.0, abs=1e-12)
+
+def test_sugar_and_the_cap_only_interact_through_the_extract_share():
+    plain = composition(cap=0.8)
+    sweet = composition(sugar_kg=0.8, cap=0.8)
+
     assert sweet.abv_pct > plain.abv_pct
     assert sweet.oe_plato > plain.oe_plato
+    assert sweet.apparent_attenuation > plain.apparent_attenuation
 
 
-def test_a_non_fermentable_sugar_survives_dextrin_consumption():
-    # A6: lactose stays unfermented; d never reaches the sugar fraction.
-    lactose = composition(sugar_kg=0.8, dextrin=1.0, sugar_fermentability=0.0)
-    fermentable = composition(sugar_kg=0.8, dextrin=1.0, sugar_fermentability=1.0)
+def test_a_non_fermentable_sugar_keeps_its_own_residue():
+    # A6: lactose stays unfermented; the malt cap never reaches the sugar.
+    lactose = composition(sugar_kg=0.8, sugar_fermentability=0.0)
+    fermentable = composition(sugar_kg=0.8, sugar_fermentability=1.0)
 
-    assert lactose.real_extract_kg == pytest.approx(0.8)
-    assert lactose.real_attenuation < 1.0
+    assert lactose.real_extract_kg == pytest.approx(
+        0.8 + MALT_KG * (1.0 - MALT_F), abs=1e-9
+    )
+    assert lactose.real_extract_kg > fermentable.real_extract_kg
     assert lactose.apparent_attenuation < fermentable.apparent_attenuation
+
+
+# --- A11: a near-1.0 cap plus sugar can cross the apparent floor -------------
+
+
+def test_a_near_one_cap_and_sugar_can_drive_apparent_extract_below_zero():
+    result = composition(malt_f=1.0, cap=1.0, sugar_kg=0.8)
+
+    assert result.apparent_extract_plato < 0.0
+    assert result.apparent_attenuation > 1.0
+    assert result.real_extract_kg > 0.0
 
 
 # --- end-to-end: the composition reaches the sealed solver -------------------
@@ -179,7 +187,7 @@ def test_solver_sugar_raises_apparent_attenuation_past_the_malt_baseline():
     assert sweet.apparent_attenuation > plain.apparent_attenuation
 
 
-# --- D5: STA1 at the wire ---------------------------------------------------
+# --- A4: STA1 is not a solver input -----------------------------------------
 
 
 def _wire(**overrides):
@@ -193,32 +201,25 @@ def _wire(**overrides):
     )
 
 
-def test_wire_sta1_consumes_the_malt_residue():
-    positive = _wire(sta1=True)
-    negative = _wire(sta1=False)
-
-    assert positive.real_attenuation == pytest.approx(1.0, abs=1e-9)
-    assert positive.apparent_attenuation > 1.0
-    assert positive.apparent_attenuation > negative.apparent_attenuation
+def test_the_wire_has_no_sta1_input():
+    assert "sta1" not in BatchSolverRequest.model_fields
 
 
-def test_wire_unknown_sta1_is_not_diastaticus():
-    unknown = _wire(sta1=None)
-    negative = _wire(sta1=False)
+def test_wire_cap_is_the_only_yeast_lever():
+    firm = _wire(malt_attenuation_cap=0.70)
+    ordinary = _wire(malt_attenuation_cap=1.0)
 
-    assert unknown.real_attenuation == pytest.approx(negative.real_attenuation)
-    assert unknown.apparent_attenuation == pytest.approx(negative.apparent_attenuation)
-    assert unknown.real_attenuation < 1.0
+    assert firm.real_attenuation < ordinary.real_attenuation
+    assert firm.apparent_attenuation < ordinary.apparent_attenuation
+    assert firm.m_grist > ordinary.m_grist
 
 
-def test_wire_sugar_and_sta1_compose():
-    plain = _wire(sta1=True)
-    sweet = _wire(sta1=True, s_late_add=0.5)
+def test_wire_sugar_and_cap_compose():
+    plain = _wire(s_late_add=0.0)
+    sweet = _wire(s_late_add=0.5)
 
-    # d empties the malt residue; sugar then only adds fermentable extract, so
-    # the fixed-ABV solve needs less malt.
-    assert sweet.real_attenuation == pytest.approx(1.0, abs=1e-9)
-    assert sweet.m_grist < plain.m_grist
+    assert sweet.real_attenuation > plain.real_attenuation
+    assert sweet.apparent_attenuation > plain.apparent_attenuation
 
 
 # --- P3b: sugar-extract share ----------------------------------------------

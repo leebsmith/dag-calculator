@@ -202,7 +202,6 @@ def _abv_ceiling(
     inputs: BatchSolverInput,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
 ) -> float:
     ceiling = resolve_extract_split(
         asbc_plato_to_sg(40.0),
@@ -218,7 +217,6 @@ def _abv_ceiling(
         s_late_add=ceiling.sugar_extract_kg,
         malt_fermentability=aa_malt,
         yeast_cap_apparent=inputs.malt_attenuation_cap,
-        dextrin_consumption=dextrin_consumption,
         sugar_fermentability=inputs.sugar_fermentability,
     ).abv_pct
 
@@ -231,7 +229,6 @@ def _fg_residual(
     inputs: BatchSolverInput,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
     target_ae: float,
 ) -> float | None:
     sg = asbc_plato_to_sg(oe_plato)
@@ -248,7 +245,6 @@ def _fg_residual(
         s_late_add=split.sugar_extract_kg,
         malt_fermentability=aa_malt,
         yeast_cap_apparent=inputs.malt_attenuation_cap,
-        dextrin_consumption=dextrin_consumption,
         sugar_fermentability=inputs.sugar_fermentability,
     )
     return composition.apparent_extract_plato - target_ae
@@ -258,13 +254,10 @@ def _bracket_fg(
     inputs: BatchSolverInput,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
     target_ae: float,
 ) -> tuple[float, float] | None:
     def residual(candidate: float) -> float | None:
-        return _fg_residual(
-            candidate, inputs, v_kettle_cold, aa_malt, dextrin_consumption, target_ae
-        )
+        return _fg_residual(candidate, inputs, v_kettle_cold, aa_malt, target_ae)
 
     previous_oe = None
     previous = None
@@ -287,7 +280,6 @@ def _gravity_from_abv(
     target: float | None,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
 ) -> tuple[float, float]:
     oe_plato = solve_oe_from_composition(
         target_abv=target if target is not None else 0.0,
@@ -295,7 +287,6 @@ def _gravity_from_abv(
         malt_fermentability=aa_malt,
         v_kettle_cold=v_kettle_cold,
         s_late_add=inputs.s_late_add,
-        dextrin_consumption=dextrin_consumption,
         sugar_extract_share=inputs.sugar_extract_share,
         sugar_fermentability=inputs.sugar_fermentability,
     )
@@ -318,23 +309,14 @@ def _gravity_from_fg(
     target: float | None,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
 ) -> tuple[float, float]:
     if target is None or not math.isfinite(target) or target <= 0.0:
         raise SolverValidationError(
             "INVALID_TARGET_FG",
             f"Target FG must be positive; got {target}.",
         )
-    if target < 1.0 and inputs.sta1 is not True:
-        raise SolverValidationError(
-            "FG_BELOW_ZERO_WITHOUT_STA1",
-            (
-                "An FG below 1.000 requires a diastaticus strain "
-                "(sta1 = true); select one or raise the target."
-            ),
-        )
     target_ae = sg_to_plato(target)
-    bracket = _bracket_fg(inputs, v_kettle_cold, aa_malt, dextrin_consumption, target_ae)
+    bracket = _bracket_fg(inputs, v_kettle_cold, aa_malt, target_ae)
     if bracket is None:
         raise SolverValidationError(
             "FG_UNREACHABLE",
@@ -347,9 +329,7 @@ def _gravity_from_fg(
         oe_plato = bracket[0]
     else:
         oe_plato = brentq(
-            lambda x: _fg_residual(
-                x, inputs, v_kettle_cold, aa_malt, dextrin_consumption, target_ae
-            )
+            lambda x: _fg_residual(x, inputs, v_kettle_cold, aa_malt, target_ae)
             or 0.0,
             bracket[0],
             bracket[1],
@@ -363,19 +343,18 @@ def _resolve_gravity(
     target: float | None,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
 ) -> _GravityState:
     """Resolve OE, extract and composition for one active scale pin."""
 
     if pin == "abv":
         oe_plato, sg_post_boil = _gravity_from_abv(
-            inputs, target, v_kettle_cold, aa_malt, dextrin_consumption
+            inputs, target, v_kettle_cold, aa_malt
         )
     elif pin == "og":
         oe_plato, sg_post_boil = _gravity_from_og(target)
     elif pin == "fg":
         oe_plato, sg_post_boil = _gravity_from_fg(
-            inputs, target, v_kettle_cold, aa_malt, dextrin_consumption
+            inputs, target, v_kettle_cold, aa_malt
         )
     else:
         raise SolverValidationError(
@@ -392,7 +371,6 @@ def _resolve_gravity(
         s_late_add=split.sugar_extract_kg,
         malt_fermentability=aa_malt,
         yeast_cap_apparent=inputs.malt_attenuation_cap,
-        dextrin_consumption=dextrin_consumption,
         sugar_fermentability=inputs.sugar_fermentability,
     )
     return _GravityState(
@@ -408,7 +386,6 @@ def _preview_rows(
     inputs: BatchSolverInput,
     v_kettle_cold: float,
     aa_malt: float,
-    dextrin_consumption: float,
 ) -> tuple[ScalePreview, ...]:
     rows: list[ScalePreview] = []
     for pin in ("abv", "og", "fg"):
@@ -419,7 +396,6 @@ def _preview_rows(
                 _target_for(inputs, pin),
                 v_kettle_cold,
                 aa_malt,
-                dextrin_consumption,
             )
         except SolverValidationError as exc:
             rows.append(ScalePreview(pin, 0.0, 0.0, 0.0, 0.0, False, exc.code))
@@ -451,11 +427,6 @@ def _solve_pipeline(
     yield_fraction = composite_yield_fraction(inputs.grain_bill)
     mc_bar = composite_moisture_fraction(inputs.grain_bill)
     aa_malt = composite_fermentability_fraction(inputs.grain_bill)
-
-    # A diastaticus strain consumes the malt's dextrin residue (d = 1). An
-    # unknown status is modelled as d = 0 and surfaced as a host-side finding,
-    # never as a silent negative.
-    dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
 
     v_kettle_cold = kettle_cold_volume(
         inputs.v_ferm,
@@ -501,7 +472,7 @@ def _solve_pipeline(
         oe_plato = sg_to_plato(sg_post_boil)
     else:
         state = _resolve_gravity(
-            inputs, pin, target, v_kettle_cold, aa_malt, dextrin_consumption
+            inputs, pin, target, v_kettle_cold, aa_malt
         )
         sg_post_boil = state.sg_post_boil
         s_late_add = state.sugar_extract_kg
@@ -518,9 +489,7 @@ def _solve_pipeline(
         composition = state.composition
         real_attenuation = composition.real_attenuation
         apparent_attenuation = composition.apparent_attenuation
-        max_abv = _abv_ceiling(
-            inputs, v_kettle_cold, aa_malt, dextrin_consumption
-        )
+        max_abv = _abv_ceiling(inputs, v_kettle_cold, aa_malt)
         oe_plato = state.oe_plato
 
     try:
@@ -746,10 +715,7 @@ def solve_batch(inputs: BatchSolverInput) -> BatchSolverResult:
             inputs.v_kettle_transfer,
             inputs.v_trub,
         )
-        dextrin_consumption = 1.0 if inputs.sta1 is True else 0.0
-        previews = _preview_rows(
-            inputs, v_kettle_cold, aa_malt, dextrin_consumption
-        )
+        previews = _preview_rows(inputs, v_kettle_cold, aa_malt)
 
     return BatchSolverResult(
         sg_post_boil=pipeline.sg_post_boil,

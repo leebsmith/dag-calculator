@@ -302,7 +302,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 |---|---|---|---|
 | `batch.target_abv` | `style.abv_min` / `style.abv_max` | Style-step number input | seeded to the band midpoint; clamped to the fixed-AA ray interval; Batch step read-only |
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
-| `batch.attenuation_derate_points` | — | per-batch root | points subtracted from the strain limit; starts at 0 |
+| `batch.attenuation_derate_points` | — | per-batch root | points subtracted from the published maximum; starts at 0 |
 
 `batch.yeast_cap = max(0, batch.yeast.attenuation_cap_pct − batch.attenuation_derate_points)`.
 The batch solver treats the grain-bill fermentability values as **real** shares

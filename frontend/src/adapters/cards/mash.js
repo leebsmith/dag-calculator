@@ -138,8 +138,9 @@ function modalActions({ artifact, getView }) {
     // are committed on OK; Cancel discards.
     openMashModal() {
       const view = getView();
-      view.mashDraft = JSON.parse(JSON.stringify(view._materializeRests(view.mashRests)));
-      view.mashDraftDirty = false;
+      const seeded = mash.withRestDefaults(view._materializeRests(view.mashRests));
+      view.mashDraft = JSON.parse(JSON.stringify(seeded.rows));
+      view.mashDraftDirty = seeded.changed;
       view.mashModalOpen = true;
     },
 

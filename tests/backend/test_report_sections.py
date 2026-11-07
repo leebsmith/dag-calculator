@@ -275,11 +275,10 @@ YEAST_STRAIN_PROBE = (
     "#metadata(temperature-line()) <probe>\n"
 )
 
-# The two gates the yeast layout branches on: a non-zero derate earns the
-# subtraction row, and a diastaticus-positive strain earns the warning.
+# A non-zero derate earns the subtraction row in the yeast layout.
 YEAST_GATES_PROBE = (
-    '#import "sections/yeast.typ": diastaticus, presents-derate\n'
-    "#metadata((sta1: diastaticus(), derate: presents-derate())) <probe>\n"
+    '#import "sections/yeast.typ": presents-derate\n'
+    "#metadata((derate: presents-derate())) <probe>\n"
 )
 
 
@@ -748,17 +747,16 @@ def test_the_strain_line_carries_the_sta1_status(shared_root: Path) -> None:
             assert probe(root, YEAST_STRAIN_PROBE).endswith(" · " + label)
 
 
-def test_the_derate_row_and_the_warning_follow_the_state(shared_root: Path) -> None:
-    assert probe(shared_root, YEAST_GATES_PROBE) == {"sta1": True, "derate": True}
+def test_the_derate_row_follows_the_state(shared_root: Path) -> None:
+    assert probe(shared_root, YEAST_GATES_PROBE) == {"derate": True}
 
     bundle = fixture()
     bundle["state"]["valuation"]["batch.attenuation_derate_points"] = 0
-    bundle["state"]["valuation"]["batch.yeast"]["sta1"] = False
     bundle["formatted"]["batch.attenuation_derate_points"] = {"text": "0.0 pts"}
 
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
-        assert probe(root, YEAST_GATES_PROBE) == {"sta1": False, "derate": False}
+        assert probe(root, YEAST_GATES_PROBE) == {"derate": False}
         render(root, "yeast")
 
 

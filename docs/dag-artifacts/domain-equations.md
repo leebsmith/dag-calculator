@@ -68,7 +68,7 @@ composition block turns extract mass into the attenuated state (full statement i
 ```
 cap_real   = apparent_to_real(OE, yeast_cap_apparent)
 F_malt_eff = min(F_malt, cap_real)
-UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)
+UE         = E_malt·(1 − F_malt_eff) + E_sugar·(1 − F_sugar)
 RE         = OE · UE / E
 AE         = inverse_cutaia(RE)          # the Cutaia RE regression, inverted
 ABW        = (cutaia_a + cutaia_b·OE)·(OE − AE)
@@ -78,15 +78,17 @@ AA_app     = (OE − AE) / OE              # may exceed 1
 
 `F_malt` is the extract-weighted real fermentability of the grain bill; the
 yeast cap is apparent and converts per candidate `OE`; sugar keeps `F_sugar =
-1.0` and is never capped; `d` is the diastaticus dextrin share (0 or 1, D5). The
+1.0` and is never capped. A vendor's published attenuation already embeds the
+strain's primary diastatic activity, so there is no separate dextrin term. The
 artifact declares the Cutaia regression as `cutaia_real_extract`; the host-side
 ingredient conversion (`apparentToRealAttenuation`) wraps it at 12 °P, and the
 Python solver mirrors both. In share mode `E_sugar` is `sugar_extract_share ·
 E(OE)` instead of a fixed dose, so the block is evaluated per candidate with
 the composition moving alongside gravity.
 
-Apparent extract may fall below 0 °P when the residue is small enough (full
-dextrin consumption), so `plato_to_sg` accepts a small negative domain.
+Apparent extract may fall below 0 °P when a near-1.0 cap and a sugar addition
+leave the residue small enough, so `plato_to_sg` accepts a small negative
+domain.
 
 ### 1.3 Color
 
@@ -197,8 +199,7 @@ root-finding via `scipy.optimize.brentq`). **Realization:** the package
 `UNKNOWN_TOPOLOGY` · `INVALID_INTENSIVE_VALUE` · `MASH_TOO_THIN` · `HLT_TOO_SMALL` ·
 `KETTLE_TOO_SMALL` · `MASH_TUN_TOO_SMALL` · `INVALID_GRAIN_BILL_NORMALIZATION` ·
 `INVALID_SUGAR_SHARE` · `INVALID_SUGAR_FERMENTABILITY` · `INVALID_SCALE_PIN` ·
-`INVALID_TARGET_OG` · `INVALID_TARGET_FG` · `FG_UNREACHABLE` ·
-`FG_BELOW_ZERO_WITHOUT_STA1`.
+`INVALID_TARGET_OG` · `INVALID_TARGET_FG` · `FG_UNREACHABLE`.
 
 ### 2.4 Derivation — two-stage batch lauter
 

@@ -13,10 +13,8 @@ import {
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
 import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../views/registry/units.js";
 import {
-  formatPercent,
   formatWithDecimals,
   joinNonEmpty,
-  roundTo,
   toPercentValue,
   unitSymbol,
 } from "../../utils.js";
@@ -86,12 +84,6 @@ export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView
         return percentText(getView().yeastField(N.derate).value ?? 0);
       },
     },
-    selectedYeastBand: {
-      configurable: true,
-      get() {
-        return attenuationBandLabel(getView().selectedYeast);
-      },
-    },
     selectedYeastSta1: {
       configurable: true,
       get() {
@@ -102,74 +94,6 @@ export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView
       configurable: true,
       get() {
         return pofLabel(getView().selectedYeast);
-      },
-    },
-    attenuationRange: {
-      configurable: true,
-      get() {
-        const yeast = getView().selectedYeast;
-        const low = yeast?.attenuation_low_pct;
-        const high = yeast?.attenuation_high_pct;
-        return typeof low === "number" && typeof high === "number" ? { low, high } : null;
-      },
-    },
-    attenuationTargetMin: {
-      configurable: true,
-      get() {
-        const range = getView().attenuationRange;
-        return range ? toPercentValue(range.low, 1, { dash: 0 }) : 0;
-      },
-    },
-    attenuationTargetMax: {
-      configurable: true,
-      get() {
-        const range = getView().attenuationRange;
-        return range ? toPercentValue(range.high, 1, { dash: 0 }) : 0;
-      },
-    },
-    attenuationTargetPercent: {
-      configurable: true,
-      get() {
-        const value = getView().fieldsById?.[N.cap]?.value;
-        return typeof value === "number" ? toPercentValue(value, 1, { dash: 0 }) : 0;
-      },
-    },
-    attenuationDraftPercent: {
-      configurable: true,
-      get() {
-        return getView().attenuationDraft ?? getView().attenuationTargetPercent;
-      },
-    },
-    attenuationDraftLabel: {
-      configurable: true,
-      get() {
-        return formatPercent(getView().attenuationDraftPercent / 100, 1);
-      },
-    },
-    attenuationDerateDraft: {
-      configurable: true,
-      get() {
-        const high = getView().attenuationRange?.high;
-        if (typeof high !== "number") return 0;
-        return roundTo(
-          toPercentValue(high, 1, { dash: 0 }) - getView().attenuationDraftPercent,
-          1
-        ) ?? 0;
-      },
-    },
-    attenuationRangeValid: {
-      configurable: true,
-      get() {
-        const view = getView();
-        const range = view.attenuationRange;
-        const cap = view.selectedYeast?.attenuation_cap_pct;
-        return Boolean(range && typeof cap === "number" && Math.abs(cap - range.high) < 1e-9);
-      },
-    },
-    attenuationUseLabel: {
-      configurable: true,
-      get() {
-        return `Use ${formatPercent(getView().attenuationDraftPercent / 100, 0)}`;
       },
     },
     attenuationCapValue: {
@@ -210,13 +134,9 @@ export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView
       configurable: true,
       get() {
         const view = getView();
-        const above = view.attenuationAboveCap;
-        if (above == null) return "";
+        if (view.attenuationAboveCap == null) return "";
         const sugar = Number(view.fieldsById?.[N.sugarExtract]?.value) || 0;
-        const sta1 = view.selectedYeast?.sta1 === true;
-        if (sta1 && sugar > 0) return "diastaticus + sugar";
-        if (sta1) return "diastaticus";
-        return "sugar";
+        return sugar > 0 ? "sugar" : "";
       },
     },
     attenuationBinding: {
@@ -227,7 +147,7 @@ export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView
         const cap = view.attenuationCapValue;
         const grist = view.attenuationGristValue;
         if (typeof cap === "number" && typeof grist === "number" && grist < cap - 1e-9) {
-          return "mash-limited";
+          return "grist-limited";
         }
         return cap == null ? "" : "yeast cap";
       },

@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:2558598358280ff9bcf4a35d2f6ef05c2e26c6581d2ed7691c92b80c2cc8142b",
+    "hash": "sha256:c35e5cdbdad53d58e9f8752ea43525a57bc976b9bc90473e700aed1f60a0fb44",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -3653,7 +3653,6 @@
             "target_og": "batch.target_og",
             "target_fg": "batch.target_fg",
             "malt_attenuation_cap": "batch.yeast_cap",
-            "sta1": "batch.yeast.sta1",
             "v_ferm": "batch.v_ferm",
             "topology": "batch.topology",
             "intensive_value": "batch.mash_thickness_l_per_kg",
@@ -3812,8 +3811,7 @@
               "INVALID_SCALE_PIN",
               "INVALID_TARGET_OG",
               "INVALID_TARGET_FG",
-              "FG_UNREACHABLE",
-              "FG_BELOW_ZERO_WITHOUT_STA1"
+              "FG_UNREACHABLE"
             ]
           }
         },
@@ -10186,5 +10184,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:9dd42b9f67523742c01ab65500e72459e3465f2484221c567f182092469d94a8"
+  "content_hash": "sha256:cd4e30214e4d01dddfa58922ba5c036ab4ce4836c8902e56aa200213a37234d3"
 }

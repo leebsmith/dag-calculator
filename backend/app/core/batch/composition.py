@@ -4,10 +4,9 @@ Phase 1 isolates the active scale target; Phase 1b evaluates the attenuated
 state implied by the wort's extract composition. Extract composition is the
 primitive: malt extract ferments in proportion to its fermentable share ``F``
 (a real fraction), capped by the yeast's attenuation converted into real space;
-sugar extract keeps its own ``F`` and is never capped; a diastaticus strain
-consumes the malt's dextrin residue (``d = 1``). ``UE``/``FE`` are masses;
-``RE``/``AE`` in °P follow from the Cutaia regression. Apparent extract (and
-attenuation) may go below 0 / above 1 in the dextrin-consumption regime.
+sugar extract keeps its own ``F`` and is never capped. ``UE``/``FE`` are masses;
+``RE``/``AE`` in °P follow from the Cutaia regression. Apparent extract may go
+below 0 only when a near-1.0 cap plus sugar leaves very little residue.
 
 See ``docs/attenuation-model.md`` and ``domain-equations.md`` §1–§2.
 """
@@ -195,13 +194,12 @@ def resolve_wort_composition(
     malt_fermentability: float,
     yeast_cap_apparent: float,
     *,
-    dextrin_consumption: float = 0.0,
     sugar_fermentability: float = SUGAR_FERMENTABILITY,
 ) -> WortComposition:
     """Evaluate the extract-composition block at one candidate ``OE``.
 
     ``F_malt_eff = min(F_malt, cap_real(OE))``
-    ``UE = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_sugar)``
+    ``UE = E_malt·(1 − F_malt_eff) + E_sugar·(1 − F_sugar)``
     ``RE = OE·UE/E``; ``AE`` is inverted from the Cutaia RE regression.
 
     Args:
@@ -210,19 +208,12 @@ def resolve_wort_composition(
         s_late_add: Late-addition extract mass, kg.
         malt_fermentability: Extract-weighted real fermentability of the malt.
         yeast_cap_apparent: The yeast's apparent attenuation cap, fraction.
-        dextrin_consumption: ``d`` — the share of the malt residue a
-            diastaticus strain consumes (0 or 1 today).
         sugar_fermentability: Fermentable share of late-addition extract.
 
     Raises:
         SolverValidationError: If the extract target cannot cover the late
             addition, or the attenuation inputs are outside their domains.
     """
-    if not (0.0 <= dextrin_consumption <= 1.0):
-        raise SolverValidationError(
-            "INVALID_ATTENUATION",
-            f"Dextrin consumption must be in [0, 1]; got {dextrin_consumption}.",
-        )
     require_malt_extract(
         ExtractSplit(extract_total_kg=extract_total_kg, sugar_extract_kg=s_late_add)
     )
@@ -232,9 +223,7 @@ def resolve_wort_composition(
     malt_fermentability_eff = min(max(malt_fermentability, 0.0), cap_real)
 
     real_extract_kg = (
-        malt_extract_kg
-        * (1.0 - malt_fermentability_eff)
-        * (1.0 - dextrin_consumption)
+        malt_extract_kg * (1.0 - malt_fermentability_eff)
     ) + (s_late_add * (1.0 - sugar_fermentability))
     real_extract_plato = oe_plato * (real_extract_kg / extract_total_kg)
 
@@ -266,7 +255,6 @@ def solve_oe_from_composition(
     s_late_add: float,
     *,
     gamma: float = GAMMA_METRIC,
-    dextrin_consumption: float = 0.0,
     sugar_fermentability: float = SUGAR_FERMENTABILITY,
     sugar_extract_share: float = 0.0,
 ) -> float:
@@ -326,7 +314,6 @@ def solve_oe_from_composition(
             s_late_add=split.sugar_extract_kg,
             malt_fermentability=malt_fermentability,
             yeast_cap_apparent=yeast_cap_apparent,
-            dextrin_consumption=dextrin_consumption,
             sugar_fermentability=sugar_fermentability,
         ).abv_pct
 

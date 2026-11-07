@@ -52,10 +52,10 @@ export const RELATION_FINDINGS = {
 // violation, so they have no artifact relation. Never blocking.
 export const HOST_FINDINGS = {
   sta1_unknown: {
-    label: "Diastaticus status unknown",
+    label: "STA1 status unknown",
     message: () =>
-      "The selected strain does not publish a STA1 result. The model treats it as " +
-      "non-diastaticus (d = 0); confirm with the lab before packaging.",
+      "The selected strain does not publish a STA1 result. The primary solve uses " +
+      "the vendor attenuation; confirm the strain's STA1 status before packaging.",
   },
   sugar_share_without_sugar: {
     label: "Sugar share without sugar",

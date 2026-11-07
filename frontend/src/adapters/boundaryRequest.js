@@ -71,15 +71,6 @@ export const BATCH_FIELDS = {
   target_og: { path: "batch.target_og" },
   target_fg: { path: "batch.target_fg" },
   malt_attenuation_cap: { path: "batch.yeast_cap" },
-  // Tri-state vendor QC. The solver only needs "diastaticus or not", so an
-  // unknown status is sent as false (d = 0) and surfaced as a host-side
-  // advisory (findings registry: sta1_unknown); null never enters the boundary
-  // input guard, which treats null as "not ready".
-  sta1: {
-    path: "batch.yeast.sta1",
-    default: false,
-    build: (resolved) => resolved.sta1 === true,
-  },
   v_ferm: { path: "batch.v_ferm" },
   topology: { path: "batch.topology" },
   intensive_value: {

@@ -165,9 +165,9 @@ the marker is presentation only. A prior is stamped `kind: "prior"` in the row's
 provenance, and the same marker applies to a prior yield.
 
 The realized **FG** readout floors at SG 1.000 (0 °P in Plato): when apparent
-extract is at or below zero (a diastaticus fermentation), the field displays
-`≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value is
-unchanged; the conformance layer still sees the computed gravity.
+extract is at or below zero (a near-1.0 attenuation cap plus sugar), the field
+displays `≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value
+is unchanged; the conformance layer still sees the computed gravity.
 
 ### Attenuation readouts
 
@@ -177,8 +177,7 @@ not duplicate them.
 
 The artifact still carries `batch.attenuation_above_cap` — `max(0, blend AA −
 malt cap)`, null when the cap holds. The report prints it as **Above malt cap**;
-the node is deliberately neutral about the cause, which can be sugar extract or
-dextrin consumption by a diastaticus strain.
+the only cause is uncapped sugar extract.
 
 ### Yeast strain and batch attenuation
 
@@ -195,10 +194,9 @@ a second disclosure explains the attenuation model.
 points off the strain's published maximum, committed on change, never guessed
 from the mash or the grist. The vendor percentages (attenuation and its
 published band) and the derate stay in percent and points; only the solved cap
-follows the percentage unit menu. A ranged strain gets **Set attenuation…**,
-which opens a range slider and writes the same derate root; the control appears
-only when both published endpoints exist and `attenuation_cap_pct` equals
-`attenuation_high_pct`. A point-only strain keeps the numeric derate input.
+follows the percentage unit menu. Every strain, ranged or point-only, uses the
+same numeric derate input. The published high end is the cap; the derate moves
+below it. The binding readout names `grist-limited`, `yeast cap` or `sugar`.
 
 The picker is a modal, opened from the card. It owns the catalog: one compact
 filter strip with name search (and the notes toggle), manufacturer, attenuation
@@ -355,9 +353,9 @@ severity derived from the artifact's `blocking` flag: `error` = unbrewable on
 this rig, `warning` = quality/policy. The footer count remains as a summary
 badge only.
 
-- **Diastaticus status** — a selected strain with no published STA1 result
-  raises the `sta1_unknown` warning (not blocking): the model treats it as
-  non-diastaticus, and the message names that assumption.
+- **STA1 status** — a selected strain with no published STA1 result raises the
+  `sta1_unknown` warning (not blocking): the primary solve still uses the vendor
+  attenuation, and the message names that assumption.
 - **Sugar share** — a positive share with no sugar rows raises
   `sugar_share_without_sugar`; a share above 90 % raises `sugar_share_high`.
   Both are non-blocking advisories: they describe the authored intent, and the

@@ -129,6 +129,24 @@ test("Configure Rests modal is draft/cancel: Cancel discards, OK commits", withF
   assert.equal(app.mashPresetId, "custom");
 }));
 
+test("Configure Rests seeds an enabled rest's missing values from the canon", withFreshApp(async (app) => {
+  app.mashRests = app.mashRests.map((rest) =>
+    rest.rest_id === "mash_out" ? { ...rest, use_temp_c: null } : rest
+  );
+
+  app.openMashModal();
+
+  const mashOut = app.mashDraft.find((rest) => rest.rest_id === "mash_out");
+  assert.equal(mashOut.use_temp_c, 76.1);
+  assert.equal(mashOut.duration_min, 10);
+  assert.equal(app.isMashDraftValid, true);
+  assert.equal(app.mashDraftDirty, true);
+
+  app.commitMashSchedule();
+  assert.equal(app.mashModalOpen, false);
+  assert.equal(app.mashRests.find((rest) => rest.rest_id === "mash_out").use_temp_c, 76.1);
+}));
+
 test("MASH_PRESETS includes single_infusion and custom as bookends of the matrix", () => {
   assert.deepEqual(MASH_PRESETS.single_infusion, ["beta_alpha_amylase"]);
   assert.deepEqual(MASH_PRESETS.custom, []);

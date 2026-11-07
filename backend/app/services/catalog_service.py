@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException
 
@@ -17,22 +17,37 @@ class CatalogValidationError(Exception):
         self.errors = errors
 
 
+def _numeric(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def _normalize_component(kind: str, component: dict) -> dict:
     """Apply stored-record invariants that predate the current validator.
 
-    A ranged yeast's cap is the published high. Records written before that rule
-    existed can disagree; serve the corrected component without rewriting the
-    stored document, so the next clone or save persists the fix.
+    A ranged yeast's cap is the published high, and the retired
+    ``attenuation_pct`` key is mapped to the cap once and then dropped. Records
+    written before those rules existed can disagree; serve the corrected
+    component without rewriting the stored document, so the next clone or save
+    persists the fix.
     """
     if kind != "yeast" or not isinstance(component, dict):
         return component
-    low = component.get("attenuation_low_pct")
-    high = component.get("attenuation_high_pct")
-    if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
-        return component
-    if component.get("attenuation_cap_pct") == high:
-        return component
-    return {**component, "attenuation_cap_pct": high}
+
+    legacy = component.get("attenuation_pct")
+    normalized = {key: value for key, value in component.items() if key != "attenuation_pct"}
+    changed = "attenuation_pct" in component
+
+    if normalized.get("attenuation_cap_pct") is None and _numeric(legacy):
+        normalized["attenuation_cap_pct"] = legacy
+        changed = True
+
+    low = normalized.get("attenuation_low_pct")
+    high = normalized.get("attenuation_high_pct")
+    if _numeric(low) and _numeric(high) and normalized.get("attenuation_cap_pct") != high:
+        normalized["attenuation_cap_pct"] = high
+        changed = True
+
+    return normalized if changed else component
 
 
 class CatalogService:

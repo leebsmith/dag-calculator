@@ -13,11 +13,12 @@ def plato_to_sg(plato: float) -> float:
 
     using the official ASBC 3rd-order polynomial.
 
-    Apparent extract may fall below 0 °P when a diastaticus-style fermentation
-    consumes the dextrin residue (an apparent attenuation above 100 %), so the
-    polynomial is evaluated on a negative domain. The floor is a guard for the
-    regression's extrapolation, not a physical claim: at 40 °P with the residue
-    fully consumed the inverted regression reaches about −14 °P.
+    Apparent extract may fall below 0 °P when a near-1.0 attenuation cap and a
+    sugar addition leave very little residue (an apparent attenuation above
+    100 %), so the polynomial is evaluated on a negative domain. The floor is a
+    guard for the regression's extrapolation, not a physical claim: at 40 °P
+    with the residue reduced to the cap floor the inverted regression stays
+    above about −2 °P.
     """
     if plato < -20.0:
         raise ValueError("Degrees Plato below -20 is outside the ASBC domain.")
@@ -94,8 +95,9 @@ def apparent_extract_for_real_extract(oe: float, real_extract: float) -> float:
     """Invert the Cutaia regression: apparent extract for a given real extract.
 
     The regression is monotonic in ``AE``, so the root is unique. ``AE`` may be
-    negative when the residual extract is small enough that only a beer with
-    apparent extract below 0 °P can hold it (the dextrin-consumption regime).
+    negative when a near-1.0 attenuation cap and a sugar addition leave the
+    residual extract small enough that only a beer with apparent extract below
+    0 °P can hold it.
     """
     if oe <= 0:
         raise ValueError("Original extract must be greater than 0.")

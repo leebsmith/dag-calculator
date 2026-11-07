@@ -25,6 +25,27 @@ export function seedSugarShareParts({ engine }) {
   return true;
 }
 
+// The import projection once normalised a `pct` onto sugar rows, but the sugar
+// item schema declares only `parts` (the share) and `resolved_mass_kg`. An
+// undeclared row field is rejected by the report bundle's catalog-coverage
+// check, so drop it from saved drafts.
+export function dropSugarRowPct({ engine }) {
+  const rows = engine.getAuthored("batch.sugars");
+  if (!Array.isArray(rows) || !rows.some((row) => row && Object.hasOwn(row, "pct"))) {
+    return false;
+  }
+  engine.setCollection(
+    "batch.sugars",
+    rows.map((row) => {
+      if (!row || typeof row !== "object") return row;
+      const next = { ...row };
+      delete next.pct;
+      return next;
+    })
+  );
+  return true;
+}
+
 // Drafts saved before the derate became points stored a multiplier of the
 // strain maximum. Convert it once, using the selected strain's published
 // attenuation; the old root is dropped by the rebuild.
@@ -39,17 +60,25 @@ export function migrateAttenuationDerate({ engine, getRoot, setRoot }, legacy) {
 }
 
 // Selections saved before the cap was renamed stored `attenuation_pct`. Treat
-// that value as the cap once, then apply the ranged invariant: when a published
-// range exists, the cap is its high end. Old drafts and frozen forks keep their
-// figure without rewriting the persisted batch.
+// that value as the cap once and drop the retired key, then apply the ranged
+// invariant: when a published range exists, the cap is its high end. A leftover
+// legacy key is undeclared state, and the report bundle's coverage check rejects
+// it. Old drafts and frozen forks keep their figure without rewriting the
+// persisted batch.
 export function migrateLegacyYeastCap({ session }) {
   const snapshots = session.selections();
   let changed = false;
   for (const [nodeId, component] of Object.entries(snapshots)) {
     if (!component || typeof component !== "object") continue;
     let next = component;
-    if (next.attenuation_cap_pct === undefined && typeof next.attenuation_pct === "number") {
-      next = { ...next, attenuation_cap_pct: next.attenuation_pct };
+    if (Object.hasOwn(next, "attenuation_pct")) {
+      const { attenuation_pct: legacy, ...rest } = next;
+      next = {
+        ...rest,
+        ...(rest.attenuation_cap_pct === undefined && typeof legacy === "number"
+          ? { attenuation_cap_pct: legacy }
+          : {}),
+      };
     }
     next = normalizeRangedYeast(next);
     if (next === component) continue;

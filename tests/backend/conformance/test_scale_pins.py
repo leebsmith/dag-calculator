@@ -131,13 +131,10 @@ def test_infeasible_preview_is_reported_not_raised():
     assert by_pin["fg"].reason == "FG_UNREACHABLE"
 
 
-def test_fg_below_one_needs_diastaticus():
+def test_fg_below_one_is_reported_as_unreachable_without_an_over_cap():
     with pytest.raises(SolverValidationError) as exc:
         solve_batch(_input(scale_pin="fg", target_fg=0.995))
-    assert exc.value.code == "FG_BELOW_ZERO_WITHOUT_STA1"
-
-    result = solve_batch(_input(scale_pin="fg", target_fg=0.995, sta1=True))
-    assert _realized_fg(result) == pytest.approx(0.995, abs=1e-6)
+    assert exc.value.code == "FG_UNREACHABLE"
 
 
 def test_pin_targets_carry_the_effective_sugar_fermentability():

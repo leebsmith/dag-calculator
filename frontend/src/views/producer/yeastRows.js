@@ -16,9 +16,9 @@ export const YEAST_ATTENUATION_TIERS = [
 ];
 
 export const YEAST_DIASTATICUS_TIERS = [
-  { key: "positive", label: "Diastaticus" },
-  { key: "negative", label: "Non-diastaticus" },
-  { key: "unknown", label: "Unknown" },
+  { key: "positive", label: "STA1+" },
+  { key: "negative", label: "STA1−" },
+  { key: "unknown", label: "STA1?" },
 ];
 
 export const YEAST_POF_TIERS = [

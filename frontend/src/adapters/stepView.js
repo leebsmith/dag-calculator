@@ -96,8 +96,9 @@ export function createStepView({
       )
       .filter(Boolean);
 
-    // Unknown STA1 is never silent: no vendor result means d = 0, with a
-    // visible advisory. A selected strain without a QC field is the same case.
+    // Unknown STA1 is never silent: the primary solve uses the vendor
+    // attenuation, and a missing QC result raises a visible advisory. A selected
+    // strain without a QC field is the same case.
     let yeastId;
     let sta1;
     try {

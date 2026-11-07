@@ -113,7 +113,6 @@ export const SOLVER_ERROR_LABELS = {
   INVALID_TARGET_OG: "Target OG must be above 1.000",
   INVALID_TARGET_FG: "Target FG must be positive",
   FG_UNREACHABLE: "Target FG is not reachable",
-  FG_BELOW_ZERO_WITHOUT_STA1: "Final gravity below 1.000 needs a diastaticus strain",
   INVALID_MASH_VOLUME: "Mash water volume is invalid",
   INVALID_SPARGE_VOLUME: "Sparge water volume is invalid",
   UNKNOWN_GRAIN_TYPE: "Unknown grain type in the water model",

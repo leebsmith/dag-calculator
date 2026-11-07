@@ -3,7 +3,7 @@
     "label": "Above malt cap",
     "displayUnit": "pct",
     "symbol": "pts",
-    "hint": "Apparent attenuation above the malt cap: uncapped sugar extract, or dextrin consumption by a diastaticus strain. Absent when the cap is not exceeded."
+    "hint": "Apparent attenuation above the malt cap: uncapped sugar extract. Absent when the cap is not exceeded."
   },
   "batch.attenuation_derate_points": {
     "label": "Batch derate (points)",
@@ -311,7 +311,7 @@
   },
   "batch.yeast_cap": {
     "label": "Malt attenuation cap",
-    "hint": "Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped."
+    "hint": "Strain attenuation less the batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped."
   },
   "batch.yeast_id": {
     "label": "Yeast"
@@ -522,7 +522,7 @@
   },
   "solver.batch.real_attenuation": {
     "label": "Real attenuation",
-    "hint": "Solver output: the share of extract actually fermented (RDF), after the yeast cap and any dextrin consumption."
+    "hint": "Solver output: the share of extract actually fermented (RDF), after the yeast cap."
   },
   "solver.batch.s_post_boil_target": {
     "label": "Post-boil extract",

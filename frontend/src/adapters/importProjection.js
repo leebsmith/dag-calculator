@@ -8,7 +8,8 @@
 // for a named batch, so there is one implementation of that rule.
 //
 // Two rules from the ledger survive projection:
-// - `parts` is authored and `pct` is normalised here, once, per collection;
+// - `parts` is authored and `pct` is normalised here, once, for the collections
+//   that declare it (the grist and hop pools; sugar rows author parts only);
 // - a source mass is converted to base units through the artifact's factors.
 
 import artifact from "../engine/artifact.json" with { type: "json" };
@@ -50,7 +51,7 @@ export function projectImport({
     "grist.trace_malts": rows
       .filter((row) => row.destination === "grist.trace_malts")
       .map((row) => traceRow(row, catalog)),
-    "batch.sugars": sharesOf(
+    "batch.sugars": keptRows(
       rows.filter((row) => row.destination === "batch.sugars").map((row) => sugarRow(row, catalog))
     ),
     "batch.boil_hops": sharesOf(
@@ -244,7 +245,11 @@ function partOf(row) {
   return row.quantity?.value ?? 0;
 }
 
+function keptRows(rows) {
+  return rows.filter(Boolean);
+}
+
 function sharesOf(rows) {
-  const kept = rows.filter(Boolean);
+  const kept = keptRows(rows);
   return kept.length ? normalizedRowShares(kept) : [];
 }

@@ -61,8 +61,8 @@ function state() {
     return row;
   });
   // A catalog record rich enough for the row builders and the solver inputs:
-  // the yeast's attenuation cap and STA1 state are batch-solver inputs, so a
-  // thin stub cannot build a request at all.
+  // the yeast's attenuation cap is a batch-solver input, so a thin stub cannot
+  // build a request at all.
   const catalog = (kind, id) => ({
     id,
     name: id,
@@ -77,7 +77,6 @@ function state() {
     product_form: "t90_pellet",
     attenuation_cap_pct: 0.75,
     attenuation_basis: "apparent",
-    sta1: false,
   });
   return projectImport({ payload: payload(), ledger, identity: IDENTITY, catalog });
 }

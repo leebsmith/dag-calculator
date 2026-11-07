@@ -110,6 +110,43 @@ export function isMashScheduleValid(enabledRests) {
 }
 
 /**
+ * Fill a missing use-temperature or duration on every enabled rest from its
+ * canonical definition. Non-mutating: returns new rows plus whether anything
+ * changed. Used when opening the Configure Rests draft, so an enabled rest
+ * seeded without a temperature (mash-out on older batches) cannot leave the OK
+ * button silently disabled.
+ */
+export function withRestDefaults(rows) {
+  let changed = false;
+  const next = (rows || []).map((row) => {
+    const seeded = seededRest(row);
+    if (seeded !== row) changed = true;
+    return seeded;
+  });
+  return { rows: next, changed };
+}
+
+function seededRest(row) {
+  if (!row?.enabled) return row;
+  const def = getCanonicalRest(row.rest_id);
+  if (!def) return row;
+  const hasTemp = typeof row.use_temp_c === "number" && !isNaN(row.use_temp_c);
+  const hasDuration =
+    typeof row.duration_min === "number" && !isNaN(row.duration_min) && row.duration_min >= 0;
+  if (hasTemp && hasDuration) return row;
+  return {
+    ...row,
+    use_temp_c: hasTemp ? row.use_temp_c : canonicalUseTemp(def, row),
+    duration_min: hasDuration ? row.duration_min : def.default_duration_min,
+  };
+}
+
+function canonicalUseTemp(def, row) {
+  if (def.temp_min_c == null || def.temp_max_c == null) return row.use_temp_c;
+  return (def.temp_min_c + def.temp_max_c) / 2;
+}
+
+/**
  * Apply a named preset to a rests array: flips `enabled` flags and seeds a
  * preset temperature/duration the first time a rest is enabled, without
  * clobbering a value the user has already set. Mash-out is left untouched.

@@ -1929,8 +1929,7 @@ samp {
 }
 
 .attenuation-summary-line,
-.attenuation-readout,
-.attenuation-arithmetic {
+.attenuation-readout {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -1941,30 +1940,6 @@ samp {
   display: flex;
   align-items: baseline;
   gap: var(--space-1-5);
-}
-
-.attenuation-popover {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-md);
-  background-color: var(--sys-surface-default);
-}
-
-.attenuation-popover-header,
-.attenuation-popover-actions,
-.attenuation-target-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.attenuation-range {
-  flex: 1;
-  min-width: 12rem;
 }
 
 /* Yeast card: the selected row's detail and derate disclosures. */

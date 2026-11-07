@@ -43,33 +43,14 @@ test("maltIsTrace marks rows under two percent", () => {
   assert.equal(app.maltIsTrace({}), true);
 });
 
-test("cloneDraftMalt copies the inspected row as an unnamed custom malt", () => {
+test("duplicate malts stay in the draft and are counted", () => {
   const app = setup();
-  app.draftRows = [{ catalog_id: "pils", name: "Pilsner", parts: 80 }];
+  app.draftRows = [
+    { catalog_id: "pils", name: "Pilsner", parts: 60 },
+    { catalog_id: "pils", name: "Pilsner", parts: 40 },
+  ];
 
-  app.cloneDraftMalt(0);
-
-  assert.deepEqual(app.draftRows[1], {
-    catalog_id: null,
-    name: "Pilsner (Custom)",
-    parts: 80,
-  });
-  assert.equal(app.maltActiveIndex, 1);
-  assert.equal(app.maltDrawer, "inspect");
-});
-
-test("cloneDraftMalt refuses at the row limit and for a missing row", () => {
-  const app = setup();
-  app.draftRows = Array.from({ length: 8 }, (_, i) => ({ catalog_id: `m${i}`, name: `M${i}`, parts: 1 }));
-
-  app.cloneDraftMalt(0);
-
-  assert.equal(app.draftRows.length, 8);
-  assert.equal(app.maltAtLimit, true);
-
-  app.draftRows = [];
-  app.cloneDraftMalt(0);
-  assert.deepEqual(app.draftRows, []);
+  assert.deepEqual(app.maltDraftCounts, { pils: 2 });
 });
 
 test("malt totals and weighted field lookups track the draft rows", () => {

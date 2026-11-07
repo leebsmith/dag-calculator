@@ -32,7 +32,6 @@ const CHROME_FIELDS = [
   "draftEmptyText",
   "draftDrawerId",
   "draftTableInspect",
-  "draftTableClone",
 ];
 
 function instrumented(app) {

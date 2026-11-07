@@ -53,17 +53,6 @@
           </template>
           <td class="text-right">
             <div class="table-action-cell">
-              <template x-if="draftTableClone">
-                <button
-                  type="button"
-                  class="btn-action-icon"
-                  @click="cloneDraftRow(ri)"
-                  :disabled="draftAtLimit"
-                  title="Clone &amp; Edit"
-                >
-                  📋
-                </button>
-              </template>
               <template x-if="draftTableInspect">
                 <button type="button" class="btn-action-icon" @click="inspectDraftRow(ri)" title="Inspect">✎</button>
               </template>

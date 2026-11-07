@@ -67,14 +67,6 @@
 // when it actually moves the ceiling.
 #let presents-derate() = derate-points() > 0
 
-// STA1 is a boolean in the state, not a display string: it gates a warning
-// rather than printing a cell.
-#let diastaticus() = {
-  let yeast = state.valuation.at("batch.yeast", default: none)
-  if type(yeast) != dictionary { return false }
-  yeast.at("sta1", default: none) == true
-}
-
 // The grist sets its own ceiling when it ferments below the yeast's cap: the
 // solver clamps malt fermentability one-sided, so a less fermentable grist
 // lands under the cap with nothing else explaining it. The row prints only when
@@ -99,10 +91,9 @@
   )
 } else { () }
 
-// The blend can exceed the malt cap: sugar extract is never capped, and a
-// diastaticus strain consumes the malt's dextrin residue. The producer omits
-// the value when nothing exceeds the cap, so the row disappears rather than
-// printing "+0.0 pts".
+// The blend can exceed the malt cap because sugar extract is never capped. The
+// producer omits the value when nothing exceeds the cap, so the row disappears
+// rather than printing "+0.0 pts".
 #let above-cap-rows() = if present-formatted("batch.attenuation_above_cap") {
   (
     [Above malt cap],
@@ -167,18 +158,4 @@
   text(size: 9pt, fill: rgb("#4a4a4a"), temperature-line())
   v(8pt)
   attenuation-chain()
-
-  if diastaticus() {
-    v(8pt)
-    block(
-      width: 100%,
-      fill: rgb("#fbf3e6"),
-      inset: (x: 7pt, y: 5pt),
-      stroke: (left: 2pt + rgb("#b8823a")),
-      text(size: 8.5pt)[
-        *⚠ STA1 positive — diastaticus.* Dedicate cold-side equipment and allow
-        extended conditioning.
-      ],
-    )
-  }
 })

@@ -68,8 +68,8 @@ canonical real/apparent table and the conversion are in
 
 `AA_batch` is not an ingredient value and is not a mash-schedule prediction: the
 solver evaluates the composition at the candidate `OE`. The block itself —
-residue, Cutaia inversion, the diastaticus share `d`, and the scale-pin choice —
-is canonical in `docs/attenuation-model.md` §1. What matters here is that
+residue, Cutaia inversion, and the scale-pin choice — is canonical in
+`docs/attenuation-model.md` §1. What matters here is that
 `F_malt` is the extract-weighted real fermentability of the grain bill, that the
 yeast cap applies to **malt only** in real space, and that sugar keeps
 `F_sugar = 1.0` and is never clamped, so an addition can lift apparent
@@ -124,7 +124,8 @@ importer reinterprets it.
 
 - Not the removed mash-schedule attenuation estimator.
 - Not a claim that a maltster's limit is your brewery's result.
-- Not a time-dependent diastaticus model: `d = 1` is a limit, not a rate.
+- Not a diastaticus model: the primary solve uses the vendor attenuation, and
+  `sta1` is a QC status, not a rate or a dextrin term.
 
 ## Vendor yeast source (White Labs)
 
@@ -153,12 +154,13 @@ The cap therefore rises from the aggregator's midpoint to the vendor's top for
 most White Labs strains. Unmatched rows keep the aggregator citation and no
 range.
 
-`sta1: null` is not a negative: D5 models it as `d = 0` and raises the
-`sta1_unknown` advisory, because a silent "assume negative" would hide a
-diastaticus risk. A `true` result consumes the malt's dextrin residue in the
-solver (the composition block's `d = 1`); sugar is untouched. The white label
-strains sold under other brands (The Yeast Bay, …) match by the same strain
-code, so their vendor data travels with them.
+`sta1: null` is not a negative: the primary solve still uses the vendor
+attenuation, and the `sta1_unknown` advisory names the missing QC result. A
+`true` result adds no dextrin term; the published attenuation already embeds the
+strain's primary diastatic activity. The status is recapitulated on the card and
+in the report for packaging decisions. The white label strains sold under other
+brands (The Yeast Bay, …) match by the same strain code, so their vendor data
+travels with them.
 
 The guard `tests/guards/whitelabs-yeast-contract.test.js` pins the source
 shape, `tests/guards/sources-manifest.test.js` pins the content hash, and

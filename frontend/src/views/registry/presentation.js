@@ -28,9 +28,9 @@ const TARGET_ABV = {
 
 const FIELD_OVERRIDES = {
   "batch.target_abv": TARGET_ABV,
-  // Apparent extract can sit at or below 0 °P when diastaticus consumes the
-  // dextrin residue. The FG readout is a floor at SG 1.000 (0 °P in Plato),
-  // never a sub-gravity number.
+  // Apparent extract can sit at or below 0 °P when a near-1.0 attenuation cap
+  // and sugar leave almost no residue. The FG readout is a floor at SG 1.000
+  // (0 °P in Plato), never a sub-gravity number.
   "batch.realized_fg": { floor: { value: 1.0, marker: "≤ " } },
 };
 

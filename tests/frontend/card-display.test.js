@@ -237,7 +237,7 @@ test("yeast card: the row's strain facts", withFreshApp(async (app) => {
   app.selectYeast(strain.id);
 
   const band = `${Math.round(strain.attenuation_low_pct * 1000) / 10}–${Math.round(strain.attenuation_high_pct * 1000) / 10}%`;
-  assert.equal(app.selectedYeastBand, band);
+  assert.equal(app.selectedYeastPublished, band);
   assert.equal(
     app.selectedYeastSta1,
     strain.sta1 === true ? "STA1+" : strain.sta1 === false ? "STA1−" : "STA1?"
@@ -258,7 +258,7 @@ test("yeast card: the row's strain facts", withFreshApp(async (app) => {
   // menu; the solved cap does.
   app.setUnit("percentage", "fraction");
   assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_cap_pct * 1000) / 10}%`);
-  assert.equal(app.selectedYeastBand, band);
+  assert.equal(app.selectedYeastPublished, band);
   assert.equal(app.yeastDerateDisplay, "0");
   assert.equal(app.yeastField("batch.yeast_cap").unit, "×1");
 

@@ -31,7 +31,7 @@ masses and scale once.
 ```
 cap_real   = apparent_to_real(OE, yeast_cap_apparent)
 F_malt_eff = min(F_malt, cap_real)
-UE         = E_malt·(1 − F_malt_eff)·(1 − d) + E_sugar·(1 − F_eff)
+UE         = E_malt·(1 − F_malt_eff) + E_sugar·(1 − F_eff)
 RE         = OE · UE / E
 AE         = inverse_cutaia(RE)               # may be ≤ 0
 ABW        = Cutaia(OE, AE)
@@ -42,10 +42,12 @@ RDF        = (OE − RE) / OE
 
 `F_eff` is the extract-weighted **real** fermentability of the late-addition
 blend (see `docs/sugar-database.md`); it is `1.0` only when every sugar in the
-blend is fully fermentable. `d = 1` only for a confirmed STA1 strain. The
-inversion solves the Cutaia real-extract regression for `AE`; when the residue
-is small enough (a diastaticus fermentation) `AE < 0` is the only solution, so
-`plato_to_sg` evaluates the ASBC polynomial on a small negative domain.
+blend is fully fermentable. The inversion solves the Cutaia real-extract
+regression for `AE`; when a near-1.0 cap and a sugar addition leave the residue
+small enough, `AE < 0` is the only solution, so `plato_to_sg` evaluates the ASBC
+polynomial on a small negative domain. A vendor's published attenuation already
+embeds the strain's primary diastatic activity; there is no separate dextrin
+term.
 
 The ABV-first inversion is the default pin. The same composition block also
 supports an OG pin (the target fixes `OE`; the grist absorbs the remainder) and
@@ -59,8 +61,8 @@ other two gravity/strength values are solved.
 |---|---|---|
 | pure grist | real-basis rows round-trip: `F = 0.643` displays `AA_app = 0.810` at 12 °P | `test_basis_conversion.py` |
 | + sugar (`F = 1`) | `UE` (mass) flat, `OE` up, `AA_app` up, `ABV` up; the yeast cap cannot suppress sugar | `test_composition_regimes.py` |
-| + STA1 (`d = 1`) | `UE → 0`; `AE_app` may be negative; `AA_app` may exceed 1 | `test_composition_regimes.py` |
-| + both | sugar adds fermentable extract only; `d` touches the malt residue only | `test_composition_regimes.py` |
+| + STA1 | the vendor cap is the observation; no dextrin term; above-cap is sugar-driven | `test_composition_regimes.py` |
+| + both | sugar adds fermentable extract only; the cap still clamps the malt fraction | `test_composition_regimes.py` |
 
 The first regime is *why* the priors do not move the default recipe: the old
 apparent prior `0.810` and the new real prior `0.643` are the same observation.
@@ -127,28 +129,24 @@ gravity-invariant.
   a sugar addition can push apparent attenuation past the malt cap (regime 2).
   A non-fermentable blend (`F_eff < 1`) leaves its own residue; the sugar share
   is total extract, not fermentable extract.
-- `d` (D5) applies to the malt residue only: `(1 − F_malt_eff)(1 − d)`. A
-  non-fermentable late addition (lactose) keeps its own residue regardless of
-  `d` (A6).
+- A non-fermentable late addition (lactose) keeps its own residue; sugar is
+  never touched by the malt cap (A6).
 - `bound: "min"` is reported, not propagated: the solver uses the printed value
   as a point and the UI labels it a floor (A8, D3).
 
 ### 5.1 Diastaticus
 
-`sta1` is a tri-state vendor field (D4b). `true` sets `d = 1`: the malt's dextrin
-residue is consumed, apparent extract may go negative, and apparent attenuation
-may exceed 1. `false` is an ordinary strain. `null` (not published) is modelled
-as `d = 0` **and** surfaced as the host advisory `sta1_unknown` — the model never
-treats a missing QC result as a confirmed negative. Sugar is never touched by
-`d`; a non-fermentable sugar keeps its own residue.
+`sta1` is a tri-state vendor field (D4b). It is **not** a solver input: a
+vendor's published attenuation already embeds the strain's primary diastatic
+activity, so the primary solve uses the published cap for every strain. `true`
+adds no dextrin term; `false` is an ordinary strain; `null` (not published) is
+surfaced as the host advisory `sta1_unknown`, because a missing QC result must
+never be silent. The status is recapitulated on the yeast card and in the
+report for packaging decisions; no packaging bound is computed.
 
-The wire carries `sta1` as a boolean. The request builder sends `false` when the
-selection has no QC result (the boundary input guard treats null as "not ready"),
-while the advisory reads the selection directly; the solver also accepts
-`sta1: null` from a direct caller and models it as `false`. The yeast picker
-exposes the same tri-state as filters (`Diastaticus`, `Non-diastaticus`,
-`Unknown`), so the QC coverage is visible before a strain is chosen: a missing
-STA1 result is a filterable bucket, never a silent "no".
+The yeast picker exposes the same tri-state as filters (`STA1+`, `STA1−`,
+`STA1?`), so QC coverage is visible before a strain is chosen: a missing result
+is a filterable bucket, never a silent "no".
 
 ## 6. Late-addition intent (P3b)
 
@@ -416,6 +414,21 @@ out-of-style *probability* additionally needs process variance (conversion
 efficiency, yeast attenuation vs the targeted AA), which is not modelled; that
 is a deliberate deferral.
 
+### 6.4 The retired `d = 1` path
+
+Earlier versions mapped `sta1: true` to a full dextrin-consumption step
+(`d = 1`), which zeroed the malt residue. That made the cap and the derate inert
+and let a 9 % / 6.1 gal tripel with 1 lb candi syrup solve at 1.055 OG /
+0.986 FG / 126.5 % apparent attenuation. A vendor's published range already
+includes the strain's primary diastatic activity, so the step was a packaging
+thought experiment, not a primary prediction.
+
+At 6.1 gal, 9.0 % ABV, 1 lb candi extract (0.385641 kg) and a 0.72 real malt
+fermentability, WLP570's 85 % cap solves near 1.076 OG / 1.009 FG / 88.6 %
+apparent attenuation. The old 1.055 / 0.986 / 126.5 % figure is retained here
+only as the diagnostic that motivated the change. A near-1.0 cap plus sugar can
+still drive apparent extract to zero or below; that edge stays in the model.
+
 ---
 
 ## 7. Assumption register
@@ -429,14 +442,14 @@ that every enforcement path exists and that the row set stays complete.
 | A1 | basis unknown for a source | `unspecified → real` | `tests/frontend/boundaryRequest.test.js` |
 | A2 | ingredient conversion at fixed 12 °P | max ΔAA 0.022 across 8–24 °P | `tests/backend/conformance/test_basis_conversion.py` |
 | A3 | yeast attenuation is apparent | converted per candidate `OE` | `tests/backend/conformance/test_composition_regimes.py` |
-| A4 | STA1 = full dextrin consumption | `d = 1`, malt residue only, time ignored | `tests/backend/conformance/test_composition_regimes.py` |
-| A5 | `sta1: null` | `d = 0` + advisory | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
+| A4 | vendor attenuation embeds primary diastatic activity | `sta1` has no solve effect; the cap is the observation | `tests/backend/conformance/test_composition_regimes.py` |
+| A5 | `sta1: null` | no solve effect + advisory | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
 | A6 | sugar immune to `d` | lactose stays unfermented | `tests/backend/conformance/test_composition_regimes.py` |
 | A7 | priors are converted apparent observations | values + round-trip | `tests/backend/conformance/test_basis_conversion.py` |
 | A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/attenuation-display.test.js` |
 | A9 | trace malts colour-only | no extract, no fermentability | `tests/guards/seed-rebuild.test.js` |
 | A10 | post-boil cascade volume is wort-only | `V_post` excludes sugar (hop utilisation); the ledger adds `v_bar·S_late` back | `tests/backend/test_batch_solver.py`, `tests/frontend/late-addition-parts.test.js` |
-| A11 | `AE_app ≤ 0` | computed and displayed (`≤ 1.000` FG policy) | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
+| A11 | `AE_app ≤ 0` | only when a near-1.0 cap plus sugar drives it; displayed as `≤ 1.000` | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
 | A12 | frozen bundles never re-solve | embedded artifact | `tests/backend/conformance/test_report_bundle_fixture.py` |
 | A13 | derate points apply before conversion | order stated in `docs/engine.md` | `tests/frontend/selection-validation.test.js` |
 | A14 | vendor ranges use the high end | low/high stored, cap = high | `tests/guards/seed-rebuild.test.js`, `tests/conformance/seed-conformance.test.js` |

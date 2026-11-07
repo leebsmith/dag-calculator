@@ -19,8 +19,6 @@ const CHROME_DEFAULTS = {
   inputStep: 0.1,
   textColumns: ["name"],
   canInspect: true,
-  canClone: false,
-  cloneRow: null,
   emptyText: "No rows in the draft.",
   totals: null,
   rowBadge: null,
@@ -105,11 +103,6 @@ function contentMethods(getView, registry) {
       const view = getView();
       const entry = activeEntry(registry, view);
       return entry?.rowBadge ? entry.rowBadge(view, row, columnId) : null;
-    },
-    cloneDraftRow(ri) {
-      const view = getView();
-      const entry = activeEntry(registry, view);
-      if (entry?.cloneRow) entry.cloneRow(view, ri);
     },
     setDraftCatalogForm(value) {
       const view = getView();

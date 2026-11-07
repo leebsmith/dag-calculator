@@ -92,14 +92,14 @@ test("diastaticusTiers labels every bucket and counts the catalogue", () => {
   ]);
 
   assert.deepEqual(tiers, [
-    { key: "positive", label: "Diastaticus", count: 1 },
-    { key: "negative", label: "Non-diastaticus", count: 2 },
-    { key: "unknown", label: "Unknown", count: 2 },
+    { key: "positive", label: "STA1+", count: 1 },
+    { key: "negative", label: "STA1−", count: 2 },
+    { key: "unknown", label: "STA1?", count: 2 },
   ]);
   assert.deepEqual(diastaticusTiers([]), [
-    { key: "positive", label: "Diastaticus", count: 0 },
-    { key: "negative", label: "Non-diastaticus", count: 0 },
-    { key: "unknown", label: "Unknown", count: 0 },
+    { key: "positive", label: "STA1+", count: 0 },
+    { key: "negative", label: "STA1−", count: 0 },
+    { key: "unknown", label: "STA1?", count: 0 },
   ]);
   assert.deepEqual(diastaticusTiers(undefined)[0].count, 0);
 });

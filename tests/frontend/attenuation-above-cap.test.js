@@ -1,6 +1,5 @@
-// The attenuation blend may pass the malt cap: sugar extract is never capped,
-// and a diastaticus strain consumes the malt's dextrin residue. The delta is an
-// artifact value so the report never subtracts.
+// The attenuation blend may pass the malt cap because sugar extract is never
+// capped. The delta is an artifact value so the report never subtracts.
 
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -68,11 +68,9 @@ export const CATALOG_CHROME_KEYS = [
   "draftInputStep",
   "draftTextColumns",
   "draftTableInspect",
-  "draftTableClone",
   "draftEmptyText",
   "draftTotals",
   "draftRowBadge",
-  "cloneDraftRow",
 ];
 
 const STATE_DEFAULTS = {
@@ -260,13 +258,6 @@ function tableGetters(getView, registry) {
       enumerable: true,
       get() {
         return activeEntry(registry, getView())?.canInspect !== false;
-      },
-    },
-    draftTableClone: {
-      configurable: true,
-      enumerable: true,
-      get() {
-        return activeEntry(registry, getView())?.canClone === true;
       },
     },
     draftEmptyText: {

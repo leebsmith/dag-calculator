@@ -67,7 +67,7 @@ test("host-only advisories are declared, warned, and never block", () => {
   assert.equal(advisory.severity, "warning");
   assert.equal(advisory.action, null);
   assert.match(advisory.message, /STA1/);
-  assert.match(advisory.message, /d = 0/);
+  assert.match(advisory.message, /vendor attenuation/);
   assert.equal(hostFinding("not_a_finding"), null);
 
   const shareWithoutSugar = hostFinding("sugar_share_without_sugar");

@@ -108,6 +108,38 @@ def test_reads_normalize_a_ranged_yeast_cap_to_the_published_high():
     assert repo.get("u1", "yeast", record["id"])["component"]["attenuation_cap_pct"] == 0.85
 
 
+def test_reads_drop_the_retired_attenuation_key_from_a_ranged_yeast():
+    svc, repo = service_with_repo()
+    record = repo.create(
+        "u1",
+        "yeast",
+        {**RANGED_YEAST, "attenuation_cap_pct": 0.92, "attenuation_pct": 0.85},
+        "id",
+        load_artifact()["schema_version"],
+    )
+
+    listed = svc.list_items("u1", "yeast")[0].component
+    assert listed["attenuation_cap_pct"] == 0.92
+    assert "attenuation_pct" not in listed
+    assert "attenuation_pct" in repo.get("u1", "yeast", record["id"])["component"]
+
+
+def test_reads_map_a_legacy_point_yeast_to_the_cap_and_drop_the_key():
+    svc, repo = service_with_repo()
+    record = repo.create(
+        "u1",
+        "yeast",
+        {"name": "Blend: Saison I RVA + Brussels Brett", "attenuation_pct": 0.88},
+        "id",
+        load_artifact()["schema_version"],
+    )
+
+    listed = svc.list_items("u1", "yeast")[0].component
+    assert listed["attenuation_cap_pct"] == 0.88
+    assert "attenuation_pct" not in listed
+    assert "attenuation_pct" in repo.get("u1", "yeast", record["id"])["component"]
+
+
 def test_create_rejects_a_ranged_yeast_with_a_mismatched_cap():
     with pytest.raises(CatalogValidationError) as exc:
         service().create_item("u1", "yeast", RANGED_YEAST)

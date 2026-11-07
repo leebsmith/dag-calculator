@@ -106,7 +106,6 @@ TRIGGERS = {
     "INVALID_TARGET_OG": lambda: _solve(scale_pin="og", target_og=None),
     "INVALID_TARGET_FG": lambda: _solve(scale_pin="fg", target_fg=None),
     "FG_UNREACHABLE": lambda: _solve(scale_pin="fg", target_fg=1.10),
-    "FG_BELOW_ZERO_WITHOUT_STA1": lambda: _solve(scale_pin="fg", target_fg=0.995),
 }
 
 

@@ -56,9 +56,6 @@ class BatchSolverInput:
         k_abs_true: Grain absorption coefficient, in L/kg. The equipment
             profile's ``grain_absorption_factor_l_per_kg`` is authoritative;
             the module constant is the fallback.
-        sta1: Vendor STA1 QC result. ``True`` consumes the malt's dextrin
-            residue (``d = 1``); ``False`` is an ordinary strain; ``None``
-            means "not published" and models as ``d = 0`` with an advisory.
         sugar_extract_share: Sugar extract as a fraction of total post-boil
             extract. ``0`` means dose mode (``s_late_add`` is authoritative);
             a positive share is solved per candidate ``OE``.
@@ -113,7 +110,6 @@ class BatchSolverInput:
     max_mash_tun_volume_l: float
     f_shrink: float = F_SHRINK_DEFAULT
     k_abs_true: float = K_ABS_TRUE_METRIC
-    sta1: bool | None = None
     sugar_extract_share: float = 0.0
     sugar_fermentability: float = 1.0
     scale_pin: str = "abv"

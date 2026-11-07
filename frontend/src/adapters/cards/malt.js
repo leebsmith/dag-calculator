@@ -1,6 +1,6 @@
 // Grain-bill (major malts) card: parts-based rows from the malt catalog.
 // Uses the shared catalog/draft helper; bespoke bits are the parts/validation
-// readouts, trace flag, and clone action.
+// readouts and the trace flag.
 
 import {
   catalogDraftKeys,
@@ -54,6 +54,7 @@ const MALT_CONFIG = {
   nodeId: N.majorMalts,
   seedKey: "malts",
   idField: "catalog_id",
+  allowDuplicates: true,
   categoryField: "category",
   standardField: "standard_malt",
   standardNameField: "standard_name",
@@ -80,8 +81,6 @@ const MALT_CONFIG = {
     "Enter relative proportional parts. Hamilton normalizes the bill to exactly 100.0%.",
   addLabel: "＋ Add Malt from Catalog",
   textColumns: ["name", "category"],
-  canClone: true,
-  cloneRow: (state, ri) => state.cloneDraftMalt(ri),
   emptyText: "No malts in the draft. Click “＋ Add Malt from Catalog” to begin.",
   totals: (state) => ({ label: "", value: state.maltDraftTotals }),
   rowBadge: (state, row, columnId) =>
@@ -109,15 +108,6 @@ export function createMaltCard({ getView }) {
 
     maltFermentable(row) {
       return maltFermentableLabel(row);
-    },
-
-    cloneDraftMalt(ri) {
-      const view = getView();
-      if (view.maltAtLimit) return;
-      const row = view.draftRows[ri];
-      if (!row) return;
-      view.addDraftRow({ ...row, catalog_id: null, name: `${row.name} (Custom)` });
-      view.inspectMaltRow(view.draftRows.length - 1);
     },
   };
 
@@ -245,7 +235,6 @@ export const KEYS = [
   "beerColorField",
   "maltIsTrace",
   "maltFermentable",
-  "cloneDraftMalt",
   "maltWeightedYield",
   "maltTotalParts",
   "maltTotalPct",

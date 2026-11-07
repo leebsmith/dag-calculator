@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
+import artifact from "../../data/artifact.json" with { type: "json" };
 import {
   projectImport,
   volumeL,
@@ -28,7 +29,25 @@ const CATALOG = {
     "h-amarillo": { id: "h-amarillo", name: "Amarillo", alpha_acid_pct: 0.09 },
   },
   yeast: { "y-1098": { id: "y-1098", name: "British Ale", attenuation_cap_pct: 0.74 } },
-  sugar: {},
+  sugar: {
+    "s-candi": {
+      id: "s-candi",
+      name: "Candi Sugar, Clear",
+      yield_fraction: 0.783,
+      color_lovibond: 1.3,
+    },
+  },
+};
+
+const SUGAR_LINE = {
+  line_id: "ledger-sugar",
+  section: "fermentables",
+  kind_hint: "sugar",
+  name: "Candi Sugar, Clear",
+  decision: "mapped",
+  destination: "batch.sugars",
+  ref: "s-candi",
+  quantity: { value: 0.5, unit: "kg" },
 };
 
 function catalog(kind, id) {
@@ -91,6 +110,38 @@ test("boil hops carry the printed time as a fraction of the boil", () => {
   assert.ok(boil.every((row) => Math.abs(row.boil_time_fraction - 20 / 60) < 1e-9));
   const pool = boil.reduce((sum, row) => sum + row.pct, 0);
   assert.ok(Math.abs(pool - 1) < 1e-9, "each hop pool normalises on its own");
+});
+
+test("a projected sugar row authors parts and carries no undeclared pct", () => {
+  const state = projectImport({
+    payload: payload(),
+    ledger: [...mapped(), SUGAR_LINE],
+    catalog,
+  });
+  const [sugar] = state.collections["batch.sugars"];
+
+  assert.ok(Math.abs(sugar.parts - 0.5) < 1e-9);
+  assert.equal("pct" in sugar, false);
+});
+
+test("projected collection rows carry only fields the artifact declares", () => {
+  const state = projectImport({
+    payload: payload(),
+    ledger: [...mapped(), SUGAR_LINE],
+    catalog,
+  });
+
+  for (const [nodeId, rows] of Object.entries(state.collections)) {
+    const node = artifact.nodes[nodeId];
+    if (!node) continue;
+    const schema = artifact.primitive_schemas[node.item_schema] ?? {};
+    const allowed = new Set([...Object.keys(schema), ...Object.keys(node.fields ?? {})]);
+    for (const row of rows) {
+      for (const key of Object.keys(row)) {
+        assert.ok(allowed.has(key), `${nodeId} carries undeclared field ${key}`);
+      }
+    }
+  }
 });
 
 test("whirlpool hops keep their pool and take a start temperature", () => {

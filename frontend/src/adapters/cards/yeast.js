@@ -27,8 +27,6 @@ function yeastActions({ artifact, engine, getView }) {
     yeastPofFilter: "",
     yeastPickerOpen: false,
     selectedYeastSnapshot: null,
-    attenuationEditorOpen: false,
-    attenuationDraft: null,
 
     yeastAttenuation(y) {
       return attenuationLabel(y);
@@ -146,42 +144,6 @@ function yeastActions({ artifact, engine, getView }) {
     fieldValue(id) {
       return getView().fieldsById?.[id]?.value;
     },
-
-    openAttenuationEditor() {
-      const view = getView();
-      if (!view.attenuationRangeValid) return;
-      view.attenuationDraft = view.attenuationTargetPercent;
-      view.attenuationEditorOpen = true;
-    },
-
-    closeAttenuationEditor() {
-      getView().attenuationEditorOpen = false;
-      getView().attenuationDraft = null;
-    },
-
-    setAttenuationDraft(raw) {
-      const view = getView();
-      const value = Number(raw);
-      if (!Number.isFinite(value)) return;
-      view.attenuationDraft = Math.min(
-        view.attenuationTargetMax,
-        Math.max(view.attenuationTargetMin, value)
-      );
-    },
-
-    useAttenuationDraft() {
-      const view = getView();
-      const yeast = view.selectedYeast;
-      const high = yeast?.attenuation_high_pct;
-      const low = yeast?.attenuation_low_pct;
-      const target = Number(view.attenuationDraft);
-      if (!Number.isFinite(target) || typeof high !== "number" || typeof low !== "number") return;
-      const fraction = Math.min(high, Math.max(low, target / 100));
-      view.setRoot(N.derate, high - fraction);
-      view.closeAttenuationEditor();
-      view.scheduleSolve();
-      view.notify();
-    },
   };
 }
 
@@ -205,4 +167,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastSnapshot = ctx.engine.get(N.selectionNode) ?? null;
 }
 
-export const KEYS = ["selectedYeastId", "selectedYeastSnapshot", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastPofFilter", "yeastAttenuation", "yeastPublished", "yeastSta1", "yeastPof", "yeastTemperature", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleYeastPof", "commitYeastDerate", "yeastField", "fieldValue", "attenuationEditorOpen", "attenuationDraft", "openAttenuationEditor", "closeAttenuationEditor", "setAttenuationDraft", "useAttenuationDraft", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "yeastPofTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastPublished", "selectedYeastMeta", "selectedYeastTemp", "selectedYeastBand", "selectedYeastSta1", "selectedYeastPof", "attenuationRange", "attenuationTargetMin", "attenuationTargetMax", "attenuationTargetPercent", "attenuationDraftPercent", "attenuationDraftLabel", "attenuationDerateDraft", "attenuationRangeValid", "attenuationUseLabel", "attenuationCapValue", "attenuationRealizedValue", "attenuationGristValue", "attenuationAboveCap", "attenuationAboveCapLabel", "attenuationAboveCapCause", "attenuationBinding", "yeastDerateDisplay"];
+export const KEYS = ["selectedYeastId", "selectedYeastSnapshot", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastPofFilter", "yeastAttenuation", "yeastPublished", "yeastSta1", "yeastPof", "yeastTemperature", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleYeastPof", "commitYeastDerate", "yeastField", "fieldValue", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "yeastPofTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastPublished", "selectedYeastMeta", "selectedYeastTemp", "selectedYeastSta1", "selectedYeastPof", "attenuationCapValue", "attenuationRealizedValue", "attenuationGristValue", "attenuationAboveCap", "attenuationAboveCapLabel", "attenuationAboveCapCause", "attenuationBinding", "yeastDerateDisplay"];

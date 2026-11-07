@@ -7,7 +7,7 @@ import { formatPercent, unitSymbol } from "../utils.js";
 
 const CAPTURE_FIELDS = new Set(["yield_basis"]);
 const FIELD_LABELS = {
-  sta1: "STA1 / diastaticus",
+  sta1: "STA1 (vendor QC)",
   pof: "POF",
 };
 const TAXONOMY_LABELS = {

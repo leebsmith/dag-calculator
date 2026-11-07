@@ -3509,7 +3509,6 @@
         "target_og": "batch.target_og",
         "target_fg": "batch.target_fg",
         "malt_attenuation_cap": "batch.yeast_cap",
-        "sta1": "batch.yeast.sta1",
         "v_ferm": "batch.v_ferm",
         "topology": "batch.topology",
         "intensive_value": "batch.mash_thickness_l_per_kg",
@@ -3668,8 +3667,7 @@
           "INVALID_SCALE_PIN",
           "INVALID_TARGET_OG",
           "INVALID_TARGET_FG",
-          "FG_UNREACHABLE",
-          "FG_BELOW_ZERO_WITHOUT_STA1"
+          "FG_UNREACHABLE"
         ]
       }
     },

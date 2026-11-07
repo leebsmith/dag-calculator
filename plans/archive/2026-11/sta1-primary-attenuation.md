@@ -1,6 +1,6 @@
 # Retire `d = 1` from the primary attenuation solve
 
-**Status:** proposed
+**Status:** complete
 **Scope:** the batch boundary contract, the composition block, the yeast card's
 derate control, the above-cap cause, STA1 recapitulation, the report, docs, and
 tests.
@@ -40,79 +40,79 @@ solver input.
 
 ## Workstream 1 — contract and core
 
-- [ ] Remove the `sta1` input from the `solver.batch` boundary declaration.
-- [ ] Remove `FG_BELOW_ZERO_WITHOUT_STA1` from the `solver.batch` domain codes.
-- [ ] Remove the `sta1` request field from the boundary schema and drop it from
+- [x] Remove the `sta1` input from the `solver.batch` boundary declaration.
+- [x] Remove `FG_BELOW_ZERO_WITHOUT_STA1` from the `solver.batch` domain codes.
+- [x] Remove the `sta1` request field from the boundary schema and drop it from
       the service's input construction.
-- [ ] Remove `sta1` from the batch solver input type.
-- [ ] Remove `dextrin_consumption` from the composition block and the OE solver;
+- [x] Remove `sta1` from the batch solver input type.
+- [x] Remove `dextrin_consumption` from the composition block and the OE solver;
       `UE = E_malt·(1 − F_eff) + E_sugar·(1 − F_sugar)`.
-- [ ] Remove the `dextrin_consumption` parameter from every orchestration helper
+- [x] Remove the `dextrin_consumption` parameter from every orchestration helper
       and both call sites.
-- [ ] Remove the below-1.000 FG gate; a target the composition cannot reach still
+- [x] Remove the below-1.000 FG gate; a target the composition cannot reach still
       returns `FG_UNREACHABLE`.
-- [ ] Update the negative-AE docstring: the cause is a near-1.0 cap plus sugar,
+- [x] Update the negative-AE docstring: the cause is a near-1.0 cap plus sugar,
       not diastaticus.
-- [ ] Update the labels: the above-cap hint is uncapped sugar only; the real
+- [x] Update the labels: the above-cap hint is uncapped sugar only; the real
       attenuation hint loses "dextrin consumption"; the cap hint says "less the
       derate", not "×".
 
 ## Workstream 2 — frontend controls
 
-- [ ] Remove the `sta1` field from the batch request builder. The yeast record
+- [x] Remove the `sta1` field from the batch request builder. The yeast record
       keeps it for display and the report.
-- [ ] Remove the attenuation editor state and handlers: open, close, draft, set,
+- [x] Remove the attenuation editor state and handlers: open, close, draft, set,
       use, range validity, target min/max/percent, draft label, derate draft, and
       use label. Keep the numeric derate commit and its readout.
-- [ ] Remove the "Set attenuation…" button and popover from the yeast step; show
+- [x] Remove the "Set attenuation…" button and popover from the yeast step; show
       the derate input for every strain.
-- [ ] Remove the "or use Set attenuation" clause from the help; keep the mash
+- [x] Remove the "or use Set attenuation" clause from the help; keep the mash
       guidance as prose.
-- [ ] Rewrite the STA1 help paragraph: the status is a vendor QC recapitulation;
+- [x] Rewrite the STA1 help paragraph: the status is a vendor QC recapitulation;
       it does not change the primary solve.
-- [ ] `attenuationAboveCapCause` returns sugar only; remove the diastaticus and
+- [x] `attenuationAboveCapCause` returns sugar only; remove the diastaticus and
       diastaticus-plus-sugar branches.
-- [ ] `attenuationBinding` returns `grist-limited` / `yeast cap` / `sugar`.
-- [ ] Relabel the picker's STA1 buckets and reword the picker help; remove the
+- [x] `attenuationBinding` returns `grist-limited` / `yeast cap` / `sugar`.
+- [x] Relabel the picker's STA1 buckets and reword the picker help; remove the
       `d = 0` claim.
-- [ ] Rename the library field label to "STA1 (vendor QC)".
-- [ ] Reword the unknown-STA1 advisory; keep it as a missing-data advisory.
-- [ ] Remove the obsolete below-1.000 error string.
-- [ ] Update the FG-floor comment.
-- [ ] Remove the unused popover CSS if the style guard flags it.
+- [x] Rename the library field label to "STA1 (vendor QC)".
+- [x] Reword the unknown-STA1 advisory; keep it as a missing-data advisory.
+- [x] Remove the obsolete below-1.000 error string.
+- [x] Update the FG-floor comment.
+- [x] Remove the unused popover CSS if the style guard flags it.
 
 ## Workstream 3 — report
 
-- [ ] Remove the STA1 warning block and its gate function from the yeast section;
+- [x] Remove the STA1 warning block and its gate function from the yeast section;
       keep the status suffix.
-- [ ] Update the above-cap comment: sugar is the only cause.
-- [ ] Regenerate the report-bundle fixture.
+- [x] Update the above-cap comment: sugar is the only cause.
+- [x] Regenerate the report-bundle fixture.
 
 ## Workstream 4 — docs
 
-- [ ] `docs/attenuation-model.md`: remove `d` from the block and notation;
+- [x] `docs/attenuation-model.md`: remove `d` from the block and notation;
       rewrite the STA1 regime and §5.1; update A4, A5 and A11; add a short
       "retired `d = 1` path" section with the 9 %/6.1 gal worked example and its
       exact inputs.
-- [ ] `docs/current-attenuation-model.md`: fold, then do not add it; remove its
+- [x] `docs/current-attenuation-model.md`: fold, then do not add it; remove its
       README row.
-- [ ] `docs/dag-artifacts/domain-equations.md`: remove `(1 − d)`; update the
+- [x] `docs/dag-artifacts/domain-equations.md`: remove `(1 − d)`; update the
       negative-AE note and the error-code list.
-- [ ] `docs/adsco/ui.md`: above-cap cause = sugar; binding = grist; remove the
+- [x] `docs/adsco/ui.md`: above-cap cause = sugar; binding = grist; remove the
       range control; reword the STA1 help; update the FG-floor parenthetical.
-- [ ] `docs/fermentability-and-yield.md`: remove the `d` references; rewrite the
+- [x] `docs/fermentability-and-yield.md`: remove the `d` references; rewrite the
       STA1 paragraphs.
-- [ ] `docs/engine.md`: confirm the cap formula wording; no structural change.
+- [x] `docs/engine.md`: confirm the cap formula wording; no structural change.
 
 ## Workstream 5 — tests and fixtures
 
-- [ ] Backend: composition regimes, scale pins, domain codes, batch solver,
+- [x] Backend: composition regimes, scale pins, domain codes, batch solver,
       fingerprints, report sections, boundary fixtures.
-- [ ] Frontend: step boundaries, import gate, yeast card, card display, yeast
+- [x] Frontend: step boundaries, import gate, yeast card, card display, yeast
       rows, the above-cap comment, and the FG-floor test.
-- [ ] Fixtures: boundary wire keys, the canonical batch request, and the report
+- [x] Fixtures: boundary wire keys, the canonical batch request, and the report
       bundle.
-- [ ] Regenerate once with `make generate`.
+- [x] Regenerate once with `make generate`.
 
 ## File matrix
 

@@ -65,7 +65,6 @@ class BatchSolverErrorCode(StrEnum):
     INVALID_TARGET_OG = "INVALID_TARGET_OG"
     INVALID_TARGET_FG = "INVALID_TARGET_FG"
     FG_UNREACHABLE = "FG_UNREACHABLE"
-    FG_BELOW_ZERO_WITHOUT_STA1 = "FG_BELOW_ZERO_WITHOUT_STA1"
 
 
 class WaterSolverErrorCode(StrEnum):
@@ -139,16 +138,6 @@ class BatchSolverRequest(BoundaryModel):
     target_og: Annotated[float | None, Field(default=None, gt=0.0, description="Target OG for the OG pin (SG)")]
     target_fg: Annotated[float | None, Field(default=None, gt=0.0, description="Target FG for the FG pin (SG)")]
     malt_attenuation_cap: Annotated[float, Field(gt=0.0, le=1.0, description="Yeast apparent-attenuation cap on malt; converted to real per candidate OE")]
-    sta1: Annotated[
-        bool | None,
-        Field(
-            default=None,
-            description=(
-                "Vendor STA1 QC result. True consumes the malt dextrin residue; "
-                "false or null models as non-diastaticus (null is flagged)."
-            ),
-        ),
-    ]
     v_ferm: Annotated[float, Field(gt=0.0, le=1_000_000.0, description="Target cold fermenter volume in Liters")]
     topology: BatchSpargeTopology = Field(description="Runoff model topology")
     intensive_value: Annotated[float, Field(gt=0.0, description="R_L:G ratio (L/kg) or runoff ratio r")]

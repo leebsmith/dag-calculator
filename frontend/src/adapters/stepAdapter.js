@@ -11,10 +11,9 @@ import { createSession } from "./session.js";
 import { resolveBoundarySeam } from "./boundarySeam.js";
 import { assertReferencePair, createReferenceCache } from "../store/referenceCache.js";
 import {
-  materializeSelections,
+  dropSugarRowPct, materializeSelections,
   migrateAttenuationDerate, migrateLegacyYeastCap,
-  seedIdentityResiduals,
-  seedSugarShareParts,
+  seedIdentityResiduals, seedSugarShareParts,
 } from "../store/batchMigrations.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
 import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
@@ -216,6 +215,7 @@ export function createStepApp(options = {}) {
       const changed = [
         seeded, materialized, synced, migrated, migratedWhirlpool,
         migratedChecklist.changed, migratedDerate, migrateLegacyYeastCap({ session }), sugarParts,
+        dropSugarRowPct({ engine: session.engine }),
       ].some(Boolean);
       if (remote) await this.solveNow();
       else this.compute();
