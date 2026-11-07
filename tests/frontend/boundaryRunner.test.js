@@ -11,11 +11,12 @@ function makeEngine() {
     applied,
     unavailable,
     clears,
+    fingerprints: {},
     boundaryRequest(id) {
       return {
         binding: id === "batch" ? "batch_sparge_solver" : "water_chemistry_solver",
         inputs: { node: id },
-        fingerprint: `fp-${id}`,
+        fingerprint: this.fingerprints[id] ?? `fp-${id}`,
       };
     },
     hasBoundaryResult(fingerprint) {
@@ -141,4 +142,74 @@ test("short-circuits nodes with a cached result", async () => {
   assert.deepEqual(urls, ["/solve/water"]);
   assert.equal(runner.statuses.batch, "ok");
   assert.equal(runner.statuses.water, "ok");
+});
+
+test("restores the telemetry that belongs to a cached fingerprint", async () => {
+  const engine = makeEngine();
+  engine.fingerprints.water = "fp-water-1";
+  let waterCalls = 0;
+  const fetchImpl = async (url) => {
+    let body = { value: url };
+    if (url === "/solve/water") {
+      waterCalls += 1;
+      body = { telemetry: [{ code: `water-${waterCalls}` }] };
+    }
+    return { ok: true, status: 200, json: async () => body };
+  };
+  let state;
+  const runner = createBoundaryRunner({
+    session: makeSession(engine, ["batch", "water"]),
+    remote: true,
+    fetchImpl,
+    compute: () => {},
+    onState: (next) => {
+      state = next;
+    },
+  });
+
+  await runner.solveNow();
+  assert.equal(state.extras.water.telemetry[0].code, "water-1");
+
+  engine.fingerprints.water = "fp-water-2";
+  await runner.solveNow();
+  assert.equal(state.extras.water.telemetry[0].code, "water-2");
+
+  engine.fingerprints.water = "fp-water-1";
+  await runner.solveNow();
+  assert.equal(waterCalls, 2, "the cached fingerprint does not request again");
+  assert.equal(state.extras.water.fingerprint, "fp-water-1");
+  assert.equal(state.extras.water.telemetry[0].code, "water-1");
+});
+
+test("clears extras when a boundary is blocked or fails", async () => {
+  const engine = makeEngine();
+  let fail = false;
+  const fetchImpl = async (url) => {
+    if (url === "/solve/water" && fail) {
+      return { ok: false, status: 422, json: async () => ({ code: "SOLVER_ERROR", message: "boom" }) };
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ telemetry: [{ code: "water" }] }),
+    };
+  };
+  let state;
+  const runner = createBoundaryRunner({
+    session: makeSession(engine, ["batch", "water"]),
+    remote: true,
+    fetchImpl,
+    compute: () => {},
+    onState: (next) => {
+      state = next;
+    },
+  });
+
+  await runner.solveNow();
+  assert.equal(state.extras.water.telemetry[0].code, "water");
+
+  engine.fingerprints.water = "fp-water-2";
+  fail = true;
+  await runner.solveNow();
+  assert.equal(state.extras.water, null);
 });

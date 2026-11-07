@@ -22,6 +22,7 @@ export const BREW_DAY_NODES = {
   fermentation: "batch.fermentation",
   yeastId: "batch.yeast_id",
   waterTarget: "water.target_profile_id",
+  batchBoundary: "solver.batch",
   hltTopUp: "solver.batch.hlt.v_hlt_top_up",
   hltTarget: "solver.batch.hlt.v_hlt_target",
   spargeDeliverable: "solver.batch.hlt.v_sparge_deliverable",

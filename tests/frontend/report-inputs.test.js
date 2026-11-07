@@ -55,6 +55,22 @@ test("the applied fingerprint is not the recomputed request fingerprint", withFr
   assert.notEqual(app.reportInputs().telemetry[id].fingerprint, applied);
 }));
 
+test("telemetry whose fingerprint does not match the applied result is dropped", withFreshApp(async (app) => {
+  const applied = app.engine.get("solver.water").fingerprint;
+  app.boundaryExtras["solver.water"] = {
+    fingerprint: `${applied}-stale`,
+    telemetry: [{ code: "STALE" }],
+    warnings: ["stale warning"],
+    notes: ["stale note"],
+  };
+
+  const entry = app.reportInputs().telemetry["solver.water"];
+  assert.equal(entry.fingerprint, applied);
+  assert.deepEqual(entry.telemetry, []);
+  assert.deepEqual(entry.warnings, []);
+  assert.deepEqual(entry.notes, []);
+}));
+
 test("the four validation blocks are present and non-empty for a booted batch", withFreshApp(async (app) => {
   const { validation } = app.reportInputs();
 

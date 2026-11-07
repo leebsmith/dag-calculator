@@ -19,6 +19,37 @@ function markUnavailableBoundaries(engine, nodes, statuses) {
   }
 }
 
+function storeBoundaryExtra(extras, extrasByFingerprint, id, fingerprint, response) {
+  const extra = {
+    fingerprint,
+    telemetry: response?.telemetry ?? [],
+    warnings: response?.warnings ?? [],
+    notes: response?.notes ?? [],
+  };
+  extrasByFingerprint.set(fingerprint, extra);
+  extras[id] = extra;
+}
+
+function restoreBoundaryExtra(extras, extrasByFingerprint, id, fingerprint) {
+  extras[id] = extrasByFingerprint.get(fingerprint) ?? null;
+}
+
+function blockNode(blocked, extras, setStatus, id, message) {
+  blocked[id] = message;
+  extras[id] = null;
+  setStatus(id, "blocked");
+}
+
+function errorNode(extras, setStatus, id) {
+  extras[id] = null;
+  setStatus(id, "error");
+}
+
+function pendingNode(extras, setStatus, id) {
+  extras[id] = null;
+  setStatus(id, "pending");
+}
+
 // AI AGENT HOOKS: Use this runner factory for every boundary solve scheduling,
 // status, and error transition. Do not duplicated this logic elsewhere.
 export function createBoundaryRunner({
@@ -38,6 +69,7 @@ export function createBoundaryRunner({
   );
   const extras = Object.fromEntries(session.boundaryNodes.map((id) => [id, null]));
   const blocked = Object.fromEntries(session.boundaryNodes.map((id) => [id, null]));
+  const extrasByFingerprint = new Map();
   const inflight = new Map(); // fingerprint -> Promise
   let error = null;
   let solveTimer = null;
@@ -104,8 +136,7 @@ export function createBoundaryRunner({
         try {
           const preBlocked = preGate(id, engine);
           if (preBlocked) {
-            blocked[id] = preBlocked;
-            setStatus(id, "blocked");
+            blockNode(blocked, extras, setStatus, id, preBlocked);
             index += 1;
             continue;
           }
@@ -113,16 +144,17 @@ export function createBoundaryRunner({
           const gateMessage = gate(binding, inputs);
           if (gateMessage) {
             if (!firstError) firstError = new Error(gateMessage);
-            setStatus(id, "error");
+            errorNode(extras, setStatus, id);
             index += 1;
             continue;
           }
           if (engine.hasBoundaryResult(fingerprint)) {
+            restoreBoundaryExtra(extras, extrasByFingerprint, id, fingerprint);
             setStatus(id, "ok");
             index += 1;
             continue;
           }
-          setStatus(id, "pending");
+          pendingNode(extras, setStatus, id);
           frontier.push({ id, binding, inputs, fingerprint });
           index += 1;
         } catch {
@@ -164,7 +196,7 @@ export function createBoundaryRunner({
           if (!firstError) firstError = result.reason;
           continue;
         }
-        if (result.value && !result.value.ok) {
+        if (!result.value?.ok) {
           if (!firstError) firstError = result.value.err;
           failures.set(result.value.job.fingerprint, result.value.err);
         }
@@ -173,16 +205,11 @@ export function createBoundaryRunner({
       for (const result of results) {
         if (result.status !== "fulfilled") continue;
         const value = result.value;
-        if (!value || !value.ok) {
-          extras[value?.job?.id] = null;
+        if (!value?.ok) {
+          extras[value.job.id] = null;
           continue;
         }
-        const { job, response } = value;
-        extras[job.id] = {
-          telemetry: response?.telemetry ?? [],
-          warnings: response?.warnings ?? [],
-          notes: response?.notes ?? [],
-        };
+        storeBoundaryExtra(extras, extrasByFingerprint, value.job.id, value.job.fingerprint, value.response);
       }
 
       for (const job of frontier) {
@@ -212,6 +239,7 @@ export function createBoundaryRunner({
     solveToken++;
     clearTimer();
     inflight.clear();
+    extrasByFingerprint.clear();
     session.getEngine().clearBoundaryUnavailable();
     for (const id of session.boundaryNodes) {
       statuses[id] = remote ? "pending" : "ok";

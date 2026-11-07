@@ -24,6 +24,8 @@ const CONDITIONS = {
   is_lager_or_mixed: (engine) => ["lager", "mixed"].includes(engine.get(N.fermentation)),
   has_water_target: (engine) => Boolean(engine.get(N.waterTarget)),
   has_yeast: (engine) => Boolean(engine.get(N.yeastId)),
+  hlt_top_up_needed: (engine) =>
+    Number(engine.get(N.batchBoundary)?.["hlt.v_hlt_top_up"]) > 0,
 };
 
 export const CONDITION_IDS = Object.keys(CONDITIONS);

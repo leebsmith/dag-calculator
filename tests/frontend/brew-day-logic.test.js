@@ -129,7 +129,7 @@ test("selectBrewDaySections groups plain rows through a plain engine object", ()
         sections: [
           { id: "setup", count: 3, rows: 3 },
           { id: "mash", count: 4, rows: 4 },
-          { id: "lauter", count: 7, rows: 7 },
+          { id: "lauter", count: 6, rows: 6 },
           { id: "boil", count: 4, rows: 4 },
           { id: "knockout", count: 6, rows: 6 },
           { id: "closeout", count: 3, rows: 3 },

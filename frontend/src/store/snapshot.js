@@ -79,10 +79,12 @@ export function createSnapshotActions({
     for (const id of session.boundaryNodes) {
       const result = engine.get(id);
       if (!result || typeof result.fingerprint !== "string") continue;
+      const extra = boundaryExtras?.[id];
+      const matches = extra?.fingerprint === result.fingerprint;
       telemetry[id] = shapeTelemetryEntry({
         binding: artifact.nodes[id].binding,
         fingerprint: result.fingerprint,
-        extra: boundaryExtras?.[id],
+        extra: matches ? extra : null,
       });
     }
     return shapeReportInputs({ validation, telemetry });

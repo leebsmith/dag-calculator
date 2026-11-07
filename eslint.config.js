@@ -145,7 +145,7 @@ const GRAMMAR_COMPLEXITY = {
 };
 
 const LIFECYCLE_COMPLEXITY = {
-  "adapters/boundaryRunner.js": 35,
+  "adapters/boundaryRunner.js": 27,
   "adapters/cards/catalogDraft.js": 16,
   "adapters/cards/water.js": 38,
   "adapters/fieldAttribution.js": 18,
@@ -162,7 +162,7 @@ const LIFECYCLE_COMPLEXITY = {
 };
 
 const STATEMENT_PINS = {
-  "adapters/boundaryRunner.js": 67,
+  "adapters/boundaryRunner.js": 66,
   "adapters/cards/water.js": 64,
   "adapters/stepAdapter.js": 32,
   "engine/sha256.js": 44,
@@ -186,7 +186,7 @@ const DEPTH_PINS = {
 const FUNCTION_LINE_PINS = {
   "engine/dag.js": 289,
   "engine/validate.js": 86,
-  "adapters/boundaryRunner.js": 211,
+  "adapters/boundaryRunner.js": 208,
   "views/producer/stylePlot.js": 67,
 };
 

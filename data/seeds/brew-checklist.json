@@ -161,7 +161,7 @@
       "level": "critical",
       "kind": "auto",
       "title": "Recipe solves",
-      "text": "Targets: {{batch.target_abv}} ABV, {{batch.target_ibu}} IBU, {{batch.target_srm}} SRM, {{batch.v_ferm}}.",
+      "text": "Targets: {{batch.target_abv}}, {{batch.target_ibu}}, {{batch.target_srm}}, {{batch.v_ferm}}.",
       "done_when": "No blocking finding stands."
     },
     {
@@ -217,7 +217,7 @@
       "level": "info",
       "kind": "check",
       "title": "Hop plan",
-      "text": "Boil {{batch.boil_target_ibu}} IBU; whirlpool {{batch.whirlpool_target_ibu}} IBU; dry hops by schedule.",
+      "text": "Boil {{batch.boil_target_ibu}}; whirlpool {{batch.whirlpool_target_ibu}}; dry hops by schedule.",
       "done_when": "Shares, forms and masses are confirmed."
     },
     {
@@ -398,7 +398,7 @@
       "level": "info",
       "kind": "auto",
       "title": "Water targets",
-      "text": "Calcium floor {{water.calcium_floor_ppm}}; target pH {{water.target_mash_ph}}.",
+      "text": "Calcium floor {{water.calcium_floor_ppm}}; target {{water.target_mash_ph}}.",
       "done_when": "The targets are reachable."
     },
     {
@@ -521,7 +521,7 @@
       "kind": "action",
       "condition": "has_mash_out",
       "title": "Mash-out",
-      "text": "Heat to 75.5 to 76.7 C for 10 min.",
+      "text": "Heat to {{mash.enabled_max_temp_c}} for 10 min.",
       "done_when": "The mash-out is complete."
     },
     {
@@ -568,6 +568,7 @@
       "section": "lauter",
       "level": "critical",
       "kind": "action",
+      "condition": "hlt_top_up_needed",
       "title": "Top up the HLT",
       "text": "Top up the HLT to {{solver.batch.hlt.v_hlt_target}}; heat to {{batch.sparge_water_temp_c}}.",
       "done_when": "The HLT holds the target volume."

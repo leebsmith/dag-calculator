@@ -221,6 +221,9 @@ Telemetry events (`telemetry.<boundary>.telemetry[]`) carry
 
 - `bundle_format` is the current format; `content_hash` equals the canonical
   hash of everything else (recomputed by `seal_bundle()`).
+- A telemetry entry is stamped with the applied boundary fingerprint, and its
+  events come from that solve. The producer caches extras per fingerprint and
+  drops an extra that does not match the applied result.
 - `state.valuation` keys are declared artifact nodes; boundary nodes carry a
   flattened output map (`cascade.v_strike`, `hlt.v_hlt_debt`).
 - `catalog.dimensions` are declared in the artifact; `batch.identity`

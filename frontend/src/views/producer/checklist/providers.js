@@ -7,6 +7,8 @@ import { getCanonicalRest } from "../../mash.js";
 import { DRY_HOP_VALUE_LABELS } from "../../registry/dry-hops.js";
 import { ignoreError } from "../../../observability.js";
 
+const TABLET_VOLUME_L = 15 * 3.785411784;
+
 const ADDITIONS = [
   ["gypsum", "gypsum_kg"],
   ["calcium chloride", "cacl2_kg"],
@@ -68,7 +70,7 @@ function dryHopLabel(group, value) {
 const PROVIDERS = {
   "waterSetup": ({ engine, fmt, reportError }) => {
     const fill = resolveValue(engine, N.hltStart, reportError);
-    const tablets = Math.max(1, Math.ceil((Number(fill) || 0) / 56.781));
+    const tablets = Math.max(1, Math.ceil((Number(fill) || 0) / TABLET_VOLUME_L));
     const tabletWord = tablets === 1 ? "tablet" : "tablets";
     return (
       `Fill the HLT to ${fmt.path(N.hltStart)}. Add ${tablets} crushed metabisulfite ` +
@@ -91,9 +93,13 @@ const PROVIDERS = {
     }
     const list = additionList(engine, fmt, N.spargeAdditions, reportError);
     const additions = list.length > 0 ? list.join(", ") : "no additions";
+    const topUp = Number(resolveValue(engine, N.hltTopUp, reportError)) || 0;
+    const timing =
+      topUp > 0
+        ? `After the strike is drawn and the HLT is topped up to ${fmt.path(N.hltTarget)}: `
+        : `The HLT is already at or above ${fmt.path(N.hltTarget)}; no top-up: `;
     return (
-      `After the strike is drawn and the HLT is topped up to ${fmt.path(N.hltTarget)}: ` +
-      `add ${additions} to the HLT. Stir to dissolve, then underlet. ` +
+      `${timing}add ${additions} to the HLT. Stir to dissolve, then underlet. ` +
       `${fmt.path(N.spargeDeliverable)} ships.`
     );
   },
