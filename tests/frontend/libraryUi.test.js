@@ -158,6 +158,63 @@ test("display converts base values to the active unit and input converts back", 
   assert.equal(app.libraryDraft.name, "Pilsner");
 });
 
+test("a ranged yeast draft locks the cap to the published high", () => {
+  const { app } = setup();
+  app.selectLibraryTab("yeast");
+  app.cloneLibraryItem({
+    id: "ranged",
+    name: "Ranged strain",
+    attenuation_low_pct: 0.8,
+    attenuation_high_pct: 0.86,
+    attenuation_cap_pct: 0.86,
+  });
+
+  const cap = field(app, "attenuation_cap_pct");
+  assert.equal(cap.readOnly, true);
+  assert.equal(cap.hint, "Cap follows the published high (86%)");
+
+  app.librarySetField("attenuation_cap_pct", "50");
+  assert.equal(app.libraryDraft.attenuation_cap_pct, 0.86);
+
+  app.librarySetField("attenuation_high_pct", "84");
+  assert.equal(app.libraryDraft.attenuation_high_pct, 0.84);
+  assert.equal(app.libraryDraft.attenuation_cap_pct, 0.84);
+});
+
+test("a point-only yeast draft keeps the cap editable", () => {
+  const { app } = setup();
+  app.selectLibraryTab("yeast");
+  app.cloneLibraryItem({ id: "point", name: "Point strain", attenuation_cap_pct: 0.78 });
+
+  const cap = field(app, "attenuation_cap_pct");
+  assert.equal(cap.readOnly, undefined);
+  assert.equal(cap.hint, undefined);
+
+  app.librarySetField("attenuation_cap_pct", "80");
+  assert.equal(app.libraryDraft.attenuation_cap_pct, 0.8);
+});
+
+test("saving a ranged yeast with a mismatched cap is rejected", async () => {
+  const { app, events } = setup({ records: { yeast: [] } });
+  app.selectLibraryTab("yeast");
+  app.libraryDraft = {
+    name: "Bad range",
+    attenuation_low_pct: 0.8,
+    attenuation_high_pct: 0.86,
+    attenuation_cap_pct: 0.85,
+  };
+
+  await app.saveLibraryItem();
+
+  assert.equal(events.some((event) => event.op === "create"), false);
+  assert.deepEqual(app.libraryErrors, [
+    {
+      field: "attenuation_cap_pct",
+      message: "Cap must equal the published high when a range is set.",
+    },
+  ]);
+});
+
 test("the yeast kind has two faces: strains and blends, split by composition", () => {
   const { app } = setup({
     records: {
@@ -192,14 +249,14 @@ test("a blend is saved with its composition", async () => {
   app.selectLibraryTab("yeast");
   app.newLibraryItem();
   app.librarySetField("name", "Blend: Saison + Brett");
-  app.librarySetField("attenuation_pct", "78");
+  app.librarySetField("attenuation_cap_pct", "78");
   app.librarySetField("blend_of", "House Saison, Brett Brux");
   await app.saveLibraryItem();
 
   const created = events.find((event) => event.op === "create");
   assert.equal(created.tab, "yeast");
   assert.equal(created.component.blend_of, "House Saison, Brett Brux");
-  assert.equal(created.component.attenuation_pct, 0.78);
+  assert.equal(created.component.attenuation_cap_pct, 0.78);
 });
 
 test("styles are forked, never authored from scratch", () => {
@@ -242,7 +299,7 @@ test("seed cloning opens a draft and seals only when saved", async () => {
   const seed = {
     id: "m31",
     name: "Belgian Tripel M31",
-    attenuation_pct: 0.85,
+    attenuation_cap_pct: 0.85,
     sta1: null,
     pof: "unknown",
   };
@@ -280,7 +337,7 @@ test("seed paging shows 50 at a time and resets with the filter", () => {
   const yeasts = Object.fromEntries(
     Array.from({ length: 60 }, (_, index) => [
       `yeast-${index}`,
-      { id: `yeast-${index}`, name: `Yeast ${index}`, attenuation_pct: 0.8 },
+      { id: `yeast-${index}`, name: `Yeast ${index}`, attenuation_cap_pct: 0.8 },
     ])
   );
   const { app } = setup({ seeds: { yeasts } });

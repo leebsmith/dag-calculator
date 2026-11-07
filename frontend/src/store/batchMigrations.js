@@ -30,11 +30,30 @@ export function seedSugarShareParts({ engine }) {
 export function migrateAttenuationDerate({ engine, getRoot, setRoot }, legacy) {
   if (typeof legacy !== "number" || !Number.isFinite(legacy)) return false;
   if (getRoot("batch.attenuation_derate_points") !== undefined) return false;
-  const aa = engine.resolve("batch.yeast.attenuation_pct");
+  const aa = engine.resolve("batch.yeast.attenuation_cap_pct");
   if (typeof aa !== "number" || !Number.isFinite(aa)) return false;
   const points = Math.min(0.25, Math.max(0, (1 - legacy) * aa));
   setRoot("batch.attenuation_derate_points", points);
   return true;
+}
+
+// Selections saved before the cap was renamed stored `attenuation_pct`. Treat
+// that value as the cap once, so old drafts and frozen forks keep their figure
+// without rewriting the persisted batch.
+export function migrateLegacyYeastCap({ session }) {
+  const snapshots = session.selections();
+  let changed = false;
+  for (const [nodeId, component] of Object.entries(snapshots)) {
+    if (!component || typeof component !== "object") continue;
+    if (component.attenuation_cap_pct !== undefined) continue;
+    if (typeof component.attenuation_pct !== "number") continue;
+    session.setSelection(nodeId, {
+      ...component,
+      attenuation_cap_pct: component.attenuation_pct,
+    });
+    changed = true;
+  }
+  return changed;
 }
 
 // Seed the creation-time residuals from the batch's identity snapshot when the

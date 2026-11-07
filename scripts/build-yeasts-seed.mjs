@@ -79,8 +79,8 @@ function convert(row, usedSlugs, vendorByStrain) {
   const manufacturer = MANUFACTURER_ALIASES[rawManufacturer] ?? rawManufacturer;
   const name = title.slice(sep + 1).trim();
 
-  let attenuation_pct = parsePercent(row.attenuation);
-  if (attenuation_pct === undefined) return null;
+  let attenuation_cap_pct = parsePercent(row.attenuation);
+  if (attenuation_cap_pct === undefined) return null;
 
   // The scrape is the source of truth for tolerance; it stays a display string
   // ("12.0%", "High", …) because it is not uniformly numeric.
@@ -99,12 +99,13 @@ function convert(row, usedSlugs, vendorByStrain) {
   // range. The high end is the cap (A14); the low end is display data. A null
   // STA1 is "not published", modelled as d = 0 with an advisory in D5.
   const vendor = vendorFor(name, vendorByStrain);
-  if (vendor) attenuation_pct = vendor.attenuation_high_pct / 100;
+  if (vendor) attenuation_cap_pct = vendor.attenuation_high_pct / 100;
 
-  const component = { id, name, manufacturer, attenuation_pct };
+  const component = { id, name, manufacturer, attenuation_cap_pct };
   if (vendor) {
     component.attenuation_low_pct = vendor.attenuation_low_pct / 100;
     component.attenuation_high_pct = vendor.attenuation_high_pct / 100;
+    component.attenuation_cap_pct = component.attenuation_high_pct;
     component.attenuation_basis = vendor.attenuation_basis;
     component.sta1 = vendor.sta1;
     component.attenuation_provenance = {

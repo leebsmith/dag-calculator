@@ -203,7 +203,7 @@ RECORD = {
             "name": "SafAle US-05",
             "manufacturer": "Fermentis",
             "form": "Dry",
-            "attenuation_pct": 0.76,
+            "attenuation_cap_pct": 0.76,
             "temp_low_c": 15.0,
             "temp_high_c": 22.0,
             "flocculation": "Medium",
@@ -249,7 +249,7 @@ RECORD = {
             "name": "SafAle US-05",
             "manufacturer": "Fermentis",
             "form": "Dry",
-            "attenuation_pct": 0.76,
+            "attenuation_cap_pct": 0.76,
             "temp_low_c": 15.0,
             "temp_high_c": 22.0,
             "flocculation": "Medium",
@@ -408,7 +408,7 @@ PAYLOAD = FreezePayload(
         validation=ValidationBundle(
             relations=[{"id": "hlt_not_overfilled", "holds": True}],
             domains=[{"nodeId": "batch.target_abv", "bounded": True, "holds": True}],
-            field_domains=[{"nodeId": "batch.yeast", "field": "attenuation_pct", "holds": True}],
+            field_domains=[{"nodeId": "batch.yeast", "field": "attenuation_cap_pct", "holds": True}],
             collection_domains=[
                 {"nodeId": "mash.rests", "index": 0, "field": "use_temp_c", "holds": True}
             ],
@@ -1201,8 +1201,8 @@ PAYLOAD = FreezePayload(
                 options=["ale", "lager", "wild", "mixed"],
                 option_labels={"ale": "Ale", "lager": "Lager", "wild": "Wild", "mixed": "Mixed"},
             ),
-            "batch.yeast.attenuation_pct": NodePresentation(
-                label="Typical attenuation",
+            "batch.yeast.attenuation_cap_pct": NodePresentation(
+                label="Attenuation cap",
                 dimension="percentage",
                 unit="pct",
                 symbol="%",
@@ -1262,7 +1262,7 @@ PAYLOAD = FreezePayload(
         "batch.yeast.manufacturer": FormattedValue(text="Fermentis"),
         "batch.yeast.form": FormattedValue(text="Dry"),
         "batch.fermentation": FormattedValue(text="Ale"),
-        "batch.yeast.attenuation_pct": FormattedValue(text="76.0%", number="76.0", unit="%"),
+        "batch.yeast.attenuation_cap_pct": FormattedValue(text="76.0%", number="76.0", unit="%"),
         "batch.attenuation_derate_points": FormattedValue(text="3.0 pts", number="3.0", unit="pts"),
         "batch.yeast_cap": FormattedValue(text="73.0%", number="73.0", unit="%"),
         "batch.attenuation_above_cap": FormattedValue(

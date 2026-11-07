@@ -98,8 +98,8 @@
     },
     {
       "catalog": "yeast",
-      "component": { "name": "Y", "attenuation_pct": "0.5" },
-      "expected": ["attenuation_pct"]
+      "component": { "name": "Y", "attenuation_cap_pct": "0.5" },
+      "expected": ["attenuation_cap_pct"]
     },
     {
       "catalog": "water_report",

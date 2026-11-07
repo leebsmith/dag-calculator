@@ -205,17 +205,6 @@
               <span class="tabular-nums" x-text="fmt.formatPercent(attenuationBlend)"></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">Malt attenuation cap</span>
-              <span class="tabular-nums" x-text="fmt.formatPercent(attenuationCap)"></span>
-            </div>
-            <div class="extract-readout">
-              <span class="form-label">Sugar lift above cap</span>
-              <span
-                class="tabular-nums"
-                x-text="attenuationSugarLift > 0 ? '+' + fmt.formatPercent(attenuationSugarLift) : '—'"
-              ></span>
-            </div>
-            <div class="extract-readout">
               <span class="form-label">ABV</span>
               <span class="tabular-nums" x-text="fmt.formatPercentValue(styleTargetInfo?.abv)"></span>
             </div>
@@ -232,10 +221,9 @@
             </div>
           </div>
           <span class="form-hint">
-            The malt cap is the yeast limit on malt only. A fully fermentable sugar share is
-            uncapped, so the blend can exceed it.
+            Apparent attenuation is the realized outcome from the grain bill and the yeast
+            cap set in the Yeast step.
           </span>
-
         </div>
       </template>
 

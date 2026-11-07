@@ -143,7 +143,7 @@ test("setRoot invalidates dependents and recomputes", () => {
 test("an unset optional selection resolves to null (no throw)", () => {
   const engine = createCalculator(loadArtifact(), makeFixtures());
   assert.equal(engine.get("batch.yeast"), null);
-  assert.equal(engine.resolve("batch.yeast.attenuation_pct"), undefined);
+  assert.equal(engine.resolve("batch.yeast.attenuation_cap_pct"), undefined);
 });
 
 test("a non-empty but unknown selection id still throws", () => {

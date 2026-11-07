@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **775** (525 enumerable, 250 hidden)
+- Declared members: **802** (534 enumerable, 268 hidden)
 - Installers: **20**
 - Card partials: **19**
 - Installers reading another installer's key: **13 of 20**
@@ -20,9 +20,9 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 62 | 0 | 0 |
-| `yeast` | `frontend/src/adapters/cards/yeast.js` | 37 | 2 | 1 |
+| `yeast` | `frontend/src/adapters/cards/yeast.js` | 66 | 2 | 1 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 3 |
-| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 30 | 1 | 6 |
+| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 45 | 1 | 10 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 153 | 4 | 18 |

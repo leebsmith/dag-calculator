@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   materializeSelections,
   migrateAttenuationDerate,
+  migrateLegacyYeastCap,
   seedIdentityResiduals,
   seedSugarShareParts,
 } from "../../frontend/src/store/batchMigrations.js";
@@ -76,7 +77,7 @@ test("sugar parts are left alone when the intent, share or weights already exist
 });
 
 test("a legacy derate multiplier converts to points off the strain maximum", () => {
-  const engine = engineWith({ resolved: { "batch.yeast.attenuation_pct": 0.8 } });
+  const engine = engineWith({ resolved: { "batch.yeast.attenuation_cap_pct": 0.8 } });
   const roots = rootHandlers();
 
   assert.equal(migrateAttenuationDerate({ engine, ...roots }, 0.9), true);
@@ -84,7 +85,7 @@ test("a legacy derate multiplier converts to points off the strain maximum", () 
 });
 
 test("the derate conversion is clamped to the contract's 0-0.25 band", () => {
-  const engine = engineWith({ resolved: { "batch.yeast.attenuation_pct": 0.8 } });
+  const engine = engineWith({ resolved: { "batch.yeast.attenuation_cap_pct": 0.8 } });
 
   const above = rootHandlers();
   migrateAttenuationDerate({ engine, ...above }, -1);
@@ -96,7 +97,7 @@ test("the derate conversion is clamped to the contract's 0-0.25 band", () => {
 });
 
 test("a derate is not migrated twice or without a published attenuation", () => {
-  const engine = engineWith({ resolved: { "batch.yeast.attenuation_pct": 0.8 } });
+  const engine = engineWith({ resolved: { "batch.yeast.attenuation_cap_pct": 0.8 } });
 
   const existing = rootHandlers({ "batch.attenuation_derate_points": 0.05 });
   assert.equal(migrateAttenuationDerate({ engine, ...existing }, 0.9), false);
@@ -111,6 +112,34 @@ test("a derate is not migrated twice or without a published attenuation", () => 
   const notNumber = rootHandlers();
   assert.equal(migrateAttenuationDerate({ engine, ...notNumber }, "0.9"), false);
   assert.deepEqual(notNumber.writes, []);
+});
+
+test("a legacy yeast snapshot reads attenuation_pct as the cap", () => {
+  const fixture = selectionFixture({
+    snapshots: { "batch.yeast": { id: "y-1", attenuation_pct: 0.78 } },
+  });
+
+  assert.equal(migrateLegacyYeastCap({ session: fixture.session }), true);
+  assert.deepEqual(fixture.selections, [
+    {
+      id: "batch.yeast",
+      component: { id: "y-1", attenuation_pct: 0.78, attenuation_cap_pct: 0.78 },
+    },
+  ]);
+});
+
+test("the cap migration leaves a current snapshot and non-numeric values alone", () => {
+  const current = selectionFixture({
+    snapshots: { "batch.yeast": { id: "y-1", attenuation_cap_pct: 0.8 } },
+  });
+  assert.equal(migrateLegacyYeastCap({ session: current.session }), false);
+  assert.deepEqual(current.selections, []);
+
+  const notNumber = selectionFixture({
+    snapshots: { "batch.yeast": { id: "y-1", attenuation_pct: "0.78" } },
+  });
+  assert.equal(migrateLegacyYeastCap({ session: notNumber.session }), false);
+  assert.deepEqual(notNumber.selections, []);
 });
 
 test("identity residuals seed only the missing roots from a selection", () => {

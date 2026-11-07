@@ -121,8 +121,8 @@
   let hair = (top: 0.4pt + rgb("#c9c2b6"))
   let head = if with-derate {
     (
-      [Typical attenuation],
-      text-or("batch.yeast.attenuation_pct"),
+      [Attenuation cap],
+      text-or("batch.yeast.attenuation_cap_pct"),
       table.cell(stroke: sep)[Batch derate],
       table.cell(stroke: sep, "− " + text-or("batch.attenuation_derate_points")),
       [Malt attenuation cap],
@@ -130,8 +130,8 @@
     )
   } else {
     (
-      [Typical attenuation = cap],
-      text-or("batch.yeast.attenuation_pct"),
+      [Attenuation cap],
+      text-or("batch.yeast.attenuation_cap_pct"),
     )
   }
   let realized = (

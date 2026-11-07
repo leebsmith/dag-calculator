@@ -26,18 +26,17 @@
 
     <div class="modal-workspace-body">
       <div class="modal-workspace-main">
-        <div class="step-grid-2col">
+        <div class="yeast-filter-grid">
           <div class="form-group">
-            <label class="form-label" for="yeast-search">Search by name</label>
-            <input
-              id="yeast-search"
-              type="text"
-              class="form-input"
-              placeholder="e.g. American Ale"
-              x-model="yeastSearchQuery"
-            />
-            <span class="form-hint">Name-first match; ties are alphabetical</span>
-            <div class="filter-pills-container">
+            <label class="form-label" for="yeast-search">Search</label>
+            <div class="table-action-cell">
+              <input
+                id="yeast-search"
+                type="text"
+                class="form-input"
+                placeholder="e.g. American Ale"
+                x-model="yeastSearchQuery"
+              />
               <button
                 type="button"
                 class="filter-pill"
@@ -45,7 +44,7 @@
                 :aria-pressed="yeastSearchNotes ? 'true' : 'false'"
                 @click="toggleYeastSearchNotes()"
               >
-                Search notes
+                Notes
               </button>
             </div>
           </div>
@@ -57,56 +56,39 @@
                 <option :value="mfr" x-text="mfr"></option>
               </template>
             </select>
-            <span class="form-hint">Filter by yeast lab</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="yeast-attenuation">Attenuation</label>
+            <select id="yeast-attenuation" class="form-select" x-model="yeastAttenuationFilter">
+              <option value="">Any attenuation</option>
+              <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
+                <option :value="t.key" x-text="t.label"></option>
+              </template>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="yeast-sta1">STA1</label>
+            <select id="yeast-sta1" class="form-select" x-model="yeastDiastaticusFilter">
+              <option value="">Any STA1</option>
+              <template x-for="t in yeastDiastaticusTiers" :key="'d-' + t.key">
+                <option :value="t.key" x-text="t.label + ' · ' + t.count"></option>
+              </template>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="yeast-pof">POF</label>
+            <select id="yeast-pof" class="form-select" x-model="yeastPofFilter">
+              <option value="">Any POF</option>
+              <template x-for="t in yeastPofTiers" :key="'p-' + t.key">
+                <option :value="t.key" x-text="t.label + ' · ' + t.count"></option>
+              </template>
+            </select>
           </div>
         </div>
-
-        <div class="filter-pills-container">
-          <template x-for="t in yeastAttenuationTiers" :key="'a-' + t.key">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': yeastAttenuationFilter === t.key }"
-              :aria-pressed="yeastAttenuationFilter === t.key ? 'true' : 'false'"
-              @click="toggleYeastAttenuation(t.key)"
-              x-text="t.label"
-            ></button>
-          </template>
-        </div>
-
-        <!-- Diastaticus status (vendor STA1 QC) -->
-        <div class="filter-pills-container">
-          <template x-for="t in yeastDiastaticusTiers" :key="'d-' + t.key">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': yeastDiastaticusFilter === t.key }"
-              :aria-pressed="yeastDiastaticusFilter === t.key ? 'true' : 'false'"
-              @click="toggleYeastDiastaticus(t.key)"
-              x-text="t.label + ' · ' + t.count"
-            ></button>
-          </template>
-        </div>
         <p class="form-hint">
-          STA1 is the vendor's diastaticus marker. A strain with no published result
-          is modelled as non-diastaticus (d = 0).
-        </p>
-
-        <div class="filter-pills-container">
-          <template x-for="t in yeastPofTiers" :key="'p-' + t.key">
-            <button
-              type="button"
-              class="filter-pill"
-              :class="{ 'is-active': yeastPofFilter === t.key }"
-              :aria-pressed="yeastPofFilter === t.key ? 'true' : 'false'"
-              @click="toggleYeastPof(t.key)"
-              x-text="t.label + ' · ' + t.count"
-            ></button>
-          </template>
-        </div>
-        <p class="form-hint">
-          POF is the phenolic off-flavour phenotype. Unknown means no vendor result
-          is recorded; it is not an assertion either way.
+          STA1 is the vendor's diastaticus marker; an unpublished result is modelled as
+          non-diastaticus (d = 0). POF is the phenolic off-flavour phenotype, unrelated to
+          attenuation; unknown means no vendor result is recorded.
         </p>
 
         <div class="catalog-result-counter" aria-live="polite" x-text="yeastResultLabel"></div>
@@ -114,20 +96,18 @@
         <div class="data-table-container data-table-container-scroll">
           <table class="data-table is-fixed">
             <colgroup>
-              <col style="width: 26%;" />
+              <col style="width: 40%;" />
               <col style="width: 16%;" />
-              <col style="width: 14%;" />
               <col style="width: 16%;" />
-              <col style="width: 14%;" />
-              <col style="width: 14%;" />
+              <col style="width: 16%;" />
+              <col style="width: 12%;" />
             </colgroup>
             <thead>
               <tr>
                 <th>Strain</th>
                 <th>Manufacturer</th>
                 <th class="text-right">Attenuation</th>
-                <th>Flocculation</th>
-                <th class="text-right">Alcohol tolerance</th>
+                <th>Temp</th>
                 <th class="text-right">Action</th>
               </tr>
             </thead>
@@ -135,15 +115,38 @@
               <template x-for="y in visibleYeasts" :key="y.id">
                 <tr :class="{ 'is-selected': selectedYeastId === y.id }">
                   <td>
-                    <span class="font-medium" x-text="y.name"></span>
-                    <template x-if="isUserItem(y.id)">
-                      <span class="status-badge status-badge-info text-nano">mine</span>
-                    </template>
+                    <div class="yeast-row-badges">
+                      <span class="font-medium" x-text="y.name"></span>
+                      <template x-if="isUserItem(y.id)">
+                        <span class="status-badge status-badge-info text-nano">mine</span>
+                      </template>
+                      <span
+                        class="status-badge status-badge-info text-nano"
+                        x-text="yeastSta1(y)"
+                      ></span>
+                      <template x-if="yeastPof(y)">
+                        <span
+                          class="status-badge status-badge-info text-nano"
+                          x-text="yeastPof(y)"
+                        ></span>
+                      </template>
+                    </div>
+                    <details
+                      class="yeast-row-details"
+                      x-show="y.flocculation || y.alcohol_tolerance"
+                    >
+                      <summary>details</summary>
+                      <span x-show="y.flocculation">
+                        Flocculation: <span x-text="y.flocculation"></span>
+                      </span>
+                      <span x-show="y.alcohol_tolerance">
+                        Tolerance: <span x-text="y.alcohol_tolerance"></span>
+                      </span>
+                    </details>
                   </td>
                   <td x-text="y.manufacturer"></td>
-                  <td class="text-right tabular-nums" x-text="yeastAttenuation(y)"></td>
-                  <td x-text="y.flocculation"></td>
-                  <td class="text-right tabular-nums" x-text="y.alcohol_tolerance"></td>
+                  <td class="text-right tabular-nums" x-text="yeastPublished(y)"></td>
+                  <td x-text="yeastTemperature(y)"></td>
                   <td class="table-action-cell">
                     <button
                       type="button"
@@ -158,7 +161,7 @@
               </template>
               <template x-if="filteredYeasts.length === 0">
                 <tr>
-                  <td colspan="6" class="table-empty-cell">No yeast strains match the current filters.</td>
+                  <td colspan="5" class="table-empty-cell">No yeast strains match the current filters.</td>
                 </tr>
               </template>
             </tbody>

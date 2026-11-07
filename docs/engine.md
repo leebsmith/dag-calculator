@@ -304,7 +304,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
 | `batch.attenuation_derate_points` | — | per-batch root | points subtracted from the strain limit; starts at 0 |
 
-`batch.yeast_cap = max(0, batch.yeast.attenuation_pct − batch.attenuation_derate_points)`.
+`batch.yeast_cap = max(0, batch.yeast.attenuation_cap_pct − batch.attenuation_derate_points)`.
 The batch solver treats the grain-bill fermentability values as **real** shares
 of extract, converts the apparent cap to real space at each candidate `OE`,
 clamps the malt (late-addition sugar keeps `F = 1.0` and is never clamped),

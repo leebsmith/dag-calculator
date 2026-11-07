@@ -75,7 +75,7 @@ test("a record authored here is what the import reads and the gate resolves", as
   await app.library.refresh();
   const record = await app.library.create("yeast", {
     name: "Saison blend",
-    attenuation_pct: 0.82,
+    attenuation_cap_pct: 0.82,
   });
   await app.refreshLibraryItems();
 
@@ -198,7 +198,7 @@ test("a library mutation replaces the catalogue the live engine resolves against
   const app = createTestApp({ libraryClient: makeClient() });
   const record = await app.library.create("yeast", {
     name: "Saison blend",
-    attenuation_pct: 0.82,
+    attenuation_cap_pct: 0.82,
   });
   app.clearYeastSelection();
   app.engine.setRoot("batch.yeast_id", record.id);

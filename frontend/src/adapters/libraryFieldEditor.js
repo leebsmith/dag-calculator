@@ -3,6 +3,7 @@
 import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { formatWithDecimals } from "../utils.js";
+import { attenuationRangeOf } from "./libraryFields.js";
 
 function specFor(getView, field) {
   return getView().libraryFields.find((spec) => spec.field === field) ?? null;
@@ -64,12 +65,18 @@ export function createLibraryFieldEditor({ artifact, engine, getView }) {
     },
 
     librarySetField(field, value) {
+      const view = getView();
       const spec = specFor(getView, field);
-      const next = { ...getView().libraryDraft };
+      if (field === "attenuation_cap_pct" && attenuationRangeOf(view.libraryDraft)) return;
+      const next = { ...view.libraryDraft };
       const resolved = nextValue({ artifact, nl, getView, field, spec, value });
       if (resolved === undefined) delete next[field];
       else next[field] = resolved;
-      getView().libraryDraft = next;
+      if (field === "attenuation_low_pct" || field === "attenuation_high_pct") {
+        const range = attenuationRangeOf(next);
+        if (range) next.attenuation_cap_pct = range.high;
+      }
+      view.libraryDraft = next;
     },
   };
 }

@@ -27,7 +27,7 @@ const CATALOG = {
     "h-citra": { id: "h-citra", name: "Citra", alpha_acid_pct: 0.12, product_form: "t90_pellet" },
     "h-amarillo": { id: "h-amarillo", name: "Amarillo", alpha_acid_pct: 0.09 },
   },
-  yeast: { "y-1098": { id: "y-1098", name: "British Ale", attenuation_pct: 0.74 } },
+  yeast: { "y-1098": { id: "y-1098", name: "British Ale", attenuation_cap_pct: 0.74 } },
   sugar: {},
 };
 
@@ -122,7 +122,7 @@ test("the carrier line is the one selection, whether it is a strain or a blend",
   const ledger = mapped();
   const catalogWithBlend = (kind, id) =>
     id === "blend-1"
-      ? { id, name: "Blend: saison + brett", attenuation_pct: 0.78 }
+      ? { id, name: "Blend: saison + brett", attenuation_cap_pct: 0.78 }
       : catalog(kind, id);
   const blendRow = { ...ledger.find((row) => row.section === "yeasts") };
   blendRow.ref = "blend-1";
@@ -135,7 +135,7 @@ test("the carrier line is the one selection, whether it is a strain or a blend",
   });
   assert.equal(state.roots["batch.yeast_id"], "blend-1");
   assert.equal(state.selections["batch.yeast"].name, "Blend: saison + brett");
-  assert.equal(state.selections["batch.yeast"].attenuation_pct, 0.78);
+  assert.equal(state.selections["batch.yeast"].attenuation_cap_pct, 0.78);
   assert.equal("batch.yeasts" in state.collections, false, "a blend is a record, not a collection");
 });
 

@@ -3,7 +3,7 @@
 
 import { CATALOGS, schemaFor } from "../store/userCatalog.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
-import { unitSymbol } from "../utils.js";
+import { formatPercent, unitSymbol } from "../utils.js";
 
 const CAPTURE_FIELDS = new Set(["yield_basis"]);
 const FIELD_LABELS = {
@@ -83,15 +83,31 @@ function taxonomyField(field, label, spec, artifact) {
   };
 }
 
+export function attenuationRangeOf(draft) {
+  const low = draft?.attenuation_low_pct;
+  const high = draft?.attenuation_high_pct;
+  return typeof low === "number" && typeof high === "number" ? { low, high } : null;
+}
+
 function fieldModel(field, spec, { artifact, cache, view }) {
   const label = FIELD_LABELS[field] ?? field;
-  if (spec.type === "list") return listField(field, label, spec, view);
-  if (spec.format === "date") return { field, label, kind: "date" };
-  if (spec.reference) return referenceField(field, label, spec, cache);
-  if (spec.taxonomy) return taxonomyField(field, label, spec, artifact);
-  if (spec.type === "boolean") return { field, label, kind: "boolean" };
-  if (!spec.dimension) return { field, label, kind: "text" };
-  return numberField(field, spec, view.unitMode);
+  let model;
+  if (spec.type === "list") model = listField(field, label, spec, view);
+  else if (spec.format === "date") model = { field, label, kind: "date" };
+  else if (spec.reference) model = referenceField(field, label, spec, cache);
+  else if (spec.taxonomy) model = taxonomyField(field, label, spec, artifact);
+  else if (spec.type === "boolean") model = { field, label, kind: "boolean" };
+  else if (!spec.dimension) model = { field, label, kind: "text" };
+  else model = numberField(field, spec, view.unitMode);
+
+  if (field === "attenuation_cap_pct") {
+    const range = attenuationRangeOf(view.libraryDraft);
+    if (range) {
+      model.readOnly = true;
+      model.hint = `Cap follows the published high (${formatPercent(range.high, 0)})`;
+    }
+  }
+  return model;
 }
 
 export function createLibraryFields({ artifact, cache, getView }) {

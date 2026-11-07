@@ -49,11 +49,11 @@ export function diastaticusTier(yeast) {
 }
 
 export function attenuationLabel(yeast) {
-  return yeast ? `${percentText(yeast.attenuation_pct)}%` : "";
+  return yeast ? `${percentText(yeast.attenuation_cap_pct)}%` : "";
 }
 
 // The vendor's published band, when it published one; the cap basis is the
-// point (`attenuation_pct`), so this is detail rather than the row's figure.
+// point (`attenuation_cap_pct`), so this is detail rather than the row's figure.
 export function attenuationBandLabel(yeast) {
   const low = yeast?.attenuation_low_pct;
   const high = yeast?.attenuation_high_pct;

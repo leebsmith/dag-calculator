@@ -321,15 +321,19 @@
               </select>
             </template>
             <template x-if="f.kind === 'number'">
-              <input
-                type="number"
-                step="any"
-                class="form-input text-xs"
-                :id="'library-field-' + f.field"
-                :value="libraryFieldDisplay(f.field)"
-                @input="librarySetField(f.field, $event.target.value)"
-                @change="libraryCommitField(f.field)"
-              />
+              <div>
+                <input
+                  type="number"
+                  step="any"
+                  class="form-input text-xs"
+                  :id="'library-field-' + f.field"
+                  :value="libraryFieldDisplay(f.field)"
+                  :readonly="f.readOnly"
+                  @input="librarySetField(f.field, $event.target.value)"
+                  @change="libraryCommitField(f.field)"
+                />
+                <p class="form-hint" x-show="f.hint" x-text="f.hint"></p>
+              </div>
             </template>
             <template x-if="f.kind === 'boolean'">
               <select

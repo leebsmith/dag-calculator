@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import { createTestApp, sharedTestApp, TEST_YEAST_ID } from "./appHelpers.js";
 import { createStepApp } from "../../frontend/src/adapters/stepAdapter.js";
@@ -285,16 +286,19 @@ test("a new batch seeds the style ABV midpoint and leaves it free", async () => 
   assert.equal(app.styleAbvTouched, false);
 });
 
-test("the style card exposes the blend AA, malt cap, and sugar lift", async () => {
+test("the style card keeps the blend AA and no longer duplicates the cap or lift", async () => {
   const app = await appWithStyle("21A");
   assert.equal(app.attenuationBlend, app.styleSolvedAa);
-  assert.equal(app.attenuationCap, app.styleSolvedCap);
-  // The lift is the artifact node, null while the blend sits at or below the cap.
-  assert.equal(
-    app.attenuationSugarLift,
-    app.engine.resolve("batch.attenuation_above_cap") ?? null
+  assert.equal("attenuationCap" in app, false);
+  assert.equal("attenuationSugarLift" in app, false);
+
+  const html = readFileSync(
+    new URL("../../frontend/src/partials/step-style.html", import.meta.url),
+    "utf8"
   );
-  assert.equal(app.attenuationSugarLift, null);
+  assert.equal(html.includes("Malt attenuation cap"), false);
+  assert.equal(html.includes("Sugar lift above cap"), false);
+  assert.ok(html.includes("Apparent attenuation"));
 });
 
 test("the batch Target ABV is a read-only readout", async () => {

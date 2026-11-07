@@ -83,7 +83,7 @@ export const generatedRegistry = {
   "batch.whirlpool_start_temp_c": {"label":"Start temp"},
   "batch.whirlpool_target_ibu": {"label":"Whirlpool IBU"},
   "batch.yeast.alcohol_tolerance": {"label":"Alcohol tolerance"},
-  "batch.yeast.attenuation_pct": {"label":"Typical attenuation"},
+  "batch.yeast.attenuation_cap_pct": {"label":"Attenuation cap"},
   "batch.yeast.flocculation": {"label":"Flocculation"},
   "batch.yeast.pof": {"label":"POF","hint":"Phenolic off-flavour status. Unknown when no vendor result is recorded.","optionLabels":{"unknown":"Unknown","positive":"Positive","negative":"Negative"}},
   "batch.yeast_cap": {"label":"Malt attenuation cap","hint":"Strain attenuation × batch derate, apparent. The solver converts it to real attenuation at each candidate OE and clamps malt fermentability only; sugar is never capped."},

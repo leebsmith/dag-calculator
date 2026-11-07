@@ -37,7 +37,7 @@ export function yeastReadouts() {
     get blendRecordAttenuationPct() {
       const blend = this.blendOutcome;
       const record = blend ? this.catalogRecord("yeast", blend.ref) : null;
-      const value = record?.attenuation_pct;
+      const value = record?.attenuation_cap_pct;
       return typeof value === "number" ? Math.round(value * 1000) / 10 : null;
     },
 

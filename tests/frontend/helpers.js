@@ -142,7 +142,7 @@ export const YEAST = {
   id: "test-yeast",
   name: "Test Yeast",
   manufacturer: "Test",
-  attenuation_pct: 0.75,
+  attenuation_cap_pct: 0.75,
   flocculation: "Medium",
   alcohol_tolerance: "10%",
   form: "Dry",

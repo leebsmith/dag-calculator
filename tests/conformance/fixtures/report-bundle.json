@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 10,
-    "hash": "sha256:aa7d7e57fa8098b38f1af0f0e5699a5f734ccea89ce320cdaaf2c8efdbfc252c",
+    "hash": "sha256:2558598358280ff9bcf4a35d2f6ef05c2e26c6581d2ed7691c92b80c2cc8142b",
     "content": {
       "schema_version": 10,
       "meta": {
@@ -1498,7 +1498,7 @@
           "id": {},
           "name": {},
           "manufacturer": {},
-          "attenuation_pct": {
+          "attenuation_cap_pct": {
             "dimension": "percentage",
             "domain": {
               "gte": 0,
@@ -2754,7 +2754,7 @@
           "kind": "derived",
           "inputs": {
             "selector": "batch.yeast_id",
-            "aa": "batch.yeast.attenuation_pct",
+            "aa": "batch.yeast.attenuation_cap_pct",
             "points": "batch.attenuation_derate_points"
           },
           "expr": {
@@ -8105,8 +8105,8 @@
           "mixed": "Mixed"
         }
       },
-      "batch.yeast.attenuation_pct": {
-        "label": "Typical attenuation",
+      "batch.yeast.attenuation_cap_pct": {
+        "label": "Attenuation cap",
         "dimension": "percentage",
         "unit": "pct",
         "symbol": "%",
@@ -8234,7 +8234,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:e9104b34d9ef82ce3fcfa64f6cc77e9b866123ca5edd5f2b704a10a1729c64b6"
+    "hash": "sha256:888936888430784b4a0c2e8ece26adddb5dee8629385c63ab743f019da89b7f4"
   },
   "batch": {
     "id": "frozen-1",
@@ -8299,7 +8299,7 @@
         "name": "SafAle US-05",
         "manufacturer": "Fermentis",
         "form": "Dry",
-        "attenuation_pct": 0.76,
+        "attenuation_cap_pct": 0.76,
         "temp_low_c": 15.0,
         "temp_high_c": 22.0,
         "flocculation": "Medium",
@@ -8673,7 +8673,7 @@
         "name": "SafAle US-05",
         "manufacturer": "Fermentis",
         "form": "Dry",
-        "attenuation_pct": 0.76,
+        "attenuation_cap_pct": 0.76,
         "temp_low_c": 15.0,
         "temp_high_c": 22.0,
         "flocculation": "Medium",
@@ -8732,7 +8732,7 @@
       "number": null,
       "unit": null
     },
-    "batch.yeast.attenuation_pct": {
+    "batch.yeast.attenuation_cap_pct": {
       "text": "76.0%",
       "number": "76.0",
       "unit": "%"
@@ -10129,7 +10129,7 @@
     "field_domains": [
       {
         "nodeId": "batch.yeast",
-        "field": "attenuation_pct",
+        "field": "attenuation_cap_pct",
         "holds": true
       }
     ],
@@ -10186,5 +10186,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:282787613cc935b43b125049853cda1280c0a43c837a3c75c4c23acfaa304a05"
+  "content_hash": "sha256:9dd42b9f67523742c01ab65500e72459e3465f2484221c567f182092469d94a8"
 }

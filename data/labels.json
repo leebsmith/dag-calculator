@@ -294,8 +294,8 @@
   "batch.yeast.alcohol_tolerance": {
     "label": "Alcohol tolerance"
   },
-  "batch.yeast.attenuation_pct": {
-    "label": "Typical attenuation"
+  "batch.yeast.attenuation_cap_pct": {
+    "label": "Attenuation cap"
   },
   "batch.yeast.flocculation": {
     "label": "Flocculation"

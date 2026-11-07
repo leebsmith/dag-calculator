@@ -169,47 +169,48 @@ extract is at or below zero (a diastaticus fermentation), the field displays
 `≤ 1.000` / `≤ 0.0` rather than a sub-gravity number. The stored value is
 unchanged; the conformance layer still sees the computed gravity.
 
-### Attenuation cap readout
+### Attenuation readouts
 
-The Style card shows three related figures:
+The Style card shows the realized **Apparent attenuation** only. The cap,
+derate and above-cap diagnosis belong to the Yeast card, so the Style card does
+not duplicate them.
 
-- **Apparent attenuation** — the solved blend AA;
-- **Malt attenuation cap** — the selected yeast's apparent cap after derate;
-- **Sugar lift above cap** — `max(0, blend AA − malt cap)`.
-
-The cap applies to malt only. A fully fermentable sugar share is uncapped, so
-the blend can exceed the cap. A 77 % malt cap with a 0.5 lb dextrose addition
-can report 79.6 % blend AA: the +2.6 points is the sugar, not a solver error.
-
-The delta is the artifact value `batch.attenuation_above_cap` — `max(0, blend
-AA − malt cap)`, null when the cap holds, so a readout can drop the figure
-instead of printing `+0.0`. The report prints it as **Above malt cap**; the
-node is deliberately neutral about the cause, which can be sugar extract or
+The artifact still carries `batch.attenuation_above_cap` — `max(0, blend AA −
+malt cap)`, null when the cap holds. The report prints it as **Above malt cap**;
+the node is deliberately neutral about the cause, which can be sugar extract or
 dextrin consumption by a diastaticus strain.
 
-### Yeast strain and attenuation cap
+### Yeast strain and batch attenuation
 
-The Yeast card is one row, not a summary panel plus a permanently open chooser.
-The row carries the strain (with its STA1 marker), manufacturer, published
-attenuation point, the solved cap, the editable batch derate, flocculation,
-alcohol tolerance and the published temperature band. The cap is `batch.yeast_cap`
-— the published point less the derate — and is blank without a strain.
+The Yeast card has three layers. The selected strain carries its name,
+manufacturer, form, flocculation, temperature band and `mine`/STA1/POF badges,
+plus the published attenuation band; **Change yeast…** opens the picker. The
+batch attenuation panel carries the solved target cap `batch.yeast_cap`, the
+published band, the realized apparent attenuation, the binding constraint, and
+the above-cap row with its inferred cause. A collapsible **Strain details**
+holds form, flocculation, tolerance, temperature, recipes, source and notes, and
+a second disclosure explains the attenuation model.
 
-`batch.attenuation_derate_points` is the one editable cell: points off the
-strain's published maximum, committed on change, never guessed from the mash or
-the grist. The vendor percentages (attenuation and its published band) and the
-derate stay in percent and points; only the solved cap follows the percentage
-unit menu. The row's "Why derate?" disclosure carries the guidance. A second
-disclosure holds the strain detail that does not earn a column: the published
-band (when the vendor publishes one), form, recipes, source, and notes.
+`batch.attenuation_derate_points` is the one editable attenuation control:
+points off the strain's published maximum, committed on change, never guessed
+from the mash or the grist. The vendor percentages (attenuation and its
+published band) and the derate stay in percent and points; only the solved cap
+follows the percentage unit menu. A ranged strain gets **Set attenuation…**,
+which opens a range slider and writes the same derate root; the control appears
+only when both published endpoints exist and `attenuation_cap_pct` equals
+`attenuation_high_pct`. A point-only strain keeps the numeric derate input.
 
-The picker is a modal, opened from the row. It owns the catalog: name search
-(with the notes toggle), manufacturer, attenuation tiers and the tri-state STA1
-tiers. Filters reset when it opens, so a narrowing from the last visit cannot
-hide the catalog; the list shows 50 rows and the counter reports the truncation.
-`Use` writes `batch.yeast_id`, snapshots the selection and closes the modal;
-cloning starts in the Library, not the picker. Clearing the selection empties
-the row and the cap.
+The picker is a modal, opened from the card. It owns the catalog: one compact
+filter strip with name search (and the notes toggle), manufacturer, attenuation
+tier, tri-state STA1 tier and POF tier. Filters reset when it opens, so a
+narrowing from the last visit cannot hide the catalog; the list shows 50 rows
+and the counter reports the truncation. Rows show the name with `mine`, STA1
+and asserted POF badges, manufacturer, published attenuation (point or band),
+temperature and `Use`; flocculation and tolerance sit under the row's optional
+details. `Use` writes `batch.yeast_id`, snapshots the selection and closes the
+modal; cloning starts in the Library, not the picker. Clearing the selection
+empties the row and the cap, and `attenuation_cap_pct` falls back to a legacy
+snapshot's old key rather than losing the figure.
 
 ### Late-addition intent
 

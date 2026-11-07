@@ -1,30 +1,22 @@
-// Yeast selection card: catalog picker with name / manufacturer / attenuation
-// tier filters. Not a draft editor, so it does not use the catalog/draft helper.
+// Yeast selection card: strain picker plus the batch attenuation control.
 
-import { filterCatalog } from "../../views/catalog.js";
 import { displayValue, nonlinearFns } from "../../views/producer.js";
-import { YEAST_NODES as N } from "../../views/registry/yeast.js";
-import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../views/registry/units.js";
-import { toggleFilter, unitSymbol } from "../../utils.js";
 import {
   attenuationBandLabel,
   attenuationLabel,
-  attenuationTier,
-  diastaticusTier,
-  diastaticusTiers,
-  isYeastListTruncated,
   percentText,
   pofLabel,
-  pofTier,
-  pofTiers,
   sta1Label,
   temperatureRangeLabel,
-  YEAST_ATTENUATION_TIERS,
-  YEAST_ROW_LIMIT,
-  yeastResultLabel,
 } from "../../views/producer/yeastRows.js";
+import { YEAST_NODES as N } from "../../views/registry/yeast.js";
+import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../views/registry/units.js";
+import { toggleFilter, unitSymbol } from "../../utils.js";
+import { createYeastAttenuationDescriptors } from "./yeastAttenuation.js";
+import { createYeastPickerDescriptors } from "./yeastPicker.js";
 
-function yeastActions({ getView }) {
+function yeastActions({ artifact, engine, getView }) {
+  const nl = nonlinearFns(artifact, engine);
   return {
     selectedYeastId: "",
     yeastSearchQuery: "",
@@ -35,9 +27,33 @@ function yeastActions({ getView }) {
     yeastPofFilter: "",
     yeastPickerOpen: false,
     selectedYeastSnapshot: null,
+    attenuationEditorOpen: false,
+    attenuationDraft: null,
 
     yeastAttenuation(y) {
       return attenuationLabel(y);
+    },
+
+    yeastPublished(y) {
+      return attenuationBandLabel(y) || attenuationLabel(y);
+    },
+
+    yeastSta1(y) {
+      return sta1Label(y);
+    },
+
+    yeastPof(y) {
+      return pofLabel(y);
+    },
+
+    yeastTemperature(y) {
+      const view = getView();
+      const unitId = masterUnit(view.unitMode, "temperature") ?? "degC";
+      return temperatureRangeLabel(y, {
+        toDisplay: (value) => displayValue(artifact, "temperature", unitId, value, nl),
+        symbol: unitSymbol(UNIT_SYMBOLS, "temperature", unitId),
+        decimals: unitDecimals("temperature", unitId) ?? 1,
+      });
     },
 
     // The picker opens on a clean slate: a narrowing left from the last visit
@@ -126,145 +142,45 @@ function yeastActions({ getView }) {
     yeastField(id) {
       return (getView().fieldsBySlice.yeast ?? []).find((f) => f.id === id) ?? {};
     },
-  };
-}
 
-function catalogDescriptors({ cache, getView }) {
-  return {
-    yeastCatalog: {
-      configurable: true,
-      get() {
-        void getView().catalogRevision;
-        return Object.values(cache.references.yeast ?? {});
-      },
+    fieldValue(id) {
+      return getView().fieldsById?.[id]?.value;
     },
-    yeastManufacturers: {
-      configurable: true,
-      get() {
-        return [...new Set(getView().yeastCatalog.map((y) => y.manufacturer).filter(Boolean))].sort();
-      },
-    },
-    yeastAttenuationTiers: {
-      configurable: true,
-      get() {
-        return YEAST_ATTENUATION_TIERS;
-      },
-    },
-    yeastDiastaticusTiers: {
-      configurable: true,
-      get() {
-        return diastaticusTiers(getView().yeastCatalog);
-      },
-    },
-    yeastPofTiers: {
-      configurable: true,
-      get() {
-        return pofTiers(getView().yeastCatalog);
-      },
-    },
-    filteredYeasts: {
-      configurable: true,
-      get() {
-        const view = getView();
-        const m = view.yeastManufacturerFilter;
-        const t = view.yeastAttenuationFilter;
-        const d = view.yeastDiastaticusFilter;
-        const p = view.yeastPofFilter;
-        const items = view.yeastCatalog.filter(
-          (y) =>
-            (!m || y.manufacturer === m) &&
-            (!t || attenuationTier(y.attenuation_pct) === t) &&
-            (!d || diastaticusTier(y) === d) &&
-            (!p || pofTier(y) === p)
-        );
-        return filterCatalog(items, {
-          query: view.yeastSearchQuery,
-          searchFields: ["name", "notes"],
-          includeNotes: view.yeastSearchNotes,
-        });
-      },
-    },
-    visibleYeasts: {
-      configurable: true,
-      get() {
-        return getView().filteredYeasts.slice(0, YEAST_ROW_LIMIT);
-      },
-    },
-    yeastResultCount: {
-      configurable: true,
-      get() {
-        return getView().filteredYeasts.length;
-      },
-    },
-    isYeastListTruncated: {
-      configurable: true,
-      get() {
-        return isYeastListTruncated(getView().yeastResultCount);
-      },
-    },
-    yeastResultLabel: {
-      configurable: true,
-      get() {
-        const view = getView();
-        return yeastResultLabel(
-          view.visibleYeasts.length,
-          view.yeastResultCount,
-          view.isYeastListTruncated
-        );
-      },
-    },
-  };
-}
 
-function selectionDescriptors({ cache, artifact, nl, getView }) {
-  return {
-    selectedYeast: {
-      configurable: true,
-      get() {
-        const id = getView().selectedYeastId;
-        if (!id) return null;
-        const live = cache.references.yeast[id] ?? null;
-        if (live) return live;
-        return getView().selectedYeastSnapshot ?? null;
-      },
+    openAttenuationEditor() {
+      const view = getView();
+      if (!view.attenuationRangeValid) return;
+      view.attenuationDraft = view.attenuationTargetPercent;
+      view.attenuationEditorOpen = true;
     },
-    selectedYeastTemp: {
-      configurable: true,
-      get() {
-        const view = getView();
-        const unitId = masterUnit(view.unitMode, "temperature") ?? "degC";
-        return temperatureRangeLabel(view.selectedYeast, {
-          toDisplay: (value) => displayValue(artifact, "temperature", unitId, value, nl),
-          symbol: unitSymbol(UNIT_SYMBOLS, "temperature", unitId),
-          decimals: unitDecimals("temperature", unitId) ?? 1,
-        });
-      },
+
+    closeAttenuationEditor() {
+      getView().attenuationEditorOpen = false;
+      getView().attenuationDraft = null;
     },
-    // The derate is percentage points, not a fraction: the input must not follow
-    // the percentage menu (a `fraction` pick would show 0.04 beside step 0.5).
-    yeastDerateDisplay: {
-      configurable: true,
-      get() {
-        return percentText(getView().yeastField(N.derate).value ?? 0);
-      },
+
+    setAttenuationDraft(raw) {
+      const view = getView();
+      const value = Number(raw);
+      if (!Number.isFinite(value)) return;
+      view.attenuationDraft = Math.min(
+        view.attenuationTargetMax,
+        Math.max(view.attenuationTargetMin, value)
+      );
     },
-    selectedYeastBand: {
-      configurable: true,
-      get() {
-        return attenuationBandLabel(getView().selectedYeast);
-      },
-    },
-    selectedYeastSta1: {
-      configurable: true,
-      get() {
-        return sta1Label(getView().selectedYeast);
-      },
-    },
-    selectedYeastPof: {
-      configurable: true,
-      get() {
-        return pofLabel(getView().selectedYeast);
-      },
+
+    useAttenuationDraft() {
+      const view = getView();
+      const yeast = view.selectedYeast;
+      const high = yeast?.attenuation_high_pct;
+      const low = yeast?.attenuation_low_pct;
+      const target = Number(view.attenuationDraft);
+      if (!Number.isFinite(target) || typeof high !== "number" || typeof low !== "number") return;
+      const fraction = Math.min(high, Math.max(low, target / 100));
+      view.setRoot(N.derate, high - fraction);
+      view.closeAttenuationEditor();
+      view.scheduleSolve();
+      view.notify();
     },
   };
 }
@@ -274,13 +190,8 @@ export function createYeastCard(ctx) {
   const nl = nonlinearFns(artifact, engine);
   const actions = yeastActions(ctx);
   Object.defineProperties(actions, {
-    ...catalogDescriptors({ cache, getView }),
-    ...selectionDescriptors({
-      cache,
-      artifact,
-      nl,
-      getView,
-    }),
+    ...createYeastPickerDescriptors({ cache, getView }),
+    ...createYeastAttenuationDescriptors({ cache, artifact, nl, getView }),
   });
   return actions;
 }
@@ -294,4 +205,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastSnapshot = ctx.engine.get(N.selectionNode) ?? null;
 }
 
-export const KEYS = ["selectedYeastId", "selectedYeastSnapshot", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastPofFilter", "yeastAttenuation", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleYeastPof", "commitYeastDerate", "yeastField", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "yeastPofTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastTemp", "selectedYeastBand", "selectedYeastSta1", "selectedYeastPof", "yeastDerateDisplay"];
+export const KEYS = ["selectedYeastId", "selectedYeastSnapshot", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastPofFilter", "yeastAttenuation", "yeastPublished", "yeastSta1", "yeastPof", "yeastTemperature", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleYeastPof", "commitYeastDerate", "yeastField", "fieldValue", "attenuationEditorOpen", "attenuationDraft", "openAttenuationEditor", "closeAttenuationEditor", "setAttenuationDraft", "useAttenuationDraft", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "yeastPofTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastPublished", "selectedYeastMeta", "selectedYeastTemp", "selectedYeastBand", "selectedYeastSta1", "selectedYeastPof", "attenuationRange", "attenuationTargetMin", "attenuationTargetMax", "attenuationTargetPercent", "attenuationDraftPercent", "attenuationDraftLabel", "attenuationDerateDraft", "attenuationRangeValid", "attenuationUseLabel", "attenuationCapValue", "attenuationRealizedValue", "attenuationGristValue", "attenuationAboveCap", "attenuationAboveCapLabel", "attenuationAboveCapCause", "attenuationBinding", "yeastDerateDisplay"];

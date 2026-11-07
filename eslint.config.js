@@ -115,6 +115,8 @@ const SURFACE_DECLARERS = [
   "adapters/cards/style/targets.js",
   "adapters/cards/water.js",
   "adapters/cards/yeast.js",
+  "adapters/cards/yeastAttenuation.js",
+  "adapters/cards/yeastPicker.js",
   "adapters/draftEditor.js",
   "adapters/fieldActions.js",
   "adapters/libraryUi.js",

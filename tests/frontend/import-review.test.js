@@ -1020,7 +1020,7 @@ test("a multi-strain recipe proposes blends, and one pick documents the componen
     id: "blend-1",
     name: "Blend: Saison + Brett",
     blend_of: "clean saison strain, Brettanomyces culture",
-    attenuation_pct: 0.78,
+    attenuation_cap_pct: 0.78,
   });
   catalog.set("yeast", { id: "strain-x", name: "clean saison strain" });
 
@@ -1060,13 +1060,13 @@ test("changing the blend is one click, and a component carries no controls", () 
     id: "blend-1",
     name: "Blend: Saison + Brett",
     blend_of: "clean saison strain, Brettanomyces culture",
-    attenuation_pct: 0.78,
+    attenuation_cap_pct: 0.78,
   });
   catalog.set("yeast", {
     id: "blend-2",
     name: "Blend: Brett forward",
     blend_of: "clean saison strain, Brettanomyces culture",
-    attenuation_pct: 0.82,
+    attenuation_cap_pct: 0.82,
   });
 
   const first = store.blendCandidates().find((chip) => chip.id === "blend-1");

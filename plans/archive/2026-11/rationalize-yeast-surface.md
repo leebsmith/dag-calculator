@@ -40,7 +40,7 @@ The Style card duplicates the cap and “Sugar lift above cap,” and the latter
 
 ### 1.1 Rename the strain cap key
 
-- Rename `batch.yeast.attenuation_pct` to `batch.yeast.attenuation_cap_pct` in the artifact yeast schema, seed builder, labels, report paths, tests, fixtures, and generated inventory/glossary.
+- Rename the old strain cap key to `batch.yeast.attenuation_cap_pct` in the artifact yeast schema, seed builder, labels, report paths, tests, fixtures, and generated inventory/glossary.
 - Keep `attenuation_low_pct` and `attenuation_high_pct` as display/provenance.
 - Add a legacy read fallback: when a selection snapshot has no `attenuation_cap_pct` but has `attenuation_pct`, treat the old value as the cap. Cover drafts and frozen valuation reads.
 - Do not rewrite frozen batches; the next draft save writes the new key.
@@ -126,18 +126,18 @@ Move flocculation, alcohol tolerance, temperature, recipes, source and notes int
 
 ### Step 1 — yeast card and attenuation model
 
-- [ ] Rename `attenuation_pct` to `attenuation_cap_pct` across the artifact, seeds, labels, reports, fixtures and tests; add the legacy snapshot fallback.
-- [ ] Enforce the ranged-strain invariant in the seed builder and Library clone editor; autofill and lock the cap when both endpoints exist.
-- [ ] Rebuild the yeast card as strain summary + batch attenuation panel + collapsible details/help.
-- [ ] Add the conditional **Set attenuation…** popover with the range, Use/Apply, derate arithmetic and cap; keep the point-only derate fallback.
-- [ ] Show realized attenuation, binding constraint and cause-aware above-cap row in the yeast panel.
-- [ ] Remove the duplicate cap/sugar-lift readouts from the Style card; retain the read-only attenuation outcome.
-- [ ] Update tests, run `make generate`, `make check` and `make test`.
+- [x] Rename `attenuation_pct` to `attenuation_cap_pct` across the artifact, seeds, labels, reports, fixtures and tests; add the legacy snapshot fallback.
+- [x] Enforce the ranged-strain invariant in the seed builder and Library clone editor; autofill and lock the cap when both endpoints exist.
+- [x] Rebuild the yeast card as strain summary + batch attenuation panel + collapsible details/help.
+- [x] Add the conditional **Set attenuation…** popover with the range, Use/Apply, derate arithmetic and cap; keep the point-only derate fallback.
+- [x] Show realized attenuation, binding constraint and cause-aware above-cap row in the yeast panel.
+- [x] Remove the duplicate cap/sugar-lift readouts from the Style card; retain the read-only attenuation outcome.
+- [x] Update tests, run `make generate`, `make check` and `make test`.
 
 ### Step 2 — picker rationalization
 
-- [ ] Replace the stacked picker filter rows with a compact filter area for manufacturer, attenuation, STA1 and POF.
-- [ ] Add per-row `mine`, STA1 and POF badges; move flocculation and tolerance into row detail.
-- [ ] Keep search, the 50-row cap/counter and `Use`; keep no Copy action.
-- [ ] Update picker tests and run `make check` + `make test`.
-- [ ] Verify the M31 clone and a point-only strain manually.
+- [x] Replace the stacked picker filter rows with a compact filter area for manufacturer, attenuation, STA1 and POF.
+- [x] Add per-row `mine`, STA1 and POF badges; move flocculation and tolerance into row detail.
+- [x] Keep search, the 50-row cap/counter and `Use`; keep no Copy action.
+- [x] Update picker tests and run `make check` + `make test`.
+- [x] Verify the M31 clone and a point-only strain manually.

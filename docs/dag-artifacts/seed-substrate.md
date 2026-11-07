@@ -94,7 +94,7 @@ committed `data/sources/malt-standard-crosswalk.json`, supplying `standard_malt`
 
 ### 2.3 `yeast`
 
-`yeast` carries identity (`id`, `name`, `manufacturer`), `attenuation_pct`
+`yeast` carries identity (`id`, `name`, `manufacturer`), `attenuation_cap_pct`
 (percentage, `[0, 1]`), the `flocculation` and `form` taxonomies, a display-only
 `alcohol_tolerance` string, `temp_low_c`/`temp_high_c` (temperature), and
 `recipes`/`url`/`notes`. The full field spec is in `inventory.md`.

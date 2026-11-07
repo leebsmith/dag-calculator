@@ -8,7 +8,7 @@
 // never references a batch.
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
-import { createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
+import { attenuationRangeOf, createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
 import { createLibraryFieldEditor, KEYS as fieldEditorKeys } from "./libraryFieldEditor.js";
 import { createLibrarySeedActions, KEYS as seedActionKeys } from "./librarySeedActions.js";
 import { createLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
@@ -25,6 +25,23 @@ function identityOf(meta, item) {
 
 function titleOf(meta, item) {
   return item?.[meta?.titleField ?? "name"] ?? identityOf(meta, item);
+}
+
+function libraryErrorsFrom(err) {
+  return (
+    err?.details?.errors?.map((message) => ({ field: "*", message })) ??
+    err?.errors ??
+    [{ field: "*", message: String(err?.message ?? err) }]
+  );
+}
+
+function yeastCapError(draft) {
+  const range = attenuationRangeOf(draft);
+  if (!range || draft.attenuation_cap_pct === range.high) return null;
+  return {
+    field: "attenuation_cap_pct",
+    message: "Cap must equal the published high when a range is set.",
+  };
 }
 
 export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
@@ -215,11 +232,7 @@ export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
     catalogItem(kind, id) {
       const meta = CATALOGS[kind];
       if (!meta || !id) return null;
-      return (
-        cache.seeds[meta.seedKey]?.[id] ??
-        cache.references[meta.referencesKey]?.[id] ??
-        null
-      );
+      return cache.seeds[meta.seedKey]?.[id] ?? cache.references[meta.referencesKey]?.[id] ?? null;
     },
 
     // The reference maps a boundary build reads. The gate solves against the same
@@ -322,6 +335,11 @@ export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
       getView().librarySortPoints();
       const draft = { ...getView().libraryDraft };
       delete draft[meta.idField];
+      const capError = kind === "yeast" ? yeastCapError(draft) : null;
+      if (capError) {
+        getView().libraryErrors = [capError];
+        return;
+      }
       const errors = validateComponent(artifact, kind, draft);
       if (errors.length) {
         getView().libraryErrors = errors;
@@ -334,10 +352,7 @@ export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
         getView().libraryNotice = "Saved and sealed. Records are immutable; corrections create a new record.";
         await afterRecordsChanged(getView());
       } catch (err) {
-        getView().libraryErrors =
-          err?.details?.errors?.map((message) => ({ field: "*", message })) ??
-          err?.errors ??
-          [{ field: "*", message: String(err?.message ?? err) }];
+        getView().libraryErrors = libraryErrorsFrom(err);
       }
     },
 

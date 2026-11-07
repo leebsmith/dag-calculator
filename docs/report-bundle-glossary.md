@@ -139,9 +139,9 @@ _130 paths_
 | `batch.yeast` | Yeast | selection | — | — | — | — |
 | `batch.yeast.alcohol_tolerance` | Alcohol tolerance | field | — | — | — | — |
 | `batch.yeast.attenuation_basis` | Attenuation Basis | field | — | — | — | — |
+| `batch.yeast.attenuation_cap_pct` | Attenuation cap | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_high_pct` | Attenuation High Pct | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_low_pct` | Attenuation Low Pct | field | percentage | pct (%) | 1 | — |
-| `batch.yeast.attenuation_pct` | Typical attenuation | field | percentage | pct (%) | 1 | — |
 | `batch.yeast.attenuation_provenance` | Attenuation Provenance | field | — | — | — | — |
 | `batch.yeast.blend_of` | Blend Of | field | — | — | — | — |
 | `batch.yeast.flocculation` | Flocculation | field | — | — | — | Low, Medium, High |

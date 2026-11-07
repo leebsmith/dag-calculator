@@ -20,8 +20,8 @@ import {
 } from "../../frontend/src/views/producer/yeastRows.js";
 
 test("attenuationLabel prints one decimal and blanks a missing strain", () => {
-  assert.equal(attenuationLabel({ attenuation_pct: 0.755 }), "75.5%");
-  assert.equal(attenuationLabel({ attenuation_pct: 0.8 }), "80%");
+  assert.equal(attenuationLabel({ attenuation_cap_pct: 0.755 }), "75.5%");
+  assert.equal(attenuationLabel({ attenuation_cap_pct: 0.8 }), "80%");
   assert.equal(attenuationLabel(null), "");
   assert.equal(attenuationLabel(undefined), "");
   assert.equal(percentText(0.705), "70.5");
@@ -33,7 +33,7 @@ test("attenuationBandLabel prints the vendor band only when both ends exist", ()
     "82–86%"
   );
   assert.equal(attenuationBandLabel({ attenuation_low_pct: 0.82 }), "");
-  assert.equal(attenuationBandLabel({ attenuation_pct: 0.8 }), "");
+  assert.equal(attenuationBandLabel({ attenuation_cap_pct: 0.8 }), "");
   assert.equal(attenuationBandLabel(null), "");
 });
 

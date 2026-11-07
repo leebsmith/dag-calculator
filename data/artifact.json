@@ -1493,7 +1493,7 @@
       "id": {},
       "name": {},
       "manufacturer": {},
-      "attenuation_pct": {
+      "attenuation_cap_pct": {
         "dimension": "percentage",
         "domain": {
           "gte": 0,
@@ -2728,7 +2728,7 @@
       "kind": "derived",
       "inputs": {
         "selector": "batch.yeast_id",
-        "aa": "batch.yeast.attenuation_pct",
+        "aa": "batch.yeast.attenuation_cap_pct",
         "points": "batch.attenuation_derate_points"
       },
       "expr": {

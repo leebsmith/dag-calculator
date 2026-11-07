@@ -47,11 +47,11 @@ test("yeast card: attenuation, manufacturer, and tier filters compose", withFres
   assert.ok(app.filteredYeasts.every((y) => y.manufacturer === manufacturer));
 
   app.yeastAttenuationFilter = "super";
-  assert.ok(app.filteredYeasts.every((y) => y.attenuation_pct >= 0.825));
+  assert.ok(app.filteredYeasts.every((y) => y.attenuation_cap_pct >= 0.825));
 
   app.yeastManufacturerFilter = "";
   app.yeastAttenuationFilter = "low";
-  assert.ok(app.filteredYeasts.every((y) => y.attenuation_pct < 0.705));
+  assert.ok(app.filteredYeasts.every((y) => y.attenuation_cap_pct < 0.705));
 
   app.yeastAttenuationFilter = "";
   assert.equal(app.filteredYeasts.length, total);
@@ -80,9 +80,9 @@ test("yeast card: the notes toggle gates note matching", async () => {
 });
 
 test("yeast card: attenuation formatting and the selected-strain readouts", withFreshApp(async (app) => {
-  const strain = app.yeastCatalog.find((y) => typeof y.attenuation_pct === "number");
+  const strain = app.yeastCatalog.find((y) => typeof y.attenuation_cap_pct === "number");
 
-  assert.equal(app.yeastAttenuation(strain), `${Math.round(strain.attenuation_pct * 1000) / 10}%`);
+  assert.equal(app.yeastAttenuation(strain), `${Math.round(strain.attenuation_cap_pct * 1000) / 10}%`);
   assert.equal(app.yeastAttenuation(null), "");
 
   app.selectedYeastId = strain.id;
@@ -181,6 +181,51 @@ test("yeast card: Use selects the strain and closes the picker", withFreshApp(as
   assert.equal(app.yeastPickerOpen, false);
 }));
 
+test("yeast card: the picker filters compose across all four controls", withFreshApp(async (app) => {
+  const positive = app.yeastCatalog.find((y) => y.sta1 === true && y.manufacturer);
+  assert.ok(positive, "a seeded STA1-positive strain exists");
+
+  app.yeastManufacturerFilter = positive.manufacturer;
+  app.yeastAttenuationFilter = app.yeastAttenuationTiers.find(
+    (tier) => {
+      const pct = positive.attenuation_cap_pct;
+      if (tier.key === "low") return pct < 0.705;
+      if (tier.key === "medium") return pct >= 0.705 && pct < 0.755;
+      if (tier.key === "high") return pct >= 0.755 && pct < 0.825;
+      return pct >= 0.825;
+    }
+  ).key;
+  app.yeastDiastaticusFilter = "positive";
+  app.yeastPofFilter = "unknown";
+
+  assert.ok(app.filteredYeasts.some((y) => y.id === positive.id));
+  assert.ok(app.filteredYeasts.every((y) => y.manufacturer === positive.manufacturer));
+  assert.ok(app.filteredYeasts.every((y) => y.sta1 === true));
+  assert.ok(app.filteredYeasts.every((y) => y.pof !== "positive" && y.pof !== "negative"));
+}));
+
+test("yeast card: row badges show STA1 always and POF only when asserted", () => {
+  const app = createTestApp();
+
+  assert.equal(app.yeastSta1({ sta1: true }), "STA1+");
+  assert.equal(app.yeastSta1({ sta1: false }), "STA1−");
+  assert.equal(app.yeastSta1({}), "STA1?");
+  assert.equal(app.yeastPof({ pof: "positive" }), "POF+");
+  assert.equal(app.yeastPof({ pof: "negative" }), "POF−");
+  assert.equal(app.yeastPof({ pof: "unknown" }), "");
+});
+
+test("yeast card: the published attenuation is a band when both ends exist", () => {
+  const app = createTestApp();
+
+  assert.equal(
+    app.yeastPublished({ attenuation_low_pct: 0.82, attenuation_high_pct: 0.86 }),
+    "82–86%"
+  );
+  assert.equal(app.yeastPublished({ attenuation_cap_pct: 0.78 }), "78%");
+  assert.equal(app.yeastTemperature({ temp_low_c: 18, temp_high_c: 22 }), "18.0–22.0°C");
+});
+
 test("yeast card: the row's strain facts", withFreshApp(async (app) => {
   const strain = app.yeastCatalog.find(
     (y) =>
@@ -197,7 +242,7 @@ test("yeast card: the row's strain facts", withFreshApp(async (app) => {
     app.selectedYeastSta1,
     strain.sta1 === true ? "STA1+" : strain.sta1 === false ? "STA1−" : "STA1?"
   );
-  assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_pct * 1000) / 10}%`);
+  assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_cap_pct * 1000) / 10}%`);
 
   assert.equal(
     app.selectedYeastTemp,
@@ -212,7 +257,7 @@ test("yeast card: the row's strain facts", withFreshApp(async (app) => {
   // Vendor percentages and the derate points do not follow the percentage
   // menu; the solved cap does.
   app.setUnit("percentage", "fraction");
-  assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_pct * 1000) / 10}%`);
+  assert.equal(app.yeastAttenuation(app.selectedYeast), `${Math.round(strain.attenuation_cap_pct * 1000) / 10}%`);
   assert.equal(app.selectedYeastBand, band);
   assert.equal(app.yeastDerateDisplay, "0");
   assert.equal(app.yeastField("batch.yeast_cap").unit, "×1");
@@ -223,7 +268,7 @@ test("yeast card: the row's strain facts", withFreshApp(async (app) => {
 }));
 
 test("yeast card: derate is points off the strain maximum", withFreshApp(async (app) => {
-  const aa = app.engine.resolve("batch.yeast.attenuation_pct");
+  const aa = app.engine.resolve("batch.yeast.attenuation_cap_pct");
 
   const input = { value: "4" };
   app.commitYeastDerate(input);
@@ -253,7 +298,7 @@ test("yeast card: derate is points off the strain maximum", withFreshApp(async (
 }));
 
 test("yeast card: a legacy multiplier derate migrates to points on load", withFreshApp(async (app) => {
-  const aa = app.engine.resolve("batch.yeast.attenuation_pct");
+  const aa = app.engine.resolve("batch.yeast.attenuation_cap_pct");
 
   await app.loadState({
     roots: {

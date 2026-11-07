@@ -211,6 +211,42 @@
         ".map-row-actions"
       ],
       "reason": "One small-actions row, used under an import in the queue and under a ledger line."
+    },
+    {
+      "context": "",
+      "declarations": "display: flex; flex-direction: column; gap: var(--space-2)",
+      "selectors": [
+        ".yeast-summary-body",
+        ".brew-day-step"
+      ],
+      "reason": "Coincidental column layout; the yeast summary and a brew-day step are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: baseline; display: flex; flex-wrap: wrap; gap: var(--space-2)",
+      "selectors": [
+        ".attenuation-summary-line, .attenuation-readout, .attenuation-arithmetic",
+        ".map-row-main"
+      ],
+      "reason": "Coincidental wrap row; the attenuation figures and a map row are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "cursor: pointer",
+      "selectors": [
+        ".catalog-item-card-selectable",
+        ".yeast-row-details summary"
+      ],
+      "reason": "Coincidental pointer cursor; the picker row disclosure and the selectable catalog card are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-1)",
+      "selectors": [
+        ".yeast-row-badges",
+        ".map-suggestions"
+      ],
+      "reason": "Coincidental wrap row; the picker badges and the import suggestions are unrelated."
     }
   ],
   "classes": []

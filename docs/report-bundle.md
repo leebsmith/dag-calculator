@@ -129,7 +129,7 @@ prefix, exactly like the engine:
 | `solver.water.grist_buckets_kg.BASE` | `state.valuation["solver.water"]["grist_buckets_kg.BASE"]` |
 | `mash.rests` | `state.valuation["mash.rests"]` (array of rows) |
 | `mash.rests.0.use_temp_c` | `state.valuation["mash.rests"][0].use_temp_c` |
-| `batch.yeast.attenuation_pct` | `state.valuation["batch.yeast"].attenuation_pct` (or `state.selections`) |
+| `batch.yeast.attenuation_cap_pct` | `state.valuation["batch.yeast"].attenuation_cap_pct` (or `state.selections`) |
 | `equipment.max_hlt_volume_l` | `batch.identity.equipment.max_hlt_volume_l` |
 | `style.og_min` | `batch.identity.style.og_min` |
 | `water.source.calcium_ca` | `batch.identity["water.source"].calcium_ca` |
@@ -205,7 +205,7 @@ entry; absence is meaningful, not zero.
 ```jsonc
 "relations":           [{ "id": "hlt_not_overfilled", "holds": true, "blocking": true }],
 "domains":             [{ "nodeId": "batch.target_abv", "bounded": true, "holds": true }],
-"field_domains":       [{ "selectionNodeId": "batch.yeast", "field": "attenuation_pct", "bounded": true, "holds": true }],
+"field_domains":       [{ "selectionNodeId": "batch.yeast", "field": "attenuation_cap_pct", "bounded": true, "holds": true }],
 "collection_domains":  [{ "nodeId": "mash.rests", "index": 0, "field": "use_temp_c", "bounded": true, "holds": true }]
 ```
 
@@ -250,7 +250,7 @@ Path resolution for consumers:
 | `batch.v_ferm` | `state.valuation["batch.v_ferm"]` |
 | `solver.batch.cascade.v_strike` | `state.valuation["solver.batch"]["cascade.v_strike"]` |
 | `mash.rests.0.use_temp_c` | valuation array → row field |
-| `batch.yeast.attenuation_pct` | valuation (or `state.selections["batch.yeast"]`) |
+| `batch.yeast.attenuation_cap_pct` | valuation (or `state.selections["batch.yeast"]`) |
 | `equipment.max_hlt_volume_l` | `batch.identity.equipment.max_hlt_volume_l` |
 | `style.og_min` | `batch.identity.style.og_min` |
 

@@ -28,12 +28,12 @@ const CATALOG = {
     saaz: { id: "saaz", name: "Saaz", alpha_acid_pct: 3.2, product_form: "t90_pellet" },
   },
   yeast: {
-    "strain-a": { id: "strain-a", name: "Strain A", attenuation_pct: 0.8 },
-    "strain-b": { id: "strain-b", name: "Strain B", attenuation_pct: 0.75 },
+    "strain-a": { id: "strain-a", name: "Strain A", attenuation_cap_pct: 0.8 },
+    "strain-b": { id: "strain-b", name: "Strain B", attenuation_cap_pct: 0.75 },
     "blend-1": {
       id: "blend-1",
       name: "Blend: A + B",
-      attenuation_pct: 0.78,
+      attenuation_cap_pct: 0.78,
       blend_of: "Strain A, Strain B",
     },
   },
@@ -145,7 +145,7 @@ test("3. a blend record is picked and carried like any yeast", async () => {
 
   await store.runCheck();
   assert.equal(store.projectedState.roots["batch.yeast_id"], "blend-1");
-  assert.equal(store.projectedState.selections["batch.yeast"].attenuation_pct, 0.78);
+  assert.equal(store.projectedState.selections["batch.yeast"].attenuation_cap_pct, 0.78);
   assert.equal(store.checkSummary?.ok, true);
 });
 
@@ -187,7 +187,7 @@ test("4. a deleted pick is broken and holds the gate shut", async () => {
 
   await store.runCheck();
   assert.equal(store.checkSummary?.ok, false, "the gate refuses a broken mapping");
-  CATALOG.yeast["strain-a"] = { id: "strain-a", name: "Strain A", attenuation_pct: 0.8 };
+  CATALOG.yeast["strain-a"] = { id: "strain-a", name: "Strain A", attenuation_cap_pct: 0.8 };
 });
 
 test("5. a whirlpool charge without a split opens the hops section", () => {

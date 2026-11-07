@@ -173,7 +173,7 @@ test("a vendor range stores both ends and uses the high end as the cap", () => {
 
   assert.equal(strain.attenuation_low_pct, 0.72);
   assert.equal(strain.attenuation_high_pct, 0.8);
-  assert.equal(strain.attenuation_pct, 0.8, "the cap is the high end (A14)");
+  assert.equal(strain.attenuation_cap_pct, 0.8, "the cap is the high end (A14)");
   assert.equal(strain.attenuation_basis, "apparent");
   assert.equal(strain.attenuation_provenance.kind, "vendor");
   assert.equal(strain.attenuation_provenance.sha256, "1".repeat(64));
@@ -200,7 +200,7 @@ test("an unmatched strain keeps the aggregator citation", () => {
   assert.equal(strain.attenuation_provenance.kind, "aggregator");
   assert.equal(strain.sta1, undefined);
   assert.equal(strain.pof, "unknown");
-  assert.equal(strain.attenuation_pct, 0.7);
+  assert.equal(strain.attenuation_cap_pct, 0.7);
 });
 
 test("every yeast seed carries an explicit POF status", () => {
@@ -220,6 +220,18 @@ test("every scraped yeast record carries a POF status", () => {
     assert.ok(
       ["unknown", "positive", "negative"].includes(row.pof),
       `${row.title ?? row.name} has no valid POF status`
+    );
+  }
+});
+
+test("every ranged yeast seed uses its published high as the cap", () => {
+  const seeds = json("data/seeds/yeasts.json");
+  for (const [id, strain] of Object.entries(seeds)) {
+    if (strain.attenuation_high_pct === undefined) continue;
+    assert.equal(
+      strain.attenuation_cap_pct,
+      strain.attenuation_high_pct,
+      `${id} cap must equal its published high`
     );
   }
 });

@@ -226,8 +226,6 @@ export function createStyleNavigator(ctx) {
     styleSolvedCap: null,
     styleSolvedVolume: null,
     attenuationBlend: null,
-    attenuationCap: null,
-    attenuationSugarLift: null,
     stylePreviewState: null,
     ...navigatorActions(ctx),
   };
@@ -249,12 +247,7 @@ export function refreshStyleNavigator(app, ctx) {
   };
   app.styleSolvedAa = read(N.apparentAttenuation);
   app.styleSolvedCap = read(N.yeastCap);
-  const attenuation = attenuationCapSummary(app.styleSolvedAa, app.styleSolvedCap);
-  app.attenuationBlend = attenuation.blend;
-  app.attenuationCap = attenuation.cap;
-  // The delta is the artifact's value, so the card and the report cannot drift.
-  // It is null when nothing exceeds the cap, which the partial renders as "—".
-  app.attenuationSugarLift = read(N.aboveCap) ?? null;
+  app.attenuationBlend = attenuationCapSummary(app.styleSolvedAa, app.styleSolvedCap).blend;
   const postBoilVolume = read(N.postBoilVolume);
   app.styleSolvedVolume = Number.isFinite(postBoilVolume)
     ? postBoilVolume
@@ -274,8 +267,6 @@ export const KEYS = [
   "styleSolvedCap",
   "styleSolvedVolume",
   "attenuationBlend",
-  "attenuationCap",
-  "attenuationSugarLift",
   "stylePreviewState",
   "computeStyleTarget",
   "updateStylePreview",

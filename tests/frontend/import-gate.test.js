@@ -75,7 +75,7 @@ function state() {
     moisture_fraction: 0.04,
     alpha_acid_pct: 0.1,
     product_form: "t90_pellet",
-    attenuation_pct: 0.75,
+    attenuation_cap_pct: 0.75,
     attenuation_basis: "apparent",
     sta1: false,
   });

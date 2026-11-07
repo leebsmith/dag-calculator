@@ -12,7 +12,7 @@ import { resolveBoundarySeam } from "./boundarySeam.js";
 import { assertReferencePair, createReferenceCache } from "../store/referenceCache.js";
 import {
   materializeSelections,
-  migrateAttenuationDerate,
+  migrateAttenuationDerate, migrateLegacyYeastCap,
   seedIdentityResiduals,
   seedSugarShareParts,
 } from "../store/batchMigrations.js";
@@ -213,12 +213,12 @@ export function createStepApp(options = {}) {
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       const sugarParts = this.seedSugarShareParts();
-      if (remote) await this.solveNow();
-      else this.compute();
       const changed = [
         seeded, materialized, synced, migrated, migratedWhirlpool,
-        migratedChecklist.changed, migratedDerate, sugarParts,
+        migratedChecklist.changed, migratedDerate, migrateLegacyYeastCap({ session }), sugarParts,
       ].some(Boolean);
+      if (remote) await this.solveNow();
+      else this.compute();
       if (changed) this.notify();
       this.resetToStyle();
     },
