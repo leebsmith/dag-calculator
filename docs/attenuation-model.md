@@ -1,9 +1,10 @@
 # The attenuation model
 
-**Status:** D1 and D2 landed. This document is the canonical statement of the
-model; the code implements it. Pass 1 made the ingredient data honest (`F` is
-now a real mass fraction) and D1 makes the solver consume it: extract composition
-is the primitive, and both real and apparent attenuation are derived from it.
+**Status:** D1, D2 and the STA1 retirement landed. This document is the canonical
+statement of the model; the code implements it. Pass 1 made the ingredient data
+honest (`F` is now a real mass fraction) and D1 makes the solver consume it:
+extract composition is the primitive, and both real and apparent attenuation are
+derived from it.
 
 The wire speaks `malt_attenuation_cap` on the request and emits
 `real_attenuation` + `apparent_attenuation` on the response.
@@ -55,16 +56,16 @@ an FG pin (root-find `OE` so the composition's apparent extract matches the
 target). In every case the active target is the only scale constraint, and the
 other two gravity/strength values are solved.
 
-## 2. The four regimes
+## 2. The model cases
 
-| Regime | What must hold | Test |
+| Case | What must hold | Test |
 |---|---|---|
 | pure grist | real-basis rows round-trip: `F = 0.643` displays `AA_app = 0.810` at 12 °P | `test_basis_conversion.py` |
 | + sugar (`F = 1`) | `UE` (mass) flat, `OE` up, `AA_app` up, `ABV` up; the yeast cap cannot suppress sugar | `test_composition_regimes.py` |
 | + STA1 | the vendor cap is the observation; no dextrin term; above-cap is sugar-driven | `test_composition_regimes.py` |
 | + both | sugar adds fermentable extract only; the cap still clamps the malt fraction | `test_composition_regimes.py` |
 
-The first regime is *why* the priors do not move the default recipe: the old
+The first case is *why* the priors do not move the default recipe: the old
 apparent prior `0.810` and the new real prior `0.643` are the same observation.
 
 ## 3. Basis audit
@@ -122,11 +123,12 @@ gravity-invariant.
 
 ## 5. The cap and sugar
 
-- The cap is the yeast's **apparent** attenuation (strain × batch derate). It
+- The cap is the yeast's **apparent** attenuation, less the batch derate. It
   converts to real space at the candidate `OE` and clamps **malt** fermentability
   only: `F_malt_eff = min(F_malt, cap_real)`.
 - Sugar extract keeps its own `F_eff` and is never clamped by the yeast cap, so
-  a sugar addition can push apparent attenuation past the malt cap (regime 2).
+  a sugar addition can push apparent attenuation past the malt cap (the sugar
+  case).
   A non-fermentable blend (`F_eff < 1`) leaves its own residue; the sugar share
   is total extract, not fermentable extract.
 - A non-fermentable late addition (lactose) keeps its own residue; sugar is
@@ -424,7 +426,7 @@ includes the strain's primary diastatic activity, so the step was a packaging
 thought experiment, not a primary prediction.
 
 At 6.1 gal, 9.0 % ABV, 1 lb candi extract (0.385641 kg) and a 0.72 real malt
-fermentability, WLP570's 85 % cap solves near 1.076 OG / 1.009 FG / 88.6 %
+fermentability, WLP570's 85 % cap solves near 1.075 OG / 1.008 FG / 88.7 %
 apparent attenuation. The old 1.055 / 0.986 / 126.5 % figure is retained here
 only as the diagnostic that motivated the change. A near-1.0 cap plus sugar can
 still drive apparent extract to zero or below; that edge stays in the model.
@@ -444,7 +446,7 @@ that every enforcement path exists and that the row set stays complete.
 | A3 | yeast attenuation is apparent | converted per candidate `OE` | `tests/backend/conformance/test_composition_regimes.py` |
 | A4 | vendor attenuation embeds primary diastatic activity | `sta1` has no solve effect; the cap is the observation | `tests/backend/conformance/test_composition_regimes.py` |
 | A5 | `sta1: null` | no solve effect + advisory | `tests/backend/conformance/test_composition_regimes.py`, `tests/frontend/attenuation-display.test.js` |
-| A6 | sugar immune to `d` | lactose stays unfermented | `tests/backend/conformance/test_composition_regimes.py` |
+| A6 | sugar is never clamped by the malt cap | lactose keeps its own residue | `tests/backend/conformance/test_composition_regimes.py` |
 | A7 | priors are converted apparent observations | values + round-trip | `tests/backend/conformance/test_basis_conversion.py` |
 | A8 | bounds reported, not propagated | `min` = point in the solver | `tests/frontend/attenuation-display.test.js` |
 | A9 | trace malts colour-only | no extract, no fermentability | `tests/guards/seed-rebuild.test.js` |
