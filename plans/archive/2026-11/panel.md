@@ -1,9 +1,9 @@
 # Finish the yeast panel
 
-**Status:** in progress
+**Status:** complete
 **Scope:** close out the in-flight yeast-surface work recorded in
-`plans/rationalize-yeast-surface.md` — the yeast card, the attenuation panel,
-the Library range invariant, and the picker.
+`plans/archive/2026-11/rationalize-yeast-surface.md` — the yeast card, the
+attenuation panel, the Library range invariant, and the picker.
 **Gate:** `make generate`, `make check`, `make test`.
 
 ## Why
@@ -22,22 +22,22 @@ and the one surface the rename missed.
 
 ## Steps
 
-- [ ] Align the report yeast section with the cap rename: relabel the
+- [x] Align the report yeast section with the cap rename: relabel the
   `batch.yeast.attenuation_cap_pct` presentation in
   `backend/scripts/emit_report_bundle_fixture.py` and the two headings in
   `backend/app/templates/sections/yeast.typ`, then regenerate the fixture.
-- [ ] Refresh the execution checklist in `plans/rationalize-yeast-surface.md`:
-  tick the five step-1 items and the four step-2 items that the working tree
-  implements, and note the report relabel as their follow-up.
-- [ ] Run `make generate`, `make check`, and `make test`; resolve any failure.
-- [ ] Confirm the ranged-strain popover and the point-only derate fallback still
+- [x] Confirm the parent plan is archived with its execution checklist ticked:
+  `plans/archive/2026-11/rationalize-yeast-surface.md`.
+- [x] Run `make generate`, `make check`, and `make test`; resolve any failure.
+- [x] Confirm the ranged-strain popover and the point-only derate fallback still
   write `batch.attenuation_derate_points` through the yeast-card suite.
 
 ## Out of scope
 
 - Redesigning the yeast card or picker.
 - Changing the attenuation model, `sta1` semantics, or the derate root.
-- Archiving `plans/rationalize-yeast-surface.md`; it keeps its own lifecycle.
+- Re-archiving the parent plan; it moved to `plans/archive/2026-11/` in its own
+  completion commit.
 - POF backfill, Library paging, and blend behaviour.
 
 ## Verification
