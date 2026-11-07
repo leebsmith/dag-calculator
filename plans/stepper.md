@@ -44,6 +44,15 @@ step is marked. The left previous/next rail and the arrow-key navigation stay.
 "Completed" means *reached*, matching the brief's "completed or revealed". It is
 not a validation verdict; `stepStatus` stays a separate concern.
 
+## Execution checklist
+
+- [ ] Derive the all-step state in `frontend/src/adapters/navigation.js` and replace `visibleSteps` with `stepperSteps`; update the base member in `frontend/src/adapters/stepAdapter.js`.
+- [ ] Add `frontend/src/partials/stepper.html` with the nav, ordered list, precomputed state classes, disabled pending steps and `aria-current`.
+- [ ] Load the partial under the menu bar in `frontend/src/partials/editor.html` and delete the two footer step-tracking spans.
+- [ ] Add the token-only stepper CSS to `frontend/src/style.css` and delete the dead `.footer-step` rule.
+- [ ] Extend `tests/frontend/navigation.test.js` for the three states, pending disabled flags, `aria-current`, and watermark preservation when navigating back.
+- [ ] Run `make check` and `make test`; resolve any failure.
+
 ## Steps
 
 ### 1. Derive one stepper model in `frontend/src/adapters/navigation.js`
