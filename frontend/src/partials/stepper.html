@@ -1,0 +1,17 @@
+<nav class="stepper" aria-label="Recipe steps">
+  <ol class="stepper-list">
+    <template x-for="step in stepperSteps" :key="step.id">
+      <li class="stepper-item">
+        <button
+          type="button"
+          class="stepper-btn"
+          :class="step.state"
+          :disabled="step.disabled"
+          :aria-current="step.ariaCurrent"
+          @click="selectStep(step.index)"
+          x-text="step.title"
+        ></button>
+      </li>
+    </template>
+  </ol>
+</nav>

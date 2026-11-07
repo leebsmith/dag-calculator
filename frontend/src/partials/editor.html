@@ -66,6 +66,8 @@
                 </div>
               </header>
 
+              <load src="src/partials/stepper.html" />
+
               <template x-if="$store.imports.originOf($store.recipes.activeId)">
                 <details class="import-origin" x-data="{ origin: $store.imports.originOf($store.recipes.activeId) }">
                   <summary class="text-xs">
@@ -178,8 +180,6 @@
                     <button type="button" class="btn-link text-xs" @click="$store.recipes.reloadFromRemote()">Reload</button>
                   </span>
                 </span>
-                <span class="footer-step" x-text="activeStep.title"></span>
-                <span class="text-xs text-muted" x-text="'Step ' + (activeIndex + 1) + ' of ' + steps.length"></span>
                 <span class="boundary-status" x-show="boundaryPending">
                   <span class="status-dot status-dot-warning"></span>
                   <span class="text-xs text-muted">Solving…</span>

@@ -138,7 +138,7 @@ export function createStepApp(options = {}) {
     activeIndex: ui.activeIndex,
     highwater: ui.highwater,
     activeStep: steps[ui.activeIndex],
-    visibleSteps: [],
+    stepperSteps: [],
     navDir: null, // "next" | "prev" — drives the step-card entry animation
     stepStatus: attribution.initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,

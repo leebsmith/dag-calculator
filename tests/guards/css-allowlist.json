@@ -11,7 +11,8 @@
       "selectors": [
         ".btn:focus-visible, .btn-link:focus-visible",
         ".landing-title:focus-visible, .landing-kebab:focus-visible",
-        ".section-toggle:focus-visible"
+        ".section-toggle:focus-visible",
+        ".stepper-btn:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
     },
@@ -31,9 +32,10 @@
       "selectors": [
         ".btn-link:hover:not(:disabled)",
         ".btn-close:hover",
+        ".stepper-btn.completed",
         ".text-primary"
       ],
-      "reason": "Coincidental text-primary colour; button hover and the utility are independent."
+      "reason": "Coincidental text-primary colour; button hover, the completed step and the utility are independent."
     },
     {
       "context": "",
@@ -134,9 +136,10 @@
       "declarations": "background-color: var(--sys-surface-hover)",
       "selectors": [
         ".landing-table tbody tr:hover",
-        ".landing-menu-item:hover"
+        ".landing-menu-item:hover",
+        ".stepper-btn.completed:hover"
       ],
-      "reason": "Shared hover surface recipe for interactive rows."
+      "reason": "Shared hover surface recipe for interactive rows and the completed stepper step."
     },
     {
       "context": "",
@@ -247,6 +250,15 @@
         ".map-suggestions"
       ],
       "reason": "Coincidental wrap row; the picker badges and the import suggestions are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "display: none",
+      "selectors": [
+        "[x-cloak]",
+        ".stepper::-webkit-scrollbar"
+      ],
+      "reason": "Coincidental hidden rendering: the Alpine cloak and the hidden stepper scrollbar are unrelated."
     }
   ],
   "classes": []

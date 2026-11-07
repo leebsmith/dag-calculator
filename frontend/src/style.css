@@ -1562,6 +1562,80 @@ samp {
   overflow-y: auto;
 }
 
+/* --- Stepper: menu-bar progress and completed-step navigation --- */
+
+.stepper {
+  flex: none;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.stepper::-webkit-scrollbar {
+  display: none;
+}
+
+.stepper-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: max-content;
+  margin: 0 auto;
+  padding: 0 var(--space-2);
+  list-style: none;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+}
+
+.stepper-item + .stepper-item::before {
+  content: "/";
+  margin: 0 var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--sys-text-tertiary);
+}
+
+.stepper-btn {
+  padding: var(--space-2) var(--space-3);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  color: var(--sys-text-secondary);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.stepper-btn.active {
+  background-color: var(--sys-surface-hover);
+  color: var(--sys-color-action-subtle-text);
+  font-weight: var(--font-weight-semibold);
+  cursor: default;
+}
+
+.stepper-btn.completed {
+  color: var(--sys-text-primary);
+}
+
+.stepper-btn.completed:hover {
+  background-color: var(--sys-surface-hover);
+}
+
+.stepper-btn.pending {
+  color: var(--sys-text-tertiary);
+  cursor: not-allowed;
+}
+
+.stepper-btn:focus-visible {
+  outline: 2px solid var(--sys-border-focus);
+  outline-offset: 2px;
+}
+
 /* Step-card entry: going forward ("next") the card rises from below; going
    back ("prev") it drops from above. The active card is keyed by step id, so
    the animation replays on each step change (and not on edits within a step). */
@@ -1597,12 +1671,6 @@ samp {
 
 .step-enter-up {
   animation: step-enter-up var(--transition-slow);
-}
-
-.footer-step {
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--sys-text-secondary);
 }
 
 .footer-violations {

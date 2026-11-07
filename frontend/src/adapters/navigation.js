@@ -13,9 +13,18 @@ export function createNavigationActions({
     view.activeIndex = ui.activeIndex;
     view.highwater = ui.highwater;
     view.activeStep = steps[ui.activeIndex];
-    view.visibleSteps = steps
-      .slice(0, ui.highwater + 1)
-      .map((s, i) => ({ ...s, index: i, active: i === ui.activeIndex, complete: i < ui.activeIndex }));
+    view.stepperSteps = steps.map((step, index) => {
+      const current = index === ui.activeIndex;
+      const reached = index <= ui.highwater;
+      return {
+        id: step.id,
+        index,
+        title: step.title,
+        state: current ? "active" : reached ? "completed" : "pending",
+        disabled: !reached,
+        ariaCurrent: current ? "step" : null,
+      };
+    });
   }
 
   function selectStep(index) {

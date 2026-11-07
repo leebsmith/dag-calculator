@@ -1,6 +1,6 @@
 ---
 title: Stepper — replace the footer step tracking
-status: proposed
+status: done
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -10,7 +10,7 @@ gate: make check + make test
 
 # Stepper — replace the footer step tracking
 
-> **Status (2026-11-07).** Planned; decisions confirmed; not started.
+> **Status (2026-11-07).** Done: the stepper replaced the footer step tracking.
 
 Replace the footer's active-step title and `Step N of M` counter with a centered
 stepper under the menu bar. The stepper is a progress readout and a navigation
@@ -46,12 +46,12 @@ not a validation verdict; `stepStatus` stays a separate concern.
 
 ## Execution checklist
 
-- [ ] Derive the all-step state in `frontend/src/adapters/navigation.js` and replace `visibleSteps` with `stepperSteps`; update the base member in `frontend/src/adapters/stepAdapter.js`.
-- [ ] Add `frontend/src/partials/stepper.html` with the nav, ordered list, precomputed state classes, disabled pending steps and `aria-current`.
-- [ ] Load the partial under the menu bar in `frontend/src/partials/editor.html` and delete the two footer step-tracking spans.
-- [ ] Add the token-only stepper CSS to `frontend/src/style.css` and delete the dead `.footer-step` rule.
-- [ ] Extend `tests/frontend/navigation.test.js` for the three states, pending disabled flags, `aria-current`, and watermark preservation when navigating back.
-- [ ] Run `make check` and `make test`; resolve any failure.
+- [x] Derive the all-step state in `frontend/src/adapters/navigation.js` and replace `visibleSteps` with `stepperSteps`; update the base member in `frontend/src/adapters/stepAdapter.js`.
+- [x] Add `frontend/src/partials/stepper.html` with the nav, ordered list, precomputed state classes, disabled pending steps and `aria-current`.
+- [x] Load the partial under the menu bar in `frontend/src/partials/editor.html` and delete the two footer step-tracking spans.
+- [x] Add the token-only stepper CSS to `frontend/src/style.css` and delete the dead `.footer-step` rule.
+- [x] Extend `tests/frontend/navigation.test.js` for the three states, pending disabled flags, `aria-current`, and watermark preservation when navigating back.
+- [x] Run `make check` and `make test`; resolve any failure.
 
 ## Steps
 
@@ -237,6 +237,8 @@ the new load.
 - `frontend/src/partials/editor.html`
 - `frontend/src/style.css`
 - `tests/frontend/navigation.test.js`
+- `tests/guards/include-integrity.test.js` (allowlist the new app-level partial)
+- `tests/guards/css-allowlist.json` (record the shared focus/hover/display recipes)
 
 No artifact, seed, schema, backend or report change. `make generate` is not
 needed.

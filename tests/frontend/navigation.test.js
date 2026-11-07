@@ -12,23 +12,41 @@ function install(app, dependencies) {
 
 function setup({ activeIndex = 0, highwater = 1, isEditorActive } = {}) {
   const ui = { activeIndex, highwater };
-  const steps = [{ id: "a" }, { id: "b" }, { id: "c" }];
+  const steps = [
+    { id: "a", title: "Alpha" },
+    { id: "b", title: "Beta" },
+    { id: "c", title: "Gamma" },
+  ];
   const app = {};
   install(app, { ui, steps, isEditorActive });
   app.syncNav();
   return { app, ui, steps };
 }
 
-test("syncNav mirrors the ui store onto the rail", () => {
+test("syncNav mirrors the ui store onto the stepper", () => {
   const { app, steps } = setup({ activeIndex: 1, highwater: 1 });
 
   assert.equal(app.activeIndex, 1);
   assert.equal(app.highwater, 1);
   assert.equal(app.activeStep, steps[1]);
-  assert.deepEqual(app.visibleSteps, [
-    { ...steps[0], index: 0, active: false, complete: true },
-    { ...steps[1], index: 1, active: true, complete: false },
+  assert.deepEqual(app.stepperSteps, [
+    { id: "a", index: 0, title: "Alpha", state: "completed", disabled: false, ariaCurrent: null },
+    { id: "b", index: 1, title: "Beta", state: "active", disabled: false, ariaCurrent: "step" },
+    { id: "c", index: 2, title: "Gamma", state: "pending", disabled: true, ariaCurrent: null },
   ]);
+});
+
+test("reached steps are completed even ahead of the cursor", () => {
+  const { app } = setup({ activeIndex: 0, highwater: 2 });
+
+  assert.deepEqual(
+    app.stepperSteps.map((step) => step.state),
+    ["active", "completed", "completed"]
+  );
+  assert.deepEqual(
+    app.stepperSteps.map((step) => step.disabled),
+    [false, false, false]
+  );
 });
 
 test("selectStep moves within the unlocked range", () => {
@@ -40,10 +58,12 @@ test("selectStep moves within the unlocked range", () => {
 
   app.selectStep(0);
   assert.equal(ui.activeIndex, 0);
+  assert.equal(ui.highwater, 2);
 
   app.selectStep(-1);
   app.selectStep(3);
   assert.equal(ui.activeIndex, 0);
+  assert.equal(ui.highwater, 2);
 });
 
 test("next advances, raises the highwater, and records the direction", () => {
@@ -54,7 +74,10 @@ test("next advances, raises the highwater, and records the direction", () => {
   assert.equal(ui.activeIndex, 1);
   assert.equal(ui.highwater, 1);
   assert.equal(app.navDir, "next");
-  assert.equal(app.visibleSteps.length, 2);
+  assert.deepEqual(
+    app.stepperSteps.map((step) => step.state),
+    ["completed", "active", "pending"]
+  );
 });
 
 test("next stops at the last step", () => {
