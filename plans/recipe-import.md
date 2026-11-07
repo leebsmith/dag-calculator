@@ -1,6 +1,6 @@
 ---
 title: Recipe Import — PDF Extract to Mapped Draft
-status: draft
+status: active (J landed; H.1 review, L0 prior hits and keyboard traversal remain)
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [recipe-critiquers]
@@ -15,6 +15,10 @@ A user uploads a recipe from a magazine (or any PDF), a Gemini Flash structured
 call transcribes it, and a user-guided ledger maps every transcribed line onto
 the registry. The result is an ordinary draft batch, solved by the ordinary
 boundaries, with an immutable import record as its receipt.
+
+> **Status (2026-11-07).** J.2–J.7 have landed, including the editor's
+> "Imported from…" panel (`170645d`). Open: the HOLD H.1 prompt/schema review, L0
+> prior hits, and keyboard traversal with batch actions.
 
 **The feature adds no artifact node, no boundary, no schema version bump.** It
 reads existing roots and writes an existing payload shape. Everything new is a
@@ -724,8 +728,7 @@ before.
 - [x] Widened `createWithIdentity` to accept state; commit writes the draft
 - [x] Committed records immutable and undeletable; one-way `batch_id` link;
       committing without a batch is refused
-- [x] `docs/import.md` (living), AGENTS source-of-truth entry, TODO line for the
-      one remaining piece
-- [ ] Editor "Imported from …" modal — needs a lookup (the link is one-way), so it
-      is recorded in TODO.md rather than smuggled in
+- [x] `docs/import.md` (living) and the AGENTS source-of-truth entry
+- [x] Editor "Imported from …" panel — the imports store resolves the record from
+      the batch id and renders the source, yeast outcome and delta
 - [x] `make check`, `make test`

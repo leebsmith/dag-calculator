@@ -3,7 +3,8 @@
 **Goal:** Resolve the material deficiencies, test gaps and complexity hotspots identified in
 `post-refactor-audit.md`, and codify the architecture in a root `DESIGN.md`.
 
-**Source:** `@plans/refactor_remediation_plan.md `
+**Source:** the original `/plan refactor-audit-remediation` prompt, removed once the
+plan completed.
 
 **Rules:** one commit per phase; `make check` + `make test` green at every phase boundary;
 `node scripts/shape-pins.mjs` after structural change; the `utils.js` barrel API is frozen.

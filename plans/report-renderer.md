@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-bundle]
 blocks: []
 gate: a downloaded bundle renders to a printable PDF and per-page PNGs from the scaffold alone; a section added later renders and is drift-guarded; make check/test green
-status: active (ten sections and the render service landed; pinned ions, style conformance and the image remain)
+status: active (eleven sections and the render service landed; pinned ions, style conformance and the image remain)
 ---
 
 # Report Renderer — Typst-composed, bundle-driven
@@ -471,9 +471,9 @@ is part of this plan's scope, not a follow-up.
 | 0 ✅ | Scaffold: `TYPST_VERSION`, `lib/bundle.typ`, `lib/format.typ`, `theme.typ`, `report.typ` with an empty registry and spec filtering, ancestry footer, `make report-dev`/`report-pages`, docs, the registry generator + guards, and `catalog.nodes.symbol` (`bundle_format` 2). | `make verify`; fixture compiles chrome-only |
 | 0b ✅ | Formatting moves into the bundle: `formatted[path]` with `{ text, number, unit }`, produced by the browser formatter with the user's unit mode; Typst becomes a string compositor (`bundle_format` 3). | producer tests, render/section tests |
 | 1 ✅ | First sections: **batch-facts** (identity names + realized OG/FG/AA/ABV/IBU/colour) and **volume-ledger** (accounting table from strike to fermenter), with fixture enrichment. | standalone + full compiles, presence matrix |
-| 2 | `report_render.py` — bundle in, artifacts out, spec validation, `typst query` | error-path tests |
-| 3 | `GET` route (frozen) + `ETag` | route tests, `make check` |
-| 4 | `POST` route (draft bundle) + browser preview | route tests |
+| 2 ✅ | `report_render.py` — bundle in, artifacts out, spec validation, `typst query` | error-path tests |
+| 3 ✅ | `GET` route (frozen) + `ETag` | route tests, `make check` |
+| 4 ✅ | `POST` route (draft bundle) + browser preview | route tests |
 | 5 | Dockerfile + deploy switch | image build, deployed smoke render |
 | 6 | Retirement: `TODO.md` cleanup as part of the renderer slice | `make verify` |
 

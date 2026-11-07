@@ -3,7 +3,7 @@ title: Mapping — the import flow, rebuilt from its states
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [recipe-import]
-status: shipped (A–B)
+status: shipped (A–B); manual verification pending
 ---
 
 # Mapping — the import flow, rebuilt from its states

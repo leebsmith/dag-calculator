@@ -10,6 +10,14 @@ tracks only what is outstanding.
    list. What remains is the gravity/ABV/SRM/IBU readouts and the LIFO ordering
    of soft warnings (`plans/warnings.md` W.1–W.5, still proposed).
 
+2. **Verify the mapping flow by hand** — phases A–B are shipped and covered;
+   the manual pass against the vendored PDF and a real blend record is what
+   remains (`plans/mapping-plans.md`).
+
+3. **Import refinements** — the H.1 prompt/schema review, L0 prior hits, and
+   keyboard traversal with batch actions; the editor's "Imported from…" panel
+   landed (`plans/recipe-import.md` J.1/J.3).
+
 ## Before 1st printed recipe
 
 * Brew checklist (the staged-notes replacement) — Phase 1 shipped: the
@@ -29,6 +37,12 @@ tracks only what is outstanding.
   mass, targets plus a required scale pin, registry names resolved with a hard fail.
   It lands as a *batch source* (a draft batch straight into the editor), not as an
   import document, so it never enters the ledger. See `plans/recipe-language.md`.
+
+* **Layered whirlpool** — author the hot/cool IBU split and the cool-side weight
+  ratio, solve the masses, and report the emergent cool-side IBU split. The
+  current `parts` are normalized IBU shares and cannot mean both an IBU budget
+  and a mass ratio, so this is a new composer plus a boundary change. Draft and
+  open decisions: `plans/hop-layering-strategy.md`.
 
 * **Multi-strain yeast (deferred, narrowed)** — blends are now ordinary Library
   records: a yeast record with a `blend_of` composition, authored and deleted there
@@ -113,41 +127,48 @@ models hop contact, not a flavour dose.
 
 ### Report sections
 
-Ten sections have landed — Brewhouse, Batch Facts, Mash Rests, Hops, Yeast,
-Volume Ledger, Liquor Ledger, Water Chemistry, Limits and the Brew Checklist —
-with the bundle and the render service (`GET`/`POST /batches/{id}/report`).
-Brewhouse prints the two solved mash ratios (L/kg and r); Mash Rests prints only
-the enabled schedule plus the total mash time; Water Chemistry carries the source
-report, the target profile, the source-to-final ion table, the mash and sparge
-treatment doses, predicted mash pH and solver telemetry; and Limits carries the
-feasibility ceiling and binding capacity plus a closing extract ledger:
-potential, conversion inefficiency, converted, mash tun and transfer losses,
-into the kettle, late additions, post-boil, kettle losses, into the fermenter,
-and the kettle-basis brewhouse efficiency. One bullet per remaining section; the
-presence predicates are in `plans/report-renderer.md` §6.4. Queue order is the
-order below.
+Eleven sections have landed — Brewhouse, Batch Facts, Mash Rests, Hops, Process
+notes, Yeast, Volume Ledger, Liquor Ledger, Water Chemistry, Limits and the Brew
+Checklist — with the bundle and the render service
+(`GET`/`POST /batches/{id}/report`). Brewhouse prints the two solved mash ratios
+(L/kg and r); Mash Rests prints only the enabled schedule plus the total mash
+time; Process notes prints the batch's free-text notes in authored order; Water
+Chemistry carries the source report, the target profile, the source-to-final ion
+table, the mash and sparge treatment doses, predicted mash pH and solver
+telemetry; and Limits carries the feasibility ceiling and binding capacity plus a
+closing extract ledger: potential, conversion inefficiency, converted, mash tun
+and transfer losses, into the kettle, late additions, post-boil, kettle losses,
+into the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
+remaining section; the presence predicates are in `plans/report-renderer.md`
+§6.4. Queue order is the order below.
 
 * **Pinned ions section** — `water.pinned_ions` rows; the checked targets and their
   values, so a reader can see what constrained the water solver.
 * **Style conformance section** — `conformance` is not `null`; SAI and the
   per-pillar verdicts already captured at freeze.
+* **Render image** — the Dockerfile that ships the Typst binary and replaces the
+  Cloud Run buildpacks; the render service itself is already live
+  (`plans/report-renderer.md` §11 step 5).
 
 ### Low priority
 
 * **Shape-pin burn-down** — the complexity ratchet and its guard landed with the
   lint program (`tests/guards/shape-pins.test.js` re-measures every pin, so a
-  ceiling can only be lowered). What is left is the residue it recorded: 47
-  functions in 25 `frontend/src` files above `complexity 12`, eight files above
-  400 lines, plus the script layer's pins from the drift-gates program. The
-  interpreter leads (`views/producer/projection.js` 34, `engine/validate.js` 34,
+  ceiling can only be lowered). What is left is the residue it recorded: 46
+  functions in 25 `frontend/src` files above `complexity 12`, four files above
+  400 lines (`engine/fermentation.js` 506, `store/recipes.js` 454,
+  `adapters/stepAdapter.js` 452, `views/producer/stylePlot.js` 422), plus the
+  script layer's pins from the drift-gates program. The interpreter still leads
+  (`views/producer/projection.js` 34, `engine/validate.js` 34,
   `views/producer/scalar.js` 21, `engine/ast.js` 22 — dispatch over the grammar,
-  so the split is a table per node kind), then the solve and refresh paths
-  (`boundaryRunner.js` 35 / 213 lines, `cards/water.js` 38 / 639 lines,
-  `stepView.js` 19) and the stores (`userCatalog.js` 32, `unitPrefs.js` 27,
-  `library.js` 18). Each split lowers its pin in the same commit and deletes it
-  once the file is under the ceiling. The backend equivalent is now a hard
-  ceiling — `max-complexity 10` in `backend/pyproject.toml`, no pins — so this
-  queue is frontend-only.
+  so the split is a table per node kind), then the solve path
+  (`adapters/cards/water.js` 38 / 296 lines after the 639-line split,
+  `adapters/boundaryRunner.js` 35 / 234 lines, `adapters/stepView.js` 19) and the
+  stores and catalogue (`store/userCatalog.js` 32, `store/unitPrefs.js` 27,
+  `views/registry/catalog.js` 29, `engine/dag.js` 26). Each split lowers its pin
+  in the same commit and deletes it once the file is under the ceiling. The
+  backend equivalent is now a hard ceiling — `max-complexity 10` in
+  `backend/pyproject.toml`, no pins — so this queue is frontend-only.
 
 ## Engine robustness follow-ups
 
