@@ -5,19 +5,19 @@ print `done_when`.
 
 ## Execution Checklist
 
-- [ ] 1. Render the checklist note.
+- [x] 1. Render the checklist note.
   - Read the `note` cell in `step-row` in `backend/app/templates/sections/checklist.typ`.
   - When it is not `—`, print a muted `Note: …` line after the step text and
     before the level line.
   - Do not read or render `done_when`.
-- [ ] 2. Add the render test.
+- [x] 2. Add the render test.
   - Set a fixture checklist row's `note` cell to a unique sentinel.
   - Render the checklist section.
   - Extract the PDF text with `pypdf` and assert the sentinel appears.
   - Keep the baseline and skipped-step tests unchanged.
-- [ ] 3. Run `make check`.
-- [ ] 4. Run `make test`.
-- [ ] 5. Archive this plan and make the final commit.
+- [x] 3. Run `make check`.
+- [x] 4. Run `make test`.
+- [x] 5. Archive this plan and make the final commit.
 
 ## Acceptance
 

@@ -181,6 +181,18 @@ def test_the_checklist_omits_skipped_steps() -> None:
     assert "Brew Day Setup" in text
 
 
+def test_the_checklist_renders_notes_without_done_when() -> None:
+    data = bundle_dict()
+    row = data["formatted_tables"]["batch.brew_checklist"][0]
+    row["note"] = _cell("NOTESENTINEL")
+
+    rendered = render(seal_bundle(data), parse_spec(sections="checklist"))
+    text = _pdf_text(rendered.data)
+
+    assert "NOTESENTINEL" in text
+    assert "Done when" not in text
+
+
 def test_the_ibu_splits_hide_without_whirlpool_hops() -> None:
     data = bundle_dict()
     del data["formatted_tables"]["batch.whirlpool_hops"]

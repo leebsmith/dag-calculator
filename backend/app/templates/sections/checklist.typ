@@ -26,6 +26,7 @@
 }
 
 #let step-row(row) = block(breakable: false, {
+  let note = cell(row, "note")
   grid(
     columns: (14pt, 1fr),
     column-gutter: 4pt,
@@ -34,6 +35,10 @@
       #text(weight: "bold", cell(row, "title"))
       #linebreak()
       #cell(row, "text")
+      #if note != "—" [
+        #linebreak()
+        #text(size: 8pt, fill: rgb("#6b6b6b"), "Note: " + note)
+      ]
       #linebreak()
       #text(size: 8pt, fill: rgb("#6b6b6b"), "Level: " + cell(row, "level"))
     ],
