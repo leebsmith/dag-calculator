@@ -121,3 +121,23 @@ Move flocculation, alcohol tolerance, temperature, recipes, source and notes int
 2. `make check`.
 3. `make test`.
 4. Manual: select the M31 clone, open Set attenuation, choose 88%, confirm cap 88 and realized/above-cap display; choose 92% and confirm the STA1 cause label; check the point-only fallback on a non-ranged strain.
+
+## Execution checklist
+
+### Step 1 — yeast card and attenuation model
+
+- [ ] Rename `attenuation_pct` to `attenuation_cap_pct` across the artifact, seeds, labels, reports, fixtures and tests; add the legacy snapshot fallback.
+- [ ] Enforce the ranged-strain invariant in the seed builder and Library clone editor; autofill and lock the cap when both endpoints exist.
+- [ ] Rebuild the yeast card as strain summary + batch attenuation panel + collapsible details/help.
+- [ ] Add the conditional **Set attenuation…** popover with the range, Use/Apply, derate arithmetic and cap; keep the point-only derate fallback.
+- [ ] Show realized attenuation, binding constraint and cause-aware above-cap row in the yeast panel.
+- [ ] Remove the duplicate cap/sugar-lift readouts from the Style card; retain the read-only attenuation outcome.
+- [ ] Update tests, run `make generate`, `make check` and `make test`.
+
+### Step 2 — picker rationalization
+
+- [ ] Replace the stacked picker filter rows with a compact filter area for manufacturer, attenuation, STA1 and POF.
+- [ ] Add per-row `mine`, STA1 and POF badges; move flocculation and tolerance into row detail.
+- [ ] Keep search, the 50-row cap/counter and `Use`; keep no Copy action.
+- [ ] Update picker tests and run `make check` + `make test`.
+- [ ] Verify the M31 clone and a point-only strain manually.
