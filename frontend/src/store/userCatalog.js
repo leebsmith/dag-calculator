@@ -274,5 +274,18 @@ function validateArtifactComponent(artifact, meta, component) {
       errors.push({ field, message: "must be a boolean" });
     }
   }
+  validateYeastAttenuation(meta, component, errors);
   return errors;
+}
+
+function validateYeastAttenuation(meta, component, errors) {
+  if (meta.schema !== "yeast") return;
+  const low = component.attenuation_low_pct;
+  const high = component.attenuation_high_pct;
+  if (typeof low !== "number" || typeof high !== "number") return;
+  if (component.attenuation_cap_pct === high) return;
+  errors.push({
+    field: "attenuation_cap_pct",
+    message: "Cap must equal the published high when a range is set.",
+  });
 }

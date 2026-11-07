@@ -78,6 +78,44 @@ def service():
     return CatalogService(FakeCatalogRepo())
 
 
+def service_with_repo():
+    repo = FakeCatalogRepo()
+    return CatalogService(repo), repo
+
+
+RANGED_YEAST = {
+    "name": "Belgian Tripel M31 (copy)",
+    "attenuation_low_pct": 0.82,
+    "attenuation_high_pct": 0.92,
+    "attenuation_cap_pct": 0.85,
+}
+
+
+def test_reads_normalize_a_ranged_yeast_cap_to_the_published_high():
+    svc, repo = service_with_repo()
+    record = repo.create(
+        "u1",
+        "yeast",
+        RANGED_YEAST,
+        "id",
+        load_artifact()["schema_version"],
+    )
+
+    listed = svc.list_items("u1", "yeast")[0]
+    assert listed.component["attenuation_cap_pct"] == 0.92
+    fetched = svc.get_item("u1", "yeast", record["id"])
+    assert fetched.component["attenuation_cap_pct"] == 0.92
+    assert repo.get("u1", "yeast", record["id"])["component"]["attenuation_cap_pct"] == 0.85
+
+
+def test_create_rejects_a_ranged_yeast_with_a_mismatched_cap():
+    with pytest.raises(CatalogValidationError) as exc:
+        service().create_item("u1", "yeast", RANGED_YEAST)
+    assert exc.value.errors == [
+        "attenuation_cap_pct: Cap must equal the published high when a range is set."
+    ]
+
+
 def test_create_assigns_the_identity_field_and_lists_by_kind():
     svc = service()
     created = svc.create_item("u1", "malt", MALT)

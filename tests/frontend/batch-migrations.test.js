@@ -128,6 +128,32 @@ test("a legacy yeast snapshot reads attenuation_pct as the cap", () => {
   ]);
 });
 
+test("a ranged snapshot takes the published high as its cap", () => {
+  const fixture = selectionFixture({
+    snapshots: {
+      "batch.yeast": {
+        id: "y-1",
+        attenuation_low_pct: 0.82,
+        attenuation_high_pct: 0.92,
+        attenuation_cap_pct: 0.85,
+      },
+    },
+  });
+
+  assert.equal(migrateLegacyYeastCap({ session: fixture.session }), true);
+  assert.deepEqual(fixture.selections, [
+    {
+      id: "batch.yeast",
+      component: {
+        id: "y-1",
+        attenuation_low_pct: 0.82,
+        attenuation_high_pct: 0.92,
+        attenuation_cap_pct: 0.92,
+      },
+    },
+  ]);
+});
+
 test("the cap migration leaves a current snapshot and non-numeric values alone", () => {
   const current = selectionFixture({
     snapshots: { "batch.yeast": { id: "y-1", attenuation_cap_pct: 0.8 } },

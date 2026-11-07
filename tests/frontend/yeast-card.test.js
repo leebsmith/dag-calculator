@@ -55,6 +55,18 @@ test("a legacy snapshot reads its old attenuation_pct as the cap", () => {
   assert.equal(app.selectedYeastPublished, "78%");
 });
 
+test("a stale ranged snapshot takes the published high as its cap", () => {
+  const app = cardFor({
+    id: "deleted-record",
+    attenuation_low_pct: 0.82,
+    attenuation_high_pct: 0.92,
+    attenuation_cap_pct: 0.85,
+  });
+
+  assert.equal(app.selectedYeast.attenuation_cap_pct, 0.92);
+  assert.equal(app.attenuationRangeValid, true);
+});
+
 test("a ranged strain exposes the range control and writes the derate", () => {
   const app = cardFor({
     id: "deleted-record",
@@ -103,7 +115,7 @@ test("the above-cap cause names diastaticus and sugar separately", () => {
     "batch.sugar_extract_total": { value: 0 },
   };
 
-  assert.equal(app.attenuationAboveCapLabel, "+5.0%");
+  assert.equal(app.attenuationAboveCapLabel, "+5.0 pts");
   assert.equal(app.attenuationAboveCapCause, "diastaticus");
   assert.equal(app.attenuationBinding, "diastaticus");
 

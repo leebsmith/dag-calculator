@@ -360,4 +360,19 @@ def validate_component(kind: str, component: Any) -> list[str]:
 
     errors = _header_errors(component, meta)
     _validate_declared_fields(artifact, schema, component, errors)
+    _validate_yeast_attenuation(kind, component, errors)
     return errors
+
+
+def _validate_yeast_attenuation(kind: str, component: dict, errors: list[str]) -> None:
+    """A ranged yeast's cap is the published high; the two cannot disagree."""
+    if kind != "yeast" or not isinstance(component, dict):
+        return
+    low = component.get("attenuation_low_pct")
+    high = component.get("attenuation_high_pct")
+    if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
+        return
+    if component.get("attenuation_cap_pct") != high:
+        errors.append(
+            "attenuation_cap_pct: Cap must equal the published high when a range is set."
+        )

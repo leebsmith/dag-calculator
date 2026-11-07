@@ -52,6 +52,18 @@ export function attenuationLabel(yeast) {
   return yeast ? `${percentText(yeast.attenuation_cap_pct)}%` : "";
 }
 
+// A ranged strain's cap is the published high. Older records can carry a
+// point cap beside a range; normalize them at every state boundary instead of
+// tolerating two different ceilings.
+export function normalizeRangedYeast(yeast) {
+  if (!yeast || typeof yeast !== "object") return yeast;
+  const low = yeast.attenuation_low_pct;
+  const high = yeast.attenuation_high_pct;
+  if (typeof low !== "number" || typeof high !== "number") return yeast;
+  if (yeast.attenuation_cap_pct === high) return yeast;
+  return { ...yeast, attenuation_cap_pct: high };
+}
+
 // The vendor's published band, when it published one; the cap basis is the
 // point (`attenuation_cap_pct`), so this is detail rather than the row's figure.
 export function attenuationBandLabel(yeast) {

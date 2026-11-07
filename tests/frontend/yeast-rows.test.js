@@ -8,6 +8,7 @@ import {
   diastaticusTier,
   diastaticusTiers,
   isYeastListTruncated,
+  normalizeRangedYeast,
   percentText,
   pofLabel,
   pofTier,
@@ -35,6 +36,26 @@ test("attenuationBandLabel prints the vendor band only when both ends exist", ()
   assert.equal(attenuationBandLabel({ attenuation_low_pct: 0.82 }), "");
   assert.equal(attenuationBandLabel({ attenuation_cap_pct: 0.8 }), "");
   assert.equal(attenuationBandLabel(null), "");
+});
+
+test("normalizeRangedYeast takes the published high as the cap", () => {
+  const stale = {
+    id: "y-1",
+    attenuation_low_pct: 0.82,
+    attenuation_high_pct: 0.92,
+    attenuation_cap_pct: 0.85,
+  };
+  assert.deepEqual(normalizeRangedYeast(stale), {
+    ...stale,
+    attenuation_cap_pct: 0.92,
+  });
+
+  const current = { ...stale, attenuation_cap_pct: 0.92 };
+  assert.equal(normalizeRangedYeast(current), current);
+
+  const pointOnly = { id: "y-2", attenuation_cap_pct: 0.78 };
+  assert.equal(normalizeRangedYeast(pointOnly), pointOnly);
+  assert.equal(normalizeRangedYeast(null), null);
 });
 
 test("sta1Label keeps the unpublished result as its own marker", () => {

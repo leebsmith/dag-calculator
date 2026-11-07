@@ -3,6 +3,7 @@
 // returns true when it changed something, so `loadState` can notify once.
 
 import { identityDerivations } from "../views/seedDerivations.js";
+import { normalizeRangedYeast } from "../views/producer/yeastRows.js";
 import { EQUAL_SUGAR_PARTS } from "../views/producer/sugarAllocation.js";
 
 // A saved batch can author a positive sugar share while every row's parts are
@@ -38,19 +39,21 @@ export function migrateAttenuationDerate({ engine, getRoot, setRoot }, legacy) {
 }
 
 // Selections saved before the cap was renamed stored `attenuation_pct`. Treat
-// that value as the cap once, so old drafts and frozen forks keep their figure
-// without rewriting the persisted batch.
+// that value as the cap once, then apply the ranged invariant: when a published
+// range exists, the cap is its high end. Old drafts and frozen forks keep their
+// figure without rewriting the persisted batch.
 export function migrateLegacyYeastCap({ session }) {
   const snapshots = session.selections();
   let changed = false;
   for (const [nodeId, component] of Object.entries(snapshots)) {
     if (!component || typeof component !== "object") continue;
-    if (component.attenuation_cap_pct !== undefined) continue;
-    if (typeof component.attenuation_pct !== "number") continue;
-    session.setSelection(nodeId, {
-      ...component,
-      attenuation_cap_pct: component.attenuation_pct,
-    });
+    let next = component;
+    if (next.attenuation_cap_pct === undefined && typeof next.attenuation_pct === "number") {
+      next = { ...next, attenuation_cap_pct: next.attenuation_pct };
+    }
+    next = normalizeRangedYeast(next);
+    if (next === component) continue;
+    session.setSelection(nodeId, next);
     changed = true;
   }
   return changed;

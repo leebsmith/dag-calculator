@@ -4,6 +4,7 @@ import { displayValue } from "../../views/producer.js";
 import {
   attenuationBandLabel,
   attenuationLabel,
+  normalizeRangedYeast,
   percentText,
   pofLabel,
   sta1Label,
@@ -11,7 +12,14 @@ import {
 } from "../../views/producer/yeastRows.js";
 import { YEAST_NODES as N } from "../../views/registry/yeast.js";
 import { UNIT_SYMBOLS, masterUnit, unitDecimals } from "../../views/registry/units.js";
-import { formatPercent, joinNonEmpty, roundTo, toPercentValue, unitSymbol } from "../../utils.js";
+import {
+  formatPercent,
+  formatWithDecimals,
+  joinNonEmpty,
+  roundTo,
+  toPercentValue,
+  unitSymbol,
+} from "../../utils.js";
 
 export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView }) {
   return {
@@ -21,16 +29,19 @@ export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView
         const id = getView().selectedYeastId;
         if (!id) return null;
         const live = cache.references.yeast[id] ?? null;
-        if (live) return live;
+        if (live) return normalizeRangedYeast(live);
         const snapshot = getView().selectedYeastSnapshot;
         if (!snapshot) return null;
         if (
           snapshot.attenuation_cap_pct === undefined &&
           typeof snapshot.attenuation_pct === "number"
         ) {
-          return { ...snapshot, attenuation_cap_pct: snapshot.attenuation_pct };
+          return normalizeRangedYeast({
+            ...snapshot,
+            attenuation_cap_pct: snapshot.attenuation_pct,
+          });
         }
-        return snapshot;
+        return normalizeRangedYeast(snapshot);
       },
     },
     selectedYeastPublished: {
@@ -190,7 +201,9 @@ export function createYeastAttenuationDescriptors({ cache, artifact, nl, getView
       configurable: true,
       get() {
         const value = getView().attenuationAboveCap;
-        return value == null ? "" : `+${formatPercent(value, 1)}`;
+        return value == null
+          ? ""
+          : `+${formatWithDecimals(toPercentValue(value, 1), 1)} pts`;
       },
     },
     attenuationAboveCapCause: {

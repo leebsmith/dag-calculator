@@ -8,7 +8,7 @@
 // never references a batch.
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
-import { attenuationRangeOf, createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
+import { createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
 import { createLibraryFieldEditor, KEYS as fieldEditorKeys } from "./libraryFieldEditor.js";
 import { createLibrarySeedActions, KEYS as seedActionKeys } from "./librarySeedActions.js";
 import { createLibraryListEditor, KEYS as libraryListKeys } from "./libraryListEditor.js";
@@ -33,15 +33,6 @@ function libraryErrorsFrom(err) {
     err?.errors ??
     [{ field: "*", message: String(err?.message ?? err) }]
   );
-}
-
-function yeastCapError(draft) {
-  const range = attenuationRangeOf(draft);
-  if (!range || draft.attenuation_cap_pct === range.high) return null;
-  return {
-    field: "attenuation_cap_pct",
-    message: "Cap must equal the published high when a range is set.",
-  };
 }
 
 export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
@@ -335,11 +326,6 @@ export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
       getView().librarySortPoints();
       const draft = { ...getView().libraryDraft };
       delete draft[meta.idField];
-      const capError = kind === "yeast" ? yeastCapError(draft) : null;
-      if (capError) {
-        getView().libraryErrors = [capError];
-        return;
-      }
       const errors = validateComponent(artifact, kind, draft);
       if (errors.length) {
         getView().libraryErrors = errors;

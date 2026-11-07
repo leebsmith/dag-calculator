@@ -17,6 +17,24 @@ class CatalogValidationError(Exception):
         self.errors = errors
 
 
+def _normalize_component(kind: str, component: dict) -> dict:
+    """Apply stored-record invariants that predate the current validator.
+
+    A ranged yeast's cap is the published high. Records written before that rule
+    existed can disagree; serve the corrected component without rewriting the
+    stored document, so the next clone or save persists the fix.
+    """
+    if kind != "yeast" or not isinstance(component, dict):
+        return component
+    low = component.get("attenuation_low_pct")
+    high = component.get("attenuation_high_pct")
+    if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
+        return component
+    if component.get("attenuation_cap_pct") == high:
+        return component
+    return {**component, "attenuation_cap_pct": high}
+
+
 class CatalogService:
     def __init__(self, repo: CatalogRepository) -> None:
         self._repo = repo
@@ -30,14 +48,27 @@ class CatalogService:
 
     def list_items(self, uid: str, kind: str) -> list[CatalogItem]:
         self._meta(kind)
-        return [CatalogItem(**record) for record in self._repo.list_items(uid, kind)]
+        return [
+            CatalogItem(**self._normalize(kind, record))
+            for record in self._repo.list_items(uid, kind)
+        ]
 
     def get_item(self, uid: str, kind: str, item_id: str) -> CatalogItem:
         self._meta(kind)
         record = self._repo.get(uid, kind, item_id)
         if record is None:
             raise HTTPException(status_code=404, detail="Catalog item not found")
-        return CatalogItem(**record)
+        return CatalogItem(**self._normalize(kind, record))
+
+    @staticmethod
+    def _normalize(kind: str, record: dict) -> dict:
+        component = record.get("component")
+        if not isinstance(component, dict):
+            return record
+        normalized = _normalize_component(kind, component)
+        if normalized is component:
+            return record
+        return {**record, "component": normalized}
 
     def create_item(self, uid: str, kind: str, component: dict) -> CatalogItem:
         meta = self._meta(kind)

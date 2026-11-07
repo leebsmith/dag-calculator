@@ -102,6 +102,26 @@
       "expected": ["attenuation_cap_pct"]
     },
     {
+      "catalog": "yeast",
+      "component": {
+        "name": "Ranged strain",
+        "attenuation_low_pct": 0.82,
+        "attenuation_high_pct": 0.92,
+        "attenuation_cap_pct": 0.92
+      },
+      "expected": []
+    },
+    {
+      "catalog": "yeast",
+      "component": {
+        "name": "Stale ranged strain",
+        "attenuation_low_pct": 0.82,
+        "attenuation_high_pct": 0.92,
+        "attenuation_cap_pct": 0.85
+      },
+      "expected": ["attenuation_cap_pct"]
+    },
+    {
       "catalog": "water_report",
       "component": { "calcium_ca": 40 },
       "expected": ["laboratory"]

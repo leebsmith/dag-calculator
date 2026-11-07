@@ -3,6 +3,7 @@
 // Everything that needs current engine state resolves it through this module.
 
 import { createCalculator } from "../engine/index.js";
+import { normalizeRangedYeast } from "../views/producer/yeastRows.js";
 import { BOUNDARY_BUILDERS } from "./boundaryRequest.js";
 
 // AI AGENT HOOKS: Use this session factory for constructing, rebuilding, and
@@ -107,7 +108,11 @@ export function createSession({
       if (component === null || component === undefined) {
         delete selectionSnapshots[nodeId];
       } else {
-        selectionSnapshots[nodeId] = { ...component };
+        const normalized =
+          artifact.nodes[nodeId]?.output?.schema === "yeast"
+            ? normalizeRangedYeast(component)
+            : component;
+        selectionSnapshots[nodeId] = { ...normalized };
       }
       engine.invalidate(nodeId);
     },
