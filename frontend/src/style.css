@@ -69,7 +69,7 @@ samp {
   border: 1px solid var(--color-transparent);
   cursor: pointer;
   text-decoration: none;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background-color var(--transition-fast), background-image var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
   user-select: none;
   min-height: var(--target-min-micro);
 }
@@ -103,24 +103,34 @@ samp {
   box-shadow: var(--sys-shadow-sm);
 }
 
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--sys-color-action-primary-hover);
-  border-color: var(--sys-color-action-primary-hover);
-}
-
 .btn-secondary {
   background-color: var(--sys-surface-subtle);
   color: var(--sys-text-secondary);
   border-color: var(--sys-border-subtle);
 }
 
+.btn:hover:not(:disabled),
+.btn-primary:hover:not(:disabled),
 .btn-secondary:hover:not(:disabled),
 .btn-outline:hover:not(:disabled),
-.btn-action-icon:hover,
+.btn-action-icon:hover:not(:disabled),
 .split-pill-unit:hover,
-.split-pill-lock:hover {
-  background-color: var(--sys-surface-hover);
-  color: var(--sys-text-primary);
+.split-pill-lock:hover,
+.segmented-item:hover:not(:disabled) {
+  background-image:
+    linear-gradient(var(--md-sys-state-hover), var(--md-sys-state-hover));
+}
+
+.btn:active:not(:disabled),
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled),
+.btn-outline:active:not(:disabled),
+.btn-action-icon:active:not(:disabled),
+.split-pill-unit:active,
+.split-pill-lock:active,
+.segmented-item:active:not(:disabled) {
+  background-image:
+    linear-gradient(var(--md-sys-state-pressed), var(--md-sys-state-pressed));
 }
 
 .btn-outline {
@@ -870,6 +880,7 @@ samp {
   user-select: none;
   transition:
     background-color var(--transition-fast),
+    background-image var(--transition-fast),
     border-color var(--transition-fast),
     color var(--transition-fast);
 }
@@ -912,15 +923,6 @@ samp {
   background-color: var(--sys-surface-default);
   border-color: var(--sys-border-default);
   border-radius: var(--radius-full);
-}
-
-.segmented-item:hover:not(.is-active, :disabled) {
-  border-color: var(--sys-border-default);
-  color: var(--sys-text-primary);
-}
-
-.segmented-item--button:hover:not(.is-active, :disabled) {
-  background-color: var(--sys-surface-hover);
 }
 
 .segmented-item.is-active {

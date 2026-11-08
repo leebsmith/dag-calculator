@@ -1,17 +1,18 @@
 /**
  * Design Tokens Architecture
- * Multi-tiered token taxonomy: Primitive -> Semantic -> Component
- * Supports native light and dark modes via prefers-color-scheme.
+ * M3 tiering: Reference Palette -> System Roles -> Semantic Aliases -> Components.
+ * Light and dark modes are expressed as M3 system-role values; component CSS
+ * consumes the semantic aliases only.
  */
 
 :root {
   color-scheme: light dark;
 
   /* ========================================================================
-     1. Primitive Color Palette
+     1. Reference Palette
      ======================================================================== */
 
-  /* Neutral Scale (Slate) */
+  /* Existing primitive palette (kept for compatibility and status roles) */
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
   --color-slate-200: #e2e8f0;
@@ -21,7 +22,6 @@
   --color-slate-600: #475569;
   --color-slate-900: #0f172a;
 
-  /* Brand / Action Scale (Indigo) */
   --color-indigo-50: #eef2ff;
   --color-indigo-100: #e0e7ff;
   --color-indigo-200: #c7d2fe;
@@ -30,74 +30,250 @@
   --color-indigo-700: #4338ca;
   --color-indigo-800: #3730a3;
 
-  /* Status: Success (Emerald) */
   --color-emerald-50: #ecfdf5;
   --color-emerald-200: #a7f3d0;
   --color-emerald-500: #10b981;
   --color-emerald-800: #065f46;
 
-  /* Status: Warning (Amber) */
   --color-amber-50: #fffbeb;
   --color-amber-200: #fde68a;
   --color-amber-500: #f59e0b;
   --color-amber-800: #92400e;
 
-  /* Status: Danger / Error (Rose) */
   --color-rose-50: #fff1f2;
   --color-rose-200: #fecdd3;
   --color-rose-600: #e11d48;
   --color-rose-700: #be123c;
 
-  /* Static Primitives */
   --color-white: #ffffff;
   --color-transparent: transparent;
 
-  /* ========================================================================
-     2. Spacing Scale
-     ======================================================================== */
-  --space-0: 0;
-  --space-0-25: 0.0625rem;  /* 1px */
-  --space-0-5: 0.125rem;    /* 2px */
-  --space-1: 0.25rem;       /* 4px */
-  --space-1-5: 0.375rem;    /* 6px */
-  --space-2: 0.5rem;        /* 8px */
-  --space-3: 0.75rem;       /* 12px */
-  --space-4: 1rem;          /* 16px */
-  --space-5: 1.25rem;       /* 20px */
-  --space-6: 1.5rem;        /* 24px */
-  --space-8: 2rem;          /* 32px */
-  --space-12: 3rem;         /* 48px */
+  /* M3 primary tonal palette (indigo seed) */
+  --md-ref-palette-primary-10: #1e1b4b;
+  --md-ref-palette-primary-20: #312e81;
+  --md-ref-palette-primary-30: #3730a3;
+  --md-ref-palette-primary-40: #4f46e5;
+  --md-ref-palette-primary-80: #c7d2fe;
+  --md-ref-palette-primary-90: #e0e7ff;
+  --md-ref-palette-primary-95: #eef2ff;
+  --md-ref-palette-primary-100: #ffffff;
+
+  /* M3 secondary tonal palette */
+  --md-ref-palette-secondary-10: #131c2b;
+  --md-ref-palette-secondary-30: #3f4759;
+  --md-ref-palette-secondary-40: #565e71;
+  --md-ref-palette-secondary-80: #bfc6dc;
+  --md-ref-palette-secondary-90: #dae2f9;
+  --md-ref-palette-secondary-100: #ffffff;
+
+  /* M3 neutral tonal palette */
+  --md-ref-palette-neutral-0: #000000;
+  --md-ref-palette-neutral-3: #070d18;
+  --md-ref-palette-neutral-5: #0b1120;
+  --md-ref-palette-neutral-10: #0f172a;
+  --md-ref-palette-neutral-12: #111827;
+  --md-ref-palette-neutral-17: #172033;
+  --md-ref-palette-neutral-20: #1e293b;
+  --md-ref-palette-neutral-25: #2d3d56;
+  --md-ref-palette-neutral-30: #475569;
+  --md-ref-palette-neutral-50: #94a3b8;
+  --md-ref-palette-neutral-60: #64748b;
+  --md-ref-palette-neutral-80: #cbd5e1;
+  --md-ref-palette-neutral-90: #e2e8f0;
+  --md-ref-palette-neutral-95: #f1f5f9;
+  --md-ref-palette-neutral-99: #f8fafc;
+  --md-ref-palette-neutral-100: #ffffff;
+
+  /* M3 error tonal palette */
+  --md-ref-palette-error-10: #410e0b;
+  --md-ref-palette-error-20: #601410;
+  --md-ref-palette-error-30: #8c1d18;
+  --md-ref-palette-error-40: #b3261e;
+  --md-ref-palette-error-80: #f2b8b5;
+  --md-ref-palette-error-90: #f9dedc;
+  --md-ref-palette-error-100: #ffffff;
 
   /* ========================================================================
-     3. Typography Tokens
+     2. M3 System Color Roles (Light)
      ======================================================================== */
 
-  /* Font Families */
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --md-sys-color-primary: var(--md-ref-palette-primary-40);
+  --md-sys-color-on-primary: var(--md-ref-palette-primary-100);
+  --md-sys-color-primary-container: var(--md-ref-palette-primary-90);
+  --md-sys-color-on-primary-container: var(--md-ref-palette-primary-10);
+
+  --md-sys-color-secondary: var(--md-ref-palette-secondary-40);
+  --md-sys-color-on-secondary: var(--md-ref-palette-secondary-100);
+  --md-sys-color-secondary-container: var(--md-ref-palette-secondary-90);
+  --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary-10);
+
+  --md-sys-color-error: var(--md-ref-palette-error-40);
+  --md-sys-color-on-error: var(--md-ref-palette-error-100);
+  --md-sys-color-error-container: var(--md-ref-palette-error-90);
+  --md-sys-color-on-error-container: var(--md-ref-palette-error-10);
+  --md-sys-color-error-outline: var(--md-ref-palette-error-80);
+
+  --md-sys-color-surface: var(--md-ref-palette-neutral-99);
+  --md-sys-color-surface-dim: var(--md-ref-palette-neutral-90);
+  --md-sys-color-surface-bright: var(--md-ref-palette-neutral-100);
+  --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral-100);
+  --md-sys-color-surface-container-low: var(--md-ref-palette-neutral-99);
+  --md-sys-color-surface-container: var(--md-ref-palette-neutral-95);
+  --md-sys-color-surface-container-high: var(--md-ref-palette-neutral-90);
+  --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral-80);
+  --md-sys-color-on-surface: var(--md-ref-palette-neutral-10);
+  --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-30);
+  --md-sys-color-surface-variant: var(--md-ref-palette-neutral-90);
+
+  --md-sys-color-outline: var(--md-ref-palette-neutral-50);
+  --md-sys-color-outline-variant: var(--md-ref-palette-neutral-90);
+  --md-sys-color-inverse-surface: var(--md-ref-palette-neutral-10);
+  --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral-99);
+  --md-sys-color-inverse-primary: var(--md-ref-palette-primary-80);
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-surface-tint: var(--md-sys-color-primary);
+
+  /* Status roles are not part of M3; they follow the container/on-container
+     structure so they can share the same alias surface. */
+  --md-sys-color-success: var(--color-emerald-500);
+  --md-sys-color-success-container: var(--color-emerald-50);
+  --md-sys-color-on-success-container: var(--color-emerald-800);
+  --md-sys-color-success-outline: var(--color-emerald-200);
+
+  --md-sys-color-warning: var(--color-amber-500);
+  --md-sys-color-warning-container: var(--color-amber-50);
+  --md-sys-color-on-warning-container: var(--color-amber-800);
+  --md-sys-color-warning-outline: var(--color-amber-200);
+
+  --md-sys-color-info: var(--md-sys-color-primary);
+  --md-sys-color-info-container: var(--md-sys-color-primary-container);
+  --md-sys-color-on-info-container: var(--md-sys-color-on-primary-container);
+  --md-sys-color-info-outline: var(--md-ref-palette-primary-80);
+
+  /* ========================================================================
+     3. M3 Type Scale
+     ======================================================================== */
+
+  --md-ref-typeface-plain: Roboto, system-ui, sans-serif;
+  --font-sans: var(--md-ref-typeface-plain);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
-  /* Fluid & Discrete Type Scale */
-  --text-micro: 0.6875rem; /* 11px */
-  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
-  --text-sm: clamp(0.875rem, 0.84rem + 0.18vw, 0.9375rem);
-  --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
-  --text-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --md-sys-typescale-display-large-size: 3.5625rem;
+  --md-sys-typescale-display-large-line-height: 4rem;
+  --md-sys-typescale-display-large-weight: 400;
+  --md-sys-typescale-display-large-tracking: -0.0156em;
 
-  /* Line Heights */
+  --md-sys-typescale-display-medium-size: 2.8125rem;
+  --md-sys-typescale-display-medium-line-height: 3.25rem;
+  --md-sys-typescale-display-medium-weight: 400;
+  --md-sys-typescale-display-medium-tracking: 0;
+
+  --md-sys-typescale-display-small-size: 2.25rem;
+  --md-sys-typescale-display-small-line-height: 2.75rem;
+  --md-sys-typescale-display-small-weight: 400;
+  --md-sys-typescale-display-small-tracking: 0;
+
+  --md-sys-typescale-headline-large-size: 2rem;
+  --md-sys-typescale-headline-large-line-height: 2.5rem;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-large-tracking: 0;
+
+  --md-sys-typescale-headline-medium-size: 1.75rem;
+  --md-sys-typescale-headline-medium-line-height: 2.25rem;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-medium-tracking: 0;
+
+  --md-sys-typescale-headline-small-size: 1.5rem;
+  --md-sys-typescale-headline-small-line-height: 2rem;
+  --md-sys-typescale-headline-small-weight: 400;
+  --md-sys-typescale-headline-small-tracking: 0;
+
+  --md-sys-typescale-title-large-size: 1.375rem;
+  --md-sys-typescale-title-large-line-height: 1.75rem;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-large-tracking: 0;
+
+  --md-sys-typescale-title-medium-size: 1rem;
+  --md-sys-typescale-title-medium-line-height: 1.5rem;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-medium-tracking: 0.0094em;
+
+  --md-sys-typescale-title-small-size: 0.875rem;
+  --md-sys-typescale-title-small-line-height: 1.25rem;
+  --md-sys-typescale-title-small-weight: 500;
+  --md-sys-typescale-title-small-tracking: 0.0063em;
+
+  --md-sys-typescale-body-large-size: 1rem;
+  --md-sys-typescale-body-large-line-height: 1.5rem;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-large-tracking: 0.0313em;
+
+  --md-sys-typescale-body-medium-size: 0.875rem;
+  --md-sys-typescale-body-medium-line-height: 1.25rem;
+  --md-sys-typescale-body-medium-weight: 400;
+  --md-sys-typescale-body-medium-tracking: 0.0156em;
+
+  --md-sys-typescale-body-small-size: 0.75rem;
+  --md-sys-typescale-body-small-line-height: 1rem;
+  --md-sys-typescale-body-small-weight: 400;
+  --md-sys-typescale-body-small-tracking: 0.025em;
+
+  --md-sys-typescale-label-large-size: 0.875rem;
+  --md-sys-typescale-label-large-line-height: 1.25rem;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-large-tracking: 0.0063em;
+
+  --md-sys-typescale-label-medium-size: 0.75rem;
+  --md-sys-typescale-label-medium-line-height: 1rem;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-medium-tracking: 0.0313em;
+
+  --md-sys-typescale-label-small-size: 0.6875rem;
+  --md-sys-typescale-label-small-line-height: 1rem;
+  --md-sys-typescale-label-small-weight: 500;
+  --md-sys-typescale-label-small-tracking: 0.0313em;
+
+  /* Legacy type aliases */
+  --text-micro: var(--md-sys-typescale-label-small-size);
+  --text-xs: var(--md-sys-typescale-body-small-size);
+  --text-sm: var(--md-sys-typescale-body-medium-size);
+  --text-base: var(--md-sys-typescale-body-large-size);
+  --text-lg: var(--md-sys-typescale-title-large-size);
+
   --line-height-none: 1;
-  --line-height-tight: 1.2;
-  --line-height-snug: 1.35;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.4286;
   --line-height-normal: 1.5;
 
-  /* Font Weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  --text-tracking-tight: 0.0063em;
+  --text-tracking-wide: 0.0313em;
+
   /* ========================================================================
-     4. Layout Dimensions & Sizing
+     4. Spacing Scale
      ======================================================================== */
+
+  --space-0: 0;
+  --space-0-25: 0.0625rem;
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-1-5: 0.375rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* ========================================================================
+     5. Layout Dimensions & Sizing
+     ======================================================================== */
+
   --container-content-stack: 36rem;
   --container-content-wide: 56rem;
   --container-modal-dialog: 42rem;
@@ -106,8 +282,9 @@
   --width-parts-input: 5rem;
 
   /* ========================================================================
-     5. Border Radii
+     6. Border Radii
      ======================================================================== */
+
   --radius-xs: 0.25rem;
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -117,17 +294,36 @@
   --radius-circle: 50%;
 
   /* ========================================================================
-     6. Elevation & Shadows (Light Mode Default)
+     7. M3 Elevation
      ======================================================================== */
-  --sys-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --sys-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-  --sys-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  --sys-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  --sys-shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.2);
+
+  --md-sys-elevation-1:
+    0 1px 2px 0 rgba(0, 0, 0, 0.30),
+    0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-2:
+    0 1px 2px 0 rgba(0, 0, 0, 0.30),
+    0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-3:
+    0 4px 8px 3px rgba(0, 0, 0, 0.15),
+    0 1px 3px 0 rgba(0, 0, 0, 0.30);
+  --md-sys-elevation-4:
+    0 6px 10px 4px rgba(0, 0, 0, 0.15),
+    0 2px 3px 0 rgba(0, 0, 0, 0.30);
+  --md-sys-elevation-5:
+    0 8px 12px 6px rgba(0, 0, 0, 0.15),
+    0 4px 4px 0 rgba(0, 0, 0, 0.30);
+
+  --sys-shadow-sm: var(--md-sys-elevation-1);
+  --sys-shadow-md: var(--md-sys-elevation-2);
+  --sys-shadow-lg: var(--md-sys-elevation-3);
+  --sys-shadow-xl: var(--md-sys-elevation-5);
+  --sys-shadow-focus:
+    0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
 
   /* ========================================================================
-     7. Z-Index Layering
+     8. Z-Index Layering
      ======================================================================== */
+
   --z-base: 0;
   --z-sticky: 10;
   --z-scrim: 15;
@@ -138,165 +334,154 @@
   --z-modal: 100;
 
   /* ========================================================================
-     8. Transitions & Timing
+     9. Transitions & Timing
      ======================================================================== */
+
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-drawer: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Backdrop Blur Filters */
   --sys-backdrop-blur-subtle: blur(2px);
   --sys-backdrop-blur: blur(4px);
 
   /* ========================================================================
-     9. Semantic Light Mode Tokens (Default)
+     10. M3 State Layers
+     ======================================================================== */
+
+  --md-sys-state-hover-opacity: 0.08;
+  --md-sys-state-focus-opacity: 0.10;
+  --md-sys-state-pressed-opacity: 0.10;
+  --md-sys-state-dragged-opacity: 0.16;
+
+  --md-sys-state-hover: color-mix(in srgb, currentColor 8%, transparent);
+  --md-sys-state-focus: color-mix(in srgb, currentColor 10%, transparent);
+  --md-sys-state-pressed: color-mix(in srgb, currentColor 10%, transparent);
+  --md-sys-state-dragged: color-mix(in srgb, currentColor 16%, transparent);
+
+  /* ========================================================================
+     11. Semantic Aliases
      ======================================================================== */
 
   /* Surfaces */
-  --sys-surface-canvas: var(--color-slate-50);
-  --sys-surface-default: #ffffff;
-  --sys-surface-elevated: #ffffff;
-  --sys-surface-subtle: var(--color-slate-100);
-  --sys-surface-hover: var(--color-slate-100);
-  --sys-surface-selected: var(--sys-color-action-subtle);
-  --sys-surface-overlay: rgba(15, 23, 42, 0.5);
-  --sys-surface-scrim: rgba(15, 23, 42, 0.4);
+  --sys-surface-canvas: var(--md-sys-color-surface);
+  --sys-surface-default: var(--md-sys-color-surface-container-lowest);
+  --sys-surface-elevated: var(--md-sys-color-surface-container-low);
+  --sys-surface-subtle: var(--md-sys-color-surface-container);
+  --sys-surface-hover: var(--md-sys-color-surface-container-high);
+  --sys-surface-selected: var(--md-sys-color-primary-container);
+  --sys-surface-overlay: color-mix(in srgb, var(--md-sys-color-scrim) 50%, transparent);
+  --sys-surface-scrim: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
 
   /* Text & Hierarchy */
-  --sys-text-primary: var(--color-slate-900);
-  --sys-text-secondary: var(--color-slate-600);
-  --sys-text-muted: var(--color-slate-500);
-  --sys-text-on-action: var(--color-white);
+  --sys-text-primary: var(--md-sys-color-on-surface);
+  --sys-text-secondary: var(--md-sys-color-on-surface-variant);
+  --sys-text-muted: var(--md-sys-color-outline);
+  --sys-text-on-action: var(--md-sys-color-on-primary);
 
   /* Borders & Dividers */
-  --sys-border-subtle: var(--color-slate-200);
-  --sys-border-default: var(--color-slate-300);
-  --sys-border-strong: var(--color-slate-400);
-  --sys-border-focus: var(--color-indigo-500);
-  --sys-border-selected: var(--sys-color-action-primary);
+  --sys-border-subtle: var(--md-sys-color-outline-variant);
+  --sys-border-default: var(--md-sys-color-outline);
+  --sys-border-strong: var(--md-sys-color-on-surface-variant);
+  --sys-border-focus: var(--md-sys-color-primary);
+  --sys-border-selected: var(--md-sys-color-primary);
 
   /* Actions & Brand */
-  --sys-color-action-primary: var(--color-indigo-600);
-  --sys-color-action-primary-hover: var(--color-indigo-700);
-  --sys-color-action-subtle: var(--color-indigo-50);
-  --sys-color-action-subtle-text: var(--color-indigo-700);
-  --sys-color-action-subtle-hover: var(--color-indigo-100);
+  --sys-color-action-primary: var(--md-sys-color-primary);
+  --sys-color-action-primary-hover: var(--md-sys-color-primary);
+  --sys-color-action-subtle: var(--md-sys-color-primary-container);
+  --sys-color-action-subtle-text: var(--md-sys-color-on-primary-container);
+  --sys-color-action-subtle-hover:
+    color-mix(in srgb, var(--md-sys-color-on-primary-container) 8%, var(--md-sys-color-primary-container));
 
   /* Status Colors */
-  --sys-color-success-surface: var(--color-emerald-50);
-  --sys-color-success-border: var(--color-emerald-200);
-  --sys-color-success-text: var(--color-emerald-800);
-  --sys-color-success-accent: var(--color-emerald-500);
+  --sys-color-success-surface: var(--md-sys-color-success-container);
+  --sys-color-success-border: var(--md-sys-color-success-outline);
+  --sys-color-success-text: var(--md-sys-color-on-success-container);
+  --sys-color-success-accent: var(--md-sys-color-success);
 
-  --sys-color-warning-surface: var(--color-amber-50);
-  --sys-color-warning-border: var(--color-amber-200);
-  --sys-color-warning-text: var(--color-amber-800);
-  --sys-color-warning-accent: var(--color-amber-500);
+  --sys-color-warning-surface: var(--md-sys-color-warning-container);
+  --sys-color-warning-border: var(--md-sys-color-warning-outline);
+  --sys-color-warning-text: var(--md-sys-color-on-warning-container);
+  --sys-color-warning-accent: var(--md-sys-color-warning);
 
-  --sys-color-danger-surface: var(--color-rose-50);
-  --sys-color-danger-border: var(--color-rose-200);
-  --sys-color-danger-text: var(--color-rose-700);
-  --sys-color-danger-accent: var(--color-rose-600);
-  --sys-color-danger-subtle: rgba(225, 29, 72, 0.08);
+  --sys-color-danger-surface: var(--md-sys-color-error-container);
+  --sys-color-danger-border: var(--md-sys-color-error-outline);
+  --sys-color-danger-text: var(--md-sys-color-on-error-container);
+  --sys-color-danger-accent: var(--md-sys-color-error);
+  --sys-color-danger-subtle: color-mix(in srgb, var(--md-sys-color-error) 8%, transparent);
 
-  --sys-color-info-surface: var(--color-indigo-50);
-  --sys-color-info-border: var(--color-indigo-200);
-  --sys-color-info-text: var(--color-indigo-800);
-  --sys-color-info-accent: var(--color-indigo-600);
+  --sys-color-info-surface: var(--md-sys-color-info-container);
+  --sys-color-info-border: var(--md-sys-color-info-outline);
+  --sys-color-info-text: var(--md-sys-color-on-info-container);
+  --sys-color-info-accent: var(--md-sys-color-info);
 
-  --sys-color-neutral-surface: var(--color-slate-100);
-  --sys-color-neutral-border: var(--color-slate-200);
+  --sys-color-neutral-surface: var(--md-sys-color-surface-container);
+  --sys-color-neutral-border: var(--md-sys-color-outline-variant);
 
   /* Accessibility Targets (WCAG 2.5.8 & 2.5.5 AAA) */
   --target-min-micro: 24px;
   --target-min-macro: 44px;
 
   /* ========================================================================
-     10. Letter-Spacing Scale
-     ======================================================================== */
-  --text-tracking-tight: 0.02em;
-  --text-tracking-wide: 0.05em;
-
-  /* ========================================================================
-     11. Component Layout Dimensions
+     12. Component Layout Dimensions
      ======================================================================== */
 
-  /* Heights and scroll caps */
   --size-modal-workspace-height: min(88vh, 60rem);
   --size-table-scroll: 28rem;
   --size-library-records: 16rem;
 
-  /* Content bounds */
   --size-content-xs: 10rem;
   --size-content-sm: 12rem;
   --size-content-md: 30rem;
 }
 
 /* ========================================================================
-   Semantic Dark Mode Tokens (prefers-color-scheme: dark)
+   M3 System Color Roles (Dark)
    ======================================================================== */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Surfaces */
-    --sys-surface-canvas: #0b1120;
-    --sys-surface-default: #1e293b;
-    --sys-surface-elevated: #293548;
-    --sys-surface-subtle: #172033;
-    --sys-surface-hover: #2d3d56;
-    --sys-surface-selected: var(--sys-color-action-subtle);
-    --sys-surface-overlay: rgba(2, 6, 23, 0.75);
-    --sys-surface-scrim: rgba(2, 6, 23, 0.65);
+    --md-sys-color-primary: var(--md-ref-palette-primary-80);
+    --md-sys-color-on-primary: var(--md-ref-palette-primary-10);
+    --md-sys-color-primary-container: var(--md-ref-palette-primary-30);
+    --md-sys-color-on-primary-container: var(--md-ref-palette-primary-90);
 
-    /* Text & Hierarchy */
-    --sys-text-primary: #f8fafc;
-    --sys-text-secondary: #cbd5e1;
-    --sys-text-muted: #94a3b8;
-    --sys-text-on-action: var(--color-white);
+    --md-sys-color-secondary: var(--md-ref-palette-secondary-80);
+    --md-sys-color-on-secondary: var(--md-ref-palette-secondary-10);
+    --md-sys-color-secondary-container: var(--md-ref-palette-secondary-30);
+    --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary-90);
 
-    /* Borders */
-    --sys-border-subtle: #2d3d56;
-    --sys-border-default: #3d4f6e;
-    --sys-border-strong: #64748b;
-    --sys-border-focus: #818cf8;
-    --sys-border-selected: var(--sys-color-action-primary);
+    --md-sys-color-error: var(--md-ref-palette-error-80);
+    --md-sys-color-on-error: var(--md-ref-palette-error-20);
+    --md-sys-color-error-container: var(--md-ref-palette-error-30);
+    --md-sys-color-on-error-container: var(--md-ref-palette-error-90);
+    --md-sys-color-error-outline: rgba(251, 113, 133, 0.35);
 
-    /* Actions & Brand */
-    --sys-color-action-primary: #6366f1;
-    --sys-color-action-primary-hover: #818cf8;
-    --sys-color-action-subtle: rgba(99, 102, 241, 0.18);
-    --sys-color-action-subtle-text: #c7d2fe;
-    --sys-color-action-subtle-hover: rgba(99, 102, 241, 0.28);
+    --md-sys-color-surface: var(--md-ref-palette-neutral-5);
+    --md-sys-color-surface-dim: var(--md-ref-palette-neutral-3);
+    --md-sys-color-surface-bright: var(--md-ref-palette-neutral-20);
+    --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral-3);
+    --md-sys-color-surface-container-low: var(--md-ref-palette-neutral-12);
+    --md-sys-color-surface-container: var(--md-ref-palette-neutral-17);
+    --md-sys-color-surface-container-high: var(--md-ref-palette-neutral-20);
+    --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral-25);
+    --md-sys-color-on-surface: var(--md-ref-palette-neutral-99);
+    --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-80);
+    --md-sys-color-surface-variant: var(--md-ref-palette-neutral-25);
 
-    /* Status Colors */
-    --sys-color-success-surface: rgba(16, 185, 129, 0.14);
-    --sys-color-success-border: rgba(52, 211, 153, 0.35);
-    --sys-color-success-text: #6ee7b7;
-    --sys-color-success-accent: #34d399;
+    --md-sys-color-outline: var(--md-ref-palette-neutral-60);
+    --md-sys-color-outline-variant: var(--md-ref-palette-neutral-25);
+    --md-sys-color-inverse-surface: var(--md-ref-palette-neutral-99);
+    --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral-5);
+    --md-sys-color-inverse-primary: var(--md-ref-palette-primary-40);
 
-    --sys-color-warning-surface: rgba(245, 158, 11, 0.14);
-    --sys-color-warning-border: rgba(251, 191, 36, 0.35);
-    --sys-color-warning-text: #fde68a;
-    --sys-color-warning-accent: #fbbf24;
+    --md-sys-color-success: #34d399;
+    --md-sys-color-success-container: rgba(16, 185, 129, 0.14);
+    --md-sys-color-on-success-container: #6ee7b7;
+    --md-sys-color-success-outline: rgba(52, 211, 153, 0.35);
 
-    --sys-color-danger-surface: rgba(244, 63, 94, 0.16);
-    --sys-color-danger-border: rgba(251, 113, 133, 0.35);
-    --sys-color-danger-text: #fecdd3;
-    --sys-color-danger-accent: #fb7185;
-    --sys-color-danger-subtle: rgba(244, 63, 94, 0.2);
-
-    --sys-color-info-surface: rgba(99, 102, 241, 0.14);
-    --sys-color-info-border: rgba(129, 140, 248, 0.35);
-    --sys-color-info-text: #c7d2fe;
-    --sys-color-info-accent: #818cf8;
-
-    --sys-color-neutral-surface: rgba(148, 163, 184, 0.15);
-    --sys-color-neutral-border: rgba(148, 163, 184, 0.25);
-
-    /* Elevation & Focus */
-    --sys-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-    --sys-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
-    --sys-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
-    --sys-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
-    --sys-shadow-focus: 0 0 0 3px rgba(129, 140, 248, 0.35);
+    --md-sys-color-warning: #fbbf24;
+    --md-sys-color-warning-container: rgba(245, 158, 11, 0.14);
+    --md-sys-color-on-warning-container: #fde68a;
+    --md-sys-color-warning-outline: rgba(251, 191, 36, 0.35);
   }
 }

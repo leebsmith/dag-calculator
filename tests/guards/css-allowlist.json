@@ -127,10 +127,9 @@
       "selectors": [
         ".data-table--list tbody tr:hover",
         ".landing-menu-item:hover",
-        ".stepper-btn.completed:hover",
-        ".segmented-item--button:hover:not(.is-active, :disabled)"
+        ".stepper-btn.completed:hover"
       ],
-      "reason": "Shared hover surface recipe for interactive rows, the completed stepper step, and the segmented button variant."
+      "reason": "Shared hover surface recipe for interactive rows and the completed stepper step."
     },
     {
       "context": "",

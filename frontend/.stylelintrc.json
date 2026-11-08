@@ -83,9 +83,9 @@
     "media-feature-range-notation": null,
     "rule-empty-line-before": null,
     "custom-property-pattern": [
-      "^(sys|color|space|text|line-height|font|radius|container|size|width|z|transition|target)-.+",
+      "^(md|sys|color|space|text|line-height|font|radius|container|size|width|z|transition|target)-.+",
       {
-        "message": "Custom properties must adhere to the strict taxonomy prefix defined in the design system (e.g., --sys-color-action, --space-4)."
+        "message": "Custom properties must adhere to the strict taxonomy prefix defined in the design system (e.g., --md-sys-color-primary, --sys-color-action, --space-4)."
       }
     ],
     "selector-class-pattern": [
