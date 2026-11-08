@@ -78,7 +78,7 @@ samp {
   gap: var(--space-1);
   font-size: var(--text-micro);
   padding: var(--space-1) var(--space-2);
-  min-height: var(--space-5);
+  min-height: var(--target-min-micro);
 }
 
 .btn:focus-visible,
@@ -88,9 +88,9 @@ samp {
   outline-offset: 2px;
 }
 
-.btn:disabled,
-.btn[disabled],
-.btn[aria-disabled="true"] {
+:is(.btn, .btn-primary, .btn-secondary, .btn-outline):disabled,
+:is(.btn, .btn-primary, .btn-secondary, .btn-outline)[disabled],
+:is(.btn, .btn-primary, .btn-secondary, .btn-outline)[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;

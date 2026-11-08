@@ -9,22 +9,12 @@
       "context": "",
       "declarations": "outline-offset: 2px; outline: 2px solid var(--sys-border-focus)",
       "selectors": [
-        ".btn:focus-visible, .btn-link:focus-visible",
+        ".btn:focus-visible, .btn-link:focus-visible, .btn-action-icon:focus-visible",
         ".landing-title:focus-visible, .landing-kebab:focus-visible",
         ".section-toggle:focus-visible",
         ".stepper-btn:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
-    },
-    {
-      "context": "",
-      "declarations": "background-color: var(--sys-surface-hover); color: var(--sys-text-primary)",
-      "selectors": [
-        ".btn-secondary:hover:not(:disabled)",
-        ".btn-outline:hover:not(:disabled)",
-        ".btn-action-icon:hover"
-      ],
-      "reason": "Shared button hover recipe; selectors differ by button variant."
     },
     {
       "context": "",
