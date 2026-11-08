@@ -41,6 +41,10 @@ function shellGetters(props) {
       return resolve(props.saveLabel);
     },
 
+    get cancelShown() {
+      return Boolean(props.cancel);
+    },
+
     get saveShown() {
       return Boolean(props.save) && resolveOption(props.saveVisible, true) !== false;
     },
@@ -99,12 +103,13 @@ export function modalShell(config = {}) {
     ...config,
   };
 
-  return {
+  const data = {
     ...props,
     bodyId: `${props.id}-body`,
     overlayId: `${props.id}-overlay`,
     titleId: `${props.id}-title`,
-    ...shellGetters(props),
     ...shellActions(),
   };
+
+  return Object.defineProperties(data, Object.getOwnPropertyDescriptors(shellGetters(props)));
 }
