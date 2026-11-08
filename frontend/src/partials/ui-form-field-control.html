@@ -102,6 +102,29 @@
     </div>
   </template>
 
+  <template x-if="field.type === 'file'">
+    <div>
+      <input
+        :class="field.controlClass || 'form-input'"
+        type="file"
+        :id="field.id"
+        :name="field.modelKey"
+        :disabled="field.disabled === true"
+        :required="field.required === true"
+        :aria-invalid="field.invalid ? 'true' : null"
+        :aria-describedby="field.describedBy"
+        x-bind="field.attrs"
+        @change="field.onFile($event)"
+      />
+      <p
+        class="form-hint"
+        :id="field.filenameId"
+        x-show="field.filename"
+        x-text="field.filename"
+      ></p>
+    </div>
+  </template>
+
   <template x-if="field.type === 'select'">
     <select
       :class="field.controlClass || 'form-select'"
@@ -156,7 +179,7 @@
     ></textarea>
   </template>
 
-  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout' && field.type !== 'range' && field.commitMode === 'change'">
+  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout' && field.type !== 'range' && field.type !== 'file' && field.commitMode === 'change'">
     <input
       :class="field.controlClass || 'form-input'"
       :id="field.id"
@@ -178,7 +201,7 @@
     />
   </template>
 
-  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout' && field.type !== 'range' && field.commitMode === 'input'">
+  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout' && field.type !== 'range' && field.type !== 'file' && field.commitMode === 'input'">
     <input
       :class="field.controlClass || 'form-input'"
       :id="field.id"

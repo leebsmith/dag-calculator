@@ -53,6 +53,10 @@ function presentationGetters(source) {
       return `${source.id}-hint`;
     },
 
+    get filenameId() {
+      return `${source.id}-filename`;
+    },
+
     get attrs() {
       const resolved = resolve(source.attrs, this.context) || {};
       const reserved = new Set([
@@ -75,6 +79,7 @@ function presentationGetters(source) {
     get describedBy() {
       const ids = [];
       if (this.hint) ids.push(this.hintId);
+      if (this.filename) ids.push(this.filenameId);
       for (const hint of this.hints) if (hint.when) ids.push(hint.id);
       return ids.length ? ids.join(" ") : null;
     },
@@ -129,6 +134,10 @@ function decorationGetters(source) {
     get warning() {
       return resolve(source.warning, this.context);
     },
+
+    get filename() {
+      return resolve(source.filename, this.context);
+    },
   };
 }
 
@@ -179,6 +188,12 @@ function actions(source, component) {
     clearDraft() {
       if (source.draft?.clear) source.draft.clear(this.context);
       this._draft = undefined;
+    },
+
+    onFile(event) {
+      const files = event?.target?.files;
+      const file = source.multiple ? [...(files ?? [])] : files?.[0] ?? null;
+      this.commit(file);
     },
 
     commit(raw) {

@@ -263,4 +263,39 @@ test("repeat rows build scoped child fields and expose add/remove", () => {
   );
 });
 
+test("file fields select a file and describe the filename hint", () => {
+  let stored = null;
+  let filename = "";
+  const field = build({
+    schema: [
+      {
+        id: "document",
+        type: "file",
+        hint: "The document is read once.",
+        write: (file) => {
+          stored = file;
+          filename = file?.name ?? "";
+        },
+        filename: () => filename,
+      },
+    ],
+    model: {},
+  }).fields[0];
+
+  assert.equal(field.filename, "");
+  assert.equal(field.describedBy, "document-hint");
+
+  const file = { name: "recipe.pdf" };
+  field.onFile({ target: { files: [file] } });
+
+  assert.equal(stored, file);
+  assert.equal(field.filename, "recipe.pdf");
+  assert.equal(field.describedBy, "document-hint document-filename");
+
+  field.onFile({ target: { files: [] } });
+  assert.equal(stored, null);
+  assert.equal(field.describedBy, "document-hint");
+});
+
+
 

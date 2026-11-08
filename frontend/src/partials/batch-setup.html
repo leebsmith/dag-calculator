@@ -50,19 +50,24 @@
           start a new batch.
         </p>
 
-        <div class="form-group" x-show="$store.setup.state.mode === 'recipe'">
-          <label class="form-label" for="recipe-file"><span>Recipe document (PDF)</span></label>
-          <input
-            id="recipe-file"
-            class="form-input"
-            type="file"
-            accept="application/pdf"
-            @change="$store.setup.chooseFile($event.target.files[0])"
-          />
-          <p class="form-hint" x-show="$store.setup.state.filename" x-text="$store.setup.state.filename"></p>
-          <p class="form-hint">
-            The document is read once and not kept: only the transcription and your mapping persist.
-          </p>
+        <div
+          x-data="formBuilder({
+            schema: [
+              {
+                id: 'recipe-file',
+                type: 'file',
+                label: 'Recipe document (PDF)',
+                when: () => $store.setup.state.mode === 'recipe',
+                read: () => $store.setup.state.file,
+                write: (file) => $store.setup.chooseFile(file),
+                filename: () => $store.setup.state.filename,
+                attrs: { accept: 'application/pdf' },
+                hint: 'The document is read once and not kept: only the transcription and your mapping persist.'
+              }
+            ]
+          })"
+        >
+          <load src="src/partials/ui-form-fields.html" />
         </div>
 
         <div class="form-hint text-warning" x-show="$store.setup.state.mode === 'recipe' && $store.imports.duplicateOf">
@@ -89,43 +94,50 @@
           </template>
         </div>
 
-        <div class="form-group" x-show="$store.setup.state.mode === 'scratch'">
-          <label class="form-label" for="batch-name"><span>Batch name</span></label>
-          <input
-            id="batch-name"
-            class="form-input"
-            type="text"
-            placeholder="e.g. House Pale"
-            :value="$store.setup.state.name"
-            @input="$store.setup.state.name = $event.target.value"
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="batch-style"><span>Style</span></label>
-          <select id="batch-style" class="form-select" @change="$store.setup.state.styleId = $event.target.value">
-            <template x-for="option in $store.setup.styleOptions()" :key="option.value">
-              <option :value="option.value" :selected="option.value === $store.setup.state.styleId" x-text="option.label"></option>
-            </template>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="batch-rig"><span>Rig</span></label>
-          <select id="batch-rig" class="form-select" @change="$store.setup.state.equipmentId = $event.target.value">
-            <template x-for="option in $store.setup.equipmentOptions()" :key="option.value">
-              <option :value="option.value" :selected="option.value === $store.setup.state.equipmentId" x-text="option.label"></option>
-            </template>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="batch-water"><span>Water source</span></label>
-          <select id="batch-water" class="form-select" @change="$store.setup.state.waterId = $event.target.value">
-            <template x-for="option in $store.setup.waterOptions()" :key="option.value">
-              <option :value="option.value" :selected="option.value === $store.setup.state.waterId" x-text="option.label"></option>
-            </template>
-          </select>
+        <div
+          x-data="formBuilder({
+            schema: [
+              {
+                id: 'batch-name',
+                type: 'text',
+                label: 'Batch name',
+                placeholder: 'e.g. House Pale',
+                when: () => $store.setup.state.mode === 'scratch',
+                read: () => $store.setup.state.name,
+                write: (value) => { $store.setup.state.name = value; },
+                commit: 'input'
+              },
+              {
+                id: 'batch-style',
+                type: 'select',
+                label: 'Style',
+                read: () => $store.setup.state.styleId,
+                write: (value) => { $store.setup.state.styleId = value; },
+                options: () => $store.setup.styleOptions(),
+                commit: 'change'
+              },
+              {
+                id: 'batch-rig',
+                type: 'select',
+                label: 'Rig',
+                read: () => $store.setup.state.equipmentId,
+                write: (value) => { $store.setup.state.equipmentId = value; },
+                options: () => $store.setup.equipmentOptions(),
+                commit: 'change'
+              },
+              {
+                id: 'batch-water',
+                type: 'select',
+                label: 'Water source',
+                read: () => $store.setup.state.waterId,
+                write: (value) => { $store.setup.state.waterId = value; },
+                options: () => $store.setup.waterOptions(),
+                commit: 'change'
+              }
+            ]
+          })"
+        >
+          <load src="src/partials/ui-form-fields.html" />
         </div>
 
         <p class="form-hint" x-show="!$store.setup.state.busy && ($store.setup.state.mode === 'scratch' ? !$store.setup.canCreate() : !$store.setup.canStartImport())">
