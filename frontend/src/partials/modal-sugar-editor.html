@@ -1,7 +1,6 @@
 <!-- Late Additions editor (draft grid + catalog picker) -->
 <div
   x-data="modalShell({
-    open: () => sugarEditorOpen,
     id: 'sugar-editor',
     title: 'Late Additions Editor',
     badge: () => sugarDraftMassDisplay,
@@ -10,6 +9,7 @@
     save: () => saveSugarEditor(),
     escape: () => handleSugarEscape()
   })"
+  x-effect="syncOpen(sugarEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

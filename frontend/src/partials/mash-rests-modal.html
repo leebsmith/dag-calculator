@@ -1,7 +1,6 @@
 <!-- Configure Mash Rests modal: draft/cancel editor over the enabled rests. -->
 <div
   x-data="modalShell({
-    open: () => mashModalOpen,
     id: 'mash-rests',
     title: 'Configure Mash Rests',
     cancel: () => closeMashModal(),
@@ -10,6 +9,7 @@
     saveDisabled: () => !isMashDraftValid,
     escape: () => closeMashModal()
   })"
+  x-effect="syncOpen(mashModalOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

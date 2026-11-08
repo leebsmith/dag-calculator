@@ -1,12 +1,12 @@
 <!-- Report sections picker: assemble a subset of the registered sections. -------->
 <div
   x-data="modalShell({
-    open: () => $store.recipes.reportPickerOpen,
     id: 'report-picker',
     variant: 'plain',
     cancel: () => $store.recipes.closeReportPicker(),
     escape: () => $store.recipes.closeReportPicker()
   })"
+  x-effect="syncOpen($store.recipes.reportPickerOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

@@ -1,7 +1,6 @@
 <!-- Dry Hop Editor (workspace modal): draft table + hop catalog / inspector drawers -->
 <div
   x-data="modalShell({
-    open: () => dryHopEditorOpen,
     id: 'dry-hop-editor',
     title: 'Dry Hop Editor',
     badge: () => dryHopDraftSummary,
@@ -10,6 +9,7 @@
     save: () => saveDryHopEditor(),
     escape: () => handleDryHopEscape()
   })"
+  x-effect="syncOpen(dryHopEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

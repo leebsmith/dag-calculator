@@ -2,7 +2,6 @@
      modal is the catalog. -->
 <div
   x-data="modalShell({
-    open: () => yeastPickerOpen,
     id: 'yeast-picker',
     title: 'Choose Yeast',
     subtitle: () => (selectedYeast ? selectedYeast.name : 'No strain selected'),
@@ -10,6 +9,7 @@
     cancelLabel: 'Close',
     escape: () => handleYeastEscape()
   })"
+  x-effect="syncOpen(yeastPickerOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

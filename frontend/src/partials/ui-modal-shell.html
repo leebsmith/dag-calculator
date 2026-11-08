@@ -1,6 +1,6 @@
 <div
   class="modal-backdrop"
-  x-show="isOpen"
+  x-show="open"
   @click.self="backdropAction()"
   @keydown.escape.window="escapeAction()"
 >
@@ -11,7 +11,7 @@
     aria-modal="true"
     :aria-labelledby="titleId"
     tabindex="-1"
-    x-effect="dialogFocus($el, isOpen)"
+    x-effect="dialogFocus($el, open)"
   >
     <template x-if="workspace">
       <div class="modal-workspace-header">

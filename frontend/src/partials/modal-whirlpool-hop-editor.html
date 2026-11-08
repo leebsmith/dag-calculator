@@ -1,7 +1,6 @@
 <!-- Whirlpool Hop Editor (workspace modal): draft grid + hop catalog / inspector drawers -->
 <div
   x-data="modalShell({
-    open: () => whirlpoolHopEditorOpen,
     id: 'whirlpool-hop-editor',
     title: 'Whirlpool Hop Editor',
     badge: () => whirlpoolHopDraftSummary,
@@ -10,6 +9,7 @@
     save: () => saveWhirlpoolHopEditor(),
     escape: () => handleWhirlpoolHopEscape()
   })"
+  x-effect="syncOpen(whirlpoolHopEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

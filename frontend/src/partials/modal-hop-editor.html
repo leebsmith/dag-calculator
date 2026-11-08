@@ -1,7 +1,6 @@
 <!-- Boil Hop Editor (workspace modal): draft grid + hop catalog / inspector drawers -->
 <div
   x-data="modalShell({
-    open: () => hopEditorOpen,
     id: 'hop-editor',
     title: 'Hop Schedule Editor',
     badge: () => hopDraftSummary,
@@ -10,6 +9,7 @@
     save: () => saveHopEditor(),
     escape: () => handleHopEscape()
   })"
+  x-effect="syncOpen(hopEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

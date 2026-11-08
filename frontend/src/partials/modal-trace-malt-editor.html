@@ -1,7 +1,6 @@
 <!-- Trace Malt Editor (workspace modal): definite-mass rows + catalog / inspector drawers -->
 <div
   x-data="modalShell({
-    open: () => traceEditorOpen,
     id: 'trace-malt-editor',
     title: 'Trace Malt Editor',
     badge: () => traceDraftMassDisplay,
@@ -10,6 +9,7 @@
     save: () => saveTraceEditor(),
     escape: () => handleTraceEscape()
   })"
+  x-effect="syncOpen(traceEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 

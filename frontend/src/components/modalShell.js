@@ -10,7 +10,7 @@ function resolveOption(value, fallback) {
 function shellGetters(props) {
   return {
     get isOpen() {
-      return Boolean(resolve(props.open));
+      return Boolean(this.open);
     },
 
     get workspace() {
@@ -57,6 +57,10 @@ function shellGetters(props) {
 
 function shellActions() {
   return {
+    syncOpen(value) {
+      this.open = Boolean(value);
+    },
+
     cancelAction() {
       this.cancel?.();
     },

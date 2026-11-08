@@ -1,7 +1,6 @@
 <!-- Grain Bill Editor (workspace modal): draft grid + catalog / inspector drawers -->
 <div
   x-data="modalShell({
-    open: () => maltEditorOpen,
     id: 'malt-editor',
     title: 'Grain Bill Editor',
     badge: () => maltValidation.label,
@@ -11,6 +10,7 @@
     escape: () => handleMaltEscape(),
     saveDisabled: () => maltValidation.type !== 'balanced'
   })"
+  x-effect="syncOpen(maltEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
 
