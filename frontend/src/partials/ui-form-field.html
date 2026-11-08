@@ -1,0 +1,136 @@
+<div class="form-group" x-show="field.visible">
+  <template x-if="field.type === 'checkbox'">
+    <label class="form-checkbox-row" :for="field.id">
+      <input
+        class="form-checkbox"
+        type="checkbox"
+        :id="field.id"
+        :name="field.modelKey"
+        :checked="field.value"
+        @change="field.commit($event.target.checked)"
+        :disabled="field.disabled"
+        :required="field.required"
+        :aria-invalid="field.invalid ? 'true' : null"
+        :aria-describedby="field.describedBy"
+      />
+      <span x-text="field.label"></span>
+      <span class="unit-badge" x-show="field.unit" x-text="field.unit"></span>
+    </label>
+  </template>
+
+  <template x-if="field.type !== 'checkbox'">
+    <label class="form-label" :for="field.id">
+      <span x-text="field.label"></span>
+      <span class="unit-badge" x-show="field.unit" x-text="field.unit"></span>
+    </label>
+  </template>
+
+  <template x-if="field.type === 'select'">
+    <select
+      class="form-select"
+      :id="field.id"
+      :name="field.modelKey"
+      :value="field.value"
+      @change="field.commit($event.target.value)"
+      :disabled="field.disabled"
+      :required="field.required"
+      :aria-invalid="field.invalid ? 'true' : null"
+      :aria-describedby="field.describedBy"
+    >
+      <template x-for="option in field.options" :key="option.value">
+        <option :value="option.value" :selected="option.value === field.value" x-text="option.label"></option>
+      </template>
+    </select>
+  </template>
+
+  <template x-if="field.type === 'textarea' && field.commitMode === 'change'">
+    <textarea
+      class="form-input"
+      :id="field.id"
+      :name="field.modelKey"
+      :rows="field.rows || 3"
+      :value="field.draftValue"
+      @input="field.setDraft($event.target.value)"
+      @change="field.commit()"
+      :placeholder="field.placeholder"
+      :readonly="field.readonly"
+      :disabled="field.disabled"
+      :required="field.required"
+      :aria-invalid="field.invalid ? 'true' : null"
+      :aria-describedby="field.describedBy"
+    ></textarea>
+  </template>
+
+  <template x-if="field.type === 'textarea' && field.commitMode === 'input'">
+    <textarea
+      class="form-input"
+      :id="field.id"
+      :name="field.modelKey"
+      :rows="field.rows || 3"
+      x-model="field.value"
+      :placeholder="field.placeholder"
+      :readonly="field.readonly"
+      :disabled="field.disabled"
+      :required="field.required"
+      :aria-invalid="field.invalid ? 'true' : null"
+      :aria-describedby="field.describedBy"
+    ></textarea>
+  </template>
+
+  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.commitMode === 'change'">
+    <input
+      class="form-input"
+      :id="field.id"
+      :name="field.modelKey"
+      :type="field.type || 'text'"
+      :value="field.draftValue"
+      @input="field.setDraft($event.target.value)"
+      @change="field.commit()"
+      :placeholder="field.placeholder"
+      :min="field.min"
+      :max="field.max"
+      :step="field.step"
+      :readonly="field.readonly"
+      :disabled="field.disabled"
+      :required="field.required"
+      :aria-invalid="field.invalid ? 'true' : null"
+      :aria-describedby="field.describedBy"
+    />
+  </template>
+
+  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.commitMode === 'input'">
+    <input
+      class="form-input"
+      :id="field.id"
+      :name="field.modelKey"
+      :type="field.type || 'text'"
+      x-model="field.value"
+      :placeholder="field.placeholder"
+      :min="field.min"
+      :max="field.max"
+      :step="field.step"
+      :readonly="field.readonly"
+      :disabled="field.disabled"
+      :required="field.required"
+      :aria-invalid="field.invalid ? 'true' : null"
+      :aria-describedby="field.describedBy"
+    />
+  </template>
+
+  <p
+    class="form-hint"
+    :id="field.hintId"
+    x-show="field.hint"
+    x-text="field.hint"
+  ></p>
+
+  <template x-for="hint in field.hints" :key="hint.id">
+    <span
+      class="form-hint"
+      :id="hint.id"
+      :class="hint.class || null"
+      x-show="hint.when"
+      x-text="hint.text"
+    ></span>
+  </template>
+</div>
