@@ -81,6 +81,7 @@ function shellActions() {
 
 export function modalShell(config = {}) {
   const props = {
+    open: false,
     title: "",
     subtitle: null,
     badge: null,
