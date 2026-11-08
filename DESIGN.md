@@ -80,6 +80,74 @@ unless the test mutates card-local draft state.
 *Enforced by:* review and the suite layout; `tests/frontend/appHelpers.js`
 documents the reset boundary.
 
+## Expression layer — Jexl (`schema_version` 11)
+
+Revision 11 replaces the JSON expression AST with Jexl strings. The artifact is
+still the single source of truth; only the expression syntax changes.
+
+**One representation.** Every authored expression is a Jexl string:
+
+| Surface | After |
+|---|---|
+| `derived.expr` | Jexl string |
+| `root` / `choice` / `collection` `default` | Jexl string |
+| `collection.fields.*.expr` | Jexl string |
+| `functions.*.body` | Jexl string |
+| node and schema-field `domain` | Jexl boolean string |
+| `relations[].predicate` | Jexl boolean string |
+
+`boundary.domain.codes` is an error-code taxonomy, not an expression, and stays
+a list. `inputs` remains the declared alias → path edge map; `output` remains a
+value spec.
+
+**Context.** A string resolves identifiers in this order: the node's declared
+`inputs` aliases (and the reserved `row` alias in a collection field), declared
+`constants`, registered `functions`, then dotted node / selection / boundary /
+identity paths. Only `inputs`, `ref`, and default-expression references remain
+graph edges; an identifier inside a string is not an edge unless the loader
+extracts it and verifies it.
+
+**Absence.** Jexl resolves a missing variable to `undefined` instead of throwing;
+that is why it is chosen over Math.js. Absence stays absence: never coerce it to
+`0`, `""`, `{}`, or a dropped key. Arithmetic through `undefined` yields `NaN`;
+the engine maps non-finite results to absence at a value boundary, and domains
+and relations treat them as unresolved (`holds: null`), not violated.
+
+**Reductions are transforms.** The old reduction nodes become registered, pure
+Jexl transforms that preserve filter-then-reduce semantics and skip non-finite
+values, e.g. `rows | weighted_avg('color_lovibond', 'pct')`. A transform receives
+the collection as its subject and field names as string arguments; it may not
+read ambient state, time, or randomness.
+
+**Compiled once.** Expressions are parsed and compiled when the artifact is
+loaded, then stored on the graph. Evaluation never re-parses a string, and the
+engine uses a private Jexl instance so transforms and operators cannot leak
+between tests or sessions.
+
+**Safety guardrail.** To regain safety after migrating to string expressions, a
+pre-build step must be added to the pipeline: a script that loops through every
+`expr` in the artifact and runs `jexl.parse(expression)` just to verify it
+compiles.
+
+The same pass must cover `default`, `domain`, `predicate`, `functions.*.body`,
+and `collection.fields.*.expr`; it runs in `make check` (and therefore CI)
+before any build, and fails on the first string that does not compile. Parsing
+is necessary but not sufficient: the structural validator must also walk each
+parsed AST and resolve every identifier, preserving the explicit-edge contract.
+
+**Versioning.** The artifact grammar bumps from 10 to 11. This is the artifact
+`schema_version`, not the batch payload revision (`DRAFT_SCHEMA_VERSION`); a
+frozen batch stores valuations, not expressions. `SUPPORTED_SCHEMA_VERSIONS`
+gains 11. The legacy AST evaluator is retained for versions ≤ 10 until the
+deprecation window closes, or the schema-version guard is changed to reject
+those versions in the same commit.
+
+**Docs and guards.** `expression-language.md` is rewritten for Jexl;
+`engine.md`’s interpreter section, `grammar.md` §2/§4/§5, `semantics.md`
+§2.2/§4, `adding-a-node.md`, `inventory.md`, and the README documentation table
+move in the same commit. A differential fixture proves the old AST and the new
+Jexl strings agree on the current artifact before the AST path is deleted.
+
 ## Where a change goes
 
 | Change | Home | Guard |
