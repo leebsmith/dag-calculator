@@ -202,133 +202,30 @@
 
           <template x-if="dryHopDrawer === 'inspect'">
             <template x-if="dryHopActiveRow">
-              <div class="inspector-form">
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-variety">Hop</label>
-                  <input
-                    id="dry-hop-row-variety"
-                    type="text"
-                    class="form-input text-xs"
-                    :value="dryHopActiveRow.variety"
-                    @change="setDryHopDraftField(dryHopActiveIndex, 'variety', $event.target.value)"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-type">Type</label>
-                  <select
-                    id="dry-hop-row-type"
-                    class="form-select text-xs"
-                    :value="dryHopActiveRow.product_type"
-                    @change="setDryHopDraftField(dryHopActiveIndex, 'product_type', $event.target.value)"
-                  >
-                    <template x-for="opt in dryHopProductOptions" :key="opt.value">
-                      <option
-                        :value="opt.value"
-                        :selected="opt.value === dryHopActiveRow.product_type"
-                        x-text="opt.label"
-                      ></option>
-                    </template>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-quantity">Quantity</label>
-                  <input
-                    id="dry-hop-row-quantity"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    class="form-input text-xs"
-                    :value="dryHopActiveRow.quantity"
-                    @change="setDryHopDraftNumber(dryHopActiveIndex, 'quantity', $event.target.value)"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-unit">Unit</label>
-                  <select
-                    id="dry-hop-row-unit"
-                    class="form-select text-xs"
-                    :value="dryHopActiveRow.unit"
-                    @change="setDryHopDraftField(dryHopActiveIndex, 'unit', $event.target.value)"
-                  >
-                    <template x-for="opt in dryHopUnitOptions" :key="opt.value">
-                      <option
-                        :value="opt.value"
-                        :selected="opt.value === dryHopActiveRow.unit"
-                        x-text="opt.label"
-                      ></option>
-                    </template>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-event">Applied at</label>
-                  <select
-                    id="dry-hop-row-event"
-                    class="form-select text-xs"
-                    :value="dryHopActiveRow.application_event"
-                    @change="setDryHopDraftField(dryHopActiveIndex, 'application_event', $event.target.value)"
-                  >
-                    <template x-for="opt in dryHopEventOptions" :key="opt.value">
-                      <option
-                        :value="opt.value"
-                        :selected="opt.value === dryHopActiveRow.application_event"
-                        x-text="opt.label"
-                      ></option>
-                    </template>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-contact">Contact (hours)</label>
-                  <input
-                    id="dry-hop-row-contact"
-                    type="number"
-                    step="1"
-                    min="0"
-                    class="form-input text-xs"
-                    :value="dryHopContactHours(dryHopActiveRow)"
-                    @change="setDryHopDraftContactHours(dryHopActiveIndex, $event.target.value)"
-                  />
-                  <span class="form-hint">Clears the end event below.</span>
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-until">…or until</label>
-                  <select
-                    id="dry-hop-row-until"
-                    class="form-select text-xs"
-                    :value="dryHopActiveRow.contact_until ?? ''"
-                    @change="setDryHopDraftContactUntil(dryHopActiveIndex, $event.target.value)"
-                  >
-                    <option value="" :selected="!dryHopActiveRow.contact_until">— no end event —</option>
-                    <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
-                      <option
-                        :value="opt.value"
-                        :selected="opt.value === dryHopActiveRow.contact_until"
-                        x-text="opt.label"
-                      ></option>
-                    </template>
-                  </select>
-                  <span class="form-hint">Clears the contact hours above.</span>
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-detail">Detail</label>
-                  <input
-                    id="dry-hop-row-detail"
-                    type="text"
-                    class="form-input text-xs"
-                    placeholder="e.g. 50% attenuation, day 3"
-                    :value="dryHopActiveRow.time_of_application"
-                    @change="setDryHopDraftField(dryHopActiveIndex, 'time_of_application', $event.target.value)"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="dry-hop-row-notes">Notes</label>
-                  <input
-                    id="dry-hop-row-notes"
-                    type="text"
-                    class="form-input text-xs"
-                    :value="dryHopActiveRow.notes"
-                    @change="setDryHopDraftField(dryHopActiveIndex, 'notes', $event.target.value)"
-                  />
-                </div>
+              <div
+                class="inspector-form"
+                x-data="formBuilder({
+                  schema: [
+                    { id: 'dry-hop-row-variety', type: 'text', label: 'Hop', modelKey: 'variety', default: '', lazy: true },
+                    { id: 'dry-hop-row-type', type: 'select', label: 'Type', modelKey: 'product_type', options: dryHopProductOptions, lazy: true },
+                    { id: 'dry-hop-row-quantity', type: 'number', label: 'Quantity', modelKey: 'quantity', min: 0, step: 0.1, lazy: true },
+                    { id: 'dry-hop-row-unit', type: 'select', label: 'Unit', modelKey: 'unit', options: dryHopUnitOptions, lazy: true },
+                    { id: 'dry-hop-row-event', type: 'select', label: 'Applied at', modelKey: 'application_event', options: dryHopEventOptions, lazy: true },
+                    { id: 'dry-hop-row-contact', type: 'number', label: 'Contact (hours)', read: () => dryHopContactHours(dryHopActiveRow), min: 0, step: 1, lazy: true, hint: 'Clears the end event below.' },
+                    { id: 'dry-hop-row-until', type: 'select', label: '…or until', read: () => dryHopActiveRow.contact_until ?? '', options: [{ value: '', label: '— no end event —' }, ...dryHopContactUntilOptions], lazy: true, hint: 'Clears the contact hours above.' },
+                    { id: 'dry-hop-row-detail', type: 'text', label: 'Detail', modelKey: 'time_of_application', default: '', placeholder: 'e.g. 50% attenuation, day 3', lazy: true },
+                    { id: 'dry-hop-row-notes', type: 'text', label: 'Notes', modelKey: 'notes', default: '', lazy: true }
+                  ],
+                  onChange: (field, value) => {
+                    if (field.id === 'dry-hop-row-contact') return setDryHopDraftContactHours(dryHopActiveIndex, value);
+                    if (field.id === 'dry-hop-row-until') return setDryHopDraftContactUntil(dryHopActiveIndex, value);
+                    if (field.type === 'number') return setDryHopDraftNumber(dryHopActiveIndex, field.modelKey, value);
+                    return setDryHopDraftField(dryHopActiveIndex, field.modelKey, value);
+                  }
+                })"
+                x-effect="setModel(dryHopActiveRow)"
+              >
+                <load src="src/partials/ui-form-fields.html" />
               </div>
             </template>
           </template>

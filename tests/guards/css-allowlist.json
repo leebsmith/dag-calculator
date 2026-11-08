@@ -210,10 +210,11 @@
       "context": "",
       "declarations": "display: flex; flex-direction: column; gap: var(--space-2)",
       "selectors": [
+        ".inspector-partial",
         ".yeast-summary-body",
         ".brew-day-step"
       ],
-      "reason": "Coincidental column layout; the yeast summary and a brew-day step are unrelated."
+      "reason": "Shared column layout; the nested partial stack, yeast summary, and brew-day step are independent."
     },
     {
       "context": "",

@@ -55,17 +55,32 @@ export function formBuilder({ schema = [], model = null, onChange = null } = {})
           return resolve(field.options, component.model) || [];
         },
 
+        get hints() {
+          return (field.hints || []).map((hint) => ({
+            ...hint,
+            text: resolve(hint.text, component.model),
+            when: typeof hint.when === "function" ? hint.when(component.model) : hint.when !== false,
+          }));
+        },
+
         get visible() {
           return typeof field.when === "function" ? field.when(component.model) : field.visible !== false;
         },
 
         get value() {
-          const value = readPath(component.model, field.modelKey);
-          return value === undefined ? field.default : value;
+          const raw = field.read ? field.read() : readPath(component.model, field.modelKey);
+          const value = raw === undefined ? field.default : raw;
+          return field.format ? field.format(value) : value;
         },
 
         set value(next) {
-          const value = coerce(field, next);
+          const parsed = field.parse ? field.parse(next) : next;
+          const value = coerce(field, parsed);
+
+          if (field.write) {
+            field.write(value);
+            return;
+          }
 
           if (component.onChange) {
             component.onChange(field, value);

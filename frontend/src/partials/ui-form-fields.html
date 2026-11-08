@@ -25,7 +25,24 @@
       </label>
     </template>
 
-    <template x-if="field.type === 'select'">
+    <template x-if="field.type === 'select' && field.lazy">
+      <select
+        class="form-select"
+        :id="field.id"
+        :name="field.modelKey"
+        x-model.lazy="field.value"
+        :disabled="field.disabled"
+        :required="field.required"
+        :aria-invalid="field.invalid ? 'true' : null"
+        :aria-describedby="field.hint ? field.id + '-hint' : null"
+      >
+        <template x-for="option in field.options" :key="option.value">
+          <option :value="option.value" :selected="option.value === field.value" x-text="option.label"></option>
+        </template>
+      </select>
+    </template>
+
+    <template x-if="field.type === 'select' && !field.lazy">
       <select
         class="form-select"
         :id="field.id"
@@ -37,12 +54,28 @@
         :aria-describedby="field.hint ? field.id + '-hint' : null"
       >
         <template x-for="option in field.options" :key="option.value">
-          <option :value="option.value" x-text="option.label"></option>
+          <option :value="option.value" :selected="option.value === field.value" x-text="option.label"></option>
         </template>
       </select>
     </template>
 
-    <template x-if="field.type === 'textarea'">
+    <template x-if="field.type === 'textarea' && field.lazy">
+      <textarea
+        class="form-input"
+        :id="field.id"
+        :name="field.modelKey"
+        :rows="field.rows || 3"
+        x-model.lazy="field.value"
+        :placeholder="field.placeholder"
+        :readonly="field.readonly"
+        :disabled="field.disabled"
+        :required="field.required"
+        :aria-invalid="field.invalid ? 'true' : null"
+        :aria-describedby="field.hint ? field.id + '-hint' : null"
+      ></textarea>
+    </template>
+
+    <template x-if="field.type === 'textarea' && !field.lazy">
       <textarea
         class="form-input"
         :id="field.id"
@@ -58,7 +91,26 @@
       ></textarea>
     </template>
 
-    <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox'">
+    <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.lazy">
+      <input
+        class="form-input"
+        :id="field.id"
+        :name="field.modelKey"
+        :type="field.type || 'text'"
+        x-model.lazy="field.value"
+        :placeholder="field.placeholder"
+        :min="field.min"
+        :max="field.max"
+        :step="field.step"
+        :readonly="field.readonly"
+        :disabled="field.disabled"
+        :required="field.required"
+        :aria-invalid="field.invalid ? 'true' : null"
+        :aria-describedby="field.hint ? field.id + '-hint' : null"
+      />
+    </template>
+
+    <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && !field.lazy">
       <input
         class="form-input"
         :id="field.id"
@@ -83,5 +135,14 @@
       x-show="field.hint"
       x-text="field.hint"
     ></p>
+
+    <template x-for="hint in field.hints" :key="hint.text">
+      <span
+        class="form-hint"
+        :class="hint.class || null"
+        x-show="hint.when"
+        x-text="hint.text"
+      ></span>
+    </template>
   </div>
 </template>

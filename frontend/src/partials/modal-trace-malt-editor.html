@@ -63,65 +63,52 @@
           <template x-if="traceDrawer === 'inspect'">
             <template x-if="traceActiveRow">
               <div class="inspector-form">
-                <div class="form-group">
-                  <label class="form-label text-xs" for="trace-row-name">Malt name</label>
-                  <input
-                    id="trace-row-name"
-                    type="text"
-                    class="form-input text-xs"
-                    :value="traceActiveRow.name"
-                    @input="setMaltField(traceActiveIndex, 'name', $event.target.value)"
-                  />
+                <div
+                  x-data="formBuilder({
+                    schema: [{ id: 'trace-row-name', type: 'text', label: 'Malt name', modelKey: 'name', default: '' }],
+                    onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
+                  })"
+                  x-effect="setModel(traceActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="trace-row-category">Category</label>
-                  <select
-                    id="trace-row-category"
-                    class="form-select text-xs"
-                    :value="traceActiveRow.category"
-                    @change="setMaltField(traceActiveIndex, 'category', $event.target.value)"
-                  >
-                    <template x-for="c in maltCategories" :key="c">
-                      <option :value="c" :selected="c === traceActiveRow.category" x-text="c"></option>
-                    </template>
-                  </select>
+                <div
+                  x-data="formBuilder({
+                    schema: [{ id: 'trace-row-category', type: 'select', label: 'Category', modelKey: 'category', options: maltCategories.map((c) => ({ value: c, label: c })), lazy: true }],
+                    onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
+                  })"
+                  x-effect="setModel(traceActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
                 <div class="inspector-grid-2col">
-                  <div class="form-group">
-                    <label class="form-label text-xs" for="trace-row-yield">Extract yield (%)</label>
-                    <input
-                      id="trace-row-yield"
-                      type="number"
-                      step="1"
-                      min="0"
-                      max="100"
-                      class="form-input text-xs"
-                      :value="fmt.toPercentValue(traceActiveRow.yield_fraction, 0)"
-                      @change="setMaltField(traceActiveIndex, 'yield_fraction', $event.target.value, 0.01)"
-                    />
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'trace-row-yield', type: 'number', label: 'Extract yield (%)', read: () => fmt.toPercentValue(traceActiveRow.yield_fraction, 0), min: 0, max: 100, step: 1, lazy: true }],
+                      onChange: (field, value) => setMaltField(traceActiveIndex, 'yield_fraction', value, 0.01)
+                    })"
+                    x-effect="setModel(traceActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
                   </div>
-                  <div class="form-group">
-                    <label class="form-label text-xs" for="trace-row-color" x-text="'Color (' + colorUnit() + ')'"></label>
-                    <input
-                      id="trace-row-color"
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      class="form-input text-xs"
-                      :value="colorDisplay(traceActiveRow.color_lovibond)"
-                      @change="setColorField(traceActiveIndex, $event.target.value)"
-                    />
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'trace-row-color', type: 'number', label: () => 'Color (' + colorUnit() + ')', read: () => colorDisplay(traceActiveRow.color_lovibond), min: 0, step: 0.1, lazy: true }],
+                      onChange: (field, value) => setColorField(traceActiveIndex, value)
+                    })"
+                    x-effect="setModel(traceActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
                   </div>
                 </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="trace-row-notes">Notes</label>
-                  <textarea
-                    id="trace-row-notes"
-                    class="form-input text-xs"
-                    rows="3"
-                    :value="traceActiveRow.notes ?? ''"
-                    @input="setMaltField(traceActiveIndex, 'notes', $event.target.value)"
-                  ></textarea>
+                <div
+                  x-data="formBuilder({
+                    schema: [{ id: 'trace-row-notes', type: 'textarea', label: 'Notes', modelKey: 'notes', default: '', rows: 3 }],
+                    onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
+                  })"
+                  x-effect="setModel(traceActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
               </div>
             </template>

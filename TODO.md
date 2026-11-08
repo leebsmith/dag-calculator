@@ -150,6 +150,17 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
   Cloud Run buildpacks; the render service itself is already live
   (`plans/report-renderer.md` §11 step 5).
 
+### Form Builder Migration Backlog
+
+- [ ] **Phase 2: Simple Step Fields (`step-hops`, `step-water`, `step-mash`, `step-brew-day`)**
+  - **Blocker:** Requires schema support for `@change` commit semantics (e.g., a `lazy: true` schema flag mapping to `x-model.lazy`).
+- [ ] **Phase 3: Custom Readouts & Controls (`step-style`, `report-picker`)**
+  - **Blocker:** Requires support for `read`/`write` primitive bindings, custom readouts, range sliders with seed badges, and checkbox groups.
+- [ ] **Phase 4: Dynamic Loops (`step-card`, `library`)**
+  - **Blocker:** Requires support for dynamic field loops (`x-for` over schema arrays) where each field carries its own display, write, and validation behavior, plus `format`/`parse` lifecycle hooks.
+- [ ] **Phase 5: Edge Cases (`batch-setup`)**
+  - **Blocker:** Requires custom change handlers for `type="file"` inputs and support for multiple dynamic hints (e.g., rendering a filename alongside a static HTML hint).
+
 ### Low priority
 
 * **Shape-pin burn-down** — the complexity ratchet and its guard landed with the

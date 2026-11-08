@@ -67,100 +67,89 @@
           <template x-if="whirlpoolHopDrawer === 'inspect'">
             <template x-if="whirlpoolHopActiveRow">
               <div class="inspector-form">
-                <div class="form-group">
-                  <label class="form-label text-xs" for="whirlpool-hop-row-name">Hop name</label>
-                  <input
-                    id="whirlpool-hop-row-name"
-                    type="text"
-                    class="form-input text-xs"
-                    :value="whirlpoolHopActiveRow.name"
-                    @input="setMaltField(whirlpoolHopActiveIndex, 'name', $event.target.value)"
-                  />
+                <div
+                  x-data="formBuilder({
+                    schema: [{ id: 'whirlpool-hop-row-name', type: 'text', label: 'Hop name', modelKey: 'name', default: '' }],
+                    onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, field.modelKey, value)
+                  })"
+                  x-effect="setModel(whirlpoolHopActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
                 <div
-                  class="form-group"
-                  x-show="whirlpoolHopActiveRow.product_form === 'whole_cone'"
+                  x-data="formBuilder({
+                    schema: [{
+                      id: 'whirlpool-hop-row-cone',
+                      type: 'number',
+                      label: 'Cone utilization (0–1)',
+                      read: () => whirlpoolHopActiveRow.cone_utilization ?? '',
+                      when: () => whirlpoolHopActiveRow.product_form === 'whole_cone',
+                      min: 0,
+                      max: 1,
+                      step: 0.01,
+                      lazy: true,
+                      hint: 'No source publishes it; measure it or own the assumption. The mass stays unsolved until it is set.'
+                    }],
+                    onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { cone_utilization: value === '' ? null : Number(value) })
+                  })"
+                  x-effect="setModel(whirlpoolHopActiveRow)"
                 >
-                  <label class="form-label text-xs" for="whirlpool-hop-row-cone">Cone utilization (0–1)</label>
-                  <input
-                    id="whirlpool-hop-row-cone"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    class="form-input text-xs"
-                    :value="whirlpoolHopActiveRow.cone_utilization ?? ''"
-                    @change="patchDraftRow(whirlpoolHopActiveIndex, { cone_utilization: $event.target.value === '' ? null : Number($event.target.value) })"
-                  />
-                  <span class="form-hint">
-                    No source publishes it; measure it or own the assumption. The mass
-                    stays unsolved until it is set.
-                  </span>
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="whirlpool-hop-row-form">Form</label>
-                  <select
-                    id="whirlpool-hop-row-form"
-                    class="form-select text-xs"
-                    :value="whirlpoolHopActiveRow.product_form || 't90_pellet'"
-                    @change="patchDraftRow(whirlpoolHopActiveIndex, { product_form: $event.target.value })"
-                  >
-                    <template x-for="form in whirlpoolHopForms" :key="form.value">
-                      <option
-                        :value="form.value"
-                        :selected="form.value === (whirlpoolHopActiveRow.product_form || 't90_pellet')"
-                        x-text="form.label"
-                      ></option>
-                    </template>
-                  </select>
+                <div
+                  x-data="formBuilder({
+                    schema: [{
+                      id: 'whirlpool-hop-row-form',
+                      type: 'select',
+                      label: 'Form',
+                      read: () => whirlpoolHopActiveRow.product_form || 't90_pellet',
+                      options: whirlpoolHopForms,
+                      lazy: true
+                    }],
+                    onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { product_form: value })
+                  })"
+                  x-effect="setModel(whirlpoolHopActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="whirlpool-hop-row-start">Start temperature</label>
-                  <select
-                    id="whirlpool-hop-row-start"
-                    class="form-select text-xs"
-                    :value="whirlpoolStartBandValue"
-                    @change="setWhirlpoolStartBand($event.target.value)"
-                  >
-                    <template x-for="band in whirlpoolStartBands" :key="band.value">
-                      <option
-                        :value="band.value"
-                        :selected="band.value === whirlpoolStartBandValue"
-                        x-text="band.label"
-                      ></option>
-                    </template>
-                    <option value="custom" :selected="whirlpoolStartBandValue === 'custom'">
-                      Custom (edit the grid temperature)
-                    </option>
-                  </select>
-                  <span
-                    class="form-hint"
-                    x-show="whirlpoolStartBandHint"
-                    x-text="whirlpoolStartBandHint"
-                  ></span>
+                <div
+                  x-data="formBuilder({
+                    schema: [{
+                      id: 'whirlpool-hop-row-start',
+                      type: 'select',
+                      label: 'Start temperature',
+                      read: () => whirlpoolStartBandValue,
+                      options: [...whirlpoolStartBands, { value: 'custom', label: 'Custom (edit the grid temperature)' }],
+                      lazy: true,
+                      hint: () => whirlpoolStartBandHint
+                    }],
+                    onChange: (field, value) => setWhirlpoolStartBand(value)
+                  })"
+                  x-effect="setModel(whirlpoolHopActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="whirlpool-hop-row-alpha">Alpha acid (%)</label>
-                  <input
-                    id="whirlpool-hop-row-alpha"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="100"
-                    class="form-input text-xs"
-                    :value="fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1)"
-                    @change="setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
-                  />
-                  <span class="form-hint">Override with the lot CoA alpha; defaults to the catalog preset.</span>
-                  <span
-                    class="form-hint"
-                    x-show="whirlpoolHopActiveRow.product_form === 'lupulin_pellet'"
-                  >
-                    Weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or 50–70 %
-                    (Lupomax) of T-90 by weight.
-                  </span>
+                <div
+                  x-data="formBuilder({
+                    schema: [{
+                      id: 'whirlpool-hop-row-alpha',
+                      type: 'number',
+                      label: 'Alpha acid (%)',
+                      read: () => fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1),
+                      min: 0,
+                      max: 100,
+                      step: 0.1,
+                      lazy: true,
+                      hint: 'Override with the lot CoA alpha; defaults to the catalog preset.',
+                      hints: [{ text: 'Weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or 50–70 % (Lupomax) of T-90 by weight.', when: () => whirlpoolHopActiveRow.product_form === 'lupulin_pellet' }]
+                    }],
+                    onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', value, 0.01)
+                  })"
+                  x-effect="setModel(whirlpoolHopActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
                 </div>
-                <div class="form-group">
+                <div class="inspector-partial">
                   <span class="form-label text-xs">Whirlpool assumptions</span>
                   <load src="src/partials/whirlpool-assumptions.html" />
                 </div>

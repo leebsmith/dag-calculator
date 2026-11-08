@@ -65,76 +65,30 @@
 
           <template x-if="hopDrawer === 'inspect'">
             <template x-if="hopActiveRow">
-              <div class="inspector-form">
-                <div class="form-group">
-                  <label class="form-label text-xs" for="hop-row-name">Hop name</label>
-                  <input
-                    id="hop-row-name"
-                    type="text"
-                    class="form-input text-xs"
-                    :value="hopActiveRow.name"
-                    @input="setMaltField(hopActiveIndex, 'name', $event.target.value)"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="hop-row-alpha">Alpha acid (%)</label>
-                  <input
-                    id="hop-row-alpha"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="100"
-                    class="form-input text-xs"
-                    :value="fmt.toPercentValue(hopActiveRow.alpha_acid_pct, 1)"
-                    @change="setMaltField(hopActiveIndex, 'alpha_acid_pct', $event.target.value, 0.01)"
-                  />
-                  <span class="form-hint">Override for crop-year alpha; defaults to the catalog median.</span>
-                </div>
-                <div class="form-group" x-show="hopActiveRow.product_form === 'whole_cone'">
-                  <label class="form-label text-xs" for="hop-row-cone">Cone utilization (0–1)</label>
-                  <input
-                    id="hop-row-cone"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    class="form-input text-xs"
-                    :value="hopActiveRow.cone_utilization ?? ''"
-                    @change="patchDraftRow(hopActiveIndex, { cone_utilization: $event.target.value === '' ? null : Number($event.target.value) })"
-                  />
-                  <span class="form-hint">
-                    No source publishes it; measure it or own the assumption. The mass
-                    stays unsolved until it is set.
-                  </span>
-                </div>
-                <div class="form-group">
-                  <label class="form-label text-xs" for="hop-row-form">Form</label>
-                  <select
-                    id="hop-row-form"
-                    class="form-select text-xs"
-                    :value="hopActiveRow.product_form || 't90_pellet'"
-                    @change="patchDraftRow(hopActiveIndex, { product_form: $event.target.value })"
-                  >
-                    <template x-for="form in hopForms" :key="form.value">
-                      <option
-                        :value="form.value"
-                        :selected="form.value === (hopActiveRow.product_form || 't90_pellet')"
-                        x-text="form.label"
-                      ></option>
-                    </template>
-                  </select>
-                </div>
-                <span
-                  class="form-hint"
-                  x-show="hopActiveRow.product_form === 'flowable_extract'"
-                >
+              <div
+                class="inspector-form"
+                x-data="formBuilder({
+                  schema: [
+                    { id: 'hop-row-name', type: 'text', label: 'Hop name', modelKey: 'name', default: '' },
+                    { id: 'hop-row-alpha', type: 'number', label: 'Alpha acid (%)', read: () => fmt.toPercentValue(hopActiveRow.alpha_acid_pct, 1), min: 0, max: 100, step: 0.1, lazy: true, hint: 'Override for crop-year alpha; defaults to the catalog median.' },
+                    { id: 'hop-row-cone', type: 'number', label: 'Cone utilization (0–1)', read: () => hopActiveRow.cone_utilization ?? '', when: () => hopActiveRow.product_form === 'whole_cone', min: 0, max: 1, step: 0.01, lazy: true, hint: 'No source publishes it; measure it or own the assumption. The mass stays unsolved until it is set.' },
+                    { id: 'hop-row-form', type: 'select', label: 'Form', read: () => hopActiveRow.product_form || 't90_pellet', options: hopForms, lazy: true }
+                  ],
+                  onChange: (field, value) => {
+                    if (field.id === 'hop-row-alpha') return setMaltField(hopActiveIndex, 'alpha_acid_pct', value, 0.01);
+                    if (field.id === 'hop-row-cone') return patchDraftRow(hopActiveIndex, { cone_utilization: value === '' ? null : Number(value) });
+                    if (field.id === 'hop-row-form') return patchDraftRow(hopActiveIndex, { product_form: value });
+                    return setMaltField(hopActiveIndex, field.modelKey, value);
+                  }
+                })"
+                x-effect="setModel(hopActiveRow)"
+              >
+                <load src="src/partials/ui-form-fields.html" />
+                <span class="form-hint" x-show="hopActiveRow.product_form === 'flowable_extract'">
                   Use the lot CoA alpha; the catalog value is a preset. Extracts default to a
                   late addition, and the leaf does not restrict the stage.
                 </span>
-                <span
-                  class="form-hint"
-                  x-show="hopActiveRow.product_form === 'whole_cone'"
-                >
+                <span class="form-hint" x-show="hopActiveRow.product_form === 'whole_cone'">
                   Whole cone needs the batch's cone utilization factor before the mass can solve.
                 </span>
               </div>
