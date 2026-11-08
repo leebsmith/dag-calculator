@@ -30,9 +30,20 @@
         "box-shadow",
         "font-family",
         "font-size",
-        "line-height"
+        "font-weight",
+        "line-height",
+        "letter-spacing",
+        "width",
+        "height",
+        "min-width",
+        "max-width",
+        "min-height",
+        "max-height",
+        "grid-template-columns",
+        "z-index"
       ],
       {
+        "ignoreFunctions": false,
         "ignoreValues": [
           "currentColor",
           "inherit",
@@ -41,8 +52,14 @@
           "auto",
           "0",
           "100%",
-          "1px",
-          "/^calc\\(.*\\)$/"
+          "1ch",
+          "100dvh",
+          "90vh",
+          "max-content",
+          "/^calc\\(.*\\)$/",
+          "/^1fr$/",
+          "/^minmax\\(0, 1fr\\)$/",
+          "/^repeat\\([0-9]+, minmax\\(0, 1fr\\)\\)$/"
         ],
         "message": "Style Drift Detected: Utilize a design token var(--...) for '${property}' instead of the hardcoded value '${value}'."
       }

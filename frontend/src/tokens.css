@@ -248,6 +248,32 @@
   /* Accessibility Targets (WCAG 2.5.8 & 2.5.5 AAA) */
   --target-min-micro: 24px;
   --target-min-macro: 44px;
+
+  /* ========================================================================
+     10. Letter-Spacing Scale
+     ======================================================================== */
+  --text-tracking-tight: 0.02em;
+  --text-tracking-wide: 0.04em;
+  --text-tracking-wider: 0.05em;
+
+  /* ========================================================================
+     11. Component Layout Dimensions
+     ======================================================================== */
+
+  /* Heights and scroll caps */
+  --size-modal-workspace-height: min(88vh, 60rem);
+  --size-table-scroll: 28rem;
+  --size-library-records: 16rem;
+
+  /* Columns, menus, and flexible tracks */
+  --width-unit-column: 13rem;
+  --width-landing-table-min: 30rem;
+  --width-column-date: 10rem;
+  --width-menu-min: 12rem;
+  --width-import-source: 12rem;
+
+  /* Content max-widths */
+  --container-import-verification: 28rem;
 }
 
 /* ========================================================================
