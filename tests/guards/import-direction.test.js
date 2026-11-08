@@ -17,6 +17,7 @@ const LAYERS = {
   assets: { rank: 0, note: "static assets" },
   partials: { rank: 0, note: "top-level templates" },
   utils: { rank: 1, note: "utils.js barrel and utils/: pure display/model helpers" },
+  components: { rank: 1, note: "schema-driven Alpine UI factories; pure and import-free" },
   engine: { rank: 2, note: "reference interpreter for the artifact; pure" },
   observability: { rank: 2, note: "error sink; leaf" },
   firebase: { rank: 2, note: "Auth-only Firebase bootstrap; leaf" },

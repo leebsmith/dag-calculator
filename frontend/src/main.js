@@ -9,6 +9,7 @@ import { createAuthClient } from "./adapters/authClient.js";
 import { createBatchClient } from "./adapters/batchClient.js";
 import { createLibraryClient } from "./adapters/libraryClient.js";
 import { createSessionClient } from "./adapters/sessionClient.js";
+import { formBuilder } from "./components/formBuilder.js";
 import {
   closeReportTab,
   downloadBlob,
@@ -264,6 +265,8 @@ onAuthStateChanged((user) => {
   latestUser = user;
   applyAuth(user).catch((err) => reportError("main.auth", err));
 });
+
+Alpine.data("formBuilder", formBuilder);
 
 Alpine.data("stepCalculator", () => {
   // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate
