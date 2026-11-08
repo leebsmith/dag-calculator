@@ -33,6 +33,7 @@ import { createMashLayers } from "./cards/mash.js";
 import { createBrewDayLayers } from "./cards/brew-day.js";
 import { createDryHopLayers } from "./cards/dry-hops.js";
 import { createWaterLayers } from "./cards/water.js";
+import { createTableConfigs } from "./tableConfigs.js";
 import {
   catalogChromeLayer,
   createCatalogChrome,
@@ -55,7 +56,6 @@ import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } fr
 import { INSTALLERS } from "./installers.js";
 import * as fmt from "../utils.js";
 import { requireObservability } from "../observability.js";
-
 // Pre-landing-page bootstrap: the seed default equipment, no water source, no
 // style. The landing page replaces this with the batch's identity snapshot.
 function bootstrapIdentity(artifactSpec, cache) {
@@ -66,7 +66,6 @@ function bootstrapIdentity(artifactSpec, cache) {
     style: {},
   };
 }
-
 // Reference assets: the browser entry owns the cache and the library that fills
 // it, and injects both. A bare test app falls back to a fresh pair.
 function referenceAssets(options, observability, onChange) {
@@ -380,6 +379,7 @@ export function createStepApp(options = {}) {
     createUnitActions({ ...core, ui, observability }),
     createSnapshotActions({ ...core, master, observability }),
     catalogChromeLayer(createCatalogChrome({ registry: cardCtx.registry, getView })),
+    createTableConfigs({ getView }),
     ...createYeastLayers(cardCtx),
     ...createStyleLayers(cardCtx),
     ...createHopLayers(cardCtx, { formatters: hopFormatters }),

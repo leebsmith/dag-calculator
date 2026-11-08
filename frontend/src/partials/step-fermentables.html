@@ -28,60 +28,8 @@
           Authored as parts, normalized by the Hamilton largest-remainder algorithm (sums to 100.0%).
         </p>
 
-        <div class="data-table-container">
-          <table class="data-table data-table--editor">
-            <colgroup>
-              <col style="width: 30%" />
-              <col style="width: 11%" />
-              <col style="width: 10%" />
-              <col style="width: 12%" />
-              <col style="width: 13%" />
-              <col style="width: 12%" />
-              <col style="width: 12%" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Malt</th>
-                <th>Type</th>
-                <th class="text-right">Parts</th>
-                <th class="text-right">Malt %</th>
-                <th class="text-right">Mass</th>
-                <th class="text-right">Extract</th>
-                <th class="text-right">Fermentable</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="(row, ri) in gristRows" :key="ri">
-                <tr>
-                  <td>
-                    <span class="font-medium" x-text="row.name"></span>
-                    <template x-if="!row.catalog_id">
-                      <span class="status-badge status-badge-info text-nano">Custom</span>
-                    </template>
-                  </td>
-                  <td x-text="row.category"></td>
-                  <td class="text-right tabular-nums" x-text="row.parts"></td>
-                  <td class="text-right">
-                    <span
-                      class="table-pct-value"
-                      :class="{ 'is-trace': maltIsTrace(row) }"
-                      x-text="fmt.formatPercent(row.pct)"
-                    ></span>
-                  </td>
-                  <td class="text-right tabular-nums" x-text="row.massDisplay"></td>
-                  <td class="text-right tabular-nums" x-text="row.extractDisplay"></td>
-                  <td class="text-right tabular-nums" x-text="maltFermentable(row)"></td>
-                </tr>
-              </template>
-              <template x-if="gristRows.length === 0">
-                <tr>
-                  <td colspan="7" class="table-empty-cell">
-                    No malts yet. Click “Configure Malts” to build your grain bill.
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+        <div x-data="{ config: gristTableConfig() }">
+          <load src="src/partials/ui-data-table.html" />
         </div>
 
         <p class="text-xs text-muted">
@@ -126,32 +74,8 @@
         </p>
 
         <template x-if="traceMaltField">
-          <div class="data-table-container">
-            <table class="data-table data-table--editor">
-              <thead>
-                <tr>
-                  <template x-for="c in traceMaltField.columns" :key="c.id">
-                    <th :class="c.dimension ? 'text-right' : ''" x-text="fmt.formatColumnHeader(c)"></th>
-                  </template>
-                </tr>
-              </thead>
-              <tbody>
-                <template x-for="(row, ri) in traceMaltField.rows" :key="ri">
-                  <tr>
-                    <template x-for="c in traceMaltField.columns" :key="c.id">
-                      <td :class="c.dimension ? 'text-right tabular-nums' : ''" x-text="row[c.id]"></td>
-                    </template>
-                  </tr>
-                </template>
-                <template x-if="traceMaltField.rows.length === 0">
-                  <tr>
-                    <td :colspan="traceMaltField.columns.length" class="table-empty-cell">
-                      No trace malts yet. Click “Configure Trace Malts” to add colorants by weight.
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
+          <div x-data="{ config: traceMaltTableConfig() }">
+            <load src="src/partials/ui-data-table.html" />
           </div>
         </template>
       </div>

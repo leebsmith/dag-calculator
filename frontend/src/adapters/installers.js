@@ -32,6 +32,7 @@ import { KEYS as mashKeys } from "./cards/mash.js";
 import { KEYS as brewDayKeys } from "./cards/brew-day.js";
 import { KEYS as dryHopKeys } from "./cards/dry-hops.js";
 import { KEYS as waterKeys } from "./cards/water.js";
+import { KEYS as tableConfigKeys, SHARED as tableConfigShared } from "./tableConfigs.js";
 const NAVIGATION = ["frontend/src/adapters/navigation.js"];
 const FIELD_ACTIONS = ["frontend/src/adapters/fieldActions.js"];
 const DRAFT_EDITOR = ["frontend/src/adapters/draftEditor.js"];
@@ -83,12 +84,18 @@ const WATER = [
   "frontend/src/adapters/cards/waterCardActions.js",
 ];
 const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
+const TABLE_CONFIGS = ["frontend/src/adapters/tableConfigs.js"];
 
 const STYLE_PARTIALS = ["step-style.html"];
 
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
   { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["step-card.html"] },
+  {
+    name: "tableConfigs",
+    modules: TABLE_CONFIGS,
+    keys: tableConfigKeys,
+  },
   { name: "draftEditor", modules: DRAFT_EDITOR, keys: draftEditorKeys },
   { name: "unitActions", modules: UNIT_ACTIONS, keys: unitActionsKeys },
   { name: "snapshot", modules: SNAPSHOT, keys: snapshotKeys },
@@ -161,6 +168,7 @@ export const INSTALLERS = [
 // guard when no read is left, so this list is the work queue for the phases
 // that move the logic into `views/`: an entry disappears with its last reader.
 export const SHARED = [
+  ...tableConfigShared,
   {
     key: "activeScaleTarget",
     owners: ["styleNavigator"],

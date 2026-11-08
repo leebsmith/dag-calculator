@@ -4,11 +4,11 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **784** (526 enumerable, 258 hidden)
-- Installers: **20**
+- Declared members: **788** (530 enumerable, 258 hidden)
+- Installers: **21**
 - Card partials: **19**
-- Installers reading another installer's key: **13 of 20**
-- Cross-owner keys declared in `SHARED`: **45**
+- Installers reading another installer's key: **13 of 21**
+- Cross-owner keys declared in `SHARED`: **49**
 
 ## Installers
 
@@ -16,6 +16,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
 | `fieldActions` | `frontend/src/adapters/fieldActions.js` | 27 | 1 | 4 |
+| `tableConfigs` | `frontend/src/adapters/tableConfigs.js` | 4 | 0 | 0 |
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 79 | 0 | 0 |
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
@@ -25,10 +26,10 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 45 | 1 | 10 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 153 | 4 | 18 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 153 | 4 | 20 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 67 | 2 | 21 |
-| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 43 | 2 | 19 |
-| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 50 | 2 | 17 |
+| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 43 | 2 | 21 |
+| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 50 | 2 | 19 |
 | `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 51 | 2 | 5 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 14 | 1 | 0 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 55 | 2 | 14 |
@@ -41,6 +42,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|
 | `activeScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |
 | `addDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
+| `boilHopTableConfig` | `tableConfigs` | `hop` | the hops partial binds the shared boil-hop table config |
 | `clearInputDraft` | `fieldActions` | `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `closeDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `colorDisplay` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
@@ -59,6 +61,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `edit` | `fieldActions` | `hop`, `lateAdditions`, `water` | shared field verbs: the card partials bind the one editing surface |
 | `editNumberInput` | `fieldActions` | `lateAdditions`, `mash` | shared field verbs: the card partials bind the one editing surface |
+| `gristTableConfig` | `tableConfigs` | `malt`, `traceMalts` | the fermentables partial binds the shared grain-bill table config |
 | `inputDraft` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `inputKey` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
@@ -81,6 +84,8 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleTargetInfo` | `styleNavigator` | `styleTargets` | the style target card mirrors the navigator's target readout |
 | `syncScalePreviewState` | `lateAdditions` | `styleTargets` | the style card drives the late-addition scale preview; Phase 3 extracts it |
 | `toggleFieldUnit` | `unitActions` | `fieldActions` | unit toggling is shared between the hop card and the generic card shell |
+| `traceMaltTableConfig` | `tableConfigs` | `malt`, `traceMalts` | the fermentables partial binds the shared trace-malt table config |
 | `updateStylePreview` | `styleNavigator` | `styleTargets` | a pin or target edit refreshes the navigator's cached plot model |
 | `waterTargetOptions` | `water` | `fieldActions` | the generic card shell renders the water target selector |
 | `waterTargetSelection` | `water` | `fieldActions` | the generic card shell renders the water target selector |
+| `whirlpoolHopTableConfig` | `tableConfigs` | `hop` | the hops partial binds the shared whirlpool-hop table config |

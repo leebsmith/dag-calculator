@@ -55,71 +55,8 @@
       <div class="section-body" id="hops-boil" x-show="isHopSectionOpen('boil')">
         <p class="text-xs text-muted">Author by IBU share; the hop mass is back-calculated from Tinseth.</p>
 
-        <div class="data-table-container">
-          <table class="data-table data-table--editor">
-            <colgroup>
-              <col style="width: 40%" />
-              <col style="width: 15%" />
-              <col style="width: 15%" />
-              <col style="width: 5%" />
-              <col style="width: 10%" />
-              <col style="width: 5%" />
-              <col style="width: 10%" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Hop</th>
-                <th class="text-right">Alpha</th>
-                <th class="text-right">Boil</th>
-                <th class="text-right">Parts</th>
-                <th class="text-right">IBU share</th>
-                <th class="text-right">IBU</th>
-                <th class="text-right">Mass</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="(row, ri) in hopRows" :key="ri">
-                <tr>
-                  <td>
-                    <div class="font-medium" x-text="row.name"></div>
-                    <div class="text-xs text-muted" x-text="hopForm(row)"></div>
-                  </td>
-                  <td class="text-right tabular-nums">
-                    <input
-                      class="form-input table-input-parts"
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      :value="hopAlphaInput(row)"
-                      @change="setHopAlpha('boil', ri, $event.target.value)"
-                      :aria-label="'Alpha acid percent for ' + row.name"
-                    />
-                    <span
-                      class="table-alpha-stock text-muted"
-                      x-show="hopAlphaRange(row)"
-                      :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
-                      x-text="hopAlphaRange(row)"
-                    ></span>
-                  </td>
-                  <td class="text-right tabular-nums">
-                    <span x-text="hopBoilPct(row)"></span>
-                    <span class="text-xs text-muted" x-text="' · ' + hopMinutes(row)"></span>
-                  </td>
-                  <td class="text-right tabular-nums" x-text="row.parts"></td>
-                  <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
-                  <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
-                  <td class="text-right tabular-nums" x-text="hopMass(row)"></td>
-                </tr>
-              </template>
-              <template x-if="hopRows.length === 0">
-                <tr>
-                  <td colspan="7" class="table-empty-cell">
-                    No boil hops yet. Click “Configure Hops” to add additions.
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+        <div x-data="{ config: boilHopTableConfig() }">
+          <load src="src/partials/ui-data-table.html" />
         </div>
 
         <div class="summary-strip">
@@ -321,71 +258,8 @@
           </div>
         </div>
 
-        <div class="data-table-container">
-          <table class="data-table data-table--editor">
-            <colgroup>
-              <col style="width: 39%" />
-              <col style="width: 15%" />
-              <col style="width: 8%" />
-              <col style="width: 8%" />
-              <col style="width: 5%" />
-              <col style="width: 10%" />
-              <col style="width: 5%" />
-              <col style="width: 10%" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Hop</th>
-                <th class="text-right">Alpha</th>
-                <th class="text-right">After flameout</th>
-                <th class="text-right">Initial</th>
-                <th class="text-right">Parts</th>
-                <th class="text-right">IBU share</th>
-                <th class="text-right">IBU</th>
-                <th class="text-right">Mass</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="row in whirlpoolHopRows" :key="row.source_index">
-                <tr>
-                  <td>
-                    <div class="font-medium" x-text="row.name"></div>
-                    <div class="text-xs text-muted" x-text="hopForm(row)"></div>
-                  </td>
-                  <td class="text-right tabular-nums">
-                    <input
-                      class="form-input table-input-parts"
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      :value="hopAlphaInput(row)"
-                      @change="setHopAlpha('whirlpool', row.source_index, $event.target.value)"
-                      :aria-label="'Alpha acid percent for ' + row.name"
-                    />
-                    <span
-                      class="table-alpha-stock text-muted"
-                      x-show="hopAlphaRange(row)"
-                      :class="{ 'text-warning': hopAlphaOutsideStock(row) }"
-                      x-text="hopAlphaRange(row)"
-                    ></span>
-                  </td>
-                  <td class="text-right tabular-nums" x-text="hopAddition(row)"></td>
-                  <td class="text-right tabular-nums" x-text="hopTemp(row)"></td>
-                  <td class="text-right tabular-nums" x-text="row.parts"></td>
-                  <td class="text-right tabular-nums" x-text="hopPct(row)"></td>
-                  <td class="text-right tabular-nums" x-text="hopIbu(row)"></td>
-                  <td class="text-right tabular-nums" x-text="whirlpoolHopMass(row)"></td>
-                </tr>
-              </template>
-              <template x-if="whirlpoolHopRows.length === 0">
-                <tr>
-                  <td colspan="8" class="table-empty-cell">
-                    No whirlpool hops yet. Click “Configure Whirlpool Hops” to add additions.
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+        <div x-data="{ config: whirlpoolHopTableConfig() }">
+          <load src="src/partials/ui-data-table.html" />
         </div>
 
         <div class="summary-strip">
