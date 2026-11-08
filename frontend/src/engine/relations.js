@@ -2,20 +2,7 @@
 // nodes; the engine reports whether it holds. Report-only (never throws on a
 // violated invariant).
 
-import { evaluate } from "./ast.js";
-
-// Relations write binary comparisons as { op, lhs, rhs }; the interpreter uses
-// { op, args }. Normalize recursively so either form evaluates.
-function normalize(node) {
-  if (node === null || typeof node !== "object") return node;
-  if (Array.isArray(node)) return node.map(normalize);
-  if ("lhs" in node && "rhs" in node) {
-    return { op: node.op, args: [normalize(node.lhs), normalize(node.rhs)] };
-  }
-  const out = {};
-  for (const [k, v] of Object.entries(node)) out[k] = normalize(v);
-  return out;
-}
+import { runtimeFor } from "./expression.js";
 
 // An operand with no realized value gives the predicate no verdict: a boundary
 // that did not solve degrades its outputs to undefined, and arithmetic through
@@ -27,14 +14,8 @@ function isUnrealized(value) {
 }
 
 export function evaluatePredicate(artifact, predicate, resolveRef) {
-  const ctx = {
-    resolveRef,
-    resolveConst: (id) => artifact.constants?.[id]?.value,
-    call: (id) => {
-      throw new Error(`A relation predicate must not call a function ("${id}")`);
-    },
-  };
-  return Boolean(evaluate(normalize(predicate), ctx));
+  const runtime = runtimeFor(artifact);
+  return Boolean(runtime.evaluate(predicate, runtime.scope(resolveRef)));
 }
 
 export function relationStates(artifact, resolveRef) {

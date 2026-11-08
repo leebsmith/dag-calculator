@@ -1,13 +1,13 @@
 {
   "bundle_format": 7,
   "artifact": {
-    "schema_version": 10,
-    "hash": "sha256:c35e5cdbdad53d58e9f8752ea43525a57bc976b9bc90473e700aed1f60a0fb44",
+    "schema_version": 11,
+    "hash": "sha256:6883a5fd81c31ccdaa71513ca0ae636b5ea2fca608afb17f298bcce0f271f69b",
     "content": {
-      "schema_version": 10,
+      "schema_version": 11,
       "meta": {
         "name": "batch-brewing-calculator-logic",
-        "description": "Canonical business-logic DAG (schema_version 10, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+        "description": "Canonical business-logic DAG (schema_version 11, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
         "status": "complete"
       },
       "identity": {
@@ -562,41 +562,7 @@
             "thickness"
           ],
           "returns": "temperature",
-          "body": {
-            "op": "+",
-            "args": [
-              {
-                "ref": "t_target"
-              },
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "op": "/",
-                    "args": [
-                      {
-                        "const": "mash_thermal_factor"
-                      },
-                      {
-                        "ref": "thickness"
-                      }
-                    ]
-                  },
-                  {
-                    "op": "-",
-                    "args": [
-                      {
-                        "ref": "t_target"
-                      },
-                      {
-                        "ref": "t_grain"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(t_target + ((constants.mash_thermal_factor / thickness) * (t_target - t_grain)))"
         },
         "calculate_tun_thermal_offset": {
           "params": [
@@ -607,49 +573,7 @@
             "water_mass"
           ],
           "returns": "temperature_delta",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "ref": "specific_heat"
-                      },
-                      {
-                        "ref": "tun_mass"
-                      }
-                    ]
-                  },
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "const": "water_specific_heat"
-                      },
-                      {
-                        "ref": "water_mass"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "-",
-                "args": [
-                  {
-                    "ref": "t_target"
-                  },
-                  {
-                    "ref": "tun_initial"
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(((specific_heat * tun_mass) / (constants.water_specific_heat * water_mass)) * (t_target - tun_initial))"
         },
         "ramp_time_min": {
           "params": [
@@ -657,154 +581,21 @@
             "rate"
           ],
           "returns": "time",
-          "body": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "rate"
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "delta_temp"
-                  },
-                  {
-                    "ref": "rate"
-                  }
-                ]
-              },
-              0
-            ]
-          }
+          "body": "((rate > 0) ? (delta_temp / rate) : 0)"
         },
         "sg_to_plato": {
           "params": [
             "sg"
           ],
           "returns": "gravity",
-          "body": {
-            "op": "-",
-            "args": [
-              {
-                "op": "+",
-                "args": [
-                  {
-                    "op": "-",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          135.997,
-                          {
-                            "op": "pow",
-                            "args": [
-                              {
-                                "ref": "sg"
-                              },
-                              3
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          630.272,
-                          {
-                            "op": "pow",
-                            "args": [
-                              {
-                                "ref": "sg"
-                              },
-                              2
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "*",
-                    "args": [
-                      1111.14,
-                      {
-                        "ref": "sg"
-                      }
-                    ]
-                  }
-                ]
-              },
-              616.868
-            ]
-          }
+          "body": "((((135.997 * (sg ^ 3)) - (630.272 * (sg ^ 2))) + (1111.14 * sg)) - 616.868)"
         },
         "plato_to_sg": {
           "params": [
             "plato"
           ],
           "returns": "gravity",
-          "body": {
-            "op": "+",
-            "args": [
-              {
-                "op": "+",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      1.0000131,
-                      {
-                        "op": "*",
-                        "args": [
-                          0.00386777,
-                          {
-                            "ref": "plato"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "*",
-                    "args": [
-                      1.27447e-05,
-                      {
-                        "op": "pow",
-                        "args": [
-                          {
-                            "ref": "plato"
-                          },
-                          2
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "*",
-                "args": [
-                  6.34964e-08,
-                  {
-                    "op": "pow",
-                    "args": [
-                      {
-                        "ref": "plato"
-                      },
-                      3
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(((1.0000131 + (0.00386777 * plato)) + (0.0000127447 * (plato ^ 2))) + (0.0000000634964 * (plato ^ 3)))"
         },
         "realized_fg": {
           "params": [
@@ -812,33 +603,7 @@
             "aa"
           ],
           "returns": "gravity",
-          "body": {
-            "call": "plato_to_sg",
-            "args": [
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "call": "sg_to_plato",
-                    "args": [
-                      {
-                        "ref": "og_sg"
-                      }
-                    ]
-                  },
-                  {
-                    "op": "-",
-                    "args": [
-                      1,
-                      {
-                        "ref": "aa"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "functions.plato_to_sg((functions.sg_to_plato(og_sg) * (1 - aa)))"
         },
         "realized_abv": {
           "params": [
@@ -846,177 +611,28 @@
             "aa"
           ],
           "returns": "abv",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "const": "cutaia_a"
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "const": "cutaia_b"
-                          },
-                          {
-                            "call": "sg_to_plato",
-                            "args": [
-                              {
-                                "ref": "og_sg"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "-",
-                    "args": [
-                      {
-                        "call": "sg_to_plato",
-                        "args": [
-                          {
-                            "ref": "og_sg"
-                          }
-                        ]
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "call": "sg_to_plato",
-                            "args": [
-                              {
-                                "ref": "og_sg"
-                              }
-                            ]
-                          },
-                          {
-                            "op": "-",
-                            "args": [
-                              1,
-                              {
-                                "ref": "aa"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "call": "plato_to_sg",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "call": "sg_to_plato",
-                            "args": [
-                              {
-                                "ref": "og_sg"
-                              }
-                            ]
-                          },
-                          {
-                            "op": "-",
-                            "args": [
-                              1,
-                              {
-                                "ref": "aa"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "const": "ethanol_density"
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(((constants.cutaia_a + (constants.cutaia_b * functions.sg_to_plato(og_sg))) * (functions.sg_to_plato(og_sg) - (functions.sg_to_plato(og_sg) * (1 - aa)))) * (functions.plato_to_sg((functions.sg_to_plato(og_sg) * (1 - aa))) / constants.ethanol_density))"
         },
         "extract_yield_ldk": {
           "params": [
             "yield_fraction"
           ],
           "returns": "extract_yield",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "yield_fraction"
-              },
-              {
-                "const": "sucrose_yield_ldk"
-              }
-            ]
-          }
+          "body": "(yield_fraction * constants.sucrose_yield_ldk)"
         },
         "bicarbonate_from_alkalinity": {
           "params": [
             "alkalinity_caco3"
           ],
           "returns": "concentration",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "alkalinity_caco3"
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "const": "bicarbonate_eq_weight"
-                  },
-                  {
-                    "const": "caco3_eq_weight"
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(alkalinity_caco3 * (constants.bicarbonate_eq_weight / constants.caco3_eq_weight))"
         },
         "alkalinity_from_bicarbonate": {
           "params": [
             "bicarbonate_hco3"
           ],
           "returns": "concentration",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "bicarbonate_hco3"
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "const": "caco3_eq_weight"
-                  },
-                  {
-                    "const": "bicarbonate_eq_weight"
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(bicarbonate_hco3 * (constants.caco3_eq_weight / constants.bicarbonate_eq_weight))"
         },
         "sugar_gravity_points": {
           "params": [
@@ -1025,54 +641,14 @@
             "v_ferm_l"
           ],
           "returns": "gravity",
-          "body": {
-            "op": "/",
-            "args": [
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "ref": "mass_kg"
-                      },
-                      {
-                        "ref": "yield_fraction"
-                      }
-                    ]
-                  },
-                  {
-                    "const": "sucrose_yield_ldk"
-                  }
-                ]
-              },
-              {
-                "ref": "v_ferm_l"
-              }
-            ]
-          }
+          "body": "(((mass_kg * yield_fraction) * constants.sucrose_yield_ldk) / v_ferm_l)"
         },
         "morey_mcu_to_srm": {
           "params": [
             "mcu"
           ],
           "returns": "beer_color",
-          "body": {
-            "op": "*",
-            "args": [
-              1.4922,
-              {
-                "op": "pow",
-                "args": [
-                  {
-                    "ref": "mcu"
-                  },
-                  0.6859
-                ]
-              }
-            ]
-          }
+          "body": "(1.4922 * (mcu ^ 0.6859))"
         },
         "cutaia_abv_plato": {
           "params": [
@@ -1080,62 +656,7 @@
             "ae"
           ],
           "returns": "abv",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "const": "cutaia_a"
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "const": "cutaia_b"
-                          },
-                          {
-                            "ref": "oe"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "-",
-                    "args": [
-                      {
-                        "ref": "oe"
-                      },
-                      {
-                        "ref": "ae"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "call": "plato_to_sg",
-                    "args": [
-                      {
-                        "ref": "ae"
-                      }
-                    ]
-                  },
-                  {
-                    "const": "ethanol_density"
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "(((constants.cutaia_a + (constants.cutaia_b * oe)) * (oe - ae)) * (functions.plato_to_sg(ae) / constants.ethanol_density))"
         },
         "cutaia_real_extract": {
           "params": [
@@ -1143,81 +664,7 @@
             "ae"
           ],
           "returns": "gravity",
-          "body": {
-            "op": "-",
-            "args": [
-              {
-                "op": "-",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "const": "cutaia_re_abw"
-                          },
-                          {
-                            "ref": "abw"
-                          }
-                        ]
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "const": "cutaia_re_ae"
-                          },
-                          {
-                            "ref": "ae"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "const": "cutaia_re_abw_ae"
-                          },
-                          {
-                            "ref": "abw"
-                          }
-                        ]
-                      },
-                      {
-                        "ref": "ae"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "const": "cutaia_re_ae2"
-                      },
-                      {
-                        "ref": "ae"
-                      }
-                    ]
-                  },
-                  {
-                    "ref": "ae"
-                  }
-                ]
-              }
-            ]
-          }
+          "body": "((((constants.cutaia_re_abw * abw) + (constants.cutaia_re_ae * ae)) - ((constants.cutaia_re_abw_ae * abw) * ae)) - ((constants.cutaia_re_ae2 * ae) * ae))"
         },
         "blend_ion": {
           "params": [
@@ -1228,96 +675,7 @@
             "sparge"
           ],
           "returns": "concentration",
-          "body": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "op": "+",
-                        "args": [
-                          {
-                            "ref": "run1"
-                          },
-                          {
-                            "ref": "run2"
-                          }
-                        ]
-                      },
-                      {
-                        "ref": "sparge"
-                      }
-                    ]
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "ref": "mash"
-                          },
-                          {
-                            "op": "+",
-                            "args": [
-                              {
-                                "ref": "run1"
-                              },
-                              {
-                                "ref": "run2"
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "ref": "hlt"
-                          },
-                          {
-                            "ref": "sparge"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "op": "+",
-                        "args": [
-                          {
-                            "ref": "run1"
-                          },
-                          {
-                            "ref": "run2"
-                          }
-                        ]
-                      },
-                      {
-                        "ref": "sparge"
-                      }
-                    ]
-                  }
-                ]
-              },
-              null
-            ]
-          }
+          "body": "((((run1 + run2) + sparge) > 0) ? (((mash * (run1 + run2)) + (hlt * sparge)) / ((run1 + run2) + sparge)) : null)"
         },
         "ion_net_change": {
           "params": [
@@ -1325,46 +683,7 @@
             "source"
           ],
           "returns": "concentration",
-          "body": {
-            "op": "if",
-            "args": [
-              {
-                "op": "and",
-                "args": [
-                  {
-                    "op": "gt",
-                    "args": [
-                      {
-                        "ref": "final"
-                      },
-                      -1e+308
-                    ]
-                  },
-                  {
-                    "op": "gt",
-                    "args": [
-                      {
-                        "ref": "source"
-                      },
-                      -1e+308
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "-",
-                "args": [
-                  {
-                    "ref": "final"
-                  },
-                  {
-                    "ref": "source"
-                  }
-                ]
-              },
-              null
-            ]
-          }
+          "body": "(((final > -100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) && (source > -100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)) ? (final - source) : null)"
         },
         "sulfate_chloride_ratio": {
           "params": [
@@ -1372,49 +691,14 @@
             "chloride"
           ],
           "returns": "dimensionless",
-          "body": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "chloride"
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "sulfate"
-                  },
-                  {
-                    "ref": "chloride"
-                  }
-                ]
-              },
-              null
-            ]
-          }
+          "body": "((chloride > 0) ? (sulfate / chloride) : null)"
         },
         "grain_displacement_volume": {
           "params": [
             "m_grist"
           ],
           "returns": "volume",
-          "body": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "m_grist"
-              },
-              {
-                "const": "grain_displacement_l_per_kg"
-              }
-            ]
-          }
+          "body": "(m_grist * constants.grain_displacement_l_per_kg)"
         }
       },
       "primitive_schemas": {
@@ -1431,35 +715,24 @@
           },
           "yield_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "yield_basis": {},
           "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "fermentability_provenance": {},
           "fermentability_basis": {},
           "fermentability_method": {},
           "moisture_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "color_lovibond": {
             "dimension": "grain_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "notes": {}
         },
@@ -1469,28 +742,20 @@
           "maltster": {},
           "yield_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "yield_basis": {},
           "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "fermentability_provenance": {},
           "fermentability_basis": {},
           "fermentability_method": {},
           "color_lovibond": {
             "dimension": "grain_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "notes": {}
         },
@@ -1500,25 +765,16 @@
           "manufacturer": {},
           "attenuation_cap_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "attenuation_provenance": {},
           "attenuation_low_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "attenuation_high_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "attenuation_basis": {},
           "blend_of": {},
@@ -1557,31 +813,19 @@
           "recipes_count": {},
           "alpha_acid_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "alpha_acid_min_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "alpha_acid_max_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "beta_acid_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "pairings": {},
           "flavor_profiles": {},
@@ -1598,24 +842,15 @@
           },
           "alpha_acid_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "alpha_acid_min_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "alpha_acid_max_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "notes": {},
           "url": {}
@@ -1644,63 +879,43 @@
           "tags": {},
           "og_min": {
             "dimension": "gravity",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "og_max": {
             "dimension": "gravity",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "fg_min": {
             "dimension": "gravity",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "fg_max": {
             "dimension": "gravity",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "ibu_min": {
             "dimension": "ibu",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "ibu_max": {
             "dimension": "ibu",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "srm_min": {
             "dimension": "beer_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "srm_max": {
             "dimension": "beer_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "abv_min": {
             "dimension": "abv",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "abv_max": {
             "dimension": "abv",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           }
         },
         "equipment": {
@@ -1709,119 +924,79 @@
           "description": {},
           "max_kettle_volume_l": {
             "dimension": "volume",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "max_mash_tun_volume_l": {
             "dimension": "volume",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "max_hlt_volume_l": {
             "dimension": "volume",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "mash_dead_space_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "mash_transfer_loss_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "kettle_dead_space_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "kettle_transfer_loss_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "trub_loss_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "hlt_dead_space_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "hlt_transfer_loss_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "nominal_boil_off_rate_l_per_hr": {
             "dimension": "volume_per_time",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "grain_absorption_factor_l_per_kg": {
             "dimension": "mash_thickness",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "mash_heating_rate_c_per_min": {
             "dimension": "temperature_delta_per_time",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "min_lgr_l_per_kg": {
             "dimension": "mash_thickness",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "nominal_conversion_efficiency": {
             "dimension": "percentage",
-            "domain": {
-              "gt": 0,
-              "lte": 1
-            }
+            "domain": "$value > 0 && $value <= 1"
           },
           "shrinkage_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 0.2
-            }
+            "domain": "$value >= 0 && $value <= 0.2"
           },
           "hlt_coil_floor_l": {
             "dimension": "volume",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "mash_tun_specific_heat": {
             "dimension": "specific_heat",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "mash_tun_mass_kg": {
             "dimension": "mass",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           }
         },
         "grist_row": {
@@ -1835,42 +1010,28 @@
           },
           "pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "yield_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "yield_basis": {},
           "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "fermentability_provenance": {},
           "fermentability_basis": {},
           "fermentability_method": {},
           "moisture_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "color_lovibond": {
             "dimension": "grain_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "notes": {}
         },
@@ -1879,40 +1040,28 @@
           "name": {},
           "mass_kg": {
             "dimension": "mass",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "parts": {
             "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "yield_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "yield_basis": {},
           "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "fermentability_provenance": {},
           "fermentability_basis": {},
           "fermentability_method": {},
           "color_lovibond": {
             "dimension": "grain_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "notes": {}
         },
@@ -1945,34 +1094,24 @@
           },
           "mass_kg": {
             "dimension": "mass",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "yield_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "yield_basis": {},
           "yield_provenance": {},
           "fermentability_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "fermentability_provenance": {},
           "fermentability_basis": {},
           "fermentability_method": {},
           "color_lovibond": {
             "dimension": "grain_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "notes": {}
         },
@@ -1981,30 +1120,19 @@
           "name": {},
           "alpha_acid_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "boil_time_fraction": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "parts": {
             "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "product_form": {
             "taxonomy": "hop_product_form",
@@ -2013,10 +1141,7 @@
           "cone_utilization": {
             "dimension": "dimensionless",
             "default": null,
-            "domain": {
-              "gt": 0,
-              "lte": 1
-            }
+            "domain": "$value > 0 && $value <= 1"
           }
         },
         "whirlpool_hop_row": {
@@ -2029,45 +1154,29 @@
           "cone_utilization": {
             "dimension": "dimensionless",
             "default": null,
-            "domain": {
-              "gt": 0,
-              "lte": 1
-            }
+            "domain": "$value > 0 && $value <= 1"
           },
           "alpha_acid_pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "addition_at_min": {
             "dimension": "time",
             "default": 0,
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "initial_temp_c": {
             "dimension": "temperature",
             "default": 99,
-            "domain": {
-              "gte": 0,
-              "lte": 100
-            }
+            "domain": "$value >= 0 && $value <= 100"
           },
           "parts": {
             "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "pct": {
             "dimension": "percentage",
-            "domain": {
-              "gte": 0,
-              "lte": 1
-            }
+            "domain": "$value >= 0 && $value <= 1"
           },
           "notes": {}
         },
@@ -2155,23 +1264,17 @@
           "purpose": {},
           "sequence": {
             "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           }
         },
         "water_grist_row": {
           "mass_kg": {
             "dimension": "mass",
-            "domain": {
-              "gt": 0
-            }
+            "domain": "$value > 0"
           },
           "color_lovibond": {
             "dimension": "grain_color",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "grain_type": {
             "taxonomy": "malt_category"
@@ -2187,94 +1290,63 @@
           "location": {},
           "ph": {
             "dimension": "ph",
-            "domain": {
-              "gte": 0,
-              "lte": 14
-            }
+            "domain": "$value >= 0 && $value <= 14"
           },
           "tds_ppm": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "electrical_conductivity_mmho_cm": {
             "dimension": "dimensionless",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "calcium_ca": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "magnesium_mg": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "sodium_na": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "potassium_k": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "chloride_cl": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "sulfate_so4": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "bicarbonate_hco3": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "total_alkalinity_caco3": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "total_hardness_caco3": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "nitrate_no3_n": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "total_phosphorus_p": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "total_iron_fe": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "notes": {}
         },
@@ -2284,45 +1356,31 @@
           "description": {},
           "calcium_ca": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "magnesium_mg": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "sodium_na": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "sulfate_so4": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "chloride_cl": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "alkalinity_as_caco3": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            }
+            "domain": "$value >= 0"
           },
           "calcium_floor_ppm": {
             "dimension": "concentration",
-            "domain": {
-              "gte": 0
-            },
+            "domain": "$value >= 0",
             "default": 50
           },
           "mode": {
@@ -2384,371 +1442,136 @@
         "batch.target_abv": {
           "kind": "root",
           "dimension": "abv",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "lt",
-                "args": [
-                  {
-                    "ref": "style.abv_min"
-                  },
-                  {
-                    "ref": "style.abv_max"
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "ref": "style.abv_min"
-                      },
-                      {
-                        "ref": "style.abv_max"
-                      }
-                    ]
-                  },
-                  2
-                ]
-              },
-              {
-                "const": "default_target_abv"
-              }
-            ]
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "((style.abv_min < style.abv_max) ? ((style.abv_min + style.abv_max) / 2) : constants.default_target_abv)",
+          "domain": "$value > 0"
         },
         "batch.scale_pin": {
           "kind": "choice",
           "taxonomy": "scale_pin",
-          "default": "abv"
+          "default": "\"abv\""
         },
         "batch.target_og": {
           "kind": "root",
           "dimension": "gravity",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "lt",
-                "args": [
-                  {
-                    "ref": "style.og_min"
-                  },
-                  {
-                    "ref": "style.og_max"
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "ref": "style.og_min"
-                      },
-                      {
-                        "ref": "style.og_max"
-                      }
-                    ]
-                  },
-                  2
-                ]
-              },
-              {
-                "const": "default_target_og"
-              }
-            ]
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "((style.og_min < style.og_max) ? ((style.og_min + style.og_max) / 2) : constants.default_target_og)",
+          "domain": "$value > 0"
         },
         "batch.target_fg": {
           "kind": "root",
           "dimension": "gravity",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "lt",
-                "args": [
-                  {
-                    "ref": "style.fg_min"
-                  },
-                  {
-                    "ref": "style.fg_max"
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "ref": "style.fg_min"
-                      },
-                      {
-                        "ref": "style.fg_max"
-                      }
-                    ]
-                  },
-                  2
-                ]
-              },
-              {
-                "const": "default_target_fg"
-              }
-            ]
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "((style.fg_min < style.fg_max) ? ((style.fg_min + style.fg_max) / 2) : constants.default_target_fg)",
+          "domain": "$value > 0"
         },
         "batch.target_ibu": {
           "kind": "root",
           "dimension": "ibu",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "lt",
-                "args": [
-                  {
-                    "ref": "style.ibu_min"
-                  },
-                  {
-                    "ref": "style.ibu_max"
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "ref": "style.ibu_min"
-                      },
-                      {
-                        "ref": "style.ibu_max"
-                      }
-                    ]
-                  },
-                  2
-                ]
-              },
-              {
-                "const": "default_target_ibu"
-              }
-            ]
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "((style.ibu_min < style.ibu_max) ? ((style.ibu_min + style.ibu_max) / 2) : constants.default_target_ibu)",
+          "domain": "$value >= 0"
         },
         "batch.target_srm": {
           "kind": "root",
           "dimension": "beer_color",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "lt",
-                "args": [
-                  {
-                    "ref": "style.srm_min"
-                  },
-                  {
-                    "ref": "style.srm_max"
-                  }
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "ref": "style.srm_min"
-                      },
-                      {
-                        "ref": "style.srm_max"
-                      }
-                    ]
-                  },
-                  2
-                ]
-              },
-              null
-            ]
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "((style.srm_min < style.srm_max) ? ((style.srm_min + style.srm_max) / 2) : null)",
+          "domain": "$value >= 0"
         },
         "batch.whirlpool_ibu_fraction": {
           "kind": "root",
           "dimension": "percentage",
-          "default": 0,
-          "domain": {
-            "gte": 0,
-            "lte": 1
-          }
+          "default": "0",
+          "domain": "$value >= 0 && $value <= 1"
         },
         "batch.whirlpool_ambient_temp_c": {
           "kind": "root",
           "dimension": "temperature",
-          "default": 20,
-          "domain": {
-            "gte": -20,
-            "lte": 50
-          }
+          "default": "20",
+          "domain": "$value >= -20 && $value <= 50"
         },
         "batch.whirlpool_cooling_time_constant_min": {
           "kind": "root",
           "dimension": "time",
-          "default": 108.7,
-          "domain": {
-            "gt": 0
-          }
+          "default": "108.7",
+          "domain": "$value > 0"
         },
         "batch.whirlpool_knockout_min": {
           "kind": "root",
           "dimension": "time",
-          "default": 30,
-          "domain": {
-            "gte": 0
-          }
+          "default": "30",
+          "domain": "$value >= 0"
         },
         "batch.whirlpool_start_temp_c": {
           "kind": "root",
           "dimension": "temperature",
-          "default": 99,
-          "domain": {
-            "gte": 0,
-            "lte": 100
-          }
+          "default": "99",
+          "domain": "$value >= 0 && $value <= 100"
         },
         "batch.cooling_curve_id": {
           "kind": "root",
           "dimension": "reference",
-          "default": ""
+          "default": "\"\""
         },
         "batch.v_ferm": {
           "kind": "root",
           "dimension": "volume",
-          "default": {
-            "const": "default_v_ferm_l"
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "constants.default_v_ferm_l",
+          "domain": "$value > 0"
         },
         "batch.boil_time_min": {
           "kind": "root",
           "dimension": "time",
-          "default": {
-            "const": "default_boil_time_min"
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "constants.default_boil_time_min",
+          "domain": "$value > 0"
         },
         "batch.boil_off_rate_l_per_hr": {
           "kind": "root",
           "dimension": "volume_per_time",
-          "default": {
-            "ref": "equipment.nominal_boil_off_rate_l_per_hr"
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "equipment.nominal_boil_off_rate_l_per_hr",
+          "domain": "$value > 0"
         },
         "batch.conversion_efficiency": {
           "kind": "root",
           "dimension": "percentage",
-          "default": {
-            "ref": "equipment.nominal_conversion_efficiency"
-          },
-          "domain": {
-            "gt": 0,
-            "lte": 1
-          }
+          "default": "equipment.nominal_conversion_efficiency",
+          "domain": "$value > 0 && $value <= 1"
         },
         "batch.topology": {
           "kind": "choice",
           "taxonomy": "topology",
-          "default": "r_l_to_g"
+          "default": "\"r_l_to_g\""
         },
         "batch.mash_thickness_l_per_kg": {
           "kind": "root",
           "dimension": "mash_thickness",
-          "default": {
-            "const": "default_mash_thickness_l_per_kg"
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "constants.default_mash_thickness_l_per_kg",
+          "domain": "$value > 0"
         },
         "batch.runoff_ratio": {
           "kind": "root",
           "dimension": "dimensionless",
-          "default": {
-            "const": "default_runoff_ratio"
-          },
-          "domain": {
-            "gt": 0
-          }
+          "default": "constants.default_runoff_ratio",
+          "domain": "$value > 0"
         },
         "batch.hlt_starting_volume_l": {
           "kind": "root",
           "dimension": "volume",
-          "default": {
-            "ref": "equipment.max_hlt_volume_l"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "equipment.max_hlt_volume_l",
+          "domain": "$value >= 0"
         },
         "batch.sparge_water_temp_c": {
           "kind": "root",
           "dimension": "temperature",
-          "default": {
-            "const": "default_sparge_water_temp_c"
-          },
-          "domain": {
-            "gte": 0,
-            "lte": 100
-          }
+          "default": "constants.default_sparge_water_temp_c",
+          "domain": "$value >= 0 && $value <= 100"
         },
         "batch.yeast_id": {
           "kind": "root",
           "dimension": "reference",
-          "default": ""
+          "default": "\"\""
         },
         "batch.attenuation_derate_points": {
           "kind": "root",
           "dimension": "percentage",
-          "default": {
-            "const": "default_attenuation_derate_points"
-          },
-          "domain": {
-            "gte": 0,
-            "lte": 0.25
-          }
+          "default": "constants.default_attenuation_derate_points",
+          "domain": "$value >= 0 && $value <= 0.25"
         },
         "batch.yeast_cap": {
           "kind": "derived",
@@ -2757,51 +1580,7 @@
             "aa": "batch.yeast.attenuation_cap_pct",
             "points": "batch.attenuation_derate_points"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "ne",
-                "args": [
-                  {
-                    "ref": "selector"
-                  },
-                  ""
-                ]
-              },
-              {
-                "op": "if",
-                "args": [
-                  {
-                    "op": "gt",
-                    "args": [
-                      {
-                        "ref": "aa"
-                      },
-                      {
-                        "ref": "points"
-                      }
-                    ]
-                  },
-                  {
-                    "op": "-",
-                    "args": [
-                      {
-                        "ref": "aa"
-                      },
-                      {
-                        "ref": "points"
-                      }
-                    ]
-                  },
-                  {
-                    "const": "default_attenuation_derate_points"
-                  }
-                ]
-              },
-              null
-            ]
-          },
+          "expr": "((selector != \"\") ? ((aa > points) ? (aa - points) : constants.default_attenuation_derate_points) : null)",
           "output": {
             "dimension": "percentage"
           }
@@ -2812,48 +1591,7 @@
             "aa": "solver.batch.apparent_attenuation",
             "cap": "batch.yeast_cap"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "and",
-                "args": [
-                  {
-                    "op": "gt",
-                    "args": [
-                      {
-                        "ref": "cap"
-                      },
-                      0
-                    ]
-                  },
-                  {
-                    "op": "gt",
-                    "args": [
-                      {
-                        "ref": "aa"
-                      },
-                      {
-                        "ref": "cap"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "-",
-                "args": [
-                  {
-                    "ref": "aa"
-                  },
-                  {
-                    "ref": "cap"
-                  }
-                ]
-              },
-              null
-            ]
-          },
+          "expr": "(((cap > 0) && (aa > cap)) ? (aa - cap) : null)",
           "output": {
             "dimension": "percentage"
           }
@@ -2861,13 +1599,8 @@
         "batch.grain_moisture_fraction": {
           "kind": "root",
           "dimension": "percentage",
-          "default": {
-            "const": "default_grain_moisture_fraction"
-          },
-          "domain": {
-            "gte": 0,
-            "lte": 1
-          }
+          "default": "constants.default_grain_moisture_fraction",
+          "domain": "$value >= 0 && $value <= 1"
         },
         "batch.sugars": {
           "kind": "collection",
@@ -2879,73 +1612,7 @@
                 "budget": "batch.sugar_extract_total",
                 "parts_total": "batch.sugar_parts_total"
               },
-              "expr": {
-                "op": "if",
-                "args": [
-                  {
-                    "op": "and",
-                    "args": [
-                      {
-                        "op": "eq",
-                        "args": [
-                          {
-                            "ref": "intent"
-                          },
-                          "share"
-                        ]
-                      },
-                      {
-                        "op": "gt",
-                        "args": [
-                          {
-                            "ref": "parts_total"
-                          },
-                          0
-                        ]
-                      },
-                      {
-                        "op": "gt",
-                        "args": [
-                          {
-                            "ref": "row.yield_fraction"
-                          },
-                          0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "op": "/",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "op": "/",
-                            "args": [
-                              {
-                                "ref": "row.parts"
-                              },
-                              {
-                                "ref": "parts_total"
-                              }
-                            ]
-                          },
-                          {
-                            "ref": "budget"
-                          }
-                        ]
-                      },
-                      {
-                        "ref": "row.yield_fraction"
-                      }
-                    ]
-                  },
-                  {
-                    "ref": "row.mass_kg"
-                  }
-                ]
-              },
+              "expr": "(((intent == \"share\") && (parts_total > 0) && (row.yield_fraction > 0)) ? (((row.parts / parts_total) * budget) / row.yield_fraction) : row.mass_kg)",
               "output": {
                 "dimension": "mass"
               }
@@ -2955,16 +1622,13 @@
         "batch.late_addition_intent": {
           "kind": "choice",
           "taxonomy": "late_addition_intent",
-          "default": "dose"
+          "default": "\"dose\""
         },
         "batch.sugar_extract_share": {
           "kind": "root",
           "dimension": "percentage",
-          "default": 0,
-          "domain": {
-            "gte": 0,
-            "lte": 0.95
-          }
+          "default": "0",
+          "domain": "$value >= 0 && $value <= 0.95"
         },
         "batch.boil_hops": {
           "kind": "collection",
@@ -2984,12 +1648,12 @@
         "batch.fermentation": {
           "kind": "choice",
           "taxonomy": "fermentation",
-          "default": "ale"
+          "default": "\"ale\""
         },
         "water.target_profile_id": {
           "kind": "root",
           "dimension": "reference",
-          "default": ""
+          "default": "\"\""
         },
         "water.target_profile": {
           "kind": "selection",
@@ -3001,147 +1665,80 @@
         "water.target.calcium_ca": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "ref": "water.target_profile.calcium_ca"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "water.target_profile.calcium_ca",
+          "domain": "$value >= 0"
         },
         "water.target.magnesium_mg": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "ref": "water.target_profile.magnesium_mg"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "water.target_profile.magnesium_mg",
+          "domain": "$value >= 0"
         },
         "water.target.sodium_na": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "ref": "water.target_profile.sodium_na"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "water.target_profile.sodium_na",
+          "domain": "$value >= 0"
         },
         "water.target.sulfate_so4": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "ref": "water.target_profile.sulfate_so4"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "water.target_profile.sulfate_so4",
+          "domain": "$value >= 0"
         },
         "water.target.chloride_cl": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "ref": "water.target_profile.chloride_cl"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "water.target_profile.chloride_cl",
+          "domain": "$value >= 0"
         },
         "water.target.alkalinity_as_caco3": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "ref": "water.target_profile.alkalinity_as_caco3"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "water.target_profile.alkalinity_as_caco3",
+          "domain": "$value >= 0"
         },
         "water.calcium_floor_ppm": {
           "kind": "root",
           "dimension": "concentration",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "water.target_profile.calcium_floor_ppm"
-                  },
-                  0
-                ]
-              },
-              {
-                "ref": "water.target_profile.calcium_floor_ppm"
-              },
-              {
-                "const": "default_calcium_floor_ppm"
-              }
-            ]
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "((water.target_profile.calcium_floor_ppm > 0) ? water.target_profile.calcium_floor_ppm : constants.default_calcium_floor_ppm)",
+          "domain": "$value >= 0"
         },
         "water.target_mash_ph": {
           "kind": "root",
           "dimension": "ph",
-          "default": {
-            "const": "default_target_mash_ph"
-          },
-          "domain": {
-            "gte": 4,
-            "lte": 7
-          }
+          "default": "constants.default_target_mash_ph",
+          "domain": "$value >= 4 && $value <= 7"
         },
         "water.strategy": {
           "kind": "choice",
           "taxonomy": "strategy",
-          "default": {
-            "op": "if",
-            "args": [
-              {
-                "op": "ne",
-                "args": [
-                  {
-                    "ref": "water.target_profile_id"
-                  },
-                  ""
-                ]
-              },
-              {
-                "ref": "water.target_profile.mode"
-              },
-              "AUTO"
-            ]
-          }
+          "default": "((water.target_profile_id != \"\") ? water.target_profile.mode : \"AUTO\")"
         },
         "water.salt_distribution": {
           "kind": "choice",
           "taxonomy": "salt_distribution",
-          "default": "PROPORTIONAL"
+          "default": "\"PROPORTIONAL\""
         },
         "water.acid_medium": {
           "kind": "choice",
           "taxonomy": "acid_medium",
-          "default": "LACTIC_88"
+          "default": "\"LACTIC_88\""
         },
         "water.gypsum_form": {
           "kind": "choice",
           "taxonomy": "gypsum_form",
-          "default": "GYPSUM_DIHYDRATE"
+          "default": "\"GYPSUM_DIHYDRATE\""
         },
         "water.cacl2_form": {
           "kind": "choice",
           "taxonomy": "cacl2_form",
-          "default": "CACL2_DIHYDRATE"
+          "default": "\"CACL2_DIHYDRATE\""
         },
         "water.preferred_alkaline_agent": {
           "kind": "choice",
           "taxonomy": "alkaline_agent",
-          "default": "PICKLING_LIME"
+          "default": "\"PICKLING_LIME\""
         },
         "water.kettle_blend.calcium_ca": {
           "kind": "derived",
@@ -3152,26 +1749,7 @@
             "run2": "solver.batch.cascade.v_run2",
             "sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "call": "blend_ion",
-            "args": [
-              {
-                "ref": "mash"
-              },
-              {
-                "ref": "hlt"
-              },
-              {
-                "ref": "run1"
-              },
-              {
-                "ref": "run2"
-              },
-              {
-                "ref": "sparge"
-              }
-            ]
-          },
+          "expr": "functions.blend_ion(mash, hlt, run1, run2, sparge)",
           "output": {
             "dimension": "concentration"
           }
@@ -3185,26 +1763,7 @@
             "run2": "solver.batch.cascade.v_run2",
             "sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "call": "blend_ion",
-            "args": [
-              {
-                "ref": "mash"
-              },
-              {
-                "ref": "hlt"
-              },
-              {
-                "ref": "run1"
-              },
-              {
-                "ref": "run2"
-              },
-              {
-                "ref": "sparge"
-              }
-            ]
-          },
+          "expr": "functions.blend_ion(mash, hlt, run1, run2, sparge)",
           "output": {
             "dimension": "concentration"
           }
@@ -3218,26 +1777,7 @@
             "run2": "solver.batch.cascade.v_run2",
             "sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "call": "blend_ion",
-            "args": [
-              {
-                "ref": "mash"
-              },
-              {
-                "ref": "hlt"
-              },
-              {
-                "ref": "run1"
-              },
-              {
-                "ref": "run2"
-              },
-              {
-                "ref": "sparge"
-              }
-            ]
-          },
+          "expr": "functions.blend_ion(mash, hlt, run1, run2, sparge)",
           "output": {
             "dimension": "concentration"
           }
@@ -3251,26 +1791,7 @@
             "run2": "solver.batch.cascade.v_run2",
             "sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "call": "blend_ion",
-            "args": [
-              {
-                "ref": "mash"
-              },
-              {
-                "ref": "hlt"
-              },
-              {
-                "ref": "run1"
-              },
-              {
-                "ref": "run2"
-              },
-              {
-                "ref": "sparge"
-              }
-            ]
-          },
+          "expr": "functions.blend_ion(mash, hlt, run1, run2, sparge)",
           "output": {
             "dimension": "concentration"
           }
@@ -3284,26 +1805,7 @@
             "run2": "solver.batch.cascade.v_run2",
             "sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "call": "blend_ion",
-            "args": [
-              {
-                "ref": "mash"
-              },
-              {
-                "ref": "hlt"
-              },
-              {
-                "ref": "run1"
-              },
-              {
-                "ref": "run2"
-              },
-              {
-                "ref": "sparge"
-              }
-            ]
-          },
+          "expr": "functions.blend_ion(mash, hlt, run1, run2, sparge)",
           "output": {
             "dimension": "concentration"
           }
@@ -3317,26 +1819,7 @@
             "run2": "solver.batch.cascade.v_run2",
             "sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "call": "blend_ion",
-            "args": [
-              {
-                "ref": "mash"
-              },
-              {
-                "ref": "hlt"
-              },
-              {
-                "ref": "run1"
-              },
-              {
-                "ref": "run2"
-              },
-              {
-                "ref": "sparge"
-              }
-            ]
-          },
+          "expr": "functions.blend_ion(mash, hlt, run1, run2, sparge)",
           "output": {
             "dimension": "concentration"
           }
@@ -3347,17 +1830,7 @@
             "sulfate": "water.kettle_blend.sulfate_so4",
             "chloride": "water.kettle_blend.chloride_cl"
           },
-          "expr": {
-            "call": "sulfate_chloride_ratio",
-            "args": [
-              {
-                "ref": "sulfate"
-              },
-              {
-                "ref": "chloride"
-              }
-            ]
-          },
+          "expr": "functions.sulfate_chloride_ratio(sulfate, chloride)",
           "output": {
             "dimension": "dimensionless"
           }
@@ -3368,17 +1841,7 @@
             "sulfate": "water.target.sulfate_so4",
             "chloride": "water.target.chloride_cl"
           },
-          "expr": {
-            "call": "sulfate_chloride_ratio",
-            "args": [
-              {
-                "ref": "sulfate"
-              },
-              {
-                "ref": "chloride"
-              }
-            ]
-          },
+          "expr": "functions.sulfate_chloride_ratio(sulfate, chloride)",
           "output": {
             "dimension": "dimensionless"
           }
@@ -3389,17 +1852,7 @@
             "source": "water.source.calcium_ca",
             "final": "solver.water.post_dose_mash_ions.calcium_ca"
           },
-          "expr": {
-            "call": "ion_net_change",
-            "args": [
-              {
-                "ref": "final"
-              },
-              {
-                "ref": "source"
-              }
-            ]
-          },
+          "expr": "functions.ion_net_change(final, source)",
           "output": {
             "dimension": "concentration"
           }
@@ -3410,17 +1863,7 @@
             "source": "water.source.magnesium_mg",
             "final": "solver.water.post_dose_mash_ions.magnesium_mg"
           },
-          "expr": {
-            "call": "ion_net_change",
-            "args": [
-              {
-                "ref": "final"
-              },
-              {
-                "ref": "source"
-              }
-            ]
-          },
+          "expr": "functions.ion_net_change(final, source)",
           "output": {
             "dimension": "concentration"
           }
@@ -3431,17 +1874,7 @@
             "source": "water.source.sodium_na",
             "final": "solver.water.post_dose_mash_ions.sodium_na"
           },
-          "expr": {
-            "call": "ion_net_change",
-            "args": [
-              {
-                "ref": "final"
-              },
-              {
-                "ref": "source"
-              }
-            ]
-          },
+          "expr": "functions.ion_net_change(final, source)",
           "output": {
             "dimension": "concentration"
           }
@@ -3452,17 +1885,7 @@
             "source": "water.source.sulfate_so4",
             "final": "solver.water.post_dose_mash_ions.sulfate_so4"
           },
-          "expr": {
-            "call": "ion_net_change",
-            "args": [
-              {
-                "ref": "final"
-              },
-              {
-                "ref": "source"
-              }
-            ]
-          },
+          "expr": "functions.ion_net_change(final, source)",
           "output": {
             "dimension": "concentration"
           }
@@ -3473,17 +1896,7 @@
             "source": "water.source.chloride_cl",
             "final": "solver.water.post_dose_mash_ions.chloride_cl"
           },
-          "expr": {
-            "call": "ion_net_change",
-            "args": [
-              {
-                "ref": "final"
-              },
-              {
-                "ref": "source"
-              }
-            ]
-          },
+          "expr": "functions.ion_net_change(final, source)",
           "output": {
             "dimension": "concentration"
           }
@@ -3494,17 +1907,7 @@
             "source": "water.source.total_alkalinity_caco3",
             "final": "solver.water.post_dose_mash_ions.alkalinity_as_caco3"
           },
-          "expr": {
-            "call": "ion_net_change",
-            "args": [
-              {
-                "ref": "final"
-              },
-              {
-                "ref": "source"
-              }
-            ]
-          },
+          "expr": "functions.ion_net_change(final, source)",
           "output": {
             "dimension": "concentration"
           }
@@ -3517,17 +1920,7 @@
               "inputs": {
                 "m_grist": "solver.batch.m_grist"
               },
-              "expr": {
-                "op": "*",
-                "args": [
-                  {
-                    "ref": "row.pct"
-                  },
-                  {
-                    "ref": "m_grist"
-                  }
-                ]
-              },
+              "expr": "(row.pct * m_grist)",
               "output": {
                 "dimension": "mass"
               }
@@ -3537,74 +1930,7 @@
                 "m_grist": "solver.batch.m_grist",
                 "grain_moisture": "batch.grain_moisture_fraction"
               },
-              "expr": {
-                "op": "-",
-                "args": [
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "ref": "row.pct"
-                          },
-                          {
-                            "ref": "m_grist"
-                          }
-                        ]
-                      },
-                      {
-                        "ref": "row.yield_fraction"
-                      }
-                    ]
-                  },
-                  {
-                    "op": "*",
-                    "args": [
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "op": "*",
-                            "args": [
-                              {
-                                "ref": "row.pct"
-                              },
-                              {
-                                "ref": "m_grist"
-                              }
-                            ]
-                          },
-                          {
-                            "ref": "row.yield_fraction"
-                          }
-                        ]
-                      },
-                      {
-                        "op": "if",
-                        "args": [
-                          {
-                            "op": "gt",
-                            "args": [
-                              {
-                                "ref": "row.moisture_fraction"
-                              },
-                              0
-                            ]
-                          },
-                          {
-                            "ref": "row.moisture_fraction"
-                          },
-                          {
-                            "ref": "grain_moisture"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
+              "expr": "(((row.pct * m_grist) * row.yield_fraction) - (((row.pct * m_grist) * row.yield_fraction) * ((row.moisture_fraction > 0) ? row.moisture_fraction : grain_moisture)))",
               "output": {
                 "dimension": "mass"
               }
@@ -3618,22 +1944,14 @@
         "mash.grain_temp_c": {
           "kind": "root",
           "dimension": "temperature",
-          "default": {
-            "const": "default_grain_temp_c"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "constants.default_grain_temp_c",
+          "domain": "$value >= 0"
         },
         "mash.tun_initial_temp_c": {
           "kind": "root",
           "dimension": "temperature",
-          "default": {
-            "const": "default_grain_temp_c"
-          },
-          "domain": {
-            "gte": 0
-          }
+          "default": "constants.default_grain_temp_c",
+          "domain": "$value >= 0"
         },
         "mash.rests": {
           "kind": "collection",
@@ -3821,17 +2139,7 @@
             "og_sg": "solver.batch.sg_post_boil",
             "aa": "solver.batch.apparent_attenuation"
           },
-          "expr": {
-            "call": "realized_fg",
-            "args": [
-              {
-                "ref": "og_sg"
-              },
-              {
-                "ref": "aa"
-              }
-            ]
-          },
+          "expr": "functions.realized_fg(og_sg, aa)",
           "output": {
             "dimension": "gravity"
           }
@@ -3842,17 +2150,7 @@
             "og_sg": "solver.batch.sg_post_boil",
             "aa": "solver.batch.apparent_attenuation"
           },
-          "expr": {
-            "call": "realized_abv",
-            "args": [
-              {
-                "ref": "og_sg"
-              },
-              {
-                "ref": "aa"
-              }
-            ]
-          },
+          "expr": "functions.realized_abv(og_sg, aa)",
           "output": {
             "dimension": "abv"
           }
@@ -3863,17 +2161,7 @@
             "target_ibu": "batch.target_ibu",
             "whirlpool_target_ibu": "batch.whirlpool_target_ibu"
           },
-          "expr": {
-            "op": "-",
-            "args": [
-              {
-                "ref": "target_ibu"
-              },
-              {
-                "ref": "whirlpool_target_ibu"
-              }
-            ]
-          },
+          "expr": "(target_ibu - whirlpool_target_ibu)",
           "output": {
             "dimension": "ibu"
           }
@@ -3884,17 +2172,7 @@
             "target_ibu": "batch.target_ibu",
             "whirlpool_fraction": "batch.whirlpool_ibu_fraction"
           },
-          "expr": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "target_ibu"
-              },
-              {
-                "ref": "whirlpool_fraction"
-              }
-            ]
-          },
+          "expr": "(target_ibu * whirlpool_fraction)",
           "output": {
             "dimension": "ibu"
           }
@@ -3905,32 +2183,7 @@
             "boil": "batch.boil_target_ibu",
             "total": "batch.target_ibu"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "total"
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "boil"
-                  },
-                  {
-                    "ref": "total"
-                  }
-                ]
-              },
-              0
-            ]
-          },
+          "expr": "((total > 0) ? (boil / total) : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -3941,32 +2194,7 @@
             "whirlpool": "batch.whirlpool_target_ibu",
             "total": "batch.target_ibu"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "total"
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "whirlpool"
-                  },
-                  {
-                    "ref": "total"
-                  }
-                ]
-              },
-              0
-            ]
-          },
+          "expr": "((total > 0) ? (whirlpool / total) : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -3977,32 +2205,7 @@
             "hot": "solver.hops.whirlpool_hot_ibu",
             "whirlpool": "batch.whirlpool_target_ibu"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "whirlpool"
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "hot"
-                  },
-                  {
-                    "ref": "whirlpool"
-                  }
-                ]
-              },
-              0
-            ]
-          },
+          "expr": "((whirlpool > 0) ? (hot / whirlpool) : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -4013,32 +2216,7 @@
             "cool": "solver.hops.whirlpool_cool_ibu",
             "whirlpool": "batch.whirlpool_target_ibu"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "whirlpool"
-                  },
-                  0
-                ]
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "cool"
-                  },
-                  {
-                    "ref": "whirlpool"
-                  }
-                ]
-              },
-              0
-            ]
-          },
+          "expr": "((whirlpool > 0) ? (cool / whirlpool) : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -4049,17 +2227,7 @@
             "v_strike": "solver.batch.cascade.v_strike",
             "v_sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "ref": "v_strike"
-              },
-              {
-                "ref": "v_sparge"
-              }
-            ]
-          },
+          "expr": "(v_strike + v_sparge)",
           "output": {
             "dimension": "volume"
           }
@@ -4070,17 +2238,7 @@
             "v_hlt_after_strike": "solver.batch.hlt.v_hlt_after_strike",
             "v_hlt_top_up": "solver.batch.hlt.v_hlt_top_up"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "ref": "v_hlt_after_strike"
-              },
-              {
-                "ref": "v_hlt_top_up"
-              }
-            ]
-          },
+          "expr": "(v_hlt_after_strike + v_hlt_top_up)",
           "output": {
             "dimension": "volume"
           }
@@ -4091,17 +2249,7 @@
             "v_sparge_deliverable": "solver.batch.hlt.v_sparge_deliverable",
             "v_sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "op": "-",
-            "args": [
-              {
-                "ref": "v_sparge_deliverable"
-              },
-              {
-                "ref": "v_sparge"
-              }
-            ]
-          },
+          "expr": "(v_sparge_deliverable - v_sparge)",
           "output": {
             "dimension": "volume"
           }
@@ -4112,17 +2260,7 @@
             "v_run1": "solver.batch.cascade.v_run1",
             "v_run2": "solver.batch.cascade.v_run2"
           },
-          "expr": {
-            "op": "/",
-            "args": [
-              {
-                "ref": "v_run1"
-              },
-              {
-                "ref": "v_run2"
-              }
-            ]
-          },
+          "expr": "(v_run1 / v_run2)",
           "output": {
             "dimension": "dimensionless"
           }
@@ -4134,25 +2272,7 @@
             "late_volume": "batch.late_addition_volume_l",
             "f_shrink": "equipment.shrinkage_pct"
           },
-          "expr": {
-            "op": "*",
-            "args": [
-              {
-                "op": "+",
-                "args": [
-                  {
-                    "ref": "v_post_boil"
-                  },
-                  {
-                    "ref": "late_volume"
-                  }
-                ]
-              },
-              {
-                "ref": "f_shrink"
-              }
-            ]
-          },
+          "expr": "((v_post_boil + late_volume) * f_shrink)",
           "output": {
             "dimension": "volume"
           }
@@ -4416,42 +2536,7 @@
           "inputs": {
             "rests": "mash.rests"
           },
-          "expr": {
-            "op": "min",
-            "coll": {
-              "ref": "rests"
-            },
-            "as": "rest",
-            "value": {
-              "ref": "rest.use_temp_c"
-            },
-            "where": {
-              "op": "and",
-              "args": [
-                {
-                  "ref": "rest.enabled"
-                },
-                {
-                  "op": "ne",
-                  "args": [
-                    {
-                      "ref": "rest.rest_id"
-                    },
-                    "mash_out"
-                  ]
-                },
-                {
-                  "op": "ne",
-                  "args": [
-                    {
-                      "ref": "rest.rest_id"
-                    },
-                    "dough_in"
-                  ]
-                }
-              ]
-            }
-          },
+          "expr": "(rests | min(\"use_temp_c\", \"(row.enabled && (row.rest_id != \\\"mash_out\\\") && (row.rest_id != \\\"dough_in\\\"))\", $context))",
           "output": {
             "dimension": "temperature"
           }
@@ -4461,26 +2546,7 @@
           "inputs": {
             "rate": "equipment.mash_heating_rate_c_per_min"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "rate"
-                  },
-                  0
-                ]
-              },
-              {
-                "ref": "rate"
-              },
-              {
-                "const": "default_mash_heating_rate_c_per_min"
-              }
-            ]
-          },
+          "expr": "((rate > 0) ? rate : constants.default_mash_heating_rate_c_per_min)",
           "output": {
             "dimension": "temperature_delta_per_time"
           }
@@ -4490,19 +2556,7 @@
           "inputs": {
             "rests": "mash.rests"
           },
-          "expr": {
-            "op": "min",
-            "coll": {
-              "ref": "rests"
-            },
-            "as": "rest",
-            "value": {
-              "ref": "rest.use_temp_c"
-            },
-            "where": {
-              "ref": "rest.enabled"
-            }
-          },
+          "expr": "(rests | min(\"use_temp_c\", \"row.enabled\", $context))",
           "output": {
             "dimension": "temperature"
           }
@@ -4512,19 +2566,7 @@
           "inputs": {
             "rests": "mash.rests"
           },
-          "expr": {
-            "op": "max",
-            "coll": {
-              "ref": "rests"
-            },
-            "as": "rest",
-            "value": {
-              "ref": "rest.use_temp_c"
-            },
-            "where": {
-              "ref": "rest.enabled"
-            }
-          },
+          "expr": "(rests | max(\"use_temp_c\", \"row.enabled\", $context))",
           "output": {
             "dimension": "temperature"
           }
@@ -4536,50 +2578,7 @@
             "t_max": "mash.enabled_max_temp_c",
             "rate": "mash.heating_rate_c_per_min"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "args": [
-                  {
-                    "ref": "t_max"
-                  },
-                  {
-                    "ref": "t_min"
-                  }
-                ]
-              },
-              {
-                "call": "ramp_time_min",
-                "args": [
-                  {
-                    "op": "-",
-                    "args": [
-                      {
-                        "ref": "t_max"
-                      },
-                      {
-                        "ref": "t_min"
-                      }
-                    ]
-                  },
-                  {
-                    "ref": "rate"
-                  }
-                ]
-              },
-              {
-                "call": "ramp_time_min",
-                "args": [
-                  0,
-                  {
-                    "ref": "rate"
-                  }
-                ]
-              }
-            ]
-          },
+          "expr": "((t_max > t_min) ? functions.ramp_time_min((t_max - t_min), rate) : functions.ramp_time_min(0, rate))",
           "output": {
             "dimension": "time"
           }
@@ -4590,41 +2589,7 @@
             "rests": "mash.rests",
             "ramp": "mash.ramp_time_min"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "op": "sum",
-                "coll": {
-                  "ref": "rests"
-                },
-                "as": "rest",
-                "where": {
-                  "op": "and",
-                  "args": [
-                    {
-                      "ref": "rest.enabled"
-                    },
-                    {
-                      "op": "ne",
-                      "args": [
-                        {
-                          "ref": "rest.duration_min"
-                        },
-                        null
-                      ]
-                    }
-                  ]
-                },
-                "body": {
-                  "ref": "rest.duration_min"
-                }
-              },
-              {
-                "ref": "ramp"
-              }
-            ]
-          },
+          "expr": "((rests | sum(\"duration_min\", \"(row.enabled && (row.duration_min != null))\", $context)) + ramp)",
           "output": {
             "dimension": "time"
           }
@@ -4636,20 +2601,7 @@
             "t_grain": "mash.grain_temp_c",
             "thickness": "solver.batch.mash_thickness_l_per_kg"
           },
-          "expr": {
-            "call": "calculate_strike_water_base_temp",
-            "args": [
-              {
-                "ref": "t_target"
-              },
-              {
-                "ref": "t_grain"
-              },
-              {
-                "ref": "thickness"
-              }
-            ]
-          },
+          "expr": "functions.calculate_strike_water_base_temp(t_target, t_grain, thickness)",
           "output": {
             "dimension": "temperature"
           }
@@ -4663,26 +2615,7 @@
             "tun_mass": "equipment.mash_tun_mass_kg",
             "water_mass": "solver.batch.cascade.v_strike"
           },
-          "expr": {
-            "call": "calculate_tun_thermal_offset",
-            "args": [
-              {
-                "ref": "t_target"
-              },
-              {
-                "ref": "tun_initial"
-              },
-              {
-                "ref": "specific_heat"
-              },
-              {
-                "ref": "tun_mass"
-              },
-              {
-                "ref": "water_mass"
-              }
-            ]
-          },
+          "expr": "functions.calculate_tun_thermal_offset(t_target, tun_initial, specific_heat, tun_mass, water_mass)",
           "output": {
             "dimension": "temperature_delta"
           }
@@ -4693,17 +2626,7 @@
             "base": "mash.strike_water_temp_base_c",
             "offset": "mash.strike_water_tun_offset_c"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "ref": "base"
-              },
-              {
-                "ref": "offset"
-              }
-            ]
-          },
+          "expr": "(base + offset)",
           "output": {
             "dimension": "temperature"
           }
@@ -4714,22 +2637,7 @@
             "m_grist": "solver.batch.m_grist",
             "v_strike": "solver.batch.cascade.v_strike"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "call": "grain_displacement_volume",
-                "args": [
-                  {
-                    "ref": "m_grist"
-                  }
-                ]
-              },
-              {
-                "ref": "v_strike"
-              }
-            ]
-          },
+          "expr": "(functions.grain_displacement_volume(m_grist) + v_strike)",
           "output": {
             "dimension": "volume"
           }
@@ -4742,38 +2650,7 @@
             "mash_dead_space_l": "equipment.mash_dead_space_l",
             "v_sparge": "solver.batch.cascade.v_sparge"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "op": "+",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "call": "grain_displacement_volume",
-                        "args": [
-                          {
-                            "ref": "m_grist"
-                          }
-                        ]
-                      },
-                      {
-                        "ref": "v_absorption"
-                      }
-                    ]
-                  },
-                  {
-                    "ref": "mash_dead_space_l"
-                  }
-                ]
-              },
-              {
-                "ref": "v_sparge"
-              }
-            ]
-          },
+          "expr": "(((functions.grain_displacement_volume(m_grist) + v_absorption) + mash_dead_space_l) + v_sparge)",
           "output": {
             "dimension": "volume"
           }
@@ -4783,19 +2660,7 @@
           "inputs": {
             "rows": "grist.major_malts"
           },
-          "expr": {
-            "op": "weighted_avg",
-            "coll": {
-              "ref": "rows"
-            },
-            "as": "row",
-            "value": {
-              "ref": "row.color_lovibond"
-            },
-            "weight": {
-              "ref": "row.pct"
-            }
-          },
+          "expr": "(rows | weighted_avg(\"color_lovibond\", \"pct\"))",
           "output": {
             "dimension": "grain_color"
           }
@@ -4805,19 +2670,7 @@
           "inputs": {
             "rows": "grist.major_malts"
           },
-          "expr": {
-            "op": "weighted_avg",
-            "coll": {
-              "ref": "rows"
-            },
-            "as": "row",
-            "value": {
-              "ref": "row.yield_fraction"
-            },
-            "weight": {
-              "ref": "row.pct"
-            }
-          },
+          "expr": "(rows | weighted_avg(\"yield_fraction\", \"pct\"))",
           "output": {
             "dimension": "percentage"
           }
@@ -4830,80 +2683,7 @@
             "budget": "batch.sugar_extract_total",
             "parts_total": "batch.sugar_parts_total"
           },
-          "expr": {
-            "op": "sum",
-            "coll": {
-              "ref": "sugars"
-            },
-            "as": "row",
-            "body": {
-              "op": "if",
-              "args": [
-                {
-                  "op": "and",
-                  "args": [
-                    {
-                      "op": "eq",
-                      "args": [
-                        {
-                          "ref": "intent"
-                        },
-                        "share"
-                      ]
-                    },
-                    {
-                      "op": "gt",
-                      "args": [
-                        {
-                          "ref": "parts_total"
-                        },
-                        0
-                      ]
-                    },
-                    {
-                      "op": "gt",
-                      "args": [
-                        {
-                          "ref": "row.yield_fraction"
-                        },
-                        0
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "op": "/",
-                  "args": [
-                    {
-                      "op": "*",
-                      "args": [
-                        {
-                          "op": "/",
-                          "args": [
-                            {
-                              "ref": "row.parts"
-                            },
-                            {
-                              "ref": "parts_total"
-                            }
-                          ]
-                        },
-                        {
-                          "ref": "budget"
-                        }
-                      ]
-                    },
-                    {
-                      "ref": "row.yield_fraction"
-                    }
-                  ]
-                },
-                {
-                  "ref": "row.mass_kg"
-                }
-              ]
-            }
-          },
+          "expr": "(sugars | sum_expr(\"(((intent == \\\"share\\\") && (parts_total > 0) && (row.yield_fraction > 0)) ? (((row.parts / parts_total) * budget) / row.yield_fraction) : row.mass_kg)\", null, $context))",
           "output": {
             "dimension": "mass"
           }
@@ -4913,16 +2693,7 @@
           "inputs": {
             "sugars": "batch.sugars"
           },
-          "expr": {
-            "op": "sum",
-            "coll": {
-              "ref": "sugars"
-            },
-            "as": "row",
-            "body": {
-              "ref": "row.parts"
-            }
-          },
+          "expr": "(sugars | sum(\"parts\"))",
           "output": {
             "dimension": "dimensionless"
           }
@@ -4935,83 +2706,7 @@
             "budget": "batch.sugar_extract_total",
             "parts_total": "batch.sugar_parts_total"
           },
-          "expr": {
-            "op": "weighted_avg",
-            "coll": {
-              "ref": "rows"
-            },
-            "as": "row",
-            "value": {
-              "ref": "row.color_lovibond"
-            },
-            "weight": {
-              "op": "if",
-              "args": [
-                {
-                  "op": "and",
-                  "args": [
-                    {
-                      "op": "eq",
-                      "args": [
-                        {
-                          "ref": "intent"
-                        },
-                        "share"
-                      ]
-                    },
-                    {
-                      "op": "gt",
-                      "args": [
-                        {
-                          "ref": "parts_total"
-                        },
-                        0
-                      ]
-                    },
-                    {
-                      "op": "gt",
-                      "args": [
-                        {
-                          "ref": "row.yield_fraction"
-                        },
-                        0
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "op": "/",
-                  "args": [
-                    {
-                      "op": "*",
-                      "args": [
-                        {
-                          "op": "/",
-                          "args": [
-                            {
-                              "ref": "row.parts"
-                            },
-                            {
-                              "ref": "parts_total"
-                            }
-                          ]
-                        },
-                        {
-                          "ref": "budget"
-                        }
-                      ]
-                    },
-                    {
-                      "ref": "row.yield_fraction"
-                    }
-                  ]
-                },
-                {
-                  "ref": "row.mass_kg"
-                }
-              ]
-            }
-          },
+          "expr": "(rows | weighted_avg_expr(\"row.color_lovibond\", \"(((intent == \\\"share\\\") && (parts_total > 0) && (row.yield_fraction > 0)) ? (((row.parts / parts_total) * budget) / row.yield_fraction) : row.mass_kg)\", null, $context))",
           "output": {
             "dimension": "grain_color"
           }
@@ -5021,16 +2716,7 @@
           "inputs": {
             "rows": "grist.trace_malts"
           },
-          "expr": {
-            "op": "sum",
-            "coll": {
-              "ref": "rows"
-            },
-            "as": "row",
-            "body": {
-              "ref": "row.mass_kg"
-            }
-          },
+          "expr": "(rows | sum(\"mass_kg\"))",
           "output": {
             "dimension": "mass"
           }
@@ -5040,19 +2726,7 @@
           "inputs": {
             "rows": "grist.trace_malts"
           },
-          "expr": {
-            "op": "weighted_avg",
-            "coll": {
-              "ref": "rows"
-            },
-            "as": "row",
-            "value": {
-              "ref": "row.color_lovibond"
-            },
-            "weight": {
-              "ref": "row.mass_kg"
-            }
-          },
+          "expr": "(rows | weighted_avg(\"color_lovibond\", \"mass_kg\"))",
           "output": {
             "dimension": "grain_color"
           }
@@ -5064,25 +2738,7 @@
             "trace": "grist.trace_malts_mass",
             "sugars": "grist.sugars_mass"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "ref": "grist"
-              },
-              {
-                "op": "+",
-                "args": [
-                  {
-                    "ref": "trace"
-                  },
-                  {
-                    "ref": "sugars"
-                  }
-                ]
-              }
-            ]
-          },
+          "expr": "(grist + (trace + sugars))",
           "output": {
             "dimension": "mass"
           }
@@ -5098,65 +2754,7 @@
             "trace_lovibond": "grist.trace_weighted_lovibond",
             "volume": "solver.batch.cascade.v_post_boil"
           },
-          "expr": {
-            "op": "*",
-            "args": [
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "op": "+",
-                    "args": [
-                      {
-                        "op": "+",
-                        "args": [
-                          {
-                            "op": "*",
-                            "args": [
-                              {
-                                "ref": "grist_mass"
-                              },
-                              {
-                                "ref": "lovibond"
-                              }
-                            ]
-                          },
-                          {
-                            "op": "*",
-                            "args": [
-                              {
-                                "ref": "sugars_mass"
-                              },
-                              {
-                                "ref": "sugar_lovibond"
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "op": "*",
-                        "args": [
-                          {
-                            "ref": "trace_mass"
-                          },
-                          {
-                            "ref": "trace_lovibond"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "ref": "volume"
-                  }
-                ]
-              },
-              {
-                "const": "mcu_metric_to_imperial_factor"
-              }
-            ]
-          },
+          "expr": "(((((grist_mass * lovibond) + (sugars_mass * sugar_lovibond)) + (trace_mass * trace_lovibond)) / volume) * constants.mcu_metric_to_imperial_factor)",
           "output": {
             "dimension": "dimensionless"
           }
@@ -5166,14 +2764,7 @@
           "inputs": {
             "mcu": "grist.mcu"
           },
-          "expr": {
-            "call": "morey_mcu_to_srm",
-            "args": [
-              {
-                "ref": "mcu"
-              }
-            ]
-          },
+          "expr": "functions.morey_mcu_to_srm(mcu)",
           "output": {
             "dimension": "beer_color"
           }
@@ -5183,24 +2774,7 @@
           "inputs": {
             "sugars": "batch.sugars"
           },
-          "expr": {
-            "op": "sum",
-            "coll": {
-              "ref": "sugars"
-            },
-            "as": "row",
-            "body": {
-              "op": "*",
-              "args": [
-                {
-                  "ref": "row.mass_kg"
-                },
-                {
-                  "ref": "row.yield_fraction"
-                }
-              ]
-            }
-          },
+          "expr": "(sugars | sum_expr(\"(row.mass_kg * row.yield_fraction)\", null, $context))",
           "output": {
             "dimension": "mass"
           }
@@ -5211,24 +2785,7 @@
             "intent": "batch.late_addition_intent",
             "dose": "batch.s_late_add"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "eq",
-                "args": [
-                  {
-                    "ref": "intent"
-                  },
-                  "share"
-                ]
-              },
-              0,
-              {
-                "ref": "dose"
-              }
-            ]
-          },
+          "expr": "((intent == \"share\") ? 0 : dose)",
           "output": {
             "dimension": "mass"
           }
@@ -5239,24 +2796,7 @@
             "intent": "batch.late_addition_intent",
             "share": "batch.sugar_extract_share"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "eq",
-                "args": [
-                  {
-                    "ref": "intent"
-                  },
-                  "share"
-                ]
-              },
-              {
-                "ref": "share"
-              },
-              0
-            ]
-          },
+          "expr": "((intent == \"share\") ? share : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -5269,34 +2809,7 @@
             "dose": "batch.s_late_add",
             "target": "solver.batch.s_post_boil_target"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "eq",
-                "args": [
-                  {
-                    "ref": "intent"
-                  },
-                  "share"
-                ]
-              },
-              {
-                "op": "*",
-                "args": [
-                  {
-                    "ref": "share"
-                  },
-                  {
-                    "ref": "target"
-                  }
-                ]
-              },
-              {
-                "ref": "dose"
-              }
-            ]
-          },
+          "expr": "((intent == \"share\") ? (share * target) : dose)",
           "output": {
             "dimension": "mass"
           }
@@ -5306,17 +2819,7 @@
           "inputs": {
             "extract": "batch.sugar_extract_total"
           },
-          "expr": {
-            "op": "*",
-            "args": [
-              {
-                "const": "v_bar"
-              },
-              {
-                "ref": "extract"
-              }
-            ]
-          },
+          "expr": "(constants.v_bar * extract)",
           "output": {
             "dimension": "volume"
           }
@@ -5327,17 +2830,7 @@
             "potential": "solver.batch.extract.s_potential",
             "converted": "solver.batch.extract.s_converted"
           },
-          "expr": {
-            "op": "-",
-            "args": [
-              {
-                "ref": "potential"
-              },
-              {
-                "ref": "converted"
-              }
-            ]
-          },
+          "expr": "(potential - converted)",
           "output": {
             "dimension": "mass"
           }
@@ -5348,17 +2841,7 @@
             "converted": "solver.batch.extract.s_converted",
             "tun": "solver.batch.extract.s_tun"
           },
-          "expr": {
-            "op": "-",
-            "args": [
-              {
-                "ref": "converted"
-              },
-              {
-                "ref": "tun"
-              }
-            ]
-          },
+          "expr": "(converted - tun)",
           "output": {
             "dimension": "mass"
           }
@@ -5369,17 +2852,7 @@
             "tun": "solver.batch.extract.s_tun",
             "kettle": "solver.batch.extract.s_kettle"
           },
-          "expr": {
-            "op": "-",
-            "args": [
-              {
-                "ref": "tun"
-              },
-              {
-                "ref": "kettle"
-              }
-            ]
-          },
+          "expr": "(tun - kettle)",
           "output": {
             "dimension": "mass"
           }
@@ -5390,17 +2863,7 @@
             "retention": "batch.extract_loss_retention",
             "transfer": "batch.extract_loss_transfer"
           },
-          "expr": {
-            "op": "+",
-            "args": [
-              {
-                "ref": "retention"
-              },
-              {
-                "ref": "transfer"
-              }
-            ]
-          },
+          "expr": "(retention + transfer)",
           "output": {
             "dimension": "mass"
           }
@@ -5411,17 +2874,7 @@
             "post": "solver.batch.s_post_boil_target",
             "fermenter": "solver.batch.extract.s_fermenter"
           },
-          "expr": {
-            "op": "-",
-            "args": [
-              {
-                "ref": "post"
-              },
-              {
-                "ref": "fermenter"
-              }
-            ]
-          },
+          "expr": "(post - fermenter)",
           "output": {
             "dimension": "mass"
           }
@@ -5432,54 +2885,7 @@
             "sugars": "batch.sugars",
             "intent": "batch.late_addition_intent"
           },
-          "expr": {
-            "op": "if",
-            "args": [
-              {
-                "op": "eq",
-                "args": [
-                  {
-                    "ref": "intent"
-                  },
-                  "share"
-                ]
-              },
-              {
-                "op": "weighted_avg",
-                "coll": {
-                  "ref": "sugars"
-                },
-                "as": "row",
-                "value": {
-                  "ref": "row.fermentability_fraction"
-                },
-                "weight": {
-                  "ref": "row.parts"
-                }
-              },
-              {
-                "op": "weighted_avg",
-                "coll": {
-                  "ref": "sugars"
-                },
-                "as": "row",
-                "value": {
-                  "ref": "row.fermentability_fraction"
-                },
-                "weight": {
-                  "op": "*",
-                  "args": [
-                    {
-                      "ref": "row.mass_kg"
-                    },
-                    {
-                      "ref": "row.yield_fraction"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
+          "expr": "((intent == \"share\") ? (sugars | weighted_avg(\"fermentability_fraction\", \"parts\")) : (sugars | weighted_avg_expr(\"row.fermentability_fraction\", \"(row.mass_kg * row.yield_fraction)\", null, $context)))",
           "output": {
             "dimension": "percentage"
           }
@@ -5490,23 +2896,7 @@
             "rate": "batch.boil_off_rate_l_per_hr",
             "boil_time": "batch.boil_time_min"
           },
-          "expr": {
-            "op": "*",
-            "args": [
-              {
-                "ref": "rate"
-              },
-              {
-                "op": "/",
-                "args": [
-                  {
-                    "ref": "boil_time"
-                  },
-                  60
-                ]
-              }
-            ]
-          },
+          "expr": "(rate * (boil_time / 60))",
           "output": {
             "dimension": "volume"
           }
@@ -5526,135 +2916,49 @@
         "batch.checklist_level": {
           "kind": "choice",
           "taxonomy": "checklist_level",
-          "default": "info"
+          "default": "\"info\""
         },
         "mash.preset_id": {
           "kind": "choice",
           "taxonomy": "mash_preset",
-          "default": "single_infusion"
+          "default": "\"single_infusion\""
         }
       },
       "relations": [
         {
           "id": "hlt_not_overfilled",
           "blocking": true,
-          "predicate": {
-            "op": "le",
-            "lhs": {
-              "ref": "batch.hlt_starting_volume_l"
-            },
-            "rhs": {
-              "ref": "equipment.max_hlt_volume_l"
-            }
-          }
+          "predicate": "(batch.hlt_starting_volume_l <= equipment.max_hlt_volume_l)"
         },
         {
           "id": "hlt_above_coil_floor",
           "blocking": false,
-          "predicate": {
-            "op": "ge",
-            "lhs": {
-              "ref": "batch.hlt_starting_volume_l"
-            },
-            "rhs": {
-              "ref": "equipment.hlt_coil_floor_l"
-            }
-          }
+          "predicate": "(batch.hlt_starting_volume_l >= equipment.hlt_coil_floor_l)"
         },
         {
           "id": "hlt_demand_not_overfilled",
           "blocking": true,
-          "predicate": {
-            "op": "le",
-            "lhs": {
-              "ref": "solver.batch.hlt.v_hlt_top_up"
-            },
-            "rhs": {
-              "ref": "equipment.max_hlt_volume_l"
-            }
-          }
+          "predicate": "(solver.batch.hlt.v_hlt_top_up <= equipment.max_hlt_volume_l)"
         },
         {
           "id": "kettle_not_overfilled",
           "blocking": true,
-          "predicate": {
-            "op": "le",
-            "lhs": {
-              "ref": "solver.batch.v_pre_boil"
-            },
-            "rhs": {
-              "ref": "equipment.max_kettle_volume_l"
-            }
-          }
+          "predicate": "(solver.batch.v_pre_boil <= equipment.max_kettle_volume_l)"
         },
         {
           "id": "mash_tun_not_overfilled",
           "blocking": true,
-          "predicate": {
-            "op": "le",
-            "lhs": {
-              "op": "if",
-              "args": [
-                {
-                  "op": "ge",
-                  "lhs": {
-                    "ref": "mash.mash_phase_volume_l"
-                  },
-                  "rhs": {
-                    "ref": "mash.sparge_phase_volume_l"
-                  }
-                },
-                {
-                  "ref": "mash.mash_phase_volume_l"
-                },
-                {
-                  "ref": "mash.sparge_phase_volume_l"
-                }
-              ]
-            },
-            "rhs": {
-              "ref": "equipment.max_mash_tun_volume_l"
-            }
-          }
+          "predicate": "(((mash.mash_phase_volume_l >= mash.sparge_phase_volume_l) ? mash.mash_phase_volume_l : mash.sparge_phase_volume_l) <= equipment.max_mash_tun_volume_l)"
         },
         {
           "id": "mash_thickness_above_equipment_floor",
           "blocking": false,
-          "predicate": {
-            "op": "if",
-            "args": [
-              {
-                "op": "gt",
-                "lhs": {
-                  "ref": "equipment.min_lgr_l_per_kg"
-                },
-                "rhs": 0
-              },
-              {
-                "op": "ge",
-                "lhs": {
-                  "ref": "solver.batch.mash_thickness_l_per_kg"
-                },
-                "rhs": {
-                  "ref": "equipment.min_lgr_l_per_kg"
-                }
-              },
-              true
-            ]
-          }
+          "predicate": "((equipment.min_lgr_l_per_kg > 0) ? (solver.batch.mash_thickness_l_per_kg >= equipment.min_lgr_l_per_kg) : true)"
         },
         {
           "id": "mash_thickness_below_ceiling",
           "blocking": false,
-          "predicate": {
-            "op": "le",
-            "lhs": {
-              "ref": "solver.batch.mash_thickness_l_per_kg"
-            },
-            "rhs": {
-              "const": "max_mash_thickness_l_per_kg"
-            }
-          }
+          "predicate": "(solver.batch.mash_thickness_l_per_kg <= constants.max_mash_thickness_l_per_kg)"
         }
       ]
     }
@@ -10184,5 +7488,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:cd4e30214e4d01dddfa58922ba5c036ab4ce4836c8902e56aa200213a37234d3"
+  "content_hash": "sha256:6fd0d3cd11b58519d6bb176213dae8e60881de93fa5a1b63ab03d7912717fdd9"
 }

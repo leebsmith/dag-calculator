@@ -130,13 +130,12 @@ const SURFACE_DECLARERS = [
 ];
 
 const GRAMMAR_COMPLEXITY = {
-  "engine/ast.js": 22,
   "engine/dag.js": 26,
   "engine/domains.js": 17,
   "engine/fermentation.js": 15,
   "engine/ingredientPriors.js": 17,
   "engine/styleConformance.js": 18,
-  "engine/validate.js": 34,
+  "engine/validate.js": 21,
   "views/producer/projection.js": 34,
   "views/producer/scalar.js": 21,
   "views/producer/table.js": 17,
@@ -184,8 +183,8 @@ const DEPTH_PINS = {
 };
 
 const FUNCTION_LINE_PINS = {
-  "engine/dag.js": 289,
-  "engine/validate.js": 86,
+  "engine/dag.js": 269,
+  "engine/validate.js": 47,
   "adapters/boundaryRunner.js": 208,
   "views/producer/stylePlot.js": 67,
 };
@@ -196,8 +195,10 @@ const FILE_LINE_PINS = {
   "adapters/cards/water.js": 296,
   "adapters/stepAdapter.js": 459,
   "views/producer/stylePlot.js": 422,
-  "engine/dag.js": 399,
+  "engine/dag.js": 366,
   "engine/fermentation.js": 506,
+  "engine/units.js": 404,
+  "engine/validate.js": 435,
   "store/persistence.js": 414,
   "store/recipes.js": 463,
 };

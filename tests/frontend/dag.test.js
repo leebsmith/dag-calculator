@@ -6,7 +6,7 @@ import { loadArtifact, makeFixtures, makeFixturesWithYeast, EQUIPMENT } from "./
 
 function syntheticArtifact(nodes) {
   return {
-    schema_version: 1,
+    schema_version: 11,
     nodes,
     dimensions: { dimensionless: { base_unit: "1", kind: "identity", units: {} } },
     constants: {},
@@ -46,9 +46,9 @@ test("adjacency is built strictly from declared inputs", () => {
 
 test("cycles are rejected", () => {
   const cyclic = syntheticArtifact({
-    a: { kind: "root", dimension: "dimensionless", default: 1 },
-    b: { kind: "derived", inputs: { x: "c" }, expr: { ref: "x" }, output: { dimension: "dimensionless" } },
-    c: { kind: "derived", inputs: { x: "b" }, expr: { ref: "x" }, output: { dimension: "dimensionless" } },
+    a: { kind: "root", dimension: "dimensionless", default: "1" },
+    b: { kind: "derived", inputs: { x: "c" }, expr: "x", output: { dimension: "dimensionless" } },
+    c: { kind: "derived", inputs: { x: "b" }, expr: "x", output: { dimension: "dimensionless" } },
   });
   assert.throws(() => buildGraph(cyclic), /Cycle detected/);
 });
@@ -74,7 +74,7 @@ test("lazy memoization: boundary evaluated once per unique input", () => {
 
 test("a failed boundary degrades to undefined until it is cleared", () => {
   const artifact = syntheticArtifact({
-    base: { kind: "root", dimension: "dimensionless", default: 1 },
+    base: { kind: "root", dimension: "dimensionless", default: "1" },
     solver: {
       kind: "boundary",
       binding: "b",
@@ -84,7 +84,7 @@ test("a failed boundary degrades to undefined until it is cleared", () => {
     derived: {
       kind: "derived",
       inputs: { y: "solver.y" },
-      expr: { ref: "y" },
+      expr: "y",
       output: { dimension: "dimensionless" },
     },
   });
@@ -102,7 +102,7 @@ test("a failed boundary degrades to undefined until it is cleared", () => {
 
 test("setReferences clears boundary-unavailable marks", () => {
   const artifact = syntheticArtifact({
-    base: { kind: "root", dimension: "dimensionless", default: 1 },
+    base: { kind: "root", dimension: "dimensionless", default: "1" },
     solver: {
       kind: "boundary",
       binding: "b",
@@ -112,7 +112,7 @@ test("setReferences clears boundary-unavailable marks", () => {
     derived: {
       kind: "derived",
       inputs: { y: "solver.y" },
-      expr: { ref: "y" },
+      expr: "y",
       output: { dimension: "dimensionless" },
     },
   });

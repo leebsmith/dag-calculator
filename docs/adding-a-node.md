@@ -6,7 +6,7 @@ wiring only — the *view* (step manifest, presentation registry, producer) is a
 separate, later step and is deliberately out of scope here.
 
 > Reference while you work: `grammar.md` §2 (node shapes), `expression-language.md`
-> (the `expr` AST), `dimensions.md` (dimensions/units), `docs/engine.md` (how the
+> (the Jexl `expr`), `dimensions.md` (dimensions/units), `docs/engine.md` (how the
 > value is consumed).
 
 ## 0. Decide the kind
@@ -31,8 +31,7 @@ component is a new `identity` namespace, not a node.
 selection (a profile field, a style envelope), declare a `default` that reads
 that field — the root inherits while unset and becomes an override once set. Do
 not add an entry to `views/seedDerivations.js`; that table is reserved for
-derivations the expression language cannot express (centroid geometry, tag
-sets).
+derivations Jexl cannot express (centroid geometry, tag sets).
 
 ## 1. Add supporting declarations first (only if new)
 
@@ -46,7 +45,7 @@ doesn't exist yet, add it to its section of `data/artifact.json`:
 // taxonomies: { "id": [ "value", … ] }
 "hop_unit": [ "oz", "g", "ml" ],
 
-// functions:  { "id": { "params": […], "returns": …, "body": {…} } }
+// functions:  { "id": { "params": […], "returns": …, "body": "<Jexl>" } }
 // dimensions: { "id": { "base_unit": …, "kind": …, "units": {…} } }
 // primitive_schemas: { "id": { "field": { "dimension"|"taxonomy"|"type" … } } }
 ```
@@ -60,8 +59,8 @@ Append to `nodes`.
 "batch.whirlpool_time_min": {
   "kind": "root",
   "dimension": "time",
-  "default": { "const": "default_whirlpool_time_min" },
-  "domain": { "gte": 0 }
+  "default": "constants.default_whirlpool_time_min",
+  "domain": "$value >= 0"
 }
 ```
 
@@ -70,7 +69,7 @@ Append to `nodes`.
 "batch.whirlpool_added": {
   "kind": "choice",
   "taxonomy": "ph_status",          // or a new taxonomy you added above
-  "default": "OPTIMAL"
+  "default": "\"OPTIMAL\""
 }
 ```
 
@@ -88,7 +87,7 @@ declared beside `item_schema` (never inside it):
   "fields": {
     "mass_kg": {
       "inputs": { "m_grist": "solver.batch.m_grist" },
-      "expr": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "m_grist" } ] },
+      "expr": "(row.pct * m_grist)",
       "output": { "dimension": "mass" }
     }
   }
@@ -114,7 +113,7 @@ declared beside `item_schema` (never inside it):
     "boil":      "batch.boil_time_min",
     "whirlpool": "batch.whirlpool_time_min"
   },
-  "expr": { "op": "+", "args": [ { "ref": "boil" }, { "ref": "whirlpool" } ] },
+  "expr": "(boil + whirlpool)",
   "output": { "dimension": "time" }
 }
 ```
@@ -123,8 +122,8 @@ declared beside `item_schema` (never inside it):
 
 - **`inputs`** — `alias → dotted path`; every path must resolve to a declared node
   or a selection/boundary field.
-- **`expr`** — an AST (`ref` / `const` / `call` / operators / reductions). See
-  `expression-language.md`.
+- **`expr`** — a Jexl string (aliases, constants, functions, operators,
+  transforms). See `expression-language.md`.
 - **`output`** — exactly **one** of `{ dimension }`, `{ taxonomy }`, or
   `{ type: "boolean" }`, and it must match what the expression infers
   (`validateDerivedDimensions` checks this). A collection `fields` entry follows
@@ -192,7 +191,7 @@ describe *how the UI authors or displays* a value, not what the value is:
 | Late-addition sugar share: parts → share of the sugar budget → resolved mass | host allocation rule; the reported mass is the artifact field | `frontend/src/views/producer/sugarAllocation.js`; `batch.sugars.fields.resolved_mass_kg` in `data/artifact.json` |
 | Tinseth hop mass and whirlpool cooling/IBU math | backend boundary | `backend/app/core/hop_solver.py` (`solver.hops`); returns the curve as `whirlpool_timeline` / `whirlpool_chills`, so the frontend holds no copy |
 | Style-conformance judgement and badges | host | `frontend/src/engine/styleConformance.js`, `views/producer/conformance.js` |
-| Residual seed-derived copy-in (only values the AST cannot express) | host | `frontend/src/views/seedDerivations.js` |
+| Residual seed-derived copy-in (only values Jexl cannot express) | host | `frontend/src/views/seedDerivations.js` |
 | Fermentation geometry (styles' OE/AE feasible regions) | host geometry; ASBC/Cutaia primitives call artifact functions | `frontend/src/engine/fermentation.js`, `engine/artifactFunctions.js` |
 | Mash ordering, schedule validation, and preset application | host | `frontend/src/views/mash.js`, `adapters/cards/mash.js` |
 | Scale-pin targets/previews (ABV/OG/FG) | host | `frontend/src/views/styleTargetsLogic.js`, `views/styleNavigatorLogic.js`, `adapters/cards/{style,late-additions}.js`, `docs/attenuation-model.md` §6.1 |

@@ -76,7 +76,7 @@ test("loadArtifact rejects a dangling reference", () => {
 
 test("loadArtifact rejects a dangling default ref", () => {
   const bad = structuredClone(artifact);
-  bad.nodes["batch.hlt_starting_volume_l"].default = { ref: "does.not.exist" };
+  bad.nodes["batch.hlt_starting_volume_l"].default = "does.not.exist";
   assert.throws(() => loadArtifact(bad), /unknown node\/field/);
 });
 
@@ -87,7 +87,7 @@ test("loadArtifact rejects a relation with a dangling ref", () => {
     {
       id: "bad_ref",
       blocking: false,
-      predicate: { op: "le", lhs: { ref: "does.not.exist" }, rhs: 1 },
+      predicate: "does.not.exist <= 1",
     },
   ];
   assert.throws(() => loadArtifact(bad), /unknown node\/field/);
@@ -114,11 +114,11 @@ test("derived dough-in target honors the enabled-rest filter", () => {
 
 test("loadArtifact rejects a choice default outside its taxonomy", () => {
   const bad = structuredClone(artifact);
-  bad.nodes["batch.topology"].default = "not_a_member";
+  bad.nodes["batch.topology"].default = '"not_a_member"';
   assert.throws(() => loadArtifact(bad), /not a member of taxonomy/);
 });
 
-test("loadArtifact accepts schema_version 4 and rejects unknown versions", () => {
+test("loadArtifact requires schema_version 11 and rejects unknown versions", () => {
   const bad = structuredClone(artifact);
   bad.schema_version = 99;
   assert.throws(() => loadArtifact(bad), /Unsupported schema_version/);

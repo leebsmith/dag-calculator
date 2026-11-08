@@ -71,7 +71,8 @@ test("fieldDomainStates skips unset optional selections", () => {
 
 test("checkDomain treats an unresolvable {ref} bound as not applicable", () => {
   const a = structuredClone(artifact);
-  a.nodes["batch.target_abv"].domain = { gt: 0, lt: { ref: "batch.yeast.attenuation_cap_pct" } };
+  a.nodes["batch.target_abv"].domain =
+    "$value > 0 && $value < batch.yeast.attenuation_cap_pct";
   const e = createCalculator(a, makeFixtures());
   const states = Object.fromEntries(e.domainStates().map((s) => [s.nodeId, s.holds]));
   assert.equal(states["batch.target_abv"], true); // gt:0 holds; unresolved lt is skipped

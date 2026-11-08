@@ -38,7 +38,7 @@ test("a modified clone is validated again", () => {
 
   const dangling = structuredClone(doc);
   const rootId = Object.keys(dangling.nodes).find((id) => dangling.nodes[id].kind === "root");
-  dangling.nodes[rootId].default = { ref: "no.such.node" };
+  dangling.nodes[rootId].default = "no.such.node";
   assert.throws(() => loadArtifact(dangling), /references unknown node\/field/);
 
   assert.equal(loadArtifact(doc), doc, "a rejected clone does not poison the original");

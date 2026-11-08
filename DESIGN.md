@@ -100,12 +100,19 @@ still the single source of truth; only the expression syntax changes.
 a list. `inputs` remains the declared alias → path edge map; `output` remains a
 value spec.
 
-**Context.** A string resolves identifiers in this order: the node's declared
-`inputs` aliases (and the reserved `row` alias in a collection field), declared
-`constants`, registered `functions`, then dotted node / selection / boundary /
-identity paths. Only `inputs`, `ref`, and default-expression references remain
-graph edges; an identifier inside a string is not an edge unless the loader
-extracts it and verifies it.
+**Context.** A node's declared `inputs` aliases (and the reserved `row` alias in
+a collection field) resolve as bare identifiers. Globally injected values are
+namespaced to prevent shadowing: constants as `constants.<id>`, functions as
+`functions.<id>(...)`, and node / selection / boundary / identity paths as their
+authored dotted paths. A domain uses the reserved subject `$value`, e.g.
+`$value >= 0 && $value <= constants.max_boil_off_rate`. Only `inputs`, `ref`,
+and default-expression references remain graph edges; an identifier inside a
+string is not an edge unless the loader extracts it and verifies it.
+
+Jexl 2.x parses `functions.Y(...)` as a call to the flat function `Y` and drops
+the qualifier. The loader rewrites the namespaced call to the function's
+registered flat name before compilation, so the artifact keeps the namespaced
+spelling while the runtime still calls the intended function.
 
 **Absence.** Jexl resolves a missing variable to `undefined` instead of throwing;
 that is why it is chosen over Math.js. Absence stays absence: never coerce it to
@@ -114,10 +121,19 @@ the engine maps non-finite results to absence at a value boundary, and domains
 and relations treat them as unresolved (`holds: null`), not violated.
 
 **Reductions are transforms.** The old reduction nodes become registered, pure
-Jexl transforms that preserve filter-then-reduce semantics and skip non-finite
-values, e.g. `rows | weighted_avg('color_lovibond', 'pct')`. A transform receives
-the collection as its subject and field names as string arguments; it may not
-read ambient state, time, or randomness.
+Jexl transforms that preserve the AST's filter-then-reduce semantics exactly.
+The field forms take row-field names and an optional row-scoped predicate:
+`rows | weighted_avg('color_lovibond', 'pct')`,
+`rests | sum('duration_min', 'row.enabled && row.duration_min != null', $context)`.
+Arbitrary row-scoped expressions use the `_expr` forms:
+`sum_expr('<expression>', <where>, $context)`,
+`weighted_avg_expr('<value>', '<weight>', <where>, $context)`, with `min_expr`,
+`max_expr`, `map_expr`, and `filter_expr` following the same shape. An absent
+`where` is `null`. `$context` carries the surrounding aliases; `row` binds the
+current item. The transforms may not read ambient state, time, or randomness.
+`sum` and `weighted_avg` keep the AST's arithmetic: a zero total weight yields
+`0`; `min` and `max` skip non-finite values and yield `undefined` when none
+remain.
 
 **Compiled once.** Expressions are parsed and compiled when the artifact is
 loaded, then stored on the graph. Evaluation never re-parses a string, and the
@@ -126,21 +142,24 @@ between tests or sessions.
 
 **Safety guardrail.** To regain safety after migrating to string expressions, a
 pre-build step must be added to the pipeline: a script that loops through every
-`expr` in the artifact and runs `jexl.parse(expression)` just to verify it
+`expr` in the artifact and runs `jexl.compile(expression)` just to verify it
 compiles.
 
 The same pass must cover `default`, `domain`, `predicate`, `functions.*.body`,
-and `collection.fields.*.expr`; it runs in `make check` (and therefore CI)
-before any build, and fails on the first string that does not compile. Parsing
-is necessary but not sufficient: the structural validator must also walk each
-parsed AST and resolve every identifier, preserving the explicit-edge contract.
+`collection.fields.*.expr`, and expression-carrying transform arguments; it runs
+in `make check` (and therefore CI) before any build, and fails on the first
+string that does not compile. Compilation is necessary but not sufficient: the
+structural validator must also walk the compiled AST and resolve every
+identifier, preserving the explicit-edge contract.
 
 **Versioning.** The artifact grammar bumps from 10 to 11. This is the artifact
 `schema_version`, not the batch payload revision (`DRAFT_SCHEMA_VERSION`); a
-frozen batch stores valuations, not expressions. `SUPPORTED_SCHEMA_VERSIONS`
-gains 11. The legacy AST evaluator is retained for versions ≤ 10 until the
-deprecation window closes, or the schema-version guard is changed to reject
-those versions in the same commit.
+frozen batch stores valuations, not expressions. The cutover is hard: versions
+1–10 are dropped, the AST evaluator is removed, and the schema-version guard
+requires exactly 11 rather than a contiguous 1..N range.
+`tools/v10_to_v11_migrator.py` performs the one-way rewrite into
+`artifact_v11.json`; the canonical `data/artifact.json` is replaced only after
+that output is reviewed.
 
 **Docs and guards.** `expression-language.md` is rewritten for Jexl;
 `engine.md`’s interpreter section, `grammar.md` §2/§4/§5, `semantics.md`

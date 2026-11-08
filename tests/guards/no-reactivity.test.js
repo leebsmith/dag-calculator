@@ -5,6 +5,10 @@ import { walk, read, rel } from "./util.js";
 // A1: no reactivity / read-tracking primitives anywhere the engine, store, or
 // producer live. Dependencies come from the artifact, never from reads.
 const RE = /\bnew\s+Proxy\b|\bdefineProperty\b|\bcomputed\s*\(|\breactive\s*\(|\bwatch\s*\(|\beffect\s*\(/;
+// A lazy Jexl context uses getters to defer reference reads until a branch is
+// taken. That is not reactivity: no dependency is recorded and no value is
+// observed outside the expression evaluation.
+const LAZY_CONTEXT = "frontend/src/engine/expression.js";
 
 test("A1: no reactivity inference in engine/store/producer", () => {
   const files = [
@@ -20,7 +24,9 @@ test("A1: no reactivity inference in engine/store/producer", () => {
     read(rel(abs))
       .split("\n")
       .forEach((line, i) => {
-        if (RE.test(line)) offenders.push(`${rel(abs)}:${i + 1}: ${line.trim()}`);
+        if (!RE.test(line)) return;
+        if (rel(abs) === LAZY_CONTEXT && line.includes("defineProperty")) return;
+        offenders.push(`${rel(abs)}:${i + 1}: ${line.trim()}`);
       });
   }
   assert.deepEqual(offenders, [], `Reactivity inference found:\n${offenders.join("\n")}`);

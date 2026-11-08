@@ -1,19 +1,21 @@
 // Explicit-DAG runtime: adjacency from declared inputs/ref only, topological
 // sort, lazy memoization. No read-tracking, no reactive inference.
 
-import { evaluate } from "./ast.js";
 import { BoundaryCache, canonicalFingerprint, createBoundaryUnavailable } from "./boundary.js";
 import { domainStates, fieldDomainStates, collectionDomainStates } from "./domains.js";
+import { compileExpression, runtimeFor } from "./expression.js";
 import { resolveIngredientCollections, resolveIngredientRows } from "./ingredientPriors.js";
 import { getField, resolveReference } from "./paths.js";
 import { relationStates } from "./relations.js";
 
 const graphs = new WeakMap();
 
-// One expression context shape: the three builders below differ only in how a
-// reference resolves and which callable recurses.
-function expressionCtx(artifact, resolveRef, call) {
-  return { resolveRef, resolveConst: (id) => artifact.constants[id].value, call };
+function defaultRefs(expression) {
+  return compileExpression(expression).paths.filter((path) => {
+    if (path === "$value" || path === "$context" || path === "row" || path === "null") return false;
+    if (path.startsWith("row.") || path.startsWith("constants.")) return false;
+    return true;
+  });
 }
 
 export function buildGraph(artifact) {
@@ -57,7 +59,7 @@ function constructGraph(artifact) {
     } else if (node.kind === "root" || node.kind === "choice") {
       // A default expression is evaluated lazily when the node is unset, so
       // any node it references is a real dependency (not a hidden one).
-      for (const path of collectRefs(node.default)) {
+      for (const path of defaultRefs(node.default)) {
         const r = resolveReference(artifact, path);
         if (r?.kind === "node") deps.push(r.nodeId);
       }
@@ -71,21 +73,6 @@ function constructGraph(artifact) {
 
   const topoOrder = topologicalSort(adjacency, dependents);
   return { adjacency, dependents, topoOrder };
-}
-
-// Collect every `{ref}` path appearing in an expression tree (defaults may be
-// `{ref}`, `{const}`, `{call}`, `{lit}`, or nested operators).
-function collectRefs(expr, out = []) {
-  if (expr === null || typeof expr !== "object") return out;
-  if (Array.isArray(expr)) {
-    for (const item of expr) collectRefs(item, out);
-    return out;
-  }
-  for (const [key, value] of Object.entries(expr)) {
-    if (key === "ref" && typeof value === "string") out.push(value);
-    else collectRefs(value, out);
-  }
-  return out;
 }
 
 export function topologicalSort(adjacency, dependents) {
@@ -186,31 +173,11 @@ export function createEngine(artifact, options = {}) {
     return inputs;
   }
 
-  function callFunction(fnId, args) {
-    const fn = artifact.functions[fnId];
-    if (!fn) throw new Error(`Unknown function "${fnId}"`);
-    const resolveRef = (name) => {
-      const idx = fn.params.indexOf(name);
-      if (idx === -1) throw new Error(`Unknown parameter "${name}" in function "${fnId}"`);
-      return args[idx];
-    };
-    return evaluate(fn.body, expressionCtx(artifact, resolveRef, callFunction));
-  }
+  const expressions = runtimeFor(artifact);
 
-  function topLevelCtxFor(authored) {
-    return expressionCtx(artifact, (name) => resolveValue(name, authored), callFunction);
-  }
-
-  function derivedCtx(inputValues, row = null, authored = false) {
-    const resolveRef = (name) => {
-      if (row) {
-        if (name === "row") return row;
-        if (name.startsWith("row.")) return getField(row, name.slice("row.".length));
-      }
-      if (Object.prototype.hasOwnProperty.call(inputValues, name)) return inputValues[name];
-      return resolveValue(name, authored);
-    };
-    return expressionCtx(artifact, resolveRef, callFunction);
+  function scopeFor(inputValues = {}, row = null, authored = false) {
+    const explicit = row === null ? { ...inputValues } : { ...inputValues, row };
+    return expressions.scope((name) => resolveValue(name, authored), explicit);
   }
 
   // Row-scoped computed fields, evaluated per row on read. They are derived
@@ -224,7 +191,7 @@ export function createEngine(artifact, options = {}) {
       for (const [alias, path] of Object.entries(spec.inputs)) {
         inputValues[alias] = resolveValue(path, true);
       }
-      values[name] = evaluate(spec.expr, derivedCtx(inputValues, row, true));
+      values[name] = expressions.evaluate(spec.expr, scopeFor(inputValues, row, true));
     }
     return values;
   }
@@ -236,7 +203,7 @@ export function createEngine(artifact, options = {}) {
       case "choice":
         return roots.has(nodeId)
           ? roots.get(nodeId)
-          : evaluate(node.default, topLevelCtxFor(authored));
+          : expressions.evaluate(node.default, scopeFor({}, null, authored));
       case "collection": {
         const rows = collections[nodeId] ?? [];
         if (authored || !node.fields) return rows;
@@ -266,7 +233,7 @@ export function createEngine(artifact, options = {}) {
         for (const [alias, path] of Object.entries(node.inputs)) {
           inputValues[alias] = resolveValue(path, authored);
         }
-        return evaluate(node.expr, derivedCtx(inputValues, null, authored));
+        return expressions.evaluate(node.expr, scopeFor(inputValues, null, authored));
       }
       case "boundary": {
         if (boundaryUnavailable.has(nodeId)) return undefined;
@@ -309,7 +276,7 @@ export function createEngine(artifact, options = {}) {
     },
     resolve: resolveValue,
     call(fnId, args) {
-      return callFunction(fnId, args);
+      return expressions.callFunction(fnId, args);
     },
     relationStates() {
       return relationStates(artifact, resolveValue);

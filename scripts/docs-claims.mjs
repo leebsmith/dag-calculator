@@ -81,6 +81,8 @@ export const FOREIGN = {
   output: "a boundary output spec key inside the artifact",
   grammar: "a prose reference to the artifact grammar",
   semantics: "a prose reference to the artifact semantics",
+  row: "the reduction element alias (row.pct, row.mass_kg)",
+  jexl: "the external expression library (jexl.compile, jexl.Jexl)",
   dimensions: "the artifact's dimension table, cited without its section prefix",
   constants: "the artifact's constant table, cited without its section prefix",
   relations: "the artifact's relation table, cited without its section prefix",

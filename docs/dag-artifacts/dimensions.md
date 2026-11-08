@@ -133,11 +133,12 @@ flagged.
 
 ### 5.1 What is inferred
 
-`inferExprDimension` resolves: node refs, dotted refs into a boundary output /
-selection field / collection field, `{const}`/`{call}` returns, the reductions
-(`sum`/`weighted_avg`/`min` bind their element alias to the collection's item
-schema), and `+`/`-`/`neg`. Dimensionless scalars (`dimensionless`,
-`percentage`) are absorbed by `*` and `/` (e.g. `mass · percentage → mass`).
+`inferExprDimension` resolves: node identifiers, dotted paths into a boundary
+output / selection field / collection field, `constants.<id>` and
+`functions.<id>(...)` returns, the reductions (`sum`/`weighted_avg`/`min` bind
+`row` to the collection's item schema, including their `_expr` strings), and
+`+`/`-`/`*`/`/`. Dimensionless scalars (`dimensionless`, `percentage`) are
+absorbed by `*` and `/` (e.g. `mass · percentage → mass`).
 
 Genuinely compound products (e.g. `volume/time · time`) remain **indeterminate**
 and are not checked; so are intentionally modeled-away quantities (`grist.mcu`

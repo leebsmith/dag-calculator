@@ -2,6 +2,8 @@
 // values; the engine reports whether the current value satisfies them.
 // Report-only (never throws).
 
+import { runtimeFor } from "./expression.js";
+
 const OPS = {
   gt: (a, b) => a > b,
   gte: (a, b) => a >= b,
@@ -20,43 +22,67 @@ function resolveLimit(limit, artifact, resolveRef) {
   return undefined;
 }
 
-// Evaluate a domain spec against a value. A bound that cannot be resolved
-// (e.g. a {ref} to a field of an unset optional selection) is treated as
-// "not applicable" and skipped, rather than failing the value.
-function evaluateDomain(domain, value, resolveLimitFn) {
-  // No value yet: absence is not a violation. Only an actually-invalid value is.
-  if (value === undefined || value === null) {
-    return { bounded: true, holds: null, reason: "unresolved" };
-  }
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    return { bounded: true, holds: false, reason: "non-finite" };
-  }
+// Record-catalog schemas still declare bound objects; artifact domains are Jexl
+// strings. The object path is kept for those authored record schemas only.
+function evaluateObjectDomain(artifact, domain, value, resolveRef) {
   for (const [op, limitExpr] of Object.entries(domain)) {
     const test = OPS[op];
     if (!test) continue;
-    const limit = resolveLimitFn(limitExpr);
+    const limit = resolveLimit(limitExpr, artifact, resolveRef);
     if (limit === undefined || limit === null || Number.isNaN(limit)) continue;
     if (!test(value, limit)) return { bounded: true, holds: false, op, limit };
   }
   return { bounded: true, holds: true };
 }
 
-export function checkDomain(artifact, nodeId, value, resolveRef) {
+function unresolvedLimit(artifact, domain, resolveRef) {
+  const runtime = runtimeFor(artifact);
+  return runtime.compile(domain).paths.some((path) => {
+    if (path === "$value" || path === "$context" || path === "constants") return false;
+    if (path.startsWith("constants.")) return false;
+    const limit = resolveRef(path);
+    return limit === undefined || limit === null || (typeof limit === "number" && Number.isNaN(limit));
+  });
+}
+
+// Evaluate a domain spec against a value. A bound that cannot be resolved
+// (e.g. a ref to a field of an unset optional selection) is treated as
+// "not applicable" and skipped, rather than failing the value.
+function evaluateDomain(artifact, domain, value, resolveRef) {
+  if (value === undefined || value === null) {
+    return { bounded: true, holds: null, reason: "unresolved" };
+  }
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return { bounded: true, holds: false, reason: "non-finite" };
+  }
+  if (typeof domain === "object" && domain !== null) {
+    return evaluateObjectDomain(artifact, domain, value, resolveRef);
+  }
+  if (typeof domain !== "string") {
+    throw new Error("Domain must be a Jexl string or a bound object");
+  }
+  if (unresolvedLimit(artifact, domain, resolveRef)) {
+    return { bounded: true, holds: true };
+  }
+  const runtime = runtimeFor(artifact);
+  const scope = runtime.scope(resolveRef, { $value: value });
+  return { bounded: true, holds: Boolean(runtime.evaluate(domain, scope)) };
+}
+
+export function checkDomain(artifact, nodeId, value, resolveRef = () => undefined) {
   const node = artifact.nodes[nodeId];
   const domain = node?.domain;
   if (!domain) return { nodeId, bounded: false, holds: true };
-  const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
-  return { nodeId, ...evaluateDomain(domain, value, resolveLimitFn) };
+  return { nodeId, ...evaluateDomain(artifact, domain, value, resolveRef) };
 }
 
 // Evaluate a raw domain spec (as declared on a primitive-schema field) against a
-// value. Component fields carry `{const}`/literal bounds, never `{ref}` (a
-// component is self-contained), so the ref resolver is a no-op. This is the
-// single source of truth for component-field domain checks on the frontend.
+// value. Component fields carry literal bounds, never refs (a component is
+// self-contained), so the ref resolver is a no-op. This is the single source of
+// truth for component-field domain checks on the frontend.
 export function checkComponentDomain(artifact, domain, value) {
-  if (!domain || typeof domain !== "object") return { bounded: false, holds: true };
-  const resolveLimitFn = (limit) => resolveLimit(limit, artifact, () => undefined);
-  return evaluateDomain(domain, value, resolveLimitFn);
+  if (!domain) return { bounded: false, holds: true };
+  return evaluateDomain(artifact, domain, value, () => undefined);
 }
 
 export function domainStates(artifact, get, resolveRef) {
@@ -85,8 +111,12 @@ export function collectionDomainStates(artifact, get, resolveRef) {
       for (const [field, spec] of bounded) {
         const value = row?.[field];
         if (value === undefined || value === null || value === "") continue;
-        const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
-        states.push({ nodeId: id, index, field, ...evaluateDomain(spec.domain, value, resolveLimitFn) });
+        states.push({
+          nodeId: id,
+          index,
+          field,
+          ...evaluateDomain(artifact, spec.domain, value, resolveRef),
+        });
       }
     });
   }
@@ -112,11 +142,10 @@ export function fieldDomainStates(artifact, resolveRef) {
         continue; // unguarded/unresolvable reference — not applicable
       }
       if (value === undefined) continue; // selection unset or field absent
-      const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
       states.push({
         selectionNodeId: id,
         field,
-        ...evaluateDomain(spec.domain, value, resolveLimitFn),
+        ...evaluateDomain(artifact, spec.domain, value, resolveRef),
       });
     }
   }
@@ -131,11 +160,10 @@ export function fieldDomainStates(artifact, resolveRef) {
         continue;
       }
       if (value === undefined) continue;
-      const resolveLimitFn = (limit) => resolveLimit(limit, artifact, resolveRef);
       states.push({
         namespace,
         field,
-        ...evaluateDomain(spec.domain, value, resolveLimitFn),
+        ...evaluateDomain(artifact, spec.domain, value, resolveRef),
       });
     }
   }

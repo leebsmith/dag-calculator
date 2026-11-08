@@ -54,8 +54,8 @@ computed, it is *not* a root.
 ### 2.2 Explicit edges
 
 The dependency graph comes **only** from declared `inputs`, `ref`, `relations`,
-and `{ref}`s inside a node `default` (a default is a lazy expression, so its refs
-are dependencies). A `collection`'s computed `fields` declare their own `inputs`,
+and the identifiers inside a node `default` (a default is a lazy Jexl
+expression, so its references are dependencies). A `collection`'s computed `fields` declare their own `inputs`,
 which are **read-side** edges: they invalidate the collection but never order it,
 because a field reads the authored rows through the boundary seam (§2.4). There is
 **no read-tracking / auto-inference**. A dependency that is not declared does not
@@ -113,8 +113,10 @@ Consequences:
 
 A node may have **no value**: an unset root whose default cannot resolve (e.g. a
 field the selected component does not declare, or no component at all), or a
-`selection` whose `ref` is empty. Absence is spelled `undefined` in the engine
-and `null` in payloads — never `0`, `""`, `{}`, or a dropped key.
+`selection` whose `ref` is empty. Jexl resolves a missing identifier to
+`undefined`; arithmetic through it yields `NaN`, which reporting treats as
+absence, never as a violation. Absence is spelled `undefined` in the engine and
+`null` in payloads — never `0`, `""`, `{}`, or a dropped key.
 
 - Bounds on a valueless node are **unresolved**, not violated (§4.1).
 - An empty `ref` selection resolves to `null`; dotted reads into it yield
@@ -181,8 +183,9 @@ and deleting the old one. Existing batches are unaffected.
 
 ## 4. Constraints, interpretations, defaults
 
-- **Domain (constraints)** — unary bounds on a node (`domain`), n-ary invariants
-  in `relations`. They restrict *what is valid*, and are annotations, not nodes.
+- **Domain (constraints)** — a Jexl boolean over `$value` on a node, and n-ary
+  Jexl predicates in `relations`. They restrict *what is valid*, and are
+  annotations, not nodes.
   The engine **evaluates** both and surfaces the result to the view
   (report-only: `relationStates()` / `domainStates()`); a violated invariant is a
   presentation concern, not a computation failure. Every relation also declares
@@ -199,8 +202,8 @@ and deleting the old one. Existing batches are unaffected.
 - **Interpretation** — a `derived` node whose output is a `taxonomy` (or boolean):
   a categorical judgment over a computed value (e.g. mash-pH status). Its
   presentation label/class is stripped.
-- **Default** — an expression evaluated when a root is unset. Structured
-  "factory" defaults are decomposed into per-node defaults.
+- **Default** — a Jexl expression evaluated when a root or choice is unset.
+  Structured "factory" defaults are decomposed into per-node defaults.
 
 ---
 
@@ -226,8 +229,8 @@ When adding to the artifact, obey:
 
 ## 6. Versioning
 
-- `schema_version` — the grammar revision. Bumping it signals a breaking change
-  to the artifact's shape.
+- `schema_version` — the grammar revision. Revision 11 replaced the JSON
+  expression AST with Jexl strings; versions 1–10 are no longer accepted.
 - The validator enforces `extra: forbid` so renamed/removed fields fail loudly.
 - Migration on load (fill defaults, rename, or flag for review) precedes
   validation — see the anti-drift strategy in the data-model plan.

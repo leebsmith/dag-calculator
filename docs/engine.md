@@ -48,7 +48,7 @@ changes.
 |---|---|
 | `index.js` | public API: `loadArtifact`, `createCalculator`; re-exports |
 | `dag.js` | the runtime: graph build, evaluation dispatch, memo, invalidation |
-| `ast.js` | the expression interpreter (`evaluate`) |
+| `expression.js` | the Jexl runtime: compile cache, lazy refs, transforms |
 | `paths.js` | dotted-path resolution (`resolveReference`, `getField`) |
 | `units.js` | dimension system: conversion, add/sub inference, derived-dimension checks |
 | `domains.js` | unary domain-bound checks (nodes, selected-component fields, collection items) |
@@ -62,9 +62,9 @@ changes.
 ### The graph (`buildGraph`)
 
 - **`adjacency`** — `nodeId → [dependencyNodeIds]`, built from each node's
-  declared `inputs` (derived/boundary), `ref` (selection), and any `{ref}` in a
-  root/choice `default` (a default is evaluated lazily when the node is unset, so
-  its refs are real dependencies, not hidden ones). A collection's computed
+  declared `inputs` (derived/boundary), `ref` (selection), and any identifier in
+  a root/choice `default` (a default is evaluated lazily when the node is unset,
+  so its references are real dependencies, not hidden ones). A collection's computed
   `fields` add **no** adjacency edges: they are read-side overlays.
 - **`dependents`** — the reverse: `nodeId → [consumerNodeIds]`, including the
   collections whose computed fields read the node.
@@ -114,10 +114,10 @@ rows. This is an artifact rule, not a UI one: direct engine callers get it too.
 ### `evaluateNode(nodeId)` — dispatch
 
 ```text
-root/choice   → roots.get(nodeId) ?? evaluate(node.default)
+root/choice   → roots.get(nodeId) ?? evaluate(node.default, scope)
 collection    → collections[nodeId] ?? []   (+ computed `fields`, per row)
 selection     → selections[nodeId] ?? reference component (empty ref → {})
-derived       → evaluate(node.expr, ctx(  resolve node.inputs  ))
+derived       → evaluate(node.expr, scope(resolve node.inputs))
 boundary      → request body → fingerprint → cache hit | boundaries[binding](body)
 ```
 
@@ -141,16 +141,28 @@ save. Library edits therefore cannot perturb a batch that already carries its
 snapshot. An empty `ref` (or a `null` snapshot) resolves to `null` — absence, not
 an empty component — so dotted reads yield `undefined`.
 
-### `evaluate(expr, ctx)` — the AST
+### `evaluate(expression, scope)` — the Jexl runtime
 
-Interprets the expression tree (`expression-language.md`): literals, `ref`
-(pulled from the context), `const`, `call`, operators (`+ - * / pow if …`), and
-reductions (`sum weighted_avg min map filter`, with an optional `where`).
+Expressions are Jexl strings (`expression-language.md`). `runtimeFor(artifact)`
+compiles each string once and caches the AST. A scope carries the node's input
+aliases, the optional `row`, `$value`, and a resolver for dotted paths. The
+context builds getters only for the identifiers the AST actually contains, so
+`&&`, `||`, and the ternary never read an untaken branch. `$value` is the domain
+subject; `constants.<id>` and `functions.<id>(...)` are the global namespaces.
+
+Reductions are registered transforms. The field forms take field names and an
+optional `row.` predicate (`sum`, `min`, `max`, `weighted_avg`); the `_expr`
+forms take row-scoped Jexl strings and `$context` (`sum_expr`, `min_expr`,
+`max_expr`, `weighted_avg_expr`, `map_expr`, `filter_expr`). The transforms
+preserve the old filter-then-reduce semantics: `weighted_avg` returns `0` for a
+zero total weight, and `min`/`max` skip non-finite values.
 
 ### Function calls
 
-`callFunction(fnId, args)` binds a `functions` entry's `params` to its `args` and
-evaluates its `body` — used for shared equations (e.g. the strike-water chain).
+`functions.<id>(...)` is rewritten to the flat Jexl function name before
+compilation; the runtime registers every artifact function under that name.
+`callFunction(fnId, args)` binds `params` to `args` and evaluates the Jexl body —
+used for shared equations (e.g. the strike-water chain).
 
 ### Path resolution
 
@@ -301,7 +313,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 | Editable value | Source | Mechanism | Re-sync semantics |
 |---|---|---|---|
 | `batch.target_abv` | `style.abv_min` / `style.abv_max` | Style-step number input | seeded to the band midpoint; clamped to the fixed-AA ray interval; Batch step read-only |
-| `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` `{ref}` | default while unset; clamped to the equipment envelope on edit |
+| `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` reference | default while unset; clamped to the equipment envelope on edit |
 | `batch.attenuation_derate_points` | — | per-batch root | points subtracted from the published maximum; starts at 0 |
 
 `batch.yeast_cap = max(0, batch.yeast.attenuation_cap_pct − batch.attenuation_derate_points)`.
@@ -386,11 +398,11 @@ It complements `grammar.md` (node *shape*) and `docs/engine.md` (runtime *API*).
 |---|---|---|
 | kind | `kind` | `root` · `choice` · `collection` · `selection` · `derived` · `boundary` |
 | value type | `dimension` / `taxonomy` / `output.{dimension|taxonomy|boolean|schema}` / `item_schema` | normalized by `valueSpecOf(artifact, id)`; `nodeDimension` returns the scalar dimension/taxonomy only. Identity fields take their type from `artifact.identity[namespace]` → schema |
-| bounds | `domain` | unary ops (`gte/lte/gt/lt/eq/ne`), values may be `{ref}`/`{const}` |
-| default | `default` | root/choice only; evaluated when unset |
+| bounds | `domain` | Jexl boolean string over `$value` |
+| default | `default` | root/choice only; Jexl string, evaluated when unset |
 | collection | `item_schema` | ⇒ `primitive_schemas[item_schema]` (per-field spec) |
 | selection | `output.schema`, `ref` | component type + the root holding the chosen id |
-| derived | `inputs`, `expr`, `output` | alias→path edges, AST, output type |
+| derived | `inputs`, `expr`, `output` | alias→path edges, Jexl string, output type |
 | boundary | `binding`, `resolution`, `inputs`, `outputs`, `domain.codes` | contract only (§2.5, `grammar.md`) |
 | namespace | `id.split(".")[0]` | graph slices: `mash` · `water` · `grist` · `batch` · `solver`; identity namespaces: `equipment`, `style`, `water.source` |
 
@@ -437,7 +449,7 @@ All report-only (never throw).
 
 | Accessor | Meaning |
 |---|---|
-| `engine.adjacency[id]` | upstream node ids this node depends on (from `inputs` / `ref` / `{ref}` in `default`) |
+| `engine.adjacency[id]` | upstream node ids this node depends on (from `inputs` / `ref` / identifiers in `default`) |
 | `engine.dependents[id]` | downstream node ids that consume it |
 | `engine.topoOrder` | deterministic order of all node ids |
 
@@ -445,8 +457,8 @@ All report-only (never throw).
 
 ### 6. Reverse references
 
-To find what points at an id, scan the artifact for it in: `default` expressions,
-`derived`/`boundary` `inputs`, and selection `ref`s. Also:
+To find what points at an id, scan the artifact for it in: Jexl `expr` and
+`default` strings, `derived`/`boundary` `inputs`, and selection `ref`s. Also:
 
 - which **dotted paths** resolve to it (`resolveReference(artifact, path)` →
   `{ nodeId, suffix }`);

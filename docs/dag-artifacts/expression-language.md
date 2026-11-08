@@ -1,165 +1,138 @@
-# Expression Language — The Formula AST
+# Expression Language — Jexl Strings
 
-Every `derived` node's `expr` and every `function`'s `body` is an **AST** — a
-tree of JSON objects, language-neutral and machine-evaluable. It contains **no
-host-language code**.
+Every authored expression is a **Jexl string** (schema revision 11). The
+artifact remains the source of truth; Jexl is only the syntax that carries it.
+
+The surfaces are:
+
+| Surface | Meaning |
+|---|---|
+| `derived.expr` | the node's value |
+| `root` / `choice` / `collection` `default` | the value used when unset |
+| `collection.fields.*.expr` | a row-scoped computed value |
+| `functions.*.body` | a shared equation |
+| node / schema-field `domain` | a boolean over `$value` |
+| `relations[].predicate` | a boolean invariant |
+
+`boundary.domain.codes` is an error-code list, not an expression.
 
 ---
 
-## 1. Leaves
+## 1. Literals and identifiers
 
-| Leaf | Shape | Meaning |
-|---|---|---|
-| node ref | `{ "ref": "alias" }` or `{ "ref": "dotted.path" }` | the value of an input (by alias) or a node/field (by dotted path) |
-| constant | `{ "const": "id" }` | a `constants` entry |
-| literal | `42`, `"HIGH"` (a **bare JSON number/string**) | a literal value (numbers, or strings for enum comparisons) |
+| Form | Meaning |
+|---|---|
+| `42`, `-7.2`, `"HIGH"`, `true`, `false` | literal value |
+| `intent`, `rows`, `t_target` | an input alias or function parameter |
+| `batch.target_abv`, `solver.batch.m_grist` | a dotted node or boundary-output path |
+| `constants.sucrose_yield_ldk` | a `constants` entry |
+| `functions.extract_yield_ldk(0.8)` | a declared function |
+| `row.pct` | an authored row field in a reduction or collection field |
 
-`{ "ref": "alias" }` is used *inside* a node's `expr` to reference its `inputs`
-aliases. `{ "ref": "dotted.path" }` is used in top-level expressions (defaults,
-relations) to reference any node by id.
+The engine resolves identifiers lazily: a dotted path is read only when Jexl
+evaluates the branch that contains it. `&&`, `||`, and the ternary therefore
+preserve the old short-circuit behavior, including guarded optional selections.
+
+A missing identifier resolves to `undefined`, not an exception. Absence is never
+coerced to `0`, `""`, `{}`, or a dropped key; arithmetic through it naturally
+yields `NaN`, which domain and relation reporting treat as unresolved.
 
 ---
 
 ## 2. Operators
 
-### 2.1 Arithmetic
+Jexl supplies the operators:
 
-`+ - * / neg pow` — each as `{ "op": "+", "args": [a, b] }` (unary `neg` takes
-one arg).
+- Arithmetic: `+ - * / // % ^`
+- Comparison: `== != > >= < <= in`
+- Logic: `&& || !`
+- Conditional: `condition ? consequent : alternate`
 
-```jsonc
-{ "op": "-", "args": [ { "ref": "t_target" }, { "ref": "t_grain" } ] }
-```
-
-### 2.2 Comparison
-
-`gt ge lt le eq ne` — `{ "op": "gt", "args": [a, b] }` → boolean.
-
-### 2.3 Logic
-
-`and or not` — `{ "op": "and", "args": [a, b] }`, `{ "op": "not", "args": [a] }`.
-
-### 2.4 Conditional
-
-`if` — `{ "op": "if", "args": [cond, then, else] }` (used for classifications).
-
-```jsonc
-{ "op": "if", "args": [
-  { "op": "ge", "args": [ { "ref": "ph" }, 5.6 ] },
-  "HIGH",
-  { "op": "if", "args": [ { "op": "le", "args": [ { "ref": "ph" }, 5.2 ] }, "LOW", "OPTIMAL" ] }
-] }
-```
-
-`and`, `or`, and `if` **short-circuit**: only the taken branch is evaluated. This
-lets a predicate guard access to a value that may be unresolvable, e.g. a field of
-an unset optional selection: `if(ref != "", <predicate>, true)`.
+`functions.<id>(...)` is namespaced in the artifact. Jexl 2.x drops the
+qualifier on a call, so the runtime rewrites it to the flat registered function
+name before compilation.
 
 ---
 
-## 3. Reductions (higher-order)
+## 3. Reductions are transforms
 
-Reductions operate over a collection and carry a **lambda binding**: `coll` (a
-reference to a collection node), `as` (the element alias), and `body` (an
-expression over the alias). The alias is available inside `body` as `{ "ref": "alias.field" }`.
+A reduction is a transform on a collection. The field forms take row-field names
+and an optional row-scoped predicate:
 
-A value-reduction (`sum` / `weighted_avg` / `min` / `max`) MAY carry an optional
-**`where`** predicate — a boolean expression over the alias. When present, only
-items whose `where` is truthy are reduced (**filter-then-reduce**). Truthiness is
-plain falsiness: `undefined`, `null`, `false`, `0`, and `""` are excluded.
-
-| Op | Shape | Returns |
-|---|---|---|
-| `map` | `{ "op":"map", "coll":..., "as":"row", "body":... }` | list of `body` per element |
-| `filter` | `{ "op":"filter", "coll":..., "as":"row", "body":<predicate> }` | sublist where predicate holds |
-| `sum` | `{ "op":"sum", "coll":..., "as":"row", "body":..., "where"?:<predicate> }` | Σ `body` |
-| `weighted_avg` | `{ "op":"weighted_avg", "coll":..., "as":"row", "value":..., "weight":..., "where"?:<predicate> }` | Σ(value·weight) / Σ(weight) |
-| `min` | `{ "op":"min", "coll":..., "as":"row", "value":..., "where"?:<predicate> }` | smallest finite `value` |
-| `max` | `{ "op":"max", "coll":..., "as":"row", "value":..., "where"?:<predicate> }` | largest finite `value` |
-
-```jsonc
-{ "op": "sum", "coll": { "ref": "grist.major_malts" }, "as": "row",
-  "body": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "row.yield_fraction" } ] } }
-
-// first enabled rest's temperature: filter by `enabled`, then take the minimum
-{ "op": "min", "coll": { "ref": "mash.rests" }, "as": "rest",
-  "value": { "ref": "rest.use_temp_c" }, "where": { "ref": "rest.enabled" } }
+```text
+rows | weighted_avg('color_lovibond', 'pct')
+rests | sum('duration_min', 'row.enabled && row.duration_min != null', $context)
 ```
 
-`min`/`max` require a **numeric** `value` (an ordered quantity); they skip
-non-finite/`null` values and return `undefined` when no finite value remains
-(e.g. an empty schedule). `count` is **not** in the set; add it only if a derived
-node requires it.
+The `_expr` forms take a row-scoped Jexl string, an optional predicate (`null`
+when absent), and `$context`:
 
-### 3.1 Row-scoped computed fields
-
-A `collection`'s `fields` entries (grammar §2.2) use the same binding idea
-without the reduction wrapper: the alias is fixed to `row` and bound to the
-element, so `{ "ref": "row.pct" }` reads an authored `item_schema` field. Every
-value from outside the row comes through the field's declared `inputs` aliases:
-
-```jsonc
-"mass_kg": {
-  "inputs": { "m_grist": "solver.batch.m_grist" },
-  "expr": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "m_grist" } ] },
-  "output": { "dimension": "mass" }
-}
+```text
+sugars | sum_expr('(row.mass_kg * row.yield_fraction)', null, $context)
+rows | weighted_avg_expr('row.color_lovibond', 'row.pct', null, $context)
 ```
+
+`min_expr`, `max_expr`, `map_expr`, and `filter_expr` follow the same shape.
+`$context` carries the surrounding aliases and `row` binds the current item.
+
+The transforms preserve the old semantics exactly:
+
+- `sum` adds the selected values.
+- `weighted_avg` returns `0` when the total weight is zero.
+- `min` and `max` skip non-finite values and return `undefined` when none remain.
+- An absent or null `where` selects every row; otherwise plain truthiness filters
+  before the reduction.
 
 ---
 
 ## 4. Function calls
 
-`{ "call": "<function-id>", "args": [ ... ] }` invokes a `functions` entry.
+A function body uses its parameter names as bare identifiers and calls other
+functions through the namespace:
 
-```jsonc
-{ "call": "morey_mcu_to_srm", "args": [ { "ref": "mcu" } ] }
+```text
+realized_fg = functions.plato_to_sg(functions.sg_to_plato(og_sg) * (1 - aa))
 ```
 
-A `function` is declared as:
-
-```jsonc
-"morey_mcu_to_srm": {
-  "params": ["mcu"],
-  "returns": "beer_color",
-  "body": { "op": "*", "args": [ 1.4922, { "op": "pow", "args": [ { "ref": "mcu" }, 0.6859 ] } ] }
-}
-```
-
-Note: inside a function `body`, `{ "ref": "x" }` refers to the function's
-**parameter** `x`, not a node.
+Function bodies are pure and deterministic. They receive only their parameters
+and the immutable constants.
 
 ---
 
-## 5. Nonlinear transforms (numeric inversion)
+## 5. Domains
 
-Some transforms are **not closed-form** (e.g. Plato → SG requires numeric
-inversion of the ASBC cubic). These are declared at the **dimension** level as a
-`nonlinear` transform pair with `fwd`/`inv` function ids:
+A node or schema-field `domain` is one boolean string over the reserved subject
+`$value`:
 
-Convention: `fwd` = **base → unit**, `inv` = **unit → base**. For `Plato`
-(base `SG`), `fwd` is `sg_to_plato` (SG→Plato, the ASBC cubic) and `inv` is
-`plato_to_sg` (Plato→SG, the numeric inverse):
-
-```jsonc
-"gravity": { "base_unit": "SG", "kind": "nonlinear",
-             "units": { "Plato": { "fwd": "sg_to_plato", "inv": "plato_to_sg" } } }
+```text
+$value >= 0
+$value > 0 && $value <= 1
+$value <= constants.max_boil_off_rate
 ```
 
-Where `inv` is not closed-form (Newton–Raphson), the engine provides a
-**numeric-inversion primitive**. The function `sg_to_plato` may be a polynomial
-(AST); its inverse `plato_to_sg` is realized by the engine's primitive rather
-than a hand-written AST.
+An unresolved value is reported as `holds: null`, not a violation. A non-finite
+value is a violation (`reason: "non-finite"`). A bound whose referenced limit is
+absent is not applicable and is skipped.
 
 ---
 
-## 6. Determinism and type rules
+## 6. Compilation and validation
 
-- Every expression is **pure**: no I/O, no time, no randomness. Same inputs →
-  same output.
-- The engine **dimension-checks** expressions: adding a `temperature` and a
-  `temperature_delta` is legal; adding a `temperature` and a `volume` is a
-  validation error.
-- A `derived` node with `output.type == "boolean"` or `output.taxonomy` produces
-  a boolean/enum, never a dimensioned quantity; the expression must match the
-  declared output.
+The runtime compiles each expression once and caches the AST. A pre-build pass
+must compile every `expr`, `default`, `domain`, `predicate`, `functions.*.body`,
+`collection.fields.*.expr`, and expression-carrying transform argument with
+`jexl.compile(...)`. Compilation proves syntax only; the loader also walks the
+compiled AST to collect identifiers and verify every path against the declared
+inputs, constants, functions, row schema, node, boundary output, selection
+field, or identity namespace.
+
+Dimension inference walks the same AST: arithmetic follows the declared
+dimensions, comparisons and logic produce `boolean`, a ternary's branches must
+agree, and a transform's dimension comes from its collection's item schema.
+
+---
+
+## 7. Determinism
+
+Every expression is pure: no I/O, no time, no randomness. Same inputs → same
+output. Evaluation order never changes a value; it only changes freshness.

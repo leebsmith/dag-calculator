@@ -1,5 +1,6 @@
 // Dimension system: unit conversion and dimension checking (dimensions.md).
 
+import { compileExpression } from "./expression.js";
 import { resolveReference } from "./paths.js";
 
 // Transform kinds and their direction conventions (matching artifact.json):
@@ -115,42 +116,31 @@ export function nodeDimension(artifact, nodeId) {
   return null;
 }
 
-// Static dimension inference for derived-node expressions. Returns a dimension
-// id, "boolean", "dimensionless", "collection", or null when indeterminate
-// (compound products, or operands whose dimension can't be resolved).
-//
-// `elem` binds a reduction's element alias to its collection item schema, so
-// `rest.use_temp_c` resolves to the schema field's dimension. Dotted refs into
-// a boundary output / selection / collection field resolve via their declared
-// dimension. Dimensionless scalars (dimensionless, percentage) are absorbed by
-// `*` and `/` (e.g. mass * percentage -> mass); other compound products stay
-// indeterminate.
+// Static dimension inference for Jexl expressions. Returns a dimension id,
+// "boolean", "dimensionless", "collection", or null when indeterminate.
 const SCALAR_DIMS = new Set(["dimensionless", "percentage"]);
+const BOOLEAN_OPERATORS = new Set([
+  "==",
+  "!=",
+  ">",
+  ">=",
+  "<",
+  "<=",
+  "&&",
+  "||",
+  "in",
+]);
 
-// Comparison and logic operators share one result type, so they need no handler.
-const BOOLEAN_OPS = new Set(["gt", "ge", "lt", "le", "eq", "ne", "and", "or", "not"]);
+function identifierPath(node) {
+  if (!node || node.type !== "Identifier") return null;
+  const base = node.from ? identifierPath(node.from) : null;
+  if (node.from && base === null) return null;
+  return base ? `${base}.${node.value}` : node.value;
+}
 
-// One handler per operator: it reads the operand dimensions through `dim` and
-// returns the expression's. The dispatcher below stays a shape check.
-const OPERATOR_DIMS = {
-  "+": (artifact, dim, expr) => inferAddDimension(artifact, dim(expr.args[0]), dim(expr.args[1])),
-  "-": (artifact, dim, expr) => inferSubDimension(artifact, dim(expr.args[0]), dim(expr.args[1])),
-  neg: (artifact, dim, expr) => dim(expr.args[0]),
-  "*": (artifact, dim, expr) => productDimension(expr.args.map(dim)),
-  "/": (artifact, dim, expr) => quotientDimension(expr.args.map(dim)),
-  if: (artifact, dim, expr) => branchDimension(dim(expr.args[1]), dim(expr.args[2])),
-};
-
-// Likewise per reduction: `sum` projects the body, the aggregates project their
-// value, and `map`/`filter` stay collections.
-const COLLECTION_DIMS = {
-  sum: (elemDim, expr) => elemDim(expr.body),
-  weighted_avg: (elemDim, expr) => elemDim(expr.value),
-  min: (elemDim, expr) => elemDim(expr.value),
-  max: (elemDim, expr) => elemDim(expr.value),
-  map: () => "collection",
-  filter: () => "collection",
-};
+function literalValue(node) {
+  return node?.type === "Literal" ? node.value : undefined;
+}
 
 function productDimension(dims) {
   if (dims.some((d) => d === null)) return null;
@@ -169,14 +159,6 @@ function branchDimension(thenDim, elseDim) {
   return thenDim === elseDim ? thenDim : null;
 }
 
-function operatorDimension(artifact, expr, dim) {
-  const handler = OPERATOR_DIMS[expr.op];
-  if (handler) return handler(artifact, dim, expr);
-  return BOOLEAN_OPS.has(expr.op) ? "boolean" : null;
-}
-
-// `undefined` means "not an element alias", so a dotted ref that matched the
-// alias but names no schema field still answers null instead of falling through.
 function aliasDimension(elem, name) {
   if (!elem || typeof name !== "string" || !name.startsWith(elem.alias + ".")) return undefined;
   const spec = elem.schema?.[name.slice(elem.alias.length + 1)];
@@ -222,60 +204,122 @@ function referenceDimension(artifact, name, inputDims, ctx) {
   return nodeSuffixDimension(artifact, artifact.nodes[ref.nodeId], ref);
 }
 
-function collectionItemSchema(artifact, expr, ctx) {
-  const collName = expr.coll?.ref;
-  if (!collName) return null;
-  const known = ctx.collSchemas?.[collName];
+function collectionSchemaFromAst(artifact, ast, ctx) {
+  const path = identifierPath(ast);
+  if (!path) return null;
+  const known = ctx.collSchemas?.[path];
   if (known) return known;
-  const ref = resolveReference(artifact, collName);
+  const ref = resolveReference(artifact, path);
   const node = ref?.kind === "node" ? artifact.nodes[ref.nodeId] : null;
   return node?.kind === "collection" ? node.item_schema : null;
 }
 
-function collectionDimension(artifact, expr, inputDims, ctx) {
-  const itemSchema = collectionItemSchema(artifact, expr, ctx);
-  const schema = itemSchema ? artifact.primitive_schemas?.[itemSchema] ?? {} : {};
-  const bound = { ...ctx, elem: { alias: expr.as ?? "", schema } };
-  const elemDim = (e) => inferExprDimension(artifact, e, inputDims, bound);
-  const handler = COLLECTION_DIMS[expr.op];
-  return handler ? handler(elemDim, expr) : null;
+function fieldDimension(artifact, schemaId, field) {
+  if (!schemaId || typeof field !== "string") return null;
+  const spec = artifact.primitive_schemas?.[schemaId]?.[field];
+  return spec ? spec.dimension ?? spec.taxonomy ?? null : null;
 }
 
-// The expression shapes, in the order the old switch checked them: a reduction
-// carries `op` too, so `coll` wins when both are present.
-const SHAPE_DIMS = {
-  ref: (artifact, expr, dim, inputDims, ctx) => referenceDimension(artifact, expr.ref, inputDims, ctx),
-  const: (artifact, expr) => artifact.constants[expr.const]?.dimension ?? null,
-  call: (artifact, expr) => artifact.functions[expr.call]?.returns ?? null,
-  op: (artifact, expr, dim) => operatorDimension(artifact, expr, dim),
-  coll: (artifact, expr, dim, inputDims, ctx) => collectionDimension(artifact, expr, inputDims, ctx),
-};
-
-function shapeOf(expr) {
-  if ("ref" in expr) return "ref";
-  if ("const" in expr) return "const";
-  if ("call" in expr) return "call";
-  if ("coll" in expr) return "coll";
-  if ("op" in expr) return "op";
-  return "unknown";
+function literalDimension(ast) {
+  if (typeof ast.value === "number") return "dimensionless";
+  if (typeof ast.value === "boolean") return "boolean";
+  return null;
 }
 
-export function inferExprDimension(artifact, expr, inputDims = {}, ctx = {}) {
-  if (expr === null || typeof expr !== "object") {
-    return typeof expr === "number" ? "dimensionless" : null;
+function identifierDimension(artifact, ast, inputDims, ctx) {
+  const path = identifierPath(ast);
+  if (!path) return null;
+  if (path.startsWith("constants.")) {
+    return artifact.constants?.[path.slice("constants.".length)]?.dimension ?? null;
   }
-  const dim = (e) => inferExprDimension(artifact, e, inputDims, ctx);
-  const handler = SHAPE_DIMS[shapeOf(expr)];
-  return handler ? handler(artifact, expr, dim, inputDims, ctx) : null;
+  return referenceDimension(artifact, path, inputDims, ctx);
 }
 
-// Verify every root's non-literal default infers the root's declared dimension.
-// Bare numbers are literals in the declared dimension; bare strings are only
-// valid for reference roots.
-function assertIfBranchesAgree(id, value, artifact) {
-  if (value.op !== "if" || !Array.isArray(value.args) || value.args.length !== 3) return;
-  const thenDimension = inferExprDimension(artifact, value.args[1], {});
-  const elseDimension = inferExprDimension(artifact, value.args[2], {});
+function binaryDimension(artifact, ast, inputDims, ctx) {
+  if (BOOLEAN_OPERATORS.has(ast.operator)) return "boolean";
+  const left = () => dimensionFromAst(artifact, ast.left, inputDims, ctx);
+  const right = () => dimensionFromAst(artifact, ast.right, inputDims, ctx);
+  switch (ast.operator) {
+    case "+":
+      return inferAddDimension(artifact, left(), right());
+    case "-":
+      return inferSubDimension(artifact, left(), right());
+    case "*":
+      return productDimension([left(), right()]);
+    case "/":
+      return quotientDimension([left(), right()]);
+    default:
+      return null;
+  }
+}
+
+function callDimension(artifact, ast, inputDims, ctx) {
+  if (ast.pool === "transforms") return transformDimension(artifact, ast, inputDims, ctx);
+  return artifact.functions?.[ast.name]?.returns ?? null;
+}
+
+function fieldTransformDimension(artifact, schema, name, field) {
+  if (name !== "sum" && name !== "min" && name !== "max" && name !== "weighted_avg") {
+    return undefined;
+  }
+  return fieldDimension(artifact, schema, field);
+}
+
+function exprTransformDimension(artifact, name, first, scope) {
+  if (name === "map_expr" || name === "filter_expr") return "collection";
+  if (
+    name !== "sum_expr" &&
+    name !== "min_expr" &&
+    name !== "max_expr" &&
+    name !== "weighted_avg_expr"
+  ) {
+    return null;
+  }
+  if (typeof first !== "string") return null;
+  return inferExprDimension(artifact, first, scope.inputDims, {
+    ...scope.ctx,
+    elem: scope.elem,
+  });
+}
+
+function transformDimension(artifact, ast, inputDims, ctx) {
+  const [subject, ...args] = ast.args ?? [];
+  const schemaId = collectionSchemaFromAst(artifact, subject, ctx);
+  const elem = schemaId
+    ? { alias: "row", schema: artifact.primitive_schemas?.[schemaId] ?? {} }
+    : null;
+  const first = literalValue(args[0]);
+  const field = fieldTransformDimension(artifact, schemaId, ast.name, first);
+  if (field !== undefined) return field;
+  return exprTransformDimension(artifact, ast.name, first, { inputDims, ctx, elem });
+}
+
+function dimensionFromAst(artifact, ast, inputDims, ctx) {
+  if (!ast || typeof ast !== "object") return null;
+  if (ast.type === "Literal") return literalDimension(ast);
+  if (ast.type === "Identifier") return identifierDimension(artifact, ast, inputDims, ctx);
+  if (ast.type === "BinaryExpression") return binaryDimension(artifact, ast, inputDims, ctx);
+  if (ast.type === "UnaryExpression") return ast.operator === "!" ? "boolean" : null;
+  if (ast.type === "ConditionalExpression") {
+    return branchDimension(
+      dimensionFromAst(artifact, ast.consequent, inputDims, ctx),
+      dimensionFromAst(artifact, ast.alternate, inputDims, ctx)
+    );
+  }
+  if (ast.type === "FunctionCall") return callDimension(artifact, ast, inputDims, ctx);
+  return null;
+}
+
+export function inferExprDimension(artifact, expression, inputDims = {}, ctx = {}) {
+  if (typeof expression !== "string") return null;
+  const record = compileExpression(expression);
+  return dimensionFromAst(artifact, record.ast, inputDims, ctx);
+}
+
+function assertIfBranchesAgree(id, ast, artifact) {
+  if (ast?.type !== "ConditionalExpression") return;
+  const thenDimension = dimensionFromAst(artifact, ast.consequent, {}, {});
+  const elseDimension = dimensionFromAst(artifact, ast.alternate, {}, {});
   if (thenDimension === null || elseDimension === null) return;
   if (thenDimension !== elseDimension) {
     throw new Error(
@@ -284,8 +328,8 @@ function assertIfBranchesAgree(id, value, artifact) {
   }
 }
 
-function assertRootDefaultDimension(id, node, value, artifact) {
-  const inferred = inferExprDimension(artifact, value, {});
+function assertRootDefaultDimension(id, node, ast, artifact) {
+  const inferred = dimensionFromAst(artifact, ast, {}, {});
   if (inferred === null || inferred === node.dimension) return;
   throw new Error(
     `Root "${id}" declares dimension "${node.dimension}" but its default infers "${inferred}"`
@@ -295,28 +339,22 @@ function assertRootDefaultDimension(id, node, value, artifact) {
 export function validateRootDefaults(artifact) {
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (node.kind !== "root") continue;
-    const value = node.default;
-    if (Array.isArray(value)) {
-      throw new Error(`Root "${id}" default must be an expression or a scalar literal`);
-    }
-    if (value === null || typeof value !== "object") {
-      if (typeof value === "string" && node.dimension !== "reference") {
+    const ast = compileExpression(node.default).ast;
+    if (ast?.type === "Literal") {
+      if (typeof ast.value === "string" && node.dimension !== "reference") {
         throw new Error(`Root "${id}" has a string default but dimension "${node.dimension}"`);
       }
       continue;
     }
-    assertIfBranchesAgree(id, value, artifact);
-    assertRootDefaultDimension(id, node, value, artifact);
+    assertIfBranchesAgree(id, ast, artifact);
+    assertRootDefaultDimension(id, node, ast, artifact);
   }
 }
 
-// Verify every dimensioned computed collection field is dimension-consistent.
-// The field expression binds the reserved `row` alias to the item schema, so
-// `row.pct` infers the authored field's dimension.
 function fieldInputDimensions(spec, artifact) {
   const inputDims = {};
   for (const [alias, path] of Object.entries(spec.inputs ?? {})) {
-    inputDims[alias] = inferExprDimension(artifact, { ref: path }, {});
+    inputDims[alias] = inferExprDimension(artifact, path, {});
   }
   return inputDims;
 }
@@ -344,16 +382,13 @@ export function validateCollectionFields(artifact) {
   }
 }
 
-// Verify every dimensioned derived node's expression is dimension-consistent.
 export function validateDerivedDimensions(artifact) {
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (node.kind !== "derived" || !node.output.dimension) continue;
     const inputDims = {};
     const collSchemas = {};
     for (const [alias, path] of Object.entries(node.inputs)) {
-      // Infer the alias's dimension from its full path (boundary output,
-      // selection/collection field, or node), not just the node.
-      inputDims[alias] = inferExprDimension(artifact, { ref: path }, {});
+      inputDims[alias] = inferExprDimension(artifact, path, {});
       const r = resolveReference(artifact, path);
       const cn = r?.kind === "node" && r.suffix.length === 0 ? artifact.nodes[r.nodeId] : null;
       if (cn?.kind === "collection") collSchemas[alias] = cn.item_schema;

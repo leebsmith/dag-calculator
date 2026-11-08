@@ -80,7 +80,7 @@ def test_invalid_domain_rejected():
 
 def test_intensive_value_bound_matches_the_split_roots():
     for root in ("batch.mash_thickness_l_per_kg", "batch.runoff_ratio"):
-        assert ARTIFACT["nodes"][root]["domain"] == {"gt": 0}
+        assert ARTIFACT["nodes"][root]["domain"] == "$value > 0"
 
     with pytest.raises(ValidationError):
         make_batch_request(intensive_value=0.0)

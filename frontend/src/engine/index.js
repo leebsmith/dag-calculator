@@ -22,7 +22,7 @@ export function createCalculator(artifact, options = {}) {
 }
 
 export { createEngine, buildGraph, topologicalSort } from "./dag.js";
-export { evaluate } from "./ast.js";
+export { collectIdentifierPaths, compileExpression, runtimeFor } from "./expression.js";
 export { evaluatePredicate, relationStates } from "./relations.js";
 export { checkDomain, domainStates, fieldDomainStates, collectionDomainStates } from "./domains.js";
 export { canonicalize, canonicalFingerprint, BoundaryCache } from "./boundary.js";

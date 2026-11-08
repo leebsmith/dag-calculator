@@ -53,8 +53,11 @@ test("rejects root dimension and default drift", () => {
   assert.throws(() => validateArtifact(badDimension), /unknown dimension "nope"/);
 
   const badDefault = clone();
-  node(badDefault, "root").default = { ref: "nope.missing" };
-  assert.throws(() => validateArtifact(badDefault), /Root ".*" default references unknown node\/field/);
+  node(badDefault, "root").default = "nope.missing";
+  assert.throws(
+    () => validateArtifact(badDefault),
+    /Root ".*" default references unknown node\/field/
+  );
 });
 
 test("rejects collection and selection schema or ref drift", () => {
@@ -82,7 +85,7 @@ test("rejects choice taxonomy and default drift", () => {
 
   const badDefault = clone();
   const choice = node(badDefault, "choice");
-  choice.default = "__not-a-member__";
+  choice.default = '"__not-a-member__"';
   assert.throws(() => validateArtifact(badDefault), /is not a member of taxonomy/);
 });
 
@@ -105,15 +108,15 @@ test("rejects derived inputs, output, and expression drift", () => {
   assert.throws(() => validateArtifact(twoKinds), /exactly one of dimension\/taxonomy\/boolean/);
 
   const unknownConst = clone();
-  node(unknownConst, "derived").expr = { const: "NOPE" };
+  node(unknownConst, "derived").expr = "constants.NOPE";
   assert.throws(() => validateArtifact(unknownConst), /unknown constant "NOPE"/);
 
   const unknownFn = clone();
-  node(unknownFn, "derived").expr = { call: "nope" };
+  node(unknownFn, "derived").expr = "functions.nope()";
   assert.throws(() => validateArtifact(unknownFn), /unknown function "nope"/);
 
   const unknownNested = clone();
-  node(unknownNested, "derived").expr = { args: [{ call: "nope" }] };
+  node(unknownNested, "derived").expr = "(batch.target_abv + functions.nope())";
   assert.throws(() => validateArtifact(unknownNested), /unknown function "nope"/);
 });
 
@@ -194,13 +197,13 @@ test("rejects relation drift", () => {
     {
       id: "r1",
       blocking: false,
-      predicate: { op: "le", lhs: { ref: "nope.missing" }, rhs: { const: 1 } },
+      predicate: "nope.missing <= 1",
     },
   ];
   assert.throws(() => validateArtifact(badPredicate), /Relation "r1" references unknown/);
 
   const noBlocking = clone();
-  noBlocking.relations = [{ id: "r1", predicate: { op: "le", lhs: 1, rhs: 1 } }];
+  noBlocking.relations = [{ id: "r1", predicate: "1 <= 1" }];
   assert.throws(() => validateArtifact(noBlocking), /Relation "r1" must declare a boolean "blocking"/);
 });
 
@@ -209,27 +212,21 @@ test("root defaults must infer the root dimension", () => {
   assert.equal(validateRootDefaults(clone()), undefined);
 
   const wrongDimension = clone();
-  wrongDimension.nodes["batch.target_abv"].default = { ref: "batch.v_ferm" };
+  wrongDimension.nodes["batch.target_abv"].default = "batch.v_ferm";
   assert.throws(
     () => validateRootDefaults(wrongDimension),
     /declares dimension "abv" but its default infers "volume"/
   );
 
   const stringDefault = clone();
-  stringDefault.nodes["batch.v_ferm"].default = "oops";
+  stringDefault.nodes["batch.v_ferm"].default = '"oops"';
   assert.throws(
     () => validateRootDefaults(stringDefault),
     /has a string default but dimension "volume"/
   );
 
   const mixedBranches = clone();
-  mixedBranches.nodes["batch.target_abv"].default = {
-    op: "if",
-    args: [
-      { op: "gt", args: [{ ref: "batch.v_ferm" }, 0] },
-      { ref: "batch.v_ferm" },
-      { ref: "batch.target_ibu" },
-    ],
-  };
+  mixedBranches.nodes["batch.target_abv"].default =
+    "batch.v_ferm > 0 ? batch.v_ferm : batch.target_ibu";
   assert.throws(() => validateRootDefaults(mixedBranches), /if branches with dimensions/);
 });

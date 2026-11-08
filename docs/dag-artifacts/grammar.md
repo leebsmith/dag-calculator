@@ -86,18 +86,18 @@ namespace → error.
 "mash.grain_temp_c": {
   "kind": "root",
   "dimension": "temperature",
-  "default": { "const": "default_grain_temp_c" },
-  "domain": { "gte": 0 }
+  "default": "constants.default_grain_temp_c",
+  "domain": "$value >= 0"
 }
 ```
 
-- `default` — an expression (see `expression-language.md`): `{const}` / `{ref}` /
-  `{call}` / a bare literal. Evaluated when the root is unset; a default that
-  reads a selection field is the sanctioned way to inherit a component value
+- `default` — a Jexl expression (see `expression-language.md`), evaluated when
+  the root is unset. A default that reads a selection field is the sanctioned
+  way to inherit a component value
   (e.g. `batch.boil_off_rate_l_per_hr` → `equipment.nominal_boil_off_rate_l_per_hr`).
-  A non-literal default must infer the root's declared dimension; bare numbers
-  are read in that dimension and bare strings are only valid for `reference`
-  roots.
+  A non-literal default must infer the root's declared dimension; a numeric
+  literal is read in that dimension and a string literal is only valid for
+  `reference` roots.
   A set root overrides its default and is never overwritten by later component
   changes.
 - `domain` — **unary bounds** on this node (see §4.1).
@@ -108,11 +108,11 @@ namespace → error.
 "grist.major_malts": {
   "kind": "collection",
   "item_schema": "grist_row",
-  "default": { "call": "default_major_malts", "args": [] },
+  "default": "functions.default_major_malts()",
   "fields": {
     "mass_kg": {
       "inputs": { "m_grist": "solver.batch.m_grist" },
-      "expr": { "op": "*", "args": [ { "ref": "row.pct" }, { "ref": "m_grist" } ] },
+      "expr": "(row.pct * m_grist)",
       "output": { "dimension": "mass" }
     }
   }
@@ -123,9 +123,9 @@ namespace → error.
   fields only.
 - `fields` — optional **row-scoped computed values**, keyed by field name. Each
   entry has the shape of a `derived` node minus the node wrapper: `inputs`
-  (alias → dotted path), `expr`, and `output` (one value spec, as in §2.4). The
-  alias `row` is reserved and bound to the element, so `{ref: "row.pct"}` reads
-  an authored `item_schema` field. A computed field may not shadow an
+  (alias → dotted path), a Jexl `expr`, and `output` (one value spec, as in
+  §2.4). The alias `row` is reserved and bound to the element, so `row.pct`
+  reads an authored `item_schema` field. A computed field may not shadow an
   `item_schema` field and may not read another computed field, so evaluation is
   strictly row-local plus its declared inputs. Computed fields are materialized
   on **evaluation**, never written into collection state (`semantics.md` §2.4).
@@ -133,7 +133,8 @@ namespace → error.
   ordering edge, so a field may read any node — including the boundary that
   consumes the collection. Inputs resolve in authored mode, so the boundary and
   the field both read the authored `item_schema` rows and cannot recurse.
-- Addressed via dotted sub-refs; reduced over by `map`/`filter`/`sum`/`weighted_avg`.
+- Addressed via dotted sub-refs; reduced over by the `map`/`filter`/`sum`/
+  `weighted_avg` transforms.
 - Hamilton largest-remainder allocation cannot be expressed in the language, so
   the values that need it are hosted: `pct` (a boundary input) and the
   late-addition sugar share. They are the only two host-normalized values; both
@@ -172,15 +173,14 @@ namespace → error.
     "t_grain":   "mash.grain_temp_c",
     "thickness": "solver.batch.mash_thickness_l_per_kg"
   },
-  "expr": { "call": "calculate_strike_water_base_temp",
-            "args": [ { "ref": "t_target" }, { "ref": "t_grain" }, { "ref": "thickness" } ] },
+  "expr": "functions.calculate_strike_water_base_temp(t_target, t_grain, thickness)",
   "output": { "dimension": "temperature" }
 }
 ```
 
 - `inputs` — alias → node path (the **explicit edges**; aliases are the names the
   expression references).
-- `expr` — an AST expression (see `expression-language.md`).
+- `expr` — a Jexl expression (see `expression-language.md`).
 - `output` — one of `{ "dimension": id }`, `{ "taxonomy": id }`, or
   `{ "type": "boolean" }`. A taxonomy/boolean output is an **interpretation**
   (a categorical derived value), not a quantity.
@@ -220,13 +220,13 @@ namespace → error.
 "batch.topology": {
   "kind": "choice",
   "taxonomy": "topology",
-  "default": "r_l_to_g"
+  "default": "\"r_l_to_g\""
 }
 ```
 
 - `taxonomy` — the enumerated domain the value is drawn from (see `taxonomies`).
-- `default` — the selected member (a bare string) or an expression evaluating to one.
-  If a literal, it must be a member of the named `taxonomy`.
+- `default` — the selected member (a Jexl string literal) or a Jexl expression
+  evaluating to one. A literal must be a member of the named `taxonomy`.
 - Binary inputs (e.g. `r_l_to_g` | `runoff_ratio`) are `choice` over a 2-member
   taxonomy; a dedicated boolean *input* kind does not exist (booleans are a
   computed/interpretation value type only).
@@ -253,22 +253,20 @@ The explicit adjacency graph is derived mechanically from `inputs`, `ref`, and
 
 ### 4.1 Unary domain (per-node)
 
-A node (usually `root`) may carry `domain` bounds. The bound references
-constants where the bound is a known parameter (e.g. a yeast envelope):
+A node (usually `root`) may carry a `domain`: one Jexl boolean string over the
+reserved subject `$value`. The bound references constants where the bound is a
+known parameter (e.g. a yeast envelope):
 
 ```jsonc
-"domain": { "gte": 0, "lte": { "const": "max_boil_off_rate" } }
+"domain": "$value >= 0 && $value <= constants.max_boil_off_rate"
 ```
 
-Supported operators: `gt`, `gte`, `lt`, `lte`, `eq`, `ne`. Bounds may be
-literals, `{const}`, or `{ref}`. These are *annotations* — they restrict the
-valid inputs, they are not separate nodes.
-
-A bound that cannot be resolved (e.g. a `{ref}` to a field of an unset optional
-selection) is treated as **not applicable** and skipped. Primitive-schema fields
-may also carry `domain`s; those are evaluated for the fields of a *selected*
-component and for the items of a *collection* (surfaced separately from node
-domains).
+These are *annotations* — they restrict the valid inputs, they are not separate
+nodes. A bound whose referenced limit cannot be resolved (e.g. a field of an
+unset optional selection) is treated as **not applicable** and skipped.
+Primitive-schema fields may also carry `domain`s; those are evaluated for the
+fields of a *selected* component and for the items of a *collection* (surfaced
+separately from node domains).
 
 A node with **no value** (`undefined` / `null` — e.g. a root whose default reads
 a field of an unset selection) is reported as **unresolved**:
@@ -281,9 +279,7 @@ non-finite computed number (e.g. `NaN`) is still a violation.
 ```jsonc
 { "id": "hlt_not_overfilled",
   "blocking": true,
-  "predicate": { "op": "le",
-                 "lhs": { "ref": "batch.hlt_starting_volume_l" },
-                 "rhs": { "ref": "equipment.max_hlt_volume_l" } } }
+  "predicate": "(batch.hlt_starting_volume_l <= equipment.max_hlt_volume_l)" }
 ```
 
 A relation is a predicate over two or more nodes that no single node owns. It is
@@ -295,15 +291,15 @@ overfilled tun, a kettle that cannot hold the pre-boil volume). `false` marks a
 quality/policy finding (a thin mash, a rig preference). The view maps `blocking`
 to its `error`/`warning` severity; the artifact never names those words.
 
-The AST has no scalar `min`/`max`. Use `if(a >= b, a, b)` for the larger of two
+Jexl has no scalar `min`/`max` operator. Use a ternary for the larger of two
 values — `mash_tun_not_overfilled` compares the peak phase volume this way.
 
-Predicate referents may include selection fields. Because `and`/`or`/`if`
-**short-circuit**, an optional selection is guarded with a conditional, e.g.
-`if(ref != "", <predicate over the selected component>, true)`. An *unguarded*
-ref to an unset optional selection resolves to `undefined` and the comparison
-yields a spurious `holds:false` — it is not a load error (validate only checks
-that refs resolve).
+Predicate referents may include selection fields. Because `&&`, `||`, and the
+ternary **short-circuit**, an optional selection is guarded with a conditional,
+e.g. `ref != "" ? <predicate over the selected component> : true`. An
+*unguarded* ref to an unset optional selection resolves to `undefined` and the
+comparison yields a spurious `holds:false` — it is not a load error (validate
+only checks that refs resolve).
 
 ---
 
@@ -313,21 +309,23 @@ The artifact is a JSON document. Its machine schema (used by the *validator*
 tooling, not shipped as a deliverable) is, in essence:
 
 - Top level: object with `schema_version` (integer; current grammar revision is
-  **10**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
+  **11**), `meta` (object), `dimensions`, `constants`, `taxonomies`, `functions`,
   `primitive_schemas`, `identity` (all objects), `nodes` (all objects), and
   `relations` (array).
 - `nodes.*` must be one of the **six** kinds; each kind's required fields are in
   §2; unknown `kind` values are rejected.
-- `derived.expr` and `functions.*.body` must be valid AST (see
-  `expression-language.md`). So must a `collection.fields.*.expr`.
+- `derived.expr` and `functions.*.body` must be valid Jexl (see
+  `expression-language.md`). So must a `collection.fields.*.expr`, a `default`,
+  a `domain`, and a relation `predicate`.
 - `output` must be exactly one of `dimension`/`taxonomy`/`type:boolean`/`schema`;
   a boundary output may also be a collection (`type:collection` + `item_schema`).
   A `collection.fields` entry carries the same value spec as a `derived.output`.
   A selection's `output` is `{schema: <id>}`. A schema field may also carry
   `{type:"boolean"}` for a flag (e.g. `enabled`).
-- Every `inputs`/`ref`/`{ref}` path must resolve to a declared node, a declared
-  schema field, or a declared identity namespace + schema field; dangling
-  references are a validation error.
+- Every `inputs`/`ref` path and every identifier in a Jexl expression must
+  resolve to a declared node, a declared schema field, an input alias, a
+  constant, a function, or a declared identity namespace + schema field;
+  dangling references are a validation error.
 - Every `dimension`/`taxonomy`/`schema`/`function`/`constant` id referenced
   anywhere must be declared in its section.
 

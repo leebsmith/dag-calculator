@@ -30,17 +30,12 @@ function backendLegacyDefaults() {
 
 test("the artifact grammar revision matches the validator and generated docs", () => {
   const a = artifact();
-  const versions = [...SUPPORTED_SCHEMA_VERSIONS];
   assert.deepEqual(
-    versions,
-    Array.from({ length: versions.length }, (_, i) => i + 1),
-    "SUPPORTED_SCHEMA_VERSIONS must be contiguous from 1"
+    [...SUPPORTED_SCHEMA_VERSIONS],
+    [11],
+    "SUPPORTED_SCHEMA_VERSIONS must require exactly the Jexl revision"
   );
-  assert.equal(
-    a.schema_version,
-    versions.at(-1),
-    "artifact schema_version must be the newest supported revision"
-  );
+  assert.equal(a.schema_version, 11, "artifact schema_version must be 11");
 
   const inventory = read("docs/dag-artifacts/inventory.md");
   const inventoryVersion = inventory.match(/`schema_version`: \*\*(\d+)\*\*/);

@@ -28,7 +28,7 @@ function uncheckedDerived(a) {
     const inputDims = {};
     const collSchemas = {};
     for (const [alias, path] of Object.entries(node.inputs)) {
-      inputDims[alias] = inferExprDimension(a, { ref: path }, {});
+      inputDims[alias] = inferExprDimension(a, path, {});
       const r = resolveReference(a, path);
       const cn = r && r.suffix.length === 0 ? a.nodes[r.nodeId] : null;
       if (cn?.kind === "collection") collSchemas[alias] = cn.item_schema;

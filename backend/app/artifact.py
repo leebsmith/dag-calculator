@@ -10,6 +10,7 @@ import json
 import logging
 import math
 import os
+import re
 from collections.abc import Mapping
 from datetime import date
 from pathlib import Path
@@ -26,6 +27,15 @@ _DOMAIN_OPS = {
     "lte": lambda a, b: a <= b,
     "eq": lambda a, b: a == b,
     "ne": lambda a, b: a != b,
+}
+_DOMAIN_STRING = re.compile(r"^\$value\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$")
+_DOMAIN_STRING_OPS = {
+    ">": lambda a, b: a > b,
+    ">=": lambda a, b: a >= b,
+    "<": lambda a, b: a < b,
+    "<=": lambda a, b: a <= b,
+    "==": lambda a, b: a == b,
+    "!=": lambda a, b: a != b,
 }
 
 # One entry per file, keyed by the file's identity on disk. A dev server outlives
@@ -115,7 +125,35 @@ def _resolve_limit(limit: Any, constants: dict[str, Any]) -> Any:
     return None
 
 
+def _string_limit(expression: str, constants: dict[str, Any]) -> float | None:
+    text = expression.strip()
+    if text.startswith("constants."):
+        constant = constants.get(text[len("constants.") :], {})
+        limit = constant.get("value") if isinstance(constant, Mapping) else None
+        return float(limit) if isinstance(limit, (int, float)) else None
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def _string_domain_error(domain: str, value: float, constants: dict[str, Any]) -> bool:
+    for term in domain.split("&&"):
+        match = _DOMAIN_STRING.match(term.strip())
+        if match is None:
+            return False
+        op, limit_expr = match.groups()
+        limit = _string_limit(limit_expr, constants)
+        if limit is None:
+            continue
+        if not _DOMAIN_STRING_OPS[op](value, limit):
+            return True
+    return False
+
+
 def _domain_error(domain: Any, value: float, constants: dict[str, Any]) -> bool:
+    if isinstance(domain, str):
+        return _string_domain_error(domain, value, constants)
     if not isinstance(domain, Mapping):
         return False
     for op, limit_expr in domain.items():

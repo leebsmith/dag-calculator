@@ -18,16 +18,13 @@ const DIMENSIONS = {
 
 const MASS_FIELD = {
   inputs: { m_grist: "solver.scale.m_grist" },
-  expr: {
-    op: "*",
-    args: [{ ref: "row.pct" }, { ref: "m_grist" }],
-  },
+  expr: "(row.pct * m_grist)",
   output: { dimension: "mass" },
 };
 
 function synthetic({ fields = { mass_kg: MASS_FIELD }, boundaryInputs = { total: "batch.parts_total" } } = {}) {
   return {
-    schema_version: 10,
+    schema_version: 11,
     dimensions: DIMENSIONS,
     constants: {},
     taxonomies: {},
@@ -35,11 +32,11 @@ function synthetic({ fields = { mass_kg: MASS_FIELD }, boundaryInputs = { total:
     primitive_schemas: {
       row: {
         parts: { dimension: "dimensionless" },
-        pct: { dimension: "percentage", domain: { gte: 0, lte: 1 } },
+        pct: { dimension: "percentage", domain: "$value >= 0 && $value <= 1" },
       },
     },
     nodes: {
-      "batch.parts_total": { kind: "root", dimension: "dimensionless", default: 100 },
+      "batch.parts_total": { kind: "root", dimension: "dimensionless", default: "100" },
       "batch.rows": { kind: "collection", item_schema: "row", fields },
       "solver.scale": {
         kind: "boundary",
@@ -104,10 +101,7 @@ test("a field input that reduces its own collection reads the authored rows", ()
   const fields = {
     mass_kg: {
       inputs: { total: "batch.parts_sum", m_grist: "solver.scale.m_grist" },
-      expr: {
-        op: "/",
-        args: [{ ref: "row.parts" }, { ref: "total" }],
-      },
+      expr: "(row.parts / total)",
       output: { dimension: "dimensionless" },
     },
   };
@@ -115,12 +109,7 @@ test("a field input that reduces its own collection reads the authored rows", ()
   doc.nodes["batch.parts_sum"] = {
     kind: "derived",
     inputs: { rows: "batch.rows" },
-    expr: {
-      op: "sum",
-      coll: { ref: "rows" },
-      as: "row",
-      body: { ref: "row.parts" },
-    },
+    expr: '(rows | sum("parts"))',
     output: { dimension: "dimensionless" },
   };
   const engine = create(doc);
@@ -148,7 +137,7 @@ test("a boolean row field is a declared value spec, not a quantity", () => {
   const fields = {
     heavy: {
       inputs: { cutoff: "batch.parts_total" },
-      expr: { op: "gt", args: [{ ref: "row.parts" }, { ref: "cutoff" }] },
+      expr: "(row.parts > cutoff)",
       output: { type: "boolean" },
     },
   };
@@ -183,7 +172,7 @@ test("validateArtifact rejects malformed computed fields", () => {
   unknownRowField.nodes["batch.rows"].fields = {
     mass_kg: {
       ...MASS_FIELD,
-      expr: { op: "*", args: [{ ref: "row.mass" }, { ref: "m_grist" }] },
+      expr: "(row.mass * m_grist)",
     },
   };
   assert.throws(() => validateArtifact(unknownRowField), /references unknown row field "row.mass"/);
@@ -200,7 +189,7 @@ test("validateArtifact rejects malformed computed fields", () => {
 
   const unknownConstant = synthetic();
   unknownConstant.nodes["batch.rows"].fields = {
-    mass_kg: { ...MASS_FIELD, expr: { const: "NOPE" } },
+    mass_kg: { ...MASS_FIELD, expr: "constants.NOPE" },
   };
   assert.throws(() => validateArtifact(unknownConstant), /unknown constant "NOPE"/);
 });

@@ -1,9 +1,10 @@
 // Artifact structural validation (grammar §5). Throws on structural problems.
 
+import { compileExpression } from "./expression.js";
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-export const SUPPORTED_SCHEMA_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+export const SUPPORTED_SCHEMA_VERSIONS = [11];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {
@@ -29,10 +30,19 @@ export function validateArtifact(artifact) {
 
   validateSchemas(artifact, dimensions, taxonomies);
   validateIdentity(artifact, schemas);
+  validateNodes(artifact, dimensions, taxonomies, constants, functions, schemas);
+  validateRelationsAndFunctions(artifact, constants, functions);
 
+  return artifact;
+}
+
+function validateNodes(artifact, dimensions, taxonomies, constants, functions, schemas) {
   for (const [id, node] of Object.entries(artifact.nodes)) {
     if (!NODE_KINDS.includes(node.kind)) {
       throw new Error(`Node "${id}" has unknown kind "${node.kind}"`);
+    }
+    if (typeof node.domain === "string") {
+      checkExprIds(artifact, node.domain, constants, functions, `Node "${id}" domain`);
     }
     switch (node.kind) {
       case "root":
@@ -59,11 +69,7 @@ export function validateArtifact(artifact) {
         if (!taxonomies[node.taxonomy]) {
           throw new Error(`Choice "${id}" references unknown taxonomy "${node.taxonomy}"`);
         }
-        if (typeof node.default === "string" && !taxonomies[node.taxonomy].includes(node.default)) {
-          throw new Error(
-            `Choice "${id}" default "${node.default}" is not a member of taxonomy "${node.taxonomy}"`
-          );
-        }
+        checkChoiceDefault(id, node, taxonomies);
         checkDefaultRefs(artifact, node, `Choice "${id}"`);
         break;
       case "derived":
@@ -76,7 +82,15 @@ export function validateArtifact(artifact) {
         break;
     }
   }
+}
 
+function validateRelationsAndFunctions(artifact, constants, functions) {
+  for (const [id, fn] of Object.entries(functions)) {
+    const aliases = Object.fromEntries(fn.params.map((param) => [param, true]));
+    checkExprIds(artifact, fn.body, constants, functions, `Function "${id}" body`, {
+      aliases,
+    });
+  }
   for (const relation of artifact.relations ?? []) {
     if (!relation || typeof relation !== "object" || !relation.id) {
       throw new Error("Each relation must be an object with an id");
@@ -84,12 +98,14 @@ export function validateArtifact(artifact) {
     if (typeof relation.blocking !== "boolean") {
       throw new Error(`Relation "${relation.id}" must declare a boolean "blocking"`);
     }
-    for (const path of collectRefs(relation.predicate)) {
-      checkRefResolves(artifact, path, `Relation "${relation.id}"`);
-    }
+    checkExprIds(
+      artifact,
+      relation.predicate,
+      constants,
+      functions,
+      `Relation "${relation.id}"`
+    );
   }
-
-  return artifact;
 }
 
 const ROW_ALIAS = "row";
@@ -130,14 +146,10 @@ function validateCollection(artifact, id, node, dimensions, taxonomies, constant
     if (spec.output.taxonomy && !taxonomies[spec.output.taxonomy]) {
       throw new Error(`${label} has unknown taxonomy "${spec.output.taxonomy}"`);
     }
-    checkExprIds(artifact, spec.expr, constants, functions, `${label} expr`);
-    for (const path of collectRefs(spec.expr)) {
-      if (path !== ROW_ALIAS && !path.startsWith(`${ROW_ALIAS}.`)) continue;
-      const field = path.slice(ROW_ALIAS.length + 1);
-      if (!Object.prototype.hasOwnProperty.call(schema, field)) {
-        throw new Error(`${label} references unknown row field "${path}"`);
-      }
-    }
+    checkExprIds(artifact, spec.expr, constants, functions, `${label} expr`, {
+      aliases: spec.inputs,
+      rowSchema: schema,
+    });
   }
 }
 
@@ -149,7 +161,9 @@ function validateDerived(artifact, id, node, constants, functions) {
     checkRefResolves(artifact, path, `Derived "${id}" input "${alias}"`);
   }
   checkOutput(node, `Derived "${id}"`);
-  checkExprIds(artifact, node.expr, constants, functions, `Derived "${id}" expr`);
+  checkExprIds(artifact, node.expr, constants, functions, `Derived "${id}" expr`, {
+    aliases: node.inputs,
+  });
 }
 
 function validateBoundary(artifact, id, node, dimensions, taxonomies) {
@@ -203,6 +217,15 @@ function validateSchemas(artifact, dimensions, taxonomies) {
       if (spec.type !== undefined && spec.type !== "boolean") {
         throw new Error(`Schema "${sid}" field "${field}" has unsupported type "${spec.type}"`);
       }
+      if (typeof spec.domain === "string") {
+        checkExprIds(
+          artifact,
+          spec.domain,
+          artifact.constants ?? {},
+          artifact.functions ?? {},
+          `Schema "${sid}" field "${field}" domain`
+        );
+      }
     }
   }
 }
@@ -216,21 +239,148 @@ function checkOutput(node, label) {
   }
 }
 
-function checkExprIds(artifact, expr, constants, functions, label) {
-  if (expr === null || typeof expr !== "object") return;
-  if ("const" in expr && !(expr.const in constants)) {
-    throw new Error(`${label} references unknown constant "${expr.const}"`);
+const TRANSFORM_NAMES = new Set([
+  "sum",
+  "min",
+  "max",
+  "weighted_avg",
+  "sum_expr",
+  "min_expr",
+  "max_expr",
+  "weighted_avg_expr",
+  "map_expr",
+  "filter_expr",
+]);
+const FIELD_TRANSFORMS = {
+  sum: { fields: [1], where: 2 },
+  min: { fields: [1], where: 2 },
+  max: { fields: [1], where: 2 },
+  weighted_avg: { fields: [1, 2], where: 3 },
+};
+const EXPR_TRANSFORMS = {
+  sum_expr: { expressions: [1], where: 2 },
+  min_expr: { expressions: [1], where: 2 },
+  max_expr: { expressions: [1], where: 2 },
+  weighted_avg_expr: { expressions: [1, 2], where: 3 },
+  map_expr: { expressions: [1], where: 2 },
+  filter_expr: { expressions: [1], where: 2 },
+};
+
+function identifierPath(node) {
+  if (!node || node.type !== "Identifier") return null;
+  const base = node.from ? identifierPath(node.from) : null;
+  if (node.from && base === null) return null;
+  return base ? `${base}.${node.value}` : node.value;
+}
+
+function literalValue(node) {
+  return node?.type === "Literal" ? node.value : undefined;
+}
+
+function walkCalls(node, visit) {
+  if (!node || typeof node !== "object") return;
+  if (Array.isArray(node)) {
+    for (const item of node) walkCalls(item, visit);
+    return;
   }
-  if ("call" in expr && !(expr.call in functions)) {
-    throw new Error(`${label} references unknown function "${expr.call}"`);
+  if (node.type === "FunctionCall") visit(node);
+  for (const [key, value] of Object.entries(node)) {
+    if (key === "_parent") continue;
+    walkCalls(value, visit);
   }
-  if ("args" in expr && Array.isArray(expr.args)) {
-    expr.args.forEach((a) => checkExprIds(artifact, a, constants, functions, label));
+}
+
+function transformRowSchema(artifact, call, aliases) {
+  const path = identifierPath(call.args?.[0]);
+  if (!path) return null;
+  const target = aliases[path] ?? path;
+  const ref = resolveReference(artifact, target);
+  if (ref?.kind !== "node" || ref.suffix.length > 0) return null;
+  const node = artifact.nodes[ref.nodeId];
+  if (node?.kind !== "collection") return null;
+  return artifact.primitive_schemas?.[node.item_schema] ?? null;
+}
+
+function checkTransformCall(artifact, call, label, constants, functions, aliases) {
+  if (!TRANSFORM_NAMES.has(call.name)) {
+    throw new Error(`${label} references unknown transform "${call.name}"`);
   }
-  if ("body" in expr) checkExprIds(artifact, expr.body, constants, functions, label);
-  if ("coll" in expr) checkExprIds(artifact, expr.coll, constants, functions, label);
-  if ("value" in expr) checkExprIds(artifact, expr.value, constants, functions, label);
-  if ("weight" in expr) checkExprIds(artifact, expr.weight, constants, functions, label);
+  const args = call.args ?? [];
+  const rowSchema = transformRowSchema(artifact, call, aliases);
+  const fieldForm = FIELD_TRANSFORMS[call.name];
+  if (fieldForm) {
+    for (const index of fieldForm.fields) {
+      const field = literalValue(args[index]);
+      if (rowSchema && typeof field === "string" && !(field in rowSchema)) {
+        throw new Error(`${label} references unknown row field "row.${field}"`);
+      }
+    }
+    checkWhere(args[fieldForm.where], artifact, label, constants, functions, aliases, rowSchema);
+    return;
+  }
+  const exprForm = EXPR_TRANSFORMS[call.name];
+  for (const index of exprForm.expressions) {
+    const expression = literalValue(args[index]);
+    if (typeof expression !== "string") continue;
+    checkExprIds(artifact, expression, constants, functions, `${label} transform "${call.name}"`, {
+      aliases,
+      rowSchema,
+    });
+  }
+  checkWhere(args[exprForm.where], artifact, label, constants, functions, aliases, rowSchema);
+}
+
+function checkWhere(ast, artifact, label, constants, functions, aliases, rowSchema) {
+  const where = literalValue(ast);
+  if (typeof where !== "string") return;
+  checkExprIds(artifact, where, constants, functions, `${label} transform where`, {
+    aliases,
+    rowSchema,
+  });
+}
+
+function checkExprIds(artifact, expression, constants, functions, label, options = {}) {
+  const { aliases = {}, rowSchema = null } = options;
+  const record = compileExpression(expression);
+  for (const path of record.paths) {
+    if (path === "$value" || path === "$context" || path === "constants") continue;
+    if (path === "null") continue;
+    if (path.startsWith("constants.")) {
+      const id = path.slice("constants.".length);
+      if (!(id in constants)) {
+        throw new Error(`${label} references unknown constant "${id}"`);
+      }
+      continue;
+    }
+    if (path === "row" || path.startsWith("row.")) {
+      if (!rowSchema) throw new Error(`${label} references row outside a collection field`);
+      const field = path.slice("row.".length);
+      if (!(field in rowSchema)) {
+        throw new Error(`${label} references unknown row field "${path}"`);
+      }
+      continue;
+    }
+    if (Object.prototype.hasOwnProperty.call(aliases, path)) continue;
+    checkRefResolves(artifact, path, label);
+  }
+  walkCalls(record.ast, (call) => {
+    if (call.pool === "functions" && !(call.name in functions)) {
+      throw new Error(`${label} references unknown function "${call.name}"`);
+    }
+    if (call.pool === "transforms") {
+      checkTransformCall(artifact, call, label, constants, functions, aliases);
+    }
+  });
+}
+
+function checkChoiceDefault(id, node, taxonomies) {
+  const ast = compileExpression(node.default).ast;
+  if (ast?.type !== "Literal" || typeof ast.value !== "string") return;
+  if (!taxonomies[node.taxonomy].includes(ast.value)) {
+    throw new Error(
+      `Choice "${id}" default "${ast.value}" is not a member of taxonomy "${node.taxonomy}"`
+    );
+  }
 }
 
 function checkRefResolves(artifact, path, label) {
@@ -273,22 +423,13 @@ function validateIdentity(artifact, schemas) {
   }
 }
 
-// Every `{ref}` in a node's `default` expression must resolve.
+// Every identifier in a node's `default` expression must resolve.
 function checkDefaultRefs(artifact, node, label) {
-  for (const path of collectRefs(node.default)) {
-    checkRefResolves(artifact, path, `${label} default`);
-  }
-}
-
-function collectRefs(expr, out = []) {
-  if (expr === null || typeof expr !== "object") return out;
-  if (Array.isArray(expr)) {
-    for (const item of expr) collectRefs(item, out);
-    return out;
-  }
-  for (const [key, value] of Object.entries(expr)) {
-    if (key === "ref" && typeof value === "string") out.push(value);
-    else collectRefs(value, out);
-  }
-  return out;
+  checkExprIds(
+    artifact,
+    node.default,
+    artifact.constants ?? {},
+    artifact.functions ?? {},
+    `${label} default`
+  );
 }

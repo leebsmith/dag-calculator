@@ -6,6 +6,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { compileExpression } from "../../frontend/src/engine/expression.js";
 import { steps } from "../../frontend/src/views/steps.js";
 import { artifact } from "./util.js";
 
@@ -73,26 +74,42 @@ const HOST_NODES = new Set([
   "water.mash_adjustment.alkalinity_as_caco3",
 ]);
 
-function collectConstants(value, out) {
-  if (Array.isArray(value)) {
-    for (const v of value) collectConstants(v, out);
-    return out;
+function expressionStrings(a) {
+  const expressions = [];
+  for (const node of Object.values(a.nodes)) {
+    if (typeof node.expr === "string") expressions.push(node.expr);
+    if (typeof node.default === "string") expressions.push(node.default);
+    if (typeof node.domain === "string") expressions.push(node.domain);
+    for (const spec of Object.values(node.fields ?? {})) {
+      if (typeof spec.expr === "string") expressions.push(spec.expr);
+    }
   }
-  if (value && typeof value === "object") {
-    if (typeof value.const === "string") out.add(value.const);
-    for (const v of Object.values(value)) collectConstants(v, out);
+  for (const fn of Object.values(a.functions ?? {})) expressions.push(fn.body);
+  for (const relation of a.relations ?? []) expressions.push(relation.predicate);
+  for (const schema of Object.values(a.primitive_schemas ?? {})) {
+    for (const spec of Object.values(schema)) {
+      if (typeof spec.domain === "string") expressions.push(spec.domain);
+    }
+  }
+  return expressions;
+}
+
+function expressionPaths(a) {
+  return expressionStrings(a).flatMap((expression) => compileExpression(expression).paths);
+}
+
+function collectConstants(a, out) {
+  for (const path of expressionPaths(a)) {
+    if (path.startsWith("constants.")) out.add(path.slice("constants.".length));
   }
   return out;
 }
 
-function collectRefs(value, out) {
-  if (Array.isArray(value)) {
-    for (const v of value) collectRefs(v, out);
-    return out;
-  }
-  if (value && typeof value === "object") {
-    if (typeof value.ref === "string") out.add(value.ref);
-    for (const v of Object.values(value)) collectRefs(v, out);
+function collectRefs(a, out) {
+  for (const path of expressionPaths(a)) {
+    if (path === "$value" || path === "$context" || path === "null" || path === "row") continue;
+    if (path.startsWith("row.") || path.startsWith("constants.")) continue;
+    out.add(path);
   }
   return out;
 }

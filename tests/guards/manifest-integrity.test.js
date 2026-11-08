@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { compileExpression } from "../../frontend/src/engine/expression.js";
 import { resolveReference } from "../../frontend/src/engine/paths.js";
 import { steps } from "../../frontend/src/views/steps.js";
 import { artifact } from "./util.js";
@@ -68,17 +69,14 @@ const IDENTITY_DERIVED = [
   "batch.target_srm",
 ];
 
-function collectRefs(expr, out = []) {
-  if (expr === null || typeof expr !== "object") return out;
-  if (Array.isArray(expr)) {
-    for (const item of expr) collectRefs(item, out);
-    return out;
-  }
-  for (const [key, value] of Object.entries(expr)) {
-    if (key === "ref" && typeof value === "string") out.push(value);
-    else collectRefs(value, out);
-  }
-  return out;
+function collectRefs(expression) {
+  return compileExpression(expression).paths.filter(
+    (path) =>
+      path !== "null" &&
+      path !== "$value" &&
+      path !== "$context" &&
+      !path.startsWith("constants.")
+  );
 }
 
 test("A6: identity-seeded root defaults are the documented set", () => {

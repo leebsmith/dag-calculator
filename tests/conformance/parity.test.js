@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-import { evaluate } from "../../frontend/src/engine/index.js";
+import { runtimeFor } from "../../frontend/src/engine/index.js";
 import { loadArtifact } from "../frontend/helpers.js";
 
 const artifact = loadArtifact();
@@ -17,20 +17,10 @@ const fixture = JSON.parse(
   readFileSync(new URL("./fixtures/oracle-parity.json", import.meta.url), "utf8")
 );
 
+const runtime = runtimeFor(artifact);
+
 function evalFn(fnId, args) {
-  const fn = artifact.functions[fnId];
-  const ctx = {
-    resolveRef: (name) => {
-      const i = fn.params.indexOf(name);
-      if (i === -1) throw new Error(`unknown param "${name}" in ${fnId}`);
-      return args[i];
-    },
-    resolveConst: (id) => artifact.constants[id].value,
-    call: () => {
-      throw new Error("nested calls are not exercised by conformance");
-    },
-  };
-  return evaluate(fn.body, ctx);
+  return runtime.callFunction(fnId, args);
 }
 
 test(`conformance: artifact functions match ${fixture.cases.length} snapshotted oracle values`, () => {
