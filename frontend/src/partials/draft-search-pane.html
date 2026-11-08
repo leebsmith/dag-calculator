@@ -9,10 +9,10 @@
       />
     </div>
 
-    <div class="segmented-control filter-pills-container">
+    <div class="segmented-control segmented-control--pills">
       <button
         type="button"
-        class="filter-pill segmented-item segmented-item--solid"
+        class="segmented-item segmented-item--pill segmented-item--solid"
         :class="{ 'is-active': draftSearchNotes }"
         :aria-pressed="draftSearchNotes ? 'true' : 'false'"
         @click="toggleDraftSearchNotes()"
@@ -20,11 +20,11 @@
     </div>
 
     <template x-if="draftFamilies.length > 0">
-      <div class="segmented-control filter-pills-container">
+      <div class="segmented-control segmented-control--pills">
         <template x-for="f in draftFamilies" :key="f.name">
           <button
             type="button"
-            class="filter-pill segmented-item segmented-item--solid"
+            class="segmented-item segmented-item--pill segmented-item--solid"
             :class="{ 'is-active': draftFamily === f.name }"
             :aria-pressed="draftFamily === f.name ? 'true' : 'false'"
             @click="toggleDraftFamily(f.name)"
@@ -55,11 +55,11 @@
     </template>
 
     <template x-if="draftCategories.length > 0">
-      <div class="segmented-control filter-pills-container">
+      <div class="segmented-control segmented-control--pills">
         <template x-for="c in draftCategories" :key="c">
           <button
             type="button"
-            class="filter-pill segmented-item segmented-item--solid"
+            class="segmented-item segmented-item--pill segmented-item--solid"
             :class="{ 'is-active': draftCategoryFilter.includes(c) }"
             :aria-pressed="draftCategoryFilter.includes(c) ? 'true' : 'false'"
             @click="toggleDraftCategory(c)"

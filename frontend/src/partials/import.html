@@ -15,24 +15,24 @@
     </div>
   </header>
 
-  <nav class="segmented-control import-stages" aria-label="Import stages">
+  <nav class="segmented-control segmented-control--inset" aria-label="Import stages">
     <button
       type="button"
-      class="btn-outline btn-sm segmented-item"
+      class="segmented-item segmented-item--button"
       :class="{ 'is-active': $store.importReview.stage === 'transcribe' }"
       :aria-pressed="$store.importReview.stage === 'transcribe'"
       @click="$store.importReview.goTo('transcribe')"
     >1 · Transcribe</button>
     <button
       type="button"
-      class="btn-outline btn-sm segmented-item"
+      class="segmented-item segmented-item--button"
       :class="{ 'is-active': $store.importReview.stage === 'map' }"
       :aria-pressed="$store.importReview.stage === 'map'"
       @click="$store.importReview.goTo('map')"
     >2 · Map</button>
     <button
       type="button"
-      class="btn-outline btn-sm segmented-item"
+      class="segmented-item segmented-item--button"
       :class="{ 'is-active': $store.importReview.stage === 'check' }"
       :aria-pressed="$store.importReview.stage === 'check'"
       @click="$store.importReview.goTo('check')"

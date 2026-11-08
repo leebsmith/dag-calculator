@@ -840,17 +840,87 @@ samp {
   gap: var(--space-2);
 }
 
+.segmented-control--tight {
+  gap: var(--space-1);
+}
+
+.segmented-control--pills {
+  margin-block: var(--space-3);
+}
+
+.segmented-control--spaced {
+  margin-bottom: var(--space-3);
+}
+
+.segmented-control--inset {
+  padding-inline: var(--space-2);
+}
+
 .segmented-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-family: inherit;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  border: 1px solid var(--color-transparent);
   cursor: pointer;
+  text-decoration: none;
+  user-select: none;
   transition:
     background-color var(--transition-fast),
     border-color var(--transition-fast),
     color var(--transition-fast);
 }
 
+.segmented-item:focus-visible {
+  outline: 2px solid var(--sys-border-focus);
+  outline-offset: 2px;
+}
+
+.segmented-item:disabled,
+.segmented-item[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.segmented-item--button {
+  padding: var(--space-1) var(--space-2);
+  min-height: var(--target-min-micro);
+  font-size: var(--text-micro);
+  color: var(--sys-text-secondary);
+  background-color: var(--sys-surface-default);
+  border-color: var(--sys-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--sys-shadow-sm);
+}
+
+.segmented-item--pill {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--sys-text-secondary);
+  background-color: var(--sys-surface-subtle);
+  border-color: var(--sys-border-subtle);
+  border-radius: var(--radius-full);
+}
+
+.segmented-item--chip {
+  padding: var(--space-0-5) var(--space-2);
+  font-size: var(--text-xs);
+  background-color: var(--sys-surface-default);
+  border-color: var(--sys-border-default);
+  border-radius: var(--radius-full);
+}
+
 .segmented-item:hover:not(.is-active, :disabled) {
   border-color: var(--sys-border-default);
   color: var(--sys-text-primary);
+}
+
+.segmented-item--button:hover:not(.is-active, :disabled) {
+  background-color: var(--sys-surface-hover);
 }
 
 .segmented-item.is-active {
@@ -864,28 +934,15 @@ samp {
   border-color: var(--sys-color-action-primary);
 }
 
-.filter-pills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-  margin-bottom: var(--space-3);
+.segmented-item--chip.is-deleted {
+  border-color: var(--sys-color-danger-border);
+  color: var(--sys-color-danger-text);
+  text-decoration: line-through;
 }
 
-.filter-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-1) var(--space-3);
-  font-family: inherit;
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--sys-text-secondary);
-  background-color: var(--sys-surface-subtle);
-  border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+.segmented-item--chip.is-proposed {
+  border-style: dashed;
+  border-color: var(--sys-color-action-primary);
 }
 
 .inspector-form {
@@ -2572,12 +2629,6 @@ samp {
   align-items: flex-start;
 }
 
-.setup-mode-switch {
-  display: flex;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
-
 .import-doc-header {
   display: flex;
   justify-content: space-between;
@@ -2683,14 +2734,6 @@ samp {
 
 /* --- Import map ------------------------------------------------------------- */
 
-.import-stages {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 0 var(--space-2);
-}
-
 .map-section {
   margin-bottom: var(--space-4);
 }
@@ -2734,22 +2777,6 @@ samp {
   flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
-}
-
-.map-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  align-items: center;
-}
-
-.map-chip {
-  padding: var(--space-0-5) var(--space-2);
-  border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-full);
-  background: var(--sys-surface-default);
-  font-size: var(--text-xs);
-  cursor: pointer;
 }
 
 .map-search {
@@ -2806,17 +2833,6 @@ samp {
   flex-wrap: wrap;
   gap: var(--space-2);
   align-items: baseline;
-}
-
-.map-chip.is-deleted {
-  border-color: var(--sys-color-danger-border);
-  color: var(--sys-color-danger-text);
-  text-decoration: line-through;
-}
-
-.map-chip.is-proposed {
-  border-style: dashed;
-  border-color: var(--sys-color-action-primary);
 }
 
 .import-queue-row.is-failed {

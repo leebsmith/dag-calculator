@@ -143,11 +143,11 @@
           </div>
 
           <div class="landing-section-bar">
-            <div class="segmented-control filter-pills-container">
+            <div class="segmented-control segmented-control--pills">
               <template x-for="s in [['all', 'All'], ['drafts', 'Drafts'], ['frozen', 'Frozen'], ['trash', 'Trash']]" :key="s[0]">
                 <button
                   type="button"
-                  class="filter-pill segmented-item segmented-item--solid"
+                  class="segmented-item segmented-item--pill segmented-item--solid"
                   :class="{ 'is-active': $store.recipes.scope === s[0] }" :aria-pressed="($store.recipes.scope === s[0]) ? 'true' : 'false'"
                   @click="$store.recipes.setScope(s[0])"
                   x-text="s[1]"

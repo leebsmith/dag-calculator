@@ -12,7 +12,8 @@
         ".btn:focus-visible, .btn-link:focus-visible, .btn-action-icon:focus-visible",
         ".landing-title:focus-visible, .landing-kebab:focus-visible",
         ".section-toggle:focus-visible",
-        ".stepper-btn:focus-visible"
+        ".stepper-btn:focus-visible",
+        ".segmented-item:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
     },
@@ -113,13 +114,23 @@
     },
     {
       "context": "",
+      "declarations": "cursor: not-allowed; opacity: 0.5; pointer-events: none",
+      "selectors": [
+        ":is(.btn, .btn-primary, .btn-secondary, .btn-outline):disabled, :is(.btn, .btn-primary, .btn-secondary, .btn-outline)[disabled], :is(.btn, .btn-primary, .btn-secondary, .btn-outline)[aria-disabled=\"true\"]",
+        ".segmented-item:disabled, .segmented-item[disabled]"
+      ],
+      "reason": "Shared disabled interaction recipe for button variants and segmented items."
+    },
+    {
+      "context": "",
       "declarations": "background-color: var(--sys-surface-hover)",
       "selectors": [
         ".data-table--list tbody tr:hover",
         ".landing-menu-item:hover",
-        ".stepper-btn.completed:hover"
+        ".stepper-btn.completed:hover",
+        ".segmented-item--button:hover:not(.is-active, :disabled)"
       ],
-      "reason": "Shared hover surface recipe for interactive rows and the completed stepper step."
+      "reason": "Shared hover surface recipe for interactive rows, the completed stepper step, and the segmented button variant."
     },
     {
       "context": "",
@@ -220,10 +231,9 @@
       "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-1)",
       "selectors": [
         ".form-actions",
-        ".yeast-row-badges",
-        ".map-suggestions"
+        ".yeast-row-badges"
       ],
-      "reason": "Coincidental wrap row; the field actions, picker badges, and import suggestions are unrelated."
+      "reason": "Coincidental wrap row; the field actions and picker badges are unrelated."
     },
     {
       "context": "",

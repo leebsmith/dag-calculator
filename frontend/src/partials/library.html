@@ -19,16 +19,16 @@
       <button type="button" class="btn-outline" @click="closeLibrary()">Close</button>
     </header>
 
-    <div class="segmented-control filter-pills-container">
+    <div class="segmented-control segmented-control--pills">
       <button
         type="button"
-        class="filter-pill segmented-item segmented-item--solid"
+        class="segmented-item segmented-item--pill segmented-item--solid"
         :class="{ 'is-active': librarySection === 'sources' }" :aria-pressed="(librarySection === 'sources') ? 'true' : 'false'"
         @click="selectLibrarySection('sources')"
       >Sources</button>
       <button
         type="button"
-        class="filter-pill segmented-item segmented-item--solid"
+        class="segmented-item segmented-item--pill segmented-item--solid"
         :class="{ 'is-active': librarySection === 'ingredients' }" :aria-pressed="(librarySection === 'ingredients') ? 'true' : 'false'"
         @click="selectLibrarySection('ingredients')"
       >Ingredients</button>
@@ -49,11 +49,11 @@
 
     <template x-if="librarySection === 'sources'">
       <div>
-        <div class="segmented-control filter-pills-container">
+        <div class="segmented-control segmented-control--pills">
           <template x-for="k in identityTabs" :key="k.id">
             <button
               type="button"
-              class="filter-pill segmented-item segmented-item--solid"
+              class="segmented-item segmented-item--pill segmented-item--solid"
               :class="{ 'is-active': sourceKind === k.id }" :aria-pressed="(sourceKind === k.id) ? 'true' : 'false'"
               @click="selectSourceKind(k.id)"
               x-text="k.label"
@@ -75,10 +75,10 @@
               @input="librarySetSearch($event.target.value)"
             />
           </div>
-          <div class="segmented-control filter-pills-container" x-show="activeKindHasNotes">
+          <div class="segmented-control segmented-control--pills" x-show="activeKindHasNotes">
             <button
               type="button"
-              class="filter-pill segmented-item segmented-item--solid"
+              class="segmented-item segmented-item--pill segmented-item--solid"
               :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
               @click="toggleLibrarySearchNotes()"
             >Search notes</button>
@@ -176,11 +176,11 @@
 
     <template x-if="librarySection === 'ingredients'">
       <div>
-        <div class="segmented-control filter-pills-container">
+        <div class="segmented-control segmented-control--pills">
           <template x-for="t in libraryTabs" :key="t.id">
             <button
               type="button"
-              class="filter-pill segmented-item segmented-item--solid"
+              class="segmented-item segmented-item--pill segmented-item--solid"
               :class="{ 'is-active': libraryTab === t.id }" :aria-pressed="(libraryTab === t.id) ? 'true' : 'false'"
               @click="selectLibraryTab(t.id)"
               x-text="t.label"
@@ -202,10 +202,10 @@
               @input="librarySetSearch($event.target.value)"
             />
           </div>
-          <div class="segmented-control filter-pills-container" x-show="activeKindHasNotes">
+          <div class="segmented-control segmented-control--pills" x-show="activeKindHasNotes">
             <button
               type="button"
-              class="filter-pill segmented-item segmented-item--solid"
+              class="segmented-item segmented-item--pill segmented-item--solid"
               :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
               @click="toggleLibrarySearchNotes()"
             >Search notes</button>
