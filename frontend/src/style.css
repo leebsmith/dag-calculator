@@ -116,7 +116,9 @@ samp {
 
 .btn-secondary:hover:not(:disabled),
 .btn-outline:hover:not(:disabled),
-.btn-action-icon:hover {
+.btn-action-icon:hover,
+.split-pill-unit:hover,
+.split-pill-lock:hover {
   background-color: var(--sys-surface-hover);
   color: var(--sys-text-primary);
 }
@@ -912,6 +914,53 @@ samp {
   display: block;
   white-space: nowrap;
   font-size: var(--text-micro);
+}
+
+.table-input-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.table-input-control {
+  display: inline-flex;
+  align-items: stretch;
+  gap: var(--space-1);
+}
+
+.split-pill {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--sys-surface-subtle);
+}
+
+.split-pill-unit,
+.split-pill-lock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-1-5);
+  border: 0;
+  background-color: transparent;
+  color: var(--sys-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  line-height: var(--line-height-none);
+  cursor: pointer;
+}
+
+.split-pill-lock {
+  border-left: 1px solid var(--sys-border-subtle);
+}
+
+.split-pill-unit:focus-visible,
+.split-pill-lock:focus-visible {
+  outline: 2px solid var(--sys-border-focus);
+  outline-offset: -2px;
 }
 
 /* ==========================================================================

@@ -1,0 +1,183 @@
+<div
+  class="data-table-container"
+  :class="{
+    'data-table-container--fit': config.fixed,
+    'data-table-container--scroll': config.scroll
+  }"
+>
+  <table
+    class="data-table"
+    :class="[
+      'data-table--' + (config.variant || 'editor'),
+      config.dense ? 'data-table--dense' : null,
+      config.fixed ? 'data-table--fixed' : null
+    ]"
+    :aria-label="config.label"
+  >
+    <colgroup>
+      <template x-for="col in config.columns" :key="col.id">
+        <col :style="col.width ? 'width: ' + col.width : null" />
+      </template>
+    </colgroup>
+
+    <thead>
+      <tr>
+        <template x-for="col in config.columns" :key="col.id">
+          <th
+            scope="col"
+            :class="col.align === 'right' ? 'text-right' : null"
+            x-text="col.label"
+          ></th>
+        </template>
+      </tr>
+    </thead>
+
+    <tbody>
+      <template
+        x-for="(row, index) in config.rows"
+        :key="config.rowKey ? config.rowKey(row, index) : index"
+      >
+        <tr :class="config.rowClass ? config.rowClass(row, index) : null">
+          <template x-for="col in config.columns" :key="col.id">
+            <td
+              :class="[
+                col.align === 'right' ? 'text-right tabular-nums' : null,
+                col.className ? col.className(row, index) : null
+              ]"
+            >
+              <template x-if="col.cell === 'text'">
+                <span x-text="col.value(row, index)"></span>
+              </template>
+
+              <template x-if="col.cell === 'number'">
+                <span :class="col.readout ? 'collection-readout tabular-nums' : 'tabular-nums'">
+                  <span x-text="col.value(row, index)"></span>
+                  <template x-if="col.badge && col.badge(row, index)">
+                    <span
+                      class="table-pct-badge"
+                      :class="col.badge(row, index).className"
+                    >
+                      <span x-text="col.badge(row, index).text"></span>
+                    </span>
+                  </template>
+                </span>
+              </template>
+
+              <template x-if="col.cell === 'name'">
+                <div>
+                  <div class="font-medium" x-text="col.value(row, index)"></div>
+                  <div
+                    class="text-xs text-muted"
+                    x-show="col.subvalue && col.subvalue(row, index)"
+                    x-text="col.subvalue ? col.subvalue(row, index) : ''"
+                  ></div>
+                  <template x-if="col.badge && col.badge(row, index)">
+                    <span
+                      class="status-badge"
+                      :class="col.badge(row, index).class"
+                      x-text="col.badge(row, index).text"
+                    ></span>
+                  </template>
+                </div>
+              </template>
+
+              <template x-if="col.cell === 'percent'">
+                <span
+                  class="table-pct-value"
+                  :class="col.cellClass ? col.cellClass(row, index) : null"
+                  x-text="col.value(row, index)"
+                ></span>
+              </template>
+
+              <template x-if="col.cell === 'input'">
+                <span class="table-input-cell">
+                  <span class="table-input-control">
+                    <input
+                      :class="col.input.class || 'form-input table-input-parts'"
+                      :type="col.input.type || 'number'"
+                      :step="col.input.step"
+                      :min="col.input.min"
+                      :max="col.input.max"
+                      :readonly="col.input.readonly"
+                      :value="col.input.value(row, index)"
+                      @input="col.input.onInput ? col.input.onInput(row, index, $event.target.value) : null"
+                      @change="col.input.onChange ? col.input.onChange(row, index, $event.target.value) : null"
+                      :aria-label="col.input.ariaLabel ? col.input.ariaLabel(row, index) : col.label"
+                    />
+                    <template x-if="col.input.splitPill">
+                      <span class="split-pill">
+                        <button
+                          type="button"
+                          class="split-pill-unit"
+                          :aria-label="'Unit: ' + col.input.splitPill.unit(row)"
+                          @click="col.input.splitPill.onUnitToggle(row)"
+                          x-text="col.input.splitPill.unit(row)"
+                        ></button>
+                        <button
+                          type="button"
+                          class="split-pill-lock"
+                          :aria-label="col.input.splitPill.isLocked(row) ? 'Unlock value' : 'Lock value'"
+                          :aria-pressed="col.input.splitPill.isLocked(row) ? 'true' : 'false'"
+                          @click="col.input.splitPill.onLockToggle(row)"
+                          x-text="col.input.splitPill.isLocked(row) ? '🔒' : '🔓'"
+                        ></button>
+                      </span>
+                    </template>
+                  </span>
+                  <span
+                    class="table-alpha-stock text-muted"
+                    x-show="col.input.hint && col.input.hint(row, index)"
+                    :class="col.input.hintClass ? col.input.hintClass(row, index) : null"
+                    x-text="col.input.hint ? col.input.hint(row, index) : ''"
+                  ></span>
+                </span>
+              </template>
+
+              <template x-if="col.cell === 'badge'">
+                <span
+                  class="status-badge text-xs"
+                  :class="col.cellClass ? col.cellClass(row, index) : null"
+                  x-text="col.value(row, index)"
+                ></span>
+              </template>
+
+              <template x-if="col.cell === 'actions'">
+                <div class="table-action-cell">
+                  <template x-for="action in col.actions(row, index)" :key="action.id || action.label">
+                    <button
+                      type="button"
+                      :class="action.class"
+                      :title="action.title"
+                      :aria-label="action.ariaLabel || action.title"
+                      @click="action.onClick(row, index)"
+                      x-text="action.label"
+                    ></button>
+                  </template>
+                </div>
+              </template>
+            </td>
+          </template>
+        </tr>
+      </template>
+
+      <template x-if="config.rows.length === 0">
+        <tr>
+          <td
+            :colspan="config.columns.length"
+            class="table-empty-cell"
+            x-text="config.emptyText"
+          ></td>
+        </tr>
+      </template>
+    </tbody>
+
+    <tfoot x-show="config.footer">
+      <tr>
+        <td :colspan="config.columns.length" class="tabular-nums">
+          <span class="font-bold" x-text="config.footer ? config.footer.label : ''"></span>
+          <span x-text="config.footer ? config.footer.value : ''"></span>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

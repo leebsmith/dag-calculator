@@ -1,0 +1,154 @@
+<div class="data-table-container" x-show="$store.recipes.rows.length">
+  <table class="data-table data-table--list">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Style</th>
+        <th scope="col">Rig</th>
+        <th scope="col">Water</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="data-table-col-date">Updated</th>
+        <th scope="col" class="data-table-col-actions" aria-label="Actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="b in $store.recipes.rows" :key="b.id">
+        <tr>
+          <td class="data-table-col-title">
+            <template x-if="$store.recipes.renamingId === b.id">
+              <input
+                class="landing-rename"
+                type="text"
+                :value="$store.recipes.renameValue"
+                @input="$store.recipes.setRenameValue($event.target.value)"
+                @keydown.enter.prevent="$store.recipes.commitRename(b)"
+                @keydown.escape.prevent="$store.recipes.cancelRename()"
+                @blur="$store.recipes.commitRename(b)"
+                x-init="$el.focus(); $el.select()"
+              />
+            </template>
+            <template x-if="$store.recipes.renamingId !== b.id">
+              <button
+                type="button"
+                class="landing-title"
+                @click="$store.recipes.openDraft(b.id)"
+              >
+                <span class="landing-name" x-text="b.name"></span>
+                <span
+                  class="text-xs text-muted"
+                  x-show="$store.recipes.parentLabel(b)"
+                  x-text="'from ' + $store.recipes.parentLabel(b)"
+                ></span>
+              </button>
+            </template>
+          </td>
+          <td x-text="$store.recipes.styleLabel(b)"></td>
+          <td x-text="$store.recipes.rigLabel(b)"></td>
+          <td x-text="$store.recipes.waterLabel(b)"></td>
+          <td>
+            <span
+              class="status-badge status-badge-info text-xs"
+              x-text="b.status === 'frozen' ? 'Frozen' : 'Draft'"
+            ></span>
+          </td>
+          <td class="data-table-col-date" x-text="$store.recipes.dateLabel(b.updated_at)"></td>
+          <td class="data-table-col-actions">
+            <button
+              type="button"
+              class="landing-kebab"
+              aria-label="Batch actions"
+              :aria-expanded="$store.recipes.rowMenu && $store.recipes.rowMenu.id === b.id ? 'true' : 'false'"
+              aria-controls="batch-row-menu"
+              @click.stop="$store.recipes.openRowMenu(b, $event)"
+            >
+              ⋮
+            </button>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>
+
+<template x-if="$store.recipes.rowMenu">
+  <div
+    class="landing-menu"
+    id="batch-row-menu"
+    :style="$store.recipes.rowMenuStyle"
+    @click.outside="$store.recipes.closeRowMenu()"
+    @keydown.escape.window="$store.recipes.closeRowMenu()"
+  >
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="$store.recipes.rowMenu.trashed"
+      @click="$store.recipes.restoreRow($store.recipes.rowMenu)"
+    >
+      Restore
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
+      @click="$store.brewSession.openFor($store.recipes.rowMenu); $store.recipes.closeRowMenu()"
+    >
+      Brew log
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
+      @click="$store.recipes.forkRow()"
+    >
+      Fork a copy
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
+      @click="$store.recipes.downloadRowBundle()"
+    >
+      Download bundle
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'frozen'"
+      @click="$store.recipes.openReportPicker($store.recipes.rowMenu)"
+    >
+      Build report…
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed && $store.recipes.rowMenu.status === 'draft'"
+      @click="$store.recipes.openDraftReadOnly($store.recipes.rowMenu.id); $store.recipes.closeRowMenu()"
+    >
+      Open read-only
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed"
+      @click="$store.recipes.startRename()"
+    >
+      Rename
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item"
+      x-show="!$store.recipes.rowMenu.trashed"
+      @click="$store.recipes.trashRow()"
+    >
+      Move to trash
+    </button>
+    <button
+      type="button"
+      class="landing-menu-item text-danger"
+      x-show="$store.recipes.rowMenu.trashed"
+      @click="$store.recipes.deleteRow($store.recipes.rowMenu)"
+    >
+      Delete permanently
+    </button>
+  </div>
+</template>
